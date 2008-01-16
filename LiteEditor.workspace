@@ -79,6 +79,6 @@
   <Environment>
     <Variable Name="MINGW" Value="C:/MinGW"/>
     <Variable Name="WorkspaceName" Value="LiteEditor"/>
-    <Variable Name="WorkspacePath" Value="/Development/C++/codelite"/>
+    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
   </Environment>
 </CodeLite_Workspace>

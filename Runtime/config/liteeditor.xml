@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LiteEditor Revision="937">
+<LiteEditor Revision="938">
   <Layout>
     <Perspective Name="Default" Value="layout2|name=Output;caption=Output;state=10487804;dir=3;layer=1;row=0;pos=0;prop=100000;bestw=604;besth=504;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Workspace;caption=Workspace;state=2099196;dir=4;layer=1;row=0;pos=0;prop=100000;bestw=250;besth=400;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger;caption=Debugger;state=2099198;dir=3;layer=1;row=0;pos=1;prop=100000;bestw=400;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Editor;caption=;state=256;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Standard Toolbar;caption=Standard;state=2108156;dir=1;layer=10;row=0;pos=0;prop=100000;bestw=505;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Search Toolbar;caption=Search;state=2108156;dir=1;layer=10;row=0;pos=693;prop=100000;bestw=194;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Build Toolbar;caption=Build;state=2108156;dir=1;layer=10;row=1;pos=0;prop=100000;bestw=163;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger Toolbar;caption=Debug;state=2108156;dir=1;layer=10;row=1;pos=174;prop=100000;bestw=194;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Navigation Toolbar;caption=Navigation Toolbar;state=2108156;dir=1;layer=10;row=2;pos=0;prop=100000;bestw=800;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=CodeFormatter;caption=CodeFormatter;state=2108156;dir=1;layer=10;row=0;pos=620;prop=100000;bestw=62;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Gizmos;caption=Gizmos;state=2108156;dir=1;layer=10;row=0;pos=516;prop=100000;bestw=93;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(3,1,0)=281|dock_size(4,1,0)=252|dock_size(5,0,0)=20|dock_size(1,10,0)=33|dock_size(1,10,1)=33|dock_size(1,10,2)=33|"/>
     <Notebook Name="Editor" Style="751164"/>
@@ -49,4 +49,11 @@
     <File Name="C:\TestArea\CCBug\main.h"/>
     <File Name="C:\TestArea\CCBug\main.cpp"/>
   </RecentFiles>
+  <ArchiveObject Name="FindInFilesData">
+    <wxArrayString Name="m_findString">
+      <wxString Value=""/>
+    </wxArrayString>
+    <wxArrayString Name="m_replaceString"/>
+    <long Value="0" Name="m_flags"/>
+  </ArchiveObject>
 </LiteEditor>

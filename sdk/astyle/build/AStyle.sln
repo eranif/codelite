@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AStyle", "AStyle.vcproj", "{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Debug Dll = Debug Dll
+		Debug Lib = Debug Lib
+		Release = Release
+		Release Dll = Release Dll
+		Release Lib = Release Lib
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Debug.ActiveCfg = Debug|Win32
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Debug.Build.0 = Debug|Win32
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Debug Dll.ActiveCfg = Debug Dll|Win32
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Debug Dll.Build.0 = Debug Dll|Win32
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Debug Lib.ActiveCfg = Debug Lib|Win32
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Debug Lib.Build.0 = Debug Lib|Win32
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Release.ActiveCfg = Release|Win32
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Release.Build.0 = Release|Win32
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Release Dll.ActiveCfg = Release Dll|Win32
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Release Dll.Build.0 = Release Dll|Win32
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Release Lib.ActiveCfg = Release Lib|Win32
+		{8EFEDD3E-7E3B-450F-A58E-B91A59A8F6FC}.Release Lib.Build.0 = Release Lib|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,26 @@
+namespace foospace
+{
+int Foo()
+{
+	if (isBar) {
+		bar();
+		return 1;
+	} else
+		return 0;
+}
+
+class Foo
+{
+public:
+	Foo() {
+		switch (foo) {
+		case 1:
+			break;
+		case 2: {
+			break;
+		}
+		}
+	};
+	virtual ~Foo();
+};
+}

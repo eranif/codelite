@@ -1,0 +1,945 @@
+<html>
+
+<head>
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Artistic Style</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Language" content="EN">
+<meta name="description" 
+content="Artistic Style is a source code indenter, source code formatter, and source code beautifier for the C, C++, C# and Java programming languages.">
+<meta name="keywords" 
+content="artistic style, astyle, source code indenter, source code formatter, source code beautifier">
+
+<style> <!-- 
+    h1 {color:#0000A0; text-align:center; font-style:italic; font-size:300%;}
+	h2 {color:#0000A0;}
+	h3 {color:#0000A0;}
+	h4 {font-size:105%;}
+	table {color:#0000A0; font-weight:bold;}
+	code {color:#0000A0;}
+	code.title {font-size:larger; font-weight:bold;}
+	pre {color:#0000A0; font-weight:bold;}
+	span.brace {color:red;}
+	--></style>
+	
+</head>
+
+<body lang="EN">
+
+<!-- CUT HERE FOR INSERTION INTO SOURCEFORGE DOC MANAGER -->
+<!-- $Id: astyle.html,v 1.28 2004/07/20 04:26:28 devsolar Exp $ -->
+<blockquote>
+    <h1>Artistic Style 1.21</h1>
+    <center>
+    <h2>A Free, Fast and Small Automatic Formatter<br>
+    for <em>C</em>, <em>C++</em>, <em>C#</em>, and <em>Java</em> Source Code
+    </h2>
+    </center>
+    
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+     
+    <h2>General Information</h2>
+     
+    <p><b>Line Endings</b><br>
+    Line endings in the formatted file will be the same as the input file. If 
+    there are mixed line endings the most frequent occurrence will be used.</p>
+     
+    <p><b>File Type</b><br>
+    Artistic Style will determine the file type from the file 
+    extension. The extension &quot;.java&quot; indicates a Java file, and &quot;.cs&quot; indicates a C# file. 
+    Everything else is a C or C++ file. If you are using a non-standard file 
+    extension for Java or C#, use one of the <code>--mode=</code> options 
+    described  in &quot;Formatting Options&quot;.</p>
+     
+    <p><b>Quick Start</b><br>
+    If you have never used Artistic Style there are a couple of ways to 
+    start. One is to run it with no options at all. This will format the file 
+    with 4 spaces per indent and will leave the brackets unchanged. Another is 
+    to use one of the predefined styles described in the &quot;Predefined Style 
+    Options&quot;. Select one with a bracket formatting style you like. Once you are 
+    familiar with the options you can customize the format to your personal 
+    preference.</p>
+     
+    <p>&nbsp;</p>
+     
+    <p>
+    </p>
+     
+    <h2>Usage</h2>
+    <p>Artistic style is a console program that receives information from the 
+    command line. The format of the command line is:</p>
+    <pre><strong>astyle [options]&nbsp;  <em>SourceFile1.cpp&nbsp; SourceFile2.cpp&nbsp; SourceFile3.cpp</em> [ . . . ]</strong></pre>
+    <p>Or to save the file with a different name:</p>
+    <p></p>
+    <pre><strong>astyle [options] <font color="purple" size="4">&lt;</font><em> OriginalSourceFile </em><font 
+    color="purple" size="4">&gt;</font><em> BeautifiedSourceFile</em></strong>
+</pre>
+    <p>The <font color="purple" size="5"><strong>&lt;</strong></font> and
+    <font color="purple" size="5"><strong>&gt;</strong></font> characters are used 
+    to redirect the files into standard input and out of standard output - don't 
+    forget them! </p>
+    <p>The block parens [ ] indicate that more than one option or more than one 
+	filename can be entered. They are NOT actually included in the command. For 
+	the options format see the following Options section.</p>
+	<p>With the first option, the newly indented file <strong>retains the 
+    original file name</strong> , while a copy of the original file is created 
+    with a<code><strong> .orig</strong></code> appended to the original file 
+    name. (This can be set to a different string by the option <code>--suffix=</code>, 
+    or suppressed altogether by the options <code>-n</code> or <code>
+    --suffix=none</code>). Thus, after indenting <code><em>SourceFile1.cpp</em></code> 
+    as above, the indented result will be named <code><em>SourceFile1.cpp</em></code>, 
+    while the original pre-indented file will be renamed to <code><em>
+    SourceFile1.cpp.orig</em></code>. </p>
+    <p>With the second option, the file is saved with a different name. 
+    Therefore a copy is <strong>not</strong> created.</p>
+    <p><code><b>Wildcards</b></code> (such as &quot;*.cpp&quot;), can be used if the 
+    project is compiled to include them. See the Installation Information 
+    for instructions.</p>
+    &nbsp;<h2>Options File</h2>
+    
+    <h4>A <font color="#0000a0">default options file</font> may be used to set 
+    your favorite source style.</h4>
+    <ul>
+        <li>The command line options have precedence. If there is a conflict 
+        between a command line option and an option in the default options file, 
+        the command line option will be used. </li>
+        <li>Artistic Style looks for this file in the following locations (in 
+        order):
+        <ol>
+            <li>the file indicated by the <strong>--options=</strong> command 
+            line option; </li>
+            <li>the <b>file</b> and <b>directory</b> indicated by the environment variable <strong>
+            ARTISTIC_STYLE_OPTIONS</strong> (if it exists); </li>
+            <li>the file named <strong>.astylerc</strong> in the directory 
+            pointed to by the <strong>HOME</strong> environment variable (e.g. &quot;<strong>$HOME/.astylerc</strong>&quot; 
+            on Linux); </li>
+            <li>the file named <strong>astylerc</strong> in the directory 
+            pointed to by the <strong>USERPROFILE</strong> environment variable 
+            (e.g. &quot;<strong>%USERPROFILE%\astylerc</strong>&quot; on Windows). </li>
+        </ol>
+        </li>
+        <li>This option file lookup can be disabled by specifying <code>
+        --options=none</code> on the command line. </li>
+        <li>Options may be set apart by new-lines, tabs or spaces. </li>
+        <li>Long options <strong>in the options file</strong> may be written
+        <strong>without</strong> the preceding '<strong>--</strong>'. </li>
+        <li>Lines within the options file that begin with '<strong>#</strong>' 
+        are considered <strong>line-comments</strong>. </li>
+        <li>Example of a default options file:
+        <blockquote>
+            <pre><strong><font color="#8080c0"># brackets should be attached to pre-bracket lines</font>
+brackets=attach
+<font color="#8080c0"># set 6 spaces per indent</font>
+indent=spaces=6
+<font color="#8080c0"># indent switch blocks</font>
+indent-switches
+<font color="#8080c0"># suffix of original files should be .pre</font>
+suffix=.pre</strong>
+</pre>
+        </blockquote>
+        </li>
+    </ul>
+    
+    <p>&nbsp;</p>
+    
+    <h2>Options </h2>
+    
+    <p>Not specifying any option will result in C/C++ style indentation, no 
+    change in bracket placement, 4 spaces per indent, and no formatting changes.</p>
+    <h4>Options may be written in two different ways:</h4>
+    <ul>
+        <li><strong>Long options:</strong><br>
+        These options start with '<strong><code>--</code></strong>', and <strong>
+        must be written one at a time.</strong><br>
+        (Example: '<code>--brackets=attach  --indent=spaces=4</code>') </li>
+        <li><strong>Short Options:</strong><br>
+        These options start with a single '<strong><code>-</code></strong>', and
+        <strong>may be concatenated together</strong>.<br>
+        (Example: '<code>-bps4</code>' is the same as writing '<code>-b -p -s4</code>'.)
+        </li>
+    </ul>
+    <p>&nbsp;</p>
+    
+    <hr>
+
+    <h3>Predefined Style Options</h3>
+    
+	<p>Predefined Style options define the style by setting several other 
+	options. If other options are also used, the placement of the 
+	predefined style option in the command line is important. If the 
+	predefined style option is placed first, the other options may override the 
+	predefined style. If placed last, the predefined style will override 
+	the other options.</p>
+	<p>For example the style <nobr>--style=ansi</nobr> sets the option <nobr>--brackets=break</nobr>
+        . If the command line specifies &quot;<nobr>--style=ansi</nobr> <nobr>--brackets=attach</nobr>&quot;, 
+	the brackets will be attached and the style will not be ansi style. If 
+	the order on the command line is reversed to &quot;<nobr>--brackets=attach</nobr>  
+	<nobr>--style=ansi</nobr> &quot;, the brackets will be broken (ansi style) and the attach 
+	option will be ignored.</p>
+	<p>For the options set by each style check the parseOption function in astyle_main.cpp.</p>
+
+    <blockquote>
+        <p><code class="title">--style=ansi</code><br>
+        ANSI style formatting/indenting. Brackets are broken, indentation is 4 
+        spaces. Namespaces, classes, and switches are NOT indented. </p>
+        <blockquote>
+            <pre>namespace foospace
+<span class="brace">{</span>
+int Foo()
+<span class="brace">{</span>
+&nbsp;&nbsp;&nbsp; if (isBar)
+<span class="brace">&nbsp;&nbsp; &nbsp;{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bar();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 1;
+<span class="brace">&nbsp;&nbsp;&nbsp; }</span>
+&nbsp;&nbsp;&nbsp; else
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;
+<span class="brace">}
+}</span>
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--style=gnu</code><br>
+        GNU style formatting/indenting.&nbsp; Brackets are broken, blocks are 
+        indented, indentation is 2 spaces. Namespaces, classes, and switches are 
+        NOT indented.</p>
+        <blockquote>
+            <pre>namespace foospace
+<span class="brace">&nbsp; {</span>
+&nbsp;&nbsp;&nbsp; int Foo()
+<span class="brace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (isBar)
+<span class="brace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bar();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 1;
+<span class="brace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;
+<span class="brace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp; }</span>
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--style=kr</code><br>
+        Kernighan&amp;Ritchie style formatting/indenting. Brackets are attached, 
+        indentation is 4 spaces. Namespaces, classes, and switches are NOT 
+        indented.</p>
+        <blockquote>
+            <pre>namespace foospace <span class="brace">{</span>
+int Foo() <span class="brace">{</span>
+&nbsp;&nbsp;&nbsp; if (isBar) <span class="brace">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bar();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 1;
+<span class="brace">&nbsp;&nbsp;&nbsp; }</span> else
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;
+<span class="brace">}
+}</span>
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--style=linux</code><br>
+        Linux style formatting/indenting. All brackets are linux style, 
+        indentation is 8 spaces. Namespaces, classes, and switches are NOT 
+        indented.</p>
+        <blockquote>
+            <pre>namespace foospace
+<span class="brace">{</span>
+int Foo()
+<span class="brace">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (isBar) <span class="brace">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bar();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 1;
+<span class="brace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  }</span> else
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;
+<span class="brace">}
+}</span>
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--style=java</code><br>
+        Java style formatting/indenting. Brackets are attached, indentation is 4 
+		spaces. Switches are NOT indented.</p>
+        <blockquote>
+            <pre>class foospace <span class="brace">{</span>
+&nbsp;&nbsp;&nbsp; int Foo() <span class="brace">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (isBar) <span class="brace">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bar();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 1;
+<span class="brace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   }</span> else
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;
+<span class="brace">&nbsp;&nbsp;&nbsp; }
+}</span>
+</pre>
+        </blockquote>
+    </blockquote>
+    <hr>
+    <!--  * * * * * * * * * * * *   Tab and Bracket Options  * * * * * * * * * * * *  -->
+    <h3>Tab and Bracket Options </h3>
+    <blockquote>
+        <p><code class="title">default indent option</code><br>
+        If no indentation option is set, the default option of <strong>4 spaces</strong> 
+        will be used (e.g. <code>-s<font color="purple">4</font> 
+        --indent=spaces=<font color="purple">4</font></code>). </p>
+        <p><code class="title">--indent=spaces=<font color="purple">#</font> / 
+        -s<font color="purple">#</font></code><br>
+        Indent using <code><font color="purple">#</font></code> spaces per 
+        indent (e.g. <code>-s<font color="purple">6</font></code> <code>
+        --indent=spaces=<font color="purple">6</font></code>).
+        <font color="purple">#</font> must be between <strong>2</strong> and
+        <strong>20</strong>. Not specifying <code><font color="purple">#</font></code> 
+        will result in a default of <strong>4 spaces</strong> per indent. </p>
+        <p><code class="title">--indent=tab / --indent=tab=<font color="purple">#</font> 
+        / -t<font color="purple">#</font></code><br>
+        Indent using tab characters. Treat each tab as <code>
+        <font color="purple">#</font></code> spaces (e.g. <code>-t<font 
+        color="purple">6</font></code> / <code>--indent=tab=<font 
+        color="purple">6</font></code>). <font color="purple">#</font> must be 
+        between <strong>2</strong> and <strong>20</strong>. If no <code>
+        <font color="purple">#</font></code> is set, treats tabs as <strong>4 
+        spaces</strong>. </p>
+        <p><code class="title">--force-indent=tab=<font color="purple">#</font> 
+        / -T<font color="purple">#</font></code><br>
+        Indent using tab characters. Treat each tab as <code>
+        <font color="purple">#</font></code> spaces (e.g. <code>-T<font 
+        color="purple">6</font></code> / <code>--force-indent=tab=<font 
+        color="purple">6</font></code>). Uses tabs as indents where <code>
+        --indent=tab</code> prefers to use spaces, such as inside multi-line 
+        statements. <font color="purple">#</font> must be between <strong>2</strong> 
+        and <strong>20</strong>. If no <code><font color="purple">#</font></code> 
+        is set, treats tabs as <strong>4 spaces</strong>. </p>
+        <p><br>
+        </p>
+        <p><code class="title">default brackets option</code><br>
+        If no brackets option is set, the brackets <strong>will not be changed.</strong>
+        </p>
+        <p><code class="title">--brackets=break / -b</code><br>
+        Break brackets from their pre-block statements ( e.g. ANSI C / C++ style 
+        ). </p>
+        <blockquote>
+            <pre>void Foo(bool isFoo)
+<span class="brace">{</span>
+    if (isFoo)
+    <span class="brace">{</span>
+        bar();
+    <span class="brace">}</span>
+    else
+    <span class="brace">{</span>
+        anotherBar();
+    <span class="brace">}</span>
+<span class="brace">}</span>
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--brackets=attach / -a</code><br>
+        Attach brackets to their pre-block statements ( e.g. Java / K&amp;R style ).
+        </p>
+        <blockquote>
+            <pre>void Foo(bool isFoo) <span class="brace">{</span>
+    if (isFoo) <span class="brace">{</span>
+        bar();
+    <span class="brace">}</span> else <span class="brace">{</span>
+        anotherBar();
+    <span class="brace">}</span>
+<span class="brace">}</span>
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--brackets=linux / -l</code><br>
+        Break brackets from class and function declarations, but attach brackets to 
+        pre-block command statements. </p>
+        <blockquote>
+            <pre>void Foo(bool isFoo)
+<span class="brace">{</span>
+    if (isFoo) <span class="brace">{</span>
+        bar();
+    <span class="brace">}</span> else <span class="brace">{</span>
+        anotherBar;
+    <span class="brace">}</span>
+<span class="brace">}</span></pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--brackets=break-closing / -y</code><br>
+        When used with either <code>--brackets=attach</code> or <code>
+        --brackets=linux</code>, breaks closing headers (e.g. '<code>else</code>', 
+        '<code>catch</code>', ...) from their immediately preceding closing 
+        brackets. </p>
+        <blockquote>
+            <pre>void Foo(bool isFoo) <span class="brace">{</span>
+    if (isFoo) <span class="brace">{</span>
+        bar();
+    <span class="brace">}</span> else <span class="brace">{</span>
+        anotherBar();
+    <span class="brace">}</span>
+<span class="brace">}</span></pre>
+            <p>becomes (with a broken 'else'):</p>
+            <pre>void Foo(bool isFoo) <span class="brace">{</span>
+    if (isFoo) <span class="brace">{</span>
+        bar();
+<span class="brace">    }</span>
+    else <span class="brace">{</span>
+        anotherBar();
+<span class="brace">    }</span>
+<span class="brace">}</span>
+</pre>
+        </blockquote>
+    </blockquote>
+    <hr>
+    <!--  * * * * * * * * * * * * *   Indentation Options  * * * * * * * * * * * * *  -->
+    <h3>Indentation Options </h3>
+    <blockquote>
+        <p><code class="title">--indent-classes / -C </code><br>
+        Indent '<code>class</code>' and '<code>struct</code>' blocks so that the blocks '<code>public:</code>', 
+        '<code>protected:</code>' and '<code>private:</code>' are indented. 
+        The entire block is indented. This option has no effect on Java and C# 
+		files.</p>
+        <blockquote>
+            <pre>class Foo
+<span class="brace">{</span>
+public:
+    Foo();
+    virtual ~Foo();
+<span class="brace">}</span>;
+</pre>
+            <p>becomes:</p>
+            <pre>class Foo
+<span class="brace">{</span>
+    public:
+        Foo();
+        virtual ~Foo();
+<span class="brace">}</span>;
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--indent-switches / -S</code><br>
+        Indent '<code>switch</code>' blocks so that the '<code>case X:</code>' 
+        statements are indented in the <code>switch</code> block. The entire 
+        case block is indented.</p>
+        <blockquote>
+            <pre>switch (foo)
+<span class="brace">{</span>
+case 1:
+    a += 1;
+    break;
+
+case 2:
+<span class="brace">{</span>
+    a += 2;
+    break;
+<span class="brace">}</span>    
+<span class="brace">}</span>
+</pre>
+            <p>becomes:</p>
+            <pre>switch (foo)
+<span class="brace">{</span>
+    case 1:
+        a += 1;
+        break;
+
+    case 2:
+<span class="brace">    {</span>
+        a += 2;
+        break;
+<span class="brace">    }        
+}</span>
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--indent-cases / -K</code><br>
+        Indent '<code>case X:</code>' blocks from the '<code>case X:</code>' 
+        headers. Case statements not enclosed in blocks are NOT indented. </p>
+        <blockquote>
+            <pre>switch (foo)
+<span class="brace">{</span>
+    case 1:
+        a += 1;
+        break;
+
+    case 2:
+<span class="brace">    {</span>
+        a += 2;
+        break;
+<span class="brace">    }
+}</span>
+</pre>
+            <p>becomes:</p>
+            <pre>switch (foo)
+<span class="brace">{</span>
+    case 1:
+        a += 1;
+        break;
+
+    case 2:
+<span class="brace">        {</span>
+            a += 2;
+            break;
+<span class="brace">        }
+}</span>
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--indent-blocks / -G</code><br>
+        Add extra indentation to entire blocks. </p>
+        <blockquote>
+            <pre>if (isFoo)
+<span class="brace">{</span>
+    bar();
+<span class="brace">}</span>
+else
+    anotherBar();
+</pre>
+            <p>becomes:</p>
+            <pre>if (isFoo)
+<span class="brace">    {</span>
+        bar();
+<span class="brace">    }</span>
+else
+    anotherBar();
+</pre>
+        </blockquote>
+        <p><br>
+        </p>		
+        <p><code class="title">--indent-brackets / -B</code><br>
+        Add extra indentation to brackets. This option has no effect if 
+        <code><nobr>--indent-blocks</nobr></code> is used.</p>
+        <blockquote>
+            <pre>if (isFoo)
+<span class="brace">{</span>
+    bar();
+<span class="brace">}</span>
+else
+    anotherBar();
+</pre>
+            <p>becomes:</p>
+            <pre>if (isFoo)
+<span class="brace">    {</span>
+    bar();
+<span class="brace">    }</span>
+else
+    anotherBar();
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+
+        <p><code class="title">--indent-namespaces / -N</code><br>
+        Add extra indentation to namespace blocks. </p>
+        <blockquote>
+            <pre>namespace foospace
+<span class="brace">{</span>
+class Foo
+<span class="brace">{</span>
+    public:
+        Foo();
+        virtual ~Foo();
+<span class="brace">}</span>;
+<span class="brace">}</span>
+</pre>
+            <p>becomes:</p>
+            <pre>namespace foospace
+<span class="brace">{</span>
+    class Foo
+<span class="brace">    {</span>
+        public:
+            Foo();
+            virtual ~Foo();
+<span class="brace">    }</span>;
+<span class="brace">}</span>
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--indent-labels / -L</code><br>
+        Add extra indentation to labels so they appear 1 indent less than the 
+        current indentation, rather than being flushed to the left (the 
+        default). </p>
+        <blockquote>
+            <pre>int foo() <span class="brace">{</span>
+    while (isFoo) <span class="brace">{</span>
+        ...
+        if (isFoo)
+            goto error;
+    <span class="brace">}</span>
+
+error:
+        ...
+<span class="brace">}</span>
+</pre>
+            <p>becomes (with indented 'error'):</p>
+            <pre>int foo() <span class="brace">{</span>
+    while (isFoo) <span class="brace">{</span>
+        ...
+        if (isFoo)
+            goto error;
+    <span class="brace">}</span>
+ 
+     error:
+         ...
+<span class="brace">}</span>
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--indent-preprocessor / -w</code><br>
+        Indent multi-line preprocessor definitions ending with a backslash. Should be used with <strong>
+        <code>--convert-tabs</code></strong> for proper results. Does a pretty 
+        good job, but can not perform miracles in obfuscated preprocessor 
+        definitions. </p>
+        <blockquote>
+            <pre>#define Is_Bar(arg,a,b) \
+(Is_Foo((arg), (a)) \
+|| Is_Foo((arg), (b)))
+</pre>
+            <p>becomes:</p>
+            <pre>#define Is_Bar(arg,a,b) \
+    (Is_Foo((arg), (a)) \
+     || Is_Foo((arg), (b)))
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+		
+        <p><code class="title">--max-instatement-indent=<font color="purple">#</font> 
+        / -M<font color="purple">#</font></code><br>
+        Indent a maximum of <code><font color="purple">#</font></code> spaces in 
+        a continuous statement, relative to the previous line (e.g. <strong>
+        <code>--max-instatement-indent=<font color="purple">40</font></code></strong>).
+        <font color="purple">#</font> must be less than <strong>80</strong>. If 
+        no <code><font color="purple">#</font></code> is set, the default value 
+        of <strong>40</strong> will be used. </p>
+        <blockquote>
+            <pre>fooArray[] = <span class="brace">{</span> red,
+         green,
+         blue <span class="brace">}</span>;
+
+fooFunction(barArg1,
+         barArg2,
+         barArg3);
+</pre>
+            <p>becomes (with larger value):</p>
+            <pre>fooArray[] = <span class="brace">{</span> red,
+               green,
+               blue <span class="brace">}</span>;
+
+fooFunction(barArg1,
+            barArg2,
+            barArg3);
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--min-conditional-indent=<font color="purple">#</font> 
+        / -m<font color="purple">#</font></code><br>
+        Set the minimal indent that is added when a header is built of 
+        multiple-lines. This indent makes helps to easily separate the header 
+        from the command statements that follow. 
+        The value for <font color="purple">#</font> must be less than <strong>40</strong>. The default setting for this 
+        option is <strong>twice the current indent</strong> (e.g. <strong><code>
+        --min-conditional-indent=<font color="purple">8</font></code></strong>).</p>
+        <blockquote>
+            <pre><font color="#8080c0">// default setting makes this non-bracketed code clear</font>
+if (a &lt; b
+        || c &gt; d)
+    foo++;
+
+<font color="#8080c0">// but creates an exaggerated indent in this bracketed code</font>
+if (a &lt; b
+        || c &gt; d)
+<span class="brace">{</span>
+    foo++;
+<span class="brace">}</span>
+</pre>
+            <p>becomes (when setting <strong><code>--min-conditional-indent=<font 
+            color="purple">0</font></code></strong>):</p>
+            <pre><font color="#8080c0">// setting makes this non-bracketed code less clear</font>
+if (a &lt; b
+    || c &gt; d)
+    foo++;
+
+<font color="#8080c0">// but makes this bracketed code clearer</font>
+if (a &lt; b
+    || c &gt; d)
+<span class="brace">{</span>
+    foo++;
+<span class="brace">}</span>
+</pre>
+        </blockquote>
+    </blockquote>
+    <hr>
+    <!--  * * * * * * * * * * * * *   Formatting Options  * * * * * * * * * * * * *  -->
+    <h3>Formatting Options </h3>
+    <blockquote>
+        <p><code class="title">--break-blocks / -f</code><br>
+        Pad empty lines around header blocks (e.g. '<code>if</code>', '<code>while</code>'...). 
+        Be sure to read the 
+        <a href="file:///G:/USB/Projects/AStyle/doc/astyleX.html">Supplemental Documentation</a> 
+        before using this option. </p>
+        <blockquote>
+            <pre>isFoo = true;
+if (isFoo) <span class="brace">{</span>
+    bar();
+<span class="brace">}</span> else <span class="brace">{</span>
+    anotherBar();
+<span class="brace">}</span>
+isBar = false;
+</pre>
+            <p>becomes:</p>
+            <pre>isFoo = true;
+
+if (isFoo) <span class="brace">{</span>
+    bar();
+<span class="brace">}</span> else <span class="brace">{</span>
+    anotherBar();
+<span class="brace">}</span>
+
+isBar = false;
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--break-blocks=all / -F</code><br>
+        Pad empty lines around header blocks (e.g. '<code>if</code>', '<code>while</code>'...). 
+        Treat closing header blocks (e.g. '<code>else</code>', '<code>catch</code>') 
+        as stand-alone blocks. Be sure to read the 
+        <a href="file:///G:/USB/Projects/AStyle/doc/astyleX.html">
+        Supplemental Documentation</a> before using this option. </p>
+        <blockquote>
+            <pre>isFoo = true;
+if (isFoo) <span class="brace">{</span>
+    bar();
+<span class="brace">}</span> else <span class="brace">{</span>
+    anotherBar();
+<span class="brace">}</span>
+isBar = false;
+</pre>
+            <p>becomes:</p>
+            <pre>isFoo = true;
+
+if (isFoo) <span class="brace">{</span>
+    bar();
+    
+<span class="brace">}</span> else <span class="brace">{</span>
+    anotherBar();
+<span class="brace">}</span>
+
+isBar = false;
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--break-elseifs / -e</code><br>
+        Break '<code>else if</code>' header combinations into separate lines. 
+		This option has no effect if <code>one-line=keep-statements</code> is 
+		used. 
+		This option cannot be undone.</p>
+        <blockquote>
+            <pre>if (isFoo) <span class="brace">{</span>
+    bar();
+<span class="brace">}</span>
+else if (isFoo1()) <span class="brace">{</span>
+    bar1();
+<span class="brace">}</span>
+else if (isFoo2()) <span class="brace">}</span>
+    bar2;</span>
+<span class="brace">}</span>
+</pre>
+            <p>becomes:</p>
+            <pre>if (isFoo) <span class="brace">{</span>
+    bar();
+<span class="brace">}</span>
+else
+    if (isFoo1()) <span class="brace">{</span>
+        bar1();
+<span class="brace">    }</span>
+<span class="brace">    </span>else
+        if (isFoo2()) <span class="brace">{</span>
+            bar2();
+<span class="brace">        }</span>
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--pad=oper / -p</code><br>
+        Insert space padding around operators. Operators inside block parens [] 
+        are <strong>not</strong> padded. Note that there is no option to unpad. 
+        Once padded, they stay padded. </p>
+        <blockquote>
+            <pre>if (foo==2)
+    a=bar((b-c)*a,*d--);
+</pre>
+            <p>becomes:</p>
+            <pre>if (foo == 2)
+     a = bar((b - c) * a, *d--);
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--pad=paren / -P</code><br>
+        Insert space padding around parenthesis on both the <strong>outside</strong> 
+        and the <strong>inside</strong>.</p>
+        <blockquote>
+            <pre>if (isFoo(a, b))
+    bar(a, b);
+</pre>
+            <p>becomes:</p>
+            <pre>if ( isFoo ( a, b ) )
+    bar ( a, b );
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--pad=paren-out / -d</code><br>
+        Insert space padding around parenthesis on the <strong>outside</strong> 
+        only. This can be used with <code>unpad=paren</code> below to remove 
+        unwanted spaces.</p>
+        <blockquote>
+            <pre>if (isFoo(a, b))
+    bar(a, b);
+</pre>
+            <p>becomes:</p>
+            <pre>if (isFoo (a, b) )
+    bar (a, b);
+</pre>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--pad=paren-in / -D</code><br>
+        Insert space padding around parenthesis on the <strong>inside</strong> 
+        only. This can be used with <code>unpad=paren</code> below to remove 
+        unwanted spaces.</p>
+        <blockquote>
+            <pre>if (isFoo(a, b))
+    bar(a, b);
+</pre>
+            <p>becomes:</p>
+            <pre>if ( isFoo( a, b ) )
+    bar( a, b );
+</pre>
+        </blockquote>
+        <p><br></p>
+        <p><code class="title">--unpad=paren / -U</code><br>
+        Remove space padding around parenthesis on the inside and outside. Can 
+        be used in combination with the paren padding options <code><nobr>
+        pad=paren-out</nobr></code> and <code><nobr>pad=paren-in</nobr></code> above. Only padding 
+        that has not been requested by other options will be removed.</p>
+		<p>For example, if a source has parens padded on both the inside and 
+		outside, and you want inside only. You need to use <code><nobr>unpad=paren</nobr></code> to remove 
+		the outside padding, and <code><nobr>pad=paren-in</nobr></code> to retain the inside padding. Using 
+		only <code><nobr>pad=paren-in</nobr></code> would not remove the outside padding.</p>
+        <blockquote>
+            <pre>if ( isFoo( a, b ) )
+    bar ( a, b );
+</pre>
+            <p>becomes (with no padding option requested):</p>
+            <pre>if (isFoo(a, b))
+    bar(a, b);
+</pre>
+        </blockquote>
+        <p><br></p>
+        <p><code class="title">--one-line=keep-statements / -o</code><br>
+        Don't break complex statements and multiple statements residing on a 
+        single line. </p>
+        <blockquote>
+            <pre>if (isFoo)
+<span class="brace">{</span>
+    isFoo = false; cout &lt;&lt; isFoo &lt;&lt; endl;
+<span class="brace">}</span>
+</pre>
+            <p>remains as is.</p>
+            <pre>if (isFoo) DoBar();
+</pre>
+            <p>remains as is.</p>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--one-line=keep-blocks / -O</code><br>
+        Don't break one-line blocks. </p>
+        <blockquote>
+            <pre>if (isFoo)
+<span class="brace">{</span> isFoo = false; cout &lt;&lt; isFoo &lt;&lt; endl; <span 
+            class="brace">}</span>
+</pre>
+            <p>remains as is.</p>
+        </blockquote>
+        <p><br>
+        </p>
+        <p><code class="title">--convert-tabs / -V</code><br>
+        Converts tabs into single spaces. </p>
+        <p><br>
+        </p>
+        <p><code class="title">--fill-empty-lines / -E</code><br>
+        Fill empty lines with the white space of the previous line. </p>
+        <p><br>
+        </p>
+        <p><code class="title">--mode=c</code><br>
+        Indent a C or C++ file. The option is set from the file extension for 
+        each file. You can override the setting with this entry. It allows the 
+        formatter to identify language specific syntax such as C++ classes, 
+        templates, and keywords. </p>
+        <p><code class="title">--mode=java</code><br>
+        Indent a Java file. The option is set from the file extension for each 
+        file. You can override the setting with this entry. It allows the 
+        formatter to identify language specific syntax such as Java classes keywords. </p>
+		<p><code class="title">--mode=cs</code><br>
+        Indent a C sharp file. The option is set from the file extension for 
+        each file. You can override the setting with this entry. It allows the 
+        formatter to identify language specific syntax such as C sharp classes 
+		and keywords. </p>
+    </blockquote>
+    <hr>
+    <!--  * * * * * * * * * * * * *   Other Options  * * * * * * * * * * * * *  -->
+    <h3>Other Options </h3>
+    <blockquote>
+        <p><code class="title">--suffix=<font color="purple">####</font></code><br>
+        Append the suffix <font color="purple">####</font> instead of '.orig' to 
+        original filename (e.g. <code>--suffix=<font color="purple">.bak</font></code>). 
+		If this is to be a file extension, the dot '.' must be included. 
+		Otherwise the suffix will be appended to the current file extension.</p>
+ 		<p><code class="title">--suffix=none / -n</code><br>
+ 		Do not retain a backup of the original file. The original file is 
+		purged after it is formatted.</p>
+        <p><code class="title">--options=<font color="purple">####</font></code><br>
+		Specify an options file <font color="purple">####</font> to read and 
+		use. </p>
+        <p><code class="title">--options=none</code><br>
+        Disable the default options file. Only the command-line parameters will 
+        be used. </p>
+        
+        <p><code class="title">--errors-to-stdout / -X</code><br>
+        Print errors to standard-output rather than to standard-error.<br>
+        This option should be helpful for systems/shells that do not have this 
+        option, such as in Windows95. </p>
+
+		<p><code class="title">--preserve-date / -Z</code><br>
+		Preserve the original file's date and time modified. The date and time 
+		modified will not be changed in the formatted file. This option is not 
+		effective if redirection is used.</p>
+		        
+        <p><code class="title">--version / -v</code><br>
+        Print version number. </p>
+        <p><code class="title">--help / -h / -?</code><br>
+        Print a help message and quit. </p>
+    </blockquote>
+    <hr>
+ 
+    <p>&nbsp;</p>
+    <h2 align="center">ENJOY !!!</h2>
+    <p>&nbsp;</p>
+	
+</blockquote>
+<!-- CUT HERE FOR INSERTION INTO SOURCEFORGE DOC MANAGER -->
+
+</body>
+
+</html>

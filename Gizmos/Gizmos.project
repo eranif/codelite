@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="Gizmos">
+  <VirtualDirectory Name="src">
+    <File Name="gizmos.h"/>
+    <File Name="gizmos.cpp"/>
+    <File Name="plugindata.cpp"/>
+    <File Name="plugindata.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Wizard">
+    <File Name="pluginwizard_page1.cpp"/>
+    <File Name="pluginwizard_page1.h"/>
+    <File Name="pluginwizard_pag2.h"/>
+    <File Name="pluginwizard_pag2.cpp"/>
+    <File Name="pluginwizard.h"/>
+    <File Name="pluginwizard.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="NewClassDialog">
+    <File Name="newclassdlg.h"/>
+    <File Name="newclassbasedlg.cpp"/>
+    <File Name="newclassbasedlg.h"/>
+    <File Name="newclassdlg.cpp"/>
+    <File Name="newinheritancedlg.h"/>
+    <File Name="newinheritancebasedlg.cpp"/>
+    <File Name="newinheritancebasedlg.h"/>
+    <File Name="newinheritancedlg.cpp"/>
+  </VirtualDirectory>
+  <Settings Type="Dynamic Library">
+    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../Runtime/Plugin.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode"/>
+      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes);">
+        <Library Value="libplugin_sdkud.a"/>
+        <Library Value="libCodeLiteud.a"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../Runtime/Plugin.so" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode"/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
+        <Library Value="libplugin_sdku.a"/>
+        <Library Value="libCodeLiteu.a"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="../Runtime/plugins/Gizmos.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory=""/>
+      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sdk/wxflatnotebook/include"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="_WIN32_WINNT=0x501"/>
+        <Preprocessor Value="ASTYLE_LIB"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=yes --libs --unicode=yes);">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdkud.a"/>
+        <Library Value="libCodeLiteud.a"/>
+        <Library Value="libwxsqlite3ud.a"/>
+        <Library Value="libsqlite3.a"/>
+        <Library Value="libwxFlatNotebookud.a"/>
+        <Library Value="libwxmsw28ud.a"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="../Runtime/plugins/Gizmos.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./WinReleaseUnicode"/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --unicode=yes --debug=no)">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sdk/wxflatnotebook/include"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="_WIN32_WINNT=0x501"/>
+        <Preprocessor Value="ASTYLE_LIB"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libwxFlatNotebooku.a"/>
+        <Library Value="libplugin_sdku.a"/>
+        <Library Value="libCodeLiteu.a"/>
+        <Library Value="libwxsqlite3u.a"/>
+        <Library Value="libsqlite3.a"/>
+        <Library Value="libwxmsw28u.a"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+  <VirtualDirectory Name="NewWxProjectDlg">
+    <File Name="newwxprojectdlg.h"/>
+    <File Name="newwxprojectbasedlg.cpp"/>
+    <File Name="newwxprojectbasedlg.h"/>
+    <File Name="newwxprojectdlg.cpp"/>
+    <File Name="newwxprojectinfo.cpp"/>
+    <File Name="newwxprojectinfo.h"/>
+  </VirtualDirectory>
+  <Dependencies/>
+</CodeLite_Project>

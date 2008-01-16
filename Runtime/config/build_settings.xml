@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BuildSettings>
+  <Compilers>
+    <Compiler Name="gnu g++">
+      <Switch Name="Debug" Value="-gstabs "/>
+      <Switch Name="Include" Value="-I"/>
+      <Switch Name="Library" Value="-l"/>
+      <Switch Name="LibraryPath" Value="-L"/>
+      <Switch Name="Output" Value="-o "/>
+      <Switch Name="Preprocessor" Value="-D"/>
+      <Switch Name="Source" Value="-c "/>
+      <Tool Name="ArchiveTool" Value="ar rcu"/>
+      <Tool Name="CompilerName" Value="g++"/>
+      <Tool Name="LinkerName" Value="g++"/>
+      <Tool Name="ResourceCompiler" Value="windres"/>
+      <Tool Name="SharedObjectLinkerName" Value="g++ -shared -fPIC"/>
+      <Option Name="ObjectSuffix" Value=".o"/>
+      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+)(:)</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+ *)(:)( warning:)</Pattern>
+    </Compiler>
+    <Compiler Name="gnu gcc">
+      <Switch Name="Debug" Value="-g "/>
+      <Switch Name="Include" Value="-I"/>
+      <Switch Name="Library" Value="-l"/>
+      <Switch Name="LibraryPath" Value="-L"/>
+      <Switch Name="Output" Value="-o "/>
+      <Switch Name="Preprocessor" Value="-D"/>
+      <Switch Name="Source" Value="-c "/>
+      <Tool Name="ArchiveTool" Value="ar rcu"/>
+      <Tool Name="CompilerName" Value="gcc"/>
+      <Tool Name="LinkerName" Value="gcc"/>
+      <Tool Name="ResourceCompiler" Value="windres"/>
+      <Tool Name="SharedObjectLinkerName" Value="gcc -shared -fPIC"/>
+      <Option Name="ObjectSuffix" Value=".o"/>
+      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+)(:)</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+ *)(:)( warning:)</Pattern>
+    </Compiler>
+  </Compilers>
+  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="C:/MinGW/bin/mingw32-make.EXE" Options="-f"/>
+</BuildSettings>

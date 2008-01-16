@@ -1,0 +1,185 @@
+# DoxySfile 0.90b ShortConfig -- Do not remove or edit this line please --
+
+#---------------------------------------------------------------------------
+# General configuration options
+#---------------------------------------------------------------------------
+PROJECT_NAME                        = CodeLite
+PROJECT_NUMBER                      = 
+INPUT                               = ../.
+OUTPUT_DIRECTORY                    = htmlhelp/
+GENERATE_DOXYS_HELP                 = NO
+HTML_FILE_EXTENSION                 = .html
+CUSTOM_DIR                          = 
+SERVER_STATISTICS                   = 
+HTML_HELP_SERVER_PATH               = 
+STRIP_CODE_COMMENTS                 = YES
+#---------------------------------------------------------------------------
+# Special options (rarely changed)
+#---------------------------------------------------------------------------
+DELETE_OUTPUT_DIRECTORY             = NO
+MS_DOT_NET_INTEGRATION              = NO
+MS_DOT_NET_INTEGRATION_PATH         = 
+GENERATE_HTMLHELP1                  = YES
+GENERATE_STATISTICS                 = NO
+#---------------------------------------------------------------------------
+# Search page options
+#---------------------------------------------------------------------------
+CREATE_SEARCHPAGE                   = YES
+SEARCH_BRIEF_DESCRIPTION            = YES
+SEARCH_FUNCTIONS                    = YES
+SEARCH_VARIABLES                    = YES
+SEARCH_TYPEDEFS_ETC                 = YES
+#---------------------------------------------------------------------------
+# Specify what is included in the output
+#---------------------------------------------------------------------------
+CREATE_DOC_FOR_FILES                = YES
+CREATE_SOURCECODE_FOR_FILES         = NO
+CREATE_SOURCECODE_FOR_MEMBERS       = NO
+EXTRACT_PRIVATE                     = YES
+EXTRACT_PROTECTED                   = YES
+EXTRACT_STATIC                      = YES
+EXTRACT_LOCAL_CLASSES               = YES
+HIDE_UNDOC_NAMESPACES               = NO
+HIDE_UNDOC_CLASSES                  = NO
+HIDE_UNDOC_FUNCTIONS                = NO
+HIDE_UNDOC_VARIABLES                = NO
+HIDE_UNDOC_ENUMS                    = NO
+HIDE_UNDOC_ENUM_VALUES              = NO
+HIDE_UNDOC_TYPEDEFS                 = NO
+HIDE_UNDOC_MACROS                   = NO
+HIDE_UNDOC_DEFINES                  = YES
+GENERATE_TODOLIST                   = YES
+GENERATE_BUGLIST                    = YES
+GENERATE_DEPRECATEDLIST             = YES
+#---------------------------------------------------------------------------
+# Customize how the documentation is generated
+#---------------------------------------------------------------------------
+MEMBER_SAME_FILE_RELATE_TO_CLASSES  = YES
+MEMBER_SAME_FILE_RELATE_TO_STRUCTS  = NO
+FULL_PATH_NAMES                     = NO
+STRIP_FROM_PATH                     = 
+INTERNAL_DOCS                       = NO
+TODO_DOCS                           = YES
+INHERIT_DOCS                        = YES
+HIDE_CLASS_METHODS_IN_OVERVIEW      = NO
+CONCATENATE_DECL_AND_DEFINITION_DOC = YES
+#---------------------------------------------------------------------------
+# Customize layout for pure text projects (ie containing no code)
+#---------------------------------------------------------------------------
+PAGE_DOCUMENTATION_MODE             = NO
+#---------------------------------------------------------------------------
+# Options to control how the input is parsed
+#---------------------------------------------------------------------------
+HIDE_IN_BODY_DOCS                   = NO
+TAB_SIZE                            = 4
+ALIASES                             = 
+ENABLED_SECTIONS                    = 
+IGNORE_CLASS_PREFIX                 = 
+#---------------------------------------------------------------------------
+# configuration options related to warning and progress messages
+#---------------------------------------------------------------------------
+MESSAGE_LEVEL_SCREEN                = Messages Warnings
+OUTPUT_PREFIX_SCREEN                = Warnings Errors
+OUTPUT_PATTERNS_SCREEN              = Progress Preprocessor Scanner Generator Docparser Dot Definition Configfile Undocumented Unknown
+MESSAGE_SCREEN_LOGFILE              = 
+MESSAGE_LEVEL_HTML_FILE             = Messages Warnings Errors Debug
+OUTPUT_PATTERNS_HTML_FILE           = Progress Preprocessor Scanner Generator Docparser Dot Definition Configfile Undocumented Unknown
+QUIET                               = YES
+#---------------------------------------------------------------------------
+# Configuration options related to the input files
+#---------------------------------------------------------------------------
+IGNORE_FILE_NAME                    = DoxyS.ignore
+FILE_PATTERNS                       = *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx *.hpp *.h++ *.idl *.odl *.cs *.page *.dir *.dxd *.doc
+RECURSIVE                           = YES
+EXCLUDE                             = htmlhelp/
+EXCLUDE_SYMLINKS                    = NO
+EXCLUDE_PATTERNS                    = 
+EXAMPLE_PATH                        = 
+IMAGE_PATH                          = 
+INPUT_FILTER                        = 
+FILTER_SOURCE_FILES                 = NO
+#---------------------------------------------------------------------------
+# Configuration options related to the HTML layout
+#---------------------------------------------------------------------------
+NAVIGATION_CHAR_LENGTH              = 30
+LIMIT_COMPACT_IN_OVERVIEW_TABLES    = 100
+COLS_IN_OVERVIEW_TABLES             = 4
+LIMIT_ALFA_INDEX_IN_OVERVIEW_TABLES = 200
+COMPACT_CHAR_LENGTH                 = 25
+INFO_ON_OVERVIEW_TABLES_NORMAL      = YES
+INFO_ON_OVERVIEW_TABLES_COMPACT     = YES
+INCLUDE_BRIEF_IN_HEADER             = YES
+INCLUDE_BRIEF_IN_DESCRIPTION        = YES
+HIDE_TYPE_ON_DESCRIPTION            = NO
+EXPAND_COLLAPSE_SECTIONS            = YES
+EXPAND_COLLAPSE_TABLE_SECTIONS_ONLY = YES
+CENTER_ALIGN_IMAGES                 = NO
+#---------------------------------------------------------------------------
+# Configuration options related to Left Menu layout
+#---------------------------------------------------------------------------
+SHOW_LEFT_MENU                      = NO
+SHOW_LEFT_MENU_MAINDIR              = YES
+SHOW_LEFT_MENU_SEARCH               = YES
+SHOW_LEFT_MENU_DIRECTORY            = YES
+SHOW_LEFT_MENU_DOC                  = YES
+SHOW_LOGO                           = NO
+LEFT_MENU_DIRECTORIES               = NO
+LEFT_MENU_PAGES                     = YES
+LEFT_MENU_CLASSES                   = YES
+LEFT_MENU_FUNCTIONS                 = NO
+LEFT_MENU_MACROS                    = NO
+LEFT_MENU_DEFINES                   = NO
+LEFT_MENU_ATTRIBUTES                = NO
+LEFT_MENU_TYPES                     = NO
+LEFT_MENU_UNITS                     = YES
+LEFT_MENU_STATISTICS                = NO
+STATISTICS_LINK_ON_MAIN_PAGE        = NO
+#---------------------------------------------------------------------------
+# Configuration options related to header and footer layout
+#---------------------------------------------------------------------------
+HIDE_HEADER_ON_DIRS_AND_PAGES       = YES
+HIDE_FOOTER_ON_DIRS_AND_PAGES       = YES
+HIDE_HEADER_ON_CLASS_AND_MEMBERS    = NO
+HIDE_FOOTER_ON_CLASS_AND_MEMBERS    = NO
+HIDE_HEADER_ON_UNITS                = NO
+HIDE_FOOTER_ON_UNITS                = NO
+#---------------------------------------------------------------------------
+# Configuration options related to the preprocessor   
+#---------------------------------------------------------------------------
+ENABLE_PREPROCESSING                = YES
+MACRO_EXPANSION                     = YES
+EXPAND_ONLY_PREDEF                  = NO
+SEARCH_INCLUDES                     = YES
+INCLUDE_PATH                        = 
+INCLUDE_FILE_PATTERNS               = 
+PREDEFINED                          = 
+EXPAND_AS_DEFINED                   = 
+SKIP_FUNCTION_MACROS                = YES
+#---------------------------------------------------------------------------
+# Configuration options related to the dot tool
+#---------------------------------------------------------------------------
+ENABLE_DOT_GRAPHS                   = YES
+DOT_PATH                            = 
+CLASS_DIAGRAMS                      = YES
+HIDE_UNDOC_RELATIONS                = YES
+CLASS_GRAPH                         = YES
+COLLABORATION_GRAPH                 = YES
+UML_LOOK                            = NO
+TEMPLATE_RELATIONS                  = YES
+INCLUDE_GRAPH                       = YES
+INCLUDED_BY_GRAPH                   = YES
+CALL_GRAPH                          = YES
+DIR_GRAPH                           = YES
+GRAPHICAL_HIERARCHY                 = YES
+DOT_IMAGE_FORMAT                    = png
+DOTFILE_DIRS                        = 
+MAX_DOT_GRAPH_WIDTH                 = 1024
+MAX_DOT_GRAPH_HEIGHT                = 1024
+MAX_DOT_GRAPH_DEPTH                 = 0
+CENTER_ALIGN_DOT_IMAGES             = NO
+DOT_CLEANUP                         = YES
+#---------------------------------------------------------------------------
+# Language options
+#---------------------------------------------------------------------------
+OUTPUT_LANGUAGE                     = English
+USE_WINDOWS_ENCODING                = YES

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="5" />
+	<Project>
+		<Option title="wx-config-win" />
+		<Option pch_mode="2" />
+		<Option default_target="wx-config-win GCC" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="" />
+		<Build>
+			<Target title="wx-config-win GCC">
+				<Option output="wx-config.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".objs\gcc" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="--cflags" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-pedantic" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="wx-config-win DMC">
+				<Option output="wx-config.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".objs\dmc" />
+				<Option type="1" />
+				<Option compiler="dmc" />
+				<Option parameters="--help" />
+				<Compiler>
+					<Add option="-6" />
+					<Add option="-o+space" />
+					<Add option="-C" />
+				</Compiler>
+			</Target>
+			<Target title="wx-config-win MSVC8">
+				<Option output="wx-config.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".objs\msvc8" />
+				<Option type="1" />
+				<Option compiler="msvc8" />
+				<Compiler>
+					<Add option="/Os" />
+					<Add option="/O1" />
+					<Add option="/Wp64" />
+					<Add option="/W3" />
+					<Add option="/EHsc" />
+				</Compiler>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="wx-config-win GCC;" />
+		</VirtualTargets>
+		<Unit filename="wx-config-win.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="wx-config-win GCC" />
+			<Option target="wx-config-win DMC" />
+			<Option target="wx-config-win MSVC8" />
+		</Unit>
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

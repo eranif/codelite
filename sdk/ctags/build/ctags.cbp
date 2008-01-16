@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="5" />
+	<Project>
+		<Option title="ctags" />
+		<Option pch_mode="2" />
+		<Option default_target="" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="" />
+		<Build>
+			<Target title="ctags">
+				<Option output="..\bin\msw_gcc\ctags.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\msw_gcc" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="ctags;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-pipe" />
+			<Add option="-mthreads" />
+			<Add option="-fmessage-length=0" />
+		</Compiler>
+		<Unit filename="..\args.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\args.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\asm.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\asp.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\awk.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\beta.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\c.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\cobol.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\ctags.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\debug.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\debug.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\e_msoft.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\eiffel.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\entry.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\entry.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\erlang.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\fortran.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\general.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\get.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\get.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\html.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\jscript.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\keyword.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\keyword.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\lisp.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\lregex.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\lua.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\main.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\main.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\make.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\options.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\options.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\parse.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\parse.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\parsers.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\pascal.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\perl.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\php.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\python.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\read.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\read.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\readtags.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\readtags.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\rexx.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\routines.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\routines.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\ruby.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\scheme.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\sh.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\slang.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\sml.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\sort.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\sort.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\sql.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\strlist.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\strlist.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\tcl.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\verilog.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\vim.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\vstring.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\vstring.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="ctags" />
+		</Unit>
+		<Unit filename="..\yacc.c">
+			<Option compilerVar="CC" />
+			<Option target="ctags" />
+		</Unit>
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

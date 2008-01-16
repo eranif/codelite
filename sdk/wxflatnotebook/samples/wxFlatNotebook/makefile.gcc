@@ -1,0 +1,36 @@
+# Project: wxFlatNotebookTest
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = App.obj Frame.obj resources.obj $(RES)
+LINKOBJ  = App.obj Frame.obj resources.obj $(RES)
+
+LIBS =  -L"$(WXSTABLE)/lib/gcc_lib" -L"../../lib" -mwindows -lwxmsw27d_adv  -lwxmsw27d_html -lwxbase27d_xml -lwxmsw27d_xrc -lwxmsw27d_core -lwxbase27d -lwxFlatNotebook -lwxtiffd -lwxjpegd -lwxpngd -lwxzlibd -lwxregexd -lwxexpatd -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool -lwinmm -lshell32 -lcomctl32 -lole32 -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32 -lodbc32 -lopengl32  
+INCS =  -I"$(WXSTABLE)/include"  -I"../../include" -I"$(WXSTABLE)/lib/gcc_lib/mswd"
+BIN  = wxFlatNotebookTest.exe
+CXXFLAGS = $(INCS) -fno-rtti -fno-exceptions -fno-pcc-struct-return -fstrict-aliasing -Wall -D__WXMSW__ -D__GNUWIN32__ -D__WIN95__   -fexpensive-optimizations -O3
+CFLAGS = $(INCS) -fno-rtti -fno-exceptions -fno-pcc-struct-return -fstrict-aliasing -Wall -fvtable-thunks -D__WXMSW__ -D__GNUWIN32__ -D__WIN95__   -fexpensive-optimizations -O3
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before wxFlatNotebookTest.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "wxFlatNotebookTest.exe" $(LIBS)
+
+App.obj: App.cpp 
+	$(CPP) -c App.cpp -o App.obj $(CXXFLAGS)
+
+Frame.obj: Frame.cpp 
+	$(CPP) -c Frame.cpp -o Frame.obj $(CXXFLAGS)
+
+resources.obj: resources.cpp   
+	$(CPP) -c resources.cpp -o resources.obj $(CXXFLAGS)

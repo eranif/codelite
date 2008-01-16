@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="5" />
+	<Project>
+		<Option title="LiteEditor" />
+		<Option pch_mode="2" />
+		<Option default_target="" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\msw_gcc\LiteEditord.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\msw_gcc\Debug" />
+				<Option external_deps="..\CodeLite\lib\msw_gcc\libcodelited.a;..\sdk\ctags\ctags.exe;..\sdk\wxscintilla\lib\msw_gcc\libwxscintillad.a;..\sdk\wxsqlite3\lib\msw_gcc\libwxsqlite3d.a;..\sdk\sqlite3\lib\msw_gcc\sqlite3.dll;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`wx-config --cflags --debug`" />
+					<Add option="-D_DEBUG" />
+					<Add option="-DUSE_TRACE" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx.include)" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="-lcodelited" />
+					<Add option="-lwxscintillad" />
+					<Add option="-lwxsqlite3d" />
+					<Add option="-lsqlite3" />
+					<Add option="`wx-config --libs --debug`" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="cmd /c rem copy /y ..\sdk\wxscintilla\lib\msw_gcc\wxscintillad.dll bin\msw_gcc\" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\msw_gcc\LiteEditor.exe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\msw_gcc\Release" />
+				<Option external_deps="..\CodeLite\lib\msw_gcc\libcodelite.a;..\sdk\ctags\ctags.exe;..\sdk\wxscintilla\lib\msw_gcc\libwxscintilla.a;..\sdk\wxsqlite3\lib\msw_gcc\libwxsqlite3.a;..\sdk\sqlite3\lib\msw_gcc\sqlite3.dll;" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="`wx-config --cflags`" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="$(#wx.include)" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-lcodelite" />
+					<Add option="-lwxscintilla" />
+					<Add option="-lwxsqlite3" />
+					<Add option="-lsqlite3" />
+					<Add option="`wx-config --libs`" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="cmd /c rem copy /y ..\sdk\wxscintilla\lib\msw_gcc\wxscintilla.dll bin\msw_gcc\" />
+				</ExtraCommands>
+			</Target>
+			<Environment>
+				<Variable name="CODELITE_DIR" value="..\CodeLite" />
+				<Variable name="WXSQLITE_DIR" value="..\sdk\wxsqlite3" />
+				<Variable name="WXSCINTILLA_DIR" value="..\sdk\wxscintilla" />
+				<Variable name="SQLITE_DIR" value="..\sdk\sqlite3" />
+			</Environment>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debug;Release;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-frtti" />
+			<Add option="-fexceptions" />
+			<Add option="-Winvalid-pch" />
+			<Add option="-DWX_PRECOMP" />
+			<Add option="-D_WINDOWS" />
+			<Add directory="include" />
+			<Add directory="$(CODELITE_DIR)" />
+			<Add directory="$(WXSCINTILLA_DIR)\include" />
+			<Add directory="$(WXSQLITE_DIR)\include" />
+		</Compiler>
+		<Linker>
+			<Add option="-Wl,--enable-auto-image-base" />
+			<Add option="-Wl,--export-all-symbols" />
+			<Add option="-Wl,--add-stdcall-alias" />
+			<Add directory="$(CODELITE_DIR)\lib\msw_gcc" />
+			<Add directory="$(WXSCINTILLA_DIR)\lib\msw_gcc" />
+			<Add directory="$(WXSQLITE_DIR)\lib\msw_gcc" />
+			<Add directory="$(SQLITE_DIR)\lib\msw_gcc" />
+		</Linker>
+		<ExtraCommands>
+			<Add after="cmd /c copy /y ..\sdk\sqlite3\lib\msw_gcc\sqlite3.dll bin\msw_gcc\" />
+			<Add after="cmd /c copy /y ..\sdk\ctags\bin\msw_gcc\ctags.exe bin\msw_gcc\" />
+			<Add after="cmd /c copy /y liteeditor.xml bin\msw_gcc\" />
+		</ExtraCommands>
+		<Unit filename="app.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="app.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="code_parser.rc">
+			<Option compilerVar="WINDRES" />
+			<Option objectName="code_parser.res" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="cpp_symbol_tree.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="cpp_symbol_tree.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="editor.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="editor.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="editor_config.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="editor_config.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="frame.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="frame.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include\wx\wxFlatNotebook\styled_notebook.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include\wx\wxFlatNotebook\wxFNBDropTarget.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include\wx\wxFlatNotebook\wxFlatNotebook.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="resource.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="resources.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="resources.xrc">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="stdwx.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="styled_notebook.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="wxFlatNotebook.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<wxFormBuilder_Project>
+    <FileVersion major="1" minor="7" />
+    <object class="Project" expanded="1">
+        <property name="bitmaps"></property>
+        <property name="class_decoration"></property>
+        <property name="code_generation">C++</property>
+        <property name="encoding">UTF-8</property>
+        <property name="event_generation">connect</property>
+        <property name="file">ext_db_page3</property>
+        <property name="first_id">1000</property>
+        <property name="help_provider">none</property>
+        <property name="icons"></property>
+        <property name="internationalize">0</property>
+        <property name="name">ext_db_page3</property>
+        <property name="namespace"></property>
+        <property name="path">.</property>
+        <property name="precompiled_header">wx/wxprec.h</property>
+        <property name="relative_path">1</property>
+        <property name="use_enum">0</property>
+        <property name="use_microsoft_bom">0</property>
+        <object class="Panel" expanded="1">
+            <property name="bg"></property>
+            <property name="context_help"></property>
+            <property name="enabled">1</property>
+            <property name="fg"></property>
+            <property name="font"></property>
+            <property name="hidden">0</property>
+            <property name="id">wxID_ANY</property>
+            <property name="maximum_size"></property>
+            <property name="minimum_size"></property>
+            <property name="name">ExtDbPage3</property>
+            <property name="pos"></property>
+            <property name="size">400,305</property>
+            <property name="subclass"></property>
+            <property name="tooltip"></property>
+            <property name="window_extra_style"></property>
+            <property name="window_style">wxTAB_TRAVERSAL</property>
+            <event name="OnChar"></event>
+            <event name="OnEnterWindow"></event>
+            <event name="OnEraseBackground"></event>
+            <event name="OnInitDialog"></event>
+            <event name="OnKeyDown"></event>
+            <event name="OnKeyUp"></event>
+            <event name="OnKillFocus"></event>
+            <event name="OnLeaveWindow"></event>
+            <event name="OnLeftDClick"></event>
+            <event name="OnLeftDown"></event>
+            <event name="OnLeftUp"></event>
+            <event name="OnMiddleDClick"></event>
+            <event name="OnMiddleDown"></event>
+            <event name="OnMiddleUp"></event>
+            <event name="OnMotion"></event>
+            <event name="OnMouseEvents"></event>
+            <event name="OnMouseWheel"></event>
+            <event name="OnPaint"></event>
+            <event name="OnRightDClick"></event>
+            <event name="OnRightDown"></event>
+            <event name="OnRightUp"></event>
+            <event name="OnSetFocus"></event>
+            <event name="OnSize"></event>
+            <event name="OnUpdateUI"></event>
+            <object class="wxBoxSizer" expanded="1">
+                <property name="minimum_size"></property>
+                <property name="name">bSizer1</property>
+                <property name="orient">wxVERTICAL</property>
+                <property name="permission">none</property>
+                <object class="sizeritem" expanded="1">
+                    <property name="border">5</property>
+                    <property name="flag">wxALL|wxEXPAND</property>
+                    <property name="proportion">0</property>
+                    <object class="wxStaticText" expanded="1">
+                        <property name="bg"></property>
+                        <property name="context_help"></property>
+                        <property name="enabled">1</property>
+                        <property name="fg"></property>
+                        <property name="font"></property>
+                        <property name="hidden">0</property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="label">Please enter a name for the symbol database:</property>
+                        <property name="maximum_size"></property>
+                        <property name="minimum_size"></property>
+                        <property name="name">m_staticText1</property>
+                        <property name="permission">protected</property>
+                        <property name="pos"></property>
+                        <property name="size"></property>
+                        <property name="style"></property>
+                        <property name="subclass"></property>
+                        <property name="tooltip"></property>
+                        <property name="window_extra_style"></property>
+                        <property name="window_style"></property>
+                        <property name="wrap">-1</property>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                </object>
+                <object class="sizeritem" expanded="1">
+                    <property name="border">0</property>
+                    <property name="flag">wxEXPAND | wxALL</property>
+                    <property name="proportion">1</property>
+                    <object class="wxPanel" expanded="1">
+                        <property name="bg"></property>
+                        <property name="context_help"></property>
+                        <property name="enabled">1</property>
+                        <property name="fg"></property>
+                        <property name="font"></property>
+                        <property name="hidden">0</property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="maximum_size"></property>
+                        <property name="minimum_size"></property>
+                        <property name="name">m_panel1</property>
+                        <property name="permission">protected</property>
+                        <property name="pos"></property>
+                        <property name="size"></property>
+                        <property name="subclass"></property>
+                        <property name="tooltip"></property>
+                        <property name="window_extra_style"></property>
+                        <property name="window_style">wxTAB_TRAVERSAL</property>
+                        <event name="OnChar"></event>
+                        <event name="OnEnterWindow"></event>
+                        <event name="OnEraseBackground"></event>
+                        <event name="OnKeyDown"></event>
+                        <event name="OnKeyUp"></event>
+                        <event name="OnKillFocus"></event>
+                        <event name="OnLeaveWindow"></event>
+                        <event name="OnLeftDClick"></event>
+                        <event name="OnLeftDown"></event>
+                        <event name="OnLeftUp"></event>
+                        <event name="OnMiddleDClick"></event>
+                        <event name="OnMiddleDown"></event>
+                        <event name="OnMiddleUp"></event>
+                        <event name="OnMotion"></event>
+                        <event name="OnMouseEvents"></event>
+                        <event name="OnMouseWheel"></event>
+                        <event name="OnPaint"></event>
+                        <event name="OnRightDClick"></event>
+                        <event name="OnRightDown"></event>
+                        <event name="OnRightUp"></event>
+                        <event name="OnSetFocus"></event>
+                        <event name="OnSize"></event>
+                        <event name="OnUpdateUI"></event>
+                        <object class="wxBoxSizer" expanded="1">
+                            <property name="minimum_size"></property>
+                            <property name="name">bSizer2</property>
+                            <property name="orient">wxVERTICAL</property>
+                            <property name="permission">none</property>
+                            <object class="sizeritem" expanded="1">
+                                <property name="border">5</property>
+                                <property name="flag">wxALL|wxEXPAND</property>
+                                <property name="proportion">0</property>
+                                <object class="wxTextCtrl" expanded="1">
+                                    <property name="bg"></property>
+                                    <property name="context_help"></property>
+                                    <property name="enabled">1</property>
+                                    <property name="fg"></property>
+                                    <property name="font"></property>
+                                    <property name="hidden">0</property>
+                                    <property name="id">wxID_ANY</property>
+                                    <property name="maximum_size"></property>
+                                    <property name="maxlength">0</property>
+                                    <property name="minimum_size"></property>
+                                    <property name="name">m_textDbName</property>
+                                    <property name="permission">protected</property>
+                                    <property name="pos"></property>
+                                    <property name="size"></property>
+                                    <property name="style"></property>
+                                    <property name="subclass"></property>
+                                    <property name="tooltip"></property>
+                                    <property name="value"></property>
+                                    <property name="window_extra_style"></property>
+                                    <property name="window_style"></property>
+                                    <event name="OnText"></event>
+                                    <event name="OnTextEnter"></event>
+                                    <event name="OnTextMaxLen"></event>
+                                    <event name="OnTextURL"></event>
+                                    <event name="OnUpdateUI"></event>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+                <object class="sizeritem" expanded="1">
+                    <property name="border">5</property>
+                    <property name="flag">wxEXPAND</property>
+                    <property name="proportion">0</property>
+                    <object class="wxStaticBoxSizer" expanded="1">
+                        <property name="label"></property>
+                        <property name="minimum_size"></property>
+                        <property name="name">sbSizer1</property>
+                        <property name="orient">wxVERTICAL</property>
+                        <property name="permission">none</property>
+                        <object class="sizeritem" expanded="1">
+                            <property name="border">5</property>
+                            <property name="flag">wxALL|wxEXPAND</property>
+                            <property name="proportion">1</property>
+                            <object class="wxStaticText" expanded="1">
+                                <property name="bg"></property>
+                                <property name="context_help"></property>
+                                <property name="enabled">1</property>
+                                <property name="fg"></property>
+                                <property name="font"></property>
+                                <property name="hidden">0</property>
+                                <property name="id">wxID_ANY</property>
+                                <property name="label">LiteEditor will store the symbols parsed from the &#x0A;input files into this database (SQLite based). If a database with name&#x0A;already exist, the new symbols will be appended to it.&#x0A;</property>
+                                <property name="maximum_size"></property>
+                                <property name="minimum_size"></property>
+                                <property name="name">m_staticText3</property>
+                                <property name="permission">protected</property>
+                                <property name="pos"></property>
+                                <property name="size"></property>
+                                <property name="style"></property>
+                                <property name="subclass"></property>
+                                <property name="tooltip"></property>
+                                <property name="window_extra_style"></property>
+                                <property name="window_style"></property>
+                                <property name="wrap">-1</property>
+                                <event name="OnUpdateUI"></event>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+    </object>
+</wxFormBuilder_Project>

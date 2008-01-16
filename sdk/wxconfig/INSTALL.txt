@@ -1,0 +1,31 @@
+//--------------------------------------------------------------------------------------------
+// INSTALLATION wx-config
+//--------------------------------------------------------------------------------------------
+
+For installing wx-config-win simply copy the file wx-config.exe to somewhere in your PATH.
+Examples: C:\Windows\System32\wx-config.exe
+          C:\MinGW\bin\wx-config.exe
+
+Set the environmental variable WXWIN to where you have installed wxWidgets.
+Example: WXWIN=C:\wxWidgets
+
+For more info see README.txt
+
+//--------------------------------------------------------------------------------------------
+// COMPILATION of wx-config
+//--------------------------------------------------------------------------------------------
+
+If you have Code::Blocks, a project is provided.
+Just do a right-click on the .cbp and click "Build".
+
+If you don't have Code::Blocks:
+Open a console (cmd.exe) and type the following (make sure the compiler is in PATH):
+
+For mingw:
+ mingw32-g++ wx-config-win.cpp -s -o wx-config.exe
+
+For dmc:
+ dmc wx-config-win.cpp -owx-config.exe
+
+For vc:
+ cl wx-config-win.cpp

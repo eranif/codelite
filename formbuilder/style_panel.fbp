@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<wxFormBuilder_Project>
+    <FileVersion major="1" minor="5" />
+    <object class="Project" expanded="1">
+        <property name="bitmaps"></property>
+        <property name="code_generation">C++</property>
+        <property name="file">style_panel</property>
+        <property name="first_id">1000</property>
+        <property name="icons"></property>
+        <property name="internationalize">0</property>
+        <property name="name">StylePage</property>
+        <property name="path">.</property>
+        <property name="precompiled_header">wx/wxprec.h</property>
+        <property name="relative_path">1</property>
+        <property name="use_enum">0</property>
+        <property name="use_microsoft_bom">0</property>
+        <object class="Panel" expanded="1">
+            <property name="bg"></property>
+            <property name="enabled">1</property>
+            <property name="fg"></property>
+            <property name="font"></property>
+            <property name="hidden">0</property>
+            <property name="id">wxID_ANY</property>
+            <property name="maximum_size"></property>
+            <property name="minimum_size"></property>
+            <property name="name">stylePanel</property>
+            <property name="pos"></property>
+            <property name="size">532,410</property>
+            <property name="subclass"></property>
+            <property name="tooltip"></property>
+            <property name="window_extra_style"></property>
+            <property name="window_style">wxTAB_TRAVERSAL</property>
+            <event name="OnSize"></event>
+            <object class="wxBoxSizer" expanded="1">
+                <property name="minimum_size"></property>
+                <property name="name">mainSizer</property>
+                <property name="orient">wxVERTICAL</property>
+                <object class="sizeritem" expanded="1">
+                    <property name="border">5</property>
+                    <property name="flag">wxALL|wxEXPAND</property>
+                    <property name="proportion">0</property>
+                    <object class="wxRadioBox" expanded="1">
+                        <property name="bg"></property>
+                        <property name="choices">&apos;Default&apos; &apos;Visual Studio 8.0&apos; &apos;Visual Studio 7.10&apos; &apos;Fancy Tabs&apos; &apos;Firefox 2&apos;</property>
+                        <property name="enabled">1</property>
+                        <property name="fg"></property>
+                        <property name="font"></property>
+                        <property name="hidden">0</property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="label">Visual Style:</property>
+                        <property name="majorDimension">3</property>
+                        <property name="maximum_size"></property>
+                        <property name="minimum_size"></property>
+                        <property name="name">m_styles</property>
+                        <property name="permission">protected</property>
+                        <property name="pos"></property>
+                        <property name="size"></property>
+                        <property name="style">wxRA_SPECIFY_COLS</property>
+                        <property name="subclass"></property>
+                        <property name="tooltip"></property>
+                        <property name="window_extra_style"></property>
+                        <property name="window_style"></property>
+                        <event name="OnRadioBox"></event>
+                    </object>
+                </object>
+                <object class="sizeritem" expanded="1">
+                    <property name="border">5</property>
+                    <property name="flag">wxALL|wxEXPAND</property>
+                    <property name="proportion">0</property>
+                    <object class="wxRadioBox" expanded="1">
+                        <property name="bg"></property>
+                        <property name="choices">&apos;Upper Tabs&apos; &apos;Bottom Tabs&apos;</property>
+                        <property name="enabled">1</property>
+                        <property name="fg"></property>
+                        <property name="font"></property>
+                        <property name="hidden">0</property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="label">Tab Positioning:</property>
+                        <property name="majorDimension">2</property>
+                        <property name="maximum_size"></property>
+                        <property name="minimum_size"></property>
+                        <property name="name">m_tabVPosition</property>
+                        <property name="permission">protected</property>
+                        <property name="pos"></property>
+                        <property name="size"></property>
+                        <property name="style">wxRA_SPECIFY_COLS</property>
+                        <property name="subclass"></property>
+                        <property name="tooltip"></property>
+                        <property name="window_extra_style"></property>
+                        <property name="window_style"></property>
+                        <event name="OnRadioBox"></event>
+                    </object>
+                </object>
+                <object class="sizeritem" expanded="1">
+                    <property name="border">5</property>
+                    <property name="flag">wxALL|wxEXPAND</property>
+                    <property name="proportion">0</property>
+                    <object class="wxStaticBoxSizer" expanded="1">
+                        <property name="label">General:</property>
+                        <property name="minimum_size"></property>
+                        <property name="name">sbSizer2</property>
+                        <property name="orient">wxVERTICAL</property>
+                        <object class="sizeritem" expanded="1">
+                            <property name="border">5</property>
+                            <property name="flag">wxEXPAND</property>
+                            <property name="proportion">0</property>
+                            <object class="wxGridSizer" expanded="1">
+                                <property name="cols">2</property>
+                                <property name="hgap">0</property>
+                                <property name="minimum_size"></property>
+                                <property name="name">gSizer1</property>
+                                <property name="rows">4</property>
+                                <property name="vgap">0</property>
+                                <object class="sizeritem" expanded="1">
+                                    <property name="border">5</property>
+                                    <property name="flag">wxALL</property>
+                                    <property name="proportion">0</property>
+                                    <object class="wxCheckBox" expanded="1">
+                                        <property name="bg"></property>
+                                        <property name="checked">0</property>
+                                        <property name="enabled">1</property>
+                                        <property name="fg"></property>
+                                        <property name="font"></property>
+                                        <property name="hidden">0</property>
+                                        <property name="id">wxID_ANY</property>
+                                        <property name="label">Draw Thin Border Around Tab Area</property>
+                                        <property name="maximum_size"></property>
+                                        <property name="minimum_size"></property>
+                                        <property name="name">m_tabBorder</property>
+                                        <property name="permission">protected</property>
+                                        <property name="pos"></property>
+                                        <property name="size"></property>
+                                        <property name="style"></property>
+                                        <property name="subclass"></property>
+                                        <property name="tooltip"></property>
+                                        <property name="window_extra_style"></property>
+                                        <property name="window_style"></property>
+                                        <event name="OnCheckBox"></event>
+                                    </object>
+                                </object>
+                                <object class="sizeritem" expanded="1">
+                                    <property name="border">5</property>
+                                    <property name="flag">wxALL</property>
+                                    <property name="proportion">0</property>
+                                    <object class="wxCheckBox" expanded="1">
+                                        <property name="bg"></property>
+                                        <property name="checked">0</property>
+                                        <property name="enabled">1</property>
+                                        <property name="fg"></property>
+                                        <property name="font"></property>
+                                        <property name="hidden">0</property>
+                                        <property name="id">wxID_ANY</property>
+                                        <property name="label">Hide Navigation Buttons</property>
+                                        <property name="maximum_size"></property>
+                                        <property name="minimum_size"></property>
+                                        <property name="name">m_hideNavButtons</property>
+                                        <property name="permission">protected</property>
+                                        <property name="pos"></property>
+                                        <property name="size"></property>
+                                        <property name="style"></property>
+                                        <property name="subclass"></property>
+                                        <property name="tooltip"></property>
+                                        <property name="window_extra_style"></property>
+                                        <property name="window_style"></property>
+                                        <event name="OnCheckBox"></event>
+                                    </object>
+                                </object>
+                                <object class="sizeritem" expanded="1">
+                                    <property name="border">5</property>
+                                    <property name="flag">wxALL</property>
+                                    <property name="proportion">0</property>
+                                    <object class="wxCheckBox" expanded="1">
+                                        <property name="bg"></property>
+                                        <property name="checked">0</property>
+                                        <property name="enabled">1</property>
+                                        <property name="fg"></property>
+                                        <property name="font"></property>
+                                        <property name="hidden">0</property>
+                                        <property name="id">wxID_ANY</property>
+                                        <property name="label">Hide Close Button</property>
+                                        <property name="maximum_size"></property>
+                                        <property name="minimum_size"></property>
+                                        <property name="name">m_hideCloseButton</property>
+                                        <property name="permission">protected</property>
+                                        <property name="pos"></property>
+                                        <property name="size"></property>
+                                        <property name="style"></property>
+                                        <property name="subclass"></property>
+                                        <property name="tooltip"></property>
+                                        <property name="window_extra_style"></property>
+                                        <property name="window_style"></property>
+                                        <event name="OnCheckBox"></event>
+                                    </object>
+                                </object>
+                                <object class="sizeritem" expanded="1">
+                                    <property name="border">5</property>
+                                    <property name="flag">wxALL</property>
+                                    <property name="proportion">0</property>
+                                    <object class="wxCheckBox" expanded="1">
+                                        <property name="bg"></property>
+                                        <property name="checked">0</property>
+                                        <property name="enabled">1</property>
+                                        <property name="fg"></property>
+                                        <property name="font"></property>
+                                        <property name="hidden">0</property>
+                                        <property name="id">wxID_ANY</property>
+                                        <property name="label">Mouse Middle Button Closes Tab</property>
+                                        <property name="maximum_size"></property>
+                                        <property name="minimum_size"></property>
+                                        <property name="name">m_mouseMiddleCloseTab</property>
+                                        <property name="permission">protected</property>
+                                        <property name="pos"></property>
+                                        <property name="size"></property>
+                                        <property name="style"></property>
+                                        <property name="subclass"></property>
+                                        <property name="tooltip"></property>
+                                        <property name="window_extra_style"></property>
+                                        <property name="window_style"></property>
+                                        <event name="OnCheckBox"></event>
+                                    </object>
+                                </object>
+                                <object class="sizeritem" expanded="1">
+                                    <property name="border">5</property>
+                                    <property name="flag">wxALL</property>
+                                    <property name="proportion">0</property>
+                                    <object class="wxCheckBox" expanded="1">
+                                        <property name="bg"></property>
+                                        <property name="checked">0</property>
+                                        <property name="enabled">1</property>
+                                        <property name="fg"></property>
+                                        <property name="font"></property>
+                                        <property name="hidden">0</property>
+                                        <property name="id">wxID_ANY</property>
+                                        <property name="label">Place Close Button On Active Tab</property>
+                                        <property name="maximum_size"></property>
+                                        <property name="minimum_size"></property>
+                                        <property name="name">m_xButtonOnTab</property>
+                                        <property name="permission">protected</property>
+                                        <property name="pos"></property>
+                                        <property name="size"></property>
+                                        <property name="style"></property>
+                                        <property name="subclass"></property>
+                                        <property name="tooltip"></property>
+                                        <property name="window_extra_style"></property>
+                                        <property name="window_style"></property>
+                                        <event name="OnCheckBox"></event>
+                                    </object>
+                                </object>
+                                <object class="sizeritem" expanded="1">
+                                    <property name="border">5</property>
+                                    <property name="flag">wxALL</property>
+                                    <property name="proportion">0</property>
+                                    <object class="wxCheckBox" expanded="1">
+                                        <property name="bg"></property>
+                                        <property name="checked">0</property>
+                                        <property name="enabled">1</property>
+                                        <property name="fg"></property>
+                                        <property name="font"></property>
+                                        <property name="hidden">0</property>
+                                        <property name="id">wxID_ANY</property>
+                                        <property name="label">Double Click Closes Tab</property>
+                                        <property name="maximum_size"></property>
+                                        <property name="minimum_size"></property>
+                                        <property name="name">m_dlbClickCloseTab</property>
+                                        <property name="permission">protected</property>
+                                        <property name="pos"></property>
+                                        <property name="size"></property>
+                                        <property name="style"></property>
+                                        <property name="subclass"></property>
+                                        <property name="tooltip"></property>
+                                        <property name="window_extra_style"></property>
+                                        <property name="window_style"></property>
+                                        <event name="OnCheckBox"></event>
+                                    </object>
+                                </object>
+                                <object class="sizeritem" expanded="1">
+                                    <property name="border">5</property>
+                                    <property name="flag">wxALL</property>
+                                    <property name="proportion">0</property>
+                                    <object class="wxCheckBox" expanded="1">
+                                        <property name="bg"></property>
+                                        <property name="checked">0</property>
+                                        <property name="enabled">1</property>
+                                        <property name="fg"></property>
+                                        <property name="font"></property>
+                                        <property name="hidden">0</property>
+                                        <property name="id">wxID_ANY</property>
+                                        <property name="label">Enable Smart Tabbing</property>
+                                        <property name="maximum_size"></property>
+                                        <property name="minimum_size"></property>
+                                        <property name="name">m_smartTabbing</property>
+                                        <property name="permission">protected</property>
+                                        <property name="pos"></property>
+                                        <property name="size"></property>
+                                        <property name="style"></property>
+                                        <property name="subclass"></property>
+                                        <property name="tooltip"></property>
+                                        <property name="window_extra_style"></property>
+                                        <property name="window_style"></property>
+                                        <event name="OnCheckBox"></event>
+                                    </object>
+                                </object>
+                                <object class="sizeritem" expanded="1">
+                                    <property name="border">5</property>
+                                    <property name="flag">wxALL</property>
+                                    <property name="proportion">0</property>
+                                    <object class="wxCheckBox" expanded="1">
+                                        <property name="bg"></property>
+                                        <property name="checked">0</property>
+                                        <property name="enabled">1</property>
+                                        <property name="fg"></property>
+                                        <property name="font"></property>
+                                        <property name="hidden">0</property>
+                                        <property name="id">wxID_ANY</property>
+                                        <property name="label">Use Drop Down Menu to List Tabs</property>
+                                        <property name="maximum_size"></property>
+                                        <property name="minimum_size"></property>
+                                        <property name="name">m_dropDownList</property>
+                                        <property name="permission">protected</property>
+                                        <property name="pos"></property>
+                                        <property name="size"></property>
+                                        <property name="style"></property>
+                                        <property name="subclass"></property>
+                                        <property name="tooltip"></property>
+                                        <property name="window_extra_style"></property>
+                                        <property name="window_style"></property>
+                                        <event name="OnCheckBox"></event>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+                <object class="sizeritem" expanded="1">
+                    <property name="border">5</property>
+                    <property name="flag">wxALL|wxEXPAND</property>
+                    <property name="proportion">0</property>
+                    <object class="wxStaticBoxSizer" expanded="1">
+                        <property name="label">Drang And Drop:</property>
+                        <property name="minimum_size"></property>
+                        <property name="name">sbSizer4</property>
+                        <property name="orient">wxHORIZONTAL</property>
+                        <object class="sizeritem" expanded="1">
+                            <property name="border">5</property>
+                            <property name="flag">wxALL</property>
+                            <property name="proportion">0</property>
+                            <object class="wxCheckBox" expanded="1">
+                                <property name="bg"></property>
+                                <property name="checked">0</property>
+                                <property name="enabled">1</property>
+                                <property name="fg"></property>
+                                <property name="font"></property>
+                                <property name="hidden">0</property>
+                                <property name="id">wxID_ANY</property>
+                                <property name="label">Enable Drag And Drop</property>
+                                <property name="maximum_size"></property>
+                                <property name="minimum_size"></property>
+                                <property name="name">m_allowDragAndDrop</property>
+                                <property name="permission">protected</property>
+                                <property name="pos"></property>
+                                <property name="size"></property>
+                                <property name="style"></property>
+                                <property name="subclass"></property>
+                                <property name="tooltip"></property>
+                                <property name="window_extra_style"></property>
+                                <property name="window_style"></property>
+                                <event name="OnCheckBox"></event>
+                            </object>
+                        </object>
+                        <object class="sizeritem" expanded="1">
+                            <property name="border">5</property>
+                            <property name="flag">wxALL</property>
+                            <property name="proportion">0</property>
+                            <object class="wxCheckBox" expanded="1">
+                                <property name="bg"></property>
+                                <property name="checked">0</property>
+                                <property name="enabled">1</property>
+                                <property name="fg"></property>
+                                <property name="font"></property>
+                                <property name="hidden">0</property>
+                                <property name="id">wxID_ANY</property>
+                                <property name="label">Allow Drag And Drop to from other notebooks</property>
+                                <property name="maximum_size"></property>
+                                <property name="minimum_size"></property>
+                                <property name="name">m_foreignDnD</property>
+                                <property name="permission">protected</property>
+                                <property name="pos"></property>
+                                <property name="size"></property>
+                                <property name="style"></property>
+                                <property name="subclass"></property>
+                                <property name="tooltip"></property>
+                                <property name="window_extra_style"></property>
+                                <property name="window_style"></property>
+                                <event name="OnCheckBox"></event>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+                <object class="sizeritem" expanded="1">
+                    <property name="border">5</property>
+                    <property name="flag">wxALL|wxEXPAND</property>
+                    <property name="proportion">0</property>
+                    <object class="wxStaticBoxSizer" expanded="1">
+                        <property name="label">Effects:</property>
+                        <property name="minimum_size"></property>
+                        <property name="name">sbSizer5</property>
+                        <property name="orient">wxHORIZONTAL</property>
+                        <object class="sizeritem" expanded="1">
+                            <property name="border">5</property>
+                            <property name="flag">wxALL</property>
+                            <property name="proportion">0</property>
+                            <object class="wxCheckBox" expanded="1">
+                                <property name="bg"></property>
+                                <property name="checked">0</property>
+                                <property name="enabled">1</property>
+                                <property name="fg"></property>
+                                <property name="font"></property>
+                                <property name="hidden">0</property>
+                                <property name="id">wxID_ANY</property>
+                                <property name="label">Use Gradient painting for tabs area</property>
+                                <property name="maximum_size"></property>
+                                <property name="minimum_size"></property>
+                                <property name="name">m_gradient</property>
+                                <property name="permission">protected</property>
+                                <property name="pos"></property>
+                                <property name="size"></property>
+                                <property name="style"></property>
+                                <property name="subclass"></property>
+                                <property name="tooltip"></property>
+                                <property name="window_extra_style"></property>
+                                <property name="window_style"></property>
+                                <event name="OnCheckBox"></event>
+                            </object>
+                        </object>
+                        <object class="sizeritem" expanded="1">
+                            <property name="border">5</property>
+                            <property name="flag">wxALL</property>
+                            <property name="proportion">0</property>
+                            <object class="wxCheckBox" expanded="1">
+                                <property name="bg"></property>
+                                <property name="checked">0</property>
+                                <property name="enabled">1</property>
+                                <property name="fg"></property>
+                                <property name="font"></property>
+                                <property name="hidden">0</property>
+                                <property name="id">wxID_ANY</property>
+                                <property name="label">Set Random Colour for Tabs</property>
+                                <property name="maximum_size"></property>
+                                <property name="minimum_size"></property>
+                                <property name="name">m_colorfulTab</property>
+                                <property name="permission">protected</property>
+                                <property name="pos"></property>
+                                <property name="size"></property>
+                                <property name="style"></property>
+                                <property name="subclass"></property>
+                                <property name="tooltip"></property>
+                                <property name="window_extra_style"></property>
+                                <property name="window_style"></property>
+                                <event name="OnCheckBox"></event>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+    </object>
+</wxFormBuilder_Project>

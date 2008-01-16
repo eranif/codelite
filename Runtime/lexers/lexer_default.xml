@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexer Name="Text" Id="1">
+  <KeyWords></KeyWords>
+  <Extensions></Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#000000" BgColour="white" Size="11"/>
+    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="black" BgColour="white" Size="11"/>
+    <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Size="11"/>
+  </Properties>
+</Lexer>

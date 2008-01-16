@@ -1,0 +1,18 @@
+#ifndef __$(AppName)__
+#define __$(AppName)__
+
+#include "wx/app.h"
+
+class $(AppName) : public wxApp {
+	
+
+public:
+	$(AppName)();
+	~$(AppName)();
+	
+protected:
+	virtual bool OnInit();
+	virtual int OnExit();
+};
+#endif // $(AppName)
+

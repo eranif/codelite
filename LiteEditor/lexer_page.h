@@ -1,0 +1,61 @@
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Feb  1 2007)
+// http://www.wxformbuilder.org/
+//
+// PLEASE DO "NOT" EDIT THIS FILE!
+///////////////////////////////////////////////////////////////////////////
+
+#ifndef __lexer_page__
+#define __lexer_page__
+
+// Define WX_GCH in order to support precompiled headers with GCC compiler.
+// You have to create the header "wx_pch.h" and include all files needed
+// for compile your gui inside it.
+// Then, compile it and place the file "wx_pch.h.gch" into the same
+// directory that "wx_pch.h".
+#ifdef WX_GCH
+#include <wx_pch.h>
+#else
+#include <wx/wx.h>
+#endif
+
+#include <wx/button.h>
+#include "lexer_configuration.h"
+#include <wx/clrpicker.h>
+#include <wx/fontpicker.h>
+
+///////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class LexerPage
+///////////////////////////////////////////////////////////////////////////////
+class LexerPage : public wxPanel 
+{
+	LexerConfPtr m_lexer;
+	std::list<StyleProperty> m_propertyList;
+	int m_selection;
+
+	DECLARE_EVENT_TABLE()
+
+protected:
+	wxListBox* m_properties;
+	wxFontPickerCtrl* m_fontPicker;
+	wxFontPickerCtrl* m_globalFontPicker;
+	wxColourPickerCtrl* m_globalBgColourPicker;
+	wxColourPickerCtrl* m_colourPicker;
+	wxColourPickerCtrl* m_bgColourPicker;
+	wxTextCtrl *m_fileSpec;
+	wxButton *m_editKeyWordsButton;
+
+	// Virtual event handlers, overide them in your derived class
+	virtual void OnItemSelected( wxCommandEvent& event );
+	virtual void OnFontChanged(wxFontPickerEvent &event);
+	virtual void OnColourChanged(wxColourPickerEvent &event);
+	virtual void OnEditKeyWordsButton(wxCommandEvent &event);
+public:
+	LexerPage( wxWindow* parent, LexerConfPtr lexer, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 285,300 ), int style = wxTAB_TRAVERSAL );
+	void SaveSettings();
+};
+
+#endif //__lexer_page__

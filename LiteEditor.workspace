@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Workspace Name="LiteEditor" Database="./LiteEditor.tags">
+  <Ctags>
+    <Option Name="Macros">WXUNUSED,wxT,WXMAKINGDLL,WXUSINGDLL,WXMAKINGDLL_FNB,WXUSINGDLL_FNB,WXDLLEXPORT,WXDLLIMPEXP_CORE,WXDLLIMPORT</Option>
+    <Option Name="Language">C++</Option>
+    <Option Name="FileSpec">*.cpp;*.c;*.cxx;*.cc;*.h;*.hpp</Option>
+    <Option Name="ParseComments">yes</Option>
+  </Ctags>
+  <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
+  <Project Name="wxflatnotebook" Path="sdk/wxflatnotebook/wxflatnotebook.project"/>
+  <Project Name="wxscintilla" Path="sdk/wxscintilla/wxscintilla.project"/>
+  <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
+  <Project Name="LiteEditor" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
+  <Project Name="sqlite3" Path="sqlite3/sqlite3.project"/>
+  <Project Name="CodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
+  <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project"/>
+  <Project Name="Interfaces" Path="Interfaces/Interfaces.project"/>
+  <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
+  <Project Name="Subversion" Path="Subversion/Subversion.project"/>
+  <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Release Unicode" Selected="no">
+      <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
+      <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
+      <Project Name="wxflatnotebook" ConfigName="ReleaseUnicode"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="plugin_sdk" ConfigName="ReleaseUnicode"/>
+      <Project Name="Subversion" ConfigName="ReleaseUnicode"/>
+      <Project Name="LiteEditor" ConfigName="ReleaseUnicode"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="Gizmos" ConfigName="ReleaseUnicode"/>
+      <Project Name="DebuggerGDB" ConfigName="ReleaseUnicode"/>
+      <Project Name="CodeLite" ConfigName="ReleaseUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
+      <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
+      <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
+      <Project Name="wxflatnotebook" ConfigName="DebugUnicode"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="plugin_sdk" ConfigName="DebugUnicode"/>
+      <Project Name="Subversion" ConfigName="DebugUnicode"/>
+      <Project Name="LiteEditor" ConfigName="DebugUnicode"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="Gizmos" ConfigName="DebugUnicode"/>
+      <Project Name="DebuggerGDB" ConfigName="DebugUnicode"/>
+      <Project Name="CodeLite" ConfigName="DebugUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+      <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
+      <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
+      <Project Name="wxflatnotebook" ConfigName="WinReleaseUnicode"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="plugin_sdk" ConfigName="WinReleaseUnicode"/>
+      <Project Name="Subversion" ConfigName="WinReleaseUnicode"/>
+      <Project Name="LiteEditor" ConfigName="WinReleaseUnicode"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
+      <Project Name="DebuggerGDB" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
+      <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
+      <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
+      <Project Name="wxflatnotebook" ConfigName="WinDebugUnicode"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="plugin_sdk" ConfigName="WinDebugUnicode"/>
+      <Project Name="Subversion" ConfigName="WinDebugUnicode"/>
+      <Project Name="LiteEditor" ConfigName="WinDebugUnicode"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
+      <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
+      <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+  <Environment>
+    <Variable Name="MINGW" Value="C:/MinGW"/>
+    <Variable Name="WorkspaceName" Value="LiteEditor"/>
+    <Variable Name="WorkspacePath" Value="/Development/C++/codelite"/>
+  </Environment>
+</CodeLite_Workspace>

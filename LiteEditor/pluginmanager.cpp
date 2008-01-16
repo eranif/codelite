@@ -1,0 +1,196 @@
+#include "pluginmanager.h"
+#include "manager.h"
+#include "wx/filename.h"
+#include <wx/log.h>
+#include <wx/dir.h>
+#include "frame.h"
+#include "editor_config.h"
+#include "fileexplorertree.h"
+#include "workspace_pane.h"
+#include "fileview.h"
+#include "wx/xrc/xmlres.h"
+#include "ctags_manager.h"
+#include "fileexplorer.h"
+
+PluginManager *PluginManager::Get() {
+	static PluginManager theManager;
+	return &theManager;
+}
+
+void PluginManager::UnLoad() {
+	std::map<wxString, IPlugin*>::iterator plugIter = m_plugins.begin();
+	for (; plugIter != m_plugins.end(); plugIter++) {
+		IPlugin *plugin = plugIter->second;
+		plugin->UnPlug();
+		delete plugin;
+	}
+
+	std::list<clDynamicLibrary*>::iterator iter = m_dl.begin();
+	for ( ; iter != m_dl.end(); iter++ ) {
+		( *iter )->Detach();
+		delete ( *iter );
+	}
+
+	m_dl.clear();
+	m_plugins.clear();
+}
+
+PluginManager::~PluginManager() {
+}
+
+void PluginManager::Load() {
+	wxString ext;
+#if defined (__WXGTK__) || defined (__WXMAC__)
+	ext = wxT("so");
+#else 
+	ext = wxT("dll");
+#endif 
+	wxString fileSpec( wxT( "*." ) + ext );
+
+	if ( wxDir::Exists( ManagerST::Get()->GetStarupDirectory() + wxT( "/plugins" ) ) ) {
+		//get list of dlls
+		wxArrayString files;
+		wxDir::GetAllFiles( ManagerST::Get()->GetStarupDirectory() + wxT( "/plugins" ), &files, fileSpec, wxDIR_FILES );
+
+		for ( size_t i=0; i<files.GetCount(); i++ ) {
+			clDynamicLibrary *dl = new clDynamicLibrary();
+			wxString fileName( files.Item( i ) );
+			if ( !dl->Load( fileName ) ) {
+				wxLogMessage( wxT( "Failed to load plugin's dll: " ) + fileName );
+				delete dl;
+				continue;
+			}
+
+			bool success( false );
+			GET_PLUGIN_CREATE_FUNC pfn = ( GET_PLUGIN_CREATE_FUNC )dl->GetSymbol( wxT( "CreatePlugin" ), &success );
+			if ( !success ) {
+				delete dl;
+				continue;
+			}
+
+			IPlugin *plugin = pfn( ( IManager* )this );
+			wxLogMessage( wxT( "Loaded plugin: " ) + plugin->GetLongName() );
+			m_plugins[plugin->GetShortName()] = plugin;
+
+			//load the toolbar
+			wxToolBar *tb = plugin->CreateToolBar( ManagerST::Get()->GetMainFrame() );
+			if ( tb ) {
+				Frame::Get()->GetDockingManager().AddPane( tb, wxAuiPaneInfo().Name( plugin->GetShortName() ).LeftDockable( true ).RightDockable( true ).Caption( plugin->GetShortName() ).ToolbarPane().Top() );
+				
+				//Add menu entry at the 'View->Toolbars' menu for this toolbar
+				int ii = Frame::Get()->GetMenuBar()->FindMenu( wxT( "View" ) );
+				if ( ii != wxNOT_FOUND ) {
+					wxMenu *viewMenu = Frame::Get()->GetMenuBar()->GetMenu( ii );
+					wxMenu *submenu = NULL;
+					wxMenuItem *item = viewMenu->FindItem( XRCID("toolbars_menu") );
+					if (item) {
+						submenu = item->GetSubMenu();
+						//add the new toolbar entry at the end of this menu
+
+						int id = wxNewId();
+						wxString text(plugin->GetShortName());
+						text << wxT(" ToolBar");
+						wxMenuItem *newItem = new wxMenuItem(submenu, id, text, wxEmptyString, wxITEM_CHECK);
+						submenu->Append(newItem);
+						Frame::Get()->RegisterToolbar(id, plugin->GetShortName());
+					}
+				}
+			}
+
+			//let the plugin plug its menu in the 'Plugins' menu at the menu bar
+			//the create menu will be placed as a sub menu of the 'Plugin' menu
+			int idx = Frame::Get()->GetMenuBar()->FindMenu( wxT( "Plugins" ) );
+			if ( idx != wxNOT_FOUND ) {
+				wxMenu *pluginsMenu = Frame::Get()->GetMenuBar()->GetMenu( idx );
+				plugin->CreatePluginMenu( pluginsMenu );
+			}
+
+			//keep the dynamic load library
+			m_dl.push_back( dl );
+		}
+		Frame::Get()->GetDockingManager().Update();
+	}
+}
+
+IEditor *PluginManager::GetActiveEditor() {
+	return( IEditor* )ManagerST::Get()->GetActiveEditor();
+}
+
+IConfigTool* PluginManager::GetConfigTool() {
+	return EditorConfigST::Get();
+}
+
+void PluginManager::HookPopupMenu( wxMenu *menu, MenuType type ) {
+	std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
+	for ( ; iter != m_plugins.end(); iter++ ) {
+		iter->second->HookPopupMenu( menu, type );
+	}
+}
+
+void PluginManager::UnHookPopupMenu( wxMenu *menu, MenuType type ) {
+	std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
+	for ( ; iter != m_plugins.end(); iter++ ) {
+		iter->second->UnHookPopupMenu( menu, type );
+	}
+}
+
+TreeItemInfo PluginManager::GetSelectedTreeItemInfo( TreeType type ) {
+	TreeItemInfo info;
+	switch ( type ) {
+	case TreeFileExplorer:
+		return Frame::Get()->GetFileExplorer()->GetFileTree()->GetSelectedItemInfo();
+	case TreeFileView:
+		return Frame::Get()->GetWorkspacePane()->GetFileViewTree()->GetSelectedItemInfo();
+	default:
+		return info;
+	}
+}
+
+wxTreeCtrl *PluginManager::GetTree(TreeType type) {
+	switch ( type ) {
+	case TreeFileExplorer:
+		return Frame::Get()->GetFileExplorer()->GetFileTree();
+	case TreeFileView:
+		return Frame::Get()->GetWorkspacePane()->GetFileViewTree();
+	default:
+		return NULL;
+	}
+}
+
+wxFlatNotebook *PluginManager::GetOutputPaneNotebook() {
+	return Frame::Get()->GetOutputPane()->GetNotebook();
+}
+
+void PluginManager::OpenFile(const wxString &fileName, const wxString &projectName, int lineno) {
+	ManagerST::Get()->OpenFile(fileName, projectName, lineno);
+}
+
+wxString PluginManager::GetStartupDirectory() const
+{
+	return ManagerST::Get()->GetStarupDirectory();
+}
+
+void PluginManager::AddProject(const wxString &path)
+{
+	ManagerST::Get()->AddProject(path);
+}
+
+bool PluginManager::IsWorkspaceOpen() const 
+{
+	return ManagerST::Get()->IsWorkspaceOpen();
+}
+
+TagsManager *PluginManager::GetTagsManager()
+{
+	return TagsManagerST::Get();
+}
+
+Workspace *PluginManager::GetWorkspace()
+{
+	return WorkspaceST::Get();
+}
+
+bool PluginManager::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths)
+{
+	return Frame::Get()->GetWorkspacePane()->GetFileViewTree()->AddFilesToVirtualFodler(item, paths);
+}

@@ -1,0 +1,23 @@
+#ifndef __$(PluginName)__
+#define __$(PluginName)__
+
+#include "plugin.h"
+
+class $(PluginName) : public IPlugin
+{
+public:
+	$(PluginName)(IManager *manager);
+	~$(PluginName)();
+	
+	//--------------------------------------------
+	//Abstract methods
+	//--------------------------------------------
+	virtual wxToolBar *CreateToolBar(wxWindow *parent);
+	virtual void CreatePluginMenu(wxMenu *pluginsMenu);
+	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
+	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
+	virtual void UnPlug();
+};
+
+#endif //$(PluginName)
+

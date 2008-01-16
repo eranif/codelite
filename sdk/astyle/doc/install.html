@@ -1,0 +1,252 @@
+<html>
+    <head>
+        <TITLE>Artistic Style - Install Information</TITLE>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta name="CREATED" content="19981123;1064600">
+        <meta name="CHANGEDBY" content="Jim Pattee">
+        <meta name="CHANGED" content="19981123;1091900">
+        <meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+        <style> <!-- h1 {color:#0000A0; text-align:center; font-style:italic; font-size:200%;}
+	h2 {color:#0000A0;}
+	h3 {color:#0000A0;}
+	h4 {font-size:105%;}
+	h5 {font-size:105%;}
+	p {font-size:105%;}
+	ol  {font-size:105%;}
+	ul  {font-size:105%;}	
+	pre {color:#0000A0;}
+	--></style>
+    </head>
+    <body>
+        <h1>Artistic Style Install Information</h1>
+        
+        <p align="center"><a href="#_Artistic_Style_Versions">Artistic Style Versions</a><br>
+		<a href="#_Linux_Version">Linux Version</a><br>
+		<a href="#_Mac_OS_X_Version">Mac OS X Version</a><br>
+		<a href="#_OpenVMS_Version">OpenVMS Version</a><br>
+		<a href="#_Windows_Version">Windows Version</a><br>
+		<a href="#_Compiler_Options">Compiler Options</a></p>
+		
+        <blockquote>
+ 
+<h2><a name="_Artistic_Style_Versions"></a>Artistic Style Versions</h2>
+        
+		<p>astyle_x.y_linux.tar.gz is the <b>Linux</b> version of Artistic Style. It 
+		    contains the source code, documentation, and makefiles. The Linux 
+		Version compile instructions below give information compiling the source 
+		code. The Linux shell will allow the use of 
+			wildcards (such as *.cpp) during execution.</p>
+		<p>astyle_x.y_macosx.tar.gz is the <b>Mac OS X</b> version of Artistic Style. It 
+		    contains the source code, documentation, and a makefile. The Mac OS 
+		X Version compile instructions below&nbsp; give information compiling 
+		the source code. The Mac shell will allow the use of 
+			wildcards (such as *.cpp) during execution.</p>
+		<p>astyle_x.y_openvms.zip is the <b>OpenVMS</b> version of Artistic 
+		Style. It contains the source code, documentation, object files, build 
+		files, and an executable.&nbsp; The OpenVMS Version compile instructions 
+		below give information compiling the source code. Object code is included for people that don't 
+			have the Hewlett-Packard&nbsp; C++ compiler.
+			Wildcards are not supported under Digital 
+			Command Language (DCL). If the Bash shell has been installed on 
+			VMS, wildcards&nbsp; (such as *.cpp) can be used if Artistic Style is run under Bash.</p>
+		<p>astyle_x.y_windows.zip is the <b>Windows</b> version of Artistic 
+		Style. It contains the source code, documentation, a Visual C project 
+		file, and an executable.&nbsp; The Windows Version compile instructions 
+		below give information compiling the source code. The pre-compiled 
+		executable has been compiled to allow the use 
+			of wildcards (such as *.cpp) during execution.</p>
+		<p>Only one platform is supported in each distribution package. If you 
+		    use Artistic Style on more than one platform you 
+			will need to download packages for each platform. 
+			The main difference in platforms is the build directory and the 
+			line endings. Most compilers and development packages will accept any 
+		    type of line ending.</p>
+		<p>&nbsp;</p>
+		
+<h2><a name="_Linux_Version"></a>Linux Version</h2>
+		
+		<h3><a name="_GCC_Compiler"></a>GCC Compiler</h3>
+		<p>To compile using the GCC compiler you must have GCC (3.1 or better) installed. 
+			To build the Artistic Style configurations use the makefile located in the astyle/build 
+		directory.&nbsp; The executables will be in the astyle/bin directory.&nbsp; 
+		To build the command line configuration enter the following:</p>
+		<pre>    cd astyle/build
+    make</pre>
+		<p>To build the other astyle configurations you can enter the file name or a 
+		symbolic name.&nbsp; Entering &quot;make astyle&quot; or &quot;make release&quot; will build the command line configuration.&nbsp; Following are the symbolic 
+		names and file names (in parens) of the various configurations:</p>
+		<ul>
+			<li><b>release</b> builds the Artistic Style command line program 
+			(astyle).&nbsp; This is the default option.</li>
+			<li><b>shared</b> builds the Artistic Style program as a 
+			shared library (libastyle.so).</li>
+			<li><b>static</b> builds the Artistic Style program as a static 
+			library (libastyle.a).</li>
+			<li><b>debug</b> builds the Artistic Style command line program with 
+			debugging information&nbsp; (astyled).</li>
+			<li><b>shareddebug</b> builds the Artistic Style program as a shared 
+			library with debugging information (libastyled.so).</li>
+			<li><b>staticdebug</b> builds the Artistic Style program as a static 
+			library with debugging information (libastyled.a).</li>
+			<li><b>all</b> builds all of the above configurations.</li>
+		</ul>
+		<p>More than one configuration can be built at the same time.&nbsp; 
+		For example, to build all of the release configurations enter:</p>
+		<pre>    cd astyle/build
+    make release shared static</pre>
+		<h3><a name="_Intel_Compiler"></a>Intel Compiler</h3>
+		<p>The Intel makefile is named <b>makeintel.</b>
+			To build astyle, use the makeintel file located in the astyle/build 
+		directory.&nbsp; The executables will be in the astyle/bin directory.&nbsp; 
+		To build the command line configuration enter the following:</p>
+		<pre>    cd astyle/build
+    make -f makeintel</pre>
+		<p>Another way to compile with Intel is to rename "makeintel" as "makefile". Then the -f option is not needed.
+			If this is done the Intel makefile will always be used instead of the GCC makefile.
+	
+          	<p>The configuration names for Intel are the same as for the 
+			<a href="#_GCC_Compiler">GCC compiler</a>.&nbsp; 
+			More than one configuration can be built at the same time.&nbsp;&nbsp; 
+			For example, to build all of the debug configurations enter:</p>
+		<pre>    cd astyle/build
+    make -f makeintel debug shareddebug staticdebug</pre>
+			
+	<h3><a name="_Other_Makefile_Options"></a>Other Makefile Options</h3>
+		<p>The following options are also available. If you are using the Intel 
+		compiler, the make filename option must be included in the command (-f 
+		makeintel).</p>
+		<h5>clean</h5>
+		<p>To remove the object files for all configurations:</p>
+		<pre>    make clean</pre>
+		<p>The executables will not be removed.</p>
+		<h5>install</h5>
+		<p>You must have the appropriate permissions to use install.&nbsp; To install the 
+		astyle executable to /usr/bin:</p>
+		<pre>    make install</pre>
+		<p>To install the executable to a different directory set a value 
+				for the macro $(prefix).&nbsp; For example to install the executable to a users 
+				home directory (/home/<i>user</i>/bin):</p>
+		<pre>   make prefix=$HOME/bin install</pre>
+		<h5>uninstall</h5>
+		<p>You must have the appropriate permissions to use uninstall.&nbsp; To uninstall the 
+		astyle executable from /usr/bin:</p>
+		<pre>    make uninstall</pre>
+		<p>To uninstall the executable from a different directory set a 
+				value for the macro $(prefix).&nbsp; For example to uninstall the executable 
+				from a users home directory (/home/<i>user</i>/bin):</p>
+		<pre>   make prefix=$HOME/bin uninstall</pre>
+		<p>NOTE: The uninstall option will NOT remove the .astylerc 
+				files from the users home directories.&nbsp; The files must be 
+				removed&nbsp; individually for each user.</p>
+		<p>&nbsp;</p>
+				
+<h2><a name="_Mac_OS_X_Version"></a>Mac OS X Version</h2>
+		
+		<p>Mac OS X uses the same makefile as Linux GCC. To build the Artistic 
+		Style configurations use the makefile located in the astyle/build 
+		directory.&nbsp; The executables will be in the astyle/bin directory.&nbsp; 
+		To build the command line configuration enter the following:</p>
+		<pre>    cd astyle/build
+    make</pre>
+	
+          	<p>The configurations for Mac are the same as for the 
+			<a href="#_GCC_Compiler">Linux GCC compiler</a>.&nbsp; 
+			More than one configuration can be built at the same time.&nbsp;&nbsp; 
+			For example, to build all of the release configurations enter:</p>
+		<pre>    cd astyle/build
+    make release shared static</pre>
+			
+		<p>&nbsp;</p>
+
+<h2><a name="_OpenVMS_Version"></a>OpenVMS Version</h2>
+		
+		<p>To build Artistic Style on an OpenVMS system, you will need 
+		Hewlett-Packard 's C++ 
+		compiler installed. To build the code, use the OpenVMS 
+		specific build file located in the astyle/build directory. The executables 
+		will be in the astyle/bin directory. To build, enter the following:</p>
+		<pre>    set def [.astyle.build]
+    @vmsbuild</pre>
+ 		<p>To run Artistic Style, you should move the executable to an appropriate
+ 		directory, and create a foreign symbol for it. For example:</p>
+ 		<pre>    create/dir my_disk:[astyle.exe]
+    set def [-.bin]
+    copy astyle_main.exe my_disk:[astyle.exe]
+    ast*yle :== $my_disk:[astyle.exe]astyle_main.exe</pre>
+ 		<p>If you use Artistic Style on ODS-2 disks, you will need to specify a 
+		different suffix for file renaming, as the default is .orig, and multi-dot 
+ 		filenames are not supported on ODS-2 disks. Add the --suffix=_orig switch 
+ 		to either the command line or your Artistic Style initialization file.</p>
+ 		<p>To set up an initialization file on OpenVMS, create a file and define a 
+		logical to point to it. For example:</p>
+		<pre>    create my_disk:[astyle]astyle.ini
+    --suffix=_orig
+    ^Z
+    define artistic_style_options my_disk:[astyle]astyle.ini</pre>
+		<p>&nbsp;</p>
+
+<h2><a name="_Windows_Version"></a></a>Windows Version</h2>
+		
+		<h3><a name="_Precompiled_Executable"></a>Precompiled Executable</h3>
+		
+		<p>In addition to the source files, the Windows version contains an astyle executable (AStyle.exe).
+			The executable is compiled to allow wildcard use during execution.</p>
+			
+		<h3><a name="_Visual_C++_Compiler"></a>Visual C++ Compiler</h3>
+		
+		<p>There is a project file for Visual C++ 2003 (version 7) or higher.&nbsp; 
+		Open the file AStyle.sln in the AStyle/build directory.&nbsp; Select the 
+		Release configuration to compile the command line version.&nbsp; All 
+		output files will be in the AStyle/bin directory.&nbsp; The 
+		project has the following configurations.</p>
+		<ul>
+			<li><b>Release</b> builds the Artistic Style command line program 
+			(AStyle.exe).&nbsp; </li>
+			<li><b>Release Dll</b> builds the Artistic Style program as a Dynamic Link 
+			Library (AStyle.dll).&nbsp; This will also produce the exports 
+			library and the static library for linking the dll.</li>
+			<li><b>Release Lib</b> builds the Artistic Style program as a Static 
+			Library (libAStyle.lib).</li>
+			<li><b>Debug</b> builds the Artistic Style command line program with 
+			debugging information&nbsp; (AStyled.exe).</li>
+			<li><b>Debug Dll</b> builds the Artistic Style program as a Dynamic Link 
+			Library (DLL) with debugging information (AStyled.dll).&nbsp; This 
+			will also produce the exports library and the static library for 
+			linking the dll.</li>
+			<li><b>Debug Lib</b> builds the Artistic Style program as a Static 
+			Library with debugging information (libAStyled.lib).</li>
+		</ul>
+		
+		<h3><a name="_Other_Compilers"></a>Other Compilers</h3>
+		
+		<p>To use other compilers a project file must be built using the 
+		compiler's development environment.</p>
+		<ul>
+			<li>Create a project using the compiler's development environment</li>
+			<li>Add to the project all the .cpp and .h files in the src directory.</li>
+			<li>In order to use wildcards (such as *.cpp) during execution:<br>
+			With Visual C++, insert "setargv.obj" to the list of linker additional dependencies.<br>
+			With the MinGW build of the GCC compiler, the use of wildcards is automatic.<br>
+			With Borland, add "wildargs.obj" to the list of linker object files.<br>
+			With other compilers I don't know of a way to allow wildcards.  I would appreciate the information if 
+			   anyone knows.</li>
+			<li>The Compiler Options section discusses the compiler options to use.</li>
+			<li>Compile.</li>
+		</ul>
+		<p>&nbsp;</p>
+
+<h2><a name="_Compiler_Options"></a>Compiler Options</h2>
+		
+		<p>To compile as a static or shared (dynamic) library define the macro ASTYLE_LIB. 
+		Then use the appropriate compiler and linker options to compile the 
+		static or shared library.</p>
+		<p> Artistic Style is a small program and it is best to optimize for 
+		speed. The debug configuration is not usually optimized. To optimize for speed in the release configuration use the macro NDEBUG to remove asserts. Use an option that allows inline function 
+		expansion. 
+		Runtime Type Information (RTTI) is NOT needed. Use whole program 
+		speed optimization if your compiler supports it. There may be other options 
+		you can use depending on the compiler.</p>
+			 
+	    </blockquote>
+    </body>
+</html>

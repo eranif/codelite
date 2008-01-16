@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="Parser">
+  <Dependencies/>
+  <VirtualDirectory Name="src">
+    <File Name="main.cpp"/>
+    <File Name="variable.tab.h"/>
+    <File Name="variable.lex.cpp"/>
+    <File Name="variable.tab.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="grammar">
+    <File Name="variable.y"/>
+    <File Name="variable.l"/>
+  </VirtualDirectory>
+  <Settings Type="Executable">
+    <Configuration Name="Debug" CompilerType="gnu g++">
+      <General OutputFile="./Debug/HelloWorld" IntermediateDirectory="./Debug" Command="HelloWorld" CommandArguments="" WorkingDirectory="./Debug"/>
+      <Compiler Required="yes" Options="-g">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Required="yes" Options="-O0">
+        <LibraryPath Value="."/>
+        <LibraryPath Value="./Debug"/>
+      </Linker>
+      <PreBuild>
+        <Command Enabled="yes">yacc -dl  -t variable.y</Command>
+        <Command Enabled="yes">flex -L  variable.l</Command>
+        <Command Enabled="yes">mv lex.yy.c variable.lex.cpp</Command>
+        <Command Enabled="yes">mv y.tab.c variable.tab.cpp</Command>
+        <Command Enabled="yes">mv y.tab.h variable.tab.h</Command>
+      </PreBuild>
+      <PostBuild/>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="GNU g++">
+      <General OutputFile="./Release/HelloWorld" IntermediateDirectory="./Release" Command="HelloWorld" CommandArguments="" WorkingDirectory="./Release"/>
+      <Compiler Required="yes" Options="-O2">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2">
+        <LibraryPath Value="."/>
+        <LibraryPath Value="./Release"/>
+      </Linker>
+      <PreBuild/>
+      <PostBuild/>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>

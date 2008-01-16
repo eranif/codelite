@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="executable">
+  <VirtualDirectory Name="Source Files"/>
+  <VirtualDirectory Name="Header Files"/>
+  <Dependencies/>
+  <Settings Type="Executable">
+	<Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)d" IntermediateDirectory="./Debug" Command="./$(ProjectName)d" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
+      <Compiler Required="yes" Options="-g">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Required="yes" Options=""/>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+      </CustomBuild>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
+      <Compiler Required="yes" Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2">
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+      </CustomBuild>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>
+

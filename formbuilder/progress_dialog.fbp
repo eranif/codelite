@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<wxFormBuilder_Project>
+    <FileVersion major="1" minor="6" />
+    <object class="Project" expanded="1">
+        <property name="bitmaps"></property>
+        <property name="class_decoration"></property>
+        <property name="code_generation">C++</property>
+        <property name="encoding">UTF-8</property>
+        <property name="event_generation">connect</property>
+        <property name="file">progress_dialog</property>
+        <property name="first_id">1000</property>
+        <property name="icons"></property>
+        <property name="internationalize">0</property>
+        <property name="name">ProgressDialog</property>
+        <property name="namespace"></property>
+        <property name="path">.</property>
+        <property name="precompiled_header">wx/wxprec.h</property>
+        <property name="relative_path">1</property>
+        <property name="use_enum">0</property>
+        <property name="use_microsoft_bom">0</property>
+        <object class="Dialog" expanded="1">
+            <property name="bg"></property>
+            <property name="center"></property>
+            <property name="enabled">1</property>
+            <property name="extra_style"></property>
+            <property name="fg"></property>
+            <property name="font"></property>
+            <property name="hidden">0</property>
+            <property name="id">wxID_ANY</property>
+            <property name="maximum_size"></property>
+            <property name="minimum_size"></property>
+            <property name="name">ProgressDialog</property>
+            <property name="pos"></property>
+            <property name="size">568,137</property>
+            <property name="style">wxDEFAULT_DIALOG_STYLE</property>
+            <property name="subclass"></property>
+            <property name="title"></property>
+            <property name="tooltip"></property>
+            <property name="window_extra_style"></property>
+            <property name="window_style"></property>
+            <event name="OnActivate"></event>
+            <event name="OnActivateApp"></event>
+            <event name="OnChar"></event>
+            <event name="OnClose"></event>
+            <event name="OnEnterWindow"></event>
+            <event name="OnEraseBackground"></event>
+            <event name="OnHibernate"></event>
+            <event name="OnIconize"></event>
+            <event name="OnIdle"></event>
+            <event name="OnInitDialog"></event>
+            <event name="OnKeyDown"></event>
+            <event name="OnKeyUp"></event>
+            <event name="OnKillFocus"></event>
+            <event name="OnLeaveWindow"></event>
+            <event name="OnLeftDClick"></event>
+            <event name="OnLeftDown"></event>
+            <event name="OnLeftUp"></event>
+            <event name="OnMiddleDClick"></event>
+            <event name="OnMiddleDown"></event>
+            <event name="OnMiddleUp"></event>
+            <event name="OnMotion"></event>
+            <event name="OnMouseEvents"></event>
+            <event name="OnMouseWheel"></event>
+            <event name="OnPaint"></event>
+            <event name="OnRightDClick"></event>
+            <event name="OnRightDown"></event>
+            <event name="OnRightUp"></event>
+            <event name="OnSetFocus"></event>
+            <event name="OnSize"></event>
+            <event name="OnUpdateUI"></event>
+            <object class="wxStaticBoxSizer" expanded="1">
+                <property name="label"></property>
+                <property name="minimum_size"></property>
+                <property name="name">mainSizer</property>
+                <property name="orient">wxVERTICAL</property>
+                <property name="permission">none</property>
+                <object class="sizeritem" expanded="1">
+                    <property name="border">5</property>
+                    <property name="flag">wxEXPAND | wxALL</property>
+                    <property name="proportion">1</property>
+                    <object class="wxPanel" expanded="1">
+                        <property name="bg"></property>
+                        <property name="enabled">1</property>
+                        <property name="fg"></property>
+                        <property name="font"></property>
+                        <property name="hidden">0</property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="maximum_size"></property>
+                        <property name="minimum_size"></property>
+                        <property name="name">m_panel1</property>
+                        <property name="permission">protected</property>
+                        <property name="pos"></property>
+                        <property name="size"></property>
+                        <property name="subclass"></property>
+                        <property name="tooltip"></property>
+                        <property name="window_extra_style"></property>
+                        <property name="window_style">wxTAB_TRAVERSAL</property>
+                        <event name="OnChar"></event>
+                        <event name="OnEnterWindow"></event>
+                        <event name="OnEraseBackground"></event>
+                        <event name="OnKeyDown"></event>
+                        <event name="OnKeyUp"></event>
+                        <event name="OnKillFocus"></event>
+                        <event name="OnLeaveWindow"></event>
+                        <event name="OnLeftDClick"></event>
+                        <event name="OnLeftDown"></event>
+                        <event name="OnLeftUp"></event>
+                        <event name="OnMiddleDClick"></event>
+                        <event name="OnMiddleDown"></event>
+                        <event name="OnMiddleUp"></event>
+                        <event name="OnMotion"></event>
+                        <event name="OnMouseEvents"></event>
+                        <event name="OnMouseWheel"></event>
+                        <event name="OnPaint"></event>
+                        <event name="OnRightDClick"></event>
+                        <event name="OnRightDown"></event>
+                        <event name="OnRightUp"></event>
+                        <event name="OnSetFocus"></event>
+                        <event name="OnSize"></event>
+                        <event name="OnUpdateUI"></event>
+                        <object class="wxBoxSizer" expanded="1">
+                            <property name="minimum_size"></property>
+                            <property name="name">panelSizer</property>
+                            <property name="orient">wxVERTICAL</property>
+                            <property name="permission">none</property>
+                            <object class="sizeritem" expanded="1">
+                                <property name="border">5</property>
+                                <property name="flag">wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL</property>
+                                <property name="proportion">1</property>
+                                <object class="wxStaticText" expanded="1">
+                                    <property name="bg"></property>
+                                    <property name="enabled">1</property>
+                                    <property name="fg"></property>
+                                    <property name="font"></property>
+                                    <property name="hidden">0</property>
+                                    <property name="id">wxID_ANY</property>
+                                    <property name="label"></property>
+                                    <property name="maximum_size"></property>
+                                    <property name="minimum_size"></property>
+                                    <property name="name">m_staticTextMessage</property>
+                                    <property name="permission">protected</property>
+                                    <property name="pos"></property>
+                                    <property name="size"></property>
+                                    <property name="style"></property>
+                                    <property name="subclass"></property>
+                                    <property name="tooltip"></property>
+                                    <property name="window_extra_style"></property>
+                                    <property name="window_style"></property>
+                                    <property name="wrap">-1</property>
+                                    <event name="OnUpdateUI"></event>
+                                </object>
+                            </object>
+                            <object class="sizeritem" expanded="1">
+                                <property name="border">5</property>
+                                <property name="flag">wxALL|wxEXPAND</property>
+                                <property name="proportion">0</property>
+                                <object class="wxGauge" expanded="1">
+                                    <property name="bg"></property>
+                                    <property name="enabled">1</property>
+                                    <property name="fg"></property>
+                                    <property name="font"></property>
+                                    <property name="hidden">0</property>
+                                    <property name="id">wxID_ANY</property>
+                                    <property name="maximum_size"></property>
+                                    <property name="minimum_size"></property>
+                                    <property name="name">m_progress</property>
+                                    <property name="permission">protected</property>
+                                    <property name="pos"></property>
+                                    <property name="range">100</property>
+                                    <property name="size"></property>
+                                    <property name="style">wxGA_HORIZONTAL</property>
+                                    <property name="subclass"></property>
+                                    <property name="tooltip"></property>
+                                    <property name="value"></property>
+                                    <property name="window_extra_style"></property>
+                                    <property name="window_style"></property>
+                                    <event name="OnUpdateUI"></event>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+    </object>
+</wxFormBuilder_Project>

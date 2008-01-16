@@ -1,0 +1,129 @@
+#ifndef DBGCMD_H
+#define DBGCMD_H
+
+#include "wx/string.h"
+#include "wx/event.h"
+#include "gdbinfolexer.h"
+#include "debuggerobserver.h"
+#include "debugger.h"
+
+class IDebugger;
+
+class DbgCmdHandler {
+protected:
+	IDebuggerObserver *m_observer;
+
+public:
+	DbgCmdHandler(IDebuggerObserver *observer) : m_observer(observer){}
+	virtual ~DbgCmdHandler(){}
+
+	virtual bool ProcessOutput(const wxString &line) = 0;
+};
+
+/**
+ * handles the 
+ * -file-list-exec-source-file command
+ */
+class DbgCmdHandlerGetLine : public DbgCmdHandler {
+public:
+	DbgCmdHandlerGetLine(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
+	virtual ~DbgCmdHandlerGetLine(){}
+
+	virtual bool ProcessOutput(const wxString &line);
+};
+
+/**
+ * this handler, handles the following commands:
+ * -exec-run
+ * -exec-continue
+ * -exec-step
+ * -exec-next
+ * -exec-finish
+ */
+class DbgCmdHandlerAsyncCmd : public DbgCmdHandler {
+public:
+	DbgCmdHandlerAsyncCmd(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
+	virtual ~DbgCmdHandlerAsyncCmd(){}
+
+	virtual bool ProcessOutput(const wxString &line);
+};
+
+class DbgCmdHandlerBp : public DbgCmdHandler {
+	BreakpointInfo m_bp;
+	std::vector< BreakpointInfo > *m_bplist;
+	
+public:
+	DbgCmdHandlerBp(IDebuggerObserver *observer, BreakpointInfo bp, std::vector< BreakpointInfo > *bplist) 
+	: DbgCmdHandler(observer)
+	, m_bp(bp) 
+	, m_bplist(bplist)
+	{}
+	
+	virtual ~DbgCmdHandlerBp(){}
+	virtual bool ProcessOutput(const wxString &line);
+};
+
+class DbgCmdHandlerLocals : public DbgCmdHandler {
+public:
+	enum {
+		EvaluateExpression,
+		Locals,
+		This
+	};
+	
+protected:
+	void MakeTree(TreeNode<wxString, NodeData> *parent);
+	void MakeSubTree(TreeNode<wxString, NodeData> *parent);
+	int m_evaluateExpression;
+	wxString m_expression;
+
+public:
+	DbgCmdHandlerLocals(IDebuggerObserver *observer, int kind = Locals, const wxString &expr = wxEmptyString) 
+		: DbgCmdHandler(observer)
+		, m_evaluateExpression(kind)
+		, m_expression(expr)
+	{}
+
+	virtual ~DbgCmdHandlerLocals(){}
+
+	virtual bool ProcessOutput(const wxString &line);
+};
+
+// A Void Handler, which is here simply to ignore a reply from the debugger
+class DbgCmdHandlerVarCreator : public DbgCmdHandler {
+public:
+	DbgCmdHandlerVarCreator(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
+	virtual ~DbgCmdHandlerVarCreator(){}
+	virtual bool ProcessOutput(const wxString & line);
+};
+
+class DbgCmdHandlerEvalExpr : public DbgCmdHandler {
+	wxString m_expression;
+public:
+	DbgCmdHandlerEvalExpr(IDebuggerObserver *observer, const wxString &expression) 
+		: DbgCmdHandler(observer)
+		, m_expression(expression)
+	{}
+
+	virtual ~DbgCmdHandlerEvalExpr(){}
+	virtual bool ProcessOutput(const wxString & line);
+	virtual const wxString & GetExpression() const {return m_expression;}
+};
+
+// handler -list-stack-frames command
+class DbgCmdStackList : public DbgCmdHandler {
+public:
+	DbgCmdStackList(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
+	virtual ~DbgCmdStackList(){}
+	virtual bool ProcessOutput(const wxString & line);
+};
+
+// handler -list-stack-frames command
+class DbgCmdSelectFrame : public DbgCmdHandler {
+public:
+	DbgCmdSelectFrame(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
+	virtual ~DbgCmdSelectFrame(){}
+	virtual bool ProcessOutput(const wxString & line);
+};
+#endif //DBGCMD_H
+

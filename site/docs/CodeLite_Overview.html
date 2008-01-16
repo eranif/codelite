@@ -1,0 +1,222 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+
+<style>
+BODY, P, DIV, H1, H2, H3, H4, H5, H6, ADDRESS, OL, UL, TITLE, TD, OPTION, SELECT {
+ font-family: Verdana;
+ 
+}
+
+BODY, P, DIV, ADDRESS, OL, UL, LI, TITLE, TD, OPTION, SELECT {  
+  font-size: 10.0pt;
+  margin-top:0pt;  
+  margin-bottom:0pt;  
+} 
+
+BODY, P {
+  margin-left:0pt; 
+  margin-right:0pt;
+}
+
+BODY {
+  line-height: ;
+
+  margin: 6px;
+  padding: 0px;
+}
+
+h6 { font-size: 10pt }
+h5 { font-size: 11pt }
+h4 { font-size: 12pt }
+h3 { font-size: 13pt }
+h2 { font-size: 14pt }
+h1 { font-size: 16pt }
+
+blockquote {padding: 10px; border: 1px #DDDDDD dashed }
+
+a img {border: 0}
+
+</style>
+
+
+
+
+</head>
+
+
+<body revision="dpj54wd_35hjdj2d:92">
+
+<h1 style=TEXT-ALIGN:center>
+  CodeLite Overview
+</h1>
+<br>
+<h2>
+  Preface
+</h2>
+In this document I will provide an overview of the
+<span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span> library and
+how it interacts with LiteEditor.<br>
+<br>
+<h2>
+  General
+</h2>
+<span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite </span>is the library
+which LiteEditor uses to get CodeCompletion to work. It is based on the free
+open source tool - ctags
+(<a href=http://ctags.sourceforge.net title=http://ctags.sourceforge.net>http://ctags.sourceforge.net</a>
+) to create a symbols database which in turn can be queried to retrieve entries
+(hereon, tags). The database is based the open source library SQLite
+(<a href=http://sqlite.org title=http://sqlite.org>http://sqlite.org</a>), hence
+the name, <span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span>.<br>
+<br>
+The interaction with ctags is done using a separate thread.<br>
+<br>
+To complete the functionality,
+<span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span> adds its own
+parsers (see below). The in-house parsers are currently for C/C++ only and will
+probably will expand in coming future for other<br>
+languages as well.<br>
+<br>
+<h2>
+  Overview
+</h2>
+The below diagram describes
+<span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span> interaction
+with the IDE:<br>
+<div style="PADDING:1em 0pt; TEXT-ALIGN:center">
+  <img src="CodeLite_Overview_images/dpj54wd_36fjr83zvj.png">
+</div>
+<span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite interaction with
+LiteEditor<br>
+</span><br>
+LiteEditor interacts with
+<span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span>, in the
+following events:<br>
+<ol>
+  <li>
+    OnCharAdded - user inserted a char, and that char is one of: '.', '-&gt;',
+    '::' or '('
+  </li>
+  <li>
+    User saved a file
+  </li>
+</ol>
+<br>
+<span style=FONT-WEIGHT:bold>Event: User saved a file<br>
+</span>When a file is saved, a request is sent to
+<span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite's</span> parsing
+thread (which is invoked automatically by the library when it is initialized)
+containing the following information:<br>
+<ul>
+  <li>
+    The file name - the modified file's name<br>
+  </li>
+</ul>
+<br>
+Sequence of events (see diagram):<br>
+<ol>
+  <li>
+    User saved a file - the main thread, puts a request on
+    <span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span>'s parsing
+    thread with containing the saved files' name<br>
+  </li>
+  <li>
+    The parser thread is woken up by the request:<br>
+    - Load all tags from the database that are belong this the file name
+    (something like: '<span style="FONT-FAMILY:Courier New">select * from tags
+    where file='FILE_NAME'</span>), the results are then kept in memory for
+    later usage<br>
+    - Delete all tags from the Workspace Symbols's database that belongs to the
+    modified file<br>
+  </li>
+  <li>
+    <span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span> sends a
+    new parse command to ctags, Once ctags is done,
+    <span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span> compares
+    the old tags (from step 2) and the new entries - as returned from ctags
+  </li>
+  <li>
+    The new tags are stored into the database
+  </li>
+  <li>
+    An event containing the difference between the old and new tags is sent to
+    the UI to update the Outline View<br>
+    <br>
+  </li>
+</ol>
+<span style=FONT-WEIGHT:bold>Event: OnCharAdded<br>
+</span>This event is fired whenever a user adds a character to the document. In
+case the character is one of the following:<br>
+<ul>
+  <li>
+    '&gt;' - and previous char was '-'
+  </li>
+  <li>
+    '.'
+  </li>
+  <li>
+    ':' - and previous char was ':'
+  </li>
+  <li>
+    '('
+  </li>
+</ul>
+<span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span> is invoked
+directly (not via the parsing thread) to try and resolve the expression. For
+example:<br>
+<br>
+<div>
+  <table bgcolor=#cccccc border=0 cellpadding=3 cellspacing=0 width=100%>
+    <tbody>
+    <tr>
+      <td bgcolor=#ffff99 width=100%>
+        <span style="FONT-FAMILY:Courier New">wxString
+        str;</span><br style="FONT-FAMILY:Courier New">
+        <span style="FONT-FAMILY:Courier New">str.</span><br>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<br>
+After the '.', or any of the above characters for that matters, is typed,
+LiteEditor passes
+<span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span> the following
+parameters:<br>
+<ul>
+  <li>
+    The text up to the point where the caret is placed (in the above example:
+    <span style="FONT-FAMILY:Courier New">'wxString str; str.'</span>)<br>
+  </li>
+  <li>
+    The expression where the '.' was found (in the above example:
+    '<span style="FONT-FAMILY:Courier New">str.'</span>)
+  </li>
+</ul>
+<br>
+The sequence of events from this point (see diagram):<br>
+<ol>
+  <li>
+    LiteEditor passes
+    <span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span> the 'text'
+    and the 'expression'
+  </li>
+  <li>
+    <span style="FONT-WEIGHT:bold; FONT-STYLE:italic">CodeLite</span> processes
+    the text and expression - the parsing is done using the yacc based parsers
+    (see below), and by using the symbols database (queries are made against
+    both<br>
+    the external and the workspace database), if parsing is successful, a list
+    of tags is then returned to LiteEditor - which in turn displays them to the
+    user in the completion box
+  </li>
+</ol>
+<br>
+<span style=FONT-WEIGHT:bold></span><span style="FONT-WEIGHT:bold; FONT-STYLE:italic"></span>
+<h2>
+  <br>
+</h2>
+<br>
+<br>
+<br></body>
+</html>

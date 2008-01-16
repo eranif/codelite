@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="Interfaces">
+  <VirtualDirectory Name="Header Files">
+    <File Name="debugger.h"/>
+    <File Name="debuggerobserver.h"/>
+    <File Name="plugin.h"/>
+    <File Name="iconfigtool.h"/>
+    <File Name="ieditor.h"/>
+    <File Name="imanager.h"/>
+  </VirtualDirectory>
+  <Settings Type="Static Library">
+    <Configuration Name="Common" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="./Debug"/>
+      <Compiler Required="yes" Options="-g">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Required="yes" Options="-O0">
+        <LibraryPath Value="."/>
+        <LibraryPath Value="Debug"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+  <Dependencies/>
+</CodeLite_Project>

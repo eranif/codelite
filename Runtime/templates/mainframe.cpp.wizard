@@ -1,0 +1,64 @@
+#include "$(MainFrameFile).h"
+#include <wx/toolbar.h>
+#include <wx/statusbr.h>
+#include <wx/sizer.h>
+#include <wx/menu.h> //wxMenuBar
+
+BEGIN_EVENT_TABLE($(MainFrameName), wxFrame)
+	EVT_CLOSE($(MainFrameName)::OnClose)
+	EVT_MENU(wxID_EXIT, $(MainFrameName)::OnQuit)
+END_EVENT_TABLE()
+
+$(MainFrameName)::$(MainFrameName)(wxWindow* parent,
+                     wxWindowID id,
+                     const wxString& title,
+                     const wxPoint& pos,
+                     const wxSize& size,
+                     long style)
+		: wxFrame(parent, id, title, pos, size, style)
+{
+	Initialize();
+}
+
+$(MainFrameName)::~$(MainFrameName)()
+{
+
+}
+
+void $(MainFrameName)::Initialize()
+{
+	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
+	SetSizer(sz);
+	
+	//Create a status bar 
+	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
+	statusBar->SetFieldsCount(1);
+	SetStatusBar(statusBar);
+	GetStatusBar()->SetStatusText(wxT("Ready"));
+	
+	//Create a menu bar
+	CreateMenuBar();
+	
+	sz->Layout();
+}
+
+void $(MainFrameName)::OnClose(wxCloseEvent &e)
+{
+	e.Skip();
+}
+
+void $(MainFrameName)::OnQuit(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	Close();
+}
+
+void $(MainFrameName)::CreateMenuBar()
+{
+	wxMenuBar *mb = new wxMenuBar();
+	//File Menu
+	wxMenu *menu = new wxMenu();
+	menu->Append(wxID_EXIT);
+	mb->Append(menu, wxT("&File"));
+	SetMenuBar(mb);
+}

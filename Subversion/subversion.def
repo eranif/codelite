@@ -1,0 +1,3 @@
+LIBRARY	Subversion
+EXPORTS
+	CreatePlugin

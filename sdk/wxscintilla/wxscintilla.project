@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="wxscintilla">
+  <VirtualDirectory Name="wxScintilla">
+    <VirtualDirectory Name="src">
+      <File Name="src/wxscintilla.cpp"/>
+      <File Name="src/PlatWX.cpp"/>
+      <File Name="src/PlatWX.h"/>
+      <File Name="src/ScintillaWX.cpp"/>
+      <File Name="src/ScintillaWX.h"/>
+      <File Name="src/gtkstring.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="include">
+      <File Name="include/wx/wxscintilla.h"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Scintilla">
+    <VirtualDirectory Name="src">
+      <File Name="src/scintilla/src/XPM.h"/>
+      <File Name="src/scintilla/src/AutoComplete.cxx"/>
+      <File Name="src/scintilla/src/AutoComplete.h"/>
+      <File Name="src/scintilla/src/CallTip.cxx"/>
+      <File Name="src/scintilla/src/CallTip.h"/>
+      <File Name="src/scintilla/src/CellBuffer.cxx"/>
+      <File Name="src/scintilla/src/CellBuffer.h"/>
+      <File Name="src/scintilla/src/CharClassify.cxx"/>
+      <File Name="src/scintilla/src/CharClassify.h"/>
+      <File Name="src/scintilla/src/ContractionState.cxx"/>
+      <File Name="src/scintilla/src/ContractionState.h"/>
+      <File Name="src/scintilla/src/Document.cxx"/>
+      <File Name="src/scintilla/src/Document.h"/>
+      <File Name="src/scintilla/src/DocumentAccessor.cxx"/>
+      <File Name="src/scintilla/src/DocumentAccessor.h"/>
+      <File Name="src/scintilla/src/Editor.cxx"/>
+      <File Name="src/scintilla/src/Editor.h"/>
+      <File Name="src/scintilla/src/ExternalLexer.cxx"/>
+      <File Name="src/scintilla/src/ExternalLexer.h"/>
+      <File Name="src/scintilla/src/Indicator.cxx"/>
+      <File Name="src/scintilla/src/Indicator.h"/>
+      <File Name="src/scintilla/src/KeyMap.cxx"/>
+      <File Name="src/scintilla/src/KeyMap.h"/>
+      <File Name="src/scintilla/src/KeyWords.cxx"/>
+      <File Name="src/scintilla/src/LexAda.cxx"/>
+      <File Name="src/scintilla/src/LexAPDL.cxx"/>
+      <File Name="src/scintilla/src/LexAsm.cxx"/>
+      <File Name="src/scintilla/src/LexAsn1.cxx"/>
+      <File Name="src/scintilla/src/LexAU3.cxx"/>
+      <File Name="src/scintilla/src/LexAVE.cxx"/>
+      <File Name="src/scintilla/src/LexBaan.cxx"/>
+      <File Name="src/scintilla/src/LexBash.cxx"/>
+      <File Name="src/scintilla/src/LexBasic.cxx"/>
+      <File Name="src/scintilla/src/LexBullant.cxx"/>
+      <File Name="src/scintilla/src/LexCaml.cxx"/>
+      <File Name="src/scintilla/src/LexCLW.cxx"/>
+      <File Name="src/scintilla/src/LexCmake.cxx"/>
+      <File Name="src/scintilla/src/LexConf.cxx"/>
+      <File Name="src/scintilla/src/LexCPP.cxx"/>
+      <File Name="src/scintilla/src/LexCrontab.cxx"/>
+      <File Name="src/scintilla/src/LexCsound.cxx"/>
+      <File Name="src/scintilla/src/LexCSS.cxx"/>
+      <File Name="src/scintilla/src/LexD.cxx"/>
+      <File Name="src/scintilla/src/LexEiffel.cxx"/>
+      <File Name="src/scintilla/src/LexErlang.cxx"/>
+      <File Name="src/scintilla/src/LexEScript.cxx"/>
+      <File Name="src/scintilla/src/LexFlagship.cxx"/>
+      <File Name="src/scintilla/src/LexForth.cxx"/>
+      <File Name="src/scintilla/src/LexFortran.cxx"/>
+      <File Name="src/scintilla/src/LexGui4Cli.cxx"/>
+      <File Name="src/scintilla/src/LexHaskell.cxx"/>
+      <File Name="src/scintilla/src/LexHTML.cxx"/>
+      <File Name="src/scintilla/src/LexInno.cxx"/>
+      <File Name="src/scintilla/src/LexKix.cxx"/>
+      <File Name="src/scintilla/src/LexLisp.cxx"/>
+      <File Name="src/scintilla/src/LexLout.cxx"/>
+      <File Name="src/scintilla/src/LexLua.cxx"/>
+      <File Name="src/scintilla/src/LexMatlab.cxx"/>
+      <File Name="src/scintilla/src/LexMetapost.cxx"/>
+      <File Name="src/scintilla/src/LexMMIXAL.cxx"/>
+      <File Name="src/scintilla/src/LexMPT.cxx"/>
+      <File Name="src/scintilla/src/LexMSSQL.cxx"/>
+      <File Name="src/scintilla/src/LexNsis.cxx"/>
+      <File Name="src/scintilla/src/LexOpal.cxx"/>
+      <File Name="src/scintilla/src/LexOthers.cxx"/>
+      <File Name="src/scintilla/src/LexPascal.cxx"/>
+      <File Name="src/scintilla/src/LexPB.cxx"/>
+      <File Name="src/scintilla/src/LexPerl.cxx"/>
+      <File Name="src/scintilla/src/LexPOV.cxx"/>
+      <File Name="src/scintilla/src/LexPS.cxx"/>
+      <File Name="src/scintilla/src/LexPython.cxx"/>
+      <File Name="src/scintilla/src/LexRebol.cxx"/>
+      <File Name="src/scintilla/src/LexRuby.cxx"/>
+      <File Name="src/scintilla/src/LexScriptol.cxx"/>
+      <File Name="src/scintilla/src/LexSmalltalk.cxx"/>
+      <File Name="src/scintilla/src/LexSpecman.cxx"/>
+      <File Name="src/scintilla/src/LexSpice.cxx"/>
+      <File Name="src/scintilla/src/LexSQL.cxx"/>
+      <File Name="src/scintilla/src/LexTADS3.cxx"/>
+      <File Name="src/scintilla/src/LexTCL.cxx"/>
+      <File Name="src/scintilla/src/LexTeX.cxx"/>
+      <File Name="src/scintilla/src/LexVB.cxx"/>
+      <File Name="src/scintilla/src/LexVerilog.cxx"/>
+      <File Name="src/scintilla/src/LexVHDL.cxx"/>
+      <File Name="src/scintilla/src/LexYAML.cxx"/>
+      <File Name="src/scintilla/src/LineMarker.cxx"/>
+      <File Name="src/scintilla/src/LineMarker.h"/>
+      <File Name="src/scintilla/src/Partitioning.h"/>
+      <File Name="src/scintilla/src/PropSet.cxx"/>
+      <File Name="src/scintilla/src/RESearch.cxx"/>
+      <File Name="src/scintilla/src/RESearch.h"/>
+      <File Name="src/scintilla/src/ScintillaBase.cxx"/>
+      <File Name="src/scintilla/src/ScintillaBase.h"/>
+      <File Name="src/scintilla/src/SplitVector.h"/>
+      <File Name="src/scintilla/src/Style.cxx"/>
+      <File Name="src/scintilla/src/Style.h"/>
+      <File Name="src/scintilla/src/StyleContext.cxx"/>
+      <File Name="src/scintilla/src/StyleContext.h"/>
+      <File Name="src/scintilla/src/SVector.h"/>
+      <File Name="src/scintilla/src/UniConversion.cxx"/>
+      <File Name="src/scintilla/src/UniConversion.h"/>
+      <File Name="src/scintilla/src/ViewStyle.cxx"/>
+      <File Name="src/scintilla/src/ViewStyle.h"/>
+      <File Name="src/scintilla/src/WindowAccessor.cxx"/>
+      <File Name="src/scintilla/src/XPM.cxx"/>
+      <File Name="src\scintilla\src\CharacterSet.h"/>
+      <File Name="src\scintilla\src\Decoration.cxx"/>
+      <File Name="src\scintilla\src\Decoration.h"/>
+      <File Name="src\scintilla\src\LexGAP.cxx"/>
+      <File Name="src\scintilla\src\LexGen.py"/>
+      <File Name="src\scintilla\src\LexPLM.cxx"/>
+      <File Name="src\scintilla\src\LexProgress.cxx"/>
+      <File Name="src\scintilla\src\PositionCache.cxx"/>
+      <File Name="src\scintilla\src\PositionCache.h"/>
+      <File Name="src\scintilla\src\RunStyles.cxx"/>
+      <File Name="src\scintilla\src\RunStyles.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="include">
+      <File Name="src/scintilla/include/Accessor.h"/>
+      <File Name="src/scintilla/include/KeyWords.h"/>
+      <File Name="src/scintilla/include/Platform.h"/>
+      <File Name="src/scintilla/include/PropSet.h"/>
+      <File Name="src/scintilla/include/SciLexer.h"/>
+      <File Name="src/scintilla/include/Scintilla.h"/>
+      <File Name="src/scintilla/include/ScintillaWidget.h"/>
+      <File Name="src/scintilla/include/SString.h"/>
+      <File Name="src/scintilla/include/WindowAccessor.h"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Settings Type="Static Library">
+    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../../lib/gcc_lib/libwxscintillaud.a" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory=""/>
+      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="src/scintilla/include"/>
+        <IncludePath Value="src/scintilla/src"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="SCI_LEXER"/>
+        <Preprocessor Value="LINK_LEXERS"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Required="yes" Options=""/>
+      <ResourceCompiler Required="yes" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../../lib/gcc_lib/libwxscintillau.a" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory=""/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="src/scintilla/include"/>
+        <IncludePath Value="src/scintilla/src"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="SCI_LEXER"/>
+        <Preprocessor Value="LINK_LEXERS"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Required="yes" Options=""/>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../../lib/gcc_lib/libwxscintillaud.a" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory=""/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);;">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="src/scintilla/include"/>
+        <IncludePath Value="src/scintilla/src"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="SCI_LEXER"/>
+        <Preprocessor Value="LINK_LEXERS"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Required="yes" Options=""/>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../../lib/gcc_lib/libwxscintillau.a" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory=""/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);;">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="src/scintilla/include"/>
+        <IncludePath Value="src/scintilla/src"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="SCI_LEXER"/>
+        <Preprocessor Value="LINK_LEXERS"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Required="yes" Options=""/>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+  <Dependencies/>
+</CodeLite_Project>

@@ -1,0 +1,151 @@
+h6 { font-size: 11pt }
+h5 { font-size: 11pt }
+h4 { font-size: 11pt }
+h3 { font-size: 12pt }
+h2 { font-size: 11pt }
+h1 { font-size: 11pt }
+
+blockquote {padding: 10px; border: 1px #DDDDDD dashed }
+
+a img {border: 0}
+body { 
+	background:  url('images/site_bg.png')  no-repeat fixed left;
+	font-family: verdana,arial,helvetica,sans-serif;
+	font-size: 11px;
+	margin: 0px; 
+}
+
+table.main-table {
+	width: 60%;
+	height: 100%;
+	border: 0px solid ButtonShadow;
+	border-collapse: collapse;
+	z-index: 99
+	font-size: 11px;
+}
+
+div.top-bar
+{
+	border-right: buttonshadow 1px solid;
+	padding-right: 11px;
+	border-top: buttonshadow 1px solid;
+	padding-left: 11px;
+	font-size: 11px;
+	padding-bottom: 11px;
+	margin: 2px;
+	border-left: buttonshadow 1px solid;
+	color: buttontext;
+	padding-top: 11px;
+	border-bottom: buttonshadow 1px solid;
+	font-family: verdana,arial,helvetica,sans-serif;
+	background-color: #ffcc66;
+}
+
+a.toolbar-item
+{
+	border-right: #ffcc66 1px solid;
+	padding-right: 8px;
+	border-top: #ffcc66 1px solid;
+	padding-left: 8px;
+	font-size: 11px;
+	padding-bottom: 8px;
+	margin: 11px;
+	border-left: #ffcc66 1px solid;
+	color: buttontext;
+	padding-top: 8px;
+	border-bottom: #ffcc66 1px solid;
+	font-family: verdana,arial,helvetica,sans-serif;
+	text-decoration: none;
+}
+
+a.toolbar-item:hover {
+	font-family: verdana,arial,helvetica,sans-serif;
+	font-size: 11px;
+	background-color: #E8E8FF; 
+	text-decoration: none; 
+	margin: 11px; 
+	color: ButtonText;
+	padding: 8px 8px 8px 8px;
+	border-right: 1px solid ButtonShadow;
+	border-bottom: 1px solid ButtonShadow;
+	border-left: 1px solid white;
+	border-top: 1px solid white;
+}
+
+a.toolbar-item:visited {
+	font-family: verdana,arial,helvetica,sans-serif;
+	font-size: 11px;
+	text-decoration: none; 
+	margin: 11px;
+	color: ButtonText;
+	padding: 9px 9px 9px 9px;
+	border-top: 1px black;
+}
+
+div.main-panel {
+	margin: 11px;
+	color: ButtonText ;
+	height: 100%;
+	font-size: 11px;
+}
+
+div.code-section {
+	margin: 5px;
+	font-size: 11px;
+	background-color: #E8E8FF; 
+	color: ButtonText ;
+	font-family: Courier New;
+	z-index: 98
+}
+
+ul.one {
+	list-style: square inside url('images/arrow.png');
+}
+
+ul.check-list {
+	list-style: square inside url('images/check.png');
+}
+
+img.screenshot {
+	border: 1px sold ButtonShadow;
+}
+
+img.rotation-arrow {
+	
+}
+
+img.rotation-arrow:hover {
+	cursor: pointer;
+}
+
+div.image-container {
+	margin: 5px;
+	background-color: white; 
+	color: ButtonText ;
+	overflow: hidden;
+}
+
+div.img{
+	margin: 2px;
+	border: 1px solid ButtonShadow;
+	height: auto;
+	width: auto;
+	float: left;
+	text-align: center;
+}
+div.img img {
+	display: inline;
+	margin: 3px;
+	border: 1px solid #ffffff;
+}
+
+div.img a:hover img {
+	border: 1px solid #0000ff;
+}
+
+div.desc {
+	text-align: center;
+	font-weight: normal;
+	width: 120px;
+	margin: 2px;
+}

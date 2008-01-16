@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="sqlite3">
+  <VirtualDirectory Name="Source Files">
+    <File Name="sqlite3.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Header Files">
+    <File Name="sqlite3.h"/>
+  </VirtualDirectory>
+  <Settings Type="Static Library">
+    <Configuration Name="Common" CompilerType="gnu gcc" DebuggerType="">
+      <General OutputFile="../lib/gcc_lib/libsqlite3.a" IntermediateDirectory="./Release_static" Command="" CommandArguments="" WorkingDirectory=""/>
+      <Compiler Required="yes" Options="-O2">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Required="yes" Options=""/>
+      <ResourceCompiler Required="yes" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand>mingw32-make -f sqlite3.mk type=ReleaseANSIStaticLibrary clean</CleanCommand>
+        <BuildCommand>mingw32-make -f sqlite3.mk type=ReleaseANSIStaticLibrary</BuildCommand>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+  <Dependencies/>
+</CodeLite_Project>

@@ -1,0 +1,875 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<title>Artistic Style - Release Notes</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="CREATED" content="19981123;1064600">
+<meta name="CHANGEDBY" content="Jim Pattee">
+<meta name="CHANGED" content="19981123;1091900">
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<style> <!-- h1 {color:#0000A0; text-align:center; font-style:italic; font-size:200%;}
+	h2 {color:#0000A0;}
+	h3 {color:#0000A0;}
+	code {color:#0000A0; font-size:larger;}
+	--></style>
+</head>
+
+<body>
+
+<h1>Artistic Style Release Notes</h1>
+<p>&nbsp;</p>
+<blockquote>
+    <h3>Artistic Style 1.21&nbsp; (June 2007)</h3>
+    <ul>
+		<li>New function, formatArrayBrackets, 
+		to improve array formatting and indentation.<li>Attach brackets to lines with end-of-line comments.
+		<li>Break brackets from lines with end-of-line comments without bringing 
+		the comments with them.<li>Move ASFormatter and ASBeautifier static initialization 
+		from constructor to &quot;init&quot; function to allow for changes in the file type.<li>Add --preserve-date (-Z) option.<li>New functions formatBrackets, padOperators and PadParens to improve decomposition.<li>Add identification of file 
+		mode (C, C#, or Java) to file open procedure.<li>Keywords in headers now depend on file 
+		mode (C, C#, or 
+		Java) and object type (formatter or beautifier).<li>Remove short options -c (mode=c) and -j 
+		(mode=java) since the mode is now set automatically from the file extension.<li>Change Linux bracket formatting for header files.<li>Fix formatting of empty blocks.<li>Expand BracketType definition.
+		<li>Fix &quot;do not change&quot; bracket mode inconsistencies with other bracket 
+		formatting.
+		<li>Remove mode=java from Java predefined style.<li>Change long option --errors-to-standard-output to --errors-to-stdout.<li>Fix breaking of struct variable declaration.<li>Add support for OpenVMS compiler.<li>Inline the ASBeautifier function isLegalNameChar.<li>Fix no-indent of block comments starting in 
+		column 1 or 2.<li>Fix formatting of Java anonymous class defined as&nbsp; a method call 
+		parameter (bracket within a paren).
+		<li>Fix indentation for Java &quot;for each&quot; statement.<li>Fix bracket being attached to a preprocessor directive.<li>Fix extra indent of single line blocks when a previous line 
+        probation header is found.<li>Fix formatting of block comments when continuation lines have 
+        different leading whitespace characters.<li>Fix deleting a blank line before a bracket when brackets=attach.<li>Fix segmentation fault on preprocessor continuation line followed by an empty line.<li>Fix bad bracket indent that sometimes occurs when brackets=attach and it 
+        cannot be attached.<li>Fix trimming of comment lines.
+        <li>Fix incorrect identification of &quot;new&quot; operator pointers as 
+		calculations.
+		<li>Fix incorrect identification of assignments as command type bracket.<li>Fix incorrect indentation of pointers following a dot operator or 
+		pointer.<li>Fix attaching &quot;else if&quot; statements to a single line block.
+		<li>Fix header recognition problem when header is proceeded by a tab 
+		instead of a space.
+		<li>Fix line break when colon is followed by a comment.<li>Fix 
+		ASBeautifier not identifying a template definition.<li>Change indents around the end of line to two indents.<li>Change header includes to fix header dependencies for Linux GCC 4.3.<li>Add output line number 
+        for debugging.<li>Add filename to trace output.<li>Add trace for arrays.<li>Add trace for bracketType .<li>Fix no-indent comment in a #else preprocessor directive.<li>Fix block comment continuation line indent when block comments do 
+		not start the line.<li>Adjust position of block comments (/*) when padding is added or deleted.
+		<li>Fix incorrect formatting if &quot;return&quot; is included in a function name.
+		<li>Fix incorrect padding if template depth is greater that one and pad=oper is used.
+		<li>Fix incorrect bracket type identification when bracket is followed 
+		by a comment.<li>Fix incorrect bracket type identification when a &quot;const&quot; 
+		method is declared.<li>Fix incorrect bracket type identification when pre-definition header is inside a paren.<li>Fix deleting a space when attaching a bracket with line comments.<li>Fix indentation when the conditional 
+		&quot;?&quot; operator is used in a single line 
+		statement.<li>Fix indentation when single line &quot;if&quot; statement is used.<li>Add pointers, multiply operators, and selected variables to do not unpad in paren unpad 
+		procedure.<li>Return exit code 0 for --version and --help.</ul>
+    <h3>Artistic Style 1.20.2&nbsp; (February 2007)</h3>
+    <ul>
+		<li>Fix problems with the new stream I/O procedure added in release 
+		1.20.1:<ul>
+	         <li>Fix adding an extra blank line at end of document.</li>
+				<li>Fix line ending on last line when cin and cout option is 
+				used.</li>
+	    </ul>
+    </ul>
+    <h3>Artistic Style 1.20.1&nbsp; (January 2007)</h3>
+    <ul>
+		<li>The following changes were made to improve processing for Mac OS X 
+		platforms:<ul>
+	         <li>Remove Makefile linker option -s and add a separate &quot;strip&quot; 
+				command.</li>
+				<li>Open console input and output streams as binary to allow Linux line 
+			ends on a Windows platform.</li>
+			<li>Change stream I/O procedure to allow for Mac OS 9 line endings.</li>
+			<li>Change output stream end of line from endl so output stream 
+			is not flushed with each write.</li>
+			<li>Change information messages from cerr to cout.</li>
+			<li>Removed messages when I/O is to cin and cout to accommodate 
+			TextWrangler.</li>
+	    </ul>
+    </ul>
+    <h3>Artistic Style 1.20&nbsp; (January 2007)</h3>
+    <ul>
+        <li>Call importOptions() from function AStyleMain() to allow slop in options parameters.</li>
+        <li>New makefiles for GCC and Intel with new compile options.</li>
+		<li>New project file for Visual C with new compile options.</li>
+		<li>Change comments to reflect the GNU Lesser General Public License.</li>
+		<li>Indent message maps for MFC and event tables for wxWidgets.</li>
+		<li>Fix incorrect formatting for an empty comment.</li>
+		<li>Fix &quot;Unknown option&quot; in default options file when last line does not 
+		contain CR or LF.</li>
+		<li>Patch from Dieter Bayer to fix case indent when a scope resolution 
+		operator is used.</li>
+		<li>Change long option --brackets=break-closing-headers to 
+        --brackets=break-closing.</li>
+		<li>Add short option -y for --brackets=break-closing.</li>
+		<li>Add short option -e for --break-elseifs.</li>
+		<li>Add short option -w for --indent-preprocessor.</li>
+		<li>Add short option -f for --break-blocks.</li>
+		<li>Add short option -F for --break-blocks=all.</li>
+		<li>Remove the backup file after formatting when <nobr>--suffix=none.</nobr></li>
+		<li>Show total time at end of job.</li>
+		<li>Improved error handling for invalid options with ASTYLE_LIB.</li>
+		<li>Add function AStyleGetVersion() to ASTYLE_LIB option.</li>
+		<li>Change preprocessor macro from ASTYLE_GUI to ASTYLE_LIB.</li>
+		<li>Add astyle namespace to ASEnhancer.</li>
+		<li>Add #include &lt;ctype.h&gt; for Red Hat distribution of GCC 3.2 (prior to 
+		Jan 2004).</li>
+		<li>Remove commented-out code.</li>
+    </ul>
+    <h3>Artistic Style 1.19&nbsp; (July 2006)</h3>
+    <ul>
+        <li>Add unpad=paren option.</li>
+        <li>Always pad paren headers (e.g. 'if', 'for', 'while').</li>
+        <li>Fix problem of pad=oper working different if pad=paren is declared.</li>
+        <li>Add additional tests to distinguish the multiplication operator from 
+        pointers.</li>
+        <li>Fix padding parens before a member access pointer (-&gt;).</li>
+        <li>If space padding has changed, move end-of-line comments to the 
+        original column, if possible.</li>
+        <li>Move potential calculation decision to outside of operator padding 
+        function.</li>
+        <li>Fix duplication of last line of source if a final endline is not 
+        present. </li>
+        <li>Fix class initializer not indented on last line if bracket is 
+        attached.</li>
+        <li>Fix identification of templates contained in parens.</li>
+        <li>Fix one line block occurring before end of class.</li>
+        <li>Fix line added after one line block with bracketFormatMode = 
+        NONE_MODE.</li>
+        <li>Add needed variables to ASBeautifier copy constructor.</li>
+        <li>Trim end of line for multi-line comments.</li>
+        <li>Add a breakLine before paren checks (needed for unpad=paren option).</li>
+        <li>Add trace file to ASFormatter.</li>
+        <li>Move formatting message from end to beginning of formatting.</li>
+        <li>Move the building of vectors to ASResource.&nbsp; Vectors for 
+        classes ASBeautifier and ASFormatter should now have the same values.</li>
+        <li>Move debugging variable inLineNumber from ASFormatter to 
+        ASBeautifier.</li>
+        <li>Bypass char processing for UTF8 characters in ASBeautifier.</li>
+        <li>Move switchVariables struct from ASEnhancer to the header file. </li>
+        <li>Remove preprocessorHeader vector (not used).</li>
+        <li>Remove variable isInConst (not used).</li>
+        <li>Remove commented-out code.</li>
+    </ul>
+    <h3>Artistic Style 1.18&nbsp; (June 2006)</h3>
+    <ul>
+        <li>The following changes were made for the option pad=oper:
+        <ul>
+            <li>Does <strong>not</strong> remove extra spaces from formatted 
+            expressions. </li>
+            <li>Does <strong>not</strong> pad opening parens on the outside.
+            </li>
+            <li>Does <strong>not</strong> remove leading spaces from multi-line 
+            comments. </li>
+            <li>Does <strong>not</strong> pad negative numbers. </li>
+            <li>Does <strong>not</strong> add a space to the end of preprocessor 
+            directives. </li>
+            <li>Will <strong>not</strong> pad operators inside block parens [].</li>
+        </ul>
+        </li>
+        <li>The following changes were made for the option pad=paren:
+        <ul>
+            <li>Formats correctly <strong>with</strong> or <strong>without</strong> 
+            pad=oper. </li>
+            <li>Does <strong>not</strong> add a space for each additional run if 
+            pad=oper is not used. </li>
+            <li>Outside of opening paren is padded correctly. </li>
+            <li>Inside of closing paren is padded correctly. </li>
+            <li>Does <strong>not</strong> pad block parens []. </li>
+            <li>Added short option P, previously used for pad=all.</li>
+        </ul>
+        </li>
+        <li>Added new options pad=paren-out (d) and pad=paren-in (D). </li>
+        <li>Removed option pad=all. </li>
+        <li>Add short option V for convert-tabs. </li>
+        <li>Added bounds checking to options containing parameters. </li>
+        <li>Display a message when a default options file is used. </li>
+        <li>Replaced IS_PARAM_OPTION(S) macros with overloaded isParamOption. 
+        Fixed compare problem with short param options. </li>
+        <li>Fix EOF problem with default options file.</li>
+    </ul>
+    <h3>Artistic Style 1.17&nbsp; (May 2006)</h3>
+    <ul>
+        <li>The following changes were made for processing bracketFormatMode = 
+        NONE_MODE:
+        <ul>
+            <li>Removed the function isFormattingEnabled() and always performed 
+            the formatting. </li>
+            <li>Removed the formatting bypass for NONE_MODE. </li>
+            <li>Fix brackets always being broken in the 2 cases where NONE_MODE 
+            formatting was done. </li>
+            <li>Added new functions to support the processing of NONE_MODE 
+            brackets. </li>
+            <li>Made other minor changes necessary for correct NONE_MODE 
+            processing.</li>
+        </ul>
+        </li>
+        <li>Changed indent cases option to indent the entire case block. </li>
+        <li>Changed to output Windows or Linux line endings. </li>
+        <li>Added ASEnhancer module for case statement indenting. </li>
+        <li>Corrected errors in identifying options indent=tab=, and 
+        force-indent=tab=. </li>
+        <li>Corrected errors in identifying options min-conditional-indent=, and 
+        max-instatement-indent=. </li>
+        <li>Improved error and information messages. </li>
+        <li>Added capability to compile as a console program, shared library, or 
+        static library. </li>
+        <li>Fixed problem with semicolons and parens being put on a line by 
+        themselves. </li>
+        <li>Fixed spaces being added before a line comment. </li>
+        <li>Fixed blank line added after some preprocessor statements. </li>
+        <li>Fixed preprocessor statements not being trimmed. </li>
+        <li>Do not indent line comments that begin in column 1 or 2. </li>
+        <li>Fixed indentation problem with ending }; of class statements. </li>
+        <li>Changed nextLine() function to eliminate char buffer limits. </li>
+        <li>Moved Windows default options file to %USERPROFILE%. </li>
+        <li>Removed NEW operators to prevent memory leaks. </li>
+        <li>Fixed space before the semicolon in return ; statement. </li>
+        <li>Fixed extra space that was sometimes added when pad operators was 
+        used. </li>
+        <li>Removed string parameter from IS_PARAM_OPTION. </li>
+        <li>Added forward declaration of parseOption() to eliminate compile 
+        error. </li>
+        <li>Added input line number counter for debugging. </li>
+        <li>Add statements to check for markers if break-blocks or 
+        break-blocks=all is used. </li>
+        <li>Remove warnings for signed/unsigned mismatch. </li>
+        <li>Removed COMPARE macro and used string compare. </li>
+        <li>Removed compiler_defines.h. </li>
+        <li>Removed USES_NAMESPACE declaration.</li>
+    </ul>
+    <h3>Artistic Style 1.16</h3>
+    <ul>
+        <p>There was no release 1.16.</p>
+    </ul>
+    <h3>Artistic Style 1.15.3 (7&nbsp;March 2002)</h3>
+    <ul>
+        <li>
+        <div>
+            <div>
+                Bug fix in handling of brackets after line-comments.</div>
+        </div>
+        </li>
+        <li>
+        <div>
+            <div>
+                Bug fix: C# add/remove event property headers now properly 
+                formatted.</div>
+        </div>
+        </li>
+    </ul>
+    <h3>Artistic Style 1.15.2 (2&nbsp;March 2002)</h3>
+    <ul>
+        <li>
+        <div>
+            Bug fixes in exception handling phrases, e.g. multiple catches and 
+            try..finally.</div>
+        </li>
+    </ul>
+    <h3>Artistic Style 1.15.1 (2&nbsp;March 2002)</h3>
+    <ul>
+        <li>
+        <div>
+            Bug fix: C# properties are now formatted properly.</div>
+        </li>
+    </ul>
+    <h3>Artistic Style 1.15.0 (2&nbsp;March 2002)</h3>
+    <ul>
+        <li>
+        <div>
+            Added support for C#.</div>
+        </li>
+        <li>
+        <div>
+            Artistic Style is now licensed only under the GNU Public License 
+            (GPL).</div>
+        </li>
+        <li>
+        <div>
+            Compilation under G++ 3.0 now works properly.</div>
+        </li>
+        <li>
+        <div>
+            Bug fix: Opening brackets that appear at the beginning of a line 
+            immediately after an empty line comment are now handled properly, 
+            and not appended as part of the line comment.</div>
+        </li>
+        <li>
+        <div>
+            Bug fix: Brackets inside comments are now not mis-indented within 
+            the comment.</div>
+        </li>
+    </ul>
+    <p></p>
+    <h3>Artistic Style 1.14.1 (2&nbsp;June 2001)</h3>
+    <p></p>
+    <ul>
+        <li>
+        <div>
+            Bug fix: : '&lt;' and '&gt;' symbols within template&nbsp;declarations (e.g. 
+            'foo&lt;bar*, xoo&gt;') are now left unpadded in the padding modes.</div>
+        </li>
+        <li>
+        <div>
+            Bug fix: Fixed false recognizing of headers within larger words 
+            (e.g. 'catch' in 'gcatch').</div>
+        </li>
+    </ul>
+    <h3>Artistic Style 1.14.0 (1&nbsp;June 2001)</h3>
+    <ul>
+        <li>
+        <div>
+            Bug fix: Fixed indentation of statements within preprocessor 
+            '#if...' statements.</div>
+        </li>
+        <li>
+        <div>
+            Bug fix: Templates are now not broken from their bodies.</div>
+        </li>
+        <li>
+        <div>
+            Bug fix: '&lt;' and '&gt;' symbols within template definitions (e.g. 
+            'template&lt;class T&gt;') are now left unpadded in the padding modes.</div>
+        </li>
+    </ul>
+    <h3>Artistic Style 1.13.8 (13 April 2001)</h3>
+    <ul>
+        <li>
+        <div>
+            Bug fix: Fixed indentation of multiple nested non-block brackets, 
+            such as in multi bracketed static array declarations.</div>
+        </li>
+    </ul>
+    <h3>Artistic Style 1.13.7 (6 April 2001)</h3>
+    <ul>
+        <li>
+        <div>
+            New option:'--force-indent=tab=#' (or 'T#') instructs astyle to 
+            indent using tabs in all the pre-statement white space, including 
+            areas astyle's '--indent=tab' prefers to indent using spaces, such 
+            as white space in multi-line statements.</div>
+        </li>
+        <li>
+        <div>
+            Bug fix: Fixed unwanted empty line insertions between empty blocks 
+            (e.g. '{}') and closing brackets that come immediately after them.</div>
+        </li>
+        <li>
+        <div>
+            Bug fix: Fixed unwanted empty line insertions immediately after 
+            colons (e.g. 'default:', 'label:', ...)</div>
+        </li>
+    </ul>
+    <h3></h3>
+    <div>
+        <h3>Artistic Style 1.13.6 (24 January 2001)</h3>
+    </div>
+    <h3></h3>
+    <ul>
+        <li>
+        <div>
+            Bug fix: Preprocessor lines now remain unpadded in padding modes.</div>
+        </li>
+    </ul>
+    <h3>Artistic Style 1.13.5 (24 January 2001)</h3>
+    <ul>
+        <li>
+        <div>
+            Bug fix: Fixed the insertion of phantom empty lines immediately 
+            after {} blocks.</div>
+        </li>
+        <li>
+        <div>
+            Bug fix: Bare open brackets ('{') with no preceding headers are now 
+            broken appropriately from their preceding code lines in the 'attach' 
+            and 'linux' bracketmodes.</div>
+        </li>
+        <li>
+        <div>
+            Bug fix: Fixed operator recognition for long operators such as 
+            '&gt;&gt;=', '&lt;&lt;= '.</div>
+        </li>
+    </ul>
+    <h3>Artistic Style 1.13.4 (24 January 2001)</h3>
+    <ul>
+        <li>
+        <div>
+            Bug fix: L&quot; unicode strings are now handled properly in padding 
+            modes.</div>
+        </li>
+        <li>
+        <div>
+            Bug fix: Fixed the padding around '-' operators (which went sour 
+            somewhere in the past).</div>
+        </li>
+        <li>
+        <div>
+            Bug fix: Fixed the handling of exponent numbers (e.g. 12.2e+2) in 
+            padding modes. The fix enables 'e+' to be regarded as part of the 
+            exponent.</div>
+        </li>
+    </ul>
+    <h3>Artistic Style 1.13.3 (23 January 2001)</h3>
+    <ul>
+        <li>
+        <div>
+            Line that contain both headers and their following non-header code 
+            (e.g. 'if (isFoo) doBar();') are now broken by default into multiple 
+            lines. To keep these lines as single lines, use '--one-line= 
+            keep-statements'.</div>
+        </li>
+        <li>
+        <div>
+            Added the new option '--break-elseifs' which breaks 'else if()' 
+            statements into multiple lines.</div>
+        </li>
+        <li>
+        <div>
+            The option block breaking options now works properly with the 
+            padding options.</div>
+        </li>
+        <li>
+        <div>
+            Various minor bug fixes.</div>
+        </li>
+    </ul>
+    <h3>Artistic Style 1.13.2 (21 January 2001)</h3>
+    <ul>
+        <li>
+        <div>
+            Added the new option '--brackets=break-closing-headers'. When this 
+            option is added to either '--brackets=attach' or '--brackets= 
+            linux', astyle breaks closing headers (e.g. 'else', 'catch') from 
+            their preceding closing brackets.</div>
+        </li>
+        <li>
+        <div>
+            '--break-blocks' and '--break-blocks= all' now correctly handle 
+            blocks that appear immediately before closing brackets, and do not 
+            append empty lines between them and the closing brackets.</div>
+        </li>
+    </ul>
+    <h3>Artistic Style 1.13.0 (27 September 1999)</h3>
+    <ul>
+        <li>Moved back to odd-minor-numbered development versions, and 
+        even-minor-numbered stable versions. </li>
+        <li>Added the new option '--break-blocks' which breaks apart unrelated 
+        blocks, labels, classes, etc. </li>
+        <li>Added the new option '--break-blocks=all' which also breaks apart 
+        blocks of closing headers, such as 'else', 'catch', etc. </li>
+        <li>Fixed indentation handling of labels and class-definition 
+        identifiers such as 'public:', 'protected:', ... (thanks to Daryn Adler 
+        for his patch) </li>
+        <li>Fixed indentation of nested class definitions. (thanks to Daryn 
+        Adler for his patch) </li>
+        <li>Added the new option '--indent-preprocessor' which (surprisingly) 
+        tries to reindent C/C++ preprocessor macro lines. Astyle should do an 
+        pretty nice indentation job if the macro code is sane, but don't expect 
+        miracles for horrid macro definitions...</li>
+    </ul>
+    <h3>Artistic Style 1.11.6&nbsp;(27 September 1999)</h3>
+    <ul>
+        <li>Improved indentation of lines containing single-line blocks.</li>
+    </ul>
+    <h3>Artistic Style 1.11.5&nbsp;(25 September 1999)</h3>
+    <ul>
+        <li>Improved the bug fix for a 'const' keyword bug which resulted in 
+        wrong indentation of methods that are declared const.</li>
+    </ul>
+    <h3>Artistic Style 1.11.4&nbsp;(18 September 1999)</h3>
+    <ul>
+        <li>Improved handling of single colons (':') in class headers, e.g. 
+        class Foo : public Bar { ... } </li>
+        <li>Improved handling of single colons (':') in method (constructor) 
+        headers, e.g. Foo::Foo(int a) : Bar(a)</li>
+    </ul>
+    <h3>Artistic Style 1.11.3&nbsp;(16 September 1999)</h3>
+    <ul>
+        <li>Fixed a serious bug in the formatting of brackets, introduced in 
+        1.11.2.</li>
+    </ul>
+    <h3>Artistic Style 1.11.2&nbsp;(10 September 1999)</h3>
+    <ul>
+        <li>Fixed an indentation bug in statements that contain the 'const', 
+        that resulted in wrong indentation of array blocks that where declared 
+        const. (Thanks Daniel!) </li>
+        <li>Fixed an indentation bug that could arise in lines that appear 
+        immediately after several preprocessor commands. (Thanks Daniel!). </li>
+        <li>Fixed a bug that inserted an empty line after closing brackets if a 
+        comment appeared immediately prior to the closing bracket. (Thanks Ed!)
+        </li>
+        <li>Fixed a bug that eliminated empty lines between closing brackets and 
+        immediately following opening brackets. (Thanks Ed!)</li>
+    </ul>
+    <h3>Artistic Style 1.11.1&nbsp;(3 September 1999)</h3>
+    <ul>
+        <li>Fixed a bug that inserted an empty line at the begining of source 
+        files. </li>
+    </ul>
+    <h3>Artistic Style 1.11.0&nbsp;(3 September 1999)</h3>
+    <ul>
+        <li>Astyle now filters out line-feeds ('\r') before begining to parse 
+        lines. This should take care of bizarre formatting that existed when 
+        moving source files from Windows (which breaks lines with a linefeed AND 
+        newline (&quot;\r\n&quot;) to unix (which breaks lines only with newlines). </li>
+        <li>The &quot;struct&quot;, &quot;static&quot; and &quot;synchronized&quot; keywords are now finally 
+        handled correctly in both the contexts of block headers AND simple 
+        keywords. </li>
+        <li>Better treatment of precompiler lines that end with backslashes, and 
+        the lines that immediately follow them. </li>
+        <li>The '--indent-classes' (or '-C') option now works correctly 
+        (again...). </li>
+        <li>Series of short command-line options (e.g. &quot;-b -s4 -C&quot;) are now 
+        parsed correctly.</li>
+    </ul>
+    <h3>Artistic Style 1.10.4&nbsp;(27 July 1999)</h3>
+    <ul>
+        <li>Fixed a MAJOR bug (inserted in 1.10.3) that resulted wrong handling 
+        of double-colons ('::') in C++. </li>
+    </ul>
+    <h3>Artistic Style 1.10.3&nbsp;(24 July 1999)</h3>
+    <ul>
+        <li>Fixed a bug (inserted yesterday) that resulted in unwanted line 
+        breaks before closing-brackets. </li>
+        <li>Fixed a bug in the handling of 'static' blocks in java. </li>
+        <li>Added the new option '--indent-cases' (or '-K') for indenting 'case 
+        XXX:' lines so they are flush with their following code lines. </li>
+        <li>Added the new option '--fill-empty-lines' (or '-E') which fills 
+        empty lines with the white-space of their previous line. </li>
+    </ul>
+    <h3>Artistic Style 1.10.2&nbsp;(23 July 1999)</h3>
+    <ul>
+        <li>Fixed a series of related bugs that resulted in certain cases of 
+        lacking line breaks after close-brackets, and colons. Thanks Jeroen!</li>
+    </ul>
+    <h3>Artistic Style 1.10.1&nbsp;(18 July 1999)</h3>
+    <ul>
+        <li>Fixed a bug (introduced in astyle 1.10.0) that can result in missing 
+        line breaks before closing brackets if they appear immediately after 
+        comments. Thanks Larry!</li>
+    </ul>
+    <h3>Artistic Style 1.10.0&nbsp;Release (14 July 1999)</h3>
+    <ul>
+        <li>Improved handling of empty bracket blocks ( e.g.{ } ). Thanks 
+        Michael!</li>
+    </ul>
+    <h3>Artistic Style 1.10.0&nbsp;Prerelease (4 July 1999)</h3>
+    <ul>
+        <li>Fixed a bug in the in-statement indentation algorithm which resulted 
+        in sub-optimal indentation of multiple-line conditional statements that 
+        immediately follow headers such as 'if', 'else if', 'while', etc... As a 
+        result, the current in-statement indentation is finally what it should 
+        have been long ago - MUCH better then in the last stable versions. </li>
+        <li>The &quot;linux&quot; bracket style (in which definition brackets are broken 
+        while code brackets are attached) has been fixed, and should finally 
+        work correctly. </li>
+        <li>Artistic Style can now parse both C/C++ and Java files in the same 
+        command. Unless a specific language mode is specified (e.g. --style=java 
+        or --style=c), astyle will now automatically set the language mode 
+        according to each file's suffix (java mode for the '.java' suffix , c 
+        mode&nbsp; otherwise). </li>
+        <li>Multiple statements in a single line (e.g. aaa; bbb; fff;) are now 
+        broken up by default. </li>
+        <li>Added the option '<strong>--one-line=keep-statement</strong>s' (or '<strong>-o</strong>') 
+        that keeps multiple statements in a single line attached, thus 
+        countering the default break detailed above. </li>
+        <li>Changed the option previously called '<strong>--keep-one-line-blocks</strong>' 
+        to '<strong>--one-line=keep-blocks</strong>', for similarity with the 
+        new option above. </li>
+        <li>Changed the short option name of the option '-<strong>-errors-to-standard-output</strong>' 
+        from '<strong>-o</strong>' to '<strong>-X</strong>'. </li>
+        <li>Up to now, Artistic Style always inserted a minimal indent of
+        <strong>t</strong>wice the current selected indent size<strong> </strong>
+        inside multi-line conditional headers ('if', 'while' ...), so that it 
+        would be clear where the headers end and the code after them begins. The 
+        current version adds the option '<strong>--min-conditional-indent=#</strong>' 
+        (or '<strong>-m#</strong>') that sets the absolute minimal indent 
+        between conditional headers and their multiple-line conditional 
+        statements. If this option is not specified, the default indent remains
+        <strong>twice the current selected indent size</strong>.<br>
+        For example, This option should come very handy in code that already has 
+        brackets after EVERY conditional statement (even if just one line is in 
+        that bracket...) - in such a case, it would be wise to set <strong>
+        --min-conditional-indent=0 </strong>since the brackets already make it 
+        clear where the header ends and the code begins... </li>
+        <li>Added the ability to set the assumed tab size when in '<strong>--indent-tab</strong>' 
+        mode by using '<strong>--indent-tab=#</strong>' or '<strong>-t#</strong>' 
+        and replacing the <strong>#</strong> with the wanted size. If the size 
+        is not specified, the size of each tab is assumed to be 4 spaces long.</li>
+    </ul>
+    <h3>Artistic Style 1.8.2&nbsp;(18 March 1999)</h3>
+    <ul>
+        <li>Fixed pointer handling problems in ASBeautifier that led to crashes 
+        when parsing preprocessor commands. </li>
+        <li>Fixed the problem in locating the default options file in the 
+        directory pointed to by $HOME or %HOMEPATH% when these system variables 
+        do not contain an '/' (or '\' ...) at their end. </li>
+        <li>Fixed inverse insertion of spaces vs. tabs when in -t mode. (Thanks 
+        Brian!) </li>
+        <li>Got rid of those pesky C4786 warnings when compiling under Visual 
+        C++ (Thanks John!)</li>
+    </ul>
+    <h3>Artistic Style 1.8.1&nbsp;(9 March 1999)</h3>
+    <ul>
+        <li>Changed the '--style=k&amp;r' option to '--style= kr' , so that 
+        linux/unix machines don't misinterpret the '&amp;' as a background 
+        processing command.</li>
+    </ul>
+    <h3>Artistic Style 1.8.0&nbsp;(3 March 1999)</h3>
+    <ul>
+        <li>Added support for predefined styles. Current supported styles are:
+        <strong>ansi, k&amp;r, linux, gnu, java</strong>. these can be set by using 
+        '--style=THESTYLE' (e.g. '--style=linux'). </li>
+        <li>Added '--indent-blocks' (or -G) option, which <strong>adds 
+        indentation to entire blocks</strong>, including their brackets, in 
+        similar fashion to the standard gnu style. </li>
+        <li>Added option '--brackets=linux' (or '-l') which <strong>breaks 
+        definition-block brackets, but attaches command-block brackets</strong>.
+        </li>
+        <li>Padding can now be set separately for operators alone('-p' or 
+        '--pad=oper'), parentheses alone ('--pad=paren) or both ('-P' or 
+        '--pad=all'). </li>
+        <li>Artistic Style looks for a default options file in the following 
+        order:<br>
+        1. The contents of the <strong>ARTISTIC_STYLE_OPTIONS</strong> 
+        environment variable if it exists.<br>
+        2. The file called .astylerc in the directory pointed to by the <strong>
+        HOME</strong> environment variable ( i.e. <strong>$HOME/.astylerc</strong> 
+        ).<br>
+        3. The file called .astylerc in the directory pointed to by the <strong>
+        HOMEPATH</strong> environment variable ( i.e. <strong>
+        %HOMEPATH%\.astylerc</strong> ).<br>
+        If a default options file is found, the options in this file will be 
+        parsed BEFORE the command-line options. Options within the default 
+        option file may be written without the preliminary '-' or '--'. 
+        Indentation within #if , #else and #endif precompiler commands now works 
+        correctly even if the program lines between these precompiler commands 
+        contain non-pared brackets. </li>
+        <li>Improved handling of labels (e.g. 'exit:'). By default, labels are 
+        now flushed completely to the left. Labels can also be indented to one 
+        indent LESS than current standard indentation by using the new option 
+        '--indent-labels' (or '-L') . </li>
+        <li>Fixed handling of the 'operator' keyword when it is preceded by a 
+        non space character (such as '&amp;' or '*'). </li>
+        <li>Fixed wrong bracket handling after 'throws' statements. </li>
+        <li>Fixed wrong indentation of single-line blocks. These where indented 
+        1 indent to much. </li>
+        <li>Fixed wrong indentation of headers in internal classes (java mode). 
+        These where indented 1 indent to little. </li>
+        <li>The option ' --errors-to-standard-output' now has the one-letter 
+        option '-o'. </li>
+        <li>Fixed bug which resulted in an unneeded indent in 
+        function-declarations in which function-variables are declared before 
+        the function declaration and are preceded by the 'static' keyword. 
+        Thanks Scott. </li>
+    </ul>
+    <h3>Artistic Style 1.6.0&nbsp;&nbsp; (5 January 1999)</h3>
+    <ul>
+        <li>Fixed zero indentation that resulted when a '-suffix' option was set 
+        after a '--indent=spaces' (or '-s') option.. </li>
+        <li>Wrong options are now announced. </li>
+        <li>Changed default indentation to NOT automatically indent class blocks 
+        and switch blocks. Instead, the new options '--indent-classes' (or '-C') 
+        and '--indent-switches' (or '-S') should be used. The option 
+        '--indent-switches' replaces the old option '--flush-switches'.</li>
+    </ul>
+    <h3>Artistic Style 1.4.1&nbsp;&nbsp; (4 January 1999)</h3>
+    <ul>
+        <li>Fixed ability to write options without the preceding '--' in the 
+        default options file. </li>
+        <li>Added one-letter options to most options that had only long-options 
+        in version 1.4.0 . </li>
+        <li>Added a '-v' or '--version' option that writes the current Artistic 
+        Style version.</li>
+    </ul>
+    <h3>Artistic Style 1.4.0&nbsp;&nbsp; (3 January 1999)</h3>
+    <ul>
+        <li><strong>MAJOR NEW CHANGE IN THE FORMAT OF OPTIONS:</strong><br>
+        Options are now either <strong>short one-letter options</strong> 
+        starting with '-', or <strong>long multi-letter options</strong> 
+        starting with '--'. The Short one-letter options MAY BE ATTACHED 
+        TOGETHER. Thus, writing '-bps4' is the same as writing '-b -p -s4'.<br>
+        Many options that have up to now had a 2 letter format now retain only 
+        their long format. I truly believe that the combination of 
+        attached-one-letter options PLUS a default option's file containing 
+        long-letter-options related to style will be much easier to work with 
+        than the previous setup. </li>
+        <li>Added support for <strong>a default options file</strong> (pointed 
+        to by the <strong>ARTISTIC_STYLE_OPTIONS environment variable</strong>).
+        </li>
+        <li>Changed downloading method from the server. From now, there will be 
+        specific directories containing the latest stable sources, stable 
+        binaries, and development sources. </li>
+        <li>Space padding ('-p' or '--pad') now works correctly (1) around 
+        semicolons and commas, (2) between headers that require parentheses 
+        after them (such as 'if', 'while'...)and those parentheses, and (3) 
+        after parentheses (unless immediately followed by a ';' or ',' or '.') .
+        </li>
+        <li>From now on, namespace blocks are NOT indented by default. To indent 
+        namespace blocks use the new '--indent-namespaces' option. </li>
+        <li>Added options '--errors-to-standard-output' for redirection of 
+        standard-error to standard-output from within Artistic Style, and 
+        '--suffix=' for specifying a suffix other than '.orig' to append to 
+        original filenames.. </li>
+        <li>Corrected indentation of 'default' in switch statements. (Up to now, 
+        this only worked correctly in java mode...). </li>
+    </ul>
+    <h3>Artistic Style 1.2.0&nbsp;&nbsp; (19 December 1998)</h3>
+    <ul>
+        <li>Artistic Style 1.2.0 is the first stable result of a new version 
+        numbering, in which development versions are numbered with an odd minor 
+        number (such as 1.1.x), and stable versions are numbered with an even 
+        number (1.2.x). Thus, version 1.2.0 accumulates all the 
+        additions/changes of the 1.1.x development versions of Artistic Style.
+        </li>
+        <li>A new '-ol' formatting mode that eliminates breaking of one-line 
+        blocks. </li>
+        <li>Fixed a SERIOUS bug, which resulted in wrong formatting of brackets 
+        ('{', '}') that came IMMEDIATELY AFTER definition type brackets, (e.g. 
+        brackets that come right after 'class', 'interface', 'name-space', etc 
+        ...). This bug was mistakenly introduced when I set out to correctly 
+        space-pad pointer and reference signs, somewhere in version 0.9.x . </li>
+        <li>Fixed unwanted elimination of final empty lines. </li>
+        <li>Fixed broken indentation of virgin opening-brackets that occur 
+        immediately after a previous closing-bracket. </li>
+        <li>Fixed space-padding to not insert a space in front of ':' characters 
+        unless they are a part of a '? ... : ' statement.</li>
+    </ul>
+    <h3>Artistic Style 1.0.5&nbsp;&nbsp; (11 December 1998)</h3>
+    <ul>
+        <li style="MARGIN-BOTTOM: 0cm">'extern' blocks now handled correctly.
+        </li>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed handling of ^= in '-p' mode. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Win32 executables now contain wildcard 
+        expansion. *** Look at the README.TXT for info on how to include 
+        wildcard expansion abilities when compiling Artistic Style under Win32. 
+        (Thanks for the info on wildcard-expansion enabling, Nat!!!)</li>
+    </ul>
+    <h3>Artistic Style 1.0.4&nbsp;&nbsp; (2 December 1998)</h3>
+    <ul>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed unwanted space-padding around 
+        urinary minuses and '-' symbols within exponents (e.g. 2.5E-5) when 
+        using the '-p' option.</li>
+    </ul>
+    <h3>Artistic Style 1.0.3&nbsp;&nbsp; (1 December 1998)</h3>
+    <ul>
+        <li style="MARGIN-BOTTOM: 0cm">Control characters now remain in the 
+        indented file. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed a bug in which long quoted 
+        white-space sequences where mistakenly eliminated in the '-p' mode. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed unwanted line-breaks in '-ab -p' 
+        mode, that in some cases occurred between '//' and the rest of a line 
+        comment. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed handling of '&gt;&gt;=', '&lt;&lt;= ' in '-p' 
+        mode.</li>
+    </ul>
+    <h3>Artistic Style 1.0.2&nbsp;&nbsp; (27 November 1998)</h3>
+    <ul>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed a SERIOUS bug of missing&nbsp; 
+        needed line-breaks in lines immediately after line-comments when in 
+        '-ab' mode. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Support for the 'finally' header. </li>
+        <li style="MARGIN-BOTTOM: 0cm">lines that contain only white-space now 
+        become empty lines.</li>
+    </ul>
+    <h3>Artistic Style 1.0.1&nbsp;&nbsp; (26 November 1998)</h3>
+    <ul>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed a SERIOUS bug, which lacked a 
+        needed line-break between&nbsp; closing brackets&nbsp; and the headers 
+        that follow them (e.g. '} else') when in '-bb' mode. In fixing the bug, 
+        I used a variation on a patch sent by Richard Bullington - THANKS! </li>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed a set of&nbsp; SERIOUS bugs which 
+        inserted an empty line into both the start and end of the reindented 
+        file. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Improved documentation of formatting 
+        options in the file astyle.html .</li>
+    </ul>
+    <h3>Artistic Style 1.0.0&nbsp;&nbsp; (24 November 1998)</h3>
+    <ul>
+        <li style="MARGIN-BOTTOM: 0cm">Indented files now <b><u>retain the 
+        original file name</u></b>, while the original pre-indented file is 
+        saved with a &quot;.orig&quot;at its end. Thus, after the call &quot;<b>astyle -bb 
+        foo.cpp</b>&quot;, the newly indented file will be called &quot;<b>foo.cpp&quot;</b>, 
+        while a file called &quot;<b>foo.cpp.orig</b>&quot; will contain the original 
+        pre-indented file. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Artistic Style may now be used and /or 
+        modified and/or distributed under <b>EITHER</b> the <b>&quot;Artistic 
+        License&quot;</b>, or the <b>GNU General Public License (GPL).</b> </li>
+        <li style="MARGIN-BOTTOM: 0cm">Methods with headers that end with 
+        'const' are now properly indented. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Cleaner, more robust, and better 
+        documented source code.</li>
+    </ul>
+    <h3>Artistic Style 0.9.2</h3>
+    <ul>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed a serious bug which led to a 
+        maximal supported source code line size of 128 characters!!! </li>
+        <li style="MARGIN-BOTTOM: 0cm">Maximal supported line size is now 1024 
+        characters. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed a serious bug in the handling of 
+        brackets inside '#define' statements. </li>
+        <li>Fixed a serious bug in which '#include' files containing slashes 
+        (i.e. #include &lt;foo_dir/foo&gt; ) where space-padded when using option '-p' 
+        on C, C++ files.</li>
+    </ul>
+    <h3>Artistic Style 0.9.1</h3>
+    <ul>
+        <li style="MARGIN-BOTTOM: 0cm">Much improved space-padding around 
+        pointers ('*') and references ('&amp;') and the 'operator' key-word&nbsp; in 
+        C and C++ source files when using the '-p' space padding option. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed several pointer handling bugs which 
+        led to potential core dumps. </li>
+        <li>Version 0.9.1 now includes all the abilities I am planning for the 
+        final 1.0 version, and <b><u>should be looked at as the first 
+        pre-release version of Artistic Style</u></b>.</li>
+    </ul>
+    <h3>Artistic Style 0.9.0</h3>
+    <ul>
+        <li style="MARGIN-BOTTOM: 0cm">Added a <b>formatting layer</b> 
+        (ASFormatter.cpp) around the indentation layer (ASBeautifier.cpp). </li>
+        <li style="MARGIN-BOTTOM: 0cm">As a result, the following formatting 
+        capabilities have been added:
+        <ul>
+            <li style="MARGIN-BOTTOM: 0cm">Bracket ('{' and '}') placement in 
+            either ANSI C style or Java style. </li>
+            <li style="MARGIN-BOTTOM: 0cm">Space padding around operators, i.e. 
+            (1+2)*3-4 becomes ( 1 + 2 ) * 3 - 4 .</li>
+        </ul>
+        </li>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed the 'tab' elimination bug 
+        introduced in ASBeautifier 0.8.2 . </li>
+        <li>Fixed a bug which under-indented class headers containing 
+        inheritance info.</li>
+    </ul>
+    <h3>ASBeautifier 0.8.2</h3>
+    <ul>
+        <li style="MARGIN-BOTTOM: 0cm">Fixed indentation problem in brackets 
+        around 'struct', and 'union' blocks. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Added recognition for '\' characters in 
+        the end of lines. </li>
+        <li style="MARGIN-BOTTOM: 0cm">Improved indentation of 
+        post-method-declaration variable initializations. </li>
+        <li>Several minor bug fixes.</li>
+    </ul>
+    <h3>ASBeautifier 0.8.1</h3>
+    <ul>
+        <li>Fixed an important bug in pointer arithmetic which resulted both in 
+        phantom indentation errors, and in core-dumps when trying to indent java 
+        files.</li>
+    </ul>
+    <h3>ASBeautifier 0.8.0</h3>
+    <ul>
+        <li style="MARGIN-BOTTOM: 0cm">This is the first public release of 
+        ASBeautifier. It is a direct port to C++ of JSBeautifier 1.1.1, PLUS 
+        extensions to for C++ indentation. </li>
+        <li style="MARGIN-BOTTOM: 0cm">So far, very little beta-testing has been 
+        done for the C++ extensions. This should change extremely with the 
+        open-source release (this was the case with JSBeautifier...), so expect 
+        ASBeautifier to become bug-free fast!!! </li>
+        <li>The C++ source code is not yet written in optimal quality. I rushed 
+        a little so that I could release this initial release as soon as 
+        possible. This will soon change.</li>
+    </ul>
+    <p>&nbsp;</p>
+</blockquote>
+
+</body>
+
+</html>

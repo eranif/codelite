@@ -1,0 +1,320 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+
+<style>
+BODY, P, DIV, H1, H2, H3, H4, H5, H6, ADDRESS, OL, UL, TITLE, TD, OPTION, SELECT {
+ font-family: Verdana;
+ 
+}
+
+BODY, P, DIV, ADDRESS, OL, UL, LI, TITLE, TD, OPTION, SELECT {  
+  font-size: 10.0pt;
+  margin-top:0pt;  
+  margin-bottom:0pt;  
+} 
+
+BODY, P {
+  margin-left:0pt; 
+  margin-right:0pt;
+}
+
+BODY {
+  line-height: ;
+
+  margin: 6px;
+  padding: 0px;
+}
+
+h6 { font-size: 10pt }
+h5 { font-size: 11pt }
+h4 { font-size: 12pt }
+h3 { font-size: 13pt }
+h2 { font-size: 14pt }
+h1 { font-size: 16pt }
+
+blockquote {padding: 10px; border: 1px #DDDDDD dashed }
+
+a img {border: 0}
+
+</style>
+
+
+
+
+</head>
+
+
+<body revision="dpj54wd_24fbfvhx:144">
+
+<br>
+<h2>
+  Background
+</h2>
+<div style="">
+  LiteEditor is an open source, cross platform IDE (Integrated Development
+  Environment) for the C/C++ languages.<br>
+  It was first developed to demonstrate the features of CodeLite - the internal
+  CodeCompletion engine - but evolved to become more.<br>
+  <br>
+  <h2>
+    Installation
+  </h2>
+  <div style=TEXT-ALIGN:justify>
+    <h3 style=FONT-STYLE:italic>
+      Windows
+    </h3>
+    download the installer located at:
+    <a href=https://sourceforge.net/project/showfiles.php?group_id=202033 title="Download LiteEditor">Download
+    LiteEditor</a>
+    <a href=https://developer.berlios.de/project/showfiles.php?group_id=7258></a>
+  </div>
+  <br>
+  <h3>
+    <span style=FONT-STYLE:italic>Linux</span><span style=TEXT-DECORATION:underline></span>
+  </h3>
+  <h3>
+    <span style=TEXT-DECORATION:underline></span>
+  </h3>
+  <p>
+    For Linux users, I suggest downloading the sources from the SVN and building
+    it using makefile.
+  </p>
+  <p>
+    Below is a list of the dependencies that LiteEditor requires:
+  </p>
+  <ul class=check-list>
+    <li>
+      wxWidgets 2.8.X (wxWidgets can be obtained from here:
+      <a href=http://www.wxwidgets.org/downloads/>wxWidgets Web Site</a>)
+    </li>
+    <li>
+      'wx-config' tool is located somewhere in your path (after installing
+      wxWidgets, it should be there), to test it, type:
+      <div class=code-section>
+        which wx-config
+      </div>
+    </li>
+  </ul>
+  <p>
+  </p>
+  <br>
+  Download the sources using any SVN client:
+  <div class=code-section style="FONT-FAMILY:Courier New">
+    svn co https://codelite.svn.sourceforge.net/svnroot/codelite codelite
+  </div>
+  <br>
+  From within the trunk directory, type:
+  <div class=code-section>
+    <span style="FONT-FAMILY:Courier New"> make type=release </span><br>
+    <br>
+    then, to install it:<br>
+    <span style="FONT-FAMILY:Courier New">sudo make type=release install</span>
+  </div>
+  <br>
+  <br>
+  The makefile argument 'type' can accept any of the following values, depends
+  on the build configuration you used for wxWidgets:
+  <ul class=one>
+    <li>
+      release_unicode
+    </li>
+    <li>
+      release
+    </li>
+    <li>
+      debug_unicode
+    </li>
+    <li>
+      debug
+    </li>
+  </ul>
+  <br>
+  <h3>
+    <span style=FONT-STYLE:italic>Additionals (MinGW)</span><br>
+  </h3>
+  LiteEditor is working best with the GCC compilers (g++, gcc).<br>
+  For windows users, it is recommend to download and install MinGW from here:<br>
+  <a href=http://sourceforge.net/project/showfiles.php?group_id=2435 title=http://sourceforge.net/project/showfiles.php?group_id=2435>http://sourceforge.net/project/showfiles.php?group_id=2435</a>&nbsp;
+  download the 'Current -&gt; MinGW-5.1.3.exe' and follow the instructions.<br>
+  <br>
+  <h2>
+    General Overview
+  </h2>
+  <span style=FONT-WEIGHT:bold>Directory layout<br>
+  <br>
+  </span>The default installation path for LiteEditor on Windows, is
+  '<span style="FONT-FAMILY:Courier New">C:\Progream Files\LiteEditor</span>'
+  (this can be modified during setup),&nbsp; on Linux it will be copied to
+  <span style="FONT-FAMILY:Courier New">$(HOME)/.liteeditor</span> .<br>
+  Under the installation directory, LiteEditor expects the following four
+  directories:<br>
+  <div style="PADDING:1em 0pt; TEXT-ALIGN:center">
+    <div style=TEXT-ALIGN:left>
+      <span style=FONT-WEIGHT:bold>'config' directory<br>
+      </span>Under config directory, you will find two xml files:
+      <span style=FONT-WEIGHT:bold><br>
+      </span>
+      <ul>
+        <li>
+          liteeditor.xml - the main configuration file, which contains data
+          saved between sessions, such as: Find history, panes layout, windows
+          positioning different dialogs settings and more<br>
+        </li>
+        <li>
+          build_settings.xml - this file contains information related to the
+          compilers &amp; the build system. (see below for more information)
+        </li>
+      </ul>
+      <br>
+      <span style=FONT-WEIGHT:bold>'lexers' directory<br>
+      </span>This directory contains the syntax highlight settings used by
+      LiteEditor in an XML format. Each XML file, describes a single language
+      attributes (e.g. keywords, colors for comments, fonts to use etc).<br>
+      To add new syntax highlight to the IDE, simply copy one of the existing
+      XML files, and modified it to suite you needs (for a good example, see the
+      lexer_makefile.xml file).<br>
+      For the changes take effect, you will need to restart LiteEditor. Opening
+      the 'View -&gt; Options...' dialog, will reveal new tab for the newly
+      added language:<br>
+      <br>
+      <div style="PADDING:1em 0pt; TEXT-ALIGN:center">
+        <img src="LiteEditor - Overview & Quick Start_images/dpj54wd_30dsw5qdhh.png">
+      </div>
+      <span style=FONT-WEIGHT:bold>'rc' the resource directory</span><br>
+      This directory contains the XRC file for LiteEditor menu bar (see here for
+      more information
+      <a href=http://wx4j.org/documentation/manual/xrc.html title=http://wx4j.org/documentation/manual/xrc.html>http://wx4j.org/documentation/manual/xrc.html)</a><br>
+      <span style=FONT-WEIGHT:bold></span><span style=FONT-WEIGHT:bold></span>
+    </div>
+  </div>
+  <span style=FONT-WEIGHT:bold>'templates' </span><br>
+  Under this directory, LiteEditor saves project template files. When installing
+  a fresh copy of LiteEditor, it comes with 3 basic templates:<br>
+  <ul>
+    <li>
+      Executable<br>
+    </li>
+    <li>
+      Static Library
+    </li>
+    <li>
+      Dynamic Library
+    </li>
+  </ul>
+  <br>
+  <br>
+  LiteEditor can save any project that you are working on as a template for
+  future use, so you wont need to type the same settings twice.<br>
+  <br>
+  <br>
+  <span style="FONT-WEIGHT:bold; FONT-STYLE:italic">Note: Under windows: the
+  installation path (e.g. C:\Documents and Settings\Eran\.liteeditor) is added
+  to your system PATH environment variable</span><br>
+  <br>
+  <h2>
+    Prerequisites&nbsp;<br>
+  </h2>
+  Currently, LiteEditor is configured to work with g++/gcc and the GNU make as
+  the build system.<br>
+  Before creating new workspace/project, you will need to configure at least one
+  compiler and build system.<br>
+  <br>
+  <span style=FONT-WEIGHT:bold>Defining compiler</span><br>
+  New compilers can be added via the 'Advanced dialog' (From the 'Build' menu,
+  select 'Advanced Settings...')<br>
+  Choosing the above, the following dialog will appear:<br>
+  <div style="PADDING:1em 0pt; TEXT-ALIGN:center">
+    <div style="PADDING:1em 0pt">
+      <img src="LiteEditor - Overview & Quick Start_images/dpj54wd_27f63kxfg5.png">
+    </div>
+  </div>
+  By pressing the 'New' button, you will be prompted to give the new compiler a
+  name, give it a name and hit OK, A new tab is now added to the dialog with the
+  new name.<br>
+  The new compiler's values are set to to the 'g++' values. you can then modify
+  them to fit your own compiler.<br>
+  <br>
+  For example, to add gcc compiler follow these steps:<br>
+  <ol>
+    <li>
+      Press the 'New' button and give your compiler a name (e.g. 'gnu gcc')
+    </li>
+    <li>
+      Since, as I mentioned above, the default values are set to g++, all is
+      left to be done is to rename the 'Tools' entries to fit gcc: rename g++ to
+      gcc for 'Compiler Name', 'Linker Name' and 'Shared Object Linker' entries.<br>
+    </li>
+    <li>
+      Thats it, once saved (i.e. click 'OK'), the new compiler can be selected
+      in the project settings dialog
+    </li>
+  </ol>
+  <br>
+  <span style=FONT-WEIGHT:bold>Define the build system<br>
+  <br>
+  </span>Currently, LiteEditor only supports the GNU make build system. All it
+  needs to know is the path to the 'make' utility. The default values are set
+  to:<br>
+  make and make flag is set '-f'.<br>
+  However, if you choose to use different make name (e.g. mingw32-make you can
+  explicitly specifies it in the build settings tab in the dialog), as shown
+  below:<br>
+  <div style="PADDING:1em 0pt; TEXT-ALIGN:center">
+    <div style="PADDING:1em 0pt">
+      <img src="LiteEditor - Overview & Quick Start_images/dpj54wd_28gvgzg2fn.png">
+    </div>
+  </div>
+  <h2>
+    <span style=FONT-WEIGHT:bold>Creating an 'Hello World' application</span>
+  </h2>
+  <span style=FONT-WEIGHT:bold></span>Now we are ready to give LiteEditor a test
+  drive by creating the world's famous 'hello world' application!<br>
+  <br>
+  <h3>
+    Createing the workspace
+  </h3>
+  First we need to create a workspace:<br>
+  1. Open the 'New Item' dialog from 'Workspace-&gt;Create New Workspace' and
+  complete the 'Workspace' tab fields as shown and click 'Create':<br>
+  <div style="PADDING:1em 0pt; TEXT-ALIGN:center">
+    <img src="LiteEditor - Overview & Quick Start_images/dpj54wd_31hfs429c2.png">
+  </div>
+  <span style="FONT-WEIGHT:bold; FONT-STYLE:italic">Note: 'C:\HelloWorld'
+  directory must exist (The dialog the pops when hitting 'Browse' buttons allows
+  you to create new folders)</span><br>
+  2. Right click on the new workspace, pops up the workspace's context menu,
+  select 'Create New Project'<br>
+  <div style="PADDING:1em 0pt; TEXT-ALIGN:center">
+    <img src="LiteEditor - Overview & Quick Start_images/dpj54wd_32ph2pq9hd.png">
+  </div>
+  3. Fill the 'new project dialog' as shown below and click create:<br>
+  <div style="PADDING:1em 0pt; TEXT-ALIGN:center">
+    <img src="LiteEditor - Overview & Quick Start_images/dpj54wd_33cq5mxfp2.png">
+  </div>
+  <span style="FONT-WEIGHT:bold; FONT-STYLE:italic">Note: 'C:\HelloWorld\testme'
+  directory must exist (The dialog the pops when hitting 'Browse' button allows
+  you to create new folders)</span><br>
+  <br>
+  4. Add source file to the project and paste it the following code:<br>
+  <br>
+  <span style="FONT-FAMILY:Courier New">&nbsp;&nbsp;&nbsp; #include "stdio.h"<br>
+  <br style="FONT-FAMILY:Courier New">
+  </span><span style="FONT-FAMILY:Courier New">&nbsp;&nbsp;&nbsp; int main(int
+  argc, char **argv) {</span><br style="FONT-FAMILY:Courier New">
+  <span style="FONT-FAMILY:Courier New">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+  printf("Hello world from
+  LiteEditor\n");</span><br style="FONT-FAMILY:Courier New">
+  <span style="FONT-FAMILY:Courier New">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+  return 0;</span><br style="FONT-FAMILY:Courier New">
+  <span style="FONT-FAMILY:Courier New">&nbsp;&nbsp;&nbsp;
+  }</span><br style="FONT-FAMILY:Courier New">
+  <div style="PADDING:1em 0pt; TEXT-ALIGN:center">
+    <img src="LiteEditor - Overview & Quick Start_images/dpj54wd_346qds5rgx.png">
+  </div>
+  5. Hit 'F7' (accelerator key for 'Build Active Project') to build the project
+  and hit Ctrl+F5 to run it!<br>
+  <span style=FONT-WEIGHT:bold><br>
+  <br>
+  </span>
+</div></body>
+</html>

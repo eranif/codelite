@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <title>AStyle Supplemental Documentation</title>
+        <style> <!-- h1 {color:#0000A0; text-align:center; font-style:italic; font-size:200%;}
+	h2 {color:#0000A0;}
+	h3 {color:#0000A0;}
+	h4 {font-size:105%}
+	code {color:#0000A0;}
+	pre {color:#0000A0; font-weight:bold;}
+	--></style>
+    </head>
+    <body lang="EN-US">
+        <blockquote><blockquote>
+                <h1>Artistic Style Supplemental Documentation</h1>
+                <hr>
+                <h3><a name="_break_blocks"></a>Problems with Break Header Blocks, Break All Blocks</h3>
+                <p>The following are known problems with the break header blocks and break all 
+                blocks options (<code><strong>--break-blocks, --break-blocks=all</strong></code>).</p>
+                <ul>
+                    <li>
+                        <p>If a statement is NOT part of a block, the following statements are all double 
+                        spaced. Statements enclosed in a block are formatted correctly.</p>
+                        <blockquote> 
+                            <p>This:</p>
+                            <pre>visStatusHeight = rcStatus.bottom - rcStatus.top;
+if(!opt.bViewStatus)
+    visStatusHeight = 0;
+GetClientRect(hwnd, &amp;rcEdit);
+iEditLeft = rcEdit.left;
+iEditRight = rcEdit.right - iEditLeft;
+</pre>
+                            <p>Becomes this (with extra lines added where they shouldn't be):</p>
+                            <pre>visStatusHeight = rcStatus.bottom - rcStatus.top;
+
+if (!opt.bViewStatus) 
+    visStatusHeight = 0;
+
+GetClientRect(hwnd, &amp;rcEdit);
+
+iEditLeft = rcEdit.left;
+
+iEditRight = rcEdit.right - iEditLeft;
+
+</pre>
+                        </blockquote>
+                    <li>
+                        <p>Comments are broken from the block.</p>
+                        <blockquote> 
+                            <p>This:</p>
+                            <pre>// line numbers and select must be done after SCI_STYLECLEARALL
+if(setDialog)
+    skip = true;
+</pre>
+                            <p>Becomes this (with a line added after the comment):</p>
+                            <pre>// line numbers and select must be done after SCI_STYLECLEARALL
+
+if(setDialog)
+    skip = true;
+</pre>
+                        </blockquote>
+                    </li>
+                </ul>
+
+
+            </blockquote></blockquote>
+    </body>
+</html>

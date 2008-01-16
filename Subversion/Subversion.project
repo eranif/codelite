@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="Subversion">
+  <VirtualDirectory Name="Source Files">
+    <File Name="svndriver.cpp"/>
+    <File Name="subversion.cpp"/>
+    <File Name="svnhandler.cpp"/>
+    <File Name="svnoptions.cpp"/>
+    <File Name="svnxmlparser.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Header Files">
+    <File Name="svndriver.h"/>
+    <File Name="subversion.h"/>
+    <File Name="svnhandler.h"/>
+    <File Name="svnoptions.h"/>
+    <File Name="svnxmlparser.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Dialogs">
+    <File Name="svndlg.h"/>
+    <File Name="svnbasedlg.cpp"/>
+    <File Name="svnbasedlg.h"/>
+    <File Name="svndlg.cpp"/>
+    <File Name="svnoptionsdlg.h"/>
+    <File Name="svnoptionsbasedlg.cpp"/>
+    <File Name="svnoptionsbasedlg.h"/>
+    <File Name="svnoptionsdlg.cpp"/>
+    <File Name="svnlogbasedlg.h"/>
+    <File Name="svnlogbasedlg.cpp"/>
+    <File Name="svnlogdlg.h"/>
+    <File Name="svnlogdlg.cpp"/>
+    <File Name="svnadditemsbasedlg.cpp"/>
+    <File Name="svnadditemsdlg.cpp"/>
+    <File Name="svnadditemsbasedlg.h"/>
+    <File Name="svnadditemsdlg.h"/>
+    <File Name="logindlg.cpp"/>
+    <File Name="logindlgbase.cpp"/>
+    <File Name="logindlg.h"/>
+    <File Name="logindlgbase.h"/>
+  </VirtualDirectory>
+  <Settings Type="Dynamic Library">
+    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../Runtime/Plugin.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode"/>
+      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes);">
+        <Library Value="libplugin_sdkud.a"/>
+        <Library Value="libCodeLiteud.a"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../Runtime/Plugin.so" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode"/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
+        <Library Value="libplugin_sdku.a"/>
+        <Library Value="libCodeLiteu.a"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="../Runtime/plugins/Subversion.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory=""/>
+      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sdk/wxflatnotebook/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="_WIN32_WINNT=0x501"/>
+        <Preprocessor Value="ASTYLE_LIB"/>
+      </Compiler>
+      <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes);">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libwxFlatNotebookud.a"/>
+        <Library Value="libplugin_sdkud.a"/>
+        <Library Value="libCodeLiteud.a"/>
+        <Library Value="libwxmsw28ud.a"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="../Runtime/plugins/Subversion.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./WinReleaseUnicode"/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --unicode=yes --debug=no)">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sdk/wxflatnotebook/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="_WIN32_WINNT=0x501"/>
+        <Preprocessor Value="ASTYLE_LIB"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdku.a"/>
+        <Library Value="libCodeLiteu.a"/>
+        <Library Value="libwxFlatNotebooku.a"/>
+        <Library Value="libwxmsw28u.a"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+  <Dependencies/>
+</CodeLite_Project>

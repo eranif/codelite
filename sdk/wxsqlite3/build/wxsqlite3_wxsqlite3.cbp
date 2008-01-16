@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="5" />
+	<Project>
+		<Option title="wxsqlite3" />
+		<Option pch_mode="2" />
+		<Option default_target="" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="" />
+		<Build>
+			<Target title="Debug">
+				<Option output="..\lib\msw_gcc\libwxsqlite3d.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj\msw_gcc\Debug" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`wx-config --cflags --debug`" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs --debug`" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="..\lib\msw_gcc\libwxsqlite3.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj\msw_gcc\Release" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="`wx-config --cflags`" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="`wx-config --libs`" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Release;Debug;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="..\include" />
+			<Add directory="..\..\sqlite3" />
+		</Compiler>
+		<Unit filename="..\include\wx\wxsqlite3.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\include\wx\wxsqlite3def.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\include\wx\wxsqlite3dyn.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\wxsqlite3.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

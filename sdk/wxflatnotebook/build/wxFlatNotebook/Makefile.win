@@ -1,0 +1,31 @@
+# Project: libwxFlatNotebook
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = Objects/wxFlatNotebook.obj $(RES)
+LINKOBJ  = Objects/wxFlatNotebook.obj $(RES)
+LIBS =  -L"E:/Program/Util/Programmer/Dev-CPP/lib"  
+INCS =  -I"E:/Program/Util/Programmer/Dev-CPP/include"  -I"../../include" 
+CXXINCS =  -I"E:/Program/Util/Programmer/Dev-CPP/lib/gcc/mingw32/3.4.2/include"  -I"E:/Program/Util/Programmer/Dev-CPP/include/c++/3.4.2/backward"  -I"E:/Program/Util/Programmer/Dev-CPP/include/c++/3.4.2/mingw32"  -I"E:/Program/Util/Programmer/Dev-CPP/include/c++/3.4.2"  -I"E:/Program/Util/Programmer/Dev-CPP/include"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/msw"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/generic"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/animate"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/fl"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/gizmos"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/html"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/mmedia"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/net"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/ogl"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/plot"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/protocol"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/stc"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/svg"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/xml"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx/xrc"  -I"E:/Program/Util/Programmer/Dev-CPP/include/wx"  -I"../../include" 
+BIN  = ../../lib/libwxFlatNotebook.a
+CXXFLAGS = $(CXXINCS)  -fexpensive-optimizations -O3
+CFLAGS = $(INCS)  -fexpensive-optimizations -O3
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before ../../lib/libwxFlatNotebook.a all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(LINKOBJ)
+	ar r $(BIN) $(LINKOBJ)
+	ranlib $(BIN)
+
+Objects/wxFlatNotebook.obj: ../../src/wxFlatNotebook/wxFlatNotebook.cpp
+	$(CPP) -c ../../src/wxFlatNotebook/wxFlatNotebook.cpp -o Objects/wxFlatNotebook.obj $(CXXFLAGS)

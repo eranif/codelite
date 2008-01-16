@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="5" />
+	<Project>
+		<Option title="wxscintilla" />
+		<Option pch_mode="2" />
+		<Option default_target="src" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="" />
+		<Build>
+			<Target title="Debug">
+				<Option output="..\lib\msw_gcc\libwxscintillad.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj\msw_gcc\Debug" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`wx-config --cflags --debug`" />
+				</Compiler>
+				<Linker>
+					<Add option="`wx-config --libs --debug`" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="..\lib\msw_gcc\libwxscintilla.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj\msw_gcc\Release" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="`wx-config --cflags`" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="`wx-config --libs`" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Release;Debug;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add option="-Winvalid-pch" />
+			<Add option="-DWX_PRECOMP" />
+			<Add option="-D__WX__" />
+			<Add option="-DSCI_LEXER" />
+			<Add option="-DLINK_LEXERS" />
+			<Add directory="..\include" />
+			<Add directory="..\src\scintilla\include" />
+			<Add directory="..\src\scintilla\src" />
+		</Compiler>
+		<Unit filename="..\include\wx\wxscintilla.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\PlatWX.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\PlatWX.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\ScintillaWX.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\ScintillaWX.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\include\Accessor.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\include\KeyWords.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\include\Platform.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\include\PropSet.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\include\SString.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\include\SciLexer.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\include\Scintilla.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\include\ScintillaWidget.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\include\WindowAccessor.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\AutoComplete.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\AutoComplete.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\CallTip.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\CallTip.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\CellBuffer.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\CellBuffer.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\CharClassify.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\CharClassify.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\ContractionState.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\ContractionState.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\Document.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\Document.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\DocumentAccessor.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\DocumentAccessor.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\Editor.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\Editor.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\ExternalLexer.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\ExternalLexer.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\Indicator.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\Indicator.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\KeyMap.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\KeyMap.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\KeyWords.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexAPDL.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexAU3.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexAVE.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexAda.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexAsm.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexAsn1.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexBaan.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexBash.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexBasic.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexBullant.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexCLW.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexCPP.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexCSS.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexCaml.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexConf.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexCrontab.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexCsound.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexEScript.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexEiffel.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexErlang.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexFlagship.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexForth.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexFortran.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexGui4Cli.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexHTML.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexHaskell.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexInno.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexKix.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexLisp.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexLout.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexLua.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexMMIXAL.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexMPT.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexMSSQL.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexMatlab.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexMetapost.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexNsis.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexOpal.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexOthers.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexPB.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexPOV.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexPS.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexPascal.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexPerl.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexPython.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexRebol.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexRuby.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexSQL.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexScriptol.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexSmalltalk.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexSpecman.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexSpice.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexTADS3.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexTCL.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexTeX.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexVB.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexVHDL.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexVerilog.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LexYAML.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LineMarker.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\LineMarker.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\PropSet.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\RESearch.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\RESearch.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\SVector.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\ScintillaBase.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\ScintillaBase.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\Style.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\Style.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\StyleContext.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\StyleContext.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\UniConversion.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\UniConversion.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\ViewStyle.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\ViewStyle.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\WindowAccessor.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\XPM.cxx">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\scintilla\src\XPM.h">
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\src\wxscintilla.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

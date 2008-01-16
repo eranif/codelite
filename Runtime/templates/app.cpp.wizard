@@ -1,0 +1,45 @@
+#include "$(AppFile).h"
+#include "wx/image.h"
+#include "wx/sysopt.h"
+#include "wx/xrc/xmlres.h"
+#include "$(MainFrameFile).h"
+
+IMPLEMENT_APP($(AppName))
+
+$(AppName)::$(AppName)()
+{
+}
+
+$(AppName)::~$(AppName)()
+{
+}
+
+bool $(AppName)::OnInit()
+{
+	// Init resources and add the PNG handler
+	wxSystemOptions::SetOption(_T("msw.remap"), 0);
+	wxXmlResource::Get()->InitAllHandlers();
+	wxImage::AddHandler( new wxPNGHandler );
+	wxImage::AddHandler( new wxCURHandler );
+	wxImage::AddHandler( new wxICOHandler );
+	wxImage::AddHandler( new wxXPMHandler );
+	wxImage::AddHandler( new wxGIFHandler );
+
+	wxFrame* frame = new $(MainFrameName)(NULL,
+                                   wxID_ANY,
+                                   wxT("$(ProjectName)"),
+                                   wxDefaultPosition,
+								   wxSize(800, 600));
+	
+
+
+	frame->Show(TRUE);
+	SetTopWindow(frame);
+	return TRUE;
+}
+
+int $(AppName)::OnExit()
+{
+	return 0;
+}
+

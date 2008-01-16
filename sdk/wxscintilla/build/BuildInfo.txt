@@ -1,0 +1,61 @@
+##############################################################################
+## File:        BuildInfo.txt
+## Purpose:     Installation info
+## Maintainer:  Otto Wyss
+## Created:     2004-11-14
+## RCS-ID:      $Id: BuildInfo.txt,v 1.3 2005/09/02 20:21:32 wyo Exp $
+## Copyright:   (c) 2004 wxCode
+## Licence:     wxWindows
+##############################################################################
+
+Requirements
+============
+To build successfully you need at least wxWidgets 2.6.1 (stable).
+
+
+Generel building rules
+======================
+1. Build or get the wxWidgets libraries however this is done on your platform
+(e.g. packages wxGTK2.4 from Debian/sarge). If the libraries are installed,
+nothing additional has to be done. Otherwise you have to set the $WXSTABLE
+environment variable to point to the base directory of wxWidgets (e.g.
+"/usr/src/wxWidgets" then "WXSTABLE=/usr/src/wxWidgets").
+
+2. Extract the sources into a working directory.
+
+3. Now follow the platform specific instructions.
+
+If you want to build any development target don't forget to set the environment
+variable WXDEVEL (e.g. "C:\Devel\wxWidgetsDev" then
+"WXDEVEL=C:\Devel\wxWidgetsDev").
+
+
+Linux (wxGTK, wxUniv/GTK)
+-------------------------
+Use "make" for the release version, "make debug" for the debug version. For
+wxUniv need to make "make univdebug" and variable WXDEVEL has to be set.
+
+MacOS (wxMAC)
+-------------
+??? Try the Linux build rules.
+
+Windows (wxMSW, wxUniv/MSW)
+---------------------------
+There is a VC++ project file which _requires_ the environment variables
+WXSTABLE pointing to the base directory of wxWidgets (e.g. "C:\Devel\wxWidgets"
+then  "WXSTABLE=C:\Devel\wxWidgets". Build the "wxscintilla - Win32 Release"
+target.
+
+Building on other ports
+-----------------------
+There is currently no support to build on other ports. If you are able to deduct
+how to build on your platform it would be nice if you submit them to the project.
+
+
+Generel installation rules
+==========================
+
+There is currently no installation mostly because I don't know how in each case.
+Simply do it as it is usual on your platform, e.g. on Linux it's probably moving
+the library into /usr/lib. On Windows follow the rules of the application which
+wants to link with.

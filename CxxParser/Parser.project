@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="Parser">
+  <VirtualDirectory Name="src">
+    <File Name="scope_parser.cpp"/>
+    <File Name="cpp_lexer.cpp"/>
+    <File Name="main.cpp"/>
+    <File Name="var_parser.cpp"/>
+    <File Name="variable.cpp"/>
+    <File Name="cpp_expr_parser.cpp"/>
+    <File Name="cpp_expr_lexer.cpp"/>
+    <File Name="expression_result.cpp"/>
+    <File Name="function.cpp"/>
+    <File Name="cpp_func_parser.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="incldue">
+    <File Name="cpp_lexer.h"/>
+    <File Name="variable.h"/>
+    <File Name="expression_result.h"/>
+    <File Name="function.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="grammar">
+    <File Name="cpp.l"/>
+    <File Name="cpp_scope_grammar.y"/>
+    <File Name="cpp_variables_grammar.y"/>
+    <File Name="expr_grammar.y"/>
+    <File Name="expr_lexer.l"/>
+    <File Name="cpp_func_parser.y"/>
+  </VirtualDirectory>
+  <Settings Type="Executable">
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="./Release/CppParser" IntermediateDirectory="./Release" Command="CppParser" CommandArguments="" WorkingDirectory="./Release"/>
+      <Compiler Required="yes" Options="-g;">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2">
+        <LibraryPath Value="."/>
+        <LibraryPath Value="./Release"/>
+      </Linker>
+      <ResourceCompiler Required="yes" Options=""/>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy *.h ..\CodeLite\.</Command>
+        <Command Enabled="yes">copy *.cpp ..\CodeLite\.</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild>scope_parser.cpp cpp_lexer.cpp var_parser.cpp cpp_expr_lexer.cpp cpp_expr_parser.cpp cpp_func_parser.cpp
+scope_parser.cpp: cpp_scope_grammar.y
+	yacc -dl  -t -v -pcl_scope_ cpp_scope_grammar.y
+	mv y.tab.c scope_parser.cpp
+	mv y.tab.h cpp_lexer.h
+
+cpp_lexer.cpp: cpp.l
+	flex -L  -Pcl_scope_ cpp.l
+	mv lex.cl_scope_.c cpp_lexer.cpp
+
+var_parser.cpp: cpp_variables_grammar.y
+	yacc -l  -t -v -pcl_var_ cpp_variables_grammar.y
+	mv y.tab.c var_parser.cpp
+
+cpp_expr_lexer.cpp: expr_lexer.l
+	flex -L  -Pcl_expr_ expr_lexer.l
+	mv lex.cl_expr_.c cpp_expr_lexer.cpp
+
+cpp_expr_parser.cpp: expr_grammar.y
+	yacc -l  -t -v -pcl_expr_ expr_grammar.y
+	mv y.tab.c cpp_expr_parser.cpp
+
+cpp_func_parser.cpp: cpp_func_parser.y
+	yacc -l  -t -v -pcl_func_ cpp_func_parser.y
+	mv y.tab.c cpp_func_parser.cpp
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+  <Dependencies/>
+</CodeLite_Project>

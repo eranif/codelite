@@ -1,0 +1,57 @@
+<html>
+<body>
+<table border=0 width="100%" >
+	<tr>
+		<td bgcolor="LIGHT BLUE">
+		<font size="3" face="Verdana">
+		Common tasks
+		</font>
+		</td>
+	</tr>
+	<tr>
+	<td>
+		<table width="100%">
+		<tr><td><font size="2" face="Verdana">
+			<a href="http://codelite.sourceforge.net/wiki/pmwiki.php?n=LiteEditor.Documentation">Open CodeLite Online Help<img src="$(InstallPath)/images/help_earth.png"/></a>
+		</font></tr></td>
+		<tr><td><font size="2" face="Verdana">
+			<a href="action:create-workspace">Create New Workspace</a>
+		</font></tr></td>
+		<tr><td><font size="2" face="Verdana">
+			<a href="action:open-workspace">Open Workspace</a>
+		</font></tr></td>
+		<tr><td><font size="2" face="Verdana">
+			<a href="action:import-msvs-solution">Import Microsoft Visual Studio Solution File</a>
+		</font></tr></td>
+		</table>
+	</td>
+	</tr>
+	<hr>
+	<tr>
+		<td bgcolor="LIGHT BLUE">
+		<font size="3" face="Verdana">
+		Recently opened workspaces:
+		</font>
+		</td>
+	</tr>
+	<tr>
+		<td>
+		$(WorkspaceTable)
+		</td>
+	</tr>
+	<tr>
+		<td bgcolor="LIGHT BLUE">
+		<font size="3" face="Verdana">
+		Recently opened files:
+		</font>
+		</td>
+	</tr>
+	<tr>
+		<td>
+		$(FilesTable)
+		</td>
+	</tr>
+	<hr>
+</table>
+</body>
+</html>

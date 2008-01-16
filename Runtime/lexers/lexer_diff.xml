@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexer Name="Diff" Id="16">
+  <KeyWords></KeyWords>
+  <Extensions>*.diff;*.patch;Diff;*.Diff</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="black" BgColour="white" Size="11"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#808080" BgColour="white" Size="11"/>
+    <Property Id="2" Name="Command" Bold="no" Face="" Colour="#804040" BgColour="white" Size="11"/>
+    <Property Id="3" Name="Header" Bold="no" Face="" Colour="#0000A0" BgColour="white" Size="11"/>
+    <Property Id="4" Name="Position" Bold="no" Face="" Colour="#0000A0" BgColour="white" Size="11"/>
+    <Property Id="5" Name="Line Deleted" Bold="no" Face="" Colour="#FF0000" BgColour="white" Size="11"/>
+    <Property Id="6" Name="Line Added" Bold="no" Face="" Colour="#008000" BgColour="white" Size="11"/>
+    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="black" BgColour="white" Size="11"/>
+    <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Size="11"/>
+  </Properties>
+</Lexer>

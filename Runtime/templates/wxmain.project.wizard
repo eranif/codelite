@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="$(ProjectName)">
+  <VirtualDirectory Name="src">
+	<File Name="$(MainFile).cpp"/>
+  </VirtualDirectory>
+  <Dependencies/>
+  <Settings Type="Executable">
+    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./DebugUnicode" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
+      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=$(Unicode) --debug=yes)">
+		<Preprocessor Value="__WX__"/>
+	  </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=yes --libs --unicode=$(Unicode));$(MWindowsFlag)">
+      </Linker>
+      <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+		</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./ReleaseUnicode" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
+      <Compiler Required="yes" Options=";$(shell wx-config --cxxflags --unicode=$(Unicode) --debug=no)">
+        <Preprocessor Value="__WX__"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=$(Unicode));$(MWindowsFlag)"/>
+      <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>

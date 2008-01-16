@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="autorev">
+  <VirtualDirectory Name="src">
+    <File Name="main.cpp"/>
+  </VirtualDirectory>
+  <Settings Type="Executable">
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)d" IntermediateDirectory="./Debug" Command="$(ProjectName)d" CommandArguments="C:/Development/C++/LiteEditor/LiteEditor" WorkingDirectory="$(IntermediateDirectory)"/>
+      <Compiler Required="yes" Options="-g">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Required="yes" Options=""/>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="../../LiteEditor/$(ProjectName)" IntermediateDirectory="./Release" Command="$(ProjectName)" CommandArguments="/home/eran/development/LiteEditor/trunk" WorkingDirectory="$(IntermediateDirectory)"/>
+      <Compiler Required="yes" Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2"/>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+  <Dependencies/>
+</CodeLite_Project>

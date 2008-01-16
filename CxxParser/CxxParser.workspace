@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Workspace Name="CxxParser" Database="./CxxParser.tags">
+  <Ctags>
+    <Option Name="Macros"/>
+    <Option Name="Language">C++</Option>
+    <Option Name="FileSpec">*.cpp;*.c;*.cxx;*.cc;*.h;*.hpp</Option>
+    <Option Name="ParseComments">no</Option>
+  </Ctags>
+  <Project Name="Parser" Path="Parser.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Project Name="Parser" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+  <Environment>
+    <Variable Name="WorkspaceName" Value="CxxParser"/>
+    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/CxxParser"/>
+  </Environment>
+</CodeLite_Workspace>

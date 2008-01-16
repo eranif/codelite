@@ -1,0 +1,141 @@
+<?xml version="1.0" ?>
+<makefile>
+
+  <!-- Some defaults for the variables used by wxCode bakefiles -->
+  <set var="WXCODE_BAKEFILEDIR">../../../build/bakefiles</set>
+  <include file="$(WXCODE_BAKEFILEDIR)/defaults.bkl"/>
+	
+  <!-- The wxSQLite3 settings -->
+  <!-- ====================== -->
+
+  <option name="SQLITE3_DIR" category="path">
+    <default-value>..$(DIRSEP)sqlite3</default-value>
+    <description>Folder where the SQLite3 link library is located</description>
+  </option>
+
+<!--
+  <set var="USE_DYNAMIC_SQLITE3_LOAD">0</set>
+-->
+  <set var="USE_DYNAMIC_SQLITE3_LOAD_DEFAULT">0</set>
+  <set var="HAVE_METADATA_DEFAULT">0</set>
+  <set var="HAVE_CODEC_DEFAULT">0</set>
+  <set var="HAVE_LOAD_EXTENSION_DEFAULT">0</set>
+
+  <if cond="TARGETING_IDE=='0'">
+    <option name="USE_DYNAMIC_SQLITE3_LOAD">
+      <values>1,0</values>
+      <default-value>$(USE_DYNAMIC_SQLITE3_LOAD_DEFAULT)</default-value>
+      <description>If 1 then the SQLite library will be loaded dynamically at run time</description>
+    </option>
+    <option name="HAVE_METADATA">
+      <values>1,0</values>
+      <default-value>$(HAVE_METADATA_DEFAULT)</default-value>
+      <description>If 1 then the SQLite library has to be compiled with meta data support</description>
+    </option>
+    <option name="HAVE_CODEC">
+      <values>1,0</values>
+      <default-value>$(HAVE_CODEC_DEFAULT)</default-value>
+      <description>If 1 then the SQLite library has to be compiled with codec support</description>
+    </option>
+    <option name="HAVE_LOAD_EXTENSION">
+      <values>1,0</values>
+      <default-value>$(HAVE_LOAD_EXTENSION_DEFAULT)</default-value>
+      <description>If 1 then the SQLite library has to be compiled with loadable extension support</description>
+    </option>
+  </if>
+  <if cond="TARGETING_IDE=='1'">
+    <set var="USE_DYNAMIC_SQLITE3_LOAD">$(USE_DYNAMIC_SQLITE3_LOAD_DEFAULT)</set>
+    <set var="HAVE_METADATA">$(HAVE_METADATA_DEFAULT)</set>
+    <set var="HAVE_CODEC">$(HAVE_CODEC_DEFAULT)</set>
+    <set var="HAVE_LOAD_EXTENSION">$(HAVE_LOAD_EXTENSION_DEFAULT)</set>
+  </if>
+
+
+
+<!--   currently this syntax doesn't work ... :-(
+  <set var="SQLITE3_DEP" cond="USE_DYNAMIC_SQLITE3_LOAD=='1'"></set>
+  <set var="SQLITE3_DEP" cond="USE_DYNAMIC_SQLITE3_LOAD=='0'">sqlite3</set>
+-->
+
+  <set var="SQLITE3_DEP">
+    <if cond="USE_DYNAMIC_SQLITE3_LOAD=='0'">sqlite3</if>
+  </set>
+
+  <set var="SQLITE3_DYNAMICLOAD_DEF">
+    <if cond="USE_DYNAMIC_SQLITE3_LOAD=='0'">wxUSE_DYNAMIC_SQLITE3_LOAD=0</if>
+    <if cond="USE_DYNAMIC_SQLITE3_LOAD=='1'">wxUSE_DYNAMIC_SQLITE3_LOAD=1</if>
+  </set>
+
+  <set var="SQLITE3_HAVE_METADATA_DEF">
+    <if cond="HAVE_METADATA=='0'">WXSQLITE3_HAVE_METADATA=0</if>
+    <if cond="HAVE_METADATA=='1'">WXSQLITE3_HAVE_METADATA=1</if>
+  </set>
+  <set var="SQLITE3_HAVE_CODEC_DEF">
+    <if cond="HAVE_CODEC=='0'">WXSQLITE3_HAVE_CODEC=0</if>
+    <if cond="HAVE_CODEC=='1'">WXSQLITE3_HAVE_CODEC=1</if>
+  </set>
+  <set var="SQLITE3_HAVE_LOAD_EXTENSION_DEF">
+    <if cond="HAVE_LOAD_EXTENSION=='0'">WXSQLITE3_HAVE_LOAD_EXTENSION=0</if>
+    <if cond="HAVE_LOAD_EXTENSION=='1'">WXSQLITE3_HAVE_LOAD_EXTENSION=1</if>
+  </set>
+
+  <set var="COMP_NAME">wxsqlite3</set>
+  <set var="COMP_SRC">wxsqlite3.cpp</set>
+  <set var="COMP_HDR">wx/wxsqlite3def.h wx/wxsqlite3.h wx/wxsqlite3dyn.h wx/wxsqlite3opt.h</set>	
+
+  <set var="COMP_SAMPLE_DIR">$(COMP_BASEPATH)/samples</set>
+  <set var="COMP_SAMPLE_SRC">minimal.cpp</set>
+  <set var="COMP_SAMPLE_HDR"/>
+
+  <set var="WX_UNICODE_DEFAULT">1</set>
+  <set var="WX_VERSION_DEFAULT">26</set>
+
+  <!-- The wxCode bakefile to include after the definition of the COMP_XXXX variables... -->
+  <include file="$(WXCODE_BAKEFILEDIR)/wxcode.bkl"/>
+  <set var="POSTFIX">
+    <if cond="WX_SHARED=='0'">_lib</if>
+    <if cond="WX_SHARED=='1'">_dll</if>
+  </set>
+  <if cond="FORMAT!='autoconf'">
+    <set var="BUILDDIR">$(FORMAT)$(WXLIBPOSTFIX)$(POSTFIX)</set>
+  </if>
+
+  <!-- The real target: wxcode.bkl does not declare a real target but a template called
+       "complib". In this way modifications are allowed to the basic template. -->
+
+  <lib id="wxsqlite3_lib" template="complib" cond="WX_SHARED=='0'">
+    <define>$(SQLITE3_DYNAMICLOAD_DEF)</define>
+    <define>$(SQLITE3_HAVE_METADATA_DEF)</define>
+    <define>$(SQLITE3_HAVE_CODEC_DEF)</define>
+    <define>$(SQLITE3_HAVE_LOAD_EXTENSION_DEF)</define>
+    <stdlib>$(SQLITE3_DIR)</stdlib>
+  </lib>
+
+  <dll id="wxsqlite3_dll" template="compdll" cond="WX_SHARED=='1'">
+    <define>$(SQLITE3_DYNAMICLOAD_DEF)</define>
+    <define>$(SQLITE3_HAVE_METADATA_DEF)</define>
+    <define>$(SQLITE3_HAVE_CODEC_DEF)</define>
+    <define>$(SQLITE3_HAVE_LOAD_EXTENSION_DEF)</define>
+    <stdlib>$(SQLITE3_DIR)</stdlib>
+    <sys-lib>$(SQLITE3_DEP)</sys-lib>
+    <wx-lib>base</wx-lib>
+  </dll>
+
+  <set var="MSVC6PRJ_MERGED_TARGETS">wxsqlite3=wxsqlite3_lib+wxsqlite3_dll</set>
+	
+  <template id="wxsqlite3compsample" template="compsample">
+    <library>wxsqlite3_lib</library>
+    <wx-lib>base</wx-lib>
+  </template>
+
+  <!-- use _ instead of '-' or '.' because MSVC6 does not like these chars -->
+  <exe id="minimal" template="wxsqlite3compsample">
+    <app-type>console</app-type>
+    <win32-res>$(COMP_SAMPLE_DIR)$(DIRSEP)minimal.rc</win32-res>
+    <stdlib>$(SQLITE3_DIR)</stdlib>
+    <sys-lib>$(SQLITE3_DEP)</sys-lib>
+    <wx-lib>base</wx-lib>
+  </exe>
+    
+</makefile>
+

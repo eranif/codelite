@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="CodeLite">
+  <VirtualDirectory Name="Source Files">
+    <File Name="calltip.cpp"/>
+    <File Name="worker_thread.cpp"/>
+    <File Name="tokenizer.cpp"/>
+    <File Name="tag_tree.cpp"/>
+    <File Name="symbol_tree.cpp"/>
+    <File Name="readtags.cpp"/>
+    <File Name="progress_dialog.cpp"/>
+    <File Name="procutils.cpp"/>
+    <File Name="parse_thread.cpp"/>
+    <File Name="lex.yy.cpp"/>
+    <File Name="language.cpp"/>
+    <File Name="fileutils.cpp"/>
+    <File Name="dirtraverser.cpp"/>
+    <File Name="ctags_manager.cpp"/>
+    <File Name="cpp_scanner.cpp"/>
+    <File Name="cl_process.cpp"/>
+    <File Name="scope_parser.cpp"/>
+    <File Name="cpp_lexer.cpp"/>
+    <File Name="cpp_comment_creator.cpp"/>
+    <File Name="tags_options_data.cpp"/>
+    <File Name="setters_getters_data.cpp"/>
+    <File Name="archive.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Header Files">
+    <File Name="y.tab.h"/>
+    <File Name="calltip.h"/>
+    <File Name="cl_process.h"/>
+    <File Name="cpp_scanner.h"/>
+    <File Name="ctags_manager.h"/>
+    <File Name="dirsaver.h"/>
+    <File Name="dirtraverser.h"/>
+    <File Name="fileutils.h"/>
+    <File Name="FlexLexer.h"/>
+    <File Name="language.h"/>
+    <File Name="parse_thread.h"/>
+    <File Name="precompiled_header.h"/>
+    <File Name="procutils.h"/>
+    <File Name="progress_dialog.h"/>
+    <File Name="readtags.h"/>
+    <File Name="singleton.h"/>
+    <File Name="smart_ptr.h"/>
+    <File Name="symbol_tree.h"/>
+    <File Name="tag_tree.h"/>
+    <File Name="tokenizer.h"/>
+    <File Name="tree.h"/>
+    <File Name="tree_node.h"/>
+    <File Name="unistd.h"/>
+    <File Name="worker_thread.h"/>
+    <File Name="cpp_lexer.h"/>
+    <File Name="comment_creator.h"/>
+    <File Name="cpp_comment_creator.h"/>
+    <File Name="archive.h"/>
+    <File Name="serialized_object.h"/>
+    <File Name="tags_options_data.h"/>
+    <File Name="setters_getters_data.h"/>
+    <File Name="extdbdata.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="GeneratedFiles">
+    <File Name="expression_result.h"/>
+    <File Name="function.h"/>
+    <File Name="variable.h"/>
+    <File Name="cpp_expr_lexer.cpp"/>
+    <File Name="cpp_expr_parser.cpp"/>
+    <File Name="cpp_func_parser.cpp"/>
+    <File Name="expression_result.cpp"/>
+    <File Name="function.cpp"/>
+    <File Name="var_parser.cpp"/>
+    <File Name="variable.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="database">
+    <File Name="tags_database.h"/>
+    <File Name="db_record.h"/>
+    <File Name="comment.h"/>
+    <File Name="entry.h"/>
+    <File Name="entry.cpp"/>
+    <File Name="comment.cpp"/>
+    <File Name="tags_database.cpp"/>
+    <File Name="variable_entry.cpp"/>
+    <File Name="variable_entry.h"/>
+  </VirtualDirectory>
+  <Settings Type="Static Library">
+    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../lib/gcc_lib/libCodeLiteud.a" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory=""/>
+      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Required="yes" Options=" "/>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../lib/gcc_lib/libCodeLiteu.a" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory=""/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Required="yes" Options=" "/>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="../lib/gcc_lib/libCodeLiteud.a" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory=""/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Required="yes" Options=""/>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="">
+      <General OutputFile="../lib/gcc_lib/libCodeLiteu.a" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory=""/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Required="yes" Options=""/>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+  <Dependencies/>
+  <Dependencies/>
+</CodeLite_Project>

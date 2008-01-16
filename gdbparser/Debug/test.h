@@ -1,0 +1,1 @@
+^done,locals=[{name="str",value="{static npos = 4294967295, _M_dataplus = {<allocator<char>> = {<new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x77c3b814 \"Y\\213\\r\\354!\\306w;\\317\\213\\301u\\3443\\300_^\\303\\314\\314\\314\\314\\314j\\004\\3775\"}}"},{name="counter",value="2009252579"}]

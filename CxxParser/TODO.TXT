@@ -1,0 +1,9 @@
+1. Scope parser not detecting destructor & constructor properly
+2. template intializing another template not supported. Possible workaround:
+
+//will not work
+std::list<std::pair<std::string, std::string> > var;
+
+//will work
+typedef std::pair<std::string, std::string> StrStrPair;
+std::list<StrStr> var;

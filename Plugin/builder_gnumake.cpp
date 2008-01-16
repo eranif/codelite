@@ -320,7 +320,7 @@ void BuilderGnuMake::CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString
 	text << targetName << wxT(":\n");
 
 	if (wxGetOsVersion() & wxOS_WINDOWS) {
-		text << wxT("\t@-if not exist ") << bldConf->GetIntermediateDirectory() << wxT(" mkdir \"") << bldConf->GetIntermediateDirectory() << wxT("\"\n");
+		text << wxT("\t@makedir \"") << bldConf->GetIntermediateDirectory() << wxT("\"\n");
 	} else {
 		//other OSs
 		text << wxT("\t@test -d ") << bldConf->GetIntermediateDirectory() << wxT(" || mkdir ") << bldConf->GetIntermediateDirectory() << wxT("\n");

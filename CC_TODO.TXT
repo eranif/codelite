@@ -1,6 +1,5 @@
 - Add new option: Ctrl Is Down + mouse left click  will display the current word as link and will jump to implementation
 				  Ctrl Is Down + mouse right clickwill display the current word as link and will jump to declaration
-- Add: add unimplemented methods
 - Import File from directory - add new filtering dialog
 - cscope plugin:
 	find symbol in workspace

@@ -5,7 +5,7 @@
   </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="$(IntermediateDirectory)/makedir" IntermediateDirectory="../Runtime/bin" Command="./makedir" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
+      <General OutputFile="../Runtime/bin/makedir" IntermediateDirectory="./DebugUnicode" Command="./makedir" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)">
         <Preprocessor Value="__WX__"/>
       </Compiler>
@@ -25,7 +25,7 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="$(IntermediateDirectory)/makedir" IntermediateDirectory="../Runtime/bin" Command="./makedir" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
+      <General OutputFile="../Runtime/bin/makedir" IntermediateDirectory="./ReleaseUnicode" Command="./makedir" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
       <Compiler Required="yes" Options=";$(shell wx-config --cxxflags --unicode=yes --debug=no)">
         <Preprocessor Value="__WX__"/>
       </Compiler>

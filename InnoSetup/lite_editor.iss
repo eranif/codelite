@@ -30,26 +30,30 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Development\C++\codelite\Runtime\CodeLite.exe"; DestDir: "{app}"; AfterInstall: MyAfterInstall() ; Flags: ignoreversion; Components: Editor
-Source: "C:\wxWidgets-2.8.4\lib\gcc_dll\wxmsw28u_gcc_custom.dll"; DestDir: "{app}"; AfterInstall: MyAfterInstall() ; Flags: ignoreversion; Components: Editor
-Source: "C:\Development\C++\codelite\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\CodeLite.exe"; DestDir: "{app}"; AfterInstall: UpdatePath() ; Flags: ignoreversion; Components: Editor
+Source: "C:\wxWidgets-2.8.4\lib\gcc_dll\wxmsw28u_gcc_custom.dll"; DestDir: "{app}"; AfterInstall: UpdatePath(); Flags: ignoreversion; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Program Files\CodeLite\common.tags"; DestDir: "{app}"; Components: Editor
-Source: "C:\Development\C++\codelite\\sdk\wxconfig\wx-config.exe"; DestDir: "{app}"; Components: Editor
-Source: "C:\Development\C++\codelite\Runtime\config\liteeditor.xml.sample"; DestDir: "{app}\config"; DestName: liteeditor.xml; Components: Editor;
-Source: "C:\Development\C++\codelite\Runtime\config\debuggers.xml"; DestDir: "{app}\config"; Components: Editor;
-Source: "C:\Development\C++\codelite\Runtime\config\build_settings.xml"; DestDir: "{app}\config"; Components: Editor
-Source: "C:\Development\C++\codelite\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\Runtime\lexers\*"; DestDir: "{app}\lexers"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\Runtime\bin\ctags-le.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\Runtime\index.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\sdk\wxconfig\wx-config.exe"; DestDir: "{app}\bin"; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\liteeditor.xml.sample"; DestDir: "{app}\config"; DestName: liteeditor.xml; Components: Editor;
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\debuggers.xml"; DestDir: "{app}\config"; Components: Editor;
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\build_settings.xml"; DestDir: "{app}\config"; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\lexers\*"; DestDir: "{app}\lexers"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\bin\ctags-le.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\bin\makedir.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\index.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\mingwm10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\which.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\rm.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\cscope.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\cygncurses-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\cygwin1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 
 ;Source: "C:\windows\system32\msvcp71.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 ;Source: "C:\Development\C++\codelite\Runtime\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
@@ -63,9 +67,6 @@ Name: "{group}\{cm:UninstallProgram, CodeLite}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}" ;Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite "; WorkingDir: "{app}"; Filename: "{app}\CodeLite.exe"; Tasks: quicklaunchicon
 
-[Run]
-Filename: "{app}\CodeLite.exe"; Description: "{cm:LaunchProgram,CodeLite }"; Flags: nowait postinstall skipifsilent
-
 [Registry]
 Root: HKCU	; Subkey: "Software\LiteEditor\LiteEditor\"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
 
@@ -74,7 +75,7 @@ var
   PathStr: String;
   Index: Integer;
   NewPath: String;
-procedure MyAfterInstall();
+procedure UpdatePath1();
 begin
   // Add {app} to path
   if RegQueryStringValue(HKLM, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
@@ -90,4 +91,25 @@ begin
   end;
 end;
 
+procedure UpdatePath2();
+begin
+  // Add {app}/bin to path
+  if RegQueryStringValue(HKLM, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment',
+     'Path', PathStr) then
+  begin
+    NewPath := ';' + ExpandConstant('{app}') + '\bin';
+    // Seacrh for the string 'C:\Eran Is Here\;'
+    index := Pos(NewPath, PathStr);
+    if index = 0 then begin
+      PathStr := PathStr + ';' + ExpandConstant('{app}') + '\bin';
+      RegWriteStringValue(HKLM, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment','Path', PathStr );
+    end;
+  end;
+end;
+
+procedure UpdatePath();
+begin
+  UpdatePath1();
+  UpdatePath2();
+end;
 

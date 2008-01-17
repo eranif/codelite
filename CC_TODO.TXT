@@ -1,14 +1,11 @@
-- Add new option: Ctrl Is Down + mouse left click  will display the current word as link and will jump to implementation
-				  Ctrl Is Down + mouse right clickwill display the current word as link and will jump to declaration
-- Import File from directory - add new filtering dialog
 - cscope plugin:
 	find symbol in workspace
 	find functions calling symbol
 	find functions called by symbol 
-- add SVN options to workspace tree
 - Colour errors with different colour
 - Add new 'Build General Page' to the build dialog which includes:
 	- colour to mark errors
 	- colour to mark warnings
 	- F4 should skip warnings (yes/no)
-- rename the 'Advance' dialog to be 'Build Settings'
+- add SVN options to workspace tree
+

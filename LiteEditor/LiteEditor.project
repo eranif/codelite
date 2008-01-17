@@ -140,6 +140,10 @@
       <File Name="new_item_dlg.h"/>
       <File Name="newdlg.cpp"/>
       <File Name="newdlg.h"/>
+      <File Name="importfilesdlg.h"/>
+      <File Name="importfilesbasedlg.cpp"/>
+      <File Name="importfilesbasedlg.h"/>
+      <File Name="importfilesdlg.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
@@ -190,6 +194,8 @@
     <File Name="navigationmanager.h"/>
     <File Name="navigationmanager.cpp"/>
     <File Name="browse_record.h"/>
+    <File Name="importfilessettings.cpp"/>
+    <File Name="importfilessettings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>

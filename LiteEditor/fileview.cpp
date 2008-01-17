@@ -1,4 +1,5 @@
 #include "fileview.h"
+#include "importfilesdlg.h"
 #include "manager.h"
 #include "tree.h"
 #include <wx/xrc/xmlres.h>
@@ -988,16 +989,22 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 
 	ProjectPtr proj = ManagerST::Get()->GetProject( project );
 
-	wxString path = wxDirSelector(wxT("Select directory to import:"), proj->GetFileName().GetPath());
-	if (path.IsEmpty())
+	ImportFilesDlg *dlg = new ImportFilesDlg(NULL, proj->GetFileName().GetPath());
+	if(dlg->ShowModal() != wxID_OK){
+		dlg->Destroy();
 		return;
-
+	}
+	
+	wxString path = dlg->GetBaseDir();
+	bool noExtFiles = dlg->GetIncludeFilesWoExt();
+	wxString mask = dlg->GetFileMask();
+	dlg->Destroy();
+	
 	wxFileName rootPath(path);
 
 	//Collect all candidates files
 	wxArrayString files;
-	TagsManager *tg = TagsManagerST::Get();
-	DirTraverser trv(tg->GetCtagsOptions().GetFileSpec(), tg->GetCtagsOptions().GetFlags() & CC_PARSE_EXT_LESS_FILES ? true : false);
+	DirTraverser trv(mask, noExtFiles);
 	wxDir dir(path);
 
 	dir.Traverse(trv);

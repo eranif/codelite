@@ -482,7 +482,17 @@ void ContextCpp::CodeComplete()
 	wxString expr = GetExpression(rCtrl.GetCurrentPos());
 
 	// get the scope
-	wxString text = rCtrl.GetTextRange(0, rCtrl.GetCurrentPos());
+	//Optimize the text for large files
+	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
+	int startPos(0);
+	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(rCtrl.GetFileName(), line);
+	if( t ){
+		startPos = rCtrl.PositionFromLine( t->GetLine() - 1);
+		if( startPos > rCtrl.GetCurrentPos() ){
+			startPos = 0;
+		}
+	}
+	wxString text = rCtrl.GetTextRange(startPos, rCtrl.GetCurrentPos());
 
 	std::vector<TagEntryPtr> candidates;
 	if ( showFuncProto ) {
@@ -497,7 +507,6 @@ void ContextCpp::CodeComplete()
 
 		// get the token
 		wxString word = rCtrl.GetTextRange(word_start, word_end);
-		int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
 		m_ct = TagsManagerST::Get()->GetFunctionTip(rCtrl.GetFileName(), line, expr, text, word);
 		if (m_ct && m_ct->Count() > 0) {
 			rCtrl.CallTipCancel();
@@ -505,7 +514,6 @@ void ContextCpp::CodeComplete()
 			m_tipKind = TipFuncProto;
 		}
 	} else {
-		int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
 		if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
 			DisplayCompletionBox(candidates, wxEmptyString, showFullDecl);
 		}
@@ -1259,6 +1267,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 
 void ContextCpp::OnKeyDown(wxKeyEvent &event)
 {
+/*
 	//validate project is open for the container editor
 	if (GetCtrl().GetProject().IsEmpty()) {
 		event.Skip();
@@ -1276,6 +1285,7 @@ void ContextCpp::OnKeyDown(wxKeyEvent &event)
 			return;
 		}
 	}
+*/	
 	event.Skip();
 }
 

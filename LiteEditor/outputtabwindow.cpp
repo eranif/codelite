@@ -51,13 +51,12 @@ void OutputTabWindow::CreateGUIControl()
 	m_sci->StyleClearAll();
 
 	// symbol margin
-	m_sci->SetMarginType(0, wxSCI_MARGIN_SYMBOL);
-	m_sci->SetMarginWidth(0, 0);	//keep the symbol margin "On"
-	m_sci->MarkerSetBackground(0x7, wxT("pink"));
-
-	m_sci->SetMarginWidth(1, 0);
+	m_sci->SetMarginType(1, wxSCI_MARGIN_SYMBOL);
 	m_sci->SetMarginWidth(2, 0);
-
+	m_sci->SetMarginWidth(1, 0);
+	m_sci->SetMarginWidth(0, 0);
+	
+	
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 
@@ -74,6 +73,7 @@ void OutputTabWindow::CreateGUIControl()
 
 	Connect(wxEVT_SCI_DOUBLECLICK, wxScintillaEventHandler(OutputTabWindow::OnMouseDClick), NULL, this);
 	Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(OutputTabWindow::OnSetFocus), NULL, this);
+	//Connect(wxEVT_SCI_STYLENEEDED, wxScintillaEventHandler(OutputTabWindow::OnStyleNeeded), NULL, this);
 }
 
 void OutputTabWindow::OnSetFocus(wxFocusEvent &event)

@@ -9,6 +9,7 @@
 
 #include "wx/wxprec.h"
 
+
 #ifdef __BORLANDC__
 #pragma hdrstop
 #endif //__BORLANDC__
@@ -17,7 +18,7 @@
 #include <wx/wx.h>
 #endif //WX_PRECOMP
 #include "macros.h"
-
+#include "buildsettingstab.h"
 #include "advanced_settings.h"
 #include "manager.h"
 #include "compiler_page.h"
@@ -86,6 +87,9 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, int id, wxString title, wxPoint pos,
 	
 	mainSizer->Add( btnSizer, 0, wxALIGN_RIGHT, 5 );
 	
+	m_buildSettings = new BuildTabSetting(m_notebook);
+	m_notebook->AddPage(m_buildSettings, wxT("Build Output Appearance"), false);
+	
 	m_buildPage = new BuildPage(m_notebook);
 	m_notebook->AddPage(m_buildPage, wxT("Build Systems"), false);
 
@@ -141,7 +145,7 @@ void AdvancedDlg::OnButtonOKClicked(wxCommandEvent &event)
 	}
 	//save the build page
 	m_buildPage->Save();
-
+	m_buildSettings->Save();
 	EndModal(wxID_OK);
 }
 

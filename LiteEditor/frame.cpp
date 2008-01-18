@@ -1334,12 +1334,15 @@ void Frame::OnBuildEvent(wxCommandEvent &event) {
 	if (event.GetEventType() == wxEVT_BUILD_STARTED) {
 		ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN);
 		m_outputPane->GetBuildTab()->Clear();
+		//read settings for the build output tab
+		m_outputPane->GetBuildTab()->ReloadSettings(); 
 		m_outputPane->GetBuildTab()->AppendText(BUILD_START_MSG);
 	} else if (event.GetEventType() == wxEVT_BUILD_ADDLINE) {
 		m_outputPane->GetBuildTab()->AppendText(event.GetString());
 	} else if (event.GetEventType() == wxEVT_BUILD_ENDED) {
 		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
-
+		m_outputPane->GetBuildTab()->OnBuildEnded();
+		
 		//If the build process was part of a 'Build and Run' command, check whether an erros
 		//occured during build process, if non, launch the output
 		if (m_buildInRun) {

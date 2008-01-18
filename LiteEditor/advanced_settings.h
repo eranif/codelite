@@ -18,7 +18,7 @@
 #include "build_page.h"
 
 ///////////////////////////////////////////////////////////////////////////
-
+class BuildTabSetting;
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class AdvancedDlg
@@ -38,7 +38,8 @@ protected:
 	wxButton* m_buttonOK;
 	wxButton* m_buttonCancel;
 	BuildPage *m_buildPage;
-
+	BuildTabSetting *m_buildSettings;
+	
 	void OnButtonNewClicked(wxCommandEvent &);
 	void OnButtonOKClicked(wxCommandEvent &);
 	void OnDeleteCompiler(wxCommandEvent &);

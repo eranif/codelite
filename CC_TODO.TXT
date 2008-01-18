@@ -2,10 +2,5 @@
 	find symbol in workspace
 	find functions calling symbol
 	find functions called by symbol 
-- Colour errors with different colour
-- Add new 'Build General Page' to the build dialog which includes:
-	- colour to mark errors
-	- colour to mark warnings
-	- F4 should skip warnings (yes/no)
 - add SVN options to workspace tree
 

@@ -122,6 +122,10 @@
       <File Name="edit_workspace_conf_dlg.h"/>
       <File Name="new_configuration_dlg.cpp"/>
       <File Name="new_configuration_dlg.h"/>
+      <File Name="buildsettingstab.h"/>
+      <File Name="buildsettingstab.cpp"/>
+      <File Name="buildsettingstabbase.h"/>
+      <File Name="buildsettingstabbase.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ProjectSettings">
       <File Name="depend_dlg_page.cpp"/>
@@ -196,6 +200,8 @@
     <File Name="browse_record.h"/>
     <File Name="importfilessettings.cpp"/>
     <File Name="importfilessettings.h"/>
+    <File Name="buildtabsettingsdata.cpp"/>
+    <File Name="buildtabsettingsdata.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>

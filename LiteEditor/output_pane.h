@@ -10,11 +10,8 @@
 
 class OutputPane;
 class ShellWindow;
-
-struct LineInfo {
-	wxString project;
-	wxString configuration;
-};
+class BuildTab;
+class FindResultsTab;
 
 /**
  * \ingroup LiteEditor
@@ -46,23 +43,16 @@ public:
 
 	wxFlatNotebook *m_book;
 	wxString m_caption;
-	bool m_canFocus;
 	wxFlatNotebookImageList m_images;
-	OutputPaneWinodw *m_outputWind;
+	ShellTab *m_outputWind;
 	wxLog *m_logTargetOld;
-	OutputPaneWinodw *m_outputDebug;
-	std::map<int, LineInfo> m_lineInfo;
-
+	ShellTab *m_outputDebug;
+	BuildTab *m_buildWin;
+	FindResultsTab *m_findResultsTab;
+	
 private:
 	void CreateGUIControls();
 	
-	void OnFindInFilesDClick(const wxString &line);
-	// returns true if line contained warning/error, false otherwise
-	bool OnBuildWindowDClick(const wxString &line, int lineClicked = wxNOT_FOUND);
-	// holds the index of the last line in the build window
-	// that was reached, using F4 (last build error)
-	int m_nextBuildError_lastLine;
-
 public:
 	/**
 	 * Return the index of a given window by its caption
@@ -82,31 +72,17 @@ public:
 	virtual ~OutputPane();
 
 	//-----------------------------------------------
-	// Operations
-	//-----------------------------------------------
-	void AppendText(const wxString &winName, const wxString &text);
-	void Clear();
-
-	//-----------------------------------------------
 	// Setters/Getters
 	//-----------------------------------------------
 	wxFlatNotebook *GetNotebook() { return m_book; }
 	const wxString &GetCaption() const { return m_caption; }
-	void CanFocus(bool can) { m_canFocus = can; }
 	void SelectTab(const wxString &tabName);
-	ShellWindow *GetOutputWindow() {return (ShellWindow *)m_outputWind->GetWindow();}
-	ShellWindow *GetDebugWindow() {return (ShellWindow *)m_outputDebug->GetWindow();}
-
-	//-----------------------------------------------
-	// Event handlers
-	//-----------------------------------------------
-	void OnSetFocus(wxFocusEvent &event);
-	void OnMouseDClick(wxScintillaEvent &event);
-	void OnPaint(wxPaintEvent &event);
-	void OnEraseBg(wxEraseEvent &){};
-	void OnNextBuildError(wxCommandEvent &event);
 	
-	DECLARE_EVENT_TABLE()
+	//return the underlying windows holded under this pane
+	ShellWindow *GetOutputWindow() {return m_outputWind->GetShell();}
+	ShellWindow *GetDebugWindow() {return m_outputDebug->GetShell();}
+	BuildTab *GetBuildTab() {return m_buildWin;}
+	FindResultsTab *GetFindResultsTab() {return m_findResultsTab;}
 };
 
 #endif // OUTPUT_PANE_H

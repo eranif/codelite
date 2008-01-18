@@ -4,14 +4,12 @@
 #include "wx/wxscintilla.h"
 #include "wx/panel.h"
 
-#define WINTYPE_SCI		0
-#define WINTYPE_SHELL	1
+class ShellWindow;
 
-class OutputPaneWinodw : public wxPanel
+class ShellTab : public wxPanel
 {
 	wxString m_name;
-	wxWindow *m_window;
-	int m_type;
+	ShellWindow *m_window;
 
 protected:
 	void CreateGUIControl();
@@ -19,13 +17,13 @@ protected:
 	void OnWordWrap(wxCommandEvent &e);
 
 public:
-	OutputPaneWinodw(wxWindow *parent, wxWindowID id, const wxString &name, int type = WINTYPE_SCI);
-	virtual ~OutputPaneWinodw();
+	ShellTab(wxWindow *parent, wxWindowID id, const wxString &name);
+	virtual ~ShellTab();
 
 	const wxString &GetCaption() const {return m_name;}
-	wxWindow *GetWindow() {return m_window;}
 	void Clear();
 	void AppendText(const wxString &text);
+	ShellWindow *GetShell() {return m_window;}
 };
 
 #endif //OUTPUTPANEWINDOW_H

@@ -463,11 +463,16 @@ public:
 	void RetagWorkspace();
 
 	/**
-	 * Add debug message
+	 * Add a debug message in the debug output window
 	 * \param msg 
 	 */
 	void DebugMessage(wxString msg);
 
+	/**
+	 * Add a message in the output tab window
+	 * \param msg 
+	 */
+	void OutputMessage(wxString msg);
 
 	/**
 	 * return the project name that 'fullPathFileName' belogs to. if 2 matches were found, return

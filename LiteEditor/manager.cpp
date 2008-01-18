@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "buidltab.h"
 #include "fileexplorer.h"
 #include "manager.h"
 #include "ctags_manager.h"
@@ -354,7 +355,7 @@ void Manager::CloseWorkspace()
 
 	WorkspaceST::Get()->CloseWorkspace();
 	//clear the 'buid' tab
-	Frame::Get()->GetOutputPane()->Clear();
+	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
 	
 	//clear the navigation bar
 	Frame::Get()->GetMainBook()->Clear();
@@ -1130,7 +1131,7 @@ void Manager::DebugMessage(wxString msg)
 	static wxString lastMessage(wxEmptyString);
 	msg = msg.Trim(false);
 	if(lastMessage != msg){
-		Frame::Get()->GetOutputPane()->AppendText(OutputPane::OUTPUT_DEBUG, msg);
+		Frame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(msg);
 		lastMessage = msg;
 	}
 }
@@ -1162,12 +1163,12 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	ProjectPtr proj = GetProject(projectName);
 	//print the current directory
 	::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-	DebugMessage(wxT("Setting working directory to: ") + proj->GetFileName().GetPath() + wxT("\n"));
+	wxLogMessage(wxT("Setting working directory to poject path: ") + proj->GetFileName().GetPath() + wxT("\n"));
 
 	//now set the working directory according to working directory field from the
 	//project settings
 	::wxSetWorkingDirectory(wd);
-	DebugMessage(wxT("Setting working directory to: ") + wd + wxT("\n"));
+	wxLogMessage(wxT("Setting working directory to: ") + wd + wxT("\n"));
 
 	//execute the command line
 	//the async command is a one time executable object,
@@ -1345,10 +1346,10 @@ wxString Manager::GetProjectNameByFile(const wxString &fullPathFileName)
 
 void Manager::ImportFromMakefile(const wxString &path)
 {
-	DebugMessage(path + wxT("\n"));
+	OutputMessage(path + wxT("\n"));
 
 	wxFileName fileName = path;
-	DebugMessage(fileName.GetPath() + wxT("\n"));
+	OutputMessage(fileName.GetPath() + wxT("\n"));
 
 	VariableLexer expander(path);
 	wxArrayString expanded = expander.getResult();
@@ -2299,4 +2300,10 @@ bool Manager::OpenFileAndAppend(const wxString &fileName, const wxString &text)
 		}
 	}
 	return ret;
+}
+
+void Manager::OutputMessage(wxString msg)
+{
+	msg = msg.Trim(false);
+	Frame::Get()->GetOutputPane()->GetOutputWindow()->AppendLine(msg);
 }

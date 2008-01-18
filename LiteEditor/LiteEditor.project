@@ -228,6 +228,12 @@
     <File Name="threadlistbasepanel.cpp"/>
     <File Name="threadlistbasepanel.h"/>
     <File Name="threadlistpanel.cpp"/>
+    <File Name="buidltab.cpp"/>
+    <File Name="buidltab.h"/>
+    <File Name="outputtabwindow.cpp"/>
+    <File Name="outputtabwindow.h"/>
+    <File Name="findresultstab.cpp"/>
+    <File Name="findresultstab.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

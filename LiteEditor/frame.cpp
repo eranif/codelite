@@ -1,5 +1,8 @@
 #include "precompiled_header.h"
+#include "shell_window.h"
 
+#include "findresultstab.h"
+#include "buidltab.h"
 #include "frame.h"
 #include "splashscreen.h"
 #include "wx/stdpaths.h"
@@ -1118,7 +1121,7 @@ void Frame::OnSearchThread(wxCommandEvent &event) {
 	// is set to the 'Find In Files' tab
 	ManagerST::Get()->ShowOutputPane(OutputPane::FIND_IN_FILES_WIN);
 
-	m_outputPane->CanFocus(false);
+	m_outputPane->GetFindResultsTab()->CanFocus(false);
 	if ( event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
 		SearchResultList *res = (SearchResultList*)event.GetClientData();
 		SearchResultList::iterator iter = res->begin();
@@ -1127,19 +1130,19 @@ void Frame::OnSearchThread(wxCommandEvent &event) {
 		for (; iter != res->end(); iter++) {
 			msg.Append((*iter).GetMessage() + wxT("\n"));
 		}
-		m_outputPane->AppendText(OutputPane::FIND_IN_FILES_WIN, msg);
+		m_outputPane->GetFindResultsTab()->AppendText(msg);
 		delete res;
 	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
-		m_outputPane->AppendText(OutputPane::FIND_IN_FILES_WIN, event.GetString() + wxT("\n"));
+		m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
 	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
-		m_outputPane->Clear();
-		m_outputPane->AppendText(OutputPane::FIND_IN_FILES_WIN, event.GetString() + wxT("\n"));
+		m_outputPane->GetFindResultsTab()->Clear();
+		m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
 	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
 		SearchSummary *summary = (SearchSummary*)event.GetClientData();
-		m_outputPane->AppendText(OutputPane::FIND_IN_FILES_WIN, summary->GetMessage() + wxT("\n"));
+		m_outputPane->GetFindResultsTab()->AppendText(summary->GetMessage() + wxT("\n"));
 		delete summary;
 	}
-	m_outputPane->CanFocus(true);
+	m_outputPane->GetFindResultsTab()->CanFocus(true);
 }
 
 void Frame::OnFindInFiles(wxCommandEvent &event) {
@@ -1327,15 +1330,15 @@ void Frame::OnAdvanceSettings(wxCommandEvent &event) {
 void Frame::OnBuildEvent(wxCommandEvent &event) {
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
-	m_outputPane->CanFocus(true);
+	m_outputPane->GetBuildTab()->CanFocus(true);
 	if (event.GetEventType() == wxEVT_BUILD_STARTED) {
 		ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN);
-		m_outputPane->Clear();
-		m_outputPane->AppendText(OutputPane::BUILD_WIN, BUILD_START_MSG);
+		m_outputPane->GetBuildTab()->Clear();
+		m_outputPane->GetBuildTab()->AppendText(BUILD_START_MSG);
 	} else if (event.GetEventType() == wxEVT_BUILD_ADDLINE) {
-		m_outputPane->AppendText(OutputPane::BUILD_WIN, event.GetString());
+		m_outputPane->GetBuildTab()->AppendText(event.GetString());
 	} else if (event.GetEventType() == wxEVT_BUILD_ENDED) {
-		m_outputPane->AppendText(OutputPane::BUILD_WIN, BUILD_END_MSG);
+		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
 
 		//If the build process was part of a 'Build and Run' command, check whether an erros
 		//occured during build process, if non, launch the output
@@ -1361,15 +1364,14 @@ void Frame::OnBuildEvent(wxCommandEvent &event) {
 void Frame::OnOutputWindowEvent(wxCommandEvent &event) {
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
-	m_outputPane->CanFocus(true);
 	ManagerST::Get()->ShowOutputPane(OutputPane::OUTPUT_WIN);
 	if (event.GetEventType() == wxEVT_ASYNC_PROC_STARTED) {
-		m_outputPane->Clear();
-		m_outputPane->AppendText(OutputPane::OUTPUT_WIN, event.GetString());
+		m_outputPane->GetOutputWindow()->Clear();
+		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());
 	} else if (event.GetEventType() == wxEVT_ASYNC_PROC_ADDLINE) {
-		m_outputPane->AppendText(OutputPane::OUTPUT_WIN, event.GetString());
+		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());
 	} else if (event.GetEventType() == wxEVT_ASYNC_PROC_ENDED) {
-		m_outputPane->AppendText(OutputPane::OUTPUT_WIN, event.GetString());
+		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());
 	}
 }
 
@@ -1889,7 +1891,7 @@ void Frame::OnIdle(wxIdleEvent &e) {
 }
 
 void Frame::OnNextBuildError(wxCommandEvent &event) {
-	GetOutputPane()->ProcessEvent(event);
+	GetOutputPane()->GetBuildTab()->ProcessEvent(event);
 }
 
 void Frame::OnNextBuildErrorUI(wxUpdateUIEvent &event) {

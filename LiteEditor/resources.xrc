@@ -64,7 +64,7 @@
 	<object class="wxBitmap" name="arrow_next">res/next.png</object>	
 	<object class="wxBitmap" name="arrow_back">res/previous.png</object>	
 	<object class="wxBitmap" name="debugger_start">res/debugger_start.png</object>
-	<object class="wxBitmap" name="debugger_stop">res/debugger_stop.png</object>
+	<object class="wxBitmap" name="debugger_stop">res/debugger_stop.png</object> 
 	<object class="wxBitmap" name="debugger_pause">res/debugger_pause.png</object>
 	<object class="wxBitmap" name="debugger_stepin">res/debugger_stepin.png</object>	
 	<object class="wxBitmap" name="debugger_stepout">res/debugger_stepout.png</object>	

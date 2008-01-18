@@ -1,5 +1,5 @@
-#ifndef OUTPUTPANEWINDOW_H
-#define OUTPUTPANEWINDOW_H
+#ifndef SHELLTAB_H
+#define SHELLTAB_H
 
 #include "wx/wxscintilla.h"
 #include "wx/panel.h"
@@ -26,7 +26,7 @@ public:
 	ShellWindow *GetShell() {return m_window;}
 };
 
-#endif //OUTPUTPANEWINDOW_H
+#endif //SHELLTAB_H
 
 
 

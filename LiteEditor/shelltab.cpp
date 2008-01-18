@@ -1,4 +1,4 @@
-#include "outputpanewindow.h"
+#include "shelltab.h"
 #include "wx/xrc/xmlres.h"
 #include "output_pane.h"
 #include "manager.h"

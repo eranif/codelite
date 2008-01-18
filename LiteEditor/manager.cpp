@@ -1163,13 +1163,11 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	ProjectPtr proj = GetProject(projectName);
 	//print the current directory
 	::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-	wxLogMessage(wxT("Setting working directory to poject path: ") + proj->GetFileName().GetPath() + wxT("\n"));
-
+	
 	//now set the working directory according to working directory field from the
 	//project settings
 	::wxSetWorkingDirectory(wd);
-	wxLogMessage(wxT("Setting working directory to: ") + wd + wxT("\n"));
-
+	
 	//execute the command line
 	//the async command is a one time executable object,
 	m_asyncExeCmd = new AsyncExeCmd(GetMainFrame());

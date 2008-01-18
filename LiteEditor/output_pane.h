@@ -5,7 +5,7 @@
 #include "wx/panel.h"
 #include "wx/wxscintilla.h"
 #include "wx/wxFlatNotebook/wxFlatNotebook.h"
-#include "outputpanewindow.h"
+#include "shelltab.h"
 #include "map"
 
 class OutputPane;

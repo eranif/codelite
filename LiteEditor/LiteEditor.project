@@ -214,8 +214,6 @@
     <File Name="localvarstree.cpp"/>
     <File Name="fileexplorer.cpp"/>
     <File Name="fileexplorer.h"/>
-    <File Name="outputpanewindow.h"/>
-    <File Name="outputpanewindow.cpp"/>
     <File Name="mainbook.cpp"/>
     <File Name="mainbook.h"/>
     <File Name="tiptree.cpp"/>
@@ -234,6 +232,8 @@
     <File Name="outputtabwindow.h"/>
     <File Name="findresultstab.cpp"/>
     <File Name="findresultstab.h"/>
+    <File Name="shelltab.h"/>
+    <File Name="shelltab.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

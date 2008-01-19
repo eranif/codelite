@@ -394,6 +394,7 @@ void BuildTab::ReloadSettings()
 
 void BuildTab::OnLeftDown(wxMouseEvent &e)
 {
+	/*
 	wxPoint clientPt = e.GetPosition();
 	int pos = m_sci->PositionFromPointClose(clientPt.x, clientPt.y);
 	int line = m_sci->LineFromPosition(pos);
@@ -405,4 +406,6 @@ void BuildTab::OnLeftDown(wxMouseEvent &e)
 
 	lineText.Replace(wxT("\\"), wxT("/"));
 	OnBuildWindowDClick(lineText, line);
+	*/
+	e.Skip();
 }

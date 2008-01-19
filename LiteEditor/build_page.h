@@ -43,6 +43,8 @@ class BuildSystemPage : public wxPanel {
 	wxStaticText* m_staticText18;
 	wxTextCtrl* m_textBuildToolOptions;
 	wxString m_name;
+	wxStaticText* m_staticText19;
+	wxComboBox* m_choiceJobs;
 public:
 	BuildSystemPage(wxWindow *parent, wxString name);
 	virtual ~BuildSystemPage(){}

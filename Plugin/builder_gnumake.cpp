@@ -84,7 +84,7 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, wxStrin
 	text << wxT("All:\n");
 
 	//iterate over the dependencies projects and generate makefile
-	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand();
+	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(false);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 
 	//generate the makefile for the selected workspace configuration
@@ -707,7 +707,7 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project)
 	}
 
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand();
+	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 
 	wxString type = Builder::NormalizeConfigName(matrix->GetSelectedConfigurationName());
@@ -725,7 +725,7 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString &project)
 		return wxEmptyString;
 	}
 
-	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand();
+	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
@@ -747,7 +747,7 @@ wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project)
 	}
 	
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand();
+	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(false);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 
 	wxString type = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), project);
@@ -768,7 +768,7 @@ wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project)
 	}
 
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand();
+	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(false);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 
 	wxString type = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), project);
@@ -789,7 +789,7 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 	}
 
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand();
+	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 
 	wxString type = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), project);

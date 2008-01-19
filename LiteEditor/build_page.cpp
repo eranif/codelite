@@ -94,6 +94,18 @@ BuildSystemPage::BuildSystemPage(wxWindow *parent, wxString name)
 	m_textBuildToolOptions = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer4->Add( m_textBuildToolOptions, 0, wxALL|wxEXPAND, 5 );
 	
+	m_staticText19 = new wxStaticText( this, wxID_ANY, wxT("No. of concurrent jobs:"), wxDefaultPosition, wxDefaultSize, 0);
+	fgSizer4->Add( m_staticText19, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+	
+	wxArrayString choices;
+	choices.Add(wxT("1"));
+	choices.Add(wxT("2"));
+	choices.Add(wxT("3"));
+	choices.Add(wxT("4"));
+	choices.Add(wxT("unlimited"));
+	m_choiceJobs = new wxComboBox(this, wxID_ANY, wxT("1"), wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY);
+	fgSizer4->Add( m_choiceJobs, 1, wxALL|wxEXPAND, 5);
+	
 	bSizer6->Add( fgSizer4, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer6 );
@@ -102,6 +114,7 @@ BuildSystemPage::BuildSystemPage(wxWindow *parent, wxString name)
 	//set the default build tool path
 	m_filePicker->SetPath(BuildManagerST::Get()->GetBuilder(name)->GetBuildToolName());
 	m_textBuildToolOptions->SetValue(BuildManagerST::Get()->GetBuilder(name)->GetBuildToolOptions());
+	m_choiceJobs->SetValue(BuildManagerST::Get()->GetBuilder(name)->GetBuildToolJobs());
 }
 
 void BuildSystemPage::Save()
@@ -110,6 +123,7 @@ void BuildSystemPage::Save()
 	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(m_name);
 	builder->SetBuildTool(m_filePicker->GetPath());
 	builder->SetBuildToolOptions(m_textBuildToolOptions->GetValue());
+	builder->SetBuildToolJobs(m_choiceJobs->GetValue());
 	BuildManagerST::Get()->AddBuilder(builder);
 
 	//update configuration file
@@ -121,5 +135,6 @@ void BuildSystemPage::Save()
 	}
 	bsptr->SetToolPath(m_filePicker->GetPath());	
 	bsptr->SetToolOptions(m_textBuildToolOptions->GetValue());
+	bsptr->SetToolJobs(m_choiceJobs->GetValue());
 	BuildSettingsConfigST::Get()->SetBuildSystem(bsptr);
 }

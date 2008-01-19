@@ -29,9 +29,11 @@ protected:
 	wxString m_name;
 	wxString m_buildTool;
 	wxString m_buildToolOptions;
+	wxString m_buildToolJobs;
 
 	wxString GetBuildToolFromConfig() const;
 	wxString GetBuildToolOptionsFromConfig() const;
+	wxString GetBuildToolJobsFromConfig() const;
 
 public:
 	Builder(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions) ;
@@ -39,6 +41,7 @@ public:
 
 	void SetBuildTool(const wxString &buildTool) { m_buildTool = buildTool; }
 	void SetBuildToolOptions(const wxString &buildToolOptions) { m_buildToolOptions = buildToolOptions; }
+	void SetBuildToolJobs(const wxString &buildToolJobs) { m_buildToolJobs = buildToolJobs; }
 
 	/**
 	 * Normalize the configuration name, this is done by removing any trailing and leading 
@@ -54,7 +57,7 @@ public:
 	/**
 	 * \return the build tool assoicated with this builder
 	 */
-	wxString GetBuildToolCommand() const;
+	wxString GetBuildToolCommand(bool isCommandlineCommand) const;
 	
 	/**
 	 * return the build tool name 
@@ -65,6 +68,11 @@ public:
 	 * return the build tool options
 	 */
 	wxString GetBuildToolOptions() const;
+	
+	/**
+	 * return the build tool jobs
+	 */ 
+	wxString GetBuildToolJobs() const;
 
 	/**
 	 * Export the build system specific file (e.g. GNU makefile, Ant file etc) 

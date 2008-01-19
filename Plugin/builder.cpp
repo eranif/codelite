@@ -46,10 +46,39 @@ wxString Builder::GetBuildToolOptionsFromConfig() const
 	return bs->GetToolOptions();
 }
 
-wxString Builder::GetBuildToolCommand() const
+wxString Builder::GetBuildToolJobsFromConfig() const
 {
+	BuildSystemPtr bs = BuildSettingsConfigST::Get()->GetBuildSystem(m_name);
+	if( !bs ){
+		return m_buildToolJobs;
+	}
+	
+	return bs->GetToolJobs();
+}
+
+wxString Builder::GetBuildToolCommand(bool isCommandlineCommand) const
+{
+	wxString jobsCmd;
+	wxString buildTool;
+	
+	if(isCommandlineCommand)
+	{
+		wxString jobs = GetBuildToolJobsFromConfig();
+		if(jobs == wxT("unlimited"))
+			jobsCmd = wxT(" -j ");
+		else
+			jobsCmd = wxT(" -j ") + jobs + wxT(" ");
+		
+		buildTool = GetBuildToolFromConfig();
+	}
+	else
+	{
+		jobsCmd = wxEmptyString;
+		buildTool = wxT("$(MAKE)");
+	}
+
 	//enclose the tool path in quatation marks
-	return wxT("\"") + GetBuildToolFromConfig() + wxT("\" ") + GetBuildToolOptionsFromConfig();
+	return wxT("\"") + buildTool + wxT("\" ") + jobsCmd + GetBuildToolOptionsFromConfig() ;
 }
 
 wxString Builder::GetBuildToolName() const
@@ -60,4 +89,9 @@ wxString Builder::GetBuildToolName() const
 wxString Builder::GetBuildToolOptions() const
 {
 	return GetBuildToolOptionsFromConfig();
+}
+
+wxString Builder::GetBuildToolJobs() const
+{
+	return GetBuildToolJobsFromConfig();
 }

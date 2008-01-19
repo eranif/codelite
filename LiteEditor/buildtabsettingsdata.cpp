@@ -5,13 +5,13 @@
 BuildTabSettingsData::BuildTabSettingsData()
 : m_skipWarnings(false)
 {
-	wxColour errColour = wxFNBRenderer::LightColour(wxT("RED"), 50);
+	wxColour errColour = wxFNBRenderer::LightColour(wxT("BROWN"), 50);
 	wxColour wrnColour = wxFNBRenderer::LightColour(wxT("YELLOW"), 70);
-	m_errorColour = errColour.GetAsString(wxC2S_HTML_SYNTAX);
-	m_warnColour  = wrnColour.GetAsString(wxC2S_HTML_SYNTAX);
+	m_errorColourBg = errColour.GetAsString(wxC2S_HTML_SYNTAX);
+	m_warnColourBg  = wrnColour.GetAsString(wxC2S_HTML_SYNTAX);
 	
-	m_warnColourBg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(wxC2S_HTML_SYNTAX);
-	m_errorColourBg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(wxC2S_HTML_SYNTAX);
+	m_warnColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(wxC2S_HTML_SYNTAX);
+	m_errorColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(wxC2S_HTML_SYNTAX);
 }
 
 BuildTabSettingsData::~BuildTabSettingsData()

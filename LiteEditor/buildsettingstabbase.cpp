@@ -15,7 +15,7 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 3, 3, 0, 0 );
+	fgSizer1 = new wxFlexGridSizer( 3, 2, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
 	fgSizer1->AddGrowableCol( 2 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
@@ -25,17 +25,11 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	m_staticText3->Wrap( -1 );
 	fgSizer1->Add( m_staticText3, 0, wxALL, 5 );
 	
-	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Foreground colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Background colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	m_staticText4->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 	
 	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
-	
-	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("Background colour:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText5->Wrap( -1 );
-	m_staticText5->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-	
-	fgSizer1->Add( m_staticText5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Compiler errors colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
@@ -44,18 +38,12 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	m_colourPickerError = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 255, 98, 98 ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
 	fgSizer1->Add( m_colourPickerError, 0, wxALL|wxEXPAND, 5 );
 	
-	m_colourPickerErrorBg = new wxColourPickerCtrl( this, wxID_ANY, wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
-	fgSizer1->Add( m_colourPickerErrorBg, 0, wxALL|wxEXPAND, 5 );
-	
 	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Compiler warnings colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_colourPickerWarnings = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 255, 255, 170 ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
 	fgSizer1->Add( m_colourPickerWarnings, 0, wxALL|wxEXPAND, 5 );
-	
-	m_colourPickerWarningsBg = new wxColourPickerCtrl( this, wxID_ANY, wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
-	fgSizer1->Add( m_colourPickerWarningsBg, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer1->Add( fgSizer1, 0, wxALL|wxEXPAND, 5 );
 	

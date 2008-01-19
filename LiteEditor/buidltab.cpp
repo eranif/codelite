@@ -63,10 +63,10 @@ void BuildTab::Initialize()
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 	
-	m_sci->StyleSetForeground(SCE_STYLE_WARNING, options.GetWarnColour());
-	m_sci->StyleSetForeground(SCE_STYLE_ERROR, options.GetErrorColour());
-//	m_sci->StyleSetBackground(SCE_STYLE_WARNING, options.GetWarnColourBg());
-//	m_sci->StyleSetBackground(SCE_STYLE_ERROR, options.GetErrorColourBg());
+//	m_sci->StyleSetForeground(SCE_STYLE_WARNING, options.GetWarnColour());
+//	m_sci->StyleSetForeground(SCE_STYLE_ERROR, options.GetErrorColour());
+	m_sci->StyleSetBackground(SCE_STYLE_WARNING, options.GetWarnColourBg());
+	m_sci->StyleSetBackground(SCE_STYLE_ERROR, options.GetErrorColourBg());
 	
 	m_sci->StyleSetFont(SCE_STYLE_WARNING, font);
 	m_sci->StyleSetFont(SCE_STYLE_ERROR, font);
@@ -103,7 +103,7 @@ void BuildTab::AppendText(const wxString &text)
 	}
 
 	OutputTabWindow::AppendText(text);
-	//ColourLine(m_sci->GetLineCount()-2);
+	ColourLine(m_sci->GetLineCount()-2);
 }
 
 void BuildTab::OnMouseDClick(wxScintillaEvent &event)

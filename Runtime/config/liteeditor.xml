@@ -43,6 +43,13 @@
     <File Name="C:\Test\wxMain\wxMain.workspace"/>
     <File Name="C:\Test\CC\CC.workspace"/>
   </RecentWorkspaces>
+  <ArchiveObject Name="build_tab_settings">
+    <wxString Value="#FFFFFF" Name="m_errorColour"/>
+    <wxString Value="#FFFFFF" Name="m_warnColour"/>
+    <wxString Value="#FF0000" Name="m_errorColourBg"/>
+    <wxString Value="#FFFFB2" Name="m_warnColourBg"/>
+    <bool Value="0" Name="m_skipWarnings"/>
+  </ArchiveObject>
   <RecentFiles>
     <File Name="C:\cscope-15.6\src\vpinit.c"/>
     <File Name="C:\cscope-15.6\src\vpopen.c"/>
@@ -54,13 +61,6 @@
     <File Name="C:\TestArea\CCBug\test_template.h"/>
     <File Name="C:\TestArea\CCBug\main.cpp"/>
   </RecentFiles>
-  <ArchiveObject Name="build_tab_settings">
-    <wxString Value="#FFFFFF" Name="m_errorColour"/>
-    <wxString Value="#FFFFFF" Name="m_warnColour"/>
-    <wxString Value="#FF8040" Name="m_errorColourBg"/>
-    <wxString Value="#FFFFB2" Name="m_warnColourBg"/>
-    <bool Value="0" Name="m_skipWarnings"/>
-  </ArchiveObject>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="1004"/>
     <wxPoint Name="m_framePos" x="-4" y="-4"/>

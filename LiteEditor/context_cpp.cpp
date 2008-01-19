@@ -486,13 +486,29 @@ void ContextCpp::CodeComplete()
 	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
 	int startPos(0);
 	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(rCtrl.GetFileName(), line);
-	if( t ){
+	if ( t ) {
 		startPos = rCtrl.PositionFromLine( t->GetLine() - 1);
-		if( startPos > rCtrl.GetCurrentPos() ){
+		if ( startPos > rCtrl.GetCurrentPos() ) {
 			startPos = 0;
 		}
 	}
+
 	wxString text = rCtrl.GetTextRange(startPos, rCtrl.GetCurrentPos());
+	//hack #2
+	//collect all text from 0 - first scope found
+	//this will help us detect statements like 'using namespace foo;'
+	if (startPos) { //> 0
+		//get the first function on this file
+		TagEntryPtr t2 = TagsManagerST::Get()->FirstFunctionOfFile(rCtrl.GetFileName());
+		if ( t2 ) {
+			int endPos = rCtrl.PositionFromLine( t2->GetLine() - 1);
+			if (endPos > 0 && endPos <= startPos) {
+				wxString globalText = rCtrl.GetTextRange(0, endPos);
+				globalText.Append(wxT(";"));
+				text.Prepend(globalText);
+			}
+		}
+	}
 
 	std::vector<TagEntryPtr> candidates;
 	if ( showFuncProto ) {
@@ -1267,25 +1283,25 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 
 void ContextCpp::OnKeyDown(wxKeyEvent &event)
 {
-/*
-	//validate project is open for the container editor
-	if (GetCtrl().GetProject().IsEmpty()) {
-		event.Skip();
-		return;
-	}
-
-	if (m_tipKind == TipFuncProto && GetCtrl().CallTipActive() && m_ct) {
-		if (event.GetKeyCode() == WXK_DOWN) {
-			GetCtrl().CallTipCancel();
-			GetCtrl().CallTipShow(GetCtrl().GetCurrentPos(), m_ct->Next());
-			return;
-		} else if (event.GetKeyCode() == WXK_UP) {
-			GetCtrl().CallTipCancel();
-			GetCtrl().CallTipShow(GetCtrl().GetCurrentPos(), m_ct->Prev());
+	/*
+		//validate project is open for the container editor
+		if (GetCtrl().GetProject().IsEmpty()) {
+			event.Skip();
 			return;
 		}
-	}
-*/	
+
+		if (m_tipKind == TipFuncProto && GetCtrl().CallTipActive() && m_ct) {
+			if (event.GetKeyCode() == WXK_DOWN) {
+				GetCtrl().CallTipCancel();
+				GetCtrl().CallTipShow(GetCtrl().GetCurrentPos(), m_ct->Next());
+				return;
+			} else if (event.GetKeyCode() == WXK_UP) {
+				GetCtrl().CallTipCancel();
+				GetCtrl().CallTipShow(GetCtrl().GetCurrentPos(), m_ct->Prev());
+				return;
+			}
+		}
+	*/
 	event.Skip();
 }
 

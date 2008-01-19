@@ -475,6 +475,13 @@ public:
 	TagEntryPtr FunctionFromFileLine(const wxFileName &fileName, int lineno);
 	
 	/**
+	 * \brief return the first function of 'fileName'
+	 * \param fileName file to scan 
+	 * \return NULL or valid tag
+	 */
+	TagEntryPtr FirstFunctionOfFile(const wxFileName &fileName);
+
+	/**
 	 * \brief return list of scopes from a given file. This function is used by the navigation bar
 	 * \param name
 	 * \param scope

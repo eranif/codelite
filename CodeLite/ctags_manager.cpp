@@ -1722,3 +1722,31 @@ bool TagsManager::GetFunctionDetails(const wxFileName &fileName, int lineno, Tag
 	}
 	return false;
 }
+
+TagEntryPtr TagsManager::FirstFunctionOfFile(const wxFileName &fileName)
+{
+	if (!m_pDb) {
+		return NULL;
+	}
+
+	wxString sql;
+	sql << wxT("select * from tags where file = '")
+	<< fileName.GetFullPath()
+	<< wxT("' ")
+	<< wxT(" and kind='function' order by line ASC");
+
+	//we take the first entry
+	try {
+		wxSQLite3ResultSet rs = m_pDb->Query(sql);
+		if ( rs.NextRow() ) {
+			// Construct a TagEntry from the rescord set
+			TagEntryPtr tag(new TagEntry(rs));
+			rs.Finalize();
+			return tag;
+		}
+		rs.Finalize();
+	} catch ( wxSQLite3Exception& e) {
+		wxUnusedVar(e);
+	}
+	return NULL;
+}

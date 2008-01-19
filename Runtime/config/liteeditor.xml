@@ -36,13 +36,6 @@
     <long Value="3" Name="m_flags"/>
   </ArchiveObject>
   <Options DisplayFoldMargin="yes" UnderlineFoldedLine="no" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#0080C0" CaretColour="#000000"/>
-  <RecentWorkspaces>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\Development\C++\codelite\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
-    <File Name="C:\Test\wxMain\wxMain.workspace"/>
-    <File Name="C:\Test\CC\CC.workspace"/>
-  </RecentWorkspaces>
   <ArchiveObject Name="build_tab_settings">
     <wxString Value="#FFFFFF" Name="m_errorColour"/>
     <wxString Value="#FFFFFF" Name="m_warnColour"/>
@@ -50,6 +43,13 @@
     <wxString Value="#FFFFB2" Name="m_warnColourBg"/>
     <bool Value="0" Name="m_skipWarnings"/>
   </ArchiveObject>
+  <RecentWorkspaces>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\Development\C++\codelite\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
+    <File Name="C:\Test\wxMain\wxMain.workspace"/>
+    <File Name="C:\Test\CC\CC.workspace"/>
+  </RecentWorkspaces>
   <RecentFiles>
     <File Name="C:\cscope-15.6\src\vpinit.c"/>
     <File Name="C:\cscope-15.6\src\vpopen.c"/>

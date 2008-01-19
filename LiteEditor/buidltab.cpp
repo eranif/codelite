@@ -70,6 +70,7 @@ void BuildTab::Initialize()
 	
 	m_sci->StyleSetFont(SCE_STYLE_WARNING, font);
 	m_sci->StyleSetFont(SCE_STYLE_ERROR, font);
+	m_sci->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(BuildTab::OnLeftDown), NULL, this);
 }
 
 void BuildTab::AppendText(const wxString &text)
@@ -389,4 +390,19 @@ void BuildTab::OnBuildEnded()
 void BuildTab::ReloadSettings()
 {
 	Initialize();
+}
+
+void BuildTab::OnLeftDown(wxMouseEvent &e)
+{
+	wxPoint clientPt = e.GetPosition();
+	int pos = m_sci->PositionFromPointClose(clientPt.x, clientPt.y);
+	int line = m_sci->LineFromPosition(pos);
+	wxString lineText = m_sci->GetLine(line);
+
+	//remove selection
+	m_sci->SetSelectionStart(pos);
+	m_sci->SetSelectionEnd(pos);
+
+	lineText.Replace(wxT("\\"), wxT("/"));
+	OnBuildWindowDClick(lineText, line);
 }

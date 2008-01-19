@@ -22,6 +22,7 @@ protected:
 	bool OnBuildWindowDClick(const wxString &line, int lineClicked);
 	void OnNextBuildError(wxCommandEvent &event);
 	void OnMouseDClick(wxScintillaEvent &event);
+	void OnLeftDown(wxMouseEvent &e);
 	void OnStyleNeeded(wxScintillaEvent &event);
 	void ColourLine(int lineNumber);
 	void Initialize();

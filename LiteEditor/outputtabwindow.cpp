@@ -47,7 +47,7 @@ void OutputTabWindow::CreateGUIControl()
 	m_sci = new wxScintilla(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
 	// Hide margins
-	m_sci->SetLexer(wxSCI_LEX_NULL);
+	m_sci->SetLexer(wxSCI_LEX_CONTAINER);
 	m_sci->StyleClearAll();
 
 	// symbol margin
@@ -73,7 +73,7 @@ void OutputTabWindow::CreateGUIControl()
 
 	Connect(wxEVT_SCI_DOUBLECLICK, wxScintillaEventHandler(OutputTabWindow::OnMouseDClick), NULL, this);
 	Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(OutputTabWindow::OnSetFocus), NULL, this);
-	//Connect(wxEVT_SCI_STYLENEEDED, wxScintillaEventHandler(OutputTabWindow::OnStyleNeeded), NULL, this);
+	Connect(wxEVT_SCI_STYLENEEDED, wxScintillaEventHandler(OutputTabWindow::OnStyleNeeded), NULL, this);
 }
 
 void OutputTabWindow::OnSetFocus(wxFocusEvent &event)

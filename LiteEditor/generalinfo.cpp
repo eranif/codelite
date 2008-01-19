@@ -1,6 +1,6 @@
 #include "generalinfo.h"
 
-GeneralInfo::GeneralInfo()
+GeneralInfo::GeneralInfo() 
 : m_frameSize(800, 600)
 , m_framePos(0, 0)
 , m_flags(CL_SHOW_WELCOME_PAGE | CL_LOAD_LAST_SESSION | CL_USE_EOL_LF)

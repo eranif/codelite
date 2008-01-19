@@ -13,6 +13,8 @@ BuildTabSettingsBase( parent )
 	m_checkBoxSkipeWarnings->SetValue( options.GetSkipWarnings() );
 	m_colourPickerError->SetColour(options.GetErrorColour());
 	m_colourPickerWarnings->SetColour(options.GetWarnColour());
+	m_colourPickerErrorBg->SetColour(options.GetErrorColourBg());
+	m_colourPickerWarningsBg->SetColour(options.GetWarnColourBg());
 }
 
 void BuildTabSetting::Save()
@@ -20,6 +22,10 @@ void BuildTabSetting::Save()
 	BuildTabSettingsData options;
 	options.SetErrorColour(m_colourPickerError->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
 	options.SetWarnColour(m_colourPickerWarnings->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
+	
+	options.SetErrorColourBg(m_colourPickerErrorBg->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
+	options.SetWarnColourBg(m_colourPickerWarningsBg->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
+
 	options.SetSkipWarnings(m_checkBoxSkipeWarnings->IsChecked());
 	
 	EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);

@@ -14,7 +14,12 @@
 #define ERROR_MARKER 	0x5
 #define WARN_MARKER 	0x6
 
+
+#define SCE_STYLE_WARNING 	1
+#define SCE_STYLE_ERROR  	2
+
 extern char *arrow_right_green_xpm[];
+
 
 #ifndef wxScintillaEventHandler
 #define wxScintillaEventHandler(func) \
@@ -30,9 +35,12 @@ BuildTab::BuildTab(wxWindow *parent, wxWindowID id, const wxString &name)
 		, m_nextBuildError_lastLine(wxNOT_FOUND)
 {
 	//set some colours to our styles
-	wxImage img(arrow_right_green_xpm);
-	wxBitmap bmp(img);
-	m_sci->MarkerDefineBitmap(0x7, bmp);
+//	wxImage img(arrow_right_green_xpm);
+//	wxBitmap bmp(img);
+//	m_sci->MarkerDefineBitmap(0x7, bmp);
+	m_sci->MarkerDefine(0x7, wxSCI_MARK_ARROW);
+	m_sci->MarkerSetForeground(0x7, wxT("BLACK"));
+	m_sci->MarkerSetBackground(0x7, wxT("RED"));
 	m_sci->SetMarginWidth(1, 16);
 	Initialize();
 }
@@ -43,14 +51,25 @@ BuildTab::~BuildTab()
 
 void BuildTab::Initialize()
 {
-	m_sci->MarkerDefine(ERROR_MARKER, wxSCI_MARK_BACKGROUND);
-	m_sci->MarkerDefine(WARN_MARKER, wxSCI_MARK_BACKGROUND);
-	
 	BuildTabSettingsData options;
 	EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
 	m_skipWarnings = options.GetSkipWarnings();
-	m_sci->MarkerSetBackground(ERROR_MARKER, options.GetErrorColour());
-	m_sci->MarkerSetBackground(WARN_MARKER, options.GetWarnColour());
+	
+	m_sci->MarkerDefine(ERROR_MARKER, wxSCI_MARK_BACKGROUND);
+	m_sci->MarkerDefine(WARN_MARKER, wxSCI_MARK_BACKGROUND);
+	m_sci->MarkerSetBackground(ERROR_MARKER, options.GetErrorColourBg());
+	m_sci->MarkerSetBackground(WARN_MARKER, options.GetWarnColourBg());
+
+	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
+	
+	m_sci->StyleSetForeground(SCE_STYLE_WARNING, options.GetWarnColour());
+	m_sci->StyleSetForeground(SCE_STYLE_ERROR, options.GetErrorColour());
+//	m_sci->StyleSetBackground(SCE_STYLE_WARNING, options.GetWarnColourBg());
+//	m_sci->StyleSetBackground(SCE_STYLE_ERROR, options.GetErrorColourBg());
+	
+	m_sci->StyleSetFont(SCE_STYLE_WARNING, font);
+	m_sci->StyleSetFont(SCE_STYLE_ERROR, font);
 }
 
 void BuildTab::AppendText(const wxString &text)
@@ -84,7 +103,7 @@ void BuildTab::AppendText(const wxString &text)
 	}
 
 	OutputTabWindow::AppendText(text);
-	ColourLine(m_sci->GetLineCount()-2);
+	//ColourLine(m_sci->GetLineCount()-2);
 }
 
 void BuildTab::OnMouseDClick(wxScintillaEvent &event)
@@ -262,8 +281,7 @@ void BuildTab::Clear()
 
 void BuildTab::OnStyleNeeded(wxScintillaEvent &event)
 {
-	wxUnusedVar(event);
-/*	wxString fileName, strLineNumber;
+	wxString fileName, strLineNumber;
 	bool warn_match = false;
 	bool eror_match = false;
 	long idx;
@@ -307,16 +325,18 @@ void BuildTab::OnStyleNeeded(wxScintillaEvent &event)
 	if ( warn_match ) {
 		//colour this line in orange
 		m_sci->SetStyling(line_length, SCE_STYLE_WARNING);
+		m_sci->MarkerAdd(lineNumber, WARN_MARKER);
 	} else if ( eror_match ) {
 		//error line
 		m_sci->SetStyling(line_length, SCE_STYLE_ERROR);
+		m_sci->MarkerAdd(lineNumber, ERROR_MARKER);
 	} else {
 		//default
 		m_sci->SetStyling(line_length, wxSCI_STYLE_DEFAULT);
 	}
 	
 	//apply changes
-	//event.Skip();*/
+	event.Skip();
 }
 
 void BuildTab::ColourLine(int lineNumber)

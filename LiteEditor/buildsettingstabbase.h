@@ -5,7 +5,7 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __buildsettingstabbase__
+#ifndef __buildsettingstabbase__ 
 #define __buildsettingstabbase__
 
 #include <wx/string.h>
@@ -30,10 +30,15 @@ class BuildTabSettingsBase : public wxPanel
 	private:
 	
 	protected:
+		wxStaticText* m_staticText3;
+		wxStaticText* m_staticText4;
+		wxStaticText* m_staticText5;
 		wxStaticText* m_staticText1;
 		wxColourPickerCtrl* m_colourPickerError;
+		wxColourPickerCtrl* m_colourPickerErrorBg;
 		wxStaticText* m_staticText2;
 		wxColourPickerCtrl* m_colourPickerWarnings;
+		wxColourPickerCtrl* m_colourPickerWarningsBg;
 		wxCheckBox* m_checkBoxSkipeWarnings;
 	
 	public:

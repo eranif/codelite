@@ -1,8 +1,8 @@
 #include "precompiled_header.h"
 #include "shell_window.h"
 
-#include "findresultstab.h"
-#include "buidltab.h"
+#include "findresultstab.h" 
+#include "buidltab.h" 
 #include "frame.h"
 #include "splashscreen.h"
 #include "wx/stdpaths.h"

@@ -96,6 +96,14 @@
 #define SCLEX_GAP 81
 #define SCLEX_PLM 82
 #define SCLEX_PROGRESS 83
+
+//Eran - START
+#define SCLEX_GCC 84
+#define SCLEX_GCC_DEFAULT 0
+#define SCLEX_GCC_ERROR	  1
+#define SCLEX_GCC_WARNING 2
+//Eran - END
+
 #define SCLEX_AUTOMATIC 1000
 #define SCE_P_DEFAULT 0
 #define SCE_P_COMMENTLINE 1

@@ -13,8 +13,10 @@ BuildTabSettingsBase( parent )
 	m_checkBoxSkipeWarnings->SetValue( options.GetSkipWarnings() );
 	m_colourPickerError->SetColour(options.GetErrorColourBg());
 	m_colourPickerWarnings->SetColour(options.GetWarnColourBg());
-//	m_colourPickerErrorBg->SetColour(options.GetErrorColourBg());
-//	m_colourPickerWarningsBg->SetColour(options.GetWarnColourBg());
+	m_colourPickerErrorFg->SetColour(options.GetErrorColour());
+	m_colourPickerWarningsFg->SetColour(options.GetWarnColour());
+	m_checkBoxBoldErrFont->SetValue(options.GetBoldErrFont());
+	m_checkBoxBoldWarnFont->SetValue(options.GetBoldWarnFont());
 }
 
 void BuildTabSetting::Save()
@@ -22,11 +24,11 @@ void BuildTabSetting::Save()
 	BuildTabSettingsData options;
 	options.SetErrorColourBg(m_colourPickerError->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
 	options.SetWarnColourBg(m_colourPickerWarnings->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
-	
-//	options.SetErrorColourBg(m_colourPickerErrorBg->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
-//	options.SetWarnColourBg(m_colourPickerWarningsBg->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
-
+	options.SetErrorColour(m_colourPickerErrorFg->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
+	options.SetWarnColour(m_colourPickerWarningsFg->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
 	options.SetSkipWarnings(m_checkBoxSkipeWarnings->IsChecked());
+	options.SetBoldErrFont(m_checkBoxBoldErrFont->IsChecked());
+	options.SetBoldWarnFont(m_checkBoxBoldWarnFont->IsChecked());
 	
 	EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);
 	//reload the settings

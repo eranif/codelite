@@ -23,10 +23,8 @@ protected:
 	void OnNextBuildError(wxCommandEvent &event);
 	void OnMouseDClick(wxScintillaEvent &event);
 	void OnLeftDown(wxMouseEvent &e);
-	void OnStyleNeeded(wxScintillaEvent &event);
-	void ColourLine(int lineNumber);
 	void Initialize();
-	CompilerPtr GetCompilerByLine(int lineClicked);
+	
 	
 public:
 	BuildTab(wxWindow *parent, wxWindowID id, const wxString &name);
@@ -37,6 +35,8 @@ public:
 	
 	void OnBuildEnded();
 	void ReloadSettings();
+	CompilerPtr GetCompilerByLine(int lineClicked);
+	int LineFromPosition(int pos);
 	
 	DECLARE_EVENT_TABLE()
 };

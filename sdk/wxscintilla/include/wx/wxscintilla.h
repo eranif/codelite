@@ -402,6 +402,13 @@
 #define wxSCI_LEX_OPAL 77
 #define wxSCI_LEX_SPICE 78
 
+//ERAN 
+#define wxSCI_LEX_GCC	84
+#define wxSCI_LEX_GCC_DEFAULT 0
+#define wxSCI_LEX_GCC_ERROR	  1
+#define wxSCI_LEX_GCC_WARNING 2
+//ERAN - END
+
 // When a lexer specifies its language as SCLEX_AUTOMATIC it receives a
 // value assigned in sequence from SCLEX_AUTOMATIC+1.
 #define wxSCI_LEX_AUTOMATIC 1000

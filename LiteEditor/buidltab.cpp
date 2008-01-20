@@ -1,4 +1,6 @@
 #include "editor_config.h"
+#include "precompiled_header.h"
+#include "frame.h"
 #include "buildtabsettingsdata.h"
 #include "wx/wxFlatNotebook/renderer.h"
 #include "regex_processor.h"
@@ -8,18 +10,8 @@
 #include "compiler.h"
 #include "manager.h"
 #include "project.h"
-#include "wx/wxscintilla.h"
+#include "wx/wxscintilla.h" 
 #include "buidltab.h"
-
-#define ERROR_MARKER 	0x5
-#define WARN_MARKER 	0x6
-
-
-#define SCE_STYLE_WARNING 	1
-#define SCE_STYLE_ERROR  	2
-
-extern char *arrow_right_green_xpm[];
-
 
 #ifndef wxScintillaEventHandler
 #define wxScintillaEventHandler(func) \
@@ -30,17 +22,66 @@ BEGIN_EVENT_TABLE(BuildTab, wxPanel)
 	EVT_MENU(XRCID("next_error"), BuildTab::OnNextBuildError)
 END_EVENT_TABLE()
 
+//----------------------------------------------------
+//decide whether to colour gcc as warning or error
+//return:
+//0 - dont colour this line
+//1 - colour as error
+//2 - colour as warning
+//----------------------------------------------------
+int ColourGccLine(int startLine, const char *line) {
+	BuildTab *bt = Frame::Get()->GetOutputPane()->GetBuildTab();
+	
+	wxString fileName, strLineNumber;
+	bool warn_match = false;
+	bool eror_match = false;
+	long idx;
+
+	// search for the compiler definition for the current line
+	int lineNumber = bt->LineFromPosition(startLine);
+	CompilerPtr cmp = bt->GetCompilerByLine(lineNumber);
+	if (!cmp) {
+		return 0;
+	}
+
+	wxString lineText = _U(line);
+	RegexProcessor re(cmp->GetWarnPattern());
+	cmp->GetWarnFileNameIndex().ToLong(&idx);
+	if (re.GetGroup(lineText, idx, fileName)) {
+		//we found the file name, get the line number
+		cmp->GetWarnLineNumberIndex().ToLong( &idx );
+		re.GetGroup(lineText, idx, strLineNumber);
+		warn_match = true;
+	}
+
+	if ( !warn_match ) {
+		RegexProcessor ere(cmp->GetErrPattern());
+		cmp->GetErrFileNameIndex().ToLong(&idx);
+		if (ere.GetGroup(lineText, idx, fileName)) {
+			//we found the file name, get the line number
+			cmp->GetErrLineNumberIndex().ToLong( &idx );
+			ere.GetGroup(lineText, idx, strLineNumber);
+			eror_match = true;
+		}
+	}
+		
+	if ( warn_match ) {
+		//colour this line in orange
+		return wxSCI_LEX_GCC_WARNING;
+	} else if ( eror_match ) {
+		//error line
+		return wxSCI_LEX_GCC_ERROR;
+	} else {
+		return wxSCI_LEX_GCC_DEFAULT;
+	}
+}
+
 BuildTab::BuildTab(wxWindow *parent, wxWindowID id, const wxString &name)
 		: OutputTabWindow(parent, id, name)
 		, m_nextBuildError_lastLine(wxNOT_FOUND)
 {
 	//set some colours to our styles
-//	wxImage img(arrow_right_green_xpm);
-//	wxBitmap bmp(img);
-//	m_sci->MarkerDefineBitmap(0x7, bmp);
 	m_sci->MarkerDefine(0x7, wxSCI_MARK_ARROW);
-	m_sci->MarkerSetForeground(0x7, wxT("BLACK"));
-	m_sci->MarkerSetBackground(0x7, wxT("RED"));
 	m_sci->SetMarginWidth(1, 16);
 	Initialize();
 }
@@ -55,21 +96,25 @@ void BuildTab::Initialize()
 	EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
 	m_skipWarnings = options.GetSkipWarnings();
 	
-	m_sci->MarkerDefine(ERROR_MARKER, wxSCI_MARK_BACKGROUND);
-	m_sci->MarkerDefine(WARN_MARKER, wxSCI_MARK_BACKGROUND);
-	m_sci->MarkerSetBackground(ERROR_MARKER, options.GetErrorColourBg());
-	m_sci->MarkerSetBackground(WARN_MARKER, options.GetWarnColourBg());
-
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 	
-//	m_sci->StyleSetForeground(SCE_STYLE_WARNING, options.GetWarnColour());
-//	m_sci->StyleSetForeground(SCE_STYLE_ERROR, options.GetErrorColour());
-	m_sci->StyleSetBackground(SCE_STYLE_WARNING, options.GetWarnColourBg());
-	m_sci->StyleSetBackground(SCE_STYLE_ERROR, options.GetErrorColourBg());
+	m_sci->SetLexer(wxSCI_LEX_GCC);
 	
-	m_sci->StyleSetFont(SCE_STYLE_WARNING, font);
-	m_sci->StyleSetFont(SCE_STYLE_ERROR, font);
+	m_sci->StyleSetForeground(wxSCI_LEX_GCC_WARNING, options.GetWarnColour());
+	m_sci->StyleSetBackground(wxSCI_LEX_GCC_WARNING, options.GetWarnColourBg());
+
+	m_sci->StyleSetForeground(wxSCI_LEX_GCC_ERROR, options.GetErrorColour());
+	m_sci->StyleSetBackground(wxSCI_LEX_GCC_ERROR, options.GetErrorColourBg());
+	
+	font.SetWeight(options.GetBoldWarnFont() ? wxBOLD : wxNORMAL);
+	m_sci->StyleSetFont(wxSCI_LEX_GCC_WARNING, font);
+	
+	font.SetWeight(wxNORMAL);
+	m_sci->StyleSetFont(wxSCI_LEX_GCC_DEFAULT, font);
+	
+	font.SetWeight(options.GetBoldErrFont() ? wxBOLD : wxNORMAL);
+	m_sci->StyleSetFont(wxSCI_LEX_GCC_ERROR, font);
 	m_sci->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(BuildTab::OnLeftDown), NULL, this);
 }
 
@@ -104,7 +149,6 @@ void BuildTab::AppendText(const wxString &text)
 	}
 
 	OutputTabWindow::AppendText(text);
-	ColourLine(m_sci->GetLineCount()-2);
 }
 
 void BuildTab::OnMouseDClick(wxScintillaEvent &event)
@@ -276,111 +320,9 @@ void BuildTab::OnNextBuildError(wxCommandEvent &event)
 void BuildTab::Clear()
 {
 	OutputTabWindow::Clear();
+	Initialize();
 	m_lineInfo.clear();
 	m_nextBuildError_lastLine = wxNOT_FOUND;
-}
-
-void BuildTab::OnStyleNeeded(wxScintillaEvent &event)
-{
-	wxString fileName, strLineNumber;
-	bool warn_match = false;
-	bool eror_match = false;
-	long idx;
-
-	long start_pos = m_sci->GetEndStyled();
-	long lineNumber = m_sci->LineFromPosition(start_pos);
-	start_pos = m_sci->PositionFromLine(lineNumber);
-	int line_length = m_sci->LineLength(lineNumber);
-
-	// search for the compiler definition for the current line
-	CompilerPtr cmp = GetCompilerByLine(lineNumber);
-	if (!cmp) {
-		return;
-	}
-
-	wxString lineText = m_sci->GetLine(lineNumber);
-	RegexProcessor re(cmp->GetWarnPattern());
-	cmp->GetWarnFileNameIndex().ToLong(&idx);
-	if (re.GetGroup(lineText, idx, fileName)) {
-		//we found the file name, get the line number
-		cmp->GetWarnLineNumberIndex().ToLong( &idx );
-		re.GetGroup(lineText, idx, strLineNumber);
-		warn_match = true;
-	}
-
-	if ( !warn_match ) {
-		RegexProcessor ere(cmp->GetErrPattern());
-		cmp->GetErrFileNameIndex().ToLong(&idx);
-		if (ere.GetGroup(lineText, idx, fileName)) {
-			//we found the file name, get the line number
-			cmp->GetErrLineNumberIndex().ToLong( &idx );
-			ere.GetGroup(lineText, idx, strLineNumber);
-			eror_match = true;
-		}
-	}
-
-
-	// colour the data between end and start position
-	m_sci->StartStyling(start_pos, 0x1f);
-
-	if ( warn_match ) {
-		//colour this line in orange
-		m_sci->SetStyling(line_length, SCE_STYLE_WARNING);
-		m_sci->MarkerAdd(lineNumber, WARN_MARKER);
-	} else if ( eror_match ) {
-		//error line
-		m_sci->SetStyling(line_length, SCE_STYLE_ERROR);
-		m_sci->MarkerAdd(lineNumber, ERROR_MARKER);
-	} else {
-		//default
-		m_sci->SetStyling(line_length, wxSCI_STYLE_DEFAULT);
-	}
-	
-	//apply changes
-	event.Skip();
-}
-
-void BuildTab::ColourLine(int lineNumber)
-{
-	wxString fileName, strLineNumber;
-	bool warn_match = false;
-	bool eror_match = false;
-	long idx;
-
-	// search for the compiler definition for the current line
-	CompilerPtr cmp = GetCompilerByLine(lineNumber);
-	if (!cmp) {
-		return;
-	}
-
-	wxString lineText = m_sci->GetLine(lineNumber);
-	RegexProcessor re(cmp->GetWarnPattern());
-	cmp->GetWarnFileNameIndex().ToLong(&idx);
-	if (re.GetGroup(lineText, idx, fileName)) {
-		//we found the file name, get the line number
-		cmp->GetWarnLineNumberIndex().ToLong( &idx );
-		re.GetGroup(lineText, idx, strLineNumber);
-		warn_match = true;
-	}
-
-	if ( !warn_match ) {
-		RegexProcessor ere(cmp->GetErrPattern());
-		cmp->GetErrFileNameIndex().ToLong(&idx);
-		if (ere.GetGroup(lineText, idx, fileName)) {
-			//we found the file name, get the line number
-			cmp->GetErrLineNumberIndex().ToLong( &idx );
-			ere.GetGroup(lineText, idx, strLineNumber);
-			eror_match = true;
-		}
-	}
-		
-	if ( warn_match ) {
-		//colour this line in orange
-		m_sci->MarkerAdd(lineNumber, WARN_MARKER);
-	} else if ( eror_match ) {
-		//error line
-		m_sci->MarkerAdd(lineNumber, ERROR_MARKER);
-	}
 }
 
 void BuildTab::OnBuildEnded()
@@ -408,4 +350,9 @@ void BuildTab::OnLeftDown(wxMouseEvent &e)
 	OnBuildWindowDClick(lineText, line);
 	*/
 	e.Skip();
+}
+
+int BuildTab::LineFromPosition(int pos)
+{
+	return m_sci->LineFromPosition(pos);
 }

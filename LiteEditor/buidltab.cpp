@@ -100,6 +100,8 @@ void BuildTab::Initialize()
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 	
 	m_sci->SetLexer(wxSCI_LEX_GCC);
+	m_sci->MarkerSetBackground(0x7, wxT("BLUE"));
+	m_sci->MarkerSetForeground(0x7, wxT("BLACK"));
 	
 	m_sci->StyleSetForeground(wxSCI_LEX_GCC_WARNING, options.GetWarnColour());
 	m_sci->StyleSetBackground(wxSCI_LEX_GCC_WARNING, options.GetWarnColourBg());

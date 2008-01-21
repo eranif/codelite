@@ -13,7 +13,7 @@
 // Copyright:   (c) 2000 by Total Control Software
 // Licence:     wxWindows license
 /////////////////////////////////////////////////////////////////////////////
-
+ 
 #include "ScintillaWX.h"
 //?#include "ExternalLexer.h"
 #include "PlatWX.h"

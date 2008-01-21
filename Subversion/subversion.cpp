@@ -382,10 +382,10 @@ void SubversionPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeFileExplorer) {
-		menu->Append(XRCID("SVN_POPUP"), wxT("SVN"), CreatePopMenu());
+		menu->Append(XRCID("SVN_POPUP"), wxT("svn"), CreatePopMenu());
 	} else if(type == MenuTypeEditor) {
 		m_sepItem = menu->AppendSeparator();
-		menu->Append(XRCID("SVN_EDITOR_POPUP"), wxT("SVN"), CreateEditorPopMenu());
+		menu->Append(XRCID("SVN_EDITOR_POPUP"), wxT("svn"), CreateEditorPopMenu());
 	}
 }
 

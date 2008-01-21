@@ -200,7 +200,7 @@ void ProcUtils::GetProcessList(std::vector<ProcessEntry> &proclist)
 #else
 	//GTK and other
 	wxArrayString output;
-#if defined (__WXGTK__)	
+#if defined (__WXGTK__)
 	ExecuteCommand(wxT("ps -A -o pid,command  --no-heading"), output);
 #elif defined (__WXMAC__)
 	// Mac does not like the --no-heading...
@@ -268,7 +268,7 @@ void ProcUtils::GetChildren(long pid, std::vector<long> &proclist)
 	//loop over all processes and collect all the processes their parent
 	//pid matches PID
 	do {
-		if((long)pe.th32ParentProcessID == pid){
+		if ((long)pe.th32ParentProcessID == pid) {
 			proclist.push_back((long)pe.th32ProcessID);
 		}
 	} while (Process32Next (hProcessSnap, &pe));
@@ -276,7 +276,7 @@ void ProcUtils::GetChildren(long pid, std::vector<long> &proclist)
 #else
 	//GTK and other
 	wxArrayString output;
-#ifdef __WXGTK__	
+#ifdef __WXGTK__
 	ExecuteCommand(wxT("ps -A -o pid,ppid  --no-heading"), output);
 #else
 	ExecuteCommand(wxT("ps -A -o pid,ppid "), output);
@@ -286,18 +286,18 @@ void ProcUtils::GetChildren(long pid, std::vector<long> &proclist)
 		long lpid(0);
 		long lppid(0);
 		wxString line = output.Item(i);
-		
+
 		//remove whitespaces
 		line = line.Trim().Trim(false);
 
 		//get the process ID
 		wxString spid  = line.BeforeFirst(wxT(' '));
 		spid.ToLong( &lpid );
-		
+
 		//get the process Parent ID
 		wxString sppid = line.AfterFirst(wxT(' '));
 		sppid.ToLong( &lppid );
-		if(lppid == pid){
+		if (lppid == pid) {
 			proclist.push_back(lpid);
 		}
 	}
@@ -307,33 +307,31 @@ void ProcUtils::GetChildren(long pid, std::vector<long> &proclist)
 bool ProcUtils::Shell()
 {
 	wxString cmd;
-#ifdef __WXMSW__		
+#ifdef __WXMSW__
 	wxChar *shell = wxGetenv(wxT("COMSPEC"));
-    if ( !shell ){
-        shell = (wxChar*) wxT("\\COMMAND.COM");
+	if ( !shell ) {
+		shell = (wxChar*) wxT("\\COMMAND.COM");
 	}
-	
+
 	// just the shell
-    cmd = shell;
+	cmd = shell;
 #elif defined(__WXMAC__)
-    wxString path = wxGetCwd();
-    cmd = wxString( wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"cd ") + path + wxT("\"' -e 'end tell'") );
+	wxString path = wxGetCwd();
+	cmd = wxString( wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"cd ") + path + wxT("\"' -e 'end tell'") );
 #else //non-windows
 	//try to locate the default terminal
 	wxString terminal;
 	wxString where;
-	if(Locate(wxT("gnome-terminal"), where)){
+	if (Locate(wxT("gnome-terminal"), where)) {
 		terminal = where;
-	}
-	else if(Locate(wxT("konsole"), where)){
+	} else if (Locate(wxT("konsole"), where)) {
 		terminal = where;
-	}
-	else if(Locate(wxT("xterm"), where)){
+	} else if (Locate(wxT("xterm"), where)) {
 		terminal = where;
 	}
 	cmd = terminal;
 #endif
-    return wxExecute(cmd, wxEXEC_ASYNC) != 0;
+	return wxExecute(cmd, wxEXEC_ASYNC) != 0;
 }
 
 bool ProcUtils::Locate(const wxString &name, wxString &where)
@@ -342,15 +340,15 @@ bool ProcUtils::Locate(const wxString &name, wxString &where)
 	wxArrayString output;
 	command << wxT("which \"") << name << wxT("\"");
 	ProcUtils::ExecuteCommand(command, output);
-	
-	if(output.IsEmpty() == false){
+
+	if (output.IsEmpty() == false) {
 		wxString interstingLine = output.Item(0);
-		
-		if(interstingLine.Trim().Trim(false).IsEmpty()){
+
+		if (interstingLine.Trim().Trim(false).IsEmpty()) {
 			return false;
 		}
-		
-		if(!interstingLine.StartsWith(wxT("which: no "))){
+
+		if (!interstingLine.StartsWith(wxT("which: no "))) {
 			where = output.Item(0);
 			where = where.Trim().Trim(false);
 			return true;
@@ -358,5 +356,4 @@ bool ProcUtils::Locate(const wxString &name, wxString &where)
 	}
 	return false;
 }
-
 

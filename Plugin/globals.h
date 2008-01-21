@@ -2,6 +2,7 @@
 #define GLOBALS_H
 
 #include "wx/string.h"
+#include "wx/arrstr.h"
 class wxListCtrl;
 
 extern void SendCmdEvent(int eventId, void *clientData = NULL);
@@ -12,5 +13,7 @@ extern long AppendListCtrlRow(wxListCtrl *list);
 extern bool ReadFileWithConversion(const wxString &fileName, wxString &content);
 extern bool RemoveDirectory(const wxString &path);
 extern bool IsValidCppIndetifier(const wxString &id);
+extern void SafeExecuteCommand(const wxString &command, wxArrayString &output);
+	
 #endif //GLOBALS_H
 

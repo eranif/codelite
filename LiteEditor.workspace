@@ -18,11 +18,7 @@
   <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
   <Project Name="Subversion" Path="Subversion/Subversion.project"/>
   <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
-  <Environment>
-    <Variable Name="MINGW" Value="C:/MinGW"/>
-    <Variable Name="WorkspaceName" Value="LiteEditor"/>
-    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
-  </Environment>
+  <Project Name="Cscope" Path="cscope\Cscope.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
@@ -37,6 +33,7 @@
       <Project Name="DebuggerGDB" ConfigName="ReleaseUnicode"/>
       <Project Name="CodeLite" ConfigName="ReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
+      <Project Name="Cscope" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
@@ -51,6 +48,7 @@
       <Project Name="DebuggerGDB" ConfigName="DebugUnicode"/>
       <Project Name="CodeLite" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
+      <Project Name="Cscope" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
@@ -63,6 +61,7 @@
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinReleaseUnicode"/>
+      <Project Name="Cscope" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
@@ -77,8 +76,14 @@
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
+      <Project Name="Cscope" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
+  <Environment>
+    <Variable Name="MINGW" Value="C:/MinGW"/>
+    <Variable Name="WorkspaceName" Value="LiteEditor"/>
+    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
+  </Environment>
 </CodeLite_Workspace>

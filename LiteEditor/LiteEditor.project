@@ -403,5 +403,6 @@ resources.cpp: resources.xrc
     <Project Name="DebuggerGDB"/>
     <Project Name="Subversion"/>
     <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
   </Dependencies>
 </CodeLite_Project>

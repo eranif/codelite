@@ -67,7 +67,7 @@ void OutputPane::CreateGUIControls()
 	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, false, 4);
 	
 	//place a trace window in the notebook as well
-	wxTextCtrl *text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY);
+	wxTextCtrl *text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
 	
 	m_book->AddPage(text, wxT("Trace"), false, 3);

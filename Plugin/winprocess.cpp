@@ -1,6 +1,7 @@
 #include "winprocess.h"
 #ifdef __WXMSW__
 #include "wx/filefn.h"
+#include <memory>
 
 /*static*/ 
 WinProcess* WinProcess::Execute(const wxString& cmd, wxString &errMsg, const wxString &workingDir)
@@ -122,6 +123,8 @@ WinProcess* WinProcess::Execute(const wxString& cmd, wxString &errMsg, const wxS
 	}
 	else
 	{
+		int err = GetLastError();
+		wxUnusedVar(err);
 		delete prc;
 		return NULL;
 	}
@@ -134,6 +137,7 @@ WinProcess* WinProcess::Execute(const wxString& cmd, wxString &errMsg, const wxS
 	}
 	if( !SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStdout) )
 	{
+		
 		delete prc;
 		return NULL;
 	}
@@ -159,8 +163,9 @@ bool WinProcess::Read(wxString& buff)
 	DWORD dwRead;
 	DWORD dwMode;
 	DWORD dwTimeout;
-	char chBuf[4097]; 
-
+	char *chBuf = new char [65536+1]; 	//64K should be sufficient buffer
+	std::auto_ptr<char> sp(chBuf);
+	
 	// Make the pipe to non-blocking mode
 	dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
 	dwTimeout = 30000;
@@ -168,7 +173,7 @@ bool WinProcess::Read(wxString& buff)
 							&dwMode,
 							NULL,
 							&dwTimeout);	// Timeout of 30 seconds
-	if( ReadFile( hChildStdoutRdDup, chBuf, 4096, &dwRead, NULL) || dwRead == 0)
+	if( ReadFile( hChildStdoutRdDup, chBuf, 65536, &dwRead, NULL) || dwRead == 0)
 	{
 		chBuf[dwRead/sizeof(char)] = 0;
 		//printf("%s\n", chBuf);

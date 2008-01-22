@@ -162,19 +162,9 @@ wxString Cscope::DoCreateListFile()
 	return list_file;
 }
 
-void Cscope::OnFindSymbol(wxCommandEvent &e)
+void Cscope::DoCscopeCommand(const wxString &command)
 {
 	//try to locate the cscope database
-	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
-	if (word.IsEmpty()) {
-		return;
-	}
-	wxString list_file = DoCreateListFile();
-
-	//Do the actual search
-	wxString command;
-
-	command << GetCscopeExeName() << wxT(" -L -0 ") << word << wxT(" -i ") << list_file;
 	wxArrayString output;
 
 	//create the search thread and return
@@ -186,16 +176,55 @@ void Cscope::OnFindSymbol(wxCommandEvent &e)
 	CScopeThreadST::Get()->Add( req );
 }
 
+void Cscope::OnFindSymbol(wxCommandEvent &e)
+{
+	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
+	if (word.IsEmpty()) {return;}
+	wxString list_file = DoCreateListFile();
+
+	//Do the actual search
+	wxString command;
+	command << GetCscopeExeName() << wxT(" -L -0 ") << word << wxT(" -i ") << list_file;
+	DoCscopeCommand(command);
+}
+
 void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
 {
+	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
+	if (word.IsEmpty()) {return;}
+	
+	wxString list_file = DoCreateListFile();
+
+	//Do the actual search
+	wxString command;
+	command << GetCscopeExeName() << wxT(" -L -1 ") << word << wxT(" -i ") << list_file;
+	DoCscopeCommand(command);
 }
 
 void Cscope::OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e)
 {
+	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
+	if (word.IsEmpty()) {return;}
+	
+	wxString list_file = DoCreateListFile();
+
+	//Do the actual search
+	wxString command;
+	command << GetCscopeExeName() << wxT(" -L -2 ") << word << wxT(" -i ") << list_file;
+	DoCscopeCommand(command);	
 }
 
 void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
 {
+	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
+	if (word.IsEmpty()) {return;}
+	
+	wxString list_file = DoCreateListFile();
+
+	//Do the actual search
+	wxString command;
+	command << GetCscopeExeName() << wxT(" -L -3 ") << word << wxT(" -i ") << list_file;
+	DoCscopeCommand(command);	
 }
 wxString Cscope::GetCscopeExeName()
 {

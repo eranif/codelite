@@ -128,18 +128,23 @@ void SafeExecuteCommand(const wxString &command, wxArrayString &output)
 	// wait for the process to terminate
 	wxString tmpbuf;
 	wxString buff;
-	while (proc->IsAlive()) {
+	static int maxRetries (1000);
+	
+	int retries(0);
+	while (proc->IsAlive() && retries < maxRetries) {
 		proc->Read(tmpbuf);
 		buff << tmpbuf;
 		wxThread::Sleep(100);
+		retries++;
 	}
 	
 	tmpbuf.Empty();
 	proc->Read(tmpbuf);
-	while( tmpbuf.IsEmpty() == false ) {
+	while( tmpbuf.IsEmpty() == false && retries < maxRetries) {
 		buff << tmpbuf;
 		tmpbuf.Empty();
 		proc->Read(tmpbuf);
+		retries++;
 	}
 	
 	//convert buff into wxArrayString

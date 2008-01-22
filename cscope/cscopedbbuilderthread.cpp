@@ -48,6 +48,9 @@ CscopeResultTable* CscopeDbBuilderThread::ParseResults(const wxArrayString &outp
 
 		//first is the file name
 		line = line.Trim().Trim(false);
+		//skip errors
+		if(line.StartsWith(wxT("cscope:"))){continue;}
+		
 		wxString file = line.BeforeFirst(wxT(' '));
 		data.SetFile(file);
 		line = line.AfterFirst(wxT(' '));

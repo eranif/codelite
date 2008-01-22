@@ -32,6 +32,7 @@ protected:
 	wxMenu *CreateEditorPopMenu();
 	wxString GetCscopeExeName();
 	wxString DoCreateListFile();
+	void DoCscopeCommand(const wxString &command);
 	
 	//Event handlers
 	//------------------------------------------

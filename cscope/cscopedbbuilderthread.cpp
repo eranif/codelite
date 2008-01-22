@@ -6,9 +6,7 @@
 
 int wxEVT_CSCOPE_THREAD_DB_BUILD_DONE = wxNewId();
 
-CscopeDbBuilderThread::CscopeDbBuilderThread(wxEvtHandler *owner)
-: wxThread(wxTHREAD_JOINABLE) 
-, m_owner(owner)
+CscopeDbBuilderThread::CscopeDbBuilderThread()
 {
 }
 
@@ -16,27 +14,28 @@ CscopeDbBuilderThread::~CscopeDbBuilderThread()
 {
 }
 
-void *CscopeDbBuilderThread::Entry()
+void CscopeDbBuilderThread::ProcessRequest(ThreadRequest *request)
 {
+	CscopeRequest *req = (CscopeRequest*)request;
+	
 	//change dir to the workspace directory
 	DirSaver ds;
 	
-	wxSetWorkingDirectory(GetWorkingDir());
+	wxSetWorkingDirectory(req->GetWorkingDir());
 	
 	//notify the database creation process as completed
 	wxArrayString output;
 	
 	//set environment variables required by cscope
 	wxSetEnv(wxT("TMPDIR"), wxT("."));
-	SafeExecuteCommand(m_cmd, output);
+	SafeExecuteCommand(req->GetCmd(), output);
 	
 	wxCommandEvent e(wxEVT_CSCOPE_THREAD_DB_BUILD_DONE);
 	CscopeResultTable *result = ParseResults( output );
 	
 	e.SetClientData(result);
-	e.SetString(GetCmd());
-	m_owner->AddPendingEvent(e);
-	return NULL;
+	e.SetString(req->GetCmd());
+	req->GetOwner()->AddPendingEvent(e);
 }
 
 CscopeResultTable* CscopeDbBuilderThread::ParseResults(const wxArrayString &output)

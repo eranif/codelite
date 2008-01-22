@@ -247,20 +247,20 @@
   </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="" IntermediateDirectory="" Command="CodeLiteUD" CommandArguments="" WorkingDirectory="..\Runtime"/>
+      <General OutputFile="" IntermediateDirectory="" Command="CodeLiteUD" CommandArguments="" WorkingDirectory="../Runtime"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);$(shell pkg-config --cflags gtk+-2.0)">
         <IncludePath Value="."/>
-        <IncludePath Value="..\CodeLite"/>
-        <IncludePath Value="..\sdk\wxsqlite3\include"/>
-        <IncludePath Value="..\sdk\wxflatnotebook\include"/>
-        <IncludePath Value="..\sdk\wxscintilla\include"/>
-        <IncludePath Value="..\Plugin"/>
-        <IncludePath Value="..\Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxflatnotebook/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../Interfaces"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --libs --debug=yes --unicode=yes);$(shell pkg-config --libs gtk+-2.0)">
-        <LibraryPath Value="..\lib\gcc_lib"/>
+        <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libwxflatnotebookud.a"/>
         <Library Value="libCodeLiteud.a"/>
         <Library Value="libplugin_sdkud.a"/>
@@ -281,20 +281,20 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="..\Runtime\LiteEditorU" IntermediateDirectory=".\ReleaseUnicode" Command="LiteEditorU" CommandArguments="" WorkingDirectory="..\Runtime"/>
+      <General OutputFile="../Runtime/LiteEditorU" IntermediateDirectory="./ReleaseUnicode" Command="LiteEditorU" CommandArguments="" WorkingDirectory="../Runtime"/>
       <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;$(shell pkg-config --cflags gtk+-2.0)">
         <IncludePath Value="."/>
-        <IncludePath Value="..\CodeLite"/>
-        <IncludePath Value="..\sdk\wxsqlite3\include"/>
-        <IncludePath Value="..\sdk\wxflatnotebook\include"/>
-        <IncludePath Value="..\sdk\wxscintilla\include"/>
-        <IncludePath Value="..\Plugin"/>
-        <IncludePath Value="..\Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxflatnotebook/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../Interfaces"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --libs --unicode=yes --debug=no);$(shell pkg-config --libs gtk+-2.0)">
-        <LibraryPath Value="..\lib\gcc_lib"/>
+        <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libwxflatnotebooku.a"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libplugin_sdku.a"/>

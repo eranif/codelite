@@ -92,7 +92,7 @@ void CscopeTab::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 		if (data) {
 			if (data->GetEntry().GetKind() == KindSingleEntry) {
 				//a single entry was activated, open the file
-				m_mgr->OpenFile(data->GetEntry().GetFile(), wxEmptyString, data->GetEntry().GetLine());
+				m_mgr->OpenFile(data->GetEntry().GetFile(), wxEmptyString, data->GetEntry().GetLine()-1);
 				return;
 			} else if (data->GetEntry().GetKind() == KindFileNode) {
 				//open the file but dont place the caret at a give line

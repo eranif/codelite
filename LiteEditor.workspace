@@ -18,9 +18,9 @@
   <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
   <Project Name="Subversion" Path="Subversion/Subversion.project"/>
   <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
-  <Project Name="Cscope" Path="cscope\Cscope.project" Active="No"/>
+  <Project Name="Cscope" Path="cscope/Cscope.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="wxflatnotebook" ConfigName="ReleaseUnicode"/>
@@ -65,7 +65,7 @@
       <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxflatnotebook" ConfigName="WinDebugUnicode"/>
@@ -84,6 +84,6 @@
   <Environment>
     <Variable Name="MINGW" Value="C:/MinGW"/>
     <Variable Name="WorkspaceName" Value="LiteEditor"/>
-    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
+    <Variable Name="WorkspacePath" Value="/home/eran/devl/codelite/trunk"/>
   </Environment>
 </CodeLite_Workspace>

@@ -6,6 +6,7 @@
 #include "workspace.h"
 #include <wx/xrc/xmlres.h>
 #include "cscopetab.h"
+#include "cscopedbbuilderthread.h"
 
 static Cscope* thePlugin = NULL;
 
@@ -21,7 +22,6 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 Cscope::Cscope(IManager *manager)
 		: IPlugin(manager)
 		, m_topWindow(NULL)
-		, m_thread(NULL)
 {
 	m_longName = wxT("Cscope Integration for CodeLite");
 	m_shortName = wxT("Cscope");
@@ -36,6 +36,9 @@ Cscope::Cscope(IManager *manager)
 	m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, wxT("cscope"), false/*, (int)m_mgr->GetOutputPaneNotebook()->GetImageList()->GetCount()-1*/);
 
 	Connect(wxEVT_CSCOPE_THREAD_DB_BUILD_DONE, wxCommandEventHandler(Cscope::OnDbBuilderThreadEnded), NULL, this);
+	
+	//start the helper thread
+	CScopeThreadST::Get()->Start();
 }
 
 Cscope::~Cscope()
@@ -93,7 +96,8 @@ void Cscope::UnHookPopupMenu(wxMenu *menu, MenuType type)
 
 void Cscope::UnPlug()
 {
-	//TODO:: perform the unplug action for this plugin
+	CScopeThreadST::Get()->Stop();
+	CScopeThreadST::Free();
 }
 
 //---------------------------------------------------------------------------------
@@ -161,10 +165,6 @@ wxString Cscope::DoCreateListFile()
 void Cscope::OnFindSymbol(wxCommandEvent &e)
 {
 	//try to locate the cscope database
-	if (m_thread) {
-		return;
-	}
-
 	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
 	if (word.IsEmpty()) {
 		return;
@@ -178,12 +178,12 @@ void Cscope::OnFindSymbol(wxCommandEvent &e)
 	wxArrayString output;
 
 	//create the search thread and return
-	m_thread = new CscopeDbBuilderThread(this);
-	m_thread->SetCmd(command);
-	m_thread->SetWorkingDir(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(true));
-
-	m_thread->Create();
-	m_thread->Run();
+	CscopeRequest *req = new CscopeRequest();
+	req->SetOwner(this);
+	req->SetCmd(command);
+	req->SetWorkingDir(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(true));
+	
+	CScopeThreadST::Get()->Add( req );
 }
 
 void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
@@ -221,6 +221,4 @@ void Cscope::OnDbBuilderThreadEnded(wxCommandEvent &e)
 	}
 	
 	//release the resources
-	delete m_thread;
-	m_thread = NULL;
 }

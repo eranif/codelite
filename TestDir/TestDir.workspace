@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="TestDir" Database=".\TestDir.tags">
+<CodeLite_Workspace Name="TestDir" Database="./TestDir.tags">
   <Environment>
     <Variable Name="WorkspaceName" Value="TestDir"/>
     <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk/TestDir"/>

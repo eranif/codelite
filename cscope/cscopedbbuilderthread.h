@@ -3,6 +3,8 @@
 
 
 #include "cscopeentrydata.h"
+#include "singleton.h"
+#include "worker_thread.h"
 #include "wx/thread.h"
 #include "wx/event.h"
 #include <map>
@@ -12,29 +14,57 @@ extern int wxEVT_CSCOPE_THREAD_DB_BUILD_DONE;
 
 typedef std::map<wxString, std::vector< CscopeEntryData >* > CscopeResultTable;
 
-class CscopeDbBuilderThread : public wxThread
+class CscopeRequest : public ThreadRequest
 {
 	wxEvtHandler *m_owner;
 	wxString m_cmd;
-	wxString m_outfile;
 	wxString m_workingDir;
-	
-protected:
-	void* Entry();
-	CscopeResultTable* ParseResults(const wxArrayString &output);
-	
+	wxString m_outfile;
 public:
-	CscopeDbBuilderThread(wxEvtHandler *owner);
-	~CscopeDbBuilderThread();
-		
-	//Setters
-	void SetCmd(const wxString& cmd) {this->m_cmd = cmd;}
-	void SetWorkingDir(const wxString& workingDir) {this->m_workingDir = workingDir;}
+	CscopeRequest() {};
+	~CscopeRequest() {};
+
+
+//Setters
+	void SetCmd(const wxString& cmd) {
+		this->m_cmd = cmd;
+	}
+	void SetOutfile(const wxString& outfile) {
+		this->m_outfile = outfile;
+	}
+	void SetOwner(wxEvtHandler* owner) {
+		this->m_owner = owner;
+	}
 	
-	//Getters
-	const wxString& GetCmd() const {return m_cmd;}
-	const wxString& GetWorkingDir() const {return m_workingDir;}
+	void SetWorkingDir(const wxString& workingDir) {
+		this->m_workingDir = workingDir;
+	}
+//Getters
+	const wxString& GetCmd() const {
+		return m_cmd;
+	}
+	const wxString& GetOutfile() const {
+		return m_outfile;
+	}
+	wxEvtHandler* GetOwner() {
+		return m_owner;
+	}
+	const wxString& GetWorkingDir() const {
+		return m_workingDir;
+	}
 };
 
+class CscopeDbBuilderThread : public WorkerThread
+{
+	friend class Singleton< CscopeDbBuilderThread >;
+protected:
+	void ProcessRequest(ThreadRequest *req);
+	CscopeResultTable* ParseResults(const wxArrayString &output);
 
+public:
+	CscopeDbBuilderThread();
+	~CscopeDbBuilderThread();
+};
+
+typedef Singleton< CscopeDbBuilderThread > CScopeThreadST;
 #endif // __cscopedbbuilderthread__

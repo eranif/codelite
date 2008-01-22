@@ -24,6 +24,9 @@ void *CscopeDbBuilderThread::Entry()
 	
 	//notify the database creation process as completed
 	wxArrayString output;
+	
+	//set environment variables required by cscope
+	wxSetEnv(wxT("TMPDIR"), wxT("."));
 	SafeExecuteCommand(m_cmd, output);
 	
 	wxArrayString *pout = new wxArrayString(output);

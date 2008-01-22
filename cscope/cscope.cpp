@@ -34,7 +34,8 @@ Cscope::~Cscope()
 
 wxToolBar *Cscope::CreateToolBar(wxWindow *parent)
 {
-	wxToolBar *tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	wxToolBar *tb = NULL;
+	// tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	// TODO :: Add your toolbar items here...
 	// Sample code that adds single button to the toolbar
 	// and associates an image to it
@@ -92,8 +93,6 @@ wxMenu *Cscope::CreateEditorPopMenu()
 	//The only menu that we are interseted is the file explorer menu
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
-
-	menu->AppendSeparator();
 
 	item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), wxT("&Find this C symbol"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);

@@ -568,7 +568,8 @@
 		<object class="wxMenuItem" name="set_as_active">
 			<label>Set As &amp;Active</label>
 		</object>
-		
+
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="build_order">
 			<label>&amp;Build Order...</label>
 		</object>

@@ -1,50 +1,58 @@
 #include "cscopetab.h"
 #include "cscopedbbuilderthread.h"
+#include "imanager.h"
 
-CscopeTab::CscopeTab( wxWindow* parent )
+CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 		: CscopeTabBase( parent )
 		, m_table(NULL)
+		, m_mgr(mgr)
 {
 }
 
 void CscopeTab::OnItemActivated( wxTreeEvent& event )
 {
+	wxTreeItemId item = event.GetItem();
+	DoItemActivated(item, event);
 }
 
 void CscopeTab::BuildTable(CscopeResultTable *table)
 {
-	if( !table ) { return; }
-		
+	if ( !table ) {
+		return;
+	}
+
 	if (m_table) {
 		//free the old table
 		FreeTable();
 	}
-	
+
 	m_table = table;
 	m_treeCtrlResults->DeleteAllItems();
-	
+
 	//add hidden root
 	wxTreeItemId root = m_treeCtrlResults->AddRoot(wxT("Root"));
-	
+
 	CscopeResultTable::iterator iter = m_table->begin();
 	for (; iter != m_table->end(); iter++ ) {
 		wxString file = iter->first;
-		
+
 		//add item for this file
 		wxTreeItemId parent;
-		
+
 		std::vector< CscopeEntryData >* vec = iter->second;
 		std::vector< CscopeEntryData >::iterator it = vec->begin();
 		for ( ; it != vec->end(); it++ ) {
 			CscopeEntryData entry = *it;
-			if(parent.IsOk() == false) {
+			if (parent.IsOk() == false) {
 				//add parent item
-				parent = m_treeCtrlResults->AppendItem(root, entry.GetFile(), wxNOT_FOUND, wxNOT_FOUND, new CscopeTabClientData(entry));
+				CscopeEntryData parent_entry = entry;
+				parent_entry.SetKind(KindFileNode);
+				parent = m_treeCtrlResults->AppendItem(root, entry.GetFile(), wxNOT_FOUND, wxNOT_FOUND, new CscopeTabClientData(parent_entry));
 			}
-			
+
 			wxString display_string;
-			display_string << wxT("[") << entry.GetLine() << wxT("] ") << entry.GetPattern();
-			m_treeCtrlResults->AppendItem(parent, display_string, wxNOT_FOUND, wxNOT_FOUND, new CscopeTabClientData(entry)); 
+			display_string << wxT("Line: ") << entry.GetLine() << wxT(", Scope: ") << entry.GetScope() << wxT(", Pattern: ") << entry.GetPattern();
+			m_treeCtrlResults->AppendItem(parent, display_string, wxNOT_FOUND, wxNOT_FOUND, new CscopeTabClientData(entry));
 		}
 	}
 	FreeTable();
@@ -62,4 +70,36 @@ void CscopeTab::FreeTable()
 		delete m_table;
 		m_table = NULL;
 	}
+}
+void CscopeTab::OnLeftDClick(wxMouseEvent &event)
+{
+	// Make sure the double click was done on an actual item
+	int flags = wxTREE_HITTEST_ONITEMLABEL;
+	wxTreeItemId item = m_treeCtrlResults->GetSelection();
+	if( item.IsOk() ) {
+		if ( m_treeCtrlResults->HitTest(event.GetPosition() , flags) == item ) {
+			DoItemActivated( item, event );
+			return;
+		}
+	}
+	event.Skip();
+}
+
+void CscopeTab::DoItemActivated( wxTreeItemId &item, wxEvent &event )
+{
+	if (item.IsOk()) {
+		CscopeTabClientData *data = (CscopeTabClientData*) m_treeCtrlResults->GetItemData(item);
+		if (data) {
+			if (data->GetEntry().GetKind() == KindSingleEntry) {
+				//a single entry was activated, open the file
+				m_mgr->OpenFile(data->GetEntry().GetFile(), wxEmptyString, data->GetEntry().GetLine());
+				return;
+			} else if (data->GetEntry().GetKind() == KindFileNode) {
+				//open the file but dont place the caret at a give line
+				m_mgr->OpenFile(data->GetEntry().GetFile(), wxEmptyString);
+				return;
+			}
+		}
+	}
+	event.Skip();
 }

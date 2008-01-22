@@ -1,3 +1,4 @@
+#include "wx/wxFlatNotebook/wxFlatNotebook.h"
 #include "dirsaver.h"
 #include "cscope.h"
 #include "procutils.h"
@@ -31,7 +32,7 @@ Cscope::Cscope(IManager *manager)
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 
 	//m_mgr->GetOutputPaneNotebook()->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
-	m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook());
+	m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook(), m_mgr);
 	m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, wxT("cscope"), false/*, (int)m_mgr->GetOutputPaneNotebook()->GetImageList()->GetCount()-1*/);
 
 	Connect(wxEVT_CSCOPE_THREAD_DB_BUILD_DONE, wxCommandEventHandler(Cscope::OnDbBuilderThreadEnded), NULL, this);
@@ -207,6 +208,18 @@ void Cscope::OnDbBuilderThreadEnded(wxCommandEvent &e)
 	CscopeResultTable *result = (CscopeResultTable*)e.GetClientData();
 	m_cscopeWin->BuildTable( result );
 
+	//set the focus to the cscope tab
+	wxFlatNotebook *book = m_mgr->GetOutputPaneNotebook();
+	wxString curSel = book->GetPageText((size_t)book->GetSelection());
+	if (curSel != wxT("cscope")) {
+		for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
+			if (book->GetPageText(i) == wxT("cscope")) {
+				book->SetSelection(i);
+				break;
+			}
+		}
+	}
+	
 	//release the resources
 	delete m_thread;
 	m_thread = NULL;

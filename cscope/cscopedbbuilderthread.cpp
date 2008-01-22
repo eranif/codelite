@@ -57,7 +57,8 @@ CscopeResultTable* CscopeDbBuilderThread::ParseResults(const wxArrayString &outp
 		line = line.Trim().Trim(false);
 		wxString scope = line.BeforeFirst(wxT(' '));
 		line = line.AfterFirst(wxT(' '));
-
+		data.SetScope( scope );
+		
 		//next is the line number
 		line = line.Trim().Trim(false);
 		long nn;

@@ -944,6 +944,7 @@ void LEditor::SetActive()
 	}
 
 	SetFocus();
+//	SetSCIFocus(true);
 }
 
 // Popup a Find/Replace dialog

@@ -10,17 +10,18 @@ enum {
 
 class CscopeEntryData
 {
-	int m_kind;
 	wxString m_file;
 	int m_line;
 	wxString m_pattern;
+	wxString m_scope;
+	int m_kind;
 
 public:
 	CscopeEntryData();
 	~CscopeEntryData();
 
 
-	//Setters
+//Setters
 	void SetFile(const wxString& file) {
 		this->m_file = file;
 	}
@@ -33,7 +34,10 @@ public:
 	void SetPattern(const wxString& pattern) {
 		this->m_pattern = pattern;
 	}
-	//Getters
+	void SetScope(const wxString& scope) {
+		this->m_scope = scope;
+	}
+//Getters
 	const wxString& GetFile() const {
 		return m_file;
 	}
@@ -46,5 +50,9 @@ public:
 	const wxString& GetPattern() const {
 		return m_pattern;
 	}
+	const wxString& GetScope() const {
+		return m_scope;
+	}
+
 };
 #endif // __cscopeentrydata__

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  6 2007)
+// C++ code generated with wxFormBuilder (version Sep 26 2007)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -9,6 +9,11 @@
 #define __cscopetabbase__
 
 #include <wx/treectrl.h>
+#include <wx/gdicmn.h>
+#include <wx/font.h>
+#include <wx/colour.h>
+#include <wx/settings.h>
+#include <wx/string.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
@@ -26,11 +31,12 @@ class CscopeTabBase : public wxPanel
 		wxTreeCtrl* m_treeCtrlResults;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnLeftDClick( wxMouseEvent& event ){ event.Skip(); }
 		virtual void OnItemActivated( wxTreeEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		CscopeTabBase( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 500,300 ), int style = wxTAB_TRAVERSAL );
+		CscopeTabBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 	
 };
 

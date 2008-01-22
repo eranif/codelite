@@ -28,12 +28,10 @@ protected:
 	//------------------------------------------
 	wxMenu *CreateEditorPopMenu();
 	wxString GetCscopeExeName();
-	void DoCreateDatabase();
 	wxString DoCreateListFile();
 	
 	//Event handlers
 	//------------------------------------------
-	void OnBuildDatabse(wxCommandEvent &e);
 	void OnFindSymbol(wxCommandEvent &e);
 	void OnFindGlobalDefinition(wxCommandEvent &e);
 	void OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e);

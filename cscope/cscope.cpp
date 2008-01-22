@@ -67,7 +67,6 @@ void Cscope::UnHookPopupMenu(wxMenu *menu, MenuType type)
 		wxMenuItem *item = menu->FindItem(XRCID("CSCOPE_EDITOR_POPUP"));
 		if (item) {
 			menu->Destroy(item);
-			m_topWindow->Disconnect(XRCID("cscope_build_database"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnBuildDatabse), NULL, (wxEvtHandler*)this);
 			m_topWindow->Disconnect(XRCID("cscope_find_symbol"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindSymbol), NULL, (wxEvtHandler*)this);
 			m_topWindow->Disconnect(XRCID("cscope_find_global_definition"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this);
 			m_topWindow->Disconnect(XRCID("cscope_functions_called_by_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFuncion), NULL, (wxEvtHandler*)this);
@@ -94,9 +93,6 @@ wxMenu *Cscope::CreateEditorPopMenu()
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("cscope_build_database"), wxT("&Build Database ..."), wxEmptyString, wxITEM_NORMAL);
-	menu->Append(item);
-
 	menu->AppendSeparator();
 
 	item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), wxT("&Find this C symbol"), wxEmptyString, wxITEM_NORMAL);
@@ -112,22 +108,11 @@ wxMenu *Cscope::CreateEditorPopMenu()
 	menu->Append(item);
 
 	//connect the events
-	m_topWindow->Connect(XRCID("cscope_build_database"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnBuildDatabse), NULL, (wxEvtHandler*)this);
 	m_topWindow->Connect(XRCID("cscope_find_symbol"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindSymbol), NULL, (wxEvtHandler*)this);
 	m_topWindow->Connect(XRCID("cscope_find_global_definition"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this);
 	m_topWindow->Connect(XRCID("cscope_functions_called_by_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFuncion), NULL, (wxEvtHandler*)this);
 	m_topWindow->Connect(XRCID("cscope_functions_calling_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction), NULL, (wxEvtHandler*)this);
 	return menu;
-}
-
-void Cscope::OnBuildDatabse(wxCommandEvent &e)
-{
-	//avoid reentrance
-	if (m_thread) {
-		return;
-	}
-
-	DoCreateDatabase();
 }
 
 wxString Cscope::DoCreateListFile()
@@ -162,28 +147,6 @@ wxString Cscope::DoCreateListFile()
 	file.Flush();
 	file.Close();
 	return list_file;
-}
-
-void Cscope::DoCreateDatabase()
-{
-	wxString command;
-	command << GetCscopeExeName() << wxT(" -b -u -i ");
-
-	//create a list of files to scan
-	wxString list_file = DoCreateListFile();
-	if(list_file.IsEmpty()){return;}
-	
-	command << wxT("\"") << list_file << wxT("\"");
-	
-	wxLogMessage(wxT("Building cscope database ..."));
-	//create the worker therad and launch it
-	m_thread = new CscopeDbBuilderThread(this);
-
-	//initialise it with the command and the output file
-	m_thread->SetCmd(command);
-	m_thread->SetWorkingDir(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(true));
-	m_thread->Create();
-	m_thread->Run();
 }
 
 void Cscope::OnFindSymbol(wxCommandEvent &e)

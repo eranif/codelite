@@ -86,7 +86,7 @@ sqlite_objects2 := $(addprefix $(SQLITE_OBJ_DIR)/, $(addsuffix .o, $(basename $(
 sqlite_objects = $(sqlite_objects1) $(sqlite_objects2) 
 
 ## our main build target
-build : pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Debugger CodeFormatter Subversion Gizmos
+build : pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Debugger CodeFormatter Subversion Gizmos cscope
 
 CodeLite: code_lite_msg $(lib_cpp_objects) $(lib_c_objects)
 	ar rcu $(OUTPUT_DIR)/libcodelite$(EXT).a $(lib_cpp_objects)  $(lib_c_objects) 
@@ -117,6 +117,9 @@ Debugger: debugger_msg
 
 Subversion: svn_msg
 	cd Subversion/ && $(MAKE)
+
+cscope: cscope_msg
+	cd cscope/ && $(MAKE)
 
 CodeFormatter: formatter_msg
 	cd CodeFormatter/ && $(MAKE)
@@ -179,6 +182,11 @@ debugger_msg:
 	@echo Building Debugger extension
 	@echo ---------------------------------------------------------- 
 
+cscope_msg:
+	@echo ----------------------------------------------------------
+	@echo Building cscope extension
+	@echo ---------------------------------------------------------- 
+
 svn_msg:
 	@echo ----------------------------------------------------------
 	@echo Building Suversion extension
@@ -229,6 +237,7 @@ clean:
 	cd Debugger/ && $(MAKE) clean
 	cd CodeFormatter/ && $(MAKE) clean
 	cd Subversion/ && $(MAKE) clean
+	cd cscope/ && $(MAKE) clean
 
 clean_deps:
 	$(RM) Debug_gcc/*.d Release_gcc/*.d Release_gcc_unicode/*.d Debug_gcc_unicode/*.d
@@ -261,6 +270,7 @@ install: upgrade
 	$(RM) $(HOME)/.liteeditor/plugins/CodeFormatter.so
 	$(RM) $(HOME)/.liteeditor/plugins/Gizmos.so
 	$(RM) $(HOME)/.liteeditor/plugins/Subversion.so
+	$(RM) $(HOME)/.liteeditor/plugins/cscope.so
 	$(RM) $(HOME)/.liteeditor/config/build_settings.xml
 	$(RM) $(HOME)/.liteeditor/config/debuggers.xml
 	$(RM) $(HOME)/.liteeditor/config/liteeditor.xml
@@ -277,6 +287,7 @@ install: upgrade
 	@\cp -pr lib/Debugger.so /usr/local/share/codelite/debuggers/
 	@\cp -pr lib/CodeFormatter.so /usr/local/share/codelite/plugins/
 	@\cp -pr lib/Subversion.so /usr/local/share/codelite/plugins/
+	@\cp -pr lib/cscope.so /usr/local/share/codelite/plugins/
 	@\cp -pr lib/Gizmos.so /usr/local/share/codelite/plugins/
 	@\cp -pr Runtime/index.html /usr/local/share/codelite/
 	@\cp -pr Runtime/astyle.sample /usr/local/share/codelite/

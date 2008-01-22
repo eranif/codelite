@@ -3,13 +3,18 @@
 
 #include "plugin.h"
 #include "cscopedbbuilderthread.h"
+#include "map"
+#include "vector"
+#include "cscopeentrydata.h"
+
+class CscopeTab;
 
 class Cscope : public IPlugin
 {
 	wxEvtHandler *m_topWindow;
 	wxMenuItem *m_sepItem;
 	CscopeDbBuilderThread *m_thread;
-	
+	CscopeTab *m_cscopeWin;
 public:
 	Cscope(IManager *manager);
 	~Cscope();

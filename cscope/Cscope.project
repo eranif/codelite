@@ -4,6 +4,8 @@
     <File Name="cscope.cpp"/>
     <File Name="cscopedbbuilderthread.cpp"/>
     <File Name="cscopedbbuilderthread.h"/>
+    <File Name="cscopeentrydata.cpp"/>
+    <File Name="cscopeentrydata.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="cscope.h"/>
@@ -150,5 +152,11 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="UI">
+    <File Name="cscopetabbase.h"/>
+    <File Name="cscopetab.cpp"/>
+    <File Name="cscopetab.h"/>
+    <File Name="cscopetabbase.cpp"/>
+  </VirtualDirectory>
   <Dependencies/>
 </CodeLite_Project>

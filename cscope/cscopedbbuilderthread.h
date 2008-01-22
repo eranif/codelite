@@ -2,10 +2,15 @@
 #define __cscopedbbuilderthread__
 
 
+#include "cscopeentrydata.h"
 #include "wx/thread.h"
 #include "wx/event.h"
+#include <map>
+#include <vector>
 
 extern int wxEVT_CSCOPE_THREAD_DB_BUILD_DONE;
+
+typedef std::map<wxString, std::vector< CscopeEntryData >* > CscopeResultTable;
 
 class CscopeDbBuilderThread : public wxThread
 {
@@ -16,12 +21,12 @@ class CscopeDbBuilderThread : public wxThread
 	
 protected:
 	void* Entry();
+	CscopeResultTable* ParseResults(const wxArrayString &output);
 	
 public:
 	CscopeDbBuilderThread(wxEvtHandler *owner);
 	~CscopeDbBuilderThread();
-	
-	
+		
 	//Setters
 	void SetCmd(const wxString& cmd) {this->m_cmd = cmd;}
 	void SetWorkingDir(const wxString& workingDir) {this->m_workingDir = workingDir;}

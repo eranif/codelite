@@ -4,6 +4,7 @@
 #include "wx/ffile.h"
 #include "workspace.h"
 #include <wx/xrc/xmlres.h>
+#include "cscopetab.h"
 
 static Cscope* thePlugin = NULL;
 
@@ -24,6 +25,14 @@ Cscope::Cscope(IManager *manager)
 	m_longName = wxT("Cscope Integration for CodeLite");
 	m_shortName = wxT("Cscope");
 	m_topWindow = wxTheApp;
+
+	//add window to the output pane
+	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
+
+	//m_mgr->GetOutputPaneNotebook()->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
+	m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook());
+	m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, wxT("cscope"), false/*, (int)m_mgr->GetOutputPaneNotebook()->GetImageList()->GetCount()-1*/);
 
 	Connect(wxEVT_CSCOPE_THREAD_DB_BUILD_DONE, wxCommandEventHandler(Cscope::OnDbBuilderThreadEnded), NULL, this);
 }
@@ -151,23 +160,27 @@ wxString Cscope::DoCreateListFile()
 void Cscope::OnFindSymbol(wxCommandEvent &e)
 {
 	//try to locate the cscope database
-	if (m_thread) {	return; }
+	if (m_thread) {
+		return;
+	}
 
 	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
-	if(word.IsEmpty()) {return;}
+	if (word.IsEmpty()) {
+		return;
+	}
 	wxString list_file = DoCreateListFile();
-	
+
 	//Do the actual search
 	wxString command;
-	
+
 	command << GetCscopeExeName() << wxT(" -L -0 ") << word << wxT(" -i ") << list_file;
 	wxArrayString output;
-	
+
 	//create the search thread and return
 	m_thread = new CscopeDbBuilderThread(this);
 	m_thread->SetCmd(command);
 	m_thread->SetWorkingDir(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(true));
-	
+
 	m_thread->Create();
 	m_thread->Run();
 }
@@ -191,15 +204,8 @@ wxString Cscope::GetCscopeExeName()
 void Cscope::OnDbBuilderThreadEnded(wxCommandEvent &e)
 {
 	wxLogMessage(wxT("cscope thread terminated execution of command: ") + e.GetString());
-	
-	wxString o;
-	wxArrayString *poutput = (wxArrayString*)e.GetClientData();
-	for(size_t i=0; i< poutput->GetCount(); i++) {
-		o << poutput->Item(i) << wxT("\n");
-	}
-	
-	delete poutput;
-	wxLogMessage(o);
+	CscopeResultTable *result = (CscopeResultTable*)e.GetClientData();
+	m_cscopeWin->BuildTable( result );
 
 	//release the resources
 	delete m_thread;

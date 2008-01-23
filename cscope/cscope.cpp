@@ -135,15 +135,23 @@ wxString Cscope::DoCreateListFile()
 	m_mgr->GetWorkspace()->GetProjectList(projects);
 	wxString err_msg;
 	std::vector< wxFileName > files;
+	std::vector< wxFileName > tmpfiles;
 	for (size_t i=0; i< projects.GetCount(); i++) {
 		ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
 		if ( proj ) {
-			proj->GetFiles(files, true);
+			proj->GetFiles(tmpfiles, true);
 		}
 	}
-
+	
+	//iterate over the files and convert them to be relative path 
+	wxString wspPath = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
+	for(size_t i=0; i< tmpfiles.size(); i++ ) {
+		tmpfiles.at(i).MakeRelativeTo(wspPath);
+		files.push_back(tmpfiles.at(i));
+	}
+	
 	//create temporary file and save the file there
-	wxString list_file = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(true);
+	wxString list_file( wspPath );
 	list_file << wxT("cscope_file.list");
 
 	wxFFile file(list_file, wxT("w+b"));
@@ -187,7 +195,7 @@ void Cscope::DoCscopeCommand(const wxString &command, const wxString &endMsg)
 	req->SetOwner(this);
 	req->SetCmd(command);
 	req->SetEndMsg(endMsg);
-	req->SetWorkingDir(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(true));
+	req->SetWorkingDir(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 	
 	CScopeThreadST::Get()->Add( req );
 }

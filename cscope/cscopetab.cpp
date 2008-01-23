@@ -1,6 +1,7 @@
 #include "cscopetab.h"
 #include "cscopedbbuilderthread.h"
 #include "imanager.h"
+#include "workspace.h"
 
 CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 		: CscopeTabBase( parent )
@@ -85,7 +86,7 @@ void CscopeTab::OnLeftDClick(wxMouseEvent &event)
 	// Make sure the double click was done on an actual item
 	int flags = wxTREE_HITTEST_ONITEMLABEL;
 	wxTreeItemId item = m_treeCtrlResults->GetSelection();
-	if( item.IsOk() ) {
+	if ( item.IsOk() ) {
 		if ( m_treeCtrlResults->HitTest(event.GetPosition() , flags) == item ) {
 			DoItemActivated( item, event );
 			return;
@@ -99,9 +100,19 @@ void CscopeTab::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 	if (item.IsOk()) {
 		CscopeTabClientData *data = (CscopeTabClientData*) m_treeCtrlResults->GetItemData(item);
 		if (data) {
+			wxString wsp_path = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
+
 			if (data->GetEntry().GetKind() == KindSingleEntry) {
+
 				//a single entry was activated, open the file
-				m_mgr->OpenFile(data->GetEntry().GetFile(), wxEmptyString, data->GetEntry().GetLine()-1);
+				//convert the file path to absolut path. We do it here, to improve performance
+				wxFileName fn(data->GetEntry().GetFile());
+
+				if ( !fn.MakeAbsolute(wsp_path) ) {
+					wxLogMessage(wxT("failed to convert file to absolute path"));
+				}
+
+				m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine()-1);
 				return;
 			} else if (data->GetEntry().GetKind() == KindFileNode) {
 				//open the file but dont place the caret at a give line

@@ -32,6 +32,7 @@ mkdir -p fakeroot/usr/local/share/codelite/lexers
 \cp -pr lib/CodeFormatter.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/Subversion.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/Gizmos.so fakeroot/usr/local/share/codelite/plugins/
+\cp -pr lib/cscope.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr Runtime/index.html fakeroot/usr/local/share/codelite/
 \cp -pr Runtime/astyle.sample fakeroot/usr/local/share/codelite/
 \cp -pr Runtime/images/*.png fakeroot/usr/local/share/codelite/images/

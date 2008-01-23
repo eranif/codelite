@@ -14,6 +14,7 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include <wx/statline.h>
 #include <wx/treectrl.h>
 #include <wx/gauge.h>
 #include <wx/sizer.h>
@@ -31,7 +32,9 @@ class CscopeTabBase : public wxPanel
 	
 	protected:
 		wxStaticText* m_statusMessage;
+		wxStaticLine* m_staticline2;
 		wxTreeCtrl* m_treeCtrlResults;
+		wxStaticLine* m_staticline1;
 		wxGauge* m_gauge;
 		
 		// Virtual event handlers, overide them in your derived class

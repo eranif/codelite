@@ -15,6 +15,15 @@ void CscopeTab::OnItemActivated( wxTreeEvent& event )
 	DoItemActivated(item, event);
 }
 
+void CscopeTab::Clear()
+{
+	if (m_table) {
+		//free the old table
+		FreeTable();
+	}
+	m_treeCtrlResults->DeleteAllItems();
+}
+
 void CscopeTab::BuildTable(CscopeResultTable *table)
 {
 	if ( !table ) {
@@ -102,4 +111,10 @@ void CscopeTab::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 		}
 	}
 	event.Skip();
+}
+
+void CscopeTab::SetMessage(const wxString &msg, int percent)
+{
+	m_statusMessage->SetLabel(msg);
+	m_gauge->SetValue(percent);
 }

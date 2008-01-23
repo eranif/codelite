@@ -10,7 +10,8 @@
 #include <map>
 #include <vector>
 
-extern int wxEVT_CSCOPE_THREAD_DB_BUILD_DONE;
+extern int wxEVT_CSCOPE_THREAD_DONE;
+extern int wxEVT_CSCOPE_THREAD_UPDATE_STATUS;
 
 typedef std::map<wxString, std::vector< CscopeEntryData >* > CscopeResultTable;
 
@@ -20,10 +21,12 @@ class CscopeRequest : public ThreadRequest
 	wxString m_cmd;
 	wxString m_workingDir;
 	wxString m_outfile;
+	wxString m_endMsg;
+	
 public:
 	CscopeRequest() {};
 	~CscopeRequest() {};
-
+	
 
 //Setters
 	void SetCmd(const wxString& cmd) {
@@ -52,6 +55,9 @@ public:
 	const wxString& GetWorkingDir() const {
 		return m_workingDir;
 	}
+	
+	void SetEndMsg(const wxString& endMsg) {this->m_endMsg = endMsg;}
+	const wxString& GetEndMsg() const {return m_endMsg;}
 };
 
 class CscopeDbBuilderThread : public WorkerThread
@@ -60,6 +66,9 @@ class CscopeDbBuilderThread : public WorkerThread
 protected:
 	void ProcessRequest(ThreadRequest *req);
 	CscopeResultTable* ParseResults(const wxArrayString &output);
+	
+protected:
+	void SendStatusEvent(const wxString &msg, int percent, wxEvtHandler *owner);
 
 public:
 	CscopeDbBuilderThread();

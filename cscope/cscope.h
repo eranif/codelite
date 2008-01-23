@@ -32,7 +32,7 @@ protected:
 	wxMenu *CreateEditorPopMenu();
 	wxString GetCscopeExeName();
 	wxString DoCreateListFile();
-	void DoCscopeCommand(const wxString &command);
+	void DoCscopeCommand(const wxString &command, const wxString &endMsg);
 	
 	//Event handlers
 	//------------------------------------------
@@ -40,7 +40,8 @@ protected:
 	void OnFindGlobalDefinition(wxCommandEvent &e);
 	void OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e);
 	void OnFindFunctionsCallingThisFunction(wxCommandEvent &e);
-	void OnDbBuilderThreadEnded(wxCommandEvent &e);
+	void OnCScopeThreadEnded(wxCommandEvent &e);
+	void OnCScopeThreadUpdateStatus(wxCommandEvent &e);
 };
 
 #endif //Cscope

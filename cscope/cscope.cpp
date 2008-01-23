@@ -35,7 +35,8 @@ Cscope::Cscope(IManager *manager)
 	m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook(), m_mgr);
 	m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, wxT("cscope"), false/*, (int)m_mgr->GetOutputPaneNotebook()->GetImageList()->GetCount()-1*/);
 
-	Connect(wxEVT_CSCOPE_THREAD_DB_BUILD_DONE, wxCommandEventHandler(Cscope::OnDbBuilderThreadEnded), NULL, this);
+	Connect(wxEVT_CSCOPE_THREAD_DONE, wxCommandEventHandler(Cscope::OnCScopeThreadEnded), NULL, this);
+	Connect(wxEVT_CSCOPE_THREAD_UPDATE_STATUS, wxCommandEventHandler(Cscope::OnCScopeThreadUpdateStatus), NULL, this);
 	
 	//start the helper thread
 	CScopeThreadST::Get()->Start();
@@ -162,15 +163,30 @@ wxString Cscope::DoCreateListFile()
 	return list_file;
 }
 
-void Cscope::DoCscopeCommand(const wxString &command)
+void Cscope::DoCscopeCommand(const wxString &command, const wxString &endMsg)
 {
 	//try to locate the cscope database
 	wxArrayString output;
-
+	
+	//set the focus to the cscope tab
+	wxFlatNotebook *book = m_mgr->GetOutputPaneNotebook();
+	wxString curSel = book->GetPageText((size_t)book->GetSelection());
+	if (curSel != wxT("cscope")) {
+		for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
+			if (book->GetPageText(i) == wxT("cscope")) {
+				book->SetSelection(i);
+				break;
+			}
+		}
+	}
+	
+	m_cscopeWin->Clear();
+	
 	//create the search thread and return
 	CscopeRequest *req = new CscopeRequest();
 	req->SetOwner(this);
 	req->SetCmd(command);
+	req->SetEndMsg(endMsg);
 	req->SetWorkingDir(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(true));
 	
 	CScopeThreadST::Get()->Add( req );
@@ -184,8 +200,10 @@ void Cscope::OnFindSymbol(wxCommandEvent &e)
 
 	//Do the actual search
 	wxString command;
+	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -L -0 ") << word << wxT(" -i ") << list_file;
-	DoCscopeCommand(command);
+	endMsg << wxT("cscope results for: find C symbol '") << word << wxT("':");
+	DoCscopeCommand(command, endMsg);	
 }
 
 void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
@@ -197,8 +215,10 @@ void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
 
 	//Do the actual search
 	wxString command;
+	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -L -1 ") << word << wxT(" -i ") << list_file;
-	DoCscopeCommand(command);
+	endMsg << wxT("cscope results for: find global definition of '") << word << wxT("':");
+	DoCscopeCommand(command, endMsg);	
 }
 
 void Cscope::OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e)
@@ -210,8 +230,10 @@ void Cscope::OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e)
 
 	//Do the actual search
 	wxString command;
+	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -L -2 ") << word << wxT(" -i ") << list_file;
-	DoCscopeCommand(command);	
+	endMsg << wxT("cscope results for: functions called by '") << word << wxT("':");
+	DoCscopeCommand(command, endMsg);	
 }
 
 void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
@@ -223,31 +245,26 @@ void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
 
 	//Do the actual search
 	wxString command;
+	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -L -3 ") << word << wxT(" -i ") << list_file;
-	DoCscopeCommand(command);	
+	endMsg << wxT("cscope results for: functions calling '") << word << wxT("':");
+	DoCscopeCommand(command, endMsg);	
 }
+
 wxString Cscope::GetCscopeExeName()
 {
 	return wxT("cscope ");
 }
 
-void Cscope::OnDbBuilderThreadEnded(wxCommandEvent &e)
+void Cscope::OnCScopeThreadEnded(wxCommandEvent &e)
 {
-	wxLogMessage(wxT("cscope thread terminated execution of command: ") + e.GetString());
 	CscopeResultTable *result = (CscopeResultTable*)e.GetClientData();
 	m_cscopeWin->BuildTable( result );
+	m_cscopeWin->SetMessage(e.GetString(), 100);
+}
 
-	//set the focus to the cscope tab
-	wxFlatNotebook *book = m_mgr->GetOutputPaneNotebook();
-	wxString curSel = book->GetPageText((size_t)book->GetSelection());
-	if (curSel != wxT("cscope")) {
-		for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
-			if (book->GetPageText(i) == wxT("cscope")) {
-				book->SetSelection(i);
-				break;
-			}
-		}
-	}
-	
-	//release the resources
+void Cscope::OnCScopeThreadUpdateStatus(wxCommandEvent &e)
+{
+	m_cscopeWin->SetMessage(e.GetString(), e.GetInt());
+	e.Skip();
 }

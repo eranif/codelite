@@ -42,7 +42,8 @@ public:
 	/** Constructor */
 	CscopeTab( wxWindow* parent, IManager *mgr );
 	void BuildTable(CscopeResultTable *table);
-	
+	void Clear();
+	void SetMessage(const wxString &msg, int percent);
 };
 
 #endif // __cscopetab__

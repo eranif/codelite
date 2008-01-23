@@ -8,12 +8,14 @@
 #ifndef __cscopetabbase__
 #define __cscopetabbase__
 
-#include <wx/treectrl.h>
+#include <wx/string.h>
+#include <wx/stattext.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/string.h>
+#include <wx/treectrl.h>
+#include <wx/gauge.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
@@ -28,7 +30,9 @@ class CscopeTabBase : public wxPanel
 	private:
 	
 	protected:
+		wxStaticText* m_statusMessage;
 		wxTreeCtrl* m_treeCtrlResults;
+		wxGauge* m_gauge;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnLeftDClick( wxMouseEvent& event ){ event.Skip(); }

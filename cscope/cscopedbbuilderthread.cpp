@@ -4,7 +4,8 @@
 #include "globals.h"
 #include "cscope.h"
 
-int wxEVT_CSCOPE_THREAD_DB_BUILD_DONE = wxNewId();
+int wxEVT_CSCOPE_THREAD_DONE = wxNewId();
+int wxEVT_CSCOPE_THREAD_UPDATE_STATUS = wxNewId();
 
 CscopeDbBuilderThread::CscopeDbBuilderThread()
 {
@@ -22,6 +23,7 @@ void CscopeDbBuilderThread::ProcessRequest(ThreadRequest *request)
 	DirSaver ds;
 	
 	wxSetWorkingDirectory(req->GetWorkingDir());
+	SendStatusEvent( wxT("Executing cscope..."), 10, req->GetOwner() );
 	
 	//notify the database creation process as completed
 	wxArrayString output;
@@ -29,12 +31,14 @@ void CscopeDbBuilderThread::ProcessRequest(ThreadRequest *request)
 	//set environment variables required by cscope
 	wxSetEnv(wxT("TMPDIR"), wxT("."));
 	SafeExecuteCommand(req->GetCmd(), output);
+	SendStatusEvent( wxT("Parsing results..."), 50, req->GetOwner() );
 	
-	wxCommandEvent e(wxEVT_CSCOPE_THREAD_DB_BUILD_DONE);
 	CscopeResultTable *result = ParseResults( output );
+	SendStatusEvent( wxT("Done"), 100, req->GetOwner() );
 	
+	wxCommandEvent e(wxEVT_CSCOPE_THREAD_DONE);
 	e.SetClientData(result);
-	e.SetString(req->GetCmd());
+	e.SetString(req->GetEndMsg());
 	req->GetOwner()->AddPendingEvent(e);
 }
 
@@ -89,5 +93,10 @@ CscopeResultTable* CscopeDbBuilderThread::ParseResults(const wxArrayString &outp
 	return results;
 }
 
-
-
+void CscopeDbBuilderThread::SendStatusEvent(const wxString &msg, int percent, wxEvtHandler *owner)
+{
+	wxCommandEvent e(wxEVT_CSCOPE_THREAD_UPDATE_STATUS);
+	e.SetString(msg);
+	e.SetInt(percent);
+	owner->AddPendingEvent(e);
+}

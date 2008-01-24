@@ -19,8 +19,13 @@
   <Project Name="Subversion" Path="Subversion/Subversion.project"/>
   <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
   <Project Name="Cscope" Path="cscope/Cscope.project" Active="No"/>
+  <Environment>
+    <Variable Name="MINGW" Value="C:/MinGW"/>
+    <Variable Name="WorkspaceName" Value="LiteEditor"/>
+    <Variable Name="WorkspacePath" Value="/home/eran/devl/codelite/trunk"/>
+  </Environment>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="wxflatnotebook" ConfigName="ReleaseUnicode"/>
@@ -31,9 +36,9 @@
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="ReleaseUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="ReleaseUnicode"/>
+      <Project Name="Cscope" ConfigName="ReleaseUnicode"/>
       <Project Name="CodeLite" ConfigName="ReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
-      <Project Name="Cscope" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
@@ -46,11 +51,11 @@
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="DebugUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="DebugUnicode"/>
+      <Project Name="Cscope" ConfigName="DebugUnicode"/>
       <Project Name="CodeLite" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
-      <Project Name="Cscope" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxflatnotebook" ConfigName="WinReleaseUnicode"/>
@@ -81,9 +86,4 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
-  <Environment>
-    <Variable Name="MINGW" Value="C:/MinGW"/>
-    <Variable Name="WorkspaceName" Value="LiteEditor"/>
-    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
-  </Environment>
 </CodeLite_Workspace>

@@ -245,22 +245,9 @@
     <File Name="pluginmanager.h"/>
     <File Name="pluginmanager.cpp"/>
   </VirtualDirectory>
-  <Dependencies>
-    <Project Name="wxscintilla"/>
-    <Project Name="wxflatnotebook"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="Subversion"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-  </Dependencies>
   <Settings Type="Executable">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="" IntermediateDirectory="" Command="CodeLiteUD" CommandArguments="" WorkingDirectory="../Runtime"/>
+      <General OutputFile="../Runtime/CodeLiteUD" IntermediateDirectory="./DebugUnicode" Command="./CodeLiteUD" CommandArguments="-b ." WorkingDirectory="../Runtime"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);$(shell pkg-config --cflags gtk+-2.0)">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
@@ -284,13 +271,15 @@
       <ResourceCompiler Required="no" Options="$(shell wx-config --rcflags)"/>
       <PreBuild/>
       <PostBuild/>
-      <CustomBuild Enabled="yes">
+      <CustomBuild Enabled="no">
         <CleanCommand>cd .. &amp;&amp; make type=debug_unicode clean</CleanCommand>
         <BuildCommand>cd .. &amp;&amp; make type=debug_unicode</BuildCommand>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -407,4 +396,17 @@ resources.cpp: resources.xrc
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies>
+    <Project Name="wxscintilla"/>
+    <Project Name="wxflatnotebook"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Subversion"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+  </Dependencies>
 </CodeLite_Project>

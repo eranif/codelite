@@ -16,9 +16,10 @@
     <File Name="cscopetab.h"/>
     <File Name="cscopetabbase.cpp"/>
   </VirtualDirectory>
+  <Dependencies/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="$(ConfigurationName)/Cscope.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode"/>
+      <General OutputFile="../Runtime/plugins/cscope.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)">
         <IncludePath Value="."/>
         <IncludePath Value="../../trunk/Interfaces"/>
@@ -34,9 +35,9 @@
       <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes);">
         <LibraryPath Value="../../trunk/lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.a"/>
-        <Library Value="libwxFlatNotebookud.a"/>
+        <Library Value="libwxflatnotebookud.a"/>
         <Library Value="libCodeLiteud.a"/>
-        <Library Value="libwxsqlite3u.a"/>
+        <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -162,5 +163,4 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies/>
 </CodeLite_Project>

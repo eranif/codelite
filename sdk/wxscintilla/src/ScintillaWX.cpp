@@ -528,6 +528,7 @@ void ScintillaWX::Paste() {
 
 
 void ScintillaWX::CopyToClipboard (const SelectionText& st) {
+	wxString textToCopy(wxEmptyString);
 #if wxUSE_CLIPBOARD
 #if 0
     if (wxTheClipboard->Open()) {
@@ -554,10 +555,33 @@ void ScintillaWX::CopyToClipboard (const SelectionText& st) {
 #else
 	if (wxTheClipboard->Open()) {
         wxTheClipboard->UsePrimarySelection(false);
-        wxString text = wxTextBuffer::Translate(sci2wx(st.s, st.len-1));
-        wxTheClipboard->SetData(new wxTextDataObject(text));
+        textToCopy = wxTextBuffer::Translate(sci2wx(st.s, st.len-1));
+        if (!wxTheClipboard->SetData(new wxTextDataObject(textToCopy))) {
+			wxLogMessage(wxT("Failed to insert data ") + textToCopy + wxT(" to clipboard"));
+		}
         wxTheClipboard->Close();
-    }
+    }else{
+		wxLogMessage(wxT("Failed to open the clipboard"));
+	}
+	
+	//confirm that our data indeed inserted into the clipboard
+	if (wxTheClipboard->Open()) {
+		wxTextDataObject data;
+		wxTheClipboard->UsePrimarySelection(false);
+		bool gotData = wxTheClipboard->GetData(data);
+		if(gotData) {
+			wxString text = wxTextBuffer::Translate(data.GetText(), wxConvertEOLMode(pdoc->eolMode));
+			if (text != textToCopy) {
+				wxLogMessage(wxT("Data in clipboard does not match the data copied: ") + text + wxT(" != ") + textToCopy);
+			}
+		}else{
+			wxLogMessage(wxT("Failed to GetData from the clipboard"));
+		}
+		wxTheClipboard->Close();
+	}else{
+		wxLogMessage(wxT("Failed to open the clipboard"));
+	}
+
 #endif
 #else
     wxUnusedVar(st);

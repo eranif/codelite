@@ -1508,9 +1508,6 @@ double ElapsedTime::Duration(bool reset) {
 
 #include "UniConversion.h"
 
-// Convert using Scintilla's functions instead of wx's, Scintilla's are more
-// forgiving and won't assert...
-
 wxString sci2wx(const char* str, size_t len)
 {
     if (!len)
@@ -1522,19 +1519,5 @@ wxString sci2wx(const char* str, size_t len)
     size_t actualLen = UCS2FromUTF8(str, len, buffer.data(), wclen+1);
     return wxString(buffer.data(), actualLen);
 }
-
-const wxWX2MBbuf wx2stc(const wxString& str)
-{
-    const wchar_t* wcstr = str.c_str();
-    size_t wclen         = str.length();
-    size_t len           = UTF8Length(wcstr, wclen);
-
-    wxCharBuffer buffer(len+1);
-    UTF8FromUCS2(wcstr, wclen, buffer.data(), len);
-
-    // TODO check NULL termination!!
-
-    return buffer;
-}
-
 #endif
+//----------------------------------------------------------------------

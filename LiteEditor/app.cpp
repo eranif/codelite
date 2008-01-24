@@ -88,10 +88,29 @@ bool App::OnInit()
 		homeDir = newBaseDir;
 	}
 
-#if defined (__WXGTK__) || defined (__WXMAC__)
+#if defined (__WXGTK__)
+	if (homeDir.IsEmpty()) {
+		SetAppName(wxT("codelite"));
+		homeDir = wxStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or ~/.codelite
+		
+		//Create the directory structure
+		wxMkDir(homeDir.ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/plugins/")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/debuggers/")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/lexers/")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/rc/")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/images/")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/templates/")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
+
+		//copy the settings from the global location if needed
+		CopySettings(homeDir);
+	}
+	
+#elif defined (__WXMAC__)
 	SetAppName(wxT("codelite"));
 	homeDir = wxStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or ~/.codelite
-	
+
 	//Create the directory structure
 	wxMkDir(homeDir.ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/plugins/")).ToAscii(), 0777);
@@ -101,10 +120,10 @@ bool App::OnInit()
 	wxMkDir((homeDir + wxT("/images/")).ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/templates/")).ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
-	
+
 	//copy the settings from the global location if needed
 	CopySettings(homeDir);
-	
+
 #else //__WXMSW__
 	if (homeDir.IsEmpty()) { //did we got a basedir from user?
 		// On windows, we use the InstallPath from the registry
@@ -120,7 +139,7 @@ bool App::OnInit()
 		}
 	}
 #endif
-	
+
 	wxString curdir = wxGetCwd();
 	::wxSetWorkingDirectory(homeDir);
 	// Load all of the XRC files that will be used. You can put everything
@@ -133,11 +152,10 @@ bool App::OnInit()
 	// keep the startup directory
 	ManagerST::Get()->SetStarupDirectory(::wxGetCwd());
 	Manager *mgr = ManagerST::Get();
-	
+
 	//show splashscreen here
 	long style = wxSIMPLE_BORDER;
 #if defined (__WXMSW__) || defined (__WXGTK__)
-	style |= wxSTAY_ON_TOP;
 	style |= wxFRAME_NO_TASKBAR;
 #endif
 
@@ -147,12 +165,12 @@ bool App::OnInit()
 		wxString mainTitle;
 		mainTitle << wxT("CodeLite - SVN build, Revision: ") << _U(SvnRevision);
 		m_splash = new SplashScreen(bitmap, mainTitle, wxT("For the Windows(R) & Linux environments"),
-		        wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT,
-		        6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
-		        style);
+		                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT,
+		                            6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
+		                            style);
 	}
 	wxYield();
-	
+
 
 	// Create the main application window (a dialog in this case)
 	// NOTE: Vertical dimension comprises the caption bar.
@@ -160,7 +178,7 @@ bool App::OnInit()
 	//       hilighting border around the dialog (2 points in
 	//       Win 95).
 	m_pMainFrame = Frame::Get();
-	
+
 	// Center the dialog when first shown
 	m_pMainFrame->Centre();
 
@@ -175,19 +193,19 @@ bool App::OnInit()
 
 	m_pMainFrame->Show(TRUE);
 	SetTopWindow(m_pMainFrame);
-	
+
 	m_splash->Close(true);
 	m_splash->Destroy();
-	
+
 	for (size_t i=0; i< parser.GetParamCount(); i++) {
 		wxString argument = parser.GetParam(i);
-		
+
 		//convert to full path and open it
 		wxFileName fn(argument);
 		fn.MakeAbsolute(curdir);
 		ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString);
 	}
-	
+
 	return TRUE;
 }
 
@@ -267,4 +285,3 @@ void App::OnHideSplash(wxCommandEvent &e)
 	m_splash->Destroy();
 	e.Skip();
 }
-

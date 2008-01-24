@@ -557,13 +557,13 @@ void ScintillaWX::CopyToClipboard (const SelectionText& st) {
         wxTheClipboard->UsePrimarySelection(false);
         textToCopy = wxTextBuffer::Translate(sci2wx(st.s, st.len-1));
         if (!wxTheClipboard->SetData(new wxTextDataObject(textToCopy))) {
-			wxPrintf(wxT("Failed to insert data %s to clipboard"), textToCopy.GetData());
+			//wxPrintf(wxT("Failed to insert data %s to clipboard"), textToCopy.GetData());
 		}
         wxTheClipboard->Close();
     }else{
 		wxPrintf(wxT("Failed to open the clipboard"));
 	}
-	
+/*	
 	//confirm that our data indeed inserted into the clipboard
 	if (wxTheClipboard->Open()) {
 		wxTextDataObject data;
@@ -581,7 +581,7 @@ void ScintillaWX::CopyToClipboard (const SelectionText& st) {
 	}else{
 		wxPrintf(wxT("Failed to open the clipboard"));
 	}
-
+*/
 #endif
 #else
     wxUnusedVar(st);

@@ -15,6 +15,12 @@ extern int wxEVT_CSCOPE_THREAD_UPDATE_STATUS;
 
 typedef std::map<wxString, std::vector< CscopeEntryData >* > CscopeResultTable;
 
+/**
+ * \class CscopeRequest
+ * \brief 
+ * \author eran
+ * \date 01/23/08
+ */
 class CscopeRequest : public ThreadRequest
 {
 	wxEvtHandler *m_owner;

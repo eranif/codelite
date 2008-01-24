@@ -19,6 +19,11 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 	return thePlugin;
 }
 
+/**
+ * \brief 
+ * \param manager
+ * \return 
+ */
 Cscope::Cscope(IManager *manager)
 		: IPlugin(manager)
 		, m_topWindow(NULL)

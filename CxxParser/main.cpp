@@ -29,8 +29,8 @@ int main(){
 	//print the scope name
 	//testScopeParser(buf);
 	//testVarParser(buf);
-	testExprParser(buf);
-	//testFuncParser(buf);
+	//testExprParser(buf);
+	testFuncParser(buf);
 	free(buf);
 	Sleep(100000);
 }

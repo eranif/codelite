@@ -62,7 +62,7 @@ extern void cl_scope_lex_clean();
 %token  LE_VIRTUAL         LE_FRIEND
 %token  LE_INLINE          LE_OVERLOAD
 %token  LE_TEMPLATE		  LE_TYPENAME
-
+%token  LE_THROW		  	LE_CATCH
 /* ANSI C Grammar suggestions */
 %token  LE_IDENTIFIER              LE_STRINGliteral
 %token  LE_FLOATINGconstant        LE_INTEGERconstant        LE_CHARACTERconstant

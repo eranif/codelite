@@ -18,12 +18,21 @@ void clFunction::Reset()
 	m_signature = "";
 	m_lineno = 0;
 	m_retrunValusConst = "";
+	m_isVirtual = false;
+	m_isPureVirtual = false;
 }
 
 void clFunction::Print()
 {
-	fprintf(	stdout, "{m_name=%s, m_lineno=%d, m_scope=%s, m_signature=%s, m_retrunValusConst=%s\nm_returnValue=", 
-				m_name.c_str(), m_lineno, m_scope.c_str(), m_signature.c_str(), m_retrunValusConst.c_str());
+	fprintf(	stdout, "{m_name=%s, m_lineno=%d, m_scope=%s, m_signature=%s, m_isVirtual=%s, m_isPureVirtual=%s, m_retrunValusConst=%s\nm_returnValue=", 
+				m_name.c_str(), 
+				m_lineno, 
+				m_scope.c_str(), 
+				m_signature.c_str(), 
+				m_isVirtual ? "yes" : "no", 
+				m_isPureVirtual ? "yes" : "no", 
+				m_retrunValusConst.c_str());
+				
 	m_returnValue.Print();
 	fprintf(	stdout, "}\n");
 	fflush(stdout);

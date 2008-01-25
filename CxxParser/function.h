@@ -14,6 +14,8 @@ public:
 	std::string 	m_signature;
 	Variable 		m_returnValue;
 	int 			m_lineno;
+	bool 			m_isVirtual;
+	bool 			m_isPureVirtual;
 	
 public:
 	clFunction();

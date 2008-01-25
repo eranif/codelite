@@ -58,9 +58,7 @@ void CleanRequest::Process()
 					wd = proj->GetFileName().GetPath();
 				}
 				
-				AppendLine(wxT("Changing working directory to: ") + wd + wxT("\n"));
 				::wxSetWorkingDirectory(wd);
-				AppendLine(wxT("Current working directory is: ") + wxGetCwd() + wxT("\n"));
 			}
 		}
 		

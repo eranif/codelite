@@ -141,6 +141,8 @@ wxString Cscope::DoCreateListFile()
 	wxString err_msg;
 	std::vector< wxFileName > files;
 	std::vector< wxFileName > tmpfiles;
+	m_cscopeWin->SetMessage(wxT("Creating file list..."), 5);
+	
 	for (size_t i=0; i< projects.GetCount(); i++) {
 		ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
 		if ( proj ) {
@@ -193,8 +195,6 @@ void Cscope::DoCscopeCommand(const wxString &command, const wxString &endMsg)
 		}
 	}
 	
-	m_cscopeWin->Clear();
-	
 	//create the search thread and return
 	CscopeRequest *req = new CscopeRequest();
 	req->SetOwner(this);
@@ -209,6 +209,8 @@ void Cscope::OnFindSymbol(wxCommandEvent &e)
 {
 	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
 	if (word.IsEmpty()) {return;}
+	
+	m_cscopeWin->Clear();
 	wxString list_file = DoCreateListFile();
 
 	//Do the actual search
@@ -223,7 +225,7 @@ void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
 {
 	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
 	if (word.IsEmpty()) {return;}
-	
+	m_cscopeWin->Clear();
 	wxString list_file = DoCreateListFile();
 
 	//Do the actual search
@@ -239,6 +241,7 @@ void Cscope::OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e)
 	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
 	if (word.IsEmpty()) {return;}
 	
+	m_cscopeWin->Clear();
 	wxString list_file = DoCreateListFile();
 
 	//Do the actual search
@@ -254,6 +257,7 @@ void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
 	wxString word = m_mgr->GetActiveEditor()->GetWordAtCaret();
 	if (word.IsEmpty()) {return;}
 	
+	m_cscopeWin->Clear();
 	wxString list_file = DoCreateListFile();
 
 	//Do the actual search

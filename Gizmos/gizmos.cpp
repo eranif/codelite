@@ -371,8 +371,8 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 	wxFFile file;
 	wxString srcFile;
 	wxString hdrFile;
-	srcFile << info.path << wxT("/") << macro << wxT(".cpp");
-	hdrFile << info.path << wxT("/") << macro << wxT(".h");
+	srcFile << info.fileName << wxT(".cpp");
+	hdrFile << info.fileName << wxT(".h");
 
 	file.Open(srcFile, wxT("w+b"));
 	file.Write(cpp);

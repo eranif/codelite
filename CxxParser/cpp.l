@@ -195,8 +195,9 @@ static_cast			{CPP_KEYWORD_RETURN(LE_STATIC_CAST);}
 const_cast			{CPP_KEYWORD_RETURN(LE_CONST_CAST);}
 reinterpret_cast 	{CPP_KEYWORD_RETURN(LE_REINTERPRET_CAST);}
 using 				{CPP_KEYWORD_RETURN(LE_USING);}
+throw				{CPP_KEYWORD_RETURN(LE_THROW);}
+catch				{CPP_KEYWORD_RETURN(LE_CATCH);}
 {identifier}        {IDENTIFIER_RETURN();}
-
 {decimal_constant}  {NUMERICAL_RETURN(LE_INTEGERconstant);}
 {octal_constant}    {NUMERICAL_RETURN(LE_OCTALconstant);}
 {hex_constant}      {NUMERICAL_RETURN(LE_HEXconstant);}

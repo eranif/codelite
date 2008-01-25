@@ -51,14 +51,15 @@ extern void cl_scope_lex_clean();
 %token  LE_DO              LE_IF              LE_STATIC          LE_WHILE
 
 /* The following are used in C++ only.  ANSI C would call these IDENTIFIERs */
-%token  LE_NEW             LE_DELETE
+%token  LE_NEW             	LE_DELETE
 %token  LE_THIS
 %token  LE_OPERATOR
 %token  LE_CLASS
-%token  LE_PUBLIC          LE_PROTECTED       LE_PRIVATE
-%token  LE_VIRTUAL         LE_FRIEND
-%token  LE_INLINE          LE_OVERLOAD
-%token  LE_TEMPLATE		  LE_TYPENAME
+%token  LE_PUBLIC          	LE_PROTECTED       LE_PRIVATE
+%token  LE_VIRTUAL         	LE_FRIEND
+%token  LE_INLINE          	LE_OVERLOAD
+%token  LE_TEMPLATE		  	LE_TYPENAME
+%token  LE_THROW		  	LE_CATCH
 
 /* ANSI C Grammar suggestions */
 %token  LE_IDENTIFIER              LE_STRINGliteral
@@ -182,15 +183,17 @@ any_operator:
         | '(' ')'
         | '[' ']'
         | LE_NEW
-        | LE_DELETE
+        | LE_DELETE 
         | ','
         ;
 				
 /* functions */
-function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl nested_scope_specifier func_name '(' {func_consumeFuncArgList();} const_spec opt_pure_virtual func_postfix  					 
+function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl nested_scope_specifier func_name '(' {func_consumeFuncArgList();} const_spec declare_throw opt_pure_virtual func_postfix  					 
 					{
 						//trim down trailing '::' from scope name
 						$6.erase($6.find_last_not_of(":")+1);
+						curr_func.m_isVirtual = $3.find("virtual") != std::string::npos;
+						curr_func.m_isPureVirtual = $12.find("=") != std::string::npos;
 						curr_func.m_name = $7;
 						curr_func.m_scope = $6;
 						curr_func.m_retrunValusConst = $4;
@@ -202,6 +205,11 @@ function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec va
 						curr_func.Reset();
 					}
 					;
+
+declare_throw: 	/*empty*/ {$$ = "";}
+			|	LE_THROW '(' nested_scope_specifier LE_IDENTIFIER special_star_amp ')' {$$ = $3 + $4 + $5;}
+			|	LE_THROW '(' basic_type_name special_star_amp ')' {$$ = $3 + $4;}
+			;
 
 func_postfix: '{'
 				| ';'

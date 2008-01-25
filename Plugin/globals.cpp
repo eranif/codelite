@@ -156,3 +156,16 @@ void SafeExecuteCommand(const wxString &command, wxArrayString &output)
 	ProcUtils::ExecuteCommand(command, output);
 #endif
 }
+bool IsValidCppFile(const wxString &id)
+{
+	if (id.IsEmpty()) {
+		return false;
+	}
+	
+	//make sure that rest of the id contains only a-zA-Z0-9_
+	if (id.find_first_not_of(wxT("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")) != wxString::npos) {
+		return false;
+	}
+	return true;	
+}
+

@@ -71,15 +71,12 @@ void CompileRequest::Process()
 					wd = proj->GetFileName().GetPath();
 				}
 				
-				AppendLine(wxT("Changing working directory to: ") + wd + wxT("\n"));
 				::wxSetWorkingDirectory(wd);
-				AppendLine(wxT("Current working directory is: ") + wxGetCwd() + wxT("\n"));
 			}
 		}
 		
 		if(m_projectOnly || m_fileName.IsEmpty() == false){
 			//need to change directory to project dir
-			AppendLine(wxT("Current working directory is set to: ") + proj->GetFileName().GetPath() + wxT("\n"));
 			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
 			
 			wxString configName;

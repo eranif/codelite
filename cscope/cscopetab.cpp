@@ -115,8 +115,7 @@ void CscopeTab::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 				m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine()-1);
 				return;
 			} else if (data->GetEntry().GetKind() == KindFileNode) {
-				//open the file but dont place the caret at a give line
-				m_mgr->OpenFile(data->GetEntry().GetFile(), wxEmptyString);
+				event.Skip();
 				return;
 			}
 		}

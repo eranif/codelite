@@ -1595,6 +1595,13 @@ bool TagsManager::ProcessExpression(const wxFileName &filename, int lineno, cons
 	return LanguageST::Get()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope);
 }
 
+bool TagsManager::GetMemberType(const wxString &scope, const wxString &name, wxString &type, wxString &typeScope)
+{
+	wxString expression(scope);
+	expression << wxT("::") << name << wxT(".");
+	return LanguageST::Get()->ProcessExpression(expression, wxEmptyString, wxFileName(), wxNOT_FOUND, type, typeScope);
+}
+
 int TagsManager::UpdatePathVariable(const wxString &name, const wxString &value)
 {
 	DbRecordPtr record(new VariableEntry(name, value));

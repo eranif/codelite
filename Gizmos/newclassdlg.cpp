@@ -31,6 +31,7 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 			}
 		}
 	}
+	m_textCtrlFileName->Enable( false );
 	GetSizer()->Layout();
 }
 
@@ -140,5 +141,40 @@ void NewClassDlg::GetNewClassInfo(NewClassInfo &info)
 	this->GetInheritance(info.parents);
 	info.path = this->GetClassPath();
 	info.isAssingable = this->IsCopyableClass();
+	info.fileName = this->GetClassFile();
 	info.isVirtualDtor = m_checkBoxVirtualDtor->IsChecked();
+}
+
+wxString NewClassDlg::GetClassFile()
+{
+	if(m_checkBoxEnterFileName->IsChecked()) {
+		return m_textCtrlFileName->GetValue();
+	} else {
+		wxString fileName(m_textClassName->GetValue());
+		fileName.MakeLower();
+		return fileName;
+	}
+}
+
+void NewClassDlg::OnCheckEnterFileNameManually(wxCommandEvent &e)
+{
+	if(e.IsChecked()) {
+		m_textCtrlFileName->Enable(true);
+		m_textCtrlFileName->Clear();
+	} else {
+		wxString file_name( m_textClassName->GetValue() );
+		file_name.MakeLower();
+		m_textCtrlFileName->SetValue( file_name );
+		m_textCtrlFileName->Enable(false);
+	}
+	e.Skip();
+}
+
+void NewClassDlg::OnTextEnter(wxCommandEvent &e)
+{
+	if(m_checkBoxEnterFileName->IsChecked() == false) {
+		wxString file_name( m_textClassName->GetValue() );
+		file_name.MakeLower();
+		m_textCtrlFileName->SetValue( file_name );
+	}
 }

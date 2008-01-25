@@ -168,14 +168,16 @@ private             {CPP_KEYWORD_RETURN(LE_PRIVATE);}
 public              {CPP_KEYWORD_RETURN(LE_PUBLIC);}
 this                {CPP_KEYWORD_RETURN(LE_THIS);}
 virtual             {CPP_KEYWORD_RETURN(LE_VIRTUAL);}
-template				  {CPP_KEYWORD_RETURN(LE_TEMPLATE);}
-typename				  {CPP_KEYWORD_RETURN(LE_TYPENAME);}
+template			{CPP_KEYWORD_RETURN(LE_TEMPLATE);}
+typename			{CPP_KEYWORD_RETURN(LE_TYPENAME);}
 dynamic_cast		{CPP_KEYWORD_RETURN(LE_DYNAMIC_CAST);}
 static_cast			{CPP_KEYWORD_RETURN(LE_STATIC_CAST);}
 const_cast			{CPP_KEYWORD_RETURN(LE_CONST_CAST);}
 reinterpret_cast 	{CPP_KEYWORD_RETURN(LE_REINTERPRET_CAST);}
-
-{identifier}          {IDENTIFIER_RETURN();}
+using 				{CPP_KEYWORD_RETURN(LE_USING);}
+throw				{CPP_KEYWORD_RETURN(LE_THROW);}
+catch				{CPP_KEYWORD_RETURN(LE_CATCH);}
+{identifier}        {IDENTIFIER_RETURN();}
 
 {decimal_constant}  {NUMERICAL_RETURN(LE_INTEGERconstant);}
 {octal_constant}    {NUMERICAL_RETURN(LE_OCTALconstant);}

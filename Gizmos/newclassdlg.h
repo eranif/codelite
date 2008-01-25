@@ -19,6 +19,7 @@ struct ClassParentInfo {
 struct NewClassInfo {
 	wxString name;
 	wxString path;
+	wxString fileName;
 	bool isSingleton;
 	bool isAssingable;
 	bool isVirtualDtor;
@@ -39,8 +40,9 @@ protected:
 	void OnButtonDeleteUI( wxUpdateUIEvent& event );
 	void OnListItemDeSelected(wxListEvent &e);
 	void OnButtonOK(wxCommandEvent &e);
+	void OnCheckEnterFileNameManually(wxCommandEvent &e);
 	bool ValidateInput();
-	
+	void OnTextEnter(wxCommandEvent &e);
 public:
 	/** Constructor */
 	NewClassDlg( wxWindow* parent, IManager *mgr );
@@ -50,6 +52,7 @@ public:
 	bool IsSingleton() {return m_checkBox6->GetValue();}
 	wxString GetClassName(){return m_textClassName->GetValue();}
 	wxString GetClassPath(){return m_dirPicker->GetPath();}
+	wxString GetClassFile();
 	bool IsCopyableClass(){return !m_checkBoxCopyable->IsChecked();}
 };
 

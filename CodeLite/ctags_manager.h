@@ -490,6 +490,19 @@ public:
 	void GetScopesFromFile(const wxFileName &fileName, std::vector<TagEntryPtr> &tags);
 	
 	/**
+	 * \brief return the scope's member type, for example:
+	 * if yout class MyClass::m_str, and m_str is std::string, then calling this function will result with
+	 * type=basic_string
+	 * typeScope=std 
+	 * \param scope scope name 
+	 * \param name the member name
+	 * \param type
+	 * \param typeScope
+	 * \return true on success, false otherwise
+	 */
+	bool GetMemberType(const wxString &scope, const wxString &name, wxString &type, wxString &typeScope);
+	
+	/**
 	 * \brief return list of tags by file name & scope
 	 * \param fileName
 	 * \param scopeName

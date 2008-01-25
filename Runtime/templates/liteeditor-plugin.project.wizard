@@ -25,7 +25,7 @@
       <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes);">
 		<LibraryPath Value="$(CodeLitePath)/lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.a"/>
-		<Library Value="libwxFlatNotebookud.a"/>  
+		<Library Value="libwxflatnotebookud.a"/>  
         <Library Value="libCodeLiteud.a"/>
 		<Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
@@ -58,7 +58,7 @@
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
 		<LibraryPath Value="$(CodeLitePath)/lib/gcc_lib"/>  
-		<Library Value="libwxFlatNotebooku.a"/>  
+		<Library Value="libwxflatnotebooku.a"/>  
         <Library Value="libplugin_sdku.a"/>
         <Library Value="libCodeLiteu.a"/>
 		<Library Value="libwxsqlite3u.a"/>
@@ -97,7 +97,7 @@
         <Library Value="libCodeLiteud.a"/>
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
-	    <Library Value="libwxFlatNotebookud.a"/>
+	    <Library Value="libwxflatnotebookud.a"/>
 		<Library Value="libwxmsw28ud.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -109,9 +109,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -135,7 +133,7 @@
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
-        <Library Value="libwxFlatNotebooku.a"/>
+        <Library Value="libwxflatnotebooku.a"/>
         <Library Value="libwxmsw28u.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -147,9 +145,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>

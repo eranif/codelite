@@ -144,6 +144,7 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	m_checkResourceNeeded->SetValue(!buildConf->IsResCompilerRequired());
 	m_textAddResCmpOptions->SetValue(buildConf->GetResCompileOptions());
 	m_textAddResCmpPath->SetValue(buildConf->GetResCmpIncludePath());
+	m_customBuildDirPicker->SetPath(buildConf->GetCustomBuildWorkingDir());
 	
 	//set the custom pre-prebuild step
 	wxString customPreBuild = buildConf->GetPreBuildCustom();
@@ -251,7 +252,8 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetResCompilerRequired(!m_checkResourceNeeded->IsChecked());
 	buildConf->SetResCmpIncludePath(m_textAddResCmpPath->GetValue());
 	buildConf->SetResCmpOptions(m_textAddResCmpOptions->GetValue());
-
+	buildConf->SetCustomBuildWorkingDir(m_customBuildDirPicker->GetPath());
+	
 	//set the pre-build step
 	wxString rules = m_textPreBuildRule->GetValue();
 	wxString deps = m_textDeps->GetValue();
@@ -324,28 +326,27 @@ void ProjectSettingsDlg::ConnectEvents()
 
 void ProjectSettingsDlg::OnCustomBuildEnabled(wxCommandEvent &event)
 {
+	DisableCompilerPage(event.IsChecked());
+	DisableLinkerPage(event.IsChecked());
+	DisableGeneralPage(event.IsChecked());
+	DisableCustomBuildPage(!event.IsChecked());
+	DisableCustomMkSteps(event.IsChecked());
+	
 	if(event.IsChecked()){
-		//disable compile & link pages
-		DisableCompilerPage(true);
-		DisableLinkerPage(true);
-		//also disable the checkboxes
 		m_checkLinkerNeeded->Enable(false);
 		m_checkCompilerNeeded->Enable(false);
-		DisableCustomBuildPage(false);
 		m_postBuildPage->Enable(false);
 		m_preBuildPage->Enable(false);
 		m_resourceCmpPage->Enable(false);
+		
 	}else{
-		//disable this page but make sure link & compile pages 
-		//are enabled
-		DisableCompilerPage(false);
-		DisableLinkerPage(false);
+
 		m_checkLinkerNeeded->Enable(true);
 		m_checkCompilerNeeded->Enable(true);
-		DisableCustomBuildPage(true);
 		m_postBuildPage->Enable(true);
 		m_preBuildPage->Enable(true);
 		m_resourceCmpPage->Enable(true);
+		
 	}
 	event.Skip();
 }
@@ -354,6 +355,7 @@ void ProjectSettingsDlg::DisableCustomBuildPage(bool disable)
 {
 	m_textBuildCommand->Enable(!disable);
 	m_textCleanCommand->Enable(!disable);
+	m_customBuildDirPicker->Enable(!disable);
 }
 
 void ProjectSettingsDlg::OnButtonAddPreprocessor(wxCommandEvent &event)
@@ -591,4 +593,18 @@ void ProjectSettingsDlg::OnCmdEvtVModified(wxCommandEvent &event)
 {
 	m_buttonApply->Enable(true);
 	event.Skip();
+}
+
+void ProjectSettingsDlg::DisableGeneralPage(bool disable)
+{
+	m_choiceProjectTypes->Enable( !disable );
+	m_choiceCompilerType->Enable( !disable );
+	m_textOutputFilePicker->Enable( !disable );
+	m_intermediateDirPicker->Enable( !disable );
+}
+
+void ProjectSettingsDlg::DisableCustomMkSteps(bool disable)
+{
+	m_textDeps->Enable( !disable );
+	m_textPreBuildRule->Enable( !disable );
 }

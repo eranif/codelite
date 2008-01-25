@@ -696,16 +696,25 @@ wxString BuilderGnuMake::ParseLibs(const wxString &libs)
 	return slibs;
 }
 
-wxString BuilderGnuMake::GetBuildCommand(const wxString &project)
+wxString BuilderGnuMake::GetBuildCommand(const wxString &project, bool &isCustom)
 {
 	wxString errMsg, cmd;
-	//generate the makefile
-	Export(project, false, errMsg);
+	isCustom = false;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(project);
 	if (!bldConf) {
 		return wxEmptyString;
 	}
 
+	if( bldConf->IsCustomBuild() ) {
+		//we got a custom build here, return the command as appears in the 
+		//'custom build line'
+		isCustom = true;
+		return bldConf->GetCustomBuildCmd();
+	}
+	
+	//generate the makefile
+	Export(project, false, errMsg);
+	
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
@@ -715,16 +724,25 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project)
 	return cmd;
 }
 
-wxString BuilderGnuMake::GetCleanCommand(const wxString &project)
+wxString BuilderGnuMake::GetCleanCommand(const wxString &project, bool &isCustom)
 {
 	wxString errMsg, cmd;
-	//generate the makefile
-	Export(project, false, errMsg);
+	isCustom = false;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(project);
 	if (!bldConf) {
 		return wxEmptyString;
 	}
+	
+	if( bldConf->IsCustomBuild() ) {
+		//we got a custom build here, return the command as appears in the 
+		//'custom build line'
+		isCustom = true;
+		return bldConf->GetCustomCleanCmd();
+	}
 
+	//generate the makefile
+	Export(project, false, errMsg);
+	
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 
@@ -734,17 +752,24 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString &project)
 	return cmd;
 }
 
-wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project)
+wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project, bool &isCustom)
 {
 	wxString errMsg, cmd;
-	
-	//generate the makefile
-	Export(project, true, errMsg);
-		
+	isCustom = false;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(project);
 	if (!bldConf) {
 		return wxEmptyString;
 	}
+	
+	if( bldConf->IsCustomBuild() ) {
+		//we got a custom build here, return the command as appears in the 
+		//'custom build command'
+		isCustom = true;
+		return bldConf->GetCustomBuildCmd();
+	}
+	
+	//generate the makefile
+	Export(project, true, errMsg);
 	
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
@@ -757,16 +782,25 @@ wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project)
 	return cmd;
 }
 
-wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project)
+wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project, bool &isCustom)
 {
 	wxString errMsg, cmd;
-	//generate the makefile
-	Export(project, true, errMsg);
+	isCustom = false;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(project);
 	if (!bldConf) {
 		return wxEmptyString;
 	}
 
+	if( bldConf->IsCustomBuild() ) {
+		//we got a custom build here, return the command as appears in the 
+		//'custom build clean command'
+		isCustom = true;
+		return bldConf->GetCustomCleanCmd();
+	}
+	
+	//generate the makefile
+	Export(project, true, errMsg);
+	
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
@@ -778,15 +812,21 @@ wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project)
 	return cmd;
 }
 
-wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxString &fileName)
+wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxString &fileName, wxString &errMsg)
 {
-	wxString errMsg, cmd;
-	//generate the makefile
-	Export(project, true, errMsg);
+	wxString cmd;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(project);
 	if (!bldConf) {
 		return wxEmptyString;
 	}
+	
+	if(bldConf->IsCustomBuild()) {
+		errMsg << wxT("Dont know how to build a single file for project with custom build");
+		return wxEmptyString;
+	}
+	
+	//generate the makefile
+	Export(project, true, errMsg);
 
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);

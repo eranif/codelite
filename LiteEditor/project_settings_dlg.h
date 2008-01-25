@@ -43,7 +43,9 @@ protected:
 	void DisableCompilerPage(bool disable);
 	void DisableLinkerPage(bool disable);
 	void DisableCustomBuildPage(bool disable);
-
+	void DisableGeneralPage(bool disable);
+	void DisableCustomMkSteps(bool disable);
+	
 	void PopupAddOptionDlg(wxTextCtrl *ctrl);
 
 	void OnEditCommand(wxCheckListBox* list);

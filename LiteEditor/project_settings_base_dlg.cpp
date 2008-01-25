@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jul 28 2007)
+// C++ code generated with wxFormBuilder (version Sep 26 2007)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -21,7 +21,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, int id, wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style )
+ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
@@ -143,7 +143,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, int id, wxStri
 	m_generalPage->SetSizer( bSizer19 );
 	m_generalPage->Layout();
 	bSizer19->Fit( m_generalPage );
-	m_notebook3->AddPage( m_generalPage, wxT("General"), false );
+	m_notebook3->AddPage( m_generalPage, wxT("General"), true );
 	m_compilerPage = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* compilerPageSizer;
 	compilerPageSizer = new wxBoxSizer( wxVERTICAL );
@@ -399,6 +399,13 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, int id, wxStri
 	fgSizer31->SetFlexibleDirection( wxBOTH );
 	fgSizer31->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
+	m_staticText27 = new wxStaticText( m_customBuildPage, wxID_ANY, wxT("Working directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText27->Wrap( -1 );
+	fgSizer31->Add( m_staticText27, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_customBuildDirPicker = new DirPicker(m_customBuildPage);
+	fgSizer31->Add( m_customBuildDirPicker, 0, wxALL|wxEXPAND, 5 );
+	
 	m_staticText181 = new wxStaticText( m_customBuildPage, wxID_ANY, wxT("Build Command:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText181->Wrap( -1 );
 	fgSizer31->Add( m_staticText181, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -414,15 +421,6 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, int id, wxStri
 	fgSizer31->Add( m_textCleanCommand, 1, wxALL|wxEXPAND, 5 );
 	
 	bSizer15->Add( fgSizer31, 1, wxEXPAND, 5 );
-	
-	wxStaticBoxSizer* sbSizer3;
-	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_customBuildPage, -1, wxEmptyString ), wxVERTICAL );
-	
-	m_staticText201 = new wxStaticText( m_customBuildPage, wxID_ANY, wxT("Note: When executing these commands, CodeLite sets its working directory to the \nproject directory."), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText201->Wrap( -1 );
-	sbSizer3->Add( m_staticText201, 0, wxALL|wxEXPAND, 5 );
-	
-	bSizer15->Add( sbSizer3, 0, wxEXPAND, 5 );
 	
 	m_customBuildPage->SetSizer( bSizer15 );
 	m_customBuildPage->Layout();
@@ -458,8 +456,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, int id, wxStri
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_customMakefileStep, -1, wxEmptyString ), wxVERTICAL );
 	
-	m_staticText24 = new wxStaticText( m_customMakefileStep, wxID_ANY, 
-		wxT("Define here a custom makefile rule to be executed in the pre-build steps.\nThis rule can be a composite rule or simple rule and must follow the writing convnetion.\nWhen executing these rules, the current directory is set to the project working directory\nSee the wiki for more help"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText24 = new wxStaticText( m_customMakefileStep, wxID_ANY, wxT("Define here a custom makefile rule to be executed in the pre-build steps.\nThis rule can be a composite rule or simple rule, see the wiki for more help"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText24->Wrap( -1 );
 	sbSizer2->Add( m_staticText24, 0, wxALL, 5 );
 	
@@ -468,7 +465,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, int id, wxStri
 	m_customMakefileStep->SetSizer( bSizer16 );
 	m_customMakefileStep->Layout();
 	bSizer16->Fit( m_customMakefileStep );
-	m_notebook3->AddPage( m_customMakefileStep, wxT("Advance"), true );
+	m_notebook3->AddPage( m_customMakefileStep, wxT("Custom makefile steps"), false );
 	
 	mainSizer->Add( m_notebook3, 1, wxEXPAND | wxALL, 5 );
 	
@@ -491,13 +488,14 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, int id, wxStri
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
-
-		// Connect Events
+	
+	// Connect Events
 	m_choiceProjectTypes->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_choiceCompilerType->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_choiceDebugger->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textOutputFilePicker->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_intermediateDirPicker->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
+	m_customBuildDirPicker->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textCommandArguments->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_workingDirPicker->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );

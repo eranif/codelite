@@ -72,7 +72,8 @@ class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject {
 	wxString m_debuggerType;
 	wxString m_customPostBuildRule;
 	wxString m_customPreBuildRule;
-
+	wxString m_customBuildWorkingDir;
+	
 private:
 	void FillFromSmiColonString(wxArrayString &arr, const wxString &str);
 	wxString ArrayToSmiColonString(const wxArrayString &array) const;
@@ -155,6 +156,10 @@ public:
 
 	void SetPreBuildCustom(const wxString& rule) {m_customPreBuildRule = rule;}
 	void SetPostBuildCustom(const wxString& rule) {m_customPostBuildRule = rule;}
+	
+	//Setters
+	void SetCustomBuildWorkingDir(const wxString& customBuildWorkingDir) {this->m_customBuildWorkingDir = customBuildWorkingDir;}
+	const wxString& GetCustomBuildWorkingDir() const {return m_customBuildWorkingDir;}
 };
 
 typedef SmartPtr<BuildConfig> BuildConfigPtr;

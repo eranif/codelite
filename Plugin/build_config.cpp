@@ -97,6 +97,8 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 					m_customBuildCmd = child->GetNodeContent();
 				}else if(child->GetName() == wxT("CleanCommand")){
 					m_customCleanCmd = child->GetNodeContent();
+				}else if(child->GetName() == wxT("WorkingDirectory")){
+					m_customBuildWorkingDir = child->GetNodeContent();
 				}
 				child = child->GetNext();
 			}
@@ -269,7 +271,11 @@ wxXmlNode *BuildConfig::ToXml() const
 	wxXmlNode *customBuild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CustomBuild"));
 	node->AddChild(customBuild);
 	customBuild->AddProperty(wxT("Enabled"), BoolToString(m_enableCustomBuild));
-
+	
+	//add the working directory of the custom build
+	wxXmlNode *customBuildWd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("WorkingDirectory"));
+	XmlUtils::SetNodeContent(customBuildWd, m_customBuildWorkingDir);
+	
 	//add build and clean commands
 	wxXmlNode *bldCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("BuildCommand"));
 	XmlUtils::SetNodeContent(bldCmd, m_customBuildCmd);

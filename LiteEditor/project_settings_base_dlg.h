@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jul 28 2007)
+// C++ code generated with wxFormBuilder (version Sep 26 2007)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -8,16 +8,27 @@
 #ifndef __project_settings_base_dlg__
 #define __project_settings_base_dlg__
 
-#include <wx/wx.h>
-
+#include <wx/string.h>
+#include <wx/stattext.h>
+#include <wx/gdicmn.h>
+#include <wx/font.h>
+#include <wx/colour.h>
+#include <wx/settings.h>
 #include <wx/choice.h>
 #include <wx/button.h>
+#include <wx/sizer.h>
 #include <wx/statline.h>
+#include <wx/textctrl.h>
 #include <wx/panel.h>
+#include <wx/bitmap.h>
+#include <wx/image.h>
+#include <wx/checkbox.h>
 #include <wx/gbsizer.h>
 #include <wx/checklst.h>
-#include <wx/treebook.h>
 #include "dirpicker.h"
+#include <wx/statbox.h>
+#include <wx/treebook.h>
+#include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -108,6 +119,8 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxPanel* m_customBuildPage;
 		wxCheckBox* m_checkEnableCustomBuild;
 		wxStaticLine* m_staticline82;
+		wxStaticText* m_staticText27;
+		DirPicker *m_customBuildDirPicker;
 		wxStaticText* m_staticText181;
 		wxTextCtrl* m_textBuildCommand;
 		wxStaticText* m_staticText192;
@@ -123,12 +136,13 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxButton* m_buttonOK;
 		wxButton* m_buttonCancel;
 		wxButton* m_buttonApply;
-	
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ){ event.Skip(); }
-
+		
+	
 	public:
-		ProjectSettingsBaseDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Project Settings"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 782,502 ), int style = wxDEFAULT_DIALOG_STYLE );
+		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 782,502 ), long style = wxDEFAULT_DIALOG_STYLE );
 	
 };
 

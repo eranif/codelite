@@ -22,29 +22,53 @@ CleanRequest::~CleanRequest()
 void CleanRequest::Process()
 {
 	wxString cmd;
+	wxString errMsg;
 	SetBusy(true);
-
+	
+	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_project, errMsg);
+	if (!proj) {
+		AppendLine(wxT("Cant find project: ") + m_project);
+		SetBusy(false);
+		return;
+	}
+	
+	bool isCustom(false);
 	//TODO:: make the builder name configurable
 	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if(m_projectOnly){
-		cmd = builder->GetPOCleanCommand(m_project);
+		cmd = builder->GetPOCleanCommand(m_project, isCustom);
 	}else{
-		cmd = builder->GetCleanCommand(m_project);
+		cmd = builder->GetCleanCommand(m_project, isCustom);
 	}
 
 	SendStartMsg();
-
 	m_proc = new clProcess(wxNewId(), cmd);
-	if(m_proc){
+	
+	if(m_proc) {
+		
 		DirSaver ds;
-		if(m_projectOnly){
-			//need to change directory to project dir
-			wxString errMsg;
-			ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_project, errMsg);
-			if(proj){
-				::wxSetWorkingDirectory(proj->GetFileName().GetPath());
+		
+		if(isCustom){
+			//first set the path to the project working directory
+			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
+			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjSelBuildConf(m_project);
+			if(buildConf) {
+				wxString wd = buildConf->GetCustomBuildWorkingDir();
+				if(wd.IsEmpty()) {
+					wd = proj->GetFileName().GetPath();
+				}
+				
+				AppendLine(wxT("Changing working directory to: ") + wd + wxT("\n"));
+				::wxSetWorkingDirectory(wd);
+				AppendLine(wxT("Current working directory is: ") + wxGetCwd() + wxT("\n"));
 			}
 		}
+		
+		if(m_projectOnly ){
+			//need to change directory to project dir
+			wxSetWorkingDirectory(proj->GetFileName().GetPath());
+		}
+		
 		if(m_proc->Start() == 0){
 			wxString message;
 			message << wxT("Failed to start clean process, command: ") << cmd << wxT(", process terminated with exit code: 0");
@@ -53,6 +77,7 @@ void CleanRequest::Process()
 			delete m_proc;
 			return;
 		}
+		
 		Connect(wxEVT_TIMER, wxTimerEventHandler(CleanRequest::OnTimer), NULL, this);
 		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(CleanRequest::OnProcessEnd), NULL, this);
 		m_timer->Start(10);

@@ -28,11 +28,11 @@ public:
 	 * \return true on success, false otherwise.
 	 */
 	virtual bool Export(const wxString &project, bool isProjectOnly, wxString &errMsg);
-	virtual wxString GetBuildCommand(const wxString &project);
-	virtual wxString GetCleanCommand(const wxString &project);
-	virtual wxString GetPOBuildCommand(const wxString &project);
-	virtual wxString GetPOCleanCommand(const wxString &project);
-	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &fileName);
+	virtual wxString GetBuildCommand(const wxString &project, bool &isCustom);
+	virtual wxString GetCleanCommand(const wxString &project, bool &isCustom);
+	virtual wxString GetPOBuildCommand(const wxString &project, bool &isCustom);
+	virtual wxString GetPOCleanCommand(const wxString &project, bool &isCustom);
+	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &fileName, wxString &errMsg);
 
 private:
 	void GenerateMakefile(ProjectPtr proj);

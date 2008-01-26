@@ -6,6 +6,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "threebuttonbasedlg.h"
+#include "wx/xrc/xmlres.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +21,7 @@ ThreeButtonBaseDlg::ThreeButtonBaseDlg( wxWindow* parent, wxWindowID id, const w
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_bitmap = new wxStaticBitmap( m_mainPanel, wxID_ANY, wxBitmap( wxT("question_and_answer"), wxBITMAP_TYPE_RESOURCE ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_bitmap = new wxStaticBitmap( m_mainPanel , wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("question_and_answer")));
 	bSizer2->Add( m_bitmap, 0, wxALL, 5 );
 	
 	m_message = new wxStaticText( m_mainPanel, wxID_ANY, wxT("Message"), wxDefaultPosition, wxDefaultSize, 0 );

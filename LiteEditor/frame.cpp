@@ -423,7 +423,9 @@ void Frame::CreateGUIControls(void) {
 	    wxFNB_DROPDOWN_TABS_LIST |
 	    wxFNB_SMART_TABS |
 	    wxFNB_X_ON_TAB |
-	    wxFNB_CUSTOM_DLG;
+	    wxFNB_CUSTOM_DLG |
+		wxFNB_MOUSE_MIDDLE_CLOSES_TABS|
+		wxFNB_DCLICK_CLOSES_TABS;
 
 	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK | wxFNB_CUSTOM_CLOSE_BUTTON );

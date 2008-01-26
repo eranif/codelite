@@ -5,7 +5,7 @@
 #include "generalinfo.h"
 #include <wx/dcbuffer.h>
 #include <wx/process.h>
-#include "wx/aui/aui.h"
+#include "wx/aui/aui.h" 
 #include "wx/frame.h"
 #include "findinfilesdlg.h"
 #include "editor.h"

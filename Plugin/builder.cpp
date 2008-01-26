@@ -4,9 +4,9 @@
 #include "workspace.h"
 
 Builder::Builder(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions)
-: m_name(name)
-, m_buildTool(buildTool)
-, m_buildToolOptions(buildToolOptions)
+		: m_name(name)
+		, m_buildTool(buildTool)
+		, m_buildToolOptions(buildToolOptions)
 
 {
 	//override values from configuration file
@@ -29,7 +29,7 @@ wxString Builder::NormalizeConfigName(const wxString &confgName)
 wxString Builder::GetBuildToolFromConfig() const
 {
 	BuildSystemPtr bs = BuildSettingsConfigST::Get()->GetBuildSystem(m_name);
-	if( !bs ){
+	if ( !bs ) {
 		return m_buildTool;
 	}
 
@@ -39,7 +39,7 @@ wxString Builder::GetBuildToolFromConfig() const
 wxString Builder::GetBuildToolOptionsFromConfig() const
 {
 	BuildSystemPtr bs = BuildSettingsConfigST::Get()->GetBuildSystem(m_name);
-	if( !bs ){
+	if ( !bs ) {
 		return m_buildToolOptions;
 	}
 
@@ -49,10 +49,10 @@ wxString Builder::GetBuildToolOptionsFromConfig() const
 wxString Builder::GetBuildToolJobsFromConfig() const
 {
 	BuildSystemPtr bs = BuildSettingsConfigST::Get()->GetBuildSystem(m_name);
-	if( !bs ){
+	if ( !bs ) {
 		return m_buildToolJobs;
 	}
-	
+
 	return bs->GetToolJobs();
 }
 
@@ -61,22 +61,28 @@ wxString Builder::GetBuildToolCommand(bool isCommandlineCommand) const
 	wxString jobsCmd;
 	wxString buildTool;
 	
-	if(isCommandlineCommand)
-	{
+#if defined (__WXMSW__)
+	wxString jobs = GetBuildToolJobsFromConfig();
+	if (jobs == wxT("unlimited"))
+		jobsCmd = wxT(" -j ");
+	else
+		jobsCmd = wxT(" -j ") + jobs + wxT(" ");
+
+	buildTool = GetBuildToolFromConfig();
+#else
+	if (isCommandlineCommand) {
 		wxString jobs = GetBuildToolJobsFromConfig();
-		if(jobs == wxT("unlimited"))
+		if (jobs == wxT("unlimited"))
 			jobsCmd = wxT(" -j ");
 		else
 			jobsCmd = wxT(" -j ") + jobs + wxT(" ");
-		
+
 		buildTool = GetBuildToolFromConfig();
-	}
-	else
-	{
+	} else {
 		jobsCmd = wxEmptyString;
 		buildTool = wxT("$(MAKE)");
 	}
-
+#endif
 	//enclose the tool path in quatation marks
 	return wxT("\"") + buildTool + wxT("\" ") + jobsCmd + GetBuildToolOptionsFromConfig() ;
 }

@@ -18,7 +18,7 @@
 #include "frame.h"
 #include "debuggermanager.h"
 #include "addincludefiledlg.h"
-
+ 
 static bool IsSource(const wxString &ext)
 {
 	wxString e(ext);

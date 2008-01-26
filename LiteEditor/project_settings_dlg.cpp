@@ -56,7 +56,7 @@ void ProjectSettingsDlg::UpdateConfigurationTypeChoice(const wxString &itemToSel
 	}
 
 	if(itemToSelect.IsEmpty() || m_choiceConfigurationType->FindString(itemToSelect) == wxNOT_FOUND){
-		if(m_choiceConfigurationType->GetCount() > 0)
+		if(m_choiceConfigurationType->GetCount() > 0) 
 			m_choiceConfigurationType->SetSelection(0);
 	}else{
 		m_choiceConfigurationType->SetStringSelection(itemToSelect);
@@ -74,6 +74,7 @@ void ProjectSettingsDlg::InitDialog(const wxString &configName, const wxString &
 		SaveValues(oldConfig);
 	}
 	CopyValues(m_choiceConfigurationType->GetStringSelection());
+	DoUpdatePages(m_checkEnableCustomBuild->IsChecked());
 }
 
 void ProjectSettingsDlg::ClearValues()
@@ -326,13 +327,19 @@ void ProjectSettingsDlg::ConnectEvents()
 
 void ProjectSettingsDlg::OnCustomBuildEnabled(wxCommandEvent &event)
 {
-	DisableCompilerPage(event.IsChecked());
-	DisableLinkerPage(event.IsChecked());
-	DisableGeneralPage(event.IsChecked());
-	DisableCustomBuildPage(!event.IsChecked());
-	DisableCustomMkSteps(event.IsChecked());
+	DoUpdatePages(event.IsChecked());
+	event.Skip();
+}
+
+void ProjectSettingsDlg::DoUpdatePages(bool checked)
+{
+	DisableCompilerPage(checked);
+	DisableLinkerPage(checked);
+	DisableGeneralPage(checked);
+	DisableCustomBuildPage(!checked);
+	DisableCustomMkSteps(checked);
 	
-	if(event.IsChecked()){
+	if(checked){
 		m_checkLinkerNeeded->Enable(false);
 		m_checkCompilerNeeded->Enable(false);
 		m_postBuildPage->Enable(false);
@@ -348,7 +355,6 @@ void ProjectSettingsDlg::OnCustomBuildEnabled(wxCommandEvent &event)
 		m_resourceCmpPage->Enable(true);
 		
 	}
-	event.Skip();
 }
 
 void ProjectSettingsDlg::DisableCustomBuildPage(bool disable)

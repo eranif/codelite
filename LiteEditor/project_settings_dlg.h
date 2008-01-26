@@ -20,7 +20,8 @@ class ProjectSettingsDlg : public ProjectSettingsBaseDlg
 protected:
 	void ConnectEvents();
 	void InitDialog(const wxString &configName, const wxString &oldConfig);
-
+	void DoUpdatePages(bool checked);
+		
 	/**
 	 * Copy values from the project settings configuration file to the 
 	 * GUI controls

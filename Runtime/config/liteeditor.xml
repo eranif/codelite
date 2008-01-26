@@ -25,16 +25,6 @@
     <long Value="0" Name="m_flags"/>
   </ArchiveObject>
   <Options DisplayFoldMargin="yes" UnderlineFoldedLine="no" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#000000" CaretColour="#000000"/>
-  <ArchiveObject Name="FindAndReplaceData">
-    <wxArrayString Name="m_findString">
-      <wxString Value="DoExecuteQueury"/>
-      <wxString Value="wxString"/>
-    </wxArrayString>
-    <wxArrayString Name="m_replaceString">
-      <wxString Value=""/>
-    </wxArrayString>
-    <long Value="0" Name="m_flags"/>
-  </ArchiveObject>
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="24" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep"/>
@@ -45,11 +35,6 @@
     </wxArrayString>
   </ArchiveObject>
   <TagsDatabase Path="C:\Development\C++\codelite\trunk\Runtime\common.tags"/>
-  <ArchiveObject Name="GeneralInfo">
-    <wxSize Name="m_frameSize" x="1288" y="1004"/>
-    <wxPoint Name="m_framePos" x="-4" y="-4"/>
-    <long Value="15" Name="m_flags"/>
-  </ArchiveObject>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="1004"/>
     <wxPoint Name="m_framePos" x="-4" y="-4"/>
@@ -72,4 +57,20 @@
     <File Name="C:\TestArea\TestCustom\StamClass.cpp"/>
     <File Name="C:\TestArea\TestCustom\StamClass.h"/>
   </RecentFiles>
+  <ArchiveObject Name="GeneralInfo">
+    <wxSize Name="m_frameSize" x="1288" y="1004"/>
+    <wxPoint Name="m_framePos" x="-4" y="-4"/>
+    <long Value="15" Name="m_flags"/>
+  </ArchiveObject>
+  <ArchiveObject Name="FindAndReplaceData">
+    <wxArrayString Name="m_findString">
+      <wxString Value="m_str"/>
+      <wxString Value="DoExecuteQueury"/>
+      <wxString Value="wxString"/>
+    </wxArrayString>
+    <wxArrayString Name="m_replaceString">
+      <wxString Value=""/>
+    </wxArrayString>
+    <long Value="0" Name="m_flags"/>
+  </ArchiveObject>
 </LiteEditor>

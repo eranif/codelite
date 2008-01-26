@@ -33,8 +33,6 @@ int ColourGccLine(int startLine, const char *line) {
 	BuildTab *bt = Frame::Get()->GetOutputPane()->GetBuildTab();
 	
 	wxString fileName, strLineNumber;
-	bool warn_match = false;
-	bool eror_match = false;
 	long idx;
 
 	// search for the compiler definition for the current line
@@ -45,35 +43,30 @@ int ColourGccLine(int startLine, const char *line) {
 	}
 
 	wxString lineText = _U(line);
+	//check if this is a 'Building:' line
+	if(lineText.StartsWith(wxT("Building:"))){
+		return wxSCI_LEX_GCC_BUILDING;
+	}
+	
 	RegexProcessor re(cmp->GetWarnPattern());
 	cmp->GetWarnFileNameIndex().ToLong(&idx);
 	if (re.GetGroup(lineText, idx, fileName)) {
 		//we found the file name, get the line number
 		cmp->GetWarnLineNumberIndex().ToLong( &idx );
 		re.GetGroup(lineText, idx, strLineNumber);
-		warn_match = true;
+		return wxSCI_LEX_GCC_WARNING;
 	}
 
-	if ( !warn_match ) {
-		RegexProcessor ere(cmp->GetErrPattern());
-		cmp->GetErrFileNameIndex().ToLong(&idx);
-		if (ere.GetGroup(lineText, idx, fileName)) {
-			//we found the file name, get the line number
-			cmp->GetErrLineNumberIndex().ToLong( &idx );
-			ere.GetGroup(lineText, idx, strLineNumber);
-			eror_match = true;
-		}
-	}
-		
-	if ( warn_match ) {
-		//colour this line in orange
-		return wxSCI_LEX_GCC_WARNING;
-	} else if ( eror_match ) {
-		//error line
+	RegexProcessor ere(cmp->GetErrPattern());
+	cmp->GetErrFileNameIndex().ToLong(&idx);
+	if (ere.GetGroup(lineText, idx, fileName)) {
+		//we found the file name, get the line number
+		cmp->GetErrLineNumberIndex().ToLong( &idx );
+		ere.GetGroup(lineText, idx, strLineNumber);
 		return wxSCI_LEX_GCC_ERROR;
-	} else {
-		return wxSCI_LEX_GCC_DEFAULT;
 	}
+	
+	return wxSCI_LEX_GCC_DEFAULT;
 }
 
 BuildTab::BuildTab(wxWindow *parent, wxWindowID id, const wxString &name)
@@ -105,7 +98,7 @@ void BuildTab::Initialize()
 	
 	m_sci->StyleSetForeground(wxSCI_LEX_GCC_WARNING, options.GetWarnColour());
 	m_sci->StyleSetBackground(wxSCI_LEX_GCC_WARNING, options.GetWarnColourBg());
-
+	
 	m_sci->StyleSetForeground(wxSCI_LEX_GCC_ERROR, options.GetErrorColour());
 	m_sci->StyleSetBackground(wxSCI_LEX_GCC_ERROR, options.GetErrorColourBg());
 	
@@ -117,6 +110,10 @@ void BuildTab::Initialize()
 	
 	font.SetWeight(options.GetBoldErrFont() ? wxBOLD : wxNORMAL);
 	m_sci->StyleSetFont(wxSCI_LEX_GCC_ERROR, font);
+	
+	font.SetWeight(wxBOLD);
+	m_sci->StyleSetFont(wxSCI_LEX_GCC_BUILDING, font);
+	
 	m_sci->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(BuildTab::OnLeftDown), NULL, this);
 }
 

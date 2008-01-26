@@ -86,6 +86,7 @@
 	<object class="wxBitmap" name="plugin_add">res/plugin_add.png</object>
 	<object class="wxBitmap" name="plugin24">res/plugin24.png</object> 
 	<object class="wxBitmap" name="question_and_answer">res/question_and_answer.png</object>
+	<object class="wxBitmap" name="cscope">res/kstars.png</object>
 	<object class="wxBitmap" name="threads">res/threads.png</object>
 	<object class="wxBitmap" name="opened_windows">res/pictures.png</object> 
 	

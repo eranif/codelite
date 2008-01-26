@@ -36,9 +36,9 @@ Cscope::Cscope(IManager *manager)
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 
-	//m_mgr->GetOutputPaneNotebook()->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
+	m_mgr->GetOutputPaneNotebook()->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("cscope")));
 	m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook(), m_mgr);
-	m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, wxT("cscope"), false/*, (int)m_mgr->GetOutputPaneNotebook()->GetImageList()->GetCount()-1*/);
+	m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, wxT("cscope"), false, (int)m_mgr->GetOutputPaneNotebook()->GetImageList()->GetCount()-1);
 
 	Connect(wxEVT_CSCOPE_THREAD_DONE, wxCommandEventHandler(Cscope::OnCScopeThreadEnded), NULL, this);
 	Connect(wxEVT_CSCOPE_THREAD_UPDATE_STATUS, wxCommandEventHandler(Cscope::OnCScopeThreadUpdateStatus), NULL, this);

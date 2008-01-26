@@ -1844,3 +1844,8 @@ Language* TagsManager::GetLanguage()
 		return m_lang;
 	}
 }
+
+bool TagsManager::ProcessExpression(const wxString &expression, wxString &type, wxString &typeScope)
+{
+	return ProcessExpression(wxFileName(), wxNOT_FOUND, expression, wxEmptyString, type, typeScope);
+}

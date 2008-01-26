@@ -554,6 +554,15 @@ public:
 	 */
 	bool IsTypeAndScopeExists(const wxString &typeName, wxString &scope);
 	
+	/**
+	 * \brief try to process a given expression and evaluate it into type & typescope
+	 * \param expression
+	 * \param type
+	 * \param typeScope
+	 * \return true on success false otherwise
+	 */
+	bool ProcessExpression(const wxString &expression, wxString &type, wxString &typeScope);
+	
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
 

@@ -717,6 +717,9 @@ wxString Language::GetScopeName(const wxString &in, std::vector<wxString> *addit
 		ignoreTokens[ token.data() ] = true;
 	}
 
+/*	FILE *fp = fopen("C:\\scope.txt", "w+a");
+	fprintf(fp, "%s\n", buf.data());
+	fclose(fp);*/
 	std::string scope_name = get_scope_name(buf.data(), moreNS, ignoreTokens);
 	wxString scope = _U(scope_name.c_str());
 	if (scope.IsEmpty()) {

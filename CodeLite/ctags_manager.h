@@ -11,10 +11,10 @@
 #include "singleton.h"
 #include "calltip.h"
 #include "comment.h"
-#include "language.h"
 #include "tags_options_data.h"
 #include "setters_getters_data.h"
 #include "extdbdata.h"
+#include "language.h"
 
 #ifndef WXDLLIMPEXP_CL
 #ifdef WXMAKINGDLL_CODELITE
@@ -35,6 +35,7 @@ class clProcess;
 class DirTraverser;
 class Language;
 class wxTimer;
+class Language;
 
 #define TagsGlobal 0
 #define TagsGlobalGTK 1
@@ -109,8 +110,12 @@ class WXDLLIMPEXP_CL TagsManager : public wxEvtHandler
 	wxTimer *m_timer;
 	std::vector<VariableEntryPtr> m_vars;
 	std::map<wxString, TagCacheEntryPtr> m_cache;
-
+	Language *m_lang;
 public:
+	
+	void SetLanguage(Language *lang);
+	Language *GetLanguage();
+	
 	/**
 	 * Return the CtagsOptions used by the tags manager
 	 * \return 

@@ -1,4 +1,5 @@
 #include "pluginmanager.h"
+#include "language.h"
 #include "manager.h"
 #include "wx/filename.h"
 #include <wx/log.h>
@@ -46,7 +47,13 @@ void PluginManager::Load() {
 	ext = wxT("dll");
 #endif 
 	wxString fileSpec( wxT( "*." ) + ext );
-
+	
+	//set the managers
+	//this code assures us that the shared objects will see the same instances as the application
+	//does
+	LanguageST::Get()->SetTagsManager( GetTagsManager() );
+	TagsManagerST::Get()->SetLanguage( LanguageST::Get() );
+	
 	if ( wxDir::Exists( ManagerST::Get()->GetStarupDirectory() + wxT( "/plugins" ) ) ) {
 		//get list of dlls
 		wxArrayString files;

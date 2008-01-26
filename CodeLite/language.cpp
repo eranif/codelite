@@ -32,6 +32,7 @@ Language::Language()
 		: m_expression(wxEmptyString)
 		, m_scanner(new CppScanner())
 		, m_tokenScanner(new CppScanner())
+		, m_tm(NULL)
 {
 	// Initialise the braces map
 	m_braces['<'] = '>';
@@ -231,8 +232,10 @@ bool Language::ProcessExpression(const wxString& stmt,
 	wxString visibleScope = GetScope(text);
 	std::vector<wxString> additionalScopes;
 	wxString scopeName = GetScopeName(text, &additionalScopes);
-
-	TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(fn, lineno);
+	
+	TagsManager *tagsManager = GetTagsManager();
+	
+	TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
 	if (tag) {
 		lastFuncSig = tag->GetSignature();
 	}
@@ -404,7 +407,7 @@ bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &pa
 {
 	bool res (false);
 	//make sure that the type really exist
-	TagsManager *tagsManager = TagsManagerST::Get();
+	TagsManager *tagsManager = GetTagsManager();
 	if (!tagsManager->IsTypeAndScopeExists(typeName, typeScope)) {
 		if (parent.m_isTemplate) {
 			//we need to test the parent declaration line
@@ -485,7 +488,7 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 	//if the match is typedef, try to replace it with the actual
 	//typename
 	bool res (false);
-	TagsManager *tagsManager = TagsManagerST::Get();
+	TagsManager *tagsManager = GetTagsManager();
 	std::vector<TagEntryPtr> tags;
 	wxString path;
 	if (typeScope == wxT("<global>")) {
@@ -705,7 +708,7 @@ wxString Language::GetScopeName(const wxString &in, std::vector<wxString> *addit
 
 	const wxCharBuffer buf = _C(in);
 
-	TagsManager *mgr = TagsManagerST::Get();
+	TagsManager *mgr = GetTagsManager();
 	wxArrayString prep = mgr->GetCtagsOptions().GetPreprocessor();
 	std::map<std::string, bool> ignoreTokens;
 
@@ -750,7 +753,7 @@ bool Language::TypeFromName(const wxString &name,
 	//first we try to match the current scope
 	std::vector<TagEntryPtr> tags;
 
-	TagsManager *mgr = TagsManagerST::Get();
+	TagsManager *mgr = GetTagsManager();
 	wxArrayString prep = mgr->GetCtagsOptions().GetPreprocessor();
 	std::map<std::string, bool> ignoreTokens;
 
@@ -822,7 +825,7 @@ bool Language::TypeFromName(const wxString &name,
 bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const std::vector<wxString> &moreScopes, std::vector<TagEntryPtr> &tags)
 {
 	if (moreScopes.empty() == false) {
-		if (!TagsManagerST::Get()->IsTypeAndScopeExists(type, typeScope)) {
+		if (!GetTagsManager()->IsTypeAndScopeExists(type, typeScope)) {
 			//the type does not exist in the global scope,
 			//try the additional scopes
 			for (size_t i=0; i<moreScopes.size(); i++) {
@@ -843,7 +846,7 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
                                       wxString &type,
                                       wxString &typeScope)
 {
-	TagsManagerST::Get()->FindByNameAndScope(name, scopeName, tags);
+	GetTagsManager()->FindByNameAndScope(name, scopeName, tags);
 	if (tags.size() == 1) {
 		TagEntryPtr tag(tags.at(0));
 		//we have a single match!
@@ -916,7 +919,7 @@ bool Language::VariableFromPattern(const wxString &in, Variable &var)
 	const wxCharBuffer patbuf = _C(pattern);
 	li.clear();
 
-	TagsManager *mgr = TagsManagerST::Get();
+	TagsManager *mgr = GetTagsManager();
 	wxArrayString prep = mgr->GetCtagsOptions().GetPreprocessor();
 	std::map<std::string, bool> ignoreTokens;
 
@@ -950,7 +953,7 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 	//a limitiation of the function parser...
 	pattern << wxT(';');
 
-	TagsManager *mgr = TagsManagerST::Get();
+	TagsManager *mgr = GetTagsManager();
 	wxArrayString prep = mgr->GetCtagsOptions().GetPreprocessor();
 	std::map<std::string, bool> ignoreTokens;
 
@@ -995,7 +998,7 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 	const wxCharBuffer patbuf = _C(pattern);
 	li.clear();
 
-	TagsManager *mgr = TagsManagerST::Get();
+	TagsManager *mgr = GetTagsManager();
 	wxArrayString prep = mgr->GetCtagsOptions().GetPreprocessor();
 	std::map<std::string, bool> ignoreTokens;
 
@@ -1041,7 +1044,7 @@ bool Language::OnArrowOperatorOverloading(wxString &typeName, wxString &typeScop
 		scope << typeScope << wxT("::") << typeName;
 
 	//this function will retrieve the ineherited tags as well
-	TagsManagerST::Get()->TagsByScope(scope, tags);
+	GetTagsManager()->TagsByScope(scope, tags);
 	if(tags.empty() == false){
 		//loop over the tags and scan for operator -> overloading
 		for(std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++){
@@ -1066,3 +1069,18 @@ bool Language::OnArrowOperatorOverloading(wxString &typeName, wxString &typeScop
 	return ret;
 }
 
+void Language::SetTagsManager(TagsManager *tm)
+{
+	m_tm = tm;
+}
+
+TagsManager* Language::GetTagsManager()
+{
+	if( !m_tm ) {
+		//for backward compatibility allows access to the tags manager using 
+		//the singleton call
+		return TagsManagerST::Get();
+	} else {
+		return m_tm;
+	}
+}

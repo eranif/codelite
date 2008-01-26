@@ -68,6 +68,7 @@ TagsManager::TagsManager() : wxEvtHandler()
 #endif
 		, m_canDeleteCtags(true)
 		, m_timer(NULL)
+		, m_lang(NULL)
 {
 	m_pDb = new TagsDatabase();
 	m_pExternalDb = new TagsDatabase();
@@ -268,7 +269,7 @@ TagTreePtr TagsManager::ParseSourceFile(const wxFileName& fp, std::vector<DbReco
 
 	if ( comments && GetParseComments() ) {
 		// parse comments
-		LanguageST::Get()->ParseComments( fp, comments );
+		GetLanguage()->ParseComments( fp, comments );
 
 	}
 	return ttp;
@@ -281,7 +282,7 @@ TagTreePtr TagsManager::ParseSourceFile2(const wxFileName& fp, const wxString &t
 
 	if (comments && GetParseComments()) {
 		// parse comments
-		LanguageST::Get()->ParseComments(fp, comments);
+		GetLanguage()->ParseComments(fp, comments);
 	}
 	return ttp;
 }
@@ -642,7 +643,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 	std::vector<wxString> additionlScopes; //from 'using namespace XXX;' statements
 
 	wxString scope;
-	wxString scopeName = LanguageST::Get()->GetScopeName(text, &additionlScopes);
+	wxString scopeName = GetLanguage()->GetScopeName(text, &additionlScopes);
 	TagEntryPtr funcTag = FunctionFromFileLine(fileName, lineno);
 	if (funcTag) {
 		funcSig = funcTag->GetSignature();
@@ -651,7 +652,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 	if (expression.IsEmpty()) {
 		//collect all the tags from the current scope, and
 		//from the global scope
-		scope = LanguageST::Get()->GetScope(text);
+		scope = GetLanguage()->GetScope(text);
 		std::vector<TagEntryPtr> tmpCandidates;
 		GetGlobalTags(word, tmpCandidates);
 		GetLocalTags(word, scope, tmpCandidates);
@@ -757,7 +758,7 @@ void TagsManager::GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &
 void TagsManager::GetLocalTags(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags, SearchFlags flags)
 {
 	//collect tags from the current scope text
-	LanguageST::Get()->GetLocalVariables(scope, tags, name, flags);
+	GetLanguage()->GetLocalVariables(scope, tags, name, flags);
 }
 
 void TagsManager::GetHoverTip(const wxFileName &fileName, int lineno, const wxString & expr, const wxString &word, const wxString & text, std::vector<wxString> & tips)
@@ -779,8 +780,8 @@ void TagsManager::GetHoverTip(const wxFileName &fileName, int lineno, const wxSt
 	expression.EndsWith(word, &tmp);
 	expression = tmp;
 
-	wxString scope = LanguageST::Get()->GetScope(text);
-	wxString scopeName = LanguageST::Get()->GetScopeName(scope, NULL);
+	wxString scope = GetLanguage()->GetScope(text);
+	wxString scopeName = GetLanguage()->GetScopeName(scope, NULL);
 	if (expression.IsEmpty()) {
 		//collect all the tags from the current scope, and
 		//from the global scope
@@ -833,8 +834,8 @@ void TagsManager::FindImplDecl(const wxFileName &fileName, int lineno, const wxS
 	expression.EndsWith(word, &tmp);
 	expression = tmp;
 
-	wxString scope(text);// = LanguageST::Get()->GetScope(text);
-	wxString scopeName = LanguageST::Get()->GetScopeName(scope, NULL);
+	wxString scope(text);// = GetLanguage()->GetScope(text);
+	wxString scopeName = GetLanguage()->GetScopeName(scope, NULL);
 	if (expression.IsEmpty()) {
 
 		//collect all the tags from the current scope, and
@@ -942,7 +943,7 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
 	if (expression.IsEmpty()) {
 		std::vector<wxString> additionlScopes;
 		//we are probably examining a global function, or a scope function
-		wxString scopeName = LanguageST::Get()->GetScopeName(text, &additionlScopes);
+		wxString scopeName = GetLanguage()->GetScopeName(text, &additionlScopes);
 		GetGlobalTags(word, candidates, ExactMatch);
 		TagsByScopeAndName(scopeName, word, candidates);
 		for (size_t i=0; i<additionlScopes.size(); i++) {
@@ -1588,20 +1589,20 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxString &kind, s
 
 wxString TagsManager::GetScopeName(const wxString &scope)
 {
-	Language *lang = LanguageST::Get();
+	Language *lang = GetLanguage();
 	return lang->GetScopeName(scope, NULL);
 }
 
 bool TagsManager::ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope)
 {
-	return LanguageST::Get()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope);
+	return GetLanguage()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope);
 }
 
 bool TagsManager::GetMemberType(const wxString &scope, const wxString &name, wxString &type, wxString &typeScope)
 {
 	wxString expression(scope);
 	expression << wxT("::") << name << wxT(".");
-	return LanguageST::Get()->ProcessExpression(expression, wxEmptyString, wxFileName(), wxNOT_FOUND, type, typeScope);
+	return GetLanguage()->ProcessExpression(expression, wxEmptyString, wxFileName(), wxNOT_FOUND, type, typeScope);
 }
 
 int TagsManager::UpdatePathVariable(const wxString &name, const wxString &value)
@@ -1726,7 +1727,7 @@ bool TagsManager::GetFunctionDetails(const wxFileName &fileName, int lineno, Tag
 {
 	tag = FunctionFromFileLine(fileName, lineno);
 	if (tag) {
-		LanguageST::Get()->FunctionFromPattern( tag->GetPattern(), func );
+		GetLanguage()->FunctionFromPattern( tag->GetPattern(), func );
 		return true;
 	}
 	return false;
@@ -1763,7 +1764,7 @@ TagEntryPtr TagsManager::FirstFunctionOfFile(const wxFileName &fileName)
 wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString &scope)
 {
 	clFunction foo;
-	if (!LanguageST::Get()->FunctionFromPattern(tag->GetPattern(), foo)) {
+	if (!GetLanguage()->FunctionFromPattern(tag->GetPattern(), foo)) {
 		return wxEmptyString;
 	}
 
@@ -1814,7 +1815,7 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 bool TagsManager::IsPureVirtual(TagEntryPtr tag)
 {
 	clFunction foo;
-	if (!LanguageST::Get()->FunctionFromPattern(tag->GetPattern(), foo)) {
+	if (!GetLanguage()->FunctionFromPattern(tag->GetPattern(), foo)) {
 		return wxEmptyString;
 	}
 	return foo.m_isPureVirtual;
@@ -1823,8 +1824,23 @@ bool TagsManager::IsPureVirtual(TagEntryPtr tag)
 bool TagsManager::IsVirtual(TagEntryPtr tag)
 {
 	clFunction foo;
-	if (!LanguageST::Get()->FunctionFromPattern(tag->GetPattern(), foo)) {
+	if (!GetLanguage()->FunctionFromPattern(tag->GetPattern(), foo)) {
 		return wxEmptyString;
 	}
 	return foo.m_isVirtual;
+}
+void TagsManager::SetLanguage(Language *lang)
+{
+	m_lang = lang;
+}
+
+Language* TagsManager::GetLanguage()
+{
+	if( !m_lang ) {
+		//for backward compatibility allows access to the tags manager using 
+		//the singleton call
+		return LanguageST::Get();
+	} else {
+		return m_lang;
+	}
 }

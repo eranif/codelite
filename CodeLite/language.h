@@ -26,6 +26,7 @@ enum SearchFlags
 	ExactMatch = 2
 };
 
+class TagsManager;
 /**
  * Language, a helper class that parses (currently) C/C++ code. 
  * It conatains all the parsing of small fragments of code, in places where 
@@ -78,6 +79,18 @@ public:
 	 */
 	void SetAutoCompDeliemters(const std::vector<wxString>& delimArr);
 
+	/**
+	 * \brief set the tags manager to be used by this language instance
+	 * \param tm
+	 */
+	void SetTagsManager(TagsManager *tm);
+	
+	/**
+	 * \brief return the available tags manager
+	 * \return 
+	 */
+	TagsManager *GetTagsManager();
+	
 	/**
 	 * Parse comments from source file
 	 * \param name file name 
@@ -209,6 +222,7 @@ private:
 	CppScannerPtr m_scanner;
 	CppScannerPtr m_tokenScanner;
 	Variable m_parentVar;
+	TagsManager *m_tm;
 };
 
 typedef Singleton<Language> LanguageST;

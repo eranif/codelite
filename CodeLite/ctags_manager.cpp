@@ -1601,7 +1601,7 @@ bool TagsManager::ProcessExpression(const wxFileName &filename, int lineno, cons
 bool TagsManager::GetMemberType(const wxString &scope, const wxString &name, wxString &type, wxString &typeScope)
 {
 	wxString expression(scope);
-	expression << wxT("::") << name << wxT("->");
+	expression << wxT("::") << name << wxT(".");
 	return GetLanguage()->ProcessExpression(expression, wxEmptyString, wxFileName(), wxNOT_FOUND, type, typeScope);
 }
 

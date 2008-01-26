@@ -1793,7 +1793,7 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 
 	if (impl) {
 		if (scope.IsEmpty()) {
-			if (foo.m_scope != "<global>") {
+			if (foo.m_scope != "<global>" && foo.m_scope.empty() == false) {
 				body << tag->GetScope() << wxT("::");
 			}
 		} else {

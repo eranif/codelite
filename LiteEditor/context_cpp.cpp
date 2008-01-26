@@ -1672,18 +1672,34 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 
 	std::vector<TagEntryPtr> tags;
 	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
+	
+	//get this scope name
+	int startPos(0);
+	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(rCtrl.GetFileName(), line);
+	if ( t ) {
+		startPos = rCtrl.PositionFromLine( t->GetLine() - 1);
+		if ( startPos > rCtrl.GetCurrentPos() ) {
+			startPos = 0;
+		}
+	}
+	wxString scopeText = rCtrl.GetTextRange(startPos, rCtrl.GetCurrentPos());
+	//get the scope name from the text
+	wxString scopeName = TagsManagerST::Get()->GetScopeName(scopeText);
+	if(scopeName.IsEmpty()) {scopeName = wxT("<global>");}
+	
 	TagsManagerST::Get()->FindSymbol(word, tags);
 	if (tags.empty())
 		return;
 
-	clFunction foo;
 	TagEntryPtr tag;
 	bool match(false);
 	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
-		if (tags.at(i)->GetName() == word && tags.at(i)->GetLine() == line && tags.at(i)->GetKind() == wxT("prototype")) {
+		if (tags.at(i)->GetName() == word && 
+			tags.at(i)->GetLine() == line && 
+			tags.at(i)->GetKind() == wxT("prototype") && 
+			tags.at(i)->GetScope() == scopeName) {
 			//we got a match
 			tag = tags.at(i);
-			LanguageST::Get()->FunctionFromPattern(tags.at(i)->GetPattern(), foo);
 			match = true;
 			break;
 		}
@@ -1701,24 +1717,10 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 			wxMessageBox(wxT("Function '") + tag->GetName() + wxT("' already has a body"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 			return;
 		}
+		
 		//create the functions body
-		wxString body;
-		blockEndPos = rCtrl.PositionAfter(blockEndPos);
-
-		if (foo.m_retrunValusConst.empty() == false) {
-			body << _U(foo.m_retrunValusConst.c_str()) << wxT(" ");
-		}
-
-		if (foo.m_returnValue.m_typeScope.empty() == false) {
-			body << _U(foo.m_returnValue.m_typeScope.c_str()) << wxT("::");
-			body << _U(foo.m_returnValue.m_templateDecl.c_str());
-		}
-
-		body << _U(foo.m_returnValue.m_type.c_str())
-		<< _U(foo.m_returnValue.m_starAmp.c_str())
-		<< wxT(" ") << tag->GetScope() << wxT("::") << tag->GetName() << tag->GetSignature();
-		body << wxT("\n{\n}\n");
-
+		wxString body = TagsManagerST::Get()->FormatFunction(tag, true);
+		
 		wxString targetFile;
 		FindSwappedFile(rCtrl.GetFileName(), targetFile);
 		MoveFuncImplDlg *dlg = new MoveFuncImplDlg(NULL, body, targetFile);

@@ -9,8 +9,6 @@
 //dynamic_cast<Std::Name::Singleton*>
 //(Std::String*) eran
 //((Std::string*)eran)
-((Singleton<MyClass>*)Eran)
+//((Singleton<MyClass>*)Eran)
 //Eran(dfd, dfdf, dfdf)
-virtual void foo() throw (int) = 0
-{
-}
+virtual void foo();

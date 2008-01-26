@@ -96,17 +96,34 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	
 	bSizer1->Add( bSizer15, 1, wxEXPAND, 5 );
 	
-	m_checkBox6 = new wxCheckBox( this, wxID_ANY, wxT("This is a singleton class"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	bSizer1->Add( m_checkBox6, 0, wxALL, 5 );
-	
-	m_checkBoxVirtualDtor = new wxCheckBox( this, wxID_ANY, wxT("Virtual destructor"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	bSizer1->Add( m_checkBoxVirtualDtor, 0, wxALL, 5 );
+	wxFlexGridSizer* fgSizer2;
+	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer2->AddGrowableCol( 0 );
+	fgSizer2->AddGrowableCol( 1 );
+	fgSizer2->SetFlexibleDirection( wxBOTH );
+	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_checkBoxCopyable = new wxCheckBox( this, wxID_ANY, wxT("Declare this class as non-copyable class"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	bSizer1->Add( m_checkBoxCopyable, 0, wxALL, 5 );
+	fgSizer2->Add( m_checkBoxCopyable, 0, wxALL, 5 );
+	
+	m_checkBoxImplVirtual = new wxCheckBox( this, wxID_ANY, wxT("Implement all virtual functions"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	fgSizer2->Add( m_checkBoxImplVirtual, 0, wxALL, 5 );
+	
+	m_checkBox6 = new wxCheckBox( this, wxID_ANY, wxT("This is a singleton class"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	fgSizer2->Add( m_checkBox6, 0, wxALL, 5 );
+	
+	m_checkBoxImplPureVirtual = new wxCheckBox( this, wxID_ANY, wxT("Implement all pure virtual functions"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	fgSizer2->Add( m_checkBoxImplPureVirtual, 0, wxALL, 5 );
+	
+	m_checkBoxVirtualDtor = new wxCheckBox( this, wxID_ANY, wxT("Virtual destructor"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	fgSizer2->Add( m_checkBoxVirtualDtor, 0, wxALL, 5 );
+	
+	bSizer1->Add( fgSizer2, 0, wxEXPAND, 5 );
 	
 	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
@@ -135,5 +152,6 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	m_buttonAddInheritance->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnButtonAdd ), NULL, this );
 	m_buttonDelInheritance->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnButtonDelete ), NULL, this );
 	m_buttonDelInheritance->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( NewClassBaseDlg::OnButtonDeleteUI ), NULL, this );
+	m_checkBoxImplVirtual->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckImpleAllVirtualFunctions ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnButtonOK ), NULL, this );
 }

@@ -1,4 +1,6 @@
 #include "gizmos.h"
+#include "ctags_manager.h"
+#include "entry.h"
 #include <wx/xrc/xmlres.h>
 #include "pluginwizard.h"
 #include "globals.h"
@@ -17,6 +19,26 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 		theGismos = new GizmosPlugin(manager);
 	}
 	return theGismos;
+}
+
+/// Ascending sorting function
+struct ascendingSortOp {
+	bool operator()(const TagEntryPtr &rStart, const TagEntryPtr &rEnd) {
+		return rEnd->GetName().Cmp(rStart->GetName()) > 0;
+	}
+};
+
+static void GizmosRemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
+{
+	for (size_t i=0; i<src.size(); i++) {
+		if (i == 0) {
+			target.push_back(src.at(0));
+		} else {
+			if (src.at(i)->GetName() != target.at(target.size()-1)->GetName()) {
+				target.push_back(src.at(i));
+			}
+		}
+	}
 }
 
 //-------------------------------------
@@ -268,7 +290,7 @@ void GizmosPlugin::OnNewClass(wxCommandEvent &e)
 		//do something with the information here
 		NewClassInfo info;
 		dlg->GetNewClassInfo(info);
-
+		
 		CreateClass(info);
 	}
 	dlg->Destroy();
@@ -334,6 +356,7 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 		} else {
 			header << wxT("\t~") << info.name << wxT("();\n\n");
 		}
+		header << DoGetVirtualFuncDecl(info);
 	}
 	header << wxT("};\n");
 	header << wxT("#endif // __") << macro << wxT("__\n");
@@ -367,7 +390,9 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 		cpp << wxT("\tms_instance = 0;\n");
 		cpp << wxT("}\n\n");
 	}
-
+	
+	cpp << DoGetVirtualFuncImpl(info);
+	
 	wxFFile file;
 	wxString srcFile;
 	wxString hdrFile;
@@ -509,4 +534,85 @@ void GizmosPlugin::CreateWxProject(NewWxProjectInfo &info)
 		//If every this is OK, add the project as well
 		m_mgr->AddProject(info.GetName() + wxT(".project"));
 	}
+}
+
+wxString GizmosPlugin::DoGetVirtualFuncImpl(const NewClassInfo &info)
+{
+	if(info.implAllVirtual == false && info.implAllPureVirtual == false)
+		return wxEmptyString;
+	
+	//get list of all parent virtual functions
+	std::vector< TagEntryPtr > tmp_tags;
+	std::vector< TagEntryPtr > no_dup_tags;
+	std::vector< TagEntryPtr > tags;
+	for(std::vector< TagEntryPtr >::size_type i=0; i< info.parents.size(); i++) {
+		ClassParentInfo pi = info.parents.at(i);
+		m_mgr->GetTagsManager()->TagsByScope(pi.name, tmp_tags);
+	}
+	// and finally sort the results
+	std::sort(tmp_tags.begin(), tmp_tags.end(), ascendingSortOp());
+	GizmosRemoveDuplicates(tmp_tags, no_dup_tags);
+	
+	//filter out all non virtual functions
+	for (std::vector< TagEntryPtr >::size_type i=0; i< no_dup_tags.size(); i++) {
+		TagEntryPtr tt = no_dup_tags.at(i);
+		bool collect(false);
+		if(info.implAllVirtual) {
+			collect = TagsManagerST::Get()->IsVirtual(tt);
+		} else if(info.implAllPureVirtual) {
+			collect = TagsManagerST::Get()->IsPureVirtual(tt);
+		}
+		
+		if(collect) {
+			tags.push_back(tt);
+		}
+	}
+	
+	wxString impl;
+	for(std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
+		TagEntryPtr tt = tags.at(i);
+		impl << TagsManagerST::Get()->FormatFunction(tt, true, info.name);
+	}
+	return impl;
+}
+
+wxString GizmosPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
+{
+	if(info.implAllVirtual == false && info.implAllPureVirtual == false)
+		return wxEmptyString;
+	
+	//get list of all parent virtual functions
+	std::vector< TagEntryPtr > tmp_tags;
+	std::vector< TagEntryPtr > no_dup_tags;
+	std::vector< TagEntryPtr > tags;
+	for(std::vector< TagEntryPtr >::size_type i=0; i< info.parents.size(); i++) {
+		ClassParentInfo pi = info.parents.at(i);
+		m_mgr->GetTagsManager()->TagsByScope(pi.name, tmp_tags);
+	}
+	
+	// and finally sort the results
+	std::sort(tmp_tags.begin(), tmp_tags.end(), ascendingSortOp());
+	GizmosRemoveDuplicates(tmp_tags, no_dup_tags);
+	
+	//filter out all non virtual functions
+	for (std::vector< TagEntryPtr >::size_type i=0; i< no_dup_tags.size(); i++) {
+		TagEntryPtr tt = no_dup_tags.at(i);
+		bool collect(false);
+		if(info.implAllVirtual) {
+			collect = TagsManagerST::Get()->IsVirtual(tt);
+		} else if(info.implAllPureVirtual) {
+			collect = TagsManagerST::Get()->IsPureVirtual(tt);
+		}
+		
+		if(collect) {
+			tags.push_back(tt);
+		}
+	}
+	
+	wxString decl;
+	for(std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
+		TagEntryPtr tt = tags.at(i);
+		decl << wxT("\t") << TagsManagerST::Get()->FormatFunction(tt);
+	}
+	return decl;
 }

@@ -2,7 +2,7 @@
 #include "ctags_manager.h"
 #include <wx/txtstrm.h>
 #include <wx/file.h>
-#include <algorithm> 
+#include <algorithm>
 #include <wx/progdlg.h>
 #include "dirtraverser.h"
 #include "wx/tokenzr.h"
@@ -1263,20 +1263,22 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 	sql << wxT("select count(*) from tags where name='") << typeName << wxT("' and scope='") << scope << wxT("'");
 
 	for (size_t i=0; i<2; i++) {
-		
+
 		if (i == 1) {
 			// Second try, change the SQL query to test against the global scope
 			sql.Clear();
 			sql << wxT("select count(*) from tags where name='") << typeName << wxT("' and scope='<global>'");
 			value = 0;
 		}
-		
+
 		wxSQLite3ResultSet rs = m_pDb->Query(sql);
 		try {
 			if (rs.NextRow()) {
 				rs.GetAsString(0).ToLong(&value);
 				if (value > 0) {
-					if(i == 1) { scope = wxT("<global>"); }
+					if (i == 1) {
+						scope = wxT("<global>");
+					}
 					return true;
 				}
 			}
@@ -1289,14 +1291,14 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 				if ( ex_rs.NextRow() ) {
 					ex_rs.GetAsString(0).ToLong(&value);
 					if (value > 0) {
-						if(i == 1) { 
-							scope = wxT("<global>"); 
+						if (i == 1) {
+							scope = wxT("<global>");
 							return true;
 						}
 						m_typeScopeCache[cacheKey] = true;
 						return true;
 					} else {
-						if( i == 1 ){
+						if ( i == 1 ) {
 							m_typeScopeCache[cacheKey] = false;
 						}
 					}
@@ -1756,4 +1758,73 @@ TagEntryPtr TagsManager::FirstFunctionOfFile(const wxFileName &fileName)
 		wxUnusedVar(e);
 	}
 	return NULL;
+}
+
+wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString &scope)
+{
+	clFunction foo;
+	if (!LanguageST::Get()->FunctionFromPattern(tag->GetPattern(), foo)) {
+		return wxEmptyString;
+	}
+
+	wxString body;
+	if (foo.m_isVirtual && impl == false) {
+		body << wxT("virtual ");
+	}
+
+	if (foo.m_retrunValusConst.empty() == false) {
+		body << _U(foo.m_retrunValusConst.c_str()) << wxT(" ");
+	}
+
+	if (foo.m_returnValue.m_typeScope.empty() == false) {
+		body << _U(foo.m_returnValue.m_typeScope.c_str()) << wxT("::");
+
+	}
+
+	if (foo.m_returnValue.m_type.empty() == false) {
+		body << _U(foo.m_returnValue.m_type.c_str());
+		if (foo.m_returnValue.m_templateDecl.empty() == false) {
+			body << wxT("<") << _U(foo.m_returnValue.m_templateDecl.c_str()) << wxT(">");
+		}
+		body << _U(foo.m_returnValue.m_starAmp.c_str());
+		body << wxT(" ");
+	}
+
+	if (impl) {
+		if (scope.IsEmpty()) {
+			if (foo.m_scope != "<global>") {
+				body << tag->GetScope() << wxT("::");
+			}
+		} else {
+			body << scope << wxT("::");
+		}
+	}
+
+	body << tag->GetName() << tag->GetSignature();
+
+	if (impl) {
+		body << wxT("\n{\n}\n");
+	} else {
+		body << wxT(";\n");
+	}
+
+	return body;
+}
+
+bool TagsManager::IsPureVirtual(TagEntryPtr tag)
+{
+	clFunction foo;
+	if (!LanguageST::Get()->FunctionFromPattern(tag->GetPattern(), foo)) {
+		return wxEmptyString;
+	}
+	return foo.m_isPureVirtual;
+}
+
+bool TagsManager::IsVirtual(TagEntryPtr tag)
+{
+	clFunction foo;
+	if (!LanguageST::Get()->FunctionFromPattern(tag->GetPattern(), foo)) {
+		return wxEmptyString;
+	}
+	return foo.m_isVirtual;
 }

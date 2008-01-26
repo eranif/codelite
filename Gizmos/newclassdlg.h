@@ -23,6 +23,8 @@ struct NewClassInfo {
 	bool isSingleton;
 	bool isAssingable;
 	bool isVirtualDtor;
+	bool implAllPureVirtual;
+	bool implAllVirtual;
 	std::vector< ClassParentInfo > parents;
 };
 
@@ -43,6 +45,8 @@ protected:
 	void OnCheckEnterFileNameManually(wxCommandEvent &e);
 	bool ValidateInput();
 	void OnTextEnter(wxCommandEvent &e);
+	void OnCheckImpleAllVirtualFunctions(wxCommandEvent &e);
+	
 public:
 	/** Constructor */
 	NewClassDlg( wxWindow* parent, IManager *mgr );

@@ -520,6 +520,33 @@ public:
 	 */
 	bool GetFunctionDetails(const wxFileName &fileName, int lineno, TagEntryPtr &tag, clFunction &func);
 	
+	/**
+	 * \brief generate function body/impl based on a tag
+	 * \param tag the input tag which represents the requested tag
+	 * \param impl set to true if you need an implementation, false otherwise. Default is set to false
+	 * \param scope real function scope to use
+	 * \return the function impl/decl
+	 */
+	wxString FormatFunction(TagEntryPtr tag, bool impl = false, const wxString &scope = wxEmptyString);
+	
+	/**
+	 * \brief return true of the tag contains a pure virtual function
+	 * \param tag
+	 */
+	bool IsPureVirtual(TagEntryPtr tag);
+	
+	/**
+	 * \brief return true of the tag contains a virtual function (can be pure)
+	 * \param tag
+	 */
+	bool IsVirtual(TagEntryPtr tag);
+	
+	/**
+	 * \brief return true if type & scope do exist in the symbols database
+	 * \param typeName
+	 * \param scope
+	 * \return 
+	 */
 	bool IsTypeAndScopeExists(const wxString &typeName, wxString &scope);
 	
 protected:

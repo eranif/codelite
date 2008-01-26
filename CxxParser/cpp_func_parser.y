@@ -219,8 +219,8 @@ nested_scope_specifier		: /*empty*/ {$$ = "";}
 							| nested_scope_specifier scope_specifier {	$$ = $1 + $2;}
 							;
 							
-opt_pure_virtual 	: /*empty*/
-						| '=' LE_OCTALconstant
+opt_pure_virtual 	: /*empty*/ {$$ = "";}
+						| '=' LE_OCTALconstant {$$ = $1 + $2;}
 						;
 						
 scope_specifier	:	LE_IDENTIFIER LE_CLCL {$$ = $1+ $2;}

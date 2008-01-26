@@ -143,6 +143,8 @@ void NewClassDlg::GetNewClassInfo(NewClassInfo &info)
 	info.isAssingable = this->IsCopyableClass();
 	info.fileName = this->GetClassFile();
 	info.isVirtualDtor = m_checkBoxVirtualDtor->IsChecked();
+	info.implAllPureVirtual = m_checkBoxImplPureVirtual->IsChecked();
+	info.implAllVirtual = m_checkBoxImplVirtual->IsChecked();
 }
 
 wxString NewClassDlg::GetClassFile()
@@ -176,5 +178,12 @@ void NewClassDlg::OnTextEnter(wxCommandEvent &e)
 		wxString file_name( m_textClassName->GetValue() );
 		file_name.MakeLower();
 		m_textCtrlFileName->SetValue( file_name );
+	}
+}
+
+void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent &e)
+{
+	if(e.IsChecked()) {
+		m_checkBoxImplPureVirtual->SetValue(true);
 	}
 }

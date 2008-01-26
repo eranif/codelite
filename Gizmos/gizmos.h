@@ -9,6 +9,8 @@
 class GizmosPlugin : public IPlugin
 {
 	void CreateClass(const NewClassInfo &info);
+	wxString DoGetVirtualFuncImpl(const NewClassInfo &info);
+	wxString DoGetVirtualFuncDecl(const NewClassInfo &info);
 	std::vector<wxMenuItem*> m_vdDynItems;
 protected:
 	void CreateWxProject(NewWxProjectInfo &info);

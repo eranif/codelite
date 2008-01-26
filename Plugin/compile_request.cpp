@@ -74,6 +74,9 @@ void CompileRequest::Process()
 				::wxSetWorkingDirectory(wd);
 			}
 		}
+
+		//print the build command
+		AppendLine(cmd + wxT("\n"));
 		
 		if(m_projectOnly || m_fileName.IsEmpty() == false){
 			//need to change directory to project dir
@@ -99,8 +102,7 @@ void CompileRequest::Process()
 			}
 			AppendLine(text);
 		}
-		//print the build command
-		AppendLine(cmd + wxT("\n"));
+		
 		if(m_proc->Start() == 0){
 			wxString message;
 			message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");
@@ -109,6 +111,7 @@ void CompileRequest::Process()
 			SetBusy(false);
 			return;
 		}
+		
 		m_timer->Start(10);
 		Connect(wxEVT_TIMER, wxTimerEventHandler(CompileRequest::OnTimer), NULL, this);
 		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(CompileRequest::OnProcessEnd), NULL, this);

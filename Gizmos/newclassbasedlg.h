@@ -55,9 +55,11 @@ class NewClassBaseDlg : public wxDialog
 		wxListCtrl* m_listCtrl1;
 		wxButton* m_buttonAddInheritance;
 		wxButton* m_buttonDelInheritance;
-		wxCheckBox* m_checkBox6;
-		wxCheckBox* m_checkBoxVirtualDtor;
 		wxCheckBox* m_checkBoxCopyable;
+		wxCheckBox* m_checkBoxImplVirtual;
+		wxCheckBox* m_checkBox6;
+		wxCheckBox* m_checkBoxImplPureVirtual;
+		wxCheckBox* m_checkBoxVirtualDtor;
 		wxStaticLine* m_staticline5;
 		wxButton* m_buttonOK;
 		wxButton* m_buttonCancel;
@@ -71,6 +73,7 @@ class NewClassBaseDlg : public wxDialog
 		virtual void OnButtonAdd( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonDelete( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonDeleteUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnCheckImpleAllVirtualFunctions( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
 		
 	

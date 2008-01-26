@@ -499,15 +499,24 @@ void ContextCpp::CodeComplete()
 	//this will help us detect statements like 'using namespace foo;'
 	if (startPos) { //> 0
 		//get the first function on this file
+		int endPos(0);
+		int endPos1(0);
+		int endPos2(0);
 		TagEntryPtr t2 = TagsManagerST::Get()->FirstFunctionOfFile(rCtrl.GetFileName());
 		if ( t2 ) {
-			int endPos = rCtrl.PositionFromLine( t2->GetLine() - 1);
-			if (endPos > 0 && endPos <= startPos) {
-				wxString globalText = rCtrl.GetTextRange(0, endPos);
-				globalText.Append(wxT(";"));
-				text.Prepend(globalText);
-			}
+			endPos1 = rCtrl.PositionFromLine( t2->GetLine() - 1);
+			if (endPos1 > 0 && endPos1 <= startPos) {endPos = endPos1;}
 		}
+
+		TagEntryPtr t3 = TagsManagerST::Get()->FirstScopeOfFile(rCtrl.GetFileName());
+		if ( t3 ) {
+			endPos2 = rCtrl.PositionFromLine( t3->GetLine() - 1);
+			if (endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) {endPos = endPos2;}
+		}
+		
+		wxString globalText = rCtrl.GetTextRange(0, endPos);
+		globalText.Append(wxT(";"));
+		text.Prepend(globalText);
 	}
 
 	std::vector<TagEntryPtr> candidates;

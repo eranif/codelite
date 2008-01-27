@@ -1332,11 +1332,11 @@ void TagsManager::AddToExtDbCache(const wxString &query, const std::vector<TagEn
 	m_cache[entry->GetQueryKey()] = entry;
 }
 
-void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> &tags)
+void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> &tags, bool onlyWorkspace /*flase*/)
 {
 	try {
 		//try the external database first
-		if ( m_pExternalDb->IsOpen() ) {
+		if ( !onlyWorkspace && m_pExternalDb->IsOpen() ) {
 			//check the cache first
 			if (!QueryExtDbCache(sql, tags)) {
 				//nothing found in the cache
@@ -1874,4 +1874,11 @@ Language* TagsManager::GetLanguage()
 bool TagsManager::ProcessExpression(const wxString &expression, wxString &type, wxString &typeScope)
 {
 	return ProcessExpression(wxFileName(), wxNOT_FOUND, expression, wxEmptyString, type, typeScope);
+}
+
+void TagsManager::GetClasses(std::vector< TagEntryPtr > &tags, bool onlyWorkspace)
+{
+	wxString sql;
+	sql << wxT("select * from tags where kind in ('class', 'struct', 'union') order by name ASC");
+	DoExecuteQueury(sql, tags, onlyWorkspace);
 }

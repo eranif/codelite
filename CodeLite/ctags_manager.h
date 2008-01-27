@@ -531,7 +531,15 @@ public:
 	 * \return true on success, false otherwise
 	 */
 	bool GetFunctionDetails(const wxFileName &fileName, int lineno, TagEntryPtr &tag, clFunction &func);
-	
+
+	/**
+	 * \brief return list of all classes.
+	 * \param tags [output] vector of tags for the classes
+	 * \param onlyWorkspace set to true if you wish to accept only classes belongs to the workspace, false if you would like to receive
+	 * classes from the external database as well 
+	 */
+	void GetClasses(std::vector< TagEntryPtr > &tags, bool onlyWorkspace = true);
+
 	/**
 	 * \brief generate function body/impl based on a tag
 	 * \param tag the input tag which represents the requested tag
@@ -615,10 +623,10 @@ private:
 	 * \return 
 	 */
 	bool GetDerivationList(const wxString &path, std::vector<wxString> &derivationList);
-	
+
 protected:
 	void DoFindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags);
-	void DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> &tags);
+	void DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> &tags, bool onlyWorkspace = false);
 	void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
 	void RemoveDuplicatesTips(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
 	void GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &tags, SearchFlags flags = PartialMatch);

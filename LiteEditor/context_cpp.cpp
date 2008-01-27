@@ -1684,14 +1684,8 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 	
 	//get this scope name
 	int startPos(0);
-	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(rCtrl.GetFileName(), line);
-	if ( t ) {
-		startPos = rCtrl.PositionFromLine( t->GetLine() - 1);
-		if ( startPos > rCtrl.GetCurrentPos() ) {
-			startPos = 0;
-		}
-	}
 	wxString scopeText = rCtrl.GetTextRange(startPos, rCtrl.GetCurrentPos());
+	
 	//get the scope name from the text
 	wxString scopeName = TagsManagerST::Get()->GetScopeName(scopeText);
 	if(scopeName.IsEmpty()) {scopeName = wxT("<global>");}

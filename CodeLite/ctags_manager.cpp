@@ -16,6 +16,8 @@
 #include "variable_entry.h"
 #include "procutils.h"
 
+extern void SafeExecuteCommand(const wxString &command, wxArrayString &output);
+
 //---------------------------------------------------------------------------
 // Misc
 
@@ -494,18 +496,18 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags, clProce
 void TagsManager::SourceToTags2(const wxFileName &fileName, wxString &tags)
 {
 	//second version of soruce->tags
-	//this function can be called only from the main thread
 	wxString cmd;
 
 	// Get ctags flags from the map
 	wxString ctagsCmd;
-	ctagsCmd << m_options.ToString() << m_ctagsCmd;
+	ctagsCmd << m_options.ToString() << wxT(" -f- --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
 
 	// build the command, we surround ctags name with double quatations
 	cmd << wxT("\"") << m_ctagsPath.GetFullPath() << wxT("\"") << ctagsCmd << wxT(" \"") << fileName.GetFullPath() << wxT("\"");
 
 	wxArrayString output;
-	ProcUtils::ExecuteCommand(cmd, output, wxEXEC_SYNC);
+	SafeExecuteCommand(cmd, output);
+//	ProcUtils::ExecuteCommand(cmd, output, wxEXEC_SYNC);
 
 	tags.Clear();
 	for (size_t i=0; i<output.GetCount(); i++) {
@@ -513,7 +515,7 @@ void TagsManager::SourceToTags2(const wxFileName &fileName, wxString &tags)
 	}
 
 	//wxPrintf(wxT("%s\n"), cmd.GetData());
-	wxPrintf(wxT("SourceToTags2:\n%s\n"), tags.GetData());
+	//wxPrintf(wxT("SourceToTags2:\n%s\n"), tags.GetData());
 }
 
 TagTreePtr TagsManager::TreeFromTags(const wxString& tags)

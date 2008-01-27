@@ -34,6 +34,17 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	wxString dbfile  = req->dbfile;
 	wxString file  = req->file;
 	
+	//req->tags should contain the tags 
+	//convert the file to tags
+	TagsManager *tagmgr = TagsManagerST::Get();
+	
+//#if defined (__WXMAC__)
+	//use the version that uses popen and calls ctags
+	tagmgr->SourceToTags2(req->file, req->tags);
+//#else
+//	tagmgr->SourceToTags(absFile, req->tags, NULL);
+//#endif
+
 	//----------------------------------------------
 	// Build a tree from project/file/project 
 	// from the value which are set in the database

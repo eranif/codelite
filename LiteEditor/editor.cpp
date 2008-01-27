@@ -479,14 +479,6 @@ bool LEditor::SaveFile()
 			absFile.MakeAbsolute();
 			req->file = absFile.GetFullPath();
 
-			//convert the file to tags
-			TagsManager *tagmgr = TagsManagerST::Get();
-#if defined (__WXMAC__)
-			//use the version that uses popen and calls ctags
-			tagmgr->SourceToTags2(absFile, req->tags);
-#else
-			tagmgr->SourceToTags(absFile, req->tags, NULL);
-#endif
 			//the previous call 'stole' the focus from us...
 			//SetActive();
 			ParseThreadST::Get()->Add(req);

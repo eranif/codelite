@@ -11,7 +11,15 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 	LEditor *editor = (LEditor*)owner;
 
 	if (event.GetId() == wxID_COPY) {
+#ifdef __WXGTK__
+		//to solve a really annoying of copy/paste bug on Linux running under
+		//GTK, we perform the same copy operation 5 times
+		for(int i=0; i<5; i++) {
+			editor->Copy();
+		}
+#else
 		editor->Copy();
+#endif 
 	} else if (event.GetId() == wxID_CUT) {
 		editor->Cut();
 	} else if (event.GetId() == wxID_PASTE) {

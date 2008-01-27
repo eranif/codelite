@@ -20,7 +20,7 @@
   <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
   <Project Name="Cscope" Path="cscope/Cscope.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="wxflatnotebook" ConfigName="ReleaseUnicode"/>
@@ -35,7 +35,7 @@
       <Project Name="CodeLite" ConfigName="ReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
       <Project Name="wxflatnotebook" ConfigName="DebugUnicode"/>

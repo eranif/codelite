@@ -487,7 +487,14 @@ void ScintillaWX::Copy() {
     if (currentPos != anchor) {
         SelectionText st;
         CopySelectionRange(&st);
-        CopyToClipboard(st);
+#ifdef __WXGTK__
+		for(int i=0; i<5; i++) {
+			//wxPrintf(wxT("Copying to clipboard %ld\n"), i);
+        	CopyToClipboard(st);
+		}
+#else
+     	CopyToClipboard(st);
+#endif
     }
 }
 

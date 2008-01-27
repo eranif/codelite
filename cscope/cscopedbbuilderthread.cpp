@@ -1,7 +1,7 @@
+#include "procutils.h"
 #include "dirsaver.h"
 #include "wx/filefn.h"
 #include "cscopedbbuilderthread.h"
-#include "globals.h"
 #include "cscope.h"
 
 int wxEVT_CSCOPE_THREAD_DONE = wxNewId();
@@ -30,7 +30,7 @@ void CscopeDbBuilderThread::ProcessRequest(ThreadRequest *request)
 	
 	//set environment variables required by cscope
 	wxSetEnv(wxT("TMPDIR"), wxT("."));
-	SafeExecuteCommand(req->GetCmd(), output);
+	ProcUtils::SafeExecuteCommand(req->GetCmd(), output);
 	SendStatusEvent( wxT("Parsing results..."), 50, req->GetOwner() );
 	
 	CscopeResultTable *result = ParseResults( output );

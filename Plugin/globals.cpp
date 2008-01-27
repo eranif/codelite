@@ -1,6 +1,5 @@
 #include "wx/tokenzr.h"
 #include "globals.h"
-#include "winprocess.h"
 #include "wx/app.h"
 #include "wx/window.h"
 #include "wx/listctrl.h"
@@ -110,52 +109,6 @@ long AppendListCtrlRow(wxListCtrl *list)
 	return item;
 }
 
-/**
- * \brief a safe function that executes 'command' and returns its output. This function
- * is safed to be called from secondary thread 
- * \param command
- * \param output
- */
-void SafeExecuteCommand(const wxString &command, wxArrayString &output)
-{
-#ifdef __WXMSW__
-	wxString errMsg;
-	WinProcess *proc = WinProcess::Execute(command, errMsg);
-	if (!proc) {
-		return;
-	}
-	
-	// wait for the process to terminate
-	wxString tmpbuf;
-	wxString buff;
-	static int maxRetries (1000);
-	
-	int retries(0);
-	while (proc->IsAlive() && retries < maxRetries) {
-		proc->Read(tmpbuf);
-		buff << tmpbuf;
-		wxThread::Sleep(100);
-		retries++;
-	}
-	
-	tmpbuf.Empty();
-	proc->Read(tmpbuf);
-	while( tmpbuf.IsEmpty() == false && retries < maxRetries) {
-		buff << tmpbuf;
-		tmpbuf.Empty();
-		proc->Read(tmpbuf);
-		retries++;
-	}
-	
-	//convert buff into wxArrayString
-	output = wxStringTokenize(buff, wxT("\n"));
-	proc->Cleanup();
-	delete proc;
-
-#else
-	ProcUtils::ExecuteCommand(command, output);
-#endif
-}
 bool IsValidCppFile(const wxString &id)
 {
 	if (id.IsEmpty()) {

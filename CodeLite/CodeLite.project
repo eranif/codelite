@@ -23,6 +23,8 @@
     <File Name="tags_options_data.cpp"/>
     <File Name="setters_getters_data.cpp"/>
     <File Name="archive.cpp"/>
+    <File Name="winprocess.h"/>
+    <File Name="winprocess.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

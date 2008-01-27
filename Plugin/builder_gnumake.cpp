@@ -63,15 +63,24 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, wxStrin
 				}
 			}
 		}
+		bool settingsChanged(false);
 		//remove the unfound projects from the dependencies array
 		for (size_t i=0; i<removeList.GetCount(); i++) {
 			int where = depsArr.Index(removeList.Item(i));
 			if (where != wxNOT_FOUND) {
 				depsArr.RemoveAt(where);
+				settingsChanged = true;
 			}
 		}
 		//update the project dependencies a
+		bool modified = proj->IsModified();
 		proj->SetDependencies(depsArr);
+		
+		//the set settings functions marks the project as 'modified' this causes 
+		//an unneeded makefile generation if the settings was not really modified
+		if(!modified & !settingsChanged) {
+			proj->SetModified(false);
+		}
 	}
 
 	wxString fn;

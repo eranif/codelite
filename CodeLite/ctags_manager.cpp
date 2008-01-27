@@ -16,8 +16,6 @@
 #include "variable_entry.h"
 #include "procutils.h"
 
-extern void SafeExecuteCommand(const wxString &command, wxArrayString &output);
-
 //---------------------------------------------------------------------------
 // Misc
 
@@ -506,8 +504,7 @@ void TagsManager::SourceToTags2(const wxFileName &fileName, wxString &tags)
 	cmd << wxT("\"") << m_ctagsPath.GetFullPath() << wxT("\"") << ctagsCmd << wxT(" \"") << fileName.GetFullPath() << wxT("\"");
 
 	wxArrayString output;
-	SafeExecuteCommand(cmd, output);
-//	ProcUtils::ExecuteCommand(cmd, output, wxEXEC_SYNC);
+	ProcUtils::SafeExecuteCommand(cmd, output);
 
 	tags.Clear();
 	for (size_t i=0; i<output.GetCount(); i++) {

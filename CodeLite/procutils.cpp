@@ -1,4 +1,6 @@
+#include "wx/tokenzr.h"
 #include "procutils.h"
+#include "winprocess.h"
 
 #include <stdio.h>
 #ifdef __WXMSW__
@@ -355,5 +357,46 @@ bool ProcUtils::Locate(const wxString &name, wxString &where)
 		}
 	}
 	return false;
+}
+
+void ProcUtils::SafeExecuteCommand(const wxString &command, wxArrayString &output)
+{
+#ifdef __WXMSW__
+	wxString errMsg;
+	WinProcess *proc = WinProcess::Execute(command, errMsg);
+	if (!proc) {
+		return;
+	}
+	
+	// wait for the process to terminate
+	wxString tmpbuf;
+	wxString buff;
+	static int maxRetries (1000);
+	
+	int retries(0);
+	while (proc->IsAlive() && retries < maxRetries) {
+		proc->Read(tmpbuf);
+		buff << tmpbuf;
+		wxThread::Sleep(100);
+		retries++;
+	}
+	
+	tmpbuf.Empty();
+	proc->Read(tmpbuf);
+	while( tmpbuf.IsEmpty() == false && retries < maxRetries) {
+		buff << tmpbuf;
+		tmpbuf.Empty();
+		proc->Read(tmpbuf);
+		retries++;
+	}
+	
+	//convert buff into wxArrayString
+	output = wxStringTokenize(buff, wxT("\n"));
+	proc->Cleanup();
+	delete proc;
+
+#else
+	ProcUtils::ExecuteCommand(command, output);
+#endif
 }
 

@@ -18,14 +18,15 @@
 #include <SetupAPI.h>
 #include <Psapi.h>
 #include <tlhelp32.h>
-#endif 
+#endif
 
 struct ProcessEntry {
 	wxString name;
 	long pid;
 };
 
-class ProcUtils {
+class ProcUtils
+{
 public:
 	ProcUtils();
 	~ProcUtils();
@@ -38,6 +39,14 @@ public:
 	static void GetChildren(long pid, std::vector<long> &children);
 	static bool Shell();
 	static bool Locate(const wxString &name, wxString &where);
+	
+	/**
+	 * \brief a safe function that executes 'command' and returns its output. This function
+	 * is safed to be called from secondary thread (hence, SafeExecuteCommand)
+	 * \param command
+	 * \param output
+	 */
+	static void SafeExecuteCommand(const wxString &command, wxArrayString &output);
 };
 
 #endif // PROCUTILS_H

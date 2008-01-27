@@ -168,11 +168,13 @@ wxString Cscope::DoCreateListFile()
 	}
 
 	//write the content of the files into the tempfile
+	wxString content;
 	for (size_t i=0; i< files.size(); i++) {
 		wxFileName fn(files.at(i));
-		file.Write( fn.GetFullPath() + wxT("\n") );
+		content << fn.GetFullPath() << wxT("\n");
 	}
-
+	
+	file.Write( content );
 	file.Flush();
 	file.Close();
 	return list_file;

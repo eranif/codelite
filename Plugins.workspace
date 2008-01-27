@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Workspace Name="Plugins" Database=".\Plugins.tags">
+  <Environment>
+    <Variable Name="WorkspaceName" Value="Plugins"/>
+    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
+  </Environment>
+  <Project Name="ReferenceAnalyser" Path="ReferenceAnalyser\ReferenceAnalyser.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+      <Project Name="ReferenceAnalyser" ConfigName="WinReleaseUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
+      <Project Name="ReferenceAnalyser" ConfigName="DebugUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+      <Project Name="ReferenceAnalyser" ConfigName="WinDebugUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release Unicode" Selected="no">
+      <Project Name="ReferenceAnalyser" ConfigName="ReleaseUnicode"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

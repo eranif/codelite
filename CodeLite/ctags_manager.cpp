@@ -1809,7 +1809,6 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 
 	if (foo.m_returnValue.m_typeScope.empty() == false) {
 		body << _U(foo.m_returnValue.m_typeScope.c_str()) << wxT("::");
-
 	}
 
 	if (foo.m_returnValue.m_type.empty() == false) {
@@ -1823,7 +1822,7 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 
 	if (impl) {
 		if (scope.IsEmpty()) {
-			if (foo.m_scope != "<global>" && foo.m_scope.empty() == false) {
+			if (tag->GetScope() != wxT("<global>")) {
 				body << tag->GetScope() << wxT("::");
 			}
 		} else {

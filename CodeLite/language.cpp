@@ -232,9 +232,9 @@ bool Language::ProcessExpression(const wxString& stmt,
 	wxString visibleScope = GetScope(text);
 	std::vector<wxString> additionalScopes;
 	wxString scopeName = GetScopeName(text, &additionalScopes);
-	
+
 	TagsManager *tagsManager = GetTagsManager();
-	
+
 	TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
 	if (tag) {
 		lastFuncSig = tag->GetSignature();
@@ -251,7 +251,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 		wxString templateInitList;
 		result = ParseExpression(word);
 		word.clear();
-		
+
 		//parsing failed?
 		if (result.m_name.empty()) {
 			evaluationSucceeded = false;
@@ -331,7 +331,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 			}
 
 			//get the derivation list of the typename
-			bool res(false); 
+			bool res(false);
 			res = TypeFromName(	_U(result.m_name.c_str()),
 			                    visibleScope,
 			                    lastFuncSig,
@@ -346,23 +346,45 @@ bool Language::ProcessExpression(const wxString& stmt,
 			}
 
 			//do typedef subsitute
-			while (OnTypedef(typeName, typeScope, templateInitList, scopeName));
+			wxString tmp_name(typeName);
+			while (OnTypedef(typeName, typeScope, templateInitList, scopeName)) {
+				if (tmp_name == typeName) {
+					//same type? break
+					break;
+				}
+				tmp_name = typeName;
+			}
+
 			//do template subsitute
 			if (OnTemplates(typeName, typeScope, parent)) {
 				//do typedef subsitute
-				while (OnTypedef(typeName, typeScope, templateInitList, scopeName));
+				wxString tmp_name(typeName);
+				while (OnTypedef(typeName, typeScope, templateInitList, scopeName)) {
+					if (tmp_name == typeName) {
+						//same type? break
+						break;
+					}
+					tmp_name = typeName;
+				}
 			}
 
 			//try match any overloading operator to the typeName
 			wxString tmpTypeName(typeName);
 			if ( oper == wxT("->") && OnArrowOperatorOverloading(typeName, typeScope) ) {
-				
+
 				//there is an operator overloading for ->
 				//do the whole typedef/template subsitute again
-				while (OnTypedef(typeName, typeScope, templateInitList, scopeName));
-				
+				wxString tmp_name(typeName);
+				while (OnTypedef(typeName, typeScope, templateInitList, scopeName)) {
+					if (tmp_name == typeName) {
+						//same type? break
+						break;
+					}
+					tmp_name = typeName;
+				}
+
 				//When template is found, replace the typeName with the temporary type name
-				//usually it will replace 'T' with the parent type, such as 
+				//usually it will replace 'T' with the parent type, such as
 				//'Singleton'
 				if (templateInitList.IsEmpty() == false) {
 					m_parentVar.m_isTemplate = true;
@@ -370,11 +392,18 @@ bool Language::ProcessExpression(const wxString& stmt,
 					m_parentVar.m_type = _C(tmpTypeName);
 					m_parentVar.m_typeScope = _C(typeScope);
 				}
-				
+
 				//do template subsitute
 				if (OnTemplates(typeName, typeScope, m_parentVar)) {
 					//do typedef subsitute
-					while (OnTypedef(typeName, typeScope, templateInitList, scopeName));
+					wxString tmp_name(typeName);
+					while (OnTypedef(typeName, typeScope, templateInitList, scopeName)) {
+						if (tmp_name == typeName) {
+							//same type? break
+							break;
+						}
+						tmp_name = typeName;
+					}
 				}
 			}
 		}
@@ -717,9 +746,9 @@ wxString Language::GetScopeName(const wxString &in, std::vector<wxString> *addit
 		ignoreTokens[ token.data() ] = true;
 	}
 
-/*	FILE *fp = fopen("C:\\scope.txt", "w+a");
-	fprintf(fp, "%s\n", buf.data());
-	fclose(fp);*/
+	/*	FILE *fp = fopen("C:\\scope.txt", "w+a");
+		fprintf(fp, "%s\n", buf.data());
+		fclose(fp);*/
 	std::string scope_name = get_scope_name(buf.data(), moreNS, ignoreTokens);
 	wxString scope = _U(scope_name.c_str());
 	if (scope.IsEmpty()) {
@@ -1037,7 +1066,7 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 bool Language::OnArrowOperatorOverloading(wxString &typeName, wxString &typeScope)
 {
 	bool ret(false);
-	
+
 	//collect all functions of typename
 	std::vector< TagEntryPtr > tags;
 	wxString scope;
@@ -1048,15 +1077,15 @@ bool Language::OnArrowOperatorOverloading(wxString &typeName, wxString &typeScop
 
 	//this function will retrieve the ineherited tags as well
 	GetTagsManager()->TagsByScope(scope, tags);
-	if(tags.empty() == false){
+	if (tags.empty() == false) {
 		//loop over the tags and scan for operator -> overloading
-		for(std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++){
+		for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
 			wxString pattern = tags.at(i)->GetPattern();
-			if(pattern.Contains(wxT("operator")) && pattern.Contains(wxT("->"))){
+			if (pattern.Contains(wxT("operator")) && pattern.Contains(wxT("->"))) {
 				//we found our overloading operator
 				//extract the 'real' type from the pattern
 				clFunction f;
-				if(FunctionFromPattern(pattern, f)){
+				if (FunctionFromPattern(pattern, f)) {
 					typeName = _U(f.m_returnValue.m_type.c_str());
 					typeScope = f.m_returnValue.m_typeScope.empty() ? wxT("<global>") : _U(f.m_returnValue.m_typeScope.c_str());
 					ret = true;
@@ -1079,8 +1108,8 @@ void Language::SetTagsManager(TagsManager *tm)
 
 TagsManager* Language::GetTagsManager()
 {
-	if( !m_tm ) {
-		//for backward compatibility allows access to the tags manager using 
+	if ( !m_tm ) {
+		//for backward compatibility allows access to the tags manager using
 		//the singleton call
 		return TagsManagerST::Get();
 	} else {

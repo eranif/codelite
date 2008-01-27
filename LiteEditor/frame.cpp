@@ -1308,6 +1308,17 @@ void Frame::OnConfigurationManager(wxCommandEvent &event) {
 	ConfigurationManagerDlg *dlg = new ConfigurationManagerDlg(this);
 	dlg->ShowModal();
 	dlg->Destroy();
+
+	//force makefile generation upon configuration change
+	wxArrayString projs;
+	ManagerST::Get()->GetProjectList(projs);
+	for ( size_t i=0; i< projs.GetCount(); i++ ) {
+		ProjectPtr proj = ManagerST::Get()->GetProject( projs.Item(i) );
+		if( proj ) {
+			proj->SetModified(true);
+		}
+	}
+	
 }
 
 void Frame::OnTogglePanes(wxCommandEvent &event) {
@@ -1470,8 +1481,19 @@ void Frame::OnExecuteNoDebugUI(wxUpdateUIEvent &event) {
 
 void Frame::OnWorkspaceConfigChanged(wxCommandEvent &event) {
 	wxString selectionStr = event.GetString();
+	
 	//update the workspace configuration file
 	ManagerST::Get()->SetWorkspaceConfigurationName(selectionStr);
+	
+	//force makefile generation upon configuration change
+	wxArrayString projs;
+	ManagerST::Get()->GetProjectList(projs);
+	for ( size_t i=0; i< projs.GetCount(); i++ ) {
+		ProjectPtr proj = ManagerST::Get()->GetProject( projs.Item(i) );
+		if( proj ) {
+			proj->SetModified(true);
+		}
+	}
 }
 
 void Frame::OnTimer(wxTimerEvent &event) {

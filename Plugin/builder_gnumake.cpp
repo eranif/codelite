@@ -36,7 +36,7 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, wxStrin
 	if (project.IsEmpty()) {
 		return false;
 	}
-
+	
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project, errMsg);
 	if (!proj) {
 		errMsg << wxT("Cant open project '") << project << wxT("'");
@@ -110,14 +110,7 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, wxStrin
 			wxFileName fn(dependProj->GetFileName());
 			fn.MakeRelativeTo(wspfile.GetPath());
 
-			//if the dependencie project is project of type 'Custom Build' - do the custom build instead
-			//of the geenrated makefile
-
-			if (dependProjbldConf && dependProjbldConf->IsCustomBuild()) {
-				text << wxT("\t") << GetCdCmd(wspfile, fn)  << dependProjbldConf->GetCustomBuildCmd() << wxT("\n");
-			} else {
-				text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\" ") << args << wxT("\n");
-			}
+			text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\" ") << args << wxT("\n");
 		}
 	}
 	
@@ -156,11 +149,7 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, wxStrin
 			//if the dependencie project is project of type 'Custom Build' - do the custom build instead
 			//of the geenrated makefile
 			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjSelBuildConf(dependProj->GetName());
-			if (dependProjbldConf && dependProjbldConf->IsCustomBuild()) {
-				text << wxT("\t") << GetCdCmd(wspfile, fn) << dependProjbldConf->GetCustomCleanCmd() << wxT("\n");
-			} else {
-				text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\" ") << args << wxT(" clean\n") ;
-			}
+			text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\" ") << args << wxT(" clean\n") ;
 		}
 	}
 	
@@ -182,11 +171,18 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, wxStrin
 
 void BuilderGnuMake::GenerateMakefile(ProjectPtr proj)
 {
+	if(proj->IsModified() == false) {
+	//	wxPrintf(wxT("Export SKIPPED for project ...%s\n"), proj->GetName().GetData() );
+		return;
+	}else{
+	//	wxPrintf(wxT("Export is called for project ...%s\n"), proj->GetName().GetData() );
+	}
+	
 	ProjectSettingsPtr settings = proj->GetSettings();
 	if (!settings) {
 		return;
 	}
-
+	
 	//get the selected build configuration for this project
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(proj->GetName());
 	if (!bldConf) {
@@ -203,34 +199,10 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj)
 	//create new makefile file
 	wxString fn(path);
 	fn << PATH_SEP << proj->GetName() << wxT(".mk");
-//	wxFileOutputStream output(fn);
-
-	//if (!output.IsOk())
-	//	return;
 
 	//generate the selected configuration for this project
 	//wxTextOutputStream text(output);
 	wxString text;
-
-	if (bldConf->IsCustomBuild()) {
-		//no need to generate makefile, just call the user cutom build command
-		text << wxT(".PHONY: all\n");
-		text << wxT("all:\n");
-		text << wxT("\t") << bldConf->GetCustomBuildCmd() << wxT("\n");
-
-		//create the clean target
-		text << wxT("clean:\n");
-		text << wxT("\t") << bldConf->GetCustomCleanCmd() << wxT("\n");
-
-		//dump the content to a file
-		wxFFile output;
-		output.Open(fn, wxT("w+"));
-		if(output.IsOpened()){
-			output.Write(text);
-			output.Close();
-		}
-		return;
-	}
 
 	text << wxT("##") << wxT("\n");
 	text << wxT("## Auto Generated makefile, please do not edit") << wxT("\n");;
@@ -304,7 +276,6 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj)
 	//-----------------------------------------------------------
 	CreateFileTargets(proj, text);
 
-
 	//dump the content to a file
 	wxFFile output;
 	output.Open(fn, wxT("w+"));
@@ -312,6 +283,9 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj)
 		output.Write(text);
 		output.Close();
 	}
+	
+	//mark the project as non-modified one
+	proj->SetModified(false);
 }
 
 void BuilderGnuMake::CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString &targetName, wxString &text)
@@ -713,7 +687,9 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, bool &isCustom
 	}
 	
 	//generate the makefile
+//	wxPrintf(wxT("Exporting makefile...\n"));
 	Export(project, false, errMsg);
+//	wxPrintf(wxT("Done...\n"));
 	
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
@@ -721,6 +697,7 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, bool &isCustom
 
 	wxString type = Builder::NormalizeConfigName(matrix->GetSelectedConfigurationName());
 	cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\" type=") << type;
+//	wxPrintf(wxT("End of GetBuildCommand()\n"));
 	return cmd;
 }
 

@@ -10,6 +10,7 @@ const wxString Project::EXECUTABLE = wxT("Executable");
 
 Project::Project()
 		: m_tranActive(false)
+		, m_isModified(false)
 {
 }
 
@@ -47,6 +48,7 @@ bool Project::Create(const wxString &name, const wxString &path, const wxString 
 	ProjectSettingsPtr settings = GetSettings();
 	settings->SetProjectType(projType);
 	SetSettings(settings);
+	SetModified(true);
 	return true;
 }
 
@@ -58,6 +60,7 @@ bool Project::Load(const wxString &path)
 
 	m_fileName = path;
 	m_fileName.MakeAbsolute();
+	SetModified(true);
 	return true;
 }
 
@@ -164,6 +167,7 @@ bool Project::AddFile(const wxString &fileName, const wxString &virtualDirPath)
 	if (!InTransaction()) {
 		m_doc.Save(m_fileName.GetFullPath());
 	}
+	SetModified(true);
 	return true;
 }
 
@@ -182,6 +186,7 @@ bool Project::DeleteVirtualDir(const wxString &vdFullPath)
 		}
 
 		delete vd;
+		SetModified(true);
 		return m_doc.Save(m_fileName.GetFullPath());
 	}
 	return false;
@@ -207,6 +212,7 @@ bool Project::RemoveFile(const wxString &fileName, const wxString &virtualDir)
 		node->GetParent()->RemoveChild( node );
 		delete node;
 	}
+	SetModified(true);
 	return m_doc.Save(m_fileName.GetFullPath());;
 }
 
@@ -274,6 +280,7 @@ void Project::RecursiveAdd(wxXmlNode *xmlNode, ProjectTreePtr &ptp, ProjectTreeN
 		RecursiveAdd(children, ptp, newNode);
 		children = children->GetNext();
 	}
+	SetModified(true);
 }
 
 void Project::Save()
@@ -389,4 +396,15 @@ void Project::SetDependencies(wxArrayString &deps)
 
 	//save changes
 	m_doc.Save(m_fileName.GetFullPath());
+	SetModified(true);
+}
+
+void Project::SetModified(bool mod)
+{
+	m_isModified = mod;
+}
+
+bool Project::IsModified()
+{
+	return m_isModified;
 }

@@ -47,7 +47,7 @@ public:
 	wxString m_displayName;
 	wxString m_file;
 	int m_kind;
-
+	
 public:
 	//---------------------------------------------------------------
 	// Constructors, destructor and assignment operator
@@ -134,7 +134,8 @@ private:
 	wxXmlDocument m_doc;
 	wxFileName m_fileName;
 	bool m_tranActive;
-
+	bool m_isModified;
+	
 public:
 	const wxFileName &GetFileName() const { return m_fileName; }
 
@@ -246,7 +247,17 @@ public:
 	 * Return true if a file already exist under the project
 	 */
 	bool IsFileExist(const wxString &fileName);
-
+	
+	/**
+	 * \brief return true of the project was modified (in terms of files removed/added)
+	 */
+	bool IsModified();
+	
+	/**
+	 * \brief 
+	 */
+	void SetModified(bool mod);
+	
 	// Transaction support to reduce overhead of disk writing
 	void BeginTranscation(){m_tranActive = true;}
 	void CommitTranscation(){Save();}

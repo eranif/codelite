@@ -202,6 +202,8 @@
     <File Name="importfilessettings.h"/>
     <File Name="buildtabsettingsdata.cpp"/>
     <File Name="buildtabsettingsdata.h"/>
+    <File Name="colourthread.cpp"/>
+    <File Name="colourthread.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>

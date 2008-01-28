@@ -164,11 +164,13 @@ bool WinProcess::Read(wxString& buff)
 	DWORD dwMode;
 	DWORD dwTimeout;
 	char *chBuf = new char [65536+1]; 	//64K should be sufficient buffer
+	memset(chBuf, 0, 65536+1);
+	
 	std::auto_ptr<char> sp(chBuf);
 	
 	// Make the pipe to non-blocking mode
 	dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
-	dwTimeout = 30000;
+	dwTimeout = 1000;
 	SetNamedPipeHandleState(hChildStdoutRdDup, 
 							&dwMode,
 							NULL,
@@ -177,7 +179,7 @@ bool WinProcess::Read(wxString& buff)
 	{
 		chBuf[dwRead/sizeof(char)] = 0;
 		//printf("%s\n", chBuf);
-		buff = wxString(chBuf, wxConvUTF8);
+		buff = wxString::From8BitData(chBuf);
 		return true;
 	}
 	return false;

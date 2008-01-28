@@ -57,22 +57,22 @@
     <long Value="15" Name="m_flags"/>
   </ArchiveObject>
   <RecentWorkspaces>
-    <File Name="C:\Documents and Settings\Eran\Desktop\test\Testing.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\Test\CC\CC.workspace"/>
-    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
     <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
+    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
+    <File Name="C:\Test\CC\CC.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\Documents and Settings\Eran\Desktop\test\Testing.workspace"/>
   </RecentWorkspaces>
   <RecentFiles>
-    <File Name="C:\TestArea\TestCustom\main.cpp"/>
-    <File Name="C:\TestArea\TestCustom\t7.h"/>
-    <File Name="C:\TestArea\TestCustom\t7.cpp"/>
-    <File Name="C:\TestArea\TestCustom\t8.h"/>
-    <File Name="C:\TestArea\TestCustom\t8.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\CodeLite\ctags_manager.cpp"/>
-    <File Name="C:\Documents and Settings\Eran\Desktop\test\testfile.cpp"/>
-    <File Name="C:\Documents and Settings\Eran\Desktop\test\Sqlite3\sqlite3.c"/>
+    <File Name="C:\Documents and Settings\Eran\Desktop\test\LexCPP.cxx"/>
+    <File Name="C:\disabled.cpp"/>
     <File Name="C:\Development\C++\codelite\trunk\CodeLite\ctags_manager.h"/>
+    <File Name="C:\Documents and Settings\Eran\Desktop\test\Sqlite3\sqlite3.c"/>
+    <File Name="C:\Documents and Settings\Eran\Desktop\test\testfile.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\CodeLite\ctags_manager.cpp"/>
+    <File Name="C:\TestArea\TestCustom\t8.cpp"/>
+    <File Name="C:\TestArea\TestCustom\t8.h"/>
+    <File Name="C:\TestArea\TestCustom\t7.cpp"/>
   </RecentFiles>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="1002"/>

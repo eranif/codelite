@@ -38,7 +38,7 @@ static void ColouriseGccDoc(
     unsigned int startPos,
     int length,
     int /*initStyle*/,
-    WordList *keywordlists[],
+    WordList *keywordlists[],  
     Accessor &styler)
 {
 	char lineBuffer[2048];

@@ -5,7 +5,7 @@
 #include "ctags_manager.h"
 #include "frame.h"
 #include "editor.h"
-#include "menumanager.h"
+#include "menumanager.h" 
 #include "language.h"
 #include "editor_config.h"
 #include "parse_thread.h"

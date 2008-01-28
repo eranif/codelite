@@ -14,7 +14,7 @@
 
 #include "PropSet.h"
 #include "Accessor.h"
-#include "StyleContext.h"
+#include "StyleContext.h" 
 
 #ifdef SCI_NAMESPACE
 using namespace Scintilla;
@@ -29,7 +29,7 @@ static void getRange(unsigned int start,
 	while ((i < end - start + 1) && (i < len-1)) {
 		s[i] = styler[start + i];
 		i++;
-	}
+	} 
 	s[i] = '\0';
 }
 

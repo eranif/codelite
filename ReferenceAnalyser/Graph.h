@@ -4,14 +4,19 @@
 #include <set>
 #include <vector>
 #include <map>
+#include <stack>
 
 template<class T>
 class Graph {
 public:
 	typedef std::set<T> Nodes;
+	typedef std::vector<T> NodeVector;
 	typedef std::map<T, Nodes> Edges;
 	
+	typedef const NodeVector& ConstNodeVectorRef;
+	
 	typedef typename Nodes::const_iterator NodesIterator;
+	typedef typename NodeVector::const_iterator NodeVectorIterator;
 	typedef typename Edges::const_iterator EdgesIterator;
 	
 	Graph();
@@ -22,9 +27,12 @@ public:
 	
 	void clear();
 	
+	bool isEmpty();
 	bool isAcyclic();
 	bool isAcyclicFrom(T node);
-	bool canReach(T from, T target, Nodes& checked);
+	bool canReach(T from, T target, Nodes& checked, std::stack<T>& path);
+
+	ConstNodeVectorRef getPath();
 	
 	EdgesIterator begin();
 	EdgesIterator end();
@@ -33,6 +41,7 @@ public:
 	
 private:
 	Edges m_edges;
+	NodeVector m_path;
 };
 
 template <class T> 
@@ -101,6 +110,18 @@ size_t Graph<T>::size()
 }
 
 template <class T> 
+bool Graph<T>::isEmpty()
+{
+	for(EdgesIterator it = m_edges.begin(); it != m_edges.end(); it++)
+	{
+		if(it->second.size())
+			return false;
+	}
+	
+	return true;
+}
+
+template <class T> 
 bool Graph<T>::isAcyclic()
 {
 	for(EdgesIterator it = m_edges.begin(); it != m_edges.end(); it++)
@@ -116,20 +137,31 @@ template <class T>
 bool Graph<T>::isAcyclicFrom(T node)
 {
 	Nodes checked;
+	std::stack<T> path;
 	
-	if(canReach(node, node, checked))
+	if(canReach(node, node, checked, path))
+	{
+		NodeVector result;
+		while(!path.empty())
+		{
+			result.push_back(path.top());
+			path.pop();
+		}
+		
+		m_path = result;
 		return false;
+	}
 		
 	return true;
 }
 
 template <class T> 
-bool Graph<T>::canReach(T from, T target, Nodes& checked)
+bool Graph<T>::canReach(T from, T target, Nodes& checked, std::stack<T>& path)
 {
 	for(NodesIterator it = m_edges[from].begin(); it != m_edges[from].end(); it++)
 	{
 		T current = *it;
-		if(current == target)
+		if(current == target)		
 			return true;
 			
 		// Don't check this node if we have already
@@ -137,12 +169,21 @@ bool Graph<T>::canReach(T from, T target, Nodes& checked)
 			continue;
 			
 		checked.insert(current);
+		path.push(current);
 			
-		if(canReach(current, target, checked))
+		if(canReach(current, target, checked, path))
 			return true;
+			
+		path.pop();
 	}
 	
 	return false;
+}
+
+template <class T> 
+typename Graph<T>::ConstNodeVectorRef Graph<T>::getPath()
+{
+	return m_path;
 }
 
 #endif // __graph__

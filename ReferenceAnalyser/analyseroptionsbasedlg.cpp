@@ -20,13 +20,30 @@ AnalyserOptionsBaseDlg::AnalyserOptionsBaseDlg( wxWindow* parent, wxWindowID id,
 	wxBoxSizer* panelSizer;
 	panelSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_checkBoxUpdateOnSave = new wxCheckBox( m_mainPanel, wxID_ANY, wxT("Option foo"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxFlexGridSizer* fgSizer1;
+	fgSizer1 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer1->SetFlexibleDirection( wxBOTH );
+	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	panelSizer->Add( m_checkBoxUpdateOnSave, 0, wxALL, 5 );
+	m_staticText1 = new wxStaticText( m_mainPanel, wxID_ANY, wxT("Container Class"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1->Wrap( -1 );
+	fgSizer1->Add( m_staticText1, 0, wxALL, 5 );
 	
-	m_checkBoxAutoAddNewFiles = new wxCheckBox( m_mainPanel, wxID_ANY, wxT("Option bar"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_containerName = new wxTextCtrl( m_mainPanel, wxID_ANY, wxT("SmartPtr"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_containerName->SetMinSize( wxSize( 250,-1 ) );
 	
-	panelSizer->Add( m_checkBoxAutoAddNewFiles, 0, wxALL, 5 );
+	fgSizer1->Add( m_containerName, 0, wxALL, 5 );
+	
+	m_staticText2 = new wxStaticText( m_mainPanel, wxID_ANY, wxT("Dereference function"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2->Wrap( -1 );
+	fgSizer1->Add( m_staticText2, 0, wxALL, 5 );
+	
+	m_containerOperator = new wxTextCtrl( m_mainPanel, wxID_ANY, wxT("->"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_containerOperator->SetMinSize( wxSize( 250,-1 ) );
+	
+	fgSizer1->Add( m_containerOperator, 0, wxALL, 5 );
+	
+	panelSizer->Add( fgSizer1, 1, wxEXPAND, 5 );
 	
 	m_mainPanel->SetSizer( panelSizer );
 	m_mainPanel->Layout();
@@ -52,15 +69,11 @@ AnalyserOptionsBaseDlg::AnalyserOptionsBaseDlg( wxWindow* parent, wxWindowID id,
 	this->Layout();
 	
 	// Connect Events
-	m_checkBoxUpdateOnSave->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( AnalyserOptionsBaseDlg::OnUpdateOnSave ), NULL, this );
-	m_checkBoxAutoAddNewFiles->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( AnalyserOptionsBaseDlg::OnAutoAddNewFiles ), NULL, this );
 	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AnalyserOptionsBaseDlg::OnButtonOk ), NULL, this );
 }
 
 AnalyserOptionsBaseDlg::~AnalyserOptionsBaseDlg()
 {
 	// Disconnect Events
-	m_checkBoxUpdateOnSave->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( AnalyserOptionsBaseDlg::OnUpdateOnSave ), NULL, this );
-	m_checkBoxAutoAddNewFiles->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( AnalyserOptionsBaseDlg::OnAutoAddNewFiles ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AnalyserOptionsBaseDlg::OnButtonOk ), NULL, this );
 }

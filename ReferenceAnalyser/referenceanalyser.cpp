@@ -5,7 +5,6 @@
 #include <wx/progdlg.h>
 #include <vector>
 
-#include "entry.h" // for TagEntry
 #include "ctags_manager.h" // for TagsManager
 
 static ReferenceAnalyser* thePlugin = NULL;
@@ -116,9 +115,11 @@ void ReferenceAnalyser::LogMessage(const wxString& message)
 	
 	wxFlatNotebook *book = m_mgr->GetOutputPaneNotebook();
 	wxTextCtrl *analyserWindow (NULL);
-	for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
-		if (book->GetPageText(i) == wxT("Analyser")) {
-			analyserWindow = dynamic_cast<wxTextCtrl*>(book->GetPage(i));
+	
+	size_t position;
+	for (position = 0; position < (size_t)book->GetPageCount(); position++) {
+		if (book->GetPageText(position) == wxT("Analyser")) {
+			analyserWindow = dynamic_cast<wxTextCtrl*>(book->GetPage(position));
 			break;
 		}
 	}
@@ -129,6 +130,23 @@ void ReferenceAnalyser::LogMessage(const wxString& message)
 		analyserWindow->AppendText(text);
 		//make the appended line visible
 		analyserWindow->ShowPosition(analyserWindow->GetLastPosition()); 
+		book->SetSelection(position);
+	}
+}
+
+void ReferenceAnalyser::ClearMessagePane()
+{
+	wxFlatNotebook *book = m_mgr->GetOutputPaneNotebook();
+	wxTextCtrl *analyserWindow (NULL);
+	for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
+		if (book->GetPageText(i) == wxT("Analyser")) {
+			analyserWindow = dynamic_cast<wxTextCtrl*>(book->GetPage(i));
+			break;
+		}
+	}
+
+	if (analyserWindow) {
+		analyserWindow->Clear();
 	}
 }
 
@@ -136,9 +154,10 @@ void ReferenceAnalyser::OnAnalyse(wxCommandEvent &e) {
     wxUnusedVar(e);
 	
 	m_classMembersGraph.clear();
+	ClearMessagePane();
 	
 	std::vector<TagEntryPtr> tags;
-	m_mgr->GetTagsManager()->OpenType(tags);
+	m_mgr->GetTagsManager()->GetClasses(tags, true); // true for only workspace
 	
 	if(tags.size() == 0)
 	{
@@ -146,6 +165,13 @@ void ReferenceAnalyser::OnAnalyse(wxCommandEvent &e) {
 		return;
 	}
 	
+	AnalyseTags(tags);
+	PrintGraph();
+	PrintResult();
+}
+
+void ReferenceAnalyser::AnalyseTags(std::vector<TagEntryPtr>& tags) 
+{
 	wxProgressDialog* prgDlg = NULL;
 	int maxVal = (int)tags.size();
 
@@ -181,14 +207,8 @@ void ReferenceAnalyser::OnAnalyse(wxCommandEvent &e) {
 	}
 	
 	prgDlg->Destroy();
-	
-	Print();
-	
-	if(m_classMembersGraph.isAcyclic())
-		LogMessage(wxT("You have no cycles in your dependency graph."));
-	else
-		LogMessage(wxT("Your dependency graph is not acyclic."));
 }
+	
 
 void ReferenceAnalyser::Analyse(const wxString& theclassname)
 {
@@ -200,7 +220,7 @@ void ReferenceAnalyser::Analyse(const wxString& theclassname)
 
 	m_mgr->GetTagsManager()->TagsByScope(classname, tags);
 	
-	LogMessage(classname << wxT(": ") << tags.size() << wxT("."));
+	// LogMessage(classname << wxT(": ") << tags.size() << wxT("."));
 	
 	wxString type, typeScope;
 	
@@ -222,15 +242,15 @@ void ReferenceAnalyser::Analyse(const wxString& theclassname)
 		bool worked = m_mgr->GetTagsManager()->ProcessExpression(expressionForType, type, typeScope);
 		if(!worked)
 		{
-			LogMessage(wxT("Could not retreive type of: ") + name);
+			LogMessage(wxT("Could not retreive type of: ") + theclassname + wxT("::") + name);
 			continue;
 		}
 		
-		if(type != wxT("SmartPtr"))
+		if(type != m_options.getContainerName())
 			continue;
 
 		wxString expressionForSmartPtr(theclassname);
-		expressionForSmartPtr << wxT("::") << name << wxT("->");
+		expressionForSmartPtr << wxT("::") << name << m_options.getContainerOperator();
 		
 		worked = m_mgr->GetTagsManager()->ProcessExpression(expressionForSmartPtr, type, typeScope);
 				
@@ -239,7 +259,7 @@ void ReferenceAnalyser::Analyse(const wxString& theclassname)
 	}
 }
 
-void ReferenceAnalyser::Print(const wxString& classname)
+void ReferenceAnalyser::PrintGraph(const wxString& classname)
 {
 	if(classname == wxEmptyString)
 	{
@@ -250,7 +270,7 @@ void ReferenceAnalyser::Print(const wxString& classname)
 			if(name == wxEmptyString)
 				continue;
 				
-			Print(name);
+			PrintGraph(name);
 		}
 		
 		return;
@@ -266,13 +286,45 @@ void ReferenceAnalyser::Print(const wxString& classname)
 	wxStringGraph::Nodes members = it->second;
 	if(members.size() == 0)
 	{
-		LogMessage(wxT("Class '") + classname + wxT("' has no members."));
+		// LogMessage(wxT("Class '") + classname + wxT("' has no members."));
 		return;
 	}
 	
-	LogMessage(wxT("Class '") + classname + wxT("' has the following members:"));
+	// LogMessage(wxT("Class '") + classname + wxT("' has the references to the following classes:"));
 	for(wxStringGraph::NodesIterator it = members.begin(); it != members.end(); it++)
 	{
-		LogMessage(*it);
+		LogMessage(classname + wxT(" -> ") + *it);
 	}
+}
+
+void ReferenceAnalyser::PrintResult()
+{
+	if(m_classMembersGraph.isEmpty())
+	{
+		LogMessage(wxT("None of the analysed classes contained any references."));
+		LogMessage(wxT("Did you properly configure the Container Class? (see options)"));
+		return;
+	}
+	
+	if(m_classMembersGraph.isAcyclic())
+	{
+		LogMessage(wxT("You have no cycles in your dependency graph."));
+		return;
+	}
+	
+	LogMessage(wxT("Your dependency graph is not acyclic:"));
+
+	wxString result;
+	wxStringGraph::ConstNodeVectorRef path = m_classMembersGraph.getPath();
+	for(int i = 0; i < path.size(); i++)
+	{
+		wxString node = path[i];
+		
+		result += node;
+		result += wxT(" -> ");
+	}
+	
+	result += path[0];
+	
+	LogMessage(result);
 }

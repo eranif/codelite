@@ -7,6 +7,7 @@
 #include "plugin.h"
 #include "analyseroptions.h"
 #include "Graph.h"
+#include "entry.h" // for TagEntry
 
 typedef Graph<wxString> wxStringGraph;
 
@@ -37,8 +38,13 @@ public:
 	
 private:
 	void Analyse(const wxString& classname);
-	void Print(const wxString& classname = wxEmptyString);
+	void AnalyseTags(std::vector<TagEntryPtr>& tags);
+	
+	void PrintGraph(const wxString& classname = wxEmptyString);
+	void PrintResult();
+	
 	void LogMessage(const wxString& message);
+	void ClearMessagePane();
 };
 
 #endif //ReferenceAnalyser

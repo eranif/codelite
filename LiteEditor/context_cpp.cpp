@@ -18,7 +18,12 @@
 #include "frame.h"
 #include "debuggermanager.h"
 #include "addincludefiledlg.h"
- 
+#include "variable.h"
+#include "function.h"
+
+extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, bool> &ignoreTokens);
+extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, bool> &ignoreTokens);
+
 static bool IsSource(const wxString &ext)
 {
 	wxString e(ext);
@@ -1735,4 +1740,73 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 		}
 		dlg->Destroy();
 	}
+}
+
+void ContextCpp::OnFileSaved()
+{
+	LEditor &rCtrl = GetCtrl();
+	VALIDATE_PROJECT(rCtrl);
+	
+	VariableList var_list;
+	FunctionList foo_list;
+	std::map<std::string, bool> ignoreTokens;
+	
+	//collect list of variables & functions
+	wxString txt;
+	TagsManagerST::Get()->StripComments(rCtrl.GetText(), txt);
+	
+	const wxCharBuffer patbuf = _C(txt);
+	
+	get_variables( patbuf.data(), var_list, ignoreTokens );
+	get_functions( patbuf.data(), foo_list, ignoreTokens );
+		
+	//cross reference between the two lists, if any of the tokens exist in 
+	//both lists, then it will be considered as function
+	std::map< std::string, Variable > var_map;
+	std::map< std::string, clFunction > foo_map;
+	
+	//remove duplicates
+	FunctionList::iterator fiter = foo_list.begin();
+	for(; fiter != foo_list.end(); fiter++ ) {
+		clFunction foo = *fiter;
+		foo_map[foo.m_name] = foo;
+	}
+
+	VariableList::iterator viter = var_list.begin();
+	for(; viter != var_list.end(); viter++ ) {
+		Variable var = *viter;
+		if( foo_map.find( var.m_name ) == foo_map.end() ) {
+			//this is not a function, it is safe to copy it
+			var_map[var.m_name] = var;
+		}
+	}
+	
+	//create to word list
+	//functions
+	wxString fooList;
+	wxString varList;
+	
+	std::map< std::string, clFunction >::iterator it1 = foo_map.begin();
+	for(; it1 != foo_map.end(); it1++ ) {
+		fooList << _U(it1->second.m_name.c_str()) << wxT(" ");
+	}
+	
+	std::map< std::string, Variable >::iterator it2 = var_map.begin();
+	for(; it2 != var_map.end(); it2++ ) {
+		varList << _U(it2->second.m_name.c_str()) << wxT(" ");
+	}
+	
+	//wxSCI_C_WORD2
+	rCtrl.SetKeyWords(1, fooList);
+	
+	//wxSCI_C_GLOBALCLASS
+	rCtrl.SetKeyWords(3, varList);
+		
+	//try to colourse only visible scope
+//	long startPos = rCtrl.PositionFromLine( rCtrl.GetFirstVisibleLine() );
+//	int lastLine = rCtrl.GetFirstVisibleLine() + rCtrl.LinesOnScreen();
+//	long endPos   = rCtrl.PositionFromLine( lastLine ) + rCtrl.LineLength(lastLine);
+//	if(endPos > startPos) {
+	rCtrl.Colourise(0, wxSCI_INVALID_POSITION);
+//	}
 }

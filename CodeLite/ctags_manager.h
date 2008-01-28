@@ -578,6 +578,12 @@ public:
 	 */
 	bool ProcessExpression(const wxString &expression, wxString &type, wxString &typeScope);
 	
+	/**
+	 * \brief strip comments from a given text
+	 * \param text
+	 */
+	void StripComments(const wxString &text, wxString &stippedText);
+	
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
 

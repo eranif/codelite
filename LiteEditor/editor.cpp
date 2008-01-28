@@ -1,5 +1,7 @@
 #include "editor.h" 
 #include "precompiled_header.h"
+#include "colourrequest.h"
+#include "colourthread.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/ffile.h>
 #include <wx/tooltip.h>
@@ -28,6 +30,12 @@
 #include "threebuttondlg.h"
 #include "debuggerconfigtool.h"
 #include "addincludefiledlg.h"
+
+#include "variable.h"
+#include "function.h"
+
+extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, bool> &ignoreTokens);
+extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, bool> &ignoreTokens);
 
 // fix bug in wxscintilla.h
 #ifdef EVT_SCI_CALLTIP_CLICK
@@ -480,8 +488,10 @@ bool LEditor::SaveFile()
 			req->file = absFile.GetFullPath();
 
 			//the previous call 'stole' the focus from us...
-			//SetActive();
 			ParseThreadST::Get()->Add(req);
+			
+			UpdateColours();
+			SetActive();
 		}
 	}
 	return true;
@@ -578,6 +588,8 @@ void LEditor::OpenFile(const wxString &fileName, const wxString &project)
 	//update breakpoints
 	UpdateBreakpoints();
 	SetCaretAt(0);
+	
+	UpdateColours();
 }
 
 //this function is called before the debugger startup
@@ -1294,6 +1306,7 @@ void LEditor::ReloadFile()
 
 	//update breakpoints
 	UpdateBreakpoints();
+	UpdateColours();
 }
 
 void LEditor::SetEditorText(const wxString &text)
@@ -1674,5 +1687,17 @@ void LEditor::OnDbgCustomWatch(wxCommandEvent &event)
 		Frame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(command);
 		Frame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
 		Frame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
+	}
+}
+
+void LEditor::UpdateColours()
+{
+	if( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_FUNC_VARS ) {
+		m_context->OnFileSaved();
+	} else {
+		SetKeyWords(1, wxEmptyString);
+		SetKeyWords(2, wxEmptyString);
+		SetKeyWords(3, wxEmptyString);
+		Colourise(0, wxSCI_INVALID_POSITION);
 	}
 }

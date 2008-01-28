@@ -19,7 +19,8 @@
     <Property Id="15" Name="Doxygen C++ comment" Bold="no" Face="" Colour="FOREST GREEN" BgColour="#FFFFFF" Size="9"/>
     <Property Id="17" Name="Doxygen keyword" Bold="no" Face="" Colour="blue" BgColour="#FFFFFF" Size="9"/>
     <Property Id="18" Name="Doxygen keyword error" Bold="yes" Face="" Colour="#800080" BgColour="#FFFFFF" Size="9"/>
-    <Property Id="19" Name="Global class" Bold="no" Face="" Colour="medium blue" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="16" Name="Functions" Bold="no" Face="" Colour="#FF00FF" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="19" Name="Variables" Bold="yes" Face="Courier New" Colour="#FF0080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="20" Name="Disabled Code" Bold="no" Face="" Colour="grey" BgColour="#FFFFFF" Size="9"/>
     <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#0005FF" BgColour="#FFFFFF" Size="9"/>
     <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Size="9"/>

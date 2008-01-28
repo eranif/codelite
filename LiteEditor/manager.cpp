@@ -268,6 +268,12 @@ void Manager::UnInitialize()
 	DebuggerMgr::Free();
 
 	// Release singleton objects
+	
+	//since the parser is making use of the TagsManager, 
+	//it is important to release it *before* the TagsManager
+	ParseThreadST::Get()->Stop();
+	ParseThreadST::Free();
+	
 	TagsManagerST::Free();
 	LanguageST::Free();
 	WorkspaceST::Free();
@@ -282,9 +288,8 @@ void Manager::UnInitialize()
 	// since we block until the thread complets its current
 	// work on the queue
 	//-----------------------------------------------------
-	ParseThreadST::Get()->Stop();
-	ParseThreadST::Free();
-
+	
+	
 	// Stop the search thread and free its resources
 	SearchThreadST::Get()->Stop();
 	SearchThreadST::Free();

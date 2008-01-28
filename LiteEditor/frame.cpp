@@ -1,8 +1,7 @@
 #include "precompiled_header.h"
 #include "shell_window.h"
-
-#include "findresultstab.h" 
-#include "buidltab.h" 
+#include "findresultstab.h"
+#include "buidltab.h"
 #include "frame.h"
 #include "splashscreen.h"
 #include "wx/stdpaths.h"
@@ -86,7 +85,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_ADDLINE, Frame::OnBuildEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_STARTED, Frame::OnBuildEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_ENDED, Frame::OnBuildEvent)
-	
+
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE, Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, Frame::OnOutputWindowEvent)
@@ -216,7 +215,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("view_welcome_page"), Frame::OnShowWelcomePageUI)
 	EVT_MENU(XRCID("view_welcome_page_at_startup"), Frame::OnLoadWelcomePage)
 	EVT_UPDATE_UI(XRCID("view_welcome_page_at_startup"), Frame::OnLoadWelcomePageUI)
-	
+
 	EVT_MENU(XRCID("line_end_cr"), Frame::OnViewEolCR)
 	EVT_MENU(XRCID("line_end_lf"), Frame::OnViewEolLF)
 	EVT_MENU(XRCID("line_end_crlf"), Frame::OnViewEolCRLF)
@@ -228,8 +227,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("convert_eol"), Frame::OnConvertEolUI)
 	EVT_MENU(XRCID("display_eol"), Frame::OnViewDisplayEOL)
 	EVT_UPDATE_UI(XRCID("display_eol"), Frame::OnViewDisplayEOL_UI)
-	
-#if defined (__WXMSW__) || defined (__WXMAC__)
+
+	#if defined (__WXMSW__) || defined (__WXMAC__)
 	EVT_UPDATE_UI(wxID_SAVE, Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("complete_word"), Frame::OnCompleteWordUpdateUI)
 	EVT_UPDATE_UI(XRCID("execute_no_debug"), Frame::OnExecuteNoDebugUI)
@@ -251,16 +250,16 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("delete_breakpoint"), Frame::OnDebugManageBreakpointsUI)
 	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
 	EVT_UPDATE_UI(wxID_CLOSE, Frame::OnFileCloseUI)
-#endif
+	#endif
 
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 
 Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
-: wxFrame(pParent, id, title, pos, size, style)
-, m_findInFilesDlg(NULL)
-, m_buildInRun(false)
-, m_rebuild(false)
+		: wxFrame(pParent, id, title, pos, size, style)
+		, m_findInFilesDlg(NULL)
+		, m_buildInRun(false)
+		, m_rebuild(false)
 {
 #if  defined(__WXGTK20__)
 	// A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -291,7 +290,8 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	m_timer->Start(100);
 }
 
-Frame::~Frame(void) {
+Frame::~Frame(void)
+{
 	delete m_timer;
 	ManagerST::Free();
 	// uninitialize AUI manager
@@ -302,7 +302,8 @@ Frame::~Frame(void) {
 	//#endif
 }
 
-Frame* Frame::Get() {
+Frame* Frame::Get()
+{
 	if ( !m_theFrame ) {
 		//set the revision number in the frame title
 		wxString title(wxT("CodeLite - Revision: "));
@@ -311,7 +312,7 @@ Frame* Frame::Get() {
 		// Initialise editor configuration files
 		EditorConfig *cfg = EditorConfigST::Get();
 		cfg->Load();
-		
+
 		GeneralInfo inf;
 		cfg->ReadObject(wxT("GeneralInfo"), &inf);
 		m_theFrame = new Frame(	NULL,
@@ -320,25 +321,25 @@ Frame* Frame::Get() {
 		                        inf.GetFramePosition(),
 		                        inf.GetFrameSize(),
 		                        wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
-									
+
 		m_theFrame->m_frameGeneralInfo = inf;
 		m_theFrame->Maximize(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME ? true : false);
-		
+
 		// upgrade: change all .db files under the startup directory to be
 		// .tags
 		m_theFrame->UpgradeExternalDbExt();
 
 		//add the welcome page
-		if(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_SHOW_WELCOME_PAGE){
+		if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_SHOW_WELCOME_PAGE) {
 			m_theFrame->CreateWelcomePage();
 		}
-		
+
 		//plugins must be loaded before the file explorer
 		m_theFrame->LoadPlugins();
-		
+
 		//time to create the file explorer
 		m_theFrame->GetFileExplorer()->Scan();
-		
+
 		//load last session?
 		if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION) {
 			m_theFrame->LoadSession(wxT("Default"));
@@ -347,7 +348,8 @@ Frame* Frame::Get() {
 	return m_theFrame;
 }
 
-void Frame::CreateGUIControls(void) {
+void Frame::CreateGUIControls(void)
+{
 #ifdef __WXMSW__
 	SetIcon(wxICON(aaaaa));
 #else
@@ -362,7 +364,7 @@ void Frame::CreateGUIControls(void) {
 	// tell wxAuiManager to manage this frame
 	m_mgr.SetManagedWindow(this);
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
-	
+
 #if defined (__WXGTK__) || defined (__WXMAC__)
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE);
 #else
@@ -374,20 +376,20 @@ void Frame::CreateGUIControls(void) {
 	//initialize debugger configuration tool
 	DebuggerConfigTool::Get()->Load(ManagerST::Get()->GetStarupDirectory() + wxT("/config/debuggers.xml"));
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
-	
+
 // On wx2.8.7, AUI dragging is broken but this happens only in debug build & on GTK
 #if wxCHECK_VERSION(2, 8, 7) && defined (__WXGTK__) && defined (__WXDEBUG__)
 	m_mgr.SetFlags(wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT);
-#endif 
+#endif
 
-#ifdef __WXGTK__	
+#ifdef __WXGTK__
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_VERTICAL);
 #else
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
 #endif
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 6);
-	
+
 	// Load the menubar from XRC and set this frame's menubar to it.
 	SetMenuBar(wxXmlResource::Get()->LoadMenuBar(wxT("main_menu")));
 
@@ -398,20 +400,20 @@ void Frame::CreateGUIControls(void) {
 	wxAuiPaneInfo paneInfo;
 	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output")).Caption(wxT("Output")).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton());
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output"));
-	
+
 	// Add the explorer pane
 	m_workspacePane = new WorkspacePane(this, wxT("Workspace"));
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
 	              Left().Layer(1).Position(0).CloseButton(true));
 	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace"));
-	
+
 	//add the debugger locals tree, make it hidden by default
 	m_debuggerPane = new DebuggerPane(this, wxT("Debugger"));
 	m_mgr.AddPane(m_debuggerPane,
 	              wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).Hide());
 	RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
-	
+
 	// Create the notebook for all the files
 	long style =
 	    wxFNB_TABS_BORDER_SIMPLE |
@@ -424,15 +426,15 @@ void Frame::CreateGUIControls(void) {
 	    wxFNB_SMART_TABS |
 	    wxFNB_X_ON_TAB |
 	    wxFNB_CUSTOM_DLG |
-		wxFNB_MOUSE_MIDDLE_CLOSES_TABS|
-		wxFNB_DCLICK_CLOSES_TABS;
+	    wxFNB_MOUSE_MIDDLE_CLOSES_TABS|
+	    wxFNB_DCLICK_CLOSES_TABS;
 
 	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK | wxFNB_CUSTOM_CLOSE_BUTTON );
-	
+
 	m_il.push_back(wxXmlResource::Get()->LoadBitmap(wxT("help_icon")));
 	m_book->SetImageList(&m_il);
-	
+
 	m_mgr.AddPane(m_book, wxAuiPaneInfo().Name(wxT("Editor")).
 	              CenterPane().PaneBorder(false));
 
@@ -449,7 +451,7 @@ void Frame::CreateGUIControls(void) {
 	EditorConfigST::Get()->ReadObject(wxT("FindInFilesData"), &m_data);
 	EditorConfigST::Get()->ReadObject(wxT("FindAndReplaceData"), &LEditor::GetFindReplaceData());
 	EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
-	
+
 	TagsManager *tagsManager = TagsManagerST::Get();
 #if defined (__WXMSW__) || defined (__WXGTK__)
 	//start ctags process
@@ -485,7 +487,7 @@ void Frame::CreateGUIControls(void) {
 
 	//load windows perspective
 	CreateToolbars();
-	
+
 	// load notebooks style
 	long book_style = 0;
 	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("Editor"));
@@ -514,7 +516,7 @@ void Frame::CreateGUIControls(void) {
 
 	m_mgr.Update();
 	SetAutoLayout (true);
-	
+
 	//load debuggers
 	DebuggerMgr::Get().Initialize(this, ManagerST::Get()->GetStarupDirectory());
 	DebuggerMgr::Get().LoadDebuggers();
@@ -525,7 +527,7 @@ void Frame::CreateGUIControls(void) {
 
 	//try to locate the build tools
 	///////////////////////////////////////////////////////
-	
+
 	//TODO:: temporarly disable to automatic tools update
 	//due to bug in overriding user settings
 	ManagerST::Get()->UpdateBuildTools();
@@ -533,7 +535,8 @@ void Frame::CreateGUIControls(void) {
 	Layout();
 }
 
-void Frame::CreateViewAsSubMenu() {
+void Frame::CreateViewAsSubMenu()
+{
 	//get the 'View As' menu
 
 	int idx = GetMenuBar()->FindMenu(wxT("View"));
@@ -560,14 +563,16 @@ void Frame::CreateViewAsSubMenu() {
 	}
 }
 
-wxString Frame::GetViewAsLanguageById(int id) const {
+wxString Frame::GetViewAsLanguageById(int id) const
+{
 	if (m_viewAsMap.find(id) == m_viewAsMap.end()) {
 		return wxEmptyString;
 	}
 	return m_viewAsMap.find(id)->second;
 }
 
-void Frame::CreateMenuBar() {
+void Frame::CreateMenuBar()
+{
 	wxMenuBar *mb = new wxMenuBar();
 	//File Menu
 	wxMenu *menu = new wxMenu();
@@ -582,7 +587,8 @@ void Frame::CreateMenuBar() {
 	SetMenuBar(mb);
 }
 
-void Frame::CreateToolbars() {
+void Frame::CreateToolbars()
+{
 	wxAuiPaneInfo info;
 	//----------------------------------------------
 	//create the standard toolbar
@@ -612,9 +618,9 @@ void Frame::CreateToolbars() {
 //	tb->AddTool(XRCID("next_bookmark"), wxT("Next Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark_previous")), wxT("Next Bookmark (F2)"));
 //	tb->AddTool(XRCID("previous_bookmark"), wxT("Previous Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark_next")), wxT("Previous Bookmark (Shift+F2)"));
 //	tb->AddTool(XRCID("removeall_bookmarks"), wxT("Remove All Bookmarks"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark_remove_all")), wxT("Remove All Bookmarks"));
-#if defined (__WXMAC__)	
+#if defined (__WXMAC__)
 	tb->AddSeparator();
-#endif	
+#endif
 
 	tb->Realize();
 	m_mgr.AddPane(tb, wxAuiPaneInfo().Name(wxT("Standard Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Standard")).ToolbarPane().Top());
@@ -625,7 +631,7 @@ void Frame::CreateToolbars() {
 	info = wxAuiPaneInfo();
 	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(24, 24));
-	
+
 	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace")), wxT("Find (Ctrl+F)"));
 	tb->AddTool(wxID_REPLACE, wxT("Replace"), wxXmlResource::Get()->LoadBitmap(wxT("refresh")), wxT("Replace (Ctrl+H)"));
 	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"), wxXmlResource::Get()->LoadBitmap(wxT("find_in_files")), wxT("Find In Files (Ctrl+Shift+F)"));
@@ -633,9 +639,9 @@ void Frame::CreateToolbars() {
 	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_resource")), wxT("Find Resource In Workspace (Ctrl+Shift+R)"));
 	tb->AddTool(XRCID("find_type"), wxT("Find Type In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_type")), wxT("Find Type In Workspace (Ctrl+Shift+T)"));
 	tb->AddTool(XRCID("find_symbol"), wxT("Quick Outline"), wxXmlResource::Get()->LoadBitmap(wxT("outline")), wxT("Show Current File Outline (Ctrl+Shift+O)"));
-#if defined (__WXMAC__)	
+#if defined (__WXMAC__)
 	tb->AddSeparator();
-#endif	
+#endif
 	tb->Realize();
 	m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Search")).ToolbarPane().Top());
 
@@ -644,16 +650,16 @@ void Frame::CreateToolbars() {
 	//----------------------------------------------
 	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(24, 24));
-	
+
 	tb->AddTool(XRCID("build_active_project"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("build_active_project")), wxT("Build Active Project (F7)"));
 	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("stop_build")), wxT("Stop Current Build"));
 	tb->AddTool(XRCID("clean_active_project"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("clean")), wxT("Clean Active Project"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("execute_no_debug"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("execute")), wxT("Run Active Project (Ctrl+F5)"));
 	tb->AddTool(XRCID("stop_executed_program"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("stop_executed_program")), wxT("Stop Running Program"));
-#if defined (__WXMAC__)	
+#if defined (__WXMAC__)
 	tb->AddSeparator();
-#endif	
+#endif
 	tb->Realize();
 	info = wxAuiPaneInfo();
 	m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Build")).ToolbarPane().Top().Row(1));
@@ -670,9 +676,9 @@ void Frame::CreateToolbars() {
 	m_debuggerTb->AddTool(XRCID("dbg_stepin"), wxT("Step Into"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepin")), wxT("Step In"));
 	m_debuggerTb->AddTool(XRCID("dbg_next"), wxT("Next"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_next")), wxT("Next"));
 	m_debuggerTb->AddTool(XRCID("dbg_stepout"), wxT("Step Out"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepout")), wxT("Step Out"));
-#if defined (__WXMAC__)	
+#if defined (__WXMAC__)
 	m_debuggerTb->AddSeparator();
-#endif	
+#endif
 	m_debuggerTb->Realize();
 	info = wxAuiPaneInfo();
 	m_mgr.AddPane(m_debuggerTb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Debug")).ToolbarPane().Top().Row(1));
@@ -682,32 +688,34 @@ void Frame::CreateToolbars() {
 	RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
 	RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
 	RegisterToolbar(XRCID("show_nav_toolbar"), wxT("Navigation Toolbar"));
-	
+
 	//----------------------------------------------
 	//create the debugger toolbar
-	//----------------------------------------------	
+	//----------------------------------------------
 	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(800, -1), wxTB_FLAT | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(24, 24));
 	wxArrayString chcs;
 	wxChoice *cbScope = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(200, -1), chcs);
 	tb->AddControl(cbScope);
-	
+
 	wxChoice *cbFunc = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(600, -1), chcs);
 	tb->AddControl(cbFunc);
-#if defined (__WXMAC__)	
+#if defined (__WXMAC__)
 	tb->AddSeparator();
-#endif	
+#endif
 	tb->Realize();
 	info = wxAuiPaneInfo();
 	m_mgr.AddPane(tb, info.Name(wxT("Navigation Toolbar")).LeftDockable(false).RightDockable(false).Caption(wxT("Navigation Toolbar")).ToolbarPane().Top().Row(2));
 	m_mainBook = new MainBook(cbFunc, cbScope);
 }
 
-void Frame::OnQuit(wxCommandEvent& WXUNUSED(event)) {
+void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
+{
 	Close();
 }
 
-void Frame::DispatchCommandEvent(wxCommandEvent &event) {
+void Frame::DispatchCommandEvent(wxCommandEvent &event)
+{
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
 	if ( !editor ) {
 		return;
@@ -722,7 +730,8 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event) {
 	editor->OnMenuCommand(event);
 }
 
-void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event) {
+void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
+{
 	if ( GetNotebook()->GetPageCount() == 0 ) {
 		event.Enable(false);
 		return;
@@ -743,7 +752,8 @@ void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event) {
 	editor->OnUpdateUI(event);
 }
 
-void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event) {
+void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event)
+{
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
 	if ( !editor ) {
 		event.Enable(false);
@@ -752,7 +762,8 @@ void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event) {
 	}
 }
 
-void Frame::OnAbout(wxCommandEvent& WXUNUSED(event)) {
+void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
+{
 	wxAboutDialogInfo info;
 	info.SetName(wxT("CodeLite"));
 
@@ -765,7 +776,8 @@ void Frame::OnAbout(wxCommandEvent& WXUNUSED(event)) {
 	wxAboutBox(info);
 }
 
-void Frame::OnClose(wxCloseEvent& event) {
+void Frame::OnClose(wxCloseEvent& event)
+{
 	// Stop the search thread
 	ManagerST::Get()->KillProgram();
 	ManagerST::Get()->DbgStop();
@@ -780,7 +792,7 @@ void Frame::OnClose(wxCloseEvent& event) {
 	//save general information
 	m_frameGeneralInfo.SetFrameSize(this->GetSize());
 	m_frameGeneralInfo.SetFramePosition(this->GetScreenPosition());
-	
+
 	SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);
 	EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
 
@@ -814,7 +826,8 @@ void Frame::OnClose(wxCloseEvent& event) {
 	event.Skip();
 }
 
-void Frame::LoadSession(const wxString &sessionName) {
+void Frame::LoadSession(const wxString &sessionName)
+{
 	SessionEntry session;
 	if (!SessionManager::Get().FindSession(sessionName, session)) {
 		return;
@@ -839,7 +852,8 @@ void Frame::LoadSession(const wxString &sessionName) {
 	}
 }
 
-void Frame::OnSave(wxCommandEvent& WXUNUSED(event)) {
+void Frame::OnSave(wxCommandEvent& WXUNUSED(event))
+{
 	if (!GetNotebook()->GetCurrentPage())
 		return;
 
@@ -851,7 +865,8 @@ void Frame::OnSave(wxCommandEvent& WXUNUSED(event)) {
 	editor->SaveFile();
 }
 
-void Frame::OnSaveAs(wxCommandEvent& WXUNUSED(event)) {
+void Frame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
+{
 	if (!GetNotebook()->GetCurrentPage())
 		return;
 
@@ -862,7 +877,8 @@ void Frame::OnSaveAs(wxCommandEvent& WXUNUSED(event)) {
 	editor->SaveFileAs();
 }
 
-void Frame::OnFileReload(wxCommandEvent &event) {
+void Frame::OnFileReload(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	if (!GetNotebook()->GetCurrentPage())
 		return;
@@ -874,7 +890,8 @@ void Frame::OnFileReload(wxCommandEvent &event) {
 	editor->ReloadFile();
 }
 
-void Frame::OnCloseWorkspace(wxCommandEvent &event) {
+void Frame::OnCloseWorkspace(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	if (ManagerST::Get()->IsWorkspaceOpen()) {
 		ManagerST::Get()->CloseWorkspace();
@@ -882,7 +899,8 @@ void Frame::OnCloseWorkspace(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnSwitchWorkspace(wxCommandEvent &event) {
+void Frame::OnSwitchWorkspace(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|")
 	                   wxT("All Files (*)|*"));
@@ -899,7 +917,8 @@ void Frame::OnSwitchWorkspace(wxCommandEvent &event) {
 // The list of words, is constructed from the database &
 // from the local scope
 //------------------------------------------------------
-void Frame::OnCompleteWord(wxCommandEvent& WXUNUSED(event)) {
+void Frame::OnCompleteWord(wxCommandEvent& WXUNUSED(event))
+{
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
 	if ( !editor )
 		return;
@@ -907,11 +926,13 @@ void Frame::OnCompleteWord(wxCommandEvent& WXUNUSED(event)) {
 	editor->CompleteWord();
 }
 
-void Frame::OnBuildExternalDatabase(wxCommandEvent& WXUNUSED(event)) {
+void Frame::OnBuildExternalDatabase(wxCommandEvent& WXUNUSED(event))
+{
 	DoBuildExternalDatabase();
 }
 
-void Frame::DoBuildExternalDatabase() {
+void Frame::DoBuildExternalDatabase()
+{
 	ExtDbData data;
 	ExtDbWizard *wiz = new ExtDbWizard(this, wxID_ANY);
 	if (wiz->Run(data)) {
@@ -927,11 +948,13 @@ void Frame::DoBuildExternalDatabase() {
 	wiz->Destroy();
 }
 
-void Frame::OnCloseExternalDatabase(wxCommandEvent& WXUNUSED(event)) {
+void Frame::OnCloseExternalDatabase(wxCommandEvent& WXUNUSED(event))
+{
 	ManagerST::Get()->CloseExternalDatabase();
 }
 
-void Frame::OnUseExternalDatabase(wxCommandEvent& WXUNUSED(event)) {
+void Frame::OnUseExternalDatabase(wxCommandEvent& WXUNUSED(event))
+{
 	const wxString ALL(	wxT("Tags Database File (*.tags)|*.tags|")
 	                    wxT("All Files (*)|*"));
 
@@ -954,7 +977,8 @@ void Frame::OnUseExternalDatabase(wxCommandEvent& WXUNUSED(event)) {
 }
 
 // Open new file
-void Frame::OnFileNew(wxCommandEvent &event) {
+void Frame::OnFileNew(wxCommandEvent &event)
+{
 	static int fileCounter = 0;
 	wxUnusedVar(event);
 
@@ -974,10 +998,11 @@ void Frame::OnFileNew(wxCommandEvent &event) {
 	editor->SetActive();
 }
 
-void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event)) {
+void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
+{
 	const wxString ALL(	wxT("All Files (*)|*"));
 	static wxString s_openPath(wxEmptyString);
-	
+
 	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open File"), s_openPath, wxEmptyString, ALL, wxOPEN | wxFILE_MUST_EXIST | wxFD_MULTIPLE, wxDefaultPosition);
 	if (dlg->ShowModal() == wxID_OK) {
 		wxArrayString paths;
@@ -985,8 +1010,8 @@ void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event)) {
 		for (size_t i=0; i<paths.GetCount(); i++) {
 			ManagerST::Get()->OpenFile(paths.Item(i), wxEmptyString);
 		}
-		
-		if(paths.GetCount() > 0){
+
+		if (paths.GetCount() > 0) {
 			wxFileName fn(paths.Item(0));
 			s_openPath = fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
 		}
@@ -995,7 +1020,8 @@ void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event)) {
 	GetOpenWindowsPane()->UpdateList();
 }
 
-void Frame::OnFileClose(wxCommandEvent &event) {
+void Frame::OnFileClose(wxCommandEvent &event)
+{
 	wxUnusedVar( event );
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
 	if ( editor ) {
@@ -1007,7 +1033,8 @@ void Frame::OnFileClose(wxCommandEvent &event) {
 	GetOpenWindowsPane()->UpdateList();
 }
 
-void Frame::OnFileClosing(wxFlatNotebookEvent &event) {
+void Frame::OnFileClosing(wxFlatNotebookEvent &event)
+{
 	// get the page that is now closing
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(event.GetSelection()));
 	if ( !editor )
@@ -1023,7 +1050,7 @@ void Frame::OnFileClosing(wxFlatNotebookEvent &event) {
 			GetWorkspacePane()->DeleteSymbolTree(editor->GetFileName());
 		}
 	}
-	
+
 	//update the titlebar
 	wxString title(wxT("CodeLite - Revision: "));
 	title << _U(SvnRevision);
@@ -1031,7 +1058,8 @@ void Frame::OnFileClosing(wxFlatNotebookEvent &event) {
 	event.Skip();
 }
 
-void Frame::OnPageChanged(wxFlatNotebookEvent &event) {
+void Frame::OnPageChanged(wxFlatNotebookEvent &event)
+{
 	// pass the event to the editor
 	wxString title(wxT("CodeLite - Revision: "));
 	title << _U(SvnRevision);
@@ -1056,17 +1084,20 @@ void Frame::OnPageChanged(wxFlatNotebookEvent &event) {
 	event.Skip();
 }
 
-void Frame::OnPageClosed(wxFlatNotebookEvent &event) {
+void Frame::OnPageClosed(wxFlatNotebookEvent &event)
+{
 	wxUnusedVar(event);
 	GetOpenWindowsPane()->UpdateList();
 }
 
-void Frame::OnFileSaveAll(wxCommandEvent &event) {
+void Frame::OnFileSaveAll(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	ManagerST::Get()->SaveAll();
 }
 
-void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event) {
+void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
+{
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
 
 	// This menu item is enabled only if the current editor
@@ -1074,7 +1105,8 @@ void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event) {
 	event.Enable(editor && !editor->GetProjectName().IsEmpty());
 }
 
-void Frame::ClosePage(LEditor *editor, bool notify, int index, bool doDelete, bool &veto) {
+void Frame::ClosePage(LEditor *editor, bool notify, int index, bool doDelete, bool &veto)
+{
 	veto = false;
 	if ( editor->GetModify() ) {
 		// prompt user to save file
@@ -1118,7 +1150,8 @@ void Frame::ClosePage(LEditor *editor, bool notify, int index, bool doDelete, bo
 	}
 }
 
-void Frame::OnSearchThread(wxCommandEvent &event) {
+void Frame::OnSearchThread(wxCommandEvent &event)
+{
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
 	ManagerST::Get()->ShowOutputPane(OutputPane::FIND_IN_FILES_WIN);
@@ -1147,7 +1180,8 @@ void Frame::OnSearchThread(wxCommandEvent &event) {
 	m_outputPane->GetFindResultsTab()->CanFocus(true);
 }
 
-void Frame::OnFindInFiles(wxCommandEvent &event) {
+void Frame::OnFindInFiles(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	if ( m_findInFilesDlg == NULL ) {
 		m_findInFilesDlg = new FindInFilesDialog(this, m_data);
@@ -1174,12 +1208,14 @@ void Frame::OnFindInFiles(wxCommandEvent &event) {
 	m_findInFilesDlg->Show();
 }
 
-void Frame::OnWorkspaceOpen(wxUpdateUIEvent &event) {
+void Frame::OnWorkspaceOpen(wxUpdateUIEvent &event)
+{
 	event.Enable(ManagerST::Get()->IsWorkspaceOpen());
 }
 
 // Project->New Workspace
-void Frame::OnProjectNewWorkspace(wxCommandEvent &event) {
+void Frame::OnProjectNewWorkspace(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	NewDlg *dlg = new NewDlg(this, NEW_DLG_WORKSPACE);
 	dlg->ShowModal();
@@ -1187,14 +1223,16 @@ void Frame::OnProjectNewWorkspace(wxCommandEvent &event) {
 }
 
 // Project->New Project
-void Frame::OnProjectNewProject(wxCommandEvent &event) {
+void Frame::OnProjectNewProject(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	NewDlg *dlg = new NewDlg(this, NEW_DLG_PROJECT);
 	dlg->ShowModal();
 	dlg->Destroy();
 }
 
-void Frame::OnProjectAddProject(wxCommandEvent &event) {
+void Frame::OnProjectAddProject(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 
 	// Prompt user for project path
@@ -1209,7 +1247,8 @@ void Frame::OnProjectAddProject(wxCommandEvent &event) {
 }
 
 // NewDlg->Create handler
-void Frame::OnNewDlgCreate(wxCommandEvent &event) {
+void Frame::OnNewDlgCreate(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 
 	NewDlg *dlg = dynamic_cast<NewDlg*>(event.GetEventObject());
@@ -1224,19 +1263,34 @@ void Frame::OnNewDlgCreate(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnCtagsOptions(wxCommandEvent &event) {
+void Frame::OnCtagsOptions(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
+	bool colourStat = m_tagsOptionsData.GetFlags() & CC_COLOUR_FUNC_VARS ? true : false;
+
 	TagsOptionsDlg *dlg = new TagsOptionsDlg(this, m_tagsOptionsData);
 	if (dlg->ShowModal() == wxID_OK) {
 		TagsManager *tagsMgr = TagsManagerST::Get();
 		m_tagsOptionsData = dlg->GetData();
+
+		bool newStat =  m_tagsOptionsData.GetFlags() & CC_COLOUR_FUNC_VARS ? true : false;
 		tagsMgr->SetCtagsOptions(m_tagsOptionsData);
 		EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
+
+		if (newStat != colourStat) {
+			for (int i=0; i<GetNotebook()->GetPageCount(); i++) {
+				LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
+				if (editor) {
+					editor->UpdateColours();
+				}
+			}
+		}
 	}
 	dlg->Destroy();
 }
 
-void Frame::RegisterToolbar(int menuItemId, const wxString &name) {
+void Frame::RegisterToolbar(int menuItemId, const wxString &name)
+{
 	m_toolbars[menuItemId] = name;
 	Connect(menuItemId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnViewToolbar), NULL, this);
 	Connect(menuItemId, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Frame::OnViewToolbarUI), NULL, this);
@@ -1249,35 +1303,40 @@ void Frame::RegisterDockWindow(int menuItemId, const wxString &name)
 	Connect(menuItemId, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Frame::OnViewPaneUI), NULL, this);
 }
 
-void Frame::OnViewToolbar(wxCommandEvent &event) {
+void Frame::OnViewToolbar(wxCommandEvent &event)
+{
 	std::map<int, wxString>::iterator iter = m_toolbars.find(event.GetId());
 	if (iter != m_toolbars.end()) {
 		ViewPane(iter->second, event);
 	}
 }
 
-void Frame::OnViewToolbarUI(wxUpdateUIEvent &event) {
+void Frame::OnViewToolbarUI(wxUpdateUIEvent &event)
+{
 	std::map<int, wxString>::iterator iter = m_toolbars.find(event.GetId());
 	if (iter != m_toolbars.end()) {
 		ViewPaneUI(iter->second, event);
 	}
 }
 
-void Frame::OnViewPane(wxCommandEvent &event) {
+void Frame::OnViewPane(wxCommandEvent &event)
+{
 	std::map<int, wxString>::iterator iter = m_panes.find(event.GetId());
 	if (iter != m_panes.end()) {
 		ViewPane(iter->second, event);
 	}
 }
 
-void Frame::OnViewPaneUI(wxUpdateUIEvent &event) {
+void Frame::OnViewPaneUI(wxUpdateUIEvent &event)
+{
 	std::map<int, wxString>::iterator iter = m_panes.find(event.GetId());
 	if (iter != m_panes.end()) {
 		ViewPaneUI(iter->second, event);
 	}
 }
 
-void Frame::ViewPane(const wxString &paneName, wxCommandEvent &event) {
+void Frame::ViewPane(const wxString &paneName, wxCommandEvent &event)
+{
 	wxAuiPaneInfo &info = m_mgr.GetPane(paneName);
 	if (info.IsOk()) {
 		if ( event.IsChecked() ) {
@@ -1290,20 +1349,23 @@ void Frame::ViewPane(const wxString &paneName, wxCommandEvent &event) {
 
 }
 
-void Frame::ViewPaneUI(const wxString &paneName, wxUpdateUIEvent &event) {
+void Frame::ViewPaneUI(const wxString &paneName, wxUpdateUIEvent &event)
+{
 	wxAuiPaneInfo &info = m_mgr.GetPane(paneName);
 	if (info.IsOk()) {
 		event.Check(info.IsShown());
 	}
 }
 
-void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event)) {
+void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
+{
 	OptionsDlg *dlg = new OptionsDlg(this);
 	dlg->ShowModal();
 	dlg->Destroy();
 }
 
-void Frame::OnConfigurationManager(wxCommandEvent &event) {
+void Frame::OnConfigurationManager(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	ConfigurationManagerDlg *dlg = new ConfigurationManagerDlg(this);
 	dlg->ShowModal();
@@ -1314,33 +1376,37 @@ void Frame::OnConfigurationManager(wxCommandEvent &event) {
 	ManagerST::Get()->GetProjectList(projs);
 	for ( size_t i=0; i< projs.GetCount(); i++ ) {
 		ProjectPtr proj = ManagerST::Get()->GetProject( projs.Item(i) );
-		if( proj ) {
+		if ( proj ) {
 			proj->SetModified(true);
 		}
 	}
-	
+
 }
 
-void Frame::OnTogglePanes(wxCommandEvent &event) {
+void Frame::OnTogglePanes(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	ManagerST::Get()->TogglePanes();
 }
 
-void Frame::OnAddEnvironmentVariable(wxCommandEvent &event) {
+void Frame::OnAddEnvironmentVariable(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	EnvVarsTableDlg *dlg = new EnvVarsTableDlg(this);
 	dlg->ShowModal();
 	dlg->Destroy();
 }
 
-void Frame::OnAdvanceSettings(wxCommandEvent &event) {
+void Frame::OnAdvanceSettings(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	AdvancedDlg *dlg = new AdvancedDlg(this);
 	dlg->ShowModal();
 	dlg->Destroy();
 }
 
-void Frame::OnBuildEvent(wxCommandEvent &event) {
+void Frame::OnBuildEvent(wxCommandEvent &event)
+{
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
 	m_outputPane->GetBuildTab()->CanFocus(true);
@@ -1348,14 +1414,14 @@ void Frame::OnBuildEvent(wxCommandEvent &event) {
 		ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN);
 		m_outputPane->GetBuildTab()->Clear();
 		//read settings for the build output tab
-		m_outputPane->GetBuildTab()->ReloadSettings(); 
+		m_outputPane->GetBuildTab()->ReloadSettings();
 		m_outputPane->GetBuildTab()->AppendText(wxT("Building: "));
 	} else if (event.GetEventType() == wxEVT_BUILD_ADDLINE) {
 		m_outputPane->GetBuildTab()->AppendText(event.GetString());
 	} else if (event.GetEventType() == wxEVT_BUILD_ENDED) {
 		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
 		m_outputPane->GetBuildTab()->OnBuildEnded();
-		
+
 		//If the build process was part of a 'Build and Run' command, check whether an erros
 		//occured during build process, if non, launch the output
 		if (m_buildInRun) {
@@ -1377,7 +1443,8 @@ void Frame::OnBuildEvent(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnOutputWindowEvent(wxCommandEvent &event) {
+void Frame::OnOutputWindowEvent(wxCommandEvent &event)
+{
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
 	ManagerST::Get()->ShowOutputPane(OutputPane::OUTPUT_WIN);
@@ -1392,7 +1459,8 @@ void Frame::OnOutputWindowEvent(wxCommandEvent &event) {
 }
 
 // Build operations
-void Frame::OnBuildProject(wxCommandEvent &event) {
+void Frame::OnBuildProject(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
@@ -1400,7 +1468,8 @@ void Frame::OnBuildProject(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnBuildAndRunProject(wxCommandEvent &event) {
+void Frame::OnBuildAndRunProject(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
@@ -1409,7 +1478,8 @@ void Frame::OnBuildAndRunProject(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnRebuildProject(wxCommandEvent &event) {
+void Frame::OnRebuildProject(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
@@ -1418,24 +1488,28 @@ void Frame::OnRebuildProject(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnBuildProjectUI(wxUpdateUIEvent &event) {
+void Frame::OnBuildProjectUI(wxUpdateUIEvent &event)
+{
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	event.Enable(enable);
 }
 
-void Frame::OnStopExecutedProgramUI(wxUpdateUIEvent &event) {
+void Frame::OnStopExecutedProgramUI(wxUpdateUIEvent &event)
+{
 	Manager *mgr = ManagerST::Get();
 	bool enable = mgr->IsProgramRunning();
 	event.Enable(enable);
 }
 
-void Frame::OnStopBuildUI(wxUpdateUIEvent &event) {
+void Frame::OnStopBuildUI(wxUpdateUIEvent &event)
+{
 	Manager *mgr = ManagerST::Get();
 	bool enable = mgr->IsBuildInProgress();
 	event.Enable(enable);
 }
 
-void Frame::OnStopBuild(wxCommandEvent &event) {
+void Frame::OnStopBuild(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	Manager *mgr = ManagerST::Get();
 	if (mgr->IsBuildInProgress()) {
@@ -1443,7 +1517,8 @@ void Frame::OnStopBuild(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnStopExecutedProgram(wxCommandEvent &event) {
+void Frame::OnStopExecutedProgram(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	Manager *mgr = ManagerST::Get();
 	if (mgr->IsProgramRunning()) {
@@ -1451,17 +1526,20 @@ void Frame::OnStopExecutedProgram(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnCleanProject(wxCommandEvent &event) {
+void Frame::OnCleanProject(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	ManagerST::Get()->CleanProject(ManagerST::Get()->GetActiveProjectName());
 }
 
-void Frame::OnCleanProjectUI(wxUpdateUIEvent &event) {
+void Frame::OnCleanProjectUI(wxUpdateUIEvent &event)
+{
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	event.Enable(enable);
 }
 
-void Frame::OnExecuteNoDebug(wxCommandEvent &event) {
+void Frame::OnExecuteNoDebug(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	wxString projectName;
 
@@ -1471,7 +1549,8 @@ void Frame::OnExecuteNoDebug(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnExecuteNoDebugUI(wxUpdateUIEvent &event) {
+void Frame::OnExecuteNoDebugUI(wxUpdateUIEvent &event)
+{
 	event.Enable(ManagerST::Get()->GetActiveProjectName().IsEmpty() == false
 	             &&
 	             !ManagerST::Get()->IsBuildInProgress()
@@ -1479,29 +1558,31 @@ void Frame::OnExecuteNoDebugUI(wxUpdateUIEvent &event) {
 	             !ManagerST::Get()->IsProgramRunning());
 }
 
-void Frame::OnWorkspaceConfigChanged(wxCommandEvent &event) {
+void Frame::OnWorkspaceConfigChanged(wxCommandEvent &event)
+{
 	wxString selectionStr = event.GetString();
-	
+
 	//update the workspace configuration file
 	ManagerST::Get()->SetWorkspaceConfigurationName(selectionStr);
-	
+
 	//force makefile generation upon configuration change
 	wxArrayString projs;
 	ManagerST::Get()->GetProjectList(projs);
 	for ( size_t i=0; i< projs.GetCount(); i++ ) {
 		ProjectPtr proj = ManagerST::Get()->GetProject( projs.Item(i) );
-		if( proj ) {
+		if ( proj ) {
 			proj->SetModified(true);
 		}
 	}
 }
 
-void Frame::OnTimer(wxTimerEvent &event) {
+void Frame::OnTimer(wxTimerEvent &event)
+{
 	static bool first(true);
 	//Attach external database symbol
 	if (first) {
 		first = false;
-		
+
 		if (m_tagsOptionsData.GetFlags() & CC_LOAD_EXT_DB) {
 			//load the recently opened external database
 			wxString tagDb = EditorConfigST::Get()->GetTagsDatabase();
@@ -1531,7 +1612,8 @@ void Frame::OnTimer(wxTimerEvent &event) {
 	event.Skip();
 }
 
-void Frame::OnFileCloseAll(wxCommandEvent &event) {
+void Frame::OnFileCloseAll(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	ManagerST::Get()->CloseAll();
 
@@ -1539,12 +1621,13 @@ void Frame::OnFileCloseAll(wxCommandEvent &event) {
 	wxString title(wxT("CodeLite - Revision: "));
 	title << _U(SvnRevision);
 	SetTitle(title);
-	
+
 	GetMainBook()->Clear();
 	GetOpenWindowsPane()->UpdateList();
 }
 
-void Frame::OnQuickOutline(wxCommandEvent &event) {
+void Frame::OnQuickOutline(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	if (ManagerST::Get()->IsWorkspaceOpen() == false)
 		return;
@@ -1560,7 +1643,8 @@ void Frame::OnQuickOutline(wxCommandEvent &event) {
 	dlg->Destroy();
 }
 
-void Frame::OnFindType(wxCommandEvent &event) {
+void Frame::OnFindType(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	if (ManagerST::Get()->IsWorkspaceOpen() == false)
 		return;
@@ -1576,7 +1660,8 @@ void Frame::OnFindType(wxCommandEvent &event) {
 	dlg->Destroy();
 }
 
-void Frame::OnFindResource(wxCommandEvent &event) {
+void Frame::OnFindResource(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	if (ManagerST::Get()->IsWorkspaceOpen() == false)
 		return;
@@ -1592,11 +1677,13 @@ void Frame::OnFindResource(wxCommandEvent &event) {
 	dlg->Destroy();
 }
 
-void Frame::OnImportMakefileUI(wxUpdateUIEvent &event) {
+void Frame::OnImportMakefileUI(wxUpdateUIEvent &event)
+{
 	event.Enable(false);
 }
 
-void Frame::OnImportMakefile(wxCommandEvent &event) {
+void Frame::OnImportMakefile(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	const wxString ALL(wxT("Import makefile files (Makefile) |Makefile|")
 	                   wxT("All Files (*)|*"));
@@ -1607,25 +1694,29 @@ void Frame::OnImportMakefile(wxCommandEvent &event) {
 	dlg->Destroy();
 }
 
-void Frame::OnAddSymbols(SymbolTreeEvent &event) {
+void Frame::OnAddSymbols(SymbolTreeEvent &event)
+{
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree();
 	if (tree)
 		tree->AddSymbols(event);
 }
 
-void Frame::OnDeleteSymbols(SymbolTreeEvent &event) {
+void Frame::OnDeleteSymbols(SymbolTreeEvent &event)
+{
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree();
 	if (tree)
 		tree->DeleteSymbols(event);
 }
 
-void Frame::OnUpdateSymbols(SymbolTreeEvent &event) {
+void Frame::OnUpdateSymbols(SymbolTreeEvent &event)
+{
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree();
 	if (tree)
 		tree->UpdateSymbols(event);
 }
 
-wxString Frame::CreateWorkspaceTable() {
+wxString Frame::CreateWorkspaceTable()
+{
 	wxString html;
 	wxArrayString files;
 	Manager *mgr = ManagerST::Get();
@@ -1648,7 +1739,8 @@ wxString Frame::CreateWorkspaceTable() {
 	return html;
 }
 
-wxString Frame::CreateFilesTable() {
+wxString Frame::CreateFilesTable()
+{
 	wxString html;
 	wxArrayString files;
 	Manager *mgr = ManagerST::Get();
@@ -1670,7 +1762,8 @@ wxString Frame::CreateFilesTable() {
 	return html;
 }
 
-void Frame::CreateRecentlyOpenedFilesMenu() {
+void Frame::CreateRecentlyOpenedFilesMenu()
+{
 	wxArrayString files;
 	Manager *mgr = ManagerST::Get();
 	FileHistory &hs = mgr->GetRecentlyOpenedFilesClass();
@@ -1697,7 +1790,8 @@ void Frame::CreateRecentlyOpenedFilesMenu() {
 	}
 }
 
-void Frame::CreateRecentlyOpenedWorkspacesMenu() {
+void Frame::CreateRecentlyOpenedWorkspacesMenu()
+{
 	wxArrayString files;
 	Manager *mgr = ManagerST::Get();
 	FileHistory &hs = mgr->GetRecentlyOpenedWorkspacesClass();
@@ -1724,7 +1818,8 @@ void Frame::CreateRecentlyOpenedWorkspacesMenu() {
 	}
 }
 
-void Frame::OnRecentFile(wxCommandEvent &event) {
+void Frame::OnRecentFile(wxCommandEvent &event)
+{
 	size_t idx = event.GetId() - (RecentFilesSubMenuID+1);
 	Manager *mgr = ManagerST::Get();
 	FileHistory &fh = mgr->GetRecentlyOpenedFilesClass();
@@ -1738,7 +1833,8 @@ void Frame::OnRecentFile(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnRecentWorkspace(wxCommandEvent &event) {
+void Frame::OnRecentWorkspace(wxCommandEvent &event)
+{
 	size_t idx = event.GetId() - (RecentWorkspaceSubMenuID+1);
 	Manager *mgr = ManagerST::Get();
 	FileHistory &fh = mgr->GetRecentlyOpenedWorkspacesClass();
@@ -1751,7 +1847,8 @@ void Frame::OnRecentWorkspace(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnBackwardForward(wxCommandEvent &event) {
+void Frame::OnBackwardForward(wxCommandEvent &event)
+{
 	switch (event.GetId()) {
 	case wxID_FORWARD: {
 		BrowseRecord rec = NavMgr::Get()->Next();
@@ -1768,7 +1865,8 @@ void Frame::OnBackwardForward(wxCommandEvent &event) {
 	}
 }
 
-void Frame::OnBackwardForwardUI(wxUpdateUIEvent &event) {
+void Frame::OnBackwardForwardUI(wxUpdateUIEvent &event)
+{
 	if (event.GetId() == wxID_FORWARD) {
 		event.Enable(NavMgr::Get()->CanNext());
 	} else if (event.GetId() == wxID_BACKWARD) {
@@ -1778,7 +1876,8 @@ void Frame::OnBackwardForwardUI(wxUpdateUIEvent &event) {
 	}
 }
 
-void Frame::OnFixDatabasePaths(wxCommandEvent &event) {
+void Frame::OnFixDatabasePaths(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	const wxString ALL(	wxT("Tags Database File (*.tags)|*.tags|")
 	                    wxT("All Files (*)|*"));
@@ -1808,11 +1907,13 @@ void Frame::OnFixDatabasePaths(wxCommandEvent &event) {
 	fdlg->Destroy();
 }
 
-void Frame::OnFixDatabasePathsUI(wxUpdateUIEvent &event) {
+void Frame::OnFixDatabasePathsUI(wxUpdateUIEvent &event)
+{
 	event.Enable(true);
 }
 
-void Frame::CreateWelcomePage() {
+void Frame::CreateWelcomePage()
+{
 	Manager *mgr = ManagerST::Get();
 	//load the template
 	wxFileName fn(mgr->GetStarupDirectory(), wxT("index.html"));
@@ -1840,7 +1941,8 @@ void Frame::CreateWelcomePage() {
 	GetNotebook()->AddPage(m_welcomePage, wxT("Welcome"), true, 0);
 }
 
-void Frame::OnImportMSVS(wxCommandEvent &e) {
+void Frame::OnImportMSVS(wxCommandEvent &e)
+{
 	wxUnusedVar(e);
 	const wxString ALL(wxT("MS Visual Studio Solution File (*.sln)|*.sln|")
 	                   wxT("All Files (*)|*"));
@@ -1851,32 +1953,38 @@ void Frame::OnImportMSVS(wxCommandEvent &e) {
 	dlg->Destroy();
 }
 
-void Frame::OnDebug(wxCommandEvent &e) {
+void Frame::OnDebug(wxCommandEvent &e)
+{
 	wxUnusedVar(e);
 	Manager *mgr = ManagerST::Get();
-	if(mgr->IsWorkspaceOpen()){
+	if (mgr->IsWorkspaceOpen()) {
 		mgr->DbgStart();
 	}
 }
 
-void Frame::OnDebugUI(wxUpdateUIEvent &e) {
+void Frame::OnDebugUI(wxUpdateUIEvent &e)
+{
 	e.Enable(true);
 }
 
-void Frame::OnDebugStop(wxCommandEvent &e) {
+void Frame::OnDebugStop(wxCommandEvent &e)
+{
 	wxUnusedVar(e);
 	ManagerST::Get()->DbgStop();
 }
 
-void Frame::OnDebugStopUI(wxUpdateUIEvent &e) {
+void Frame::OnDebugStopUI(wxUpdateUIEvent &e)
+{
 	e.Enable(DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning());
 }
 
-void Frame::OnDebugManageBreakpointsUI(wxUpdateUIEvent &e) {
+void Frame::OnDebugManageBreakpointsUI(wxUpdateUIEvent &e)
+{
 	e.Enable(true);
 }
 
-void Frame::OnDebugCmd(wxCommandEvent &e) {
+void Frame::OnDebugCmd(wxCommandEvent &e)
+{
 	int cmd(wxNOT_FOUND);
 	if (e.GetId() == XRCID("pause_debugger")) {
 		cmd = DBG_PAUSE;
@@ -1893,7 +2001,8 @@ void Frame::OnDebugCmd(wxCommandEvent &e) {
 	}
 }
 
-void Frame::OnDebugCmdUI(wxUpdateUIEvent &e) {
+void Frame::OnDebugCmdUI(wxUpdateUIEvent &e)
+{
 	if (e.GetId() == XRCID("pause_debugger") ||
 	        e.GetId() == XRCID("dbg_stepin") ||
 	        e.GetId() == XRCID("dbg_stepout") ||
@@ -1902,14 +2011,16 @@ void Frame::OnDebugCmdUI(wxUpdateUIEvent &e) {
 	}
 }
 
-void Frame::OnDebuggerSettings(wxCommandEvent &e) {
+void Frame::OnDebuggerSettings(wxCommandEvent &e)
+{
 	wxUnusedVar(e);
 	DebuggerSettingsDlg *dlg = new DebuggerSettingsDlg(this);
 	dlg->ShowModal();
 	dlg->Destroy();
 }
 
-void Frame::OnIdle(wxIdleEvent &e) {
+void Frame::OnIdle(wxIdleEvent &e)
+{
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
 		dbgr->Poke();
@@ -1917,11 +2028,13 @@ void Frame::OnIdle(wxIdleEvent &e) {
 	}
 }
 
-void Frame::OnNextBuildError(wxCommandEvent &event) {
+void Frame::OnNextBuildError(wxCommandEvent &event)
+{
 	GetOutputPane()->GetBuildTab()->ProcessEvent(event);
 }
 
-void Frame::OnNextBuildErrorUI(wxUpdateUIEvent &event) {
+void Frame::OnNextBuildErrorUI(wxUpdateUIEvent &event)
+{
 	bool isShown(false);
 	wxAuiPaneInfo &info = m_mgr.GetPane(wxT("Output"));
 	if (info.IsOk()) {
@@ -1930,7 +2043,8 @@ void Frame::OnNextBuildErrorUI(wxUpdateUIEvent &event) {
 	event.Enable(ManagerST::Get()->IsWorkspaceOpen() && isShown);
 }
 
-void Frame::OnLinkClicked(wxHtmlLinkEvent &e) {
+void Frame::OnLinkClicked(wxHtmlLinkEvent &e)
+{
 	wxHtmlLinkInfo info = e.GetLinkInfo();
 	wxString action = info.GetHref();
 
@@ -1969,23 +2083,27 @@ void Frame::OnLinkClicked(wxHtmlLinkEvent &e) {
 	}
 }
 
-void Frame::OnLoadLastSessionUI(wxUpdateUIEvent &event) {
+void Frame::OnLoadLastSessionUI(wxUpdateUIEvent &event)
+{
 	event.Check(m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION);
 }
 
-void Frame::SetFrameFlag(bool set, int flag){
-	if(set){
+void Frame::SetFrameFlag(bool set, int flag)
+{
+	if (set) {
 		m_frameGeneralInfo.SetFlags(m_frameGeneralInfo.GetFlags() | flag);
-	}else{
+	} else {
 		m_frameGeneralInfo.SetFlags(m_frameGeneralInfo.GetFlags() & ~(flag));
 	}
 }
 
-void Frame::OnLoadLastSession(wxCommandEvent &event) {
+void Frame::OnLoadLastSession(wxCommandEvent &event)
+{
 	SetFrameFlag(event.IsChecked(), CL_LOAD_LAST_SESSION);
 }
 
-void Frame::OnShowWelcomePageUI(wxUpdateUIEvent &event){
+void Frame::OnShowWelcomePageUI(wxUpdateUIEvent &event)
+{
 	for (int i=0; i<GetNotebook()->GetPageCount(); i++) {
 		if (GetNotebook()->GetPage((size_t)i) == m_welcomePage) {
 			event.Enable(false);
@@ -1995,7 +2113,8 @@ void Frame::OnShowWelcomePageUI(wxUpdateUIEvent &event){
 	event.Enable(true);
 }
 
-void Frame::OnShowWelcomePage(wxCommandEvent &event) {
+void Frame::OnShowWelcomePage(wxCommandEvent &event)
+{
 	//check if the welcome page is not 'on'
 	for (int i=0; i<GetNotebook()->GetPageCount(); i++) {
 		if (GetNotebook()->GetPage((size_t)i) == m_welcomePage) {
@@ -2006,10 +2125,11 @@ void Frame::OnShowWelcomePage(wxCommandEvent &event) {
 	CreateWelcomePage();
 }
 
-void Frame::LoadPlugins() {
+void Frame::LoadPlugins()
+{
 	PluginManager::Get()->Load();
-	
-	//after the plugin are loaded, it is time to load the saved 
+
+	//after the plugin are loaded, it is time to load the saved
 	//perspective
 	wxString pers = EditorConfigST::Get()->LoadPerspective(wxT("Default"));
 	if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == _U(SvnRevision)) {
@@ -2019,7 +2139,8 @@ void Frame::LoadPlugins() {
 	}
 }
 
-void Frame::OnAppActivated(wxActivateEvent &e) {
+void Frame::OnAppActivated(wxActivateEvent &e)
+{
 	if (!m_theFrame || e.GetActive() == false) {
 		e.Skip();
 		return;
@@ -2050,7 +2171,8 @@ void Frame::OnAppActivated(wxActivateEvent &e) {
 	e.Skip();
 }
 
-void Frame::UpgradeExternalDbExt() {
+void Frame::UpgradeExternalDbExt()
+{
 	wxString fileSpec( wxT( "*.db" ) );
 	wxArrayString files;
 	wxDir::GetAllFiles( ManagerST::Get()->GetStarupDirectory(), &files, fileSpec, wxDIR_FILES );
@@ -2065,7 +2187,8 @@ void Frame::UpgradeExternalDbExt() {
 	}
 }
 
-void Frame::AutoLoadExternalDb() {
+void Frame::AutoLoadExternalDb()
+{
 	wxString fileSpec( wxT( "*.tags" ) );
 	wxArrayString files;
 
@@ -2111,7 +2234,8 @@ void Frame::AutoLoadExternalDb() {
 	}
 }
 
-void Frame::OnCompileFile(wxCommandEvent &e) {
+void Frame::OnCompileFile(wxCommandEvent &e)
+{
 	wxUnusedVar(e);
 	Manager *mgr = ManagerST::Get();
 	if (mgr->IsWorkspaceOpen() && !mgr->IsBuildInProgress()) {
@@ -2126,7 +2250,8 @@ void Frame::OnCompileFile(wxCommandEvent &e) {
 	}
 }
 
-void Frame::OnCompileFileUI(wxUpdateUIEvent &e) {
+void Frame::OnCompileFileUI(wxUpdateUIEvent &e)
+{
 	Manager *mgr = ManagerST::Get();
 	if (mgr->IsWorkspaceOpen() && !mgr->IsBuildInProgress()) {
 		//get the current active docuemnt
@@ -2155,26 +2280,30 @@ void Frame::OnCloseAllButThis(wxCommandEvent &e)
 	wxUnusedVar(e);
 	//Start the debugger
 	Manager *mgr = ManagerST::Get();
-	
+
 	int sel = GetNotebook()->GetSelection();
-	if(sel != wxNOT_FOUND){
+	if (sel != wxNOT_FOUND) {
 		mgr->CloseAllButThis(GetNotebook()->GetPage((size_t)sel));
 	}
 }
- 
-OpenWindowsPanel *Frame::GetOpenWindowsPane(){
+
+OpenWindowsPanel *Frame::GetOpenWindowsPane()
+{
 	return GetWorkspacePane()->GetOpenedWindows();
 }
 
-FileExplorer *Frame::GetFileExplorer(){
+FileExplorer *Frame::GetFileExplorer()
+{
 	return GetWorkspacePane()->GetFileExplorer();
 }
 
-void Frame::OnLoadWelcomePage(wxCommandEvent &event){
+void Frame::OnLoadWelcomePage(wxCommandEvent &event)
+{
 	SetFrameFlag(event.IsChecked(), CL_SHOW_WELCOME_PAGE);
 }
 
-void Frame::OnLoadWelcomePageUI(wxUpdateUIEvent &event){
+void Frame::OnLoadWelcomePageUI(wxUpdateUIEvent &event)
+{
 	event.Check(m_frameGeneralInfo.GetFlags() & CL_SHOW_WELCOME_PAGE ? true : false);
 }
 
@@ -2224,15 +2353,15 @@ void Frame::OnViewEolUI(wxUpdateUIEvent &e)
 void Frame::OnConvertEol(wxCommandEvent &e)
 {
 	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if(editor){
+	if (editor) {
 		size_t flags = m_frameGeneralInfo.GetFlags();
 		int eolMode (wxSCI_EOL_LF);	//default it to unix
 		if (flags & CL_USE_EOL_CR) {
 			eolMode = wxSCI_EOL_CR;
-		} else if(flags & CL_USE_EOL_CRLF) {
+		} else if (flags & CL_USE_EOL_CRLF) {
 			eolMode = wxSCI_EOL_CRLF;
 		}
-		
+
 		editor->ConvertEOLs(eolMode);
 		//editor->Colourise(0, wxSCI_INVALID_POSITION);
 	}
@@ -2263,7 +2392,7 @@ void Frame::OnViewDisplayEOL(wxCommandEvent &e)
 {
 	bool visible;
 	size_t frame_flags = m_frameGeneralInfo.GetFlags();
-	if(e.IsChecked()){
+	if (e.IsChecked()) {
 		frame_flags |= CL_SHOW_EOL;
 		visible = true;
 	} else {
@@ -2284,7 +2413,7 @@ void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 {
 	LEditor *editor = ManagerST::Get()->GetActiveEditor();
 	bool hasEditor = editor ? true : false;
-	if(!hasEditor){
+	if (!hasEditor) {
 		e.Enable(false);
 		return;
 	}
@@ -2292,4 +2421,3 @@ void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 	e.Enable(true);
 	e.Check(m_frameGeneralInfo.GetFlags() & CL_SHOW_EOL ? true : false);
 }
-

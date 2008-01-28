@@ -22,7 +22,8 @@ enum CodeCompletionOpts
 	CC_DISP_FUNC_CALLTIP		= 8,
 	CC_LOAD_EXT_DB				= 16,
 	CC_LOAD_EXT_DB_TO_MEMORY	= 32,
-	CC_PARSE_EXT_LESS_FILES		= 64
+	CC_PARSE_EXT_LESS_FILES		= 64,
+	CC_COLOUR_FUNC_VARS			= 128
 };
 
 class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject

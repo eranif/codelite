@@ -80,6 +80,7 @@ public:
 	virtual void OnDbgDwellStart(wxScintillaEvent &event);
 	virtual void OnCallTipClick(wxScintillaEvent &event);
 	virtual void OnSciUpdateUI(wxScintillaEvent &event);
+	virtual void OnFileSaved();
 	
 	//Capture menu events
 	//return this context specific right click menu

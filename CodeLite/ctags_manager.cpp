@@ -1862,8 +1862,8 @@ void TagsManager::SetLanguage(Language *lang)
 
 Language* TagsManager::GetLanguage()
 {
-	if( !m_lang ) {
-		//for backward compatibility allows access to the tags manager using 
+	if ( !m_lang ) {
+		//for backward compatibility allows access to the tags manager using
 		//the singleton call
 		return LanguageST::Get();
 	} else {
@@ -1881,4 +1881,45 @@ void TagsManager::GetClasses(std::vector< TagEntryPtr > &tags, bool onlyWorkspac
 	wxString sql;
 	sql << wxT("select * from tags where kind in ('class', 'struct', 'union') order by name ASC");
 	DoExecuteQueury(sql, tags, onlyWorkspace);
+}
+
+void TagsManager::StripComments(const wxString &text, wxString &stippedText)
+{
+	CppScanner scanner;
+	scanner.SetText( _C(text) );
+
+	bool changedLine = false;
+	bool prepLine = false;
+	int curline = 0;
+
+	while (true) {
+		int type = scanner.yylex();
+		if (type == 0) {
+			break;
+		}
+
+		// eat up all tokens until next line
+		if ( prepLine && scanner.lineno() == curline) {
+			continue;
+		}
+
+		prepLine = false;
+
+		// Get the current line number, it will help us detect preprocessor lines
+		changedLine = (scanner.lineno() > curline);
+		if (changedLine) {
+			stippedText << wxT("\n");
+		}
+
+		curline = scanner.lineno();
+		if (type == '#') {
+			if (changedLine) {
+				// We are at the start of a new line
+				// consume everything until new line is found or end of text
+				prepLine = true;
+				continue;
+			}
+		}
+		stippedText << _U( scanner.YYText() ) << wxT(" ");
+	}
 }

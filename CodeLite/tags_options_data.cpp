@@ -4,7 +4,7 @@
 
 TagsOptionsData::TagsOptionsData() 
 : SerializedObject()
-, m_ccFlags(0)
+, m_ccFlags(CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB)
 , m_fileSpec(wxT("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++"))
 {
 	m_languages.Add(wxT("C++"));

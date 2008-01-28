@@ -58,6 +58,9 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data, i
 	
 	sbSizer2->Add( m_checkDisplayFunctionTip, 0, wxALL, 5 );
 	
+	m_checkColourLocalFuncAndVars = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Colour local functions and variables"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer2->Add( m_checkColourLocalFuncAndVars, 0, wxALL, 5 );
+	
 	bSizer4->Add( sbSizer2, 0, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer21;
@@ -164,6 +167,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkDisplayComments->SetValue(m_data.GetFlags() & CC_DISP_COMMENTS ? true : false);
 	m_checkLoadToMemory->SetValue(m_data.GetFlags() & CC_LOAD_EXT_DB_TO_MEMORY ? true : false);
 	m_checkFilesWithoutExt->SetValue(m_data.GetFlags() & CC_PARSE_EXT_LESS_FILES ? true : false);
+	m_checkColourLocalFuncAndVars->SetValue(m_data.GetFlags() & CC_COLOUR_FUNC_VARS ? true : false);
 	
 	//initialize the ctags page
 	wxString prep;
@@ -208,9 +212,10 @@ void TagsOptionsDlg::CopyData()
 	SetFlag(CC_PARSE_COMMENTS, m_checkParseComments->IsChecked());
 	SetFlag(CC_LOAD_EXT_DB_TO_MEMORY, m_checkLoadToMemory->IsChecked());
 	SetFlag(CC_PARSE_EXT_LESS_FILES, m_checkFilesWithoutExt->IsChecked());
+	SetFlag(CC_COLOUR_FUNC_VARS, m_checkColourLocalFuncAndVars->IsChecked());
+	
 	m_data.SetFileSpec(m_textFileSpec->GetValue());
 	
-
 	wxStringTokenizer tknz(m_textPrep->GetValue(), wxT(";"));
 	wxArrayString prep;
 	while(tknz.HasMoreTokens()){

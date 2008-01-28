@@ -184,15 +184,14 @@ void OpenTypeDlg::TryOpenAndEndModal()
 	{
 		m_tag = m_tags.at(data);
 		m_tags.clear();
-		EndModal(wxID_OK);
 	}
+	EndModal(wxID_OK);
 }
 
 void OpenTypeDlg::OnOK(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	TryOpenAndEndModal();
-	EndModal(wxID_OK);
 }
 
 void OpenTypeDlg::OnItemActivated(wxListEvent &event)

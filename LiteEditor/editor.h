@@ -263,7 +263,13 @@ public:
 	 */
 	time_t GetEditorLastModifiedTime() const {return m_modifyTime;}
 	void SetEditorLastModifiedTime(time_t modificationTime) {m_modifyTime = modificationTime;}
-
+	
+	/**
+	 * \brief run through the file content and update colours for the
+	 * functions / locals 
+	 */
+	void UpdateColours();
+	
 	/**
 	 *--------------------------------------------------
 	 * Implemetation for IEditor interace

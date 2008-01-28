@@ -1,4 +1,8 @@
+#include "precompiled_header.h"
 #include "colourthread.h"
+#include "colourrequest.h"
+
+#if 0
 ColourThread* ColourThread::ms_instance = 0;
 
 ColourThread::ColourThread()
@@ -27,5 +31,5 @@ void ColourThread::Release()
 
 void ColourThread::ProcessRequest(ThreadRequest *request)
 {
-	
 }
+#endif

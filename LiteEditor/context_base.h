@@ -66,6 +66,7 @@ public:
 	virtual void AddMenuDynamicContent(wxMenu *WXUNUSED(menu)) {};
 	virtual void RemoveMenuDynamicContent(wxMenu *WXUNUSED(menu)) {};
 	virtual void OnSciUpdateUI(wxScintillaEvent& WXUNUSED(event)){}
+	virtual void OnFileSaved(){};
 	
 	//override this method if you wish to provide context based right click menu
 	virtual wxMenu *GetMenu() {return NULL;}

@@ -86,7 +86,7 @@ sqlite_objects2 := $(addprefix $(SQLITE_OBJ_DIR)/, $(addsuffix .o, $(basename $(
 sqlite_objects = $(sqlite_objects1) $(sqlite_objects2) 
 
 ## our main build target
-build : pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Debugger CodeFormatter Subversion Gizmos cscope
+build : pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Debugger CodeFormatter Subversion ReferenceAnalyser Gizmos cscope
 
 CodeLite: code_lite_msg $(lib_cpp_objects) $(lib_c_objects)
 	ar rcu $(OUTPUT_DIR)/libcodelite$(EXT).a $(lib_cpp_objects)  $(lib_c_objects) 
@@ -126,6 +126,9 @@ CodeFormatter: formatter_msg
 
 ctags: sdk/ctags/Makefile ctags_msg
 	cd sdk/ctags/ && $(MAKE)
+
+ReferenceAnalyser: analyser_msg
+	cd ReferenceAnalyser/ && $(MAKE)
 
 sdk/ctags/Makefile:
 	@chmod +x sdk/ctags/configure
@@ -197,6 +200,11 @@ formatter_msg:
 	@echo Building CodeFormatter extension -AStyle
 	@echo ---------------------------------------------------------- 
 
+analyser_msg:
+	@echo ----------------------------------------------------------
+	@echo Building ReferenceAnalyser extension
+	@echo ---------------------------------------------------------- 
+
 code_lite_msg:
 	@echo ----------------------------------------------------------
 	@echo Building CodeLite library
@@ -237,6 +245,7 @@ clean:
 	cd Debugger/ && $(MAKE) clean
 	cd CodeFormatter/ && $(MAKE) clean
 	cd Subversion/ && $(MAKE) clean
+	cd ReferenceAnalyser/ && $(MAKE) clean
 	cd cscope/ && $(MAKE) clean
 
 clean_deps:
@@ -269,6 +278,7 @@ install: upgrade
 	$(RM) $(HOME)/.liteeditor/debuggers/Debugger.so
 	$(RM) $(HOME)/.liteeditor/plugins/CodeFormatter.so
 	$(RM) $(HOME)/.liteeditor/plugins/Gizmos.so
+	$(RM) $(HOME)/.liteeditor/plugins/ReferenceAnalyser.so
 	$(RM) $(HOME)/.liteeditor/plugins/Subversion.so
 	$(RM) $(HOME)/.liteeditor/plugins/cscope.so
 	$(RM) $(HOME)/.liteeditor/config/build_settings.xml
@@ -287,6 +297,8 @@ install: upgrade
 	@\cp -pr lib/Debugger.so /usr/local/share/codelite/debuggers/
 	@\cp -pr lib/CodeFormatter.so /usr/local/share/codelite/plugins/
 	@\cp -pr lib/Subversion.so /usr/local/share/codelite/plugins/
+	@\cp -pr lib/ReferenceAnalyser.so /usr/local/share/codelite/plugins/
+	@\cp -pr lib/ReferenceAnalyser.so /usr/local/share/codelite/plugins/
 	@\cp -pr lib/cscope.so /usr/local/share/codelite/plugins/
 	@\cp -pr lib/Gizmos.so /usr/local/share/codelite/plugins/
 	@\cp -pr Runtime/index.html /usr/local/share/codelite/

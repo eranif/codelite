@@ -1761,23 +1761,23 @@ void ContextCpp::OnFileSaved()
 	get_functions( patbuf.data(), foo_list, ignoreTokens );
 		
 	//cross reference between the two lists, if any of the tokens exist in 
-	//both lists, then it will be considered as function
+	//both lists, then it will be considered as variable
 	std::map< std::string, Variable > var_map;
 	std::map< std::string, clFunction > foo_map;
 	
 	//remove duplicates
-	FunctionList::iterator fiter = foo_list.begin();
-	for(; fiter != foo_list.end(); fiter++ ) {
-		clFunction foo = *fiter;
-		foo_map[foo.m_name] = foo;
-	}
-
 	VariableList::iterator viter = var_list.begin();
 	for(; viter != var_list.end(); viter++ ) {
 		Variable var = *viter;
-		if( foo_map.find( var.m_name ) == foo_map.end() ) {
+		var_map[var.m_name] = var;
+	}
+
+	FunctionList::iterator fiter = foo_list.begin();
+	for(; fiter != foo_list.end(); fiter++ ) {
+		clFunction foo = *fiter;
+		if( var_map.find( foo.m_name ) == var_map.end() ) {
 			//this is not a function, it is safe to copy it
-			var_map[var.m_name] = var;
+			foo_map[foo.m_name] = foo;
 		}
 	}
 	
@@ -1803,10 +1803,5 @@ void ContextCpp::OnFileSaved()
 	rCtrl.SetKeyWords(3, varList);
 		
 	//try to colourse only visible scope
-//	long startPos = rCtrl.PositionFromLine( rCtrl.GetFirstVisibleLine() );
-//	int lastLine = rCtrl.GetFirstVisibleLine() + rCtrl.LinesOnScreen();
-//	long endPos   = rCtrl.PositionFromLine( lastLine ) + rCtrl.LineLength(lastLine);
-//	if(endPos > startPos) {
 	rCtrl.Colourise(0, wxSCI_INVALID_POSITION);
-//	}
 }

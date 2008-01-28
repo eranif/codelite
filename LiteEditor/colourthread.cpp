@@ -1,23 +1,23 @@
 #include "colourthread.h"
-colourthread* colourthread::ms_instance = 0;
+ColourThread* ColourThread::ms_instance = 0;
 
-colourthread::colourthread()
+ColourThread::ColourThread()
 {
 }
 
-colourthread::~colourthread()
+ColourThread::~ColourThread()
 {
 }
 
-colourthread* colourthread::Instance()
+ColourThread* ColourThread::Instance()
 {
 	if(ms_instance == 0){
-		ms_instance = new colourthread();
+		ms_instance = new ColourThread();
 	}
 	return ms_instance;
 }
 
-void colourthread::Release()
+void ColourThread::Release()
 {
 	if(ms_instance){
 		delete ms_instance;
@@ -25,6 +25,7 @@ void colourthread::Release()
 	ms_instance = 0;
 }
 
-void colourthread::ProcessRequest(ThreadRequest *request)
+void ColourThread::ProcessRequest(ThreadRequest *request)
 {
+	
 }

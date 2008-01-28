@@ -165,8 +165,8 @@ bool App::OnInit()
 		wxString mainTitle;
 		mainTitle << wxT("CodeLite - SVN build, Revision: ") << _U(SvnRevision);
 		m_splash = new SplashScreen(bitmap, mainTitle, wxT("For the Windows(R) & Linux environments"),
-		                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT,
-		                            6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
+		                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
+		                            3000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 		                            style);
 	}
 	wxYield();

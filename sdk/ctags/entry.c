@@ -775,7 +775,7 @@ static int writePatternEntry (const tagEntryInfo *const tag)
 
 	//Eran Ifrah [PATCH START]
 	if (tag->hasTemplate) {
-		char *const line = readSourceLines(TagFile.vLine, tag->templatefilePosition, tag->filePosition);
+		char *const line = (char*)readSourceLines(TagFile.vLine, tag->templatefilePosition, tag->filePosition);
 		
 		for(; i<TagFile.vLine->length; i++){
 			if(TagFile.vLine->buffer[i] == '\n'){

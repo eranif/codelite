@@ -3,17 +3,17 @@
 
 #include "worker_thread.h"
 
-class colourthread : public WorkerThread {
+class ColourThread : public WorkerThread {
 
-	static colourthread* ms_instance;
+	static ColourThread* ms_instance;
 
 public:
-	static colourthread* Instance();
+	static ColourThread* Instance();
 	static void Release();
 
 private:
-	colourthread();
-	~colourthread();
+	ColourThread();
+	~ColourThread();
 
 public:
 	virtual void ProcessRequest(ThreadRequest *request);

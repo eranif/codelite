@@ -679,6 +679,13 @@ void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
 	        projectName,
 	        title );
 	dlg->ShowModal();
+	
+	//mark this project as modified
+	ProjectPtr proj = ManagerST::Get()->GetProject(projectName);
+	if(proj) {
+		proj->SetModified(true);
+	}
+	
 	dlg->Destroy();
 }
 

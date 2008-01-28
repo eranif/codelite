@@ -356,8 +356,16 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 		} else {
 			header << wxT("\t~") << info.name << wxT("();\n\n");
 		}
-		header << DoGetVirtualFuncDecl(info);
+		
 	}
+	
+	//add virtual function declaration
+	wxString v_decl = DoGetVirtualFuncDecl(info);
+	if(v_decl.IsEmpty() == false) {
+		header << wxT("public:\n");
+		header << v_decl;
+	}
+	
 	header << wxT("};\n");
 	header << wxT("#endif // __") << macro << wxT("__\n");
 
@@ -396,8 +404,8 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 	wxFFile file;
 	wxString srcFile;
 	wxString hdrFile;
-	srcFile << info.fileName << wxT(".cpp");
-	hdrFile << info.fileName << wxT(".h");
+	srcFile << info.path << wxFileName::GetPathSeparator() << info.fileName << wxT(".cpp");
+	hdrFile << info.path << wxFileName::GetPathSeparator() << info.fileName << wxT(".h");
 
 	file.Open(srcFile, wxT("w+b"));
 	file.Write(cpp);

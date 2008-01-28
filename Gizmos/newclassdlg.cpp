@@ -187,3 +187,12 @@ void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent &e)
 		m_checkBoxImplPureVirtual->SetValue(true);
 	}
 }
+
+wxString NewClassDlg::GetClassPath()
+{
+	if(m_dirPicker->GetPath().Trim().IsEmpty()) {
+		return wxT(".");
+	} else {
+		return m_dirPicker->GetPath();
+	}
+}

@@ -1548,7 +1548,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 		long blockStartPos(wxNOT_FOUND);
 		wxString content;
 
-		if (DoGetFunctionBody(curPos, blockEndPos, blockStartPos, content)) {
+		if (DoGetFunctionBody(curPos, blockStartPos, blockEndPos, content)) {
 
 			//create the functions body
 			wxString body;
@@ -1715,7 +1715,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 		long blockStartPos(wxNOT_FOUND);
 		wxString content;
 
-		if (DoGetFunctionBody(curPos, blockEndPos, blockStartPos, content)) {
+		if (DoGetFunctionBody(curPos, blockStartPos, blockEndPos, content)) {
 			//function already has body ...
 			wxMessageBox(wxT("Function '") + tag->GetName() + wxT("' already has a body"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 			return;

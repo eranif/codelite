@@ -18,6 +18,8 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 
+const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS = wxNewId();
+
 ParseThread::ParseThread()
 : WorkerThread()
 , m_pDb( new TagsDatabase() )
@@ -38,12 +40,8 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	//convert the file to tags
 	TagsManager *tagmgr = TagsManagerST::Get();
 	
-//#if defined (__WXMAC__)
-	//use the version that uses popen and calls ctags
+	//convert the file content into tags
 	tagmgr->SourceToTags2(req->file, req->tags);
-//#else
-//	tagmgr->SourceToTags(absFile, req->tags, NULL);
-//#endif
 
 	//----------------------------------------------
 	// Build a tree from project/file/project 
@@ -80,13 +78,14 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	}else{
 		newTree = mgr->ParseSourceFile2(wxFileName(file), req->tags);
 	}
-
+	
 	//-------------------------------------------------------------------
 	// Now what is left to be done here, is to update the GUI tree
 	// The GUI tree needs to be updated item by item, to avoid total tree
 	// Collapsing
 	//-------------------------------------------------------------------
-
+	
+	
 	// Compare old tree vs new tree
 	std::vector<std::pair<wxString, TagEntry> >  deletedItems;
 	std::vector<std::pair<wxString, TagEntry> >  newItems;

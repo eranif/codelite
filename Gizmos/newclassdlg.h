@@ -55,7 +55,7 @@ public:
 	void GetInheritance(std::vector< ClassParentInfo > &inheritVec);
 	bool IsSingleton() {return m_checkBox6->GetValue();}
 	wxString GetClassName(){return m_textClassName->GetValue();}
-	wxString GetClassPath(){return m_dirPicker->GetPath();}
+	wxString GetClassPath();
 	wxString GetClassFile();
 	bool IsCopyableClass(){return !m_checkBoxCopyable->IsChecked();}
 };

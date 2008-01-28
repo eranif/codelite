@@ -179,7 +179,11 @@ bool WinProcess::Read(wxString& buff)
 	{
 		chBuf[dwRead/sizeof(char)] = 0;
 		//printf("%s\n", chBuf);
-		buff = wxString::From8BitData(chBuf);
+		buff = wxString(chBuf, wxConvUTF8);
+		if(buff.IsEmpty() && dwRead > 0){
+			//conversion failed
+			buff = wxString::From8BitData(chBuf);
+		}
 		return true;
 	}
 	return false;

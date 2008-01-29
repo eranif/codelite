@@ -483,7 +483,7 @@ public:
 	/** 
 	* Import a workspace from a makefile
 	*/ 	
-	void ImportFromMakefile(const wxString &path);
+// 	void ImportFromMakefile(const wxString &path);
 
 	/**
 	 * Return the active editor or NULL if none

@@ -185,9 +185,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("find_symbol"), Frame::OnQuickOutline)
 	EVT_MENU(XRCID("attach_debugger"), Frame::OnDebugAttach)
 	EVT_MENU(XRCID("add_project"), Frame::OnProjectAddProject)
-	EVT_MENU(XRCID("import_from_makefile"), Frame::OnImportMakefile)
+//	EVT_MENU(XRCID("import_from_makefile"), Frame::OnImportMakefile)
 	EVT_MENU(XRCID("import_from_msvs"), Frame::OnImportMSVS)
-	EVT_UPDATE_UI(XRCID("import_from_makefile"), Frame::OnImportMakefileUI)
+//	EVT_UPDATE_UI(XRCID("import_from_makefile"), Frame::OnImportMakefileUI)
 	EVT_CLOSE(Frame::OnClose)
 	EVT_TIMER(FrameTimerId, Frame::OnTimer)
 	EVT_MENU_RANGE(RecentFilesSubMenuID, RecentFilesSubMenuID + 10, Frame::OnRecentFile)
@@ -1682,6 +1682,7 @@ void Frame::OnFindResource(wxCommandEvent &event)
 	dlg->Destroy();
 }
 
+/*
 void Frame::OnImportMakefileUI(wxUpdateUIEvent &event)
 {
 	event.Enable(false);
@@ -1698,6 +1699,7 @@ void Frame::OnImportMakefile(wxCommandEvent &event)
 	}
 	dlg->Destroy();
 }
+*/
 
 void Frame::OnAddSymbols(SymbolTreeEvent &event)
 {

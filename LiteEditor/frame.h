@@ -244,8 +244,8 @@ protected:
 	void OnFindResource(wxCommandEvent &event);
 	void OnFindType(wxCommandEvent &event);
 	void OnQuickOutline(wxCommandEvent &event);
-	void OnImportMakefile(wxCommandEvent &event);
-	void OnImportMakefileUI(wxUpdateUIEvent &event);
+//	void OnImportMakefile(wxCommandEvent &event);
+//	void OnImportMakefileUI(wxUpdateUIEvent &event);
 	void OnImportMSVS(wxCommandEvent &e);
 	void OnNextBuildError(wxCommandEvent &event);
 	void OnNextBuildErrorUI(wxUpdateUIEvent &event);

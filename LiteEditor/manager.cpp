@@ -27,9 +27,6 @@
 #include "algorithm"
 #include "async_executable_cmd.h"
 #include "fileutils.h"
-#include "VariableLexer.h"
-#include "MakefileParser.h"
-#include "TargetLexer.h"
 #include "workspace_pane.h"
 #include "close_all_dlg.h"
 #include "vcimporter.h"
@@ -1344,6 +1341,7 @@ wxString Manager::GetProjectNameByFile(const wxString &fullPathFileName)
 	return wxEmptyString;
 }
 
+/*
 void Manager::ImportFromMakefile(const wxString &path)
 {
 	OutputMessage(path + wxT("\n"));
@@ -1403,6 +1401,7 @@ void Manager::ImportFromMakefile(const wxString &path)
 	}
 	return;
 }
+*/
 
 LEditor *Manager::FindEditorByFileName(const wxString &fileName) const
 {

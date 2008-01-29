@@ -1700,7 +1700,7 @@ void ContextCpp::OnFileSaved()
 	rCtrl.Colourise(0, wxSCI_INVALID_POSITION);
 }
 
-void ContextCpp::ApplySettings()
+void ContextCpp::ApplySettings() 
 {
 	//-----------------------------------------------
 	// Load laguage settings from configuration file

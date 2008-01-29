@@ -44,7 +44,7 @@ public:
 	virtual void AutoIndent(const wxChar&);
 	virtual void CallTipCancel(){};
 	virtual void ApplySettings();
-	
+	virtual void OnFileSaved(); 
 	virtual bool IsCommentOrString(long WXUNUSED(pos)){ return false; }
 
 	// event handlers

@@ -10,6 +10,7 @@ ContextGeneric::ContextGeneric(LEditor *container, const wxString &name)
 	// Load laguage settings from configuration file
 	//-----------------------------------------------
 	SetName(name);
+	ApplySettings();
 }
 
 
@@ -97,4 +98,10 @@ void ContextGeneric::ApplySettings()
 		rCtrl.StyleSetForeground(st.GetId(), (*iter).GetFgColour());
 		rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
 	}
+}
+
+void ContextGeneric::OnFileSaved()
+{
+	//by default just colour the page
+	GetCtrl().Colourise(0, wxSCI_INVALID_POSITION);
 }

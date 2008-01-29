@@ -22,7 +22,7 @@
   <Environment>
     <Variable Name="MINGW" Value="C:/MinGW"/>
     <Variable Name="WorkspaceName" Value="LiteEditor"/>
-    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
+    <Variable Name="WorkspacePath" Value="/home/eran/devl/codelite/trunk"/>
   </Environment>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Release Unicode" Selected="no">
@@ -40,7 +40,7 @@
       <Project Name="CodeLite" ConfigName="ReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Debug Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
       <Project Name="wxflatnotebook" ConfigName="DebugUnicode"/>
@@ -55,7 +55,7 @@
       <Project Name="CodeLite" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxflatnotebook" ConfigName="WinReleaseUnicode"/>

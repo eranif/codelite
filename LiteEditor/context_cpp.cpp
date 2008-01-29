@@ -1748,47 +1748,44 @@ void ContextCpp::OnFileSaved()
 	VALIDATE_PROJECT(rCtrl);
 	
 	VariableList var_list;
-	FunctionList foo_list;
+	std::map< std::string, Variable > var_map;
+	std::map< wxString, TagEntryPtr> foo_map;
+	
 	std::map<std::string, bool> ignoreTokens;
 	
-	//collect list of variables & functions
-	wxString txt;
-	TagsManagerST::Get()->StripComments(rCtrl.GetText(), txt);
+	const wxCharBuffer patbuf = _C(rCtrl.GetText());
 	
-	const wxCharBuffer patbuf = _C(txt);
-	
+	//collect list of variables
 	get_variables( patbuf.data(), var_list, ignoreTokens );
-	get_functions( patbuf.data(), foo_list, ignoreTokens );
-		
-	//cross reference between the two lists, if any of the tokens exist in 
-	//both lists, then it will be considered as variable
-	std::map< std::string, Variable > var_map;
-	std::map< std::string, clFunction > foo_map;
+
+	//list all functions of this file
+	std::vector< TagEntryPtr > tags;
+	TagsManagerST::Get()->GetFunctions(tags, rCtrl.GetFileName().GetFullPath());
+	for(size_t i=0; i< tags.size(); i++) {
+		foo_map[tags.at(i)->GetName()] = tags.at(i);
+	}
 	
+	//cross reference between the two lists, if any of the tokens exist in 
+	//both lists, then it will be considered as function
+
 	//remove duplicates
 	VariableList::iterator viter = var_list.begin();
 	for(; viter != var_list.end(); viter++ ) {
 		Variable var = *viter;
-		var_map[var.m_name] = var;
-	}
-
-	FunctionList::iterator fiter = foo_list.begin();
-	for(; fiter != foo_list.end(); fiter++ ) {
-		clFunction foo = *fiter;
-		if( var_map.find( foo.m_name ) == var_map.end() ) {
-			//this is not a function, it is safe to copy it
-			foo_map[foo.m_name] = foo;
+		wxString name = _U(var.m_name.c_str());
+		if(foo_map.find(name) == foo_map.end()) {
+			var_map[var.m_name] = var;
 		}
 	}
-	
+
 	//create to word list
 	//functions
 	wxString fooList;
 	wxString varList;
 	
-	std::map< std::string, clFunction >::iterator it1 = foo_map.begin();
+	std::map< wxString, TagEntryPtr >::iterator it1 = foo_map.begin();
 	for(; it1 != foo_map.end(); it1++ ) {
-		fooList << _U(it1->second.m_name.c_str()) << wxT(" ");
+		fooList << it1->second->GetName() << wxT(" ");
 	}
 	
 	std::map< std::string, Variable >::iterator it2 = var_map.begin();

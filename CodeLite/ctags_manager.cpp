@@ -1923,3 +1923,14 @@ void TagsManager::StripComments(const wxString &text, wxString &stippedText)
 		stippedText << _U( scanner.YYText() ) << wxT(" ");
 	}
 }
+
+void TagsManager::GetFunctions(std::vector< TagEntryPtr > &tags, const wxString &fileName , bool onlyWorkspace )
+{
+	wxString sql;
+	sql << wxT("select * from tags where kind in ('function', 'prototype')");
+	if (fileName.IsEmpty() == false) {
+		sql << wxT(" and file='") << fileName << wxT("'");
+	}
+	sql << wxT("  order by name ASC");
+	DoExecuteQueury(sql, tags, onlyWorkspace);
+}

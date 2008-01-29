@@ -20,7 +20,7 @@
     <Property Id="17" Name="Doxygen keyword" Bold="no" Face="Bitstream Vera Sans Mono" Colour="blue" BgColour="#FFFFFF" Size="9"/>
     <Property Id="18" Name="Doxygen keyword error" Bold="no" Face="Bitstream Vera Sans Mono" Colour="#800080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="16" Name="Functions" Bold="yes" Face="Bitstream Vera Sans Mono" Colour="#FF00FF" BgColour="#FFFFFF" Size="9"/>
-    <Property Id="19" Name="Variables" Bold="no" Face="Bitstream Vera Sans Mono" Colour="#800080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="19" Name="Variables" Bold="no" Face="Bitstream Vera Sans Mono" Colour="#804000" BgColour="#FFFFFF" Size="9"/>
     <Property Id="20" Name="Disabled Code" Bold="no" Face="Bitstream Vera Sans Mono" Colour="grey" BgColour="#FFFFFF" Size="9"/>
     <Property Id="34" Name="Brace match" Bold="no" Face="Bitstream Vera Sans Mono" Colour="#0005FF" BgColour="#FFFFFF" Size="9"/>
     <Property Id="35" Name="Brace bad match" Bold="no" Face="Bitstream Vera Sans Mono" Colour="red" BgColour="white" Size="9"/>

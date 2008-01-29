@@ -539,7 +539,14 @@ public:
 	 * classes from the external database as well 
 	 */
 	void GetClasses(std::vector< TagEntryPtr > &tags, bool onlyWorkspace = true);
-
+	
+	/**
+	 * \brief return list of functions
+	 * \param tags
+	 * \param fileName
+	 */
+	void GetFunctions(std::vector< TagEntryPtr > &tags, const wxString &fileName = wxEmptyString, bool onlyWorkspace = true);
+	
 	/**
 	 * \brief generate function body/impl based on a tag
 	 * \param tag the input tag which represents the requested tag

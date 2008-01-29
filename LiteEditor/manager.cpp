@@ -1205,6 +1205,11 @@ void Manager::OnProcessEnd(wxProcessEvent &event)
 	m_asyncExeCmd->GetProcess()->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
 	delete m_asyncExeCmd;
 	m_asyncExeCmd = NULL;
+	
+	//return the focus back to the editor
+	if(GetActiveEditor()) {
+		GetActiveEditor()->SetActive();
+	}
 }
 
 void Manager::SetWorkspaceConfigurationName(const wxString &name)

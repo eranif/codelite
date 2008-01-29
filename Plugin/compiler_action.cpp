@@ -85,6 +85,7 @@ void CompilerAction::OnProcessEnd(wxProcessEvent& event)
 		}
 		CleanUp();
 	}
+	//give back the focus to the editor
 	event.Skip();
 }
 

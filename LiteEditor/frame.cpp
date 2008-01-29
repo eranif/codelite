@@ -1421,7 +1421,7 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 	} else if (event.GetEventType() == wxEVT_BUILD_ENDED) {
 		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
 		m_outputPane->GetBuildTab()->OnBuildEnded();
-
+		
 		//If the build process was part of a 'Build and Run' command, check whether an erros
 		//occured during build process, if non, launch the output
 		if (m_buildInRun) {
@@ -1439,6 +1439,12 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 			//are we rebuilding?
 			m_rebuild = false;
 			ManagerST::Get()->BuildProject(ManagerST::Get()->GetActiveProjectName());
+		}
+		
+		//give back the focus to the editor
+		LEditor *editor = ManagerST::Get()->GetActiveEditor();
+		if(editor) {
+			editor->SetActive();
 		}
 	}
 }

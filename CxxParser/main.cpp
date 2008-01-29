@@ -36,7 +36,7 @@ int main()
 	//testScopeParser(buf);
 	//testVarParser(buf);
 	//testExprParser(buf);
-	//testFuncParser(buf);
+	testFuncParser(buf);
 	free(buf);
 	Sleep(100000);
 }

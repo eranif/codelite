@@ -288,7 +288,7 @@ optional_initialization_list: /* empty */
 		| ':' {consumeInitializationList();}
 		;
 
-/* functions */
+/* functions */ 
 function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl nested_scope_specifier func_name '(' {consumeFuncArgList();} const_spec  '{'
 					{
 						//trim down trailing '::' from scope name

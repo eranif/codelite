@@ -11,4 +11,4 @@
 //((Std::string*)eran)
 //((Singleton<MyClass>*)Eran)
 //Eran(dfd, dfdf, dfdf)
-void foo();
+foo();

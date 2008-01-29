@@ -14,7 +14,7 @@
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/
 
-#ifdef yylex
+#ifdef yylex 
 #undef yylex
 #define yylex cl_scope_lex
 #endif 

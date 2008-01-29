@@ -1004,18 +1004,33 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 		//(this can happen because ctags keeps only the first line of a function which was declared
 		//over multiple lines)
 		//do some work on the input buffer
-		if (pattern.EndsWith(wxT(";"))) {
-			pattern = pattern.RemoveLast();
+		wxString pat2(pattern);
+		
+		if (pat2.EndsWith(wxT(";"))) {
+			pat2 = pat2.RemoveLast();
 		}
-		if (pattern.EndsWith(wxT(","))) {
-			pattern = pattern.RemoveLast();
+		if (pat2.EndsWith(wxT(","))) {
+			pat2 = pat2.RemoveLast();
 		}
-		pattern << wxT(");");
-		const wxCharBuffer patbuf1 = _C(pattern);
+		pat2 << wxT(");");
+		const wxCharBuffer patbuf1 = _C(pat2);
 		get_functions(patbuf1.data(), fooList, ignoreTokens);
 		if (fooList.size() == 1) {
 			foo = (*fooList.begin());
 			return true;
+		} else if(fooList.empty()) {
+			//try a nasty hack:
+			//the yacc cant find ctor declarations
+			//so add a 'void ' infront of the function...
+			wxString pat3(pattern);
+			pat3.Prepend(wxT("void "));
+			const wxCharBuffer patbuf2 = _C(pat3);
+			get_functions(patbuf2.data(), fooList, ignoreTokens);
+			if (fooList.size() == 1) {
+				foo = (*fooList.begin());
+				foo.m_returnValue.Reset();//clear the dummy return value
+				return true;
+			}
 		}
 	}
 	return false;

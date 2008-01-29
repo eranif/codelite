@@ -1462,7 +1462,8 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 			//remove the empty content provided by this function
 			body = body.BeforeLast(wxT('{'));
 			body = body.Trim().Trim(false);
-			body << content;
+			body.Prepend(wxT("\n"));
+			body << content << wxT("\n");
 			
 			wxString targetFile;
 			FindSwappedFile(rCtrl.GetFileName(), targetFile);
@@ -1546,7 +1547,7 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long &blockStartPos, long &block
 		}
 
 		if (depth == 0) {
-			blockEndPos = curPos;
+			blockEndPos = rCtrl.PositionAfter(curPos);
 		}
 	}
 

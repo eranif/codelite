@@ -1659,8 +1659,7 @@ void Frame::OnFindType(wxCommandEvent &event)
 	if (dlg->ShowModal() == wxID_OK) {
 		TagEntryPtr tag = dlg->GetSelectedTag();
 		if (tag && tag->IsOk()) {
-			wxString projectName = ManagerST::Get()->GetProjectNameByFile(tag->GetFile());
-			ManagerST::Get()->OpenFile(tag->GetFile(), projectName, tag->GetLine()-1);
+			ManagerST::Get()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
 		}
 	}
 	dlg->Destroy();

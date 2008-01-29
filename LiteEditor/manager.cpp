@@ -281,15 +281,6 @@ void Manager::UnInitialize()
 	ContextManager::Free();
 	BuildManagerST::Free();
 	BuildSettingsConfigST::Free();
-	//-----------------------------------------------------
-	// Stop the parser thread and release its resources
-	// This is required if you want to avoid memory leaks
-	// Stopping the parser thread can take up to several
-	// seconds
-	// since we block until the thread complets its current
-	// work on the queue
-	//-----------------------------------------------------
-	
 	
 	// Stop the search thread and free its resources
 	SearchThreadST::Get()->Stop();

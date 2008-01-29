@@ -57,29 +57,30 @@
     <wxPoint Name="m_framePos" x="0" y="0"/>
     <long Value="15" Name="m_flags"/>
   </ArchiveObject>
+  <RecentWorkspaces>
+    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+    <File Name="/home/eran/devl/test/test.workspace"/>
+    <File Name="C:\Documents and Settings\Eran\Desktop\test\Testing.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\Test\CC\CC.workspace"/>
+    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
+    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\sdk\ctags\ctags_workspace.workspace"/>
+  </RecentWorkspaces>
+  <RecentFiles>
+    <File Name="/home/eran/devl/codelite/trunk/LiteEditor/manager.h"/>
+    <File Name="/home/eran/devl/test/testtip.mk"/>
+    <File Name="/home/eran/devl/test/main.cpp"/>
+    <File Name="/home/eran/devl/codelite/trunk/Runtime/config/build_settings.xml"/>
+    <File Name="/home/eran/devl/test/_1erere.h"/>
+    <File Name="/home/eran/devl/test/_1erere.cpp"/>
+    <File Name="/home/eran/devl/test/anotherclass.h"/>
+    <File Name="/home/eran/devl/test/anotherclass.cpp"/>
+    <File Name="/home/eran/devl/test/myclass.cpp"/>
+  </RecentFiles>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1280" y="951"/>
     <wxPoint Name="m_framePos" x="0" y="0"/>
     <long Value="15" Name="m_flags"/>
   </ArchiveObject>
-  <RecentWorkspaces>
-    <File Name="C:\Development\C++\codelite\trunk\sdk\ctags\ctags_workspace.workspace"/>
-    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
-    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
-    <File Name="C:\Test\CC\CC.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\Documents and Settings\Eran\Desktop\test\Testing.workspace"/>
-    <File Name="/home/eran/devl/test/test.workspace"/>
-  </RecentWorkspaces>
-  <RecentFiles>
-    <File Name="C:\TestArea\CCBug\sqlite3.c"/>
-    <File Name="C:\TestArea\CCBug\manager.cpp"/>
-    <File Name="C:\TestArea\CCBug\main.cpp"/>
-    <File Name="C:\TestArea\TestCustom\t7.cpp"/>
-    <File Name="/home/eran/devl/test/anotherclass.cpp"/>
-    <File Name="/home/eran/devl/test/anotherclass.h"/>
-    <File Name="/home/eran/devl/test/_1erere.cpp"/>
-    <File Name="/home/eran/devl/test/_1erere.h"/>
-    <File Name="/home/eran/devl/codelite/trunk/Runtime/config/build_settings.xml"/>
-  </RecentFiles>
 </LiteEditor>

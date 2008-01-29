@@ -126,6 +126,7 @@ void LEditor::SetSyntaxHighlight()
 	ClearDocumentStyle();
 	m_context = ManagerST::Get()->NewContextByFileName(m_fileName, this);
 	SetProperties();
+	Colourise(0, wxSCI_INVALID_POSITION);
 }
 
 LEditor::~LEditor()

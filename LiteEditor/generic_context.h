@@ -43,7 +43,8 @@ public:
 	virtual void GotoPreviousDefintion();
 	virtual void AutoIndent(const wxChar&);
 	virtual void CallTipCancel(){};
-
+	virtual void ApplySettings();
+	
 	virtual bool IsCommentOrString(long WXUNUSED(pos)){ return false; }
 
 	// event handlers

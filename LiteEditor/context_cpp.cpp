@@ -82,111 +82,8 @@ ContextCpp::ContextCpp(LEditor *container)
 		, m_tipKind(TipNone)
 		, m_rclickMenu(NULL)
 {
-	//-----------------------------------------------
-	// Load laguage settings from configuration file
-	//-----------------------------------------------
-	SetName(wxT("C++"));
-
-	// Set the key words and the lexer
-	std::list<StyleProperty> styles;
-	LexerConfPtr lexPtr;
-	// Read the configuration file
-	if (EditorConfigST::Get()->IsOk()) {
-		lexPtr = EditorConfigST::Get()->GetLexer(wxT("C++"));
-	}
-
-	// Update the control
-	LEditor &rCtrl = GetCtrl();
-	rCtrl.SetLexer(lexPtr->GetLexerId());
-
-	wxString keyWords = lexPtr->GetKeyWords();
-	keyWords.Replace(wxT("\n"), wxT(" "));
-	keyWords.Replace(wxT("\r"), wxT(" "));
-	rCtrl.SetKeyWords(0, keyWords);
-	rCtrl.StyleClearAll();
-
-	styles = lexPtr->GetProperties();
-	std::list<StyleProperty>::iterator iter = styles.begin();
-	for (; iter != styles.end(); iter++) {
-		StyleProperty st = (*iter);
-		int size = st.GetFontSize();
-		wxString face = st.GetFaceName();
-		bool bold = st.IsBold();
-
-		wxFont font;
-		if (st.GetId() == wxSCI_STYLE_CALLTIP) {
-			font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-		} else {
-			font = wxFont(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
-		}
-
-		if (st.GetId() == 0) { //default
-			rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
-			rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
-			rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
-			rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
-			rCtrl.StyleSetBackground(wxSCI_STYLE_LINENUMBER, (*iter).GetBgColour());
-			rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
-			rCtrl.SetFoldMarginColour(true, (*iter).GetBgColour());
-			rCtrl.SetFoldMarginHiColour(true, (*iter).GetBgColour());
-		}
-
-		rCtrl.StyleSetFont(st.GetId(), font);
-		rCtrl.StyleSetSize(st.GetId(), (*iter).GetFontSize());
-		rCtrl.StyleSetForeground(st.GetId(), (*iter).GetFgColour());
-		rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
-	}
-
-	//create all images used by the cpp context
-	wxImage img;
-	if (m_classBmp.IsOk() == false) {
-		m_classBmp = wxXmlResource::Get()->LoadBitmap(wxT("class"));
-		m_structBmp = wxXmlResource::Get()->LoadBitmap(wxT("struct"));
-		m_namespaceBmp = wxXmlResource::Get()->LoadBitmap(wxT("namespace"));
-		m_variableBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_public"));
-		m_tpyedefBmp = wxXmlResource::Get()->LoadBitmap(wxT("typedef"));
-		m_tpyedefBmp.SetMask(new wxMask(m_tpyedefBmp, wxColor(0, 128, 128)));
-
-		m_memberPrivateBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_private"));
-		m_memberPublicBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_public"));
-		m_memberProtectedeBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_protected"));
-		m_functionPrivateBmp = wxXmlResource::Get()->LoadBitmap(wxT("func_private"));
-		m_functionPublicBmp = wxXmlResource::Get()->LoadBitmap(wxT("func_public"));
-		m_functionProtectedeBmp = wxXmlResource::Get()->LoadBitmap(wxT("func_protected"));
-		m_macroBmp = wxXmlResource::Get()->LoadBitmap(wxT("typedef"));
-		m_macroBmp.SetMask(new wxMask(m_macroBmp, wxColor(0, 128, 128)));
-
-		m_enumBmp = wxXmlResource::Get()->LoadBitmap(wxT("enum"));
-		m_enumBmp.SetMask(new wxMask(m_enumBmp, wxColor(0, 128, 128)));
-
-		m_enumeratorBmp = wxXmlResource::Get()->LoadBitmap(wxT("enumerator"));
-
-		//Initialise the file bitmaps
-		m_cppFileBmp = wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus"));
-		m_hFileBmp = wxXmlResource::Get()->LoadBitmap(wxT("page_white_h"));
-		m_otherFileBmp = wxXmlResource::Get()->LoadBitmap(wxT("page_white_text"));
-	}
-
-	//register the images
-	rCtrl.ClearRegisteredImages();
-	rCtrl.RegisterImage(1, m_classBmp);
-	rCtrl.RegisterImage(2, m_structBmp);
-	rCtrl.RegisterImage(3, m_namespaceBmp);
-	rCtrl.RegisterImage(4, m_variableBmp);
-	rCtrl.RegisterImage(5, m_tpyedefBmp);
-	rCtrl.RegisterImage(6, m_memberPrivateBmp);
-	rCtrl.RegisterImage(7, m_memberPublicBmp);
-	rCtrl.RegisterImage(8, m_memberProtectedeBmp);
-	rCtrl.RegisterImage(9, m_functionPrivateBmp);
-	rCtrl.RegisterImage(10, m_functionPublicBmp);
-	rCtrl.RegisterImage(11, m_functionProtectedeBmp);
-	rCtrl.RegisterImage(12, m_macroBmp);
-	rCtrl.RegisterImage(13, m_enumBmp);
-	rCtrl.RegisterImage(14, m_enumeratorBmp);
-	rCtrl.RegisterImage(15, m_cppFileBmp);
-	rCtrl.RegisterImage(16, m_hFileBmp);
-	rCtrl.RegisterImage(17, m_otherFileBmp);
-
+	ApplySettings();
+	
 	//load the context menu from the resource manager
 	m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
 	m_rclickMenu->Connect(XRCID("swap_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnSwapFiles), NULL, this);
@@ -1801,4 +1698,112 @@ void ContextCpp::OnFileSaved()
 		
 	//try to colourse only visible scope
 	rCtrl.Colourise(0, wxSCI_INVALID_POSITION);
+}
+
+void ContextCpp::ApplySettings()
+{
+	//-----------------------------------------------
+	// Load laguage settings from configuration file
+	//-----------------------------------------------
+	SetName(wxT("C++"));
+
+	// Set the key words and the lexer
+	std::list<StyleProperty> styles;
+	LexerConfPtr lexPtr;
+	// Read the configuration file
+	if (EditorConfigST::Get()->IsOk()) {
+		lexPtr = EditorConfigST::Get()->GetLexer(wxT("C++"));
+	}
+
+	// Update the control
+	LEditor &rCtrl = GetCtrl();
+	rCtrl.SetLexer(lexPtr->GetLexerId());
+
+	wxString keyWords = lexPtr->GetKeyWords();
+	keyWords.Replace(wxT("\n"), wxT(" "));
+	keyWords.Replace(wxT("\r"), wxT(" "));
+	rCtrl.SetKeyWords(0, keyWords);
+	rCtrl.StyleClearAll();
+
+	styles = lexPtr->GetProperties();
+	std::list<StyleProperty>::iterator iter = styles.begin();
+	for (; iter != styles.end(); iter++) {
+		StyleProperty st = (*iter);
+		int size = st.GetFontSize();
+		wxString face = st.GetFaceName();
+		bool bold = st.IsBold();
+
+		wxFont font;
+		if (st.GetId() == wxSCI_STYLE_CALLTIP) {
+			font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+		} else {
+			font = wxFont(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
+		}
+
+		if (st.GetId() == 0) { //default
+			rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
+			rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
+			rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
+			rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
+			rCtrl.StyleSetBackground(wxSCI_STYLE_LINENUMBER, (*iter).GetBgColour());
+			rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
+			rCtrl.SetFoldMarginColour(true, (*iter).GetBgColour());
+			rCtrl.SetFoldMarginHiColour(true, (*iter).GetBgColour());
+		}
+
+		rCtrl.StyleSetFont(st.GetId(), font);
+		rCtrl.StyleSetSize(st.GetId(), (*iter).GetFontSize());
+		rCtrl.StyleSetForeground(st.GetId(), (*iter).GetFgColour());
+		rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
+	}
+
+	//create all images used by the cpp context
+	wxImage img;
+	if (m_classBmp.IsOk() == false) {
+		m_classBmp = wxXmlResource::Get()->LoadBitmap(wxT("class"));
+		m_structBmp = wxXmlResource::Get()->LoadBitmap(wxT("struct"));
+		m_namespaceBmp = wxXmlResource::Get()->LoadBitmap(wxT("namespace"));
+		m_variableBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_public"));
+		m_tpyedefBmp = wxXmlResource::Get()->LoadBitmap(wxT("typedef"));
+		m_tpyedefBmp.SetMask(new wxMask(m_tpyedefBmp, wxColor(0, 128, 128)));
+
+		m_memberPrivateBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_private"));
+		m_memberPublicBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_public"));
+		m_memberProtectedeBmp = wxXmlResource::Get()->LoadBitmap(wxT("member_protected"));
+		m_functionPrivateBmp = wxXmlResource::Get()->LoadBitmap(wxT("func_private"));
+		m_functionPublicBmp = wxXmlResource::Get()->LoadBitmap(wxT("func_public"));
+		m_functionProtectedeBmp = wxXmlResource::Get()->LoadBitmap(wxT("func_protected"));
+		m_macroBmp = wxXmlResource::Get()->LoadBitmap(wxT("typedef"));
+		m_macroBmp.SetMask(new wxMask(m_macroBmp, wxColor(0, 128, 128)));
+
+		m_enumBmp = wxXmlResource::Get()->LoadBitmap(wxT("enum"));
+		m_enumBmp.SetMask(new wxMask(m_enumBmp, wxColor(0, 128, 128)));
+
+		m_enumeratorBmp = wxXmlResource::Get()->LoadBitmap(wxT("enumerator"));
+
+		//Initialise the file bitmaps
+		m_cppFileBmp = wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus"));
+		m_hFileBmp = wxXmlResource::Get()->LoadBitmap(wxT("page_white_h"));
+		m_otherFileBmp = wxXmlResource::Get()->LoadBitmap(wxT("page_white_text"));
+	}
+
+	//register the images
+	rCtrl.ClearRegisteredImages();
+	rCtrl.RegisterImage(1, m_classBmp);
+	rCtrl.RegisterImage(2, m_structBmp);
+	rCtrl.RegisterImage(3, m_namespaceBmp);
+	rCtrl.RegisterImage(4, m_variableBmp);
+	rCtrl.RegisterImage(5, m_tpyedefBmp);
+	rCtrl.RegisterImage(6, m_memberPrivateBmp);
+	rCtrl.RegisterImage(7, m_memberPublicBmp);
+	rCtrl.RegisterImage(8, m_memberProtectedeBmp);
+	rCtrl.RegisterImage(9, m_functionPrivateBmp);
+	rCtrl.RegisterImage(10, m_functionPublicBmp);
+	rCtrl.RegisterImage(11, m_functionProtectedeBmp);
+	rCtrl.RegisterImage(12, m_macroBmp);
+	rCtrl.RegisterImage(13, m_enumBmp);
+	rCtrl.RegisterImage(14, m_enumeratorBmp);
+	rCtrl.RegisterImage(15, m_cppFileBmp);
+	rCtrl.RegisterImage(16, m_hFileBmp);
+	rCtrl.RegisterImage(17, m_otherFileBmp);
 }

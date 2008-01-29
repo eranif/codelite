@@ -69,7 +69,8 @@ public:
 	virtual	bool IsCommentOrString(long pos);
 	virtual void AddMenuDynamicContent(wxMenu *menu);
 	virtual void RemoveMenuDynamicContent(wxMenu *menu);
-
+	virtual void ApplySettings();
+	
 	//override swapfiles features
 	virtual void SwapFiles(const wxFileName &fileName);
 

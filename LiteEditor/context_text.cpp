@@ -6,6 +6,50 @@
 ContextText::ContextText(LEditor *container) 
 : ContextBase(container)
 {
+	ApplySettings();
+}
+
+ContextText::~ContextText()
+{
+}
+
+ContextBase *ContextText::NewInstance(LEditor *container){
+	return new ContextText(container);
+}
+
+// Dont implement this function, maybe derived child will want 
+// to do something with it
+void ContextText::AutoIndent(const wxChar &nChar)
+{
+	ContextBase::AutoIndent(nChar);
+}
+
+// Dont implement this function, maybe derived child will want 
+// to do something with it
+void ContextText::CodeComplete()
+{
+}
+
+// Dont implement this function, maybe derived child will want 
+// to do something with it
+void ContextText::CompleteWord()
+{
+}
+
+// Dont implement this function, maybe derived child will want 
+// to do something with it
+void ContextText::GotoDefinition()
+{
+}
+
+// Dont implement this function, maybe derived child will want 
+// to do something with it
+void ContextText::GotoPreviousDefintion()
+{
+}
+
+void ContextText::ApplySettings()
+{
 	// Initialise default style settings
 	SetName(wxT("Text"));
 
@@ -54,44 +98,5 @@ ContextText::ContextText(LEditor *container)
 		rCtrl.StyleSetSize((*iter).GetId(), (*iter).GetFontSize());
 		rCtrl.StyleSetForeground((*iter).GetId(), (*iter).GetFgColour());
 		rCtrl.StyleSetBackground((*iter).GetId(), (*iter).GetBgColour());
-	}
-}
-
-ContextText::~ContextText()
-{
-}
-
-ContextBase *ContextText::NewInstance(LEditor *container){
-	return new ContextText(container);
-}
-
-// Dont implement this function, maybe derived child will want 
-// to do something with it
-void ContextText::AutoIndent(const wxChar &nChar)
-{
-	ContextBase::AutoIndent(nChar);
-}
-
-// Dont implement this function, maybe derived child will want 
-// to do something with it
-void ContextText::CodeComplete()
-{
-}
-
-// Dont implement this function, maybe derived child will want 
-// to do something with it
-void ContextText::CompleteWord()
-{
-}
-
-// Dont implement this function, maybe derived child will want 
-// to do something with it
-void ContextText::GotoDefinition()
-{
-}
-
-// Dont implement this function, maybe derived child will want 
-// to do something with it
-void ContextText::GotoPreviousDefintion()
-{
+	}	
 }

@@ -10,50 +10,6 @@ ContextGeneric::ContextGeneric(LEditor *container, const wxString &name)
 	// Load laguage settings from configuration file
 	//-----------------------------------------------
 	SetName(name);
-
-	// Set the key words and the lexer
-	std::list<StyleProperty> styles;
-	LexerConfPtr lexPtr;
-	// Read the configuration file
-	if(EditorConfigST::Get()->IsOk()){
-		lexPtr = EditorConfigST::Get()->GetLexer(name);
-	}
-
-	// Update the control
-	LEditor &rCtrl = GetCtrl();
-	rCtrl.SetLexer(lexPtr->GetLexerId());
-
-	wxString keyWords = lexPtr->GetKeyWords();
-	keyWords.Replace(wxT("\n"), wxT(" "));
-	keyWords.Replace(wxT("\r"), wxT(" "));
-	rCtrl.SetKeyWords(0, keyWords);
-	rCtrl.StyleClearAll();
-	
-	styles = lexPtr->GetProperties();
-	std::list<StyleProperty>::iterator iter = styles.begin();
-	for(; iter != styles.end(); iter++)
-	{
-		StyleProperty st = (*iter);
-		int size = st.GetFontSize();
-		wxString face = st.GetFaceName();
-		bool bold = st.IsBold();
-		
-		wxFont font(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
-
-		if(st.GetId() == 0){ //default
-			rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
-			rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
-			rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
-			rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
-			rCtrl.StyleSetBackground(wxSCI_STYLE_LINENUMBER, (*iter).GetBgColour());
-			rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
-		}
-
-		rCtrl.StyleSetFont(st.GetId(), font);
-		rCtrl.StyleSetSize(st.GetId(), (*iter).GetFontSize());
-		rCtrl.StyleSetForeground(st.GetId(), (*iter).GetFgColour());
-		rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
-	}
 }
 
 
@@ -94,4 +50,51 @@ void ContextGeneric::GotoDefinition()
 // to do something with it
 void ContextGeneric::GotoPreviousDefintion()
 {
+}
+
+void ContextGeneric::ApplySettings()
+{
+	// Set the key words and the lexer
+	std::list<StyleProperty> styles;
+	LexerConfPtr lexPtr;
+	// Read the configuration file
+	if(EditorConfigST::Get()->IsOk()){
+		lexPtr = EditorConfigST::Get()->GetLexer(m_name);
+	}
+
+	// Update the control
+	LEditor &rCtrl = GetCtrl();
+	rCtrl.SetLexer(lexPtr->GetLexerId());
+
+	wxString keyWords = lexPtr->GetKeyWords();
+	keyWords.Replace(wxT("\n"), wxT(" "));
+	keyWords.Replace(wxT("\r"), wxT(" "));
+	rCtrl.SetKeyWords(0, keyWords);
+	rCtrl.StyleClearAll();
+	
+	styles = lexPtr->GetProperties();
+	std::list<StyleProperty>::iterator iter = styles.begin();
+	for(; iter != styles.end(); iter++)
+	{
+		StyleProperty st = (*iter);
+		int size = st.GetFontSize();
+		wxString face = st.GetFaceName();
+		bool bold = st.IsBold();
+		
+		wxFont font(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
+
+		if(st.GetId() == 0){ //default
+			rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
+			rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
+			rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
+			rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
+			rCtrl.StyleSetBackground(wxSCI_STYLE_LINENUMBER, (*iter).GetBgColour());
+			rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
+		}
+
+		rCtrl.StyleSetFont(st.GetId(), font);
+		rCtrl.StyleSetSize(st.GetId(), (*iter).GetFontSize());
+		rCtrl.StyleSetForeground(st.GetId(), (*iter).GetFgColour());
+		rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
+	}
 }

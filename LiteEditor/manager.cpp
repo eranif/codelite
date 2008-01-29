@@ -174,6 +174,7 @@ bool Manager::OpenFile(const wxString &file_name, const wxString &projectName, i
 		// create new instance from pool
 		editor = EditorCreatorST::Get()->NewInstance();
 		editor->Create(projName, fileName);
+		editor->SetSyntaxHighlight(editor->GetContext()->GetName());
 		notebook->AddPage(editor, fileName.GetFullName(), true);
 		notebook->Thaw();
 		selection = (int)notebook->GetPageCount()-1;

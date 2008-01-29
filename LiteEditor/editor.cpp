@@ -109,7 +109,6 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 	ms_bookmarkShapes[wxT("Small Arrow")] = wxSCI_MARK_ARROW;
 	ms_bookmarkShapes[wxT("Circle")] = wxSCI_MARK_CIRCLE;
 
-	RestoreDefaults();
 	m_fileName.MakeAbsolute();
 
 	// If file name is provided, open it
@@ -118,6 +117,7 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 		OpenFile(m_fileName.GetFullPath(), m_project);
 	}
 	SetDropTarget(new FileDropTarget());
+	RestoreDefaults();
 }
 
 void LEditor::RestoreDefaults()
@@ -125,12 +125,13 @@ void LEditor::RestoreDefaults()
 	//the order is important, SetSyntaxHighlight must be called before SetProperties
 	//do not change it
 	SetSyntaxHighlight();
-	SetProperties();
 }
 
 void LEditor::SetSyntaxHighlight()
 {
+	ClearDocumentStyle();
 	m_context = ManagerST::Get()->NewContextByFileName(m_fileName, this);
+	SetProperties();
 }
 
 LEditor::~LEditor()
@@ -562,8 +563,8 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 {
 	ClearDocumentStyle();
 	m_context = ContextManager::Get()->NewContext(this, lexerName);
-	Colourise(0, wxSCI_INVALID_POSITION);
 	SetProperties();
+	UpdateColours();
 }
 
 void LEditor::OpenFile(const wxString &fileName, const wxString &project)
@@ -1324,14 +1325,14 @@ void LEditor::Create(const wxString &project, const wxFileName &fileName)
 	SetFileName(fileName);
 	// set the project name
 	SetProject(project);
-	// let the editor choose the syntax highlight to use according to file extension
-	// and set the editor properties to default
-	RestoreDefaults();
 	// reload the file from disk
 	ReloadFile();
 	// mark this editor as non-modified to avoid non-needed confirm dialogs
 	SetSavePoint();
 	EmptyUndoBuffer();
+	// let the editor choose the syntax highlight to use according to file extension
+	// and set the editor properties to default
+	RestoreDefaults();
 }
 
 void LEditor::InsertTextWithIndentation(const wxString &text, int lineno)

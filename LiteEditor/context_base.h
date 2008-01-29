@@ -47,6 +47,7 @@ public:
 	const wxString &GetName() const { return m_name; }
 
 	virtual void AutoIndent(const wxChar&);
+	
 	// every Context derived class must implement the following methods
 	virtual ContextBase *NewInstance(LEditor *container) = 0;
 	virtual void CompleteWord() = 0;
@@ -56,6 +57,7 @@ public:
 	virtual void CallTipCancel() = 0;
 	virtual bool IsCommentOrString(long WXUNUSED(pos)) = 0;
 	virtual void OnCallTipClick(wxScintillaEvent& WXUNUSED(event)) = 0;
+	virtual void ApplySettings() = 0;
 	
 	//a functions with default implementation:
 	virtual void OnDwellEnd(wxScintillaEvent & event){event.Skip();}

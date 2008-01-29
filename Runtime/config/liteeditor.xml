@@ -43,6 +43,20 @@
     <long Value="3" Name="m_flags"/>
   </ArchiveObject>
   <Options DisplayFoldMargin="yes" UnderlineFoldedLine="no" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="no" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#004080" CaretColour="#000000"/>
+  <ArchiveObject Name="m_tagsOptionsData">
+    <long Value="24" Name="m_ccFlags"/>
+    <wxArrayString Name="m_prep"/>
+    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
+    <wxArrayString Name="m_languages">
+      <wxString Value="C++"/>
+      <wxString Value="Java"/>
+    </wxArrayString>
+  </ArchiveObject>
+  <ArchiveObject Name="GeneralInfo">
+    <wxSize Name="m_frameSize" x="1280" y="951"/>
+    <wxPoint Name="m_framePos" x="0" y="0"/>
+    <long Value="15" Name="m_flags"/>
+  </ArchiveObject>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1280" y="951"/>
     <wxPoint Name="m_framePos" x="0" y="0"/>
@@ -58,28 +72,14 @@
     <File Name="/home/eran/devl/test/test.workspace"/>
   </RecentWorkspaces>
   <RecentFiles>
-    <File Name="/home/eran/devl/codelite/trunk/Runtime/config/build_settings.xml"/>
-    <File Name="/home/eran/devl/test/_1erere.h"/>
-    <File Name="/home/eran/devl/test/_1erere.cpp"/>
-    <File Name="/home/eran/devl/test/anotherclass.h"/>
-    <File Name="/home/eran/devl/test/anotherclass.cpp"/>
-    <File Name="C:\TestArea\TestCustom\t7.cpp"/>
-    <File Name="C:\TestArea\CCBug\main.cpp"/>
-    <File Name="C:\TestArea\CCBug\manager.cpp"/>
     <File Name="C:\TestArea\CCBug\sqlite3.c"/>
+    <File Name="C:\TestArea\CCBug\manager.cpp"/>
+    <File Name="C:\TestArea\CCBug\main.cpp"/>
+    <File Name="C:\TestArea\TestCustom\t7.cpp"/>
+    <File Name="/home/eran/devl/test/anotherclass.cpp"/>
+    <File Name="/home/eran/devl/test/anotherclass.h"/>
+    <File Name="/home/eran/devl/test/_1erere.cpp"/>
+    <File Name="/home/eran/devl/test/_1erere.h"/>
+    <File Name="/home/eran/devl/codelite/trunk/Runtime/config/build_settings.xml"/>
   </RecentFiles>
-  <ArchiveObject Name="m_tagsOptionsData">
-    <long Value="24" Name="m_ccFlags"/>
-    <wxArrayString Name="m_prep"/>
-    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
-    <wxArrayString Name="m_languages">
-      <wxString Value="C++"/>
-      <wxString Value="Java"/>
-    </wxArrayString>
-  </ArchiveObject>
-  <ArchiveObject Name="GeneralInfo">
-    <wxSize Name="m_frameSize" x="1280" y="951"/>
-    <wxPoint Name="m_framePos" x="0" y="0"/>
-    <long Value="15" Name="m_flags"/>
-  </ArchiveObject>
 </LiteEditor>

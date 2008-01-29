@@ -53,6 +53,7 @@ private:
 	void DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl);
 	void DisplayFilesCompletionBox(const wxString &word);
 	bool DoGetFunctionBody(long curPos, long &blockStartPos, long &blockEndPos, wxString &content);
+	void Initialize();
 	
 public:
 	ContextCpp(LEditor *container);

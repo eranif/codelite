@@ -452,6 +452,10 @@
             <label>Goto Implementation</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		
+		<object class="wxMenu" name="code_gen_refactoring">
+			<label>Code Generation / Refactoring</label>
+			<style>wxMENU_TEAROFF</style>
 			<object class="wxMenuItem" name="insert_doxy_comment">
 				<label>Insert Do&amp;xygen Comment</label>
 			</object>
@@ -465,7 +469,8 @@
 			<object class="wxMenuItem" name="add_impl">
 				<label>Add Function Implementation...</label>
 			</object>
-
+		</object>
+		
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>		
 		<object class="wxMenuItem" name="comment_selection">
             <label>Comment &amp;Selection</label>

@@ -31,12 +31,6 @@
 #include "debuggerconfigtool.h"
 #include "addincludefiledlg.h"
 
-#include "variable.h"
-#include "function.h"
-
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, bool> &ignoreTokens);
-extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, bool> &ignoreTokens);
-
 // fix bug in wxscintilla.h
 #ifdef EVT_SCI_CALLTIP_CLICK
 #undef EVT_SCI_CALLTIP_CLICK

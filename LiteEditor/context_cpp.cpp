@@ -83,18 +83,7 @@ ContextCpp::ContextCpp(LEditor *container)
 		, m_rclickMenu(NULL)
 {
 	ApplySettings();
-	
-	//load the context menu from the resource manager
-	m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
-	m_rclickMenu->Connect(XRCID("swap_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnSwapFiles), NULL, this);
-	m_rclickMenu->Connect(XRCID("insert_doxy_comment"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnInsertDoxyComment), NULL, this);
-	m_rclickMenu->Connect(XRCID("comment_selection"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentSelection), NULL, this);
-	m_rclickMenu->Connect(XRCID("comment_line"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentLine), NULL, this);
-	m_rclickMenu->Connect(XRCID("setters_getters"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnGenerateSettersGetters), NULL, this);
-	m_rclickMenu->Connect(XRCID("find_decl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindDecl), NULL, this);
-	m_rclickMenu->Connect(XRCID("find_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindImpl), NULL, this);
-	m_rclickMenu->Connect(XRCID("move_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnMoveImpl), NULL, this);
-	m_rclickMenu->Connect(XRCID("add_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnAddImpl), NULL, this);
+	Initialize();
 }
 
 ContextCpp::ContextCpp()
@@ -407,15 +396,19 @@ void ContextCpp::CodeComplete()
 		TagEntryPtr t2 = TagsManagerST::Get()->FirstFunctionOfFile(rCtrl.GetFileName());
 		if ( t2 ) {
 			endPos1 = rCtrl.PositionFromLine( t2->GetLine() - 1);
-			if (endPos1 > 0 && endPos1 <= startPos) {endPos = endPos1;}
+			if (endPos1 > 0 && endPos1 <= startPos) {
+				endPos = endPos1;
+			}
 		}
 
 		TagEntryPtr t3 = TagsManagerST::Get()->FirstScopeOfFile(rCtrl.GetFileName());
 		if ( t3 ) {
 			endPos2 = rCtrl.PositionFromLine( t3->GetLine() - 1);
-			if (endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) {endPos = endPos2;}
+			if (endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) {
+				endPos = endPos2;
+			}
 		}
-		
+
 		wxString globalText = rCtrl.GetTextRange(0, endPos);
 		globalText.Append(wxT(";"));
 		text.Prepend(globalText);
@@ -1583,15 +1576,17 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 
 	std::vector<TagEntryPtr> tags;
 	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
-	
+
 	//get this scope name
 	int startPos(0);
 	wxString scopeText = rCtrl.GetTextRange(startPos, rCtrl.GetCurrentPos());
-	
+
 	//get the scope name from the text
 	wxString scopeName = TagsManagerST::Get()->GetScopeName(scopeText);
-	if(scopeName.IsEmpty()) {scopeName = wxT("<global>");}
-	
+	if (scopeName.IsEmpty()) {
+		scopeName = wxT("<global>");
+	}
+
 	TagsManagerST::Get()->FindSymbol(word, tags);
 	if (tags.empty())
 		return;
@@ -1599,10 +1594,10 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 	TagEntryPtr tag;
 	bool match(false);
 	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
-		if (tags.at(i)->GetName() == word && 
-			tags.at(i)->GetLine() == line && 
-			tags.at(i)->GetKind() == wxT("prototype") && 
-			tags.at(i)->GetScope() == scopeName) {
+		if (tags.at(i)->GetName() == word &&
+		        tags.at(i)->GetLine() == line &&
+		        tags.at(i)->GetKind() == wxT("prototype") &&
+		        tags.at(i)->GetScope() == scopeName) {
 			//we got a match
 			tag = tags.at(i);
 			match = true;
@@ -1622,10 +1617,10 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 			wxMessageBox(wxT("Function '") + tag->GetName() + wxT("' already has a body"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 			return;
 		}
-		
+
 		//create the functions body
 		wxString body = TagsManagerST::Get()->FormatFunction(tag, true);
-		
+
 		wxString targetFile;
 		FindSwappedFile(rCtrl.GetFileName(), targetFile);
 		MoveFuncImplDlg *dlg = new MoveFuncImplDlg(NULL, body, targetFile);
@@ -1643,34 +1638,34 @@ void ContextCpp::OnFileSaved()
 {
 	LEditor &rCtrl = GetCtrl();
 	VALIDATE_PROJECT(rCtrl);
-	
+
 	VariableList var_list;
 	std::map< std::string, Variable > var_map;
 	std::map< wxString, TagEntryPtr> foo_map;
-	
+
 	std::map<std::string, bool> ignoreTokens;
-	
+
 	const wxCharBuffer patbuf = _C(rCtrl.GetText());
-	
+
 	//collect list of variables
 	get_variables( patbuf.data(), var_list, ignoreTokens );
 
 	//list all functions of this file
 	std::vector< TagEntryPtr > tags;
 	TagsManagerST::Get()->GetFunctions(tags, rCtrl.GetFileName().GetFullPath());
-	for(size_t i=0; i< tags.size(); i++) {
+	for (size_t i=0; i< tags.size(); i++) {
 		foo_map[tags.at(i)->GetName()] = tags.at(i);
 	}
-	
-	//cross reference between the two lists, if any of the tokens exist in 
+
+	//cross reference between the two lists, if any of the tokens exist in
 	//both lists, then it will be considered as function
 
 	//remove duplicates
 	VariableList::iterator viter = var_list.begin();
-	for(; viter != var_list.end(); viter++ ) {
+	for (; viter != var_list.end(); viter++ ) {
 		Variable var = *viter;
 		wxString name = _U(var.m_name.c_str());
-		if(foo_map.find(name) == foo_map.end()) {
+		if (foo_map.find(name) == foo_map.end()) {
 			var_map[var.m_name] = var;
 		}
 	}
@@ -1679,28 +1674,28 @@ void ContextCpp::OnFileSaved()
 	//functions
 	wxString fooList;
 	wxString varList;
-	
+
 	std::map< wxString, TagEntryPtr >::iterator it1 = foo_map.begin();
-	for(; it1 != foo_map.end(); it1++ ) {
+	for (; it1 != foo_map.end(); it1++ ) {
 		fooList << it1->second->GetName() << wxT(" ");
 	}
-	
+
 	std::map< std::string, Variable >::iterator it2 = var_map.begin();
-	for(; it2 != var_map.end(); it2++ ) {
+	for (; it2 != var_map.end(); it2++ ) {
 		varList << _U(it2->second.m_name.c_str()) << wxT(" ");
 	}
-	
+
 	//wxSCI_C_WORD2
 	rCtrl.SetKeyWords(1, fooList);
-	
+
 	//wxSCI_C_GLOBALCLASS
 	rCtrl.SetKeyWords(3, varList);
-		
+
 	//try to colourse only visible scope
 	rCtrl.Colourise(0, wxSCI_INVALID_POSITION);
 }
 
-void ContextCpp::ApplySettings() 
+void ContextCpp::ApplySettings()
 {
 	//-----------------------------------------------
 	// Load laguage settings from configuration file
@@ -1806,4 +1801,27 @@ void ContextCpp::ApplySettings()
 	rCtrl.RegisterImage(15, m_cppFileBmp);
 	rCtrl.RegisterImage(16, m_hFileBmp);
 	rCtrl.RegisterImage(17, m_otherFileBmp);
+}
+
+void ContextCpp::Initialize()
+{
+	//load the context menu from the resource manager
+	m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
+
+	wxMenuItem *refactorMenuItem = NULL;
+	refactorMenuItem = m_rclickMenu->FindItem(XRCID("code_gen_refactoring"));
+	wxMenu *refactorMenu = refactorMenuItem->GetSubMenu();
+	
+	m_rclickMenu->Connect(XRCID("swap_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnSwapFiles), NULL, this);
+	m_rclickMenu->Connect(XRCID("comment_selection"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentSelection), NULL, this);
+	m_rclickMenu->Connect(XRCID("comment_line"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentLine), NULL, this);
+	m_rclickMenu->Connect(XRCID("find_decl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindDecl), NULL, this);
+	m_rclickMenu->Connect(XRCID("find_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindImpl), NULL, this);
+
+	if (refactorMenu) {
+		refactorMenu->Connect(XRCID("insert_doxy_comment"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnInsertDoxyComment), NULL, this);
+		refactorMenu->Connect(XRCID("move_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnMoveImpl), NULL, this);
+		refactorMenu->Connect(XRCID("add_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnAddImpl), NULL, this);
+		refactorMenu->Connect(XRCID("setters_getters"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnGenerateSettersGetters), NULL, this);
+	}
 }

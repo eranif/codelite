@@ -1,10 +1,11 @@
 %{
 #include <wx/string.h>
 
+#define yylval clplugin_scope_lval
 #define YYSTYPE wxString
 extern wxString yylval;
 
-#include "variable.tab.h"
+#include "makefile_lexer.h"
 #define YY_NO_UNISTD_H 1
 #undef YY_NO_INPUT
 int lineno = 0;

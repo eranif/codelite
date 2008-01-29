@@ -1,4 +1,4 @@
-#include "variable.tab.h"
+#include "makefile_lexer.h"
 #include <stdio.h>
 #include <map>
 #include <wx/string.h>
@@ -6,6 +6,9 @@
 #include <wx/app.h>
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
+
+#define YYSTYPE wxString
+#define yyparse clplugin_scope_parse
 
 void initLexer(const char *filename);
 

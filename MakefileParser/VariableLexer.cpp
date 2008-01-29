@@ -1,4 +1,4 @@
-#include "variable.tab.h"
+#include "makefile_lexer.h"
 #include "VariableLexer.h"
 #include <string>
 #include <vector>
@@ -8,6 +8,8 @@
 #include <wx/string.h>
 
 void initLexer(const char *filename);
+
+#define YYSTYPE wxString
 
 YYSTYPE yyparse();
 

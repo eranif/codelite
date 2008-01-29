@@ -2295,6 +2295,9 @@ bool Manager::OpenFileAndAppend(const wxString &fileName, const wxString &text)
 	if(OpenFile(fileName, wxEmptyString)){
 		LEditor* editor = GetActiveEditor();
 		if(editor){
+			//get the current line number
+			int lineNum = editor->GetLineCount();
+			editor->GotoLine(lineNum-1);
 			editor->AppendText(text);
 			ret = true;
 		}

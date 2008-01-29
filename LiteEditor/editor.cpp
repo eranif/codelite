@@ -1694,6 +1694,8 @@ void LEditor::UpdateColours()
 		SetKeyWords(1, wxEmptyString);
 		SetKeyWords(2, wxEmptyString);
 		SetKeyWords(3, wxEmptyString);
-		Colourise(0, wxSCI_INVALID_POSITION);
 	}
+	
+	//colourise the document
+	Colourise(0, wxSCI_INVALID_POSITION);
 }

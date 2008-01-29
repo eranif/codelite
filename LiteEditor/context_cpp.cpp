@@ -1423,14 +1423,26 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 	if (tags.empty())
 		return;
 
-	clFunction foo;
+
+	//get this scope name
+	int startPos(0);
+	wxString scopeText = rCtrl.GetTextRange(startPos, rCtrl.GetCurrentPos());
+	
+	//get the scope name from the text
+	wxString scopeName = TagsManagerST::Get()->GetScopeName(scopeText);
+	if (scopeName.IsEmpty()) {
+		scopeName = wxT("<global>");
+	}
+	
 	TagEntryPtr tag;
 	bool match(false);
 	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
-		if (tags.at(i)->GetName() == word && tags.at(i)->GetLine() == line && tags.at(i)->GetKind() == wxT("function")) {
+		if (tags.at(i)->GetName() == word &&
+		        tags.at(i)->GetLine() == line &&
+		        tags.at(i)->GetKind() == wxT("function") &&
+		        tags.at(i)->GetScope() == scopeName) {
 			//we got a match
 			tag = tags.at(i);
-			LanguageST::Get()->FunctionFromPattern(tags.at(i)->GetPattern(), foo);
 			match = true;
 			break;
 		}
@@ -1446,26 +1458,12 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 		if (DoGetFunctionBody(curPos, blockStartPos, blockEndPos, content)) {
 
 			//create the functions body
-			wxString body;
-			blockEndPos = rCtrl.PositionAfter(blockEndPos);
-
-			if (foo.m_retrunValusConst.empty() == false) {
-				body << _U(foo.m_retrunValusConst.c_str()) << wxT(" ");
-			}
-
-			if (foo.m_returnValue.m_typeScope.empty() == false) {
-				body << _U(foo.m_returnValue.m_typeScope.c_str()) << wxT("::");
-				body << _U(foo.m_returnValue.m_templateDecl.c_str());
-			}
-
-			body << _U(foo.m_returnValue.m_type.c_str())
-			<< _U(foo.m_returnValue.m_starAmp.c_str())
-			<< wxT(" ") << tag->GetScope() << wxT("::") << tag->GetName() << tag->GetSignature();
-			body << wxT("\n");
+			wxString body = TagsManagerST::Get()->FormatFunction(tag, true);
+			//remove the empty content provided by this function
+			body = body.BeforeLast(wxT('{'));
+			body = body.Trim().Trim(false);
 			body << content;
-			body << wxT("\n");
-			body << wxT("\n");
-
+			
 			wxString targetFile;
 			FindSwappedFile(rCtrl.GetFileName(), targetFile);
 			MoveFuncImplDlg *dlg = new MoveFuncImplDlg(NULL, body, targetFile);
@@ -1690,9 +1688,6 @@ void ContextCpp::OnFileSaved()
 
 	//wxSCI_C_GLOBALCLASS
 	rCtrl.SetKeyWords(3, varList);
-
-	//try to colourse only visible scope
-	rCtrl.Colourise(0, wxSCI_INVALID_POSITION);
 }
 
 void ContextCpp::ApplySettings()
@@ -1808,20 +1803,27 @@ void ContextCpp::Initialize()
 	//load the context menu from the resource manager
 	m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
 
-	wxMenuItem *refactorMenuItem = NULL;
-	refactorMenuItem = m_rclickMenu->FindItem(XRCID("code_gen_refactoring"));
-	wxMenu *refactorMenu = refactorMenuItem->GetSubMenu();
-	
 	m_rclickMenu->Connect(XRCID("swap_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnSwapFiles), NULL, this);
 	m_rclickMenu->Connect(XRCID("comment_selection"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentSelection), NULL, this);
 	m_rclickMenu->Connect(XRCID("comment_line"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentLine), NULL, this);
 	m_rclickMenu->Connect(XRCID("find_decl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindDecl), NULL, this);
 	m_rclickMenu->Connect(XRCID("find_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindImpl), NULL, this);
 
+#if defined (__WXGTK__)
+	//on GTK, we need to connect the sub menu to the events
+	wxMenuItem *refactorMenuItem = NULL;
+	refactorMenuItem = m_rclickMenu->FindItem(XRCID("code_gen_refactoring"));
+	wxMenu *refactorMenu = refactorMenuItem->GetSubMenu();
 	if (refactorMenu) {
 		refactorMenu->Connect(XRCID("insert_doxy_comment"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnInsertDoxyComment), NULL, this);
 		refactorMenu->Connect(XRCID("move_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnMoveImpl), NULL, this);
 		refactorMenu->Connect(XRCID("add_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnAddImpl), NULL, this);
 		refactorMenu->Connect(XRCID("setters_getters"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnGenerateSettersGetters), NULL, this);
 	}
+#else // Windows/Mac
+	m_rclickMenu->Connect(XRCID("insert_doxy_comment"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnInsertDoxyComment), NULL, this);
+	m_rclickMenu->Connect(XRCID("move_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnMoveImpl), NULL, this);
+	m_rclickMenu->Connect(XRCID("add_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnAddImpl), NULL, this);
+	m_rclickMenu->Connect(XRCID("setters_getters"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnGenerateSettersGetters), NULL, this);
+#endif
 }

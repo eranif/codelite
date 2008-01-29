@@ -102,6 +102,4 @@ void ContextGeneric::ApplySettings()
 
 void ContextGeneric::OnFileSaved()
 {
-	//by default just colour the page
-	GetCtrl().Colourise(0, wxSCI_INVALID_POSITION);
 }

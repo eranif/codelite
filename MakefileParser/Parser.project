@@ -3,9 +3,10 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <File Name="main.cpp"/>
-    <File Name="variable.tab.h"/>
-    <File Name="variable.lex.cpp"/>
-    <File Name="variable.tab.cpp"/>
+    <File Name="MakefileParser.cpp"/>
+    <File Name="Target.cpp"/>
+    <File Name="TargetLexer.cpp"/>
+    <File Name="VariableLexer.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="grammar">
     <File Name="variable.y"/>
@@ -43,4 +44,13 @@
       <PostBuild/>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="UI"/>
+  <VirtualDirectory Name="include">
+    <File Name="LineTypes.h"/>
+    <File Name="MakefileParser.h"/>
+    <File Name="Target.h"/>
+    <File Name="TargetLexer.h"/>
+    <File Name="VariableLexer.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="MakefileParser"/>
 </CodeLite_Project>

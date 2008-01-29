@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="Plugins" Database=".\Plugins.tags">
-  <Project Name="ReferenceAnalyser" Path="ReferenceAnalyser\ReferenceAnalyser.project" Active="Yes"/>
+<CodeLite_Workspace Name="Plugins" Database="./Plugins.tags">
+  <Project Name="ReferenceAnalyser" Path="ReferenceAnalyser/ReferenceAnalyser.project" Active="Yes"/>
+  <Environment>
+    <Variable Name="WorkspaceName" Value="Plugins"/>
+    <Variable Name="WorkspacePath" Value="/home/sverre/code/CodeLite/trunk"/>
+  </Environment>
+  <Project Name="Parser" Path="MakefileParser/Parser.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="ReferenceAnalyser" ConfigName="WinReleaseUnicode"/>
+      <Project Name="Parser" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Debug Unicode" Selected="yes">
       <Project Name="ReferenceAnalyser" ConfigName="DebugUnicode"/>
+      <Project Name="Parser" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
       <Project Name="ReferenceAnalyser" ConfigName="WinDebugUnicode"/>
+      <Project Name="Parser" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Release Unicode" Selected="yes">
       <Project Name="ReferenceAnalyser" ConfigName="ReleaseUnicode"/>
+      <Project Name="Parser" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
-  <Environment>
-    <Variable Name="WorkspaceName" Value="Plugins"/>
-    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
-  </Environment>
 </CodeLite_Workspace>

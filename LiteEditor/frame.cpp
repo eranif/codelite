@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "environmentconfig.h"
 #include "shell_window.h"
 #include "findresultstab.h"
 #include "buidltab.h"
@@ -312,7 +313,10 @@ Frame* Frame::Get()
 		// Initialise editor configuration files
 		EditorConfig *cfg = EditorConfigST::Get();
 		cfg->Load();
-
+		
+		//initialize the environment variable configuration manager
+		EnvironmentConfig::Instance()->Load();
+		
 		GeneralInfo inf;
 		cfg->ReadObject(wxT("GeneralInfo"), &inf);
 		m_theFrame = new Frame(	NULL,

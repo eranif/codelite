@@ -16,12 +16,6 @@
     <File Name="regex_processor.cpp"/>
     <File Name="search_thread.cpp"/>
     <File Name="workspace.cpp"/>
-    <File Name="MakefileParser.cpp"/>
-    <File Name="Target.cpp"/>
-    <File Name="TargetLexer.cpp"/>
-    <File Name="VariableLexer.cpp"/>
-    <File Name="variable.tab.cpp"/>
-    <File Name="variable.yy.cpp"/>
     <File Name="volumelocatorthread.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
@@ -42,10 +36,6 @@
     <File Name="search_thread.h"/>
     <File Name="workspace.h"/>
     <File Name="LineTypes.h"/>
-    <File Name="MakefileParser.h"/>
-    <File Name="TargetLexer.h"/>
-    <File Name="VariableLexer.h"/>
-    <File Name="variable.yy.h"/>
     <File Name="volumelocatorthread.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
@@ -93,6 +83,10 @@
     <File Name="configtool.h"/>
     <File Name="debuggerconfigtool.h"/>
     <File Name="debuggerconfigtool.cpp"/>
+    <File Name="configurationtoolbase.cpp"/>
+    <File Name="configurationtoolbase.h"/>
+    <File Name="environmentconfig.cpp"/>
+    <File Name="environmentconfig.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ProcessControl">
     <File Name="pipedprocess.h"/>

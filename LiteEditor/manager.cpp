@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "environmentconfig.h"
 #include "buidltab.h"
 #include "fileexplorer.h"
 #include "manager.h"
@@ -289,7 +290,8 @@ void Manager::UnInitialize()
 	wxFlatNotebook::CleanUp();
 	MenuManager::Free();
 	EditorConfigST::Free();
-
+	EnvironmentConfig::Release();
+	
 	//free all plugins
 	PluginManager::Get()->UnLoad();
 }

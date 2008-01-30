@@ -2,6 +2,7 @@
 #define ARCHIVE_H
 
 #include "wx/string.h"
+#include "wx/hashmap.h"
 #include <wx/arrstr.h>
 #include "wx/filename.h"
 #include <wx/gdicmn.h>
@@ -19,6 +20,8 @@ class wxXmlNode;
 #endif // WXDLLIMPEXP_CL
 
 class SerializedObject;
+
+WX_DECLARE_STRING_HASH_MAP( wxString, StringMap );
 
 /**
  * \class Archive
@@ -54,7 +57,8 @@ public:
 	void Write(const wxString &name, size_t value);
 	void Write(const wxString &name, wxSize size);
 	void Write(const wxString &name, wxPoint pt);
-
+	void Write(const wxString &name, const StringMap &str_map);
+	
 	//--------------------
 	// Read API
 	//--------------------
@@ -67,6 +71,7 @@ public:
 	void Read(const wxString &name, size_t &value);
 	void Read(const wxString &name, wxSize &size);
 	void Read(const wxString &name, wxPoint &pt);
+	void Read(const wxString &name, StringMap &str_map);
 	void Read(const wxString &name, SerializedObject *obj);
 
 private:

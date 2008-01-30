@@ -68,6 +68,26 @@ void Archive::Write(const wxString &name, const wxArrayString &arr)
 	}
 }
 
+void Archive::Write(const wxString &name, const StringMap &str_map)
+{
+	if (!m_root) {
+		return;
+	}
+	
+	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("StringMap"));
+	m_root->AddChild(node);
+	node->AddProperty(wxT("Name"), name);
+
+	//add an entry for each wxString in the array
+	StringMap::const_iterator iter = str_map.begin();
+	for( ; iter != str_map.end(); iter++ ) {
+		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
+		node->AddChild(child);
+		child->AddProperty(wxT("Key"), iter->first);
+		child->AddProperty(wxT("Value"), iter->second);
+	}
+}
+
 void Archive::Write(const wxString &name, wxSize size)
 {
 	if (!m_root) {
@@ -120,6 +140,30 @@ void Archive::Read(const wxString &name, wxArrayString &arr)
 				wxString value;
 				value = child->GetPropVal(wxT("Value"), wxEmptyString);
 				arr.Add(value);
+			}
+			child = child->GetNext();
+		}
+	}
+}
+
+void Archive::Read(const wxString &name, StringMap &str_map)
+{
+	if (!m_root) {
+		return;
+	}
+
+	wxXmlNode *node = FindNodeByName(m_root, wxT("StringMap"), name);
+	if (node) {
+		//fill the output array with the values
+		str_map.clear();
+		wxXmlNode *child = node->GetChildren();
+		while (child) {
+			if (child->GetName() == wxT("MapEntry")) {
+				wxString value;
+				wxString key;
+				key = child->GetPropVal(wxT("Key"), wxEmptyString);
+				value = child->GetPropVal(wxT("Value"), wxEmptyString);
+				str_map[key] = value;
 			}
 			child = child->GetNext();
 		}

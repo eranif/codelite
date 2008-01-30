@@ -1,4 +1,6 @@
 #include "project.h"
+#include "evnvarlist.h"
+#include "environmentconfig.h"
 #include "builder_gnumake.h"
 #include "configuration_mapping.h"
 #include "dirsaver.h"
@@ -220,13 +222,17 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj)
 	//----------------------------------------------------------
 	//copy environment variables to the makefile
 	//----------------------------------------------------------
-	EnvironmentVarieblesPtr env = WorkspaceST::Get()->GetEnvironmentVariables();
-	EnvironmentVariebles::ConstIterator iter = env->Begin();
-	for (; iter != env->End(); iter++) {
+	EvnVarList vars;
+	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+	StringMap varMap = vars.GetVariables();
+	StringMap::const_iterator iter = varMap.begin();
+	
+	for (; iter != varMap.end(); iter++) {
 		wxString name = iter->first;
 		wxString value = iter->second;
 		text << name << wxT("=") << value << wxT("") << wxT("\n");
 	}
+	
 	//create a variable for the project name as well
 	text << wxT("ProjectName=") << proj->GetName() << wxT("\n");
 	text << wxT("\n");

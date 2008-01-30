@@ -296,16 +296,6 @@ void Manager::UnInitialize()
 	PluginManager::Get()->UnLoad();
 }
 
-void Manager::CreateEnvironmentVars(const wxString &path)
-{
-	//initialize some environment variable to be available for this workspace
-	EnvironmentVarieblesPtr env = GetEnvironmentVariables();
-	wxFileName filepath(path);
-	env->SetEnv(wxT("WorkspaceName"), WorkspaceST::Get()->GetName());
-	env->SetEnv(wxT("WorkspacePath"), filepath.GetPath(wxPATH_GET_VOLUME, wxPATH_UNIX));
-	SetEnvironmentVariables(env);
-}
-
 void Manager::CreateWorkspace(const wxString &name, const wxString &path)
 {
 	// make sure that the workspace pane is visible
@@ -392,7 +382,6 @@ void Manager::OpenWorkspace(const wxString &path)
 	wxBusyCursor cursor;
 
 	//initialize some environment variable to be available for this workspace
-	CreateEnvironmentVars(path);
 	Frame::Get()->GetWorkspacePane()->BuildFileTree();
 
 	//Update the configuration choice on the toolbar
@@ -896,16 +885,6 @@ void Manager::TogglePanes()
 		toggled = false;
 	}
 	Frame::Get()->Thaw();
-}
-
-void Manager::SetEnvironmentVariables(EnvironmentVarieblesPtr env)
-{
-	WorkspaceST::Get()->SetEnvironmentVariables(env);
-}
-
-EnvironmentVarieblesPtr Manager::GetEnvironmentVariables() const
-{
-	return WorkspaceST::Get()->GetEnvironmentVariables();
 }
 
 bool Manager::CreateDefaultNewCompiler(const wxString &name)

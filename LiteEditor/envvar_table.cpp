@@ -19,7 +19,9 @@
 #endif //WX_PRECOMP
 
 #include "envvar_table.h"
+#include "evnvarlist.h"
 #include "manager.h"
+#include "environmentconfig.h"
 #include "macros.h"
 #include "envvar_dlg.h"
 #include "globals.h"
@@ -72,18 +74,25 @@ void EnvVarsTableDlg::InitVars()
 {
 	m_listVarsTable->ClearAll();
 	m_listVarsTable->Freeze();
-	EnvironmentVarieblesPtr env = ManagerST::Get()->GetEnvironmentVariables();
-	//add two columns to the list ctrl
+	
 	m_listVarsTable->InsertColumn(0, wxT("Name"));
 	m_listVarsTable->InsertColumn(1, wxT("Value"));
 
-	EnvironmentVariebles::ConstIterator iter = env->Begin();
-	for (; iter != env->End(); iter++) {
+	//read all environment from configuraion
+	EvnVarList vars;
+	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+	StringMap::const_iterator iter = vars.GetVariables().begin();
+	
+	for(; iter != vars.GetVariables().end(); iter++) {
+		wxString name  = iter->first;
+		wxString value = iter->second;
+		
+		//add item to the list
 		long item = AppendListCtrlRow(m_listVarsTable);
 		SetColumnText(m_listVarsTable, item, 0, iter->first);
 		SetColumnText(m_listVarsTable, item, 1, iter->second);
 	}
-	
+
 	m_listVarsTable->SetColumnWidth(0, wxLIST_AUTOSIZE);
 	m_listVarsTable->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	m_listVarsTable->Thaw();
@@ -94,9 +103,15 @@ void EnvVarsTableDlg::OnEditVar(wxCommandEvent &event)
 	wxUnusedVar(event);
 	EnvVarDlg *dlg = new EnvVarDlg(this, m_selectedVarName, m_selectedVarValue);
 	if(dlg->ShowModal() == wxID_OK){
-		EnvironmentVarieblesPtr env = ManagerST::Get()->GetEnvironmentVariables();
-		env->SetEnv(dlg->GetName(), dlg->GetValue());
-		ManagerST::Get()->SetEnvironmentVariables(env);
+		EvnVarList vars;
+		EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+		
+		StringMap varMap = vars.GetVariables();
+		varMap[dlg->GetName()] = dlg->GetValue();
+		
+		vars.SetVariables( varMap );
+		EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
+		
 		InitVars();
 	}
 	dlg->Destroy();
@@ -107,9 +122,15 @@ void EnvVarsTableDlg::OnNewVar(wxCommandEvent &event)
 	wxUnusedVar(event);
 	EnvVarDlg *dlg = new EnvVarDlg(this);
 	if(dlg->ShowModal() == wxID_OK){
-		EnvironmentVarieblesPtr env = ManagerST::Get()->GetEnvironmentVariables();
-		env->SetEnv(dlg->GetName(), dlg->GetValue());
-		ManagerST::Get()->SetEnvironmentVariables(env);
+		EvnVarList vars;
+		EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+		
+		StringMap varMap = vars.GetVariables();
+		varMap[dlg->GetName()] = dlg->GetValue();
+		
+		vars.SetVariables( varMap );
+		EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
+		
 		InitVars();
 	}
 	dlg->Destroy();
@@ -121,9 +142,18 @@ void EnvVarsTableDlg::OnDeleteVar(wxCommandEvent &event)
 	wxString msg;
 	msg << wxT("Delete environment variable '") << m_selectedVarName << wxT("'?");
 	if(wxMessageBox(msg, wxT("CodeLite"), wxYES_NO | wxICON_QUESTION) == wxYES){
-		EnvironmentVarieblesPtr env = ManagerST::Get()->GetEnvironmentVariables();
-		env->DeleteEnv(m_selectedVarName);
-		ManagerST::Get()->SetEnvironmentVariables(env);
+		EvnVarList vars;
+		EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+		
+		StringMap varMap = vars.GetVariables();
+		StringMap::iterator it = varMap.find(m_selectedVarName);
+		if(it != varMap.end()){
+			varMap.erase(it);
+		}
+
+		vars.SetVariables( varMap );
+		EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
+		
 		InitVars();
 	}
 }

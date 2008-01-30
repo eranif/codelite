@@ -8,7 +8,6 @@
     <File Name="compile_request.cpp"/>
     <File Name="compiler_action.cpp"/>
     <File Name="configuration_mapping.cpp"/>
-    <File Name="envvar.cpp"/>
     <File Name="lexer_configuration.cpp"/>
     <File Name="optionsconfig.cpp"/>
     <File Name="project.cpp"/>
@@ -27,7 +26,6 @@
     <File Name="compiler_action.h"/>
     <File Name="configuration_mapping.h"/>
     <File Name="configuration_object.h"/>
-    <File Name="envvar.h"/>
     <File Name="lexer_configuration.h"/>
     <File Name="optionsconfig.h"/>
     <File Name="project.h"/>
@@ -87,6 +85,8 @@
     <File Name="configurationtoolbase.h"/>
     <File Name="environmentconfig.cpp"/>
     <File Name="environmentconfig.h"/>
+    <File Name="evnvarlist.cpp"/>
+    <File Name="evnvarlist.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ProcessControl">
     <File Name="pipedprocess.h"/>

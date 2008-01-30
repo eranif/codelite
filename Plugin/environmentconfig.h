@@ -2,6 +2,7 @@
 #define __environmentconfig__
 
 #include "configurationtoolbase.h"
+#include "archive.h"
 
 class EnvironmentConfig : public ConfigurationToolBase {
 
@@ -10,7 +11,7 @@ class EnvironmentConfig : public ConfigurationToolBase {
 public:
 	static EnvironmentConfig* Instance();
 	static void Release();
-	bool Load(); 
+	bool Load();  
 	
 private:
 	EnvironmentConfig();

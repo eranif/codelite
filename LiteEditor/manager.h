@@ -1,8 +1,3 @@
-/*!
- * <File comment goes here!!>
- * 
- * Copyright (c) 2007 by Eran Ifrah <eran.ifrah@gmail.com>
- */
 #ifndef MANAGER_H
 #define MANAGER_H
 
@@ -28,13 +23,7 @@ class wxFrame;
 class LEditor;
 class AsyncExeCmd;
 class QuickWatchDlg;
-//class DebuggerTip;
 
-/*!
- * \brief
- * Manager class, a global class that provides access to many 
- * commands of CodeLite
- */
 class Manager : public wxEvtHandler, public IDebuggerObserver
 {
 	friend class Singleton<Manager>;
@@ -302,26 +291,6 @@ public:
 	 * then hides all panes, when called again, all panes are restored
 	 */
 	void TogglePanes();
-
-	/**
-	 * Set environment variables for the workspace. The new environment will override
-	 * the current. To perform update, do the following:
-	 * \code
-	 * EnvironmentVarieblesPtr env = ManagerST::Get()->GetEnvironmentVariables();
-	 * //update the environment
-	 * env->SetEnv(wxT("HOME"), wxT("/home/user/eran"));
-	 * //update 
-	 * ManagerST::Get()->SetEnvironmentVariables(env);
-	 * \endcode
-	 * \param env 
-	 */
-	void SetEnvironmentVariables(EnvironmentVarieblesPtr env);
-
-	/**
-	 * get the environment of the workspace
-	 * \return 
-	 */
-	EnvironmentVarieblesPtr GetEnvironmentVariables() const;
 
 	/**
 	 * create default new compiler
@@ -652,9 +621,6 @@ private:
 	 * Remove a file from the gui tree
 	 */
 	void RemoveFileFromSymbolTree(const wxFileName &fileName, const wxString &project);
-
-	// Create environment variables for the workspace
-	void CreateEnvironmentVars(const wxString &wpsPath);
 };
 
 typedef Singleton<Manager> ManagerST;

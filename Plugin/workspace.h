@@ -9,7 +9,6 @@
 #include <map>
 //#include "ctags_manager.h"
 #include "configuration_mapping.h"
-#include "envvar.h"
 
 
 #ifdef WXMAKINGDLL_LE_SDK
@@ -197,30 +196,9 @@ public:
 	void SetBuildMatrix(BuildMatrixPtr mapping);
 
 	/**
-	 * Set environment variables for the workspace. The new environment will override
-	 * the current. To perform update, do the following:
-	 * \code
-	 * EnvironmentVarieblesPtr env = WorkspaceST::Get()->GetEnvironmentVariables();
-	 * //update the environment
-	 * env->SetEnv(wxT("HOME"), wxT("/home/user/eran"));
-	 * //update 
-	 * WorkspaceST::Get()->SetEnvironmentVariables(env);
-	 * \endcode
-	 * \param env 
-	 */
-	void SetEnvironmentVariables(EnvironmentVarieblesPtr env);
-
-	/**
-	 * get the environment of the workspace
-	 * \return 
-	 */
-	EnvironmentVarieblesPtr GetEnvironmentVariables() const;
-	
-	/**
 	 * Return the workspace name
 	 */
 	wxString GetName() const;
-
 
 	/**
 	 * return the project build configuration that matches the

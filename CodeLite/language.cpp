@@ -233,8 +233,6 @@ bool Language::ProcessExpression(const wxString& stmt,
 	std::vector<wxString> additionalScopes;
 	wxString scopeName = GetScopeName(text, &additionalScopes);
 
-	TagsManager *tagsManager = GetTagsManager();
-
 	TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
 	if (tag) {
 		lastFuncSig = tag->GetSignature();

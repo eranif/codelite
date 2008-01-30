@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="ctags_workspace" Database=".\ctags_workspace.tags">
+<CodeLite_Workspace Name="ctags_workspace" Database="./ctags_workspace.tags">
   <Project Name="ctags" Path="ctags.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">

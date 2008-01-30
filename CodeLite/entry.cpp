@@ -475,3 +475,10 @@ wxString TagEntry::GetInsertOneStatement()
 {
 	return wxT("INSERT INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");	
 }
+
+wxString TagEntry::GetPattern()
+{
+	//since ctags's pattern is regex, forward slashes are escaped. ('/' becomes '\/')
+	m_pattern.Replace(wxT("\\/"), wxT("/"));
+	return m_pattern;
+}

@@ -981,7 +981,12 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 	if (pattern.EndsWith(wxT(";"))) {
 		pattern = pattern.RemoveLast();
 	}
-
+	
+	//remove any comments from the pattern
+	wxString tmp_pattern(pattern);
+	pattern.Empty();
+	GetTagsManager()->StripComments(tmp_pattern, pattern);
+	
 	//a limitiation of the function parser...
 	pattern << wxT(';');
 

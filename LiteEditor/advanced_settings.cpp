@@ -146,6 +146,16 @@ void AdvancedDlg::OnButtonOKClicked(wxCommandEvent &event)
 	//save the build page
 	m_buildPage->Save();
 	m_buildSettings->Save();
+	
+	//mark all the projects as dirty
+	wxArrayString projects;
+	WorkspaceST::Get()->GetProjectList( projects );
+	for( size_t i=0; i< projects.size(); i++ ) {
+		ProjectPtr proj = ManagerST::Get()->GetProject( projects.Item(0) );
+		if( proj ) {
+			proj->SetModified( true );
+		}
+	}
 	EndModal(wxID_OK);
 }
 

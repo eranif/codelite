@@ -696,9 +696,7 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, bool &isCustom
 	}
 	
 	//generate the makefile
-//	wxPrintf(wxT("Exporting makefile...\n"));
 	Export(project, false, errMsg);
-//	wxPrintf(wxT("Done...\n"));
 	
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
@@ -706,7 +704,6 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, bool &isCustom
 
 	wxString type = Builder::NormalizeConfigName(matrix->GetSelectedConfigurationName());
 	cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\" type=") << type;
-//	wxPrintf(wxT("End of GetBuildCommand()\n"));
 	return cmd;
 }
 

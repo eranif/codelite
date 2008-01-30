@@ -139,7 +139,7 @@ public:
 	int GetLine() const { return m_lineNumber;}
 	void SetLine(int line) { m_lineNumber = line; }
 
-	const wxString& GetPattern() const { return m_pattern; }
+	wxString GetPattern();
 	void SetPattern(const wxString& pattern) { m_pattern = pattern; }
 
 	wxString GetKind() const;

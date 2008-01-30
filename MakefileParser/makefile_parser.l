@@ -1,9 +1,10 @@
 %{
-#include <wx/string.h>
+// #include <wx/string.h>
+#include <string>
 
-#define yylval clplugin_scope_lval
-#define YYSTYPE wxString
-extern wxString yylval;
+// #define yylval clplugin_scope_lval
+#define YYSTYPE std::string
+extern YYSTYPE yylval;
 
 #include "makefile_lexer.h"
 #define YY_NO_UNISTD_H 1
@@ -39,7 +40,8 @@ word [0-9a-zA-Z_.\-+\*~:\\@&/|%\<\>,\'^ \t]+
 				return '\n';	
 			}			
 {word}                  {				
-                                yylval.Printf(wxT("%s"),yytext);
+								yylval = yytext;
+                                // yylval.Printf(wxT("%s"),yytext);
                                 return WORD;
                         }
 .                      	{

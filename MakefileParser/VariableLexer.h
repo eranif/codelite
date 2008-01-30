@@ -22,8 +22,11 @@ class WXDLLIMPEXP_LE_SDK VariableLexer
 {
 	public:
 		VariableLexer(wxString path);
-		wxArrayString getResult();
-		void DebugMessage(const wxString& msg);
+		
+		const wxArrayString& getResult();
+		const wxArrayString& getUnmatched();
+		const wxArrayString& getError();
+		const std::map<wxString, wxString>& getTokens();
 	
 	private:
 		wxArrayString m_output;

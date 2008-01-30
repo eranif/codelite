@@ -1,20 +1,16 @@
 %{
 /**** Includes and Defines *****************************/
 #include <stdio.h>
-#include <wx/string.h>
+#include <iostream>
+#include <string>
 #include <map>
-#include <wx/arrstr.h>
-#include <wx/wxchar.h>
-#include <wx/txtstrm.h>
-#include <wx/wfstream.h>
-#include <wx/app.h>
+#include <vector>
 
 #define YYDEBUG 0        		/* get the pretty debugging code to compile*/
-#define YYSTYPE wxString
+#define YYSTYPE std::string
 
-
-typedef wxArrayString Strings;
-typedef std::map<wxString, wxString> tokens;
+typedef std::vector<std::string> Strings;
+typedef std::map<std::string, std::string> tokens;
 typedef tokens::iterator Itokens;
 
 extern Strings TheOutput;
@@ -25,30 +21,18 @@ extern int lineno;
 
 bool append = false;
 int yylex(void);
-void TrimString(wxString &string)
+
+void TrimString(std::string& param)
 {
-        bool good = wxInitialize();
-	if(!good)
-	{
-		printf("wx could not be initialized, aborting.\n");
-		exit(-1);
-	}
-	else
-	{
-		printf("wx initialized succesfully!\n");
-		wxFFileOutputStream MYoutput( stderr );
-		wxTextOutputStream MYcout( MYoutput );
-		wxString string = wxT(" a test yo ");
-		MYcout << wxT("Before: '") << string << wxT("'\n");
-		string = string.Trim(true);
-		MYcout << wxT("AfterT: '") << string << wxT("'\n");
-		string = string.Trim(false);
-		MYcout << wxT("AfterF: '") << string << wxT("'\n");
-	}
-	wxUninitialize();
+	std::string string = " a test yo ";
+	std::cout << "Before: '" << param << "'\n";
+	// string = string.Trim(true);
+	std::cout << "AfterT: '" << string << "'\n";
+	// string = string.Trim(false);
+	std::cout << "AfterF: '" << string << "'\n";
 }
 
-void yyerror(char* string)
+void yyerror(char* param)
 {
 //	printf("parser error: %s\n", string);
 }
@@ -64,30 +48,30 @@ void yyerror(char* string)
 /* Start of grammar */
 %%
 input:	/* empty */
-	| input line			{	/* Do Nothing */				}
+	| input line			{	$$ = "";				}
 ;
 
-line:	'\n'				{	/* Do Nothing */				}
-	| optwords vars_line '\n'	{	TheOutput.push_back($1+$2);			}
-	| wordsline '\n'		{	TheOutput.push_back($1);			}
-	| assgnline '\n'		{	/* Do Nothing */				}
-	| printline '\n'		{	/* Do Nothing */				}
-	| error	'\n'			{
-						YYSTYPE msg;
-						msg << wxT("Line ") << lineno << wxT(": Unexpected token '") << yylval << wxT("'.");
-						TheError.push_back(msg);
-						yyerrok;
-					}
+line:	'\n'					{	$$ = "";				}
+	| optwords vars_line '\n'	{	$$ = $1+$2; TheOutput.push_back($$);			}
+	| wordsline '\n'			{	$$ = $1; TheOutput.push_back($1);			}
+	| assgnline '\n'			{	$$ = "";				}
+	| printline '\n'			{	$$ = "";				}
+	| error	'\n'				{
+							YYSTYPE msg;
+							msg.append("Line ").append(": Unexpected token '").append(yylval).append("'.");
+							TheError.push_back(msg);
+							yyerrok;
+						}
 ;
 
-open:	'$' '('				{	/* do nothing */			}
+open:	'$' '('				{	$$ = "";			}
 
-name:	wordvars			{	$$ = $1;				}
+name:	wordvars			{	$$ = $1;					}
 
-close:	')'				{	/* do nothing */			}
+close:	')'					{	$$ = "";			}
 
 variable: open name close 		{
-						wxString token = $2;
+						YYSTYPE token = $2;
 						TrimString(token);
 
 						if(TheTokens[token].size() > 0)
@@ -97,36 +81,36 @@ variable: open name close 		{
 						else
 						{
 							TheUnmatched.push_back(token);
-							$$ = wxEmptyString;
+							$$ = "";
 						}
 					}
 
 words: WORD				{	$$ = $1;				}
-     | words WORD 			{	$$ = $1 + $2;				}
+     | words WORD 		{	$$ = $1 + $2;			}
 ;
 
-optwords:				{	$$ = wxEmptyString;			}
+optwords:				{	$$ = "";				}
 	| words				{	$$ = $1;				}
 ;	
 
-optvars:				{	$$ = wxEmptyString;			}	
+optvars:				{	$$ = "";				}	
 	| wordvars			{	$$ = $1;				}
 ;
 
 
-vars_line: variable optwords		{	$$ = $1 + $2;				}
-         | vars_line variable optwords	{	$$ = $1 + $2 + $3;			}
+vars_line: variable optwords			{	$$ = $1 + $2;		}
+         | vars_line variable optwords	{	$$ = $1 + $2 + $3;	}
 ;
 
 wordsline: words			{	$$ = $1;				}
 
-assignm:	ASSIGN			{	append = true;				}
-       |	'='			{	append = false;				}
+assignm:	ASSIGN			{	$$ = ""; append = true;			}
+       |	'='				{	$$ = ""; append = false;			}
 ;
 
 assgnline: words assignm optvars	{
-	 					wxString name = $1;
-						wxString value = $3;
+	 					YYSTYPE name = $1;
+						YYSTYPE value = $3;
 						TrimString(name);
 						TrimString(value);
 
@@ -138,23 +122,23 @@ assgnline: words assignm optvars	{
 						{
 							TheTokens[name] = value;
 						}
-	 					$$ = name + wxT("=") + value;			
+	 					$$ = name + "=" + value;			
 					}
 
 printline:	PRINT			{
-	 					YYSTYPE result = wxT("Tokens: \n");
+	 					YYSTYPE result ="Tokens: \n";
 						for(Itokens it = TheTokens.begin(); it != TheTokens.end(); it++)
 						{
-							result += wxT("'") + it->first + wxT("'='") + it->second + wxT("'\n");
+							result += "'" + it->first + "'='" + it->second + "'\n";
 						}
-						result += wxT("Done.");
+						result += "Done.";
 						$$ = result;
 					}
 
 wordvars: WORD 				{	$$ = $1;				}
-	| variable 			{	$$ = $1;				}
-	| wordvars variable		{	$$ = $1 + $2;				}
-	| wordvars WORD 		{	$$ = $1 + $2;				}
+	| variable 				{	$$ = $1;				}
+	| wordvars variable		{	$$ = $1 + $2;			}
+	| wordvars WORD 		{	$$ = $1 + $2;			}
 ;
 %%
 /* End of grammar */

@@ -17,47 +17,19 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 extern int yyparse(void);
 
 static int yygrowstack(void);
-#define yyparse clplugin_scope_parse
-#define yylex clplugin_scope_lex
-#define yyerror clplugin_scope_error
-#define yychar clplugin_scope_char
-#define yyval clplugin_scope_val
-#define yylval clplugin_scope_lval
-#define yydebug clplugin_scope_debug
-#define yynerrs clplugin_scope_nerrs
-#define yyerrflag clplugin_scope_errflag
-#define yyss clplugin_scope_ss
-#define yyssp clplugin_scope_ssp
-#define yyvs clplugin_scope_vs
-#define yyvsp clplugin_scope_vsp
-#define yylhs clplugin_scope_lhs
-#define yylen clplugin_scope_len
-#define yydefred clplugin_scope_defred
-#define yydgoto clplugin_scope_dgoto
-#define yysindex clplugin_scope_sindex
-#define yyrindex clplugin_scope_rindex
-#define yygindex clplugin_scope_gindex
-#define yytable clplugin_scope_table
-#define yycheck clplugin_scope_check
-#define yyname clplugin_scope_name
-#define yyrule clplugin_scope_rule
-#define YYPREFIX "clplugin_scope_"
+#define YYPREFIX "yy"
 /**** Includes and Defines *****************************/
 #include <stdio.h>
-#include <wx/string.h>
+#include <iostream>
+#include <string>
 #include <map>
-#include <wx/arrstr.h>
-#include <wx/wxchar.h>
-#include <wx/txtstrm.h>
-#include <wx/wfstream.h>
-#include <wx/app.h>
+#include <vector>
 
 #define YYDEBUG 0        		/* get the pretty debugging code to compile*/
-#define YYSTYPE wxString
+#define YYSTYPE std::string
 
-
-typedef wxArrayString Strings;
-typedef std::map<wxString, wxString> tokens;
+typedef std::vector<std::string> Strings;
+typedef std::map<std::string, std::string> tokens;
 typedef tokens::iterator Itokens;
 
 extern Strings TheOutput;
@@ -68,30 +40,18 @@ extern int lineno;
 
 bool append = false;
 int yylex(void);
-void TrimString(wxString &string)
+
+void TrimString(std::string& param)
 {
-        bool good = wxInitialize();
-	if(!good)
-	{
-		printf("wx could not be initialized, aborting.\n");
-		exit(-1);
-	}
-	else
-	{
-		printf("wx initialized succesfully!\n");
-		wxFFileOutputStream MYoutput( stderr );
-		wxTextOutputStream MYcout( MYoutput );
-		wxString string = wxT(" a test yo ");
-		MYcout << wxT("Before: '") << string << wxT("'\n");
-		string = string.Trim(true);
-		MYcout << wxT("AfterT: '") << string << wxT("'\n");
-		string = string.Trim(false);
-		MYcout << wxT("AfterF: '") << string << wxT("'\n");
-	}
-	wxUninitialize();
+	std::string string = " a test yo ";
+	std::cout << "Before: '" << param << "'\n";
+	/* string = string.Trim(true);*/
+	std::cout << "AfterT: '" << string << "'\n";
+	/* string = string.Trim(false);*/
+	std::cout << "AfterF: '" << string << "'\n";
 }
 
-void yyerror(char* string)
+void yyerror(char* param)
 {
 /*	printf("parser error: %s\n", string);*/
 }
@@ -101,44 +61,44 @@ void yyerror(char* string)
 #define ASSIGN 258
 #define PRINT 259
 #define YYERRCODE 256
-short clplugin_scope_lhs[] = {                                        -1,
+short yylhs[] = {                                        -1,
     0,    0,    1,    1,    1,    1,    1,    1,    7,    8,
    10,   11,   12,   12,    2,    2,   13,   13,    3,    3,
     4,   14,   14,    5,    6,    9,    9,    9,    9,
 };
-short clplugin_scope_len[] = {                                         2,
+short yylen[] = {                                         2,
     0,    2,    1,    3,    2,    2,    2,    2,    2,    1,
     1,    3,    1,    2,    0,    1,    0,    1,    2,    3,
     1,    1,    1,    3,    1,    1,    1,    2,    2,
 };
-short clplugin_scope_defred[] = {                                      1,
+short yydefred[] = {                                      1,
     0,    0,   13,   25,    3,    2,    0,    0,    0,    0,
     0,    8,    0,    0,    0,    0,    5,    6,    7,   14,
    22,   23,    0,    9,    4,    0,   26,    0,    0,   27,
    19,    0,    0,   24,   20,   11,   12,   29,   28,
 };
-short clplugin_scope_dgoto[] = {                                       1,
+short yydgoto[] = {                                       1,
     6,    7,   14,    8,    9,   10,   15,   28,   29,   37,
    30,   32,   34,   23,
 };
-short clplugin_scope_sindex[] = {                                      0,
+short yysindex[] = {                                      0,
   -10,    2,    0,    0,    0,    0,  -26,    3,    4,    5,
   -58,    0,  -24,   -5,  -35, -239,    0,    0,    0,    0,
     0,    0,  -35,    0,    0, -239,    0,  -22,  -34,    0,
     0, -237,  -34,    0,    0,    0,    0,    0,    0,
 };
-short clplugin_scope_rindex[] = {                                      0,
+short yyrindex[] = {                                      0,
   -15,    0,    0,    0,    0,    0,    0,    0,    0,    0,
    -4,    0,    0,    0,    0,   -2,    0,    0,    0,    0,
     0,    0,    3,    0,    0,   -2,    0,    0,  -19,    0,
     0,   -1,    4,    0,    0,    0,    0,    0,    0,
 };
-short clplugin_scope_gindex[] = {                                      0,
+short yygindex[] = {                                      0,
     0,   -9,    0,    0,    0,    0,    0,    0,    1,    0,
    -3,   22,    0,    0,
 };
 #define YYTABLESIZE 249
-short clplugin_scope_table[] = {                                       5,
+short yytable[] = {                                       5,
    13,   13,   22,   16,   25,   21,   31,   15,   16,   13,
    26,   12,   17,   18,   19,   24,   35,    3,   36,   20,
    15,   10,   11,   33,    0,   39,    0,    0,    0,   39,
@@ -165,7 +125,7 @@ short clplugin_scope_table[] = {                                       5,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    2,    3,    0,    4,
 };
-short clplugin_scope_check[] = {                                      10,
+short yycheck[] = {                                      10,
    36,   36,   61,    7,   10,   10,   16,   10,   10,   36,
    14,   10,   10,   10,   10,   40,   26,  257,   41,  257,
    36,   41,    1,   23,   -1,   29,   -1,   -1,   -1,   33,
@@ -198,7 +158,7 @@ short clplugin_scope_check[] = {                                      10,
 #endif
 #define YYMAXTOKEN 259
 #if YYDEBUG
-char *clplugin_scope_name[] = {
+char *yyname[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,"'\\n'",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,"'$'",0,0,0,"'('","')'",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"'='",0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -208,7 +168,7 @@ char *clplugin_scope_name[] = {
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"WORD",
 "ASSIGN","PRINT",
 };
-char *clplugin_scope_rule[] = {
+char *yyrule[] = {
 "$accept : input",
 "input :",
 "input : input line",
@@ -466,43 +426,43 @@ yyreduce:
     switch (yyn)
     {
 case 2:
-{	/* Do Nothing */				}
+{	yyval = "";				}
 break;
 case 3:
-{	/* Do Nothing */				}
+{	yyval = "";				}
 break;
 case 4:
-{	TheOutput.push_back(yyvsp[-2]+yyvsp[-1]);			}
+{	yyval = yyvsp[-2]+yyvsp[-1]; TheOutput.push_back(yyval);			}
 break;
 case 5:
-{	TheOutput.push_back(yyvsp[-1]);			}
+{	yyval = yyvsp[-1]; TheOutput.push_back(yyvsp[-1]);			}
 break;
 case 6:
-{	/* Do Nothing */				}
+{	yyval = "";				}
 break;
 case 7:
-{	/* Do Nothing */				}
+{	yyval = "";				}
 break;
 case 8:
 {
-						YYSTYPE msg;
-						msg << wxT("Line ") << lineno << wxT(": Unexpected token '") << yylval << wxT("'.");
-						TheError.push_back(msg);
-						yyerrok;
-					}
+							YYSTYPE msg;
+							msg.append("Line ").append(": Unexpected token '").append(yylval).append("'.");
+							TheError.push_back(msg);
+							yyerrok;
+						}
 break;
 case 9:
-{	/* do nothing */			}
+{	yyval = "";			}
 break;
 case 10:
-{	yyval = yyvsp[0];				}
+{	yyval = yyvsp[0];					}
 break;
 case 11:
-{	/* do nothing */			}
+{	yyval = "";			}
 break;
 case 12:
 {
-						wxString token = yyvsp[-1];
+						YYSTYPE token = yyvsp[-1];
 						TrimString(token);
 
 						if(TheTokens[token].size() > 0)
@@ -512,7 +472,7 @@ case 12:
 						else
 						{
 							TheUnmatched.push_back(token);
-							yyval = wxEmptyString;
+							yyval = "";
 						}
 					}
 break;
@@ -520,39 +480,39 @@ case 13:
 {	yyval = yyvsp[0];				}
 break;
 case 14:
-{	yyval = yyvsp[-1] + yyvsp[0];				}
+{	yyval = yyvsp[-1] + yyvsp[0];			}
 break;
 case 15:
-{	yyval = wxEmptyString;			}
+{	yyval = "";				}
 break;
 case 16:
 {	yyval = yyvsp[0];				}
 break;
 case 17:
-{	yyval = wxEmptyString;			}
+{	yyval = "";				}
 break;
 case 18:
 {	yyval = yyvsp[0];				}
 break;
 case 19:
-{	yyval = yyvsp[-1] + yyvsp[0];				}
+{	yyval = yyvsp[-1] + yyvsp[0];		}
 break;
 case 20:
-{	yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0];			}
+{	yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0];	}
 break;
 case 21:
 {	yyval = yyvsp[0];				}
 break;
 case 22:
-{	append = true;				}
+{	yyval = ""; append = true;			}
 break;
 case 23:
-{	append = false;				}
+{	yyval = ""; append = false;			}
 break;
 case 24:
 {
-	 					wxString name = yyvsp[-2];
-						wxString value = yyvsp[0];
+	 					YYSTYPE name = yyvsp[-2];
+						YYSTYPE value = yyvsp[0];
 						TrimString(name);
 						TrimString(value);
 
@@ -564,17 +524,17 @@ case 24:
 						{
 							TheTokens[name] = value;
 						}
-	 					yyval = name + wxT("=") + value;			
+	 					yyval = name + "=" + value;			
 					}
 break;
 case 25:
 {
-	 					YYSTYPE result = wxT("Tokens: \n");
+	 					YYSTYPE result ="Tokens: \n";
 						for(Itokens it = TheTokens.begin(); it != TheTokens.end(); it++)
 						{
-							result += wxT("'") + it->first + wxT("'='") + it->second + wxT("'\n");
+							result += "'" + it->first + "'='" + it->second + "'\n";
 						}
-						result += wxT("Done.");
+						result += "Done.";
 						yyval = result;
 					}
 break;
@@ -585,10 +545,10 @@ case 27:
 {	yyval = yyvsp[0];				}
 break;
 case 28:
-{	yyval = yyvsp[-1] + yyvsp[0];				}
+{	yyval = yyvsp[-1] + yyvsp[0];			}
 break;
 case 29:
-{	yyval = yyvsp[-1] + yyvsp[0];				}
+{	yyval = yyvsp[-1] + yyvsp[0];			}
 break;
     }
     yyssp -= yym;

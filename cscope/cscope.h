@@ -42,7 +42,8 @@ protected:
 	void OnFindFunctionsCallingThisFunction(wxCommandEvent &e);
 	void OnCScopeThreadEnded(wxCommandEvent &e);
 	void OnCScopeThreadUpdateStatus(wxCommandEvent &e);
+	void OnCscopeUI(wxUpdateUIEvent &e);
 };
-
+ 
 #endif //Cscope
 

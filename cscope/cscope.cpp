@@ -49,20 +49,28 @@ Cscope::Cscope(IManager *manager)
 
 Cscope::~Cscope()
 {
-}
+} 
 
 wxToolBar *Cscope::CreateToolBar(wxWindow *parent)
 {
 	wxToolBar *tb = NULL;
-	// tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
-	// TODO :: Add your toolbar items here...
+	tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	tb->SetToolBitmapSize(wxSize(24, 24));
+	
 	// Sample code that adds single button to the toolbar
 	// and associates an image to it
-	// tb->AddTool(XRCID("new_plugin"), wxT("New Plugin Wizard..."), wxXmlResource::Get()->LoadBitmap(wxT("plugin_add")), wxT("New Plugin Wizard..."));
-	// tb->Realize();
+	tb->AddTool(XRCID("cscope_find_symbol"), wxT("Find this C symbol"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_find_symbol")), wxT("Find this C symbol"));
+	tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_func_calling")), wxT("Find functions called by this function"));
+	tb->AddTool(XRCID("cscope_functions_calling_this_function"), wxT("Find functions calling this function"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_func_called")), wxT("Find functions calling this function"));
+	tb->Realize();
+	
 	// Connect the events to us
-	// parent->Connect(XRCID("new_plugin"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnNewPlugin), NULL, (wxEvtHandler*)this);
-	// parent->Connect(XRCID("new_plugin"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnNewPluginUI), NULL, (wxEvtHandler*)this);
+	parent->Connect(XRCID("cscope_find_symbol"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindSymbol), NULL, (wxEvtHandler*)this);
+	parent->Connect(XRCID("cscope_find_symbol"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI), NULL, (wxEvtHandler*)this);
+	parent->Connect(XRCID("cscope_functions_called_by_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFuncion), NULL, (wxEvtHandler*)this);
+	parent->Connect(XRCID("cscope_functions_called_by_this_function"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI), NULL, (wxEvtHandler*)this);
+	parent->Connect(XRCID("cscope_functions_calling_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction), NULL, (wxEvtHandler*)this);
+	parent->Connect(XRCID("cscope_functions_calling_this_function"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(Cscope::OnCscopeUI), NULL, (wxEvtHandler*)this);
 	return tb;
 }
 
@@ -286,4 +294,10 @@ void Cscope::OnCScopeThreadUpdateStatus(wxCommandEvent &e)
 {
 	m_cscopeWin->SetMessage(e.GetString(), e.GetInt());
 	e.Skip();
+}
+ 
+void Cscope::OnCscopeUI(wxUpdateUIEvent &e)
+{
+	bool isEditor = m_mgr->GetActiveEditor() ? true : false;
+	e.Enable(m_mgr->IsWorkspaceOpen() && isEditor);
 }

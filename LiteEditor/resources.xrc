@@ -90,7 +90,7 @@
 	<object class="wxBitmap" name="threads">res/threads.png</object>
 	<object class="wxBitmap" name="opened_windows">res/pictures.png</object> 
 	
-	<object class="wxBitmap" name="svn_ok">res/folder_green.png</object> 
+	<object class="wxBitmap" name="svn_ok">res/folder_green.png</object>  
 	<object class="wxBitmap" name="svn_modified">res/folder_red.png</object> 
 	<object class="wxBitmap" name="svn_conflict">res/error.png</object>
 <!-- 	
@@ -114,4 +114,9 @@
 	<object class="wxBitmap" name="class24">res/class24.png</object>
 	<object class="wxBitmap" name="new_wx_project">res/wx24.png</object>
 	<object class="wxBitmap" name="wx_project_header">res/wxproject.png</object>
+	
+	<!-- cscope -->
+	<object class="wxBitmap" name="cscope_find_symbol">res/func_find24.png</object>
+	<object class="wxBitmap" name="cscope_func_called">res/func_called24.png</object>
+	<object class="wxBitmap" name="cscope_func_calling">res/func_calling24.png</object>
 </resource>

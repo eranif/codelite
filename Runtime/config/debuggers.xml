@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Debuggers>
-  <ArchiveObject Name="DebuggersData">
-    <long Value="1" Name="debuggersCount"/>
-    <wxString Value="GNU gdb debugger" Name="name"/>
-    <wxString Value="" Name="path"/>
-    <bool Value="0" Name="enableDebugLog"/>
-    <bool Value="1" Name="enablePendingBreakpoints"/>
-    <bool Value="1" Name="breakAtWinMain"/>
-  </ArchiveObject>
   <ArchiveObject Name="DebuggerCommands">
     <long Value="3" Name="size"/>
     <SerializedObject Name="DebuggerCmd0">
@@ -25,5 +17,13 @@
       <wxString Value="$(Variable).size()" Name="m_command"/>
       <bool Value="0" Name="m_isSubMenu"/>
     </SerializedObject>
+  </ArchiveObject>
+  <ArchiveObject Name="DebuggersData">
+    <long Value="1" Name="debuggersCount"/>
+    <wxString Value="GNU gdb debugger" Name="name"/>
+    <wxString Value="" Name="path"/>
+    <bool Value="0" Name="enableDebugLog"/>
+    <bool Value="0" Name="enablePendingBreakpoints"/>
+    <bool Value="0" Name="breakAtWinMain"/>
   </ArchiveObject>
 </Debuggers>

@@ -1,8 +1,7 @@
-#include "makefile_lexer.h"
 #include "precompiled_header.h"
-#include <wx/wx.h>
-
+#include "makefile_lexer.h"
 #include "VariableLexer.h"
+#include "stdio.h"
 
 typedef std::map<wxString, wxString> Tokens;
 typedef Tokens::iterator ITokens;
@@ -21,31 +20,33 @@ int main(int argv, char* argc[])
 	wxArrayString unmatched = lexer.getUnmatched();
 	wxArrayString error = lexer.getError();
 	Tokens tokens = lexer.getTokens();
-
-	printf("============= RESULT =============\n");
+	
+	FILE *of = fopen("outout.txt", "w+");
+	fprintf(of, "============= RESULT =============\n");
 	for(int i = 0; i < result.size(); i++)
 	{
-		printf("%s\n", result[i].c_str());
+		fprintf(of, "%s\n", result[i].c_str());
 	}
 
-	printf("============ UNMATCHED ===========\n");
+	fprintf(of, "============ UNMATCHED ===========\n");
 	for(int i = 0; i < unmatched.size(); i++)
 	{
-		printf("%s\n", unmatched[i].c_str());
+		fprintf(of, "%s\n", unmatched[i].c_str());
 	}
 
-	printf("============== ERROR =============\n");
+	fprintf(of, "============== ERROR =============\n");
 	for(int i = 0; i < error.size(); i++)
 	{
-		printf("%s\n", error[i].c_str());
+		fprintf(of, "%s\n", error[i].c_str());
 	}
 
-	printf("============= TOKENS =============\n");
+	fprintf(of, "============= TOKENS =============\n");
         for(ITokens it = tokens.begin(); it != tokens.end(); it++)
         {
-         	printf("'%s'='%s'\n", it->first.c_str(), it->second.c_str());
+         	fprintf(of, "'%s'='%s'\n", it->first.c_str(), it->second.c_str());
         }
 
-	printf("=============== DONE =============\n");
+	fprintf(of, "=============== DONE =============\n");
+	fclose(of);
 	return 0;
 }

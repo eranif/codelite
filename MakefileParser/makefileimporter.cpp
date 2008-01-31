@@ -17,7 +17,7 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 		thePlugin = new MakefileImporter(manager);
 	}
 	return thePlugin;
-}
+} 
 
 MakefileImporter::MakefileImporter(IManager *manager)
 		: IPlugin(manager)
@@ -210,4 +210,15 @@ void MakefileImporter::ImportFromMakefile(const wxString &path)
 		//AddProject(proj->GetFileName().GetFullPath());
 	}
 	return;
+}
+
+void MakefileImporter::HookPopupMenu(wxMenu *menu, MenuType type)
+{
+}
+
+void MakefileImporter::UnHookPopupMenu(wxMenu *menu, MenuType type)
+{
+}
+void MakefileImporter::UnPlug()
+{
 }

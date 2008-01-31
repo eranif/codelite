@@ -1,4 +1,4 @@
-%{
+%{ 
 // #include <wx/string.h>
 #include <string>
 

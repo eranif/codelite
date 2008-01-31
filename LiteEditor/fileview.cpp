@@ -249,7 +249,10 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
 		m_itemsToSort[parentHti.m_pItem] = true;
 
 		// Set active project with bold
-		if ( parentHti == GetRootItem() && ManagerST::Get()->GetActiveProjectName() == node->GetData().GetDisplayName() ) {
+		wxString activeProjectName = ManagerST::Get()->GetActiveProjectName();
+		wxString displayName = node->GetData().GetDisplayName();
+		
+		if ( parentHti == GetRootItem() && displayName == activeProjectName) {
 			SetItemBold( hti );
 		}
 

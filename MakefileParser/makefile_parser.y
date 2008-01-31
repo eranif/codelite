@@ -1,4 +1,4 @@
-%{
+%{ 
 /**** Includes and Defines *****************************/
 #include <stdio.h>
 #include <iostream>

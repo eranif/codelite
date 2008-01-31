@@ -1,10 +1,9 @@
+#include "precompiled_header.h"
 #include "makefile_lexer.h"
 #include "VariableLexer.h"
-#include "precompiled_header.h"
 #include <string>
 #include <vector>
 #include <map>
-#include <wx/wx.h>
 #include <wx/log.h>
 #include <wx/string.h>
 

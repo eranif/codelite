@@ -55,16 +55,22 @@ wxString EnvironmentConfig::ExpandVariables(const wxString &in)
 	while (reVarPattern.Matches(result)) {
 		wxString varName = reVarPattern.GetMatch(result, 2);
 		wxString text = reVarPattern.GetMatch(result);
-
-		//search for workspace variable with this name
-		wxString replacement;
-		wxGetEnv(varName, &replacement);
 		
+		wxString replacement;
+		if(varName == wxT("MAKE")) {
+			//ignore this variable, since it is probably was passed here 
+			//by the makefile generator
+			replacement = wxT("___MAKE___");	
+		}else{
+			//search for workspace variable with this name
+			wxGetEnv(varName, &replacement);
+		}	
 		result.Replace(text, replacement);
 	}
 	
+	//restore the ___MAKE___ back to $(MAKE)
+	result.Replace(wxT("___MAKE___"), wxT("$(MAKE)"));
 	UnApplyEnv();
-	
 	return result;
 }
 

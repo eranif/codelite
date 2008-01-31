@@ -185,9 +185,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("find_symbol"), Frame::OnQuickOutline)
 	EVT_MENU(XRCID("attach_debugger"), Frame::OnDebugAttach)
 	EVT_MENU(XRCID("add_project"), Frame::OnProjectAddProject)
-//	EVT_MENU(XRCID("import_from_makefile"), Frame::OnImportMakefile)
+	//	EVT_MENU(XRCID("import_from_makefile"), Frame::OnImportMakefile)
 	EVT_MENU(XRCID("import_from_msvs"), Frame::OnImportMSVS)
-//	EVT_UPDATE_UI(XRCID("import_from_makefile"), Frame::OnImportMakefileUI)
+	//	EVT_UPDATE_UI(XRCID("import_from_makefile"), Frame::OnImportMakefileUI)
 	EVT_CLOSE(Frame::OnClose)
 	EVT_TIMER(FrameTimerId, Frame::OnTimer)
 	EVT_MENU_RANGE(RecentFilesSubMenuID, RecentFilesSubMenuID + 10, Frame::OnRecentFile)
@@ -312,10 +312,10 @@ Frame* Frame::Get()
 		// Initialise editor configuration files
 		EditorConfig *cfg = EditorConfigST::Get();
 		cfg->Load();
-		
+
 		//initialize the environment variable configuration manager
 		EnvironmentConfig::Instance()->Load();
-		
+
 		GeneralInfo inf;
 		cfg->ReadObject(wxT("GeneralInfo"), &inf);
 		m_theFrame = new Frame(	NULL,
@@ -1375,12 +1375,14 @@ void Frame::OnConfigurationManager(wxCommandEvent &event)
 	dlg->Destroy();
 
 	//force makefile generation upon configuration change
-	wxArrayString projs;
-	ManagerST::Get()->GetProjectList(projs);
-	for ( size_t i=0; i< projs.GetCount(); i++ ) {
-		ProjectPtr proj = ManagerST::Get()->GetProject( projs.Item(i) );
-		if ( proj ) {
-			proj->SetModified(true);
+	if (ManagerST::Get()->IsWorkspaceOpen()) {
+		wxArrayString projs;
+		ManagerST::Get()->GetProjectList(projs);
+		for ( size_t i=0; i< projs.GetCount(); i++ ) {
+			ProjectPtr proj = ManagerST::Get()->GetProject( projs.Item(i) );
+			if ( proj ) {
+				proj->SetModified(true);
+			}
 		}
 	}
 
@@ -1404,7 +1406,20 @@ void Frame::OnAdvanceSettings(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	AdvancedDlg *dlg = new AdvancedDlg(this);
-	dlg->ShowModal();
+	if (dlg->ShowModal() == wxID_OK) {
+		//mark the whole workspace as dirty so makefile generation will take place
+		//force makefile generation upon configuration change
+		if (ManagerST::Get()->IsWorkspaceOpen()) {
+			wxArrayString projs;
+			ManagerST::Get()->GetProjectList(projs);
+			for ( size_t i=0; i< projs.GetCount(); i++ ) {
+				ProjectPtr proj = ManagerST::Get()->GetProject( projs.Item(i) );
+				if ( proj ) {
+					proj->SetModified(true);
+				}
+			}
+		}
+	}
 	dlg->Destroy();
 }
 
@@ -1424,7 +1439,7 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 	} else if (event.GetEventType() == wxEVT_BUILD_ENDED) {
 		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
 		m_outputPane->GetBuildTab()->OnBuildEnded();
-		
+
 		//If the build process was part of a 'Build and Run' command, check whether an erros
 		//occured during build process, if non, launch the output
 		if (m_buildInRun) {
@@ -1443,10 +1458,10 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 			m_rebuild = false;
 			ManagerST::Get()->BuildProject(ManagerST::Get()->GetActiveProjectName());
 		}
-		
+
 		//give back the focus to the editor
 		LEditor *editor = ManagerST::Get()->GetActiveEditor();
-		if(editor) {
+		if (editor) {
 			editor->SetActive();
 		}
 	}

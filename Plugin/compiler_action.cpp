@@ -1,3 +1,4 @@
+#include "environmentconfig.h"
 #include "compiler_action.h"
 #include "wx/tokenzr.h"
 
@@ -85,6 +86,8 @@ void CompilerAction::OnProcessEnd(wxProcessEvent& event)
 		}
 		CleanUp();
 	}
+	
+	EnvironmentConfig::Instance()->UnApplyEnv();
 	//give back the focus to the editor
 	event.Skip();
 }

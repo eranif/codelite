@@ -1164,9 +1164,14 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	//execute the program:
 	//- no hiding the console
 	//- no redirection of the stdin/out
+	EnvironmentConfig::Instance()->ApplyEnv();
 	m_asyncExeCmd->Execute(execLine, false, false);
-	if (m_asyncExeCmd->GetProcess())
+	if (m_asyncExeCmd->GetProcess()) {
+		
 		m_asyncExeCmd->GetProcess()->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
+	} else {
+		EnvironmentConfig::Instance()->UnApplyEnv();
+	}
 }
 
 void Manager::OnProcessEnd(wxProcessEvent &event)
@@ -1175,6 +1180,9 @@ void Manager::OnProcessEnd(wxProcessEvent &event)
 	m_asyncExeCmd->GetProcess()->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
 	delete m_asyncExeCmd;
 	m_asyncExeCmd = NULL;
+	
+	//unset the environment variables
+	EnvironmentConfig::Instance()->UnApplyEnv();
 	
 	//return the focus back to the editor
 	if(GetActiveEditor()) {

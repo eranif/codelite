@@ -1,4 +1,5 @@
 #include "project.h"
+#include "environmentconfig.h"
 #include "evnvarlist.h"
 #include "environmentconfig.h"
 #include "builder_gnumake.h"
@@ -819,8 +820,6 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
-	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
-
 	wxString type = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), project);
 
 	//create the target 
@@ -830,10 +829,11 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 	
 	wxString cmpType = bldConf->GetCompilerType();
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
-	tareget << bldConf->GetIntermediateDirectory() << wxT("/") << fn.GetName() << cmp->GetObjectSuffix();
 	
+	tareget << bldConf->GetIntermediateDirectory() << wxT("/") << fn.GetName() << cmp->GetObjectSuffix();
 	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" type=") << type << wxT(" ") << tareget;
-	return cmd;
+	
+	return EnvironmentConfig::Instance()->ExpandVariables(cmd);
 }
 
 wxString BuilderGnuMake::GetCdCmd(const wxFileName &path1, const wxFileName &path2)

@@ -29,35 +29,7 @@ wxString Workspace::GetName() const
 
 wxString Workspace::ExpandVariables(const wxString &expression) const
 {
-	static wxRegEx reVarPattern(wxT("\\$\\(( *)([a-zA-Z0-9_]+)( *)\\)"));
-	wxString result(expression);
-
-	EvnVarList vars;
-	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
-	StringMap variables = vars.GetVariables();
-
-	while (reVarPattern.Matches(result)) {
-		wxString varName = reVarPattern.GetMatch(result, 2);
-		wxString text = reVarPattern.GetMatch(result);
-
-		//search for workspace variable with this name
-		wxString replacement;
-		StringMap::iterator it = variables.find(varName);
-		if (it != variables.end()) {
-			replacement = it->second;
-		}
-
-		if (replacement.IsEmpty()) {
-			//no match in the workspace, try the environment
-			wxGetEnv(varName, &replacement);
-		}
-
-		if (replacement.IsEmpty())
-			break;
-
-		result.Replace(text, replacement);
-	}
-	return result;
+	return EnvironmentConfig::Instance()->ExpandVariables(expression);
 }
 
 void Workspace::CloseWorkspace()

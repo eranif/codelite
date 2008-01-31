@@ -1,4 +1,5 @@
 #include "compile_request.h"
+#include "environmentconfig.h"
 #include "buildmanager.h"
 #include "wx/process.h"
 #include "workspace.h"
@@ -102,10 +103,11 @@ void CompileRequest::Process()
 			}
 			AppendLine(text);
 		}
-		
+		EnvironmentConfig::Instance()->ApplyEnv();
 		if(m_proc->Start() == 0){
 			wxString message;
 			message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");
+			EnvironmentConfig::Instance()->UnApplyEnv();
 			AppendLine(message);
 			delete m_proc;
 			SetBusy(false);

@@ -14,9 +14,17 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
+	wxBoxSizer* bSizer2;
+	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
+	
 	m_statusMessage = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_statusMessage->Wrap( -1 );
-	mainSizer->Add( m_statusMessage, 0, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
+	bSizer2->Add( m_statusMessage, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_buttonClear = new wxButton( this, wxID_ANY, wxT("&Clear Results"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer2->Add( m_buttonClear, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	mainSizer->Add( bSizer2, 0, wxEXPAND, 5 );
 	
 	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	mainSizer->Add( m_staticline2, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
@@ -35,6 +43,7 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	this->Layout();
 	
 	// Connect Events
+	m_buttonClear->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CscopeTabBase::OnClearResults ), NULL, this );
 	m_treeCtrlResults->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( CscopeTabBase::OnLeftDClick ), NULL, this );
 	m_treeCtrlResults->Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( CscopeTabBase::OnItemActivated ), NULL, this );
 }

@@ -128,3 +128,10 @@ void CscopeTab::SetMessage(const wxString &msg, int percent)
 	m_statusMessage->SetLabel(msg);
 	m_gauge->SetValue(percent);
 }
+
+void CscopeTab::OnClearResults(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	SetMessage(wxT("Ready"), 0);
+	Clear();
+}

@@ -38,6 +38,8 @@ protected:
 	void OnLeftDClick(wxMouseEvent &event);
 	void DoItemActivated( wxTreeItemId &item, wxEvent &event );
 	void FreeTable();
+	void OnClearResults(wxCommandEvent &e);
+	
 public:
 	/** Constructor */
 	CscopeTab( wxWindow* parent, IManager *mgr );

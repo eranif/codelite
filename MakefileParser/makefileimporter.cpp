@@ -153,8 +153,7 @@ void MakefileImporter::ImportFromMakefile(const wxString &path)
 	wxFileName fileName = path;
 	LogMessage(fileName.GetPath() + wxT("\n"));
 	
-	const wxCharBuffer _path = _C(path);
-	VariableLexer expander(_path.data());
+	VariableLexer expander(path.data());
 	wxArrayString expanded = expander.getResult();
 
 	MakefileParser parser(expanded);

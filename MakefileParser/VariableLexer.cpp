@@ -7,10 +7,9 @@
 #include <wx/log.h>
 #include <wx/string.h>
 
-extern void initLexer(const char *filename);
-
 #define YYSTYPE std::string
 
+extern void initLexer(const char *filename);
 extern int yyparse();
 
 typedef std::vector<std::string> Strings;
@@ -23,9 +22,11 @@ Strings TheUnmatched;
 Strings TheError;
 Tokens TheTokens;
 
-VariableLexer::VariableLexer(const char* path) 
+VariableLexer::VariableLexer(const wxString& path) 
 {
-	initLexer(path);
+	const wxCharBuffer pathBuffer = path.ToAscii();
+	const char *cstr_path = pathBuffer.data();
+	initLexer(cstr_path);
 	yyparse();
 	
 	for(IStrings it = TheOutput.begin(); it != TheOutput.end(); it++)

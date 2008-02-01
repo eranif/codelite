@@ -2,60 +2,20 @@
 #include "makefile_lexer.h"
 #include "VariableLexer.h"
 #include "stdio.h"
-#include "errno.h"
 
 typedef std::map<wxString, wxString> Tokens;
 typedef Tokens::iterator ITokens;
 
-extern void initLexer(const char *filename);
-extern int yyparse();
-
-char *loadFile(const char *fileName)
-{
-	FILE *fp;
-	long len;
-	char *buf = NULL;
-
-	fp = fopen(fileName, "rb");
-	if (!fp) {
-		printf("failed to open file 'test.h': %s\n", strerror(errno));
-		return NULL;
-	}
-
-	//read the whole file
-	fseek(fp, 0, SEEK_END); 		//go to end
-	len = ftell(fp); 					//get position at end (length)
-	fseek(fp, 0, SEEK_SET); 		//go to begining
-	buf = (char *)malloc(len+1); 	//malloc buffer
-
-	//read into buffer
-	long bytes = fread(buf, sizeof(char), len, fp);
-	printf("read: %ld\n", bytes);
-	if (bytes != len) {
-		fclose(fp);
-		printf("failed to read from file 'test.h': %s\n", strerror(errno));
-		return NULL;
-	}
-
-	buf[len] = 0;	// make it null terminated string
-	fclose(fp);
-	return buf;
-}
-
 int main(int argv, char* argc[])
 {
-	char* path(NULL);
+	
+	wxString path;
 	if(argv>1)
-		path = argc[1];
+		path = _U(argc[1]);
 	else
-		path = "input";
-	
-	char *data = loadFile(path);
-	VariableLexer lexer(data);
-	
-	//release the input data
-	free(data);
-	/*
+		path = wxT("input");
+
+	VariableLexer lexer(path);
 	wxArrayString result = lexer.getResult();
 	wxArrayString unmatched = lexer.getUnmatched();
 	wxArrayString error = lexer.getError();
@@ -87,6 +47,6 @@ int main(int argv, char* argc[])
         }
 
 	fprintf(of, "=============== DONE =============\n");
-	fclose(of);*/
+	fclose(of);
 	return 0;
 }

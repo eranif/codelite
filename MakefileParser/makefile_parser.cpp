@@ -44,7 +44,7 @@ void TrimString(std::string& param)
 	std::cout << "AfterLeft: '" << param << "'\n";
 }
 
-// inverse of atoi
+/* inverse of atoi*/
 std::string itoa(const int x)
 {
 	std::ostringstream o;
@@ -61,6 +61,7 @@ void yyerror(char* param)
 #define WORD 257
 #define ASSIGN 258
 #define PRINT 259
+#define SHELL 260
 #define YYERRCODE 256
 short yylhs[] = {                                        -1,
     0,    0,    1,    1,    1,    1,    1,    1,    7,    8,
@@ -157,7 +158,7 @@ short yycheck[] = {                                      10,
 #ifndef YYDEBUG
 #define YYDEBUG 1
 #endif
-#define YYMAXTOKEN 259
+#define YYMAXTOKEN 260
 #if YYDEBUG
 char *yyname[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,"'\\n'",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -167,7 +168,7 @@ char *yyname[] = {
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"WORD",
-"ASSIGN","PRINT",
+"ASSIGN","PRINT","SHELL",
 };
 char *yyrule[] = {
 "$accept : input",

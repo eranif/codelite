@@ -1,4 +1,4 @@
-%{ 
+%{
 // #include <wx/string.h>
 #include <string>
 
@@ -27,13 +27,15 @@ word [0-9a-zA-Z_.\-+\*~:\\@&/|%\<\>,\'^ \t]+
                ;
        }
        #endif
+		lineno++;
     }
 
 ":="			{return ASSIGN;	}
-"="                     {return '=';    }
-"$"                     {return '$';    }
-"("                     {return '(';    }
-")"                     {return ')';    }
+"="				{return '=';    }
+"$"				{return '$';    }
+"("				{return '(';    }
+")"				{return ')';    }
+"shell"			{return SHELL;	}
 "PRINT"			{return PRINT;	}
 "\n"			{
 				lineno++;
@@ -56,7 +58,7 @@ word [0-9a-zA-Z_.\-+\*~:\\@&/|%\<\>,\'^ \t]+
 %%
 
 
-void initLexer(const char *filename)
+void initLexer(const char *fileName)
 {
         FILE *file = fopen(fileName, "r");
         if(!file)

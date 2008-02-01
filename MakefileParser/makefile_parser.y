@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <sstream>
 
 #define YYDEBUG 0        		/* get the pretty debugging code to compile*/
 #define YYSTYPE std::string
@@ -27,10 +28,18 @@ void TrimString(std::string& param)
 	static std::string whitespace = " \t";
 	
 	std::cout << "Before: '" << param << "'\n";
-	param.erase(param.find_last_not_of(whitespace)-1);
+	param.erase(param.find_last_not_of(whitespace)+1);
 	std::cout << "AfterRight: '" << param << "'\n";
 	param.erase(0, param.find_first_not_of(whitespace));
 	std::cout << "AfterLeft: '" << param << "'\n";
+}
+
+// inverse of atoi
+std::string itoa(const int x)
+{
+	std::ostringstream o;
+	if(!(o << x)) return "itoa(), ERROR!";
+	return o.str();
 }
 
 void yyerror(char* param)
@@ -45,6 +54,7 @@ void yyerror(char* param)
 %token WORD
 %token ASSIGN
 %token PRINT
+%token SHELL
 
 /* Start of grammar */
 %%
@@ -59,7 +69,7 @@ line:	'\n'					{	$$ = "";				}
 	| printline '\n'			{	$$ = "";				}
 	| error	'\n'				{
 							YYSTYPE msg;
-							msg.append("Line ").append(lineno).append(": Unexpected token '").append(yylval).append("'.");
+							msg.append("Line ").append(itoa(lineno)).append(": Unexpected token '").append(yylval).append("'.");
 							TheError.push_back(msg);
 							yyerrok;
 						}

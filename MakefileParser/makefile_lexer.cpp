@@ -669,6 +669,12 @@ YY_RULE_SETUP
                                 return WORD;
                         }
 	YY_BREAK
+case YY_STATE_EOF(INITIAL):
+{	
+							//reset lexer
+							yyterminate();
+						}
+	YY_BREAK
 case 10:
 YY_RULE_SETUP
 {
@@ -679,8 +685,6 @@ case 11:
 YY_RULE_SETUP
 ECHO;
 	YY_BREAK
-case YY_STATE_EOF(INITIAL):
-	yyterminate();
 
 	case YY_END_OF_BUFFER:
 		{

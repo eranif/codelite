@@ -7,6 +7,9 @@
 typedef std::map<wxString, wxString> Tokens;
 typedef Tokens::iterator ITokens;
 
+extern void initLexer(const char *filename);
+extern int yyparse();
+
 char *loadFile(const char *fileName)
 {
 	FILE *fp;
@@ -52,7 +55,7 @@ int main(int argv, char* argc[])
 	
 	//release the input data
 	free(data);
-	
+	/*
 	wxArrayString result = lexer.getResult();
 	wxArrayString unmatched = lexer.getUnmatched();
 	wxArrayString error = lexer.getError();
@@ -84,6 +87,6 @@ int main(int argv, char* argc[])
         }
 
 	fprintf(of, "=============== DONE =============\n");
-	fclose(of);
+	fclose(of);*/
 	return 0;
 }

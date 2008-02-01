@@ -7,11 +7,11 @@
 #include <wx/log.h>
 #include <wx/string.h>
 
-void initLexer(const char *filename);
+extern void initLexer(const char *filename);
 
 #define YYSTYPE std::string
 
-YYSTYPE yyparse();
+extern int yyparse();
 
 typedef std::vector<std::string> Strings;
 typedef Strings::iterator IStrings;

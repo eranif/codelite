@@ -19,11 +19,6 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 	return thePlugin;
 }
 
-/**
- * \brief 
- * \param manager
- * \return 
- */
 Cscope::Cscope(IManager *manager)
 		: IPlugin(manager)
 		, m_topWindow(NULL)
@@ -76,8 +71,18 @@ wxToolBar *Cscope::CreateToolBar(wxWindow *parent)
 
 void Cscope::CreatePluginMenu(wxMenu *pluginsMenu)
 {
-	//TODO:: create the menu for the 'Plugin' menu entry in the
-	//menu bar
+	wxMenu *menu = new wxMenu();
+	wxMenuItem *item(NULL);
+	item = new wxMenuItem(menu, XRCID("cscope_find_symbol"), wxT("Find this C symbol\tCtrl+0"), wxT("Find this C symbol"), wxITEM_NORMAL);
+	menu->Append(item);
+	
+	item = new wxMenuItem(menu, XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function\tCtrl+2"), wxT("Find functions called by this function"), wxITEM_NORMAL);
+	menu->Append(item);
+	
+	item = new wxMenuItem(menu, XRCID("cscope_functions_calling_this_function"), wxT("Find functions calling this function\tCtrl+3"), wxT("Find functions calling this function"), wxITEM_NORMAL);
+	menu->Append(item);
+
+	pluginsMenu->Append(wxID_ANY, wxT("cscope"), menu);
 }
 
 void Cscope::HookPopupMenu(wxMenu *menu, MenuType type)

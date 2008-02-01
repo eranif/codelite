@@ -128,6 +128,7 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	this->Layout();
 	
 	// Connect Events
+	m_choiceApplicationType->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NewWxProjectBaseDlg::OnChoiceChanged ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWxProjectBaseDlg::OnButtonOK ), NULL, this );
 	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWxProjectBaseDlg::OnButtonCancel ), NULL, this );
 }

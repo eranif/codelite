@@ -63,6 +63,7 @@ class NewWxProjectBaseDlg : public wxDialog
 		wxButton* m_button2;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnChoiceChanged( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonCancel( wxCommandEvent& event ){ event.Skip(); }
 		

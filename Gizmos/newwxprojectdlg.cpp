@@ -79,3 +79,16 @@ void NewWxProjectDlg::GetProjectInfo(NewWxProjectInfo &info)
 	info.SetPath(m_dirPicker->GetPath());
 }
 
+void NewWxProjectDlg::OnChoiceChanged(wxCommandEvent &e)
+{
+#ifdef __WXMSW__
+	if(e.GetSelection() == 1) {	//Simple main with wxWidgets enabled
+		m_checkBoxMWindows->SetValue(false);
+		m_checkBoxMWindows->Enable(false);
+	} else {
+		m_checkBoxMWindows->Enable(true);
+	}
+#else
+	wxUnusedVar(e);
+#endif
+}

@@ -18,7 +18,8 @@ protected:
 	void OnButtonCancel(wxCommandEvent &e);
 	void OnButtonOK(wxCommandEvent &e);
 	bool ValidateInput();
-	
+	void OnChoiceChanged(wxCommandEvent &e);
+	 
 public:
 	/** Constructor */
 	NewWxProjectDlg( wxWindow* parent, IManager *mgr  );

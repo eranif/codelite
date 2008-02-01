@@ -44,7 +44,12 @@ word [0-9a-zA-Z_.\-+\*~:\\@&/|%\<\>,\'^ \t]+
                                 // yylval.Printf(wxT("%s"),yytext);
                                 return WORD;
                         }
-.                      	{
+<<EOF>> 				{	
+							//reset lexer
+							yyterminate();
+						}
+					
+.           {
 				//printf("?> '%s'\n", yytext);
 			}
 

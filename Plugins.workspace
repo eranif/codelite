@@ -2,16 +2,12 @@
 <CodeLite_Workspace Name="Plugins" Database="./Plugins.tags">
   <Project Name="ReferenceAnalyser" Path="ReferenceAnalyser/ReferenceAnalyser.project" Active="No"/>
   <Project Name="MakefileImporter" Path="MakefileParser/MakefileImporter.project" Active="Yes"/>
-  <Environment>
-    <Variable Name="WorkspaceName" Value="Plugins"/>
-    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
-  </Environment>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="ReferenceAnalyser" ConfigName="WinReleaseUnicode"/>
       <Project Name="MakefileImporter" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Debug Unicode" Selected="yes">
       <Project Name="ReferenceAnalyser" ConfigName="DebugUnicode"/>
       <Project Name="MakefileImporter" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
@@ -24,4 +20,8 @@
       <Project Name="MakefileImporter" ConfigName="ReleaseUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
+  <Environment>
+    <Variable Name="WorkspaceName" Value="Plugins"/>
+    <Variable Name="WorkspacePath" Value="/home/eran/devl/codelite/trunk"/>
+  </Environment>
 </CodeLite_Workspace>

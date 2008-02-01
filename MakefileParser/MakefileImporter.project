@@ -59,9 +59,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -96,13 +94,11 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="$(ConfigurationName)/MakefileImporter" IntermediateDirectory="./WinDebugUnicode" Command="./MakefileImporter" CommandArguments="" WorkingDirectory="./WinDebugUnicode"/>
+      <General OutputFile="./MakefileImporter.exe" IntermediateDirectory="./WinDebugUnicode" Command="./MakefileImporter.exe" CommandArguments="" WorkingDirectory="./"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)">
         <IncludePath Value="."/>
         <IncludePath Value="../../trunk/Interfaces"/>
@@ -121,7 +117,7 @@
         <LibraryPath Value="../../trunk/lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.a"/>
         <Library Value="libCodeLiteud.a"/>
-        <Library Value="libwxsqlite3u.a"/>
+        <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
         <Library Value="libwxflatnotebookud.a"/>
         <Library Value="libwxmsw28ud.a"/>
@@ -179,9 +175,7 @@ makefile_lexer.cpp: makefile_parser.l
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>

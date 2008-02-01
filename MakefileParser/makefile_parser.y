@@ -77,9 +77,12 @@ line:	'\n'					{	$$ = "";				}
 
 open:	'$' '('				{	$$ = "";			}
 
-name:	wordvars			{	$$ = $1;					}
+name:	wordvars			{	$$ = $1;			}
 
 close:	')'					{	$$ = "";			}
+
+
+shellcommand: SHELL WORD 	{	$$ = $1;	}
 
 variable: open name close 		{
 						YYSTYPE token = $2;
@@ -95,6 +98,10 @@ variable: open name close 		{
 							$$ = "";
 						}
 					}
+		|	shellcommand	{	
+			$$ = $1;			
+			printf("Matched\n");
+			}
 
 words: WORD				{	$$ = $1;				}
      | words WORD 		{	$$ = $1 + $2;			}

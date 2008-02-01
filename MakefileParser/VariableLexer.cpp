@@ -27,6 +27,7 @@ VariableLexer::VariableLexer(const wxString& path)
 	const wxCharBuffer pathBuffer = path.ToAscii();
 	const char *cstr_path = pathBuffer.data();
 	initLexer(cstr_path);
+	initTokens();
 	yyparse();
 	
 	for(IStrings it = TheOutput.begin(); it != TheOutput.end(); it++)
@@ -63,4 +64,10 @@ const wxArrayString& VariableLexer::getError()
 const std::map<wxString,wxString>& VariableLexer::getTokens()
 {
 	return m_tokens;
+}
+
+void VariableLexer::initTokens()
+{
+	TheTokens["RM"] = "rm";
+	TheTokens["MAKE"] = "make";
 }

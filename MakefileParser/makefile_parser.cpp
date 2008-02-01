@@ -15,6 +15,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include <string>
 #include <map>
 #include <vector>
+#include <sstream>
 
 #define YYDEBUG 0        		/* get the pretty debugging code to compile*/
 #define YYSTYPE std::string
@@ -34,12 +35,21 @@ int yylex(void);
 
 void TrimString(std::string& param)
 {
-	std::string string = " a test yo ";
+	static std::string whitespace = " \t";
+	
 	std::cout << "Before: '" << param << "'\n";
-	/* string = string.Trim(true);*/
-	std::cout << "AfterT: '" << string << "'\n";
-	/* string = string.Trim(false);*/
-	std::cout << "AfterF: '" << string << "'\n";
+	param.erase(param.find_last_not_of(whitespace)+1);
+	std::cout << "AfterRight: '" << param << "'\n";
+	param.erase(0, param.find_first_not_of(whitespace));
+	std::cout << "AfterLeft: '" << param << "'\n";
+}
+
+// inverse of atoi
+std::string itoa(const int x)
+{
+	std::ostringstream o;
+	if(!(o << x)) return "itoa(), ERROR!";
+	return o.str();
 }
 
 void yyerror(char* param)
@@ -389,7 +399,7 @@ break;
 case 8:
 {
 							YYSTYPE msg;
-							msg.append("Line ").append(": Unexpected token '").append(yylval).append("'.");
+							msg.append("Line ").append(itoa(lineno)).append(": Unexpected token '").append(yylval).append("'.");
 							TheError.push_back(msg);
 							yyerrok;
 						}

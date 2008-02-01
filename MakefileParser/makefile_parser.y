@@ -24,12 +24,13 @@ int yylex(void);
 
 void TrimString(std::string& param)
 {
-	std::string string = " a test yo ";
+	static std::string whitespace = " \t";
+	
 	std::cout << "Before: '" << param << "'\n";
-	// string = string.Trim(true);
-	std::cout << "AfterT: '" << string << "'\n";
-	// string = string.Trim(false);
-	std::cout << "AfterF: '" << string << "'\n";
+	param.erase(param.find_last_not_of(whitespace)-1);
+	std::cout << "AfterRight: '" << param << "'\n";
+	param.erase(0, param.find_first_not_of(whitespace));
+	std::cout << "AfterLeft: '" << param << "'\n";
 }
 
 void yyerror(char* param)
@@ -58,7 +59,7 @@ line:	'\n'					{	$$ = "";				}
 	| printline '\n'			{	$$ = "";				}
 	| error	'\n'				{
 							YYSTYPE msg;
-							msg.append("Line ").append(": Unexpected token '").append(yylval).append("'.");
+							msg.append("Line ").append(lineno).append(": Unexpected token '").append(yylval).append("'.");
 							TheError.push_back(msg);
 							yyerrok;
 						}

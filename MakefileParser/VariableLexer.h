@@ -21,7 +21,7 @@
 class WXDLLIMPEXP_LE_SDK VariableLexer
 {
 	public:
-		VariableLexer(wxString path);
+		VariableLexer(const char* path);
 		
 		const wxArrayString& getResult();
 		const wxArrayString& getUnmatched();

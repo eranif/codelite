@@ -23,9 +23,9 @@ Strings TheUnmatched;
 Strings TheError;
 Tokens TheTokens;
 
-VariableLexer::VariableLexer(wxString path) 
+VariableLexer::VariableLexer(const char* path) 
 {
-	initLexer(path.mb_str());
+	initLexer(path);
 	yyparse();
 	
 	for(IStrings it = TheOutput.begin(); it != TheOutput.end(); it++)

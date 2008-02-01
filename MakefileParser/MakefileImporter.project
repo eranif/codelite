@@ -26,7 +26,6 @@
     <File Name="makefile_lexer.h"/>
     <File Name="makefile_parser.cpp"/>
   </VirtualDirectory>
-  <Dependencies/>
   <Settings Type="Executable">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
       <General OutputFile="./MakefileImporter" IntermediateDirectory="./DebugUnicode" Command="./MakefileImporter" CommandArguments="" WorkingDirectory="./"/>
@@ -56,12 +55,18 @@
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>
         <BuildCommand></BuildCommand>
-        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
+        <CustomPreBuild>makefile_parser.cpp makefile_lexer.cpp
+makefile_parser.cpp: makefile_parser.y
+	yacc -dl  -t -v makefile_parser.y
+	mv y.tab.c makefile_parser.cpp
+	mv y.tab.h makefile_lexer.h
 
+makefile_lexer.cpp: makefile_parser.l
+	flex -L  makefile_parser.l
+	mv lex.yy.c makefile_lexer.cpp
 </CustomPreBuild>
       </AdditionalRules>
     </Configuration>
@@ -93,11 +98,12 @@
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>
         <BuildCommand></BuildCommand>
-        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -131,7 +137,6 @@
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>
         <BuildCommand></BuildCommand>
-        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
@@ -177,7 +182,6 @@ makefile_lexer.cpp: makefile_parser.l
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>
         <BuildCommand></BuildCommand>
-        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
@@ -185,4 +189,5 @@ makefile_lexer.cpp: makefile_parser.l
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies/>
 </CodeLite_Project>

@@ -1,3 +1,4 @@
+#include "precompiled_header.h"
 #include "makefileimporter.h"
 #include <wx/xrc/xmlres.h>
 #include "workspace.h"
@@ -151,8 +152,9 @@ void MakefileImporter::ImportFromMakefile(const wxString &path)
 
 	wxFileName fileName = path;
 	LogMessage(fileName.GetPath() + wxT("\n"));
-
-	VariableLexer expander(path);
+	
+	const wxCharBuffer _path = _C(path);
+	VariableLexer expander(_path.data());
 	wxArrayString expanded = expander.getResult();
 
 	MakefileParser parser(expanded);

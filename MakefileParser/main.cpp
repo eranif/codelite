@@ -1,7 +1,7 @@
 #include "precompiled_header.h"
 #include "makefile_lexer.h"
 #include "VariableLexer.h"
-#include "stdio.h"
+#include <wx/file.h>
 
 typedef std::map<wxString, wxString> Tokens;
 typedef Tokens::iterator ITokens;
@@ -14,39 +14,56 @@ int main(int argv, char* argc[])
 		path = _U(argc[1]);
 	else
 		path = wxT("input");
-
+		
+	printf("Creating lexer...\t");
+	
 	VariableLexer lexer(path);
+	
+	printf("Done.\n");
+	printf("Retreiving result...\t");
+	
 	wxArrayString result = lexer.getResult();
 	wxArrayString unmatched = lexer.getUnmatched();
 	wxArrayString error = lexer.getError();
 	Tokens tokens = lexer.getTokens();
 	
-	FILE *of = fopen("outout.txt", "w+");
-	fprintf(of, "============= RESULT =============\n");
-	for(int i = 0; i < result.size(); i++)
+	printf("Done.\n");
+	printf("Opening output file...\t");
+	
+	wxFile of(wxT("outout.txt"), wxFile::write);
+	
+	printf("Done.\n");
+	printf("Writing output...\t");
+	
+	of.Write(wxT("============= RESULT =============\n"));
+	for(wxArrayString::iterator it = result.begin(); it != result.end(); it++)
+		of.Write(*it + wxT("\n"));
+	
+	of.Write(wxT("============ UNMATCHED ===========\n"));
+	for(wxArrayString::iterator it = unmatched.begin(); it != unmatched.end(); it++)
+		of.Write(*it + wxT("\n"));
+
+	of.Write(wxT("============== ERROR =============\n"));
+	for(wxArrayString::iterator it = error.begin(); it != error.end(); it++)
+		of.Write(*it + wxT("\n"));
+
+	of.Write(wxT("============= TOKENS =============\n"));
+	for(ITokens it = tokens.begin(); it != tokens.end(); it++)
 	{
-		fprintf(of, "%s\n", result[i].c_str());
+		wxString line;
+		line << wxT("'") << it->first << wxT("' = '") << it->second << wxT("'\n");
+		of.Write(line);
 	}
 
-	fprintf(of, "============ UNMATCHED ===========\n");
-	for(int i = 0; i < unmatched.size(); i++)
-	{
-		fprintf(of, "%s\n", unmatched[i].c_str());
-	}
-
-	fprintf(of, "============== ERROR =============\n");
-	for(int i = 0; i < error.size(); i++)
-	{
-		fprintf(of, "%s\n", error[i].c_str());
-	}
-
-	fprintf(of, "============= TOKENS =============\n");
-        for(ITokens it = tokens.begin(); it != tokens.end(); it++)
-        {
-         	fprintf(of, "'%s'='%s'\n", it->first.c_str(), it->second.c_str());
-        }
-
-	fprintf(of, "=============== DONE =============\n");
-	fclose(of);
+	of.Write(wxT("============= DONE =============\n"));
+	
+	printf("Done.\n");
+	printf("Closing output file...\t");
+	
+	of.Close();
+	
+	printf("Done.\n");
+	printf("Exiting.\n");
+	
 	return 0;
 }

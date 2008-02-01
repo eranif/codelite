@@ -16,6 +16,7 @@
     <File Name="cscopetab.h"/>
     <File Name="cscopetabbase.cpp"/>
   </VirtualDirectory>
+  <Dependencies/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
       <General OutputFile="../Runtime/plugins/cscope.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode"/>
@@ -43,12 +44,13 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -77,12 +79,13 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -104,7 +107,7 @@
         <LibraryPath Value="../../trunk/lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.a"/>
         <Library Value="libCodeLiteud.a"/>
-        <Library Value="libwxsqlite3u.a"/>
+        <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
         <Library Value="libwxFlatNotebookud.a"/>
         <Library Value="libwxmsw28ud.a"/>
@@ -113,12 +116,15 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -149,14 +155,14 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies/>
 </CodeLite_Project>

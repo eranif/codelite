@@ -278,6 +278,7 @@
       <CustomBuild Enabled="no">
         <CleanCommand>cd .. &amp;&amp; make type=debug_unicode clean</CleanCommand>
         <BuildCommand>cd .. &amp;&amp; make type=debug_unicode</BuildCommand>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
@@ -312,6 +313,7 @@
       <CustomBuild Enabled="no">
         <CleanCommand>cd .. &amp;&amp; make type=release_unicode clean</CleanCommand>
         <BuildCommand>cd .. &amp;&amp; make type=release_unicode</BuildCommand>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
@@ -348,10 +350,17 @@
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPreBuild>resources.cpp svninfo.cpp
+resources.cpp: resources.xrc
+	wxrc /c /v /o resources.cpp resources.xrc
+
+svninfo.cpp:
+	autorev .
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -386,6 +395,7 @@
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>

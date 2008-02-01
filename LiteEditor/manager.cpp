@@ -1760,7 +1760,7 @@ void Manager::DbgStart(long pid)
 	DebuggerMgr::Get().GetDebuggerInformation(debuggerName, dbginfo);
 	wxString dbgname = dbginfo.path;
 
-	dbgname = ExpandVariables2(dbgname);
+	dbgname = EnvironmentConfig::Instance()->ExpandVariables(dbgname);
 
 	//set focus to the output debug pane
 	ShowOutputPane(OutputPane::OUTPUT_DEBUG);

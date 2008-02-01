@@ -60,8 +60,8 @@ wxToolBar *Cscope::CreateToolBar(wxWindow *parent)
 	// Sample code that adds single button to the toolbar
 	// and associates an image to it
 	tb->AddTool(XRCID("cscope_find_symbol"), wxT("Find this C symbol"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_find_symbol")), wxT("Find this C symbol"));
-	tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_func_calling")), wxT("Find functions called by this function"));
 	tb->AddTool(XRCID("cscope_functions_calling_this_function"), wxT("Find functions calling this function"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_func_called")), wxT("Find functions calling this function"));
+	tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_func_calling")), wxT("Find functions called by this function"));
 	tb->Realize();
 	
 	// Connect the events to us

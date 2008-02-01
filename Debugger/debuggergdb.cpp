@@ -1,4 +1,5 @@
 #include "debuggergdb.h"
+#include "environmentconfig.h"
 #include "dirkeeper.h"
 #include "dbgcmd.h"
 #include "wx/regex.h"
@@ -132,7 +133,15 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 	//m_proc will be deleted upon termination
 	m_proc = new PipedProcess(wxNewId(), cmd);
 	if (m_proc) {
+		
+		//set the environment variables
+		EnvironmentConfig::Instance()->ApplyEnv();
+		
 		if (m_proc->Start() == 0) {
+			
+			//set the environment variables
+			EnvironmentConfig::Instance()->UnApplyEnv();
+		
 			//failed to start the debugger
 			delete m_proc;
 			SetBusy(false);

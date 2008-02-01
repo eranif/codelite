@@ -27,7 +27,7 @@
         <Library Value="libplugin_sdkud.a"/>
 		<Library Value="libwxflatnotebookud.a"/>  
         <Library Value="libCodeLiteud.a"/>
-		<Library Value="libwxsqlite3u.a"/>
+		<Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -95,7 +95,7 @@
         <LibraryPath Value="$(CodeLitePath)/lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.a"/>
         <Library Value="libCodeLiteud.a"/>
-        <Library Value="libwxsqlite3u.a"/>
+        <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
 	    <Library Value="libwxflatnotebookud.a"/>
 		<Library Value="libwxmsw28ud.a"/>

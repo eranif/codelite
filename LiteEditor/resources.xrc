@@ -117,6 +117,6 @@
 	
 	<!-- cscope -->
 	<object class="wxBitmap" name="cscope_find_symbol">res/func_find24.png</object>
-	<object class="wxBitmap" name="cscope_func_called">res/func_called24.png</object>
-	<object class="wxBitmap" name="cscope_func_calling">res/func_calling24.png</object>
+	<object class="wxBitmap" name="cscope_func_called">res/func_calling24.png</object>
+	<object class="wxBitmap" name="cscope_func_calling">res/func_called24.png</object>
 </resource>

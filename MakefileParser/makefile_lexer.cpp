@@ -1567,18 +1567,10 @@ int main()
 
 
 
-void initLexer(const char *fileName)
+void initLexer(const char *data)
 {
-        FILE *file = fopen(fileName, "r");
-        if(!file)
-        {
-                printf("failed loading file 'test.h'\n");
-                exit(-1);
-        }
-
-        //set the file to be our buffer
-        YY_BUFFER_STATE buffState = yy_create_buffer(file, YY_BUF_SIZE);
-        yy_switch_to_buffer(buffState);
+	BEGIN INITIAL;
+	yy_scan_string(data);
 }
 
 int yywrap()

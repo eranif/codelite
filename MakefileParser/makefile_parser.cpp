@@ -37,11 +37,11 @@ void TrimString(std::string& param)
 {
 	static std::string whitespace = " \t";
 	
-	std::cout << "Before: '" << param << "'\n";
+	/* std::cout << "Before: '" << param << "'\n";*/
 	param.erase(param.find_last_not_of(whitespace)+1);
-	std::cout << "AfterRight: '" << param << "'\n";
+	/* std::cout << "AfterRight: '" << param << "'\n";*/
 	param.erase(0, param.find_first_not_of(whitespace));
-	std::cout << "AfterLeft: '" << param << "'\n";
+	/* std::cout << "AfterLeft: '" << param << "'\n";*/
 }
 
 /* inverse of atoi*/

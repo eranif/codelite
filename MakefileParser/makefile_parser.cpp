@@ -621,7 +621,7 @@ break;
 case 27:
 {
 									printf("assgnline\n");
-									if(enableExecution.size() == 0 || enableExecution.top() == false)
+									if(enableExecution.size() != 0 && enableExecution.top() == false)
 									{
 										yyval = "";
 									}

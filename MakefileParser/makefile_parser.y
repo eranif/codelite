@@ -8,6 +8,12 @@
 #include <sstream>
 #include <stack>
 
+#if 0
+	#define DEBUGPRINTF(x)
+#else
+	#define DEBUGPRINTF(x) printf(x)
+#endif
+
 #define YYDEBUG 0        		/* get the pretty debugging code to compile*/
 #define YYSTYPE std::string
 
@@ -265,7 +271,7 @@ assignm:	ASSIGN				{
 
 assgnline: WORD assignm optvars	{
 									printf("assgnline\n");
-									if(enableExecution.size() == 0 || enableExecution.top() == false)
+									if(enableExecution.size() != 0 && enableExecution.top() == false)
 									{
 										$$ = "";
 									}

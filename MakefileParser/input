@@ -1,4 +1,11 @@
-ifeq ($(type),WinDebugUnicode)
-bla bla bla
-bla bla
+rofl = abc
+type=thetype
+test=one
+
+ifeq ($(type),thetype)
+test=two
 endif
+
+test
+$(rofl)
+two

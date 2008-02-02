@@ -61,7 +61,7 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data, i
 	m_checkColourLocalVars = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Colour local variables"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer2->Add( m_checkColourLocalVars, 0, wxALL, 5 );
 	
-	m_checkColourProjTags = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Colour project tags (functions, classes, structs etc.)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkColourProjTags = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Colour workspace tags (functions, classes, structs etc.)"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer2->Add( m_checkColourProjTags, 0, wxALL, 5 );
 	
 	bSizer4->Add( sbSizer2, 0, wxEXPAND, 5 );

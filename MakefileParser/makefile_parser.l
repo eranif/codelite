@@ -18,6 +18,7 @@ smallword [0-9a-zA-Z]+
 %%
 
 "#" {
+	   printf("comment\n");
        register int c;
        #ifdef __cplusplus
        while((c = yyinput()) != '\n' && c != EOF){
@@ -31,31 +32,32 @@ smallword [0-9a-zA-Z]+
 		lineno++;
     }
 
-":="			{return ASSIGN;	}
-"="				{return '=';    }
-"$"				{return '$';    }
-"("				{return '(';    }
-")"				{return ')';    }
-","				{return ',';	}
-"ifeq"			{return IFEQ;	}
-"PRINT"			{return PRINT;	}
+":="			{return ASSIGN;	printf("1\n"); }
+"="				{return '=';    printf("2\n"); }
+"$"				{return '$';    printf("3\n"); }
+"("				{return '(';    printf("4\n"); }
+")"				{return ')';    printf("5\n"); }
+","				{return ',';	printf("6\n"); }
+"endif"			{return ENDIF;	printf("7\n"); }
+"PRINT"			{return PRINT;	printf("8\n"); }
 "\n"			{
 				lineno++;
 				return '\n';	
 			}			
 {word}                  {				
 								yylval = yytext;
-								// printf("yytext: %s\n", yytext);
+								printf("yytext: %s\n", yytext);
                                 // yylval.Printf(wxT("%s"),yytext);
                                 return WORD;
                         }
 <<EOF>> 				{	
+							printf("EOF\n");
 							//reset lexer
 							yyterminate();
 						}
 					
 .           {
-				//printf("?> '%s'\n", yytext);
+				printf("?> '%s'\n", yytext);
 			}
 
 %%

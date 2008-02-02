@@ -1,6 +1,4 @@
-something
-OutputFile = target
-test
-all : test
-lol
-
+ifeq ($(type),WinDebugUnicode)
+bla bla bla
+bla bla
+endif

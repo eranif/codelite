@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include <sstream>
+#include <stack>
 
 #define YYDEBUG 0        		/* get the pretty debugging code to compile*/
 #define YYSTYPE std::string
@@ -22,6 +23,8 @@ extern tokens TheTokens;
 extern int lineno;
 
 bool append = false;
+std::stack<bool> enableExecution;
+
 int yylex(void);
 
 void TrimString(std::string& param)
@@ -57,137 +60,262 @@ void yyerror(char* param)
 %token PRINT
 %token SHELL
 %token IFEQ
+%token ENDIF
 
 /* Start of grammar */
 %%
-input:	/* empty */			{	$$ = "";				}
-	| input line			{	$$ = "";				}
+input:	/* empty */				{	
+									$$ = "";
+									printf("empty input\n");
+								}
+	| input line				{
+									$$ = "";
+									printf("input line\n");
+								}
 ;
 
-line:	'\n'					{	$$ = "";		printf("empty line\n");		}
-	| optwords vars_line '\n'	{	$$ = $1+$2; 	TheOutput.push_back($$);	}
-	| wordsline '\n'			{	$$ = $1; 		TheOutput.push_back($1);	}
-	| assgnline '\n'			{	$$ = "";		printf("assign line\n");	}
-	| printline '\n'			{	$$ = "";									}
-	| ifline '\n'				{	$$ = "";		printf("ifline\n");			}
-	| error	'\n'				{					printf("error line\n");
-							YYSTYPE msg;
-							msg.append("Line ").append(itoa(lineno)).append(": Unexpected token '").append(yylval).append("'.");
-							TheError.push_back(msg);
-							yyerrok;
-						}
+line:	'\n'					{	
+									$$ = "";
+									printf("empty line\n");
+								}
+	| optwords vars_line '\n'	{	
+									printf("varsline\n");
+									if(enableExecution.size())
+									{
+										YYSTYPE msg;
+										msg.append("Line ").append(itoa(lineno)).append(": Unexpected token inside if '").append(yylval).append("'.");
+										TheError.push_back(msg);
+										$$ = "";
+									}
+									else
+									{
+										$$ = $1+$2;
+										TheOutput.push_back($$);
+									}
+								}
+	| wordsline '\n'			{
+									printf("wordsline\n");
+									if(enableExecution.size())
+									{
+										YYSTYPE msg;
+										msg.append("Line ").append(itoa(lineno)).append(": Unexpected token inside if '").append(yylval).append("'.");
+										TheError.push_back(msg);
+										$$ = "";
+									}
+									else
+									{
+										$$ = $1;
+										TheOutput.push_back($1);
+									}
+								}
+	| assgnline '\n'			{	
+									$$ = "";
+									printf("assign line\n");
+								}
+	| printline '\n'			{	
+									$$ = "";
+									printf("printline\n");
+								}
+	| ifline '\n'				{	
+									$$ = "";
+									printf("ifline\n");
+								}
+	| ENDIF '\n'				{	
+									$$ = "";
+									printf("endif\n");
+									
+									if(enableExecution.size() > 0)
+									{
+										enableExecution.pop();
+									}
+									else
+									{
+										YYSTYPE msg;
+										msg.append("Line ").append(itoa(lineno)).append(": Unexpected endif token.");
+										TheError.push_back(msg);
+									}
+								}
+	| error	'\n'				{
+									YYSTYPE msg;
+									printf("error line\n");
+									msg.append("Line ").append(itoa(lineno)).append(": Unexpected token '").append(yylval).append("'.");
+									TheError.push_back(msg);
+									yyerrok;
+								}
 ;
 
-open:	'$' '('				{	$$ = "";			}
+open:	'$' '('					{	
+									$$ = "";
+									printf("open\n");
+								}
 
-name:	wordvars			{	$$ = $1;			}
+name:	wordvars				{	
+									$$ = $1;
+									printf("name\n");
+								}
 
-close:	')'					{	$$ = "";			}
+close:	')'						{
+									$$ = "";
+									printf("close\n");
+								}
 
-ifline:	IFEQ ' ' '(' '$' '(' WORD ')' ',' WORD ')'	{	$$ = ""; printf("gotcha\n"); }
+ifline:	WORD '(' '$' '(' WORD ')' ',' WORD ')'	
+								{
+									$$ = ""; 
+									printf("ifline\n");
+
+									YYSTYPE command = $1;
+									if(!command.substr(0, 4).compare("ifeq"))
+									{							
+										YYSTYPE varname = $5;
+										YYSTYPE target = $8;
+										if(TheTokens[varname].compare(target))
+											enableExecution.push(false);
+										else
+											enableExecution.push(true);
+									}
+								}
 
 variable: open name close 		{
-						YYSTYPE token = $2;
-						TrimString(token);
-						
-						if(!token.substr(0, 5).compare("shell"))
-						{
-							token.erase(0, 5);
-							TrimString(token);
-							printf("SHELL! '%s'\n", token.c_str());
-							YYSTYPE result = getShellResult(token);
-							TrimString(result);
-							printf("result: '%s'\n", result.c_str());
-							$$ = result;
-						}
-						else
-						{
-							if(TheTokens[token].size() > 0)
-							{
-								$$ = TheTokens[token];
-							}
-							else
-							{
-								TheUnmatched.push_back(token);
-								$$ = "";
-							}
-						}
-					}
+									printf("variable\n");
+									YYSTYPE token = $2;
+									TrimString(token);
+									
+									if(!token.substr(0, 5).compare("shell"))
+									{
+										token.erase(0, 5);
+										TrimString(token);
+										printf("SHELL! '%s'\n", token.c_str());
+										YYSTYPE result = getShellResult(token);
+										TrimString(result);
+										printf("result: '%s'\n", result.c_str());
+										$$ = result;
+									}
+									else
+									{
+										if(TheTokens[token].size() > 0)
+										{
+											$$ = TheTokens[token];
+										}
+										else
+										{
+											TheUnmatched.push_back(token);
+											$$ = "";
+										}
+									}
+								}
 
-words: WORD				{	$$ = $1;				}
-     | words WORD 		{	$$ = $1 + $2;			}
+words: WORD						{	
+									$$ = $1;
+									printf("words\n");
+								}
+     | words WORD 				{	
+									$$ = $1 + $2;
+									printf("words\n");
+								}
 ;
 
-whitespace: ' '			{	$$ = " ";				}
-	|	whitespace ' '	{	$$ = $1 + " ";			}
-;
-
-optwords:				{	$$ = "";				}
-	| words				{	$$ = $1;				}
+optwords:						{	
+									$$ = "";
+									printf("optwords\n");
+								}
+	| words						{	
+									$$ = $1;
+									printf("optwords\n");
+								}
 ;	
 
-optvars:				{	$$ = "";				}	
-	| wordvars			{	$$ = $1;				}
+optvars:						{	
+									$$ = "";
+									printf("optvars\n");
+								}	
+	| wordvars					{	
+									$$ = $1;
+									printf("optvars\n");
+								}
 ;
 
-optspace:				{	$$ = "";				}
-	|	whitespace		{	$$ = $1;				}
+
+vars_line: variable optwords	{
+									$$ = $1 + $2;
+									printf("vars_line\n");
+								}
+         | vars_line variable optwords	{	
+									$$ = $1 + $2 + $3;
+									printf("vars_line\n");
+								}
 ;
 
+wordsline: words				{	
+									$$ = $1;
+									printf("wordline\n");
+								}
 
-vars_line: variable optwords			{	$$ = $1 + $2;		}
-         | vars_line variable optwords	{	$$ = $1 + $2 + $3;	}
+assignm:	ASSIGN				{	
+									$$ = ""; 
+									append = true;
+									printf("assignm\n");
+								}
+       |	'='					{	
+									$$ = ""; 
+									append = false;
+									printf("assignm\n");
+								}
 ;
 
-wordsline: words			{	$$ = $1;				}
+assgnline: WORD assignm optvars	{
+									printf("assgnline\n");
+									if(enableExecution.size() == 0 || enableExecution.top() == false)
+									{
+										$$ = "";
+									}
+									else
+									{
+										YYSTYPE name = $1;
+										YYSTYPE value = $3;
+										TrimString(name);
+										TrimString(value);
 
-assignm:	ASSIGN			{	$$ = ""; append = true;			}
-       |	'='				{	$$ = ""; append = false;			}
+										if(append)
+											TheTokens[name] += value;
+										else
+											TheTokens[name] = value;
+
+										$$ = name + "=" + value;										
+									}
+								}
+
+printline:	PRINT				{
+									YYSTYPE result ="Tokens: \n";
+									for(Itokens it = TheTokens.begin(); it != TheTokens.end(); it++)
+									{
+										result += "'" + it->first + "'='" + it->second + "'\n";
+									}
+									result += "Done.";
+									$$ = result;
+								}
+
+wordvars: WORD 					{	
+									$$ = $1;
+									printf("wordvars\n");
+								}
+	| variable 					{	
+									$$ = $1;
+									printf("wordvars\n");
+								}
+	| wordvars variable			{	
+									$$ = $1 + $2;
+									printf("wordvars\n");
+								}
+	| wordvars WORD 			{	
+									$$ = $1 + $2;
+									printf("wordvars\n");
+								}
+	| wordvars '='				{	
+									$$ = $1 + "=";
+									printf("wordvars\n");
+								}
 ;
 
-assgnline: WORD optspace assignm optspace optvars	{
-	 					YYSTYPE name = $1;
-						YYSTYPE value = $5;
-						TrimString(name);
-						TrimString(value);
-
-	 					if(append)
-						{
-	 						TheTokens[name] += value;
-						}
-						else
-						{
-							TheTokens[name] = value;
-						}
-	 					$$ = name + "=" + value;			
-					}
-
-printline:	PRINT			{
-	 					YYSTYPE result ="Tokens: \n";
-						for(Itokens it = TheTokens.begin(); it != TheTokens.end(); it++)
-						{
-							result += "'" + it->first + "'='" + it->second + "'\n";
-						}
-						result += "Done.";
-						$$ = result;
-					}
-
-wordvars: WORD 				{	$$ = $1;				}
-	| variable 				{	$$ = $1;				}
-	| wordvars variable		{	$$ = $1 + $2;			}
-	| wordvars WORD 		{	$$ = $1 + $2;			}
-	| wordvars '='			{	$$ = $1 + "=";			}
-	| wordvars ' '			{	$$ = $1 + " ";			}
-;
 %%
 /* End of grammar */
-
-
-
-
-
-
-
-
-
-

@@ -3,3 +3,4 @@
 #define PRINT 259
 #define SHELL 260
 #define IFEQ 261
+#define ENDIF 262

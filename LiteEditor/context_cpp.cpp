@@ -1427,13 +1427,13 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 	//get this scope name
 	int startPos(0);
 	wxString scopeText = rCtrl.GetTextRange(startPos, rCtrl.GetCurrentPos());
-	
+
 	//get the scope name from the text
 	wxString scopeName = TagsManagerST::Get()->GetScopeName(scopeText);
 	if (scopeName.IsEmpty()) {
 		scopeName = wxT("<global>");
 	}
-	
+
 	TagEntryPtr tag;
 	bool match(false);
 	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
@@ -1464,7 +1464,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 			body = body.Trim().Trim(false);
 			body.Prepend(wxT("\n"));
 			body << content << wxT("\n");
-			
+
 			wxString targetFile;
 			FindSwappedFile(rCtrl.GetFileName(), targetFile);
 			MoveFuncImplDlg *dlg = new MoveFuncImplDlg(NULL, body, targetFile);
@@ -1671,24 +1671,30 @@ void ContextCpp::OnFileSaved()
 
 	//create to word list
 	//functions
-	wxString fooList;
+	wxString projectTags;
 	wxString varList;
-
-	std::map< wxString, TagEntryPtr >::iterator it1 = foo_map.begin();
-	for (; it1 != foo_map.end(); it1++ ) {
-		fooList << it1->second->GetName() << wxT(" ");
-	}
 
 	std::map< std::string, Variable >::iterator it2 = var_map.begin();
 	for (; it2 != var_map.end(); it2++ ) {
 		varList << _U(it2->second.m_name.c_str()) << wxT(" ");
 	}
 
+	//get list of all tags from the workspace
+	TagsManagerST::Get()->GetAllTagsNameAsSpaceDelimString(projectTags);
+
 	//wxSCI_C_WORD2
-	rCtrl.SetKeyWords(1, fooList);
+	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_PROJ_TAGS) {
+		rCtrl.SetKeyWords(1, projectTags);
+	} else {
+		rCtrl.SetKeyWords(1, wxEmptyString);
+	}
 
 	//wxSCI_C_GLOBALCLASS
-	rCtrl.SetKeyWords(3, varList);
+	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS) {
+		rCtrl.SetKeyWords(3, varList);
+	} else {
+		rCtrl.SetKeyWords(3, wxEmptyString);
+	}
 }
 
 void ContextCpp::ApplySettings()

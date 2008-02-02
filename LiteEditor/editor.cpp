@@ -1688,7 +1688,8 @@ void LEditor::OnDbgCustomWatch(wxCommandEvent &event)
 
 void LEditor::UpdateColours()
 {
-	if( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_FUNC_VARS ) {
+	if( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS || 
+		TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_PROJ_TAGS) {
 		m_context->OnFileSaved();
 	} else {
 		SetKeyWords(1, wxEmptyString);

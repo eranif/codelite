@@ -49,7 +49,8 @@ protected:
 	wxButton* m_buttonOK;
 	wxButton* m_buttonCancel;
 	TagsOptionsData m_data;
-	wxCheckBox* m_checkColourLocalFuncAndVars;
+	wxCheckBox* m_checkColourLocalVars;
+	wxCheckBox* m_checkColourProjTags;
 	
 protected:
 	void SetFlag(CodeCompletionOpts flag, bool set);

@@ -240,7 +240,7 @@ public:
 	 * \param files [output] array of files
 	 */
 	void GetFiles(const wxString &partialName, std::vector<wxFileName> &files);
-
+	
 	void GetVariables(std::vector<VariableEntryPtr> &vars);
 };
 

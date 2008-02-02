@@ -1269,18 +1269,28 @@ void Frame::OnNewDlgCreate(wxCommandEvent &event)
 void Frame::OnCtagsOptions(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	bool colourStat = m_tagsOptionsData.GetFlags() & CC_COLOUR_FUNC_VARS ? true : false;
-
+	
+	bool colVars(false);
+	bool colTags(false);
+	bool newColVars(false);
+	bool newColTags(false);
+	
+	colVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
+	colTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_PROJ_TAGS ? true : false);
+						
 	TagsOptionsDlg *dlg = new TagsOptionsDlg(this, m_tagsOptionsData);
 	if (dlg->ShowModal() == wxID_OK) {
 		TagsManager *tagsMgr = TagsManagerST::Get();
 		m_tagsOptionsData = dlg->GetData();
 
-		bool newStat =  m_tagsOptionsData.GetFlags() & CC_COLOUR_FUNC_VARS ? true : false;
+		newColVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
+		newColTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_PROJ_TAGS ? true : false);
+						
 		tagsMgr->SetCtagsOptions(m_tagsOptionsData);
 		EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
-		if (newStat != colourStat) {
+//do we need to colourise?
+		if (newColTags != colTags || newColVars != colVars) {
 			for (int i=0; i<GetNotebook()->GetPageCount(); i++) {
 				LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
 				if (editor) {

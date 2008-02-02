@@ -1934,3 +1934,19 @@ void TagsManager::GetFunctions(std::vector< TagEntryPtr > &tags, const wxString 
 	sql << wxT("  order by name ASC");
 	DoExecuteQueury(sql, tags, onlyWorkspace);
 }
+
+void TagsManager::GetAllTagsNameAsSpaceDelimString(wxString &tagsList)
+{
+	try
+	{
+		wxString query(wxT("select distinct name from tags where kind in('class' , 'struct', 'function', 'typedef') order by name ASC"));
+		wxSQLite3ResultSet res = m_pDb->Query(query);
+		while(res.NextRow()){
+			tagsList << res.GetString(0) << wxT(" ");
+		}
+	}
+	catch(wxSQLite3Exception &e)
+	{
+		wxUnusedVar(e);
+	}
+}

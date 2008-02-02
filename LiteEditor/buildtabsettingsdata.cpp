@@ -5,15 +5,16 @@
 BuildTabSettingsData::BuildTabSettingsData()
 : m_skipWarnings(false)
 , m_boldErrFont(true)
-, m_boldWarnFont(false)
+, m_boldWarnFont(true)
 {
-	wxColour errColour = wxFNBRenderer::LightColour(wxT("BROWN"), 50);
-	wxColour wrnColour = wxFNBRenderer::LightColour(wxT("YELLOW"), 70);
-	m_errorColourBg = errColour.GetAsString(wxC2S_HTML_SYNTAX);
-	m_warnColourBg  = wrnColour.GetAsString(wxC2S_HTML_SYNTAX);
+	wxColour errColour(wxT("RED"));
+	wxColour wrnColour(wxT("GOLD"));
 	
-	m_warnColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString(wxC2S_HTML_SYNTAX);
-	m_errorColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(wxC2S_HTML_SYNTAX);
+	m_errorColour = errColour.GetAsString(wxC2S_HTML_SYNTAX);
+	m_warnColour  = wrnColour.GetAsString(wxC2S_HTML_SYNTAX);
+	
+	m_warnColourBg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(wxC2S_HTML_SYNTAX);
+	m_errorColourBg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(wxC2S_HTML_SYNTAX);
 }
 
 BuildTabSettingsData::~BuildTabSettingsData()

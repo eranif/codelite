@@ -577,4 +577,3 @@ void TagsDatabase::GetFiles(const wxString &partialName, std::vector<wxFileName>
 		wxUnusedVar(e);
 	}
 }
-

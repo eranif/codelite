@@ -590,6 +590,12 @@ public:
 	 * \param text
 	 */
 	void StripComments(const wxString &text, wxString &stippedText);
+	 
+	/**
+	 * \brief return space delimited list of all unique string names in the database
+	 * \param tagsList
+	 */
+	void GetAllTagsNameAsSpaceDelimString(wxString &tagsList);
 	
 protected:
 	std::map<wxString, bool> m_typeScopeCache;

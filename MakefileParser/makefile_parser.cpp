@@ -18,6 +18,12 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include <sstream>
 #include <stack>
 
+#if 0
+	#define DEBUGPRINTF printf
+#else
+	#define DEBUGPRINTF
+#endif
+
 #define YYDEBUG 0        		/* get the pretty debugging code to compile*/
 #define YYSTYPE std::string
 
@@ -58,7 +64,7 @@ std::string itoa(const int x)
 
 void yyerror(char* param)
 {
-/*	printf("parser error: %s\n", string);*/
+/*	DEBUGPRINTF("parser error: %s\n", string);*/
 }
 
 /*************** Standard variable.y: continues here *********************/
@@ -392,24 +398,24 @@ yyreduce:
 case 1:
 {	
 									yyval = "";
-									printf("empty input\n");
+									DEBUGPRINTF("empty input\n");
 								}
 break;
 case 2:
 {
 									yyval = "";
-									printf("input line\n");
+									DEBUGPRINTF("input line\n");
 								}
 break;
 case 3:
 {	
 									yyval = "";
-									printf("empty line\n");
+									DEBUGPRINTF("empty line\n");
 								}
 break;
 case 4:
 {	
-									printf("varsline\n");
+									DEBUGPRINTF("varsline\n");
 									if(enableExecution.size())
 									{
 										YYSTYPE msg;
@@ -426,7 +432,7 @@ case 4:
 break;
 case 5:
 {
-									printf("wordsline\n");
+									DEBUGPRINTF("wordsline\n");
 									if(enableExecution.size())
 									{
 										YYSTYPE msg;
@@ -444,25 +450,25 @@ break;
 case 6:
 {	
 									yyval = "";
-									printf("assign line\n");
+									DEBUGPRINTF("assign line\n");
 								}
 break;
 case 7:
 {	
 									yyval = "";
-									printf("printline\n");
+									DEBUGPRINTF("printline\n");
 								}
 break;
 case 8:
 {	
 									yyval = "";
-									printf("ifline\n");
+									DEBUGPRINTF("ifline\n");
 								}
 break;
 case 9:
 {	
 									yyval = "";
-									printf("endif\n");
+									DEBUGPRINTF("endif\n");
 									
 									if(enableExecution.size() > 0)
 									{
@@ -479,7 +485,7 @@ break;
 case 10:
 {
 									YYSTYPE msg;
-									printf("error line\n");
+									DEBUGPRINTF("error line\n");
 									msg.append("Line ").append(itoa(lineno)).append(": Unexpected token '").append(yylval).append("'.");
 									TheError.push_back(msg);
 									yyerrok;
@@ -488,25 +494,25 @@ break;
 case 11:
 {	
 									yyval = "";
-									printf("open\n");
+									DEBUGPRINTF("open\n");
 								}
 break;
 case 12:
 {	
 									yyval = yyvsp[0];
-									printf("name\n");
+									DEBUGPRINTF("name\n");
 								}
 break;
 case 13:
 {
 									yyval = "";
-									printf("close\n");
+									DEBUGPRINTF("close\n");
 								}
 break;
 case 14:
 {
 									yyval = ""; 
-									printf("ifline\n");
+									DEBUGPRINTF("ifline\n");
 
 									YYSTYPE command = yyvsp[-8];
 									if(!command.substr(0, 4).compare("ifeq"))
@@ -522,7 +528,7 @@ case 14:
 break;
 case 15:
 {
-									printf("variable\n");
+									DEBUGPRINTF("variable\n");
 									YYSTYPE token = yyvsp[-1];
 									TrimString(token);
 									
@@ -530,10 +536,10 @@ case 15:
 									{
 										token.erase(0, 5);
 										TrimString(token);
-										printf("SHELL! '%s'\n", token.c_str());
+										DEBUGPRINTF("SHELL! '%s'\n", token.c_str());
 										YYSTYPE result = getShellResult(token);
 										TrimString(result);
-										printf("result: '%s'\n", result.c_str());
+										DEBUGPRINTF("result: '%s'\n", result.c_str());
 										yyval = result;
 									}
 									else
@@ -553,74 +559,74 @@ break;
 case 16:
 {	
 									yyval = yyvsp[0];
-									printf("words\n");
+									DEBUGPRINTF("words\n");
 								}
 break;
 case 17:
 {	
 									yyval = yyvsp[-1] + yyvsp[0];
-									printf("words\n");
+									DEBUGPRINTF("words\n");
 								}
 break;
 case 18:
 {	
 									yyval = "";
-									printf("optwords\n");
+									DEBUGPRINTF("optwords\n");
 								}
 break;
 case 19:
 {	
 									yyval = yyvsp[0];
-									printf("optwords\n");
+									DEBUGPRINTF("optwords\n");
 								}
 break;
 case 20:
 {	
 									yyval = "";
-									printf("optvars\n");
+									DEBUGPRINTF("optvars\n");
 								}
 break;
 case 21:
 {	
 									yyval = yyvsp[0];
-									printf("optvars\n");
+									DEBUGPRINTF("optvars\n");
 								}
 break;
 case 22:
 {
 									yyval = yyvsp[-1] + yyvsp[0];
-									printf("vars_line\n");
+									DEBUGPRINTF("vars_line\n");
 								}
 break;
 case 23:
 {	
 									yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0];
-									printf("vars_line\n");
+									DEBUGPRINTF("vars_line\n");
 								}
 break;
 case 24:
 {	
 									yyval = yyvsp[0];
-									printf("wordline\n");
+									DEBUGPRINTF("wordline\n");
 								}
 break;
 case 25:
 {	
 									yyval = ""; 
 									append = true;
-									printf("assignm\n");
+									DEBUGPRINTF("assignm\n");
 								}
 break;
 case 26:
 {	
 									yyval = ""; 
 									append = false;
-									printf("assignm\n");
+									DEBUGPRINTF("assignm\n");
 								}
 break;
 case 27:
 {
-									printf("assgnline\n");
+									DEBUGPRINTF("assgnline\n");
 									if(enableExecution.size() != 0 && enableExecution.top() == false)
 									{
 										yyval = "";
@@ -655,31 +661,31 @@ break;
 case 29:
 {	
 									yyval = yyvsp[0];
-									printf("wordvars\n");
+									DEBUGPRINTF("wordvars\n");
 								}
 break;
 case 30:
 {	
 									yyval = yyvsp[0];
-									printf("wordvars\n");
+									DEBUGPRINTF("wordvars\n");
 								}
 break;
 case 31:
 {	
 									yyval = yyvsp[-1] + yyvsp[0];
-									printf("wordvars\n");
+									DEBUGPRINTF("wordvars\n");
 								}
 break;
 case 32:
 {	
 									yyval = yyvsp[-1] + yyvsp[0];
-									printf("wordvars\n");
+									DEBUGPRINTF("wordvars\n");
 								}
 break;
 case 33:
 {	
 									yyval = yyvsp[-1] + "=";
-									printf("wordvars\n");
+									DEBUGPRINTF("wordvars\n");
 								}
 break;
     }

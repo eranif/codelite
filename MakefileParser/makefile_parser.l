@@ -10,6 +10,12 @@ extern YYSTYPE yylval;
 #define YY_NO_UNISTD_H 1
 #undef YY_NO_INPUT
 int lineno = 0;
+
+#if 0
+	#define DEBUGPRINTF printf
+#else
+	#define DEBUGPRINTF
+#endif
 %}
 
 word [0-9a-zA-Z_.\-+\*~:\\@&/|%\<\>\'^\t ]+
@@ -18,7 +24,7 @@ smallword [0-9a-zA-Z]+
 %%
 
 "#" {
-	   printf("comment\n");
+	   DEBUGPRINTF("comment\n");
        register int c;
        #ifdef __cplusplus
        while((c = yyinput()) != '\n' && c != EOF){
@@ -32,32 +38,31 @@ smallword [0-9a-zA-Z]+
 		lineno++;
     }
 
-":="			{return ASSIGN;	printf("1\n"); }
-"="				{return '=';    printf("2\n"); }
-"$"				{return '$';    printf("3\n"); }
-"("				{return '(';    printf("4\n"); }
-")"				{return ')';    printf("5\n"); }
-","				{return ',';	printf("6\n"); }
-"endif"			{return ENDIF;	printf("7\n"); }
-"PRINT"			{return PRINT;	printf("8\n"); }
+":="			{return ASSIGN;	DEBUGPRINTF(":=\n"); }
+"="				{return '=';    DEBUGPRINTF("=\n"); }
+"$"				{return '$';    DEBUGPRINTF("$\n"); }
+"("				{return '(';    DEBUGPRINTF("(\n"); }
+")"				{return ')';    DEBUGPRINTF(")\n"); }
+","				{return ',';	DEBUGPRINTF(",\n"); }
+"endif"			{return ENDIF;	DEBUGPRINTF("endif\n"); }
+"PRINT"			{return PRINT;	DEBUGPRINTF("PRINT\n"); }
 "\n"			{
 				lineno++;
 				return '\n';	
 			}			
 {word}                  {				
 								yylval = yytext;
-								printf("yytext: %s\n", yytext);
-                                // yylval.Printf(wxT("%s"),yytext);
+								DEBUGPRINTF("yytext: %s\n", yytext);
                                 return WORD;
                         }
 <<EOF>> 				{	
-							printf("EOF\n");
+							DEBUGPRINTF("EOF\n");
 							//reset lexer
 							yyterminate();
 						}
 					
 .           {
-				printf("?> '%s'\n", yytext);
+				DEBUGPRINTF("?> '%s'\n", yytext);
 			}
 
 %%
@@ -68,7 +73,7 @@ void initLexer(const char *fileName)
         FILE *file = fopen(fileName, "r");
         if(!file)
         {
-                printf("failed loading file 'test.h'\n");
+                DEBUGPRINTF("failed loading file 'test.h'\n");
                 exit(-1);
         }
 

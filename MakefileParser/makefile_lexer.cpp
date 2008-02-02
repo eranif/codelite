@@ -387,6 +387,12 @@ extern YYSTYPE yylval;
 #undef YY_NO_INPUT
 int lineno = 0;
 
+#if 0
+	#define DEBUGPRINTF printf
+#else
+	#define DEBUGPRINTF
+#endif
+
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
  */
@@ -623,7 +629,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 {
-	   printf("comment\n");
+	   DEBUGPRINTF("comment\n");
        register int c;
        #ifdef __cplusplus
        while((c = yyinput()) != '\n' && c != EOF){
@@ -639,35 +645,35 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-{return ASSIGN;	printf("1\n"); }
+{return ASSIGN;	DEBUGPRINTF(":=\n"); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-{return '=';    printf("2\n"); }
+{return '=';    DEBUGPRINTF("=\n"); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-{return '$';    printf("3\n"); }
+{return '$';    DEBUGPRINTF("$\n"); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-{return '(';    printf("4\n"); }
+{return '(';    DEBUGPRINTF("(\n"); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-{return ')';    printf("5\n"); }
+{return ')';    DEBUGPRINTF(")\n"); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-{return ',';	printf("6\n"); }
+{return ',';	DEBUGPRINTF(",\n"); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-{return ENDIF;	printf("7\n"); }
+{return ENDIF;	DEBUGPRINTF("endif\n"); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-{return PRINT;	printf("8\n"); }
+{return PRINT;	DEBUGPRINTF("PRINT\n"); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
@@ -680,14 +686,13 @@ case 11:
 YY_RULE_SETUP
 {				
 								yylval = yytext;
-								printf("yytext: %s\n", yytext);
-                                // yylval.Printf(wxT("%s"),yytext);
+								DEBUGPRINTF("yytext: %s\n", yytext);
                                 return WORD;
                         }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 {	
-							printf("EOF\n");
+							DEBUGPRINTF("EOF\n");
 							//reset lexer
 							yyterminate();
 						}
@@ -695,7 +700,7 @@ case YY_STATE_EOF(INITIAL):
 case 12:
 YY_RULE_SETUP
 {
-				printf("?> '%s'\n", yytext);
+				DEBUGPRINTF("?> '%s'\n", yytext);
 			}
 	YY_BREAK
 case 13:
@@ -1593,7 +1598,7 @@ void initLexer(const char *fileName)
         FILE *file = fopen(fileName, "r");
         if(!file)
         {
-                printf("failed loading file 'test.h'\n");
+                DEBUGPRINTF("failed loading file 'test.h'\n");
                 exit(-1);
         }
 

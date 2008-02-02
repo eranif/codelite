@@ -9,9 +9,9 @@
 #include <stack>
 
 #if 0
-	#define DEBUGPRINTF(x)
+	#define DEBUGPRINTF printf
 #else
-	#define DEBUGPRINTF(x) printf(x)
+	#define DEBUGPRINTF
 #endif
 
 #define YYDEBUG 0        		/* get the pretty debugging code to compile*/
@@ -54,7 +54,7 @@ std::string itoa(const int x)
 
 void yyerror(char* param)
 {
-//	printf("parser error: %s\n", string);
+//	DEBUGPRINTF("parser error: %s\n", string);
 }
 
 /*************** Standard variable.y: continues here *********************/
@@ -72,20 +72,20 @@ void yyerror(char* param)
 %%
 input:	/* empty */				{	
 									$$ = "";
-									printf("empty input\n");
+									DEBUGPRINTF("empty input\n");
 								}
 	| input line				{
 									$$ = "";
-									printf("input line\n");
+									DEBUGPRINTF("input line\n");
 								}
 ;
 
 line:	'\n'					{	
 									$$ = "";
-									printf("empty line\n");
+									DEBUGPRINTF("empty line\n");
 								}
 	| optwords vars_line '\n'	{	
-									printf("varsline\n");
+									DEBUGPRINTF("varsline\n");
 									if(enableExecution.size())
 									{
 										YYSTYPE msg;
@@ -100,7 +100,7 @@ line:	'\n'					{
 									}
 								}
 	| wordsline '\n'			{
-									printf("wordsline\n");
+									DEBUGPRINTF("wordsline\n");
 									if(enableExecution.size())
 									{
 										YYSTYPE msg;
@@ -116,19 +116,19 @@ line:	'\n'					{
 								}
 	| assgnline '\n'			{	
 									$$ = "";
-									printf("assign line\n");
+									DEBUGPRINTF("assign line\n");
 								}
 	| printline '\n'			{	
 									$$ = "";
-									printf("printline\n");
+									DEBUGPRINTF("printline\n");
 								}
 	| ifline '\n'				{	
 									$$ = "";
-									printf("ifline\n");
+									DEBUGPRINTF("ifline\n");
 								}
 	| ENDIF '\n'				{	
 									$$ = "";
-									printf("endif\n");
+									DEBUGPRINTF("endif\n");
 									
 									if(enableExecution.size() > 0)
 									{
@@ -143,7 +143,7 @@ line:	'\n'					{
 								}
 	| error	'\n'				{
 									YYSTYPE msg;
-									printf("error line\n");
+									DEBUGPRINTF("error line\n");
 									msg.append("Line ").append(itoa(lineno)).append(": Unexpected token '").append(yylval).append("'.");
 									TheError.push_back(msg);
 									yyerrok;
@@ -152,23 +152,23 @@ line:	'\n'					{
 
 open:	'$' '('					{	
 									$$ = "";
-									printf("open\n");
+									DEBUGPRINTF("open\n");
 								}
 
 name:	wordvars				{	
 									$$ = $1;
-									printf("name\n");
+									DEBUGPRINTF("name\n");
 								}
 
 close:	')'						{
 									$$ = "";
-									printf("close\n");
+									DEBUGPRINTF("close\n");
 								}
 
 ifline:	WORD '(' '$' '(' WORD ')' ',' WORD ')'	
 								{
 									$$ = ""; 
-									printf("ifline\n");
+									DEBUGPRINTF("ifline\n");
 
 									YYSTYPE command = $1;
 									if(!command.substr(0, 4).compare("ifeq"))
@@ -183,7 +183,7 @@ ifline:	WORD '(' '$' '(' WORD ')' ',' WORD ')'
 								}
 
 variable: open name close 		{
-									printf("variable\n");
+									DEBUGPRINTF("variable\n");
 									YYSTYPE token = $2;
 									TrimString(token);
 									
@@ -191,10 +191,10 @@ variable: open name close 		{
 									{
 										token.erase(0, 5);
 										TrimString(token);
-										printf("SHELL! '%s'\n", token.c_str());
+										DEBUGPRINTF("SHELL! '%s'\n", token.c_str());
 										YYSTYPE result = getShellResult(token);
 										TrimString(result);
-										printf("result: '%s'\n", result.c_str());
+										DEBUGPRINTF("result: '%s'\n", result.c_str());
 										$$ = result;
 									}
 									else
@@ -213,64 +213,64 @@ variable: open name close 		{
 
 words: WORD						{	
 									$$ = $1;
-									printf("words\n");
+									DEBUGPRINTF("words\n");
 								}
      | words WORD 				{	
 									$$ = $1 + $2;
-									printf("words\n");
+									DEBUGPRINTF("words\n");
 								}
 ;
 
 optwords:						{	
 									$$ = "";
-									printf("optwords\n");
+									DEBUGPRINTF("optwords\n");
 								}
 	| words						{	
 									$$ = $1;
-									printf("optwords\n");
+									DEBUGPRINTF("optwords\n");
 								}
 ;	
 
 optvars:						{	
 									$$ = "";
-									printf("optvars\n");
+									DEBUGPRINTF("optvars\n");
 								}	
 	| wordvars					{	
 									$$ = $1;
-									printf("optvars\n");
+									DEBUGPRINTF("optvars\n");
 								}
 ;
 
 
 vars_line: variable optwords	{
 									$$ = $1 + $2;
-									printf("vars_line\n");
+									DEBUGPRINTF("vars_line\n");
 								}
          | vars_line variable optwords	{	
 									$$ = $1 + $2 + $3;
-									printf("vars_line\n");
+									DEBUGPRINTF("vars_line\n");
 								}
 ;
 
 wordsline: words				{	
 									$$ = $1;
-									printf("wordline\n");
+									DEBUGPRINTF("wordline\n");
 								}
 
 assignm:	ASSIGN				{	
 									$$ = ""; 
 									append = true;
-									printf("assignm\n");
+									DEBUGPRINTF("assignm\n");
 								}
        |	'='					{	
 									$$ = ""; 
 									append = false;
-									printf("assignm\n");
+									DEBUGPRINTF("assignm\n");
 								}
 ;
 
 assgnline: WORD assignm optvars	{
-									printf("assgnline\n");
+									DEBUGPRINTF("assgnline\n");
 									if(enableExecution.size() != 0 && enableExecution.top() == false)
 									{
 										$$ = "";
@@ -303,23 +303,23 @@ printline:	PRINT				{
 
 wordvars: WORD 					{	
 									$$ = $1;
-									printf("wordvars\n");
+									DEBUGPRINTF("wordvars\n");
 								}
 	| variable 					{	
 									$$ = $1;
-									printf("wordvars\n");
+									DEBUGPRINTF("wordvars\n");
 								}
 	| wordvars variable			{	
 									$$ = $1 + $2;
-									printf("wordvars\n");
+									DEBUGPRINTF("wordvars\n");
 								}
 	| wordvars WORD 			{	
 									$$ = $1 + $2;
-									printf("wordvars\n");
+									DEBUGPRINTF("wordvars\n");
 								}
 	| wordvars '='				{	
 									$$ = $1 + "=";
-									printf("wordvars\n");
+									DEBUGPRINTF("wordvars\n");
 								}
 ;
 

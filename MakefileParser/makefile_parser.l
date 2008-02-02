@@ -12,7 +12,8 @@ extern YYSTYPE yylval;
 int lineno = 0;
 %}
 
-word [0-9a-zA-Z_.\-+\*~:\\@&/|%\<\>,\'^ \t]+
+word [0-9a-zA-Z_.\-+\*~:\\@&/|%\<\>\'^\t ]+
+smallword [0-9a-zA-Z]+
 
 %%
 
@@ -35,7 +36,8 @@ word [0-9a-zA-Z_.\-+\*~:\\@&/|%\<\>,\'^ \t]+
 "$"				{return '$';    }
 "("				{return '(';    }
 ")"				{return ')';    }
-"shell"			{return SHELL;	}
+","				{return ',';	}
+"ifeq"			{return IFEQ;	}
 "PRINT"			{return PRINT;	}
 "\n"			{
 				lineno++;
@@ -43,6 +45,7 @@ word [0-9a-zA-Z_.\-+\*~:\\@&/|%\<\>,\'^ \t]+
 			}			
 {word}                  {				
 								yylval = yytext;
+								// printf("yytext: %s\n", yytext);
                                 // yylval.Printf(wxT("%s"),yytext);
                                 return WORD;
                         }

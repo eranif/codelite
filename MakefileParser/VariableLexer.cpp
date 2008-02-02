@@ -1,4 +1,4 @@
-#include "precompiled_header.h"
+#include "procutils.h"
 #include "makefile_lexer.h"
 #include "VariableLexer.h"
 #include <string>
@@ -21,6 +21,28 @@ Strings TheOutput;
 Strings TheUnmatched;
 Strings TheError;
 Tokens TheTokens;
+
+std::string getShellResult(const std::string& command)
+{
+	std::string result;
+	
+	if(!command.size())
+		return result;
+	
+	wxString thecommand = _U(command.c_str());
+	wxArrayString shellresult;
+	ProcUtils::SafeExecuteCommand(thecommand, shellresult);
+	
+	if(shellresult.size())
+	{
+		wxString line = shellresult[0];
+		line.Replace(wxT("\n"), wxEmptyString, true);
+		line.Replace(wxT("\r"), wxEmptyString, true);
+		result = std::string(line.ToAscii().data());
+	}
+	
+	return result;
+}
 
 VariableLexer::VariableLexer(const wxString& path) 
 {

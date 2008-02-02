@@ -24,6 +24,7 @@ typedef std::vector<std::string> Strings;
 typedef std::map<std::string, std::string> tokens;
 typedef tokens::iterator Itokens;
 
+extern std::string getShellResult(const std::string& command);
 extern Strings TheOutput;
 extern Strings TheUnmatched;
 extern Strings TheError;
@@ -62,55 +63,60 @@ void yyerror(char* param)
 #define ASSIGN 258
 #define PRINT 259
 #define SHELL 260
-#define word 261
+#define IFEQ 261
 #define YYERRCODE 256
 short yylhs[] = {                                        -1,
-    0,    0,    1,    1,    1,    1,    1,    1,    7,    8,
-   10,   11,   12,   12,   13,   13,    2,    2,   14,   14,
-    3,    3,    4,   15,   15,    5,    6,    9,    9,    9,
-    9,
+    0,    0,    1,    1,    1,    1,    1,    1,    1,    8,
+    9,   11,    7,   12,   13,   13,   15,   15,    2,    2,
+   16,   16,   14,   14,    3,    3,    4,   17,   17,    5,
+    6,   10,   10,   10,   10,   10,   10,
 };
 short yylen[] = {                                         2,
-    0,    2,    1,    3,    2,    2,    2,    2,    2,    1,
-    1,    2,    3,    1,    1,    2,    0,    1,    0,    1,
-    2,    3,    1,    1,    1,    3,    1,    1,    1,    2,
-    2,
+    0,    2,    1,    3,    2,    2,    2,    2,    2,    2,
+    1,    1,   10,    3,    1,    3,    1,    2,    0,    1,
+    0,    1,    0,    1,    2,    3,    1,    1,    1,    5,
+    1,    1,    1,    2,    2,    2,    2,
 };
 short yydefred[] = {                                      1,
-    0,    0,   15,   27,    3,    2,    0,    0,    0,    0,
-    0,    8,    0,    0,    0,    0,   14,    0,    5,    6,
-    7,   16,   24,   25,    0,   12,    9,    4,    0,   28,
-    0,    0,   29,   21,    0,    0,   26,   22,   11,   13,
-   31,   30,
+    0,    0,    0,   31,    0,    3,    2,    0,    0,    0,
+    0,    0,    0,    9,   17,    0,    0,    0,    0,    0,
+    0,    0,    5,    6,    7,    8,    0,   28,   29,    0,
+   18,    0,   10,    4,    0,   32,    0,    0,   33,   15,
+   25,    0,   16,    0,    0,   26,   12,   14,   35,   37,
+   36,   34,    0,   30,    0,    0,    0,    0,    0,   13,
 };
 short yydgoto[] = {                                       1,
-    6,    7,   15,    8,    9,   10,   16,   31,   32,   40,
-   17,   33,   35,   37,   25,
+    7,    8,   20,    9,   10,   11,   12,   21,   37,   38,
+   48,   39,   42,   27,   17,   54,   30,
 };
 short yysindex[] = {                                      0,
-   -2,    1,    0,    0,    0,    0,  -30,    4,    5,    6,
-  -52,    0, -248,  -23,  -10,  -32,    0, -238,    0,    0,
-    0,    0,    0,    0,  -32,    0,    0,    0, -238,    0,
-  -21,  -31,    0,    0, -236,  -31,    0,    0,    0,    0,
-    0,    0,
+  -10,    5,  -16,    0,  -15,    0,    0,  -17,   10,   11,
+   12,   14,  -16,    0,    0,  -57,   -6,   -8,    1,    3,
+  -34, -232,    0,    0,    0,    0, -229,    0,    0,  -16,
+    0,    6,    0,    0, -232,    0,  -11,  -24,    0,    0,
+    0,  -16,    0,  -34,    7,    0,    0,    0,    0,    0,
+    0,    0,  -24,    0, -223,    2,    9, -213,   13,    0,
 };
 short yyrindex[] = {                                      0,
-  -29,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-   -9,    0,    0,    0,    0,    0,    0,   -8,    0,    0,
-    0,    0,    0,    0,    4,    0,    0,    0,   -8,    0,
-    0,  -19,    0,    0,   -7,    5,    0,    0,    0,    0,
-    0,    0,
+  -17,    0,   -5,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,   -9,    0,    0,    0,   -3,    0,    0,    0,
+    0,    4,    0,    0,    0,    0,    0,    0,    0,   -7,
+    0,    0,    0,    0,    4,    0,    0,   16,    0,    0,
+    0,   -1,    0,   35,    0,    0,    0,    0,    0,    0,
+    0,    0,   36,    0,    0,    0,    0,    0,    0,    0,
 };
 short yygindex[] = {                                      0,
-    0,   -6,    0,    0,    0,    0,    0,    0,   -1,    0,
-    0,    3,   24,    0,    0,
+    0,  -12,    0,    0,    0,    0,    0,    0,    0,   15,
+    0,   -2,   47,    8,    0,    0,    0,
 };
-#define YYTABLESIZE 257
-short yytable[] = {                                      28,
-   23,   17,   18,   14,   14,   14,   17,    5,   24,   18,
-   12,   34,   26,   19,   20,   21,   27,   29,    3,   39,
-   22,   10,   38,   36,   11,   14,   18,   17,   18,    0,
-    0,    0,    0,    0,   42,    0,    0,    0,   42,    0,
+#define YYTABLESIZE 256
+short yytable[] = {                                       6,
+   27,   19,   23,   29,   15,   22,   24,   50,   20,   41,
+   16,   19,   34,   19,   14,   15,   18,   35,   19,   23,
+   24,   25,   46,   26,   40,   31,   20,   43,   23,   47,
+   15,   32,   24,   56,   20,   52,   51,   44,   19,   19,
+   33,   45,   57,   59,   21,   22,   55,   13,    0,    0,
+   52,    0,   58,   60,    0,   23,   11,   24,   53,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -125,20 +131,20 @@ short yytable[] = {                                      28,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+   28,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,   22,   23,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,   30,   41,    0,   13,   13,   13,
-   17,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,   13,
-   18,   17,   18,    2,    3,    0,    4,
+    0,    0,   36,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,   49,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    2,    3,   23,    4,   23,
+    5,   15,   23,   24,   24,   23,
 };
 short yycheck[] = {                                      10,
-   10,   10,   10,   36,   36,   36,   36,   10,   61,    7,
-   10,   18,  261,   10,   10,   10,   40,   15,  257,   41,
-  257,   41,   29,   25,    1,   36,   36,   36,   36,   -1,
-   -1,   -1,   -1,   -1,   32,   -1,   -1,   -1,   36,   -1,
+   10,   36,   10,   61,   10,    8,   10,   32,   10,   22,
+    3,   36,   10,   10,   10,   32,   32,   20,   36,   10,
+   10,   10,   35,   10,  257,   32,   36,  257,   36,   41,
+   36,   40,   36,  257,   36,   38,   61,   30,   36,   36,
+   40,   36,   41,  257,   10,   10,   40,    1,   -1,   -1,
+   53,   -1,   44,   41,   -1,   61,   41,   61,   44,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -153,14 +159,12 @@ short yycheck[] = {                                      10,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+  258,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,  257,  258,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,  257,  257,   -1,  260,  260,  260,
-  260,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,  260,
-  260,  260,  260,  256,  257,   -1,  259,
+   -1,   -1,  257,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,  257,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,  256,  257,  257,  259,  257,
+  261,  257,  258,  257,  258,  257,
 };
 #define YYFINAL 1
 #ifndef YYDEBUG
@@ -170,13 +174,13 @@ short yycheck[] = {                                      10,
 #if YYDEBUG
 char *yyname[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,"'\\n'",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,"'$'",0,0,0,"'('","')'",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"'='",0,
+0,"' '",0,0,0,"'$'",0,0,0,"'('","')'",0,0,"','",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+"'='",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"WORD",
-"ASSIGN","PRINT","SHELL","word",
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+"WORD","ASSIGN","PRINT","SHELL","IFEQ",
 };
 char *yyrule[] = {
 "$accept : input",
@@ -187,30 +191,36 @@ char *yyrule[] = {
 "line : wordsline '\\n'",
 "line : assgnline '\\n'",
 "line : printline '\\n'",
+"line : ifline '\\n'",
 "line : error '\\n'",
 "open : '$' '('",
 "name : wordvars",
 "close : ')'",
-"shellcommand : SHELL word",
+"ifline : IFEQ ' ' '(' '$' '(' WORD ')' ',' WORD ')'",
 "variable : open name close",
-"variable : shellcommand",
 "words : WORD",
-"words : words WORD",
+"words : words optspace WORD",
+"whitespace : ' '",
+"whitespace : whitespace ' '",
 "optwords :",
 "optwords : words",
 "optvars :",
 "optvars : wordvars",
+"optspace :",
+"optspace : whitespace",
 "vars_line : variable optwords",
 "vars_line : vars_line variable optwords",
 "wordsline : words",
 "assignm : ASSIGN",
 "assignm : '='",
-"assgnline : words assignm optvars",
+"assgnline : WORD optspace assignm optspace optvars",
 "printline : PRINT",
 "wordvars : WORD",
 "wordvars : variable",
 "wordvars : wordvars variable",
 "wordvars : wordvars WORD",
+"wordvars : wordvars '='",
+"wordvars : wordvars ' '",
 };
 #endif
 #ifndef YYSTYPE
@@ -389,77 +399,90 @@ yyreduce:
     yyval = yyvsp[1-yym];
     switch (yyn)
     {
+case 1:
+{	yyval = "";				}
+break;
 case 2:
 {	yyval = "";				}
 break;
 case 3:
-{	yyval = "";				}
+{	yyval = "";		printf("empty line\n");		}
 break;
 case 4:
-{	yyval = yyvsp[-2]+yyvsp[-1]; TheOutput.push_back(yyval);			}
+{	yyval = yyvsp[-2]+yyvsp[-1]; 	TheOutput.push_back(yyval);	}
 break;
 case 5:
-{	yyval = yyvsp[-1]; TheOutput.push_back(yyvsp[-1]);			}
+{	yyval = yyvsp[-1]; 		TheOutput.push_back(yyvsp[-1]);	}
 break;
 case 6:
-{	yyval = "";				}
+{	yyval = "";		printf("assign line\n");	}
 break;
 case 7:
-{	yyval = "";				}
+{	yyval = "";									}
 break;
 case 8:
-{
+{	yyval = "";		printf("ifline\n");			}
+break;
+case 9:
+{					printf("error line\n");
 							YYSTYPE msg;
 							msg.append("Line ").append(itoa(lineno)).append(": Unexpected token '").append(yylval).append("'.");
 							TheError.push_back(msg);
 							yyerrok;
 						}
 break;
-case 9:
-{	yyval = "";			}
-break;
 case 10:
-{	yyval = yyvsp[0];			}
+{	yyval = "";			}
 break;
 case 11:
-{	yyval = "";			}
+{	yyval = yyvsp[0];			}
 break;
 case 12:
-{	yyval = yyvsp[-1];	}
+{	yyval = "";			}
 break;
 case 13:
+{	yyval = ""; printf("gotcha\n"); }
+break;
+case 14:
 {
 						YYSTYPE token = yyvsp[-1];
 						TrimString(token);
-
-						if(TheTokens[token].size() > 0)
+						
+						if(!token.substr(0, 5).compare("shell"))
 						{
-							yyval = TheTokens[token];
+							token.erase(0, 5);
+							TrimString(token);
+							printf("SHELL! '%s'\n", token.c_str());
+							YYSTYPE result = getShellResult(token);
+							TrimString(result);
+							printf("result: '%s'\n", result.c_str());
+							yyval = result;
 						}
 						else
 						{
-							TheUnmatched.push_back(token);
-							yyval = "";
+							if(TheTokens[token].size() > 0)
+							{
+								yyval = TheTokens[token];
+							}
+							else
+							{
+								TheUnmatched.push_back(token);
+								yyval = "";
+							}
 						}
 					}
-break;
-case 14:
-{	
-			yyval = yyvsp[0];			
-			printf("Matched\n");
-			}
 break;
 case 15:
 {	yyval = yyvsp[0];				}
 break;
 case 16:
-{	yyval = yyvsp[-1] + yyvsp[0];			}
+{	yyval = yyvsp[-2] + yyvsp[-1];			}
 break;
 case 17:
-{	yyval = "";				}
+{	yyval = " ";				}
 break;
 case 18:
-{	yyval = yyvsp[0];				}
+{	yyval = yyvsp[-1] + " ";			}
 break;
 case 19:
 {	yyval = "";				}
@@ -468,23 +491,35 @@ case 20:
 {	yyval = yyvsp[0];				}
 break;
 case 21:
-{	yyval = yyvsp[-1] + yyvsp[0];		}
+{	yyval = "";				}
 break;
 case 22:
-{	yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0];	}
-break;
-case 23:
 {	yyval = yyvsp[0];				}
 break;
+case 23:
+{	yyval = "";				}
+break;
 case 24:
-{	yyval = ""; append = true;			}
+{	yyval = yyvsp[0];				}
 break;
 case 25:
-{	yyval = ""; append = false;			}
+{	yyval = yyvsp[-1] + yyvsp[0];		}
 break;
 case 26:
+{	yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0];	}
+break;
+case 27:
+{	yyval = yyvsp[0];				}
+break;
+case 28:
+{	yyval = ""; append = true;			}
+break;
+case 29:
+{	yyval = ""; append = false;			}
+break;
+case 30:
 {
-	 					YYSTYPE name = yyvsp[-2];
+	 					YYSTYPE name = yyvsp[-4];
 						YYSTYPE value = yyvsp[0];
 						TrimString(name);
 						TrimString(value);
@@ -500,7 +535,7 @@ case 26:
 	 					yyval = name + "=" + value;			
 					}
 break;
-case 27:
+case 31:
 {
 	 					YYSTYPE result ="Tokens: \n";
 						for(Itokens it = TheTokens.begin(); it != TheTokens.end(); it++)
@@ -511,17 +546,23 @@ case 27:
 						yyval = result;
 					}
 break;
-case 28:
+case 32:
 {	yyval = yyvsp[0];				}
 break;
-case 29:
+case 33:
 {	yyval = yyvsp[0];				}
 break;
-case 30:
+case 34:
 {	yyval = yyvsp[-1] + yyvsp[0];			}
 break;
-case 31:
+case 35:
 {	yyval = yyvsp[-1] + yyvsp[0];			}
+break;
+case 36:
+{	yyval = yyvsp[-1] + "=";			}
+break;
+case 37:
+{	yyval = yyvsp[-1] + " ";			}
 break;
     }
     yyssp -= yym;

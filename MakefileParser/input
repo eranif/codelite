@@ -1,45 +1,6 @@
-Lorem 
-Lorem ipsum ya
-teset = bla
-$(teset)
-bla = jajaaaaja
-rot hihi = okeedan
-bok = rot
-bla rot = lol
-rot = vijf
-blarot = hihi
-rothihi = replaced
-test = yoyo
-name = eran
-doeswork = fiex!
-first = 1
-bsecond = 2b
-bthird = 3b
-yarr = pirate
-forwarding = gogogo
-Lorem ipsum
-Ik zou wel is willen weten wat bla nou is
-test een twee $(bla) drie vier $(bok) vijf zes zeven acht
-test $($(bok) $(bla$(bok))) twee drie
-a = een
-b = twee
-c = drie
-d = vier
-eentweedrievier = bijna gelukt
-een twee drie vier = gelukt
-$($(a) $(b) $(c) $(d))
-I say $(test) tataa
-bla = sex
-lol = haha
-Hatste flats van te meen
-hohum=$(bla)
-$(yarr)
-$(yarr shiver me timbers je $(weet wel toch ja nee ) hearties yoho)
-the power of $(forwarding) is yet unknown
-to most $(name) here.
-Now see if $(doeswork) yes
-^^--
-$(first)
-asecond $(bsecond)
-athird $(bthird) cthird
-first second third fourth fifth 
+something
+OutputFile = target
+test
+all : test
+lol
+

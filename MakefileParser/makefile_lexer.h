@@ -2,4 +2,4 @@
 #define ASSIGN 258
 #define PRINT 259
 #define SHELL 260
-#define word 261
+#define IFEQ 261

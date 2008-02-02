@@ -17,7 +17,9 @@ int main(int argv, char* argc[])
 		
 	printf("Creating lexer...\t");
 	
+	printf("\n\n\n");
 	VariableLexer lexer(path);
+	printf("\n\n\n");
 	
 	printf("Done.\n");
 	printf("Retreiving result...\t");

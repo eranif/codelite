@@ -14,6 +14,7 @@ typedef std::vector<std::string> Strings;
 typedef std::map<std::string, std::string> tokens;
 typedef tokens::iterator Itokens;
 
+extern std::string getShellResult(const std::string& command);
 extern Strings TheOutput;
 extern Strings TheUnmatched;
 extern Strings TheError;
@@ -55,19 +56,21 @@ void yyerror(char* param)
 %token ASSIGN
 %token PRINT
 %token SHELL
+%token IFEQ
 
 /* Start of grammar */
 %%
-input:	/* empty */
+input:	/* empty */			{	$$ = "";				}
 	| input line			{	$$ = "";				}
 ;
 
-line:	'\n'					{	$$ = "";				}
-	| optwords vars_line '\n'	{	$$ = $1+$2; TheOutput.push_back($$);			}
-	| wordsline '\n'			{	$$ = $1; TheOutput.push_back($1);			}
-	| assgnline '\n'			{	$$ = "";				}
-	| printline '\n'			{	$$ = "";				}
-	| error	'\n'				{
+line:	'\n'					{	$$ = "";		printf("empty line\n");		}
+	| optwords vars_line '\n'	{	$$ = $1+$2; 	TheOutput.push_back($$);	}
+	| wordsline '\n'			{	$$ = $1; 		TheOutput.push_back($1);	}
+	| assgnline '\n'			{	$$ = "";		printf("assign line\n");	}
+	| printline '\n'			{	$$ = "";									}
+	| ifline '\n'				{	$$ = "";		printf("ifline\n");			}
+	| error	'\n'				{					printf("error line\n");
 							YYSTYPE msg;
 							msg.append("Line ").append(itoa(lineno)).append(": Unexpected token '").append(yylval).append("'.");
 							TheError.push_back(msg);
@@ -81,30 +84,42 @@ name:	wordvars			{	$$ = $1;			}
 
 close:	')'					{	$$ = "";			}
 
-
-shellcommand: SHELL WORD 	{	$$ = $1;	}
+ifline:	IFEQ ' ' '(' '$' '(' WORD ')' ',' WORD ')'	{	$$ = ""; printf("gotcha\n"); }
 
 variable: open name close 		{
 						YYSTYPE token = $2;
 						TrimString(token);
-
-						if(TheTokens[token].size() > 0)
+						
+						if(!token.substr(0, 5).compare("shell"))
 						{
-							$$ = TheTokens[token];
+							token.erase(0, 5);
+							TrimString(token);
+							printf("SHELL! '%s'\n", token.c_str());
+							YYSTYPE result = getShellResult(token);
+							TrimString(result);
+							printf("result: '%s'\n", result.c_str());
+							$$ = result;
 						}
 						else
 						{
-							TheUnmatched.push_back(token);
-							$$ = "";
+							if(TheTokens[token].size() > 0)
+							{
+								$$ = TheTokens[token];
+							}
+							else
+							{
+								TheUnmatched.push_back(token);
+								$$ = "";
+							}
 						}
 					}
-		|	shellcommand	{	
-			$$ = $1;			
-			printf("Matched\n");
-			}
 
 words: WORD				{	$$ = $1;				}
      | words WORD 		{	$$ = $1 + $2;			}
+;
+
+whitespace: ' '			{	$$ = " ";				}
+	|	whitespace ' '	{	$$ = $1 + " ";			}
 ;
 
 optwords:				{	$$ = "";				}
@@ -113,6 +128,10 @@ optwords:				{	$$ = "";				}
 
 optvars:				{	$$ = "";				}	
 	| wordvars			{	$$ = $1;				}
+;
+
+optspace:				{	$$ = "";				}
+	|	whitespace		{	$$ = $1;				}
 ;
 
 
@@ -126,9 +145,9 @@ assignm:	ASSIGN			{	$$ = ""; append = true;			}
        |	'='				{	$$ = ""; append = false;			}
 ;
 
-assgnline: words assignm optvars	{
+assgnline: WORD optspace assignm optspace optvars	{
 	 					YYSTYPE name = $1;
-						YYSTYPE value = $3;
+						YYSTYPE value = $5;
 						TrimString(name);
 						TrimString(value);
 
@@ -157,6 +176,8 @@ wordvars: WORD 				{	$$ = $1;				}
 	| variable 				{	$$ = $1;				}
 	| wordvars variable		{	$$ = $1 + $2;			}
 	| wordvars WORD 		{	$$ = $1 + $2;			}
+	| wordvars '='			{	$$ = $1 + "=";			}
+	| wordvars ' '			{	$$ = $1 + " ";			}
 ;
 %%
 /* End of grammar */

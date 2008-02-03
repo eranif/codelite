@@ -3,7 +3,7 @@
 #include "buidltab.h"
 #include "fileexplorer.h"
 #include "manager.h"
-#include "ctags_manager.h"
+#include "ctags_manager.h" 
 #include "frame.h"
 #include "editor.h"
 #include "menumanager.h" 
@@ -1162,9 +1162,9 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	//set a console to the execute target
 	wxString term;
 	term << wxT("xterm -title ");
-	term << wxT("'") << CL_EXEC_WRAPPER << wxT(" ") << execLine << wxT("'");
-	term << wxT(" -e ");
-	execLine.Prepend(term);
+	term << wxT("'") << execLine << wxT("'");
+	term << wxT(" -e ") << CL_EXEC_WRAPPER << execLine;
+	execLine = term;
 #elif defined (__WXMSW__)
 	execLine.Prepend(CL_EXEC_WRAPPER);
 #endif

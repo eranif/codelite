@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Workspace Name="le_exe" Database=".\le_exe.tags">
+  <Project Name="le_exec" Path="le_exec.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="no">
+      <Project Name="le_exec" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Project Name="le_exec" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

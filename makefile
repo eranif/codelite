@@ -260,9 +260,12 @@ install: upgrade
 	@ln -s /usr/local/bin/$(EXE_NAME) /usr/local/bin/CodeLite
 	@echo cp Runtime/le_dos2unix.sh /usr/local/bin/
 	@cp Runtime/le_dos2unix.sh /usr/local/bin/
+	@echo cp Runtime/le_exec.sh /usr/local/bin/
+	@cp Runtime/le_exec.sh /usr/local/bin/
 	@echo cp Runtime/le_killproc.sh /usr/local/bin/
 	@cp Runtime/le_killproc.sh /usr/local/bin/
 	@chmod +x /usr/local/bin/le_dos2unix.sh
+	@chmod +x /usr/local/bin/le_exec.sh
 	@chmod +x /usr/local/bin/le_killproc.sh
 	@echo copying ctags-le to /usr/local/bin
 	@cp sdk/ctags/ctags-le /usr/local/bin/
@@ -322,6 +325,7 @@ upgrade:
 	@\rm -fr /usr/local/bin/CodeLiteUR
 	@\rm -fr /usr/local/bin/CodeLiteUD
 	@\rm -fr /usr/local/bin/le_dos2unix.sh	
+	@\rm -fr /usr/local/bin/le_exec.sh	
 	@\rm -fr /usr/local/bin/le_killproc.sh
 	@\rm -fr /usr/local/bin/le_intgdb.sh
 	@\rm -fr /usr/local/bin/$(EXE_NAME) 
@@ -337,6 +341,7 @@ uninstall:
 	@\rm -fr /usr/local/bin/CodeLiteUR
 	@\rm -fr /usr/local/bin/CodeLiteUD
 	@\rm -fr /usr/local/bin/le_dos2unix.sh	
+	@\rm -fr /usr/local/bin/le_exec.sh	
 	@\rm -fr /usr/local/bin/le_killproc.sh
 	@\rm -fr /usr/local/bin/le_intgdb.sh
 	@\rm -fr /usr/local/bin/$(EXE_NAME) 

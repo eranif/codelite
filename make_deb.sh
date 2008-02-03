@@ -9,8 +9,10 @@ mkdir -p fakeroot/usr/local/bin/
 cp ./Runtime/${EXE_NAME} fakeroot/usr/local/bin/CodeLite
 cp Runtime/le_dos2unix.sh fakeroot/usr/local/bin/
 cp Runtime/le_killproc.sh fakeroot/usr/local/bin/
+cp Runtime/le_exec.sh fakeroot/usr/local/bin/
 chmod +x fakeroot/usr/local/bin/le_dos2unix.sh
 chmod +x fakeroot/usr/local/bin/le_killproc.sh
+chmod +x fakeroot/usr/local/bin/le_exec.sh
 cp sdk/ctags/ctags-le fakeroot/usr/local/bin/
 mkdir -p fakeroot/usr/local/share/codelite
 mkdir -p fakeroot/usr/local/share/codelite/config

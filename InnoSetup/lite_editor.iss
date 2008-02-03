@@ -45,6 +45,7 @@ Source: "C:\Development\C++\codelite\trunk\Runtime\lexers\*"; DestDir: "{app}\le
 Source: "C:\Development\C++\codelite\trunk\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\bin\ctags-le.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\bin\le_exec.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\bin\makedir.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\index.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor

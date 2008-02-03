@@ -49,6 +49,12 @@
 #include "threadlistpanel.h"
 #include "plugin.h"
 
+#if defined (__WXMSW__)
+static wxString CL_EXEC_WRAPPER = wxT("le_exec.exe ");
+#elif defined (__WXGTK__)
+static wxString CL_EXEC_WRAPPER = wxT("le_exec.sh ");
+#endif
+
 #define CHECK_MSGBOX(res)										\
 	if( !res )													\
 	{															\
@@ -1156,9 +1162,11 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	//set a console to the execute target
 	wxString term;
 	term << wxT("xterm -title ");
-	term << wxT("'") << execLine << wxT("'");
+	term << wxT("'") << CL_EXEC_WRAPPER << wxT(" ") << execLine << wxT("'");
 	term << wxT(" -e ");
 	execLine.Prepend(term);
+#elif defined (__WXMSW__)
+	execLine.Prepend(CL_EXEC_WRAPPER);
 #endif
 
 	//execute the program:

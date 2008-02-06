@@ -774,8 +774,8 @@ void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 	svnInfo << wxT("SVN Build, Revision: ") << _U(SvnRevision);
 	info.SetVersion(svnInfo);
 	info.SetDescription(wxT("A lightweight cross-platform IDE for C/C++"));
-	info.SetCopyright(wxT("(C) 2007 By Eran Ifrah <eran.ifrah@gmail.com>"));
-	info.SetWebSite(wxT("http://codelite.sourceforge.net/"));
+	info.SetCopyright(wxT("(C) 2007-2008 By Eran Ifrah <eran.ifrah@gmail.com>"));
+	info.SetWebSite(wxT("http://codelite.org/"));
 	wxAboutBox(info);
 }
 

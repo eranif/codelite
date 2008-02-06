@@ -20,7 +20,7 @@ class WXDLLIMPEXP_LE_SDK Target
 {
 	public:
 		Target(wxString name, wxArrayString deps, wxArrayString actions);
-		void stripWhitespace();
+		void stripWhitespace(const wxArrayString& target);
 		void splitDepencencies();
 		
 		wxString getName();

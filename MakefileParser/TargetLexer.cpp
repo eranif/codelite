@@ -53,6 +53,7 @@ void TargetLexer::Lex()
 	
 }
 
+// Returns wether there are more targets
 bool TargetLexer::FindTarget()
 {
 	for(; m_current < m_lines.size(); m_current++)
@@ -69,6 +70,7 @@ bool TargetLexer::FindTarget()
 	return false;
 }
 
+// Returns wether there are more deps
 bool TargetLexer::FindDeps()
 {
 	for(; m_current < m_lines.size(); m_current++)

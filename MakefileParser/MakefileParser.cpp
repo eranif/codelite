@@ -72,7 +72,7 @@ LINETYPES::LineType MakefileParser::Deduct()
 			return LINETYPES::LINE_ACTION;			
 	}
 	
-	if(isalpha(current[0])) // could be a target
+	if(isalpha(current[0]) || ispunct(current[0])) // could be a target
 	{	
 		if(colon != -1)
 			return LINETYPES::LINE_TARGET;

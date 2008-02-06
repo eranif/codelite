@@ -28,7 +28,8 @@ namespace LINETYPES
 		LineType type;
 		wxString line;
 	};	
-
+	
+	wxString toString(const LineType& type);
 };
 
 typedef struct LINETYPES::TypedString TypedString;

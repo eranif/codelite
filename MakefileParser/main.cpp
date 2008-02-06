@@ -1,10 +1,35 @@
 #include "precompiled_header.h"
 #include "makefile_lexer.h"
 #include "VariableLexer.h"
+#include "MakefileParser.h"
+#include "Target.h"
+#include "TargetLexer.h"
 #include <wx/file.h>
 
 typedef std::map<wxString, wxString> Tokens;
 typedef Tokens::iterator ITokens;
+
+void LogMessage(const wxString& msg)
+{
+	wxCharBuffer buf = msg.ToAscii();
+	printf("%s", buf.data());
+}
+
+Targets ImportFromMakefile(const wxString &path)
+{
+	LogMessage(wxT("Path: ") + path + wxT("\n"));
+
+	VariableLexer expander(path.data());
+	wxArrayString expanded = expander.getResult();
+
+	MakefileParser parser(expanded);
+	TypedStrings parsed = parser.getResult();
+
+	TargetLexer lexer(parsed);
+	Targets lexed = lexer.getResult();
+	
+	return lexed;
+}
 
 int main(int argv, char* argc[])
 {
@@ -15,54 +40,46 @@ int main(int argv, char* argc[])
 	else
 		path = wxT("input");
 		
-	printf("Creating lexer...\t");
-	
-	printf("\n\n\n");
-	VariableLexer lexer(path);
-	printf("\n\n\n");
-	
-	printf("Done.\n");
-	printf("Retreiving result...\t");
-	
-	wxArrayString result = lexer.getResult();
-	wxArrayString unmatched = lexer.getUnmatched();
-	wxArrayString error = lexer.getError();
-	Tokens tokens = lexer.getTokens();
+	printf("Fetching result...\n");
+		
+	// TypedStrings result = ImportFromMakefile(path);
+	Targets result = ImportFromMakefile(path);
 	
 	printf("Done.\n");
-	printf("Opening output file...\t");
+	printf("Result:\n");
 	
-	wxFile of(wxT("outout.txt"), wxFile::write);
-	
-	printf("Done.\n");
-	printf("Writing output...\t");
-	
-	of.Write(wxT("============= RESULT =============\n"));
-	for(wxArrayString::iterator it = result.begin(); it != result.end(); it++)
-		of.Write(*it + wxT("\n"));
-	
-	of.Write(wxT("============ UNMATCHED ===========\n"));
-	for(wxArrayString::iterator it = unmatched.begin(); it != unmatched.end(); it++)
-		of.Write(*it + wxT("\n"));
-
-	of.Write(wxT("============== ERROR =============\n"));
-	for(wxArrayString::iterator it = error.begin(); it != error.end(); it++)
-		of.Write(*it + wxT("\n"));
-
-	of.Write(wxT("============= TOKENS =============\n"));
-	for(ITokens it = tokens.begin(); it != tokens.end(); it++)
+	for(Targets::iterator it = result.begin(); it != result.end(); it++)
 	{
+		Target token = *it;
 		wxString line;
-		line << wxT("'") << it->first << wxT("' = '") << it->second << wxT("'\n");
-		of.Write(line);
+		line = wxT("Target ");
+		line << token.getName();
+		line << wxT(":\n"); 
+		LogMessage(line);
+		
+		wxArrayString actions = token.getActions();
+		for(wxArrayString::iterator act = actions.begin(); act != actions.end(); act++)
+			LogMessage(*act + wxT("\n"));
+		
+		wxArrayString deps = token.getDeps();
+		for(wxArrayString::iterator dep = deps.begin(); dep != deps.end(); dep++)
+			LogMessage(*dep + wxT("\n"));
+		
+		printf("\n");
 	}
-
-	of.Write(wxT("============= DONE =============\n"));
 	
-	printf("Done.\n");
-	printf("Closing output file...\t");
-	
-	of.Close();
+	/*
+	for(TypedStrings::iterator it = result.begin(); it != result.end(); it++)
+	{
+		TypedString token = *it;
+		wxString msg;
+		msg << LINETYPES::toString(token.type);
+		msg << wxT(": '");
+		msg << token.line;
+		msg << wxT("'.\n");
+		LogMessage(msg);
+	}
+	*/
 	
 	printf("Done.\n");
 	printf("Exiting.\n");

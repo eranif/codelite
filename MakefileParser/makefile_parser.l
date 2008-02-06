@@ -16,6 +16,7 @@ int lineno = 0;
 #else
 	#define DEBUGPRINTF
 #endif
+
 %}
 
 word [0-9a-zA-Z_.\-+\*~:\\@&/|%\<\>\'^\t ]+

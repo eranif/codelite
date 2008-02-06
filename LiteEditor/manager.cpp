@@ -622,7 +622,9 @@ void Manager::AddFilesToProject(const wxArrayString &files, const wxString &vdFu
 	//try to find this file in the workspace
 	for (i=0; i<files.GetCount(); i++) {
 		wxString projName = this->GetProjectNameByFile(files.Item(i));
-		if (projName.IsEmpty()) {
+		//allow adding the file, only if it does not already exist under the current project 
+		//(it can be already exist under the different project)
+		if (projName.IsEmpty() || projName != project) {
 			actualAdded.Add(files.Item(i));
 		}
 	}

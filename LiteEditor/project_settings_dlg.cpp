@@ -105,6 +105,7 @@ void ProjectSettingsDlg::ClearValues()
 	m_textPreBuildRule->Clear();
 	m_textDeps->Clear();
 	m_checkResourceNeeded->SetValue(true);
+	m_checkBoxPauseWhenExecEnds->SetValue(true);
 }
 
 void ProjectSettingsDlg::CopyValues(const wxString &confName)
@@ -217,6 +218,8 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	}else{
 		m_choiceCompilerType->SetSelection(where);
 	}
+	
+	m_checkBoxPauseWhenExecEnds->SetValue(buildConf->GetPauseWhenExecEnds());
 }
 
 void ProjectSettingsDlg::SaveValues(const wxString &confName)
@@ -254,6 +257,7 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetResCmpIncludePath(m_textAddResCmpPath->GetValue());
 	buildConf->SetResCmpOptions(m_textAddResCmpOptions->GetValue());
 	buildConf->SetCustomBuildWorkingDir(m_customBuildDirPicker->GetPath());
+	buildConf->SetPauseWhenExecEnds(m_checkBoxPauseWhenExecEnds->IsChecked());
 	
 	//set the pre-build step
 	wxString rules = m_textPreBuildRule->GetValue();

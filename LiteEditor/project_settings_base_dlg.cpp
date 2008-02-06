@@ -94,7 +94,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_staticText16->Wrap( -1 );
 	fgSizer3->Add( m_staticText16, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_intermediateDirPicker = new DirPicker( m_generalPage );
+	m_intermediateDirPicker = new DirPicker(m_generalPage);
 	fgSizer3->Add( m_intermediateDirPicker, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer19->Add( fgSizer3, 0, wxEXPAND, 5 );
@@ -135,10 +135,19 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_staticText20->Wrap( -1 );
 	fgSizer6->Add( m_staticText20, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_workingDirPicker = new DirPicker( m_generalPage );
+	m_workingDirPicker = new DirPicker(m_generalPage);
 	fgSizer6->Add( m_workingDirPicker, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer19->Add( fgSizer6, 1, wxEXPAND, 5 );
+	bSizer19->Add( fgSizer6, 0, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer17;
+	bSizer17 = new wxBoxSizer( wxVERTICAL );
+	
+	m_checkBoxPauseWhenExecEnds = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Pause when execution ends"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	bSizer17->Add( m_checkBoxPauseWhenExecEnds, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer19->Add( bSizer17, 1, wxEXPAND, 5 );
 	
 	m_generalPage->SetSizer( bSizer19 );
 	m_generalPage->Layout();
@@ -437,7 +446,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	fgSizer5->SetFlexibleDirection( wxBOTH );
 	fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText25 = new wxStaticText( m_customMakefileStep, wxID_ANY, wxT("Dependenices:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText25 = new wxStaticText( m_customMakefileStep, wxID_ANY, wxT("Dependencies:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText25->Wrap( -1 );
 	fgSizer5->Add( m_staticText25, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -456,7 +465,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_customMakefileStep, -1, wxEmptyString ), wxVERTICAL );
 	
-	m_staticText24 = new wxStaticText( m_customMakefileStep, wxID_ANY, wxT("Define here a custom makefile rule to be executed in the pre-build steps.\nThis rule can be a composite rule or simple rule, see the wiki for more help"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText24 = new wxStaticText( m_customMakefileStep, wxID_ANY, wxT("Define here a custom makefile rule to be executed in the pre-build steps.\nSee the wiki for more help"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText24->Wrap( -1 );
 	sbSizer2->Add( m_staticText24, 0, wxALL, 5 );
 	
@@ -494,11 +503,9 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_choiceCompilerType->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_choiceDebugger->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textOutputFilePicker->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_intermediateDirPicker->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_customBuildDirPicker->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textCommandArguments->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_workingDirPicker->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
+	m_checkBoxPauseWhenExecEnds->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_checkCompilerNeeded->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textCompilerOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textAdditionalSearchPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );

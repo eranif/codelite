@@ -126,8 +126,8 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 			m_command = XmlUtils::ReadString(general, wxT("Command"));
 			m_commandArguments = XmlUtils::ReadString(general, wxT("CommandArguments"));
 			m_workingDirectory = XmlUtils::ReadString(general, wxT("WorkingDirectory"), wxT("."));
+			m_pauseWhenExecEnds = XmlUtils::ReadBool(general, wxT("PauseExecWhenProcTerminates"), true);
 		}
-
 	}else{
 		//create default project settings
 		m_name = wxT("Debug");
@@ -192,6 +192,7 @@ wxXmlNode *BuildConfig::ToXml() const
 	general->AddProperty(wxT("Command"), m_command );
 	general->AddProperty(wxT("CommandArguments"), m_commandArguments);
 	general->AddProperty(wxT("WorkingDirectory"), m_workingDirectory);
+	general->AddProperty(wxT("PauseExecWhenProcTerminates"), BoolToString(m_pauseWhenExecEnds));
 	node->AddChild(general);
 
 	//create the compile node

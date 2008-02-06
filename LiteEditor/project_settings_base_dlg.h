@@ -19,10 +19,10 @@
 #include <wx/sizer.h>
 #include <wx/statline.h>
 #include <wx/textctrl.h>
+#include <wx/checkbox.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
-#include <wx/checkbox.h>
 #include <wx/gbsizer.h>
 #include <wx/checklst.h>
 #include "dirpicker.h"
@@ -56,7 +56,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxStaticText* m_staticText15;
 		wxTextCtrl* m_textOutputFilePicker;
 		wxStaticText* m_staticText16;
-		DirPicker* m_intermediateDirPicker;
+		DirPicker *m_intermediateDirPicker;
 		wxStaticText* m_staticText17;
 		wxStaticLine* m_staticline5;
 		wxStaticText* m_staticText18;
@@ -64,7 +64,8 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxStaticText* m_staticText19;
 		wxTextCtrl* m_textCommandArguments;
 		wxStaticText* m_staticText20;
-		DirPicker* m_workingDirPicker;
+		DirPicker *m_workingDirPicker;
+		wxCheckBox* m_checkBoxPauseWhenExecEnds;
 		wxPanel* m_compilerPage;
 		wxCheckBox* m_checkCompilerNeeded;
 		wxStaticLine* m_staticline7;
@@ -125,7 +126,6 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxTextCtrl* m_textBuildCommand;
 		wxStaticText* m_staticText192;
 		wxTextCtrl* m_textCleanCommand;
-		wxStaticText* m_staticText201;
 		wxPanel* m_customMakefileStep;
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_textDeps;

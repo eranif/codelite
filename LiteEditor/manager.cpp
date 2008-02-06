@@ -53,6 +53,8 @@
 static wxString CL_EXEC_WRAPPER = wxT("le_exec.exe ");
 #elif defined (__WXGTK__)
 static wxString CL_EXEC_WRAPPER = wxT("le_exec.sh ");
+#else
+static wxString CL_EXEC_WRAPPER = wxEmptyString;
 #endif
 
 #define CHECK_MSGBOX(res)										\
@@ -1127,7 +1129,11 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	}
 
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(projectName);
-
+	if(!bldConf) {
+		wxLogMessage(wxT("failed to find project configuration for project '") + projectName);
+		return;
+	}
+	
 	//expand variables
 	wxString cmd = bldConf->GetCommand();
 	cmd = ExpandVariables(cmd, GetProject(projectName));
@@ -1165,10 +1171,20 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	wxString term;
 	term << wxT("xterm -title ");
 	term << wxT("'") << execLine << wxT("'");
-	term << wxT(" -e ") << CL_EXEC_WRAPPER << execLine;
+	term << wxT(" -e ");
+	
+	if ( bldConf->GetPauseWhenExecEnds() ) {
+		term << CL_EXEC_WRAPPER;
+	}
+	
+	term << execLine;
 	execLine = term;
 #elif defined (__WXMSW__)
-	execLine.Prepend(CL_EXEC_WRAPPER);
+	
+	if (bldConf->GetPauseWhenExecEnds() ) {
+		execLine.Prepend(CL_EXEC_WRAPPER);
+	}
+	
 #endif
 
 	//execute the program:

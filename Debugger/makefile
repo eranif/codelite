@@ -21,7 +21,7 @@ OPT=-O3
 DEBUG=
 endif
 
-SOFLAG=-shared
+SOFLAG=-shared -fPIC 
 OSNAME=$(shell uname -s)
 ifeq ($(OSNAME), Darwin)
 SOFLAG=-dynamiclib

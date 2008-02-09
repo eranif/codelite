@@ -10,7 +10,7 @@ EXT=d
 OBJ_DIR=Debug_gcc
 DEBUG= -g 
 
-SOFLAG=-shared
+SOFLAG=-shared -fPIC 
 OSNAME=$(shell uname -s)
 ifeq ($(OSNAME), Darwin)
 SOFLAG=-dynamiclib

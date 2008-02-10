@@ -1,6 +1,6 @@
 ## Author: Sverre Rabbelier
  
-SOFLAG=-shared -fPIC 
+SOFLAG=-shared  
 OSNAME=$(shell uname -s)
 ifeq ($(OSNAME), Darwin)
 SOFLAG=-dynamiclib

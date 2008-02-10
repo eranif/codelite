@@ -1,6 +1,6 @@
 ## Author: Eran Ifrah
  
-SOFLAG=-shared -fPIC 
+SOFLAG=-shared 
 OSNAME=$(shell uname -s)
 ifeq ($(OSNAME), Darwin)
 SOFLAG=-dynamiclib
@@ -49,7 +49,7 @@ OUTPUT_DIR=../lib
 ##
 ## Define variables, using wx-config tool
 ##
-CMP=g++ $(DEBUG) $(OPT) 
+CMP=g++ -fPIC $(DEBUG) $(OPT) 
 
 CCFLAGS= -DASTYLE_LIB -D__WX__ -Wall $(TRACE_FLAG) -I. -DWXUSINGDLL -DWX_PRECOMP -DNO_GCC_PRAGMA -DXTHREADS -D_REENTRANT -DXUSE_MTSAFE_API $(shell wx-config --cxxflags $(WXCFG)) $(PROFILER) -fno-strict-aliasing -DYY_NEVER_INTERACTIVE=1
 

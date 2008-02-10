@@ -1,7 +1,7 @@
 # Superspecial makefile by Sverre Rabbelier!
 
 # Maaaagic variables
-cc=g++
+cc=g++ -fPIC
 filesuffix=
 file=variable
 infix_lex=yy

@@ -49,10 +49,14 @@ PROFILER=# -pg
 ## Define variables, using wx-config tool
 ##
 CMP=g++ $(DEBUG) $(OPT)
+GCC=gcc
+
 arch=$(shell uname -m)
 ifeq ($(arch), x86_64)
  CMP=g++ -fPIC $(DEBUG) $(OPT)
+ GCC=gcc -fPIC 
 endif
+
 
 LIBP=-L../lib
 
@@ -105,7 +109,7 @@ SQLite: sqlite_msg sqlite3/Release/sqlite3.o $(sqlite_objects)
 	ranlib $(OUTPUT_DIR)/libwxsqlite3$(EXT).a
 
 sqlite3/Release/sqlite3.o:
-	gcc -c sqlite3/sqlite3.c -o sqlite3/Release/sqlite3.o -O3
+	$(GCC) -c sqlite3/sqlite3.c -o sqlite3/Release/sqlite3.o -O3
 			
 wxFlatNotebook: wxFlatNotebook_msg
 	cd sdk/wxflatnotebook/build/wxFlatNotebook && $(MAKE)

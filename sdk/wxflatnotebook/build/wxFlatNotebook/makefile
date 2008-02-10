@@ -48,7 +48,7 @@ ifeq ($(type),debug_unicode)
    OPT=-O0
 endif
 
-CMP = g++ -fPIC $(OPT) 
+CMP = g++ $(OPT) 
 CXXFLAGS =  -I../../include $(shell wx-config --cxxflags $(WXCFG))
 
 ## Libraries required to link the sample program and their path

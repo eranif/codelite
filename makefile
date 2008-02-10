@@ -48,7 +48,12 @@ PROFILER=# -pg
 ##
 ## Define variables, using wx-config tool
 ##
-CMP=g++ $(DEBUG) $(OPT) 
+CMP=g++ $(DEBUG) $(OPT)
+arch=$(shell uname -m)
+ifeq ($(arch), x86_64)
+ CMP=g++ -fPIC $(DEBUG) $(OPT)
+endif
+
 LIBP=-L../lib
 
 TRACE_FLAG=## Comment this if you dont want messages in log window

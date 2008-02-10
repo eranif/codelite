@@ -49,7 +49,11 @@ OUTPUT_DIR=../lib
 ##
 ## Define variables, using wx-config tool
 ##
-CMP=g++ $(DEBUG) $(OPT) 
+CMP=g++ $(DEBUG) $(OPT)
+arch=$(shell uname -m)
+ifeq ($(arch), x86_64)
+ CMP=g++ -fPIC $(DEBUG) $(OPT)
+endif
 
 CCFLAGS= -DASTYLE_LIB -D__WX__ -Wall $(TRACE_FLAG) -I. -DWXUSINGDLL -DWX_PRECOMP -DNO_GCC_PRAGMA -DXTHREADS -D_REENTRANT -DXUSE_MTSAFE_API $(shell wx-config --cxxflags $(WXCFG)) $(PROFILER) -fno-strict-aliasing -DYY_NEVER_INTERACTIVE=1
 

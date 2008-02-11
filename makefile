@@ -76,7 +76,7 @@ INCLUDES = -I. $(SQLITE_INCLUDE) $(SCI_INCLUDE) -IInterfaces -IDebugger -IPlugin
 lib_cpp_objects := $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(wildcard CodeLite/*.cpp)))))
 lib_c_objects := $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(wildcard CodeLite/*.c)))))
 sample_cpp_objects := $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(wildcard LiteEditor/*.cpp)))))
-
+sample_cpp_objects := $(sample_cpp_objects) $(OBJ_DIR)/svninfo.o
 ## 
 ## Scintilla related
 ## 

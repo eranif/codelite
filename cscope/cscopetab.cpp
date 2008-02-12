@@ -61,7 +61,7 @@ void CscopeTab::BuildTable(CscopeResultTable *table)
 			}
 
 			wxString display_string;
-			display_string << wxT("Line: ") << entry.GetLine() << wxT(", Scope: ") << entry.GetScope() << wxT(", Pattern: ") << entry.GetPattern();
+			display_string << wxT("Line: ") << entry.GetLine() << wxT(", ") << entry.GetScope() << wxT(", ") << entry.GetPattern();
 			m_treeCtrlResults->AppendItem(parent, display_string, wxNOT_FOUND, wxNOT_FOUND, new CscopeTabClientData(entry));
 		}
 	}

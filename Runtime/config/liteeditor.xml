@@ -17,18 +17,21 @@
       <wxString Value="Java"/>
     </wxArrayString>
   </ArchiveObject>
-  <RecentFiles>
-    <File Name="/usr/include/boost/shared_ptr.hpp"/>
-    <File Name="/home/eran/devl/test/main.h"/>
-    <File Name="/home/eran/devl/test/main.cpp"/>
-    <File Name="C:\TestArea\CCBug\main.cpp"/>
-    <File Name="C:\TestArea\CCBug\testme\main.cpp"/>
-  </RecentFiles>
   <RecentWorkspaces>
-    <File Name="C:\Test\CC\CC.workspace"/>
-    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
     <File Name="/home/eran/devl/test/test.workspace"/>
+    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
+    <File Name="C:\Test\CC\CC.workspace"/>
   </RecentWorkspaces>
+  <RecentFiles>
+    <File Name="C:\Test\CC\stam.cpp"/>
+    <File Name="C:\Test\CC\main.h"/>
+    <File Name="C:\Test\CC\main.cpp"/>
+    <File Name="C:\TestArea\CCBug\testme\main.cpp"/>
+    <File Name="C:\TestArea\CCBug\main.cpp"/>
+    <File Name="/home/eran/devl/test/main.cpp"/>
+    <File Name="/home/eran/devl/test/main.h"/>
+    <File Name="/usr/include/boost/shared_ptr.hpp"/>
+  </RecentFiles>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1094" y="694"/>
     <wxPoint Name="m_framePos" x="93" y="151"/>

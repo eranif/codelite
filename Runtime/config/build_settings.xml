@@ -36,5 +36,5 @@
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+ *)(:)( warning:)</Pattern>
     </Compiler>
   </Compilers>
-  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="/usr/bin/make" Options="-f" Jobs="1"/>
+  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="C:/MinGW/bin/mingw32-make.EXE" Options="-f" Jobs="1"/>
 </BuildSettings>

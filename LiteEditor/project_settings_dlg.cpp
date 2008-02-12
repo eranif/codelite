@@ -608,7 +608,7 @@ void ProjectSettingsDlg::OnCmdEvtVModified(wxCommandEvent &event)
 void ProjectSettingsDlg::DisableGeneralPage(bool disable)
 {
 	m_choiceProjectTypes->Enable( !disable );
-	m_choiceCompilerType->Enable( !disable );
+	//m_choiceCompilerType->Enable( !disable );
 	m_textOutputFilePicker->Enable( !disable );
 	m_intermediateDirPicker->Enable( !disable );
 }

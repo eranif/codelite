@@ -19,6 +19,11 @@
   <Project Name="Subversion" Path="Subversion/Subversion.project"/>
   <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
   <Project Name="Cscope" Path="cscope/Cscope.project" Active="No"/>
+  <Environment>
+    <Variable Name="MINGW" Value="C:/MinGW"/>
+    <Variable Name="WorkspaceName" Value="LiteEditor"/>
+    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
+  </Environment>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
@@ -81,9 +86,4 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
-  <Environment>
-    <Variable Name="MINGW" Value="C:/MinGW"/>
-    <Variable Name="WorkspaceName" Value="LiteEditor"/>
-    <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
-  </Environment>
 </CodeLite_Workspace>

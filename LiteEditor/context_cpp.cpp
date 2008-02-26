@@ -255,7 +255,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 		}
 
 		int dummy = rCtrl.GetLineIndentation(line);
-		if (rCtrl.GetTabIndents()) {
+		if (rCtrl.GetUseTabs()) {
 			dummy = dummy / indentSize;
 		}
 		rCtrl.SetCaretAt(rCtrl.GetCurrentPos() + dummy);

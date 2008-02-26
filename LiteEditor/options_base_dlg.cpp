@@ -165,6 +165,10 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 	m_displayLineNumbers->SetValue(options->GetDisplayLineNumbers());
 	bszier->Add( m_displayLineNumbers, 0, wxALL, 5 );
 	
+	m_indentsUsesTabs = new wxCheckBox( m_general, wxID_ANY, wxT("Use Tabs For Indentation"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_indentsUsesTabs->SetValue(options->GetIndentUsesTabs());
+	bszier->Add( m_indentsUsesTabs, 0, wxALL, 5 );
+	
 	m_showIndentationGuideLines = new wxCheckBox( m_general, wxID_ANY, wxT("Show Indentation Guidelines"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_showIndentationGuideLines->SetValue(options->GetShowIndentationGuidelines());
 	bszier->Add( m_showIndentationGuideLines, 0, wxALL, 5 );
@@ -255,7 +259,8 @@ void OptionsDlg::SaveChanges()
 	options->SetShowIndentationGuidelines( m_showIndentationGuideLines->IsChecked() );
 	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
 	options->SetCaretColour(m_caretColourPicker->GetColour());
-
+	options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
+	
 	EditorConfigST::Get()->SetOptions(options);
 	ManagerST::Get()->ApplySettingsChanges();
 }

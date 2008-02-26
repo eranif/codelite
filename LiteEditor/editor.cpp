@@ -305,7 +305,7 @@ void LEditor::SetProperties()
 	SetIndent(4);
 	SetTabIndents(true);
 	SetBackSpaceUnIndents (true);
-	SetUseTabs (true);
+	SetUseTabs (options->GetIndentUsesTabs());
 	SetLayoutCache(wxSCI_CACHE_DOCUMENT);
 	
 	size_t frame_flags = Frame::Get()->GetFrameGeneralInfo().GetFlags();

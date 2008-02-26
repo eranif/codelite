@@ -27,6 +27,7 @@ class WXDLLIMPEXP_LE_SDK OptionsConfig : public ConfObject
 	bool m_showIndentationGuidelines;
 	wxColour m_caretLineColour;
 	wxColour m_caretColour;
+	bool	m_indentUsesTabs;
 	
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -59,11 +60,11 @@ public:
 	void SetShowIndentationGuidelines(bool b){ m_showIndentationGuidelines = b; }
 	void SetCaretLineColour(wxColour c) { m_caretLineColour = c;}
 	
-	//Setters
 	void SetCaretColour(const wxColour& caretColour) {this->m_caretColour = caretColour;}
-	//Getters
 	const wxColour& GetCaretColour() const {return m_caretColour;}
-	
+	void SetIndentUsesTabs(const bool& indentUsesTabs) {this->m_indentUsesTabs = indentUsesTabs;}
+	const bool& GetIndentUsesTabs() const {return m_indentUsesTabs;}
+	 
 	/**
 	 * Return an XML representation of this object
 	 * \return XML node

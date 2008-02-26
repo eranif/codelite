@@ -31,7 +31,7 @@ void ContextBase::AutoIndent(const wxChar &ch){
 		rCtrl.SetLineIndentation(line, prevLineIndet);
 		//place the caret at the end of the line
 		int dummy = rCtrl.GetLineIndentation(line);
-		if(rCtrl.GetTabIndents()){
+		if(rCtrl.GetUseTabs()){
 			dummy = dummy / indentSize;
 		}
 		rCtrl.SetCaretAt(rCtrl.GetCurrentPos() + dummy);

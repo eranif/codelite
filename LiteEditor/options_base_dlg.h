@@ -62,6 +62,7 @@ protected:
 	wxCheckBox* m_highlighyCaretLine;
 	wxCheckBox* m_displayLineNumbers;
 	wxCheckBox* m_showIndentationGuideLines;
+	wxCheckBox* m_indentsUsesTabs;
 	wxPanel* m_syntaxHighlightPage;
 	wxStaticLine* m_staticline1;
 	wxButton* m_okButton;

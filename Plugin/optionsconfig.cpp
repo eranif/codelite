@@ -15,6 +15,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 , m_displayLineNumbers(false)
 , m_showIndentationGuidelines(false)
 , m_caretLineColour(wxT("LIGHT BLUE"))
+, m_indentUsesTabs(true)
 {
 	if( node ){
 		m_displayFoldMargin = XmlUtils::ReadBool(node, wxT("DisplayFoldMargin"));
@@ -29,6 +30,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_showIndentationGuidelines = XmlUtils::ReadBool(node, wxT("IndentationGuides"));
 		m_caretLineColour = XmlUtils::ReadString(node, wxT("CaretLineColour"), wxColour(255, 255, 220).GetAsString(wxC2S_HTML_SYNTAX));
 		m_caretColour = XmlUtils::ReadString(node, wxT("CaretColour"), wxColour(0, 0, 0).GetAsString(wxC2S_HTML_SYNTAX));
+		m_indentUsesTabs = XmlUtils::ReadBool(node, wxT("IndentUsesTabs"), true);
 	}
 }
 
@@ -51,6 +53,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("IndentationGuides"), BoolToString(m_showIndentationGuidelines));
 	n->AddProperty(wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
 	n->AddProperty(wxT("CaretColour"), m_caretColour.GetAsString(wxC2S_HTML_SYNTAX));
+	n->AddProperty(wxT("IndentUsesTabs"), BoolToString(m_indentUsesTabs));
 	return n;
 }
 

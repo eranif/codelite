@@ -1,7 +1,7 @@
 #include "formatoptions.h"
 
 FormatOptions::FormatOptions()
-		: m_options(AS_DEFAULT)
+		: m_options(AS_DEFAULT | AS_INDENT_USES_TABS)
 {
 }
 
@@ -108,8 +108,13 @@ wxString FormatOptions::ToString() const
 	if (m_options & AS_UNPAD_PARENTHESIS) {
 		options << wxT(" -U ");
 	}
-
-	options << wxT(" -t4 ");
+	
+	if (m_options & AS_INDENT_USES_TABS) {
+		options << wxT(" -t4 ");
+	} else {
+		options << wxT(" -s4 ");
+	}
+	
 	return options;
 }
 

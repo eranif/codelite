@@ -381,7 +381,7 @@ void Frame::CreateGUIControls(void)
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
 
 // On wx2.8.7, AUI dragging is broken but this happens only in debug build & on GTK
-#if wxCHECK_VERSION(2, 8, 7) && defined (__WXGTK__) && defined (__WXDEBUG__)
+#if defined (__WXGTK__) && defined (__WXDEBUG__)
 	m_mgr.SetFlags(wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT);
 #endif
 

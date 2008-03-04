@@ -1269,15 +1269,15 @@ void Frame::OnNewDlgCreate(wxCommandEvent &event)
 void Frame::OnCtagsOptions(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	
+
 	bool colVars(false);
 	bool colTags(false);
 	bool newColVars(false);
 	bool newColTags(false);
-	
+
 	colVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
 	colTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_PROJ_TAGS ? true : false);
-						
+
 	TagsOptionsDlg *dlg = new TagsOptionsDlg(this, m_tagsOptionsData);
 	if (dlg->ShowModal() == wxID_OK) {
 		TagsManager *tagsMgr = TagsManagerST::Get();
@@ -1285,7 +1285,7 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 
 		newColVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
 		newColTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_PROJ_TAGS ? true : false);
-						
+
 		tagsMgr->SetCtagsOptions(m_tagsOptionsData);
 		EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
@@ -1409,6 +1409,19 @@ void Frame::OnAddEnvironmentVariable(wxCommandEvent &event)
 	wxUnusedVar(event);
 	EnvVarsTableDlg *dlg = new EnvVarsTableDlg(this);
 	dlg->ShowModal();
+
+	if (ManagerST::Get()->IsWorkspaceOpen()) {
+		//mark all the projects as dirty
+		wxArrayString projects;
+		WorkspaceST::Get()->GetProjectList( projects );
+		for ( size_t i=0; i< projects.size(); i++ ) {
+			ProjectPtr proj = ManagerST::Get()->GetProject( projects.Item(0) );
+			if ( proj ) {
+				proj->SetModified( true );
+			}
+		}
+	}
+
 	dlg->Destroy();
 }
 

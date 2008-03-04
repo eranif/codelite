@@ -1,6 +1,3 @@
-- cscope plugin:
-	find symbol in workspace
-	find functions calling symbol
-	find functions called by symbol 
 - add SVN options to workspace tree
+- when editing a c++ file, add new menu entry in the menu bar, which includes all the editor's context menu
 

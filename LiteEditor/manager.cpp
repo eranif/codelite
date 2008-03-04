@@ -1676,8 +1676,13 @@ wxString Manager::ExpandVariables2(const wxString &expression)
 wxString Manager::ExpandVariables(const wxString &expression, ProjectPtr proj)
 {
 	wxString output(expression);
+	wxString project_name(proj->GetName());
+	
+	//make sure that the project name does not contain any spaces
+	project_name.Replace(wxT(" "), wxT("_"));
+	
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(proj->GetName());
-	output.Replace(wxT("$(ProjectName)"), proj->GetName());
+	output.Replace(wxT("$(ProjectName)"), project_name);
 	output.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
 	output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
 	output.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
@@ -2260,6 +2265,12 @@ void Manager::UpdateBuildTools()
 	//confirm that it exists...
 	wxString path;
 	bool is_ok(true);
+	
+	if(tool.Contains(wxT("$"))) {
+		//expand 
+		tool = EnvironmentConfig::Instance()->ExpandVariables(tool);
+	}
+	
 	if (!ExeLocator::Locate(tool, path)) {
 		is_ok = false;
 		//failed to locate the specified build tool

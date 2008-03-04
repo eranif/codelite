@@ -10,7 +10,7 @@
       <Switch Name="Preprocessor" Value="-D"/>
       <Switch Name="Source" Value="-c "/>
       <Tool Name="ArchiveTool" Value="ar rcu"/>
-      <Tool Name="CompilerName" Value="g++"/>
+      <Tool Name="CompilerName" Value="$(MINGW)\bin\g++"/>
       <Tool Name="LinkerName" Value="g++"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="g++ -shared -fPIC"/>

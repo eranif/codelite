@@ -278,6 +278,8 @@
       <CustomBuild Enabled="no">
         <CleanCommand>cd .. &amp;&amp; make type=debug_unicode clean</CleanCommand>
         <BuildCommand>cd .. &amp;&amp; make type=debug_unicode</BuildCommand>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
         <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
@@ -313,6 +315,8 @@
       <CustomBuild Enabled="no">
         <CleanCommand>cd .. &amp;&amp; make type=release_unicode clean</CleanCommand>
         <BuildCommand>cd .. &amp;&amp; make type=release_unicode</BuildCommand>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
         <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
@@ -350,6 +354,8 @@
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
         <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
@@ -395,6 +401,8 @@ svninfo.cpp:
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
         <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>

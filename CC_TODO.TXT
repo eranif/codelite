@@ -1,3 +1,4 @@
 - add SVN options to workspace tree
 - when editing a c++ file, add new menu entry in the menu bar, which includes all the editor's context menu
 
+

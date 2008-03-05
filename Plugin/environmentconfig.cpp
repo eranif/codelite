@@ -92,6 +92,13 @@ void EnvironmentConfig::ApplyEnv()
 		wxGetEnv(key, &oldVal);
 		m_envSnapshot[key] = oldVal;
 		
+		//allow value to include itself
+		//so this is valid:
+		//PATH=$(PATH):C:\SomePath\
+		//but note that the following is not valid: PATH=$(OtherVarName):C:\SomePath
+		wxString varName(wxT("$(") + key + wxT(")"));
+		val.Replace(varName, oldVal);
+		
 		//set the new value
 		wxSetEnv(key, val);
 	}

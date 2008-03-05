@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+// C++ code generated with wxFormBuilder (version Feb 20 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -27,7 +27,7 @@
 #include <wx/checklst.h>
 #include "dirpicker.h"
 #include <wx/statbox.h>
-#include <wx/treebook.h>
+#include <wx/notebook.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxChoice* m_choiceConfigurationType;
 		wxButton* m_buttonConfigManager;
 		wxStaticLine* m_staticline81;
-		wxTreebook* m_notebook3;
+		wxNotebook* m_notebook3;
 		wxPanel* m_generalPage;
 		wxStaticText* m_staticText22;
 		wxChoice* m_choiceProjectTypes;
@@ -126,6 +126,11 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxTextCtrl* m_textBuildCommand;
 		wxStaticText* m_staticText192;
 		wxTextCtrl* m_textCleanCommand;
+		wxStaticText* m_staticText29;
+		wxStaticLine* m_staticline11;
+		wxChoice* m_thirdPartyTool;
+		wxStaticText* m_staticText30;
+		wxTextCtrl* m_textCtrlMakefileGenerationCmd;
 		wxPanel* m_customMakefileStep;
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_textDeps;
@@ -139,10 +144,12 @@ class ProjectSettingsBaseDlg : public wxDialog
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnChoiceMakefileTool( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:
 		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 782,502 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~ProjectSettingsBaseDlg();
 	
 };
 

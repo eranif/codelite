@@ -99,6 +99,10 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 					m_customCleanCmd = child->GetNodeContent();
 				}else if(child->GetName() == wxT("WorkingDirectory")){
 					m_customBuildWorkingDir = child->GetNodeContent();
+				}else if(child->GetName() == wxT("ThirdPartyToolName")){
+					m_toolName = child->GetNodeContent();
+				}else if(child->GetName() == wxT("MakefileGenerationCommand")){
+					m_makeGenerationCommand = child->GetNodeContent();
 				}
 				child = child->GetNext();
 			}
@@ -129,6 +133,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 			m_pauseWhenExecEnds = XmlUtils::ReadBool(general, wxT("PauseExecWhenProcTerminates"), true);
 		}
 	}else{
+		
 		//create default project settings
 		m_name = wxT("Debug");
 		m_compilerRequired = true;
@@ -149,6 +154,9 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_resCompileOptions = wxEmptyString;
 		m_customPostBuildRule = wxEmptyString;
 		m_customPreBuildRule = wxEmptyString;
+		m_makeGenerationCommand = wxEmptyString;
+		m_toolName = wxEmptyString;
+		
 		BuildSettingsConfigCookie cookie;
 		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
 		if(cmp){
@@ -276,6 +284,14 @@ wxXmlNode *BuildConfig::ToXml() const
 	//add the working directory of the custom build
 	wxXmlNode *customBuildWd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("WorkingDirectory"));
 	XmlUtils::SetNodeContent(customBuildWd, m_customBuildWorkingDir);
+
+	//add the makefile generation command
+	wxXmlNode *toolName = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("ThirdPartyToolName"));
+	XmlUtils::SetNodeContent(toolName, m_toolName);
+
+	//add the makefile generation command
+	wxXmlNode *makeGenCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("MakefileGenerationCommand"));
+	XmlUtils::SetNodeContent(makeGenCmd, m_makeGenerationCommand);
 	
 	//add build and clean commands
 	wxXmlNode *bldCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("BuildCommand"));

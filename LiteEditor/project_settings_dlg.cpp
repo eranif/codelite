@@ -33,6 +33,7 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 		m_checkCompilerNeeded->Enable(false);
 		m_checkLinkerNeeded->Enable(false);
 		m_resourceCmpPage->Enable(false);
+		DisableCustomBuildPage(false);
 	}else{
 		DisableCustomBuildPage(true);
 	}
@@ -106,6 +107,7 @@ void ProjectSettingsDlg::ClearValues()
 	m_textDeps->Clear();
 	m_checkResourceNeeded->SetValue(true);
 	m_checkBoxPauseWhenExecEnds->SetValue(true);
+	DisableCustomBuildPage(true);
 }
 
 void ProjectSettingsDlg::CopyValues(const wxString &confName)
@@ -148,8 +150,12 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	m_textAddResCmpPath->SetValue(buildConf->GetResCmpIncludePath());
 	m_customBuildDirPicker->SetPath(buildConf->GetCustomBuildWorkingDir());
 	
+	m_thirdPartyTool->SetStringSelection(buildConf->GetToolName());
+	m_textCtrlMakefileGenerationCmd->SetValue(buildConf->GetMakeGenerationCommand());
+	
 	//set the custom pre-prebuild step
 	wxString customPreBuild = buildConf->GetPreBuildCustom();
+	
 	//extract the dependencies
 	wxString deps, rules;
 	deps = customPreBuild.BeforeFirst(wxT('\n'));
@@ -252,7 +258,8 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetCustomBuildCmd(m_textBuildCommand->GetValue());
 	buildConf->SetCustomCleanCmd(m_textCleanCommand->GetValue());
 	buildConf->EnableCustomBuild(m_checkEnableCustomBuild->IsChecked());
-	
+	buildConf->SetMakeGenerationCommand(m_textCtrlMakefileGenerationCmd->GetValue());
+	buildConf->SetToolName(m_thirdPartyTool->GetStringSelection());
 	buildConf->SetResCompilerRequired(!m_checkResourceNeeded->IsChecked());
 	buildConf->SetResCmpIncludePath(m_textAddResCmpPath->GetValue());
 	buildConf->SetResCmpOptions(m_textAddResCmpOptions->GetValue());
@@ -335,7 +342,7 @@ void ProjectSettingsDlg::OnCustomBuildEnabled(wxCommandEvent &event)
 	event.Skip();
 }
 
-void ProjectSettingsDlg::DoUpdatePages(bool checked)
+void ProjectSettingsDlg::DoUpdatePages(bool checked) 
 {
 	DisableCompilerPage(checked);
 	DisableLinkerPage(checked);
@@ -366,6 +373,17 @@ void ProjectSettingsDlg::DisableCustomBuildPage(bool disable)
 	m_textBuildCommand->Enable(!disable);
 	m_textCleanCommand->Enable(!disable);
 	m_customBuildDirPicker->Enable(!disable);
+	m_thirdPartyTool->Enable(!disable);
+	
+	if(!disable) {
+		if(m_thirdPartyTool->GetStringSelection() == wxT("None")) {
+			m_textCtrlMakefileGenerationCmd->Enable(false);
+		}else{
+			m_textCtrlMakefileGenerationCmd->Enable(true);
+		}
+	} else {
+		m_textCtrlMakefileGenerationCmd->Enable(!disable);
+	}
 }
 
 void ProjectSettingsDlg::OnButtonAddPreprocessor(wxCommandEvent &event)
@@ -617,4 +635,15 @@ void ProjectSettingsDlg::DisableCustomMkSteps(bool disable)
 {
 	m_textDeps->Enable( !disable );
 	m_textPreBuildRule->Enable( !disable );
+}
+
+void ProjectSettingsDlg::OnChoiceMakefileTool(wxCommandEvent &e)
+{
+	if(e.GetString() == wxT("None")) {
+		m_textCtrlMakefileGenerationCmd->Enable(false);
+	} else {
+		m_textCtrlMakefileGenerationCmd->Enable(true);
+	}
+	
+	OnCmdEvtVModified(e);
 }

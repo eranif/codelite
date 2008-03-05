@@ -1,15 +1,17 @@
 #include "compile_request.h"
+#include "build_config.h"
 #include "environmentconfig.h"
 #include "buildmanager.h"
 #include "wx/process.h"
 #include "workspace.h"
 #include "dirsaver.h" 
 
-CompileRequest::CompileRequest(wxEvtHandler *owner, const wxString &projectName, bool projectOnly, const wxString &fileName)
+CompileRequest::CompileRequest(wxEvtHandler *owner, const wxString &projectName, bool projectOnly, const wxString &fileName, bool runPremakeOnly)
 : CompilerAction(owner)
 , m_project(projectName)
 , m_projectOnly(projectOnly)
 , m_fileName(fileName)
+, m_premakeOnly(runPremakeOnly)
 {
 }
 
@@ -43,8 +45,22 @@ void CompileRequest::Process()
 	}else{
 		cmd = builder->GetBuildCommand(m_project, isCustom);
 	}
-
+	
 	SendStartMsg();
+	if(!isCustom && m_premakeOnly) {
+		AppendLine(wxT("Empty makefile generation command (see Project Settings -> Custom Build)"));
+		return;
+	}
+
+	//if we require to run the makefile generation command only, replace the 'cmd' with the
+	//generation command line
+	if(m_premakeOnly) {
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(m_project);
+		if(bldConf) {
+			cmd = bldConf->GetMakeGenerationCommand();
+		}
+	}
+	
 	if(cmd.IsEmpty()) {
 		//if we got an error string, use it
 		if(errMsg.IsEmpty() == false) {
@@ -59,7 +75,6 @@ void CompileRequest::Process()
 	m_proc = new clProcess(wxNewId(), cmd);
 	if(m_proc){
 		DirSaver ds;
-		
 		
 		//when using custom build, user can select different working directory
 		if(isCustom){
@@ -103,6 +118,7 @@ void CompileRequest::Process()
 			}
 			AppendLine(text);
 		}
+		
 		EnvironmentConfig::Instance()->ApplyEnv();
 		if(m_proc->Start() == 0){
 			wxString message;

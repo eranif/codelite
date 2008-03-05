@@ -74,6 +74,8 @@ class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject {
 	wxString m_customPreBuildRule;
 	wxString m_customBuildWorkingDir;
 	bool m_pauseWhenExecEnds;
+	wxString m_toolName;
+	wxString m_makeGenerationCommand;
 	
 private:
 	void FillFromSmiColonString(wxArrayString &arr, const wxString &str);
@@ -163,6 +165,12 @@ public:
 	
 	void SetPauseWhenExecEnds(const bool& pauseWhenExecEnds) {this->m_pauseWhenExecEnds = pauseWhenExecEnds;}
 	const bool& GetPauseWhenExecEnds() const {return m_pauseWhenExecEnds;}
+	
+	void SetMakeGenerationCommand(const wxString& makeGenerationCommand) {this->m_makeGenerationCommand = makeGenerationCommand;}
+	void SetToolName(const wxString& toolName) {this->m_toolName = toolName;}
+	
+	const wxString& GetMakeGenerationCommand() const {return m_makeGenerationCommand;}
+	const wxString& GetToolName() const {return m_toolName;}
 };
 
 typedef SmartPtr<BuildConfig> BuildConfigPtr;

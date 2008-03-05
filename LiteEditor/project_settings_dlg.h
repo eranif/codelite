@@ -88,6 +88,7 @@ public:
 	virtual void OnResourceCmpNeeded(wxCommandEvent &e);
 	virtual void OnResourceCmpAddPath(wxCommandEvent &e);
 	virtual void OnResourceCmpAddOption(wxCommandEvent &e);
+	virtual void OnChoiceMakefileTool(wxCommandEvent &e);
 };
 
 #endif // __project_settings_dlg__

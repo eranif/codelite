@@ -12,9 +12,11 @@
 #endif // WXMAKINGDLL_LE_SDK
 
 class WXDLLIMPEXP_LE_SDK CompileRequest : public CompilerAction {
+	
 	wxString m_project;
 	bool m_projectOnly;
 	wxString m_fileName;
+	bool m_premakeOnly;
 	
 public:
 	/**
@@ -23,7 +25,12 @@ public:
 	 * \param projectName the selected project to build
 	 * \param configurationName the workspace selected configuration
 	 */
-	CompileRequest(wxEvtHandler *owner, const wxString &projectName, bool projectOnly = false, const wxString &fileName = wxEmptyString);
+	CompileRequest(	wxEvtHandler *owner, 
+					const wxString &projectName, 
+					bool projectOnly = false, 
+					const wxString &fileName = wxEmptyString,
+					bool runPremakeOnly = false
+					);
 
 	///dtor
 	virtual ~CompileRequest();

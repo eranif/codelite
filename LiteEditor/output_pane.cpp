@@ -20,7 +20,7 @@ OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 , m_caption(caption)
 , m_logTargetOld(NULL)
 {
-	CreateGUIControls();	
+	CreateGUIControls();	 
 }
 
 OutputPane::~OutputPane()

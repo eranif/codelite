@@ -346,6 +346,12 @@ public:
 	void BuildProject(const wxString &project, bool projectOnly = false);
 
 	/**
+	 * \brief when building using custom build, execute the makefile generation command provided by the user
+	 * \param project project to execute it for
+	 */
+	void RunCustomPreMakeCommand(const wxString &project);
+	
+	/**
 	 * compile single file from a given
 	 * given project
 	 */

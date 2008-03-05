@@ -41,6 +41,7 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "build_order" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnBuildOrder ), NULL, this );
 	Connect( XRCID( "clean_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnClean ), NULL, this );
 	Connect( XRCID( "build_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnBuild ), NULL, this );
+	Connect( XRCID( "generate_makefile" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRunPremakeStep ), NULL, this );
 	Connect( XRCID( "stop_build" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnStopBuild ), NULL, this );
 	Connect( XRCID( "retag_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRetagProject ), NULL, this );
 	Connect( XRCID( "retag_workspace" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRetagWorkspace ), NULL, this );
@@ -69,6 +70,7 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "clean_project_only" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "import_directory" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "compile_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
+	Connect( XRCID( "generate_makefile" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 }
 
 void FileViewTree::OnBuildInProgress( wxUpdateUIEvent &event )
@@ -251,7 +253,7 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
 		// Set active project with bold
 		wxString activeProjectName = ManagerST::Get()->GetActiveProjectName();
 		wxString displayName = node->GetData().GetDisplayName();
-		
+
 		if ( parentHti == GetRootItem() && displayName == activeProjectName) {
 			SetItemBold( hti );
 		}
@@ -264,12 +266,36 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
 // Event handlers
 //-----------------------------------------------
 
-void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type )
+void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString &projectName )
 {
+	wxMenuItem *itemSep(NULL);
+	wxMenuItem *item(NULL);
+	if ( type == MenuTypeFileView_Project ) {
+
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(projectName);
+		if (bldConf && bldConf->IsCustomBuild()) {
+			wxString toolName = bldConf->GetToolName();
+			if (toolName != wxT("None")) {
+				//add the custom execution command
+				itemSep = new wxMenuItem(menu, wxID_SEPARATOR);
+				menu->Prepend(itemSep);
+
+				wxString menu_text(wxT("Run ") + toolName);
+
+				item = new wxMenuItem(menu, XRCID("generate_makefile"), menu_text, wxEmptyString, wxITEM_NORMAL);
+				menu->Prepend(item);
+			}
+		}
+	}
+
 	PluginManager::Get()->HookPopupMenu( menu, type );
 	PopupMenu( menu );
 	//let the plugins remove their hooked content
 	PluginManager::Get()->UnHookPopupMenu( menu, type );
+	
+	//remove the custom makefile hooked menu items
+	if(item) {menu->Destroy(item);}
+	if(itemSep) {menu->Destroy(itemSep);}
 }
 
 void FileViewTree::OnPopupMenu( wxTreeEvent &event )
@@ -282,7 +308,7 @@ void FileViewTree::OnPopupMenu( wxTreeEvent &event )
 			FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
 			switch ( data->GetData().GetKind() ) {
 			case ProjectItem::TypeProject:
-				PopupContextMenu( m_projectMenu, MenuTypeFileView_Project );
+				PopupContextMenu( m_projectMenu, MenuTypeFileView_Project, data->GetData().GetDisplayName() );
 				break;
 			case ProjectItem::TypeVirtualDirectory:
 				PopupContextMenu( m_folderMenu, MenuTypeFileView_Folder );
@@ -312,8 +338,8 @@ TreeItemInfo FileViewTree::GetSelectedItemInfo()
 		info.m_text = GetItemText( item );
 		info.m_itemType = data->GetData().GetKind();
 		info.m_fileName  = data->GetData().GetFile();
-		if(info.m_itemType == ProjectItem::TypeVirtualDirectory){
-			//incase of virtual directories, set the file name to be the directory of 
+		if (info.m_itemType == ProjectItem::TypeVirtualDirectory) {
+			//incase of virtual directories, set the file name to be the directory of
 			//the project
 			wxString path = GetItemPath(item);
 			wxString project = path.BeforeFirst(wxT(':'));
@@ -412,7 +438,7 @@ bool FileViewTree::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &pa
 {
 	if (item.IsOk() == false)
 		return false;
-	
+
 	FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
 	switch ( data->GetData().GetKind() ) {
 	case ProjectItem::TypeVirtualDirectory:
@@ -421,7 +447,7 @@ bool FileViewTree::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &pa
 	default:
 		return false;
 	}
-	
+
 	wxArrayString actualAdded;
 	wxString vdPath = GetItemPath( item );
 	wxString project;
@@ -682,13 +708,13 @@ void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
 	        projectName,
 	        title );
 	dlg->ShowModal();
-	
+
 	//mark this project as modified
 	ProjectPtr proj = ManagerST::Get()->GetProject(projectName);
-	if(proj) {
+	if (proj) {
 		proj->SetModified(true);
 	}
-	
+
 	dlg->Destroy();
 }
 
@@ -1000,16 +1026,16 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	ProjectPtr proj = ManagerST::Get()->GetProject( project );
 
 	ImportFilesDlg *dlg = new ImportFilesDlg(NULL, proj->GetFileName().GetPath());
-	if(dlg->ShowModal() != wxID_OK){
+	if (dlg->ShowModal() != wxID_OK) {
 		dlg->Destroy();
 		return;
 	}
-	
+
 	wxString path = dlg->GetBaseDir();
 	bool noExtFiles = dlg->GetIncludeFilesWoExt();
 	wxString mask = dlg->GetFileMask();
 	dlg->Destroy();
-	
+
 	wxFileName rootPath(path);
 
 	//Collect all candidates files
@@ -1091,5 +1117,15 @@ void FileViewTree::DoAddItem(ProjectPtr proj, const FileViewItem &item)
 		//For performance reasons, we dont go through the Workspace API
 		//but directly through the project API
 		proj->AddFile(item.fullpath, item.virtualDir);
+	}
+}
+
+void FileViewTree::OnRunPremakeStep(wxCommandEvent &event)
+{
+	wxUnusedVar( event );
+	wxTreeItemId item = GetSingleSelection();
+	if ( item.IsOk() ) {
+		wxString projectName = GetItemText( item );
+		ManagerST::Get()->RunCustomPreMakeCommand( projectName );
 	}
 }

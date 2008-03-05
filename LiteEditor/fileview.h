@@ -108,6 +108,7 @@ protected:
 	virtual void OnBuildOrder(wxCommandEvent &event);
 	virtual void OnClean(wxCommandEvent &event);
 	virtual void OnBuild(wxCommandEvent &event);
+	virtual void OnRunPremakeStep(wxCommandEvent &event);
 	virtual void OnBuildProjectOnly(wxCommandEvent &event);
 	virtual void OnCleanProjectOnly(wxCommandEvent &event);
 	virtual void OnStopBuild(wxCommandEvent &event);
@@ -125,7 +126,7 @@ protected:
 	virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
 	int OnCompareItems(const FilewViewTreeItemData *a, const FilewViewTreeItemData *b);
 	
-	void PopupContextMenu(wxMenu *menu, MenuType type);
+	void PopupContextMenu(wxMenu *menu, MenuType type, const wxString &projectName = wxEmptyString);
 
 private:
 	// Build project node

@@ -2335,3 +2335,22 @@ void Manager::OutputMessage(wxString msg)
 	msg = msg.Trim(false);
 	Frame::Get()->GetOutputPane()->GetOutputWindow()->AppendLine(msg);
 }
+
+void Manager::RunCustomPreMakeCommand(const wxString &project)
+{
+	if ( m_compileRequest && m_compileRequest->IsBusy() ) {
+		return;
+	}
+
+	if ( m_compileRequest ) {
+		delete m_compileRequest;
+		m_compileRequest = NULL;
+	}
+
+	m_compileRequest = new CompileRequest(	GetMainFrame(), //owner window
+											project,	 	//project to build 
+											false, 			//not project only
+											wxEmptyString, 	//no file name (valid only for build file only)
+											true);			//run premake step only
+	m_compileRequest->Process();	
+}

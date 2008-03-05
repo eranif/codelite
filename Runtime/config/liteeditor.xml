@@ -18,21 +18,21 @@
     <bool Value="1" Name="m_boldWarnFont"/>
   </ArchiveObject>
   <RecentWorkspaces>
-    <File Name="C:\TestArea\TestOne.workspace"/>
-    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
     <File Name="C:\TestArea\1234\stam.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
+    <File Name="C:\TestArea\TestOne.workspace"/>
   </RecentWorkspaces>
   <RecentFiles>
-    <File Name="C:\TestArea\main.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\addincludefiledlgbase.cpp"/>
-    <File Name="C:\TestArea\CCBug\testme\main.cpp"/>
-    <File Name="C:\TestArea\CCBug\main.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\CodeFormatter\codeformatter.cpp"/>
-    <File Name="C:\MinGW\bin\..\lib\gcc\mingw32\3.4.2\..\..\..\..\include\c++\3.4.2\map"/>
-    <File Name="C:\Development\C++\codelite\trunk\cscope\cscope.cpp"/>
-    <File Name="C:\MinGW\bin\..\lib\gcc\mingw32\3.4.2\..\..\..\..\include\c++\3.4.2\bits\vector.tcc"/>
     <File Name="C:\TestArea\1234\main.cpp"/>
+    <File Name="C:\MinGW\bin\..\lib\gcc\mingw32\3.4.2\..\..\..\..\include\c++\3.4.2\bits\vector.tcc"/>
+    <File Name="C:\Development\C++\codelite\trunk\cscope\cscope.cpp"/>
+    <File Name="C:\MinGW\bin\..\lib\gcc\mingw32\3.4.2\..\..\..\..\include\c++\3.4.2\map"/>
+    <File Name="C:\Development\C++\codelite\trunk\CodeFormatter\codeformatter.cpp"/>
+    <File Name="C:\TestArea\CCBug\main.cpp"/>
+    <File Name="C:\TestArea\CCBug\testme\main.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\addincludefiledlgbase.cpp"/>
+    <File Name="C:\TestArea\main.cpp"/>
   </RecentFiles>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="1004"/>

@@ -66,7 +66,7 @@ public:
 	int GetUid() { return m_uid; }
 	void SetType(int type) { m_type = type; }
 	int GetType() const { return m_type; }
-
+	void SetCommand(const wxString &cmd) { m_cmd = cmd; }
 	bool HasInput(wxString &input, wxString &errors);
 
 	/**

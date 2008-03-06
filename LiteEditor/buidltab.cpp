@@ -253,11 +253,13 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 		Manager *mgr = ManagerST::Get();
 		std::vector<wxFileName> files;
 		mgr->GetWorkspaceFiles(files, true);
+		
+		bool fileOpened(false);
 		for (size_t i=0; i<files.size(); i++) {
 			if (files.at(i).GetFullName() == fn.GetFullName()) {
 				//we have a match
 				mgr->OpenFile(files.at(i).GetFullPath(), wxEmptyString, (int)lineNumber-1);
-
+				fileOpened = true;
 				if (lineClicked != wxNOT_FOUND || m_nextBuildError_lastLine != wxNOT_FOUND) {
 					if (lineClicked != wxNOT_FOUND) {
 						//the call came from mouse double click, update
@@ -269,6 +271,23 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 					m_sci->MarkerAdd(m_nextBuildError_lastLine, 0x7);
 					m_sci->GotoLine(m_nextBuildError_lastLine);
 				}
+			}
+		}
+		
+		if( !fileOpened ) {
+			//try to open the file as is
+			//we have a match
+			mgr->OpenFile(fn.GetFullPath(), wxEmptyString, (int)lineNumber-1);
+			if (lineClicked != wxNOT_FOUND || m_nextBuildError_lastLine != wxNOT_FOUND) {
+				if (lineClicked != wxNOT_FOUND) {
+					//the call came from mouse double click, update
+					//the m_nextBuildError_lastLine member
+					m_nextBuildError_lastLine = lineClicked;
+				}
+
+				m_sci->MarkerDeleteAll(0x7);
+				m_sci->MarkerAdd(m_nextBuildError_lastLine, 0x7);
+				m_sci->GotoLine(m_nextBuildError_lastLine);
 			}
 		}
 	}

@@ -1,4 +1,7 @@
 - add SVN options to workspace tree
 - when editing a c++ file, add new menu entry in the menu bar, which includes all the editor's context menu
-
+- selecting different compiler setting other than g++ does not work
+- make the "Start" page go away after a project has been loaded
+- validate the environment variables
+- Also a possible feature would be to popup a dialog if a $(var) is in a project and not defined already
 

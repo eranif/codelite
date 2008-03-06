@@ -383,7 +383,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, wxString &text)
 				dependFile << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix)") << wxT(".d");
 
 				text << objectName << wxT(": ") << fileName << wxT(" ") << dependFile << wxT("\n");
-				text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch)") << fileName << wxT(" $(CmpOptions)  ") << wxT(" $(OutputSwitch)") << objectName << wxT(" $(IncludePath)\n");
+				text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch)") << fileName << wxT(" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
 
 				//add the dependencie rule
 				text << dependFile << wxT(":") << wxT("\n");
@@ -395,7 +395,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, wxString &text)
 
 				wxString fileName   = files[i].GetFullPath(wxPATH_UNIX);
 				text << objectName << wxT(": ") << fileName << wxT("\n");
-				text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch)") << fileName << wxT(" $(CmpOptions)  ") << wxT(" $(OutputSwitch)") << objectName << wxT(" $(IncludePath) \n\n");
+				text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch)") << fileName << wxT(" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath) \n\n");
 			}
 		} else if (IsResource(files.at(i).GetExt()) && bldConf->IsResCompilerRequired() && wxGetOsVersion() & wxOS_WINDOWS ) {
 			//Windows only
@@ -404,7 +404,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, wxString &text)
 
 			wxString fileName   = files[i].GetFullPath(wxPATH_UNIX);
 			text << objectName << wxT(": ") << fileName << wxT("\n");
-			text << wxT("\t") << wxT("$(RcCompilerName) -i ") << fileName << wxT(" $(RcCmpOptions)  ") << wxT(" $(OutputSwitch)") << objectName << wxT(" $(RcIncludePath) \n\n");
+			text << wxT("\t") << wxT("$(RcCompilerName) -i ") << fileName << wxT(" $(RcCmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(RcIncludePath) \n\n");
 		}
 	}
 
@@ -466,7 +466,7 @@ void BuilderGnuMake::CreateTargets(const wxString &type, BuildConfigPtr bldConf,
 
 	if (type == Project::STATIC_LIBRARY) {
 		//create a static library
-		text << wxT("\t") << wxT("$(ArchiveTool) $(OutputFile) $(Objects)\n");
+		text << wxT("\t") << wxT("$(ArchiveTool) $(ArchiveOutputSwitch)$(OutputFile) $(Objects)\n");
 	} else
 		if (type == Project::DYNAMIC_LIBRARY) {
 			//create a shared library
@@ -569,7 +569,7 @@ void BuilderGnuMake::CreateConfigsVariables(BuildConfigPtr bldConf, wxString &te
 
 	wxString cmpType = bldConf->GetCompilerType();
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
-
+	
 	text << wxT("## ") << name << wxT("\n");
 	text << wxT("ifeq ($(type),") << name << wxT(")") << wxT("\n");
 	//The following two variables are here for compatibility with MSVS
@@ -591,7 +591,9 @@ void BuilderGnuMake::CreateConfigsVariables(BuildConfigPtr bldConf, wxString &te
 	text << wxT("RcCompilerName") << wxT("=") << cmp->GetTool(wxT("ResourceCompiler")) << wxT("\n");
 	text << wxT("OutputFile") << wxT("=") << bldConf->GetOutputFileName() << wxT("\n");
 	text << wxT("Preprocessors=") << ParsePreprocessor(bldConf->GetPreprocessor()) << wxT("\n");
-
+	text << wxT("ObjectSwitch=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
+	text << wxT("ArchiveOutputSwitch=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
+	
 	wxString buildOpts = bldConf->GetCompileOptions();
 	buildOpts.Replace(wxT(";"), wxT(" "));
 	text << wxT("CmpOptions") << wxT("=") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");

@@ -175,8 +175,9 @@ BuildConfig::~BuildConfig()
 
 wxString BuildConfig::NormalizePath(const wxString &path) const
 {
-	wxFileName fn(path);
-	return fn.GetFullPath(wxPATH_UNIX);
+	wxString normalized_path(path);
+	normalized_path.Replace(wxT("\\"), wxT("/"));
+	return normalized_path;
 }
 
 BuildConfig *BuildConfig::Clone() const

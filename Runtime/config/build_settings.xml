@@ -2,12 +2,14 @@
 <BuildSettings>
   <Compilers>
     <Compiler Name="gnu g++">
-      <Switch Name="Debug" Value="-gstabs "/>
+      <Switch Name="ArchiveOutput" Value=" "/>
+      <Switch Name="Debug" Value="-gstab"/>
       <Switch Name="Include" Value="-I"/>
       <Switch Name="Library" Value="-l"/>
       <Switch Name="LibraryPath" Value="-L"/>
+      <Switch Name="Object" Value="-o "/>
       <Switch Name="Output" Value="-o "/>
-      <Switch Name="Preprocessor" Value="-D"/>
+      <Switch Name="Preprocessor" Value="-d"/>
       <Switch Name="Source" Value="-c "/>
       <Tool Name="ArchiveTool" Value="ar rcu"/>
       <Tool Name="CompilerName" Value="g++"/>
@@ -19,10 +21,12 @@
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+ *)(:)( warning:)</Pattern>
     </Compiler>
     <Compiler Name="gnu gcc">
+      <Switch Name="ArchiveOutput" Value=" "/>
       <Switch Name="Debug" Value="-g "/>
       <Switch Name="Include" Value="-I"/>
       <Switch Name="Library" Value="-l"/>
       <Switch Name="LibraryPath" Value="-L"/>
+      <Switch Name="Object" Value="-o "/>
       <Switch Name="Output" Value="-o "/>
       <Switch Name="Preprocessor" Value="-D"/>
       <Switch Name="Source" Value="-c "/>
@@ -34,6 +38,25 @@
       <Option Name="ObjectSuffix" Value=".o"/>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+)(:)</Pattern>
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+ *)(:)( warning:)</Pattern>
+    </Compiler>
+    <Compiler Name="VC++">
+      <Switch Name="ArchiveOutput" Value="/OUT:"/>
+      <Switch Name="Debug" Value="/Zi "/>
+      <Switch Name="Include" Value="/I"/>
+      <Switch Name="Library" Value=" "/>
+      <Switch Name="LibraryPath" Value="/LIBPATH:"/>
+      <Switch Name="Object" Value="/Fo"/>
+      <Switch Name="Output" Value="/OUT:"/>
+      <Switch Name="Preprocessor" Value="/D"/>
+      <Switch Name="Source" Value=""/>
+      <Tool Name="ArchiveTool" Value="lib.exe  /nologo"/>
+      <Tool Name="CompilerName" Value="cl.exe /nologo /c"/>
+      <Tool Name="LinkerName" Value="link.exe  /nologo"/>
+      <Tool Name="ResourceCompiler" Value="windres"/>
+      <Tool Name="SharedObjectLinkerName" Value="link.exe /DLL  /nologo"/>
+      <Option Name="ObjectSuffix" Value=".obj"/>
+      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:]+ *)(\()([0-9]+)(\))( \: )</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:]+ *)(\()([0-9]+)(\))( \: )(warning)</Pattern>
     </Compiler>
   </Compilers>
   <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="C:/MinGW/bin/mingw32-make.EXE" Options="-f" Jobs="1"/>

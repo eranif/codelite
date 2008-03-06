@@ -1675,29 +1675,13 @@ wxString Manager::ExpandVariables2(const wxString &expression)
 
 wxString Manager::ExpandVariables(const wxString &expression, ProjectPtr proj)
 {
-	wxString output(expression);
 	wxString project_name(proj->GetName());
-	
-	//make sure that the project name does not contain any spaces
-	project_name.Replace(wxT(" "), wxT("_"));
-	
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(proj->GetName());
-	output.Replace(wxT("$(ProjectName)"), project_name);
-	output.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
-	output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
-	output.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
-
+	wxString fileName;
 	LEditor *editor = GetActiveEditor();
 	if (editor) {
-		output.Replace(wxT("$(CurrentFileName)"), editor->GetFileName().GetName());
-		output.Replace(wxT("$(CurrentFilePath)"), editor->GetFileName().GetPath());
-		output.Replace(wxT("$(CurrentFileExt)"), editor->GetFileName().GetExt());
-		output.Replace(wxT("$(CurrentFileFullPath)"), editor->GetFileName().GetFullPath());
+		fileName = editor->GetFileName().GetFullPath();
 	}
-
-	//call the environment & workspace variables expand function
-	output = ExpandVariables2(output);
-	return output;
+	return ExpandAllVariables(expression, project_name, fileName);
 }
 
 //--------------------------- Debugger API -----------------------------

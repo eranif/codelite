@@ -1,3 +1,5 @@
+#include "workspace.h"
+#include "project.h"
 #include "wx/tokenzr.h"
 #include "globals.h"
 #include "wx/app.h"
@@ -120,5 +122,37 @@ bool IsValidCppFile(const wxString &id)
 		return false;
 	}
 	return true;	
+}
+// This functions accepts expression and expand all variables in it
+wxString ExpandAllVariables(const wxString &expression, const wxString &projectName, const wxString &fileName)
+{
+	wxString errMsg;
+	wxString output(expression);
+	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(projectName, errMsg);
+	if (proj) {
+		wxString project_name(proj->GetName());
+
+		//make sure that the project name does not contain any spaces
+		project_name.Replace(wxT(" "), wxT("_"));
+
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(proj->GetName());
+		output.Replace(wxT("$(ProjectName)"), project_name);
+		output.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
+		output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
+		output.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
+
+		if(fileName.IsEmpty() == false) {
+			wxFileName fn(fileName);
+		
+			output.Replace(wxT("$(CurrentFileName)"), fn.GetName());
+			output.Replace(wxT("$(CurrentFilePath)"), fn.GetPath());
+			output.Replace(wxT("$(CurrentFileExt)"), fn.GetExt());
+			output.Replace(wxT("$(CurrentFileFullPath)"), fn.GetFullPath());
+		}
+	}
+	
+	//call the environment & workspace variables expand function
+	output = WorkspaceST::Get()->ExpandVariables(output);
+	return output;
 }
 

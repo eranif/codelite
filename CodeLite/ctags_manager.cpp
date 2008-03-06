@@ -1,4 +1,4 @@
-#include "precompiled_header.h"
+#include "precompiled_header.h" 
 #include "ctags_manager.h"
 #include <wx/txtstrm.h>
 #include <wx/file.h>
@@ -10,7 +10,7 @@
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
 #include "cpp_comment_creator.h"
-#include "tags_options_data.h"
+#include "tags_options_data.h" 
 #include <wx/busyinfo.h>
 #include "wx/timer.h"
 #include "variable_entry.h"

@@ -14,6 +14,7 @@ extern bool ReadFileWithConversion(const wxString &fileName, wxString &content);
 extern bool RemoveDirectory(const wxString &path);
 extern bool IsValidCppIndetifier(const wxString &id);
 extern bool IsValidCppFile(const wxString &id);
-	
+extern wxString ExpandAllVariables(const wxString &expression, const wxString &projectName, const wxString &fileName);
+
 #endif //GLOBALS_H
 

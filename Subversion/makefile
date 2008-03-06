@@ -1,6 +1,11 @@
 ## Author: Eran Ifrah
-
  
+SOFLAG=-shared  
+OSNAME=$(shell uname -s)
+ifeq ($(OSNAME), Darwin)
+SOFLAG=-dynamiclib
+endif
+
 ## 
 ## Set default build set
 ## as ANSI-deubg
@@ -9,12 +14,6 @@ WXCFG=--unicode=no --debug=yes
 EXT=d
 OBJ_DIR=Debug_gcc
 DEBUG= -g 
-
-SOFLAG=-shared 
-OSNAME=$(shell uname -s)
-ifeq ($(OSNAME), Darwin)
-SOFLAG=-dynamiclib
-endif
 
 ##
 ## Override default settings by typing: make type=[release | release_unicode | debug_unicode]
@@ -60,8 +59,8 @@ endif
 CCFLAGS= -DASTYLE_LIB -D__WX__ -Wall $(TRACE_FLAG) -I. -DWXUSINGDLL -DWX_PRECOMP -DNO_GCC_PRAGMA -DXTHREADS -D_REENTRANT -DXUSE_MTSAFE_API $(shell wx-config --cxxflags $(WXCFG)) $(PROFILER) -fno-strict-aliasing -DYY_NEVER_INTERACTIVE=1
 
 SQLITE_INCLUDE= -I../sdk/wxsqlite3/include -I../sdk/wxsqlite3/sqlite3/include
-INCLUDES = -I. -I../Interfaces -I../CodeLite  -I../Plugin -I../sdk/wxflatnotebook/include
-LINK_FLAGS=$(shell wx-config --libs $(WXCFG)) -L../lib -lplugin$(EXT) -lcodelite$(EXT) -L../sdk/wxflatnotebook/lib -lwxflatnotebook$(EXT)
+INCLUDES = -I. -I../Interfaces -I../CodeLite  -I../Plugin -I../sdk/wxflatnotebook/include $(SQLITE_INCLUDE)
+LINK_FLAGS=$(shell wx-config --libs $(WXCFG)) -L../lib -lplugin$(EXT) -lcodelite$(EXT) -L../sdk/wxflatnotebook/lib -lwxflatnotebook$(EXT) -lwxsqlite3$(EXT)
 
 ##
 ## Define the object files
@@ -71,7 +70,7 @@ lib_cpp_objects := $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir 
 ## our main build target
 build : pre_build Subversion
 
-Subversion: $(lib_cpp_objects)
+Subversion: $(lib_cpp_objects) $(lib_c_objects)
 	$(CMP) $(SOFLAG) -o $(OUTPUT_DIR)/Subversion.so $(lib_cpp_objects) $(LINK_FLAGS)
 
 $(OBJ_DIR)/%.o: %.cpp %.o.d

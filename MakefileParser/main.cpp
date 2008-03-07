@@ -7,9 +7,6 @@
 #include "Node.h"
 #include <wx/file.h>
 
-typedef std::map<wxString, wxString> Tokens;
-typedef Tokens::iterator ITokens;
-
 void LogMessage(const wxString& msg)
 {
 	wxCharBuffer buf = msg.ToAscii();
@@ -20,7 +17,11 @@ MakefileNode* ImportFromMakefile(const wxString &path)
 {
 	LogMessage(wxT("Path: ") + path + wxT("\n"));
 
-	VariableLexer expander(path.data());
+	Tokens tokens;
+	tokens["RM"] = "rm";
+	tokens["MAKE"] = "make";
+
+	VariableLexer expander(path.data(), tokens);
 	wxArrayString expanded = expander.getResult();
 
 	MakefileParser parser(expanded);

@@ -17,11 +17,12 @@
 #endif // WXMAKINGDLL_LE_SDK
 #endif // WXDLLIMPEXP_LE_SDK
 
+typedef std::map<std::string, std::string> Tokens;
 
 class WXDLLIMPEXP_LE_SDK VariableLexer
 {
 	public:
-		VariableLexer(const wxString& path);
+		VariableLexer(const wxString& path, const Tokens& tokens);
 		
 		const wxArrayString& getResult();
 		const wxArrayString& getUnmatched();
@@ -29,7 +30,7 @@ class WXDLLIMPEXP_LE_SDK VariableLexer
 		const std::map<wxString, wxString>& getTokens();
 	
 	private:
-		void initTokens();
+		void initTokens(const Tokens& tokens);
 	
 		wxArrayString m_output;
 		wxArrayString m_unmatched;

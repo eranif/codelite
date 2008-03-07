@@ -13,8 +13,8 @@ extern void initLexer(const char *filename);
 extern int yyparse();
 
 typedef std::vector<std::string> Strings;
+typedef std::pair<std::string, std::string> Token;
 typedef Strings::iterator IStrings;
-typedef std::map<std::string, std::string> Tokens;
 typedef Tokens::iterator ITokens;
 
 Strings TheOutput;
@@ -44,12 +44,12 @@ std::string getShellResult(const std::string& command)
 	return result;
 }
 
-VariableLexer::VariableLexer(const wxString& path) 
+VariableLexer::VariableLexer(const wxString& path, const Tokens& tokens) 
 {
 	const wxCharBuffer pathBuffer = path.ToAscii();
 	const char *cstr_path = pathBuffer.data();
 	initLexer(cstr_path);
-	initTokens();
+	initTokens(tokens);
 	yyparse();
 	
 	for(IStrings it = TheOutput.begin(); it != TheOutput.end(); it++)
@@ -88,8 +88,11 @@ const std::map<wxString,wxString>& VariableLexer::getTokens()
 	return m_tokens;
 }
 
-void VariableLexer::initTokens()
+void VariableLexer::initTokens(const Tokens& tokens)
 {
-	TheTokens["RM"] = "rm";
-	TheTokens["MAKE"] = "make";
+	for(Tokens::const_iterator it = tokens.begin(); it != tokens.end(); it++)
+	{
+		Token token = *it;
+		TheTokens[token.first] = token.second;
+	}
 }

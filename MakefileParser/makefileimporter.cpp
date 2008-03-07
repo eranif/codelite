@@ -257,7 +257,11 @@ void MakefileImporter::ImportFromMakefile(const wxString &path)
 	wxFileName fileName = path;
 	LogMessage(fileName.GetPath() + wxT("\n"));
 	
-	VariableLexer expander(path.data());
+	Tokens tokens;
+	tokens["RM"] = "rm";
+	tokens["MAKE"] = "make";
+
+	VariableLexer expander(path.data(), tokens);
 	wxArrayString expanded = expander.getResult();
 
 	MakefileParser parser(expanded);

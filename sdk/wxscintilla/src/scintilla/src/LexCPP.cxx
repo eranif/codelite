@@ -9,7 +9,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <stdarg.h>
+#include <stdarg.h> 
 
 #include "Platform.h"
 
@@ -20,12 +20,15 @@
 #include "Scintilla.h"
 #include "SciLexer.h"
 #include "CharacterSet.h"
+#include "string"
 
 #ifdef SCI_NAMESPACE
 using namespace Scintilla;
 #endif
 
-static bool IsDisabledCodeEnd(Accessor &styler, StyleContext &sc) {
+extern std::string GetCurrentFileName();
+
+static bool IsDisabledCodeEnd(Accessor &styler, StyleContext &sc, int &depth) {
 	char buf[6];
 	int offset(0);
 	
@@ -44,7 +47,38 @@ static bool IsDisabledCodeEnd(Accessor &styler, StyleContext &sc) {
 	buf[5] = 0;
 	
 	if (strcmp(buf, "endif") == 0) {
-		sc.Forward(5);
+		if(depth == 0) {
+			sc.Forward(5);
+			return true;
+		} else {
+			depth--;
+		}
+	}
+	return false;
+}
+
+static bool IsPrepBlockStart(Accessor &styler, StyleContext &sc) {
+	//check if this is a pre-preocessor block start
+	//#if
+	//#ifdef 
+	char buf[6];
+	int offset(0);
+	
+	char chWhite(0);
+	//skip all prefix whitespaces
+	do {
+		offset++;
+		chWhite = styler.SafeGetCharAt(sc.currentPos+offset, 0);
+	} while( chWhite && (chWhite == '\t' || chWhite == ' '));
+	
+	buf[0] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
+	buf[1] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
+	buf[2] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
+	buf[3] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
+	buf[4] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
+	buf[5] = 0;
+
+	if (strncmp(buf, "if", 2) == 0 || strcmp(buf, "ifdef") == 0) {
 		return true;
 	}
 	return false;
@@ -102,7 +136,15 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 	WordList &keywords2 = *keywordlists[1];
 	WordList &keywords3 = *keywordlists[2];
 	WordList &keywords4 = *keywordlists[3];
-
+	
+	static std::string file_name;
+	static int depth(0);
+	
+	if (file_name != GetCurrentFileName()) {
+		file_name = GetCurrentFileName();
+		depth = 0;
+	}
+	
 	bool stylingWithinPreprocessor = styler.GetPropertyInt("styling.within.preprocessor") != 0;
 
 	CharacterSet setOKBeforeRE(CharacterSet::setNone, "(=,");
@@ -221,7 +263,11 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 			break;
 		case SCE_C_PREPROCESSOR_DISABLED:
 			if (visibleChars == 0 && sc.ch == '#') {
-				if(IsDisabledCodeEnd(styler, sc)){
+				if(IsPrepBlockStart(styler, sc)){
+					//nested block, increase the depth
+					depth++;
+					sc.ForwardSetState(SCE_C_PREPROCESSOR_DISABLED);
+				} else if(IsDisabledCodeEnd(styler, sc, depth)){
 					sc.ForwardSetState(SCE_C_DEFAULT);
 				}
 			}

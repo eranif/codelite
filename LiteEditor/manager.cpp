@@ -73,6 +73,16 @@ static wxString CL_EXEC_WRAPPER = wxEmptyString;
 
 static bool HideDebuggerPane = true;
 
+std::string GetCurrentFileName()
+{
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	if(editor) {
+		const wxCharBuffer fileName = _C(editor->GetFileName().GetFullPath());
+		return fileName.data();
+	}
+	return "";
+}
+
 Manager::Manager(void)
 		: m_cleanRequest(NULL)
 		, m_compileRequest(NULL)

@@ -372,7 +372,7 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 	//----------------------------------------------------
 	// source file
 	//----------------------------------------------------
-	cpp << wxT("#include \"") << macro << wxT(".h\"\n");
+	cpp << wxT("#include \"") << info.fileName << wxT(".h\"\n");
 	if (info.isSingleton) {
 		cpp << info.name << wxT("* ") << info.name << wxT("::ms_instance = 0;\n\n");
 	}

@@ -266,7 +266,6 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 				if(IsPrepBlockStart(styler, sc)){
 					//nested block, increase the depth
 					depth++;
-					sc.ForwardSetState(SCE_C_PREPROCESSOR_DISABLED);
 				} else if(IsDisabledCodeEnd(styler, sc, depth)){
 					sc.ForwardSetState(SCE_C_DEFAULT);
 				}

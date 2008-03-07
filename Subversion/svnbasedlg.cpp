@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  6 2007)
+// C++ code generated with wxFormBuilder (version Feb 20 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -9,7 +9,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-SvnBaseDlg::SvnBaseDlg( wxWindow* parent, int id, wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style )
+SvnBaseDlg::SvnBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
@@ -18,6 +18,16 @@ SvnBaseDlg::SvnBaseDlg( wxWindow* parent, int id, wxString title, wxPoint pos, w
 	
 	m_textCtrl = new wxTextCtrl( this, wxID_ANY, wxT("# Enter commit log here.Lines starting with the pound sign (#), are \n# ignored\n"), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB );
 	bSizer1->Add( m_textCtrl, 1, wxALL|wxEXPAND, 5 );
+	
+	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Last commit messages:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1->Wrap( -1 );
+	bSizer1->Add( m_staticText1, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+	
+	m_comboBoxLastCommitMsgs = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY ); 
+	bSizer1->Add( m_comboBoxLastCommitMsgs, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
 	
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
@@ -32,4 +42,15 @@ SvnBaseDlg::SvnBaseDlg( wxWindow* parent, int id, wxString title, wxPoint pos, w
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	
+	// Connect Events
+	m_comboBoxLastCommitMsgs->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( SvnBaseDlg::OnLastCommitMsgSelected ), NULL, this );
+	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnBaseDlg::OnButtonOK ), NULL, this );
+}
+
+SvnBaseDlg::~SvnBaseDlg()
+{
+	// Disconnect Events
+	m_comboBoxLastCommitMsgs->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( SvnBaseDlg::OnLastCommitMsgSelected ), NULL, this );
+	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnBaseDlg::OnButtonOK ), NULL, this );
 }

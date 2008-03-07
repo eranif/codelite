@@ -1,4 +1,5 @@
 #include "subversion.h"
+#include "svncommitmsgsmgr.h"
 #include "wx/busyinfo.h"
 #include "globals.h"
 #include "wx/menu.h"
@@ -192,6 +193,7 @@ wxMenu *SubversionPlugin::CreatePopMenu()
 
 SubversionPlugin::~SubversionPlugin()
 {
+	SvnCommitMsgsMgr::Release();
 	UnPlug();
 }
 

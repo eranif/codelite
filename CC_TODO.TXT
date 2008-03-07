@@ -3,6 +3,4 @@
 - make the "Start" page go away after a project has been loaded
 - validate the environment variables
 - Also a possible feature would be to popup a dialog if a $(var) is in a project and not defined already
-- When setting manual class name in the 'Class Wizard', the generated file still includes the hard coded
-  file name
 - auto-fix symbols database when paths are not correct  

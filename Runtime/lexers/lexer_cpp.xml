@@ -22,7 +22,7 @@
     <Property Id="16" Name="Workspace tags" Bold="yes" Face="" Colour="#800080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="19" Name="Local variables" Bold="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="9"/>
     <Property Id="20" Name="Disabled Code" Bold="no" Face="" Colour="grey" BgColour="#FFFFFF" Size="9"/>
-    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#0005FF" BgColour="#FFFFFF" Size="9"/>
-    <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#FF0000" Size="9"/>
   </Properties>
 </Lexer>

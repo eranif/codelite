@@ -8,7 +8,6 @@
     <Notebook Name="DebuggerPane" Style="738396"/>
   </Layout>
   <TagsDatabase Path="C:\Development\C++\codelite\trunk\Runtime\common.tags"/>
-  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="no" FoldStyle="Flatten Tree Square Headers" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#BFD8D8" CaretColour="#000000" IndentUsesTabs="yes"/>
   <ArchiveObject Name="build_tab_settings">
     <wxString Value="#FF0000" Name="m_errorColour"/>
     <wxString Value="#CC7F32" Name="m_warnColour"/>
@@ -18,6 +17,12 @@
     <bool Value="1" Name="m_boldErrFont"/>
     <bool Value="1" Name="m_boldWarnFont"/>
   </ArchiveObject>
+  <RecentWorkspaces>
+    <File Name="C:\TestArea\1234\stam.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
+    <File Name="C:\TestArea\TestOne.workspace"/>
+  </RecentWorkspaces>
   <RecentFiles>
     <File Name="C:\TestArea\1234\Lib\lib.cpp"/>
     <File Name="C:\Development\C++\codelite\trunk\Runtime\rc\menu.xrc"/>
@@ -29,12 +34,7 @@
     <File Name="C:\Development\C++\codelite\trunk\LiteEditor\addincludefiledlgbase.cpp"/>
     <File Name="C:\TestArea\CCBug\testme\main.cpp"/>
   </RecentFiles>
-  <RecentWorkspaces>
-    <File Name="C:\TestArea\1234\stam.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
-    <File Name="C:\TestArea\TestOne.workspace"/>
-  </RecentWorkspaces>
+  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="no" FoldStyle="Flatten Tree Square Headers" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#BFD8D8" CaretColour="#000000" IndentUsesTabs="yes"/>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="1004"/>
     <wxPoint Name="m_framePos" x="-4" y="-4"/>

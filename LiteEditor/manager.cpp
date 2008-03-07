@@ -402,6 +402,18 @@ void Manager::OpenWorkspace(const wxString &path)
 	wxFileName filename(path);
 	fe->GetFileTree()->ExpandToPath(filename.GetPath() + wxT("/"));
 
+	//hide the start page
+	wxFlatNotebook *book = Frame::Get()->GetNotebook();
+	for(size_t i=0; i< (size_t)book->GetPageCount(); i++) {
+		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow*>( book->GetPage(i) );
+		if(win && book->GetPageText(i) == wxT("Welcome")) {
+			//we found our start page, now hide it
+			book->DeletePage(i);
+			Frame::Get()->GetOpenWindowsPane()->UpdateList();
+			break;
+		}
+	}
+	
 	SendCmdEvent(wxEVT_WORKSPACE_LOADED);
 }
 

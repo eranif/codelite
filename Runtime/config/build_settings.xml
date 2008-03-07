@@ -9,7 +9,7 @@
       <Switch Name="LibraryPath" Value="-L"/>
       <Switch Name="Object" Value="-o "/>
       <Switch Name="Output" Value="-o "/>
-      <Switch Name="Preprocessor" Value="-d"/>
+      <Switch Name="Preprocessor" Value="-D"/>
       <Switch Name="Source" Value="-c "/>
       <Tool Name="ArchiveTool" Value="ar rcu"/>
       <Tool Name="CompilerName" Value="g++"/>

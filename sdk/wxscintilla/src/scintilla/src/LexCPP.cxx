@@ -26,7 +26,9 @@
 using namespace Scintilla;
 #endif
 
+#if 0
 extern std::string GetCurrentFileName();
+#endif
 
 static bool IsDisabledCodeEnd(Accessor &styler, StyleContext &sc, int &depth) {
 	char buf[6];
@@ -57,6 +59,7 @@ static bool IsDisabledCodeEnd(Accessor &styler, StyleContext &sc, int &depth) {
 	return false;
 }
 
+#if 0
 static bool IsPrepBlockStart(Accessor &styler, StyleContext &sc) {
 	//check if this is a pre-preocessor block start
 	//#if
@@ -83,6 +86,7 @@ static bool IsPrepBlockStart(Accessor &styler, StyleContext &sc) {
 	}
 	return false;
 }
+#endif
 
 static bool IsDisabledCode(Accessor &styler, StyleContext &sc) {
 	char buf[4];
@@ -136,7 +140,8 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 	WordList &keywords2 = *keywordlists[1];
 	WordList &keywords3 = *keywordlists[2];
 	WordList &keywords4 = *keywordlists[3];
-	
+
+#if 0	
 	static std::string file_name;
 	static int depth(0);
 	
@@ -144,7 +149,8 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 		file_name = GetCurrentFileName();
 		depth = 0;
 	}
-	
+#endif
+
 	bool stylingWithinPreprocessor = styler.GetPropertyInt("styling.within.preprocessor") != 0;
 
 	CharacterSet setOKBeforeRE(CharacterSet::setNone, "(=,");
@@ -263,10 +269,14 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 			break;
 		case SCE_C_PREPROCESSOR_DISABLED:
 			if (visibleChars == 0 && sc.ch == '#') {
+#if 0				
 				if(IsPrepBlockStart(styler, sc)){
 					//nested block, increase the depth
 					depth++;
-				} else if(IsDisabledCodeEnd(styler, sc, depth)){
+				} else 
+#endif			
+				int dummy(0);
+				if(IsDisabledCodeEnd(styler, sc, dummy)){
 					sc.ForwardSetState(SCE_C_DEFAULT);
 				}
 			}

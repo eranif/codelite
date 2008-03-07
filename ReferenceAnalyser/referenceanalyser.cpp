@@ -44,8 +44,8 @@ wxToolBar *ReferenceAnalyser::CreateToolBar(wxWindow *parent)
 	wxToolBar *tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(24, 24));
 	
-	tb->AddTool(XRCID("analyse_references"), wxT("Analyse References..."), wxXmlResource::Get()->LoadBitmap(wxT("code_format")), wxT("Analyse References"));
-    tb->AddTool(XRCID("analyser_options"), wxT("Analyser Options"), wxXmlResource::Get()->LoadBitmap(wxT("code_format_options")), wxT("Reference Analyser Options..."));
+	tb->AddTool(XRCID("analyse_references"), wxT("Analyse References..."), wxXmlResource::Get()->LoadBitmap(wxT("ref_analyzer24")), wxT("Analyse References"));
+    tb->AddTool(XRCID("analyser_options"), wxT("Analyser Options"), wxXmlResource::Get()->LoadBitmap(wxT("ref_analyzer_settings24")), wxT("Reference Analyser Options..."));
 #if defined (__WXMAC__)	
 	tb->AddSeparator();
 #endif	

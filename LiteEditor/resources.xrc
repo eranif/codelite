@@ -119,4 +119,9 @@
 	<object class="wxBitmap" name="cscope_find_symbol">res/func_find24.png</object>
 	<object class="wxBitmap" name="cscope_func_called">res/func_calling24.png</object>
 	<object class="wxBitmap" name="cscope_func_calling">res/func_called24.png</object>
+	
+	<!-- reference analyzer -->
+	<object class="wxBitmap" name="ref_analyzer24">res/ref_analyzer24.png</object>
+	<object class="wxBitmap" name="ref_analyzer_settings24">res/ref_anaylzer_settings24.png</object>
+	
 </resource>

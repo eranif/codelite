@@ -8,6 +8,7 @@
 #include "LineTypes.h"
 #include "Target.h"
 #include "TargetLexer.h"
+#include "Node.h"
 
 static MakefileImporter* thePlugin = NULL;
 
@@ -25,6 +26,15 @@ MakefileImporter::MakefileImporter(IManager *manager)
 {
 	m_longName = wxT("Import makefiles to CodeLite.");
 	m_shortName = wxT("MakefileImporter");
+	
+	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
+	
+	wxTextCtrl* analyserWindow = new wxTextCtrl(m_mgr->GetOutputPaneNotebook(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER| wxTE_MULTILINE);
+	analyserWindow->SetFont(font);
+
+	m_mgr->GetOutputPaneNotebook()->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
+	m_mgr->GetOutputPaneNotebook()->AddPage(analyserWindow, wxT("Importer"), false, (int)m_mgr->GetOutputPaneNotebook()->GetImageList()->GetCount()-1);
 }
 
 MakefileImporter::~MakefileImporter()
@@ -53,7 +63,7 @@ wxToolBar *MakefileImporter::CreateToolBar(wxWindow *parent)
 
 void MakefileImporter::OnImportMakefileUI(wxUpdateUIEvent &event)
 {
-	event.Enable(false);
+	event.Enable(true);
 }
 
 void MakefileImporter::OnImportMakefile(wxCommandEvent &event)
@@ -146,6 +156,7 @@ void MakefileImporter::ClearMessagePane()
 	}
 }
 
+/*
 void MakefileImporter::ImportFromMakefile(const wxString &path)
 {
 	LogMessage(path + wxT("\n"));
@@ -181,36 +192,93 @@ void MakefileImporter::ImportFromMakefile(const wxString &path)
 	for (size_t i = 0; i < lexed.size(); i++) {
 		Target targ = lexed[i];
 		wxArrayString deps = targ.getDeps();
+		wxString name = targ.getName();
+		LogMessage(wxT("Processing target ") + name + wxT(".\n"));
+				
+		size_t dotPos = dep.find_last_of(wxT("."));
+		if(dotPos == wxNOT_FOUND)
+		{			
+			ProjectPtr proj(new Project());
+			proj->Create(name, fileName.GetPath(), wxT("importedProject"));
+			proj->SetSettings(new ProjectSettings(NULL));
 
-		ProjectPtr proj(new Project());
-		proj->Create(targ.getName(), fileName.GetPath(), wxT("importedProject"));
-		proj->SetSettings(new ProjectSettings(NULL));
-
-		for (size_t j = 0; j < deps.size(); j++) {
-			wxString dep = deps[j];
-			if (dep.Right(2) == wxT(".o")) { // string ends with .o!
-				wxString file = dep.Left(dep.size()-2);
-
-				for (size_t k = 0; k < extentions.size(); k++) {
-					wxString ext = extentions[k];
+			for (size_t j = 0; j < deps.size(); j++) {
+				wxString dep = deps[j];
+				size_t dotPos = dep.find_last_of(wxT("."));
+				if(dotPos == wxNOT_FOUND)
+				{
+					LogMessage(wxT("No Extension found.\n"));
+					continue;
+				}
+				
+				wxString ext = dep.Mid(dotPos);
+				size_t pos = extentions.Index(ext);
+				
+				if(pos != wxNOT_FOUND) {
+					wxString file = dep.Left(dep.size()-2);
+					wxString ext = extentions[pos];
 					wxFileName fileName = proj->GetFileName().GetPathWithSep() + file + ext;
 					if (fileName.FileExists()) {
 						bool added = proj->AddFile(fileName.GetFullPath(), wxT("Source Files"));
 						if (!added) {
-							LogMessage(wxT("WHOOPS WRONG BAD NOT GOOD!\n"));
+							LogMessage(wxT("Could not add file: '") + fileName.GetFullPath() + wxT("'.\n"));
 						}
-					}
-				}
-			} else if (deps.Index(dep, false) != wxNOT_FOUND) {
-				wxArrayString dependencies= proj->GetDependencies();
-				dependencies.Add(dep);
-				proj->SetDependencies(dependencies);
+					}				
+				} else if (deps.Index(dep, false) != wxNOT_FOUND) { // look for inter-project dependency
+					wxArrayString dependencies= proj->GetDependencies();
+					dependencies.Add(dep);
+					proj->SetDependencies(dependencies);
+				} 
+			}
+			
+			proj->Save();
+			wxString errMsg;
+			wxString path = proj->GetFileName().GetFullPath();
+			m_mgr->GetWorkspace()->AddProject(path, errMsg);
+			
+			if(errMsg.length())
+			{
+				LogMessage(path);
+				LogMessage(errMsg);
 			}
 		}
-		proj->Save();
-		//AddProject(proj->GetFileName().GetFullPath());
+		else {
+			wxString ext = dep.Mid(dotPos);
+		}
 	}
 	return;
+}
+*/
+
+void MakefileImporter::ImportFromMakefile(const wxString &path)
+{
+	LogMessage(path + wxT("\n"));
+
+	wxFileName fileName = path;
+	LogMessage(fileName.GetPath() + wxT("\n"));
+	
+	VariableLexer expander(path.data());
+	wxArrayString expanded = expander.getResult();
+
+	MakefileParser parser(expanded);
+	TypedStrings parsed = parser.getResult();
+
+	TargetLexer lexer(parsed);
+	Targets lexed = lexer.getResult();
+	
+	MakefileNode* result = NULL;
+
+	for(Targets::iterator it = lexed.begin(); it != lexed.end(); it++)
+	{				
+		Target* target = *it;
+		
+		if(result == NULL)
+			result = new MakefileNode(NULL, target);
+		else
+			result->addNode(target);
+	}
+	
+	LogMessage(result->toString());
 }
 
 void MakefileImporter::HookPopupMenu(wxMenu *menu, MenuType type)
@@ -220,6 +288,7 @@ void MakefileImporter::HookPopupMenu(wxMenu *menu, MenuType type)
 void MakefileImporter::UnHookPopupMenu(wxMenu *menu, MenuType type)
 {
 }
+
 void MakefileImporter::UnPlug()
 {
 }

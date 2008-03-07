@@ -4,6 +4,7 @@
 #include "MakefileParser.h"
 #include "Target.h"
 #include "TargetLexer.h"
+#include "Node.h"
 #include <wx/file.h>
 
 typedef std::map<wxString, wxString> Tokens;
@@ -15,7 +16,7 @@ void LogMessage(const wxString& msg)
 	printf("%s", buf.data());
 }
 
-Targets ImportFromMakefile(const wxString &path)
+MakefileNode* ImportFromMakefile(const wxString &path)
 {
 	LogMessage(wxT("Path: ") + path + wxT("\n"));
 
@@ -28,7 +29,20 @@ Targets ImportFromMakefile(const wxString &path)
 	TargetLexer lexer(parsed);
 	Targets lexed = lexer.getResult();
 	
-	return lexed;
+	MakefileNode* result = NULL;
+
+	for(Targets::iterator it = lexed.begin(); it != lexed.end(); it++)
+	{				
+		Target* target = *it;
+		LogMessage(target->getName() + wxT("\n"));
+		
+		if(result == NULL)
+			result = new MakefileNode(NULL, target);
+		else
+			result->addNode(target);
+	}
+	
+	return result;
 }
 
 int main(int argv, char* argc[])
@@ -43,11 +57,14 @@ int main(int argv, char* argc[])
 	printf("Fetching result...\n");
 		
 	// TypedStrings result = ImportFromMakefile(path);
-	Targets result = ImportFromMakefile(path);
+	MakefileNode* result = ImportFromMakefile(path);
 	
 	printf("Done.\n");
 	printf("Result:\n");
 	
+	LogMessage(result->toString());
+	
+	/*
 	for(Targets::iterator it = result.begin(); it != result.end(); it++)
 	{
 		Target token = *it;
@@ -57,9 +74,13 @@ int main(int argv, char* argc[])
 		line << wxT(":\n"); 
 		LogMessage(line);
 		
+		LogMessage(wxT("Actions: \n"));
+		
 		wxArrayString actions = token.getActions();
 		for(wxArrayString::iterator act = actions.begin(); act != actions.end(); act++)
 			LogMessage(*act + wxT("\n"));
+			
+		LogMessage(wxT("Deps: \n"));
 		
 		wxArrayString deps = token.getDeps();
 		for(wxArrayString::iterator dep = deps.begin(); dep != deps.end(); dep++)
@@ -67,6 +88,7 @@ int main(int argv, char* argc[])
 		
 		printf("\n");
 	}
+	*/
 	
 	/*
 	for(TypedStrings::iterator it = result.begin(); it != result.end(); it++)

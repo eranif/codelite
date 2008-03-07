@@ -2,7 +2,8 @@
 #define TARGETLEXER_H_INCLUDED
 
 #include "LineTypes.h"
-#include "Target.h"
+class Target;
+typedef std::vector<Target*> Targets;
 
 #ifndef WXDLLIMPEXP_LE_SDK
 #ifdef WXMAKINGDLL_LE_SDK
@@ -17,7 +18,8 @@
 class WXDLLIMPEXP_LE_SDK TargetLexer
 {
 	public:
-		TargetLexer(TypedStrings lines);		
+		TargetLexer(TypedStrings lines);
+		~TargetLexer();
 		
 		void Lex();
 		bool FindTarget(); // Is there another target in the makefile?

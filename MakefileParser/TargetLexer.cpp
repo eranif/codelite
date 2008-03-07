@@ -8,6 +8,17 @@ m_current(0)
 	Lex();
 }
 
+TargetLexer::~TargetLexer()
+{
+	/*
+	for(Targets::iterator it = m_result.begin(); it != m_result.end(); it++)
+	{
+		Target* target = *it;
+		delete target;
+	}
+	*/
+}
+
 void TargetLexer::Lex()
 {
 	for(int i = 0; FindTarget(); i++)
@@ -47,7 +58,7 @@ void TargetLexer::Lex()
 			m_current++;
 		}
 		
-		Target targ(name, deps, actions);
+		Target* targ = new Target(name, deps, actions);
 		m_result.push_back(targ);
 	}
 	

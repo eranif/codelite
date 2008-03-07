@@ -34,6 +34,6 @@ class WXDLLIMPEXP_LE_SDK Target
 		wxArrayString m_actions;
 };
 
-typedef std::vector<Target> Targets;
+typedef std::vector<Target*> Targets;
 
 #endif // TARGET_H_INCLUDED

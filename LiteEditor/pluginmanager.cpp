@@ -1,4 +1,5 @@
 #include "pluginmanager.h"
+#include "optionsconfig.h"
 #include "language.h"
 #include "manager.h"
 #include "wx/filename.h"
@@ -200,4 +201,14 @@ Workspace *PluginManager::GetWorkspace()
 bool PluginManager::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths)
 {
 	return Frame::Get()->GetWorkspacePane()->GetFileViewTree()->AddFilesToVirtualFodler(item, paths);
+}
+
+int PluginManager::GetToolbarIconSize()
+{
+	//for now return 24 by default
+	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+	if(options) {
+		return options->GetIconsSize();
+	}
+	return 24;
 }

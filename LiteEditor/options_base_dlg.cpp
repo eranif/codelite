@@ -160,7 +160,17 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_general, -1, wxT("General:") ), wxVERTICAL );
 	
 	wxBoxSizer *bszier = new wxBoxSizer(wxVERTICAL);
-
+	
+	wxString iconSize[] = { wxT("Toolbar uses small icons (16x16)"), wxT("Toolbar uses large icons (24x24)") };
+	m_iconSize = new wxChoice( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, 2, iconSize, 0 );
+	bszier->Add( m_iconSize, 0, wxALL|wxEXPAND, 5 );
+	
+	if(options->GetIconsSize() == 16) {
+		m_iconSize->SetSelection(0);
+	}else{
+		m_iconSize->SetSelection(1);
+	}
+	
 	m_displayLineNumbers = new wxCheckBox( m_general, wxID_ANY, wxT("Display Line Numbers"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_displayLineNumbers->SetValue(options->GetDisplayLineNumbers());
 	bszier->Add( m_displayLineNumbers, 0, wxALL, 5 );
@@ -260,6 +270,26 @@ void OptionsDlg::SaveChanges()
 	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
 	options->SetCaretColour(m_caretColourPicker->GetColour());
 	options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
+	
+	int iconSize(24);
+	if(m_iconSize->GetStringSelection() == wxT("Toolbar uses small icons (16x16)")) {
+		iconSize = 16;
+	}
+	options->SetIconsSize(iconSize);
+	
+	//check to see of the icon size was modified
+	int oldIconSize(24);
+	OptionsConfigPtr oldOptions = EditorConfigST::Get()->GetOptions();
+	if(oldOptions) {
+		oldIconSize = oldOptions->GetIconsSize();
+	}
+	if(oldIconSize != iconSize) {
+		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 0);
+		//notify the user
+		wxMessageBox(wxT("Toolbar icons size change, requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+	}else{
+		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
+	}
 	
 	EditorConfigST::Get()->SetOptions(options);
 	ManagerST::Get()->ApplySettingsChanges();

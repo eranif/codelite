@@ -57,7 +57,7 @@ static void ExpandVariables(wxString &content, const NewWxProjectInfo &info)
 	content.Replace(wxT("$(Unicode)"), info.GetFlags() & wxWidgetsUnicode ? wxT("yes") : wxT("no"));
 	content.Replace(wxT("$(MWindowsFlag)"), info.GetFlags() & wxWidgetsSetMWindows ? wxT("-mwindows") : wxEmptyString);
 	content.Replace(wxT("$(MainFile)"), projname);
-	
+
 	//create the application class name
 	wxString initial = appfilename.Mid(0, 1);
 	initial.MakeUpper();
@@ -66,18 +66,18 @@ static void ExpandVariables(wxString &content, const NewWxProjectInfo &info)
 	//create the main frame class name
 	wxString framename(projname);
 	wxString appname(projname);
-	
+
 	framename << wxT("Frame");
 	appname << wxT("App");
-	
+
 	initial = framename.Mid(0, 1);
 	initial.MakeUpper();
 	framename.SetChar(0, initial.GetChar(0));
-	
+
 	initial = appname.Mid(0, 1);
 	initial.MakeUpper();
 	appname.SetChar(0, initial.GetChar(0));
-	
+
 	content.Replace(wxT("$(AppName)"), appname);
 	content.Replace(wxT("$(MainFrameName)"), framename);
 }
@@ -106,16 +106,24 @@ GizmosPlugin::~GizmosPlugin()
 
 wxToolBar *GizmosPlugin::CreateToolBar(wxWindow *parent)
 {
-	wxToolBar *tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
-	tb->SetToolBitmapSize(wxSize(24, 24));
-	
-	tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("New Plugin Wizard..."));
-	tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class24")), wxT("New Class..."));
+	//support both toolbars icon size
+	int size = m_mgr->GetToolbarIconSize();
 
-	tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project")), wxT("New wxWidget Project"));
-#if defined (__WXMAC__)	
+	wxToolBar *tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	tb->SetToolBitmapSize(wxSize(size, size));
+
+	if (size == 24) {
+		tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("New Plugin Wizard..."));
+		tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class24")), wxT("New Class..."));
+		tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project24")), wxT("New wxWidget Project"));
+	} else {
+		tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("New Plugin Wizard..."));
+		tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class16")), wxT("New Class..."));
+		tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project16")), wxT("New wxWidget Project"));
+	}
+#if defined (__WXMAC__)
 	tb->AddSeparator();
-#endif	
+#endif
 	tb->Realize();
 
 	//Connect the events to us
@@ -290,7 +298,7 @@ void GizmosPlugin::OnNewClass(wxCommandEvent &e)
 		//do something with the information here
 		NewClassInfo info;
 		dlg->GetNewClassInfo(info);
-		
+
 		CreateClass(info);
 	}
 	dlg->Destroy();
@@ -356,16 +364,16 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 		} else {
 			header << wxT("\t~") << info.name << wxT("();\n\n");
 		}
-		
+
 	}
-	
+
 	//add virtual function declaration
 	wxString v_decl = DoGetVirtualFuncDecl(info);
-	if(v_decl.IsEmpty() == false) {
+	if (v_decl.IsEmpty() == false) {
 		header << wxT("public:\n");
 		header << v_decl;
 	}
-	
+
 	header << wxT("};\n");
 	header << wxT("#endif // __") << macro << wxT("__\n");
 
@@ -398,9 +406,9 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 		cpp << wxT("\tms_instance = 0;\n");
 		cpp << wxT("}\n\n");
 	}
-	
+
 	cpp << DoGetVirtualFuncImpl(info);
-	
+
 	wxFFile file;
 	wxString srcFile;
 	wxString hdrFile;
@@ -503,11 +511,10 @@ void GizmosPlugin::CreateWxProject(NewWxProjectInfo &info)
 		WriteFile(appfilename + wxT(".h"), apphConent);
 		WriteFile(appfilename+ wxT(".cpp"), appCppConent);
 		WriteFile(info.GetName() + wxT(".project"), projectConent);
-		
+
 		//If every this is OK, add the project as well
 		m_mgr->AddProject(info.GetName() + wxT(".project"));
-	}
-	else if (info.GetType() == wxProjectTypeSimpleMain) {
+	} else if (info.GetType() == wxProjectTypeSimpleMain) {
 
 		//we are creating a project of type GUI
 		wxString basedir = m_mgr->GetStartupDirectory();
@@ -538,7 +545,7 @@ void GizmosPlugin::CreateWxProject(NewWxProjectInfo &info)
 		wxString appfilename = projname;
 		WriteFile(appfilename+ wxT(".cpp"), appCppConent);
 		WriteFile(info.GetName() + wxT(".project"), projectConent);
-		
+
 		//If every this is OK, add the project as well
 		m_mgr->AddProject(info.GetName() + wxT(".project"));
 	}
@@ -546,38 +553,38 @@ void GizmosPlugin::CreateWxProject(NewWxProjectInfo &info)
 
 wxString GizmosPlugin::DoGetVirtualFuncImpl(const NewClassInfo &info)
 {
-	if(info.implAllVirtual == false && info.implAllPureVirtual == false)
+	if (info.implAllVirtual == false && info.implAllPureVirtual == false)
 		return wxEmptyString;
-	
+
 	//get list of all parent virtual functions
 	std::vector< TagEntryPtr > tmp_tags;
 	std::vector< TagEntryPtr > no_dup_tags;
 	std::vector< TagEntryPtr > tags;
-	for(std::vector< TagEntryPtr >::size_type i=0; i< info.parents.size(); i++) {
+	for (std::vector< TagEntryPtr >::size_type i=0; i< info.parents.size(); i++) {
 		ClassParentInfo pi = info.parents.at(i);
 		m_mgr->GetTagsManager()->TagsByScope(pi.name, tmp_tags);
 	}
 	// and finally sort the results
 	std::sort(tmp_tags.begin(), tmp_tags.end(), ascendingSortOp());
 	GizmosRemoveDuplicates(tmp_tags, no_dup_tags);
-	
+
 	//filter out all non virtual functions
 	for (std::vector< TagEntryPtr >::size_type i=0; i< no_dup_tags.size(); i++) {
 		TagEntryPtr tt = no_dup_tags.at(i);
 		bool collect(false);
-		if(info.implAllVirtual) {
+		if (info.implAllVirtual) {
 			collect = TagsManagerST::Get()->IsVirtual(tt);
-		} else if(info.implAllPureVirtual) {
+		} else if (info.implAllPureVirtual) {
 			collect = TagsManagerST::Get()->IsPureVirtual(tt);
 		}
-		
-		if(collect) {
+
+		if (collect) {
 			tags.push_back(tt);
 		}
 	}
-	
+
 	wxString impl;
-	for(std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
+	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
 		TagEntryPtr tt = tags.at(i);
 		impl << TagsManagerST::Get()->FormatFunction(tt, true, info.name);
 	}
@@ -586,39 +593,39 @@ wxString GizmosPlugin::DoGetVirtualFuncImpl(const NewClassInfo &info)
 
 wxString GizmosPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
 {
-	if(info.implAllVirtual == false && info.implAllPureVirtual == false)
+	if (info.implAllVirtual == false && info.implAllPureVirtual == false)
 		return wxEmptyString;
-	
+
 	//get list of all parent virtual functions
 	std::vector< TagEntryPtr > tmp_tags;
 	std::vector< TagEntryPtr > no_dup_tags;
 	std::vector< TagEntryPtr > tags;
-	for(std::vector< TagEntryPtr >::size_type i=0; i< info.parents.size(); i++) {
+	for (std::vector< TagEntryPtr >::size_type i=0; i< info.parents.size(); i++) {
 		ClassParentInfo pi = info.parents.at(i);
 		m_mgr->GetTagsManager()->TagsByScope(pi.name, tmp_tags);
 	}
-	
+
 	// and finally sort the results
 	std::sort(tmp_tags.begin(), tmp_tags.end(), ascendingSortOp());
 	GizmosRemoveDuplicates(tmp_tags, no_dup_tags);
-	
+
 	//filter out all non virtual functions
 	for (std::vector< TagEntryPtr >::size_type i=0; i< no_dup_tags.size(); i++) {
 		TagEntryPtr tt = no_dup_tags.at(i);
 		bool collect(false);
-		if(info.implAllVirtual) {
+		if (info.implAllVirtual) {
 			collect = TagsManagerST::Get()->IsVirtual(tt);
-		} else if(info.implAllPureVirtual) {
+		} else if (info.implAllPureVirtual) {
 			collect = TagsManagerST::Get()->IsPureVirtual(tt);
 		}
-		
-		if(collect) {
+
+		if (collect) {
 			tags.push_back(tt);
 		}
 	}
-	
+
 	wxString decl;
-	for(std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
+	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
 		TagEntryPtr tt = tags.at(i);
 		decl << wxT("\t") << TagsManagerST::Get()->FormatFunction(tt);
 	}

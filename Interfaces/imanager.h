@@ -49,6 +49,7 @@ public:
 	virtual TagsManager *GetTagsManager() = 0;
 	virtual Workspace *GetWorkspace() = 0;
 	virtual bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths) = 0;
+	virtual int GetToolbarIconSize() = 0;
 };
 
 #endif //IMANAGER_H

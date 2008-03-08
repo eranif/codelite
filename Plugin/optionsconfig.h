@@ -28,6 +28,7 @@ class WXDLLIMPEXP_LE_SDK OptionsConfig : public ConfObject
 	wxColour m_caretLineColour;
 	wxColour m_caretColour;
 	bool	m_indentUsesTabs;
+	int		m_iconsSize;
 	
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -64,7 +65,10 @@ public:
 	const wxColour& GetCaretColour() const {return m_caretColour;}
 	void SetIndentUsesTabs(const bool& indentUsesTabs) {this->m_indentUsesTabs = indentUsesTabs;}
 	const bool& GetIndentUsesTabs() const {return m_indentUsesTabs;}
-	 
+	
+	void SetIconsSize(const int& iconsSize) {this->m_iconsSize = iconsSize;}
+	const int& GetIconsSize() const {return m_iconsSize;}
+	
 	/**
 	 * Return an XML representation of this object
 	 * \return XML node

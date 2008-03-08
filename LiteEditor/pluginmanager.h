@@ -41,6 +41,7 @@ public:
 	virtual TagsManager *GetTagsManager();
 	virtual Workspace *GetWorkspace();
 	virtual bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths);
+	virtual int GetToolbarIconSize();
 	
 	//------------------------------------
 	//End of IManager interface

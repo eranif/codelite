@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <wxFormBuilder_Project>
-    <FileVersion major="1" minor="8" />
+    <FileVersion major="1" minor="9" />
     <object class="Project" expanded="1">
         <property name="bitmaps" />
         <property name="code_generation">C++</property>
@@ -182,7 +182,7 @@
                                                 <property name="proportion">0</property>
                                                 <object class="wxChoice" expanded="1">
                                                     <property name="bg" />
-                                                    <property name="choices">&apos;Simple&apos; &apos;Arrows&apos; &apos;Flatten Tree Square Headers&apos; &apos;Flatten Tree Circular Headers&apos;</property>
+                                                    <property name="choices">&quot;Simple&quot; &quot;Arrows&quot; &quot;Flatten Tree Square Headers&quot; &quot;Flatten Tree Circular Headers&quot;</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg" />
                                                     <property name="font" />
@@ -270,7 +270,7 @@
                                                 <property name="proportion">0</property>
                                                 <object class="wxChoice" expanded="1">
                                                     <property name="bg" />
-                                                    <property name="choices">&apos;Samll Rectangle&apos; &apos;Rounded Rectangle&apos; &apos;Circle&apos; &apos;Small Arrow&apos;</property>
+                                                    <property name="choices">&quot;Samll Rectangle&quot; &quot;Rounded Rectangle&quot; &quot;Circle&quot; &quot;Small Arrow&quot;</property>
                                                     <property name="enabled">1</property>
                                                     <property name="fg" />
                                                     <property name="font" />

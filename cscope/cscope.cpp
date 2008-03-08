@@ -48,15 +48,26 @@ Cscope::~Cscope()
 
 wxToolBar *Cscope::CreateToolBar(wxWindow *parent)
 {
+	//support both toolbars icon size
+	int size = m_mgr->GetToolbarIconSize();
+	
 	wxToolBar *tb = NULL;
 	tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
-	tb->SetToolBitmapSize(wxSize(24, 24));
+	tb->SetToolBitmapSize(wxSize(size, size));
 	
 	// Sample code that adds single button to the toolbar
 	// and associates an image to it
-	tb->AddTool(XRCID("cscope_find_symbol"), wxT("Find this C symbol"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_find_symbol")), wxT("Find this C symbol (Ctrl+0)"));
-	tb->AddTool(XRCID("cscope_functions_calling_this_function"), wxT("Find functions calling this function"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_func_called")), wxT("Find functions calling this function (Ctrl+2)"));
-	tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_func_calling")), wxT("Find functions called by this function (Ctrl+3)"));
+	if(size == 24) {
+		//use the large icons set
+		tb->AddTool(XRCID("cscope_find_symbol"), wxT("Find this C symbol"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_find_symbol24")), wxT("Find this C symbol (Ctrl+0)"));
+		tb->AddTool(XRCID("cscope_functions_calling_this_function"), wxT("Find functions calling this function"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_func_called24")), wxT("Find functions calling this function (Ctrl+2)"));
+		tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_func_calling24")), wxT("Find functions called by this function (Ctrl+3)"));
+	} else {
+		//16 
+		tb->AddTool(XRCID("cscope_find_symbol"), wxT("Find this C symbol"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_find_symbol16")), wxT("Find this C symbol (Ctrl+0)"));
+		tb->AddTool(XRCID("cscope_functions_calling_this_function"), wxT("Find functions calling this function"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_func_called16")), wxT("Find functions calling this function (Ctrl+2)"));
+		tb->AddTool(XRCID("cscope_functions_called_by_this_function"), wxT("Find functions called by this function"), wxXmlResource::Get()->LoadBitmap(wxT("cscope_func_calling16")), wxT("Find functions called by this function (Ctrl+3)"));
+	}
 	tb->Realize();
 	
 	// Connect the events to us

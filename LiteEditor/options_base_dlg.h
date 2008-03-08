@@ -68,7 +68,8 @@ protected:
 	wxButton* m_okButton;
 	wxButton* m_cancelButton;
 	wxButton* m_applyButton;
-
+	wxChoice* m_iconSize;
+	
 private:
 	wxPanel *CreateSyntaxHighlightPage();
 	wxPanel *CreateGeneralPage();

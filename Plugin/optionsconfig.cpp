@@ -16,6 +16,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 , m_showIndentationGuidelines(false)
 , m_caretLineColour(wxT("LIGHT BLUE"))
 , m_indentUsesTabs(true)
+, m_iconsSize(24)
 {
 	if( node ){
 		m_displayFoldMargin = XmlUtils::ReadBool(node, wxT("DisplayFoldMargin"));
@@ -31,6 +32,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_caretLineColour = XmlUtils::ReadString(node, wxT("CaretLineColour"), wxColour(255, 255, 220).GetAsString(wxC2S_HTML_SYNTAX));
 		m_caretColour = XmlUtils::ReadString(node, wxT("CaretColour"), wxColour(0, 0, 0).GetAsString(wxC2S_HTML_SYNTAX));
 		m_indentUsesTabs = XmlUtils::ReadBool(node, wxT("IndentUsesTabs"), true);
+		m_iconsSize = XmlUtils::ReadLong(node, wxT("ToolbarIconSize"), 24);
 	}
 }
 
@@ -54,6 +56,10 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
 	n->AddProperty(wxT("CaretColour"), m_caretColour.GetAsString(wxC2S_HTML_SYNTAX));
 	n->AddProperty(wxT("IndentUsesTabs"), BoolToString(m_indentUsesTabs));
+	
+	wxString tmp;
+	tmp << m_iconsSize;
+	n->AddProperty(wxT("ToolbarIconSize"), tmp);
 	return n;
 }
 

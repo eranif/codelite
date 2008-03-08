@@ -169,7 +169,8 @@ private:
 	 */
 	void DispatchCommandEvent(wxCommandEvent &event);
 	void DispatchUpdateUIEvent(wxUpdateUIEvent &event);
-	void CreateToolbars();
+	void CreateToolbars24();
+	void CreateToolbars16();
 	void ViewPaneUI(const wxString &paneName, wxUpdateUIEvent&event);
 	void ViewPane(const wxString &paneName, wxCommandEvent &event);
 	void CreateViewAsSubMenu();

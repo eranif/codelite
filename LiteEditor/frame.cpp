@@ -489,7 +489,16 @@ void Frame::CreateGUIControls(void)
 	TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
 
 	//load windows perspective
-	CreateToolbars();
+	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+	if(options) {
+		if(options->GetIconsSize() == 16) {
+			CreateToolbars16();
+		}else{
+			CreateToolbars24();
+		}
+	}else{
+		CreateToolbars24();
+	}
 
 	// load notebooks style
 	long book_style = 0;
@@ -590,7 +599,8 @@ void Frame::CreateMenuBar()
 	SetMenuBar(mb);
 }
 
-void Frame::CreateToolbars()
+
+void Frame::CreateToolbars24()
 {
 	wxAuiPaneInfo info;
 	//----------------------------------------------
@@ -598,29 +608,27 @@ void Frame::CreateToolbars()
 	//----------------------------------------------
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(24, 24));
-	tb->AddTool(wxID_NEW, wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new")), wxT("New File (Ctrl+N)"));
+	tb->AddTool(wxID_NEW, wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new24")), wxT("New File (Ctrl+N)"));
 	tb->AddTool(wxID_OPEN, wxT("Open"), wxXmlResource::Get()->LoadBitmap(wxT("folder24")), wxT("Open File (Ctrl+O)"));
-	tb->AddTool(wxID_REFRESH, wxT("Reload"), wxXmlResource::Get()->LoadBitmap(wxT("reload")), wxT("Reload File (Ctrl+R)"));
+	tb->AddTool(wxID_REFRESH, wxT("Reload"), wxXmlResource::Get()->LoadBitmap(wxT("reload24")), wxT("Reload File (Ctrl+R)"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_SAVE, wxT("Save"), wxXmlResource::Get()->LoadBitmap(wxT("page_save")), wxT("Save (Ctrl+S)"));
-	tb->AddTool(wxID_SAVEAS, wxT("Save As"), wxXmlResource::Get()->LoadBitmap(wxT("save_as")), wxT("Save As"));
-	tb->AddTool(XRCID("save_all"), wxT("Save All"), wxXmlResource::Get()->LoadBitmap(wxT("save_all")), wxT("Save All"));
+	tb->AddTool(wxID_SAVE, wxT("Save"), wxXmlResource::Get()->LoadBitmap(wxT("page_save24")), wxT("Save (Ctrl+S)"));
+	tb->AddTool(wxID_SAVEAS, wxT("Save As"), wxXmlResource::Get()->LoadBitmap(wxT("save_as24")), wxT("Save As"));
+	tb->AddTool(XRCID("save_all"), wxT("Save All"), wxXmlResource::Get()->LoadBitmap(wxT("save_all24")), wxT("Save All"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_CLOSE, wxT("Close"), wxXmlResource::Get()->LoadBitmap(wxT("page_close")), wxT("Close File (Ctrl+W)"));
+	tb->AddTool(wxID_CLOSE, wxT("Close"), wxXmlResource::Get()->LoadBitmap(wxT("page_close24")), wxT("Close File (Ctrl+W)"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_CUT, wxT("Cut"), wxXmlResource::Get()->LoadBitmap(wxT("cut")), wxT("Cut (Ctrl+X)"));
-	tb->AddTool(wxID_COPY, wxT("Copy"), wxXmlResource::Get()->LoadBitmap(wxT("copy")), wxT("Copy (Ctrl+C)"));
-	tb->AddTool(wxID_PASTE, wxT("Paste"), wxXmlResource::Get()->LoadBitmap(wxT("paste")), wxT("Paste (Ctrl+V)"));
+	tb->AddTool(wxID_CUT, wxT("Cut"), wxXmlResource::Get()->LoadBitmap(wxT("cut24")), wxT("Cut (Ctrl+X)"));
+	tb->AddTool(wxID_COPY, wxT("Copy"), wxXmlResource::Get()->LoadBitmap(wxT("copy24")), wxT("Copy (Ctrl+C)"));
+	tb->AddTool(wxID_PASTE, wxT("Paste"), wxXmlResource::Get()->LoadBitmap(wxT("paste24")), wxT("Paste (Ctrl+V)"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_UNDO, wxT("Undo"), wxXmlResource::Get()->LoadBitmap(wxT("undo")), wxT("Undo (Ctrl+Z)"));
-	tb->AddTool(wxID_REDO, wxT("Redo"), wxXmlResource::Get()->LoadBitmap(wxT("redo")), wxT("Redo (Ctrl+Y)"));
-	tb->AddTool(wxID_BACKWARD, wxT("Backward"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_back")), wxT("Backward (Ctrl+P)"));
-	tb->AddTool(wxID_FORWARD, wxT("Forward"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_next")), wxT("Forward"));
+	tb->AddTool(wxID_UNDO, wxT("Undo"), wxXmlResource::Get()->LoadBitmap(wxT("undo24")), wxT("Undo (Ctrl+Z)"));
+	tb->AddTool(wxID_REDO, wxT("Redo"), wxXmlResource::Get()->LoadBitmap(wxT("redo24")), wxT("Redo (Ctrl+Y)"));
+	tb->AddTool(wxID_BACKWARD, wxT("Backward"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_back24")), wxT("Backward (Ctrl+P)"));
+	tb->AddTool(wxID_FORWARD, wxT("Forward"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_next24")), wxT("Forward"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("toggle_bookmark"), wxT("Toggle Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark")), wxT("Toggle Bookmark (Ctrl+B)"));
-//	tb->AddTool(XRCID("next_bookmark"), wxT("Next Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark_previous")), wxT("Next Bookmark (F2)"));
-//	tb->AddTool(XRCID("previous_bookmark"), wxT("Previous Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark_next")), wxT("Previous Bookmark (Shift+F2)"));
-//	tb->AddTool(XRCID("removeall_bookmarks"), wxT("Remove All Bookmarks"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark_remove_all")), wxT("Remove All Bookmarks"));
+	tb->AddTool(XRCID("toggle_bookmark"), wxT("Toggle Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark24")), wxT("Toggle Bookmark (Ctrl+B)"));
+
 #if defined (__WXMAC__)
 	tb->AddSeparator();
 #endif
@@ -635,13 +643,13 @@ void Frame::CreateToolbars()
 	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(24, 24));
 
-	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace")), wxT("Find (Ctrl+F)"));
-	tb->AddTool(wxID_REPLACE, wxT("Replace"), wxXmlResource::Get()->LoadBitmap(wxT("refresh")), wxT("Replace (Ctrl+H)"));
-	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"), wxXmlResource::Get()->LoadBitmap(wxT("find_in_files")), wxT("Find In Files (Ctrl+Shift+F)"));
+	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace24")), wxT("Find (Ctrl+F)"));
+	tb->AddTool(wxID_REPLACE, wxT("Replace"), wxXmlResource::Get()->LoadBitmap(wxT("refresh24")), wxT("Replace (Ctrl+H)"));
+	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"), wxXmlResource::Get()->LoadBitmap(wxT("find_in_files24")), wxT("Find In Files (Ctrl+Shift+F)"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_resource")), wxT("Find Resource In Workspace (Ctrl+Shift+R)"));
-	tb->AddTool(XRCID("find_type"), wxT("Find Type In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_type")), wxT("Find Type In Workspace (Ctrl+Shift+T)"));
-	tb->AddTool(XRCID("find_symbol"), wxT("Quick Outline"), wxXmlResource::Get()->LoadBitmap(wxT("outline")), wxT("Show Current File Outline (Ctrl+Shift+O)"));
+	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_resource24")), wxT("Find Resource In Workspace (Ctrl+Shift+R)"));
+	tb->AddTool(XRCID("find_type"), wxT("Find Type In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_type24")), wxT("Find Type In Workspace (Ctrl+Shift+T)"));
+	tb->AddTool(XRCID("find_symbol"), wxT("Quick Outline"), wxXmlResource::Get()->LoadBitmap(wxT("outline24")), wxT("Show Current File Outline (Ctrl+Shift+O)"));
 #if defined (__WXMAC__)
 	tb->AddSeparator();
 #endif
@@ -654,12 +662,12 @@ void Frame::CreateToolbars()
 	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(24, 24));
 
-	tb->AddTool(XRCID("build_active_project"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("build_active_project")), wxT("Build Active Project (F7)"));
-	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("stop_build")), wxT("Stop Current Build"));
-	tb->AddTool(XRCID("clean_active_project"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("clean")), wxT("Clean Active Project"));
+	tb->AddTool(XRCID("build_active_project"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("build_active_project24")), wxT("Build Active Project (F7)"));
+	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("stop_build24")), wxT("Stop Current Build"));
+	tb->AddTool(XRCID("clean_active_project"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("clean24")), wxT("Clean Active Project"));
 	tb->AddSeparator();
-	tb->AddTool(XRCID("execute_no_debug"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("execute")), wxT("Run Active Project (Ctrl+F5)"));
-	tb->AddTool(XRCID("stop_executed_program"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("stop_executed_program")), wxT("Stop Running Program"));
+	tb->AddTool(XRCID("execute_no_debug"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("execute24")), wxT("Run Active Project (Ctrl+F5)"));
+	tb->AddTool(XRCID("stop_executed_program"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("stop_executed_program24")), wxT("Stop Running Program"));
 #if defined (__WXMAC__)
 	tb->AddSeparator();
 #endif
@@ -672,13 +680,13 @@ void Frame::CreateToolbars()
 	//----------------------------------------------
 	m_debuggerTb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	m_debuggerTb->SetToolBitmapSize(wxSize(24, 24));
-	m_debuggerTb->AddTool(XRCID("start_debugger"), wxT("Start / Continue debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_start")), wxT("Start / Continue debugger (F5)"));
-	m_debuggerTb->AddTool(XRCID("stop_debugger"), wxT("Stop debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stop")), wxT("Stop debugger"));
-	m_debuggerTb->AddTool(XRCID("pause_debugger"), wxT("Pause debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_pause")), wxT("Pause debugger"));
+	m_debuggerTb->AddTool(XRCID("start_debugger"), wxT("Start / Continue debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_start24")), wxT("Start / Continue debugger (F5)"));
+	m_debuggerTb->AddTool(XRCID("stop_debugger"), wxT("Stop debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stop24")), wxT("Stop debugger"));
+	m_debuggerTb->AddTool(XRCID("pause_debugger"), wxT("Pause debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_pause24")), wxT("Pause debugger"));
 	m_debuggerTb->AddSeparator();
-	m_debuggerTb->AddTool(XRCID("dbg_stepin"), wxT("Step Into"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepin")), wxT("Step In"));
-	m_debuggerTb->AddTool(XRCID("dbg_next"), wxT("Next"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_next")), wxT("Next"));
-	m_debuggerTb->AddTool(XRCID("dbg_stepout"), wxT("Step Out"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepout")), wxT("Step Out"));
+	m_debuggerTb->AddTool(XRCID("dbg_stepin"), wxT("Step Into"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepin24")), wxT("Step In"));
+	m_debuggerTb->AddTool(XRCID("dbg_next"), wxT("Next"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_next24")), wxT("Next"));
+	m_debuggerTb->AddTool(XRCID("dbg_stepout"), wxT("Step Out"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepout24")), wxT("Step Out"));
 #if defined (__WXMAC__)
 	m_debuggerTb->AddSeparator();
 #endif
@@ -697,6 +705,126 @@ void Frame::CreateToolbars()
 	//----------------------------------------------
 	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(800, -1), wxTB_FLAT | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(24, 24));
+	wxArrayString chcs;
+	wxChoice *cbScope = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(200, -1), chcs);
+	tb->AddControl(cbScope);
+
+	wxChoice *cbFunc = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(600, -1), chcs);
+	tb->AddControl(cbFunc);
+#if defined (__WXMAC__)
+	tb->AddSeparator();
+#endif
+	tb->Realize();
+	info = wxAuiPaneInfo();
+	m_mgr.AddPane(tb, info.Name(wxT("Navigation Toolbar")).LeftDockable(false).RightDockable(false).Caption(wxT("Navigation Toolbar")).ToolbarPane().Top().Row(2));
+	m_mainBook = new MainBook(cbFunc, cbScope);
+}
+
+void Frame::CreateToolbars16()
+{
+	wxAuiPaneInfo info;
+	//----------------------------------------------
+	//create the standard toolbar
+	//----------------------------------------------
+	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	tb->SetToolBitmapSize(wxSize(16, 16));
+	tb->AddTool(wxID_NEW, wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new16")), wxT("New File (Ctrl+N)"));
+	tb->AddTool(wxID_OPEN, wxT("Open"), wxXmlResource::Get()->LoadBitmap(wxT("folder16")), wxT("Open File (Ctrl+O)"));
+	tb->AddTool(wxID_REFRESH, wxT("Reload"), wxXmlResource::Get()->LoadBitmap(wxT("reload16")), wxT("Reload File (Ctrl+R)"));
+	tb->AddSeparator();
+	tb->AddTool(wxID_SAVE, wxT("Save"), wxXmlResource::Get()->LoadBitmap(wxT("page_save16")), wxT("Save (Ctrl+S)"));
+	tb->AddTool(wxID_SAVEAS, wxT("Save As"), wxXmlResource::Get()->LoadBitmap(wxT("save_as16")), wxT("Save As"));
+	tb->AddTool(XRCID("save_all"), wxT("Save All"), wxXmlResource::Get()->LoadBitmap(wxT("save_all16")), wxT("Save All"));
+	tb->AddSeparator();
+	tb->AddTool(wxID_CLOSE, wxT("Close"), wxXmlResource::Get()->LoadBitmap(wxT("page_close16")), wxT("Close File (Ctrl+W)"));
+	tb->AddSeparator();
+	tb->AddTool(wxID_CUT, wxT("Cut"), wxXmlResource::Get()->LoadBitmap(wxT("cut16")), wxT("Cut (Ctrl+X)"));
+	tb->AddTool(wxID_COPY, wxT("Copy"), wxXmlResource::Get()->LoadBitmap(wxT("copy16")), wxT("Copy (Ctrl+C)"));
+	tb->AddTool(wxID_PASTE, wxT("Paste"), wxXmlResource::Get()->LoadBitmap(wxT("paste16")), wxT("Paste (Ctrl+V)"));
+	tb->AddSeparator();
+	tb->AddTool(wxID_UNDO, wxT("Undo"), wxXmlResource::Get()->LoadBitmap(wxT("undo16")), wxT("Undo (Ctrl+Z)"));
+	tb->AddTool(wxID_REDO, wxT("Redo"), wxXmlResource::Get()->LoadBitmap(wxT("redo16")), wxT("Redo (Ctrl+Y)"));
+	tb->AddTool(wxID_BACKWARD, wxT("Backward"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_back16")), wxT("Backward (Ctrl+P)"));
+	tb->AddTool(wxID_FORWARD, wxT("Forward"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_next16")), wxT("Forward"));
+	tb->AddSeparator();
+	tb->AddTool(XRCID("toggle_bookmark"), wxT("Toggle Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark16")), wxT("Toggle Bookmark (Ctrl+B)"));
+
+#if defined (__WXMAC__)
+	tb->AddSeparator();
+#endif
+
+	tb->Realize();
+	m_mgr.AddPane(tb, wxAuiPaneInfo().Name(wxT("Standard Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Standard")).ToolbarPane().Top());
+
+	//----------------------------------------------
+	//create the search toolbar
+	//----------------------------------------------
+	info = wxAuiPaneInfo();
+	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	tb->SetToolBitmapSize(wxSize(16, 16));
+
+	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace16")), wxT("Find (Ctrl+F)"));
+	tb->AddTool(wxID_REPLACE, wxT("Replace"), wxXmlResource::Get()->LoadBitmap(wxT("refresh16")), wxT("Replace (Ctrl+H)"));
+	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"), wxXmlResource::Get()->LoadBitmap(wxT("find_in_files16")), wxT("Find In Files (Ctrl+Shift+F)"));
+	tb->AddSeparator();
+	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_resource16")), wxT("Find Resource In Workspace (Ctrl+Shift+R)"));
+	tb->AddTool(XRCID("find_type"), wxT("Find Type In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_type16")), wxT("Find Type In Workspace (Ctrl+Shift+T)"));
+	tb->AddTool(XRCID("find_symbol"), wxT("Quick Outline"), wxXmlResource::Get()->LoadBitmap(wxT("outline16")), wxT("Show Current File Outline (Ctrl+Shift+O)"));
+#if defined (__WXMAC__)
+	tb->AddSeparator();
+#endif
+	tb->Realize();
+	m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Search")).ToolbarPane().Top());
+
+	//----------------------------------------------
+	//create the build toolbar
+	//----------------------------------------------
+	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	tb->SetToolBitmapSize(wxSize(16, 16));
+
+	tb->AddTool(XRCID("build_active_project"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("build_active_project16")), wxT("Build Active Project (F7)"));
+	tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("stop_build16")), wxT("Stop Current Build"));
+	tb->AddTool(XRCID("clean_active_project"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("clean16")), wxT("Clean Active Project"));
+	tb->AddSeparator();
+	tb->AddTool(XRCID("execute_no_debug"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("execute16")), wxT("Run Active Project (Ctrl+F5)"));
+	tb->AddTool(XRCID("stop_executed_program"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("stop_executed_program16")), wxT("Stop Running Program"));
+#if defined (__WXMAC__)
+	tb->AddSeparator();
+#endif
+	tb->Realize();
+	info = wxAuiPaneInfo();
+	m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Build")).ToolbarPane().Top().Row(1));
+
+	//----------------------------------------------
+	//create the debugger toolbar
+	//----------------------------------------------
+	m_debuggerTb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	m_debuggerTb->SetToolBitmapSize(wxSize(16, 16));
+	m_debuggerTb->AddTool(XRCID("start_debugger"), wxT("Start / Continue debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_start16")), wxT("Start / Continue debugger (F5)"));
+	m_debuggerTb->AddTool(XRCID("stop_debugger"), wxT("Stop debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stop16")), wxT("Stop debugger"));
+	m_debuggerTb->AddTool(XRCID("pause_debugger"), wxT("Pause debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_pause16")), wxT("Pause debugger"));
+	m_debuggerTb->AddSeparator();
+	m_debuggerTb->AddTool(XRCID("dbg_stepin"), wxT("Step Into"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepin16")), wxT("Step In"));
+	m_debuggerTb->AddTool(XRCID("dbg_next"), wxT("Next"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_next16")), wxT("Next"));
+	m_debuggerTb->AddTool(XRCID("dbg_stepout"), wxT("Step Out"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepout16")), wxT("Step Out"));
+#if defined (__WXMAC__)
+	m_debuggerTb->AddSeparator();
+#endif
+	m_debuggerTb->Realize();
+	info = wxAuiPaneInfo();
+	m_mgr.AddPane(m_debuggerTb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Debug")).ToolbarPane().Top().Row(1));
+
+	RegisterToolbar(XRCID("show_std_toolbar"), wxT("Standard Toolbar"));
+	RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
+	RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
+	RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
+	RegisterToolbar(XRCID("show_nav_toolbar"), wxT("Navigation Toolbar"));
+
+	//----------------------------------------------
+	//create the debugger toolbar
+	//----------------------------------------------
+	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(800, -1), wxTB_FLAT | wxTB_NODIVIDER);
+	tb->SetToolBitmapSize(wxSize(16, 16));
 	wxArrayString chcs;
 	wxChoice *cbScope = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(200, -1), chcs);
 	tb->AddControl(cbScope);
@@ -2179,12 +2307,17 @@ void Frame::LoadPlugins()
 
 	//after the plugin are loaded, it is time to load the saved
 	//perspective
-	wxString pers = EditorConfigST::Get()->LoadPerspective(wxT("Default"));
-	if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == _U(SvnRevision)) {
-		m_mgr.LoadPerspective(pers);
-	} else {
-		EditorConfigST::Get()->SetRevision(_U(SvnRevision));
+	long loadIt(1);
+	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
+	if(loadIt) {
+		wxString pers = EditorConfigST::Get()->LoadPerspective(wxT("Default"));
+		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == _U(SvnRevision)) {
+			m_mgr.LoadPerspective(pers);
+		} else {
+			EditorConfigST::Get()->SetRevision(_U(SvnRevision));
+		}
 	}
+	EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
 }
 
 void Frame::OnAppActivated(wxActivateEvent &e)

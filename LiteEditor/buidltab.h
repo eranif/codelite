@@ -23,6 +23,7 @@ protected:
 	void OnNextBuildError(wxCommandEvent &event);
 	void OnMouseDClick(wxScintillaEvent &event);
 	void OnLeftDown(wxMouseEvent &e);
+	void OnCompilerColours(wxCommandEvent &e);
 	void Initialize();
 	
 	

@@ -46,7 +46,7 @@ protected:
 	void LoadCompilers();
 	
 public:
-	AdvancedDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Build Settings"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize(800, 600), int style = wxDEFAULT_DIALOG_STYLE );
+	AdvancedDlg( wxWindow* parent, size_t selected_page, int id = wxID_ANY, wxString title = wxT("Build Settings"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize(800, 600), int style = wxDEFAULT_DIALOG_STYLE );
 
 };
 

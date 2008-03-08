@@ -62,6 +62,7 @@
 	<object class="wxBitmap" name="text_conflict">res/page_error.png</object>
 	<object class="wxBitmap" name="new_class_title">res/new_class.png</object>
 	<object class="wxBitmap" name="wx_project_header">res/wxproject.png</object>
+	<object class="wxBitmap" name="colourise">res/colorize.png</object>
 	
 	<!-- 
 		Toolbar bitmaps (24x24) 

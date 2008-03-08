@@ -1555,8 +1555,12 @@ void Frame::OnAddEnvironmentVariable(wxCommandEvent &event)
 
 void Frame::OnAdvanceSettings(wxCommandEvent &event)
 {
-	wxUnusedVar(event);
-	AdvancedDlg *dlg = new AdvancedDlg(this);
+	size_t selected_page(0);
+	if (event.GetInt() == 1) {
+		selected_page = 1;
+	}
+	
+	AdvancedDlg *dlg = new AdvancedDlg(this, selected_page);
 	if (dlg->ShowModal() == wxID_OK) {
 		//mark the whole workspace as dirty so makefile generation will take place
 		//force makefile generation upon configuration change

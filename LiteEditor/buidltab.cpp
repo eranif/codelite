@@ -1,4 +1,5 @@
 #include "editor_config.h"
+#include "frame.h"
 #include "precompiled_header.h"
 #include "frame.h"
 #include "buildtabsettingsdata.h"
@@ -373,4 +374,12 @@ void BuildTab::OnLeftDown(wxMouseEvent &e)
 int BuildTab::LineFromPosition(int pos)
 {
 	return m_sci->LineFromPosition(pos);
+}
+
+void BuildTab::OnCompilerColours(wxCommandEvent &e)
+{
+	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("advance_settings"));
+	event.SetEventObject(this);
+	event.SetInt(1);
+	Frame::Get()->ProcessEvent(event);
 }

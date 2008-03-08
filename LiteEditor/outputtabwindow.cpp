@@ -1,4 +1,5 @@
 #include "outputtabwindow.h"
+#include "output_pane.h"
 #include "wx/sizer.h"
 #include "wx/toolbar.h"
 #include "wx/xrc/xmlres.h"
@@ -41,6 +42,16 @@ void OutputTabWindow::CreateGUIControl()
 	            wxXmlResource::Get()->LoadBitmap(wxT("word_wrap")),
 	            wxT("Word Wrap"));
 	Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnWordWrap ));
+	
+	if(m_name == OutputPane::BUILD_WIN) {
+	id = wxNewId();
+		tb->AddTool(id,
+					wxT("Set compiler colours..."),
+					wxXmlResource::Get()->LoadBitmap(wxT("colourise")),
+					wxT("Set compiler colours..."));
+		Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnCompilerColours ));
+	}
+	
 	tb->Realize();
 	mainSizer->Add(tb, 0, wxALL|wxEXPAND, 5);
 

@@ -33,7 +33,7 @@ END_EVENT_TABLE()
 
 ///////////////////////////////////////////////////////////////////////////
 
-AdvancedDlg::AdvancedDlg( wxWindow* parent, int id, wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style | wxRESIZE_BORDER )
+AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style | wxRESIZE_BORDER )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
@@ -101,6 +101,8 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, int id, wxString title, wxPoint pos,
 	LoadCompilers();
 	ConnectButton(m_buttonNewCompiler, AdvancedDlg::OnButtonNewClicked);
 	ConnectButton(m_buttonOK, AdvancedDlg::OnButtonOKClicked);
+	
+	m_notebook->SetSelection( selected_page );
 }
 
 void AdvancedDlg::LoadCompilers()

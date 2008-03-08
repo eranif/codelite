@@ -107,6 +107,7 @@ void ProjectSettingsDlg::ClearValues()
 	m_textDeps->Clear();
 	m_checkResourceNeeded->SetValue(true);
 	m_checkBoxPauseWhenExecEnds->SetValue(true);
+	m_textCtrl1SingleFileCommand->SetValue(wxEmptyString);
 	DisableCustomBuildPage(true);
 }
 
@@ -152,6 +153,7 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	
 	m_thirdPartyTool->SetStringSelection(buildConf->GetToolName());
 	m_textCtrlMakefileGenerationCmd->SetValue(buildConf->GetMakeGenerationCommand());
+	m_textCtrl1SingleFileCommand->SetValue(buildConf->GetSingleFileBuildCommand());
 	
 	//set the custom pre-prebuild step
 	wxString customPreBuild = buildConf->GetPreBuildCustom();
@@ -265,6 +267,7 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetResCmpOptions(m_textAddResCmpOptions->GetValue());
 	buildConf->SetCustomBuildWorkingDir(m_customBuildDirPicker->GetPath());
 	buildConf->SetPauseWhenExecEnds(m_checkBoxPauseWhenExecEnds->IsChecked());
+	buildConf->SetSingleFileBuildCommand(m_textCtrl1SingleFileCommand->GetValue());
 	
 	//set the pre-build step
 	wxString rules = m_textPreBuildRule->GetValue();
@@ -374,6 +377,7 @@ void ProjectSettingsDlg::DisableCustomBuildPage(bool disable)
 	m_textCleanCommand->Enable(!disable);
 	m_customBuildDirPicker->Enable(!disable);
 	m_thirdPartyTool->Enable(!disable);
+	m_textCtrl1SingleFileCommand->Enable(!disable);
 	
 	if(!disable) {
 		if(m_thirdPartyTool->GetStringSelection() == wxT("None")) {

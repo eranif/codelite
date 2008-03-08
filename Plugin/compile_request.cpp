@@ -40,7 +40,7 @@ void CompileRequest::Process()
 	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_fileName.IsEmpty() == false) {
 		//we got a complie request of a single file
-		cmd = builder->GetSingleFileCmd(m_project, m_fileName, errMsg);
+		cmd = builder->GetSingleFileCmd(m_project, m_fileName, isCustom, errMsg);
 	} else if (m_projectOnly) {
 		cmd = builder->GetPOBuildCommand(m_project, isCustom);
 	} else {

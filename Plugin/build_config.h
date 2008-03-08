@@ -76,6 +76,7 @@ class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject {
 	bool m_pauseWhenExecEnds;
 	wxString m_toolName;
 	wxString m_makeGenerationCommand;
+	wxString m_singleFileBuildCommand;
 	
 private:
 	void FillFromSmiColonString(wxArrayString &arr, const wxString &str);
@@ -171,6 +172,9 @@ public:
 	
 	const wxString& GetMakeGenerationCommand() const {return m_makeGenerationCommand;}
 	const wxString& GetToolName() const {return m_toolName;}
+	
+	void SetSingleFileBuildCommand(const wxString& singleFileBuildCommand) {this->m_singleFileBuildCommand = singleFileBuildCommand;}
+	const wxString& GetSingleFileBuildCommand() const {return m_singleFileBuildCommand;}
 };
 
 typedef SmartPtr<BuildConfig> BuildConfigPtr;

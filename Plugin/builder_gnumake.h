@@ -32,7 +32,7 @@ public:
 	virtual wxString GetCleanCommand(const wxString &project, bool &isCustom);
 	virtual wxString GetPOBuildCommand(const wxString &project, bool &isCustom);
 	virtual wxString GetPOCleanCommand(const wxString &project, bool &isCustom);
-	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &fileName, wxString &errMsg);
+	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &fileName, bool &isCustom, wxString &errMsg);
 
 private:
 	void GenerateMakefile(ProjectPtr proj);

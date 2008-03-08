@@ -117,7 +117,7 @@ public:
 	 * \param errMsg [output]
 	 * \return the command
 	 */
-	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &fileName, wxString &errMsg) = 0;
+	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &fileName, bool &isCustom, wxString &errMsg) = 0;
 };
 
 typedef SmartPtr<Builder> BuilderPtr;

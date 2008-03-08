@@ -97,6 +97,8 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 					m_customBuildCmd = child->GetNodeContent();
 				}else if(child->GetName() == wxT("CleanCommand")){
 					m_customCleanCmd = child->GetNodeContent();
+				}else if(child->GetName() == wxT("SingleFileCommand")){
+					m_singleFileBuildCommand = child->GetNodeContent();
 				}else if(child->GetName() == wxT("WorkingDirectory")){
 					m_customBuildWorkingDir = child->GetNodeContent();
 				}else if(child->GetName() == wxT("ThirdPartyToolName")){
@@ -156,6 +158,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_customPreBuildRule = wxEmptyString;
 		m_makeGenerationCommand = wxEmptyString;
 		m_toolName = wxEmptyString;
+		m_singleFileBuildCommand = wxEmptyString;
 		
 		BuildSettingsConfigCookie cookie;
 		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
@@ -293,6 +296,10 @@ wxXmlNode *BuildConfig::ToXml() const
 	//add the makefile generation command
 	wxXmlNode *makeGenCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("MakefileGenerationCommand"));
 	XmlUtils::SetNodeContent(makeGenCmd, m_makeGenerationCommand);
+	
+	//add the makefile generation command
+	wxXmlNode *singleFileCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("SingleFileCommand"));
+	XmlUtils::SetNodeContent(singleFileCmd, m_singleFileBuildCommand);
 	
 	//add build and clean commands
 	wxXmlNode *bldCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("BuildCommand"));

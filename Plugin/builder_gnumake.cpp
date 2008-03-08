@@ -804,7 +804,7 @@ wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project, bool &isCust
 	return cmd;
 }
 
-wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxString &fileName, wxString &errMsg)
+wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxString &fileName, bool &isCustom, wxString &errMsg)
 {
 	wxString cmd;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(project);
@@ -813,8 +813,8 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 	}
 	
 	if(bldConf->IsCustomBuild()) {
-		errMsg << wxT("Dont know how to build a single file for project with custom build");
-		return wxEmptyString;
+		isCustom = true;
+		return bldConf->GetSingleFileBuildCommand();
 	}
 	
 	//generate the makefile

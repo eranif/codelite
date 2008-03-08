@@ -124,6 +124,8 @@ class ProjectSettingsBaseDlg : public wxDialog
 		DirPicker *m_customBuildDirPicker;
 		wxStaticText* m_staticText181;
 		wxTextCtrl* m_textBuildCommand;
+		wxStaticText* m_staticText291;
+		wxTextCtrl* m_textCtrl1SingleFileCommand;
 		wxStaticText* m_staticText192;
 		wxTextCtrl* m_textCleanCommand;
 		wxStaticText* m_staticText29;

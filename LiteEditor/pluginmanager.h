@@ -42,6 +42,7 @@ public:
 	virtual Workspace *GetWorkspace();
 	virtual bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths);
 	virtual int GetToolbarIconSize();
+	virtual wxFlatNotebook *GetMainNotebook();
 	
 	//------------------------------------
 	//End of IManager interface

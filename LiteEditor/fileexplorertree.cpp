@@ -193,9 +193,9 @@ void FileExplorerTree::OnRefreshNode(wxCommandEvent &event)
 	DoReloadNode(item);
 	Thaw();
 
-	wxCommandEvent e(wxEVT_FILE_EXP_REFRESHED, GetId());
+/*	wxCommandEvent e(wxEVT_FILE_EXP_REFRESHED, GetId());
 	e.SetEventObject(this);
-	GetEventHandler()->ProcessEvent(e);
+	GetEventHandler()->ProcessEvent(e);*/
 }
 
 void FileExplorerTree::OnOpenShell(wxCommandEvent &event)

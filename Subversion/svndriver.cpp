@@ -113,12 +113,6 @@ void SvnDriver::OnSvnProcessTerminated(wxProcessEvent &event) {
 		PrintMessage(wxT("Done\n"));
 		CommitWithAuth(cmd, item);
 
-	}else if(callRefresh){
-
-		//Perform a refresh command on the tree
-		if(item.m_item.IsOk()){
-			m_plugin->RefreshTreeStatus( &item.m_item );
-		}
 	}
 }
 

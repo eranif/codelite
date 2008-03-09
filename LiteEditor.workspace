@@ -16,7 +16,7 @@
   <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project"/>
   <Project Name="Interfaces" Path="Interfaces/Interfaces.project"/>
   <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
-  <Project Name="Subversion" Path="Subversion/Subversion.project"/>
+  <Project Name="Subversion" Path="Subversion/Subversion.project" Active="No"/>
   <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
   <Project Name="Cscope" Path="cscope/Cscope.project" Active="No"/>
   <Environment>

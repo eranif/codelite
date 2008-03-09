@@ -1,4 +1,6 @@
+#include "wx/html/htmlwin.h"
 #include "subversion.h"
+#include "procutils.h"
 #include "svncommitmsgsmgr.h"
 #include "wx/busyinfo.h"
 #include "globals.h"
@@ -13,22 +15,6 @@
 #include "exelocator.h"
 #include "svnxmlparser.h"
 #include "dirsaver.h"
-
-int SubversionPlugin::SvnConflictImageId;
-int SubversionPlugin::SvnModifiedImageId;
-int SubversionPlugin::SvnOkImageId;
-int SubversionPlugin::CppOK;
-int SubversionPlugin::CppModified;
-int SubversionPlugin::CppConflict;
-int SubversionPlugin::CConflict;
-int SubversionPlugin::COK;
-int SubversionPlugin::CModified;
-int SubversionPlugin::TextOK;
-int SubversionPlugin::TextModified;
-int SubversionPlugin::TextConflict;
-int SubversionPlugin::HeaderOK;
-int SubversionPlugin::HeaderModified;
-int SubversionPlugin::HeaderConflict;
 
 #define VALIDATE_SVNPATH()\
 	{\
@@ -85,15 +71,13 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 
 	if (topWin) {
 		topWin->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(SubversionPlugin::OnFileSaved), NULL, this);
-		topWin->Connect(wxEVT_FILE_EXP_REFRESHED, wxCommandEventHandler(SubversionPlugin::OnRefreshFolderStatus), NULL, this);
 		topWin->Connect(wxEVT_FILE_EXP_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnFileExplorerInitDone), NULL, this);
-		topWin->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionPlugin::OnRefreshFolderStatus), NULL, this);
 		topWin->Connect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SubversionPlugin::OnProjectFileAdded), NULL, this);
 		topWin->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnAppInitDone), NULL, this);
 	}
 
 	wxVirtualDirTreeCtrl* tree =  (wxVirtualDirTreeCtrl*)m_mgr->GetTree(TreeFileExplorer);
-	tree->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEventHandler(SubversionPlugin::OnTreeExpanded), NULL, this);
+	//tree->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEventHandler(SubversionPlugin::OnTreeExpanded), NULL, this);
 }
 
 wxMenu *SubversionPlugin::CreateEditorPopMenu()
@@ -166,7 +150,7 @@ wxMenu *SubversionPlugin::CreatePopMenu()
 	menu->Append(item);
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("svn_refresh"), wxT("Re&fresh SVN Status"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_refresh"), wxT("Show SVN S&tatus"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
@@ -195,37 +179,6 @@ SubversionPlugin::~SubversionPlugin()
 {
 	SvnCommitMsgsMgr::Release();
 	UnPlug();
-}
-
-void SubversionPlugin::OnTreeExpanded(wxTreeEvent &event)
-{
-	VALIDATE_SVNPATH();
-	if(!m_initIsDone){ return; }
-		
-	//dont allow any user interaction until refresh is done
-	wxWindowDisabler disabler;
-	wxTreeItemId item = event.GetItem();
-	if (IsItemSvnDir(item)) {
-		RefreshTreeStatus(&item);
-	}
-	event.Skip();
-}
-
-bool SubversionPlugin::IsItemSvnDir(wxTreeItemId &item)
-{
-	if (item.IsOk()) {
-		VdtcTreeItemBase *b;
-		wxVirtualDirTreeCtrl* tree =  (wxVirtualDirTreeCtrl*)m_mgr->GetTree(TreeFileExplorer);
-		b = (VdtcTreeItemBase*)tree->GetItemData(item);
-		if (b && b->IsDir()) {
-			wxFileName svnDir(tree->GetFullPath(item));
-			svnDir.AppendDir(wxT(".svn"));
-			if (svnDir.DirExists()) {
-				return true;
-			}
-		}
-	}
-	return false;
 }
 
 void SubversionPlugin::OnSvnAbort(wxCommandEvent &event)
@@ -257,11 +210,6 @@ void SubversionPlugin::OnUpdate(wxCommandEvent &event)
 	wxUnusedVar(event);
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	m_svn->Update();
-	//refresh tree status
-	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
-	if (item.m_item.IsOk()) {
-		RefreshTreeStatus(&item.m_item);
-	}
 }
 
 void SubversionPlugin::OnCommit(wxCommandEvent &event)
@@ -350,12 +298,25 @@ void SubversionPlugin::OnRevert(wxCommandEvent &e)
 void SubversionPlugin::OnRefreshFolderStatus(wxCommandEvent &event)
 {
 	VALIDATE_SVNPATH();
-	if(!m_initIsDone){ return; }
-	TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
-	if (IsItemSvnDir(info.m_item)) {
-		
-		wxBusyCursor bc;
-		RefreshTreeStatus(&info.m_item);
+	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
+	if (item.m_item.IsOk()) {
+		//Generate report for base directory
+		if(item.m_fileName.IsDir()) {
+			//Run the SVN command
+			// Execute a sync command to get modified files 
+			wxString command;
+			wxArrayString output;
+			
+			DirSaver ds;
+			wxSetWorkingDirectory(item.m_fileName.GetPath());
+			
+			command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
+			command << wxT("status --xml --non-interactive -q --no-ignore \"") << item.m_fileName.GetFullPath() << wxT("\"");
+			ProcUtils::ExecuteCommand(command, output);
+			
+			DoGenerateReport(output);
+			return;
+		}
 	}
 	event.Skip();
 }
@@ -432,239 +393,7 @@ void SubversionPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 void SubversionPlugin::OnFileSaved(wxCommandEvent &e)
 {
 	VALIDATE_SVNPATH();
-	if (m_options.GetFlags() & SVN_UPDATE_ON_SAVE) {
-		RefreshTreeStatus(NULL);
-	}
 	e.Skip();
-}
-
-void SubversionPlugin::RefreshTreeStatus(wxTreeItemId *tree_item)
-{
-	VALIDATE_SVNPATH();
-	wxVirtualDirTreeCtrl* tree =  (wxVirtualDirTreeCtrl*)m_mgr->GetTree(TreeFileExplorer);
-	wxTreeItemId first;
-	std::map<wxString, wxTreeItemId> svnRepos;
-
-	if (!tree_item) {
-		//get list of all SVN root directories
-		//in the tree
-		first = tree->GetFirstVisibleItem();
-		ScanForSvnDirs(first, svnRepos, true);
-	} else {
-		if (IsSvnDirectory(tree->GetFullPath(*tree_item))) {
-			svnRepos[tree->GetFullPath(*tree_item).GetFullPath()] = *tree_item;
-		} else {
-			return;
-		}
-	}
-
-	//execute the status command for every directory in the list
-	wxString output;
-
-	std::map< wxString, wxTreeItemId >::const_iterator iter = svnRepos.begin();
-	for ( ; iter != svnRepos.end() ; iter ++ ) {
-		output.Clear();
-		wxTreeItemId item = iter->second;
-		wxString fullpath = iter->first;
-
-		//try to determine whether this is a directory or file
-		if (wxDir::Exists(fullpath)) {
-			fullpath << wxT("/");
-		}
-
-		wxFileName tmpfn(fullpath);
-		m_svn->ExecStatusCommand(tmpfn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR), output);
-
-		DirSaver ds;
-		wxSetWorkingDirectory(tmpfn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-
-		//update the tree status
-		wxArrayString cdirs;
-		wxArrayString mdirs;
-		wxArrayString unverfiles;
-
-		//get list of files modified/conflicts
-		SvnXmlParser::GetFiles(output, cdirs, SvnXmlParser::StateConflict);
-		SvnXmlParser::GetFiles(output, mdirs, SvnXmlParser::StateModified);
-		SvnXmlParser::GetFiles(output, unverfiles, SvnXmlParser::StateUnversioned);
-
-		//update UI
-		tree->Freeze();
-		//set all icons as OK
-		std::map<wxString, wxTreeItemId>::iterator it = svnRepos.begin();
-		for (; it != svnRepos.end(); it++) {
-			wxTreeItemId rootNode = it->second;
-
-			VdtcTreeItemBase *a = (VdtcTreeItemBase *) tree->GetItemData(rootNode);
-			if (a) {
-				tree->SetItemImage(rootNode, GetOkIcon(a));
-			}
-
-			//get all visible children of this node and mark them as OK as well
-			std::list< wxTreeItemId > children;
-			GetAllChildren(rootNode, children);
-			std::list< wxTreeItemId >::const_iterator i = children.begin();
-			for (; i != children.end(); i++) {
-				VdtcTreeItemBase *b = (VdtcTreeItemBase *) tree->GetItemData(*i);
-				if (b) {
-					int iconId = GetOkIcon(b);
-					tree->SetItemImage((*i), iconId);
-				}
-			}
-		}
-
-		for (size_t i=0; i< unverfiles.GetCount(); i++) {
-			//set all modified dirs first
-
-			wxString tmppath(unverfiles.Item(i));
-
-			if (wxDir::Exists(unverfiles.Item(i))) {
-				//it is a directory
-				tmppath << wxT("/");
-			}
-
-			wxFileName fn(tmppath);
-			fn.MakeAbsolute();
-			wxString dirpath = fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
-			dirpath << fn.GetFullName();
-
-			wxTreeItemId item_ = tree->GetItemByFullPath(dirpath);
-			if (item_.IsOk()) {
-				VdtcTreeItemBase *data = (VdtcTreeItemBase*)tree->GetItemData(item_);
-				if (data) {
-					tree->SetItemImage(item_, data->GetIconId());
-				}
-			}
-		}
-
-
-		//update modify items
-		for (size_t i=0; i<mdirs.GetCount(); i++) {
-			//set all modified dirs first
-			wxFileName fn(mdirs.Item(i));
-			fn.MakeAbsolute();
-
-			wxString dirpath = fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
-			dirpath << fn.GetFullName();
-			wxTreeItemId item_ = tree->GetItemByFullPath(dirpath);
-
-			if (item_.IsOk()) {
-				VdtcTreeItemBase *data = (VdtcTreeItemBase*)tree->GetItemData(item_);
-				if (data) {
-					tree->SetItemImage(item_, GetModifiedIcon(data));
-					UpdateParent(item_, data, mdirs.Item(i), SubversionPlugin::SvnModifiedImageId);
-				}
-			}
-		}
-
-		//update conflict items
-		for (size_t i=0; i<cdirs.GetCount(); i++) {
-			//set all modified dirs first
-			wxFileName fn(cdirs.Item(i));
-			fn.MakeAbsolute();
-
-			wxString dirpath = fn.GetFullPath();
-			wxTreeItemId item_ = tree->GetItemByFullPath(dirpath);
-			if (item_.IsOk()) {
-				VdtcTreeItemBase *data = (VdtcTreeItemBase*)tree->GetItemData(item_);
-				if (data) {
-					tree->SetItemImage(item_, GetConflictIcon(data));
-					UpdateParent(item_, data, cdirs.Item(i), SubversionPlugin::SvnConflictImageId);
-				}
-			}
-		}
-		tree->Thaw();
-	}
-
-	//wxLogMessage(output);
-
-}
-
-void SubversionPlugin::UpdateParent(const wxTreeItemId &child, VdtcTreeItemBase *childData, const wxString &childPath, int imgId)
-{
-	if (!childData) {
-		return;
-	}
-
-	wxVirtualDirTreeCtrl* tree =  (wxVirtualDirTreeCtrl*)m_mgr->GetTree(TreeFileExplorer);
-	wxString tmppath = childPath;
-	if (childData->IsDir()) {
-		tmppath << wxT("/");
-	}
-
-	wxFileName fn(tmppath);
-	wxArrayString dirs = fn.GetDirs();
-	size_t levelsToUpdate = dirs.GetCount()+1;
-	wxTreeItemId item = child;
-	for (size_t i=0; i<levelsToUpdate; i++) {
-		item = tree->GetItemParent(item);
-		if (item.IsOk()) {
-			tree->SetItemImage(item, imgId);
-		} else {
-			break;
-		}
-	}
-}
-
-void SubversionPlugin::ScanForSvnDirs(const wxTreeItemId &item, std::map<wxString, wxTreeItemId> &svnRepos, bool allVisibles)
-{
-	VdtcTreeItemBase *b;
-	wxVirtualDirTreeCtrl* tree =  (wxVirtualDirTreeCtrl*)m_mgr->GetTree(TreeFileExplorer);
-	wxTreeItemId child = item;
-	wxTreeItemId stopAtChild;
-
-	if (!allVisibles) {
-		stopAtChild = tree->GetNextSibling(item);
-	}
-
-	while (child.IsOk())	{
-		if (!tree->IsVisible(child))
-			break;
-
-		b = (VdtcTreeItemBase *)tree->GetItemData(child);
-		wxFileName fn = tree->GetFullPath(child);
-		wxString tmp = fn.GetFullPath();
-		if (b && b->IsDir())	{
-			if (IsSvnDirectory(fn)) {
-				svnRepos[fn.GetFullPath()] = child;
-			}
-		}
-
-		child = tree->GetNextVisible(child);
-		if (!allVisibles && child == stopAtChild)
-			break;
-	}
-}
-
-bool SubversionPlugin::IsSvnDirectory(const wxFileName &fn)
-{
-	wxFileName svnDir(fn);
-	wxFileName svnDir2(fn);
-	svnDir.AppendDir(wxT(".svn"));
-	svnDir2.AppendDir(wxT("_svn"));
-	if (svnDir.DirExists()) {
-		//We have a svn directory, no need to go down futher
-		return true;
-	}
-	//try the second form of _svn
-	else if (svnDir2.DirExists()) {
-		//We have a svn directory, no need to go down futher
-		return true;
-	}
-	return false;
-}
-
-void SubversionPlugin::GetAllChildren(const wxTreeItemId &item, std::list<wxTreeItemId> &children)
-{
-	wxVirtualDirTreeCtrl* tree =  (wxVirtualDirTreeCtrl*)m_mgr->GetTree(TreeFileExplorer);
-
-	wxTreeItemIdValue cookie;
-	wxTreeItemId child = tree->GetFirstChild(item, cookie);
-
-	while (child.IsOk()) {
-		children.push_back(child);
-		child = tree->GetNextChild(item, cookie);
-	}
 }
 
 void SubversionPlugin::OnOptions(wxCommandEvent &event)
@@ -692,108 +421,9 @@ void SubversionPlugin::UnPlug()
 	}
 }
 
-
-//Icons methods
-int SubversionPlugin::GetOkIcon(VdtcTreeItemBase *data)
-{
-	wxString caption = data->GetCaption();
-	caption.MakeLower();
-
-	//directory
-	if (data->IsDir()) {
-		return SvnOkImageId;
-	}
-	//file
-	if (caption.EndsWith(wxT(".c++")) || caption.EndsWith(wxT(".cpp")) || caption.EndsWith(wxT(".cxx")) || caption.EndsWith(wxT(".cc"))) {
-		return CppOK;
-	}
-
-	if (caption.EndsWith(wxT(".h")) || caption.EndsWith(wxT(".h++")) || caption.EndsWith(wxT(".hpp"))) {
-		return HeaderOK;
-	}
-
-	if (caption.EndsWith(wxT(".c"))) {
-		return COK;
-	}
-	return TextOK;
-}
-
-int SubversionPlugin::GetModifiedIcon(VdtcTreeItemBase *data)
-{
-	wxString caption = data->GetCaption();
-	caption.MakeLower();
-
-	//directory
-	if (data->IsDir()) {
-		return SvnModifiedImageId;
-	}
-	//file
-	if (caption.EndsWith(wxT(".c++")) || caption.EndsWith(wxT(".cpp")) || caption.EndsWith(wxT(".cxx")) || caption.EndsWith(wxT(".cc"))) {
-		return CppModified;
-	}
-
-	if (caption.EndsWith(wxT(".h")) || caption.EndsWith(wxT(".h++")) || caption.EndsWith(wxT(".hpp"))) {
-		return HeaderModified;
-	}
-
-	if (caption.EndsWith(wxT(".c"))) {
-		return CModified;
-	}
-	return TextModified;
-}
-
-int SubversionPlugin::GetConflictIcon(VdtcTreeItemBase *data)
-{
-	wxString caption = data->GetCaption();
-	caption.MakeLower();
-
-	//directory
-	if (data->IsDir()) {
-		return SvnConflictImageId;
-	}
-	//file
-	if (caption.EndsWith(wxT(".c++")) || caption.EndsWith(wxT(".cpp")) || caption.EndsWith(wxT(".cxx")) || caption.EndsWith(wxT(".cc"))) {
-		return CppConflict;
-	}
-
-	if (caption.EndsWith(wxT(".h")) || caption.EndsWith(wxT(".h++")) || caption.EndsWith(wxT(".hpp"))) {
-		return HeaderConflict;
-	}
-
-	if (caption.EndsWith(wxT(".c"))) {
-		return CConflict;
-	}
-	return TextConflict;
-}
-
 void SubversionPlugin::OnFileExplorerInitDone(wxCommandEvent &event)
 {
-	if(!m_initIsDone){ return; }
-	
-	wxVirtualDirTreeCtrl* tree =  (wxVirtualDirTreeCtrl*)m_mgr->GetTree(TreeFileExplorer);
-	//add new icons to the tree control
-	wxImageList *il = tree->GetImageList();
-	if (il) {
-		SvnOkImageId		= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_ok")));
-		SvnConflictImageId	= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_conflict")));
-		SvnModifiedImageId	= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_modified")));
-
-		CppConflict		= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("cpp_conflict")));
-		CppOK	= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("cpp_ok")));
-		CppModified	= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("cpp_modified")));
-
-		CConflict		= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("c_conflict")));
-		COK	= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("c_ok")));
-		CModified	= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("c_modified")));
-
-		HeaderConflict		= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("h_conflict")));
-		HeaderOK	= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("h_ok")));
-		HeaderModified	= il->Add(wxXmlResource::Get()->LoadBitmap(wxT("h_modified")));
-
-		TextConflict = il->Add(wxXmlResource::Get()->LoadBitmap(wxT("text_conflict")));
-		TextOK = il->Add(wxXmlResource::Get()->LoadBitmap(wxT("text_ok")));
-		TextModified = il->Add(wxXmlResource::Get()->LoadBitmap(wxT("text_modified")));
-	}
+	wxUnusedVar(event);
 }
 
 void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event)
@@ -817,10 +447,14 @@ void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event)
 void SubversionPlugin::OnAppInitDone(wxCommandEvent &event)
 {
 	m_initIsDone = true;
-	//Initialize icons
-	OnFileExplorerInitDone(event);
-	wxBusyInfo wait(wxT("Updating 'Explorer' view with SVN status..."));
+}
+
+void SubversionPlugin::DoGenerateReport(const wxArrayString &output)
+{
+	wxString path = m_mgr->GetStartupDirectory();
+	wxString name = wxT("svnreport.html");
 	
-	//Notify the plugin that the file explorer tree has expanded
-	SendCmdEvent(wxEVT_FILE_EXP_REFRESHED);
+	wxFileName fn(path, name);
+	wxHtmlWindow *reportPage = new wxHtmlWindow(m_mgr->GetMainNotebook(), wxID_ANY);
+	m_mgr->GetMainNotebook()->AddPage(reportPage, wxT("SVN Status"), true);
 }

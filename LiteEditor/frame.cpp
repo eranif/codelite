@@ -2255,6 +2255,8 @@ void Frame::OnLinkClicked(wxHtmlLinkEvent &e)
 		} else if (command == wxT("open-workspace")) {
 			wxCommandEvent dummy;
 			OnSwitchWorkspace(e);
+		} else {
+			e.Skip();
 		}
 	} else {
 		//do the default, which is open the link in the default

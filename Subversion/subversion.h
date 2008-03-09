@@ -1,7 +1,9 @@
 #ifndef SUBVERSION_H
 #define SUBVERSION_H
 
+#include "svnxmlparser.h"
 #include "plugin.h"
+#include "wx/html/htmlwin.h"
 #include "map"
 #include "list"
 #include "wx/timer.h"
@@ -41,6 +43,11 @@ protected:
 	wxMenu *CreatePopMenu();
 	wxMenu *CreateEditorPopMenu();
 	
+	//
+	//Helper functions
+	///////////////////////////////////////////////////////
+	wxString FormatRaws(const wxArrayString &lines, const wxString &basePath, SvnXmlParser::FileState state);
+	
 	// event handlers
 	///////////////////////////////////////////////////////
 	void OnUpdate(wxCommandEvent &event);
@@ -62,7 +69,8 @@ protected:
 	void OnUpdateFile(wxCommandEvent &e);
 	void OnDiffFile(wxCommandEvent &e);
 	void OnRevertFile(wxCommandEvent &e);
-	void DoGenerateReport(const wxArrayString &output);
+	void DoGenerateReport(const wxArrayString &output, const wxString &basePath);
+	void OnLinkClicked(wxHtmlLinkEvent &e);
 };
 
 #endif //SUBVERSION_H

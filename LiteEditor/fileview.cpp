@@ -1041,6 +1041,13 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	//Collect all candidates files
 	wxArrayString files;
 	DirTraverser trv(mask, noExtFiles);
+	
+	//ignore .svn & .cvs files 
+	wxArrayString excludeDirs;
+	excludeDirs.Add(wxT(".svn"));
+	excludeDirs.Add(wxT(".cvs"));
+	
+	trv.SetExcludeDirs(excludeDirs);
 	wxDir dir(path);
 
 	dir.Traverse(trv);

@@ -60,7 +60,10 @@ public:
 	 * \return one of the values wxDIR_STOP, wxDIR_IGNORE or wxDIR_CONTINUE
 	 */
 	virtual wxDirTraverseResult OnDir(const wxString& dirname);
-
+	
+	void SetExcludeDirs(const wxArrayString& excludeDirs) {this->m_excludeDirs = excludeDirs;}
+	const wxArrayString& GetExcludeDirs() const {return m_excludeDirs;}
+	
 	/**
 	 * Return list of files found 
 	 * \return Return list of files found 

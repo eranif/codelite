@@ -20,8 +20,6 @@ DirTraverser::DirTraverser(const wxString &filespec, bool includeExtLessFiles)
 			m_specMap.insert( val );
 		}
 	}
-	m_excludeDirs.Add(wxT(".svn"));
-	m_excludeDirs.Add(wxT(".cvs"));
 }
 
 wxDirTraverseResult DirTraverser::OnFile(const wxString& filename)

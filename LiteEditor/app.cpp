@@ -234,6 +234,7 @@ void App::CopySettings(const wxString &destDir)
 		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/rc/menu.xrc"), destDir + wxT("/rc/menu.xrc"));
 		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/debuggers/Debugger.so"), destDir + wxT("/debuggers/Debugger.so"));
 		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/index.html"), destDir + wxT("/index.html"));
+		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
 		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
 	}
 }

@@ -319,6 +319,7 @@ install: upgrade
 	@\cp -pr lib/Gizmos.so /usr/local/share/codelite/plugins/
 	@\cp -pr Runtime/index.html /usr/local/share/codelite/
 	@\cp -pr Runtime/astyle.sample /usr/local/share/codelite/
+	@\cp -pr Runtime/svnreport.html /usr/local/share/codelite/
 	@\cp -pr Runtime/images/*.png /usr/local/share/codelite/images/
 	@chmod -R 777 /usr/local/share/codelite
 	@chmod +x /usr/local/bin/CodeLite

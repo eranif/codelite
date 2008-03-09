@@ -47,7 +47,7 @@ Source: "C:\Development\C++\codelite\trunk\Runtime\plugins\*.dll"; DestDir: "{ap
 Source: "C:\Development\C++\codelite\trunk\Runtime\bin\ctags-le.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\bin\le_exec.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\bin\makedir.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\index.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW\bin\mingwm10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW\bin\which.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor

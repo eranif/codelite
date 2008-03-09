@@ -3,5 +3,5 @@
 - validate the environment variables
 - Also a possible feature would be to popup a dialog if a $(var) is in a project and not defined already
 - auto-fix symbols database when paths are not correct  
-- add new toolbar item to the 'Build' tab to popup the colour settings
 - fixed the '#if 0' thingi with nested '#endif'
+- auto update the SVN status report after commit/revert operation

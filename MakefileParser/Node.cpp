@@ -11,27 +11,36 @@ m_target(target)
 	m_extentions.Add(wxT(".cc"));
 	m_extentions.Add(wxT(".cpp"));
 	m_extentions.Add(wxT(".cxx"));
+	//m_extentions.Add(wxT(".o"));
 	
 	wxArrayString deps = target->getDeps();
 	for(wxArrayString::iterator it = deps.begin(); it != deps.end(); it++)
 		m_dependees.Add(*it);
 }
 
-void MakefileNode::addNode(Target* target)
+void MakefileNode::addNodes(std::map<wxString, Target*>& targets)
 {
-	size_t pos = m_dependees.Index(target->getName());
-	if(pos == wxNOT_FOUND)
+	for(wxArrayString::iterator it = m_dependees.begin(); it != m_dependees.end(); it++)
 	{
-		for(MakefileNodes::iterator it = m_children.begin(); it != m_children.end(); it++)
+		Target* target = targets[*it];
+		if(target == NULL)
 		{
-			MakefileNode* child = *it;
-			child->addNode(target);
+			wxString name = *it;
+			wxCharBuffer buf = name.ToAscii();
+			// printf("Can't find '%s'\n", buf.data());
+			continue;
 		}
-		return;
+			
+		MakefileNode* child = new MakefileNode(this, target);
+		m_children.push_back(child);
 	}
 	
-	MakefileNode* child = new MakefileNode(this, target);
-	m_children.push_back(child);
+	for(MakefileNodes::iterator it = m_children.begin(); it != m_children.end(); it++)
+	{
+		MakefileNode* child = *it;
+		child->addNodes(targets);
+	}
+
 	return;
 }
 

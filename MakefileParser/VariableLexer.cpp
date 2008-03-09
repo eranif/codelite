@@ -44,12 +44,15 @@ std::string getShellResult(const std::string& command)
 	return result;
 }
 
-VariableLexer::VariableLexer(const wxString& path, const Tokens& tokens) 
+VariableLexer::VariableLexer(const wxString& path, const Tokens& tokens)
 {
-	const wxCharBuffer pathBuffer = path.ToAscii();
+	m_filename = wxT("expandedMakefile_CL_Makefile_Importer.mk");
+	expandFile(path);
+	
+	const wxCharBuffer pathBuffer = m_filename.ToAscii();
 	const char *cstr_path = pathBuffer.data();
 	initLexer(cstr_path);
-	initTokens(tokens);
+	initTokens(tokens);	
 	yyparse();
 	
 	for(IStrings it = TheOutput.begin(); it != TheOutput.end(); it++)
@@ -95,4 +98,29 @@ void VariableLexer::initTokens(const Tokens& tokens)
 		Token token = *it;
 		TheTokens[token.first] = token.second;
 	}
+}
+
+void VariableLexer::expandFile(const wxString& file)
+{
+	wxString thecommand = wxT("make -np -f \"");
+	thecommand += file;
+	thecommand += wxT("\" ");
+	
+	wxArrayString ignore;
+	ignore.Add(wxT("/usr/include"));
+	//ignore.Add(wxT("^\%"));
+	
+	for(wxArrayString::iterator it = ignore.begin(); it != ignore.end(); it++)
+	{
+		thecommand += wxT("| grep -v \"");
+		thecommand += *it;
+		thecommand += wxT("\" ");
+	}	
+	thecommand += wxT("> ");
+	thecommand += m_filename;
+	
+	// printf("%s\n", thecommand.ToAscii().data());
+	
+	wxArrayString shellresult;
+	ProcUtils::SafeExecuteCommand(thecommand, shellresult);
 }

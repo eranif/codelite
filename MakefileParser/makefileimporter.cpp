@@ -272,6 +272,7 @@ void MakefileImporter::ImportFromMakefile(const wxString &path)
 	
 	MakefileNode* result = NULL;
 
+	/*
 	for(Targets::iterator it = lexed.begin(); it != lexed.end(); it++)
 	{				
 		Target* target = *it;
@@ -281,6 +282,7 @@ void MakefileImporter::ImportFromMakefile(const wxString &path)
 		else
 			result->addNode(target);
 	}
+	*/
 	
 	LogMessage(result->toString());
 }

@@ -280,6 +280,14 @@ assgnline: WORD assignm optvars	{
 										YYSTYPE name = $1;
 										YYSTYPE value = $3;
 										TrimString(name);
+																		
+										if(name[name.size()-1] == ':')
+										{
+											append = true;
+											name.erase(name.size()-1);
+										}
+											
+										TrimString(name);
 										TrimString(value);
 
 										if(append)

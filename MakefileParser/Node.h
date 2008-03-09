@@ -5,6 +5,7 @@
 #include "wx/arrstr.h"
 
 #include <vector>
+#include <map>
 class Target;
 
 #ifndef WXDLLIMPEXP_LE_SDK
@@ -20,7 +21,7 @@ class Target;
 class WXDLLIMPEXP_LE_SDK MakefileNode
 {
 	public:
-		void addNode(Target* target);
+		void addNodes(std::map<wxString, Target*>& nodes);
 		wxString toString(wxString prefix = wxEmptyString);
 		
 		MakefileNode(MakefileNode* parent, Target* firstTarget);

@@ -636,6 +636,14 @@ case 27:
 										YYSTYPE name = yyvsp[-2];
 										YYSTYPE value = yyvsp[0];
 										TrimString(name);
+																		
+										if(name[name.size()-1] == ':')
+										{
+											append = true;
+											name.erase(name.size()-1);
+										}
+										
+										TrimString(name);
 										TrimString(value);
 
 										if(append)

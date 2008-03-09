@@ -31,7 +31,9 @@ class WXDLLIMPEXP_LE_SDK VariableLexer
 	
 	private:
 		void initTokens(const Tokens& tokens);
+		void expandFile(const wxString& file);
 	
+		wxString m_filename;
 		wxArrayString m_output;
 		wxArrayString m_unmatched;
 		wxArrayString m_error;

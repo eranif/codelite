@@ -24,15 +24,16 @@
     <File Name="t1.h"/>
     <File Name="C:\TestArea\TestCustom\test.cpp"/>
   </RecentFiles>
-  <ArchiveObject Name="LoadSavedPrespective">
-    <long Value="1" Name="m_value"/>
-  </ArchiveObject>
-  <RecentWorkspaces>
-    <File Name="C:\TestArea\1234\stam.workspace"/>
-    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
-  </RecentWorkspaces>
   <ArchiveObject Name="import_dir_options">
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileMask"/>
     <long Value="0" Name="m_flags"/>
   </ArchiveObject>
+  <ArchiveObject Name="LoadSavedPrespective">
+    <long Value="1" Name="m_value"/>
+  </ArchiveObject>
+  <RecentWorkspaces>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
+    <File Name="C:\TestArea\1234\stam.workspace"/>
+  </RecentWorkspaces>
 </LiteEditor>

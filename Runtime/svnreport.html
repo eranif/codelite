@@ -2,27 +2,47 @@
 <body>
 <table border=0 width="100%" >
 	<tr>
-		<td bgcolor="ORANGE RED">
+		<td ALIGN="CENTER">
+		<h2>
 		<font size="3" face="Verdana">
-		$(ModifiedFiles)
+		SVN Report for $(BasePath)
 		</font>
-		</td>
-	</tr>
-	<tr>
-		<td bgcolor="ORANGE">
-		<font size="3" face="Verdana">
-		$(ConflictFiles)
-		</font>
+		</h2>
 		</td>
 	</tr>
 	<hr>
 	<tr>
-		<td bgcolor="ORANGE">
+		<td bgcolor="GREEN YELLOW" ALIGN="CENTER">
+		<h3>
 		<font size="3" face="Verdana">
-		$(UnversionedFiles)
+		Modified files: <a href="action:commit-all:$(BasePath)">Commit All</a>
 		</font>
+		</h3>
 		</td>
 	</tr>
+	$(ModifiedFiles)
+	<hr>
+	<tr>
+		<td bgcolor="GOLDENROD"  ALIGN="CENTER">
+		<h3>
+		<font size="3" face="Verdana">
+		Conflicted files:
+		</font>
+		</h3>
+		</td>
+	</tr>
+	$(ConflictFiles)
+	<hr>
+	<tr>
+		<td bgcolor="LIGHT BLUE"   ALIGN="CENTER">
+		<h3>
+		<font size="3" face="Verdana">
+		Unversioned files:
+		</font>
+		</h3>
+		</td>
+	</tr>
+	$(UnversionedFiles)
 	<hr>
 </table>
 </body>

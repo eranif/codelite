@@ -685,6 +685,5 @@
 		<object class="wxMenuItem" name="open_shell">
             <label>Open Shell here</label>
         </object>
-		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 	</object>
 </resource>

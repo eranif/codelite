@@ -249,26 +249,13 @@ void SvnDriver::Commit() {
 	dlg->Destroy();
 }
 
-void SvnDriver::CommitFile(const wxFileName &fileName) {
+void SvnDriver::CommitFile(const wxString &fileName) {
 	TRYENTERSVN()
 	wxString command, comment;
 
-	DirSaver ds;
-	wxString file_name;
-	wxSetWorkingDirectory(fileName.GetPath());
-	if (!fileName.IsDir()) {
-		//we got a file name
-		file_name = fileName.GetFullName();
-	}
-
-#ifdef __WXMSW__
-	file_name.Prepend(wxT("\""));
-	file_name.Append(wxT("\""));
-#endif
-
 	//get the comment to enter
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
-	command << wxT(" status -q ") << file_name;
+	command << wxT(" status -q ") << fileName;
 
 	wxArrayString output;
 	ProcUtils::ExecuteCommand(command, output);
@@ -288,32 +275,19 @@ void SvnDriver::CommitFile(const wxFileName &fileName) {
 		StripComments(comment);
 		command.Clear();
 		command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
-		command << wxT("commit ") << file_name << wxT(" -m \"") << comment << wxT("\"");
+		command << wxT("commit ") << fileName << wxT(" -m \"") << comment << wxT("\"");
 		m_curHandler = new SvnCommitCmdHandler(this, command, dummy);
 		ExecCommand(command);
 	}
 	dlg->Destroy();
 }
 
-void SvnDriver::UpdateFile(const wxFileName &fileName)
+void SvnDriver::UpdateFile(const wxString &fileName)
 {
 	TRYENTERSVN()
 
 	wxString command;
-	
-	DirSaver ds;
-	wxString file_name;
-	wxSetWorkingDirectory(fileName.GetPath());
-	if (!fileName.IsDir()) {
-		//we got a file name
-		file_name = fileName.GetFullName();
-	}
-
-#ifdef __WXMSW__
-	file_name.Prepend(wxT("\""));
-	file_name.Append(wxT("\""));
-#endif
-
+	wxString file_name(fileName);
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("update ") << file_name ;
 	m_curHandler = new SvnDefaultCmdHandler(this, command);

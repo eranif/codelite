@@ -47,8 +47,8 @@ public:
 	///////////////////////////////
 
 	//operations on a single file 
-	void UpdateFile(const wxFileName &fileName);
-	void CommitFile(const wxFileName &fileName);
+	void UpdateFile(const wxString &fileName);
+	void CommitFile(const wxString &fileName);
 	void DiffFile(const wxFileName &fileName);
 	void RevertFile(const wxFileName &fileName);
 

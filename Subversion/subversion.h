@@ -42,6 +42,8 @@ public:
 protected:
 	wxMenu *CreatePopMenu();
 	wxMenu *CreateEditorPopMenu();
+	wxMenu *CreateWorkspacePopMenu();
+	wxMenu *CreateProjectPopMenu();
 	
 	//
 	//Helper functions
@@ -50,6 +52,8 @@ protected:
 	void DoMakeHTML(const wxArrayString &outpout, const wxString &basePath);
 	void DoGetSvnStatus(const wxString &basePath, wxArrayString &output);
 	void DoGenerateReport(const wxString &basePath);
+	void DoGenerateWspReport();
+	void DoGetWspSvnStatus(wxArrayString &output);
 	
 	// event handlers
 	///////////////////////////////////////////////////////
@@ -73,6 +77,14 @@ protected:
 	void OnDiffFile(wxCommandEvent &e);
 	void OnRevertFile(wxCommandEvent &e);
 	void OnLinkClicked(wxHtmlLinkEvent &e);
+	
+	void OnShowReportWsp(wxCommandEvent &e);
+	void OnUpdateWsp(wxCommandEvent &e);
+	void OnCommitWsp(wxCommandEvent &e);
+	void OnShowReportPrj(wxCommandEvent &e);
+	void OnUpdatePrj(wxCommandEvent &e);
+	void OnCommitPrj(wxCommandEvent &e);
+
 };
 
 #endif //SUBVERSION_H

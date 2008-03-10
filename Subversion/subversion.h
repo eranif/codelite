@@ -47,6 +47,9 @@ protected:
 	//Helper functions
 	///////////////////////////////////////////////////////
 	wxString FormatRaws(const wxArrayString &lines, const wxString &basePath, SvnXmlParser::FileState state);
+	void DoMakeHTML(const wxArrayString &outpout, const wxString &basePath);
+	void DoGetSvnStatus(const wxString &basePath, wxArrayString &output);
+	void DoGenerateReport(const wxString &basePath);
 	
 	// event handlers
 	///////////////////////////////////////////////////////
@@ -55,7 +58,7 @@ protected:
 	void OnDiff(wxCommandEvent &event);
 	void OnCleanup(wxCommandEvent &event);
 	void OnFileSaved(wxCommandEvent &event);
-	void OnRefreshFolderStatus(wxCommandEvent &event);
+	void OnShowSvnStatus_FileExplorer(wxCommandEvent &event);
 	void OnFileExplorerInitDone(wxCommandEvent &event);
 	void OnOptions(wxCommandEvent &event);
 	void OnChangeLog(wxCommandEvent &event);
@@ -69,7 +72,6 @@ protected:
 	void OnUpdateFile(wxCommandEvent &e);
 	void OnDiffFile(wxCommandEvent &e);
 	void OnRevertFile(wxCommandEvent &e);
-	void DoGenerateReport(const wxArrayString &output, const wxString &basePath);
 	void OnLinkClicked(wxHtmlLinkEvent &e);
 };
 

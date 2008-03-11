@@ -11,7 +11,7 @@
     <object class="wxBitmap" name="class">res/class.png</object>    
     <object class="wxBitmap" name="typedef">res/typedef.xpm</object>     
     <object class="wxBitmap" name="project">res/cubes_blue.png</object>
-    <object class="wxBitmap" name="globals">res/cube_green.png</object>
+	<object class="wxBitmap" name="globals">res/cube_green.png</object>
     <object class="wxBitmap" name="namespace">res/namespace.png</object>   
     <object class="wxBitmap" name="struct">res/but_green_s.png</object>  
     <object class="wxBitmap" name="bookmark_blue">res/media_stop.png</object>
@@ -155,4 +155,9 @@
 	<object class="wxBitmap" name="cscope_func_calling16">res/16/func_called24.png</object>
 	<object class="wxBitmap" name="ref_analyzer16">res/16/ref_analyzer24.png</object>
 	<object class="wxBitmap" name="ref_analyzer_settings16">res/16/ref_anaylzer_settings24.png</object>	
+	
+	<!-- Svn icons -->
+	<object class="wxBitmap" name="project_modified">res/cubes_red.png</object>
+	<object class="wxBitmap" name="project_ok">res/cubes_green.png</object>
+	<object class="wxBitmap" name="project_conflict">res/error.png</object>
 </resource>

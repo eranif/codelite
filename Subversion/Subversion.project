@@ -8,6 +8,8 @@
     <File Name="svnxmlparser.cpp"/>
     <File Name="svncommitmsgsmgr.cpp"/>
     <File Name="svncommitmsgsmgr.h"/>
+    <File Name="svniconrefreshhandler.cpp"/>
+    <File Name="svniconrefreshhandler.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="svndriver.h"/>

@@ -7,17 +7,22 @@
 #include "imanager.h"
 
 class SvnDriver;
+class SvnIconRefreshHandler;
 
 class SvnCmdHandler {
 protected:
 	SvnDriver *m_svnDriver;
 	wxString m_cmd;
-
+	SvnIconRefreshHandler *m_iconRefrshHandler;
+	
 public:
-	SvnCmdHandler(SvnDriver *driver, const wxString &cmd) : m_svnDriver(driver), m_cmd(cmd) {};
+	SvnCmdHandler(SvnDriver *driver, const wxString &cmd) : m_svnDriver(driver), m_cmd(cmd), m_iconRefrshHandler(NULL) {};
 	virtual ~SvnCmdHandler(){}
 	const wxString &GetCmd() const {return m_cmd;}
 	virtual void ProcessEvent(wxCommandEvent &event) = 0;
+	
+	void SetIconRefrshHandler(SvnIconRefreshHandler* iconRefrshHandler) {this->m_iconRefrshHandler = iconRefrshHandler;}
+	SvnIconRefreshHandler* GetIconRefrshHandler() {return m_iconRefrshHandler;}
 };
 
 ////////////////////////////////////////////////////

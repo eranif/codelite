@@ -695,6 +695,15 @@ void SubversionPlugin::OnLinkClicked(wxHtmlLinkEvent &e)
 			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("svn_commit_wsp"));
 			event.SetEventObject(this);
 			wxPostEvent(this, event);
+		} else if (command == wxT("refresh-project")) {
+			//Commit all files
+			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("svn_refresh_prj"));
+			event.SetEventObject(this);
+			wxPostEvent(this, event);
+		} else if (command == wxT("commit-all-project")) {
+			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("svn_commit_prj"));
+			event.SetEventObject(this);
+			wxPostEvent(this, event);
 		} else {
 			e.Skip();
 		}

@@ -664,7 +664,7 @@ wxString SubversionPlugin::FormatRaws(const wxArrayString &lines, const wxString
 		}
 
 		content << wxT("<tr><td><font size=2 face=\"Verdana\">");
-		content << wxT("<a href=\"action:open-file:") << basePath << lines.Item(i) << wxT("\" >") << lines.Item(i) << wxT("</a>") ;
+		content << wxT("<a href=\"action:open-file:") << lines.Item(i) << wxT("\" >") << lines.Item(i) << wxT("</a>") ;
 
 		//for modified files, add Diff menu
 		if (state == SvnXmlParser::StateModified) {

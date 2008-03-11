@@ -590,7 +590,7 @@ void BuilderGnuMake::CreateConfigsVariables(BuildConfigPtr bldConf, wxString &te
 	text << wxT("PreprocessorSwitch :=") << cmp->GetSwitch(wxT("Preprocessor")) << wxT("\n");
 	text << wxT("SourceSwitch :=") << cmp->GetSwitch(wxT("Source")) << wxT("\n");
 	text << wxT("CompilerName :=") << cmp->GetTool(wxT("CompilerName")) << wxT("\n");
-	text << wxT("RcCompilerName :=") << cmp->GetTool(wxT("ResourceCompiler")) << wxT("\n");
+	
 	text << wxT("OutputFile :=") << bldConf->GetOutputFileName() << wxT("\n");
 	text << wxT("Preprocessors :=") << ParsePreprocessor(bldConf->GetPreprocessor()) << wxT("\n");
 	text << wxT("ObjectSwitch :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
@@ -600,11 +600,15 @@ void BuilderGnuMake::CreateConfigsVariables(BuildConfigPtr bldConf, wxString &te
 	buildOpts.Replace(wxT(";"), wxT(" "));
 	text << wxT("CmpOptions :=") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");
 
-
-	wxString rcBuildOpts = bldConf->GetResCompileOptions();
-	rcBuildOpts.Replace(wxT(";"), wxT(" "));
-	text << wxT("RcCmpOptions :=") << rcBuildOpts << wxT("\n");
-
+	
+	//only if resource compiler required, evaluate the resource variables
+	if(bldConf->IsResCompilerRequired()) {
+		wxString rcBuildOpts = bldConf->GetResCompileOptions();
+		rcBuildOpts.Replace(wxT(";"), wxT(" "));
+		text << wxT("RcCmpOptions :=") << rcBuildOpts << wxT("\n");
+		text << wxT("RcCompilerName :=") << cmp->GetTool(wxT("ResourceCompiler")) << wxT("\n");
+	}
+	
 	wxString linkOpt = bldConf->GetLinkOptions();
 	linkOpt.Replace(wxT(";"), wxT(" "));
 

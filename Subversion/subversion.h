@@ -2,6 +2,7 @@
 #define SUBVERSION_H
 
 #include "svnxmlparser.h"
+#include "project.h"
 #include "plugin.h"
 #include "wx/html/htmlwin.h"
 #include "map"
@@ -50,10 +51,16 @@ protected:
 	///////////////////////////////////////////////////////
 	wxString FormatRaws(const wxArrayString &lines, const wxString &basePath, SvnXmlParser::FileState state);
 	void DoMakeHTML(const wxArrayString &outpout, const wxString &basePath);
+	ProjectPtr GetSelectedProject();
+	
 	void DoGetSvnStatus(const wxString &basePath, wxArrayString &output);
 	void DoGenerateReport(const wxString &basePath);
+	
 	void DoGenerateWspReport();
 	void DoGetWspSvnStatus(wxArrayString &output);
+	
+	void DoGetPrjSvnStatus(wxArrayString &output);
+	void DoGeneratePrjReport();
 	
 	// event handlers
 	///////////////////////////////////////////////////////

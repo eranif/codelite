@@ -588,6 +588,28 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 	m_mgr->GetMainNotebook()->AddPage(reportPage, wxT("SVN Status"), true);
 }
 
+void SubversionPlugin::DoGetPrjSvnStatus(wxArrayString &output)
+{
+	//get the selected project name
+	wxString command;
+	ProjectPtr p = GetSelectedProject();
+	if(!p){ return; }
+
+	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
+	command << wxT("status --xml --non-interactive --no-ignore -q ");
+	//concatenate list of files here
+	command << wxT("\"") <<  p->GetFileName().GetPath() << wxT("\" ");
+	ProcUtils::ExecuteCommand(command, output);
+}
+
+void SubversionPlugin::DoGeneratePrjReport()
+{
+	wxArrayString output;
+	DoGetPrjSvnStatus(output);
+	
+	DoMakeHTML(output, wxT("project"));
+}
+
 void SubversionPlugin::DoGenerateWspReport()
 {
 	wxArrayString output;
@@ -743,12 +765,41 @@ void SubversionPlugin::OnCommitWsp(wxCommandEvent &e)
 
 void SubversionPlugin::OnShowReportPrj(wxCommandEvent &e)
 {
+	wxUnusedVar(e);
+	wxBusyCursor cursor;
+	DoGeneratePrjReport();
 }
 
 void SubversionPlugin::OnUpdatePrj(wxCommandEvent &e)
 {
+	ProjectPtr p = GetSelectedProject();
+	if(!p){ return; }
+	
+	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
+	//concatenate list of files here
+	m_svn->UpdateFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""));	
 }
 
 void SubversionPlugin::OnCommitPrj(wxCommandEvent &e)
 {
+	ProjectPtr p = GetSelectedProject();
+	if(!p){ return; }
+	
+	m_svn->PrintMessage(wxT("----\nCommitting ...\n"));
+	m_svn->CommitFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""));
+}
+
+ProjectPtr SubversionPlugin::GetSelectedProject()
+{
+	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
+	if( item.m_text.IsEmpty() ){
+		return NULL;
+	}
+	
+	wxString errMsg;
+	ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(item.m_text, errMsg);
+	if(!p){
+		return NULL;
+	}
+	return p;	
 }

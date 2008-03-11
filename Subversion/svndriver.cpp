@@ -113,6 +113,9 @@ void SvnDriver::OnSvnProcessTerminated(wxProcessEvent &event) {
 		PrintMessage(wxT("Done\n"));
 		CommitWithAuth(cmd, item);
 
+	} else {
+		//operation completed successfully
+		
 	}
 }
 

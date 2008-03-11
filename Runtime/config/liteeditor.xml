@@ -18,17 +18,6 @@
     <wxArrayString Name="m_replaceString"/>
     <long Value="0" Name="m_flags"/>
   </ArchiveObject>
-  <RecentFiles>
-    <File Name="C:\TestArea\CCBug\testme\main.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Subversion\subversion.h"/>
-    <File Name="Runtime\config\liteeditor.xml"/>
-    <File Name=".\Diff"/>
-    <File Name="C:\Development\C++\codelite\trunk\Subversion\subversion.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Subversion\svnxmlparser.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Subversion\svndriver.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Subversion\svndriver.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\CodeFormatter\cc4waaaa.c"/>
-  </RecentFiles>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="1004"/>
     <wxPoint Name="m_framePos" x="-4" y="-4"/>
@@ -44,4 +33,15 @@
     <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
     <File Name="C:\TestArea\TestOne.workspace"/>
   </RecentWorkspaces>
+  <RecentFiles>
+    <File Name="C:\Development\C++\codelite\trunk\CC_TODO.TXT"/>
+    <File Name="C:\Development\C++\codelite\trunk\CodeFormatter\cc4waaaa.c"/>
+    <File Name="C:\Development\C++\codelite\trunk\Subversion\svndriver.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\Subversion\svndriver.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\Subversion\svnxmlparser.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\Subversion\subversion.cpp"/>
+    <File Name=".\Diff"/>
+    <File Name="Runtime\config\liteeditor.xml"/>
+    <File Name="C:\Development\C++\codelite\trunk\Subversion\subversion.h"/>
+  </RecentFiles>
 </LiteEditor>

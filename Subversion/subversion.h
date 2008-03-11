@@ -19,18 +19,21 @@ class SubversionPlugin : public IPlugin
 	wxMenu *m_svnMenu;
 	SvnDriver *m_svn;
 	wxEvtHandler *topWin;
-	wxTreeItemId m_firstVisibleItem;
 	SvnOptions m_options;	
 	friend class SvnDriver;
 	bool m_isValid;
 	bool m_initIsDone;
 	wxMenuItem *m_sepItem;
 	
+protected:
+	void SendSvnMenuEvent(int id);
+	
 public:
 	SubversionPlugin(IManager *manager);
 	virtual ~SubversionPlugin();
 	const SvnOptions& GetOptions() const{return m_options;}
-
+	bool IsWorkspaceUnderSvn();
+	
 	//--------------------------------------------
 	//Abstract methods
 	//--------------------------------------------
@@ -84,7 +87,7 @@ protected:
 	void OnDiffFile(wxCommandEvent &e);
 	void OnRevertFile(wxCommandEvent &e);
 	void OnLinkClicked(wxHtmlLinkEvent &e);
-	
+	void OnRefrshIconsStatus(wxCommandEvent &e);
 	void OnShowReportWsp(wxCommandEvent &e);
 	void OnUpdateWsp(wxCommandEvent &e);
 	void OnCommitWsp(wxCommandEvent &e);

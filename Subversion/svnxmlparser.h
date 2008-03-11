@@ -8,6 +8,9 @@ class SvnXmlParser
 {
 public:
 	enum FileState{
+		//OK
+		StateOK				= 0x00000000,
+		
 		//wc-status: conflict
 		StateConflict		= 0x00000001,		
 

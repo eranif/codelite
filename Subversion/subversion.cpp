@@ -1,4 +1,5 @@
 #include "wx/ffile.h"
+#include "svniconrefreshhandler.h"
 #include "wx/html/htmlwin.h"
 #include "workspace.h"
 #include "svnadditemsdlg.h"
@@ -20,6 +21,10 @@
 #include "svnxmlparser.h"
 #include "dirsaver.h"
 #include <vector>
+
+int ProjectConflictIconId 	= wxNOT_FOUND;
+int ProjectModifiedIconId 	= wxNOT_FOUND;
+int ProjectOkIconId 		= wxNOT_FOUND;
 
 static void WriteFile(const wxString &fileName, const wxString &content)
 {
@@ -102,6 +107,7 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		topWin->Connect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SubversionPlugin::OnProjectFileAdded), NULL, this);
 		topWin->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnAppInitDone), NULL, this);
 		topWin->Connect(wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler(SubversionPlugin::OnLinkClicked), NULL, this);
+		topWin->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatus), NULL, this);
 
 		topWin->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnUpdate), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommit), NULL, (wxEvtHandler*)this);
@@ -127,10 +133,17 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		topWin->Connect(XRCID("svn_update_prj"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnUpdatePrj), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_commit_prj"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommitPrj), NULL, (wxEvtHandler*)this);
 
+		topWin->Connect(XRCID("svn_refresh_icons"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatus), NULL, (wxEvtHandler*)this);
 	}
 
-	wxVirtualDirTreeCtrl* tree =  (wxVirtualDirTreeCtrl*)m_mgr->GetTree(TreeFileExplorer);
+	//wxVirtualDirTreeCtrl* tree =  (wxVirtualDirTreeCtrl*)m_mgr->GetTree(TreeFileExplorer);
 	//tree->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEventHandler(SubversionPlugin::OnTreeExpanded), NULL, this);
+	wxTreeCtrl *tree = m_mgr->GetTree(TreeFileView);
+	if (tree) {
+		ProjectModifiedIconId 	= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_modified")));
+		ProjectConflictIconId 	= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")));
+		ProjectOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_ok")));
+	}
 }
 
 wxMenu *SubversionPlugin::CreateEditorPopMenu()
@@ -166,7 +179,7 @@ wxMenu *SubversionPlugin::CreatePopMenu()
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("svn_refresh"), wxT("Show SVN S&tatus"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_refresh"), wxT("Show Svn S&tatus Report"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
@@ -372,9 +385,15 @@ void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 		m_sepItem = menu->AppendSeparator();
 		menu->Append(XRCID("SVN_EDITOR_POPUP"), wxT("Svn"), CreateEditorPopMenu());
 	} else if (type == MenuTypeFileView_Workspace) {
+		if (!IsWorkspaceUnderSvn()) {
+			return;
+		}
 		m_sepItem = menu->PrependSeparator();
 		menu->Prepend(XRCID("SVN_WORKSPACE_POPUP"), wxT("Svn"), CreateWorkspacePopMenu());
 	} else if (type == MenuTypeFileView_Project) {
+		if (!IsWorkspaceUnderSvn()) {
+			return;
+		}
 		m_sepItem = menu->PrependSeparator();
 		menu->Prepend(XRCID("SVN_PROJECT_POPUP"), wxT("Svn"), CreateProjectPopMenu());
 	}
@@ -493,11 +512,11 @@ void SubversionPlugin::OnAppInitDone(wxCommandEvent &event)
 void SubversionPlugin::DoGetWspSvnStatus(wxArrayString &output)
 {
 	wxString command;
-	
+
 	//get list of files
 	std::vector<wxFileName> fileNames;
 	wxString errMsg;
-	
+
 	wxArrayString projects;
 	m_mgr->GetWorkspace()->GetProjectList(projects);
 	for (size_t i=0; i<projects.GetCount(); i++) {
@@ -508,7 +527,7 @@ void SubversionPlugin::DoGetWspSvnStatus(wxArrayString &output)
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive --no-ignore -q ");
 	//concatenate list of files here
-	for(size_t i=0; i< fileNames.size(); i++){
+	for (size_t i=0; i< fileNames.size(); i++) {
 		command << wxT("\"") <<  fileNames.at(i).GetPath() << wxT("\" ");
 	}
 	ProcUtils::ExecuteCommand(command, output);
@@ -525,18 +544,18 @@ void SubversionPlugin::DoGetSvnStatus(const wxString &basePath, wxArrayString &o
 void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &basePath)
 {
 	wxFlatNotebook *book =  m_mgr->GetMainNotebook();
-	
+
 	wxString origin(wxT("explorer"));
 	wxString _base(basePath);
-	if(basePath == wxT("workspace")) {
+	if (basePath == wxT("workspace")) {
 		origin = wxT("workspace");
 		_base.Empty();
-	} else if(basePath == wxT("project")) {
+	} else if (basePath == wxT("project")) {
 		origin = wxT("project");
 		_base.Empty();
 	}
-	
-	
+
+
 	for ( size_t i=0; i<book->GetPageCount(); i++) {
 		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow *>(book->GetPage(i));
 		if (win && book->GetPageText(i) == wxT("SVN Status")) {
@@ -562,11 +581,11 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 	for (size_t i=0; i< output.GetCount(); i++) {
 		rawData << output.Item(i);
 	}
-	
+
 	//replace the page macros
 	//$(ModifiedFiles)
 	wxArrayString files;
-	
+
 
 	files.Clear();
 	SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateModified);
@@ -593,7 +612,9 @@ void SubversionPlugin::DoGetPrjSvnStatus(wxArrayString &output)
 	//get the selected project name
 	wxString command;
 	ProjectPtr p = GetSelectedProject();
-	if(!p){ return; }
+	if (!p) {
+		return;
+	}
 
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive --no-ignore -q ");
@@ -606,7 +627,7 @@ void SubversionPlugin::DoGeneratePrjReport()
 {
 	wxArrayString output;
 	DoGetPrjSvnStatus(output);
-	
+
 	DoMakeHTML(output, wxT("project"));
 }
 
@@ -614,7 +635,7 @@ void SubversionPlugin::DoGenerateWspReport()
 {
 	wxArrayString output;
 	DoGetWspSvnStatus(output);
-	
+
 	DoMakeHTML(output, wxT("workspace"));
 }
 
@@ -682,28 +703,27 @@ void SubversionPlugin::OnLinkClicked(wxHtmlLinkEvent &e)
 			//Commit all files
 			m_svn->CommitFile(wxT("\"") + fn.GetFullPath() + wxT("\""));
 		} else if (command == wxT("refresh-explorer")) {
+			
 			//Commit all files
-			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("svn_refresh"));
-			event.SetEventObject(this);
-			wxPostEvent(this, event);
+			SendSvnMenuEvent(XRCID("svn_refresh"));
+			
 		} else if (command == wxT("refresh-workspace")) {
+			
 			//Commit all files
-			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("svn_refresh_wsp"));
-			event.SetEventObject(this);
-			wxPostEvent(this, event);
+			SendSvnMenuEvent(XRCID("svn_refresh_wsp"));
+			
 		} else if (command == wxT("commit-all-workspace")) {
-			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("svn_commit_wsp"));
-			event.SetEventObject(this);
-			wxPostEvent(this, event);
+			
+			SendSvnMenuEvent(XRCID("svn_commit_wsp"));
+
 		} else if (command == wxT("refresh-project")) {
-			//Commit all files
-			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("svn_refresh_prj"));
-			event.SetEventObject(this);
-			wxPostEvent(this, event);
+			
+			SendSvnMenuEvent(XRCID("svn_refresh_prj"));
+
 		} else if (command == wxT("commit-all-project")) {
-			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("svn_commit_prj"));
-			event.SetEventObject(this);
-			wxPostEvent(this, event);
+		
+			SendSvnMenuEvent(XRCID("svn_commit_prj"));
+
 		} else {
 			e.Skip();
 		}
@@ -717,7 +737,11 @@ wxMenu* SubversionPlugin::CreateWorkspacePopMenu()
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("svn_refresh_wsp"), wxT("Show SVN S&tatus"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_refresh_wsp"), wxT("Show Svn S&tatus Report"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	menu->AppendSeparator();
+
+	item = new wxMenuItem(menu, XRCID("svn_refresh_icons"), wxT("Refresh Svn Icons"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
@@ -737,7 +761,11 @@ wxMenu* SubversionPlugin::CreateProjectPopMenu()
 	wxMenu* menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
-	item = new wxMenuItem(menu, XRCID("svn_refresh_prj"), wxT("Show SVN S&tatus"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_refresh_prj"), wxT("Show Svn S&tatus Report"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	menu->AppendSeparator();
+
+	item = new wxMenuItem(menu, XRCID("svn_refresh_icons"), wxT("Refresh Svn Icons"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
@@ -762,14 +790,14 @@ void SubversionPlugin::OnUpdateWsp(wxCommandEvent &e)
 	wxString file = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME);
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	//concatenate list of files here
-	m_svn->UpdateFile(wxT("\"") + file + wxT("\""));
+	m_svn->UpdateFile(wxT("\"") + file + wxT("\""), new SvnIconRefreshHandler(m_mgr, this));
 }
 
 void SubversionPlugin::OnCommitWsp(wxCommandEvent &e)
 {
 	wxString file = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME);
 	m_svn->PrintMessage(wxT("----\nCommitting ...\n"));
-	m_svn->CommitFile(wxT("\"") + file + wxT("\""));
+	m_svn->CommitFile(wxT("\"") + file + wxT("\""), new SvnIconRefreshHandler(m_mgr, this));
 }
 
 void SubversionPlugin::OnShowReportPrj(wxCommandEvent &e)
@@ -782,33 +810,68 @@ void SubversionPlugin::OnShowReportPrj(wxCommandEvent &e)
 void SubversionPlugin::OnUpdatePrj(wxCommandEvent &e)
 {
 	ProjectPtr p = GetSelectedProject();
-	if(!p){ return; }
-	
+	if (!p) {
+		return;
+	}
+
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	//concatenate list of files here
-	m_svn->UpdateFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""));	
+	m_svn->UpdateFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""), new SvnIconRefreshHandler(m_mgr, this));
 }
 
 void SubversionPlugin::OnCommitPrj(wxCommandEvent &e)
 {
 	ProjectPtr p = GetSelectedProject();
-	if(!p){ return; }
-	
+	if (!p) {
+		return;
+	}
+
 	m_svn->PrintMessage(wxT("----\nCommitting ...\n"));
-	m_svn->CommitFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""));
+	m_svn->CommitFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""), new SvnIconRefreshHandler(m_mgr, this));
 }
 
 ProjectPtr SubversionPlugin::GetSelectedProject()
 {
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-	if( item.m_text.IsEmpty() ){
+	if ( item.m_text.IsEmpty() ) {
 		return NULL;
 	}
-	
+
 	wxString errMsg;
 	ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(item.m_text, errMsg);
-	if(!p){
+	if (!p) {
 		return NULL;
 	}
-	return p;	
+	return p;
+}
+
+void SubversionPlugin::OnRefrshIconsStatus(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	SvnIconRefreshHandler handler(m_mgr, this);
+	handler.UpdateIcons();
+}
+
+bool SubversionPlugin::IsWorkspaceUnderSvn()
+{
+	if (!m_mgr->IsWorkspaceOpen()) {
+		//no workspace is opened
+		return false;
+	}
+	wxString file_name = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
+
+	if (wxDir::Exists(file_name + wxFileName::GetPathSeparator() + wxT(".svn"))) {
+		return true;
+	}
+	if (wxDir::Exists(file_name + wxFileName::GetPathSeparator() + wxT("_svn"))) {
+		return true;
+	}
+	return false;
+}
+
+void SubversionPlugin::SendSvnMenuEvent(int id)
+{
+	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, id);
+	event.SetEventObject(this);
+	wxPostEvent(this, event);
 }

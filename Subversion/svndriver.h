@@ -11,6 +11,7 @@
 
 class SvnCmdHandler;
 class SubversionPlugin;
+class SvnIconRefreshHandler;
 
 class SvnDriver : public wxEvtHandler 
 {
@@ -47,8 +48,8 @@ public:
 	///////////////////////////////
 
 	//operations on a single file 
-	void UpdateFile(const wxString &fileName);
-	void CommitFile(const wxString &fileName);
+	void UpdateFile(const wxString &fileName, SvnIconRefreshHandler *handler = NULL);
+	void CommitFile(const wxString &fileName, SvnIconRefreshHandler *handler = NULL);
 	void DiffFile(const wxFileName &fileName);
 	void RevertFile(const wxFileName &fileName);
 

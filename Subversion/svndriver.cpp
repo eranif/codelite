@@ -1,4 +1,5 @@
 #include "svndriver.h"
+#include "svniconrefreshhandler.h"
 #include "wx/tokenzr.h"
 #include "dirsaver.h"
 #include "svndlg.h"
@@ -90,7 +91,8 @@ void SvnDriver::OnSvnProcessTerminated(wxProcessEvent &event) {
 		item = handler->GetItem();
 		callRefresh = true;
 	}
-
+	
+	SvnIconRefreshHandler *iconHandler = m_curHandler->GetIconRefrshHandler();
 	delete m_curHandler;
 	m_curHandler = NULL;
 
@@ -115,7 +117,10 @@ void SvnDriver::OnSvnProcessTerminated(wxProcessEvent &event) {
 
 	} else {
 		//operation completed successfully
-		
+		if(iconHandler) {
+			iconHandler->UpdateIcons();
+			delete iconHandler;
+		}
 	}
 }
 
@@ -252,7 +257,7 @@ void SvnDriver::Commit() {
 	dlg->Destroy();
 }
 
-void SvnDriver::CommitFile(const wxString &fileName) {
+void SvnDriver::CommitFile(const wxString &fileName, SvnIconRefreshHandler *handler) {
 	TRYENTERSVN()
 	wxString command, comment;
 
@@ -280,12 +285,13 @@ void SvnDriver::CommitFile(const wxString &fileName) {
 		command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 		command << wxT("commit ") << fileName << wxT(" -m \"") << comment << wxT("\"");
 		m_curHandler = new SvnCommitCmdHandler(this, command, dummy);
+		m_curHandler->SetIconRefrshHandler(handler);
 		ExecCommand(command);
 	}
 	dlg->Destroy();
 }
 
-void SvnDriver::UpdateFile(const wxString &fileName)
+void SvnDriver::UpdateFile(const wxString &fileName, SvnIconRefreshHandler *handler)
 {
 	TRYENTERSVN()
 
@@ -294,6 +300,7 @@ void SvnDriver::UpdateFile(const wxString &fileName)
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("update ") << file_name ;
 	m_curHandler = new SvnDefaultCmdHandler(this, command);
+	m_curHandler->SetIconRefrshHandler(handler);
 	ExecCommand(command);
 }
 

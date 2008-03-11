@@ -1,5 +1,4 @@
 #include "interactiveprocess.h"
-#include "environmentconfig.h"
 #include "wx/txtstrm.h"
 #include "wx/app.h"
 
@@ -26,9 +25,6 @@ void InteractiveProcess::OnProcessEnd(wxProcessEvent& event)
 {
 	wxUnusedVar(event);
 	m_canUse = false;
-	
-	EnvironmentConfig::Instance()->UnApplyEnv();
-	
 	//read all input before stopping the timer
 	if( !m_stop ){
 		CleanUp();

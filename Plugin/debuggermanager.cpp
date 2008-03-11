@@ -146,6 +146,10 @@ bool DebuggerMgr::LoadDebuggers()
 
 		wxLogMessage(wxT("Loaded debugger: ") + info.name + wxT(", Version: ") + info.version);
 		IDebugger *dbg = pfnInitDbg();
+		
+		//set the environment
+		dbg->SetEnvironment(m_env);
+		
 		m_debuggers[info.name] = dbg;
 
 		//keep the dynamic load library

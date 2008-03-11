@@ -27,7 +27,7 @@ public:
 	 * \param errMsg output
 	 * \return true on success, false otherwise.
 	 */
-	virtual bool Export(const wxString &project, bool isProjectOnly, wxString &errMsg);
+	virtual bool Export(const wxString &project, bool isProjectOnly, bool force, wxString &errMsg);
 	virtual wxString GetBuildCommand(const wxString &project, bool &isCustom);
 	virtual wxString GetCleanCommand(const wxString &project, bool &isCustom);
 	virtual wxString GetPOBuildCommand(const wxString &project, bool &isCustom);
@@ -35,7 +35,7 @@ public:
 	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &fileName, bool &isCustom, wxString &errMsg);
 
 private:
-	void GenerateMakefile(ProjectPtr proj);
+	void GenerateMakefile(ProjectPtr proj, bool force);
 	void CreateConfigsVariables(BuildConfigPtr bldConf, wxString &text);
 	void CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString &targetName, wxString &text);
 	void CreateFileTargets(ProjectPtr proj, wxString &text);

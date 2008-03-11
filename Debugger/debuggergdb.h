@@ -44,6 +44,7 @@ protected:
 	int StartConsole();
 	void DoProcessAsyncCommand(wxString &line, wxString &id);
 	void SetBreakpoints();
+	void OnProcessEndEx(wxProcessEvent &e);
 	
 public:
 	DbgGdb();

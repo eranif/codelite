@@ -34,7 +34,7 @@ BuilderGnuMake::~BuilderGnuMake()
 {
 }
 
-bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, wxString &errMsg)
+bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, bool force, wxString &errMsg)
 {
 	if (project.IsEmpty()) {
 		return false;
@@ -112,7 +112,7 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, wxStrin
 			}
 			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjSelBuildConf(dependProj->GetName());
 
-			GenerateMakefile(dependProj);
+			GenerateMakefile(dependProj, force);
 			wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, dependProj->GetName());
 			args = wxT("type=");
 			args << NormalizeConfigName(projectSelConf) << wxT(" ");
@@ -127,7 +127,7 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, wxStrin
 	}
 	
 	//generate makefile for the project itself
-	GenerateMakefile(proj);
+	GenerateMakefile(proj, force);
 	wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, project);
 	args = wxT("type=");
 	args << NormalizeConfigName(projectSelConf) << wxT(" ");
@@ -181,15 +181,8 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, wxStrin
 	return true;
 }
 
-void BuilderGnuMake::GenerateMakefile(ProjectPtr proj)
+void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, bool force)
 {
-	if(proj->IsModified() == false) {
-	//	wxPrintf(wxT("Export SKIPPED for project ...%s\n"), proj->GetName().GetData() );
-		return;
-	}else{
-	//	wxPrintf(wxT("Export is called for project ...%s\n"), proj->GetName().GetData() );
-	}
-	
 	ProjectSettingsPtr settings = proj->GetSettings();
 	if (!settings) {
 		return;
@@ -211,7 +204,16 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj)
 	//create new makefile file
 	wxString fn(path);
 	fn << PATH_SEP << proj->GetName() << wxT(".mk");
-
+	
+	//skip the next test if the makefile does not exist
+	if(wxFileName::FileExists( fn )) {
+		if(!force) {
+			if(proj->IsModified() == false) {
+				return;
+			}
+		}
+	}
+	
 	//generate the selected configuration for this project
 	//wxTextOutputStream text(output);
 	wxString text;
@@ -231,11 +233,11 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj)
 	for (; iter != varMap.end(); iter++) {
 		wxString name = iter->first;
 		wxString value = iter->second;
-		text << name << wxT("=") << value << wxT("") << wxT("\n");
+		text << name << wxT(":=") << value << wxT("") << wxT("\n");
 	}
 	
 	//create a variable for the project name as well
-	text << wxT("ProjectName=") << proj->GetName() << wxT("\n");
+	text << wxT("ProjectName:=") << proj->GetName() << wxT("\n");
 	text << wxT("\n");
 
 	CreateConfigsVariables(bldConf, text);
@@ -573,45 +575,45 @@ void BuilderGnuMake::CreateConfigsVariables(BuildConfigPtr bldConf, wxString &te
 	text << wxT("## ") << name << wxT("\n");
 	text << wxT("ifeq ($(type),") << name << wxT(")") << wxT("\n");
 	//The following two variables are here for compatibility with MSVS
-	text << wxT("ConfigurationName=") << name << wxT("\n");
-	text << wxT("IntermediateDirectory") << wxT("=") << bldConf->GetIntermediateDirectory() << wxT("\n");
-	text << wxT("OutDir=$(IntermediateDirectory)\n");
-	text << wxT("LinkerName=") << cmp->GetTool(wxT("LinkerName")) << wxT("\n");
-	text << wxT("ArchiveTool=") << cmp->GetTool(wxT("ArchiveTool")) << wxT("\n");
-	text << wxT("SharedObjectLinkerName=") << cmp->GetTool(wxT("SharedObjectLinkerName")) << wxT("\n");
-	text << wxT("ObjectSuffix=") << cmp->GetObjectSuffix() << wxT("\n");
-	text << wxT("DebugSwitch=") << cmp->GetSwitch(wxT("Debug")) << wxT("\n");
-	text << wxT("IncludeSwitch=") << cmp->GetSwitch(wxT("Include")) << wxT("\n");
-	text << wxT("LibrarySwitch=") << cmp->GetSwitch(wxT("Library")) << wxT("\n");
-	text << wxT("OutputSwitch=") << cmp->GetSwitch(wxT("Output")) << wxT("\n");
-	text << wxT("LibraryPathSwitch=") << cmp->GetSwitch(wxT("LibraryPath")) << wxT("\n");
-	text << wxT("PreprocessorSwitch=") << cmp->GetSwitch(wxT("Preprocessor")) << wxT("\n");
-	text << wxT("SourceSwitch=") << cmp->GetSwitch(wxT("Source")) << wxT("\n");
-	text << wxT("CompilerName") << wxT("=") << cmp->GetTool(wxT("CompilerName")) << wxT("\n");
-	text << wxT("RcCompilerName") << wxT("=") << cmp->GetTool(wxT("ResourceCompiler")) << wxT("\n");
-	text << wxT("OutputFile") << wxT("=") << bldConf->GetOutputFileName() << wxT("\n");
-	text << wxT("Preprocessors=") << ParsePreprocessor(bldConf->GetPreprocessor()) << wxT("\n");
-	text << wxT("ObjectSwitch=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
-	text << wxT("ArchiveOutputSwitch=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
+	text << wxT("ConfigurationName :=") << name << wxT("\n");
+	text << wxT("IntermediateDirectory :=") << bldConf->GetIntermediateDirectory() << wxT("\n");
+	text << wxT("OutDir := $(IntermediateDirectory)\n");
+	text << wxT("LinkerName:=") << cmp->GetTool(wxT("LinkerName")) << wxT("\n");
+	text << wxT("ArchiveTool :=") << cmp->GetTool(wxT("ArchiveTool")) << wxT("\n");
+	text << wxT("SharedObjectLinkerName :=") << cmp->GetTool(wxT("SharedObjectLinkerName")) << wxT("\n");
+	text << wxT("ObjectSuffix :=") << cmp->GetObjectSuffix() << wxT("\n");
+	text << wxT("DebugSwitch :=") << cmp->GetSwitch(wxT("Debug")) << wxT("\n");
+	text << wxT("IncludeSwitch :=") << cmp->GetSwitch(wxT("Include")) << wxT("\n");
+	text << wxT("LibrarySwitch :=") << cmp->GetSwitch(wxT("Library")) << wxT("\n");
+	text << wxT("OutputSwitch :=") << cmp->GetSwitch(wxT("Output")) << wxT("\n");
+	text << wxT("LibraryPathSwitch :=") << cmp->GetSwitch(wxT("LibraryPath")) << wxT("\n");
+	text << wxT("PreprocessorSwitch :=") << cmp->GetSwitch(wxT("Preprocessor")) << wxT("\n");
+	text << wxT("SourceSwitch :=") << cmp->GetSwitch(wxT("Source")) << wxT("\n");
+	text << wxT("CompilerName :=") << cmp->GetTool(wxT("CompilerName")) << wxT("\n");
+	text << wxT("RcCompilerName :=") << cmp->GetTool(wxT("ResourceCompiler")) << wxT("\n");
+	text << wxT("OutputFile :=") << bldConf->GetOutputFileName() << wxT("\n");
+	text << wxT("Preprocessors :=") << ParsePreprocessor(bldConf->GetPreprocessor()) << wxT("\n");
+	text << wxT("ObjectSwitch :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
+	text << wxT("ArchiveOutputSwitch :=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
 	
 	wxString buildOpts = bldConf->GetCompileOptions();
 	buildOpts.Replace(wxT(";"), wxT(" "));
-	text << wxT("CmpOptions") << wxT("=") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");
+	text << wxT("CmpOptions :=") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");
 
 
 	wxString rcBuildOpts = bldConf->GetResCompileOptions();
 	rcBuildOpts.Replace(wxT(";"), wxT(" "));
-	text << wxT("RcCmpOptions") << wxT("=") << rcBuildOpts << wxT("\n");
+	text << wxT("RcCmpOptions :=") << rcBuildOpts << wxT("\n");
 
 	wxString linkOpt = bldConf->GetLinkOptions();
 	linkOpt.Replace(wxT(";"), wxT(" "));
 
 	//link options are kept with semi-colons, strip them
-	text << wxT("LinkOptions") << wxT("=") << linkOpt << wxT("\n");
-	text << wxT("IncludePath=") << ParseIncludePath(bldConf->GetIncludePath()) << wxT("\n");
-	text << wxT("RcIncludePath=") << ParseIncludePath(bldConf->GetResCmpIncludePath()) << wxT("\n");
-	text << wxT("Libs=") << ParseLibs(bldConf->GetLibraries()) << wxT("\n");
-	text << wxT("LibPath=") << ParseLibPath(bldConf->GetLibPath()) << wxT("\n");
+	text << wxT("LinkOptions := ") << linkOpt << wxT("\n");
+	text << wxT("IncludePath := ") << ParseIncludePath(bldConf->GetIncludePath()) << wxT("\n");
+	text << wxT("RcIncludePath :=") << ParseIncludePath(bldConf->GetResCmpIncludePath()) << wxT("\n");
+	text << wxT("Libs :=") << ParseLibs(bldConf->GetLibraries()) << wxT("\n");
+	text << wxT("LibPath :=") << ParseLibPath(bldConf->GetLibPath()) << wxT("\n");
 	text << wxT("endif\n\n");
 }
 
@@ -705,7 +707,7 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, bool &isCustom
 	}
 	
 	//generate the makefile
-	Export(project, false, errMsg);
+	Export(project, false, false, errMsg);
 	
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
@@ -733,7 +735,7 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString &project, bool &isCustom
 	}
 
 	//generate the makefile
-	Export(project, false, errMsg);
+	Export(project, false, false, errMsg);
 	
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
@@ -761,7 +763,7 @@ wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project, bool &isCust
 	}
 	
 	//generate the makefile
-	Export(project, true, errMsg);
+	Export(project, true, false, errMsg);
 	
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
@@ -791,7 +793,7 @@ wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project, bool &isCust
 	}
 	
 	//generate the makefile
-	Export(project, true, errMsg);
+	Export(project, true, false, errMsg);
 	
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
@@ -818,7 +820,7 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 	}
 	
 	//generate the makefile
-	Export(project, true, errMsg);
+	Export(project, true, false, errMsg);
 
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);

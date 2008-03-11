@@ -135,12 +135,12 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 	if (m_proc) {
 		
 		//set the environment variables
-		EnvironmentConfig::Instance()->ApplyEnv();
+		m_env->ApplyEnv();
 		
 		if (m_proc->Start() == 0) {
 			
 			//set the environment variables
-			EnvironmentConfig::Instance()->UnApplyEnv();
+			m_env->UnApplyEnv();
 		
 			//failed to start the debugger
 			delete m_proc;
@@ -149,7 +149,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 		}
 
 		Connect(wxEVT_TIMER, wxTimerEventHandler(DbgGdb::OnTimer), NULL, this);
-		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(DbgGdb::OnProcessEnd), NULL, this);
+		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(DbgGdb::OnProcessEndEx), NULL, this);
 		m_canUse = true;
 		m_timer->Start(10);
 		wxWakeUpIdle();
@@ -227,10 +227,18 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 		//project settings
 		DirKeeper keeper;
 		wxSetWorkingDirectory(cwd);
+		
+		//set the environment variables
+		m_env->ApplyEnv();
+		
 		if (m_proc->Start() == 0) {
 			//failed to start the debugger
 			delete m_proc;
 			SetBusy(false);
+			
+			//Unset the environment variables
+			m_env->UnApplyEnv();
+			
 			return false;
 		}
 
@@ -760,6 +768,12 @@ bool DbgGdb::SelectThread(long threadId)
 	wxString command;
 	command << wxT("-thread-select ") << threadId;
 	return WriteCommand(command, NULL);
+}
+
+void DbgGdb::OnProcessEndEx(wxProcessEvent &e)
+{
+	InteractiveProcess::OnProcessEnd(e);
+	m_env->UnApplyEnv();
 }
 
 

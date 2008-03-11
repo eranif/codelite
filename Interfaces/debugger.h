@@ -74,6 +74,7 @@ public:
 
 
 class IDebuggerObserver;
+class EnvironmentConfig;
 
 //-------------------------------------------------------
 // The debugger interface
@@ -95,12 +96,15 @@ class IDebugger
 protected:
 	IDebuggerObserver *m_observer;
 	DebuggerInformation m_info;
+	EnvironmentConfig *m_env;
+	
 public:
-	IDebugger(){};
+	IDebugger() : m_env(NULL) {};
 	virtual ~IDebugger(){};
 	virtual void AddObserver(IDebuggerObserver *observer) { m_observer = observer; }
 	virtual IDebuggerObserver *GetObserver(){return m_observer;}
-
+	virtual void SetEnvironment(EnvironmentConfig *env){m_env = env;}
+	
 	// Debugger operations
 	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList) = 0;
 	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList) = 0;

@@ -81,7 +81,7 @@ public:
 	 * \param errMsg output
 	 * \return true on success, false otherwise.
 	 */
-	virtual bool Export(const wxString &project, bool isProjectOnly, wxString &errMsg) = 0;
+	virtual bool Export(const wxString &project, bool isProjectOnly, bool force, wxString &errMsg) = 0;
 
 	/** 
 	 * Return the command that should be executed for performing the clean

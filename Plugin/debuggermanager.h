@@ -10,6 +10,8 @@
 #include "serialized_object.h"
 #include "dynamiclibrary.h"
 
+class EnvironmentConfig;
+
 class DebuggersData : public SerializedObject
 {
 private:
@@ -21,7 +23,7 @@ public:
 
 	bool GetDebuggerInformation(const wxString &name, DebuggerInformation &info);
 	void SetDebuggerInformation(const wxString &name, const DebuggerInformation &info);
-
+	
 	void Serialize(Archive &arc);
 	void DeSerialize(Archive &arc);
 };
@@ -35,6 +37,7 @@ class DebuggerMgr
 	wxEvtHandler *m_parent;
 	std::vector<BreakpointInfo> m_bps;
 	DebuggersData m_debuggersData;
+	EnvironmentConfig *m_env;
 	
 private:
 	DebuggerMgr();
@@ -47,10 +50,11 @@ public:
 	 * equivalent to $(HOME)/.liteeditor/, and on windows it is set
 	 * to C:\Program Files\LiteEditor\
 	 */
-	void Initialize(wxEvtHandler *parent, const wxString &dir) 
+	void Initialize(wxEvtHandler *parent, EnvironmentConfig *env, const wxString &dir) 
 	{ 
 		m_baseDir = dir; 
 		m_parent = parent;
+		m_env = env;
 	}
 
 	/**

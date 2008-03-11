@@ -409,7 +409,7 @@ void FileViewTree::OnExportMakefile( wxCommandEvent &event )
 		//TODO:: make the builder name configurable
 		BuilderPtr builder = BuildManagerST::Get()->GetBuilder( wxT( "GNU makefile for g++/gcc" ) );
 		projectName = GetItemText( item );
-		if ( !builder->Export( projectName, false, errMsg ) ) {
+		if ( !builder->Export( projectName, false, true, errMsg ) ) {
 			wxMessageBox( errMsg, wxT( "CodeLite" ), wxICON_HAND );
 			return;
 		}

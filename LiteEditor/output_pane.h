@@ -50,6 +50,7 @@ public:
 	ShellTab *m_outputDebug;
 	BuildTab *m_buildWin;
 	FindResultsContainer *m_findResultsTab;
+	int m_fifTabToUse;
 	
 private:
 	void CreateGUIControls();

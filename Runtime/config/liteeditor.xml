@@ -41,32 +41,35 @@
     <long Value="1" Name="m_value"/>
   </ArchiveObject>
   <RecentWorkspaces>
-    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
-    <File Name="C:\TestArea\1234\stam.workspace"/>
-    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\TestOne.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/Plugins.workspace"/>
     <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/Plugins.workspace"/>
+    <File Name="C:\TestArea\TestOne.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
+    <File Name="C:\TestArea\1234\stam.workspace"/>
+    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
   </RecentWorkspaces>
   <RecentFiles>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\frame.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\interactiveprocess.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\debuggermanager.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Interfaces\debugger.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\Debugger\debuggergdb.cpp"/>
-    <File Name="/home/eran/devl/codelite/trunk/CodeFormatter/CodeFormatter.project"/>
-    <File Name="/tmp/Diff"/>
-    <File Name="/home/eran/devl/codelite/trunk/CodeFormatter/CodeFormatter.mk"/>
     <File Name="/home/eran/devl/codelite/trunk/CodeLite/CodeLite.mk"/>
+    <File Name="/home/eran/devl/codelite/trunk/CodeFormatter/CodeFormatter.mk"/>
+    <File Name="/tmp/Diff"/>
+    <File Name="/home/eran/devl/codelite/trunk/CodeFormatter/CodeFormatter.project"/>
+    <File Name="C:\Development\C++\codelite\trunk\Debugger\debuggergdb.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\Interfaces\debugger.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugin\debuggermanager.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugin\interactiveprocess.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\frame.cpp"/>
   </RecentFiles>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="917" y="725"/>
-    <wxPoint Name="m_framePos" x="251" y="37"/>
+    <wxPoint Name="m_framePos" x="181" y="135"/>
     <long Value="14" Name="m_flags"/>
   </ArchiveObject>
   <ArchiveObject Name="FindInFilesData">
     <wxArrayString Name="m_findString">
+      <wxString Value="findresultstab"/>
+      <wxString Value="wxString"/>
+      <wxString Value="wxFlatNotebook"/>
       <wxString Value="main"/>
       <wxString Value="CreateDebuggerGDB"/>
     </wxArrayString>

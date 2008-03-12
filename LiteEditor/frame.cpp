@@ -1284,10 +1284,6 @@ void Frame::ClosePage(LEditor *editor, bool notify, int index, bool doDelete, bo
 
 void Frame::OnSearchThread(wxCommandEvent &event)
 {
-	// make sure that the output pane is visible and selection
-	// is set to the 'Find In Files' tab
-	ManagerST::Get()->ShowOutputPane(OutputPane::FIND_IN_FILES_WIN);
-
 	m_outputPane->GetFindResultsTab()->CanFocus(false);
 	if ( event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
 		SearchResultList *res = (SearchResultList*)event.GetClientData();
@@ -1302,7 +1298,10 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
 		m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
 	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
-		
+		// make sure that the output pane is visible and selection
+		// is set to the 'Find In Files' tab
+		ManagerST::Get()->ShowOutputPane(OutputPane::FIND_IN_FILES_WIN);
+
 		//set the request find results tab to use
 		GetOutputPane()->SetFindResultsTab(event.GetInt());
 		

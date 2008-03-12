@@ -20,6 +20,7 @@ OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300))
 , m_caption(caption)
 , m_logTargetOld(NULL)
+, m_fifTabToUse(0)
 {
 	CreateGUIControls();	 
 }
@@ -101,10 +102,11 @@ int OutputPane::CaptionToIndex(const wxString &caption)
 
 FindResultsTab* OutputPane::GetFindResultsTab()
 {
-	return m_findResultsTab->GetActiveTab();
+	return (FindResultsTab*)m_findResultsTab->GetNotebook()->GetPage((size_t)m_fifTabToUse);
 }
 
 void OutputPane::SetFindResultsTab(int which)
 {
+	m_fifTabToUse = which;
 	m_findResultsTab->SetActiveTab(which);
 }

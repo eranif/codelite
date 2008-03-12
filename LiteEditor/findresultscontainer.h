@@ -17,5 +17,7 @@ public:
 	
 	FindResultsTab *GetActiveTab();
 	void SetActiveTab(int selection);
+	
+	wxFlatNotebook *GetNotebook(){return m_book;}
 };
 #endif // __findresultscontainer__

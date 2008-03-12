@@ -154,6 +154,10 @@ void SearchThread::DoSearchFiles(ThreadRequest *req)
 			message << wxT("false; ======");
 		}
 		event.SetString(message);
+		
+		//set the rquested output tab
+		event.SetInt(data->GetOutputTab());
+		
 		::wxPostEvent(m_notifiedWindow, event);
 	}
 

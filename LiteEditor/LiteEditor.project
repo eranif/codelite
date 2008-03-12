@@ -244,6 +244,8 @@
     <File Name="findresultstab.h"/>
     <File Name="shelltab.h"/>
     <File Name="shelltab.cpp"/>
+    <File Name="findresultscontainer.cpp"/>
+    <File Name="findresultscontainer.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

@@ -1,3 +1,4 @@
+#include "wx/choice.h"
 #include "findinfilesdlg.h"
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
@@ -120,6 +121,20 @@ void FindInFilesDialog::CreateGUIControls()
 								2, options, wxCB_DROPDOWN);
 	sz->Add(m_fileTypes, 0, wxEXPAND | wxALL, 5);
 
+	itemStaticText = new wxStaticText( this, wxID_STATIC, wxT("Display search results in tab:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
+	sz->Add(itemStaticText, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5 );
+	
+	wxArrayString tabs;
+	tabs.Add(wxT("Find Results 1"));
+	tabs.Add(wxT("Find Results 2"));
+	tabs.Add(wxT("Find Results 3"));
+	tabs.Add(wxT("Find Results 4"));
+	tabs.Add(wxT("Find Results 5"));
+	
+	m_searchResultsTab = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tabs);
+	sz->Add(m_searchResultsTab, 0, wxEXPAND | wxALL, 5 );
+	m_searchResultsTab->SetStringSelection(wxT("Find Results 1"));
+	
 	// Add the buttons
 	m_find = new wxButton(this, wxID_ANY, wxT("&Find"));
 	btnSizer->Add(m_find, 1, wxALL | wxEXPAND, 5 ); 
@@ -173,7 +188,10 @@ void FindInFilesDialog::DoSearch()
 		ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
 		data.SetFiles(files);
 	}
+	
+	data.SetOutputTab( m_searchResultsTab->GetSelection() );
 	data.SetExtensions(m_fileTypes->GetValue());
+	
 	// Convert file types to array
 	SearchThreadST::Get()->PerformSearch(data);
 }

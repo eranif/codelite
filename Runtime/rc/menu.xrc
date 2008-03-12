@@ -210,9 +210,7 @@
             <object class="wxMenuItem" name="find_previous">
                 <label>Find &amp;Previous\tShift+F3</label>
             </object>
-            
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            
             <object class="wxMenuItem" name="find_resource">
                 <label>Find Re&amp;source...\tCtrl+Shift+R</label>
             </object>

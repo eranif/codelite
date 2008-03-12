@@ -10,6 +10,7 @@ class wxButton;
 class wxStaticText;
 class DirPicker;
 class wxComboBox;
+class wxChoice;
 
 extern const wxEventType wxEVT_FIF_FIND;
 extern const wxEventType wxEVT_FIF_STOP;
@@ -28,7 +29,8 @@ class FindInFilesDialog : public wxDialog
 	wxCheckBox *m_regualrExpression;
 	DirPicker *m_dirPicker;
 	wxComboBox *m_fileTypes;
-
+	wxChoice *m_searchResultsTab;
+	
 	// Buttons
 	wxButton *m_find;
 	wxButton *m_stop;

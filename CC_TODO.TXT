@@ -7,3 +7,7 @@
 - update the SVN options dialog:
 	+ remove obsolete options
 	+ add svn file masking
+	+ add option to set third part diff tool
+- Fix CC for files, by adding new table in the database which include all files scanned by CL
+- Replace SVN icons - they are too ugly ;)
+- Fix bug in 'Replace' which may recurse into itself

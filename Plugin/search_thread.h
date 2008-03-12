@@ -38,7 +38,8 @@ class WXDLLIMPEXP_LE_SDK SearchData : public ThreadRequest
 	int m_flags;
 	wxString m_validExt;
 	wxArrayString m_files;
-
+	int m_outputTab;
+	
 private:
 	// An internal helper function that set/remove an option bit
 	void SetOption(int option, bool set){
@@ -56,15 +57,7 @@ public:
 		, m_rootDir(wxEmptyString)
 		, m_findString(wxEmptyString) 
 		, m_flags(0)
-	{}
-
-	SearchData(const wxString &rootDir, const wxString &findString, const int flags, const wxString &exts, const wxArrayString &files)
-		: ThreadRequest()
-		, m_rootDir(rootDir)
-		, m_findString(findString)
-		, m_flags(flags)
-		, m_validExt(exts)
-		, m_files(files)
+		, m_outputTab(0)
 	{}
 
 	SearchData(const SearchData &rhs){
@@ -83,6 +76,7 @@ public:
 		m_validExt = rhs.m_validExt;
 		m_rootDir = rhs.m_rootDir;
 		m_files = rhs.m_files;
+		m_outputTab = rhs.m_outputTab;
 		return *this;
 	}
 	
@@ -104,6 +98,8 @@ public:
 	void SetFindString(const wxString &findString){ m_findString = findString; }
 	void SetFiles(const wxArrayString &files){m_files = files;}
 	const wxArrayString &GetFiles() const{return m_files;}
+	void SetOutputTab(const int& outputTab) {this->m_outputTab = outputTab;}
+	const int& GetOutputTab() const {return m_outputTab;}
 };
 
 //------------------------------------------

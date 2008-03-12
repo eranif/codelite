@@ -26,7 +26,9 @@
       <wxString Value="_T"/>
       <wxString Value="ATTRIBUTE_PRINTF_1"/>
       <wxString Value="ATTRIBUTE_PRINTF_2"/>
-	<wxString Value="WXDLLIMPEXP_FWD_BASE"/>  
+	  <wxString Value="WXDLLIMPEXP_FWD_BASE"/>  
+	  <wxString Value="DLLIMPORT"/>  
+	  <wxString Value="DECLARE_INSTANCE_TYPE"/>  
     </wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">

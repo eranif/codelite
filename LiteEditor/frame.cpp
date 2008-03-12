@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "wx/numdlg.h"
 #include "environmentconfig.h"
 #include "shell_window.h"
 #include "findresultstab.h"
@@ -1301,12 +1302,19 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
 		m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
 	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
+		
+		//set the request find results tab to use
+		GetOutputPane()->SetFindResultsTab(event.GetInt());
+		
 		m_outputPane->GetFindResultsTab()->Clear();
 		m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
+		
 	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
+		
 		SearchSummary *summary = (SearchSummary*)event.GetClientData();
 		m_outputPane->GetFindResultsTab()->AppendText(summary->GetMessage() + wxT("\n"));
 		delete summary;
+		
 	}
 	m_outputPane->GetFindResultsTab()->CanFocus(true);
 }
@@ -2608,3 +2616,5 @@ void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 	e.Enable(true);
 	e.Check(m_frameGeneralInfo.GetFlags() & CL_SHOW_EOL ? true : false);
 }
+
+

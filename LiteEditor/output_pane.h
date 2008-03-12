@@ -12,6 +12,7 @@ class OutputPane;
 class ShellWindow;
 class BuildTab;
 class FindResultsTab;
+class FindResultsContainer;
 
 /**
  * \ingroup LiteEditor
@@ -48,7 +49,7 @@ public:
 	wxLog *m_logTargetOld;
 	ShellTab *m_outputDebug;
 	BuildTab *m_buildWin;
-	FindResultsTab *m_findResultsTab;
+	FindResultsContainer *m_findResultsTab;
 	
 private:
 	void CreateGUIControls();
@@ -82,7 +83,8 @@ public:
 	ShellWindow *GetOutputWindow() {return m_outputWind->GetShell();}
 	ShellWindow *GetDebugWindow() {return m_outputDebug->GetShell();}
 	BuildTab *GetBuildTab() {return m_buildWin;}
-	FindResultsTab *GetFindResultsTab() {return m_findResultsTab;}
+	FindResultsTab *GetFindResultsTab();
+	void SetFindResultsTab(int which);
 };
 
 #endif // OUTPUT_PANE_H

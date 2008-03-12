@@ -1,4 +1,5 @@
 #include "output_pane.h"
+#include "findresultscontainer.h"
 #include "findresultstab.h"
 #include <wx/xrc/xmlres.h>
 #include "wx/wxFlatNotebook/wxFlatNotebook.h"
@@ -55,7 +56,7 @@ void OutputPane::CreateGUIControls()
 	m_book->SetImageList( &m_images );
 
 	// Create the tabs
-	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN);
+	m_findResultsTab = new FindResultsContainer(m_book, wxID_ANY);
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
 	m_outputDebug = new ShellTab(m_book, wxID_ANY, OUTPUT_DEBUG);
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
@@ -98,3 +99,12 @@ int OutputPane::CaptionToIndex(const wxString &caption)
 	return wxNOT_FOUND;
 }
 
+FindResultsTab* OutputPane::GetFindResultsTab()
+{
+	return m_findResultsTab->GetActiveTab();
+}
+
+void OutputPane::SetFindResultsTab(int which)
+{
+	m_findResultsTab->SetActiveTab(which);
+}

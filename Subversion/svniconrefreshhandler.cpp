@@ -16,6 +16,9 @@ typedef std::map< wxString, ProjectIconInfo > ProjectIconInfoMap;
 extern int ProjectModifiedIconId;
 extern int ProjectConflictIconId;
 extern int ProjectOkIconId;
+extern int WorkspaceModifiedIconId;
+extern int WorkspaceConflictIconId;
+extern int WorkspaceOkIconId;
 
 SvnIconRefreshHandler::SvnIconRefreshHandler(IManager *mgr, SubversionPlugin *plugin)
 		: m_mgr(mgr)
@@ -115,7 +118,7 @@ void SvnIconRefreshHandler::UpdateIcons()
 		return;
 	}
 
-	int wspImgId(ProjectOkIconId);
+	int wspImgId(WorkspaceOkIconId);
 	wxTreeItemIdValue cookie;
 	wxTreeItemId child = tree->GetFirstChild(root, cookie);
 	while ( child.IsOk() ) {
@@ -129,13 +132,13 @@ void SvnIconRefreshHandler::UpdateIcons()
 				switch (info.state) {
 				case SvnXmlParser::StateConflict:
 					imgId = ProjectConflictIconId;
-					wspImgId = ProjectConflictIconId;
+					wspImgId = WorkspaceConflictIconId;
 					break;
 
 				case SvnXmlParser::StateModified:
 					imgId = ProjectModifiedIconId;
-					if (wspImgId != ProjectConflictIconId) {
-						wspImgId = ProjectModifiedIconId;
+					if (wspImgId != WorkspaceConflictIconId) {
+						wspImgId = WorkspaceModifiedIconId;
 					}
 					break;
 

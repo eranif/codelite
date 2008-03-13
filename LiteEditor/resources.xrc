@@ -10,7 +10,7 @@
     <object class="wxBitmap" name="enumerator">res/enumee.xpm</object>  
     <object class="wxBitmap" name="class">res/class.png</object>    
     <object class="wxBitmap" name="typedef">res/typedef.xpm</object>     
-    <object class="wxBitmap" name="project">res/cubes_blue.png</object>
+    <object class="wxBitmap" name="project">res/cubes_yellow.png</object>
 	<object class="wxBitmap" name="globals">res/cube_green.png</object>
     <object class="wxBitmap" name="namespace">res/namespace.png</object>   
     <object class="wxBitmap" name="struct">res/but_green_s.png</object>  
@@ -157,7 +157,10 @@
 	<object class="wxBitmap" name="ref_analyzer_settings16">res/16/ref_anaylzer_settings24.png</object>	
 	
 	<!-- Svn icons -->
-	<object class="wxBitmap" name="project_modified">res/cubes_red.png</object>
-	<object class="wxBitmap" name="project_ok">res/cubes_green.png</object>
+	<object class="wxBitmap" name="project_modified">res/cubes_yellow_modified.png</object>
+	<object class="wxBitmap" name="workspace_modified">res/cubes_modified.png</object>
+	<object class="wxBitmap" name="project_ok">res/cubes_yellow_ok.png</object>
+	<object class="wxBitmap" name="workspace_ok">res/cubes_ok.png</object>
 	<object class="wxBitmap" name="project_conflict">res/error.png</object>
+	<object class="wxBitmap" name="workspace_conflict">res/error.png</object>
 </resource>

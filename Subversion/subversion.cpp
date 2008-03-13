@@ -25,6 +25,9 @@
 int ProjectConflictIconId 	= wxNOT_FOUND;
 int ProjectModifiedIconId 	= wxNOT_FOUND;
 int ProjectOkIconId 		= wxNOT_FOUND;
+int WorkspaceModifiedIconId = wxNOT_FOUND;
+int WorkspaceConflictIconId = wxNOT_FOUND;
+int WorkspaceOkIconId 		= wxNOT_FOUND;
 
 static void WriteFile(const wxString &fileName, const wxString &content)
 {
@@ -143,6 +146,10 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		ProjectModifiedIconId 	= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_modified")));
 		ProjectConflictIconId 	= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")));
 		ProjectOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_ok")));
+		
+		WorkspaceModifiedIconId = tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace_modified")));
+		WorkspaceConflictIconId 	= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace_conflict")));
+		WorkspaceOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace_ok")));
 	}
 }
 

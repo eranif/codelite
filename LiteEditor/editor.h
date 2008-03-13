@@ -66,6 +66,7 @@ class LEditor : public wxScintilla, public IEditor
 	bool m_popupIsOn;
 	time_t m_modifyTime;
 	std::map<int, wxString> m_customCmds;
+	bool m_resetSearch;
 	
 public:
 	static FindReplaceData &GetFindReplaceData(){return m_findReplaceData;}

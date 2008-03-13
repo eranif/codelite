@@ -1,4 +1,4 @@
-#include "editor.h" 
+#include "editor.h"
 #include "precompiled_header.h"
 #include "colourrequest.h"
 #include "colourthread.h"
@@ -63,7 +63,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_UPDATE_UI(XRCID("setters_getters"), LEditor::OnPopupMenuUpdateUI)
 	EVT_UPDATE_UI(XRCID("find_decl"), LEditor::OnPopupMenuUpdateUI)
 	EVT_UPDATE_UI(XRCID("find_impl"), LEditor::OnPopupMenuUpdateUI)
-//	EVT_UPDATE_UI(XRCID("move_impl"), LEditor::OnPopupMenuUpdateUI)
+	//	EVT_UPDATE_UI(XRCID("move_impl"), LEditor::OnPopupMenuUpdateUI)
 
 	// Find and replace dialog
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_FIND_NEXT, LEditor::OnFindDialog)
@@ -96,6 +96,7 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 		, m_lastMatchPos(0)
 		, m_popupIsOn(false)
 		, m_modifyTime(0)
+		, m_resetSearch(false)
 {
 	Show(!hidden);
 	ms_bookmarkShapes[wxT("Small Rectangle")] = wxSCI_MARK_SMALLRECT;
@@ -147,7 +148,7 @@ void LEditor::SetProperties()
 	m_rightClickMenu = m_context->GetMenu();
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	CallTipUseStyle(1);
-	
+
 	SetMouseDwellTime(250);
 	SetProperty(wxT("fold"), wxT("1"));
 	SetProperty(wxT("fold.html"), wxT("1"));
@@ -199,7 +200,7 @@ void LEditor::SetProperties()
 	// Separators
 	SetMarginType(SEP_MARGIN_ID, wxSCI_MARGIN_FORE);
 	SetMarginMask(SEP_MARGIN_ID, 0);
-	
+
 	// Fold margin - allow only folder symbols to display
 	SetMarginMask(FOLD_MARGIN_ID, wxSCI_MASK_FOLDERS);
 
@@ -294,10 +295,10 @@ void LEditor::SetProperties()
 	MarkerSetForeground(0x9, wxT("BLACK"));
 
 	// calltip settings
-/*	CallTipUseStyle(1);
-	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	StyleSetFont(wxSCI_STYLE_CALLTIP, font);*/	
-	
+	/*	CallTipUseStyle(1);
+		wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+		StyleSetFont(wxSCI_STYLE_CALLTIP, font);*/
+
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 
@@ -307,18 +308,18 @@ void LEditor::SetProperties()
 	SetBackSpaceUnIndents (true);
 	SetUseTabs (options->GetIndentUsesTabs());
 	SetLayoutCache(wxSCI_CACHE_DOCUMENT);
-	
+
 	size_t frame_flags = Frame::Get()->GetFrameGeneralInfo().GetFlags();
 	int eolMode (wxSCI_EOL_LF);	//default it to unix
 	if (frame_flags & CL_USE_EOL_CR) {
 		eolMode = wxSCI_EOL_CR;
-	} else if(frame_flags & CL_USE_EOL_CRLF) {
+	} else if (frame_flags & CL_USE_EOL_CRLF) {
 		eolMode = wxSCI_EOL_CRLF;
 	}
-	
+
 	SetEOLMode(eolMode);
 	SetViewEOL(frame_flags & CL_SHOW_EOL ? true : false);
-	
+
 	//if no right click menu is provided by the context, use scintilla default
 	//right click menu
 	UsePopUp(m_rightClickMenu ? false : true);
@@ -485,7 +486,7 @@ bool LEditor::SaveFile()
 
 			//the previous call 'stole' the focus from us...
 			ParseThreadST::Get()->Add(req);
-			
+
 			UpdateColours();
 			SetActive();
 		}
@@ -584,7 +585,7 @@ void LEditor::OpenFile(const wxString &fileName, const wxString &project)
 	//update breakpoints
 	UpdateBreakpoints();
 	SetCaretAt(0);
-	
+
 	UpdateColours();
 }
 
@@ -673,12 +674,12 @@ void LEditor::GotoPreviousDefintion()
 void LEditor::OnDwellStart(wxScintillaEvent & event)
 {
 	Manager *mgr = ManagerST::Get();
-	if(mgr->DbgCanInteract()){
+	if (mgr->DbgCanInteract()) {
 		//debugger is running and responsive, query it about the current token
 		if (!IsContextMenuOn()) {
 			m_context->OnDbgDwellStart(event);
 		}
-	}else{
+	} else {
 		if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_TYPE_INFO) {
 			//if context menu is on, dont allow it
 			if (!IsContextMenuOn()) {
@@ -1083,33 +1084,38 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 {
 	bool dirDown = ! (data.GetFlags() & wxFRD_SEARCHUP ? true : false);
 	int flags = GetSciSearchFlag(data);
+
+	if(m_resetSearch) {
+		m_lastMatchPos = GetCurrentPos();
+		m_resetSearch = false;
+	}
 	int pos = FindString(data.GetFindString(), flags, dirDown, m_lastMatchPos);
 	if (pos >= 0) {
 		EnsureCaretVisible();
 		SetSelection (pos, pos + (int)data.GetFindString().Length());
 
-		if ( dirDown ) {
-			m_lastMatchPos = PositionAfter(pos);
+		if ( !dirDown ) {
+			m_lastMatchPos = GetCurrentPos() - data.GetFindString().Length();
 		} else {
-			m_lastMatchPos = PositionBefore(pos);
+			m_lastMatchPos = GetCurrentPos();
 		}
+
 		//adjust the dialog position
-		if(m_findReplaceDlg && m_findReplaceDlg->IsShown()){
+		if (m_findReplaceDlg && m_findReplaceDlg->IsShown()) {
 			wxPoint pt = PointFromPosition(pos);
 			//pt is in wxScintilla coordinates, need to convert them into
 			//the frame coordinates
 			wxPoint displayPt = ClientToScreen(pt);
-			
+
 			//check if this point is placed inside the dialog area
 			wxRect rr = m_findReplaceDlg->GetScreenRect();
-			if(rr.Contains(displayPt)){
+			if (rr.Contains(displayPt)) {
 				//move the dialog a bit upward
 				m_findReplaceDlg->Move(rr.x, displayPt.y - rr.GetHeight());
 			}
 		}
 		return true;
 	} else {
-		// No match was found
 		if ( dirDown ) {
 			m_lastMatchPos = 0;
 		} else {
@@ -1132,6 +1138,7 @@ bool LEditor::Replace(const FindReplaceData &data)
 		// the selection contains the searched string
 		// do the replace
 		ReplaceTarget( replaceString );
+		m_lastMatchPos += replaceString.Length();
 	}
 
 	//  and find another match in the document
@@ -1411,14 +1418,14 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 {
 	//let the context process it as well
 	m_context->OnKeyDown(event);
-	if(event.GetKeyCode() == WXK_NUMPAD_DELETE) 
-	{
+	if (event.GetKeyCode() == WXK_NUMPAD_DELETE) {
 		event.Skip(false);
 	}
 }
 
 void LEditor::OnLeftDown(wxMouseEvent &event)
 {
+	m_resetSearch = true;
 	//emulate here VS like selection with mouse and ctrl key
 	if (event.m_controlDown) {
 		long pos = PositionFromPointClose(event.GetX(), event.GetY());
@@ -1512,7 +1519,7 @@ void LEditor::DelAllBreakpointMarkers()
 void LEditor::HighlightLine(int lineno)
 {
 	int sci_line = lineno - 1;
-	if(GetLineCount() < sci_line -1){
+	if (GetLineCount() < sci_line -1) {
 		sci_line = GetLineCount() - 1;
 	}
 	MarkerAdd(sci_line, 0x9);
@@ -1534,7 +1541,7 @@ void LEditor::ToggleBreakpoint()
 void LEditor::ToggleBreakpoint(const BreakpointInfo &bp)
 {
 	bool contIsNeeded(false);
-	
+
 	Manager *mgr = ManagerST::Get();
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning() && !mgr->DbgCanInteract()) {
@@ -1552,8 +1559,8 @@ void LEditor::ToggleBreakpoint(const BreakpointInfo &bp)
 		//no breakpoint at this line, add one
 		DoSetBreakpoint(bp);
 	}
-	
-	if(contIsNeeded){
+
+	if (contIsNeeded) {
 		//resume execution of the debugger
 		mgr->DbgStart();
 	}
@@ -1679,7 +1686,7 @@ void LEditor::OnDbgCustomWatch(wxCommandEvent &event)
 		//Replace $(Variable) with the actual string
 		wxString command = iter->second;
 		command.Replace(wxT("$(Variable)"), word);
-		
+
 		Frame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(command);
 		Frame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
 		Frame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
@@ -1688,15 +1695,15 @@ void LEditor::OnDbgCustomWatch(wxCommandEvent &event)
 
 void LEditor::UpdateColours()
 {
-	if( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS || 
-		TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_PROJ_TAGS) {
+	if ( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS ||
+	        TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_PROJ_TAGS) {
 		m_context->OnFileSaved();
 	} else {
 		SetKeyWords(1, wxEmptyString);
 		SetKeyWords(2, wxEmptyString);
 		SetKeyWords(3, wxEmptyString);
 	}
-	
+
 	//colourise the document
 	Colourise(0, wxSCI_INVALID_POSITION);
 }

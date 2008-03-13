@@ -12,22 +12,6 @@
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileMask"/>
     <long Value="0" Name="m_flags"/>
   </ArchiveObject>
-  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="no" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="no" IndentationGuides="no" CaretLineColour="#BFD8D8" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="16"/>
-  <ArchiveObject Name="FindAndReplaceData">
-    <wxArrayString Name="m_findString">
-      <wxString Value="OnProcessEndEx"/>
-      <wxString Value="EnvironmentConfig"/>
-      <wxString Value="m_env"/>
-      <wxString Value="EnvironmentConfig::Instance()"/>
-      <wxString Value="DbgStart"/>
-      <wxString Value="m_dbg"/>
-    </wxArrayString>
-    <wxArrayString Name="m_replaceString">
-      <wxString Value="m_env"/>
-      <wxString Value=""/>
-    </wxArrayString>
-    <long Value="1" Name="m_flags"/>
-  </ArchiveObject>
   <ArchiveObject Name="build_tab_settings">
     <wxString Value="#FF0000" Name="m_errorColour"/>
     <wxString Value="#CC7F32" Name="m_warnColour"/>
@@ -36,34 +20,6 @@
     <bool Value="0" Name="m_skipWarnings"/>
     <bool Value="1" Name="m_boldErrFont"/>
     <bool Value="1" Name="m_boldWarnFont"/>
-  </ArchiveObject>
-  <ArchiveObject Name="LoadSavedPrespective">
-    <long Value="1" Name="m_value"/>
-  </ArchiveObject>
-  <RecentWorkspaces>
-    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/Plugins.workspace"/>
-    <File Name="C:\TestArea\TestOne.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
-    <File Name="C:\TestArea\1234\stam.workspace"/>
-    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
-  </RecentWorkspaces>
-  <RecentFiles>
-    <File Name="/home/eran/devl/codelite/trunk/CodeLite/CodeLite.mk"/>
-    <File Name="/home/eran/devl/codelite/trunk/CodeFormatter/CodeFormatter.mk"/>
-    <File Name="/tmp/Diff"/>
-    <File Name="/home/eran/devl/codelite/trunk/CodeFormatter/CodeFormatter.project"/>
-    <File Name="C:\Development\C++\codelite\trunk\Debugger\debuggergdb.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Interfaces\debugger.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\debuggermanager.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\interactiveprocess.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\frame.cpp"/>
-  </RecentFiles>
-  <ArchiveObject Name="GeneralInfo">
-    <wxSize Name="m_frameSize" x="917" y="725"/>
-    <wxPoint Name="m_framePos" x="181" y="135"/>
-    <long Value="14" Name="m_flags"/>
   </ArchiveObject>
   <ArchiveObject Name="FindInFilesData">
     <wxArrayString Name="m_findString">
@@ -75,5 +31,59 @@
     </wxArrayString>
     <wxArrayString Name="m_replaceString"/>
     <long Value="0" Name="m_flags"/>
+  </ArchiveObject>
+  <ArchiveObject Name="FindNextWrapAroundAnswer">
+    <long Value="5100" Name="m_value"/>
+  </ArchiveObject>
+  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="no" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#BFD8D8" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="16"/>
+  <ArchiveObject Name="LoadSavedPrespective">
+    <long Value="1" Name="m_value"/>
+  </ArchiveObject>
+  <RecentWorkspaces>
+    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
+    <File Name="C:\TestArea\1234\stam.workspace"/>
+    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\TestOne.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/Plugins.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+  </RecentWorkspaces>
+  <RecentFiles>
+    <File Name="C:\Development\C++\codelite\trunk\Plugin\builder_gnumake.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\frame.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugin\interactiveprocess.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugin\debuggermanager.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\Interfaces\debugger.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\Debugger\debuggergdb.cpp"/>
+    <File Name="/home/eran/devl/codelite/trunk/CodeFormatter/CodeFormatter.project"/>
+    <File Name="/tmp/Diff"/>
+    <File Name="/home/eran/devl/codelite/trunk/CodeFormatter/CodeFormatter.mk"/>
+  </RecentFiles>
+  <ArchiveObject Name="GeneralInfo">
+    <wxSize Name="m_frameSize" x="917" y="725"/>
+    <wxPoint Name="m_framePos" x="181" y="135"/>
+    <long Value="14" Name="m_flags"/>
+  </ArchiveObject>
+  <ArchiveObject Name="FindAndReplaceData">
+    <wxArrayString Name="m_findString">
+      <wxString Value="IsSource"/>
+      <wxString Value="wxString"/>
+      <wxString Value="=="/>
+      <wxString Value="="/>
+      <wxString Value=":="/>
+      <wxString Value="OnProcessEndEx"/>
+      <wxString Value="EnvironmentConfig"/>
+      <wxString Value="m_env"/>
+      <wxString Value="EnvironmentConfig::Instance()"/>
+      <wxString Value="DbgStart"/>
+      <wxString Value="m_dbg"/>
+    </wxArrayString>
+    <wxArrayString Name="m_replaceString">
+      <wxString Value="::=="/>
+      <wxString Value=":="/>
+      <wxString Value="m_env"/>
+      <wxString Value=""/>
+    </wxArrayString>
+    <long Value="3" Name="m_flags"/>
   </ArchiveObject>
 </LiteEditor>

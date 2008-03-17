@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+// C++ code generated with wxFormBuilder (version Feb 20 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -35,31 +35,65 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_staticline = new wxStaticLine( m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	panelSizer->Add( m_staticline, 0, wxEXPAND | wxALL, 5 );
 	
-	wxGridSizer* gSizer1;
-	gSizer1 = new wxGridSizer( 2, 2, 0, 0 );
+	wxBoxSizer* bSizer8;
+	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText3 = new wxStaticText( m_mainPanel, wxID_ANY, wxT("Icons refresh interval (milliseconds):"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText3->Wrap( -1 );
-	gSizer1->Add( m_staticText3, 1, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	m_checkBoxUseIconsInWorkspace = new wxCheckBox( m_mainPanel, wxID_ANY, wxT("Use Svn icons in the workspace tree view (Workspace reload is required to remove the icons)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxUseIconsInWorkspace->SetValue(true);
 	
-	m_spinCtrl1 = new wxSpinCtrl( m_mainPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 500, 50000, 500 );
-	gSizer1->Add( m_spinCtrl1, 0, wxALL|wxEXPAND, 5 );
+	bSizer8->Add( m_checkBoxUseIconsInWorkspace, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	panelSizer->Add( gSizer1, 0, wxEXPAND, 5 );
+	wxBoxSizer* bSizer6;
+	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_checkBoxUpdateOnSave = new wxCheckBox( m_mainPanel, wxID_ANY, wxT("Update file explorer icons when saving a file"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	panelSizer->Add( m_checkBoxUpdateOnSave, 0, wxALL, 5 );
+	bSizer6->Add( 20, 0, 0, 0, 5 );
 	
-	m_checkBoxAutoAddNewFiles = new wxCheckBox( m_mainPanel, wxID_ANY, wxT("When adding files to project, add them to SVN as well"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxKeepIconsAutoUpdate = new wxCheckBox( m_mainPanel, wxID_ANY, wxT("Update Svn icons after adding / removing / deleting item from the workspace tree"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxKeepIconsAutoUpdate->SetValue(true);
+	
+	bSizer6->Add( m_checkBoxKeepIconsAutoUpdate, 0, wxALL, 5 );
+	
+	bSizer8->Add( bSizer6, 0, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer61;
+	bSizer61 = new wxBoxSizer( wxHORIZONTAL );
+	
+	
+	bSizer61->Add( 20, 0, 0, 0, 5 );
+	
+	m_checkBoxUpdateAfterSave = new wxCheckBox( m_mainPanel, wxID_ANY, wxT("Update Svn icons after saving a file"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	bSizer61->Add( m_checkBoxUpdateAfterSave, 0, wxALL, 5 );
+	
+	bSizer8->Add( bSizer61, 0, wxEXPAND, 5 );
+	
+	m_checkBoxAutoAddNewFiles = new wxCheckBox( m_mainPanel, wxID_ANY, wxT("When adding files to project, add them to Svn as well"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxAutoAddNewFiles->SetValue(true);
 	
-	panelSizer->Add( m_checkBoxAutoAddNewFiles, 0, wxALL, 5 );
+	bSizer8->Add( m_checkBoxAutoAddNewFiles, 0, wxALL, 5 );
+	
+	panelSizer->Add( bSizer8, 1, wxEXPAND, 5 );
+	
+	m_staticline3 = new wxStaticLine( m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	panelSizer->Add( m_staticline3, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText3 = new wxStaticText( m_mainPanel, wxID_ANY, wxT("Svn ignore file patterns:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	bSizer7->Add( m_staticText3, 0, wxALL|wxEXPAND, 5 );
+	
+	m_textCtrl1 = new wxTextCtrl( m_mainPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer7->Add( m_textCtrl1, 1, wxALL|wxEXPAND, 5 );
+	
+	panelSizer->Add( bSizer7, 0, wxEXPAND, 5 );
 	
 	m_mainPanel->SetSizer( panelSizer );
 	m_mainPanel->Layout();
 	panelSizer->Fit( m_mainPanel );
-	bSizer1->Add( m_mainPanel, 1, wxEXPAND | wxALL, 5 );
+	bSizer1->Add( m_mainPanel, 1, wxALL|wxEXPAND, 5 );
 	
 	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
@@ -74,13 +108,21 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttonSizer->Add( m_buttonCancel, 0, wxALL, 5 );
 	
-	bSizer1->Add( buttonSizer, 0, wxALIGN_RIGHT, 5 );
+	bSizer1->Add( buttonSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
 	
 	// Connect Events
-	m_checkBoxUpdateOnSave->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnUpdateOnSave ), NULL, this );
+	m_checkBoxUseIconsInWorkspace->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnSvnUseIcons ), NULL, this );
 	m_checkBoxAutoAddNewFiles->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnAutoAddNewFiles ), NULL, this );
 	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnButtonOk ), NULL, this );
+}
+
+SvnOptionsBaseDlg::~SvnOptionsBaseDlg()
+{
+	// Disconnect Events
+	m_checkBoxUseIconsInWorkspace->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnSvnUseIcons ), NULL, this );
+	m_checkBoxAutoAddNewFiles->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnAutoAddNewFiles ), NULL, this );
+	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnButtonOk ), NULL, this );
 }

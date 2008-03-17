@@ -5,8 +5,6 @@
 - fixed the '#if 0' thingi with nested '#endif'
 - auto update the SVN status report after commit/revert operation
 - update the SVN options dialog:
-	+ remove obsolete options
-	+ add svn file masking
 	+ add option to set third part diff tool
 - Fix CC for files, by adding new table in the database which include all files scanned by CL
 - Fix bug in 'Replace' which may recurse into itself

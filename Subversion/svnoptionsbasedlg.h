@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+// C++ code generated with wxFormBuilder (version Feb 20 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -17,8 +17,8 @@
 #include "filepicker.h"
 #include <wx/sizer.h>
 #include <wx/statline.h>
-#include <wx/spinctrl.h>
 #include <wx/checkbox.h>
+#include <wx/textctrl.h>
 #include <wx/panel.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -38,22 +38,28 @@ class SvnOptionsBaseDlg : public wxDialog
 		wxStaticText* m_staticText1;
 		FilePicker *m_filePicker;
 		wxStaticLine* m_staticline;
-		wxStaticText* m_staticText3;
-		wxSpinCtrl* m_spinCtrl1;
-		wxCheckBox* m_checkBoxUpdateOnSave;
+		wxCheckBox* m_checkBoxUseIconsInWorkspace;
+		
+		wxCheckBox* m_checkBoxKeepIconsAutoUpdate;
+		
+		wxCheckBox* m_checkBoxUpdateAfterSave;
 		wxCheckBox* m_checkBoxAutoAddNewFiles;
+		wxStaticLine* m_staticline3;
+		wxStaticText* m_staticText3;
+		wxTextCtrl* m_textCtrl1;
 		wxStaticLine* m_staticline2;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnUpdateOnSave( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnSvnUseIcons( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAutoAddNewFiles( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonOk( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Subversion Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 505,212 ), long style = wxDEFAULT_DIALOG_STYLE );
+		SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Subversion Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 613,318 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~SvnOptionsBaseDlg();
 	
 };
 

@@ -16,8 +16,9 @@ class SvnOptionsDlg : public SvnOptionsBaseDlg
 protected:
 	// Handlers for SvnOptionsBaseDlg events.
 	void OnButtonOk( wxCommandEvent& event );
-	void OnUpdateOnSave( wxCommandEvent& event );
-	void OnAutoAddNewFiles(wxCommandEvent &event);
+	void OnSvnUseIcons(wxCommandEvent &e);
+	void SaveOptions();
+	
 public:
 	/** Constructor */
 	SvnOptionsDlg( wxWindow* parent, const SvnOptions& options );

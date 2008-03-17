@@ -296,7 +296,7 @@ void SubversionPlugin::OnCommitFile(wxCommandEvent &event)
 	//get the current active editor name
 	IEditor *editor = m_mgr->GetActiveEditor();
 	if (editor) {
-		m_svn->CommitFile(wxT("\"") + editor->GetFileName().GetFullPath() + wxT("\""));
+		m_svn->CommitFile(wxT("\"") + editor->GetFileName().GetFullPath() + wxT("\""), new SvnIconRefreshHandler(m_mgr, this));
 	}
 }
 
@@ -307,7 +307,7 @@ void SubversionPlugin::OnUpdateFile(wxCommandEvent &event)
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	IEditor *editor = m_mgr->GetActiveEditor();
 	if (editor) {
-		m_svn->UpdateFile(wxT("\"") + editor->GetFileName().GetFullPath() + wxT("\""));
+		m_svn->UpdateFile(wxT("\"") + editor->GetFileName().GetFullPath() + wxT("\"")), new SvnIconRefreshHandler(m_mgr, this);
 	}
 }
 
@@ -457,6 +457,17 @@ void SubversionPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 void SubversionPlugin::OnFileSaved(wxCommandEvent &e)
 {
 	VALIDATE_SVNPATH();
+	
+	SvnOptions options;
+	m_mgr->GetConfigTool()->ReadObject(wxT("SubversionOptions"), &options);
+	
+	bool updateAfterSave ( false );
+	options.GetFlags() & SvnUpdateAfterSave ? updateAfterSave = true : updateAfterSave = false;
+	
+	if(updateAfterSave) {
+		SvnIconRefreshHandler handler(m_mgr, this);
+		handler.UpdateIcons();
+	}
 	e.Skip();
 }
 
@@ -513,7 +524,7 @@ void SubversionPlugin::OnFileExplorerInitDone(wxCommandEvent &event)
 
 void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event)
 {
-	if (m_options.GetFlags() & SVN_AUTO_ADD_FILE) {
+	if (m_options.GetFlags() & SvnAutoAddFiles) {
 		void *cdata(NULL);
 		wxArrayString files;
 		cdata = event.GetClientData();
@@ -673,8 +684,8 @@ void SubversionPlugin::DoGenerateReport(const wxString &basePath)
 
 wxString SubversionPlugin::FormatRaws(const wxArrayString &lines, const wxString &basePath, SvnXmlParser::FileState state)
 {
-	SvnIgnorePatternData data;
-	m_mgr->GetConfigTool()->ReadObject(wxT("SvnIgnorePatternData"), &data);
+	SvnOptions data;
+	m_mgr->GetConfigTool()->ReadObject(wxT("SubversionOptions"), &data);
 
 	wxString content;
 	if (lines.IsEmpty()) {
@@ -684,7 +695,7 @@ wxString SubversionPlugin::FormatRaws(const wxArrayString &lines, const wxString
 	}
 
 	for (size_t i=0; i<lines.GetCount(); i++) {
-		if ( IsIgnoredFile(lines.Item(i), data.GetIgnorePattern() ) ) {
+		if ( IsIgnoredFile(lines.Item(i), data.GetPattern() ) ) {
 			continue;
 		}
 

@@ -14,10 +14,10 @@ SvnAddItemsDlg::SvnAddItemsDlg( wxWindow* parent, const wxArrayString &files, IC
 void SvnAddItemsDlg::InitDialog(bool loadPattern)
 {
 	if(loadPattern){
-		m_configTool->ReadObject(wxT("SvnIgnorePatternData"), &m_data);
+		m_configTool->ReadObject(wxT("SubversionOptions"), &m_data);
 	}
 
-	m_textIgnoreFilePatterns->SetValue(m_data.GetIgnorePattern());
+	m_textIgnoreFilePatterns->SetValue(m_data.GetPattern());
 
 	m_checkListFiles->Freeze();
 	m_checkListFiles->Clear();
@@ -54,14 +54,14 @@ void SvnAddItemsDlg::OnButtonOK(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	//save the file patterns
-	m_configTool->WriteObject(wxT("SvnIgnorePatternData"), &m_data);
+	m_configTool->WriteObject(wxT("SubversionOptions"), &m_data);
 	EndModal(wxID_OK);
 }
 
 void SvnAddItemsDlg::OnApplyPattern(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-	m_data.SetIgnorePattern(m_textIgnoreFilePatterns->GetValue());
+	m_data.SetPattern(m_textIgnoreFilePatterns->GetValue());
 	InitDialog();
 }
 
@@ -74,28 +74,5 @@ wxString SvnAddItemsDlg::GetFiles()
 		}
 	}
 	return files;
-}
-
-//-------------------------------------------------
-// Serialized data object
-//-------------------------------------------------
-
-SvnIgnorePatternData::SvnIgnorePatternData()
-: m_pattern(wxT("*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;"))
-{
-}
-
-SvnIgnorePatternData::~SvnIgnorePatternData()
-{
-}
-
-void SvnIgnorePatternData::DeSerialize(Archive &arch)
-{
-	arch.Read(wxT("m_pattern"), m_pattern);
-}
-
-void SvnIgnorePatternData::Serialize(Archive &arch)
-{
-	arch.Write(wxT("m_pattern"), m_pattern);
 }
 

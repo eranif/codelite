@@ -6,38 +6,55 @@ SvnOptionsBaseDlg( parent )
 {
 	m_options = options;
 	m_filePicker->SetPath(m_options.GetExePath());
-	m_checkBoxUpdateOnSave->SetValue(m_options.GetFlags() & SVN_UPDATE_ON_SAVE ? true : false);
-	m_checkBoxAutoAddNewFiles->SetValue(m_options.GetFlags() & SVN_AUTO_ADD_FILE ? true : false);
-	m_spinCtrl1->SetValue((int)m_options.GetRefreshInterval());
+	m_checkBoxUseIconsInWorkspace->SetValue(m_options.GetFlags() & SvnUseIcons ? true : false);
+	m_checkBoxKeepIconsAutoUpdate->SetValue(m_options.GetFlags() & SvnKeepIconsUpdated ? true : false);
+	m_checkBoxAutoAddNewFiles->SetValue(m_options.GetFlags() & SvnAutoAddFiles ? true : false);
+	m_checkBoxUpdateAfterSave->SetValue(m_options.GetFlags() & SvnUpdateAfterSave ? true : false);
+	
+	m_textCtrl1->SetValue(m_options.GetPattern());
+	if(m_checkBoxUseIconsInWorkspace->IsChecked() == false) {
+		m_checkBoxKeepIconsAutoUpdate->Enable(false);
+		m_checkBoxUpdateAfterSave->Enable(false);
+	}
 }
 
 void SvnOptionsDlg::OnButtonOk( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	m_options.SetExePath(m_filePicker->GetPath());
-	int interval = m_spinCtrl1->GetValue();
-	if(interval < 500){
-		interval = 500;
-	}
-
-	m_options.SetRefreshInterval((size_t)interval);
+	m_options.SetPattern(m_textCtrl1->GetValue());
+	SaveOptions();
 	EndModal(wxID_OK);
 }
 
-void SvnOptionsDlg::OnUpdateOnSave( wxCommandEvent& event )
+void SvnOptionsDlg::OnSvnUseIcons(wxCommandEvent &e)
 {
-	if(event.IsChecked()){
-		m_options.SetFlags(m_options.GetFlags() | SVN_UPDATE_ON_SAVE);
+	if(e.IsChecked()){
+		m_checkBoxKeepIconsAutoUpdate->Enable();
+		m_checkBoxUpdateAfterSave->Enable();
 	}else{
-		m_options.SetFlags(m_options.GetFlags() & ~(SVN_UPDATE_ON_SAVE));
+		m_checkBoxKeepIconsAutoUpdate->Enable(false);
+		m_checkBoxUpdateAfterSave->Enable(false);
 	}
 }
 
-void SvnOptionsDlg::OnAutoAddNewFiles(wxCommandEvent &event)
+void SvnOptionsDlg::SaveOptions()
 {
-	if(event.IsChecked()){
-		m_options.SetFlags(m_options.GetFlags() | SVN_AUTO_ADD_FILE);
-	}else{
-		m_options.SetFlags(m_options.GetFlags() & ~(SVN_AUTO_ADD_FILE));
+	size_t options(0);
+	if(m_checkBoxAutoAddNewFiles->IsChecked()) { 
+		options |= SvnAutoAddFiles;
 	}
+	
+	if(m_checkBoxKeepIconsAutoUpdate->IsEnabled() && m_checkBoxKeepIconsAutoUpdate->IsChecked()) {
+		options |= SvnKeepIconsUpdated;
+	}
+	
+	if(m_checkBoxUpdateAfterSave->IsEnabled() && m_checkBoxUpdateAfterSave->IsChecked()) {
+		options |= SvnUpdateAfterSave;
+	}
+	
+	if(m_checkBoxUseIconsInWorkspace->IsChecked()) {
+		options |= SvnUseIcons;
+	}
+	m_options.SetFlags( options );
 }

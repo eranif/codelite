@@ -3,15 +3,18 @@
 
 #include "serialized_object.h"
 
-#define SVN_UPDATE_ON_SAVE 0x00000001
-#define SVN_AUTO_ADD_FILE  0x00000002
-
-#define SVN_DEFAULT_FLAGS SVN_AUTO_ADD_FILE
+enum SvnOptionsFlags {
+	SvnUseIcons 			= 0x00000001,
+	SvnKeepIconsUpdated  	= 0x00000002,
+	SvnAutoAddFiles 		= 0x00000004,
+	SvnUpdateAfterSave 		= 0x00000008,
+};
 
 class SvnOptions : public SerializedObject {
 	size_t m_flags;
-	size_t m_refreshInterval;
 	wxString m_exePath;
+	wxString m_pattern;
+	
 public:
 	SvnOptions();
 	virtual ~SvnOptions();
@@ -24,9 +27,10 @@ public:
 
 	const wxString &GetExePath() const {return m_exePath;}
 	void SetExePath(const wxString &path) {m_exePath = path;}
-
-	const size_t& GetRefreshInterval() const {return m_refreshInterval;}
-	void SetRefreshInterval(const size_t& interval){m_refreshInterval = interval;}
+	
+	void SetPattern(const wxString& pattern) {this->m_pattern = pattern;}
+	const wxString& GetPattern() const {return m_pattern;}
+	
 };
 
 #endif //SVNOPTIONS_H

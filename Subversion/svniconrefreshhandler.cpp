@@ -39,7 +39,13 @@ SvnIconRefreshHandler::~SvnIconRefreshHandler()
 
 void SvnIconRefreshHandler::UpdateIcons()
 {
-	if (!m_plugin->IsWorkspaceUnderSvn()) {
+	SvnOptions options;
+	m_mgr->GetConfigTool()->ReadObject(wxT("SubversionOptions"), &options);
+	
+	bool useIcons ( true );
+	options.GetFlags() & SvnUseIcons ? useIcons = true : useIcons = false;
+	
+	if (!m_plugin->IsWorkspaceUnderSvn() || !useIcons) {
 		return;
 	}
 

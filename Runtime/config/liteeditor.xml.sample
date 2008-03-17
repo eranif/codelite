@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LiteEditor Revision="653">
-  <Layout/>
+    <Layout>
+    <Notebook Name="Editor" Style="751292"/>
+    <Notebook Name="OutputPane" Style="738332"/>
+    <Notebook Name="WorkspacePane" Style="721948"/>
+    <Notebook Name="DebuggerPane" Style="738396"/>
+  </Layout>
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="24" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">

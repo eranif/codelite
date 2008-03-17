@@ -1,7 +1,7 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include "wx/wx.h"
+#include "wx/treectrl.h"
 #include "wx/string.h"
 #include <wx/xml/xml.h>
 #include "wx/filename.h"
@@ -285,6 +285,25 @@ public:
 	wxString m_path;	//< project directoy
 	ProjectPtr m_srcProject;
 	wxString m_cmpType; //< Project compiler type
+};
+
+//-----------------------------------------------------------------
+// This class is related to the visual representation of the class
+// projects in the tree view
+//-----------------------------------------------------------------
+/**
+ * Class FilewViewTreeItemData, a user defined class which stores a node private information
+ *
+ * \date 12-04-2007
+ * \author Eran 
+ *
+ */
+class FilewViewTreeItemData : public wxTreeItemData
+{
+	ProjectItem m_item;
+public:
+	FilewViewTreeItemData(const ProjectItem &item) : m_item(item) { }
+	const ProjectItem &GetData() const { return m_item; }
 };
 
 #endif // PROJECT_H

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+// C++ code generated with wxFormBuilder (version Feb 20 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -52,6 +52,7 @@ class ThreeButtonBaseDlg : public wxDialog
 	
 	public:
 		ThreeButtonBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 399,147 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~ThreeButtonBaseDlg();
 	
 };
 

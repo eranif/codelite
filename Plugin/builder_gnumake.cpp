@@ -81,7 +81,7 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, bool fo
 		
 		//the set settings functions marks the project as 'modified' this causes 
 		//an unneeded makefile generation if the settings was not really modified
-		if(!modified & !settingsChanged) {
+		if(!modified && !settingsChanged) {
 			proj->SetModified(false);
 		}
 	}

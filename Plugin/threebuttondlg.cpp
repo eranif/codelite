@@ -4,14 +4,10 @@ ThreeButtonDlg::ThreeButtonDlg( wxWindow* parent, const wxString &msg, const wxS
 : ThreeButtonBaseDlg( parent )
 {
 	m_message->SetLabel(msg);
+	m_buttonYes->SetFocus();
 	SetLabel(caption);
 	GetSizer()->Fit(this);
 	GetSizer()->Layout();
-}
-
-void ThreeButtonDlg::OnButtonCancel(wxCommandEvent &e)
-{
-	EndModal(wxID_CANCEL);
 }
 
 void ThreeButtonDlg::OnButtonYes(wxCommandEvent &e)
@@ -22,4 +18,9 @@ void ThreeButtonDlg::OnButtonYes(wxCommandEvent &e)
 void ThreeButtonDlg::OnButtonNo(wxCommandEvent &e)
 {
 	EndModal(wxID_NO);
+}
+
+void ThreeButtonDlg::OnButtonCancel(wxCommandEvent &e)
+{
+	EndModal(wxID_CANCEL);
 }

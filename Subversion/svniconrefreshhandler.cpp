@@ -19,6 +19,12 @@ extern int ProjectOkIconId;
 extern int WorkspaceModifiedIconId;
 extern int WorkspaceConflictIconId;
 extern int WorkspaceOkIconId;
+extern int FileModifiedIconId;
+extern int FileConflictIconId;
+extern int FileOkIconId;
+extern int FolderModifiedIconId;
+extern int FolderConflictIconId;
+extern int FolderOkIconId;
 
 SvnIconRefreshHandler::SvnIconRefreshHandler(IManager *mgr, SubversionPlugin *plugin)
 		: m_mgr(mgr)
@@ -33,10 +39,10 @@ SvnIconRefreshHandler::~SvnIconRefreshHandler()
 
 void SvnIconRefreshHandler::UpdateIcons()
 {
-	if(!m_plugin->IsWorkspaceUnderSvn()) {
+	if (!m_plugin->IsWorkspaceUnderSvn()) {
 		return;
 	}
-	
+
 	//get list of paths to check
 	std::vector<wxFileName> fileNames;
 	wxString errMsg;
@@ -79,30 +85,12 @@ void SvnIconRefreshHandler::UpdateIcons()
 
 	//by default all paths are OK
 	SvnXmlParser::GetFiles(rawData, modifiedPaths, SvnXmlParser::StateModified);
-	ProjectIconInfoMap::iterator iter = pi.begin();
-	for (; iter != pi.end(); iter++) {
-		for (size_t i=0; i< modifiedPaths.GetCount(); i++) {
-			wxString s1 = modifiedPaths.Item(i);
-			wxString s2 = iter->second.path;
-			if (s1.StartsWith(s2)) {
-				//our project is modified
-				iter->second.state = SvnXmlParser::StateModified;
-				break;
-			}
-		}
-	}
-
 	SvnXmlParser::GetFiles(rawData, conflictedPaths, SvnXmlParser::StateConflict);
-	iter = pi.begin();
-	for (; iter != pi.end(); iter++) {
-		for (size_t i=0; i< conflictedPaths.GetCount(); i++) {
-			if (conflictedPaths.Item(i) == iter->second.path) {
-				//our project is modified
-				iter->second.state = SvnXmlParser::StateConflict;
-				break;
-			}
-		}
-	}
+
+	//sort the results for better search later
+	modifiedPaths.Sort();
+	conflictedPaths.Sort();
+
 
 	wxTreeCtrl *tree = m_mgr->GetTree(TreeFileView);
 	if (!tree) {
@@ -114,49 +102,120 @@ void SvnIconRefreshHandler::UpdateIcons()
 		return;
 	}
 
-	if (!tree->ItemHasChildren(root)) {
+	//we now have two lists containing the modified and conflict files in the workspace
+	//we recurse into the file view tree, every item of type File that we encounter, we
+	//colour according to the match
+	ColourTree(tree, root, modifiedPaths, conflictedPaths);
+}
+
+void SvnIconRefreshHandler::ColourTree(wxTreeCtrl *tree, wxTreeItemId &parent, const wxArrayString &modifiedPaths, const wxArrayString &conflictedPaths)
+{
+	if (parent.IsOk() == false) {
 		return;
 	}
 
-	int wspImgId(WorkspaceOkIconId);
-	wxTreeItemIdValue cookie;
-	wxTreeItemId child = tree->GetFirstChild(root, cookie);
-	while ( child.IsOk() ) {
-		wxString text = tree->GetItemText(child);
-		ProjectIconInfoMap::iterator it = pi.find(text);
-		if (it != pi.end()) {
-			ProjectIconInfo info = it->second;
-			if (info.name == text) {
-				int imgId(wxNOT_FOUND);
-
-				switch (info.state) {
-				case SvnXmlParser::StateConflict:
-					imgId = ProjectConflictIconId;
-					wspImgId = WorkspaceConflictIconId;
-					break;
-
-				case SvnXmlParser::StateModified:
-					imgId = ProjectModifiedIconId;
-					if (wspImgId != WorkspaceConflictIconId) {
-						wspImgId = WorkspaceModifiedIconId;
-					}
-					break;
-
-				default:
-					imgId = ProjectOkIconId;
-					break;
-				}
-
-				if (imgId != wxNOT_FOUND) {
-					tree->SetItemImage(child, imgId, wxTreeItemIcon_Normal);
-					tree->SetItemImage(child, imgId, wxTreeItemIcon_Selected);
-				}
-
+	//get the item data
+	FilewViewTreeItemData *data = (FilewViewTreeItemData *) tree->GetItemData(parent);
+	if (data && data->GetData().GetKind() == ProjectItem::TypeFile) {
+		//we found a leaf of the tree
+		wxString fileName = data->GetData().GetFile();
+		ColourPath(tree, parent, fileName, modifiedPaths, conflictedPaths);
+		return;
+	} else {
+		//container, might be workspace, project or virtual folder
+		if (tree->ItemHasChildren(parent)) {
+			//loop over the children
+			wxTreeItemIdValue cookie;
+			wxTreeItemId child = tree->GetFirstChild(parent, cookie);
+			while ( child.IsOk() ) {
+				ColourTree(tree, child, modifiedPaths, conflictedPaths);
+				child = tree->GetNextChild(parent, cookie);
 			}
 		}
-
-		child = tree->GetNextChild(root, cookie);
 	}
-	tree->SetItemImage(root, wspImgId, wxTreeItemIcon_Normal);
-	tree->SetItemImage(root, wspImgId, wxTreeItemIcon_Selected);
 }
+
+void SvnIconRefreshHandler::ColourPath(wxTreeCtrl *tree, wxTreeItemId &item, const wxString &fileName, const wxArrayString &modifiedPaths, const wxArrayString &conflictedPaths)
+{
+	SvnXmlParser::FileState state ( SvnXmlParser::StateOK );
+	
+	if(conflictedPaths.Index(fileName) != wxNOT_FOUND){
+		state = SvnXmlParser::StateConflict;
+		
+	} else if( modifiedPaths.Index(fileName) != wxNOT_FOUND){ 
+		state = SvnXmlParser::StateModified;
+	}
+	
+	DoColourPath(tree, item, state);
+}
+
+void SvnIconRefreshHandler::DoColourPath(wxTreeCtrl *tree, wxTreeItemId &item, SvnXmlParser::FileState state)
+{
+	int imgid;
+	FilewViewTreeItemData *data = (FilewViewTreeItemData *) tree->GetItemData(item);
+	if(data) {
+		imgid = GetIcon(data->GetData().GetKind(), state);
+		if(imgid != wxNOT_FOUND) {
+			tree->SetItemImage(item, imgid, wxTreeItemIcon_Normal);
+			tree->SetItemImage(item, imgid, wxTreeItemIcon_Selected);
+		}
+		
+		//colour the items parents as well
+		wxTreeItemId parent = tree->GetItemParent(item);
+		while( parent.IsOk() ) {
+			//get the parent type
+			data = NULL;
+			data = (FilewViewTreeItemData *) tree->GetItemData(parent);
+			if(data){
+				imgid = GetIcon(data->GetData().GetKind(), state);
+				int curimgid = tree->GetItemImage(parent);
+				//replce the icon only if the severity is higher, that is only these state shifts are allowed:
+				//non-versionsed -> ok
+				//ok -> modified
+				//modified -> conflict
+				if(imgid != wxNOT_FOUND && imgid > curimgid){
+					tree->SetItemImage(parent, imgid, wxTreeItemIcon_Normal);
+					tree->SetItemImage(parent, imgid, wxTreeItemIcon_Selected);
+				}
+			}
+			parent = tree->GetItemParent(parent);
+		}
+	}
+}
+
+int SvnIconRefreshHandler::GetIcon(int kind, SvnXmlParser::FileState state)
+{
+	switch(kind) {
+		
+	case ProjectItem::TypeFile:
+		if(state == SvnXmlParser::StateConflict)
+			return FileConflictIconId;
+		if(state == SvnXmlParser::StateModified)
+			return FileModifiedIconId;
+		return FileOkIconId;
+		
+	case ProjectItem::TypeProject:
+		if(state == SvnXmlParser::StateConflict)
+			return ProjectConflictIconId;
+		if(state == SvnXmlParser::StateModified)
+			return ProjectModifiedIconId;
+		return ProjectOkIconId;
+		
+	case ProjectItem::TypeWorkspace:
+		if(state == SvnXmlParser::StateConflict)
+			return WorkspaceConflictIconId;
+		if(state == SvnXmlParser::StateModified)
+			return WorkspaceModifiedIconId;
+		return WorkspaceOkIconId;
+
+	case ProjectItem::TypeVirtualDirectory:
+		if(state == SvnXmlParser::StateConflict)
+			return FolderConflictIconId;
+		if(state == SvnXmlParser::StateModified)
+			return FolderModifiedIconId;
+		return FolderOkIconId;
+
+	}
+	return wxNOT_FOUND;
+}
+

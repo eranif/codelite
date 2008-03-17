@@ -45,21 +45,7 @@
 	<object class="wxBitmap" name="cscope">res/kstars.png</object>
 	<object class="wxBitmap" name="threads">res/threads.png</object>
 	<object class="wxBitmap" name="opened_windows">res/pictures.png</object> 
-	<object class="wxBitmap" name="svn_ok">res/folder_green.png</object>  
-	<object class="wxBitmap" name="svn_modified">res/folder_red.png</object> 
-	<object class="wxBitmap" name="svn_conflict">res/error.png</object>
-	<object class="wxBitmap" name="c_ok">res/page_green.png</object> 
-	<object class="wxBitmap" name="c_modified">res/page_red.png</object> 
-	<object class="wxBitmap" name="c_conflict">res/page_error.png</object>
-	<object class="wxBitmap" name="cpp_ok">res/page_green.png</object>
-	<object class="wxBitmap" name="cpp_modified">res/page_red.png</object>
-	<object class="wxBitmap" name="cpp_conflict">res/page_error.png</object>
-	<object class="wxBitmap" name="h_ok">res/page_green.png</object>
-	<object class="wxBitmap" name="h_modified">res/page_red.png</object>
-	<object class="wxBitmap" name="h_conflict">res/page_error.png</object>
 	<object class="wxBitmap" name="text_ok">res/page_green.png</object>
-	<object class="wxBitmap" name="text_modified">res/page_red.png</object>
-	<object class="wxBitmap" name="text_conflict">res/page_error.png</object>
 	<object class="wxBitmap" name="new_class_title">res/new_class.png</object>
 	<object class="wxBitmap" name="wx_project_header">res/wxproject.png</object>
 	<object class="wxBitmap" name="colourise">res/colorize.png</object>
@@ -158,9 +144,18 @@
 	
 	<!-- Svn icons -->
 	<object class="wxBitmap" name="project_modified">res/cubes_yellow_modified.png</object>
-	<object class="wxBitmap" name="workspace_modified">res/cubes_modified.png</object>
 	<object class="wxBitmap" name="project_ok">res/cubes_yellow_ok.png</object>
-	<object class="wxBitmap" name="workspace_ok">res/cubes_ok.png</object>
 	<object class="wxBitmap" name="project_conflict">res/error.png</object>
+	
+	<object class="wxBitmap" name="workspace_modified">res/cubes_modified.png</object>
+	<object class="wxBitmap" name="workspace_ok">res/cubes_ok.png</object>
 	<object class="wxBitmap" name="workspace_conflict">res/error.png</object>
+	
+	<object class="wxBitmap" name="page_modified">res/page_white_text_modified.png</object>
+	<object class="wxBitmap" name="page_ok">res/page_white_text_ok.png</object>
+	<object class="wxBitmap" name="page_conflict">res/error.png</object>
+	
+	<object class="wxBitmap" name="folder_modified">res/folder_modified.png</object>
+	<object class="wxBitmap" name="folder_ok">res/folder_ok.png</object>
+	<object class="wxBitmap" name="folder_conflict">res/error.png</object>	
 </resource>

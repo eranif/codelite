@@ -15,21 +15,6 @@ struct FileViewItem {
 	wxString displayName;
 };
 
-/**
- * Class FilewViewTreeItemData, a user defined class which stores a node private information
- *
- * \date 12-04-2007
- * \author Eran 
- *
- */
-class FilewViewTreeItemData : public wxTreeItemData
-{
-	ProjectItem m_item;
-public:
-	FilewViewTreeItemData(const ProjectItem &item) : m_item(item) { }
-	const ProjectItem &GetData() const { return m_item; }
-};
-
 class FileViewTree : public wxTreeCtrl
 {
 	DECLARE_DYNAMIC_CLASS()

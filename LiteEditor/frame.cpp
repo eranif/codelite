@@ -1550,7 +1550,7 @@ void Frame::OnAddEnvironmentVariable(wxCommandEvent &event)
 		wxArrayString projects;
 		WorkspaceST::Get()->GetProjectList( projects );
 		for ( size_t i=0; i< projects.size(); i++ ) {
-			ProjectPtr proj = ManagerST::Get()->GetProject( projects.Item(0) );
+			ProjectPtr proj = ManagerST::Get()->GetProject( projects.Item(i) );
 			if ( proj ) {
 				proj->SetModified( true );
 			}

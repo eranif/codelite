@@ -13,9 +13,9 @@ class ThreeButtonDlg : public ThreeButtonBaseDlg
 {
 	
 protected:
-	void OnButtonCancel(wxCommandEvent &e);
 	void OnButtonYes(wxCommandEvent &e);
 	void OnButtonNo(wxCommandEvent &e);
+	void OnButtonCancel(wxCommandEvent &e);
 	
 public:
 	/** Constructor */

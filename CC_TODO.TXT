@@ -9,5 +9,20 @@
 	+ add svn file masking
 	+ add option to set third part diff tool
 - Fix CC for files, by adding new table in the database which include all files scanned by CL
-- Replace SVN icons - they are too ugly ;)
 - Fix bug in 'Replace' which may recurse into itself
+- Update file level icons on the workspace tree:
+	1. Update all icons on workspace load
+	2. Update file & parents icons on the following actions:
+		- OnFileSave
+		- OnFileRemoved
+		- OnFileDeleted
+- Create new ListCtrl to replace the Open Type dialog, this list must include the following columns:
+	1. Icon
+	2. Name
+	3. Scope
+	4. File
+- Make sure u add scope to the parent class like in 'class A : public scope::B'
+- Implement auto-hide feature for the Output pane, which does the following:
+	1. When building, auto show the build pane, and close it if build was OK
+	2. When searching, show the pane, close it only when user press the 'x'
+	3. Same as 2 for cscope

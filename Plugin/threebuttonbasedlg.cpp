@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+// C++ code generated with wxFormBuilder (version Feb 20 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -62,4 +62,12 @@ ThreeButtonBaseDlg::ThreeButtonBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_buttonYes->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ThreeButtonBaseDlg::OnButtonYes ), NULL, this );
 	m_buttonNo->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ThreeButtonBaseDlg::OnButtonNo ), NULL, this );
 	m_buttonCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ThreeButtonBaseDlg::OnButtonCancel ), NULL, this );
+}
+
+ThreeButtonBaseDlg::~ThreeButtonBaseDlg()
+{
+	// Disconnect Events
+	m_buttonYes->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ThreeButtonBaseDlg::OnButtonYes ), NULL, this );
+	m_buttonNo->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ThreeButtonBaseDlg::OnButtonNo ), NULL, this );
+	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ThreeButtonBaseDlg::OnButtonCancel ), NULL, this );
 }

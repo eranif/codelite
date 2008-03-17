@@ -28,6 +28,12 @@ int ProjectOkIconId 		= wxNOT_FOUND;
 int WorkspaceModifiedIconId = wxNOT_FOUND;
 int WorkspaceConflictIconId = wxNOT_FOUND;
 int WorkspaceOkIconId 		= wxNOT_FOUND;
+int FileModifiedIconId		= wxNOT_FOUND;
+int FileConflictIconId 		= wxNOT_FOUND;
+int FileOkIconId			= wxNOT_FOUND;
+int FolderModifiedIconId		= wxNOT_FOUND;
+int FolderConflictIconId 		= wxNOT_FOUND;
+int FolderOkIconId			= wxNOT_FOUND;
 
 static void WriteFile(const wxString &fileName, const wxString &content)
 {
@@ -143,13 +149,25 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 	//tree->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEventHandler(SubversionPlugin::OnTreeExpanded), NULL, this);
 	wxTreeCtrl *tree = m_mgr->GetTree(TreeFileView);
 	if (tree) {
+		//IMPORTANT!
+		//note that the order the images are added is important !!
+		//do not change it
+		ProjectOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_ok")));
 		ProjectModifiedIconId 	= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_modified")));
 		ProjectConflictIconId 	= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")));
-		ProjectOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_ok")));
 		
+		WorkspaceOkIconId		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace_ok")));
 		WorkspaceModifiedIconId = tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace_modified")));
-		WorkspaceConflictIconId 	= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace_conflict")));
-		WorkspaceOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace_ok")));
+		WorkspaceConflictIconId = tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace_conflict")));
+		
+		FileOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_ok")));
+		FileModifiedIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_modified")));
+		FileConflictIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_conflict")));
+		
+		FolderOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_ok")));
+		FolderModifiedIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_modified")));
+		FolderConflictIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_conflict")));
+		
 	}
 }
 

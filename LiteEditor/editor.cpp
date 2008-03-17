@@ -96,7 +96,7 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 		, m_lastMatchPos(0)
 		, m_popupIsOn(false)
 		, m_modifyTime(0)
-		, m_resetSearch(false)
+		, m_resetSearch(true)
 {
 	Show(!hidden);
 	ms_bookmarkShapes[wxT("Small Rectangle")] = wxSCI_MARK_SMALLRECT;

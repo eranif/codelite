@@ -223,7 +223,7 @@ wxString Project::GetName() const
 
 ProjectTreePtr Project::AsTree()
 {
-	ProjectItem item(GetName(), GetName(), wxEmptyString, ProjectItem::TypeProject);
+	ProjectItem item(GetName(), GetName(), GetFileName().GetFullPath(), ProjectItem::TypeProject);
 	ProjectTreePtr ptp(new ProjectTree(item.Key(), item));
 
 	wxXmlNode *child = m_doc.GetRoot()->GetChildren();

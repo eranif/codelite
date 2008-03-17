@@ -1,4 +1,5 @@
 #include "svncommitmsgsmgr.h"
+
 SvnCommitMsgsMgr* SvnCommitMsgsMgr::ms_instance = 0;
 
 SvnCommitMsgsMgr::SvnCommitMsgsMgr()

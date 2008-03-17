@@ -22,6 +22,7 @@
 #include "dirsaver.h"
 #include <vector>
 
+
 int ProjectConflictIconId 	= wxNOT_FOUND;
 int ProjectModifiedIconId 	= wxNOT_FOUND;
 int ProjectOkIconId 		= wxNOT_FOUND;

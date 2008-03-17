@@ -101,7 +101,8 @@ void SvnIconRefreshHandler::UpdateIcons()
 	if (!root.IsOk()) {
 		return;
 	}
-
+	
+	
 	//we now have two lists containing the modified and conflict files in the workspace
 	//we recurse into the file view tree, every item of type File that we encounter, we
 	//colour according to the match

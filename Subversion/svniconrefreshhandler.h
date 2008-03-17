@@ -18,7 +18,7 @@ protected:
 	virtual void ColourPath(wxTreeCtrl *tree, wxTreeItemId &item, const wxString &fileName, const wxArrayString &modifiedPaths, const wxArrayString &conflictedPaths);
 	virtual int  GetIcon(int kind, SvnXmlParser::FileState state);
 	virtual void DoColourPath(wxTreeCtrl *tree, wxTreeItemId &item, SvnXmlParser::FileState state);
-	
+	virtual void ResetIcons(wxTreeCtrl *tree, wxTreeItemId &item);
 public:
 	SvnIconRefreshHandler(IManager *mgr, SubversionPlugin *plugin);
 	~SvnIconRefreshHandler();

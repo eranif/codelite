@@ -102,11 +102,19 @@ void SvnIconRefreshHandler::UpdateIcons()
 		return;
 	}
 	
+	//avoid flickering
+	tree->Freeze();
+	
+	//reset parents icons back to normal
+	ResetIcons(tree, root);
 	
 	//we now have two lists containing the modified and conflict files in the workspace
 	//we recurse into the file view tree, every item of type File that we encounter, we
 	//colour according to the match
 	ColourTree(tree, root, modifiedPaths, conflictedPaths);
+	
+	//unfreeze it
+	tree->Thaw();
 }
 
 void SvnIconRefreshHandler::ColourTree(wxTreeCtrl *tree, wxTreeItemId &parent, const wxArrayString &modifiedPaths, const wxArrayString &conflictedPaths)
@@ -220,3 +228,29 @@ int SvnIconRefreshHandler::GetIcon(int kind, SvnXmlParser::FileState state)
 	return wxNOT_FOUND;
 }
 
+void SvnIconRefreshHandler::ResetIcons(wxTreeCtrl *tree, wxTreeItemId &item)
+{
+	if (item.IsOk() == false) {
+		return;
+	}
+
+	//get the item data
+	FilewViewTreeItemData *data = (FilewViewTreeItemData *) tree->GetItemData(item);
+	if (data) {
+		int imgid = GetIcon(data->GetData().GetKind(), SvnXmlParser::StateOK);
+		if(imgid != wxNOT_FOUND) {
+			tree->SetItemImage(item, imgid, wxTreeItemIcon_Normal);
+			tree->SetItemImage(item, imgid, wxTreeItemIcon_Selected);
+		}
+	}
+		
+	if (tree->ItemHasChildren(item)) {
+		//loop over the children
+		wxTreeItemIdValue cookie;
+		wxTreeItemId child = tree->GetFirstChild(item, cookie);
+		while ( child.IsOk() ) {
+			ResetIcons(tree, child);
+			child = tree->GetNextChild(item, cookie);
+		}
+	}
+}

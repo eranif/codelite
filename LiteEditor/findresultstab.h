@@ -2,7 +2,7 @@
 #define __findresultstab__
 
 #include "outputtabwindow.h"
-
+ 
 class FindResultsTab : public OutputTabWindow 
 {
 

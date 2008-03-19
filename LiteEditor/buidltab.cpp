@@ -8,7 +8,7 @@
 #include "macros.h"
 #include "wx/xrc/xmlres.h"
 #include "build_settings_config.h"
-#include "compiler.h"
+#include "compiler.h" 
 #include "manager.h"
 #include "project.h"
 #include "wx/wxscintilla.h" 

@@ -2272,6 +2272,8 @@ void Manager::UpdateBuildTools()
 	wxString path;
 	bool is_ok(true);
 	
+	EnvironmentConfig::Instance()->ApplyEnv();
+	
 	if(tool.Contains(wxT("$"))) {
 		//expand 
 		tool = EnvironmentConfig::Instance()->ExpandVariables(tool);
@@ -2292,14 +2294,16 @@ void Manager::UpdateBuildTools()
 		}
 	}else{
 		//we are good, nothing to be done
+		EnvironmentConfig::Instance()->UnApplyEnv();
 		return;
 	}
+	EnvironmentConfig::Instance()->UnApplyEnv();
 	
 	wxString message;
 	if (!is_ok) {
 		message << wxT("Failed to locate make util '")
 			    << tool << wxT("' specified by 'Build Settings'");
-		wxMessageBox(message, wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxLogMessage(message);
 		return;
 	} else {
 		wxLogMessage(wxT("Updating build too to '") + tool + wxT("' from '") + origTool + wxT("'"));

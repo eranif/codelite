@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jul 28 2007)
+// C++ code generated with wxFormBuilder (version Feb 20 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -21,32 +21,42 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-BreakpointDlgBase::BreakpointDlgBase( wxWindow* parent, int id, wxPoint pos, wxSize size, int style ) 
-: wxPanel( parent, id, pos, size, style )
+BreakpointTab::BreakpointTab( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	wxBoxSizer* bSizer5;
+	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
 	
-	wxBoxSizer* bSizer16;
-	bSizer16 = new wxBoxSizer( wxVERTICAL );
+	m_listCtrlBreakpoints = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+	bSizer5->Add( m_listCtrlBreakpoints, 1, wxALL|wxEXPAND, 5 );
 	
-	wxBoxSizer* bSizer19;
-	bSizer19 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_listBreakpoints = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizer19->Add( m_listBreakpoints, 1, wxALL|wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer20;
-	bSizer20 = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer* bSizer6;
+	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
 	m_buttonDelete = new wxButton( this, wxID_ANY, wxT("&Delete"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer20->Add( m_buttonDelete, 0, wxALL, 5 );
+	bSizer6->Add( m_buttonDelete, 0, wxALL, 5 );
 	
 	m_buttonDeleteAll = new wxButton( this, wxID_ANY, wxT("Delete &All"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer20->Add( m_buttonDeleteAll, 0, wxALL, 5 );
+	bSizer6->Add( m_buttonDeleteAll, 0, wxALL, 5 );
 	
-	bSizer19->Add( bSizer20, 0, wxEXPAND, 5 );
-	bSizer16->Add( bSizer19, 1, wxEXPAND, 5 );
+	bSizer5->Add( bSizer6, 0, wxEXPAND, 5 );
 	
-	this->SetSizer( bSizer16 );
+	this->SetSizer( bSizer5 );
 	this->Layout();
+	
+	// Connect Events
+	m_listCtrlBreakpoints->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( BreakpointTab::OnItemActivated ), NULL, this );
+	m_listCtrlBreakpoints->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( BreakpointTab::OnItemDeselected ), NULL, this );
+	m_listCtrlBreakpoints->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( BreakpointTab::OnItemSelected ), NULL, this );
+	m_buttonDelete->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnDelete ), NULL, this );
+	m_buttonDeleteAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnDeleteAll ), NULL, this );
+}
+
+BreakpointTab::~BreakpointTab()
+{
+	// Disconnect Events
+	m_listCtrlBreakpoints->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( BreakpointTab::OnItemActivated ), NULL, this );
+	m_listCtrlBreakpoints->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( BreakpointTab::OnItemDeselected ), NULL, this );
+	m_listCtrlBreakpoints->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( BreakpointTab::OnItemSelected ), NULL, this );
+	m_buttonDelete->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnDelete ), NULL, this );
+	m_buttonDeleteAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnDeleteAll ), NULL, this );
 }

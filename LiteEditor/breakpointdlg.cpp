@@ -2,10 +2,11 @@
 #include "debuggermanager.h"
 #include "manager.h"
 #include "macros.h"
+#include "globals.h"
 
 BreakpointDlg::BreakpointDlg( wxWindow* parent )
-:
-BreakpointDlgBase( parent )
+		: BreakpointTab( parent )
+		, m_selectedItem(wxNOT_FOUND)
 {
 	Initialize();
 	ConnectButton(m_buttonDelete, BreakpointDlg::OnDelete);
@@ -15,51 +16,57 @@ BreakpointDlgBase( parent )
 
 void BreakpointDlg::Initialize()
 {
-	m_listBreakpoints->Clear();
-	m_listBreakpoints->Freeze();
-	
+	m_listCtrlBreakpoints->ClearAll();
+	m_listCtrlBreakpoints->Freeze();
+
+	m_listCtrlBreakpoints->InsertColumn(0, wxT("File"));
+	m_listCtrlBreakpoints->InsertColumn(1, wxT("Line"));
+
 	std::vector<BreakpointInfo> bps, pbps;
 	DebuggerMgr::Get().GetBreakpoints(bps);
 	std::vector<BreakpointInfo>::iterator iter = bps.begin();
-	for(; iter != bps.end(); iter++)
-	{
-		wxString entry;
-		entry << iter->file << wxT("|") << iter->lineno;
-		m_listBreakpoints->Append(entry);
-	}
-	iter = pbps.begin();
-	for(; iter != pbps.end(); iter++)
-	{
-		wxString entry;
-		entry << iter->file << wxT("|") << iter->lineno;
-		m_listBreakpoints->Append(entry);
-	}
-	if(m_listBreakpoints->GetCount() > 0){
-		m_listBreakpoints->Select(0);
+	for (; iter != bps.end(); iter++) {
+		long item = AppendListCtrlRow(m_listCtrlBreakpoints);
+		SetColumnText(m_listCtrlBreakpoints, item, 0, iter->file);
+
+		wxString line;
+		line << iter->lineno;
+		SetColumnText(m_listCtrlBreakpoints, item, 1, line);
 	}
 
-	m_listBreakpoints->Thaw();
+	iter = pbps.begin();
+	for (; iter != pbps.end(); iter++) {
+		long item = AppendListCtrlRow(m_listCtrlBreakpoints);
+		SetColumnText(m_listCtrlBreakpoints, item, 0, iter->file);
+		wxString line;
+		line << iter->lineno;
+		SetColumnText(m_listCtrlBreakpoints, item, 1, line);
+	}
+
+	m_listCtrlBreakpoints->SetColumnWidth(0, wxLIST_AUTOSIZE);
+	m_listCtrlBreakpoints->SetColumnWidth(1, wxLIST_AUTOSIZE);
+
+	//TODO:: select the first item
+	m_listCtrlBreakpoints->Thaw();
 }
 
 void BreakpointDlg::OnDelete(wxCommandEvent &e)
 {
-	wxUnusedVar(e);
-	if(m_listBreakpoints->GetCount() > 0){
-		int where = m_listBreakpoints->GetSelection();
-		if(where != wxNOT_FOUND){
-			wxString sel = m_listBreakpoints->GetStringSelection();
-			//get the file name
-			wxString fileName = sel.BeforeFirst(wxT('|'));
-			wxString strLine  = sel.AfterFirst(wxT('|'));
-			long lineno;
-			strLine.ToLong(&lineno);
+	if (m_selectedItem != wxNOT_FOUND) {
+		
+		wxString fileName = GetColumnText(m_listCtrlBreakpoints, m_selectedItem, 0);
+		wxString strLine  = GetColumnText(m_listCtrlBreakpoints, m_selectedItem, 1);
+		
+		long lineno;
+		strLine.ToLong(&lineno);
 
-			BreakpointInfo bp;
-			bp.file = fileName;
-			bp.lineno = lineno;
-			ManagerST::Get()->DbgDeleteBreakpoint(bp);
-			m_listBreakpoints->Delete((unsigned int)where);
-		}
+		BreakpointInfo bp;
+		bp.file = fileName;
+		bp.lineno = lineno;
+		
+		ManagerST::Get()->DbgDeleteBreakpoint(bp);
+		m_listCtrlBreakpoints->DeleteItem(m_selectedItem);
+		m_selectedItem = wxNOT_FOUND;
 	}
 }
 
@@ -67,5 +74,26 @@ void BreakpointDlg::OnDeleteAll(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	ManagerST::Get()->DbgDeleteAllBreakpoints();
-	m_listBreakpoints->Clear();
+	Initialize();
+}
+
+void BreakpointDlg::OnItemSelected(wxListEvent &e)
+{
+	m_selectedItem = e.m_itemIndex;
+}
+
+void BreakpointDlg::OnItemDeselected(wxListEvent &e)
+{
+	wxUnusedVar(e);
+	m_selectedItem = wxNOT_FOUND;
+}
+
+void BreakpointDlg::OnItemActivated(wxListEvent &e)
+{
+	wxString file = GetColumnText(m_listCtrlBreakpoints, e.m_itemIndex, 0);
+	wxString line = GetColumnText(m_listCtrlBreakpoints, e.m_itemIndex, 1);
+	long line_number;
+	line.ToLong(&line_number);
+	
+	ManagerST::Get()->OpenFile(file, wxEmptyString, line_number-1);
 }

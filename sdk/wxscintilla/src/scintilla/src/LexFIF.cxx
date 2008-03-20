@@ -61,6 +61,7 @@ static void ColouriseFifDoc(
 				size_t pos = str.find("(");
 				if(pos != std::string::npos) {
 					styler.ColourTo(startLine + pos - 1, SCLEX_FIF_FILE);
+					styler.ColourTo(startLine + str.length() - 1, SCLEX_FIF_DEFAULT);
 				}
 			}
 			

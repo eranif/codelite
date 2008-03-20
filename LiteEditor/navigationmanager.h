@@ -33,13 +33,13 @@ public:
 	 * \brief return the next place to visit
 	 * \return next browsing record
 	 */
-	BrowseRecord Next();
+	BrowseRecord GetNextRecord();
 
 	/**
 	 * \brief return the previous place we visited at
 	 * \return previous browsing record
 	 */
-	BrowseRecord Prev();
+	BrowseRecord GetPrevRecord();
 
 	/**
 	 * \brief return true if manager has more next items
@@ -53,6 +53,7 @@ public:
 	 */
 	bool CanPrev() const;
 
+	void NavigateBackward();
 	void Clear();
 };
 #endif //NAVIGATIONMANAGER_H

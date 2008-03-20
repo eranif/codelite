@@ -491,13 +491,13 @@ void Frame::CreateGUIControls(void)
 
 	//load windows perspective
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-	if(options) {
-		if(options->GetIconsSize() == 16) {
+	if (options) {
+		if (options->GetIconsSize() == 16) {
 			CreateToolbars16();
-		}else{
+		} else {
 			CreateToolbars24();
 		}
-	}else{
+	} else {
 		CreateToolbars24();
 	}
 
@@ -1304,16 +1304,16 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 
 		//set the request find results tab to use
 		GetOutputPane()->SetFindResultsTab(event.GetInt());
-		
+
 		m_outputPane->GetFindResultsTab()->Clear();
 		m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
-		
+
 	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
-		
+
 		SearchSummary *summary = (SearchSummary*)event.GetClientData();
 		m_outputPane->GetFindResultsTab()->AppendText(summary->GetMessage() + wxT("\n"));
 		delete summary;
-		
+
 	}
 	m_outputPane->GetFindResultsTab()->CanFocus(true);
 }
@@ -1566,7 +1566,7 @@ void Frame::OnAdvanceSettings(wxCommandEvent &event)
 	if (event.GetInt() == 1) {
 		selected_page = 1;
 	}
-	
+
 	AdvancedDlg *dlg = new AdvancedDlg(this, selected_page);
 	if (dlg->ShowModal() == wxID_OK) {
 		//mark the whole workspace as dirty so makefile generation will take place
@@ -2038,15 +2038,13 @@ void Frame::OnBackwardForward(wxCommandEvent &event)
 {
 	switch (event.GetId()) {
 	case wxID_FORWARD: {
-		BrowseRecord rec = NavMgr::Get()->Next();
+		BrowseRecord rec = NavMgr::Get()->GetNextRecord();
 		ManagerST::Get()->OpenFile(rec);
 	}
 	break;
-	case wxID_BACKWARD: {
-		BrowseRecord rec = NavMgr::Get()->Prev();
-		ManagerST::Get()->OpenFile(rec);
-	}
-	break;
+	case wxID_BACKWARD: 
+		NavMgr::Get()->NavigateBackward();
+		break;
 	default:
 		break;
 	}
@@ -2322,7 +2320,7 @@ void Frame::LoadPlugins()
 	//perspective
 	long loadIt(1);
 	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
-	if(loadIt) {
+	if (loadIt) {
 		wxString pers = EditorConfigST::Get()->LoadPerspective(wxT("Default"));
 		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == _U(SvnRevision)) {
 			m_mgr.LoadPerspective(pers);
@@ -2615,5 +2613,3 @@ void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 	e.Enable(true);
 	e.Check(m_frameGeneralInfo.GetFlags() & CL_SHOW_EOL ? true : false);
 }
-
-

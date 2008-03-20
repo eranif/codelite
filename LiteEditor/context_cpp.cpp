@@ -895,15 +895,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 
 void ContextCpp::GotoPreviousDefintion()
 {
-	if (!NavMgr::Get()->CanPrev())
-		return;
-
-	// Get the last tag visited
-	BrowseRecord record = NavMgr::Get()->Prev();
-
-	wxString msg;
-	msg << wxT("GotoPreviousDefintion ") << record.filename << wxT(" ") << record.lineno;
-	ManagerST::Get()->OpenFile(record);
+	NavMgr::Get()->NavigateBackward();
 }
 
 void ContextCpp::GotoDefinition()

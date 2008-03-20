@@ -37,25 +37,27 @@ Compiler::Compiler(wxXmlNode *node)
 			child = child->GetNext();
 		}
 	} else {
-		//create a default compiler:
-		//g++
+		//create a default compiler: g++
 		m_name = wxT("gnu g++");
 		m_switches[wxT("Include")] = wxT("-I");
-		m_switches[wxT("Debug")] = wxT("-g");
+		m_switches[wxT("Debug")] = wxT("-g ");
 		m_switches[wxT("Preprocessor")] = wxT("-D");
 		m_switches[wxT("Library")] = wxT("-l");
 		m_switches[wxT("LibraryPath")] = wxT("-L");
-		m_switches[wxT("Source")] = wxT("-c");
-		m_switches[wxT("Output")] = wxT("-o");
+		m_switches[wxT("Source")] = wxT("-c ");
+		m_switches[wxT("Output")] = wxT("-o ");
+		m_switches[wxT("Object")] = wxT("-o ");
+		m_switches[wxT("ArchiveOutput")] = wxT(" ");
 		m_objectSuffix = wxT(".o");
-		m_errorPattern = wxT("(^[a-zA-Z\\.0-9_/]+ *)(:)([0-9]+)");
+							 
+		m_errorPattern = wxT("(^[a-zA-Z\\.0-9_/]+ *)(:)([0-9]+)(:)");
 		m_errorFileNameIndex = wxT("1");
 		m_errorLineNubmerIndex = wxT("3");
-		m_warningPattern = wxT("(^[a-zA-Z\\.0-9_/]+ *)(:)([0-9]+)");
+		m_warningPattern = wxT("(^[a-zA-Z\\.0-9_/]+ *)(:)([0-9]+)(:)( warning:)");
 		m_warningFileNameIndex = wxT("1");
 		m_warningLineNubmerIndex = wxT("3");
 		m_tools[wxT("LinkerName")] = wxT("g++");
-		m_tools[wxT("SharedObjectLinkerName")] = wxT("g++ -shared");
+		m_tools[wxT("SharedObjectLinkerName")] = wxT("g++ -shared -fPIC");
 		m_tools[wxT("CompilerName")] = wxT("g++");
 		m_tools[wxT("ArchiveTool")] = wxT("ar rcu");
 		m_tools[wxT("ResourceCompiler")] = wxT("windres");

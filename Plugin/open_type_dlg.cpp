@@ -18,6 +18,7 @@
 #endif //WX_PRECOMP
 
 #include "open_type_dlg.h"
+#include "globals.h"
 #include "ctags_manager.h"
 #include <wx/xrc/xmlres.h>
 #include "macros.h"
@@ -26,19 +27,16 @@
 static int OpenTypeDlgTimerId = wxNewId();
 
 BEGIN_EVENT_TABLE(OpenTypeDlg, wxDialog)
-EVT_TIMER(OpenTypeDlgTimerId, OpenTypeDlg::OnTimer)
-EVT_CHAR_HOOK(OpenTypeDlg::OnCharHook)
-EVT_LIST_ITEM_ACTIVATED(wxID_ANY, OpenTypeDlg::OnItemActivated)
+	EVT_CHAR_HOOK(OpenTypeDlg::OnCharHook)
+	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, OpenTypeDlg::OnItemActivated)
 END_EVENT_TABLE()
 
 ///////////////////////////////////////////////////////////////////////////
 
-OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxString title, wxPoint pos, wxSize size, int style ) 
-: wxDialog( parent, id, title, pos, size, style )
+OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxString title, wxPoint pos, wxSize size, int style )
+		: wxDialog( parent, id, title, pos, size, style )
 {
 	m_tagsManager = tagsMgr;
-	m_timer = new wxTimer(this, OpenTypeDlgTimerId);
-	m_timer->Start(100);
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -51,7 +49,7 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 	m_textTypeName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	mainSizer->Add( m_textTypeName, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 
-	m_listTypes = new wxListView(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_NO_HEADER|wxLC_REPORT);
+	m_listTypes = new wxListView(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL);
 	mainSizer->Add( m_listTypes, 1, wxALL|wxEXPAND, 5 );
 
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -71,7 +69,7 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 	m_il = new wxImageList(16, 16, true);
 	m_il->Add(wxXmlResource::Get()->LoadBitmap(_T("namespace")));
 	m_il->Add(wxXmlResource::Get()->LoadBitmap(_T("class")));
-    m_il->Add(wxXmlResource::Get()->LoadBitmap(_T("struct")));
+	m_il->Add(wxXmlResource::Get()->LoadBitmap(_T("struct")));
 	wxBitmap bmp;
 
 	// typedef
@@ -85,6 +83,7 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 
 	Init();
 	ConnectButton(m_buttonOK, OpenTypeDlg::OnOK);
+	m_textTypeName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OpenTypeDlg::OnTextEnter), NULL, this);
 
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -92,7 +91,6 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 
 OpenTypeDlg::~OpenTypeDlg()
 {
-	delete m_timer;
 	delete m_il;
 	m_tags.clear();
 }
@@ -100,55 +98,77 @@ OpenTypeDlg::~OpenTypeDlg()
 void OpenTypeDlg::Init()
 {
 	m_listTypes->InsertColumn(0, wxT("Symbol"));
+	m_listTypes->InsertColumn(1, wxT("Scope"));
+	m_listTypes->InsertColumn(2, wxT("File"));
+	m_listTypes->InsertColumn(3, wxT("Line"));
+
 	m_tagsManager->OpenType(m_tags);
 	this->m_textTypeName->SetFocus();
-}
-
-void OpenTypeDlg::OnTimer(wxTimerEvent &event)
-{
-	wxUnusedVar(event);
-	PopulateList();
 }
 
 void OpenTypeDlg::PopulateList()
 {
 	wxString filter = m_textTypeName->GetValue();
-	if(filter.Trim().IsEmpty())
+	if (filter.Trim().IsEmpty()) {
+		//clear the list
+		m_listTypes->Freeze();
+		m_listTypes->DeleteAllItems();
+		m_listTypes->Thaw();
 		return;
-	
+	}
+
 	//if filter is the same, dont update the view
-	if(m_filter == filter)
+	if (m_filter == filter)
 		return;
 	m_filter = filter;
-	
+
 	m_listTypes->Freeze();
 	m_listTypes->DeleteAllItems();
 	m_listTypes->SetImageList(m_il, wxIMAGE_LIST_SMALL);
-	
+
 	m_itemsData.clear();
 
-	int row=0;
 	//populate the list view
-	for(size_t i=0; i<m_tags.size(); i++)
-	{
+	for (size_t i=0; i<m_tags.size(); i++) {
 		filter = filter.MakeLower();
-		if(!filter.EndsWith(wxT("*"))){
+		if (!filter.EndsWith(wxT("*"))) {
 			filter << wxT("*");
 		}
-		wxString tagName = m_tags.at(i)->GetName();
+
+		TagEntryPtr tag = m_tags.at(i);
+		wxString tagName = tag->GetName();
+
 		tagName = tagName.MakeLower();
-		if(wxMatchWild(filter, tagName)){
+		if (wxMatchWild(filter, tagName)) {
 			// Set the item display name
-			wxString name = m_tags.at(i)->GetName();
-			long tmp = m_listTypes->InsertItem(row, name, GetTagImage(m_tags.at(i)->GetKind()));
-			m_listTypes->SetItemData(tmp, (int)i);
-			row++;
-			//m_itemsData[m_tags.at(i)->Key()] = m_tags.at(i);
+			wxString name = tag->GetName();
+
+			//add new line to the list control
+			long row = AppendListCtrlRow(m_listTypes);
+			//set the item name and icon
+			SetColumnText(m_listTypes, row, 0, name, GetTagImage(tag->GetKind()));
+			//set the item scope
+
+			wxString scope;
+			tag->GetScope() == wxT("<global>") ? scope = wxEmptyString : scope = tag->GetScope();
+
+			SetColumnText(m_listTypes, row, 1, scope);
+
+			//set the file name
+			SetColumnText(m_listTypes, row, 2, tag->GetFile());
+
+			wxString lineNumber;
+			lineNumber << tag->GetLine();
+			SetColumnText(m_listTypes, row, 3, lineNumber);
+
+			m_listTypes->SetItemData(row, (long)i);
 		}
 	}
 
 	m_listTypes->SetColumnWidth(0, wxLIST_AUTOSIZE);
-	if(m_listTypes->GetItemCount() > 0){
+	m_listTypes->SetColumnWidth(2, wxLIST_AUTOSIZE);
+
+	if (m_listTypes->GetItemCount() > 0) {
 		m_listTypes->Focus(0);
 		m_listTypes->Select(0);
 	}
@@ -157,31 +177,59 @@ void OpenTypeDlg::PopulateList()
 
 int OpenTypeDlg::GetTagImage(const wxString &kind)
 {
-	if(kind == wxT("namespace"))	return 0;
-	if(kind == wxT("class"))		return 1;
-	if(kind == wxT("struct"))		return 2;
-	if(kind == wxT("typedef"))		return 3;
-	if(kind == wxT("enum"))			return 4;
-	if(kind == wxT("union"))		return 2;
+	if (kind == wxT("namespace"))	return 0;
+	if (kind == wxT("class"))		return 1;
+	if (kind == wxT("struct"))		return 2;
+	if (kind == wxT("typedef"))		return 3;
+	if (kind == wxT("enum"))			return 4;
+	if (kind == wxT("union"))		return 2;
 	return 1;
 }
 
 void OpenTypeDlg::OnCharHook(wxKeyEvent &event)
 {
-	if(event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER)
-	{
+	if (event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
 		TryOpenAndEndModal();
 		return;
+	} else if (event.GetKeyCode() == WXK_DOWN) {
+		long selectedItem = m_listTypes->GetFirstSelected();
+		if(selectedItem == wxNOT_FOUND && m_listTypes->GetItemCount() > 0) {
+			selectedItem = 0;
+		}
+		if(selectedItem == wxNOT_FOUND)
+			return;
+			
+		//select the next one if we can
+		if(m_listTypes->GetItemCount() > (selectedItem + 1)) {
+			//we can select the next one
+			m_listTypes->Select(selectedItem + 1);
+			m_listTypes->Focus(selectedItem + 1);
+		}
+		return;
+	} else if (event.GetKeyCode() == WXK_UP) {
+		long selectedItem = m_listTypes->GetFirstSelected();
+		if(selectedItem == wxNOT_FOUND && m_listTypes->GetItemCount() > 0) {
+			selectedItem = 0;
+		}
+		if(selectedItem == wxNOT_FOUND)
+			return;
+			
+		//select the previous one if we can
+		if((selectedItem - 1) >= 0) {
+			//we can select the next one
+			m_listTypes->Select(selectedItem - 1);
+			m_listTypes->Focus(selectedItem - 1);
+		}
+		return;
 	}
-	event.Skip(); 
+	event.Skip();
 }
 
 void OpenTypeDlg::TryOpenAndEndModal()
 {
 	long item = m_listTypes->GetFirstSelected();
 	long data  = m_listTypes->GetItemData(item);
-	if((int)m_tags.size() > data && data >= 0)
-	{
+	if ((int)m_tags.size() > data && data >= 0) {
 		m_tag = m_tags.at(data);
 		m_tags.clear();
 	}
@@ -198,5 +246,11 @@ void OpenTypeDlg::OnItemActivated(wxListEvent &event)
 {
 	wxUnusedVar(event);
 	TryOpenAndEndModal();
-	
+
+}
+
+void OpenTypeDlg::OnTextEnter(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	PopulateList();
 }

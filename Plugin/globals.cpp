@@ -26,16 +26,15 @@ void PostCmdEvent(int eventId, void *clientData)
 	wxTheApp->AddPendingEvent(e);
 }
 
-void SetColumnText (wxListCtrl *list, long indx, long column, const wxString &rText )
+void SetColumnText (wxListCtrl *list, long indx, long column, const wxString &rText, int imgId )
 {
-//	list->Freeze();
 	wxListItem list_item;
 	list_item.SetId ( indx );
 	list_item.SetColumn ( column );
 	list_item.SetMask ( wxLIST_MASK_TEXT );
 	list_item.SetText ( rText );
+	list_item.SetImage( imgId );
 	list->SetItem ( list_item );
-//	list->Thaw();
 }
 
 wxString GetColumnText(wxListCtrl *list, long index, long column)

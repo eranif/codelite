@@ -5,7 +5,6 @@
 #include <wx/listctrl.h>
 #include <wx/statline.h>
 #include <wx/button.h>
-#include <wx/timer.h>
 #include "ctags_manager.h"
 #include "map"
 
@@ -22,7 +21,6 @@ protected:
 	wxStaticLine* m_staticline1;
 	wxButton* m_buttonOK;
 	wxButton* m_button2;
-	wxTimer *m_timer;
 	std::vector<TagEntryPtr> m_tags;
 	wxString m_filter ;
 	wxImageList *m_il;
@@ -32,16 +30,17 @@ protected:
 	
 protected:
 	void Init();
-	void OnTimer(wxTimerEvent &event);
+	void OnTextEnter(wxCommandEvent &e);
+	
 	void OnCharHook(wxKeyEvent &event);
 	void OnItemActivated(wxListEvent &event);
 	void PopulateList();
 	int GetTagImage(const wxString &kind);
 	void OnOK(wxCommandEvent &event);
 	void TryOpenAndEndModal();
-
+	
 public:
-	OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id = wxID_ANY, wxString title = wxT("Open Type"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 431,353 ), int style = wxDEFAULT_DIALOG_STYLE);
+	OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id = wxID_ANY, wxString title = wxT("Open Type"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 682, 353 ), int style = wxDEFAULT_DIALOG_STYLE);
 	virtual ~OpenTypeDlg();
 	TagEntryPtr GetSelectedTag() const {return m_tag;}
 	DECLARE_EVENT_TABLE()

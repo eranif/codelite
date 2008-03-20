@@ -27,11 +27,11 @@ void BreakpointDlg::Initialize()
 	std::vector<BreakpointInfo>::iterator iter = bps.begin();
 	for (; iter != bps.end(); iter++) {
 		long item = AppendListCtrlRow(m_listCtrlBreakpoints);
-		SetColumnText(m_listCtrlBreakpoints, item, 0, iter->file);
+		SetColumnText(m_listCtrlBreakpoints, item, 0, iter->file, wxNOT_FOUND);
 
 		wxString line;
 		line << iter->lineno;
-		SetColumnText(m_listCtrlBreakpoints, item, 1, line);
+		SetColumnText(m_listCtrlBreakpoints, item, 1, line, wxNOT_FOUND);
 	}
 
 	iter = pbps.begin();

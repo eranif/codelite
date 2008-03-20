@@ -12,6 +12,8 @@
 /// Class OpenTypeDlg
 ///////////////////////////////////////////////////////////////////////////////
 class wxImageList;
+class wxTimer;
+
 class OpenTypeDlg : public wxDialog 
 {
 protected:
@@ -27,10 +29,11 @@ protected:
 	TagEntryPtr m_tag;
 	std::map<wxString, TagEntryPtr> m_itemsData;
 	TagsManager *m_tagsManager;
+	wxTimer *m_timer;
 	
 protected:
 	void Init();
-	void OnTextEnter(wxCommandEvent &e);
+	void OnTimer(wxTimerEvent &event);
 	
 	void OnCharHook(wxKeyEvent &event);
 	void OnItemActivated(wxListEvent &event);

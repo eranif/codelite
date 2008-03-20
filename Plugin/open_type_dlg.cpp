@@ -23,10 +23,12 @@
 #include <wx/xrc/xmlres.h>
 #include "macros.h"
 #include "wx/imaglist.h"
+#include "wx/timer.h"
 
 static int OpenTypeDlgTimerId = wxNewId();
 
 BEGIN_EVENT_TABLE(OpenTypeDlg, wxDialog)
+	EVT_TIMER(OpenTypeDlgTimerId, OpenTypeDlg::OnTimer)
 	EVT_CHAR_HOOK(OpenTypeDlg::OnCharHook)
 	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, OpenTypeDlg::OnItemActivated)
 END_EVENT_TABLE()
@@ -37,7 +39,9 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 		: wxDialog( parent, id, title, pos, size, style )
 {
 	m_tagsManager = tagsMgr;
-
+	m_timer = new wxTimer(this, OpenTypeDlgTimerId);
+	m_timer->Start(100);
+	
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxBoxSizer* mainSizer;
@@ -83,7 +87,6 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 
 	Init();
 	ConnectButton(m_buttonOK, OpenTypeDlg::OnOK);
-	m_textTypeName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OpenTypeDlg::OnTextEnter), NULL, this);
 
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -91,6 +94,7 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 
 OpenTypeDlg::~OpenTypeDlg()
 {
+	delete m_timer;
 	delete m_il;
 	m_tags.clear();
 }
@@ -249,8 +253,8 @@ void OpenTypeDlg::OnItemActivated(wxListEvent &event)
 
 }
 
-void OpenTypeDlg::OnTextEnter(wxCommandEvent &e)
+void OpenTypeDlg::OnTimer(wxTimerEvent &event)
 {
-	wxUnusedVar(e);
+	wxUnusedVar(event);
 	PopulateList();
 }

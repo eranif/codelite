@@ -18,7 +18,14 @@ void NewIneritanceDlg::OnButtonMore( wxCommandEvent& event )
 {
 	OpenTypeDlg *dlg = new OpenTypeDlg(this, m_mgr->GetTagsManager());
 	if(dlg->ShowModal() == wxID_OK){
-		m_textCtrlInhertiance->SetValue(dlg->GetSelectedTag()->GetName());
+		wxString parentName;
+		if(	dlg->GetSelectedTag()->GetScope().IsEmpty() == false && 
+			dlg->GetSelectedTag()->GetScope() != wxT("<global>"))
+		{
+			parentName << dlg->GetSelectedTag()->GetScope() << wxT("::");
+		}
+		parentName << dlg->GetSelectedTag()->GetName();
+		m_textCtrlInhertiance->SetValue(parentName);
 	}
 	dlg->Destroy();
 }

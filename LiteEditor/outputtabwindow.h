@@ -18,6 +18,7 @@ protected:
 	virtual void OnWordWrap(wxCommandEvent &e);
 	virtual void OnSetFocus(wxFocusEvent &event);
 	virtual void OnMouseDClick(wxScintillaEvent &event){event.Skip();}
+	virtual void OnHotspotClicked(wxScintillaEvent &event){event.Skip();}
 	virtual void OnStyleNeeded(wxScintillaEvent &event){event.Skip();}
 	virtual void OnCompilerColours(wxCommandEvent &event){event.Skip();};
 	

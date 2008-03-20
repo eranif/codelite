@@ -1495,11 +1495,13 @@ void LEditor::DelBreakpoint()
 void LEditor::SetBreakpointMarker(int lineno)
 {
 	MarkerAdd(lineno, 0x8);
+	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
 
 void LEditor::DelBreakpointMarker(int lineno)
 {
 	MarkerDelete(lineno, 0x8);
+	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
 
 void LEditor::DelAllBreakpointMarkers()

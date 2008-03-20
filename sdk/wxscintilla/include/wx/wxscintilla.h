@@ -408,6 +408,10 @@
 #define wxSCI_LEX_GCC_ERROR	  1
 #define wxSCI_LEX_GCC_WARNING 2
 #define wxSCI_LEX_GCC_BUILDING 3
+
+#define wxSCI_LEX_FIF 85
+#define wxSCI_LEX_FIF_DEFAULT 0
+#define wxSCI_LEX_FIF_FILE	  1
 //ERAN - END
 
 // When a lexer specifies its language as SCLEX_AUTOMATIC it receives a

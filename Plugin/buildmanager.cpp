@@ -17,7 +17,7 @@ BuildManager::~BuildManager()
 void BuildManager::AddBuilder(BuilderPtr builder)
 {
 	wxCriticalSectionLocker locker(m_cs);
-	if(!builder){
+	if(!builder){ 
 		return;
 	}
 

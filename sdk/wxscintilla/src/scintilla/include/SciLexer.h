@@ -103,6 +103,10 @@
 #define SCLEX_GCC_ERROR	  1
 #define SCLEX_GCC_WARNING 2
 #define SCLEX_GCC_BUILDING 3
+
+#define SCLEX_FIF 85
+#define SCLEX_FIF_DEFAULT 0
+#define SCLEX_FIF_FILE	  1
 //Eran - END
 
 #define SCLEX_AUTOMATIC 1000

@@ -15,5 +15,6 @@ public:
 	virtual ~FindResultsTab();
 
 	virtual void OnMouseDClick(wxScintillaEvent &event);
+	virtual void OnHotspotClicked(wxScintillaEvent &event);
 };
 #endif // __findresultstab__

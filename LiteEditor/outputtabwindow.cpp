@@ -83,7 +83,8 @@ void OutputTabWindow::CreateGUIControl()
 	//------------------------
 
 	Connect(wxEVT_SCI_DOUBLECLICK, wxScintillaEventHandler(OutputTabWindow::OnMouseDClick), NULL, this);
-	Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(OutputTabWindow::OnSetFocus), NULL, this);
+	Connect(wxEVT_SCI_HOTSPOT_CLICK, wxScintillaEventHandler(OutputTabWindow::OnHotspotClicked), NULL, this);
+	
 	//Connect(wxEVT_SCI_STYLENEEDED, wxScintillaEventHandler(OutputTabWindow::OnStyleNeeded), NULL, this);
 }
 

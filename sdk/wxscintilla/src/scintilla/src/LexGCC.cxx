@@ -26,7 +26,7 @@
 using namespace Scintilla;
 #endif
 
-extern int ColourGccLine(int lineNumber, const char *line);
+extern int ColourGccLine(int startLine, const char *line, size_t &fileNameStart, size_t &fileNameLen);
 
 static inline bool AtEOL(Accessor &styler, unsigned int i)
 {
@@ -53,7 +53,19 @@ static void ColouriseGccDoc(
 			// lineBuffer contains our line
 			// End of line (or of line buffer) met, colourise it
 			lineBuffer[linePos] = '\0';
-			styler.ColourTo(i, ColourGccLine(startLine, lineBuffer));
+			
+			size_t start(0);
+			size_t len(0);
+			int style = ColourGccLine(startLine, lineBuffer, start, len);
+			
+			
+			if(len != 0) {
+				styler.ColourTo(startLine + start - 1, style);
+				styler.ColourTo(startLine + start + len - 1, SCLEX_GCC_FILE_LINK);
+				styler.ColourTo(i, style);
+			} else {
+				styler.ColourTo(i, style);
+			}
 			
 			linePos = 0;
 			startLine = i + 1;

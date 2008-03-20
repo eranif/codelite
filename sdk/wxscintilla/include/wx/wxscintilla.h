@@ -408,6 +408,7 @@
 #define wxSCI_LEX_GCC_ERROR	  1
 #define wxSCI_LEX_GCC_WARNING 2
 #define wxSCI_LEX_GCC_BUILDING 3
+#define wxSCI_LEX_GCC_FILE_LINK 4
 
 #define wxSCI_LEX_FIF 85
 #define wxSCI_LEX_FIF_DEFAULT 0

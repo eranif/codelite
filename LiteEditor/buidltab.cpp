@@ -2,16 +2,17 @@
 #include "frame.h"
 #include "precompiled_header.h"
 #include "frame.h"
+#include "wx/regex.h"
 #include "buildtabsettingsdata.h"
 #include "wx/wxFlatNotebook/renderer.h"
 #include "regex_processor.h"
 #include "macros.h"
 #include "wx/xrc/xmlres.h"
 #include "build_settings_config.h"
-#include "compiler.h" 
+#include "compiler.h"
 #include "manager.h"
 #include "project.h"
-#include "wx/wxscintilla.h" 
+#include "wx/wxscintilla.h"
 #include "buidltab.h"
 
 #ifndef wxScintillaEventHandler
@@ -30,9 +31,10 @@ END_EVENT_TABLE()
 //1 - colour as error
 //2 - colour as warning
 //----------------------------------------------------
-int ColourGccLine(int startLine, const char *line) {
+int ColourGccLine(int startLine, const char *line, size_t &fileNameStart, size_t &fileNameLen)
+{
 	BuildTab *bt = Frame::Get()->GetOutputPane()->GetBuildTab();
-	
+
 	wxString fileName, strLineNumber;
 	long idx;
 
@@ -45,28 +47,28 @@ int ColourGccLine(int startLine, const char *line) {
 
 	wxString lineText = _U(line);
 	//check if this is a 'Building:' line
-	if(lineText.StartsWith(wxT("Building:"))){
+	if (lineText.StartsWith(wxT("Building:"))) {
 		return wxSCI_LEX_GCC_BUILDING;
 	}
+
+	wxRegEx re(cmp->GetWarnPattern());
+	if (re.IsValid()) {
+		cmp->GetWarnFileNameIndex().ToLong(&idx);
+		if(re.Matches(lineText)){
+			re.GetMatch(&fileNameStart, &fileNameLen, 0);
+			return wxSCI_LEX_GCC_WARNING;
+		}
+	}
 	
-	RegexProcessor re(cmp->GetWarnPattern());
-	cmp->GetWarnFileNameIndex().ToLong(&idx);
-	if (re.GetGroup(lineText, idx, fileName)) {
-		//we found the file name, get the line number
-		cmp->GetWarnLineNumberIndex().ToLong( &idx );
-		re.GetGroup(lineText, idx, strLineNumber);
-		return wxSCI_LEX_GCC_WARNING;
+	wxRegEx ere(cmp->GetErrPattern());
+	if (re.IsValid()) {
+		cmp->GetErrFileNameIndex().ToLong(&idx);
+		if(ere.Matches(lineText)){
+			ere.GetMatch(&fileNameStart, &fileNameLen, 0);
+			return wxSCI_LEX_GCC_ERROR;
+		}
 	}
 
-	RegexProcessor ere(cmp->GetErrPattern());
-	cmp->GetErrFileNameIndex().ToLong(&idx);
-	if (ere.GetGroup(lineText, idx, fileName)) {
-		//we found the file name, get the line number
-		cmp->GetErrLineNumberIndex().ToLong( &idx );
-		ere.GetGroup(lineText, idx, strLineNumber);
-		return wxSCI_LEX_GCC_ERROR;
-	}
-	
 	return wxSCI_LEX_GCC_DEFAULT;
 }
 
@@ -89,33 +91,35 @@ void BuildTab::Initialize()
 	BuildTabSettingsData options;
 	EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
 	m_skipWarnings = options.GetSkipWarnings();
-	
+
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
-	
+
 	m_sci->SetLexer(wxSCI_LEX_GCC);
 	m_sci->MarkerSetBackground(0x7, wxT("BLUE"));
 	m_sci->MarkerSetForeground(0x7, wxT("BLACK"));
-	
+
 	m_sci->StyleSetForeground(wxSCI_LEX_GCC_WARNING, options.GetWarnColour());
 	m_sci->StyleSetBackground(wxSCI_LEX_GCC_WARNING, options.GetWarnColourBg());
-	
+
 	m_sci->StyleSetForeground(wxSCI_LEX_GCC_ERROR, options.GetErrorColour());
 	m_sci->StyleSetBackground(wxSCI_LEX_GCC_ERROR, options.GetErrorColourBg());
-	
+
 	font.SetWeight(options.GetBoldWarnFont() ? wxBOLD : wxNORMAL);
 	m_sci->StyleSetFont(wxSCI_LEX_GCC_WARNING, font);
-	
+
 	font.SetWeight(wxNORMAL);
 	m_sci->StyleSetFont(wxSCI_LEX_GCC_DEFAULT, font);
 	
+	m_sci->StyleSetForeground(wxSCI_LEX_GCC_FILE_LINK, wxT("BLUE"));
+	m_sci->StyleSetFont(wxSCI_LEX_GCC_FILE_LINK, font);
+	
 	font.SetWeight(options.GetBoldErrFont() ? wxBOLD : wxNORMAL);
 	m_sci->StyleSetFont(wxSCI_LEX_GCC_ERROR, font);
-	
+
 	font.SetWeight(wxBOLD);
 	m_sci->StyleSetFont(wxSCI_LEX_GCC_BUILDING, font);
-	
-	m_sci->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(BuildTab::OnLeftDown), NULL, this);
+	m_sci->StyleSetHotSpot(wxSCI_LEX_GCC_FILE_LINK, true);
 }
 
 void BuildTab::AppendText(const wxString &text)
@@ -237,9 +241,9 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 			match = true;
 		}
 	} else {
-		//match was of a warning, 
+		//match was of a warning,
 		//incase of the user is not interesting in warnings, skip it
-		if(m_skipWarnings) {
+		if (m_skipWarnings) {
 			match = false;
 		}
 	}
@@ -254,7 +258,7 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 		Manager *mgr = ManagerST::Get();
 		std::vector<wxFileName> files;
 		mgr->GetWorkspaceFiles(files, true);
-		
+
 		bool fileOpened(false);
 		for (size_t i=0; i<files.size(); i++) {
 			if (files.at(i).GetFullName() == fn.GetFullName()) {
@@ -274,8 +278,8 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 				}
 			}
 		}
-		
-		if( !fileOpened ) {
+
+		if ( !fileOpened ) {
 			//try to open the file as is
 			//we have a match
 			mgr->OpenFile(fn.GetFullPath(), wxEmptyString, (int)lineNumber-1);
@@ -353,24 +357,6 @@ void BuildTab::ReloadSettings()
 	Initialize();
 }
 
-void BuildTab::OnLeftDown(wxMouseEvent &e)
-{
-	/*
-	wxPoint clientPt = e.GetPosition();
-	int pos = m_sci->PositionFromPointClose(clientPt.x, clientPt.y);
-	int line = m_sci->LineFromPosition(pos);
-	wxString lineText = m_sci->GetLine(line);
-
-	//remove selection
-	m_sci->SetSelectionStart(pos);
-	m_sci->SetSelectionEnd(pos);
-
-	lineText.Replace(wxT("\\"), wxT("/"));
-	OnBuildWindowDClick(lineText, line);
-	*/
-	e.Skip();
-}
-
 int BuildTab::LineFromPosition(int pos)
 {
 	return m_sci->LineFromPosition(pos);
@@ -382,4 +368,9 @@ void BuildTab::OnCompilerColours(wxCommandEvent &e)
 	event.SetEventObject(this);
 	event.SetInt(1);
 	Frame::Get()->ProcessEvent(event);
+}
+
+void BuildTab::OnHotspotClicked(wxScintillaEvent &event)
+{
+	OnMouseDClick(event);
 }

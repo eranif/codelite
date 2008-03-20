@@ -22,7 +22,7 @@ protected:
 	bool OnBuildWindowDClick(const wxString &line, int lineClicked);
 	void OnNextBuildError(wxCommandEvent &event);
 	void OnMouseDClick(wxScintillaEvent &event);
-	void OnLeftDown(wxMouseEvent &e);
+	void OnHotspotClicked(wxScintillaEvent &event);
 	void OnCompilerColours(wxCommandEvent &e);
 	void Initialize();
 	

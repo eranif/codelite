@@ -17,8 +17,8 @@
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="g++ -shared -fPIC"/>
       <Option Name="ObjectSuffix" Value=".o"/>
-      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+)(:)</Pattern>
-      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+ *)(:)( warning:)</Pattern>
+      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+)(:)([ eor]*)</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/]+ *)(:)([0-9]+ *)(:)([0-9:]*)( warning:)</Pattern>
     </Compiler>
     <Compiler Name="gnu gcc">
       <Switch Name="ArchiveOutput" Value=" "/>

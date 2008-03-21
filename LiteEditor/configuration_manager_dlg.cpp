@@ -108,9 +108,10 @@ void ConfigurationManagerDlg::PopulateConfigurations()
 		AddEntry(projects.Item(i), selConf);
 	}
 
+	Thaw();
 	mainSizer->Fit(m_scrolledWindow);
 	Layout();
-	Thaw();
+	
 }
 
 void ConfigurationManagerDlg::LoadWorkspaceConfiguration(const wxString &confName)

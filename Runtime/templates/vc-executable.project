@@ -17,9 +17,9 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand>$(MINGW)\bin\mingw32-make clean</CleanCommand>
-        <BuildCommand>$(MINGW)\bin\mingw32-make</BuildCommand>
-        <MakefileGenerationCommand>$(MINGW)\bin\ls</MakefileGenerationCommand>
+        <CleanCommand>$(MINGW)/bin/mingw32-make clean</CleanCommand>
+        <BuildCommand>$(MINGW)/bin/mingw32-make</BuildCommand>
+        <MakefileGenerationCommand>$(MINGW)/bin/ls</MakefileGenerationCommand>
         <ThirdPartyToolName>Premake</ThirdPartyToolName>
         <WorkingDirectory></WorkingDirectory>
       </CustomBuild>

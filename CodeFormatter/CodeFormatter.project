@@ -79,10 +79,9 @@
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
         <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdku.a"/>
         <Library Value="libwxflatnotebooku.a"/>
         <Library Value="libCodeLiteu.a"/>
-        <Library Value="libplugin_sdku.a"/>
-        <Library Value="libwxscintillau.a"/>
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>

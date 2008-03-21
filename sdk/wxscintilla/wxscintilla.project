@@ -132,7 +132,7 @@
       <File Name="src/scintilla/src/RunStyles.cxx"/>
       <File Name="src/scintilla/src/RunStyles.h"/>
       <File Name="src/scintilla/src/LexGCC.cxx"/>
-      <File Name="src\scintilla\src\LexFIF.cxx"/>
+      <File Name="src/scintilla/src/LexFIF.cxx"/>
     </VirtualDirectory>
     <VirtualDirectory Name="include">
       <File Name="src/scintilla/include/Accessor.h"/>

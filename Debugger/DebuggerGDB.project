@@ -48,9 +48,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -66,10 +64,9 @@
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
         <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdku.a"/>
         <Library Value="libwxflatnotebooku.a"/>
         <Library Value="libCodeLiteu.a"/>
-        <Library Value="libplugin_sdku.a"/>
-        <Library Value="libwxscintillau.a"/>
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
@@ -81,12 +78,14 @@
         <BuildCommand></BuildCommand>
         <SingleFileCommand></SingleFileCommand>
         <MakefileGenerationCommand></MakefileGenerationCommand>
-        <ThirdPartyToolName></ThirdPartyToolName>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
         <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">

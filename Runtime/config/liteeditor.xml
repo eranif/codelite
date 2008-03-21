@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LiteEditor Revision="1174">
+<LiteEditor Revision="1175">
   <Layout>
     <Notebook Name="Editor" Style="751292"/>
     <Notebook Name="OutputPane" Style="738332"/>
@@ -103,34 +103,34 @@
     </wxArrayString>
   </ArchiveObject>
   <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#000080" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="16"/>
-  <RecentFiles>
-    <File Name="C:\TestArea\jin\c.cpp"/>
-    <File Name="C:\devl\myproject\main.cpp"/>
-    <File Name="C:\wxWidgets-2.8.7\include\wx\hashmap.h"/>
-    <File Name="C:\devl\myproject\myderivedclass.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\Subversion\svnxmlparser.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\lexer_configuration.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\build_settings_config.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\configtool.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\vcimporter.cpp"/>
-  </RecentFiles>
-  <ArchiveObject Name="LoadSavedPrespective">
-    <long Value="1" Name="m_value"/>
-  </ArchiveObject>
-  <RecentWorkspaces>
-    <File Name="C:\devl\myproject\MyProject.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/Plugins.workspace"/>
-    <File Name="C:\TestArea\TestOne.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
-    <File Name="C:\TestArea\1234\stam.workspace"/>
-    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
-    <File Name="C:\TestArea\jin\a.workspace"/>
-  </RecentWorkspaces>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1270" y="947"/>
     <wxPoint Name="m_framePos" x="0" y="0"/>
     <long Value="15" Name="m_flags"/>
   </ArchiveObject>
+  <ArchiveObject Name="LoadSavedPrespective">
+    <long Value="1" Name="m_value"/>
+  </ArchiveObject>
+  <RecentFiles>
+    <File Name="C:\Development\C++\codelite\trunk\Plugin\vcimporter.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugin\configtool.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugin\build_settings_config.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugin\lexer_configuration.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\Subversion\svnxmlparser.cpp"/>
+    <File Name="C:\devl\myproject\myderivedclass.h"/>
+    <File Name="C:\wxWidgets-2.8.7\include\wx\hashmap.h"/>
+    <File Name="C:\devl\myproject\main.cpp"/>
+    <File Name="C:\TestArea\jin\c.cpp"/>
+  </RecentFiles>
+  <RecentWorkspaces>
+    <File Name="C:\TestArea\jin\a.workspace"/>
+    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
+    <File Name="C:\TestArea\1234\stam.workspace"/>
+    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\TestOne.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/Plugins.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+    <File Name="C:\devl\myproject\MyProject.workspace"/>
+  </RecentWorkspaces>
 </LiteEditor>

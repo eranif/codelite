@@ -11,7 +11,8 @@ enum {
 	CL_USE_EOL_LF			= 0x00000008,
 	CL_USE_EOL_CR			= 0x00000010,
 	CL_USE_EOL_CRLF			= 0x00000020,
-	CL_SHOW_EOL				= 0x00000040
+	CL_SHOW_EOL				= 0x00000040,
+	CL_SHOW_SPLASH			= 0x00000080
 };
 
 class GeneralInfo : public SerializedObject{

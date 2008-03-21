@@ -16,6 +16,8 @@
 #endif //WX_PRECOMP
 
 #include "options_base_dlg.h"
+#include "frame.h"
+#include "generalinfo.h"
 #include "wx/notebook.h"
 #include "lexer_configuration.h"
 #include "lexer_page.h"
@@ -100,22 +102,14 @@ wxPanel *OptionsDlg::CreateSyntaxHighlightPage()
 
 wxPanel *OptionsDlg::CreateGeneralPage()
 {
+	GeneralInfo info = Frame::Get()->GetFrameGeneralInfo();;
+		
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	m_general = new wxPanel( m_book, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* vSz1;
 	vSz1 = new wxBoxSizer( wxVERTICAL );
 
 	wxBoxSizer *bszier = new wxBoxSizer(wxVERTICAL);
-	
-	wxString iconSize[] = { wxT("Toolbar uses small icons (16x16)"), wxT("Toolbar uses large icons (24x24)") };
-	m_iconSize = new wxChoice( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, 2, iconSize, 0 );
-	bszier->Add( m_iconSize, 0, wxALL|wxEXPAND, 5 );
-	
-	if(options->GetIconsSize() == 16) {
-		m_iconSize->SetSelection(0);
-	}else{
-		m_iconSize->SetSelection(1);
-	}
 	
 	m_displayLineNumbers = new wxCheckBox( m_general, wxID_ANY, wxT("Display Line Numbers"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_displayLineNumbers->SetValue(options->GetDisplayLineNumbers());
@@ -133,8 +127,26 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 	m_highlighyCaretLine->SetValue(options->GetHighlightCaretLine());
 	bszier->Add( m_highlighyCaretLine, 0, wxALL, 5 );
 	
+	wxString iconSize[] = { wxT("Toolbar uses small icons (16x16)"), wxT("Toolbar uses large icons (24x24)") };
+	m_iconSize = new wxChoice( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, 2, iconSize, 0 );
+	bszier->Add( m_iconSize, 0, wxALL|wxEXPAND, 5 );
+	
+	if(options->GetIconsSize() == 16) {
+		m_iconSize->SetSelection(0);
+	}else{
+		m_iconSize->SetSelection(1);
+	}
+	
 	//set some colour pickers
 	wxStaticLine *line = new wxStaticLine( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bszier->Add(line, 0, wxEXPAND | wxALL, 5);
+	
+	m_checkBoxShowSplash = new wxCheckBox( m_general, wxID_ANY, wxT("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
+	bszier->Add(m_checkBoxShowSplash, 0, wxEXPAND | wxALL, 5);
+	bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
+	m_checkBoxShowSplash->SetValue(showSplash);
+	
+	line = new wxStaticLine( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bszier->Add(line, 0, wxEXPAND | wxALL, 5);
 	
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -198,7 +210,13 @@ void OptionsDlg::SaveChanges()
 			page->SaveSettings();
 		}
 	}
-
+	
+	if(m_checkBoxShowSplash->IsChecked()){
+		Frame::Get()->SetFrameFlag(true, CL_SHOW_SPLASH);
+	}else{
+		Frame::Get()->SetFrameFlag(false, CL_SHOW_SPLASH);
+	}
+	
 	// construct an OptionsConfig object and update the configuration
 	OptionsConfigPtr options(new OptionsConfig(NULL));
 	options->SetDisplayFoldMargin( m_checkBoxDisplayFoldMargin->IsChecked() );

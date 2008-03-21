@@ -1,6 +1,7 @@
 #include "app.h"
 #include <wx/image.h>
 
+#include "editor_config.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/sysopt.h>
 #include "manager.h"
@@ -92,7 +93,7 @@ bool App::OnInit()
 	if (homeDir.IsEmpty()) {
 		SetAppName(wxT("codelite"));
 		homeDir = wxStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or ~/.codelite
-		
+
 		//Create the directory structure
 		wxMkDir(homeDir.ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/plugins/")).ToAscii(), 0777);
@@ -106,7 +107,7 @@ bool App::OnInit()
 		//copy the settings from the global location if needed
 		CopySettings(homeDir);
 	}
-	
+
 #elif defined (__WXMAC__)
 	SetAppName(wxT("codelite"));
 	homeDir = wxStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or ~/.codelite
@@ -159,18 +160,28 @@ bool App::OnInit()
 	style |= wxFRAME_NO_TASKBAR;
 #endif
 
-	wxBitmap bitmap;
-	wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png"));
-	if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
-		wxString mainTitle;
-		mainTitle << wxT("CodeLite - SVN build, Revision: ") << _U(SvnRevision);
-		m_splash = new SplashScreen(bitmap, mainTitle, wxT("For the Windows(R) & Linux environments"),
-		                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
-		                            3000, NULL, -1, wxDefaultPosition, wxDefaultSize,
-		                            style);
-	}
-	wxYield();
+	//read the last frame size from the configuration file
+	// Initialise editor configuration files
+	EditorConfig *cfg = EditorConfigST::Get();
+	cfg->Load();
 
+	GeneralInfo inf;
+	cfg->ReadObject(wxT("GeneralInfo"), &inf);
+	
+	bool showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
+	if (showSplash) {
+		wxBitmap bitmap;
+		wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png"));
+		if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
+			wxString mainTitle;
+			mainTitle << wxT("CodeLite - SVN build, Revision: ") << _U(SvnRevision);
+			m_splash = new SplashScreen(bitmap, mainTitle, wxT("For the Windows(R) & Linux environments"),
+			                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
+			                            3000, NULL, -1, wxDefaultPosition, wxDefaultSize,
+			                            style);
+		}
+		wxYield();
+	}
 
 	// Create the main application window (a dialog in this case)
 	// NOTE: Vertical dimension comprises the caption bar.
@@ -194,8 +205,10 @@ bool App::OnInit()
 	m_pMainFrame->Show(TRUE);
 	SetTopWindow(m_pMainFrame);
 
-	m_splash->Close(true);
-	m_splash->Destroy();
+	if( showSplash ) {
+		m_splash->Close(true);
+		m_splash->Destroy();
+	}
 
 	for (size_t i=0; i< parser.GetParamCount(); i++) {
 		wxString argument = parser.GetParam(i);

@@ -309,14 +309,11 @@ Frame* Frame::Get()
 		//set the revision number in the frame title
 		wxString title(wxT("CodeLite - Revision: "));
 		title << _U(SvnRevision);
-		//read the last frame size from the configuration file
-		// Initialise editor configuration files
-		EditorConfig *cfg = EditorConfigST::Get();
-		cfg->Load();
-
+		
 		//initialize the environment variable configuration manager
 		EnvironmentConfig::Instance()->Load();
-
+		
+		EditorConfig *cfg = EditorConfigST::Get();
 		GeneralInfo inf;
 		cfg->ReadObject(wxT("GeneralInfo"), &inf);
 		m_theFrame = new Frame(	NULL,

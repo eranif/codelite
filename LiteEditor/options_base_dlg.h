@@ -69,6 +69,7 @@ protected:
 	wxButton* m_cancelButton;
 	wxButton* m_applyButton;
 	wxChoice* m_iconSize;
+	wxCheckBox* m_checkBoxShowSplash;
 	
 private:
 	wxPanel *CreateSyntaxHighlightPage();

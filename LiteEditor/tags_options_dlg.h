@@ -66,7 +66,7 @@ public:
 				    int id = wxID_ANY, 
 				    wxString title = wxT("Tags Options"), 
 				    wxPoint pos = wxDefaultPosition, 
-				    wxSize size = wxSize(469, 362), 
+				    wxSize size = wxSize(500, 450), 
 				    int style = wxDEFAULT_DIALOG_STYLE);
 
 	TagsOptionsData &GetData() {return m_data;}

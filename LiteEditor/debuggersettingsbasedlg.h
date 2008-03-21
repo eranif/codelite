@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+// C++ code generated with wxFormBuilder (version Feb 20 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -19,7 +19,7 @@
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
-#include <wx/wxFlatNotebook/wxFlatNotebook.h>
+#include <wx/notebook.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
 
@@ -34,14 +34,14 @@ class DebuggerSettingsBaseDlg : public wxDialog
 	private:
 	
 	protected:
-		wxFlatNotebook* m_notebook2;
+		wxNotebook* m_notebook2;
 		wxPanel* m_panel2;
 		wxListCtrl* m_listCtrl1;
 		wxButton* m_buttonNewType;
 		wxButton* m_buttonEdit;
 		wxButton* m_buttonDelete;
 		wxPanel* m_panel1;
-		wxFlatNotebook* m_book;
+		wxNotebook* m_book;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOK;
 		wxButton* m_buttonCancel;
@@ -58,6 +58,7 @@ class DebuggerSettingsBaseDlg : public wxDialog
 	
 	public:
 		DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 537,451 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~DebuggerSettingsBaseDlg();
 	
 };
 

@@ -42,7 +42,6 @@
     <wxString Value="svn" Name="m_exePath"/>
     <wxString Value="*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;" Name="m_pattern"/>
   </ArchiveObject>
-  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="no" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#000080" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="16"/>
   <ArchiveObject Name="FindInFilesData">
     <wxArrayString Name="m_findString">
       <wxString Value="wxXmlDocument"/>
@@ -68,6 +67,42 @@
     <bool Value="1" Name="m_boldErrFont"/>
     <bool Value="1" Name="m_boldWarnFont"/>
   </ArchiveObject>
+  <ArchiveObject Name="m_tagsOptionsData">
+    <long Value="24" Name="m_ccFlags"/>
+    <wxArrayString Name="m_prep">
+      <wxString Value="_GLIBCXX_STD=std"/>
+      <wxString Value="WXDLLIMPEXP_CORE"/>
+      <wxString Value="WXDLLIMPEXP_BASE"/>
+      <wxString Value="WXDLLIMPEXP_XML"/>
+      <wxString Value="WXDLLIMPEXP_XRC"/>
+      <wxString Value="WXDLLIMPEXP_ADV"/>
+      <wxString Value="WXDLLIMPEXP_AUI"/>
+      <wxString Value="WXMAKINGDLL"/>
+      <wxString Value="WXUSINGDLL"/>
+      <wxString Value="_CRTIMP"/>
+      <wxString Value="__CRT_INLINE"/>
+      <wxString Value="__cdecl"/>
+      <wxString Value="__stdcall"/>
+      <wxString Value="WXDLLEXPORT"/>
+      <wxString Value="WXDLLIMPORT"/>
+      <wxString Value="wxT"/>
+      <wxString Value="wxTopLevelWindowNative=wxTopLevelWindowMSW"/>
+      <wxString Value="WXUNUSED"/>
+      <wxString Value="wxDEPRECTAED"/>
+      <wxString Value="_T"/>
+      <wxString Value="ATTRIBUTE_PRINTF_1"/>
+      <wxString Value="ATTRIBUTE_PRINTF_2"/>
+      <wxString Value="WXDLLIMPEXP_FWD_BASE"/>
+      <wxString Value="DLLIMPORT"/>
+      <wxString Value="DECLARE_INSTANCE_TYPE"/>
+    </wxArrayString>
+    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
+    <wxArrayString Name="m_languages">
+      <wxString Value="C++"/>
+      <wxString Value="Java"/>
+    </wxArrayString>
+  </ArchiveObject>
+  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#000080" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="16"/>
   <ArchiveObject Name="LoadSavedPrespective">
     <long Value="1" Name="m_value"/>
   </ArchiveObject>

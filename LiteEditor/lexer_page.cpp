@@ -43,6 +43,7 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT("Display Item:") ), wxHORIZONTAL );
 
 	m_properties = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	m_properties->SetSizeHints(150, -1);
 	sbSizer5->Add( m_properties, 0, wxALL|wxEXPAND, 5 );
 
 	m_propertyList = m_lexer->GetProperties();

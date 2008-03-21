@@ -7,7 +7,7 @@
 #include "dirpicker.h" 
 #include <wx/statline.h> 
 #include <wx/msgdlg.h>
-#include <wx/wxFlatNotebook/wxFlatNotebook.h> 
+#include <wx/notebook.h> 
 #include <wx/listbox.h>  
 #include "project.h"
 #include <map>
@@ -70,9 +70,7 @@ void NewDlg::CreateGUIControls()
 	wxBoxSizer *btnSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
-	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(500, -1), 
-								wxFNB_NO_NAV_BUTTONS | wxFNB_NO_X_BUTTON | wxFNB_NODRAG | wxFNB_FF2 |
-								wxFNB_BACKGROUND_GRADIENT);
+	m_book = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(500, -1), wxNB_DEFAULT);
 
 	m_book->AddPage(CreateProjectPage(), wxT("Project"), m_selection == NEW_DLG_PROJECT);
 	m_book->AddPage(CreateWorkspacePage(), wxT("Workspace"), m_selection == NEW_DLG_WORKSPACE);

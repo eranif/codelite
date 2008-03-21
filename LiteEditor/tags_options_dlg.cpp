@@ -33,8 +33,8 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data, i
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	long bookStyle = wxFNB_FF2 | wxFNB_BACKGROUND_GRADIENT | wxFNB_NO_NAV_BUTTONS | wxFNB_NO_X_BUTTON;
-	m_mainBook = new wxFlatNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
+	long bookStyle = wxNB_DEFAULT;
+	m_mainBook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
 	m_generalPage = new wxPanel( m_mainBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );

@@ -16,7 +16,7 @@ class wxStaticText;
 class DirPicker;
 class wxComboBox;
 class FilePicker;
-class wxFlatNotebook;
+class wxNotebook;
 class wxListBox;
 
 #ifndef WXDLLIMPEXP_LE
@@ -59,7 +59,7 @@ class NewDlg : public wxDialog
 	wxButton *m_cancel;
 
 	int m_selection;
-	wxFlatNotebook *m_book;
+	wxNotebook *m_book;
 	std::list<ProjectPtr> m_list;
 
 public:

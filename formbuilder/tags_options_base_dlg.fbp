@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <wxFormBuilder_Project>
-    <FileVersion major="1" minor="8" />
+    <FileVersion major="1" minor="9" />
     <object class="Project" expanded="1">
         <property name="bitmaps" />
         <property name="class_decoration" />
@@ -612,7 +612,7 @@
                                                 <property name="proportion">0</property>
                                                 <object class="wxComboBox" expanded="1">
                                                     <property name="bg" />
-                                                    <property name="choices">&apos;C++&apos; &apos;Java&apos;</property>
+                                                    <property name="choices">&quot;C++&quot; &quot;Java&quot;</property>
                                                     <property name="context_help" />
                                                     <property name="enabled">1</property>
                                                     <property name="fg" />

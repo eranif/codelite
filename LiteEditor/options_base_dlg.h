@@ -22,7 +22,6 @@
 #include <wx/choice.h>
 #include <wx/button.h>
 #include <wx/panel.h>
-#include "wx/wxFlatNotebook/wxFlatNotebook.h"
 #include <wx/statline.h>
 #include "lexer_configuration.h"
 #include <wx/clrpicker.h>
@@ -33,6 +32,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class OptionsDlg
 ///////////////////////////////////////////////////////////////////////////////
+class wxNotebook;
 class OptionsDlg : public wxDialog 
 {
 	DECLARE_EVENT_TABLE()
@@ -43,8 +43,8 @@ class OptionsDlg : public wxDialog
 	void OnButtonApply( wxCommandEvent& event );
 
 protected:
-	wxFlatNotebook* m_book;
-	wxFlatNotebook *m_lexersBook;
+	wxNotebook* m_book;
+	wxNotebook *m_lexersBook;
 	wxPanel* m_general;
 	wxCheckBox* m_checkBoxDisplayFoldMargin;
 	wxCheckBox* m_checkBoxMarkFoldedLine;
@@ -73,11 +73,14 @@ protected:
 private:
 	wxPanel *CreateSyntaxHighlightPage();
 	wxPanel *CreateGeneralPage();
-	wxPanel *CreateLexerPage(wxPanel *parent, LexerConfPtr lexer);
+	wxPanel *CreateLexerPage(wxWindow *parent, LexerConfPtr lexer);
+	wxPanel *CreateBookmarksPage();
+	wxPanel *CreateFoldingPage();
+	
 	void SaveChanges();
 
 public:
-	OptionsDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Options"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 700,750 ), int style = wxDEFAULT_DIALOG_STYLE );
+	OptionsDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Editor's Settings"), wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_DIALOG_STYLE );
 
 };
 

@@ -17,7 +17,8 @@ class SymbolsDialog : public SymbolsDialogBase
 	long m_line;
 	wxString m_file;
 	wxString m_project;
-
+	long m_selectedItem;
+	
 public:
 	/** Constructor */
 	SymbolsDialog( wxWindow* parent );
@@ -56,6 +57,10 @@ private:
 	void OnItemActivated(wxListEvent &event);
 	void OnButtonCancel(wxCommandEvent &event);
 	void OnButtonOK(wxCommandEvent &event);
+	void OnCharHook(wxKeyEvent &event);
+	void OnItemDeselected(wxListEvent &event);
+	
+	DECLARE_EVENT_TABLE()
 };
 
 #endif // __symbols_dialog__

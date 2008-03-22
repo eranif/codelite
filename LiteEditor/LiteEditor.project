@@ -253,7 +253,7 @@
   </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="../Runtime/CodeLiteUD" IntermediateDirectory="./DebugUnicode" Command="./CodeLiteUD" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/CodeLiteUD" IntermediateDirectory="./DebugUnicode" Command="./CodeLiteUD" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);$(shell pkg-config --cflags gtk+-2.0)">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
@@ -282,12 +282,14 @@
         <BuildCommand>cd .. &amp;&amp; make type=debug_unicode</BuildCommand>
         <SingleFileCommand></SingleFileCommand>
         <MakefileGenerationCommand></MakefileGenerationCommand>
-        <ThirdPartyToolName></ThirdPartyToolName>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
         <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">

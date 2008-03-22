@@ -27,10 +27,14 @@ public:
 	virtual ~OutputTabWindow();
 	
 	void CanFocus(bool can) { m_canFocus = can; }
+	wxWindow *GetInternalWindow() {return m_sci;}
 	
 	virtual const wxString &GetCaption() const {return m_name;}
 	virtual void AppendText(const wxString &text);
 	virtual void Clear();
+	
+	virtual void OnCommand(wxCommandEvent &e);
+	virtual void OnUpdateUI(wxUpdateUIEvent &e);
 };
 #endif // __outputtabwindow__
 

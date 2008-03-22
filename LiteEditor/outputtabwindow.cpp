@@ -84,8 +84,6 @@ void OutputTabWindow::CreateGUIControl()
 
 	Connect(wxEVT_SCI_DOUBLECLICK, wxScintillaEventHandler(OutputTabWindow::OnMouseDClick), NULL, this);
 	Connect(wxEVT_SCI_HOTSPOT_CLICK, wxScintillaEventHandler(OutputTabWindow::OnHotspotClicked), NULL, this);
-	
-	//Connect(wxEVT_SCI_STYLENEEDED, wxScintillaEventHandler(OutputTabWindow::OnStyleNeeded), NULL, this);
 }
 
 void OutputTabWindow::OnSetFocus(wxFocusEvent &event)
@@ -147,4 +145,27 @@ void OutputTabWindow::Clear()
 	m_sci->SetReadOnly(false);
 	m_sci->ClearAll();
 	m_sci->SetReadOnly(true);
+}
+
+void OutputTabWindow::OnCommand(wxCommandEvent &e)
+{
+	switch(e.GetId()) {
+	case wxID_COPY:
+		m_sci->Copy();
+		break;
+	default:
+		break;
+	}
+}
+
+void OutputTabWindow::OnUpdateUI(wxUpdateUIEvent &e)
+{
+	switch(e.GetId()) {
+	case wxID_COPY:
+		e.Enable( m_sci->GetSelectionStart() - m_sci->GetSelectionEnd() != 0 );
+		break;
+	default:
+		break;
+	}
+	e.Skip(false);
 }

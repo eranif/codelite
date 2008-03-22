@@ -309,10 +309,10 @@ Frame* Frame::Get()
 		//set the revision number in the frame title
 		wxString title(wxT("CodeLite - Revision: "));
 		title << _U(SvnRevision);
-		
+
 		//initialize the environment variable configuration manager
 		EnvironmentConfig::Instance()->Load();
-		
+
 		EditorConfig *cfg = EditorConfigST::Get();
 		GeneralInfo inf;
 		cfg->ReadObject(wxT("GeneralInfo"), &inf);
@@ -845,40 +845,61 @@ void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void Frame::DispatchCommandEvent(wxCommandEvent &event)
 {
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
-	if ( !editor ) {
+	wxWindow *win = wxWindow::FindFocus();
+	if (!win) {
 		return;
 	}
 
-	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
-		//keep the old id as int and override the value set in the event object
-		//to trick the event system
-		event.SetInt(event.GetId());
-		event.SetId(viewAsMenuItemID);
+	LEditor* editor = dynamic_cast<LEditor*>(win);
+	if (editor) {
+		if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
+			//keep the old id as int and override the value set in the event object
+			//to trick the event system
+			event.SetInt(event.GetId());
+			event.SetId(viewAsMenuItemID);
+		}
+		editor->OnMenuCommand(event);
+		return;
 	}
-	editor->OnMenuCommand(event);
+	
+	//the focused window is not the main editor
+	OutputTabWindow *tabWin = FindOutputTabWindowByPtr(win);
+	
+	if(tabWin) {
+		tabWin->OnCommand(event);
+		return;
+	}
+	event.Skip();
 }
 
 void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 {
-	if ( GetNotebook()->GetPageCount() == 0 ) {
+	wxWindow *win = wxWindow::FindFocus();
+	if (!win) {
 		event.Enable(false);
 		return;
 	}
 
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
-	if ( !editor ) {
-		event.Enable(false);
+	LEditor* editor = dynamic_cast<LEditor*>(win);
+	if (editor) {
+		if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
+			//keep the old id as int and override the value set in the event object
+			//to trick the event system
+			event.SetInt(event.GetId());
+			event.SetId(viewAsMenuItemID);
+		}
+		editor->OnUpdateUI(event);
 		return;
 	}
 
-	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
-		//keep the old id as int and override the value set in the event object
-		//to trick the event system
-		event.SetInt(event.GetId());
-		event.SetId(viewAsMenuItemID);
+	//the focused window is not the main editor
+	OutputTabWindow *tabWin = FindOutputTabWindowByPtr(win);
+	
+	if(tabWin) {
+		tabWin->OnUpdateUI(event);
+		return;
 	}
-	editor->OnUpdateUI(event);
+	event.Enable(false);
 }
 
 void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event)
@@ -2039,7 +2060,7 @@ void Frame::OnBackwardForward(wxCommandEvent &event)
 		ManagerST::Get()->OpenFile(rec);
 	}
 	break;
-	case wxID_BACKWARD: 
+	case wxID_BACKWARD:
 		NavMgr::Get()->NavigateBackward();
 		break;
 	default:
@@ -2609,4 +2630,24 @@ void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 
 	e.Enable(true);
 	e.Check(m_frameGeneralInfo.GetFlags() & CL_SHOW_EOL ? true : false);
+}
+
+OutputTabWindow* Frame::FindOutputTabWindowByPtr(wxWindow *win)
+{
+	wxFlatNotebook *book = GetOutputPane()->GetNotebook();
+	for(size_t i=0; i< (size_t)book->GetPageCount(); i++) {
+		if(book->GetPageText(i) == OutputPane::BUILD_WIN) {
+			OutputTabWindow *tabWin = dynamic_cast< OutputTabWindow* > ( book->GetPage(i) );
+			if(tabWin && tabWin->GetInternalWindow() == win) {
+				return tabWin;
+			}
+		}
+		
+		if(book->GetPageText(i) == OutputPane::FIND_IN_FILES_WIN) {
+			if(GetOutputPane()->GetFindResultsTab()->GetInternalWindow() == win){
+				return GetOutputPane()->GetFindResultsTab();
+			}
+		}
+	}
+	return NULL;
 }

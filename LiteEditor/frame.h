@@ -29,6 +29,7 @@ class wxToolBar;
 class wxFlatNotebook;
 class OpenWindowsPanel;
 class FileExplorer;
+class OutputTabWindow;
 
 /**
  * The main frame class
@@ -149,6 +150,14 @@ public:
 	
 	wxComboBox *GetConfigChoice();
 	const GeneralInfo& GetFrameGeneralInfo() const {return m_frameGeneralInfo;}
+	
+	/**
+	 * \brief loop over all known OutputTabWindows available, and match them against the 
+	 * 		  child wxScintilla pointer 
+	 * \param win the window that owns the focus 
+	 * \return OutputTabWindow pointer, or NULL if non matched
+	 */
+	OutputTabWindow *FindOutputTabWindowByPtr(wxWindow *win);
 	
 private:
 	// make our frame's constructor private

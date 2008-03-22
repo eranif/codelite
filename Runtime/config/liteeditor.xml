@@ -33,22 +33,6 @@
     </wxArrayString>
     <long Value="0" Name="m_flags"/>
   </ArchiveObject>
-  <ArchiveObject Name="FindInFilesData">
-    <wxArrayString Name="m_findString">
-      <wxString Value="wxXmlDocument"/>
-      <wxString Value="virtual"/>
-      <wxString Value="main"/>
-      <wxString Value="IsSource"/>
-      <wxString Value="int"/>
-      <wxString Value="svn status"/>
-      <wxString Value="findresultstab"/>
-      <wxString Value="wxString"/>
-      <wxString Value="wxFlatNotebook"/>
-      <wxString Value="CreateDebuggerGDB"/>
-    </wxArrayString>
-    <wxArrayString Name="m_replaceString"/>
-    <long Value="3" Name="m_flags"/>
-  </ArchiveObject>
   <ArchiveObject Name="build_tab_settings">
     <wxString Value="#FF0000" Name="m_errorColour"/>
     <wxString Value="#CC7F32" Name="m_warnColour"/>
@@ -98,17 +82,6 @@
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileMask"/>
     <long Value="0" Name="m_flags"/>
   </ArchiveObject>
-  <RecentFiles>
-    <File Name="C:\Development\C++\wxflatmenu\wxflatmenu\stam.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\configtool.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\build_settings_config.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\lexer_configuration.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\Subversion\svnxmlparser.cpp"/>
-    <File Name="C:\devl\myproject\myderivedclass.h"/>
-    <File Name="C:\wxWidgets-2.8.7\include\wx\hashmap.h"/>
-    <File Name="C:\devl\myproject\main.cpp"/>
-    <File Name="C:\TestArea\jin\c.cpp"/>
-  </RecentFiles>
   <ArchiveObject Name="SubversionOptions">
     <long Value="15" Name="m_flags"/>
     <wxString Value="svn" Name="m_exePath"/>
@@ -118,19 +91,51 @@
     <long Value="1" Name="m_value"/>
   </ArchiveObject>
   <RecentWorkspaces>
-    <File Name="C:\Development\C++\wxflatmenu\flatmenu.workspace"/>
-    <File Name="C:\devl\myproject\MyProject.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/Plugins.workspace"/>
-    <File Name="C:\TestArea\TestOne.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
-    <File Name="C:\TestArea\1234\stam.workspace"/>
     <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
+    <File Name="C:\TestArea\1234\stam.workspace"/>
+    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\TestOne.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/Plugins.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+    <File Name="C:\devl\myproject\MyProject.workspace"/>
+    <File Name="C:\Development\C++\wxflatmenu\flatmenu.workspace"/>
   </RecentWorkspaces>
+  <RecentFiles>
+    <File Name="C:\Development\C++\wxflatmenu\wxflatmenu\flat_menu_bar.cpp"/>
+    <File Name="C:\Development\C++\wxflatmenu\wxflatmenu\flat_menu.h"/>
+    <File Name="C:\Development\C++\wxflatmenu\wxflatmenu\fm_renderer.cpp"/>
+    <File Name="C:\Development\C++\wxflatmenu\wxflatmenu\art_manager.cpp"/>
+    <File Name="C:\Development\C++\wxflatmenu\wxflatmenu\art_manager.h"/>
+    <File Name="C:\TestArea\jin\c.cpp"/>
+    <File Name="C:\devl\myproject\main.cpp"/>
+    <File Name="C:\wxWidgets-2.8.7\include\wx\hashmap.h"/>
+    <File Name="C:\devl\myproject\myderivedclass.h"/>
+  </RecentFiles>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="998"/>
     <wxPoint Name="m_framePos" x="-4" y="-4"/>
     <long Value="15" Name="m_flags"/>
+  </ArchiveObject>
+  <ArchiveObject Name="FindInFilesData">
+    <wxArrayString Name="m_findString">
+      <wxString Value="once"/>
+      <wxString Value="popupwin"/>
+      <wxString Value="pragma"/>
+      <wxString Value="DEBUG_NEW"/>
+      <wxString Value="art_manager"/>
+      <wxString Value="wxXmlDocument"/>
+      <wxString Value="virtual"/>
+      <wxString Value="main"/>
+      <wxString Value="IsSource"/>
+      <wxString Value="int"/>
+      <wxString Value="svn status"/>
+      <wxString Value="findresultstab"/>
+      <wxString Value="wxString"/>
+      <wxString Value="wxFlatNotebook"/>
+      <wxString Value="CreateDebuggerGDB"/>
+    </wxArrayString>
+    <wxArrayString Name="m_replaceString"/>
+    <long Value="3" Name="m_flags"/>
   </ArchiveObject>
 </LiteEditor>

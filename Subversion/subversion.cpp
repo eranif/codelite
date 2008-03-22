@@ -599,7 +599,7 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 	}
 
 
-	for ( size_t i=0; i<book->GetPageCount(); i++) {
+	for ( size_t i=0; i<(size_t)book->GetPageCount(); i++) {
 		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow *>(book->GetPage(i));
 		if (win && book->GetPageText(i) == wxT("SVN Status")) {
 			//we found a SVN status page, close it

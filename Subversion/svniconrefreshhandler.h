@@ -21,7 +21,7 @@ protected:
 	virtual void ResetIcons(wxTreeCtrl *tree, wxTreeItemId &item);
 public:
 	SvnIconRefreshHandler(IManager *mgr, SubversionPlugin *plugin);
-	~SvnIconRefreshHandler();
+	virtual ~SvnIconRefreshHandler();
 	void UpdateIcons();
 };
 #endif // __svniconrefreshhandler__

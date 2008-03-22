@@ -163,7 +163,7 @@ simple_expr	:	stmnt_starter special_cast '<' cast_type '>' '('
 						result.m_isThis = true;
 						//result.Print();
 					}
-				| 	stmnt_starter '*' LE_IDENTIFIER 
+				| 	stmnt_starter '*' identifier_name 
 					{
 						$$ = $3;
 						result.m_isaType = false;
@@ -173,7 +173,7 @@ simple_expr	:	stmnt_starter special_cast '<' cast_type '>' '('
 						result.m_isPtr = false;
 						//result.Print();
 					}
-				|	stmnt_starter '(' cast_type ')' special_star_amp LE_IDENTIFIER
+				|	stmnt_starter '(' cast_type ')' special_star_amp identifier_name
 					{
 						$$ = $3;
 						result.m_isaType = true;
@@ -182,7 +182,7 @@ simple_expr	:	stmnt_starter special_cast '<' cast_type '>' '('
 						result.m_isThis = false;
 						//result.Print();
 					}
-				| 	stmnt_starter '(' '(' cast_type ')' special_star_amp LE_IDENTIFIER ')'
+				| 	stmnt_starter '(' '(' cast_type ')' special_star_amp identifier_name ')'
 					{
 						$$ = $4;
 						result.m_isaType = true;
@@ -191,7 +191,7 @@ simple_expr	:	stmnt_starter special_cast '<' cast_type '>' '('
 						result.m_isThis = false;
 						//result.Print();
 					}
-				| stmnt_starter nested_scope_specifier LE_IDENTIFIER optional_template_init_list  optinal_postifx
+				| stmnt_starter nested_scope_specifier identifier_name optional_template_init_list  optinal_postifx
 					{
 						result.m_isaType = false;
 						result.m_name = $3;
@@ -204,6 +204,8 @@ simple_expr	:	stmnt_starter special_cast '<' cast_type '>' '('
 					}
 				;
 
+identifier_name	:	LE_IDENTIFIER array_brackets {$$ = $1;}
+				;
 optional_template_init_list: /*empty*/ {$$ = "";}
 							| '<' parameter_list '>' {$$ = $1 + $2 + $3;}
 							;
@@ -265,10 +267,50 @@ nested_scope_specifier	: /*empty*/ {$$ = "";}
 
 scope_specifier	:	LE_IDENTIFIER LE_CLCL {$$ = $1+ $2;}
 						;
-						
+
+array_brackets 	:	/* empty */ { $$ = ""; }
+				|	'[' { expr_consumBracketsContent('['); $$ = "[]";}
+				;
 %%
 void yyerror(char *s) {}
 
+void expr_consumBracketsContent(char openBrace)
+{
+	char closeBrace;
+	
+	switch(openBrace) {
+	case '(': closeBrace = ')'; break;
+	case '[': closeBrace = ']'; break;
+	case '<': closeBrace = '>'; break;
+	case '{': closeBrace = '}'; break;
+	default:
+		openBrace = '(';
+		closeBrace = ')';
+		break;
+	}
+	
+	int depth = 1;
+	while(depth > 0)
+	{
+		int ch = cl_expr_lex();
+		//printf("ch=%d\n", ch);
+		//fflush(stdout);
+		if(ch == 0){
+			break;
+		}
+		
+		if(ch == closeBrace)
+		{
+			depth--;
+			continue;
+		}
+		else if(ch == openBrace)
+		{
+			depth ++ ;
+			continue;
+		}
+	}
+}
 
 void expr_FuncArgList()
 {

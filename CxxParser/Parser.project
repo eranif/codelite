@@ -26,9 +26,10 @@
     <File Name="expr_lexer.l"/>
     <File Name="cpp_func_parser.y"/>
   </VirtualDirectory>
+  <Dependencies/>
   <Settings Type="Executable">
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="./Release/CppParser" IntermediateDirectory="./Release" Command="CppParser" CommandArguments="" WorkingDirectory="./Release"/>
+      <General OutputFile="./Release/CppParser" IntermediateDirectory="./Release" Command="CppParser" CommandArguments="" WorkingDirectory="./Release" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g;">
         <IncludePath Value="."/>
       </Compiler>
@@ -45,6 +46,9 @@
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>
         <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
         <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
@@ -78,5 +82,4 @@ cpp_func_parser.cpp: cpp_func_parser.y
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies/>
 </CodeLite_Project>

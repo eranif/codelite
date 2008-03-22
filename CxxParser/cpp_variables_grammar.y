@@ -181,7 +181,8 @@ postfix: ';'
 		 | '='
 		 | ')'
 		 | ','  
-		 | '(' { $$ = $1 + var_consumeFuncArgList();} 
+		 | '(' { $$ = $1 + var_consumBracketsContent('(');}
+		 | '[' { $$ = $1 + var_consumBracketsContent('[');}
 		 ; 
 /* 
 applicable for C++, for cases where a function is declared as
@@ -248,8 +249,21 @@ variable_decl		:	const_spec basic_type_name
 void yyerror(char *s) {}
 
 
-std::string var_consumeFuncArgList()
+std::string var_consumBracketsContent(char openBrace)
 {
+	char closeBrace;
+	
+	switch(openBrace) {
+	case '(': closeBrace = ')'; break;
+	case '[': closeBrace = ']'; break;
+	case '<': closeBrace = '>'; break;
+	case '{': closeBrace = '}'; break;
+	default:
+		openBrace = '(';
+		closeBrace = ')';
+		break;
+	}
+	
 	std::string consumedData;
 	int depth = 1;
 	while(depth > 0)
@@ -257,18 +271,18 @@ std::string var_consumeFuncArgList()
 		int ch = cl_scope_lex();
 		//printf("ch=%d\n", ch);
 		//fflush(stdout);
-		if(ch ==0){
+		if(ch == 0){
 			break;
 		}
 		
 		consumedData += cl_scope_text;
 		consumedData += " ";
-		if(ch == ')')
+		if(ch == closeBrace)
 		{
 			depth--;
 			continue;
 		}
-		else if(ch == '(')
+		else if(ch == openBrace)
 		{
 			depth ++ ;
 			continue;

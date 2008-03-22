@@ -32,13 +32,13 @@ void testColorLocals()
 int main()
 {
 	char *buf = loadFile("test.h");
+	
 	//print the scope name
 	//testScopeParser(buf);
-	//testVarParser(buf);
+	testVarParser(buf);
 	//testExprParser(buf);
-	testFuncParser(buf);
+	//testFuncParser(buf);
 	free(buf);
-	Sleep(100000);
 }
 
 void testFuncParser(char *buf)

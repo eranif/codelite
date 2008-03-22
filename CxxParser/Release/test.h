@@ -11,4 +11,7 @@
 //((Std::string*)eran)
 //((Singleton<MyClass>*)Eran)
 //Eran(dfd, dfdf, dfdf)
-foo();
+//foo();
+int main(0);
+int var[100][10];
+char *argv[];

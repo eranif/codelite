@@ -45,7 +45,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/
 
-#ifdef yylex
+#ifdef yylex 
 #undef yylex
 #define yylex cl_scope_lex
 #endif 

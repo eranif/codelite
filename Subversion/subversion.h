@@ -88,6 +88,7 @@ protected:
 	void OnRevertFile(wxCommandEvent &e);
 	void OnLinkClicked(wxHtmlLinkEvent &e);
 	void OnRefrshIconsStatus(wxCommandEvent &e);
+	void OnRefreshIconsCond(wxCommandEvent &e);
 	void OnShowReportWsp(wxCommandEvent &e);
 	void OnUpdateWsp(wxCommandEvent &e);
 	void OnCommitWsp(wxCommandEvent &e);

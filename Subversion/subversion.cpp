@@ -114,6 +114,9 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		topWin->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(SubversionPlugin::OnFileSaved), NULL, this);
 		topWin->Connect(wxEVT_FILE_EXP_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnFileExplorerInitDone), NULL, this);
 		topWin->Connect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SubversionPlugin::OnProjectFileAdded), NULL, this);
+		topWin->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond), NULL, this);
+		topWin->Connect(wxEVT_PROJ_ADDED, wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond), NULL, this);
+		topWin->Connect(wxEVT_PROJ_REMOVED, wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond), NULL, this);
 		topWin->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnAppInitDone), NULL, this);
 		topWin->Connect(wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler(SubversionPlugin::OnLinkClicked), NULL, this);
 		topWin->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatus), NULL, this);
@@ -155,19 +158,19 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		ProjectOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_ok")));
 		ProjectModifiedIconId 	= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_modified")));
 		ProjectConflictIconId 	= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")));
-		
+
 		WorkspaceOkIconId		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace_ok")));
 		WorkspaceModifiedIconId = tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace_modified")));
 		WorkspaceConflictIconId = tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace_conflict")));
-		
+
 		FileOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_ok")));
 		FileModifiedIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_modified")));
 		FileConflictIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_conflict")));
-		
+
 		FolderOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_ok")));
 		FolderModifiedIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_modified")));
 		FolderConflictIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_conflict")));
-		
+
 	}
 }
 
@@ -457,14 +460,14 @@ void SubversionPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 void SubversionPlugin::OnFileSaved(wxCommandEvent &e)
 {
 	VALIDATE_SVNPATH();
-	
+
 	SvnOptions options;
 	m_mgr->GetConfigTool()->ReadObject(wxT("SubversionOptions"), &options);
-	
+
 	bool updateAfterSave ( false );
 	options.GetFlags() & SvnUpdateAfterSave ? updateAfterSave = true : updateAfterSave = false;
-	
-	if(updateAfterSave) {
+
+	if (updateAfterSave) {
 		SvnIconRefreshHandler handler(m_mgr, this);
 		handler.UpdateIcons();
 	}
@@ -536,6 +539,10 @@ void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event)
 			}
 
 		}
+	}
+	if (m_options.GetFlags() & SvnKeepIconsUpdated) {
+		SvnIconRefreshHandler handler(m_mgr, this);
+		handler.UpdateIcons();
 	}
 	event.Skip();
 }
@@ -739,25 +746,25 @@ void SubversionPlugin::OnLinkClicked(wxHtmlLinkEvent &e)
 			//Commit all files
 			m_svn->CommitFile(wxT("\"") + fn.GetFullPath() + wxT("\""));
 		} else if (command == wxT("refresh-explorer")) {
-			
+
 			//Commit all files
 			SendSvnMenuEvent(XRCID("svn_refresh"));
-			
+
 		} else if (command == wxT("refresh-workspace")) {
-			
+
 			//Commit all files
 			SendSvnMenuEvent(XRCID("svn_refresh_wsp"));
-			
+
 		} else if (command == wxT("commit-all-workspace")) {
-			
+
 			SendSvnMenuEvent(XRCID("svn_commit_wsp"));
 
 		} else if (command == wxT("refresh-project")) {
-			
+
 			SendSvnMenuEvent(XRCID("svn_refresh_prj"));
 
 		} else if (command == wxT("commit-all-project")) {
-		
+
 			SendSvnMenuEvent(XRCID("svn_commit_prj"));
 
 		} else {
@@ -883,9 +890,18 @@ ProjectPtr SubversionPlugin::GetSelectedProject()
 
 void SubversionPlugin::OnRefrshIconsStatus(wxCommandEvent &e)
 {
-	wxUnusedVar(e);
 	SvnIconRefreshHandler handler(m_mgr, this);
 	handler.UpdateIcons();
+	e.Skip();
+}
+
+void SubversionPlugin::OnRefreshIconsCond(wxCommandEvent &e)
+{
+	if (m_options.GetFlags() & SvnKeepIconsUpdated) {
+		SvnIconRefreshHandler handler(m_mgr, this);
+		handler.UpdateIcons();
+	}
+	e.Skip();
 }
 
 bool SubversionPlugin::IsWorkspaceUnderSvn()

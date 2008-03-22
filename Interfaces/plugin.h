@@ -30,15 +30,26 @@ enum MenuType {
 //
 //Plugins events
 //
-#define wxEVT_FILE_SAVED			3450
-#define wxEVT_FILE_EXP_REFRESHED	3451
-#define wxEVT_WORKSPACE_LOADED		3452
-//Initialization of the file explorer tree is now completed
-#define wxEVT_FILE_EXP_INIT_DONE	3453 
-#define wxEVT_PROJ_FILE_ADDED		3454
-
-//The application initialization has ended
-#define wxEVT_INIT_DONE				3455	
+enum {
+	//clientData is fileName (wxString)
+	wxEVT_FILE_SAVED			 = 3450,
+	//clientData is NULL
+	wxEVT_FILE_EXP_REFRESHED,	
+	//clientData is NULL
+	wxEVT_WORKSPACE_LOADED,		
+	//clientData is NULL
+	wxEVT_FILE_EXP_INIT_DONE,
+	//clientData is list of files added to project (wxArrayString)
+	wxEVT_PROJ_FILE_ADDED,
+	//clientData is the fileName which has been removed (wxString)
+	wxEVT_PROJ_FILE_REMOVED,
+	//clientData is the project name (wxString)
+	wxEVT_PROJ_REMOVED,
+	//clientData is the project name (wxString)
+	wxEVT_PROJ_ADDED,
+	//clientData is NULL
+	wxEVT_INIT_DONE
+};
 
 //------------------------------------------------------------------
 //each plugin must implement this interface

@@ -1,4 +1,5 @@
 #include "fileview.h"
+#include "globals.h"
 #include "importfilesdlg.h"
 #include "manager.h"
 #include "tree.h"
@@ -488,14 +489,16 @@ void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 	wxString project;
 	project = vdPath.BeforeFirst( wxT( ':' ) );
 
+	wxArrayString paths;
 	ProjectPtr proj = ManagerST::Get()->GetProject( project );
 	wxFileDialog *dlg = new wxFileDialog( this, wxT( "Add Existing Item" ), proj->GetFileName().GetPath(), wxEmptyString, ALL, wxFD_MULTIPLE | wxOPEN | wxFILE_MUST_EXIST , wxDefaultPosition );
 	if ( dlg->ShowModal() == wxID_OK ) {
-		wxArrayString paths, actualAdded;
+		
 		dlg->GetPaths( paths );
 		AddFilesToVirtualFodler(item, paths);
 	}
 
+	SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&paths);
 	dlg->Destroy();
 }
 
@@ -532,8 +535,10 @@ void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
 		wxUnusedVar( hti );
 		SortItem(item);
 		Expand( item );
+		
+		SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&filename);
 	}
-
+	
 	dlg->Destroy();
 }
 
@@ -595,7 +600,11 @@ void FileViewTree::DoRemoveItem( wxTreeItemId &item )
 			if ( parent.IsOk() ) {
 				wxString path = GetItemPath( parent );
 				ManagerST::Get()->RemoveFile( data->GetData().GetFile(), path );
+				
+				wxString file_name(data->GetData().GetFile());
 				Delete( item );
+				
+				SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&file_name);
 			}
 		}
 	}
@@ -619,9 +628,10 @@ void FileViewTree::DoRemoveVirtualFolder( wxTreeItemId &item )
 
 	if ( wxMessageBox( message, wxT( "CodeLite" ), wxYES_NO|wxICON_WARNING ) == wxYES ) {
 		wxString path = GetItemPath( item );
-		ManagerST::Get()->RemoveVirtualDirectory( path );
 		DeleteChildren( item );
 		Delete( item );
+		
+		ManagerST::Get()->RemoveVirtualDirectory( path );
 	}
 }
 
@@ -646,8 +656,7 @@ void FileViewTree::DoAddVirtualFolder( wxTreeItemId &parent )
 
 		path += wxT( ":" );
 		path += dlg->GetValue();
-		ManagerST::Get()->AddVirtualDirectory( path );
-
+		
 		ProjectItem itemData( path, dlg->GetValue(), wxEmptyString, ProjectItem::TypeVirtualDirectory );
 		AppendItem(	parent,								// parent
 		            itemData.GetDisplayName(),	// display name
@@ -657,6 +666,8 @@ void FileViewTree::DoAddVirtualFolder( wxTreeItemId &parent )
 
 		SortItem( parent );
 		Expand( parent );
+		
+		ManagerST::Get()->AddVirtualDirectory( path );
 	}
 	dlg->Destroy();
 }

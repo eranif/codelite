@@ -481,8 +481,13 @@ void Manager::AddProject(const wxString & path)
 
 	//retag the newly added project
 	wxFileName fn(path);
-	RetagProject(fn.GetName());
+	wxString projectName( fn.GetName() );
+	
+	RetagProject(projectName);
 	RebuildFileView();
+	
+	//notify plugins
+	SendCmdEvent(wxEVT_PROJ_ADDED, (void*)&projectName);
 }
 
 void Manager::RebuildFileView()
@@ -513,6 +518,9 @@ bool Manager::RemoveProject(const wxString &name)
 	} // if(proj)
 
 	Frame::Get()->GetWorkspacePane()->GetFileViewTree()->BuildTree();
+	//notify plugins
+	SendCmdEvent(wxEVT_PROJ_REMOVED, (void*)&name);
+	
 	return true;
 }
 
@@ -572,10 +580,12 @@ void Manager::RemoveVirtualDirectory(const wxString &virtualDirFullPath)
 	for (size_t i=0; i<files.Count(); i++) {
 		RemoveFileFromSymbolTree(files.Item(i), p->GetName());
 	}
-
+	
 	//and finally, remove the virtual dir from the workspace
 	bool res = WorkspaceST::Get()->RemoveVirtualDirectory(virtualDirFullPath, errMsg);
 	CHECK_MSGBOX(res);
+	
+	SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&files);
 }
 
 void Manager::SaveWorkspace()
@@ -629,7 +639,6 @@ bool Manager::AddFileToProject(const wxString &fileName, const wxString &vdFullP
 	//project
 	wxArrayString files;
 	files.Add(fileName);
-	SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&files);
 	return true;
 }
 
@@ -700,7 +709,7 @@ bool Manager::RemoveFile(const wxString &fileName, const wxString &vdFullPath)
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->RemoveFile(vdFullPath, fileName, errMsg);
 	CHECK_MSGBOX_BOOL(res);
-
+	
 	RemoveFileFromSymbolTree(absPath, project);
 	return true;
 }

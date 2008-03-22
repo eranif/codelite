@@ -537,9 +537,8 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	SetSavePoint();
 
 	//fire a wxEVT_FILE_SAVED event
-	wxCommandEvent event(wxEVT_FILE_SAVED, GetId());
-	event.SetEventObject(this);
-	GetEventHandler()->ProcessEvent(event);
+	wxString file_name = fileName.GetFullPath();
+	SendCmdEvent(wxEVT_FILE_SAVED, (void*)&file_name);
 
 	// update the file name (remove the star from the file name)
 	ManagerST::Get()->SetPageTitle(this, fileName.GetFullName());

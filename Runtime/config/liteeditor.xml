@@ -5,13 +5,9 @@
     <Notebook Name="OutputPane" Style="738332"/>
     <Notebook Name="WorkspacePane" Style="721948"/>
     <Notebook Name="DebuggerPane" Style="738396"/>
-    <Perspective Name="Default" Value="layout2|name=Output;caption=Output;state=10487804;dir=3;layer=1;row=0;pos=0;prop=100000;bestw=604;besth=538;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Workspace;caption=Workspace;state=2115580;dir=4;layer=1;row=0;pos=0;prop=100000;bestw=250;besth=400;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger;caption=Debugger;state=2099198;dir=3;layer=1;row=0;pos=1;prop=100000;bestw=400;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Editor;caption=;state=256;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Standard Toolbar;caption=Standard;state=2108156;dir=1;layer=10;row=0;pos=399;prop=100000;bestw=486;besth=26;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Search Toolbar;caption=Search;state=2108156;dir=1;layer=10;row=0;pos=202;prop=100000;bestw=186;besth=26;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Build Toolbar;caption=Build;state=2108156;dir=1;layer=10;row=1;pos=197;prop=100000;bestw=158;besth=26;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger Toolbar;caption=Debug;state=2108156;dir=1;layer=10;row=1;pos=0;prop=100000;bestw=186;besth=26;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Navigation Toolbar;caption=Navigation Toolbar;state=2108159;dir=1;layer=10;row=2;pos=4;prop=100000;bestw=806;besth=29;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=23;floaty=210;floatw=823;floath=53|name=Gizmos;caption=Gizmos;state=2108156;dir=1;layer=10;row=0;pos=101;prop=100000;bestw=90;besth=26;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=CodeFormatter;caption=CodeFormatter;state=2108158;dir=1;layer=10;row=0;pos=101;prop=100000;bestw=62;besth=26;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Cscope;caption=Cscope;state=2108156;dir=1;layer=10;row=0;pos=0;prop=100000;bestw=90;besth=26;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(3,1,0)=284|dock_size(4,1,0)=252|dock_size(5,0,0)=20|dock_size(1,10,0)=28|dock_size(1,10,1)=28|"/>
+    <Perspective Name="Default" Value="layout2|name=Output;caption=Output;state=10487804;dir=3;layer=1;row=0;pos=0;prop=100000;bestw=604;besth=534;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Workspace;caption=Workspace;state=2099196;dir=4;layer=1;row=0;pos=0;prop=100000;bestw=250;besth=400;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger;caption=Debugger;state=2099198;dir=3;layer=1;row=0;pos=1;prop=100000;bestw=400;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Editor;caption=;state=256;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Standard Toolbar;caption=Standard;state=2108156;dir=1;layer=10;row=0;pos=0;prop=100000;bestw=385;besth=23;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Search Toolbar;caption=Search;state=2108156;dir=1;layer=10;row=0;pos=613;prop=100000;bestw=146;besth=23;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Build Toolbar;caption=Build;state=2108156;dir=1;layer=10;row=1;pos=0;prop=100000;bestw=123;besth=23;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger Toolbar;caption=Debug;state=2108156;dir=1;layer=10;row=1;pos=134;prop=100000;bestw=146;besth=23;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Navigation Toolbar;caption=Navigation Toolbar;state=2108156;dir=1;layer=10;row=2;pos=0;prop=100000;bestw=800;besth=23;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=CodeFormatter;caption=CodeFormatter;state=2108156;dir=1;layer=10;row=0;pos=476;prop=100000;bestw=46;besth=23;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Cscope;caption=Cscope;state=2108156;dir=1;layer=10;row=0;pos=533;prop=100000;bestw=69;besth=23;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Gizmos;caption=Gizmos;state=2108156;dir=1;layer=10;row=0;pos=396;prop=100000;bestw=69;besth=23;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(3,1,0)=260|dock_size(4,1,0)=224|dock_size(5,0,0)=20|dock_size(1,10,0)=25|dock_size(1,10,1)=25|dock_size(1,10,2)=25|"/>
   </Layout>
   <TagsDatabase Path="C:\Program Files\CodeLite\common.tags"/>
-  <ArchiveObject Name="import_dir_options">
-    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileMask"/>
-    <long Value="0" Name="m_flags"/>
-  </ArchiveObject>
   <ArchiveObject Name="FindAndReplaceData">
     <wxArrayString Name="m_findString">
       <wxString Value="conflic"/>
@@ -36,11 +32,6 @@
       <wxString Value=""/>
     </wxArrayString>
     <long Value="0" Name="m_flags"/>
-  </ArchiveObject>
-  <ArchiveObject Name="SubversionOptions">
-    <long Value="1" Name="m_flags"/>
-    <wxString Value="svn" Name="m_exePath"/>
-    <wxString Value="*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;" Name="m_pattern"/>
   </ArchiveObject>
   <ArchiveObject Name="FindInFilesData">
     <wxArrayString Name="m_findString">
@@ -103,16 +94,12 @@
     </wxArrayString>
   </ArchiveObject>
   <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#000080" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="16"/>
-  <ArchiveObject Name="GeneralInfo">
-    <wxSize Name="m_frameSize" x="1270" y="947"/>
-    <wxPoint Name="m_framePos" x="0" y="0"/>
-    <long Value="15" Name="m_flags"/>
-  </ArchiveObject>
-  <ArchiveObject Name="LoadSavedPrespective">
-    <long Value="1" Name="m_value"/>
+  <ArchiveObject Name="import_dir_options">
+    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileMask"/>
+    <long Value="0" Name="m_flags"/>
   </ArchiveObject>
   <RecentFiles>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\vcimporter.cpp"/>
+    <File Name="C:\Development\C++\wxflatmenu\wxflatmenu\stam.cpp"/>
     <File Name="C:\Development\C++\codelite\trunk\Plugin\configtool.h"/>
     <File Name="C:\Development\C++\codelite\trunk\Plugin\build_settings_config.h"/>
     <File Name="C:\Development\C++\codelite\trunk\Plugin\lexer_configuration.h"/>
@@ -122,15 +109,28 @@
     <File Name="C:\devl\myproject\main.cpp"/>
     <File Name="C:\TestArea\jin\c.cpp"/>
   </RecentFiles>
+  <ArchiveObject Name="SubversionOptions">
+    <long Value="15" Name="m_flags"/>
+    <wxString Value="svn" Name="m_exePath"/>
+    <wxString Value="*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;" Name="m_pattern"/>
+  </ArchiveObject>
+  <ArchiveObject Name="LoadSavedPrespective">
+    <long Value="1" Name="m_value"/>
+  </ArchiveObject>
   <RecentWorkspaces>
-    <File Name="C:\TestArea\jin\a.workspace"/>
-    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
-    <File Name="C:\TestArea\1234\stam.workspace"/>
-    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\TestOne.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/Plugins.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+    <File Name="C:\Development\C++\wxflatmenu\flatmenu.workspace"/>
     <File Name="C:\devl\myproject\MyProject.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/Plugins.workspace"/>
+    <File Name="C:\TestArea\TestOne.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
+    <File Name="C:\TestArea\1234\stam.workspace"/>
+    <File Name="C:\TestArea\CCBug\cc_bug.workspace"/>
   </RecentWorkspaces>
+  <ArchiveObject Name="GeneralInfo">
+    <wxSize Name="m_frameSize" x="1288" y="998"/>
+    <wxPoint Name="m_framePos" x="-4" y="-4"/>
+    <long Value="15" Name="m_flags"/>
+  </ArchiveObject>
 </LiteEditor>

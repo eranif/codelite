@@ -121,7 +121,7 @@ void SvnDiffCmdHandler::ProcessEvent(wxCommandEvent &event)
 
 	if (event.GetEventType() == wxEVT_ASYNC_PROC_ADDLINE) {
 		m_content << event.GetString();
-		m_content.Trim();
+		m_content = m_content.Trim().Trim(false);
 		m_content << wxT("\n");
 	} else {
 		m_svnDriver->PrintMessage(text);
@@ -143,7 +143,7 @@ void SvnChangeLogCmdHandler::ProcessEvent(wxCommandEvent &event)
 
 	if (event.GetEventType() == wxEVT_ASYNC_PROC_ADDLINE) {
 		m_content << event.GetString();
-		m_content.Trim();
+		m_content = m_content.Trim().Trim(false);
 		m_content << wxT("\n");
 	} else {
 		m_svnDriver->PrintMessage(text);

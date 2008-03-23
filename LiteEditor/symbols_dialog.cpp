@@ -149,7 +149,7 @@ void SymbolsDialog::OnCharHook(wxKeyEvent &event)
 		if (m_results->GetItemCount() > m_selectedItem + 1) {
 			m_selectedItem ++;
 			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-			m_results->SetItemState(m_selectedItem, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+			m_results->EnsureVisible(m_selectedItem);
 			return;
 		}
 	} else if( event.GetKeyCode() == WXK_UP) {
@@ -165,7 +165,7 @@ void SymbolsDialog::OnCharHook(wxKeyEvent &event)
 			//we can select the next one
 			m_selectedItem --;
 			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-			m_results->SetItemState(m_selectedItem, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+			m_results->EnsureVisible(m_selectedItem);
 		}
 		return;
 	}

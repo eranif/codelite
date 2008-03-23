@@ -237,7 +237,9 @@ void SvnDriver::Commit() {
 	
 	wxString text;
 	for(size_t i=0; i< output.GetCount(); i++){
-		text << wxT("# ") << output.Item(i) << wxT("\n");
+		wxString file_name(output.Item(i));
+		file_name = file_name.Trim().Trim(false);
+		text << wxT("# ") << file_name << wxT("\n");
 	}
 	
 	//Get Log message from user
@@ -270,7 +272,9 @@ void SvnDriver::CommitFile(const wxString &fileName, SvnIconRefreshHandler *hand
 	
 	wxString text;
 	for(size_t i=0; i< output.GetCount(); i++){
-		text << wxT("# ") << output.Item(i) << wxT("\n");
+		wxString file_name(output.Item(i));
+		file_name = file_name.Trim().Trim(false);
+		text << wxT("# ") << file_name << wxT("\n");
 	}
 	
 	//Get Log message from user
@@ -582,7 +586,9 @@ void SvnDriver::Cleanup() {
 
 void SvnDriver::PrintMessage(const wxArrayString &textArr) {
 	for(size_t i=0; i<textArr.GetCount(); i++){
-		PrintMessage(textArr.Item(i) + wxT("\n"));
+		wxString text(textArr.Item(i));
+		text = text.Trim().Trim(false);
+		PrintMessage(text + wxT("\n"));
 	}
 }
 

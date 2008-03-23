@@ -436,6 +436,11 @@
         <object class="wxMenuItem" name="wxID_SAVEAS">
             <label>Save As</label>
         </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="copy_file_name">
+            <label>Copy &amp;File Name to Clipboard</label>
+        </object>
+		
     </object>
     
     <object class="wxMenu" name="editor_right_click">

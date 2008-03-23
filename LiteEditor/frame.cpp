@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "wx/clipbrd.h"
 #include "wx/numdlg.h"
 #include "environmentconfig.h"
 #include "shell_window.h"
@@ -89,6 +90,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_ENDED, Frame::OnBuildEvent)
 
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
+	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE, Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, Frame::OnOutputWindowEvent)
@@ -861,11 +863,11 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 		editor->OnMenuCommand(event);
 		return;
 	}
-	
+
 	//the focused window is not the main editor
 	OutputTabWindow *tabWin = FindOutputTabWindowByPtr(win);
-	
-	if(tabWin) {
+
+	if (tabWin) {
 		tabWin->OnCommand(event);
 		return;
 	}
@@ -894,8 +896,8 @@ void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 
 	//the focused window is not the main editor
 	OutputTabWindow *tabWin = FindOutputTabWindowByPtr(win);
-	
-	if(tabWin) {
+
+	if (tabWin) {
 		tabWin->OnUpdateUI(event);
 		return;
 	}
@@ -2635,19 +2637,38 @@ void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 OutputTabWindow* Frame::FindOutputTabWindowByPtr(wxWindow *win)
 {
 	wxFlatNotebook *book = GetOutputPane()->GetNotebook();
-	for(size_t i=0; i< (size_t)book->GetPageCount(); i++) {
-		if(book->GetPageText(i) == OutputPane::BUILD_WIN) {
+	for (size_t i=0; i< (size_t)book->GetPageCount(); i++) {
+		if (book->GetPageText(i) == OutputPane::BUILD_WIN) {
 			OutputTabWindow *tabWin = dynamic_cast< OutputTabWindow* > ( book->GetPage(i) );
-			if(tabWin && tabWin->GetInternalWindow() == win) {
+			if (tabWin && tabWin->GetInternalWindow() == win) {
 				return tabWin;
 			}
 		}
-		
-		if(book->GetPageText(i) == OutputPane::FIND_IN_FILES_WIN) {
-			if(GetOutputPane()->GetFindResultsTab()->GetInternalWindow() == win){
+
+		if (book->GetPageText(i) == OutputPane::FIND_IN_FILES_WIN) {
+			if (GetOutputPane()->GetFindResultsTab()->GetInternalWindow() == win) {
 				return GetOutputPane()->GetFindResultsTab();
 			}
 		}
 	}
 	return NULL;
+}
+
+void Frame::OnCopyFilePath(wxCommandEvent &event)
+{
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	if (editor) {
+		wxString fileName = editor->GetFileName().GetFullPath();
+#if wxUSE_CLIPBOARD
+		if (wxTheClipboard->Open()) {
+			wxTheClipboard->UsePrimarySelection(false);
+			if (!wxTheClipboard->SetData(new wxTextDataObject(fileName))) {
+				//wxPrintf(wxT("Failed to insert data %s to clipboard"), textToCopy.GetData());
+			}
+			wxTheClipboard->Close();
+		} else {
+			wxPrintf(wxT("Failed to open the clipboard"));
+		}
+#endif
+	}
 }

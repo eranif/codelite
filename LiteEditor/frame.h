@@ -254,12 +254,11 @@ protected:
 	void OnFindResource(wxCommandEvent &event);
 	void OnFindType(wxCommandEvent &event);
 	void OnQuickOutline(wxCommandEvent &event);
-//	void OnImportMakefile(wxCommandEvent &event);
-//	void OnImportMakefileUI(wxUpdateUIEvent &event);
 	void OnImportMSVS(wxCommandEvent &e);
 	void OnNextBuildError(wxCommandEvent &event);
 	void OnNextBuildErrorUI(wxUpdateUIEvent &event);
 	void OnDebugAttach(wxCommandEvent &event);
+	void OnCopyFilePath(wxCommandEvent &event);
 	
 	// this event is sent from the notebook container to the frame
 	void OnFileClosing(wxFlatNotebookEvent &event);

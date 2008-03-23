@@ -831,7 +831,7 @@ wxMenu* SubversionPlugin::CreateProjectPopMenu()
 void SubversionPlugin::OnShowReportWsp(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-	wxBusyCursor cursor;
+	wxWindowDisabler disabler;
 	DoGenerateWspReport();
 }
 
@@ -853,7 +853,7 @@ void SubversionPlugin::OnCommitWsp(wxCommandEvent &e)
 void SubversionPlugin::OnShowReportPrj(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-	wxBusyCursor cursor;
+	wxWindowDisabler disabler;
 	DoGeneratePrjReport();
 }
 
@@ -897,6 +897,7 @@ ProjectPtr SubversionPlugin::GetSelectedProject()
 
 void SubversionPlugin::OnRefrshIconsStatus(wxCommandEvent &e)
 {
+	wxWindowDisabler disabler;
 	SvnIconRefreshHandler handler(m_mgr, this);
 	handler.UpdateIcons();
 	e.Skip();
@@ -904,6 +905,7 @@ void SubversionPlugin::OnRefrshIconsStatus(wxCommandEvent &e)
 
 void SubversionPlugin::OnRefreshIconsCond(wxCommandEvent &e)
 {
+	wxWindowDisabler disabler;
 	if (m_options.GetFlags() & SvnKeepIconsUpdated) {
 		SvnIconRefreshHandler handler(m_mgr, this);
 		handler.UpdateIcons();

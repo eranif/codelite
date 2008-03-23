@@ -31,7 +31,7 @@
 	<object class="wxBitmap" name="word_wrap">res/wrap_arrow.png</object>
 	<object class="wxBitmap" name="output_win">res/output_win.png</object> 
 	<object class="wxBitmap" name="debug_window">res/debug_windows.png</object> 
-	<object class="wxBitmap" name="sym_wiz_bmp">res/sym_wiz_bmp.png</object>	
+	<object class="wxBitmap" name="sym_wiz_bmp">res/sym_wiz_bmp.png</object>	 
 	<object class="wxBitmap" name="debugger_tab">res/bug.png</object>
 	<object class="wxBitmap" name="help_icon">res/help.png</object> 
 	<object class="wxBitmap" name="svn_repo">res/svn_repo.png</object>
@@ -49,6 +49,7 @@
 	<object class="wxBitmap" name="new_class_title">res/new_class.png</object>
 	<object class="wxBitmap" name="wx_project_header">res/wxproject.png</object>
 	<object class="wxBitmap" name="colourise">res/colorize.png</object>
+	<object class="wxBitmap" name="collapse">res/collapse.png</object>
 	
 	<!-- 
 		Toolbar bitmaps (24x24) 

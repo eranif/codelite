@@ -99,7 +99,7 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 
-	wxTextCtrl *svnwin = new wxTextCtrl(m_mgr->GetOutputPaneNotebook(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER| wxTE_MULTILINE);
+	wxTextCtrl *svnwin = new wxTextCtrl(m_mgr->GetOutputPaneNotebook(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER| wxTE_MULTILINE | wxTE_READONLY);
 	svnwin->SetFont(font);
 
 	m_mgr->GetOutputPaneNotebook()->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
@@ -406,6 +406,11 @@ void SubversionPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 
 void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
+	if(m_sepItem) {
+		//we already have popup menu for the SVN
+		return;
+	}
+	
 	if (type == MenuTypeFileExplorer) {
 		m_sepItem = menu->PrependSeparator();
 		menu->Prepend(XRCID("SVN_POPUP"), wxT("Svn"), CreatePopMenu());
@@ -527,17 +532,19 @@ void SubversionPlugin::OnFileExplorerInitDone(wxCommandEvent &event)
 
 void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event)
 {
+	if (IsWorkspaceUnderSvn() == false) {
+		return;
+	}
+
 	if (m_options.GetFlags() & SvnAutoAddFiles) {
 		void *cdata(NULL);
-		wxArrayString files;
+		wxArrayString *files(NULL);
 		cdata = event.GetClientData();
 		if (cdata) {
-			files = *((wxArrayString*)cdata);
-
-			for (size_t i=0; i< files.GetCount(); i++) {
-				m_svn->Add(files.Item(i));
+			files = (wxArrayString*)cdata;
+			for (size_t i=0; i< files->GetCount(); i++) {
+				m_svn->Add(files->Item(i));
 			}
-
 		}
 	}
 	if (m_options.GetFlags() & SvnKeepIconsUpdated) {

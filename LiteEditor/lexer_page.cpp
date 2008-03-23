@@ -38,9 +38,12 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 {
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
-
-	wxStaticBoxSizer* sbSizer5;
-	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT("Display Item:") ), wxHORIZONTAL );
+	
+	wxStaticText *static_text = new wxStaticText( this, wxID_ANY, wxT("Language Attributes:"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer6->Add(static_text, 0, wxEXPAND | wxALL, 5);
+	
+	wxBoxSizer* sbSizer5;
+	sbSizer5 = new wxBoxSizer( wxHORIZONTAL );
 
 	m_properties = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	m_properties->SetSizeHints(150, -1);
@@ -120,12 +123,16 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 
 	sbSizer5->Add( bSizer7, 1, wxEXPAND, 5 );
 
-	wxStaticBoxSizer *hs = new wxStaticBoxSizer(wxHORIZONTAL, this, wxT("File Types:"));
+	wxBoxSizer *hs = new wxBoxSizer(wxHORIZONTAL);//, this, wxT("File Types:"));
 	m_fileSpec = new wxTextCtrl(this, wxID_ANY, m_lexer->GetFileSpec()); 
 	hs->Add(m_fileSpec, 1, wxALL | wxEXPAND, 5);
 
 	bSizer6->Add( sbSizer5, 1, wxEXPAND, 5 );
+	
+	static_text = new wxStaticText( this, wxID_ANY, wxT("File Masking:"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer6->Add(static_text, 0, wxEXPAND | wxALL, 5);
 	bSizer6->Add( hs, 0, wxEXPAND, 5 );
+	
 	this->SetSizer( bSizer6 );
 	this->Layout();
 

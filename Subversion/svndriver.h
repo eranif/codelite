@@ -40,7 +40,7 @@ public:
 	void Shutdown();
 	void ExecStatusCommand(const wxString &path, wxString &output);
 	void SetCommitWithPassword(bool need);
-
+	bool IsRunning() {return m_cmd != NULL;}
 	AsyncExeCmd *Svn() {return m_cmd;}
 
 	///////////////////////////////

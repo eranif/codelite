@@ -1,3 +1,4 @@
+#include "wx/xrc/xmlres.h"
 #include "workspacetab.h"
 #include "manager.h"
 #include "fileview.h"
@@ -48,10 +49,15 @@ void WorkspaceTab::CreateGUIControls()
 	
 	//add toolbar on top of the workspace tab that includes a single button that collapse all 
 	//tree items
-	wxButton *button = new wxButton(this, wxID_ANY, wxT("Collapse &All"), wxDefaultPosition, wxDefaultSize, 0);
-	button->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( WorkspaceTab::OnCollapseAll ), NULL, this);
-	button->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceTab::OnCollapseAllUI ), NULL, this);
-	sz->Add(button, 0, wxRIGHT|wxTOP|wxBOTTOM, 5);
+	
+	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_NODIVIDER|wxTB_HORIZONTAL| wxTB_HORZ_TEXT);
+	int id = wxNewId();
+	tb->AddTool(id, wxT("Collapse &All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse &All"), wxITEM_NORMAL);
+	tb->Realize();
+	
+	Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnCollapseAll ));
+	Connect( id, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceTab::OnCollapseAllUI ));
+	sz->Add(tb, 0, wxRIGHT|wxTOP|wxBOTTOM, 5);
 	
 	wxStaticLine *staticline = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	sz->Add(staticline, 0, wxEXPAND);

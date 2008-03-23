@@ -28,7 +28,15 @@ void SvnCommitMsgsMgr::Release()
 
 void SvnCommitMsgsMgr::AddMessage(const wxString &message)
 {
-	m_messages.Add(message);
+	if(message.IsEmpty()) {
+		//dont add empty comments
+		return;
+	}
+	
+	//dont add duplicate messages
+	if ( m_messages.Index( comment, false ) == wxNOT_FOUND ) {
+		m_messages.Add(message);
+	}
 }
 
 void SvnCommitMsgsMgr::GetAllMessages(wxArrayString &messages)

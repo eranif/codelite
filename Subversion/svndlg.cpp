@@ -39,12 +39,7 @@ void SvnDlg::OnButtonOK(wxCommandEvent &e)
 	wxString comment = m_textCtrl->GetValue();
 	StripComments( comment );
 	
-	wxArrayString msgs;
+	SvnCommitMsgsMgr::Instance()->AddMessage( comment );
 	
-	//dont duplicate messages
-	SvnCommitMsgsMgr::Instance()->GetAllMessages( msgs );
-	if ( msgs.Index( comment, false ) == wxNOT_FOUND ) {
-		SvnCommitMsgsMgr::Instance()->AddMessage( comment );
-	}
 	EndModal( wxID_OK );
 }

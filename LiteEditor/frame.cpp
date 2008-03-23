@@ -848,11 +848,14 @@ void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
 void Frame::DispatchCommandEvent(wxCommandEvent &event)
 {
 	wxWindow *win = wxWindow::FindFocus();
+	LEditor* editor(NULL);
 	if (!win) {
-		return;
+		//do default behavior
+		editor = ManagerST::Get()->GetActiveEditor();
+	}else{
+		editor = dynamic_cast<LEditor*>(win);
 	}
-
-	LEditor* editor = dynamic_cast<LEditor*>(win);
+	
 	if (editor) {
 		if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
 			//keep the old id as int and override the value set in the event object

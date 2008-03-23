@@ -52,7 +52,7 @@ void WorkspaceTab::CreateGUIControls()
 	
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_NODIVIDER|wxTB_HORIZONTAL| wxTB_HORZ_TEXT);
 	int id = wxNewId();
-	tb->AddTool(id, wxT("Collapse &All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse &All"), wxITEM_NORMAL);
+	tb->AddTool(id, wxT("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
 	tb->Realize();
 	
 	Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnCollapseAll ));

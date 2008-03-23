@@ -1417,9 +1417,6 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 {
 	//let the context process it as well
 	m_context->OnKeyDown(event);
-	if (event.GetKeyCode() == WXK_NUMPAD_DELETE) {
-		event.Skip(false);
-	}
 }
 
 void LEditor::OnLeftDown(wxMouseEvent &event)

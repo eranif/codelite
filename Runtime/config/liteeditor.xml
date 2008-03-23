@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LiteEditor Revision="1186">
+<LiteEditor Revision="1187">
   <Layout>
     <Notebook Name="Editor" Style="751292"/>
     <Notebook Name="OutputPane" Style="738332"/>
@@ -109,34 +109,34 @@
     <wxArrayString Name="m_replaceString"/>
     <long Value="3" Name="m_flags"/>
   </ArchiveObject>
-  <RecentFiles>
-    <File Name="C:\Development\C++\codelite\trunk\MakefileParser\makefile_lexer.cpp"/>
-    <File Name="C:\wxWidgets-2.8.7\include\wx\hash.h"/>
-    <File Name="/home/eran/devl/test/sampleclass.h"/>
-    <File Name="/home/eran/devl/test/sampleclass.cpp"/>
-    <File Name="/home/eran/devl/test/main.cpp"/>
-    <File Name="C:\devl\myproject\myderivedclass.h"/>
-    <File Name="C:\wxWidgets-2.8.7\include\wx\hashmap.h"/>
-    <File Name="C:\devl\myproject\main.cpp"/>
-    <File Name="C:\TestArea\jin\c.cpp"/>
-  </RecentFiles>
-  <ArchiveObject Name="LoadSavedPrespective">
-    <long Value="1" Name="m_value"/>
-  </ArchiveObject>
-  <RecentWorkspaces>
-    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/Plugins.workspace"/>
-    <File Name="C:\TestArea\TestOne.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
-    <File Name="C:\TestArea\1234\stam.workspace"/>
-    <File Name="C:\TestArea\jin\a.workspace"/>
-    <File Name="/home/eran/devl/test/test.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
-  </RecentWorkspaces>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="1004"/>
     <wxPoint Name="m_framePos" x="-4" y="-4"/>
     <long Value="15" Name="m_flags"/>
   </ArchiveObject>
+  <ArchiveObject Name="LoadSavedPrespective">
+    <long Value="1" Name="m_value"/>
+  </ArchiveObject>
+  <RecentWorkspaces>
+    <File Name="/home/eran/devl/SampleC_Code/SampleC_Code.workspace"/>
+    <File Name="/home/eran/devl/ZendLib/ZendLib.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
+    <File Name="/home/eran/devl/test/test.workspace"/>
+    <File Name="C:\TestArea\jin\a.workspace"/>
+    <File Name="C:\TestArea\1234\stam.workspace"/>
+    <File Name="C:\TestArea\TestCustom\test_custom.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\TestOne.workspace"/>
+  </RecentWorkspaces>
+  <RecentFiles>
+    <File Name="/home/eran/devl/SampleC_Code/test.cpp"/>
+    <File Name="C:\TestArea\jin\c.cpp"/>
+    <File Name="C:\devl\myproject\main.cpp"/>
+    <File Name="C:\wxWidgets-2.8.7\include\wx\hashmap.h"/>
+    <File Name="C:\devl\myproject\myderivedclass.h"/>
+    <File Name="/home/eran/devl/test/main.cpp"/>
+    <File Name="/home/eran/devl/test/sampleclass.cpp"/>
+    <File Name="/home/eran/devl/test/sampleclass.h"/>
+    <File Name="C:\wxWidgets-2.8.7\include\wx\hash.h"/>
+  </RecentFiles>
 </LiteEditor>

@@ -536,7 +536,9 @@ void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
 		SortItem(item);
 		Expand( item );
 		
-		SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&filename);
+		wxArrayString arrStr;
+		arrStr.Add(filename);
+		SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&arrStr);
 	}
 	
 	dlg->Destroy();

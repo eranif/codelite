@@ -246,6 +246,8 @@
     <File Name="shelltab.cpp"/>
     <File Name="findresultscontainer.cpp"/>
     <File Name="findresultscontainer.h"/>
+    <File Name="workspacetab.cpp"/>
+    <File Name="workspacetab.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

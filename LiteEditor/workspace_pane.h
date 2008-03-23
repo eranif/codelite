@@ -13,6 +13,7 @@ class WindowStack;
 class OpenWindowsPanel;
 class wxComboBox;
 class FileExplorer;
+class WorkspaceTab;
 
 class WorkspacePane : public wxPanel 
 {
@@ -24,17 +25,16 @@ public:
 	
 	wxFlatNotebook *m_book;
 	wxString m_caption;
-	FileViewTree *m_fileView;
 	wxFlatNotebookImageList m_images;
 	WindowStack *m_winStack;
 	OpenWindowsPanel *m_openWindowsPane;
-	wxComboBox *m_workspaceConfig;
 	FileExplorer *m_explorer;
+	WorkspaceTab *m_workspaceTab;
 	
 private:
 	void CreateGUIControls();
 	CppSymbolTree *GetTreeByFilename(const wxFileName &filename);
-
+	
 public:
 	WorkspacePane(wxWindow *parent, const wxString &caption);
 	virtual ~WorkspacePane();
@@ -56,10 +56,10 @@ public:
 	//-----------------------------------------------
 	wxFlatNotebook *GetNotebook() { return m_book; }
 	SymbolTree *GetSymbolTree();
-	FileViewTree *GetFileViewTree() {return m_fileView;}
+	FileViewTree *GetFileViewTree();
 	OpenWindowsPanel *GetOpenedWindows() {return m_openWindowsPane;}
 	const wxString &GetCaption() const {return m_caption;}
-	wxComboBox *GetConfigCombBox(){return m_workspaceConfig;}
+	wxComboBox *GetConfigCombBox();
 	FileExplorer *GetFileExplorer(){return m_explorer;}
 };
 

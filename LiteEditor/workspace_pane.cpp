@@ -8,6 +8,7 @@
 #include "openwindowspanel.h"
 #include "macros.h"
 #include "fileexplorer.h"
+#include "workspacetab.h"
 
 const wxString WorkspacePane::SYMBOL_VIEW 	= wxT("Outline");
 const wxString WorkspacePane::FILE_VIEW   	= wxT("Workspace");
@@ -49,35 +50,12 @@ void WorkspacePane::CreateGUIControls()
 	m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 
-//	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("file_view")));
-//	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("class_view")));
-//	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("opened_windows")));
-//	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("file_explorer")));
-//	m_book->SetImageList( &m_images );
-
 	// Add the class view tree
 	m_winStack = new WindowStack(m_book, wxID_ANY);
 	m_book->AddPage(m_winStack, WorkspacePane::SYMBOL_VIEW, false);
-
-	wxPanel *page = new wxPanel(m_book);
-	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
-	page->SetSizer(sz);
-
-	//add the workspace configuration combobox
-	wxArrayString choices;
-	m_workspaceConfig = new wxComboBox(page, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY);
-	m_workspaceConfig->Enable(false);
 	
-	// Connect an event to handle changes in the choice control
-	ConnectCombo(m_workspaceConfig, Frame::OnWorkspaceConfigChanged);
-	sz->Add(new wxStaticText( page, wxID_ANY, wxT("Active Configuration:")), 0, wxEXPAND| wxTOP, 5);
-	sz->Add(m_workspaceConfig, 0, wxEXPAND| wxTOP, 5);
-
-	//add the fileview tab
-	m_fileView = new FileViewTree(page, wxID_ANY);
-	sz->Add(m_fileView, 1, wxEXPAND|wxTOP, 2);
-
-	m_book->AddPage(page, WorkspacePane::FILE_VIEW, true);
+	m_workspaceTab = new WorkspaceTab(this);
+	m_book->AddPage(m_workspaceTab, WorkspacePane::FILE_VIEW, true);
 
 	m_explorer = new FileExplorer(m_book, wxT("Explorer"));
 	m_book->AddPage(m_explorer, WorkspacePane::EXPLORER, false);
@@ -109,7 +87,7 @@ void WorkspacePane::BuildSymbolTree(const wxFileName &filename)
 
 void WorkspacePane::BuildFileTree()
 {
-	m_fileView->BuildTree();
+	m_workspaceTab->BuildFileTree();
 }
 
 SymbolTree *WorkspacePane::GetSymbolTree()
@@ -137,4 +115,14 @@ void WorkspacePane::DeleteSymbolTree(const wxFileName &filename)
 void WorkspacePane::DeleteAllSymbolTrees()
 {
 	m_winStack->Clear();
+}
+
+FileViewTree* WorkspacePane::GetFileViewTree()
+{
+	return m_workspaceTab->GetFileView();
+}
+
+wxComboBox* WorkspacePane::GetConfigCombBox()
+{
+	return m_workspaceTab->GetComboBox();
 }

@@ -34,7 +34,7 @@ void SvnCommitMsgsMgr::AddMessage(const wxString &message)
 	}
 	
 	//dont add duplicate messages
-	if ( m_messages.Index( comment, false ) == wxNOT_FOUND ) {
+	if ( m_messages.Index( message, false ) == wxNOT_FOUND ) {
 		m_messages.Add(message);
 	}
 }

@@ -35,17 +35,6 @@ int FolderModifiedIconId		= wxNOT_FOUND;
 int FolderConflictIconId 		= wxNOT_FOUND;
 int FolderOkIconId			= wxNOT_FOUND;
 
-static void WriteFile(const wxString &fileName, const wxString &content)
-{
-	wxFFile file;
-	if (!file.Open(fileName, wxT("w+b"))) {
-		return;
-	}
-
-	file.Write(content);
-	file.Close();
-}
-
 static bool IsIgnoredFile(const wxString &file, const wxString &patten)
 {
 	wxStringTokenizer tkz(patten, wxT(";"), wxTOKEN_STRTOK);

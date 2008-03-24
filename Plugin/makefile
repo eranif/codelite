@@ -54,8 +54,11 @@ endif
 CCFLAGS= -D__WX__ -Wall $(TRACE_FLAG) -I. -DWXUSINGDLL -DWX_PRECOMP -DNO_GCC_PRAGMA -DXTHREADS -D_REENTRANT -DXUSE_MTSAFE_API $(shell wx-config --cxxflags $(WXCFG)) $(PROFILER) -fno-strict-aliasing  
 
 SQLITE_INCLUDE= -I../sdk/wxsqlite3/include -I../sdk/wxsqlite3/sqlite3/include
-INCLUDES = $(shell pkg-config --cflags gtk+-2.0) -I. $(SQLITE_INCLUDE) -I../CodeLite -I../Interfaces -I../sdk/wxflatnotebook/include/
-
+INCLUDES = -I. $(SQLITE_INCLUDE) -I../CodeLite -I../Interfaces -I../sdk/wxflatnotebook/include/
+OSNAME=$(shell uname -s)
+ifneq ($(OSNAME), Darwin)
+ INCLUDES:=$(shell pkg-config --cflags gtk+-2.0) $(INCLUDES)
+endif
 ##
 ## Define the object files
 ##

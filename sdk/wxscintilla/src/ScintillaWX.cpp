@@ -1030,6 +1030,10 @@ int  ScintillaWX::DoKeyDown(const wxKeyEvent& evt, bool* consumed)
 	case WXK_NUMPAD_DELETE: //fall through
 	//Eran - END
     case WXK_DELETE:            key = SCK_DELETE;   break;
+	
+	//Eran - BEGIN
+	case WXK_NUMPAD_INSERT://fall through
+	//Eran - END
     case WXK_INSERT:            key = SCK_INSERT;   break;
     case WXK_ESCAPE:            key = SCK_ESCAPE;   break;
     case WXK_BACK:              key = SCK_BACK;     break;

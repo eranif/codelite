@@ -5,7 +5,7 @@
  *   This file is a part of "Artistic Style" - an indentation and
  *   reformatting tool for C, C++, C# and Java source files.
  *   http://astyle.sourceforge.net
- *
+ * 
  *   The "Artistic Style" project, including all files needed to
  *   compile it, is free software; you can redistribute it and/or
  *   modify it under the terms of the GNU Lesser General Public

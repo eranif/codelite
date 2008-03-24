@@ -687,6 +687,7 @@ static boolean isContextualStatement (const statementInfo *const st)
 		case DECL_INTERFACE:
 		case DECL_STRUCT:
 		case DECL_UNION:
+		case DECL_NAMESPACE:
 			result = TRUE;
 			break;
 

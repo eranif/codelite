@@ -812,7 +812,7 @@ bool Language::TypeFromName(const wxString &name,
 
 					//support for 'using namespace'
 					if (typeScope == wxT("<global>")) {
-						return CorrectUsingNamespace(type, typeScope, moreScopes, tags);
+						return CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
 					}
 					return true;
 				}
@@ -824,7 +824,7 @@ bool Language::TypeFromName(const wxString &name,
 				tags.clear();
 				if (DoSearchByNameAndScope(name, moreScopes.at(i), tags, type, typeScope)) {
 					if (typeScope == wxT("<global>")) {
-						return CorrectUsingNamespace(type, typeScope, moreScopes, tags);
+						return CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
 					}
 					return true;
 				}
@@ -848,14 +848,14 @@ bool Language::TypeFromName(const wxString &name,
 			m_parentVar.m_type = _C(type);
 			m_parentVar.m_typeScope = _C(typeScope);
 		}
-		return CorrectUsingNamespace(type, typeScope, moreScopes, tags);
+		return CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
 	}
 }
 
-bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const std::vector<wxString> &moreScopes, std::vector<TagEntryPtr> &tags)
+bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const std::vector<wxString> &moreScopes, const wxString &parentScope, std::vector<TagEntryPtr> &tags)
 {
-	if (moreScopes.empty() == false) {
-		if (!GetTagsManager()->IsTypeAndScopeExists(type, typeScope)) {
+	if (!GetTagsManager()->IsTypeAndScopeExists(type, typeScope)) {
+		if (moreScopes.empty() == false) {
 			//the type does not exist in the global scope,
 			//try the additional scopes
 			for (size_t i=0; i<moreScopes.size(); i++) {
@@ -864,8 +864,16 @@ bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const 
 					return true;
 				}
 			}
-			return false;
 		}
+		
+		//if we are here, it means that the more scopes did not matched any, try the parent scope
+		tags.clear();
+		if (DoSearchByNameAndScope(type, parentScope, tags, type, typeScope)) {
+			return true;
+		}
+		
+		//still no match?
+		return false;
 	}
 	return true;
 }
@@ -979,12 +987,12 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 	if (pattern.EndsWith(wxT(";"))) {
 		pattern = pattern.RemoveLast();
 	}
-	
+
 	//remove any comments from the pattern
 	wxString tmp_pattern(pattern);
 	pattern.Empty();
 	GetTagsManager()->StripComments(tmp_pattern, pattern);
-	
+
 	//a limitiation of the function parser...
 	pattern << wxT(';');
 
@@ -1008,7 +1016,7 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 		//over multiple lines)
 		//do some work on the input buffer
 		wxString pat2(pattern);
-		
+
 		if (pat2.EndsWith(wxT(";"))) {
 			pat2 = pat2.RemoveLast();
 		}
@@ -1021,7 +1029,7 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 		if (fooList.size() == 1) {
 			foo = (*fooList.begin());
 			return true;
-		} else if(fooList.empty()) {
+		} else if (fooList.empty()) {
 			//try a nasty hack:
 			//the yacc cant find ctor declarations
 			//so add a 'void ' infront of the function...

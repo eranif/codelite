@@ -60,6 +60,7 @@ void SymbolTree::InitialiseSymbolMap()
 	m_imagesMap[wxT("function_private")] = 7;
 	m_imagesMap[wxT("prototype_private")] = 7;
 	m_imagesMap[wxT("variable")] = 8;
+	m_imagesMap[wxT("member")] = 8;
 	m_imagesMap[wxT("member_public")] = 8;
 	m_imagesMap[wxT("member_protected")] = 9;
 	m_imagesMap[wxT("member_private")] = 10;

@@ -199,6 +199,10 @@ wxString ContextCpp::GetImageString(const TagEntry &entry)
 
 	if (entry.GetKind() == wxT("member") && entry.GetAccess().Contains(wxT("protected")))
 		return wxT("?8");
+	
+	//member with no access? (maybe part of namespace??)
+	if (entry.GetKind() == wxT("member"))
+		return wxT("?7");
 
 	if ((entry.GetKind() == wxT("function") || entry.GetKind() == wxT("prototype")) && entry.GetAccess().Contains(wxT("private")))
 		return wxT("?9");

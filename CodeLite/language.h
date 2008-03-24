@@ -172,7 +172,7 @@ private:
 								std::vector<TagEntryPtr> &tags,
 								wxString &type, 
 								wxString &typeScope);
-	bool CorrectUsingNamespace(wxString &type, wxString &typeScope, const std::vector<wxString> &moreScopes, std::vector<TagEntryPtr>& tags);
+	bool CorrectUsingNamespace(wxString &type, wxString &typeScope, const std::vector<wxString> &moreScopes, const wxString &parentScope, std::vector<TagEntryPtr>& tags);
 	/**
 	 * Private constructor
 	 */

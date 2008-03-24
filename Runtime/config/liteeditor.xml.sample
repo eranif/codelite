@@ -32,6 +32,8 @@
       <wxString Value="ATTRIBUTE_PRINTF_1"/>
       <wxString Value="ATTRIBUTE_PRINTF_2"/>
 	  <wxString Value="WXDLLIMPEXP_FWD_BASE"/>  
+	  <wxString Value="WXDLLIMPEXP_FWD_CORE"/>   
+	  <wxString Value="extern"/>   
 	  <wxString Value="DLLIMPORT"/>  
 	  <wxString Value="DECLARE_INSTANCE_TYPE"/>  
     </wxArrayString>

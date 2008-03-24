@@ -11,7 +11,7 @@
 
 class SvnCmdHandler;
 class SubversionPlugin;
-class SvnIconRefreshHandler;
+class SvnPostCmdAction;
 
 class SvnDriver : public wxEvtHandler 
 {
@@ -35,7 +35,7 @@ public:
 	virtual ~SvnDriver();
 	void PrintMessage(const wxString &text);
 	void PrintMessage(const wxArrayString &textArr);
-	void DisplayDiffFile(const wxString &content);
+	void DisplayDiffFile(const wxString &fileName, const wxString &content);
 	void DisplayLog(const wxString &outputFile, const wxString &content);
 	void Shutdown();
 	void ExecStatusCommand(const wxString &path, wxString &output);
@@ -48,10 +48,10 @@ public:
 	///////////////////////////////
 
 	//operations on a single file 
-	void UpdateFile(const wxString &fileName, SvnIconRefreshHandler *handler = NULL);
-	void CommitFile(const wxString &fileName, SvnIconRefreshHandler *handler = NULL);
+	void UpdateFile(const wxString &fileName, SvnPostCmdAction *handler = NULL);
+	void CommitFile(const wxString &fileName, SvnPostCmdAction *handler = NULL);
 	void DiffFile(const wxFileName &fileName);
-	void RevertFile(const wxFileName &fileName);
+	void RevertFile(const wxFileName &fileName, SvnPostCmdAction *handler = NULL);
 
 	//operations taken from the file explorer tree
 	void Abort();
@@ -59,7 +59,7 @@ public:
 	void Commit();
 	void Diff();
 	void Add();
-	void Add(const wxFileName &filename);
+	void Add(const wxFileName &filename, SvnPostCmdAction *handler = NULL);
 	void Cleanup();
 	void ChangeLog();
 	void Delete();

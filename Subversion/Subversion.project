@@ -10,6 +10,10 @@
     <File Name="svncommitmsgsmgr.h"/>
     <File Name="svniconrefreshhandler.cpp"/>
     <File Name="svniconrefreshhandler.h"/>
+    <File Name="svnpostcmdaction.cpp"/>
+    <File Name="svnpostcmdaction.h"/>
+    <File Name="svnreportgeneratoraction.cpp"/>
+    <File Name="svnreportgeneratoraction.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="svndriver.h"/>
@@ -40,7 +44,6 @@
     <File Name="logindlg.h"/>
     <File Name="logindlgbase.h"/>
   </VirtualDirectory>
-  <Dependencies/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
       <General OutputFile="../Runtime/plugins/Subversion.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
@@ -75,9 +78,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -113,13 +114,11 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="../Runtime/plugins/Subversion.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/plugins/Subversion.dll" IntermediateDirectory="./WinDebugUnicode" Command="CodeLite" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
@@ -153,11 +152,13 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="../Runtime/plugins/Subversion.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./WinReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/plugins/Subversion.dll" IntermediateDirectory="./WinReleaseUnicode" Command="./CodeLite" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Compiler Required="yes" Options="$(shell wx-config --cxxflags --unicode=yes --debug=no)">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
@@ -197,4 +198,5 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies/>
 </CodeLite_Project>

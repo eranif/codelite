@@ -127,7 +127,7 @@ void SvnDiffCmdHandler::ProcessEvent(wxCommandEvent &event)
 		m_svnDriver->PrintMessage(text);
 		if (event.GetEventType() == wxEVT_ASYNC_PROC_ENDED) {
 			//Create a diff file and open it in the editor
-			m_svnDriver->DisplayDiffFile(m_content);
+			m_svnDriver->DisplayDiffFile(m_fileName, m_content);
 		}
 	}
 }

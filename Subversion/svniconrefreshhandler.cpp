@@ -278,3 +278,8 @@ void SvnIconRefreshHandler::ResetIcons(wxTreeCtrl *tree, wxTreeItemId &item)
 		}
 	}
 }
+
+void SvnIconRefreshHandler::DoCommand()
+{
+	UpdateIcons();
+}

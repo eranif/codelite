@@ -1,3 +1,4 @@
+#include "svnreportgeneratoraction.h"
 #include "wx/ffile.h"
 #include "svniconrefreshhandler.h"
 #include "wx/html/htmlwin.h"
@@ -395,11 +396,11 @@ void SubversionPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 
 void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
-	if(m_sepItem) {
+	if (m_sepItem) {
 		//we already have popup menu for the SVN
 		return;
 	}
-	
+
 	if (type == MenuTypeFileExplorer) {
 		m_sepItem = menu->PrependSeparator();
 		menu->Prepend(XRCID("SVN_POPUP"), wxT("Svn"), CreatePopMenu());
@@ -463,7 +464,7 @@ void SubversionPlugin::OnFileSaved(wxCommandEvent &e)
 
 	if (updateAfterSave) {
 		SvnIconRefreshHandler handler(m_mgr, this);
-		handler.UpdateIcons();
+		handler.DoCommand();
 	}
 	e.Skip();
 }
@@ -538,7 +539,7 @@ void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event)
 	}
 	if (m_options.GetFlags() & SvnKeepIconsUpdated) {
 		SvnIconRefreshHandler handler(m_mgr, this);
-		handler.UpdateIcons();
+		handler.DoCommand();
 	}
 	event.Skip();
 }
@@ -595,6 +596,7 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 	}
 
 
+	book->Freeze();
 	for ( size_t i=0; i<(size_t)book->GetPageCount(); i++) {
 		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow *>(book->GetPage(i));
 		if (win && book->GetPageText(i) == wxT("SVN Status")) {
@@ -608,14 +610,12 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 	wxString name = wxT("svnreport.html");
 
 	wxFileName fn(path, name);
-	wxHtmlWindow *reportPage = new wxHtmlWindow(m_mgr->GetMainNotebook(), wxID_ANY);
+	wxHtmlWindow *reportPage = new wxHtmlWindow(m_mgr->GetMainNotebook(), wxID_ANY, wxDefaultPosition, wxSize(1, 1));
 
 	//read the file content
 	wxString content;
 	ReadFileWithConversion(fn.GetFullPath(), content);
-	content.Replace(wxT("$(BasePath)"), _base);
-	content.Replace(wxT("$(Origin)"), origin);
-
+	
 	wxString rawData;
 	for (size_t i=0; i< output.GetCount(); i++) {
 		rawData << output.Item(i);
@@ -624,7 +624,6 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 	//replace the page macros
 	//$(ModifiedFiles)
 	wxArrayString files;
-
 
 	files.Clear();
 	SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateModified);
@@ -640,10 +639,15 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 	SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateUnversioned);
 	formatStr = FormatRaws(files, _base, SvnXmlParser::StateUnversioned);
 	content.Replace(wxT("$(UnversionedFiles)"), formatStr);
+	
+	content.Replace(wxT("$(BasePath)"), _base);
+	content.Replace(wxT("$(Origin)"), origin);
+
 	reportPage->SetPage(content);
 
 	//create new report
 	m_mgr->GetMainNotebook()->AddPage(reportPage, wxT("SVN Status"), true);
+	book->Thaw();
 }
 
 void SubversionPlugin::DoGetPrjSvnStatus(wxArrayString &output)
@@ -706,11 +710,19 @@ wxString SubversionPlugin::FormatRaws(const wxArrayString &lines, const wxString
 		content << wxT("<a href=\"action:open-file:") << lines.Item(i) << wxT("\" >") << lines.Item(i) << wxT("</a>") ;
 
 		//for modified files, add Diff menu
-		if (state == SvnXmlParser::StateModified) {
+		switch (state) {
+		case SvnXmlParser::StateModified:
 			content << wxT(" - ");
 			content << wxT("<a href=\"action:diff:") << basePath << lines.Item(i) << wxT("\" >") << wxT("Diff") << wxT("</a>");
 			content << wxT(" ");
-			content << wxT("<a href=\"action:revert:") << basePath << lines.Item(i) << wxT("\" >") << wxT("Revert") << wxT("</a>");
+			content << wxT("<a href=\"action:revert-$(Origin):") << basePath << lines.Item(i) << wxT("\" >") << wxT("Revert") << wxT("</a>");
+			break;
+		case SvnXmlParser::StateUnversioned:
+			content << wxT(" - ");
+			content << wxT("<a href=\"action:add-$(Origin):") << basePath << lines.Item(i) << wxT("\" >") << wxT("Add") << wxT("</a>");
+			break;
+		default:
+			break;
 		}
 
 		content << wxT("</font></td></tr>");
@@ -728,16 +740,23 @@ void SubversionPlugin::OnLinkClicked(wxHtmlLinkEvent &e)
 
 		action = action.AfterFirst(wxT(':'));
 		wxString command = action.BeforeFirst(wxT(':'));
-
 		wxString fileName = action.AfterFirst(wxT(':'));
+		
 		wxFileName fn(fileName);
-
-		if (command == wxT("diff")) {
-			//Open file
+		if (command == wxT("add-explorer")) {
+			m_svn->Add(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh")));
+		} else if (command == wxT("add-project")) {
+			m_svn->Add(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh_prj")));
+		} else if (command == wxT("add-workspace")) {
+			m_svn->Add(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh_wsp")));
+		} else if (command == wxT("diff")) {
 			m_svn->DiffFile(fn);
-		} else if (command == wxT("revert")) {
-			m_svn->RevertFile(fn);
-
+		} else if (command == wxT("revert-workspace")) {
+			m_svn->RevertFile(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh_wsp")));
+		} else if (command == wxT("revert-project")) {
+			m_svn->RevertFile(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh_prj")));
+		} else if (command == wxT("revert-explorer")) {
+			m_svn->RevertFile(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh")));
 		} else if (command == wxT("commit-all-explorer")) {
 			//Commit all files
 			m_svn->CommitFile(wxT("\"") + fn.GetFullPath() + wxT("\""));
@@ -888,7 +907,7 @@ void SubversionPlugin::OnRefrshIconsStatus(wxCommandEvent &e)
 {
 	wxWindowDisabler disabler;
 	SvnIconRefreshHandler handler(m_mgr, this);
-	handler.UpdateIcons();
+	handler.DoCommand();
 	e.Skip();
 }
 
@@ -897,7 +916,7 @@ void SubversionPlugin::OnRefreshIconsCond(wxCommandEvent &e)
 	wxWindowDisabler disabler;
 	if (m_options.GetFlags() & SvnKeepIconsUpdated) {
 		SvnIconRefreshHandler handler(m_mgr, this);
-		handler.UpdateIcons();
+		handler.DoCommand();
 	}
 	e.Skip();
 }

@@ -7,22 +7,22 @@
 #include "imanager.h"
 
 class SvnDriver;
-class SvnIconRefreshHandler;
+class SvnPostCmdAction;
 
 class SvnCmdHandler {
 protected:
 	SvnDriver *m_svnDriver;
 	wxString m_cmd;
-	SvnIconRefreshHandler *m_iconRefrshHandler;
+	SvnPostCmdAction *m_postCmd;
 	
 public:
-	SvnCmdHandler(SvnDriver *driver, const wxString &cmd) : m_svnDriver(driver), m_cmd(cmd), m_iconRefrshHandler(NULL) {};
+	SvnCmdHandler(SvnDriver *driver, const wxString &cmd) : m_svnDriver(driver), m_cmd(cmd), m_postCmd(NULL) {};
 	virtual ~SvnCmdHandler(){}
 	const wxString &GetCmd() const {return m_cmd;}
 	virtual void ProcessEvent(wxCommandEvent &event) = 0;
 	
-	void SetIconRefrshHandler(SvnIconRefreshHandler* iconRefrshHandler) {this->m_iconRefrshHandler = iconRefrshHandler;}
-	SvnIconRefreshHandler* GetIconRefrshHandler() {return m_iconRefrshHandler;}
+	void SetPostCmdAction(SvnPostCmdAction* handler) {this->m_postCmd = handler;}
+	SvnPostCmdAction* GetPostCmdAction() {return m_postCmd;}
 };
 
 ////////////////////////////////////////////////////
@@ -58,8 +58,9 @@ public:
 
 class SvnDiffCmdHandler : public SvnCmdHandler {
 	wxString m_content;
+	wxString m_fileName;
 public:
-	SvnDiffCmdHandler(SvnDriver *driver, const wxString &cmd) : SvnCmdHandler(driver, cmd) {}
+	SvnDiffCmdHandler(SvnDriver *driver, const wxString &cmd, const wxString &fileName) : SvnCmdHandler(driver, cmd), m_fileName(fileName) {}
 	virtual ~SvnDiffCmdHandler(){}
 	virtual void ProcessEvent(wxCommandEvent &event);
 };

@@ -4,11 +4,12 @@
 #include "wx/arrstr.h"
 #include "wx/treectrl.h"
 #include "svnxmlparser.h"
+#include "svnpostcmdaction.h"
 
 class IManager;
 class SubversionPlugin;
 
-class SvnIconRefreshHandler {
+class SvnIconRefreshHandler : public SvnPostCmdAction {
 	
 	IManager *m_mgr;
 	SubversionPlugin *m_plugin;
@@ -19,9 +20,12 @@ protected:
 	virtual int  GetIcon(int kind, SvnXmlParser::FileState state);
 	virtual void DoColourPath(wxTreeCtrl *tree, wxTreeItemId &item, SvnXmlParser::FileState state);
 	virtual void ResetIcons(wxTreeCtrl *tree, wxTreeItemId &item);
+	void UpdateIcons();
+	
 public:
 	SvnIconRefreshHandler(IManager *mgr, SubversionPlugin *plugin);
 	virtual ~SvnIconRefreshHandler();
-	void UpdateIcons();
+	virtual void DoCommand();
+	
 };
 #endif // __svniconrefreshhandler__

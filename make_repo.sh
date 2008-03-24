@@ -5,11 +5,20 @@
 ##	/usr/bin/dpkg-scanpackages . /dev/null > Packages
 ##4. Compress the Packages file to dists/gutsy/restricted/binary-i386/Packages.gz
 ##5. Add the following entry to your /etc/apt/sources.list: deb http://eran-linux:/debs  gutsy restricted (replace eran-linux with your IP/server name)
-
+echo "removing old deb files..."
+rm *.deb
+rm /usr/local/apache2/htdocs/debs/*.deb
+echo "Creating new deb file..."
+./make_deb.sh
+echo "Copying deb to /usr/local/apache2/htdocs/debs/"
 cp *.deb /usr/local/apache2/htdocs/debs
+echo "changing directory to /usr/local/apache2/htdocs/debs/"
 cd /usr/local/apache2/htdocs/debs
+echo "Running: /usr/bin/dpkg-scanpackages tool..."
 /usr/bin/dpkg-scanpackages . /dev/null > Packages
+echo "Compressing Packages..."
 gzip Packages
+echo "Moving Packages.gz to dist directory"
 mv Packages.gz dists/gutsy/restricted/binary-i386/Packages.gz
-echo "deb installed"
+echo "Done"
 

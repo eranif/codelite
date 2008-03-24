@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "Running postinst step..."
+\rm -f $HOME/.codelite/config/liteeditor.xml
+echo "Done"
+

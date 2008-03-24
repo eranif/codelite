@@ -385,33 +385,38 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	// Get current position
 	long pos = GetCurrentPos();
 
-	if ((GetCharAt(pos) == '{' ||
-	        GetCharAt(pos) == '[' ||
-	        GetCharAt(pos) == '<' ||
-	        GetCharAt(pos) == '(')
-	        && !m_context->IsCommentOrString(pos)) {
-		BraceMatch((long)pos);
-	} else
-		if ((GetCharAt(PositionBefore(pos)) == '{' ||
-		        GetCharAt(PositionBefore(pos)) == '<' ||
-		        GetCharAt(PositionBefore(pos)) == '[' ||
-		        GetCharAt(PositionBefore(pos)) == '(') && !m_context->IsCommentOrString(PositionBefore(pos))) {
+	//ignore << and >>
+	int charAfter  = SafeGetChar(PositionAfter(pos));
+	int charBefore = SafeGetChar(PositionBefore(pos));
+	int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(pos)));
+	int charCurrnt = SafeGetChar(pos);
+	
+	if ( GetSelectedText().IsEmpty() == false) {
+		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+	} else if (	charCurrnt == '<' && charAfter == '<' 	||	//<<
+	        charCurrnt == '<' && charBefore == '<' 	||	//<<
+	        charCurrnt == '>' && charAfter == '>' 	||	//>>
+	        charCurrnt == '>' && charBefore == '>'  ||	//>>
+			beforeBefore == '<' && charBefore == '<'||	//<<
+			beforeBefore == '>' && charBefore == '>'||	//>>
+			beforeBefore == '-' && charBefore == '>'||	//->
+			charCurrnt == '>' && charBefore == '-'	) {	//->
+		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+	} else {
+
+		if ((charCurrnt == '{' || charCurrnt == '[' || GetCharAt(pos) == '<' || charCurrnt == '(') && !m_context->IsCommentOrString(pos)) {
+			BraceMatch((long)pos);
+		} else if ((charBefore == '{' || charBefore == '<' || charBefore == '[' || charBefore == '(') && !m_context->IsCommentOrString(PositionBefore(pos))) {
 			BraceMatch((long)PositionBefore(pos));
-		} else
-			if ((GetCharAt(pos) == '}' ||
-			        GetCharAt(pos) == ']' ||
-			        GetCharAt(pos) == '>' ||
-			        GetCharAt(pos) == ')') && !m_context->IsCommentOrString(pos)) {
-				BraceMatch((long)pos);
-			} else
-				if ((GetCharAt(PositionBefore(pos)) == '}' ||
-				        GetCharAt(PositionBefore(pos)) == '>' ||
-				        GetCharAt(PositionBefore(pos)) == ']' ||
-				        GetCharAt(PositionBefore(pos)) == ')') && !m_context->IsCommentOrString(PositionBefore(pos))) {
-					BraceMatch((long)PositionBefore(pos));
-				} else {
-					wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
-				}
+		} else if ((charCurrnt == '}' || charCurrnt == ']' || charCurrnt == '>' || charCurrnt == ')') && !m_context->IsCommentOrString(pos)) {
+			BraceMatch((long)pos);
+		} else if ((charBefore == '}' || charBefore == '>' || charBefore == ']' ||charBefore == ')') && !m_context->IsCommentOrString(PositionBefore(pos))) {
+			BraceMatch((long)PositionBefore(pos));
+		} else {
+			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+		}
+	}
+	
 	//update line number
 	wxString message;
 	message << wxT("Ln ") << LineFromPosition(pos)+1 << wxT("    Col ") << GetColumn(pos) << wxT("    Pos ") << pos;
@@ -1084,7 +1089,7 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 	bool dirDown = ! (data.GetFlags() & wxFRD_SEARCHUP ? true : false);
 	int flags = GetSciSearchFlag(data);
 
-	if(m_resetSearch) {
+	if (m_resetSearch) {
 		m_lastMatchPos = GetCurrentPos();
 		m_resetSearch = false;
 	}
@@ -1704,4 +1709,12 @@ void LEditor::UpdateColours()
 
 	//colourise the document
 	Colourise(0, wxSCI_INVALID_POSITION);
+}
+
+int LEditor::SafeGetChar(int pos)
+{
+	if (pos < 0 || pos >= GetLength()) {
+		return 0;
+	}
+	return GetCharAt(pos);
 }

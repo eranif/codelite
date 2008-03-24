@@ -176,6 +176,7 @@ public:
 	static FindReplaceDialog* GetFindReplaceDialog() { return m_findReplaceDlg; }
 
 	// Util function
+	int SafeGetChar(int pos);
 	wxChar PreviousChar(const int& pos, int &foundPos, bool wantWhitespace = false);
 	wxChar NextChar(const int& pos, int &foundPos);
 	int  FindString (const wxString &str, int flags, const bool down, long pos);

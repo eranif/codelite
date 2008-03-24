@@ -26,9 +26,20 @@ cp config/build_settings.xml ./CodeLite.app/Contents/SharedSupport/config
 ## replace the revision macro
 ##
 cur_rev=`svn info | grep Revision | awk '{print $2;}'`
+file_exist=`test -f ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml`
+file_exist=$?
+if [ $file_exist -eq 1 ] 
+then
+	## file does not exist, create an empty file
+	touch ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml
+fi
 
+## empty the file
+\cp /dev/null ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml
 
-cp config/liteeditor.xml.sample ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml
+## replace $(Revision) with the actual revision, and create new file
+cat config/liteeditor.xml.mac | sed s/\$\(Revision\)/${cur_rev}/g >> ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml
+
 cp config/debuggers.xml ./CodeLite.app/Contents/SharedSupport/config
 
 cp ../lib/CodeFormatter.so ./CodeLite.app/Contents/SharedSupport/plugins/

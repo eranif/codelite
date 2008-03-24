@@ -11,8 +11,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include <wx/string.h>
-
 #include "Platform.h"
 
 #include "PropSet.h"
@@ -20,6 +18,7 @@
 #include "KeyWords.h"
 #include "Scintilla.h"
 #include "SciLexer.h"
+#include <string>
 
 #ifdef SCI_NAMESPACE
 using namespace Scintilla;

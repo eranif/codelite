@@ -73,9 +73,10 @@
     <File Name="sort.h"/>
     <File Name="strlist.h"/>
   </VirtualDirectory>
+  <Dependencies/>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger">
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)d" IntermediateDirectory="./Debug" Command="./$(ProjectName)d" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)d" IntermediateDirectory="./Debug" Command="./$(ProjectName)d" CommandArguments="-f- test.h" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
       </Compiler>
@@ -84,17 +85,22 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <WorkingDirectory/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger">
-      <General OutputFile="../../Runtime/bin/ctags-le.exe" IntermediateDirectory="./Release" Command="./ctags-le" CommandArguments="" WorkingDirectory="../../Runtime/bin/"/>
+      <General OutputFile="../../Runtime/bin/ctags-le.exe" IntermediateDirectory="./Release" Command="./ctags-le" CommandArguments="" WorkingDirectory="../../Runtime/bin/" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="">
         <IncludePath Value="."/>
       </Compiler>
@@ -103,15 +109,19 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <WorkingDirectory/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies/>
 </CodeLite_Project>

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 rm -rf CodeLite.app
 mkdir -p ./CodeLite.app/Contents/MacOS
 mkdir -p ./CodeLite.app/Contents/Resources
@@ -14,10 +16,18 @@ cp -r lexers ./CodeLite.app/Contents/SharedSupport/
 
 cp astyle.sample ./CodeLite.app/Contents/SharedSupport/
 cp index.html ./CodeLite.app/Contents/SharedSupport/
+cp svnreport.html ./CodeLite.app/Contents/SharedSupport/
 cp Info.plist ./CodeLite.app/Contents/
 cp icon.icns ./CodeLite.app/Contents/Resources/
 
 cp config/build_settings.xml ./CodeLite.app/Contents/SharedSupport/config
+
+##
+## replace the revision macro
+##
+cur_rev=`svn info | grep Revision | awk '{print $2;}'`
+
+
 cp config/liteeditor.xml.sample ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml
 cp config/debuggers.xml ./CodeLite.app/Contents/SharedSupport/config
 

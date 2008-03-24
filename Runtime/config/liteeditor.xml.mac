@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LiteEditor Revision="$(Revision)">
+    <Layout>
+    <Notebook Name="Editor" Style="751292"/>
+    <Notebook Name="OutputPane" Style="738332"/>
+    <Notebook Name="WorkspacePane" Style="721948"/>
+    <Notebook Name="DebuggerPane" Style="738396"/>
+  </Layout>
+  <ArchiveObject Name="m_tagsOptionsData">
+    <long Value="88" Name="m_ccFlags"/>
+    <wxArrayString Name="m_prep">
+      <wxString Value="_GLIBCXX_STD=std"/>
+      <wxString Value="WXDLLIMPEXP_CORE"/>
+      <wxString Value="WXDLLIMPEXP_BASE"/>
+      <wxString Value="WXDLLIMPEXP_XML"/>
+      <wxString Value="WXDLLIMPEXP_XRC"/>
+      <wxString Value="WXDLLIMPEXP_ADV"/>
+      <wxString Value="WXDLLIMPEXP_AUI"/>
+      <wxString Value="WXMAKINGDLL"/>
+      <wxString Value="WXUSINGDLL"/>
+      <wxString Value="_CRTIMP"/>
+      <wxString Value="__CRT_INLINE"/>
+      <wxString Value="__cdecl"/>
+      <wxString Value="__stdcall"/>
+      <wxString Value="WXDLLEXPORT"/>
+      <wxString Value="WXDLLIMPORT"/>
+      <wxString Value="wxT"/>
+      <wxString Value="wxTopLevelWindowNative=wxTopLevelWindowMSW"/>
+      <wxString Value="WXUNUSED"/>
+      <wxString Value="wxDEPRECTAED"/>
+      <wxString Value="_T"/>
+      <wxString Value="ATTRIBUTE_PRINTF_1"/>
+      <wxString Value="ATTRIBUTE_PRINTF_2"/>
+	  <wxString Value="WXDLLIMPEXP_FWD_BASE"/>  
+	  <wxString Value="WXDLLIMPEXP_FWD_CORE"/>   
+	  <wxString Value="extern"/>   
+	  <wxString Value="DLLIMPORT"/>  
+	  <wxString Value="DECLARE_INSTANCE_TYPE"/>  
+    </wxArrayString>
+    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
+    <wxArrayString Name="m_languages">
+      <wxString Value="C++"/>
+    </wxArrayString>
+  </ArchiveObject>
+  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Arrows" DisplayBookmarkMargin="yes" BookmarkShape="Small Rectangle" BookmarkBgColour="#FF0080" BookmarkFgColour="#FF0080" HighlightCaretLine="no" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#BFD8D8" CaretColour="#000000"/>
+</LiteEditor>

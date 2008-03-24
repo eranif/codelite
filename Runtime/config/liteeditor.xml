@@ -16,8 +16,48 @@
     <bool Value="1" Name="m_boldErrFont"/>
     <bool Value="1" Name="m_boldWarnFont"/>
   </ArchiveObject>
+  <ArchiveObject Name="import_dir_options">
+    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileMask"/>
+    <long Value="0" Name="m_flags"/>
+  </ArchiveObject>
+  <ArchiveObject Name="SubversionOptions">
+    <long Value="15" Name="m_flags"/>
+    <wxString Value="svn" Name="m_exePath"/>
+    <wxString Value="*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;" Name="m_pattern"/>
+  </ArchiveObject>
+  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#D0D0E3" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="16"/>
+  <TagsDatabase Path="C:\Program Files\CodeLite\common.tags"/>
+  <ArchiveObject Name="FindAndReplaceData">
+    <wxArrayString Name="m_findString">
+      <wxString Value="-&gt;"/>
+      <wxString Value="&lt;&lt;"/>
+    </wxArrayString>
+    <wxArrayString Name="m_replaceString">
+      <wxString Value=""/>
+    </wxArrayString>
+    <long Value="0" Name="m_flags"/>
+  </ArchiveObject>
+  <ArchiveObject Name="LoadSavedPrespective">
+    <long Value="1" Name="m_value"/>
+  </ArchiveObject>
+  <RecentWorkspaces>
+    <File Name="C:\TestArea\jin\a.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+  </RecentWorkspaces>
+  <RecentFiles>
+    <File Name=".\svndriver.cpp.diff"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\editor.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\CodeLite\ctags_manager.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\CodeFormatter\ASBeautifier.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\CodeFormatter\codeformatter.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\Interfaces\plugin.h"/>
+    <File Name="C:\TestArea\jin\c.cpp"/>
+    <File Name="C:\MinGW\include\c++\3.4.2\iostream"/>
+    <File Name="C:\MinGW\include\c++\3.4.2\iosfwd"/>
+  </RecentFiles>
   <ArchiveObject Name="m_tagsOptionsData">
-    <long Value="24" Name="m_ccFlags"/>
+    <long Value="88" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
       <wxString Value="_GLIBCXX_STD=std"/>
       <wxString Value="WXDLLIMPEXP_CORE"/>
@@ -51,46 +91,6 @@
       <wxString Value="Java"/>
     </wxArrayString>
   </ArchiveObject>
-  <ArchiveObject Name="import_dir_options">
-    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileMask"/>
-    <long Value="0" Name="m_flags"/>
-  </ArchiveObject>
-  <ArchiveObject Name="SubversionOptions">
-    <long Value="15" Name="m_flags"/>
-    <wxString Value="svn" Name="m_exePath"/>
-    <wxString Value="*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;" Name="m_pattern"/>
-  </ArchiveObject>
-  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#D0D0E3" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="16"/>
-  <TagsDatabase Path="C:\Program Files\CodeLite\common.tags"/>
-  <ArchiveObject Name="FindAndReplaceData">
-    <wxArrayString Name="m_findString">
-      <wxString Value="-&gt;"/>
-      <wxString Value="&lt;&lt;"/>
-    </wxArrayString>
-    <wxArrayString Name="m_replaceString">
-      <wxString Value=""/>
-    </wxArrayString>
-    <long Value="0" Name="m_flags"/>
-  </ArchiveObject>
-  <ArchiveObject Name="LoadSavedPrespective">
-    <long Value="1" Name="m_value"/>
-  </ArchiveObject>
-  <RecentWorkspaces>
-    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\jin\a.workspace"/>
-  </RecentWorkspaces>
-  <RecentFiles>
-    <File Name="C:\MinGW\include\c++\3.4.2\iosfwd"/>
-    <File Name="C:\MinGW\include\c++\3.4.2\iostream"/>
-    <File Name="C:\TestArea\jin\c.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Interfaces\plugin.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\CodeFormatter\codeformatter.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\CodeFormatter\ASBeautifier.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\CodeLite\ctags_manager.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\editor.cpp"/>
-    <File Name=".\svndriver.cpp.diff"/>
-  </RecentFiles>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="1004"/>
     <wxPoint Name="m_framePos" x="-4" y="-4"/>

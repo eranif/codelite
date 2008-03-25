@@ -133,6 +133,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("switch_to_workspace"), Frame::OnSwitchWorkspace)
 	EVT_MENU(XRCID("close_workspace"), Frame::OnCloseWorkspace)
 	EVT_MENU(XRCID("add_project"), Frame::OnProjectAddProject)
+	EVT_UPDATE_UI(XRCID("add_project"), Frame::OnWorkspaceMenuUI)
 	EVT_UPDATE_UI(XRCID("save_all"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("copy_file_name"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("copy_file_path"), Frame::OnFileExistUpdateUI)
@@ -155,9 +156,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(viewAsSubMenuID, Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("previous_bookmark"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("removeall_bookmarks"), Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("new_project"), Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("new_project"), Frame::OnWorkspaceMenuUI)
 	EVT_UPDATE_UI(XRCID("close_workspace"), Frame::OnWorkspaceOpen)
-	EVT_UPDATE_UI(XRCID("add_project"), Frame::OnWorkspaceOpen)
 	EVT_UPDATE_UI(XRCID("view_as_menu"), Frame::OnFileExistUpdateUI)
 	EVT_MENU(XRCID("complete_word"), Frame::OnCompleteWord)
 	EVT_MENU(XRCID("tags_options"), Frame::OnCtagsOptions)
@@ -2695,4 +2695,17 @@ void Frame::OnCopyFilePathOnly(wxCommandEvent &event)
 		}
 #endif
 	}
+}
+
+void Frame::OnWorkspaceMenuUI(wxUpdateUIEvent &e)
+{
+	if(ManagerST::Get()->IsWorkspaceOpen() == false) {
+		e.Enable(false);
+		return;
+	}
+	if(ManagerST::Get()->IsBuildInProgress()) {
+		e.Enable(false);
+		return;
+	}
+	e.Enable(true);
 }

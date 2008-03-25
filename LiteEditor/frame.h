@@ -298,6 +298,7 @@ protected:
 	void OnCompileFile(wxCommandEvent &e);
 	void OnCompileFileUI(wxUpdateUIEvent &e);
 	void OnCloseAllButThis(wxCommandEvent &e);
+	void OnWorkspaceMenuUI(wxUpdateUIEvent &e);
 	
 	//EOL
 	void OnViewEolUI(wxUpdateUIEvent &e);

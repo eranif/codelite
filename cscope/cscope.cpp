@@ -19,6 +19,11 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 	return thePlugin;
 }
 
+extern "C" EXPORT wxString GetPluginName()
+{
+	return wxT("cscope");
+}
+
 Cscope::Cscope(IManager *manager)
 		: IPlugin(manager)
 		, m_topWindow(NULL)

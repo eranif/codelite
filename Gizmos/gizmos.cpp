@@ -21,6 +21,11 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 	return theGismos;
 }
 
+extern "C" EXPORT wxString GetPluginName()
+{
+	return wxT("Gizmos");
+}
+
 /// Ascending sorting function
 struct ascendingSortOp {
 	bool operator()(const TagEntryPtr &rStart, const TagEntryPtr &rEnd) {

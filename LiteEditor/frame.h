@@ -320,6 +320,8 @@ protected:
 	void OnViewPane(wxCommandEvent &event);
 	void OnViewPaneUI(wxUpdateUIEvent &event);
 	
+	void OnManagePlugins(wxCommandEvent &e);
+	
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);
 

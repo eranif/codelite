@@ -70,6 +70,12 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 	return theSvnPlugin;
 }
 
+//Define the plugin entry point
+extern "C" EXPORT wxString GetPluginName()
+{
+	return wxT("Subversion");
+}
+
 SubversionPlugin::SubversionPlugin(IManager *manager)
 		: IPlugin(manager)
 		, m_svnMenu(NULL)

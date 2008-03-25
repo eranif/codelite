@@ -312,6 +312,7 @@ void Manager::UnInitialize()
 	
 	//free all plugins
 	PluginManager::Get()->UnLoad();
+	
 }
 
 void Manager::CreateWorkspace(const wxString &name, const wxString &path)

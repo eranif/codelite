@@ -112,5 +112,6 @@ public:
 
 //Every dll must contain at least this function
 typedef IPlugin* (*GET_PLUGIN_CREATE_FUNC)(IManager*);
+typedef wxString (*GET_PLUGIN_NAME_FUNC)();
 
 #endif //PLUGIN_H

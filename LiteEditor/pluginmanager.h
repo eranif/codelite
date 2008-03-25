@@ -8,12 +8,14 @@
 #include "wx/string.h"
 #include "wx/treectrl.h"
 #include "dynamiclibrary.h"
+#include "plugindata.h"
 
 class PluginManager : public IManager
 {
 	std::map<wxString, IPlugin*> m_plugins;
 	std::list< clDynamicLibrary* > m_dl;
-
+	std::map<wxString, PluginInfo> m_pluginsInfo;
+	
 private:
 	PluginManager(){}
 	virtual ~PluginManager();
@@ -24,6 +26,11 @@ public:
 	
 	virtual void Load();
 	virtual void UnLoad();
+	
+	/**
+	 * \brief return a map of all loaded plugins
+	 */
+	const std::map<wxString, PluginInfo>& GetPluginsInfo() const {return m_pluginsInfo;}
 	
 	//------------------------------------
 	//Implementation of IManager interface

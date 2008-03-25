@@ -149,6 +149,12 @@
       <File Name="importfilesbasedlg.h"/>
       <File Name="importfilesdlg.cpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="Plugins">
+      <File Name="pluginmgrdlg.h"/>
+      <File Name="plugindlgbase.cpp"/>
+      <File Name="plugindlgbase.h"/>
+      <File Name="pluginmgrdlg.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>

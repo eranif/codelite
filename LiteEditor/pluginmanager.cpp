@@ -1,4 +1,6 @@
 #include "pluginmanager.h"
+#include "pluginsdata.h"
+#include "pluginconfig.h"
 #include "optionsconfig.h"
 #include "language.h"
 #include "manager.h"
@@ -35,6 +37,13 @@ void PluginManager::UnLoad() {
 
 	m_dl.clear();
 	m_plugins.clear();
+	
+	//save the plugins data
+	PluginsData pluginsData;
+	pluginsData.SetInfo(m_pluginsInfo);
+	PluginConfig::Instance()->WriteObject(wxT("plugins_data"), &pluginsData);
+	
+	PluginConfig::Instance()->Release();
 }
 
 PluginManager::~PluginManager() {
@@ -48,6 +57,13 @@ void PluginManager::Load() {
 	ext = wxT("dll");
 #endif 
 	wxString fileSpec( wxT( "*." ) + ext );
+	PluginConfig::Instance()->Load(ManagerST::Get()->GetStarupDirectory() + wxT("/config/plugins.xml"), wxT("PluginsSettings"));
+	
+	PluginsData pluginsData;
+	PluginConfig::Instance()->ReadObject(wxT("plugins_data"), &pluginsData);
+	
+	//get the map of all available plugins
+	m_pluginsInfo = pluginsData.GetInfo();
 	
 	//set the managers
 	//this code assures us that the shared objects will see the same instances as the application
@@ -70,8 +86,43 @@ void PluginManager::Load() {
 			}
 
 			bool success( false );
+			GET_PLUGIN_NAME_FUNC pfnGetName = ( GET_PLUGIN_NAME_FUNC )dl->GetSymbol( wxT( "GetPluginName" ), &success );
+			if ( !success ) {
+				delete dl;
+				continue;
+			}
+			
+			//check if this dll can be loaded 
+			wxString pluginName = pfnGetName();
+			std::map< wxString, PluginInfo>::const_iterator iter = m_pluginsInfo.find(pluginName);
+			if(iter == m_pluginsInfo.end()) {
+				//new plugin?, add it
+				PluginInfo newPluginInfo;
+				newPluginInfo.SetEnabled(true);
+				newPluginInfo.SetName(pluginName);
+				m_pluginsInfo[newPluginInfo.GetName()] = newPluginInfo;
+			} else {
+				//we have a match
+				PluginInfo pi = iter->second;
+				m_pluginsInfo[pi.GetName()] = pi;
+				if(pi.GetEnabled() == false) {
+					delete dl;
+					continue;
+				}
+			}
+			
+			//try and load the plugin
 			GET_PLUGIN_CREATE_FUNC pfn = ( GET_PLUGIN_CREATE_FUNC )dl->GetSymbol( wxT( "CreatePlugin" ), &success );
 			if ( !success ) {
+				
+				//mark this plugin as not available
+				std::map< wxString, PluginInfo>::const_iterator iter = m_pluginsInfo.find(pluginName);
+				if(iter != m_pluginsInfo.end()) {
+					PluginInfo info = iter->second;
+					info.SetEnabled(false);
+					m_pluginsInfo[info.GetName()] = info;
+				}
+				
 				delete dl;
 				continue;
 			}

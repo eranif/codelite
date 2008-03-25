@@ -19,7 +19,7 @@ public:
 	ConfigTool();
 	~ConfigTool();
 	
-	bool Load(const wxString &filename);
+	bool Load(const wxString &filename, const wxString &rootName);
 	bool WriteObject(const wxString &name, SerializedObject *obj);
 	bool ReadObject(const wxString &name, SerializedObject *obj);
 };

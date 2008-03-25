@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "pluginmgrdlg.h"
 #include "wx/clipbrd.h"
 #include "wx/numdlg.h"
 #include "environmentconfig.h"
@@ -133,6 +134,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("switch_to_workspace"), Frame::OnSwitchWorkspace)
 	EVT_MENU(XRCID("close_workspace"), Frame::OnCloseWorkspace)
 	EVT_MENU(XRCID("add_project"), Frame::OnProjectAddProject)
+	EVT_MENU(XRCID("manage_plugins"), Frame::OnManagePlugins)
 	EVT_UPDATE_UI(XRCID("add_project"), Frame::OnWorkspaceMenuUI)
 	EVT_UPDATE_UI(XRCID("save_all"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("copy_file_name"), Frame::OnFileExistUpdateUI)
@@ -380,7 +382,7 @@ void Frame::CreateGUIControls(void)
 #endif
 
 	//initialize debugger configuration tool
-	DebuggerConfigTool::Get()->Load(ManagerST::Get()->GetStarupDirectory() + wxT("/config/debuggers.xml"));
+	DebuggerConfigTool::Get()->Load(ManagerST::Get()->GetStarupDirectory() + wxT("/config/debuggers.xml"), wxT("DebuggerSettings"));
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
 
 // On wx2.8.7, AUI dragging is broken but this happens only in debug build & on GTK
@@ -2341,7 +2343,7 @@ void Frame::OnShowWelcomePage(wxCommandEvent &event)
 void Frame::LoadPlugins()
 {
 	PluginManager::Get()->Load();
-
+	
 	//after the plugin are loaded, it is time to load the saved
 	//perspective
 	long loadIt(1);
@@ -2708,4 +2710,13 @@ void Frame::OnWorkspaceMenuUI(wxUpdateUIEvent &e)
 		return;
 	}
 	e.Enable(true);
+}
+
+void Frame::OnManagePlugins(wxCommandEvent &e)
+{
+	PluginMgrDlg *dlg = new PluginMgrDlg(this);
+	if(dlg->ShowModal() == wxID_OK) {
+		
+	}
+	dlg->Destroy();
 }

@@ -47,6 +47,11 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 	return theFormatter;
 }
 
+extern "C" EXPORT wxString GetPluginName()
+{
+	return wxT("CodeFormatter");
+}
+
 CodeFormatter::CodeFormatter(IManager *manager)
 		: IPlugin(manager)
 {

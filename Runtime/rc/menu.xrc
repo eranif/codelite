@@ -373,6 +373,10 @@
         <object class="wxMenu" name="plugins">
             <label>&amp;Plugins</label>
             <style>wxMENU_TEAROFF</style>
+            <object class="wxMenuItem" name="manage_plugins">
+                <label>&amp;Manage Plugins...</label>
+            </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>    
         </object>
         
 		<object class="wxMenu" name="settings_menu">

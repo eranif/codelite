@@ -13,7 +13,7 @@ ConfigTool::~ConfigTool()
 {
 }
 
-bool ConfigTool::Load(const wxString &fileName)
+bool ConfigTool::Load(const wxString &fileName, const wxString &rootName)
 {
 	wxFileName fn(fileName);
 	m_fileName = fn.GetFullPath();
@@ -21,7 +21,8 @@ bool ConfigTool::Load(const wxString &fileName)
 	if(fn.FileExists() == false){
 		//no such file, create an empty file
 		wxString content;
-		content << wxT("<DebuggerSettings/>");
+		
+		content << wxT("<") << rootName << wxT("/>");
 		wxFFile file;
 		file.Open(fn.GetFullPath(), wxT("w+b"));
 		if(file.IsOpened()){

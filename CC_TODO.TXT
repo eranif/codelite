@@ -13,6 +13,9 @@
 - Add bookmark tab to the bottom pane, it should always show the current file (should be in a form of tree)
   make it a plugin
 
-- fix the plugin wizard - make sure it complies with the latest addition of plugin API (GetPluginName)
+- Fix : ExpandAllVariables() function to accept the workspace as pointer, othewise, this function is not 
+  usable from plugins
+
+
 
   

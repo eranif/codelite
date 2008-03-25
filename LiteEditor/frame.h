@@ -259,6 +259,7 @@ protected:
 	void OnNextBuildErrorUI(wxUpdateUIEvent &event);
 	void OnDebugAttach(wxCommandEvent &event);
 	void OnCopyFilePath(wxCommandEvent &event);
+	void OnCopyFilePathOnly(wxCommandEvent &event);
 	
 	// this event is sent from the notebook container to the frame
 	void OnFileClosing(wxFlatNotebookEvent &event);

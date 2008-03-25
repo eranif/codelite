@@ -438,9 +438,11 @@
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="copy_file_name">
-            <label>Copy &amp;File Name to Clipboard</label>
+            <label>Copy &amp;Full Path to Clipboard</label>
         </object>
-		
+		<object class="wxMenuItem" name="copy_file_path">
+            <label>Copy &amp;Path to Clipboard</label>
+        </object>
     </object>
     
     <object class="wxMenu" name="editor_right_click">

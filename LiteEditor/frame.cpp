@@ -91,6 +91,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
+	EVT_MENU(XRCID("copy_file_path"), Frame::OnCopyFilePathOnly)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE, Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, Frame::OnOutputWindowEvent)
@@ -134,6 +135,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("add_project"), Frame::OnProjectAddProject)
 	EVT_UPDATE_UI(XRCID("save_all"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("copy_file_name"), Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("copy_file_path"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(wxID_CUT, Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_COPY, Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_PASTE, Frame::DispatchUpdateUIEvent)
@@ -2663,6 +2665,24 @@ void Frame::OnCopyFilePath(wxCommandEvent &event)
 	LEditor *editor = ManagerST::Get()->GetActiveEditor();
 	if (editor) {
 		wxString fileName = editor->GetFileName().GetFullPath();
+#if wxUSE_CLIPBOARD
+		if (wxTheClipboard->Open()) {
+			wxTheClipboard->UsePrimarySelection(false);
+			if (!wxTheClipboard->SetData(new wxTextDataObject(fileName))) {
+				//wxPrintf(wxT("Failed to insert data %s to clipboard"), textToCopy.GetData());
+			}
+			wxTheClipboard->Close();
+		} else {
+			wxPrintf(wxT("Failed to open the clipboard"));
+		}
+#endif
+	}
+}
+void Frame::OnCopyFilePathOnly(wxCommandEvent &event)
+{
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	if (editor) {
+		wxString fileName = editor->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
 #if wxUSE_CLIPBOARD
 		if (wxTheClipboard->Open()) {
 			wxTheClipboard->UsePrimarySelection(false);

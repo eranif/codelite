@@ -548,14 +548,6 @@ public:
 	wxString ExpandVariables(const wxString &expression, ProjectPtr proj);
 
 	/**
-	 * Expand variables to their real value, if expanding fails
-	 * the return value is same as input. 
-	 * the variables are resolved using the workspace varaibles &
-	 * the environment
-	 */
-	wxString ExpandVariables2(const wxString &expression);
-
-	/**
 	 * return true if the last buid ended successfully
 	 */
 	bool IsBuildEndedSuccessfully() const;

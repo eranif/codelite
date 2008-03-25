@@ -135,6 +135,8 @@ wxString ExpandAllVariables(const wxString &expression, const wxString &projectN
 		project_name.Replace(wxT(" "), wxT("_"));
 
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(proj->GetName());
+		output.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+		output.Replace(wxT("$(WorkspacePath)"), WorkspaceST::Get()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 		output.Replace(wxT("$(ProjectName)"), project_name);
 		output.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
 		output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());

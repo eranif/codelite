@@ -1700,11 +1700,6 @@ void Manager::ImportMSVSSolution(const wxString &path)
 	}
 }
 
-wxString Manager::ExpandVariables2(const wxString &expression)
-{
-	return WorkspaceST::Get()->ExpandVariables(expression);
-}
-
 wxString Manager::ExpandVariables(const wxString &expression, ProjectPtr proj)
 {
 	wxString project_name(proj->GetName());

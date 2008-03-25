@@ -289,14 +289,22 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 		}
 	}
 
-	PluginManager::Get()->HookPopupMenu( menu, type );
+	if (ManagerST::Get()->IsBuildInProgress() == false) {
+		PluginManager::Get()->HookPopupMenu( menu, type );
+	}
 	PopupMenu( menu );
-	//let the plugins remove their hooked content
-	PluginManager::Get()->UnHookPopupMenu( menu, type );
-	
+	if (ManagerST::Get()->IsBuildInProgress() == false) {
+		//let the plugins remove their hooked content
+		PluginManager::Get()->UnHookPopupMenu( menu, type );
+	}
+
 	//remove the custom makefile hooked menu items
-	if(item) {menu->Destroy(item);}
-	if(itemSep) {menu->Destroy(itemSep);}
+	if (item) {
+		menu->Destroy(item);
+	}
+	if (itemSep) {
+		menu->Destroy(itemSep);
+	}
 }
 
 void FileViewTree::OnPopupMenu( wxTreeEvent &event )
@@ -493,7 +501,7 @@ void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 	ProjectPtr proj = ManagerST::Get()->GetProject( project );
 	wxFileDialog *dlg = new wxFileDialog( this, wxT( "Add Existing Item" ), proj->GetFileName().GetPath(), wxEmptyString, ALL, wxFD_MULTIPLE | wxOPEN | wxFILE_MUST_EXIST , wxDefaultPosition );
 	if ( dlg->ShowModal() == wxID_OK ) {
-		
+
 		dlg->GetPaths( paths );
 		AddFilesToVirtualFodler(item, paths);
 	}
@@ -535,12 +543,12 @@ void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
 		wxUnusedVar( hti );
 		SortItem(item);
 		Expand( item );
-		
+
 		wxArrayString arrStr;
 		arrStr.Add(filename);
 		SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&arrStr);
 	}
-	
+
 	dlg->Destroy();
 }
 
@@ -602,10 +610,10 @@ void FileViewTree::DoRemoveItem( wxTreeItemId &item )
 			if ( parent.IsOk() ) {
 				wxString path = GetItemPath( parent );
 				ManagerST::Get()->RemoveFile( data->GetData().GetFile(), path );
-				
+
 				wxString file_name(data->GetData().GetFile());
 				Delete( item );
-				
+
 				SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&file_name);
 			}
 		}
@@ -632,7 +640,7 @@ void FileViewTree::DoRemoveVirtualFolder( wxTreeItemId &item )
 		wxString path = GetItemPath( item );
 		DeleteChildren( item );
 		Delete( item );
-		
+
 		ManagerST::Get()->RemoveVirtualDirectory( path );
 	}
 }
@@ -658,7 +666,7 @@ void FileViewTree::DoAddVirtualFolder( wxTreeItemId &parent )
 
 		path += wxT( ":" );
 		path += dlg->GetValue();
-		
+
 		ProjectItem itemData( path, dlg->GetValue(), wxEmptyString, ProjectItem::TypeVirtualDirectory );
 		AppendItem(	parent,								// parent
 		            itemData.GetDisplayName(),	// display name
@@ -668,7 +676,7 @@ void FileViewTree::DoAddVirtualFolder( wxTreeItemId &parent )
 
 		SortItem( parent );
 		Expand( parent );
-		
+
 		ManagerST::Get()->AddVirtualDirectory( path );
 	}
 	dlg->Destroy();
@@ -1054,12 +1062,12 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	//Collect all candidates files
 	wxArrayString files;
 	DirTraverser trv(mask, noExtFiles);
-	
-	//ignore .svn & .cvs files 
+
+	//ignore .svn & .cvs files
 	wxArrayString excludeDirs;
 	excludeDirs.Add(wxT(".svn"));
 	excludeDirs.Add(wxT(".cvs"));
-	
+
 	trv.SetExcludeDirs(excludeDirs);
 	wxDir dir(path);
 

@@ -873,7 +873,7 @@ bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const 
 		}
 		
 		//still no match?
-		return false;
+		return true;
 	}
 	return true;
 }

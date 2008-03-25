@@ -19,9 +19,14 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 	return thePlugin;
 }
 
-extern "C" EXPORT wxString GetPluginName()
+extern "C" EXPORT PluginInfo GetPluginInfo()
 {
-	return wxT("cscope");
+	PluginInfo info;
+	info.SetAuthor(wxT("Eran Ifrah"));
+	info.SetName(wxT("cscope"));
+	info.SetDescription(wxT("Cscope Integration for CodeLite"));
+	info.SetVersion(wxT("v1.0"));
+	return info;
 }
 
 Cscope::Cscope(IManager *manager)

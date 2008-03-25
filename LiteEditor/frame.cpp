@@ -2716,7 +2716,7 @@ void Frame::OnManagePlugins(wxCommandEvent &e)
 {
 	PluginMgrDlg *dlg = new PluginMgrDlg(this);
 	if(dlg->ShowModal() == wxID_OK) {
-		
+		wxMessageBox(wxT("Changes will take place after restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 	}
 	dlg->Destroy();
 }

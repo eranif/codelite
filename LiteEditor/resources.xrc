@@ -1,5 +1,5 @@
 <resource>  
-    <object class="wxBitmap" name="member_public">res/member_public.png</object>  
+	<object class="wxBitmap" name="member_public">res/member_public.png</object>  
     <object class="wxBitmap" name="file_explorer">res/file_explorer.png</object>  
 	<object class="wxBitmap" name="member_protected">res/member_protected.png</object>  
     <object class="wxBitmap" name="member_private">res/member_private.png</object>  

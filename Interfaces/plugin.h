@@ -4,6 +4,7 @@
 #include "imanager.h"
 #include "wx/toolbar.h"
 #include "wx/event.h"
+#include "plugindata.h"
 
 #ifdef _WIN32
 #define STDCALL __stdcall
@@ -112,6 +113,6 @@ public:
 
 //Every dll must contain at least this function
 typedef IPlugin* (*GET_PLUGIN_CREATE_FUNC)(IManager*);
-typedef wxString (*GET_PLUGIN_NAME_FUNC)();
+typedef PluginInfo (*GET_PLUGIN_INFO_FUNC)();
 
 #endif //PLUGIN_H

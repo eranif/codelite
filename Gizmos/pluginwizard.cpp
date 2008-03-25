@@ -2,7 +2,7 @@
 #include <wx/xrc/xmlres.h>
 #include "pluginwizard_pag2.h"
 #include "pluginwizard_page1.h"
-#include "plugindata.h"
+#include "newplugindata.h"
 
 PluginWizard::PluginWizard(wxWindow *parent, wxWindowID id)
 {
@@ -21,7 +21,7 @@ PluginWizard::~PluginWizard()
 { 
 }
 
-bool PluginWizard::Run(PluginData &data)
+bool PluginWizard::Run(NewPluginData &data)
 {
 	wxSize sz1 = m_page1->GetSizer()->CalcMin();
 	wxSize sz2 = m_page2->GetSizer()->CalcMin();

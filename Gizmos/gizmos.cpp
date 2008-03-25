@@ -1,5 +1,6 @@
 #include "gizmos.h"
 #include "ctags_manager.h"
+#include "newplugindata.h"
 #include "entry.h"
 #include <wx/xrc/xmlres.h>
 #include "pluginwizard.h"
@@ -21,9 +22,14 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 	return theGismos;
 }
 
-extern "C" EXPORT wxString GetPluginName()
+extern "C" EXPORT PluginInfo GetPluginInfo()
 {
-	return wxT("Gizmos");
+	PluginInfo info;
+	info.SetAuthor(wxT("Eran Ifrah"));
+	info.SetName(wxT("Gizmos"));
+	info.SetDescription(wxT("Gizmos Plugin - a collection of useful wizards for C++:\nnew Class Wizard, new wxWidgets Wizard, new Plugin Wizard"));
+	info.SetVersion(wxT("v1.0"));
+	return info;
 }
 
 /// Ascending sorting function
@@ -187,7 +193,7 @@ void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
 	wxUnusedVar(e);
 	//Load the wizard
 	PluginWizard *wiz = new PluginWizard(NULL, wxID_ANY);
-	PluginData data;
+	NewPluginData data;
 	if (wiz->Run(data)) {
 		//load the template file and replace all variables with the
 		//actual values provided by user

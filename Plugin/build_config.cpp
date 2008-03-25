@@ -4,7 +4,7 @@
 #include "macros.h"
 #include "project.h"
 #include "editor_config.h"
-#include "build_settings_config.h"
+#include "build_settings_config.h" 
 #include "debuggermanager.h"
 
 BuildConfig::BuildConfig(wxXmlNode *node)

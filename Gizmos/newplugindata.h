@@ -1,17 +1,17 @@
-#ifndef PLUGIN_DATA_H
-#define PLUGIN_DATA_H
+#ifndef NEW_PLUGIN_DATA_H
+#define NEW_PLUGIN_DATA_H
 
 #include "wx/string.h"
 
-class PluginData 
+class NewPluginData 
 {
 	wxString m_projectPath;
 	wxString m_pluginName;
 	wxString m_codelitePath;
 	wxString m_pluginDescription;
 public:
-	PluginData();
-	~PluginData();
+	NewPluginData();
+	~NewPluginData();
 	
 	//Setters
 	void SetCodelitePath(const wxString& codelitePath) {this->m_codelitePath = codelitePath;}
@@ -25,4 +25,4 @@ public:
 	const wxString& GetProjectPath() const {return m_projectPath;}
 	
 };
-#endif //PLUGIN_DATA_H
+#endif //NEW_PLUGIN_DATA_H

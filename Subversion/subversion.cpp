@@ -71,9 +71,14 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 }
 
 //Define the plugin entry point
-extern "C" EXPORT wxString GetPluginName()
+extern "C" EXPORT PluginInfo GetPluginInfo()
 {
-	return wxT("Subversion");
+	PluginInfo info;
+	info.SetAuthor(wxT("Eran Ifrah"));
+	info.SetName(wxT("Svn"));
+	info.SetDescription(wxT("Subversion - integration of the subversion command line tool"));
+	info.SetVersion(wxT("v1.0"));
+	return info;
 }
 
 SubversionPlugin::SubversionPlugin(IManager *manager)

@@ -47,9 +47,14 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 	return theFormatter;
 }
 
-extern "C" EXPORT wxString GetPluginName()
+extern "C" EXPORT PluginInfo GetPluginInfo()
 {
-	return wxT("CodeFormatter");
+	PluginInfo info;
+	info.SetAuthor(wxT("Eran Ifrah"));
+	info.SetName(wxT("CodeFormatter"));
+	info.SetDescription(wxT("Source Code Formatter based on the open source AStyle tool"));
+	info.SetVersion(wxT("v1.0"));
+	return info;
 }
 
 CodeFormatter::CodeFormatter(IManager *manager)

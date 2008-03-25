@@ -48,8 +48,15 @@ PluginMgrDlgBase::PluginMgrDlgBase( wxWindow* parent, wxWindowID id, const wxStr
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	
+	// Connect Events
+	m_checkListPluginsList->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( PluginMgrDlgBase::OnItemSelected ), NULL, this );
+	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PluginMgrDlgBase::OnButtonOK ), NULL, this );
 }
 
 PluginMgrDlgBase::~PluginMgrDlgBase()
 {
+	// Disconnect Events
+	m_checkListPluginsList->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( PluginMgrDlgBase::OnItemSelected ), NULL, this );
+	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PluginMgrDlgBase::OnButtonOK ), NULL, this );
 }

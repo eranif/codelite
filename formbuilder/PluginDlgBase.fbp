@@ -153,7 +153,7 @@
                         <property name="window_name"></property>
                         <property name="window_style"></property>
                         <event name="OnChar"></event>
-                        <event name="OnCheckListBox"></event>
+                        <event name="OnCheckListBox">OnItemSelected</event>
                         <event name="OnCheckListBoxDClick"></event>
                         <event name="OnCheckListBoxToggled"></event>
                         <event name="OnEnterWindow"></event>
@@ -367,7 +367,7 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
-                                <event name="OnButtonClick"></event>
+                                <event name="OnButtonClick">OnButtonOK</event>
                                 <event name="OnChar"></event>
                                 <event name="OnEnterWindow"></event>
                                 <event name="OnEraseBackground"></event>

@@ -2,7 +2,7 @@
 #define PLUGINWIZARD_H
 
 #include "wx/wizard.h"
-#include "plugindata.h"
+#include "newplugindata.h"
 
 class PluginWizard : public wxWizard
 {
@@ -11,7 +11,7 @@ class PluginWizard : public wxWizard
 public:
 	PluginWizard(wxWindow *parent, wxWindowID id);
 	~PluginWizard();
-	bool Run(PluginData &data);
+	bool Run(NewPluginData &data);
 };
 
 #endif //PLUGINWIZARD_H

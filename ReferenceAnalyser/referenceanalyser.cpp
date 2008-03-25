@@ -18,6 +18,16 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 	return thePlugin;
 }
 
+extern "C" EXPORT PluginInfo GetPluginInfo()
+{
+    PluginInfo info;
+    info.SetAuthor(wxT("Sverre Rabbelier"));
+    info.SetName(wxT("ReferenceAnalyser"));
+    info.SetDescription(wxT("Reference Analyser using Codelite's CC."));
+    info.SetVersion(wxT("v1.0"));
+    return info;
+}
+
 ReferenceAnalyser::ReferenceAnalyser(IManager *manager)
 		: IPlugin(manager)
 {

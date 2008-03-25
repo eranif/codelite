@@ -687,7 +687,6 @@ static boolean isContextualStatement (const statementInfo *const st)
 		case DECL_INTERFACE:
 		case DECL_STRUCT:
 		case DECL_UNION:
-		case DECL_NAMESPACE:
 			result = TRUE;
 			break;
 
@@ -703,7 +702,7 @@ static boolean isMember (const statementInfo *const st)
 		result = TRUE;
 	else
 		result = (boolean)
-			(st->parent != NULL && isContextualStatement (st->parent));
+			(st->parent != NULL && (isContextualStatement (st->parent) || st->parent->declaration == DECL_NAMESPACE));
 	return result;
 }
 

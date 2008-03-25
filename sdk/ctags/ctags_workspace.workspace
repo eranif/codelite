@@ -6,10 +6,10 @@
     <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk/sdk/ctags"/>
   </Environment>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="ctags" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
+    <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="ctags" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

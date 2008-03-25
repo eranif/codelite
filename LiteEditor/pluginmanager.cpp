@@ -62,7 +62,8 @@ void PluginManager::Load()
 
 	//get the map of all available plugins
 	m_pluginsInfo = pluginsData.GetInfo();
-
+	std::map<wxString, PluginInfo> actualPlugins;
+	
 	//set the managers
 	//this code assures us that the shared objects will see the same instances as the application
 	//does
@@ -96,13 +97,13 @@ void PluginManager::Load()
 			if (iter == m_pluginsInfo.end()) {
 				//new plugin?, add it
 				pluginInfo.SetEnabled(true);
-				m_pluginsInfo[pluginInfo.GetName()] = pluginInfo;
+				actualPlugins[pluginInfo.GetName()] = pluginInfo;
 			} else {
 				//we have a match
 				PluginInfo pi = iter->second;
 				pluginInfo.SetEnabled(pi.GetEnabled());
 				
-				m_pluginsInfo[pluginInfo.GetName()] = pluginInfo;
+				actualPlugins[pluginInfo.GetName()] = pluginInfo;
 				if (pluginInfo.GetEnabled() == false) {
 					delete dl;
 					continue;
@@ -115,7 +116,7 @@ void PluginManager::Load()
 
 				//mark this plugin as not available
 				pluginInfo.SetEnabled(false);
-				m_pluginsInfo[pluginInfo.GetName()] = pluginInfo;
+				actualPlugins[pluginInfo.GetName()] = pluginInfo;
 				
 				delete dl;
 				continue;
@@ -165,7 +166,7 @@ void PluginManager::Load()
 
 		//save the plugins data
 		PluginsData pluginsData;
-		pluginsData.SetInfo(m_pluginsInfo);
+		pluginsData.SetInfo(actualPlugins);
 		PluginConfig::Instance()->WriteObject(wxT("plugins_data"), &pluginsData);
 	}
 }

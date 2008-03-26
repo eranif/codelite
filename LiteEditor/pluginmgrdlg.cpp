@@ -79,7 +79,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
 		content << wxT("<table border=0 width=\"100%\" >");
 		
 		//create line with the plugin name
-		content << wxT("<tr bgcolor=\"LIGHT BLUE\">");
+		content << wxT("<tr bgcolor=\"LIGHT GREY\">");
 		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>Plugin Name:</strong></font></td>");
 		content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << info.GetName() << wxT("</font></td>");
 		content << wxT("</tr>");
@@ -91,7 +91,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
 		content << wxT("</tr>");
 
 		//plugin version
-		content << wxT("<tr bgcolor=\"LIGHT BLUE\">");
+		content << wxT("<tr bgcolor=\"LIGHT GREY\">");
 		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>Version:</strong></font></td>");
 		content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << info.GetVersion() << wxT("</font></td>");
 		content << wxT("</tr>");
@@ -102,7 +102,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
 		content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << info.GetDescription() << wxT("</font></td>");
 		content << wxT("</tr>");
 		
-		content << wxT("<tr bgcolor=\"LIGHT BLUE\">");
+		content << wxT("<tr bgcolor=\"LIGHT GREY\">");
 		content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>Status:</strong></font></td>");
 		
 		wxString status;

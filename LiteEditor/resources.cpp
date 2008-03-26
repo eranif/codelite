@@ -20051,6 +20051,6 @@ void InitXmlResource()
     wxMemoryFSHandler::AddFile(wxT("XRC_resource/resources.cpp$res_page_white_text_ok.png"), xml_res_file_140, xml_res_size_140);
     wxMemoryFSHandler::AddFile(wxT("XRC_resource/resources.cpp$res_folder_modified.png"), xml_res_file_141, xml_res_size_141);
     wxMemoryFSHandler::AddFile(wxT("XRC_resource/resources.cpp$res_folder_ok.png"), xml_res_file_142, xml_res_size_142);
-    wxMemoryFSHandler::AddFile(wxT("XRC_resource/resources.cpp$._resources.xrc"), xml_res_file_143, xml_res_size_143);
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/resources.cpp$._resources.xrc"));
+    wxMemoryFSHandler::AddFile(wxT("XRC_resource/resources.cpp$resources.xrc"), xml_res_file_143, xml_res_size_143);
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/resources.cpp$resources.xrc"));
 }

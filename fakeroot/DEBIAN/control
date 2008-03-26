@@ -3,7 +3,7 @@ Version: 0.9
 Section: Development 
 Architecture: i386
 Essential: no
-Pre-Depends: libwxgtk2.8-0, libgtk2.0-0
+Depends: libwxgtk2.8-0, libgtk2.0-0
 Maintainer: Eran Ifrah [eran.ifrah@gmail.com]
 Description: CodeLite is a powerful open-source, cross platform code editor for the C/C++ programming languages (regulary tested on Windows XP sp2, Ubuntu 7.10 Gutsy Gibbon, Fedora Core 6 and Debian lenny/sid). 
 			 CodeLite is distributed under the terms of the GPL license.

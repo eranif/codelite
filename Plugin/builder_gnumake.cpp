@@ -590,6 +590,7 @@ void BuilderGnuMake::CreateConfigsVariables(BuildConfigPtr bldConf, wxString &te
 	text << wxT("PreprocessorSwitch :=") << cmp->GetSwitch(wxT("Preprocessor")) << wxT("\n");
 	text << wxT("SourceSwitch :=") << cmp->GetSwitch(wxT("Source")) << wxT("\n");
 	text << wxT("CompilerName :=") << cmp->GetTool(wxT("CompilerName")) << wxT("\n");
+	text << wxT("deps_clean_dummy_var := $(shell rm -fr $(IntermediateDirectory)/*.o.d)\n");
 	
 	text << wxT("OutputFile :=") << bldConf->GetOutputFileName() << wxT("\n");
 	text << wxT("Preprocessors :=") << ParsePreprocessor(bldConf->GetPreprocessor()) << wxT("\n");

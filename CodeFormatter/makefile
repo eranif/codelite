@@ -5,6 +5,7 @@ OSNAME=$(shell uname -s)
 ifeq ($(OSNAME), Darwin)
 SOFLAG=-dynamiclib
 endif
+clean_deps_var := $(shell rm -fr Release_gcc_unicode/*.o.d Debug_gcc_unicode/*.o.d)
 
 ## 
 ## Set default build set
@@ -67,7 +68,7 @@ LINK_FLAGS=$(shell wx-config --libs $(WXCFG)) -L../lib -lplugin$(EXT) -lcodelite
 lib_cpp_objects := $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(wildcard *.cpp)))))
 
 ## our main build target
-build : pre_build CodeFormatter
+build :  pre_build CodeFormatter
 
 CodeFormatter: $(lib_cpp_objects) $(lib_c_objects)
 	$(CMP) $(SOFLAG) -o $(OUTPUT_DIR)/CodeFormatter.so $(lib_cpp_objects) $(LINK_FLAGS)
@@ -86,4 +87,5 @@ clean:
 	$(RM) -fR Release_gcc_unicode/ $(OUTPUT_DIR)/CodeFormatter.so
 	$(RM) -fR Debug_gcc_unicode/
 	
+
 -include $(OBJ_DIR)/*.d

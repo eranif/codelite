@@ -82,6 +82,8 @@ ifneq ($(svninfo_found), svninfo.o)
  sample_cpp_objects := $(sample_cpp_objects) $(OBJ_DIR)/svninfo.o
 endif
 
+clean_deps_var := $(shell rm -fr Release_gcc_unicode/*.o.d Debug_gcc_unicode/*.o.d)
+
 ## 
 ## Scintilla related
 ## 
@@ -99,7 +101,7 @@ sqlite_objects2 := $(addprefix $(SQLITE_OBJ_DIR)/, $(addsuffix .o, $(basename $(
 sqlite_objects = $(sqlite_objects1) $(sqlite_objects2) 
 
 ## our main build target
-build : pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Debugger CodeFormatter Subversion ReferenceAnalyser Gizmos cscope
+build :  pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Debugger CodeFormatter Subversion ReferenceAnalyser Gizmos cscope
 
 CodeLite: code_lite_msg $(lib_cpp_objects) $(lib_c_objects)
 	ar rcu $(OUTPUT_DIR)/libcodelite$(EXT).a $(lib_cpp_objects)  $(lib_c_objects) 
@@ -261,8 +263,6 @@ clean:
 	cd ReferenceAnalyser/ && $(MAKE) clean
 	cd cscope/ && $(MAKE) clean
 
-clean_deps:
-	$(RM) Debug_gcc/*.d Release_gcc/*.d Release_gcc_unicode/*.d Debug_gcc_unicode/*.d
 	
 install: upgrade
 	@echo installing CodeLite

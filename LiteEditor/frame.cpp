@@ -406,14 +406,14 @@ void Frame::CreateGUIControls(void)
 	//---------------------------------------------
 	m_outputPane = new OutputPane(this, wxT("Output"));
 	wxAuiPaneInfo paneInfo;
-	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output")).Caption(wxT("Output")).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton());
+	m_mgr.AddPane(m_outputPane, paneInfo.BestSize(-1, 300).Name(wxT("Output")).Caption(wxT("Output")).Bottom().Layer(1).Position(1).CloseButton(true));
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output"));
 
 	// Add the explorer pane
 	m_workspacePane = new WorkspacePane(this, wxT("Workspace"));
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
-	              Left().Layer(1).Position(0).CloseButton(true));
+	              Right().Layer(1).Position(0).CloseButton(true));
 	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace"));
 
 	//add the debugger locals tree, make it hidden by default
@@ -510,21 +510,6 @@ void Frame::CreateGUIControls(void)
 	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("Editor"));
 	if (book_style != wxNOT_FOUND) {
 		GetNotebook()->SetWindowStyleFlag(book_style);
-	}
-
-	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("OutputPane"));
-	if (book_style != wxNOT_FOUND) {
-		m_outputPane->GetNotebook()->SetWindowStyleFlag(book_style);
-	}
-
-	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("WorkspacePane"));
-	if (book_style != wxNOT_FOUND) {
-		m_workspacePane->GetNotebook()->SetWindowStyleFlag(book_style);
-	}
-
-	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("DebuggerPane"));
-	if (book_style != wxNOT_FOUND) {
-		m_debuggerPane->GetNotebook()->SetWindowStyleFlag(book_style);
 	}
 
 	//load the tab right click menu
@@ -944,9 +929,6 @@ void Frame::OnClose(wxCloseEvent& event)
 	SearchThreadST::Get()->StopSearch();
 	EditorConfigST::Get()->SavePerspective(wxT("Default"), m_mgr.SavePerspective());
 	EditorConfigST::Get()->SaveNotebookStyle(wxT("Editor"), GetNotebook()->GetWindowStyleFlag());
-	EditorConfigST::Get()->SaveNotebookStyle(wxT("OutputPane"), m_outputPane->GetNotebook()->GetWindowStyleFlag());
-	EditorConfigST::Get()->SaveNotebookStyle(wxT("WorkspacePane"), m_workspacePane->GetNotebook()->GetWindowStyleFlag());
-	EditorConfigST::Get()->SaveNotebookStyle(wxT("DebuggerPane"), m_debuggerPane->GetNotebook()->GetWindowStyleFlag());
 	EditorConfigST::Get()->SaveLexers();
 
 	//save general information

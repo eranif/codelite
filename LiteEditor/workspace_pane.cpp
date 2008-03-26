@@ -9,6 +9,7 @@
 #include "macros.h"
 #include "fileexplorer.h"
 #include "workspacetab.h"
+#include "wx/aui/auibook.h"
 
 const wxString WorkspacePane::SYMBOL_VIEW 	= wxT("Outline");
 const wxString WorkspacePane::FILE_VIEW   	= wxT("Workspace");
@@ -18,7 +19,7 @@ const wxString WorkspacePane::EXPLORER  	= wxT("Explorer");
 extern wxImageList* CreateSymbolTreeImages();
 
 WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption)
-		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 400), wxBORDER_SUNKEN)
+		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 400), wxNO_BORDER|wxTAB_TRAVERSAL)
 		, m_caption(caption)
 {
 	CreateGUIControls();
@@ -32,9 +33,8 @@ WorkspacePane::~WorkspacePane()
 
 int WorkspacePane::CaptionToIndex(const wxString &caption)
 {
-	int i = 0;
-	for (; i<m_book->GetPageCount(); i++) {
-		if (m_book->GetPageText((size_t)i) == caption)
+	for (size_t i=0; i< m_book->GetPageCount(); i++) {
+		if (m_book->GetPageText(i) == caption)
 			return i;
 	}
 	return wxNOT_FOUND;
@@ -45,15 +45,18 @@ void WorkspacePane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	long style = wxFNB_NO_X_BUTTON | wxFNB_NO_NAV_BUTTONS | wxFNB_FF2 | wxFNB_BACKGROUND_GRADIENT | wxFNB_CUSTOM_DLG | wxFNB_TABS_BORDER_SIMPLE;
-	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-	m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK);
-	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
+	long style = 	wxAUI_NB_TAB_SPLIT |
+					wxAUI_NB_TAB_MOVE |
+					wxAUI_NB_WINDOWLIST_BUTTON |
+					wxAUI_NB_TOP|wxNO_BORDER;
 
+	m_book = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
+	
 	// Add the class view tree
 	m_winStack = new WindowStack(m_book, wxID_ANY);
 	m_book->AddPage(m_winStack, WorkspacePane::SYMBOL_VIEW, false);
-	
+
 	m_workspaceTab = new WorkspaceTab(this);
 	m_book->AddPage(m_workspaceTab, WorkspacePane::FILE_VIEW, true);
 

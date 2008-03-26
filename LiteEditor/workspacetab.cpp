@@ -69,7 +69,7 @@ void WorkspaceTab::CreateGUIControls()
 	
 	// Connect an event to handle changes in the choice control
 	ConnectCombo(m_workspaceConfig, Frame::OnWorkspaceConfigChanged);
-	sz->Add(new wxStaticText(this, wxID_ANY, wxT("Active Configuration:")), 0, wxEXPAND| wxTOP, 5);
+	sz->Add(new wxStaticText(this, wxID_ANY, wxT("Configuration:")), 0, wxEXPAND| wxTOP | wxLEFT, 5);
 	sz->Add(m_workspaceConfig, 0, wxEXPAND| wxTOP, 5);
 
 	//add the fileview tab

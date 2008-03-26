@@ -18,7 +18,7 @@ const wxString OutputPane::OUTPUT_WIN        = wxT("Output");
 const wxString OutputPane::OUTPUT_DEBUG       = wxT("Debug");
 
 OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
-: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300))
+: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 400))
 , m_caption(caption)
 , m_logTargetOld(NULL)
 , m_fifTabToUse(0)
@@ -40,22 +40,12 @@ void OutputPane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	/*	
-	long style = wxFNB_NO_X_BUTTON | 
-				 wxFNB_NO_NAV_BUTTONS | 
-				 wxFNB_DROPDOWN_TABS_LIST | 
-				 wxFNB_FF2 | 
-				 wxFNB_CUSTOM_DLG | 
-				 wxFNB_BACKGROUND_GRADIENT | 
-				 wxFNB_TABS_BORDER_SIMPLE |
-				 wxFNB_BOTTOM ; 
-	*/
 	long style = 	wxAUI_NB_TAB_SPLIT | 
 					wxAUI_NB_TAB_MOVE | 
 					wxAUI_NB_WINDOWLIST_BUTTON | 
 					wxAUI_NB_TOP | wxNO_BORDER;
 				
-	m_book = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+	m_book = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1, 400), style);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
 
 	// Create the tabs

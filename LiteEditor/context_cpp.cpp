@@ -44,6 +44,12 @@ static bool IsHeader(const wxString &ext)
 		return;\
 	}
 
+#define VALIDATE_WORKSPACE()\
+	if(ManagerST::Get()->IsWorkspaceOpen() == false)\
+	{\
+		return;\
+	}
+
 struct SFileSort {
 	bool operator()(const wxFileName &one, const wxFileName &two) {
 		return two.GetFullName().Cmp(one.GetFullName()) > 0;
@@ -199,7 +205,7 @@ wxString ContextCpp::GetImageString(const TagEntry &entry)
 
 	if (entry.GetKind() == wxT("member") && entry.GetAccess().Contains(wxT("protected")))
 		return wxT("?8");
-	
+
 	//member with no access? (maybe part of namespace??)
 	if (entry.GetKind() == wxT("member"))
 		return wxT("?7");
@@ -321,7 +327,7 @@ void ContextCpp::CodeComplete()
 {
 	LEditor &rCtrl = GetCtrl();
 
-	VALIDATE_PROJECT(rCtrl);
+	VALIDATE_WORKSPACE();
 
 	long pos = rCtrl.GetCurrentPos();
 	bool showFuncProto = false;
@@ -789,7 +795,7 @@ void ContextCpp::CompleteWord()
 {
 	LEditor &rCtrl = GetCtrl();
 
-	VALIDATE_PROJECT(rCtrl);
+	VALIDATE_WORKSPACE();
 
 	std::vector<TagEntryPtr> tags;
 	wxString scope;
@@ -906,7 +912,7 @@ void ContextCpp::GotoDefinition()
 {
 	LEditor &rCtrl = GetCtrl();
 
-	VALIDATE_PROJECT(rCtrl);
+	VALIDATE_WORKSPACE();
 
 	std::vector<TagEntryPtr> tags;
 
@@ -944,20 +950,19 @@ void ContextCpp::DoGotoSymbol(const std::vector<TagEntryPtr> &tags)
 
 	// Did we get a single match?
 	if (tags.size() == 1) {
-		// Just open the file and set the cursor on the match we found
-		wxString projectName = ManagerST::Get()->GetProjectNameByFile(tags[0]->GetFile());
-		ManagerST::Get()->OpenFile(tags[0]->GetFile(), projectName, tags[0]->GetLine()-1);
+		ManagerST::Get()->OpenFile(	tags[0]->GetFile(),
+		                            wxEmptyString,
+		                            tags[0]->GetLine()-1);
 	} else {
 		// popup a dialog offering the results to the user
 		SymbolsDialog *dlg = new SymbolsDialog(&GetCtrl());
 		dlg->AddSymbols( tags, 0 );
 		if (dlg->ShowModal() == wxID_OK) {
-			ManagerST::Get()->OpenFile(dlg->GetFile(), dlg->GetProject(), dlg->GetLine()-1);
+			ManagerST::Get()->OpenFile(dlg->GetFile(), wxEmptyString, dlg->GetLine()-1);
 		}
 		dlg->Destroy();
 	}
 }
-
 
 void ContextCpp::SwapFiles(const wxFileName &fileName)
 {
@@ -1068,14 +1073,13 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent &event)
 	wxUnusedVar(event);
 	LEditor &editor = GetCtrl();
 
-	VALIDATE_PROJECT(editor);
+	VALIDATE_WORKSPACE();
 
 	//get the current line text
 	int lineno = editor.LineFromPosition(editor.GetCurrentPos());
 
 	//get doxygen comment based on file and line
-	TagsManager *mgr = TagsManagerST::Get();
-	wxString comment = mgr->GenerateDoxygenComment(editor.GetFileName().GetFullPath(), lineno);
+	wxString comment = TagsManagerST::Get()->GenerateDoxygenComment(editor.GetFileName().GetFullPath(), lineno);
 	//do we have a comment?
 	if (comment.IsEmpty())
 		return;
@@ -1085,10 +1089,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent &event)
 	//since we just inserted a text to the document, we force a save on the
 	//document, or else the parser will lose sync with the database
 	//but avoid saving it, if it not part of the workspace
-	wxString project = ManagerST::Get()->GetProjectNameByFile(editor.GetFileName().GetFullPath());
-	if (project.IsEmpty() == false) {
-		editor.SaveFile();
-	}
+	editor.SaveFile();
 }
 
 void ContextCpp::OnCommentSelection(wxCommandEvent &event)
@@ -1127,7 +1128,8 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 	wxUnusedVar(event);
 	LEditor &editor = GetCtrl();
 
-	VALIDATE_PROJECT(editor);
+	VALIDATE_WORKSPACE();
+
 	long pos = editor.GetCurrentPos();
 
 	if (IsCommentOrString(pos)) {
@@ -1183,25 +1185,6 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 
 void ContextCpp::OnKeyDown(wxKeyEvent &event)
 {
-	/*
-		//validate project is open for the container editor
-		if (GetCtrl().GetProject().IsEmpty()) {
-			event.Skip();
-			return;
-		}
-
-		if (m_tipKind == TipFuncProto && GetCtrl().CallTipActive() && m_ct) {
-			if (event.GetKeyCode() == WXK_DOWN) {
-				GetCtrl().CallTipCancel();
-				GetCtrl().CallTipShow(GetCtrl().GetCurrentPos(), m_ct->Next());
-				return;
-			} else if (event.GetKeyCode() == WXK_UP) {
-				GetCtrl().CallTipCancel();
-				GetCtrl().CallTipShow(GetCtrl().GetCurrentPos(), m_ct->Prev());
-				return;
-			}
-		}
-	*/
 	event.Skip();
 }
 
@@ -1209,7 +1192,7 @@ void ContextCpp::OnFindImpl(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	LEditor &rCtrl = GetCtrl();
-	VALIDATE_PROJECT(rCtrl);
+	VALIDATE_WORKSPACE();
 
 	//get expression
 	int pos = rCtrl.GetCurrentPos();
@@ -1242,7 +1225,8 @@ void ContextCpp::OnFindDecl(wxCommandEvent &event)
 
 	wxUnusedVar(event);
 	LEditor &rCtrl = GetCtrl();
-	VALIDATE_PROJECT(rCtrl);
+
+	VALIDATE_WORKSPACE();
 
 	//get expression
 	//get expression
@@ -1271,25 +1255,21 @@ void ContextCpp::OnFindDecl(wxCommandEvent &event)
 
 void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)
 {
-
-	LEditor &ctrl = GetCtrl();
+	bool workspaceOpen = ManagerST::Get()->IsWorkspaceOpen();
+	
 	if (event.GetId() == XRCID("insert_doxy_comment")) {
-		event.Enable(ctrl.GetProject().IsEmpty() == false);
-	} else
-		if (event.GetId() == XRCID("setters_getters")) {
-			event.Enable(ctrl.GetProject().IsEmpty() == false);
-		} else
-			if (event.GetId() == XRCID("find_decl")) {
-				event.Enable(ctrl.GetProject().IsEmpty() == false);
-			} else
-				if (event.GetId() == XRCID("find_impl")) {
-					event.Enable(ctrl.GetProject().IsEmpty() == false);
-				} else
-					if (event.GetId() == XRCID("move_impl")) {
-						event.Enable(ctrl.GetProject().IsEmpty() == false && ctrl.GetSelectedText().IsEmpty() == false );
-					} else {
-						event.Skip();
-					}
+		event.Enable(workspaceOpen);
+	} else if (event.GetId() == XRCID("setters_getters")) {
+		event.Enable(workspaceOpen);
+	} else if (event.GetId() == XRCID("find_decl")) {
+		event.Enable(workspaceOpen);
+	} else if (event.GetId() == XRCID("find_impl")) {
+		event.Enable(workspaceOpen);
+	} else if (event.GetId() == XRCID("move_impl")) {
+		event.Enable(workspaceOpen && GetCtrl().GetSelectedText().IsEmpty() == false );
+	} else {
+		event.Skip();
+	}
 }
 
 void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
@@ -1400,7 +1380,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	LEditor &rCtrl = GetCtrl();
-	VALIDATE_PROJECT(rCtrl);
+	VALIDATE_WORKSPACE();
 
 	//get expression
 	int pos = rCtrl.GetCurrentPos();
@@ -1556,7 +1536,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	LEditor &rCtrl = GetCtrl();
-	VALIDATE_PROJECT(rCtrl);
+	VALIDATE_WORKSPACE();
 
 	//get expression
 	int pos = rCtrl.GetCurrentPos();
@@ -1632,7 +1612,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 void ContextCpp::OnFileSaved()
 {
 	LEditor &rCtrl = GetCtrl();
-	VALIDATE_PROJECT(rCtrl);
+	VALIDATE_WORKSPACE();
 
 	VariableList var_list;
 	std::map< std::string, Variable > var_map;

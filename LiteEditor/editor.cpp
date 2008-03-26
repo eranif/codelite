@@ -355,27 +355,25 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	if (event.GetKey() == ':' || event.GetKey() == '}' || event.GetKey() == '\n')
 		m_context->AutoIndent(event.GetKey());
 
-	if (false == GetProjectName().IsEmpty()) {
-		switch ( event.GetKey() ) {
-		case ':':
-		case '.':
-		case '>':
-		case '(':
-			CodeComplete();
-			break;
-		case ')': {
-				m_context->CallTipCancel();
-				break;
-			}
-		case '\n': {
-				// incase we are typing in a folded line, make sure it is visible
-				int  nLineNumber = LineFromPosition(GetCurrentPos());
-				EnsureVisible(nLineNumber+1);
-				break;
-			}
-		default:
+	switch ( event.GetKey() ) {
+	case ':':
+	case '.':
+	case '>':
+	case '(':
+		CodeComplete();
+		break;
+	case ')': {
+			m_context->CallTipCancel();
 			break;
 		}
+	case '\n': {
+			// incase we are typing in a folded line, make sure it is visible
+			int  nLineNumber = LineFromPosition(GetCurrentPos());
+			EnsureVisible(nLineNumber+1);
+			break;
+		}
+	default:
+		break;
 	}
 	event.Skip();
 }
@@ -390,17 +388,17 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	int charBefore = SafeGetChar(PositionBefore(pos));
 	int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(pos)));
 	int charCurrnt = SafeGetChar(pos);
-	
+
 	if ( GetSelectedText().IsEmpty() == false) {
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 	} else if (	charCurrnt == '<' && charAfter == '<' 	||	//<<
-	        charCurrnt == '<' && charBefore == '<' 	||	//<<
-	        charCurrnt == '>' && charAfter == '>' 	||	//>>
-	        charCurrnt == '>' && charBefore == '>'  ||	//>>
-			beforeBefore == '<' && charBefore == '<'||	//<<
-			beforeBefore == '>' && charBefore == '>'||	//>>
-			beforeBefore == '-' && charBefore == '>'||	//->
-			charCurrnt == '>' && charBefore == '-'	) {	//->
+	            charCurrnt == '<' && charBefore == '<' 	||	//<<
+	            charCurrnt == '>' && charAfter == '>' 	||	//>>
+	            charCurrnt == '>' && charBefore == '>'  ||	//>>
+	            beforeBefore == '<' && charBefore == '<'||	//<<
+	            beforeBefore == '>' && charBefore == '>'||	//>>
+	            beforeBefore == '-' && charBefore == '>'||	//->
+	            charCurrnt == '>' && charBefore == '-'	) {	//->
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 	} else {
 
@@ -416,7 +414,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 		}
 	}
-	
+
 	//update line number
 	wxString message;
 	message << wxT("Ln ") << LineFromPosition(pos)+1 << wxT("    Col ") << GetColumn(pos) << wxT("    Pos ") << pos;
@@ -469,7 +467,8 @@ bool LEditor::SaveFile()
 		if ( !SaveToFile(m_fileName) )
 			return false;
 
-		if ( GetProjectName().IsEmpty() )
+		wxString projName = GetProjectName();
+		if ( projName.Trim().Trim(false).IsEmpty() )
 			return true;
 
 		//-------------------------------------------------------------------

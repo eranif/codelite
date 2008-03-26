@@ -25,7 +25,7 @@
     <wxString Value="svn" Name="m_exePath"/>
     <wxString Value="*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;" Name="m_pattern"/>
   </ArchiveObject>
-  <TagsDatabase Path="C:\Program Files\CodeLite\common.tags"/>
+  <TagsDatabase Path="/home/eran/.codelite/static-symbols.tags"/>
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="88" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
@@ -73,39 +73,39 @@
     </wxArrayString>
     <long Value="0" Name="m_flags"/>
   </ArchiveObject>
-  <RecentWorkspaces>
-    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\jin\a.workspace"/>
-    <File Name="/home/eran/devl/ZendLib/ZendLib.workspace"/>
-    <File Name="/home/eran/devl/test/test.workspace"/>
-  </RecentWorkspaces>
-  <ArchiveObject Name="LoadSavedPrespective">
-    <long Value="1" Name="m_value"/>
-  </ArchiveObject>
   <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#DBDBF4" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="16"/>
-  <RecentFiles>
-    <File Name="/home/eran/devl/test/Debug/anotherclass.o.d"/>
-    <File Name="/home/eran/devl/test/_1erere.h"/>
-    <File Name="/home/eran/devl/test/anotherclass.cpp"/>
-    <File Name="/home/eran/devl/test/anotherclass.h"/>
-    <File Name="/home/eran/devl/test/main.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\editor.cpp"/>
-    <File Name=".\svndriver.cpp.diff"/>
-    <File Name="C:\TestArea\jin\mytestplugin.h"/>
-    <File Name="C:\TestArea\jin\mytestplugin.cpp"/>
-  </RecentFiles>
-  <ArchiveObject Name="GeneralInfo">
-    <wxSize Name="m_frameSize" x="1280" y="950"/>
-    <wxPoint Name="m_framePos" x="0" y="0"/>
-    <long Value="15" Name="m_flags"/>
-  </ArchiveObject>
   <ArchiveObject Name="FindInFilesData">
     <wxArrayString Name="m_findString">
       <wxString Value="__anotherclass__"/>
     </wxArrayString>
     <wxArrayString Name="m_replaceString"/>
     <long Value="0" Name="m_flags"/>
+  </ArchiveObject>
+  <ArchiveObject Name="LoadSavedPrespective">
+    <long Value="1" Name="m_value"/>
+  </ArchiveObject>
+  <RecentWorkspaces>
+    <File Name="/home/eran/devl/test/test.workspace"/>
+    <File Name="/home/eran/devl/ZendLib/ZendLib.workspace"/>
+    <File Name="C:\TestArea\jin\a.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
+  </RecentWorkspaces>
+  <RecentFiles>
+    <File Name="/home/eran/devl/test/vim.cpp"/>
+    <File Name="/usr/include/wx-2.8/wx/string.h"/>
+    <File Name="C:\TestArea\jin\mytestplugin.h"/>
+    <File Name=".\svndriver.cpp.diff"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\editor.cpp"/>
+    <File Name="/home/eran/devl/test/main.cpp"/>
+    <File Name="/home/eran/devl/test/anotherclass.h"/>
+    <File Name="/home/eran/devl/test/anotherclass.cpp"/>
+    <File Name="/home/eran/devl/test/_1erere.h"/>
+  </RecentFiles>
+  <ArchiveObject Name="GeneralInfo">
+    <wxSize Name="m_frameSize" x="1280" y="950"/>
+    <wxPoint Name="m_framePos" x="0" y="0"/>
+    <long Value="15" Name="m_flags"/>
   </ArchiveObject>
 </LiteEditor>

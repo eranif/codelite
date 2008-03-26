@@ -1258,11 +1258,11 @@ void Frame::OnFileSaveAll(wxCommandEvent &event)
 
 void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 {
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
+	LEditor* editor = ManagerST::Get()->GetActiveEditor();
 
 	// This menu item is enabled only if the current editor
 	// belongs to a project
-	event.Enable(editor && !editor->GetProjectName().IsEmpty());
+	event.Enable(editor && ManagerST::Get()->IsWorkspaceOpen());
 }
 
 void Frame::ClosePage(LEditor *editor, bool notify, int index, bool doDelete, bool &veto)

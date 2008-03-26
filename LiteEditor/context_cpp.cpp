@@ -1256,17 +1256,18 @@ void ContextCpp::OnFindDecl(wxCommandEvent &event)
 void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)
 {
 	bool workspaceOpen = ManagerST::Get()->IsWorkspaceOpen();
+	bool projectAvailable = (GetCtrl().GetProjectName().IsEmpty() == false);
 	
 	if (event.GetId() == XRCID("insert_doxy_comment")) {
-		event.Enable(workspaceOpen);
+		event.Enable(projectAvailable);
 	} else if (event.GetId() == XRCID("setters_getters")) {
-		event.Enable(workspaceOpen);
+		event.Enable(projectAvailable);
 	} else if (event.GetId() == XRCID("find_decl")) {
 		event.Enable(workspaceOpen);
 	} else if (event.GetId() == XRCID("find_impl")) {
 		event.Enable(workspaceOpen);
 	} else if (event.GetId() == XRCID("move_impl")) {
-		event.Enable(workspaceOpen && GetCtrl().GetSelectedText().IsEmpty() == false );
+		event.Enable(projectAvailable && GetCtrl().GetSelectedText().IsEmpty() == false );
 	} else {
 		event.Skip();
 	}

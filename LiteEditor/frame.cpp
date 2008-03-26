@@ -395,7 +395,7 @@ void Frame::CreateGUIControls(void)
 #else
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
 #endif
-	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
+	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 6);
 
 	// Load the menubar from XRC and set this frame's menubar to it.
@@ -2644,7 +2644,7 @@ void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 
 OutputTabWindow* Frame::FindOutputTabWindowByPtr(wxWindow *win)
 {
-	wxFlatNotebook *book = GetOutputPane()->GetNotebook();
+	wxAuiNotebook *book = GetOutputPane()->GetNotebook();
 	for (size_t i=0; i< (size_t)book->GetPageCount(); i++) {
 		if (book->GetPageText(i) == OutputPane::BUILD_WIN) {
 			OutputTabWindow *tabWin = dynamic_cast< OutputTabWindow* > ( book->GetPage(i) );

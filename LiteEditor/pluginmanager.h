@@ -40,7 +40,7 @@ public:
 	virtual IConfigTool *GetConfigTool();
 	virtual TreeItemInfo GetSelectedTreeItemInfo(TreeType type);
 	virtual wxTreeCtrl *GetTree(TreeType type);
-	virtual wxFlatNotebook *GetOutputPaneNotebook();
+	virtual wxAuiNotebook *GetOutputPaneNotebook();
 	virtual void OpenFile(const wxString &fileName, const wxString &projectName, int lineno = wxNOT_FOUND);
 	virtual wxString GetStartupDirectory() const;
 	virtual void AddProject(const wxString & path);

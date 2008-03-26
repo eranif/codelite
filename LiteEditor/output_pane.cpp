@@ -2,14 +2,15 @@
 #include "findresultscontainer.h"
 #include "findresultstab.h"
 #include <wx/xrc/xmlres.h>
-#include "wx/wxFlatNotebook/wxFlatNotebook.h"
 #include "manager.h"
+#include "wx/aui/auibook.h"
 #include "regex_processor.h"
 #include "build_settings_config.h"
 #include "dirsaver.h"
 #include "macros.h"
 #include "shell_window.h"
 #include "buidltab.h"
+#include "wx/wxFlatNotebook/wxFlatNotebook.h"
 
 const wxString OutputPane::FIND_IN_FILES_WIN = wxT("Find Results");
 const wxString OutputPane::BUILD_WIN         = wxT("Build");
@@ -28,7 +29,10 @@ OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 OutputPane::~OutputPane()
 {
 	delete wxLog::SetActiveTarget(m_logTargetOld);
-	m_book->DeleteAllPages();
+	
+	for(size_t i=0; i< m_book->GetPageCount(); i++ ) {
+		m_book->DeletePage(0);
+	}
 }
 
 void OutputPane::CreateGUIControls()
@@ -36,6 +40,7 @@ void OutputPane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
+	/*	
 	long style = wxFNB_NO_X_BUTTON | 
 				 wxFNB_NO_NAV_BUTTONS | 
 				 wxFNB_DROPDOWN_TABS_LIST | 
@@ -44,17 +49,14 @@ void OutputPane::CreateGUIControls()
 				 wxFNB_BACKGROUND_GRADIENT | 
 				 wxFNB_TABS_BORDER_SIMPLE |
 				 wxFNB_BOTTOM ; 
-				 
-	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-	m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK);
+	*/
+	long style = 	wxAUI_NB_TAB_SPLIT | 
+					wxAUI_NB_TAB_MOVE | 
+					wxAUI_NB_WINDOWLIST_BUTTON | 
+					wxAUI_NB_TOP | wxNO_BORDER;
+				
+	m_book = new wxAuiNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
-
-	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
-	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("build")));
-	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("output_win")));
-	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
-	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
-	m_book->SetImageList( &m_images );
 
 	// Create the tabs
 	m_findResultsTab = new FindResultsContainer(m_book, wxID_ANY);
@@ -62,17 +64,16 @@ void OutputPane::CreateGUIControls()
 	m_outputDebug = new ShellTab(m_book, wxID_ANY, OUTPUT_DEBUG);
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
 	
-	//add them to the notebook
-	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, true, 0);
-	m_book->AddPage(m_buildWin, BUILD_WIN, false, 1);
-	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, 2);
-	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, false, 4);
+	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, true, wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
+	m_book->AddPage(m_buildWin, BUILD_WIN, false, wxXmlResource::Get()->LoadBitmap(wxT("build")));
+	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, wxXmlResource::Get()->LoadBitmap(wxT("output_win")));
+	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, false, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
 	
 	//place a trace window in the notebook as well
 	wxTextCtrl *text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
 	
-	m_book->AddPage(text, wxT("Trace"), false, 3);
+	m_book->AddPage(text, wxT("Trace"), false, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
 
 	mainSizer->Fit(this);
 	mainSizer->Layout();
@@ -92,7 +93,7 @@ void OutputPane::SelectTab(const wxString &tabName)
 int OutputPane::CaptionToIndex(const wxString &caption)
 {
 	int i = 0;
-	for(; i<m_book->GetPageCount(); i++)
+	for(; i<(int)m_book->GetPageCount(); i++)
 	{
 		if(m_book->GetPageText((size_t)i) == caption)
 			return i;

@@ -4,7 +4,7 @@
 
 #include "wx/panel.h"
 #include "wx/wxscintilla.h"
-#include "wx/wxFlatNotebook/wxFlatNotebook.h"
+#include "wx/aui/auibook.h"
 #include "shelltab.h"
 #include "map"
 
@@ -42,9 +42,9 @@ public:
 	static const wxString OUTPUT_WIN;
 	static const wxString OUTPUT_DEBUG;
 
-	wxFlatNotebook *m_book;
+	wxAuiNotebook *m_book;
 	wxString m_caption;
-	wxFlatNotebookImageList m_images;
+//	wxFlatNotebookImageList m_images;
 	ShellTab *m_outputWind;
 	wxLog *m_logTargetOld;
 	ShellTab *m_outputDebug;
@@ -76,7 +76,7 @@ public:
 	//-----------------------------------------------
 	// Setters/Getters
 	//-----------------------------------------------
-	wxFlatNotebook *GetNotebook() { return m_book; }
+	wxAuiNotebook *GetNotebook() { return m_book; }
 	const wxString &GetCaption() const { return m_caption; }
 	void SelectTab(const wxString &tabName);
 	

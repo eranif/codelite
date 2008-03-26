@@ -18,7 +18,7 @@ const wxString WorkspacePane::EXPLORER  	= wxT("Explorer");
 extern wxImageList* CreateSymbolTreeImages();
 
 WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption)
-		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 400))
+		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 400), wxBORDER_SUNKEN)
 		, m_caption(caption)
 {
 	CreateGUIControls();

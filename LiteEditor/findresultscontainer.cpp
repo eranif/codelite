@@ -1,7 +1,7 @@
 #include "findresultscontainer.h"
 #include "output_pane.h"
 #include "findresultstab.h"
-#include "wx/wxFlatNotebook/wxFlatNotebook.h"
+//#include "wx/wxFlatNotebook/wxFlatNotebook.h"
 //#include "wx/notebook.h"
 //#include "wx/toolbook.h"
 //#include "imgbook/imagebook.h"
@@ -25,7 +25,8 @@ void FindResultsContainer::Initialize()
 	long style = wxFNB_NO_X_BUTTON |
 	             wxFNB_NO_NAV_BUTTONS |
 	             wxFNB_DROPDOWN_TABS_LIST |
-				 wxFNB_NODRAG | wxFNB_BOTTOM;
+				wxFNB_TABS_BORDER_SIMPLE | 
+	             wxFNB_NODRAG | wxFNB_BOTTOM;
 
 	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 

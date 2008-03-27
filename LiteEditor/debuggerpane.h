@@ -2,7 +2,7 @@
 #define DEBUGGERPANE_H
 
 #include "wx/panel.h"
-#include <wx/aui/auibook.h>
+#include <wx/wxFlatNotebook/wxFlatNotebook.h>
 #include <wx/imaglist.h>
 
 class ListCtrlPanel;
@@ -21,17 +21,18 @@ public:
 	static const wxString THREADS;
 
 private:
-	wxAuiNotebook *m_book;
+	wxFlatNotebook *m_book;
 	LocalVarsTree *m_localsTree;
 	wxString m_caption;
 	SimpleTable *m_watchesTable;
 	ListCtrlPanel *m_frameList;
+	wxFlatNotebookImageList m_imageList;
 	BreakpointDlg *m_breakpoints;
 	ThreadListPanel *m_threads;
 	
 private:
 	void CreateGUIControls();
-	void OnPageChanged(wxAuiNotebookEvent &event);
+	void OnPageChanged(wxFlatNotebookEvent &event);
 
 public:
 	DebuggerPane(wxWindow *parent, const wxString &caption);
@@ -44,7 +45,7 @@ public:
 	ListCtrlPanel *GetFrameListView(){return m_frameList;}
 	BreakpointDlg *GetBreakpointView(){return m_breakpoints;}
 	ThreadListPanel *GetThreadsView(){return m_threads;}
-	wxAuiNotebook *GetNotebook(){return m_book;}
+	wxFlatNotebook *GetNotebook(){return m_book;}
 	void SelectTab(const wxString &tabName);
 	void Clear();
 };

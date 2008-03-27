@@ -3,6 +3,7 @@
 
 #include "wx/panel.h"
 #include "tag_tree.h"
+#include "wx/wxFlatNotebook/wxFlatNotebook.h"
 #include "wx/filename.h"
 
 class FileViewTree;
@@ -13,7 +14,6 @@ class OpenWindowsPanel;
 class wxComboBox;
 class FileExplorer;
 class WorkspaceTab;
-class wxAuiNotebook;
 
 class WorkspacePane : public wxPanel 
 {
@@ -23,8 +23,9 @@ public:
 	static const wxString OPEN_FILES;
 	static const wxString EXPLORER;
 	
-	wxAuiNotebook *m_book;
+	wxFlatNotebook *m_book;
 	wxString m_caption;
+	wxFlatNotebookImageList m_images;
 	WindowStack *m_winStack;
 	OpenWindowsPanel *m_openWindowsPane;
 	FileExplorer *m_explorer;
@@ -53,7 +54,7 @@ public:
 	//-----------------------------------------------
 	// Setters/Getters
 	//-----------------------------------------------
-	wxAuiNotebook *GetNotebook() { return m_book; }
+	wxFlatNotebook *GetNotebook() { return m_book; }
 	SymbolTree *GetSymbolTree();
 	FileViewTree *GetFileViewTree();
 	OpenWindowsPanel *GetOpenedWindows() {return m_openWindowsPane;}

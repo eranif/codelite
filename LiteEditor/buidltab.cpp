@@ -78,7 +78,7 @@ BuildTab::BuildTab(wxWindow *parent, wxWindowID id, const wxString &name)
 {
 	//set some colours to our styles
 	m_sci->MarkerDefine(0x7, wxSCI_MARK_ARROW);
-	m_sci->SetMarginWidth(1, 0);
+	m_sci->SetMarginWidth(1, 16);
 	Initialize();
 }
 
@@ -96,7 +96,7 @@ void BuildTab::Initialize()
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 
 	m_sci->SetLexer(wxSCI_LEX_GCC);
-	m_sci->MarkerSetBackground(0x7, wxT("PINK"));
+	m_sci->MarkerSetBackground(0x7, wxT("BLUE"));
 	m_sci->MarkerSetForeground(0x7, wxT("BLACK"));
 
 	m_sci->StyleSetForeground(wxSCI_LEX_GCC_WARNING, options.GetWarnColour());

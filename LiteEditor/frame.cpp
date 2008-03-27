@@ -395,7 +395,7 @@ void Frame::CreateGUIControls(void)
 #else
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
 #endif
-	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
+	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 6);
 
 	// Load the menubar from XRC and set this frame's menubar to it.
@@ -406,14 +406,14 @@ void Frame::CreateGUIControls(void)
 	//---------------------------------------------
 	m_outputPane = new OutputPane(this, wxT("Output"));
 	wxAuiPaneInfo paneInfo;
-	m_mgr.AddPane(m_outputPane, paneInfo.BestSize(-1, 300).Name(wxT("Output")).Caption(wxT("Output")).Bottom().Layer(1).Position(1).CloseButton(true));
+	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output")).Caption(wxT("Output")).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton());
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output"));
 
 	// Add the explorer pane
 	m_workspacePane = new WorkspacePane(this, wxT("Workspace"));
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
-	              Right().Layer(1).Position(0).CloseButton(true));
+	              Left().Layer(1).Position(0).CloseButton(true));
 	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace"));
 
 	//add the debugger locals tree, make it hidden by default
@@ -434,7 +434,8 @@ void Frame::CreateGUIControls(void)
 	    wxFNB_SMART_TABS |
 	    wxFNB_X_ON_TAB |
 	    wxFNB_CUSTOM_DLG |
-	    wxFNB_MOUSE_MIDDLE_CLOSES_TABS;
+	    wxFNB_MOUSE_MIDDLE_CLOSES_TABS|
+	    wxFNB_DCLICK_CLOSES_TABS;
 
 	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK | wxFNB_CUSTOM_CLOSE_BUTTON );
@@ -509,6 +510,21 @@ void Frame::CreateGUIControls(void)
 	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("Editor"));
 	if (book_style != wxNOT_FOUND) {
 		GetNotebook()->SetWindowStyleFlag(book_style);
+	}
+
+	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("OutputPane"));
+	if (book_style != wxNOT_FOUND) {
+		m_outputPane->GetNotebook()->SetWindowStyleFlag(book_style);
+	}
+
+	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("WorkspacePane"));
+	if (book_style != wxNOT_FOUND) {
+		m_workspacePane->GetNotebook()->SetWindowStyleFlag(book_style);
+	}
+
+	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("DebuggerPane"));
+	if (book_style != wxNOT_FOUND) {
+		m_debuggerPane->GetNotebook()->SetWindowStyleFlag(book_style);
 	}
 
 	//load the tab right click menu
@@ -928,6 +944,9 @@ void Frame::OnClose(wxCloseEvent& event)
 	SearchThreadST::Get()->StopSearch();
 	EditorConfigST::Get()->SavePerspective(wxT("Default"), m_mgr.SavePerspective());
 	EditorConfigST::Get()->SaveNotebookStyle(wxT("Editor"), GetNotebook()->GetWindowStyleFlag());
+	EditorConfigST::Get()->SaveNotebookStyle(wxT("OutputPane"), m_outputPane->GetNotebook()->GetWindowStyleFlag());
+	EditorConfigST::Get()->SaveNotebookStyle(wxT("WorkspacePane"), m_workspacePane->GetNotebook()->GetWindowStyleFlag());
+	EditorConfigST::Get()->SaveNotebookStyle(wxT("DebuggerPane"), m_debuggerPane->GetNotebook()->GetWindowStyleFlag());
 	EditorConfigST::Get()->SaveLexers();
 
 	//save general information
@@ -2625,7 +2644,7 @@ void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 
 OutputTabWindow* Frame::FindOutputTabWindowByPtr(wxWindow *win)
 {
-	wxAuiNotebook *book = GetOutputPane()->GetNotebook();
+	wxFlatNotebook *book = GetOutputPane()->GetNotebook();
 	for (size_t i=0; i< (size_t)book->GetPageCount(); i++) {
 		if (book->GetPageText(i) == OutputPane::BUILD_WIN) {
 			OutputTabWindow *tabWin = dynamic_cast< OutputTabWindow* > ( book->GetPage(i) );

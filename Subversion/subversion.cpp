@@ -103,7 +103,8 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 	wxTextCtrl *svnwin = new wxTextCtrl(m_mgr->GetOutputPaneNotebook(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER| wxTE_MULTILINE | wxTE_READONLY);
 	svnwin->SetFont(font);
 
-	m_mgr->GetOutputPaneNotebook()->AddPage(svnwin, wxT("SVN"), false, wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
+	m_mgr->GetOutputPaneNotebook()->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
+	m_mgr->GetOutputPaneNotebook()->AddPage(svnwin, wxT("SVN"), false, (int)m_mgr->GetOutputPaneNotebook()->GetImageList()->GetCount()-1);
 
 	//Connect items
 	if (!topWin) {

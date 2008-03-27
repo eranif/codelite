@@ -413,7 +413,7 @@ void Frame::CreateGUIControls(void)
 	m_workspacePane = new WorkspacePane(this, wxT("Workspace"));
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
-	              Left().BestSize(350, 300).Layer(1).Position(0).CloseButton(true));
+	              Left().BestSize(250, 300).Layer(2).Position(0).CloseButton(true));
 	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace"));
 
 	//add the debugger locals tree, make it hidden by default
@@ -424,6 +424,7 @@ void Frame::CreateGUIControls(void)
 
 	// Create the notebook for all the files
 	long style =
+		wxFNB_TABS_BORDER_SIMPLE |
 	    wxFNB_NODRAG |
 	    wxFNB_FF2 |
 	    wxFNB_BACKGROUND_GRADIENT |

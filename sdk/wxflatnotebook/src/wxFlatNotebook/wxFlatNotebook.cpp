@@ -112,7 +112,7 @@ bool wxFlatNotebook::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	int tabHeight = height + wxFNB_HEIGHT_SPACER; // We use 8 pixels as padding
 #ifdef __WXGTK__
 	// On GTK the tabs are should be larger
-	//tabHeight += 6;
+	tabHeight += 6;
 #endif
 	m_pages->SetSizeHints(wxSize(-1, tabHeight));
 	

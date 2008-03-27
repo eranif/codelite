@@ -57,7 +57,7 @@ void WorkspaceTab::CreateGUIControls()
 	
 	Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnCollapseAll ));
 	Connect( id, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceTab::OnCollapseAllUI ));
-	sz->Add(tb, 0, wxRIGHT|wxTOP|wxBOTTOM, 5);
+	sz->Add(tb, 0, wxEXPAND|wxRIGHT|wxTOP|wxBOTTOM, 5);
 	
 	wxStaticLine *staticline = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	sz->Add(staticline, 0, wxEXPAND);
@@ -69,7 +69,7 @@ void WorkspaceTab::CreateGUIControls()
 	
 	// Connect an event to handle changes in the choice control
 	ConnectCombo(m_workspaceConfig, Frame::OnWorkspaceConfigChanged);
-	sz->Add(new wxStaticText(this, wxID_ANY, wxT("Active Configuration:")), 0, wxEXPAND| wxTOP, 5);
+	sz->Add(new wxStaticText(this, wxID_ANY, wxT("Configuration:")), 0, wxEXPAND| wxTOP, 5);
 	sz->Add(m_workspaceConfig, 0, wxEXPAND| wxTOP, 5);
 
 	//add the fileview tab

@@ -1,5 +1,9 @@
 #!/bin/sh
+
 echo "Running postinst step..."
 \rm -f $HOME/.codelite/config/liteeditor.xml
+
+##echo '?package(CodeLite):needs="x11" section="Apps/Programming" title="CodeLite" command="/usr/local/bin/CodeLite"' > /usr/share/menu/CodeLite
+
 echo "Done"
 

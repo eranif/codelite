@@ -52,7 +52,7 @@ void WorkspacePane::CreateGUIControls()
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 
 	// Add the class view tree
-	m_winStack = new WindowStack(m_book, wxID_ANY);
+	m_winStack = new WindowStack(m_book, wxID_ANY); 
 	m_book->AddPage(m_winStack, WorkspacePane::SYMBOL_VIEW, false);
 	
 	m_workspaceTab = new WorkspaceTab(this);

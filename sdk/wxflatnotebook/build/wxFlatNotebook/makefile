@@ -59,9 +59,6 @@ CXXFLAGS =  -I../../include $(shell wx-config --cxxflags $(WXCFG))
 ## Libraries required to link the sample program and their path
 LIBS =  -L../../lib -lwxflatnotebook$(UNICODE)$(DEBUG_FLAG)  $(shell wx-config --libs $(WXCFG))
 
-## sample program name
-OUTPUT  = wxFlatNotebookTest
-
 ## library name
 LIB_OUTPUT  = ../../lib/libwxflatnotebook$(UNICODE)$(DEBUG_FLAG).a
 
@@ -72,8 +69,7 @@ lib_objects := $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(wi
 sample_objects := $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(notdir $(wildcard ../../samples/wxFlatNotebook/*.cpp)))))
 
 ## Rules
-wxFlatNotebookTest: pre_build wxFlatNotebook $(sample_objects)
-	$(CMP) -o $(OUTPUT) $(sample_objects) $(LIBS)
+wxFlatNotebookTest: pre_build wxFlatNotebook 
 
 wxFlatNotebook: $(lib_objects)
 	ar rcu $(LIB_OUTPUT) $(lib_objects)

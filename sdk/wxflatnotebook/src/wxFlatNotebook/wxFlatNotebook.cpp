@@ -647,6 +647,7 @@ wxPageContainer::wxPageContainer(wxWindow* parent, wxWindowID id, const wxPoint&
 , m_pDropTarget(NULL)
 , m_nLeftClickZone(wxFNB_NOWHERE)
 , m_customizeOptions(wxFNB_CUSTOM_ALL)
+, m_fixedTabWidth(wxNOT_FOUND)
 {
 	m_pRightClickMenu = NULL;
 	m_nXButtonStatus = wxFNB_BTN_NONE;

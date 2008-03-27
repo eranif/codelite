@@ -70,6 +70,7 @@ void wxFlatNotebook::Init()
 	m_nFrom = 0;
 	m_pages = NULL;
 	m_mainSizer = new wxBoxSizer(wxVERTICAL);
+	m_fixedTabWidth = wxNOT_FOUND;
 	SetSizer(m_mainSizer);
 }
 
@@ -110,10 +111,9 @@ bool wxFlatNotebook::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	memDc.GetTextExtent(stam, &width, &height);
 
 	int tabHeight = height + wxFNB_HEIGHT_SPACER; // We use 8 pixels as padding
-#ifdef __WXGTK__
-	// On GTK the tabs are should be larger
-	tabHeight += 6;
-#endif
+
+//	tabHeight += 6;
+
 	m_pages->SetSizeHints(wxSize(-1, tabHeight));
 	
 	// Add the tab container to the sizer
@@ -423,31 +423,6 @@ void wxFlatNotebook::OnNavigationKey(wxNavigationKeyEvent& event)
 			GetParent()->ProcessEvent(event);
 		}
 	}
-}
-
-bool wxFlatNotebook::GetPageShapeAngle(int page_index, unsigned int * result)
-{
-	if(page_index < 0 || page_index >= (int)m_pages->m_pagesInfoVec.GetCount()) return false;
-	*result = m_pages->m_pagesInfoVec[page_index].GetTabAngle();
-	return true;
-}
-
-void wxFlatNotebook::SetPageShapeAngle(int page_index, unsigned int angle)
-{
-	if(page_index < 0 || page_index >= (int)m_pages->m_pagesInfoVec.GetCount()) return;
-	if(angle > 15) return;
-
-	m_pages->m_pagesInfoVec[page_index].SetTabAngle(angle);
-}
-
-void wxFlatNotebook::SetAllPagesShapeAngle(unsigned int angle)
-{
-	if(angle > 15) return;
-	for(unsigned int i = 0; i < m_pages->m_pagesInfoVec.GetCount(); i++)
-	{
-		m_pages->m_pagesInfoVec[i].SetTabAngle(angle);
-	}
-	Refresh();
 }
 
 wxSize wxFlatNotebook::GetPageBestSize()
@@ -1785,4 +1760,9 @@ void wxPageContainer::SetCustomizeOptions(long options)
 long wxPageContainer::GetCustomizeOptions() const
 {
 	return m_customizeOptions;
+}
+
+void wxFlatNotebook::SetFixedTabWidth(int width)
+{
+	m_pages->m_fixedTabWidth = width;
 }

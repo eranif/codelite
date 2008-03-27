@@ -8,7 +8,11 @@
 #include <map>
 #include <vector>
 #include <wx/event.h>
- 
+
+#ifndef wxFNB_HEIGHT_SPACER
+#define wxFNB_HEIGHT_SPACER 16
+#endif
+
 class wxFNBRenderer
 {
 protected:

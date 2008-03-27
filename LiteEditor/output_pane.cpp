@@ -42,10 +42,26 @@ void OutputPane::CreateGUIControls()
 				 wxFNB_FF2 | 
 				 wxFNB_CUSTOM_DLG | 
 				 wxFNB_BACKGROUND_GRADIENT | 
-				 wxFNB_TABS_BORDER_SIMPLE |
-				 wxFNB_BOTTOM ; 
+				 wxFNB_TABS_BORDER_SIMPLE; 
 				 
 	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+	
+	int width;
+	int height;
+	
+	//get the font we want to use
+	wxFont normalFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	wxFont boldFont(normalFont);
+	boldFont.SetWeight(wxFONTWEIGHT_BOLD);
+	
+	wxWindow::GetTextExtent(wxT("Find Results"), &width, &height, NULL, NULL, &boldFont);
+	
+	//add the image size, the x button and some spacers to the width
+	width += 16; //image size
+	width += 20; //spacers
+	
+	m_book->SetFixedTabWidth(width);
+	
 	m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
 

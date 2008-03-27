@@ -45,10 +45,6 @@ class wxPageContainer;
 #define M_PI 3.14159265358979
 #endif
 
-#ifndef wxFNB_HEIGHT_SPACER
-#define wxFNB_HEIGHT_SPACER 12
-#endif
-
 // forward declerations
 class wxFNBRenderer;
 class wxFNBRendererDefault;
@@ -85,10 +81,9 @@ WX_DECLARE_USER_EXPORTED_OBJARRAY(wxWindow*, wxWindowPtrArray, WXDLLIMPEXP_FNB);
 #define wxFNB_LEFT						0x00010000		// Left tabs
 #define wxFNB_CUSTOM_DLG				0x00020000		// Popup customize dialog using right click
 
+
 /// General macros
 #define VERTICAL_BORDER_PADDING			4
-#define BUTTON_SPACE					16
-#define VC8_SHAPE_LEN					16
 #define MASK_COLOR wxColor(0, 128, 128)
 
 enum wxCustomizeDlgOptions {
@@ -210,24 +205,6 @@ public:
 	int GetPreviousSelection() const;
 
 	const wxArrayInt &GetBrowseHistory() const;
-
-	/// Returns tab header inclination angle of specified page
-	/**
-	\param page_index - page index
-	\param result - pointer to the variable that receives the result
-	*/
-	bool GetPageShapeAngle(int page_index, unsigned int * result);
-	/// Sets tab header inclination angle of specified page
-	/**
-	\param page_index - page index
-	\param angle - new value of tab header inclination angle
-	*/
-	void SetPageShapeAngle(int page_index, unsigned int angle);
-	/// Sets tab header inclination angle for all pages
-	/**
-	\param angle - new value of tab header inclination angle
-	*/
-	void SetAllPagesShapeAngle(unsigned int angle);
 
 	/// Returns the best size for a page
 	wxSize GetPageBestSize();
@@ -394,6 +371,14 @@ public:
 	 */
 	long GetCustomizeOptions() const;
 	
+	/**
+	 * \brief set a fixed tab width, when set to -1 (the default), wxFNB will calculate each tab lenght according to 
+	 * image, text and x button, otherwise, the value provided here will be used. A tab can not have width lower than 
+	 * 30 pixels. If the tabs' text is wider than the fixed tab width, it will be truncated 
+	 * \param width in pixels, in range between 30 - 300
+	 */
+	void SetFixedTabWidth(int width);
+	
 	// Setters / Getters
 	void SetForceSelection(bool force) { m_bForceSelection = force; }
 	bool GetForceSelection() { return m_bForceSelection; }
@@ -422,8 +407,8 @@ private:
 	int m_nPadding;
 	wxTabNavigatorWindow *m_popupWin;
 	bool m_sendPageChangeEvent; ///< Ugly but needed to allow SetSelection to send / dont send event
-
-//	DECLARE_DYNAMIC_CLASS(wxFlatNotebook)
+	int m_fixedTabWidth;
+	
 	DECLARE_EVENT_TABLE()
 	void OnNavigationKey(wxNavigationKeyEvent& event);
 };
@@ -447,9 +432,6 @@ private:
 	/// Page region
 	wxRegion m_region;
 
-	/// Angle for painting tab
-	unsigned int m_TabAngle;
-
 	/// Page image index
 	int m_ImageIndex;
 
@@ -465,14 +447,14 @@ private:
 public:
 
 	/// Default constructor
-	wxPageInfo(): m_strCaption(wxEmptyString), m_TabAngle(0), m_ImageIndex(-1), m_bEnabled(true){};
+	wxPageInfo(): m_strCaption(wxEmptyString), m_ImageIndex(-1), m_bEnabled(true){};
 	/// Parametrized constructor
 	/**
 	\param caption - page caption
 	\param imgindex - image index
 	*/
 	wxPageInfo(const wxString& caption, int imgindex) :
-	m_strCaption(caption), m_pos(-1, -1), m_size(-1, -1), m_TabAngle(0), m_ImageIndex(imgindex), m_bEnabled(true){}
+	m_strCaption(caption), m_pos(-1, -1), m_size(-1, -1), m_ImageIndex(imgindex), m_bEnabled(true){}
 	/// Destructor
 	~wxPageInfo(){};
 
@@ -503,14 +485,6 @@ public:
 	///Returns page size
 	const wxSize & GetSize() {return m_size;}
 
-	/// Sets the tab header inclination angle
-	/**
-	\param value - new tab header inclination angle
-	*/
-	void SetTabAngle(unsigned int value) {m_TabAngle = FNB_MIN((unsigned int)(45), (unsigned int)(value));}
-
-	/// Returns an inclination of tab header borders
-	unsigned int GetTabAngle() {return m_TabAngle;}
 	/// Sets page image index
 	/**
 	\param value - new image index
@@ -891,6 +865,7 @@ private:
 	/// Customize menu
 	wxMenu *m_customMenu;
 	long m_customizeOptions;
+	int m_fixedTabWidth;
 };
 
 /**

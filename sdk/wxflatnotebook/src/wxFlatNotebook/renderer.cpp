@@ -846,19 +846,19 @@ void wxFNBRendererDefault::DrawTab(wxWindow* pageContainer, wxDC &dc, const int 
 	tabPoints[0].x = posx;
 	tabPoints[0].y = pc->HasFlag(wxFNB_BOTTOM) ? 2 : tabHeight - 2;
 
-	tabPoints[1].x = (int)(posx+tabHeight-2);
+	tabPoints[1].x = (int)(posx);
 	tabPoints[1].y = pc->HasFlag(wxFNB_BOTTOM) ? tabHeight - (VERTICAL_BORDER_PADDING+2) : (VERTICAL_BORDER_PADDING+2);
 
 	tabPoints[2].x = tabPoints[1].x+2;
 	tabPoints[2].y = pc->HasFlag(wxFNB_BOTTOM) ? tabHeight - VERTICAL_BORDER_PADDING : VERTICAL_BORDER_PADDING;
 
-	tabPoints[3].x = (int)(posx+tabWidth-tabHeight-2-2);
+	tabPoints[3].x = (int)(posx+tabWidth-2);
 	tabPoints[3].y = pc->HasFlag(wxFNB_BOTTOM) ? tabHeight - VERTICAL_BORDER_PADDING : VERTICAL_BORDER_PADDING;
 
 	tabPoints[4].x = tabPoints[3].x+2;
 	tabPoints[4].y = pc->HasFlag(wxFNB_BOTTOM) ? tabHeight - (VERTICAL_BORDER_PADDING+2) : (VERTICAL_BORDER_PADDING+2);
 
-	tabPoints[5].x = (int)(tabPoints[4].x+tabHeight-2);
+	tabPoints[5].x = (int)(tabPoints[4].x);
 	tabPoints[5].y = pc->HasFlag(wxFNB_BOTTOM) ? 2 : tabHeight - 2;
 
 	tabPoints[6].x = tabPoints[0].x;

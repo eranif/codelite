@@ -2,9 +2,6 @@
 <LiteEditor Revision="653">
     <Layout>
     <Notebook Name="Editor" Style="751292"/>
-    <Notebook Name="OutputPane" Style="738332"/>
-    <Notebook Name="WorkspacePane" Style="721948"/>
-    <Notebook Name="DebuggerPane" Style="738396"/>
   </Layout>
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="88" Name="m_ccFlags"/>

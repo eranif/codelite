@@ -408,12 +408,12 @@ void Frame::CreateGUIControls(void)
 	wxAuiPaneInfo paneInfo;
 	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output")).Caption(wxT("Output")).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton());
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output"));
-
+	
 	// Add the explorer pane
 	m_workspacePane = new WorkspacePane(this, wxT("Workspace"));
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
-	              Left().Layer(1).Position(0).CloseButton(true));
+	              Left().BestSize(350, 300).Layer(1).Position(0).CloseButton(true));
 	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace"));
 
 	//add the debugger locals tree, make it hidden by default
@@ -424,7 +424,6 @@ void Frame::CreateGUIControls(void)
 
 	// Create the notebook for all the files
 	long style =
-	    wxFNB_TABS_BORDER_SIMPLE |
 	    wxFNB_NODRAG |
 	    wxFNB_FF2 |
 	    wxFNB_BACKGROUND_GRADIENT |
@@ -434,8 +433,7 @@ void Frame::CreateGUIControls(void)
 	    wxFNB_SMART_TABS |
 	    wxFNB_X_ON_TAB |
 	    wxFNB_CUSTOM_DLG |
-	    wxFNB_MOUSE_MIDDLE_CLOSES_TABS|
-	    wxFNB_DCLICK_CLOSES_TABS;
+	    wxFNB_MOUSE_MIDDLE_CLOSES_TABS;
 
 	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK | wxFNB_CUSTOM_CLOSE_BUTTON );
@@ -444,7 +442,7 @@ void Frame::CreateGUIControls(void)
 	m_book->SetImageList(&m_il);
 
 	m_mgr.AddPane(m_book, wxAuiPaneInfo().Name(wxT("Editor")).
-	              CenterPane().PaneBorder(false));
+	              CenterPane().PaneBorder(true));
 
 	// Connect the main notebook events
 	GetNotebook()->Connect(GetNotebook()->GetId(), wxEVT_COMMAND_FLATNOTEBOOK_PAGE_CHANGED, wxFlatNotebookEventHandler(Frame::OnPageChanged), NULL, this);

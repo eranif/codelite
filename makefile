@@ -255,6 +255,7 @@ clean:
 	$(RM) Debug_gcc_sqlite3/*.o Release_gcc_sqlite3/*.o Release_gcc_unicode_sqlite3/*. Debug_gcc_unicode_sqlite3/*.o lib/*.o lib/*.a
 	$(RM) Debug_gcc_scintilla/*.o Release_gcc_scintilla/*.o Release_gcc_unicode_scintilla/*. Debug_gcc_unicode_sinctilla/*.o lib/*.o lib/*.a
 	$(RM) -R Debug_gcc Release_gcc Release_gcc_unicode Debug_gcc_unicode Debug_gcc_sqlite3 Release_gcc_sqlite3 Release_gcc_unicode_sqlite3 Debug_gcc_unicode_sqlite3 Debug_gcc_scintilla Release_gcc_scintilla Release_gcc_unicode_scintilla Debug_gcc_unicode_scintilla	
+
 	cd sdk/wxflatnotebook/build/wxFlatNotebook/ && $(MAKE) clean
 	cd Plugin/ && $(MAKE) clean
 	cd Debugger/ && $(MAKE) clean
@@ -262,6 +263,7 @@ clean:
 	cd Subversion/ && $(MAKE) clean
 	cd ReferenceAnalyser/ && $(MAKE) clean
 	cd cscope/ && $(MAKE) clean
+	cd Gizmos/ && $(MAKE) clean
 
 	
 install: upgrade

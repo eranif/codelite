@@ -3,3 +3,5 @@ echo "Running postinst step..."
 \rm -f $HOME/.codelite/config/liteeditor.xml
 echo "Done"
 
+echo '?package(CodeLite):needs="x11" section="Apps/Editors" title="CodeLite" command="/usr/local/bin/CodeLite" icon="/usr/local/share/CodeLite/images/cubes.png"' > /usr/share/menu/CodeLite
+

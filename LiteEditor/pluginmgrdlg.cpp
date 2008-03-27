@@ -32,6 +32,7 @@ void PluginMgrDlg::Initialize()
 		m_checkListPluginsList->Select(0);
 		CreateInfoPage(0);
 	}
+	m_checkListPluginsList->SetFocus();
 }
 
 void PluginMgrDlg::OnItemSelected(wxCommandEvent &event)

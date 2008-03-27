@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LiteEditor Revision="1235">
+<LiteEditor Revision="1236">
   <Layout>
     <Notebook Name="Editor" Style="751292"/>
-    <Perspective Name="Default" Value="layout2|name=Output;caption=Output;state=2115580;dir=3;layer=1;row=0;pos=0;prop=100000;bestw=-1;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Workspace;caption=Workspace;state=2099196;dir=2;layer=1;row=0;pos=0;prop=100000;bestw=250;besth=400;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger;caption=Debugger;state=2099198;dir=3;layer=1;row=0;pos=1;prop=100000;bestw=400;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Editor;caption=;state=256;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Standard Toolbar;caption=Standard;state=2108156;dir=1;layer=10;row=0;pos=489;prop=100000;bestw=606;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Search Toolbar;caption=Search;state=2108156;dir=1;layer=10;row=0;pos=246;prop=100000;bestw=234;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Build Toolbar;caption=Build;state=2108156;dir=1;layer=10;row=1;pos=243;prop=100000;bestw=198;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger Toolbar;caption=Debug;state=2108156;dir=1;layer=10;row=1;pos=0;prop=100000;bestw=234;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Navigation Toolbar;caption=Navigation Toolbar;state=2108156;dir=1;layer=10;row=1;pos=450;prop=100000;bestw=806;besth=30;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=356;floaty=339;floatw=823;floath=54|name=Cscope;caption=Cscope;state=2108156;dir=1;layer=10;row=0;pos=123;prop=100000;bestw=114;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Gizmos;caption=Gizmos;state=2108156;dir=1;layer=10;row=0;pos=0;prop=100000;bestw=114;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(3,1,0)=287|dock_size(2,1,0)=250|dock_size(5,0,0)=20|dock_size(1,10,0)=35|dock_size(1,10,1)=35|"/>
+    <Perspective Name="Default" Value="layout2|name=Output;caption=Output;state=2099196;dir=3;layer=1;row=0;pos=0;prop=100000;bestw=-1;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Workspace;caption=Workspace;state=2115580;dir=2;layer=2;row=0;pos=0;prop=100000;bestw=250;besth=400;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=1044;floaty=146;floatw=258;floath=424|name=Debugger;caption=Debugger;state=2099198;dir=3;layer=1;row=0;pos=1;prop=100000;bestw=400;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Editor;caption=;state=256;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Standard Toolbar;caption=Standard;state=2108156;dir=1;layer=10;row=0;pos=489;prop=100000;bestw=606;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Search Toolbar;caption=Search;state=2108156;dir=1;layer=10;row=0;pos=246;prop=100000;bestw=234;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Build Toolbar;caption=Build;state=2108156;dir=1;layer=10;row=1;pos=243;prop=100000;bestw=198;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger Toolbar;caption=Debug;state=2108156;dir=1;layer=10;row=1;pos=0;prop=100000;bestw=234;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Navigation Toolbar;caption=Navigation Toolbar;state=2108156;dir=1;layer=10;row=2;pos=0;prop=100000;bestw=806;besth=30;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Cscope;caption=Cscope;state=2108156;dir=1;layer=10;row=0;pos=123;prop=100000;bestw=114;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Gizmos;caption=Gizmos;state=2108156;dir=1;layer=10;row=0;pos=0;prop=100000;bestw=114;besth=35;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(3,1,0)=271|dock_size(5,0,0)=20|dock_size(1,10,0)=35|dock_size(1,10,1)=35|dock_size(1,10,2)=30|dock_size(2,2,0)=250|"/>
   </Layout>
-  <ArchiveObject Name="build_tab_settings">
-    <wxString Value="#FF0000" Name="m_errorColour"/>
-    <wxString Value="#CC7F32" Name="m_warnColour"/>
-    <wxString Value="#FFFFFF" Name="m_errorColourBg"/>
-    <wxString Value="#FFFFFF" Name="m_warnColourBg"/>
-    <bool Value="0" Name="m_skipWarnings"/>
-    <bool Value="1" Name="m_boldErrFont"/>
-    <bool Value="1" Name="m_boldWarnFont"/>
-  </ArchiveObject>
   <ArchiveObject Name="import_dir_options">
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileMask"/>
     <long Value="0" Name="m_flags"/>
@@ -78,6 +69,27 @@
     <long Value="0" Name="m_flags"/>
   </ArchiveObject>
   <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#DBDBF4" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="24"/>
+  <ArchiveObject Name="LoadSavedPrespective">
+    <long Value="1" Name="m_value"/>
+  </ArchiveObject>
+  <RecentWorkspaces>
+    <File Name="/home/eran/devl/test/test.workspace"/>
+    <File Name="/home/eran/devl/ZendLib/ZendLib.workspace"/>
+    <File Name="C:\TestArea\jin\a.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
+    <File Name="C:\TestArea\TestOne.workspace"/>
+  </RecentWorkspaces>
+  <ArchiveObject Name="build_tab_settings">
+    <wxString Value="#FF0000" Name="m_errorColour"/>
+    <wxString Value="#CC7F32" Name="m_warnColour"/>
+    <wxString Value="#FFFFFF" Name="m_errorColourBg"/>
+    <wxString Value="#FFFFFF" Name="m_warnColourBg"/>
+    <bool Value="0" Name="m_skipWarnings"/>
+    <bool Value="1" Name="m_boldErrFont"/>
+    <bool Value="1" Name="m_boldWarnFont"/>
+  </ArchiveObject>
   <RecentFiles>
     <File Name="C:\TestArea\main.cpp"/>
     <File Name="C:\MinGW\include\c++\3.4.5\cstdio"/>
@@ -89,18 +101,6 @@
     <File Name="/home/eran/devl/test/vim.h"/>
     <File Name="/home/eran/devl/test/anotherclass.cpp"/>
   </RecentFiles>
-  <ArchiveObject Name="LoadSavedPrespective">
-    <long Value="1" Name="m_value"/>
-  </ArchiveObject>
-  <RecentWorkspaces>
-    <File Name="C:\TestArea\TestOne.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\jin\a.workspace"/>
-    <File Name="/home/eran/devl/ZendLib/ZendLib.workspace"/>
-    <File Name="/home/eran/devl/test/test.workspace"/>
-  </RecentWorkspaces>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1280" y="950"/>
     <wxPoint Name="m_framePos" x="0" y="0"/>

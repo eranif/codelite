@@ -28,7 +28,9 @@ WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption)
 
 WorkspacePane::~WorkspacePane()
 {
-
+	for(size_t i=0; i< m_book->GetPageCount(); i++ ) {
+		m_book->DeletePage(0);
+	}
 }
 
 int WorkspacePane::CaptionToIndex(const wxString &caption)

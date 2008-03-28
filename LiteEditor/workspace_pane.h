@@ -62,6 +62,12 @@ public:
 	const wxString &GetCaption() const {return m_caption;}
 	wxComboBox *GetConfigCombBox();
 	FileExplorer *GetFileExplorer(){return m_explorer;}
+	
+	DECLARE_EVENT_TABLE()
+	virtual void OnEraseBg(wxEraseEvent &e);
+	virtual void OnPaint(wxPaintEvent &e);
+	virtual void OnSize(wxSizeEvent &e);
+	
 };
 
 #endif // WORKSPACE_PANE_H

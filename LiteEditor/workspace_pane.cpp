@@ -18,6 +18,12 @@ const wxString WorkspacePane::EXPLORER  	= wxT("Explorer");
 
 extern wxImageList* CreateSymbolTreeImages();
 
+BEGIN_EVENT_TABLE(WorkspacePane, wxPanel)
+	EVT_PAINT(WorkspacePane::OnPaint)
+	EVT_ERASE_BACKGROUND(WorkspacePane::OnEraseBg)
+	EVT_SIZE(WorkspacePane::OnSize)
+END_EVENT_TABLE()
+
 WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption)
 		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
 		, m_caption(caption)
@@ -46,22 +52,17 @@ void WorkspacePane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-//	long style = wxFNB_NO_X_BUTTON | wxFNB_DROPDOWN_TABS_LIST |  wxFNB_NO_NAV_BUTTONS | wxFNB_FF2 | wxFNB_BACKGROUND_GRADIENT | wxFNB_CUSTOM_DLG | wxFNB_TABS_BORDER_SIMPLE;
-//	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	m_book = new wxVerticalBook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT);
-	
-	//m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 
-	// Add the class view tree
-	m_winStack = new WindowStack(m_book, wxID_ANY); 
-	m_book->AddPage(m_winStack, WorkspacePane::SYMBOL_VIEW, wxNullBitmap, false);
-	
 	m_workspaceTab = new WorkspaceTab(this);
 	m_book->AddPage(m_workspaceTab, WorkspacePane::FILE_VIEW, wxNullBitmap, true);
 
 	m_explorer = new FileExplorer(m_book, wxT("Explorer"));
 	m_book->AddPage(m_explorer, WorkspacePane::EXPLORER, wxNullBitmap, false);
+	
+	m_winStack = new WindowStack(m_book, wxID_ANY); 
+	m_book->AddPage(m_winStack, WorkspacePane::SYMBOL_VIEW, wxNullBitmap, false);
 
 	m_openWindowsPane = new OpenWindowsPanel(m_book);
 	m_book->AddPage(m_openWindowsPane, WorkspacePane::OPEN_FILES, wxNullBitmap, false);
@@ -128,4 +129,26 @@ FileViewTree* WorkspacePane::GetFileViewTree()
 wxComboBox* WorkspacePane::GetConfigCombBox()
 {
 	return m_workspaceTab->GetComboBox();
+}
+
+void WorkspacePane::OnEraseBg(wxEraseEvent &e)
+{
+	wxUnusedVar(e);
+}
+
+void WorkspacePane::OnPaint(wxPaintEvent &e)
+{
+	wxUnusedVar(e);
+	wxBufferedPaintDC dc(this);
+	
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	
+	dc.DrawRectangle(GetClientSize());
+}
+
+void WorkspacePane::OnSize(wxSizeEvent &e)
+{
+	Refresh();
+	e.Skip();
 }

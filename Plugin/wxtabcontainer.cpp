@@ -186,13 +186,13 @@ void wxTabContainer::OnPaint(wxPaintEvent &e)
 	wxColour endColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 30);
 	DrawingUtils::PaintStraightGradientBox(dc, rr, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), endColour, false);
 	
+	int xx;
 	if(m_orientation == wxRIGHT) {
-		rr.x += 3;
-		rr.width -= 3;
+		xx = 3;
 	}else{
-		rr.width -= 3;
+		xx = rr.GetWidth() - 4;
 	}
-	dc.DrawRectangle(rr);
+	dc.DrawLine(xx, 0, xx, rr.GetHeight());
 }
 
 void wxTabContainer::OnEraseBg(wxEraseEvent &)
@@ -202,8 +202,8 @@ void wxTabContainer::OnEraseBg(wxEraseEvent &)
 
 void wxTabContainer::OnSizeEvent(wxSizeEvent &e)
 {
-	wxUnusedVar(e);
 	Refresh();
+	e.Skip();
 }
 
 void wxTabContainer::SetOrientation(const int& orientation)

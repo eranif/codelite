@@ -48,6 +48,7 @@
 #include "openwindowspanel.h"
 #include "threadlistpanel.h"
 #include "plugin.h"
+#include "wxverticalbook.h"
 
 #if defined (__WXMSW__)
 static wxString CL_EXEC_WRAPPER = wxT("le_exec.exe ");
@@ -793,7 +794,7 @@ void Manager::ShowWorkspacePane(wxString focusWin, bool commit)
 	// set the selection to focus win
 	WorkspacePane *pane = Frame::Get()->GetWorkspacePane();
 	int index = pane->CaptionToIndex(focusWin);
-	if ( index != wxNOT_FOUND && index != pane->GetNotebook()->GetSelection()) {
+	if ( index != wxNOT_FOUND && (size_t)index != pane->GetNotebook()->GetSelection()) {
 		pane->GetNotebook()->SetSelection((size_t)index);
 	}
 }

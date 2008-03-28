@@ -52,13 +52,14 @@
 #include "pluginmanager.h"
 #include "wx/dir.h"
 #include "exelocator.h"
-#include "builder.h"
+#include "builder.h" 
 #include "buildmanager.h"
 #include "debuggerconfigtool.h"
 #include "openwindowspanel.h"
 #include "workspace_pane.h"
 #include "globals.h"
 #include "fileexplorer.h"
+#include "wxverticalbook.h"
 
 #ifdef __WXGTK20__
 #include <gtk-2.0/gtk/gtk.h>
@@ -347,7 +348,8 @@ Frame* Frame::Get()
 
 		//time to create the file explorer
 		m_theFrame->GetFileExplorer()->Scan();
-
+		
+		m_theFrame->GetWorkspacePane()->GetNotebook()->SetAuiManager( &m_theFrame->GetDockingManager(), wxT("Workspace") );
 		//load last session?
 		if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION) {
 			m_theFrame->LoadSession(wxT("Default"));
@@ -516,10 +518,10 @@ void Frame::CreateGUIControls(void)
 		m_outputPane->GetNotebook()->SetWindowStyleFlag(book_style);
 	}
 
-	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("WorkspacePane"));
-	if (book_style != wxNOT_FOUND) {
-		m_workspacePane->GetNotebook()->SetWindowStyleFlag(book_style);
-	}
+//	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("WorkspacePane"));
+//	if (book_style != wxNOT_FOUND) {
+//		m_workspacePane->GetNotebook()->SetWindowStyleFlag(book_style);
+//	}
 
 	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("DebuggerPane"));
 	if (book_style != wxNOT_FOUND) {
@@ -944,7 +946,7 @@ void Frame::OnClose(wxCloseEvent& event)
 	EditorConfigST::Get()->SavePerspective(wxT("Default"), m_mgr.SavePerspective());
 	EditorConfigST::Get()->SaveNotebookStyle(wxT("Editor"), GetNotebook()->GetWindowStyleFlag());
 	EditorConfigST::Get()->SaveNotebookStyle(wxT("OutputPane"), m_outputPane->GetNotebook()->GetWindowStyleFlag());
-	EditorConfigST::Get()->SaveNotebookStyle(wxT("WorkspacePane"), m_workspacePane->GetNotebook()->GetWindowStyleFlag());
+//	EditorConfigST::Get()->SaveNotebookStyle(wxT("WorkspacePane"), m_workspacePane->GetNotebook()->GetWindowStyleFlag());
 	EditorConfigST::Get()->SaveNotebookStyle(wxT("DebuggerPane"), m_debuggerPane->GetNotebook()->GetWindowStyleFlag());
 	EditorConfigST::Get()->SaveLexers();
 

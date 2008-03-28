@@ -121,6 +121,16 @@
       <File Name="open_type_dlg.h"/>
       <File Name="open_type_dlg.cpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="VerticalBook">
+      <File Name="wxverticaltab.h"/>
+      <File Name="wxtabcontainer.cpp"/>
+      <File Name="wxtabcontainer.h"/>
+      <File Name="wxverticalbook.cpp"/>
+      <File Name="wxverticalbook.h"/>
+      <File Name="wxverticaltab.cpp"/>
+      <File Name="drawingutils.h"/>
+      <File Name="drawingutils.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Static Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">

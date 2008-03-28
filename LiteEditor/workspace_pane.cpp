@@ -1,4 +1,5 @@
 #include "workspace_pane.h"
+#include "wxverticalbook.h"
 #include "fileview.h"
 #include "cpp_symbol_tree.h"
 #include <wx/xrc/xmlres.h>
@@ -32,9 +33,9 @@ WorkspacePane::~WorkspacePane()
 
 int WorkspacePane::CaptionToIndex(const wxString &caption)
 {
-	int i = 0;
+	size_t i = 0;
 	for (; i<m_book->GetPageCount(); i++) {
-		if (m_book->GetPageText((size_t)i) == caption)
+		if (m_book->GetPageText(i) == caption)
 			return i;
 	}
 	return wxNOT_FOUND;
@@ -45,24 +46,25 @@ void WorkspacePane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	long style = wxFNB_NO_X_BUTTON | wxFNB_DROPDOWN_TABS_LIST |  wxFNB_NO_NAV_BUTTONS | wxFNB_FF2 | wxFNB_BACKGROUND_GRADIENT | wxFNB_CUSTOM_DLG | wxFNB_TABS_BORDER_SIMPLE;
-	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+//	long style = wxFNB_NO_X_BUTTON | wxFNB_DROPDOWN_TABS_LIST |  wxFNB_NO_NAV_BUTTONS | wxFNB_FF2 | wxFNB_BACKGROUND_GRADIENT | wxFNB_CUSTOM_DLG | wxFNB_TABS_BORDER_SIMPLE;
+//	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+	m_book = new wxVerticalBook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT);
 	
-	m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK);
+	//m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 
 	// Add the class view tree
 	m_winStack = new WindowStack(m_book, wxID_ANY); 
-	m_book->AddPage(m_winStack, WorkspacePane::SYMBOL_VIEW, false);
+	m_book->AddPage(m_winStack, WorkspacePane::SYMBOL_VIEW, wxNullBitmap, false);
 	
 	m_workspaceTab = new WorkspaceTab(this);
-	m_book->AddPage(m_workspaceTab, WorkspacePane::FILE_VIEW, true);
+	m_book->AddPage(m_workspaceTab, WorkspacePane::FILE_VIEW, wxNullBitmap, true);
 
 	m_explorer = new FileExplorer(m_book, wxT("Explorer"));
-	m_book->AddPage(m_explorer, WorkspacePane::EXPLORER, false);
+	m_book->AddPage(m_explorer, WorkspacePane::EXPLORER, wxNullBitmap, false);
 
 	m_openWindowsPane = new OpenWindowsPanel(m_book);
-	m_book->AddPage(m_openWindowsPane, WorkspacePane::OPEN_FILES, false);
+	m_book->AddPage(m_openWindowsPane, WorkspacePane::OPEN_FILES, wxNullBitmap, false);
 }
 
 CppSymbolTree *WorkspacePane::GetTreeByFilename(const wxFileName &filename)

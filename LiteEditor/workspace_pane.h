@@ -14,6 +14,7 @@ class OpenWindowsPanel;
 class wxComboBox;
 class FileExplorer;
 class WorkspaceTab;
+class wxVerticalBook;
 
 class WorkspacePane : public wxPanel 
 {
@@ -23,7 +24,7 @@ public:
 	static const wxString OPEN_FILES;
 	static const wxString EXPLORER;
 	
-	wxFlatNotebook *m_book;
+	wxVerticalBook *m_book;
 	wxString m_caption;
 	wxFlatNotebookImageList m_images;
 	WindowStack *m_winStack;
@@ -54,7 +55,7 @@ public:
 	//-----------------------------------------------
 	// Setters/Getters
 	//-----------------------------------------------
-	wxFlatNotebook *GetNotebook() { return m_book; }
+	wxVerticalBook *GetNotebook() { return m_book; }
 	SymbolTree *GetSymbolTree();
 	FileViewTree *GetFileViewTree();
 	OpenWindowsPanel *GetOpenedWindows() {return m_openWindowsPane;}

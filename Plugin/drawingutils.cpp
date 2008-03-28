@@ -103,7 +103,7 @@ void DrawingUtils::DrawButton(wxDC& dc,
                               const bool &upperTabs,
                               bool vertical   )
 {
-	wxColour lightGray = LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 30);
+	wxColour lightGray = LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 40);
 
 	// Define the rounded rectangle base on the given rect
 	// we need an array of 9 points for it

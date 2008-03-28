@@ -84,7 +84,7 @@ void wxTabContainer::SetSelection(wxVerticalTab *tab, bool notify)
 		return;
 	}
 	
-	size_t oldSel;
+	size_t oldSel((size_t)-1);;
 	if(notify) {
 		//send event to noitfy that the page is changing
 		oldSel = TabToIndex( GetSelection() );

@@ -67,12 +67,12 @@ void SvnDriver::SelectSvnTab()
 {
 	wxFlatNotebook *book = m_manager->GetOutputPaneNotebook();
 	wxString curSel = book->GetPageText((size_t)book->GetSelection());
-	if (curSel == wxT("SVN")) {
+	if (curSel == wxT("Subversion")) {
 		return;
 	}
 
 	for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
-		if (book->GetPageText(i) == wxT("SVN")) {
+		if (book->GetPageText(i) == wxT("Subversion")) {
 			book->SetSelection(i);
 			break;
 		}

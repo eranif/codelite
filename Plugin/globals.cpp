@@ -8,6 +8,8 @@
 #include "wx/ffile.h"
 #include "procutils.h"
 
+static wxString DoExpandAllVariables(const wxString &expression, const wxString &projectName, const wxString &fileName);
+
 void SendCmdEvent(int eventId, void *clientData)
 {
 	wxCommandEvent e(eventId);
@@ -125,6 +127,55 @@ bool IsValidCppFile(const wxString &id)
 // This functions accepts expression and expand all variables in it
 wxString ExpandAllVariables(const wxString &expression, const wxString &projectName, const wxString &fileName)
 {
+	//add support for backticks commands
+	wxString tmpExp;
+	wxString noBackticksExpression;
+	for(size_t i=0; i< expression.Length(); i++) {
+		if(expression.GetChar(i) == wxT('`')){
+			//found a backtick, loop over until we found the closing backtick
+			wxString backtick;
+			bool found(false);
+			i++;
+			for(; i< expression.Length(); i++){
+				if(expression.GetChar(i) == wxT('`')){
+					found = true;
+					i++;
+					break;
+				}
+				backtick << expression.GetChar(i);
+			}
+			
+			if (!found) {
+				//dont replace anything
+				wxLogMessage(wxT("Syntax error in expression: ") + expression + wxT(": expecting '`'"));
+				return expression;
+			} else {
+				//expand the backtick statement
+				wxString expandedBacktick = DoExpandAllVariables(backtick, projectName, fileName);
+				
+				//execute the backtick
+				wxArrayString output;
+				ProcUtils::SafeExecuteCommand(expandedBacktick, output);
+				
+				//concatenate the array into space delimited string
+				backtick.Clear();
+				for(size_t xx=0; xx < output.GetCount(); xx++){
+					backtick << output.Item(xx).Trim().Trim(false) << wxT(" ");
+				}
+				
+				//and finally concatente the result of the backtick command back to the expression
+				tmpExp << backtick;
+			}
+		}else{
+			tmpExp << expression.GetChar(i);
+		}
+	}
+	
+	return DoExpandAllVariables(tmpExp, projectName, fileName);
+}
+
+wxString DoExpandAllVariables(const wxString &expression, const wxString &projectName, const wxString &fileName)
+{
 	wxString errMsg;
 	wxString output(expression);
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(projectName, errMsg);
@@ -154,6 +205,5 @@ wxString ExpandAllVariables(const wxString &expression, const wxString &projectN
 	
 	//call the environment & workspace variables expand function
 	output = WorkspaceST::Get()->ExpandVariables(output);
-	return output;
+	return output;	
 }
-

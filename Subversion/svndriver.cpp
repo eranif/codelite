@@ -634,7 +634,7 @@ void SvnDriver::PrintMessage(const wxString &text)
 	wxFlatNotebook *book = m_manager->GetOutputPaneNotebook();
 	wxTextCtrl *svnWin (NULL);
 	for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
-		if (book->GetPageText(i) == wxT("SVN")) {
+		if (book->GetPageText(i) == wxT("Subversion")) {
 			svnWin = dynamic_cast<wxTextCtrl*>(book->GetPage(i));
 			break;
 		}

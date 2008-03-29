@@ -325,7 +325,7 @@
             <label>&amp;Debug</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="start_debugger">
-                <label>S&amp;tart\tF5</label>
+                <label>S&amp;tart/Continue Debugger\tF5</label>
             </object>
             <object class="wxMenuItem" name="attach_debugger">
                 <label>&amp;Attach to process...</label>

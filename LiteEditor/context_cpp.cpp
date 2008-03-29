@@ -1847,8 +1847,8 @@ void ContextCpp::AutoAddComment()
 		int prevLine = line - 1;
 
 		if (rCtrl.GetLine(prevLine).Trim().Trim(false) == wxT("//")) {
-
 			//dont add new comment
+			ContextBase::AutoIndent(wxT('\n'));
 			return;
 		}
 

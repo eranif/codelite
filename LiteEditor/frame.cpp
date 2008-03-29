@@ -2144,7 +2144,14 @@ void Frame::OnDebug(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	Manager *mgr = ManagerST::Get();
-	if (mgr->IsWorkspaceOpen()) {
+	
+ 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if(dbgr && dbgr->IsRunning()) {
+		//debugger is already running -> probably a continue command
+		mgr->DbgStart();
+	}
+	else if(mgr->IsWorkspaceOpen()) {
+		//debugger is not running, but workspace is opened -> start debug session
 		mgr->DbgStart();
 	}
 }

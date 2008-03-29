@@ -85,24 +85,24 @@
     <long Value="1" Name="m_value"/>
   </ArchiveObject>
   <RecentWorkspaces>
-    <File Name="C:\TestArea\TestOne.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\TestArea\jin\a.workspace"/>
-    <File Name="/home/eran/devl/ZendLib/ZendLib.workspace"/>
     <File Name="/home/eran/devl/test/test.workspace"/>
+    <File Name="/home/eran/devl/ZendLib/ZendLib.workspace"/>
+    <File Name="C:\TestArea\jin\a.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
+    <File Name="C:\TestArea\TestOne.workspace"/>
   </RecentWorkspaces>
   <RecentFiles>
-    <File Name="C:\TestArea\jin\Debug\c.o.d"/>
-    <File Name="C:\TestArea\jin\t1.mk"/>
-    <File Name="/home/eran/devl/test/anotherclass.h"/>
-    <File Name="/home/eran/devl/test/main.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\editor.cpp"/>
-    <File Name=".\svndriver.cpp.diff"/>
-    <File Name="C:\TestArea\jin\second_plugin.cpp"/>
-    <File Name="C:\TestArea\jin\second_plugin.h"/>
     <File Name="C:\TestArea\jin\c.cpp"/>
+    <File Name="C:\TestArea\jin\second_plugin.h"/>
+    <File Name="C:\TestArea\jin\second_plugin.cpp"/>
+    <File Name=".\svndriver.cpp.diff"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\editor.cpp"/>
+    <File Name="/home/eran/devl/test/main.cpp"/>
+    <File Name="/home/eran/devl/test/anotherclass.h"/>
+    <File Name="C:\TestArea\jin\t1.mk"/>
+    <File Name="C:\TestArea\jin\Debug\c.o.d"/>
   </RecentFiles>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="998"/>

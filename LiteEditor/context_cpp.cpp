@@ -821,8 +821,10 @@ void ContextCpp::CompleteWord()
 	if (IsCommentOrString(rCtrl.GetCurrentPos()))
 		return;
 
-	// get the word under the cursor
-	word = GetWordUnderCaret();
+	// Get the partial word that we have
+	long pos = rCtrl.GetCurrentPos();
+	long start = rCtrl.WordStartPosition(pos, true);
+	word = rCtrl.GetTextRange(start, pos);
 
 	if (word.IsEmpty())
 		return;

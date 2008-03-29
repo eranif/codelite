@@ -871,11 +871,11 @@ void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, cons
 
 		rCtrl.AutoCompSetSeparator((int)('@'));	// set the separator to be non valid language wxChar
 		rCtrl.AutoCompSetChooseSingle(true);					// If only one match, insert it automatically
-		rCtrl.AutoCompSetIgnoreCase(false);
+		//rCtrl.AutoCompSetIgnoreCase(false);
 		rCtrl.AutoCompSetDropRestOfWord(true);
 		rCtrl.AutoCompSetAutoHide(false);
 		rCtrl.AutoCompShow((int)word.Length(), list);
-		rCtrl.AutoCompSetFillUps(wxT("<( \t"));
+		rCtrl.AutoCompSetFillUps(wxT("<( \t\n"));
 	}
 }
 

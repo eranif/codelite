@@ -1,6 +1,7 @@
 #include "app.h"
 #include <wx/image.h>
 
+#include "xmlutils.h"
 #include "editor_config.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/sysopt.h>
@@ -139,6 +140,8 @@ bool App::OnInit()
 			homeDir = ::wxGetCwd();
 		}
 	}
+//	bool copyIt = CheckRevision(homeDir + wxT("/config/liteeditor.xml"));
+//	wxUnusedVar(copyIt);
 #endif
 
 	wxString curdir = wxGetCwd();
@@ -167,7 +170,7 @@ bool App::OnInit()
 
 	GeneralInfo inf;
 	cfg->ReadObject(wxT("GeneralInfo"), &inf);
-	
+
 	bool showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
 	if (showSplash) {
 		wxBitmap bitmap;
@@ -205,7 +208,7 @@ bool App::OnInit()
 	m_pMainFrame->Show(TRUE);
 	SetTopWindow(m_pMainFrame);
 
-	if( showSplash ) {
+	if ( showSplash ) {
 		m_splash->Close(true);
 		m_splash->Destroy();
 	}
@@ -229,7 +232,17 @@ int App::OnExit()
 
 void App::CopySettings(const wxString &destDir)
 {
-	if (!wxFileName::FileExists( destDir + wxT("/config/liteeditor.xml") )) {
+	bool fileExist = wxFileName::FileExists( destDir + wxT("/config/liteeditor.xml") );
+	bool copyAnyways(true);
+
+	if (fileExist) {
+		if(CheckRevision(destDir + wxT("/config/liteeditor.xml")) == true) {
+			//revision is ok
+			copyAnyways = false;
+		}
+	}
+
+	if ( !fileExist || copyAnyways ) {
 		//
 		// copy new settings from the global installation location which is currently located at
 		// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
@@ -298,4 +311,21 @@ void App::OnHideSplash(wxCommandEvent &e)
 	m_splash->Close(true);
 	m_splash->Destroy();
 	e.Skip();
+}
+
+bool App::CheckRevision(const wxString &fileName)
+{
+	wxXmlDocument doc;
+	doc.Load(fileName);
+	if (doc.IsOk()) {
+		wxXmlNode *root = doc.GetRoot();
+		if (root) {
+			wxString configRevision = XmlUtils::ReadString(root, wxT("Revision"));
+			wxString curRevision = _U(SvnRevision);
+			if (configRevision.Trim().Trim(false) == curRevision.Trim().Trim(false)) {
+				return true;
+			}
+		}
+	}
+	return false;
 }

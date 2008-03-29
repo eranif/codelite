@@ -11,6 +11,7 @@ private:
 	Frame *m_pMainFrame;
 	bool ReadControlFile(wxString &installPath, long &installRev);
 	void CopySettings(const wxString &installPath);
+	bool CheckRevision(const wxString &fileName);
 	
 public:
 	App(void);

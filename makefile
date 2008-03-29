@@ -101,7 +101,7 @@ sqlite_objects2 := $(addprefix $(SQLITE_OBJ_DIR)/, $(addsuffix .o, $(basename $(
 sqlite_objects = $(sqlite_objects1) $(sqlite_objects2) 
 
 ## our main build target
-build :  pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Debugger CodeFormatter Subversion ReferenceAnalyser Gizmos cscope
+build :  pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Debugger CodeFormatter Subversion ReferenceAnalyser Gizmos cscope post_build_msg
 
 CodeLite: code_lite_msg $(lib_cpp_objects) $(lib_c_objects)
 	ar rcu $(OUTPUT_DIR)/libcodelite$(EXT).a $(lib_cpp_objects)  $(lib_c_objects) 
@@ -249,6 +249,11 @@ wxFlatNotebook_msg:
 	@echo ----------------------------------------------------------
 	@echo Building wxFlatNotebook library
 	@echo ---------------------------------------------------------- 
+
+post_build_msg:
+	@echo ----------------------------------------------------------
+	@echo Done, please run \"sudo make type=$(type$) install\".
+	@echo ----------------------------------------------------------
 		
 clean:
 	$(RM) Debug_gcc/*.o Release_gcc/*.o Release_gcc_unicode/*. Debug_gcc_unicode/*.o lib/*.o lib/*.a

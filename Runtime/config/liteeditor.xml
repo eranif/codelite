@@ -7,15 +7,6 @@
     <Notebook Name="WorkspacePane" Style="738332"/>
     <Notebook Name="DebuggerPane" Style="738396"/>
   </Layout>
-  <ArchiveObject Name="build_tab_settings">
-    <wxString Value="#FF0000" Name="m_errorColour"/>
-    <wxString Value="#CC7F32" Name="m_warnColour"/>
-    <wxString Value="#FFFFFF" Name="m_errorColourBg"/>
-    <wxString Value="#FFFFFF" Name="m_warnColourBg"/>
-    <bool Value="0" Name="m_skipWarnings"/>
-    <bool Value="1" Name="m_boldErrFont"/>
-    <bool Value="1" Name="m_boldWarnFont"/>
-  </ArchiveObject>
   <ArchiveObject Name="import_dir_options">
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileMask"/>
     <long Value="0" Name="m_flags"/>
@@ -81,6 +72,15 @@
     <long Value="0" Name="m_flags"/>
   </ArchiveObject>
   <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#DBDBF4" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="24"/>
+  <ArchiveObject Name="build_tab_settings">
+    <wxString Value="#FF0000" Name="m_errorColour"/>
+    <wxString Value="#CC7F32" Name="m_warnColour"/>
+    <wxString Value="#FFFFFF" Name="m_errorColourBg"/>
+    <wxString Value="#FFFFFF" Name="m_warnColourBg"/>
+    <bool Value="0" Name="m_skipWarnings"/>
+    <bool Value="1" Name="m_boldErrFont"/>
+    <bool Value="1" Name="m_boldWarnFont"/>
+  </ArchiveObject>
   <ArchiveObject Name="LoadSavedPrespective">
     <long Value="1" Name="m_value"/>
   </ArchiveObject>
@@ -94,8 +94,8 @@
     <File Name="/home/eran/devl/test/test.workspace"/>
   </RecentWorkspaces>
   <RecentFiles>
-    <File Name="C:\TestArea\jin\mytestplugin.cpp"/>
-    <File Name="C:\MinGW\include\c++\3.4.2\string"/>
+    <File Name="C:\TestArea\jin\Debug\c.o.d"/>
+    <File Name="C:\TestArea\jin\t1.mk"/>
     <File Name="/home/eran/devl/test/anotherclass.h"/>
     <File Name="/home/eran/devl/test/main.cpp"/>
     <File Name="C:\Development\C++\codelite\trunk\LiteEditor\editor.cpp"/>

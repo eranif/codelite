@@ -33,6 +33,7 @@
 	  <wxString Value="extern"/>   
 	  <wxString Value="DLLIMPORT"/>  
 	  <wxString Value="DECLARE_INSTANCE_TYPE"/>  
+	  <wxString Value="Q_REQUIRED_RESULT"/>  
     </wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">

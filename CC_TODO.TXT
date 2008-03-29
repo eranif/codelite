@@ -16,6 +16,8 @@
 - Fix : ExpandAllVariables() function to accept the workspace as pointer, othewise, this function is not 
   usable from plugins
 
+- implement auto add comment line when hitting enter
+- implement the `` functionality 
 
 
   

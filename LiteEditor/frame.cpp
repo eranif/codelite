@@ -52,7 +52,7 @@
 #include "pluginmanager.h"
 #include "wx/dir.h"
 #include "exelocator.h"
-#include "builder.h" 
+#include "builder.h"
 #include "buildmanager.h"
 #include "debuggerconfigtool.h"
 #include "openwindowspanel.h"
@@ -348,7 +348,7 @@ Frame* Frame::Get()
 
 		//time to create the file explorer
 		m_theFrame->GetFileExplorer()->Scan();
-		
+
 		m_theFrame->GetWorkspacePane()->GetNotebook()->SetAuiManager( &m_theFrame->GetDockingManager(), wxT("Workspace") );
 		//load last session?
 		if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION) {
@@ -410,7 +410,7 @@ void Frame::CreateGUIControls(void)
 	wxAuiPaneInfo paneInfo;
 	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output")).Caption(wxT("Output")).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton());
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output"));
-	
+
 	// Add the explorer pane
 	m_workspacePane = new WorkspacePane(this, wxT("Workspace"));
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
@@ -426,7 +426,7 @@ void Frame::CreateGUIControls(void)
 
 	// Create the notebook for all the files
 	long style =
-		wxFNB_TABS_BORDER_SIMPLE |
+	    wxFNB_TABS_BORDER_SIMPLE |
 	    wxFNB_NODRAG |
 	    wxFNB_FF2 |
 	    wxFNB_BACKGROUND_GRADIENT |
@@ -853,64 +853,37 @@ void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void Frame::DispatchCommandEvent(wxCommandEvent &event)
 {
-	wxWindow *win = wxWindow::FindFocus();
-	LEditor* editor(NULL);
-	if (!win) {
-		//do default behavior
-		editor = ManagerST::Get()->GetActiveEditor();
-	}else{
-		editor = dynamic_cast<LEditor*>(win);
-	}
-	
-	if (editor) {
-		if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
-			//keep the old id as int and override the value set in the event object
-			//to trick the event system
-			event.SetInt(event.GetId());
-			event.SetId(viewAsMenuItemID);
-		}
-		editor->OnMenuCommand(event);
+	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
+	if ( !editor ) {
 		return;
 	}
-
-	//the focused window is not the main editor
-	OutputTabWindow *tabWin = FindOutputTabWindowByPtr(win);
-
-	if (tabWin) {
-		tabWin->OnCommand(event);
-		return;
+	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
+		//keep the old id as int and override the value set in the event object
+		//to trick the event system
+		event.SetInt(event.GetId());
+		event.SetId(viewAsMenuItemID);
 	}
-	event.Skip();
+	editor->OnMenuCommand(event);
 }
 
 void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 {
-	wxWindow *win = wxWindow::FindFocus();
-	if (!win) {
+	if ( GetNotebook()->GetPageCount() == 0 ) {
 		event.Enable(false);
-		return;
+ 		return;
+ 	}
+	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
+	if ( !editor ) {
+		event.Enable(false);
+			return;
+ 	}
+	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
+		//keep the old id as int and override the value set in the event object
+		//to trick the event system
+		event.SetInt(event.GetId());
+		event.SetId(viewAsMenuItemID);
 	}
-
-	LEditor* editor = dynamic_cast<LEditor*>(win);
-	if (editor) {
-		if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
-			//keep the old id as int and override the value set in the event object
-			//to trick the event system
-			event.SetInt(event.GetId());
-			event.SetId(viewAsMenuItemID);
-		}
-		editor->OnUpdateUI(event);
-		return;
-	}
-
-	//the focused window is not the main editor
-	OutputTabWindow *tabWin = FindOutputTabWindowByPtr(win);
-
-	if (tabWin) {
-		tabWin->OnUpdateUI(event);
-		return;
-	}
-	event.Enable(false);
+	editor->OnUpdateUI(event);
 }
 
 void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event)
@@ -2344,7 +2317,7 @@ void Frame::OnShowWelcomePage(wxCommandEvent &event)
 void Frame::LoadPlugins()
 {
 	PluginManager::Get()->Load();
-	
+
 	//after the plugin are loaded, it is time to load the saved
 	//perspective
 	long loadIt(1);
@@ -2702,11 +2675,11 @@ void Frame::OnCopyFilePathOnly(wxCommandEvent &event)
 
 void Frame::OnWorkspaceMenuUI(wxUpdateUIEvent &e)
 {
-	if(ManagerST::Get()->IsWorkspaceOpen() == false) {
+	if (ManagerST::Get()->IsWorkspaceOpen() == false) {
 		e.Enable(false);
 		return;
 	}
-	if(ManagerST::Get()->IsBuildInProgress()) {
+	if (ManagerST::Get()->IsBuildInProgress()) {
 		e.Enable(false);
 		return;
 	}
@@ -2716,7 +2689,7 @@ void Frame::OnWorkspaceMenuUI(wxUpdateUIEvent &e)
 void Frame::OnManagePlugins(wxCommandEvent &e)
 {
 	PluginMgrDlg *dlg = new PluginMgrDlg(this);
-	if(dlg->ShowModal() == wxID_OK) {
+	if (dlg->ShowModal() == wxID_OK) {
 		wxMessageBox(wxT("Changes will take place after restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 	}
 	dlg->Destroy();

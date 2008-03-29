@@ -68,6 +68,7 @@ public:
 	virtual void AutoIndent(const wxChar&);
 	virtual void CallTipCancel();
 	virtual	bool IsCommentOrString(long pos);
+	virtual	bool IsComment(long pos);
 	virtual void AddMenuDynamicContent(wxMenu *menu);
 	virtual void RemoveMenuDynamicContent(wxMenu *menu);
 	virtual void ApplySettings();
@@ -83,6 +84,7 @@ public:
 	virtual void OnCallTipClick(wxScintillaEvent &event);
 	virtual void OnSciUpdateUI(wxScintillaEvent &event);
 	virtual void OnFileSaved();
+	virtual void AutoAddComment();
 	
 	//Capture menu events
 	//return this context specific right click menu

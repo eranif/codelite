@@ -1,0 +1,113 @@
+#!/bin/sh
+
+rm -fr ./Makefile
+configuration="\$(OBJ_DIR)"
+exe_name="Runtime/\$(EXE_NAME)"
+createObjectList ()
+{
+	files_list=$1
+	object_list_name=$2
+	
+	echo "${object_list_name} = \\"  >> Makefile
+	for a_file in $files_list
+	do
+		a_file_no_ext=`basename $a_file .cxx`
+		a_file_no_ext=`basename $a_file_no_ext .cpp`
+		a_file_no_ext=`basename $a_file_no_ext .c`
+		echo "\t${configuration}/${a_file_no_ext}.o\\" >> Makefile
+	done
+	echo >> Makefile
+}
+
+# create list of files for scintilla
+createRules_archive ()
+{
+	files_list=$1
+	object_list_name=$2
+	rule_name=$3
+	libname=$4
+	for a_file in $files_list
+	do 
+
+		a_file_with_ext=`basename $a_file`
+		a_file_no_ext=`basename $a_file .cxx`
+		a_file_no_ext=`basename $a_file_no_ext .cpp`
+		a_file_no_ext=`basename $a_file_no_ext .c`
+		file_extension=`basename $a_file | cut -d. -f2`
+		
+		if [ "$file_extension" = "c" ]; then
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		else
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		fi
+	done
+	echo >> Makefile
+	
+	echo "${rule_name}: \$(${object_list_name})" >> Makefile
+	echo "\tar rcu \$(OUTPUT_DIR)/lib${libname}\$(EXT).a \$(${object_list_name})" >> Makefile
+	echo "\tranlib \$(OUTPUT_DIR)/lib${libname}\$(EXT).a " >> Makefile
+	echo >> Makefile
+}
+
+createRules_exe ()
+{
+	files_list=$1
+	object_list_name=$2
+	rule_name=$3
+	exename=$4
+	for a_file in $files_list
+	do 
+
+		a_file_with_ext=`basename $a_file`
+		a_file_no_ext=`basename $a_file .cxx`
+		a_file_no_ext=`basename $a_file_no_ext .cpp`
+		a_file_no_ext=`basename $a_file_no_ext .c`
+		file_extension=`basename $a_file | cut -d. -f2`
+		
+		if [ "$file_extension" = "c" ]; then
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		else
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		fi
+	done
+	echo >> Makefile
+	
+	echo "${rule_name}: \$(${object_list_name})" >> Makefile
+	echo "\t\$(CMP) -o ${exename} \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
+	echo >> Makefile
+}
+
+## main
+## Create the variables needed by the makefile
+createObjectList "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects"
+createObjectList "CodeLite/*.cpp" "CodeLiteObjects"
+createObjectList "LiteEditor/*.cpp" "LiteEditorObjects"
+createObjectList "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects"
+createObjectList "Plugin/*.cpp" "SDKObjects"
+
+## append the content of the makefile.base to the generated makefile
+cat makefile.base >> Makefile
+echo >> Makefile
+
+## Create the rules
+createRules_archive "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects" "Scintilla" "wxscintilla"
+createRules_archive "CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "codelite"
+createRules_archive "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "wxsqlite3"
+createRules_archive "Plugin/*.cpp " "SDKObjects" "SDK" "plugin"
+createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
+
+echo "-include \$(OBJ_DIR)/*.d" >> Makefile
+echo "" >> Makefile
+

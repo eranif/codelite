@@ -299,7 +299,6 @@ createInstallTarget()
 	echo "\t@echo installing CodeLite" >> Makefile
 	echo "\t@\$(RM) -fr  /usr/local/bin/CodeLite" >> Makefile
 	echo "\t@\$(RM) -fr  /usr/local/share/codelite" >> Makefile
-	echo "\t@echo copying \$(EXE_NAME) to /usr/local/bin/" >> Makefile
 	echo "\t@mkdir -p /usr/local/bin" >> Makefile
 	echo "\t@cp \$(EXE_NAME) /usr/local/bin/" >> Makefile
 	echo "\t@ln -s /usr/local/bin/\$(EXE_NAME_NO_PATH) /usr/local/bin/CodeLite" >> Makefile
@@ -318,7 +317,6 @@ createInstallTarget()
 	echo "\t@mkdir -p /usr/local/share/codelite/images" >> Makefile
 	echo "\t@mkdir -p /usr/local/share/codelite/rc" >> Makefile
 	echo "\t@mkdir -p /usr/local/share/codelite/lexers" >> Makefile
-	echo "\t\$(RM) -fr \$(HOME)/.codelite/" >> Makefile
 	echo "\t@cp -fr Runtime/config/*.xml /usr/local/share/codelite/config/" >> Makefile
 	echo "\t@cp -fr Runtime/config/liteeditor.xml.sample /usr/local/share/codelite/config/liteeditor.xml" >> Makefile
 	echo "\t@cp -fpr Runtime/rc/*.xrc /usr/local/share/codelite/rc/" >> Makefile
@@ -335,6 +333,8 @@ createInstallTarget()
 	echo "\t@cp -fpr Runtime/astyle.sample /usr/local/share/codelite/" >> Makefile
 	echo "\t@cp -fpr Runtime/svnreport.html /usr/local/share/codelite/" >> Makefile
 	echo "\t@cp -fpr Runtime/images/*.png /usr/local/share/codelite/images/" >> Makefile
+	echo "\t@cp -fpr Runtime/codelite.desktop /usr/share/applications/" >> Makefile
+	echo "\t@cp -fpr Runtime/codelite.desktop ~/Desktop/" >> Makefile
 	echo "\t@chmod -R 777 /usr/local/share/codelite" >> Makefile
 	echo "\t@chmod +x /usr/local/bin/CodeLite" >> Makefile
 	echo "" >> Makefile

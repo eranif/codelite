@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=0.9
+Name=CodeLite
+Comment=An Open Source IDE for C/C++
+TryExec=CodeLite
+Exec=CodeLite %f
+Icon=/usr/local/share/codelite/images/cubes.png
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Categories=Development;
+StartupNotify=true

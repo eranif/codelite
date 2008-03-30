@@ -298,36 +298,22 @@ install: upgrade
 	@mkdir -p /usr/local/share/codelite/rc
 	@mkdir -p /usr/local/share/codelite/lexers
 	@echo Deleting old settings...
-	$(RM) $(HOME)/.liteeditor/debuggers/Debugger.so
-	$(RM) $(HOME)/.liteeditor/plugins/CodeFormatter.so
-	$(RM) $(HOME)/.liteeditor/plugins/Gizmos.so
-	$(RM) $(HOME)/.liteeditor/plugins/ReferenceAnalyser.so
-	$(RM) $(HOME)/.liteeditor/plugins/Subversion.so
-	$(RM) $(HOME)/.liteeditor/plugins/cscope.so
-	$(RM) $(HOME)/.liteeditor/config/build_settings.xml
-	$(RM) $(HOME)/.liteeditor/config/debuggers.xml
-	$(RM) $(HOME)/.liteeditor/config/liteeditor.xml
-	$(RM) $(HOME)/.liteeditor/rc/menu.xrc
-	$(RM) $(HOME)/.liteeditor/astyle.sample
+	$(RM) -fr $(HOME)/.liteeditor/debuggers/*.so
+	$(RM) -fr $(HOME)/.liteeditor/plugins/*.so
+	$(RM) -fr $(HOME)/.liteeditor/config/*
+	$(RM) -fr $(HOME)/.liteeditor/rc/menu.xrc
+	$(RM) -fr $(HOME)/.liteeditor/astyle.sample
 	@echo Copying new settings...
-	@\cp -pr Runtime/config/build_settings.xml /usr/local/share/codelite/config/build_settings.xml
-	@\cp -pr Runtime/config/debuggers.xml /usr/local/share/codelite/config/debuggers.xml
-	@\cp -pr Runtime/config/liteeditor.xml.sample /usr/local/share/codelite/config/liteeditor.xml
-	@\cp -pr Runtime/rc/menu.xrc /usr/local/share/codelite/rc/
-	@\cp -pr Runtime/templates/*.project /usr/local/share/codelite/templates/
-	@\cp -pr Runtime/templates/*.wizard /usr/local/share/codelite/templates/
-	@\cp -pr Runtime/lexers/*.xml /usr/local/share/codelite/lexers/
-	@\cp -pr lib/Debugger.so /usr/local/share/codelite/debuggers/
-	@\cp -pr lib/CodeFormatter.so /usr/local/share/codelite/plugins/
-	@\cp -pr lib/Subversion.so /usr/local/share/codelite/plugins/
-	@\cp -pr lib/ReferenceAnalyser.so /usr/local/share/codelite/plugins/
-	@\cp -pr lib/ReferenceAnalyser.so /usr/local/share/codelite/plugins/
-	@\cp -pr lib/cscope.so /usr/local/share/codelite/plugins/
-	@\cp -pr lib/Gizmos.so /usr/local/share/codelite/plugins/
-	@\cp -pr Runtime/index.html /usr/local/share/codelite/
-	@\cp -pr Runtime/astyle.sample /usr/local/share/codelite/
-	@\cp -pr Runtime/svnreport.html /usr/local/share/codelite/
-	@\cp -pr Runtime/images/*.png /usr/local/share/codelite/images/
+	@\cp -fpr Runtime/config/*.xml /usr/local/share/codelite/config/
+	@\cp -fpr Runtime/config/liteeditor.xml.sample /usr/local/share/codelite/config/liteeditor.xml
+	@\cp -fpr Runtime/rc/*.xrc /usr/local/share/codelite/rc/
+	@\cp -fpr Runtime/templates/*.project /usr/local/share/codelite/templates/
+	@\cp -fpr Runtime/templates/*.wizard /usr/local/share/codelite/templates/
+	@\cp -fpr Runtime/lexers/*.xml /usr/local/share/codelite/lexers/
+	@\cp -fpr Runtime/index.html /usr/local/share/codelite/
+	@\cp -fpr Runtime/astyle.sample /usr/local/share/codelite/
+	@\cp -fpr Runtime/svnreport.html /usr/local/share/codelite/
+	@\cp -fpr Runtime/images/*.png /usr/local/share/codelite/images/
 	@chmod -R 777 /usr/local/share/codelite
 	@chmod +x /usr/local/bin/CodeLite
 	@echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

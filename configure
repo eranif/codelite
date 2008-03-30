@@ -1,8 +1,126 @@
 #!/bin/sh
 
-rm -fr ./Makefile
-configuration="\$(OBJ_DIR)"
-exe_name="Runtime/\$(EXE_NAME)"
+########################################################
+## This file is part of CodeLite project and 
+## it is realeased under the terms of GPLv2 or later
+## Copyrights Eran Ifrah (c) 2008
+########################################################
+
+createRevisionFile()
+{
+	file_exist=`test -f LiteEditor/svninfo.cpp`
+	file_exist=$?
+
+	cur_rev=`svn info | grep Revision | awk '{print $2;}'`
+	if [ $file_exist -eq 1 ] 
+	then
+		## file does not exist, create an empty file
+		touch LiteEditor/svninfo.cpp
+	fi
+	src_rev=`cat LiteEditor/svninfo.cpp | awk '{print $4;}' | sed s/\"//g | sed s/\;//g`
+
+	if [ "$src_rev" != "$cur_rev" ]; then
+		## generate the svninfo file again
+		\cp /dev/null LiteEditor/svninfo.cpp
+		echo "char *SvnRevision = \"${cur_rev}\";" >> LiteEditor/svninfo.cpp
+		echo "" >> LiteEditor/svninfo.cpp
+		echo "Generating svninfo file..."
+	fi
+	chmod +x ./le_makerevision.sh
+}
+
+createVariables()
+{
+	## set the compiler name 
+	compiler_name="g++ "
+	c_compiler_name="gcc "
+	exe_name="Runtime/CodeLite"
+	exe_name1="CodeLite"
+	is_plugin=$1
+	if [ "$arch" = "x86_64" ]; then
+		compiler_name=${compiler_name} "-fPIC "
+		c_compiler_name=${compiler_name} "-fPIC "
+	fi
+
+	## set the executable name
+	if [ "$enable_debug" = "yes" ]; then
+		exe_name=${exe_name}"UD"
+		exe_name1=${exe_name1}"UD"
+		objects_dir="Debug_gcc_unicode"
+		configuration="Debug_gcc_unicode"
+		debug_flag=" -g "
+		ext=ud
+		optimization=" -DREGEXP_UNICODE "
+		wxcfg="--unicode=yes --debug=yes"
+	else
+		exe_name=${exe_name}"UR"
+		exe_name1=${exe_name1}"UR"
+		objects_dir="Release_gcc_unicode"
+		configuration="Release_gcc_unicode"
+		ext=u
+		debug_flag=""
+		optimization=" -O3 -DREGEXP_UNICODE "
+		wxcfg="\"--unicode=yes --debug=no\""
+	fi
+
+	echo "CMP=${compiler_name}" >> Makefile
+	echo "GCC=${c_compiler_name}" >> Makefile
+	echo "EXE_NAME=${exe_name}" >> Makefile
+	echo "EXE_NAME_NO_PATH=${exe_name1}" >> Makefile
+	echo "OBJ_DIR=${objects_dir}" >> Makefile
+	echo "OPT=${optimization}" >> Makefile
+	echo "DEBUG=${debug_flag}" >> Makefile
+	echo "EXT=${ext}" >> Makefile
+	echo "OUTPUT_DIR=lib" >> Makefile
+	echo "WXCFG=${wxcfg}" >> Makefile
+	echo "" >> Makefile
+	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ " >> Makefile
+	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lwxflatnotebook\$(EXT) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
+	echo "\t-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
+	echo "INCLUDES = -I. -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include	 -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite -I${base_dir}/sdk/wxflatnotebook/include" >> Makefile 
+
+	if [ "$is_plugin" = "no" ]; then
+		echo "INCLUDES := \$(INCLUDES) -ILiteEditor " >> Makefile 
+	fi
+
+	echo "" >> Makefile
+	if [ "$os_name" = "Linux" ]; then
+		echo "INCLUDES := \$(INCLUDES) \$(shell pkg-config --cflags gtk+-2.0)" >> Makefile
+		echo "LINK_FLAGS := \$(LINK_FLAGS) \$(shell pkg-config --libs gtk+-2.0)" >> Makefile
+	
+	fi
+	echo "" >> Makefile
+	echo "" >> Makefile
+}
+
+createMainTargets()
+{
+	echo "## build tagrets" >> Makefile
+	echo "all :  pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Plugins" >> Makefile
+	echo "" >> Makefile
+
+	echo "ctags: sdk/ctags/Makefile" >> Makefile
+	echo "\tcd sdk/ctags/ && \$(MAKE)" >> Makefile
+	echo "" >> Makefile
+
+	echo "sdk/ctags/Makefile:" >> Makefile
+	echo "\t@chmod +x sdk/ctags/configure" >> Makefile
+	echo "\tcd sdk/ctags && ./cofigure" >> Makefile 
+	echo "" >> Makefile
+
+	echo "pre_build:" >> Makefile
+	echo "\t./le_makerevision.sh" >> Makefile
+	echo "\ttest -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
+	echo "\ttest -d  \$(OUTPUT_DIR) || mkdir \$(OUTPUT_DIR)" >> Makefile
+	echo "" >> Makefile
+
+	echo "clean: clean_plugins" >> Makefile
+	echo "\t\$(RM) \$(OUTPUT_DIR)/*.a \$(OUTPUT_DIR)/*.so" >> Makefile
+	echo "\t\$(RM) -fr \$(OBJ_DIR)" >> Makefile
+	echo "" >> Makefile
+
+}
+
 createObjectList ()
 {
 	files_list=$1
@@ -55,6 +173,39 @@ createRules_archive ()
 	echo >> Makefile
 }
 
+createRules_sharedObject ()
+{
+	files_list=$1
+	object_list_name=$2
+	rule_name=$3
+	libname=$4
+	for a_file in $files_list
+	do 
+
+		a_file_with_ext=`basename $a_file`
+		a_file_no_ext=`basename $a_file .cxx`
+		a_file_no_ext=`basename $a_file_no_ext .cpp`
+		a_file_no_ext=`basename $a_file_no_ext .c`
+		file_extension=`basename $a_file | cut -d. -f2`
+		
+		if [ "$file_extension" = "c" ]; then
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		else
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		fi
+	done
+	echo >> Makefile
+	
+	echo "${rule_name}: \$(${object_list_name})" >> Makefile
+	echo "\t\$(CMP) -shared -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
+	echo >> Makefile
+}
 createRules_exe ()
 {
 	files_list=$1
@@ -89,16 +240,136 @@ createRules_exe ()
 	echo >> Makefile
 }
 
+createPluginMakefile()
+{
+	plugin_path=$1
+	plugin_name=$2
+	
+	echo "Generating ${plugin_path}/Makefile..."
+	current_wd=`pwd`
+	cd ${plugin_path}
+	
+	## remove old Makefile
+	rm -fr Makefile
+	
+	## set the plugin path relative to the main path
+	base_dir=".."
+
+	createVariables "yes"
+	createObjectList "*.cpp" "${plugin_name}Objects"
+	createPluginTargets "${plugin_name}"	
+	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}"
+
+	## restore the path
+	cd ${current_wd}
+	
+	echo ".PHONY: ${plugin_name}" >> Makefile
+	echo "${plugin_name}:" >> Makefile
+	echo "\tcd ${plugin_path} && \$(MAKE) -f Makefile" >> Makefile
+	echo "" >> Makefile
+
+	echo "${plugin_name}_clean:" >> Makefile
+	echo "\tcd ${plugin_path} && \$(MAKE) -f Makefile clean" >> Makefile
+	echo "" >> Makefile
+}
+
+createPluginTargets()
+{
+	plugin_name=$1
+	echo "## build tagrets" >> Makefile
+	echo "all :  pre_build ${plugin_name}" >> Makefile
+	echo "" >> Makefile
+	echo "pre_build:" >> Makefile
+	echo "\t@echo =================================================" >> Makefile
+	echo "\t@echo Building target ${plugin_name}" >> Makefile
+	echo "\t@echo =================================================" >> Makefile
+	echo "\ttest -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
+	echo "\ttest -d  ${base_dir}/\$(OUTPUT_DIR) || mkdir ${base_dir}/\$(OUTPUT_DIR)" >> Makefile
+	echo "" >> Makefile
+	echo "clean:" >> Makefile
+	echo "\t\$(RM) ${base_dir}/\$(OUTPUT_DIR)/${plugin_name}.so" >> Makefile
+	echo "\t\$(RM) -fr \$(OBJ_DIR)" >> Makefile
+	echo "" >> Makefile
+
+}
+
+createInstallTarget()
+{
+	echo "install: " >> Makefile
+	echo "\t@echo installing CodeLite" >> Makefile
+	echo "\t@\$(RM) -fr  /usr/local/bin/CodeLite" >> Makefile
+	echo "\t@\$(RM) -fr  /usr/local/share/codelite" >> Makefile
+	echo "\t@echo copying \$(EXE_NAME) to /usr/local/bin/" >> Makefile
+	echo "\t@mkdir -p /usr/local/bin" >> Makefile
+	echo "\t@cp \$(EXE_NAME) /usr/local/bin/" >> Makefile
+	echo "\t@ln -s /usr/local/bin/\$(EXE_NAME_NO_PATH) /usr/local/bin/CodeLite" >> Makefile
+	echo "\t@cp Runtime/le_dos2unix.sh /usr/local/bin/" >> Makefile
+	echo "\t@cp Runtime/le_exec.sh /usr/local/bin/" >> Makefile
+	echo "\t@cp Runtime/le_killproc.sh /usr/local/bin/" >> Makefile
+	echo "\t@chmod +x /usr/local/bin/le_dos2unix.sh" >> Makefile
+	echo "\t@chmod +x /usr/local/bin/le_exec.sh" >> Makefile
+	echo "\t@chmod +x /usr/local/bin/le_killproc.sh" >> Makefile
+	echo "\t@cp sdk/ctags/ctags-le /usr/local/bin/" >> Makefile
+	echo "\t@mkdir -p /usr/local/share/codelite" >> Makefile
+	echo "\t@mkdir -p /usr/local/share/codelite/config" >> Makefile
+	echo "\t@mkdir -p /usr/local/share/codelite/debuggers" >> Makefile
+	echo "\t@mkdir -p /usr/local/share/codelite/templates" >> Makefile
+	echo "\t@mkdir -p /usr/local/share/codelite/plugins" >> Makefile
+	echo "\t@mkdir -p /usr/local/share/codelite/images" >> Makefile
+	echo "\t@mkdir -p /usr/local/share/codelite/rc" >> Makefile
+	echo "\t@mkdir -p /usr/local/share/codelite/lexers" >> Makefile
+	echo "\t\$(RM) -fr \$(HOME)/.codelite/" >> Makefile
+	echo "\t@cp -fr Runtime/config/*.xml /usr/local/share/codelite/config/" >> Makefile
+	echo "\t@cp -fr Runtime/config/liteeditor.xml.sample /usr/local/share/codelite/config/liteeditor.xml" >> Makefile
+	echo "\t@cp -fpr Runtime/rc/*.xrc /usr/local/share/codelite/rc/" >> Makefile
+	echo "\t@cp -fpr Runtime/templates/*.project /usr/local/share/codelite/templates/" >> Makefile
+	echo "\t@cp -fpr Runtime/templates/*.wizard /usr/local/share/codelite/templates/" >> Makefile
+	echo "\t@cp -fpr Runtime/lexers/*.xml /usr/local/share/codelite/lexers/" >> Makefile
+	echo "\t@cp -fpr lib/Debugger.so /usr/local/share/codelite/debuggers/" >> Makefile
+	echo "\t@cp -fpr lib/CodeFormatter.so /usr/local/share/codelite/plugins/" >> Makefile
+	echo "\t@cp -fpr lib/Subversion.so /usr/local/share/codelite/plugins/" >> Makefile
+	echo "\t@cp -fpr lib/ReferenceAnalyser.so /usr/local/share/codelite/plugins/" >> Makefile
+	echo "\t@cp -fpr lib/cscope.so /usr/local/share/codelite/plugins/" >> Makefile
+	echo "\t@cp -fpr lib/Gizmos.so /usr/local/share/codelite/plugins/" >> Makefile
+	echo "\t@cp -fpr Runtime/index.html /usr/local/share/codelite/" >> Makefile
+	echo "\t@cp -fpr Runtime/astyle.sample /usr/local/share/codelite/" >> Makefile
+	echo "\t@cp -fpr Runtime/svnreport.html /usr/local/share/codelite/" >> Makefile
+	echo "\t@cp -fpr Runtime/images/*.png /usr/local/share/codelite/images/" >> Makefile
+	echo "\t@chmod -R 777 /usr/local/share/codelite" >> Makefile
+	echo "\t@chmod +x /usr/local/bin/CodeLite" >> Makefile
+	echo "" >> Makefile
+}
+
 ## main
-## Create the variables needed by the makefile
+
+## Create variables needed by the makefile
+enable_debug="no"
+os_name=`uname -s`
+arch=`uname -m`
+
+if [ "$1" = "--enable-debug" ]; then
+	enable_debug="yes"
+fi
+
+## remove old makefile
+makefile_name="Makefile"
+base_dir="."
+rm -fr ./Makefile
+
+## Create revision file
+createRevisionFile
+echo "Generating Makefile..."
+createVariables "no"
+
+## Create the various object lists
 createObjectList "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects"
+createObjectList "sdk/wxflatnotebook/src/wxFlatNotebook/*.cpp " "wxFlatNotebookObjects" 
 createObjectList "CodeLite/*.cpp" "CodeLiteObjects"
 createObjectList "LiteEditor/*.cpp" "LiteEditorObjects"
 createObjectList "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects"
 createObjectList "Plugin/*.cpp" "SDKObjects"
 
-## append the content of the makefile.base to the generated makefile
-cat makefile.base >> Makefile
+createMainTargets
 echo >> Makefile
 
 ## Create the rules
@@ -106,8 +377,56 @@ createRules_archive "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src
 createRules_archive "CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "codelite"
 createRules_archive "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "wxsqlite3"
 createRules_archive "Plugin/*.cpp " "SDKObjects" "SDK" "plugin"
+createRules_archive "sdk/wxflatnotebook/src/wxFlatNotebook/*.cpp " "wxFlatNotebookObjects" "wxFlatNotebook" "wxflatnotebook"
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
+createInstallTarget
 
 echo "-include \$(OBJ_DIR)/*.d" >> Makefile
 echo "" >> Makefile
+
+echo "Plugins:\\" >> Makefile
+
+########################################################
+##
+## !Add here any plugin target you need
+## append ourself as dependencie for the main project
+##
+########################################################
+echo "Debugger\\" >> Makefile
+echo "Gizmos\\" >> Makefile
+echo "cscope\\" >> Makefile
+echo "Subversion\\" >> Makefile
+echo "CodeFormatter\\" >> Makefile
+echo "ReferenceAnalyser\\" >> Makefile
+echo "" >> Makefile
+
+echo "clean_plugins:\\" >> Makefile
+########################################################
+##
+## For any plugin you add, add here entry for the clean
+##
+########################################################
+echo "Debugger_clean\\" >> Makefile
+echo "Gizmos_clean\\" >> Makefile
+echo "cscope_clean\\" >> Makefile
+echo "Subversion_clean\\" >> Makefile
+echo "CodeFormatter_clean\\" >> Makefile
+echo "ReferenceAnalyser_clean\\" >> Makefile
+echo "" >> Makefile
+
+########################################################
+##
+## add here plugins
+## createPluginMakefile <plugin path> <plugin name>
+##
+########################################################
+
+createPluginMakefile "Debugger" "Debugger"
+createPluginMakefile "Gizmos" "Gizmos"  
+createPluginMakefile "cscope" "cscope"
+createPluginMakefile "Subversion" "Subversion"
+createPluginMakefile "CodeFormatter" "CodeFormatter"
+createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser"
+
+
 

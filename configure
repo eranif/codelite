@@ -96,7 +96,7 @@ createVariables()
 createMainTargets()
 {
 	echo "## build tagrets" >> Makefile
-	echo "all :  pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Plugins" >> Makefile
+	echo "all :  pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Plugins post_build_msg" >> Makefile
 	echo "" >> Makefile
 
 	echo "ctags: sdk/ctags/Makefile" >> Makefile
@@ -340,6 +340,14 @@ createInstallTarget()
 	echo "" >> Makefile
 }
 
+createEndMessage() 
+{
+	echo "post_build_msg:" >> Makefile
+        echo "\t@echo ==========================================================" >> Makefile
+        echo "\t@echo Done, please run \"sudo make install\"." >> Makefile
+        echo "\t@echo ==========================================================" >> Makefile
+}
+
 ## main
 
 ## Create variables needed by the makefile
@@ -383,6 +391,8 @@ createInstallTarget
 
 echo "-include \$(OBJ_DIR)/*.d" >> Makefile
 echo "" >> Makefile
+
+createEndMessage
 
 echo "Plugins:\\" >> Makefile
 

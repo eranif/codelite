@@ -2,7 +2,7 @@
 
 ########################################################
 ## This file is part of CodeLite project and 
-## it is realeased under the terms of GPLv2 or later
+## it is released under the terms of GPLv2 or later
 ## Copyrights Eran Ifrah (c) 2008
 ########################################################
 
@@ -388,8 +388,8 @@ echo "Plugins:\\" >> Makefile
 
 ########################################################
 ##
-## !Add here any plugin target you need
-## append ourself as dependencie for the main project
+## Add any plugin targets you need here
+## Append these as dependencie for the main project
 ##
 ########################################################
 echo "Debugger\\" >> Makefile
@@ -403,7 +403,7 @@ echo "" >> Makefile
 echo "clean_plugins:\\" >> Makefile
 ########################################################
 ##
-## For any plugin you add, add here entry for the clean
+## For all plugins you add, add an entry here for 'clean'
 ##
 ########################################################
 echo "Debugger_clean\\" >> Makefile
@@ -416,7 +416,7 @@ echo "" >> Makefile
 
 ########################################################
 ##
-## add here plugins
+## add plugins here
 ## createPluginMakefile <plugin path> <plugin name>
 ##
 ########################################################

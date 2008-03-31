@@ -77,7 +77,7 @@ createVariables()
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ " >> Makefile
 	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lwxflatnotebook\$(EXT) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
 	echo "\t-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
-	echo "INCLUDES = -I. -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include	 -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite -I${base_dir}/sdk/wxflatnotebook/include" >> Makefile 
+	
 
 	if [ "$is_plugin" = "no" ]; then
 		echo "INCLUDES := \$(INCLUDES) -ILiteEditor " >> Makefile 
@@ -86,8 +86,8 @@ createVariables()
 	if [ "$os_name" = "Linux" ]; then
 		echo "INCLUDES := \$(INCLUDES) \$(shell pkg-config --cflags gtk+-2.0)" >> Makefile
 		echo "LINK_FLAGS := \$(LINK_FLAGS) \$(shell pkg-config --libs gtk+-2.0)" >> Makefile
-	
 	fi
+	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include	 -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite -I${base_dir}/sdk/wxflatnotebook/include" >> Makefile 
 	echo "" >> Makefile
 	echo "" >> Makefile
 }

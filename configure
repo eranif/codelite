@@ -82,7 +82,6 @@ createVariables()
 	if [ "$is_plugin" = "no" ]; then
 		echo "INCLUDES := \$(INCLUDES) -ILiteEditor " >> Makefile 
 	fi
-
 	echo "" >> Makefile
 	if [ "$os_name" = "Linux" ]; then
 		echo "INCLUDES := \$(INCLUDES) \$(shell pkg-config --cflags gtk+-2.0)" >> Makefile
@@ -202,10 +201,16 @@ createRules_sharedObject ()
 	done
 	echo >> Makefile
 	
+	shared_obj_switch=" -shared "
+	if [ "$os_name" = "Darwin" ]; then
+		shared_obj_switch=" -dynamiclib "
+	fi
+	
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
-	echo "\t\$(CMP) -shared -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
+	echo "\t\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
 	echo >> Makefile
 }
+
 createRules_exe ()
 {
 	files_list=$1

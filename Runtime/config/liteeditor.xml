@@ -96,17 +96,17 @@
     <long Value="1" Name="m_value"/>
   </ArchiveObject>
   <RecentWorkspaces>
-    <File Name="/home/eran/devl/test/test.workspace"/>
-    <File Name="/home/eran/devl/ZendLib/ZendLib.workspace"/>
-    <File Name="C:\TestArea\jin\a.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
     <File Name="C:\TestArea\TestOne.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
+    <File Name="/home/eran/devl/codelite/trunk/LiteEditor.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\jin\a.workspace"/>
+    <File Name="/home/eran/devl/ZendLib/ZendLib.workspace"/>
+    <File Name="/home/eran/devl/test/test.workspace"/>
   </RecentWorkspaces>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="998"/>
     <wxPoint Name="m_framePos" x="-4" y="-4"/>
-    <long Value="141" Name="m_flags"/>
+    <long Value="143" Name="m_flags"/>
   </ArchiveObject>
 </LiteEditor>

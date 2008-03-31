@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Lexer Name="Script" Id="62">
-  <KeyWords>echo cp rm ls chmod if then fi done touch for in do while switch else cd pwd  cat mkdir rmdir grep awk print printf xargs find</KeyWords>
+  <KeyWords>echo cp rm ls chmod if then fi done touch for in do while switch else cd pwd  cat mkdir rmdir grep awk print printf xargs find mv gzip tar bzip zip gunzip</KeyWords>
   <Extensions>*.bash;*.sh;.tcsh;.bashrc;*.ksh;configure</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Size="9"/>

@@ -90,7 +90,9 @@ void ReplaceInFilesPanel::AddResults(SearchResultList *res)
 
 	wxString msg;
 	for (; iter != res->end(); iter++) {
-		m_listBox1->Append((*iter).GetMessage());
+		msg = (*iter).GetMessage();
+		msg = msg.Trim().Trim(false);
+		m_listBox1->Append(msg);
 	}
 
 	m_listBox1->Thaw();

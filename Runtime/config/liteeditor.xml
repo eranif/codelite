@@ -75,14 +75,10 @@
     <bool Value="1" Name="m_boldErrFont"/>
     <bool Value="1" Name="m_boldWarnFont"/>
   </ArchiveObject>
-  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#DBDBF4" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="24"/>
-  <ArchiveObject Name="GeneralInfo">
-    <wxSize Name="m_frameSize" x="1288" y="998"/>
-    <wxPoint Name="m_framePos" x="-4" y="-4"/>
-    <long Value="143" Name="m_flags"/>
-  </ArchiveObject>
-  <ArchiveObject Name="LoadSavedPrespective">
-    <long Value="1" Name="m_value"/>
+  <ArchiveObject Name="SubversionOptions">
+    <long Value="15" Name="m_flags"/>
+    <wxString Value="svn" Name="m_exePath"/>
+    <wxString Value="*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;" Name="m_pattern"/>
   </ArchiveObject>
   <RecentWorkspaces>
     <File Name="C:\TestArea\TestOne.workspace"/>
@@ -94,7 +90,6 @@
     <File Name="/home/eran/devl/test/test.workspace"/>
   </RecentWorkspaces>
   <RecentFiles>
-    <File Name="/home/eran/devl/test/main.cpp"/>
     <File Name="C:\Development\C++\codelite\trunk\LiteEditor\editor.cpp"/>
     <File Name=".\svndriver.cpp.diff"/>
     <File Name="C:\TestArea\jin\second_plugin.cpp"/>
@@ -103,10 +98,15 @@
     <File Name="C:\Development\C++\codelite\trunk\configure"/>
     <File Name="C:\Development\C++\codelite\trunk\le_makerevision.sh"/>
     <File Name="C:\Development\C++\codelite\trunk\Runtime\make_mac_bundle.sh"/>
+    <File Name="C:\boot.ini"/>
   </RecentFiles>
-  <ArchiveObject Name="SubversionOptions">
-    <long Value="15" Name="m_flags"/>
-    <wxString Value="svn" Name="m_exePath"/>
-    <wxString Value="*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;" Name="m_pattern"/>
+  <ArchiveObject Name="LoadSavedPrespective">
+    <long Value="1" Name="m_value"/>
+  </ArchiveObject>
+  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Simple" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#0C85DE" BookmarkFgColour="#42A9F4" HighlightCaretLine="yes" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#DBDBF4" CaretColour="#000000" IndentUsesTabs="yes" ToolbarIconSize="24"/>
+  <ArchiveObject Name="GeneralInfo">
+    <wxSize Name="m_frameSize" x="1288" y="998"/>
+    <wxPoint Name="m_framePos" x="-4" y="-4"/>
+    <long Value="143" Name="m_flags"/>
   </ArchiveObject>
 </LiteEditor>

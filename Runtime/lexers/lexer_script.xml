@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Lexer Name="Script" Id="62">
-  <KeyWords>echo cp rm ls chmod if then fi done touch for in do while switch else cd pwd
- cat mkdir rmdir grep awk print printf xargs find</KeyWords>
+  <KeyWords>echo cp rm ls chmod if then fi done touch for in do while switch else cd pwd  cat mkdir rmdir grep awk print printf xargs find</KeyWords>
   <Extensions>*.bash;*.sh;.tcsh;.bashrc;*.ksh;configure</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Size="9"/>
@@ -18,7 +17,7 @@
     <Property Id="11" Name="Backticks" Bold="no" Face="" Colour="#800000" BgColour="#FFD7AE" Size="9"/>
     <Property Id="12" Name="Here Delimiter" Bold="no" Face="" Colour="red" BgColour="#FFFFFF" Size="9"/>
     <Property Id="13" Name="Here Q" Bold="no" Face="" Colour="red" BgColour="#FFFFFF" Size="9"/>
-	<Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Size="9"/>
     <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#FF0000" Size="9"/>
-</Properties>
+  </Properties>
 </Lexer>

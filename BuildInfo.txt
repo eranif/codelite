@@ -1,54 +1,27 @@
 //--------------------------------------------
-// g++ on Linux
+// Linux
 //--------------------------------------------
-The Linux build uses the makefile named: makefile.linux.
-
-To build CodeLite with the g++ on Linux, follow the following steps:
-0. make sure you have downloaded and installed wxWidgets
-(http://www.wxwidgets.org)
-1. make sure you have 'make' utility somewhere in your path
-2. make sure you have wx-config somewhere in your path, if not build it
-from sdk,
-   it is required for the makefile
-
-debug:
- make -f makefile.linux type=debug [clean]
-
-debug unicode:
- make -f makefile.linux type=debug_unicode [clean]
-
-release:
- make -f makefile.linux type=release [clean]
-
-release unicode:
- make -f makefile.linux type=release_unicode [clean]
-
-//--------------------------------------------
-// g++ / MinGW / wxWidgets static library (Windows)
-//--------------------------------------------
-
-Before you build it using LE, make sure you have the following:
-1. Define a build system in LE Build->Advance Settings (set to your make.exe and set flag to '-f')
-2. Define two compilers: gnu g++ & gnu gcc (use the default compiler settings when pressing the 'New' Button, excpet for gcc rename 
-   the compiler name from g++ to gcc
-   
-To build with mingw, I suggest downloading one of the nightly build of LiteEditor,
-open trunk/LiteEditor.workspace - and hit 'Ctrl+B'
+The build for Linux uses the default Linux build:
 
 
-//----------------------------------------------
-// VC71
-//----------------------------------------------
+from the trunk/ directory, run:
 
-1. Open the provided workspace (CodeLite.sln)
-2. Select the requested configuration 
-3. Hit F7 :)
+./configure
+make -f Makefile
+sudo make -f Makefile install
 
---------------------------------------------------------------------------
-Notes:
---------------------------------------------------------------------------
- - When building with VC71, will need sqlite3.dll, so set the working directory to 'Runtime' dir
- other builds methods uses sqlite3 as static library
+
+//-----------------------------------------------------
+// Windows: MinGW 
+//-----------------------------------------------------
+
+The following are required prior building codelite using CodeLite:
+1. wxWidgets (2.8 or later) in Unicode Shared installed on your machine 
+2. wx-config somewhere in yout path
+3. MinGW + WinAPI for MinGW (gcc compiler 3.4.5 or later)
+
+To build: Download CodeLite for Windows (can be downloaded from here: http://codelite.org),
+open the file trunk/LiteEditor.workspace - and hit 'F7'
    
 Enjoy,
 Eran

@@ -1,22 +1,7 @@
 #!/bin/sh
 echo "Running postinst step..."
 \rm -f ${HOME}/.codelite/config/liteeditor.xml
-echo "Creating menu entry for CodeLite..."
-file_name=/usr/share/applications/codelite.desktop
-\rm -f ${file_name}
-
-echo "[Desktop Entry]" >> ${file_name}
-echo "Version=0.9" >> ${file_name}
-echo "Name=CodeLite" >> ${file_name}
-echo "Comment=An Open Source IDE for C/C++" >> ${file_name}
-echo "TryExec=CodeLite" >> ${file_name}
-echo "Exec=CodeLite %f" >> ${file_name}
-echo "Icon=/usr/local/share/codelite/images/cubes.png" >> ${file_name}
-echo "Terminal=false" >> ${file_name}
-echo "X-MultipleArgs=false" >> ${file_name}
-echo "Type=Application" >> ${file_name}
-echo "Categories=Development;" >> ${file_name}
-echo "StartupNotify=true" >> ${file_name}
-cp ${file_name} ~/Desktop/
+echo "Creating desktop shortcut for CodeLite..."
+cp /usr/share/applications/codelite.desktop ~/Desktop/
 echo "Done"
 

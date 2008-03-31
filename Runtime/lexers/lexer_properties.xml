@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Lexer Name="Properties" Id="9">
   <KeyWords></KeyWords>
-  <Extensions>*.ini;*.properties</Extensions>
+  <Extensions>*.ini;*.properties;*.desktop</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="black" BgColour="#FFFFFF" Size="9"/>
     <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>

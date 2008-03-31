@@ -14,7 +14,7 @@ wxTabNavigatorWindow::wxTabNavigatorWindow(wxWindow* parent)
 , m_selectedItem(-1)
 , m_panel(NULL)
 {
-	Create(NULL);
+	Create(parent);
 	GetSizer()->Fit(this);
 	GetSizer()->SetSizeHints(this);
 	GetSizer()->Layout();

@@ -191,6 +191,7 @@ bool App::OnInit()
 	//       Horizontal dimension has to take into account the thin
 	//       hilighting border around the dialog (2 points in
 	//       Win 95).
+	Frame::Initialize( parser.GetParamCount() == 0 );
 	m_pMainFrame = Frame::Get();
 
 	// Center the dialog when first shown
@@ -219,7 +220,12 @@ bool App::OnInit()
 		//convert to full path and open it
 		wxFileName fn(argument);
 		fn.MakeAbsolute(curdir);
-		ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString);
+		
+		if(fn.GetExt() == wxT("workspace")) {
+			ManagerST::Get()->OpenWorkspace(fn.GetFullPath());
+		}else{
+			ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString);
+		}
 	}
 
 	return TRUE;

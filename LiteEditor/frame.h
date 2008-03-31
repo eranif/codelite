@@ -64,6 +64,8 @@ class Frame : public wxFrame
 public:		
 	// the access method to the singleton frame is by using the Get method
 	static Frame* Get();
+	static void Initialize(bool loadLastSession);
+	
 	virtual ~Frame(void);
 	
 	void SetFrameFlag(bool set, int flag);

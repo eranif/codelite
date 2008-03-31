@@ -311,50 +311,52 @@ Frame::~Frame(void)
 	//#endif
 }
 
+void Frame::Initialize(bool loadLastSession)
+{
+	//set the revision number in the frame title
+	wxString title(wxT("CodeLite - Revision: "));
+	title << _U(SvnRevision);
+
+	//initialize the environment variable configuration manager
+	EnvironmentConfig::Instance()->Load();
+
+	EditorConfig *cfg = EditorConfigST::Get();
+	GeneralInfo inf;
+	cfg->ReadObject(wxT("GeneralInfo"), &inf);
+	m_theFrame = new Frame(	NULL,
+	                        wxID_ANY,
+	                        title,
+	                        inf.GetFramePosition(),
+	                        inf.GetFrameSize(),
+	                        wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
+
+	m_theFrame->m_frameGeneralInfo = inf;
+	m_theFrame->Maximize(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME ? true : false);
+
+	// upgrade: change all .db files under the startup directory to be
+	// .tags
+	m_theFrame->UpgradeExternalDbExt();
+
+	//add the welcome page
+	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_SHOW_WELCOME_PAGE) {
+		m_theFrame->CreateWelcomePage();
+	}
+
+	//plugins must be loaded before the file explorer
+	m_theFrame->LoadPlugins();
+
+	//time to create the file explorer
+	m_theFrame->GetFileExplorer()->Scan();
+
+	m_theFrame->GetWorkspacePane()->GetNotebook()->SetAuiManager( &m_theFrame->GetDockingManager(), wxT("Workspace") );
+	//load last session?
+	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
+		m_theFrame->LoadSession(wxT("Default"));
+	}
+}
+
 Frame* Frame::Get()
 {
-	if ( !m_theFrame ) {
-		//set the revision number in the frame title
-		wxString title(wxT("CodeLite - Revision: "));
-		title << _U(SvnRevision);
-
-		//initialize the environment variable configuration manager
-		EnvironmentConfig::Instance()->Load();
-
-		EditorConfig *cfg = EditorConfigST::Get();
-		GeneralInfo inf;
-		cfg->ReadObject(wxT("GeneralInfo"), &inf);
-		m_theFrame = new Frame(	NULL,
-		                        wxID_ANY,
-		                        title,
-		                        inf.GetFramePosition(),
-		                        inf.GetFrameSize(),
-		                        wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
-
-		m_theFrame->m_frameGeneralInfo = inf;
-		m_theFrame->Maximize(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME ? true : false);
-
-		// upgrade: change all .db files under the startup directory to be
-		// .tags
-		m_theFrame->UpgradeExternalDbExt();
-
-		//add the welcome page
-		if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_SHOW_WELCOME_PAGE) {
-			m_theFrame->CreateWelcomePage();
-		}
-
-		//plugins must be loaded before the file explorer
-		m_theFrame->LoadPlugins();
-
-		//time to create the file explorer
-		m_theFrame->GetFileExplorer()->Scan();
-
-		m_theFrame->GetWorkspacePane()->GetNotebook()->SetAuiManager( &m_theFrame->GetDockingManager(), wxT("Workspace") );
-		//load last session?
-		if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION) {
-			m_theFrame->LoadSession(wxT("Default"));
-		}
-	}
 	return m_theFrame;
 }
 
@@ -870,13 +872,13 @@ void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 {
 	if ( GetNotebook()->GetPageCount() == 0 ) {
 		event.Enable(false);
- 		return;
- 	}
+		return;
+	}
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
 	if ( !editor ) {
 		event.Enable(false);
-			return;
- 	}
+		return;
+	}
 	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
 		//keep the old id as int and override the value set in the event object
 		//to trick the event system
@@ -2144,13 +2146,12 @@ void Frame::OnDebug(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	Manager *mgr = ManagerST::Get();
-	
- 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if(dbgr && dbgr->IsRunning()) {
+
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if (dbgr && dbgr->IsRunning()) {
 		//debugger is already running -> probably a continue command
 		mgr->DbgStart();
-	}
-	else if(mgr->IsWorkspaceOpen()) {
+	} else if (mgr->IsWorkspaceOpen()) {
 		//debugger is not running, but workspace is opened -> start debug session
 		mgr->DbgStart();
 	}

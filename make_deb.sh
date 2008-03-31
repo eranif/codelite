@@ -22,6 +22,7 @@ mkdir -p fakeroot/usr/local/share/codelite/plugins
 mkdir -p fakeroot/usr/local/share/codelite/images
 mkdir -p fakeroot/usr/local/share/codelite/rc
 mkdir -p fakeroot/usr/local/share/codelite/lexers
+mkdir -p fakeroot/usr/share/applications/
 \cp -pr Runtime/config/build_settings.xml fakeroot/usr/local/share/codelite/config/build_settings.xml
 \cp -pr Runtime/config/debuggers.xml fakeroot/usr/local/share/codelite/config/debuggers.xml
 \cp -pr Runtime/config/liteeditor.xml.sample fakeroot/usr/local/share/codelite/config/liteeditor.xml
@@ -29,6 +30,7 @@ mkdir -p fakeroot/usr/local/share/codelite/lexers
 \cp -pr Runtime/templates/*.project fakeroot/usr/local/share/codelite/templates/
 \cp -pr Runtime/templates/*.wizard fakeroot/usr/local/share/codelite/templates/
 \cp -pr Runtime/lexers/*.xml fakeroot/usr/local/share/codelite/lexers/
+\cp -pr Runtime/codelite.desktop fakeroot/usr/share/applications/
 \cp -pr static-symbols.tags fakeroot/usr/local/share/codelite/
 \cp -pr lib/Debugger.so fakeroot/usr/local/share/codelite/debuggers/
 \cp -pr lib/CodeFormatter.so fakeroot/usr/local/share/codelite/plugins/

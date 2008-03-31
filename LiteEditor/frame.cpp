@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "replaceinfilespanel.h"
 #include "pluginmgrdlg.h"
 #include "wx/clipbrd.h"
 #include "wx/numdlg.h"
@@ -269,6 +270,7 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 		, m_findInFilesDlg(NULL)
 		, m_buildInRun(false)
 		, m_rebuild(false)
+		, m_doingReplaceInFiles(false)
 {
 #if  defined(__WXGTK20__)
 	// A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -1288,38 +1290,60 @@ void Frame::ClosePage(LEditor *editor, bool notify, int index, bool doDelete, bo
 
 void Frame::OnSearchThread(wxCommandEvent &event)
 {
-	m_outputPane->GetFindResultsTab()->CanFocus(false);
-	if ( event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
-		SearchResultList *res = (SearchResultList*)event.GetClientData();
-		SearchResultList::iterator iter = res->begin();
+	if (m_doingReplaceInFiles) {
+		//Incase this flag is on, it means that the find in files dialog
+		//was invoked with 'find replace candidates
+		//which requires different handling code
 
-		wxString msg;
-		for (; iter != res->end(); iter++) {
-			msg.Append((*iter).GetMessage() + wxT("\n"));
+		//the only event that reallty interesting us, is the match find
+		if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED || event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
+			m_doingReplaceInFiles = false;
+		}else if(event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND){
+			//add an entry to the replace panel
+			SearchResultList *res = (SearchResultList*)event.GetClientData();
+			
+			//res will be deleted by AddResult
+			GetOutputPane()->GetReplaceResultsTab()->AddResults(res);
+			
+		}else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
+			ManagerST::Get()->ShowOutputPane(OutputPane::REPLACE_IN_FILES);
+			GetOutputPane()->GetReplaceResultsTab()->Clear();
 		}
-		m_outputPane->GetFindResultsTab()->AppendText(msg);
-		delete res;
-	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
-		m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
-	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
-		// make sure that the output pane is visible and selection
-		// is set to the 'Find In Files' tab
-		ManagerST::Get()->ShowOutputPane(OutputPane::FIND_IN_FILES_WIN);
+	} else {
 
-		//set the request find results tab to use
-		GetOutputPane()->SetFindResultsTab(event.GetInt());
+		m_outputPane->GetFindResultsTab()->CanFocus(false);
+		if ( event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
+			SearchResultList *res = (SearchResultList*)event.GetClientData();
+			SearchResultList::iterator iter = res->begin();
 
-		m_outputPane->GetFindResultsTab()->Clear();
-		m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
+			wxString msg;
+			for (; iter != res->end(); iter++) {
+				msg.Append((*iter).GetMessage() + wxT("\n"));
+			}
+			m_outputPane->GetFindResultsTab()->AppendText(msg);
+			delete res;
+		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
+			m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
+		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
+			// make sure that the output pane is visible and selection
+			// is set to the 'Find In Files' tab
+			ManagerST::Get()->ShowOutputPane(OutputPane::FIND_IN_FILES_WIN);
 
-	} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
+			//set the request find results tab to use
+			GetOutputPane()->SetFindResultsTab(event.GetInt());
 
-		SearchSummary *summary = (SearchSummary*)event.GetClientData();
-		m_outputPane->GetFindResultsTab()->AppendText(summary->GetMessage() + wxT("\n"));
-		delete summary;
+			m_outputPane->GetFindResultsTab()->Clear();
+			m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
 
+		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
+
+			SearchSummary *summary = (SearchSummary*)event.GetClientData();
+			m_outputPane->GetFindResultsTab()->AppendText(summary->GetMessage() + wxT("\n"));
+			delete summary;
+
+		}
+		m_outputPane->GetFindResultsTab()->CanFocus(true);
 	}
-	m_outputPane->GetFindResultsTab()->CanFocus(true);
 }
 
 void Frame::OnFindInFiles(wxCommandEvent &event)
@@ -1327,9 +1351,9 @@ void Frame::OnFindInFiles(wxCommandEvent &event)
 	wxUnusedVar(event);
 	if ( m_findInFilesDlg == NULL ) {
 		m_findInFilesDlg = new FindInFilesDialog(this, m_data);
-		m_findInFilesDlg->SetEventOwner(GetEventHandler());
 	}
 
+	m_findInFilesDlg->SetEventOwner(GetEventHandler());
 	if ( m_findInFilesDlg->IsShown() ) {
 		// make sure that dialog has focus and that this instace
 		m_findInFilesDlg->SetFocus();
@@ -2701,4 +2725,9 @@ void Frame::OnManagePlugins(wxCommandEvent &e)
 		wxMessageBox(wxT("Changes will take place after restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 	}
 	dlg->Destroy();
+}
+
+void Frame::DoReplaceAll()
+{
+	m_doingReplaceInFiles = true;
 }

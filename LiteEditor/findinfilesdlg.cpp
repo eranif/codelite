@@ -12,10 +12,7 @@
 #include "wx/sizer.h"
 #include "macros.h"
 #include "manager.h"
-
-DEFINE_EVENT_TYPE(wxEVT_FIF_FIND)
-DEFINE_EVENT_TYPE(wxEVT_FIF_STOP)
-DEFINE_EVENT_TYPE(wxEVT_FIF_CLOSE)
+#include "frame.h"
 
 BEGIN_EVENT_TABLE(FindInFilesDialog, wxDialog)
 EVT_CLOSE(FindInFilesDialog::OnClose)
@@ -139,6 +136,9 @@ void FindInFilesDialog::CreateGUIControls()
 	m_find = new wxButton(this, wxID_ANY, wxT("&Find"));
 	btnSizer->Add(m_find, 1, wxALL | wxEXPAND, 5 ); 
 
+	m_replaceAll = new wxButton(this, wxID_ANY, wxT("Find &Replace Candidates"));
+	btnSizer->Add(m_replaceAll, 1, wxALL | wxEXPAND, 5 ); 
+
 	m_stop = new wxButton(this, wxID_ANY, wxT("&Stop Search"));
 	btnSizer->Add(m_stop, 1, wxALL | wxEXPAND, 5 ); 
 
@@ -164,36 +164,18 @@ void FindInFilesDialog::SetData(FindReplaceData &data)
 	m_regualrExpression->SetValue(data.GetFlags() & wxFRD_REGULAREXPRESSION ? true : false);
 }
 
+void FindInFilesDialog::DoSearchReplace()
+{
+	//send event to the main frame
+	Frame::Get()->DoReplaceAll();
+	DoSearch();
+}
+
 void FindInFilesDialog::DoSearch()
 {
-	SearchData data;
-	wxString findStr(m_data.GetFindString());
-	if(m_findString->GetValue().IsEmpty() == false){
-		findStr = m_findString->GetValue();
-	}
-
-	data.SetFindString(findStr);
-	data.SetMatchCase( (m_data.GetFlags() & wxFRD_MATCHCASE) != 0);
-	data.SetMatchWholeWord((m_data.GetFlags() & wxFRD_MATCHWHOLEWORD) != 0);
-	data.SetRegularExpression((m_data.GetFlags() & wxFRD_REGULAREXPRESSION) != 0);
-	data.SetRootDir(m_dirPicker->GetPath());
-	if(m_dirPicker->GetPath() == SEARCH_IN_WORKSPACE){
-
-		wxArrayString files;
-		ManagerST::Get()->GetWorkspaceFiles(files);
-		data.SetFiles(files);
-		
-	}else if(m_dirPicker->GetPath() == SEARCH_IN_PROJECT){
-		wxArrayString files;
-		ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
-		data.SetFiles(files);
-	}
-	
-	data.SetOutputTab( m_searchResultsTab->GetSelection() );
-	data.SetExtensions(m_fileTypes->GetValue());
-	
-	// Convert file types to array
+	SearchData data = DoGetSearchData();
 	SearchThreadST::Get()->PerformSearch(data);
+	Hide();
 }
 
 void FindInFilesDialog::OnClick(wxCommandEvent &event)
@@ -206,6 +188,8 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 		SearchThreadST::Get()->StopSearch();
 	} else if(btnClicked == m_find){
 		DoSearch();		
+	} else if(btnClicked == m_replaceAll){
+		DoSearchReplace();
 	} else if(btnClicked == m_cancel){
 		// Hide the dialog
 		Hide();
@@ -246,6 +230,7 @@ void FindInFilesDialog::ConnectEvents()
 {
 	// Connect buttons
 	m_find->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
+	m_replaceAll->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
 	m_cancel->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
 	m_stop->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
 
@@ -289,4 +274,34 @@ bool FindInFilesDialog::Show()
 	m_findString->SetSelection(-1, -1); // select all
 	m_findString->SetFocus();
 	return wxDialog::Show();
+}
+
+SearchData FindInFilesDialog::DoGetSearchData()
+{
+	SearchData data;
+	wxString findStr(m_data.GetFindString());
+	if(m_findString->GetValue().IsEmpty() == false){
+		findStr = m_findString->GetValue();
+	}
+
+	data.SetFindString(findStr);
+	data.SetMatchCase( (m_data.GetFlags() & wxFRD_MATCHCASE) != 0);
+	data.SetMatchWholeWord((m_data.GetFlags() & wxFRD_MATCHWHOLEWORD) != 0);
+	data.SetRegularExpression((m_data.GetFlags() & wxFRD_REGULAREXPRESSION) != 0);
+	data.SetRootDir(m_dirPicker->GetPath());
+	if(m_dirPicker->GetPath() == SEARCH_IN_WORKSPACE){
+
+		wxArrayString files;
+		ManagerST::Get()->GetWorkspaceFiles(files);
+		data.SetFiles(files);
+		
+	}else if(m_dirPicker->GetPath() == SEARCH_IN_PROJECT){
+		wxArrayString files;
+		ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
+		data.SetFiles(files);
+	}
+	
+	data.SetOutputTab( m_searchResultsTab->GetSelection() );
+	data.SetExtensions(m_fileTypes->GetValue());
+	return data;
 }

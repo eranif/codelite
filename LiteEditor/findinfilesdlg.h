@@ -3,6 +3,7 @@
 
 #include "wx/dialog.h"
 #include "findreplacedlg.h"
+#include "search_thread.h"
 
 class wxTextCtrl;
 class wxCheckBox;
@@ -11,10 +12,6 @@ class wxStaticText;
 class DirPicker;
 class wxComboBox;
 class wxChoice;
-
-extern const wxEventType wxEVT_FIF_FIND;
-extern const wxEventType wxEVT_FIF_STOP;
-extern const wxEventType wxEVT_FIF_CLOSE;
 
 class FindInFilesDialog : public wxDialog
 {
@@ -35,6 +32,7 @@ class FindInFilesDialog : public wxDialog
 	wxButton *m_find;
 	wxButton *m_stop;
 	wxButton *m_cancel;
+	wxButton *m_replaceAll;
 	
 public:
 	virtual ~FindInFilesDialog( );
@@ -71,8 +69,10 @@ protected:
 	void ConnectEvents();
 	void OnClick(wxCommandEvent &event);
 	void SendEvent(wxEventType type);
+	SearchData DoGetSearchData();
 	void DoSearch();
-
+	void DoSearchReplace();
+	
 	DECLARE_EVENT_TABLE()
 	void OnClose(wxCloseEvent &event);
 	void OnCharEvent(wxKeyEvent &event);

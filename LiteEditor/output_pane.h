@@ -13,6 +13,7 @@ class ShellWindow;
 class BuildTab;
 class FindResultsTab;
 class FindResultsContainer;
+class ReplaceInFilesPanel;
 
 /**
  * \ingroup LiteEditor
@@ -41,6 +42,7 @@ public:
 	static const wxString BUILD_WIN;
 	static const wxString OUTPUT_WIN;
 	static const wxString OUTPUT_DEBUG;
+	static const wxString REPLACE_IN_FILES;
 
 	wxFlatNotebook *m_book;
 	wxString m_caption;
@@ -50,6 +52,7 @@ public:
 	ShellTab *m_outputDebug;
 	BuildTab *m_buildWin;
 	FindResultsContainer *m_findResultsTab;
+	ReplaceInFilesPanel *m_replaceResultsTab;
 	int m_fifTabToUse;
 	
 private:
@@ -85,6 +88,7 @@ public:
 	ShellWindow *GetDebugWindow() {return m_outputDebug->GetShell();}
 	BuildTab *GetBuildTab() {return m_buildWin;}
 	FindResultsTab *GetFindResultsTab();
+	ReplaceInFilesPanel *GetReplaceResultsTab(){return m_replaceResultsTab;}
 	void SetFindResultsTab(int which);
 };
 

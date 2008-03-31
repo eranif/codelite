@@ -1,4 +1,5 @@
 #include "output_pane.h"
+#include "replaceinfilespanel.h"
 #include "findresultscontainer.h"
 #include "findresultstab.h"
 #include <wx/xrc/xmlres.h>
@@ -15,6 +16,7 @@ const wxString OutputPane::FIND_IN_FILES_WIN = wxT("Find Results");
 const wxString OutputPane::BUILD_WIN         = wxT("Build");
 const wxString OutputPane::OUTPUT_WIN        = wxT("Output");
 const wxString OutputPane::OUTPUT_DEBUG       = wxT("Debug");
+const wxString OutputPane::REPLACE_IN_FILES   = wxT("Replace Results");
 
 OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300))
@@ -54,7 +56,7 @@ void OutputPane::CreateGUIControls()
 	wxFont boldFont(normalFont);
 	boldFont.SetWeight(wxFONTWEIGHT_BOLD);
 	
-	wxWindow::GetTextExtent(wxT("Find Results"), &width, &height, NULL, NULL, &boldFont);
+	wxWindow::GetTextExtent(REPLACE_IN_FILES, &width, &height, NULL, NULL, &boldFont);
 	
 	//add the image size, the x button and some spacers to the width
 	width += 16; //image size
@@ -66,29 +68,32 @@ void OutputPane::CreateGUIControls()
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
 
 	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
+	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
 	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("build")));
 	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("output_win")));
-	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
 	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
+	m_images.Add(wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
+	
 	m_book->SetImageList( &m_images );
 
 	// Create the tabs
 	m_findResultsTab = new FindResultsContainer(m_book, wxID_ANY);
+	m_replaceResultsTab = new ReplaceInFilesPanel(m_book);
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
 	m_outputDebug = new ShellTab(m_book, wxID_ANY, OUTPUT_DEBUG);
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
-	
-	//add them to the notebook
-	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, true, 0);
-	m_book->AddPage(m_buildWin, BUILD_WIN, false, 1);
-	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, 2);
-	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, false, 4);
 	
 	//place a trace window in the notebook as well
 	wxTextCtrl *text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
 	
-	m_book->AddPage(text, wxT("Trace"), false, 3);
+	//add them to the notebook
+	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, true, 0);
+	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, true, 1);
+	m_book->AddPage(m_buildWin, BUILD_WIN, false, 2);
+	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, 3);
+	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, false, 4);
+	m_book->AddPage(text, wxT("Trace"), false, 5);
 
 	mainSizer->Fit(this);
 	mainSizer->Layout();

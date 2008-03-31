@@ -60,6 +60,7 @@ class Frame : public wxFrame
 	GeneralInfo m_frameGeneralInfo;
 	std::map<int, wxString> m_toolbars;//< map between toolbars and their resource ID
 	std::map<int, wxString> m_panes;//< map between panes and their name
+	bool m_doingReplaceInFiles;
 	
 public:		
 	// the access method to the singleton frame is by using the Get method
@@ -160,6 +161,11 @@ public:
 	 * \return OutputTabWindow pointer, or NULL if non matched
 	 */
 	OutputTabWindow *FindOutputTabWindowByPtr(wxWindow *win);
+	
+	/**
+	 * \brief start replace all 
+	 */
+	void DoReplaceAll();
 	
 private:
 	// make our frame's constructor private

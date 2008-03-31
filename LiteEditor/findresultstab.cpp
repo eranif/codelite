@@ -1,6 +1,7 @@
 #include "findresultstab.h"
 #include "wx/string.h"
 #include "manager.h"
+#include "editor.h"
 
 FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name)
 : OutputTabWindow(parent, id, name)
@@ -46,15 +47,36 @@ void FindResultsTab::OnMouseDClick(wxScintillaEvent &event)
 	m_sci->SetSelectionEnd(pos);
 	
 	// each line has the format of 
-	// file(line, col): text
+	// file(line, col, len): text
 	wxString fileName = lineText.BeforeFirst(wxT('('));
 	wxString strLineNumber = lineText.AfterFirst(wxT('('));
+	wxString strLen = strLineNumber.AfterFirst(wxT(',')).AfterFirst(wxT(',')).BeforeFirst(wxT(')'));
+	wxString strCol = strLineNumber.AfterFirst(wxT(',')).BeforeFirst(wxT(','));
+	
 	strLineNumber = strLineNumber.BeforeFirst(wxT(','));
 	strLineNumber = strLineNumber.Trim();
+	
 	long lineNumber = -1;
+	long matchLen = wxNOT_FOUND;
+	long col = wxNOT_FOUND;
+	
 	strLineNumber.ToLong(&lineNumber);
-
+	
+	strLen = strLen.Trim().Trim(false);
+	strLen.ToLong( &matchLen );
+	
+	strCol = strCol.Trim().Trim(false);
+	strCol.ToLong( &col );
+	
 	// open the file in the editor
-	ManagerST::Get()->OpenFile(fileName, wxEmptyString, lineNumber - 1 );
+	if(ManagerST::Get()->OpenFile(fileName, wxEmptyString, lineNumber - 1 )) {
+		//select the matched result
+		LEditor *editor = ManagerST::Get()->GetActiveEditor();
+		if(editor) {
+			if(col >= 0 && matchLen >= 0){
+				int offset = editor->PositionFromLine(lineNumber-1);
+				editor->SetSelection(offset + col, offset + col + matchLen);
+			}
+		}
+	}
 }
-

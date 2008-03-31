@@ -19,10 +19,10 @@
 	}													\
 }
 
-DEFINE_EVENT_TYPE(wxEVT_SEARCH_THREAD_MATCHFOUND)
-DEFINE_EVENT_TYPE(wxEVT_SEARCH_THREAD_SEARCHEND)
-DEFINE_EVENT_TYPE(wxEVT_SEARCH_THREAD_SEARCHCANCELED)
-DEFINE_EVENT_TYPE(wxEVT_SEARCH_THREAD_SEARCHSTARTED)
+const wxEventType wxEVT_SEARCH_THREAD_MATCHFOUND = wxNewEventType();
+const wxEventType wxEVT_SEARCH_THREAD_SEARCHEND = wxNewEventType();
+const wxEventType wxEVT_SEARCH_THREAD_SEARCHCANCELED = wxNewEventType();
+const wxEventType wxEVT_SEARCH_THREAD_SEARCHSTARTED = wxNewEventType();
 
 //----------------------------------------------------------------
 // SearchData
@@ -248,6 +248,8 @@ void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const
 			result.SetLineNumber(lineNum);
 			result.SetPattern(line);
 			result.SetFileName(fileName);
+			result.SetLen((int)len);
+			
 			m_results.push_back(result);
 			col += len;
 
@@ -300,6 +302,7 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 			result.SetLineNumber(lineNum);
 			result.SetPattern(line);
 			result.SetFileName(fileName);
+			result.SetLen((int)findString.Length());
 			m_results.push_back(result);
 			if( !AdjustLine(modLine, pos, findString) ){
 				break;									

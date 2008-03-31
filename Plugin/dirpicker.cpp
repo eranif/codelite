@@ -39,14 +39,14 @@ void DirPicker::CreateControls()
 
 	if (m_style & wxDP_USE_TEXTCTRL) {
 		m_path = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
-		mainSizer->Add(m_path, 1, wxLEFT | wxTOP | wxBOTTOM, 0);
+		mainSizer->Add(m_path, 1, wxEXPAND | wxLEFT | wxALIGN_CENTER, 0);
 	} else {
 		m_combo = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
-		mainSizer->Add(m_combo, 1, wxLEFT | wxTOP | wxBOTTOM, 0);
+		mainSizer->Add(m_combo, 1, wxALIGN_CENTER | wxEXPAND , 0);
 	}
 
 	m_button = new wxButton(this, wxID_ANY, m_buttonCaption, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-	mainSizer->Add(m_button, 0, wxTOP | wxBOTTOM, 0);
+	mainSizer->Add(m_button, 0, wxEXPAND | wxALIGN_CENTER, 0);
 
 	Layout();
 }

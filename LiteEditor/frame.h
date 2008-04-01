@@ -232,7 +232,6 @@ protected:
 	void OnViewToolbarUI(wxUpdateUIEvent &event);
 	void OnViewOptions(wxCommandEvent &event);
 	void OnTogglePanes(wxCommandEvent &event);
-	void OnNewDlgCreate(wxCommandEvent &event);
 	void OnProjectNewWorkspace(wxCommandEvent &event);
 	void OnProjectNewProject(wxCommandEvent &event);
 	void OnCreateWorkspace(wxCommandEvent &event);

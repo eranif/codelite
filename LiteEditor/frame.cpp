@@ -99,7 +99,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE, Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, Frame::OnOutputWindowEvent)
-	EVT_COMMAND(wxID_ANY, wxEVT_NEW_DLG_CREATE_LE, Frame::OnNewDlgCreate)
 	EVT_MENU(wxID_CLOSE_ALL, Frame::OnFileCloseAll)
 	EVT_MENU(XRCID("fix_ext_database"), Frame::OnFixDatabasePaths)
 	EVT_MENU(wxID_EXIT, Frame::OnQuit)
@@ -1419,23 +1418,6 @@ void Frame::OnProjectAddProject(wxCommandEvent &event)
 		ManagerST::Get()->AddProject(dlg->GetPath());
 	}
 	dlg->Destroy();
-}
-
-// NewDlg->Create handler
-void Frame::OnNewDlgCreate(wxCommandEvent &event)
-{
-	wxUnusedVar(event);
-
-	NewDlg *dlg = dynamic_cast<NewDlg*>(event.GetEventObject());
-	if ( dlg ) {
-		if ( dlg->GetSelection() == NEW_DLG_WORKSPACE ) {
-			WorkspaceData data = dlg->GetWorksapceData();
-			ManagerST::Get()->CreateWorkspace(data.m_name, data.m_path);
-		} else if ( dlg->GetSelection() == NEW_DLG_PROJECT ) {
-			ProjectData data = dlg->GetProjectData();
-			ManagerST::Get()->CreateProject(data);
-		}
-	}
 }
 
 void Frame::OnCtagsOptions(wxCommandEvent &event)

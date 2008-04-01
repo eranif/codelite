@@ -215,14 +215,17 @@ bool wxFlatNotebook::InsertPage(size_t index, wxWindow* page, const wxString& te
 	return true;
 }
 
-void wxFlatNotebook::SetSelection(size_t page)
+void wxFlatNotebook::DoSetSelection(size_t page)
 {
 	if(page >= m_windows.GetCount())
 		return;
-
+	
+	int curSel = m_pages->GetSelection();
+		
 	// Support for disabed tabs
 	if(!m_pages->GetEnabled(page) && m_windows.GetCount() > 1 && !m_bForceSelection)
 		return;
+		
 	if( m_sendPageChangeEvent ){
 		// Allow the user to veto the selection
 		int oldSelection = GetSelection();
@@ -238,7 +241,7 @@ void wxFlatNotebook::SetSelection(size_t page)
 		}
 	}
 
-	int curSel = m_pages->GetSelection();
+	
 
 	// program allows the page change
 	Freeze();
@@ -398,7 +401,7 @@ void wxFlatNotebook::OnNavigationKey(wxNavigationKeyEvent& event)
 				m_popupWin = new wxTabNavigatorWindow( this );
 				m_popupWin->ShowModal();
 				m_popupWin->Destroy(); 
-				SetSelection((size_t)GetSelection());
+				DoSetSelection((size_t)GetSelection());
 				m_popupWin = NULL;
 			}
 			else if( m_popupWin )
@@ -451,7 +454,7 @@ void wxFlatNotebook::SetWindowStyleFlag(long style)
 		// For changing the tab position (i.e. placing them top/bottom)
 		// refreshing the tab container is not enough
 		m_sendPageChangeEvent = false;
-		SetSelection(m_pages->m_iActivePage);
+		DoSetSelection(m_pages->m_iActivePage);
 		m_sendPageChangeEvent = true;
 	}
 }
@@ -1143,7 +1146,7 @@ int wxPageContainer::HitTest(const wxPoint& pt, wxPageInfo& pageInfo, int &tabId
 void wxPageContainer::SetSelection(size_t page)
 {
 	wxFlatNotebook* book = (wxFlatNotebook*)GetParent();
-	book->SetSelection(page);
+	book->DoSetSelection(page);
 	DoSetSelection(page);
 }
 
@@ -1230,7 +1233,7 @@ void wxPageContainer::DoDeletePage(size_t page)
 
 	// Refresh the tabs
 	book->SetForceSelection(true);
-	book->SetSelection(m_iActivePage);
+	book->DoSetSelection(m_iActivePage);
 	book->SetForceSelection(false);
 
 	if(m_pagesInfoVec.empty())
@@ -1738,7 +1741,7 @@ void wxPageContainer::PopupTabsMenu()
 void wxPageContainer::OnTabMenuSelection(wxCommandEvent &event)
 {
 	int selection = event.GetId();
-	static_cast<wxFlatNotebook*>(m_pParent)->SetSelection( (size_t)selection );
+	static_cast<wxFlatNotebook*>(m_pParent)->DoSetSelection( (size_t)selection );
 }
 
 // Draw small arrow at the place that the tab will be placed
@@ -1766,4 +1769,12 @@ long wxPageContainer::GetCustomizeOptions() const
 void wxFlatNotebook::SetFixedTabWidth(int width)
 {
 	m_pages->m_fixedTabWidth = width;
+}
+
+void wxFlatNotebook::SetSelection(size_t page)
+{
+	int curSel = GetSelection();
+	if(curSel == page) { return; }
+	
+	DoSetSelection(page);
 }

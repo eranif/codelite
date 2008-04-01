@@ -162,9 +162,11 @@ public:
 	bool InsertPage(size_t index, wxWindow* page, const wxString& text, bool select = false, const int imgindex = -1);
 	/// Changes the selection from currently visible/selected page to the page given by index.
 	/**
-	\param page - index of page to be selected
-	*/
+	 * \param page - index of page to be selected
+	 **/ 
 	void SetSelection(size_t page);
+
+	
 	/// Removes the window from the notebook, and destroys the window associated with that notebook page.
 	/**
 	 * \param page - index of page to be deleted
@@ -385,6 +387,11 @@ public:
 	wxWindowPtrArray& GetWindows() { return m_windows; }
 	wxPageContainer *GetPages() { return m_pages; }
 	wxBoxSizer* GetMainSizer() { return m_mainSizer; }
+
+	/**
+	 * \param page - index of page to be selected
+	 **/ 
+	void DoSetSelection(size_t page);
 
 protected:
 	/// Initialization function, called internally

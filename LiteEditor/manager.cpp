@@ -161,7 +161,7 @@ bool Manager::OpenFile(const wxString &file_name, const wxString &projectName, i
 			wxString f1 = editor->GetFileName().GetFullPath();
 			wxString f2 = fileName.GetFullPath();
 			if (f1 == f2) {
-				notebook ->SetSelection( nCount );
+				notebook->SetSelection( nCount );
 				selection = (int)nCount;
 				fileWasOpenedInNB = true;
 				break;

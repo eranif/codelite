@@ -1352,7 +1352,12 @@ void Frame::OnFindInFiles(wxCommandEvent &event)
 	if ( m_findInFilesDlg == NULL ) {
 		m_findInFilesDlg = new FindInFilesDialog(this, m_data);
 	}
-
+	
+	if(m_doingReplaceInFiles) {
+		wxMessageBox(wxT("The search thread is currently busy in 'replace in files' operations"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		return;
+	}
+	
 	m_findInFilesDlg->SetEventOwner(GetEventHandler());
 	if ( m_findInFilesDlg->IsShown() ) {
 		// make sure that dialog has focus and that this instace

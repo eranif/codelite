@@ -1,4 +1,5 @@
 #include "replaceinfilespanel.h"
+#include "wx/progdlg.h"
 #include "cl_editor.h"
 #include "manager.h"
 
@@ -74,7 +75,38 @@ void ReplaceInFilesPanel::OnItemDClicked( wxCommandEvent& event )
 
 void ReplaceInFilesPanel::OnReplaceAll( wxCommandEvent& event )
 {
-	// TODO: Implement OnReplaceAll
+	//parse all entries in the list, collect the file names and perform a massive replace
+	size_t count = m_listBox1->GetCount();
+
+	// Create a progress dialog
+	wxProgressDialog prgDlg(wxT("Performing replace all..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)count, NULL, wxPD_APP_MODAL | wxPD_SMOOTH|wxPD_AUTO_HIDE);
+	prgDlg.GetSizer()->Fit( &prgDlg );
+	prgDlg.Layout();
+	prgDlg.Centre();
+
+	wxString msg;
+	prgDlg.Update(0, wxT("Replacing..."));
+	for (size_t i=0; i< m_listBox1->GetCount(); i++) {
+		
+		long cur_line;
+		long matchLen;
+		long col;
+		wxString file_name;
+		wxString pattern;
+
+		ParseEntry(i, cur_line, col, matchLen, file_name, pattern);
+		
+		//open this file
+		if( ManagerST::Get()->OpenFile(file_name, wxEmptyString) ) {
+			//do the actual replacement here
+			//TODO:: DO IT!
+		}
+		
+		// update the progress bar
+		msg.Clear();
+		msg << wxT("Replacing in file: ") << file_name;
+		prgDlg.Update(i, msg);
+	}
 }
 
 void ReplaceInFilesPanel::OnReplaceAllUI( wxUpdateUIEvent& event )
@@ -176,7 +208,7 @@ void ReplaceInFilesPanel::AdjustItems(unsigned int from, int diff, const wxStrin
 			<< wxT("): ")
 			<< pattern;
 			m_listBox1->SetString(i, msg);
-		}else{
+		} else {
 			break;
 		}
 	}

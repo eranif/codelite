@@ -49,7 +49,12 @@ void NewProjectDlg::OnProjectPathUpdated( wxCommandEvent& event )
 	if ( !projectPath.EndsWith(tmpSep) && projectPath.IsEmpty() == false ) {
 		projectPath << wxFileName::GetPathSeparator();
 	}
-
+	
+	if( m_textCtrlProjName->GetValue().Trim().Trim(false).IsEmpty() ) {
+		m_staticTextProjectFileFullPath->SetLabel(wxEmptyString);
+		return;
+	}
+	
 	projectPath << m_textCtrlProjName->GetValue();
 	projectPath << wxT(".project");
 
@@ -78,7 +83,7 @@ void NewProjectDlg::OnButtonCreate(wxCommandEvent &e)
 	m_projectData.m_name = m_textCtrlProjName->GetValue();
 	m_projectData.m_path = m_textCtrlProjectPath->GetValue();
 	m_projectData.m_cmpType = m_choiceCompilerType->GetStringSelection();
-	
+
 	EndModal(wxID_OK);
 }
 

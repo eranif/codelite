@@ -46,7 +46,7 @@ NewWorkspaceBase::NewWorkspaceBase( wxWindow* parent, wxWindowID id, const wxStr
 	bSizer4->Add( bSizer3, 0, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer1;
-	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panelWorkspace, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panelWorkspace, wxID_ANY, wxT("File Name:") ), wxVERTICAL );
 	
 	m_staticTextWorkspaceFileName = new wxStaticText( m_panelWorkspace, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextWorkspaceFileName->Wrap( -1 );

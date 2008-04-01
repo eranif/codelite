@@ -23,8 +23,14 @@ void NewWorkspaceDlg::OnWorkspacePathUpdated( wxCommandEvent& event )
 	if ( !workspacePath.EndsWith(tmpSep) && workspacePath.IsEmpty() == false ) {
 		workspacePath << wxFileName::GetPathSeparator();
 	}
-
+	
+	if( m_textCtrlWorkspaceName->GetValue().Trim().Trim(false).IsEmpty() ) {
+		m_staticTextWorkspaceFileName->SetLabel(wxEmptyString);
+		return;
+	}
+	
 	workspacePath << m_textCtrlWorkspaceName->GetValue();
+	
 	workspacePath << wxT(".workspace");
 
 	m_staticTextWorkspaceFileName->SetLabel( workspacePath );

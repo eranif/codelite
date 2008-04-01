@@ -1,4 +1,4 @@
-#include "precompiled_header.h" 
+#include "precompiled_header.h"
 #include "newprojectdlg.h"
 #include "newworkspacedlg.h"
 #include "replaceinfilespanel.h"
@@ -1298,14 +1298,14 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 		//the only event that reallty interesting us, is the match find
 		if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED || event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
 			m_doingReplaceInFiles = false;
-		}else if(event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND){
+		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
 			//add an entry to the replace panel
 			SearchResultList *res = (SearchResultList*)event.GetClientData();
-			
+
 			//res will be deleted by AddResult
 			GetOutputPane()->GetReplaceResultsTab()->AddResults(res);
-			
-		}else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
+
+		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
 			ManagerST::Get()->ShowOutputPane(OutputPane::REPLACE_IN_FILES);
 			GetOutputPane()->GetReplaceResultsTab()->Clear();
 		}
@@ -1352,12 +1352,12 @@ void Frame::OnFindInFiles(wxCommandEvent &event)
 	if ( m_findInFilesDlg == NULL ) {
 		m_findInFilesDlg = new FindInFilesDialog(this, m_data);
 	}
-	
-	if(m_doingReplaceInFiles) {
+
+	if (m_doingReplaceInFiles) {
 		wxMessageBox(wxT("The search thread is currently busy in 'replace in files' operations"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
 	}
-	
+
 	m_findInFilesDlg->SetEventOwner(GetEventHandler());
 	if ( m_findInFilesDlg->IsShown() ) {
 		// make sure that dialog has focus and that this instace
@@ -1389,9 +1389,9 @@ void Frame::OnProjectNewWorkspace(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	NewWorkspaceDlg *dlg = new NewWorkspaceDlg(this);
-	if(dlg->ShowModal() == wxID_OK){
+	if (dlg->ShowModal() == wxID_OK) {
 		wxString fullname = dlg->GetFilePath();
-		
+
 		wxFileName fn(fullname);
 		ManagerST::Get()->CreateWorkspace(fn.GetName(), fn.GetPath());
 	}
@@ -1403,7 +1403,7 @@ void Frame::OnProjectNewProject(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	NewProjectDlg *dlg = new NewProjectDlg(this);
-	if(dlg->ShowModal() == wxID_OK){
+	if (dlg->ShowModal() == wxID_OK) {
 		ProjectData data = dlg->GetProjectData();
 		ManagerST::Get()->CreateProject(data);
 	}
@@ -2369,6 +2369,7 @@ void Frame::OnAppActivated(wxActivateEvent &e)
 	}
 
 	//check if the welcome page is not 'on'
+	std::vector<wxFileName> files;
 	for (int i=0; i<GetNotebook()->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
 		if (editor) {
@@ -2387,9 +2388,19 @@ void Frame::OnAppActivated(wxActivateEvent &e)
 				if (wxMessageBox(msg, wxT("Confirm"), wxYES_NO | wxCANCEL | wxICON_QUESTION) == wxYES) {
 					editor->ReloadFile();
 				}
+
+				if (editor->GetProject().IsEmpty() == false && ManagerST::Get()->IsWorkspaceOpen()) {
+					//retag the file
+					files.push_back(editor->GetFileName());
+				}
 			}
 		}
 	}
+	
+	if (files.empty() == false) {
+		TagsManagerST::Get()->RetagFiles( files );
+	}
+	
 	e.Skip();
 }
 

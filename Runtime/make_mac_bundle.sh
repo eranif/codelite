@@ -1,5 +1,8 @@
 #!/bin/sh
 
+## extract the file name from the Makefile
+exe_name=`cat ../Makefile | grep ^EXE_NAME_NO_PATH | cut -d= -f2`
+
 rm -rf CodeLite.app
 mkdir -p ./CodeLite.app/Contents/MacOS
 mkdir -p ./CodeLite.app/Contents/Resources
@@ -8,7 +11,7 @@ mkdir -p ./CodeLite.app/Contents/SharedSupport/plugins
 mkdir -p ./CodeLite.app/Contents/SharedSupport/debuggers
 mkdir -p ./CodeLite.app/Contents/SharedSupport/config
 
-cp CodeLiteUR ./CodeLite.app/Contents/MacOS/CodeLiteUR
+cp ${exe_name} ./CodeLite.app/Contents/MacOS/${exe_name}
 cp -r rc ./CodeLite.app/Contents/SharedSupport/
 cp -r templates ./CodeLite.app/Contents/SharedSupport/
 cp -r images ./CodeLite.app/Contents/SharedSupport/
@@ -17,7 +20,6 @@ cp -r lexers ./CodeLite.app/Contents/SharedSupport/
 cp astyle.sample ./CodeLite.app/Contents/SharedSupport/
 cp index.html ./CodeLite.app/Contents/SharedSupport/
 cp svnreport.html ./CodeLite.app/Contents/SharedSupport/
-cp Info.plist ./CodeLite.app/Contents/
 cp icon.icns ./CodeLite.app/Contents/Resources/
 
 cp config/build_settings.xml ./CodeLite.app/Contents/SharedSupport/config
@@ -39,6 +41,9 @@ fi
 
 ## replace $(Revision) with the actual revision, and create new file
 cat config/liteeditor.xml.mac | sed s/\$\(Revision\)/${cur_rev}/g >> ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml
+
+## replace the executable name according to the configuration used in the build
+cat Info.plist.template | sed s/EXE_NAME/${exe_name}/g >> ./CodeLite.app/Contents/Info.plist
 
 cp config/debuggers.xml ./CodeLite.app/Contents/SharedSupport/config
 

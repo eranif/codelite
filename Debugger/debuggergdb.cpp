@@ -11,7 +11,7 @@
 #ifdef __WXMSW__
 #include "windows.h"
 #endif
-#ifdef __WXGTK__
+#if defined(__WXGTK__) || defined (__WXMAC__)
 #include <sys/types.h>
 #include <signal.h>
 #endif

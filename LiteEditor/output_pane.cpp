@@ -88,9 +88,9 @@ void OutputPane::CreateGUIControls()
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
 	
 	//add them to the notebook
-	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, true, 0);
-	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, true, 1);
-	m_book->AddPage(m_buildWin, BUILD_WIN, false, 2);
+	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, false, 0);
+	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false, 1);
+	m_book->AddPage(m_buildWin, BUILD_WIN, true, 2);
 	m_book->AddPage(m_outputWind, OUTPUT_WIN, false, 3);
 	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, false, 4);
 	m_book->AddPage(text, wxT("Trace"), false, 5);

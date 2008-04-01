@@ -42,7 +42,7 @@ public:
 						wxWindowID id = wxID_ANY, 
 						const wxString& caption = wxT("Find In Files"), 
 						const wxPoint& pos = wxDefaultPosition, 
-						const wxSize& size = wxSize(400, 200), 
+						const wxSize& size = wxSize(450, 200), 
 						long style = wxDEFAULT_DIALOG_STYLE);
 
 	// Creation
@@ -51,7 +51,7 @@ public:
 				wxWindowID id = wxID_ANY, 
 				const wxString& caption = wxT("Find In Files"), 
 				const wxPoint& pos = wxDefaultPosition, 
-				const wxSize& size = wxSize(400, 200), 
+				const wxSize& size = wxSize(450, 200), 
 				long style = wxDEFAULT_DIALOG_STYLE
 				);
  

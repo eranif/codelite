@@ -244,7 +244,7 @@ void wxFlatNotebook::DoSetSelection(size_t page)
 	
 
 	// program allows the page change
-	GetParent()->Freeze();
+	Freeze();
 	if(curSel >= 0){
 		// Remove the window from the main sizer
 		m_mainSizer->Detach(m_windows[curSel]);
@@ -260,7 +260,7 @@ void wxFlatNotebook::DoSetSelection(size_t page)
 	
 	m_windows[page]->Show();
 	m_mainSizer->Layout();
-	
+	Thaw();
 
 	if( page != (size_t)m_pages->m_iActivePage ){
 		//keep the page history
@@ -278,7 +278,7 @@ void wxFlatNotebook::DoSetSelection(size_t page)
 		event.SetEventObject( this );
 		GetEventHandler()->ProcessEvent(event);
 	}
-	GetParent()->Thaw();
+	
 }
 
 void wxFlatNotebook::DeletePage(size_t page, bool notify)
@@ -1219,7 +1219,7 @@ void wxPageContainer::DoDeletePage(size_t page)
 	PopPageHistory((int)page);
 
 	// same thing with the active page
-	if (m_iActivePage > (int)page || (int)page >= m_pagesInfoVec.Count()){
+	if (m_iActivePage > (int)page || page >= m_pagesInfoVec.Count()){
 		m_iActivePage -= 1;
 	}else if (m_iActivePage == (int)page){
 		m_iActivePage = GetPreviousSelection();
@@ -1775,7 +1775,7 @@ void wxFlatNotebook::SetFixedTabWidth(int width)
 void wxFlatNotebook::SetSelection(size_t page)
 {
 	int curSel = GetSelection();
-	if(curSel == page) { return; }
+	if(curSel == (int)page) { return; }
 	
 	DoSetSelection(page);
 }

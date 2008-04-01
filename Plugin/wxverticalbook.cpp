@@ -80,6 +80,13 @@ void wxVerticalBook::Initialize()
 void wxVerticalBook::SetSelection(size_t page)
 {
 	wxVerticalTab *tab = m_tabs->IndexToTab(page);
+	wxVerticalTab *old_tab = m_tabs->GetSelection();
+	
+	if (old_tab == tab) {
+		//same tab, nothing to be done
+		return;
+	}
+	
 	if (tab) {
 		//the next call will also trigger a call to wxVerticalBook::SetSelection(wxVerticalTab *tab)
 		m_tabs->SetSelection(tab);

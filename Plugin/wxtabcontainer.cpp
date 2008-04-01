@@ -7,9 +7,9 @@
 #include "wx/dcbuffer.h"
 
 BEGIN_EVENT_TABLE(wxTabContainer, wxPanel)
-EVT_PAINT(wxTabContainer::OnPaint)
-EVT_ERASE_BACKGROUND(wxTabContainer::OnEraseBg)
-EVT_SIZE(wxTabContainer::OnSizeEvent)
+	EVT_PAINT(wxTabContainer::OnPaint)
+	EVT_ERASE_BACKGROUND(wxTabContainer::OnEraseBg)
+	EVT_SIZE(wxTabContainer::OnSizeEvent)
 END_EVENT_TABLE()
 wxTabContainer::wxTabContainer(wxWindow *win, wxWindowID id, int orientation)
 		: wxPanel(win, id)
@@ -26,7 +26,7 @@ void wxTabContainer::Initialize()
 {
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	SetSizer(sz);
-	
+
 	m_tabsSizer = new wxBoxSizer(wxVERTICAL);
 	sz->AddSpacer(3);
 	sz->Add(m_tabsSizer, 1, wxEXPAND);
@@ -51,10 +51,10 @@ void wxTabContainer::AddTab(wxVerticalTab *tab)
 	if (GetSelection() == NULL && tab->GetSelected() == false) {
 		tab->SetSelected(true);
 	}
-	
+
 	Thaw();
 	m_tabsSizer->Layout();
-	
+
 }
 
 wxVerticalTab* wxTabContainer::GetSelection()
@@ -83,9 +83,9 @@ void wxTabContainer::SetSelection(wxVerticalTab *tab, bool notify)
 	if (!tab) {
 		return;
 	}
-	
+
 	size_t oldSel((size_t)-1);;
-	if(notify) {
+	if (notify) {
 		//send event to noitfy that the page is changing
 		oldSel = TabToIndex( GetSelection() );
 
@@ -95,17 +95,17 @@ void wxTabContainer::SetSelection(wxVerticalTab *tab, bool notify)
 		event.SetEventObject( this );
 		GetEventHandler()->ProcessEvent(event);
 
-		if( !event.IsAllowed() ){
+		if ( !event.IsAllowed() ) {
 			return;
 		}
 	}
-	
+
 	//let the notebook process this first
 	wxVerticalBook *book = dynamic_cast<wxVerticalBook *>( GetParent() );
-	if(book) {
+	if (book) {
 		book->SetSelection(tab);
 	}
-	
+
 	//find the old selection
 	wxVerticalTab *oldSelection = GetSelection();
 	if (oldSelection) {
@@ -115,8 +115,8 @@ void wxTabContainer::SetSelection(wxVerticalTab *tab, bool notify)
 
 	tab->SetSelected(true);
 	tab->Refresh();
-	
-	if(notify) {
+
+	if (notify) {
 		//send event to noitfy that the page has changed
 		wxVerticalBookEvent event(wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGED, GetId());
 		event.SetSelection( TabToIndex( tab ) );
@@ -130,14 +130,14 @@ wxVerticalTab* wxTabContainer::IndexToTab(size_t page)
 {
 	//return the tab of given index
 	wxSizer *sz = m_tabsSizer;
-	
+
 	//check limit
-	if(page >= sz->GetChildren().GetCount()){
+	if (page >= sz->GetChildren().GetCount()) {
 		return NULL;
 	}
-	
+
 	wxSizerItem *szItem = sz->GetItem(page);
-	if(szItem) {
+	if (szItem) {
 		return dynamic_cast< wxVerticalTab* >(szItem->GetWindow());
 	}
 	return NULL;
@@ -146,10 +146,10 @@ wxVerticalTab* wxTabContainer::IndexToTab(size_t page)
 size_t wxTabContainer::TabToIndex(wxVerticalTab *tab)
 {
 	//iteratre over the items in the sizer, and search for the selected one
-	if(!tab) {
+	if (!tab) {
 		return static_cast<size_t>(-1);
 	}
-	
+
 	wxSizer *sz = m_tabsSizer;
 	wxSizerItemList items = sz->GetChildren();
 
@@ -178,20 +178,31 @@ void wxTabContainer::OnPaint(wxPaintEvent &e)
 {
 	wxUnusedVar(e);
 	wxBufferedPaintDC dc(this);
-	
+
 	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW)));
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
-	
+
 	wxRect rr = GetClientSize();
 	wxColour endColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 30);
 	DrawingUtils::PaintStraightGradientBox(dc, rr, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), endColour, false);
-	
+
+	//draw a small rectangle with 3DFACE colour
+
 	int xx;
-	if(m_orientation == wxRIGHT) {
+	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	
+	if (m_orientation == wxRIGHT) {
 		xx = 3;
-	}else{
+		dc.DrawRectangle(0, 0, 2, rr.height);
+
+	} else {
 		xx = rr.GetWidth() - 4;
+		dc.DrawRectangle(rr.width - 3, 0, 3, rr.height);
+
 	}
+
+	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW)));
 	dc.DrawLine(xx, 0, xx, rr.GetHeight());
 }
 
@@ -209,7 +220,7 @@ void wxTabContainer::OnSizeEvent(wxSizeEvent &e)
 void wxTabContainer::SetOrientation(const int& orientation)
 {
 	this->m_orientation = orientation;
-	
+
 	wxSizer *sz = m_tabsSizer;
 	wxSizerItemList items = sz->GetChildren();
 

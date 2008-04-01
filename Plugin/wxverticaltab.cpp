@@ -186,3 +186,4 @@ void wxVerticalTab::OnLeftDown(wxMouseEvent &e)
 	}
 	e.Skip();
 }
+

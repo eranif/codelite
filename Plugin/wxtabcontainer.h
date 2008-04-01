@@ -25,6 +25,7 @@ public:
 	size_t TabToIndex(wxVerticalTab *tab);
 	size_t GetTabsCount();
 	
+	
 	//Setters
 	void SetOrientation(const int& orientation) ;
 	const int& GetOrientation() const {return m_orientation;}

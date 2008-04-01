@@ -25,7 +25,6 @@
 #include "findinfilesdlg.h"
 #include "search_thread.h"
 #include "project.h"
-#include "newdlg.h"
 #include "fileview.h"
 #include "wx/aui/framemanager.h"
 #include "options_base_dlg.h"

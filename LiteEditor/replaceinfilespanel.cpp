@@ -78,6 +78,12 @@ void ReplaceInFilesPanel::OnReplaceAll( wxCommandEvent& event )
 	//parse all entries in the list, collect the file names and perform a massive replace
 	size_t count = m_listBox1->GetCount();
 
+	wxString warnMessage;
+	warnMessage << wxT("Are you sure you want to replace all ") << count << wxT(" occurrences of ") << m_findWhat << wxT(" ?");
+	if (wxMessageBox(warnMessage, wxT("CodeLite"), wxYES_NO|wxCANCEL|wxICON_WARNING) != wxYES) {
+		return;
+	}
+
 	// Create a progress dialog
 	wxProgressDialog prgDlg(wxT("Performing replace all..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)count, NULL, wxPD_APP_MODAL | wxPD_SMOOTH|wxPD_AUTO_HIDE);
 	prgDlg.GetSizer()->Fit( &prgDlg );
@@ -87,7 +93,7 @@ void ReplaceInFilesPanel::OnReplaceAll( wxCommandEvent& event )
 	wxString msg;
 	prgDlg.Update(0, wxT("Replacing..."));
 	for (size_t i=0; i< m_listBox1->GetCount(); i++) {
-		
+
 		long cur_line;
 		long matchLen;
 		long col;
@@ -95,18 +101,35 @@ void ReplaceInFilesPanel::OnReplaceAll( wxCommandEvent& event )
 		wxString pattern;
 
 		ParseEntry(i, cur_line, col, matchLen, file_name, pattern);
-		
+
 		//open this file
-		if( ManagerST::Get()->OpenFile(file_name, wxEmptyString) ) {
+		if ( ManagerST::Get()->OpenFile(file_name, wxEmptyString) ) {
 			//do the actual replacement here
-			//TODO:: DO IT!
+			LEditor *editor = ManagerST::Get()->GetActiveEditor();
+			if ( editor ) {
+				//select the target string
+				if (col >= 0 && matchLen >= 0) {
+					int offset = editor->PositionFromLine(cur_line-1);
+					editor->SetSelection(offset + col, offset + col + matchLen);
+				}
+				//replace the selection
+				if (editor->GetSelectedText().IsEmpty() == false) {
+					editor->ReplaceSelection(m_textCtrlReplaceWith->GetValue());
+					AdjustItems((unsigned int)i, m_textCtrlReplaceWith->GetValue().Length()-matchLen, file_name, cur_line);
+				}
+			}
 		}
-		
+
 		// update the progress bar
 		msg.Clear();
 		msg << wxT("Replacing in file: ") << file_name;
 		prgDlg.Update(i, msg);
 	}
+
+	wxString statusMessage;
+	statusMessage << m_listBox1->GetCount() << wxT(" replacements have been made");
+	wxMessageBox(statusMessage, wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+	Clear();
 }
 
 void ReplaceInFilesPanel::OnReplaceAllUI( wxUpdateUIEvent& event )
@@ -123,9 +146,11 @@ void ReplaceInFilesPanel::AddResults(SearchResultList *res)
 	wxString msg;
 	wxArrayString arr;
 	for (; iter != res->end(); iter++) {
-		msg = (*iter).GetMessage();
+		SearchResult r = (*iter);
+		msg = r.GetMessage();
 		msg = msg.Trim().Trim(false);
 		arr.Add( msg );
+		m_findWhat = r.GetFindWhat();
 	}
 
 	m_listBox1->Append(arr);
@@ -136,6 +161,7 @@ void ReplaceInFilesPanel::AddResults(SearchResultList *res)
 
 void ReplaceInFilesPanel::Clear()
 {
+	m_findWhat.Clear();
 	m_listBox1->Clear();
 }
 

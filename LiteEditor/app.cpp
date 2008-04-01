@@ -166,7 +166,10 @@ bool App::OnInit()
 	//read the last frame size from the configuration file
 	// Initialise editor configuration files
 	EditorConfig *cfg = EditorConfigST::Get();
-	cfg->Load();
+	if( !cfg->Load() ){
+		wxLogMessage(wxT("Failed to load configuration file liteeditor.xml"), wxT("CodeLite"), wxICON_ERROR | wxOK);
+		return false;
+	}
 
 	GeneralInfo inf;
 	cfg->ReadObject(wxT("GeneralInfo"), &inf);

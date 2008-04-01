@@ -249,7 +249,7 @@ void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const
 			result.SetPattern(line);
 			result.SetFileName(fileName);
 			result.SetLen((int)len);
-			
+			result.SetFindWhat(wxT("[Regex expression]: ") + data->GetFindString());
 			m_results.push_back(result);
 			col += len;
 
@@ -303,6 +303,8 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 			result.SetPattern(line);
 			result.SetFileName(fileName);
 			result.SetLen((int)findString.Length());
+			result.SetFindWhat(data->GetFindString());
+			
 			m_results.push_back(result);
 			if( !AdjustLine(modLine, pos, findString) ){
 				break;									

@@ -89,14 +89,17 @@ void ReplaceInFilesPanel::AddResults(SearchResultList *res)
 	m_listBox1->Freeze();
 
 	wxString msg;
+	wxArrayString arr;
 	for (; iter != res->end(); iter++) {
 		msg = (*iter).GetMessage();
 		msg = msg.Trim().Trim(false);
-		m_listBox1->Append(msg);
+		arr.Add( msg );
 	}
 
+	m_listBox1->Append(arr);
 	m_listBox1->Thaw();
 	delete res;
+	m_listBox1->SetFocus();
 }
 
 void ReplaceInFilesPanel::Clear()

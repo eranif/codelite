@@ -1,4 +1,6 @@
-#include "precompiled_header.h"
+#include "precompiled_header.h" 
+#include "newprojectdlg.h"
+#include "newworkspacedlg.h"
 #include "replaceinfilespanel.h"
 #include "pluginmgrdlg.h"
 #include "wx/clipbrd.h"
@@ -1383,8 +1385,13 @@ void Frame::OnWorkspaceOpen(wxUpdateUIEvent &event)
 void Frame::OnProjectNewWorkspace(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	NewDlg *dlg = new NewDlg(this, NEW_DLG_WORKSPACE);
-	dlg->ShowModal();
+	NewWorkspaceDlg *dlg = new NewWorkspaceDlg(this);
+	if(dlg->ShowModal() == wxID_OK){
+		wxString fullname = dlg->GetFilePath();
+		
+		wxFileName fn(fullname);
+		ManagerST::Get()->CreateWorkspace(fn.GetName(), fn.GetPath());
+	}
 	dlg->Destroy();
 }
 
@@ -1392,8 +1399,11 @@ void Frame::OnProjectNewWorkspace(wxCommandEvent &event)
 void Frame::OnProjectNewProject(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	NewDlg *dlg = new NewDlg(this, NEW_DLG_PROJECT);
-	dlg->ShowModal();
+	NewProjectDlg *dlg = new NewProjectDlg(this);
+	if(dlg->ShowModal() == wxID_OK){
+		ProjectData data = dlg->GetProjectData();
+		ManagerST::Get()->CreateProject(data);
+	}
 	dlg->Destroy();
 }
 

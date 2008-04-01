@@ -146,12 +146,18 @@
       <File Name="open_resouce_dlg.h"/>
       <File Name="new_item_dlg.cpp"/>
       <File Name="new_item_dlg.h"/>
-      <File Name="newdlg.cpp"/>
-      <File Name="newdlg.h"/>
       <File Name="importfilesdlg.h"/>
       <File Name="importfilesbasedlg.cpp"/>
       <File Name="importfilesbasedlg.h"/>
       <File Name="importfilesdlg.cpp"/>
+      <File Name="newworkspacedlg.h"/>
+      <File Name="newworkspacebasedlg.cpp"/>
+      <File Name="newworkspacebasedlg.h"/>
+      <File Name="newworkspacedlg.cpp"/>
+      <File Name="newprojectdlg.h"/>
+      <File Name="newprojectbasedlg.cpp"/>
+      <File Name="newprojectbasedlg.h"/>
+      <File Name="newprojectdlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Plugins">
       <File Name="pluginmgrdlg.h"/>

@@ -26,7 +26,7 @@
 #include <wx/statbox.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
-#include "editor.h"
+#include "cl_editor.h"
 
 ///////////////////////////////////////////////////////////////////////////
 

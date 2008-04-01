@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="CodeLite">
   <VirtualDirectory Name="Source Files">
-    <File Name="calltip.cpp"/>
     <File Name="worker_thread.cpp"/>
     <File Name="tokenizer.cpp"/>
     <File Name="tag_tree.cpp"/>
@@ -25,10 +24,10 @@
     <File Name="archive.cpp"/>
     <File Name="winprocess.h"/>
     <File Name="winprocess.cpp"/>
+    <File Name="cl_calltip.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>
-    <File Name="calltip.h"/>
     <File Name="cl_process.h"/>
     <File Name="cpp_scanner.h"/>
     <File Name="ctags_manager.h"/>
@@ -59,6 +58,7 @@
     <File Name="tags_options_data.h"/>
     <File Name="setters_getters_data.h"/>
     <File Name="extdbdata.h"/>
+    <File Name="cl_calltip.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GeneratedFiles">
     <File Name="expression_result.h"/>

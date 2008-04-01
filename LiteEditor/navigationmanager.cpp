@@ -1,5 +1,5 @@
 #include "navigationmanager.h"
-#include "editor.h"
+#include "cl_editor.h"
 #include "manager.h"
 
 NavMgr::NavMgr()

@@ -1,7 +1,7 @@
 #include "findresultstab.h"
 #include "wx/string.h"
 #include "manager.h"
-#include "editor.h"
+#include "cl_editor.h"
 
 FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name)
 : OutputTabWindow(parent, id, name)

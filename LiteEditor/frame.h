@@ -8,7 +8,7 @@
 #include "wx/aui/aui.h" 
 #include "wx/frame.h"
 #include "findinfilesdlg.h"
-#include "editor.h"
+#include "cl_editor.h"
 #include "output_pane.h"
 #include "findinfilesdlg.h"
 #include "cl_process.h"

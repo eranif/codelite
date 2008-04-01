@@ -1,4 +1,4 @@
-#include "editor.h"
+#include "cl_editor.h"
 #include "precompiled_header.h"
 #include "colourrequest.h"
 #include "colourthread.h"

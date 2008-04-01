@@ -1,5 +1,5 @@
 #include "editor_creator.h"
-#include "editor.h"
+#include "cl_editor.h"
 #include "wx/window.h"
 #include "frame.h"
 

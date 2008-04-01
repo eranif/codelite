@@ -9,7 +9,7 @@
 #include "tags_database.h"
 #include <wx/thread.h>
 #include "singleton.h"
-#include "calltip.h"
+#include "cl_calltip.h"
 #include "comment.h"
 #include "tags_options_data.h"
 #include "setters_getters_data.h"

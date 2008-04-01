@@ -2,11 +2,7 @@
 #define CONTEXT_CPP_H
 
 #include "context_base.h"
-#ifdef __WXMAC__
-#include "./CodeLite/calltip.h"
-#else
-#include "calltip.h"
-#endif
+#include "cl_calltip.h"
 #include <map>
 #include "entry.h"
 

@@ -1,5 +1,5 @@
 #include "menu_event_handlers.h"
-#include "editor.h"
+#include "cl_editor.h"
 #include "frame.h"
 
 //------------------------------------

@@ -186,7 +186,6 @@
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>
     <File Name="context_text.h"/>
-    <File Name="editor.h"/>
     <File Name="context_cpp.h"/>
     <File Name="context_manager.h"/>
     <File Name="editor_creator.h"/>
@@ -196,11 +195,12 @@
     <File Name="context_cpp.cpp"/>
     <File Name="context_manager.cpp"/>
     <File Name="context_text.cpp"/>
-    <File Name="editor.cpp"/>
     <File Name="generic_context.cpp"/>
     <File Name="menumanager.cpp"/>
     <File Name="menu_event_handlers.cpp"/>
     <File Name="editor_creator.cpp"/>
+    <File Name="cl_editor.cpp"/>
+    <File Name="cl_editor.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Manager">
     <File Name="manager.h"/>

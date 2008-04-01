@@ -1,7 +1,7 @@
 #include "context_text.h"
 #include <vector>
 #include "editor_config.h"
-#include "editor.h"
+#include "cl_editor.h"
 
 ContextText::ContextText(LEditor *container) 
 : ContextBase(container)

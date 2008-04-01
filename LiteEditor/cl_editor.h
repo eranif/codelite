@@ -5,7 +5,7 @@
 #include <stack>
 #include <map>
 #include "entry.h"
-#include "calltip.h"
+#include "cl_calltip.h"
 #include "wx/filename.h"
 #include "findreplacedlg.h"
 #include <wx/wxFlatNotebook/wxFlatNotebook.h>

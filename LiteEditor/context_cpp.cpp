@@ -1,7 +1,7 @@
 #include "precompiled_header.h"
 #include "movefuncimpldlg.h"
 #include "context_cpp.h"
-#include "editor.h"
+#include "cl_editor.h"
 #include "ctags_manager.h"
 #include "manager.h"
 #include "symbols_dialog.h"

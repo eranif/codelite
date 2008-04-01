@@ -1,5 +1,5 @@
 #include "replaceinfilespanel.h"
-#include "editor.h"
+#include "cl_editor.h"
 #include "manager.h"
 
 ReplaceInFilesPanel::ReplaceInFilesPanel( wxWindow* parent )

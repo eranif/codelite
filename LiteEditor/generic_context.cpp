@@ -1,7 +1,7 @@
 #include "generic_context.h"
 #include <vector>
 #include "editor_config.h"
-#include "editor.h"
+#include "cl_editor.h"
 
 ContextGeneric::ContextGeneric(LEditor *container, const wxString &name) 
 : ContextBase(container)

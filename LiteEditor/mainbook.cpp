@@ -4,7 +4,7 @@
 #include "wx/log.h"
 #include "manager.h"
 #include "ctags_manager.h"
-#include "editor.h"
+#include "cl_editor.h"
 #include "macros.h"
 
 MainBook::MainBook(wxChoice* choiceFunc, wxChoice* choiceScope)

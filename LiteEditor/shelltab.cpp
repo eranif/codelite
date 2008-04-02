@@ -37,7 +37,7 @@ void ShellTab::CreateGUIControl()
 				wxT("Word Wrap"));
 	Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( ShellTab::OnWordWrap ));
 	tb->Realize(); 
-	mainSizer->Add(tb, 0, wxALL|wxEXPAND, 5);
+	mainSizer->Add(tb, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
 	
 	m_window = new ShellWindow(this, ManagerST::Get());
 	ManagerST::Get()->Connect(m_window->GetId(), wxEVT_SHELLWIN_LINE_ENTERED, wxCommandEventHandler(Manager::OnOutputWindow), NULL, ManagerST::Get());

@@ -39,10 +39,6 @@ void WorkspaceTab::CreateGUIControls()
 	
 	Connect( XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnCollapseAll ));
 	Connect( XRCID("collapse_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceTab::OnCollapseAllUI ));
-	sz->Add(tb, 0, wxEXPAND, 0);
-	
-	wxStaticLine *staticline = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	sz->Add(staticline, 0, wxEXPAND);
 	
 	//add the workspace configuration combobox
 	wxArrayString choices;
@@ -57,6 +53,7 @@ void WorkspaceTab::CreateGUIControls()
 	//add the fileview tab
 	m_fileView = new FileViewTree(this, wxID_ANY);
 	sz->Add(m_fileView, 1, wxEXPAND|wxTOP, 2);
+	sz->Add(tb, 0, wxEXPAND, 0);
 }
 
 void WorkspaceTab::BuildFileTree()

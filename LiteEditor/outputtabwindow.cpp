@@ -53,7 +53,7 @@ void OutputTabWindow::CreateGUIControl()
 	}
 	
 	tb->Realize();
-	mainSizer->Add(tb, 0, wxALL|wxEXPAND, 5);
+	mainSizer->Add(tb, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
 
 	m_sci = new wxScintilla(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 

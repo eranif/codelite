@@ -10,7 +10,11 @@
 #include <wx/event.h>
 
 #ifndef wxFNB_HEIGHT_SPACER
+#ifdef __WXMSW__
+#define wxFNB_HEIGHT_SPACER 11
+#else // Mac & Linux
 #define wxFNB_HEIGHT_SPACER 16
+#endif
 #endif
 
 class wxFNBRenderer

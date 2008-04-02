@@ -137,7 +137,7 @@ bool App::OnInit()
 #elif defined (__WXMAC__)
 	SetAppName(wxT("codelite"));
 	homeDir = wxGetHomeDir() + wxT("/.codelite/");
-	wxPrintf(wxT("Creating %s\n"), homeDir.GetData());	
+	//wxPrintf(wxT("Creating %s\n"), homeDir.GetData());	
 	//Create the directory structure
 	wxMkDir(homeDir.ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/plugins/")).ToAscii(), 0777);
@@ -266,7 +266,7 @@ int App::OnExit()
 
 void App::CopySettings(const wxString &destDir, const wxString &installPath)
 {
-	wxPrintf(wxT("CopySettings.from %s to %s\n"), installPath.GetData(), destDir.GetData());
+	//wxPrintf(wxT("CopySettings.from %s to %s\n"), installPath.GetData(), destDir.GetData());
 	bool fileExist = wxFileName::FileExists( destDir + wxT("/config/liteeditor.xml") );
 	bool copyAnyways(true);
 
@@ -298,7 +298,7 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 		wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
 		wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
 	} else {
-		wxPrintf(wxT("Skipping settings copy ...\n"));
+		//wxPrintf(wxT("Skipping settings copy ...\n"));
 	}
 }
 

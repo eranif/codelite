@@ -32,7 +32,7 @@ BEGIN_EVENT_TABLE( OptionsDlg, wxDialog )
 END_EVENT_TABLE()
 
 OptionsDlg::OptionsDlg( wxWindow* parent, int id, wxString title, wxPoint pos, wxSize size, int style ) 
-: wxDialog( parent, id, title, pos, wxSize(600, 600), style )
+: wxDialog( parent, id, title, pos, wxSize(700, 600), style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	this->Centre( wxBOTH );

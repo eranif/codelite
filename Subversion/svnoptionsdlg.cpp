@@ -16,6 +16,7 @@ SvnOptionsBaseDlg( parent )
 		m_checkBoxKeepIconsAutoUpdate->Enable(false);
 		m_checkBoxUpdateAfterSave->Enable(false);
 	}
+	m_textCtrl1->SetFocus();
 }
 
 void SvnOptionsDlg::OnButtonOk( wxCommandEvent& event )

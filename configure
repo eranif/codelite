@@ -5,7 +5,7 @@
 ## it is released under the terms of GPLv2 or later
 ## Copyrights Eran Ifrah (c) 2008
 ########################################################
-
+	
 createRevisionFile()
 {
 	file_exist=`test -f LiteEditor/svninfo.cpp`
@@ -76,7 +76,7 @@ createVariables()
 	echo "" >> Makefile
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ " >> Makefile
 	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lwxflatnotebook\$(EXT) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
-	echo "\t-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
+	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 	
 
 	if [ "$is_plugin" = "no" ]; then
@@ -99,23 +99,23 @@ createMainTargets()
 	echo "" >> Makefile
 
 	echo "ctags: sdk/ctags/Makefile" >> Makefile
-	echo "\tcd sdk/ctags/ && \$(MAKE)" >> Makefile
+	echo "	cd sdk/ctags/ && \$(MAKE)" >> Makefile
 	echo "" >> Makefile
 
 	echo "sdk/ctags/Makefile:" >> Makefile
-	echo "\t@chmod +x sdk/ctags/configure" >> Makefile
-	echo "\tcd sdk/ctags && ./cofigure" >> Makefile 
+	echo "	@chmod +x sdk/ctags/configure" >> Makefile
+	echo "	cd sdk/ctags && ./cofigure" >> Makefile 
 	echo "" >> Makefile
 
 	echo "pre_build:" >> Makefile
-	echo "\t./le_makerevision.sh" >> Makefile
-	echo "\ttest -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
-	echo "\ttest -d  \$(OUTPUT_DIR) || mkdir \$(OUTPUT_DIR)" >> Makefile
+	echo "	./le_makerevision.sh" >> Makefile
+	echo "	test -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
+	echo "	test -d  \$(OUTPUT_DIR) || mkdir \$(OUTPUT_DIR)" >> Makefile
 	echo "" >> Makefile
 
 	echo "clean: clean_plugins" >> Makefile
-	echo "\t\$(RM) \$(OUTPUT_DIR)/*.a \$(OUTPUT_DIR)/*.so" >> Makefile
-	echo "\t\$(RM) -fr \$(OBJ_DIR)" >> Makefile
+	echo "	\$(RM) \$(OUTPUT_DIR)/*.a \$(OUTPUT_DIR)/*.so" >> Makefile
+	echo "	\$(RM) -fr \$(OBJ_DIR)" >> Makefile
 	echo "" >> Makefile
 
 }
@@ -131,7 +131,7 @@ createObjectList ()
 		a_file_no_ext=`basename $a_file .cxx`
 		a_file_no_ext=`basename $a_file_no_ext .cpp`
 		a_file_no_ext=`basename $a_file_no_ext .c`
-		echo "\t${configuration}/${a_file_no_ext}.o\\" >> Makefile
+		echo "	${configuration}/${a_file_no_ext}.o\\" >> Makefile
 	done
 	echo >> Makefile
 }
@@ -154,21 +154,21 @@ createRules_archive ()
 		
 		if [ "$file_extension" = "c" ]; then
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		fi
 	done
 	echo >> Makefile
 	
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
-	echo "\tar rcu \$(OUTPUT_DIR)/lib${libname}\$(EXT).a \$(${object_list_name})" >> Makefile
-	echo "\tranlib \$(OUTPUT_DIR)/lib${libname}\$(EXT).a " >> Makefile
+	echo "	ar rcu \$(OUTPUT_DIR)/lib${libname}\$(EXT).a \$(${object_list_name})" >> Makefile
+	echo "	ranlib \$(OUTPUT_DIR)/lib${libname}\$(EXT).a " >> Makefile
 	echo >> Makefile
 }
 
@@ -189,14 +189,14 @@ createRules_sharedObject ()
 		
 		if [ "$file_extension" = "c" ]; then
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		fi
 	done
 	echo >> Makefile
@@ -207,7 +207,7 @@ createRules_sharedObject ()
 	fi
 	
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
-	echo "\t\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
+	echo "	\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
 	echo >> Makefile
 }
 
@@ -228,20 +228,20 @@ createRules_exe ()
 		
 		if [ "$file_extension" = "c" ]; then
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "\t\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "\t\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		fi
 	done
 	echo >> Makefile
 	
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
-	echo "\t\$(CMP) -o ${exename} \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
+	echo "	\$(CMP) -o ${exename} \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
 	echo >> Makefile
 }
 
@@ -270,11 +270,11 @@ createPluginMakefile()
 	
 	echo ".PHONY: ${plugin_name}" >> Makefile
 	echo "${plugin_name}:" >> Makefile
-	echo "\tcd ${plugin_path} && \$(MAKE) -f Makefile" >> Makefile
+	echo "	cd ${plugin_path} && \$(MAKE) -f Makefile" >> Makefile
 	echo "" >> Makefile
 
 	echo "${plugin_name}_clean:" >> Makefile
-	echo "\tcd ${plugin_path} && \$(MAKE) -f Makefile clean" >> Makefile
+	echo "	cd ${plugin_path} && \$(MAKE) -f Makefile clean" >> Makefile
 	echo "" >> Makefile
 }
 
@@ -285,15 +285,15 @@ createPluginTargets()
 	echo "all :  pre_build ${plugin_name}" >> Makefile
 	echo "" >> Makefile
 	echo "pre_build:" >> Makefile
-	echo "\t@echo =================================================" >> Makefile
-	echo "\t@echo Building target ${plugin_name}" >> Makefile
-	echo "\t@echo =================================================" >> Makefile
-	echo "\ttest -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
-	echo "\ttest -d  ${base_dir}/\$(OUTPUT_DIR) || mkdir ${base_dir}/\$(OUTPUT_DIR)" >> Makefile
+	echo "	@echo =================================================" >> Makefile
+	echo "	@echo Building target ${plugin_name}" >> Makefile
+	echo "	@echo =================================================" >> Makefile
+	echo "	test -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
+	echo "	test -d  ${base_dir}/\$(OUTPUT_DIR) || mkdir ${base_dir}/\$(OUTPUT_DIR)" >> Makefile
 	echo "" >> Makefile
 	echo "clean:" >> Makefile
-	echo "\t\$(RM) ${base_dir}/\$(OUTPUT_DIR)/${plugin_name}.so" >> Makefile
-	echo "\t\$(RM) -fr \$(OBJ_DIR)" >> Makefile
+	echo "	\$(RM) ${base_dir}/\$(OUTPUT_DIR)/${plugin_name}.so" >> Makefile
+	echo "	\$(RM) -fr \$(OBJ_DIR)" >> Makefile
 	echo "" >> Makefile
 
 }
@@ -301,57 +301,57 @@ createPluginTargets()
 createInstallTarget()
 {
 	echo "install: " >> Makefile
-	echo "\t@echo installing CodeLite" >> Makefile
-	echo "\t@\$(RM) -fr  /usr/local/bin/CodeLite" >> Makefile
-	echo "\t@\$(RM) -fr  /usr/local/share/codelite" >> Makefile
-	echo "\t@mkdir -p /usr/local/bin" >> Makefile
-	echo "\t@cp \$(EXE_NAME) /usr/local/bin/" >> Makefile
-	echo "\t@ln -s /usr/local/bin/\$(EXE_NAME_NO_PATH) /usr/local/bin/CodeLite" >> Makefile
-	echo "\t@cp Runtime/le_dos2unix.sh /usr/local/bin/" >> Makefile
-	echo "\t@cp Runtime/le_exec.sh /usr/local/bin/" >> Makefile
-	echo "\t@cp Runtime/le_killproc.sh /usr/local/bin/" >> Makefile
-	echo "\t@chmod +x /usr/local/bin/le_dos2unix.sh" >> Makefile
-	echo "\t@chmod +x /usr/local/bin/le_exec.sh" >> Makefile
-	echo "\t@chmod +x /usr/local/bin/le_killproc.sh" >> Makefile
-	echo "\t@cp sdk/ctags/ctags-le /usr/local/bin/" >> Makefile
-	echo "\t@mkdir -p /usr/local/share/codelite" >> Makefile
-	echo "\t@mkdir -p /usr/local/share/codelite/config" >> Makefile
-	echo "\t@mkdir -p /usr/local/share/codelite/debuggers" >> Makefile
-	echo "\t@mkdir -p /usr/local/share/codelite/templates" >> Makefile
-	echo "\t@mkdir -p /usr/local/share/codelite/plugins" >> Makefile
-	echo "\t@mkdir -p /usr/local/share/codelite/images" >> Makefile
-	echo "\t@mkdir -p /usr/local/share/codelite/rc" >> Makefile
-	echo "\t@mkdir -p /usr/local/share/codelite/lexers" >> Makefile
-	echo "\t@cp -fr Runtime/config/*.xml /usr/local/share/codelite/config/" >> Makefile
-	echo "\t@cp -fr Runtime/config/liteeditor.xml.sample /usr/local/share/codelite/config/liteeditor.xml" >> Makefile
-	echo "\t@cp -fr Runtime/codelite.desktop /usr/share/applications/codelite.desktop" >> Makefile
-	echo "\t@cp -fpr Runtime/rc/*.xrc /usr/local/share/codelite/rc/" >> Makefile
-	echo "\t@cp -fpr Runtime/templates/*.project /usr/local/share/codelite/templates/" >> Makefile
-	echo "\t@cp -fpr Runtime/templates/*.wizard /usr/local/share/codelite/templates/" >> Makefile
-	echo "\t@cp -fpr Runtime/lexers/*.xml /usr/local/share/codelite/lexers/" >> Makefile
-	echo "\t@cp -fpr lib/Debugger.so /usr/local/share/codelite/debuggers/" >> Makefile
-	echo "\t@cp -fpr lib/CodeFormatter.so /usr/local/share/codelite/plugins/" >> Makefile
-	echo "\t@cp -fpr lib/Subversion.so /usr/local/share/codelite/plugins/" >> Makefile
-	echo "\t@cp -fpr lib/ReferenceAnalyser.so /usr/local/share/codelite/plugins/" >> Makefile
-	echo "\t@cp -fpr lib/cscope.so /usr/local/share/codelite/plugins/" >> Makefile
-	echo "\t@cp -fpr lib/Gizmos.so /usr/local/share/codelite/plugins/" >> Makefile
-	echo "\t@cp -fpr Runtime/index.html /usr/local/share/codelite/" >> Makefile
-	echo "\t@cp -fpr Runtime/astyle.sample /usr/local/share/codelite/" >> Makefile
-	echo "\t@cp -fpr Runtime/svnreport.html /usr/local/share/codelite/" >> Makefile
-	echo "\t@cp -fpr Runtime/images/*.png /usr/local/share/codelite/images/" >> Makefile
-	echo "\t@cp -fpr Runtime/codelite.desktop /usr/share/applications/" >> Makefile
-	echo "\t@cp -fpr Runtime/codelite.desktop ~/Desktop/" >> Makefile
-	echo "\t@chmod -R 777 /usr/local/share/codelite" >> Makefile
-	echo "\t@chmod +x /usr/local/bin/CodeLite" >> Makefile
+	echo "	@echo installing CodeLite" >> Makefile
+	echo "	@\$(RM) -fr  /usr/local/bin/CodeLite" >> Makefile
+	echo "	@\$(RM) -fr  /usr/local/share/codelite" >> Makefile
+	echo "	@mkdir -p /usr/local/bin" >> Makefile
+	echo "	@cp \$(EXE_NAME) /usr/local/bin/" >> Makefile
+	echo "	@ln -s /usr/local/bin/\$(EXE_NAME_NO_PATH) /usr/local/bin/CodeLite" >> Makefile
+	echo "	@cp Runtime/le_dos2unix.sh /usr/local/bin/" >> Makefile
+	echo "	@cp Runtime/le_exec.sh /usr/local/bin/" >> Makefile
+	echo "	@cp Runtime/le_killproc.sh /usr/local/bin/" >> Makefile
+	echo "	@chmod +x /usr/local/bin/le_dos2unix.sh" >> Makefile
+	echo "	@chmod +x /usr/local/bin/le_exec.sh" >> Makefile
+	echo "	@chmod +x /usr/local/bin/le_killproc.sh" >> Makefile
+	echo "	@cp sdk/ctags/ctags-le /usr/local/bin/" >> Makefile
+	echo "	@mkdir -p /usr/local/share/codelite" >> Makefile
+	echo "	@mkdir -p /usr/local/share/codelite/config" >> Makefile
+	echo "	@mkdir -p /usr/local/share/codelite/debuggers" >> Makefile
+	echo "	@mkdir -p /usr/local/share/codelite/templates" >> Makefile
+	echo "	@mkdir -p /usr/local/share/codelite/plugins" >> Makefile
+	echo "	@mkdir -p /usr/local/share/codelite/images" >> Makefile
+	echo "	@mkdir -p /usr/local/share/codelite/rc" >> Makefile
+	echo "	@mkdir -p /usr/local/share/codelite/lexers" >> Makefile
+	echo "	@cp -fr Runtime/config/*.xml /usr/local/share/codelite/config/" >> Makefile
+	echo "	@cp -fr Runtime/config/liteeditor.xml.sample /usr/local/share/codelite/config/liteeditor.xml" >> Makefile
+	echo "	@cp -fr Runtime/codelite.desktop /usr/share/applications/codelite.desktop" >> Makefile
+	echo "	@cp -fpr Runtime/rc/*.xrc /usr/local/share/codelite/rc/" >> Makefile
+	echo "	@cp -fpr Runtime/templates/*.project /usr/local/share/codelite/templates/" >> Makefile
+	echo "	@cp -fpr Runtime/templates/*.wizard /usr/local/share/codelite/templates/" >> Makefile
+	echo "	@cp -fpr Runtime/lexers/*.xml /usr/local/share/codelite/lexers/" >> Makefile
+	echo "	@cp -fpr lib/Debugger.so /usr/local/share/codelite/debuggers/" >> Makefile
+	echo "	@cp -fpr lib/CodeFormatter.so /usr/local/share/codelite/plugins/" >> Makefile
+	echo "	@cp -fpr lib/Subversion.so /usr/local/share/codelite/plugins/" >> Makefile
+	echo "	@cp -fpr lib/ReferenceAnalyser.so /usr/local/share/codelite/plugins/" >> Makefile
+	echo "	@cp -fpr lib/cscope.so /usr/local/share/codelite/plugins/" >> Makefile
+	echo "	@cp -fpr lib/Gizmos.so /usr/local/share/codelite/plugins/" >> Makefile
+	echo "	@cp -fpr Runtime/index.html /usr/local/share/codelite/" >> Makefile
+	echo "	@cp -fpr Runtime/astyle.sample /usr/local/share/codelite/" >> Makefile
+	echo "	@cp -fpr Runtime/svnreport.html /usr/local/share/codelite/" >> Makefile
+	echo "	@cp -fpr Runtime/images/*.png /usr/local/share/codelite/images/" >> Makefile
+	echo "	@cp -fpr Runtime/codelite.desktop /usr/share/applications/" >> Makefile
+	echo "	@cp -fpr Runtime/codelite.desktop ~/Desktop/" >> Makefile
+	echo "	@chmod -R 777 /usr/local/share/codelite" >> Makefile
+	echo "	@chmod +x /usr/local/bin/CodeLite" >> Makefile
 	echo "" >> Makefile
 }
 
 createEndMessage() 
 {
 	echo "post_build_msg:" >> Makefile
-        echo "\t@echo ==========================================================" >> Makefile
-        echo "\t@echo Done, please run \"sudo make install\"." >> Makefile
-        echo "\t@echo ==========================================================" >> Makefile
+        echo "	@echo ==========================================================" >> Makefile
+        echo "	@echo Done, please run \"sudo make install\"." >> Makefile
+        echo "	@echo ==========================================================" >> Makefile
 }
 
 ## main

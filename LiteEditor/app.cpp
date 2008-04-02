@@ -24,6 +24,31 @@
 
 extern char *SvnRevision;
 
+#ifdef __WXMAC__
+#include <mach-o/dyld.h>
+
+//On Mac we determine the base path using system call 
+//_NSGetExecutablePath(path, &path_len);
+wxString GetBasePath()
+{
+	char path[257];
+	uint32_t path_len = 256;
+	_NSGetExecutablePath(path, &path_len);
+	
+	//path now contains 
+	//CodeLite.app/Contents/MacOS/
+	wxFileName fname(wxString(path, wxConvUTF8));
+	
+	//remove he MacOS part of the exe path
+	wxString file_name = fname.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
+	wxString rest;
+	file_name.EndsWith(wxT("MacOS/"), &rest);
+	rest.Append(wxT("SharedSupport/"));
+	
+	return rest;
+}
+#endif
+
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
 	{wxCMD_LINE_SWITCH, wxT("v"), wxT("version"), wxT("Print current version"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_OPTION, wxT("b"), wxT("basedir"),  wxT("The base directory of CodeLite"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
@@ -166,7 +191,7 @@ bool App::OnInit()
 	//read the last frame size from the configuration file
 	// Initialise editor configuration files
 	EditorConfig *cfg = EditorConfigST::Get();
-	if( !cfg->Load() ){
+	if ( !cfg->Load() ) {
 		wxLogMessage(wxT("Failed to load configuration file liteeditor.xml"), wxT("CodeLite"), wxICON_ERROR | wxOK);
 		return false;
 	}
@@ -223,10 +248,10 @@ bool App::OnInit()
 		//convert to full path and open it
 		wxFileName fn(argument);
 		fn.MakeAbsolute(curdir);
-		
-		if(fn.GetExt() == wxT("workspace")) {
+
+		if (fn.GetExt() == wxT("workspace")) {
 			ManagerST::Get()->OpenWorkspace(fn.GetFullPath());
-		}else{
+		} else {
 			ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString);
 		}
 	}
@@ -245,7 +270,7 @@ void App::CopySettings(const wxString &destDir)
 	bool copyAnyways(true);
 
 	if (fileExist) {
-		if(CheckRevision(destDir + wxT("/config/liteeditor.xml")) == true) {
+		if (CheckRevision(destDir + wxT("/config/liteeditor.xml")) == true) {
 			//revision is ok
 			copyAnyways = false;
 		}

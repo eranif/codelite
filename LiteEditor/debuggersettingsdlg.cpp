@@ -61,6 +61,7 @@ DebuggerSettingsDlg::DebuggerSettingsDlg( wxWindow* parent )
 	//fill the notebook with the available debuggers
 	Initialize();
 	ConnectButton(m_buttonOK, DebuggerSettingsDlg::OnOk);
+	m_listCtrl1->SetFocus();
 }
 
 void DebuggerSettingsDlg::Initialize()

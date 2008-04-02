@@ -58,7 +58,8 @@ EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent, int id, wxString title, wxPo
 	
 	this->SetSizer( bSizer12 );
 	this->Layout();
-
+	
+	m_listVarsTable->SetFocus();
 	ConnectEvents();
 }
 
@@ -92,9 +93,14 @@ void EnvVarsTableDlg::InitVars()
 		SetColumnText(m_listVarsTable, item, 0, iter->first);
 		SetColumnText(m_listVarsTable, item, 1, iter->second);
 	}
-
-	m_listVarsTable->SetColumnWidth(0, wxLIST_AUTOSIZE);
-	m_listVarsTable->SetColumnWidth(1, wxLIST_AUTOSIZE);
+	
+	if(vars.GetVariables().size() > 0) {
+		m_listVarsTable->SetColumnWidth(0, wxLIST_AUTOSIZE);
+		m_listVarsTable->SetColumnWidth(1, wxLIST_AUTOSIZE);
+	}else{
+		m_listVarsTable->SetColumnWidth(0, 150);
+		m_listVarsTable->SetColumnWidth(1, 150);
+	}
 	m_listVarsTable->Thaw();
 }
 

@@ -158,6 +158,8 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data, i
 
 	ConnectButton(m_buttonOK, TagsOptionsDlg::OnButtonOK);
 	ConnectButton(m_buttonAdd, TagsOptionsDlg::OnButtonAdd);
+	
+	m_checkParseComments->SetFocus();
 }
 
 void TagsOptionsDlg::InitValues()

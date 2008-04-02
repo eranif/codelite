@@ -227,6 +227,8 @@ bool Manager::OpenFile(const wxString &file_name, const wxString &projectName, i
 		Frame::Get()->GetWorkspacePane()->GetFileViewTree()->ExpandToPath(editor->GetProject(), editor->GetFileName());
 	}
 	
+	Frame::Get()->GetFileExplorer()->GetFileTree()->ExpandToPath(editor->GetFileName());
+	
 	//update the open files list
 	Frame::Get()->GetOpenWindowsPane()->UpdateList();
 	editor->SetActive();

@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "fileexplorertree.h"
 #include "newprojectdlg.h"
 #include "newworkspacedlg.h"
 #include "replaceinfilespanel.h"
@@ -1213,6 +1214,7 @@ void Frame::OnPageChanged(wxFlatNotebookEvent &event)
 	if (!editor->GetProject().IsEmpty()) {
 		GetWorkspacePane()->DisplaySymbolTree(editor->GetFileName());
 		GetWorkspacePane()->GetFileViewTree()->ExpandToPath(editor->GetProject(), editor->GetFileName());
+		GetFileExplorer()->GetFileTree()->ExpandToPath(editor->GetFileName());
 	}
 
 	title << wxT(" - ") << editor->GetFileName().GetFullPath();

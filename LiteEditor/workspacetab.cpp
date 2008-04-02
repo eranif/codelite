@@ -20,26 +20,8 @@ WorkspaceTab::~WorkspaceTab()
 
 void WorkspaceTab::OnCollapseAll(wxCommandEvent &event)
 {
-	if(ManagerST::Get()->IsWorkspaceOpen() == false) {
-		return;
-	}
-	
-	wxTreeItemId root = m_fileView->GetRootItem();
-	if(root.IsOk() == false) {
-		return;
-	}
-	
-	if(m_fileView->ItemHasChildren(root) == false) {
-		return;
-	}
-	
-	//iterate over all the projects items and collapse them all
-	wxTreeItemIdValue cookie;
-	wxTreeItemId child = m_fileView->GetFirstChild(root, cookie);
-	while( child.IsOk() ) {
-		m_fileView->CollapseAllChildren(child);
-		child = m_fileView->GetNextChild(root, cookie);
-	}
+	wxUnusedVar(event);
+	DoCollpaseAll();
 }
 
 void WorkspaceTab::CreateGUIControls()
@@ -51,12 +33,12 @@ void WorkspaceTab::CreateGUIControls()
 	//tree items
 	
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_NODIVIDER|wxTB_HORIZONTAL| wxTB_HORZ_TEXT);
-	int id = wxNewId();
-	tb->AddTool(id, wxT("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
+	
+	tb->AddTool(XRCID("collapse_all"), wxT("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
 	tb->Realize();
 	
-	Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnCollapseAll ));
-	Connect( id, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceTab::OnCollapseAllUI ));
+	Connect( XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnCollapseAll ));
+	Connect( XRCID("collapse_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceTab::OnCollapseAllUI ));
 	sz->Add(tb, 0, wxEXPAND, 0);
 	
 	wxStaticLine *staticline = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -85,4 +67,32 @@ void WorkspaceTab::BuildFileTree()
 void WorkspaceTab::OnCollapseAllUI(wxUpdateUIEvent &event)
 {
 	event.Enable(ManagerST::Get()->IsWorkspaceOpen());
+}
+void WorkspaceTab::DoCollpaseAll()
+{
+if(ManagerST::Get()->IsWorkspaceOpen() == false) {
+		return;
+	}
+	
+	wxTreeItemId root = m_fileView->GetRootItem();
+	if(root.IsOk() == false) {
+		return;
+	}
+	
+	if(m_fileView->ItemHasChildren(root) == false) {
+		return;
+	}
+	
+	//iterate over all the projects items and collapse them all
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = m_fileView->GetFirstChild(root, cookie);
+	while( child.IsOk() ) {
+		m_fileView->CollapseAllChildren(child);
+		child = m_fileView->GetNextChild(root, cookie);
+	}
+}
+
+void WorkspaceTab::CollpaseAll()
+{
+	DoCollpaseAll();
 }

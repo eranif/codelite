@@ -10,10 +10,13 @@ class WorkspaceTab : public wxPanel {
 	FileViewTree *m_fileView;
 	wxComboBox *m_workspaceConfig;
 	
-protected:
+
 	void OnCollapseAll(wxCommandEvent &event);
 	void OnCollapseAllUI(wxUpdateUIEvent &event);
 	
+	void DoCollpaseAll();
+	
+protected:	
 	void CreateGUIControls();
 	
 public:
@@ -21,6 +24,8 @@ public:
 	~WorkspaceTab();
 	
 	void BuildFileTree();
+	void CollpaseAll();
+	
 	FileViewTree *GetFileView(){return m_fileView;}
 	wxComboBox *GetComboBox(){return m_workspaceConfig;}
 	

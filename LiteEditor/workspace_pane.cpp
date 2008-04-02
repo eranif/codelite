@@ -152,3 +152,7 @@ void WorkspacePane::OnSize(wxSizeEvent &e)
 	Refresh();
 	e.Skip();
 }
+void WorkspacePane::CollpaseAll()
+{
+	m_workspaceTab->CollpaseAll();
+}

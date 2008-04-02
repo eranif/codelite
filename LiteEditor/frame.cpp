@@ -1169,6 +1169,7 @@ void Frame::OnFileClose(wxCommandEvent &event)
 		GetNotebook()->DeletePage((size_t) GetNotebook()->GetSelection());
 	}
 	GetOpenWindowsPane()->UpdateList();
+	GetMainBook()->Clear();
 }
 
 void Frame::OnFileClosing(wxFlatNotebookEvent &event)
@@ -1226,6 +1227,8 @@ void Frame::OnPageClosed(wxFlatNotebookEvent &event)
 {
 	wxUnusedVar(event);
 	GetOpenWindowsPane()->UpdateList();
+	//clean the navigation bar
+	GetMainBook()->Clear();
 }
 
 void Frame::OnFileSaveAll(wxCommandEvent &event)
@@ -1834,6 +1837,7 @@ void Frame::OnFileCloseAll(wxCommandEvent &event)
 
 	GetMainBook()->Clear();
 	GetOpenWindowsPane()->UpdateList();
+	GetWorkspacePane()->CollpaseAll();
 }
 
 void Frame::OnQuickOutline(wxCommandEvent &event)

@@ -7,7 +7,7 @@ NewWorkspaceDlg::NewWorkspaceDlg( wxWindow* parent )
 		:
 		NewWorkspaceBase( parent )
 {
-
+	m_textCtrlWorkspaceName->SetFocus();
 }
 
 void NewWorkspaceDlg::OnWorkspacePathUpdated( wxCommandEvent& event )

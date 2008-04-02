@@ -10,7 +10,7 @@ private:
 	SplashScreen* m_splash;
 	Frame *m_pMainFrame;
 	bool ReadControlFile(wxString &installPath, long &installRev);
-	void CopySettings(const wxString &installPath);
+	void CopySettings(const wxString &destDir, const wxString &installPath);
 	bool CheckRevision(const wxString &fileName);
 	
 public:

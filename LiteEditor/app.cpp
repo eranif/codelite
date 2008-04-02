@@ -29,7 +29,7 @@ extern char *SvnRevision;
 
 //On Mac we determine the base path using system call 
 //_NSGetExecutablePath(path, &path_len);
-wxString GetBasePath()
+wxString MacGetBasePath()
 {
 	char path[257];
 	uint32_t path_len = 256;
@@ -131,13 +131,13 @@ bool App::OnInit()
 		wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
 
 		//copy the settings from the global location if needed
-		CopySettings(homeDir);
+		CopySettings(homeDir, wxStandardPaths::Get().GetDataDir());
 	}
 
 #elif defined (__WXMAC__)
 	SetAppName(wxT("codelite"));
-	homeDir = wxStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or ~/.codelite
-
+	homeDir = wxT("~/.codelite");//wxStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or 
+	
 	//Create the directory structure
 	wxMkDir(homeDir.ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/plugins/")).ToAscii(), 0777);
@@ -149,7 +149,7 @@ bool App::OnInit()
 	wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
 
 	//copy the settings from the global location if needed
-	CopySettings(homeDir);
+	CopySettings(homeDir, MacGetBasePath());
 
 #else //__WXMSW__
 	if (homeDir.IsEmpty()) { //did we got a basedir from user?
@@ -264,7 +264,7 @@ int App::OnExit()
 	return 0;
 }
 
-void App::CopySettings(const wxString &destDir)
+void App::CopySettings(const wxString &destDir, const wxString &installPath)
 {
 	bool fileExist = wxFileName::FileExists( destDir + wxT("/config/liteeditor.xml") );
 	bool copyAnyways(true);
@@ -281,21 +281,21 @@ void App::CopySettings(const wxString &destDir)
 		// copy new settings from the global installation location which is currently located at
 		// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
 		//
-		massCopy(  wxStandardPaths::Get().GetDataDir() + wxT("/plugins/"), wxT("*.so"), destDir + wxT("/plugins/"));
-		massCopy(  wxStandardPaths::Get().GetDataDir() + wxT("/templates/"), wxT("*.wizard"), destDir + wxT("/templates/"));
-		massCopy(  wxStandardPaths::Get().GetDataDir() + wxT("/templates/"), wxT("*.project"), destDir + wxT("/templates/"));
-		massCopy(  wxStandardPaths::Get().GetDataDir() + wxT("/templates/"), wxT("*.xml"), destDir + wxT("/templates/"));
-		massCopy(  wxStandardPaths::Get().GetDataDir() + wxT("/lexers/"), wxT("*.xml"), destDir + wxT("/lexers/"));
-		massCopy(  wxStandardPaths::Get().GetDataDir() + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
-		massCopy(  wxStandardPaths::Get().GetDataDir() + wxT("/"), wxT("*.tags"), destDir + wxT("/"));
-		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/config/build_settings.xml"), destDir + wxT("/config/build_settings.xml"));
-		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/config/liteeditor.xml"), destDir + wxT("/config/liteeditor.xml"));
-		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/config/debuggers.xml"), destDir + wxT("/config/debuggers.xml"));
-		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/rc/menu.xrc"), destDir + wxT("/rc/menu.xrc"));
-		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/debuggers/Debugger.so"), destDir + wxT("/debuggers/Debugger.so"));
-		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/index.html"), destDir + wxT("/index.html"));
-		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
-		wxCopyFile(wxStandardPaths::Get().GetDataDir() + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
+		massCopy  (installPath + wxT("/plugins/"), wxT("*.so"), destDir + wxT("/plugins/"));
+		massCopy  (installPath + wxT("/templates/"), wxT("*.wizard"), destDir + wxT("/templates/"));
+		massCopy  (installPath + wxT("/templates/"), wxT("*.project"), destDir + wxT("/templates/"));
+		massCopy  (installPath + wxT("/templates/"), wxT("*.xml"), destDir + wxT("/templates/"));
+		massCopy  (installPath + wxT("/lexers/"), wxT("*.xml"), destDir + wxT("/lexers/"));
+		massCopy  (installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
+		massCopy  (installPath + wxT("/"), wxT("*.tags"), destDir + wxT("/"));
+		wxCopyFile(installPath + wxT("/config/build_settings.xml"), destDir + wxT("/config/build_settings.xml"));
+		wxCopyFile(installPath + wxT("/config/liteeditor.xml"), destDir + wxT("/config/liteeditor.xml"));
+		wxCopyFile(installPath + wxT("/config/debuggers.xml"), destDir + wxT("/config/debuggers.xml"));
+		wxCopyFile(installPath + wxT("/rc/menu.xrc"), destDir + wxT("/rc/menu.xrc"));
+		wxCopyFile(installPath + wxT("/debuggers/Debugger.so"), destDir + wxT("/debuggers/Debugger.so"));
+		wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));
+		wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
+		wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
 	}
 }
 

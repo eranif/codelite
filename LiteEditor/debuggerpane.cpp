@@ -23,7 +23,6 @@ DebuggerPane::DebuggerPane(wxWindow *parent, const wxString &caption)
 
 DebuggerPane::~DebuggerPane()
 {
-	m_book->DeleteAllPages();
 }
 
 void DebuggerPane::OnPageChanged(wxFlatNotebookEvent &event)

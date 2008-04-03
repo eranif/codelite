@@ -30,7 +30,6 @@ OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 OutputPane::~OutputPane()
 {
 	delete wxLog::SetActiveTarget(m_logTargetOld);
-	m_book->DeleteAllPages();
 }
 
 void OutputPane::CreateGUIControls()

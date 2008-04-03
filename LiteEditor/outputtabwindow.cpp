@@ -1,4 +1,5 @@
 #include "outputtabwindow.h"
+#include "wx/ffile.h"
 #include "output_pane.h"
 #include "wx/sizer.h"
 #include "wx/toolbar.h"
@@ -20,6 +21,15 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
 
 OutputTabWindow::~OutputTabWindow()
 {
+	wxFFile file;
+	if (!file.Open(wxT("LEditor"), wxT("a+b"))) {
+		return;
+	}
+	
+	wxString msg;
+	msg << GetId() << wxT(": OutputTabWindow dtor is called\n");
+	file.Write(msg);
+	file.Close();
 }
 
 void OutputTabWindow::CreateGUIControl()
@@ -42,16 +52,16 @@ void OutputTabWindow::CreateGUIControl()
 	            wxXmlResource::Get()->LoadBitmap(wxT("word_wrap")),
 	            wxT("Word Wrap"));
 	Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnWordWrap ));
-	
-	if(m_name == OutputPane::BUILD_WIN) {
-	id = wxNewId();
+
+	if (m_name == OutputPane::BUILD_WIN) {
+		id = wxNewId();
 		tb->AddTool(id,
-					wxT("Set compiler colours..."),
-					wxXmlResource::Get()->LoadBitmap(wxT("colourise")),
-					wxT("Set compiler colours..."));
+		            wxT("Set compiler colours..."),
+		            wxXmlResource::Get()->LoadBitmap(wxT("colourise")),
+		            wxT("Set compiler colours..."));
 		Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnCompilerColours ));
 	}
-	
+
 	tb->Realize();
 	mainSizer->Add(tb, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
 
@@ -66,8 +76,8 @@ void OutputTabWindow::CreateGUIControl()
 	m_sci->SetMarginWidth(2, 0);
 	m_sci->SetMarginWidth(1, 0);
 	m_sci->SetMarginWidth(0, 0);
-	
-	
+
+
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 
@@ -149,7 +159,7 @@ void OutputTabWindow::Clear()
 
 void OutputTabWindow::OnCommand(wxCommandEvent &e)
 {
-	switch(e.GetId()) {
+	switch (e.GetId()) {
 	case wxID_COPY:
 		m_sci->Copy();
 		break;
@@ -160,7 +170,7 @@ void OutputTabWindow::OnCommand(wxCommandEvent &e)
 
 void OutputTabWindow::OnUpdateUI(wxUpdateUIEvent &e)
 {
-	switch(e.GetId()) {
+	switch (e.GetId()) {
 	case wxID_COPY:
 		e.Enable( m_sci->GetSelectionStart() - m_sci->GetSelectionEnd() != 0 );
 		break;

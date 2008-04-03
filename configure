@@ -478,12 +478,12 @@ echo "" >> Makefile
 ##
 ########################################################
 
-createPluginMakefile "Debugger" "Debugger" "~/.codelite/debuggers/"
-createPluginMakefile "Gizmos" "Gizmos"  "~/.codelite/plugins/"
-createPluginMakefile "cscope" "cscope" "~/.codelite/plugins/"
-createPluginMakefile "Subversion" "Subversion" "~/.codelite/plugins/"
-createPluginMakefile "CodeFormatter" "CodeFormatter" "~/.codelite/plugins/"
-createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "~/.codelite/plugins/"
+createPluginMakefile "Debugger" "Debugger" "/usr/local/share/codelite/debuggers/"
+createPluginMakefile "Gizmos" "Gizmos"  "/usr/local/share/codelite/plugins/"
+createPluginMakefile "cscope" "cscope" "/usr/local/share/codelite/plugins/"
+createPluginMakefile "Subversion" "Subversion" "/usr/local/share/codelite/plugins/"
+createPluginMakefile "CodeFormatter" "CodeFormatter" "/usr/local/share/codelite/plugins/"
+createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "/usr/local/share/codelite/plugins/"
 
 
 

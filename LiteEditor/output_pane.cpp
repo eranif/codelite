@@ -18,6 +18,12 @@ const wxString OutputPane::OUTPUT_WIN        = wxT("Output");
 const wxString OutputPane::OUTPUT_DEBUG       = wxT("Debug");
 const wxString OutputPane::REPLACE_IN_FILES   = wxT("Replace Results");
 
+BEGIN_EVENT_TABLE(OutputPane, wxPanel)
+EVT_PAINT(OutputPane::OnPaint)
+EVT_ERASE_BACKGROUND(OutputPane::OnEraseBg)
+EVT_SIZE(OutputPane::OnSize)
+END_EVENT_TABLE()
+
 OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300))
 , m_caption(caption)
@@ -129,4 +135,25 @@ void OutputPane::SetFindResultsTab(int which)
 {
 	m_fifTabToUse = which;
 	m_findResultsTab->SetActiveTab(which);
+}
+
+void OutputPane::OnEraseBg(wxEraseEvent &e)
+{
+	wxUnusedVar(e);
+}
+
+void OutputPane::OnPaint(wxPaintEvent &e)
+{
+	wxUnusedVar(e);
+	wxBufferedPaintDC dc(this);
+	dc.SetPen( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
+	dc.SetBrush( *wxTRANSPARENT_BRUSH );
+	
+	dc.DrawRectangle( wxRect(GetSize()) );
+}
+
+void OutputPane::OnSize(wxSizeEvent &e)
+{
+	Refresh();
+	e.Skip();
 }

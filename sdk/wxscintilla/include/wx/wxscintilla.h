@@ -413,6 +413,15 @@
 #define wxSCI_LEX_FIF 85
 #define wxSCI_LEX_FIF_DEFAULT 0
 #define wxSCI_LEX_FIF_FILE	  1
+
+#define wxSCI_LEX_SVN 86
+#define wxSCI_LEX_SVN_DEFAULT 	0
+#define wxSCI_LEX_SVN_UPDATED  	1
+#define wxSCI_LEX_SVN_CONFLICT  2
+#define wxSCI_LEX_SVN_MERGED 	3
+#define wxSCI_LEX_SVN_DELETED 	4
+#define wxSCI_LEX_SVN_ADDED 	5
+
 //ERAN - END
 
 // When a lexer specifies its language as SCLEX_AUTOMATIC it receives a

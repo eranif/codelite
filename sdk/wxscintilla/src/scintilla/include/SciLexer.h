@@ -108,6 +108,14 @@
 #define SCLEX_FIF 85
 #define SCLEX_FIF_DEFAULT 0
 #define SCLEX_FIF_FILE	  1
+
+#define SCLEX_SVN 86
+#define SCLEX_SVN_DEFAULT 	0
+#define SCLEX_SVN_UPDATED  	1
+#define SCLEX_SVN_CONFLICT  2
+#define SCLEX_SVN_MERGED 	3
+#define SCLEX_SVN_DELETED 	4
+#define SCLEX_SVN_ADDED 	5
 //Eran - END
 
 #define SCLEX_AUTOMATIC 1000

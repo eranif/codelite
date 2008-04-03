@@ -34,7 +34,9 @@ void ShellTab::CreateGUIControl()
 	tb->AddTool(id, 
 				wxT("Word Wrap"), 
 				wxXmlResource::Get()->LoadBitmap(wxT("word_wrap")), 
-				wxT("Word Wrap"));
+				wxT("Word Wrap"),
+				wxITEM_CHECK);
+				
 	Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( ShellTab::OnWordWrap ));
 	tb->Realize(); 
 	mainSizer->Add(tb, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);

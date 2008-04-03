@@ -90,6 +90,11 @@ public:
 	FindResultsTab *GetFindResultsTab();
 	ReplaceInFilesPanel *GetReplaceResultsTab(){return m_replaceResultsTab;}
 	void SetFindResultsTab(int which);
+	
+	DECLARE_EVENT_TABLE()
+	virtual void OnPaint(wxPaintEvent &e);
+	virtual void OnEraseBg(wxEraseEvent &e);
+	virtual void OnSize(wxSizeEvent &e);
 };
 
 #endif // OUTPUT_PANE_H

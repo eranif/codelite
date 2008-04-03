@@ -20,6 +20,11 @@ wxVerticalTab::wxVerticalTab(wxWindow *win, wxWindowID id, const wxString &text,
 		, m_bmp(bmp)
 		, m_selected(selected)
 		, m_padding(6)
+#ifdef __WXMSW__		
+		, m_heightPadding(4)
+#else
+		, m_heightPadding(6)
+#endif
 		, m_orientation(orientation)
 		, m_window(NULL)
 		, m_leftDown(false)
@@ -157,11 +162,10 @@ int wxVerticalTab::CalcTabHeight()
 int wxVerticalTab::CalcTabWidth()
 {
 	int tmpTabWidth(0);
-	int tabWidth(GetPadding()*2);
+	int tabWidth(GetHeightPadding()*2);
 	if (GetBmp().IsOk()) {
 		tmpTabWidth = GetBmp().GetHeight();
 	}
-
 
 	if (GetText().IsEmpty() == false) {
 		int xx, yy;

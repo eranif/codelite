@@ -11,6 +11,7 @@ class wxVerticalTab : public wxPanel {
 	wxBitmap m_bmp;
 	bool m_selected;
 	int m_padding;
+	int m_heightPadding;
 	int m_orientation;
 	wxWindow *m_window;
 	bool m_leftDown;
@@ -35,6 +36,9 @@ public:
 	const int& GetOrientation() const {return m_orientation;}
 	const int& GetPadding() const {return m_padding;}
 	wxWindow* GetWindow() const {return m_window;}
+	
+	void SetHeightPadding(const int& heightPadding) {this->m_heightPadding = heightPadding;}
+	const int& GetHeightPadding() const {return m_heightPadding;}
 	
 	DECLARE_EVENT_TABLE()
 	

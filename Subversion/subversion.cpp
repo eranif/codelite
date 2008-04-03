@@ -446,27 +446,31 @@ void SubversionPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 		wxMenuItem *item = menu->FindItem(XRCID("SVN_POPUP"));
 		if (item) {
 			menu->Destroy(item);
+			menu->Destroy(m_sepItem);
+			m_sepItem = NULL;
 		}
 
 	} else if (type == MenuTypeEditor) {
 		wxMenuItem *item = menu->FindItem(XRCID("SVN_EDITOR_POPUP"));
 		if (item) {
 			menu->Destroy(item);
+			menu->Destroy(m_sepItem);
+			m_sepItem = NULL;
 		}
 	} else if (type == MenuTypeFileView_Workspace) {
 		wxMenuItem *item = menu->FindItem(XRCID("SVN_WORKSPACE_POPUP"));
 		if (item) {
 			menu->Destroy(item);
+			menu->Destroy(m_sepItem);
+			m_sepItem = NULL;
 		}
 	} else if (type == MenuTypeFileView_Project) {
 		wxMenuItem *item = menu->FindItem(XRCID("SVN_PROJECT_POPUP"));
 		if (item) {
 			menu->Destroy(item);
+			menu->Destroy(m_sepItem);
+			m_sepItem = NULL;
 		}
-	}
-	if (m_sepItem) {
-		menu->Destroy(m_sepItem);
-		m_sepItem = NULL;
 	}
 }
 

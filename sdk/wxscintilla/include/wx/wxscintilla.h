@@ -3424,7 +3424,7 @@ protected:
 
 private:
     DECLARE_EVENT_TABLE()
-    DECLARE_DYNAMIC_CLASS(wxScintilla)
+    //DECLARE_CLASS(wxScintilla)
 #endif
 };
 
@@ -3492,7 +3492,7 @@ public:
 
 #ifndef SWIG
 private:
-    DECLARE_DYNAMIC_CLASS(wxScintillaEvent)
+    //DECLARE_CLASS(wxScintillaEvent)
 
     int  m_position;
     int  m_key;

@@ -130,8 +130,8 @@ BEGIN_EVENT_TABLE(wxScintilla, wxControl)
 END_EVENT_TABLE()
 
 
-IMPLEMENT_CLASS(wxScintilla, wxControl)
-IMPLEMENT_DYNAMIC_CLASS(wxScintillaEvent, wxCommandEvent)
+//IMPLEMENT_CLASS(wxScintilla, wxControl)
+//IMPLEMENT_CLASS(wxScintillaEvent, wxCommandEvent)
 
 #ifdef LINK_LEXERS
 // forces the linking of the lexer modules

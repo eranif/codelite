@@ -56,6 +56,7 @@
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sdk/wxflatnotebook/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
@@ -66,6 +67,7 @@
         <Library Value="libwxflatnotebookud.a"/>
         <Library Value="libCodeLiteud.a"/>
         <Library Value="libwxsqlite3ud.a"/>
+        <Library Value="libwxscintillaud.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -81,7 +83,9 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -92,6 +96,7 @@
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sdk/wxflatnotebook/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
@@ -102,6 +107,7 @@
         <Library Value="libwxflatnotebooku.a"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
+        <Library Value="libwxscintillau.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -117,7 +123,9 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -157,9 +165,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -199,9 +205,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>

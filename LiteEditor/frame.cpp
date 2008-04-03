@@ -68,11 +68,13 @@
 #include <gtk-2.0/gtk/gtk.h>
 #endif
 
+typedef int (*_GCC_COLOUR_FUNC_PTR)(int, const char*, size_t&, size_t&);
+
 extern char *SvnRevision;
 extern char *cubes_xpm[];
 extern unsigned char cubes_alpha[];
 extern time_t GetFileModificationTime(const wxString &fileName);
-
+extern void SetGccColourFunction(_GCC_COLOUR_FUNC_PTR func);
 static int FrameTimerId = wxNewId();
 
 //----------------------------------------------------------------
@@ -356,6 +358,8 @@ void Frame::Initialize(bool loadLastSession)
 	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
 		m_theFrame->LoadSession(wxT("Default"));
 	}
+	
+	SetGccColourFunction( BuildTab::ColourGccLine );
 }
 
 Frame* Frame::Get()
@@ -1214,7 +1218,9 @@ void Frame::OnPageChanged(wxFlatNotebookEvent &event)
 	if (!editor->GetProject().IsEmpty()) {
 		GetWorkspacePane()->DisplaySymbolTree(editor->GetFileName());
 		GetWorkspacePane()->GetFileViewTree()->ExpandToPath(editor->GetProject(), editor->GetFileName());
-		GetFileExplorer()->GetFileTree()->ExpandToPath(editor->GetFileName());
+		if(GetFileExplorer()->GetIsLinkedToEditor()) {
+			GetFileExplorer()->GetFileTree()->ExpandToPath(editor->GetFileName());
+		}
 	}
 
 	title << wxT(" - ") << editor->GetFileName().GetFullPath();

@@ -31,46 +31,6 @@ END_EVENT_TABLE()
 //1 - colour as error
 //2 - colour as warning
 //----------------------------------------------------
-int ColourGccLine(int startLine, const char *line, size_t &fileNameStart, size_t &fileNameLen)
-{
-	BuildTab *bt = Frame::Get()->GetOutputPane()->GetBuildTab();
-
-	wxString fileName, strLineNumber;
-	long idx;
-
-	// search for the compiler definition for the current line
-	int lineNumber = bt->LineFromPosition(startLine);
-	CompilerPtr cmp = bt->GetCompilerByLine(lineNumber);
-	if (!cmp) {
-		return 0;
-	}
-
-	wxString lineText = _U(line);
-	//check if this is a 'Building:' line
-	if (lineText.StartsWith(wxT("Building:"))) {
-		return wxSCI_LEX_GCC_BUILDING;
-	}
-
-	wxRegEx re(cmp->GetWarnPattern());
-	if (re.IsValid()) {
-		cmp->GetWarnFileNameIndex().ToLong(&idx);
-		if(re.Matches(lineText)){
-			re.GetMatch(&fileNameStart, &fileNameLen, 0);
-			return wxSCI_LEX_GCC_WARNING;
-		}
-	}
-	
-	wxRegEx ere(cmp->GetErrPattern());
-	if (re.IsValid()) {
-		cmp->GetErrFileNameIndex().ToLong(&idx);
-		if(ere.Matches(lineText)){
-			ere.GetMatch(&fileNameStart, &fileNameLen, 0);
-			return wxSCI_LEX_GCC_ERROR;
-		}
-	}
-
-	return wxSCI_LEX_GCC_DEFAULT;
-}
 
 BuildTab::BuildTab(wxWindow *parent, wxWindowID id, const wxString &name)
 		: OutputTabWindow(parent, id, name)
@@ -373,4 +333,45 @@ void BuildTab::OnCompilerColours(wxCommandEvent &e)
 void BuildTab::OnHotspotClicked(wxScintillaEvent &event)
 {
 	OnMouseDClick(event);
+}
+
+int BuildTab::ColourGccLine(int startLine, const char *line, size_t &fileNameStart, size_t &fileNameLen)
+{
+	BuildTab *bt = Frame::Get()->GetOutputPane()->GetBuildTab();
+
+	wxString fileName, strLineNumber;
+	long idx;
+
+	// search for the compiler definition for the current line
+	int lineNumber = bt->LineFromPosition(startLine);
+	CompilerPtr cmp = bt->GetCompilerByLine(lineNumber);
+	if (!cmp) {
+		return 0;
+	}
+
+	wxString lineText = _U(line);
+	//check if this is a 'Building:' line
+	if (lineText.StartsWith(wxT("Building:"))) {
+		return wxSCI_LEX_GCC_BUILDING;
+	}
+
+	wxRegEx re(cmp->GetWarnPattern());
+	if (re.IsValid()) {
+		cmp->GetWarnFileNameIndex().ToLong(&idx);
+		if(re.Matches(lineText)){
+			re.GetMatch(&fileNameStart, &fileNameLen, 0);
+			return wxSCI_LEX_GCC_WARNING;
+		}
+	}
+	
+	wxRegEx ere(cmp->GetErrPattern());
+	if (re.IsValid()) {
+		cmp->GetErrFileNameIndex().ToLong(&idx);
+		if(ere.Matches(lineText)){
+			ere.GetMatch(&fileNameStart, &fileNameLen, 0);
+			return wxSCI_LEX_GCC_ERROR;
+		}
+	}
+
+	return wxSCI_LEX_GCC_DEFAULT;
 }

@@ -39,6 +39,8 @@ public:
 	CompilerPtr GetCompilerByLine(int lineClicked);
 	int LineFromPosition(int pos);
 	
+	static int ColourGccLine(int startLine, const char *line, size_t &fileNameStart, size_t &fileNameLen);
+	
 	DECLARE_EVENT_TABLE()
 };
 #endif // __buidltab__

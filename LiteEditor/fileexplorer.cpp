@@ -1,3 +1,4 @@
+#include "wx/xrc/xmlres.h"
 #include "fileexplorer.h"
 #include "fileexplorertree.h"
 #include "wx/sizer.h"
@@ -10,6 +11,7 @@
 FileExplorer::FileExplorer(wxWindow *parent, const wxString &caption)
 : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 300))
 , m_caption(caption)
+, m_isLinkedToEditor(false)
 #ifdef __WXMSW__
 , m_thread(this)
 #endif
@@ -39,6 +41,15 @@ void FileExplorer::CreateGUIControls()
 
 	m_fileTree = new FileExplorerTree(this, wxID_ANY);
 	mainSizer->Add(m_fileTree, 1, wxEXPAND|wxALL, 1);
+	
+	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL);
+	mainSizer->Add(tb, 0, wxEXPAND);
+	
+	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
+	tb->Realize();
+	
+	Connect( XRCID("link_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileExplorer::OnLinkEditor ));
+
 	mainSizer->Layout();
 
 #ifdef __WXMSW__
@@ -102,3 +113,8 @@ void FileExplorer::OnVolumes(wxCommandEvent &e)
 
 #endif
 
+void FileExplorer::OnLinkEditor(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	m_isLinkedToEditor = !m_isLinkedToEditor;
+}

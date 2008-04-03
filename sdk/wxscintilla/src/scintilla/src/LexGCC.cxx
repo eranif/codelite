@@ -26,7 +26,22 @@
 using namespace Scintilla;
 #endif
 
-extern int ColourGccLine(int startLine, const char *line, size_t &fileNameStart, size_t &fileNameLen);
+typedef int (*GCC_COLOUR_FUNC_PTR)(int, const char*, size_t&, size_t&);
+
+static GCC_COLOUR_FUNC_PTR s_gccColourFunc = NULL;
+
+void SetGccColourFunction(GCC_COLOUR_FUNC_PTR func){
+	s_gccColourFunc = func;
+}
+
+int ColourGccLine(int startLine, const char *line, size_t &fileNameStart, size_t &fileNameLen)
+{
+	if(s_gccColourFunc) {
+		return s_gccColourFunc(startLine, line, fileNameStart, fileNameLen);
+	}else{
+		return 0;
+	}
+}
 
 static inline bool AtEOL(Accessor &styler, unsigned int i)
 {

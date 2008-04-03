@@ -14,11 +14,10 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/button.h>
-#include <wx/sizer.h>
-#include <wx/statline.h>
 #include <wx/treectrl.h>
 #include <wx/gauge.h>
+#include <wx/button.h>
+#include <wx/sizer.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -33,16 +32,14 @@ class CscopeTabBase : public wxPanel
 	
 	protected:
 		wxStaticText* m_statusMessage;
-		wxButton* m_buttonClear;
-		wxStaticLine* m_staticline2;
 		wxTreeCtrl* m_treeCtrlResults;
-		wxStaticLine* m_staticline1;
 		wxGauge* m_gauge;
+		wxButton* m_buttonClear;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnClearResults( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnLeftDClick( wxMouseEvent& event ){ event.Skip(); }
 		virtual void OnItemActivated( wxTreeEvent& event ){ event.Skip(); }
+		virtual void OnClearResults( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:

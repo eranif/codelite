@@ -1,4 +1,5 @@
 #include "svnreportgeneratoraction.h"
+#include "svntab.h"
 #include "wx/ffile.h"
 #include "svniconrefreshhandler.h"
 #include "wx/html/htmlwin.h"
@@ -97,11 +98,7 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 	m_longName = wxT("Subversion");
 	m_shortName = wxT("SVN");
 
-	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
-
-	wxTextCtrl *svnwin = new wxTextCtrl(m_mgr->GetOutputPaneNotebook(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER| wxTE_MULTILINE | wxTE_READONLY);
-	svnwin->SetFont(font);
+	SvnTab *svnwin = new SvnTab(m_mgr->GetOutputPaneNotebook());
 
 	m_mgr->GetOutputPaneNotebook()->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
 	m_mgr->GetOutputPaneNotebook()->AddPage(svnwin, wxT("Subversion"), false, (int)m_mgr->GetOutputPaneNotebook()->GetImageList()->GetCount()-1);
@@ -407,29 +404,39 @@ void SubversionPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 
 void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
-	if (m_sepItem) {
-		//we already have popup menu for the SVN
-		return;
-	}
-
 	if (type == MenuTypeFileExplorer) {
-		m_sepItem = menu->PrependSeparator();
-		menu->Prepend(XRCID("SVN_POPUP"), wxT("Svn"), CreatePopMenu());
+		if (!menu->FindItem(XRCID("SVN_POPUP"))) {
+			m_sepItem = menu->PrependSeparator();
+			menu->Prepend(XRCID("SVN_POPUP"), wxT("Svn"), CreatePopMenu());
+		}
 	} else if (type == MenuTypeEditor) {
-		m_sepItem = menu->AppendSeparator();
-		menu->Append(XRCID("SVN_EDITOR_POPUP"), wxT("Svn"), CreateEditorPopMenu());
+		
+		if (!menu->FindItem(XRCID("SVN_EDITOR_POPUP"))) {
+			m_sepItem = menu->AppendSeparator();
+			menu->Append(XRCID("SVN_EDITOR_POPUP"), wxT("Svn"), CreateEditorPopMenu());
+		}
 	} else if (type == MenuTypeFileView_Workspace) {
+		
 		if (!IsWorkspaceUnderSvn()) {
 			return;
 		}
-		m_sepItem = menu->PrependSeparator();
-		menu->Prepend(XRCID("SVN_WORKSPACE_POPUP"), wxT("Svn"), CreateWorkspacePopMenu());
+
+		if (!menu->FindItem(XRCID("SVN_WORKSPACE_POPUP"))) {
+			m_sepItem = menu->PrependSeparator();
+			menu->Prepend(XRCID("SVN_WORKSPACE_POPUP"), wxT("Svn"), CreateWorkspacePopMenu());
+		}
+		
 	} else if (type == MenuTypeFileView_Project) {
 		if (!IsWorkspaceUnderSvn()) {
 			return;
 		}
-		m_sepItem = menu->PrependSeparator();
-		menu->Prepend(XRCID("SVN_PROJECT_POPUP"), wxT("Svn"), CreateProjectPopMenu());
+
+		if (!menu->FindItem(XRCID("SVN_PROJECT_POPUP"))) {
+			//No svn menu
+			m_sepItem = menu->PrependSeparator();
+			menu->Prepend(XRCID("SVN_PROJECT_POPUP"), wxT("Svn"), CreateProjectPopMenu());
+		}
+
 	}
 }
 
@@ -626,7 +633,7 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 	//read the file content
 	wxString content;
 	ReadFileWithConversion(fn.GetFullPath(), content);
-	
+
 	wxString rawData;
 	for (size_t i=0; i< output.GetCount(); i++) {
 		rawData << output.Item(i);
@@ -650,7 +657,7 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 	SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateUnversioned);
 	formatStr = FormatRaws(files, _base, SvnXmlParser::StateUnversioned);
 	content.Replace(wxT("$(UnversionedFiles)"), formatStr);
-	
+
 	content.Replace(wxT("$(BasePath)"), _base);
 	content.Replace(wxT("$(Origin)"), origin);
 
@@ -752,7 +759,7 @@ void SubversionPlugin::OnLinkClicked(wxHtmlLinkEvent &e)
 		action = action.AfterFirst(wxT(':'));
 		wxString command = action.BeforeFirst(wxT(':'));
 		wxString fileName = action.AfterFirst(wxT(':'));
-		
+
 		wxFileName fn(fileName);
 		if (command == wxT("add-explorer")) {
 			m_svn->Add(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh")));

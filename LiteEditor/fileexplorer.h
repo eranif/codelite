@@ -12,7 +12,8 @@ class FileExplorer : public wxPanel
 private:
 	FileExplorerTree *m_fileTree;
 	wxString m_caption;
-
+	bool m_isLinkedToEditor;
+	
 #ifdef __WXMSW__
 	wxChoice *m_volumes;
 	VolumeLocatorThread m_thread;
@@ -33,7 +34,11 @@ public:
 	//setters/getters
 	const wxString &GetCaption() const{return m_caption;}
 	FileExplorerTree *GetFileTree() {return m_fileTree;}
+	void OnLinkEditor(wxCommandEvent &e);
 	void Scan();
+	
+	void SetIsLinkedToEditor(const bool& isLinkedToEditor) {this->m_isLinkedToEditor = isLinkedToEditor;}
+	const bool& GetIsLinkedToEditor() const {return m_isLinkedToEditor;}
 };
 
 #endif //FILEEXPLORER_H

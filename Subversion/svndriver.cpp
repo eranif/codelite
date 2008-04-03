@@ -1,4 +1,5 @@
 #include "svndriver.h"
+#include "svntab.h"
 #include "svnpostcmdaction.h"
 #include "wx/tokenzr.h"
 #include "dirsaver.h"
@@ -632,10 +633,10 @@ void SvnDriver::PrintMessage(const wxArrayString &textArr)
 void SvnDriver::PrintMessage(const wxString &text)
 {
 	wxFlatNotebook *book = m_manager->GetOutputPaneNotebook();
-	wxTextCtrl *svnWin (NULL);
+	SvnTab *svnWin (NULL);
 	for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
 		if (book->GetPageText(i) == wxT("Subversion")) {
-			svnWin = dynamic_cast<wxTextCtrl*>(book->GetPage(i));
+			svnWin = dynamic_cast< SvnTab *>(book->GetPage(i));
 			break;
 		}
 	}
@@ -643,8 +644,6 @@ void SvnDriver::PrintMessage(const wxString &text)
 
 	if (svnWin) {
 		svnWin->AppendText(text);
-		//make the appended line visible
-		svnWin->ShowPosition(svnWin->GetLastPosition());
 	}
 }
 

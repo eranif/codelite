@@ -14,6 +14,8 @@
     <File Name="svnpostcmdaction.h"/>
     <File Name="svnreportgeneratoraction.cpp"/>
     <File Name="svnreportgeneratoraction.h"/>
+    <File Name="svntab.cpp"/>
+    <File Name="svntab.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="svndriver.h"/>
@@ -137,6 +139,7 @@
         <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
         <Library Value="libwxFlatNotebookud.a"/>
+        <Library Value="libwxscintillaud.a"/>
         <Library Value="libwxmsw28ud.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -165,6 +168,7 @@
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sdk/wxflatnotebook/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="_WIN32_WINNT=0x501"/>
@@ -177,6 +181,7 @@
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
+        <Library Value="libwxscintillau.a"/>
         <Library Value="libwxmsw28u.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>

@@ -63,6 +63,8 @@ static void ColouriseSvnDoc(
 					styler.ColourTo(i, SCLEX_SVN_CONFLICT);
 				} else if (str.at(0) == 'G' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_MERGED);
+				} else if (str.at(0) == 'M' && str.at(1) == ' ') {
+					styler.ColourTo(i, SCLEX_SVN_MERGED);
 				} else if (str.at(0) == 'A' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_ADDED);
 				} else if (str.at(0) == 'D' && str.at(1) == ' ') {

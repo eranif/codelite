@@ -59,6 +59,10 @@ static void ColouriseSvnDoc(
 			if (str.length() > 2) {
 				if (str.at(0) == 'U' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_UPDATED);
+				} else if (str.at(0) == '_' && str.at(1) == 'U' && str.at(1) == ' ') {
+					styler.ColourTo(i, SCLEX_SVN_UPDATED);
+				} else if (str.at(0) == 'U' && str.at(1) == 'U' && str.at(1) == ' ') {
+					styler.ColourTo(i, SCLEX_SVN_UPDATED);
 				} else if (str.at(0) == 'C' && str.at(1) == ' ') {
 					styler.ColourTo(i, SCLEX_SVN_CONFLICT);
 				} else if (str.at(0) == 'G' && str.at(1) == ' ') {

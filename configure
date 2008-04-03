@@ -104,7 +104,7 @@ createMainTargets()
 
 	echo "sdk/ctags/Makefile:" >> Makefile
 	echo "	@chmod +x sdk/ctags/configure" >> Makefile
-	echo "	cd sdk/ctags && ./cofigure" >> Makefile 
+	echo "	cd sdk/ctags && ./configure" >> Makefile 
 	echo "" >> Makefile
 
 	echo "pre_build:" >> Makefile

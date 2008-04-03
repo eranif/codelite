@@ -249,6 +249,7 @@ createPluginMakefile()
 {
 	plugin_path=$1
 	plugin_name=$2
+	install_path=$3
 	
 	echo "Generating ${plugin_path}/Makefile..."
 	current_wd=`pwd`
@@ -268,13 +269,17 @@ createPluginMakefile()
 	## restore the path
 	cd ${current_wd}
 	
-	echo ".PHONY: ${plugin_name}" >> Makefile
+	echo ".PHONY: ${plugin_name} ${plugin_name}_clean ${plugin_name}_install" >> Makefile
 	echo "${plugin_name}:" >> Makefile
 	echo "	cd ${plugin_path} && \$(MAKE) -f Makefile" >> Makefile
 	echo "" >> Makefile
 
 	echo "${plugin_name}_clean:" >> Makefile
 	echo "	cd ${plugin_path} && \$(MAKE) -f Makefile clean" >> Makefile
+	echo "" >> Makefile
+	
+	echo "${plugin_name}_install:" >> Makefile
+	echo "	cp \$(OUTPUT_DIR)/${plugin_name}.so ${install_path}" >> Makefile
 	echo "" >> Makefile
 }
 
@@ -300,7 +305,10 @@ createPluginTargets()
 
 createInstallTarget()
 {
-	echo "install: " >> Makefile
+	echo "install: core_install plugins_install" >> Makefile
+	echo "" >> Makefile
+	
+	echo "core_install:" >> Makefile
 	echo "	@echo installing CodeLite" >> Makefile
 	echo "	@\$(RM) -fr  /usr/local/bin/CodeLite" >> Makefile
 	echo "	@\$(RM) -fr  /usr/local/share/codelite" >> Makefile
@@ -346,12 +354,30 @@ createInstallTarget()
 	echo "" >> Makefile
 }
 
+createUnInstallTarget()
+{
+	echo "uninstall: " >> Makefile
+	echo "	@echo Uninstalling CodeLite" >> Makefile
+	echo "	@\$(RM) -fr  /usr/local/bin/CodeLite" >> Makefile
+	echo "	@\$(RM) -fr  /usr/local/bin/le_dos2unix.sh" >> Makefile
+	echo "	@\$(RM) -fr  /usr/local/bin/le_exec.sh" >> Makefile
+	echo "	@\$(RM) -fr  /usr/local/bin/le_killproc.sh" >> Makefile
+	echo "	@\$(RM) -fr  /usr/local/bin/CodeLiteUR" >> Makefile
+	echo "	@\$(RM) -fr  /usr/local/bin/CodeLiteUD" >> Makefile
+	echo "	@\$(RM) -fr  /usr/local/share/codelite" >> Makefile
+	echo "	@\$(RM) -fr /usr/share/applications/codelite.desktop" >> Makefile
+	echo "	@\$(RM) -fr ~/Desktop/codelite.desktop" >> Makefile
+	echo "" >> Makefile
+}
+
 createEndMessage() 
 {
-	echo "post_build_msg:" >> Makefile
-        echo "	@echo ==========================================================" >> Makefile
-        echo "	@echo Done, please run \"sudo make install\"." >> Makefile
-        echo "	@echo ==========================================================" >> Makefile
+	if [ "$os_name" = "Linux" ]; then
+		echo "post_build_msg:" >> Makefile
+		echo "	@echo ==========================================================" >> Makefile
+		echo "	@echo Done, please run \"sudo make install\"." >> Makefile
+		echo "	@echo ==========================================================" >> Makefile
+	fi
 }
 
 ## main
@@ -394,6 +420,7 @@ createRules_archive "Plugin/*.cpp " "SDKObjects" "SDK" "plugin"
 createRules_archive "sdk/wxflatnotebook/src/wxFlatNotebook/*.cpp " "wxFlatNotebookObjects" "wxFlatNotebook" "wxflatnotebook"
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createInstallTarget
+createUnInstallTarget
 
 echo "-include \$(OBJ_DIR)/*.d" >> Makefile
 echo "" >> Makefile
@@ -414,6 +441,20 @@ echo "cscope\\" >> Makefile
 echo "Subversion\\" >> Makefile
 echo "CodeFormatter\\" >> Makefile
 echo "ReferenceAnalyser\\" >> Makefile
+echo "" >> Makefile
+
+echo "plugins_install:\\" >> Makefile
+########################################################
+##
+## For all plugins you add, you can add an entry here for 
+## the install target
+########################################################
+echo "Debugger_install\\" >> Makefile
+echo "Gizmos_install\\" >> Makefile
+echo "cscope_install\\" >> Makefile
+echo "Subversion_install\\" >> Makefile
+echo "CodeFormatter_install\\" >> Makefile
+echo "ReferenceAnalyser_install\\" >> Makefile
 echo "" >> Makefile
 
 echo "clean_plugins:\\" >> Makefile
@@ -437,12 +478,12 @@ echo "" >> Makefile
 ##
 ########################################################
 
-createPluginMakefile "Debugger" "Debugger"
-createPluginMakefile "Gizmos" "Gizmos"  
-createPluginMakefile "cscope" "cscope"
-createPluginMakefile "Subversion" "Subversion"
-createPluginMakefile "CodeFormatter" "CodeFormatter"
-createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser"
+createPluginMakefile "Debugger" "Debugger" "~/.codelite/debuggers/"
+createPluginMakefile "Gizmos" "Gizmos"  "~/.codelite/plugins/"
+createPluginMakefile "cscope" "cscope" "~/.codelite/plugins/"
+createPluginMakefile "Subversion" "Subversion" "~/.codelite/plugins/"
+createPluginMakefile "CodeFormatter" "CodeFormatter" "~/.codelite/plugins/"
+createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "~/.codelite/plugins/"
 
 
 

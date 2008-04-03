@@ -133,7 +133,6 @@
       <File Name="src/scintilla/src/RunStyles.h"/>
       <File Name="src/scintilla/src/LexGCC.cxx"/>
       <File Name="src/scintilla/src/LexFIF.cxx"/>
-      <File Name="src\scintilla\src\LexSVN.cxx"/>
       <File Name="src/scintilla/src/LexSVN.cxx"/>
     </VirtualDirectory>
     <VirtualDirectory Name="include">

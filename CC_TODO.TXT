@@ -18,7 +18,7 @@
 - Fix : ExpandAllVariables() function to accept the workspace as pointer, othewise, this function is not 
   usable from plugins
   
-- add lexer for SVN 
+- Auto detect workspace/project modified outside of the IDE and offer to re-load the workspace
 
-- make the synchronization between the File Explorer and the editor as optional
+
 

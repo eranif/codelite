@@ -21,15 +21,6 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
 
 OutputTabWindow::~OutputTabWindow()
 {
-	wxFFile file;
-	if (!file.Open(wxT("LEditor"), wxT("a+b"))) {
-		return;
-	}
-	
-	wxString msg;
-	msg << GetId() << wxT(": OutputTabWindow dtor is called\n");
-	file.Write(msg);
-	file.Close();
 }
 
 void OutputTabWindow::CreateGUIControl()

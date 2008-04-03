@@ -14,6 +14,7 @@ END_EVENT_TABLE()
 wxTabContainer::wxTabContainer(wxWindow *win, wxWindowID id, int orientation)
 		: wxPanel(win, id)
 		, m_orientation(orientation)
+		, m_draggedTab(NULL)
 {
 	Initialize();
 }
@@ -191,7 +192,7 @@ void wxTabContainer::OnPaint(wxPaintEvent &e)
 	int xx;
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-	
+
 	if (m_orientation == wxRIGHT) {
 		xx = 3;
 		dc.DrawRectangle(0, 0, 2, rr.height);
@@ -236,4 +237,58 @@ void wxTabContainer::SetOrientation(const int& orientation)
 		}
 	}
 	GetSizer()->Layout();
+}
+
+void wxTabContainer::SetDraggedTab(wxVerticalTab *tab)
+{
+	m_draggedTab = tab;
+}
+
+void wxTabContainer::SwapTabs(wxVerticalTab *tab)
+{
+	if(m_draggedTab == tab) {return;}
+	if(m_draggedTab == NULL){return;}
+	
+	int orientation(wxBOTTOM);
+	
+	size_t index = TabToIndex(tab);
+	if(index == static_cast<size_t>(-1)) {return;}
+	
+	size_t index2 = TabToIndex(m_draggedTab);
+	if(index2 == static_cast<size_t>(-1)) {return;}
+	
+	orientation = index2 > index ? wxTOP : wxBOTTOM;
+	
+	Freeze();
+	//detach the dragged tab from the sizer
+	m_tabsSizer->Detach(m_draggedTab);
+	
+	index = TabToIndex(tab);
+	if (orientation == wxBOTTOM) {
+		//tab is being dragged bottom
+		if(index == GetTabsCount()-1){
+			//last tab
+			m_tabsSizer->Add(m_draggedTab, 0, wxLEFT | wxRIGHT, 3);
+		}else{
+			m_tabsSizer->Insert(index+1, m_draggedTab, 0, wxLEFT | wxRIGHT, 3);
+		}
+	} else {
+		//dragg is going up
+		m_tabsSizer->Insert(index, m_draggedTab, 0, wxLEFT | wxRIGHT, 3);
+	}
+	Thaw();
+	m_tabsSizer->Layout();
+	
+}
+
+void wxTabContainer::OnLeaveWindow(wxMouseEvent &e)
+{
+	wxUnusedVar(e);
+	m_draggedTab = NULL;
+}
+
+void wxTabContainer::OnLeftUp(wxMouseEvent &e)
+{
+	wxUnusedVar(e);
+	m_draggedTab = NULL;
 }

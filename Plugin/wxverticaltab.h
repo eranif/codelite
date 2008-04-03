@@ -13,6 +13,7 @@ class wxVerticalTab : public wxPanel {
 	int m_padding;
 	int m_orientation;
 	wxWindow *m_window;
+	bool m_leftDown;
 	
 protected:
 	int CalcTabHeight();
@@ -41,5 +42,8 @@ public:
 	virtual void OnPaint(wxPaintEvent &event);
 	virtual void OnErase(wxEraseEvent &event);
 	virtual void OnLeftDown(wxMouseEvent &e);
+	virtual void OnMouseEnterWindow(wxMouseEvent &e);
+	virtual void OnMouseMove(wxMouseEvent &e);
+	virtual void OnLeftUp(wxMouseEvent &e);
 };
 #endif // __wxverticaltab__

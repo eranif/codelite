@@ -9,6 +9,9 @@ BEGIN_EVENT_TABLE(wxVerticalTab, wxPanel)
 	EVT_PAINT(wxVerticalTab::OnPaint)
 	EVT_ERASE_BACKGROUND(wxVerticalTab::OnErase)
 	EVT_LEFT_DOWN(wxVerticalTab::OnLeftDown)
+	EVT_ENTER_WINDOW(wxVerticalTab::OnMouseEnterWindow)
+	EVT_LEFT_UP(wxVerticalTab::OnLeftUp)
+	EVT_MOTION(wxVerticalTab::OnMouseMove)
 END_EVENT_TABLE()
 
 wxVerticalTab::wxVerticalTab(wxWindow *win, wxWindowID id, const wxString &text, const wxBitmap &bmp, bool selected, int orientation)
@@ -19,6 +22,7 @@ wxVerticalTab::wxVerticalTab(wxWindow *win, wxWindowID id, const wxString &text,
 		, m_padding(6)
 		, m_orientation(orientation)
 		, m_window(NULL)
+		, m_leftDown(false)
 {
 	SetSizeHints(CalcTabWidth(), CalcTabHeight());
 }
@@ -174,16 +178,53 @@ int wxVerticalTab::CalcTabWidth()
 
 void wxVerticalTab::OnLeftDown(wxMouseEvent &e)
 {
+	m_leftDown = true;
 	//notify the parent that this tab has been selected
-	if(GetSelected()) {
+	if (GetSelected()) {
 		//we are already the selected tab nothing to be done here
 		return;
 	}
-	
+
 	wxTabContainer *parent = dynamic_cast<wxTabContainer*>( GetParent() );
-	if(parent) {
+	if (parent) {
 		parent->SetSelection(this, true);
 	}
+	
 	e.Skip();
 }
 
+void wxVerticalTab::OnMouseEnterWindow(wxMouseEvent &e)
+{
+	wxUnusedVar(e);
+	if (e.LeftIsDown()) {
+		wxTabContainer *parent = dynamic_cast<wxTabContainer*>( GetParent() );
+		if (parent) {
+			parent->SwapTabs(this);
+		}
+	}
+}
+
+void wxVerticalTab::OnMouseMove(wxMouseEvent &e)
+{
+	//mark this tab as the dragged one, only if the left down action
+	//was taken place on this tab!
+	if (e.LeftIsDown() && m_leftDown) {
+		//left is down, check to see if the tab is being dragged
+		wxTabContainer *parent = dynamic_cast<wxTabContainer*>( GetParent() );
+		if (parent) {
+			parent->SetDraggedTab(this);
+		}
+	}
+	
+}
+
+void wxVerticalTab::OnLeftUp(wxMouseEvent &e)
+{
+	wxUnusedVar(e);
+	m_leftDown = false;
+	wxTabContainer *parent = dynamic_cast<wxTabContainer*>( GetParent() );
+	if (parent) {
+		parent->SetDraggedTab(NULL);
+	}
+	
+}

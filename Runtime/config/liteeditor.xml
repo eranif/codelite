@@ -9,6 +9,9 @@
   <ArchiveObject Name="LoadSavedPrespective">
     <long Value="1" Name="m_value"/>
   </ArchiveObject>
+  <RecentWorkspaces>
+    <File Name="C:\Users\Eran\Development\codelite\trunk\LiteEditor.workspace"/>
+  </RecentWorkspaces>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1296" y="1010"/>
     <wxPoint Name="m_framePos" x="-8" y="-8"/>

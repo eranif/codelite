@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LiteEditor Revision="1327">
+<LiteEditor Revision="1332">
   <Layout>
-    <Perspective Name="Default" Value="layout2|name=Output;caption=Output;state=10487804;dir=3;layer=3;row=0;pos=0;prop=100000;bestw=627;besth=471;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=258;floaty=700;floatw=635;floath=495|name=Workspace;caption=Workspace;state=2099196;dir=4;layer=2;row=0;pos=0;prop=100000;bestw=250;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger;caption=Debugger;state=2099198;dir=3;layer=1;row=0;pos=1;prop=100000;bestw=400;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Editor;caption=;state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Standard Toolbar;caption=Standard;state=2108156;dir=1;layer=10;row=0;pos=0;prop=100000;bestw=505;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Search Toolbar;caption=Search;state=2108156;dir=1;layer=10;row=0;pos=789;prop=100000;bestw=194;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Build Toolbar;caption=Build;state=2108156;dir=1;layer=10;row=1;pos=0;prop=100000;bestw=163;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger Toolbar;caption=Debug;state=2108156;dir=1;layer=10;row=1;pos=172;prop=100000;bestw=194;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Navigation Toolbar;caption=Navigation Toolbar;state=2108156;dir=1;layer=10;row=2;pos=0;prop=100000;bestw=800;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=CodeFormatter;caption=CodeFormatter;state=2108156;dir=1;layer=10;row=0;pos=616;prop=100000;bestw=62;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Cscope;caption=Cscope;state=2108156;dir=1;layer=10;row=0;pos=687;prop=100000;bestw=93;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Gizmos;caption=Gizmos;state=2108156;dir=1;layer=10;row=0;pos=514;prop=100000;bestw=93;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(4,2,0)=250|dock_size(5,0,0)=20|dock_size(1,10,0)=31|dock_size(1,10,1)=31|dock_size(1,10,2)=31|dock_size(3,3,0)=281|"/>
+    <Perspective Name="Default" Value="layout2|name=Output;caption=Output;state=10487806;dir=3;layer=1;row=0;pos=0;prop=100000;bestw=627;besth=471;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Workspace;caption=Workspace;state=2099198;dir=4;layer=2;row=0;pos=0;prop=100000;bestw=250;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger;caption=Debugger;state=2099198;dir=3;layer=1;row=0;pos=1;prop=100000;bestw=400;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Editor;caption=;state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Standard Toolbar;caption=Standard;state=2108156;dir=1;layer=10;row=0;pos=0;prop=100000;bestw=505;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Search Toolbar;caption=Search;state=2108156;dir=1;layer=10;row=0;pos=789;prop=100000;bestw=194;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Build Toolbar;caption=Build;state=2108156;dir=1;layer=10;row=1;pos=0;prop=100000;bestw=163;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger Toolbar;caption=Debug;state=2108156;dir=1;layer=10;row=1;pos=172;prop=100000;bestw=194;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Navigation Toolbar;caption=Navigation Toolbar;state=2108156;dir=1;layer=10;row=2;pos=0;prop=100000;bestw=800;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=CodeFormatter;caption=CodeFormatter;state=2108156;dir=1;layer=10;row=0;pos=616;prop=100000;bestw=62;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Cscope;caption=Cscope;state=2108156;dir=1;layer=10;row=0;pos=687;prop=100000;bestw=93;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Gizmos;caption=Gizmos;state=2108156;dir=1;layer=10;row=0;pos=514;prop=100000;bestw=93;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=20|dock_size(1,10,0)=31|dock_size(1,10,1)=31|dock_size(1,10,2)=31|"/>
     <Notebook Name="Editor" Style="747196"/>
     <Notebook Name="OutputPane" Style="721948"/>
     <Notebook Name="WorkspacePane" Style="738332"/>
@@ -121,9 +121,6 @@
     <File Name="/home/eran/devl/test/anotherclass.cpp"/>
     <File Name="C:\MinGW\bin\..\lib\gcc\mingw32\3.4.2\..\..\..\..\include\string.h"/>
   </RecentFiles>
-  <ArchiveObject Name="LoadSavedPrespective">
-    <long Value="1" Name="m_value"/>
-  </ArchiveObject>
   <RecentWorkspaces>
     <File Name="C:\Test.project.workspace"/>
     <File Name="/home/eran/devl/test/test.workspace"/>
@@ -135,6 +132,9 @@
     <File Name="C:\TestArea\TestOne.workspace"/>
     <File Name="C:\TestArea\newdlgs\SomeWSP.workspace"/>
   </RecentWorkspaces>
+  <ArchiveObject Name="LoadSavedPrespective">
+    <long Value="1" Name="m_value"/>
+  </ArchiveObject>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="1004"/>
     <wxPoint Name="m_framePos" x="-4" y="-4"/>

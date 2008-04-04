@@ -2354,7 +2354,7 @@ wxSQLite3FunctionContext::wxSQLite3FunctionContext(void* ctx, bool isAggregate, 
 {
 }
 
-static wxChar* authCodeString[] =
+static const wxChar* authCodeString[] =
 { _T("SQLITE_COPY"),              _T("SQLITE_CREATE_INDEX"),      _T("SQLITE_CREATE_TABLE"),
   _T("SQLITE_CREATE_TEMP_INDEX"), _T("SQLITE_CREATE_TEMP_TABLE"), _T("SQLITE_CREATE_TEMP_TRIGGER"),
   _T("SQLITE_CREATE_TEMP_VIEW"),  _T("SQLITE_CREATE_TRIGGER"),    _T("SQLITE_CREATE_VIEW"),
@@ -2372,7 +2372,7 @@ static wxChar* authCodeString[] =
 /* static */
 wxString wxSQLite3Authorizer::AuthorizationCodeToString(wxSQLite3Authorizer::wxAuthorizationCode type)
 {
-  wxChar* authString = _T("Unknown");
+ const  wxChar* authString = _T("Unknown");
   if (type >= SQLITE_COPY && type <= SQLITE_MAX_CODE)
   {
     authString = authCodeString[type];

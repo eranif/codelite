@@ -22,7 +22,7 @@
 #include <wx/msw/registry.h> //registry keys
 #endif
 
-extern char *SvnRevision;
+extern wxChar *SvnRevision;
 
 #ifdef __WXMAC__
 #include <mach-o/dyld.h>
@@ -205,7 +205,7 @@ bool App::OnInit()
 		wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png"));
 		if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
 			wxString mainTitle;
-			mainTitle << wxT("CodeLite - SVN build, Revision: ") << _U(SvnRevision);
+			mainTitle << wxT("CodeLite - SVN build, Revision: ") << SvnRevision;
 			m_splash = new SplashScreen(bitmap, mainTitle, wxT("For the Windows(R) & Linux environments"),
 			                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
 			                            3000, NULL, -1, wxDefaultPosition, wxDefaultSize,
@@ -358,7 +358,7 @@ bool App::CheckRevision(const wxString &fileName)
 		wxXmlNode *root = doc.GetRoot();
 		if (root) {
 			wxString configRevision = XmlUtils::ReadString(root, wxT("Revision"));
-			wxString curRevision = _U(SvnRevision);
+			wxString curRevision(SvnRevision);
 			if (configRevision.Trim().Trim(false) == curRevision.Trim().Trim(false)) {
 				return true;
 			}

@@ -351,7 +351,7 @@ resources.cpp: resources.xrc
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
       <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./WinDebugUnicode" Command="./CodeLite.exe" CommandArguments="-b . " WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
-      <Compiler Required="yes" Options="$(shell wx-config --debug=yes --cxxflags --unicode=yes);-g;-Wall">
+      <Compiler Required="yes" Options="$(shell wx-config --wxcfg=gcc_dll\mswud --debug=yes --cxxflags --unicode=yes);-Wall;-fno-strict-aliasing;">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
@@ -397,7 +397,7 @@ svninfo.cpp:
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
       <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./WinReleaseUnicode" Command="./CodeLite.exe" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
-      <Compiler Required="yes" Options="$(shell wx-config --debug=no --cxxflags --unicode=yes);-O2;-Wall">
+      <Compiler Required="yes" Options="$(shell wx-config --wxcfg=gcc_dll\mswu --debug=no --cxxflags --unicode=yes);-O2;-Wall;-fno-strict-aliasing ">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>

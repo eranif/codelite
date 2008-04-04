@@ -38,7 +38,8 @@ int main(int argc, char **argv){
 		return -1;
 	}
 	
-	fprintf(of, "#define SvnRevision \"");
+	fprintf(of, "#include <wx/string.h>\n");
+	fprintf(of, "const wxChar* SvnRevision = wxT(\"");
 	if(found){
 		//we got the revision number
 		int counter(0);
@@ -57,7 +58,7 @@ int main(int argc, char **argv){
 			counter++;
 		}
 	}
-	fprintf(of, "\"\n");
+	fprintf(of, "\");\n");
 	pclose(fp);
 	fclose(of);
 	return 0;

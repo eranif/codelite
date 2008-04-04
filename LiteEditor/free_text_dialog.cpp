@@ -18,7 +18,7 @@
 #endif //WX_PRECOMP
 
 #include "free_text_dialog.h"
-
+ 
 ///////////////////////////////////////////////////////////////////////////
 
 FreeTextDialog::FreeTextDialog( wxWindow* parent, wxString value, int id, wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style )

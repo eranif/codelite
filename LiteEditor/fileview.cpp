@@ -4,7 +4,7 @@
 #include "manager.h"
 #include "tree.h"
 #include <wx/xrc/xmlres.h>
-#include "wx/imaglist.h"
+#include "wx/imaglist.h" 
 #include <wx/textdlg.h>
 #include <deque>
 #include "new_item_dlg.h"

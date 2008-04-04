@@ -18,5 +18,5 @@ bool FileDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &file
 		ManagerST::Get()->OpenFile(filenames.Item(i), wxEmptyString);
 	}
 	return true;
-}
+} 
 

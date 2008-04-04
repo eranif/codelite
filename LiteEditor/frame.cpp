@@ -70,7 +70,7 @@
 
 typedef int (*_GCC_COLOUR_FUNC_PTR)(int, const char*, size_t&, size_t&);
 
-extern char *SvnRevision;
+extern const wxChar *SvnRevision;
 extern char *cubes_xpm[];
 extern unsigned char cubes_alpha[];
 extern time_t GetFileModificationTime(const wxString &fileName);
@@ -320,7 +320,7 @@ void Frame::Initialize(bool loadLastSession)
 {
 	//set the revision number in the frame title
 	wxString title(wxT("CodeLite - Revision: "));
-	title << _U(SvnRevision);
+	title << SvnRevision;
 
 	//initialize the environment variable configuration manager
 	EnvironmentConfig::Instance()->Load();
@@ -911,7 +911,7 @@ void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 	info.SetName(wxT("CodeLite"));
 
 	wxString svnInfo;
-	svnInfo << wxT("SVN Build, Revision: ") << _U(SvnRevision);
+	svnInfo << wxT("SVN Build, Revision: ") << SvnRevision;
 	info.SetVersion(svnInfo);
 	info.SetDescription(wxT("A lightweight cross-platform IDE for C/C++"));
 	info.SetCopyright(wxT("(C) 2007-2008 By Eran Ifrah <eran.ifrah@gmail.com>"));
@@ -1175,7 +1175,7 @@ void Frame::OnFileClose(wxCommandEvent &event)
 	}
 	GetOpenWindowsPane()->UpdateList();
 	GetMainBook()->Clear();
-}
+} 
 
 void Frame::OnFileClosing(wxFlatNotebookEvent &event)
 {
@@ -1197,7 +1197,7 @@ void Frame::OnFileClosing(wxFlatNotebookEvent &event)
 
 	//update the titlebar
 	wxString title(wxT("CodeLite - Revision: "));
-	title << _U(SvnRevision);
+	title << SvnRevision;
 	SetTitle(title);
 	event.Skip();
 }
@@ -1206,7 +1206,7 @@ void Frame::OnPageChanged(wxFlatNotebookEvent &event)
 {
 	// pass the event to the editor
 	wxString title(wxT("CodeLite - Revision: "));
-	title << _U(SvnRevision);
+	title << SvnRevision;
 
 	LEditor *editor = dynamic_cast<LEditor*>( GetNotebook()->GetPage(event.GetSelection()) );
 	if ( !editor ) {
@@ -1840,7 +1840,7 @@ void Frame::OnFileCloseAll(wxCommandEvent &event)
 
 	//update the title bar
 	wxString title(wxT("CodeLite - Revision: "));
-	title << _U(SvnRevision);
+	title << SvnRevision;
 	SetTitle(title);
 
 	GetMainBook()->Clear();
@@ -2364,10 +2364,10 @@ void Frame::LoadPlugins()
 	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
 	if (loadIt) {
 		wxString pers = EditorConfigST::Get()->LoadPerspective(wxT("Default"));
-		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == _U(SvnRevision)) {
+		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == SvnRevision) {
 			m_mgr.LoadPerspective(pers);
 		} else {
-			EditorConfigST::Get()->SetRevision(_U(SvnRevision));
+			EditorConfigST::Get()->SetRevision(SvnRevision);
 		}
 	}
 	EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);

@@ -13,14 +13,14 @@
 extern "C" EXPORT char* STDCALL
 	AStyleMain(const char* pSourceIn,
 	           const char* pOptions,
-	           void(STDCALL *fpError)(int, char*),
+	           void(STDCALL *fpError)(int, const char*),
 	           char*(STDCALL *fpAlloc)(unsigned long));
 
 
 //------------------------------------------------------------------------
 // Astyle functions required by AStyleLib
 // Error handler for the Artistic Style formatter
-void  STDCALL ASErrorHandler(int errorNumber, char* errorMessage)
+void  STDCALL ASErrorHandler(int errorNumber, const char* errorMessage)
 {
 	wxString errStr;
 	errStr << _U(errorMessage) << wxT(" (error ") << errorNumber << wxT(")");

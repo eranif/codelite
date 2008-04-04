@@ -80,7 +80,7 @@ bool parseOption(ASFormatter &formatter, const string &arg, const string &errorI
 
 #ifdef ASTYLE_LIB
 // GUI function pointers
-typedef void (STDCALL *fpError)(int, char*);       // pointer to callback error handler
+typedef void (STDCALL *fpError)(int, const char*);       // pointer to callback error handler
 typedef char* (STDCALL *fpAlloc)(unsigned long);   // pointer to callback memory allocation
 // GUI variables
 stringstream *_err = NULL;
@@ -602,17 +602,17 @@ extern "C" EXPORT char* STDCALL
 
 	if (pSourceIn == NULL)
 	{
-		fpErrorHandler(101, "No pointer to source input");
+		fpErrorHandler(101, (char*)"No pointer to source input");
 		return NULL;
 	}
 	if (pOptions == NULL)
 	{
-		fpErrorHandler(102, "No pointer to AStyle options");
+		fpErrorHandler(102, (char*)"No pointer to AStyle options");
 		return NULL;
 	}
 	if (fpMemoryAlloc == NULL)
 	{
-		fpErrorHandler(103, "No pointer to memory allocation function");
+		fpErrorHandler(103, (char*)"No pointer to memory allocation function");
 		return NULL;
 	}
 
@@ -651,7 +651,7 @@ extern "C" EXPORT char* STDCALL
 	char* pTextOut = fpMemoryAlloc(textSizeOut + 1);     // call memory allocation function
 	if (pTextOut == NULL)
 	{
-		fpErrorHandler(110, "Allocation failure on output");
+		fpErrorHandler(110, (const char*)"Allocation failure on output");
 		return NULL;
 	}
 

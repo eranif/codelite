@@ -30,34 +30,34 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Development\C++\codelite\trunk\Runtime\CodeLite.exe"; DestDir: "{app}"; AfterInstall: UpdatePath() ; Flags: ignoreversion; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\CodeLite.exe"; DestDir: "{app}"; AfterInstall: UpdatePath() ; Flags: ignoreversion; Components: Editor
 Source: "C:\wxWidgets-2.8.7\lib\gcc_dll\wxmsw28u_gcc_custom.dll"; DestDir: "{app}"; AfterInstall: UpdatePath(); Flags: ignoreversion; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Program Files\CodeLite\common.tags"; DestDir: "{app}"; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\sdk\wxconfig\wx-config.exe"; DestDir: "{app}\bin"; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\config\liteeditor.xml.sample"; DestDir: "{app}\config"; DestName: liteeditor.xml; Components: Editor;
-Source: "C:\Development\C++\codelite\trunk\Runtime\config\debuggers.xml"; DestDir: "{app}\config"; Components: Editor;
-Source: "C:\Development\C++\codelite\trunk\Runtime\config\build_settings.xml"; DestDir: "{app}\config"; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\lexers\*"; DestDir: "{app}\lexers"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\bin\ctags-le.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\bin\le_exec.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\bin\makedir.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\mingwm10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\which.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\rm.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\cscope.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\cygncurses-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\cygwin1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\sdk\wxconfig\wx-config.exe"; DestDir: "{app}\bin"; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\config\liteeditor.xml.sample"; DestDir: "{app}\config"; DestName: liteeditor.xml; Components: Editor;
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\config\debuggers.xml"; DestDir: "{app}\config"; Components: Editor;
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\config\build_settings.xml"; DestDir: "{app}\config"; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\lexers\*"; DestDir: "{app}\lexers"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\bin\ctags-le.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\bin\le_exec.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\bin\makedir.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "\Users\Eran\Development\codelite\trunk\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
+Source: "\MinGW4\bin\mingwm10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "\MinGW4\bin\which.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "\MinGW4\bin\rm.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "\MinGW4\bin\cscope.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "\MinGW4\bin\cygncurses-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "\MinGW4\bin\cygwin1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 
 ;Source: "C:\windows\system32\msvcp71.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-;Source: "C:\Development\C++\codelite\Runtime\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+;Source: "\Users\Eran\Development\codelite\Runtime\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 ;Source: "C:\windows\system32\msvcr71.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 ;Source: "c:\windows\system32\MSVCRT.DLL"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files

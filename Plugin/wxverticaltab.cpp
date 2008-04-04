@@ -116,13 +116,13 @@ void wxVerticalTab::OnPaint(wxPaintEvent &event)
 	dc.SetPen(pen);
 
 	if (left) {
-		dc.DrawRoundedRectangle(0, 0, rr.GetWidth()+2, rr.GetHeight(), 3);
+		dc.DrawRoundedRectangle(0, 0, rr.GetWidth()+2, rr.GetHeight(), 0);
 		if (!GetSelected()) {
 			//draw a line
 			dc.DrawLine(rr.GetWidth()-1, 0, rr.GetWidth()-1, rr.GetHeight());
 		}
 	} else {
-		dc.DrawRoundedRectangle(-2, 0, rr.GetWidth(), rr.GetHeight(), 3);
+		dc.DrawRoundedRectangle(-2, 0, rr.GetWidth(), rr.GetHeight(), 0);
 		if (!GetSelected()) {
 			//draw a line
 			dc.DrawLine(0, 0, 0, rr.GetHeight());

@@ -2,7 +2,7 @@
 // Copyright Eran Ifrah(c)
 %} 
 
-%{
+%{ 
 /*************** Includes and Defines *****************************/
 #include "string"
 #include "vector"

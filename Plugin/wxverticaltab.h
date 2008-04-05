@@ -15,6 +15,7 @@ class wxVerticalTab : public wxPanel {
 	int m_orientation;
 	wxWindow *m_window;
 	bool m_leftDown;
+	bool m_hovered;
 	
 protected:
 	int CalcTabHeight();
@@ -28,7 +29,7 @@ public:
 	void SetPadding(const int& padding) {this->m_padding = padding;}
 	void SetOrientation(const int& orientation) {this->m_orientation = orientation;}
 	void SetWindow(wxWindow* window) {this->m_window = window;}
-	void SetSelected(bool selected) {this->m_selected = selected;}
+	void SetSelected(bool selected) ;
 	//Getters
 	const wxBitmap& GetBmp() const {return m_bmp;}
 	const bool& GetSelected() const {return m_selected;}
@@ -47,6 +48,7 @@ public:
 	virtual void OnErase(wxEraseEvent &event);
 	virtual void OnLeftDown(wxMouseEvent &e);
 	virtual void OnMouseEnterWindow(wxMouseEvent &e);
+	virtual void OnMouseLeaveWindow(wxMouseEvent &e);
 	virtual void OnMouseMove(wxMouseEvent &e);
 	virtual void OnLeftUp(wxMouseEvent &e);
 };

@@ -10,6 +10,7 @@ BEGIN_EVENT_TABLE(wxVerticalTab, wxPanel)
 	EVT_ERASE_BACKGROUND(wxVerticalTab::OnErase)
 	EVT_LEFT_DOWN(wxVerticalTab::OnLeftDown)
 	EVT_ENTER_WINDOW(wxVerticalTab::OnMouseEnterWindow)
+	EVT_LEAVE_WINDOW(wxVerticalTab::OnMouseLeaveWindow)
 	EVT_LEFT_UP(wxVerticalTab::OnLeftUp)
 	EVT_MOTION(wxVerticalTab::OnMouseMove)
 END_EVENT_TABLE()
@@ -20,14 +21,15 @@ wxVerticalTab::wxVerticalTab(wxWindow *win, wxWindowID id, const wxString &text,
 		, m_bmp(bmp)
 		, m_selected(selected)
 		, m_padding(6)
-#ifdef __WXMSW__		
-		, m_heightPadding(4)
+#ifdef __WXMSW__
+		, m_heightPadding(5)
 #else
 		, m_heightPadding(6)
 #endif
 		, m_orientation(orientation)
 		, m_window(NULL)
 		, m_leftDown(false)
+		, m_hovered(false)
 {
 	SetSizeHints(CalcTabWidth(), CalcTabHeight());
 }
@@ -43,7 +45,7 @@ void wxVerticalTab::OnPaint(wxPaintEvent &event)
 
 	//draw a grey border around the tab
 	wxRect rr = GetClientSize();
-
+	
 	//create temporary memory dc and draw the image on top of it
 	wxBitmap bmp(rr.GetHeight(), rr.GetWidth());
 	wxMemoryDC memDc;
@@ -61,7 +63,13 @@ void wxVerticalTab::OnPaint(wxPaintEvent &event)
 
 	//fill the bmp with a nice gradient colour
 	bool left = (GetOrientation() == wxLEFT);
-	DrawingUtils::DrawButton(memDc, bmpRect.Deflate(2), GetSelected(), left, true);
+	bool hovered = (m_hovered && (GetSelected() == false));
+
+	if(!left) {
+		DrawingUtils::DrawButton(memDc, bmpRect.Deflate(2), GetSelected(), left, true, hovered);
+	}else{
+		DrawingUtils::DrawButton(memDc, bmpRect, GetSelected(), left, true, hovered);
+	}
 
 	int posx(GetPadding());
 	if ( GetBmp().IsOk() ) {
@@ -112,17 +120,20 @@ void wxVerticalTab::OnPaint(wxPaintEvent &event)
 
 	//set pen & brush
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
-	wxPen pen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+
+	wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+	//borderColour = *wxBLACK;
+	wxPen pen(borderColour);
 	dc.SetPen(pen);
 
 	if (left) {
-		dc.DrawRoundedRectangle(0, 0, rr.GetWidth()+2, rr.GetHeight(), 0);
+		dc.DrawRectangle(0, 0, rr.GetWidth()+2, rr.GetHeight());
 		if (!GetSelected()) {
 			//draw a line
 			dc.DrawLine(rr.GetWidth()-1, 0, rr.GetWidth()-1, rr.GetHeight());
 		}
 	} else {
-		dc.DrawRoundedRectangle(-2, 0, rr.GetWidth(), rr.GetHeight(), 0);
+		dc.DrawRectangle(-2, 0, rr.GetWidth(), rr.GetHeight());
 		if (!GetSelected()) {
 			//draw a line
 			dc.DrawLine(0, 0, 0, rr.GetHeight());
@@ -193,19 +204,21 @@ void wxVerticalTab::OnLeftDown(wxMouseEvent &e)
 	if (parent) {
 		parent->SetSelection(this, true);
 	}
-	
+
 	e.Skip();
 }
 
 void wxVerticalTab::OnMouseEnterWindow(wxMouseEvent &e)
 {
-	wxUnusedVar(e);
 	if (e.LeftIsDown()) {
 		wxTabContainer *parent = dynamic_cast<wxTabContainer*>( GetParent() );
 		if (parent) {
 			parent->SwapTabs(this);
 		}
 	}
+	m_hovered = true;
+	Refresh();
+	e.Skip();
 }
 
 void wxVerticalTab::OnMouseMove(wxMouseEvent &e)
@@ -219,7 +232,7 @@ void wxVerticalTab::OnMouseMove(wxMouseEvent &e)
 			parent->SetDraggedTab(this);
 		}
 	}
-	
+	e.Skip();
 }
 
 void wxVerticalTab::OnLeftUp(wxMouseEvent &e)
@@ -230,5 +243,21 @@ void wxVerticalTab::OnLeftUp(wxMouseEvent &e)
 	if (parent) {
 		parent->SetDraggedTab(NULL);
 	}
-	
+	e.Skip();
+}
+
+void wxVerticalTab::OnMouseLeaveWindow(wxMouseEvent &e)
+{
+	m_hovered = false;
+	Refresh();
+	e.Skip();
+}
+
+void wxVerticalTab::SetSelected(bool selected)
+{
+	if (m_selected == selected) {
+		return;
+	}
+
+	m_selected = selected;
 }

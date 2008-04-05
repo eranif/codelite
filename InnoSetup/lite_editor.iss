@@ -49,14 +49,14 @@ Source: "C:\Development\C++\codelite\trunk\Runtime\bin\le_exec.exe"; DestDir: "{
 Source: "C:\Development\C++\codelite\trunk\Runtime\bin\makedir.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
-Source: "\MinGW4\bin\mingwm10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "\MinGW4\bin\which.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "\MinGW4\bin\rm.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "\MinGW4\bin\cscope.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "\MinGW4\bin\cygncurses-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "\MinGW4\bin\cygwin1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "\MinGW4\bin\libintl3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
-Source: "\MinGW4\bin\libiconv2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\mingwm10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\which.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\rm.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\cscope.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\cygncurses-8.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\cygwin1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\libintl3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\libiconv2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 
 ;Source: "C:\windows\system32\msvcp71.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 ;Source: "C:\Development\C++\codelite\Runtime\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

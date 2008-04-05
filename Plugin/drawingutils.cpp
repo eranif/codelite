@@ -100,8 +100,9 @@ void DrawingUtils::PaintStraightGradientBox(wxDC& dc,
 void DrawingUtils::DrawButton(wxDC& dc,
                               const wxRect& rect,
                               const bool &focus,
-                              const bool &upperTabs,
-                              bool vertical   )
+                              const bool &leftTabs,
+                              bool vertical,
+                              bool hover  )
 {
 	wxColour lightGray = LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 40);
 
@@ -109,22 +110,31 @@ void DrawingUtils::DrawButton(wxDC& dc,
 	// we need an array of 9 points for it
 	wxColour topStartColor(wxT("WHITE"));
 	wxColour topEndColor(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-	wxColour bottomStartColor(topEndColor);
-	wxColour bottomEndColor(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+
+
 
 	// Define the middle points
 	if ( focus ) {
 		PaintStraightGradientBox(dc, rect, topStartColor, topEndColor, vertical);
 	} else {
 
-		// Incase we use bottom tabs, switch the colors
-		topStartColor = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-		topEndColor = lightGray;
-
-		if (upperTabs) {
-			PaintStraightGradientBox(dc, rect, topStartColor, topEndColor, vertical);
+		if ( hover ) {
+			topStartColor =  wxT("WHITE");
+			topEndColor = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 		} else {
-			PaintStraightGradientBox(dc, rect, topEndColor, topStartColor, vertical);
+			topStartColor = topEndColor;
+			topEndColor = lightGray;
+		}
+		
+		wxRect r1(rect.x, rect.y, rect.width, rect.height/2);
+		wxRect r2(rect.x, rect.y+rect.height/2, rect.width, rect.height/2);;
+		
+		if (leftTabs) {
+			PaintStraightGradientBox(dc, r1, topStartColor, topStartColor, vertical);
+			PaintStraightGradientBox(dc, r2, topStartColor, topEndColor, vertical);
+		} else {
+			PaintStraightGradientBox(dc, r1, topEndColor, topEndColor, vertical);
+			PaintStraightGradientBox(dc, r2, topEndColor, topStartColor, vertical);
 		}
 	}
 

@@ -179,13 +179,12 @@ void wxTabContainer::OnPaint(wxPaintEvent &e)
 {
 	wxUnusedVar(e);
 	wxBufferedPaintDC dc(this);
-
-	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW)));
-	dc.SetBrush(*wxTRANSPARENT_BRUSH);
-
 	wxRect rr = GetClientSize();
-	wxColour endColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 30);
-	DrawingUtils::PaintStraightGradientBox(dc, rr, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), endColour, false);
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	dc.DrawRectangle(rr);
+
+
 
 	//draw a small rectangle with 3DFACE colour
 
@@ -246,30 +245,38 @@ void wxTabContainer::SetDraggedTab(wxVerticalTab *tab)
 
 void wxTabContainer::SwapTabs(wxVerticalTab *tab)
 {
-	if(m_draggedTab == tab) {return;}
-	if(m_draggedTab == NULL){return;}
-	
+	if (m_draggedTab == tab) {
+		return;
+	}
+	if (m_draggedTab == NULL) {
+		return;
+	}
+
 	int orientation(wxBOTTOM);
-	
+
 	size_t index = TabToIndex(tab);
-	if(index == static_cast<size_t>(-1)) {return;}
-	
+	if (index == static_cast<size_t>(-1)) {
+		return;
+	}
+
 	size_t index2 = TabToIndex(m_draggedTab);
-	if(index2 == static_cast<size_t>(-1)) {return;}
-	
+	if (index2 == static_cast<size_t>(-1)) {
+		return;
+	}
+
 	orientation = index2 > index ? wxTOP : wxBOTTOM;
-	
+
 	Freeze();
 	//detach the dragged tab from the sizer
 	m_tabsSizer->Detach(m_draggedTab);
-	
+
 	index = TabToIndex(tab);
 	if (orientation == wxBOTTOM) {
 		//tab is being dragged bottom
-		if(index == GetTabsCount()-1){
+		if (index == GetTabsCount()-1) {
 			//last tab
 			m_tabsSizer->Add(m_draggedTab, 0, wxLEFT | wxRIGHT, 3);
-		}else{
+		} else {
 			m_tabsSizer->Insert(index+1, m_draggedTab, 0, wxLEFT | wxRIGHT, 3);
 		}
 	} else {
@@ -278,7 +285,7 @@ void wxTabContainer::SwapTabs(wxVerticalTab *tab)
 	}
 	Thaw();
 	m_tabsSizer->Layout();
-	
+
 }
 
 void wxTabContainer::OnLeaveWindow(wxMouseEvent &e)

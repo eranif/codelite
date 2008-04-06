@@ -354,7 +354,7 @@ createInstallTarget()
 	
 	## remove the liteeditor.xml file which causes many bugs and wierd crashes
 	## unless it is totally synchronized with the latest build
-	echo "	@rm -fr ~/.codelite/config/liteeditor.xml" >> Makefie
+	echo "	@rm -fr ~/.codelite/config/liteeditor.xml" >> Makefile
 	echo "" >> Makefile
 }
 

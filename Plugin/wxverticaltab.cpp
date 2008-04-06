@@ -127,13 +127,15 @@ void wxVerticalTab::OnPaint(wxPaintEvent &event)
 	dc.SetPen(pen);
 
 	if (left) {
-		dc.DrawRectangle(0, 0, rr.GetWidth()+2, rr.GetHeight());
+		//dc.DrawRectangle(0, 0, rr.GetWidth()+2, rr.GetHeight());
+		dc.DrawRoundedRectangle(0, 0, rr.GetWidth()+2, rr.GetHeight(), 2);
 		if (!GetSelected()) {
-			//draw a line
+			//draw a lineNo space left on device in /usr/local/zend/apache2/htdocs/jinxmachine/jinxserver/jinxpartialcachingdisk.php on line 182
 			dc.DrawLine(rr.GetWidth()-1, 0, rr.GetWidth()-1, rr.GetHeight());
 		}
 	} else {
-		dc.DrawRectangle(-2, 0, rr.GetWidth(), rr.GetHeight());
+		//dc.DrawRectangle(-2, 0, rr.GetWidth(), rr.GetHeight());
+		dc.DrawRoundedRectangle(-2, 0, rr.GetWidth(), rr.GetHeight(), 2);
 		if (!GetSelected()) {
 			//draw a line
 			dc.DrawLine(0, 0, 0, rr.GetHeight());

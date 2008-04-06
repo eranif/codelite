@@ -331,7 +331,8 @@ protected:
 	
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);
-
+	void ShowBuildConfigurationManager();
+	
 	// Any class wishing to process wxWindows events must use this macro
 	DECLARE_EVENT_TABLE()
 };

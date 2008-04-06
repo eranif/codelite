@@ -13,7 +13,8 @@ class WorkspaceTab : public wxPanel {
 
 	void OnCollapseAll(wxCommandEvent &event);
 	void OnCollapseAllUI(wxUpdateUIEvent &event);
-	
+	void OnConfigurationManager(wxCommandEvent &e);
+	void OnConfigurationManagerUI(wxUpdateUIEvent &e);
 	void DoCollpaseAll();
 	
 protected:	

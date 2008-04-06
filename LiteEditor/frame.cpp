@@ -1550,22 +1550,7 @@ void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 void Frame::OnConfigurationManager(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	ConfigurationManagerDlg *dlg = new ConfigurationManagerDlg(this);
-	dlg->ShowModal();
-	dlg->Destroy();
-
-	//force makefile generation upon configuration change
-	if (ManagerST::Get()->IsWorkspaceOpen()) {
-		wxArrayString projs;
-		ManagerST::Get()->GetProjectList(projs);
-		for ( size_t i=0; i< projs.GetCount(); i++ ) {
-			ProjectPtr proj = ManagerST::Get()->GetProject( projs.Item(i) );
-			if ( proj ) {
-				proj->SetModified(true);
-			}
-		}
-	}
-
+	ShowBuildConfigurationManager();
 }
 
 void Frame::OnTogglePanes(wxCommandEvent &event)
@@ -2749,4 +2734,23 @@ void Frame::OnManagePlugins(wxCommandEvent &e)
 void Frame::DoReplaceAll()
 {
 	m_doingReplaceInFiles = true;
+}
+
+void Frame::ShowBuildConfigurationManager()
+{
+	ConfigurationManagerDlg *dlg = new ConfigurationManagerDlg(this);
+	dlg->ShowModal();
+	dlg->Destroy();
+
+	//force makefile generation upon configuration change
+	if (ManagerST::Get()->IsWorkspaceOpen()) {
+		wxArrayString projs;
+		ManagerST::Get()->GetProjectList(projs);
+		for ( size_t i=0; i< projs.GetCount(); i++ ) {
+			ProjectPtr proj = ManagerST::Get()->GetProject( projs.Item(i) );
+			if ( proj ) {
+				proj->SetModified(true);
+			}
+		}
+	}
 }

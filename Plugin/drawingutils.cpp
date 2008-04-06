@@ -97,7 +97,7 @@ void DrawingUtils::PaintStraightGradientBox(wxDC& dc,
 	dc.SetBrush( savedBrush );
 }
 
-void DrawingUtils::DrawButton(wxDC& dc,
+void DrawingUtils::DrawVerticalButton(wxDC& dc,
                               const wxRect& rect,
                               const bool &focus,
                               const bool &leftTabs,
@@ -110,8 +110,6 @@ void DrawingUtils::DrawButton(wxDC& dc,
 	// we need an array of 9 points for it
 	wxColour topStartColor(wxT("WHITE"));
 	wxColour topEndColor(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-
-
 
 	// Define the middle points
 	if ( focus ) {

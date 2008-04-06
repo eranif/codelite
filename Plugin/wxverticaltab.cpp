@@ -66,9 +66,9 @@ void wxVerticalTab::OnPaint(wxPaintEvent &event)
 	bool hovered = (m_hovered && (GetSelected() == false));
 
 	if(!left) {
-		DrawingUtils::DrawButton(memDc, bmpRect.Deflate(2), GetSelected(), left, true, hovered);
+		DrawingUtils::DrawVerticalButton(memDc, bmpRect.Deflate(2), GetSelected(), left, true, hovered);
 	}else{
-		DrawingUtils::DrawButton(memDc, bmpRect, GetSelected(), left, true, hovered);
+		DrawingUtils::DrawVerticalButton(memDc, bmpRect, GetSelected(), left, true, hovered);
 	}
 
 	int posx(GetPadding());

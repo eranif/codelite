@@ -26,6 +26,7 @@ protected:
 	void OnCompilerColours(wxCommandEvent &e);
 	void Initialize();
 	
+	wxString ProjectFromLine(int line);
 	
 public:
 	BuildTab(wxWindow *parent, wxWindowID id, const wxString &name);

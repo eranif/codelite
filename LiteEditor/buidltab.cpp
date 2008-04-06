@@ -217,28 +217,62 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 
 		Manager *mgr = ManagerST::Get();
 		std::vector<wxFileName> files;
-		mgr->GetWorkspaceFiles(files, true);
-
 		bool fileOpened(false);
-		for (size_t i=0; i<files.size(); i++) {
-			if (files.at(i).GetFullName() == fn.GetFullName()) {
-				//we have a match
-				mgr->OpenFile(files.at(i).GetFullPath(), wxEmptyString, (int)lineNumber-1);
-				fileOpened = true;
-				if (lineClicked != wxNOT_FOUND || m_nextBuildError_lastLine != wxNOT_FOUND) {
-					if (lineClicked != wxNOT_FOUND) {
-						//the call came from mouse double click, update
-						//the m_nextBuildError_lastLine member
-						m_nextBuildError_lastLine = lineClicked;
-					}
+		
+		//try to open the file in context of the project
+		wxString project_name = ProjectFromLine(lineClicked);
+		if(project_name.IsEmpty() == false) {
+			wxArrayString project_files;
+			mgr->GetProjectFiles(project_name, project_files);
+			
+			//search for the given file
+			for(size_t i=0; i< project_files.GetCount(); i++){
+				wxFileName tmpFileName( project_files.Item(i) );
+				if(tmpFileName.GetFullName() == fn.GetFullName()){
+					//we got a match
+					mgr->OpenFile(tmpFileName.GetFullPath(), wxEmptyString, (int)lineNumber-1);
+					fileOpened = true;
+					if (lineClicked != wxNOT_FOUND || m_nextBuildError_lastLine != wxNOT_FOUND) {
+						if (lineClicked != wxNOT_FOUND) {
+							//the call came from mouse double click, update
+							//the m_nextBuildError_lastLine member
+							m_nextBuildError_lastLine = lineClicked;
+						}
 
-					m_sci->MarkerDeleteAll(0x7);
-					m_sci->MarkerAdd(m_nextBuildError_lastLine, 0x7);
-					m_sci->GotoLine(m_nextBuildError_lastLine);
+						m_sci->MarkerDeleteAll(0x7);
+						m_sci->MarkerAdd(m_nextBuildError_lastLine, 0x7);
+						m_sci->GotoLine(m_nextBuildError_lastLine);
+					}
+					break;
 				}
 			}
 		}
+		
+		
+		mgr->GetWorkspaceFiles(files, true);
+		//Ok no success in the project area... wider the search to workspace level
+		if( !fileOpened ) {
+			for (size_t i=0; i<files.size(); i++) {
+				if (files.at(i).GetFullName() == fn.GetFullName()) {
+					//we have a match
+					mgr->OpenFile(files.at(i).GetFullPath(), wxEmptyString, (int)lineNumber-1);
+					fileOpened = true;
+					if (lineClicked != wxNOT_FOUND || m_nextBuildError_lastLine != wxNOT_FOUND) {
+						if (lineClicked != wxNOT_FOUND) {
+							//the call came from mouse double click, update
+							//the m_nextBuildError_lastLine member
+							m_nextBuildError_lastLine = lineClicked;
+						}
 
+						m_sci->MarkerDeleteAll(0x7);
+						m_sci->MarkerAdd(m_nextBuildError_lastLine, 0x7);
+						m_sci->GotoLine(m_nextBuildError_lastLine);
+					}
+					break;
+				}
+			}
+		}
+		
 		if ( !fileOpened ) {
 			//try to open the file as is
 			//we have a match
@@ -374,4 +408,15 @@ int BuildTab::ColourGccLine(int startLine, const char *line, size_t &fileNameSta
 	}
 
 	return wxSCI_LEX_GCC_DEFAULT;
+}
+
+wxString BuildTab::ProjectFromLine(int line)
+{
+	//return the project name
+	//from given line number
+	std::map<int, LineInfo>::iterator iter = m_lineInfo.find(line);
+	if (iter == m_lineInfo.end()) {
+		return wxEmptyString;
+	}
+	return iter->second.project;
 }

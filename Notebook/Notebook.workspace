@@ -2,11 +2,17 @@
 <CodeLite_Workspace Name="Notebook" Database=".\Notebook.tags">
   <Project Name="Notebook" Path="Notebook.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="DebugUnicode" Selected="no">
       <Project Name="Notebook" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="ReleaseUnicode" Selected="yes">
       <Project Name="Notebook" ConfigName="ReleaseUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="WinDebugUnicode" Selected="no">
+      <Project Name="Notebook" ConfigName="WinDebugUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="WinReleaseUnicode" Selected="yes">
+      <Project Name="Notebook" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

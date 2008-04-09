@@ -49,33 +49,33 @@ void NotebookFrame::Initialize()
 	
 	Notebook *book1 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_RIGHT|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB);
 	
-	book1->AddPage(new wxTextCtrl(book1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 1"), bmp);
-	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 2"), bmp);
-	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 3"), bmp);
-	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 4"), bmp);
+	book1->AddPage(new wxTextCtrl(book1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"), bmp);
+	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2"), bmp);
+	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"), bmp);
+	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"), bmp);
 	sz->Layout();
 	
 	Notebook *book2 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_HAS_X);
 	
 	
-	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 1"));
-	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 2 With Long"));
-	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 3 With"));
-	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 4"));
+	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"));
+	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2 With Long"));
+	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3 With"));
+	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"));
 	
 	m_topbook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_HAS_X);
-	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 1"), bmp1);
-	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 2 With Long"), bmp1);
-	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 3"), bmp1);
-	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 4"), bmp1);
-	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 5 With Longer Title"), bmp1);
+	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"), bmp1);
+	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2 With Long"), bmp1);
+	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"), bmp1);
+	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"), bmp1);
+	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 5 With Longer Title"), bmp1);
 	
 	Notebook *book4 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_BOTTOM|wxVB_HAS_X);
 	
-	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 1"));
-	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 2"));
-	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 3"));
-	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE), wxT("Page 4"));
+	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"));
+	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2"));
+	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"));
+	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"));
 	
 	hsz->Add(m_topbook, 1, wxEXPAND);
 	hsz->Add(book2, 1, wxEXPAND);

@@ -144,7 +144,7 @@ void wxTabContainer::SetSelection(CustomTab *tab, bool notify)
 	EnsureVisible(tab);
 
 	tab->Refresh();
-
+	tab->GetWindow()->SetFocus();
 
 	//add this page to the history
 	PushPageHistory(tab);

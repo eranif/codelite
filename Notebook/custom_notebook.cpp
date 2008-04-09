@@ -15,7 +15,7 @@ BEGIN_EVENT_TABLE(Notebook, wxPanel)
 END_EVENT_TABLE()
 
 Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
-		: wxPanel(parent, id, pos, size)
+		: wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
 		, m_style(style)
 		, m_aui(NULL)
 		, m_popupWin(NULL)

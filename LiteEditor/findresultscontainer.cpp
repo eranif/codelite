@@ -22,19 +22,19 @@ void FindResultsContainer::Initialize()
 
 	//add 5 tabs for the find results
 	FindResultsTab *tab = new FindResultsTab(m_book, wxID_ANY, OutputPane::FIND_IN_FILES_WIN);
-	m_book->AddPage(tab, wxT("Find Results 1"), false);
+	m_book->AddPage(tab, wxT("Find Results 1"), wxNullBitmap, false);
 
 	tab = new FindResultsTab(m_book, wxID_ANY, OutputPane::FIND_IN_FILES_WIN);
-	m_book->AddPage(tab, wxT("Find Results 2"), false);
+	m_book->AddPage(tab, wxT("Find Results 2"),  wxNullBitmap, false);
 
 	tab = new FindResultsTab(m_book, wxID_ANY, OutputPane::FIND_IN_FILES_WIN);
-	m_book->AddPage(tab, wxT("Find Results 3"), false);
+	m_book->AddPage(tab, wxT("Find Results 3"), wxNullBitmap,  false);
 
 	tab = new FindResultsTab(m_book, wxID_ANY, OutputPane::FIND_IN_FILES_WIN);
-	m_book->AddPage(tab, wxT("Find Results 4"), false);
+	m_book->AddPage(tab, wxT("Find Results 4"), wxNullBitmap,  false);
 
 	tab = new FindResultsTab(m_book, wxID_ANY, OutputPane::FIND_IN_FILES_WIN);
-	m_book->AddPage(tab, wxT("Find Results 5"), false);
+	m_book->AddPage(tab, wxT("Find Results 5"), wxNullBitmap,  false);
 
 	sz->Add(m_book, 1, wxALL|wxEXPAND);
 	sz->Layout();

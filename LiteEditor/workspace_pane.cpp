@@ -1,5 +1,5 @@
 #include "workspace_pane.h"
-#include "wxverticalbook.h"
+#include "custom_notebook.h"
 #include "fileview.h"
 #include "cpp_symbol_tree.h"
 #include <wx/xrc/xmlres.h>
@@ -52,7 +52,7 @@ void WorkspacePane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	m_book = new wxVerticalBook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT);
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 
 	m_workspaceTab = new WorkspaceTab(this);

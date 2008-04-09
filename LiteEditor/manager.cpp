@@ -48,7 +48,7 @@
 #include "openwindowspanel.h"
 #include "threadlistpanel.h"
 #include "plugin.h"
-#include "wxverticalbook.h"
+#include "custom_notebook.h"
 
 #if defined (__WXMSW__)
 static wxString CL_EXEC_WRAPPER = wxT("le_exec.exe ");

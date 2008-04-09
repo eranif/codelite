@@ -121,15 +121,19 @@
       <File Name="open_type_dlg.h"/>
       <File Name="open_type_dlg.cpp"/>
     </VirtualDirectory>
-    <VirtualDirectory Name="VerticalBook">
-      <File Name="wxverticaltab.h"/>
-      <File Name="wxtabcontainer.cpp"/>
-      <File Name="wxtabcontainer.h"/>
-      <File Name="wxverticalbook.cpp"/>
-      <File Name="wxverticalbook.h"/>
-      <File Name="wxverticaltab.cpp"/>
-      <File Name="drawingutils.h"/>
+    <VirtualDirectory Name="Notebook">
+      <File Name="custom_notebook.cpp"/>
+      <File Name="custom_notebook.h"/>
+      <File Name="custom_tab.cpp"/>
+      <File Name="custom_tab.h"/>
+      <File Name="custom_tabcontainer.cpp"/>
+      <File Name="custom_tabcontainer.h"/>
       <File Name="drawingutils.cpp"/>
+      <File Name="drawingutils.h"/>
+      <File Name="dropbutton.cpp"/>
+      <File Name="dropbutton.h"/>
+      <File Name="notebooknavdialog.cpp"/>
+      <File Name="notebooknavdialog.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Static Library">

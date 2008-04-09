@@ -41,8 +41,7 @@ ReferenceAnalyser::ReferenceAnalyser(IManager *manager)
 	wxTextCtrl* analyserWindow = new wxTextCtrl(m_mgr->GetOutputPaneNotebook(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER| wxTE_MULTILINE);
 	analyserWindow->SetFont(font);
 
-	m_mgr->GetOutputPaneNotebook()->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
-	m_mgr->GetOutputPaneNotebook()->AddPage(analyserWindow, wxT("Analyser"), false, (int)m_mgr->GetOutputPaneNotebook()->GetImageList()->GetCount()-1);
+	m_mgr->GetOutputPaneNotebook()->AddPage(analyserWindow, wxT("Analyser"), wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")), false);
 }
 
 ReferenceAnalyser::~ReferenceAnalyser()
@@ -133,7 +132,7 @@ void ReferenceAnalyser::LogMessage(const wxString& message)
 {
 	// Copy from SvnDriver::PrintMessage()
 
-	wxFlatNotebook *book = m_mgr->GetOutputPaneNotebook();
+	Notebook *book = m_mgr->GetOutputPaneNotebook();
 	wxTextCtrl *analyserWindow (NULL);
 
 	size_t position;
@@ -156,7 +155,7 @@ void ReferenceAnalyser::LogMessage(const wxString& message)
 
 void ReferenceAnalyser::ClearMessagePane()
 {
-	wxFlatNotebook *book = m_mgr->GetOutputPaneNotebook();
+	Notebook *book = m_mgr->GetOutputPaneNotebook();
 	wxTextCtrl *analyserWindow (NULL);
 	for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
 		if (book->GetPageText(i) == wxT("Analyser")) {

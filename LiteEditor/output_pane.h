@@ -4,7 +4,6 @@
 
 #include "wx/panel.h"
 #include "wx/wxscintilla.h"
-#include "wx/wxFlatNotebook/wxFlatNotebook.h"
 #include "shelltab.h"
 #include "map"
 
@@ -14,6 +13,7 @@ class BuildTab;
 class FindResultsTab;
 class FindResultsContainer;
 class ReplaceInFilesPanel;
+class Notebook;
 
 /**
  * \ingroup LiteEditor
@@ -44,9 +44,8 @@ public:
 	static const wxString OUTPUT_DEBUG;
 	static const wxString REPLACE_IN_FILES;
 
-	wxFlatNotebook *m_book;
+	Notebook *m_book;
 	wxString m_caption;
-	wxFlatNotebookImageList m_images;
 	ShellTab *m_outputWind;
 	wxLog *m_logTargetOld;
 	ShellTab *m_outputDebug;
@@ -79,7 +78,7 @@ public:
 	//-----------------------------------------------
 	// Setters/Getters
 	//-----------------------------------------------
-	wxFlatNotebook *GetNotebook() { return m_book; }
+	Notebook *GetNotebook() { return m_book; }
 	const wxString &GetCaption() const { return m_caption; }
 	void SelectTab(const wxString &tabName);
 	

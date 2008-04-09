@@ -62,7 +62,7 @@
 #include "workspace_pane.h"
 #include "globals.h"
 #include "fileexplorer.h"
-#include "wxverticalbook.h"
+#include "custom_notebook.h"
 
 #ifdef __WXGTK20__
 #include <gtk-2.0/gtk/gtk.h>
@@ -522,10 +522,10 @@ void Frame::CreateGUIControls(void)
 		GetNotebook()->SetWindowStyleFlag(book_style);
 	}
 
-	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("OutputPane"));
-	if (book_style != wxNOT_FOUND) {
-		m_outputPane->GetNotebook()->SetWindowStyleFlag(book_style);
-	}
+//	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("OutputPane"));
+//	if (book_style != wxNOT_FOUND) {
+//		m_outputPane->GetNotebook()->SetWindowStyleFlag(book_style);
+//	}
 
 //	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("WorkspacePane"));
 //	if (book_style != wxNOT_FOUND) {
@@ -2654,7 +2654,7 @@ void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 
 OutputTabWindow* Frame::FindOutputTabWindowByPtr(wxWindow *win)
 {
-	wxFlatNotebook *book = GetOutputPane()->GetNotebook();
+	Notebook *book = GetOutputPane()->GetNotebook();
 	for (size_t i=0; i< (size_t)book->GetPageCount(); i++) {
 		if (book->GetPageText(i) == OutputPane::BUILD_WIN) {
 			OutputTabWindow *tabWin = dynamic_cast< OutputTabWindow* > ( book->GetPage(i) );

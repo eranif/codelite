@@ -1,11 +1,19 @@
 #ifndef __wxverticaltab__
-#define __wxverticaltab__
+#define __CustomTab__
 
+#include "wx/dc.h"
 #include "wx/bitmap.h"
 #include "wx/panel.h"
 
+extern const wxEventType wxEVT_CMD_DELETE_TAB;
+
+enum XState {
+	XNone,
+	XPushed
+};
+
 class wxWindow;
-class wxVerticalTab : public wxPanel {
+class CustomTab : public wxPanel {
 	
 	wxString m_text;
 	wxBitmap m_bmp;
@@ -16,14 +24,23 @@ class wxVerticalTab : public wxPanel {
 	wxWindow *m_window;
 	bool m_leftDown;
 	bool m_hovered;
+	wxRect m_xButtonRect;
+	wxBitmap m_xButtonNormalBmp;
+	wxBitmap m_xButtonPressedBmp;
+	long m_style;
+	XState m_x_state;
 	
 protected:
 	int CalcTabHeight();
 	int CalcTabWidth();
 	
+	void DoDrawVerticalTab(wxDC &dc);
+	void DoDrawHorizontalTab(wxDC &dc);
+	const wxBitmap &GetXBmp();
+	
 public:
-	wxVerticalTab(wxWindow *win, wxWindowID id, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false, int orientation = wxLEFT);
-	virtual ~wxVerticalTab();
+	CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false, int orientation = wxLEFT, long style=0);
+	virtual ~CustomTab();
 	
 	//Getters
 	void SetPadding(const int& padding) {this->m_padding = padding;}
@@ -51,5 +68,6 @@ public:
 	virtual void OnMouseLeaveWindow(wxMouseEvent &e);
 	virtual void OnMouseMove(wxMouseEvent &e);
 	virtual void OnLeftUp(wxMouseEvent &e);
+	virtual void OnMouseMiddleButton(wxMouseEvent &e);
 };
-#endif // __wxverticaltab__
+#endif // __CustomTab__

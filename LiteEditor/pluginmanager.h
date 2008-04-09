@@ -10,6 +10,9 @@
 #include "dynamiclibrary.h"
 #include "plugindata.h"
 
+class Notebook;
+class wxFlatNotebook;
+
 class PluginManager : public IManager
 {
 	std::map<wxString, IPlugin*> m_plugins;
@@ -40,7 +43,7 @@ public:
 	virtual IConfigTool *GetConfigTool();
 	virtual TreeItemInfo GetSelectedTreeItemInfo(TreeType type);
 	virtual wxTreeCtrl *GetTree(TreeType type);
-	virtual wxFlatNotebook *GetOutputPaneNotebook();
+	virtual Notebook *GetOutputPaneNotebook();
 	virtual void OpenFile(const wxString &fileName, const wxString &projectName, int lineno = wxNOT_FOUND);
 	virtual wxString GetStartupDirectory() const;
 	virtual void AddProject(const wxString & path);

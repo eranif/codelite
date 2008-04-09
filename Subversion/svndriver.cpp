@@ -66,7 +66,7 @@ void SvnDriver::Shutdown()
 
 void SvnDriver::SelectSvnTab()
 {
-	wxFlatNotebook *book = m_manager->GetOutputPaneNotebook();
+	Notebook *book = m_manager->GetOutputPaneNotebook();
 	wxString curSel = book->GetPageText((size_t)book->GetSelection());
 	if (curSel == wxT("Subversion")) {
 		return;
@@ -632,7 +632,7 @@ void SvnDriver::PrintMessage(const wxArrayString &textArr)
 
 void SvnDriver::PrintMessage(const wxString &text)
 {
-	wxFlatNotebook *book = m_manager->GetOutputPaneNotebook();
+	Notebook *book = m_manager->GetOutputPaneNotebook();
 	SvnTab *svnWin (NULL);
 	for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
 		if (book->GetPageText(i) == wxT("Subversion")) {

@@ -1,18 +1,23 @@
-#ifndef __wxverticalbook__
-#define __wxverticalbook__
+#ifndef __Notebook__
+#define __Notebook__
 
 #include "wx/panel.h"
 #include "wx/aui/framemanager.h"
 
 enum {
-	wxVB_LEFT 	= 0x00000001,
-	wxVB_RIGHT 	= 0x00000002
+	wxVB_LEFT 					= 0x00000001,
+	wxVB_RIGHT 					= 0x00000002,
+	wxVB_TOP 					= 0x00000004,
+	wxVB_BOTTOM					= 0x00000008,
+	wxVB_HAS_X					= 0x00000010,
+	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00000020
 };
 
 class wxTabContainer;
-class wxVerticalTab;
+class CustomTab;
+class NotebookNavDialog;
 
-class wxVerticalBook : public wxPanel
+class Notebook : public wxPanel
 {
 	friend class wxTabContainer;
 
@@ -20,23 +25,27 @@ class wxVerticalBook : public wxPanel
 	long m_style;
 	wxAuiManager *m_aui;
 	wxString m_paneName;
-	
+	NotebookNavDialog *m_popupWin;
 public:
 	static const size_t	npos = static_cast<size_t>(-1);
 
 protected:
 	void Initialize();
-	void SetSelection(wxVerticalTab *tab);
+	
 	void OnRender(wxAuiManagerEvent &e);
 	
 public:
-	wxVerticalBook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
-	virtual ~wxVerticalBook();
-
+	Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
+	virtual ~Notebook();
 
 	/**
+	 * \brief select given tab by the actual tab object
+	 */
+	void SetSelection(CustomTab *tab);
+	
+	/**
 	 * \brief return the currently selected item index
-	 * \return the currently selected item, of the book is empty, return wxVerticalBook::npos
+	 * \return the currently selected item, of the book is empty, return Notebook::npos
 	 */
 	size_t GetSelection();
 
@@ -56,6 +65,12 @@ public:
 	void AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
 
 	/**
+	 * \brief add page to the book
+	 * \param tab to be added 
+	 */
+	void AddPage(CustomTab *tab);
+
+	/**
 	 * \brief return page at give position
 	 * \param page page's index
 	 * \return the page or NULL if index is out of bounds
@@ -68,9 +83,9 @@ public:
 	size_t GetPageCount() const;
 	
 	/**
-	 * \brief set the book orientation to the left
+	 * \brief set the book orientation
 	 */
-	void SetOrientationLeft(bool left = true);
+	void SetOrientation(int orientation);
 	
 	/**
 	 * \brief return the page caption
@@ -97,9 +112,26 @@ public:
 	 */
 	void SetAuiManager(wxAuiManager *manager, const wxString &containedPaneName);
 	
+	/**
+	 * \brief return the tabbing history for this notebook
+	 */
+	const wxArrayPtrVoid& GetHistory() const;
+	
+	/**
+	 * \brief return the notebook style
+	 */
+	long GetBookStyle() const {return m_style;}
+	
+	/**
+	 * \brief return the tabs container control
+	 */
+	wxTabContainer *GetTabContainer() {return m_tabs;}
+	
+	DECLARE_EVENT_TABLE()
+	virtual void OnNavigationKey(wxNavigationKeyEvent &e);
 };
 
-class wxVerticalBookEvent : public wxNotifyEvent
+class NotebookEvent : public wxNotifyEvent
 {
 	size_t sel, oldsel;
 
@@ -110,7 +142,7 @@ public:
 	 * \param nSel - current selection
 	 * \param nOldSel - old selection
 	 */
-	wxVerticalBookEvent(wxEventType commandType = wxEVT_NULL, int winid = 0, size_t nSel = (size_t)-1, size_t nOldSel = (size_t)-1)
+	NotebookEvent(wxEventType commandType = wxEVT_NULL, int winid = 0, size_t nSel = (size_t)-1, size_t nOldSel = (size_t)-1)
 			: wxNotifyEvent(commandType, winid), sel(nSel), oldsel(nOldSel) {}
 
 	/**
@@ -143,21 +175,21 @@ extern const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGING;
 extern const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSING;
 extern const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSED;
 
-typedef void (wxEvtHandler::*wxVerticalBookEventFunction)(wxVerticalBookEvent&);
+typedef void (wxEvtHandler::*NotebookEventFunction)(NotebookEvent&);
 
-#define wxVerticalBookEventHandler(func) \
-	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxVerticalBookEventFunction, &func)
+#define NotebookEventHandler(func) \
+	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(NotebookEventFunction, &func)
 
 #define EVT_VERTICALBOOK_PAGE_CHANGED(winid, fn) \
-	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGED, winid, wxVerticalBookEventHandler(fn))
+	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGED, winid, NotebookEventHandler(fn))
 
 #define EVT_VERTICALBOOK_PAGE_CHANGING(winid, fn) \
-	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGING, winid, wxVerticalBookEventHandler(fn))
+	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGING, winid, NotebookEventHandler(fn))
 
 #define EVT_VERTICALBOOK_PAGE_CLOSING(winid, fn) \
-	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSING, winid, wxVerticalBookEventHandler(fn))
+	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSING, winid, NotebookEventHandler(fn))
 
 #define EVT_VERTICALBOOK_PAGE_CLOSED(winid, fn) \
-	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSED, winid, wxVerticalBookEventHandler(fn))
+	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSED, winid, NotebookEventHandler(fn))
 
-#endif // __wxverticalbook__
+#endif // __Notebook__

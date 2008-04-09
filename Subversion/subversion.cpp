@@ -1,4 +1,5 @@
 #include "svnreportgeneratoraction.h"
+#include "custom_tab.h"
 #include "svntab.h"
 #include "wx/ffile.h"
 #include "svniconrefreshhandler.h"
@@ -23,6 +24,7 @@
 #include "svnxmlparser.h"
 #include "dirsaver.h"
 #include <vector>
+#include "custom_tabcontainer.h"
 
 int ProjectConflictIconId 	= wxNOT_FOUND;
 int ProjectModifiedIconId 	= wxNOT_FOUND;
@@ -98,11 +100,22 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 	m_longName = wxT("Subversion");
 	m_shortName = wxT("SVN");
 
-	SvnTab *svnwin = new SvnTab(m_mgr->GetOutputPaneNotebook());
+	Notebook *book = m_mgr->GetOutputPaneNotebook();
+	SvnTab *svnwin = new SvnTab(book);
 
-	m_mgr->GetOutputPaneNotebook()->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
-	m_mgr->GetOutputPaneNotebook()->AddPage(svnwin, wxT("Subversion"), false, (int)m_mgr->GetOutputPaneNotebook()->GetImageList()->GetCount()-1);
-
+	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("svn_repo"));
+	wxString caption( wxT("Subversion") );
+	
+	CustomTab *tab = new CustomTab(book->GetTabContainer(), 
+									wxID_ANY, 
+									caption, 
+									bmp, 
+									false, 
+									book->GetTabContainer()->GetOrientation(), 
+									book->GetBookStyle());
+	tab->SetWindow( svnwin );
+	book->AddPage(tab);
+	
 	//Connect items
 	if (!topWin) {
 		topWin = wxTheApp;

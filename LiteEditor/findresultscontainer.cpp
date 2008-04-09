@@ -1,10 +1,7 @@
 #include "findresultscontainer.h"
 #include "output_pane.h"
 #include "findresultstab.h"
-//#include "wx/wxFlatNotebook/wxFlatNotebook.h"
-//#include "wx/notebook.h"
-//#include "wx/toolbook.h"
-//#include "imgbook/imagebook.h"
+#include "custom_notebook.h"
 
 FindResultsContainer::FindResultsContainer(wxWindow *win, wxWindowID id)
 		: wxPanel(win, id)
@@ -21,14 +18,7 @@ void FindResultsContainer::Initialize()
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	SetSizer(sz);
 
-	//create the toolbar
-	long style = wxFNB_NO_X_BUTTON |
-	             wxFNB_NO_NAV_BUTTONS |
-	             wxFNB_DROPDOWN_TABS_LIST |
-				 wxFNB_FF2 | 
-				 wxFNB_NODRAG | wxFNB_BOTTOM;
-
-	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_BOTTOM);
 
 	//add 5 tabs for the find results
 	FindResultsTab *tab = new FindResultsTab(m_book, wxID_ANY, OutputPane::FIND_IN_FILES_WIN);

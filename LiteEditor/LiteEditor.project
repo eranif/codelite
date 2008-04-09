@@ -333,13 +333,13 @@
       <ResourceCompiler Required="no" Options="$(shell wx-config --rcflags)"/>
       <PreBuild/>
       <PostBuild/>
-      <CustomBuild Enabled="no">
-        <CleanCommand>cd .. &amp;&amp; make type=release_unicode clean</CleanCommand>
-        <BuildCommand>cd .. &amp;&amp; make type=release_unicode</BuildCommand>
-        <SingleFileCommand/>
+      <CustomBuild Enabled="yes">
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make </BuildCommand>
+        <SingleFileCommand>make $(CurrentFile).o</SingleFileCommand>
         <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory>/home/eran/devl/codelite/trunk</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>

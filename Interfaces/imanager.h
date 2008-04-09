@@ -4,6 +4,7 @@
 #include "ieditor.h"
 #include "iconfigtool.h"
 #include "wx/treectrl.h"
+#include "custom_notebook.h"
 #include "wx/wxFlatNotebook/wxFlatNotebook.h"
 
 class TagsManager;
@@ -42,7 +43,7 @@ public:
 	virtual IConfigTool *GetConfigTool() = 0;
 	virtual TreeItemInfo GetSelectedTreeItemInfo(TreeType type) = 0;
 	virtual wxTreeCtrl *GetTree(TreeType type) = 0;
-	virtual wxFlatNotebook *GetOutputPaneNotebook() = 0;
+	virtual Notebook *GetOutputPaneNotebook() = 0;
 	virtual wxString GetStartupDirectory() const = 0;
 	virtual void AddProject(const wxString & path) = 0;
 	virtual bool IsWorkspaceOpen() const = 0;

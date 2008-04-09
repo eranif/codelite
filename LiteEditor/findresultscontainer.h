@@ -3,10 +3,10 @@
 
 #include "wx/panel.h"
 class FindResultsTab;
-class wxFlatNotebook;
+class Notebook;
 
 class FindResultsContainer : public wxPanel {
-	wxFlatNotebook *m_book;
+	Notebook *m_book;
 	
 protected:
 	void Initialize();
@@ -18,6 +18,6 @@ public:
 	FindResultsTab *GetActiveTab();
 	void SetActiveTab(int selection);
 	
-	wxFlatNotebook *GetNotebook(){return m_book;}
+	Notebook *GetNotebook(){return m_book;}
 };
 #endif // __findresultscontainer__

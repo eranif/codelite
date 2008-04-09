@@ -222,7 +222,7 @@ wxTreeCtrl *PluginManager::GetTree(TreeType type)
 	}
 }
 
-wxFlatNotebook *PluginManager::GetOutputPaneNotebook()
+Notebook *PluginManager::GetOutputPaneNotebook()
 {
 	return Frame::Get()->GetOutputPane()->GetNotebook();
 }

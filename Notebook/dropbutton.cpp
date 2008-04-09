@@ -49,7 +49,10 @@ void DropButton::OnLeftDown(wxMouseEvent &e)
 	wxRect rr = GetSize();
 	wxMenu popupMenu;
 
+#ifdef __WXMSW__
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+#endif
+
 	for (size_t i=0; i<count; i++) {
 		CustomTab *tab = m_tabContainer->IndexToTab(i);
 		bool selected( false );
@@ -59,21 +62,24 @@ void DropButton::OnLeftDown(wxMouseEvent &e)
 		}
 
 		wxMenuItem *item = new wxMenuItem(&popupMenu, static_cast<int>(i), tab->GetText(), tab->GetText(), wxITEM_CHECK);
+		
+		//set the font
+#ifdef __WXMSW__
 		if (selected) {
 			font.SetWeight(wxBOLD);
 		}
-
-		//set the font
 		item->SetFont(font);
-
+#endif
 		popupMenu.Append( item );
 
 		//mark the selected item
 		item->Check(selected);
 
 		//restore font
+#ifdef __WXMSW__
 		font.SetWeight(wxNORMAL);
-	}
+#endif
+}
 
 	// connect an event handler to our menu
 	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DropButton::OnMenuSelection), NULL, this);

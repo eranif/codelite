@@ -4,11 +4,11 @@
 #include "custom_tabcontainer.h"
 #include "wx/sizer.h"
 
+
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGED = wxNewEventType();
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGING = wxNewEventType();
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING = wxNewEventType();
 const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED = wxNewEventType();
-
 
 BEGIN_EVENT_TABLE(Notebook, wxPanel)
 	EVT_NAVIGATION_KEY(Notebook::OnNavigationKey)
@@ -25,7 +25,6 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 
 Notebook::~Notebook()
 {
-
 }
 
 void Notebook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp, bool selected)
@@ -303,4 +302,9 @@ void Notebook::AddPage(CustomTab *tab)
 
 	sz->Layout();
 	Thaw();
+}
+
+void Notebook::SetRightClickMenu(wxMenu* menu)
+{
+	m_tabs->SetRightClickMenu( menu );
 }

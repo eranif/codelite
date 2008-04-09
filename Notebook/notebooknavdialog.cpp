@@ -3,7 +3,7 @@
 #include <wx/listctrl.h>
 #include <wx/listbox.h>
 #include <wx/image.h>
-#include "wx/sizer.h"
+#include "wx/sizer.h" 
 #include "custom_notebook.h"
 #include "custom_tab.h"
 

@@ -25,7 +25,7 @@ protected:
 	//are updated if needed
 	void PopPageHistory(CustomTab *page);
 	
-	void DoRemoveTab(CustomTab *deleteTab, bool deleteIt);
+	void DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notify = false);
 	
 	void EnsureVisible(CustomTab *tab);
 	
@@ -46,14 +46,16 @@ public:
 	/**
 	 * \brief delete tab from the tab container (also destroying it)
 	 * \param deleteTab tab to delete
+	 * \param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
 	 */
-	void DeletePage(CustomTab *deleteTab);
+	void DeletePage(CustomTab *deleteTab, bool notify);
 	
 	/**
 	 * \brief remove tab from the tab container (the tab will *not* be destroyed)
 	 * \param removePage tab to remove
+	 * \param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
 	 */
-	void RemovePage(CustomTab *removePage);
+	void RemovePage(CustomTab *removePage, bool notify);
 	
 	/**
 	 * \brief return previous selection

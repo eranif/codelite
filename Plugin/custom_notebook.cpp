@@ -4,10 +4,10 @@
 #include "custom_tabcontainer.h"
 #include "wx/sizer.h"
 
-const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGED = wxNewEventType();
-const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGING = wxNewEventType();
-const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSING = wxNewEventType();
-const wxEventType wxEVT_COMMAND_FLATNOTEBOOK_PAGE_CLOSED = wxNewEventType();
+const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGED = wxNewEventType();
+const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGING = wxNewEventType();
+const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING = wxNewEventType();
+const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED = wxNewEventType();
 
 
 BEGIN_EVENT_TABLE(Notebook, wxPanel)
@@ -140,20 +140,20 @@ size_t Notebook::GetPageCount() const
 	return m_tabs->GetTabsCount();
 }
 
-void Notebook::RemovePage(size_t page)
+void Notebook::RemovePage(size_t page, bool notify)
 {
 	CustomTab *tab = m_tabs->IndexToTab(page);
 	if (tab) {
-		m_tabs->RemovePage(tab);
+		m_tabs->RemovePage(tab, notify);
 	}
 
 }
 
-void Notebook::DeletePage(size_t page)
+void Notebook::DeletePage(size_t page, bool notify)
 {
 	CustomTab *tab = m_tabs->IndexToTab(page);
 	if (tab) {
-		m_tabs->DeletePage(tab);
+		m_tabs->DeletePage(tab, notify);
 	}
 }
 

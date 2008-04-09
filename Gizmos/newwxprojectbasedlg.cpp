@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -33,7 +33,7 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline4, 0, wxEXPAND|wxBOTTOM, 5 );
 	
-	m_flatNotebook1 = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFNB_NODRAG|wxFNB_NO_NAV_BUTTONS|wxFNB_NO_X_BUTTON);
+	m_flatNotebook1 = new wxNotebook( this, wxID_ANY );
 	m_flatNotebook1->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
 	
 	m_panel2 = new wxPanel( m_flatNotebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -71,6 +71,7 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	wxString m_choiceApplicationTypeChoices[] = { wxT("GUI application with Main Frame"), wxT("Simple main with wxWidgets enabled") };
 	int m_choiceApplicationTypeNChoices = sizeof( m_choiceApplicationTypeChoices ) / sizeof( wxString );
 	m_choiceApplicationType = new wxChoice( m_panelBasicInfo, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceApplicationTypeNChoices, m_choiceApplicationTypeChoices, 0 );
+	m_choiceApplicationType->SetSelection( 0 );
 	fgSizer1->Add( m_choiceApplicationType, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer2->Add( fgSizer1, 1, wxEXPAND, 5 );
@@ -105,7 +106,7 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	m_panel2->SetSizer( bSizer5 );
 	m_panel2->Layout();
 	bSizer5->Fit( m_panel2 );
-	m_flatNotebook1->AddPage( m_panel2, wxT("Basics"), true ); 
+	m_flatNotebook1->AddPage( m_panel2, wxT("Basics"), true );
 	
 	bSizer1->Add( m_flatNotebook1, 1, wxALL|wxEXPAND, 5 );
 	
@@ -131,4 +132,12 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	m_choiceApplicationType->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NewWxProjectBaseDlg::OnChoiceChanged ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWxProjectBaseDlg::OnButtonOK ), NULL, this );
 	m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWxProjectBaseDlg::OnButtonCancel ), NULL, this );
+}
+
+NewWxProjectBaseDlg::~NewWxProjectBaseDlg()
+{
+	// Disconnect Events
+	m_choiceApplicationType->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NewWxProjectBaseDlg::OnChoiceChanged ), NULL, this );
+	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWxProjectBaseDlg::OnButtonOK ), NULL, this );
+	m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWxProjectBaseDlg::OnButtonCancel ), NULL, this );
 }

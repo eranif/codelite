@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -10,6 +10,7 @@
 
 #include <wx/bitmap.h>
 #include <wx/image.h>
+#include <wx/icon.h>
 #include <wx/statbmp.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
@@ -24,10 +25,7 @@
 #include "dirpicker.h"
 #include <wx/choice.h>
 #include <wx/checkbox.h>
-#include <wx/wxFlatNotebook/wxFlatNotebook.h>
-#ifdef __VISUALC__
-#include <wx/link_additions.h>
-#endif //__VISUALC__
+#include <wx/notebook.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
 
@@ -45,7 +43,7 @@ class NewWxProjectBaseDlg : public wxDialog
 		wxPanel* m_bitmapPanel;
 		wxStaticBitmap* m_bitmap1;
 		wxStaticLine* m_staticline4;
-		wxFlatNotebook* m_flatNotebook1; 
+		wxNotebook* m_flatNotebook1;
 		wxPanel* m_panel2;
 		wxPanel* m_panelBasicInfo;
 		wxStaticText* m_staticText1;
@@ -70,6 +68,7 @@ class NewWxProjectBaseDlg : public wxDialog
 	
 	public:
 		NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("New wxWidgets Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 528,390 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~NewWxProjectBaseDlg();
 	
 };
 

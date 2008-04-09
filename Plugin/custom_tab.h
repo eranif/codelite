@@ -69,5 +69,6 @@ public:
 	virtual void OnMouseMove(wxMouseEvent &e);
 	virtual void OnLeftUp(wxMouseEvent &e);
 	virtual void OnMouseMiddleButton(wxMouseEvent &e);
+	virtual void OnRightDown(wxMouseEvent &e);
 };
 #endif // __CustomTab__

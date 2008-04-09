@@ -6,6 +6,8 @@
 #include "custom_tab.h"
 #include "custom_notebook.h"
 #include "wx/dcbuffer.h"
+#include "wx/menu.h"
+
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 
 BEGIN_EVENT_TABLE(wxTabContainer, wxPanel)
@@ -19,12 +21,17 @@ wxTabContainer::wxTabContainer(wxWindow *win, wxWindowID id, int orientation, lo
 		: wxPanel(win, id)
 		, m_orientation(orientation)
 		, m_draggedTab(NULL)
+		, m_rightClickMenu(NULL)
 {
 	Initialize();
 }
 
 wxTabContainer::~wxTabContainer()
 {
+	if (m_rightClickMenu) {
+		delete m_rightClickMenu;
+		m_rightClickMenu = NULL;
+	}
 }
 
 void wxTabContainer::Initialize()

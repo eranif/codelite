@@ -19,6 +19,7 @@ BEGIN_EVENT_TABLE(CustomTab, wxPanel)
 	EVT_LEFT_UP(CustomTab::OnLeftUp)
 	EVT_MOTION(CustomTab::OnMouseMove)
 	EVT_MIDDLE_DOWN(CustomTab::OnMouseMiddleButton)
+	EVT_RIGHT_DOWN(CustomTab::OnRightDown)
 END_EVENT_TABLE()
 
 const wxEventType wxEVT_CMD_DELETE_TAB = wxNewEventType();
@@ -29,11 +30,7 @@ CustomTab::CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const w
 		, m_bmp(bmp)
 		, m_selected(selected)
 		, m_padding(6)
-#ifdef __WXMSW__
-		, m_heightPadding(5)
-#else
 		, m_heightPadding(6)
-#endif
 		, m_orientation(orientation)
 		, m_window(NULL)
 		, m_leftDown(false)
@@ -130,7 +127,7 @@ void CustomTab::OnLeftDown(wxMouseEvent &e)
 {
 	m_leftDown = true;
 	wxTabContainer *parent = (wxTabContainer*)GetParent();
-		
+
 	//check if the click was on x button
 	wxPoint pt = e.GetPosition();
 	if (m_xButtonRect.Contains(pt) && GetSelected()) {
@@ -244,11 +241,21 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 	if (left) {
 		wxRect rt(bmpRect);
-		rt.y += 2;
+		if(GetSelected()) {
+			rt.y += 1;
+		}else{
+			rt.y += 3;
+		}
+		
 		DrawingUtils::DrawVerticalButton(memDc, rt, GetSelected(), left, true, hovered);
+		
 	} else {
 		wxRect rt(bmpRect);
-		rt.y += 2;
+		if(GetSelected()) {
+			rt.y += 1;
+		}else{
+			rt.y += 3;
+		}
 		DrawingUtils::DrawVerticalButton(memDc, rt, GetSelected(), left, true, hovered);
 	}
 
@@ -299,7 +306,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		if (GetSelected()) {
 			memDc.DrawBitmap(GetXBmp(), posx, xBtnYCoord, true);
 		}
-		
+
 		if (m_orientation == wxLEFT) {
 			m_xButtonRect = wxRect(xBtnYCoord, GetPadding(), 16, 16);
 		} else {
@@ -330,46 +337,49 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 	wxRect tmpRect(rr);
 	if (left && !GetSelected()) {
-		tmpRect.x += 2;
-		tmpRect.width  -= 2;
+		tmpRect.x += 3;
+		tmpRect.width  -= 3;
 
 		dc.DrawLine(tmpRect.x+tmpRect.width-1, 0, tmpRect.x+tmpRect.width-1, tmpRect.y + tmpRect.height);
 	} else if (!left && !GetSelected()) {
-		tmpRect.width  -= 2;
+		tmpRect.width  -= 3;
 		dc.DrawLine(0, 0, 0, tmpRect.y + tmpRect.height);
 	}
+
 	dc.DrawRoundedRectangle(tmpRect, 2);
 
 	if (left && GetSelected()) {
 		//draw a line
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(rr.x + rr.width - 1, 0, rr.x + rr.width - 1, rr.y + rr.height);
-
-		//draw a single caption colour on top of the active tab
-		wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
-		dc.SetPen(p);
-		dc.DrawLine(rr.x+1, 1, rr.x+1, rr.y+rr.height+1);
-		dc.DrawLine(rr.x+2, 1, rr.x+2, rr.y+rr.height+1);
-		//draw third line on top of the second line, but 1 pixel shorter
-		p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
-		dc.SetPen(p);
-		dc.DrawLine(rr.x+2, 2, rr.x+2, rr.y+rr.height);
+		if (m_style & wxVB_TAB_DECORATION) {
+			//draw a single caption colour on top of the active tab
+			wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
+			dc.SetPen(p);
+			dc.DrawLine(rr.x+1, 1, rr.x+1, rr.y+rr.height+1);
+			dc.DrawLine(rr.x+2, 1, rr.x+2, rr.y+rr.height+1);
+			//draw third line on top of the second line, but 1 pixel shorter
+			p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
+			dc.SetPen(p);
+			dc.DrawLine(rr.x+2, 2, rr.x+2, rr.y+rr.height);
+		}
 
 	} else if (!left && GetSelected()) {
 		//draw a line
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(0, 0, 0, tmpRect.y + tmpRect.height);
+		if (m_style & wxVB_TAB_DECORATION) {
+			//draw a single caption colour on top of the active tab
+			wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
+			dc.SetPen(p);
 
-		//draw a single caption colour on top of the active tab
-		wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
-		dc.SetPen(p);
-
-		dc.DrawLine(rr.x+rr.width-2, 0, rr.x+rr.width-2, rr.y+rr.height);
-		dc.DrawLine(rr.x+rr.width-3, 0, rr.x+rr.width-3, rr.y+rr.height);
-		//draw third line on top of the second line, but 1 pixel shorter
-		p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
-		dc.SetPen(p);
-		dc.DrawLine(rr.x+rr.width-3, 1, rr.x+rr.width-3, rr.y+rr.height-1);
+			dc.DrawLine(rr.x+rr.width-2, 0, rr.x+rr.width-2, rr.y+rr.height);
+			dc.DrawLine(rr.x+rr.width-3, 0, rr.x+rr.width-3, rr.y+rr.height);
+			//draw third line on top of the second line, but 1 pixel shorter
+			p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
+			dc.SetPen(p);
+			dc.DrawLine(rr.x+rr.width-3, 1, rr.x+rr.width-3, rr.y+rr.height-1);
+		}
 	}
 }
 
@@ -399,11 +409,20 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 	if (top) {
 		wxRect fillRect(bmpRect);
-		fillRect.y += 2;
+
+		if (GetSelected()) {
+			fillRect.y += 1;
+		} else {
+			fillRect.y += 3;
+		}
 		DrawingUtils::DrawHorizontalButton(memDc, fillRect, GetSelected(), top, true, hovered);
 	} else {
 		wxRect fillRect(bmpRect);
-		fillRect.height -= 2;
+		if (GetSelected()) {
+			fillRect.height -= 1;
+		} else {
+			fillRect.height -= 3;
+		}
 		DrawingUtils::DrawHorizontalButton(memDc, fillRect, GetSelected(), top, true, hovered);
 	}
 
@@ -474,12 +493,12 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 	wxRect tmpRect(rr);
 	if (top && !GetSelected()) {
-		tmpRect.y += 2;
-		tmpRect.height  -= 2;
+		tmpRect.y += 3;
+		tmpRect.height  -= 3;
 
 		dc.DrawLine(tmpRect.x, tmpRect.y + tmpRect.height - 1, tmpRect.x+tmpRect.width, tmpRect.y + tmpRect.height -1);
 	} else if (!top && !GetSelected()) {
-		tmpRect.height  -= 2;
+		tmpRect.height  -= 3;
 		dc.DrawLine(0, 0, tmpRect.x+tmpRect.width, 0);
 	}
 
@@ -490,32 +509,36 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(0, rr.GetHeight()-1, rr.GetWidth(), rr.GetHeight()-1);
 
-		wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
-		dc.SetPen(p);
+		if (m_style & wxVB_TAB_DECORATION) {
+			wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
+			dc.SetPen(p);
 
-		dc.DrawLine(rr.x+1, rr.y+1, rr.x+rr.width-1, rr.y+1);
-		dc.DrawLine(rr.x+1, rr.y+2, rr.x+rr.width-1, rr.y+2);
+			dc.DrawLine(rr.x+1, rr.y+1, rr.x+rr.width-1, rr.y+1);
+			dc.DrawLine(rr.x+1, rr.y+2, rr.x+rr.width-1, rr.y+2);
 
-		//draw third line on top of the second line, but 1 pixel shorter
-		p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
-		dc.SetPen(p);
-		dc.DrawLine(rr.x+2, rr.y+2, rr.x+rr.width-2, rr.y+2);
-
+			//draw third line on top of the second line, but 1 pixel shorter
+			p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
+			dc.SetPen(p);
+			dc.DrawLine(rr.x+2, rr.y+2, rr.x+rr.width-2, rr.y+2);
+		}
 	} else if (!top && GetSelected()) {
 		//draw a line
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(0, 0, rr.GetWidth(), 0);
 
-		wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
-		dc.SetPen(p);
-		dc.DrawLine(rr.x+1, rr.y+rr.height-2, rr.x+rr.width-1, rr.y+rr.height-2);
-		dc.DrawLine(rr.x+1, rr.y+rr.height-3, rr.x+rr.width-1, rr.y+rr.height-3);
-		//draw third line on top of the second line, but 1 pixel shorter
-		p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
-		dc.SetPen(p);
-		dc.DrawLine(rr.x+2, rr.y+rr.height-3, rr.x+rr.width-2, rr.y+rr.height-3);
+		if (m_style & wxVB_TAB_DECORATION) {
+			wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
+			dc.SetPen(p);
+			dc.DrawLine(rr.x+1, rr.y+rr.height-2, rr.x+rr.width-1, rr.y+rr.height-2);
+			dc.DrawLine(rr.x+1, rr.y+rr.height-3, rr.x+rr.width-1, rr.y+rr.height-3);
+			//draw third line on top of the second line, but 1 pixel shorter
+			p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
+			dc.SetPen(p);
+			dc.DrawLine(rr.x+2, rr.y+rr.height-3, rr.x+rr.width-2, rr.y+rr.height-3);
+		}
 	}
 }
+
 const wxBitmap& CustomTab::GetXBmp()
 {
 	//return the x bitmap by state
@@ -535,5 +558,17 @@ void CustomTab::OnMouseMiddleButton(wxMouseEvent &e)
 		wxCommandEvent event(wxEVT_CMD_DELETE_TAB, GetId());
 		event.SetEventObject(this);
 		GetParent()->AddPendingEvent(event);
+	}
+}
+
+void CustomTab::OnRightDown(wxMouseEvent &e)
+{
+	wxTabContainer *parent = (wxTabContainer*)GetParent();
+	if(!GetSelected()) {
+		parent->SetSelection(this);
+	}
+	
+	if(parent->GetRightClickMenu()){
+		PopupMenu( parent->GetRightClickMenu());
 	}
 }

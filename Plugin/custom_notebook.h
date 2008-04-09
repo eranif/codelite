@@ -10,12 +10,14 @@ enum {
 	wxVB_TOP 					= 0x00000004,
 	wxVB_BOTTOM					= 0x00000008,
 	wxVB_HAS_X					= 0x00000010,
-	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00000020
+	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00000020,
+	wxVB_TAB_DECORATION			= 0x00000040
 };
 
 class wxTabContainer;
 class CustomTab;
 class NotebookNavDialog;
+class wxMenu;
 
 class Notebook : public wxPanel
 {
@@ -26,6 +28,7 @@ class Notebook : public wxPanel
 	wxAuiManager *m_aui;
 	wxString m_paneName;
 	NotebookNavDialog *m_popupWin;
+	
 public:
 	static const size_t	npos = static_cast<size_t>(-1);
 
@@ -128,6 +131,11 @@ public:
 	 * \brief return the tabs container control
 	 */
 	wxTabContainer *GetTabContainer() {return m_tabs;}
+	
+	/**
+	 *\param menu - right click menu object
+	 */
+	void SetRightClickMenu(wxMenu* menu);
 	
 	DECLARE_EVENT_TABLE()
 	virtual void OnNavigationKey(wxNavigationKeyEvent &e);

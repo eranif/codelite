@@ -5,14 +5,15 @@
 #include <wx/dynarray.h>
 
 class CustomTab;
+class wxMenu;
 
 class wxTabContainer : public wxPanel
 {
-
 	int m_orientation;
 	wxSizer *m_tabsSizer;
 	CustomTab *m_draggedTab;
 	wxArrayPtrVoid m_history;
+	wxMenu *m_rightClickMenu;
 	
 protected:
 	void Initialize();
@@ -42,6 +43,9 @@ public:
 	CustomTab *IndexToTab(size_t page);
 	size_t TabToIndex(CustomTab *tab);
 	size_t GetTabsCount();
+	
+	void SetRightClickMenu(wxMenu* rightClickMenu) {this->m_rightClickMenu = rightClickMenu;}
+	wxMenu* GetRightClickMenu() {return m_rightClickMenu;}
 	
 	/**
 	 * \brief delete tab from the tab container (also destroying it)

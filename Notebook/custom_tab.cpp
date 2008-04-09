@@ -150,8 +150,6 @@ void CustomTab::OnLeftDown(wxMouseEvent &e)
 	if (parent) {
 		parent->SetSelection(this, true);
 	}
-
-	e.Skip();
 }
 
 void CustomTab::OnMouseEnterWindow(wxMouseEvent &e)

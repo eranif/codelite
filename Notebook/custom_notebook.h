@@ -15,6 +15,7 @@ enum {
 
 class wxTabContainer;
 class CustomTab;
+class NotebookNavDialog;
 
 class Notebook : public wxPanel
 {
@@ -24,20 +25,24 @@ class Notebook : public wxPanel
 	long m_style;
 	wxAuiManager *m_aui;
 	wxString m_paneName;
-	
+	NotebookNavDialog *m_popupWin;
 public:
 	static const size_t	npos = static_cast<size_t>(-1);
 
 protected:
 	void Initialize();
-	void SetSelection(CustomTab *tab);
+	
 	void OnRender(wxAuiManagerEvent &e);
 	
 public:
 	Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
 	virtual ~Notebook();
 
-
+	/**
+	 * \brief select given tab by the actual tab object
+	 */
+	void SetSelection(CustomTab *tab);
+	
 	/**
 	 * \brief return the currently selected item index
 	 * \return the currently selected item, of the book is empty, return Notebook::npos
@@ -101,6 +106,13 @@ public:
 	 */
 	void SetAuiManager(wxAuiManager *manager, const wxString &containedPaneName);
 	
+	/**
+	 * \brief return the tabbing history for this notebook
+	 */
+	const wxArrayPtrVoid& GetHistory() const;
+	
+	DECLARE_EVENT_TABLE()
+	virtual void OnNavigationKey(wxNavigationKeyEvent &e);
 };
 
 class NotebookEvent : public wxNotifyEvent

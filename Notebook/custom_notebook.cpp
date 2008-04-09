@@ -1,3 +1,4 @@
+#include "notebooknavdialog.h"
 #include "custom_notebook.h"
 #include "custom_tab.h"
 #include "custom_tabcontainer.h"
@@ -8,10 +9,16 @@ const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGING = wxNewEventType();
 const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSING = wxNewEventType();
 const wxEventType wxEVT_COMMAND_FLATNOTEBOOK_PAGE_CLOSED = wxNewEventType();
 
+
+BEGIN_EVENT_TABLE(Notebook, wxPanel)
+	EVT_NAVIGATION_KEY(Notebook::OnNavigationKey)
+END_EVENT_TABLE()
+
 Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
 		: wxPanel(parent, id, pos, size)
 		, m_style(style)
 		, m_aui(NULL)
+		, m_popupWin(NULL)
 {
 	Initialize();
 }
@@ -65,19 +72,19 @@ void Notebook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 void Notebook::Initialize()
 {
 	wxBoxSizer *sz = NULL;
-	
-	
+
+
 	int ori(wxRIGHT);
 	if (m_style & wxVB_LEFT) {
 		ori = wxLEFT;
 		sz = new wxBoxSizer(wxHORIZONTAL);
-	}else if(m_style & wxVB_TOP) {
+	} else if (m_style & wxVB_TOP) {
 		ori = wxTOP;
 		sz = new wxBoxSizer(wxVERTICAL);
-	}else if(m_style & wxVB_BOTTOM) {
+	} else if (m_style & wxVB_BOTTOM) {
 		ori = wxBOTTOM;
 		sz = new wxBoxSizer(wxVERTICAL);
-	}else{
+	} else {
 		sz = new wxBoxSizer(wxHORIZONTAL);
 	}
 
@@ -97,8 +104,10 @@ void Notebook::SetSelection(size_t page)
 		//same tab, nothing to be done
 		return;
 	}
-	
+
 	if (tab) {
+		tab->GetWindow()->SetFocus();
+		
 		//the next call will also trigger a call to Notebook::SetSelection(CustomTab *tab)
 		m_tabs->SetSelection(tab);
 	}
@@ -166,16 +175,16 @@ size_t Notebook::GetPageCount() const
 void Notebook::RemovePage(size_t page)
 {
 	CustomTab *tab = m_tabs->IndexToTab(page);
-	if(tab) {
+	if (tab) {
 		m_tabs->RemovePage(tab);
 	}
-	
+
 }
 
 void Notebook::DeletePage(size_t page)
 {
 	CustomTab *tab = m_tabs->IndexToTab(page);
-	if(tab) {
+	if (tab) {
 		m_tabs->DeletePage(tab);
 	}
 }
@@ -192,21 +201,21 @@ wxString Notebook::GetPageText(size_t page) const
 void Notebook::SetOrientation(int orientation)
 {
 	int add_style(orientation);
-	
+
 	wxSizer *sz = GetSizer();
 	m_style &= ~(wxVB_LEFT | wxVB_RIGHT | wxVB_TOP | wxVB_BOTTOM);
 	m_style |= add_style;
-	
+
 	int ori(wxRIGHT);
 	if (m_style & wxVB_LEFT) {
 		ori = wxLEFT;
-	}else if(m_style & wxVB_TOP) {
+	} else if (m_style & wxVB_TOP) {
 		ori = wxTOP;
-	}else if(m_style & wxVB_BOTTOM) {
+	} else if (m_style & wxVB_BOTTOM) {
 		ori = wxBOTTOM;
 	}
 	m_tabs->SetOrientation(ori);
-	
+
 	//detach the tabcontainer class from the sizer
 	if (GetPageCount() > 0) {
 		if (m_style & wxVB_LEFT || m_style & wxVB_TOP) {
@@ -225,12 +234,12 @@ void Notebook::SetOrientation(int orientation)
 
 void Notebook::SetAuiManager(wxAuiManager *manager, const wxString &containedPaneName)
 {
-	if(manager) {
+	if (manager) {
 		m_aui = manager;
 		m_paneName = containedPaneName;
 		m_aui->Connect(wxEVT_AUI_RENDER, wxAuiManagerEventHandler(Notebook::OnRender), NULL, this);
 	} else {
-		if(m_aui) {
+		if (m_aui) {
 			m_aui->Disconnect(wxEVT_AUI_RENDER, wxAuiManagerEventHandler(Notebook::OnRender), NULL, this);
 		}
 		m_aui = NULL;
@@ -240,16 +249,54 @@ void Notebook::SetAuiManager(wxAuiManager *manager, const wxString &containedPan
 
 void Notebook::OnRender(wxAuiManagerEvent &e)
 {
-	if(m_aui) {
+	if (m_aui) {
 		wxAuiPaneInfo info = m_aui->GetPane( m_paneName );
-		if(info.IsOk()) {
+		if (info.IsOk()) {
 			//we got the containing pane of the book, test its orientation
-			if(info.dock_direction == wxAUI_DOCK_LEFT && m_style & wxVB_RIGHT) {
+			if (info.dock_direction == wxAUI_DOCK_LEFT && m_style & wxVB_RIGHT) {
 				SetOrientation(wxVB_LEFT);
-			} else if(info.dock_direction == wxAUI_DOCK_RIGHT && m_style & wxVB_LEFT) {
+			} else if (info.dock_direction == wxAUI_DOCK_RIGHT && m_style & wxVB_LEFT) {
 				SetOrientation(wxVB_LEFT);
 			}
 		}
 	}
 	e.Skip();
+}
+
+void Notebook::OnNavigationKey(wxNavigationKeyEvent &e)
+{
+	CustomTab *tab(NULL);
+	if ( e.IsWindowChange() ) {
+		if ( !m_popupWin && GetPageCount() > 0) {
+			m_popupWin = new NotebookNavDialog( this );
+			if(m_popupWin->ShowModal() == wxID_OK && m_popupWin->GetSelection()){
+				tab = m_popupWin->GetSelection();
+				size_t idx = m_tabs->TabToIndex(tab);
+				SetSelection(idx);
+			}
+			
+			m_popupWin->Destroy();
+			m_popupWin = NULL;
+			
+			if(tab) {
+				tab->GetWindow()->SetFocus();
+			}
+			
+		} else if ( m_popupWin ) {
+			// a dialog is already opened
+			m_popupWin->OnNavigationKey( e );
+			return;
+		}
+	} else {
+		// pass to the parent
+		if ( GetParent() ) {
+			e.SetCurrentFocus(this);
+			GetParent()->ProcessEvent(e);
+		}
+	}
+}
+
+const wxArrayPtrVoid& Notebook::GetHistory() const
+{
+	return m_tabs->GetHistory();
 }

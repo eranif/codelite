@@ -19,6 +19,8 @@
     <File Name="drawingutils.cpp"/>
     <File Name="dropbutton.cpp"/>
     <File Name="dropbutton.h"/>
+    <File Name="notebooknavdialog.cpp"/>
+    <File Name="notebooknavdialog.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="tab_x_pressed.xpm"/>

@@ -74,6 +74,7 @@ void wxTabContainer::AddTab(CustomTab *tab)
 	//force selection
 	if (GetSelection() == NULL && tab->GetSelected() == false) {
 		tab->SetSelected(true);
+		PushPageHistory(tab);
 	}
 
 	Thaw();
@@ -108,6 +109,8 @@ void wxTabContainer::SetSelection(CustomTab *tab, bool notify)
 		return;
 	}
 
+	tab->GetWindow()->SetFocus();
+	
 	size_t oldSel((size_t)-1);
 	if (notify) {
 		//send event to noitfy that the page is changing
@@ -145,7 +148,7 @@ void wxTabContainer::SetSelection(CustomTab *tab, bool notify)
 
 	//add this page to the history
 	PushPageHistory(tab);
-
+	
 	if (notify) {
 		//send event to noitfy that the page has changed
 		NotebookEvent event(wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGED, GetId());

@@ -76,7 +76,12 @@ public:
 	//Setters
 	void SetOrientation(const int& orientation) ;
 	const int& GetOrientation() const {return m_orientation;}
-
+	
+	
+	//Setters
+	void SetHistory(const wxArrayPtrVoid& history) {this->m_history = history;}
+	const wxArrayPtrVoid& GetHistory() const {return m_history;}
+	
 	DECLARE_EVENT_TABLE()
 	virtual void OnPaint(wxPaintEvent &e);
 	virtual void OnEraseBg(wxEraseEvent &e);

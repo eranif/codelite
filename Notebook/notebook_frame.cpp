@@ -35,7 +35,7 @@ void NotebookFrame::Initialize()
 	SetSizer(sz);
 	
 	wxBitmap bmp, bmp1;
-	bmp.LoadFile(wxT("../page_close.png"), wxBITMAP_TYPE_PNG);
+	bmp.LoadFile(wxT("../folder.png"), wxBITMAP_TYPE_PNG);
 	bmp1.LoadFile(wxT("../bookmark.png"), wxBITMAP_TYPE_PNG);
 	
 	//Create a status bar 

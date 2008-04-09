@@ -25,5 +25,6 @@ public:
 	
 	
 	void OnDeletePage(wxCommandEvent &e);
+	void OnNewPage(wxCommandEvent &e);
 };
 #endif // __NotebookFrame__

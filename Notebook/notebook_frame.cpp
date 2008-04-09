@@ -10,6 +10,7 @@ BEGIN_EVENT_TABLE(NotebookFrame, wxFrame)
 	EVT_CLOSE(NotebookFrame::OnClose)
 	EVT_MENU(wxID_EXIT, NotebookFrame::OnQuit)
 	EVT_MENU(wxID_DELETE, NotebookFrame::OnDeletePage)
+	EVT_MENU(wxID_NEW, NotebookFrame::OnNewPage)
 END_EVENT_TABLE()
 
 NotebookFrame::NotebookFrame(wxWindow* parent,
@@ -46,7 +47,7 @@ void NotebookFrame::Initialize()
 	
 	//Create a menu bar
 	CreateMenuBar();
-	
+	/*
 	Notebook *book1 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_RIGHT|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB);
 	
 	book1->AddPage(new wxTextCtrl(book1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"), bmp);
@@ -55,6 +56,7 @@ void NotebookFrame::Initialize()
 	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"), bmp);
 	sz->Layout();
 	
+	
 	Notebook *book2 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_HAS_X);
 	
 	
@@ -62,6 +64,7 @@ void NotebookFrame::Initialize()
 	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2 With Long"));
 	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3 With"));
 	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"));
+	*/
 	
 	m_topbook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_HAS_X);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"), bmp1);
@@ -69,18 +72,18 @@ void NotebookFrame::Initialize()
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 5 With Longer Title"), bmp1);
-	
+	/*
 	Notebook *book4 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_BOTTOM|wxVB_HAS_X);
 	
 	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"));
 	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2"));
 	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"));
 	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"));
-	
+	*/
 	hsz->Add(m_topbook, 1, wxEXPAND);
-	hsz->Add(book2, 1, wxEXPAND);
-	hsz->Add(book4, 1, wxEXPAND);
-	hsz->Add(book1, 1, wxEXPAND);
+	//hsz->Add(book2, 1, wxEXPAND);
+	//hsz->Add(book4, 1, wxEXPAND);
+	//hsz->Add(book1, 1, wxEXPAND);
 	
 	sz->Add(hsz, 1, wxEXPAND);
 }
@@ -101,9 +104,11 @@ void NotebookFrame::CreateMenuBar()
 	wxMenuBar *mb = new wxMenuBar();
 	//File Menu
 	wxMenu *menu = new wxMenu();
-	menu->Append(wxID_DELETE);
+	menu->Append(wxID_DELETE, wxT("Delete Tab\tCtrl+D"));
+	menu->Append(wxID_NEW, wxT("New Tab\tCtrl+N"));
 	menu->AppendSeparator();
 	menu->Append(wxID_EXIT);
+	
 	
 	mb->Append(menu, wxT("&File"));
 	SetMenuBar(mb);
@@ -113,5 +118,18 @@ void NotebookFrame::OnDeletePage(wxCommandEvent &e)
 {
 	if(m_topbook && m_topbook->GetPageCount() > 0) {
 		m_topbook->DeletePage(m_topbook->GetSelection());
+	}
+}
+
+void NotebookFrame::OnNewPage(wxCommandEvent &e)
+{
+	static int pageCount(4);
+	wxBitmap bmp1;
+	bmp1.LoadFile(wxT("../bookmark.png"), wxBITMAP_TYPE_PNG);
+
+	wxString caption;
+	caption << wxT("Page Number ") << ++pageCount;
+	if(m_topbook) {
+		m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), caption, bmp1, false);
 	}
 }

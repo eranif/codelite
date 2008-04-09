@@ -5,10 +5,10 @@
     <WorkspaceConfiguration Name="DebugUnicode" Selected="no">
       <Project Name="Notebook" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="ReleaseUnicode" Selected="yes">
+    <WorkspaceConfiguration Name="ReleaseUnicode" Selected="no">
       <Project Name="Notebook" ConfigName="ReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="WinDebugUnicode" Selected="no">
+    <WorkspaceConfiguration Name="WinDebugUnicode" Selected="yes">
       <Project Name="Notebook" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="WinReleaseUnicode" Selected="yes">

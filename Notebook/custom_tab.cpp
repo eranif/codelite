@@ -129,8 +129,8 @@ int CustomTab::CalcTabWidth()
 void CustomTab::OnLeftDown(wxMouseEvent &e)
 {
 	m_leftDown = true;
-	wxTabContainer *parent = dynamic_cast<wxTabContainer*>( GetParent() );
-
+	wxTabContainer *parent = (wxTabContainer*)GetParent();
+		
 	//check if the click was on x button
 	wxPoint pt = e.GetPosition();
 	if (m_xButtonRect.Contains(pt) && GetSelected()) {
@@ -155,7 +155,7 @@ void CustomTab::OnLeftDown(wxMouseEvent &e)
 void CustomTab::OnMouseEnterWindow(wxMouseEvent &e)
 {
 	if (e.LeftIsDown()) {
-		wxTabContainer *parent = dynamic_cast<wxTabContainer*>( GetParent() );
+		wxTabContainer *parent = (wxTabContainer*)GetParent();
 		if (parent) {
 			parent->SwapTabs(this);
 		}
@@ -171,7 +171,7 @@ void CustomTab::OnMouseMove(wxMouseEvent &e)
 	//was taken place on this tab!
 	if (e.LeftIsDown() && m_leftDown) {
 		//left is down, check to see if the tab is being dragged
-		wxTabContainer *parent = dynamic_cast<wxTabContainer*>( GetParent() );
+		wxTabContainer *parent = (wxTabContainer*)GetParent();
 		if (parent) {
 			parent->SetDraggedTab(this);
 		}
@@ -183,7 +183,7 @@ void CustomTab::OnLeftUp(wxMouseEvent &e)
 {
 	wxUnusedVar(e);
 	m_leftDown = false;
-	wxTabContainer *parent = dynamic_cast<wxTabContainer*>( GetParent() );
+	wxTabContainer *parent = (wxTabContainer*)GetParent();
 	if (parent) {
 		parent->SetDraggedTab(NULL);
 	}

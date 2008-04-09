@@ -55,12 +55,12 @@ void wxTabContainer::Initialize()
 void wxTabContainer::AddTab(CustomTab *tab)
 {
 	Freeze();
-	
-	if(tab->GetSelected() == false && GetTabsCount() == 0) {
+
+	if (tab->GetSelected() == false && GetTabsCount() == 0) {
 		tab->SetSelected(true);
 		PushPageHistory(tab);
 	}
-	
+
 	if (m_orientation == wxLEFT || m_orientation == wxRIGHT) {
 		m_tabsSizer->Add(tab, 0, wxLEFT | wxRIGHT, 3);
 	} else {
@@ -70,8 +70,8 @@ void wxTabContainer::AddTab(CustomTab *tab)
 	if (tab->GetSelected()) {
 		//find the old selection and unselect it
 		CustomTab *selectedTab = GetSelection();
-		
-		if(selectedTab && selectedTab != tab) {
+
+		if (selectedTab && selectedTab != tab) {
 			selectedTab->SetSelected( false );
 		}
 	}
@@ -91,7 +91,7 @@ CustomTab* wxTabContainer::GetSelection()
 		wxSizerItem *item = *iter;
 		wxWindow *win = item->GetWindow();
 		if (win) {
-			CustomTab *tab = dynamic_cast<CustomTab*>(win);
+			CustomTab *tab = (CustomTab*)win;
 			if (tab && tab->GetSelected()) {
 				return tab;
 			}
@@ -108,13 +108,13 @@ void wxTabContainer::SetSelection(CustomTab *tab, bool notify)
 	}
 
 	tab->GetWindow()->SetFocus();
-	
+
 	size_t oldSel((size_t)-1);
 	if (notify) {
 		//send event to noitfy that the page is changing
 		oldSel = TabToIndex( GetSelection() );
 
-		NotebookEvent event(wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGING, GetId());
+		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CHANGING, GetId());
 		event.SetSelection( TabToIndex( tab ) );
 		event.SetOldSelection( oldSel );
 		event.SetEventObject( this );
@@ -126,7 +126,7 @@ void wxTabContainer::SetSelection(CustomTab *tab, bool notify)
 	}
 
 	//let the notebook process this first
-	Notebook *book = dynamic_cast<Notebook *>( GetParent() );
+	Notebook *book = (Notebook *)GetParent();
 	if (book) {
 		book->SetSelection(tab);
 	}
@@ -146,10 +146,10 @@ void wxTabContainer::SetSelection(CustomTab *tab, bool notify)
 
 	//add this page to the history
 	PushPageHistory(tab);
-	
+
 	if (notify) {
 		//send event to noitfy that the page has changed
-		NotebookEvent event(wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGED, GetId());
+		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CHANGED, GetId());
 		event.SetSelection( TabToIndex( tab ) );
 		event.SetOldSelection( oldSel );
 		event.SetEventObject( this );
@@ -169,7 +169,7 @@ CustomTab* wxTabContainer::IndexToTab(size_t page)
 
 	wxSizerItem *szItem = sz->GetItem(page);
 	if (szItem) {
-		return dynamic_cast< CustomTab* >(szItem->GetWindow());
+		return (CustomTab*)szItem->GetWindow();
 	}
 	return NULL;
 }
@@ -188,11 +188,8 @@ size_t wxTabContainer::TabToIndex(CustomTab *tab)
 	for (size_t i=0; iter != items.end(); iter++, i++) {
 		wxSizerItem *item = *iter;
 		wxWindow *win = item->GetWindow();
-		if (win) {
-			CustomTab *curtab = dynamic_cast<CustomTab*>(win);
-			if (curtab == tab) {
-				return i;
-			}
+		if (win == tab) {
+			return i;
 		}
 	}
 	return static_cast<size_t>(-1);
@@ -214,11 +211,11 @@ void wxTabContainer::OnPaint(wxPaintEvent &e)
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 
 	dc.DrawRectangle(rr);
-	
-	if(GetTabsCount() == 0) {
+
+	if (GetTabsCount() == 0) {
 		return;
 	}
-	
+
 	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
 	if (m_orientation == wxRIGHT) {
 		dc.DrawLine(rr.x+3, rr.y, rr.x+3, rr.y+rr.height);
@@ -254,10 +251,8 @@ void wxTabContainer::SetOrientation(const int& orientation)
 		wxSizerItem *item = *iter;
 		wxWindow *win = item->GetWindow();
 		if (win) {
-			CustomTab *curtab = dynamic_cast<CustomTab*>(win);
-			if (curtab) {
-				curtab->SetOrientation(m_orientation);
-			}
+			CustomTab *curtab = (CustomTab*)win;
+			curtab->SetOrientation(m_orientation);
 		}
 	}
 	GetSizer()->Layout();
@@ -366,20 +361,33 @@ CustomTab* wxTabContainer::GetPreviousSelection()
 	return static_cast<CustomTab*>( m_history.Item(0));
 }
 
-void wxTabContainer::DeletePage(CustomTab *deleteTab)
+void wxTabContainer::DeletePage(CustomTab *deleteTab, bool notify)
 {
-	DoRemoveTab(deleteTab, true);
+	DoRemoveTab(deleteTab, true, notify);
 }
 
-void wxTabContainer::RemovePage(CustomTab *removePage)
+void wxTabContainer::RemovePage(CustomTab *removePage, bool notify)
 {
-	DoRemoveTab(removePage, false);
+	DoRemoveTab(removePage, false, notify);
 }
 
-void wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt)
+void wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notify)
 {
 	if (deleteTab == NULL) {
 		return;
+	}
+
+	size_t pageIndex = TabToIndex( deleteTab );
+	if (notify) {
+		//send event to noitfy that the page has changed
+		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CLOSING, GetId());
+		event.SetSelection( pageIndex );
+		event.SetEventObject( this );
+		GetEventHandler()->ProcessEvent(event);
+
+		if (!event.IsAllowed()) {
+			return;
+		}
 	}
 
 	//detach the tab from the tabs container
@@ -393,7 +401,7 @@ void wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt)
 			nextSelection = IndexToTab(0);
 		}
 
-		Notebook *book = dynamic_cast<Notebook*>(GetParent());
+		Notebook *book = (Notebook*)GetParent();
 		if (book && nextSelection) {
 			book->SetSelection(nextSelection);
 			nextSelection->SetSelected(true);
@@ -414,6 +422,13 @@ void wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt)
 	m_tabsSizer->Layout();
 	GetParent()->GetSizer()->Layout();
 
+	if (notify) {
+		//send event to noitfy that the page has been closed
+		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CLOSED, GetId());
+		event.SetSelection( pageIndex );
+		event.SetEventObject( this );
+		GetEventHandler()->ProcessEvent(event);
+	}
 }
 
 void wxTabContainer::EnsureVisible(CustomTab *tab)
@@ -456,8 +471,8 @@ bool wxTabContainer::IsVisible(CustomTab *tab)
 
 void wxTabContainer::OnDeleteTab(wxCommandEvent &e)
 {
-	CustomTab *tab = dynamic_cast<CustomTab*>(e.GetEventObject());
-	if(tab) {
-		DeletePage(tab);
+	CustomTab *tab = (CustomTab*)e.GetEventObject();
+	if (tab) {
+		DeletePage(tab, true);
 	}
 }

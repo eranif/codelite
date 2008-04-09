@@ -65,6 +65,12 @@ public:
 	void AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
 
 	/**
+	 * \brief add page to the book
+	 * \param tab to be added 
+	 */
+	void AddPage(CustomTab *tab);
+
+	/**
 	 * \brief return page at give position
 	 * \param page page's index
 	 * \return the page or NULL if index is out of bounds
@@ -90,13 +96,15 @@ public:
 	
 	/**
 	 * \brief remove page from the book without destroying it
+	 * \param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
 	 */
-	void RemovePage(size_t page);
+	void RemovePage(size_t page, bool notify = true);
 
 	/**
 	 * \brief delete page from the book and destroy it as well
+	 * \param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
 	 */
-	void DeletePage(size_t page);
+	void DeletePage(size_t page, bool notify = true);
 	
 	/**
 	 * \brief set an AUI manager for this book. This allows the book to automatically detect chanegs in 
@@ -110,6 +118,16 @@ public:
 	 * \brief return the tabbing history for this notebook
 	 */
 	const wxArrayPtrVoid& GetHistory() const;
+	
+	/**
+	 * \brief return the notebook style
+	 */
+	long GetBookStyle() const {return m_style;}
+	
+	/**
+	 * \brief return the tabs container control
+	 */
+	wxTabContainer *GetTabContainer() {return m_tabs;}
 	
 	DECLARE_EVENT_TABLE()
 	virtual void OnNavigationKey(wxNavigationKeyEvent &e);
@@ -154,26 +172,26 @@ public:
 	}
 };
 
-extern const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGED;
-extern const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGING;
-extern const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSING;
-extern const wxEventType wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSED;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGED;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGING;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING;
+extern const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED;
 
 typedef void (wxEvtHandler::*NotebookEventFunction)(NotebookEvent&);
 
 #define NotebookEventHandler(func) \
 	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(NotebookEventFunction, &func)
 
-#define EVT_VERTICALBOOK_PAGE_CHANGED(winid, fn) \
-	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGED, winid, NotebookEventHandler(fn))
+#define EVT_BOOK_PAGE_CHANGED(winid, fn) \
+	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_PAGE_CHANGED, winid, NotebookEventHandler(fn))
 
-#define EVT_VERTICALBOOK_PAGE_CHANGING(winid, fn) \
-	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CHANGING, winid, NotebookEventHandler(fn))
+#define EVT_BOOK_PAGE_CHANGING(winid, fn) \
+	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_PAGE_CHANGING, winid, NotebookEventHandler(fn))
 
-#define EVT_VERTICALBOOK_PAGE_CLOSING(winid, fn) \
-	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSING, winid, NotebookEventHandler(fn))
+#define EVT_BOOK_PAGE_CLOSING(winid, fn) \
+	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_PAGE_CLOSING, winid, NotebookEventHandler(fn))
 
-#define EVT_VERTICALBOOK_PAGE_CLOSED(winid, fn) \
-	wx__DECLARE_EVT1(wxEVT_COMMAND_VERTICALBOOK_PAGE_CLOSED, winid, NotebookEventHandler(fn))
+#define EVT_BOOK_PAGE_CLOSED(winid, fn) \
+	wx__DECLARE_EVT1(wxEVT_COMMAND_BOOK_PAGE_CLOSED, winid, NotebookEventHandler(fn))
 
 #endif // __Notebook__

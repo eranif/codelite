@@ -34,6 +34,10 @@ void NotebookFrame::Initialize()
 	wxBoxSizer *hsz = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer(sz);
 	
+	wxBitmap bmp, bmp1;
+	bmp.LoadFile(wxT("../page_close.png"), wxBITMAP_TYPE_PNG);
+	bmp1.LoadFile(wxT("../bookmark.png"), wxBITMAP_TYPE_PNG);
+	
 	//Create a status bar 
 	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
 	statusBar->SetFieldsCount(1);
@@ -45,10 +49,10 @@ void NotebookFrame::Initialize()
 	
 	Notebook *book1 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_RIGHT|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB);
 	
-	book1->AddPage(new wxTextCtrl(book1, wxID_ANY), wxT("Page 1"));
-	book1->AddPage(new wxTextCtrl(book1, wxID_ANY), wxT("Page 2"));
-	book1->AddPage(new wxTextCtrl(book1, wxID_ANY), wxT("Page 3"));
-	book1->AddPage(new wxTextCtrl(book1, wxID_ANY), wxT("Page 4"));
+	book1->AddPage(new wxTextCtrl(book1, wxID_ANY), wxT("Page 1"), bmp);
+	book1->AddPage(new wxTextCtrl(book1, wxID_ANY), wxT("Page 2"), bmp);
+	book1->AddPage(new wxTextCtrl(book1, wxID_ANY), wxT("Page 3"), bmp);
+	book1->AddPage(new wxTextCtrl(book1, wxID_ANY), wxT("Page 4"), bmp);
 	sz->Layout();
 	
 	Notebook *book2 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_HAS_X);
@@ -60,11 +64,11 @@ void NotebookFrame::Initialize()
 	book2->AddPage(new wxTextCtrl(book2, wxID_ANY), wxT("Page 4"));
 	
 	m_topbook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_HAS_X);
-	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY), wxT("Page 1"));
-	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY), wxT("Page 2 With Long"));
-	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY), wxT("Page 3"));
-	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY), wxT("Page 4"));
-	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY), wxT("Page 5 With Longer Title"));
+	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY), wxT("Page 1"), bmp1);
+	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY), wxT("Page 2 With Long"), bmp1);
+	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY), wxT("Page 3"), bmp1);
+	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY), wxT("Page 4"), bmp1);
+	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY), wxT("Page 5 With Longer Title"), bmp1);
 	
 	Notebook *book4 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_BOTTOM|wxVB_HAS_X);
 	

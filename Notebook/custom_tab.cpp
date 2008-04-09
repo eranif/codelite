@@ -49,10 +49,10 @@ CustomTab::CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const w
 	}
 
 	//create a drop down arrow image
-	m_xButtonNormalBmp = wxBitmap(x_button_xpm);
+	m_xButtonNormalBmp = wxBitmap(_tab_x_button_xpm);
 	m_xButtonNormalBmp.SetMask(new wxMask(m_xButtonNormalBmp, clMASK_COLOR));
 
-	m_xButtonPressedBmp = wxBitmap(x_button_pressed_xpm);
+	m_xButtonPressedBmp = wxBitmap(_tab_x_button_pressed_xpm);
 	m_xButtonPressedBmp.SetMask(new wxMask(m_xButtonPressedBmp, clMASK_COLOR));
 }
 

@@ -55,7 +55,12 @@ void wxTabContainer::Initialize()
 void wxTabContainer::AddTab(CustomTab *tab)
 {
 	Freeze();
-
+	
+	if(tab->GetSelected() == false && GetTabsCount() == 0) {
+		tab->SetSelected(true);
+		PushPageHistory(tab);
+	}
+	
 	if (m_orientation == wxLEFT || m_orientation == wxRIGHT) {
 		m_tabsSizer->Add(tab, 0, wxLEFT | wxRIGHT, 3);
 	} else {
@@ -65,21 +70,14 @@ void wxTabContainer::AddTab(CustomTab *tab)
 	if (tab->GetSelected()) {
 		//find the old selection and unselect it
 		CustomTab *selectedTab = GetSelection();
-		if (selectedTab) {
+		
+		if(selectedTab && selectedTab != tab) {
 			selectedTab->SetSelected( false );
 		}
 	}
 
-	//if there are no selection, and this tab is not selected as well,
-	//force selection
-	if (GetSelection() == NULL && tab->GetSelected() == false) {
-		tab->SetSelected(true);
-		PushPageHistory(tab);
-	}
-
 	Thaw();
 	m_tabsSizer->Layout();
-
 }
 
 CustomTab* wxTabContainer::GetSelection()

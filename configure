@@ -63,13 +63,13 @@ createVariables()
 		wxcfg="\"--unicode=yes --debug=no\""
 	fi
 
-	echo "CMP=${compiler_name}" >> Makefile
+	echo "OPT=${optimization}" >> Makefile
+	echo "DEBUG=${debug_flag}" >> Makefile
+	echo "CMP=${compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
 	echo "GCC=${c_compiler_name}" >> Makefile
 	echo "EXE_NAME=${exe_name}" >> Makefile
 	echo "EXE_NAME_NO_PATH=${exe_name1}" >> Makefile
 	echo "OBJ_DIR=${objects_dir}" >> Makefile
-	echo "OPT=${optimization}" >> Makefile
-	echo "DEBUG=${debug_flag}" >> Makefile
 	echo "EXT=${ext}" >> Makefile
 	echo "OUTPUT_DIR=lib" >> Makefile
 	echo "WXCFG=${wxcfg}" >> Makefile

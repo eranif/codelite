@@ -29,11 +29,13 @@ Notebook::~Notebook()
 
 void Notebook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp, bool selected)
 {
+	Freeze();
 	CustomTab *tab = new CustomTab(m_tabs, wxID_ANY, text, bmp, selected, m_tabs->GetOrientation(), m_style);
 	win->Reparent(this);
 	tab->SetWindow(win);
 	
 	AddPage(tab);
+	Thaw();
 }
 
 void Notebook::Initialize()
@@ -111,9 +113,9 @@ void Notebook::SetSelection(CustomTab *tab)
 		sz->Insert(0, win, 1, wxEXPAND);
 	}
 	win->Show();
+	sz->Layout();
 	Thaw();
 
-	sz->Layout();
 }
 
 size_t Notebook::GetSelection()
@@ -141,19 +143,23 @@ size_t Notebook::GetPageCount() const
 
 void Notebook::RemovePage(size_t page, bool notify)
 {
+	Freeze();
 	CustomTab *tab = m_tabs->IndexToTab(page);
 	if (tab) {
 		m_tabs->RemovePage(tab, notify);
 	}
+	Thaw();
 
 }
 
 void Notebook::DeletePage(size_t page, bool notify)
 {
+	Freeze();
 	CustomTab *tab = m_tabs->IndexToTab(page);
 	if (tab) {
 		m_tabs->DeletePage(tab, notify);
 	}
+	Thaw();
 }
 
 wxString Notebook::GetPageText(size_t page) const

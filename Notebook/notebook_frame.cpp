@@ -26,14 +26,22 @@ NotebookFrame::NotebookFrame(wxWindow* parent,
 
 NotebookFrame::~NotebookFrame()
 {
-
+	m_mgr.UnInit();
 }
 
 void NotebookFrame::Initialize()
 {
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer *hsz = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer(sz);
+	
+	wxPanel *mainPanel = new wxPanel(this, wxID_ANY);
+	barPanel = new wxPanel(this, wxID_ANY);
+	barPanel->SetSizeHints(-1, 100);
+	barPanel->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(NotebookFrame::OnPanelDClick), NULL, this);
+	
+	sz->Add(barPanel, 0, wxEXPAND);
+	sz->Add(mainPanel, 1, wxEXPAND);
+	m_mgr.SetManagedWindow( mainPanel );
 	
 	wxBitmap bmp, bmp1;
 	bmp.LoadFile(wxT("../folder.png"), wxBITMAP_TYPE_PNG);
@@ -52,17 +60,15 @@ void NotebookFrame::Initialize()
 	menu->Append(wxID_NEW);
 	menu->Append(wxID_DELETE);
 	
-	Notebook *book1 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_RIGHT|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB);
+	Notebook *book1 = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_RIGHT|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB);
 	book1->SetRightClickMenu(menu);
 	
 	book1->AddPage(new wxTextCtrl(book1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"), bmp);
 	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2"), bmp);
 	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"), bmp);
 	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"), bmp);
-	sz->Layout();
 	
-	
-	Notebook *book2 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_HAS_X);
+	Notebook *book2 = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_HAS_X);
 	
 	
 	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"));
@@ -71,26 +77,35 @@ void NotebookFrame::Initialize()
 	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"));
 
 	
-	m_topbook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_HAS_X|wxVB_BG_GRADIENT|wxVB_BORDER);
+	m_topbook = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_HAS_X|wxVB_BG_GRADIENT|wxVB_BORDER);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2 With Long"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 5 With Longer Title"), bmp1);
 
-	Notebook *book4 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_BOTTOM|wxVB_HAS_X);
+	Notebook *book4 = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_BOTTOM|wxVB_HAS_X);
 	
 	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"));
 	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2"));
 	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"));
 	book4->AddPage(new wxTextCtrl(book4, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"));
 
-	hsz->Add(m_topbook, 1, wxEXPAND);
-	hsz->Add(book2, 1, wxEXPAND);
-	hsz->Add(book4, 1, wxEXPAND);
-	hsz->Add(book1, 1, wxEXPAND);
+	wxAuiPaneInfo paneInfo;
+	m_mgr.AddPane(m_topbook, paneInfo.Name(wxT("Center Book")).Caption(wxT("Center Book")).CenterPane());
 	
-	sz->Add(hsz, 1, wxEXPAND);
+	paneInfo = wxAuiPaneInfo();
+	m_mgr.AddPane(book2, paneInfo.Name(wxT("Left Book")).BestSize(150, 150).Caption(wxT("Left Book")).Left().Layer(1).Position(1).CloseButton(false));
+	
+	paneInfo = wxAuiPaneInfo();
+	m_mgr.AddPane(book1, paneInfo.Name(wxT("Right Book")).BestSize(150, 150).Caption(wxT("Right Book")).Right().Layer(1).Position(1).CloseButton(false));
+	
+	paneInfo = wxAuiPaneInfo();
+	m_mgr.AddPane(book4, paneInfo.Name(wxT("Bottom Book")).BestSize(150, 150).Caption(wxT("Bottom Book")).Bottom().Layer(1).Position(1).CloseButton(false));
+	
+	m_mgr.Update();
+	
+	sz->Layout();
 }
 
 void NotebookFrame::OnClose(wxCloseEvent &e)
@@ -137,4 +152,18 @@ void NotebookFrame::OnNewPage(wxCommandEvent &e)
 	if(m_topbook) {
 		m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), caption, bmp1, false);
 	}
+}
+
+void NotebookFrame::OnPanelDClick(wxMouseEvent &e)
+{
+	Freeze();
+	static bool expanded(true);
+	if(expanded) {
+		barPanel->SetSizeHints(-1, 10);
+	}else{
+		barPanel->SetSizeHints(-1, 100);
+	}
+	expanded = !expanded;
+	GetSizer()->Layout();
+	Thaw();
 }

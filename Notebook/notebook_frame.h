@@ -1,10 +1,17 @@
 #ifndef __NotebookFrame__
 #define __NotebookFrame__
 
+#include "wx/aui/framemanager.h"
 #include "wx/frame.h"
+
 class Notebook;
+class wxPanel;
+
 class NotebookFrame : public wxFrame {
 	Notebook *m_topbook;
+	wxAuiManager m_mgr;
+	wxPanel *barPanel;
+	
 private:
 	void Initialize();
 	void CreateMenuBar();
@@ -26,5 +33,6 @@ public:
 	
 	void OnDeletePage(wxCommandEvent &e);
 	void OnNewPage(wxCommandEvent &e);
+	void OnPanelDClick(wxMouseEvent &e); 
 };
 #endif // __NotebookFrame__

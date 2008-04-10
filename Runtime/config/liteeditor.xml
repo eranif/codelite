@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LiteEditor Revision="1360">
   <Layout>
-    <Perspective Name="Default" Value="layout2|name=Output;caption=Output;state=10487804;dir=3;layer=0;row=1;pos=0;prop=105024;bestw=627;besth=509;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=220;floaty=584;floatw=635;floath=533|name=Workspace;caption=Workspace;state=2099196;dir=4;layer=1;row=0;pos=0;prop=100000;bestw=250;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=1025;floaty=103;floatw=258;floath=324|name=Debugger;caption=Debugger;state=2099196;dir=3;layer=0;row=1;pos=1;prop=94976;bestw=400;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=3;floaty=105;floatw=408;floath=324|name=Editor;caption=;state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Standard Toolbar;caption=Standard;state=2108156;dir=1;layer=10;row=0;pos=0;prop=100000;bestw=505;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Search Toolbar;caption=Search;state=2108156;dir=1;layer=10;row=0;pos=789;prop=100000;bestw=194;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Build Toolbar;caption=Build;state=2108156;dir=1;layer=10;row=1;pos=0;prop=100000;bestw=163;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger Toolbar;caption=Debug;state=2108156;dir=1;layer=10;row=1;pos=172;prop=100000;bestw=194;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Navigation Toolbar;caption=Navigation Toolbar;state=2108156;dir=1;layer=10;row=1;pos=375;prop=100000;bestw=800;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=CodeFormatter;caption=CodeFormatter;state=2108156;dir=1;layer=10;row=0;pos=616;prop=100000;bestw=62;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Cscope;caption=Cscope;state=2108156;dir=1;layer=10;row=0;pos=687;prop=100000;bestw=93;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Gizmos;caption=Gizmos;state=2108156;dir=1;layer=10;row=0;pos=514;prop=100000;bestw=93;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=20|dock_size(1,10,0)=31|dock_size(1,10,1)=31|dock_size(3,0,1)=281|dock_size(4,1,0)=250|"/>
+    <Perspective Name="Default" Value="layout2|name=Output;caption=Output;state=10487804;dir=3;layer=0;row=1;pos=0;prop=105024;bestw=627;besth=509;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=220;floaty=584;floatw=635;floath=533|name=Workspace;caption=Workspace;state=2099196;dir=4;layer=1;row=0;pos=0;prop=100000;bestw=250;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=1025;floaty=103;floatw=258;floath=324|name=Debugger;caption=Debugger;state=2099198;dir=3;layer=0;row=1;pos=1;prop=94976;bestw=400;besth=300;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=3;floaty=105;floatw=408;floath=324|name=Editor;caption=;state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Standard Toolbar;caption=Standard;state=2108156;dir=1;layer=10;row=0;pos=0;prop=100000;bestw=505;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Search Toolbar;caption=Search;state=2108156;dir=1;layer=10;row=0;pos=789;prop=100000;bestw=194;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Build Toolbar;caption=Build;state=2108156;dir=1;layer=10;row=1;pos=0;prop=100000;bestw=163;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Debugger Toolbar;caption=Debug;state=2108156;dir=1;layer=10;row=1;pos=172;prop=100000;bestw=194;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Navigation Toolbar;caption=Navigation Toolbar;state=2108156;dir=1;layer=10;row=1;pos=375;prop=100000;bestw=800;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=CodeFormatter;caption=CodeFormatter;state=2108156;dir=1;layer=10;row=0;pos=616;prop=100000;bestw=62;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Cscope;caption=Cscope;state=2108156;dir=1;layer=10;row=0;pos=687;prop=100000;bestw=93;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=Gizmos;caption=Gizmos;state=2108156;dir=1;layer=10;row=0;pos=514;prop=100000;bestw=93;besth=31;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=20|dock_size(1,10,0)=31|dock_size(1,10,1)=31|dock_size(3,0,1)=281|dock_size(4,1,0)=250|"/>
     <Notebook Name="Editor" Style="524288"/>
     <Notebook Name="OutputPane" Style="524288"/>
     <Notebook Name="DebuggerPane" Style="524288"/>
@@ -11,28 +11,28 @@
     <long Value="1" Name="m_value"/>
   </ArchiveObject>
   <RecentWorkspaces>
-    <File Name="C:\TestArea\newdlgs\SomeWSP.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\Users\Eran\Development\codelite\trunk\Plugins.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\CxxParser\CxxParser.workspace"/>
-    <File Name="C:\TestArea\TestMainBug\TestMainBug.workspace"/>
     <File Name="/home/eran/devl/test/test.workspace"/>
+    <File Name="C:\TestArea\TestMainBug\TestMainBug.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\CxxParser\CxxParser.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
+    <File Name="C:\Users\Eran\Development\codelite\trunk\Plugins.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\newdlgs\SomeWSP.workspace"/>
   </RecentWorkspaces>
   <RecentFiles>
-    <File Name="C:\Development\C++\codelite\trunk\Runtime\astyle.sample"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\checktreectrl.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\checkdirtreectrl.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\CodeLite\symbol_tree.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\virtualdirtreectrl.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\fileexplorertree.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\dirpicker.cpp"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugin\dirpicker.h"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\output_pane.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\Interfaces\plugin.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\Interfaces\imanager.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\Interfaces\ieditor.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\Interfaces\iconfigtool.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\Interfaces\debuggerobserver.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\Interfaces\debugger.h"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor\app.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\CodeFormatter\ASEnhancer.cpp"/>
+    <File Name="C:\Development\C++\codelite\trunk\CodeFormatter\ASBeautifier.cpp"/>
   </RecentFiles>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1288" y="1004"/>
     <wxPoint Name="m_framePos" x="-4" y="-4"/>
-    <long Value="143" Name="m_flags"/>
+    <long Value="141" Name="m_flags"/>
   </ArchiveObject>
 </LiteEditor>

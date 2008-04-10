@@ -132,6 +132,5 @@ void DropButton::OnMenuSelection(wxCommandEvent &e)
 	size_t item = (size_t)e.GetId();
 
 	CustomTab *tab = m_tabContainer->IndexToTab(item);
-	m_tabContainer->SetSelection(tab);
-
+	m_tabContainer->SetSelection(tab, true);
 }

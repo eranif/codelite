@@ -586,10 +586,7 @@ void CustomTab::SetText(const wxString &text)
 {
 	m_text = text;
 	Initialize();
-	
-	//we need to tell the container to layout since our size might have changed
-	wxTabContainer *parent = (wxTabContainer*)GetParent();
-	parent->Resize();
+	Refresh();
 }
 
 void CustomTab::Initialize()

@@ -54,14 +54,14 @@ void wxTabContainer::Initialize()
 		flag = wxALIGN_CENTER_HORIZONTAL;
 	}
 
-	sz->Add(btn, 0, flag);
+	sz->Add(btn, 0, flag|wxALL, 2);
 	sz->Add(m_tabsSizer, 1, wxEXPAND);
 	sz->Layout();
 }
 
 void wxTabContainer::AddTab(CustomTab *tab)
 {
-	Freeze();
+	size_t oldSel(0);
 
 	if (tab->GetSelected() == false && GetTabsCount() == 0) {
 		tab->SetSelected(true);
@@ -80,11 +80,23 @@ void wxTabContainer::AddTab(CustomTab *tab)
 
 		if (selectedTab && selectedTab != tab) {
 			selectedTab->SetSelected( false );
+			oldSel = TabToIndex( selectedTab );
 		}
 	}
 
-	Thaw();
 	m_tabsSizer->Layout();
+	if (tab->GetSelected()) {
+
+		EnsureVisible(tab);
+		PushPageHistory(tab);
+
+		//fire page changed event
+		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CHANGED, GetId());
+		event.SetSelection( TabToIndex(tab) );
+		event.SetOldSelection( oldSel );
+		event.SetEventObject( this );
+		GetEventHandler()->ProcessEvent(event);
+	}
 }
 
 CustomTab* wxTabContainer::GetSelection()
@@ -212,26 +224,81 @@ size_t wxTabContainer::GetTabsCount()
 void wxTabContainer::OnPaint(wxPaintEvent &e)
 {
 	wxBufferedPaintDC dc(this);
+	Notebook *book = (Notebook *)GetParent();
 
 	wxRect rr = GetClientSize();
-	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-
-	dc.DrawRectangle(rr);
 
 	if (GetTabsCount() == 0) {
+		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		dc.DrawRectangle(rr);
 		return;
 	}
 
+	wxColour col1 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+	wxColour col2 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+
+	if ( book->m_style & wxVB_BG_GRADIENT ) {
+		col1 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+		col2 = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 30);
+	}
+
+	//paint gradient background
+	switch (m_orientation) {
+	case wxLEFT:
+		DrawingUtils::PaintStraightGradientBox(dc, rr, col1, col2, false);
+		break;
+	case wxRIGHT:
+		DrawingUtils::PaintStraightGradientBox(dc, rr, col2, col1, false);
+		break;
+	case wxBOTTOM:
+		DrawingUtils::PaintStraightGradientBox(dc, rr, col2, col1, true);
+		break;
+	case wxTOP:
+	default:
+		DrawingUtils::PaintStraightGradientBox(dc, rr, col1, col2, true);
+		break;
+	}
+
+	//draw border around the tab area
+	if (book->m_style & wxVB_BORDER) {
+		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.DrawRectangle(rr);
+	}
+
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	for (int i=0; i<3; i++) {
+		switch (m_orientation) {
+		case wxRIGHT:
+			dc.DrawLine(rr.x+i, rr.y, rr.x+i, rr.y+rr.height);
+			break;
+		case wxTOP:
+			dc.DrawLine(rr.x, rr.height-i-1, rr.x+rr.width, rr.height-i-1);
+			break;
+		case wxLEFT:
+			dc.DrawLine(rr.x+rr.width-i, rr.y, rr.x+rr.width-i, rr.y+rr.height);
+			break;
+		default:
+			dc.DrawLine(rr.x, rr.y+i, rr.x + rr.width, rr.y+i);
+			break;
+		}
+	}
+
 	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-	if (m_orientation == wxRIGHT) {
+	switch (m_orientation) {
+	case wxRIGHT:
 		dc.DrawLine(rr.x+3, rr.y, rr.x+3, rr.y+rr.height);
-	} else if (m_orientation == wxTOP) {
+		break;
+	case wxTOP:
 		dc.DrawLine(rr.x, rr.height-4, rr.x+rr.width, rr.height-4);
-	} else if (m_orientation == wxLEFT) {
+		break;
+	case wxLEFT:
 		dc.DrawLine(rr.x+rr.width-4, rr.y, rr.x+rr.width-4, rr.y+rr.height);
-	} else {
+		break;
+	default:
 		dc.DrawLine(rr.x, rr.y+3, rr.x + rr.width, rr.y+3);
+		break;
 	}
 }
 
@@ -410,9 +477,7 @@ void wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notif
 
 		Notebook *book = (Notebook*)GetParent();
 		if (book && nextSelection) {
-			book->SetSelection(nextSelection);
-			nextSelection->SetSelected(true);
-			EnsureVisible(nextSelection);
+			SetSelection(nextSelection, true);
 		}
 
 		//remove the window from the parents' sizer
@@ -482,4 +547,10 @@ void wxTabContainer::OnDeleteTab(wxCommandEvent &e)
 	if (tab) {
 		DeletePage(tab, true);
 	}
+}
+
+void wxTabContainer::Resize()
+{
+	m_tabsSizer->Layout();
+	GetSizer()->Layout();
 }

@@ -3,7 +3,7 @@
 
 #include "wx/panel.h"
 #include "tag_tree.h"
-#include "wx/wxFlatNotebook/wxFlatNotebook.h"
+
 #include "wx/filename.h"
 
 class FileViewTree;
@@ -26,7 +26,6 @@ public:
 	
 	Notebook *m_book;
 	wxString m_caption;
-	wxFlatNotebookImageList m_images;
 	WindowStack *m_winStack;
 	OpenWindowsPanel *m_openWindowsPane;
 	FileExplorer *m_explorer;

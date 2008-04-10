@@ -33,9 +33,10 @@ NotebookNavDialog::~NotebookNavDialog()
 void NotebookNavDialog::Create(wxWindow* parent)
 {
 	long style = 0;
-	if (  !wxDialog::Create(parent, wxID_ANY, wxT("Navigation History"), wxDefaultPosition, wxDefaultSize, style|wxBORDER_SIMPLE) )
+	if (  !wxDialog::Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, style|wxBORDER_RAISED) )
 		return;
-
+	//SetTransparent(200);
+	
 	wxBoxSizer *sz = new wxBoxSizer( wxVERTICAL );
 	SetSizer( sz );
 

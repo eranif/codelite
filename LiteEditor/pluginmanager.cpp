@@ -272,7 +272,7 @@ int PluginManager::GetToolbarIconSize()
 	return 24;
 }
 
-wxFlatNotebook* PluginManager::GetMainNotebook()
+Notebook* PluginManager::GetMainNotebook()
 {
 	return Frame::Get()->GetNotebook();
 }

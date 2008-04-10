@@ -12,7 +12,6 @@
 #include "menumanager.h"
 #include <wx/fdrepdlg.h>
 #include "findreplacedlg.h"
-#include <wx/wxFlatNotebook/renderer.h>
 #include "context_manager.h"
 #include "editor_config.h"
 #include "filedroptarget.h"

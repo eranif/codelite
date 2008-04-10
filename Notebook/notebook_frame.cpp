@@ -71,7 +71,7 @@ void NotebookFrame::Initialize()
 	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"));
 
 	
-	m_topbook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_HAS_X);
+	m_topbook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_HAS_X|wxVB_BG_GRADIENT|wxVB_BORDER);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2 With Long"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"), bmp1);

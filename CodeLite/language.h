@@ -103,8 +103,8 @@ public:
 	//==========================================================
 
 	/**
-	 * Evaluate a C++ expression. for example, the following expression: '((wxFlatNotebook*)book)->'
-	 * will be processed into typeName=wxFlatNotebook, and typeScope=<global> (assuming wxFlatNotebook is not 
+	 * Evaluate a C++ expression. for example, the following expression: '((Notebook*)book)->'
+	 * will be processed into typeName=Notebook, and typeScope=<global> (assuming Notebook is not 
 	 * placed within any namespace)
 	 * \param stmt c++ expression
 	 * \param text text where this expression was found

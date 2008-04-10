@@ -1,5 +1,5 @@
 #include "buildtabsettingsdata.h"
-#include "wx/wxFlatNotebook/renderer.h"
+
 #include "wx/settings.h"
 
 BuildTabSettingsData::BuildTabSettingsData()

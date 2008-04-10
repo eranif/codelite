@@ -4,7 +4,6 @@
 #include "frame.h"
 #include "wx/regex.h"
 #include "buildtabsettingsdata.h"
-#include "wx/wxFlatNotebook/renderer.h"
 #include "regex_processor.h"
 #include "macros.h"
 #include "wx/xrc/xmlres.h"

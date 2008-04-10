@@ -333,7 +333,7 @@ void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent)
 			}
 		} else if (type == (int)'(') {
 			//we encountered an expression of:
-			//(class wxFlatNotebook *) 0xffeedd00
+			//(class Notebook *) 0xffeedd00
 			displayLine << wxT(" = ");
 			while ( type != (int)'}') {
 				displayLine << _U(currentToken.c_str()) << wxT(" ");

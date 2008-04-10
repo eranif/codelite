@@ -19,7 +19,7 @@ void QuickWatchDlg::Init(const wxString &expression, TreeNode<wxString, NodeData
 {
 	m_localVarsTree->BuildTree(tree);
 	m_textCtrl1->SetValue(expression);
-}
+} 
 
 void QuickWatchDlg::OnReEvaluate(wxCommandEvent &event)
 {

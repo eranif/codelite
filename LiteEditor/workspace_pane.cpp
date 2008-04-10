@@ -52,10 +52,10 @@ void WorkspacePane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT);
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_TAB_DECORATION);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 
-	m_workspaceTab = new WorkspaceTab(this);
+	m_workspaceTab = new WorkspaceTab(m_book);
 	m_book->AddPage(m_workspaceTab, WorkspacePane::FILE_VIEW, wxNullBitmap, true);
 
 	m_explorer = new FileExplorer(m_book, wxT("Explorer"));

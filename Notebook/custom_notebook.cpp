@@ -76,7 +76,7 @@ void Notebook::SetSelection(size_t page)
 		tab->GetWindow()->SetFocus();
 		
 		//the next call will also trigger a call to Notebook::SetSelection(CustomTab *tab)
-		m_tabs->SetSelection(tab);
+		m_tabs->SetSelection(tab, true);
 	}
 }
 
@@ -185,18 +185,17 @@ void Notebook::SetOrientation(int orientation)
 
 	//detach the tabcontainer class from the sizer
 	if (GetPageCount() > 0) {
+		sz->Detach(m_tabs);
 		if (m_style & wxVB_LEFT || m_style & wxVB_TOP) {
-			//the tabs container is on the left=pos 0
-			sz->Detach(0);
-			sz->Add(m_tabs, 0, wxEXPAND);
-		} else {
-			sz->Detach(1);
 			sz->Insert(0, m_tabs, 0, wxEXPAND);
+		} else {
+			sz->Add(m_tabs, 0, wxEXPAND);
 		}
-		m_tabs->Refresh();
-		Refresh();
-		sz->Layout();
+		
 	}
+	
+	m_tabs->Resize();
+	sz->Layout();
 }
 
 void Notebook::SetAuiManager(wxAuiManager *manager, const wxString &containedPaneName)
@@ -223,7 +222,7 @@ void Notebook::OnRender(wxAuiManagerEvent &e)
 			if (info.dock_direction == wxAUI_DOCK_LEFT && m_style & wxVB_RIGHT) {
 				SetOrientation(wxVB_LEFT);
 			} else if (info.dock_direction == wxAUI_DOCK_RIGHT && m_style & wxVB_LEFT) {
-				SetOrientation(wxVB_LEFT);
+				SetOrientation(wxVB_RIGHT);
 			}
 		}
 	}
@@ -299,12 +298,56 @@ void Notebook::AddPage(CustomTab *tab)
 		}
 		win->Show();
 	}
-
-	sz->Layout();
+	
 	Thaw();
+	sz->Layout();
 }
 
 void Notebook::SetRightClickMenu(wxMenu* menu)
 {
 	m_tabs->SetRightClickMenu( menu );
+}
+
+wxWindow* Notebook::GetCurrentPage()
+{
+	CustomTab *tab =  m_tabs->GetSelection();
+	if(tab) {
+		return tab->GetWindow();
+	}
+	return NULL;
+}
+
+size_t Notebook::GetPageIndex(wxWindow *page)
+{
+	for(size_t i=0; i< m_tabs->GetTabsCount(); i++) {
+		CustomTab *tab = m_tabs->IndexToTab(i);
+		if(tab->GetWindow() == page) {
+			return i;
+		}
+	}
+	return Notebook::npos;
+}
+
+void Notebook::SetPageText(size_t index, const wxString &text)
+{
+	CustomTab *tab = m_tabs->IndexToTab(index);
+	if(tab) {
+		tab->SetText(text);
+		tab->Refresh();
+		
+		//this requires re-calculating the tabs are
+		m_tabs->Resize();
+	}
+}
+
+void Notebook::DeleteAllPages()
+{
+	Freeze();
+	
+	size_t count = m_tabs->GetTabsCount();
+	for(size_t i=0; i<count; i++){
+		DeletePage(0, false);
+	}
+	
+	Thaw();
 }

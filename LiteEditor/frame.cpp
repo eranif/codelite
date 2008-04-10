@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "drawingutils.h"
 #include "fileexplorertree.h"
 #include "newprojectdlg.h"
 #include "newworkspacedlg.h"
@@ -50,7 +51,6 @@
 #include "quickoutlinedlg.h"
 #include "debuggerpane.h"
 #include "wx/ffile.h"
-#include "wx/wxFlatNotebook/renderer.h"
 #include "sessionmanager.h"
 #include "pluginmanager.h"
 #include "wx/dir.h"
@@ -387,9 +387,9 @@ void Frame::CreateGUIControls(void)
 #if defined (__WXGTK__) || defined (__WXMAC__)
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE);
 #else
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION));
-	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+//	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+//	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION));
+//	m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
 #endif
 
 	//initialize debugger configuration tool
@@ -404,7 +404,7 @@ void Frame::CreateGUIControls(void)
 #ifdef __WXGTK__
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_VERTICAL);
 #else
-	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
+	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
 #endif
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 6);
@@ -434,37 +434,22 @@ void Frame::CreateGUIControls(void)
 	RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
 	// Create the notebook for all the files
-	long style =
-	    wxFNB_TABS_BORDER_SIMPLE |
-	    wxFNB_NODRAG |
-	    wxFNB_FF2 |
-	    wxFNB_BACKGROUND_GRADIENT |
-	    wxFNB_NO_X_BUTTON |
-	    wxFNB_NO_NAV_BUTTONS |
-	    wxFNB_DROPDOWN_TABS_LIST |
-	    wxFNB_SMART_TABS |
-	    wxFNB_X_ON_TAB |
-	    wxFNB_CUSTOM_DLG |
-	    wxFNB_MOUSE_MIDDLE_CLOSES_TABS;
-
-	m_book = new wxFlatNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-	m_book->SetCustomizeOptions(wxFNB_CUSTOM_LOCAL_DRAG | wxFNB_CUSTOM_ORIENTATION | wxFNB_CUSTOM_TAB_LOOK | wxFNB_CUSTOM_CLOSE_BUTTON );
-
-	m_il.push_back(wxXmlResource::Get()->LoadBitmap(wxT("help_icon")));
-	m_book->SetImageList(&m_il);
-
+	long style = wxVB_TOP|wxVB_HAS_X|wxVB_BORDER|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+	
 	m_mgr.AddPane(m_book, wxAuiPaneInfo().Name(wxT("Editor")).
 	              CenterPane().PaneBorder(true));
 
 	// Connect the main notebook events
-	GetNotebook()->Connect(GetNotebook()->GetId(), wxEVT_COMMAND_FLATNOTEBOOK_PAGE_CHANGED, wxFlatNotebookEventHandler(Frame::OnPageChanged), NULL, this);
-	GetNotebook()->Connect(GetNotebook()->GetId(), wxEVT_COMMAND_FLATNOTEBOOK_PAGE_CLOSING, wxFlatNotebookEventHandler(Frame::OnFileClosing), NULL, this);
-	GetNotebook()->Connect(GetNotebook()->GetId(), wxEVT_COMMAND_FLATNOTEBOOK_PAGE_CLOSED, wxFlatNotebookEventHandler(Frame::OnPageClosed), NULL, this);
+	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(Frame::OnPageChanged), NULL, this);
+	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING, NotebookEventHandler(Frame::OnFileClosing), NULL, this);
+	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSED, NotebookEventHandler(Frame::OnPageClosed), NULL, this);
 
 	CreateViewAsSubMenu();
 	CreateRecentlyOpenedFilesMenu();
 	CreateRecentlyOpenedWorkspacesMenu();
 	BuildSettingsConfigST::Get()->Load();
+	
 	//load dialog properties
 	EditorConfigST::Get()->ReadObject(wxT("FindInFilesData"), &m_data);
 	EditorConfigST::Get()->ReadObject(wxT("FindAndReplaceData"), &LEditor::GetFindReplaceData());
@@ -516,11 +501,11 @@ void Frame::CreateGUIControls(void)
 	}
 
 	// load notebooks style
-	long book_style = 0;
-	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("Editor"));
-	if (book_style != wxNOT_FOUND) {
-		GetNotebook()->SetWindowStyleFlag(book_style);
-	}
+//	long book_style = 0;
+//	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("Editor"));
+//	if (book_style != wxNOT_FOUND) {
+//		GetNotebook()->SetWindowStyleFlag(book_style);
+//	}
 
 //	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("OutputPane"));
 //	if (book_style != wxNOT_FOUND) {
@@ -532,10 +517,10 @@ void Frame::CreateGUIControls(void)
 //		m_workspacePane->GetNotebook()->SetWindowStyleFlag(book_style);
 //	}
 
-	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("DebuggerPane"));
-	if (book_style != wxNOT_FOUND) {
-		m_debuggerPane->GetNotebook()->SetWindowStyleFlag(book_style);
-	}
+//	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("DebuggerPane"));
+//	if (book_style != wxNOT_FOUND) {
+//		m_debuggerPane->GetNotebook()->SetWindowStyleFlag(book_style);
+//	}
 
 	//load the tab right click menu
 	m_tabRightClickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
@@ -954,7 +939,7 @@ void Frame::OnClose(wxCloseEvent& event)
 
 	//loop over the open editors, and get their file name
 	wxArrayString files;
-	for (int i=0; i<GetNotebook()->GetPageCount(); i++) {
+	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
 		if (editor) {
 			files.Add(editor->GetFileName().GetFullPath());
@@ -990,7 +975,7 @@ void Frame::LoadSession(const wxString &sessionName)
 
 	//set selected tab
 	int selection = session.GetSelectedTab();
-	if (selection >= 0 && selection < GetNotebook()->GetPageCount()) {
+	if (selection >= 0 && selection < (int)GetNotebook()->GetPageCount()) {
 		GetNotebook()->SetSelection(selection);
 	}
 }
@@ -1135,7 +1120,7 @@ void Frame::OnFileNew(wxCommandEvent &event)
 	LEditor *editor = EditorCreatorST::Get()->NewInstance();
 	editor->SetFileName(fileName);
 
-	GetNotebook()->AddPage(editor, fileName.GetFullName(), true);
+	GetNotebook()->AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
 	GetNotebook()->Thaw();
 	editor->Show(true);
 	editor->SetActive();
@@ -1177,7 +1162,7 @@ void Frame::OnFileClose(wxCommandEvent &event)
 	GetMainBook()->Clear();
 } 
 
-void Frame::OnFileClosing(wxFlatNotebookEvent &event)
+void Frame::OnFileClosing(NotebookEvent &event)
 {
 	// get the page that is now closing
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(event.GetSelection()));
@@ -1202,7 +1187,7 @@ void Frame::OnFileClosing(wxFlatNotebookEvent &event)
 	event.Skip();
 }
 
-void Frame::OnPageChanged(wxFlatNotebookEvent &event)
+void Frame::OnPageChanged(NotebookEvent &event)
 {
 	// pass the event to the editor
 	wxString title(wxT("CodeLite - Revision: "));
@@ -1231,7 +1216,7 @@ void Frame::OnPageChanged(wxFlatNotebookEvent &event)
 	event.Skip();
 }
 
-void Frame::OnPageClosed(wxFlatNotebookEvent &event)
+void Frame::OnPageClosed(NotebookEvent &event)
 {
 	wxUnusedVar(event);
 	GetOpenWindowsPane()->UpdateList();
@@ -1459,10 +1444,10 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 		tagsMgr->SetCtagsOptions(m_tagsOptionsData);
 		EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
-//do we need to colourise?
+		//do we need to colourise?
 		if (newColTags != colTags || newColVars != colVars) {
-			for (int i=0; i<GetNotebook()->GetPageCount(); i++) {
-				LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
+			for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
+				LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(i));
 				if (editor) {
 					editor->UpdateColours();
 				}
@@ -1931,7 +1916,7 @@ wxString Frame::CreateWorkspaceTable()
 	mgr->GetRecentlyOpenedWorkspaces(files);
 
 	wxColour bgclr = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-	bgclr = wxFNBRenderer::LightColour(bgclr, 70);
+	bgclr = DrawingUtils::LightColour(bgclr, 70);
 
 	html << wxT("<table width=100% border=0 bgcolor=\"") << bgclr.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">");
 	if (files.GetCount() == 0) {
@@ -1955,7 +1940,7 @@ wxString Frame::CreateFilesTable()
 	mgr->GetRecentlyOpenedFiles(files);
 
 	wxColour bgclr = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-	bgclr = wxFNBRenderer::LightColour(bgclr, 70);
+	bgclr = DrawingUtils::LightColour(bgclr, 70);
 	html << wxT("<table width=100% border=0 bgcolor=\"") << bgclr.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">");
 	if (files.GetCount() == 0) {
 		html << wxT("<tr><td><font size=2 face=\"Verdana\">");
@@ -2144,7 +2129,7 @@ void Frame::CreateWelcomePage()
 	content.Replace(wxT("$(FilesTable)"), filesTable);
 
 	m_welcomePage->SetPage(content);
-	GetNotebook()->AddPage(m_welcomePage, wxT("Welcome"), true, 0);
+	GetNotebook()->AddPage(m_welcomePage, wxT("Welcome"), wxXmlResource::Get()->LoadBitmap(wxT("help_icon")), true);
 }
 
 void Frame::OnImportMSVS(wxCommandEvent &e)
@@ -2318,7 +2303,7 @@ void Frame::OnLoadLastSession(wxCommandEvent &event)
 
 void Frame::OnShowWelcomePageUI(wxUpdateUIEvent &event)
 {
-	for (int i=0; i<GetNotebook()->GetPageCount(); i++) {
+	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
 		if (GetNotebook()->GetPage((size_t)i) == m_welcomePage) {
 			event.Enable(false);
 			return;
@@ -2330,7 +2315,7 @@ void Frame::OnShowWelcomePageUI(wxUpdateUIEvent &event)
 void Frame::OnShowWelcomePage(wxCommandEvent &event)
 {
 	//check if the welcome page is not 'on'
-	for (int i=0; i<GetNotebook()->GetPageCount(); i++) {
+	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
 		if (GetNotebook()->GetPage((size_t)i) == m_welcomePage) {
 			GetNotebook()->SetSelection((size_t)i);
 			return;
@@ -2367,7 +2352,7 @@ void Frame::OnAppActivated(wxActivateEvent &e)
 
 	//check if the welcome page is not 'on'
 	std::vector<wxFileName> files;
-	for (int i=0; i<GetNotebook()->GetPageCount(); i++) {
+	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
 		if (editor) {
 			//test to see if the file was modified
@@ -2462,7 +2447,7 @@ void Frame::AutoLoadExternalDb()
 			}
 		}
 	}
-}
+} 
 
 void Frame::OnCompileFile(wxCommandEvent &e)
 {
@@ -2470,8 +2455,8 @@ void Frame::OnCompileFile(wxCommandEvent &e)
 	Manager *mgr = ManagerST::Get();
 	if (mgr->IsWorkspaceOpen() && !mgr->IsBuildInProgress()) {
 		//get the current active docuemnt
-		int curpage = GetNotebook()->GetSelection();
-		if (curpage != wxNOT_FOUND) {
+		size_t curpage = GetNotebook()->GetSelection();
+		if (curpage != Notebook::npos) {
 			LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)curpage));
 			if (editor && editor->GetProject().IsEmpty() == false) {
 				mgr->CompileFile(editor->GetProject(), editor->GetFileName().GetFullPath());
@@ -2485,8 +2470,8 @@ void Frame::OnCompileFileUI(wxUpdateUIEvent &e)
 	Manager *mgr = ManagerST::Get();
 	if (mgr->IsWorkspaceOpen() && !mgr->IsBuildInProgress()) {
 		//get the current active docuemnt
-		int curpage = GetNotebook()->GetSelection();
-		if (curpage != wxNOT_FOUND) {
+		size_t curpage = GetNotebook()->GetSelection();
+		if (curpage != Notebook::npos) {
 			LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)curpage));
 			if (editor && editor->GetProject().IsEmpty() == false) {
 				e.Enable(true);
@@ -2511,8 +2496,8 @@ void Frame::OnCloseAllButThis(wxCommandEvent &e)
 	//Start the debugger
 	Manager *mgr = ManagerST::Get();
 
-	int sel = GetNotebook()->GetSelection();
-	if (sel != wxNOT_FOUND) {
+	size_t sel = GetNotebook()->GetSelection();
+	if (sel != Notebook::npos) {
 		mgr->CloseAllButThis(GetNotebook()->GetPage((size_t)sel));
 	}
 }
@@ -2631,7 +2616,7 @@ void Frame::OnViewDisplayEOL(wxCommandEvent &e)
 	}
 
 	m_frameGeneralInfo.SetFlags(frame_flags);
-	for (int i=0; i<GetNotebook()->GetPageCount(); i++) {
+	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
 		if (editor) {
 			editor->SetViewEOL(visible);

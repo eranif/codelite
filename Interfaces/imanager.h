@@ -5,7 +5,6 @@
 #include "iconfigtool.h"
 #include "wx/treectrl.h"
 #include "custom_notebook.h"
-#include "wx/wxFlatNotebook/wxFlatNotebook.h"
 
 class TagsManager;
 class Workspace;
@@ -51,7 +50,7 @@ public:
 	virtual Workspace *GetWorkspace() = 0;
 	virtual bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths) = 0;
 	virtual int GetToolbarIconSize() = 0;
-	virtual wxFlatNotebook *GetMainNotebook() = 0;
+	virtual Notebook *GetMainNotebook() = 0;
 };
 
 #endif //IMANAGER_H

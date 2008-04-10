@@ -1,4 +1,4 @@
-#include "debuggersettingsdlg.h" 
+#include "debuggersettingsdlg.h"
 #include "debuggermanager.h"
 #include "macros.h"
 #include "manager.h"

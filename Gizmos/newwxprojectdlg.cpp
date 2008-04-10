@@ -12,13 +12,6 @@ NewWxProjectDlg::NewWxProjectDlg( wxWindow* parent, IManager *mgr  )
 	m_choiceApplicationType->SetSelection(wxProjectTypeGUI);
 	m_dirPicker->SetPath(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 
-//update the flatnotebook style
-	size_t flag = m_flatNotebook1->GetWindowStyleFlag();
-	flag &= ~wxFNB_VC8;
-	flag |= wxFNB_FF2;
-	
-	m_flatNotebook1->SetWindowStyleFlag(flag);
-	
 #if defined (__WXMSW__)	
 	m_checkBoxMWindows->SetValue(true);
 #else

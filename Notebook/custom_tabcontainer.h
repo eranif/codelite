@@ -47,6 +47,8 @@ public:
 	void SetRightClickMenu(wxMenu* rightClickMenu) {this->m_rightClickMenu = rightClickMenu;}
 	wxMenu* GetRightClickMenu() {return m_rightClickMenu;}
 	
+	void Resize();
+	
 	/**
 	 * \brief delete tab from the tab container (also destroying it)
 	 * \param deleteTab tab to delete

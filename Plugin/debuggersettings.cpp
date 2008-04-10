@@ -1,4 +1,4 @@
-#include "debuggersettings.h"
+#include "debuggersettings.h" 
 
 DebuggerCmdData::DebuggerCmdData()
 {

@@ -618,7 +618,7 @@ void SubversionPlugin::DoGetSvnStatus(const wxString &basePath, wxArrayString &o
 
 void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &basePath)
 {
-	wxFlatNotebook *book =  m_mgr->GetMainNotebook();
+	Notebook *book =  m_mgr->GetMainNotebook();
 
 	wxString origin(wxT("explorer"));
 	wxString _base(basePath);
@@ -632,7 +632,7 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 
 
 	book->Freeze();
-	for ( size_t i=0; i<(size_t)book->GetPageCount(); i++) {
+	for ( size_t i=0; i< book->GetPageCount(); i++) {
 		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow *>(book->GetPage(i));
 		if (win && book->GetPageText(i) == wxT("SVN Status")) {
 			//we found a SVN status page, close it
@@ -681,7 +681,7 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 	reportPage->SetPage(content);
 
 	//create new report
-	m_mgr->GetMainNotebook()->AddPage(reportPage, wxT("SVN Status"), true);
+	m_mgr->GetMainNotebook()->AddPage(reportPage, wxT("SVN Status"), wxNullBitmap, true);
 	book->Thaw();
 }
 

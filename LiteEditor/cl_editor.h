@@ -8,7 +8,6 @@
 #include "cl_calltip.h"
 #include "wx/filename.h"
 #include "findreplacedlg.h"
-#include <wx/wxFlatNotebook/wxFlatNotebook.h>
 #include "context_base.h"
 #include "wx/menu.h"
 #include "browse_record.h"

@@ -11,7 +11,9 @@ enum {
 	wxVB_BOTTOM					= 0x00000008,
 	wxVB_HAS_X					= 0x00000010,
 	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00000020,
-	wxVB_TAB_DECORATION			= 0x00000040
+	wxVB_TAB_DECORATION			= 0x00000040,
+	wxVB_BG_GRADIENT			= 0x00000080,
+	wxVB_BORDER					= 0x00000100
 };
 
 class wxTabContainer;
@@ -110,6 +112,11 @@ public:
 	void DeletePage(size_t page, bool notify = true);
 	
 	/**
+	 * \brief delete all the pages in the notebook, this function does not fire any events
+	 */
+	void DeleteAllPages();
+	
+	/**
 	 * \brief set an AUI manager for this book. This allows the book to automatically detect chanegs in 
 	 * orientation so the book can adapt itself 
 	 * \param manager AUI manager
@@ -136,6 +143,26 @@ public:
 	 *\param menu - right click menu object
 	 */
 	void SetRightClickMenu(wxMenu* menu);
+	
+	/**
+	 * \brief return the active page
+	 * \return active page or NULL if there are no pages in the book
+	 */
+	wxWindow *GetCurrentPage();
+	
+	/**
+	 * \brief return page index by window pointer
+	 * \param page page to search
+	 * \return page index, or Notebook::npos if page does not exist in the notebook
+	 */
+	size_t GetPageIndex(wxWindow *page);
+	
+	/**
+	 * \brief set the text for page at a given index
+	 * \param index page's index
+	 * \param text new text
+	 */
+	void SetPageText(size_t index, const wxString &text);
 	
 	DECLARE_EVENT_TABLE()
 	virtual void OnNavigationKey(wxNavigationKeyEvent &e);

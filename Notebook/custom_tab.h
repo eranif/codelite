@@ -29,6 +29,7 @@ class CustomTab : public wxPanel {
 	wxBitmap m_xButtonPressedBmp;
 	long m_style;
 	XState m_x_state;
+	int m_x_padding;
 	
 protected:
 	int CalcTabHeight();
@@ -37,6 +38,7 @@ protected:
 	void DoDrawVerticalTab(wxDC &dc);
 	void DoDrawHorizontalTab(wxDC &dc);
 	const wxBitmap &GetXBmp();
+	void Initialize();
 	
 public:
 	CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false, int orientation = wxLEFT, long style=0);
@@ -47,6 +49,8 @@ public:
 	void SetOrientation(const int& orientation) {this->m_orientation = orientation;}
 	void SetWindow(wxWindow* window) {this->m_window = window;}
 	void SetSelected(bool selected) ;
+	void SetText(const wxString &text);
+	
 	//Getters
 	const wxBitmap& GetBmp() const {return m_bmp;}
 	const bool& GetSelected() const {return m_selected;}
@@ -57,6 +61,10 @@ public:
 	
 	void SetHeightPadding(const int& heightPadding) {this->m_heightPadding = heightPadding;}
 	const int& GetHeightPadding() const {return m_heightPadding;}
+	
+	//Setters
+	void SetXPadding(const int& x_padding) {this->m_x_padding = x_padding;}
+	const int& GetXPadding() const {return m_x_padding;}
 	
 	DECLARE_EVENT_TABLE()
 	

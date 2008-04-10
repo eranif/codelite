@@ -11,7 +11,6 @@
 #include "plugindata.h"
 
 class Notebook;
-class wxFlatNotebook;
 
 class PluginManager : public IManager
 {
@@ -52,7 +51,7 @@ public:
 	virtual Workspace *GetWorkspace();
 	virtual bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths);
 	virtual int GetToolbarIconSize();
-	virtual wxFlatNotebook *GetMainNotebook();
+	virtual Notebook *GetMainNotebook();
 	
 	//------------------------------------
 	//End of IManager interface

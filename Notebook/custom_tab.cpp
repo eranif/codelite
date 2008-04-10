@@ -37,20 +37,9 @@ CustomTab::CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const w
 		, m_hovered(false)
 		, m_style(style)
 		, m_x_state(XNone)
+		, m_x_padding(3)
 {
-	if (m_orientation == wxLEFT || m_orientation == wxRIGHT) {
-		//Vertical tab
-		SetSizeHints(CalcTabWidth(), CalcTabHeight());
-	} else {
-		SetSizeHints(CalcTabHeight(), CalcTabWidth());
-	}
-
-	//create a drop down arrow image
-	m_xButtonNormalBmp = wxBitmap(_tab_x_button_xpm);
-	m_xButtonNormalBmp.SetMask(new wxMask(m_xButtonNormalBmp, clMASK_COLOR));
-
-	m_xButtonPressedBmp = wxBitmap(_tab_x_button_pressed_xpm);
-	m_xButtonPressedBmp.SetMask(new wxMask(m_xButtonPressedBmp, clMASK_COLOR));
+	Initialize();
 }
 
 CustomTab::~CustomTab()
@@ -94,8 +83,9 @@ int CustomTab::CalcTabHeight()
 
 	if (m_style & wxVB_HAS_X) {
 		//this control is using x buttons
+		tmpTabHeight -= GetXPadding() ;
 		tmpTabHeight += 16;
-		tmpTabHeight += GetPadding();
+		tmpTabHeight += GetXPadding();
 	}
 
 	tabHeight += tmpTabHeight;
@@ -107,6 +97,7 @@ int CustomTab::CalcTabWidth()
 	int tmpTabWidth(0);
 	int tabWidth(GetHeightPadding()*2);
 	if (GetBmp().IsOk()) {
+		tabWidth = GetHeightPadding()+4;
 		tmpTabWidth = GetBmp().GetHeight();
 	}
 
@@ -241,19 +232,19 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 	if (left) {
 		wxRect rt(bmpRect);
-		if(GetSelected()) {
+		if (GetSelected()) {
 			rt.y += 1;
-		}else{
+		} else {
 			rt.y += 3;
 		}
-		
+
 		DrawingUtils::DrawVerticalButton(memDc, rt, GetSelected(), left, true, hovered);
-		
+
 	} else {
 		wxRect rt(bmpRect);
-		if(GetSelected()) {
+		if (GetSelected()) {
 			rt.y += 1;
-		}else{
+		} else {
 			rt.y += 3;
 		}
 		DrawingUtils::DrawVerticalButton(memDc, rt, GetSelected(), left, true, hovered);
@@ -285,7 +276,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		//calcualte the size left for drawing the text
 		int x_len = 0;
 		if (m_style & wxVB_HAS_X) {
-			x_len = 16 + GetPadding();
+			x_len = 16 + GetXPadding();
 		}
 
 		int maxTextWidth = bmp.GetWidth() - posx - x_len - GetPadding();
@@ -345,8 +336,11 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		tmpRect.width  -= 3;
 		dc.DrawLine(0, 0, 0, tmpRect.y + tmpRect.height);
 	}
-
-	dc.DrawRoundedRectangle(tmpRect, 2);
+	
+	int radius(0);
+	if(GetSelected()) {radius = 2;}
+	
+	dc.DrawRoundedRectangle(tmpRect, radius);
 
 	if (left && GetSelected()) {
 		//draw a line
@@ -426,11 +420,21 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		DrawingUtils::DrawHorizontalButton(memDc, fillRect, GetSelected(), top, true, hovered);
 	}
 
+	int text_yoffset(1);
+	int x_yoffset(1);
+	int bmp_yoffset(1);
+	
+	if ( !top ) {
+		text_yoffset = -3;
+		x_yoffset = -1;
+		bmp_yoffset = -1;
+	}
+	
 	int posx(GetPadding());
 	if ( GetBmp().IsOk() ) {
 
 		wxCoord imgYCoord = (bmp.GetHeight() - GetBmp().GetHeight())/2;
-		memDc.DrawBitmap(GetBmp(), posx, imgYCoord, true);
+		memDc.DrawBitmap(GetBmp(), posx, imgYCoord + bmp_yoffset, true);
 		posx += GetBmp().GetWidth() + GetPadding();
 
 	}
@@ -442,7 +446,8 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		wxCoord xx, yy;
 		memDc.GetTextExtent(sampleText, &xx, &yy);
 
-		wxCoord txtYCoord = (bmp.GetHeight() - yy)/2;
+
+		wxCoord txtYCoord = (bmp.GetHeight() - yy)/2 + text_yoffset;
 
 		//make sure the colour used here is the system default
 		memDc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
@@ -451,7 +456,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 		int x_len = 0;
 		if (m_style & wxVB_HAS_X) {
-			x_len = 16 + GetPadding();
+			x_len = 16 + GetXPadding();
 		}
 
 		//calcualte the size left for drawing the text
@@ -474,7 +479,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 		//draw the x button, only if we are the active tab
 		if (GetSelected()) {
-			memDc.DrawBitmap(GetXBmp(), posx, xBtnYCoord, true);
+			memDc.DrawBitmap(GetXBmp(), posx, xBtnYCoord + x_yoffset, true);
 		}
 		m_xButtonRect = wxRect(posx, xBtnYCoord, 16, 16);
 		posx += 16 + GetPadding();
@@ -502,7 +507,10 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		dc.DrawLine(0, 0, tmpRect.x+tmpRect.width, 0);
 	}
 
-	dc.DrawRoundedRectangle(tmpRect, 2);
+	int radius(0);
+	if(GetSelected()) {radius = 2;}
+
+	dc.DrawRoundedRectangle(tmpRect, radius);
 
 	if (top && GetSelected()) {
 		//draw a line
@@ -564,11 +572,35 @@ void CustomTab::OnMouseMiddleButton(wxMouseEvent &e)
 void CustomTab::OnRightDown(wxMouseEvent &e)
 {
 	wxTabContainer *parent = (wxTabContainer*)GetParent();
-	if(!GetSelected()) {
+	if (!GetSelected()) {
 		parent->SetSelection(this);
 	}
-	
-	if(parent->GetRightClickMenu()){
+
+	if (parent->GetRightClickMenu()) {
 		PopupMenu( parent->GetRightClickMenu());
 	}
+}
+
+void CustomTab::SetText(const wxString &text)
+{
+	m_text = text;
+	Initialize();
+	Refresh();
+}
+
+void CustomTab::Initialize()
+{
+	if (m_orientation == wxLEFT || m_orientation == wxRIGHT) {
+		//Vertical tab
+		SetSizeHints(CalcTabWidth(), CalcTabHeight());
+	} else {
+		SetSizeHints(CalcTabHeight(), CalcTabWidth());
+	}
+
+	//create a drop down arrow image
+	m_xButtonNormalBmp = wxBitmap(_tab_x_button_xpm);
+	m_xButtonNormalBmp.SetMask(new wxMask(m_xButtonNormalBmp, clMASK_COLOR));
+
+	m_xButtonPressedBmp = wxBitmap(_tab_x_button_pressed_xpm);
+	m_xButtonPressedBmp.SetMask(new wxMask(m_xButtonPressedBmp, clMASK_COLOR));
 }

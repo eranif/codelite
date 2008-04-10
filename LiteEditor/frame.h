@@ -19,14 +19,14 @@
 #include "tags_options_dlg.h"
 #include <wx/html/htmlwin.h>
 #include "debuggerpane.h"
-#include "wx/wxFlatNotebook/wxFlatNotebook.h"
+#include "custom_notebook.h"
 #include "mainbook.h"
 
 // forward decls
 class TagEntry;
 class WorkspacePane;
 class wxToolBar;
-class wxFlatNotebook;
+class Notebook;
 class OpenWindowsPanel;
 class FileExplorer;
 class OutputTabWindow;
@@ -37,8 +37,7 @@ class OutputTabWindow;
  */
 class Frame : public wxFrame
 {
-	wxFlatNotebook *m_book;
-	wxFlatNotebookImageList m_il;
+	Notebook *m_book;
 	MainBook *m_mainBook;
 	
 	static Frame* m_theFrame;
@@ -79,7 +78,7 @@ public:
 	/**
 	 * Return the main editor notebook
 	 */
-	wxFlatNotebook *GetNotebook() { return m_book; }
+	Notebook *GetNotebook() { return m_book; }
 	MainBook* GetMainBook() const {return m_mainBook;}
 	
 	/**
@@ -269,9 +268,9 @@ protected:
 	void OnCopyFilePathOnly(wxCommandEvent &event);
 	
 	// this event is sent from the notebook container to the frame
-	void OnFileClosing(wxFlatNotebookEvent &event);
-	void OnPageChanged(wxFlatNotebookEvent &event);
-	void OnPageClosed(wxFlatNotebookEvent &event);
+	void OnFileClosing(NotebookEvent &event);
+	void OnPageChanged(NotebookEvent &event);
+	void OnPageClosed(NotebookEvent &event);
 
 	//handle symbol tree events
 	void OnAddSymbols(SymbolTreeEvent &event);

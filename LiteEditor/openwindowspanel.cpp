@@ -1,5 +1,4 @@
 #include "openwindowspanel.h"
-#include "wx/wxFlatNotebook/wxFlatNotebook.h"
 #include "frame.h"
 #include <wx/clntdata.h>
 #include "manager.h"
@@ -19,11 +18,11 @@ void OpenWindowsPanel::UpdateList()
 {
 	m_fileList->Freeze();
 	m_fileList->Clear();
-	wxFlatNotebook *book = Frame::Get()->GetNotebook();
-	for (int i=0; i< (int)book->GetPageCount(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(book->GetPage((size_t)i));
+	Notebook *book = Frame::Get()->GetNotebook();
+	for (size_t i=0; i< book->GetPageCount(); i++) {
+		LEditor *editor = dynamic_cast<LEditor*>(book->GetPage(i));
 		if (editor) {
-			wxString txt = book->GetPageText((size_t)i);
+			wxString txt = book->GetPageText(i);
 			m_fileList->Append(txt, new wxStringClientData(editor->GetFileName().GetFullPath()));
 		}
 	}
@@ -33,10 +32,10 @@ void OpenWindowsPanel::UpdateList()
 
 void OpenWindowsPanel::SyncSelection()
 {
-	wxFlatNotebook *book = Frame::Get()->GetNotebook();
-	int sel = book->GetSelection();
-	if (sel != wxNOT_FOUND) {
-		LEditor *editor = dynamic_cast<LEditor*>(book->GetPage((size_t)sel));
+	Notebook *book = Frame::Get()->GetNotebook();
+	size_t sel = book->GetSelection();
+	if (sel != Notebook::npos) {
+		LEditor *editor = dynamic_cast<LEditor*>(book->GetPage(sel));
 		if (editor) {
 			//Ok, the selection is a valid editor (unlike the Welcome page)
 			wxString fullname = editor->GetFileName().GetFullPath();

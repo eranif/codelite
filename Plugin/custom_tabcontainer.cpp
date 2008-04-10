@@ -553,6 +553,24 @@ void wxTabContainer::Resize()
 {
 	m_tabsSizer->Layout();
 	GetSizer()->Layout();
+	
+	//refersh all tabs 
+	wxSizer *sz = m_tabsSizer;
+	wxSizerItemList items = sz->GetChildren();
+
+	wxSizerItemList::iterator iter = items.begin();
+	for (; iter != items.end(); iter++) {
+		wxSizerItem *item = *iter;
+		wxWindow *win = item->GetWindow();
+		if (win) {
+			CustomTab *curtab = (CustomTab*)win;
+			
+			//refresh only visible tabs
+			if(IsVisible(curtab)) {
+				curtab->Refresh();
+			}
+		}
+	}
 }
 
 void wxTabContainer::ShowPopupMenu()

@@ -577,9 +577,8 @@ void CustomTab::OnRightDown(wxMouseEvent &e)
 	}
 
 	if (parent->GetRightClickMenu()) {
-		PopupMenu( parent->GetRightClickMenu());
+		parent->ShowPopupMenu();
 	}
-	e.Skip();
 }
 
 void CustomTab::SetText(const wxString &text)

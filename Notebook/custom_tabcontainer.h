@@ -85,6 +85,7 @@ public:
 	void SetOrientation(const int& orientation) ;
 	const int& GetOrientation() const {return m_orientation;}
 	
+	void ShowPopupMenu();
 	
 	//Setters
 	void SetHistory(const wxArrayPtrVoid& history) {this->m_history = history;}

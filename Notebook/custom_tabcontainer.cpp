@@ -554,3 +554,8 @@ void wxTabContainer::Resize()
 	m_tabsSizer->Layout();
 	GetSizer()->Layout();
 }
+
+void wxTabContainer::ShowPopupMenu()
+{
+	PopupMenu( m_rightClickMenu );
+}

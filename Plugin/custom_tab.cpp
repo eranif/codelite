@@ -128,14 +128,13 @@ void CustomTab::OnLeftDown(wxMouseEvent &e)
 		return;
 	}
 	
-	parent->GetParent()->Freeze();
 	//notify the parent that this tab has been selected
 	if (GetSelected()) {
 		//we are already the selected tab nothing to be done here
 		return;
 	}
 
-
+	parent->GetParent()->Freeze();
 	if (parent) {
 		parent->SetSelection(this, true);
 	}

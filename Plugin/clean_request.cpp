@@ -1,4 +1,5 @@
 #include "clean_request.h"
+#include "environmentconfig.h"
 #include "globals.h"
 #include "buildmanager.h"
 #include "wx/process.h"
@@ -70,8 +71,15 @@ void CleanRequest::Process()
 			//need to change directory to project dir
 			wxSetWorkingDirectory(proj->GetFileName().GetPath());
 		}
-
+	
+		//apply environment settings
+		EnvironmentConfig::Instance()->ApplyEnv();
+		
 		if (m_proc->Start() == 0) {
+			
+			//remove environment settings applied
+			EnvironmentConfig::Instance()->UnApplyEnv();
+			
 			wxString message;
 			message << wxT("Failed to start clean process, command: ") << cmd << wxT(", process terminated with exit code: 0");
 			AppendLine(message);

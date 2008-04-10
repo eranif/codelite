@@ -1,3 +1,4 @@
+#include "foldtoolbargroup.h"
 #include "wx/textctrl.h"
 #include "notebook_frame.h"
 #include "custom_notebook.h"
@@ -5,6 +6,8 @@
 #include <wx/statusbr.h>
 #include <wx/sizer.h>
 #include <wx/menu.h> //wxMenuBar
+#include "foldtoolbar.h"
+#include "sample_toolbar.h"
 
 BEGIN_EVENT_TABLE(NotebookFrame, wxFrame)
 	EVT_CLOSE(NotebookFrame::OnClose)
@@ -33,13 +36,9 @@ void NotebookFrame::Initialize()
 {
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	SetSizer(sz);
+	CreateFoldToolbar();
 	
 	wxPanel *mainPanel = new wxPanel(this, wxID_ANY);
-	barPanel = new wxPanel(this, wxID_ANY);
-	barPanel->SetSizeHints(-1, 100);
-	barPanel->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(NotebookFrame::OnPanelDClick), NULL, this);
-	
-	sz->Add(barPanel, 0, wxEXPAND);
 	sz->Add(mainPanel, 1, wxEXPAND);
 	m_mgr.SetManagedWindow( mainPanel );
 	
@@ -77,7 +76,7 @@ void NotebookFrame::Initialize()
 	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"));
 
 	
-	m_topbook = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_HAS_X|wxVB_BG_GRADIENT|wxVB_BORDER);
+	m_topbook = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_HAS_X);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2 With Long"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"), bmp1);
@@ -166,4 +165,20 @@ void NotebookFrame::OnPanelDClick(wxMouseEvent &e)
 	expanded = !expanded;
 	GetSizer()->Layout();
 	Thaw();
+}
+void NotebookFrame::CreateFoldToolbar()
+{
+	barPanel = new FoldToolBar(this, 0);
+	GetSizer()->Add(barPanel, 0, wxEXPAND);
+	
+	//create sample toolbar group
+	FoldToolbarGroup *group1 = new FoldToolbarGroup(barPanel, wxT("Group One"));
+	MyToolbar *mybar = new MyToolbar(group1);
+	group1->Add(mybar, 0);
+	
+	barPanel->AddGroup(group1, 0);
+	barPanel->AddGroup(new FoldToolbarGroup(barPanel, wxT("Group Two")), 1);
+	barPanel->Realize();
+	
+	barPanel->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(NotebookFrame::OnPanelDClick), NULL, this);
 }

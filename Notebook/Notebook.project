@@ -25,7 +25,22 @@
   <VirtualDirectory Name="resources">
     <File Name="tab_x_pressed.xpm"/>
     <File Name="tab_x.xpm"/>
+    <File Name="bg_black.xpm"/>
+    <File Name="bg_bright.xpm"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="FoldTollbar">
+    <File Name="foldtoolbar.cpp"/>
+    <File Name="foldtoolbar.h"/>
+    <File Name="foldtoolbargroup.cpp"/>
+    <File Name="foldtoolbargroup.h"/>
+    <File Name="fb_resources.cpp"/>
+    <File Name="fb_resources.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="SampleToolbar">
+    <File Name="sample_toolbar.h"/>
+    <File Name="sample_toolbar.cpp"/>
+  </VirtualDirectory>
+  <Dependencies/>
   <Settings Type="Executable">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/Notebook" IntermediateDirectory="./$(ConfigurationName)" Command="./Notebook" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no"/>
@@ -102,10 +117,10 @@
       <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="no">copy custom* ..\Plugin</Command>
-        <Command Enabled="no">copy draw* ..\Plugin</Command>
-        <Command Enabled="no">copy drop* ..\Plugin</Command>
-        <Command Enabled="no">copy notebooknavdialog* ..\Plugin</Command>
+        <Command Enabled="yes">copy custom* ..\Plugin</Command>
+        <Command Enabled="yes">copy draw* ..\Plugin</Command>
+        <Command Enabled="yes">copy drop* ..\Plugin</Command>
+        <Command Enabled="yes">copy notebooknavdialog* ..\Plugin</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>
@@ -123,5 +138,4 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies/>
 </CodeLite_Project>

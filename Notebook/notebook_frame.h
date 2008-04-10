@@ -6,15 +6,17 @@
 
 class Notebook;
 class wxPanel;
+class FoldToolBar;
 
 class NotebookFrame : public wxFrame {
 	Notebook *m_topbook;
 	wxAuiManager m_mgr;
-	wxPanel *barPanel;
+	FoldToolBar *barPanel;
 	
 private:
 	void Initialize();
 	void CreateMenuBar();
+	void CreateFoldToolbar();
 	
 public:
 	NotebookFrame(wxWindow* parent,

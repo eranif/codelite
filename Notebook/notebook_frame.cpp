@@ -165,7 +165,7 @@ void NotebookFrame::OnPanelDClick(wxMouseEvent &e)
 	expanded = !expanded;
 	GetSizer()->Layout();
 	Thaw();
-}
+} 
 void NotebookFrame::CreateFoldToolbar()
 {
 	barPanel = new FoldToolBar(this, 0);
@@ -174,10 +174,10 @@ void NotebookFrame::CreateFoldToolbar()
 	//create sample toolbar group
 	FoldToolbarGroup *group1 = new FoldToolbarGroup(barPanel, wxT("Group One"));
 	MyToolbar *mybar = new MyToolbar(group1);
-	group1->Add(mybar, 0);
+	group1->Add(mybar, 0, 0);
 	
-	barPanel->AddGroup(group1, 0);
-	barPanel->AddGroup(new FoldToolbarGroup(barPanel, wxT("Group Two")), 1);
+	barPanel->AddGroup(group1);
+	barPanel->AddGroup(new FoldToolbarGroup(barPanel, wxT("Group Two")));
 	barPanel->Realize();
 	
 	barPanel->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(NotebookFrame::OnPanelDClick), NULL, this);

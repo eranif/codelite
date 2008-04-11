@@ -3,7 +3,7 @@
 #include "wx/dcbuffer.h"
 #include "foldtoolbargroup.h"
 #include "foldtoolbar.h"
-//#include "drawingutils.h"
+//#include "drawingutils.h" 
 
 BEGIN_EVENT_TABLE(FoldToolbarGroup, wxPanel)
 	EVT_PAINT(FoldToolbarGroup::OnPaint)
@@ -34,18 +34,6 @@ void FoldToolbarGroup::OnPaint(wxPaintEvent &e)
 	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 	dc.DrawRectangle(rr);
-	
-	if(m_hovered) {
-		//draw a simple raisde border
-		
-		dc.SetPen(*wxWHITE_PEN);
-		dc.DrawLine(rr.x, rr.y, rr.x+rr.width-1, rr.y);
-		dc.DrawLine(rr.x, rr.y, rr.x, rr.y+rr.height-1);
-		
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-		dc.DrawLine(rr.x+rr.width-1, rr.y, rr.x+rr.width-1, rr.y+rr.height-1);
-		dc.DrawLine(rr.x, rr.y+rr.height-1, rr.x+rr.width, rr.y+rr.height-1);
-	}
 }
 
 void FoldToolbarGroup::OnEraseBg(wxEraseEvent &e)
@@ -65,10 +53,10 @@ void FoldToolbarGroup::Initialize()
 	SetSizer(sizer);
 }
 
-void FoldToolbarGroup::Add(wxWindow* item, int proportion)
+void FoldToolbarGroup::Add(wxWindow* item, int proportion, int border)
 {
 	wxSizer *sz = GetSizer();
-	sz->Add(item, proportion, wxALL|wxEXPAND, 3);
+	sz->Add(item, proportion, wxALL|wxEXPAND, border );
 }
 
 void FoldToolbarGroup::OnEnterWindow(wxMouseEvent &e)

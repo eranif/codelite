@@ -17,7 +17,7 @@ public:
 	FoldToolbarGroup(FoldToolBar *parent, const wxString &caption);
 	virtual ~FoldToolbarGroup();
 	
-	void Add(wxWindow* item, int proportion);
+	void Add(wxWindow* item, int proportion = 0, int border = 0);
 	
 	//Setters
 	void SetHovered(const bool& hovered) ;

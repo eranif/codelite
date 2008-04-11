@@ -86,7 +86,7 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="$(IntermediateDirectory)/Notebook" IntermediateDirectory="./$(ConfigurationName)" Command="./Notebook" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/Notebook" IntermediateDirectory="./WinDebugUnicode" Command="./Notebook" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes);-Wall">
         <Preprocessor Value="__WX__"/>
       </Compiler>
@@ -116,10 +116,10 @@
       <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy custom* ..\Plugin</Command>
-        <Command Enabled="yes">copy draw* ..\Plugin</Command>
-        <Command Enabled="yes">copy drop* ..\Plugin</Command>
-        <Command Enabled="yes">copy notebooknavdialog* ..\Plugin</Command>
+        <Command Enabled="no">copy custom* ..\Plugin</Command>
+        <Command Enabled="no">copy draw* ..\Plugin</Command>
+        <Command Enabled="no">copy drop* ..\Plugin</Command>
+        <Command Enabled="no">copy notebooknavdialog* ..\Plugin</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <CleanCommand/>

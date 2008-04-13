@@ -68,7 +68,7 @@ CommentPageBase::CommentPageBase( wxWindow* parent, wxWindowID id, const wxPoint
 	bSizer1->Add( m_staticText4, 0, wxALL|wxEXPAND, 5 );
 	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 3, 3, 0, 0 );
+	fgSizer1 = new wxFlexGridSizer( 2, 2, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
 	fgSizer1->AddGrowableRow( 0 );
 	fgSizer1->AddGrowableRow( 1 );
@@ -82,9 +82,6 @@ CommentPageBase::CommentPageBase( wxWindow* parent, wxWindowID id, const wxPoint
 	m_textCtrlClassPattern = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
 	fgSizer1->Add( m_textCtrlClassPattern, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_buttonClassPattern = new wxButton( this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer1->Add( m_buttonClassPattern, 0, wxALL, 5 );
-	
 	m_staticText7 = new wxStaticText( this, wxID_ANY, wxT("Function prefix:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText7->Wrap( -1 );
 	fgSizer1->Add( m_staticText7, 0, wxALL, 5 );
@@ -92,29 +89,19 @@ CommentPageBase::CommentPageBase( wxWindow* parent, wxWindowID id, const wxPoint
 	m_textCtrlFunctionPattern = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
 	fgSizer1->Add( m_textCtrlFunctionPattern, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_buttonFunctionPattern = new wxButton( this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer1->Add( m_buttonFunctionPattern, 0, wxALL, 5 );
-	
 	bSizer1->Add( fgSizer1, 1, wxEXPAND, 5 );
 	
 	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
 	
-	m_staticText12 = new wxStaticText( this, wxID_ANY, wxT("The following macros are allowed:\n$(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name)\n$(CurrentFileFullPath), $(CurrentFileExt), $(CurrentFileFullPath), $(CurrentFilePath)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText12 = new wxStaticText( this, wxID_ANY, wxT("The following macros are available:\n$(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name)\n$(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorksapceName)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText12->Wrap( -1 );
 	bSizer1->Add( m_staticText12, 0, wxALL|wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
-	
-	// Connect Events
-	m_buttonClassPattern->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CommentPageBase::OnClassPattern ), NULL, this );
-	m_buttonFunctionPattern->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CommentPageBase::OnFunctionPattern ), NULL, this );
 }
 
 CommentPageBase::~CommentPageBase()
 {
-	// Disconnect Events
-	m_buttonClassPattern->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CommentPageBase::OnClassPattern ), NULL, this );
-	m_buttonFunctionPattern->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CommentPageBase::OnFunctionPattern ), NULL, this );
 }

@@ -25,8 +25,12 @@ void CommentConfigData::DeSerialize(Archive &arch)
 	arch.Read(wxT("m_continueCppComment"), m_continueCppComment);
 	arch.Read(wxT("m_useSlash2Stars"), m_useSlash2Stars);
 	arch.Read(wxT("m_useShtroodel"), m_useShtroodel);
+	
 	arch.Read(wxT("m_classPattern"), m_classPattern);
+	m_classPattern.Replace(wxT("|"), wxT("\n"));
+	
 	arch.Read(wxT("m_functionPattern"), m_functionPattern);
+	m_functionPattern.Replace(wxT("|"), wxT("\n"));
 }
 
 void CommentConfigData::Serialize(Archive &arch)
@@ -35,6 +39,9 @@ void CommentConfigData::Serialize(Archive &arch)
 	arch.Write(wxT("m_continueCppComment"), m_continueCppComment);
 	arch.Write(wxT("m_useSlash2Stars"), m_useSlash2Stars);
 	arch.Write(wxT("m_useShtroodel"), m_useShtroodel);
+	
+	m_classPattern.Replace(wxT("\n"), wxT("|"));
 	arch.Write(wxT("m_classPattern"), m_classPattern);
+	m_functionPattern.Replace(wxT("\n"), wxT("|"));
 	arch.Write(wxT("m_functionPattern"), m_functionPattern);
 }

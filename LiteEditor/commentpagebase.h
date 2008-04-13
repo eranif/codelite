@@ -18,7 +18,6 @@
 #include <wx/sizer.h>
 #include <wx/checkbox.h>
 #include <wx/textctrl.h>
-#include <wx/button.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -44,17 +43,10 @@ class CommentPageBase : public wxPanel
 		wxStaticText* m_staticText4;
 		wxStaticText* m_staticText6;
 		wxTextCtrl* m_textCtrlClassPattern;
-		wxButton* m_buttonClassPattern;
 		wxStaticText* m_staticText7;
 		wxTextCtrl* m_textCtrlFunctionPattern;
-		wxButton* m_buttonFunctionPattern;
 		wxStaticLine* m_staticline5;
 		wxStaticText* m_staticText12;
-		
-		// Virtual event handlers, overide them in your derived class
-		virtual void OnClassPattern( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnFunctionPattern( wxCommandEvent& event ){ event.Skip(); }
-		
 	
 	public:
 		CommentPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 644,439 ), long style = wxTAB_TRAVERSAL );

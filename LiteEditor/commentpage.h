@@ -13,8 +13,6 @@ class CommentPage : public CommentPageBase
 {
 protected:
 	// Handlers for CommentPageBase events.
-	void OnClassPattern( wxCommandEvent& event );
-	void OnFunctionPattern( wxCommandEvent& event );
 	void Initialize();
 	
 public:

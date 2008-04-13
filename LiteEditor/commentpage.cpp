@@ -1,31 +1,12 @@
 #include "editor_config.h"
 #include "commentconfigdata.h"
 #include "commentpage.h"
-#include "free_text_dialog.h"
 
 CommentPage::CommentPage( wxWindow* parent )
 		:
 		CommentPageBase( parent )
 {
 	Initialize();
-}
-
-void CommentPage::OnClassPattern( wxCommandEvent& event )
-{
-	FreeTextDialog *dlg = new FreeTextDialog(this, m_textCtrlClassPattern->GetValue(), wxID_ANY, wxT("Class Pattern:"));
-	if (dlg->ShowModal() == wxID_OK) {
-		m_textCtrlClassPattern->SetValue( dlg->GetValue() );
-	}
-	dlg->Destroy();
-}
-
-void CommentPage::OnFunctionPattern( wxCommandEvent& event )
-{
-	FreeTextDialog *dlg = new FreeTextDialog(this, m_textCtrlFunctionPattern->GetValue(), wxID_ANY, wxT("Function Pattern:"));
-	if (dlg->ShowModal() == wxID_OK) {
-		m_textCtrlFunctionPattern->SetValue( dlg->GetValue() );
-	}
-	dlg->Destroy();
 }
 
 void CommentPage::Save()

@@ -1514,7 +1514,7 @@ void TagsManager::CloseExternalDatabase()
 	}
 }
 
-wxString TagsManager::GenerateDoxygenComment(const wxString &file, const int line)
+DoxygenComment TagsManager::GenerateDoxygenComment(const wxString &file, const int line, wxChar keyPrefix)
 {
 	if (m_pDb->IsOpen()) {
 		wxString sql;
@@ -1522,18 +1522,21 @@ wxString TagsManager::GenerateDoxygenComment(const wxString &file, const int lin
 		std::vector<TagEntryPtr> tags;
 		DoExecuteQueury(sql, tags);
 		if (tags.empty() || tags.size() > 1)
-			return wxEmptyString;
+			return DoxygenComment();
 
 		//create a doxygen comment from the tag
-		return DoCreateDoxygenComment(tags.at(0));
+		return DoCreateDoxygenComment(tags.at(0), keyPrefix);
 	}
-	return wxEmptyString;
+	return DoxygenComment();
 }
 
-wxString TagsManager::DoCreateDoxygenComment(TagEntryPtr tag)
+DoxygenComment TagsManager::DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix)
 {
-	CppCommentCreator commentCreator(tag);
-	return commentCreator.CreateComment();
+	CppCommentCreator commentCreator(tag, keyPrefix);
+	DoxygenComment dc;
+	dc.comment = commentCreator.CreateComment();
+	dc.name = tag->GetName();
+	return dc;
 }
 
 bool TagsManager::GetParseComments()

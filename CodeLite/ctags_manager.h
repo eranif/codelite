@@ -53,6 +53,11 @@ public:
 
 typedef SmartPtr<TagCacheEntry> TagCacheEntryPtr;
 
+struct DoxygenComment {
+	wxString name;
+	wxString comment;
+};
+
 /**
  * This class is the interface to ctags and SQLite database. 
  * It contains various APIs that allows the caller to parse source file(s), 
@@ -363,11 +368,15 @@ public:
 	wxString GetComment(const wxString &file, const int line);
 
 	/**
-	 * Generate doxygen based on file & line
+	 * Generate doxygen based on file & line. The generated doxygen is partial, that is, only the "\param" "\return" 
+	 * is generated. On top of the comment, there will be the a place holder to be replaced by the application, the place
+	 * holder can be one of:
+	 * '$(ClassPattern)' or '$(FunctionPattern)' 
 	 * \param line line number
 	 * \param file file name
+	 * \param keyPrefix prefix to use for the 'param' & 'return' keyword (can be @ or \ ) 
 	 */
-	wxString GenerateDoxygenComment(const wxString &file, const int line);
+	DoxygenComment GenerateDoxygenComment(const wxString &file, const int line, wxChar keyPrefix);
 
 	/**
 	 * Load all types from database. 'Type' is one of:
@@ -652,7 +661,7 @@ protected:
 	void GetLocalTags(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags, SearchFlags flags = PartialMatch);
 	void TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips);
 	void GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips);
-	wxString DoCreateDoxygenComment(TagEntryPtr tag);
+	DoxygenComment DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix);
 	void DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, const wxString *rootPath = NULL);
 	bool ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope);
 	void FilterImplementation(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);

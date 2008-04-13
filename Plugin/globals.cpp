@@ -117,12 +117,12 @@ bool IsValidCppFile(const wxString &id)
 	if (id.IsEmpty()) {
 		return false;
 	}
-	
+
 	//make sure that rest of the id contains only a-zA-Z0-9_
 	if (id.find_first_not_of(wxT("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")) != wxString::npos) {
 		return false;
 	}
-	return true;	
+	return true;
 }
 // This functions accepts expression and expand all variables in it
 wxString ExpandAllVariables(const wxString &expression, const wxString &projectName, const wxString &fileName)
@@ -130,21 +130,21 @@ wxString ExpandAllVariables(const wxString &expression, const wxString &projectN
 	//add support for backticks commands
 	wxString tmpExp;
 	wxString noBackticksExpression;
-	for(size_t i=0; i< expression.Length(); i++) {
-		if(expression.GetChar(i) == wxT('`')){
+	for (size_t i=0; i< expression.Length(); i++) {
+		if (expression.GetChar(i) == wxT('`')) {
 			//found a backtick, loop over until we found the closing backtick
 			wxString backtick;
 			bool found(false);
 			i++;
-			for(; i< expression.Length(); i++){
-				if(expression.GetChar(i) == wxT('`')){
+			for (; i< expression.Length(); i++) {
+				if (expression.GetChar(i) == wxT('`')) {
 					found = true;
 					i++;
 					break;
 				}
 				backtick << expression.GetChar(i);
 			}
-			
+
 			if (!found) {
 				//dont replace anything
 				wxLogMessage(wxT("Syntax error in expression: ") + expression + wxT(": expecting '`'"));
@@ -152,25 +152,25 @@ wxString ExpandAllVariables(const wxString &expression, const wxString &projectN
 			} else {
 				//expand the backtick statement
 				wxString expandedBacktick = DoExpandAllVariables(backtick, projectName, fileName);
-				
+
 				//execute the backtick
 				wxArrayString output;
 				ProcUtils::SafeExecuteCommand(expandedBacktick, output);
-				
+
 				//concatenate the array into space delimited string
 				backtick.Clear();
-				for(size_t xx=0; xx < output.GetCount(); xx++){
+				for (size_t xx=0; xx < output.GetCount(); xx++) {
 					backtick << output.Item(xx).Trim().Trim(false) << wxT(" ");
 				}
-				
+
 				//and finally concatente the result of the backtick command back to the expression
 				tmpExp << backtick;
 			}
-		}else{
+		} else {
 			tmpExp << expression.GetChar(i);
 		}
 	}
-	
+
 	return DoExpandAllVariables(tmpExp, projectName, fileName);
 }
 
@@ -193,17 +193,23 @@ wxString DoExpandAllVariables(const wxString &expression, const wxString &projec
 		output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
 		output.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
 
-		if(fileName.IsEmpty() == false) {
-			wxFileName fn(fileName);
-		
-			output.Replace(wxT("$(CurrentFileName)"), fn.GetName());
-			output.Replace(wxT("$(CurrentFilePath)"), fn.GetPath());
-			output.Replace(wxT("$(CurrentFileExt)"), fn.GetExt());
-			output.Replace(wxT("$(CurrentFileFullPath)"), fn.GetFullPath());
-		}
 	}
+	
+	if (fileName.IsEmpty() == false) {
+		wxFileName fn(fileName);
+
+		output.Replace(wxT("$(CurrentFileName)"), fn.GetName());
+		output.Replace(wxT("$(CurrentFilePath)"), fn.GetPath());
+		output.Replace(wxT("$(CurrentFileExt)"), fn.GetExt());
+		output.Replace(wxT("$(CurrentFileFullPath)"), fn.GetFullPath());
+	}
+	
+	//exapnd common macros
+	wxDateTime now = wxDateTime::Now();
+	output.Replace(wxT("$(User)"), wxGetUserName());
+	output.Replace(wxT("$(Date)"), now.FormatDate());
 	
 	//call the environment & workspace variables expand function
 	output = WorkspaceST::Get()->ExpandVariables(output);
-	return output;	
+	return output;
 }

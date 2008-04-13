@@ -535,10 +535,18 @@ void wxTabContainer::EnsureVisible(CustomTab *tab)
 bool wxTabContainer::IsVisible(CustomTab *tab)
 {
 	wxPoint pos = tab->GetPosition();
+	wxSize tabSize = tab->GetSize();
 	wxRect rr = GetSize();
+	
+	bool cond0(true);
+	if(rr.width > tabSize.x) {
+		//the visible area has enough space to show the entire 
+		//tab, force it
+		cond0 = !(pos.x + tabSize.x > rr.x + rr.width);
+	}
 	bool cond1 = !(pos.x > rr.x + rr.width);
 	bool cond2 = m_tabsSizer->IsShown(tab);
-	return cond1 && cond2;
+	return cond0 && cond1 && cond2;
 }
 
 void wxTabContainer::OnDeleteTab(wxCommandEvent &e)

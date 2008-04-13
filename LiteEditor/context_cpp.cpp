@@ -1,4 +1,7 @@
 #include "precompiled_header.h"
+#include "globals.h"
+#include "commentconfigdata.h"
+#include "editor_config.h"
 #include "movefuncimpldlg.h"
 #include "context_cpp.h"
 #include "cl_editor.h"
@@ -1087,14 +1090,45 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent &event)
 
 	//get the current line text
 	int lineno = editor.LineFromPosition(editor.GetCurrentPos());
-
+	
+	CommentConfigData data;
+	EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
+	
 	//get doxygen comment based on file and line
-	wxString comment = TagsManagerST::Get()->GenerateDoxygenComment(editor.GetFileName().GetFullPath(), lineno);
+	wxChar keyPrefix(wxT('\\'));
+	if(data.GetUseShtroodel()){
+		keyPrefix = wxT('@');
+	}
+	
+	wxString blockStart(wxT("/**\n"));
+	if(!data.GetUseSlash2Stars()){
+		blockStart = wxT("/*!\n");
+	}
+	
+	DoxygenComment dc = TagsManagerST::Get()->GenerateDoxygenComment(editor.GetFileName().GetFullPath(), lineno, keyPrefix);
 	//do we have a comment?
-	if (comment.IsEmpty())
+	if (dc.comment.IsEmpty())
 		return;
-
-	editor.InsertTextWithIndentation(comment, lineno);
+	
+	//prepend the prefix to the 
+	wxString classPattern = data.GetClassPattern();
+	wxString funcPattern  = data.GetFunctionPattern();
+	
+	//replace $(Name) here **before** the call to ExpandAllVariables()
+	classPattern.Replace(wxT("$(Name)"), dc.name);
+	funcPattern.Replace(wxT("$(Name)"), dc.name);
+	
+	classPattern = ExpandAllVariables(classPattern, editor.GetProjectName(), editor.GetFileName().GetFullPath());
+	funcPattern = ExpandAllVariables(funcPattern, editor.GetProjectName(), editor.GetFileName().GetFullPath());
+	
+	dc.comment.Replace(wxT("$(ClassPattern)"), classPattern);
+	dc.comment.Replace(wxT("$(FunctionPattern)"), funcPattern);
+	
+	//close the comment
+	dc.comment << wxT(" */\n");
+	dc.comment.Prepend(blockStart);
+	
+	editor.InsertTextWithIndentation(dc.comment, lineno);
 
 	//since we just inserted a text to the document, we force a save on the
 	//document, or else the parser will lose sync with the database
@@ -1115,7 +1149,14 @@ void ContextCpp::OnCommentSelection(wxCommandEvent &event)
 	//createa C block comment
 	editor.BeginUndoAction();
 	editor.InsertText(start, wxT("/*"));
-	editor.InsertText(editor.PositionAfter(editor.PositionAfter(end)), wxT("*/"));
+	
+	//advance the end selection by 2
+	end = editor.PositionAfter(editor.PositionAfter(end));
+	editor.InsertText(end, wxT("*/"));
+	
+	end = editor.PositionAfter(editor.PositionAfter(end));
+	editor.SetCaretAt(end);
+	
 	editor.EndUndoAction();
 }
 
@@ -1836,7 +1877,10 @@ void ContextCpp::AutoAddComment()
 	cur_style = rCtrl.GetStyleAt(curpos);
 	next_style = rCtrl.GetStyleAt(rCtrl.PositionAfter(curpos));
 	prepre_style = rCtrl.GetStyleAt(rCtrl.PositionBefore(prevpos));
-
+	
+	CommentConfigData data;
+	EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
+	
 	if (cur_style == wxSCI_C_COMMENTLINE) {
 
 		//C++ comment style was in the previous line
@@ -1846,7 +1890,7 @@ void ContextCpp::AutoAddComment()
 		int line = rCtrl.LineFromPosition(curpos);
 		int prevLine = line - 1;
 
-		if (rCtrl.GetLine(prevLine).Trim().Trim(false) == wxT("//")) {
+		if (rCtrl.GetLine(prevLine).Trim().Trim(false) == wxT("//") || data.GetContinueCppComment() == false) {
 			//dont add new comment
 			ContextBase::AutoIndent(wxT('\n'));
 			return;
@@ -1867,7 +1911,12 @@ void ContextCpp::AutoAddComment()
 		}
 
 	} else if (cur_style == wxSCI_C_COMMENT || cur_style == wxSCI_C_COMMENTDOC) {
-
+		
+		if(data.GetAddStarOnCComment() == false) {
+			ContextBase::AutoIndent(wxT('\n'));
+			return;
+		}
+		
 		// we are in C style comment
 		int indentSize = rCtrl.GetIndent();
 		int line = rCtrl.LineFromPosition(curpos);

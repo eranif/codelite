@@ -16,6 +16,7 @@
 #endif //WX_PRECOMP
 
 #include "options_base_dlg.h"
+#include "commentpage.h"
 #include "frame.h"
 #include "generalinfo.h"
 #include "wx/notebook.h"
@@ -53,6 +54,9 @@ OptionsDlg::OptionsDlg( wxWindow* parent, int id, wxString title, wxPoint pos, w
 	//Create the bookmark page
 	m_book->AddPage( CreateBookmarksPage(), wxT("Bookmarks"), false);
 
+	//add C++ comment page
+	m_book->AddPage( CreateCxxCommentPage(), wxT("C++ Comments"), false);
+	
 	m_book->AddPage( CreateSyntaxHighlightPage(), wxT("Syntax Highlight"), false );
 	
 	mainSizer->Add( m_book, 1, wxEXPAND | wxALL, 5 );
@@ -203,6 +207,7 @@ void OptionsDlg::OnButtonCancel(wxCommandEvent &event)
 
 void OptionsDlg::SaveChanges()
 {
+	
 	int max = m_lexersBook->GetPageCount();
 	for(int i=0; i<max; i++){
 		wxWindow *win = m_lexersBook->GetPage((size_t)i);
@@ -253,6 +258,8 @@ void OptionsDlg::SaveChanges()
 	}else{
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
 	}
+	
+	m_commentPage->Save();
 	
 	EditorConfigST::Get()->SetOptions(options);
 	ManagerST::Get()->ApplySettingsChanges();
@@ -331,4 +338,10 @@ wxPanel* OptionsDlg::CreateFoldingPage()
 	m_foldStyleChoice->SetStringSelection( options->GetFoldStyle() );
 	
 	return page;
+}
+
+wxPanel* OptionsDlg::CreateCxxCommentPage()
+{
+	m_commentPage = new CommentPage(m_book);
+	return m_commentPage;
 }

@@ -165,6 +165,12 @@
       <File Name="plugindlgbase.h"/>
       <File Name="pluginmgrdlg.cpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="DoxygenUI">
+      <File Name="commentpagebase.h"/>
+      <File Name="commentpage.cpp"/>
+      <File Name="commentpage.h"/>
+      <File Name="commentpagebase.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>

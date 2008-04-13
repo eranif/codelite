@@ -33,6 +33,8 @@
 /// Class OptionsDlg
 ///////////////////////////////////////////////////////////////////////////////
 class wxNotebook;
+class CommentPage;
+
 class OptionsDlg : public wxDialog 
 {
 	DECLARE_EVENT_TABLE()
@@ -41,7 +43,7 @@ class OptionsDlg : public wxDialog
 	void OnButtonOK( wxCommandEvent& event );
 	void OnButtonCancel( wxCommandEvent& event );
 	void OnButtonApply( wxCommandEvent& event );
-
+	
 protected:
 	wxNotebook* m_book;
 	wxNotebook *m_lexersBook;
@@ -70,6 +72,7 @@ protected:
 	wxButton* m_applyButton;
 	wxChoice* m_iconSize;
 	wxCheckBox* m_checkBoxShowSplash;
+	CommentPage *m_commentPage;
 	
 private:
 	wxPanel *CreateSyntaxHighlightPage();
@@ -77,7 +80,7 @@ private:
 	wxPanel *CreateLexerPage(wxWindow *parent, LexerConfPtr lexer);
 	wxPanel *CreateBookmarksPage();
 	wxPanel *CreateFoldingPage();
-	
+	wxPanel *CreateCxxCommentPage();
 	void SaveChanges();
 
 public:

@@ -17,8 +17,11 @@
  */
 class CommentCreator
 {
+protected:
+	wxChar m_keyPrefix;
+	
 public:
-	CommentCreator(){}
+	CommentCreator(wxChar keyPrefix = wxT('\\')) : m_keyPrefix(keyPrefix) {}
 	virtual ~CommentCreator(){}
 	virtual wxString CreateComment() = 0;
 };

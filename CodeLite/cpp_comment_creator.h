@@ -9,13 +9,12 @@ class CppCommentCreator : public CommentCreator
 {
 	TagEntryPtr m_tag;
 public:
-	CppCommentCreator(TagEntryPtr tag);
+	CppCommentCreator(TagEntryPtr tag, wxChar keyPrefix);
 	virtual ~CppCommentCreator();
 	virtual wxString CreateComment();
 
 private:
 	wxString FunctionComment();
-	wxString ClassComment();
 };
 
 #endif //CPP_COMMENT_CREATOR_H

@@ -556,7 +556,7 @@
                         <property name="font"></property>
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
-                        <property name="label">CodeLite contains a built-in doxygen documentation generator which can add doxygen comments to your code.&#x0A;here you will be able to set the prefix to be used by CodeLite for the various types</property>
+                        <property name="label">CodeLite contains a built-in doxygen documentation generator which adds doxygen comments to your code.&#x0A;Here you can set the prefix that will placed on top of the dynamic content of the comment:</property>
                         <property name="maximum_size"></property>
                         <property name="minimum_size"></property>
                         <property name="name">m_staticText4</property>
@@ -598,12 +598,12 @@
                 <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND</property>
-                    <property name="proportion">0</property>
+                    <property name="proportion">1</property>
                     <object class="wxFlexGridSizer" expanded="0">
                         <property name="cols">3</property>
                         <property name="flexible_direction">wxBOTH</property>
                         <property name="growablecols">1</property>
-                        <property name="growablerows"></property>
+                        <property name="growablerows">0,1</property>
                         <property name="hgap">0</property>
                         <property name="minimum_size"></property>
                         <property name="name">fgSizer1</property>
@@ -613,7 +613,7 @@
                         <property name="vgap">0</property>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
+                            <property name="flag">wxALL</property>
                             <property name="proportion">0</property>
                             <object class="wxStaticText" expanded="1">
                                 <property name="bg"></property>
@@ -623,7 +623,7 @@
                                 <property name="font"></property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
-                                <property name="label">Class pattern:</property>
+                                <property name="label">Class prefix:</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
                                 <property name="name">m_staticText6</property>
@@ -681,7 +681,7 @@
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
                                 <property name="size"></property>
-                                <property name="style"></property>
+                                <property name="style">wxTE_MULTILINE</property>
                                 <property name="subclass"></property>
                                 <property name="tooltip"></property>
                                 <property name="value"></property>
@@ -719,7 +719,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
+                            <property name="flag">wxALL</property>
                             <property name="proportion">0</property>
                             <object class="wxButton" expanded="1">
                                 <property name="bg"></property>
@@ -771,7 +771,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
+                            <property name="flag">wxALL</property>
                             <property name="proportion">0</property>
                             <object class="wxStaticText" expanded="1">
                                 <property name="bg"></property>
@@ -781,7 +781,7 @@
                                 <property name="font"></property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
-                                <property name="label">Function pattern:</property>
+                                <property name="label">Function prefix:</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
                                 <property name="name">m_staticText7</property>
@@ -839,7 +839,7 @@
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
                                 <property name="size"></property>
-                                <property name="style"></property>
+                                <property name="style">wxTE_MULTILINE</property>
                                 <property name="subclass"></property>
                                 <property name="tooltip"></property>
                                 <property name="value"></property>
@@ -877,7 +877,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
+                            <property name="flag">wxALL</property>
                             <property name="proportion">0</property>
                             <object class="wxButton" expanded="1">
                                 <property name="bg"></property>
@@ -981,7 +981,7 @@
                 <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
                     <property name="flag">wxALL|wxEXPAND</property>
-                    <property name="proportion">1</property>
+                    <property name="proportion">0</property>
                     <object class="wxStaticText" expanded="1">
                         <property name="bg"></property>
                         <property name="context_help"></property>
@@ -990,7 +990,7 @@
                         <property name="font"></property>
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
-                        <property name="label">The following macros can be used in doxygen pattern:&#x0A;$(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name)&#x0A;$(CurrentFileFullPath), $(CurrentFileExt)</property>
+                        <property name="label">The following macros are allowed:&#x0A;$(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name)&#x0A;$(CurrentFileFullPath), $(CurrentFileExt), $(CurrentFileFullPath), $(CurrentFilePath)</property>
                         <property name="maximum_size"></property>
                         <property name="minimum_size"></property>
                         <property name="name">m_staticText12</property>

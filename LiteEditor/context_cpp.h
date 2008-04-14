@@ -113,6 +113,7 @@ private:
 	bool IsIncludeStatement(const wxString &line, wxString *fileName = NULL);
 	void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
 	void PrependMenuItem(wxMenu* menu, const wxString &text, wxObjectEventFunction func);
+	void PrependMenuItem(wxMenu* menu, const wxString &text, int id);
 	void PrependMenuItemSeparator(wxMenu* menu);
 	int FindLineToAddInclude();
 	

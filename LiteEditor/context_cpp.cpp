@@ -84,6 +84,17 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 	EVT_UPDATE_UI(XRCID("insert_doxy_comment"), ContextCpp::OnUpdateUI)
 	EVT_UPDATE_UI(XRCID("setters_getters"), ContextCpp::OnUpdateUI)
 	EVT_UPDATE_UI(XRCID("move_impl"), ContextCpp::OnUpdateUI)
+
+	EVT_MENU(XRCID("swap_files"), ContextCpp::OnSwapFiles)
+	EVT_MENU(XRCID("comment_selection"), ContextCpp::OnCommentSelection)
+	EVT_MENU(XRCID("comment_line"), ContextCpp::OnCommentLine)
+	EVT_MENU(XRCID("find_decl"), ContextCpp::OnFindDecl)
+	EVT_MENU(XRCID("find_impl"), ContextCpp::OnFindImpl)
+	EVT_MENU(XRCID("insert_doxy_comment"), ContextCpp::OnInsertDoxyComment)
+	EVT_MENU(XRCID("move_impl"), ContextCpp::OnMoveImpl)
+	EVT_MENU(XRCID("add_impl"), ContextCpp::OnAddImpl)
+	EVT_MENU(XRCID("setters_getters"), ContextCpp::OnGenerateSettersGetters)
+	EVT_MENU(XRCID("add_include_file"), ContextCpp::OnAddIncludeFile)
 END_EVENT_TABLE()
 
 ContextCpp::ContextCpp(LEditor *container)
@@ -93,7 +104,9 @@ ContextCpp::ContextCpp(LEditor *container)
 {
 	ApplySettings();
 	Initialize();
+
 }
+	
 
 ContextCpp::ContextCpp()
 		: ContextBase(wxT("C++"))
@@ -687,8 +700,8 @@ void ContextCpp::AddMenuDynamicContent(wxMenu *menu)
 		wxString word = rCtrl.GetWordAtCaret();
 		if (word.IsEmpty() == false) {
 			PrependMenuItemSeparator(menu);
-			menuItemText << wxT("Add Include File for \"") << word << wxT("\"");
-			PrependMenuItem(menu, menuItemText, wxCommandEventHandler(ContextCpp::OnAddIncludeFile));
+			menuItemText << wxT("Add Include File for \"") << word << wxT("\"\tCtrl+Shift+I");
+			PrependMenuItem(menu, menuItemText, XRCID("add_include_file"));
 			m_selectedWord = word;
 		}
 	}
@@ -701,6 +714,15 @@ void ContextCpp::PrependMenuItem(wxMenu *menu, const wxString &text, wxObjectEve
 	item = new wxMenuItem(menu, wxNewId(), text);
 	menu->Prepend(item);
 	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, func, NULL, this);
+	m_dynItems.push_back(item);
+}
+
+void ContextCpp::PrependMenuItem(wxMenu *menu, const wxString &text, int id)
+{
+	wxMenuItem *item;
+	wxString menuItemText;
+	item = new wxMenuItem(menu, id, text);
+	menu->Prepend(item);
 	m_dynItems.push_back(item);
 }
 
@@ -729,13 +751,19 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)
 
 	// get the scope
 	wxString text = rCtrl.GetTextRange(0, word_end);
-
-	if (m_selectedWord.IsEmpty())
-		return;
+	
+	wxString word = m_selectedWord;
+	if (word.IsEmpty()) {
+		//try the word under the caret
+		word = rCtrl.GetWordAtCaret();
+		if(word.IsEmpty()) {
+			return;
+		}
+	}
 
 	std::vector<TagEntryPtr> tags;
 	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
-	TagsManagerST::Get()->FindImplDecl(rCtrl.GetFileName(), line, expr, m_selectedWord, text, tags, false);
+	TagsManagerST::Get()->FindImplDecl(rCtrl.GetFileName(), line, expr, word, text, tags, false);
 	if (tags.empty())
 		return;
 
@@ -1090,44 +1118,44 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent &event)
 
 	//get the current line text
 	int lineno = editor.LineFromPosition(editor.GetCurrentPos());
-	
+
 	CommentConfigData data;
 	EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
-	
+
 	//get doxygen comment based on file and line
 	wxChar keyPrefix(wxT('\\'));
-	if(data.GetUseShtroodel()){
+	if (data.GetUseShtroodel()) {
 		keyPrefix = wxT('@');
 	}
-	
+
 	wxString blockStart(wxT("/**\n"));
-	if(!data.GetUseSlash2Stars()){
+	if (!data.GetUseSlash2Stars()) {
 		blockStart = wxT("/*!\n");
 	}
-	
+
 	DoxygenComment dc = TagsManagerST::Get()->GenerateDoxygenComment(editor.GetFileName().GetFullPath(), lineno, keyPrefix);
 	//do we have a comment?
 	if (dc.comment.IsEmpty())
 		return;
-	
-	//prepend the prefix to the 
+
+	//prepend the prefix to the
 	wxString classPattern = data.GetClassPattern();
 	wxString funcPattern  = data.GetFunctionPattern();
-	
+
 	//replace $(Name) here **before** the call to ExpandAllVariables()
 	classPattern.Replace(wxT("$(Name)"), dc.name);
 	funcPattern.Replace(wxT("$(Name)"), dc.name);
-	
+
 	classPattern = ExpandAllVariables(classPattern, editor.GetProjectName(), editor.GetFileName().GetFullPath());
 	funcPattern = ExpandAllVariables(funcPattern, editor.GetProjectName(), editor.GetFileName().GetFullPath());
-	
+
 	dc.comment.Replace(wxT("$(ClassPattern)"), classPattern);
 	dc.comment.Replace(wxT("$(FunctionPattern)"), funcPattern);
-	
+
 	//close the comment
 	dc.comment << wxT(" */\n");
 	dc.comment.Prepend(blockStart);
-	
+
 	editor.InsertTextWithIndentation(dc.comment, lineno);
 
 	//since we just inserted a text to the document, we force a save on the
@@ -1149,14 +1177,14 @@ void ContextCpp::OnCommentSelection(wxCommandEvent &event)
 	//createa C block comment
 	editor.BeginUndoAction();
 	editor.InsertText(start, wxT("/*"));
-	
+
 	//advance the end selection by 2
 	end = editor.PositionAfter(editor.PositionAfter(end));
 	editor.InsertText(end, wxT("*/"));
-	
+
 	end = editor.PositionAfter(editor.PositionAfter(end));
 	editor.SetCaretAt(end);
-	
+
 	editor.EndUndoAction();
 }
 
@@ -1831,36 +1859,41 @@ void ContextCpp::ApplySettings()
 	rCtrl.RegisterImage(15, m_cppFileBmp);
 	rCtrl.RegisterImage(16, m_hFileBmp);
 	rCtrl.RegisterImage(17, m_otherFileBmp);
+	
+	//delete uneeded commands 
+	rCtrl.CmdKeyClear('/', wxSCI_SCMOD_CTRL);
 }
 
 void ContextCpp::Initialize()
 {
 	//load the context menu from the resource manager
 	m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
+	
+	/*
+		m_rclickMenu->Connect(XRCID("swap_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnSwapFiles), NULL, this);
+		m_rclickMenu->Connect(XRCID("comment_selection"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentSelection), NULL, this);
+		m_rclickMenu->Connect(XRCID("comment_line"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentLine), NULL, this);
+		m_rclickMenu->Connect(XRCID("find_decl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindDecl), NULL, this);
+		m_rclickMenu->Connect(XRCID("find_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindImpl), NULL, this);
 
-	m_rclickMenu->Connect(XRCID("swap_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnSwapFiles), NULL, this);
-	m_rclickMenu->Connect(XRCID("comment_selection"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentSelection), NULL, this);
-	m_rclickMenu->Connect(XRCID("comment_line"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentLine), NULL, this);
-	m_rclickMenu->Connect(XRCID("find_decl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindDecl), NULL, this);
-	m_rclickMenu->Connect(XRCID("find_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindImpl), NULL, this);
-
-#if defined (__WXGTK__)
-	//on GTK, we need to connect the sub menu to the events
-	wxMenuItem *refactorMenuItem = NULL;
-	refactorMenuItem = m_rclickMenu->FindItem(XRCID("code_gen_refactoring"));
-	wxMenu *refactorMenu = refactorMenuItem->GetSubMenu();
-	if (refactorMenu) {
-		refactorMenu->Connect(XRCID("insert_doxy_comment"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnInsertDoxyComment), NULL, this);
-		refactorMenu->Connect(XRCID("move_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnMoveImpl), NULL, this);
-		refactorMenu->Connect(XRCID("add_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnAddImpl), NULL, this);
-		refactorMenu->Connect(XRCID("setters_getters"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnGenerateSettersGetters), NULL, this);
-	}
-#else // Windows/Mac
-	m_rclickMenu->Connect(XRCID("insert_doxy_comment"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnInsertDoxyComment), NULL, this);
-	m_rclickMenu->Connect(XRCID("move_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnMoveImpl), NULL, this);
-	m_rclickMenu->Connect(XRCID("add_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnAddImpl), NULL, this);
-	m_rclickMenu->Connect(XRCID("setters_getters"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnGenerateSettersGetters), NULL, this);
-#endif
+	#if defined (__WXGTK__)
+		//on GTK, we need to connect the sub menu to the events
+		wxMenuItem *refactorMenuItem = NULL;
+		refactorMenuItem = m_rclickMenu->FindItem(XRCID("code_gen_refactoring"));
+		wxMenu *refactorMenu = refactorMenuItem->GetSubMenu();
+		if (refactorMenu) {
+			refactorMenu->Connect(XRCID("insert_doxy_comment"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnInsertDoxyComment), NULL, this);
+			refactorMenu->Connect(XRCID("move_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnMoveImpl), NULL, this);
+			refactorMenu->Connect(XRCID("add_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnAddImpl), NULL, this);
+			refactorMenu->Connect(XRCID("setters_getters"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnGenerateSettersGetters), NULL, this);
+		}
+	#else // Windows/Mac
+		m_rclickMenu->Connect(XRCID("insert_doxy_comment"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnInsertDoxyComment), NULL, this);
+		m_rclickMenu->Connect(XRCID("move_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnMoveImpl), NULL, this);
+		m_rclickMenu->Connect(XRCID("add_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnAddImpl), NULL, this);
+		m_rclickMenu->Connect(XRCID("setters_getters"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnGenerateSettersGetters), NULL, this);
+	#endif
+	 */
 }
 
 void ContextCpp::AutoAddComment()
@@ -1877,10 +1910,10 @@ void ContextCpp::AutoAddComment()
 	cur_style = rCtrl.GetStyleAt(curpos);
 	next_style = rCtrl.GetStyleAt(rCtrl.PositionAfter(curpos));
 	prepre_style = rCtrl.GetStyleAt(rCtrl.PositionBefore(prevpos));
-	
+
 	CommentConfigData data;
 	EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
-	
+
 	if (cur_style == wxSCI_C_COMMENTLINE) {
 
 		//C++ comment style was in the previous line
@@ -1911,12 +1944,12 @@ void ContextCpp::AutoAddComment()
 		}
 
 	} else if (cur_style == wxSCI_C_COMMENT || cur_style == wxSCI_C_COMMENTDOC) {
-		
-		if(data.GetAddStarOnCComment() == false) {
+
+		if (data.GetAddStarOnCComment() == false) {
 			ContextBase::AutoIndent(wxT('\n'));
 			return;
 		}
-		
+
 		// we are in C style comment
 		int indentSize = rCtrl.GetIndent();
 		int line = rCtrl.LineFromPosition(curpos);

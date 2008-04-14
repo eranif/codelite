@@ -60,6 +60,7 @@ class Frame : public wxFrame
 	std::map<int, wxString> m_toolbars;//< map between toolbars and their resource ID
 	std::map<int, wxString> m_panes;//< map between panes and their name
 	bool m_doingReplaceInFiles;
+	wxMenu *m_cppMenu;
 	
 public:		
 	// the access method to the singleton frame is by using the Get method
@@ -135,7 +136,7 @@ public:
 	 * \param doDelete delete the page from the notebook as well
 	 * \param veto [output] set to true to veto the page closer
 	 */
-	void ClosePage(LEditor *editor, bool notify, int index, bool doDelete, bool &veto);
+	void ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete, bool &veto);
 	
 	/**
 	 * Load session into LE
@@ -327,10 +328,13 @@ protected:
 	void OnViewPaneUI(wxUpdateUIEvent &event);
 	
 	void OnManagePlugins(wxCommandEvent &e);
+	void OnCppContextMenu(wxCommandEvent &e);
 	
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);
 	void ShowBuildConfigurationManager();
+	void AddCppMenu();
+	void RemoveCppMenu();
 	
 	// Any class wishing to process wxWindows events must use this macro
 	DECLARE_EVENT_TABLE()

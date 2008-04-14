@@ -127,7 +127,7 @@
 				</object>
 			</object>
 			<object class="wxMenuItem" name="convert_eol">
-				<label>Convert Line End Characters\tCtrl+Shift+C</label>
+				<label>Convert Line End Characters</label>
 			</object>
             <object class="wxMenuItem" name="display_eol">
                 <label>Display EOL</label>
@@ -451,7 +451,7 @@
     
     <object class="wxMenu" name="editor_right_click">
 		<object class="wxMenuItem" name="swap_files">
-            <label>Swap Header/Implementation file</label>
+            <label>Swap Header/Implementation file\tF12</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="find_decl">
@@ -482,10 +482,10 @@
 		
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>		
 		<object class="wxMenuItem" name="comment_selection">
-            <label>Comment &amp;Selection</label>
+            <label>Comment &amp;Selection\tCtrl+Shift+C</label>
         </object>
         <object class="wxMenuItem" name="comment_line">
-            <label>Comment &amp;Line</label>
+            <label>Comment &amp;Line\tCtrl+Shift+P</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="wxID_UNDO">

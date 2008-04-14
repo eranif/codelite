@@ -755,7 +755,7 @@ void Manager::ShowOutputPane(wxString focusWin, bool commit)
 	// set the selection to focus win
 	OutputPane *pane = Frame::Get()->GetOutputPane();
 	int index = pane->CaptionToIndex(focusWin);
-	if ( index != wxNOT_FOUND && index != (int)pane->GetNotebook()->GetSelection()) {
+	if ( index != wxNOT_FOUND && (size_t)index != pane->GetNotebook()->GetSelection()) {
 		pane->GetNotebook()->SetSelection((size_t)index);
 	}
 }
@@ -1478,8 +1478,8 @@ LEditor *Manager::GetActiveEditor() const
 		return NULL;
 	}
 
-	int selected = book->GetSelection();
-	if (selected == wxNOT_FOUND)
+	size_t selected = book->GetSelection();
+	if (selected == Notebook::npos)
 		return NULL;
 
 	LEditor *editor = dynamic_cast<LEditor*>(book->GetPage(selected));

@@ -241,6 +241,20 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("display_eol"), Frame::OnViewDisplayEOL)
 	EVT_UPDATE_UI(XRCID("display_eol"), Frame::OnViewDisplayEOL_UI)
 
+	//-----------------------------------------------------------------
+	//C++ context menu
+	//-----------------------------------------------------------------
+	EVT_MENU(XRCID("swap_files"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("comment_selection"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("comment_line"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("find_decl"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("find_impl"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("insert_doxy_comment"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("move_impl"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("add_impl"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("setters_getters"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("add_include_file"), Frame::OnCppContextMenu)
+
 	#if defined (__WXMSW__) || defined (__WXMAC__)
 	EVT_UPDATE_UI(wxID_SAVE, Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("complete_word"), Frame::OnCompleteWordUpdateUI)
@@ -274,6 +288,7 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 		, m_buildInRun(false)
 		, m_rebuild(false)
 		, m_doingReplaceInFiles(false)
+		, m_cppMenu(NULL)
 {
 #if  defined(__WXGTK20__)
 	// A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -302,6 +317,20 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	EditorCreatorST::Get()->SetParent(GetNotebook());
 	m_timer = new wxTimer(this, FrameTimerId);
 	m_timer->Start(100);
+	
+	//add an entry to the frame accelerator table
+	wxAcceleratorEntry* a = wxAcceleratorEntry::Create(wxT("\tCtrl+Shift+I"));
+	wxAcceleratorEntry accel;
+	if( a ) {
+		a->Set(a->GetFlags(), a->GetKeyCode(), XRCID("add_include_file"));
+		accel = *a;
+		delete a;
+	}
+	
+	wxAcceleratorEntry entries[1];
+	entries[0] = accel;
+	wxAcceleratorTable table(1, entries);
+	SetAcceleratorTable(table);
 }
 
 Frame::~Frame(void)
@@ -358,7 +387,7 @@ void Frame::Initialize(bool loadLastSession)
 	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
 		m_theFrame->LoadSession(wxT("Default"));
 	}
-	
+
 	SetGccColourFunction( BuildTab::ColourGccLine );
 }
 
@@ -436,7 +465,7 @@ void Frame::CreateGUIControls(void)
 	// Create the notebook for all the files
 	long style = wxVB_TOP|wxVB_HAS_X|wxVB_BORDER|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-	
+
 	m_mgr.AddPane(m_book, wxAuiPaneInfo().Name(wxT("Editor")).
 	              CenterPane().PaneBorder(true));
 
@@ -449,7 +478,7 @@ void Frame::CreateGUIControls(void)
 	CreateRecentlyOpenedFilesMenu();
 	CreateRecentlyOpenedWorkspacesMenu();
 	BuildSettingsConfigST::Get()->Load();
-	
+
 	//load dialog properties
 	EditorConfigST::Get()->ReadObject(wxT("FindInFilesData"), &m_data);
 	EditorConfigST::Get()->ReadObject(wxT("FindAndReplaceData"), &LEditor::GetFindReplaceData());
@@ -1151,6 +1180,7 @@ void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 void Frame::OnFileClose(wxCommandEvent &event)
 {
 	wxUnusedVar( event );
+	RemoveCppMenu();
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
 	if ( editor ) {
 		bool veto;
@@ -1158,13 +1188,21 @@ void Frame::OnFileClose(wxCommandEvent &event)
 	} else {
 		GetNotebook()->DeletePage((size_t) GetNotebook()->GetSelection());
 	}
+	
+	//this function does not send notification about page deletion, so we need to manually add the CppMenu()
+	AddCppMenu();
+	
 	GetOpenWindowsPane()->UpdateList();
 	GetMainBook()->Clear();
-} 
+}
 
 void Frame::OnFileClosing(NotebookEvent &event)
 {
 	// get the page that is now closing
+
+	//always remove the c++ menu
+	RemoveCppMenu();
+
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(event.GetSelection()));
 	if ( !editor )
 		return;
@@ -1196,14 +1234,21 @@ void Frame::OnPageChanged(NotebookEvent &event)
 	LEditor *editor = dynamic_cast<LEditor*>( GetNotebook()->GetPage(event.GetSelection()) );
 	if ( !editor ) {
 		SetTitle(title);
+		RemoveCppMenu();
 		return;
+	}
+
+	if ( editor->GetContext()->GetName() == wxT("C++") ) {
+		AddCppMenu();
+	} else {
+		RemoveCppMenu();
 	}
 
 	//update the symbol view as well in case we are in a workspace context
 	if (!editor->GetProject().IsEmpty()) {
 		GetWorkspacePane()->DisplaySymbolTree(editor->GetFileName());
 		GetWorkspacePane()->GetFileViewTree()->ExpandToPath(editor->GetProject(), editor->GetFileName());
-		if(GetFileExplorer()->GetIsLinkedToEditor()) {
+		if (GetFileExplorer()->GetIsLinkedToEditor()) {
 			GetFileExplorer()->GetFileTree()->ExpandToPath(editor->GetFileName());
 		}
 	}
@@ -1239,9 +1284,11 @@ void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 	event.Enable(editor && ManagerST::Get()->IsWorkspaceOpen());
 }
 
-void Frame::ClosePage(LEditor *editor, bool notify, int index, bool doDelete, bool &veto)
+void Frame::ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete, bool &veto)
 {
 	veto = false;
+	if(index == Notebook::npos) return;
+	
 	if ( editor->GetModify() ) {
 		// prompt user to save file
 		wxString msg;
@@ -2129,7 +2176,7 @@ void Frame::CreateWelcomePage()
 	content.Replace(wxT("$(FilesTable)"), filesTable);
 
 	m_welcomePage->SetPage(content);
-	GetNotebook()->AddPage(m_welcomePage, wxT("Welcome"), wxXmlResource::Get()->LoadBitmap(wxT("help_icon")), true);
+	GetNotebook()->AddPage(m_welcomePage, wxT("Welcome!"), wxNullBitmap, true);
 }
 
 void Frame::OnImportMSVS(wxCommandEvent &e)
@@ -2378,11 +2425,11 @@ void Frame::OnAppActivated(wxActivateEvent &e)
 			}
 		}
 	}
-	
+
 	if (files.empty() == false) {
 		TagsManagerST::Get()->RetagFiles( files );
 	}
-	
+
 	e.Skip();
 }
 
@@ -2447,7 +2494,7 @@ void Frame::AutoLoadExternalDb()
 			}
 		}
 	}
-} 
+}
 
 void Frame::OnCompileFile(wxCommandEvent &e)
 {
@@ -2738,4 +2785,52 @@ void Frame::ShowBuildConfigurationManager()
 			}
 		}
 	}
+}
+
+void Frame::AddCppMenu()
+{
+	size_t selection = GetNotebook()->GetSelection();
+	if( selection == Notebook::npos ) {
+		return;
+	}
+	
+	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(selection));
+	if ( !editor ) {
+		return;
+	}
+	
+	if(editor->GetContext()->GetName() != wxT("C++")){
+		return;
+	}
+
+	//load the C++ menu and append one to the menu bar
+	if (GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
+		GetMenuBar()->Append(editor->GetContext()->GetMenu(), wxT("&C++"));
+	}
+}
+
+void Frame::RemoveCppMenu()
+{
+	int idx = GetMenuBar()->FindMenu(wxT("C++"));
+	if ( idx != wxNOT_FOUND ) {
+		GetMenuBar()->Remove(idx);
+	}
+}
+
+void Frame::OnCppContextMenu(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	
+	size_t selection = GetNotebook()->GetSelection();
+	if( selection == Notebook::npos ) {
+		return;
+	}
+	
+	//get the active editor
+	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(selection));
+	if ( !editor ) {
+		return;
+	}
+
+	editor->GetContext()->ProcessEvent( e );
 }

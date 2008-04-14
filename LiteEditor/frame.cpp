@@ -2805,7 +2805,8 @@ void Frame::AddCppMenu()
 
 	//load the C++ menu and append one to the menu bar
 	if (GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
-		GetMenuBar()->Append(editor->GetContext()->GetMenu(), wxT("&C++"));
+		wxMenu *menu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
+		GetMenuBar()->Append(menu, wxT("&C++"));
 	}
 }
 
@@ -2813,7 +2814,8 @@ void Frame::RemoveCppMenu()
 {
 	int idx = GetMenuBar()->FindMenu(wxT("C++"));
 	if ( idx != wxNOT_FOUND ) {
-		GetMenuBar()->Remove(idx);
+		wxMenu *menu = GetMenuBar()->Remove(idx);
+		delete menu;
 	}
 }
 

@@ -14,7 +14,6 @@ BEGIN_EVENT_TABLE(wxTabContainer, wxPanel)
 	EVT_PAINT(wxTabContainer::OnPaint)
 	EVT_ERASE_BACKGROUND(wxTabContainer::OnEraseBg)
 	EVT_SIZE(wxTabContainer::OnSizeEvent)
-	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_TAB, wxTabContainer::OnDeleteTab)
 END_EVENT_TABLE()
 
 wxTabContainer::wxTabContainer(wxWindow *win, wxWindowID id, int orientation, long style)

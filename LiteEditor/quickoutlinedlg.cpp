@@ -30,7 +30,7 @@ EVT_TEXT(wxID_ANY, QuickOutlineDlg::OnTextEntered)
 END_EVENT_TABLE()
 
 QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString &fileName, int id, wxString title, wxPoint pos, wxSize size, int style ) 
-: wxDialog( parent, id, title, pos, size, style )
+: wxDialog( parent, id, title, pos, size, style|wxRAISED_BORDER )
 , m_fileName(fileName)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );

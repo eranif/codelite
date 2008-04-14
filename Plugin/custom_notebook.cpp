@@ -35,6 +35,8 @@ void Notebook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 	tab->SetWindow(win);
 	
 	AddPage(tab);
+	GetSizer()->Layout();
+	
 	Thaw();
 }
 
@@ -101,21 +103,21 @@ void Notebook::SetSelection(CustomTab *tab)
 	}
 
 	Freeze();
-	if (oldWindow && sz->GetItem(oldWindow)) {
-		//the item indeed exist in the sizer, remove it
-		sz->Detach(oldWindow);
-		oldWindow->Hide();
-	}
-
 	if (m_style & wxVB_LEFT || m_style & wxVB_TOP) {
 		sz->Insert(1, win, 1, wxEXPAND);
 	} else {
 		sz->Insert(0, win, 1, wxEXPAND);
 	}
 	win->Show();
+	
+	if (oldWindow && sz->GetItem(oldWindow)) {
+		//the item indeed exist in the sizer, remove it
+		sz->Detach(oldWindow);
+		oldWindow->Hide();
+	}
+	
 	sz->Layout();
 	Thaw();
-
 }
 
 size_t Notebook::GetSelection()
@@ -275,7 +277,6 @@ const wxArrayPtrVoid& Notebook::GetHistory() const
 
 void Notebook::AddPage(CustomTab *tab)
 {
-	Freeze();
 	wxWindow *oldWindow(NULL);
 	CustomTab *oldSelection = m_tabs->GetSelection();
 	if (oldSelection) {
@@ -289,24 +290,23 @@ void Notebook::AddPage(CustomTab *tab)
 	wxSizer *sz = GetSizer();
 	wxWindow *win = tab->GetWindow();
 	
-	win->Hide();
+	
 	if (tab->GetSelected()) {
-		if (oldWindow && sz->GetItem(oldWindow)) {
-			//the item indeed exist in the sizer, remove it
-			sz->Detach(oldWindow);
-			oldWindow->Hide();
-		}
 		//inert the new item
 		if (m_style & wxVB_LEFT || m_style & wxVB_TOP) {
 			sz->Insert(1, win, 1, wxEXPAND);
 		} else {
 			sz->Insert(0, win, 1, wxEXPAND);
 		}
-		win->Show();
+
+		if (oldWindow && sz->GetItem(oldWindow)) {
+			//the item indeed exist in the sizer, remove it
+			sz->Detach(oldWindow);
+			oldWindow->Hide();
+		}
+	}else{
+		win->Hide();
 	}
-	
-	Thaw();
-	sz->Layout();
 }
 
 void Notebook::SetRightClickMenu(wxMenu* menu)

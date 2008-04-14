@@ -15,6 +15,8 @@ class wxTabContainer : public wxPanel
 	wxArrayPtrVoid m_history;
 	wxMenu *m_rightClickMenu;
 	
+	friend class CustomTab;
+	
 protected:
 	void Initialize();
 

@@ -40,10 +40,12 @@ CustomTab::CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const w
 		, m_x_padding(3)
 {
 	Initialize();
+	GetParent()->Connect(GetId(), wxEVT_CMD_DELETE_TAB, wxCommandEventHandler(wxTabContainer::OnDeleteTab));
 }
 
 CustomTab::~CustomTab()
 {
+	GetParent()->Disconnect(GetId(), wxEVT_CMD_DELETE_TAB, wxCommandEventHandler(wxTabContainer::OnDeleteTab));
 }
 
 void CustomTab::OnPaint(wxPaintEvent &event)
@@ -182,7 +184,7 @@ void CustomTab::OnLeftUp(wxMouseEvent &e)
 		wxCommandEvent event(wxEVT_CMD_DELETE_TAB, GetId());
 		event.SetEventObject(this);
 
-		GetParent()->AddPendingEvent(event);
+		parent->AddPendingEvent(event);
 		return;
 	}
 

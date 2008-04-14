@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <wxFormBuilder_Project>
-    <FileVersion major="1" minor="7" />
+    <FileVersion major="1" minor="9" />
     <object class="Project" expanded="1">
-        <property name="bitmaps"></property>
         <property name="class_decoration"></property>
         <property name="code_generation">C++</property>
+        <property name="disconnect_events">1</property>
         <property name="encoding">UTF-8</property>
         <property name="event_generation">connect</property>
         <property name="file">quickoutlinedlg</property>
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
-        <property name="icons"></property>
         <property name="internationalize">0</property>
         <property name="name">QuickOutline</property>
         <property name="namespace"></property>
         <property name="path">..\LiteEditor\</property>
-        <property name="precompiled_header">wx/wxprec.h</property>
+        <property name="precompiled_header">#ifdef WX_PRECOMP&#x0A;&#x0A;#include &quot;wx/wxprec.h&quot;&#x0A;&#x0A;#ifdef __BORLANDC__&#x0A;#pragma hdrstop&#x0A;#endif //__BORLANDC__&#x0A;&#x0A;#else&#x0A;#include &lt;wx/wx.h&gt;&#x0A;#endif //WX_PRECOMP</property>
         <property name="relative_path">1</property>
         <property name="use_enum">0</property>
         <property name="use_microsoft_bom">0</property>
@@ -39,6 +38,7 @@
             <property name="title"></property>
             <property name="tooltip"></property>
             <property name="window_extra_style"></property>
+            <property name="window_name"></property>
             <property name="window_style">wxRAISED_BORDER</property>
             <event name="OnActivate"></event>
             <event name="OnActivateApp"></event>
@@ -99,7 +99,30 @@
                         <property name="tooltip"></property>
                         <property name="value"></property>
                         <property name="window_extra_style"></property>
+                        <property name="window_name"></property>
                         <property name="window_style">wxNO_BORDER</property>
+                        <event name="OnChar"></event>
+                        <event name="OnEnterWindow"></event>
+                        <event name="OnEraseBackground"></event>
+                        <event name="OnKeyDown"></event>
+                        <event name="OnKeyUp"></event>
+                        <event name="OnKillFocus"></event>
+                        <event name="OnLeaveWindow"></event>
+                        <event name="OnLeftDClick"></event>
+                        <event name="OnLeftDown"></event>
+                        <event name="OnLeftUp"></event>
+                        <event name="OnMiddleDClick"></event>
+                        <event name="OnMiddleDown"></event>
+                        <event name="OnMiddleUp"></event>
+                        <event name="OnMotion"></event>
+                        <event name="OnMouseEvents"></event>
+                        <event name="OnMouseWheel"></event>
+                        <event name="OnPaint"></event>
+                        <event name="OnRightDClick"></event>
+                        <event name="OnRightDown"></event>
+                        <event name="OnRightUp"></event>
+                        <event name="OnSetFocus"></event>
+                        <event name="OnSize"></event>
                         <event name="OnText"></event>
                         <event name="OnTextEnter"></event>
                         <event name="OnTextMaxLen"></event>
@@ -129,7 +152,30 @@
                         <property name="subclass"></property>
                         <property name="tooltip"></property>
                         <property name="window_extra_style"></property>
+                        <property name="window_name"></property>
                         <property name="window_style"></property>
+                        <event name="OnChar"></event>
+                        <event name="OnEnterWindow"></event>
+                        <event name="OnEraseBackground"></event>
+                        <event name="OnKeyDown"></event>
+                        <event name="OnKeyUp"></event>
+                        <event name="OnKillFocus"></event>
+                        <event name="OnLeaveWindow"></event>
+                        <event name="OnLeftDClick"></event>
+                        <event name="OnLeftDown"></event>
+                        <event name="OnLeftUp"></event>
+                        <event name="OnMiddleDClick"></event>
+                        <event name="OnMiddleDown"></event>
+                        <event name="OnMiddleUp"></event>
+                        <event name="OnMotion"></event>
+                        <event name="OnMouseEvents"></event>
+                        <event name="OnMouseWheel"></event>
+                        <event name="OnPaint"></event>
+                        <event name="OnRightDClick"></event>
+                        <event name="OnRightDown"></event>
+                        <event name="OnRightUp"></event>
+                        <event name="OnSetFocus"></event>
+                        <event name="OnSize"></event>
                         <event name="OnUpdateUI"></event>
                     </object>
                 </object>
@@ -155,7 +201,30 @@
                         <property name="subclass"></property>
                         <property name="tooltip"></property>
                         <property name="window_extra_style"></property>
+                        <property name="window_name"></property>
                         <property name="window_style">wxNO_BORDER</property>
+                        <event name="OnChar"></event>
+                        <event name="OnEnterWindow"></event>
+                        <event name="OnEraseBackground"></event>
+                        <event name="OnKeyDown"></event>
+                        <event name="OnKeyUp"></event>
+                        <event name="OnKillFocus"></event>
+                        <event name="OnLeaveWindow"></event>
+                        <event name="OnLeftDClick"></event>
+                        <event name="OnLeftDown"></event>
+                        <event name="OnLeftUp"></event>
+                        <event name="OnMiddleDClick"></event>
+                        <event name="OnMiddleDown"></event>
+                        <event name="OnMiddleUp"></event>
+                        <event name="OnMotion"></event>
+                        <event name="OnMouseEvents"></event>
+                        <event name="OnMouseWheel"></event>
+                        <event name="OnPaint"></event>
+                        <event name="OnRightDClick"></event>
+                        <event name="OnRightDown"></event>
+                        <event name="OnRightUp"></event>
+                        <event name="OnSetFocus"></event>
+                        <event name="OnSize"></event>
                         <event name="OnTreeBeginDrag"></event>
                         <event name="OnTreeBeginLabelEdit"></event>
                         <event name="OnTreeBeginRDrag"></event>

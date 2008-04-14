@@ -1863,6 +1863,8 @@ void Frame::OnFileCloseAll(wxCommandEvent &event)
 	GetMainBook()->Clear();
 	GetOpenWindowsPane()->UpdateList();
 	GetWorkspacePane()->CollpaseAll();
+	
+	RemoveCppMenu();
 }
 
 void Frame::OnQuickOutline(wxCommandEvent &event)

@@ -794,7 +794,8 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)
 	if (choice.IsEmpty()) {
 		return;
 	}
-
+	
+	//check to see if this file is a workspace file
 	AddIncludeFileDlg *dlg = new AddIncludeFileDlg(NULL, choice, rCtrl.GetText(), FindLineToAddInclude());
 	if (dlg->ShowModal() == wxID_OK) {
 		//add the line to the current document

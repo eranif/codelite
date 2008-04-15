@@ -1,4 +1,5 @@
 #include "addincludefiledlg.h"
+#include "manager.h"
 #include "wx/filename.h"
 #include "wx/regex.h"
 
@@ -51,7 +52,12 @@ void AddIncludeFileDlg::UpdateLineToAdd()
 		rest = fn.GetFullName();
 	}
 	
-	line << wxT("#include \"") << rest << wxT("\"");
+	if (!ManagerST::Get()->IsFileInWorkspace(m_fullpath)) {
+		line << wxT("#include <") << rest << wxT(">");
+	} else {
+		line << wxT("#include \"") << rest << wxT("\"");
+	}
+	
 	m_textCtrlLineToAdd->SetValue(line);
 
 }

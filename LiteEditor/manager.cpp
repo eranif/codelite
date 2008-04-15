@@ -1309,7 +1309,7 @@ bool Manager::IsFileInWorkspace(const wxString &fileName)
 	wxFileName findme(fileName);
 	std::vector<wxFileName> files;
 
-	GetWorkspaceFiles(files);
+	GetWorkspaceFiles(files, true);
 	std::vector<wxFileName>::const_iterator iter = std::find(files.begin(), files.end(), findme);
 	return iter != files.end();
 }

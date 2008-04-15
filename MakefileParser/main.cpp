@@ -14,6 +14,8 @@ void LogMessage(const wxString& msg)
 {
 	wxCharBuffer buf = msg.ToAscii();
 	printf("%s", buf.data());
+	
+	wxString mystring;
 }
 
 MakefileNode* ImportFromMakefile(const wxString &path)

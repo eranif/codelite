@@ -2179,7 +2179,10 @@ void Frame::CreateWelcomePage()
 	
 	//replace the HTML colours with platfroms correct colours
 	wxColour active_caption 	= wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-	wxColour active_caption_txt = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+	wxColour active_caption_txt = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+	
+	active_caption = DrawingUtils::LightColour(active_caption, 50);
+	
 	content.Replace(wxT("$(ACTIVE_CAPTION)"), active_caption.GetAsString());
 	content.Replace(wxT("$(ACTIVE_CAPTION_TEXT)"), active_caption_txt.GetAsString());
 	

@@ -31,7 +31,6 @@ void WorkspaceTab::CreateGUIControls()
 	SetSizer(sz);
 	
 	wxBoxSizer *hsz = new wxBoxSizer(wxHORIZONTAL);
-	sz->Add(hsz, 0, wxEXPAND|wxTOP, 5);
 	
 	//add toolbar on top of the workspace tab that includes a single button that collapse all 
 	//tree items
@@ -56,6 +55,7 @@ void WorkspaceTab::CreateGUIControls()
 	
 	wxButton *btn = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	hsz->Add(btn, 0, wxALIGN_CENTER_VERTICAL);
+	sz->Add(hsz, 0, wxEXPAND|wxTOP, 5);
 	
 	ConnectButton(btn, WorkspaceTab::OnConfigurationManager);
 	btn->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTab::OnConfigurationManagerUI), NULL, this);

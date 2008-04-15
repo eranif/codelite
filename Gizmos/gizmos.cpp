@@ -584,9 +584,9 @@ wxString GizmosPlugin::DoGetVirtualFuncImpl(const NewClassInfo &info)
 		TagEntryPtr tt = no_dup_tags.at(i);
 		bool collect(false);
 		if (info.implAllVirtual) {
-			collect = TagsManagerST::Get()->IsVirtual(tt);
+			collect = m_mgr->GetTagsManager()->IsVirtual(tt);
 		} else if (info.implAllPureVirtual) {
-			collect = TagsManagerST::Get()->IsPureVirtual(tt);
+			collect = m_mgr->GetTagsManager()->IsPureVirtual(tt);
 		}
 
 		if (collect) {
@@ -597,7 +597,7 @@ wxString GizmosPlugin::DoGetVirtualFuncImpl(const NewClassInfo &info)
 	wxString impl;
 	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
 		TagEntryPtr tt = tags.at(i);
-		impl << TagsManagerST::Get()->FormatFunction(tt, true, info.name);
+		impl << m_mgr->GetTagsManager()->FormatFunction(tt, true, info.name);
 	}
 	return impl;
 }
@@ -625,9 +625,9 @@ wxString GizmosPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
 		TagEntryPtr tt = no_dup_tags.at(i);
 		bool collect(false);
 		if (info.implAllVirtual) {
-			collect = TagsManagerST::Get()->IsVirtual(tt);
+			collect = m_mgr->GetTagsManager()->IsVirtual(tt);
 		} else if (info.implAllPureVirtual) {
-			collect = TagsManagerST::Get()->IsPureVirtual(tt);
+			collect = m_mgr->GetTagsManager()->IsPureVirtual(tt);
 		}
 
 		if (collect) {
@@ -638,7 +638,7 @@ wxString GizmosPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
 	wxString decl;
 	for (std::vector< TagEntryPtr >::size_type i=0; i< tags.size(); i++) {
 		TagEntryPtr tt = tags.at(i);
-		decl << wxT("\t") << TagsManagerST::Get()->FormatFunction(tt);
+		decl << wxT("\t") << m_mgr->GetTagsManager()->FormatFunction(tt);
 	}
 	return decl;
 }

@@ -5,13 +5,13 @@
     <WorkspaceConfiguration Name="DebugUnicode" Selected="no">
       <Project Name="Notebook" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="ReleaseUnicode" Selected="no">
+    <WorkspaceConfiguration Name="ReleaseUnicode" Selected="yes">
       <Project Name="Notebook" ConfigName="ReleaseUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="WinDebugUnicode" Selected="no">
       <Project Name="Notebook" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="WinReleaseUnicode" Selected="yes">
+    <WorkspaceConfiguration Name="WinReleaseUnicode" Selected="no">
       <Project Name="Notebook" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

@@ -10,6 +10,7 @@
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "wx/sstream.h"
+#include "globals.h"
 
 static bool IsSource(const wxString &ext)
 {
@@ -240,7 +241,7 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, bool force)
 	text << wxT("ProjectName:=") << proj->GetName() << wxT("\n");
 	text << wxT("\n");
 
-	CreateConfigsVariables(bldConf, text);
+	CreateConfigsVariables(proj, bldConf, text);
 
 	// create a list of objects
 	CreateObjectList(proj, text);
@@ -564,7 +565,7 @@ void BuilderGnuMake::CreatePreBuildEvents(BuildConfigPtr bldConf, wxString &text
 	}
 }
 
-void BuilderGnuMake::CreateConfigsVariables(BuildConfigPtr bldConf, wxString &text)
+void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldConf, wxString &text)
 {
 	wxString name = bldConf->GetName();
 	name = NormalizeConfigName(name);
@@ -614,14 +615,19 @@ void BuilderGnuMake::CreateConfigsVariables(BuildConfigPtr bldConf, wxString &te
 
 	//link options are kept with semi-colons, strip them
 	text << wxT("LinkOptions := ") << linkOpt << wxT("\n");
-	text << wxT("IncludePath := ") << ParseIncludePath(bldConf->GetIncludePath()) << wxT("\n");
-	text << wxT("RcIncludePath :=") << ParseIncludePath(bldConf->GetResCmpIncludePath()) << wxT("\n");
+	
+	// add the global include path followed by the project include path
+	text << wxT("IncludePath := ") << ParseIncludePath(cmp->GetGlobalIncludePath(), proj->GetName()) << wxT(" ") << ParseIncludePath(bldConf->GetIncludePath(), proj->GetName()) << wxT("\n");
+	
+	text << wxT("RcIncludePath :=") << ParseIncludePath(bldConf->GetResCmpIncludePath(), proj->GetName()) << wxT("\n");
 	text << wxT("Libs :=") << ParseLibs(bldConf->GetLibraries()) << wxT("\n");
-	text << wxT("LibPath :=") << ParseLibPath(bldConf->GetLibPath()) << wxT("\n");
+	
+	// add the global library path followed by the project library path
+	text << wxT("LibPath :=") << ParseLibPath(cmp->GetGlobalLibPath(), proj->GetName()) << wxT(" ") << ParseLibPath(bldConf->GetLibPath(), proj->GetName()) << wxT("\n");
 	text << wxT("endif\n\n");
 }
 
-wxString BuilderGnuMake::ParseIncludePath(const wxString &paths)
+wxString BuilderGnuMake::ParseIncludePath(const wxString &paths, const wxString &projectName)
 {
 	//convert semi-colon delimited string into GNU list of
 	//include paths:
@@ -631,12 +637,14 @@ wxString BuilderGnuMake::ParseIncludePath(const wxString &paths)
 	while (tkz.HasMoreTokens()) {
 		wxString path(tkz.NextToken());
 		TrimString(path);
+		path = ExpandAllVariables(path, projectName, wxEmptyString);
+		path.Replace(wxT("\\"), wxT("/"));
 		incluedPath << wxT("$(IncludeSwitch)") << path << wxT(" ");
 	}
 	return incluedPath;
 }
 
-wxString BuilderGnuMake::ParseLibPath(const wxString &paths)
+wxString BuilderGnuMake::ParseLibPath(const wxString &paths, const wxString &projectName)
 {
 	//convert semi-colon delimited string into GNU list of
 	//lib path
@@ -646,6 +654,8 @@ wxString BuilderGnuMake::ParseLibPath(const wxString &paths)
 	while (tkz.HasMoreTokens()) {
 		wxString path(tkz.NextToken());
 		TrimString(path);
+		path = ExpandAllVariables(path, projectName, wxEmptyString);
+		path.Replace(wxT("\\"), wxT("/"));
 		libPath << wxT("$(LibraryPathSwitch)") << path << wxT(" ");
 	}
 	return libPath;

@@ -38,7 +38,9 @@ class WXDLLIMPEXP_LE_SDK Compiler : public ConfObject {
 	wxString m_warningFileNameIndex;
 
 	std::map<wxString, wxString> m_tools;
-
+	wxString m_globalIncludePath;
+	wxString m_globalLibPath;
+	
 public:
 	typedef std::map<wxString, wxString>::const_iterator ConstIterator;
 
@@ -76,6 +78,11 @@ public:
 	void SetWarnPattern(const wxString &s) { m_warningPattern = s; }
 	void SetWarnFileNameIndex(const wxString &s) { m_warningFileNameIndex = s; }
 	void SetWarnLineNumberIndex(const wxString &s) { m_warningLineNubmerIndex = s; };
+	
+	void SetGlobalIncludePath(const wxString& globalIncludePath) {this->m_globalIncludePath = globalIncludePath;}
+	void SetGlobalLibPath(const wxString& globalLibPath) {this->m_globalLibPath = globalLibPath;}
+	const wxString& GetGlobalIncludePath() const {return m_globalIncludePath;}
+	const wxString& GetGlobalLibPath() const {return m_globalLibPath;}
 };	
 
 typedef SmartPtr<Compiler> CompilerPtr;

@@ -36,7 +36,7 @@ public:
 
 private:
 	void GenerateMakefile(ProjectPtr proj, bool force);
-	void CreateConfigsVariables(BuildConfigPtr bldConf, wxString &text);
+	void CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldConf, wxString &text);
 	void CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString &targetName, wxString &text);
 	void CreateFileTargets(ProjectPtr proj, wxString &text);
 	void CreateObjectList(ProjectPtr proj, wxString &text);
@@ -46,8 +46,8 @@ private:
 	
 	wxString GetCdCmd(const wxFileName &path1, const wxFileName &path2);
 
-	wxString ParseIncludePath(const wxString &paths);
-	wxString ParseLibPath(const wxString &paths);
+	wxString ParseIncludePath(const wxString &paths, const wxString &projectName);
+	wxString ParseLibPath(const wxString &paths, const wxString &projectName);
 	wxString ParseLibs(const wxString &libs);
 	wxString ParsePreprocessor(const wxString &prep);
 	bool HasPrebuildCommands(BuildConfigPtr bldConf) const;

@@ -33,7 +33,7 @@ CompilerPage::CompilerPage( wxWindow* parent, wxString name, int id, wxPoint pos
 	bSizer11 = new wxBoxSizer( wxHORIZONTAL );
 	
 	wxStaticBoxSizer* sbSizer5;
-	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT("Compiler Error Pattern:") ), wxVERTICAL );
+	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Compiler Error Pattern:") ), wxVERTICAL );
 	
 	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("Regex Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
@@ -59,7 +59,7 @@ CompilerPage::CompilerPage( wxWindow* parent, wxString name, int id, wxPoint pos
 	bSizer11->Add( sbSizer5, 1, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer4;
-	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT("Compiler Warning Pattern:") ), wxVERTICAL );
+	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Compiler Warning Pattern:") ), wxVERTICAL );
 	
 	m_staticText51 = new wxStaticText( this, wxID_ANY, wxT("Regex Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText51->Wrap( -1 );
@@ -87,7 +87,7 @@ CompilerPage::CompilerPage( wxWindow* parent, wxString name, int id, wxPoint pos
 	mainSizer->Add( bSizer11, 0, wxALL|wxEXPAND, 0 );
 	
 	wxStaticBoxSizer* sbSizer41;
-	sbSizer41 = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT("Tools:") ), wxVERTICAL );
+	sbSizer41 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Tools:") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer4;
 	fgSizer4 = new wxFlexGridSizer( 3, 4, 0, 0 );
@@ -135,13 +135,6 @@ CompilerPage::CompilerPage( wxWindow* parent, wxString name, int id, wxPoint pos
 	
 	mainSizer->Add( sbSizer41, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText8 = new wxStaticText( this, wxID_ANY, wxT("Switches:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText8->Wrap( -1 );
-	mainSizer->Add( m_staticText8, 0, wxALL, 5 );
-	
-	m_listSwitches = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
-	mainSizer->Add( m_listSwitches, 1, wxEXPAND|wxALL, 5 );
-	
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
 	fgSizer2->AddGrowableCol( 1 );
@@ -156,6 +149,40 @@ CompilerPage::CompilerPage( wxWindow* parent, wxString name, int id, wxPoint pos
 	fgSizer2->Add( m_textObjectExtension, 1, wxALL|wxEXPAND, 5 );
 	
 	mainSizer->Add( fgSizer2, 0, wxALL|wxEXPAND, 0 );
+	
+	wxStaticBoxSizer* sbSizer51;
+	sbSizer51 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Compiler Global Paths:") ), wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer3;
+	fgSizer3 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer3->AddGrowableCol( 1 );
+	fgSizer3->SetFlexibleDirection( wxBOTH );
+	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText141 = new wxStaticText( this, wxID_ANY, wxT("Include Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText141->Wrap( -1 );
+	fgSizer3->Add( m_staticText141, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlGlobalIncludePath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer3->Add( m_textCtrlGlobalIncludePath, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText16 = new wxStaticText( this, wxID_ANY, wxT("Libraries Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText16->Wrap( -1 );
+	fgSizer3->Add( m_staticText16, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlGlobalLibPath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer3->Add( m_textCtrlGlobalLibPath, 0, wxALL|wxEXPAND, 5 );
+	
+	sbSizer51->Add( fgSizer3, 1, wxEXPAND, 5 );
+	
+	mainSizer->Add( sbSizer51, 0, wxEXPAND|wxALL, 5 );
+	
+	m_staticText8 = new wxStaticText( this, wxID_ANY, wxT("Switches:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText8->Wrap( -1 );
+	mainSizer->Add( m_staticText8, 0, wxALL, 5 );
+	
+	m_listSwitches = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+	mainSizer->Add( m_listSwitches, 1, wxEXPAND|wxALL, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -178,6 +205,9 @@ void CompilerPage::CustomInitialize()
 	m_textLinkerName->SetValue(cmp->GetTool(wxT("LinkerName")));
 	m_textSOLinker->SetValue(cmp->GetTool(wxT("SharedObjectLinkerName")));
 	m_textResourceCmp->SetValue(cmp->GetTool(wxT("ResourceCompiler")));
+	m_textCtrlGlobalIncludePath->SetValue(cmp->GetGlobalIncludePath());
+	m_textCtrlGlobalLibPath->SetValue(cmp->GetGlobalLibPath());
+	
 	InitSwitches();
 	ConnectEvents();
 }
@@ -198,6 +228,9 @@ void CompilerPage::Save()
 	cmp->SetTool(wxT("LinkerName"), m_textLinkerName->GetValue());
 	cmp->SetTool(wxT("SharedObjectLinkerName"), m_textSOLinker->GetValue());
 	cmp->SetTool(wxT("ResourceCompiler"), m_textResourceCmp->GetValue());
+	cmp->SetGlobalIncludePath(m_textCtrlGlobalIncludePath->GetValue());
+	cmp->SetGlobalLibPath(m_textCtrlGlobalLibPath->GetValue());
+	
 	BuildSettingsConfigST::Get()->SetCompiler(cmp);//save changes
 }
 

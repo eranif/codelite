@@ -11,17 +11,17 @@ Compiler::Compiler(wxXmlNode *node)
 				m_switches[XmlUtils::ReadString(child, wxT("Name"))] = XmlUtils::ReadString(child, wxT("Value"));
 			}
 
-			if(child->GetName() == wxT("Tool")){
+			else if(child->GetName() == wxT("Tool")){
 				m_tools[XmlUtils::ReadString(child, wxT("Name"))] = XmlUtils::ReadString(child, wxT("Value"));
 			}
 
-			if(child->GetName() == wxT("Option")){
+			else if(child->GetName() == wxT("Option")){
 				if(XmlUtils::ReadString(child, wxT("Name")) == wxT("ObjectSuffix")){
 					m_objectSuffix = XmlUtils::ReadString(child, wxT("Value"));
 				}
 			}
 
-			if(child->GetName() == wxT("Pattern")){
+			else if(child->GetName() == wxT("Pattern")){
 				if(XmlUtils::ReadString(child, wxT("Name")) == wxT("Error")){
 					//found the error description
 					m_errorFileNameIndex = XmlUtils::ReadString(child, wxT("FileNameIndex"));
@@ -34,6 +34,15 @@ Compiler::Compiler(wxXmlNode *node)
 					m_warningPattern = child->GetNodeContent();
 				}
 			}
+			
+			else if(child->GetName() == wxT("GlobalIncludePath")){
+				m_globalIncludePath = child->GetNodeContent();
+			}
+			
+			else if(child->GetName() == wxT("GlobalLibPath")){
+				m_globalLibPath = child->GetNodeContent();
+			}
+			
 			child = child->GetNext();
 		}
 	} else {
@@ -60,6 +69,8 @@ Compiler::Compiler(wxXmlNode *node)
 		m_tools[wxT("CompilerName")] = wxT("g++");
 		m_tools[wxT("ArchiveTool")] = wxT("ar rcu");
 		m_tools[wxT("ResourceCompiler")] = wxT("windres");
+		m_globalIncludePath = wxEmptyString;
+		m_globalLibPath = wxEmptyString;
 	}
 }
 
@@ -107,6 +118,14 @@ wxXmlNode *Compiler::ToXml() const
 	warning->AddProperty(wxT("LineNumberIndex"), m_warningLineNubmerIndex);
 	XmlUtils::SetNodeContent(warning, m_warningPattern);
 	node->AddChild(warning);
+	
+	wxXmlNode *globalIncludePath = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("GlobalIncludePath"));
+	XmlUtils::SetNodeContent(globalIncludePath, m_globalIncludePath);
+	node->AddChild(globalIncludePath);
+	
+	wxXmlNode *globalLibPath = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("GlobalLibPath"));
+	XmlUtils::SetNodeContent(globalLibPath, m_globalLibPath);
+	node->AddChild(globalLibPath);
 	return node;
 }
 

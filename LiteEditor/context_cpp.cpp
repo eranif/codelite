@@ -1193,12 +1193,28 @@ void ContextCpp::OnCommentLine(wxCommandEvent &event)
 	wxUnusedVar(event);
 	LEditor &editor = GetCtrl();
 
-	int lineno = editor.LineFromPosition(editor.GetCurrentPos());
-	int start  = editor.PositionFromLine(lineno);
-
-	//createa C block comment
+	int line_start = editor.LineFromPosition(editor.GetCurrentPos());
+	int line_end(line_start);
+	
+	if(editor.GetSelectedText().IsEmpty() == false) {
+		//we have a selection
+		//calculate the line number and start point using the selection 
+		line_start = editor.LineFromPosition(editor.GetSelectionStart());
+		line_end   = editor.LineFromPosition(editor.GetSelectionEnd());
+	}
+	
 	editor.BeginUndoAction();
-	editor.InsertText(start, wxT("//"));
+	//comment all the lines
+	int i(line_start);
+	for(i=line_start; i<= line_end; i++){
+		int start = editor.PositionFromLine(i);
+		editor.InsertText(start, wxT("//"));	
+	}
+	
+	//place the caret at the end of the commented line
+	int endPos = editor.PositionFromLine(line_end) + editor.LineLength(line_end);
+	editor.SetCaretAt(endPos);
+	
 	editor.EndUndoAction();
 }
 

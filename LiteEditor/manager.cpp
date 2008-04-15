@@ -422,7 +422,7 @@ void Manager::OpenWorkspace(const wxString &path)
 	Notebook *book = Frame::Get()->GetNotebook();
 	for(size_t i=0; i< (size_t)book->GetPageCount(); i++) {
 		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow*>( book->GetPage(i) );
-		if(win && book->GetPageText(i) == wxT("Welcome")) {
+		if(win && book->GetPageText(i) == wxT("Welcome!")) {
 			//we found our start page, now hide it
 			book->DeletePage(i);
 			Frame::Get()->GetOpenWindowsPane()->UpdateList();

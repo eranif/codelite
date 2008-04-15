@@ -2176,7 +2176,13 @@ void Frame::CreateWelcomePage()
 
 	content.Replace(wxT("$(WorkspaceTable)"), workspaceTable);
 	content.Replace(wxT("$(FilesTable)"), filesTable);
-
+	
+	//replace the HTML colours with platfroms correct colours
+	wxColour active_caption 	= wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+	wxColour active_caption_txt = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+	content.Replace(wxT("$(ACTIVE_CAPTION)"), active_caption.GetAsString());
+	content.Replace(wxT("$(ACTIVE_CAPTION_TEXT)"), active_caption_txt.GetAsString());
+	
 	m_welcomePage->SetPage(content);
 	GetNotebook()->AddPage(m_welcomePage, wxT("Welcome!"), wxNullBitmap, true);
 }

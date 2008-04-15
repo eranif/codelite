@@ -20,7 +20,7 @@
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z:]{0,2}[a-zA-Z\.0-9_/\-]+ *)(:)([0-9]+)(:)([ eor]*)</Pattern>
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z:]{0,2}[a-zA-Z\.0-9_/\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)( warning:)</Pattern>
       <GlobalIncludePath></GlobalIncludePath>
-      <GlobalLibPath>$(WorkspacePath)/lib</GlobalLibPath>
+      <GlobalLibPath></GlobalLibPath>
     </Compiler>
     <Compiler Name="gnu gcc">
       <Switch Name="ArchiveOutput" Value=" "/>
@@ -38,8 +38,8 @@
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="gcc -shared -fPIC"/>
       <Option Name="ObjectSuffix" Value=".o"/>
-      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/:\-]+ *)(:)([0-9]+)(:)([ eor]*)</Pattern>
-      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\.0-9_/:\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)( warning:)</Pattern>
+      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z:]{0,2}[a-zA-Z\.0-9_/\-]+ *)(:)([0-9]+)(:)([ eor]*)</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z:]{0,2}[a-zA-Z\.0-9_/\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)( warning:)</Pattern>
       <GlobalIncludePath></GlobalIncludePath>
       <GlobalLibPath></GlobalLibPath>
     </Compiler>

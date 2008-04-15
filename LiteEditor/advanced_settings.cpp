@@ -110,7 +110,7 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 
 void AdvancedDlg::LoadCompilers()
 {
-	m_compilersNotebook->Freeze();
+	Freeze();
 	m_compilersNotebook->DeleteAllPages();
 
 	BuildSettingsConfigCookie cookie;
@@ -119,7 +119,8 @@ void AdvancedDlg::LoadCompilers()
 		m_compilersNotebook->AddPage(new CompilerPage(m_compilersNotebook, cmp->GetName()), cmp->GetName());
 		cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
 	}
-	m_compilersNotebook->Thaw();
+	
+	Thaw();
 }
 
 AdvancedDlg::~AdvancedDlg()

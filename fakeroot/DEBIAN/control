@@ -1,7 +1,7 @@
 Package: CodeLite
 Version: 0.9
 Section: Development 
-Architecture: i386
+Architecture: amd64
 Essential: no
 Depends: libwxgtk2.8-0, libgtk2.0-0
 Maintainer: Eran Ifrah [eran.ifrah@gmail.com]

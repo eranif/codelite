@@ -38,8 +38,8 @@ createVariables()
 	exe_name1="CodeLite"
 	is_plugin=$1
 	if [ "$arch" = "x86_64" ]; then
-		compiler_name=${compiler_name} "-fPIC "
-		c_compiler_name=${compiler_name} "-fPIC "
+		compiler_name=${compiler_name}" -fPIC "
+		c_compiler_name=${c_compiler_name}" -fPIC "
 	fi
 
 	## set the executable name

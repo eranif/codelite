@@ -149,7 +149,14 @@ public:
 	 * \return project name
 	 */
 	wxString GetName() const;
-
+	
+	
+	/**
+	 * \brief return the project description as appears in the XML file
+	 * \return project description
+	 */
+	wxString GetDescription() const;
+	
 	//-----------------------------------
 	// Project operations
 	//-----------------------------------

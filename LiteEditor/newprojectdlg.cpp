@@ -19,6 +19,11 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 	if ( iter != m_list.end() ) {
 		m_projTypes->SetStringSelection((*iter)->GetName());
 		m_projectData.m_srcProject = (*iter);
+		
+		wxString desc = m_projectData.m_srcProject->GetDescription();
+		desc = desc.Trim().Trim(false);
+		desc.Replace(wxT("\t"), wxT(" "));
+		m_textCtrlDescription->SetValue(desc);
 	}
 
 	//append list of compilers
@@ -91,6 +96,14 @@ void NewProjectDlg::OnButtonCreate(wxCommandEvent &e)
 void NewProjectDlg::OnItemSelected( wxCommandEvent& event )
 {
 	m_projectData.m_srcProject = FindProject( event.GetString() );
+	
+	//update the description
+	if( m_projectData.m_srcProject) {
+		wxString desc = m_projectData.m_srcProject->GetDescription();
+		desc = desc.Trim().Trim(false);
+		desc.Replace(wxT("\t"), wxT(" "));
+		m_textCtrlDescription->SetValue( desc ); 
+	}
 }
 
 ProjectPtr NewProjectDlg::FindProject(const wxString &name)

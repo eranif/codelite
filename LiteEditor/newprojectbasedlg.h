@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 20 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -43,6 +43,7 @@ class NewProjectBaseDlg : public wxDialog
 		wxStaticText* m_staticText14;
 		wxChoice* m_choiceCompilerType;
 		wxStaticText* m_staticTextProjectFileFullPath;
+		wxTextCtrl* m_textCtrlDescription;
 		wxStaticLine* m_staticline4;
 		wxButton* m_buttonCreateProject;
 		wxButton* m_buttonCancel;

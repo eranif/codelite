@@ -412,3 +412,15 @@ bool Project::IsModified()
 {
 	return m_isModified;
 }
+
+wxString Project::GetDescription() const
+{
+	wxXmlNode *root = m_doc.GetRoot();
+	if(root) {
+		wxXmlNode *node = XmlUtils::FindFirstByTagName(root, wxT("Description"));
+		if(node) {
+			return node->GetNodeContent();
+		}
+	}
+	return wxEmptyString;
+}

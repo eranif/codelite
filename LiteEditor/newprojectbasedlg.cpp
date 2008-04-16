@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 20 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -63,7 +63,12 @@ NewProjectBaseDlg::NewProjectBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_staticTextProjectFileFullPath->Wrap( -1 );
 	sbSizer2->Add( m_staticTextProjectFileFullPath, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer18->Add( sbSizer2, 0, wxEXPAND, 5 );
+	bSizer18->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
+	
+	m_textCtrlDescription = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_CAPITALIZE|wxTE_MULTILINE|wxTE_READONLY|wxTE_WORDWRAP );
+	m_textCtrlDescription->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+	
+	bSizer18->Add( m_textCtrlDescription, 1, wxALL|wxEXPAND, 5 );
 	
 	bSizer15->Add( bSizer18, 2, wxEXPAND, 5 );
 	

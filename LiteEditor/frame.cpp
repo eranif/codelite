@@ -17,7 +17,7 @@
 #include <wx/xrc/xmlres.h>
 #include "symbol_tree.h"
 #include <wx/splitter.h>
-#include "cpp_symbol_tree.h"
+#include "cpp_symbol_tree.h" 
 #include "plugin.h"
 #include "language.h"
 #include "editor_config.h"

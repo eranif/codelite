@@ -18,7 +18,7 @@ Project::~Project()
 {
 }
 
-bool Project::Create(const wxString &name, const wxString &path, const wxString &projType)
+bool Project::Create(const wxString &name, const wxString &description, const wxString &path, const wxString &projType)
 {
 	m_fileName = path + wxFileName::GetPathSeparator() + name + wxT(".project");
 	m_fileName.MakeAbsolute();
@@ -26,16 +26,20 @@ bool Project::Create(const wxString &name, const wxString &path, const wxString 
 	wxXmlNode *root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CodeLite_Project"));
 	m_doc.SetRoot(root);
 	m_doc.GetRoot()->AddProperty(wxT("Name"), name);
+	
+	wxXmlNode *descNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Description"));
+	XmlUtils::SetNodeContent(descNode, description);
+	m_doc.GetRoot()->AddChild(descNode);
 
 	// Create the default virtual directories
 	wxXmlNode *srcNode = NULL, *headNode = NULL;
 
 	srcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
-	srcNode->AddProperty(wxT("Name"), wxT("Source Files"));
+	srcNode->AddProperty(wxT("Name"), wxT("src"));
 	m_doc.GetRoot()->AddChild(srcNode);
 
 	headNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
-	headNode->AddProperty(wxT("Name"), wxT("Header Files"));
+	headNode->AddProperty(wxT("Name"), wxT("include"));
 	m_doc.GetRoot()->AddChild(headNode);
 
 	//creae dependencies node

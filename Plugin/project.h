@@ -160,13 +160,14 @@ public:
 	 */
 	bool Load(const wxString &path); 
 	/**
-	 * Create new project 
+	 * \brief Create new project 
 	 * \param name project name
+	 * \param description project description
 	 * \param path path of the file excluding  the file name (e.g. C:\)
 	 * \param projType project type: Project::STATIC_LIBRARY, Project::DYNAMIC_LIBRARY, Project::EXECUTABLE
-	 * \return 
+	 * \return true on success, false otherwise
 	 */
-	bool Create(const wxString &name, const wxString &path, const wxString &projType = Project::STATIC_LIBRARY);
+	bool Create(const wxString &name, const wxString &description, const wxString &path, const wxString &projType);
 
 	/**
 	 * Add file to the project
@@ -176,6 +177,7 @@ public:
 	 * \return 
 	 */
 	bool AddFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
+	
 	/**
 	 * Remove file from the project
 	 * \param fileName file full path

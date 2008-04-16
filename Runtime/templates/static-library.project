@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="static-library">
-  <VirtualDirectory Name="Source Files"/>
-  <VirtualDirectory Name="Header Files"/>
+	<Description>
+		A project that produces a static library (archive). Note that this project is set to work 
+		with the GNU toolchain (gdb, g++, ar)
+	</Description>
+	
+  <VirtualDirectory Name="src"/>
+  <VirtualDirectory Name="include"/>
   <Dependencies/>
   <Settings Type="Static Library">
 	<Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName)d.a" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
+      <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
       </Compiler>

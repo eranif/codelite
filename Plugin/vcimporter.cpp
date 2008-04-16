@@ -276,7 +276,7 @@ void VcImporter::CreateFiles(wxXmlNode *parent, wxString vdPath, ProjectPtr proj
 			wxString fileName = XmlUtils::ReadString(child, wxT("RelativePath"));
 			wxString path = vdPath;
 			if(path.IsEmpty()){
-				path = wxT("Source Files");
+				path = wxT("src");
 			}
 			proj->AddFile(fileName, path);
 		}

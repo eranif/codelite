@@ -1,44 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="vc-static-lib">
-  <VirtualDirectory Name="Source Files"/>
-  <VirtualDirectory Name="Header Files"/>
+	<Description>
+		A project that produces a static library (.lib). Note that this project is set to work 
+		with the Microsoft(R) toolchain (CL, LINK)
+	</Description>
+  <VirtualDirectory Name="src"/>
+  <VirtualDirectory Name="include"/>
   <Dependencies/>
   <Settings Type="Static Library">
     <Configuration Name="Debug" CompilerType="VC++" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).lib" IntermediateDirectory="Debug" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no"/>
-      <Compiler Required="yes" Options="/Zi">
-        <IncludePath Value="."/>
-        <IncludePath Value="&quot;C:/Program Files/Microsoft Visual Studio 8/VC/include&quot;"/>
-      </Compiler>
-      <Linker Required="yes" Options="">
-        <LibraryPath Value="&quot;C:/Program Files/Microsoft Visual Studio 8/VC/lib&quot;"/>
-      </Linker>
-      <ResourceCompiler Required="no" Options=""/>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <CleanCommand>$(MINGW)/bin/mingw32-make clean</CleanCommand>
-        <BuildCommand>$(MINGW)/bin/mingw32-make</BuildCommand>
-        <MakefileGenerationCommand>$(MINGW)/bin/ls</MakefileGenerationCommand>
-        <ThirdPartyToolName>Premake</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="Release" CompilerType="VC++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName).lib" IntermediateDirectory="Release" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no"/>
-      <Compiler Required="yes" Options="">
-        <IncludePath Value="."/>
-        <IncludePath Value="&quot;C:/Program Files/Microsoft Visual Studio 8/VC/include&quot;"/>
-      </Compiler>
-      <Linker Required="yes" Options="">
-        <LibraryPath Value="&quot;C:/Program Files/Microsoft Visual Studio 8/VC/lib&quot;"/>
-      </Linker>
+      <Compiler Required="yes" Options="/Zi"/>
+      <Linker Required="yes" Options=""/>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
@@ -46,14 +19,31 @@
         <CleanCommand></CleanCommand>
         <BuildCommand></BuildCommand>
         <MakefileGenerationCommand></MakefileGenerationCommand>
-        <ThirdPartyToolName>Premake</ThirdPartyToolName>
+        <ThirdPartyToolName></ThirdPartyToolName>
         <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="VC++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName).lib" IntermediateDirectory="Release" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no"/>
+      <Compiler Required="yes" Options=""/>
+      <Linker Required="yes" Options=""/>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName></ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>

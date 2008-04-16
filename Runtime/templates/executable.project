@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="executable">
-  <VirtualDirectory Name="Source Files"/>
-  <VirtualDirectory Name="Header Files"/>
+	<Description>
+		A project that produces an executable. Note that this project is set to work 
+		with the GNU toolchain (gdb, g++)
+	</Description>
+
+  <VirtualDirectory Name="src"/>
+  <VirtualDirectory Name="include"/>
   <Dependencies/>
   <Settings Type="Executable">
 	<Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)d" IntermediateDirectory="./Debug" Command="./$(ProjectName)d" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)d" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
       </Compiler>

@@ -61,8 +61,8 @@
       <Option Name="ObjectSuffix" Value=".obj"/>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:]+ *)(\()([0-9]+)(\))( \: )</Pattern>
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:]+ *)(\()([0-9]+)(\))( \: )(warning)</Pattern>
-      <GlobalIncludePath></GlobalIncludePath>
-      <GlobalLibPath></GlobalLibPath>
+      <GlobalIncludePath>"&quot;C:/Program Files/Microsoft Visual Studio 8/VC/include&quot;";.</GlobalIncludePath>
+      <GlobalLibPath>"&quot;C:/Program Files/Microsoft Visual Studio 8/VC/lib&quot;"</GlobalLibPath>
     </Compiler>
   </Compilers>
   <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="C:/MinGW/bin/mingw32-make.EXE" Options="-f" Jobs="1"/>

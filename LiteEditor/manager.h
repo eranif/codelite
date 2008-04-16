@@ -314,8 +314,9 @@ public:
 	 * Save project as template
 	 * \param proj project to duplicate
 	 * \param name the template name
+	 * \param description project short description 
 	 */
-	void SaveProjectTemplate(ProjectPtr proj, const wxString &name);
+	void SaveProjectTemplate(ProjectPtr proj, const wxString &name, const wxString &description);
 
 	/**
 	 * Set lite editor's startup directory

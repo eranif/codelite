@@ -1,4 +1,5 @@
 #include "fileview.h"
+#include "nameanddescdlg.h"
 #include "globals.h"
 #include "importfilesdlg.h"
 #include "manager.h"
@@ -781,14 +782,19 @@ void FileViewTree::OnSaveAsTemplate( wxCommandEvent & WXUNUSED( event ) )
 		wxString name = GetItemText( item );
 		ProjectPtr proj = ManagerST::Get()->GetProject( name );
 		if ( proj ) {
-			wxTextEntryDialog *dlg = new wxTextEntryDialog( NULL, wxT( "New Template Name:" ), wxT( "Save As Template" ), name );
+			NameAndDescDlg *dlg = new NameAndDescDlg(NULL, name);
 			if ( dlg->ShowModal() == wxID_OK ) {
-				wxString newName = dlg->GetValue();
-				TrimString( newName );
+				wxString newName = dlg->GetName();
+				wxString desc  	 = dlg->GetDescription();
+				
+				newName = newName.Trim().Trim(false);
+				desc = desc.Trim().Trim(false);
+				
 				if ( newName.IsEmpty() == false ) {
-					ManagerST::Get()->SaveProjectTemplate( proj, newName );
+					ManagerST::Get()->SaveProjectTemplate( proj, newName, desc );
 				}
 			}
+			dlg->Destroy();
 		}
 	}
 }

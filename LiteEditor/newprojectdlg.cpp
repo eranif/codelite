@@ -11,6 +11,7 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 	ManagerST::Get()->GetProjectTemplateList(m_list);
 	std::list<ProjectPtr>::iterator iter = m_list.begin();
 	for (; iter != m_list.end(); iter++) {
+		wxString n = (*iter)->GetName();
 		m_projTypes->Append((*iter)->GetName());
 	}
 

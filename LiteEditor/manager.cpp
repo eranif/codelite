@@ -971,30 +971,36 @@ void Manager::GetProjectTemplateList(std::list<ProjectPtr> &list)
 	if (files.GetCount() > 0) {
 		for (size_t i=0; i<files.GetCount(); i++) {
 			ProjectPtr proj(new Project());
-			proj->Load(files.Item(i));
+			if(!proj->Load(files.Item(i))) {
+				//corrupted xml file?
+				wxLogMessage(wxT("Failed to load template project: ") + files.Item(i) + wxT(" (corrupted XML?)"));
+				continue;
+			}
 			list.push_back(proj);
 		}
 	} else {
+		//if we eneded up here, it means the insallation got screwed up since
+		//there should be at least 8 project templates !
 		//create 3 default empty projects
 		ProjectPtr exeProj(new Project());
 		ProjectPtr libProj(new Project());
 		ProjectPtr dllProj(new Project());
-		libProj->Create(wxT("Static Library"), tmplateDir, Project::STATIC_LIBRARY);
-		dllProj->Create(wxT("Dynamic Library"), tmplateDir, Project::DYNAMIC_LIBRARY);
-		exeProj->Create(wxT("Executable"), tmplateDir, Project::EXECUTABLE);
+		libProj->Create(wxT("Static Library"), wxEmptyString, tmplateDir, Project::STATIC_LIBRARY);
+		dllProj->Create(wxT("Dynamic Library"), wxEmptyString, tmplateDir, Project::DYNAMIC_LIBRARY);
+		exeProj->Create(wxT("Executable"), wxEmptyString, tmplateDir, Project::EXECUTABLE);
 		list.push_back(libProj);
 		list.push_back(dllProj);
 		list.push_back(exeProj);
 	}
 }
 
-void Manager::SaveProjectTemplate(ProjectPtr proj, const wxString &name)
+void Manager::SaveProjectTemplate(ProjectPtr proj, const wxString &name, const wxString &description)
 {
 	//create new project
 	wxString tmplateDir = m_startupDir + PATH_SEP + wxT("templates");
 
 	ProjectPtr cloned(new Project());
-	cloned->Create(name, tmplateDir);
+	cloned->Create(name, description, tmplateDir, Project::STATIC_LIBRARY);
 
 	//copy project settings
 	cloned->SetSettings(proj->GetSettings());

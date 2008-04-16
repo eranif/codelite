@@ -218,7 +218,7 @@ bool Workspace::CreateProject(const wxString &name, const wxString &path, const 
 	}
 
 	ProjectPtr proj(new Project());
-	proj->Create(name, path, type);
+	proj->Create(name, wxEmptyString, path, type);
 	m_projects[name] = proj;
 
 	// make the project path to be relative to the workspace

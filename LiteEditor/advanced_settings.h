@@ -15,7 +15,7 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include "build_page.h"
-#include <wx/choicebk.h>
+#include <wx/toolbook.h>
 
 ///////////////////////////////////////////////////////////////////////////
 class BuildTabSetting;
@@ -33,7 +33,7 @@ protected:
 	wxStaticText* m_staticText1;
 	wxButton* m_buttonNewCompiler;
 	wxStaticLine* m_staticline2;
-	wxChoicebook* m_compilersNotebook; 
+	wxNotebook* m_compilersNotebook; 
 	wxStaticLine* m_staticline10;
 	wxButton* m_buttonOK;
 	wxButton* m_buttonCancel;

@@ -180,7 +180,7 @@ void LEditor::SetProperties()
 	SetCaretLineBackground(options->GetCaretLineColour());
 
 #ifdef __WXMSW__
-	SetCaretLineBackgroundAlpha(30);
+	SetCaretLineBackgroundAlpha(70);
 #endif
 
 	SetFoldFlags(options->GetUnderlineFoldLine() ? 16 : 0);

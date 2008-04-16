@@ -62,8 +62,10 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	m_staticline2 = new wxStaticLine( m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer5->Add( m_staticline2, 0, wxEXPAND | wxRIGHT | wxLEFT, 5 );
 
-	m_compilersNotebook = new wxChoicebook(m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_DEFAULT);
-	m_compilersNotebook->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+	m_compilersNotebook = new wxNotebook(m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBK_DEFAULT );
+//	m_compilersNotebook->AssignImageList(new wxImageList(16, 16));
+//	long bkStyle = m_compilersNotebook->GetToolBar()->GetWindowStyleFlag();
+//	m_compilersNotebook->GetToolBar()->SetWindowStyleFlag(wxTB_FLAT | wxTB_NOICONS | wxTB_TEXT | wxTB_HORIZONTAL);
 
 	bSizer5->Add( m_compilersNotebook, 1, wxEXPAND | wxALL, 5 );
 
@@ -109,17 +111,19 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 
 void AdvancedDlg::LoadCompilers()
 {
-	Freeze();
+	m_compilersNotebook->Freeze();
 	m_compilersNotebook->DeleteAllPages();
 
 	BuildSettingsConfigCookie cookie;
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
+	bool first (true);
 	while (cmp) {
-		m_compilersNotebook->AddPage(new CompilerPage(m_compilersNotebook, cmp->GetName()), cmp->GetName());
+		m_compilersNotebook->AddPage(new CompilerPage(m_compilersNotebook, cmp->GetName()), cmp->GetName(), first);
 		cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
+		first = false;
 	}
 	
-	Thaw();
+	m_compilersNotebook->Thaw();
 }
 
 AdvancedDlg::~AdvancedDlg()

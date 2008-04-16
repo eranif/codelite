@@ -93,7 +93,7 @@ class CompilerPage : public wxScrolledWindow
 	
 
 public:
-	CompilerPage( wxWindow* parent, wxString name, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 732,409 ), int style = wxTAB_TRAVERSAL );
+	CompilerPage( wxWindow* parent, wxString name, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 1, 1), int style = wxTAB_TRAVERSAL );
 	void Save();
 
 };

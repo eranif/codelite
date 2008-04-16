@@ -28,6 +28,7 @@ private:
 	ListCtrlPanel *m_frameList;
 	BreakpointDlg *m_breakpoints;
 	ThreadListPanel *m_threads;
+	bool m_initDone;
 	
 private:
 	void CreateGUIControls();

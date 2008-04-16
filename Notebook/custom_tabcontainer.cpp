@@ -93,8 +93,8 @@ void wxTabContainer::AddTab(CustomTab *tab)
 		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CHANGED, GetId());
 		event.SetSelection( TabToIndex(tab) );
 		event.SetOldSelection( oldSel );
-		event.SetEventObject( this );
-		GetEventHandler()->ProcessEvent(event);
+		event.SetEventObject( GetParent() );
+		GetParent()->ProcessEvent(event);
 	}
 }
 
@@ -135,8 +135,8 @@ void wxTabContainer::SetSelection(CustomTab *tab, bool notify)
 		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CHANGING, GetId());
 		event.SetSelection( TabToIndex( tab ) );
 		event.SetOldSelection( oldSel );
-		event.SetEventObject( this );
-		GetEventHandler()->ProcessEvent(event);
+		event.SetEventObject( GetParent() );
+		GetParent()->ProcessEvent(event);
 
 		if ( !event.IsAllowed() ) {
 			return;
@@ -170,8 +170,8 @@ void wxTabContainer::SetSelection(CustomTab *tab, bool notify)
 		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CHANGED, GetId());
 		event.SetSelection( TabToIndex( tab ) );
 		event.SetOldSelection( oldSel );
-		event.SetEventObject( this );
-		GetEventHandler()->ProcessEvent(event);
+		event.SetEventObject( GetParent() );
+		GetParent()->ProcessEvent(event);
 	}
 }
 
@@ -455,8 +455,8 @@ void wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notif
 		//send event to noitfy that the page has changed
 		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CLOSING, GetId());
 		event.SetSelection( pageIndex );
-		event.SetEventObject( this );
-		GetEventHandler()->ProcessEvent(event);
+		event.SetEventObject( GetParent() );
+		GetParent()->ProcessEvent(event);
 
 		if (!event.IsAllowed()) {
 			return;
@@ -497,8 +497,8 @@ void wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notif
 		//send event to noitfy that the page has been closed
 		NotebookEvent event(wxEVT_COMMAND_BOOK_PAGE_CLOSED, GetId());
 		event.SetSelection( pageIndex );
-		event.SetEventObject( this );
-		GetEventHandler()->ProcessEvent(event);
+		event.SetEventObject( GetParent() );
+		GetParent()->ProcessEvent(event);
 	}
 }
 

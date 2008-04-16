@@ -13,9 +13,9 @@
 #include <wx/button.h>
 #include <wx/statline.h>
 #include <wx/notebook.h>
-#include "wx/treebook.h"
 #include <wx/panel.h>
 #include "build_page.h"
+#include <wx/choicebk.h>
 
 ///////////////////////////////////////////////////////////////////////////
 class BuildTabSetting;
@@ -28,12 +28,12 @@ class AdvancedDlg : public wxDialog
 	DECLARE_EVENT_TABLE();
 	
 protected:
-	wxTreebook* m_notebook; 
+	wxNotebook* m_notebook; 
 	wxPanel* m_compilersPage;
 	wxStaticText* m_staticText1;
 	wxButton* m_buttonNewCompiler;
 	wxStaticLine* m_staticline2;
-	wxNotebook* m_compilersNotebook; 
+	wxChoicebook* m_compilersNotebook; 
 	wxStaticLine* m_staticline10;
 	wxButton* m_buttonOK;
 	wxButton* m_buttonCancel;

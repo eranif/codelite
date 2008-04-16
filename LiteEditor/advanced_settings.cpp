@@ -42,10 +42,9 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_notebook = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	m_notebook->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
-
+	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	m_compilersPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
 
@@ -63,7 +62,7 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	m_staticline2 = new wxStaticLine( m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer5->Add( m_staticline2, 0, wxEXPAND | wxRIGHT | wxLEFT, 5 );
 
-	m_compilersNotebook = new wxNotebook(m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_DEFAULT);
+	m_compilersNotebook = new wxChoicebook(m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_DEFAULT);
 	m_compilersNotebook->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
 
 	bSizer5->Add( m_compilersNotebook, 1, wxEXPAND | wxALL, 5 );

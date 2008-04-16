@@ -1,8 +1,13 @@
 - add key accelerator functionality that allows one to bind keys to actions
+
 - validate the environment variables
+
 - Also a possible feature would be to popup a dialog if a $(var) is in a project and not defined already
+
 - auto-fix symbols database when paths are not correct  
+
 - fixed the '#if 0' thingi with nested '#endif'
+
 - update the SVN options dialog:
 	+ add option to set third part diff tool
 - Fix CC for files, by adding new table in the database which include all files scanned by CL
@@ -22,4 +27,7 @@
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
 
+- add support for the file filter in the create external database wizard, by default set the values to be header files only
 
+- fix the bug that until checkbox is expanded (in the create external database wizard), it is considered as unmarked. Possible solution:
+  When a parent dir is selected expand all its children

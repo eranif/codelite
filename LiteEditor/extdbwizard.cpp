@@ -47,9 +47,10 @@ bool ExtDbWizard::Run(ExtDbData &data)
 		data.attachDb 	 = ((ExtDbPage3*)m_page3)->AttachDb();
 		((ExtDbPage2*)m_page2)->GetIncludeDirs(data.includeDirs);
 		data.fileMasking = ((ExtDbPage2*)m_page2)->GetFileMask();
-		
+		data.parseFilesWithoutExtension  = ((ExtDbPage2*)m_page2)->GetParseFilesWithoutExtension();
 		//save the file masking to disk
 		EditorConfigST::Get()->SaveStringValue(wxT("WizardFileMask"), data.fileMasking);
+		EditorConfigST::Get()->SaveLongValue(wxT("WizardParseFileWithoutExtension"), data.parseFilesWithoutExtension);
 	}
 	return res;
 }

@@ -531,14 +531,14 @@ void wxTabContainer::EnsureVisible(CustomTab *tab)
 	}
 }
 
-bool wxTabContainer::IsVisible(CustomTab *tab)
+bool wxTabContainer::IsVisible(CustomTab *tab, bool fullShown)
 {
 	wxPoint pos = tab->GetPosition();
 	wxSize tabSize = tab->GetSize();
 	wxRect rr = GetSize();
 	
 	bool cond0(true);
-	if(rr.width > tabSize.x) {
+	if(rr.width > tabSize.x && fullShown) {
 		//the visible area has enough space to show the entire 
 		//tab, force it
 		cond0 = !(pos.x + tabSize.x > rr.x + rr.width);
@@ -572,7 +572,7 @@ void wxTabContainer::Resize()
 			CustomTab *curtab = (CustomTab*)win;
 
 			//refresh only visible tabs
-			if (IsVisible(curtab)) {
+			if (IsVisible(curtab, false)) {
 				curtab->Refresh();
 			}
 		}

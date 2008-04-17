@@ -1012,7 +1012,7 @@ void TagsManager::BuildExternalDatabase(ExtDbData &data)
 	wxBusyCursor busy;
 	wxArrayString all_files;
 	wxArrayString files;
-	bool extlessFiles = true;
+	bool extlessFiles = data.parseFilesWithoutExtension;
 
 	wxDir::GetAllFiles(data.rootPath, &all_files);
 	wxStringTokenizer tok(data.fileMasking, wxT(";"));

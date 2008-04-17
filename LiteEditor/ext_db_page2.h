@@ -15,6 +15,7 @@
 #include <wx/wizard.h>
 
 class CheckDirTreeCtrl;
+class wxCheckBox;
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -31,12 +32,14 @@ class ExtDbPage2 : public wxWizardPageSimple
 		wxStaticText* m_staticText3;
 		CheckDirTreeCtrl *m_includeDirs;
 		wxTextCtrl *m_textCtrlFileMask;
+		wxCheckBox *m_parseFileWithNoExtension;
 		
 	public:
 		ExtDbPage2( wxWizard* parent);
 		void BuildTree(const wxString &path);
 		void GetIncludeDirs(wxArrayString &arr);
 		wxString GetFileMask();
+		bool GetParseFilesWithoutExtension();
 };
 
 #endif //__ext_db_page2__

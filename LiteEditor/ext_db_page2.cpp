@@ -18,6 +18,8 @@
 #endif //WX_PRECOMP
 
 #include "ext_db_page2.h"
+#include "tags_options_data.h"
+#include "editor_config.h"
 #include "macros.h"
 #include "checkdirtreectrl.h"
 
@@ -39,6 +41,18 @@ ExtDbPage2::ExtDbPage2(wxWizard* parent)
 	
 	m_includeDirs = new CheckDirTreeCtrl( m_panel1, wxEmptyString, wxID_ANY);
 	bSizer2->Add(m_includeDirs, 1, wxEXPAND | wxALL, 5 );
+	
+	wxString fileMask = EditorConfigST::Get()->GetStringValue(wxT("WizardFileMask"));
+	if(fileMask.IsEmpty()) {
+		fileMask = wxT("*.h;*.hpp;");
+	}
+	
+	wxStaticText *txt = new wxStaticText( m_panel1, wxID_ANY, wxT("Parse files with the following extensions:"), wxDefaultPosition, wxDefaultSize, 0 );
+	txt->Wrap( -1 );
+	bSizer2->Add( txt, 0, wxALL|wxEXPAND, 5 );
+	
+	m_textCtrlFileMask = new wxTextCtrl(m_panel1, wxID_ANY, fileMask);
+	bSizer2->Add(m_textCtrlFileMask, 0, wxEXPAND | wxALL, 5 );
 	
 	m_panel1->SetSizer( bSizer2 );
 	m_panel1->Layout();
@@ -67,4 +81,9 @@ void ExtDbPage2::GetIncludeDirs(wxArrayString &arr)
 void ExtDbPage2::BuildTree(const wxString &path)
 {
 	m_includeDirs->BuildTree(path);
+}
+
+wxString ExtDbPage2::GetFileMask()
+{
+	return m_textCtrlFileMask->GetValue();
 }

@@ -30,11 +30,13 @@ class ExtDbPage2 : public wxWizardPageSimple
 		wxPanel* m_panel1;
 		wxStaticText* m_staticText3;
 		CheckDirTreeCtrl *m_includeDirs;
-
+		wxTextCtrl *m_textCtrlFileMask;
+		
 	public:
 		ExtDbPage2( wxWizard* parent);
 		void BuildTree(const wxString &path);
 		void GetIncludeDirs(wxArrayString &arr);
+		wxString GetFileMask();
 };
 
 #endif //__ext_db_page2__

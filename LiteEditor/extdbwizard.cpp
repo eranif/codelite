@@ -1,7 +1,15 @@
 #include "extdbwizard.h"
+#include <wx/busyinfo.h>
+#include "editor_config.h"
 #include <wx/xrc/xmlres.h>
 
+BEGIN_EVENT_TABLE(ExtDbWizard, wxWizard)
+	EVT_WIZARD_PAGE_CHANGING(wxID_ANY, ExtDbWizard::OnPageChanging)
+	EVT_WIZARD_PAGE_CHANGED(wxID_ANY, ExtDbWizard::OnPageChanged)
+END_EVENT_TABLE()
+
 ExtDbWizard::ExtDbWizard(wxWindow *parent, wxWindowID id)
+: m_busyInfoDlg(NULL)
 {
 	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("sym_wiz_bmp"));
 	wxWizard::Create(parent, id, wxT("Create Symbols Database"), bmp);
@@ -38,6 +46,35 @@ bool ExtDbWizard::Run(ExtDbData &data)
 		data.dbName 	 = ((ExtDbPage3*)m_page3)->GetDbName();
 		data.attachDb 	 = ((ExtDbPage3*)m_page3)->AttachDb();
 		((ExtDbPage2*)m_page2)->GetIncludeDirs(data.includeDirs);
+		data.fileMasking = ((ExtDbPage2*)m_page2)->GetFileMask();
+		
+		//save the file masking to disk
+		EditorConfigST::Get()->SaveStringValue(wxT("WizardFileMask"), data.fileMasking);
 	}
 	return res;
+}
+
+void ExtDbWizard::OnPageChanging(wxWizardEvent &e)
+{
+//	if(e.GetDirection()){
+//		//going forward
+//		if(e.GetPage() == m_page1){
+//			//switching from page1 to page2, 
+//			//display 
+//			m_busyInfoDlg = new wxBusyInfo(wxT("Gathering file list..."));
+//		}
+//	}
+	e.Skip();
+}
+void ExtDbWizard::OnPageChanged(wxWizardEvent &e)
+{
+//	if(e.GetPage() == m_page2){
+//		//switching from page1 to page2, 
+//		//remove the busy dialog
+//		if(m_busyInfoDlg) {
+//			delete m_busyInfoDlg;
+//			m_busyInfoDlg = NULL;
+//		}
+//	}
+	e.Skip();
 }

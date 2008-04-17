@@ -36,7 +36,11 @@ void CheckDirTreeCtrl::AddChildren(const wxTreeItemId &item)
 		wxDir dir(path);
 		if(wxDir::Exists(path)){
 			wxFileName filename(path, wxEmptyString);
+			
+			Freeze();
 			GetChildren(item, dir, filename.GetFullPath());
+			Thaw();
+			
 		}
 	}
 }
@@ -47,15 +51,31 @@ CheckDirTreeCtrl::~CheckDirTreeCtrl()
 
 void CheckDirTreeCtrl::OnItemUnchecked(wxCheckTreeCtrlEvent &event)
 {
-//	RecursiveCheck(event.GetItem(), false);
-	Check(event.GetItem(), false);
+	wxTreeItemId item = event.GetItem();
+	if(item.IsOk()){
+		if(ItemHasChildren(item) && IsExpanded(item)) {
+			//the item has children, but it is expanded, so check only this item
+			Check(event.GetItem(), true);
+		}
+		else if(ItemHasChildren(item) && !IsExpanded(item)){
+			RecursiveCheck(event.GetItem(), false);		
+		}
+	}
 	event.Skip();
 }
 
 void CheckDirTreeCtrl::OnItemChecked(wxCheckTreeCtrlEvent &event)
 {
-//	RecursiveCheck(event.GetItem());
-	Check(event.GetItem(), true);
+	wxTreeItemId item = event.GetItem();
+	if(item.IsOk()){
+		if(ItemHasChildren(item) && IsExpanded(item)) {
+			//the item has children, but it is expanded, so check only this item
+			Check(event.GetItem(), true);
+		}
+		else if(ItemHasChildren(item) && !IsExpanded(item)){
+			RecursiveCheck(event.GetItem());		
+		}
+	}
 	event.Skip();
 }
 
@@ -77,7 +97,8 @@ void CheckDirTreeCtrl::GetChildren(const wxTreeItemId &parent, const wxDir &dir,
 		wxDir child(dirname.GetFullPath());
 		if(child.IsOpened() && child.HasSubDirs()){
 			//add dummy item under this node with the parent path
-			AppendItem(item, wxT("<Dummy>"), IsChecked(item), new DirTreeData(dirname));
+//			AppendItem(item, wxT("<Dummy>"), IsChecked(item), new DirTreeData(dirname));
+			GetChildren(item, child, dirname.GetFullPath());
 		}
 		cont = dir.GetNext(&filename);
 	}

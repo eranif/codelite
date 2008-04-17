@@ -27,7 +27,5 @@
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
 
-- add support for the file filter in the create external database wizard, by default set the values to be header files only
-
 - fix the bug that until checkbox is expanded (in the create external database wizard), it is considered as unmarked. Possible solution:
   When a parent dir is selected expand all its children

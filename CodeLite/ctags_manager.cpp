@@ -1012,10 +1012,11 @@ void TagsManager::BuildExternalDatabase(ExtDbData &data)
 	wxBusyCursor busy;
 	wxArrayString all_files;
 	wxArrayString files;
-	bool extlessFiles = m_options.GetFlags() & CC_PARSE_EXT_LESS_FILES ? true : false;
+	bool extlessFiles = true;
 
 	wxDir::GetAllFiles(data.rootPath, &all_files);
-	wxStringTokenizer tok(m_options.GetFileSpec(), wxT(";"));
+	wxStringTokenizer tok(data.fileMasking, wxT(";"));
+	
 	std::map<wxString, bool> specMap;
 	while ( tok.HasMoreTokens() ) {
 		std::pair<wxString, bool> val;

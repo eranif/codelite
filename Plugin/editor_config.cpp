@@ -26,6 +26,25 @@ void SimpleLongValue::DeSerialize(Archive &arch)
 }
 
 //-------------------------------------------------------------------------------------------
+SimpleStringValue::SimpleStringValue()
+{
+}
+
+SimpleStringValue::~SimpleStringValue()
+{
+}
+
+void SimpleStringValue::Serialize(Archive &arch)
+{
+	arch.Write(wxT("m_value"), m_value);
+}
+
+void SimpleStringValue::DeSerialize(Archive &arch)
+{
+	arch.Read(wxT("m_value"), m_value);
+}
+
+//-------------------------------------------------------------------------------------------
 EditorConfig::EditorConfig()
 {
 	m_doc = new wxXmlDocument();
@@ -417,3 +436,16 @@ bool EditorConfig::GetLongValue(const wxString &name, long &value)
 	return false;
 }
 
+wxString EditorConfig::GetStringValue(const wxString &key)
+{
+	SimpleStringValue data;
+	ReadObject(key, &data);
+	return data.GetValue();
+}
+
+void EditorConfig::SaveStringValue(const wxString &key, const wxString &value)
+{
+	SimpleStringValue data;
+	data.SetValue(value);
+	WriteObject(key, &data);
+}

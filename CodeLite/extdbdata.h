@@ -8,6 +8,7 @@ struct ExtDbData {
 	wxString rootPath;
 	wxArrayString includeDirs;
 	bool attachDb;
+	wxString fileMasking;
 };
 
 #endif //EXTDBDATA_H

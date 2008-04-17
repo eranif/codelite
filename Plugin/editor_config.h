@@ -35,6 +35,20 @@ public:
 	const long& GetValue() const {return m_value;}
 };
 
+class SimpleStringValue : public SerializedObject 
+{
+	wxString m_value;
+public:
+	SimpleStringValue();
+	~SimpleStringValue();
+	
+	void DeSerialize(Archive &arch);
+	void Serialize(Archive &arch);
+	
+	void SetValue(const wxString& value) {this->m_value = value;}
+	const wxString& GetValue() const {return m_value;}
+};
+
 /**
  * \ingroup LiteEditor
  * \brief EditorConfig a singleton class that manages the liteeditor.xml configuration file
@@ -210,6 +224,20 @@ public:
 	 * \return return true on success, false otherwise
 	 */
 	bool GetLongValue(const wxString &name, long &value);
+	
+	/**
+	 * \brief get string from the configuration identified by key
+	 * \param key key identifiying the string
+	 * \return wxEmptyString or the value
+	 */
+	wxString GetStringValue(const wxString &key);
+	
+	/**
+	 * \brief 
+	 * \param key
+	 * \param value
+	 */
+	void SaveStringValue(const wxString &key, const wxString &value);
 	
 private:
 	EditorConfig();

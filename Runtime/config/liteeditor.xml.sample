@@ -33,8 +33,16 @@
 	  <wxString Value="extern"/>   
 	  <wxString Value="DLLIMPORT"/>  
 	  <wxString Value="DECLARE_INSTANCE_TYPE"/>  
+	  <wxString Value="emit"/>  
+	  <wxString Value="Q_OBJECT"/>  
+	  <wxString Value="Q_PACKED"/>  
+	  <wxString Value="Q_GADGET"/>  
+	  <wxString Value="QT_BEGIN_HEADER"/>  
+	  <wxString Value="QT_END_HEADER"/>  
 	  <wxString Value="Q_REQUIRED_RESULT"/>  
-    </wxArrayString>
+	  <wxString Value="Q_INLINE_TEMPLATE"/>  
+	  <wxString Value="Q_OUTLINE_TEMPLATE"/>    
+</wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">
       <wxString Value="C++"/>

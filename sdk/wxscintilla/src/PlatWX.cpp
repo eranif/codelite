@@ -713,7 +713,9 @@ void Window::SetCursor(Cursor curs) {
         cursorId = wxCURSOR_SIZENS;
         break;
     case cursorReverseArrow:
-        cursorId = wxCURSOR_RIGHT_ARROW;
+	//ERAN - BEGIN
+        cursorId = wxCURSOR_ARROW;
+	//END - END
         break;
     case cursorHand:
         cursorId = wxCURSOR_HAND;

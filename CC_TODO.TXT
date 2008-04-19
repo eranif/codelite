@@ -26,6 +26,3 @@
 - Auto detect workspace/project modified outside of the IDE and offer to re-load the workspace
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
-
-- fix the bug that until checkbox is expanded (in the create external database wizard), it is considered as unmarked. Possible solution:
-  When a parent dir is selected expand all its children

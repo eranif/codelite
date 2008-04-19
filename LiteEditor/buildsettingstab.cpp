@@ -7,7 +7,7 @@
 BuildTabSetting::BuildTabSetting( wxWindow* parent )
 :
 BuildTabSettingsBase( parent )
-{
+{ 
 	BuildTabSettingsData options;
 	EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
 	m_checkBoxSkipeWarnings->SetValue( options.GetSkipWarnings() );

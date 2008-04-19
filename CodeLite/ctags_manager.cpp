@@ -1,4 +1,4 @@
-#include "precompiled_header.h" 
+#include "precompiled_header.h"
 #include "ctags_manager.h"
 #include <wx/txtstrm.h>
 #include <wx/file.h>
@@ -10,7 +10,7 @@
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
 #include "cpp_comment_creator.h"
-#include "tags_options_data.h" 
+#include "tags_options_data.h"
 #include <wx/busyinfo.h>
 #include "wx/timer.h"
 #include "variable_entry.h"
@@ -648,6 +648,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		funcSig = funcTag->GetSignature();
 	}
 
+	wxString oper;
 	if (expression.IsEmpty()) {
 		//collect all the tags from the current scope, and
 		//from the global scope
@@ -663,7 +664,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		RemoveDuplicates(tmpCandidates, candidates);
 	} else {
 		wxString typeName, typeScope;
-		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope);
+		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 		if (!res) {
 			return false;
 		}
@@ -693,8 +694,9 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 	static wxString trimRightString(wxT("({};\r\n\t\v "));
 	expression.erase(0, expression.find_first_not_of(trimLeftString));
 	expression.erase(expression.find_last_not_of(trimRightString)+1);
+	wxString oper;
 
-	bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope);
+	bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 	if (!res) {
 		return false;
 	}
@@ -707,7 +709,19 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		scope << typeScope << wxT("::") << typeName;
 
 	//this function will retrieve the ineherited tags as well
-	TagsByScope(scope, candidates);
+
+	//incase the last operator used was '::', retrieve all kinds of tags. Otherwise (-> , . operators were used)
+	//retrieve only the members/prototypes/functions/enums
+	if (oper == wxT("::")) {
+		TagsByScope(scope, candidates);
+	} else {
+		wxArrayString filter;
+		filter.Add(wxT("function"));
+		filter.Add(wxT("member"));
+		filter.Add(wxT("prototype"));
+		TagsByScope(scope, filter, candidates);
+	}
+
 	return candidates.empty() == false;
 }
 
@@ -794,7 +808,8 @@ void TagsManager::GetHoverTip(const wxFileName &fileName, int lineno, const wxSt
 		TipsFromTags(candidates, word, tips);
 	} else {
 		wxString typeName, typeScope;
-		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope);
+		wxString oper;
+		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 		if (!res) {
 			return;
 		}
@@ -852,7 +867,8 @@ void TagsManager::FindImplDecl(const wxFileName &fileName, int lineno, const wxS
 	} else {
 
 		wxString typeName, typeScope;
-		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope);
+		wxString oper;
+		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 		if (!res) {
 			return;
 		}
@@ -950,7 +966,8 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
 		}
 		GetFunctionTipFromTags(candidates, word, tips);
 	} else {
-		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope);
+		wxString oper;
+		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 		if (!res) {
 			return false;
 		}
@@ -1016,7 +1033,7 @@ void TagsManager::BuildExternalDatabase(ExtDbData &data)
 
 	wxDir::GetAllFiles(data.rootPath, &all_files);
 	wxStringTokenizer tok(data.fileMasking, wxT(";"));
-	
+
 	std::map<wxString, bool> specMap;
 	while ( tok.HasMoreTokens() ) {
 		std::pair<wxString, bool> val;
@@ -1596,16 +1613,17 @@ wxString TagsManager::GetScopeName(const wxString &scope)
 	return lang->GetScopeName(scope, NULL);
 }
 
-bool TagsManager::ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope)
+bool TagsManager::ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper)
 {
-	return GetLanguage()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope);
+	return GetLanguage()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope, oper);
 }
 
 bool TagsManager::GetMemberType(const wxString &scope, const wxString &name, wxString &type, wxString &typeScope)
 {
 	wxString expression(scope);
 	expression << wxT("::") << name << wxT(".");
-	return GetLanguage()->ProcessExpression(expression, wxEmptyString, wxFileName(), wxNOT_FOUND, type, typeScope);
+	wxString dummy;
+	return GetLanguage()->ProcessExpression(expression, wxEmptyString, wxFileName(), wxNOT_FOUND, type, typeScope, dummy);
 }
 
 int TagsManager::UpdatePathVariable(const wxString &name, const wxString &value)
@@ -1875,11 +1893,11 @@ Language* TagsManager::GetLanguage()
 	}
 }
 
-bool TagsManager::ProcessExpression(const wxString &expression, wxString &type, wxString &typeScope)
-{
-	return ProcessExpression(wxFileName(), wxNOT_FOUND, expression, wxEmptyString, type, typeScope);
-}
-
+//bool TagsManager::ProcessExpression(const wxString &expression, wxString &type, wxString &typeScope)
+//{
+//	return ProcessExpression(wxFileName(), wxNOT_FOUND, expression, wxEmptyString, type, typeScope);
+//}
+//
 void TagsManager::GetClasses(std::vector< TagEntryPtr > &tags, bool onlyWorkspace)
 {
 	wxString sql;
@@ -1941,16 +1959,51 @@ void TagsManager::GetFunctions(std::vector< TagEntryPtr > &tags, const wxString 
 
 void TagsManager::GetAllTagsNameAsSpaceDelimString(wxString &tagsList)
 {
-	try
-	{
+	try {
 		wxString query(wxT("select distinct name from tags where kind in('class' , 'struct', 'function', 'typedef', 'prototype', 'enum') order by name ASC"));
 		wxSQLite3ResultSet res = m_pDb->Query(query);
-		while(res.NextRow()){
+		while (res.NextRow()) {
 			tagsList << res.GetString(0) << wxT(" ");
 		}
-	}
-	catch(wxSQLite3Exception &e)
-	{
+	} catch (wxSQLite3Exception &e) {
 		wxUnusedVar(e);
 	}
+}
+
+void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags)
+{
+	wxString sql;
+	std::vector<wxString> derivationList;
+
+	//add this scope as well to the derivation list
+	derivationList.push_back(scopeName);
+	GetDerivationList(scopeName, derivationList);
+
+	//make enough room for max of 500 elements in the vector
+	tags.reserve(500);
+
+	//prepare the kind claus
+	wxString kindClaus;
+	if (kind.IsEmpty() == false) {
+		kindClaus << wxT(" AND kind in (");
+	}
+
+	for (size_t i=0; i< kind.GetCount(); i++) {
+		kindClaus << wxT("'") << kind.Item(i) << wxT("', ");
+	}
+	//remove the trailing ','
+	kindClaus = kindClaus.BeforeLast(wxT(','));
+	if (kind.IsEmpty() == false) {
+		kindClaus << wxT(") ");
+	}
+
+	for (size_t i=0; i<derivationList.size(); i++) {
+		sql.Empty();
+		wxString tmpScope(derivationList.at(i));
+		sql << wxT("select * from tags where scope='") << tmpScope << wxT("' ") << kindClaus;
+		DoExecuteQueury(sql, tags);
+	}
+	// and finally sort the results
+	std::sort(tags.begin(), tags.end(), SAscendingSort());
+
 }

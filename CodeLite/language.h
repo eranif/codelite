@@ -112,10 +112,11 @@ public:
 	 * \param lineno current line number
 	 * \param typeName [output]
 	 * \param typeScope [output]
+	 * \param oper [output] return the operator used (::, ., ->)
 	 * \return true on success, false otherwise. The output fields are only to be checked with the return 
 	 * valus is 'true'
 	 */
-	bool ProcessExpression(const wxString& stmt, const wxString& text, const wxFileName &fn, int lineno, wxString &typeName, wxString &typeScope);
+	bool ProcessExpression(const wxString& stmt, const wxString& text, const wxFileName &fn, int lineno, wxString &typeName, wxString &typeScope, wxString &oper);
 
 	/**
 	 * return scope name from given input string

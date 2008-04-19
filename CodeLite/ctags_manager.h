@@ -406,7 +406,16 @@ public:
 	 * \param inherits set to true if you want inherited members as well members 
 	 */
 	void TagsByScope(const wxString &scopeName, const wxString &kind, std::vector<TagEntryPtr> &tags, bool includeInherits = false);
-
+	
+	/**
+	 * return tags belongs to given scope and kind
+	 * \param scopeName the scope to search
+	 * \param kind list of tags kind to return
+	 * \param tags [ouput] the result vector
+	 * \param inherits set to true if you want inherited members as well members 
+	 */
+	void TagsByScope(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags);
+	
 	/**
 	 * Find implementation/declaration of symbol
 	 * \param expr the current expression
@@ -585,14 +594,14 @@ public:
 	 */
 	bool IsTypeAndScopeExists(const wxString &typeName, wxString &scope);
 	
-	/**
-	 * \brief try to process a given expression and evaluate it into type & typescope
-	 * \param expression
-	 * \param type
-	 * \param typeScope
-	 * \return true on success false otherwise
-	 */
-	bool ProcessExpression(const wxString &expression, wxString &type, wxString &typeScope);
+//	/**
+//	 * \brief try to process a given expression and evaluate it into type & typescope
+//	 * \param expression
+//	 * \param type
+//	 * \param typeScope
+//	 * \return true on success false otherwise
+//	 */
+//	bool ProcessExpression(const wxString &expression, wxString &type, wxString &typeScope);
 	
 	/**
 	 * \brief strip comments from a given text
@@ -663,7 +672,7 @@ protected:
 	void GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips);
 	DoxygenComment DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix);
 	void DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, const wxString *rootPath = NULL);
-	bool ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope);
+	bool ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper);
 	void FilterImplementation(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	void FilterDeclarations(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	void ConvertPath(TagEntryPtr& tag);

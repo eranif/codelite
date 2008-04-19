@@ -208,8 +208,9 @@ void Language::SetAutoCompDeliemters(const std::vector<wxString> &delimArr)
 bool Language::ProcessExpression(const wxString& stmt,
                                  const wxString& text,
                                  const wxFileName &fn, int lineno,
-                                 wxString &typeName, //output
-                                 wxString &typeScope)//output
+                                 wxString &typeName, 	//output
+                                 wxString &typeScope,	//output
+                                 wxString &oper)		//output
 {
 	ExpressionResult result;
 	wxString statement( stmt );
@@ -224,7 +225,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 
 	// First token is handled sepratly
 	wxString word;
-	wxString oper;
+	wxString op;
 	wxString lastFuncSig;
 	wxString accumulatedScope;
 
@@ -244,7 +245,8 @@ bool Language::ProcessExpression(const wxString& stmt,
 	//get next token using the tokenscanner object
 	m_tokenScanner->SetText(_C(statement));
 	Variable parent;
-	while (NextToken(word, oper)) {
+	while (NextToken(word, op)) {
+		oper = op;
 		m_parentVar.Reset();
 		wxString templateInitList;
 		result = ParseExpression(word);
@@ -275,16 +277,16 @@ bool Language::ProcessExpression(const wxString& stmt,
 				evaluationSucceeded = false;
 				break;
 			}
-			if (oper == wxT("::")) {
+			if (op == wxT("::")) {
 				evaluationSucceeded = false;
 				break;
 			} // if(oper == wxT("::"))
 
-			if (result.m_isPtr && oper == wxT(".")) {
+			if (result.m_isPtr && op == wxT(".")) {
 				evaluationSucceeded = false;
 				break;
 			}
-			if (!result.m_isPtr && oper == wxT("->")) {
+			if (!result.m_isPtr && op == wxT("->")) {
 				evaluationSucceeded = false;
 				break;
 			}
@@ -322,7 +324,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 				accumulatedScope << wxT("<global>");
 			}
 
-			if (oper == wxT("::")) {
+			if (op == wxT("::")) {
 				//if the operator was something like 'Qualifier::', it is safe to assume
 				//that the secope to be searched is the full expression
 				scopeToSearch = accumulatedScope;
@@ -368,7 +370,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 
 			//try match any overloading operator to the typeName
 			wxString tmpTypeName(typeName);
-			if ( oper == wxT("->") && OnArrowOperatorOverloading(typeName, typeScope) ) {
+			if ( op == wxT("->") && OnArrowOperatorOverloading(typeName, typeScope) ) {
 
 				//there is an operator overloading for ->
 				//do the whole typedef/template subsitute again
@@ -865,13 +867,13 @@ bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const 
 				}
 			}
 		}
-		
+
 		//if we are here, it means that the more scopes did not matched any, try the parent scope
 		tags.clear();
 		if (DoSearchByNameAndScope(type, parentScope, tags, type, typeScope)) {
 			return true;
 		}
-		
+
 		//still no match?
 		return true;
 	}

@@ -597,7 +597,7 @@ public:
 	 */
 	void GetAcceleratorMap(MenuItemDataMap& accelMap);
 	
-	void UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap);
+	void UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< wxAcceleratorEntry > &accelVec);
 	
 	//--------------------------------------------------------------------
 	//IDebuggerObserver implementation. These set of functions are called

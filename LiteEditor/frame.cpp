@@ -258,7 +258,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	
 	EVT_MENU(XRCID("configure_accelerators"), Frame::OnConfigureAccelerators)
 	
-	#if defined (__WXMSW__) || defined (__WXMAC__)
+//	#if defined (__WXMSW__) || defined (__WXMAC__)
 	EVT_UPDATE_UI(wxID_SAVE, Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("complete_word"), Frame::OnCompleteWordUpdateUI)
 	EVT_UPDATE_UI(XRCID("execute_no_debug"), Frame::OnExecuteNoDebugUI)
@@ -280,7 +280,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("delete_breakpoint"), Frame::OnDebugManageBreakpointsUI)
 	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
 	EVT_UPDATE_UI(wxID_CLOSE, Frame::OnFileCloseUI)
-	#endif
+//	#endif
 
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;

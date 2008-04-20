@@ -2389,13 +2389,14 @@ void Manager::UpdateMenuAccelerators()
 	wxMenuBar *bar = Frame::Get()->GetMenuBar();
 	
 	wxString content;
+	std::vector< wxAcceleratorEntry > accelVec;
 	size_t count = bar->GetMenuCount();
 	for (size_t i=0; i< count; i++) {
 		wxMenu * menu = bar->GetMenu(i);
 
 		//iterate over the menu and its sub menus and print all menu items IDs, name and shortcut
 //		DumpMenu(menu, bar->GetMenuLabelText(i), content);
-		UpdateMenu(menu, menuMap);
+		UpdateMenu(menu, menuMap, accelVec);
 	}
 	
 	if(content.IsEmpty() == false) {
@@ -2403,6 +2404,18 @@ void Manager::UpdateMenuAccelerators()
 		f.Write(content);
 		f.Close();
 	}
+	
+	//update the accelerator table of the main frame
+	wxAcceleratorEntry *entries = new wxAcceleratorEntry[accelVec.size()];
+	for(size_t i=0; i < accelVec.size(); i++ ) {
+		entries[i] = accelVec[i];
+	}
+	
+	wxAcceleratorTable table(accelVec.size(), entries);
+	
+	//update the accelerator table
+	Frame::Get()->SetAcceleratorTable( table );
+	delete [] entries;
 }
 
 void Manager::DumpMenu(wxMenu *menu, const wxString &label, wxString &content)
@@ -2467,14 +2480,14 @@ void Manager::LoadAcceleratorTable(const wxString &file, MenuItemDataMap &accelM
 	}
 }
 
-void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap)
+void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< wxAcceleratorEntry > &accelVec)
 {
 	wxMenuItemList items = menu->GetMenuItems();
 	wxMenuItemList::iterator iter = items.begin();
 	for (; iter != items.end(); iter++) {
 		wxMenuItem *item =  *iter;
 		if (item->GetSubMenu()) {
-			UpdateMenu(item->GetSubMenu(), accelMap);
+			UpdateMenu(item->GetSubMenu(), accelMap, accelVec);
 		} else {
 
 			if ( item->GetId() == wxID_SEPARATOR ) {
@@ -2495,17 +2508,26 @@ void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap)
 					txt << wxT("\t") << item_data.accel;
 				}
 				
-				//wxPrintf(wxT("Adding: %s\n"), txt.GetData());	
-				//wxAcceleratorEntry* a = wxAcceleratorEntry::Create(txt);	
 				//item->SetAccel(a);
 				item->SetItemLabel( txt );	
+				
+#ifdef __WXMSW__
+				txt = txt.AfterFirst(wxT('\t'));
+				txt.Prepend(wxT('\t'));
+#endif			
+				wxAcceleratorEntry* a = wxAcceleratorEntry::Create(txt);
+				if( a ) {
+					a->Set(a->GetFlags(), a->GetKeyCode(), item->GetId());
+					accelVec.push_back( *a );
+					delete a;
+				}
 			} else {
 				//wxPrintf(wxT("Could not find %s\n"), labelText.GetData());	
 				//item->SetAccel(NULL);
 				
 			}
 		}
-	}	
+	}
 }
 
 void Manager::GetAcceleratorMap(MenuItemDataMap& accelMap)

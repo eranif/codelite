@@ -2,7 +2,7 @@
     <object class="wxMenuBar" name="main_menu">
 		<style>wxMB_DOCKABLE</style>
         <object class="wxMenu" name="file_tool_or_menuitem">
-            <label>File</label>
+            <label>&amp;File</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="new_file">
                 <label>New File</label>
@@ -68,7 +68,7 @@
             Edit menu 
          -->
         <object class="wxMenu" name="edit_menu">
-            <label>Edit</label>
+            <label>&amp;Edit</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="wxID_UNDO">
                 <label>Undo</label>
@@ -136,7 +136,7 @@
         </object>
 
         <object class="wxMenu" name="view_menu">
-            <label>View</label>
+            <label>&amp;View</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="view_welcome_page">
 				<label>Show Welcome Page</label>
@@ -193,7 +193,7 @@
         </object>
 	    
         <object class="wxMenu" name="search_menu">
-            <label>Search</label>
+            <label>&amp;Search</label>
             <style>wxMENU_TEAROFF</style>
 			<object class="wxMenuItem" name="find_in_files">
                 <label>Find In Files...</label>
@@ -250,7 +250,7 @@
         
         <!-- Project Menu -->
         <object class="wxMenu" name="project_menu">
-            <label>Workspace</label>
+            <label>&amp;Workspace</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="new_workspace">
                 <label>Create New Workspace...</label>
@@ -281,7 +281,7 @@
         </object>
         
         <object class="wxMenu" name="build_menu">
-            <label>Build</label>
+            <label>&amp;Build</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="configuration_manager">
                 <label>Configuration Manager...</label>
@@ -322,7 +322,7 @@
         </object>
 
         <object class="wxMenu" name="debug">
-            <label>Debug</label>
+            <label>&amp;Debug</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="start_debugger">
                 <label>Start/Continue Debugger</label>
@@ -352,7 +352,7 @@
 		</object>
 
         <object class="wxMenu" name="tags_menu">
-            <label>Tags</label>
+            <label>&amp;Tags</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="create_ext_database">
                 <label>Create external tags database...</label>
@@ -371,7 +371,7 @@
         </object>
         
         <object class="wxMenu" name="plugins">
-            <label>Plugins</label>
+            <label>&amp;Plugins</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="manage_plugins">
                 <label>Manage Plugins...</label>
@@ -380,7 +380,7 @@
         </object>
         
 		<object class="wxMenu" name="settings_menu">
-            <label>Settings</label>
+            <label>Settin&amp;gs</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="options">
                 <label>Editor...</label>
@@ -406,7 +406,7 @@
             Help menu 
          -->
         <object class="wxMenu" name="help_menu">
-            <label>Help</label>
+            <label>&amp;Help</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="about">
                 <label>About...</label>

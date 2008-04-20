@@ -92,15 +92,15 @@
     <long Value="1" Name="m_value"/>
   </ArchiveObject>
   <RecentWorkspaces>
-    <File Name="C:\TestArea\TestOne.workspace"/>
-    <File Name="C:\TestArea\TestProjectSettings\workspace.workspace"/>
-    <File Name="C:\TestArea\newdlgs\SomeWSP.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
-    <File Name="C:\Users\Eran\Development\codelite\trunk\Plugins.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
-    <File Name="C:\Development\C++\codelite\trunk\CxxParser\CxxParser.workspace"/>
-    <File Name="C:\TestArea\TestMainBug\TestMainBug.workspace"/>
     <File Name="/home/eran/devl/test/test.workspace"/>
+    <File Name="C:\TestArea\TestMainBug\TestMainBug.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\CxxParser\CxxParser.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\Plugins.workspace"/>
+    <File Name="C:\Users\Eran\Development\codelite\trunk\Plugins.workspace"/>
+    <File Name="C:\Development\C++\codelite\trunk\LiteEditor.workspace"/>
+    <File Name="C:\TestArea\newdlgs\SomeWSP.workspace"/>
+    <File Name="C:\TestArea\TestProjectSettings\workspace.workspace"/>
+    <File Name="C:\TestArea\TestOne.workspace"/>
   </RecentWorkspaces>
   <ArchiveObject Name="GeneralInfo">
     <wxSize Name="m_frameSize" x="1688" y="1028"/>

@@ -2,26 +2,26 @@
     <object class="wxMenuBar" name="main_menu">
 		<style>wxMB_DOCKABLE</style>
         <object class="wxMenu" name="file_tool_or_menuitem">
-            <label>&amp;File</label>
+            <label>File</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="new_file">
-                <label>&amp;New File</label>
+                <label>New File</label>
                 <help>Create an empty new file</help>
             </object>
             <object class="wxMenuItem" name="open_file">
-                <label>&amp;Open File...</label> 
+                <label>Open File...</label> 
                 <help>Open an existing file</help>
             </object>
 			<object class="wxMenuItem" name="wxID_REFRESH">
-				<label>&amp;Reload File</label>
+				<label>Reload File</label>
 			</object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="wxID_SAVE">
-                <label>&amp;Save File</label>
+                <label>Save File</label>
                 <help>Save the existing file</help>
             </object>
             <object class="wxMenuItem" name="wxID_SAVEAS">
-                <label>&amp;Save &amp;As...</label>
+                <label>Save As...</label>
                 <help>Save current file as...</help>
             </object>
             <object class="wxMenuItem" name="save_all">
@@ -43,12 +43,12 @@
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             
             <object class="wxMenu" name="recent_files">
-				<label>Recent &amp;Files</label>
+				<label>Recent Files</label>
 				<style>wxMENU_TEAROFF</style>
             </object>            
             
             <object class="wxMenu" name="recent_workspaces">
-				<label>Recent &amp;Workspaces</label>
+				<label>Recent Workspaces</label>
 				<style>wxMENU_TEAROFF</style>
             </object>
 			
@@ -59,7 +59,7 @@
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>     
             <object class="wxMenuItem" name="wxID_EXIT">
-                <label>E&amp;xit</label>
+                <label>Exit</label>
                 <help>Close LiteEditor</help>
             </object>
         </object>
@@ -68,37 +68,37 @@
             Edit menu 
          -->
         <object class="wxMenu" name="edit_menu">
-            <label>&amp;Edit</label>
+            <label>Edit</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="wxID_UNDO">
-                <label>&amp;Undo</label>
+                <label>Undo</label>
             </object>
             <object class="wxMenuItem" name="wxID_REDO">
-                <label>&amp;Redo</label>
+                <label>Redo</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>            
             <object class="wxMenuItem" name="wxID_CUT">
                 <label>Cut</label>
             </object>
             <object class="wxMenuItem" name="wxID_COPY">
-                <label>&amp;Copy</label>
+                <label>Copy</label>
             </object>
             <object class="wxMenuItem" name="wxID_PASTE">
-                <label>&amp;Paste</label>
+                <label>Paste</label>
             </object>
             <object class="wxMenuItem" name="wxID_DUPLICATE">
-                <label>&amp;Duplicate Line</label>
+                <label>Duplicate Line</label>
                 <help>Duplcate the current line</help>
             </object>
             <object class="wxMenuItem" name="wxID_SELECTALL">
-                <label>&amp;Select All</label>
+                <label>Select All</label>
             </object>            
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>            
             <object class="wxMenuItem" name="match_brace">
-                <label>&amp;Match Brace</label>
+                <label>Match Brace</label>
             </object>            
             <object class="wxMenuItem" name="select_to_brace">
-                <label>&amp;Select to Brace</label>
+                <label>Select to Brace</label>
             </object>            
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="complete_word">
@@ -106,23 +106,23 @@
             </object>                        
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="word_wrap">
-				<label>&amp;Word Wrap</label>
+				<label>Word Wrap</label>
 				<checkable>1</checkable>
 			</object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenu" name="line_end_chars_menu">
-				<label>&amp;Line End Characters</label>
+				<label>Line End Characters</label>
 				<style>wxMENU_TEAROFF</style>
 				<object class="wxMenuItem" name="line_end_cr">
-					<label>&amp;CR</label>
+					<label>CR</label>
 					<radio>1</radio>
 				</object>
 				<object class="wxMenuItem" name="line_end_lf">
-					<label>&amp;LF</label>
+					<label>LF</label>
 					<radio>1</radio>
 				</object>
 				<object class="wxMenuItem" name="line_end_crlf">
-					<label>CR &amp;+ LF</label>
+					<label>CR + LF</label>
 					<radio>1</radio>
 				</object>
 			</object>
@@ -136,26 +136,26 @@
         </object>
 
         <object class="wxMenu" name="view_menu">
-            <label>&amp;View</label>
+            <label>View</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="view_welcome_page">
-				<label>&amp;Show Welcome Page</label>
+				<label>Show Welcome Page</label>
             </object>
             <object class="wxMenuItem" name="view_welcome_page_at_startup">
-				<label>Load W&amp;elcome Page at Startup</label>
+				<label>Load Welcome Page at Startup</label>
 				<checkable>1</checkable>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="output_pane">
-				<label>O&amp;utput Pane</label>
+				<label>Output Pane</label>
 				<checkable>1</checkable>
             </object>
 			<object class="wxMenuItem" name="workspace_pane">
-				<label>&amp;Workspace Pane</label>
+				<label>Workspace Pane</label>
 				<checkable>1</checkable>
 			</object>
 			<object class="wxMenuItem" name="debugger_pane">
-				<label>&amp;Debugger Pane</label>
+				<label>Debugger Pane</label>
 				<checkable>1</checkable>
 			</object>	
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
@@ -163,62 +163,62 @@
 				<label>Toolbars</label>
 				<style>wxMENU_TEAROFF</style>
 				<object class="wxMenuItem" name="show_std_toolbar">
-					<label>Stan&amp;dard ToolBar</label>
+					<label>Standard ToolBar</label>
 					<checkable>1</checkable>
 				</object>
 				<object class="wxMenuItem" name="show_search_toolbar">
-					<label>&amp;Search ToolBar</label>
+					<label>Search ToolBar</label>
 					<checkable>1</checkable>
 				</object>
 				<object class="wxMenuItem" name="show_build_toolbar">
-					<label>&amp;Build ToolBar</label>
+					<label>Build ToolBar</label>
 					<checkable>1</checkable>
 				</object>
 				<object class="wxMenuItem" name="show_debug_toolbar">
-					<label>&amp;Debug ToolBar</label>
+					<label>Debug ToolBar</label>
 					<checkable>1</checkable>
 				</object>
 				<object class="wxMenuItem" name="show_nav_toolbar">
-					<label>&amp;Navigation ToolBar</label>
+					<label>Navigation ToolBar</label>
 					<checkable>1</checkable>
 				</object>
 			</object>
 		
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="toggle_panes">
-                <label>&amp;Toggle All Panes</label>
+                <label>Toggle All Panes</label>
                 <help>Hide all panes and maximize the editing area</help>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         </object>
 	    
         <object class="wxMenu" name="search_menu">
-            <label>&amp;Search</label>
+            <label>Search</label>
             <style>wxMENU_TEAROFF</style>
 			<object class="wxMenuItem" name="find_in_files">
-                <label>Fin&amp;d In Files...</label>
+                <label>Find In Files...</label>
             </object>
             <object class="wxMenuItem" name="wxID_FIND">
-                <label>&amp;Find...</label>
+                <label>Find...</label>
             </object>
             <object class="wxMenuItem" name="wxID_REPLACE">
-                <label>&amp;Replace...</label>
+                <label>Replace...</label>
             </object>
             <object class="wxMenuItem" name="find_next">
-                <label>Find &amp;Next</label>
+                <label>Find Next</label>
             </object>
             <object class="wxMenuItem" name="find_previous">
-                <label>Find &amp;Previous</label>
+                <label>Find Previous</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="find_resource">
-                <label>Find Re&amp;source...</label>
+                <label>Find Resource...</label>
             </object>
             <object class="wxMenuItem" name="find_type">
-                <label>Find &amp;Type...</label>
+                <label>Find Type...</label>
             </object>
 			<object class="wxMenuItem" name="find_symbol">
-                <label>&amp;Quick Outline...</label>
+                <label>Quick Outline...</label>
             </object>
             <object class="wxMenuItem" name="goto_definition">
                 <label>Find Symbol</label>
@@ -229,91 +229,91 @@
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			
             <object class="wxMenuItem" name="goto_linenumber">
-                <label>&amp;Go To...</label>
+                <label>Go To...</label>
             </object>
             
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 
             <object class="wxMenuItem" name="toggle_bookmark">
-                <label>To&amp;ggle Bookmark</label>
+                <label>Toggle Bookmark</label>
             </object>
             <object class="wxMenuItem" name="next_bookmark">
-                <label>Next Book&amp;mark</label>
+                <label>Next Bookmark</label>
             </object>
             <object class="wxMenuItem" name="previous_bookmark">
-                <label>Pre&amp;vious Bookmark</label>
+                <label>Previous Bookmark</label>
             </object>
             <object class="wxMenuItem" name="removeall_bookmarks">
-                <label>Remove &amp;All Bookmarks</label>
+                <label>Remove All Bookmarks</label>
             </object>
         </object>
         
         <!-- Project Menu -->
         <object class="wxMenu" name="project_menu">
-            <label>&amp;Workspace</label>
+            <label>Workspace</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="new_workspace">
-                <label>Create &amp;New Workspace...</label>
+                <label>Create New Workspace...</label>
                 <help>Create New workspace</help>
             </object>
             <object class="wxMenuItem" name="switch_to_workspace">
-                <label>&amp;Switch to Workspace...</label>
+                <label>Switch to Workspace...</label>
                 <help>Switch to an existing workspace</help>
             </object>
             <object class="wxMenuItem" name="close_workspace">
-                <label>&amp;Close Workspace</label>
+                <label>Close Workspace</label>
             </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="import_from_msvs">
-	    		<label>&amp;Import MS Visual Studio Solution File...</label>
+	    		<label>Import MS Visual Studio Solution File...</label>
 				<help>Import a workspace from a MS Visual Studio solution file</help>
 			</object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 
             <object class="wxMenuItem" name="new_project">
-                <label>&amp;Create New &amp;Project</label>
+                <label>Create New Project</label>
                 <help>Create new Project and add it to the current workspace</help>
             </object>
             <object class="wxMenuItem" name="add_project">
-                <label>&amp;Add an &amp;Existing Project</label>
+                <label>Add an Existing Project</label>
                 <help>Add an existing project to the current workspace</help>
             </object>            
         </object>
         
         <object class="wxMenu" name="build_menu">
-            <label>&amp;Build</label>
+            <label>Build</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="configuration_manager">
-                <label>C&amp;onfiguration Manager...</label>
+                <label>Configuration Manager...</label>
             </object>
 
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="execute_no_debug">
-				<label>&amp;Run</label>
+				<label>Run</label>
 			</object>
 			<object class="wxMenuItem" name="stop_executed_program">
-				<label>&amp;Stop</label>
+				<label>Stop</label>
 			</object>
 
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="build_active_project">
-                <label>&amp;Build Project</label>
+                <label>Build Project</label>
             </object>
 			<object class="wxMenuItem" name="compile_active_file">
-                <label>&amp;Compile Current File</label>
+                <label>Compile Current File</label>
             </object>
             <object class="wxMenuItem" name="clean_active_project">
-                <label>&amp;Clean Project</label>
+                <label>Clean Project</label>
             </object>
             <object class="wxMenuItem" name="stop_active_project_build">
-                <label>&amp;Stop Build</label>
+                <label>Stop Build</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="rebuild_active_project">
                 <label>Rebuild Project</label>
             </object>
 			<object class="wxMenuItem" name="build_n_run_active_project">
-                <label>Build and &amp;Run Project</label>
+                <label>Build and Run Project</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="next_error">
@@ -322,19 +322,19 @@
         </object>
 
         <object class="wxMenu" name="debug">
-            <label>&amp;Debug</label>
+            <label>Debug</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="start_debugger">
-                <label>S&amp;tart/Continue Debugger</label>
+                <label>Start/Continue Debugger</label>
             </object>
             <object class="wxMenuItem" name="attach_debugger">
-                <label>&amp;Attach to process...</label>
+                <label>Attach to process...</label>
             </object>
             <object class="wxMenuItem" name="pause_debugger">
                 <label>Pause debugger</label>
             </object>
             <object class="wxMenuItem" name="stop_debugger">
-                <label>S&amp;top debugger</label>
+                <label>Stop debugger</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/> 
             <object class="wxMenuItem" name="dbg_stepin">
@@ -352,53 +352,53 @@
 		</object>
 
         <object class="wxMenu" name="tags_menu">
-            <label>&amp;Tags</label>
+            <label>Tags</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="create_ext_database">
-                <label>&amp;Create external tags database...</label>
+                <label>Create external tags database...</label>
             </object>
             
             <object class="wxMenuItem" name="open_ext_database">
-                <label>A&amp;ttach external tags database...</label>
+                <label>Attach external tags database...</label>
             </object>
             <object class="wxMenuItem" name="close_ext_database">
-                <label>Clos&amp;e external tags database</label>
+                <label>Close external tags database</label>
             </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>    
             <object class="wxMenuItem" name="fix_ext_database">
-                <label>&amp;Fix external tags database paths...</label>
+                <label>Fix external tags database paths...</label>
             </object>
         </object>
         
         <object class="wxMenu" name="plugins">
-            <label>&amp;Plugins</label>
+            <label>Plugins</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="manage_plugins">
-                <label>&amp;Manage Plugins...</label>
+                <label>Manage Plugins...</label>
             </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>    
         </object>
         
 		<object class="wxMenu" name="settings_menu">
-            <label>Settin&amp;gs</label>
+            <label>Settings</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="options">
-                <label>&amp;Editor...</label>
+                <label>Editor...</label>
             </object>
 			<object class="wxMenuItem" name="configure_accelerators">
-                <label>Configure &amp;accelerators...</label>
+                <label>Configure accelerators...</label>
             </object>
             <object class="wxMenuItem" name="add_envvar">
-                <label>En&amp;vironment Variables...</label>
+                <label>Environment Variables...</label>
             </object>
 			<object class="wxMenuItem" name="advance_settings">
-                <label>&amp;Build Settings...</label>
+                <label>Build Settings...</label>
             </object>
 			<object class="wxMenuItem" name="debuger_settings">
-                <label>&amp;Debugger Settings...</label>
+                <label>Debugger Settings...</label>
             </object>
 			<object class="wxMenuItem" name="tags_options">
-                <label>&amp;Tags Options...</label>
+                <label>Tags Options...</label>
             </object>
 		</object>
 		
@@ -406,10 +406,10 @@
             Help menu 
          -->
         <object class="wxMenu" name="help_menu">
-            <label>&amp;Help</label>
+            <label>Help</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="about">
-                <label>&amp;About...</label>
+                <label>About...</label>
             </object>
         </object>
     </object>
@@ -430,7 +430,7 @@
             <label>Close All</label>
         </object>
 		<object class="wxMenuItem" name="close_other_tabs">
-            <label>Close &amp;Other tabs</label>
+            <label>Close Other tabs</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="wxID_REFRESH">
@@ -445,10 +445,10 @@
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="copy_file_name">
-            <label>Copy &amp;Full Path to Clipboard</label>
+            <label>Copy Full Path to Clipboard</label>
         </object>
 		<object class="wxMenuItem" name="copy_file_path">
-            <label>Copy &amp;Path to Clipboard</label>
+            <label>Copy Path to Clipboard</label>
         </object>
     </object>
     
@@ -469,10 +469,10 @@
 			<label>Code Generation / Refactoring</label>
 			<style>wxMENU_TEAROFF</style>
 			<object class="wxMenuItem" name="insert_doxy_comment">
-				<label>Insert Do&amp;xygen Comment</label>
+				<label>Insert Doxygen Comment</label>
 			</object>
 			<object class="wxMenuItem" name="setters_getters">
-				<label>&amp;Generate Setters/Getters...</label>
+				<label>Generate Setters/Getters...</label>
 			</object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="move_impl">
@@ -485,10 +485,10 @@
 		
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>		
 		<object class="wxMenuItem" name="comment_selection">
-            <label>Comment &amp;Selection</label>
+            <label>Comment Selection</label>
         </object>
         <object class="wxMenuItem" name="comment_line">
-            <label>Comment &amp;Line</label>
+            <label>Comment Line</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="wxID_UNDO">
@@ -522,51 +522,51 @@
     
     <!-- Folder Menu -->
     <object class="wxMenu" name="file_tree_folder">
-        <label>&amp;Project</label>
+        <label>Project</label>
         <style>wxMENU_TEAROFF</style>
         <object class="wxMenuItem" name="new_item">
-            <label>Add New &amp;Item...</label>
+            <label>Add New Item...</label>
         </object>
         <object class="wxMenuItem" name="add_existing_item">
-            <label>Add E&amp;xisting Item...</label>
+            <label>Add Existing Item...</label>
         </object>
         <object class="wxMenuItem" name="new_virtual_folder">
-            <label>&amp;New Virtual Folder</label>
+            <label>New Virtual Folder</label>
         </object>
          <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="sort_item">
-            <label>&amp;Sort Item</label>
+            <label>Sort Item</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="remove_virtual_folder">
-            <label>&amp;Remove Virtual Folder</label>
+            <label>Remove Virtual Folder</label>
         </object>        
     </object>
     
     <!-- Project Menu -->
     <object class="wxMenu" name="file_tree_project">
-        <label>&amp;Project</label>
+        <label>Project</label>
         <style>wxMENU_TEAROFF</style>
 		
 		<object class="wxMenuItem" name="import_directory">
-			<label>&amp;Import Files From Directory</label>
+			<label>Import Files From Directory</label>
 		</object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		
 		<object class="wxMenuItem" name="build_project">
-			<label>&amp;Build</label>
+			<label>Build</label>
 		</object>
 
 		<object class="wxMenuItem" name="stop_build">
-			<label>&amp;Stop Build</label>
+			<label>Stop Build</label>
 		</object>
 		
 		<object class="wxMenuItem" name="clean_project">
-			<label>&amp;Clean</label>
+			<label>Clean</label>
 		</object>
 		
 		<object class="wxMenuItem" name="export_makefile">
-			<label>Export &amp;Makefile</label>
+			<label>Export Makefile</label>
 		</object>
 		
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
@@ -584,32 +584,32 @@
 		
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="set_as_active">
-			<label>Set As &amp;Active</label>
+			<label>Set As Active</label>
 		</object>
 
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="build_order">
-			<label>&amp;Build Order...</label>
+			<label>Build Order...</label>
 		</object>
 		
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		
 		<object class="wxMenuItem" name="retag_project">
-			<label>&amp;Re-Tag Project</label>
+			<label>Re-Tag Project</label>
 		</object>
 		
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		
 		<object class="wxMenuItem" name="sort_item">
-			<label>&amp;Sort Item</label>
+			<label>Sort Item</label>
 		</object>
 		<object class="wxMenuItem" name="new_virtual_folder">
-			<label>New &amp;Virtual Folder</label>
+			<label>New Virtual Folder</label>
 		</object>
 		
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="remove_project">
-            <label>&amp;Remove Project</label>
+            <label>Remove Project</label>
         </object>
         
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
@@ -624,11 +624,11 @@
     <!-- Workspace -->
      <object class="wxMenu" name="workspace_popup_menu">
         <object class="wxMenuItem" name="new_project">
-            <label>&amp;Create New &amp;Project</label>
+            <label>Create New Project</label>
             <help>Create new Project and add it to the current workspace</help>
         </object>
         <object class="wxMenuItem" name="add_project">
-            <label>&amp;Add an &amp;Existing Project</label>
+            <label>Add an Existing Project</label>
             <help>Add an existing project to the current workspace</help>
         </object>            
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
@@ -638,7 +638,7 @@
         
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="add_envvar">
-            <label>En&amp;vironment Variables...</label>
+            <label>Environment Variables...</label>
         </object>
     </object>
     
@@ -653,7 +653,7 @@
     
 	<object class="wxMenu" name="delete_compiler_menu">
         <object class="wxMenuItem" name="delete_compiler">
-            <label>&amp;Delete Compiler</label>
+            <label>Delete Compiler</label>
         </object>
     </object>    
 
@@ -680,18 +680,18 @@
 	//File explorer
 	<object class="wxMenu" name="file_explorer_menu">
         <object class="wxMenuItem" name="refresh_node">
-            <label>&amp;Refresh</label>
+            <label>Refresh</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="delete_node">
-            <label>&amp;Delete</label>
+            <label>Delete</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="open_file">
-            <label>&amp;Open</label>
+            <label>Open</label>
         </object>
         <object class="wxMenuItem" name="open_file_in_text_editor">
-            <label>Open in &amp;editor</label>
+            <label>Open in editor</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="open_shell">

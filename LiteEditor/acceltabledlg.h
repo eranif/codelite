@@ -20,7 +20,7 @@ protected:
 	void OnItemDeselected( wxListEvent& event );
 	void OnColClicked(wxListEvent &event);
 	void PopulateTable();
-	
+	void OnButtonOk(wxCommandEvent &e);
 public:
 	/** Constructor */
 	AccelTableDlg( wxWindow* parent );

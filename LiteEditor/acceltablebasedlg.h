@@ -40,6 +40,7 @@ class AccelTableBaseDlg : public wxDialog
 		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }
 		virtual void OnItemSelected( wxListEvent& event ){ event.Skip(); }
 		virtual void OnItemDeselected( wxListEvent& event ){ event.Skip(); }
+		virtual void OnButtonOk( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:

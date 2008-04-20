@@ -42,6 +42,7 @@ AccelTableBaseDlg::AccelTableBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_listCtrl1->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( AccelTableBaseDlg::OnItemActivated ), NULL, this );
 	m_listCtrl1->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( AccelTableBaseDlg::OnItemSelected ), NULL, this );
 	m_listCtrl1->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( AccelTableBaseDlg::OnItemDeselected ), NULL, this );
+	m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AccelTableBaseDlg::OnButtonOk ), NULL, this );
 }
 
 AccelTableBaseDlg::~AccelTableBaseDlg()
@@ -51,4 +52,5 @@ AccelTableBaseDlg::~AccelTableBaseDlg()
 	m_listCtrl1->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( AccelTableBaseDlg::OnItemActivated ), NULL, this );
 	m_listCtrl1->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( AccelTableBaseDlg::OnItemSelected ), NULL, this );
 	m_listCtrl1->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( AccelTableBaseDlg::OnItemDeselected ), NULL, this );
+	m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AccelTableBaseDlg::OnButtonOk ), NULL, this );
 }

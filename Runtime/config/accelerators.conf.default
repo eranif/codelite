@@ -114,6 +114,7 @@
 115|C++::Code Generation / Refactoring|Add Function Implementation...|
 113|C++|Comment Selection|Ctrl-Shift-C
 114|C++|Comment Line|Ctrl-Shift-P
+116|C++|Add Include File|Ctrl-Shift-I
 5007|C++|Undo|Ctrl-Z
 5008|C++|Redo|Ctrl-Y
 5031|C++|Cut|Ctrl-X

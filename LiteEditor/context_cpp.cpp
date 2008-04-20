@@ -700,7 +700,7 @@ void ContextCpp::AddMenuDynamicContent(wxMenu *menu)
 		wxString word = rCtrl.GetWordAtCaret();
 		if (word.IsEmpty() == false) {
 			PrependMenuItemSeparator(menu);
-			menuItemText << wxT("Add Include File for \"") << word << wxT("\"\tCtrl+Shift+I");
+			menuItemText << wxT("Add Include File for \"") << word << wxT("\"");
 			PrependMenuItem(menu, menuItemText, XRCID("add_include_file"));
 			m_selectedWord = word;
 		}

@@ -1,4 +1,5 @@
 #include "globals.h"
+#include <wx/ffile.h>
 #include "newkeyshortcutdlg.h"
 #include "acceltabledlg.h"
 #include "manager.h"
@@ -124,3 +125,38 @@ void AccelTableDlg::OnColClicked(wxListEvent &event)
 {
 	wxUnusedVar(event);
 }
+
+void AccelTableDlg::OnButtonOk(wxCommandEvent &e)
+{
+	//export the content of table, and apply the changes
+	wxString content;
+	size_t count = m_listCtrl1->GetItemCount();
+	for(size_t i=0; i<count; i++) {
+		content << GetColumnText(m_listCtrl1, i, 0);
+		content << wxT("|");
+		content << GetColumnText(m_listCtrl1, i, 1);
+		content << wxT("|");
+		content << GetColumnText(m_listCtrl1, i, 2);
+		content << wxT("|");
+		content << GetColumnText(m_listCtrl1, i, 3);
+		content << wxT("\n");
+	}
+	
+	wxString fileName = ManagerST::Get()->GetStarupDirectory();
+	fileName << wxT("/config/accelerators.conf");
+	
+	wxFFile file;
+	if (!file.Open(fileName, wxT("w+b"))) {
+		return;
+	}
+
+	file.Write(content);
+	file.Close();
+	
+	//apply changes
+	ManagerST::Get()->UpdateMenuAccelerators();
+	
+	EndModal( wxID_OK );
+}
+
+

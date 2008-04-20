@@ -320,20 +320,6 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	EditorCreatorST::Get()->SetParent(GetNotebook());
 	m_timer = new wxTimer(this, FrameTimerId);
 	m_timer->Start(100);
-	
-	//add an entry to the frame accelerator table
-	wxAcceleratorEntry* a = wxAcceleratorEntry::Create(wxT("\tCtrl+Shift+I"));
-	wxAcceleratorEntry accel;
-	if( a ) {
-		a->Set(a->GetFlags(), a->GetKeyCode(), XRCID("add_include_file"));
-		accel = *a;
-		delete a;
-	}
-	
-	wxAcceleratorEntry entries[1];
-	entries[0] = accel;
-	wxAcceleratorTable table(1, entries);
-	SetAcceleratorTable(table);
 }
 
 Frame::~Frame(void)
@@ -2854,8 +2840,10 @@ void Frame::OnCppContextMenu(wxCommandEvent &e)
 void Frame::OnConfigureAccelerators(wxCommandEvent &e)
 {
 	AccelTableDlg *dlg = new AccelTableDlg(this);
-	if(dlg->ShowModal() == wxID_OK){
-		//do something here
-	}
+//	wxString ll;
+//	ll << XRCID("add_include_file");
+//	wxMessageBox( ll );
+	
+	dlg->ShowModal();
 	dlg->Destroy();
 }

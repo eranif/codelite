@@ -300,7 +300,8 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 		wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));
 		wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
 		wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
-		wxCopyFile(installPath + wxT("/config/accelerators.conf"), destDir + wxT("/config/accelerators.conf"));
+		wxCopyFile(installPath + wxT("/config/accelerators.conf.default"), destDir + wxT("/config/accelerators.conf.default"));
+		
 	} else {
 		//wxPrintf(wxT("Skipping settings copy ...\n"));
 	}

@@ -105,13 +105,13 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, Frame::OnOutputWindowEvent)
 	EVT_MENU(wxID_CLOSE_ALL, Frame::OnFileCloseAll)
 	EVT_MENU(XRCID("fix_ext_database"), Frame::OnFixDatabasePaths)
-	EVT_MENU(wxID_EXIT, Frame::OnQuit)
-	EVT_MENU(wxID_SAVE, Frame::OnSave)
-	EVT_MENU(wxID_SAVEAS, Frame::OnSaveAs)
+	EVT_MENU(XRCID("exit_app"), Frame::OnQuit)
+	EVT_MENU(XRCID("save_file"), Frame::OnSave)
+	EVT_MENU(XRCID("save_file_as"), Frame::OnSaveAs)
 	EVT_MENU(XRCID("about"), Frame::OnAbout)
 	EVT_MENU(XRCID("new_file"), Frame::OnFileNew)
 	EVT_MENU(XRCID("open_file"), Frame::OnFileOpen)
-	EVT_MENU(wxID_CLOSE, Frame::OnFileClose)
+	EVT_MENU(XRCID("close_file"), Frame::OnFileClose)
 	EVT_MENU(XRCID("save_all"), Frame::OnFileSaveAll)
 	EVT_MENU(wxID_CUT, Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_COPY, Frame::DispatchCommandEvent)
@@ -120,7 +120,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(wxID_REDO, Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_SELECTALL, Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_DUPLICATE, Frame::DispatchCommandEvent)
-	EVT_MENU(wxID_REFRESH, Frame::OnFileReload)
+	EVT_MENU(XRCID("refresh_file"), Frame::OnFileReload)
 	EVT_MENU(XRCID("select_to_brace"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("match_brace"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("find_next"), Frame::DispatchCommandEvent)
@@ -259,18 +259,18 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("configure_accelerators"), Frame::OnConfigureAccelerators)
 	
 //	#if defined (__WXMSW__) || defined (__WXMAC__)
-	EVT_UPDATE_UI(wxID_SAVE, Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("save_file"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("complete_word"), Frame::OnCompleteWordUpdateUI)
 	EVT_UPDATE_UI(XRCID("execute_no_debug"), Frame::OnExecuteNoDebugUI)
 	EVT_UPDATE_UI(XRCID("dbg_stepin"), Frame::OnDebugCmdUI)
 	EVT_UPDATE_UI(XRCID("dbg_stepout"), Frame::OnDebugCmdUI)
 	EVT_UPDATE_UI(XRCID("dbg_next"), Frame::OnDebugCmdUI)
-	EVT_UPDATE_UI(wxID_SAVEAS, Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("save_file_as"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("build_active_project"), Frame::OnBuildProjectUI)
 	EVT_UPDATE_UI(XRCID("compile_active_file"), Frame::OnCompileFileUI)
 	EVT_UPDATE_UI(XRCID("build_n_run_active_project"), Frame::OnBuildProjectUI)
 	EVT_UPDATE_UI(XRCID("rebuild_active_project"), Frame::OnBuildProjectUI)
-	EVT_UPDATE_UI(wxID_REFRESH, Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("refresh_file"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("find_type"), Frame::OnWorkspaceOpen)
 	EVT_UPDATE_UI(XRCID("find_symbol"), Frame::OnCompleteWordUpdateUI)
 	EVT_UPDATE_UI(XRCID("goto_definition"), Frame::DispatchUpdateUIEvent)
@@ -279,7 +279,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("insert_breakpoint"), Frame::OnDebugManageBreakpointsUI)
 	EVT_UPDATE_UI(XRCID("delete_breakpoint"), Frame::OnDebugManageBreakpointsUI)
 	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
-	EVT_UPDATE_UI(wxID_CLOSE, Frame::OnFileCloseUI)
+	EVT_UPDATE_UI(XRCID("close_file"), Frame::OnFileCloseUI)
 //	#endif
 
 END_EVENT_TABLE()
@@ -608,10 +608,10 @@ void Frame::CreateMenuBar()
 	wxMenu *menu = new wxMenu();
 	menu->Append(XRCID("new_file"));
 	menu->Append(XRCID("open_file"));
-	menu->Append(wxID_REFRESH);
+	menu->Append(XRCID("refresh_file"));
 	menu->AppendSeparator();
-	menu->Append(wxID_SAVE);
-	menu->Append(wxID_SAVEAS);
+	menu->Append(XRCID("save_file"));
+	menu->Append(XRCID("save_file_as"));
 	mb->Append(menu, wxT("&File"));
 
 	SetMenuBar(mb);
@@ -628,13 +628,13 @@ void Frame::CreateToolbars24()
 	tb->SetToolBitmapSize(wxSize(24, 24));
 	tb->AddTool(XRCID("new_file"), wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new24")), wxT("New File (Ctrl+N)"));
 	tb->AddTool(XRCID("open_file"), wxT("Open"), wxXmlResource::Get()->LoadBitmap(wxT("folder24")), wxT("Open File (Ctrl+O)"));
-	tb->AddTool(wxID_REFRESH, wxT("Reload"), wxXmlResource::Get()->LoadBitmap(wxT("reload24")), wxT("Reload File (Ctrl+R)"));
+	tb->AddTool(XRCID("refresh_file"), wxT("Reload"), wxXmlResource::Get()->LoadBitmap(wxT("reload24")), wxT("Reload File (Ctrl+R)"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_SAVE, wxT("Save"), wxXmlResource::Get()->LoadBitmap(wxT("page_save24")), wxT("Save (Ctrl+S)"));
-	tb->AddTool(wxID_SAVEAS, wxT("Save As"), wxXmlResource::Get()->LoadBitmap(wxT("save_as24")), wxT("Save As"));
+	tb->AddTool(XRCID("save_file"), wxT("Save"), wxXmlResource::Get()->LoadBitmap(wxT("page_save24")), wxT("Save (Ctrl+S)"));
+	tb->AddTool(XRCID("save_file_as"), wxT("Save As"), wxXmlResource::Get()->LoadBitmap(wxT("save_as24")), wxT("Save As"));
 	tb->AddTool(XRCID("save_all"), wxT("Save All"), wxXmlResource::Get()->LoadBitmap(wxT("save_all24")), wxT("Save All"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_CLOSE, wxT("Close"), wxXmlResource::Get()->LoadBitmap(wxT("page_close24")), wxT("Close File (Ctrl+W)"));
+	tb->AddTool(XRCID("close_file"), wxT("Close"), wxXmlResource::Get()->LoadBitmap(wxT("page_close24")), wxT("Close File (Ctrl+W)"));
 	tb->AddSeparator();
 	tb->AddTool(wxID_CUT, wxT("Cut"), wxXmlResource::Get()->LoadBitmap(wxT("cut24")), wxT("Cut (Ctrl+X)"));
 	tb->AddTool(wxID_COPY, wxT("Copy"), wxXmlResource::Get()->LoadBitmap(wxT("copy24")), wxT("Copy (Ctrl+C)"));
@@ -748,13 +748,13 @@ void Frame::CreateToolbars16()
 	tb->SetToolBitmapSize(wxSize(16, 16));
 	tb->AddTool(XRCID("new_file"), wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new16")), wxT("New File (Ctrl+N)"));
 	tb->AddTool(XRCID("open_file"), wxT("Open"), wxXmlResource::Get()->LoadBitmap(wxT("folder16")), wxT("Open File (Ctrl+O)"));
-	tb->AddTool(wxID_REFRESH, wxT("Reload"), wxXmlResource::Get()->LoadBitmap(wxT("reload16")), wxT("Reload File (Ctrl+R)"));
+	tb->AddTool(XRCID("refresh_file"), wxT("Reload"), wxXmlResource::Get()->LoadBitmap(wxT("reload16")), wxT("Reload File (Ctrl+R)"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_SAVE, wxT("Save"), wxXmlResource::Get()->LoadBitmap(wxT("page_save16")), wxT("Save (Ctrl+S)"));
-	tb->AddTool(wxID_SAVEAS, wxT("Save As"), wxXmlResource::Get()->LoadBitmap(wxT("save_as16")), wxT("Save As"));
+	tb->AddTool(XRCID("save_file"), wxT("Save"), wxXmlResource::Get()->LoadBitmap(wxT("page_save16")), wxT("Save (Ctrl+S)"));
+	tb->AddTool(XRCID("save_file_as"), wxT("Save As"), wxXmlResource::Get()->LoadBitmap(wxT("save_as16")), wxT("Save As"));
 	tb->AddTool(XRCID("save_all"), wxT("Save All"), wxXmlResource::Get()->LoadBitmap(wxT("save_all16")), wxT("Save All"));
 	tb->AddSeparator();
-	tb->AddTool(wxID_CLOSE, wxT("Close"), wxXmlResource::Get()->LoadBitmap(wxT("page_close16")), wxT("Close File (Ctrl+W)"));
+	tb->AddTool(XRCID("close_file"), wxT("Close"), wxXmlResource::Get()->LoadBitmap(wxT("page_close16")), wxT("Close File (Ctrl+W)"));
 	tb->AddSeparator();
 	tb->AddTool(wxID_CUT, wxT("Cut"), wxXmlResource::Get()->LoadBitmap(wxT("cut16")), wxT("Cut (Ctrl+X)"));
 	tb->AddTool(wxID_COPY, wxT("Copy"), wxXmlResource::Get()->LoadBitmap(wxT("copy16")), wxT("Copy (Ctrl+C)"));

@@ -12,15 +12,15 @@
                 <label>&amp;Open File...</label> 
                 <help>Open an existing file</help>
             </object>
-			<object class="wxMenuItem" name="wxID_REFRESH">
+			<object class="wxMenuItem" name="refresh_file">
 				<label>&amp;Reload File</label>
 			</object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="wxID_SAVE">
+            <object class="wxMenuItem" name="save_file">
                 <label>&amp;Save File</label>
                 <help>Save the existing file</help>
             </object>
-            <object class="wxMenuItem" name="wxID_SAVEAS">
+            <object class="wxMenuItem" name="save_file_as">
                 <label>Save As...</label>
                 <help>Save current file as...</help>
             </object>
@@ -30,7 +30,7 @@
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 
-            <object class="wxMenuItem" name="wxID_CLOSE">
+            <object class="wxMenuItem" name="close_file">
                 <label>&amp;Close</label>
                 <help>Close Current File</help>
             </object> 
@@ -58,7 +58,7 @@
 				<checkable>1</checkable>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>     
-            <object class="wxMenuItem" name="wxID_EXIT">
+            <object class="wxMenuItem" name="exit_app">
                 <label>E&amp;xit</label>
                 <help>Close LiteEditor</help>
             </object>
@@ -423,7 +423,7 @@
     -->
     
     <object class="wxMenu" name="editor_tab_right_click">
-		<object class="wxMenuItem" name="wxID_CLOSE">
+		<object class="wxMenuItem" name="close_file">
             <label>Close</label>
         </object>
 		<object class="wxMenuItem" name="wxID_CLOSE_ALL">
@@ -433,14 +433,14 @@
             <label>Close Other tabs</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-		<object class="wxMenuItem" name="wxID_REFRESH">
+		<object class="wxMenuItem" name="refresh_file">
             <label>Reload</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-		<object class="wxMenuItem" name="wxID_SAVE">
+		<object class="wxMenuItem" name="save_file">
             <label>Save</label>
         </object>
-        <object class="wxMenuItem" name="wxID_SAVEAS">
+        <object class="wxMenuItem" name="save_file_as">
             <label>Save As</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>

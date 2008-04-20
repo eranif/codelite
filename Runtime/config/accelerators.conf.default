@@ -1,43 +1,40 @@
-123|File|New File|Ctrl-N
-124|File|Open File...|Ctrl-O
-5123|File|Reload File|Ctrl-R
-5003|File|Save File|Ctrl-S
-5004|File|Save As...|Ctrl-Shift-S
-123|File|Save all files|
-5001|File|Close|Ctrl-W
-5021|File|Close All|
-176|File|Load last session on restart|
-5006|File|Exit|Alt-X
-5007|Edit|Undo|Ctrl-Z
-5008|Edit|Redo|Ctrl-Y
-5031|Edit|Cut|Ctrl-X
-5032|Edit|Copy|Ctrl-C
-5033|Edit|Paste|Ctrl-V
-5036|Edit|Duplicate Line|Ctrl-U
-5037|Edit|Select All|Ctrl-A
-125|Edit|Match Brace|Ctrl-E
-124|Edit|Select to Brace|Ctrl-Shift-E
-143|Edit|Complete Word|Ctrl-SPACE
-146|Edit|Word Wrap|
-179|Edit::Line End Characters|CR|
-180|Edit::Line End Characters|LF|
-181|Edit::Line End Characters|CR + LF|
-183|Edit|Convert Line End Characters|
-184|Edit|Display EOL|
-177|View|Show Welcome Page|
-178|View|Load Welcome Page at Startup|
-189|View|Output Pane|Ctrl-Alt-O
-190|View|Workspace Pane|Ctrl-Alt-W
-191|View|Debugger Pane|Ctrl-Alt-D
-192|View::Toolbars|Standard ToolBar|
-193|View::Toolbars|Search ToolBar|
-194|View::Toolbars|Build ToolBar|
-195|View::Toolbars|Debug ToolBar|
-196|View::Toolbars|Navigation ToolBar|
-255|View::Toolbars|CodeFormatter ToolBar|
-263|View::Toolbars|Cscope ToolBar|
-270|View::Toolbars|Gizmos ToolBar|
-148|View|Toggle All Panes|Ctrl-M
+new_file|File|New File|Ctrl-N
+open_file|File|Open File...|Ctrl-O
+refresh_file|File|Reload File|Ctrl-R
+save_file|File|Save File|Ctrl-S
+save_file_as|File|Save As...|Ctrl-Shift-S
+save_all|File|Save all files|
+close_file|File|Close|Ctrl-W
+wxID_CLOSE_ALL|File|Close All|
+load_last_session|File|Load last session on restart|
+exit_app|File|Exit|Alt-X
+wxID_UNDO|Edit|Undo|Ctrl-Z
+wxID_REDO|Edit|Redo|Ctrl-Y
+wxID_CUT|Edit|Cut|Ctrl-X
+wxID_COPY|Edit|Copy|Ctrl-C
+wxID_PASTE|Edit|Paste|Ctrl-V
+wxID_DUPLICATE|Edit|Duplicate Line|Ctrl-U
+wxID_SELECTALL|Edit|Select All|Ctrl-A
+match_brace|Edit|Match Brace|Ctrl-E
+select_to_brace|Edit|Select to Brace|Ctrl-Shift-E
+complete_word|Edit|Complete Word|Ctrl-SPACE
+word_wrap|Edit|Word Wrap|
+line_end_cr|Edit::Line End Characters|CR|
+line_end_lf|Edit::Line End Characters|LF|
+line_end_crlf|Edit::Line End Characters|CR + LF|
+convert_eol|Edit|Convert Line End Characters|
+display_eol|Edit|Display EOL|
+view_welcome_page|View|Show Welcome Page|
+view_welcome_page_at_startup|View|Load Welcome Page at Startup|
+output_pane|View|Output Pane|Ctrl-Alt-O
+workspace_pane|View|Workspace Pane|Ctrl-Alt-W
+debugger_pane|View|Debugger Pane|Ctrl-Alt-D
+show_std_toolbar|View::Toolbars|Standard ToolBar|
+show_search_toolbar|View::Toolbars|Search ToolBar|
+show_build_toolbar|View::Toolbars|Build ToolBar|
+show_debug_toolbar|View::Toolbars|Debug ToolBar|
+show_nav_toolbar|View::Toolbars|Navigation ToolBar|
+toggle_panes|View|Toggle All Panes|Ctrl-M
 23500|View::View As|C++|
 23501|View::View As|Diff|
 23502|View::View As|Java|
@@ -48,77 +45,72 @@
 23507|View::View As|Script|
 23508|View::View As|Text|
 23509|View::View As|XML|
-135|Search|Find In Files...|Ctrl-Shift-F
-5035|Search|Find...|Ctrl-F
-5039|Search|Replace...|Ctrl-H
-126|Search|Find Next|F3
-127|Search|Find Previous|Shift-F3
-162|Search|Find Resource...|Ctrl-Shift-R
-163|Search|Find Type...|Ctrl-Shift-T
-164|Search|Quick Outline...|Ctrl-Shift-O
-133|Search|Find Symbol|Ctrl-D
-134|Search|Go To Previous Location|Ctrl-P
-128|Search|Go To...|Ctrl-G
-129|Search|Toggle Bookmark|Ctrl-B
-130|Search|Next Bookmark|F2
-131|Search|Previous Bookmark|Shift-F2
-132|Search|Remove All Bookmarks|
-136|Workspace|Create New Workspace...|
-138|Workspace|Switch to Workspace...|
-139|Workspace|Close Workspace|
-166|Workspace|Import MS Visual Studio Solution File...|
-137|Workspace|Create New Project|
-140|Workspace|Add an Existing Project|
-147|Build|Configuration Manager...|
-158|Build|Run|Ctrl-F5
-157|Build|Stop|
-151|Build|Build Project|F7
-152|Build|Compile Current File|Ctrl-F7
-153|Build|Clean Project|
-156|Build|Stop Build|
-155|Build|Rebuild Project|
-154|Build|Build and Run Project|Ctrl-F9
-106|Build|Next Build Error|F4
-167|Debug|Start/Continue Debugger|F5
-165|Debug|Attach to process...|
-171|Debug|Pause debugger|
-168|Debug|Stop debugger|
-172|Debug|Step Into|F11
-174|Debug|Next|F10
-173|Debug|Step Out|Shift-F11
-169|Debug|Toggle Breakpoint|F9
-159|Tags|Create external tags database...|
-160|Tags|Attach external tags database...|
-161|Tags|Close external tags database|
-121|Tags|Fix external tags database paths...|
-141|Plugins|Manage Plugins...|
-253|Plugins::Source Code Formatter|Format Current Source|Ctrl-I
-254|Plugins::Source Code Formatter|Options...|
-260|Plugins::cscope|Find this C symbol|Ctrl-0
-262|Plugins::cscope|Find functions called by this function|Ctrl-2
-261|Plugins::cscope|Find functions calling this function|Ctrl-3
-294|Plugins::Subversion|Options...|
-145|Settings|Editor...|Alt-O
-185|Settings|Configure accelerators...|
-149|Settings|Environment Variables...|Ctrl-Shift-V
-150|Settings|Build Settings...|
-175|Settings|Debugger Settings...|
-144|Settings|Tags Options...|
-122|Help|About...|
-112|C++|Swap Header/Implementation file|F12
-109|C++|Goto Declaration|
-110|C++|Goto Implementation|
-107|C++::Code Generation / Refactoring|Insert Doxygen Comment|
-108|C++::Code Generation / Refactoring|Generate Setters/Getters...|
-111|C++::Code Generation / Refactoring|Move Function Implementation to...|
-115|C++::Code Generation / Refactoring|Add Function Implementation...|
-113|C++|Comment Selection|Ctrl-Shift-C
-114|C++|Comment Line|Ctrl-Shift-P
-116|C++|Add Include File|Ctrl-Shift-I
-5007|C++|Undo|Ctrl-Z
-5008|C++|Redo|Ctrl-Y
-5031|C++|Cut|Ctrl-X
-5032|C++|Copy|Ctrl-C
-5033|C++|Paste|Ctrl-V
-171|C++|Toggle Breakpoint|F9
-131|C++|Toggle Bookmark|Ctrl-B
+find_in_files|Search|Find In Files...|Ctrl-Shift-F
+wxID_FIND|Search|Find...|Ctrl-F
+wxID_REPLACE|Search|Replace...|Ctrl-H
+find_next|Search|Find Next|F3
+find_previous|Search|Find Previous|Shift-F3
+find_resource|Search|Find Resource...|Ctrl-Shift-R
+find_type|Search|Find Type...|Ctrl-Shift-T
+find_symbol|Search|Quick Outline...|Ctrl-Shift-O
+goto_definition|Search|Find Symbol|Ctrl-D
+goto_previous_definition|Search|Go To Previous Location|Ctrl-P
+goto_linenumber|Search|Go To...|Ctrl-G
+toggle_bookmark|Search|Toggle Bookmark|Ctrl-B
+next_bookmark|Search|Next Bookmark|F2
+previous_bookmark|Search|Previous Bookmark|Shift-F2
+removeall_bookmarks|Search|Remove All Bookmarks|
+new_workspace|Workspace|Create New Workspace...|
+switch_to_workspace|Workspace|Switch to Workspace...|
+close_workspace|Workspace|Close Workspace|
+import_from_msvs|Workspace|Import MS Visual Studio Solution File...|
+new_project|Workspace|Create New Project|
+add_project|Workspace|Add an Existing Project|
+configuration_manager|Build|Configuration Manager...|
+execute_no_debug|Build|Run|Ctrl-F5
+stop_executed_program|Build|Stop|
+build_active_project|Build|Build Project|F7
+compile_active_file|Build|Compile Current File|Ctrl-F7
+clean_active_project|Build|Clean Project|
+stop_active_project_build|Build|Stop Build|
+rebuild_active_project|Build|Rebuild Project|
+build_n_run_active_project|Build|Build and Run Project|Ctrl-F9
+next_error|Build|Next Build Error|F4
+start_debugger|Debug|Start/Continue Debugger|F5
+attach_debugger|Debug|Attach to process...|
+pause_debugger|Debug|Pause debugger|
+stop_debugger|Debug|Stop debugger|
+dbg_stepin|Debug|Step Into|F11
+dbg_next|Debug|Next|F10
+dbg_stepout|Debug|Step Out|Shift-F11
+insert_breakpoint|Debug|Toggle Breakpoint|F9
+create_ext_database|Tags|Create external tags database...|
+open_ext_database|Tags|Attach external tags database...|
+close_ext_database|Tags|Close external tags database|
+fix_ext_database|Tags|Fix external tags database paths...|
+manage_plugins|Plugins|Manage Plugins...|
+format_source|Plugins::Source Code Formatter|Format Current Source|Ctrl-I
+formatter_options|Plugins::Source Code Formatter|Options...|
+cscope_find_symbol|Plugins::cscope|Find this C symbol|Ctrl-0
+cscope_functions_calling_this_function|Plugins::cscope|Find functions called by this function|Ctrl-2
+cscope_functions_called_by_this_function|Plugins::cscope|Find functions calling this function|Ctrl-3
+svn_options|Plugins::Subversion|Options...|
+options|Settings|Editor...|Alt-O
+configure_accelerators|Settings|Configure accelerators...|
+add_envvar|Settings|Environment Variables...|Ctrl-Shift-V
+advance_settings|Settings|Build Settings...|
+debuger_settings|Settings|Debugger Settings...|
+tags_options|Settings|Tags Options...|
+about|Help|About...|
+swap_files|C++|Swap Header/Implementation file|F12
+find_decl|C++|Goto Declaration|
+find_impl|C++|Goto Implementation|
+insert_doxy_comment|C++::Code Generation / Refactoring|Insert Doxygen Comment|
+setters_getters|C++::Code Generation / Refactoring|Generate Setters/Getters...|
+move_impl|C++::Code Generation / Refactoring|Move Function Implementation to...|
+add_impl|C++::Code Generation / Refactoring|Add Function Implementation...|
+comment_selection|C++|Comment Selection|Ctrl-Shift-C
+comment_line|C++|Comment Line|Ctrl-Shift-P
+add_include_file|C++|Add Include File|Ctrl-Shift-I
+insert_breakpoint|C++|Toggle Breakpoint|F9
+toggle_bookmark|C++|Toggle Bookmark|Ctrl-B

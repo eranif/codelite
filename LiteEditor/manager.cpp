@@ -2402,18 +2402,15 @@ void Manager::UpdateMenuAccelerators()
 	size_t count = bar->GetMenuCount();
 	for (size_t i=0; i< count; i++) {
 		wxMenu * menu = bar->GetMenu(i);
-
-		//iterate over the menu and its sub menus and print all menu items IDs, name and shortcut
-//		DumpMenu(menu, bar->GetMenuLabelText(i), content);
 		UpdateMenu(menu, menuMap, accelVec);
 	}
 	
 	//Incase we still have items to map, map them. this can happen for items
 	//which exist in the list but does not have any menu associated to them in the menu bar (e.g. C++ menu)
 	if(menuMap.empty() == false) {
-		wxString msg;
-		msg << wxT("Info: UpdateMenuAccelerators: There are still ") << menuMap.size() << wxT(" un-mapped item(s)");
-		wxLogMessage(msg);
+//		wxString msg;
+//		msg << wxT("Info: UpdateMenuAccelerators: There are still ") << menuMap.size() << wxT(" un-mapped item(s)");
+//		wxLogMessage(msg);
 		
 		MenuItemDataMap::iterator iter = menuMap.begin();
 		for(; iter != menuMap.end(); iter++) {
@@ -2429,6 +2426,12 @@ void Manager::UpdateMenuAccelerators()
 			if( a ) {
 				long commandId(0);
 				itemData.id.ToLong( &commandId );
+				
+				//use the resource ID
+				if(commandId == 0) {
+					commandId = wxXmlResource::GetXRCID(itemData.id);
+				}
+				
 				a->Set(a->GetFlags(), a->GetKeyCode(), commandId);
 				accelVec.push_back( *a );
 				delete a;
@@ -2558,9 +2561,6 @@ void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< w
 				//remove this entry from the map
 				accelMap.erase(labelTextTag);
 				
-			} else {
-				//wxPrintf(wxT("Could not find %s\n"), labelText.GetData());	
-				//item->SetAccel(NULL);
 			}
 		}
 	}

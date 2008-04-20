@@ -5,19 +5,19 @@
             <label>&amp;File</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="new_file">
-                <label>New File</label>
+                <label>&amp;New File</label>
                 <help>Create an empty new file</help>
             </object>
             <object class="wxMenuItem" name="open_file">
-                <label>Open File...</label> 
+                <label>&amp;Open File...</label> 
                 <help>Open an existing file</help>
             </object>
 			<object class="wxMenuItem" name="wxID_REFRESH">
-				<label>Reload File</label>
+				<label>&amp;Reload File</label>
 			</object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="wxID_SAVE">
-                <label>Save File</label>
+                <label>&amp;Save File</label>
                 <help>Save the existing file</help>
             </object>
             <object class="wxMenuItem" name="wxID_SAVEAS">

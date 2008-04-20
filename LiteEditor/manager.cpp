@@ -2482,17 +2482,24 @@ void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap)
 			}
 
 			//search this item in the accelMap
-			if(accelMap.find(item->GetItemLabelText()) != accelMap.end()) {
+			wxString labelText = wxMenuItemBase::GetLabelFromText(item->GetItemLabelText());
+			
+			if(accelMap.find(labelText) != accelMap.end()) {
 				MenuItemData item_data = accelMap.find(item->GetItemLabelText())->second;
 				
-				if(item_data.accel.Trim().IsEmpty()) {
-					item->SetAccel(NULL);
-				}else{
-					wxAcceleratorEntry* a = wxAcceleratorEntry::Create(wxT("\t") + item_data.accel);	
-					item->SetAccel(a);
+				wxString txt;
+				txt << item->GetItemLabel();
+				if(item_data.accel.IsEmpty() == false) {
+					txt << wxT("\t") << item_data.accel;
 				}
+				
+				wxAcceleratorEntry* a = wxAcceleratorEntry::Create(txt);	
+				item->SetAccel(a);
+				
 			} else {
+				
 				item->SetAccel(NULL);
+				
 			}
 		}
 	}	

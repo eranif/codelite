@@ -1,4 +1,4 @@
-#include "simpletable.h"
+#include "simpletable.h" 
 #include <wx/textdlg.h> //wxGetTextFromUser
 #include "manager.h"
 #include <wx/xrc/xmlres.h>

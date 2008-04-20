@@ -36,6 +36,7 @@ Source: "C:\Development\C++\codelite\trunk\InnoSetup\license.txt"; DestDir: "{ap
 Source: "C:\Program Files\CodeLite\common.tags"; DestDir: "{app}"; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\sdk\wxconfig\wx-config.exe"; DestDir: "{app}\bin"; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\config\liteeditor.xml.sample"; DestDir: "{app}\config"; DestName: liteeditor.xml; Components: Editor;
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\accelerators.conf.default"; DestDir: "{app}\config"; DestName: accelerators.conf.default; Components: Editor;
 Source: "C:\Development\C++\codelite\trunk\Runtime\config\debuggers.xml"; DestDir: "{app}\config"; Components: Editor;
 Source: "C:\Development\C++\codelite\trunk\Runtime\config\build_settings.xml"; DestDir: "{app}\config"; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversion ; Components: Editor

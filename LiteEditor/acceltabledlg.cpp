@@ -110,7 +110,7 @@ void AccelTableDlg::PopulateTable()
 		SetColumnText(m_listCtrl1, row, 3, item.accel);
 	}
 
-	m_listCtrl1->SetColumnWidth(0, wxLIST_AUTOSIZE);
+	m_listCtrl1->SetColumnWidth(0, 0);
 	m_listCtrl1->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	m_listCtrl1->SetColumnWidth(2, wxLIST_AUTOSIZE);
 	m_listCtrl1->SetColumnWidth(3, wxLIST_AUTOSIZE);

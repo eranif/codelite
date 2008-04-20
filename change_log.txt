@@ -1,4 +1,4 @@
-Fixed: Bug #1794775 CC using the wrong variable
+Fixed: Bug #1794775 CC using the wrong variable 
 - added new FileExplorer pane
 - updated plugins to get access to the popup menus of the editor
 - Linux adjustments to the new File Explorer

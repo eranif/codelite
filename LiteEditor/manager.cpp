@@ -2483,22 +2483,25 @@ void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap)
 
 			//search this item in the accelMap
 			wxString labelText = wxMenuItemBase::GetLabelFromText(item->GetItemLabelText());
-			
-			if(accelMap.find(labelText) != accelMap.end()) {
-				MenuItemData item_data = accelMap.find(item->GetItemLabelText())->second;
+			wxString labelTextTag( labelText ); 
+			labelTextTag.Replace(wxT("_"), wxEmptyString);	
+			if(accelMap.find(labelTextTag) != accelMap.end()) {
+				MenuItemData item_data = accelMap.find(labelTextTag)->second;
 				
 				wxString txt;
-				txt << item->GetItemLabel();
+				txt << item->GetItemLabel().BeforeFirst(wxT('\t'));
+				//set the new accelerator
 				if(item_data.accel.IsEmpty() == false) {
 					txt << wxT("\t") << item_data.accel;
 				}
 				
-				wxAcceleratorEntry* a = wxAcceleratorEntry::Create(txt);	
-				item->SetAccel(a);
-				
+				//wxPrintf(wxT("Adding: %s\n"), txt.GetData());	
+				//wxAcceleratorEntry* a = wxAcceleratorEntry::Create(txt);	
+				//item->SetAccel(a);
+				item->SetItemLabel( txt );	
 			} else {
-				
-				item->SetAccel(NULL);
+				//wxPrintf(wxT("Could not find %s\n"), labelText.GetData());	
+				//item->SetAccel(NULL);
 				
 			}
 		}

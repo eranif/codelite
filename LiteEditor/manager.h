@@ -9,7 +9,8 @@
 #include "context_base.h"
 #include "ctags_manager.h"
 #include "workspace.h"
-#include "list"
+#include <list>
+#include <map>
 #include "compile_request.h"
 #include "clean_request.h"
 #include "wx/event.h"
@@ -23,6 +24,14 @@ class wxFrame;
 class LEditor;
 class AsyncExeCmd;
 class QuickWatchDlg;
+
+struct MenuItemData {
+	wxString id;
+	wxString parent;
+	wxString action;
+	wxString accel;
+};
+typedef std::map< wxString, MenuItemData > MenuItemDataMap;
 
 class Manager : public wxEvtHandler, public IDebuggerObserver
 {
@@ -571,6 +580,25 @@ public:
 	 */
 	bool OpenFileAndAppend(const wxString &fileName, const wxString &text);
 	
+	/**
+	 * \brief update the menu bar accelerators
+	 */
+	void UpdateMenuAccelerators();
+	
+	/**
+	 * \brief load accelerator table from the configuration section
+	 * \param file
+	 * \param map
+	 */
+	void LoadAcceleratorTable(const wxString &file, MenuItemDataMap &map);
+	
+	/**
+	 * \brief retrun map of the accelerator table. the StringMap maps between the actions and their accelerators
+	 */
+	void GetAcceleratorMap(MenuItemDataMap& accelMap);
+	
+	void UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap);
+	
 	//--------------------------------------------------------------------
 	//IDebuggerObserver implementation. These set of functions are called
 	//from the debugger whenever event occurs there
@@ -620,6 +648,8 @@ private:
 	 * Remove a file from the gui tree
 	 */
 	void RemoveFileFromSymbolTree(const wxFileName &fileName, const wxString &project);
+	
+	void DumpMenu( wxMenu *menu, const wxString &label, wxString &content );
 };
 
 typedef Singleton<Manager> ManagerST;

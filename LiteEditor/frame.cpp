@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "acceltabledlg.h"
 #include "drawingutils.h"
 #include "fileexplorertree.h"
 #include "newprojectdlg.h"
@@ -254,7 +255,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("add_impl"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("setters_getters"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_include_file"), Frame::OnCppContextMenu)
-
+	
+	EVT_MENU(XRCID("configure_accelerators"), Frame::OnConfigureAccelerators)
+	
 	#if defined (__WXMSW__) || defined (__WXMAC__)
 	EVT_UPDATE_UI(wxID_SAVE, Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("complete_word"), Frame::OnCompleteWordUpdateUI)
@@ -2846,4 +2849,13 @@ void Frame::OnCppContextMenu(wxCommandEvent &e)
 	}
 
 	editor->GetContext()->ProcessEvent( e );
+}
+
+void Frame::OnConfigureAccelerators(wxCommandEvent &e)
+{
+	AccelTableDlg *dlg = new AccelTableDlg(this);
+	if(dlg->ShowModal() == wxID_OK){
+		//do something here
+	}
+	dlg->Destroy();
 }

@@ -1,13 +1,14 @@
 #include "precompiled_header.h"
+#include "archive.h"
 #include "environmentconfig.h"
 #include "buidltab.h"
 #include "fileexplorer.h"
 #include "manager.h"
-#include "ctags_manager.h" 
+#include "ctags_manager.h"
 #include "frame.h"
 #include "cl_editor.h"
-#include "menumanager.h" 
-#include "language.h"
+#include "menumanager.h"
+#include "language.h" 
 #include "editor_config.h"
 #include "parse_thread.h"
 #include "search_thread.h"
@@ -77,7 +78,7 @@ static bool HideDebuggerPane = true;
 std::string GetCurrentFileName()
 {
 	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if(editor) {
+	if (editor) {
 		const wxCharBuffer fileName = _C(editor->GetFileName().GetFullPath());
 		return fileName.data();
 	}
@@ -103,7 +104,7 @@ Manager::~Manager(void)
 //	if(m_debuggerTipWin){
 //		delete m_debuggerTipWin;
 //	}
-	
+
 	if (m_cleanRequest) {
 		delete m_cleanRequest;
 		m_cleanRequest = NULL;
@@ -226,11 +227,11 @@ bool Manager::OpenFile(const wxString &file_name, const wxString &projectName, i
 	if (IsWorkspaceOpen()) {
 		Frame::Get()->GetWorkspacePane()->GetFileViewTree()->ExpandToPath(editor->GetProject(), editor->GetFileName());
 	}
-	
-	if(Frame::Get()->GetFileExplorer()->GetIsLinkedToEditor()) {
+
+	if (Frame::Get()->GetFileExplorer()->GetIsLinkedToEditor()) {
 		Frame::Get()->GetFileExplorer()->GetFileTree()->ExpandToPath(editor->GetFileName());
 	}
-	
+
 	//update the open files list
 	Frame::Get()->GetOpenWindowsPane()->UpdateList();
 	editor->SetActive();
@@ -290,19 +291,19 @@ void Manager::UnInitialize()
 	DebuggerMgr::Free();
 
 	// Release singleton objects
-	
-	//since the parser is making use of the TagsManager, 
+
+	//since the parser is making use of the TagsManager,
 	//it is important to release it *before* the TagsManager
 	ParseThreadST::Get()->Stop();
 	ParseThreadST::Free();
-	
+
 	TagsManagerST::Free();
 	LanguageST::Free();
 	WorkspaceST::Free();
 	ContextManager::Free();
 	BuildManagerST::Free();
 	BuildSettingsConfigST::Free();
-	
+
 	// Stop the search thread and free its resources
 	SearchThreadST::Get()->Stop();
 	SearchThreadST::Free();
@@ -314,10 +315,10 @@ void Manager::UnInitialize()
 	MenuManager::Free();
 	EditorConfigST::Free();
 	EnvironmentConfig::Release();
-	
+
 	//free all plugins
 	PluginManager::Get()->UnLoad();
-	
+
 }
 
 void Manager::CreateWorkspace(const wxString &name, const wxString &path)
@@ -366,10 +367,10 @@ void Manager::CloseWorkspace()
 	WorkspaceST::Get()->CloseWorkspace();
 	//clear the 'buid' tab
 	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
-	
+
 	//clear the navigation bar
 	Frame::Get()->GetMainBook()->Clear();
-	
+
 	//close all open files, and clear trees
 	Notebook *book = Frame::Get()->GetNotebook();
 	int count = book->GetPageCount();
@@ -420,16 +421,16 @@ void Manager::OpenWorkspace(const wxString &path)
 
 	//hide the start page
 	Notebook *book = Frame::Get()->GetNotebook();
-	for(size_t i=0; i< (size_t)book->GetPageCount(); i++) {
+	for (size_t i=0; i< (size_t)book->GetPageCount(); i++) {
 		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow*>( book->GetPage(i) );
-		if(win && book->GetPageText(i) == wxT("Welcome!")) {
+		if (win && book->GetPageText(i) == wxT("Welcome!")) {
 			//we found our start page, now hide it
 			book->DeletePage(i);
 			Frame::Get()->GetOpenWindowsPane()->UpdateList();
 			break;
 		}
 	}
-	
+
 	SendCmdEvent(wxEVT_WORKSPACE_LOADED);
 }
 
@@ -488,10 +489,10 @@ void Manager::AddProject(const wxString & path)
 	//retag the newly added project
 	wxFileName fn(path);
 	wxString projectName( fn.GetName() );
-	
+
 	RetagProject(projectName);
 	RebuildFileView();
-	
+
 	//notify plugins
 	SendCmdEvent(wxEVT_PROJ_ADDED, (void*)&projectName);
 }
@@ -526,7 +527,7 @@ bool Manager::RemoveProject(const wxString &name)
 	Frame::Get()->GetWorkspacePane()->GetFileViewTree()->BuildTree();
 	//notify plugins
 	SendCmdEvent(wxEVT_PROJ_REMOVED, (void*)&name);
-	
+
 	return true;
 }
 
@@ -586,11 +587,11 @@ void Manager::RemoveVirtualDirectory(const wxString &virtualDirFullPath)
 	for (size_t i=0; i<files.Count(); i++) {
 		RemoveFileFromSymbolTree(files.Item(i), p->GetName());
 	}
-	
+
 	//and finally, remove the virtual dir from the workspace
 	bool res = WorkspaceST::Get()->RemoveVirtualDirectory(virtualDirFullPath, errMsg);
 	CHECK_MSGBOX(res);
-	
+
 	SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&files);
 }
 
@@ -640,8 +641,8 @@ bool Manager::AddFileToProject(const wxString &fileName, const wxString &vdFullP
 		}
 		TagsManagerST::Get()->Store(ttp);
 	}
-	
-	//send notification command event that files was added to 
+
+	//send notification command event that files was added to
 	//project
 	wxArrayString files;
 	files.Add(fileName);
@@ -661,7 +662,7 @@ void Manager::AddFilesToProject(const wxArrayString &files, const wxString &vdFu
 	//try to find this file in the workspace
 	for (i=0; i<files.GetCount(); i++) {
 		wxString projName = this->GetProjectNameByFile(files.Item(i));
-		//allow adding the file, only if it does not already exist under the current project 
+		//allow adding the file, only if it does not already exist under the current project
 		//(it can be already exist under the different project)
 		if (projName.IsEmpty() || projName != project) {
 			actualAdded.Add(files.Item(i));
@@ -683,7 +684,7 @@ void Manager::AddFilesToProject(const wxArrayString &files, const wxString &vdFu
 	if (vFiles.empty() == false) {
 		TagsManagerST::Get()->RetagFiles(vFiles);
 	}
-	
+
 	SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&actualAdded);
 }
 
@@ -715,7 +716,7 @@ bool Manager::RemoveFile(const wxString &fileName, const wxString &vdFullPath)
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->RemoveFile(vdFullPath, fileName, errMsg);
 	CHECK_MSGBOX_BOOL(res);
-	
+
 	RemoveFileFromSymbolTree(absPath, project);
 	return true;
 }
@@ -902,7 +903,7 @@ void Manager::TogglePanes()
 		HidePane(wxT("Workspace"), false);
 		HidePane(wxT("Debugger"), false);
 		HidePane(wxT("File Explorer"), false);
-		
+
 		//update changes
 		Frame::Get()->GetDockingManager().Update();
 		toggled = true;
@@ -927,7 +928,7 @@ void Manager::TogglePanes()
 				info.Show();
 			}
 		}
-		
+
 		Frame::Get()->GetDockingManager().Update();
 		toggled = false;
 	}
@@ -971,7 +972,7 @@ void Manager::GetProjectTemplateList(std::list<ProjectPtr> &list)
 	if (files.GetCount() > 0) {
 		for (size_t i=0; i<files.GetCount(); i++) {
 			ProjectPtr proj(new Project());
-			if(!proj->Load(files.Item(i))) {
+			if (!proj->Load(files.Item(i))) {
 				//corrupted xml file?
 				wxLogMessage(wxT("Failed to load template project: ") + files.Item(i) + wxT(" (corrupted XML?)"));
 				continue;
@@ -1158,7 +1159,7 @@ void Manager::DebugMessage(wxString msg)
 {
 	static wxString lastMessage(wxEmptyString);
 	msg = msg.Trim(false);
-	if(lastMessage != msg){
+	if (lastMessage != msg) {
 		Frame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(msg);
 		lastMessage = msg;
 	}
@@ -1172,11 +1173,11 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	}
 
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(projectName);
-	if(!bldConf) {
+	if (!bldConf) {
 		wxLogMessage(wxT("failed to find project configuration for project '") + projectName);
 		return;
 	}
-	
+
 	//expand variables
 	wxString cmd = bldConf->GetCommand();
 	cmd = ExpandVariables(cmd, GetProject(projectName));
@@ -1195,39 +1196,39 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	ProjectPtr proj = GetProject(projectName);
 	//print the current directory
 	::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-	
+
 	//now set the working directory according to working directory field from the
 	//project settings
 	::wxSetWorkingDirectory(wd);
-	
+
 	//execute the command line
 	//the async command is a one time executable object,
 	m_asyncExeCmd = new AsyncExeCmd(GetMainFrame());
 
 #if defined(__WXMAC__)
-    execLine = wxString( wxT("osascript -e 'tell application \"Terminal\"'")) +
-        wxT(" -e   'activate'") +
-        wxT(" -e   'do script with command \"cd ") + proj->GetFileName().GetPath() + wxT(" && cd ") + wd + wxT(" && ") + execLine + wxT("\"'") +
-        wxT(" -e  'end tell'");
+	execLine = wxString( wxT("osascript -e 'tell application \"Terminal\"'")) +
+	           wxT(" -e   'activate'") +
+	           wxT(" -e   'do script with command \"cd ") + proj->GetFileName().GetPath() + wxT(" && cd ") + wd + wxT(" && ") + execLine + wxT("\"'") +
+	           wxT(" -e  'end tell'");
 #elif defined(__WXGTK__)
 	//set a console to the execute target
 	wxString term;
 	term << wxT("xterm -title ");
 	term << wxT("'") << execLine << wxT("'");
 	term << wxT(" -e ");
-	
+
 	if ( bldConf->GetPauseWhenExecEnds() ) {
 		term << CL_EXEC_WRAPPER;
 	}
-	
+
 	term << execLine;
 	execLine = term;
 #elif defined (__WXMSW__)
-	
+
 	if (bldConf->GetPauseWhenExecEnds() ) {
 		execLine.Prepend(CL_EXEC_WRAPPER);
 	}
-	
+
 #endif
 
 	//execute the program:
@@ -1236,7 +1237,7 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	EnvironmentConfig::Instance()->ApplyEnv();
 	m_asyncExeCmd->Execute(execLine, false, false);
 	if (m_asyncExeCmd->GetProcess()) {
-		
+
 		m_asyncExeCmd->GetProcess()->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
 	} else {
 		EnvironmentConfig::Instance()->UnApplyEnv();
@@ -1249,12 +1250,12 @@ void Manager::OnProcessEnd(wxProcessEvent &event)
 	m_asyncExeCmd->GetProcess()->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
 	delete m_asyncExeCmd;
 	m_asyncExeCmd = NULL;
-	
+
 	//unset the environment variables
 	EnvironmentConfig::Instance()->UnApplyEnv();
-	
+
 	//return the focus back to the editor
-	if(GetActiveEditor()) {
+	if (GetActiveEditor()) {
 		GetActiveEditor()->SetActive();
 	}
 }
@@ -1356,10 +1357,10 @@ void Manager::WriteProgram(const wxString &line)
 	if (!IsProgramRunning())
 		return;
 
-	if(m_asyncExeCmd->GetProcess()->GetRedirect() == false){
+	if (m_asyncExeCmd->GetProcess()->GetRedirect() == false) {
 		return;
 	}
-	
+
 	wxOutputStream *out = m_asyncExeCmd->GetOutputStream();
 	if ( out ) {
 		wxString cmd(line);
@@ -1558,8 +1559,8 @@ void Manager::CloseAllButThis(wxWindow *curreditor)
 {
 	Notebook *book = Frame::Get()->GetNotebook();
 	bool idxToDelete(0);//can be 1 or 0
-	while(book->GetPageCount() > 1){
-		if(book->GetPage(0) == curreditor){
+	while (book->GetPageCount() > 1) {
+		if (book->GetPage(0) == curreditor) {
 			idxToDelete = 1;
 		}
 		book->DeletePage(idxToDelete);
@@ -1737,36 +1738,36 @@ void Manager::DbgStart(long pid)
 	BuildConfigPtr bldConf;
 	ProjectPtr proj;
 	long PID(-1);
-	
-	if(pid == 1){ //attach to process
+
+	if (pid == 1) { //attach to process
 		AttachDbgProcDlg *dlg = new AttachDbgProcDlg(NULL);
-		if(dlg->ShowModal() == wxID_OK){
+		if (dlg->ShowModal() == wxID_OK) {
 			wxString processId = dlg->GetProcessId();
 			exepath   = dlg->GetExeName();
 			debuggerName = dlg->GetDebugger();
 			DebuggerMgr::Get().SetActiveDebugger(debuggerName);
-			
+
 			processId.ToLong(&PID);
-			if(exepath.IsEmpty() == false){
+			if (exepath.IsEmpty() == false) {
 				wxFileName fn(exepath);
 				wxSetWorkingDirectory(fn.GetPath());
 				exepath = fn.GetFullName();
-				
+
 			}
 			dlg->Destroy();
-		}else{
+		} else {
 			dlg->Destroy();
 			return;
 		}
 	}
 
-	if(pid == wxNOT_FOUND){
+	if (pid == wxNOT_FOUND) {
 		//need to debug the current project
 		proj = WorkspaceST::Get()->FindProjectByName(GetActiveProjectName(), errMsg);
 		if (proj) {
-			wxSetWorkingDirectory(proj->GetFileName().GetPath());	
+			wxSetWorkingDirectory(proj->GetFileName().GetPath());
 			bldConf = WorkspaceST::Get()->GetProjSelBuildConf(proj->GetName());
-			if(bldConf){
+			if (bldConf) {
 				debuggerName = bldConf->GetDebuggerType();
 				DebuggerMgr::Get().SetActiveDebugger(debuggerName);
 			}
@@ -1790,13 +1791,13 @@ void Manager::DbgStart(long pid)
 		dbgr->QueryFileLine();
 		return;
 	}
-	
+
 	//set the debugger information
 	DebuggerInformation dinfo;
 	DebuggerMgr::Get().GetDebuggerInformation(debuggerName, dinfo);
 	dbgr->SetDebuggerInformation(dinfo);
 
-	if(pid == wxNOT_FOUND){
+	if (pid == wxNOT_FOUND) {
 		exepath = bldConf->GetCommand();
 		args = bldConf->GetCommandArguments();
 		exepath.Prepend(wxT("\""));
@@ -1807,7 +1808,7 @@ void Manager::DbgStart(long pid)
 		wd = ExpandVariables(wd, proj);
 		exepath = ExpandVariables(exepath, proj);
 	}
-	
+
 	//get the debugger path to execute
 	DebuggerInformation dbginfo;
 	DebuggerMgr::Get().GetDebuggerInformation(debuggerName, dbginfo);
@@ -1832,7 +1833,7 @@ void Manager::DbgStart(long pid)
 	//or else call to UpdateBreakpoint() will yield an attempt to
 	//actually add the breakpoint before Run() is called - this can
 	//be a problem when adding breakpoint to dll files
-	if(wxNOT_FOUND == pid){
+	if (wxNOT_FOUND == pid) {
 		Notebook *book = Frame::Get()->GetNotebook();
 		for (size_t i=0; i<book->GetPageCount(); i++) {
 			LEditor *editor = dynamic_cast<LEditor*>(book->GetPage(i));
@@ -1846,7 +1847,7 @@ void Manager::DbgStart(long pid)
 	std::vector<BreakpointInfo> bps;
 	DebuggerMgr::Get().GetBreakpoints(bps);
 
-	if(pid == wxNOT_FOUND){
+	if (pid == wxNOT_FOUND) {
 		//it is now OK to start the debugger...
 		if (!dbgr->Start(dbgname, exepath, wd, bps)) {
 			wxString errMsg;
@@ -1870,17 +1871,17 @@ void Manager::DbgStart(long pid)
 	if (editor) {
 		editor->SetActive();
 	}
-	
+
 	//mark that we are waiting for the first GotControl()
 	DebugMessage(output);
 	DebugMessage(wxT("Debug session started successfully!\n"));
-	
+
 	//Incase we are attaching to process
 	//do nothing here
-	if(pid == wxNOT_FOUND){
+	if (pid == wxNOT_FOUND) {
 		dbgr->Run(args);
 	}
-	
+
 	//and finally make the debugger pane visible
 	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
 	if (info.IsOk() && !info.IsShown()) {
@@ -1899,7 +1900,7 @@ void Manager::DbgStop()
 	//remove all debugger markers
 	DbgUnMarkDebuggerLine();
 	m_dbgCanInteract = false;
-	
+
 	IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
 	if (!dbgr) {
 		return;
@@ -1911,7 +1912,7 @@ void Manager::DbgStop()
 
 	//clear the debugger pane
 	Frame::Get()->GetDebuggerPane()->Clear();
-	
+
 	dbgr->Stop();
 	DebuggerMgr::Get().SetActiveDebugger(wxEmptyString);
 
@@ -1929,12 +1930,12 @@ void Manager::DbgStop()
 
 void Manager::DbgMarkDebuggerLine(const wxString &fileName, int lineno)
 {
-	DbgUnMarkDebuggerLine(); 
+	DbgUnMarkDebuggerLine();
 	if (lineno < 0) {
 		return;
 	}
 
-	//try to open the file 
+	//try to open the file
 	wxFileName fn(fileName);
 	LEditor *editor = GetActiveEditor();
 	if (editor && editor->GetFileName().GetFullPath() == fn.GetFullPath()) {
@@ -1943,7 +1944,7 @@ void Manager::DbgMarkDebuggerLine(const wxString &fileName, int lineno)
 	} else {
 		OpenFile(fileName, wxEmptyString, lineno-1, wxNOT_FOUND);
 		editor = GetActiveEditor();
-		if(editor){
+		if (editor) {
 			editor->HighlightLine(lineno);
 		}
 	}
@@ -2050,7 +2051,7 @@ void Manager::DbgDoSimpleCommand(int cmd)
 }
 
 void Manager::DbgQuickWatch(const wxString &expression, bool useTipWin, long pos)
-{ 
+{
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
 		m_useTipWin = useTipWin;
@@ -2060,7 +2061,7 @@ void Manager::DbgQuickWatch(const wxString &expression, bool useTipWin, long pos
 }
 
 void Manager::DbgCancelQuickWatchTip()
-{ 
+{
 	/*
 	if(m_debuggerTipWin){
 		m_debuggerTipWin->Dismiss();
@@ -2106,7 +2107,7 @@ void Manager::UpdateDebuggerPane()
 			if (pane->GetNotebook()->GetCurrentPage() == pane->GetLocalsTree()) {
 				//update the locals tree
 				dbgr->QueryLocals();
-				
+
 			} else if (pane->GetNotebook()->GetCurrentPage() == pane->GetWatchesTable()) {
 				//update the watches table
 				wxArrayString expressions = pane->GetWatchesTable()->GetExpressions();
@@ -2133,12 +2134,12 @@ void Manager::UpdateLocals(TreeNode<wxString, NodeData> *tree)
 {
 	NodeData data = tree->GetData();
 	static TreeNode<wxString, NodeData> *thisTree(NULL);
-	if(data.name == wxT("*this")){
+	if (data.name == wxT("*this")) {
 		//append this tree to the local's tree
 		thisTree = tree;//keep the tree and wait for the other call that will come
-	}else{
+	} else {
 		//if we already have thisTree, append it as child of this tree
-		if(thisTree){
+		if (thisTree) {
 			tree->AddChild(thisTree);
 			thisTree = NULL;
 		}
@@ -2156,12 +2157,12 @@ void Manager::UpdateGotControl(DebuggerReasons reason)
 	//put us ontop of the z-order window
 	Frame::Get()->Raise();
 	m_dbgCanInteract = true;
-	
+
 	switch (reason) {
 	case DBG_RECV_SIGNAL_EXC_BAD_ACCESS:
 	case DBG_RECV_SIGNAL_SIGSEGV: { //program received signal sigsegv
 		wxString signame = wxT("SIGSEGV");
-		if(reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS){
+		if (reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS) {
 			signame = wxT("EXC_BAD_ACCESS");
 		}
 		DebugMessage(wxT("Program Received signal ") + signame + wxT("\n"));
@@ -2219,18 +2220,18 @@ void Manager::UpdateExpression(const wxString &expression, const wxString &evalu
 
 void Manager::UpdateQuickWatch(const wxString &expression, TreeNode<wxString, NodeData> *tree)
 {
-	if(m_useTipWin){
+	if (m_useTipWin) {
 
-#if 0		
+#if 0
 		m_useTipWin = false;
-		if(m_debuggerTipWin){
+		if (m_debuggerTipWin) {
 			delete m_debuggerTipWin;
 		}
 		m_debuggerTipWin = new DebuggerTip(GetMainFrame(), expression, tree, m_tipWinPos);
-		m_debuggerTipWin->Popup(); 
+		m_debuggerTipWin->Popup();
 #endif
 
-	}else{
+	} else {
 		//Display a dialog with the expression
 		if (!m_quickWatchDlg) {
 			//first time?
@@ -2283,18 +2284,18 @@ void Manager::UpdateBuildTools()
 	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT( "GNU makefile for g++/gcc" ));
 	wxString tool = builder->GetBuildToolName();
 	wxString origTool(tool);
-	
+
 	//confirm that it exists...
 	wxString path;
 	bool is_ok(true);
-	
+
 	EnvironmentConfig::Instance()->ApplyEnv();
-	
-	if(tool.Contains(wxT("$"))) {
-		//expand 
+
+	if (tool.Contains(wxT("$"))) {
+		//expand
 		tool = EnvironmentConfig::Instance()->ExpandVariables(tool);
 	}
-	
+
 	if (!ExeLocator::Locate(tool, path)) {
 		is_ok = false;
 		//failed to locate the specified build tool
@@ -2303,28 +2304,28 @@ void Manager::UpdateBuildTools()
 			tool = path;
 			is_ok = true;
 		}
-		
-		if (!is_ok && ExeLocator::Locate(wxT("make"), path)){
+
+		if (!is_ok && ExeLocator::Locate(wxT("make"), path)) {
 			tool = path;
 			is_ok = true;
 		}
-	}else{
+	} else {
 		//we are good, nothing to be done
 		EnvironmentConfig::Instance()->UnApplyEnv();
 		return;
 	}
 	EnvironmentConfig::Instance()->UnApplyEnv();
-	
+
 	wxString message;
 	if (!is_ok) {
 		message << wxT("Failed to locate make util '")
-			    << tool << wxT("' specified by 'Build Settings'");
+		<< tool << wxT("' specified by 'Build Settings'");
 		wxLogMessage(message);
 		return;
 	} else {
 		wxLogMessage(wxT("Updating build too to '") + tool + wxT("' from '") + origTool + wxT("'"));
 	}
-	
+
 	//update the cached builders
 	builder->SetBuildTool(tool);
 	BuildManagerST::Get()->AddBuilder(builder);
@@ -2343,9 +2344,9 @@ void Manager::UpdateBuildTools()
 bool Manager::OpenFileAndAppend(const wxString &fileName, const wxString &text)
 {
 	bool ret(false);
-	if(OpenFile(fileName, wxEmptyString)){
+	if (OpenFile(fileName, wxEmptyString)) {
 		LEditor* editor = GetActiveEditor();
-		if(editor){
+		if (editor) {
 			//get the current line number
 			int lineNum = editor->GetLineCount();
 			editor->GotoLine(lineNum-1);
@@ -2374,9 +2375,125 @@ void Manager::RunCustomPreMakeCommand(const wxString &project)
 	}
 
 	m_compileRequest = new CompileRequest(	GetMainFrame(), //owner window
-											project,	 	//project to build 
-											false, 			//not project only
-											wxEmptyString, 	//no file name (valid only for build file only)
-											true);			//run premake step only
-	m_compileRequest->Process();	
+	                                       project,	 	//project to build
+	                                       false, 			//not project only
+	                                       wxEmptyString, 	//no file name (valid only for build file only)
+	                                       true);			//run premake step only
+	m_compileRequest->Process();
+}
+
+void Manager::UpdateMenuAccelerators()
+{
+	MenuItemDataMap menuMap;
+	LoadAcceleratorTable(GetStarupDirectory() + wxT("/config/accelerators.conf"), menuMap);
+	wxMenuBar *bar = Frame::Get()->GetMenuBar();
+	
+	wxString content;
+	size_t count = bar->GetMenuCount();
+	for (size_t i=0; i< count; i++) {
+		wxMenu * menu = bar->GetMenu(i);
+
+		//iterate over the menu and its sub menus and print all menu items IDs, name and shortcut
+//		DumpMenu(menu, bar->GetMenuLabelText(i), content);
+		UpdateMenu(menu, menuMap);
+	}
+	
+	if(content.IsEmpty() == false) {
+		wxFFile f(GetStarupDirectory() + wxT("/config/accelerators.conf"), wxT("w+b"));
+		f.Write(content);
+		f.Close();
+	}
+}
+
+void Manager::DumpMenu(wxMenu *menu, const wxString &label, wxString &content)
+{
+	wxMenuItemList items = menu->GetMenuItems();
+	wxMenuItemList::iterator iter = items.begin();
+	for (; iter != items.end(); iter++) {
+		wxMenuItem *item =  *iter;
+		if (item->GetSubMenu()) {
+			DumpMenu(item->GetSubMenu(), label + wxT("::") + item->GetLabel(), content);
+		} else {
+
+			if ( item->GetId() == wxID_SEPARATOR ) {
+				continue;
+			} else if( item->GetId() >= RecentFilesSubMenuID && item->GetId() <= RecentFilesSubMenuID + 10) {
+				continue;
+			} else if( item->GetId() >= RecentWorkspaceSubMenuID && item->GetId() <= RecentWorkspaceSubMenuID + 10) {
+				continue;
+			}
+			
+			//dump the content of this menu item
+			content << item->GetId();
+			content << wxT("|");
+			content << label;
+			content << wxT("|");
+			content << item->GetItemLabelText();
+			content << wxT("|");
+			if (item->GetAccel()) {
+				content << item->GetAccel()->ToString();
+			}
+			content << wxT("\n");
+		}
+	}
+}
+
+void Manager::LoadAcceleratorTable(const wxString &file, MenuItemDataMap &accelMap)
+{
+	wxString content;
+	if (!ReadFileWithConversion(file, content)) {
+		return;
+	}
+
+	wxArrayString lines = wxStringTokenize(content, wxT("\n"));
+	for (size_t i = 0; i < lines.GetCount(); i ++ ) {
+		
+		MenuItemData item;
+		wxString line = lines.Item(i);
+		
+		item.id = line.BeforeFirst(wxT('|'));
+		line = line.AfterFirst(wxT('|'));
+		
+		item.parent = line.BeforeFirst(wxT('|'));
+		line = line.AfterFirst(wxT('|'));
+
+		item.action = line.BeforeFirst(wxT('|'));
+		line = line.AfterFirst(wxT('|'));
+		
+		item.accel = line.BeforeFirst(wxT('|'));
+		line = line.AfterFirst(wxT('|'));
+		
+		accelMap[item.action] = item;
+	}
+}
+
+void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap)
+{
+	wxMenuItemList items = menu->GetMenuItems();
+	wxMenuItemList::iterator iter = items.begin();
+	for (; iter != items.end(); iter++) {
+		wxMenuItem *item =  *iter;
+		if (item->GetSubMenu()) {
+			UpdateMenu(item->GetSubMenu(), accelMap);
+		} else {
+
+			if ( item->GetId() == wxID_SEPARATOR ) {
+				continue;
+			}
+
+			//search this item in the accelMap
+			if(accelMap.find(item->GetItemLabelText()) != accelMap.end()) {
+				MenuItemData item_data = accelMap.find(item->GetItemLabelText())->second;
+				wxAcceleratorEntry* a = wxAcceleratorEntry::Create(wxT("\t") + item_data.accel);	
+				item->SetAccel(a);
+			} else {
+				item->SetAccel(NULL);
+			}
+		}
+	}	
+}
+
+void Manager::GetAcceleratorMap(MenuItemDataMap& accelMap)
+{
+	LoadAcceleratorTable(GetStarupDirectory() + wxT("/config/accelerators.conf"), accelMap);
 }

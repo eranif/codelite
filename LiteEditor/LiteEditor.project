@@ -171,6 +171,16 @@
       <File Name="commentpage.h"/>
       <File Name="commentpagebase.cpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="Accelerators">
+      <File Name="acceltabledlg.h"/>
+      <File Name="acceltablebasedlg.cpp"/>
+      <File Name="acceltablebasedlg.h"/>
+      <File Name="acceltabledlg.cpp"/>
+      <File Name="newkeyshortcutdlg.h"/>
+      <File Name="newkeyshortcutbasedlg.cpp"/>
+      <File Name="newkeyshortcutbasedlg.h"/>
+      <File Name="newkeyshortcutdlg.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>

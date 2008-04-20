@@ -224,6 +224,9 @@ bool App::OnInit()
 
 	// Center the dialog when first shown
 	m_pMainFrame->Centre();
+	
+	// update the accelerators table
+	ManagerST::Get()->UpdateMenuAccelerators();
 
 	//if the application started with a given file name,
 	//which is not a workspace
@@ -297,6 +300,7 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 		wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));
 		wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
 		wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
+		wxCopyFile(installPath + wxT("/config/accelerators.conf"), destDir + wxT("/config/accelerators.conf"));
 	} else {
 		//wxPrintf(wxT("Skipping settings copy ...\n"));
 	}

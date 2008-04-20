@@ -330,6 +330,8 @@ protected:
 	void OnManagePlugins(wxCommandEvent &e);
 	void OnCppContextMenu(wxCommandEvent &e);
 	
+	void OnConfigureAccelerators(wxCommandEvent &e);
+	
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);
 	void ShowBuildConfigurationManager();

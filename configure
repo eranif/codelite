@@ -347,6 +347,7 @@ createInstallTarget()
 	echo "	@cp -fpr Runtime/astyle.sample /usr/local/share/codelite/" >> Makefile
 	echo "	@cp -fpr Runtime/svnreport.html /usr/local/share/codelite/" >> Makefile
 	echo "	@cp -fpr Runtime/images/*.png /usr/local/share/codelite/images/" >> Makefile
+	echo "	@cp -fpr Runtime/config/accelerators.conf /usr/local/share/codelite/config/" >> Makefile
 	echo "	@cp -fpr Runtime/codelite.desktop /usr/share/applications/" >> Makefile
 	echo "	@cp -fpr Runtime/codelite.desktop ~/Desktop/" >> Makefile
 	echo "	@chmod -R 777 /usr/local/share/codelite" >> Makefile

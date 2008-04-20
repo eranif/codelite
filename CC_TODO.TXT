@@ -1,5 +1,3 @@
-- add key accelerator functionality that allows one to bind keys to actions
-
 - validate the environment variables
 
 - Also a possible feature would be to popup a dialog if a $(var) is in a project and not defined already
@@ -26,10 +24,4 @@
 - Auto detect workspace/project modified outside of the IDE and offer to re-load the workspace
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
-
-- nemonics not working on GTK - FIXIT
-
-- Remove tooltips from toolbars
-
-- Apply the changes set in the 'Accelerators table'
 

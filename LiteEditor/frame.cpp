@@ -109,8 +109,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(wxID_SAVE, Frame::OnSave)
 	EVT_MENU(wxID_SAVEAS, Frame::OnSaveAs)
 	EVT_MENU(XRCID("about"), Frame::OnAbout)
-	EVT_MENU(wxID_NEW, Frame::OnFileNew)
-	EVT_MENU(wxID_OPEN, Frame::OnFileOpen)
+	EVT_MENU(XRCID("new_file"), Frame::OnFileNew)
+	EVT_MENU(XRCID("open_file"), Frame::OnFileOpen)
 	EVT_MENU(wxID_CLOSE, Frame::OnFileClose)
 	EVT_MENU(XRCID("save_all"), Frame::OnFileSaveAll)
 	EVT_MENU(wxID_CUT, Frame::DispatchCommandEvent)
@@ -620,8 +620,8 @@ void Frame::CreateMenuBar()
 	wxMenuBar *mb = new wxMenuBar();
 	//File Menu
 	wxMenu *menu = new wxMenu();
-	menu->Append(wxID_NEW);
-	menu->Append(wxID_OPEN);
+	menu->Append(XRCID("new_file"));
+	menu->Append(XRCID("open_file"));
 	menu->Append(wxID_REFRESH);
 	menu->AppendSeparator();
 	menu->Append(wxID_SAVE);
@@ -640,8 +640,8 @@ void Frame::CreateToolbars24()
 	//----------------------------------------------
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(24, 24));
-	tb->AddTool(wxID_NEW, wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new24")), wxT("New File (Ctrl+N)"));
-	tb->AddTool(wxID_OPEN, wxT("Open"), wxXmlResource::Get()->LoadBitmap(wxT("folder24")), wxT("Open File (Ctrl+O)"));
+	tb->AddTool(XRCID("new_file"), wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new24")), wxT("New File (Ctrl+N)"));
+	tb->AddTool(XRCID("open_file"), wxT("Open"), wxXmlResource::Get()->LoadBitmap(wxT("folder24")), wxT("Open File (Ctrl+O)"));
 	tb->AddTool(wxID_REFRESH, wxT("Reload"), wxXmlResource::Get()->LoadBitmap(wxT("reload24")), wxT("Reload File (Ctrl+R)"));
 	tb->AddSeparator();
 	tb->AddTool(wxID_SAVE, wxT("Save"), wxXmlResource::Get()->LoadBitmap(wxT("page_save24")), wxT("Save (Ctrl+S)"));
@@ -760,8 +760,8 @@ void Frame::CreateToolbars16()
 	//----------------------------------------------
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(16, 16));
-	tb->AddTool(wxID_NEW, wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new16")), wxT("New File (Ctrl+N)"));
-	tb->AddTool(wxID_OPEN, wxT("Open"), wxXmlResource::Get()->LoadBitmap(wxT("folder16")), wxT("Open File (Ctrl+O)"));
+	tb->AddTool(XRCID("new_file"), wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new16")), wxT("New File (Ctrl+N)"));
+	tb->AddTool(XRCID("open_file"), wxT("Open"), wxXmlResource::Get()->LoadBitmap(wxT("folder16")), wxT("Open File (Ctrl+O)"));
 	tb->AddTool(wxID_REFRESH, wxT("Reload"), wxXmlResource::Get()->LoadBitmap(wxT("reload16")), wxT("Reload File (Ctrl+R)"));
 	tb->AddSeparator();
 	tb->AddTool(wxID_SAVE, wxT("Save"), wxXmlResource::Get()->LoadBitmap(wxT("page_save16")), wxT("Save (Ctrl+S)"));

@@ -2484,8 +2484,13 @@ void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap)
 			//search this item in the accelMap
 			if(accelMap.find(item->GetItemLabelText()) != accelMap.end()) {
 				MenuItemData item_data = accelMap.find(item->GetItemLabelText())->second;
-				wxAcceleratorEntry* a = wxAcceleratorEntry::Create(wxT("\t") + item_data.accel);	
-				item->SetAccel(a);
+				
+				if(item_data.accel.Trim().IsEmpty()) {
+					item->SetAccel(NULL);
+				}else{
+					wxAcceleratorEntry* a = wxAcceleratorEntry::Create(wxT("\t") + item_data.accel);	
+					item->SetAccel(a);
+				}
 			} else {
 				item->SetAccel(NULL);
 			}

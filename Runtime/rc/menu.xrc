@@ -4,11 +4,11 @@
         <object class="wxMenu" name="file_tool_or_menuitem">
             <label>&amp;File</label>
             <style>wxMENU_TEAROFF</style>
-            <object class="wxMenuItem" name="wxID_NEW">
+            <object class="wxMenuItem" name="new_file">
                 <label>&amp;New File</label>
                 <help>Create an empty new file</help>
             </object>
-            <object class="wxMenuItem" name="wxID_OPEN">
+            <object class="wxMenuItem" name="open_file">
                 <label>&amp;Open File...</label> 
                 <help>Open an existing file</help>
             </object>

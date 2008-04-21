@@ -8,7 +8,7 @@
 #include "frame.h"
 #include "cl_editor.h"
 #include "menumanager.h"
-#include "language.h" 
+#include "language.h"
 #include "editor_config.h"
 #include "parse_thread.h"
 #include "search_thread.h"
@@ -75,6 +75,9 @@ static wxString CL_EXEC_WRAPPER = wxEmptyString;
 
 static bool HideDebuggerPane = true;
 
+//--------------------------------------------------------------
+// Helper methods
+//--------------------------------------------------------------
 std::string GetCurrentFileName()
 {
 	LEditor *editor = ManagerST::Get()->GetActiveEditor();
@@ -84,6 +87,37 @@ std::string GetCurrentFileName()
 	}
 	return "";
 }
+
+/**
+ * \brief strip accelerators and nemonics from given text
+ * \param text
+ * \return 
+ */
+static wxString StripAccelAndNemonics(const wxString &text)
+{
+	//possible nemonics:
+	//_ and &
+	wxString stripedText( text );
+	stripedText.Replace(wxT("_"), wxEmptyString);
+	stripedText.Replace(wxT("&"), wxEmptyString);
+	return stripedText.BeforeFirst(wxT('\t'));
+}
+
+/**
+ * \brief remove any accelerator key from the menu text and return only 
+ * the text including any nemonics 
+ * \param text
+ * \return 
+ */
+static wxString StripAccel(const wxString &text)
+{
+	return text.BeforeFirst(wxT('\t'));
+}
+
+//---------------------------------------------------------------
+//---------------------------------------------------------------
+//---------------------------------------------------------------
+//---------------------------------------------------------------
 
 Manager::Manager(void)
 		: m_cleanRequest(NULL)
@@ -2385,18 +2419,18 @@ void Manager::RunCustomPreMakeCommand(const wxString &project)
 void Manager::UpdateMenuAccelerators()
 {
 	MenuItemDataMap menuMap;
-	
+
 	//try to locate the user's settings
 	wxString fileName( GetStarupDirectory() + wxT("/config/accelerators.conf") );
-	if( !wxFileName::FileExists( GetStarupDirectory() + wxT("/config/accelerators.conf") ) ) {
-		
+	if ( !wxFileName::FileExists( GetStarupDirectory() + wxT("/config/accelerators.conf") ) ) {
+
 		//use the default settings
 		fileName = GetStarupDirectory() + wxT("/config/accelerators.conf.default");
 	}
-	
+
 	LoadAcceleratorTable(fileName, menuMap);
 	wxMenuBar *bar = Frame::Get()->GetMenuBar();
-	
+
 	wxString content;
 	std::vector< wxAcceleratorEntry > accelVec;
 	size_t count = bar->GetMenuCount();
@@ -2404,55 +2438,55 @@ void Manager::UpdateMenuAccelerators()
 		wxMenu * menu = bar->GetMenu(i);
 		UpdateMenu(menu, menuMap, accelVec);
 	}
-	
+
 	//Incase we still have items to map, map them. this can happen for items
 	//which exist in the list but does not have any menu associated to them in the menu bar (e.g. C++ menu)
-	if(menuMap.empty() == false) {
+	if (menuMap.empty() == false) {
 //		wxString msg;
 //		msg << wxT("Info: UpdateMenuAccelerators: There are still ") << menuMap.size() << wxT(" un-mapped item(s)");
 //		wxLogMessage(msg);
-		
+
 		MenuItemDataMap::iterator iter = menuMap.begin();
-		for(; iter != menuMap.end(); iter++) {
+		for (; iter != menuMap.end(); iter++) {
 			MenuItemData itemData = iter->second;
-			
+
 			wxString txt;
 			txt << itemData.action;
-			if( itemData.accel.IsEmpty() == false ) {
+			if ( itemData.accel.IsEmpty() == false ) {
 				txt << wxT("\t") << itemData.accel;
 			}
-			
+
 			wxAcceleratorEntry* a = wxAcceleratorEntry::Create(txt);
-			if( a ) {
+			if ( a ) {
 				long commandId(0);
 				itemData.id.ToLong( &commandId );
-				
+
 				//use the resource ID
-				if(commandId == 0) {
+				if (commandId == 0) {
 					commandId = wxXmlResource::GetXRCID(itemData.id);
 				}
-				
+
 				a->Set(a->GetFlags(), a->GetKeyCode(), commandId);
 				accelVec.push_back( *a );
 				delete a;
 			}
 		}
 	}
-	
-	if(content.IsEmpty() == false) {
+
+	if (content.IsEmpty() == false) {
 		wxFFile f(GetStarupDirectory() + wxT("/config/accelerators.conf"), wxT("w+b"));
 		f.Write(content);
 		f.Close();
 	}
-	
+
 	//update the accelerator table of the main frame
 	wxAcceleratorEntry *entries = new wxAcceleratorEntry[accelVec.size()];
-	for(size_t i=0; i < accelVec.size(); i++ ) {
+	for (size_t i=0; i < accelVec.size(); i++ ) {
 		entries[i] = accelVec[i];
 	}
-	
+
 	wxAcceleratorTable table(accelVec.size(), entries);
-	
+
 	//update the accelerator table
 	Frame::Get()->SetAcceleratorTable( table );
 	delete [] entries;
@@ -2470,18 +2504,18 @@ void Manager::DumpMenu(wxMenu *menu, const wxString &label, wxString &content)
 
 			if ( item->GetId() == wxID_SEPARATOR ) {
 				continue;
-			} else if( item->GetId() >= RecentFilesSubMenuID && item->GetId() <= RecentFilesSubMenuID + 10) {
+			} else if ( item->GetId() >= RecentFilesSubMenuID && item->GetId() <= RecentFilesSubMenuID + 10) {
 				continue;
-			} else if( item->GetId() >= RecentWorkspaceSubMenuID && item->GetId() <= RecentWorkspaceSubMenuID + 10) {
+			} else if ( item->GetId() >= RecentWorkspaceSubMenuID && item->GetId() <= RecentWorkspaceSubMenuID + 10) {
 				continue;
 			}
-			
+
 			//dump the content of this menu item
 			content << item->GetId();
 			content << wxT("|");
 			content << label;
 			content << wxT("|");
-			content << item->GetItemLabelText();
+			content << StripAccelAndNemonics( item->GetText() );
 			content << wxT("|");
 			if (item->GetAccel()) {
 				content << item->GetAccel()->ToString();
@@ -2500,22 +2534,22 @@ void Manager::LoadAcceleratorTable(const wxString &file, MenuItemDataMap &accelM
 
 	wxArrayString lines = wxStringTokenize(content, wxT("\n"));
 	for (size_t i = 0; i < lines.GetCount(); i ++ ) {
-		
+
 		MenuItemData item;
 		wxString line = lines.Item(i);
-		
+
 		item.id = line.BeforeFirst(wxT('|'));
 		line = line.AfterFirst(wxT('|'));
-		
+
 		item.parent = line.BeforeFirst(wxT('|'));
 		line = line.AfterFirst(wxT('|'));
 
 		item.action = line.BeforeFirst(wxT('|'));
 		line = line.AfterFirst(wxT('|'));
-		
+
 		item.accel = line.BeforeFirst(wxT('|'));
 		line = line.AfterFirst(wxT('|'));
-		
+
 		accelMap[item.action] = item;
 	}
 }
@@ -2535,32 +2569,30 @@ void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< w
 			}
 
 			//search this item in the accelMap
-			wxString labelText = wxMenuItemBase::GetLabelFromText(item->GetItemLabelText());
-			wxString labelTextTag( labelText ); 
-			labelTextTag.Replace(wxT("_"), wxEmptyString);	
-			if(accelMap.find(labelTextTag) != accelMap.end()) {
-				MenuItemData item_data = accelMap.find(labelTextTag)->second;
-				
+			wxString labelText = StripAccelAndNemonics( item->GetText() );
+			if (accelMap.find(labelText) != accelMap.end()) {
+				MenuItemData item_data = accelMap.find(labelText)->second;
+
 				wxString txt;
-				txt << item->GetItemLabel().BeforeFirst(wxT('\t'));
+				txt << StripAccel( item->GetText() );
+				
 				//set the new accelerator
-				if(item_data.accel.IsEmpty() == false) {
+				if (item_data.accel.IsEmpty() == false) {
 					txt << wxT("\t") << item_data.accel;
 				}
-				
-				//item->SetAccel(a);
-				item->SetItemLabel( txt );	
-	
+
+				txt.Replace(wxT("_"), wxT("&"));
+				item->SetText( txt );
+
 				wxAcceleratorEntry* a = wxAcceleratorEntry::Create(txt);
-				if( a ) {
+				if ( a ) {
 					a->Set(a->GetFlags(), a->GetKeyCode(), item->GetId());
 					accelVec.push_back( *a );
 					delete a;
 				}
-				
+
 				//remove this entry from the map
-				accelMap.erase(labelTextTag);
-				
+				accelMap.erase(labelText);
 			}
 		}
 	}
@@ -2569,8 +2601,8 @@ void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< w
 void Manager::GetAcceleratorMap(MenuItemDataMap& accelMap)
 {
 	wxString fileName( GetStarupDirectory() + wxT("/config/accelerators.conf") );
-	if( !wxFileName::FileExists( GetStarupDirectory() + wxT("/config/accelerators.conf") ) ) {
-		
+	if ( !wxFileName::FileExists( GetStarupDirectory() + wxT("/config/accelerators.conf") ) ) {
+
 		//use the default settings
 		fileName = GetStarupDirectory() + wxT("/config/accelerators.conf.default");
 	}

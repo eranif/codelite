@@ -122,8 +122,6 @@ bool App::OnInit()
 
 		//Create the directory structure
 		wxMkDir(homeDir.ToAscii(), 0777);
-		wxMkDir((homeDir + wxT("/plugins/")).ToAscii(), 0777);
-		wxMkDir((homeDir + wxT("/debuggers/")).ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/lexers/")).ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/rc/")).ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/images/")).ToAscii(), 0777);
@@ -142,8 +140,6 @@ bool App::OnInit()
 	//wxPrintf(wxT("Creating %s\n"), homeDir.GetData());	
 	//Create the directory structure
 	wxMkDir(homeDir.ToAscii(), 0777);
-	wxMkDir((homeDir + wxT("/plugins/")).ToAscii(), 0777);
-	wxMkDir((homeDir + wxT("/debuggers/")).ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/lexers/")).ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/rc/")).ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/images/")).ToAscii(), 0777);

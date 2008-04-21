@@ -55,7 +55,7 @@ void PluginManager::Load()
 	ext = wxT("dll");
 #endif
 	wxString fileSpec( wxT( "*." ) + ext );
-	PluginConfig::Instance()->Load(ManagerST::Get()->GetInstallDir() + wxT("/config/plugins.xml"), wxT("PluginsSettings"));
+	PluginConfig::Instance()->Load(ManagerST::Get()->GetStarupDirectory() + wxT("/config/plugins.xml"), wxT("PluginsSettings"));
 
 	PluginsData pluginsData;
 	PluginConfig::Instance()->ReadObject(wxT("plugins_data"), &pluginsData);
@@ -73,7 +73,7 @@ void PluginManager::Load()
 	if ( wxDir::Exists( ManagerST::Get()->GetInstallDir() + wxT( "/plugins" ) ) ) {
 		//get list of dlls
 		wxArrayString files;
-		wxDir::GetAllFiles( ManagerST::Get()->GetStarupDirectory() + wxT( "/plugins" ), &files, fileSpec, wxDIR_FILES );
+		wxDir::GetAllFiles( ManagerST::Get()->GetInstallDir() + wxT( "/plugins" ), &files, fileSpec, wxDIR_FILES );
 
 		for ( size_t i=0; i<files.GetCount(); i++ ) {
 			clDynamicLibrary *dl = new clDynamicLibrary();

@@ -25,20 +25,6 @@
   <VirtualDirectory Name="resources">
     <File Name="tab_x_pressed.xpm"/>
     <File Name="tab_x.xpm"/>
-    <File Name="bg_black.xpm"/>
-    <File Name="bg_bright.xpm"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="FoldTollbar">
-    <File Name="foldtoolbar.cpp"/>
-    <File Name="foldtoolbar.h"/>
-    <File Name="foldtoolbargroup.cpp"/>
-    <File Name="foldtoolbargroup.h"/>
-    <File Name="fb_resources.cpp"/>
-    <File Name="fb_resources.h"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="SampleToolbar">
-    <File Name="sample_toolbar.h"/>
-    <File Name="sample_toolbar.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">

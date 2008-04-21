@@ -1,4 +1,4 @@
-#include "foldtoolbargroup.h"
+//#include "foldtoolbargroup.h"
 #include "wx/textctrl.h"
 #include "notebook_frame.h"
 #include "custom_notebook.h"
@@ -6,8 +6,8 @@
 #include <wx/statusbr.h>
 #include <wx/sizer.h>
 #include <wx/menu.h> //wxMenuBar
-#include "foldtoolbar.h"
-#include "sample_toolbar.h"
+//#include "foldtoolbar.h"
+//#include "sample_toolbar.h"
 
 BEGIN_EVENT_TABLE(NotebookFrame, wxFrame)
 	EVT_CLOSE(NotebookFrame::OnClose)
@@ -36,7 +36,6 @@ void NotebookFrame::Initialize()
 {
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	SetSizer(sz);
-	CreateFoldToolbar();
 	
 	wxPanel *mainPanel = new wxPanel(this, wxID_ANY);
 	sz->Add(mainPanel, 1, wxEXPAND);
@@ -59,7 +58,7 @@ void NotebookFrame::Initialize()
 	menu->Append(wxID_NEW);
 	menu->Append(wxID_DELETE);
 	
-	Notebook *book1 = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_RIGHT|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB);
+	Notebook *book1 = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_RIGHT|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_TAB_DECORATION);
 	book1->SetRightClickMenu(menu);
 	
 	book1->AddPage(new wxTextCtrl(book1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"), bmp);
@@ -67,7 +66,7 @@ void NotebookFrame::Initialize()
 	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"), bmp);
 	book1->AddPage(new wxTextCtrl(book1, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"), bmp);
 	
-	Notebook *book2 = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_HAS_X);
+	Notebook *book2 = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_HAS_X|wxVB_TAB_DECORATION);
 	
 	
 	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"));
@@ -76,7 +75,7 @@ void NotebookFrame::Initialize()
 	book2->AddPage(new wxTextCtrl(book2, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 4"));
 
 	
-	m_topbook = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_HAS_X);
+	m_topbook = new Notebook(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_HAS_X|wxVB_TAB_DECORATION);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 1"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 2 With Long"), bmp1);
 	m_topbook->AddPage(new wxTextCtrl(m_topbook, wxID_ANY,  wxEmptyString, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTE_MULTILINE), wxT("Page 3"), bmp1);
@@ -153,32 +152,33 @@ void NotebookFrame::OnNewPage(wxCommandEvent &e)
 	}
 }
 
-void NotebookFrame::OnPanelDClick(wxMouseEvent &e)
-{
-	Freeze();
-	static bool expanded(true);
-	if(expanded) {
-		barPanel->SetSizeHints(-1, 10);
-	}else{
-		barPanel->SetSizeHints(-1, 100);
-	}
-	expanded = !expanded;
-	GetSizer()->Layout();
-	Thaw();
-} 
-void NotebookFrame::CreateFoldToolbar()
-{
-	barPanel = new FoldToolBar(this, 0);
-	GetSizer()->Add(barPanel, 0, wxEXPAND);
-	
-	//create sample toolbar group
-	FoldToolbarGroup *group1 = new FoldToolbarGroup(barPanel, wxT("Group One"));
-	MyToolbar *mybar = new MyToolbar(group1);
-	group1->Add(mybar, 0, 0);
-	
-	barPanel->AddGroup(group1);
-	barPanel->AddGroup(new FoldToolbarGroup(barPanel, wxT("Group Two")));
-	barPanel->Realize();
-	
-	barPanel->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(NotebookFrame::OnPanelDClick), NULL, this);
-}
+//void NotebookFrame::OnPanelDClick(wxMouseEvent &e)
+//{
+//	Freeze();
+//	static bool expanded(true);
+//	if(expanded) {
+//		barPanel->SetSizeHints(-1, 10);
+//	}else{
+//		barPanel->SetSizeHints(-1, 100);
+//	}
+//	expanded = !expanded;
+//	GetSizer()->Layout();
+//	Thaw();
+//} 
+//void NotebookFrame::CreateFoldToolbar()
+//{
+//	barPanel = new FoldToolBar(this, 0);
+//	GetSizer()->Add(barPanel, 0, wxEXPAND);
+//	
+//	//create sample toolbar group
+//	FoldToolbarGroup *group1 = new FoldToolbarGroup(barPanel, wxT("Group One"));
+//	MyToolbar *mybar = new MyToolbar(group1);
+//	group1->Add(mybar, 0, 0);
+//	
+//	barPanel->AddGroup(group1);
+//	barPanel->AddGroup(new FoldToolbarGroup(barPanel, wxT("Group Two")));
+//	barPanel->Realize();
+//	
+//	barPanel->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(NotebookFrame::OnPanelDClick), NULL, this);
+//}
+//

@@ -1893,11 +1893,12 @@ Language* TagsManager::GetLanguage()
 	}
 }
 
-//bool TagsManager::ProcessExpression(const wxString &expression, wxString &type, wxString &typeScope)
-//{
-//	return ProcessExpression(wxFileName(), wxNOT_FOUND, expression, wxEmptyString, type, typeScope);
-//}
-//
+bool TagsManager::ProcessExpression(const wxString &expression, wxString &type, wxString &typeScope)
+{
+	wxString oper;
+	return ProcessExpression(wxFileName(), wxNOT_FOUND, expression, wxEmptyString, type, typeScope, oper);
+}
+
 void TagsManager::GetClasses(std::vector< TagEntryPtr > &tags, bool onlyWorkspace)
 {
 	wxString sql;

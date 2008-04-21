@@ -548,7 +548,7 @@ void Frame::CreateGUIControls(void)
 	SetAutoLayout (true);
 
 	//load debuggers
-	DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), ManagerST::Get()->GetStarupDirectory());
+	DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), ManagerST::Get()->GetInstallDir());
 	DebuggerMgr::Get().LoadDebuggers();
 
 	wxString sessConfFile;

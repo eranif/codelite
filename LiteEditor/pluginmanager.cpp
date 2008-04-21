@@ -55,7 +55,7 @@ void PluginManager::Load()
 	ext = wxT("dll");
 #endif
 	wxString fileSpec( wxT( "*." ) + ext );
-	PluginConfig::Instance()->Load(ManagerST::Get()->GetStarupDirectory() + wxT("/config/plugins.xml"), wxT("PluginsSettings"));
+	PluginConfig::Instance()->Load(ManagerST::Get()->GetInstallDir() + wxT("/config/plugins.xml"), wxT("PluginsSettings"));
 
 	PluginsData pluginsData;
 	PluginConfig::Instance()->ReadObject(wxT("plugins_data"), &pluginsData);
@@ -70,7 +70,7 @@ void PluginManager::Load()
 	LanguageST::Get()->SetTagsManager( GetTagsManager() );
 	TagsManagerST::Get()->SetLanguage( LanguageST::Get() );
 
-	if ( wxDir::Exists( ManagerST::Get()->GetStarupDirectory() + wxT( "/plugins" ) ) ) {
+	if ( wxDir::Exists( ManagerST::Get()->GetInstallDir() + wxT( "/plugins" ) ) ) {
 		//get list of dlls
 		wxArrayString files;
 		wxDir::GetAllFiles( ManagerST::Get()->GetStarupDirectory() + wxT( "/plugins" ), &files, fileSpec, wxDIR_FILES );

@@ -131,6 +131,8 @@ bool App::OnInit()
 		wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
 
 		//copy the settings from the global location if needed
+		ManagerST::Get()->SetInstallDir( wxStandardPaths::Get().GetDataDir() );
+		
 		CopySettings(homeDir, wxStandardPaths::Get().GetDataDir());
 	}
 
@@ -148,6 +150,7 @@ bool App::OnInit()
 	wxMkDir((homeDir + wxT("/templates/")).ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
 
+	ManagerST::Get()->SetInstallDir( MacGetBasePath() );
 	//copy the settings from the global location if needed
 	CopySettings(homeDir, MacGetBasePath());
 
@@ -165,8 +168,8 @@ bool App::OnInit()
 			homeDir = ::wxGetCwd();
 		}
 	}
-//	bool copyIt = CheckRevision(homeDir + wxT("/config/liteeditor.xml"));
-//	wxUnusedVar(copyIt);
+	
+	ManagerST::Get()->SetInstallDir( homeDir );
 #endif
 
 	wxString curdir = wxGetCwd();
@@ -285,7 +288,7 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 		// copy new settings from the global installation location which is currently located at
 		// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
 		//
-		massCopy  (installPath + wxT("/plugins/"), wxT("*.so"), destDir + wxT("/plugins/"));
+//		massCopy  (installPath + wxT("/plugins/"), wxT("*.so"), destDir + wxT("/plugins/"));
 		massCopy  (installPath + wxT("/templates/"), wxT("*.wizard"), destDir + wxT("/templates/"));
 		massCopy  (installPath + wxT("/templates/"), wxT("*.project"), destDir + wxT("/templates/"));
 		massCopy  (installPath + wxT("/templates/"), wxT("*.xml"), destDir + wxT("/templates/"));
@@ -296,7 +299,7 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 		wxCopyFile(installPath + wxT("/config/liteeditor.xml"), destDir + wxT("/config/liteeditor.xml"));
 		wxCopyFile(installPath + wxT("/config/debuggers.xml"), destDir + wxT("/config/debuggers.xml"));
 		wxCopyFile(installPath + wxT("/rc/menu.xrc"), destDir + wxT("/rc/menu.xrc"));
-		wxCopyFile(installPath + wxT("/debuggers/Debugger.so"), destDir + wxT("/debuggers/Debugger.so"));
+//		wxCopyFile(installPath + wxT("/debuggers/Debugger.so"), destDir + wxT("/debuggers/Debugger.so"));
 		wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));
 		wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
 		wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));

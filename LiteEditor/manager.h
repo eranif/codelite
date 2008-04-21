@@ -47,8 +47,9 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	QuickWatchDlg *m_quickWatchDlg;
 	int m_frameLineno;
 	bool m_useTipWin;
-//	DebuggerTip *m_debuggerTipWin;
 	long m_tipWinPos;
+	wxString m_installDir;
+	
 public:
 	/*!
 	 * \brief
@@ -336,7 +337,17 @@ public:
 	 * Get lite editor's startup directory
 	 */
 	const wxString &GetStarupDirectory() const { return m_startupDir; }
-
+	
+	/**
+	 * \brief return the OS specific installation directory
+	 */
+	const wxString &GetInstallDir() const { return m_installDir; }
+	
+	/**
+	 * \brief set the installation directory 
+	 */
+	void SetInstallDir(const wxString &dir) { m_installDir = dir; }
+	
 	/**
 	 * Popup project dependencies dialog
 	 * \param projectName project name

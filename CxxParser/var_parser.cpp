@@ -735,6 +735,7 @@ case 47:
 							yyval = yyvsp[-1] + " " + yyvsp[0];
 							yyvsp[0].erase(yyvsp[0].find_last_not_of(":")+1);
 							curr_var.m_type = yyvsp[0];
+							curr_var.m_isConst = !yyvsp[-1].empty();
 						}
 break;
 case 48:
@@ -743,6 +744,7 @@ case 48:
 							yyvsp[-1].erase(yyvsp[-1].find_last_not_of(":")+1);
 							curr_var.m_typeScope = yyvsp[-1];
 							curr_var.m_type = yyvsp[0];
+							curr_var.m_isConst = !yyvsp[-2].empty();
 						}
 break;
 case 49:
@@ -753,6 +755,7 @@ case 49:
 							curr_var.m_type = yyvsp[-3];
 							curr_var.m_isTemplate = true;
 							curr_var.m_templateDecl = yyvsp[-2] +yyvsp[-1] +yyvsp[0];
+							curr_var.m_isConst = !yyvsp[-5].empty();
 						}
 break;
     }

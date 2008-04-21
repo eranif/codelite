@@ -16,6 +16,7 @@ public:
 	std::string 	m_pattern;
 	std::string  	m_starAmp;
 	int				m_lineno;
+	bool 			m_isConst;
 	
 public:
 	Variable();

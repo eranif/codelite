@@ -39,6 +39,7 @@ struct tagParseResult {
 	wxString fileName;
 };
 
+extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, bool> &ignoreTokens);
 //---------------------------------------------------------------------------
 // Tag cache entry
 //---------------------------------------------------------------------------
@@ -2007,4 +2008,62 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 	// and finally sort the results
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
 
+}
+
+wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarNames)
+{
+	wxArrayString prep = GetCtagsOptions().GetPreprocessor();
+	std::map<std::string, bool> ignoreTokens;
+
+	for (size_t i=0; i< prep.GetCount(); i++) {
+		const wxCharBuffer token = _C(prep.Item(i));
+		ignoreTokens[ token.data() ] = true;
+	}
+	
+	VariableList li;
+	const wxCharBuffer patbuf = _C(sig);
+	
+	get_variables(patbuf.data(), li, ignoreTokens);
+	
+	//construct a function signature from the results
+	wxString output;
+	output << wxT("(");
+	
+	VariableList::iterator iter = li.begin();
+	for( ; iter != li.end() ; iter++ ) {
+		Variable v = *iter;
+		
+		//add const qualifier
+		if(v.m_isConst) {
+			output << wxT("const ");
+		}
+		
+		//add scope
+		if (v.m_typeScope.empty() == false) {
+			output << _U(v.m_typeScope.c_str()) << wxT("::");
+		}
+		
+		if(v.m_type.empty() == false){
+			output << _U(v.m_type.c_str());
+		}
+		
+		if(v.m_templateDecl.empty() == false) {
+			output << _U(v.m_templateDecl.c_str());
+		}
+		
+		if(v.m_starAmp.empty() == false) {
+			output << _U(v.m_starAmp.c_str());
+		}
+		
+		if(v.m_name.empty() == false && includeVarNames) {
+			output << _U(v.m_name.c_str());
+		}
+		output << wxT(", ");
+	}
+	if(li.empty() == false) {
+		output = output.BeforeLast(wxT(','));
+	}
+	
+	output << wxT(")");
+	return output;
 }

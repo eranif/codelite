@@ -253,6 +253,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("insert_doxy_comment"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("move_impl"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_impl"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("add_multi_impl"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("setters_getters"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_include_file"), Frame::OnCppContextMenu)
 	

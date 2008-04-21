@@ -226,6 +226,7 @@ variable_decl		:	const_spec basic_type_name
 							$$ = $1 + " " + $2;
 							$2.erase($2.find_last_not_of(":")+1);
 							curr_var.m_type = $2;
+							curr_var.m_isConst = !$1.empty();
 						}
 						|	const_spec nested_scope_specifier LE_IDENTIFIER 
 						{
@@ -233,6 +234,7 @@ variable_decl		:	const_spec basic_type_name
 							$2.erase($2.find_last_not_of(":")+1);
 							curr_var.m_typeScope = $2;
 							curr_var.m_type = $3;
+							curr_var.m_isConst = !$1.empty();
 						}
 						| 	const_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>'
 						{
@@ -242,6 +244,7 @@ variable_decl		:	const_spec basic_type_name
 							curr_var.m_type = $3;
 							curr_var.m_isTemplate = true;
 							curr_var.m_templateDecl = $4 +$5 +$6;
+							curr_var.m_isConst = !$1.empty();
 						}
 						;
 						

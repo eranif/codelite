@@ -35,8 +35,8 @@ int main()
 	
 	//print the scope name
 	//testScopeParser(buf);
-	//testVarParser(buf);
-	testExprParser(buf);
+	testVarParser(buf);
+	//testExprParser(buf);
 	//testFuncParser(buf);
 	free(buf);
 }
@@ -100,7 +100,7 @@ void testVarParser(char *buf)
 //	time_t end = GetTickCount();
 	for (VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
 		Variable var = *iter;
-		printf("%s\n", var.m_name.c_str());
+		var.Print();
 	}
 
 //	printf("total time: %d\n", end-start);

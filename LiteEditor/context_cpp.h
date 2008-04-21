@@ -102,6 +102,7 @@ public:
 	virtual void OnAddIncludeFile(wxCommandEvent &e);
 	virtual void OnMoveImpl(wxCommandEvent &e);
 	virtual void OnAddImpl(wxCommandEvent &e);
+	virtual void OnAddMultiImpl(wxCommandEvent &e);
 	
 	DECLARE_EVENT_TABLE();
 private:

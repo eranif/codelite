@@ -93,6 +93,7 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 	EVT_MENU(XRCID("insert_doxy_comment"), ContextCpp::OnInsertDoxyComment)
 	EVT_MENU(XRCID("move_impl"), ContextCpp::OnMoveImpl)
 	EVT_MENU(XRCID("add_impl"), ContextCpp::OnAddImpl)
+	EVT_MENU(XRCID("add_multi_impl"), ContextCpp::OnAddMultiImpl)
 	EVT_MENU(XRCID("setters_getters"), ContextCpp::OnGenerateSettersGetters)
 	EVT_MENU(XRCID("add_include_file"), ContextCpp::OnAddIncludeFile)
 END_EVENT_TABLE()
@@ -1629,6 +1630,40 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long &blockStartPos, long &block
 	        (blockStartPos != wxNOT_FOUND);
 }
 
+void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	LEditor &rCtrl = GetCtrl();
+	VALIDATE_WORKSPACE();
+	
+	//get the text from the file start point until the current position
+	int pos = rCtrl.GetCurrentPos();
+	wxString context = rCtrl.GetTextRange(0, pos);
+	
+	wxString scopeName = TagsManagerST::Get()->GetScopeName(context);
+	if (scopeName.IsEmpty() || scopeName == wxT("<global>")){
+		wxMessageBox(wxT("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + wxT(")"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		return;
+	}
+	
+	//get list of all prototype functions from the database
+	std::vector< TagEntryPtr > vproto;
+	std::vector< TagEntryPtr > vimpl;
+	
+	TagsManagerST::Get()->TagsByScope(scopeName, wxT("prototype"), vproto, true);
+	TagsManagerST::Get()->TagsByScope(scopeName, wxT("function"), vimpl, true);
+	
+	wxLogMessage(wxT("Prototypes:"));
+	for( size_t i=0; i < vproto.size() ; i++ ) {
+		wxLogMessage( TagsManagerST::Get()->NormalizeFunctionSig( vproto.at(i)->GetSignature() ));
+	}
+
+	wxLogMessage(wxT("Functions:"));
+	for( size_t i=0; i < vimpl.size() ; i++ ) {
+		wxLogMessage( TagsManagerST::Get()->NormalizeFunctionSig( vimpl.at(i)->GetSignature() ));
+	}
+}
+
 void ContextCpp::OnAddImpl(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
@@ -1885,32 +1920,6 @@ void ContextCpp::Initialize()
 {
 	//load the context menu from the resource manager
 	m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
-	
-	/*
-		m_rclickMenu->Connect(XRCID("swap_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnSwapFiles), NULL, this);
-		m_rclickMenu->Connect(XRCID("comment_selection"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentSelection), NULL, this);
-		m_rclickMenu->Connect(XRCID("comment_line"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnCommentLine), NULL, this);
-		m_rclickMenu->Connect(XRCID("find_decl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindDecl), NULL, this);
-		m_rclickMenu->Connect(XRCID("find_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnFindImpl), NULL, this);
-
-	#if defined (__WXGTK__)
-		//on GTK, we need to connect the sub menu to the events
-		wxMenuItem *refactorMenuItem = NULL;
-		refactorMenuItem = m_rclickMenu->FindItem(XRCID("code_gen_refactoring"));
-		wxMenu *refactorMenu = refactorMenuItem->GetSubMenu();
-		if (refactorMenu) {
-			refactorMenu->Connect(XRCID("insert_doxy_comment"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnInsertDoxyComment), NULL, this);
-			refactorMenu->Connect(XRCID("move_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnMoveImpl), NULL, this);
-			refactorMenu->Connect(XRCID("add_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnAddImpl), NULL, this);
-			refactorMenu->Connect(XRCID("setters_getters"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnGenerateSettersGetters), NULL, this);
-		}
-	#else // Windows/Mac
-		m_rclickMenu->Connect(XRCID("insert_doxy_comment"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnInsertDoxyComment), NULL, this);
-		m_rclickMenu->Connect(XRCID("move_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnMoveImpl), NULL, this);
-		m_rclickMenu->Connect(XRCID("add_impl"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnAddImpl), NULL, this);
-		m_rclickMenu->Connect(XRCID("setters_getters"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ContextCpp::OnGenerateSettersGetters), NULL, this);
-	#endif
-	 */
 }
 
 void ContextCpp::AutoAddComment()

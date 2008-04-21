@@ -615,6 +615,16 @@ public:
 	 */
 	void GetAllTagsNameAsSpaceDelimString(wxString &tagsList);
 	
+	/**
+	 * \brief return normalize function signature. This function strips any default values or variable
+	 * name from the signature. The return value for signature like this: wxT("int value, const std::string &str = "", void *data = NULL"), is "int, const std::string&, void *"
+	 * and by setting the  includeVarNames to true, it will also returns the variables names
+	 * \param sig signature
+	 * \param includeVarNames set to true if the stripped signature should include the variables names. By default it is set to false
+	 * \return stripped functions signature
+	 */
+	wxString NormalizeFunctionSig(const wxString &sig, bool includeVarNames = false);
+	
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
 

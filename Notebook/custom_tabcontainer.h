@@ -32,7 +32,7 @@ protected:
 	
 	void EnsureVisible(CustomTab *tab);
 	
-	bool IsVisible(CustomTab *tab);
+	bool IsVisible(CustomTab *tab, bool fullShown = true);
 	
 public:
 	wxTabContainer(wxWindow *win, wxWindowID id = wxID_ANY, int orientation = wxLEFT, long style = 0);

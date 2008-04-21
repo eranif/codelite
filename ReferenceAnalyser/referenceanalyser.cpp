@@ -267,7 +267,6 @@ void ReferenceAnalyser::Analyse(const wxString& theclassname)
 
 		wxString expressionForSmartPtr(theclassname);
 		expressionForSmartPtr << wxT("::") << name << m_options.getContainerOperator();
-
 		worked = m_mgr->GetTagsManager()->ProcessExpression(expressionForSmartPtr, type, typeScope);
 
 		m_classMembersGraph.addNode(type);

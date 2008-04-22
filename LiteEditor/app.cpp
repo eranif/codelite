@@ -132,6 +132,10 @@ bool App::OnInit()
 		ManagerST::Get()->SetInstallDir( wxStandardPaths::Get().GetDataDir() );
 		
 		CopySettings(homeDir, wxStandardPaths::Get().GetDataDir());
+	} else {
+		wxFileName fn(homeDir);
+		fn.MakeAbsolute();
+		ManagerST::Get()->SetInstallDir( fn.GetFullPath() );
 	}
 
 #elif defined (__WXMAC__)

@@ -25,3 +25,9 @@
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
 
+- Add InnoSetup syntax highlight
+
+- add InnoSetup compiler
+
+- Add PHP syntax highlight
+

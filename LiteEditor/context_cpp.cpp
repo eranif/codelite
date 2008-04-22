@@ -107,7 +107,7 @@ ContextCpp::ContextCpp(LEditor *container)
 	Initialize();
 
 }
-	
+
 
 ContextCpp::ContextCpp()
 		: ContextBase(wxT("C++"))
@@ -752,12 +752,12 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)
 
 	// get the scope
 	wxString text = rCtrl.GetTextRange(0, word_end);
-	
+
 	wxString word = m_selectedWord;
 	if (word.IsEmpty()) {
 		//try the word under the caret
 		word = rCtrl.GetWordAtCaret();
-		if(word.IsEmpty()) {
+		if (word.IsEmpty()) {
 			return;
 		}
 	}
@@ -795,7 +795,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)
 	if (choice.IsEmpty()) {
 		return;
 	}
-	
+
 	//check to see if this file is a workspace file
 	AddIncludeFileDlg *dlg = new AddIncludeFileDlg(NULL, choice, rCtrl.GetText(), FindLineToAddInclude());
 	if (dlg->ShowModal() == wxID_OK) {
@@ -1197,26 +1197,26 @@ void ContextCpp::OnCommentLine(wxCommandEvent &event)
 
 	int line_start = editor.LineFromPosition(editor.GetCurrentPos());
 	int line_end(line_start);
-	
-	if(editor.GetSelectedText().IsEmpty() == false) {
+
+	if (editor.GetSelectedText().IsEmpty() == false) {
 		//we have a selection
-		//calculate the line number and start point using the selection 
+		//calculate the line number and start point using the selection
 		line_start = editor.LineFromPosition(editor.GetSelectionStart());
 		line_end   = editor.LineFromPosition(editor.GetSelectionEnd());
 	}
-	
+
 	editor.BeginUndoAction();
 	//comment all the lines
 	int i(line_start);
-	for(i=line_start; i<= line_end; i++){
+	for (i=line_start; i<= line_end; i++) {
 		int start = editor.PositionFromLine(i);
-		editor.InsertText(start, wxT("//"));	
+		editor.InsertText(start, wxT("//"));
 	}
-	
+
 	//place the caret at the end of the commented line
 	int endPos = editor.PositionFromLine(line_end) + editor.LineLength(line_end);
 	editor.SetCaretAt(endPos);
-	
+
 	editor.EndUndoAction();
 }
 
@@ -1635,33 +1635,75 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 	wxUnusedVar(e);
 	LEditor &rCtrl = GetCtrl();
 	VALIDATE_WORKSPACE();
-	
+
 	//get the text from the file start point until the current position
 	int pos = rCtrl.GetCurrentPos();
 	wxString context = rCtrl.GetTextRange(0, pos);
-	
+
 	wxString scopeName = TagsManagerST::Get()->GetScopeName(context);
-	if (scopeName.IsEmpty() || scopeName == wxT("<global>")){
+	if (scopeName.IsEmpty() || scopeName == wxT("<global>")) {
 		wxMessageBox(wxT("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + wxT(")"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
 	}
-	
+
 	//get list of all prototype functions from the database
 	std::vector< TagEntryPtr > vproto;
 	std::vector< TagEntryPtr > vimpl;
-	
+
 	TagsManagerST::Get()->TagsByScope(scopeName, wxT("prototype"), vproto, true);
 	TagsManagerST::Get()->TagsByScope(scopeName, wxT("function"), vimpl, true);
-	
-	wxLogMessage(wxT("Prototypes:"));
-	for( size_t i=0; i < vproto.size() ; i++ ) {
-		wxLogMessage( TagsManagerST::Get()->NormalizeFunctionSig( vproto.at(i)->GetSignature() ));
+
+	//filter out functions which already has implementation
+	std::map<wxString, TagEntryPtr> protos;
+	for ( size_t i=0; i < vproto.size() ; i++ ) {
+		TagEntryPtr tag = vproto.at(i);
+		wxString key = tag->GetName();
+		key << TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature() );
+		protos[key] = tag;
 	}
 
-	wxLogMessage(wxT("Functions:"));
-	for( size_t i=0; i < vimpl.size() ; i++ ) {
-		wxLogMessage( TagsManagerST::Get()->NormalizeFunctionSig( vimpl.at(i)->GetSignature() ));
+	//remove from the map all the functions that already has a body
+	for ( size_t i=0; i < vimpl.size() ; i++ ) {
+		TagEntryPtr tag = vimpl.at(i);
+		wxString key = tag->GetName();
+		key << TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature() );
+		std::map<wxString, TagEntryPtr>::iterator iter = protos.find(key);
+		if ( iter != protos.end() ) {
+			protos.erase( iter );
+		}
 	}
+
+	// the map now consist only with functions without implementation
+	// create body for all of those functions
+	//create the functions body
+	wxString body;
+	std::map<wxString, TagEntryPtr>::iterator iter = protos.begin();
+
+	for (; iter != protos.end(); iter ++ ) {
+		TagEntryPtr tag = iter->second;
+		//use normalize function signature rather than the default one
+		//this will ensure that default values are removed
+		tag->SetSignature(TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), true ));
+		body << TagsManagerST::Get()->FormatFunction(tag, true);
+		body << wxT("\n");
+	}
+
+	wxString targetFile;
+	FindSwappedFile(rCtrl.GetFileName(), targetFile);
+	
+	//if no swapped file is found, use the current file
+	if (targetFile.IsEmpty()) {
+		targetFile = rCtrl.GetFileName().GetFullPath();
+	}
+
+	MoveFuncImplDlg *dlg = new MoveFuncImplDlg(NULL, body, targetFile);
+	if (dlg->ShowModal() == wxID_OK) {
+		//get the updated data
+		targetFile = dlg->GetFileName();
+		body = dlg->GetText();
+		ManagerST::Get()->OpenFileAndAppend(targetFile, body);
+	}
+	dlg->Destroy();
 }
 
 void ContextCpp::OnAddImpl(wxCommandEvent &e)
@@ -1726,10 +1768,20 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 		}
 
 		//create the functions body
+		//replace the function signature with the normalized one, so default values
+		//will not appear in the function implementation
+		wxString newSig = TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), true );
+		tag->SetSignature( newSig );
 		wxString body = TagsManagerST::Get()->FormatFunction(tag, true);
 
 		wxString targetFile;
 		FindSwappedFile(rCtrl.GetFileName(), targetFile);
+
+		//if no swapped file is found, use the current file
+		if (targetFile.IsEmpty()) {
+			targetFile = rCtrl.GetFileName().GetFullPath();
+		}
+
 		MoveFuncImplDlg *dlg = new MoveFuncImplDlg(NULL, body, targetFile);
 		if (dlg->ShowModal() == wxID_OK) {
 			//get the updated data
@@ -1911,8 +1963,8 @@ void ContextCpp::ApplySettings()
 	rCtrl.RegisterImage(15, m_cppFileBmp);
 	rCtrl.RegisterImage(16, m_hFileBmp);
 	rCtrl.RegisterImage(17, m_otherFileBmp);
-	
-	//delete uneeded commands 
+
+	//delete uneeded commands
 	rCtrl.CmdKeyClear('/', wxSCI_SCMOD_CTRL);
 }
 

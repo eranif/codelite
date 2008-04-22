@@ -2056,7 +2056,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarN
 		}
 		
 		if(v.m_name.empty() == false && includeVarNames) {
-			output << _U(v.m_name.c_str());
+			output << wxT(" ") << _U(v.m_name.c_str());
 		}
 		output << wxT(", ");
 	}

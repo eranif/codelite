@@ -155,6 +155,8 @@ public:
 	void SetAccess(const wxString &access){m_extFields[wxT("access")] = access;}
 
 	wxString GetSignature() const { return GetExtField(_T("signature")); }
+	void SetSignature(const wxString &sig) { m_extFields[wxT("signature")] = sig; }
+	
 	wxString GetInherits() const { return GetExtField(_T("inherits")); }
 	wxString GetTyperef() const { return GetExtField(_T("typeref")); }
 	

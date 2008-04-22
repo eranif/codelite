@@ -164,7 +164,7 @@ void ContextCpp::OnDwellStart(wxScintillaEvent &event)
 	}
 
 	//get the expression we are hovering over
-	wxString expr = GetExpression(end);
+	wxString expr = GetExpression(end, false);
 	// get the full text of the current page
 	wxString text = rCtrl.GetTextRange(0, pos);
 	// now we are ready to process the scope and build our tips
@@ -405,7 +405,7 @@ void ContextCpp::CodeComplete()
 	}
 
 	//get expression
-	wxString expr = GetExpression(rCtrl.GetCurrentPos());
+	wxString expr = GetExpression(rCtrl.GetCurrentPos(), false);
 
 	// get the scope
 	//Optimize the text for large files
@@ -454,7 +454,7 @@ void ContextCpp::CodeComplete()
 		//for function prototype, the last char entered was '(', this will break
 		//the logic of the Getexpression() method to workaround this, we search for
 		//expression one char before the current position
-		expr = GetExpression(rCtrl.PositionBefore(rCtrl.GetCurrentPos()));
+		expr = GetExpression(rCtrl.PositionBefore(rCtrl.GetCurrentPos()), false);
 
 		//display function tooltip
 		int word_end = rCtrl.WordEndPosition(end, true);
@@ -488,7 +488,7 @@ void ContextCpp::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<Tag
 	}
 }
 
-wxString ContextCpp::GetExpression(long pos)
+wxString ContextCpp::GetExpression(long pos, bool onlyWord)
 {
 	bool cont(true);
 	int depth(0);
@@ -497,7 +497,7 @@ wxString ContextCpp::GetExpression(long pos)
 	int position( pos );
 	int at(position);
 	bool prevGt(false);
-	while (cont) {
+	while (cont && depth >= 0) {
 		wxChar ch = rCtrl.PreviousChar(position, at, true);
 		position = at;
 		//Eof?
@@ -577,6 +577,12 @@ wxString ContextCpp::GetExpression(long pos)
 		case wxT('<'):
 						prevGt = true;
 			depth--;
+			if (depth <= 0) {
+
+				//dont include this token
+				at = rCtrl.PositionAfter(at);
+				cont = false;
+			}
 			break;
 		case wxT(')'):
 					case wxT(']'):
@@ -591,7 +597,7 @@ wxString ContextCpp::GetExpression(long pos)
 
 	if (at < 0) at = 0;
 	wxString expr = rCtrl.GetTextRange(at, pos);
-
+	
 	//remove comments from it
 	CppScanner sc;
 	sc.SetText(_C(expr));
@@ -748,7 +754,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)
 		return;
 
 	int word_end = rCtrl.WordEndPosition(pos, true);
-	wxString expr = GetExpression(word_end);
+	wxString expr = GetExpression(word_end, false);
 
 	// get the scope
 	wxString text = rCtrl.GetTextRange(0, word_end);
@@ -865,7 +871,7 @@ void ContextCpp::CompleteWord()
 	TagsManager *mgr = TagsManagerST::Get();
 
 	//get the current expression
-	wxString expr = GetExpression(rCtrl.GetCurrentPos());
+	wxString expr = GetExpression(rCtrl.GetCurrentPos(), true);
 
 	std::vector<TagEntryPtr> candidates;
 	//get the full text of the current page
@@ -1295,7 +1301,7 @@ void ContextCpp::OnFindImpl(wxCommandEvent &event)
 	int pos = rCtrl.GetCurrentPos();
 	int word_end = rCtrl.WordEndPosition(pos, true);
 	int word_start = rCtrl.WordStartPosition(pos, true);
-	wxString expr = GetExpression(word_end);
+	wxString expr = GetExpression(word_end, false);
 
 	// get the scope
 	wxString text = rCtrl.GetTextRange(0, word_end);
@@ -1330,7 +1336,7 @@ void ContextCpp::OnFindDecl(wxCommandEvent &event)
 	int pos = rCtrl.GetCurrentPos();
 	int word_end = rCtrl.WordEndPosition(pos, true);
 	int word_start = rCtrl.WordStartPosition(pos, true);
-	wxString expr = GetExpression(word_end);
+	wxString expr = GetExpression(word_end, false);
 
 	// get the scope
 	wxString text = rCtrl.GetTextRange(0, word_end);

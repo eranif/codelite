@@ -1700,9 +1700,11 @@ void LEditor::UpdateColours()
 	        TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_PROJ_TAGS) {
 		m_context->OnFileSaved();
 	} else {
-		SetKeyWords(1, wxEmptyString);
-		SetKeyWords(2, wxEmptyString);
-		SetKeyWords(3, wxEmptyString);
+		if(m_context->GetName() == wxT("C++")) {
+			SetKeyWords(1, wxEmptyString);
+			SetKeyWords(2, wxEmptyString);
+			SetKeyWords(3, wxEmptyString);
+		}
 	}
 
 	//colourise the document

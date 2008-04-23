@@ -105,7 +105,7 @@
     <Property Id="118" Name="PHP Default" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="119" Name="PHP HString" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="120" Name="PHP Simple String" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="121" Name="PHP Word" Bold="yes" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="121" Name="PHP Word" Bold="yes" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="10"/>
     <Property Id="122" Name="PHP Number" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="10"/>
     <Property Id="123" Name="PHP Variable" Bold="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="124" Name="PHP Multiline comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Size="10"/>

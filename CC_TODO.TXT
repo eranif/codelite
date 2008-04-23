@@ -29,5 +29,5 @@
 
 - add InnoSetup compiler
 
-- Add PHP syntax highlight
+- Add support for multiple keyword list (UI too)
 

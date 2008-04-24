@@ -29,5 +29,4 @@
 
 - add InnoSetup compiler
 
-- Add support for multiple keyword list (UI too)
 

@@ -50,7 +50,10 @@
 #include "threadlistpanel.h"
 #include "plugin.h"
 #include "custom_notebook.h"
-
+// 
+// The CodeLite manager class
+// 
+//
 #if defined (__WXMSW__)
 static wxString CL_EXEC_WRAPPER = wxT("le_exec.exe ");
 #elif defined (__WXGTK__)

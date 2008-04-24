@@ -131,15 +131,21 @@ external_decl		:	{curr_var.Reset(); gs_names.clear();} variables
 /* the following rules are for template parameters no declarations! */
 parameter_list	: /* empty */		{$$ = "";}
 							| template_parameter	{$$ = $1;}
-							| parameter_list ',' template_parameter {$$ = $1 + $2 + $3;}
+							| parameter_list ',' template_parameter {$$ = $1 + $2 + " " + $3;}
 							;
 
 template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp 
-						{$$ = $1 + " " + $2 + " " + $3 +$4;}
+						{
+							$$ = $1 +  $2 + $3 +$4;
+						}
 					|  	const_spec nested_scope_specifier basic_type_name special_star_amp 
-						{$$ = $1 + " " + $2 + " " + $3 +$4;}
+						{
+							$$ = $1 +  $2 + $3 +$4;
+						}
 					|  	const_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>'
-						{$$ = $1 + " " + $2 + " " + $3 +$4 + $5 + $6;}
+						{
+							$$ = $1 + $2 + $3 +$4 + $5 + $6 + " ";
+						}
 						;
 
 //the main rule for finding variables

@@ -12,4 +12,4 @@
 //((Singleton<MyClass>*)Eran)
 //Eran(dfd, dfdf, dfdf)
 //foo();
-(int foo, std::string *mystr = "", const std::vector<std::string>::iterator &ite);
+(int foo, std::string *mystr = "", const std::vector<std::string, std::map<wxString, vector<wxString> > >::iterator &ite);

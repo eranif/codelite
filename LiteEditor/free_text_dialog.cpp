@@ -48,4 +48,5 @@ FreeTextDialog::FreeTextDialog( wxWindow* parent, wxString value, int id, wxStri
 	
 	this->SetSizer( bSizer23 );
 	this->Layout();
+	m_text->SetFocus();
 }

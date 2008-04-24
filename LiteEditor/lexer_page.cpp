@@ -86,22 +86,22 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 	wxBoxSizer *btnSizers = new wxBoxSizer(wxHORIZONTAL);
 	gbz->Add( btnSizers, wxGBPosition(0, 1), wxGBSpan(1, 1), wxALL|wxEXPAND, 5);
 	
-	wxButton *btn0 = new wxButton(this, wxID_ANY, wxT("Set &0"));
+	wxButton *btn0 = new wxButton(this, wxID_ANY, wxT("Set &0"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	btnSizers->Add(btn0, 0, wxEXPAND|wxALL, 0);
 	
-	wxButton *btn1 = new wxButton(this, wxID_ANY, wxT("Set &1"));
+	wxButton *btn1 = new wxButton(this, wxID_ANY, wxT("Set &1"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	btnSizers->Add(btn1, 0, wxEXPAND|wxALL, 0);
 	
-	wxButton *btn2 = new wxButton(this, wxID_ANY, wxT("Set &2"));
+	wxButton *btn2 = new wxButton(this, wxID_ANY, wxT("Set &2"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	btnSizers->Add(btn2, 0, wxEXPAND|wxALL, 0);
 	
-	wxButton *btn3 = new wxButton(this, wxID_ANY, wxT("Set &3"));
+	wxButton *btn3 = new wxButton(this, wxID_ANY, wxT("Set &3"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	btnSizers->Add(btn3, 0, wxEXPAND|wxALL, 0);
 	
-	wxButton *btn4 = new wxButton(this, wxID_ANY, wxT("Set &4"));
+	wxButton *btn4 = new wxButton(this, wxID_ANY, wxT("Set &4"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	btnSizers->Add(btn4, 0, wxEXPAND|wxALL, 0);
 
-	text = new wxStaticText(this, wxID_ANY, wxT("Style font:"));
+	text = new wxStaticText(this, wxID_ANY, wxT("Style font:"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	gbz->Add( text, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
 
 	m_fontPicker = new wxFontPickerCtrl(this, wxID_ANY, initialFont, wxDefaultPosition, wxDefaultSize, wxFNTP_USEFONT_FOR_LABEL);

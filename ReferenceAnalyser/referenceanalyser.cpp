@@ -324,7 +324,7 @@ void ReferenceAnalyser::PrintResult()
 
 	wxString result;
 	wxStringGraph::ConstNodeVectorRef path = m_classMembersGraph.getPath();
-	for (int i = 0; i < path.size(); i++) {
+	for (size_t i = 0; i < path.size(); i++) {
 		wxString node = path[i];
 
 		result += node;

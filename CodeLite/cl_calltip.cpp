@@ -1,3 +1,5 @@
+#include <map>
+#include "ctags_manager.h"
 #include "cl_calltip.h"
 
 #ifdef __VISUALC__
@@ -81,11 +83,19 @@ int clCallTip::Count() const
 wxString clCallTip::All()
 {
 	wxString tip;
+	std::map<wxString, bool> mymap;
 	for(size_t i=0; i< m_tips.size(); i++){
-		tip << m_tips.at(i) << wxT("\n");
+		wxString normalizedSig = TagsManagerST::Get()->NormalizeFunctionSig( m_tips.at(i) );
+		//make sure we dont add duplicates
+		if( mymap.find(normalizedSig) == mymap.end() ) {
+			//add it
+			mymap[normalizedSig] = true;
+			wxString sig = TagsManagerST::Get()->NormalizeFunctionSig( m_tips.at(i), true );
+			sig = sig.Trim().Trim(false);
+			tip << sig << wxT("\n");
+		}
 	}
 	tip = tip.BeforeLast(wxT('\n'));
 	return tip;
 }
-
 

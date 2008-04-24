@@ -405,7 +405,7 @@ public:
 	 * \param tags [ouput] the result vector
 	 * \param inherits set to true if you want inherited members as well members 
 	 */
-	void TagsByScope(const wxString &scopeName, const wxString &kind, std::vector<TagEntryPtr> &tags, bool includeInherits = false);
+	void TagsByScope(const wxString &scopeName, const wxString &kind, std::vector<TagEntryPtr> &tags, bool includeInherits = false, bool onlyWorkspace = false);
 	
 	/**
 	 * return tags belongs to given scope and kind

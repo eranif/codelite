@@ -1656,14 +1656,19 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 	std::vector< TagEntryPtr > vproto;
 	std::vector< TagEntryPtr > vimpl;
 
-	TagsManagerST::Get()->TagsByScope(scopeName, wxT("prototype"), vproto, true);
-	TagsManagerST::Get()->TagsByScope(scopeName, wxT("function"), vimpl, true);
+	//currently we want to add implementation only for workspace classes
+	TagsManagerST::Get()->TagsByScope(scopeName, wxT("prototype"), vproto, true, true);
+	TagsManagerST::Get()->TagsByScope(scopeName, wxT("function"), vimpl, true, true);
 
 	//filter out functions which already has implementation
 	std::map<wxString, TagEntryPtr> protos;
 	for ( size_t i=0; i < vproto.size() ; i++ ) {
 		TagEntryPtr tag = vproto.at(i);
 		wxString key = tag->GetName();
+		
+		//override the scope to be our scope...
+		tag->SetScope( scopeName );
+		
 		key << TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature() );
 		protos[key] = tag;
 	}

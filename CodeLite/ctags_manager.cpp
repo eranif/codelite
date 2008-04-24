@@ -1584,7 +1584,7 @@ void TagsManager::GenerateSettersGetters(const wxString &scope, const SettersGet
 	wxUnusedVar(decl);
 }
 
-void TagsManager::TagsByScope(const wxString &scopeName, const wxString &kind, std::vector<TagEntryPtr> &tags, bool includeInherits)
+void TagsManager::TagsByScope(const wxString &scopeName, const wxString &kind, std::vector<TagEntryPtr> &tags, bool includeInherits, bool onlyWorkspace)
 {
 	wxString sql;
 	std::vector<wxString> derivationList;
@@ -1602,7 +1602,7 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxString &kind, s
 		sql.Empty();
 		wxString tmpScope(derivationList.at(i));
 		sql << wxT("select * from tags where scope='") << tmpScope << wxT("' and kind='") << kind << wxT("' ");;
-		DoExecuteQueury(sql, tags);
+		DoExecuteQueury(sql, tags, onlyWorkspace);
 	}
 	// and finally sort the results
 	std::sort(tags.begin(), tags.end(), SAscendingSort());

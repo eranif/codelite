@@ -633,16 +633,22 @@ case 16:
 {yyval = yyvsp[0];}
 break;
 case 17:
-{yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0];}
+{yyval = yyvsp[-2] + yyvsp[-1] + " " + yyvsp[0];}
 break;
 case 18:
-{yyval = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] +yyvsp[0];}
+{
+							yyval = yyvsp[-3] +  yyvsp[-2] + yyvsp[-1] +yyvsp[0];
+						}
 break;
 case 19:
-{yyval = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] +yyvsp[0];}
+{
+							yyval = yyvsp[-3] +  yyvsp[-2] + yyvsp[-1] +yyvsp[0];
+						}
 break;
 case 20:
-{yyval = yyvsp[-5] + " " + yyvsp[-4] + " " + yyvsp[-3] +yyvsp[-2] + yyvsp[-1] + yyvsp[0];}
+{
+							yyval = yyvsp[-5] + yyvsp[-4] + yyvsp[-3] +yyvsp[-2] + yyvsp[-1] + yyvsp[0] + " ";
+						}
 break;
 case 21:
 {

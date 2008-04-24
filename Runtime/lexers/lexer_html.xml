@@ -7,8 +7,8 @@
   <KeyWords4>and array as bool boolean break case cfunction class const continue declare                              default die directory do double echo else elseif empty enddeclare endfor                              endforeach endif endswitch endwhile eval exit extends false float for                              foreach function global if include include_once int integer isset list new                              null object old_function or parent print real require require_once resource                              return static stdclass string switch true unset use var while xor __class__                              __file__ __function__ __line__ __sleep __wakeup</KeyWords4>
   <Extensions>*.htm;*.html;*.xhtml;*.phtml;*.js;*.php;*.php3;*.inc</Extensions>
   <Properties>
-    <Property Id="0" Name="HTML Default" Bold="no" Face="Courier New" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="1" Name="HTML Tag" Bold="no" Face="Courier New" Colour="#0000FF" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="0" Name="HTML Default" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="1" Name="HTML Tag" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="10"/>
     <Property Id="2" Name="HTML Unknown tag" Bold="yes" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="3" Name="HTML Attribute Name" Bold="yes" Face="" Colour="#408080" BgColour="#FFFFFF" Size="10"/>
     <Property Id="4" Name="HTML Unknown attribute" Bold="yes" Face="" Colour="#408080" BgColour="#FFFFFF" Size="10"/>
@@ -41,7 +41,7 @@
     <Property Id="41" Name="JS Default" Bold="yes" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="42" Name="JS Comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="43" Name="JS Line Comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="44" Name="JS Doc comment" Bold="no" Face="Courier New" Colour="#8080FF" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="44" Name="JS Doc comment" Bold="no" Face="" Colour="#8080FF" BgColour="#FFFFFF" Size="10"/>
     <Property Id="45" Name="JS Number" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="10"/>
     <Property Id="46" Name="JS Word" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="47" Name="JS Keyword" Bold="yes" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="10"/>

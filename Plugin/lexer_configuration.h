@@ -16,19 +16,20 @@
 #    define WXDLLIMPEXP_LE_SDK
 #endif // WXMAKINGDLL_LE_SDK
 
-class WXDLLIMPEXP_LE_SDK LexerConf {
+class WXDLLIMPEXP_LE_SDK LexerConf
+{
 	StylePropertyList m_properties;
 	int m_lexerId;
 	wxString m_name;
-	wxString m_keyWords;
 	wxString m_extension;
 	wxXmlDocument m_doc;
 	wxFileName m_fileName;
-
+	wxString m_keyWords[10];
+	
 private:
 	// Parse lexer object from xml node
 	void Parse(wxXmlNode *node);
-	
+
 	// Return an xml representation from this object
 	wxXmlNode *ToXml() const;
 
@@ -39,46 +40,65 @@ public:
 
 	/**
 	 * Get the lexer ID, which should be in sync with values of Scintilla
-	 * \return 
+	 * \return
 	 */
-	int GetLexerId() const { return m_lexerId; }
+	int GetLexerId() const {
+		return m_lexerId;
+	}
 
 	/**
 	 * Set the lexer ID
-	 * \param id 
+	 * \param id
 	 */
-	void SetLexerId(int id) { m_lexerId = id; }
+	void SetLexerId(int id) {
+		m_lexerId = id;
+	}
 
 	/**
 	 * Return the lexer description as described in the XML file
 	 */
-	const wxString &GetName() const { return m_name; }
+	const wxString &GetName() const {
+		return m_name;
+	}
 	/**
 	 * Return the lexer keywords
-	 * \return 
+	 * \return
 	 */
-	const wxString &GetKeyWords() const { return m_keyWords; }
-	void SetKeyWords(const wxString &keywords){m_keyWords = keywords;}
+	const wxString &GetKeyWords(int set) const {
+		return m_keyWords[set];
+	}
+	
+	void SetKeyWords(const wxString &keywords, int set) {
+		m_keyWords[set] = keywords;
+	}
 
 	/**
 	 * File patterns that this lexer should apply to
 	 */
-	const wxString &GetFileSpec() const { return m_extension; }
+	const wxString &GetFileSpec() const {
+		return m_extension;
+	}
 	/**
 	 * Return a list of the lexer properties
-	 * \return 
+	 * \return
 	 */
-	const StylePropertyList &GetProperties() const { return m_properties; }
+	const StylePropertyList &GetProperties() const {
+		return m_properties;
+	}
 	/**
 	 * Set the lexer properties
-	 * \param &properties 
+	 * \param &properties
 	 */
-	void SetProperties(StylePropertyList &properties) { m_properties = properties; }
+	void SetProperties(StylePropertyList &properties) {
+		m_properties = properties;
+	}
 	/**
 	 * Set file spec for the lexer
-	 * \param &spec 
+	 * \param &spec
 	 */
-	void SetFileSpec(const wxString &spec) { m_extension = spec; }
+	void SetFileSpec(const wxString &spec) {
+		m_extension = spec;
+	}
 };
 
 typedef SmartPtr<LexerConf> LexerConfPtr;

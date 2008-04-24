@@ -66,18 +66,18 @@ void ContextGeneric::ApplySettings()
 
 	// Update the control
 	LEditor &rCtrl = GetCtrl();
-
-	wxString keyWords = lexPtr->GetKeyWords();
-	keyWords.Replace(wxT("\n"), wxT(" "));
-	keyWords.Replace(wxT("\r"), wxT(" "));
-
-	for (int i = 0; i <= wxSCI_KEYWORDSET_MAX; ++i) {
+	rCtrl.SetLexer(lexPtr->GetLexerId());
+	
+	for (int i = 0; i <= 4; ++i) {
+		wxString keyWords = lexPtr->GetKeyWords(i);
+		keyWords.Replace(wxT("\n"), wxT(" "));
+		keyWords.Replace(wxT("\r"), wxT(" "));
 		rCtrl.SetKeyWords(i, keyWords);
 	}
 	
 	rCtrl.StyleClearAll();
 	rCtrl.SetStyleBits(rCtrl.GetStyleBitsNeeded());
-	rCtrl.SetLexer(lexPtr->GetLexerId());
+	
 
 	styles = lexPtr->GetProperties();
 	std::list<StyleProperty>::iterator iter = styles.begin();

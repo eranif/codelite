@@ -46,13 +46,19 @@ protected:
 	wxColourPickerCtrl* m_colourPicker;
 	wxColourPickerCtrl* m_bgColourPicker;
 	wxTextCtrl *m_fileSpec;
-	wxButton *m_editKeyWordsButton;
 
 	// Virtual event handlers, overide them in your derived class
 	virtual void OnItemSelected( wxCommandEvent& event );
 	virtual void OnFontChanged(wxFontPickerEvent &event);
 	virtual void OnColourChanged(wxColourPickerEvent &event);
-	virtual void OnEditKeyWordsButton(wxCommandEvent &event);
+	virtual void OnEditKeyWordsButton0(wxCommandEvent &event);
+	virtual void OnEditKeyWordsButton1(wxCommandEvent &event);
+	virtual void OnEditKeyWordsButton2(wxCommandEvent &event);
+	virtual void OnEditKeyWordsButton3(wxCommandEvent &event);
+	virtual void OnEditKeyWordsButton4(wxCommandEvent &event);
+	
+	void EditKeyWords(int set);
+	
 public:
 	LexerPage( wxWindow* parent, LexerConfPtr lexer, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 285,300 ), int style = wxTAB_TRAVERSAL );
 	void SaveSettings();

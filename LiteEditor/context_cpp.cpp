@@ -1882,7 +1882,7 @@ void ContextCpp::ApplySettings()
 	LEditor &rCtrl = GetCtrl();
 	rCtrl.SetLexer(lexPtr->GetLexerId());
 
-	wxString keyWords = lexPtr->GetKeyWords();
+	wxString keyWords = lexPtr->GetKeyWords(0);
 	keyWords.Replace(wxT("\n"), wxT(" "));
 	keyWords.Replace(wxT("\r"), wxT(" "));
 	rCtrl.SetKeyWords(0, keyWords);

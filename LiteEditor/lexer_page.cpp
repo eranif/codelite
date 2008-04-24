@@ -45,8 +45,8 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 	wxBoxSizer* sbSizer5;
 	sbSizer5 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_properties = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	m_properties->SetSizeHints(150, -1);
+	m_properties = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_HSCROLL); 
+	m_properties->SetSizeHints(200, -1);
 	sbSizer5->Add( m_properties, 0, wxALL|wxEXPAND, 5 );
 
 	m_propertyList = m_lexer->GetProperties();
@@ -83,8 +83,23 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 	text = new wxStaticText(this, wxID_ANY, wxT("Edit Keywords:"));
 	gbz->Add(text, wxGBPosition(0, 0), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
 	
-	m_editKeyWordsButton = new wxButton(this, wxID_ANY, wxT("&Edit Keywords"));
-	gbz->Add( m_editKeyWordsButton, wxGBPosition(0, 1), wxGBSpan(1, 1), wxALL|wxEXPAND, 5);
+	wxBoxSizer *btnSizers = new wxBoxSizer(wxHORIZONTAL);
+	gbz->Add( btnSizers, wxGBPosition(0, 1), wxGBSpan(1, 1), wxALL|wxEXPAND, 5);
+	
+	wxButton *btn0 = new wxButton(this, wxID_ANY, wxT("Set &0"));
+	btnSizers->Add(btn0, 0, wxEXPAND|wxALL, 0);
+	
+	wxButton *btn1 = new wxButton(this, wxID_ANY, wxT("Set &1"));
+	btnSizers->Add(btn1, 0, wxEXPAND|wxALL, 0);
+	
+	wxButton *btn2 = new wxButton(this, wxID_ANY, wxT("Set &2"));
+	btnSizers->Add(btn2, 0, wxEXPAND|wxALL, 0);
+	
+	wxButton *btn3 = new wxButton(this, wxID_ANY, wxT("Set &3"));
+	btnSizers->Add(btn3, 0, wxEXPAND|wxALL, 0);
+	
+	wxButton *btn4 = new wxButton(this, wxID_ANY, wxT("Set &4"));
+	btnSizers->Add(btn4, 0, wxEXPAND|wxALL, 0);
 
 	text = new wxStaticText(this, wxID_ANY, wxT("Style font:"));
 	gbz->Add( text, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
@@ -140,18 +155,12 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 		m_fontPicker->Enable(false);
 		m_colourPicker->Enable(false);
 	}
-	ConnectButton(m_editKeyWordsButton, LexerPage::OnEditKeyWordsButton);
-}
-
-void LexerPage::OnEditKeyWordsButton(wxCommandEvent &event)
-{
-	wxUnusedVar(event);
-	wxString keywords = m_lexer->GetKeyWords();
-	FreeTextDialog *dlg = new FreeTextDialog(this, keywords);
-	if(dlg->ShowModal() == wxID_OK){
-		m_lexer->SetKeyWords(dlg->GetValue());
-	}
-	dlg->Destroy();
+	
+	ConnectButton(btn0, LexerPage::OnEditKeyWordsButton0);
+	ConnectButton(btn1, LexerPage::OnEditKeyWordsButton1);
+	ConnectButton(btn2, LexerPage::OnEditKeyWordsButton2);
+	ConnectButton(btn3, LexerPage::OnEditKeyWordsButton3);
+	ConnectButton(btn4, LexerPage::OnEditKeyWordsButton4);
 }
 
 void LexerPage::OnItemSelected(wxCommandEvent & event)
@@ -241,4 +250,44 @@ void LexerPage::SaveSettings()
 	m_lexer->SetProperties( m_propertyList );
 	m_lexer->SetFileSpec( m_fileSpec->GetValue() );
 	m_lexer->Save();
+}
+
+void LexerPage::OnEditKeyWordsButton0(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	EditKeyWords(0);
+}
+
+void LexerPage::OnEditKeyWordsButton1(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	EditKeyWords(1);
+}
+
+void LexerPage::OnEditKeyWordsButton2(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	EditKeyWords(2);
+}
+
+void LexerPage::OnEditKeyWordsButton3(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	EditKeyWords(3);
+}
+
+void LexerPage::OnEditKeyWordsButton4(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	EditKeyWords(4);
+}
+
+void LexerPage::EditKeyWords(int set)
+{
+	wxString keywords = m_lexer->GetKeyWords(set);
+	FreeTextDialog *dlg = new FreeTextDialog(this, keywords);
+	if(dlg->ShowModal() == wxID_OK){
+		m_lexer->SetKeyWords(dlg->GetValue(), set);
+	}
+	dlg->Destroy();
 }

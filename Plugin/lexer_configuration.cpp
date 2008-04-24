@@ -31,13 +31,42 @@ void LexerConf::Parse(wxXmlNode *element)
 		m_name = element->GetPropVal(wxT("Name"), wxEmptyString);
 
 		// load key words
-		wxXmlNode *node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords"));
+		wxXmlNode *node = NULL;
+		node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords0"));
 		if( node ){
-			m_keyWords = node->GetNodeContent();
-			m_keyWords.Replace(wxT("\n"), wxT(" "));
-			m_keyWords.Replace(wxT("\r"), wxT(" "));
+			m_keyWords[0] = node->GetNodeContent();
+			m_keyWords[0].Replace(wxT("\n"), wxT(" "));
+			m_keyWords[0].Replace(wxT("\r"), wxT(" "));
 		}
 
+		node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords1"));
+		if( node ){
+			m_keyWords[1] = node->GetNodeContent();
+			m_keyWords[1].Replace(wxT("\n"), wxT(" "));
+			m_keyWords[1].Replace(wxT("\r"), wxT(" "));
+		}
+	
+		node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords2"));
+		if( node ){
+			m_keyWords[2] = node->GetNodeContent();
+			m_keyWords[2].Replace(wxT("\n"), wxT(" "));
+			m_keyWords[2].Replace(wxT("\r"), wxT(" "));
+		}
+		
+		node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords3"));
+		if( node ){
+			m_keyWords[3] = node->GetNodeContent();
+			m_keyWords[3].Replace(wxT("\n"), wxT(" "));
+			m_keyWords[3].Replace(wxT("\r"), wxT(" "));
+		}
+		
+		node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords4"));
+		if( node ){
+			m_keyWords[4] = node->GetNodeContent();
+			m_keyWords[4].Replace(wxT("\n"), wxT(" "));
+			m_keyWords[4].Replace(wxT("\r"), wxT(" "));
+		}
+		
 		// load extensions
 		node = XmlUtils::FindFirstByTagName(element, wxT("Extensions"));
 		if( node ){
@@ -91,9 +120,25 @@ wxXmlNode *LexerConf::ToXml() const
 	node->AddProperty(wxT("Id"), strId);
 	
 	//set the keywords node
-	wxXmlNode *keyWords = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords"));
-	XmlUtils::SetNodeContent(keyWords, GetKeyWords());
-	node->AddChild(keyWords);
+	wxXmlNode *keyWords0 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords0"));
+	XmlUtils::SetNodeContent(keyWords0, GetKeyWords(0));
+	node->AddChild(keyWords0);
+
+	wxXmlNode *keyWords1 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords1"));
+	XmlUtils::SetNodeContent(keyWords1, GetKeyWords(1));
+	node->AddChild(keyWords1);
+	
+	wxXmlNode *keyWords2 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords2"));
+	XmlUtils::SetNodeContent(keyWords2, GetKeyWords(2));
+	node->AddChild(keyWords2);
+	
+	wxXmlNode *keyWords3 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords3"));
+	XmlUtils::SetNodeContent(keyWords3, GetKeyWords(3));
+	node->AddChild(keyWords3);
+	
+	wxXmlNode *keyWords4 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords4"));
+	XmlUtils::SetNodeContent(keyWords4, GetKeyWords(4));
+	node->AddChild(keyWords4);
 
 	//set the extensions node
 	wxXmlNode *extesions = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Extensions"));

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Lexer Name="Lua" Id="15">
-  <KeyWords>if elseif else then end do while nil true false in for and or function local not repeat return until</KeyWords>
+  <KeyWords0>if elseif else then end do while nil true false in for and or function local not repeat return until</KeyWords0>
+  <KeyWords1></KeyWords1>
+  <KeyWords2></KeyWords2>
+  <KeyWords3></KeyWords3>
+  <KeyWords4></KeyWords4>
   <Extensions>*.lua;*.h2x;</Extensions>
   <Properties>
     <Property Id="0" Name="Whitespace" Bold="no" Face="" Colour="#FFFFFF" BgColour="white" Size="9"/>

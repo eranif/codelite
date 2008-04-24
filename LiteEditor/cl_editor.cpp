@@ -1704,6 +1704,7 @@ void LEditor::UpdateColours()
 			SetKeyWords(1, wxEmptyString);
 			SetKeyWords(2, wxEmptyString);
 			SetKeyWords(3, wxEmptyString);
+			SetKeyWords(4, wxEmptyString);
 		}
 	}
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexer Name="InnoSetup" Id="76">
+  <KeyWords0>code components custommessages dirs files icons ini installdelete langoptions languages messages registry run setup types tasks uninstalldelete uninstallrun _istool</KeyWords0>
+  <KeyWords1>  allowcancelduringinstall allownoicons allowrootdirectory allowuncpath   alwaysrestart alwaysshowcomponentslist alwaysshowdironreadypage   alwaysshowgrouponreadypage alwaysusepersonalgroup appcomments appcontact   appcopyright appenddefaultdirname appenddefaultgroupname appid appmodifypath   appmutex appname apppublisher apppublisherurl appreadmefile appsupporturl   appupdatesurl appvername appversion architecturesallowed   architecturesinstallin64bitmode backcolor backcolor2 backcolordirection   backsolid changesassociations changesenvironment compression copyrightfontname   copyrightfontsize createappdir createuninstallregkey defaultdirname   defaultgroupname defaultuserinfoname defaultuserinfoorg defaultuserinfoserial   dialogfontname dialogfontsize direxistswarning disabledirpage   disablefinishedpage disableprogramgrouppage disablereadymemo disablereadypage   disablestartupprompt diskclustersize diskslicesize diskspanning   enablesdirdoesntexistwarning encryption extradiskspacerequired   flatcomponentslist infoafterfile infobeforefile internalcompresslevel   languagedetectionmethod languagecodepage languageid languagename licensefile   mergeduplicatefiles minversion onlybelowversion outputbasefilename outputdir   outputmanifestfile password privilegesrequired reservebytes   restartifneededbyrun setupiconfile showcomponentsizes showlanguagedialog   showtaskstreelines slicesperdisk solidcompression sourcedir timestamprounding   timestampsinutc titlefontname titlefontsize touchdate touchtime uninstallable   uninstalldisplayicon uninstalldisplayname uninstallfilesdir uninstalllogmode   uninstallrestartcomputer updateuninstalllogappname usepreviousappdir   usepreviousgroup useprevioussetuptype useprevioustasks useprevioususerinfo   userinfopage usesetupldr versioninfocompany versioninfocopyright   versioninfodescription versioninfotextversion versioninfoversion   welcomefontname welcomefontsize windowshowcaption windowstartmaximized   windowresizable windowvisible wizardimagebackcolor wizardimagefile   wizardimagestretch wizardsmallimagefile   </KeyWords1>
+  <KeyWords2>  afterinstall attribs beforeinstall check comment components copymode   description destdir destname excludes extradiskspacerequired filename flags   fontinstall groupdescription hotkey infoafterfile infobeforefile iconfilename   iconindex key languages licensefile messagesfile minversion name   onlybelowversion parameters permissions root runonceid section source   statusmsg string subkey tasks type types valuedata valuename valuetype   workingdir   </KeyWords2>
+  <KeyWords3>  append define dim else emit endif endsub error expr file for if ifdef ifexist   ifndef ifnexist include insert pragma sub undef   </KeyWords3>
+  <KeyWords4>  begin break case const continue do downto else end except finally for function   if of procedure repeat then to try until uses var while with   </KeyWords4>
+  <Extensions>*.iss</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="2" Name="Keyword" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="3" Name="Parameter" Bold="no" Face="" Colour="#800040" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="4" Name="Section" Bold="no" Face="" Colour="#400000" BgColour="#C8C891" Size="9"/>
+    <Property Id="5" Name="Preprocessor" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="6" Name="Preprocessor (inline)" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="7" Name="Pascal comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="8" Name="Pascal keyword" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="9" Name="User defined keyword" Bold="no" Face="" Colour="#800080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="10" Name="Double quoted string" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="11" Name="Single quoted string" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#000000" BgColour="#8BBF86" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#000000" BgColour="#FF0000" Size="9"/>
+  </Properties>
+</Lexer>

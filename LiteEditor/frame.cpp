@@ -379,6 +379,24 @@ void Frame::Initialize(bool loadLastSession)
 	}
 
 	SetGccColourFunction( BuildTab::ColourGccLine );
+	
+	//update the build system to contain the number of CPUs
+	int cpus = wxThread::GetCPUCount();
+	if(cpus != wxNOT_FOUND) {
+		//update the build system
+		BuildSystemPtr bs = BuildSettingsConfigST::Get()->GetBuildSystem(wxT("GNU makefile for g++/gcc"));
+		if( bs ) {
+			wxString jobs;
+			jobs << cpus;
+			
+			if( bs->GetToolJobs() != jobs ) {
+				bs->SetToolJobs( jobs );
+				BuildSettingsConfigST::Get()->SetBuildSystem(bs);
+				
+				wxLogMessage(wxT("Info: setting number of concurrent builder jobs to ") + jobs);
+			}
+		}
+	}
 }
 
 Frame* Frame::Get()

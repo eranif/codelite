@@ -52,6 +52,7 @@ public:
 	virtual bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths);
 	virtual int GetToolbarIconSize();
 	virtual Notebook *GetMainNotebook();
+	virtual wxAuiManager* GetDockingManager();
 	
 	//------------------------------------
 	//End of IManager interface

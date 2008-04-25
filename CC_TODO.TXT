@@ -1,7 +1,3 @@
-- validate the environment variables
-
-- Also a possible feature would be to popup a dialog if a $(var) is in a project and not defined already
-
 - auto-fix symbols database when paths are not correct  
 
 - fixed the '#if 0' thingi with nested '#endif'
@@ -25,8 +21,5 @@
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
 
-- Add InnoSetup syntax highlight
-
-- add InnoSetup compiler
 
 

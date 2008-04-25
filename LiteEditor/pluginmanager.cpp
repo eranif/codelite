@@ -276,3 +276,8 @@ Notebook* PluginManager::GetMainNotebook()
 {
 	return Frame::Get()->GetNotebook();
 }
+
+wxAuiManager* PluginManager::GetDockingManager()
+{
+	return &Frame::Get()->GetDockingManager();
+}

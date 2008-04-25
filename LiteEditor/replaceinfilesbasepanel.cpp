@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 20 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -14,7 +14,7 @@ ReplaceInFilesBasePanel::ReplaceInFilesBasePanel( wxWindow* parent, wxWindowID i
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText8 = new wxStaticText( this, wxID_ANY, wxT("Matched results (double click on an entry to replace single selection):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText8 = new wxStaticText( this, wxID_ANY, wxT("Matched results (double click on an entry to replace it):"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText8->Wrap( -1 );
 	bSizer1->Add( m_staticText8, 0, wxRIGHT|wxLEFT, 5 );
 	

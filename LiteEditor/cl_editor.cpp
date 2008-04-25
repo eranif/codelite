@@ -8,7 +8,7 @@
 #include <wx/settings.h>
 #include "parse_thread.h"
 #include "ctags_manager.h"
-#include "manager.h"
+#include "manager.h" 
 #include "menumanager.h"
 #include <wx/fdrepdlg.h>
 #include "findreplacedlg.h"

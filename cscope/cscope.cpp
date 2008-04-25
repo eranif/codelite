@@ -1,5 +1,6 @@
 #include "dirsaver.h"
 #include "cscope.h"
+#include <wx/aui/framemanager.h>
 #include "procutils.h"
 #include "wx/ffile.h"
 #include "workspace.h"
@@ -215,6 +216,17 @@ void Cscope::DoCscopeCommand(const wxString &command, const wxString &endMsg)
 	
 	//set the focus to the cscope tab
 	Notebook *book = m_mgr->GetOutputPaneNotebook();
+	
+	//make sure that the Output pane is visible
+	wxAuiManager *aui = m_mgr->GetDockingManager();
+	if(aui) {
+		wxAuiPaneInfo &info = aui->GetPane(wxT("Output"));
+		if (info.IsOk() && !info.IsShown()) {
+			info.Show();
+			aui->Update();
+		}
+	}
+	
 	wxString curSel = book->GetPageText((size_t)book->GetSelection());
 	if (curSel != wxT("cscope")) {
 		for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {

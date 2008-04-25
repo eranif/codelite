@@ -2,15 +2,14 @@
 <wxFormBuilder_Project>
     <FileVersion major="1" minor="9" />
     <object class="Project" expanded="1">
-        <property name="bitmaps"></property>
         <property name="class_decoration"></property>
         <property name="code_generation">C++</property>
+        <property name="disconnect_events">1</property>
         <property name="encoding">UTF-8</property>
         <property name="event_generation">connect</property>
         <property name="file">replaceinfilesbasepanel</property>
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
-        <property name="icons"></property>
         <property name="internationalize">0</property>
         <property name="name">ReplaceInFilesBasePanel</property>
         <property name="namespace"></property>
@@ -78,7 +77,7 @@
                         <property name="font"></property>
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
-                        <property name="label">Matched results (double click on an entry to replace single selection):</property>
+                        <property name="label">Matched results (double click on an entry to replace it):</property>
                         <property name="maximum_size"></property>
                         <property name="minimum_size"></property>
                         <property name="name">m_staticText8</property>

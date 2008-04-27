@@ -35,12 +35,13 @@ Source: "C:\wxWidgets-2.8.7\lib\gcc_dll\wxmsw28u_gcc_custom.dll"; DestDir: "{app
 Source: "C:\Development\C++\codelite\trunk\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Program Files\CodeLite\common.tags"; DestDir: "{app}"; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\sdk\wxconfig\wx-config.exe"; DestDir: "{app}\bin"; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\config\liteeditor.xml.sample"; DestDir: "{app}\config"; DestName: liteeditor.xml.default; Components: Editor;
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\codelite.xml.default"; DestDir: "{app}\config"; DestName: codelite.xml.default; Components: Editor;
 Source: "C:\Development\C++\codelite\trunk\Runtime\config\accelerators.conf.default"; DestDir: "{app}\config"; DestName: accelerators.conf.default; Components: Editor;
 Source: "C:\Development\C++\codelite\trunk\Runtime\config\debuggers.xml"; DestDir: "{app}\config"; Components: Editor;
 Source: "C:\Development\C++\codelite\trunk\Runtime\config\build_settings.xml"; DestDir: "{app}\config"; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\codelite.layout.default"; DestDir: "{app}\config"; DestName: codelite.layout; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\lexers\*"; DestDir: "{app}\lexers"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
@@ -59,11 +60,6 @@ Source: "C:\MinGW\bin\cygwin1.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ;
 Source: "C:\MinGW\bin\libintl3.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW\bin\libiconv2.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 
-;Source: "C:\windows\system32\msvcp71.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-;Source: "C:\Development\C++\codelite\Runtime\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-;Source: "C:\windows\system32\msvcr71.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-;Source: "c:\windows\system32\MSVCRT.DLL"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}"

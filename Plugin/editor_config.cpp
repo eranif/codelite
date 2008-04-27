@@ -58,12 +58,12 @@ EditorConfig::~EditorConfig()
 bool EditorConfig::Load()
 {
 	//first try to load the user's settings
-	m_fileName = wxFileName(wxT("config/liteeditor.xml"));
+	m_fileName = wxFileName(wxT("config/codelite.xml"));
 	m_fileName.MakeAbsolute();
 
 	if (!m_fileName.FileExists()) {
 		//try to load the default settings
-		m_fileName = wxFileName(wxT("config/liteeditor.xml.default"));
+		m_fileName = wxFileName(wxT("config/codelite.xml.default"));
 		m_fileName.MakeAbsolute();
 		
 		if( !m_fileName.FileExists() ) {
@@ -87,6 +87,9 @@ bool EditorConfig::Load()
 	if (!m_doc->Load(m_fileName.GetFullPath())) {
 		return false;
 	}
+	
+	//make sure that the file name is set to .xml and not .default
+	m_fileName.SetFullName(wxT("codelite.xml"));
 	
 	//load all lexer configuration files
 	DirTraverser traverser(wxT("*.xml"));

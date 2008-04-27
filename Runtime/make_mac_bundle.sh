@@ -22,6 +22,9 @@ cp index.html ./CodeLite.app/Contents/SharedSupport/
 cp svnreport.html ./CodeLite.app/Contents/SharedSupport/
 cp icon.icns ./CodeLite.app/Contents/Resources/
 
+## copy empty layout file
+cp config/codelite.layout.default ./CodeLite.app/Contents/Resources/config/codelite.layout
+
 cp config/build_settings.xml ./CodeLite.app/Contents/SharedSupport/config
 
 ##

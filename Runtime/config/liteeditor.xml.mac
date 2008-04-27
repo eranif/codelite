@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LiteEditor Revision="$(Revision)">
-    <Layout>
-    <Notebook Name="Editor" Style="751292"/>
-    <Notebook Name="OutputPane" Style="738332"/>
-    <Notebook Name="WorkspacePane" Style="721948"/>
-    <Notebook Name="DebuggerPane" Style="738396"/>
-  </Layout>
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="88" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
@@ -36,7 +30,16 @@
 	  <wxString Value="extern"/>   
 	  <wxString Value="DLLIMPORT"/>  
 	  <wxString Value="DECLARE_INSTANCE_TYPE"/>  
-    </wxArrayString>
+	  <wxString Value="emit"/>  
+	  <wxString Value="Q_OBJECT"/>  
+	  <wxString Value="Q_PACKED"/>  
+	  <wxString Value="Q_GADGET"/>  
+	  <wxString Value="QT_BEGIN_HEADER"/>  
+	  <wxString Value="QT_END_HEADER"/>  
+	  <wxString Value="Q_REQUIRED_RESULT"/>  
+	  <wxString Value="Q_INLINE_TEMPLATE"/>  
+	  <wxString Value="Q_OUTOFLINE_TEMPLATE"/>    
+	</wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">
       <wxString Value="C++"/>

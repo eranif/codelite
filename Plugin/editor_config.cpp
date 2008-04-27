@@ -57,29 +57,37 @@ EditorConfig::~EditorConfig()
 
 bool EditorConfig::Load()
 {
+	//first try to load the user's settings
 	m_fileName = wxFileName(wxT("config/liteeditor.xml"));
 	m_fileName.MakeAbsolute();
 
 	if (!m_fileName.FileExists()) {
-		//create a new empty file with this name so the load function will not
-		//fail
-		wxFFile file(m_fileName.GetFullPath(), wxT("a"));
-		wxString content;
-		content << wxT("<LiteEditor Revision=\"")
-		<< SvnRevision
-		<< wxT("\">")
-		<< wxT("</LiteEditor>");
+		//try to load the default settings
+		m_fileName = wxFileName(wxT("config/liteeditor.xml.default"));
+		m_fileName.MakeAbsolute();
+		
+		if( !m_fileName.FileExists() ) {
+			//create a new empty file with this name so the load function will not
+			//fail
+			wxFFile file(m_fileName.GetFullPath(), wxT("a"));
+			wxString content;
+			content << wxT("<LiteEditor Revision=\"")
+			<< SvnRevision
+			<< wxT("\">")
+			<< wxT("</LiteEditor>");
 
-		if (file.IsOpened()) {
-			file.Write(content);
-			file.Close();
+			if (file.IsOpened()) {
+				file.Write(content);
+				file.Close();
+			}
 		}
 	}
-
+	
 	//load the main configuration file
 	if (!m_doc->Load(m_fileName.GetFullPath())) {
 		return false;
 	}
+	
 	//load all lexer configuration files
 	DirTraverser traverser(wxT("*.xml"));
 	wxDir dir(wxT("lexers/"));

@@ -273,11 +273,11 @@ int App::OnExit()
 void App::CopySettings(const wxString &destDir, const wxString &installPath)
 {
 	//wxPrintf(wxT("CopySettings.from %s to %s\n"), installPath.GetData(), destDir.GetData());
-	bool fileExist = wxFileName::FileExists( destDir + wxT("/config/liteeditor.xml") );
+	bool fileExist = wxFileName::FileExists( destDir + wxT("/config/codelite.xml") );
 	bool copyAnyways(true);
 
 	if (fileExist) {
-		if (CheckRevision(destDir + wxT("/config/liteeditor.xml")) == true) {
+		if (CheckRevision(destDir + wxT("/config/codelite.xml")) == true) {
 			//revision is ok
 			copyAnyways = false;
 		}
@@ -295,7 +295,7 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 		massCopy  (installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
 		massCopy  (installPath + wxT("/"), wxT("*.tags"), destDir + wxT("/"));
 		wxCopyFile(installPath + wxT("/config/build_settings.xml"), destDir + wxT("/config/build_settings.xml"));
-		wxCopyFile(installPath + wxT("/config/liteeditor.xml"), destDir + wxT("/config/liteeditor.xml"));
+		wxCopyFile(installPath + wxT("/config/codelite.xml.default"), destDir + wxT("/config/codelite.xml.default"));
 		wxCopyFile(installPath + wxT("/config/debuggers.xml"), destDir + wxT("/config/debuggers.xml"));
 		wxCopyFile(installPath + wxT("/rc/menu.xrc"), destDir + wxT("/rc/menu.xrc"));
 		wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));

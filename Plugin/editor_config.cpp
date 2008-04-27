@@ -144,88 +144,59 @@ wxString EditorConfig::LoadPerspective(const wxString &Name) const
 	return wxEmptyString;
 }
 
-void EditorConfig::SavePerspective(const wxString &name, const wxString &pers)
-{
-	wxXmlNode *layoutNode = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Layout"));
-	if ( !layoutNode ) {
-		//add an Layout node
-		wxXmlNode *newChild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Layout"));
-		m_doc->GetRoot()->AddChild(newChild);
-		m_doc->Save(m_fileName.GetFullPath());
-		layoutNode = newChild;
-	}
-
-	wxXmlNode *child = layoutNode->GetChildren();
-	while ( child ) {
-		if ( child->GetName() == wxT("Perspective") ) {
-			if (child->GetPropVal(wxT("Name"), wxEmptyString) == name) {
-				XmlUtils::UpdateProperty(child, wxT("Value"), pers);
-				m_doc->Save(m_fileName.GetFullPath());
-				return;
-			}
-		}
-		child = child->GetNext();
-	}
-
-	wxXmlNode *newChild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Perspective"));
-	newChild->AddProperty(wxT("Name"), name);
-	newChild->AddProperty(wxT("Value"), pers);
-	layoutNode->AddChild(newChild);
-	m_doc->Save(m_fileName.GetFullPath());
-}
-
-long EditorConfig::LoadNotebookStyle(const wxString &nbName)
-{
-	long style = wxNOT_FOUND;
-	wxXmlNode *layoutNode = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Layout"));
-	if (!layoutNode) {
-		return style;
-	}
-
-	wxXmlNode *child = layoutNode->GetChildren();
-	while ( child ) {
-		if ( child->GetName() == wxT("Notebook") ) {
-			if (child->GetPropVal(wxT("Name"), wxEmptyString) == nbName) {
-				wxString strStyle = child->GetPropVal(wxT("Style"), wxEmptyString);
-				strStyle.ToLong(&style);
-				break;
-			}
-		}
-		child = child->GetNext();
-	}
-	return style;
-}
-
-void EditorConfig::SaveNotebookStyle(const wxString &nbName, long style)
-{
-	wxXmlNode *layoutNode = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Layout"));
-	if ( !layoutNode ) {
-		return;
-	}
-
-	wxXmlNode *child = layoutNode->GetChildren();
-	while ( child ) {
-		if ( child->GetName() == wxT("Notebook") ) {
-			if (child->GetPropVal(wxT("Name"), wxEmptyString) == nbName) {
-				wxString strStyle;
-				strStyle << style;
-				XmlUtils::UpdateProperty(child, wxT("Style"), strStyle);
-				m_doc->Save(m_fileName.GetFullPath());
-				return;
-			}
-		}
-		child = child->GetNext();
-	}
-
-	wxXmlNode *newChild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Notebook"));
-	newChild->AddProperty(wxT("Name"), nbName);
-
-	wxString strStyle;
-	strStyle << style;
-	newChild->AddProperty(wxT("Style"), strStyle);
-	layoutNode->AddChild(newChild);
-	m_doc->Save(m_fileName.GetFullPath());
-}
+//long EditorConfig::LoadNotebookStyle(const wxString &nbName)
+//{
+//	long style = wxNOT_FOUND;
+//	wxXmlNode *layoutNode = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Layout"));
+//	if (!layoutNode) {
+//		return style;
+//	}
+//
+//	wxXmlNode *child = layoutNode->GetChildren();
+//	while ( child ) {
+//		if ( child->GetName() == wxT("Notebook") ) {
+//			if (child->GetPropVal(wxT("Name"), wxEmptyString) == nbName) {
+//				wxString strStyle = child->GetPropVal(wxT("Style"), wxEmptyString);
+//				strStyle.ToLong(&style);
+//				break;
+//			}
+//		}
+//		child = child->GetNext();
+//	}
+//	return style;
+//}
+//
+//void EditorConfig::SaveNotebookStyle(const wxString &nbName, long style)
+//{
+//	wxXmlNode *layoutNode = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Layout"));
+//	if ( !layoutNode ) {
+//		return;
+//	}
+//
+//	wxXmlNode *child = layoutNode->GetChildren();
+//	while ( child ) {
+//		if ( child->GetName() == wxT("Notebook") ) {
+//			if (child->GetPropVal(wxT("Name"), wxEmptyString) == nbName) {
+//				wxString strStyle;
+//				strStyle << style;
+//				XmlUtils::UpdateProperty(child, wxT("Style"), strStyle);
+//				m_doc->Save(m_fileName.GetFullPath());
+//				return;
+//			}
+//		}
+//		child = child->GetNext();
+//	}
+//
+//	wxXmlNode *newChild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Notebook"));
+//	newChild->AddProperty(wxT("Name"), nbName);
+//
+//	wxString strStyle;
+//	strStyle << style;
+//	newChild->AddProperty(wxT("Style"), strStyle);
+//	layoutNode->AddChild(newChild);
+//	m_doc->Save(m_fileName.GetFullPath());
+//}
+//
 
 EditorConfig::ConstIterator EditorConfig::LexerEnd()
 {

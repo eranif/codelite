@@ -947,11 +947,13 @@ void Frame::OnClose(wxCloseEvent& event)
 	ManagerST::Get()->KillProgram();
 	ManagerST::Get()->DbgStop();
 	SearchThreadST::Get()->StopSearch();
-	EditorConfigST::Get()->SavePerspective(wxT("Default"), m_mgr.SavePerspective());
-	EditorConfigST::Get()->SaveNotebookStyle(wxT("Editor"), GetNotebook()->GetWindowStyleFlag());
-	EditorConfigST::Get()->SaveNotebookStyle(wxT("OutputPane"), m_outputPane->GetNotebook()->GetWindowStyleFlag());
-//	EditorConfigST::Get()->SaveNotebookStyle(wxT("WorkspacePane"), m_workspacePane->GetNotebook()->GetWindowStyleFlag());
-	EditorConfigST::Get()->SaveNotebookStyle(wxT("DebuggerPane"), m_debuggerPane->GetNotebook()->GetWindowStyleFlag());
+	
+	//save the perspective 
+	WriteFileUTF8(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"), m_mgr.SavePerspective());
+	
+//	EditorConfigST::Get()->SaveNotebookStyle(wxT("Editor"), GetNotebook()->GetWindowStyleFlag());
+//	EditorConfigST::Get()->SaveNotebookStyle(wxT("OutputPane"), m_outputPane->GetNotebook()->GetWindowStyleFlag());
+//	EditorConfigST::Get()->SaveNotebookStyle(wxT("DebuggerPane"), m_debuggerPane->GetNotebook()->GetWindowStyleFlag());
 	EditorConfigST::Get()->SaveLexers();
 
 	//save general information
@@ -2399,7 +2401,16 @@ void Frame::LoadPlugins()
 	long loadIt(1);
 	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
 	if (loadIt) {
-		wxString pers = EditorConfigST::Get()->LoadPerspective(wxT("Default"));
+		
+		//locate the layout file
+		wxString file_name(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"));
+		wxString pers(wxEmptyString);
+		
+		if(wxFileName(file_name).FileExists()) {
+			//load this file
+			ReadFileWithConversion(file_name, pers);	
+		}
+		
 		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == SvnRevision) {
 			m_mgr.LoadPerspective(pers);
 		} else {

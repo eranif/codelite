@@ -105,26 +105,19 @@ public:
 	 */
 	bool IsOk() const { return m_doc->IsOk(); }
 
-	/**
-	 * Load notebook style from configuration
-	 * \param nbName notebook name
-	 * \return wxNOT_FOUND when notebook not found or style
-	 */
-	long LoadNotebookStyle(const wxString &nbName);
-
-	/**
-	 * Save notebook style to configuration
-	 * \param nbName notebook name
-	 * \param style style value to save
-	 */
-	void SaveNotebookStyle(const wxString &nbName, long style);
-
-	/**
-	 * Save the perspective to the configuration file
-	 * \param name perspective name
-	 * \param pers perspective to save
-	 */
-	void SavePerspective(const wxString &name, const wxString &pers);
+//	/**
+//	 * Load notebook style from configuration
+//	 * \param nbName notebook name
+//	 * \return wxNOT_FOUND when notebook not found or style
+//	 */
+//	long LoadNotebookStyle(const wxString &nbName);
+//
+//	/**
+//	 * Save notebook style to configuration
+//	 * \param nbName notebook name
+//	 * \param style style value to save
+//	 */
+//	void SaveNotebookStyle(const wxString &nbName, long style);
 
 	/**
 	 * Load perspective from configuration file

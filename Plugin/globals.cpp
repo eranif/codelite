@@ -213,3 +213,11 @@ wxString DoExpandAllVariables(const wxString &expression, const wxString &projec
 	output = WorkspaceST::Get()->ExpandVariables(output);
 	return output;
 }
+
+bool WriteFileUTF8(const wxString& fileName, const wxString& content)
+{
+	wxFFile file(fileName, wxT("w+b"));
+
+	//first try the Utf8
+	return file.Write(content, wxConvUTF8) == content.Length();
+}

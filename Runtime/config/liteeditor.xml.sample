@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LiteEditor Revision="653">
-    <Layout>
-    <Notebook Name="Editor" Style="751292"/>
-  </Layout>
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="88" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
@@ -41,8 +38,8 @@
 	  <wxString Value="QT_END_HEADER"/>  
 	  <wxString Value="Q_REQUIRED_RESULT"/>  
 	  <wxString Value="Q_INLINE_TEMPLATE"/>  
-	  <wxString Value="Q_OUTLINE_TEMPLATE"/>    
-</wxArrayString>
+	  <wxString Value="Q_OUTOFLINE_TEMPLATE"/>    
+	</wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">
       <wxString Value="C++"/>

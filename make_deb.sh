@@ -26,7 +26,7 @@ mkdir -p fakeroot/usr/share/applications/
 \cp -pr Runtime/config/build_settings.xml fakeroot/usr/local/share/codelite/config/build_settings.xml
 \cp -pr Runtime/config/debuggers.xml fakeroot/usr/local/share/codelite/config/debuggers.xml
 \cp -pr Runtime/config/accelerators.conf.default fakeroot/usr/local/share/codelite/config/accelerators.conf.default
-\cp -pr Runtime/config/liteeditor.xml.sample fakeroot/usr/local/share/codelite/config/liteeditor.xml
+\cp -pr Runtime/config/codelite.xml.default fakeroot/usr/local/share/codelite/config/codelite.xml.default
 \cp -pr Runtime/rc/menu.xrc fakeroot/usr/local/share/codelite/rc/
 \cp -pr Runtime/templates/*.project fakeroot/usr/local/share/codelite/templates/
 \cp -pr Runtime/templates/*.wizard fakeroot/usr/local/share/codelite/templates/

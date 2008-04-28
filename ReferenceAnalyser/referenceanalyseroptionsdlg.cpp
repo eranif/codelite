@@ -6,6 +6,7 @@ AnalyserOptionsBaseDlg( parent )
 	m_options = options;
 	m_containerName->SetValue(m_options.getContainerName());
 	m_containerOperator->SetValue(m_options.getContainerOperator());
+	m_containerOperator->SetFocus();
 }
 
 void ReferenceAnalyserOptionsDlg::OnButtonOk( wxCommandEvent& event )

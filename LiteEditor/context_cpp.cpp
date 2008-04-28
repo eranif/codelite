@@ -575,9 +575,9 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord)
 			depth++;
 			break;
 		case wxT('<'):
-						prevGt = true;
+						prevGt = false;
 			depth--;
-			if (depth <= 0) {
+			if (depth < 0) {
 
 				//dont include this token
 				at = rCtrl.PositionAfter(at);

@@ -83,20 +83,26 @@ int clCallTip::Count() const
 wxString clCallTip::All()
 {
 	wxString tip;
-	std::map<wxString, bool> mymap;
+	std::map<wxString, wxString> mymap;
 	for (size_t i=0; i< m_tips.size(); i++) {
 		wxString tmp_raw_sig = m_tips.at(i);
 		wxString raw_sig(tmp_raw_sig);
 		if (tmp_raw_sig.StartsWith(wxT("function:"), &raw_sig)) {
-
+			
+			bool hasDefaultValues = (raw_sig.Find(wxT("=")) != wxNOT_FOUND);
 			wxString normalizedSig = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig);
+			
+			if (hasDefaultValues) {
+				//incase default values exist in this prototype, 
+				//make it the tip instead of the existing one
+				mymap[normalizedSig] = raw_sig.Trim().Trim(false);
+			}			
+			
 			//make sure we dont add duplicates
 			if ( mymap.find(normalizedSig) == mymap.end() ) {
 				//add it
-				mymap[normalizedSig] = true;
 				wxString sig = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, true );
-				sig = sig.Trim().Trim(false);
-				tip << sig << wxT("\n");
+				mymap[normalizedSig] = sig.Trim().Trim(false);;
 			}
 			
 		} else if( tmp_raw_sig.StartsWith(wxT("macro:"), &raw_sig) ) {
@@ -105,17 +111,20 @@ wxString clCallTip::All()
 			//just add them to the map
 			if ( mymap.find(raw_sig) == mymap.end() ) {
 				//add it
-				mymap[raw_sig] = true;
-				tip << raw_sig << wxT("\n");
+				mymap[raw_sig] = raw_sig;
 			}
 		}else{
 			//simply add it
 			if ( mymap.find(raw_sig) == mymap.end() ) {
 				//add it
-				mymap[raw_sig] = true;
-				tip << raw_sig << wxT("\n");
+				mymap[raw_sig] = raw_sig;
 			}
 		}
+	}
+	
+	std::map<wxString, wxString>::iterator iter = mymap.begin();
+	for( ; iter != mymap.end(); iter++ ) {
+		tip << iter->second << wxT("\n");
 	}
 	tip = tip.BeforeLast(wxT('\n'));
 	return tip;

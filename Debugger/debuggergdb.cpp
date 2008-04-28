@@ -350,10 +350,12 @@ bool DbgGdb::Break(const wxString &fileName, long lineno)
 	tmpfileName.Replace(wxT("\\"), wxT("/"));
 	
 	wxString command;
+	bool useQuatations(false);
 #if defined (__WXGTK__) || defined (__WXMAC__)
 	if (m_info.enablePendingBreakpoints) {
 		//On GTK however, it works pretty well.
 		command = wxT("break ");
+		useQuatations = true;
 	} else {
 		command = wxT("-break-insert ");
 	}
@@ -361,7 +363,14 @@ bool DbgGdb::Break(const wxString &fileName, long lineno)
 	// Mac & Windows
 	command = wxT("-break-insert ");
 #endif
-
+	
+	//when using the simple command line interface, use quatations mark 
+	//around file names
+	if(useQuatations) {
+		tmpfileName.Prepend(wxT("\""));
+		tmpfileName.Append(wxT("\""));
+	}
+	
 	command << tmpfileName << wxT(":") << lineno;
 	return WriteCommand(command, new DbgCmdHandlerBp(m_observer, bp, &m_bpList));
 }

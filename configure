@@ -331,6 +331,7 @@ createInstallTarget()
 	echo "	@mkdir -p /usr/local/share/codelite/rc" >> Makefile
 	echo "	@mkdir -p /usr/local/share/codelite/lexers" >> Makefile
 	echo "	@cp -fr Runtime/config/*.xml /usr/local/share/codelite/config/" >> Makefile
+	echo "	@cp -fr Runtime/config/debuggers.xml.gtk /usr/local/share/codelite/config/debuggers.xml" >> Makefile
 	echo "	@cp -fr Runtime/config/codelite.xml.default /usr/local/share/codelite/config/codelite.xml.default" >> Makefile
 	echo "	@cp -fr Runtime/config/codelite.layout.default /usr/local/share/codelite/config/codelite.layout" >> Makefile
 	echo "	@cp -fr Runtime/codelite.desktop /usr/share/applications/codelite.desktop" >> Makefile

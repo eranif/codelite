@@ -304,7 +304,10 @@ static void makeDefineTag (const char *const name)
 		initTagEntry (&e, name);
 		e.lineNumberEntry = (boolean) (Option.locate != EX_PATTERN);
 		e.isFileScope  = isFileScope;
-		e.truncateLine = TRUE;
+		//ERAN IFRAH [PATCH START]
+		//keep full lines instead of truncating them
+		e.truncateLine = FALSE;
+		//ERAN IFRAH [PATCH END]
 		e.kindName     = "macro";
 		e.kind         = 'd';
 		makeTagEntry (&e);

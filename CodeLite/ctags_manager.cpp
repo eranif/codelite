@@ -1495,15 +1495,38 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 		if (tags.at(i)->GetName() != word)
 			continue;
 
-		if (tags.at(i)->GetKind() != wxT("function") && tags.at(i)->GetKind() != wxT("prototype"))
-			continue;
+		TagEntryPtr t = tags.at(i);
+		if (t->GetKind() == wxT("function") || t->GetKind() == wxT("prototype")) {
+			wxString tip;
+			tip << t->GetSignature();
 
-		wxString tip;
-		tip << tags.at(i)->GetSignature();
+			//collect each signature only once, we do this by using
+			//map
+			tipsMap[t->GetSignature()] = tip;
+		} else if (t->GetKind() == wxT("macro")) {
 
-		//collect each signature only once, we do this by using
-		//map
-		tipsMap[tags.at(i)->GetSignature()] = tip;
+			wxString tip;
+			wxString macroName = t->GetName();
+			wxString pattern = t->GetPattern();
+
+			int where = pattern.Find(macroName);
+			if (where != wxNOT_FOUND) {
+				//remove the #define <name> from the pattern
+				pattern = pattern.Mid(where + macroName.Length());
+				pattern = pattern.Trim().Trim(false);
+				if (pattern.StartsWith(wxT("("))) {
+					//this macro has the form of a function
+					pattern = pattern.BeforeFirst(wxT(')'));
+					pattern.Append(wxT(')'));
+
+					tip << pattern;
+
+					//collect each signature only once, we do this by using
+					//map
+					tipsMap[tip] = tip;
+				}
+			}
+		}
 	}
 
 	for (std::map<wxString, wxString>::iterator iter = tipsMap.begin(); iter != tipsMap.end(); iter++) {
@@ -2019,51 +2042,51 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarN
 		const wxCharBuffer token = _C(prep.Item(i));
 		ignoreTokens[ token.data() ] = true;
 	}
-	
+
 	VariableList li;
 	const wxCharBuffer patbuf = _C(sig);
-	
+
 	get_variables(patbuf.data(), li, ignoreTokens);
-	
+
 	//construct a function signature from the results
 	wxString output;
 	output << wxT("(");
-	
+
 	VariableList::iterator iter = li.begin();
-	for( ; iter != li.end() ; iter++ ) {
+	for ( ; iter != li.end() ; iter++ ) {
 		Variable v = *iter;
-		
+
 		//add const qualifier
-		if(v.m_isConst) {
+		if (v.m_isConst) {
 			output << wxT("const ");
 		}
-		
+
 		//add scope
 		if (v.m_typeScope.empty() == false) {
 			output << _U(v.m_typeScope.c_str()) << wxT("::");
 		}
-		
-		if(v.m_type.empty() == false){
+
+		if (v.m_type.empty() == false) {
 			output << _U(v.m_type.c_str());
 		}
-		
-		if(v.m_templateDecl.empty() == false) {
+
+		if (v.m_templateDecl.empty() == false) {
 			output << _U(v.m_templateDecl.c_str());
 		}
-		
-		if(v.m_starAmp.empty() == false) {
+
+		if (v.m_starAmp.empty() == false) {
 			output << _U(v.m_starAmp.c_str());
 		}
-		
-		if(v.m_name.empty() == false && includeVarNames) {
+
+		if (v.m_name.empty() == false && includeVarNames) {
 			output << wxT(" ") << _U(v.m_name.c_str());
 		}
 		output << wxT(", ");
 	}
-	if(li.empty() == false) {
+	if (li.empty() == false) {
 		output = output.BeforeLast(wxT(','));
 	}
-	
+
 	output << wxT(")");
 	return output;
 }

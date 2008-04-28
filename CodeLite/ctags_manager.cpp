@@ -1498,7 +1498,7 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 		TagEntryPtr t = tags.at(i);
 		if (t->GetKind() == wxT("function") || t->GetKind() == wxT("prototype")) {
 			wxString tip;
-			tip << t->GetSignature();
+			tip << wxT("function:") << t->GetSignature();
 
 			//collect each signature only once, we do this by using
 			//map
@@ -1519,7 +1519,7 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 					pattern = pattern.BeforeFirst(wxT(')'));
 					pattern.Append(wxT(')'));
 
-					tip << pattern;
+					tip << wxT("macro:") << pattern;
 
 					//collect each signature only once, we do this by using
 					//map

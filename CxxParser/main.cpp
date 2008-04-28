@@ -35,8 +35,8 @@ int main()
 	
 	//print the scope name
 	//testScopeParser(buf);
-	testVarParser(buf);
-	//testExprParser(buf);
+	//testVarParser(buf);
+	testExprParser(buf);
 	//testFuncParser(buf);
 	free(buf);
 }

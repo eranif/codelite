@@ -83,6 +83,7 @@ stop_debugger|Debug|Stop debugger|
 dbg_stepin|Debug|Step Into|F11
 dbg_next|Debug|Next|F10
 dbg_stepout|Debug|Step Out|Shift-F11
+show_cursor|Show Cursor|
 insert_breakpoint|Debug|Toggle Breakpoint|F9
 create_ext_database|Tags|Create external tags database...|
 open_ext_database|Tags|Attach external tags database...|

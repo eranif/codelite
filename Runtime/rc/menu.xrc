@@ -346,7 +346,12 @@
             <object class="wxMenuItem" name="dbg_stepout">
                 <label>Step &amp;Out</label>
             </object>
-            <object class="wxMenuItem" name="insert_breakpoint">
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/> 
+            <object class="wxMenuItem" name="show_cursor">
+                <label>Show &amp;Cursor</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/> 
+			<object class="wxMenuItem" name="insert_breakpoint">
 				<label>Toggle &amp;Breakpoint</label>
 			</object>
 		</object>

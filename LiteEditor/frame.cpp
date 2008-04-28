@@ -18,7 +18,7 @@
 #include <wx/xrc/xmlres.h>
 #include "symbol_tree.h"
 #include <wx/splitter.h>
-#include "cpp_symbol_tree.h" 
+#include "cpp_symbol_tree.h"
 #include "plugin.h"
 #include "language.h"
 #include "editor_config.h"
@@ -218,6 +218,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("dbg_stepin"), Frame::OnDebugCmd)
 	EVT_MENU(XRCID("dbg_stepout"), Frame::OnDebugCmd)
 	EVT_MENU(XRCID("dbg_next"), Frame::OnDebugCmd)
+	EVT_MENU(XRCID("show_cursor"), Frame::OnDebugCmd)
 	EVT_MENU(XRCID("debuger_settings"), Frame::OnDebuggerSettings)
 	EVT_UPDATE_UI(XRCID("pause_debugger"), Frame::OnDebugCmdUI)
 	EVT_UPDATE_UI(XRCID("stop_debugger"), Frame::OnDebugStopUI)
@@ -256,16 +257,16 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("add_multi_impl"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("setters_getters"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_include_file"), Frame::OnCppContextMenu)
-	
+
 	EVT_MENU(XRCID("configure_accelerators"), Frame::OnConfigureAccelerators)
-	
-//	#if defined (__WXMSW__) || defined (__WXMAC__)
+
 	EVT_UPDATE_UI(XRCID("save_file"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("complete_word"), Frame::OnCompleteWordUpdateUI)
 	EVT_UPDATE_UI(XRCID("execute_no_debug"), Frame::OnExecuteNoDebugUI)
 	EVT_UPDATE_UI(XRCID("dbg_stepin"), Frame::OnDebugCmdUI)
 	EVT_UPDATE_UI(XRCID("dbg_stepout"), Frame::OnDebugCmdUI)
 	EVT_UPDATE_UI(XRCID("dbg_next"), Frame::OnDebugCmdUI)
+	EVT_UPDATE_UI(XRCID("show_cursor"), Frame::OnDebugCmdUI)
 	EVT_UPDATE_UI(XRCID("save_file_as"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("build_active_project"), Frame::OnBuildProjectUI)
 	EVT_UPDATE_UI(XRCID("compile_active_file"), Frame::OnCompileFileUI)
@@ -281,7 +282,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("delete_breakpoint"), Frame::OnDebugManageBreakpointsUI)
 	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
 	EVT_UPDATE_UI(XRCID("close_file"), Frame::OnFileCloseUI)
-//	#endif
+
 
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
@@ -379,20 +380,20 @@ void Frame::Initialize(bool loadLastSession)
 	}
 
 	SetGccColourFunction( BuildTab::ColourGccLine );
-	
+
 	//update the build system to contain the number of CPUs
 	int cpus = wxThread::GetCPUCount();
-	if(cpus != wxNOT_FOUND) {
+	if (cpus != wxNOT_FOUND) {
 		//update the build system
 		BuildSystemPtr bs = BuildSettingsConfigST::Get()->GetBuildSystem(wxT("GNU makefile for g++/gcc"));
-		if( bs ) {
+		if ( bs ) {
 			wxString jobs;
 			jobs << cpus;
-			
-			if( bs->GetToolJobs() != jobs ) {
+
+			if ( bs->GetToolJobs() != jobs ) {
 				bs->SetToolJobs( jobs );
 				BuildSettingsConfigST::Get()->SetBuildSystem(bs);
-				
+
 				wxLogMessage(wxT("Info: setting number of concurrent builder jobs to ") + jobs);
 			}
 		}
@@ -721,6 +722,8 @@ void Frame::CreateToolbars24()
 	m_debuggerTb->AddTool(XRCID("stop_debugger"), wxT("Stop debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stop24")), wxT("Stop debugger"));
 	m_debuggerTb->AddTool(XRCID("pause_debugger"), wxT("Pause debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_pause24")), wxT("Pause debugger"));
 	m_debuggerTb->AddSeparator();
+	m_debuggerTb->AddTool(XRCID("show_cursor"), wxT("Show Current Line"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_green_right24")), wxT("Show Current Line"));
+	m_debuggerTb->AddSeparator();
 	m_debuggerTb->AddTool(XRCID("dbg_stepin"), wxT("Step Into"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepin24")), wxT("Step In"));
 	m_debuggerTb->AddTool(XRCID("dbg_next"), wxT("Next"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_next24")), wxT("Next"));
 	m_debuggerTb->AddTool(XRCID("dbg_stepout"), wxT("Step Out"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepout24")), wxT("Step Out"));
@@ -841,6 +844,8 @@ void Frame::CreateToolbars16()
 	m_debuggerTb->AddTool(XRCID("stop_debugger"), wxT("Stop debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stop16")), wxT("Stop debugger"));
 	m_debuggerTb->AddTool(XRCID("pause_debugger"), wxT("Pause debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_pause16")), wxT("Pause debugger"));
 	m_debuggerTb->AddSeparator();
+	m_debuggerTb->AddTool(XRCID("show_cursor"), wxT("Show Current Line"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_green_right16")), wxT("Show Current Line"));
+	m_debuggerTb->AddSeparator();
 	m_debuggerTb->AddTool(XRCID("dbg_stepin"), wxT("Step Into"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepin16")), wxT("Step In"));
 	m_debuggerTb->AddTool(XRCID("dbg_next"), wxT("Next"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_next16")), wxT("Next"));
 	m_debuggerTb->AddTool(XRCID("dbg_stepout"), wxT("Step Out"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepout16")), wxT("Step Out"));
@@ -947,10 +952,10 @@ void Frame::OnClose(wxCloseEvent& event)
 	ManagerST::Get()->KillProgram();
 	ManagerST::Get()->DbgStop();
 	SearchThreadST::Get()->StopSearch();
-	
-	//save the perspective 
+
+	//save the perspective
 	WriteFileUTF8(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"), m_mgr.SavePerspective());
-	
+
 //	EditorConfigST::Get()->SaveNotebookStyle(wxT("Editor"), GetNotebook()->GetWindowStyleFlag());
 //	EditorConfigST::Get()->SaveNotebookStyle(wxT("OutputPane"), m_outputPane->GetNotebook()->GetWindowStyleFlag());
 //	EditorConfigST::Get()->SaveNotebookStyle(wxT("DebuggerPane"), m_debuggerPane->GetNotebook()->GetWindowStyleFlag());
@@ -1198,10 +1203,10 @@ void Frame::OnFileClose(wxCommandEvent &event)
 	} else {
 		GetNotebook()->DeletePage((size_t) GetNotebook()->GetSelection());
 	}
-	
+
 	//this function does not send notification about page deletion, so we need to manually add the CppMenu()
 	AddCppMenu();
-	
+
 	GetOpenWindowsPane()->UpdateList();
 	GetMainBook()->Clear();
 }
@@ -1297,8 +1302,8 @@ void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 void Frame::ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete, bool &veto)
 {
 	veto = false;
-	if(index == Notebook::npos) return;
-	
+	if (index == Notebook::npos) return;
+
 	if ( editor->GetModify() ) {
 		// prompt user to save file
 		wxString msg;
@@ -1873,7 +1878,7 @@ void Frame::OnFileCloseAll(wxCommandEvent &event)
 	GetMainBook()->Clear();
 	GetOpenWindowsPane()->UpdateList();
 	GetWorkspacePane()->CollpaseAll();
-	
+
 	RemoveCppMenu();
 }
 
@@ -2186,16 +2191,16 @@ void Frame::CreateWelcomePage()
 
 	content.Replace(wxT("$(WorkspaceTable)"), workspaceTable);
 	content.Replace(wxT("$(FilesTable)"), filesTable);
-	
+
 	//replace the HTML colours with platfroms correct colours
 	wxColour active_caption 	= wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
 	wxColour active_caption_txt = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-	
+
 	active_caption = DrawingUtils::LightColour(active_caption, 50);
-	
+
 	content.Replace(wxT("$(ACTIVE_CAPTION)"), active_caption.GetAsString());
 	content.Replace(wxT("$(ACTIVE_CAPTION_TEXT)"), active_caption_txt.GetAsString());
-	
+
 	m_welcomePage->SetPage(content);
 	GetNotebook()->AddPage(m_welcomePage, wxT("Welcome!"), wxNullBitmap, true);
 }
@@ -2259,6 +2264,8 @@ void Frame::OnDebugCmd(wxCommandEvent &e)
 		cmd = DBG_STEPOUT;
 	} else if (e.GetId() == XRCID("dbg_next")) {
 		cmd = DBG_NEXT;
+	} else if (e.GetId() == XRCID("show_cursor")) {
+		cmd = DBG_SHOW_CURSOR;
 	}
 
 	if (cmd != wxNOT_FOUND) {
@@ -2271,7 +2278,8 @@ void Frame::OnDebugCmdUI(wxUpdateUIEvent &e)
 	if (e.GetId() == XRCID("pause_debugger") ||
 	        e.GetId() == XRCID("dbg_stepin") ||
 	        e.GetId() == XRCID("dbg_stepout") ||
-	        e.GetId() == XRCID("dbg_next") ) {
+	        e.GetId() == XRCID("dbg_next") ||
+	        e.GetId() == XRCID("show_cursor")) {
 		e.Enable(DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning());
 	}
 }
@@ -2401,16 +2409,16 @@ void Frame::LoadPlugins()
 	long loadIt(1);
 	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
 	if (loadIt) {
-		
+
 		//locate the layout file
 		wxString file_name(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"));
 		wxString pers(wxEmptyString);
-		
-		if(wxFileName(file_name).FileExists()) {
+
+		if (wxFileName(file_name).FileExists()) {
 			//load this file
-			ReadFileWithConversion(file_name, pers);	
+			ReadFileWithConversion(file_name, pers);
 		}
-		
+
 		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == SvnRevision) {
 			m_mgr.LoadPerspective(pers);
 		} else {
@@ -2820,16 +2828,16 @@ void Frame::ShowBuildConfigurationManager()
 void Frame::AddCppMenu()
 {
 	size_t selection = GetNotebook()->GetSelection();
-	if( selection == Notebook::npos ) {
+	if ( selection == Notebook::npos ) {
 		return;
 	}
-	
+
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(selection));
 	if ( !editor ) {
 		return;
 	}
-	
-	if(editor->GetContext()->GetName() != wxT("C++")){
+
+	if (editor->GetContext()->GetName() != wxT("C++")) {
 		return;
 	}
 
@@ -2852,12 +2860,12 @@ void Frame::RemoveCppMenu()
 void Frame::OnCppContextMenu(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-	
+
 	size_t selection = GetNotebook()->GetSelection();
-	if( selection == Notebook::npos ) {
+	if ( selection == Notebook::npos ) {
 		return;
 	}
-	
+
 	//get the active editor
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(selection));
 	if ( !editor ) {
@@ -2873,7 +2881,7 @@ void Frame::OnConfigureAccelerators(wxCommandEvent &e)
 //	wxString ll;
 //	ll << XRCID("add_include_file");
 //	wxMessageBox( ll );
-	
+
 	dlg->ShowModal();
 	dlg->Destroy();
 }

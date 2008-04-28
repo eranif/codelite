@@ -11,7 +11,8 @@ enum DebuggerCommands
 	DBG_PAUSE = 0,
 	DBG_NEXT,
 	DBG_STEPIN,
-	DBG_STEPOUT
+	DBG_STEPOUT,
+	DBG_SHOW_CURSOR
 };
 
 //-------------------------------------------------------

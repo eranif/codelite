@@ -1,4 +1,4 @@
-#include "precompiled_header.h" 
+#include "precompiled_header.h"
 #include "archive.h"
 #include "environmentconfig.h"
 #include "buidltab.h"
@@ -50,9 +50,9 @@
 #include "threadlistpanel.h"
 #include "plugin.h"
 #include "custom_notebook.h"
-// 
+//
 // The CodeLite manager class
-// 
+//
 //
 #if defined (__WXMSW__)
 static wxString CL_EXEC_WRAPPER = wxT("le_exec.exe ");
@@ -94,7 +94,7 @@ std::string GetCurrentFileName()
 /**
  * \brief strip accelerators and nemonics from given text
  * \param text
- * \return 
+ * \return
  */
 static wxString StripAccelAndNemonics(const wxString &text)
 {
@@ -107,10 +107,10 @@ static wxString StripAccelAndNemonics(const wxString &text)
 }
 
 /**
- * \brief remove any accelerator key from the menu text and return only 
- * the text including any nemonics 
+ * \brief remove any accelerator key from the menu text and return only
+ * the text including any nemonics
  * \param text
- * \return 
+ * \return
  */
 static wxString StripAccel(const wxString &text)
 {
@@ -2057,30 +2057,21 @@ void Manager::DbgDoSimpleCommand(int cmd)
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
 		switch (cmd) {
-		case DBG_NEXT: {
-			if (dbgr->IsRunning()) {
-				dbgr->Next();
-			}
-		}
-		break;
-		case DBG_STEPIN: {
-			if (dbgr->IsRunning()) {
-				dbgr->StepIn();
-			}
-		}
-		break;
-		case DBG_STEPOUT: {
-			if (dbgr->IsRunning()) {
-				dbgr->StepOut();
-			}
-		}
-		break;
-		case DBG_PAUSE: {
-			if (dbgr->IsRunning()) {
-				dbgr->Interrupt();
-			}
-		}
-		break;
+		case DBG_NEXT:
+			dbgr->Next();
+			break;
+		case DBG_STEPIN:
+			dbgr->StepIn();
+			break;
+		case DBG_STEPOUT:
+			dbgr->StepOut();
+			break;
+		case DBG_PAUSE:
+			dbgr->Interrupt();
+			break;
+		case DBG_SHOW_CURSOR:
+			dbgr->QueryFileLine();
+			break;
 		default:
 			break;
 		}
@@ -2578,7 +2569,7 @@ void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< w
 
 				wxString txt;
 				txt << StripAccel( item->GetText() );
-				
+
 				//set the new accelerator
 				if (item_data.accel.IsEmpty() == false) {
 					txt << wxT("\t") << item_data.accel;

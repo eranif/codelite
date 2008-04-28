@@ -12,4 +12,4 @@
 //((Singleton<MyClass>*)Eran)
 //Eran(dfd, dfdf, dfdf)
 //foo();
-(className, baseName)
+std::map<wxString, std::vector>

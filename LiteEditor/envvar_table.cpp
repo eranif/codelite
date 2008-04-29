@@ -45,12 +45,15 @@ EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent, int id, wxString title, wxPo
 	wxBoxSizer* bSizer13;
 	bSizer13 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonNew = new wxButton( this, wxID_ANY, wxT("New..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonNew = new wxButton( this, wxID_ANY, wxT("&New..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer13->Add( m_buttonNew, 0, wxALL, 5 );
 	
-	m_buttonDelete = new wxButton( this, wxID_ANY, wxT("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDelete = new wxButton( this, wxID_ANY, wxT("&Delete"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer13->Add( m_buttonDelete, 0, wxALL, 5 );
 	
+	m_editButton = new wxButton( this, wxID_ANY, wxT("&Edit"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer13->Add( m_editButton, 0, wxALL, 5 );
+
 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("&Close"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer13->Add( m_buttonCancel, 0, wxALL, 5 );
 	
@@ -59,6 +62,12 @@ EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent, int id, wxString title, wxPo
 	this->SetSizer( bSizer12 );
 	this->Layout();
 	
+	//select the first item in the list
+	if(m_listVarsTable->GetItemCount() > 0) {
+		m_listVarsTable->SetItemState(0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+		m_listVarsTable->SetItemState(0, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+	}
+
 	m_listVarsTable->SetFocus();
 	ConnectEvents();
 }
@@ -67,6 +76,7 @@ void EnvVarsTableDlg::ConnectEvents()
 {
 	ConnectButton(m_buttonDelete, EnvVarsTableDlg::OnDeleteVar);
 	ConnectButton(m_buttonNew, EnvVarsTableDlg::OnNewVar);
+	ConnectButton(m_editButton, EnvVarsTableDlg::OnEditVar)
 	ConnectListCtrlItemSelected(m_listVarsTable, EnvVarsTableDlg::OnItemSelected);
 	ConnectListCtrlItemActivated(m_listVarsTable, EnvVarsTableDlg::OnItemActivated);
 }

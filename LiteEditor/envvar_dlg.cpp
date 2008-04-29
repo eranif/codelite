@@ -70,4 +70,6 @@ EnvVarDlg::EnvVarDlg( wxWindow* parent, wxString name, wxString value, int id, w
 	
 	this->SetSizer( bSizer4 );
 	this->Layout();
+	
+	m_textName->SetFocus();
 }

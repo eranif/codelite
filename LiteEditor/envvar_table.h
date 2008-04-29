@@ -39,6 +39,7 @@ protected:
 	wxButton* m_buttonDelete;
 	wxButton* m_buttonCancel;
 	wxButton* m_buttonNew;
+	wxButton* m_editButton;
 	wxString m_selectedVarName;
 	wxString m_selectedVarValue;
 

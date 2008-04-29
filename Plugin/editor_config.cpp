@@ -1,3 +1,4 @@
+#include "dirsaver.h"
 #include "precompiled_header.h"
 #include "editor_config.h"
 #include <wx/xml/xml.h>
@@ -83,37 +84,16 @@ bool EditorConfig::Load()
 		}
 	}
 	
-	//load the main configuration file
+	// load the main configuration file
 	if (!m_doc->Load(m_fileName.GetFullPath())) {
 		return false;
 	}
 	
-	//make sure that the file name is set to .xml and not .default
+	// load CodeLite lexers
+	LoadLexers();
+	
+	// make sure that the file name is set to .xml and not .default
 	m_fileName.SetFullName(wxT("codelite.xml"));
-	
-	//when this function is called, the working directory is located at the
-	//startup directory
-	
-	//load all lexer configuration files
-	DirTraverser traverser(wxT("*.xml"));
-	wxDir dir(wxT("lexers/"));
-	dir.Traverse(traverser);
-
-	wxArrayString files = traverser.GetFiles();
-	m_lexers.clear();
-	for (size_t i=0; i<files.GetCount(); i++) {
-		
-		wxString fileToLoad( files.Item(i) );
-		
-		//try to locate a file with the same name but with the user extension
-		wxString userLexer( files.Item(i) + wxT("_") + wxGetUserName() );
-		if( wxFileName::FileExists( userLexer ) ) {
-			fileToLoad = userLexer;
-		}
-		
-		LexerConfPtr lexer(new LexerConf( fileToLoad ));
-		m_lexers[lexer->GetName()] = lexer;
-	}
 	return true;
 }
 
@@ -229,12 +209,6 @@ EditorConfig::ConstIterator EditorConfig::LexerEnd()
 EditorConfig::ConstIterator EditorConfig::LexerBegin()
 {
 	return m_lexers.begin();
-}
-
-void EditorConfig::SetLexer(LexerConfPtr lexer)
-{
-	m_lexers[lexer->GetName()] = lexer;
-	lexer->Save();
 }
 
 OptionsConfigPtr EditorConfig::GetOptions() const
@@ -442,4 +416,42 @@ void EditorConfig::SaveStringValue(const wxString &key, const wxString &value)
 	SimpleStringValue data;
 	data.SetValue(value);
 	WriteObject(key, &data);
+}
+
+void EditorConfig::LoadLexers()
+{
+	wxString theme = GetStringValue(wxT("LexerTheme"));
+	if(theme.IsEmpty()) {
+		theme = wxT("Default");
+		SaveStringValue(wxT("LexerTheme"), wxT("Default"));
+	}
+	
+	//when this function is called, the working directory is located at the
+	//startup directory
+	DirSaver ds;
+	wxSetWorkingDirectory(m_fileName.GetPath());
+	
+	wxString cwd = wxGetCwd();
+	
+	//load all lexer configuration files
+	DirTraverser traverser(wxT("*.xml"));
+	wxDir dir(cwd + wxT("/../lexers/") + theme + wxT("/"));
+	dir.Traverse(traverser);
+
+	wxArrayString files = traverser.GetFiles();
+	m_lexers.clear();
+	for (size_t i=0; i<files.GetCount(); i++) {
+		
+		wxString fileToLoad( files.Item(i) );
+		
+		//try to locate a file with the same name but with the user extension
+		wxFileName fn(files.Item(i));
+		wxString userLexer( fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) + fn.GetName() +  wxT(".") + wxGetUserName() + wxT("_xml"));
+		if( wxFileName::FileExists( userLexer ) ) {
+			fileToLoad = userLexer;
+		}
+		
+		LexerConfPtr lexer(new LexerConf( fileToLoad ));
+		m_lexers[lexer->GetName()] = lexer;
+	}
 }

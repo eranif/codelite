@@ -32,7 +32,7 @@ EVT_COLOURPICKER_CHANGED(wxID_ANY, LexerPage::OnColourChanged)
 END_EVENT_TABLE()
 
 LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos, wxSize size, int style ) 
-: wxPanel(parent, id, pos, size, style)
+: wxPanel(parent, id, pos, wxSize(1, 1), style)
 , m_lexer(lexer)
 , m_selection(0)
 {

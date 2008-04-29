@@ -119,7 +119,7 @@ void SimpleTable::OnDeleteWatch(wxCommandEvent &event)
 
 void SimpleTable::OnDeleteWatchUI(wxUpdateUIEvent &event)
 {
-	event.Enable(m_selectedId != wxNOT_FOUND );
+	event.Enable(m_selectedId != wxNOT_FOUND && m_listTable->GetItemCount()>0);
 }
 
 void SimpleTable::AddExpression(const wxString &expr)

@@ -66,6 +66,11 @@ class EditorConfig : public IConfigTool
 	wxXmlDocument* m_doc;
 	wxFileName m_fileName; 
 	std::map<wxString, LexerConfPtr> m_lexers;
+
+public:
+
+	//load lexers again, based on the active theme
+	void LoadLexers();
 	
 public:
 	typedef std::map<wxString, LexerConfPtr>::const_iterator ConstIterator;
@@ -93,11 +98,6 @@ public:
 	 * Return iterator to the end of the undelying lexer mapping
 	 */
 	ConstIterator LexerEnd();
-
-	/**
-	 * Set a lexer to the configuration file
-	 */
-	void SetLexer(LexerConfPtr lexer);
 
 	/**
 	 * Test if this configuration is loaded properly

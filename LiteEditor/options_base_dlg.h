@@ -43,6 +43,9 @@ class OptionsDlg : public wxDialog
 	void OnButtonOK( wxCommandEvent& event );
 	void OnButtonCancel( wxCommandEvent& event );
 	void OnButtonApply( wxCommandEvent& event );
+	void OnThemeChanged( wxCommandEvent &event);
+	
+	void LoadLexers(const wxString &theme);
 	
 protected:
 	wxNotebook* m_book;
@@ -73,6 +76,8 @@ protected:
 	wxChoice* m_iconSize;
 	wxCheckBox* m_checkBoxShowSplash;
 	CommentPage *m_commentPage;
+	wxChoice* m_themes;
+	wxString m_startingTheme;
 	
 private:
 	wxPanel *CreateSyntaxHighlightPage();

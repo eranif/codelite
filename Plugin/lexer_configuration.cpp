@@ -20,7 +20,7 @@ void LexerConf::Save()
 
 	if(m_doc.IsOk()){
 		//we never save to the default file, but rather we create our own copy of it
-		wxString userExt( wxT("xml_") + wxGetUserName());
+		wxString userExt( wxGetUserName() + wxT("_xml"));
 		if(m_fileName.GetExt() != userExt) {
 			m_fileName.SetExt( userExt );
 		}

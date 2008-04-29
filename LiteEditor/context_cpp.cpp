@@ -1876,7 +1876,6 @@ void ContextCpp::ApplySettings()
 	SetName(wxT("C++"));
 
 	// Set the key words and the lexer
-	std::list<StyleProperty> styles;
 	LexerConfPtr lexPtr;
 	// Read the configuration file
 	if (EditorConfigST::Get()->IsOk()) {
@@ -1891,47 +1890,8 @@ void ContextCpp::ApplySettings()
 	keyWords.Replace(wxT("\n"), wxT(" "));
 	keyWords.Replace(wxT("\r"), wxT(" "));
 	rCtrl.SetKeyWords(0, keyWords);
-	rCtrl.StyleClearAll();
-
-	styles = lexPtr->GetProperties();
-	std::list<StyleProperty>::iterator iter = styles.begin();
-	for (; iter != styles.end(); iter++) {
-		StyleProperty st = (*iter);
-		int size = st.GetFontSize();
-		wxString face = st.GetFaceName();
-		bool bold = st.IsBold();
-
-		if ( st.GetId() == -1 ) {
-			//fold margin foreground colour
-			rCtrl.SetFoldMarginColour(true, st.GetBgColour());
-			rCtrl.SetFoldMarginHiColour(true, st.GetFgColour());
-		} else {
-
-
-			wxFont font;
-			if (st.GetId() == wxSCI_STYLE_CALLTIP) {
-				font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-			} else {
-				font = wxFont(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
-			}
-
-			if (st.GetId() == 0) { //default
-				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
-				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
-				rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
-				rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
-				rCtrl.StyleSetBackground(wxSCI_STYLE_LINENUMBER, (*iter).GetBgColour());
-				rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
-				rCtrl.SetFoldMarginColour(true, (*iter).GetBgColour());
-				rCtrl.SetFoldMarginHiColour(true, (*iter).GetBgColour());
-			}
-
-			rCtrl.StyleSetFont(st.GetId(), font);
-			rCtrl.StyleSetSize(st.GetId(), (*iter).GetFontSize());
-			rCtrl.StyleSetForeground(st.GetId(), (*iter).GetFgColour());
-			rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
-		}
-	}
+	
+	DoApplySettings( lexPtr );
 
 	//create all images used by the cpp context
 	wxImage img;

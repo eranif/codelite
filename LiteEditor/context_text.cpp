@@ -60,51 +60,17 @@ void ContextText::ApplySettings()
 
 	// Set the key words and the lexer
 	wxString keyWords;
-	std::list<StyleProperty> styles;
-
+	LexerConfPtr lexPtr;
+	
 	// Read the configuration file
 	if (EditorConfigST::Get()->IsOk()) {
-		styles = EditorConfigST::Get()->GetLexer(wxT("Text"))->GetProperties();
+		lexPtr = EditorConfigST::Get()->GetLexer(wxT("Text"));
 	}
 
 	// Update the control
 	LEditor &rCtrl = GetCtrl();
 	rCtrl.SetLexer(wxSCI_LEX_NULL);
 	rCtrl.StyleClearAll();
-
-	std::list<StyleProperty>::iterator iter = styles.begin();
-	for (iter != styles.end(); iter != styles.end(); iter++) {
-		int size = (*iter).GetFontSize();
-		wxString face = (*iter).GetFaceName();
-		bool bold = (*iter).IsBold();
-
-		if ( (*iter).GetId() == -1 ) {
-			//fold margin foreground colour
-			rCtrl.SetFoldMarginColour(true, (*iter).GetBgColour());
-			rCtrl.SetFoldMarginHiColour(true, (*iter).GetFgColour());
-		} else {
-
-
-			wxFont font;
-			if ((*iter).GetId() == wxSCI_STYLE_CALLTIP) {
-				font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-			} else {
-				font = wxFont(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
-			}
-
-			if ((*iter).GetId() == 0) { //default
-				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
-				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
-				rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
-				rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
-				rCtrl.StyleSetBackground(wxSCI_STYLE_LINENUMBER, (*iter).GetBgColour());
-				rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
-			}
-
-			rCtrl.StyleSetFont((*iter).GetId(), font);
-			rCtrl.StyleSetSize((*iter).GetId(), (*iter).GetFontSize());
-			rCtrl.StyleSetForeground((*iter).GetId(), (*iter).GetFgColour());
-			rCtrl.StyleSetBackground((*iter).GetId(), (*iter).GetBgColour());
-		}
-	}
+	
+	DoApplySettings( lexPtr );
 }

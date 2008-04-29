@@ -5,6 +5,7 @@
 #include "wx/wxscintilla.h"
 #include "smart_ptr.h"
 #include "wx/filename.h"
+#include "lexer_configuration.h"
 
 class LEditor;
 
@@ -28,7 +29,7 @@ protected:
 
 protected:
 	void SetName(const wxString &name){m_name = name;}
-
+	void DoApplySettings(LexerConfPtr lexPtr);
 public:
 
 	// ctor-dtor

@@ -117,6 +117,7 @@
     <Property Id="126" Name="PHP HString Variable" Bold="yes" Face="" Colour="#FF8000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="127" Name="PHP Operator" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000080" Size="9"/>
     <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Size="9"/>
   </Properties>
 </Lexer>

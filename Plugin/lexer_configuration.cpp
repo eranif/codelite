@@ -1,3 +1,4 @@
+#include <wx/utils.h>
 #include "lexer_configuration.h"
 #include "xmlutils.h"
 #include "macros.h"
@@ -18,6 +19,12 @@ void LexerConf::Save()
 	m_doc.SetRoot(ToXml());
 
 	if(m_doc.IsOk()){
+		//we never save to the default file, but rather we create our own copy of it
+		wxString userExt( wxT("xml_") + wxGetUserName());
+		if(m_fileName.GetExt() != userExt) {
+			m_fileName.SetExt( userExt );
+		}
+		
 		m_doc.Save(m_fileName.GetFullPath());
 	}
 }

@@ -91,6 +91,9 @@ bool EditorConfig::Load()
 	//make sure that the file name is set to .xml and not .default
 	m_fileName.SetFullName(wxT("codelite.xml"));
 	
+	//when this function is called, the working directory is located at the
+	//startup directory
+	
 	//load all lexer configuration files
 	DirTraverser traverser(wxT("*.xml"));
 	wxDir dir(wxT("lexers/"));
@@ -99,7 +102,16 @@ bool EditorConfig::Load()
 	wxArrayString files = traverser.GetFiles();
 	m_lexers.clear();
 	for (size_t i=0; i<files.GetCount(); i++) {
-		LexerConfPtr lexer(new LexerConf(files.Item(i)));
+		
+		wxString fileToLoad( files.Item(i) );
+		
+		//try to locate a file with the same name but with the user extension
+		wxString userLexer( files.Item(i) + wxT("_") + wxGetUserName() );
+		if( wxFileName::FileExists( userLexer ) ) {
+			fileToLoad = userLexer;
+		}
+		
+		LexerConfPtr lexer(new LexerConf( fileToLoad ));
 		m_lexers[lexer->GetName()] = lexer;
 	}
 	return true;

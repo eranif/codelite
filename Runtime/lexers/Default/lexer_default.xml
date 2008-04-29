@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Lexer Name="Text" Id="1">
-  <KeyWords0></KeyWords0>
-  <KeyWords1></KeyWords1>
-  <KeyWords2></KeyWords2>
-  <KeyWords3></KeyWords3>
-  <KeyWords4></KeyWords4>
-  <Extensions></Extensions>
+  <KeyWords0/>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions/>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="9"/>
     <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="9"/>

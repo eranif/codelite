@@ -123,6 +123,8 @@ bool App::OnInit()
 		//Create the directory structure
 		wxMkDir(homeDir.ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/lexers/")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/lexers/Default")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/lexers/BlackTheme")).ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/rc/")).ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/images/")).ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/templates/")).ToAscii(), 0777);
@@ -145,6 +147,8 @@ bool App::OnInit()
 	//Create the directory structure
 	wxMkDir(homeDir.ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/lexers/")).ToAscii(), 0777);
+	wxMkDir((homeDir + wxT("/lexers/Default")).ToAscii(), 0777);
+	wxMkDir((homeDir + wxT("/lexers/BlackTheme")).ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/rc/")).ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/images/")).ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/templates/")).ToAscii(), 0777);
@@ -291,7 +295,8 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 		massCopy  (installPath + wxT("/templates/"), wxT("*.wizard"), destDir + wxT("/templates/"));
 		massCopy  (installPath + wxT("/templates/"), wxT("*.project"), destDir + wxT("/templates/"));
 		massCopy  (installPath + wxT("/templates/"), wxT("*.xml"), destDir + wxT("/templates/"));
-		massCopy  (installPath + wxT("/lexers/"), wxT("*.xml"), destDir + wxT("/lexers/"));
+		massCopy  (installPath + wxT("/lexers/Default/"), wxT("*.xml"), destDir + wxT("/lexers/Default"));
+		massCopy  (installPath + wxT("/lexers/BlackTheme/"), wxT("*.xml"), destDir + wxT("/lexers/BlackTheme"));
 		massCopy  (installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
 		massCopy  (installPath + wxT("/"), wxT("*.tags"), destDir + wxT("/"));
 		wxCopyFile(installPath + wxT("/config/build_settings.xml"), destDir + wxT("/config/build_settings.xml"));

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Lexer Name="Makefile" Id="11">
-  <KeyWords0></KeyWords0>
-  <KeyWords1></KeyWords1>
-  <KeyWords2></KeyWords2>
-  <KeyWords3></KeyWords3>
-  <KeyWords4></KeyWords4>
+  <KeyWords0/>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
   <Extensions>*.mk;makefile;Makefile;*.mak</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="#202020" BgColour="#FFFFFF" Size="9"/>

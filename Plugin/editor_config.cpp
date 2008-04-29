@@ -435,7 +435,16 @@ void EditorConfig::LoadLexers()
 	
 	//load all lexer configuration files
 	DirTraverser traverser(wxT("*.xml"));
-	wxDir dir(cwd + wxT("/../lexers/") + theme + wxT("/"));
+	wxString path_( cwd + wxT("/../lexers/") + theme + wxT("/") );
+	if(wxDir::Exists(path_) == false) {
+		//the directory does not exist
+		//fallback to 'Default'
+		theme = wxT("Default");
+		SaveStringValue(wxT("LexerTheme"), wxT("Default"));
+		path_ = cwd + wxT("/../lexers/") + theme + wxT("/");
+	}
+	
+	wxDir dir(path_);
 	dir.Traverse(traverser);
 
 	wxArrayString files = traverser.GetFiles();

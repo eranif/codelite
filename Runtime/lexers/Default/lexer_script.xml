@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Lexer Name="Script" Id="62">
   <KeyWords0>echo cp rm ls chmod if then fi done touch for in do while switch else cd pwd  cat mkdir rmdir grep awk print printf xargs find mv gzip tar bzip zip gunzip</KeyWords0>
-  <KeyWords1></KeyWords1>
-  <KeyWords2></KeyWords2>
-  <KeyWords3></KeyWords3>
-  <KeyWords4></KeyWords4>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
   <Extensions>*.bash;*.sh;.tcsh;.bashrc;*.ksh;configure</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>

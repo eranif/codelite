@@ -7,7 +7,7 @@
   <KeyWords4>and array as bool boolean break case cfunction class const continue declare                              default die directory do double echo else elseif empty enddeclare endfor                              endforeach endif endswitch endwhile eval exit extends false float for                              foreach function global if include include_once int integer isset list new                              null object old_function or parent print real require require_once resource                              return static stdclass string switch true unset use var while xor __class__                              __file__ __function__ __line__ __sleep __wakeup</KeyWords4>
   <Extensions>*.htm;*.html;*.xhtml;*.phtml;*.js;*.php;*.php3;*.inc</Extensions>
   <Properties>
-    <Property Id="0" Name="HTML Default" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="1" Name="HTML Tag" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="10"/>
     <Property Id="2" Name="HTML Unknown tag" Bold="yes" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="3" Name="HTML Attribute Name" Bold="yes" Face="" Colour="#408080" BgColour="#FFFFFF" Size="10"/>
@@ -116,5 +116,7 @@
     <Property Id="125" Name="PHP single line Comment" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="126" Name="PHP HString Variable" Bold="yes" Face="" Colour="#FF8000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="127" Name="PHP Operator" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Size="9"/>
   </Properties>
 </Lexer>

@@ -597,7 +597,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord)
 
 	if (at < 0) at = 0;
 	wxString expr = rCtrl.GetTextRange(at, pos);
-	
+
 	//remove comments from it
 	CppScanner sc;
 	sc.SetText(_C(expr));
@@ -1665,10 +1665,10 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 	for ( size_t i=0; i < vproto.size() ; i++ ) {
 		TagEntryPtr tag = vproto.at(i);
 		wxString key = tag->GetName();
-		
+
 		//override the scope to be our scope...
 		tag->SetScope( scopeName );
-		
+
 		key << TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature() );
 		protos[key] = tag;
 	}
@@ -1701,7 +1701,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 
 	wxString targetFile;
 	FindSwappedFile(rCtrl.GetFileName(), targetFile);
-	
+
 	//if no swapped file is found, use the current file
 	if (targetFile.IsEmpty()) {
 		targetFile = rCtrl.GetFileName().GetFullPath();
@@ -1901,28 +1901,36 @@ void ContextCpp::ApplySettings()
 		wxString face = st.GetFaceName();
 		bool bold = st.IsBold();
 
-		wxFont font;
-		if (st.GetId() == wxSCI_STYLE_CALLTIP) {
-			font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+		if ( st.GetId() == -1 ) {
+			//fold margin foreground colour
+			rCtrl.SetFoldMarginColour(true, st.GetBgColour());
+			rCtrl.SetFoldMarginHiColour(true, st.GetFgColour());
 		} else {
-			font = wxFont(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
-		}
 
-		if (st.GetId() == 0) { //default
-			rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
-			rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
-			rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
-			rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
-			rCtrl.StyleSetBackground(wxSCI_STYLE_LINENUMBER, (*iter).GetBgColour());
-			rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
-			rCtrl.SetFoldMarginColour(true, (*iter).GetBgColour());
-			rCtrl.SetFoldMarginHiColour(true, (*iter).GetBgColour());
-		}
 
-		rCtrl.StyleSetFont(st.GetId(), font);
-		rCtrl.StyleSetSize(st.GetId(), (*iter).GetFontSize());
-		rCtrl.StyleSetForeground(st.GetId(), (*iter).GetFgColour());
-		rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
+			wxFont font;
+			if (st.GetId() == wxSCI_STYLE_CALLTIP) {
+				font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+			} else {
+				font = wxFont(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
+			}
+
+			if (st.GetId() == 0) { //default
+				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
+				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
+				rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
+				rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
+				rCtrl.StyleSetBackground(wxSCI_STYLE_LINENUMBER, (*iter).GetBgColour());
+				rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
+				rCtrl.SetFoldMarginColour(true, (*iter).GetBgColour());
+				rCtrl.SetFoldMarginHiColour(true, (*iter).GetBgColour());
+			}
+
+			rCtrl.StyleSetFont(st.GetId(), font);
+			rCtrl.StyleSetSize(st.GetId(), (*iter).GetFontSize());
+			rCtrl.StyleSetForeground(st.GetId(), (*iter).GetFgColour());
+			rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
+		}
 	}
 
 	//create all images used by the cpp context

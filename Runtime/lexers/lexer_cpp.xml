@@ -7,7 +7,7 @@
   <KeyWords4></KeyWords4>
   <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Face="" Colour="medium blue" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#0080C0" BgColour="#FFFFFF" Size="9"/>
     <Property Id="2" Name="C++ comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Size="9"/>
     <Property Id="3" Name="C style comment" Bold="no" Face="" Colour="#3978C6" BgColour="#FFFFFF" Size="9"/>
@@ -26,6 +26,8 @@
     <Property Id="16" Name="Workspace tags" Bold="yes" Face="" Colour="#800080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="19" Name="Local variables" Bold="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="9"/>
     <Property Id="20" Name="Disabled Code" Bold="no" Face="" Colour="grey" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="9"/>
     <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Size="9"/>
     <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#FF0000" Size="9"/>
   </Properties>

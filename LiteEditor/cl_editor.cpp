@@ -219,7 +219,7 @@ void LEditor::SetProperties()
 
 	int ww = options->GetDisplayFoldMargin() ? 16 : 0;
 	SetMarginWidth(FOLD_MARGIN_ID, ww);	// Fold margin
-	StyleSetForeground(wxSCI_STYLE_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+//	StyleSetForeground(wxSCI_STYLE_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
 
 	// Mark fold margin & symbols margins as sensetive
 	SetMarginSensitive(FOLD_MARGIN_ID, true);
@@ -293,11 +293,6 @@ void LEditor::SetProperties()
 	MarkerSetBackground(0x9, wxT("LIME GREEN"));
 	MarkerSetForeground(0x9, wxT("BLACK"));
 
-	// calltip settings
-	/*	CallTipUseStyle(1);
-		wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-		StyleSetFont(wxSCI_STYLE_CALLTIP, font);*/
-
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 
@@ -322,10 +317,7 @@ void LEditor::SetProperties()
 	//if no right click menu is provided by the context, use scintilla default
 	//right click menu
 	UsePopUp(m_rightClickMenu ? false : true);
-	StyleSetForeground(wxSCI_STYLE_LINENUMBER, wxColour(0, 63, 125));
 	SetIndentationGuides(options->GetShowIndentationGuidelines());
-
-	SetFoldMarginColour (true, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 }
 
 void LEditor::SetDirty(bool dirty)

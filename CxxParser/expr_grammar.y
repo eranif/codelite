@@ -99,7 +99,7 @@ primary_expr		:	{result.Reset();} simple_expr
 						| 	error { 
 								yyclearin;	//clear lookahead token
 								yyerrok;
-								//fprintf(stderr, "CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_expr_text, cl_expr_lineno);
+								fprintf(stderr, "CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_expr_text, cl_expr_lineno);
 								//fflush(stderr);
 								expr_syncParser();
 						}
@@ -113,7 +113,7 @@ basic_type_name:
         LE_INT			{ $$ = $1; }
         | LE_CHAR		{ $$ = $1; }
         | LE_SHORT		{ $$ = $1; }
-        | LE_LONG		{ $$ = $1; }
+        | LE_LONG		{ $$ = $1; } 
         | LE_FLOAT		{ $$ = $1; }
         | LE_DOUBLE		{ $$ = $1; }
         | LE_SIGNED		{ $$ = $1; }
@@ -125,6 +125,7 @@ parameter_list	: /* empty */		{$$ = "";}
 				| template_parameter	{$$ = $1;}
 				| parameter_list ',' template_parameter {$$ = $1 + $2 + $3;}
 				;
+
 
 template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp 
 						{$$ = $1 + " " + $2 + " " + $3 +$4;}
@@ -182,15 +183,6 @@ simple_expr	:	stmnt_starter special_cast '<' cast_type '>' '('
 						result.m_isThis = false;
 						//result.Print();
 					}
-				| 	stmnt_starter '(' '(' cast_type ')' special_star_amp identifier_name ')'
-					{
-						$$ = $4;
-						result.m_isaType = true;
-						result.m_name = $$;
-						result.m_isFunc = false;
-						result.m_isThis = false;
-						//result.Print();
-					}
 				| stmnt_starter nested_scope_specifier identifier_name optional_template_init_list  optinal_postifx
 					{
 						result.m_isaType = false;
@@ -202,6 +194,17 @@ simple_expr	:	stmnt_starter special_cast '<' cast_type '>' '('
 						result.m_templateInitList = $4;
 						//result.Print();
 					}
+					
+				| 	stmnt_starter '(' '(' cast_type ')' special_star_amp identifier_name ')'
+					{
+						$$ = $4;
+						result.m_isaType = true;
+						result.m_name = $$;
+						result.m_isFunc = false;
+						result.m_isThis = false;
+						//result.Print();
+					}
+				
 				;
 
 identifier_name	:	LE_IDENTIFIER array_brackets {$$ = $1;}

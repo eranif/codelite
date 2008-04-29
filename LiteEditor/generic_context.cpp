@@ -67,17 +67,17 @@ void ContextGeneric::ApplySettings()
 	// Update the control
 	LEditor &rCtrl = GetCtrl();
 	rCtrl.SetLexer(lexPtr->GetLexerId());
-	
+
 	for (int i = 0; i <= 4; ++i) {
 		wxString keyWords = lexPtr->GetKeyWords(i);
 		keyWords.Replace(wxT("\n"), wxT(" "));
 		keyWords.Replace(wxT("\r"), wxT(" "));
 		rCtrl.SetKeyWords(i, keyWords);
 	}
-	
+
 	rCtrl.StyleClearAll();
 	rCtrl.SetStyleBits(rCtrl.GetStyleBitsNeeded());
-	
+
 
 	styles = lexPtr->GetProperties();
 	std::list<StyleProperty>::iterator iter = styles.begin();
@@ -87,21 +87,28 @@ void ContextGeneric::ApplySettings()
 		wxString face = st.GetFaceName();
 		bool bold = st.IsBold();
 
-		wxFont font(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
+		if ( st.GetId() == -1 ) {
+			//fold margin foreground colour
+			rCtrl.SetFoldMarginColour(true, st.GetBgColour());
+			rCtrl.SetFoldMarginHiColour(true, st.GetFgColour());
+		} else {
 
-		if (st.GetId() == 0) { //default
-			rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
-			rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
-			rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
-			rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
-			rCtrl.StyleSetBackground(wxSCI_STYLE_LINENUMBER, (*iter).GetBgColour());
-			rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
+			wxFont font(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
+
+			if (st.GetId() == 0) { //default
+				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
+				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
+				rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
+				rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
+				rCtrl.StyleSetBackground(wxSCI_STYLE_LINENUMBER, (*iter).GetBgColour());
+				rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
+			}
+
+			rCtrl.StyleSetFont(st.GetId(), font);
+			rCtrl.StyleSetSize(st.GetId(), (*iter).GetFontSize());
+			rCtrl.StyleSetForeground(st.GetId(), (*iter).GetFgColour());
+			rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
 		}
-
-		rCtrl.StyleSetFont(st.GetId(), font);
-		rCtrl.StyleSetSize(st.GetId(), (*iter).GetFontSize());
-		rCtrl.StyleSetForeground(st.GetId(), (*iter).GetFgColour());
-		rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
 	}
 }
 

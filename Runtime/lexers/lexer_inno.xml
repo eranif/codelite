@@ -7,7 +7,7 @@
   <KeyWords4>  begin break case const continue do downto else end except finally for function   if of procedure repeat then to try until uses var while with   </KeyWords4>
   <Extensions>*.iss</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Size="9"/>
     <Property Id="2" Name="Keyword" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="9"/>
     <Property Id="3" Name="Parameter" Bold="no" Face="" Colour="#800040" BgColour="#FFFFFF" Size="9"/>
@@ -19,6 +19,8 @@
     <Property Id="9" Name="User defined keyword" Bold="no" Face="" Colour="#800080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="10" Name="Double quoted string" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="11" Name="Single quoted string" Bold="no" Face="" Colour="#800000" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#000000" BgColour="#8BBF86" Size="9"/>
     <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#000000" BgColour="#FF0000" Size="9"/>
   </Properties>

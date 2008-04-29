@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexer Name="C++" Id="3">
+  <KeyWords0>and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast continue default delete        do double dynamic_cast else enum explicit export extern false float for friend goto if inline int long mutable namespace        new not not_eq operator or or_eq private protected public register reinterpret_cast return short signed Sizeof static        static_cast struct switch template this throw true try typedef typeid typename union unsigned using virtual void volatile        wchar_t while xor xor_eq</KeyWords0>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="C++ comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="C style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="5" Name="C++ keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="6" Name="String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="7" Name="Character" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="9"/>
+    <Property Id="8" Name="Uuid" Bold="no" Face="" Colour="#8000FF" BgColour="#000000" Size="9"/>
+    <Property Id="9" Name="Preprocessor" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="9"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="12" Name="Open string" Bold="no" Face="" Colour="#800000" BgColour="#000000" Size="9"/>
+    <Property Id="15" Name="Doxygen C++ comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="17" Name="Doxygen keyword" Bold="no" Face="" Colour="#8080FF" BgColour="#000000" Size="9"/>
+    <Property Id="18" Name="Doxygen keyword error" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="16" Name="Workspace tags" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="19" Name="Local variables" Bold="no" Face="" Colour="#804000" BgColour="#000000" Size="9"/>
+    <Property Id="20" Name="Disabled Code" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#000000" Size="9"/>
+  </Properties>
+</Lexer>

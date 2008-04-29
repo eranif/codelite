@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lexer Name="Lua" Id="15">
+  <KeyWords0>if elseif else then end do while nil true false in for and or function local not repeat return until</KeyWords0>
+  <KeyWords1/>
+  <KeyWords2/>
+  <KeyWords3/>
+  <KeyWords4/>
+  <Extensions>*.lua;*.h2x;</Extensions>
+  <Properties>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#008040" BgColour="white" Size="9"/>
+    <Property Id="2" Name="Comment Line" Bold="no" Face="" Colour="#008000" BgColour="white" Size="9"/>
+    <Property Id="3" Name="Comment Doc" Bold="no" Face="" Colour="#004080" BgColour="white" Size="9"/>
+    <Property Id="4" Name="Number" Bold="no" Face="" Colour="#FF00FF" BgColour="white" Size="9"/>
+    <Property Id="5" Name="Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="white" Size="9"/>
+    <Property Id="6" Name="String" Bold="no" Face="" Colour="#FF8000" BgColour="white" Size="9"/>
+    <Property Id="7" Name="Character" Bold="no" Face="" Colour="#FF8040" BgColour="white" Size="9"/>
+    <Property Id="8" Name="String Literal" Bold="no" Face="" Colour="#FF8000" BgColour="white" Size="9"/>
+    <Property Id="9" Name="Preprocessor" Bold="no" Face="" Colour="#804040" BgColour="white" Size="9"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#808080" BgColour="white" Size="9"/>
+    <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#000000" BgColour="white" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000080" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="32" Name="Default" Bold="no" Face="" Colour="#000000" BgColour="white" Size="9"/>
+  </Properties>
+</Lexer>

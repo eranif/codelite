@@ -56,7 +56,8 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_CONTEXT_MENU(LEditor::OnContextMenu)
 	EVT_KEY_DOWN(LEditor::OnKeyDown)
 	EVT_LEFT_DOWN(LEditor::OnLeftDown)
-
+//	EVT_SCI_START_DRAG(wxID_ANY, LEditor::OnDragStart)
+//	EVT_SCI_DRAG_OVER(wxID_ANY, LEditor::OnDragEnd)
 	//C++ contex menu update UI events
 	EVT_UPDATE_UI(XRCID("insert_doxy_comment"), LEditor::OnPopupMenuUpdateUI)
 	EVT_UPDATE_UI(XRCID("setters_getters"), LEditor::OnPopupMenuUpdateUI)
@@ -110,7 +111,7 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 	if (	!tmpFilename.IsEmpty() ) {
 		OpenFile(m_fileName.GetFullPath(), m_project);
 	}
-	SetDropTarget(new FileDropTarget());
+//	SetDropTarget(new FileDropTarget());
 	RestoreDefaults();
 }
 
@@ -1708,3 +1709,18 @@ int LEditor::SafeGetChar(int pos)
 	}
 	return GetCharAt(pos);
 }
+
+void LEditor::OnDragEnd(wxScintillaEvent& e)
+{
+//	wxUnusedVar(e);
+//	wxLogMessage(wxT("OnDragEnd"));
+	e.Skip();
+}
+
+void LEditor::OnDragStart(wxScintillaEvent& e)
+{
+//	wxUnusedVar(e);
+//	wxLogMessage(wxT("OnDragStart"));
+	e.Skip();
+}
+

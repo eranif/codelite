@@ -191,15 +191,6 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 	m_caretLineColourPicker = new wxColourPickerCtrl(m_general, wxID_ANY, options->GetCaretLineColour(), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
 	hsizer->Add(m_caretLineColourPicker, 0, wxALL|wxEXPAND, 5);
 	bszier->Add( hsizer, 0, wxEXPAND);
-
-	hsizer = new wxBoxSizer(wxHORIZONTAL);
-	txt = new wxStaticText(m_general, wxID_ANY, wxT("Select the caret forground colour:"));
-	hsizer->Add(txt, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL, 5);
-
-	m_caretColourPicker = new wxColourPickerCtrl(m_general, wxID_ANY, options->GetCaretColour(), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
-	hsizer->Add(m_caretColourPicker, 0, wxALL|wxEXPAND, 5);
-	bszier->Add( hsizer, 0, wxEXPAND);
-
 	vSz1->Add( bszier, 0, wxEXPAND, 5 );
 
 	m_general->SetSizer( vSz1 );
@@ -275,7 +266,6 @@ void OptionsDlg::SaveChanges()
 	options->SetDisplayLineNumbers( m_displayLineNumbers->IsChecked() );
 	options->SetShowIndentationGuidelines( m_showIndentationGuideLines->IsChecked() );
 	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
-	options->SetCaretColour(m_caretColourPicker->GetColour());
 	options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
 
 	int iconSize(24);

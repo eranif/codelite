@@ -53,7 +53,8 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 		int size = st.GetFontSize();
 		wxString face = st.GetFaceName();
 		bool bold = st.IsBold();
-
+		
+		// handle special cases
 		if ( st.GetId() == -1 ) {
 			// fold margin foreground colour
 			rCtrl.SetFoldMarginColour(true, st.GetBgColour());
@@ -62,9 +63,10 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 			// selection colour
 			rCtrl.SetSelForeground(true, st.GetFgColour());
 			rCtrl.SetSelBackground(true, st.GetBgColour());
+		} else if( st.GetId() == -3 ) {
+			// caret colour
+			rCtrl.SetCaretForeground(st.GetFgColour());
 		} else {
-
-
 			wxFont font;
 			if (st.GetId() == wxSCI_STYLE_CALLTIP) {
 				font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

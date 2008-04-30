@@ -208,9 +208,6 @@ void LEditor::SetProperties()
 	// allow everything except for the folding symbols
 	SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSCI_MASK_FOLDERS));
 
-	//sets the caret colour
-	SetCaretForeground(options->GetCaretColour());
-
 	// Line number margin
 	int pixelWidth = 4 + 5*TextWidth(wxSCI_STYLE_LINENUMBER, wxT("9"));
 	SetMarginWidth(NUMBER_MARGIN_ID, options->GetDisplayLineNumbers() ? pixelWidth : 0);

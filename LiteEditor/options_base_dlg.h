@@ -63,7 +63,6 @@ protected:
 	wxStaticText* m_staticText5;
 	wxColourPickerCtrl* m_fgColourPicker;
 	wxColourPickerCtrl* m_caretLineColourPicker;
-	wxColourPickerCtrl* m_caretColourPicker;
 	wxCheckBox* m_highlighyCaretLine;
 	wxCheckBox* m_displayLineNumbers;
 	wxCheckBox* m_showIndentationGuideLines;

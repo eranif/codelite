@@ -12,14 +12,14 @@
     <Property Id="2" Name="Comment" Bold="no" Face="" Colour="#008080" BgColour="white" Size="9"/>
     <Property Id="3" Name="POD" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
     <Property Id="4" Name="Number" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="5" Name="Word" Bold="no" Face="" Colour="#FF8000" BgColour="white" Size="9"/>
+    <Property Id="5" Name="Keyword" Bold="no" Face="" Colour="#FF8000" BgColour="white" Size="9"/>
     <Property Id="6" Name="String" Bold="no" Face="" Colour="#800000" BgColour="white" Size="9"/>
     <Property Id="7" Name="Char" Bold="no" Face="" Colour="#800000" BgColour="white" Size="9"/>
     <Property Id="8" Name="Punctuation" Bold="no" Face="" Colour="#FF8000" BgColour="white" Size="9"/>
     <Property Id="9" Name="Preprocessor" Bold="no" Face="" Colour="#FF0000" BgColour="white" Size="9"/>
     <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#FF0000" BgColour="white" Size="9"/>
     <Property Id="11" Name="Idientifier" Bold="no" Face="" Colour="#0000FF" BgColour="white" Size="9"/>
-    <Property Id="12" Name="Word" Bold="no" Face="" Colour="#0000FF" BgColour="white" Size="9"/>
+    <Property Id="12" Name="Scalar" Bold="no" Face="" Colour="#0000FF" BgColour="white" Size="9"/>
     <Property Id="13" Name="Array" Bold="no" Face="" Colour="#0000FF" BgColour="white" Size="9"/>
     <Property Id="14" Name="Hash" Bold="no" Face="" Colour="#0000FF" BgColour="white" Size="9"/>
     <Property Id="15" Name="SymbolTable" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>

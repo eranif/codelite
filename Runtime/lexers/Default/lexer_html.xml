@@ -7,20 +7,24 @@
   <KeyWords4>and array as bool boolean break case cfunction class const continue declare                              default die directory do double echo else elseif empty enddeclare endfor                              endforeach endif endswitch endwhile eval exit extends false float for                              foreach function global if include include_once int integer isset list new                              null object old_function or parent print real require require_once resource                              return static stdclass string switch true unset use var while xor __class__                              __file__ __function__ __line__ __sleep __wakeup</KeyWords4>
   <Extensions>*.htm;*.html;*.xhtml;*.phtml;*.js;*.php;*.php3;*.inc</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
-    <Property Id="1" Name="HTML Tag" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="2" Name="HTML Unknown tag" Bold="yes" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="3" Name="HTML Attribute Name" Bold="yes" Face="" Colour="#408080" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="4" Name="HTML Unknown attribute" Bold="yes" Face="" Colour="#408080" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="5" Name="HTML Attribute value" Bold="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="6" Name="HTML Attribute value" Bold="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="7" Name="HTML Attribute value" Bold="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="8" Name="HTML Attribute value" Bold="no" Face="" Colour="#804040" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="9" Name="HTML Comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="10" Name="HTML Entity" Bold="yes" Face="" Colour="#FF8000" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="11" Name="HTML Tag end" Bold="no" Face="" Colour="#808000" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="12" Name="XML Start" Bold="no" Face="" Colour="#0080FF" BgColour="#FFFFFF" Size="10"/>
-    <Property Id="13" Name="XML End" Bold="no" Face="" Colour="#0080FF" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="32" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="0" Name="Whitespace" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="1" Name="Tags" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="2" Name="Unknown tags" Bold="yes" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="3" Name="Attributes" Bold="yes" Face="" Colour="#408080" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="4" Name="Unknown attributes" Bold="yes" Face="" Colour="#408080" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="5" Name="Numbers" Bold="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="6" Name="Double quoted Strings" Bold="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="7" Name="Single quoted Strings" Bold="no" Face="" Colour="#804000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="8" Name="Other inside tag" Bold="no" Face="" Colour="#804040" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="9" Name="Comment" Bold="no" Face="" Colour="#008000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="10" Name="Entities" Bold="yes" Face="" Colour="#FF8000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="11" Name="XML style tag ends /&gt;" Bold="no" Face="" Colour="#808000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="12" Name="XML identifier start &lt; ?" Bold="no" Face="" Colour="#0080FF" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="13" Name="XML identifier end ?&gt;" Bold="no" Face="" Colour="#0080FF" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="14" Name="Script" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="15" Name="ASP &lt;% ... %&gt;" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
+    <Property Id="16" Name="ASP &lt;% ... %&gt;" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="17" Name="CDATA Section" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="10"/>
     <Property Id="18" Name="PHP/Unknown Section Block" Bold="no" Face="" Colour="#800080" BgColour="#FFFFFF" Size="10"/>
     <Property Id="19" Name="Unquoted values" Bold="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="10"/>

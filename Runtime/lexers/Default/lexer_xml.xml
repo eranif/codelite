@@ -7,7 +7,8 @@
   <KeyWords4/>
   <Extensions>*.xml;*xrc;*.project;*.workspace;*.plist</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="32" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="0" Name="Whitespace" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="1" Name="Tags" Bold="no" Face="" Colour="#004080" BgColour="white" Size="9"/>
     <Property Id="2" Name="Unknown Tags" Bold="no" Face="" Colour="#FF0000" BgColour="white" Size="9"/>
     <Property Id="3" Name="Attributes" Bold="no" Face="" Colour="#408080" BgColour="white" Size="9"/>
@@ -18,8 +19,8 @@
     <Property Id="8" Name="Other inside tag" Bold="no" Face="" Colour="#000000" BgColour="white" Size="9"/>
     <Property Id="9" Name="Comment" Bold="no" Face="" Colour="#008000" BgColour="white" Size="9"/>
     <Property Id="10" Name="Entities" Bold="no" Face="" Colour="#FF8000" BgColour="white" Size="9"/>
-    <Property Id="11" Name="XML style tag ends " Bold="no" Face="" Colour="#000000" BgColour="white" Size="9"/>
-    <Property Id="12" Name="XML identifier start " Bold="no" Face="" Colour="#FF8080" BgColour="white" Size="9"/>
+    <Property Id="11" Name="XML style tag ends /&gt;" Bold="no" Face="" Colour="#000000" BgColour="white" Size="9"/>
+    <Property Id="12" Name="XML identifier start &lt; ?" Bold="no" Face="" Colour="#FF8080" BgColour="white" Size="9"/>
     <Property Id="13" Name="XML identifier end '?&gt;'" Bold="no" Face="" Colour="#FF8080" BgColour="white" Size="9"/>
     <Property Id="14" Name="CDATA" Bold="no" Face="" Colour="#800000" BgColour="white" Size="9"/>
     <Property Id="15" Name="Question" Bold="no" Face="" Colour="#0000FF" BgColour="white" Size="9"/>

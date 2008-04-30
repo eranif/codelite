@@ -5,7 +5,7 @@
   <KeyWords2/>
   <KeyWords3/>
   <KeyWords4/>
-  <Extensions>*.mk;makefile;Makefile;*.mak</Extensions>
+  <Extensions>*.mk;makefile;Makefile;*.mak;*.make</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="#202020" BgColour="#FFFFFF" Size="9"/>
     <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#008000" BgColour="white" Size="9"/>

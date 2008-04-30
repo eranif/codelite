@@ -7,43 +7,43 @@
   <KeyWords4/>
   <Extensions>*.pl;*.pm</Extensions>
   <Properties>
-    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
-    <Property Id="1" Name="Perl Error" Bold="no" Face="" Colour="#004080" BgColour="white" Size="9"/>
-    <Property Id="2" Name="Comment" Bold="no" Face="" Colour="#008080" BgColour="white" Size="9"/>
-    <Property Id="3" Name="POD" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="4" Name="Number" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="5" Name="Word" Bold="no" Face="" Colour="#FF8000" BgColour="white" Size="9"/>
-    <Property Id="6" Name="String" Bold="no" Face="" Colour="#800000" BgColour="white" Size="9"/>
-    <Property Id="7" Name="Char" Bold="no" Face="" Colour="#800000" BgColour="white" Size="9"/>
-    <Property Id="8" Name="Punctuation" Bold="no" Face="" Colour="#FF8000" BgColour="white" Size="9"/>
-    <Property Id="9" Name="Preprocessor" Bold="no" Face="" Colour="#FF0000" BgColour="white" Size="9"/>
-    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#FF0000" BgColour="white" Size="9"/>
-    <Property Id="11" Name="Idientifier" Bold="no" Face="" Colour="#0000FF" BgColour="white" Size="9"/>
-    <Property Id="12" Name="Word" Bold="no" Face="" Colour="#0000FF" BgColour="white" Size="9"/>
-    <Property Id="13" Name="Array" Bold="no" Face="" Colour="#0000FF" BgColour="white" Size="9"/>
-    <Property Id="14" Name="Hash" Bold="no" Face="" Colour="#0000FF" BgColour="white" Size="9"/>
-    <Property Id="15" Name="SymbolTable" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="16" Name="VariableIndexer" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="17" Name="Regex" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="18" Name="RegSubst" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="19" Name="LongQuote" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="20" Name="BackTicks" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="21" Name="DataSection" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="22" Name="HereDelim" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="23" Name="HereQ" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="24" Name="HereQQ" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="25" Name="HereQX" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="26" Name="StringQ" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="27" Name="StringQQ" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="28" Name="StringQX" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="29" Name="StringQR" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="30" Name="StringQW" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="31" Name="PODVerb" Bold="no" Face="" Colour="#800080" BgColour="white" Size="9"/>
-    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="9"/>
-    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000080" Size="9"/>
-    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="9"/>
-    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Size="9"/>
-    <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="black" BgColour="white" Size="9"/>
-    <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Size="9"/>
+    <Property Id="0" Name="Default" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Perl Error" Bold="no" Face="" Colour="#FF0000" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="POD" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="4" Name="Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="5" Name="Keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
+    <Property Id="6" Name="String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="7" Name="Char" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="9"/>
+    <Property Id="8" Name="Punctuation" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="9" Name="Preprocessor" Bold="no" Face="" Colour="#804040" BgColour="#000000" Size="9"/>
+    <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
+    <Property Id="11" Name="Idientifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="12" Name="Scalar" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="13" Name="Array" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="14" Name="Hash" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
+    <Property Id="15" Name="SymbolTable" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="16" Name="VariableIndexer" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
+    <Property Id="17" Name="Regex" Bold="no" Face="" Colour="#8000FF" BgColour="#000000" Size="9"/>
+    <Property Id="18" Name="RegSubst" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="19" Name="LongQuote" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="20" Name="BackTicks" Bold="no" Face="" Colour="#808000" BgColour="#000000" Size="9"/>
+    <Property Id="21" Name="DataSection" Bold="no" Face="" Colour="#8080FF" BgColour="#000000" Size="9"/>
+    <Property Id="22" Name="HereDelim" Bold="no" Face="" Colour="#FF8040" BgColour="#000000" Size="9"/>
+    <Property Id="23" Name="HereQ" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="24" Name="HereQQ" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="25" Name="HereQX" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="26" Name="StringQ" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="27" Name="StringQQ" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="28" Name="StringQX" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="29" Name="StringQR" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="30" Name="StringQW" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
+    <Property Id="31" Name="PODVerb" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
+    <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#202020" BgColour="#202020" Size="9"/>
+    <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#0000FF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
+    <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
+    <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#000000" Size="9"/>
   </Properties>
 </Lexer>

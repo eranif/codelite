@@ -10,8 +10,8 @@
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="9"/>
     <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Size="9"/>
     <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#FFFFFF" BgColour="#000080" Size="9"/>
-	<Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="9"/>
-	<Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#000000" BgColour="#000000" Size="9"/>
+    <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="9"/>
     <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="black" BgColour="white" Size="9"/>
     <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Size="9"/>
   </Properties>

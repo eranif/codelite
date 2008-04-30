@@ -371,6 +371,11 @@ void Manager::CreateWorkspace(const wxString &name, const wxString &path)
 
 void Manager::CreateProject(ProjectData &data)
 {
+	if( IsWorkspaceOpen() == false ) {
+		//create a workspace before creating a project
+		CreateWorkspace(data.m_name, data.m_path);
+	}
+	
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->CreateProject(data.m_name,
 	           data.m_path,

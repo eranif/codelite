@@ -228,13 +228,13 @@ bool CopyDir(const wxString& src, const wxString& target)
 
 	wxString from(src);
 	wxString to(target);
-	
+
 	// append a slash if there is not one (for easier parsing)
 	// because who knows what people will pass to the function.
 	if (to.EndsWith(SLASH) == false) {
 		to << SLASH;
 	}
-	
+
 	// for both dirs
 	if (from.EndsWith(SLASH) == false) {
 		from << SLASH;
@@ -242,12 +242,20 @@ bool CopyDir(const wxString& src, const wxString& target)
 
 	// first make sure that the source dir exists
 	if (!wxDir::Exists(from)) {
+#ifdef __WXMSW__
+		wxMkDir(from.GetData());
+#else
 		wxMkDir(from.ToAscii(), 0777);
+#endif
 		return false;
 	}
 
 	if (!wxDir::Exists(to)) {
+#ifdef __WXMSW__
+		wxMkDir(to.GetData());
+#else
 		wxMkDir(to.ToAscii(), 0777);
+#endif
 	}
 
 	wxDir dir(from);
@@ -258,7 +266,11 @@ bool CopyDir(const wxString& src, const wxString& target)
 		do {
 
 			if (wxDirExists(from + filename) ) {
+#ifdef __WXMSW__
+				wxMkDir(wxString(to + filename).GetData());
+#else
 				wxMkDir(wxString(to + filename).ToAscii(), 0777);
+#endif
 				CopyDir(from + filename, to + filename);
 			} else {
 				wxCopyFile(from + filename, to + filename);

@@ -158,7 +158,7 @@ wxString ExpandAllVariables(const wxString &expression, const wxString &projectN
 				wxArrayString output;
 				ProcUtils::SafeExecuteCommand(expandedBacktick, output);
 
-				//concatenate the array into space delimited string
+				//concatenate the array into sAssign To:pace delimited string
 				backtick.Clear();
 				for (size_t xx=0; xx < output.GetCount(); xx++) {
 					backtick << output.Item(xx).Trim().Trim(false) << wxT(" ");
@@ -231,22 +231,24 @@ bool CopyDir(const wxString& src, const wxString& target)
 	
 	// append a slash if there is not one (for easier parsing)
 	// because who knows what people will pass to the function.
-	if (to[to.length()-1] != SLASH) {
-		to += SLASH;
+	if (to.EndsWith(SLASH) == false) {
+		to << SLASH;
 	}
+	
 	// for both dirs
-	if (from[from.length()-1] != SLASH) {
-		from += SLASH;
+	if (from.EndsWith(SLASH) == false) {
+		from << SLASH;
 	}
 
 	// first make sure that the source dir exists
 	if (!wxDir::Exists(from)) {
-		wxLogError(from + wxT(" does not exist.  Can not copy directory."));
+		wxMkDir(from.ToAscii(), 0777);
 		return false;
 	}
 
-	if (!wxDirExists(to))
-		wxMkdir(to);
+	if (!wxDir::Exists(to)) {
+		wxMkDir(to.ToAscii(), 0777);
+	}
 
 	wxDir dir(from);
 	wxString filename;
@@ -256,7 +258,7 @@ bool CopyDir(const wxString& src, const wxString& target)
 		do {
 
 			if (wxDirExists(from + filename) ) {
-				wxMkdir(to + filename);
+				wxMkDir(wxString(to + filename).ToAscii(), 0777);
 				CopyDir(from + filename, to + filename);
 			} else {
 				wxCopyFile(from + filename, to + filename);

@@ -129,11 +129,11 @@ bool App::OnInit()
 		wxMkDir((homeDir + wxT("/images/")).ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/templates/")).ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
-
+		
 		//copy the settings from the global location if needed
 		ManagerST::Get()->SetInstallDir( wxStandardPaths::Get().GetDataDir() );
-		
 		CopySettings(homeDir, wxStandardPaths::Get().GetDataDir());
+		
 	} else {
 		wxFileName fn(homeDir);
 		fn.MakeAbsolute();
@@ -143,7 +143,6 @@ bool App::OnInit()
 #elif defined (__WXMAC__)
 	SetAppName(wxT("codelite"));
 	homeDir = wxGetHomeDir() + wxT("/.codelite/");
-	//wxPrintf(wxT("Creating %s\n"), homeDir.GetData());	
 	//Create the directory structure
 	wxMkDir(homeDir.ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/lexers/")).ToAscii(), 0777);
@@ -276,7 +275,6 @@ int App::OnExit()
 
 void App::CopySettings(const wxString &destDir, const wxString &installPath)
 {
-	//wxPrintf(wxT("CopySettings.from %s to %s\n"), installPath.GetData(), destDir.GetData());
 	bool fileExist = wxFileName::FileExists( destDir + wxT("/config/codelite.xml") );
 	bool copyAnyways(true);
 

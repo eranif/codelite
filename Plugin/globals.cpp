@@ -1,3 +1,4 @@
+#include <wx/dir.h>
 #include "workspace.h"
 #include "project.h"
 #include "wx/tokenzr.h"
@@ -194,7 +195,7 @@ wxString DoExpandAllVariables(const wxString &expression, const wxString &projec
 		output.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
 
 	}
-	
+
 	if (fileName.IsEmpty() == false) {
 		wxFileName fn(fileName);
 
@@ -203,12 +204,12 @@ wxString DoExpandAllVariables(const wxString &expression, const wxString &projec
 		output.Replace(wxT("$(CurrentFileExt)"), fn.GetExt());
 		output.Replace(wxT("$(CurrentFileFullPath)"), fn.GetFullPath());
 	}
-	
+
 	//exapnd common macros
 	wxDateTime now = wxDateTime::Now();
 	output.Replace(wxT("$(User)"), wxGetUserName());
 	output.Replace(wxT("$(Date)"), now.FormatDate());
-	
+
 	//call the environment & workspace variables expand function
 	output = WorkspaceST::Get()->ExpandVariables(output);
 	return output;
@@ -220,4 +221,47 @@ bool WriteFileUTF8(const wxString& fileName, const wxString& content)
 
 	//first try the Utf8
 	return file.Write(content, wxConvUTF8) == content.Length();
+}
+bool CopyDir(const wxString& src, const wxString& target)
+{
+	wxString SLASH = wxFileName::GetPathSeparator();
+
+	wxString from(src);
+	wxString to(target);
+	
+	// append a slash if there is not one (for easier parsing)
+	// because who knows what people will pass to the function.
+	if (to[to.length()-1] != SLASH) {
+		to += SLASH;
+	}
+	// for both dirs
+	if (from[from.length()-1] != SLASH) {
+		from += SLASH;
+	}
+
+	// first make sure that the source dir exists
+	if (!wxDir::Exists(from)) {
+		wxLogError(from + wxT(" does not exist.  Can not copy directory."));
+		return false;
+	}
+
+	if (!wxDirExists(to))
+		wxMkdir(to);
+
+	wxDir dir(from);
+	wxString filename;
+	bool bla = dir.GetFirst(&filename);
+
+	if (bla) {
+		do {
+
+			if (wxDirExists(from + filename) ) {
+				wxMkdir(to + filename);
+				CopyDir(from + filename, to + filename);
+			} else {
+				wxCopyFile(from + filename, to + filename);
+			}
+		} while (dir.GetNext(&filename) );
+	}
+	return true;
 }

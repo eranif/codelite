@@ -3,8 +3,8 @@
   <ArchiveObject Name="DebuggerCommands">
     <long Value="3" Name="size"/>
     <SerializedObject Name="DebuggerCmd0">
-      <wxString Value="std::string" Name="m_name"/>
-      <wxString Value="$(Variable).c_str()" Name="m_command"/>
+      <wxString Value="std::vector" Name="m_name"/>
+      <wxString Value="$(Variable).size()" Name="m_command"/>
       <bool Value="0" Name="m_isSubMenu"/>
     </SerializedObject>
     <SerializedObject Name="DebuggerCmd1">
@@ -13,8 +13,8 @@
       <bool Value="0" Name="m_isSubMenu"/>
     </SerializedObject>
     <SerializedObject Name="DebuggerCmd2">
-      <wxString Value="std::vector" Name="m_name"/>
-      <wxString Value="$(Variable).size()" Name="m_command"/>
+      <wxString Value="std::string" Name="m_name"/>
+      <wxString Value="$(Variable).c_str()" Name="m_command"/>
       <bool Value="0" Name="m_isSubMenu"/>
     </SerializedObject>
   </ArchiveObject>
@@ -24,6 +24,6 @@
     <wxString Value="" Name="path"/>
     <bool Value="0" Name="enableDebugLog"/>
     <bool Value="0" Name="enablePendingBreakpoints"/>
-    <bool Value="0" Name="breakAtWinMain"/>
+    <bool Value="1" Name="breakAtWinMain"/>
   </ArchiveObject>
 </Debuggers>

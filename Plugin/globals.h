@@ -16,6 +16,7 @@ bool RemoveDirectory(const wxString &path);
 bool IsValidCppIndetifier(const wxString &id);
 bool IsValidCppFile(const wxString &id);
 wxString ExpandAllVariables(const wxString &expression, const wxString &projectName, const wxString &fileName);
+bool CopyDir(const wxString& src, const wxString& target);
 
 #endif //GLOBALS_H
 

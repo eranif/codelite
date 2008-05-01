@@ -288,15 +288,12 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 	}
 
 	if ( !fileExist || copyAnyways ) {
-		//
+		///////////////////////////////////////////////////////////////////////////////////////////
 		// copy new settings from the global installation location which is currently located at
 		// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
-		//
-		massCopy  (installPath + wxT("/templates/"), wxT("*.wizard"), destDir + wxT("/templates/"));
-		massCopy  (installPath + wxT("/templates/"), wxT("*.project"), destDir + wxT("/templates/"));
-		massCopy  (installPath + wxT("/templates/"), wxT("*.xml"), destDir + wxT("/templates/"));
-		massCopy  (installPath + wxT("/lexers/Default/"), wxT("*.xml"), destDir + wxT("/lexers/Default"));
-		massCopy  (installPath + wxT("/lexers/BlackTheme/"), wxT("*.xml"), destDir + wxT("/lexers/BlackTheme"));
+		///////////////////////////////////////////////////////////////////////////////////////////
+		CopyDir(installPath + wxT("/templates/"), destDir + wxT("/templates/"));
+		CopyDir(installPath + wxT("/lexers/"), destDir + wxT("/lexers/"));
 		massCopy  (installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
 		massCopy  (installPath + wxT("/"), wxT("*.tags"), destDir + wxT("/"));
 		wxCopyFile(installPath + wxT("/config/build_settings.xml"), destDir + wxT("/config/build_settings.xml"));
@@ -308,8 +305,6 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 		wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
 		wxCopyFile(installPath + wxT("/config/accelerators.conf.default"), destDir + wxT("/config/accelerators.conf.default"));
 		
-	} else {
-		//wxPrintf(wxT("Skipping settings copy ...\n"));
 	}
 }
 

@@ -197,7 +197,7 @@ void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
 	if (wiz->Run(data)) {
 		//load the template file and replace all variables with the
 		//actual values provided by user
-		wxString filename(m_mgr->GetStartupDirectory() + wxT("/templates/liteeditor-plugin.project.wizard"));
+		wxString filename(m_mgr->GetStartupDirectory() + wxT("/templates/gizmos/liteeditor-plugin.project.wizard"));
 		wxString content;
 		if (!ReadFileWithConversion(filename, content)) {
 			return;
@@ -245,7 +245,7 @@ void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
 		//---------------------------------------------------------------
 
 		//Generate the source files
-		filename = m_mgr->GetStartupDirectory() + wxT("/templates/plugin.cpp.wizard");
+		filename = m_mgr->GetStartupDirectory() + wxT("/templates/gizmos/plugin.cpp.wizard");
 		content.Clear();
 		if (!ReadFileWithConversion(filename, content)) {
 			wxMessageBox(wxT("Failed to load wizard's file 'plugin.cpp.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
@@ -263,7 +263,7 @@ void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
 		file.Close();
 
 		//create the header file
-		filename = m_mgr->GetStartupDirectory() + wxT("/templates/plugin.h.wizard");
+		filename = m_mgr->GetStartupDirectory() + wxT("/templates/gizmos/plugin.h.wizard");
 		content.Clear();
 		if (!ReadFileWithConversion(filename, content)) {
 			wxMessageBox(wxT("Failed to load wizard's file 'plugin.h.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
@@ -485,19 +485,19 @@ void GizmosPlugin::CreateWxProject(NewWxProjectInfo &info)
 		wxString appCppConent;
 		wxString apphConent;
 
-		if (!ReadFileWithConversion(basedir + wxT("/templates/wxproject.project.wizard"), projectConent)) {
+		if (!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wxproject.project.wizard"), projectConent)) {
 			return;
 		}
-		if (!ReadFileWithConversion(basedir + wxT("/templates/mainframe.cpp.wizard"), mainFrameCppContent)) {
+		if (!ReadFileWithConversion(basedir + wxT("/templates/gizmos/mainframe.cpp.wizard"), mainFrameCppContent)) {
 			return;
 		}
-		if (!ReadFileWithConversion(basedir + wxT("/templates/mainframe.h.wizard"), mainFrameHContent)) {
+		if (!ReadFileWithConversion(basedir + wxT("/templates/gizmos/mainframe.h.wizard"), mainFrameHContent)) {
 			return;
 		}
-		if (!ReadFileWithConversion(basedir + wxT("/templates/app.h.wizard"), apphConent)) {
+		if (!ReadFileWithConversion(basedir + wxT("/templates/gizmos/app.h.wizard"), apphConent)) {
 			return;
 		}
-		if (!ReadFileWithConversion(basedir + wxT("/templates/app.cpp.wizard"), appCppConent)) {
+		if (!ReadFileWithConversion(basedir + wxT("/templates/gizmos/app.cpp.wizard"), appCppConent)) {
 			return;
 		}
 
@@ -536,10 +536,10 @@ void GizmosPlugin::CreateWxProject(NewWxProjectInfo &info)
 		wxString appCppConent;
 		wxString apphConent;
 
-		if (!ReadFileWithConversion(basedir + wxT("/templates/wxmain.project.wizard"), projectConent)) {
+		if (!ReadFileWithConversion(basedir + wxT("/templates/gizmos/wxmain.project.wizard"), projectConent)) {
 			return;
 		}
-		if (!ReadFileWithConversion(basedir + wxT("/templates/main.cpp.wizard"), appCppConent)) {
+		if (!ReadFileWithConversion(basedir + wxT("/templates/gizmos/main.cpp.wizard"), appCppConent)) {
 			return;
 		}
 

@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "threebuttondlg.h"
 #include "acceltabledlg.h"
 #include "drawingutils.h"
 #include "fileexplorertree.h"
@@ -164,7 +165,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(viewAsSubMenuID, Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("previous_bookmark"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("removeall_bookmarks"), Frame::OnFileExistUpdateUI)
-//	EVT_UPDATE_UI(XRCID("new_project"), Frame::OnWorkspaceMenuUI)
+	//	EVT_UPDATE_UI(XRCID("new_project"), Frame::OnWorkspaceMenuUI)
 	EVT_UPDATE_UI(XRCID("close_workspace"), Frame::OnWorkspaceOpen)
 	EVT_UPDATE_UI(XRCID("view_as_menu"), Frame::OnFileExistUpdateUI)
 	EVT_MENU(XRCID("complete_word"), Frame::OnCompleteWord)
@@ -380,24 +381,6 @@ void Frame::Initialize(bool loadLastSession)
 	}
 
 	SetGccColourFunction( BuildTab::ColourGccLine );
-
-	//update the build system to contain the number of CPUs
-	int cpus = wxThread::GetCPUCount();
-	if (cpus != wxNOT_FOUND) {
-		//update the build system
-		BuildSystemPtr bs = BuildSettingsConfigST::Get()->GetBuildSystem(wxT("GNU makefile for g++/gcc"));
-		if ( bs ) {
-			wxString jobs;
-			jobs << cpus;
-
-			if ( bs->GetToolJobs() != jobs ) {
-				bs->SetToolJobs( jobs );
-				BuildSettingsConfigST::Get()->SetBuildSystem(bs);
-
-				wxLogMessage(wxT("Info: setting number of concurrent builder jobs to ") + jobs);
-			}
-		}
-	}
 }
 
 Frame* Frame::Get()
@@ -1854,6 +1837,50 @@ void Frame::OnTimer(wxTimerEvent &event)
 			}
 			AutoLoadExternalDb();
 		}
+
+		//update the build system to contain the number of CPUs
+		int cpus = wxThread::GetCPUCount();
+		if (cpus != wxNOT_FOUND) {
+			//update the build system
+			BuildSystemPtr bs = BuildSettingsConfigST::Get()->GetBuildSystem(wxT("GNU makefile for g++/gcc"));
+			if ( bs ) {
+				wxString jobs;
+				jobs << cpus;
+
+				if ( bs->GetToolJobs() != jobs ) {
+
+					//prompt the user
+					long val(0);
+					bool do_it(false);
+					if ( !EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), val) ) {
+
+						//no entry was found in the configuration file, popup the dialog and ask the user
+						ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, wxT("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"), wxT("CodeLite"));
+						if (dlg->ShowModal() == wxID_OK) {
+							do_it = true;
+						}
+
+						if ( dlg->GetDontAskMeAgain() ) {
+							// the user wishes that his answer will be kept
+							EditorConfigST::Get()->SaveLongValue(wxT("AdjustCPUNumber"), do_it ? 1 : 0);
+						}
+						dlg->Destroy();
+
+					} else {
+						do_it = !(val == 0);
+					}
+
+					// are we allowed to update the concurrent jobs number?
+					if ( do_it ) {
+						bs->SetToolJobs( jobs );
+						BuildSettingsConfigST::Get()->SetBuildSystem(bs);
+						wxLogMessage(wxT("Info: setting number of concurrent builder jobs to ") + jobs);
+					}
+				}
+			}
+		}
+
+
 		//send initialization end event
 		SendCmdEvent(wxEVT_INIT_DONE);
 	}

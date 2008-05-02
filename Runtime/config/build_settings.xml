@@ -19,8 +19,8 @@
       <Option Name="ObjectSuffix" Value=".o"/>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z:]{0,2}[a-zA-Z\.0-9_/\-\+]+ *)(:)([0-9]+)(:)([ eor]*)</Pattern>
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z:]{0,2}[a-zA-Z\.0-9_/\-\+]+ *)(:)([0-9]+ *)(:)([0-9:]*)( warning:)</Pattern>
-      <GlobalIncludePath></GlobalIncludePath>
-      <GlobalLibPath></GlobalLibPath>
+      <GlobalIncludePath/>
+      <GlobalLibPath/>
     </Compiler>
     <Compiler Name="gnu gcc">
       <Switch Name="ArchiveOutput" Value=" "/>
@@ -40,8 +40,8 @@
       <Option Name="ObjectSuffix" Value=".o"/>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z:]{0,2}[a-zA-Z\.0-9_/\-\+]+ *)(:)([0-9]+)(:)([ eor]*)</Pattern>
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z:]{0,2}[a-zA-Z\.0-9_/\-\+]+ *)(:)([0-9]+ *)(:)([0-9:]*)( warning:)</Pattern>
-      <GlobalIncludePath></GlobalIncludePath>
-      <GlobalLibPath></GlobalLibPath>
+      <GlobalIncludePath/>
+      <GlobalLibPath/>
     </Compiler>
     <Compiler Name="VC++">
       <Switch Name="ArchiveOutput" Value="/OUT:"/>
@@ -65,5 +65,5 @@
       <GlobalLibPath>"C:/Program Files/Microsoft Visual Studio 8/VC/lib"</GlobalLibPath>
     </Compiler>
   </Compilers>
-  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="C:/MinGW/bin/mingw32-make.EXE" Options="-f" Jobs="1"/>
+  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="C:/MinGW/bin/mingw32-make.EXE" Options="-f" Jobs="2"/>
 </BuildSettings>

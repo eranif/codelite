@@ -31,6 +31,16 @@ class OpenWindowsPanel;
 class FileExplorer;
 class OutputTabWindow;
 
+//--------------------------------
+// Helper class 
+//--------------------------------
+
+struct StartPageData {
+	wxString name;
+	wxString file_path;
+	wxString action;
+};
+
 /**
  * The main frame class
  * \author Eran Ifrah
@@ -331,7 +341,7 @@ protected:
 	void OnCppContextMenu(wxCommandEvent &e);
 	
 	void OnConfigureAccelerators(wxCommandEvent &e);
-	
+	void OnStartPageEvent(wxCommandEvent &e);
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);
 	void ShowBuildConfigurationManager();

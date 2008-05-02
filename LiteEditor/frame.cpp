@@ -80,6 +80,22 @@ extern void SetGccColourFunction(_GCC_COLOUR_FUNC_PTR func);
 static int FrameTimerId = wxNewId();
 
 //----------------------------------------------------------------
+// Helper method
+//----------------------------------------------------------------
+static void PostStartPageEvent(const wxString &action, const wxString &file_name)
+{
+	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("link_action"));
+	event.SetEventObject(Frame::Get());
+
+	StartPageData *data = new StartPageData;
+	data->action = action;
+	data->file_path = file_name;
+
+	event.SetClientData( data );
+	wxPostEvent(Frame::Get(), event);
+}
+
+//----------------------------------------------------------------
 // Our main frame
 //----------------------------------------------------------------
 BEGIN_EVENT_TABLE(Frame, wxFrame)
@@ -283,7 +299,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("delete_breakpoint"), Frame::OnDebugManageBreakpointsUI)
 	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
 	EVT_UPDATE_UI(XRCID("close_file"), Frame::OnFileCloseUI)
-
+	EVT_MENU(XRCID("link_action"), Frame::OnStartPageEvent)
 
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
@@ -2356,25 +2372,16 @@ void Frame::OnLinkClicked(wxHtmlLinkEvent &e)
 			wxString fileName = action.AfterFirst(wxT(':'));
 			wxFileName fn(fileName);
 			if (fn.GetExt() == wxT("workspace")) {
-				//workspace file
-				ManagerST::Get()->OpenWorkspace(fileName);
+				PostStartPageEvent(wxT("switch-workspace"), fileName);
 			} else {
-				//other file
-				ManagerST::Get()->OpenFile(fileName, wxEmptyString);
+				PostStartPageEvent(wxT("open-file"), fileName);
 			}
 		} else if (command == wxT("create-workspace")) {
-			//Create workspace
-			wxCommandEvent dummy;
-			OnProjectNewWorkspace(e);
-
+			PostStartPageEvent(wxT("create-workspace"), wxEmptyString);
 		} else if (command == wxT("import-msvs-solution")) {
-			//Import microsoft visual studio solution
-			wxCommandEvent dummy;
-			OnImportMSVS(e);
-
+			PostStartPageEvent(wxT("import-msvs-solution"), wxEmptyString);
 		} else if (command == wxT("open-workspace")) {
-			wxCommandEvent dummy;
-			OnSwitchWorkspace(e);
+			PostStartPageEvent(wxT("open-workspace"), wxEmptyString);
 		} else {
 			e.Skip();
 		}
@@ -2383,6 +2390,23 @@ void Frame::OnLinkClicked(wxHtmlLinkEvent &e)
 		//browser
 		wxLaunchDefaultBrowser(info.GetHref());
 	}
+}
+
+void Frame::OnStartPageEvent(wxCommandEvent& e)
+{
+	StartPageData *data = (StartPageData *)e.GetClientData();
+	if ( data->action == wxT("switch-workspace" )) {
+		ManagerST::Get()->OpenWorkspace(data->file_path);
+	} else if ( data->action == wxT("open-file" )) {
+		ManagerST::Get()->OpenFile(data->file_path, wxEmptyString);
+	} else if ( data->action == wxT("create-workspace" )) {
+		OnProjectNewWorkspace(e);
+	} else if ( data->action == wxT("import-msvs-solution" )) {
+		OnImportMSVS(e);
+	} else if ( data->action == wxT("open-workspace" )) {
+		OnSwitchWorkspace(e);
+	}
+	delete data;
 }
 
 void Frame::OnLoadLastSessionUI(wxUpdateUIEvent &event)
@@ -2905,10 +2929,6 @@ void Frame::OnCppContextMenu(wxCommandEvent &e)
 void Frame::OnConfigureAccelerators(wxCommandEvent &e)
 {
 	AccelTableDlg *dlg = new AccelTableDlg(this);
-//	wxString ll;
-//	ll << XRCID("add_include_file");
-//	wxMessageBox( ll );
-
 	dlg->ShowModal();
 	dlg->Destroy();
 }

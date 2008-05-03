@@ -40,7 +40,8 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 	if (choices.IsEmpty() == false) {
 		m_choiceCompilerType->SetSelection(0);
 	}
-
+	
+	m_textCtrlProjectPath->SetValue( WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
 	m_textCtrlProjName->SetFocus();
 }
 
@@ -85,7 +86,30 @@ void NewProjectDlg::OnButtonCreate(wxCommandEvent &e)
 		wxMessageBox(wxT("Invalid path: ") + fn.GetPath(), wxT("Error"), wxOK | wxICON_HAND);
 		return;
 	}
-
+	
+	// make sure that there is no conflict in files between the template project and the selected path
+	if(m_projectData.m_srcProject) {
+		ProjectPtr p = m_projectData.m_srcProject;
+		wxString base_dir( fn.GetPath() );
+		std::vector<wxFileName> files;
+		p->GetFiles(files);
+		
+		for(size_t i=0; i<files.size(); i++){
+			wxFileName f = files.at(i);
+			wxString new_file = base_dir + wxT("/") + f.GetFullName();
+			
+			if( wxFileName::FileExists(new_file) ) {
+				// this file already - notify the user
+				wxString msg;
+				msg << wxT("The File '") << f.GetFullName() << wxT("' already exists at the target directory '") << base_dir << wxT("'\n");
+				msg << wxT("Please select a different project path\n");
+				msg << wxT("The file '") << f.GetFullName() << wxT("' is part of the template project [") << p->GetName() << wxT("]");
+				wxMessageBox(msg, wxT("CodeLite"), wxOK|wxICON_HAND);
+				return;
+			}
+		}
+	}
+	
 	m_projectData.m_name = m_textCtrlProjName->GetValue();
 	m_projectData.m_path = m_textCtrlProjectPath->GetValue();
 	m_projectData.m_cmpType = m_choiceCompilerType->GetStringSelection();

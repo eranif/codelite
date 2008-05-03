@@ -242,20 +242,12 @@ bool CopyDir(const wxString& src, const wxString& target)
 
 	// first make sure that the source dir exists
 	if (!wxDir::Exists(from)) {
-#ifdef __WXMSW__
-		wxMkDir(from.GetData());
-#else
-		wxMkDir(from.ToAscii(), 0777);
-#endif
+		Mkdir(from);
 		return false;
 	}
 
 	if (!wxDir::Exists(to)) {
-#ifdef __WXMSW__
-		wxMkDir(to.GetData());
-#else
-		wxMkDir(to.ToAscii(), 0777);
-#endif
+		Mkdir(to);
 	}
 
 	wxDir dir(from);
@@ -266,11 +258,7 @@ bool CopyDir(const wxString& src, const wxString& target)
 		do {
 
 			if (wxDirExists(from + filename) ) {
-#ifdef __WXMSW__
-				wxMkDir(wxString(to + filename).GetData());
-#else
-				wxMkDir(wxString(to + filename).ToAscii(), 0777);
-#endif
+				Mkdir(to + filename);
 				CopyDir(from + filename, to + filename);
 			} else {
 				wxCopyFile(from + filename, to + filename);
@@ -278,4 +266,13 @@ bool CopyDir(const wxString& src, const wxString& target)
 		} while (dir.GetNext(&filename) );
 	}
 	return true;
+}
+
+void Mkdir(const wxString& path)
+{
+#ifdef __WXMSW__
+	wxMkDir(path.GetData());
+#else
+	wxMkDir(path.ToAscii(), 0777);
+#endif
 }

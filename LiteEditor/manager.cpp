@@ -371,11 +371,11 @@ void Manager::CreateWorkspace(const wxString &name, const wxString &path)
 
 void Manager::CreateProject(ProjectData &data)
 {
-	if( IsWorkspaceOpen() == false ) {
+	if ( IsWorkspaceOpen() == false ) {
 		//create a workspace before creating a project
 		CreateWorkspace(data.m_name, data.m_path);
 	}
-	
+
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->CreateProject(data.m_name,
 	           data.m_path,
@@ -395,6 +395,23 @@ void Manager::CreateProject(ProjectData &data)
 		bldConf = settings->GetNextBuildConfiguration(cookie);
 	}
 	proj->SetSettings(settings);
+
+	//copy the files as they appear in the source project
+	proj->SetFiles(data.m_srcProject);
+
+	{
+		// copy the actual files from the template directory to the new project path
+		DirSaver ds;
+		wxSetWorkingDirectory(proj->GetFileName().GetPath());
+
+		// get list of files
+		std::vector<wxFileName> files;
+		data.m_srcProject->GetFiles(files, true);
+		for (size_t i=0; i<files.size(); i++) {
+			wxFileName f(files.at(i));
+			wxCopyFile(f.GetFullPath(), f.GetFullName());
+		}
+	}
 	RebuildFileView();
 }
 
@@ -1039,14 +1056,14 @@ void Manager::GetProjectTemplateList(std::list<ProjectPtr> &list)
 
 void Manager::SaveProjectTemplate(ProjectPtr proj, const wxString &name, const wxString &description)
 {
-	//create new project
-	wxString tmplateDir = m_startupDir + PATH_SEP + wxT("templates");
+	// create new project
+	wxString tmplateDir = GetStarupDirectory() + wxT("/templates/projects/") + name + wxT("/");
 
-	ProjectPtr cloned(new Project());
-	cloned->Create(name, description, tmplateDir, Project::STATIC_LIBRARY);
+	// create the directory
+	Mkdir(tmplateDir);
 
-	//copy project settings
-	cloned->SetSettings(proj->GetSettings());
+	// copy the project to the new location
+	proj->CopyTo(tmplateDir, name, description);
 }
 
 ProjectPtr Manager::GetProject(const wxString &name) const

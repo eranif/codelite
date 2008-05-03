@@ -26,7 +26,7 @@ bool Project::Create(const wxString &name, const wxString &description, const wx
 	wxXmlNode *root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CodeLite_Project"));
 	m_doc.SetRoot(root);
 	m_doc.GetRoot()->AddProperty(wxT("Name"), name);
-	
+
 	wxXmlNode *descNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Description"));
 	XmlUtils::SetNodeContent(descNode, description);
 	m_doc.GetRoot()->AddChild(descNode);
@@ -99,11 +99,11 @@ wxXmlNode *Project::CreateVD(const wxString &vdFullPath, bool mkpath)
 		wxXmlNode *p = XmlUtils::FindNodeByName(parent, wxT("VirtualDirectory"), token);
 		if ( !p ) {
 			if ( mkpath ) {
-				
+
 				//add the node
 				p = new wxXmlNode(parent, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
 				p->AddProperty(wxT("Name"), token);
-				
+
 			} else {
 				return NULL;
 			}
@@ -416,11 +416,134 @@ bool Project::IsModified()
 wxString Project::GetDescription() const
 {
 	wxXmlNode *root = m_doc.GetRoot();
-	if(root) {
+	if (root) {
 		wxXmlNode *node = XmlUtils::FindFirstByTagName(root, wxT("Description"));
-		if(node) {
+		if (node) {
 			return node->GetNodeContent();
 		}
 	}
 	return wxEmptyString;
+}
+
+void Project::CopyTo(const wxString& new_path, const wxString& new_name, const wxString& description)
+{
+	// first save the xml document to the destination folder
+
+	wxString newFile = new_path + new_name + wxT(".project");
+	if ( !m_doc.Save( newFile ) ) {
+		return;
+	}
+
+	// load the new xml and modify it
+	wxXmlDocument doc;
+	if ( !doc.Load( newFile ) ) {
+		return;
+	}
+
+	// update the 'Name' property
+	XmlUtils::UpdateProperty(doc.GetRoot(), wxT("Name"), new_name);
+
+	// set description
+	wxXmlNode *descNode(NULL);
+
+	// update the description
+	descNode = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("Description"));
+	if (!descNode) {
+		descNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Description"));
+		doc.GetRoot()->AddChild(descNode);
+	}
+	XmlUtils::SetNodeContent(descNode, description);
+
+	// Remove the 'Dependencies'
+	wxXmlNode *deps = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("Dependencies"));
+	if (deps) {
+		doc.GetRoot()->RemoveChild(deps);
+		delete deps;
+	}
+
+	// add an empty deps node
+	deps = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Dependencies"));
+	doc.GetRoot()->AddChild(deps);
+
+	// Remove virtual folders
+	wxXmlNode *vd = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("VirtualDirectory"));
+	while (vd) {
+		doc.GetRoot()->RemoveChild( vd );
+		delete vd;
+		vd = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("VirtualDirectory"));
+	}
+
+	// add all files under this path
+	std::vector<wxFileName> files;
+	GetFiles(files, true);
+
+	wxXmlNode *srcNode(NULL);
+	wxXmlNode *headNode(NULL);
+	wxXmlNode *rcNode(NULL);
+
+	// copy the files to their new location
+	for (size_t i=0; i<files.size(); i++) {
+		wxFileName fn = files.at(i);
+		wxCopyFile(fn.GetFullPath(), new_path + wxT("/") + fn.GetFullName());
+
+		// add source file under the 'src' while headers are added under 'include'
+		wxString e(fn.GetExt());
+		e = e.MakeLower();
+
+		wxXmlNode *file_node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
+		file_node->AddProperty(wxT("Name"), fn.GetFullName());
+
+		if ( e == wxT("cpp") || e == wxT("cxx") || e == wxT("c") || e == wxT("c++") || e == wxT("cc") ) {
+			// source file
+			if ( !srcNode ) {
+				srcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
+				srcNode->AddProperty(wxT("Name"), wxT("src"));
+				doc.GetRoot()->AddChild(srcNode);
+			}
+			srcNode->AddChild(file_node);
+
+		} else if ( e == wxT("h") || e == wxT("hpp") || e == wxT("h++") || e == wxT("hxx")|| e == wxT("hh")  || e == wxT("inc") || e == wxT("inl") ) {
+			// header file
+			if (!headNode) {
+				headNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
+				headNode->AddProperty(wxT("Name"), wxT("include"));
+				doc.GetRoot()->AddChild(headNode);
+			}
+			headNode->AddChild(file_node);
+
+		} else {
+			// resource file
+			if ( !rcNode ) {
+				rcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
+				rcNode->AddProperty(wxT("Name"), wxT("resources"));
+				doc.GetRoot()->AddChild(rcNode);
+			}
+			rcNode->AddChild(file_node);
+		}
+	}
+	doc.Save(newFile);
+}
+
+void Project::SetFiles(ProjectPtr src)
+{
+	// first remove all the virtual directories from this project
+	// Remove virtual folders
+	wxXmlNode *vd = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("VirtualDirectory"));
+	while (vd) {
+		m_doc.GetRoot()->RemoveChild( vd );
+		delete vd;
+		vd = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("VirtualDirectory"));
+	}
+
+	// copy the virtual directories from the src project
+	wxXmlNode *child = src->m_doc.GetRoot()->GetChildren();
+	while ( child ) {
+		if ( child->GetName() == wxT("VirtualDirectory") ) {
+			// create a new VirtualDirectory like this one
+			wxXmlNode *newNode = new wxXmlNode(*child);
+			m_doc.GetRoot()->AddChild(newNode);
+		}
+		child = child->GetNext();
+	}
+	m_doc.Save(m_fileName.GetFullPath());
 }

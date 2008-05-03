@@ -103,6 +103,9 @@ typedef Tree<wxString, ProjectItem> ProjectTree;
 typedef SmartPtr<ProjectTree> ProjectTreePtr;
 typedef TreeNode<wxString, ProjectItem> ProjectTreeNode;
 
+class Project;
+typedef SmartPtr<Project> ProjectPtr;
+
 /**
  * \ingroup LiteEditor
  *
@@ -138,9 +141,26 @@ private:
 	
 public:
 	const wxFileName &GetFileName() const { return m_fileName; }
-
+	
+	/**
+	 * \brief copy this project and all the files under to new_path
+	 * \param file_name the new path of the project
+	 * \param new_name the new project name
+	 * \param description the new project description
+	 */
+	void CopyTo(const wxString &new_path, const wxString &new_name, const wxString &description);
+	
+	/**
+	 * \brief copy files (and virtual directories) from src project to this project
+	 * note that this call replaces the files that exists under this project 
+	 * \param src
+	 */
+	void SetFiles(ProjectPtr src);
+	
+	//--------------------------------------------------
 	// Ctor - Dtor
-
+	//--------------------------------------------------
+	
 	// default constructor
 	Project();
 	virtual ~Project();
@@ -285,8 +305,6 @@ private:
 
 	void GetFiles(wxXmlNode *parent, std::vector<wxFileName> &files, bool absPath = false);
 };
-
-typedef SmartPtr<Project> ProjectPtr;
 
 class ProjectData {
 public:

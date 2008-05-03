@@ -458,6 +458,7 @@ resources.cpp: resources.xrc
     </Configuration>
   </Settings>
   <Dependencies>
+    <Project Name="wxflatnotebook"/>
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>

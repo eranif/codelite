@@ -1001,7 +1001,7 @@ bool Manager::DeleteCompiler(const wxString &name)
 
 void Manager::GetProjectTemplateList(std::list<ProjectPtr> &list)
 {
-	wxString tmplateDir = m_startupDir + PATH_SEP + wxT("templates");
+	wxString tmplateDir = m_startupDir + PATH_SEP + wxT("templates/projects");
 
 	//read all files under this directory
 	DirTraverser dt(wxT("*.project"));

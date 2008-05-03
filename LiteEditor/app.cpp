@@ -17,7 +17,7 @@
 #include "wx/dir.h"
 #include "splashscreen.h"
 #include <wx/stdpaths.h>
-
+ 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h> //registry keys
 #endif

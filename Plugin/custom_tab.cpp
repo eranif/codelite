@@ -148,7 +148,9 @@ void CustomTab::OnMouseEnterWindow(wxMouseEvent &e)
 	if (e.LeftIsDown()) {
 		wxTabContainer *parent = (wxTabContainer*)GetParent();
 		if (parent) {
-			parent->SwapTabs(this);
+			if(!(m_style & wxVB_NODND)){
+				parent->SwapTabs(this);
+			}
 		}
 	}
 	m_hovered = true;

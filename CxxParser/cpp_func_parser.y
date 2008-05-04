@@ -150,6 +150,7 @@ template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_sta
 							;
 
 func_name: LE_IDENTIFIER {$$ = $1;}
+		 | '~' LE_IDENTIFIER {$$ = $1 + $2;}
 		 | LE_OPERATOR any_operator {$$ = $1 + $2;}
 		 ;
 

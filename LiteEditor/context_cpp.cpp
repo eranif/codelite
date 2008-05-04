@@ -1945,6 +1945,9 @@ void ContextCpp::ApplySettings()
 
 	//delete uneeded commands
 	rCtrl.CmdKeyClear('/', wxSCI_SCMOD_CTRL);
+	
+	// update word characters to allow '~' as valid word character
+	rCtrl.SetWordChars(wxT("~_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"));
 }
 
 void ContextCpp::Initialize()

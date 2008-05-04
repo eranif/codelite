@@ -163,7 +163,7 @@ short cl_expr_lhs[] = {                                        -1,
 short cl_expr_len[] = {                                         2,
     0,    2,    0,    2,    1,    0,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    1,    0,    1,    3,    4,
-    4,    6,    6,    2,    3,    3,    6,    8,    5,    2,
+    4,    6,    6,    2,    3,    3,    6,    5,    8,    2,
     0,    3,    0,    1,    1,    1,    1,    1,    0,    1,
     0,    2,    2,    0,    1,    1,    6,    3,    0,    2,
     2,    0,    1,
@@ -173,10 +173,10 @@ short cl_expr_defred[] = {                                      1,
    36,   37,   38,    0,    0,    0,    0,   49,    0,    0,
    25,    0,   26,    0,    0,   50,   49,    0,    0,   41,
    53,   30,   51,    0,    0,    0,   41,    0,   48,    0,
-    0,    7,   49,    0,   18,   34,   29,    0,    0,    0,
+    0,    7,   49,    0,   18,   34,   28,    0,    0,    0,
    42,   40,   43,   27,    0,    0,   32,   23,    0,   41,
    13,    8,   11,    9,   12,   10,   15,   14,   16,    0,
-   41,   19,   28,   47,    0,   20,   21,    0,   22,
+   41,   19,   29,   47,    0,   20,   21,    0,   22,
 };
 short cl_expr_dgoto[] = {                                       1,
     3,    7,    4,   43,   71,   44,   45,   19,   39,    8,
@@ -344,8 +344,8 @@ char *cl_expr_rule[] = {
 "simple_expr : stmnt_starter '*' LE_THIS",
 "simple_expr : stmnt_starter '*' identifier_name",
 "simple_expr : stmnt_starter '(' cast_type ')' special_star_amp identifier_name",
-"simple_expr : stmnt_starter '(' '(' cast_type ')' special_star_amp identifier_name ')'",
 "simple_expr : stmnt_starter nested_scope_specifier identifier_name optional_template_init_list optinal_postifx",
+"simple_expr : stmnt_starter '(' '(' cast_type ')' special_star_amp identifier_name ')'",
 "identifier_name : LE_IDENTIFIER array_brackets",
 "optional_template_init_list :",
 "optional_template_init_list : '<' parameter_list '>'",
@@ -655,7 +655,7 @@ case 5:
 { 
 								yyclearin;	/*clear lookahead token*/
 								yyerrok;
-								/*fprintf(stderr, "CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_expr_text, cl_expr_lineno);*/
+								fprintf(stderr, "CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_expr_text, cl_expr_lineno);
 								/*fflush(stderr);*/
 								expr_syncParser();
 						}
@@ -766,16 +766,6 @@ case 27:
 break;
 case 28:
 {
-						yyval = yyvsp[-4];
-						result.m_isaType = true;
-						result.m_name = yyval;
-						result.m_isFunc = false;
-						result.m_isThis = false;
-						/*result.Print();*/
-					}
-break;
-case 29:
-{
 						result.m_isaType = false;
 						result.m_name = yyvsp[-2];
 						result.m_isThis = false;
@@ -783,6 +773,16 @@ case 29:
 						result.m_scope = yyvsp[-3];
 						result.m_isTemplate = yyvsp[-1].empty() ? false : true;
 						result.m_templateInitList = yyvsp[-1];
+						/*result.Print();*/
+					}
+break;
+case 29:
+{
+						yyval = yyvsp[-4];
+						result.m_isaType = true;
+						result.m_name = yyval;
+						result.m_isFunc = false;
+						result.m_isThis = false;
 						/*result.Print();*/
 					}
 break;

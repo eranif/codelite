@@ -12,4 +12,5 @@
 //((Singleton<MyClass>*)Eran)
 //Eran(dfd, dfdf, dfdf)
 //foo();
-std::map<wxString, std::vector>
+//std::map<wxString, std::vector>
+void ~MyClass(){};

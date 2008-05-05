@@ -229,7 +229,7 @@ bool App::OnInit()
 	m_pMainFrame = Frame::Get();
 
 	// Center the dialog when first shown
-	m_pMainFrame->Centre();
+//	m_pMainFrame->Centre();
 	
 	// update the accelerators table
 	ManagerST::Get()->UpdateMenuAccelerators();

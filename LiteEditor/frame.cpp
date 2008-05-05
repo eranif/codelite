@@ -961,7 +961,12 @@ void Frame::OnClose(wxCloseEvent& event)
 	EditorConfigST::Get()->SaveLexers();
 
 	//save general information
-	m_frameGeneralInfo.SetFrameSize(this->GetSize());
+	if (IsMaximized()) {
+		m_frameGeneralInfo.SetFrameSize(wxSize(800, 600));
+	}else{
+		m_frameGeneralInfo.SetFrameSize(this->GetSize());
+	}
+	
 	m_frameGeneralInfo.SetFramePosition(this->GetScreenPosition());
 
 	SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);

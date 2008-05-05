@@ -1,4 +1,5 @@
 #include "newprojectdlg.h"
+#include "globals.h"
 #include "workspace.h"
 #include "build_settings_config.h"
 #include "manager.h"
@@ -62,6 +63,12 @@ void NewProjectDlg::OnProjectPathUpdated( wxCommandEvent& event )
 		return;
 	}
 	
+	if( m_checkBoxCreateSeparateDir->IsChecked()) {
+		//append the workspace name 
+		projectPath << m_textCtrlProjName->GetValue();
+		projectPath << wxFileName::GetPathSeparator();
+	}
+	
 	projectPath << m_textCtrlProjName->GetValue();
 	projectPath << wxT(".project");
 
@@ -81,7 +88,12 @@ void NewProjectDlg::OnButtonCreate(wxCommandEvent &e)
 	//validate that the path part is valid
 	wxString projFullPath = m_staticTextProjectFileFullPath->GetLabel();
 	wxFileName fn(projFullPath);
-
+	
+	if(m_checkBoxCreateSeparateDir->IsChecked()){
+		// dont check the return
+		Mkdir(fn.GetPath());
+	}
+	
 	if ( !wxDirExists(fn.GetPath()) ) {
 		wxMessageBox(wxT("Invalid path: ") + fn.GetPath(), wxT("Error"), wxOK | wxICON_HAND);
 		return;
@@ -111,7 +123,7 @@ void NewProjectDlg::OnButtonCreate(wxCommandEvent &e)
 	}
 	
 	m_projectData.m_name = m_textCtrlProjName->GetValue();
-	m_projectData.m_path = m_textCtrlProjectPath->GetValue();
+	m_projectData.m_path = fn.GetPath();
 	m_projectData.m_cmpType = m_choiceCompilerType->GetStringSelection();
 
 	EndModal(wxID_OK);

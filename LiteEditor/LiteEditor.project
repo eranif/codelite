@@ -349,7 +349,7 @@
       <ResourceCompiler Required="no" Options="$(shell wx-config --rcflags)"/>
       <PreBuild/>
       <PostBuild/>
-      <CustomBuild Enabled="yes">
+      <CustomBuild Enabled="no">
         <CleanCommand>make clean</CleanCommand>
         <BuildCommand>make </BuildCommand>
         <SingleFileCommand>make $(CurrentFile).o</SingleFileCommand>

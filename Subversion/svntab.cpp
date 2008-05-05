@@ -31,7 +31,6 @@ void SvnTab::Initialize()
 
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
-	font.SetWeight(wxBOLD);
 	
 	//set the font for different styles
 	m_sci->StyleSetFont(0, font);

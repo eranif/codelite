@@ -1,4 +1,5 @@
 #include "newworkspacedlg.h"
+#include "globals.h"
 #include "wx/msgdlg.h"
 #include "wx/dirdlg.h"
 #include "wx/filename.h"
@@ -30,10 +31,13 @@ void NewWorkspaceDlg::OnWorkspacePathUpdated( wxCommandEvent& event )
 		return;
 	}
 	
-	workspacePath << m_textCtrlWorkspaceName->GetValue();
+	if( m_checkBoxCreateSeparateDir->IsChecked() ) {
+		workspacePath << m_textCtrlWorkspaceName->GetValue();
+		workspacePath << wxFileName::GetPathSeparator();
+	}
 	
+	workspacePath << m_textCtrlWorkspaceName->GetValue();
 	workspacePath << wxT(".workspace");
-
 	m_staticTextWorkspaceFileName->SetLabel( workspacePath );
 }
 
@@ -50,11 +54,15 @@ void NewWorkspaceDlg::OnButtonCreate( wxCommandEvent& event )
 	//validate that the path part is valid
 	m_workspacePath = m_staticTextWorkspaceFileName->GetLabel();
 	wxFileName fn(m_workspacePath);
-
+	
+	if( m_checkBoxCreateSeparateDir->IsChecked() ){
+		// dont test the result
+		Mkdir(fn.GetPath());
+	}
+	
 	if ( !wxDirExists(fn.GetPath()) ) {
 		wxMessageBox(wxT("Invalid path: ") + fn.GetPath(), wxT("Error"), wxOK | wxICON_HAND);
 		return;
 	}
-
 	EndModal(wxID_OK);
 }

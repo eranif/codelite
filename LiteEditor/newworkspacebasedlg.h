@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 20 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -17,6 +17,7 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
+#include <wx/checkbox.h>
 #include <wx/statbox.h>
 #include <wx/statline.h>
 #include <wx/panel.h>
@@ -39,6 +40,7 @@ class NewWorkspaceBase : public wxDialog
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textCtrlWorkspacePath;
 		wxButton* m_buttonWorkspaceDirPicker;
+		wxCheckBox* m_checkBoxCreateSeparateDir;
 		wxStaticText* m_staticTextWorkspaceFileName;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonCreateWorkspace;

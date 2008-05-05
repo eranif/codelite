@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 20 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -45,6 +45,11 @@ NewWorkspaceBase::NewWorkspaceBase( wxWindow* parent, wxWindowID id, const wxStr
 	
 	bSizer4->Add( bSizer3, 0, wxEXPAND, 5 );
 	
+	m_checkBoxCreateSeparateDir = new wxCheckBox( m_panelWorkspace, wxID_ANY, wxT("Create the workspace under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxCreateSeparateDir->SetValue(true);
+	
+	bSizer4->Add( m_checkBoxCreateSeparateDir, 0, wxALL|wxEXPAND, 5 );
+	
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panelWorkspace, wxID_ANY, wxT("File Name:") ), wxVERTICAL );
 	
@@ -82,6 +87,7 @@ NewWorkspaceBase::NewWorkspaceBase( wxWindow* parent, wxWindowID id, const wxStr
 	m_textCtrlWorkspaceName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewWorkspaceBase::OnWorkspacePathUpdated ), NULL, this );
 	m_textCtrlWorkspacePath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewWorkspaceBase::OnWorkspacePathUpdated ), NULL, this );
 	m_buttonWorkspaceDirPicker->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWorkspaceBase::OnWorkspaceDirPicker ), NULL, this );
+	m_checkBoxCreateSeparateDir->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewWorkspaceBase::OnWorkspacePathUpdated ), NULL, this );
 	m_buttonCreateWorkspace->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWorkspaceBase::OnButtonCreate ), NULL, this );
 }
 
@@ -91,5 +97,6 @@ NewWorkspaceBase::~NewWorkspaceBase()
 	m_textCtrlWorkspaceName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewWorkspaceBase::OnWorkspacePathUpdated ), NULL, this );
 	m_textCtrlWorkspacePath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewWorkspaceBase::OnWorkspacePathUpdated ), NULL, this );
 	m_buttonWorkspaceDirPicker->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWorkspaceBase::OnWorkspaceDirPicker ), NULL, this );
+	m_checkBoxCreateSeparateDir->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewWorkspaceBase::OnWorkspacePathUpdated ), NULL, this );
 	m_buttonCreateWorkspace->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewWorkspaceBase::OnButtonCreate ), NULL, this );
 }

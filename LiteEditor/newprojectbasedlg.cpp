@@ -56,7 +56,7 @@ NewProjectBaseDlg::NewProjectBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_choiceCompilerType->SetSelection( 0 );
 	bSizer18->Add( m_choiceCompilerType, 0, wxALL|wxEXPAND, 5 );
 	
-	m_checkBoxCreateSeparateDir = new wxCheckBox( this, wxID_ANY, wxT("Create the workspace under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxCreateSeparateDir = new wxCheckBox( this, wxID_ANY, wxT("Create the project under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxCreateSeparateDir->SetValue(true);
 	
 	bSizer18->Add( m_checkBoxCreateSeparateDir, 0, wxALL|wxEXPAND, 5 );

@@ -102,6 +102,7 @@ NewProjectBaseDlg::NewProjectBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_textCtrlProjName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
 	m_textCtrlProjectPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
 	m_buttonProjectDirPicker->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathPicker ), NULL, this );
+	m_checkBoxCreateSeparateDir->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
 	m_buttonCreateProject->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnButtonCreate ), NULL, this );
 }
 
@@ -112,5 +113,6 @@ NewProjectBaseDlg::~NewProjectBaseDlg()
 	m_textCtrlProjName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
 	m_textCtrlProjectPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
 	m_buttonProjectDirPicker->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathPicker ), NULL, this );
+	m_checkBoxCreateSeparateDir->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
 	m_buttonCreateProject->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnButtonCreate ), NULL, this );
 }

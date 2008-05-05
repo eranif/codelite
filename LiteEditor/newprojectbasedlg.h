@@ -19,6 +19,7 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/choice.h>
+#include <wx/checkbox.h>
 #include <wx/statbox.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
@@ -42,6 +43,7 @@ class NewProjectBaseDlg : public wxDialog
 		wxButton* m_buttonProjectDirPicker;
 		wxStaticText* m_staticText14;
 		wxChoice* m_choiceCompilerType;
+		wxCheckBox* m_checkBoxCreateSeparateDir;
 		wxStaticText* m_staticTextProjectFileFullPath;
 		wxTextCtrl* m_textCtrlDescription;
 		wxStaticLine* m_staticline4;
@@ -56,7 +58,7 @@ class NewProjectBaseDlg : public wxDialog
 		
 	
 	public:
-		NewProjectBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("New Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 735,377 ), long style = wxDEFAULT_DIALOG_STYLE );
+		NewProjectBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("New Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 735,426 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~NewProjectBaseDlg();
 	
 };

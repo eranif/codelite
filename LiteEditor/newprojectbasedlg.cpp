@@ -56,6 +56,11 @@ NewProjectBaseDlg::NewProjectBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_choiceCompilerType->SetSelection( 0 );
 	bSizer18->Add( m_choiceCompilerType, 0, wxALL|wxEXPAND, 5 );
 	
+	m_checkBoxCreateSeparateDir = new wxCheckBox( this, wxID_ANY, wxT("Create the workspace under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxCreateSeparateDir->SetValue(true);
+	
+	bSizer18->Add( m_checkBoxCreateSeparateDir, 0, wxALL|wxEXPAND, 5 );
+	
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("File Name:") ), wxVERTICAL );
 	
@@ -65,7 +70,7 @@ NewProjectBaseDlg::NewProjectBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	
 	bSizer18->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
 	
-	m_textCtrlDescription = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_CAPITALIZE|wxTE_MULTILINE|wxTE_READONLY|wxTE_WORDWRAP );
+	m_textCtrlDescription = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY|wxTE_WORDWRAP );
 	m_textCtrlDescription->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
 	
 	bSizer18->Add( m_textCtrlDescription, 1, wxALL|wxEXPAND, 5 );

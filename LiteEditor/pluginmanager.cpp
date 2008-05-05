@@ -1,3 +1,4 @@
+#include "environmentconfig.h"
 #include "pluginmanager.h"
 #include "pluginsdata.h"
 #include "pluginconfig.h"
@@ -281,3 +282,9 @@ wxAuiManager* PluginManager::GetDockingManager()
 {
 	return &Frame::Get()->GetDockingManager();
 }
+
+EnvironmentConfig* PluginManager::GetEnv()
+{
+	return EnvironmentConfig::Instance();
+}
+

@@ -8,6 +8,7 @@
 
 class TagsManager;
 class Workspace;
+class EnvironmentConfig;
 
 //--------------------------
 //Auxulary class
@@ -52,6 +53,7 @@ public:
 	virtual int GetToolbarIconSize() = 0;
 	virtual Notebook *GetMainNotebook() = 0;
 	virtual wxAuiManager* GetDockingManager() = 0;
+	virtual EnvironmentConfig *GetEnv() = 0;
 };
 
 #endif //IMANAGER_H

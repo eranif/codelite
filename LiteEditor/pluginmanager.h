@@ -11,6 +11,7 @@
 #include "plugindata.h"
 
 class Notebook;
+class EnvironmentConfig;
 
 class PluginManager : public IManager
 {
@@ -53,6 +54,7 @@ public:
 	virtual int GetToolbarIconSize();
 	virtual Notebook *GetMainNotebook();
 	virtual wxAuiManager* GetDockingManager();
+	virtual EnvironmentConfig* GetEnv();
 	
 	//------------------------------------
 	//End of IManager interface

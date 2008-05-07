@@ -8,7 +8,7 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 		, m_table(NULL)
 		, m_mgr(mgr)
 {
-}
+} 
 
 void CscopeTab::OnItemActivated( wxTreeEvent& event )
 {

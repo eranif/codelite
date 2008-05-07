@@ -12,6 +12,12 @@ enum {
 CppWordScanner::CppWordScanner(const std::string &text)
 : m_text(text)
 {
+	std::string key_words = 
+	"auto break case char const continue default define defined do double elif else endif enum error extern float"           
+	"for  goto if ifdef ifndef include int line long pragma register return short signed sizeof static struct switch"          
+	"typedef undef union unsigned void volatile while class namespace delete friend inline new operator overload"        
+	"protected private public this virtual template typename dynamic_cast static_cast const_cast reinterpret_cast"
+	"using throw catch";
 }
 
 CppWordScanner::~CppWordScanner()

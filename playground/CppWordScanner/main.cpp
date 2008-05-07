@@ -9,16 +9,19 @@ char *loadFile(const char *fileName);
 int main(int argc, char **argv)
 {
 	CppTokenList l;
-	char *data = loadFile("/home/eran/devl/codelite/trunk/sqlite3/sqlite3.c");
+	char *data = loadFile("../../../LiteEditor/manager.cpp");
+	if( !data ) {return -1;}
 	
+	
+	printf("scan started...\n");
 	CppWordScanner scanner( data ) ;
 	scanner.parse(l);
-	
-	CppTokenList::iterator iter = l.begin();
+//	
+//	CppTokenList::iterator iter = l.begin();
 //	for(; iter != l.end(); iter++){
 //		(*iter).print();
 //	}
-//	printf("Word count: %d\n", l.size());
+	printf("Word count: %d\n", l.size());
 	free(data);
 	return 0;
 }
@@ -34,7 +37,7 @@ char *loadFile(const char *fileName)
 
 	fp = fopen(fileName, "rb");
 	if (!fp) {
-		printf("failed to open file 'test.h': %s\n", strerror(errno));
+		printf("failed to open file %s: %s\n", fileName, strerror(errno));
 		return NULL;
 	}
 

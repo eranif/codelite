@@ -102,7 +102,7 @@ protected:
 public:
 	IDebugger() : m_env(NULL) {};
 	virtual ~IDebugger(){};
-	virtual void AddObserver(IDebuggerObserver *observer) { m_observer = observer; }
+	virtual void SetObserver(IDebuggerObserver *observer) { m_observer = observer; }
 	virtual IDebuggerObserver *GetObserver(){return m_observer;}
 	virtual void SetEnvironment(EnvironmentConfig *env){m_env = env;}
 	

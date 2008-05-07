@@ -1,13 +1,13 @@
 #ifndef __cpptoken__
 #define __cpptoken__
 
-#include <string>
+#include <wx/string.h>
 #include <list>
 
 class CppToken
 {
-	std::string name;	//the name of the token
-	size_t offset;		//file offset
+	wxString name;		// the name of the token
+	size_t offset;		// file offset
 
 public:
 	CppToken();
@@ -17,14 +17,14 @@ public:
 	
 	void append(const char ch);
 	
-	void setName(const std::string& name) {
+	void setName(const wxString& name) {
 		this->name = name;
 	}
 	void setOffset(const size_t& offset) {
 		this->offset = offset;
 	}
 
-	const std::string& getName() const {
+	const wxString& getName() const {
 		return name;
 	}
 	const size_t& getOffset() const {

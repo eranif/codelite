@@ -12,7 +12,11 @@ private:
 	bool ReadControlFile(wxString &installPath, long &installRev);
 	void CopySettings(const wxString &destDir, const wxString &installPath);
 	bool CheckRevision(const wxString &fileName);
-	
+
+#ifdef __WXMSW__	
+	HINSTANCE m_handler;
+#endif
+
 public:
 	App(void);
 	virtual ~App(void);

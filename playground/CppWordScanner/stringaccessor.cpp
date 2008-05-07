@@ -1,5 +1,5 @@
 #include "stringaccessor.h"
-StringAccessor::StringAccessor(const std::string &str)
+StringAccessor::StringAccessor(const wxString &str)
 : m_str(str)
 {
 }

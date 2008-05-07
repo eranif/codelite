@@ -1,3 +1,4 @@
+#include <wx/tokenzr.h>
 #include "cppwordscanner.h"
 #include "stringaccessor.h"
 
@@ -9,22 +10,36 @@ enum {
 	STATE_SINGLE_STRING
 };
 
-CppWordScanner::CppWordScanner(const std::string &text)
-: m_text(text)
+CppWordScanner::CppWordScanner(const wxString &text)
+		: m_text(text)
 {
-	std::string key_words = 
-	"auto break case char const continue default define defined do double elif else endif enum error extern float"           
-	"for  goto if ifdef ifndef include int line long pragma register return short signed sizeof static struct switch"          
-	"typedef undef union unsigned void volatile while class namespace delete friend inline new operator overload"        
-	"protected private public this virtual template typename dynamic_cast static_cast const_cast reinterpret_cast"
-	"using throw catch";
+	wxString key_words =
+	    wxT("auto break case char const continue default define defined do double elif else endif enum error extern float"
+	        "for  goto if ifdef ifndef include int line long pragma register return short signed sizeof static struct switch"
+	        "typedef undef union unsigned void volatile while class namespace delete friend inline new operator overload"
+	        "protected private public this virtual template typename dynamic_cast static_cast const_cast reinterpret_cast"
+	        "using throw catch");
+
+	//add this items into map
+	m_arr = wxStringTokenize(key_words, wxT(" "));
+	m_arr.Sort();
 }
 
 CppWordScanner::~CppWordScanner()
 {
 }
 
-void CppWordScanner::parse(CppTokenList &l)
+void CppWordScanner::findAll(CppTokenList &l)
+{
+	doFind(wxEmptyString, l);
+}
+
+void CppWordScanner::match(const wxString& word, CppTokenList& l)
+{
+	doFind(word, l);
+}
+
+void CppWordScanner::doFind(const wxString& filter, CppTokenList& l)
 {
 	int state(STATE_NORMAL);
 
@@ -62,15 +77,23 @@ void CppWordScanner::parse(CppTokenList &l)
 
 				// is valid C++ word?
 				token.append( ch );
-				if (token.getOffset() == std::string::npos) {
+				if (token.getOffset() == wxString::npos) {
 					token.setOffset( i );
 				}
 			} else {
 
-				// not valid C++ word
 				if (token.getName().empty() == false) {
-					l.push_back( token );
+
+					//dont add C++ key words
+					if (m_arr.Index(token.getName()) == wxNOT_FOUND) {
+						
+						// filter out non matching words
+						if(filter.empty() || filter == token.getName()){
+							l.push_back( token );
+						}
+					}
 				}
+
 				token.reset();
 			}
 

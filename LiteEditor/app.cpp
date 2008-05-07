@@ -17,7 +17,7 @@
 #include "wx/dir.h"
 #include "splashscreen.h"
 #include <wx/stdpaths.h>
- 
+
 #ifdef __WXMSW__
 #include <wx/msw/registry.h> //registry keys
 #endif
@@ -27,24 +27,24 @@ extern wxChar *SvnRevision;
 #ifdef __WXMAC__
 #include <mach-o/dyld.h>
 
-//On Mac we determine the base path using system call 
+//On Mac we determine the base path using system call
 //_NSGetExecutablePath(path, &path_len);
 wxString MacGetBasePath()
 {
 	char path[257];
 	uint32_t path_len = 256;
 	_NSGetExecutablePath(path, &path_len);
-	
-	//path now contains 
+
+	//path now contains
 	//CodeLite.app/Contents/MacOS/
 	wxFileName fname(wxString(path, wxConvUTF8));
-	
+
 	//remove he MacOS part of the exe path
 	wxString file_name = fname.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
 	wxString rest;
 	file_name.EndsWith(wxT("MacOS/"), &rest);
 	rest.Append(wxT("SharedSupport/"));
-	
+
 	return rest;
 }
 #endif
@@ -74,12 +74,19 @@ END_EVENT_TABLE()
 extern void InitXmlResource();
 App::App(void)
 		: m_pMainFrame(NULL)
+		, m_handler(NULL)
 {
 }
 
 App::~App(void)
 {
 	wxImage::CleanUpHandlers();
+#ifdef __WXMSW__
+	if (m_handler) {
+		FreeLibrary(m_handler);
+		m_handler = NULL;
+	}
+#endif
 	wxAppBase::ExitMainLoop();
 }
 
@@ -88,6 +95,12 @@ bool App::OnInit()
 #if wxUSE_STACKWALKER
 	//trun on fatal exceptions handler
 	wxHandleFatalExceptions(true);
+#endif
+
+#ifdef __WXMSW__
+	// as described in http://jrfonseca.dyndns.org/projects/gnu-win32/software/drmingw/
+	// load the exception handler dll so we will get Dr MinGW at runtime
+	m_handler = LoadLibrary(wxT("exchndl.dll"));
 #endif
 
 	// Init resources and add the PNG handler
@@ -129,11 +142,11 @@ bool App::OnInit()
 		wxMkDir((homeDir + wxT("/images/")).ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/templates/")).ToAscii(), 0777);
 		wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
-		
+
 		//copy the settings from the global location if needed
 		ManagerST::Get()->SetInstallDir( wxStandardPaths::Get().GetDataDir() );
 		CopySettings(homeDir, wxStandardPaths::Get().GetDataDir());
-		
+
 	} else {
 		wxFileName fn(homeDir);
 		fn.MakeAbsolute();
@@ -171,7 +184,7 @@ bool App::OnInit()
 			homeDir = ::wxGetCwd();
 		}
 	}
-	
+
 	ManagerST::Get()->SetInstallDir( homeDir );
 #endif
 
@@ -230,7 +243,7 @@ bool App::OnInit()
 
 	// Center the dialog when first shown
 //	m_pMainFrame->Centre();
-	
+
 	// update the accelerators table
 	ManagerST::Get()->UpdateMenuAccelerators();
 
@@ -302,7 +315,7 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 		wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
 		wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
 		wxCopyFile(installPath + wxT("/config/accelerators.conf.default"), destDir + wxT("/config/accelerators.conf.default"));
-		
+
 	}
 }
 

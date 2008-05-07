@@ -1,6 +1,6 @@
-#include "cppwordscanner.h"
 #include <stdio.h>
 #include <errno.h>
+#include <wx/string.h>
 
 #include "cppwordscanner.h"
 
@@ -9,18 +9,19 @@ char *loadFile(const char *fileName);
 int main(int argc, char **argv)
 {
 	CppTokenList l;
+//	char *data = loadFile("../../../sqlite3/sqlite3.c");
 	char *data = loadFile("../../../LiteEditor/manager.cpp");
 	if( !data ) {return -1;}
 	
 	
 	printf("scan started...\n");
-	CppWordScanner scanner( data ) ;
-	scanner.parse(l);
-//	
-//	CppTokenList::iterator iter = l.begin();
-//	for(; iter != l.end(); iter++){
-//		(*iter).print();
-//	}
+	CppWordScanner scanner( wxString(data, wxConvUTF8) ) ;
+	scanner.match(wxT("handler"), l);
+
+	CppTokenList::iterator iter = l.begin();
+	for(; iter != l.end(); iter++){
+		(*iter).print();
+	}
 	printf("Word count: %d\n", l.size());
 	free(data);
 	return 0;

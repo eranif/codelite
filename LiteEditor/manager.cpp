@@ -1,6 +1,6 @@
 #include "precompiled_header.h"
 #include "archive.h"
-#include "environmentconfig.h"
+#include "environmentconfig.h" 
 #include "buidltab.h"
 #include "fileexplorer.h"
 #include "manager.h"
@@ -1879,7 +1879,7 @@ void Manager::DbgStart(long pid)
 	ShowOutputPane(OutputPane::OUTPUT_DEBUG);
 
 	//set ourselves as the observer for the debugger class
-	dbgr->AddObserver(this);
+	dbgr->SetObserver(this);
 
 	//remove any breakpoints from previous runs
 	//and collect the breakpoints from the user

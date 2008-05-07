@@ -80,7 +80,7 @@ DbgCmdHandler *DbgGdb::PopHandler(const wxString &id)
 	if (it == m_handlers.end()) {
 		return NULL;
 	}
-	DbgCmdHandler *cmd = it->second;
+	DbgCmdHandler *cmd = it->second; 
 	m_handlers.erase(it);
 	return cmd;
 }

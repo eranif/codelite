@@ -11,7 +11,7 @@ CppToken::~CppToken()
 void CppToken::reset()
 {
 	name.clear();
-	offset = std::string::npos;
+	offset = wxString::npos;
 }
 void CppToken::append(const char ch)
 {
@@ -20,5 +20,5 @@ void CppToken::append(const char ch)
 
 void CppToken::print()
 {
-	printf("%s | %ld\n", name.c_str(), offset);
+	wxPrintf(wxT("%s | %ld\n"), name.GetData(), offset);
 }

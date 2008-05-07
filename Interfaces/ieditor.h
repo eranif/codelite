@@ -7,6 +7,13 @@
 //------------------------------------------------------------------
 // Defines the interface to the editor control
 //------------------------------------------------------------------
+/**
+ * @class IEditor
+ * @author Eran
+ * @date 05/07/08
+ * @file ieditor.h
+ * @brief an interface for the plugin to provide clean access to the editor class 
+ */
 class IEditor {
 public:
 	IEditor(){}
@@ -33,14 +40,17 @@ public:
 	 * to the  current file
 	 */
 	virtual void ReloadFile() = 0;
+	
 	/**
 	 * \brief return the current position of the caret
 	 */
 	virtual long GetCurrentPosition() = 0;
+	
 	/**
 	 * \brief return the current file name 
 	 */
 	virtual const wxFileName &GetFileName() const = 0;
+	
 	/**
 	 * \brief return the project which owns the current file name. return wxEmptyString
 	 * if this file has not project owner 

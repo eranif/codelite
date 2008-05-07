@@ -55,6 +55,15 @@ enum {
 //------------------------------------------------------------------
 //each plugin must implement this interface
 //------------------------------------------------------------------
+/**
+ * @class IPlugin
+ * @author Eran
+ * @date 05/07/08
+ * @file plugin.h
+ * @brief The interface that defines a plugin for CodeLite. each plugin must implement the pure virtual methods of this
+ * interface. The plugin gains access to CodeLite data by using the m_mgr member
+ * @sa  IManager
+ */
 class IPlugin : public wxEvtHandler {
 protected:
 	wxString m_shortName;
@@ -68,7 +77,15 @@ public:
 	//-----------------------------------------------
 	//The interface
 	//-----------------------------------------------
+	/**
+	 * @brief return the plugin's short name 
+	 * @return 
+	 */
 	virtual const wxString &GetShortName() const{return m_shortName;}
+	/**
+	 * @brief return the plugin's long and more descriptive name
+	 * @return 
+	 */
 	virtual const wxString &GetLongName() const{return m_longName;}
 
 	/**
@@ -95,16 +112,20 @@ public:
 	 * Override this method to allow the plugin to  
 	 * hook the popup menu by adding its entries.
 	 * \param menu menu to hook
-	 * \param type menu type, can be one of:
-	 * -# MenuTypeFileExplorer
-	 * -# MenuTypeFileView
-	 * -# MenuTypeEditor
+	 * \param type menu type
+	 * \sa  MenuType
 	 */
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type){
 		wxUnusedVar(type);
 		wxUnusedVar(menu);
 	};
 
+	/**
+	 * @brief un hook previosly hooked popup menu
+	 * @param menu the parent of our hooked menu
+	 * @param type the parent's type
+	 * @sa MenuType
+	 */
 	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type){
 		wxUnusedVar(type);
 		wxUnusedVar(menu);

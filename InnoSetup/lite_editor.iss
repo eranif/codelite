@@ -53,6 +53,7 @@ Source: "C:\Development\C++\codelite\trunk\Runtime\bin\makedir.exe"; DestDir: "{
 Source: "C:\Development\C++\codelite\trunk\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW\bin\mingwm10.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW\bin\which.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW\bin\rm.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW\bin\cscope.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor

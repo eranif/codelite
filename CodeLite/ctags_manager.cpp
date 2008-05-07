@@ -1888,7 +1888,7 @@ bool TagsManager::IsPureVirtual(TagEntryPtr tag)
 {
 	clFunction foo;
 	if (!GetLanguage()->FunctionFromPattern(tag->GetPattern(), foo)) {
-		return wxEmptyString;
+		return false;
 	}
 	return foo.m_isPureVirtual;
 }
@@ -1897,7 +1897,7 @@ bool TagsManager::IsVirtual(TagEntryPtr tag)
 {
 	clFunction foo;
 	if (!GetLanguage()->FunctionFromPattern(tag->GetPattern(), foo)) {
-		return wxEmptyString;
+		return false;
 	}
 	return foo.m_isVirtual;
 }

@@ -120,6 +120,8 @@ public:
 	
 	void SetLanguage(Language *lang);
 	Language *GetLanguage();
+		
+	
 	
 	/**
 	 * Return the CtagsOptions used by the tags manager

@@ -8,18 +8,19 @@ class CppToken
 {
 	wxString name;		// the name of the token
 	size_t offset;		// file offset
+	wxString filename;
 
 public:
 	CppToken();
 	~CppToken();
-	
+
 	void reset();
-	
 	void append(const char ch);
-	
+
 	void setName(const wxString& name) {
 		this->name = name;
 	}
+	
 	void setOffset(const size_t& offset) {
 		this->offset = offset;
 	}
@@ -30,7 +31,15 @@ public:
 	const size_t& getOffset() const {
 		return offset;
 	}
-	
+
+	void setFilename(const wxString& filename) {
+		this->filename = filename;
+	}
+
+	const wxString& getFilename() const {
+		return filename;
+	}
+
 	void print();
 };
 typedef std::list<CppToken> CppTokenList;

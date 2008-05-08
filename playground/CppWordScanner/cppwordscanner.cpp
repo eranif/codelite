@@ -1,6 +1,8 @@
+#include <wx/ffile.h>
 #include <wx/tokenzr.h>
 #include "cppwordscanner.h"
 #include "stringaccessor.h"
+#include "tokendb.h"
 
 enum {
 	STATE_NORMAL = 0,
@@ -10,8 +12,8 @@ enum {
 	STATE_SINGLE_STRING
 };
 
-CppWordScanner::CppWordScanner(const wxString &text)
-		: m_text(text)
+CppWordScanner::CppWordScanner(const wxString &file_name)
+		: m_db(NULL)
 {
 	wxString key_words =
 	    wxT("auto break case char const continue default define defined do double elif else endif enum error extern float"
@@ -23,20 +25,44 @@ CppWordScanner::CppWordScanner(const wxString &text)
 	//add this items into map
 	m_arr = wxStringTokenize(key_words, wxT(" "));
 	m_arr.Sort();
+
+	//open the file and read all its content
+	wxFFile file(file_name, wxT("rb"));
+
+	//first try the Utf8
+	file.ReadAll(&m_text, wxConvUTF8);
+	if (m_text.IsEmpty()) {
+		//try local
+		file.Seek(0);
+
+		file.ReadAll(&m_text, wxConvLocal);
+		if (m_text.IsEmpty()) {
+			file.Seek(0);
+			file.ReadAll(&m_text, wxConvLibc);
+		}
+	}
+	file.Close();
 }
 
 CppWordScanner::~CppWordScanner()
 {
+	m_db = NULL;
 }
 
-void CppWordScanner::findAll(CppTokenList &l)
+void CppWordScanner::FindAll(CppTokenList &l)
 {
 	doFind(wxEmptyString, l);
 }
 
-void CppWordScanner::match(const wxString& word, CppTokenList& l)
+void CppWordScanner::Match(const wxString& word, CppTokenList& l)
 {
 	doFind(word, l);
+	if (m_db) {
+		CppTokenList::iterator iter = l.begin();
+		for (; iter != l.end(); iter++) {
+			m_db->Store( (*iter) );
+		}
+	}
 }
 
 void CppWordScanner::doFind(const wxString& filter, CppTokenList& l)
@@ -86,9 +112,9 @@ void CppWordScanner::doFind(const wxString& filter, CppTokenList& l)
 
 					//dont add C++ key words
 					if (m_arr.Index(token.getName()) == wxNOT_FOUND) {
-						
+
 						// filter out non matching words
-						if(filter.empty() || filter == token.getName()){
+						if (filter.empty() || filter == token.getName()) {
 							l.push_back( token );
 						}
 					}
@@ -128,3 +154,9 @@ void CppWordScanner::doFind(const wxString& filter, CppTokenList& l)
 		}
 	}
 }
+
+void CppWordScanner::SetDatabase(TokenDb* db)
+{
+	m_db = db;
+}
+

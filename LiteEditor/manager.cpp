@@ -220,13 +220,17 @@ bool Manager::OpenFile(const wxString &file_name, const wxString &projectName, i
 
 	if ( !editor ) {
 		/// Open the file and read the text
-		if (fileName.IsOk() == false)
+		if (fileName.IsOk() == false) {
+			wxLogMessage(wxT("Invalid file name: ") + fileName.GetFullPath());
 			return false;
-
+		}
+		
 		// make sure that the file exist
-		if ( !fileName.FileExists() )
+		if ( !fileName.FileExists() ) {
+			wxLogMessage(wxT("File: ") + fileName.GetFullPath() + wxT(" does not exist!"));
 			return false;
-
+		}
+		
 		// Create new editor and add it to the notebook
 		notebook->Freeze();
 		// create new instance from pool
@@ -1396,7 +1400,7 @@ void Manager::RetagProject(const wxString &projectName)
 		TagsManagerST::Get()->RetagFiles(projectFiles);
 
 		// build tokens database for refactoring purposes...
-		BuildRefactorDatabase( projectFiles );
+//		BuildRefactorDatabase( projectFiles );
 	}
 }
 
@@ -1417,7 +1421,7 @@ void Manager::RetagWorkspace()
 	TagsManagerST::Get()->RetagFiles(projectFiles);
 
 	// build tokens database for refactoring purposes...
-	BuildRefactorDatabase( projectFiles );
+//	BuildRefactorDatabase( projectFiles );
 }
 
 void Manager::WriteProgram(const wxString &line)

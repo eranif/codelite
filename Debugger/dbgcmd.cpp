@@ -101,9 +101,11 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 	//remove quotes
 	fileName = fileName.AfterFirst(wxT('"'));
 	fileName = fileName.BeforeLast(wxT('"'));
-
+	fileName.Replace(wxT("\\\\"), wxT("\\"));
+	
 	m_observer->UpdateFileLine(fileName, lineno);
 #else
+	
 	// On Mac we use the stack info the
 	// get the current file and line from the debugger
 	wxString tmpLine(line);

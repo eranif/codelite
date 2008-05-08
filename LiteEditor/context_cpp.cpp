@@ -1,4 +1,6 @@
 #include "precompiled_header.h"
+#include "cpptoken.h"
+#include "tokendb.h"
 #include "globals.h"
 #include "commentconfigdata.h"
 #include "editor_config.h"
@@ -96,6 +98,9 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 	EVT_MENU(XRCID("add_multi_impl"), ContextCpp::OnAddMultiImpl)
 	EVT_MENU(XRCID("setters_getters"), ContextCpp::OnGenerateSettersGetters)
 	EVT_MENU(XRCID("add_include_file"), ContextCpp::OnAddIncludeFile)
+	EVT_MENU(XRCID("rename_function"), ContextCpp::OnRenameFunction)
+	EVT_MENU(XRCID("rename_member"), ContextCpp::OnRenameMember)
+	
 END_EVENT_TABLE()
 
 ContextCpp::ContextCpp(LEditor *container)
@@ -488,17 +493,23 @@ void ContextCpp::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<Tag
 	}
 }
 
-wxString ContextCpp::GetExpression(long pos, bool onlyWord)
+wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 {
 	bool cont(true);
 	int depth(0);
-	LEditor &rCtrl = GetCtrl();
+	
+	LEditor *ctrl(NULL);
+	if(!editor) {
+		ctrl = &GetCtrl();
+	} else {
+		ctrl = editor;
+	}
 
 	int position( pos );
 	int at(position);
 	bool prevGt(false);
 	while (cont && depth >= 0) {
-		wxChar ch = rCtrl.PreviousChar(position, at, true);
+		wxChar ch =ctrl->PreviousChar(position, at, true);
 		position = at;
 		//Eof?
 		if (ch == 0) {
@@ -520,7 +531,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord)
 				} else {
 					if (depth <= 0) {
 						//dont include this token
-						at = rCtrl.PositionAfter(at);
+						at =ctrl->PositionAfter(at);
 						cont = false;
 					}
 				}
@@ -548,7 +559,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord)
 			prevGt = false;
 			if (depth < 0) {
 				//dont include this token
-				at = rCtrl.PositionAfter(at);
+				at =ctrl->PositionAfter(at);
 				cont = false;
 				break;
 			}
@@ -566,7 +577,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord)
 			if (depth <= 0) {
 
 				//dont include this token
-				at = rCtrl.PositionAfter(at);
+				at =ctrl->PositionAfter(at);
 				cont = false;
 			}
 			break;
@@ -580,7 +591,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord)
 			if (depth < 0) {
 
 				//dont include this token
-				at = rCtrl.PositionAfter(at);
+				at =ctrl->PositionAfter(at);
 				cont = false;
 			}
 			break;
@@ -596,7 +607,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord)
 	}
 
 	if (at < 0) at = 0;
-	wxString expr = rCtrl.GetTextRange(at, pos);
+	wxString expr =ctrl->GetTextRange(at, pos);
 
 	//remove comments from it
 	CppScanner sc;
@@ -2042,3 +2053,57 @@ bool ContextCpp::IsComment(long pos)
 	        style == wxSCI_C_COMMENTDOCKEYWORD		||
 	        style == wxSCI_C_COMMENTDOCKEYWORDERROR   );
 }
+
+void ContextCpp::OnRenameFunction(wxCommandEvent& e)
+{
+	VALIDATE_WORKSPACE();
+	
+	// Open the refactoing index database and search for the word to refactor
+	TokenDb db;
+
+	// get the path to the workspace
+	wxFileName wsp_file = WorkspaceST::Get()->GetWorkspaceFileName();
+	wxFileName dbfile(wsp_file.GetPath(), wsp_file.GetName() + wxT("_tokens.db"));
+
+	db.Open(dbfile.GetFullPath());
+	CppTokenList l;
+	
+	LEditor &rCtrl = GetCtrl();
+	
+	//get expression
+	int pos = rCtrl.GetCurrentPos();
+	int word_end = rCtrl.WordEndPosition(pos, true);
+	int word_start = rCtrl.WordStartPosition(pos, true);
+
+	// get the scope
+	wxString word = rCtrl.GetTextRange(word_start, word_end);
+	if (word.IsEmpty())
+		return;
+	
+	// locate all instances of this word in the database
+	db.Fetch(word, l);
+	
+	wxString msg;
+	msg << wxT("Found ") << l.size() << wxT(" instances of ") << word;
+	wxLogMessage(msg);
+	
+	// create an empty hidden instance of LEditor
+	LEditor *editor = new LEditor(Frame::Get()->GetNotebook(), wxID_ANY, wxSize(1, 1), wxEmptyString, wxEmptyString, true);
+	
+	// Get expressions for the CC to work with:
+	CppTokenList::iterator iter = l.begin();
+	for(; iter != l.end(); iter++) {
+		CppToken token = *iter;
+		editor->Create(wxEmptyString, token.getFilename());
+		wxString expr = GetExpression(token.getOffset()+token.getName().Length(), false, editor);
+//		TagsManagerST::Get()->ProcessExpression(
+		wxLogMessage(wxT("File: ") + token.getFilename() + wxT(", Expression: ") + expr);
+	}
+	
+	editor->Destroy();
+}
+
+void ContextCpp::OnRenameMember(wxCommandEvent& e)
+{
+}
+

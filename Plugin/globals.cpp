@@ -54,19 +54,23 @@ bool ReadFileWithConversion(const wxString &fileName, wxString &content)
 {
 	wxFFile file(fileName, wxT("rb"));
 
-	//first try the Utf8
-	file.ReadAll(&content, wxConvUTF8);
-	if (content.IsEmpty()) {
-		//try local
-		file.Seek(0);
-
-		file.ReadAll(&content, wxConvLocal);
+	if (file.IsOpened()) {
+		//first try the Utf8
+		file.ReadAll(&content, wxConvUTF8);
 		if (content.IsEmpty()) {
+			//try local
 			file.Seek(0);
-			file.ReadAll(& content, wxConvLibc);
+
+			file.ReadAll(&content, wxConvLocal);
+			if (content.IsEmpty()) {
+				file.Seek(0);
+				file.ReadAll(& content, wxConvLibc);
+			}
 		}
+		return content.IsEmpty() == false;
+	} else {
+		return false;
 	}
-	return content.IsEmpty() == false;
 }
 
 bool RemoveDirectory(const wxString &path)

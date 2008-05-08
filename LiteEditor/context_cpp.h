@@ -103,13 +103,15 @@ public:
 	virtual void OnMoveImpl(wxCommandEvent &e);
 	virtual void OnAddImpl(wxCommandEvent &e);
 	virtual void OnAddMultiImpl(wxCommandEvent &e);
+	virtual void OnRenameFunction(wxCommandEvent &e);
+	virtual void OnRenameMember(wxCommandEvent &e);
 	
 	DECLARE_EVENT_TABLE();
 private:
 	wxString GetWordUnderCaret();
 	wxString GetFileImageString(const wxString &ext);
 	wxString GetImageString(const TagEntry &entry);
-	wxString GetExpression(long pos, bool onlyWord);
+	wxString GetExpression(long pos, bool onlyWord, LEditor *editor = NULL);
 	void DoGotoSymbol(const std::vector<TagEntryPtr> &tags);
 	bool IsIncludeStatement(const wxString &line, wxString *fileName = NULL);
 	void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);

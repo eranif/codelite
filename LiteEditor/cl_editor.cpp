@@ -56,15 +56,15 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_CONTEXT_MENU(LEditor::OnContextMenu)
 	EVT_KEY_DOWN(LEditor::OnKeyDown)
 	EVT_LEFT_DOWN(LEditor::OnLeftDown)
-//	EVT_SCI_START_DRAG(wxID_ANY, LEditor::OnDragStart)
-//	EVT_SCI_DRAG_OVER(wxID_ANY, LEditor::OnDragEnd)
-	//C++ contex menu update UI events
-	EVT_UPDATE_UI(XRCID("insert_doxy_comment"), LEditor::OnPopupMenuUpdateUI)
-	EVT_UPDATE_UI(XRCID("setters_getters"), LEditor::OnPopupMenuUpdateUI)
-	EVT_UPDATE_UI(XRCID("find_decl"), LEditor::OnPopupMenuUpdateUI)
-	EVT_UPDATE_UI(XRCID("find_impl"), LEditor::OnPopupMenuUpdateUI)
-	//	EVT_UPDATE_UI(XRCID("move_impl"), LEditor::OnPopupMenuUpdateUI)
 
+	//C++ contex menu update UI events
+//	EVT_UPDATE_UI(XRCID("insert_doxy_comment"), LEditor::OnPopupMenuUpdateUI)
+//	EVT_UPDATE_UI(XRCID("setters_getters"), LEditor::OnPopupMenuUpdateUI)
+//	EVT_UPDATE_UI(XRCID("find_decl"), LEditor::OnPopupMenuUpdateUI)
+//	EVT_UPDATE_UI(XRCID("find_impl"), LEditor::OnPopupMenuUpdateUI)
+//	EVT_UPDATE_UI(XRCID("rename_function"), LEditor::OnPopupMenuUpdateUI)
+//	EVT_UPDATE_UI(XRCID("rename_member"), LEditor::OnPopupMenuUpdateUI)
+	
 	// Find and replace dialog
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_FIND_NEXT, LEditor::OnFindDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_REPLACE, LEditor::OnFindDialog)

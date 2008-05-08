@@ -274,7 +274,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("add_multi_impl"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("setters_getters"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_include_file"), Frame::OnCppContextMenu)
-
+	EVT_MENU(XRCID("rename_member"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("rename_function"), Frame::OnCppContextMenu)
+	
 	EVT_MENU(XRCID("configure_accelerators"), Frame::OnConfigureAccelerators)
 
 	EVT_UPDATE_UI(XRCID("save_file"), Frame::OnFileExistUpdateUI)

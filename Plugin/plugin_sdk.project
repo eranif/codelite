@@ -244,5 +244,15 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="TokenScanner">
+    <File Name="tokendb.cpp"/>
+    <File Name="tokendb.h"/>
+    <File Name="cpptoken.cpp"/>
+    <File Name="cpptoken.h"/>
+    <File Name="cppwordscanner.cpp"/>
+    <File Name="cppwordscanner.h"/>
+    <File Name="stringaccessor.cpp"/>
+    <File Name="stringaccessor.h"/>
+  </VirtualDirectory>
   <Dependencies/>
 </CodeLite_Project>

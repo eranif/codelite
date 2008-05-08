@@ -74,7 +74,9 @@ END_EVENT_TABLE()
 extern void InitXmlResource();
 App::App(void)
 		: m_pMainFrame(NULL)
+#ifdef __WXMSW__		
 		, m_handler(NULL)
+#endif		
 {
 }
 

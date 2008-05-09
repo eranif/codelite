@@ -50,7 +50,7 @@ void RefactorIndexBuildJob::Process(wxThread *thread)
 		CppWordScanner scanner(fn.GetFullPath());
 
 		wxString msg;
-		msg << wxT("Parsing file: ") << fn.GetFullName();
+		msg << wxT("Parsing: ") << fn.GetFullName();
 		POST_NEW_STATUS(msg, i, Action_Update_Gauge);
 		// scan
 		scanner.FindAll(l);
@@ -86,7 +86,7 @@ void RefactorIndexBuildJob::Process(wxThread *thread)
 			curr_file = (*iter).getFilename();
 			i++;
 			wxString msg;
-			msg << wxT("Saving symbols from file: ") << curr_file.GetFullName();
+			msg << wxT("Saving: ") << curr_file.GetFullName();
 			POST_NEW_STATUS(msg, maxVal+i, Action_Update_Gauge);
 		}
 

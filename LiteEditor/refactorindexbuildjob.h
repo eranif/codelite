@@ -5,6 +5,18 @@
 #include <wx/filename.h>
 #include "job.h"
 
+enum {
+	Action_Reset_Gauge,
+	Action_Update_Gauge,
+	Action_Clear_Gauge
+};
+
+struct RefactorIndexBuildJobInfo {
+	int action;
+	int status;
+	wxString filename;
+};
+ 
 class RefactorIndexBuildJob : public Job
 {
 	std::vector<wxFileName> m_files;
@@ -13,6 +25,6 @@ public:
 	virtual ~RefactorIndexBuildJob();
 
 public:
-	virtual void Process();
+	virtual void Process(wxThread *thread);
 };
 #endif // __refactorindexbuildjob__

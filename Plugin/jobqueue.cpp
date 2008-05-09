@@ -69,7 +69,7 @@ void* JobQueueWorker::Entry()
 void JobQueueWorker::ProcessJob(Job *job)
 {
 	if ( job ) {
-		job->Process();
+		job->Process(this);
 	}
 }
 

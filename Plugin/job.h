@@ -42,8 +42,10 @@ public:
 	 */
 	virtual void Post(void *ptr);
 	/**
-	 * @brief overridable Process() method
+	 * @brief overridable Process() method. If the Process() method is performs a long computations, it is advised to 
+	 * to call thread->TestDestroy() to allow the thread to exit when requested 
+	 * @param thread the thread that is currently running the job. 
 	 */
-	virtual void Process() = 0;
+	virtual void Process(wxThread *thread) = 0;
 };
 #endif // __job__

@@ -406,7 +406,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 
 	//update line number
 	wxString message;
-	message << wxT("Ln ") << LineFromPosition(pos)+1 << wxT("    Col ") << GetColumn(pos) << wxT("    Pos ") << pos << wxT("    Style ") << GetStyleAt(pos);
+	message << wxT("Ln ") << LineFromPosition(pos)+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
 	ManagerST::Get()->SetStatusMessage(message, 3);
 
 	//let the context handle this as well

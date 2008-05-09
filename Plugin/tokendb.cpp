@@ -116,3 +116,11 @@ void TokenDb::DeleteByFile(const wxString& file)
 	
 }
 
+void TokenDb::Rollback()
+{
+	try {
+		m_db->Rollback();
+	} catch (wxSQLite3Exception &e) {
+		wxUnusedVar(e);
+	}
+}

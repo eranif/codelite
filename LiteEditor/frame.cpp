@@ -1,4 +1,6 @@
 #include "precompiled_header.h"
+#include "refactorindexbuildjob.h"
+#include "customstatusbar.h"
 #include "jobqueue.h"
 #include "threebuttondlg.h"
 #include "acceltabledlg.h"
@@ -303,7 +305,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
 	EVT_UPDATE_UI(XRCID("close_file"), Frame::OnFileCloseUI)
 	EVT_MENU(XRCID("link_action"), Frame::OnStartPageEvent)
-
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_JOB_STATUS_VOID_PTR, Frame::OnUpdateBuildRefactorIndexBar)
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 
@@ -517,8 +519,7 @@ void Frame::CreateGUIControls(void)
 	ParseThreadST::Get()->SetNotifyWindow( this );
 
 	// And finally create a status bar
-	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
-	statusBar->SetFieldsCount(4);
+	wxStatusBar* statusBar = new CustomStatusBar(this, wxID_ANY);
 	SetStatusBar(statusBar);
 
 	GetStatusBar()->SetStatusText(wxT("Ready"));
@@ -2934,4 +2935,25 @@ void Frame::OnConfigureAccelerators(wxCommandEvent &e)
 	AccelTableDlg *dlg = new AccelTableDlg(this);
 	dlg->ShowModal();
 	dlg->Destroy();
+}
+
+void Frame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
+{
+	wxLogMessage(wxT("OnUpdateBuildRefactorIndexBar"));
+	RefactorIndexBuildJobInfo *info = reinterpret_cast<RefactorIndexBuildJobInfo*>(e.GetClientData());
+	if (info) {
+		switch(info->action) {
+			case Action_Update_Gauge:
+				((CustomStatusBar*)GetStatusBar())->Update(info->status, info->filename);
+				break;
+			case Action_Reset_Gauge:
+				((CustomStatusBar*)GetStatusBar())->ResetGauge(info->status);
+				break;
+			case Action_Clear_Gauge:
+				((CustomStatusBar*)GetStatusBar())->Update(0, wxEmptyString);
+				((CustomStatusBar*)GetStatusBar())->SetStatusText(wxT("Done"));
+				break;
+		}
+		delete info;
+	}
 }

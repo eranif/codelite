@@ -316,6 +316,7 @@ protected:
 	void OnCompileFileUI(wxUpdateUIEvent &e);
 	void OnCloseAllButThis(wxCommandEvent &e);
 	void OnWorkspaceMenuUI(wxUpdateUIEvent &e);
+	void OnUpdateBuildRefactorIndexBar(wxCommandEvent &e);
 	
 	//EOL
 	void OnViewEolUI(wxUpdateUIEvent &e);

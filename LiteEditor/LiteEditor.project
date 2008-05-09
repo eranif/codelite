@@ -192,6 +192,8 @@
     <File Name="generalinfo.cpp"/>
     <File Name="generalinfo.h"/>
     <File Name="frame.cpp"/>
+    <File Name="customstatusbar.cpp"/>
+    <File Name="customstatusbar.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Controls">
     <File Name="checktreectrl.cpp"/>

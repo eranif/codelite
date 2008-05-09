@@ -27,6 +27,11 @@ public:
 	void Commit();
 	
 	/**
+	 * @brief rollback last transaction
+	 */
+	void Rollback();
+	
+	/**
 	 * \brief store CppToken into the database
 	 * \param token
 	 */

@@ -238,6 +238,8 @@
     <File Name="colourthread.cpp"/>
     <File Name="colourrequest.cpp"/>
     <File Name="colourrequest.h"/>
+    <File Name="refactorindexbuildjob.cpp"/>
+    <File Name="refactorindexbuildjob.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>

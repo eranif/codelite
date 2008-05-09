@@ -12,6 +12,7 @@
 
 class Notebook;
 class EnvironmentConfig;
+class JobQueue;
 
 class PluginManager : public IManager
 {
@@ -55,6 +56,7 @@ public:
 	virtual Notebook *GetMainNotebook();
 	virtual wxAuiManager* GetDockingManager();
 	virtual EnvironmentConfig* GetEnv();
+	virtual JobQueue *GetJobQueue();
 	
 	//------------------------------------
 	//End of IManager interface

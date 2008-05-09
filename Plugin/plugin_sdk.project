@@ -255,4 +255,10 @@
     <File Name="stringaccessor.h"/>
   </VirtualDirectory>
   <Dependencies/>
+  <VirtualDirectory Name="JobQueue">
+    <File Name="jobqueue.cpp"/>
+    <File Name="jobqueue.h"/>
+    <File Name="job.h"/>
+    <File Name="job.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

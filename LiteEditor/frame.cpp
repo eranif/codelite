@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "jobqueue.h"
 #include "threebuttondlg.h"
 #include "acceltabledlg.h"
 #include "drawingutils.h"
@@ -336,7 +337,10 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	// Start the search thread
 	SearchThreadST::Get()->SetNotifyWindow(this);
 	SearchThreadST::Get()->Start(WXTHREAD_MIN_PRIORITY);
-
+	
+	// start the job queue
+	JobQueueSingleton::Instance()->Start();
+	
 	//start the editor creator thread
 	EditorCreatorST::Get()->SetParent(GetNotebook());
 	m_timer = new wxTimer(this, FrameTimerId);
@@ -349,10 +353,6 @@ Frame::~Frame(void)
 	ManagerST::Free();
 	// uninitialize AUI manager
 	m_mgr.UnInit();
-	//#ifdef __WXMSW__
-	//	force exit!
-	//	wxTheApp->ExitMainLoop();
-	//#endif
 }
 
 void Frame::Initialize(bool loadLastSession)
@@ -953,13 +953,9 @@ void Frame::OnClose(wxCloseEvent& event)
 	ManagerST::Get()->KillProgram();
 	ManagerST::Get()->DbgStop();
 	SearchThreadST::Get()->StopSearch();
-
+	
 	//save the perspective
 	WriteFileUTF8(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"), m_mgr.SavePerspective());
-
-//	EditorConfigST::Get()->SaveNotebookStyle(wxT("Editor"), GetNotebook()->GetWindowStyleFlag());
-//	EditorConfigST::Get()->SaveNotebookStyle(wxT("OutputPane"), m_outputPane->GetNotebook()->GetWindowStyleFlag());
-//	EditorConfigST::Get()->SaveNotebookStyle(wxT("DebuggerPane"), m_debuggerPane->GetNotebook()->GetWindowStyleFlag());
 	EditorConfigST::Get()->SaveLexers();
 
 	//save general information
@@ -998,7 +994,7 @@ void Frame::OnClose(wxCloseEvent& event)
 
 	session.SetTabs(files);
 	SessionManager::Get().Save(wxT("Default"), session);
-
+	
 	//make sure there are no 'unsaved documents'
 	ManagerST::Get()->CloseAll();
 	event.Skip();

@@ -1,4 +1,5 @@
 #include "environmentconfig.h"
+#include "jobqueue.h"
 #include "pluginmanager.h"
 #include "pluginsdata.h"
 #include "pluginconfig.h"
@@ -288,3 +289,7 @@ EnvironmentConfig* PluginManager::GetEnv()
 	return EnvironmentConfig::Instance();
 }
 
+JobQueue* PluginManager::GetJobQueue()
+{
+	return JobQueueSingleton::Instance();
+}

@@ -9,6 +9,7 @@
 class TagsManager;
 class Workspace;
 class EnvironmentConfig;
+class JobQueue;
 
 //--------------------------
 //Auxulary class
@@ -134,6 +135,11 @@ public:
 	 * @sa EnvironmentConfig 
 	 */
 	virtual EnvironmentConfig *GetEnv() = 0;
+	/**
+	 * @brief return a pointer to the job queue manager
+	 * \return job queue manager
+	 */
+	virtual JobQueue *GetJobQueue() = 0;
 };
 
 #endif //IMANAGER_H

@@ -19,8 +19,10 @@ CustomStatusBar::~CustomStatusBar()
 
 void CustomStatusBar::OnSize(wxSizeEvent& event)
 {
-	if ( !m_gauge )
+	if ( !m_gauge ){
+		event.Skip();
 		return;
+	}
 
 	wxRect rect;
 	GetFieldRect(4, rect);

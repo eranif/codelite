@@ -519,9 +519,11 @@ void Frame::CreateGUIControls(void)
 	ParseThreadST::Get()->SetNotifyWindow( this );
 
 	// And finally create a status bar
-	wxStatusBar* statusBar = new CustomStatusBar(this, wxID_ANY);
+	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
+//	wxStatusBar* statusBar = new CustomStatusBar(this, wxID_ANY);
 	SetStatusBar(statusBar);
-
+	GetStatusBar()->SetFieldsCount(5);
+	
 	GetStatusBar()->SetStatusText(wxT("Ready"));
 
 
@@ -2939,17 +2941,26 @@ void Frame::OnConfigureAccelerators(wxCommandEvent &e)
 
 void Frame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
 {
+	static double max_range(1);
+	
 	RefactorIndexBuildJobInfo *info = reinterpret_cast<RefactorIndexBuildJobInfo*>(e.GetClientData());
 	if (info) {
+		wxString message;
+		 
 		switch(info->action) {
 			case Action_Update_Gauge:
-				((CustomStatusBar*)GetStatusBar())->Update(info->status, info->filename);
+				message << wxT("(") << (int)(((double)info->status / max_range)*100) << wxT("%) : ") << info->filename;
+//				((CustomStatusBar*)GetStatusBar())->Update(info->status, info->filename);
+				GetStatusBar()->SetStatusText(message, 4);
 				break;
 			case Action_Reset_Gauge:
-				((CustomStatusBar*)GetStatusBar())->ResetGauge(info->status);
+//				((CustomStatusBar*)GetStatusBar())->ResetGauge(info->status);
+				max_range = info->status;
+				GetStatusBar()->SetStatusText(wxEmptyString, 4);
 				break;
 			case Action_Clear_Gauge:
-				((CustomStatusBar*)GetStatusBar())->Update(0, wxT("Done"));
+//				((CustomStatusBar*)GetStatusBar())->Update(0, wxT("Done"));
+				GetStatusBar()->SetStatusText(wxT("Done"), 4);
 				break;
 		}
 		delete info;

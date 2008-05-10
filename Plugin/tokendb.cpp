@@ -124,3 +124,36 @@ void TokenDb::Rollback()
 		wxUnusedVar(e);
 	}
 }
+
+void TokenDb::RecreateSchema()
+{
+	wxString sql;
+	try {
+		
+		// create the database schema
+		sql = wxT("PRAGMA synchronous = OFF;");
+		m_db->ExecuteUpdate(sql);
+
+		sql = wxT("PRAGMA temp_store = MEMORY;");
+		m_db->ExecuteUpdate(sql);
+
+		sql = wxT("PRAGMA default_cache_size = 20000;");
+		m_db->ExecuteUpdate(sql);
+		
+		sql = wxT("drop table if exists TOKENS");
+		m_db->ExecuteUpdate(sql);
+		
+		sql = wxT("create  table if not exists TOKENS (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, file string, offset integer)");
+		m_db->ExecuteUpdate(sql);
+		
+		// Create search indexes
+		sql = wxT("CREATE INDEX IF NOT EXISTS TOKEN_NAME on TOKENS(name);");
+		m_db->ExecuteUpdate(sql);
+		
+		sql = wxT("CREATE INDEX IF NOT EXISTS TOKEN_FILE on TOKENS(file);");
+		m_db->ExecuteUpdate(sql);
+		
+	} catch (wxSQLite3Exception &e) {
+		wxUnusedVar(e);
+	}
+}

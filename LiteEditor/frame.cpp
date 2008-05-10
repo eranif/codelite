@@ -2939,7 +2939,6 @@ void Frame::OnConfigureAccelerators(wxCommandEvent &e)
 
 void Frame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
 {
-	wxLogMessage(wxT("OnUpdateBuildRefactorIndexBar"));
 	RefactorIndexBuildJobInfo *info = reinterpret_cast<RefactorIndexBuildJobInfo*>(e.GetClientData());
 	if (info) {
 		switch(info->action) {
@@ -2950,8 +2949,7 @@ void Frame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
 				((CustomStatusBar*)GetStatusBar())->ResetGauge(info->status);
 				break;
 			case Action_Clear_Gauge:
-				((CustomStatusBar*)GetStatusBar())->Update(0, wxEmptyString);
-				((CustomStatusBar*)GetStatusBar())->SetStatusText(wxT("Done"));
+				((CustomStatusBar*)GetStatusBar())->Update(0, wxT("Done"));
 				break;
 		}
 		delete info;

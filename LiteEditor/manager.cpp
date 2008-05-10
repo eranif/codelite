@@ -512,7 +512,7 @@ void Manager::OpenWorkspace(const wxString &path)
 			proj->GetFiles(projectFiles, true);
 		}
 	}
-	BuildRefactorDatabase(projectFiles);
+	BuildRefactorDatabase(projectFiles, true);
 }
 
 void Manager::DoUpdateConfigChoiceControl()
@@ -1415,7 +1415,7 @@ void Manager::RetagProject(const wxString &projectName)
 		TagsManagerST::Get()->RetagFiles(projectFiles);
 
 		// build tokens database for refactoring purposes...
-		BuildRefactorDatabase( projectFiles );
+		BuildRefactorDatabase(projectFiles, false);
 	}
 }
 
@@ -1436,7 +1436,7 @@ void Manager::RetagWorkspace()
 	TagsManagerST::Get()->RetagFiles(projectFiles);
 
 	// build tokens database for refactoring purposes...
-	BuildRefactorDatabase( projectFiles );
+	BuildRefactorDatabase(projectFiles, true);
 }
 
 void Manager::WriteProgram(const wxString &line)
@@ -2653,8 +2653,8 @@ void Manager::GetAcceleratorMap(MenuItemDataMap& accelMap)
 	LoadAcceleratorTable(fileName, accelMap);
 }
 
-void Manager::BuildRefactorDatabase(const std::vector<wxFileName>& files)
+void Manager::BuildRefactorDatabase(const std::vector<wxFileName>& files, bool full_build)
 {
-	RefactorIndexBuildJob *job = new RefactorIndexBuildJob(Frame::Get(), files);
+	RefactorIndexBuildJob *job = new RefactorIndexBuildJob(Frame::Get(), files, full_build);
 	JobQueueSingleton::Instance()->PushJob( job );
 }

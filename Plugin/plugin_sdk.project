@@ -114,6 +114,8 @@
       <File Name="dirpicker.h"/>
       <File Name="splashscreen.cpp"/>
       <File Name="splashscreen.h"/>
+      <File Name="progressctrl.cpp"/>
+      <File Name="progressctrl.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="threebuttondlg.h"/>

@@ -612,7 +612,7 @@ public:
 	 * \brief parse list of files and construct a token database that will be used for refactoring
 	 * \param files list of files to parse 
 	 */
-	void BuildRefactorDatabase(const std::vector<wxFileName> &files);
+	void BuildRefactorDatabase(const std::vector<wxFileName> &files, bool full_build = false);
 	
 	void UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< wxAcceleratorEntry > &accelVec);
 	

@@ -20,8 +20,10 @@ struct RefactorIndexBuildJobInfo {
 class RefactorIndexBuildJob : public Job
 {
 	std::vector<wxFileName> m_files;
+	bool m_full_build;
+	
 public:
-	RefactorIndexBuildJob(wxEvtHandler *handler, const std::vector<wxFileName> &files);
+	RefactorIndexBuildJob(wxEvtHandler *handler, const std::vector<wxFileName> &files, bool full_build);
 	virtual ~RefactorIndexBuildJob();
 
 public:

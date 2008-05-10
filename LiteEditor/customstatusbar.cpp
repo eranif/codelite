@@ -1,3 +1,4 @@
+#include "progressctrl.h"
 #include "customstatusbar.h"
 
 BEGIN_EVENT_TABLE(CustomStatusBar, wxStatusBar)
@@ -8,7 +9,8 @@ CustomStatusBar::CustomStatusBar(wxWindow *parent, wxWindowID id)
 : wxStatusBar(parent, id)
 {
 	SetFieldsCount(5);
-	m_gauge = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxDefaultSize, wxGA_HORIZONTAL|wxNO_BORDER|wxGA_SMOOTH );
+	m_gauge = new ProgressCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	m_gauge->SetMaxRange(200);
 }
 
 CustomStatusBar::~CustomStatusBar()
@@ -22,21 +24,17 @@ void CustomStatusBar::OnSize(wxSizeEvent& event)
 
 	wxRect rect;
 	GetFieldRect(4, rect);
-
-	m_gauge->SetSize(rect.x, rect.y, rect.width, rect.height);
-
+	m_gauge->SetSize(rect.x+1, rect.y+1, rect.width-2, rect.height-2);
 	event.Skip();
 }
 
 void CustomStatusBar::ResetGauge(int range)
 {
-	m_gauge->SetValue(0);
-	m_gauge->SetRange(range);
+	m_gauge->SetMaxRange((size_t)range);
+	m_gauge->Update(0, wxEmptyString);
 }
 
-void CustomStatusBar::Update(int vlaue, const wxString& message)
+void CustomStatusBar::Update(int value, const wxString& message)
 {
-	m_gauge->SetValue(vlaue);
-	wxUnusedVar(message);
-//	SetStatusText(message);
+	m_gauge->Update((size_t)value, message);
 }

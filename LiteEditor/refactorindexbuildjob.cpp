@@ -11,9 +11,10 @@
 	status->action = act;\
 	Post(status);
 	
-RefactorIndexBuildJob::RefactorIndexBuildJob(wxEvtHandler *parent, const std::vector<wxFileName> &files)
+RefactorIndexBuildJob::RefactorIndexBuildJob(wxEvtHandler *parent, const std::vector<wxFileName> &files, bool full_build)
 : Job(parent)
 , m_files( files )
+, m_full_build(full_build)
 {
 }
 
@@ -24,13 +25,18 @@ RefactorIndexBuildJob::~RefactorIndexBuildJob()
 void RefactorIndexBuildJob::Process(wxThread *thread)
 {
 	TokenDb db;
-
+	
 	// get the path to the workspace
 	wxFileName wsp_file = WorkspaceST::Get()->GetWorkspaceFileName();
 	wxFileName dbfile(wsp_file.GetPath(), wsp_file.GetName() + wxT("_tokens.db"));
 
 	db.Open(dbfile.GetFullPath());
 	CppTokenList l;
+	
+	if( m_full_build) {
+		// Incase of a full re-build, drop the tables and re-create the schema
+		db.RecreateSchema();
+	}
 
 	int maxVal = (int)m_files.size();
 	size_t i=0;
@@ -91,12 +97,12 @@ void RefactorIndexBuildJob::Process(wxThread *thread)
 		}
 
 		db.Store( (*iter) );
-		if (counter % 1000 == 0) {
-			db.Commit();
-			db.BeginTransaction();
-		}
+//		if (counter % 5000 == 0) {
+//			db.Commit();
+//			db.BeginTransaction();
+//		}
 	}
 	
-	POST_NEW_STATUS(wxEmptyString, wxNOT_FOUND, Action_Clear_Gauge);
 	db.Commit();
+	POST_NEW_STATUS(wxEmptyString, wxNOT_FOUND, Action_Clear_Gauge);
 }

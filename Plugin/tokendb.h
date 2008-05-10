@@ -50,6 +50,11 @@ public:
 	 */
 	void DeleteByFile(const wxString  &file);
 	
+	/**
+	 * @brief drop the existing tables (if any) and recreate the sechema
+	 */
+	void RecreateSchema();
+	
 public:
 	TokenDb();
 	virtual ~TokenDb();

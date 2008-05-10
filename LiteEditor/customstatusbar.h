@@ -4,8 +4,10 @@
 #include <wx/statusbr.h>
 #include <wx/gauge.h>
 
+class ProgressCtrl;
+
 class CustomStatusBar : public wxStatusBar {
-	wxGauge *m_gauge; 
+	ProgressCtrl *m_gauge; 
 public:
 	CustomStatusBar(wxWindow *parent, wxWindowID id = wxID_ANY);
 	virtual ~CustomStatusBar();

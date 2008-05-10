@@ -1,6 +1,7 @@
 #ifndef __tokendb__
 #define __tokendb__
 
+#if 0
 #include "cpptoken.h"
 #include <wx/string.h>
 
@@ -42,7 +43,7 @@ public:
 	 * \param name name to search
 	 * \param l [output] the result
 	 */
-	void Fetch(const wxString& name, CppTokenList &l);
+	void Fetch(const wxString& name, CppTokensMap &l);
 	
 	/**
 	 * \brief delete all entries by file name
@@ -60,4 +61,6 @@ public:
 	virtual ~TokenDb();
 
 };
+#endif 
+
 #endif // __tokendb__

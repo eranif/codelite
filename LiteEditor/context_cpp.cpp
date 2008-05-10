@@ -518,10 +518,26 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 		}
 
 		//Comment?
-		if (IsCommentOrString(at))
+		int style = ctrl->GetStyleAt(pos);
+		if (style == wxSCI_C_COMMENT				||
+	        style == wxSCI_C_COMMENTLINE			||
+	        style == wxSCI_C_COMMENTDOC				||
+	        style == wxSCI_C_COMMENTLINEDOC			||
+	        style == wxSCI_C_COMMENTDOCKEYWORD		||
+	        style == wxSCI_C_COMMENTDOCKEYWORDERROR ||
+	        style == wxSCI_C_STRING					||
+	        style == wxSCI_C_STRINGEOL				||
+	        style == wxSCI_C_CHARACTER)
+		{
 			continue;
+		}
 
 		switch (ch) {
+		case wxT(';'):
+			// dont include this token
+			at = ctrl->PositionAfter(at);
+			cont = false;
+			break;
 		case wxT('-'):
 						if (prevGt) {
 					prevGt = false;
@@ -548,9 +564,8 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 			}
 			break;
 		case wxT('{'):
-					case wxT('='):
-						case wxT(';'):
-								prevGt = false;
+		case wxT('='):
+			prevGt = false;
 			cont = false;
 			break;
 		case wxT('('):
@@ -607,7 +622,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 	}
 
 	if (at < 0) at = 0;
-	wxString expr =ctrl->GetTextRange(at, pos);
+	wxString expr = ctrl->GetTextRange(at, pos);
 
 	//remove comments from it
 	CppScanner sc;
@@ -2057,18 +2072,8 @@ bool ContextCpp::IsComment(long pos)
 void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 {
 	VALIDATE_WORKSPACE();
-	
-	// Open the refactoing index database and search for the word to refactor
-	TokenDb db;
-
-	// get the path to the workspace
-	wxFileName wsp_file = WorkspaceST::Get()->GetWorkspaceFileName();
-	wxFileName dbfile(wsp_file.GetPath(), wsp_file.GetName() + wxT("_tokens.db"));
-
-	db.Open(dbfile.GetFullPath());
-	CppTokenList l;
-	
 	LEditor &rCtrl = GetCtrl();
+	CppTokensMap l;
 	
 	//get expression
 	int pos = rCtrl.GetCurrentPos();
@@ -2080,23 +2085,24 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	if (word.IsEmpty())
 		return;
 	
-	// locate all instances of this word in the database
-	db.Fetch(word, l);
+	// load all tokens, first we need to parse the workspace files...
+	ManagerST::Get()->BuildRefactorDatabase( l );
+	std::list<CppToken> tokens;
 	
+	l.findTokens(word, tokens);
 	wxString msg;
-	msg << wxT("Found ") << l.size() << wxT(" instances of ") << word;
+	msg << wxT("Found ") << tokens.size() << wxT(" instances of ") << word;
 	wxLogMessage(msg);
 	
 	// create an empty hidden instance of LEditor
 	LEditor *editor = new LEditor(Frame::Get()->GetNotebook(), wxID_ANY, wxSize(1, 1), wxEmptyString, wxEmptyString, true);
 	
 	// Get expressions for the CC to work with:
-	CppTokenList::iterator iter = l.begin();
-	for(; iter != l.end(); iter++) {
+	std::list<CppToken>::iterator iter = tokens.begin();
+	for(; iter != tokens.end(); iter++) {
 		CppToken token = *iter;
 		editor->Create(wxEmptyString, token.getFilename());
 		wxString expr = GetExpression(token.getOffset()+token.getName().Length(), false, editor);
-//		TagsManagerST::Get()->ProcessExpression(
 		wxLogMessage(wxT("File: ") + token.getFilename() + wxT(", Expression: ") + expr);
 	}
 	

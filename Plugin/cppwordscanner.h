@@ -4,22 +4,22 @@
 #include <wx/arrstr.h>
 #include "cpptoken.h"
 
-class TokenDb;
+//class TokenDb;
 
 class CppWordScanner {
 	wxString m_text;
 	wxSortedArrayString m_arr;
-	TokenDb *m_db;
+//	TokenDb *m_db;
 	wxString m_filename;
 protected:
-	void doFind(const wxString &filter, CppTokenList &l);
+	void doFind(const wxString &filter, CppTokensMap &l);
 	
 public:
 	CppWordScanner(const wxString &file_name);
 	~CppWordScanner();
 	
-	void FindAll(CppTokenList &l);
-	void Match(const wxString &word, CppTokenList &l);
-	void SetDatabase(TokenDb *db);
+	void FindAll(CppTokensMap &l);
+	void Match(const wxString &word, CppTokensMap &l);
+//	void SetDatabase(TokenDb *db);
 };
 #endif // __cppwordscanner__

@@ -2,6 +2,7 @@
 #define MANAGER_H
 
 #include "singleton.h"
+#include "cpptoken.h"
 #include "wx/string.h"
 #include "readtags.h"
 #include "entry.h"
@@ -612,7 +613,7 @@ public:
 	 * \brief parse list of files and construct a token database that will be used for refactoring
 	 * \param files list of files to parse 
 	 */
-	void BuildRefactorDatabase(const std::vector<wxFileName> &files, bool full_build = false);
+	void BuildRefactorDatabase(CppTokensMap &l);
 	
 	void UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< wxAcceleratorEntry > &accelVec);
 	

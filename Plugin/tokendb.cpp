@@ -1,4 +1,5 @@
 #include "tokendb.h"
+#if 0
 #include <wx/wxsqlite3.h>
 
 TokenDb::TokenDb()
@@ -157,3 +158,4 @@ void TokenDb::RecreateSchema()
 		wxUnusedVar(e);
 	}
 }
+#endif 

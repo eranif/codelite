@@ -13,4 +13,5 @@
 //Eran(dfd, dfdf, dfdf)
 //foo();
 //std::map<wxString, std::vector>
-void ~MyClass(){};
+//void ~MyClass(){};
+std::map<wxString, std::list<CppToken>* >

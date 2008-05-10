@@ -305,7 +305,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
 	EVT_UPDATE_UI(XRCID("close_file"), Frame::OnFileCloseUI)
 	EVT_MENU(XRCID("link_action"), Frame::OnStartPageEvent)
-	EVT_COMMAND(wxID_ANY, wxEVT_CMD_JOB_STATUS_VOID_PTR, Frame::OnUpdateBuildRefactorIndexBar)
+//	EVT_COMMAND(wxID_ANY, wxEVT_CMD_JOB_STATUS_VOID_PTR, Frame::OnUpdateBuildRefactorIndexBar)
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 

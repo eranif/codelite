@@ -33,7 +33,6 @@
     <File Name="regex_processor.h"/>
     <File Name="search_thread.h"/>
     <File Name="workspace.h"/>
-    <File Name="LineTypes.h"/>
     <File Name="volumelocatorthread.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
@@ -256,11 +255,11 @@
     <File Name="stringaccessor.cpp"/>
     <File Name="stringaccessor.h"/>
   </VirtualDirectory>
-  <Dependencies/>
   <VirtualDirectory Name="JobQueue">
     <File Name="jobqueue.cpp"/>
     <File Name="jobqueue.h"/>
     <File Name="job.h"/>
     <File Name="job.cpp"/>
   </VirtualDirectory>
+  <Dependencies/>
 </CodeLite_Project>

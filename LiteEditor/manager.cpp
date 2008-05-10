@@ -1413,9 +1413,6 @@ void Manager::RetagProject(const wxString &projectName)
 
 		//call tags manager for retagging
 		TagsManagerST::Get()->RetagFiles(projectFiles);
-
-		// build tokens database for refactoring purposes...
-		BuildRefactorDatabase(projectFiles, false);
 	}
 }
 
@@ -1434,9 +1431,6 @@ void Manager::RetagWorkspace()
 	}
 	//call tags manager for retagging
 	TagsManagerST::Get()->RetagFiles(projectFiles);
-
-	// build tokens database for refactoring purposes...
-	BuildRefactorDatabase(projectFiles, true);
 }
 
 void Manager::WriteProgram(const wxString &line)
@@ -2653,9 +2647,20 @@ void Manager::GetAcceleratorMap(MenuItemDataMap& accelMap)
 	LoadAcceleratorTable(fileName, accelMap);
 }
 
-void Manager::BuildRefactorDatabase(const std::vector<wxFileName>& files, bool full_build)
+void Manager::BuildRefactorDatabase( CppTokensMap &l )
 {
-//	RefactorIndexBuildJob *job = new RefactorIndexBuildJob(Frame::Get(), files, full_build);
-////	JobQueueSingleton::Instance()->PushJob( job );
-//	job->Process(NULL);
+	wxArrayString projects;
+	GetProjectList(projects);
+	std::vector<wxFileName> files;
+	
+	for (size_t i=0; i<projects.GetCount(); i++) {
+		ProjectPtr proj = GetProject(projects.Item(i));
+		if ( proj ) {
+			//change the directory to the project dir
+			proj->GetFiles(files, true);
+		}
+	}
+	
+	RefactorIndexBuildJob job(files);
+	job.Parse( l );
 }

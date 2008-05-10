@@ -3,7 +3,7 @@
 #include <wx/tokenzr.h>
 #include "cppwordscanner.h"
 #include "stringaccessor.h"
-#include "tokendb.h"
+//#include "tokendb.h"
 
 enum {
 	STATE_NORMAL = 0,
@@ -15,8 +15,7 @@ enum {
 };
 
 CppWordScanner::CppWordScanner(const wxString &file_name)
-		: m_db(NULL)
-		, m_filename(file_name)
+		: m_filename(file_name)
 {
 	wxString key_words =
 	    wxT("auto break case char const continue default define defined do double elif else endif enum error extern float"
@@ -34,39 +33,39 @@ CppWordScanner::CppWordScanner(const wxString &file_name)
 
 CppWordScanner::~CppWordScanner()
 {
-	m_db = NULL;
+//	m_db = NULL;
 }
 
-void CppWordScanner::FindAll(CppTokenList &l)
+void CppWordScanner::FindAll(CppTokensMap &l)
 {
 	doFind(wxEmptyString, l);
 
-	if (m_db) {
-		m_db->BeginTransaction();
-		m_db->DeleteByFile(m_filename);
-		CppTokenList::iterator iter = l.begin();
-		for (; iter != l.end(); iter++) {
-			m_db->Store( (*iter) );
-		}
-		m_db->Commit();
-	}
+//	if (m_db) {
+//		m_db->BeginTransaction();
+//		m_db->DeleteByFile(m_filename);
+//		CppTokenList::iterator iter = l.begin();
+//		for (; iter != l.end(); iter++) {
+//			m_db->Store( (*iter) );
+//		}
+//		m_db->Commit();
+//	}
 }
 
-void CppWordScanner::Match(const wxString& word, CppTokenList& l)
+void CppWordScanner::Match(const wxString& word, CppTokensMap& l)
 {
 	doFind(word, l);
-	if (m_db) {
-		m_db->BeginTransaction();
-		m_db->DeleteByFile(m_filename);
-		CppTokenList::iterator iter = l.begin();
-		for (; iter != l.end(); iter++) {
-			m_db->Store( (*iter) );
-		}
-		m_db->Commit();
-	}
+//	if (m_db) {
+//		m_db->BeginTransaction();
+//		m_db->DeleteByFile(m_filename);
+//		CppTokenList::iterator iter = l.begin();
+//		for (; iter != l.end(); iter++) {
+//			m_db->Store( (*iter) );
+//		}
+//		m_db->Commit();
+//	}
 }
 
-void CppWordScanner::doFind(const wxString& filter, CppTokenList& l)
+void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l)
 {
 	int state(STATE_NORMAL);
 //	bool sol(true);
@@ -129,7 +128,7 @@ void CppWordScanner::doFind(const wxString& filter, CppTokenList& l)
 							// filter out non matching words
 							if (filter.empty() || filter == token.getName()) {
 								token.setFilename(m_filename);
-								l.push_back( token );
+								l.addToken(token);
 							}
 						}
 						token.reset();
@@ -176,7 +175,8 @@ void CppWordScanner::doFind(const wxString& filter, CppTokenList& l)
 	}
 }
 
-void CppWordScanner::SetDatabase(TokenDb* db)
-{
-	m_db = db;
-}
+//void CppWordScanner::SetDatabase(TokenDb* db)
+//{
+//	m_db = db;
+//}
+//

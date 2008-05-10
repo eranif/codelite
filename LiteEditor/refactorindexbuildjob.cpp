@@ -4,13 +4,13 @@
 #include "tokendb.h"
 #include "workspace.h"
 
-#define POST_NEW_STATUS(msg, value, act) \
-	status = new RefactorIndexBuildJobInfo;\
-	status->filename = msg;\
-	status->status = value;\
-	status->action = act;\
-	Post(status);
-	
+#define POST_NEW_STATUS(msg, value, act) 
+//	status = new RefactorIndexBuildJobInfo;\
+//	status->filename = msg;\
+//	status->status = value;\
+//	status->action = act;\
+//	Post(status);
+//	
 RefactorIndexBuildJob::RefactorIndexBuildJob(wxEvtHandler *parent, const std::vector<wxFileName> &files, bool full_build)
 : Job(parent)
 , m_files( files )
@@ -47,10 +47,10 @@ void RefactorIndexBuildJob::Process(wxThread *thread)
 	
 	for ( ; i<m_files.size(); i++) {
 		
-		// test for thread cancellation
-		if(thread->TestDestroy()) {
-			return;
-		}
+//		// test for thread cancellation
+//		if(thread->TestDestroy()) {
+//			return;
+//		}
 		
 		wxFileName fn = m_files.at(i);
 		CppWordScanner scanner(fn.GetFullPath());
@@ -71,10 +71,10 @@ void RefactorIndexBuildJob::Process(wxThread *thread)
 		db.DeleteByFile(fn.GetFullPath());
 
 		// test for thread cancellation
-		if(thread->TestDestroy()) {
-			db.Rollback();
-			return;
-		}
+//		if(thread->TestDestroy()) {
+//			db.Rollback();
+//			return;
+//		}
 	}
 
 	CppTokenList::iterator iter = l.begin();
@@ -82,11 +82,11 @@ void RefactorIndexBuildJob::Process(wxThread *thread)
 	i = 0;
 	for (; iter != l.end(); iter++, counter++) {
 		
-		// test for thread cancellation
-		if(thread->TestDestroy()) {
-			db.Rollback();
-			return;
-		}
+//		// test for thread cancellation
+//		if(thread->TestDestroy()) {
+//			db.Rollback();
+//			return;
+//		}
 
 		if ((*iter).getFilename() != curr_file.GetFullPath()) {
 			curr_file = (*iter).getFilename();
@@ -97,10 +97,6 @@ void RefactorIndexBuildJob::Process(wxThread *thread)
 		}
 
 		db.Store( (*iter) );
-//		if (counter % 5000 == 0) {
-//			db.Commit();
-//			db.BeginTransaction();
-//		}
 	}
 	
 	db.Commit();

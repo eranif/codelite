@@ -512,7 +512,7 @@ void Manager::OpenWorkspace(const wxString &path)
 			proj->GetFiles(projectFiles, true);
 		}
 	}
-	BuildRefactorDatabase(projectFiles, true);
+//	BuildRefactorDatabase(projectFiles, true);
 }
 
 void Manager::DoUpdateConfigChoiceControl()
@@ -2655,6 +2655,7 @@ void Manager::GetAcceleratorMap(MenuItemDataMap& accelMap)
 
 void Manager::BuildRefactorDatabase(const std::vector<wxFileName>& files, bool full_build)
 {
-	RefactorIndexBuildJob *job = new RefactorIndexBuildJob(Frame::Get(), files, full_build);
-	JobQueueSingleton::Instance()->PushJob( job );
+//	RefactorIndexBuildJob *job = new RefactorIndexBuildJob(Frame::Get(), files, full_build);
+////	JobQueueSingleton::Instance()->PushJob( job );
+//	job->Process(NULL);
 }

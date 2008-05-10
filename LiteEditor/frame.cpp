@@ -2941,28 +2941,28 @@ void Frame::OnConfigureAccelerators(wxCommandEvent &e)
 
 void Frame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
 {
-	static double max_range(1);
-	
-	RefactorIndexBuildJobInfo *info = reinterpret_cast<RefactorIndexBuildJobInfo*>(e.GetClientData());
-	if (info) {
-		wxString message;
-		 
-		switch(info->action) {
-			case Action_Update_Gauge:
-				message << wxT("(") << (int)(((double)info->status / max_range)*100) << wxT("%) : ") << info->filename;
+//	static double max_range(1);
+//	
+//	RefactorIndexBuildJobInfo *info = reinterpret_cast<RefactorIndexBuildJobInfo*>(e.GetClientData());
+//	if (info) {
+//		wxString message;
+//		 
+//		switch(info->action) {
+//			case Action_Update_Gauge:
+//				message << wxT("(") << (int)(((double)info->status / max_range)*100) << wxT("%) : ") << info->filename;
 //				((CustomStatusBar*)GetStatusBar())->Update(info->status, info->filename);
-				GetStatusBar()->SetStatusText(message, 4);
-				break;
-			case Action_Reset_Gauge:
+//				GetStatusBar()->SetStatusText(message, 4);
+//				break;
+//			case Action_Reset_Gauge:
 //				((CustomStatusBar*)GetStatusBar())->ResetGauge(info->status);
-				max_range = info->status;
-				GetStatusBar()->SetStatusText(wxEmptyString, 4);
-				break;
-			case Action_Clear_Gauge:
+//				max_range = info->status;
+//				GetStatusBar()->SetStatusText(wxEmptyString, 4);
+//				break;
+//			case Action_Clear_Gauge:
 //				((CustomStatusBar*)GetStatusBar())->Update(0, wxT("Done"));
-				GetStatusBar()->SetStatusText(wxT("Done"), 4);
-				break;
-		}
-		delete info;
-	}
+//				GetStatusBar()->SetStatusText(wxT("Done"), 4);
+//				break;
+//		}
+//		delete info;
+//	}
 }

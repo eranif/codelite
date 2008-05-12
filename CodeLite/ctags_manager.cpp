@@ -1097,7 +1097,7 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 		return;
 
 	// Create a progress dialog
-	prgDlg = new wxProgressDialog (wxT("Building tags database ..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)files.GetCount()*2, NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE);
+	prgDlg = new wxProgressDialog (wxT("Building tags database ..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)files.GetCount()*2, NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT );
 	prgDlg->GetSizer()->Fit(prgDlg);
 	prgDlg->Layout();
 	prgDlg->Centre();
@@ -1114,7 +1114,11 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 		// update the progress bar
 		wxString msg;
 		msg << wxT("Parsing file: ") << curFile.GetFullName();
-		prgDlg->Update(i, msg);
+		if (!prgDlg->Update(i, msg)) {
+			prgDlg->Destroy();
+			trees.clear();
+			return;
+		}
 
 		tags.Clear();
 		tagParseResult result;

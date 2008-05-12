@@ -99,8 +99,7 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 	EVT_MENU(XRCID("setters_getters"), ContextCpp::OnGenerateSettersGetters)
 	EVT_MENU(XRCID("add_include_file"), ContextCpp::OnAddIncludeFile)
 	EVT_MENU(XRCID("rename_function"), ContextCpp::OnRenameFunction)
-	EVT_MENU(XRCID("rename_member"), ContextCpp::OnRenameMember)
-	
+
 END_EVENT_TABLE()
 
 ContextCpp::ContextCpp(LEditor *container)
@@ -497,9 +496,9 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 {
 	bool cont(true);
 	int depth(0);
-	
+
 	LEditor *ctrl(NULL);
-	if(!editor) {
+	if (!editor) {
 		ctrl = &GetCtrl();
 	} else {
 		ctrl = editor;
@@ -520,22 +519,21 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 		//Comment?
 		int style = ctrl->GetStyleAt(pos);
 		if (style == wxSCI_C_COMMENT				||
-	        style == wxSCI_C_COMMENTLINE			||
-	        style == wxSCI_C_COMMENTDOC				||
-	        style == wxSCI_C_COMMENTLINEDOC			||
-	        style == wxSCI_C_COMMENTDOCKEYWORD		||
-	        style == wxSCI_C_COMMENTDOCKEYWORDERROR ||
-	        style == wxSCI_C_STRING					||
-	        style == wxSCI_C_STRINGEOL				||
-	        style == wxSCI_C_CHARACTER)
-		{
+		        style == wxSCI_C_COMMENTLINE			||
+		        style == wxSCI_C_COMMENTDOC				||
+		        style == wxSCI_C_COMMENTLINEDOC			||
+		        style == wxSCI_C_COMMENTDOCKEYWORD		||
+		        style == wxSCI_C_COMMENTDOCKEYWORDERROR ||
+		        style == wxSCI_C_STRING					||
+		        style == wxSCI_C_STRINGEOL				||
+		        style == wxSCI_C_CHARACTER) {
 			continue;
 		}
 
 		switch (ch) {
 		case wxT(';'):
-			// dont include this token
-			at = ctrl->PositionAfter(at);
+						// dont include this token
+						at = ctrl->PositionAfter(at);
 			cont = false;
 			break;
 		case wxT('-'):
@@ -564,8 +562,8 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 			}
 			break;
 		case wxT('{'):
-		case wxT('='):
-			prevGt = false;
+					case wxT('='):
+							prevGt = false;
 			cont = false;
 			break;
 		case wxT('('):
@@ -1916,7 +1914,7 @@ void ContextCpp::ApplySettings()
 	keyWords.Replace(wxT("\n"), wxT(" "));
 	keyWords.Replace(wxT("\r"), wxT(" "));
 	rCtrl.SetKeyWords(0, keyWords);
-	
+
 	DoApplySettings( lexPtr );
 
 	//create all images used by the cpp context
@@ -1971,7 +1969,7 @@ void ContextCpp::ApplySettings()
 
 	//delete uneeded commands
 	rCtrl.CmdKeyClear('/', wxSCI_SCMOD_CTRL);
-	
+
 	// update word characters to allow '~' as valid word character
 	rCtrl.SetWordChars(wxT("~_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"));
 }
@@ -2074,7 +2072,7 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	VALIDATE_WORKSPACE();
 	LEditor &rCtrl = GetCtrl();
 	CppTokensMap l;
-	
+
 	//get expression
 	int pos = rCtrl.GetCurrentPos();
 	int word_end = rCtrl.WordEndPosition(pos, true);
@@ -2084,32 +2082,93 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	wxString word = rCtrl.GetTextRange(word_start, word_end);
 	if (word.IsEmpty())
 		return;
+
+	// search to see if we are on a valid tag
+	std::vector<TagEntryPtr> tags;
+	if(!ResolveWord(&rCtrl, word_start, word, tags)){
+		// parsing of the initial expression failed, abort
+		return;
+	}
+
+//	std::vector<TagEntryPtr> candidates;
+//	if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
+//		DisplayCompletionBox(candidates, wxEmptyString, showFullDecl);
+//	}
 	
 	// load all tokens, first we need to parse the workspace files...
 	ManagerST::Get()->BuildRefactorDatabase(word, l);
 	std::list<CppToken> tokens;
-	
+
 	l.findTokens(word, tokens);
 	wxString msg;
 	msg << wxT("Found ") << tokens.size() << wxT(" instances of ") << word;
 	wxLogMessage(msg);
-	
+
 	// create an empty hidden instance of LEditor
 	LEditor *editor = new LEditor(Frame::Get()->GetNotebook(), wxID_ANY, wxSize(1, 1), wxEmptyString, wxEmptyString, true);
-	
+
 	// Get expressions for the CC to work with:
 	std::list<CppToken>::iterator iter = tokens.begin();
-	for(; iter != tokens.end(); iter++) {
+	for (; iter != tokens.end(); iter++) {
 		CppToken token = *iter;
 		editor->Create(wxEmptyString, token.getFilename());
 		wxString expr = GetExpression(token.getOffset()+token.getName().Length(), false, editor);
 		wxLogMessage(wxT("File: ") + token.getFilename() + wxT(", Expression: ") + expr);
 	}
-	
+
 	editor->Destroy();
 }
 
-void ContextCpp::OnRenameMember(wxCommandEvent& e)
+bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, std::vector<TagEntryPtr> &tags)
 {
-}
+	// try to process the current expression
+	wxString expr = GetExpression(pos + word.Len(), false, ctrl);
 
+	// get the scope
+	//Optimize the text for large files
+	int line = ctrl->LineFromPosition(pos)+1;
+	int startPos(0);
+	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(ctrl->GetFileName(), line);
+	if ( t ) {
+		startPos = ctrl->PositionFromLine( t->GetLine() - 1);
+		if (startPos > pos) {
+			startPos = 0;
+		}
+	}
+
+	wxString text = ctrl->GetTextRange(startPos, pos);
+	//hack #2
+	//collect all text from 0 - first scope found
+	//this will help us detect statements like 'using namespace foo;'
+	if (startPos) { //> 0
+		//get the first function on this file
+		int endPos(0);
+		int endPos1(0);
+		int endPos2(0);
+		TagEntryPtr t2 = TagsManagerST::Get()->FirstFunctionOfFile(ctrl->GetFileName());
+		if ( t2 ) {
+			endPos1 = ctrl->PositionFromLine( t2->GetLine() - 1);
+			if (endPos1 > 0 && endPos1 <= startPos) {
+				endPos = endPos1;
+			}
+		}
+
+		TagEntryPtr t3 = TagsManagerST::Get()->FirstScopeOfFile(ctrl->GetFileName());
+		if ( t3 ) {
+			endPos2 = ctrl->PositionFromLine( t3->GetLine() - 1);
+			if (endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) {
+				endPos = endPos2;
+			}
+		}
+
+		wxString globalText = ctrl->GetTextRange(0, endPos);
+		globalText.Append(wxT(";"));
+		text.Prepend(globalText);
+	}
+	
+	// we simply collect declarations & implementations
+	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, true);
+	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, false);
+	
+	return !tags.empty();
+}

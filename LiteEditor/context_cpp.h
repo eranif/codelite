@@ -104,7 +104,6 @@ public:
 	virtual void OnAddImpl(wxCommandEvent &e);
 	virtual void OnAddMultiImpl(wxCommandEvent &e);
 	virtual void OnRenameFunction(wxCommandEvent &e);
-	virtual void OnRenameMember(wxCommandEvent &e);
 	
 	DECLARE_EVENT_TABLE();
 private:
@@ -128,6 +127,16 @@ private:
 	 * \return true if such sibling file exist, false otherwise
 	 */
 	bool FindSwappedFile(const wxFileName &rhs, wxString &lhs);
+	
+	/**
+	 * @brief process given expression located at 'pos' at the container 'ctrl', 
+	 * @param ctrl
+	 * @param pos
+	 * @param word
+	 * @param tags
+	 * @return 
+	 */
+	bool ResolveWord(LEditor *ctrl, int pos, const wxString &word, std::vector<TagEntryPtr> &tags);
 };
 
 #endif // CONTEXT_CPP_H

@@ -66,7 +66,7 @@ bool CppTokensMap::contains(const wxString& name)
 void CppTokensMap::findTokens(const wxString& name, std::list<CppToken>& tokens)
 {
 	std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.find(name);
-	std::list<CppToken> *tokensList(NULL);
+//	std::list<CppToken> *tokensList(NULL);
 	if (iter != m_tokens.end()) {
 		tokens = *(iter->second);
 	}

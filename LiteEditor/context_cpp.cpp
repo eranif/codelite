@@ -2086,7 +2086,7 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 		return;
 	
 	// load all tokens, first we need to parse the workspace files...
-	ManagerST::Get()->BuildRefactorDatabase( l );
+	ManagerST::Get()->BuildRefactorDatabase(word, l);
 	std::list<CppToken> tokens;
 	
 	l.findTokens(word, tokens);

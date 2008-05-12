@@ -2647,7 +2647,7 @@ void Manager::GetAcceleratorMap(MenuItemDataMap& accelMap)
 	LoadAcceleratorTable(fileName, accelMap);
 }
 
-void Manager::BuildRefactorDatabase( CppTokensMap &l )
+void Manager::BuildRefactorDatabase(const wxString& word, CppTokensMap &l )
 {
 	wxArrayString projects;
 	GetProjectList(projects);
@@ -2662,5 +2662,5 @@ void Manager::BuildRefactorDatabase( CppTokensMap &l )
 	}
 	
 	RefactorIndexBuildJob job(files);
-	job.Parse( l );
+	job.Parse(word, l);
 }

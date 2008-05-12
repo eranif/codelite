@@ -21,16 +21,8 @@ RefactorIndexBuildJob::~RefactorIndexBuildJob()
 {
 }
 
-void RefactorIndexBuildJob::Parse(CppTokensMap &l)
+void RefactorIndexBuildJob::Parse(const wxString &word, CppTokensMap &l)
 {
-//	TokenDb db;
-	
-	// get the path to the workspace
-//	wxFileName wsp_file = WorkspaceST::Get()->GetWorkspaceFileName();
-//	wxFileName dbfile(wsp_file.GetPath(), wsp_file.GetName() + wxT("_tokens.db"));
-//
-//	db.Open(dbfile.GetFullPath());
-
 	wxProgressDialog* prgDlg = NULL;
 	// Create a progress dialog
 	prgDlg = new wxProgressDialog (wxT("Indexing workspace tokens..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)m_files.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE);
@@ -38,24 +30,10 @@ void RefactorIndexBuildJob::Parse(CppTokensMap &l)
 	prgDlg->Layout();
 	prgDlg->Centre();
 	
-//	if( m_full_build) {
-//		// Incase of a full re-build, drop the tables and re-create the schema
-//		db.RecreateSchema();
-//	}
-//
 	prgDlg->Update(0, wxT("Building refactoring databse..."));
 	size_t i=0;
 	
-//	RefactorIndexBuildJobInfo *status(NULL);
-//	POST_NEW_STATUS(wxEmptyString, maxVal*2, Action_Reset_Gauge);
-//	POST_NEW_STATUS(wxT("Building refactoring databse..."), 0, Action_Update_Gauge);
-	
 	for ( ; i<m_files.size(); i++) {
-		
-//		// test for thread cancellation
-//		if(thread->TestDestroy()) {
-//			return;
-//		}
 		
 		wxFileName fn = m_files.at(i);
 		CppWordScanner scanner(fn.GetFullPath());
@@ -65,49 +43,7 @@ void RefactorIndexBuildJob::Parse(CppTokensMap &l)
 		// update the progress bar
 		prgDlg->Update(i, msg);
 		
-//		POST_NEW_STATUS(msg, i, Action_Update_Gauge);
-//		// scan
-		scanner.FindAll( l );
+		scanner.Match(word, l);
 	}
 	prgDlg->Destroy();
-	
-//	// store all tokens to the database
-//	db.BeginTransaction();
-//	size_t counter(0);
-//
-//	for (size_t j=0 ; j<m_files.size(); j++) {
-//		wxFileName fn = m_files.at(j);
-//		db.DeleteByFile(fn.GetFullPath());
-//
-//		// test for thread cancellation
-//		if(thread->TestDestroy()) {
-//			db.Rollback();
-//			return;
-//		}
-//	}
-
-//	CppTokenList::iterator iter = l.begin();
-//	wxFileName curr_file;
-//	i = 0;
-//	for (; iter != l.end(); iter++, counter++) {
-//		
-////		// test for thread cancellation
-////		if(thread->TestDestroy()) {
-////			db.Rollback();
-////			return;
-////		}
-//
-//		if ((*iter).getFilename() != curr_file.GetFullPath()) {
-//			curr_file = (*iter).getFilename();
-//			i++;
-//			wxString msg;
-//			msg << wxT("Saving: ") << curr_file.GetFullName();
-//			POST_NEW_STATUS(msg, maxVal+i, Action_Update_Gauge);
-//		}
-//
-//		db.Store( (*iter) );
-//	}
-//	
-//	db.Commit();
-//	POST_NEW_STATUS(wxEmptyString, wxNOT_FOUND, Action_Clear_Gauge);
 }

@@ -611,9 +611,10 @@ public:
 	
 	/**
 	 * \brief parse list of files and construct a token database that will be used for refactoring
+	 * \param word word to search
 	 * \param files list of files to parse 
 	 */
-	void BuildRefactorDatabase(CppTokensMap &l);
+	void BuildRefactorDatabase(const wxString& word, CppTokensMap &l);
 	
 	void UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< wxAcceleratorEntry > &accelVec);
 	

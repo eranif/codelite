@@ -14,6 +14,6 @@ public:
 	virtual ~RefactorIndexBuildJob();
 
 public:
-	void Parse(CppTokensMap &l);
+	void Parse(const wxString &word, CppTokensMap &l);
 };
 #endif // __refactorindexbuildjob__

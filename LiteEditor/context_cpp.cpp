@@ -2117,7 +2117,13 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	ManagerST::Get()->BuildRefactorDatabase(word, l);
 	std::list<CppToken> tokens;
 
+	// incase no tokens were found (possibly cause of user pressing cancel
+	// abort this operation
 	l.findTokens(word, tokens);
+	if(tokens.empty()){
+		return;
+	}
+	
 	wxString msg;
 	msg << wxT("Found ") << tokens.size() << wxT(" instances of ") << word;
 	wxLogMessage(msg);
@@ -2130,7 +2136,7 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	std::list<CppToken> candidates;
 	std::list<CppToken> possibleCandidates;
 	
-	wxProgressDialog* prgDlg = new wxProgressDialog (wxT("Parsing matches..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)tokens.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE);
+	wxProgressDialog* prgDlg = new wxProgressDialog (wxT("Parsing matches..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)tokens.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT);
 	prgDlg->GetSizer()->Fit(prgDlg);
 	prgDlg->Layout();
 	prgDlg->Centre();
@@ -2143,8 +2149,15 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 		token.setLine( editor->GetLine( editor->LineFromPosition( (int)token.getOffset() ) ) );
 		
 		wxString msg;
-		msg << wxT("Parsing expression ") << counter << wxT("/") << tokens.size();
-		prgDlg->Update(counter, msg);
+		wxFileName f(token.getFilename());
+		msg << wxT("Parsing expression ") << counter << wxT("/") << tokens.size() << wxT(" in file: ") << f.GetFullName();
+		if( !prgDlg->Update(counter, msg) ){
+			// user clicked 'Cancel'
+			prgDlg->Destroy();
+			editor->Destroy();
+			return;
+		}
+		
 		counter++;
 		
 		// reset the result

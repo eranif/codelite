@@ -86,6 +86,11 @@ public:
 	 * @param token token to add
 	 */
 	void addToken(const CppToken &token);
+	
+	/**
+	 * @brief clear all token
+	 */
+	void clear();
 };
 
 #endif // __cpptoken__

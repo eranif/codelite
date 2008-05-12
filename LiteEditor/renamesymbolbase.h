@@ -18,7 +18,7 @@
 #include <wx/sizer.h>
 #include <wx/checklst.h>
 #include "cl_editor.h"
-#include <wx/statline.h>
+#include <wx/statbox.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
 
@@ -37,9 +37,7 @@ class RenameSymbolBase : public wxDialog
 		wxTextCtrl* m_textCtrlNewName;
 		wxStaticText* m_staticText1;
 		wxCheckListBox* m_checkListCandidates;
-		wxStaticText* m_staticText3;
 		LEditor *m_preview;
-		wxStaticLine* m_staticline2;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
 		
@@ -51,7 +49,7 @@ class RenameSymbolBase : public wxDialog
 		
 	
 	public:
-		RenameSymbolBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Rename Symbol"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 895,579 ), long style = wxDEFAULT_DIALOG_STYLE );
+		RenameSymbolBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Rename Symbol"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 895,579 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~RenameSymbolBase();
 	
 };

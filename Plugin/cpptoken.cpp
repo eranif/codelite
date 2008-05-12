@@ -35,11 +35,7 @@ CppTokensMap::CppTokensMap()
 
 CppTokensMap::~CppTokensMap()
 {
-	std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.begin();
-	for(; iter != m_tokens.end(); iter++) {
-		delete iter->second;
-	}
-	m_tokens.clear();
+	clear();
 }
 
 void CppTokensMap::addToken(const CppToken& token)
@@ -70,4 +66,12 @@ void CppTokensMap::findTokens(const wxString& name, std::list<CppToken>& tokens)
 	if (iter != m_tokens.end()) {
 		tokens = *(iter->second);
 	}
+}
+void CppTokensMap::clear()
+{
+	std::map<wxString, std::list<CppToken>* >::iterator iter = m_tokens.begin();
+	for(; iter != m_tokens.end(); iter++) {
+		delete iter->second;
+	}
+	m_tokens.clear();
 }

@@ -25,7 +25,7 @@ void RefactorIndexBuildJob::Parse(const wxString &word, CppTokensMap &l)
 {
 	wxProgressDialog* prgDlg = NULL;
 	// Create a progress dialog
-	prgDlg = new wxProgressDialog (wxT("Gathering required information..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)m_files.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE);
+	prgDlg = new wxProgressDialog (wxT("Gathering required information..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)m_files.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT);
 	prgDlg->GetSizer()->Fit(prgDlg);
 	prgDlg->Layout();
 	prgDlg->Centre();
@@ -41,7 +41,11 @@ void RefactorIndexBuildJob::Parse(const wxString &word, CppTokensMap &l)
 		wxString msg;
 		msg << wxT("Parsing: ") << fn.GetFullName();
 		// update the progress bar
-		prgDlg->Update(i, msg);
+		if (!prgDlg->Update(i, msg)){
+			prgDlg->Destroy();
+			l.clear();
+			return;
+		}
 		
 		scanner.Match(word, l);
 	}

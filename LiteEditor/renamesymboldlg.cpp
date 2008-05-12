@@ -50,8 +50,8 @@ void RenameSymbol::AddMatch(const CppToken& token, bool check)
 	msg << token.getLine() << wxT(": At ") << fn.GetFullName() << wxT(" pos ") << token.getOffset();
 
 	msg.Replace(wxT("\n"), wxT(" "));
+	msg.Replace(wxT("\r\n"), wxT(" "));
 	msg = msg.Trim().Trim(false);
-	wxLogMessage(wxT("Adding: ") + msg );
 
 	int index = m_checkListCandidates->Append(msg);//, new CppToken(token));
 	m_checkListCandidates->Check((unsigned int)index, check);

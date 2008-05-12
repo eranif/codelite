@@ -1,4 +1,6 @@
 #include "precompiled_header.h"
+#include <wx/progdlg.h>
+#include "renamesymboldlg.h"
 #include "cpptoken.h"
 #include "tokendb.h"
 #include "globals.h"
@@ -66,6 +68,16 @@ struct SFileSort {
 struct RefactorSource {
 	wxString name;
 	wxString scope;
+	bool isClass;
+
+	RefactorSource() : name(wxEmptyString), scope(wxEmptyString), isClass(false) {
+	}
+
+	void Reset() {
+		name.clear();
+		scope.clear();
+		isClass = false;
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -2100,7 +2112,7 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	}
 
 	wxLogMessage(wxT("Refactoring: ") + source.name + wxT(" of scope: ") + source.scope);
-	
+
 	// load all tokens, first we need to parse the workspace files...
 	ManagerST::Get()->BuildRefactorDatabase(word, l);
 	std::list<CppToken> tokens;
@@ -2118,23 +2130,53 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	std::list<CppToken> candidates;
 	std::list<CppToken> possibleCandidates;
 	
+	wxProgressDialog* prgDlg = new wxProgressDialog (wxT("Parsing matches..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)tokens.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE);
+	prgDlg->GetSizer()->Fit(prgDlg);
+	prgDlg->Layout();
+	prgDlg->Centre();
+	
 	std::list<CppToken>::iterator iter = tokens.begin();
+	int counter(0);
 	for (; iter != tokens.end(); iter++) {
 		CppToken token = *iter;
 		editor->Create(wxEmptyString, token.getFilename());
+		token.setLine( editor->GetLine( editor->LineFromPosition( (int)token.getOffset() ) ) );
 		
-		if(ResolveWord(editor, token.getOffset(), word, &target) && (target.name == source.name && target.scope == source.scope)) {
-			candidates.push_back( token );
-			wxLogMessage(wxT("Good match: ") + token.getFilename() + wxT(", Offset: ") + token.getOffset());
-		} else {
-			possibleCandidates.push_back( token );
-			wxLogMessage(wxT("Possible match: ") + token.getFilename() + wxT(", Offset: ") + token.getOffset());
-		}
-//		wxString expr = GetExpression(token.getOffset()+token.getName().Length(), false, editor);
-//		wxLogMessage(wxT("File: ") + token.getFilename() + wxT(", Expression: ") + expr);
-	}
+		wxString msg;
+		msg << wxT("Parsing expression ") << counter << wxT("/") << tokens.size();
+		prgDlg->Update(counter, msg);
+		counter++;
+		
+		// reset the result
+		target.Reset();
+		if (ResolveWord(editor, token.getOffset(), word, &target)) {
 
+			if (target.name == source.name && target.scope == source.scope) {
+				// full match
+				candidates.push_back( token );
+			} else if (target.name == source.scope && !source.isClass) { 
+				// source is function, and target is class
+				candidates.push_back( token );
+			} else if (target.name == source.name && source.isClass) { 
+				// source is class, and target is ctor
+				candidates.push_back( token );
+			} else {
+				// add it to the possible match list
+				possibleCandidates.push_back( token );
+			}
+		} else {
+			// resolved word failed, add it to the possible list
+			possibleCandidates.push_back( token );
+		}
+	}
+	
 	editor->Destroy();
+	prgDlg->Destroy();
+	
+	// display the refactor dialog
+	RenameSymbol *dlg = new RenameSymbol(&rCtrl, candidates, possibleCandidates);
+	dlg->ShowModal();
+	dlg->Destroy();
 }
 
 bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, RefactorSource *rs)
@@ -2146,53 +2188,54 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 	// get the scope
 	//Optimize the text for large files
 	int line = ctrl->LineFromPosition(pos)+1;
-	int startPos(0);
-	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(ctrl->GetFileName(), line);
-	if ( t ) {
-		startPos = ctrl->PositionFromLine( t->GetLine() - 1);
-		if (startPos > pos) {
-			startPos = 0;
-		}
-	}
-
-	wxString text = ctrl->GetTextRange(startPos, pos);
-	//hack #2
-	//collect all text from 0 - first scope found
-	//this will help us detect statements like 'using namespace foo;'
-	if (startPos) { //> 0
-		//get the first function on this file
-		int endPos(0);
-		int endPos1(0);
-		int endPos2(0);
-		TagEntryPtr t2 = TagsManagerST::Get()->FirstFunctionOfFile(ctrl->GetFileName());
-		if ( t2 ) {
-			endPos1 = ctrl->PositionFromLine( t2->GetLine() - 1);
-			if (endPos1 > 0 && endPos1 <= startPos) {
-				endPos = endPos1;
-			}
-		}
-
-		TagEntryPtr t3 = TagsManagerST::Get()->FirstScopeOfFile(ctrl->GetFileName());
-		if ( t3 ) {
-			endPos2 = ctrl->PositionFromLine( t3->GetLine() - 1);
-			if (endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) {
-				endPos = endPos2;
-			}
-		}
-
-		wxString globalText = ctrl->GetTextRange(0, endPos);
-		globalText.Append(wxT(";"));
-		text.Prepend(globalText);
-	}
-
-	// we simply collect declarations & implementations
+//	int startPos(0);
+//	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(ctrl->GetFileName(), line);
+//	if ( t ) {
+//		startPos = ctrl->PositionFromLine( t->GetLine() - 1);
+//		if (startPos > pos) {
+//			startPos = 0;
+//		}
+//	}
+//
+//	wxString text = ctrl->GetTextRange(startPos, pos + word.Len());
+//	//hack #2
+//	//collect all text from 0 - first scope found
+//	//this will help us detect statements like 'using namespace foo;'
+//	if (startPos) { //> 0
+//		//get the first function on this file
+//		int endPos(0);
+//		int endPos1(0);
+//		int endPos2(0);
+//		TagEntryPtr t2 = TagsManagerST::Get()->FirstFunctionOfFile(ctrl->GetFileName());
+//		if ( t2 ) {
+//			endPos1 = ctrl->PositionFromLine( t2->GetLine() - 1);
+//			if (endPos1 > 0 && endPos1 <= startPos) {
+//				endPos = endPos1;
+//			}
+//		}
+//
+//		TagEntryPtr t3 = TagsManagerST::Get()->FirstScopeOfFile(ctrl->GetFileName());
+//		if ( t3 ) {
+//			endPos2 = ctrl->PositionFromLine( t3->GetLine() - 1);
+//			if (endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) {
+//				endPos = endPos2;
+//			}
+//		}
+//
+//		wxString globalText = ctrl->GetTextRange(0, endPos);
+//		globalText.Append(wxT(";"));
+//		text.Prepend(globalText);
+//	}
+	wxString text = ctrl->GetTextRange(0, pos + word.Len());
 	
+	// we simply collect declarations & implementations
+
 	//try implemetation first
 	bool found(false);
-	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, true);
-	if(tags.empty() == false) {
+	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, true, true);
+	if (tags.empty() == false) {
 		// try to see if we got a function and not class/struct
-		
+
 		for (size_t i=0; i<tags.size(); i++) {
 			TagEntryPtr tag = tags.at(i);
 			// find first non class/struct tag
@@ -2202,22 +2245,23 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 				return true;
 			}
 		}
-		
+
 		// if no match was found, keep the first result but keep searching
 		if ( !found ) {
 			TagEntryPtr tag = tags.at(0);
 			rs->scope = tag->GetScope();
 			rs->name = tag->GetName();
+			rs->isClass = true;
 			found = true;
 		}
 	}
-	
+
 	// Ok, the "implementation" search did not yield definite results, try declaration
 	tags.clear();
-	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, false);
-	if(tags.empty() == false) {
+	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, false, true);
+	if (tags.empty() == false) {
 		// try to see if we got a function and not class/struct
-		bool found(false);
+//		bool found(false);
 		for (size_t i=0; i<tags.size(); i++) {
 			TagEntryPtr tag = tags.at(i);
 			// find first non class/struct tag
@@ -2227,7 +2271,7 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 				return true;
 			}
 		}
-		
+
 		// if no match was found, keep the first result but keep searching
 		if ( !found ) {
 			TagEntryPtr tag = tags.at(0);
@@ -2236,6 +2280,8 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 		}
 		return true;
 	}
-
+	
+	// if we got so far, CC failed to parse the expression
+	
 	return false;
 }

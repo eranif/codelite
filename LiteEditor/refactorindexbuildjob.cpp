@@ -25,12 +25,12 @@ void RefactorIndexBuildJob::Parse(const wxString &word, CppTokensMap &l)
 {
 	wxProgressDialog* prgDlg = NULL;
 	// Create a progress dialog
-	prgDlg = new wxProgressDialog (wxT("Indexing workspace tokens..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)m_files.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE);
+	prgDlg = new wxProgressDialog (wxT("Gathering required information..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)m_files.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE);
 	prgDlg->GetSizer()->Fit(prgDlg);
 	prgDlg->Layout();
 	prgDlg->Centre();
 	
-	prgDlg->Update(0, wxT("Building refactoring databse..."));
+	prgDlg->Update(0, wxT("Gathering required information..."));
 	size_t i=0;
 	
 	for ( ; i<m_files.size(); i++) {

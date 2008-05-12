@@ -70,6 +70,7 @@ TagsManager::TagsManager() : wxEvtHandler()
 		, m_canDeleteCtags(true)
 		, m_timer(NULL)
 		, m_lang(NULL)
+		, m_useExternalDatabase(true)
 {
 	m_pDb = new TagsDatabase();
 	m_pExternalDb = new TagsDatabase();
@@ -831,7 +832,7 @@ void TagsManager::GetHoverTip(const wxFileName &fileName, int lineno, const wxSt
 	}
 }
 
-void TagsManager::FindImplDecl(const wxFileName &fileName, int lineno, const wxString & expr, const wxString &word, const wxString & text, std::vector<TagEntryPtr> &tags, bool imp)
+void TagsManager::FindImplDecl(const wxFileName &fileName, int lineno, const wxString & expr, const wxString &word, const wxString & text, std::vector<TagEntryPtr> &tags, bool imp, bool workspaceOnly)
 {
 	wxString path;
 	wxString typeName, typeScope, tmp;
@@ -848,7 +849,15 @@ void TagsManager::FindImplDecl(const wxFileName &fileName, int lineno, const wxS
 	tmp = expression;
 	expression.EndsWith(word, &tmp);
 	expression = tmp;
-
+	
+	// add bool guard for the flag
+	BoolGuard guard( &m_useExternalDatabase );
+	
+	if(workspaceOnly) {
+		// disable scan in external database
+		m_useExternalDatabase = false;
+	}
+	
 	wxString scope(text);// = GetLanguage()->GetScope(text);
 	wxString scopeName = GetLanguage()->GetScopeName(scope, NULL);
 	if (expression.IsEmpty()) {
@@ -1353,9 +1362,16 @@ void TagsManager::AddToExtDbCache(const wxString &query, const std::vector<TagEn
 
 void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> &tags, bool onlyWorkspace /*flase*/)
 {
+	bool only_workspace(onlyWorkspace);
+	
+	// test global parameter m_useExternalDatabase
+	if ( !m_useExternalDatabase ) {
+		only_workspace = true;
+	}
+	
 	try {
 		//try the external database first
-		if ( !onlyWorkspace && m_pExternalDb->IsOpen() ) {
+		if ( !only_workspace && m_pExternalDb->IsOpen() ) {
 			//check the cache first
 			if (!QueryExtDbCache(sql, tags)) {
 				//nothing found in the cache

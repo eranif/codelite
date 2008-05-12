@@ -11,6 +11,7 @@ class CppToken
 	wxString name;		// the name of the token
 	size_t offset;		// file offset
 	wxString filename;
+	wxString line;
 
 public:
 	CppToken();
@@ -50,16 +51,25 @@ public:
 		return m_id;
 	}
 
+	void setLine(const wxString& line) {
+		this->line = line;
+	}
+	
+	const wxString& getLine() const {
+		return line;
+	}
+
 	void print();
 };
- 
-class CppTokensMap {
+
+class CppTokensMap
+{
 	std::map<wxString, std::list<CppToken>* > m_tokens;
-	
+
 public:
 	CppTokensMap();
 	~CppTokensMap();
-	
+
 	/**
 	 * @brief return true if any token with given name exists in the map
 	 * @param name token's name to search

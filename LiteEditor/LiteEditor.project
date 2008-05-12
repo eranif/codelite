@@ -225,6 +225,10 @@
     <File Name="editor_creator.cpp"/>
     <File Name="cl_editor.cpp"/>
     <File Name="cl_editor.h"/>
+    <File Name="renamesymboldlg.h"/>
+    <File Name="renamesymbolbase.cpp"/>
+    <File Name="renamesymbolbase.h"/>
+    <File Name="renamesymboldlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Manager">
     <File Name="manager.h"/>

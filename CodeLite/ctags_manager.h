@@ -58,6 +58,14 @@ struct DoxygenComment {
 	wxString comment;
 };
 
+class BoolGuard {
+	bool *m_bool;
+	bool m_value;
+public:
+	BoolGuard(bool *b) : m_bool(b), m_value(*b) {}
+	~BoolGuard() { *m_bool = m_value; }
+};
+
 /**
  * This class is the interface to ctags and SQLite database. 
  * It contains various APIs that allows the caller to parse source file(s), 
@@ -116,6 +124,8 @@ class WXDLLIMPEXP_CL TagsManager : public wxEvtHandler
 	std::vector<VariableEntryPtr> m_vars;
 	std::map<wxString, TagCacheEntryPtr> m_cache;
 	Language *m_lang;
+	bool m_useExternalDatabase;
+	
 public:
 	
 	void SetLanguage(Language *lang);
@@ -426,7 +436,7 @@ public:
 	 * \param gotoImpl set to true, if you wish that CodeLite will find the implementation, false to declaration
 	 * \param tags the output
 	 */
-	void FindImplDecl(const wxFileName &fileName, int lineno, const wxString & expr, const wxString &word,  const wxString &text, std::vector<TagEntryPtr> &tags, bool impl = true);
+	void FindImplDecl(const wxFileName &fileName, int lineno, const wxString & expr, const wxString &word,  const wxString &text, std::vector<TagEntryPtr> &tags, bool impl = true, bool workspaceOnly = false);
 
 	/**
 	 * \brief get the scope name. CodeLite assumes that the caret is placed at the end of the 'scope'

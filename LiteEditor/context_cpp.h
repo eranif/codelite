@@ -6,6 +6,8 @@
 #include <map>
 #include "entry.h"
 
+class RefactorSource;
+
 class ContextCpp : public ContextBase {
 	clCallTipPtr m_ct;
 	std::map<wxString, int> m_propertyInt;
@@ -129,14 +131,14 @@ private:
 	bool FindSwappedFile(const wxFileName &rhs, wxString &lhs);
 	
 	/**
-	 * @brief process given expression located at 'pos' at the container 'ctrl', 
-	 * @param ctrl
-	 * @param pos
-	 * @param word
-	 * @param tags
-	 * @return 
+	 * \brief 
+	 * \param ctrl
+	 * \param pos
+	 * \param word
+	 * \param rs
+	 * \return 
 	 */
-	bool ResolveWord(LEditor *ctrl, int pos, const wxString &word, std::vector<TagEntryPtr> &tags);
+	bool ResolveWord(LEditor *ctrl, int pos, const wxString &word, RefactorSource *rs);
 };
 
 #endif // CONTEXT_CPP_H

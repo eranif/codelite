@@ -61,6 +61,15 @@ struct SFileSort {
 	}
 };
 
+//----------------------------------------------------------------------------------
+
+struct RefactorSource {
+	wxString name;
+	wxString scope;
+};
+
+//----------------------------------------------------------------------------------
+
 //Images initialization
 wxBitmap ContextCpp::m_classBmp = wxNullBitmap;
 wxBitmap ContextCpp::m_structBmp = wxNullBitmap;
@@ -2084,16 +2093,13 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 		return;
 
 	// search to see if we are on a valid tag
-	std::vector<TagEntryPtr> tags;
-	if(!ResolveWord(&rCtrl, word_start, word, tags)){
+	RefactorSource source;
+	if (!ResolveWord(&rCtrl, word_start, word, &source)) {
 		// parsing of the initial expression failed, abort
 		return;
 	}
 
-//	std::vector<TagEntryPtr> candidates;
-//	if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
-//		DisplayCompletionBox(candidates, wxEmptyString, showFullDecl);
-//	}
+	wxLogMessage(wxT("Refactoring: ") + source.name + wxT(" of scope: ") + source.scope);
 	
 	// load all tokens, first we need to parse the workspace files...
 	ManagerST::Get()->BuildRefactorDatabase(word, l);
@@ -2108,19 +2114,32 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	LEditor *editor = new LEditor(Frame::Get()->GetNotebook(), wxID_ANY, wxSize(1, 1), wxEmptyString, wxEmptyString, true);
 
 	// Get expressions for the CC to work with:
+	RefactorSource target;
+	std::list<CppToken> candidates;
+	std::list<CppToken> possibleCandidates;
+	
 	std::list<CppToken>::iterator iter = tokens.begin();
 	for (; iter != tokens.end(); iter++) {
 		CppToken token = *iter;
 		editor->Create(wxEmptyString, token.getFilename());
-		wxString expr = GetExpression(token.getOffset()+token.getName().Length(), false, editor);
-		wxLogMessage(wxT("File: ") + token.getFilename() + wxT(", Expression: ") + expr);
+		
+		if(ResolveWord(editor, token.getOffset(), word, &target) && (target.name == source.name && target.scope == source.scope)) {
+			candidates.push_back( token );
+			wxLogMessage(wxT("Good match: ") + token.getFilename() + wxT(", Offset: ") + token.getOffset());
+		} else {
+			possibleCandidates.push_back( token );
+			wxLogMessage(wxT("Possible match: ") + token.getFilename() + wxT(", Offset: ") + token.getOffset());
+		}
+//		wxString expr = GetExpression(token.getOffset()+token.getName().Length(), false, editor);
+//		wxLogMessage(wxT("File: ") + token.getFilename() + wxT(", Expression: ") + expr);
 	}
 
 	editor->Destroy();
 }
 
-bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, std::vector<TagEntryPtr> &tags)
+bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, RefactorSource *rs)
 {
+	std::vector<TagEntryPtr> tags;
 	// try to process the current expression
 	wxString expr = GetExpression(pos + word.Len(), false, ctrl);
 
@@ -2165,10 +2184,58 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, std::
 		globalText.Append(wxT(";"));
 		text.Prepend(globalText);
 	}
-	
+
 	// we simply collect declarations & implementations
-	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, true);
-	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, false);
 	
-	return !tags.empty();
+	//try implemetation first
+	bool found(false);
+	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, true);
+	if(tags.empty() == false) {
+		// try to see if we got a function and not class/struct
+		
+		for (size_t i=0; i<tags.size(); i++) {
+			TagEntryPtr tag = tags.at(i);
+			// find first non class/struct tag
+			if (tag->GetKind() != wxT("class") && tag->GetKind() != wxT("struct")) {
+				rs->name = tag->GetName();
+				rs->scope = tag->GetScope();
+				return true;
+			}
+		}
+		
+		// if no match was found, keep the first result but keep searching
+		if ( !found ) {
+			TagEntryPtr tag = tags.at(0);
+			rs->scope = tag->GetScope();
+			rs->name = tag->GetName();
+			found = true;
+		}
+	}
+	
+	// Ok, the "implementation" search did not yield definite results, try declaration
+	tags.clear();
+	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, false);
+	if(tags.empty() == false) {
+		// try to see if we got a function and not class/struct
+		bool found(false);
+		for (size_t i=0; i<tags.size(); i++) {
+			TagEntryPtr tag = tags.at(i);
+			// find first non class/struct tag
+			if (tag->GetKind() != wxT("class") && tag->GetKind() != wxT("struct")) {
+				rs->name = tag->GetName();
+				rs->scope = tag->GetScope();
+				return true;
+			}
+		}
+		
+		// if no match was found, keep the first result but keep searching
+		if ( !found ) {
+			TagEntryPtr tag = tags.at(0);
+			rs->scope = tag->GetScope();
+			rs->name = tag->GetName();
+		}
+		return true;
+	}
+
+	return false;
 }

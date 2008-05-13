@@ -2091,6 +2091,17 @@ bool ContextCpp::IsComment(long pos)
 void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 {
 	VALIDATE_WORKSPACE();
+	
+	// make sure there are no un-saved files before refactoring
+	Notebook *book = Frame::Get()->GetNotebook();
+	for(size_t i=0; i<book->GetPageCount(); i++){
+		LEditor *editor = dynamic_cast<LEditor*>(book->GetPage(i));
+		if(editor && editor->GetModify()) {
+			wxMessageBox(wxT("Please save on all un-saved files before refactoring"));
+			return;
+		}
+	}
+	
 	LEditor &rCtrl = GetCtrl();
 	CppTokensMap l;
 

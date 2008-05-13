@@ -391,7 +391,7 @@
                 <label>&amp;Editor...</label>
             </object>
 			<object class="wxMenuItem" name="configure_accelerators">
-                <label>Configure &amp;accelerators...</label>
+                <label>Keyboard &amp;shortcuts...</label>
             </object>
             <object class="wxMenuItem" name="add_envvar">
                 <label>En&amp;vironment Variables...</label>

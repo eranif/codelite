@@ -28,9 +28,8 @@ mkdir -p fakeroot/usr/share/applications/
 \cp -pr Runtime/config/accelerators.conf.default fakeroot/usr/local/share/codelite/config/accelerators.conf.default
 \cp -pr Runtime/config/codelite.xml.default fakeroot/usr/local/share/codelite/config/codelite.xml.default
 \cp -pr Runtime/rc/menu.xrc fakeroot/usr/local/share/codelite/rc/
-\cp -pr Runtime/templates/*.project fakeroot/usr/local/share/codelite/templates/
-\cp -pr Runtime/templates/*.wizard fakeroot/usr/local/share/codelite/templates/
-\cp -pr Runtime/lexers/*.xml fakeroot/usr/local/share/codelite/lexers/
+\cp -pfr Runtime/templates/* fakeroot/usr/local/share/codelite/templates/
+\cp -pfr Runtime/lexers/* fakeroot/usr/local/share/codelite/lexers/
 \cp -pr Runtime/codelite.desktop fakeroot/usr/share/applications/
 \cp -pr static-symbols.tags fakeroot/usr/local/share/codelite/
 \cp -pr lib/Debugger.so fakeroot/usr/local/share/codelite/debuggers/

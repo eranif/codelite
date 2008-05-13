@@ -1892,8 +1892,12 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 			body << scope << wxT("::");
 		}
 	}
-
-	body << tag->GetName() << tag->GetSignature();
+	
+	if( impl ) {
+		body << tag->GetName() << NormalizeFunctionSig( tag->GetSignature(), true );
+	} else {
+		body << tag->GetName() << tag->GetSignature();
+	}
 
 	if (impl) {
 		body << wxT("\n{\n}\n");

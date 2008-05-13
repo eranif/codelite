@@ -13,6 +13,7 @@
 #include <stdarg.h>
 
 #include <wx/string.h>
+#include <string>
 
 #include "Platform.h"
 

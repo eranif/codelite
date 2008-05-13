@@ -30,6 +30,7 @@ public:
 	/** Constructor */
 	RenameSymbol( wxWindow* parent, const std::list<CppToken>& candidates, const std::list<CppToken> &possCandidates );
 	void GetMatches(std::list<CppToken>& matches);
+	wxString GetWord() const { return m_textCtrlNewName->GetValue(); }
 };
 
 #endif // __renamesymboldlg__

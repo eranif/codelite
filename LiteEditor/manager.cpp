@@ -1,4 +1,4 @@
-#include "precompiled_header.h" 
+#include "precompiled_header.h"
 #include "refactorindexbuildjob.h"
 #include "jobqueue.h"
 #include <wx/progdlg.h>
@@ -222,13 +222,13 @@ bool Manager::OpenFile(const wxString &file_name, const wxString &projectName, i
 			wxLogMessage(wxT("Invalid file name: ") + fileName.GetFullPath());
 			return false;
 		}
-		
+
 		// make sure that the file exist
 		if ( !fileName.FileExists() ) {
 			wxLogMessage(wxT("File: ") + fileName.GetFullPath() + wxT(" does not exist!"));
 			return false;
 		}
-		
+
 		// Create new editor and add it to the notebook
 		notebook->Freeze();
 		// create new instance from pool
@@ -331,13 +331,13 @@ void Manager::UnInitialize()
 	//stop the debugger
 	DbgStop();
 	DebuggerMgr::Free();
-	
+
 	// Release singleton objects
 
 	// stop the job queue thread
 	JobQueueSingleton::Instance()->Stop();
 	JobQueueSingleton::Release();
-	
+
 	//since the parser is making use of the TagsManager,
 	//it is important to release it *before* the TagsManager
 	ParseThreadST::Get()->Stop();
@@ -498,7 +498,7 @@ void Manager::OpenWorkspace(const wxString &path)
 	}
 
 	SendCmdEvent(wxEVT_WORKSPACE_LOADED);
-	
+
 	// Re-build refactoring index database
 	// the build is done in a secondary thread
 	wxArrayString projects;
@@ -2652,7 +2652,7 @@ void Manager::BuildRefactorDatabase(const wxString& word, CppTokensMap &l )
 	wxArrayString projects;
 	GetProjectList(projects);
 	std::vector<wxFileName> files;
-	
+
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		ProjectPtr proj = GetProject(projects.Item(i));
 		if ( proj ) {
@@ -2660,7 +2660,59 @@ void Manager::BuildRefactorDatabase(const wxString& word, CppTokensMap &l )
 			proj->GetFiles(files, true);
 		}
 	}
-	
+
 	RefactorIndexBuildJob job(files);
 	job.Parse(word, l);
+}
+
+void Manager::ReplaceInFiles(const wxString &word, std::list<CppToken> &li)
+{
+	std::list<CppToken>::iterator iter = li.begin();
+
+	int amount(0);
+	if ( iter != li.end() ) {
+		amount = word.Len() - iter->getName().Len();
+	}
+
+	int off(0);
+	wxString file_name(wxEmptyString);
+
+	for (; iter != li.end(); iter++) {
+		CppToken token = *iter;
+
+		// update next token offset incase we are still in the same file
+		if (!file_name.IsEmpty()) {
+			if (file_name == token.getFilename()) {
+				token.setOffset(token.getOffset()+off);
+			}else{
+				// switched file
+				off = 0;
+				file_name = token.getFilename();
+			}
+		} else {
+			//first time
+			file_name = token.getFilename();
+		}
+
+		//open this file
+		if ( OpenFile(token.getFilename(), wxEmptyString) ) {
+			//do the actual replacement here
+			wxFileName fn( token.getFilename() );
+			LEditor *editor = GetActiveEditor();
+
+			// did we managed to open the file correctly?
+			if ( editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() ) {
+
+				//select the target string
+				editor->SetSelection(token.getOffset(), token.getOffset()+token.getName().Len());
+
+				//replace the selection
+				if (editor->GetSelectedText().IsEmpty() == false) {
+					editor->ReplaceSelection(word);
+					off += amount;
+//					UpdateOffsetsForFile(li, iter, token.getFilename(), token.getName().Length()-word.Len());
+				}
+			}
+		}
+	}
 }

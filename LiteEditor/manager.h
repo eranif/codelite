@@ -616,6 +616,13 @@ public:
 	 */
 	void BuildRefactorDatabase(const wxString& word, CppTokensMap &l);
 	
+	/**
+	 * \brief replace list of toens representd by li with 'word'
+	 * \param li
+	 * \return 
+	 */
+	void ReplaceInFiles(const wxString &word, std::list<CppToken> &li);
+	
 	void UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< wxAcceleratorEntry > &accelVec);
 	
 	//--------------------------------------------------------------------

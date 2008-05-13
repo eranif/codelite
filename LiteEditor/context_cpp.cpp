@@ -69,7 +69,7 @@ struct RefactorSource {
 	wxString name;
 	wxString scope;
 	bool isClass;
-
+	
 	RefactorSource() : name(wxEmptyString), scope(wxEmptyString), isClass(false) {
 	}
 
@@ -2188,7 +2188,14 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	
 	// display the refactor dialog
 	RenameSymbol *dlg = new RenameSymbol(&rCtrl, candidates, possibleCandidates);
-	dlg->ShowModal();
+	if(dlg->ShowModal() == wxID_OK){
+		std::list<CppToken> matches;
+		
+		dlg->GetMatches( matches );
+		if(matches.empty() == false) {
+			ManagerST::Get()->ReplaceInFiles(dlg->GetWord(), matches);
+		}
+	}
 	dlg->Destroy();
 }
 
@@ -2253,9 +2260,21 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 			TagEntryPtr tag = tags.at(i);
 			// find first non class/struct tag
 			if (tag->GetKind() != wxT("class") && tag->GetKind() != wxT("struct")) {
-				rs->name = tag->GetName();
-				rs->scope = tag->GetScope();
-				return true;
+				
+				// if there is no match, add it anyways
+				if (!found) {
+					rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
+					rs->name = tag->GetName();
+					rs->scope = tag->GetScope();
+					found = true;
+				}else if(rs->scope == wxT("<global>") && rs->isClass == false) {
+					// give predecense to <global> variables
+					rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
+					rs->name = tag->GetName();
+					rs->scope = tag->GetScope();
+					found = true;
+				}
+				found = true;
 			}
 		}
 
@@ -2264,8 +2283,10 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 			TagEntryPtr tag = tags.at(0);
 			rs->scope = tag->GetScope();
 			rs->name = tag->GetName();
-			rs->isClass = true;
+			rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
 			found = true;
+		} else {
+			return true;
 		}
 	}
 
@@ -2290,6 +2311,7 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 			TagEntryPtr tag = tags.at(0);
 			rs->scope = tag->GetScope();
 			rs->name = tag->GetName();
+			rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
 		}
 		return true;
 	}

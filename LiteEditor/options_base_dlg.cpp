@@ -107,7 +107,7 @@ wxPanel *OptionsDlg::CreateSyntaxHighlightPage()
 		if (new_path != base_path.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR)) {
 			fn.MakeRelativeTo(base_path.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			new_path = fn.GetPath();
-			if(dirs.Index(new_path) == wxNOT_FOUND) {
+			if (dirs.Index(new_path) == wxNOT_FOUND) {
 				dirs.Add(new_path);
 			}
 		}
@@ -115,21 +115,21 @@ wxPanel *OptionsDlg::CreateSyntaxHighlightPage()
 
 	m_themes = new wxChoice(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, dirs, 0 );
 	sz->Add(m_themes, 0, wxEXPAND|wxALL, 5);
-	
-	if(m_themes->IsEmpty() == false) {
+
+	if (m_themes->IsEmpty() == false) {
 		int where = m_themes->FindString(EditorConfigST::Get()->GetStringValue( wxT("LexerTheme") ));
-		if( where != wxNOT_FOUND) {
+		if ( where != wxNOT_FOUND) {
 			m_themes->SetSelection( where );
 		}
 	}
-	
+
 	long style = wxNB_DEFAULT;
 	m_lexersBook = new wxNotebook(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	sz->Add(m_lexersBook, 1, wxEXPAND | wxALL, 5);
 	m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 
 	LoadLexers(m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection());
-	
+
 	m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
 	ConnectChoice(m_themes, OptionsDlg::OnThemeChanged);
 	return page;
@@ -173,32 +173,39 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 	}
 
 	//set some colour pickers
+	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *txt = new wxStaticText(m_general, wxID_ANY, wxT("Select the caret line background colour:"));
+	hsizer->Add(txt, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+
+	m_caretLineColourPicker = new wxColourPickerCtrl(m_general, wxID_ANY, options->GetCaretLineColour(), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
+	hsizer->Add(m_caretLineColourPicker, 0, wxALL|wxEXPAND, 5);
+	bszier->Add( hsizer, 0, wxEXPAND);
+
 	wxStaticLine *line = new wxStaticLine( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bszier->Add(line, 0, wxEXPAND | wxALL, 5);
+	bszier->Add(line, 0, wxEXPAND);
 
 	wxBoxSizer *hs1 = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText *txt (NULL);
 	txt = new wxStaticText( m_general, wxID_ANY, wxT("Editor Tab Width"), wxDefaultPosition, wxDefaultSize, 0 );
 	hs1->Add(txt, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-	
+
 	m_spinCtrlTabWidth = new wxSpinCtrl( m_general, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 8, 4 );
 	hs1->Add( m_spinCtrlTabWidth, 0, wxALL, 5 );
-	
+
 	long value(4);
 	EditorConfigST::Get()->GetLongValue(wxT("EditorTabWidth"), value);
 	m_spinCtrlTabWidth->SetValue(value);
-	
+
 	bszier->Add(hs1, 0, wxEXPAND|wxALL, 5);
-	
+
 	line = new wxStaticLine( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bszier->Add(line, 0, wxEXPAND | wxALL, 5);
-	
+	bszier->Add(line, 0, wxEXPAND);
+
 	m_checkBoxShowSplash = new wxCheckBox( m_general, wxID_ANY, wxT("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
 	bszier->Add(m_checkBoxShowSplash, 0, wxEXPAND | wxALL, 5);
-	
+
 	bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
 	m_checkBoxShowSplash->SetValue(showSplash);
-	
+
 	vSz1->Add( bszier, 0, wxEXPAND, 5 );
 
 	m_general->SetSizer( vSz1 );
@@ -225,7 +232,7 @@ void OptionsDlg::OnButtonApply(wxCommandEvent &event)
 {
 	SaveChanges();
 	ManagerST::Get()->ApplySettingsChanges();
-	
+
 	m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
 	wxUnusedVar(event);
 }
@@ -234,12 +241,12 @@ void OptionsDlg::OnButtonCancel(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	wxString curSelTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
-	if(curSelTheme != m_startingTheme) {
+	if (curSelTheme != m_startingTheme) {
 		//restore the starting theme
 		EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), m_startingTheme);
 		EditorConfigST::Get()->LoadLexers();
 	}
-	
+
 	EndModal(wxID_CANCEL);
 }
 
@@ -274,24 +281,25 @@ void OptionsDlg::SaveChanges()
 	options->SetDisplayLineNumbers( m_displayLineNumbers->IsChecked() );
 	options->SetShowIndentationGuidelines( m_showIndentationGuideLines->IsChecked() );
 	options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
+	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
 
 	int iconSize(24);
 	if (m_iconSize->GetStringSelection() == wxT("Toolbar uses small icons (16x16)")) {
 		iconSize = 16;
 	}
 	options->SetIconsSize(iconSize);
-	
+
 	// save the tab width
 	int value = m_spinCtrlTabWidth->GetValue();
-	
+
 	// make sure we are saving correct values
-	if(value < 1 || value > 8) {
+	if (value < 1 || value > 8) {
 		value = 4;
 	}
-	
+
 	// save it to configuration file
 	EditorConfigST::Get()->SaveLongValue(wxT("EditorTabWidth"), value);
-	
+
 	//check to see of the icon size was modified
 	int oldIconSize(24);
 	OptionsConfigPtr oldOptions = EditorConfigST::Get()->GetOptions();
@@ -397,18 +405,18 @@ void OptionsDlg::LoadLexers(const wxString& theme)
 {
 	Freeze();
 	bool selected = true;
-	
-	//remove old lexers 
-	if(m_lexersBook->GetPageCount() > 0){
+
+	//remove old lexers
+	if (m_lexersBook->GetPageCount() > 0) {
 		m_lexersBook->DeleteAllPages();
 	}
-	
+
 	//update the theme name
 	EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), theme);
-	
+
 	//load all lexers
 	EditorConfigST::Get()->LoadLexers();
-	
+
 	EditorConfig::ConstIterator iter = EditorConfigST::Get()->LexerBegin();
 	for (; iter != EditorConfigST::Get()->LexerEnd(); iter++) {
 		LexerConfPtr lexer = iter->second;
@@ -422,9 +430,9 @@ void OptionsDlg::OnThemeChanged(wxCommandEvent& event)
 {
 	int sel = event.GetSelection();
 	wxString themeName = m_themes->GetString((unsigned int)sel);
-	
+
 	//update the configuration with the new lexer's theme
 	EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), themeName);
-	
+
 	LoadLexers( themeName );
 }

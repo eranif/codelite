@@ -181,7 +181,7 @@ void LEditor::SetProperties()
 	SetCaretLineBackground(options->GetCaretLineColour());
 
 #ifdef __WXMSW__
-	SetCaretLineBackgroundAlpha(70);
+	SetCaretLineBackgroundAlpha(30);
 #endif
 
 	SetFoldFlags(options->GetUnderlineFoldLine() ? 16 : 0);
@@ -293,9 +293,14 @@ void LEditor::SetProperties()
 
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+	
+	// by default we use tab size 4
+	long tabWidth(4);
+	EditorConfigST::Get()->GetLongValue(wxT("EditorTabWidth"), tabWidth);
 
-	SetTabWidth(4);
-	SetIndent(4);
+	SetTabWidth(tabWidth);
+	SetIndent(tabWidth);
+	
 	SetTabIndents(true);
 	SetBackSpaceUnIndents (true);
 	SetUseTabs (options->GetIndentUsesTabs());

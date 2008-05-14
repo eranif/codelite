@@ -25,6 +25,7 @@
 #include <wx/statline.h>
 #include "lexer_configuration.h"
 #include <wx/clrpicker.h>
+#include <wx/spinctrl.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -62,7 +63,6 @@ protected:
 	wxColourPickerCtrl* m_bgColourPicker;
 	wxStaticText* m_staticText5;
 	wxColourPickerCtrl* m_fgColourPicker;
-	wxColourPickerCtrl* m_caretLineColourPicker;
 	wxCheckBox* m_highlighyCaretLine;
 	wxCheckBox* m_displayLineNumbers;
 	wxCheckBox* m_showIndentationGuideLines;
@@ -77,7 +77,7 @@ protected:
 	CommentPage *m_commentPage;
 	wxChoice* m_themes;
 	wxString m_startingTheme;
-	
+	wxSpinCtrl* m_spinCtrlTabWidth;
 private:
 	wxPanel *CreateSyntaxHighlightPage();
 	wxPanel *CreateGeneralPage();

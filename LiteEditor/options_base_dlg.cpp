@@ -176,21 +176,29 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 	wxStaticLine *line = new wxStaticLine( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bszier->Add(line, 0, wxEXPAND | wxALL, 5);
 
-	m_checkBoxShowSplash = new wxCheckBox( m_general, wxID_ANY, wxT("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
-	bszier->Add(m_checkBoxShowSplash, 0, wxEXPAND | wxALL, 5);
-	bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
-	m_checkBoxShowSplash->SetValue(showSplash);
-
+	wxBoxSizer *hs1 = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *txt (NULL);
+	txt = new wxStaticText( m_general, wxID_ANY, wxT("Editor Tab Width"), wxDefaultPosition, wxDefaultSize, 0 );
+	hs1->Add(txt, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+	
+	m_spinCtrlTabWidth = new wxSpinCtrl( m_general, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 8, 4 );
+	hs1->Add( m_spinCtrlTabWidth, 0, wxALL, 5 );
+	
+	long value(4);
+	EditorConfigST::Get()->GetLongValue(wxT("EditorTabWidth"), value);
+	m_spinCtrlTabWidth->SetValue(value);
+	
+	bszier->Add(hs1, 0, wxEXPAND|wxALL, 5);
+	
 	line = new wxStaticLine( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bszier->Add(line, 0, wxEXPAND | wxALL, 5);
-
-	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText *txt = new wxStaticText(m_general, wxID_ANY, wxT("Select the caret line background colour:"));
-	hsizer->Add(txt, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL, 5);
-
-	m_caretLineColourPicker = new wxColourPickerCtrl(m_general, wxID_ANY, options->GetCaretLineColour(), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
-	hsizer->Add(m_caretLineColourPicker, 0, wxALL|wxEXPAND, 5);
-	bszier->Add( hsizer, 0, wxEXPAND);
+	
+	m_checkBoxShowSplash = new wxCheckBox( m_general, wxID_ANY, wxT("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
+	bszier->Add(m_checkBoxShowSplash, 0, wxEXPAND | wxALL, 5);
+	
+	bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
+	m_checkBoxShowSplash->SetValue(showSplash);
+	
 	vSz1->Add( bszier, 0, wxEXPAND, 5 );
 
 	m_general->SetSizer( vSz1 );
@@ -265,7 +273,6 @@ void OptionsDlg::SaveChanges()
 	options->SetHighlightCaretLine( m_highlighyCaretLine->IsChecked() );
 	options->SetDisplayLineNumbers( m_displayLineNumbers->IsChecked() );
 	options->SetShowIndentationGuidelines( m_showIndentationGuideLines->IsChecked() );
-	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
 	options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
 
 	int iconSize(24);
@@ -273,7 +280,18 @@ void OptionsDlg::SaveChanges()
 		iconSize = 16;
 	}
 	options->SetIconsSize(iconSize);
-
+	
+	// save the tab width
+	int value = m_spinCtrlTabWidth->GetValue();
+	
+	// make sure we are saving correct values
+	if(value < 1 || value > 8) {
+		value = 4;
+	}
+	
+	// save it to configuration file
+	EditorConfigST::Get()->SaveLongValue(wxT("EditorTabWidth"), value);
+	
 	//check to see of the icon size was modified
 	int oldIconSize(24);
 	OptionsConfigPtr oldOptions = EditorConfigST::Get()->GetOptions();

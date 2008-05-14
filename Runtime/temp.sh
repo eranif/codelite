@@ -2,7 +2,10 @@
 
 ## Get list of files to work on
 exe_name="CodeLiteUR"
-exe_list=$exe_name `ls ./plugins/*.so ./debuggers/*.so`
+exe_list=`ls ./plugins/*.so ./debuggers/*.so`
+exe_list=$exe_list $exe_name 
+
+echo $exe_list
 
 ## Loop over the files, and update the path of the wx library
 for file in $exe_list
@@ -16,4 +19,5 @@ do
 		## install_name_tool -change $orig_path @executable_path/$new_path $file
 	done
 done
+
 

@@ -36,14 +36,14 @@ file_exist=$?
 if [ $file_exist -eq 1 ] 
 then
 	## file does not exist, create an empty file
-	touch ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml
+	touch ./CodeLite.app/Contents/SharedSupport/config/codelite.xml
 fi
 
 ## empty the file
-\cp /dev/null ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml
+\cp /dev/null ./CodeLite.app/Contents/SharedSupport/config/codelite.xml
 
 ## replace $(Revision) with the actual revision, and create new file
-cat config/liteeditor.xml.mac | sed s/\$\(Revision\)/${cur_rev}/g >> ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml.default
+cat config/liteeditor.xml.mac | sed s/\$\(Revision\)/${cur_rev}/g >> ./CodeLite.app/Contents/SharedSupport/config/codelite.xml.default
 
 ## replace the executable name according to the configuration used in the build
 cat Info.plist.template | sed s/EXE_NAME/${exe_name}/g >> ./CodeLite.app/Contents/Info.plist

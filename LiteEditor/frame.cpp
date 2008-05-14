@@ -353,6 +353,9 @@ Frame::~Frame(void)
 	delete m_timer;
 	ManagerST::Free();
 	// uninitialize AUI manager
+#ifdef __WXMAC__
+	exit(0);
+#endif
 	m_mgr.UnInit();
 }
 

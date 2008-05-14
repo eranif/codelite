@@ -3,6 +3,10 @@
 ## extract the file name from the Makefile
 exe_name=`cat ../Makefile | grep ^EXE_NAME_NO_PATH | cut -d= -f2`
 
+## Run install_name_tool on the executable to bundle 
+## libwx with the bundle
+
+
 rm -rf CodeLite.app
 mkdir -p ./CodeLite.app/Contents/MacOS
 mkdir -p ./CodeLite.app/Contents/Resources

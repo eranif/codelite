@@ -1,6 +1,7 @@
 #include "symbols_dialog.h"
 #include "manager.h"
 #include "macros.h"
+#include "globals.h"
 
 BEGIN_EVENT_TABLE(SymbolsDialog, SymbolsDialogBase)
 	EVT_CHAR_HOOK(SymbolsDialog::OnCharHook)
@@ -23,9 +24,7 @@ SymbolsDialog::SymbolsDialog( wxWindow* parent )
 
 void SymbolsDialog::AddSymbol(const TagEntryPtr &tag, bool sel)
 {
-	wxListItem info;
-	wxString line;
-	line << tag->GetLine();
+	wxString displayName;
 
 	//-------------------------------------------------------
 	// Populate the columns
@@ -34,34 +33,19 @@ void SymbolsDialog::AddSymbol(const TagEntryPtr &tag, bool sel)
 	// Set the item display name
 	wxString tmp(tag->GetFullDisplayName()), name;
 	if (tmp.EndsWith(wxT(": [prototype]"), &name)) {
-		info.SetText(name);
+		displayName = name;
 	} else {
-		info.SetText(tmp);
+		displayName = tmp;
 	}
 
-	info.SetColumn(0);
-	long item = m_results->InsertItem(info);
-
-	// Set the item kind
-	info.SetColumn(1);
-	info.SetId(item);
-	info.SetText(tag->GetKind());
-	info.SetState(0);
-	m_results->SetItem(info);
-
-	// Set the file name
-	info.SetColumn(2);
-	info.SetId(item);
-	info.SetText(tag->GetFile());
-	info.SetState(0);
-	m_results->SetItem(info);
-
-	// set the line number
-	info.SetColumn(3);
-	info.SetId(item);
-	info.SetText(line);
-	info.SetState(0);
-	m_results->SetItem(info);
+	wxString line;
+	line << tag->GetLine();
+	
+	long index = AppendListCtrlRow(m_results);
+	SetColumnText(m_results, index, 0, displayName);
+	SetColumnText(m_results, index, 1, tag->GetKind());
+	SetColumnText(m_results, index, 2, tag->GetFile());
+	SetColumnText(m_results, index, 3, line);
 }
 
 void SymbolsDialog::AddSymbols(const std::vector<TagEntryPtr> &tags, size_t sel)
@@ -74,13 +58,13 @@ void SymbolsDialog::AddSymbols(const std::vector<TagEntryPtr> &tags, size_t sel)
 	m_results->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	m_results->SetColumnWidth(2, wxLIST_AUTOSIZE);
 	m_results->SetColumnWidth(3, wxLIST_AUTOSIZE);
-
+	
+	m_results->SetFocus();
 	if (tags.empty() == false) {
 		m_results->SetItemState(0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 		m_results->SetItemState(0, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
 		m_selectedItem = 0;
 	}
-	m_results->SetFocus();
 }
 
 void SymbolsDialog::UpdateFileAndLine(wxListEvent &event)
@@ -138,30 +122,30 @@ void SymbolsDialog::OnItemDeselected(wxListEvent &event)
 void SymbolsDialog::OnCharHook(wxKeyEvent &event)
 {
 	if (event.GetKeyCode() == WXK_DOWN) {
-		
-		if(m_selectedItem == wxNOT_FOUND && m_results->GetItemCount() > 0) {
+
+		if (m_selectedItem == wxNOT_FOUND && m_results->GetItemCount() > 0) {
 			m_selectedItem = 0;
 		}
 
-		if(m_selectedItem == wxNOT_FOUND)
+		if (m_selectedItem == wxNOT_FOUND)
 			return;
-		
+
 		if (m_results->GetItemCount() > m_selectedItem + 1) {
 			m_selectedItem ++;
 			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 			m_results->EnsureVisible(m_selectedItem);
 			return;
 		}
-	} else if( event.GetKeyCode() == WXK_UP) {
-		if(m_selectedItem == wxNOT_FOUND && m_results->GetItemCount() > 0) {
+	} else if ( event.GetKeyCode() == WXK_UP) {
+		if (m_selectedItem == wxNOT_FOUND && m_results->GetItemCount() > 0) {
 			m_selectedItem = 0;
 		}
-		
-		if(m_selectedItem == wxNOT_FOUND)
+
+		if (m_selectedItem == wxNOT_FOUND)
 			return;
-			
+
 		//select the previous one if we can
-		if((m_selectedItem - 1) >= 0) {
+		if ((m_selectedItem - 1) >= 0) {
 			//we can select the next one
 			m_selectedItem --;
 			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);

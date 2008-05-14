@@ -95,7 +95,11 @@ createVariables()
 createMainTargets()
 {
 	echo "## build tagrets" >> Makefile
-	echo "all :  pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Plugins post_build_msg" >> Makefile
+	if [ "$os_name" = "Linux" ]; then
+		echo "all :  pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Plugins post_build_msg" >> Makefile
+	else
+		echo "all :  pre_build CodeLite Scintilla SQLite wxFlatNotebook SDK LiteEditor ctags Plugins " >> Makefile
+	fi	
 	echo "" >> Makefile
 
 	echo "ctags: sdk/ctags/Makefile" >> Makefile

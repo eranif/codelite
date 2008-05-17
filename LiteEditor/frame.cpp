@@ -437,6 +437,8 @@ void Frame::CreateGUIControls(void)
 
 	//initialize debugger configuration tool
 	DebuggerConfigTool::Get()->Load(ManagerST::Get()->GetStarupDirectory() + wxT("/config/debuggers.xml"), wxT("DebuggerSettings"));
+	WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
+	
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
 
 // On wx2.8.7, AUI dragging is broken but this happens only in debug build & on GTK

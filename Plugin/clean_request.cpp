@@ -46,7 +46,7 @@ void CleanRequest::Process()
 	SendStartMsg();
 
 	//expand the variables of the command
-	cmd = ExpandAllVariables(cmd, m_project, wxEmptyString);
+	cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_project, wxEmptyString);
 	m_proc = new clProcess(wxNewId(), cmd);
 
 	if (m_proc) {

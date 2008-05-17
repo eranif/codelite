@@ -9,7 +9,7 @@
 #include "wx/ffile.h"
 #include "procutils.h"
 
-static wxString DoExpandAllVariables(const wxString &expression, const wxString &projectName, const wxString &fileName);
+static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &fileName);
 
 void SendCmdEvent(int eventId, void *clientData)
 {
@@ -130,7 +130,7 @@ bool IsValidCppFile(const wxString &id)
 	return true;
 }
 // This functions accepts expression and expand all variables in it
-wxString ExpandAllVariables(const wxString &expression, const wxString &projectName, const wxString &fileName)
+wxString ExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &fileName)
 {
 	//add support for backticks commands
 	wxString tmpExp;
@@ -156,7 +156,7 @@ wxString ExpandAllVariables(const wxString &expression, const wxString &projectN
 				return expression;
 			} else {
 				//expand the backtick statement
-				wxString expandedBacktick = DoExpandAllVariables(backtick, projectName, fileName);
+				wxString expandedBacktick = DoExpandAllVariables(backtick, workspace, projectName, fileName);
 
 				//execute the backtick
 				wxArrayString output;
@@ -176,23 +176,23 @@ wxString ExpandAllVariables(const wxString &expression, const wxString &projectN
 		}
 	}
 
-	return DoExpandAllVariables(tmpExp, projectName, fileName);
+	return DoExpandAllVariables(tmpExp, workspace, projectName, fileName);
 }
 
-wxString DoExpandAllVariables(const wxString &expression, const wxString &projectName, const wxString &fileName)
+wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &fileName)
 {
 	wxString errMsg;
 	wxString output(expression);
-	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(projectName, errMsg);
+	ProjectPtr proj = workspace->FindProjectByName(projectName, errMsg);
 	if (proj) {
 		wxString project_name(proj->GetName());
 
 		//make sure that the project name does not contain any spaces
 		project_name.Replace(wxT(" "), wxT("_"));
 
-		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(proj->GetName());
+		BuildConfigPtr bldConf = workspace->GetProjSelBuildConf(proj->GetName());
 		output.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-		output.Replace(wxT("$(WorkspacePath)"), WorkspaceST::Get()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+		output.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 		output.Replace(wxT("$(ProjectName)"), project_name);
 		output.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
 		output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
@@ -213,9 +213,11 @@ wxString DoExpandAllVariables(const wxString &expression, const wxString &projec
 	wxDateTime now = wxDateTime::Now();
 	output.Replace(wxT("$(User)"), wxGetUserName());
 	output.Replace(wxT("$(Date)"), now.FormatDate());
-
+	output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
+	
 	//call the environment & workspace variables expand function
-	output = WorkspaceST::Get()->ExpandVariables(output);
+	output = workspace->ExpandVariables(output);
+	
 	return output;
 }
 

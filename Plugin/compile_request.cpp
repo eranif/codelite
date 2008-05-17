@@ -93,7 +93,7 @@ void CompileRequest::Process()
 		}
 
 		//expand the variables of the command
-		cmd = ExpandAllVariables(cmd, m_project, m_fileName);
+		cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_project, m_fileName);
 		
 		//replace the command line
 		m_proc->SetCommand(cmd);

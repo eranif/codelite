@@ -1801,7 +1801,7 @@ wxString Manager::ExpandVariables(const wxString &expression, ProjectPtr proj)
 	if (editor) {
 		fileName = editor->GetFileName().GetFullPath();
 	}
-	return ExpandAllVariables(expression, project_name, fileName);
+	return ExpandAllVariables(expression, WorkspaceST::Get(), project_name, fileName);
 }
 
 //--------------------------- Debugger API -----------------------------

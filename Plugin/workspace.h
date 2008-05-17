@@ -30,7 +30,8 @@ class WXDLLIMPEXP_LE_SDK Workspace
 	wxXmlDocument m_doc;
 	wxFileName m_fileName;
 	std::map<wxString, ProjectPtr> m_projects;
-
+	wxString m_startupDir;
+	
 private:
 
 	/// Constructor
@@ -40,6 +41,10 @@ private:
 	virtual ~Workspace();
 
 public:
+	
+	void SetStartupDir(const wxString& startupDir) {this->m_startupDir = startupDir;}
+	const wxString& GetStartupDir() const {return m_startupDir;}
+	
 	/**
 	 * Returns the workspace file name
 	 */

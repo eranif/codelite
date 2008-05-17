@@ -861,12 +861,13 @@ void TagsManager::FindImplDecl(const wxFileName &fileName, int lineno, const wxS
 	wxString scope(text);// = GetLanguage()->GetScope(text);
 	wxString scopeName = GetLanguage()->GetScopeName(scope, NULL);
 	if (expression.IsEmpty()) {
-
-		//collect all the tags from the current scope, and
-		//from the global scope
-		GetGlobalTags(word, tmpCandidates, ExactMatch);
+		
 		TagsByScopeAndName(scopeName, word, tmpCandidates, ExactMatch);
-
+		if(tmpCandidates.empty()){
+			// no match in the given scope, try to collect from global scope as well
+			GetGlobalTags(word, tmpCandidates, ExactMatch);
+		}
+		
 		if (!imp) {
 			//collect only implementation
 			FilterImplementation(tmpCandidates, tags);

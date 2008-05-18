@@ -16,6 +16,8 @@
     <File Name="search_thread.cpp"/>
     <File Name="workspace.cpp"/>
     <File Name="volumelocatorthread.cpp"/>
+    <File Name="stringsearcher.cpp"/>
+    <File Name="stringsearcher.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="async_executable_cmd.h"/>

@@ -206,6 +206,10 @@
     <File Name="fileexplorertree.h"/>
     <File Name="debuggertip.cpp"/>
     <File Name="debuggertip.h"/>
+    <File Name="cc_boxbase.h"/>
+    <File Name="cc_box.cpp"/>
+    <File Name="cc_box.h"/>
+    <File Name="cc_boxbase.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

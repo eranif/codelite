@@ -1312,6 +1312,8 @@ bool LEditor::MarkAll()
 
 void LEditor::ReloadFile()
 {
+	HideCompletionBox();
+	
 	if (m_fileName.GetFullPath().IsEmpty() == true || m_fileName.GetFullPath().StartsWith(wxT("Untitled")))
 		return;
 
@@ -1331,6 +1333,8 @@ void LEditor::ReloadFile()
 
 void LEditor::SetEditorText(const wxString &text)
 {
+	HideCompletionBox();
+	
 	SetText( text );
 	SetDirty(true);
 
@@ -1447,6 +1451,10 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 		case WXK_ESCAPE:
 		case WXK_LEFT:
 		case WXK_RIGHT:
+		case WXK_HOME:
+		case WXK_END:
+		case WXK_DELETE:
+		case WXK_NUMPAD_DELETE:
 			m_ccBox->Hide();
 			return;
 		case WXK_UP:

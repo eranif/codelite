@@ -5,6 +5,9 @@
 #include <wx/xrc/xmlres.h>
 #include "entry.h"
 
+#define BOX_HEIGHT 200
+#define BOX_WIDTH  300
+
 CCBox::CCBox( LEditor* parent)
 		:
 		CCBoxBase(parent, wxID_ANY, wxDefaultPosition, wxSize(0, 0))
@@ -107,6 +110,13 @@ void CCBox::Adjust()
 	}
 
 	pt.y += hh;
+	
+	wxSize size = parent->GetClientSize();
+	if(size.y - pt.y < BOX_HEIGHT) {
+		pt.y -= BOX_HEIGHT;
+		pt.y -= hh;
+	}
+	
 	Move(pt);
 }
 
@@ -185,7 +195,7 @@ void CCBox::Show(const wxString& word)
 				}
 			}
 		}
-		m_listCtrl->SetColumnWidth(0, 300);
+		m_listCtrl->SetColumnWidth(0, BOX_WIDTH);
 	}
 
 	m_listCtrl->Thaw();
@@ -193,7 +203,7 @@ void CCBox::Show(const wxString& word)
 	m_selectedItem = 0;
 	SelectItem(m_selectedItem);
 
-	SetSize(300, 200);
+	SetSize(BOX_WIDTH, BOX_HEIGHT);
 	GetSizer()->Layout();
 	wxWindow::Show();
 }

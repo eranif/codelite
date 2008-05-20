@@ -596,7 +596,7 @@ void TagsManager::TagsByScopeAndName(const wxString& scope, const wxString &name
 	}
 
 	// and finally sort the results
-	std::sort(tags.begin(), tags.end(), SAscendingSort());
+	std::sort(tags.begin(), tags.end(), SDescendingSort());
 }
 
 void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr> &tags)
@@ -618,7 +618,7 @@ void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr> &t
 	}
 	// and finally sort the results
 
-	std::sort(tags.begin(), tags.end(), SAscendingSort());
+	std::sort(tags.begin(), tags.end(), SDescendingSort());
 
 }
 
@@ -767,7 +767,7 @@ void TagsManager::GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &
 		sql << wxT("select * from tags where parent='<global>' and name ='") << tmpName << wxT("'  ");
 	}
 	DoExecuteQueury(sql, tags);
-	std::sort(tags.begin(), tags.end(), SAscendingSort());
+	std::sort(tags.begin(), tags.end(), SDescendingSort());
 }
 
 void TagsManager::GetLocalTags(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags, SearchFlags flags)
@@ -1649,7 +1649,7 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxString &kind, s
 		DoExecuteQueury(sql, tags, onlyWorkspace);
 	}
 	// and finally sort the results
-	std::sort(tags.begin(), tags.end(), SAscendingSort());
+	std::sort(tags.begin(), tags.end(), SDescendingSort());
 }
 
 wxString TagsManager::GetScopeName(const wxString &scope)
@@ -2054,7 +2054,7 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 		DoExecuteQueury(sql, tags);
 	}
 	// and finally sort the results
-	std::sort(tags.begin(), tags.end(), SAscendingSort());
+	std::sort(tags.begin(), tags.end(), SDescendingSort());
 
 }
 

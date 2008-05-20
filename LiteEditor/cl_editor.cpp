@@ -1,4 +1,6 @@
 #include "cl_editor.h"
+#include "cc_box.h"
+#include "stringsearcher.h"
 #include "precompiled_header.h"
 #include "colourrequest.h"
 #include "colourthread.h"
@@ -8,7 +10,7 @@
 #include <wx/settings.h>
 #include "parse_thread.h"
 #include "ctags_manager.h"
-#include "manager.h" 
+#include "manager.h"
 #include "menumanager.h"
 #include <wx/fdrepdlg.h>
 #include "findreplacedlg.h"
@@ -57,14 +59,6 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_KEY_DOWN(LEditor::OnKeyDown)
 	EVT_LEFT_DOWN(LEditor::OnLeftDown)
 
-	//C++ contex menu update UI events
-//	EVT_UPDATE_UI(XRCID("insert_doxy_comment"), LEditor::OnPopupMenuUpdateUI)
-//	EVT_UPDATE_UI(XRCID("setters_getters"), LEditor::OnPopupMenuUpdateUI)
-//	EVT_UPDATE_UI(XRCID("find_decl"), LEditor::OnPopupMenuUpdateUI)
-//	EVT_UPDATE_UI(XRCID("find_impl"), LEditor::OnPopupMenuUpdateUI)
-//	EVT_UPDATE_UI(XRCID("rename_function"), LEditor::OnPopupMenuUpdateUI)
-//	EVT_UPDATE_UI(XRCID("rename_member"), LEditor::OnPopupMenuUpdateUI)
-	
 	// Find and replace dialog
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_FIND_NEXT, LEditor::OnFindDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_REPLACE, LEditor::OnFindDialog)
@@ -97,6 +91,7 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 		, m_popupIsOn(false)
 		, m_modifyTime(0)
 		, m_resetSearch(true)
+		, m_ccBox(NULL)
 {
 	Show(!hidden);
 	ms_bookmarkShapes[wxT("Small Rectangle")] = wxSCI_MARK_SMALLRECT;
@@ -293,14 +288,14 @@ void LEditor::SetProperties()
 
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
-	
+
 	// by default we use tab size 4
 	long tabWidth(4);
 	EditorConfigST::Get()->GetLongValue(wxT("EditorTabWidth"), tabWidth);
 
 	SetTabWidth(tabWidth);
 	SetIndent(tabWidth);
-	
+
 	SetTabIndents(true);
 	SetBackSpaceUnIndents (true);
 	SetUseTabs (options->GetIndentUsesTabs());
@@ -338,6 +333,12 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 {
 	// set the page title as dirty
 	SetDirty(true);
+
+	// get the word and select it in the completion box
+	if (m_ccBox && m_ccBox->IsShown()) {
+		wxString word = GetWordAtCaret();
+		m_ccBox->Show(word);
+	}
 
 	// make sure line is visible
 	int curLine = LineFromPosition(GetCurrentPos());
@@ -1016,13 +1017,32 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 			}
 		}
 	}
-
-	else if (type == wxEVT_FRD_REPLACEALL) {
-		ReplaceAll();
-	} else if (type == wxEVT_FRD_BOOKMARKALL) {
-		MarkAll();
-	}
-	event.Skip();
+//
+//	wxEventType type = event.GetEventType();
+//	if ( type == wxEVT_FRD_FIND_NEXT ) {
+//		int offset = GetCurrentPos();
+//		wxString findWhat = m_findReplaceDlg->GetData().GetFindString();
+//
+//		size_t flags = 0;
+//		size_t wxflags = m_findReplaceDlg->GetData().GetFlags();
+//		wxflags & wxFRD_MATCHWHOLEWORD ? flags |= wxSD_MATCHWHOLEWORD : flags = flags;
+//		wxflags & wxFRD_MATCHCASE ? flags |= wxSD_MATCHCASE : flags = flags;
+//		wxflags & wxFRD_REGULAREXPRESSION ? flags |= wxSD_REGULAREXPRESSION : flags = flags;
+//		wxflags & wxFRD_SEARCHUP ? flags |= wxSD_SEARCH_BACKWARD : flags = flags;
+//
+//		int pos(0);
+//		int match_len(0);
+//
+//		if( StringFindReplacer::Search(GetText(), offset, findWhat, flags, pos, match_len) ){
+//			SetSelection(pos, pos + match_len);
+//		}
+//
+//	} else if (type == wxEVT_FRD_REPLACEALL) {
+//		ReplaceAll();
+//	} else if (type == wxEVT_FRD_BOOKMARKALL) {
+//		MarkAll();
+//	}
+//	event.Skip();
 }
 
 void LEditor::FindNext(const FindReplaceData &data)
@@ -1414,11 +1434,70 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 void LEditor::OnKeyDown(wxKeyEvent &event)
 {
 	//let the context process it as well
+	if (m_ccBox && m_ccBox->IsShown()) {
+		switch (event.GetKeyCode()) {
+		case WXK_NUMPAD_ENTER:
+		case WXK_RETURN:
+		case WXK_SPACE:
+		case WXK_TAB:
+			m_ccBox->InsertSelection();
+			m_ccBox->Hide();
+			return;
+
+		case WXK_ESCAPE:
+		case WXK_LEFT:
+		case WXK_RIGHT:
+			m_ccBox->Hide();
+			return;
+		case WXK_UP:
+			m_ccBox->Previous();
+			return;
+		case WXK_DOWN:
+			m_ccBox->Next();
+			return;
+		case WXK_BACK: {
+
+				if (event.ControlDown()) {
+					m_ccBox->Hide();
+				} else {
+
+					wxString word = GetWordAtCaret();
+					if (word.IsEmpty()) {
+						m_ccBox->Hide();
+					} else {
+						word.RemoveLast();
+						m_ccBox->Show(word);
+					}
+				}
+				break;
+			}
+		default:
+			break;
+		}
+
+		// handle completion box control characters that once typed, CL should:
+		// 1. Insert the selection
+		// 2. Insert the typed character
+		if (	event.ShiftDown() && event.GetKeyCode() == wxT('9') || 	// (
+		        event.ShiftDown() && event.GetKeyCode() == wxT('0') || 	// )
+		        event.GetKeyCode() == wxT('-') 						||	// -
+		        event.ShiftDown() && event.GetKeyCode() == wxT(',') ||	// <
+		        event.ShiftDown() && event.GetKeyCode() == wxT('.') ||	// >
+		        event.GetKeyCode() == wxT(' ')) {						// SPACE
+			m_ccBox->InsertSelection();
+			m_ccBox->Hide();
+		}
+	}
 	m_context->OnKeyDown(event);
 }
 
 void LEditor::OnLeftDown(wxMouseEvent &event)
 {
+	// hide completion box
+	if (m_ccBox && m_ccBox->IsShown()) {
+		m_ccBox->Hide();
+	}
+
 	m_resetSearch = true;
 	//emulate here VS like selection with mouse and ctrl key
 	if (event.m_controlDown) {
@@ -1695,7 +1774,7 @@ void LEditor::UpdateColours()
 	        TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_PROJ_TAGS) {
 		m_context->OnFileSaved();
 	} else {
-		if(m_context->GetName() == wxT("C++")) {
+		if (m_context->GetName() == wxT("C++")) {
 			SetKeyWords(1, wxEmptyString);
 			SetKeyWords(2, wxEmptyString);
 			SetKeyWords(3, wxEmptyString);
@@ -1729,3 +1808,20 @@ void LEditor::OnDragStart(wxScintillaEvent& e)
 	e.Skip();
 }
 
+void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, bool showFullDecl)
+{
+	if ( m_ccBox == NULL ) {
+		// create new completion box
+		m_ccBox = new CCBox(this);
+	}
+
+	m_ccBox->Adjust();
+	m_ccBox->Show(tags, word, showFullDecl);
+}
+
+void LEditor::HideCompletionBox()
+{
+	if(m_ccBox && m_ccBox->IsShown()){
+		m_ccBox->Hide();
+	}
+}

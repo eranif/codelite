@@ -3,20 +3,30 @@
 #include <wx/regex.h>
 #include <algorithm>
 
-wxString StringFindReplacer::GetString(const wxString& input, int from)
+wxString StringFindReplacer::GetString(const wxString& input, int from, bool search_up)
 {
-	if (from < 0) { 
+	if (from < 0) {
 		from = 0;
 	}
-	if (from >= (int)input.Len()) {
-		return wxEmptyString;
-	}
 
-	return input.Mid((size_t)from);
+	if ( !search_up ) {
+
+		if (from >= (int)input.Len()) {
+			return wxEmptyString;
+		}
+		return input.Mid((size_t)from);
+
+	} else {
+		if (from >= (int)input.Len()) {
+			from = (int)input.Len();
+		}
+		return input.Mid(0, (size_t)from);
+	}
 }
+
 bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, const wxString& find_what, size_t flags, int& pos, int& matchLen)
 {
-	wxString str = GetString(input, startOffset);
+	wxString str = GetString(input, startOffset, flags & wxSD_SEARCH_BACKWARD ? true : false);
 	if (str.IsEmpty()) {
 		return false;
 	}
@@ -26,27 +36,33 @@ bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, cons
 	bool matchCase = flags & wxSD_MATCHCASE ? true : false;
 	if ( !matchCase ) re_flags |= wxRE_ICASE;
 	re.Compile(find_what, re_flags);
-	pos = startOffset;
-
+	
+	// incase we are scanning NOT backwared, set the offset
+	if (!( flags & wxSD_SEARCH_BACKWARD )) {
+		pos = startOffset;
+	}
+	
 	if ( re.IsValid() ) {
 		if ( flags & wxSD_SEARCH_BACKWARD ) {
 			size_t start(0), len(0);
 			bool matched(false);
-			
-			// get the last match 
-			while (re.Matches(str)){
+
+			// get the last match
+			while (re.Matches(str)) {
 				re.GetMatch(&start, &len);
 				pos += start;
-				if( matched ) {pos += matchLen;}				
+				if ( matched ) {
+					pos += matchLen;
+				}
 				matchLen = len;
 				matched = true;
 				str = str.Mid(start + len);
 			}
-			
-			if( matched ) {
+
+			if ( matched ) {
 				return true;
 			}
-			
+
 		} else if ( re.Matches(str)) {
 			size_t start, len;
 			re.GetMatch(&start, &len);
@@ -60,21 +76,24 @@ bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, cons
 
 bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, const wxString& find_what, size_t flags, int& pos, int& matchLen)
 {
-	wxString str = GetString(input, startOffset);
+	wxString str = GetString(input, startOffset, flags & wxSD_SEARCH_BACKWARD ? true : false);
 	size_t init_size = str.length();
-	
+
 	if (str.IsEmpty()) {
 		return false;
 	}
-	
+
 	wxString find_str(find_what);
+	size_t offset(0);
 	
 	// incase we are scanning backwared, revert the strings
-	if( flags & wxSD_SEARCH_BACKWARD ) {
+	if ( flags & wxSD_SEARCH_BACKWARD ) {
 		std::reverse(find_str.begin(), find_str.end());
 		std::reverse(str.begin(), str.end());
+	} else {
+		offset = startOffset;
 	}
-		
+
 	bool matchCase = flags & wxSD_MATCHCASE ? true : false;
 	if ( !matchCase ) {
 		find_str.MakeLower();
@@ -82,7 +101,7 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 	}
 
 	pos = str.Find(find_str);
-	size_t offset(startOffset);
+	
 	while ( pos != wxNOT_FOUND ) {
 		if (flags & wxSD_MATCHWHOLEWORD) {
 			// full word match
@@ -114,10 +133,10 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 					continue;
 				}
 			}
-			
+
 			// mirror the result as well
-			if(flags & wxSD_SEARCH_BACKWARD) {
-				pos = init_size - pos - matchLen;	
+			if (flags & wxSD_SEARCH_BACKWARD) {
+				pos = init_size - pos - matchLen;
 			}
 			matchLen = (int)find_str.Len();
 			pos += offset;
@@ -125,8 +144,8 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 		} else {
 			// we got a match
 			matchLen = (int)find_str.Len();
-			if(flags & wxSD_SEARCH_BACKWARD) {
-				pos = init_size - pos - matchLen;	
+			if (flags & wxSD_SEARCH_BACKWARD) {
+				pos = init_size - pos - matchLen;
 			}
 			pos += offset;
 			return true;

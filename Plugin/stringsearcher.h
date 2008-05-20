@@ -13,7 +13,7 @@
 class StringFindReplacer {
 
 protected:
-	static wxString GetString(const wxString& input, int from);
+	static wxString GetString(const wxString& input, int from, bool search_up);
 	static bool DoRESearch(const wxString &input, int startOffset, const wxString &find_what, size_t flags, int &pos, int &matchLen);
 	static bool DoSimpleSearch(const wxString &input, int startOffset, const wxString &find_what, size_t flags, int &pos, int &matchLen);
 	

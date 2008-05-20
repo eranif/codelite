@@ -16,6 +16,7 @@
 #include "plugin.h"
 
 class wxFindReplaceDialog;
+class CCBox;
 
 //incase we are using DLL build of wxWdigets, we need to make this class to export its 
 //classes 
@@ -66,6 +67,7 @@ class LEditor : public wxScintilla, public IEditor
 	time_t m_modifyTime;
 	std::map<int, wxString> m_customCmds;
 	bool m_resetSearch;
+	CCBox *m_ccBox;
 	
 public:
 	static FindReplaceData &GetFindReplaceData(){return m_findReplaceData;}
@@ -270,6 +272,19 @@ public:
 	 * functions / locals 
 	 */
 	void UpdateColours();
+	
+	/**
+	 * @brief display completion box. This function also moves the completion box to the current position
+	 * @param tags list of tags to work with
+	 * @param word part of the word 
+	 * @param showFullDecl display full function declaration
+	 */
+	void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl);
+	
+	/**
+	 * @brief hide the completion box if it is active.
+	 */
+	void HideCompletionBox();
 	
 	/**
 	 *--------------------------------------------------

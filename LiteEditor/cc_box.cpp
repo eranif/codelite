@@ -1,25 +1,27 @@
 #include "cc_box.h"
+#include "cl_editor.h"
 #include "globals.h"
 #include <wx/imaglist.h>
 #include <wx/xrc/xmlres.h>
 #include "entry.h"
 
-CCBox::CCBox( wxWindow* parent )
+CCBox::CCBox( LEditor* parent)
 		:
-		CCBoxBase( parent )
+		CCBoxBase(parent, wxID_ANY, wxDefaultPosition, wxSize(0, 0))
+		, m_showFullDecl(false)
 {
-	// load all the CC images 
+	// load all the CC images
 	wxImageList *il = new wxImageList(16, 16, true);
-	
+
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("class")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("struct")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("namespace")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_public")));
-	
+
 	wxBitmap m_tpyedefBmp = wxXmlResource::Get()->LoadBitmap(wxT("typedef"));
 	m_tpyedefBmp.SetMask(new wxMask(m_tpyedefBmp, wxColor(0, 128, 128)));
 	il->Add(m_tpyedefBmp);
-	
+
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_private")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_public")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_protected")));
@@ -29,130 +31,238 @@ CCBox::CCBox( wxWindow* parent )
 	wxBitmap m_macroBmp = wxXmlResource::Get()->LoadBitmap(wxT("typedef"));
 	m_macroBmp.SetMask(new wxMask(m_macroBmp, wxColor(0, 128, 128)));
 	il->Add(m_macroBmp);
-	
+
 	wxBitmap m_enumBmp = wxXmlResource::Get()->LoadBitmap(wxT("enum"));
 	m_enumBmp.SetMask(new wxMask(m_enumBmp, wxColor(0, 128, 128)));
 	il->Add(m_enumBmp);
-	
+
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("enumerator")));
 
 	//Initialise the file bitmaps
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_h")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));
-	
+
 	// assign the image list and let the control take owner ship (i.e. delete it)
 	m_listCtrl->AssignImageList(il, wxIMAGE_LIST_SMALL);
+	m_listCtrl->InsertColumn(0, wxT("Name"));
+
+	// return the focus to scintilla
+	parent->SetActive();
 }
 
 void CCBox::OnItemActivated( wxListEvent& event )
 {
-	// TODO: Implement OnItemActivated
+	m_selectedItem = event.m_itemIndex;
+	InsertSelection();
+	Hide();
 }
 
 void CCBox::OnItemDeSelected( wxListEvent& event )
 {
-	// TODO: Implement OnItemDeSelected
+	m_selectedItem = wxNOT_FOUND;
 }
 
 void CCBox::OnItemSelected( wxListEvent& event )
 {
-	// TODO: Implement OnItemSelected
+	m_selectedItem = event.m_itemIndex;
 }
 
-void CCBox::OnKeyDown( wxListEvent& event )
+void CCBox::Show(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl)
 {
-	// TODO: Implement OnKeyDown
+	if (tags.empty()) {
+		return;
+	}
+
+	m_tags = tags;
+	m_showFullDecl = showFullDecl;
+	Show(word);
 }
 
-void CCBox::Initialize(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl)
+void CCBox::Adjust()
 {
-	wxString list;
+	LEditor *parent = (LEditor*)GetParent();
+
+	int point = parent->GetCurrentPos();
+	wxPoint pt = parent->PointFromPosition(point);
+
+	// calculate the line height
+	int curline = parent->LineFromPosition(point);
+	int ll;
+	int hh(0);
+	if (curline > 0) {
+		ll = curline - 1;
+		int pp = parent->PositionFromLine(ll);
+		wxPoint p = parent->PointFromPosition(pp);
+		hh =  pt.y - p.y;
+	} else {
+		ll = curline + 1;
+		int pp = parent->PositionFromLine(ll);
+		wxPoint p = parent->PointFromPosition(pp);
+		hh =  p.y - pt.y;
+	}
+
+	if (hh == 0) {
+		hh = 12; // default height on most OSs
+	}
+
+	pt.y += hh;
+	Move(pt);
+}
+
+void CCBox::SelectWord(const wxString& word)
+{
+	long item = m_listCtrl->FindItem(0, word, true);
+	if (item != wxNOT_FOUND) {
+		m_selectedItem = item;
+		SelectItem(m_selectedItem);
+	}
+}
+
+void CCBox::Next()
+{
+	if (m_selectedItem != wxNOT_FOUND) {
+		if (m_selectedItem + 1 < m_listCtrl->GetItemCount()) {
+			m_selectedItem++;
+			SelectItem(m_selectedItem);
+		}
+	}
+}
+
+void CCBox::Previous()
+{
+	if (m_selectedItem != wxNOT_FOUND) {
+		if (m_selectedItem - 1 >= 0) {
+			m_selectedItem--;
+			SelectItem(m_selectedItem);
+		}
+	}
+}
+
+void CCBox::SelectItem(long item)
+{
+	m_listCtrl->SetItemState(item, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+	m_listCtrl->SetItemState(item, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+	m_listCtrl->EnsureVisible(item);
+}
+
+void CCBox::Show(const wxString& word)
+{
 	size_t i(0);
 	m_listCtrl->Freeze();
-	
-	//Assumption (which is always true..): the tags are sorted
+	m_listCtrl->DeleteAllItems();
+
+	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+
+	//Assumption (which is always true..): the m_tags are sorted
 	wxString lastName;
-	if (tags.empty() == false) {
-		for (; i<tags.size()-1; i++) {
-			if (lastName != tags.at(i)->GetName()) {
-				int row = AppendListCtrlRow(m_listCtrl);
-				SetColumnText(m_listCtrl, row, 0, tags.at(i)->GetName(), GetImageId(*tags.at(i)));
-				lastName = tags.at(i)->GetName();
+	if (m_tags.empty() == false) {
+		for (; i<m_tags.size(); i++) {
+			TagEntryPtr tag = m_tags.at(i);
+
+			// Collect only m_tags that matches 'word'
+			wxString s1(word);
+			wxString s2(tag->GetName());
+			s1.MakeLower();
+			s2.MakeLower();
+
+			if (wxStrncmp(s1, s2, word.Len()) != 0 && word.IsEmpty() == false) {
+				continue;
 			}
-			if (showFullDecl) {
+
+			if (lastName != m_tags.at(i)->GetName()) {
+				int row = AppendListCtrlRow(m_listCtrl);
+
+				SetColumnText(m_listCtrl, row, 0, tag->GetName(), GetImageId(*m_tags.at(i)));
+				lastName = tag->GetName();
+			}
+
+			if (m_showFullDecl) {
 				//collect only declarations
-				if (tags.at(i)->GetKind() == wxT("prototype")) {
+				if (m_tags.at(i)->GetKind() == wxT("prototype")) {
 					int row = AppendListCtrlRow(m_listCtrl);
-					SetColumnText(m_listCtrl, row, 0, tags.at(i)->GetName()+tags.at(i)->GetSignature(), GetImageId(*tags.at(i)));
+					SetColumnText(m_listCtrl, row, 0, tag->GetName()+tag->GetSignature(), GetImageId(*m_tags.at(i)));
 				}
 			}
 		}
+		m_listCtrl->SetColumnWidth(0, 300);
+	}
 
-		if (lastName != tags.at(i)->GetName()) {
-			int row = AppendListCtrlRow(m_listCtrl);
-			SetColumnText(m_listCtrl, row, 0, tags.at(i)->GetName(), GetImageId(*tags.at(i)));
-		}
-		
-//		rCtrl.AutoCompSetSeparator((int)('@'));	// set the separator to be non valid language wxChar
-//		rCtrl.AutoCompSetChooseSingle(true);					// If only one match, insert it automatically
-//		//rCtrl.AutoCompSetIgnoreCase(false);
-//		rCtrl.AutoCompSetDropRestOfWord(true);
-//		rCtrl.AutoCompSetAutoHide(false);
-//		rCtrl.AutoCompShow((int)word.Length(), list);
-//		rCtrl.AutoCompSetFillUps(wxT("<( \t\n"));
+	m_listCtrl->Thaw();
+	
+	m_selectedItem = 0;
+	SelectItem(m_selectedItem);
+
+	SetSize(300, 200);
+	GetSizer()->Layout();
+	wxWindow::Show();
+}
+
+void CCBox::InsertSelection()
+{
+	if(m_selectedItem == wxNOT_FOUND) {
+		return;
 	}
 	
-	m_listCtrl->Thaw();
+	// get the selected word
+	wxString word = GetColumnText(m_listCtrl, m_selectedItem, 0);
+	
+	LEditor *editor = (LEditor*)GetParent();
+	int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
+	
+	editor->SetSelection(insertPos, editor->GetCurrentPos());
+	editor->ReplaceSelection(word);
+	
 }
 
 int CCBox::GetImageId(const TagEntry &entry)
 {
 	if (entry.GetKind() == wxT("class"))
-		return 1;
+		return 0;
 
 	if (entry.GetKind() == wxT("struct"))
-		return 2;
+		return 1;
 
 	if (entry.GetKind() == wxT("namespace"))
-		return 3;
+		return 2;
 
 	if (entry.GetKind() == wxT("variable"))
-		return 4;
+		return 3;
 
 	if (entry.GetKind() == wxT("typedef"))
-		return 5;
+		return 4;
 
 	if (entry.GetKind() == wxT("member") && entry.GetAccess().Contains(wxT("private")))
-		return 6;
+		return 5;
 
 	if (entry.GetKind() == wxT("member") && entry.GetAccess().Contains(wxT("public")))
-		return 7;
+		return 6;
 
 	if (entry.GetKind() == wxT("member") && entry.GetAccess().Contains(wxT("protected")))
-		return 8;
+		return 7;
 
 	//member with no access? (maybe part of namespace??)
 	if (entry.GetKind() == wxT("member"))
-		return 7;
+		return 6;
 
 	if ((entry.GetKind() == wxT("function") || entry.GetKind() == wxT("prototype")) && entry.GetAccess().Contains(wxT("private")))
-		return 9;
+		return 8;
 
 	if ((entry.GetKind() == wxT("function") || entry.GetKind() == wxT("prototype")) && (entry.GetAccess().Contains(wxT("public")) || entry.GetAccess().IsEmpty()))
-		return 10;
+		return 9;
 
 	if ((entry.GetKind() == wxT("function") || entry.GetKind() == wxT("prototype")) && entry.GetAccess().Contains(wxT("protected")))
-		return 11;
+		return 10;
 
 	if (entry.GetKind() == wxT("macro"))
-		return 12;
+		return 11;
 
 	if (entry.GetKind() == wxT("enum"))
-		return 13;
+		return 12;
 
 	if (entry.GetKind() == wxT("enumerator"))
-		return 14;
+		return 13;
 
 	return wxNOT_FOUND;
 }
+

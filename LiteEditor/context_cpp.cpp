@@ -1,4 +1,5 @@
 #include "precompiled_header.h"
+#include "cc_box.h"
 #include <wx/progdlg.h>
 #include "renamesymboldlg.h"
 #include "cpptoken.h"
@@ -929,38 +930,41 @@ void ContextCpp::CompleteWord()
 
 void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl)
 {
-	LEditor &rCtrl = GetCtrl();
-	wxString list;
-	size_t i=0;
-	//Assumption (which is always true..): the tags are sorted
-	wxString lastName;
-	if (tags.empty() == false) {
-		for (; i<tags.size()-1; i++) {
-			if (lastName != tags.at(i)->GetName()) {
-				list.Append(tags.at(i)->GetName() + GetImageString(*tags.at(i)) + wxT("@"));
-				lastName = tags.at(i)->GetName();
-			}
-			if (showFullDecl) {
-				//collect only declarations
-				if (tags.at(i)->GetKind() == wxT("prototype")) {
-					list.Append(tags.at(i)->GetName() + tags.at(i)->GetSignature() + GetImageString(*tags[i]) + wxT("@"));
-				}
-			}
-		}
+//	LEditor &rCtrl = GetCtrl();
+//	wxString list;
+//	size_t i=0;
+//	//Assumption (which is always true..): the tags are sorted
+//	wxString lastName;
+//	if (tags.empty() == false) {
+//		for (; i<tags.size()-1; i++) {
+//			if (lastName != tags.at(i)->GetName()) {
+//				list.Append(tags.at(i)->GetName() + GetImageString(*tags.at(i)) + wxT("@"));
+//				lastName = tags.at(i)->GetName();
+//			}
+//			if (showFullDecl) {
+//				//collect only declarations
+//				if (tags.at(i)->GetKind() == wxT("prototype")) {
+//					list.Append(tags.at(i)->GetName() + tags.at(i)->GetSignature() + GetImageString(*tags[i]) + wxT("@"));
+//				}
+//			}
+//		}
+//
+//		if (lastName != tags.at(i)->GetName()) {
+//			list.Append(tags.at(i)->GetName() + GetImageString(*tags.at(i)) + wxT("@"));
+//		}
+//		list = list.BeforeLast(wxT('@'));
+//
+//		rCtrl.AutoCompSetSeparator((int)('@'));	// set the separator to be non valid language wxChar
+//		rCtrl.AutoCompSetChooseSingle(true);					// If only one match, insert it automatically
+//		//rCtrl.AutoCompSetIgnoreCase(false);
+//		rCtrl.AutoCompSetDropRestOfWord(true);
+//		rCtrl.AutoCompSetAutoHide(false);
+//		rCtrl.AutoCompShow((int)word.Length(), list);
+//		rCtrl.AutoCompSetFillUps(wxT("<( \t\n"));
+//	}
 
-		if (lastName != tags.at(i)->GetName()) {
-			list.Append(tags.at(i)->GetName() + GetImageString(*tags.at(i)) + wxT("@"));
-		}
-		list = list.BeforeLast(wxT('@'));
-
-		rCtrl.AutoCompSetSeparator((int)('@'));	// set the separator to be non valid language wxChar
-		rCtrl.AutoCompSetChooseSingle(true);					// If only one match, insert it automatically
-		//rCtrl.AutoCompSetIgnoreCase(false);
-		rCtrl.AutoCompSetDropRestOfWord(true);
-		rCtrl.AutoCompSetAutoHide(false);
-		rCtrl.AutoCompShow((int)word.Length(), list);
-		rCtrl.AutoCompSetFillUps(wxT("<( \t\n"));
-	}
+	// calculate the position to display the completion box
+	GetCtrl().ShowCompletionBox(tags, word, showFullDecl);
 }
 
 void ContextCpp::DisplayFilesCompletionBox(const wxString &word)

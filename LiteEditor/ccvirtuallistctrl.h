@@ -28,5 +28,7 @@ public:
 	virtual int OnGetItemColumnImage(long item, long column) const;
 	virtual int OnGetItemImage(long item) const;
 	virtual wxString OnGetItemText(long item, long column) const;
+	int FindMatch(const wxString &word);
+	
 };
 #endif // __ccvirtuallistctrl__

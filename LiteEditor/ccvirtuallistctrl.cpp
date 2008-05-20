@@ -38,3 +38,18 @@ wxString CCVirtualListCtrl::OnGetItemText(long item, long column) const
 	info = m_tags.at(item);
 	return info.displayName;
 }
+
+int CCVirtualListCtrl::FindMatch(const wxString& word)
+{
+	for(size_t i=0; i<m_tags.size(); i++) {
+		CCItemInfo info = m_tags.at(i);
+		
+		wxString s1(word);
+		wxString s2(info.displayName);
+		s1.MakeLower(); s2.MakeLower();
+		if(s2.StartsWith(s1)) {
+			return static_cast<int>(i);
+		}
+	}
+	return wxNOT_FOUND;
+}

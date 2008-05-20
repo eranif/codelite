@@ -132,7 +132,7 @@ void CCBox::Adjust()
 
 void CCBox::SelectWord(const wxString& word)
 {
-	long item = m_listCtrl->FindItem(0, word, true);
+	long item = m_listCtrl->FindMatch(word);
 	if (item != wxNOT_FOUND) {
 		m_selectedItem = item;
 		SelectItem(m_selectedItem);
@@ -204,7 +204,7 @@ void CCBox::Show(const wxString& word)
 	
 	m_selectedItem = 0;
 	
-	m_selectedItem = m_listCtrl->FindItem(0, word, true);
+	m_selectedItem = m_listCtrl->FindMatch(word);
 	if(m_selectedItem == wxNOT_FOUND) {
 		m_selectedItem = 0;
 	}

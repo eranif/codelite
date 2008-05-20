@@ -173,6 +173,7 @@ void CCBox::Show(const wxString& word)
 	std::vector<CCItemInfo> _tags;
 	
 	CCItemInfo item;
+	m_listCtrl->DeleteAllItems();
 	
 	if (m_tags.empty() == false) {
 		for (; i<m_tags.size(); i++) {

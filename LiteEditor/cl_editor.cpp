@@ -337,7 +337,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	// get the word and select it in the completion box
 	if (m_ccBox && m_ccBox->IsShown()) {
 		wxString word = GetWordAtCaret();
-		m_ccBox->Show(word);
+		m_ccBox->SelectWord(word);
 	}
 
 	// make sure line is visible
@@ -1474,7 +1474,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 						m_ccBox->Hide();
 					} else {
 						word.RemoveLast();
-						m_ccBox->Show(word);
+						m_ccBox->SelectWord(word);
 					}
 				}
 				break;
@@ -1798,7 +1798,7 @@ int LEditor::SafeGetChar(int pos)
 {
 	if (pos < 0 || pos >= GetLength()) {
 		return 0;
-	}
+	} 
 	return GetCharAt(pos);
 }
 

@@ -210,6 +210,8 @@
     <File Name="cc_box.cpp"/>
     <File Name="cc_box.h"/>
     <File Name="cc_boxbase.cpp"/>
+    <File Name="ccvirtuallistctrl.cpp"/>
+    <File Name="ccvirtuallistctrl.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

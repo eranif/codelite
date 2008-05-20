@@ -30,13 +30,13 @@ protected:
 	// helper methods
 	int GetImageId(const TagEntry &entry);
 	void SelectItem(long item);
+	void Show(const wxString &word);
 	
 public:
 	/** Constructor */
 	CCBox(LEditor* parent);
 	
 	void Show(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl);
-	void Show(const wxString &word);
 	void InsertSelection();
 	
 	void Adjust();

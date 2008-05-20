@@ -168,51 +168,48 @@ void CCBox::SelectItem(long item)
 
 void CCBox::Show(const wxString& word)
 {
-	size_t i(0);
-	m_listCtrl->Freeze();
-	m_listCtrl->DeleteAllItems();
-
-	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-
-	//Assumption (which is always true..): the m_tags are sorted
 	wxString lastName;
+	size_t i(0);
+	std::vector<CCItemInfo> _tags;
+	
+	CCItemInfo item;
+	
 	if (m_tags.empty() == false) {
 		for (; i<m_tags.size(); i++) {
 			TagEntryPtr tag = m_tags.at(i);
-
-			// Collect only m_tags that matches 'word'
-			wxString s1(word);
-			wxString s2(tag->GetName());
-			s1.MakeLower();
-			s2.MakeLower();
-
-			if (wxStrncmp(s1, s2, word.Len()) != 0 && word.IsEmpty() == false) {
-				continue;
-			}
-
 			if (lastName != m_tags.at(i)->GetName()) {
-				int row = AppendListCtrlRow(m_listCtrl);
-
-				SetColumnText(m_listCtrl, row, 0, tag->GetName(), GetImageId(*m_tags.at(i)));
+				
+				item.displayName =  tag->GetName();
+				item.imgId = GetImageId(*m_tags.at(i));
+				_tags.push_back(item);
+				
 				lastName = tag->GetName();
 			}
 
 			if (m_showFullDecl) {
 				//collect only declarations
 				if (m_tags.at(i)->GetKind() == wxT("prototype")) {
-					int row = AppendListCtrlRow(m_listCtrl);
-					SetColumnText(m_listCtrl, row, 0, tag->GetName()+tag->GetSignature(), GetImageId(*m_tags.at(i)));
+					item.displayName =  tag->GetName()+tag->GetSignature();
+					item.imgId = GetImageId(*m_tags.at(i));
+					_tags.push_back(item);
+				
 				}
 			}
 		}
-		m_listCtrl->SetColumnWidth(0, BOX_WIDTH);
 	}
-
-	m_listCtrl->Thaw();
+	
+	m_listCtrl->SetColumnWidth(0, BOX_WIDTH);
+	m_listCtrl->SetItems(_tags);
+	m_listCtrl->SetItemCount(_tags.size());
 	
 	m_selectedItem = 0;
+	
+	m_selectedItem = m_listCtrl->FindItem(0, word, true);
+	if(m_selectedItem == wxNOT_FOUND) {
+		m_selectedItem = 0;
+	}
+	
 	SelectItem(m_selectedItem);
-
 	SetSize(BOX_WIDTH, m_height);
 	GetSizer()->Layout();
 	wxWindow::Show();

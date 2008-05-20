@@ -9,6 +9,7 @@
 #define __cc_boxbase__
 
 #include <wx/listctrl.h>
+#include "ccvirtuallistctrl.h"
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
@@ -28,7 +29,7 @@ class CCBoxBase : public wxPanel
 	private:
 	
 	protected:
-		wxListCtrl* m_listCtrl;
+		CCVirtualListCtrl* m_listCtrl;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }

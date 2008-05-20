@@ -87,7 +87,6 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 		, m_fileName(fileName)
 		, m_project(project)
 		, m_rightClickMenu(NULL)
-		, m_lastMatchPos(0)
 		, m_popupIsOn(false)
 		, m_modifyTime(0)
 		, m_resetSearch(true)
@@ -964,7 +963,6 @@ void LEditor::DoFindAndReplace(bool isReplaceDlg)
 	}
 
 	// the search always starts from the current line
-	m_lastMatchPos = GetCurrentPos();
 	//if there is a selection, set it
 	if (GetSelectedText().IsEmpty() == false) {
 		//if this string does not exist in the array add it
@@ -982,67 +980,47 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 	if ( type == wxEVT_FRD_FIND_NEXT ) {
 		FindNext(m_findReplaceDlg->GetData());
 	} else if ( type == wxEVT_FRD_REPLACE ) {
+
+		// Perform a "Replace" operation
+
 		if ( !Replace() ) {
-			if (dirDown) {
-				long res;
-				if (!conf->GetLongValue(wxT("ReplaceWrapAroundAnswer"), res)) {
-					ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL,
-					        wxT("CodeLite reached the end of the document, Search again from the start?"),
-					        wxT("CodeLite"));
-					res = dlg->ShowModal();
-					if (dlg->GetDontAskMeAgain()) {
-						//save this answer
-						conf->SaveLongValue(wxT("ReplaceWrapAroundAnswer"), res);
-					}
-					dlg->Destroy();
-				}
+			long res(wxNOT_FOUND);
 
+			wxString msg;
+			if ( dirDown ) {
+				msg << wxT("CodeLite reached the end of the document, Search again from the start?");
 			} else {
-				long res;
-				if (!conf->GetLongValue(wxT("ReplaceWrapAroundAnswer"), res)) {
-					ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL,
-					        wxT("CodeLite reached the end of the document, Search again from the start?"),
-					        wxT("CodeLite"));
-					res = dlg->ShowModal();
-					if (dlg->GetDontAskMeAgain()) {
-						//save this answer
-						conf->SaveLongValue(wxT("ReplaceWrapAroundAnswer"), res);
-					}
-					dlg->Destroy();
+				msg << wxT("CodeLite reached the end of the document, Search again from the bottom?");
+			}
+
+			if (!conf->GetLongValue(wxT("ReplaceWrapAroundAnswer"), res)) {
+				ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, msg, wxT("CodeLite"));
+				res = dlg->ShowModal();
+				if (dlg->GetDontAskMeAgain()) {
+					//save this answer
+					conf->SaveLongValue(wxT("ReplaceWrapAroundAnswer"), res);
+				}
+				dlg->Destroy();
+			}
+
+			if ( res == wxID_OK ) {
+				// place the caret at the new position
+				if (dirDown) {
+					SetCaretAt(0);
+				} else {
+					SetCaretAt(GetLength());
 				}
 
-				if (res == wxID_OK) {
-					Replace();
-				}
+				// replace again
+				Replace();
 			}
 		}
+	} else if (type == wxEVT_FRD_REPLACEALL) {
+		ReplaceAll();
+	} else if (type == wxEVT_FRD_BOOKMARKALL) {
+		MarkAll();
 	}
-//
-//	wxEventType type = event.GetEventType();
-//	if ( type == wxEVT_FRD_FIND_NEXT ) {
-//		int offset = GetCurrentPos();
-//		wxString findWhat = m_findReplaceDlg->GetData().GetFindString();
-//
-//		size_t flags = 0;
-//		size_t wxflags = m_findReplaceDlg->GetData().GetFlags();
-//		wxflags & wxFRD_MATCHWHOLEWORD ? flags |= wxSD_MATCHWHOLEWORD : flags = flags;
-//		wxflags & wxFRD_MATCHCASE ? flags |= wxSD_MATCHCASE : flags = flags;
-//		wxflags & wxFRD_REGULAREXPRESSION ? flags |= wxSD_REGULAREXPRESSION : flags = flags;
-//		wxflags & wxFRD_SEARCHUP ? flags |= wxSD_SEARCH_BACKWARD : flags = flags;
-//
-//		int pos(0);
-//		int match_len(0);
-//
-//		if( StringFindReplacer::Search(GetText(), offset, findWhat, flags, pos, match_len) ){
-//			SetSelection(pos, pos + match_len);
-//		}
-//
-//	} else if (type == wxEVT_FRD_REPLACEALL) {
-//		ReplaceAll();
-//	} else if (type == wxEVT_FRD_BOOKMARKALL) {
-//		MarkAll();
-//	}
-//	event.Skip();
+	event.Skip();
 }
 
 void LEditor::FindNext(const FindReplaceData &data)
@@ -1051,38 +1029,31 @@ void LEditor::FindNext(const FindReplaceData &data)
 
 	bool dirDown = ! (data.GetFlags() & wxFRD_SEARCHUP ? true : false);
 	if ( !FindAndSelect(data) ) {
-		if (dirDown) {
-			long res;
-			if (!conf->GetLongValue(wxT("FindNextWrapAroundAnswer"), res)) {
-				ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL,
-				        wxT("CodeLite reached the end of the document, Search again from the start?"),
-				        wxT("CodeLite"));
-				res = dlg->ShowModal();
-				if (dlg->GetDontAskMeAgain()) {
-					//save this answer
-					conf->SaveLongValue(wxT("FindNextWrapAroundAnswer"), res);
-				}
-				dlg->Destroy();
-			}
-			if (res == wxID_OK) {
-				FindAndSelect(data);
-			}
+		long res(wxNOT_FOUND);
+		wxString msg;
+		if ( dirDown ) {
+			msg << wxT("CodeLite reached the end of the document, Search again from the start?");
 		} else {
-			long res;
-			if (!conf->GetLongValue(wxT("FindNextWrapAroundAnswer"), res)) {
-				ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL,
-				        wxT("CodeLite reached the end of the document, Search again from the start?"),
-				        wxT("CodeLite"));
-				res = dlg->ShowModal();
-				if (dlg->GetDontAskMeAgain()) {
-					//save this answer
-					conf->SaveLongValue(wxT("FindNextWrapAroundAnswer"), res);
-				}
-				dlg->Destroy();
+			msg << wxT("CodeLite reached the end of the document, Search again from the bottom?");
+		}
+
+		if (!conf->GetLongValue(wxT("FindNextWrapAroundAnswer"), res)) {
+			ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, msg, wxT("CodeLite"));
+			res = dlg->ShowModal();
+			if (dlg->GetDontAskMeAgain()) {
+				//save this answer
+				conf->SaveLongValue(wxT("FindNextWrapAroundAnswer"), res);
 			}
-			if (res == wxID_OK) {
-				FindAndSelect(data);
+			dlg->Destroy();
+		}
+
+		if (res == wxID_OK) {
+			if (dirDown) {
+				SetCaretAt(0);
+			} else {
+				SetCaretAt(GetLength());
 			}
+			FindAndSelect(data);
 		}
 	}
 }
@@ -1099,77 +1070,50 @@ bool LEditor::FindAndSelect()
 
 bool LEditor::FindAndSelect(const FindReplaceData &data)
 {
-	bool dirDown = ! (data.GetFlags() & wxFRD_SEARCHUP ? true : false);
-	int flags = GetSciSearchFlag(data);
+	int offset = GetCurrentPos();
+	wxString findWhat = data.GetFindString();
 
-	if (m_resetSearch) {
-		m_lastMatchPos = GetCurrentPos();
-		m_resetSearch = false;
-	}
-	int pos = FindString(data.GetFindString(), flags, dirDown, m_lastMatchPos);
-	if (pos >= 0) {
-		EnsureCaretVisible();
-		SetSelection (pos, pos + (int)data.GetFindString().Length());
+	size_t flags = SearchFlags(data);
 
-		if ( !dirDown ) {
-			m_lastMatchPos = GetCurrentPos() - data.GetFindString().Length();
+	int pos(0);
+	int match_len(0);
+
+	if ( StringFindReplacer::Search(GetText(), offset, findWhat, flags, pos, match_len) ) {
+		if ( flags & wxSD_SEARCH_BACKWARD ) {
+			SetSelection(pos + match_len, pos);
 		} else {
-			m_lastMatchPos = GetCurrentPos();
-		}
-
-		//adjust the dialog position
-		if (m_findReplaceDlg && m_findReplaceDlg->IsShown()) {
-			wxPoint pt = PointFromPosition(pos);
-			//pt is in wxScintilla coordinates, need to convert them into
-			//the frame coordinates
-			wxPoint displayPt = ClientToScreen(pt);
-
-			//check if this point is placed inside the dialog area
-			wxRect rr = m_findReplaceDlg->GetScreenRect();
-			if (rr.Contains(displayPt)) {
-				//move the dialog a bit upward
-				m_findReplaceDlg->Move(rr.x, displayPt.y - rr.GetHeight());
-			}
+			SetSelection(pos, pos + match_len);
 		}
 		return true;
-	} else {
-		if ( dirDown ) {
-			m_lastMatchPos = 0;
-		} else {
-			m_lastMatchPos = GetLength();
-		}
-		return false;
 	}
+	return false;
 }
 
 bool LEditor::Replace(const FindReplaceData &data)
 {
-	wxString replaceString = data.GetReplaceString();
-	wxString findString    = data.GetFindString();
-	wxString selection = GetSelectedText();
-
-	SetSearchFlags( GetSciSearchFlag(data));
-	TargetFromSelection();
-
-	if (SearchInTarget( findString ) != -1) {
-		// the selection contains the searched string
-		// do the replace
-		ReplaceTarget( replaceString );
-		m_lastMatchPos += replaceString.Length();
+	// the string to be replaced should be selected
+	if ( GetSelectedText().IsEmpty() == false ) {
+		int pos(0);
+		int match_len(0);
+		size_t flags = SearchFlags(data);
+		if ( StringFindReplacer::Search(GetSelectedText(), 0, data.GetFindString(), flags, pos, match_len) ) {
+			ReplaceSelection(data.GetReplaceString());
+		}
 	}
 
 	//  and find another match in the document
 	return FindAndSelect();
 }
 
-int LEditor::GetSciSearchFlag(const FindReplaceData &data)
+size_t LEditor::SearchFlags(const FindReplaceData &data)
 {
 	size_t flags = 0;
 	size_t wxflags = data.GetFlags();
-	wxflags & wxFRD_MATCHWHOLEWORD ? flags |= wxSCI_FIND_WHOLEWORD : flags = flags;
-	wxflags & wxFRD_MATCHCASE ? flags |= wxSCI_FIND_MATCHCASE : flags = flags;
-	wxflags & wxFRD_REGULAREXPRESSION ? flags |= wxSCI_FIND_REGEXP : flags = flags;
-	return static_cast<int>(flags);
+	wxflags & wxFRD_MATCHWHOLEWORD ? flags |= wxSD_MATCHWHOLEWORD : flags = flags;
+	wxflags & wxFRD_MATCHCASE ? flags |= wxSD_MATCHCASE : flags = flags;
+	wxflags & wxFRD_REGULAREXPRESSION ? flags |= wxSD_REGULAREXPRESSION : flags = flags;
+	wxflags & wxFRD_SEARCHUP ? flags |= wxSD_SEARCH_BACKWARD : flags = flags;
+	return flags;
 }
 
 //----------------------------------------------
@@ -1253,33 +1197,34 @@ void LEditor::FindPrevMarker()
 bool LEditor::ReplaceAll()
 {
 	int occur = 0;
+	int offset( 0 );
+	
 	wxString findWhat = m_findReplaceDlg->GetData().GetFindString();
 	wxString replaceWith = m_findReplaceDlg->GetData().GetReplaceString();
-	int flags = GetSciSearchFlag(m_findReplaceDlg->GetData());
+	size_t flags = SearchFlags(m_findReplaceDlg->GetData());
 
-	if (findWhat.IsEmpty()) {
-		return false;
-	}
+	int pos(0);
+	int match_len(0);
 
-	BeginUndoAction();
-	long pos = 0;
-
-	// Save the caret position
-	long savedPos = GetCurrentPos();
-
-	SetCaretAt(0);
-	while ((pos = FindString(findWhat, flags, true, pos)) >= 0) {
+	wxString txt ( GetText() );
+	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
+		txt.Remove(pos, match_len);
+		txt.insert(pos, replaceWith);
+		offset = pos + replaceWith.Length();
 		occur++;
-		ReplaceTarget (replaceWith);
-		pos += (int)replaceWith.Length();
-		SetCaretAt(pos);
 	}
 
+	// replace the buffer
+	BeginUndoAction();
+	long savedPos = GetCurrentPos();
+	
+	SetText(txt);
+	
 	// Restore the caret
 	SetCaretAt(savedPos);
 
 	EndUndoAction();
-
+	
 	wxString message;
 	message << wxT("Replacements: ") << occur;
 	m_findReplaceDlg->SetReplacementsMessage(message);
@@ -1288,24 +1233,33 @@ bool LEditor::ReplaceAll()
 
 bool LEditor::MarkAll()
 {
-	long pos = wxSCI_INVALID_POSITION;
-	long savedPos = GetCurrentPos();
 	wxString findWhat = m_findReplaceDlg->GetData().GetFindString();
-	int flags = GetSciSearchFlag(m_findReplaceDlg->GetData());
 
-	if (findWhat.IsEmpty())
+	if (findWhat.IsEmpty()) {
 		return false;
+	}
+	
+	// Save the caret position
+	long savedPos = GetCurrentPos(); 
 
-	// Set the cursor to start
 	SetCaretAt(0);
-
-	while ((pos = FindString (findWhat, flags, true, pos)) >= 0) {
+	size_t flags = SearchFlags(m_findReplaceDlg->GetData());
+	
+	int pos(0);
+	int match_len(0);
+	
+	// remove reverse search
+	flags &= ~ wxSD_SEARCH_BACKWARD;
+	int offset(0);
+	wxString txt = GetText();
+	
+	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
+		SetSelection(pos, pos + match_len);
+		offset = pos + match_len;
 		MarkerAdd(LineFromPosition(pos), 0x7);
-		pos = PositionAfter(pos);
-		SetCaretAt(pos);
 	}
 
-	// Resttore the caret
+	// Restore the caret
 	SetCaretAt(savedPos);
 	return true;
 }
@@ -1313,7 +1267,7 @@ bool LEditor::MarkAll()
 void LEditor::ReloadFile()
 {
 	HideCompletionBox();
-	
+
 	if (m_fileName.GetFullPath().IsEmpty() == true || m_fileName.GetFullPath().StartsWith(wxT("Untitled")))
 		return;
 
@@ -1334,7 +1288,7 @@ void LEditor::ReloadFile()
 void LEditor::SetEditorText(const wxString &text)
 {
 	HideCompletionBox();
-	
+
 	SetText( text );
 	SetDirty(true);
 
@@ -1490,8 +1444,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 		        event.ShiftDown() && event.GetKeyCode() == wxT('0') || 	// )
 		        event.GetKeyCode() == wxT(' ') 						||	// SPACE
 		        event.ShiftDown() && event.GetKeyCode() == wxT(',') ||	// <
-		        event.ShiftDown() && event.GetKeyCode() == wxT('.'))	// >
-		{
+		        event.ShiftDown() && event.GetKeyCode() == wxT('.')) {	// >
 			m_ccBox->InsertSelection();
 			m_ccBox->Hide();
 		}
@@ -1798,7 +1751,7 @@ int LEditor::SafeGetChar(int pos)
 {
 	if (pos < 0 || pos >= GetLength()) {
 		return 0;
-	} 
+	}
 	return GetCharAt(pos);
 }
 
@@ -1829,7 +1782,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 
 void LEditor::HideCompletionBox()
 {
-	if(m_ccBox && m_ccBox->IsShown()){
+	if (m_ccBox && m_ccBox->IsShown()) {
 		m_ccBox->Hide();
 	}
 }

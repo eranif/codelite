@@ -309,8 +309,8 @@ private:
 	void BraceMatch(const bool& bSelRegion);
 	void BraceMatch(long pos);
 
-	// Conevert FindReplaceDialog flags to wxSCI flags
-	int  GetSciSearchFlag(const FindReplaceData &data);
+	// Conevert FindReplaceDialog flags to wxSD flags
+	size_t SearchFlags(const FindReplaceData &data);
 	
 	void AddDebuggerContextMenu(wxMenu *menu);
 	void RemoveDebuggerContextMenu(wxMenu *menu);

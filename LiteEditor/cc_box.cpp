@@ -14,6 +14,8 @@ CCBox::CCBox( LEditor* parent)
 		, m_showFullDecl(false)
 		, m_height(BOX_HEIGHT)
 {
+	Hide();
+
 	// load all the CC images
 	wxImageList *il = new wxImageList(16, 16, true);
 
@@ -50,7 +52,8 @@ CCBox::CCBox( LEditor* parent)
 	// assign the image list and let the control take owner ship (i.e. delete it)
 	m_listCtrl->AssignImageList(il, wxIMAGE_LIST_SMALL);
 	m_listCtrl->InsertColumn(0, wxT("Name"));
-
+	
+	m_listCtrl->SetFocus();
 	// return the focus to scintilla
 	parent->SetActive();
 }
@@ -77,7 +80,7 @@ void CCBox::Show(const std::vector<TagEntryPtr> &tags, const wxString &word, boo
 	if (tags.empty()) {
 		return;
 	}
-	
+
 	//m_height = BOX_HEIGHT;
 	m_tags = tags;
 	m_showFullDecl = showFullDecl;
@@ -112,15 +115,15 @@ void CCBox::Adjust()
 	}
 
 	pt.y += hh;
-	
+
 	wxSize size = parent->GetClientSize();
 	int diff = size.y - pt.y;
 	m_height = BOX_HEIGHT;
-	if(diff < BOX_HEIGHT) {
+	if (diff < BOX_HEIGHT) {
 		pt.y -= BOX_HEIGHT;
 		pt.y -= hh;
-		
-		if(pt.y < 0) {
+
+		if (pt.y < 0) {
 			// the completion box is out of screen, resotre original size
 			pt.y += BOX_HEIGHT;
 			pt.y += hh;
@@ -171,19 +174,19 @@ void CCBox::Show(const wxString& word)
 	wxString lastName;
 	size_t i(0);
 	std::vector<CCItemInfo> _tags;
-	
+
 	CCItemInfo item;
 	m_listCtrl->DeleteAllItems();
-	
+
 	if (m_tags.empty() == false) {
 		for (; i<m_tags.size(); i++) {
 			TagEntryPtr tag = m_tags.at(i);
 			if (lastName != m_tags.at(i)->GetName()) {
-				
+
 				item.displayName =  tag->GetName();
 				item.imgId = GetImageId(*m_tags.at(i));
 				_tags.push_back(item);
-				
+
 				lastName = tag->GetName();
 			}
 
@@ -193,44 +196,59 @@ void CCBox::Show(const wxString& word)
 					item.displayName =  tag->GetName()+tag->GetSignature();
 					item.imgId = GetImageId(*m_tags.at(i));
 					_tags.push_back(item);
-				
+
 				}
 			}
 		}
 	}
-	
+
+	if (_tags.size() == 1) {
+		// only one match, insert it
+		LEditor *editor = (LEditor*)GetParent();
+		int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
+		
+		editor->SetSelection(insertPos, editor->GetCurrentPos());
+		
+		CCItemInfo info = _tags.at(0);
+		editor->ReplaceSelection(info.displayName);
+		
+		// return without calling to wxWindow::Show()
+		return;
+	}
+
 	m_listCtrl->SetColumnWidth(0, BOX_WIDTH);
 	m_listCtrl->SetItems(_tags);
 	m_listCtrl->SetItemCount(_tags.size());
-	
+
 	m_selectedItem = 0;
-	
+
 	m_selectedItem = m_listCtrl->FindMatch(word);
-	if(m_selectedItem == wxNOT_FOUND) {
+	if (m_selectedItem == wxNOT_FOUND) {
 		m_selectedItem = 0;
 	}
-	
-	SelectItem(m_selectedItem);
+
 	SetSize(BOX_WIDTH, m_height);
 	GetSizer()->Layout();
 	wxWindow::Show();
+	
+	SelectItem(m_selectedItem);
 }
 
 void CCBox::InsertSelection()
 {
-	if(m_selectedItem == wxNOT_FOUND) {
+	if (m_selectedItem == wxNOT_FOUND) {
 		return;
 	}
-	
+
 	// get the selected word
 	wxString word = GetColumnText(m_listCtrl, m_selectedItem, 0);
-	
+
 	LEditor *editor = (LEditor*)GetParent();
 	int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
-	
+
 	editor->SetSelection(insertPos, editor->GetCurrentPos());
 	editor->ReplaceSelection(word);
-	
+
 }
 
 int CCBox::GetImageId(const TagEntry &entry)
@@ -283,4 +301,3 @@ int CCBox::GetImageId(const TagEntry &entry)
 
 	return wxNOT_FOUND;
 }
-

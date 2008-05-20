@@ -1488,10 +1488,10 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 		// 2. Insert the typed character
 		if (	event.ShiftDown() && event.GetKeyCode() == wxT('9') || 	// (
 		        event.ShiftDown() && event.GetKeyCode() == wxT('0') || 	// )
-		        event.GetKeyCode() == wxT('-') 						||	// -
+		        event.GetKeyCode() == wxT(' ') 						||	// SPACE
 		        event.ShiftDown() && event.GetKeyCode() == wxT(',') ||	// <
-		        event.ShiftDown() && event.GetKeyCode() == wxT('.') ||	// >
-		        event.GetKeyCode() == wxT(' ')) {						// SPACE
+		        event.ShiftDown() && event.GetKeyCode() == wxT('.'))	// >
+		{
 			m_ccBox->InsertSelection();
 			m_ccBox->Hide();
 		}

@@ -25,7 +25,7 @@
     <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
   </Environment>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="wxflatnotebook" ConfigName="ReleaseUnicode"/>

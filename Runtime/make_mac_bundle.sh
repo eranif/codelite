@@ -15,7 +15,6 @@ mkdir -p ./CodeLite.app/Contents/SharedSupport/plugins
 mkdir -p ./CodeLite.app/Contents/SharedSupport/debuggers
 mkdir -p ./CodeLite.app/Contents/SharedSupport/config
 
-cp ${exe_name} ./CodeLite.app/Contents/MacOS/${exe_name}
 
 ## Get list of files to work on
 file_list=`ls ../lib/*.so`
@@ -37,6 +36,7 @@ do
         done
 done
 
+cp ${exe_name} ./CodeLite.app/Contents/MacOS/${exe_name}
 ## copy the wx dlls to the exeutable path which under Mac is located at ./CodeLite.app/Contents/MacOS/
 for wx_file in ${orig_path}
 do

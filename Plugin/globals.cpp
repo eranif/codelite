@@ -55,22 +55,31 @@ bool ReadFileWithConversion(const wxString &fileName, wxString &content)
 	wxFFile file(fileName, wxT("rb"));
 
 	if (file.IsOpened()) {
-		//first try the Utf8
+		// first try the Utf8
 		file.ReadAll(&content, wxConvUTF8);
 		if (content.IsEmpty()) {
-			//try local
-			file.Seek(0);
-
-			file.ReadAll(&content, wxConvLocal);
-			if (content.IsEmpty()) {
-				file.Seek(0);
-				file.ReadAll(& content, wxConvLibc);
+			// try local 8 bit data
+			const wxCharBuffer name = _C(fileName);
+			FILE *fp = fopen(name.data(), "rb");
+			if ( fp ) {
+				struct stat buff;
+				if ( stat(name.data(), &buff) == 0 ) {
+					size_t size = buff.st_size;
+					char *buffer = new char[size+1];
+					if ( fread(buffer, sizeof(char), size, fp) == size ) {
+						buffer[size] = 0;
+						content = wxString::From8BitData(buffer);
+					}
+					delete [] buffer;
+				}
+				fclose(fp);
 			}
 		}
 		return content.IsEmpty() == false;
 	} else {
 		return false;
 	}
+	return !content.IsEmpty();
 }
 
 bool RemoveDirectory(const wxString &path)
@@ -214,10 +223,10 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	output.Replace(wxT("$(User)"), wxGetUserName());
 	output.Replace(wxT("$(Date)"), now.FormatDate());
 	output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
-	
+
 	//call the environment & workspace variables expand function
 	output = workspace->ExpandVariables(output);
-	
+
 	return output;
 }
 

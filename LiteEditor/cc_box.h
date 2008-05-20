@@ -18,6 +18,7 @@ class CCBox : public CCBoxBase
 	int m_selectedItem;
 	std::vector<TagEntryPtr> m_tags;
 	bool m_showFullDecl;
+	int m_height;
 	
 protected:
 	// Handlers for CCBoxBase events.

@@ -12,6 +12,7 @@ CCBox::CCBox( LEditor* parent)
 		:
 		CCBoxBase(parent, wxID_ANY, wxDefaultPosition, wxSize(0, 0))
 		, m_showFullDecl(false)
+		, m_height(BOX_HEIGHT)
 {
 	// load all the CC images
 	wxImageList *il = new wxImageList(16, 16, true);
@@ -76,7 +77,8 @@ void CCBox::Show(const std::vector<TagEntryPtr> &tags, const wxString &word, boo
 	if (tags.empty()) {
 		return;
 	}
-
+	
+	//m_height = BOX_HEIGHT;
 	m_tags = tags;
 	m_showFullDecl = showFullDecl;
 	Show(word);
@@ -112,11 +114,19 @@ void CCBox::Adjust()
 	pt.y += hh;
 	
 	wxSize size = parent->GetClientSize();
-	if(size.y - pt.y < BOX_HEIGHT) {
+	int diff = size.y - pt.y;
+	m_height = BOX_HEIGHT;
+	if(diff < BOX_HEIGHT) {
 		pt.y -= BOX_HEIGHT;
 		pt.y -= hh;
+		
+		if(pt.y < 0) {
+			// the completion box is out of screen, resotre original size
+			pt.y += BOX_HEIGHT;
+			pt.y += hh;
+			m_height = diff;
+		}
 	}
-	
 	Move(pt);
 }
 
@@ -203,7 +213,7 @@ void CCBox::Show(const wxString& word)
 	m_selectedItem = 0;
 	SelectItem(m_selectedItem);
 
-	SetSize(BOX_WIDTH, BOX_HEIGHT);
+	SetSize(BOX_WIDTH, m_height);
 	GetSizer()->Layout();
 	wxWindow::Show();
 }

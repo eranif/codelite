@@ -411,9 +411,15 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
     wxUnusedVar(cornerSize);
     wxUnusedVar(alphaFill);
     wxUnusedVar(alphaOutline);
-    RectangleDraw(rc, outline, fill);
+	
+	// save the current bursh
+	wxBrush b = hdc->GetBrush();
+	hdc->SetBrush(*wxTRANSPARENT_BRUSH);
+	hdc->DrawRoundedRectangle(wxRectFromPRectangle(rc), cornerSize);
+	
+	// restore brush
+	hdc->SetBrush(b);
 #endif
-
 }
 
 void SurfaceImpl::Ellipse(PRectangle rc, ColourAllocated fore, ColourAllocated back) {

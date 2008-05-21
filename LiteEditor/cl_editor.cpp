@@ -10,7 +10,7 @@
 #include <wx/tooltip.h>
 #include <wx/settings.h>
 #include "parse_thread.h"
-#include "ctags_manager.h"
+#include "ctags_manager.h" 
 #include "manager.h"
 #include "menumanager.h"
 #include <wx/fdrepdlg.h>
@@ -480,11 +480,12 @@ bool LEditor::SaveFile()
 			ParseRequest *req = new ParseRequest();
 			// Put a request on the parsing thread to update the GUI tree for this file
 			wxFileName fn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
-			req->dbfile = fn.GetFullPath();
+			req->setDbFile(fn.GetFullPath());
+			
 			// Construct an absolute file name for ctags
 			wxFileName absFile( m_fileName);
 			absFile.MakeAbsolute();
-			req->file = absFile.GetFullPath();
+			req->setFile(absFile.GetFullPath());
 
 			//the previous call 'stole' the focus from us...
 			ParseThreadST::Get()->Add(req);

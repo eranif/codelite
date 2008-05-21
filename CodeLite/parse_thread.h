@@ -21,10 +21,30 @@ class TagsDatabase;
 
 class WXDLLIMPEXP_CL ParseRequest : public ThreadRequest 
 {
+	wxChar *_file;
+	wxChar *_dbfile;
+	wxChar *_tags;
 public:
-	wxString file;
-	wxString dbfile;
-	wxString tags;
+	
+	// ctor/dtor
+	ParseRequest() : _file(NULL), _dbfile(NULL), _tags(NULL) {}
+	virtual ~ParseRequest() ;
+	
+	// accessors
+	void setFile(const wxString &file) ;
+	
+	wxChar* getFile() { return _file; }
+	
+	void setDbFile(const wxString &dbfile) ;
+	wxChar* getDbFile() { return _dbfile; }
+	
+	void setTags(const wxString &tags) ;
+	wxChar* getTags() { return _tags; }
+	
+	// copy ctor
+	ParseRequest(const ParseRequest& rhs) ;
+	// assignment operator
+	ParseRequest &operator=(const ParseRequest& rhs);
 };
 
 class WXDLLIMPEXP_CL ParseThread : public WorkerThread

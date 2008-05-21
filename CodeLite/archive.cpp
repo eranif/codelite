@@ -1,7 +1,7 @@
 #include "archive.h"
 #include <wx/xml/xml.h>
 #include "serialized_object.h"
-
+ 
 //helper functions
 static wxXmlNode *FindNodeByName(const wxXmlNode *parent, const wxString &tagName, const wxString &name)
 {
@@ -15,7 +15,7 @@ static wxXmlNode *FindNodeByName(const wxXmlNode *parent, const wxString &tagNam
 			if ( child->GetPropVal(wxT("Name"), wxEmptyString) == name) {
 				return child;
 			}
-		}
+		} 
 		child = child->GetNext();
 	}
 	return NULL;

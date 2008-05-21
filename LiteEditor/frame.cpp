@@ -72,7 +72,7 @@
 #ifdef __WXGTK20__
 #include <gtk-2.0/gtk/gtk.h>
 #endif
-
+ 
 typedef int (*_GCC_COLOUR_FUNC_PTR)(int, const char*, size_t&, size_t&);
 
 extern const wxChar *SvnRevision;
@@ -526,7 +526,7 @@ void Frame::CreateGUIControls(void)
 	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
 //	wxStatusBar* statusBar = new CustomStatusBar(this, wxID_ANY);
 	SetStatusBar(statusBar);
-	GetStatusBar()->SetFieldsCount(5);
+	GetStatusBar()->SetFieldsCount(4);
 	
 	GetStatusBar()->SetStatusText(wxT("Ready"));
 

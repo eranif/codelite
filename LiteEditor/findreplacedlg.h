@@ -14,6 +14,7 @@ class wxStaticText;
 #define wxFRD_REGULAREXPRESSION				0x00000004
 #define wxFRD_SEARCHUP						0x00000008
 #define wxFRD_WRAPSEARCH					0x00000010
+#define wxFRD_SELECTIONONLY					0x00000020
 
 #define FIND_DLG 0
 #define REPLACE_DLG 1
@@ -33,6 +34,7 @@ DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_CLOSE, -1)
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_REPLACE, -1)
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_REPLACEALL, -1)
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_BOOKMARKALL, -1)
+DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_CLEARBOOKMARKS, -1)
 
 class FindReplaceData : public SerializedObject
 {
@@ -153,12 +155,14 @@ class FindReplaceDialog : public wxDialog
 	wxCheckBox *m_matchWholeWord;
 	wxCheckBox *m_regualrExpression;
 	wxCheckBox *m_searchUp;
+	wxCheckBox *m_selectionOnly;
 	
 	// Buttons
 	wxButton *m_find;
 	wxButton *m_replace;
 	wxButton *m_replaceAll;
 	wxButton *m_markAll;
+	wxButton *m_clearBookmarks;
 	wxButton *m_cancel;
 	wxStaticText *m_replacementsMsg;
 	wxStaticText *m_replaceWithLabel;

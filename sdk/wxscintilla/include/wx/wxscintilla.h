@@ -3335,7 +3335,17 @@ public:
 
     // Returns the current UseAntiAliasing setting.
     bool GetUseAntiAliasing();
-
+	
+	// ERAN IFRAH
+	// Modern indicators
+	void SetIndicatorCurrent(int indicator);
+	int  GetIndicatorCurrent();
+	void IndicatorFillRange(int position, int len);
+	void IndicatorClearRange(int position, int len);
+	int IndicatorStart(int indicator, int position);
+	int IndicatorEnd(int indicator, int position);
+	// ERAN IFRAH - END
+	
 #if wxCHECK_VERSION(2, 5, 0)
     // The following methods are nearly equivallent to their similarly named
     // cousins above.  The difference is that these methods bypass wxString

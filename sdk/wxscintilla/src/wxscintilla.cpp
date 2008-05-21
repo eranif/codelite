@@ -2591,7 +2591,35 @@ void wxScintilla::SetLexerLanguage (const wxString& language) {
 
 // END of generated section
 //----------------------------------------------------------------------
+void wxScintilla::SetIndicatorCurrent(int indicator)
+{
+	SendMsg(SCI_SETINDICATORCURRENT, indicator, 0);
+}
 
+int wxScintilla::GetIndicatorCurrent()
+{
+	return SendMsg(SCI_GETINDICATORCURRENT, 0, 0);
+}
+
+void wxScintilla::IndicatorFillRange(int position, int len)
+{
+	SendMsg(SCI_INDICATORFILLRANGE, position, len);
+}
+
+void wxScintilla::IndicatorClearRange(int position, int len)
+{
+	SendMsg(SCI_INDICATORCLEARRANGE, position, len);
+}
+
+int wxScintilla::IndicatorStart(int indicator, int position)
+{
+	return SendMsg(SCI_INDICATORSTART, indicator, position);
+}
+
+int wxScintilla::IndicatorEnd(int indicator, int position)
+{
+	return SendMsg(SCI_INDICATOREND, indicator, position);
+}
 
 // Returns the line number of the line with the caret.
 int wxScintilla::GetCurrentLine () {

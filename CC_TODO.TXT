@@ -19,7 +19,3 @@
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
 
-- Complete the new 'StringFindReplacer' code
-
-- Implement new custom auto completion box that behaves the same on Mac as on other plaftforms
-

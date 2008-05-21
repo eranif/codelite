@@ -93,27 +93,9 @@ void CCBox::Adjust()
 
 	int point = parent->GetCurrentPos();
 	wxPoint pt = parent->PointFromPosition(point);
-
-	// calculate the line height
-	int curline = parent->LineFromPosition(point);
-	int ll;
-	int hh(0);
-	if (curline > 0) {
-		ll = curline - 1;
-		int pp = parent->PositionFromLine(ll);
-		wxPoint p = parent->PointFromPosition(pp);
-		hh =  pt.y - p.y;
-	} else {
-		ll = curline + 1;
-		int pp = parent->PositionFromLine(ll);
-		wxPoint p = parent->PointFromPosition(pp);
-		hh =  p.y - pt.y;
-	}
-
-	if (hh == 0) {
-		hh = 12; // default height on most OSs
-	}
-
+	
+	// add the line height
+	int hh = parent->GetCurrLineHeight();
 	pt.y += hh;
 
 	wxSize size = parent->GetClientSize();

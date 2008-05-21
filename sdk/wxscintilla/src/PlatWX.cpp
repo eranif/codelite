@@ -342,6 +342,7 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
     wxUnusedVar(cornerSize);
     int x, y;
     wxRect r = wxRectFromPRectangle(rc);
+	
     wxBitmap bmp(r.width, r.height, 32);
     wxAlphaPixelData pixData(bmp);
     pixData.UseAlpha();
@@ -378,7 +379,7 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
 #else
     int aOutline = 0xff;
 #endif
-    for (x=0; x<r.width; x++) {
+    for (x=1; x<r.width-1; x++) {
         p.MoveTo(pixData, x, 0);
         p.Red()   = red   * aOutline / 0xff;
         p.Green() = green * aOutline / 0xff;
@@ -390,7 +391,7 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
         p.Blue()  = blue  * aOutline / 0xff;
         p.Alpha() = alphaOutline;
     }
-    for (y=0; y<r.height; y++) {
+    for (y=1; y<r.height-1; y++) {
         p.MoveTo(pixData, 0, y);
         p.Red()   = red   * aOutline / 0xff;
         p.Green() = green * aOutline / 0xff;

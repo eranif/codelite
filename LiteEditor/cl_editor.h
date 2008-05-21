@@ -226,7 +226,13 @@ public:
 	 */
 	BrowseRecord CreateBrowseRecord();
 	bool IsContextMenuOn() const {return m_popupIsOn;}
-
+	
+	/**
+	 * @brief return an approximation of the line height
+	 * @return line height
+	 */
+	int GetCurrLineHeight();
+	
 	/**
 	 * toggle break point at the current line & file
 	 * the second version is using BreakpointInfo

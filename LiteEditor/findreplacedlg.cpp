@@ -12,6 +12,7 @@ DEFINE_EVENT_TYPE(wxEVT_FRD_CLOSE)
 DEFINE_EVENT_TYPE(wxEVT_FRD_REPLACE)
 DEFINE_EVENT_TYPE(wxEVT_FRD_REPLACEALL)
 DEFINE_EVENT_TYPE(wxEVT_FRD_BOOKMARKALL)
+DEFINE_EVENT_TYPE(wxEVT_FRD_CLEARBOOKMARKS)
 
 BEGIN_EVENT_TABLE(FindReplaceDialog, wxDialog)
 	EVT_CLOSE(FindReplaceDialog::OnClose)
@@ -101,6 +102,9 @@ void FindReplaceDialog::CreateGUIControls()
 	m_searchUp = new wxCheckBox(this, wxID_ANY, wxT("Search &up"));
 	sz->Add(m_searchUp, 1, wxALL | wxEXPAND, 5 );
 
+	m_selectionOnly = new wxCheckBox(this, wxID_ANY, wxT("Search / Replace in selec&ted text"));
+	sz->Add(m_selectionOnly, 1, wxALL | wxEXPAND, 5 );
+
 	// Add the buttons
 
 	m_find = new wxButton(this, wxID_ANY, wxT("&Find Next"));
@@ -114,6 +118,9 @@ void FindReplaceDialog::CreateGUIControls()
 
 	m_markAll = new wxButton(this, wxID_ANY, wxT("&Bookmark All"));
 	btnSizer->Add(m_markAll, 1, wxALL | wxEXPAND, 5 );
+
+	m_clearBookmarks = new wxButton(this, wxID_ANY, wxT("&Clear Bookmarks"));
+	btnSizer->Add(m_clearBookmarks, 1, wxALL | wxEXPAND, 5 );
 
 	m_cancel = new wxButton(this, wxID_ANY, wxT("Close"));
 	btnSizer->Add(m_cancel, 1, wxALL | wxEXPAND, 5 );
@@ -141,6 +148,7 @@ void FindReplaceDialog::SetFindReplaceData(FindReplaceData &data)
 	m_matchWholeWord->SetValue(data.GetFlags() & wxFRD_MATCHWHOLEWORD ? true : false);
 	m_regualrExpression->SetValue(data.GetFlags() & wxFRD_REGULAREXPRESSION ? true : false);
 	m_searchUp->SetValue(data.GetFlags() & wxFRD_SEARCHUP ? true : false);
+	m_selectionOnly->SetValue(data.GetFlags() & wxFRD_SELECTIONONLY ? true : false);
 
 	//set the focus to the find string text control
 	m_findString->SetFocus();
@@ -153,6 +161,15 @@ void FindReplaceDialog::OnClick(wxCommandEvent &event)
 	size_t flags = m_data.GetFlags();
 	m_data.SetFindString( m_findString->GetValue() );
 	m_data.SetReplaceString( m_replaceString->GetValue() );
+	
+	// disable the 'Find/Replace' buttons when the 'Selection only' is enabled
+	if ( m_selectionOnly->IsChecked() ) {
+		m_find->Enable(false);
+		m_replace->Enable(false);
+	} else {
+		m_find->Enable(true);
+		m_replace->Enable(true);
+	}
 
 	if (btnClicked == m_find) {
 		SendEvent(wxEVT_FRD_FIND_NEXT);
@@ -162,6 +179,8 @@ void FindReplaceDialog::OnClick(wxCommandEvent &event)
 		SendEvent(wxEVT_FRD_REPLACEALL);
 	} else if (btnClicked == m_markAll) {
 		SendEvent(wxEVT_FRD_BOOKMARKALL);
+	} else if (btnClicked == m_clearBookmarks) {
+		SendEvent(wxEVT_FRD_CLEARBOOKMARKS);
 	} else if (btnClicked == m_cancel) {
 		// Fire a close event
 		SendEvent(wxEVT_FRD_CLOSE);
@@ -190,6 +209,12 @@ void FindReplaceDialog::OnClick(wxCommandEvent &event)
 			flags |= wxFRD_SEARCHUP;
 		} else {
 			flags &= ~(wxFRD_SEARCHUP);
+		}
+	} else if (btnClicked == m_selectionOnly) {
+		if (m_selectionOnly->IsChecked()) {
+			flags |= wxFRD_SELECTIONONLY;
+		} else {
+			flags &= ~(wxFRD_SELECTIONONLY);
 		}
 	}
 
@@ -226,7 +251,7 @@ void FindReplaceDialog::OnKeyDown(wxKeyEvent &event)
 			event.Skip(false);
 			return;
 		}
-	} // if(event.GetKeyCode() == WXK_ESCAPE)
+	}
 	event.Skip();
 }
 
@@ -238,12 +263,14 @@ void FindReplaceDialog::ConnectEvents()
 	m_replaceAll->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
 	m_markAll->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
 	m_cancel->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
+	m_clearBookmarks->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
 
 	// connect options
 	m_matchCase->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
 	m_matchWholeWord->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
 	m_regualrExpression->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
 	m_searchUp->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
+	m_selectionOnly->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindReplaceDialog::OnClick), NULL, this);
 }
 
 void FindReplaceDialog::SendEvent(wxEventType type)
@@ -284,24 +311,24 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
 	isFindDlg = gbSizer->GetItemPosition(sz) == wxGBPosition(1, 0);
 	if (show == false) {
 		//is this dialog is already a 'Find' dialog?
-		if(isFindDlg){
+		if (isFindDlg) {
 			return;
 		}
-		
+
 		//remove 'Replace' dialog items
 		gbSizer->Detach(m_replaceWithLabel);
 		gbSizer->Detach(m_replaceString);
-		
+
 		//reposition the options static sizer
 		gbSizer->Detach(sz);
 		gbSizer->Add(sz, wxGBPosition(1, 0), wxGBSpan(1, 2),  wxALL | wxEXPAND, 5 );
-		
+
 	} else {
 		// is this dialog is already a 'Replace' dialog?
-		if(!isFindDlg){
+		if (!isFindDlg) {
 			return;
 		}
-		
+
 		//remmove the 'Options' item frmo pos 1,0
 		gbSizer->Detach(sz);
 		gbSizer->Add(m_replaceWithLabel, wxGBPosition(1, 0), wxDefaultSpan, wxALL | wxEXPAND, 5 );
@@ -315,7 +342,7 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
 	m_replaceString->Show(show);
 	m_replacementsMsg->Show(show);
 	m_replaceWithLabel->Show(show);
-	
+
 	SetLabel(label);
 	this->Fit();
 	GetSizer()->Layout();

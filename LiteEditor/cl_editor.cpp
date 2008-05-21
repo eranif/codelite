@@ -65,6 +65,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_REPLACEALL, LEditor::OnFindDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_BOOKMARKALL, LEditor::OnFindDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLOSE, LEditor::OnFindDialog)
+	EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
 END_EVENT_TABLE()
 
 // Instantiate statics
@@ -294,6 +295,8 @@ void LEditor::SetProperties()
 
 	SetTabWidth(tabWidth);
 	SetIndent(tabWidth);
+	SetTwoPhaseDraw(true);
+	SetBufferedDraw(true);
 
 	SetTabIndents(true);
 	SetBackSpaceUnIndents (true);
@@ -1019,8 +1022,9 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 		ReplaceAll();
 	} else if (type == wxEVT_FRD_BOOKMARKALL) {
 		MarkAll();
+	} else if (type == wxEVT_FRD_CLEARBOOKMARKS) {
+		DelAllMarkers();
 	}
-	event.Skip();
 }
 
 void LEditor::FindNext(const FindReplaceData &data)
@@ -1079,11 +1083,13 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 	int match_len(0);
 
 	if ( StringFindReplacer::Search(GetText(), offset, findWhat, flags, pos, match_len) ) {
-		if ( flags & wxSD_SEARCH_BACKWARD ) {
-			SetSelection(pos + match_len, pos);
-		} else {
-			SetSelection(pos, pos + match_len);
-		}
+
+			if ( flags & wxSD_SEARCH_BACKWARD ) {
+				SetSelection(pos + match_len, pos);
+			} else {
+				SetSelection(pos, pos + match_len);
+			}
+			
 		return true;
 	}
 	return false;
@@ -1154,6 +1160,10 @@ void LEditor::DelAllMarkers()
 {
 	// Delete all markers from the view
 	MarkerDeleteAll(0x7);
+
+	// delete all markers as well
+	SetIndicatorCurrent(1);
+	IndicatorClearRange(0, GetLength());
 }
 
 void LEditor::FindNextMarker()
@@ -1198,7 +1208,7 @@ bool LEditor::ReplaceAll()
 {
 	int occur = 0;
 	int offset( 0 );
-	
+
 	wxString findWhat = m_findReplaceDlg->GetData().GetFindString();
 	wxString replaceWith = m_findReplaceDlg->GetData().GetReplaceString();
 	size_t flags = SearchFlags(m_findReplaceDlg->GetData());
@@ -1206,25 +1216,39 @@ bool LEditor::ReplaceAll()
 	int pos(0);
 	int match_len(0);
 
-	wxString txt ( GetText() );
+	wxString txt;
+	if( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
+		txt = GetSelectedText();
+	} else {
+		txt = GetText();
+	}	
+	
 	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
 		txt.Remove(pos, match_len);
 		txt.insert(pos, replaceWith);
-		offset = pos + replaceWith.Length();
 		occur++;
+		offset = pos + match_len;
 	}
 
 	// replace the buffer
 	BeginUndoAction();
 	long savedPos = GetCurrentPos();
 	
-	SetText(txt);
-	
-	// Restore the caret
-	SetCaretAt(savedPos);
+	if( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
+		// replace the selection
+		ReplaceSelection(txt);
+		
+		// place the caret at the end of the selection
+		SetCurrentPos(GetSelectionEnd());
+		EnsureCaretVisible();
+	}else{
+		SetText(txt);
+		// Restore the caret
+		SetCaretAt(savedPos);	
+	}
 
 	EndUndoAction();
-	
+
 	wxString message;
 	message << wxT("Replacements: ") << occur;
 	m_findReplaceDlg->SetReplacementsMessage(message);
@@ -1238,29 +1262,44 @@ bool LEditor::MarkAll()
 	if (findWhat.IsEmpty()) {
 		return false;
 	}
-	
-	// Save the caret position
-	long savedPos = GetCurrentPos(); 
 
-	SetCaretAt(0);
+	// Save the caret position
+	long savedPos = GetCurrentPos();
 	size_t flags = SearchFlags(m_findReplaceDlg->GetData());
-	
+
 	int pos(0);
 	int match_len(0);
-	
+
 	// remove reverse search
 	flags &= ~ wxSD_SEARCH_BACKWARD;
 	int offset(0);
-	wxString txt = GetText();
+	
+	wxString txt;
+	int fixed_offset(0);
+	if( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
+		txt = GetSelectedText();
+		fixed_offset = GetSelectionStart();
+	} else {
+		txt = GetText();
+	}
+
+	DelAllMarkers();
+	IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
+	IndicatorSetForeground(1, wxT("RED"));
+	SetIndicatorCurrent(1);
+	
 	
 	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
-		SetSelection(pos, pos + match_len);
+		MarkerAdd(LineFromPosition(fixed_offset + pos), 0x7);
+
+		// add indicator as well
+		IndicatorFillRange(fixed_offset + pos, match_len);
 		offset = pos + match_len;
-		MarkerAdd(LineFromPosition(pos), 0x7);
 	}
 
 	// Restore the caret
-	SetCaretAt(savedPos);
+	SetCurrentPos(savedPos);
+	EnsureCaretVisible();
 	return true;
 }
 
@@ -1785,4 +1824,32 @@ void LEditor::HideCompletionBox()
 	if (m_ccBox && m_ccBox->IsShown()) {
 		m_ccBox->Hide();
 	}
+}
+
+int LEditor::GetCurrLineHeight()
+{
+	int point = GetCurrentPos();
+	wxPoint pt = PointFromPosition(point);
+
+	// calculate the line height
+	int curline = LineFromPosition(point);
+	int ll;
+	int hh(0);
+	if (curline > 0) {
+		ll = curline - 1;
+		int pp = PositionFromLine(ll);
+		wxPoint p = PointFromPosition(pp);
+		hh =  pt.y - p.y;
+	} else {
+		ll = curline + 1;
+		int pp = PositionFromLine(ll);
+		wxPoint p = PointFromPosition(pp);
+		hh =  p.y - pt.y;
+	}
+
+	if (hh == 0) {
+		hh = 12; // default height on most OSs
+	}
+
+	return hh;
 }

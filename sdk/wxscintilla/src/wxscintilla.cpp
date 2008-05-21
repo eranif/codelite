@@ -2621,6 +2621,11 @@ int wxScintilla::IndicatorEnd(int indicator, int position)
 	return SendMsg(SCI_INDICATOREND, indicator, position);
 }
 
+void wxScintilla::IndicatorSetUnder(int indicator, bool under)
+{
+	SendMsg(SCI_INDICSETUNDER, indicator, under);
+}
+
 // Returns the line number of the line with the caret.
 int wxScintilla::GetCurrentLine () {
     int line = LineFromPosition (GetCurrentPos());
@@ -3377,3 +3382,4 @@ wxScintillaEvent::wxScintillaEvent (const wxScintillaEvent& event)
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------
+

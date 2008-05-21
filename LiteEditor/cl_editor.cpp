@@ -1,4 +1,5 @@
 #include "cl_editor.h"
+#include "drawingutils.h"
 #include "cc_box.h"
 #include "stringsearcher.h"
 #include "precompiled_header.h"
@@ -1285,9 +1286,15 @@ bool LEditor::MarkAll()
 
 	DelAllMarkers();
 	IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
-	IndicatorSetForeground(1, wxT("RED"));
+#ifdef __WXMSW__	
+	IndicatorSetForeground(1, wxT("GREEN"));
+#else
+	wxColour col = DrawingUtils::LightColour(wxT("GREEN"), 80);
+	IndicatorSetForeground(1, col);
+#endif
+
 	SetIndicatorCurrent(1);
-	
+	IndicatorSetUnder(1, true);
 	
 	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
 		MarkerAdd(LineFromPosition(fixed_offset + pos), 0x7);

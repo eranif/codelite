@@ -3344,6 +3344,7 @@ public:
 	void IndicatorClearRange(int position, int len);
 	int IndicatorStart(int indicator, int position);
 	int IndicatorEnd(int indicator, int position);
+	void IndicatorSetUnder(int indicator, bool under);
 	// ERAN IFRAH - END
 	
 #if wxCHECK_VERSION(2, 5, 0)

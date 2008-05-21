@@ -333,7 +333,7 @@ void SurfaceImpl::FillRectangle(PRectangle rc, Surface &surfacePattern) {
 void SurfaceImpl::RoundedRectangle(PRectangle rc, ColourAllocated fore, ColourAllocated back) {
     PenColour(fore);
     BrushColour(back);
-    hdc->DrawRoundedRectangle(wxRectFromPRectangle(rc), 4);
+    hdc->DrawRoundedRectangle(wxRectFromPRectangle(rc), 2);
 }
 
 void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated fill, int alphaFill, ColourAllocated outline, int alphaOutline, int WXUNUSED(flags)) {
@@ -412,13 +412,7 @@ void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated
     wxUnusedVar(alphaFill);
     wxUnusedVar(alphaOutline);
 	
-	// save the current bursh
-	wxBrush b = hdc->GetBrush();
-	hdc->SetBrush(*wxTRANSPARENT_BRUSH);
-	hdc->DrawRoundedRectangle(wxRectFromPRectangle(rc), cornerSize);
-	
-	// restore brush
-	hdc->SetBrush(b);
+	RoundedRectangle(rc, outline, fill);
 #endif
 }
 

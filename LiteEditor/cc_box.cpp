@@ -121,7 +121,7 @@ void CCBox::SelectWord(const wxString& word)
 	long item = m_listCtrl->FindMatch(word);
 	if (item != wxNOT_FOUND) {
 		// first unselect the current item
-		if(m_selectedItem != wxNOT_FOUND) {
+		if(m_selectedItem != wxNOT_FOUND && m_selectedItem != item) {
 			m_listCtrl->Select(m_selectedItem, false);
 		}
 		
@@ -134,7 +134,10 @@ void CCBox::Next()
 {
 	if (m_selectedItem != wxNOT_FOUND) {
 		if (m_selectedItem + 1 < m_listCtrl->GetItemCount()) {
+			// unselect current item
+			m_listCtrl->Select(m_selectedItem, false);
 			m_selectedItem++;
+			// select next item
 			SelectItem(m_selectedItem);
 		}
 	}
@@ -144,7 +147,10 @@ void CCBox::Previous()
 {
 	if (m_selectedItem != wxNOT_FOUND) {
 		if (m_selectedItem - 1 >= 0) {
+			// unselect current item
+			m_listCtrl->Select(m_selectedItem, false);
 			m_selectedItem--;
+			// select previous item
 			SelectItem(m_selectedItem);
 		}
 	}
@@ -152,8 +158,7 @@ void CCBox::Previous()
 
 void CCBox::SelectItem(long item)
 {
-	m_listCtrl->SetItemState(item, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-	m_listCtrl->SetItemState(item, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+	m_listCtrl->Select(item);
 	m_listCtrl->EnsureVisible(item);
 }
 

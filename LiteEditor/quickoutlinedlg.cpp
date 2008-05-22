@@ -57,6 +57,7 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString &fileName, int
 	bSizer1->Add( m_treeOutline, 1, wxALL|wxEXPAND, 5 );
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	Centre();
 	m_textFilter->SetFocus();
 }
 

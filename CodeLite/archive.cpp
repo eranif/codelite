@@ -1,7 +1,8 @@
 #include "archive.h"
+#include <wx/colour.h>
 #include <wx/xml/xml.h>
 #include "serialized_object.h"
- 
+
 //helper functions
 static wxXmlNode *FindNodeByName(const wxXmlNode *parent, const wxString &tagName, const wxString &name)
 {
@@ -15,7 +16,7 @@ static wxXmlNode *FindNodeByName(const wxXmlNode *parent, const wxString &tagNam
 			if ( child->GetPropVal(wxT("Name"), wxEmptyString) == name) {
 				return child;
 			}
-		} 
+		}
 		child = child->GetNext();
 	}
 	return NULL;
@@ -73,14 +74,14 @@ void Archive::Write(const wxString &name, const StringMap &str_map)
 	if (!m_root) {
 		return;
 	}
-	
+
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("StringMap"));
 	m_root->AddChild(node);
 	node->AddProperty(wxT("Name"), name);
 
 	//add an entry for each wxString in the array
 	StringMap::const_iterator iter = str_map.begin();
-	for( ; iter != str_map.end(); iter++ ) {
+	for ( ; iter != str_map.end(); iter++ ) {
 		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
 		node->AddChild(child);
 		child->AddProperty(wxT("Key"), iter->first);
@@ -341,4 +342,34 @@ void Archive::ReadSimple(long &value, const wxString &typeName, const wxString &
 		wxString val = node->GetPropVal(wxT("Value"), wxEmptyString);
 		val.ToLong(&value);
 	}
+}
+
+void Archive::Read(const wxString& name, wxColour& colour)
+{
+	if (!m_root) {
+		return;
+	}
+
+	wxXmlNode *node = FindNodeByName(m_root, wxT("wxColour"), name);
+	wxString value;
+	if (node) {
+		value = node->GetPropVal(wxT("Value"), wxEmptyString);
+	}
+
+	if (value.IsEmpty()) {
+		return;
+	}
+
+	colour = wxColour(value);
+}
+
+void Archive::Write(const wxString& name, const wxColour& colour)
+{
+	if (!m_root) {
+		return;
+	}
+	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxColour"));
+	m_root->AddChild(node);
+	node->AddProperty(wxT("Value"), colour.GetAsString());
+	node->AddProperty(wxT("Name"), name);
 }

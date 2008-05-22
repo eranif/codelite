@@ -319,6 +319,33 @@ void LEditor::SetProperties()
 	//right click menu
 	UsePopUp(m_rightClickMenu ? false : true);
 	SetIndentationGuides(options->GetShowIndentationGuidelines());
+	
+	IndicatorSetUnder(1, true);
+	IndicatorSetUnder(2, true);
+	
+	IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
+	IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
+	
+	wxColour col2(wxT("BLUE"));
+	wxString val2 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
+	if(val2.IsEmpty() == false) {
+		col2 = wxColour(val2);
+	}
+	
+#ifdef __WXMSW__	
+
+	IndicatorSetForeground(1, options->GetBookmarkBgColour());
+	IndicatorSetForeground(2, col2);
+	
+#else // GTK & MAC
+
+	wxColour col;
+	col = DrawingUtils::LightColour(options->GetBookmarkBgColour(), 80);
+	IndicatorSetForeground(1, col);
+	
+	col = DrawingUtils::LightColour(col2, 80);
+	IndicatorSetForeground(2, col);
+#endif
 }
 
 void LEditor::SetDirty(bool dirty)
@@ -688,6 +715,15 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 				m_context->OnDwellStart(event);
 			}
 		}
+	}
+	
+	long highlight_word(0);
+	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlight_word);
+	if( GetWordAtCaret().IsEmpty() == false && highlight_word) {
+		HighlightWord();
+	} else if( !highlight_word ) {
+		SetIndicatorCurrent(2);
+		IndicatorClearRange(0, GetLength());
 	}
 }
 
@@ -1166,6 +1202,9 @@ void LEditor::DelAllMarkers()
 	// delete all markers as well
 	SetIndicatorCurrent(1);
 	IndicatorClearRange(0, GetLength());
+	
+	SetIndicatorCurrent(2);
+	IndicatorClearRange(0, GetLength());
 }
 
 void LEditor::FindNextMarker()
@@ -1286,16 +1325,9 @@ bool LEditor::MarkAll()
 	}
 
 	DelAllMarkers();
-	IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
-#ifdef __WXMSW__	
-	IndicatorSetForeground(1, wxT("GREEN"));
-#else
-	wxColour col = DrawingUtils::LightColour(wxT("GREEN"), 80);
-	IndicatorSetForeground(1, col);
-#endif
-
+	
+	// set the active indicator to be 1
 	SetIndicatorCurrent(1);
-	IndicatorSetUnder(1, true);
 	
 	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
 		MarkerAdd(LineFromPosition(fixed_offset + pos), 0x7);
@@ -1860,4 +1892,39 @@ int LEditor::GetCurrLineHeight()
 	}
 
 	return hh;
+}
+
+void LEditor::DoHighlightWord()
+{
+	wxString word = GetWordAtCaret();
+	if( word.IsEmpty() ) {
+		return;
+	}
+	
+	SetIndicatorCurrent(2);
+	
+	// clear the old markers
+	IndicatorClearRange(0, GetLength());
+
+	int pos(0);
+	int match_len(0);
+
+	// remove reverse search
+	int offset(0);
+	
+	while ( StringFindReplacer::Search(GetText(), offset, word, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len) ) {
+		// add indicator
+		IndicatorFillRange(pos, match_len);
+		offset = pos + match_len;
+	}
+}
+
+void LEditor::HighlightWord(bool highlight)
+{
+	if(highlight) {
+		DoHighlightWord();
+	} else {
+		SetIndicatorCurrent(2);
+		IndicatorClearRange(0, GetLength());
+	}
 }

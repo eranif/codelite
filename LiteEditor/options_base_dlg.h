@@ -79,6 +79,7 @@ protected:
 	wxString m_startingTheme;
 	wxSpinCtrl* m_spinCtrlTabWidth;
 	wxColourPickerCtrl *m_caretLineColourPicker;
+	wxColourPickerCtrl *m_wordHighlightColour;
 	
 private:
 	wxPanel *CreateSyntaxHighlightPage();

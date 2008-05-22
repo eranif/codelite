@@ -72,7 +72,7 @@
 #ifdef __WXGTK20__
 #include <gtk-2.0/gtk/gtk.h>
 #endif
- 
+
 typedef int (*_GCC_COLOUR_FUNC_PTR)(int, const char*, size_t&, size_t&);
 
 extern const wxChar *SvnRevision;
@@ -279,7 +279,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("setters_getters"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_include_file"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("rename_function"), Frame::OnCppContextMenu)
-	
+
 	EVT_MENU(XRCID("configure_accelerators"), Frame::OnConfigureAccelerators)
 
 	EVT_UPDATE_UI(XRCID("save_file"), Frame::OnFileExistUpdateUI)
@@ -332,9 +332,9 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	long value(0);
 	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), value);
 	m_highlightWord = (bool)value;
-	
+
 	CreateGUIControls();
-	
+
 	ManagerST::Get();	// Dummy call
 
 	//allow the main frame to receive files by drag and drop
@@ -343,10 +343,10 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	// Start the search thread
 	SearchThreadST::Get()->SetNotifyWindow(this);
 	SearchThreadST::Get()->Start(WXTHREAD_MIN_PRIORITY);
-	
+
 	// start the job queue
 	JobQueueSingleton::Instance()->Start();
-	
+
 	//start the editor creator thread
 	EditorCreatorST::Get()->SetParent(GetNotebook());
 	m_timer = new wxTimer(this, FrameTimerId);
@@ -443,7 +443,7 @@ void Frame::CreateGUIControls(void)
 	//initialize debugger configuration tool
 	DebuggerConfigTool::Get()->Load(ManagerST::Get()->GetStarupDirectory() + wxT("/config/debuggers.xml"), wxT("DebuggerSettings"));
 	WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
-	
+
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
 
 // On wx2.8.7, AUI dragging is broken but this happens only in debug build & on GTK
@@ -532,7 +532,7 @@ void Frame::CreateGUIControls(void)
 //	wxStatusBar* statusBar = new CustomStatusBar(this, wxID_ANY);
 	SetStatusBar(statusBar);
 	GetStatusBar()->SetFieldsCount(4);
-	
+
 	GetStatusBar()->SetStatusText(wxT("Ready"));
 
 
@@ -704,7 +704,7 @@ void Frame::CreateToolbars24()
 	tb->AddSeparator();
 	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"), wxXmlResource::Get()->LoadBitmap(wxT("highlight24")), wxT("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
-	
+
 #if defined (__WXMAC__)
 	tb->AddSeparator();
 #endif
@@ -830,7 +830,7 @@ void Frame::CreateToolbars16()
 	tb->AddSeparator();
 	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"), wxXmlResource::Get()->LoadBitmap(wxT("highlight16")), wxT("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
-	
+
 #if defined (__WXMAC__)
 	tb->AddSeparator();
 #endif
@@ -855,7 +855,7 @@ void Frame::CreateToolbars16()
 	tb->Realize();
 	info = wxAuiPaneInfo();
 	m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Build")).ToolbarPane().Top().Row(1));
-	
+
 	//----------------------------------------------
 	//create the debugger toolbar
 	//----------------------------------------------
@@ -973,7 +973,7 @@ void Frame::OnClose(wxCloseEvent& event)
 	ManagerST::Get()->KillProgram();
 	ManagerST::Get()->DbgStop();
 	SearchThreadST::Get()->StopSearch();
-	
+
 	//save the perspective
 	WriteFileUTF8(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"), m_mgr.SavePerspective());
 	EditorConfigST::Get()->SaveLexers();
@@ -981,10 +981,10 @@ void Frame::OnClose(wxCloseEvent& event)
 	//save general information
 	if (IsMaximized()) {
 		m_frameGeneralInfo.SetFrameSize(wxSize(800, 600));
-	}else{
+	} else {
 		m_frameGeneralInfo.SetFrameSize(this->GetSize());
 	}
-	
+
 	m_frameGeneralInfo.SetFramePosition(this->GetScreenPosition());
 
 	SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);
@@ -1014,7 +1014,7 @@ void Frame::OnClose(wxCloseEvent& event)
 
 	session.SetTabs(files);
 	SessionManager::Get().Save(wxT("Default"), session);
-	
+
 	//make sure there are no 'unsaved documents'
 	ManagerST::Get()->CloseAll();
 	event.Skip();
@@ -2963,9 +2963,16 @@ void Frame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
 
 void Frame::OnHighlightWord(wxCommandEvent& event)
 {
-	if(event.IsChecked()){
+	if (event.IsChecked()) {
 		EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 1);
 	} else {
+		// remove all highlights from all open editors
+		for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
+			LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
+			if (editor) {
+				editor->HighlightWord(false);
+			}
+		}
 		EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 0);
 	}
 }

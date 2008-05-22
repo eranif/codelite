@@ -299,7 +299,10 @@ void OptionsDlg::SaveChanges()
 
 	// save it to configuration file
 	EditorConfigST::Get()->SaveLongValue(wxT("EditorTabWidth"), value);
-
+	
+	// save the WordHighlightColour value
+	EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_wordHighlightColour->GetColour().GetAsString());
+		
 	//check to see of the icon size was modified
 	int oldIconSize(24);
 	OptionsConfigPtr oldOptions = EditorConfigST::Get()->GetOptions();
@@ -344,7 +347,7 @@ wxPanel* OptionsDlg::CreateBookmarksPage()
 	m_bookmarkShape->SetStringSelection(options->GetBookmarkShape());
 
 	wxGridSizer* gSizer1;
-	gSizer1 = new wxGridSizer( 2, 2, 0, 0 );
+	gSizer1 = new wxGridSizer( 3, 2, 0, 0 );
 
 	m_staticText4 = new wxStaticText( page, wxID_ANY, wxT("Select the bookmark background colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_staticText4, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
@@ -357,7 +360,18 @@ wxPanel* OptionsDlg::CreateBookmarksPage()
 
 	m_fgColourPicker = new wxColourPickerCtrl( page, wxID_ANY, options->GetBookmarkFgColour(), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
 	gSizer1->Add( m_fgColourPicker, 0, wxALIGN_RIGHT|wxALL, 5 );
+	
+	wxStaticText *t1 = new wxStaticText( page, wxID_ANY, wxT("Select word highlight colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer1->Add( t1, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
+	wxColour col1(wxT("BLUE"));
+	wxString val1 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
+	if(val1.IsEmpty() == false) {
+		col1 = wxColour(val1);
+	}
+	m_wordHighlightColour = new wxColourPickerCtrl(page, wxID_ANY, col1, wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
+	gSizer1->Add( m_wordHighlightColour, 0, wxALIGN_RIGHT|wxALL, 5 );
+	
 	sz->Add( gSizer1, 0, wxEXPAND|wxALL, 5 );
 
 	return page;

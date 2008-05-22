@@ -56,7 +56,9 @@ bool FindReplaceDialog::Create(wxWindow* parent,
 	ConnectEvents();
 
 	GetSizer()->Fit(this);
-//	GetSizer()->SetSizeHints(this);
+	Centre();
+	
+	m_findString->SetFocus();
 	return true;
 }
 

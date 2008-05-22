@@ -58,6 +58,7 @@ public:
 	void Write(const wxString &name, wxSize size);
 	void Write(const wxString &name, wxPoint pt);
 	void Write(const wxString &name, const StringMap &str_map);
+	void Write(const wxString &name, const wxColour &colour);
 	
 	//--------------------
 	// Read API
@@ -73,7 +74,8 @@ public:
 	void Read(const wxString &name, wxPoint &pt);
 	void Read(const wxString &name, StringMap &str_map);
 	void Read(const wxString &name, SerializedObject *obj);
-
+	void Read(const wxString &name, wxColour &colour);	
+	
 private:
 	void WriteSimple(long value, const wxString &typeName, const wxString &name);
 	void ReadSimple(long &value, const wxString &typeName, const wxString &name);

@@ -293,6 +293,12 @@ public:
 	void HideCompletionBox();
 	
 	/**
+	 * @brief highlight the word where the cursor is at
+	 * @param highlight  
+	 */
+	void HighlightWord(bool highlight = true);
+	
+	/**
 	 *--------------------------------------------------
 	 * Implemetation for IEditor interace
 	 *--------------------------------------------------
@@ -314,7 +320,8 @@ private:
 	bool SaveToFile(const wxFileName &fileName);
 	void BraceMatch(const bool& bSelRegion);
 	void BraceMatch(long pos);
-
+	void DoHighlightWord();
+	
 	// Conevert FindReplaceDialog flags to wxSD flags
 	size_t SearchFlags(const FindReplaceData &data);
 	

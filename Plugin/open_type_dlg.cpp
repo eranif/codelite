@@ -90,6 +90,7 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 
 	this->SetSizer( mainSizer );
 	this->Layout();
+	Centre();
 }
 
 OpenTypeDlg::~OpenTypeDlg()

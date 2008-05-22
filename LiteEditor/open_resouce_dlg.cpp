@@ -78,6 +78,7 @@ OpenResourceDlg::OpenResourceDlg( wxWindow* parent, int id, wxString title, wxPo
 	this->SetSizer( mainSizer );
 	this->Layout();
 	ConnectEvents();
+	Centre();
 	m_textResourceName->SetFocus();
 }
 

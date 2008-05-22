@@ -30,9 +30,9 @@ void* WorkerThread::Entry()
 		{
 			// Call user's implementation for processing request
 			ProcessRequest( request );
-
-			wxThread::Sleep(10);  // Allow other threads to work as well
 			delete request;
+			
+			wxThread::Sleep(10);  // Allow other threads to work as well
 			request = NULL;
 			continue; // to avoid the sleep
 		}

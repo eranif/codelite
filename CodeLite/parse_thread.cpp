@@ -34,7 +34,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 {
 	// request is delete by the parent WorkerThread after this method is completed
 	ParseRequest *req = (ParseRequest*)request;
-	wxString dbfile  = req->getDbFile();
+	wxString dbfile  = req->getDbfile();
 	wxString file  = req->getFile();
 
 	//req->tags should contain the tags
@@ -162,20 +162,12 @@ void ParseThread::SendEvent(int evtType, std::vector<std::pair<wxString, TagEntr
 //--------------------------------------------------------------------------------------
 void ParseRequest::setDbFile(const wxString& dbfile)
 {
-	if (_dbfile) {
-		delete [] _dbfile;
-	}
-	_dbfile = new wxChar[dbfile.Len()+1];
-	wxStrcpy(_dbfile, dbfile.GetData());
+	_dbfile = dbfile.c_str();
 }
 
 void ParseRequest::setTags(const wxString& tags)
 {
-	if (_tags) {
-		delete [] _tags;
-	}
-	_tags = new wxChar[tags.Len()+1];
-	wxStrcpy(_tags, tags.GetData());
+	_tags = tags.c_str();
 }
 
 ParseRequest::ParseRequest(const ParseRequest& rhs)
@@ -196,27 +188,9 @@ ParseRequest &ParseRequest::operator =(const ParseRequest& rhs)
 
 void ParseRequest::setFile(const wxString& file)
 {
-	if (_file) {
-		delete [] _file;
-	}
-	_file = new wxChar[file.Len()+1];
-	wxStrcpy(_file, file.GetData());
+	_file = file.c_str();
 }
 
 ParseRequest::~ParseRequest()
 {
-	if (_file) {
-		delete [] _file;
-		_file = NULL;
-	}
-
-	if (_dbfile) {
-		delete [] _dbfile;
-		_dbfile = NULL;
-	}
-
-	if (_tags) {
-		delete [] _tags;
-		_tags = NULL;
-	}
 }

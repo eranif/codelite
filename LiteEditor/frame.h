@@ -71,6 +71,7 @@ class Frame : public wxFrame
 	std::map<int, wxString> m_panes;//< map between panes and their name
 	bool m_doingReplaceInFiles;
 	wxMenu *m_cppMenu;
+	bool m_highlightWord;
 	
 public:		
 	// the access method to the singleton frame is by using the Get method
@@ -80,7 +81,12 @@ public:
 	virtual ~Frame(void);
 	
 	void SetFrameFlag(bool set, int flag);
-
+	
+	/**
+	 * @brief return true if the word under the caret should be highlighted 
+	 */
+	bool GetHighlightWord(){return m_highlightWord;}
+	
 	/**
 	 * Return language name by menu item id
 	 */
@@ -277,6 +283,7 @@ protected:
 	void OnDebugAttach(wxCommandEvent &event);
 	void OnCopyFilePath(wxCommandEvent &event);
 	void OnCopyFilePathOnly(wxCommandEvent &event);
+	void OnHighlightWord(wxCommandEvent &event);
 	
 	// this event is sent from the notebook container to the frame
 	void OnFileClosing(NotebookEvent &event);

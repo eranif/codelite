@@ -41,17 +41,25 @@ TagEntry::TagEntry(const TagEntry& rhs)
 TagEntry& TagEntry::operator=(const TagEntry& rhs)
 {
 	m_id = rhs.m_id;
-	m_file = rhs.m_file;
-	m_kind = rhs.m_kind;
-	m_parent = rhs.m_parent;
-	m_pattern = rhs.m_pattern;
+	m_file = rhs.m_file.c_str();
+	m_kind = rhs.m_kind.c_str();
+	m_parent = rhs.m_parent.c_str();
+	m_pattern = rhs.m_pattern.c_str();
 	m_lineNumber = rhs.m_lineNumber;
-	m_name = rhs.m_name;
-	m_path = rhs.m_path;
+	m_name = rhs.m_name.c_str();
+	m_path = rhs.m_path.c_str();
 	m_hti = rhs.m_hti;
 	m_position = rhs.m_position;
-	m_scope = rhs.m_scope;
-	m_extFields = std::map<wxString, wxString>(rhs.m_extFields);
+	m_scope = rhs.m_scope.c_str();
+	
+	// loop over the map and copy item by item
+	// we use the c_str() method to force our own copy of the string and to avoid 
+	// ref counting which may cause crash when sharing wxString among threads
+	m_extFields.clear();
+	std::map<wxString, wxString>::const_iterator iter = rhs.m_extFields.begin();
+	for( ; iter != rhs.m_extFields.end(); iter ++ ){
+		m_extFields[iter->first.c_str()] = iter->second.c_str();
+	}
 	return *this;
 }
 

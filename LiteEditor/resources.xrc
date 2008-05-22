@@ -98,6 +98,7 @@
 	<object class="wxBitmap" name="ref_analyzer24">res/24/ref_analyzer24.png</object>
 	<object class="wxBitmap" name="ref_analyzer_settings24">res/24/ref_anaylzer_settings24.png</object>
 	<object class="wxBitmap" name="arrow_green_right24">res/24/arrow_green_right24.png</object>
+	<object class="wxBitmap" name="highlight24">res/24/highlight.png</object>
 
 	<!-- 
 		Toolbar bitmaps (16x16) 
@@ -145,6 +146,7 @@
 	<object class="wxBitmap" name="ref_analyzer16">res/16/ref_analyzer24.png</object>
 	<object class="wxBitmap" name="ref_analyzer_settings16">res/16/ref_anaylzer_settings24.png</object>	
 	<object class="wxBitmap" name="arrow_green_right16">res/16/arrow_right_green16.png</object>
+	<object class="wxBitmap" name="highlight16">res/16/highlight.png</object>
 	
 	<!-- Svn icons -->
 	<object class="wxBitmap" name="project_modified">res/cubes_yellow_modified.png</object>

@@ -157,6 +157,8 @@ void Tree<TKey, TData>::ToVector(std::vector<std::pair<TKey, TData> >& vec)
 template <typename TKey, typename TData>
 void Tree<TKey, TData>::Compare(Tree* targetTree, std::vector<std::pair<TKey, TData> >& deletedItems, std::vector<std::pair<TKey, TData> >& modifiedItems, std::vector<std::pair<TKey, TData> >& newItems, TreeNode<TKey, TData>* fromNode)
 {
+	// we break generic for the sake of thread safety:
+	// we explicitly calling TKey.c_str(), which means that we assume that TKey has such member
 	if(!targetTree){
 		return;
 	}
@@ -179,7 +181,8 @@ void Tree<TKey, TData>::Compare(Tree* targetTree, std::vector<std::pair<TKey, TD
 		{
 			// Item does not exist in target tree which means it must been deleted
 			std::pair<TKey, TData> itemPair;
-			itemPair.first = sourceTreeWalker.GetNode()->GetKey();
+			
+			itemPair.first = sourceTreeWalker.GetNode()->GetKey().c_str();
 			itemPair.second = sourceTreeWalker.GetNode()->GetData();
 			deletedItems.push_back( itemPair );
 		}
@@ -191,7 +194,7 @@ void Tree<TKey, TData>::Compare(Tree* targetTree, std::vector<std::pair<TKey, TD
 
 			// Data was modified
 			std::pair<TKey, TData> itemPair;
-			itemPair.first = sourceTreeWalker.GetNode()->GetKey();
+			itemPair.first = sourceTreeWalker.GetNode()->GetKey().c_str();
 			itemPair.second = node->GetData();
 			modifiedItems.push_back( itemPair );
 		}
@@ -208,7 +211,7 @@ void Tree<TKey, TData>::Compare(Tree* targetTree, std::vector<std::pair<TKey, TD
 			// which means that this node is new
 			// Data was modified
 			std::pair<TKey, TData> itemPair;
-			itemPair.first = targetTreeWalker.GetNode()->GetKey();
+			itemPair.first = targetTreeWalker.GetNode()->GetKey().c_str();
 			itemPair.second = targetTreeWalker.GetNode()->GetData();
 			newItems.push_back( itemPair );
 		}

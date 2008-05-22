@@ -217,6 +217,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("find_resource"), Frame::OnFindResource)
 	EVT_MENU(XRCID("find_type"), Frame::OnFindType)
 	EVT_MENU(XRCID("find_symbol"), Frame::OnQuickOutline)
+	EVT_MENU(XRCID("highlight_word"), Frame::OnHighlightWord)
 	EVT_MENU(XRCID("attach_debugger"), Frame::OnDebugAttach)
 	EVT_MENU(XRCID("add_project"), Frame::OnProjectAddProject)
 	//	EVT_MENU(XRCID("import_from_makefile"), Frame::OnImportMakefile)
@@ -304,7 +305,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
 	EVT_UPDATE_UI(XRCID("close_file"), Frame::OnFileCloseUI)
 	EVT_MENU(XRCID("link_action"), Frame::OnStartPageEvent)
-//	EVT_COMMAND(wxID_ANY, wxEVT_CMD_JOB_STATUS_VOID_PTR, Frame::OnUpdateBuildRefactorIndexBar)
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 
@@ -315,6 +315,7 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 		, m_rebuild(false)
 		, m_doingReplaceInFiles(false)
 		, m_cppMenu(NULL)
+		, m_highlightWord(false)
 {
 #if  defined(__WXGTK20__)
 	// A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -328,8 +329,12 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 
 #endif
 
+	long value(0);
+	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), value);
+	m_highlightWord = (bool)value;
+	
 	CreateGUIControls();
-
+	
 	ManagerST::Get();	// Dummy call
 
 	//allow the main frame to receive files by drag and drop
@@ -696,6 +701,10 @@ void Frame::CreateToolbars24()
 	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_resource24")), wxT("Find Resource In Workspace"));
 	tb->AddTool(XRCID("find_type"), wxT("Find Type In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_type24")), wxT("Find Type In Workspace"));
 	tb->AddTool(XRCID("find_symbol"), wxT("Quick Outline"), wxXmlResource::Get()->LoadBitmap(wxT("outline24")), wxT("Show Current File Outline"));
+	tb->AddSeparator();
+	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"), wxXmlResource::Get()->LoadBitmap(wxT("highlight24")), wxT("Highlight Word"), wxITEM_CHECK);
+	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
+	
 #if defined (__WXMAC__)
 	tb->AddSeparator();
 #endif
@@ -818,6 +827,10 @@ void Frame::CreateToolbars16()
 	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_resource16")), wxT("Find Resource In Workspace"));
 	tb->AddTool(XRCID("find_type"), wxT("Find Type In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_type16")), wxT("Find Type In Workspace"));
 	tb->AddTool(XRCID("find_symbol"), wxT("Quick Outline"), wxXmlResource::Get()->LoadBitmap(wxT("outline16")), wxT("Show Current File Outline"));
+	tb->AddSeparator();
+	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"), wxXmlResource::Get()->LoadBitmap(wxT("highlight16")), wxT("Highlight Word"), wxITEM_CHECK);
+	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
+	
 #if defined (__WXMAC__)
 	tb->AddSeparator();
 #endif
@@ -842,7 +855,7 @@ void Frame::CreateToolbars16()
 	tb->Realize();
 	info = wxAuiPaneInfo();
 	m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Build")).ToolbarPane().Top().Row(1));
-
+	
 	//----------------------------------------------
 	//create the debugger toolbar
 	//----------------------------------------------
@@ -2945,28 +2958,14 @@ void Frame::OnConfigureAccelerators(wxCommandEvent &e)
 
 void Frame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
 {
-//	static double max_range(1);
-//	
-//	RefactorIndexBuildJobInfo *info = reinterpret_cast<RefactorIndexBuildJobInfo*>(e.GetClientData());
-//	if (info) {
-//		wxString message;
-//		 
-//		switch(info->action) {
-//			case Action_Update_Gauge:
-//				message << wxT("(") << (int)(((double)info->status / max_range)*100) << wxT("%) : ") << info->filename;
-//				((CustomStatusBar*)GetStatusBar())->Update(info->status, info->filename);
-//				GetStatusBar()->SetStatusText(message, 4);
-//				break;
-//			case Action_Reset_Gauge:
-//				((CustomStatusBar*)GetStatusBar())->ResetGauge(info->status);
-//				max_range = info->status;
-//				GetStatusBar()->SetStatusText(wxEmptyString, 4);
-//				break;
-//			case Action_Clear_Gauge:
-//				((CustomStatusBar*)GetStatusBar())->Update(0, wxT("Done"));
-//				GetStatusBar()->SetStatusText(wxT("Done"), 4);
-//				break;
-//		}
-//		delete info;
-//	}
+	wxUnusedVar(e);
+}
+
+void Frame::OnHighlightWord(wxCommandEvent& event)
+{
+	if(event.IsChecked()){
+		EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 1);
+	} else {
+		EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 0);
+	}
 }

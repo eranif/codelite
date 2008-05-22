@@ -120,6 +120,11 @@ void CCBox::SelectWord(const wxString& word)
 {
 	long item = m_listCtrl->FindMatch(word);
 	if (item != wxNOT_FOUND) {
+		// first unselect the current item
+		if(m_selectedItem != wxNOT_FOUND) {
+			m_listCtrl->Select(m_selectedItem, false);
+		}
+		
 		m_selectedItem = item;
 		SelectItem(m_selectedItem);
 	}

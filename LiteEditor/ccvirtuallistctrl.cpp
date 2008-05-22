@@ -1,6 +1,6 @@
 #include "ccvirtuallistctrl.h"
 CCVirtualListCtrl::CCVirtualListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-: wxListCtrl(parent, id, pos, size, style)
+: wxListView(parent, id, pos, size, style)
 {
 }
 

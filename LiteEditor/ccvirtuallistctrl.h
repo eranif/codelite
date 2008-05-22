@@ -14,7 +14,7 @@ struct CCItemInfo {
 	}
 };
 
-class CCVirtualListCtrl : public wxListCtrl {
+class CCVirtualListCtrl : public wxListView {
 	std::vector<CCItemInfo> m_tags;
 public:
 	CCVirtualListCtrl( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 486,300 ), long style = wxTAB_TRAVERSAL );

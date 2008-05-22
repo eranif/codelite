@@ -67,6 +67,7 @@ void CCBox::OnItemActivated( wxListEvent& event )
 
 void CCBox::OnItemDeSelected( wxListEvent& event )
 {
+	m_listCtrl->Select(event.m_itemIndex, false);
 	m_selectedItem = wxNOT_FOUND;
 }
 

@@ -1,4 +1,4 @@
-#ifndef CODELITE_PARSE_THREAD_H 
+#ifndef CODELITE_PARSE_THREAD_H
 #define CODELITE_PARSE_THREAD_H
 
 #include "entry.h"
@@ -19,28 +19,34 @@
 
 class TagsDatabase;
 
-class WXDLLIMPEXP_CL ParseRequest : public ThreadRequest 
+class WXDLLIMPEXP_CL ParseRequest : public ThreadRequest
 {
 	wxChar *_file;
 	wxChar *_dbfile;
 	wxChar *_tags;
 public:
-	
+
 	// ctor/dtor
 	ParseRequest() : _file(NULL), _dbfile(NULL), _tags(NULL) {}
 	virtual ~ParseRequest() ;
-	
+
 	// accessors
 	void setFile(const wxString &file) ;
-	
-	wxChar* getFile() { return _file; }
-	
+
+	wxChar* getFile() {
+		return _file;
+	}
+
 	void setDbFile(const wxString &dbfile) ;
-	wxChar* getDbFile() { return _dbfile; }
-	
+	wxChar* getDbFile() {
+		return _dbfile;
+	}
+
 	void setTags(const wxString &tags) ;
-	wxChar* getTags() { return _tags; }
-	
+	wxChar* getTags() {
+		return _tags;
+	}
+
 	// copy ctor
 	ParseRequest(const ParseRequest& rhs) ;
 	// assignment operator
@@ -51,7 +57,7 @@ class WXDLLIMPEXP_CL ParseThread : public WorkerThread
 {
 	friend class Singleton<ParseThread>;
 	std::auto_ptr<TagsDatabase> m_pDb;
-	
+
 	wxStopWatch m_watch;
 
 private:
@@ -95,6 +101,23 @@ class WXDLLIMPEXP_CL SymbolTreeEvent : public wxNotifyEvent
 	std::vector<std::pair<wxString, TagEntry> >  m_items;
 	wxString m_project;
 
+protected:
+	/**
+	 * @brief we provide our own 'copy' function for the event items
+	 * this is to avoide ref counting of the wxString items 
+	 * @param items
+	 */
+	void CopyItems(const std::vector<std::pair<wxString, TagEntry> > & items) {
+		m_items.clear();
+		for(size_t i=0; i<items.size(); i++){
+			std::pair<wxString, TagEntry> p;
+			p.first = items.at(i).first.c_str();
+			p.second = items.at(i).second;
+			m_items.push_back(p);
+		}
+	}
+
+
 public:
 	/**
 	 * Constructor
@@ -104,9 +127,8 @@ public:
 	 * \param data Item data
 	 */
 	SymbolTreeEvent(std::vector<std::pair<wxString, TagEntry> >  &items, wxEventType commandType = wxEVT_NULL, int winid = 0)
-		: wxNotifyEvent(commandType, winid)
-		, m_items(items)
-	{
+			: wxNotifyEvent(commandType, winid) {
+		CopyItems(items);
 	}
 
 	/**
@@ -116,9 +138,8 @@ public:
 	 * \param winid Window ID
 	 */
 	SymbolTreeEvent(const wxString& project, wxEventType commandType = wxEVT_NULL, int winid = 0)
-		: wxNotifyEvent(commandType, winid)
-		, m_project(project)
-	{
+			: wxNotifyEvent(commandType, winid)
+			, m_project(project.c_str()) {
 	}
 
 	/**
@@ -126,24 +147,28 @@ public:
 	 * \param rhs Right hand side
 	 */
 	SymbolTreeEvent(const SymbolTreeEvent& rhs)
-		: wxNotifyEvent(rhs.GetEventType(), rhs.GetId())
-		, m_items(rhs.m_items)
-		, m_project(rhs.m_project)
-	{
+			: wxNotifyEvent(rhs.GetEventType(), rhs.GetId())
+			, m_project(rhs.m_project.c_str()) {
+		CopyItems(rhs.m_items);
 	}
 
 	/**
 	 * Clone method to allow the event to be posted between threads.
 	 * \return
 	 */
-	wxEvent *Clone(void) const { return new SymbolTreeEvent(*this); }
+	wxEvent *Clone(void) const {
+		return new SymbolTreeEvent(*this);
+	}
 
 	SymbolTreeEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)
-		: wxNotifyEvent(commandType, winid)
-	{}
+			: wxNotifyEvent(commandType, winid) {}
 
-	std::vector<std::pair<wxString, TagEntry> >& GetItems() { return m_items; }
-	const wxString& GetProject() const { return m_project; }
+	std::vector<std::pair<wxString, TagEntry> >& GetItems() {
+		return m_items;
+	}
+	const wxString& GetProject() const {
+		return m_project;
+	}
 };
 
 

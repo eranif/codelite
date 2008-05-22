@@ -16,7 +16,6 @@
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
 
-- Force copy on write for SymbolTreeEvent
 - Modify the SymbolTreeEvent::m_items to be pointer and allocated on the heap
 - Modify all members in SymbolTreeEvent to be copy on write
 - complete the 'highlight word' functionlity

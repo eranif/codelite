@@ -1036,6 +1036,8 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 			}
 
 			if ( res == wxID_OK ) {
+				int saved_pos = GetCurrentPos();
+
 				// place the caret at the new position
 				if (dirDown) {
 					SetCaretAt(0);
@@ -1044,7 +1046,14 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 				}
 
 				// replace again
-				Replace();
+				if ( !Replace() ) {
+					// restore the caret
+					wxMessageBox(wxT("Can not find the string '") + m_findReplaceDlg->GetData().GetFindString() + wxT("'"),
+					             wxT("CodeLite"),
+					             wxICON_WARNING);
+
+					SetCaretAt( saved_pos );
+				}
 			}
 		}
 	} else if (type == wxEVT_FRD_REPLACEALL) {
@@ -1081,12 +1090,21 @@ void LEditor::FindNext(const FindReplaceData &data)
 		}
 
 		if (res == wxID_OK) {
+			int saved_pos = GetCurrentPos();
 			if (dirDown) {
 				SetCaretAt(0);
 			} else {
 				SetCaretAt(GetLength());
 			}
-			FindAndSelect(data);
+
+			if ( !FindAndSelect(data) ) {
+				wxMessageBox(wxT("Can not find the string '") + data.GetFindString() + wxT("'"),
+				             wxT("CodeLite"),
+				             wxICON_WARNING);
+
+				// restore the caret
+				SetCaretAt( saved_pos );
+			}
 		}
 	}
 }
@@ -1547,13 +1565,13 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 		// select the word
 		SetSelectionStart(start);
 		SetSelectionEnd(end);
-		
+
 		// make the caret visible (if not, scroll to it)
 		EnsureCaretVisible();
-	
+
 		// highlight all occurances of selected word
 		long highlight_word(0);
-		
+
 		EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlight_word);
 		if ( GetSelectedText().IsEmpty() == false && highlight_word) {
 			HighlightWord();

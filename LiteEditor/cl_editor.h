@@ -66,7 +66,6 @@ class LEditor : public wxScintilla, public IEditor
 	bool m_popupIsOn;
 	time_t m_modifyTime;
 	std::map<int, wxString> m_customCmds;
-	bool m_resetSearch;
 	CCBox *m_ccBox;
 	
 public:
@@ -341,6 +340,7 @@ private:
 	void OnContextMenu(wxContextMenuEvent &event);
 	void OnKeyDown(wxKeyEvent &event);
 	void OnLeftDown(wxMouseEvent &event);
+	void OnLeftDClick(wxScintillaEvent &event);
 	void OnPopupMenuUpdateUI(wxUpdateUIEvent &event);
 	void OnDbgQuickWatch(wxCommandEvent &event);
 	void OnDbgAddWatch(wxCommandEvent &event);

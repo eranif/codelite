@@ -10,7 +10,7 @@
 #include <wx/tooltip.h>
 #include <wx/settings.h>
 #include "parse_thread.h"
-#include "ctags_manager.h" 
+#include "ctags_manager.h"
 #include "manager.h"
 #include "menumanager.h"
 #include <wx/fdrepdlg.h>
@@ -59,6 +59,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_CONTEXT_MENU(LEditor::OnContextMenu)
 	EVT_KEY_DOWN(LEditor::OnKeyDown)
 	EVT_LEFT_DOWN(LEditor::OnLeftDown)
+	EVT_SCI_DOUBLECLICK(wxID_ANY, LEditor::OnLeftDClick)
 
 	// Find and replace dialog
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_FIND_NEXT, LEditor::OnFindDialog)
@@ -91,7 +92,6 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 		, m_rightClickMenu(NULL)
 		, m_popupIsOn(false)
 		, m_modifyTime(0)
-		, m_resetSearch(true)
 		, m_ccBox(NULL)
 {
 	Show(!hidden);
@@ -319,30 +319,30 @@ void LEditor::SetProperties()
 	//right click menu
 	UsePopUp(m_rightClickMenu ? false : true);
 	SetIndentationGuides(options->GetShowIndentationGuidelines());
-	
+
 	IndicatorSetUnder(1, true);
 	IndicatorSetUnder(2, true);
-	
+
 	IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 	IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
-	
+
 	wxColour col2(wxT("BLUE"));
 	wxString val2 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
-	if(val2.IsEmpty() == false) {
+	if (val2.IsEmpty() == false) {
 		col2 = wxColour(val2);
 	}
-	
-#ifdef __WXMSW__	
+
+#ifdef __WXMSW__
 
 	IndicatorSetForeground(1, options->GetBookmarkBgColour());
 	IndicatorSetForeground(2, col2);
-	
+
 #else // GTK & MAC
 
 	wxColour col;
 	col = DrawingUtils::LightColour(options->GetBookmarkBgColour(), 80);
 	IndicatorSetForeground(1, col);
-	
+
 	col = DrawingUtils::LightColour(col2, 80);
 	IndicatorSetForeground(2, col);
 #endif
@@ -508,7 +508,7 @@ bool LEditor::SaveFile()
 			// Put a request on the parsing thread to update the GUI tree for this file
 			wxFileName fn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
 			req->setDbFile(fn.GetFullPath());
-			
+
 			// Construct an absolute file name for ctags
 			wxFileName absFile( m_fileName);
 			absFile.MakeAbsolute();
@@ -715,15 +715,6 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 				m_context->OnDwellStart(event);
 			}
 		}
-	}
-	
-	long highlight_word(0);
-	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlight_word);
-	if( GetWordAtCaret().IsEmpty() == false && highlight_word) {
-		HighlightWord();
-	} else if( !highlight_word ) {
-		SetIndicatorCurrent(2);
-		IndicatorClearRange(0, GetLength());
 	}
 }
 
@@ -1122,12 +1113,12 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 
 	if ( StringFindReplacer::Search(GetText(), offset, findWhat, flags, pos, match_len) ) {
 
-			if ( flags & wxSD_SEARCH_BACKWARD ) {
-				SetSelection(pos + match_len, pos);
-			} else {
-				SetSelection(pos, pos + match_len);
-			}
-			
+		if ( flags & wxSD_SEARCH_BACKWARD ) {
+			SetSelection(pos + match_len, pos);
+		} else {
+			SetSelection(pos, pos + match_len);
+		}
+
 		return true;
 	}
 	return false;
@@ -1202,7 +1193,7 @@ void LEditor::DelAllMarkers()
 	// delete all markers as well
 	SetIndicatorCurrent(1);
 	IndicatorClearRange(0, GetLength());
-	
+
 	SetIndicatorCurrent(2);
 	IndicatorClearRange(0, GetLength());
 }
@@ -1258,12 +1249,12 @@ bool LEditor::ReplaceAll()
 	int match_len(0);
 
 	wxString txt;
-	if( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
+	if ( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
 		txt = GetSelectedText();
 	} else {
 		txt = GetText();
-	}	
-	
+	}
+
 	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
 		txt.Remove(pos, match_len);
 		txt.insert(pos, replaceWith);
@@ -1274,18 +1265,18 @@ bool LEditor::ReplaceAll()
 	// replace the buffer
 	BeginUndoAction();
 	long savedPos = GetCurrentPos();
-	
-	if( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
+
+	if ( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
 		// replace the selection
 		ReplaceSelection(txt);
-		
+
 		// place the caret at the end of the selection
 		SetCurrentPos(GetSelectionEnd());
 		EnsureCaretVisible();
-	}else{
+	} else {
 		SetText(txt);
 		// Restore the caret
-		SetCaretAt(savedPos);	
+		SetCaretAt(savedPos);
 	}
 
 	EndUndoAction();
@@ -1314,10 +1305,10 @@ bool LEditor::MarkAll()
 	// remove reverse search
 	flags &= ~ wxSD_SEARCH_BACKWARD;
 	int offset(0);
-	
+
 	wxString txt;
 	int fixed_offset(0);
-	if( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
+	if ( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
 		txt = GetSelectedText();
 		fixed_offset = GetSelectionStart();
 	} else {
@@ -1325,10 +1316,10 @@ bool LEditor::MarkAll()
 	}
 
 	DelAllMarkers();
-	
+
 	// set the active indicator to be 1
 	SetIndicatorCurrent(1);
-	
+
 	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
 		MarkerAdd(LineFromPosition(fixed_offset + pos), 0x7);
 
@@ -1538,8 +1529,7 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 		m_ccBox->Hide();
 	}
 
-	m_resetSearch = true;
-	//emulate here VS like selection with mouse and ctrl key
+	// emulate here VS like selection with mouse and ctrl key
 	if (event.m_controlDown) {
 		long pos = PositionFromPointClose(event.GetX(), event.GetY());
 		if (pos == wxSCI_INVALID_POSITION) {
@@ -1554,11 +1544,20 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 			event.Skip();
 			return;
 		}
-		//select the word
+		// select the word
 		SetSelectionStart(start);
 		SetSelectionEnd(end);
-		//make the caret visible (if not, scroll to it)
+		
+		// make the caret visible (if not, scroll to it)
 		EnsureCaretVisible();
+	
+		// highlight all occurances of selected word
+		long highlight_word(0);
+		
+		EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlight_word);
+		if ( GetSelectedText().IsEmpty() == false && highlight_word) {
+			HighlightWord();
+		}
 		return;
 	}
 	event.Skip();
@@ -1896,13 +1895,13 @@ int LEditor::GetCurrLineHeight()
 
 void LEditor::DoHighlightWord()
 {
-	wxString word = GetWordAtCaret();
-	if( word.IsEmpty() ) {
+	wxString word = GetSelectedText();
+	if ( word.IsEmpty() ) {
 		return;
 	}
-	
+
 	SetIndicatorCurrent(2);
-	
+
 	// clear the old markers
 	IndicatorClearRange(0, GetLength());
 
@@ -1911,7 +1910,7 @@ void LEditor::DoHighlightWord()
 
 	// remove reverse search
 	int offset(0);
-	
+
 	while ( StringFindReplacer::Search(GetText(), offset, word, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len) ) {
 		// add indicator
 		IndicatorFillRange(pos, match_len);
@@ -1921,10 +1920,20 @@ void LEditor::DoHighlightWord()
 
 void LEditor::HighlightWord(bool highlight)
 {
-	if(highlight) {
+	if (highlight) {
 		DoHighlightWord();
 	} else {
 		SetIndicatorCurrent(2);
 		IndicatorClearRange(0, GetLength());
 	}
+}
+
+void LEditor::OnLeftDClick(wxScintillaEvent& event)
+{
+	long highlight_word(0);
+	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlight_word);
+	if ( GetSelectedText().IsEmpty() == false && highlight_word) {
+		DoHighlightWord();
+	}
+	event.Skip();
 }

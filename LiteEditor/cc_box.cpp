@@ -67,7 +67,9 @@ void CCBox::OnItemActivated( wxListEvent& event )
 
 void CCBox::OnItemDeSelected( wxListEvent& event )
 {
+#ifdef __WXMAC__	
 	m_listCtrl->Select(event.m_itemIndex, false);
+#endif	
 	m_selectedItem = wxNOT_FOUND;
 }
 
@@ -134,8 +136,10 @@ void CCBox::Next()
 {
 	if (m_selectedItem != wxNOT_FOUND) {
 		if (m_selectedItem + 1 < m_listCtrl->GetItemCount()) {
+#ifdef __WXMAC__			
 			// unselect current item
 			m_listCtrl->Select(m_selectedItem, false);
+#endif			
 			m_selectedItem++;
 			// select next item
 			SelectItem(m_selectedItem);
@@ -147,9 +151,12 @@ void CCBox::Previous()
 {
 	if (m_selectedItem != wxNOT_FOUND) {
 		if (m_selectedItem - 1 >= 0) {
+#ifdef __WXMAC__			
 			// unselect current item
 			m_listCtrl->Select(m_selectedItem, false);
+#endif						
 			m_selectedItem--;
+
 			// select previous item
 			SelectItem(m_selectedItem);
 		}

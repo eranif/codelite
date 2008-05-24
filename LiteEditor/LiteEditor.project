@@ -235,6 +235,8 @@
     <File Name="renamesymbolbase.cpp"/>
     <File Name="renamesymbolbase.h"/>
     <File Name="renamesymboldlg.cpp"/>
+    <File Name="stringhighlighterjob.cpp"/>
+    <File Name="stringhighlighterjob.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Manager">
     <File Name="manager.h"/>

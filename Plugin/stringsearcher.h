@@ -2,13 +2,14 @@
 #define __stringsearcher__
 
 #include <wx/string.h>
-//
-//enum {
-//	wxSD_MATCHCASE         = 1,
-//	wxSD_MATCHWHOLEWORD    = 2,
-//	wxSD_REGULAREXPRESSION = 4,
-//	wxSD_SEARCH_BACKWARD   = 8
-//};
+
+// Possible search data options:
+enum {
+	wxSD_MATCHCASE         = 1,
+	wxSD_MATCHWHOLEWORD    = 2,
+	wxSD_REGULAREXPRESSION = 4,
+	wxSD_SEARCH_BACKWARD   = 8
+};
 
 class StringFindReplacer {
 

@@ -1,4 +1,7 @@
 #include "cl_editor.h"
+#include "jobqueue.h"
+#include "stringhighlighterjob.h"
+#include "job.h"
 #include "drawingutils.h"
 #include "cc_box.h"
 #include "stringsearcher.h"
@@ -68,6 +71,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_BOOKMARKALL, LEditor::OnFindDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLOSE, LEditor::OnFindDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_JOB_STATUS_VOID_PTR, LEditor::OnHighlightThread)
 END_EVENT_TABLE()
 
 // Instantiate statics
@@ -1917,23 +1921,10 @@ void LEditor::DoHighlightWord()
 	if ( word.IsEmpty() ) {
 		return;
 	}
-
-	SetIndicatorCurrent(2);
-
-	// clear the old markers
-	IndicatorClearRange(0, GetLength());
-
-	int pos(0);
-	int match_len(0);
-
-	// remove reverse search
-	int offset(0);
-
-	while ( StringFindReplacer::Search(GetText(), offset, word, wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD, pos, match_len) ) {
-		// add indicator
-		IndicatorFillRange(pos, match_len);
-		offset = pos + match_len;
-	}
+	
+	// to make the code "smoother" we move the search task to different thread
+	StringHighlighterJob *j = new StringHighlighterJob(this, GetText().c_str(), word.c_str());
+	JobQueueSingleton::Instance()->PushJob( j );
 }
 
 void LEditor::HighlightWord(bool highlight)
@@ -1954,4 +1945,22 @@ void LEditor::OnLeftDClick(wxScintillaEvent& event)
 		DoHighlightWord();
 	}
 	event.Skip();
+}
+
+void LEditor::OnHighlightThread(wxCommandEvent& e)
+{
+	// the search highlighter thread has completed the calculations, fetch the results and mark them in the editor
+	std::vector<std::pair<int, int> > *matches = (std::vector<std::pair<int, int> >*) e.GetClientData();
+	
+	SetIndicatorCurrent(2);
+
+	// clear the old markers
+	IndicatorClearRange(0, GetLength());
+
+	for(size_t i=0; i<matches->size(); i++){
+		std::pair<int, int> p = matches->at(i);
+		IndicatorFillRange(p.first, p.second);
+	}
+	
+	delete matches;
 }

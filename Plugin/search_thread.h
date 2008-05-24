@@ -10,14 +10,7 @@
 #include "wx/filename.h"
 #include <wx/regex.h>
 #include "worker_thread.h"
-
-// Possible search data options:
-enum {
-	wxSD_MATCHCASE         = 1,
-	wxSD_MATCHWHOLEWORD    = 2,
-	wxSD_REGULAREXPRESSION = 4,
-	wxSD_SEARCH_BACKWARD   = 8
-};
+#include "stringsearcher.h"
 
 class wxEvtHandler;
 

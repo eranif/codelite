@@ -347,6 +347,7 @@ private:
 	void OnDbgCustomWatch(wxCommandEvent &event);
 	void OnDragStart(wxScintillaEvent &e);
 	void OnDragEnd(wxScintillaEvent &e);
+	void OnHighlightThread(wxCommandEvent &e);
 };
 
 #endif // LITEEDITOR_EDITOR_H

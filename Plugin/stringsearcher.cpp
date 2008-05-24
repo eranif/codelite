@@ -1,5 +1,4 @@
 #include "stringsearcher.h"
-#include "search_thread.h"
 #include <wx/regex.h>
 #include <algorithm>
 

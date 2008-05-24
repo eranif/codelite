@@ -180,10 +180,10 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 	}
 
 	// expand constants
-	content = ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, editor->GetFileName().GetFullPath());
+	wxString _content = ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, editor->GetFileName().GetFullPath());
 
 	// we are good to go :)
-	editor->InsertText(0, content);
+	editor->InsertText(0, _content);
 }
 
 void Copyright::OnOptions(wxCommandEvent& e)
@@ -271,6 +271,11 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
 				// valid file
 				filtered_files.push_back( files.at(i) );
 			}
+		}
+		
+		if(wxMessageBox(wxString::Format(wxT("You are about to modifiy %d files, continue?"), filtered_files.size()), wxT("CodeLite"), wxYES_NO|wxICON_QUESTION) == wxNO){
+			dlg->Destroy();
+			return;
 		}
 		
 		wxProgressDialog* prgDlg = NULL;

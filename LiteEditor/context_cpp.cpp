@@ -930,39 +930,6 @@ void ContextCpp::CompleteWord()
 
 void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl)
 {
-//	LEditor &rCtrl = GetCtrl();
-//	wxString list;
-//	size_t i=0;
-//	//Assumption (which is always true..): the tags are sorted
-//	wxString lastName;
-//	if (tags.empty() == false) {
-//		for (; i<tags.size()-1; i++) {
-//			if (lastName != tags.at(i)->GetName()) {
-//				list.Append(tags.at(i)->GetName() + GetImageString(*tags.at(i)) + wxT("@"));
-//				lastName = tags.at(i)->GetName();
-//			}
-//			if (showFullDecl) {
-//				//collect only declarations
-//				if (tags.at(i)->GetKind() == wxT("prototype")) {
-//					list.Append(tags.at(i)->GetName() + tags.at(i)->GetSignature() + GetImageString(*tags[i]) + wxT("@"));
-//				}
-//			}
-//		}
-//
-//		if (lastName != tags.at(i)->GetName()) {
-//			list.Append(tags.at(i)->GetName() + GetImageString(*tags.at(i)) + wxT("@"));
-//		}
-//		list = list.BeforeLast(wxT('@'));
-//
-//		rCtrl.AutoCompSetSeparator((int)('@'));	// set the separator to be non valid language wxChar
-//		rCtrl.AutoCompSetChooseSingle(true);					// If only one match, insert it automatically
-//		//rCtrl.AutoCompSetIgnoreCase(false);
-//		rCtrl.AutoCompSetDropRestOfWord(true);
-//		rCtrl.AutoCompSetAutoHide(false);
-//		rCtrl.AutoCompShow((int)word.Length(), list);
-//		rCtrl.AutoCompSetFillUps(wxT("<( \t\n"));
-//	}
-
 	// calculate the position to display the completion box
 	GetCtrl().ShowCompletionBox(tags, word, showFullDecl);
 }
@@ -2223,44 +2190,6 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 	// get the scope
 	//Optimize the text for large files
 	int line = ctrl->LineFromPosition(pos)+1;
-//	int startPos(0);
-//	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(ctrl->GetFileName(), line);
-//	if ( t ) {
-//		startPos = ctrl->PositionFromLine( t->GetLine() - 1);
-//		if (startPos > pos) {
-//			startPos = 0;
-//		}
-//	}
-//
-//	wxString text = ctrl->GetTextRange(startPos, pos + word.Len());
-//	//hack #2
-//	//collect all text from 0 - first scope found
-//	//this will help us detect statements like 'using namespace foo;'
-//	if (startPos) { //> 0
-//		//get the first function on this file
-//		int endPos(0);
-//		int endPos1(0);
-//		int endPos2(0);
-//		TagEntryPtr t2 = TagsManagerST::Get()->FirstFunctionOfFile(ctrl->GetFileName());
-//		if ( t2 ) {
-//			endPos1 = ctrl->PositionFromLine( t2->GetLine() - 1);
-//			if (endPos1 > 0 && endPos1 <= startPos) {
-//				endPos = endPos1;
-//			}
-//		}
-//
-//		TagEntryPtr t3 = TagsManagerST::Get()->FirstScopeOfFile(ctrl->GetFileName());
-//		if ( t3 ) {
-//			endPos2 = ctrl->PositionFromLine( t3->GetLine() - 1);
-//			if (endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) {
-//				endPos = endPos2;
-//			}
-//		}
-//
-//		wxString globalText = ctrl->GetTextRange(0, endPos);
-//		globalText.Append(wxT(";"));
-//		text.Prepend(globalText);
-//	}
 	wxString text = ctrl->GetTextRange(0, pos + word.Len());
 	
 	// we simply collect declarations & implementations
@@ -2310,7 +2239,6 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 	TagsManagerST::Get()->FindImplDecl(ctrl->GetFileName(), line, expr, word, text, tags, false, true);
 	if (tags.empty() == false) {
 		// try to see if we got a function and not class/struct
-//		bool found(false);
 		for (size_t i=0; i<tags.size(); i++) {
 			TagEntryPtr tag = tags.at(i);
 			// find first non class/struct tag
@@ -2332,6 +2260,5 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 	}
 	
 	// if we got so far, CC failed to parse the expression
-	
 	return false;
 }

@@ -310,7 +310,11 @@ public:
 	virtual const wxFileName& GetFileName() const { return m_fileName; }
 	virtual const wxString &GetProjectName() const { return m_project; }
 	virtual wxString GetWordAtCaret() ;
-
+	virtual void AppendText(const wxString &text) { wxScintilla::AppendText(text); }
+	virtual void InsertText(int pos, const wxString &text) { wxScintilla::InsertText(pos, text); }
+	virtual int GetLength() { return wxScintilla::GetLength(); }
+	virtual bool IsModified() {return wxScintilla::GetModify();}
+	
 private:
 	void DoSetBreakpoint(const BreakpointInfo &bp);
 	void SetProperties();

@@ -18,7 +18,12 @@ class IEditor {
 public:
 	IEditor(){}
 	virtual ~IEditor(){}
-
+	
+	/**
+	 * @brief return true if the editor is modified
+	 */
+	virtual bool IsModified() = 0;
+	
 	/**
 	 * \brief return the current editor content
 	 */
@@ -28,6 +33,25 @@ public:
 	 * \brief sets the current editor's content with 'text'
 	 */
 	virtual void SetEditorText(const wxString &text) = 0;
+	
+	/**
+	 * @brief append text to the editor
+	 * @param text text to append
+	 */
+	virtual void AppendText(const wxString &text) = 0;
+	
+	/**
+	 * @brief insert text at a given position
+	 * @param text test to insert
+	 * @param pos position to insert it
+	 */
+	virtual void InsertText(int pos, const wxString &text) = 0;
+	
+	/**
+	 * @brief return the document length
+	 * @return document length
+	 */
+	virtual int GetLength() = 0;
 	
 	/**
 	 * \brief place the carte at a given position

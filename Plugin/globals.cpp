@@ -192,23 +192,24 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 {
 	wxString errMsg;
 	wxString output(expression);
-	ProjectPtr proj = workspace->FindProjectByName(projectName, errMsg);
-	if (proj) {
-		wxString project_name(proj->GetName());
+	if ( workspace ) {
+		ProjectPtr proj = workspace->FindProjectByName(projectName, errMsg);
+		if (proj) {
+			wxString project_name(proj->GetName());
 
-		//make sure that the project name does not contain any spaces
-		project_name.Replace(wxT(" "), wxT("_"));
+			//make sure that the project name does not contain any spaces
+			project_name.Replace(wxT(" "), wxT("_"));
 
-		BuildConfigPtr bldConf = workspace->GetProjSelBuildConf(proj->GetName());
-		output.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-		output.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-		output.Replace(wxT("$(ProjectName)"), project_name);
-		output.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
-		output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
-		output.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
+			BuildConfigPtr bldConf = workspace->GetProjSelBuildConf(proj->GetName());
+			output.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+			output.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+			output.Replace(wxT("$(ProjectName)"), project_name);
+			output.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
+			output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
+			output.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
 
+		}
 	}
-
 	if (fileName.IsEmpty() == false) {
 		wxFileName fn(fileName);
 
@@ -225,8 +226,9 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
 
 	//call the environment & workspace variables expand function
-	output = workspace->ExpandVariables(output);
-
+	if( workspace ) {
+		output = workspace->ExpandVariables(output);
+	}
 	return output;
 }
 

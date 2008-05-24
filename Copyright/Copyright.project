@@ -1,40 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="Cscope">
+<CodeLite_Project Name="Copyright">
   <VirtualDirectory Name="src">
-    <File Name="cscope.cpp"/>
-    <File Name="cscopedbbuilderthread.cpp"/>
-    <File Name="cscopedbbuilderthread.h"/>
-    <File Name="cscopeentrydata.cpp"/>
-    <File Name="cscopeentrydata.h"/>
+    <File Name="copyright.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
-    <File Name="cscope.h"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="UI">
-    <File Name="cscopetabbase.h"/>
-    <File Name="cscopetab.cpp"/>
-    <File Name="cscopetab.h"/>
-    <File Name="cscopetabbase.cpp"/>
+    <File Name="copyright.h"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="../Runtime/plugins/cscope.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/plugins/Copyright.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)">
         <IncludePath Value="."/>
-        <IncludePath Value="../../trunk/Interfaces"/>
-        <IncludePath Value="../../trunk/CodeLite"/>
-        <IncludePath Value="../../trunk/Plugin"/>
-        <IncludePath Value="../../trunk/sdk/wxflatnotebook/include"/>
-        <IncludePath Value="../../trunk/sqlite3"/>
-        <IncludePath Value="../../trunk/sdk/wxsqlite3/include"/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sqlite3"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes);">
-        <LibraryPath Value="../../trunk/lib/gcc_lib"/>
+        <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.a"/>
-        <Library Value="libwxflatnotebookud.a"/>
         <Library Value="libCodeLiteud.a"/>
         <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
@@ -47,7 +35,7 @@
         <BuildCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
-        <ThirdPartyToolName/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
         <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
@@ -56,22 +44,20 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="../Runtime/plugins/cscope.so" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/plugins/Copyright.dll" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2">
         <IncludePath Value="."/>
-        <IncludePath Value="../../trunk/Interfaces"/>
-        <IncludePath Value="../../trunk/CodeLite"/>
-        <IncludePath Value="../../trunk/Plugin"/>
-        <IncludePath Value="../../trunk/sdk/wxflatnotebook/include"/>
-        <IncludePath Value="../../trunk/sqlite3"/>
-        <IncludePath Value="../../trunk/sdk/wxsqlite3/include"/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sqlite3"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
         <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libwxflatnotebooku.a"/>
         <Library Value="libplugin_sdku.a"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
@@ -85,7 +71,7 @@
         <BuildCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
-        <ThirdPartyToolName/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
         <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
@@ -94,13 +80,12 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="../Runtime/plugins/cscope.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/plugins/Copyright.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
         <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
@@ -108,13 +93,12 @@
         <Preprocessor Value="_WIN32_WINNT=0x501"/>
         <Preprocessor Value="ASTYLE_LIB"/>
       </Compiler>
-      <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes);">
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=yes --libs --unicode=yes);">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.a"/>
         <Library Value="libCodeLiteud.a"/>
         <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
-        <Library Value="libwxFlatNotebookud.a"/>
         <Library Value="libwxmsw28ud.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -134,13 +118,12 @@
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
-      <General OutputFile="../Runtime/plugins/cscope.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./WinReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --unicode=yes --debug=no)">
+      <General OutputFile="../Runtime/plugins/Copyright.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./WinReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
         <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
@@ -154,7 +137,6 @@
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
-        <Library Value="libwxFlatNotebooku.a"/>
         <Library Value="libwxmsw28u.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -174,5 +156,19 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="Configuration">
+    <File Name="copyrightsconfigdata.cpp"/>
+    <File Name="copyrightsconfigdata.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Dialogs">
+    <File Name="copyrights_options_dlg.h"/>
+    <File Name="copyrights_options_base_dlg.cpp"/>
+    <File Name="copyrights_options_base_dlg.h"/>
+    <File Name="copyrights_options_dlg.cpp"/>
+    <File Name="copyrights_proj_sel_dlg.h"/>
+    <File Name="copyrights_proj_sel_base_dlg.cpp"/>
+    <File Name="copyrights_proj_sel_base_dlg.h"/>
+    <File Name="copyrights_proj_sel_dlg.cpp"/>
+  </VirtualDirectory>
   <Dependencies/>
 </CodeLite_Project>

@@ -91,6 +91,11 @@ public:
 	 * @brief clear all token
 	 */
 	void clear();
+	
+	/**
+	 * @brief return true if no tokens were found
+	 */
+	bool is_empty();
 };
 
 #endif // __cpptoken__

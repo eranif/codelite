@@ -14,4 +14,4 @@
 //foo();
 //std::map<wxString, std::vector>
 //void ~MyClass(){};
-std::map<wxString, std::list<CppToken>* >
+std::map<wxString, std::list<CppToken>* > m_matches;

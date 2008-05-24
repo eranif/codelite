@@ -75,3 +75,8 @@ void CppTokensMap::clear()
 	}
 	m_tokens.clear();
 }
+
+bool CppTokensMap::is_empty()
+{
+	return m_tokens.empty();
+}

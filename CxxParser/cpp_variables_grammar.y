@@ -142,9 +142,9 @@ template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_sta
 						{
 							$$ = $1 +  $2 + $3 +$4;
 						}
-					|  	const_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>'
+					|  	const_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>' special_star_amp
 						{
-							$$ = $1 + $2 + $3 +$4 + $5 + $6 + " ";
+							$$ = $1 + $2 + $3 +$4 + $5 + $6 + $7 + " " ;
 						}
 						;
 

@@ -1,0 +1,73 @@
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// http://www.wxformbuilder.org/
+//
+// PLEASE DO "NOT" EDIT THIS FILE!
+///////////////////////////////////////////////////////////////////////////
+
+#include "copyrights_proj_sel_base_dlg.h"
+
+///////////////////////////////////////////////////////////////////////////
+
+CopyrightsProjectSelBaseDlg::CopyrightsProjectSelBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer3;
+	bSizer3 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Select projects to insert copyrights block:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	bSizer3->Add( m_staticText3, 0, wxALL|wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer5;
+	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
+	
+	wxBoxSizer* bSizer6;
+	bSizer6 = new wxBoxSizer( wxVERTICAL );
+	
+	wxArrayString m_checkListProjectsChoices;
+	m_checkListProjects = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_checkListProjectsChoices, 0 );
+	bSizer6->Add( m_checkListProjects, 1, wxALL|wxEXPAND, 5 );
+	
+	bSizer5->Add( bSizer6, 1, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxVERTICAL );
+	
+	m_buttonCheckAll = new wxButton( this, wxID_ANY, wxT("Check &All"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer7->Add( m_buttonCheckAll, 0, wxALL, 5 );
+	
+	m_buttonUnCheckAll = new wxButton( this, wxID_ANY, wxT("&Un-Check All"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer7->Add( m_buttonUnCheckAll, 0, wxALL, 5 );
+	
+	bSizer5->Add( bSizer7, 0, 0, 5 );
+	
+	bSizer3->Add( bSizer5, 1, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer4;
+	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_buttonInsert = new wxButton( this, wxID_OK, wxT("&Insert"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonInsert->SetDefault(); 
+	bSizer4->Add( m_buttonInsert, 0, wxALL, 5 );
+	
+	m_button5 = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer4->Add( m_button5, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	bSizer3->Add( bSizer4, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	this->SetSizer( bSizer3 );
+	this->Layout();
+	
+	// Connect Events
+	m_buttonCheckAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CopyrightsProjectSelBaseDlg::OnCheckAll ), NULL, this );
+	m_buttonUnCheckAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CopyrightsProjectSelBaseDlg::OnUnCheckAll ), NULL, this );
+}
+
+CopyrightsProjectSelBaseDlg::~CopyrightsProjectSelBaseDlg()
+{
+	// Disconnect Events
+	m_buttonCheckAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CopyrightsProjectSelBaseDlg::OnCheckAll ), NULL, this );
+	m_buttonUnCheckAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CopyrightsProjectSelBaseDlg::OnUnCheckAll ), NULL, this );
+}

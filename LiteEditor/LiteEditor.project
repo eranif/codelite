@@ -485,5 +485,6 @@ resources.cpp: resources.xrc
     <Project Name="Subversion"/>
     <Project Name="Gizmos"/>
     <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
   </Dependencies>
 </CodeLite_Project>

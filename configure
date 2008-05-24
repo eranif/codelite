@@ -493,6 +493,7 @@ createPluginMakefile "cscope" "cscope" "/usr/local/share/codelite/plugins/"
 createPluginMakefile "Subversion" "Subversion" "/usr/local/share/codelite/plugins/"
 createPluginMakefile "CodeFormatter" "CodeFormatter" "/usr/local/share/codelite/plugins/"
 createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "/usr/local/share/codelite/plugins/"
+createPluginMakefile "Copyright" "Copyright" "/usr/local/share/codelite/plugins/"
 
 
 

@@ -520,14 +520,14 @@
             <label>Paste</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenuItem" name="insert_breakpoint">
-            <label>Toggle Breakpoint</label>
-        </object>
-        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenuItem" name="toggle_bookmark">
+
+		<object class="wxMenuItem" name="toggle_bookmark">
             <label>Toggle Bookmark</label>
         </object>
 
+        <object class="wxMenuItem" name="insert_breakpoint">
+            <label>Toggle Breakpoint</label>
+        </object>
     </object>
     
     <!-- File Tree -->

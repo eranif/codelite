@@ -15,7 +15,6 @@
         <IncludePath Value="$(CodeLitePath)/Interfaces"/>
         <IncludePath Value="$(CodeLitePath)/CodeLite"/>
         <IncludePath Value="$(CodeLitePath)/Plugin"/>
-		<IncludePath Value="$(CodeLitePath)/sdk/wxflatnotebook/include"/>
 		<IncludePath Value="$(CodeLitePath)/sqlite3"/>
 		<IncludePath Value="$(CodeLitePath)/sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
@@ -25,7 +24,6 @@
       <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes);">
 		<LibraryPath Value="$(CodeLitePath)/lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.a"/>
-		<Library Value="libwxflatnotebookud.a"/>  
         <Library Value="libCodeLiteud.a"/>
 		<Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
@@ -49,7 +47,6 @@
         <IncludePath Value="$(CodeLitePath)/Interfaces"/>
         <IncludePath Value="$(CodeLitePath)/CodeLite"/>
         <IncludePath Value="$(CodeLitePath)/Plugin"/>
-        <IncludePath Value="$(CodeLitePath)/sdk/wxflatnotebook/include"/>
 		<IncludePath Value="$(CodeLitePath)/sqlite3"/>
 		<IncludePath Value="$(CodeLitePath)/sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
@@ -58,7 +55,6 @@
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
 		<LibraryPath Value="$(CodeLitePath)/lib/gcc_lib"/>  
-		<Library Value="libwxflatnotebooku.a"/>  
         <Library Value="libplugin_sdku.a"/>
         <Library Value="libCodeLiteu.a"/>
 		<Library Value="libwxsqlite3u.a"/>
@@ -83,7 +79,6 @@
         <IncludePath Value="$(CodeLitePath)/Interfaces"/>
         <IncludePath Value="$(CodeLitePath)/CodeLite"/>
         <IncludePath Value="$(CodeLitePath)/Plugin"/>
-        <IncludePath Value="$(CodeLitePath)/sdk/wxflatnotebook/include"/>
         <IncludePath Value="$(CodeLitePath)/sqlite3"/>
 		<IncludePath Value="$(CodeLitePath)/sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
@@ -97,7 +92,6 @@
         <Library Value="libCodeLiteud.a"/>
         <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
-	    <Library Value="libwxflatnotebookud.a"/>
 		<Library Value="libwxmsw28ud.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -114,12 +108,11 @@
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(ConfigurationName)/$(PluginName).$(DllExt)" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./WinReleaseUnicode"/>
-      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=no)">
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2">
         <IncludePath Value="."/>
         <IncludePath Value="$(CodeLitePath)/Interfaces"/>
         <IncludePath Value="$(CodeLitePath)/CodeLite"/>
         <IncludePath Value="$(CodeLitePath)/Plugin"/>
-        <IncludePath Value="$(CodeLitePath)/sdk/wxflatnotebook/include"/>
         <IncludePath Value="$(CodeLitePath)/sqlite3"/>
 		<IncludePath Value="$(CodeLitePath)/sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
@@ -133,7 +126,6 @@
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
-        <Library Value="libwxflatnotebooku.a"/>
         <Library Value="libwxmsw28u.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>

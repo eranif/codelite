@@ -10,6 +10,8 @@ static wxXmlNode *FindNodeByName(const wxXmlNode *parent, const wxString &tagNam
 		return NULL;
 	}
 
+	
+	
 	wxXmlNode *child = parent->GetChildren();
 	while ( child ) {
 		if ( child->GetName() == tagName) {
@@ -257,7 +259,7 @@ void Archive::Write(const wxString &name, bool value)
 
 void Archive::Read(const wxString &name, bool &value)
 {
-	if (!m_root) {
+	if (!m_root) { 
 		return;
 	}
 

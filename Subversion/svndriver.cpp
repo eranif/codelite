@@ -152,6 +152,9 @@ void SvnDriver::DisplayLog(const wxString &outputFile, const wxString &content)
 	wxString tmpFile(outputFile);
 	if (tmpFile.IsEmpty()) {
 		tmpFile = wxFileName::GetTempDir();
+#ifdef __WXGTK__
+		tmpFile << wxT("/");
+#endif
 		tmpFile << wxT("ChangeLog.txt");
 	}
 

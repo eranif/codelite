@@ -41,6 +41,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 Copyright::Copyright(IManager *manager)
 		: IPlugin(manager)
 		, m_topWin(NULL)
+		, m_sepItem(NULL)
 {
 	m_longName = wxT("Copyright Plugin - a small plugin that allows you to place copyright block on top of your source files");
 	m_shortName = wxT("Copyright");

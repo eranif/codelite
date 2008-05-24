@@ -34,6 +34,7 @@ mkdir -p fakeroot/usr/share/applications/
 \cp -pr static-symbols.tags fakeroot/usr/local/share/codelite/
 \cp -pr lib/Debugger.so fakeroot/usr/local/share/codelite/debuggers/
 \cp -pr lib/CodeFormatter.so fakeroot/usr/local/share/codelite/plugins/
+\cp -pr lib/Copyright.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/Subversion.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/Gizmos.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/cscope.so fakeroot/usr/local/share/codelite/plugins/

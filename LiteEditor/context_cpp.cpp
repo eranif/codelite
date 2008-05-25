@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "precompiled_header.h"
+#include "scopejob.h"
+#include "jobqueue.h"
 #include "cc_box.h"
 #include <wx/progdlg.h>
 #include "renamesymboldlg.h"
@@ -145,7 +147,7 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 	EVT_MENU(XRCID("setters_getters"), ContextCpp::OnGenerateSettersGetters)
 	EVT_MENU(XRCID("add_include_file"), ContextCpp::OnAddIncludeFile)
 	EVT_MENU(XRCID("rename_function"), ContextCpp::OnRenameFunction)
-
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_UPDATE_SCOPE, ContextCpp::OnScopeUpdate)
 END_EVENT_TABLE()
 
 ContextCpp::ContextCpp(LEditor *container)
@@ -1438,9 +1440,13 @@ void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
 		//position has changed, compare line numbers
 		if (ctrl.LineFromPosition(curpos) != lastLine) {
 			lastLine = ctrl.LineFromPosition(curpos);
-			//we need to update the navigation bar of the main frame
-			TagsManager *tags = TagsManagerST::Get();
-			Frame::Get()->GetMainBook()->UpdateScope(tags->FunctionFromFileLine(ctrl.GetFileName(), lastLine+1));
+			
+			// add new job to perform the scope calculation
+			ScopeJob *job = new ScopeJob(this,  // watcher
+										 ctrl.GetFileName().GetFullPath().c_str(), // current file
+										 lastLine, // current line
+										 TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str()); // database file
+			JobQueueSingleton::Instance()->PushJob( job );
 		}
 	}
 }
@@ -2285,4 +2291,24 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 	
 	// if we got so far, CC failed to parse the expression
 	return false;
+}
+
+void ContextCpp::OnScopeUpdate(wxCommandEvent& e)
+{
+	//we need to update the navigation bar of the main frame
+	ScopeJobResult *result = reinterpret_cast<ScopeJobResult*>(e.GetClientData());
+	if( result ) {
+		LEditor &ctrl = GetCtrl();
+		
+		// do we still need to update?
+		TagEntryPtr tag( result->tag );
+		
+		if(ctrl.GetCurrentLine() == result->last_line) {
+			// update the scope
+			Frame::Get()->GetMainBook()->UpdateScope( tag );
+		}
+
+		// delete the result
+		delete result;
+	}
 }

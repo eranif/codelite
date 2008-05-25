@@ -130,6 +130,7 @@ public:
 	virtual void OnAddImpl(wxCommandEvent &e);
 	virtual void OnAddMultiImpl(wxCommandEvent &e);
 	virtual void OnRenameFunction(wxCommandEvent &e);
+	virtual void OnScopeUpdate(wxCommandEvent &e);
 	
 	DECLARE_EVENT_TABLE();
 private:

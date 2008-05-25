@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : job.h              
+// file name            : scopejob.h              
 //                                                                          
 // -------------------------------------------------------------------------
 // A                                                                        
@@ -22,56 +22,31 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __job__
-#define __job__
 
-#include <wx/event.h>
+#ifndef __scopejob__
+#define __scopejob__
+#include "job.h"
 
-extern const wxEventType wxEVT_CMD_JOB_STATUS;
-extern const wxEventType wxEVT_CMD_JOB_STATUS_VOID_PTR;
+extern const wxEventType wxEVT_CMD_UPDATE_SCOPE;
 
-/**
- * \class Job
- * \author Eran
- * \date 05/09/08
- * \file job.h
- * \brief this class defines the interface to a job used by the JobQueue
- * To use the JobQueue, you should inherit from Job, and implement the Porcess() pure virtual function
- */
-class Job
-{
-protected:
-	wxEvtHandler *m_parent;
+
+class TagEntry;
+
+struct ScopeJobResult {
+	TagEntry *tag;
+	int last_line;
+};
+
+class ScopeJob : public Job {
+	int m_currLine;
+	wxString m_fileName;
+	wxString m_dbPath;
 	
 public:
-	/**
-	 * @brief Construct Job object with optional parent event handler.
-	 * @param parent event handler class which would like to receive notifications of progress
-	 */
-	Job(wxEvtHandler *parent = NULL);
-	virtual ~Job();
+	ScopeJob(wxEvtHandler *parent, const wxChar *file_name, int curr_line, const wxChar *db_path);
+	virtual ~ScopeJob();
 
 public:
-	/**
-	 * @brief post string and int values to parent in a form of wxCommandEvent of type wxEVT_CMD_JOB_STATUS. the string can be accessed by using event.GetString() and the int
-	 * by calling event.GetInt(). 
-	 * this function has no affect if parnet is NULL
-	 * @param i
-	 * @param message
-	 */
-	void Post(int i, const wxString &message);
-	/**
-	 * @brief post void* to parent in a form of wxCommandEvent of type wxEVT_CMD_JOB_STATUS_VOID_PTR. the void* can be accessed by using event.GetClientData() method. 
-	 * NB: User must free the void* 
-	 * this function has no affect if parnet is NULL
-	 * @param i integer to send to parent
-	 */
-	virtual void Post(void *ptr);
-	/**
-	 * @brief overridable Process() method. If the Process() method is performs a long computations, it is advised to 
-	 * to call thread->TestDestroy() to allow the thread to exit when requested 
-	 * @param thread the thread that is currently running the job. 
-	 */
-	virtual void Process(wxThread *thread) = 0;
+	virtual void Process(wxThread *thread);
 };
-#endif // __job__
+#endif // __scopejob__

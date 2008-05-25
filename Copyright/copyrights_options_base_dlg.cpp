@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -38,6 +38,14 @@ CopyrightsOptionsBaseDlg::CopyrightsOptionsBaseDlg( wxWindow* parent, wxWindowID
 	
 	m_textCtrlFileMaksing = new wxTextCtrl( this, wxID_ANY, wxT("*.hpp;*.h;*.hxx;*.inl;*.h++"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_textCtrlFileMaksing, 0, wxALL|wxEXPAND, 5 );
+	
+	filler1 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	fgSizer1->Add( filler1, 1, wxEXPAND | wxALL, 5 );
+	
+	m_checkBoxBackup = new wxCheckBox( this, wxID_ANY, wxT("Backup modified files"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxBackup->SetValue(true);
+	
+	fgSizer1->Add( m_checkBoxBackup, 0, wxALL, 5 );
 	
 	bSizer1->Add( fgSizer1, 1, wxEXPAND|wxALL, 5 );
 	

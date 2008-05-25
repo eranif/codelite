@@ -1,3 +1,28 @@
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//
+// copyright            : (C) 2008 by Eran Ifrah                            
+// file name            : copyright.cpp              
+//                                                                          
+// -------------------------------------------------------------------------
+// A                                                                        
+//              _____           _      _     _ _                            
+//             /  __ \         | |    | |   (_) |                           
+//             | /  \/ ___   __| | ___| |    _| |_ ___                      
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ \                     
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
+//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
+//                                                                          
+//                                                  F i l e                 
+//                                                                          
+//    This program is free software; you can redistribute it and/or modify  
+//    it under the terms of the GNU General Public License as published by  
+//    the Free Software Foundation; either version 2 of the License, or     
+//    (at your option) any later version.                                   
+//                                                                          
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+ #include <wx/filefn.h>
 #include <wx/progdlg.h>
 #include <wx/ffile.h>
 #include <wx/tokenzr.h>
@@ -18,6 +43,32 @@
 #include "copyrightsconfigdata.h"
 
 static Copyright* thePlugin = NULL;
+
+static bool WriteFileWithBackup(const wxString &file_name, const wxString &content, bool backup)
+{
+
+	if (backup) {
+		wxString backup_name(file_name);
+		backup_name << wxT(".bak");
+		if (!wxCopyFile(file_name, backup_name, true)) {
+			wxLogMessage(wxString::Format(wxT("Failed to backup file %s, skipping it"), file_name.c_str()));
+			return false;
+		}
+	}
+
+	wxFFile file(file_name, wxT("wb"));
+	if (file.IsOpened() == false) {
+		// Nothing to be done
+		wxString msg = wxString::Format(wxT("Failed to open file %s"), file_name.c_str());
+		wxLogMessage( msg );
+		return false;
+	}
+
+	// write the new content
+	file.Write(content);
+	file.Close();
+	return true;
+}
 
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
@@ -42,6 +93,8 @@ Copyright::Copyright(IManager *manager)
 		: IPlugin(manager)
 		, m_topWin(NULL)
 		, m_sepItem(NULL)
+		, m_projectSepItem(NULL)
+		, m_workspaceSepItem(NULL)
 {
 	m_longName = wxT("Copyright Plugin - a small plugin that allows you to place copyright block on top of your source files");
 	m_shortName = wxT("Copyright");
@@ -53,6 +106,7 @@ Copyright::~Copyright()
 	m_topWin->Disconnect(XRCID("copyrights_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnOptions), NULL, this);
 	m_topWin->Disconnect(XRCID("insert_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
 	m_topWin->Disconnect(XRCID("batch_insert_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
+	m_topWin->Disconnect(XRCID("insert_prj_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnProjectInsertCopyrights), NULL, this);
 }
 
 wxToolBar *Copyright::CreateToolBar(wxWindow *parent)
@@ -82,6 +136,7 @@ void Copyright::CreatePluginMenu(wxMenu *pluginsMenu)
 	m_topWin->Connect(XRCID("copyrights_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnOptions), NULL, this);
 	m_topWin->Connect(XRCID("insert_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
 	m_topWin->Connect(XRCID("batch_insert_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnBatchInsertCopyrights), NULL, this);
+	m_topWin->Connect(XRCID("insert_prj_copyrights"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnProjectInsertCopyrights), NULL, this);
 }
 
 void Copyright::HookPopupMenu(wxMenu *menu, MenuType type)
@@ -97,11 +152,26 @@ void Copyright::HookPopupMenu(wxMenu *menu, MenuType type)
 		}
 
 	} else if (type == MenuTypeFileExplorer) {
-		//TODO::Append items for the file explorer context menu
+
 	} else if (type == MenuTypeFileView_Workspace) {
-		//TODO::Append items for the file view / workspace context menu
+		// Workspace menu
+		if ( !m_workspaceSepItem ) {
+			m_workspaceSepItem = menu->PrependSeparator();
+		}
+
+		if (!menu->FindItem(XRCID("batch_insert_copyrights"))) {
+			menu->Prepend(XRCID("batch_insert_copyrights"), wxT("Batch Insert of Copyright Block"), wxEmptyString);
+		}
+		
 	} else if (type == MenuTypeFileView_Project) {
-		//TODO::Append items for the file view/Project context menu
+		if ( !m_projectSepItem ) {
+			m_projectSepItem = menu->PrependSeparator();
+		}
+
+		if (!menu->FindItem(XRCID("insert_prj_copyrights"))) {
+			menu->Prepend(XRCID("insert_prj_copyrights"), wxT("Insert Copyright Block"), wxEmptyString);
+		}
+
 	} else if (type == MenuTypeFileView_Folder) {
 		//TODO::Append items for the file view/Virtual folder context menu
 	} else if (type == MenuTypeFileView_File) {
@@ -125,9 +195,27 @@ void Copyright::UnHookPopupMenu(wxMenu *menu, MenuType type)
 	} else if (type == MenuTypeFileExplorer) {
 		//TODO::Unhook  items for the file explorer context menu
 	} else if (type == MenuTypeFileView_Workspace) {
-		//TODO::Unhook  items for the file view / workspace context menu
+		
+		wxMenuItem *item = menu->FindItem(XRCID("batch_insert_copyrights"));
+		if (item) {
+			menu->Destroy( item );
+		}
+
+		if (m_workspaceSepItem) {
+			menu->Destroy( m_workspaceSepItem );
+			m_workspaceSepItem = NULL;
+		}
+		
 	} else if (type == MenuTypeFileView_Project) {
-		//TODO::Unhook  items for the file view/Project context menu
+		wxMenuItem *item = menu->FindItem(XRCID("insert_prj_copyrights"));
+		if (item) {
+			menu->Destroy( item );
+		}
+
+		if (m_projectSepItem) {
+			menu->Destroy( m_projectSepItem );
+			m_projectSepItem = NULL;
+		}
 	} else if (type == MenuTypeFileView_Folder) {
 		//TODO::Unhook  items for the file view/Virtual folder context menu
 	} else if (type == MenuTypeFileView_File) {
@@ -251,16 +339,13 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
 				filtered_files.push_back( files.at(i) );
 			}
 		}
-
-		if (wxMessageBox(wxString::Format(wxT("You are about to modifiy %d files, continue?"), filtered_files.size()), wxT("CodeLite"), wxYES_NO|wxICON_QUESTION) == wxNO) {
-			return;
+		
+		if(filtered_files.empty() == false) {
+			MassUpdate(filtered_files, content);
 		}
 
-		MassUpdate(filtered_files, content);
-
-	} else {
-		dlg->Destroy();
 	}
+	dlg->Destroy();
 }
 
 void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
@@ -320,16 +405,26 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
 	}
 
 	// update files
-	MassUpdate(filtered_files, content);
+	if(filtered_files.empty() == false) {
+		MassUpdate(filtered_files, content);
+	}
 }
 
 void Copyright::MassUpdate(const std::vector<wxFileName> &filtered_files, const wxString &content)
 {
+	// last confirmation from the user
+	if (wxMessageBox(wxString::Format(wxT("You are about to modifiy %d files, continue?"), filtered_files.size()), wxT("CodeLite"), wxYES_NO|wxICON_QUESTION) == wxNO) {
+		return;
+	}
+	
 	wxProgressDialog* prgDlg = NULL;
 	prgDlg = new wxProgressDialog (wxT("Processing file ..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)filtered_files.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT );
 	prgDlg->GetSizer()->Fit(prgDlg);
 	prgDlg->Layout();
 	prgDlg->Centre();
+
+	CopyrightsConfigData data;
+	m_mgr->GetConfigTool()->ReadObject(wxT("CopyrightsConfig"), &data);
 
 	// now loop over the files and add copyrights block
 	for (size_t i=0 ; i< filtered_files.size(); i++) {
@@ -346,17 +441,7 @@ void Copyright::MassUpdate(const std::vector<wxFileName> &filtered_files, const 
 			}
 
 			file_content.Prepend(_content);
-
-			wxFFile file(fn.GetFullPath(), wxT("wb"));
-			if (file.IsOpened() == false) {
-				// Nothing to be done
-				wxString msg = wxString::Format(wxT("Failed to open file %s"), fn.GetFullPath().GetData());
-				wxLogMessage( msg );
-				continue;
-			}
-
-			file.Write(file_content);
-			file.Close();
+			WriteFileWithBackup(fn.GetFullPath(), file_content, data.GetBackupFiles());
 		}
 	}
 	prgDlg->Destroy();
@@ -393,4 +478,3 @@ bool Copyright::Validate(wxString& content)
 	content.Replace(wxT("`"), wxT("'"));
 	return true;
 }
-

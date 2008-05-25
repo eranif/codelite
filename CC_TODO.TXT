@@ -16,4 +16,6 @@
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
 
-- move the updating of the navigation tool bar to separate thread (the part where it locates the function/class)
+- refactor the 'Replace in files' to work using the new class StringFindReplacer
+
+

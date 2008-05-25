@@ -24,7 +24,7 @@
     <Variable Name="WorkspaceName" Value="LiteEditor"/>
     <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
   </Environment>
-  <Project Name="Copyright" Path="Copyright\Copyright.project" Active="No"/>
+  <Project Name="Copyright" Path="Copyright/Copyright.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>

@@ -9,7 +9,7 @@
 //              _____           _      _     _ _                            
 //             /  __ \         | |    | |   (_) |                           
 //             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ \                     
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
 //             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
 //              \____/\___/ \__,_|\___\_____/_|\__\___|                     
 //                                                                          
@@ -125,11 +125,6 @@ void ReplaceInFilesPanel::OnReplaceAll( wxCommandEvent& event )
 		wxString pattern;
 
 		ParseEntry(i, cur_line, col, matchLen, file_name, pattern);
-		
-		wxString content;
-		if( ReadFileWithConversion(file_name, content) ) {
-			
-		}
 		
 		//open this file
 		if ( ManagerST::Get()->OpenFile(file_name, wxEmptyString) ) {

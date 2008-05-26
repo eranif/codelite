@@ -183,6 +183,9 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data, i
 	ConnectButton(m_buttonOK, TagsOptionsDlg::OnButtonOK);
 	ConnectButton(m_buttonAdd, TagsOptionsDlg::OnButtonAdd);
 	
+	// center the dialog
+	Centre();
+	
 	m_checkParseComments->SetFocus();
 }
 

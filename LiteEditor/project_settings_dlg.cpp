@@ -67,6 +67,7 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 	m_buttonAddResCmpOptions->Enable(!m_checkResourceNeeded->IsChecked());
 	m_buttonAddResCmpPath->Enable(!m_checkResourceNeeded->IsChecked());
 	m_buttonApply->Enable(false);
+	Centre();
 }
 
 void ProjectSettingsDlg::UpdateConfigurationTypeChoice(const wxString &itemToSelect)

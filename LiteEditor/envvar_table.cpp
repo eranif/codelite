@@ -94,6 +94,9 @@ EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent, int id, wxString title, wxPo
 
 	m_listVarsTable->SetFocus();
 	ConnectEvents();
+	// center the dialog
+	Centre();
+	
 }
 
 void EnvVarsTableDlg::ConnectEvents()

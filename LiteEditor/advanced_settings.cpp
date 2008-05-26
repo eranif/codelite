@@ -131,6 +131,9 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	ConnectButton(m_buttonOK, AdvancedDlg::OnButtonOKClicked);
 
 	m_notebook->SetSelection( selected_page );
+	
+	// center the dialog
+	Centre();
 }
 
 void AdvancedDlg::LoadCompilers()

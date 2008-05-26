@@ -40,6 +40,8 @@ SvnOptionsBaseDlg( parent )
 		m_checkBoxKeepIconsAutoUpdate->Enable(false);
 		m_checkBoxUpdateAfterSave->Enable(false);
 	}
+	// center the dialog
+	Centre();
 	m_filePicker->SetFocus();
 }
 

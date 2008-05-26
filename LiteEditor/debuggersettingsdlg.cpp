@@ -62,7 +62,7 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 	m_checkBreakAtWinMain = new wxCheckBox(this, wxID_ANY, wxT("Automatically set breakpoint at main"), wxDefaultPosition, wxDefaultSize, 0 );
 	sz->Add(m_checkBreakAtWinMain, 0, wxEXPAND|wxALL, 5);
 	sz->Layout();
-
+	
 	DebuggerInformation info;
 	if(DebuggerMgr::Get().GetDebuggerInformation(m_title, info)){
 		m_filePicker->SetPath(info.path);
@@ -85,6 +85,10 @@ DebuggerSettingsDlg::DebuggerSettingsDlg( wxWindow* parent )
 	//fill the notebook with the available debuggers
 	Initialize();
 	ConnectButton(m_buttonOK, DebuggerSettingsDlg::OnOk);
+	
+	// center the dialog
+	Centre();
+	
 	m_listCtrl1->SetFocus();
 }
 

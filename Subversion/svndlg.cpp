@@ -51,6 +51,9 @@ SvnBaseDlg( parent )
 	if( msgs.GetCount() > 0 ) {
 		m_comboBoxLastCommitMsgs->SetSelection( msgs.GetCount()-1 );
 	}
+	m_textCtrl->SetFocus();
+	// center the dialog
+	Centre();
 }
 
 void SvnDlg::OnLastCommitMsgSelected(wxCommandEvent &e)

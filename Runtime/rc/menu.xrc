@@ -154,6 +154,10 @@
 				<label>Wor&amp;kspace Pane</label>
 				<checkable>1</checkable>
 			</object>
+			<object class="wxMenuItem" name="show_nav_toolbar">
+				<label>&amp;Navigation Bar</label>
+				<checkable>1</checkable>
+			</object>
 			<object class="wxMenuItem" name="debugger_pane">
 				<label>&amp;Debugger Pane</label>
 				<checkable>1</checkable>
@@ -178,10 +182,10 @@
 					<label>Debug ToolBar</label>
 					<checkable>1</checkable>
 				</object>
-				<object class="wxMenuItem" name="show_nav_toolbar">
+<!--				<object class="wxMenuItem" name="show_nav_toolbar">
 					<label>Navigation ToolBar</label>
-					<checkable>1</checkable>
-				</object>
+					<checkable>1</checkable> 
+				</object> -->
 			</object>
 		
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>

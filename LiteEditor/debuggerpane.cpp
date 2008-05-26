@@ -51,7 +51,6 @@ DebuggerPane::DebuggerPane(wxWindow *parent, const wxString &caption)
 		, m_initDone(false)
 {
 	CreateGUIControls();
-//	Connect(m_book->GetId(), wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(DebuggerPane::OnPageChanged));
 }
 
 DebuggerPane::~DebuggerPane()

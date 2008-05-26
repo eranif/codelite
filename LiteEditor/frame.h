@@ -71,7 +71,7 @@ struct StartPageData {
  */
 class Frame : public wxFrame
 {
-	Notebook *m_book;
+//	Notebook *m_book;
 	MainBook *m_mainBook;
 	
 	static Frame* m_theFrame;
@@ -119,7 +119,10 @@ public:
 	/**
 	 * Return the main editor notebook
 	 */
-	Notebook *GetNotebook() { return m_book; }
+	Notebook *GetNotebook() { 
+		return m_mainBook->GetNotebook(); 
+	}
+	
 	MainBook* GetMainBook() const {return m_mainBook;}
 	
 	/**
@@ -308,6 +311,8 @@ protected:
 	void OnCopyFilePath(wxCommandEvent &event);
 	void OnCopyFilePathOnly(wxCommandEvent &event);
 	void OnHighlightWord(wxCommandEvent &event);
+	void OnShowNavBar(wxCommandEvent &e);
+	void OnShowNavBarUI(wxUpdateUIEvent &e);
 	
 	// this event is sent from the notebook container to the frame
 	void OnFileClosing(NotebookEvent &event);

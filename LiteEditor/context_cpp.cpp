@@ -1422,10 +1422,10 @@ void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
 	wxUnusedVar(event);
 
 	//update the navigation toolbar only if the toolbar is visible
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Navigation Toolbar"));
-	if (!info.IsOk() || !info.IsShown()) {
-		return;
-	}
+//	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Navigation Toolbar"));
+//	if (!info.IsOk() || !info.IsShown()) {
+//		return;
+//	}
 
 	LEditor &ctrl = GetCtrl();
 

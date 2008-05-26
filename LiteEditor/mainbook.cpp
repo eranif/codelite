@@ -30,16 +30,33 @@
 #include "ctags_manager.h"
 #include "cl_editor.h"
 #include "macros.h"
+#include "custom_notebook.h"
 
-MainBook::MainBook(wxChoice* choiceFunc, wxChoice* choiceScope)
-: m_choiceFunc(choiceFunc)
-, m_choiceScope(choiceScope)
+MainBook::MainBook(wxWindow *parent)
+: wxPanel( parent )
 {
+	wxArrayString chcs;
+	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
+	m_hsz = new wxBoxSizer(wxHORIZONTAL);
+	
+	SetSizer(sz);
+	sz->Add(m_hsz, 0, wxEXPAND);
+	
+	m_choiceScope = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(200, -1), chcs);
+	m_choiceFunc = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(600, -1), chcs);
+	m_hsz->Add(m_choiceScope, 0, wxEXPAND);
+	m_hsz->Add(m_choiceFunc, 1, wxEXPAND);
+	
 	//Connect events
 	m_choiceFunc->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(MainBook::OnFuncListMouseDown), NULL, this);
 	//m_choiceScope->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(MainBook::OnScopeListMouseDown), NULL, this);
 	ConnectChoice(m_choiceFunc, MainBook::OnFunction);
 	//ConnectChoice(m_choiceScope, MainBook::OnScope);
+	
+	long style = wxVB_TOP|wxVB_HAS_X|wxVB_BORDER|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+	sz->Add(m_book, 1, wxEXPAND);
+	sz->Layout();
 }
 
 MainBook::~MainBook()
@@ -178,3 +195,31 @@ void MainBook::OnFuncListMouseDown(wxMouseEvent &e)
 	e.Skip();
 }
 
+void MainBook::ShowNavBar(bool s)
+{
+	if( s ) {
+		if( !m_hsz->IsShown(m_choiceFunc) ) {
+			m_hsz->Show(m_choiceFunc);
+		}
+		
+		if( !m_hsz->IsShown(m_choiceScope) ) {
+			m_hsz->Show(m_choiceScope);
+		}
+	} else { // Hide
+		if( m_hsz->IsShown(m_choiceFunc) ) {
+			m_hsz->Hide(m_choiceFunc);
+		}
+		
+		if( m_hsz->IsShown(m_choiceScope) ) {
+			m_hsz->Hide(m_choiceScope);
+		}
+	}
+	m_book->Refresh();
+	GetSizer()->Layout();
+}
+
+bool MainBook::IsNavBarShown()
+{
+	// it is enough to test only control
+	return m_hsz->IsShown(m_choiceFunc);
+}

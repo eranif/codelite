@@ -44,6 +44,7 @@ SymbolsDialog::SymbolsDialog( wxWindow* parent )
 	m_results->InsertColumn(3, wxT("Line"));
 
 	m_results->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(SymbolsDialog::OnItemDeselected), NULL, this);
+	Centre();
 }
 
 void SymbolsDialog::AddSymbol(const TagEntryPtr &tag, bool sel)

@@ -28,13 +28,19 @@
 #include "wx/event.h"
 #include "wx/string.h"
 #include "entry.h"
+#include <wx/panel.h>
 
 class wxChoice;
+class Notebook;
+class wxBoxSizer;
 
-class MainBook : public wxEvtHandler 
+class MainBook : public wxPanel
 {
 	wxChoice *m_choiceFunc;
 	wxChoice *m_choiceScope;
+	Notebook *m_book;
+	wxBoxSizer *m_hsz;
+	
 protected:
 	void OnFuncListMouseDown(wxMouseEvent &e);
 	void OnScopeListMouseDown(wxMouseEvent &e);
@@ -42,11 +48,16 @@ protected:
 	void OnFunction(wxCommandEvent &e);
 	
 public:
-	MainBook(wxChoice* choiceFunc, wxChoice* choiceScope);
+	MainBook(wxWindow *parent);
 	~MainBook();
+	Notebook *GetNotebook() {return m_book;}
 	
 	void UpdateScope(TagEntryPtr tag);
 	void Clear();
+	void ShowNavBar(bool s);
+	void HideNavBar(){ ShowNavBar(false); }
+	bool IsNavBarShown();
+	
 };
 
 #endif //MAINBOOK_H

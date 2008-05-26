@@ -244,9 +244,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("highlight_word"), Frame::OnHighlightWord)
 	EVT_MENU(XRCID("attach_debugger"), Frame::OnDebugAttach)
 	EVT_MENU(XRCID("add_project"), Frame::OnProjectAddProject)
-	//	EVT_MENU(XRCID("import_from_makefile"), Frame::OnImportMakefile)
 	EVT_MENU(XRCID("import_from_msvs"), Frame::OnImportMSVS)
-	//	EVT_UPDATE_UI(XRCID("import_from_makefile"), Frame::OnImportMakefileUI)
 	EVT_CLOSE(Frame::OnClose)
 	EVT_TIMER(FrameTimerId, Frame::OnTimer)
 	EVT_MENU_RANGE(RecentFilesSubMenuID, RecentFilesSubMenuID + 10, Frame::OnRecentFile)
@@ -275,7 +273,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("view_welcome_page"), Frame::OnShowWelcomePageUI)
 	EVT_MENU(XRCID("view_welcome_page_at_startup"), Frame::OnLoadWelcomePage)
 	EVT_UPDATE_UI(XRCID("view_welcome_page_at_startup"), Frame::OnLoadWelcomePageUI)
-
 	EVT_MENU(XRCID("line_end_cr"), Frame::OnViewEolCR)
 	EVT_MENU(XRCID("line_end_lf"), Frame::OnViewEolLF)
 	EVT_MENU(XRCID("line_end_crlf"), Frame::OnViewEolCRLF)
@@ -303,9 +300,11 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("setters_getters"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_include_file"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("rename_function"), Frame::OnCppContextMenu)
-
+	
+	EVT_MENU(XRCID("show_nav_toolbar"), Frame::OnShowNavBar)
+	EVT_UPDATE_UI(XRCID("show_nav_toolbar"), Frame::OnShowNavBarUI)
+	
 	EVT_MENU(XRCID("configure_accelerators"), Frame::OnConfigureAccelerators)
-
 	EVT_UPDATE_UI(XRCID("save_file"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("complete_word"), Frame::OnCompleteWordUpdateUI)
 	EVT_UPDATE_UI(XRCID("execute_no_debug"), Frame::OnExecuteNoDebugUI)
@@ -508,12 +507,18 @@ void Frame::CreateGUIControls(void)
 	RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
 	// Create the notebook for all the files
-	long style = wxVB_TOP|wxVB_HAS_X|wxVB_BORDER|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-
-	m_mgr.AddPane(m_book, wxAuiPaneInfo().Name(wxT("Editor")).
-	              CenterPane().PaneBorder(true));
-
+//	long style = wxVB_TOP|wxVB_HAS_X|wxVB_BORDER|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
+//	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+//
+	m_mainBook = new MainBook(this);
+	m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(true));
+	
+	long show_nav(1);
+	EditorConfigST::Get()->GetLongValue(wxT("ShowNavBar"), show_nav);
+	if( !show_nav ) {
+		m_mainBook->ShowNavBar( false );
+	}
+	
 	// Connect the main notebook events
 	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(Frame::OnPageChanged), NULL, this);
 	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING, NotebookEventHandler(Frame::OnFileClosing), NULL, this);
@@ -704,9 +709,7 @@ void Frame::CreateToolbars24()
 	tb->AddSeparator();
 	tb->AddTool(XRCID("toggle_bookmark"), wxT("Toggle Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark24")), wxT("Toggle Bookmark"));
 
-#if defined (__WXMAC__)
-	tb->AddSeparator();
-#endif
+
 
 	tb->Realize();
 	m_mgr.AddPane(tb, wxAuiPaneInfo().Name(wxT("Standard Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Standard")).ToolbarPane().Top());
@@ -729,9 +732,7 @@ void Frame::CreateToolbars24()
 	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"), wxXmlResource::Get()->LoadBitmap(wxT("highlight24")), wxT("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
 
-#if defined (__WXMAC__)
-	tb->AddSeparator();
-#endif
+
 	tb->Realize();
 	m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Search")).ToolbarPane().Top());
 
@@ -747,9 +748,7 @@ void Frame::CreateToolbars24()
 	tb->AddSeparator();
 	tb->AddTool(XRCID("execute_no_debug"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("execute24")), wxT("Run Active Project"));
 	tb->AddTool(XRCID("stop_executed_program"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("stop_executed_program24")), wxT("Stop Running Program"));
-#if defined (__WXMAC__)
-	tb->AddSeparator();
-#endif
+
 	tb->Realize();
 	info = wxAuiPaneInfo();
 	m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Build")).ToolbarPane().Top().Row(1));
@@ -768,9 +767,7 @@ void Frame::CreateToolbars24()
 	m_debuggerTb->AddTool(XRCID("dbg_stepin"), wxT("Step Into"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepin24")), wxT("Step In"));
 	m_debuggerTb->AddTool(XRCID("dbg_next"), wxT("Next"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_next24")), wxT("Next"));
 	m_debuggerTb->AddTool(XRCID("dbg_stepout"), wxT("Step Out"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepout24")), wxT("Step Out"));
-#if defined (__WXMAC__)
-	m_debuggerTb->AddSeparator();
-#endif
+
 	m_debuggerTb->Realize();
 	info = wxAuiPaneInfo();
 	m_mgr.AddPane(m_debuggerTb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Debug")).ToolbarPane().Top().Row(1));
@@ -779,26 +776,21 @@ void Frame::CreateToolbars24()
 	RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
 	RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
 	RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
-	RegisterToolbar(XRCID("show_nav_toolbar"), wxT("Navigation Toolbar"));
-
-	//----------------------------------------------
-	//create the debugger toolbar
-	//----------------------------------------------
-	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(800, -1), wxTB_FLAT | wxTB_NODIVIDER);
-	tb->SetToolBitmapSize(wxSize(24, 24));
-	wxArrayString chcs;
-	wxChoice *cbScope = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(200, -1), chcs);
-	tb->AddControl(cbScope);
-
-	wxChoice *cbFunc = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(600, -1), chcs);
-	tb->AddControl(cbFunc);
-#if defined (__WXMAC__)
-	tb->AddSeparator();
-#endif
-	tb->Realize();
-	info = wxAuiPaneInfo();
-	m_mgr.AddPane(tb, info.Name(wxT("Navigation Toolbar")).LeftDockable(false).RightDockable(false).Caption(wxT("Navigation Toolbar")).ToolbarPane().Top().Row(2));
-	m_mainBook = new MainBook(cbFunc, cbScope);
+//	RegisterToolbar(XRCID("show_nav_toolbar"), wxT("Navigation Toolbar"));
+//	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(800, -1), wxTB_FLAT | wxTB_NODIVIDER);
+//	tb->SetToolBitmapSize(wxSize(24, 24));
+//	wxArrayString chcs;
+//	
+//	wxChoice *cbScope = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(200, -1), chcs);
+//	tb->AddControl(cbScope);
+//
+//	wxChoice *cbFunc = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(600, -1), chcs);
+//	tb->AddControl(cbFunc);
+//
+//	tb->Realize();
+//	info = wxAuiPaneInfo();
+//	m_mgr.AddPane(tb, info.Name(wxT("Navigation Toolbar")).LeftDockable(false).RightDockable(false).Caption(wxT("Navigation Toolbar")).ToolbarPane().Top().Row(2));
+//	m_mainBook = new MainBook(cbFunc, cbScope);
 }
 
 void Frame::CreateToolbars16()
@@ -830,9 +822,7 @@ void Frame::CreateToolbars16()
 	tb->AddSeparator();
 	tb->AddTool(XRCID("toggle_bookmark"), wxT("Toggle Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark16")), wxT("Toggle Bookmark"));
 
-#if defined (__WXMAC__)
-	tb->AddSeparator();
-#endif
+
 
 	tb->Realize();
 	m_mgr.AddPane(tb, wxAuiPaneInfo().Name(wxT("Standard Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Standard")).ToolbarPane().Top());
@@ -855,9 +845,7 @@ void Frame::CreateToolbars16()
 	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"), wxXmlResource::Get()->LoadBitmap(wxT("highlight16")), wxT("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
 
-#if defined (__WXMAC__)
-	tb->AddSeparator();
-#endif
+
 	tb->Realize();
 	m_mgr.AddPane(tb, info.Name(wxT("Search Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Search")).ToolbarPane().Top());
 
@@ -873,9 +861,7 @@ void Frame::CreateToolbars16()
 	tb->AddSeparator();
 	tb->AddTool(XRCID("execute_no_debug"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("execute16")), wxT("Run Active Project"));
 	tb->AddTool(XRCID("stop_executed_program"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("stop_executed_program16")), wxT("Stop Running Program"));
-#if defined (__WXMAC__)
-	tb->AddSeparator();
-#endif
+
 	tb->Realize();
 	info = wxAuiPaneInfo();
 	m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Build")).ToolbarPane().Top().Row(1));
@@ -894,9 +880,7 @@ void Frame::CreateToolbars16()
 	m_debuggerTb->AddTool(XRCID("dbg_stepin"), wxT("Step Into"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepin16")), wxT("Step In"));
 	m_debuggerTb->AddTool(XRCID("dbg_next"), wxT("Next"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_next16")), wxT("Next"));
 	m_debuggerTb->AddTool(XRCID("dbg_stepout"), wxT("Step Out"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepout16")), wxT("Step Out"));
-#if defined (__WXMAC__)
-	m_debuggerTb->AddSeparator();
-#endif
+
 	m_debuggerTb->Realize();
 	info = wxAuiPaneInfo();
 	m_mgr.AddPane(m_debuggerTb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Debug")).ToolbarPane().Top().Row(1));
@@ -905,26 +889,22 @@ void Frame::CreateToolbars16()
 	RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
 	RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
 	RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
-	RegisterToolbar(XRCID("show_nav_toolbar"), wxT("Navigation Toolbar"));
+//	RegisterToolbar(XRCID("show_nav_toolbar"), wxT("Navigation Toolbar"));
 
-	//----------------------------------------------
-	//create the debugger toolbar
-	//----------------------------------------------
-	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(800, -1), wxTB_FLAT | wxTB_NODIVIDER);
-	tb->SetToolBitmapSize(wxSize(16, 16));
-	wxArrayString chcs;
-	wxChoice *cbScope = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(200, -1), chcs);
-	tb->AddControl(cbScope);
-
-	wxChoice *cbFunc = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(600, -1), chcs);
-	tb->AddControl(cbFunc);
-#if defined (__WXMAC__)
-	tb->AddSeparator();
-#endif
-	tb->Realize();
-	info = wxAuiPaneInfo();
-	m_mgr.AddPane(tb, info.Name(wxT("Navigation Toolbar")).LeftDockable(false).RightDockable(false).Caption(wxT("Navigation Toolbar")).ToolbarPane().Top().Row(2));
-	m_mainBook = new MainBook(cbFunc, cbScope);
+//	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(800, -1), wxTB_FLAT | wxTB_NODIVIDER);
+//	tb->SetToolBitmapSize(wxSize(16, 16));
+//	wxArrayString chcs;
+//	wxChoice *cbScope = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(200, -1), chcs);
+//	tb->AddControl(cbScope);
+//
+//	wxChoice *cbFunc = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(600, -1), chcs);
+//	tb->AddControl(cbFunc);
+//	
+//	tb->Realize();
+//	info = wxAuiPaneInfo();
+//	
+//	m_mgr.AddPane(tb, info.Name(wxT("Navigation Toolbar")).LeftDockable(false).RightDockable(false).Caption(wxT("Navigation Toolbar")).ToolbarPane().Top().Row(2));
+//	m_mainBook = new MainBook(cbFunc, cbScope);
 }
 
 void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -1013,7 +993,8 @@ void Frame::OnClose(wxCloseEvent& event)
 
 	SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);
 	EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
-
+	EditorConfigST::Get()->SaveLongValue(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
+	
 	//save the 'find and replace' information
 	if (m_findInFilesDlg) {
 		EditorConfigST::Get()->WriteObject(wxT("FindInFilesData"), &(m_findInFilesDlg->GetData()));
@@ -2999,4 +2980,14 @@ void Frame::OnHighlightWord(wxCommandEvent& event)
 		}
 		EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 0);
 	}
+}
+
+void Frame::OnShowNavBar(wxCommandEvent& e)
+{
+	m_mainBook->ShowNavBar(e.IsChecked());
+}
+
+void Frame::OnShowNavBarUI(wxUpdateUIEvent& e)
+{
+	e.Check( m_mainBook->IsNavBarShown() );
 }

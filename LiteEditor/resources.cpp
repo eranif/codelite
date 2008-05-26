@@ -37,7 +37,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_all.h>
 
-#if wxCHECK_VERSION(2,8,5) && wxABI_VERSION >= 20805
+#if 0//wxCHECK_VERSION(2,8,5) && wxABI_VERSION >= 20805
     #define XRC_ADD_FILE(name, data, size, mime) \
         wxMemoryFSHandler::AddFileWithMimeType(name, data, size, mime)
 #else

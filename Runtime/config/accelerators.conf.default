@@ -29,11 +29,11 @@ view_welcome_page_at_startup|View|Load Welcome Page at Startup|
 output_pane|View|Output Pane|Ctrl-Alt-O
 workspace_pane|View|Workspace Pane|Ctrl-Alt-W
 debugger_pane|View|Debugger Pane|Ctrl-Alt-D
+show_nav_toolbar|View|Navigation Bar|Ctrl-Alt-N
 show_std_toolbar|View::Toolbars|Standard ToolBar|
 show_search_toolbar|View::Toolbars|Search ToolBar|
 show_build_toolbar|View::Toolbars|Build ToolBar|
 show_debug_toolbar|View::Toolbars|Debug ToolBar|
-show_nav_toolbar|View::Toolbars|Navigation ToolBar|
 toggle_panes|View|Toggle All Panes|Ctrl-M
 23500|View::View As|C++|
 23501|View::View As|Diff|

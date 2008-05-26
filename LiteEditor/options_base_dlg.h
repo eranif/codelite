@@ -104,6 +104,7 @@ protected:
 	wxSpinCtrl* m_spinCtrlTabWidth;
 	wxColourPickerCtrl *m_caretLineColourPicker;
 	wxColourPickerCtrl *m_wordHighlightColour;
+	wxChoice* m_fileFontEncoding;
 	
 private:
 	wxPanel *CreateSyntaxHighlightPage();

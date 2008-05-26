@@ -30,7 +30,6 @@
 #include "dirtraverser.h"
 #include <wx/ffile.h>
 
-extern const wxChar *SvnRevision;
 //-------------------------------------------------------------------------------------------
 SimpleLongValue::SimpleLongValue()
 {
@@ -70,6 +69,9 @@ void SimpleStringValue::DeSerialize(Archive &arch)
 }
 
 //-------------------------------------------------------------------------------------------
+
+wxString EditorConfig::m_svnRevision;
+
 EditorConfig::EditorConfig()
 {
 	m_doc = new wxXmlDocument();
@@ -97,7 +99,7 @@ bool EditorConfig::Load()
 			wxFFile file(m_fileName.GetFullPath(), wxT("a"));
 			wxString content;
 			content << wxT("<LiteEditor Revision=\"")
-			<< SvnRevision
+			<< m_svnRevision
 			<< wxT("\">")
 			<< wxT("</LiteEditor>");
 

@@ -90,11 +90,13 @@ class EditorConfig : public IConfigTool
 	wxXmlDocument* m_doc;
 	wxFileName m_fileName; 
 	std::map<wxString, LexerConfPtr> m_lexers;
-
+	static wxString m_svnRevision;
+	
 public:
 
 	//load lexers again, based on the active theme
 	void LoadLexers();
+	static void Init(const wxChar *revision) { m_svnRevision = revision; }
 	
 public:
 	typedef std::map<wxString, LexerConfPtr>::const_iterator ConstIterator;

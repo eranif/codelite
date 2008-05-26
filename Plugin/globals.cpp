@@ -1,28 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : globals.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : globals.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include <wx/dir.h>
+#include <wx/dir.h>
+#include "editor_config.h"
 #include "workspace.h"
 #include "project.h"
 #include "wx/tokenzr.h"
@@ -34,6 +35,27 @@
 #include "procutils.h"
 
 static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &fileName);
+
+static bool ReadFile8BitData(const char *file_name, wxString &content)
+{
+	content.Empty();
+	
+	FILE *fp = fopen(file_name, "rb");
+	if ( fp ) {
+		struct stat buff;
+		if ( stat(file_name, &buff) == 0 ) {
+			size_t size = buff.st_size;
+			char *buffer = new char[size+1];
+			if ( fread(buffer, sizeof(char), size, fp) == size ) {
+				buffer[size] = 0;
+				content = wxString::From8BitData(buffer);
+			}
+			delete [] buffer;
+		}
+		fclose(fp);
+	} // From8BitData
+	return content.IsEmpty() == false;
+}
 
 void SendCmdEvent(int eventId, void *clientData)
 {
@@ -79,26 +101,23 @@ bool ReadFileWithConversion(const wxString &fileName, wxString &content)
 	wxFFile file(fileName, wxT("rb"));
 
 	if (file.IsOpened()) {
-		// first try the Utf8
-		file.ReadAll(&content, wxConvUTF8);
+
+		// first try the user defined encoding
+		wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+		file.ReadAll(&content, fontEncConv);
+		
 		if (content.IsEmpty()) {
-			// try local 8 bit data
-			const wxCharBuffer name = _C(fileName);
-			FILE *fp = fopen(name.data(), "rb");
-			if ( fp ) {
-				struct stat buff;
-				if ( stat(name.data(), &buff) == 0 ) {
-					size_t size = buff.st_size;
-					char *buffer = new char[size+1];
-					if ( fread(buffer, sizeof(char), size, fp) == size ) {
-						buffer[size] = 0;
-						content = wxString::From8BitData(buffer);
-					}
-					delete [] buffer;
-				}
-				fclose(fp);
-			}
-		}
+			
+			// now try the Utf8
+			file.ReadAll(&content, wxConvUTF8);
+			if (content.IsEmpty()) {
+				
+				// try local 8 bit data
+				const wxCharBuffer name = _C(fileName);
+				ReadFile8BitData(name.data(), content);
+				
+			} // UTF8
+		} // user encoding
 		return content.IsEmpty() == false;
 	} else {
 		return false;
@@ -250,7 +269,7 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
 
 	//call the environment & workspace variables expand function
-	if( workspace ) {
+	if ( workspace ) {
 		output = workspace->ExpandVariables(output);
 	}
 	return output;

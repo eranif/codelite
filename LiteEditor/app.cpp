@@ -212,6 +212,8 @@ bool App::OnInit()
 	}
 
 	ManagerST::Get()->SetInstallDir( homeDir );
+	EditorConfig::Init( SvnRevision );
+	
 #endif
 
 	wxString curdir = wxGetCwd();

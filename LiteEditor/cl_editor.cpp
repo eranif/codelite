@@ -586,10 +586,12 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 		wxMessageBox( msg );
 		return false;
 	}
-
-	file.Write(GetText());
+	
+	// save the file using the user's defined encoding
+	wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+	file.Write(GetText(), fontEncConv);
 	file.Close();
-
+	
 	//update the modification time of the file
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
 	SetSavePoint();

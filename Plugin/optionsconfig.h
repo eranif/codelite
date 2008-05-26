@@ -22,13 +22,16 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef OPTIONS_CONFIG_H
+
+#ifndef OPTIONS_CONFIG_H
 #define OPTIONS_CONFIG_H
 
 #include "wx/string.h"
 #include "wx/xml/xml.h"
 #include "wx/colour.h"
+#include "wx/font.h"
 #include "configuration_object.h"
+
 #ifdef WXMAKINGDLL_LE_SDK
 #    define WXDLLIMPEXP_LE_SDK WXEXPORT
 #elif defined(WXUSINGDLL_LE_SDK)
@@ -53,6 +56,7 @@ class WXDLLIMPEXP_LE_SDK OptionsConfig : public ConfObject
 	wxColour m_caretColour;
 	bool	m_indentUsesTabs;
 	int		m_iconsSize;
+	wxFontEncoding m_fileFontEncoding;
 	
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -92,6 +96,9 @@ public:
 	
 	void SetIconsSize(const int& iconsSize) {this->m_iconsSize = iconsSize;}
 	const int& GetIconsSize() const {return m_iconsSize;}
+	
+	void SetFileFontEncoding(const wxString& strFileFontEncoding);
+	wxFontEncoding GetFileFontEncoding() const {return m_fileFontEncoding;}
 	
 	/**
 	 * Return an XML representation of this object

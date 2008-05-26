@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : options_base_dlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : options_base_dlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Feb  1 2007)
 // http://www.wxformbuilder.org/
 //
@@ -30,6 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
+#include <wx/fontmap.h>
 
 #ifdef __BORLANDC__
 #pragma hdrstop
@@ -196,6 +197,31 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 		m_iconSize->SetSelection(1);
 	}
 
+	// file font encoding
+	wxBoxSizer *hsEnc = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *txtEnc = new wxStaticText( m_general, wxID_ANY, wxT("File font encoding"), wxDefaultPosition, wxDefaultSize, 0 );
+	hsEnc->Add(txtEnc, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+
+	wxArrayString astrEncodings;
+	wxFontEncoding fontEnc;
+	int iCurrSelId = 0;
+	size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
+	for (size_t i = 0; i < iEncCnt; i++) {
+		fontEnc = wxFontMapper::GetEncoding(i);
+		if (wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
+			continue;
+		}
+		astrEncodings.Add(wxFontMapper::GetEncodingName(fontEnc));
+		if (fontEnc == options->GetFileFontEncoding()) {
+			iCurrSelId = i;
+		}
+	}
+	m_fileFontEncoding = new wxChoice( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, astrEncodings, 0 );
+	m_fileFontEncoding->SetSelection(iCurrSelId);
+	hsEnc->Add( m_fileFontEncoding, 1, wxALL|wxEXPAND, 5 );
+
+	bszier->Add( hsEnc, 0, wxEXPAND);
+
 	//set some colour pickers
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *txt = new wxStaticText(m_general, wxID_ANY, wxT("Select the caret line background colour:"));
@@ -219,7 +245,7 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 	EditorConfigST::Get()->GetLongValue(wxT("EditorTabWidth"), value);
 	m_spinCtrlTabWidth->SetValue(value);
 
-	bszier->Add(hs1, 0, wxEXPAND|wxALL, 5);
+	bszier->Add(hs1, 0, wxEXPAND);
 
 	line = new wxStaticLine( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bszier->Add(line, 0, wxEXPAND);
@@ -323,10 +349,10 @@ void OptionsDlg::SaveChanges()
 
 	// save it to configuration file
 	EditorConfigST::Get()->SaveLongValue(wxT("EditorTabWidth"), value);
-	
+
 	// save the WordHighlightColour value
 	EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_wordHighlightColour->GetColour().GetAsString());
-		
+
 	//check to see of the icon size was modified
 	int oldIconSize(24);
 	OptionsConfigPtr oldOptions = EditorConfigST::Get()->GetOptions();
@@ -384,18 +410,18 @@ wxPanel* OptionsDlg::CreateBookmarksPage()
 
 	m_fgColourPicker = new wxColourPickerCtrl( page, wxID_ANY, options->GetBookmarkFgColour(), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
 	gSizer1->Add( m_fgColourPicker, 0, wxALIGN_RIGHT|wxALL, 5 );
-	
+
 	wxStaticText *t1 = new wxStaticText( page, wxID_ANY, wxT("Select word highlight colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( t1, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	wxColour col1(wxT("BLUE"));
 	wxString val1 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
-	if(val1.IsEmpty() == false) {
+	if (val1.IsEmpty() == false) {
 		col1 = wxColour(val1);
 	}
 	m_wordHighlightColour = new wxColourPickerCtrl(page, wxID_ANY, col1, wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
 	gSizer1->Add( m_wordHighlightColour, 0, wxALIGN_RIGHT|wxALL, 5 );
-	
+
 	sz->Add( gSizer1, 0, wxEXPAND|wxALL, 5 );
 
 	return page;

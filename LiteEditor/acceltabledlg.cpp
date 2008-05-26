@@ -67,8 +67,12 @@ AccelTableDlg::AccelTableDlg( wxWindow* parent )
 	m_listCtrl1->InsertColumn(1, wxT("Menu"));
 	m_listCtrl1->InsertColumn(2, wxT("Action"));
 	m_listCtrl1->InsertColumn(3, wxT("Accelerator"));
-
+	
 	PopulateTable();
+	
+	// center the dialog
+	Centre();
+	
 	m_listCtrl1->SetFocus();
 }
 

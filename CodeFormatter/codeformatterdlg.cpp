@@ -37,8 +37,14 @@ CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, size_t 
 	// Initialise dialog
 	m_textCtrlPreview->SetValue(m_sampleCode);
 	InitDialog();
+	
+	// center the dialog
+	Centre();
+	
 	GetSizer()->Fit(this);
 	UpdatePreview();
+	
+	m_radioBoxPredefinedStyle->SetFocus();
 }
 
 void CodeFormatterDlg::UpdateCheckBox(wxCheckBox *obj, size_t flag)

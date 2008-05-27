@@ -1383,6 +1383,8 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 		//the only event that reallty interesting us, is the match find
 		if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED || event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
 			m_doingReplaceInFiles = false;
+			GetOutputPane()->GetReplaceResultsTab()->ShowResults();
+			
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
 			//add an entry to the replace panel
 			SearchResultList *res = (SearchResultList*)event.GetClientData();

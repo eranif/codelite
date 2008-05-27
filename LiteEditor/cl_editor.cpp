@@ -22,7 +22,8 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "cl_editor.h"
+
+#include "cl_editor.h"
 #include "jobqueue.h"
 #include "stringhighlighterjob.h"
 #include "job.h"
@@ -1004,7 +1005,7 @@ void LEditor::SetActive()
 	}
 
 	SetFocus();
-//	SetSCIFocus(true);
+	SetSCIFocus(true);
 }
 
 // Popup a Find/Replace dialog

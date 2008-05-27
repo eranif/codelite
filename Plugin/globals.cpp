@@ -336,3 +336,28 @@ void Mkdir(const wxString& path)
 	wxMkDir(path.ToAscii(), 0777);
 #endif
 }
+
+bool WriteFileWithBackup(const wxString &file_name, const wxString &content, bool backup)
+{
+	if (backup) {
+		wxString backup_name(file_name);
+		backup_name << wxT(".bak");
+		if (!wxCopyFile(file_name, backup_name, true)) {
+			wxLogMessage(wxString::Format(wxT("Failed to backup file %s, skipping it"), file_name.c_str()));
+			return false;
+		}
+	}
+
+	wxFFile file(file_name, wxT("wb"));
+	if (file.IsOpened() == false) {
+		// Nothing to be done
+		wxString msg = wxString::Format(wxT("Failed to open file %s"), file_name.c_str());
+		wxLogMessage( msg );
+		return false;
+	}
+
+	// write the new content
+	file.Write(content);
+	file.Close();
+	return true;
+}

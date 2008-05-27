@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : search_thread.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : search_thread.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef SEARCH_THREAD_H
+#ifndef SEARCH_THREAD_H
 #define SEARCH_THREAD_H
 
 #include <deque>
@@ -37,6 +37,8 @@
 #include "stringsearcher.h"
 
 class wxEvtHandler;
+class SearchResult;
+class SearchThread;
 
 //----------------------------------------------------------
 // The searched data class to be passed to the search thread
@@ -46,11 +48,13 @@ class SearchData : public ThreadRequest
 {
 	wxString m_rootDir;
 	wxString m_findString;
-	int m_flags;
+	size_t m_flags;
 	wxString m_validExt;
 	wxArrayString m_files;
 	int m_outputTab;
-
+	
+	friend class SearchThread;
+	
 private:
 	// An internal helper function that set/remove an option bit
 	void SetOption(int option, bool set) {
@@ -167,6 +171,7 @@ class SearchResult : public wxObject
 	wxString m_fileName;
 	int m_len;
 	wxString m_findWhat;
+	size_t m_flags;
 
 public:
 	//ctor-dtor, copy constructor and assignment operator
@@ -181,19 +186,30 @@ public:
 	SearchResult& operator=(const SearchResult &rhs) {
 		if (this == &rhs)
 			return *this;
+			
 		m_column = rhs.m_column;
 		m_lineNumber = rhs.m_lineNumber;
-		m_pattern = rhs.m_pattern;
-		m_fileName = rhs.m_fileName;
+		m_pattern = rhs.m_pattern.c_str();
+		m_fileName = rhs.m_fileName.c_str();
 		m_len = rhs.m_len;
-		m_findWhat = rhs.m_findWhat;
+		m_findWhat = rhs.m_findWhat.c_str();
+		m_flags = rhs.m_flags;
 		return *this;
 	}
 
 	//------------------------------------------------------
 	// Setters/getters
+
+	void SetFlags(const size_t& flags) {
+		this->m_flags = flags;
+	}
+	
+	const size_t& GetFlags() const {
+		return m_flags;
+	}
+
 	void SetPattern(const wxString &pat) {
-		m_pattern = pat;
+		m_pattern = pat.c_str();
 	}
 	void SetLineNumber(const int &line) {
 		m_lineNumber = line;
@@ -202,7 +218,7 @@ public:
 		m_column = col;
 	}
 	void SetFileName(const wxString &fileName) {
-		m_fileName = fileName;
+		m_fileName = fileName.c_str();
 	}
 
 	const int& GetLineNumber() const {
@@ -229,7 +245,7 @@ public:
 
 	//Setters
 	void SetFindWhat(const wxString& findWhat) {
-		this->m_findWhat = findWhat;
+		this->m_findWhat = findWhat.c_str();
 	}
 	//Getters
 	const wxString& GetFindWhat() const {

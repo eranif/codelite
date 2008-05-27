@@ -126,5 +126,14 @@ bool CopyDir(const wxString& src, const wxString& target);
  */
 void Mkdir(const wxString &path);
 
+/**
+ * \brief write file content with optinal backup
+ * \param file_name
+ * \param content
+ * \param backup
+ * \return true on success, false otherwise
+ */
+bool WriteFileWithBackup(const wxString &file_name, const wxString &content, bool backup);
+
 #endif //GLOBALS_H
 

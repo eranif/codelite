@@ -71,6 +71,7 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite "; Workin
 
 [Registry]
 Root: HKCU	; Subkey: "Software\LiteEditor\LiteEditor\"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
+Root: HKCR	; Subkey: "*\shell\Open With CodeLite\command"; ValueType: string; ValueName: ""; ValueData: "{app}\CodeLite.exe %1"
 
 [Code]
 var
@@ -113,5 +114,20 @@ procedure UpdatePath();
 begin
   UpdatePath1();
   UpdatePath2();
+  // add registry entry to the Windows Shell Menu
+  
 end;
 
+// Uninstall
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  case CurUninstallStep of
+    usUninstall:
+      begin
+        RegDeleteKeyIncludingSubkeys(HKCR, '*\shell\Open With CodeLite');
+      end;
+    usPostUninstall:
+      begin
+      end;
+  end;
+end;

@@ -18,3 +18,6 @@
 
 - change the code so that the accelerators.conf.default and codelite.xml.default are loaded from the global data area (/usr/local/share/codelite/config)
 
+- Towards release v1.0: 
+	- Add single instance checker code - make it optional 
+	- 

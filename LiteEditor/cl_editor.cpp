@@ -351,30 +351,17 @@ void LEditor::SetProperties()
 
 	IndicatorSetUnder(1, true);
 	IndicatorSetUnder(2, true);
-
-	IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
-	IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
-
+	
+	
+	
 	wxColour col2(wxT("BLUE"));
 	wxString val2 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
 	if (val2.IsEmpty() == false) {
 		col2 = wxColour(val2);
 	}
 
-#ifdef __WXMSW__
-
 	IndicatorSetForeground(1, options->GetBookmarkBgColour());
 	IndicatorSetForeground(2, col2);
-
-#else // GTK & MAC
-
-	wxColour col;
-	col = DrawingUtils::LightColour(options->GetBookmarkBgColour(), 80);
-	IndicatorSetForeground(1, col);
-
-	col = DrawingUtils::LightColour(col2, 80);
-	IndicatorSetForeground(2, col);
-#endif
 }
 
 void LEditor::SetDirty(bool dirty)

@@ -1,28 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : context_base.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : context_base.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "context_base.h"
+#include "context_base.h"
+#include "drawingutils.h"
 #include <vector>
 #include "editor_config.h"
 #include "cl_editor.h"
@@ -70,6 +71,10 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 	rCtrl.StyleClearAll();
 	rCtrl.SetStyleBits(rCtrl.GetStyleBitsNeeded());
 
+	// by default indicators are set to be opaque rounded box
+	rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
+	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
+
 	std::list<StyleProperty> styles = lexPtr->GetProperties();
 	std::list<StyleProperty>::iterator iter = styles.begin();
 	for (; iter != styles.end(); iter++) {
@@ -77,17 +82,17 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 		int size = st.GetFontSize();
 		wxString face = st.GetFaceName();
 		bool bold = st.IsBold();
-		
+
 		// handle special cases
 		if ( st.GetId() == -1 ) {
 			// fold margin foreground colour
 			rCtrl.SetFoldMarginColour(true, st.GetBgColour());
 			rCtrl.SetFoldMarginHiColour(true, st.GetFgColour());
-		} else if( st.GetId() == -2 ) {
+		} else if ( st.GetId() == -2 ) {
 			// selection colour
 			rCtrl.SetSelForeground(true, st.GetFgColour());
 			rCtrl.SetSelBackground(true, st.GetBgColour());
-		} else if( st.GetId() == -3 ) {
+		} else if ( st.GetId() == -3 ) {
 			// caret colour
 			rCtrl.SetCaretForeground(st.GetFgColour());
 		} else {
@@ -106,6 +111,14 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 				rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, (*iter).GetFontSize());
 				rCtrl.SetFoldMarginColour(true, (*iter).GetBgColour());
 				rCtrl.SetFoldMarginHiColour(true, (*iter).GetBgColour());
+
+				// test the background colour of the editor, if it is considered "dark"
+				// set the indicator to be hollow rectanlgle
+				StyleProperty sp = (*iter);
+				if ( DrawingUtils::IsDark(sp.GetBgColour()) ) {
+					rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_BOX);
+					rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_BOX);
+				}
 			}
 
 			rCtrl.StyleSetFont(st.GetId(), font);

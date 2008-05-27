@@ -196,3 +196,12 @@ void DrawingUtils::DrawHorizontalButton(wxDC& dc, const wxRect& rect, const bool
 
 	dc.SetBrush( *wxTRANSPARENT_BRUSH );
 }
+
+bool DrawingUtils::IsDark(const wxColour& color)
+{
+	int evg = (color.Red() + color.Green() + color.Blue())/3;
+	if(evg < 127)
+		return true;
+
+	return false;
+}

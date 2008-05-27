@@ -16,8 +16,5 @@
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
 
-- refactor the 'Replace in files' to work using the new class StringFindReplacer
-
-
 - change the code so that the accelerators.conf.default and codelite.xml.default are loaded from the global data area (/usr/local/share/codelite/config)
 

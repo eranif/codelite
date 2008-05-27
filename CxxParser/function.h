@@ -16,6 +16,7 @@ public:
 	int 			m_lineno;
 	bool 			m_isVirtual;
 	bool 			m_isPureVirtual;
+	bool 			m_isConst;
 	
 public:
 	clFunction();

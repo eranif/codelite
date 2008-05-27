@@ -35,9 +35,9 @@ int main()
 	
 	//print the scope name
 	//testScopeParser(buf);
-	testVarParser(buf);
+	//testVarParser(buf);
 	//testExprParser(buf);
-	//testFuncParser(buf);
+	testFuncParser(buf);
 	free(buf);
 }
 
@@ -53,7 +53,7 @@ void testFuncParser(char *buf)
 	for (FunctionList::iterator iter = li.begin(); iter != li.end(); iter++) {
 		//test the var parser on the function argument list:
 		clFunction f = (*iter);
-		//f.Print();
+		f.Print();
 		//testVarParser((char*)f.m_signature.c_str());
 		printf("%s\n", f.m_name.c_str());
 	}

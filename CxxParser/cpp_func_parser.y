@@ -195,6 +195,7 @@ function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec va
 						$6.erase($6.find_last_not_of(":")+1);
 						curr_func.m_isVirtual = $3.find("virtual") != std::string::npos;
 						curr_func.m_isPureVirtual = $12.find("=") != std::string::npos;
+						curr_func.m_isConst = $10.find("const") != std::string::npos;
 						curr_func.m_name = $7;
 						curr_func.m_scope = $6;
 						curr_func.m_retrunValusConst = $4;

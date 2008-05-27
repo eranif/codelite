@@ -778,6 +778,7 @@ case 62:
 						yyvsp[-7].erase(yyvsp[-7].find_last_not_of(":")+1);
 						curr_func.m_isVirtual = yyvsp[-10].find("virtual") != std::string::npos;
 						curr_func.m_isPureVirtual = yyvsp[-1].find("=") != std::string::npos;
+						curr_func.m_isConst = yyvsp[-3].find("const") != std::string::npos;
 						curr_func.m_name = yyvsp[-6];
 						curr_func.m_scope = yyvsp[-7];
 						curr_func.m_retrunValusConst = yyvsp[-9];

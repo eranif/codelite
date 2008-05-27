@@ -1,28 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : cpp_func_parser.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
- #ifndef lint
+#ifndef lint
 static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #endif
 #define YYBYACC 1
@@ -802,6 +778,7 @@ case 62:
 						yyvsp[-7].erase(yyvsp[-7].find_last_not_of(":")+1);
 						curr_func.m_isVirtual = yyvsp[-10].find("virtual") != std::string::npos;
 						curr_func.m_isPureVirtual = yyvsp[-1].find("=") != std::string::npos;
+						curr_func.m_isConst = yyvsp[-3].find("const") != std::string::npos;
 						curr_func.m_name = yyvsp[-6];
 						curr_func.m_scope = yyvsp[-7];
 						curr_func.m_retrunValusConst = yyvsp[-9];

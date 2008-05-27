@@ -1923,7 +1923,9 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 	} else {
 		body << tag->GetName() << tag->GetSignature();
 	}
-
+	
+	if ( foo.m_isConst ) {body << wxT(" const");}
+	
 	if (impl) {
 		body << wxT("\n{\n}\n");
 	} else {

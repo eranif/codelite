@@ -352,9 +352,7 @@ void LEditor::SetProperties()
 	IndicatorSetUnder(1, true);
 	IndicatorSetUnder(2, true);
 	
-	
-	
-	wxColour col2(wxT("BLUE"));
+	wxColour col2(wxT("LIGHT BLUE"));
 	wxString val2 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
 	if (val2.IsEmpty() == false) {
 		col2 = wxColour(val2);

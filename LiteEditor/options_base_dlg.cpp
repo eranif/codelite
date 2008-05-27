@@ -414,7 +414,7 @@ wxPanel* OptionsDlg::CreateBookmarksPage()
 	wxStaticText *t1 = new wxStaticText( page, wxID_ANY, wxT("Select word highlight colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( t1, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	wxColour col1(wxT("BLUE"));
+	wxColour col1(wxT("LIGHT BLUE"));
 	wxString val1 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
 	if (val1.IsEmpty() == false) {
 		col1 = wxColour(val1);

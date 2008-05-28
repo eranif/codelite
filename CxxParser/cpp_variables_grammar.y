@@ -98,19 +98,24 @@ extern void cl_scope_lex_clean();
 
 %%
 /* Costants */
-basic_type_name:
-        LE_INT				{ $$ = $1; }
-        | LE_CHAR			{ $$ = $1; }
-        | LE_SHORT		{ $$ = $1; }
-        | LE_LONG			{ $$ = $1; }
-        | LE_FLOAT		{ $$ = $1; }
-        | LE_DOUBLE		{ $$ = $1; }
-        | LE_SIGNED		{ $$ = $1; }
-        | LE_UNSIGNED	{ $$ = $1; }
-        | LE_VOID			{ $$ = $1; }
-        ;
+basic_type_name_inter:    LE_INT			{ $$ = $1; }
+				| 	LE_CHAR			{ $$ = $1; }
+				| 	LE_SHORT		{ $$ = $1; }
+				| 	LE_LONG			{ $$ = $1; }
+				| 	LE_FLOAT		{ $$ = $1; }
+				| 	LE_DOUBLE		{ $$ = $1; }
+				| 	LE_SIGNED		{ $$ = $1; }
+				| 	LE_UNSIGNED		{ $$ = $1; }
+				| 	LE_VOID			{ $$ = $1; }
+				;
 	
-
+basic_type_name:	LE_UNSIGNED basic_type_name_inter 	{ $$ = $1 + " " + $2; }
+				|	LE_SIGNED basic_type_name_inter 	{ $$ = $1 + " " + $2; }
+				|	LE_LONG LE_LONG 					{ $$ = $1 + " " + $2; }
+				|	LE_LONG LE_INT 						{ $$ = $1 + " " + $2; }
+				|	basic_type_name_inter 			  	{ $$ = $1; }
+				;
+				
 /* ========================================================================*/
 /* find declarations													   */
 /* ========================================================================*/

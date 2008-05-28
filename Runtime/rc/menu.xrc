@@ -507,6 +507,10 @@
             <label>Comment Line</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="retag_file">
+            <label>Re-Tag File</label>
+        </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="wxID_UNDO">
             <label>Undo</label>
         </object>
@@ -523,8 +527,11 @@
         <object class="wxMenuItem" name="wxID_PASTE">
             <label>Paste</label>
         </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="wxID_SELECTALL">
+            <label>Select All</label>
+        </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-
 		<object class="wxMenuItem" name="toggle_bookmark">
             <label>Toggle Bookmark</label>
         </object>

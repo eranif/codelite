@@ -338,7 +338,9 @@ void OptionsDlg::SaveChanges()
 		iconSize = 16;
 	}
 	options->SetIconsSize(iconSize);
-
+	// save file font encoding
+	options->SetFileFontEncoding(m_fileFontEncoding->GetStringSelection());
+	
 	// save the tab width
 	int value = m_spinCtrlTabWidth->GetValue();
 

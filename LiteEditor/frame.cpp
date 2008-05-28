@@ -300,6 +300,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("setters_getters"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_include_file"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("rename_function"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("retag_file"), Frame::OnCppContextMenu)
 	
 	EVT_MENU(XRCID("show_nav_toolbar"), Frame::OnShowNavBar)
 	EVT_UPDATE_UI(XRCID("show_nav_toolbar"), Frame::OnShowNavBarUI)

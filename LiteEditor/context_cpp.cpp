@@ -25,6 +25,7 @@
 
 
 #include "precompiled_header.h"
+#include "parse_thread.h"
 #include "cc_box.h"
 #include <wx/progdlg.h>
 #include "renamesymboldlg.h"
@@ -147,6 +148,7 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 	EVT_MENU(XRCID("setters_getters"), ContextCpp::OnGenerateSettersGetters)
 	EVT_MENU(XRCID("add_include_file"), ContextCpp::OnAddIncludeFile)
 	EVT_MENU(XRCID("rename_function"), ContextCpp::OnRenameFunction)
+	EVT_MENU(XRCID("retag_file"), ContextCpp::OnRetagFile)
 END_EVENT_TABLE()
 
 ContextCpp::ContextCpp(LEditor *container)
@@ -1689,11 +1691,11 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 		wxMessageBox(wxT("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + wxT(")"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
 	}
-	
+
 	// get map of all unimlpemented methods
 	std::map<wxString, TagEntryPtr> protos;
 	TagsManagerST::Get()->GetUnImplementedFunctions( scopeName, protos );
-	
+
 	// the map now consist only with functions without implementation
 	// create body for all of those functions
 	//create the functions body
@@ -2276,3 +2278,37 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 //		delete result;
 //	}
 //}
+
+void ContextCpp::OnRetagFile(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	RetagFile();
+}
+
+void ContextCpp::RetagFile()
+{
+	//-------------------------------------------------------------------
+	// Using the CodeParser library, enforces us to notify the parsing
+	// thread once the file is saved. ctags accepts file name, so we
+	// notify him once the file on the disk is changed, there is no
+	// point in notifying the parsing thread on, for example, OnCharAdded
+	// event, since the actual file on the disk was not modified
+	//-------------------------------------------------------------------
+	LEditor &ctrl = GetCtrl();
+	ParseRequest *req = new ParseRequest();
+	// Put a request on the parsing thread to update the GUI tree for this file
+	wxFileName fn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
+	req->setDbFile(fn.GetFullPath());
+
+	// Construct an absolute file name for ctags
+	wxFileName absFile( ctrl.GetFileName() );
+	absFile.MakeAbsolute();
+	req->setFile(absFile.GetFullPath());
+
+	//the previous call 'stole' the focus from us...
+	ParseThreadST::Get()->Add(req);
+	
+	
+	ctrl.UpdateColours();
+	ctrl.SetActive();
+}

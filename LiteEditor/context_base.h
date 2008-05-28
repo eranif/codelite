@@ -95,6 +95,7 @@ public:
 	virtual void OnSciUpdateUI(wxScintillaEvent& WXUNUSED(event)){}
 	virtual void OnFileSaved(){};
 	virtual void OnEnterHit(){};
+	virtual void RetagFile(){}
 	
 	//override this method if you wish to provide context based right click menu
 	virtual wxMenu *GetMenu() {return NULL;}

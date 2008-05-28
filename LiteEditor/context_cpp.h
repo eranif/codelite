@@ -98,6 +98,7 @@ public:
 	virtual void AddMenuDynamicContent(wxMenu *menu);
 	virtual void RemoveMenuDynamicContent(wxMenu *menu);
 	virtual void ApplySettings();
+	virtual void RetagFile();
 	
 	//override swapfiles features
 	virtual void SwapFiles(const wxFileName &fileName);
@@ -130,6 +131,7 @@ public:
 	virtual void OnAddImpl(wxCommandEvent &e);
 	virtual void OnAddMultiImpl(wxCommandEvent &e);
 	virtual void OnRenameFunction(wxCommandEvent &e);
+	virtual void OnRetagFile(wxCommandEvent &e);
 	
 	DECLARE_EVENT_TABLE();
 private:
@@ -144,6 +146,7 @@ private:
 	void PrependMenuItem(wxMenu* menu, const wxString &text, int id);
 	void PrependMenuItemSeparator(wxMenu* menu);
 	int FindLineToAddInclude();
+	
 	
 	/**
 	 * \brief try to find a swapped file for this rhs. The logic is based on the C++ coding conventions

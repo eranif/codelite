@@ -2311,4 +2311,8 @@ void ContextCpp::RetagFile()
 	
 	ctrl.UpdateColours();
 	ctrl.SetActive();
+	
+	wxString msg;
+	msg << wxT("Re-Tagged file: ") << absFile.GetFullName();
+	Frame::Get()->GetStatusBar()->SetStatusText(msg, 4);
 }

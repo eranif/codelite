@@ -119,3 +119,4 @@ comment_line|C++|Comment Line|Ctrl-Shift-P
 add_include_file|C++|Add Include File|Ctrl-Shift-I
 insert_breakpoint|C++|Toggle Breakpoint|F9
 toggle_bookmark|C++|Toggle Bookmark|Ctrl-B
+retag_file|C++|Re-Tag File|Ctrl-Shift-G

@@ -23,7 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "precompiled_header.h"
-#include "refactorindexbuildjob.h"
+#include "refactorindexbuildjob.h" 
 #include "customstatusbar.h"
 #include "jobqueue.h"
 #include "threebuttondlg.h"
@@ -374,7 +374,7 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	//start the editor creator thread
 	EditorCreatorST::Get()->SetParent(GetNotebook());
 	m_timer = new wxTimer(this, FrameTimerId);
-	m_timer->Start(100);
+	m_timer->Start(1000);
 }
 
 Frame::~Frame(void)
@@ -561,7 +561,7 @@ void Frame::CreateGUIControls(void)
 	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
 //	wxStatusBar* statusBar = new CustomStatusBar(this, wxID_ANY);
 	SetStatusBar(statusBar);
-	GetStatusBar()->SetFieldsCount(4);
+	GetStatusBar()->SetFieldsCount(5);
 
 	GetStatusBar()->SetStatusText(wxT("Ready"));
 
@@ -1936,6 +1936,9 @@ void Frame::OnTimer(wxTimerEvent &event)
 	if (GetNotebook()->GetPageCount() == 0) {
 		NavMgr::Get()->Clear();
 	}
+	
+	// clear status message 
+	GetStatusBar()->SetStatusText(wxEmptyString, 4);
 	event.Skip();
 }
 

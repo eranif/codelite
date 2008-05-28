@@ -15,4 +15,5 @@
 //std::map<wxString, std::vector>
 //void ~MyClass(){};
 //std::map<wxString, std::list<CppToken>* > m_matches;
-const bool &is_ok() const;
+//const bool &is_ok() const;
+void ~MyClass();

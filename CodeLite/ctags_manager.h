@@ -266,13 +266,6 @@ public:
 #endif
 
 	/**
-	 * Set the event handler to handle notifications of tree changes. 
-	 * This is usually the SymbolTree class (or its derived classes).
-	 * \param evtHandler 
-	 */
-	void SetEventHandler(wxEvtHandler* evtHandler);
-
-	/**
 	 * Test if filename matches the current ctags file spec.
 	 * \param filename file name to test
 	 * \return true if the file name extension matches the current running ctags file spec
@@ -661,6 +654,7 @@ public:
 	 */
 	wxString NormalizeFunctionSig(const wxString &sig, bool includeVarNames = false);
 	
+	void GetUnImplementedFunctions(const wxString &scopeName, std::map<wxString, TagEntryPtr> &protos);
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
 

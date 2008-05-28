@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : context_cpp.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : context_cpp.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -96,7 +96,7 @@ struct RefactorSource {
 	wxString name;
 	wxString scope;
 	bool isClass;
-	
+
 	RefactorSource() : name(wxEmptyString), scope(wxEmptyString), isClass(false) {
 	}
 
@@ -1420,10 +1420,10 @@ void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)
 void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
 {
 	wxUnusedVar(event);
-	if( !Frame::Get()->GetMainBook()->IsNavBarShown() ) {
+	if ( !Frame::Get()->GetMainBook()->IsNavBarShown() ) {
 		return;
 	}
-	
+
 	LEditor &ctrl = GetCtrl();
 
 	static long lastPos(wxNOT_FOUND);
@@ -1435,10 +1435,10 @@ void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
 		lastPos = curpos;
 		//position has changed, compare line numbers
 		if (ctrl.LineFromPosition(curpos) != lastLine) {
-			
+
 			lastLine = ctrl.LineFromPosition(curpos);
 			Frame::Get()->GetMainBook()->UpdateScope( TagsManagerST::Get()->FunctionFromFileLine(ctrl.GetFileName(), lastLine+1) );
-			
+
 		}
 	}
 }
@@ -1689,39 +1689,11 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 		wxMessageBox(wxT("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + wxT(")"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
 	}
-
-	//get list of all prototype functions from the database
-	std::vector< TagEntryPtr > vproto;
-	std::vector< TagEntryPtr > vimpl;
-
-	//currently we want to add implementation only for workspace classes
-	TagsManagerST::Get()->TagsByScope(scopeName, wxT("prototype"), vproto, true, true);
-	TagsManagerST::Get()->TagsByScope(scopeName, wxT("function"), vimpl, true, true);
-
-	//filter out functions which already has implementation
+	
+	// get map of all unimlpemented methods
 	std::map<wxString, TagEntryPtr> protos;
-	for ( size_t i=0; i < vproto.size() ; i++ ) {
-		TagEntryPtr tag = vproto.at(i);
-		wxString key = tag->GetName();
-
-		//override the scope to be our scope...
-		tag->SetScope( scopeName );
-
-		key << TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature() );
-		protos[key] = tag;
-	}
-
-	//remove from the map all the functions that already has a body
-	for ( size_t i=0; i < vimpl.size() ; i++ ) {
-		TagEntryPtr tag = vimpl.at(i);
-		wxString key = tag->GetName();
-		key << TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature() );
-		std::map<wxString, TagEntryPtr>::iterator iter = protos.find(key);
-		if ( iter != protos.end() ) {
-			protos.erase( iter );
-		}
-	}
-
+	TagsManagerST::Get()->GetUnImplementedFunctions( scopeName, protos );
+	
 	// the map now consist only with functions without implementation
 	// create body for all of those functions
 	//create the functions body
@@ -2084,17 +2056,17 @@ bool ContextCpp::IsComment(long pos)
 void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 {
 	VALIDATE_WORKSPACE();
-	
+
 	// make sure there are no un-saved files before refactoring
 	Notebook *book = Frame::Get()->GetNotebook();
-	for(size_t i=0; i<book->GetPageCount(); i++){
+	for (size_t i=0; i<book->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(book->GetPage(i));
-		if(editor && editor->GetModify()) {
+		if (editor && editor->GetModify()) {
 			wxMessageBox(wxT("Please save on all un-saved files before refactoring"));
 			return;
 		}
 	}
-	
+
 	LEditor &rCtrl = GetCtrl();
 	CppTokensMap l;
 
@@ -2124,10 +2096,10 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	// incase no tokens were found (possibly cause of user pressing cancel
 	// abort this operation
 	l.findTokens(word, tokens);
-	if(tokens.empty()){
+	if (tokens.empty()) {
 		return;
 	}
-	
+
 	wxString msg;
 	msg << wxT("Found ") << tokens.size() << wxT(" instances of ") << word;
 	wxLogMessage(msg);
@@ -2139,31 +2111,31 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	RefactorSource target;
 	std::list<CppToken> candidates;
 	std::list<CppToken> possibleCandidates;
-	
+
 	wxProgressDialog* prgDlg = new wxProgressDialog (wxT("Parsing matches..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)tokens.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT);
 	prgDlg->GetSizer()->Fit(prgDlg);
 	prgDlg->Layout();
 	prgDlg->Centre();
-	
+
 	std::list<CppToken>::iterator iter = tokens.begin();
 	int counter(0);
 	for (; iter != tokens.end(); iter++) {
 		CppToken token = *iter;
 		editor->Create(wxEmptyString, token.getFilename());
 		token.setLine( editor->GetLine( editor->LineFromPosition( (int)token.getOffset() ) ) );
-		
+
 		wxString msg;
 		wxFileName f(token.getFilename());
 		msg << wxT("Parsing expression ") << counter << wxT("/") << tokens.size() << wxT(" in file: ") << f.GetFullName();
-		if( !prgDlg->Update(counter, msg) ){
+		if ( !prgDlg->Update(counter, msg) ) {
 			// user clicked 'Cancel'
 			prgDlg->Destroy();
 			editor->Destroy();
 			return;
 		}
-		
+
 		counter++;
-		
+
 		// reset the result
 		target.Reset();
 		if (ResolveWord(editor, token.getOffset(), word, &target)) {
@@ -2171,10 +2143,10 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 			if (target.name == source.name && target.scope == source.scope) {
 				// full match
 				candidates.push_back( token );
-			} else if (target.name == source.scope && !source.isClass) { 
+			} else if (target.name == source.scope && !source.isClass) {
 				// source is function, and target is class
 				candidates.push_back( token );
-			} else if (target.name == source.name && source.isClass) { 
+			} else if (target.name == source.name && source.isClass) {
 				// source is class, and target is ctor
 				candidates.push_back( token );
 			} else {
@@ -2186,17 +2158,17 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 			possibleCandidates.push_back( token );
 		}
 	}
-	
+
 	editor->Destroy();
 	prgDlg->Destroy();
-	
+
 	// display the refactor dialog
 	RenameSymbol *dlg = new RenameSymbol(&rCtrl, candidates, possibleCandidates);
-	if(dlg->ShowModal() == wxID_OK){
+	if (dlg->ShowModal() == wxID_OK) {
 		std::list<CppToken> matches;
-		
+
 		dlg->GetMatches( matches );
-		if(matches.empty() == false) {
+		if (matches.empty() == false) {
 			ManagerST::Get()->ReplaceInFiles(dlg->GetWord(), matches);
 		}
 	}
@@ -2213,7 +2185,7 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 	//Optimize the text for large files
 	int line = ctrl->LineFromPosition(pos)+1;
 	wxString text = ctrl->GetTextRange(0, pos + word.Len());
-	
+
 	// we simply collect declarations & implementations
 
 	//try implemetation first
@@ -2226,14 +2198,14 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 			TagEntryPtr tag = tags.at(i);
 			// find first non class/struct tag
 			if (tag->GetKind() != wxT("class") && tag->GetKind() != wxT("struct")) {
-				
+
 				// if there is no match, add it anyways
 				if (!found) {
 					rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
 					rs->name = tag->GetName();
 					rs->scope = tag->GetScope();
 					found = true;
-				}else if(rs->scope == wxT("<global>") && rs->isClass == false) {
+				} else if (rs->scope == wxT("<global>") && rs->isClass == false) {
 					// give predecense to <global> variables
 					rs->isClass = (tag->GetKind() == wxT("class") ||tag->GetKind() == wxT("struct"));
 					rs->name = tag->GetName();
@@ -2280,7 +2252,7 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 		}
 		return true;
 	}
-	
+
 	// if we got so far, CC failed to parse the expression
 	return false;
 }
@@ -2291,10 +2263,10 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 //	ScopeJobResult *result = reinterpret_cast<ScopeJobResult*>(e.GetClientData());
 //	if( result ) {
 //		LEditor &ctrl = GetCtrl();
-//		
+//
 //		// do we still need to update?
 //		TagEntryPtr tag( result->tag );
-//		
+//
 //		if(ctrl.GetCurrentLine() == result->last_line) {
 //			// update the scope
 //			Frame::Get()->GetMainBook()->UpdateScope( tag );

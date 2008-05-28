@@ -1059,8 +1059,22 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 			//try a nasty hack:
 			//the yacc cant find ctor declarations
 			//so add a 'void ' infront of the function...
-			wxString pat3(pattern);
-			pat3.Prepend(wxT("void "));
+			wxString pat_tag(pattern);
+			pat_tag = pat_tag.Trim(false).Trim();
+			
+			wxString pat3;
+			
+			// consider virtual methods as well
+			bool virt(false);
+			virt = pat_tag.StartsWith(wxT("virtual"), &pat3);
+			if( virt ) {
+				pat3.Prepend(wxT("void "));
+				pat3.Prepend(wxT("virtual "));
+			} else {
+				pat3 = pat_tag;
+				pat3.Prepend(wxT("void "));
+			}
+						
 			const wxCharBuffer patbuf2 = _C(pat3);
 			get_functions(patbuf2.data(), fooList, ignoreTokens);
 			if (fooList.size() == 1) {

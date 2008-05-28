@@ -2141,3 +2141,65 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarN
 	output << wxT(")");
 	return output;
 }
+
+void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<wxString, TagEntryPtr>& protos)
+{
+	//get list of all prototype functions from the database
+	std::vector< TagEntryPtr > vproto;
+	std::vector< TagEntryPtr > vimpl;
+
+	//currently we want to add implementation only for workspace classes
+	TagsByScope(scopeName, wxT("prototype"), vproto, false, true);
+	TagsByScope(scopeName, wxT("function"), vimpl, false, true);
+
+	//filter out functions which already has implementation
+	for ( size_t i=0; i < vproto.size() ; i++ ) {
+		TagEntryPtr tag = vproto.at(i);
+		wxString key = tag->GetName();
+
+		//override the scope to be our scope...
+		tag->SetScope( scopeName );
+
+		key << NormalizeFunctionSig( tag->GetSignature() );
+		protos[key] = tag;
+	}
+
+	wxArrayString prep = GetCtagsOptions().GetPreprocessor();
+	std::map<std::string, bool> ignoreTokens;
+
+	for (size_t i=0; i< prep.GetCount(); i++) {
+		const wxCharBuffer token = _C(prep.Item(i));
+		ignoreTokens[ token.data() ] = true;
+	}
+
+	// remove functions with implementation
+	for ( size_t i=0; i < vimpl.size() ; i++ ) {
+		TagEntryPtr tag = vimpl.at(i);
+		wxString key = tag->GetName();
+		key << NormalizeFunctionSig( tag->GetSignature() );
+		std::map<wxString, TagEntryPtr>::iterator iter = protos.find(key);
+
+		if ( iter != protos.end() ) {
+			protos.erase( iter );
+		}
+	}
+
+	std::map<wxString, TagEntryPtr> tmpMap( protos );
+	std::map<wxString, TagEntryPtr>::iterator it = tmpMap.begin();
+	protos.clear();
+
+	// collect only non-pure virtual methods
+	for (; it != tmpMap.end() ; it++ ) {
+		TagEntryPtr tag = it->second;
+		clFunction f;
+		if ( GetLanguage()->FunctionFromPattern(tag->GetPattern(), f) ) {
+			if ( !f.m_isPureVirtual ) {
+				// incude this function
+				protos[it->first] = it->second;
+			}
+		} else {
+			// parsing failed
+			protos[it->first] = it->second;
+		}
+	}
+}

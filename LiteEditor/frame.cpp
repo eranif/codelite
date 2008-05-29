@@ -1,29 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : frame.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : frame.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "precompiled_header.h"
-#include "refactorindexbuildjob.h" 
+#include "precompiled_header.h"
+#include "refactorindexbuildjob.h"
 #include "customstatusbar.h"
 #include "jobqueue.h"
 #include "threebuttondlg.h"
@@ -301,10 +301,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("add_include_file"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("rename_function"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("retag_file"), Frame::OnCppContextMenu)
-	
+
 	EVT_MENU(XRCID("show_nav_toolbar"), Frame::OnShowNavBar)
 	EVT_UPDATE_UI(XRCID("show_nav_toolbar"), Frame::OnShowNavBarUI)
-	
+
 	EVT_MENU(XRCID("configure_accelerators"), Frame::OnConfigureAccelerators)
 	EVT_UPDATE_UI(XRCID("save_file"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("complete_word"), Frame::OnCompleteWordUpdateUI)
@@ -408,7 +408,7 @@ void Frame::Initialize(bool loadLastSession)
 	                        wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
 
 	m_theFrame->m_frameGeneralInfo = inf;
-	
+
 	m_theFrame->Maximize(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME ? true : false);
 
 	// upgrade: change all .db files under the startup directory to be
@@ -514,13 +514,13 @@ void Frame::CreateGUIControls(void)
 //
 	m_mainBook = new MainBook(this);
 	m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(true));
-	
+
 	long show_nav(1);
 	EditorConfigST::Get()->GetLongValue(wxT("ShowNavBar"), show_nav);
-	if( !show_nav ) {
+	if ( !show_nav ) {
 		m_mainBook->ShowNavBar( false );
 	}
-	
+
 	// Connect the main notebook events
 	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(Frame::OnPageChanged), NULL, this);
 	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING, NotebookEventHandler(Frame::OnFileClosing), NULL, this);
@@ -782,7 +782,7 @@ void Frame::CreateToolbars24()
 //	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(800, -1), wxTB_FLAT | wxTB_NODIVIDER);
 //	tb->SetToolBitmapSize(wxSize(24, 24));
 //	wxArrayString chcs;
-//	
+//
 //	wxChoice *cbScope = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(200, -1), chcs);
 //	tb->AddControl(cbScope);
 //
@@ -901,10 +901,10 @@ void Frame::CreateToolbars16()
 //
 //	wxChoice *cbFunc = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(600, -1), chcs);
 //	tb->AddControl(cbFunc);
-//	
+//
 //	tb->Realize();
 //	info = wxAuiPaneInfo();
-//	
+//
 //	m_mgr.AddPane(tb, info.Name(wxT("Navigation Toolbar")).LeftDockable(false).RightDockable(false).Caption(wxT("Navigation Toolbar")).ToolbarPane().Top().Row(2));
 //	m_mainBook = new MainBook(cbFunc, cbScope);
 }
@@ -995,7 +995,7 @@ void Frame::OnClose(wxCloseEvent& event)
 	SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);
 	EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
 	EditorConfigST::Get()->SaveLongValue(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
-	
+
 	//save the 'find and replace' information
 	if (m_findInFilesDlg) {
 		EditorConfigST::Get()->WriteObject(wxT("FindInFilesData"), &(m_findInFilesDlg->GetData()));
@@ -1385,7 +1385,7 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 		if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED || event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
 			m_doingReplaceInFiles = false;
 			GetOutputPane()->GetReplaceResultsTab()->ShowResults();
-			
+
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
 			//add an entry to the replace panel
 			SearchResultList *res = (SearchResultList*)event.GetClientData();
@@ -1936,8 +1936,8 @@ void Frame::OnTimer(wxTimerEvent &event)
 	if (GetNotebook()->GetPageCount() == 0) {
 		NavMgr::Get()->Clear();
 	}
-	
-	// clear status message 
+
+	// clear status message
 	GetStatusBar()->SetStatusText(wxEmptyString, 4);
 	event.Skip();
 }
@@ -2709,10 +2709,13 @@ void Frame::OnViewEolCR(wxCommandEvent &e)
 	flags &= ~(CL_USE_EOL_LF);
 	flags &= ~(CL_USE_EOL_CRLF);
 	m_frameGeneralInfo.SetFlags(flags | CL_USE_EOL_CR);
-	
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if (editor) {
-		editor->SetEOLMode(wxSCI_EOL_CR);
+
+
+	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
+		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
+		if (editor) {
+			editor->SetEOLMode(wxSCI_EOL_CR);
+		}
 	}
 }
 
@@ -2723,9 +2726,11 @@ void Frame::OnViewEolLF(wxCommandEvent &e)
 	flags &= ~(CL_USE_EOL_LF);
 	flags &= ~(CL_USE_EOL_CRLF);
 	m_frameGeneralInfo.SetFlags(flags | CL_USE_EOL_LF);
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if (editor) {
-		editor->SetEOLMode(wxSCI_EOL_LF);
+	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
+		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
+		if (editor) {
+			editor->SetEOLMode(wxSCI_EOL_LF);
+		}
 	}
 }
 
@@ -2736,9 +2741,11 @@ void Frame::OnViewEolCRLF(wxCommandEvent &e)
 	flags &= ~(CL_USE_EOL_LF);
 	flags &= ~(CL_USE_EOL_CRLF);
 	m_frameGeneralInfo.SetFlags(flags | CL_USE_EOL_CRLF);
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if (editor) {
-		editor->SetEOLMode(wxSCI_EOL_CRLF);
+	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
+		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
+		if (editor) {
+			editor->SetEOLMode(wxSCI_EOL_CRLF);
+		}
 	}
 }
 

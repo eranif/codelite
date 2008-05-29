@@ -2282,6 +2282,12 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 void ContextCpp::OnRetagFile(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
+	LEditor &ctrl = GetCtrl();
+	if( ctrl.GetModify() ) {
+		wxMessageBox(wxString::Format(wxT("Please save the file before retagging it")));
+		return;
+	}
+	
 	RetagFile();
 }
 

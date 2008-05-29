@@ -170,7 +170,7 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data, i
 	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_buttonOK, 0, wxALL, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Close"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	mainSizer->Add( bSizer3, 0, wxALIGN_RIGHT, 5 );

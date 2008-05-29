@@ -458,7 +458,13 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	wxString message;
 	message << wxT("Ln ") << LineFromPosition(pos)+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
 	ManagerST::Get()->SetStatusMessage(message, 3);
-
+	
+	if (GetSelectedText().IsEmpty()) {
+		// remove indicators 
+		SetIndicatorCurrent(2);
+		IndicatorClearRange(0, GetLength());
+	}
+	
 	//let the context handle this as well
 	m_context->OnSciUpdateUI(event);
 }
@@ -1540,7 +1546,7 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 	if (m_ccBox && m_ccBox->IsShown()) {
 		m_ccBox->Hide();
 	}
-
+	
 	// emulate here VS like selection with mouse and ctrl key
 	if (event.m_controlDown) {
 		long pos = PositionFromPointClose(event.GetX(), event.GetY());

@@ -338,6 +338,7 @@ public:
 	virtual void InsertText(int pos, const wxString &text) { wxScintilla::InsertText(pos, text); }
 	virtual int GetLength() { return wxScintilla::GetLength(); }
 	virtual bool IsModified() {return wxScintilla::GetModify();}
+	virtual int GetEOL() {return wxScintilla::GetEOLMode();}
 	
 private:
 	void DoSetBreakpoint(const BreakpointInfo &bp);

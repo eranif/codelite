@@ -155,6 +155,18 @@ void CodeFormatter::DoFormatFile(IEditor *editor)
 	wxString output;
 	AstyleFormat(editor->GetEditorText(), options, output);
 	if (output.IsEmpty() == false) {
+		
+		// append new-line
+		wxString eol;
+		if( editor->GetEOL() == 0 ) {// CRLF
+			eol = wxT("\r\n");
+		} else if( editor->GetEOL() == 1 ) { // CR
+			eol = wxT("\r");
+		} else {
+			eol = wxT("\n");
+		}
+		output << eol;
+		
 		editor->SetEditorText(output);
 		editor->SetCaretAt(curpos);
 	}
@@ -166,7 +178,6 @@ void CodeFormatter::AstyleFormat(const wxString &input, const wxString &options,
 	if (textOut) {
 		output = _U(textOut);
 		output.Trim();
-		output << wxT("\n");
 		delete [] textOut;
 	}
 }

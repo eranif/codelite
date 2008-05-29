@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : editor_config.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : editor_config.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "dirsaver.h"
+#include "dirsaver.h"
 #include "precompiled_header.h"
 #include "editor_config.h"
 #include <wx/xml/xml.h>
@@ -92,8 +92,8 @@ bool EditorConfig::Load()
 		//try to load the default settings
 		m_fileName = wxFileName(wxT("config/codelite.xml.default"));
 		m_fileName.MakeAbsolute();
-		
-		if( !m_fileName.FileExists() ) {
+
+		if ( !m_fileName.FileExists() ) {
 			//create a new empty file with this name so the load function will not
 			//fail
 			wxFFile file(m_fileName.GetFullPath(), wxT("a"));
@@ -109,15 +109,15 @@ bool EditorConfig::Load()
 			}
 		}
 	}
-	
+
 	// load the main configuration file
 	if (!m_doc->Load(m_fileName.GetFullPath())) {
 		return false;
 	}
-	
+
 	// load CodeLite lexers
 	LoadLexers();
-	
+
 	// make sure that the file name is set to .xml and not .default
 	m_fileName.SetFullName(wxT("codelite.xml"));
 	return true;
@@ -423,7 +423,7 @@ void EditorConfig::SaveLongValue(const wxString &name, long value)
 bool EditorConfig::GetLongValue(const wxString &name, long &value)
 {
 	SimpleLongValue data;
-	if(ReadObject(name, &data)){
+	if (ReadObject(name, &data)) {
 		value = data.GetValue();
 		return true;
 	}
@@ -447,45 +447,45 @@ void EditorConfig::SaveStringValue(const wxString &key, const wxString &value)
 void EditorConfig::LoadLexers()
 {
 	wxString theme = GetStringValue(wxT("LexerTheme"));
-	if(theme.IsEmpty()) {
+	if (theme.IsEmpty()) {
 		theme = wxT("Default");
 		SaveStringValue(wxT("LexerTheme"), wxT("Default"));
 	}
-	
+
 	//when this function is called, the working directory is located at the
 	//startup directory
 	DirSaver ds;
 	wxSetWorkingDirectory(m_fileName.GetPath());
-	
+
 	wxString cwd = wxGetCwd();
-	
+
 	//load all lexer configuration files
 	DirTraverser traverser(wxT("*.xml"));
 	wxString path_( cwd + wxT("/../lexers/") + theme + wxT("/") );
-	if(wxDir::Exists(path_) == false) {
+	if (wxDir::Exists(path_) == false) {
 		//the directory does not exist
 		//fallback to 'Default'
 		theme = wxT("Default");
 		SaveStringValue(wxT("LexerTheme"), wxT("Default"));
 		path_ = cwd + wxT("/../lexers/") + theme + wxT("/");
 	}
-	
+
 	wxDir dir(path_);
 	dir.Traverse(traverser);
 
 	wxArrayString files = traverser.GetFiles();
 	m_lexers.clear();
 	for (size_t i=0; i<files.GetCount(); i++) {
-		
+
 		wxString fileToLoad( files.Item(i) );
-		
+
 		//try to locate a file with the same name but with the user extension
 		wxFileName fn(files.Item(i));
 		wxString userLexer( fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) + fn.GetName() +  wxT(".") + wxGetUserName() + wxT("_xml"));
-		if( wxFileName::FileExists( userLexer ) ) {
+		if ( wxFileName::FileExists( userLexer ) ) {
 			fileToLoad = userLexer;
 		}
-		
+
 		LexerConfPtr lexer(new LexerConf( fileToLoad ));
 		m_lexers[lexer->GetName()] = lexer;
 	}

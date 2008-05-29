@@ -109,6 +109,14 @@ public:
 	 * \brief return the current word under the caret. May return wxEmptyString
 	 */
 	virtual wxString GetWordAtCaret() = 0;
+	
+	/**
+	 * @brief return the EOL mode of the editor. 
+	 * 	wxSCI_EOL_CRLF 	0
+	 *	wxSCI_EOL_CR 	1
+	 *	wxSCI_EOL_LF 	2
+	 */
+	virtual int GetEOL() = 0;
 };
 
 #endif //IEDITOR_H

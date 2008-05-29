@@ -408,6 +408,7 @@ void Frame::Initialize(bool loadLastSession)
 	                        wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
 
 	m_theFrame->m_frameGeneralInfo = inf;
+	
 	m_theFrame->Maximize(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME ? true : false);
 
 	// upgrade: change all .db files under the startup directory to be
@@ -989,7 +990,6 @@ void Frame::OnClose(wxCloseEvent& event)
 	} else {
 		m_frameGeneralInfo.SetFrameSize(this->GetSize());
 	}
-
 	m_frameGeneralInfo.SetFramePosition(this->GetScreenPosition());
 
 	SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);
@@ -2709,6 +2709,11 @@ void Frame::OnViewEolCR(wxCommandEvent &e)
 	flags &= ~(CL_USE_EOL_LF);
 	flags &= ~(CL_USE_EOL_CRLF);
 	m_frameGeneralInfo.SetFlags(flags | CL_USE_EOL_CR);
+	
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	if (editor) {
+		editor->SetEOLMode(wxSCI_EOL_CR);
+	}
 }
 
 void Frame::OnViewEolLF(wxCommandEvent &e)
@@ -2718,6 +2723,10 @@ void Frame::OnViewEolLF(wxCommandEvent &e)
 	flags &= ~(CL_USE_EOL_LF);
 	flags &= ~(CL_USE_EOL_CRLF);
 	m_frameGeneralInfo.SetFlags(flags | CL_USE_EOL_LF);
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	if (editor) {
+		editor->SetEOLMode(wxSCI_EOL_LF);
+	}
 }
 
 void Frame::OnViewEolCRLF(wxCommandEvent &e)
@@ -2727,6 +2736,10 @@ void Frame::OnViewEolCRLF(wxCommandEvent &e)
 	flags &= ~(CL_USE_EOL_LF);
 	flags &= ~(CL_USE_EOL_CRLF);
 	m_frameGeneralInfo.SetFlags(flags | CL_USE_EOL_CRLF);
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	if (editor) {
+		editor->SetEOLMode(wxSCI_EOL_CRLF);
+	}
 }
 
 void Frame::OnViewEolUI(wxUpdateUIEvent &e)

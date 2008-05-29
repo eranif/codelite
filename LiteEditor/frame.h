@@ -323,7 +323,8 @@ protected:
 	void OnAddSymbols(SymbolTreeEvent &event);
 	void OnDeleteSymbols(SymbolTreeEvent &event);
 	void OnUpdateSymbols(SymbolTreeEvent &event);
-
+	void OnParsingThreadDone(wxCommandEvent &e);
+	
 	void OnRecentFile(wxCommandEvent &event);
 	void OnRecentWorkspace(wxCommandEvent &event);
 	void OnBackwardForward(wxCommandEvent &event);

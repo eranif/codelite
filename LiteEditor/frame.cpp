@@ -131,6 +131,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY, Frame::OnAddSymbols)
 	EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
+	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone)
+	
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, Frame::OnSearchThread)
@@ -1936,9 +1938,6 @@ void Frame::OnTimer(wxTimerEvent &event)
 	if (GetNotebook()->GetPageCount() == 0) {
 		NavMgr::Get()->Clear();
 	}
-
-	// clear status message
-	GetStatusBar()->SetStatusText(wxEmptyString, 4);
 	event.Skip();
 }
 
@@ -3016,4 +3015,10 @@ void Frame::OnShowNavBar(wxCommandEvent& e)
 void Frame::OnShowNavBarUI(wxUpdateUIEvent& e)
 {
 	e.Check( m_mainBook->IsNavBarShown() );
+}
+
+void Frame::OnParsingThreadDone(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	GetStatusBar()->SetStatusText(wxT("Done"), 4);
 }

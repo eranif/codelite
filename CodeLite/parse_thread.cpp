@@ -172,6 +172,10 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 
 	if ( !modifiedItems.empty() )
 		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, modifiedItems);
+		
+	// send "end" event
+	wxCommandEvent e(wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS);
+	wxPostEvent(m_notifiedWindow, e);
 }
 
 

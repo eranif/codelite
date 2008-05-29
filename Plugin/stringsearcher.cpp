@@ -157,11 +157,12 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 				}
 			}
 
+			matchLen = (int)find_str.Len();
 			// mirror the result as well
 			if (flags & wxSD_SEARCH_BACKWARD) {
 				pos = init_size - pos - matchLen;
 			}
-			matchLen = (int)find_str.Len();
+			
 			pos += offset;
 			return true;
 		} else {

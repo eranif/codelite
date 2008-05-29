@@ -1535,20 +1535,50 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips)
 {
 	std::map<wxString, wxString> tipsMap;
-
+	std::vector<TagEntryPtr> ctor_tags;
+	
 	for (size_t i=0; i<tags.size(); i++) {
 		if (tags.at(i)->GetName() != word)
 			continue;
 
 		TagEntryPtr t = tags.at(i);
-		if (t->GetKind() == wxT("function") || t->GetKind() == wxT("prototype")) {
+		wxString k = t->GetKind();
+		wxString pat = t->GetPattern();
+		
+		if (k == wxT("function") || k == wxT("prototype")) {
 			wxString tip;
 			tip << wxT("function:") << t->GetSignature();
 
-			//collect each signature only once, we do this by using
-			//map
+			// collect each signature only once, we do this by using
+			// map
 			tipsMap[t->GetSignature()] = tip;
-		} else if (t->GetKind() == wxT("macro")) {
+		} else if (k == wxT("class")) {
+			
+			// this tag is a class declaration that matches the word
+			// user is probably is typing something like 
+			// Class *a = new Class(
+			// or even Class a = Class(
+			// the steps to take from here:
+			// - lookup in the tables for tags that matches path of: WordScope::Word::Word and of type prototype/function
+			wxString scope;
+			if( t->GetScope().IsEmpty() == false && t->GetScope() != wxT("<global>") ) {
+				scope << t->GetScope() << wxT("::");
+			}
+			
+			scope << t->GetName();
+			ctor_tags.clear();
+			TagsByScopeAndName(scope, t->GetName(), ctor_tags, ExactMatch);
+			
+			for(size_t i=0; i<ctor_tags.size(); i++){
+				TagEntryPtr ctor_tag = ctor_tags.at(i);
+				if( ctor_tag->GetKind() == wxT("function") || ctor_tag->GetKind() == wxT("prototype") ) {
+					wxString tip;
+					tip << wxT("function:") << ctor_tag->GetSignature();	
+					tipsMap[ctor_tag->GetSignature()] = tip;
+				}
+			}
+			
+		} else if (k == wxT("macro")) {
 
 			wxString tip;
 			wxString macroName = t->GetName();

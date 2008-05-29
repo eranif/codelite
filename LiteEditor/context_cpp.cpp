@@ -459,6 +459,9 @@ void ContextCpp::CodeComplete()
 
 	//get expression
 	wxString expr = GetExpression(rCtrl.GetCurrentPos(), false);
+//	if( ch == '(' ) {
+//		expr = GetExpression( rCtrl.PositionBefore(rCtrl.GetCurrentPos()), false);
+//	}
 
 	// get the scope
 	//Optimize the text for large files

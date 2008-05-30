@@ -54,6 +54,7 @@ protected:
 	virtual void OnMouseDblClick( wxMouseEvent &event );
 	virtual void OnKeyDown( wxTreeEvent &event );
 	virtual void OnOpenShell(wxCommandEvent &event);
+	virtual void OnOpenWidthDefaultApp(wxCommandEvent &e);
 };
 
 #endif //FILEEXPLORERTREE_H

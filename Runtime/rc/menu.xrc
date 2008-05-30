@@ -711,10 +711,14 @@
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="open_file">
-            <label>Open</label>
+            <label>&amp;Open</label>
         </object>
         <object class="wxMenuItem" name="open_file_in_text_editor">
-            <label>Open in editor</label>
+            <label>Open in &amp;editor</label>
+        </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="open_with_default_application">
+            <label>Open With &amp;Default Application</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="open_shell">

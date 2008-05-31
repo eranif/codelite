@@ -96,6 +96,7 @@ public:
 	virtual void OnFileSaved(){};
 	virtual void OnEnterHit(){};
 	virtual void RetagFile(){}
+	virtual void OnUserTypedXChars(const wxString &word) { wxUnusedVar(word); }
 	
 	//override this method if you wish to provide context based right click menu
 	virtual wxMenu *GetMenu() {return NULL;}

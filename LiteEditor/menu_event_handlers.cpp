@@ -33,27 +33,23 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	LEditor *editor = (LEditor*)owner;
-
+	
+	// hide completion box
+	editor->HideCompletionBox();
+		
 	if (event.GetId() == wxID_COPY) {
-		editor->HideCompletionBox();
 		editor->Copy();
 	} else if (event.GetId() == wxID_CUT) {
-		editor->HideCompletionBox();
 		editor->Cut();
 	} else if (event.GetId() == wxID_PASTE) {
-		editor->HideCompletionBox();
 		editor->Paste();
 	} else if (event.GetId() == wxID_UNDO) {
-		editor->HideCompletionBox();
 		editor->Undo();
 	} else if (event.GetId() == wxID_REDO) {
-		editor->HideCompletionBox();
 		editor->Redo();
 	} else if (event.GetId() == wxID_SELECTALL) {
-		editor->HideCompletionBox();
 		editor->SelectAll();
 	} else if (event.GetId() == wxID_DUPLICATE) {
-		editor->HideCompletionBox();
 		editor->LineDuplicate();
 	}
 }

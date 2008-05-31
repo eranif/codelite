@@ -32,11 +32,13 @@
 #define BOX_HEIGHT 200
 #define BOX_WIDTH  300
 
-CCBox::CCBox( LEditor* parent)
+CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		:
 		CCBoxBase(parent, wxID_ANY, wxDefaultPosition, wxSize(0, 0))
 		, m_showFullDecl(false)
 		, m_height(BOX_HEIGHT)
+		, m_autoHide(autoHide)
+		, m_insertSingleChoice(autoInsertSingleChoice)
 {
 	Hide();
 
@@ -72,7 +74,8 @@ CCBox::CCBox( LEditor* parent)
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_h")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));
-
+	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("cpp_keyword")));
+	
 	// assign the image list and let the control take owner ship (i.e. delete it)
 	m_listCtrl->AssignImageList(il, wxIMAGE_LIST_SMALL);
 	m_listCtrl->InsertColumn(0, wxT("Name"));
@@ -153,6 +156,10 @@ void CCBox::SelectWord(const wxString& word)
 		
 		m_selectedItem = item;
 		SelectItem(m_selectedItem);
+	} else {
+		if(GetAutoHide()) {
+			Hide();
+		}
 	}
 }
 
@@ -226,15 +233,9 @@ void CCBox::Show(const wxString& word)
 		}
 	}
 
-	if (_tags.size() == 1) {
-		// only one match, insert it
-		LEditor *editor = (LEditor*)GetParent();
-		int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
+	if (_tags.size() == 1 && m_insertSingleChoice) {
 		
-		editor->SetSelection(insertPos, editor->GetCurrentPos());
-		
-		CCItemInfo info = _tags.at(0);
-		editor->ReplaceSelection(info.displayName);
+		DoInsertSelection(_tags.at(0).displayName);
 		
 		// return without calling to wxWindow::Show()
 		return;
@@ -247,6 +248,11 @@ void CCBox::Show(const wxString& word)
 	m_selectedItem = 0;
 
 	m_selectedItem = m_listCtrl->FindMatch(word);
+	if( m_selectedItem == wxNOT_FOUND && m_autoHide ) {
+		// return without calling wxWindow::Show
+		return;
+	}
+	
 	if (m_selectedItem == wxNOT_FOUND) {
 		m_selectedItem = 0;
 	}
@@ -258,15 +264,8 @@ void CCBox::Show(const wxString& word)
 	SelectItem(m_selectedItem);
 }
 
-void CCBox::InsertSelection()
+void CCBox::DoInsertSelection(const wxString& word)
 {
-	if (m_selectedItem == wxNOT_FOUND) {
-		return;
-	}
-
-	// get the selected word
-	wxString word = GetColumnText(m_listCtrl, m_selectedItem, 0);
-
 	LEditor *editor = (LEditor*)GetParent();
 	int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
 
@@ -287,6 +286,17 @@ void CCBox::InsertSelection()
 		// trigger function tip
 		editor->CodeComplete();
 	}
+}
+
+void CCBox::InsertSelection()
+{
+	if (m_selectedItem == wxNOT_FOUND) {
+		return;
+	}
+
+	// get the selected word
+	wxString word = GetColumnText(m_listCtrl, m_selectedItem, 0);
+	DoInsertSelection(word);
 }
 
 int CCBox::GetImageId(const TagEntry &entry)
@@ -336,6 +346,10 @@ int CCBox::GetImageId(const TagEntry &entry)
 
 	if (entry.GetKind() == wxT("enumerator"))
 		return 13;
-
+	
+	if (entry.GetKind() == wxT("cpp_keyword"))
+		return 17;
+		
 	return wxNOT_FOUND;
 }
+

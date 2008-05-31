@@ -49,6 +49,7 @@ enum CodeCompletionOpts
 	CC_PARSE_EXT_LESS_FILES		= 0x00000040,
 	CC_COLOUR_VARS				= 0x00000080,
 	CC_COLOUR_PROJ_TAGS			= 0x00000100,
+	CC_CPP_KEYWORD_ASISST		= 0x00000200
 };
 
 class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
@@ -57,6 +58,7 @@ class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
 	wxArrayString m_prep;
 	wxString m_fileSpec;
 	wxArrayString m_languages;
+	int m_minWordLen;
 	
 public:	
 	TagsOptionsData();
@@ -73,6 +75,11 @@ public:
 	const wxArrayString& GetPreprocessor() const {return m_prep;}
 	const size_t& GetFlags() const {return m_ccFlags;}
 	const wxString &GetFileSpec() const{return m_fileSpec;}
+	
+	//Setters
+	void SetMinWordLen(const int& minWordLen) {this->m_minWordLen = minWordLen;}
+	//Getters
+	const int& GetMinWordLen() const {return m_minWordLen;}
 	
 	//Serialization API
 	void Serialize(Archive &arch);

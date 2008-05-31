@@ -2286,11 +2286,11 @@ void ContextCpp::OnRetagFile(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	LEditor &ctrl = GetCtrl();
-	if( ctrl.GetModify() ) {
+	if ( ctrl.GetModify() ) {
 		wxMessageBox(wxString::Format(wxT("Please save the file before retagging it")));
 		return;
 	}
-	
+
 	RetagFile();
 }
 
@@ -2316,12 +2316,50 @@ void ContextCpp::RetagFile()
 
 	//the previous call 'stole' the focus from us...
 	ParseThreadST::Get()->Add(req);
-	
-	
+
+
 	ctrl.UpdateColours();
 	ctrl.SetActive();
-	
+
 	wxString msg;
 	msg << wxT("Re-tagging file ") << absFile.GetFullName() << wxT("...");
 	Frame::Get()->GetStatusBar()->SetStatusText(msg, 4);
+}
+
+void ContextCpp::OnUserTypedXChars(const wxString &word)
+{
+	// user typed more than 3 chars, display completion box with C++ keywords
+	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_CPP_KEYWORD_ASISST) {
+		std::vector<TagEntryPtr> tags;
+		MakeCppKeywordsTags(word, tags);
+		if ( tags.empty() == false ) {
+			GetCtrl().ShowCompletionBox(tags, 		// list of tags
+			                            word, 		// partial word
+			                            false, 		// dont show full declaration
+			                            true, 		// auto hide if there is no match in the list
+			                            false);		// do not automatically insert word if there is only single choice
+		}
+	}
+}
+
+void ContextCpp::MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr>& tags)
+{
+	wxString cppWords = wxT("and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast continue default delete "
+	                        "do double dynamic_cast else enum explicit export extern false float for friend goto if inline int long mutable namespace "
+	                        "new not not_eq operator or or_eq private protected public register reinterpret_cast return short signed Sizeof static "
+	                        "static_cast struct switch template this throw true try typedef typeid typename union unsigned using virtual void volatile "
+	                        "wchar_t while xor xor_eq");
+
+	wxString s1(word);
+	wxArrayString wordsArr = wxStringTokenize(cppWords, wxT(" "));
+	for (size_t i=0; i<wordsArr.GetCount(); i++) {
+
+		wxString s2(wordsArr.Item(i));
+		if (s2.StartsWith(s1) || s2.Lower().StartsWith(s1.Lower())) {
+			TagEntryPtr tag ( new TagEntry() );
+			tag->SetName(wordsArr.Item(i));
+			tag->SetKind(wxT("cpp_keyword"));
+			tags.push_back(tag);
+		}
+	}
 }

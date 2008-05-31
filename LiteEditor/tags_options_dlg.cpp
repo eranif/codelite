@@ -79,8 +79,10 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data, i
 	sbSizer2->Add( m_checkDisplayTypeInfo, 0, wxALL, 5 );
 	
 	m_checkDisplayFunctionTip = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Display function calltip"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	sbSizer2->Add( m_checkDisplayFunctionTip, 0, wxALL, 5 );
+	
+	m_checkCppKeywordAssist = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Display completion box for language keywords"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer2->Add( m_checkCppKeywordAssist, 0, wxALL, 5 );
 	
 	m_checkColourLocalVars = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Colour local variables"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer2->Add( m_checkColourLocalVars, 0, wxALL, 5 );
@@ -201,6 +203,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkFilesWithoutExt->SetValue(m_data.GetFlags() & CC_PARSE_EXT_LESS_FILES ? true : false);
 	m_checkColourLocalVars->SetValue(m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
 	m_checkColourProjTags->SetValue(m_data.GetFlags() & CC_COLOUR_PROJ_TAGS ? true : false);
+	m_checkCppKeywordAssist->SetValue(m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
 	
 	//initialize the ctags page
 	wxString prep;
@@ -247,6 +250,7 @@ void TagsOptionsDlg::CopyData()
 	SetFlag(CC_PARSE_EXT_LESS_FILES, m_checkFilesWithoutExt->IsChecked());
 	SetFlag(CC_COLOUR_VARS, m_checkColourLocalVars->IsChecked());
 	SetFlag(CC_COLOUR_PROJ_TAGS, m_checkColourProjTags->IsChecked());
+	SetFlag(CC_CPP_KEYWORD_ASISST, m_checkCppKeywordAssist->IsChecked());
 	
 	m_data.SetFileSpec(m_textFileSpec->GetValue());
 	

@@ -308,12 +308,17 @@ public:
 	 * @param word part of the word 
 	 * @param showFullDecl display full function declaration
 	 */
-	void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl);
+	void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl, bool autoHide = false, bool autoInsertSingleChoice = true);
 	
 	/**
 	 * @brief hide the completion box if it is active.
 	 */
 	void HideCompletionBox();
+	
+	/**
+	 * @brief return true if the completion box is visible
+	 */
+	bool IsCompletionBoxShown();
 	
 	/**
 	 * @brief highlight the word where the cursor is at

@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : debuggergdb.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : debuggergdb.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "debuggergdb.h"
+#include "debuggergdb.h"
 #include "environmentconfig.h"
 #include "dirkeeper.h"
 #include "dbgcmd.h"
@@ -34,7 +34,23 @@
 
 #ifdef __WXMSW__
 #include "windows.h"
+
+// On Windows lower than XP, the function DebugBreakProcess does not exist
+// so we need to bind it dynamically
+typedef WINBASEAPI BOOL WINAPI (*DBG_BREAK_PROC_FUNC_PTR)(HANDLE);
+DBG_BREAK_PROC_FUNC_PTR DebugBreakProcessFunc = NULL;
+HINSTANCE Kernel32Dll = NULL;
+
+// define a dummy control handler
+BOOL CtrlHandler( DWORD fdwCtrlType )
+{
+	wxUnusedVar(fdwCtrlType);
+
+	// return FALSE so other process in our group are allowed to process this event
+	return FALSE;
+}
 #endif
+
 #if defined(__WXGTK__) || defined (__WXMAC__)
 #include <sys/types.h>
 #include <signal.h>
@@ -87,10 +103,30 @@ static wxString MakeId()
 DbgGdb::DbgGdb()
 		: m_debuggeePid(wxNOT_FOUND)
 {
+#ifdef __WXMSW__
+	Kernel32Dll = LoadLibrary(wxT("kernel32.dll"));
+	if (Kernel32Dll) {
+		DebugBreakProcessFunc = (DBG_BREAK_PROC_FUNC_PTR)GetProcAddress(Kernel32Dll, "DebugBreakProcess");
+	} else {
+		// we dont have DebugBreakProcess, try to work with Control handlers
+		if (SetConsoleCtrlHandler( (PHANDLER_ROUTINE) CtrlHandler, TRUE ) == FALSE) {
+			wxLogMessage(wxString::Format(wxT("failed to install ConsoleCtrlHandler: %d"), GetLastError()));
+		}
+	}
+	if (SetConsoleCtrlHandler( (PHANDLER_ROUTINE) CtrlHandler, TRUE ) == FALSE) {
+		wxLogMessage(wxString::Format(wxT("failed to install ConsoleCtrlHandler: %d"), GetLastError()));
+	}
+#endif
 }
 
 DbgGdb::~DbgGdb()
 {
+#ifdef __WXMSW__
+	if ( Kernel32Dll ) {
+		FreeLibrary(Kernel32Dll);
+		Kernel32Dll = NULL;
+	}
+#endif
 }
 
 void DbgGdb::RegisterHandler(const wxString &id, DbgCmdHandler *cmd)
@@ -104,7 +140,7 @@ DbgCmdHandler *DbgGdb::PopHandler(const wxString &id)
 	if (it == m_handlers.end()) {
 		return NULL;
 	}
-	DbgCmdHandler *cmd = it->second; 
+	DbgCmdHandler *cmd = it->second;
 	m_handlers.erase(it);
 	return cmd;
 }
@@ -157,15 +193,15 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 	//m_proc will be deleted upon termination
 	m_proc = new PipedProcess(wxNewId(), cmd);
 	if (m_proc) {
-		
+
 		//set the environment variables
 		m_env->ApplyEnv();
-		
+
 		if (m_proc->Start() == 0) {
-			
+
 			//set the environment variables
 			m_env->UnApplyEnv();
-		
+
 			//failed to start the debugger
 			delete m_proc;
 			SetBusy(false);
@@ -186,22 +222,22 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 		ExecuteCmd(wxT("set width 0"));
 		// no pagination
 		ExecuteCmd(wxT("set height 0"));
-		
-		if(m_info.enablePendingBreakpoints) {
-		//a workaround for the MI pending breakpoint
+
+		if (m_info.enablePendingBreakpoints) {
+			//a workaround for the MI pending breakpoint
 #if defined (__WXGTK__) || defined (__WXMAC__)
 			ExecuteCmd(wxT("set breakpoint pending on"));
-#else		
+#else
 			// Mac & Windows
 			ExecuteCmd(wxT("set auto-solib-add on"));
 			ExecuteCmd(wxT("set stop-on-solib-events 1"));
 #endif
 		}
-		
+
 		//keep the list of breakpoints
 		m_bpList = bpList;
 		SetBreakpoints();
-		
+
 		if (m_info.breakAtWinMain) {
 			//try also to set breakpoint at WinMain
 			WriteCommand(wxT("-break-insert main"), NULL);
@@ -251,18 +287,18 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 		//project settings
 		DirKeeper keeper;
 		wxSetWorkingDirectory(cwd);
-		
+
 		//set the environment variables
 		m_env->ApplyEnv();
-		
+
 		if (m_proc->Start() == 0) {
 			//failed to start the debugger
 			delete m_proc;
 			SetBusy(false);
-			
+
 			//Unset the environment variables
 			m_env->UnApplyEnv();
-			
+
 			return false;
 		}
 
@@ -276,12 +312,12 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 		ExecuteCmd(wxT("set  new-console on"));
 #endif
 		ExecuteCmd(wxT("set unwindonsignal on"));
-		
-		if(m_info.enablePendingBreakpoints) {
-		//a workaround for the MI pending breakpoint
+
+		if (m_info.enablePendingBreakpoints) {
+			//a workaround for the MI pending breakpoint
 #if defined (__WXGTK__) || defined (__WXMAC__)
 			ExecuteCmd(wxT("set breakpoint pending on"));
-#else		
+#else
 			// Mac & Windows
 			ExecuteCmd(wxT("set auto-solib-add on"));
 			ExecuteCmd(wxT("set stop-on-solib-events 1"));
@@ -292,11 +328,11 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 		ExecuteCmd(wxT("set width 0"));
 		// no pagination
 		ExecuteCmd(wxT("set height 0"));
-		
+
 		//keep the list of breakpoints
 		m_bpList = bpList;
 		SetBreakpoints();
-		
+
 		if (m_info.breakAtWinMain) {
 			//try also to set breakpoint at WinMain
 			WriteCommand(wxT("-break-insert main"), NULL);
@@ -344,7 +380,7 @@ bool DbgGdb::Stop()
 		//return control to the program
 		m_observer->UpdateGotControl(DBG_DBGR_KILLED);
 		EmptyQueue();
-		
+
 		m_bpList.empty();
 	}
 	return true;
@@ -360,7 +396,7 @@ void DbgGdb::SetBreakpoints()
 	for (size_t i=0; i< m_bpList.size(); i++) {
 		BreakpointInfo bpinfo = m_bpList.at(i);
 		Break(bpinfo.file, bpinfo.lineno);
-	}	
+	}
 }
 
 bool DbgGdb::Break(const wxString &fileName, long lineno)
@@ -372,7 +408,7 @@ bool DbgGdb::Break(const wxString &fileName, long lineno)
 
 	wxString tmpfileName(fn.GetFullPath());
 	tmpfileName.Replace(wxT("\\"), wxT("/"));
-	
+
 	wxString command;
 	bool useQuatations(false);
 #if defined (__WXGTK__) || defined (__WXMAC__)
@@ -387,14 +423,14 @@ bool DbgGdb::Break(const wxString &fileName, long lineno)
 	// Mac & Windows
 	command = wxT("-break-insert ");
 #endif
-	
-	//when using the simple command line interface, use quatations mark 
+
+	//when using the simple command line interface, use quatations mark
 	//around file names
-	if(useQuatations) {
+	if (useQuatations) {
 		tmpfileName.Prepend(wxT("\""));
 		tmpfileName.Append(wxT("\""));
 	}
-	
+
 	command << tmpfileName << wxT(":") << lineno;
 	return WriteCommand(command, new DbgCmdHandlerBp(m_observer, bp, &m_bpList));
 }
@@ -423,9 +459,24 @@ bool DbgGdb::Interrupt()
 {
 	if (m_debuggeePid > 0) {
 #ifdef __WXMSW__
-		HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)m_debuggeePid);
-		BOOL res = DebugBreakProcess(process);
-		return res == TRUE;
+		if ( DebugBreakProcessFunc ) {
+			// we have DebugBreakProcess
+			HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)m_debuggeePid);
+			BOOL res = DebugBreakProcessFunc(process);
+			return res == TRUE;
+		} else {
+			// second method:
+			// attach our process to the debugee 
+			BOOL deatch = AttachConsole (m_debuggeePid);
+			if ( !GenerateConsoleCtrlEvent(0, (DWORD)m_debuggeePid) ) {
+				wxLogMessage(wxString::Format(wxT("Warning: Can not send Ctrl+C event to debuggee process - error code: %d"), GetLastError() ));
+			}
+
+			if (deatch) {
+				wxLogMessage(wxT("Detaching console"));
+				FreeConsole();
+			}
+		}
 #else
 		m_observer->UpdateAddLine(wxT("Interrupting debugee process"));
 		kill(m_debuggeePid, SIGINT);
@@ -436,7 +487,7 @@ bool DbgGdb::Interrupt()
 
 bool DbgGdb::QueryFileLine()
 {
-#if defined (__WXMSW__) || defined (__WXGTK__)	
+#if defined (__WXMSW__) || defined (__WXGTK__)
 	return WriteCommand(wxT("-file-list-exec-source-file"), new DbgCmdHandlerGetLine(m_observer));
 #else
 	//Mac
@@ -447,7 +498,7 @@ bool DbgGdb::QueryFileLine()
 bool DbgGdb::QueryLocals()
 {
 	//the order of the commands here is important
-	if(!WriteCommand(wxT("-data-evaluate-expression *this"), new DbgCmdHandlerLocals(m_observer, DbgCmdHandlerLocals::This, wxT("*this")))){
+	if (!WriteCommand(wxT("-data-evaluate-expression *this"), new DbgCmdHandlerLocals(m_observer, DbgCmdHandlerLocals::This, wxT("*this")))) {
 		return false;
 	}
 	return WriteCommand(wxT("-stack-list-locals --all-values"), new DbgCmdHandlerLocals(m_observer));
@@ -467,7 +518,7 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 	if (!Write(cmd)) {
 		return false;
 	}
-	
+
 	//read all output until we found 'XXXXXXXX^done'
 	static wxRegEx reCommand(wxT("^([0-9]{8})"));
 	const int maxPeeks(100);
@@ -478,38 +529,38 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 		line.Empty();
 		ReadLine(line, 1);
 		line = line.Trim().Trim(false);
-		
-		if(line.IsEmpty()){
-			if(counter < maxPeeks){
+
+		if (line.IsEmpty()) {
+			if (counter < maxPeeks) {
 				counter++;
 				continue;
-			}else{
+			} else {
 				break;
 			}
 		}
 		counter = 0;
-		if(reCommand.Matches(line)){
+		if (reCommand.Matches(line)) {
 			//not a gdb message, get the command associated with the message
 			wxString cmd_id = reCommand.GetMatch(line, 1);
-			if(cmd_id != id){
+			if (cmd_id != id) {
 				long expcId(0), recvId(0);
 				cmd_id.ToLong(&recvId);
 				id.ToLong(&expcId);
-				
-				if(expcId > recvId){
+
+				if (expcId > recvId) {
 					//we can keep waiting for our ID
 					continue;
 				}
 				return false;
 			}
-			
+
 			//remove trailing new line
 			output = output.Trim().Trim(false);
 			return true;
-			
-		}else{
+
+		} else {
 			StipString(line);
-			if(!line.Contains(command)){
+			if (!line.Contains(command)) {
 				output << line << wxT("\n");
 			}
 		}
@@ -551,8 +602,8 @@ bool DbgGdb::FilterMessage(const wxString &msg)
 	if (msg.Contains(wxT("Variable object not found"))) {
 		return true;
 	}
-	
-	if (msg.Contains(wxT("No symbol \"this\" in current context"))){
+
+	if (msg.Contains(wxT("No symbol \"this\" in current context"))) {
 		return true;
 	}
 	return false;
@@ -563,15 +614,15 @@ void DbgGdb::Poke()
 	static wxRegEx reCommand(wxT("^([0-9]{8})"));
 	//poll the debugger output
 	wxString line;
-	
+
 	if (m_debuggeePid == wxNOT_FOUND) {
 		std::vector<long> children;
 		ProcUtils::GetChildren(m_proc->GetPid(), children);
 		std::sort(children.begin(), children.end());
-		if(children.empty() == false){
+		if (children.empty() == false) {
 			m_debuggeePid = children.at(0);
 		}
-		
+
 		if (m_debuggeePid != wxNOT_FOUND) {
 			wxString msg;
 			msg << wxT("Debuggee process ID: ") << m_debuggeePid;
@@ -622,14 +673,14 @@ void DbgGdb::Poke()
 			m_observer->UpdateAddLine(line);
 
 		} else if (reCommand.Matches(line)) {
-			
+
 			//not a gdb message, get the command associated with the message
 			wxString id = reCommand.GetMatch(line, 1);
-			
+
 			//strip the id from the line
 			line = line.Mid(8);
 			DoProcessAsyncCommand(line, id);
-			
+
 		} else if (line.StartsWith(wxT("^done")) || line.StartsWith(wxT("*stopped"))) {
 			//Unregistered command, use the default AsyncCommand handler to process the line
 			DbgCmdHandlerAsyncCmd cmd(m_observer);
@@ -674,21 +725,21 @@ void DbgGdb::DoProcessAsyncCommand(wxString &line, wxString &id)
 	} else if (line.StartsWith(wxT("*stopped"))) {
 		//get the stop reason,
 		if (line == wxT("*stopped")) {
-			if(m_bpList.empty()){
-				
+			if (m_bpList.empty()) {
+
 				ExecuteCmd(wxT("set auto-solib-add off"));
 				ExecuteCmd(wxT("set stop-on-solib-events 0"));
-				
+
 			} else {
-			
-				//no reason for the failure, this means that we stopped due to 
+
+				//no reason for the failure, this means that we stopped due to
 				//hitting a loading of shared library
-				//try to place all breakpoints which previously failed 
+				//try to place all breakpoints which previously failed
 				SetBreakpoints();
 			}
-			
+
 			Continue();
-			
+
 		} else {
 			//GDB/MI Out-of-band Records
 			//caused by async command, this line indicates that we have the control back
@@ -760,34 +811,34 @@ bool DbgGdb::SetFrame(int frame)
 
 bool DbgGdb::ListThreads(ThreadEntryArray &threads)
 {
-	static wxRegEx reCommand(wxT("^([0-9]{8})"));	
+	static wxRegEx reCommand(wxT("^([0-9]{8})"));
 	wxString output;
-	if(!ExecSyncCmd(wxT("info threads"), output)){
+	if (!ExecSyncCmd(wxT("info threads"), output)) {
 		return false;
 	}
-	
+
 	//parse the debugger output
 	wxStringTokenizer tok(output, wxT("\n"), wxTOKEN_STRTOK);
-	while(tok.HasMoreTokens()){
+	while (tok.HasMoreTokens()) {
 		ThreadEntry entry;
 		wxString line = tok.NextToken();
 		line.Replace(wxT("\t"), wxT(" "));
 		line = line.Trim().Trim(false);
-		
-		
-		if(reCommand.Matches(line)){
+
+
+		if (reCommand.Matches(line)) {
 			//this is the ack line, ignore it
 			continue;
 		}
-		
+
 		wxString tmpline(line);
-		if(tmpline.StartsWith(wxT("*"), &line)){
+		if (tmpline.StartsWith(wxT("*"), &line)) {
 			//active thread
 			entry.active = true;
-		}else{
+		} else {
 			entry.active = false;
 		}
-		
+
 		line = line.Trim().Trim(false);
 		line.ToLong(&entry.dbgid);
 		entry.more = line.AfterFirst(wxT(' '));
@@ -808,5 +859,3 @@ void DbgGdb::OnProcessEndEx(wxProcessEvent &e)
 	InteractiveProcess::OnProcessEnd(e);
 	m_env->UnApplyEnv();
 }
-
-

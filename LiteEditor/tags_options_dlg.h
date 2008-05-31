@@ -75,6 +75,7 @@ protected:
 	TagsOptionsData m_data;
 	wxCheckBox* m_checkColourLocalVars;
 	wxCheckBox* m_checkColourProjTags;
+	wxCheckBox* m_checkCppKeywordAssist;
 	
 protected:
 	void SetFlag(CodeCompletionOpts flag, bool set);
@@ -90,7 +91,7 @@ public:
 				    int id = wxID_ANY, 
 				    wxString title = wxT("Tags Options"), 
 				    wxPoint pos = wxDefaultPosition, 
-				    wxSize size = wxSize(500, 450), 
+				    wxSize size = wxSize(600, 450), 
 				    int style = wxDEFAULT_DIALOG_STYLE);
 
 	TagsOptionsData &GetData() {return m_data;}

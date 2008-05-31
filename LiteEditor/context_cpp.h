@@ -132,6 +132,7 @@ public:
 	virtual void OnAddMultiImpl(wxCommandEvent &e);
 	virtual void OnRenameFunction(wxCommandEvent &e);
 	virtual void OnRetagFile(wxCommandEvent &e);
+	virtual void OnUserTypedXChars(const wxString &word);
 	
 	DECLARE_EVENT_TABLE();
 private:
@@ -146,6 +147,7 @@ private:
 	void PrependMenuItem(wxMenu* menu, const wxString &text, int id);
 	void PrependMenuItemSeparator(wxMenu* menu);
 	int FindLineToAddInclude();
+	void MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
 	
 	
 	/**

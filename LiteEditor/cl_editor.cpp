@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : cl_editor.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : cl_editor.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -351,7 +351,7 @@ void LEditor::SetProperties()
 
 	IndicatorSetUnder(1, true);
 	IndicatorSetUnder(2, true);
-	
+
 	wxColour col2(wxT("LIGHT BLUE"));
 	wxString val2 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
 	if (val2.IsEmpty() == false) {
@@ -379,7 +379,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	SetDirty(true);
 
 	// get the word and select it in the completion box
-	if (m_ccBox && m_ccBox->IsShown()) {
+	if (IsCompletionBoxShown()) {
 		wxString word = GetWordAtCaret();
 		m_ccBox->SelectWord(word);
 	}
@@ -413,6 +413,13 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		}
 	default:
 		break;
+	}
+
+	if ( IsCompletionBoxShown() == false ) {
+		if (GetWordAtCaret().Len() >= 3) {
+			// user typed more than 3 chars, let the contenxt to handle
+			m_context->OnUserTypedXChars(GetWordAtCaret());
+		}
 	}
 	event.Skip();
 }
@@ -458,13 +465,13 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	wxString message;
 	message << wxT("Ln ") << LineFromPosition(pos)+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
 	ManagerST::Get()->SetStatusMessage(message, 3);
-	
+
 	if (GetSelectedText().IsEmpty()) {
-		// remove indicators 
+		// remove indicators
 		SetIndicatorCurrent(2);
 		IndicatorClearRange(0, GetLength());
 	}
-	
+
 	//let the context handle this as well
 	m_context->OnSciUpdateUI(event);
 }
@@ -515,7 +522,7 @@ bool LEditor::SaveFile()
 		wxString projName = GetProjectName();
 		if ( projName.Trim().Trim(false).IsEmpty() )
 			return true;
-			
+
 		m_context->RetagFile();
 	}
 	return true;
@@ -555,12 +562,12 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 		wxMessageBox( msg );
 		return false;
 	}
-	
+
 	// save the file using the user's defined encoding
 	wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
 	file.Write(GetText(), fontEncConv);
 	file.Close();
-	
+
 	//update the modification time of the file
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
 	SetSavePoint();
@@ -1048,7 +1055,7 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 				if ( !Replace() ) {
 					// restore the caret
 					SetCaretAt( saved_pos );
-					
+
 					// popup a message
 					wxMessageBox(wxT("Can not find the string '") + m_findReplaceDlg->GetData().GetFindString() + wxT("'"),
 					             wxT("CodeLite"),
@@ -1099,8 +1106,8 @@ void LEditor::FindNext(const FindReplaceData &data)
 
 			if ( !FindAndSelect(data) ) {
 				// restore the caret
-				SetCaretAt( saved_pos );				
-				
+				SetCaretAt( saved_pos );
+
 				wxMessageBox(wxT("Can not find the string '") + data.GetFindString() + wxT("'"),
 				             wxT("CodeLite"),
 				             wxICON_WARNING);
@@ -1480,14 +1487,14 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 void LEditor::OnKeyDown(wxKeyEvent &event)
 {
 	//let the context process it as well
-	if (m_ccBox && m_ccBox->IsShown()) {
+	if (IsCompletionBoxShown()) {
 		switch (event.GetKeyCode()) {
 		case WXK_NUMPAD_ENTER:
 		case WXK_RETURN:
 		case WXK_SPACE:
 		case WXK_TAB:
 			m_ccBox->InsertSelection();
-			m_ccBox->Hide();
+			HideCompletionBox();
 			return;
 
 		case WXK_ESCAPE:
@@ -1497,7 +1504,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 		case WXK_END:
 		case WXK_DELETE:
 		case WXK_NUMPAD_DELETE:
-			m_ccBox->Hide();
+			HideCompletionBox();
 			return;
 		case WXK_UP:
 			m_ccBox->Previous();
@@ -1507,20 +1514,20 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 			return;
 		case WXK_BACK: {
 
-				if (event.ControlDown()) {
-					m_ccBox->Hide();
-				} else {
+			if (event.ControlDown()) {
+				HideCompletionBox();
+			} else {
 
-					wxString word = GetWordAtCaret();
-					if (word.IsEmpty()) {
-						m_ccBox->Hide();
-					} else {
-						word.RemoveLast();
-						m_ccBox->SelectWord(word);
-					}
+				wxString word = GetWordAtCaret();
+				if (word.IsEmpty()) {
+					HideCompletionBox();
+				} else {
+					word.RemoveLast();
+					m_ccBox->SelectWord(word);
 				}
-				break;
 			}
+			break;
+		}
 		default:
 			break;
 		}
@@ -1528,13 +1535,11 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 		// handle completion box control characters that once typed, CL should:
 		// 1. Insert the selection
 		// 2. Insert the typed character
-		if (	event.ShiftDown() && event.GetKeyCode() == wxT('9') || 	// (
-		        event.ShiftDown() && event.GetKeyCode() == wxT('0') || 	// )
-		        event.GetKeyCode() == wxT(' ') 						||	// SPACE
+		if (	event.GetKeyCode() == wxT(' ') 						||	// SPACE
 		        event.ShiftDown() && event.GetKeyCode() == wxT(',') ||	// <
-		        event.ShiftDown() && event.GetKeyCode() == wxT('.')) {	// >
+		        event.GetKeyCode() == wxT('.')) {	// > or .
 			m_ccBox->InsertSelection();
-			m_ccBox->Hide();
+			HideCompletionBox();
 		}
 	}
 	m_context->OnKeyDown(event);
@@ -1543,10 +1548,8 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 void LEditor::OnLeftDown(wxMouseEvent &event)
 {
 	// hide completion box
-	if (m_ccBox && m_ccBox->IsShown()) {
-		m_ccBox->Hide();
-	}
-	
+	HideCompletionBox();
+
 	// emulate here VS like selection with mouse and ctrl key
 	if (event.m_controlDown) {
 		long pos = PositionFromPointClose(event.GetX(), event.GetY());
@@ -1865,20 +1868,23 @@ void LEditor::OnDragStart(wxScintillaEvent& e)
 	e.Skip();
 }
 
-void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, bool showFullDecl)
+void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, bool showFullDecl, bool autoHide, bool autoInsertSingleChoice)
 {
 	if ( m_ccBox == NULL ) {
 		// create new completion box
 		m_ccBox = new CCBox(this);
 	}
-
+	
+	m_ccBox->SetAutoHide(autoHide);
+	m_ccBox->SetInsertSingleChoice(autoInsertSingleChoice);
+	
 	m_ccBox->Adjust();
 	m_ccBox->Show(tags, word, showFullDecl);
 }
 
 void LEditor::HideCompletionBox()
 {
-	if (m_ccBox && m_ccBox->IsShown()) {
+	if (IsCompletionBoxShown()) {
 		m_ccBox->Hide();
 	}
 }
@@ -1917,7 +1923,7 @@ void LEditor::DoHighlightWord()
 	if ( word.IsEmpty() ) {
 		return;
 	}
-	
+
 	// to make the code "smoother" we move the search task to different thread
 	StringHighlighterJob *j = new StringHighlighterJob(this, GetText().c_str(), word.c_str());
 	JobQueueSingleton::Instance()->PushJob( j );
@@ -1947,16 +1953,21 @@ void LEditor::OnHighlightThread(wxCommandEvent& e)
 {
 	// the search highlighter thread has completed the calculations, fetch the results and mark them in the editor
 	std::vector<std::pair<int, int> > *matches = (std::vector<std::pair<int, int> >*) e.GetClientData();
-	
+
 	SetIndicatorCurrent(2);
 
 	// clear the old markers
 	IndicatorClearRange(0, GetLength());
 
-	for(size_t i=0; i<matches->size(); i++){
+	for (size_t i=0; i<matches->size(); i++) {
 		std::pair<int, int> p = matches->at(i);
 		IndicatorFillRange(p.first, p.second);
 	}
-	
+
 	delete matches;
+}
+
+bool LEditor::IsCompletionBoxShown()
+{
+	return m_ccBox && m_ccBox->IsShown();
 }

@@ -2329,6 +2329,10 @@ void ContextCpp::RetagFile()
 void ContextCpp::OnUserTypedXChars(const wxString &word)
 {
 	// user typed more than 3 chars, display completion box with C++ keywords
+	if( IsCommentOrString(GetCtrl().GetCurrentPos()) ) {
+		return;
+	}
+	
 	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_CPP_KEYWORD_ASISST) {
 		std::vector<TagEntryPtr> tags;
 		MakeCppKeywordsTags(word, tags);

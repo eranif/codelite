@@ -21,3 +21,5 @@
 - Towards release v1.0: 
 	- Add single instance checker code - make it optional 
 	- 
+- Check the "Rename Symbol..." on linux & mac for performance
+

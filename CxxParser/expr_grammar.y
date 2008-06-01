@@ -99,7 +99,7 @@ primary_expr		:	{result.Reset();} simple_expr
 						| 	error { 
 								yyclearin;	//clear lookahead token
 								yyerrok;
-								fprintf(stderr, "CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_expr_text, cl_expr_lineno);
+								//fprintf(stderr, "CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_expr_text, cl_expr_lineno);
 								//fflush(stderr);
 								expr_syncParser();
 						}

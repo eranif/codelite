@@ -272,19 +272,24 @@ void CCBox::DoInsertSelection(const wxString& word)
 	editor->SetSelection(insertPos, editor->GetCurrentPos());
 	editor->ReplaceSelection(word);
 	
-	// TODO :: make this configurable
 	// incase we are adding a function, add '()' at the end of the function name and place the caret in the middle
 	int img_id = m_listCtrl->OnGetItemImage(m_selectedItem);
 	if(img_id >= 8 && img_id <= 10) { 
-		// image id in range of 8-10 is function 
-		editor->InsertText(editor->GetCurrentPos(), wxT("()"));
-		int pos = editor->GetCurrentPos() + 1;
-		editor->SetCurrentPos(pos);
-		editor->SetSelectionStart(pos);
-		editor->SetSelectionEnd(pos);
 		
-		// trigger function tip
-		editor->CodeComplete();
+		// if full declaration was selected, dont do anything,
+		// otherwise, append '()' to the inserted string, place the caret
+		// in the middle, and trigger the function tooltip
+		
+		if(word.Find(wxT("(")) == wxNOT_FOUND) {
+			// image id in range of 8-10 is function 
+			editor->InsertText(editor->GetCurrentPos(), wxT("()"));
+			int pos = editor->GetCurrentPos() + 1;
+			editor->SetCurrentPos(pos);
+			editor->SetSelectionStart(pos);
+			editor->SetSelectionEnd(pos);
+			// trigger function tip
+			editor->CodeComplete();
+		}		
 	}
 }
 

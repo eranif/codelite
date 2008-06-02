@@ -210,6 +210,9 @@ public:
 	 */
 	void DoReplaceAll();
 	
+	void OnSingleInstanceOpenFiles(wxCommandEvent &e);
+	void OnSingleInstanceRaise(wxCommandEvent &e);
+	
 private:
 	// make our frame's constructor private
 	Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLIP_CHILDREN);

@@ -57,7 +57,7 @@ protected:
 	int GetImageId(const TagEntry &entry);
 	void SelectItem(long item);
 	void Show(const wxString &word);
-	void DoInsertSelection(const wxString &word);
+	void DoInsertSelection(const wxString &word, bool triggerTip = true);
 
 public:
 

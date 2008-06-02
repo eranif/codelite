@@ -380,8 +380,14 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 
 	// get the word and select it in the completion box
 	if (IsCompletionBoxShown()) {
-		wxString word = GetWordAtCaret();
-		m_ccBox->SelectWord(word);
+		int pos = WordStartPosition(GetCurrentPos(), true);
+		wxString word = GetTextRange(pos, GetCurrentPos());
+		
+		if( word.IsEmpty() ) {
+			HideCompletionBox();
+		} else {
+			m_ccBox->SelectWord(word);
+		}
 	}
 
 	// make sure line is visible
@@ -1491,7 +1497,6 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 		switch (event.GetKeyCode()) {
 		case WXK_NUMPAD_ENTER:
 		case WXK_RETURN:
-		case WXK_SPACE:
 		case WXK_TAB:
 			m_ccBox->InsertSelection();
 			HideCompletionBox();
@@ -1532,15 +1537,16 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 			break;
 		}
 
-		// handle completion box control characters that once typed, CL should:
-		// 1. Insert the selection
-		// 2. Insert the typed character
-		if (	event.GetKeyCode() == wxT(' ') 						||	// SPACE
-		        event.ShiftDown() && event.GetKeyCode() == wxT(',') ||	// <
-		        event.GetKeyCode() == wxT('.')) {	// > or .
-			m_ccBox->InsertSelection();
-			HideCompletionBox();
-		}
+//		// handle completion box control characters that once typed, CL should:
+//		// 1. Insert the selection
+//		// 2. Insert the typed character
+//		if (	event.GetKeyCode() == wxT(' ') ||	// SPACE
+//		        event.ShiftDown() && event.GetKeyCode() == wxT('9') || // (
+//		        event.GetKeyCode() == wxT(',') ||	// < or ,
+//		        event.GetKeyCode() == wxT('.')) {	// > or .
+//			m_ccBox->InsertSelection();
+//			HideCompletionBox();
+//		}
 	}
 	m_context->OnKeyDown(event);
 }
@@ -1874,10 +1880,10 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 		// create new completion box
 		m_ccBox = new CCBox(this);
 	}
-	
+
 	m_ccBox->SetAutoHide(autoHide);
 	m_ccBox->SetInsertSingleChoice(autoInsertSingleChoice);
-	
+
 	m_ccBox->Adjust();
 	m_ccBox->Show(tags, word, showFullDecl);
 }

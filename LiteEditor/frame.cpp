@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "singleinstancethreadjob.h"
 #include "refactorindexbuildjob.h"
 #include "customstatusbar.h"
 #include "jobqueue.h"
@@ -132,7 +133,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone)
-	
+
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, Frame::OnSearchThread)
@@ -331,6 +332,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
 	EVT_UPDATE_UI(XRCID("close_file"), Frame::OnFileCloseUI)
 	EVT_MENU(XRCID("link_action"), Frame::OnStartPageEvent)
+
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, Frame::OnSingleInstanceOpenFiles)
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, Frame::OnSingleInstanceRaise)
+
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 
@@ -371,7 +376,9 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	SearchThreadST::Get()->Start(WXTHREAD_MIN_PRIORITY);
 
 	// start the job queue
-	JobQueueSingleton::Instance()->Start();
+	JobQueueSingleton::Instance()->Start(5);
+	// the single instance job is a presisstent job, so the pool will contain only 4 available threads
+	JobQueueSingleton::Instance()->PushJob(new SingleInstanceThreadJob(this, ManagerST::Get()->GetStarupDirectory()));
 
 	//start the editor creator thread
 	EditorCreatorST::Get()->SetParent(GetNotebook());
@@ -3021,4 +3028,33 @@ void Frame::OnParsingThreadDone(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	GetStatusBar()->SetStatusText(wxT("Done"), 4);
+}
+
+void Frame::OnSingleInstanceOpenFiles(wxCommandEvent& e)
+{
+	wxArrayString *arr = reinterpret_cast<wxArrayString*>(e.GetClientData());
+	if (arr) {
+		for (size_t i=0; i<arr->GetCount(); i++) {
+			wxFileName fn(arr->Item(i));
+			
+			// if file is workspace, load it
+			if (fn.GetExt() == wxT("workspace")) {
+				if( ManagerST::Get()->IsWorkspaceOpen() ) {
+					if(wxMessageBox(wxT("Close this workspace, and load workspace '") + fn.GetFullName() + wxT("'"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxYES){
+						ManagerST::Get()->OpenWorkspace(arr->Item(i));
+					}
+				}//else we skip this file
+			} else {
+				ManagerST::Get()->OpenFile(arr->Item(i), wxEmptyString);
+			}
+		}
+		delete arr;
+	}
+	Raise();
+}
+
+void Frame::OnSingleInstanceRaise(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	Raise();
 }

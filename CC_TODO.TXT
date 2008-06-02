@@ -23,3 +23,8 @@
 	- 
 - Check the "Rename Symbol..." on linux & mac for performance
 
+- '(' and ',' should hide the completion box
+
+- avoid triggering function tip for single match
+
+- space should not only dismiss CC box, but also be added

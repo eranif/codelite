@@ -235,7 +235,7 @@ void CCBox::Show(const wxString& word)
 
 	if (_tags.size() == 1 && m_insertSingleChoice) {
 		m_selectedItem = 0;
-		DoInsertSelection(_tags.at(0).displayName);
+		DoInsertSelection(_tags.at(0).displayName, false);
 		
 		// return without calling to wxWindow::Show()
 		return;
@@ -264,7 +264,7 @@ void CCBox::Show(const wxString& word)
 	SelectItem(m_selectedItem);
 }
 
-void CCBox::DoInsertSelection(const wxString& word)
+void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 {
 	LEditor *editor = (LEditor*)GetParent();
 	int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
@@ -280,7 +280,7 @@ void CCBox::DoInsertSelection(const wxString& word)
 		// otherwise, append '()' to the inserted string, place the caret
 		// in the middle, and trigger the function tooltip
 		
-		if(word.Find(wxT("(")) == wxNOT_FOUND) {
+		if(word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
 			// image id in range of 8-10 is function 
 			editor->InsertText(editor->GetCurrentPos(), wxT("()"));
 			int pos = editor->GetCurrentPos() + 1;

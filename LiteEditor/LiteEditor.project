@@ -194,6 +194,8 @@
     <File Name="frame.cpp"/>
     <File Name="customstatusbar.cpp"/>
     <File Name="customstatusbar.h"/>
+    <File Name="singleinstancethreadjob.cpp"/>
+    <File Name="singleinstancethreadjob.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Controls">
     <File Name="checktreectrl.cpp"/>

@@ -27,12 +27,12 @@ void SingleInstanceThreadJob::Process(wxThread* thread)
 	Mkdir(m_path + wxT("/ipc"));
 	wxString cmd_file(m_path + wxT("/ipc/command.msg"));
 	wxString cmd_file_inuse(m_path + wxT("/ipc/command.msg_inuse"));
-	
+
 	// loop until the thread is requested to exit
 	while ( thread->TestDestroy() == false ) {
 
 		// client will place a file named: message.msg
-		
+
 		if ( wxFileName::FileExists(cmd_file) ) {
 			// a command file was found, rename it to a temporary name
 			if ( wxRenameFile(cmd_file, cmd_file_inuse) ) {
@@ -43,11 +43,11 @@ void SingleInstanceThreadJob::Process(wxThread* thread)
 					ProcessFile(content);
 				} else {
 					// file was found but it is empty
-					// just make this app active 
+					// just make this app active
 					wxCommandEvent e(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP);
 					wxPostEvent(m_parent, e);
 				}
-				
+
 				// remove it
 				wxRemoveFile(cmd_file_inuse);
 			}
@@ -60,15 +60,15 @@ void SingleInstanceThreadJob::ProcessFile(const wxString& fileContent)
 {
 	// each line in the file content contains a file name to be opened, pass it to the main thread
 	wxCommandEvent e(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES);
-	
+
 	wxArrayString *arr = new wxArrayString();
 	wxArrayString a = wxStringTokenize(fileContent, wxT("\n"));
-	
-	for(size_t i=0; i<a.GetCount(); i++){
+
+	for (size_t i=0; i<a.GetCount(); i++) {
 		// since we are sending an event between threads, use c_str() to avoid ref-counting
 		arr->Add(a.Item(i).c_str());
 	}
-	
+
 	e.SetClientData(arr);
 	wxPostEvent(m_parent, e);
 }

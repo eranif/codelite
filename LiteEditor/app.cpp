@@ -244,7 +244,7 @@ bool App::OnInit()
 	// Initialise editor configuration files
 	EditorConfig *cfg = EditorConfigST::Get();
 	if ( !cfg->Load() ) {
-		wxLogMessage(wxT("Failed to load configuration file codelite.xml"), wxT("CodeLite"), wxICON_ERROR | wxOK);
+		wxLogMessage(wxT("Failed to load configuration file: ") + wxGetCwd() + wxT("/config/codelite.xml"), wxT("CodeLite"), wxICON_ERROR | wxOK);
 		return false;
 	}
 
@@ -445,14 +445,20 @@ bool App::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir
 			}
 
 			if (files.IsEmpty() == false) {
-				wxString file_name;
 				Mkdir(ManagerST::Get()->GetStarupDirectory() + wxT("/ipc"));
+				
+				wxString file_name, tmp_file;
+				tmp_file 	<< ManagerST::Get()->GetStarupDirectory()
+							<< wxT("/ipc/command.msg.tmp");
+							
 				file_name 	<< ManagerST::Get()->GetStarupDirectory()
-				<< wxT("/ipc/command.msg");
-
-				WriteFileUTF8(file_name, files);
+							<< wxT("/ipc/command.msg");
+				
+				// write the content to a temporary file, once completed, 
+				// rename the file to the actual file name
+				WriteFileUTF8(tmp_file, files);
+				wxRenameFile(tmp_file, file_name);
 			}
-
 			return false;
 		}
 	}

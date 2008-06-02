@@ -3036,14 +3036,15 @@ void Frame::OnSingleInstanceOpenFiles(wxCommandEvent& e)
 	if (arr) {
 		for (size_t i=0; i<arr->GetCount(); i++) {
 			wxFileName fn(arr->Item(i));
-			
+
 			// if file is workspace, load it
 			if (fn.GetExt() == wxT("workspace")) {
-				if( ManagerST::Get()->IsWorkspaceOpen() ) {
-					if(wxMessageBox(wxT("Close this workspace, and load workspace '") + fn.GetFullName() + wxT("'"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxYES){
-						ManagerST::Get()->OpenWorkspace(arr->Item(i));
+				if ( ManagerST::Get()->IsWorkspaceOpen() ) {
+					if (wxMessageBox(wxT("Close this workspace, and load workspace '") + fn.GetFullName() + wxT("'"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxNO) {
+						continue;
 					}
-				}//else we skip this file
+				}
+				ManagerST::Get()->OpenWorkspace(arr->Item(i));
 			} else {
 				ManagerST::Get()->OpenFile(arr->Item(i), wxEmptyString);
 			}

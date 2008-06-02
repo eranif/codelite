@@ -27,16 +27,20 @@
 
 #include "frame.h"
 class SplashScreen;
+class wxSingleInstanceChecker;
 
 class App : public wxApp
 {
-private:
 	SplashScreen* m_splash;
 	Frame *m_pMainFrame;
+	wxSingleInstanceChecker *m_singleInstance;
+
+private:	// Methods
 	bool ReadControlFile(wxString &installPath, long &installRev);
 	void CopySettings(const wxString &destDir, const wxString &installPath);
 	bool CheckRevision(const wxString &fileName);
-
+	bool CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);
+	
 #ifdef __WXMSW__	
 	HINSTANCE m_handler;
 #endif

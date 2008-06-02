@@ -1,28 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : app.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : app.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "app.h"
+#include "app.h"
+#include <wx/snglinst.h>
 #include <wx/image.h>
 
 #include "xmlutils.h"
@@ -98,9 +99,10 @@ END_EVENT_TABLE()
 extern void InitXmlResource();
 App::App(void)
 		: m_pMainFrame(NULL)
-#ifdef __WXMSW__		
+		, m_singleInstance(NULL)
+#ifdef __WXMSW__
 		, m_handler(NULL)
-#endif		
+#endif
 {
 }
 
@@ -113,6 +115,9 @@ App::~App(void)
 		m_handler = NULL;
 	}
 #endif
+	if ( m_singleInstance ) {
+		delete m_singleInstance;
+	}
 	wxAppBase::ExitMainLoop();
 }
 
@@ -213,7 +218,7 @@ bool App::OnInit()
 
 	ManagerST::Get()->SetInstallDir( homeDir );
 	EditorConfig::Init( SvnRevision );
-	
+
 #endif
 
 	wxString curdir = wxGetCwd();
@@ -239,7 +244,12 @@ bool App::OnInit()
 	// Initialise editor configuration files
 	EditorConfig *cfg = EditorConfigST::Get();
 	if ( !cfg->Load() ) {
-		wxLogMessage(wxT("Failed to load configuration file liteeditor.xml"), wxT("CodeLite"), wxICON_ERROR | wxOK);
+		wxLogMessage(wxT("Failed to load configuration file codelite.xml"), wxT("CodeLite"), wxICON_ERROR | wxOK);
+		return false;
+	}
+
+	// check for single instance
+	if ( !CheckSingularity(parser, curdir) ) {
 		return false;
 	}
 
@@ -410,4 +420,41 @@ bool App::CheckRevision(const wxString &fileName)
 		}
 	}
 	return false;
+}
+
+bool App::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir)
+{
+	// check for single instance
+	long singleInstance(1);
+	EditorConfigST::Get()->GetLongValue(wxT("SingleInstance"), singleInstance);
+	if ( singleInstance ) {
+		const wxString name = wxString::Format(wxT("CodeLite-%s"), wxGetUserId().c_str());
+
+		m_singleInstance = new wxSingleInstanceChecker(name);
+		if (m_singleInstance->IsAnotherRunning()) {
+//			wxMessageBox(wxT("CodeLite is configured to allow only single instance running.\nThis can be modified from the 'Settings -> Editor' menu"), wxT("CodeLite"), wxOK | wxICON_ERROR);
+			// prepare commands file for the running instance
+			wxString files;
+			for (size_t i=0; i< parser.GetParamCount(); i++) {
+				wxString argument = parser.GetParam(i);
+
+				//convert to full path and open it
+				wxFileName fn(argument);
+				fn.MakeAbsolute(curdir);
+				files << fn.GetFullPath() << wxT("\n");
+			}
+
+			if (files.IsEmpty() == false) {
+				wxString file_name;
+				Mkdir(ManagerST::Get()->GetStarupDirectory() + wxT("/ipc"));
+				file_name 	<< ManagerST::Get()->GetStarupDirectory()
+				<< wxT("/ipc/command.msg");
+
+				WriteFileUTF8(file_name, files);
+			}
+
+			return false;
+		}
+	}
+	return true;
 }

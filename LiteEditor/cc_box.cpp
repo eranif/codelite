@@ -234,7 +234,7 @@ void CCBox::Show(const wxString& word)
 	}
 
 	if (_tags.size() == 1 && m_insertSingleChoice) {
-		
+		m_selectedItem = 0;
 		DoInsertSelection(_tags.at(0).displayName);
 		
 		// return without calling to wxWindow::Show()
@@ -248,7 +248,7 @@ void CCBox::Show(const wxString& word)
 	m_selectedItem = 0;
 
 	m_selectedItem = m_listCtrl->FindMatch(word);
-	if( m_selectedItem == wxNOT_FOUND && m_autoHide ) {
+	if( m_selectedItem == wxNOT_FOUND && GetAutoHide() ) {
 		// return without calling wxWindow::Show
 		return;
 	}

@@ -105,6 +105,7 @@ protected:
 	wxColourPickerCtrl *m_caretLineColourPicker;
 	wxColourPickerCtrl *m_wordHighlightColour;
 	wxChoice* m_fileFontEncoding;
+	wxCheckBox* m_singleInstance;
 	
 private:
 	wxPanel *CreateSyntaxHighlightPage();

@@ -137,7 +137,9 @@ wxPanel *OptionsDlg::CreateSyntaxHighlightPage()
 			}
 		}
 	}
-
+	wxStaticText *txt = new wxStaticText(page, wxID_ANY, wxT("Colouring scheme:"), wxDefaultPosition, wxDefaultSize, 0);
+	sz->Add(txt, 0, wxEXPAND|wxALL, 5);
+	
 	m_themes = new wxChoice(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, dirs, 0 );
 	sz->Add(m_themes, 0, wxEXPAND|wxALL, 5);
 
@@ -253,6 +255,13 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 	m_checkBoxShowSplash = new wxCheckBox( m_general, wxID_ANY, wxT("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
 	bszier->Add(m_checkBoxShowSplash, 0, wxEXPAND | wxALL, 5);
 
+	m_singleInstance = new wxCheckBox(m_general, wxID_ANY, wxT("Allow only single instance running"), wxDefaultPosition, wxDefaultSize, 0);
+	bszier->Add(m_singleInstance, 0, wxEXPAND | wxALL, 5);
+	
+	long single_instance(1);
+	EditorConfigST::Get()->GetLongValue(wxT("SingleInstance"), single_instance);
+	m_singleInstance->SetValue(single_instance ? true : false);
+	
 	bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
 	m_checkBoxShowSplash->SetValue(showSplash);
 
@@ -354,7 +363,8 @@ void OptionsDlg::SaveChanges()
 
 	// save the WordHighlightColour value
 	EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_wordHighlightColour->GetColour().GetAsString());
-
+	EditorConfigST::Get()->SaveLongValue(wxT("SingleInstance"), m_singleInstance->IsChecked() ? 1 : 0);
+	
 	//check to see of the icon size was modified
 	int oldIconSize(24);
 	OptionsConfigPtr oldOptions = EditorConfigST::Get()->GetOptions();

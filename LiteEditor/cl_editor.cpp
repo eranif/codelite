@@ -422,7 +422,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	}
 
 	if ( IsCompletionBoxShown() == false ) {
-		if (GetWordAtCaret().Len() >= 3) {
+		if (GetWordAtCaret().Len() >= 2) {
 			// user typed more than 3 chars, let the contenxt to handle
 			m_context->OnUserTypedXChars(GetWordAtCaret());
 		}

@@ -49,4 +49,7 @@
   <ArchiveObject Name="LexerTheme">
     <wxString Value="Default" Name="m_value"/>
   </ArchiveObject>
+  <ArchiveObject Name="SingleInstance">
+    <long Value="0" Name="m_value"/>
+  </ArchiveObject>
 </LiteEditor>

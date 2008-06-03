@@ -45,5 +45,8 @@
       <wxString Value="C++"/>
     </wxArrayString>
   </ArchiveObject>
+  <ArchiveObject Name="SingleInstance">
+    <long Value="0" Name="m_value"/>
+  </ArchiveObject>
   <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Arrows" DisplayBookmarkMargin="yes" BookmarkShape="Small Rectangle" BookmarkBgColour="#FF0080" BookmarkFgColour="#FF0080" HighlightCaretLine="no" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#BFD8D8" CaretColour="#000000"/>
 </LiteEditor>

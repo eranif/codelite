@@ -48,6 +48,8 @@ const wxEventType wxEVT_SEARCH_THREAD_SEARCHEND = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHCANCELED = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHSTARTED = wxNewEventType();
 
+extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen); 
+
 //----------------------------------------------------------------
 // SearchData
 //----------------------------------------------------------------
@@ -257,6 +259,8 @@ void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const
 {
 	wxRegEx &re = GetRegex(data->GetFindString(), data->IsMatchCase());
 	size_t col = 0;
+	int iCorrectedCol = 0;
+	int iCorrectedLen = 0;
 	wxString modLine = line;
 	if( re.IsValid() ){
 		while( re.Matches(modLine)) {
@@ -267,12 +271,17 @@ void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const
 			m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
 			
 			// Notify our match
+			// correct search Pos and Length owing to non plain ASCII multibyte characters
+			iCorrectedCol = UTF8Length(modLine.c_str(), col);
+			iCorrectedLen = UTF8Length(modLine.c_str(), col+len) - iCorrectedCol;
 			SearchResult result;
-			result.SetColumn((int)col);
+//			result.SetColumn((int)col);
+			result.SetColumn(iCorrectedCol);
 			result.SetLineNumber(lineNum);
 			result.SetPattern(line);
 			result.SetFileName(fileName);
-			result.SetLen((int)len);
+//			result.SetLen((int)len);
+			result.SetLen(iCorrectedLen);
 			result.SetFlags(data->m_flags);
 			result.SetFindWhat(data->GetFindString());
 			m_results.push_back(result);
@@ -298,6 +307,8 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 
 	int pos = 0;
 	int col = 0;
+	int iCorrectedCol = 0;
+	int iCorrectedLen = 0;
 	while( pos != wxNOT_FOUND ){
 		pos = modLine.Find(findString);
 		if(pos != wxNOT_FOUND){
@@ -322,12 +333,17 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 			m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
 
 			// Notify our match
+			// correct search Pos and Length owing to non plain ASCII multibyte characters
+			iCorrectedCol = UTF8Length(modLine.c_str(), col);
+			iCorrectedLen = UTF8Length(findString.c_str(), findString.Length());
 			SearchResult result;
-			result.SetColumn(col);
+//			result.SetColumn(col);
+			result.SetColumn(iCorrectedCol);
 			result.SetLineNumber(lineNum);
 			result.SetPattern(line);
 			result.SetFileName(fileName);
-			result.SetLen((int)findString.Length());
+//			result.SetLen((int)findString.Length());
+			result.SetLen(iCorrectedLen);
 			result.SetFindWhat(data->GetFindString());
 			result.SetFlags(data->m_flags);
 			

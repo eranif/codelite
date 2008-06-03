@@ -26,6 +26,8 @@
 #include <wx/regex.h>
 #include <algorithm>
 
+extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen); 
+
 wxString StringFindReplacer::GetString(const wxString& input, int from, bool search_up)
 {
 	if (from < 0) {
@@ -180,9 +182,17 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 
 bool StringFindReplacer::Search(const wxString& input, int startOffset, const wxString& find_what, size_t flags, int& pos, int& matchLen)
 {
+	bool bResult = false;
 	if (flags & wxSD_REGULAREXPRESSION) {
-		return DoRESearch(input, startOffset, find_what, flags, pos, matchLen);
+		bResult = DoRESearch(input, startOffset, find_what, flags, pos, matchLen);
 	} else {
-		return DoSimpleSearch(input, startOffset, find_what, flags, pos, matchLen);
+		bResult = DoSimpleSearch(input, startOffset, find_what, flags, pos, matchLen);
 	}
+	// correct search Pos and Length owing to non plain ASCII multibyte characters
+	if(bResult)
+	{
+		pos = UTF8Length(input.c_str(), pos);
+		matchLen = UTF8Length(find_what.c_str(), matchLen);
+	}
+	return bResult;
 }

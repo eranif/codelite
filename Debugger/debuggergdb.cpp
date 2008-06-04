@@ -464,25 +464,17 @@ bool DbgGdb::Interrupt()
 			HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)m_debuggeePid);
 			BOOL res = DebugBreakProcessFunc(process);
 			return res == TRUE;
-		} else {
-			// second method:
-			// attach our process to the debugee 
-			BOOL deatch = AttachConsole (m_debuggeePid);
-			if ( !GenerateConsoleCtrlEvent(0, (DWORD)m_debuggeePid) ) {
-				wxLogMessage(wxString::Format(wxT("Warning: Can not send Ctrl+C event to debuggee process - error code: %d"), GetLastError() ));
-			}
-
-			if (deatch) {
-				wxLogMessage(wxT("Detaching console"));
-				FreeConsole();
-			}
-		}
+		} 
+		// on Windows version < XP we need to find a solution for interrupting the 
+		// debuggee process
+		return false;
 #else
 		m_observer->UpdateAddLine(wxT("Interrupting debugee process"));
 		kill(m_debuggeePid, SIGINT);
+		return true;
 #endif
 	}
-	return true;
+	return false;
 }
 
 bool DbgGdb::QueryFileLine()

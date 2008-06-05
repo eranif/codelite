@@ -382,8 +382,8 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	if (IsCompletionBoxShown()) {
 		int pos = WordStartPosition(GetCurrentPos(), true);
 		wxString word = GetTextRange(pos, GetCurrentPos());
-		
-		if( word.IsEmpty() ) {
+
+		if ( word.IsEmpty() ) {
 			HideCompletionBox();
 		} else {
 			m_ccBox->SelectWord(word);

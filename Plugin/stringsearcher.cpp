@@ -1,32 +1,32 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : stringsearcher.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : stringsearcher.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "stringsearcher.h"
+#include "stringsearcher.h"
 #include <wx/regex.h>
 #include <algorithm>
 
-extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen); 
+extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
 wxString StringFindReplacer::GetString(const wxString& input, int from, bool search_up)
 {
@@ -61,12 +61,12 @@ bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, cons
 	bool matchCase = flags & wxSD_MATCHCASE ? true : false;
 	if ( !matchCase ) re_flags |= wxRE_ICASE;
 	re.Compile(find_what, re_flags);
-	
+
 	// incase we are scanning NOT backwared, set the offset
 	if (!( flags & wxSD_SEARCH_BACKWARD )) {
 		pos = startOffset;
 	}
-	
+
 	if ( re.IsValid() ) {
 		if ( flags & wxSD_SEARCH_BACKWARD ) {
 			size_t start(0), len(0);
@@ -110,7 +110,7 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 
 	wxString find_str(find_what);
 	size_t offset(0);
-	
+
 	// incase we are scanning backwared, revert the strings
 	if ( flags & wxSD_SEARCH_BACKWARD ) {
 		std::reverse(find_str.begin(), find_str.end());
@@ -126,7 +126,7 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 	}
 
 	pos = str.Find(find_str);
-	
+
 	while ( pos != wxNOT_FOUND ) {
 		if (flags & wxSD_MATCHWHOLEWORD) {
 			// full word match
@@ -164,7 +164,7 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 			if (flags & wxSD_SEARCH_BACKWARD) {
 				pos = init_size - pos - matchLen;
 			}
-			
+
 			pos += offset;
 			return true;
 		} else {
@@ -180,8 +180,8 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 	return false;
 }
 
-bool StringFindReplacer::Search(const wxString& input, int startOffset, const wxString& find_what, size_t flags, 
-	int& pos, int& matchLen, int& posInChars, int& matchLenInChars)
+bool StringFindReplacer::Search(const wxString& input, int startOffset, const wxString& find_what, size_t flags,
+                                int& pos, int& matchLen, int& posInChars, int& matchLenInChars)
 {
 	bool bResult = false;
 	if (flags & wxSD_REGULAREXPRESSION) {
@@ -190,15 +190,11 @@ bool StringFindReplacer::Search(const wxString& input, int startOffset, const wx
 		bResult = DoSimpleSearch(input, startOffset, find_what, flags, posInChars, matchLenInChars);
 	}
 	// correct search Pos and Length owing to non plain ASCII multibyte characters
-	if(bResult)
-	{
+	if (bResult) {
 		pos = UTF8Length(input.c_str(), posInChars);
-		if (flags & wxSD_REGULAREXPRESSION)
-		{
+		if (flags & wxSD_REGULAREXPRESSION) {
 			matchLen = UTF8Length(input.c_str(), posInChars + matchLenInChars) - pos;
-		}
-		else
-		{
+		} else {
 			matchLen = UTF8Length(find_what.c_str(), matchLenInChars);
 		}
 	}

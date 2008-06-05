@@ -30,6 +30,7 @@ BuildTabSettingsData::BuildTabSettingsData()
 : m_skipWarnings(false)
 , m_boldErrFont(true)
 , m_boldWarnFont(true)
+, m_autoHide(false)
 {
 	wxColour errColour(wxT("RED"));
 	wxColour wrnColour(wxT("GOLD"));
@@ -54,6 +55,7 @@ void BuildTabSettingsData::Serialize(Archive &arch)
 	arch.Write(wxT("m_skipWarnings"), m_skipWarnings);
 	arch.Write(wxT("m_boldErrFont"), m_boldErrFont);
 	arch.Write(wxT("m_boldWarnFont"), m_boldWarnFont);
+	arch.Write(wxT("m_autoHide"), m_autoHide);
 }
 
 void BuildTabSettingsData::DeSerialize(Archive &arch)
@@ -65,4 +67,5 @@ void BuildTabSettingsData::DeSerialize(Archive &arch)
 	arch.Read(wxT("m_skipWarnings"), m_skipWarnings);
 	arch.Read(wxT("m_boldErrFont"), m_boldErrFont);
 	arch.Read(wxT("m_boldWarnFont"), m_boldWarnFont);
+	arch.Read(wxT("m_autoHide"), m_autoHide);
 }

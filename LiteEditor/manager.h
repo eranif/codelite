@@ -259,8 +259,10 @@ public:
 	/**
 	 * Show output pane and set focus to focusWin
 	 * \param focusWin tab name to set the focus
+	 * \return return true if the output pane was hidden and this function forced it to appear. false if the window was already
+	 * shown and nothing needed to be done 
 	 */
-	void ShowOutputPane(wxString focusWin = wxEmptyString, bool commit = true );
+	bool ShowOutputPane(wxString focusWin = wxEmptyString, bool commit = true );
 
 	/**
 	 * Show the debugger pane

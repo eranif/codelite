@@ -35,6 +35,7 @@ class BuildTabSettingsData : public SerializedObject {
 	wxString m_errorColourBg;
 	bool m_boldErrFont;
 	bool m_boldWarnFont;
+	bool m_autoHide;
 	
 private:
 	BuildTabSettingsData(const BuildTabSettingsData& rhs);
@@ -64,6 +65,10 @@ public:
 	const bool& GetSkipWarnings() const {return m_skipWarnings;}
 	const wxString& GetWarnColour() const {return m_warnColour;}
 	const wxString& GetWarnColourBg() const {return m_warnColourBg;}
+	
+	//Setters
+	void SetAutoHide(const bool& autoHide) {this->m_autoHide = autoHide;}
+	const bool& GetAutoHide() const {return m_autoHide;}
 	
 };
 #endif // __buildtabsettingsdata__

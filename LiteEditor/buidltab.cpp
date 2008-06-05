@@ -443,3 +443,34 @@ wxString BuildTab::ProjectFromLine(int line)
 	}
 	return iter->second.project;
 }
+
+int BuildTab::GetErrorCount()
+{
+	int errorCount(0);
+	wxString txt = m_sci->GetText();
+	for(int i=0; i<m_sci->GetLineCount(); i++){
+		const wxCharBuffer line = _C(m_sci->GetLine(i));
+		size_t dummy;
+		int res = ColourGccLine(m_sci->PositionFromLine(i), line.data(), dummy, dummy);
+		if(res == wxSCI_LEX_GCC_ERROR) {
+			errorCount++;
+		}
+	}
+	return errorCount;
+}
+
+int BuildTab::GetWarningCount()
+{
+	int warnCount(0);
+	wxString txt = m_sci->GetText();
+	for(int i=0; i<m_sci->GetLineCount(); i++){
+		const wxCharBuffer line = _C(m_sci->GetLine(i));
+		size_t dummy;
+		int res = ColourGccLine(m_sci->PositionFromLine(i), line.data(), dummy, dummy);
+		if(res == wxSCI_LEX_GCC_WARNING) {
+			warnCount++;
+		}
+	}
+	return warnCount;
+}
+

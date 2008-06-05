@@ -847,12 +847,15 @@ wxString Manager::GetProjectCwd(const wxString &project) const
 	return projectFileName.GetPath();
 }
 
-void Manager::ShowOutputPane(wxString focusWin, bool commit)
+bool Manager::ShowOutputPane(wxString focusWin, bool commit)
 {
 	// make the output pane visible
+	bool showedIt(false);
+	
 	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Output"));
 	if ( info.IsOk() && !info.IsShown() ) {
 		info.Show();
+		showedIt = true;
 		if (commit) {
 			Frame::Get()->GetDockingManager().Update();
 		}
@@ -864,6 +867,7 @@ void Manager::ShowOutputPane(wxString focusWin, bool commit)
 	if ( index != wxNOT_FOUND && (size_t)index != pane->GetNotebook()->GetSelection()) {
 		pane->GetNotebook()->SetSelection((size_t)index);
 	}
+	return showedIt;
 }
 
 

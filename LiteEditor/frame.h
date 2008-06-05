@@ -96,6 +96,7 @@ class Frame : public wxFrame
 	bool m_doingReplaceInFiles;
 	wxMenu *m_cppMenu;
 	bool m_highlightWord;
+	bool m_hideOutputPane;
 	
 public:		
 	// the access method to the singleton frame is by using the Get method

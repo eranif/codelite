@@ -41,6 +41,7 @@ BuildTabSettingsBase( parent )
 	m_colourPickerWarningsFg->SetColour(options.GetWarnColour());
 	m_checkBoxBoldErrFont->SetValue(options.GetBoldErrFont());
 	m_checkBoxBoldWarnFont->SetValue(options.GetBoldWarnFont());
+	m_checkBoxAutoHide->SetValue(options.GetAutoHide());
 }
 
 void BuildTabSetting::Save()
@@ -53,6 +54,7 @@ void BuildTabSetting::Save()
 	options.SetSkipWarnings(m_checkBoxSkipeWarnings->IsChecked());
 	options.SetBoldErrFont(m_checkBoxBoldErrFont->IsChecked());
 	options.SetBoldWarnFont(m_checkBoxBoldWarnFont->IsChecked());
+	options.SetAutoHide(m_checkBoxAutoHide->IsChecked());
 	
 	EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);
 	//reload the settings

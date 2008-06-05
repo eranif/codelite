@@ -21,6 +21,7 @@
 #include "KeyWords.h"
 #include "Scintilla.h"
 #include "SciLexer.h"
+#include "StyleContext.h"
 
 #ifdef SCI_NAMESPACE
 using namespace Scintilla;
@@ -52,7 +53,7 @@ static inline bool AtEOL(Accessor &styler, unsigned int i)
 static void ColouriseGccDoc(
     unsigned int startPos,
     int length,
-    int /*initStyle*/,
+    int initStyle,
     WordList *keywordlists[],  
     Accessor &styler)
 {
@@ -62,17 +63,17 @@ static void ColouriseGccDoc(
 	styler.StartSegment(startPos);
 	unsigned int linePos = 0;
 	unsigned int startLine = startPos;
+	
 	for (unsigned int i = startPos; i < startPos + length; i++) {
 		lineBuffer[linePos++] = styler[i];
 		if (AtEOL(styler, i) || (linePos >= sizeof(lineBuffer) - 1)) {
 			// lineBuffer contains our line
 			// End of line (or of line buffer) met, colourise it
 			lineBuffer[linePos] = '\0';
-			
 			size_t start(0);
 			size_t len(0);
-			int style = ColourGccLine(startLine, lineBuffer, start, len);
 			
+			int style = ColourGccLine(startLine, lineBuffer, start, len);
 			
 			if(len != 0) {
 				styler.ColourTo(startLine + start - 1, style);

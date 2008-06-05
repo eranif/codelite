@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : outputtabwindow.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : outputtabwindow.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "outputtabwindow.h"
+#include "outputtabwindow.h"
 #include "wx/ffile.h"
 #include "output_pane.h"
 #include "wx/sizer.h"
@@ -54,19 +54,23 @@ void OutputTabWindow::CreateGUIControl()
 	//Create the toolbar
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxTB_NODIVIDER);
 
-	int id = wxNewId();
-	tb->AddTool(id,
-	            wxT("Clear All"),
-	            wxXmlResource::Get()->LoadBitmap(wxT("document_delete")),
-	            wxT("Clear All"));
-	Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnClearAll ));
-
+	int id;
+	// dont allow 'clear all' button for the build window
+	if (m_name != OutputPane::BUILD_WIN) {
+		id = wxNewId();
+		tb->AddTool(id,
+		            wxT("Clear All"),
+		            wxXmlResource::Get()->LoadBitmap(wxT("document_delete")),
+		            wxT("Clear All"));
+		Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnClearAll ));
+	}
+	
 	id = wxNewId();
 	tb->AddTool(id,
 	            wxT("Word Wrap"),
 	            wxXmlResource::Get()->LoadBitmap(wxT("word_wrap")),
 	            wxT("Word Wrap"),
-				wxITEM_CHECK);
+	            wxITEM_CHECK);
 	Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnWordWrap ));
 
 	if (m_name == OutputPane::BUILD_WIN) {
@@ -110,19 +114,6 @@ void OutputTabWindow::CreateGUIControl()
 
 	Connect(wxEVT_SCI_DOUBLECLICK, wxScintillaEventHandler(OutputTabWindow::OnMouseDClick), NULL, this);
 	Connect(wxEVT_SCI_HOTSPOT_CLICK, wxScintillaEventHandler(OutputTabWindow::OnHotspotClicked), NULL, this);
-}
-
-void OutputTabWindow::OnSetFocus(wxFocusEvent &event)
-{
-	if ( m_canFocus ) {
-		return;
-	}
-
-	wxWindow *prevFocusWin = event.GetWindow();
-	if ( prevFocusWin ) {
-		prevFocusWin->SetFocus();
-	}
-	event.Skip();
 }
 
 void OutputTabWindow::OnWordWrap(wxCommandEvent &e)

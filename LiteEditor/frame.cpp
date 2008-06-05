@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "buildtabsettingsdata.h"
 #include "singleinstancethreadjob.h"
 #include "refactorindexbuildjob.h"
 #include "customstatusbar.h"
@@ -347,6 +348,7 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 		, m_doingReplaceInFiles(false)
 		, m_cppMenu(NULL)
 		, m_highlightWord(false)
+		, m_hideOutputPane(false)
 {
 #if  defined(__WXGTK20__)
 	// A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -1697,17 +1699,34 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 	// is set to the 'Find In Files' tab
 	m_outputPane->GetBuildTab()->CanFocus(true);
 	if (event.GetEventType() == wxEVT_BUILD_STARTED) {
-		ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN);
+		m_hideOutputPane = ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN);
 		m_outputPane->GetBuildTab()->Clear();
 		//read settings for the build output tab
 		m_outputPane->GetBuildTab()->ReloadSettings();
 		m_outputPane->GetBuildTab()->AppendText(wxT("Building: "));
+		
 	} else if (event.GetEventType() == wxEVT_BUILD_ADDLINE) {
 		m_outputPane->GetBuildTab()->AppendText(event.GetString());
+		
 	} else if (event.GetEventType() == wxEVT_BUILD_ENDED) {
 		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
+		
 		m_outputPane->GetBuildTab()->OnBuildEnded();
-
+		
+		// get the build settings
+		BuildTabSettingsData buildSettings;
+		EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &buildSettings);
+		
+		if(buildSettings.GetAutoHide()){
+			// implement the auto-hide feature:
+			// incase the build ended with no error nor warnings, and the pane was shown due to the build
+			// process, hide it.
+			if(GetOutputPane()->GetBuildTab()->GetErrorCount() == 0 && GetOutputPane()->GetBuildTab()->GetWarningCount() == 0 && m_hideOutputPane){
+				ManagerST::Get()->HidePane(wxT("Output"), true);
+			}
+		}
+		m_hideOutputPane = false;
+		
 		//If the build process was part of a 'Build and Run' command, check whether an erros
 		//occured during build process, if non, launch the output
 		if (m_buildInRun) {

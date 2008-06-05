@@ -1,15 +1,13 @@
 //--------------------------------------------
-// Linux
+// Linux 
 //--------------------------------------------
 The build for Linux uses the default Linux build:
-
 
 from the trunk/ directory, run:
 
 ./configure
-make -f Makefile
-sudo make -f Makefile install
-
+make
+sudo make install
 
 //-----------------------------------------------------
 // Windows: MinGW 
@@ -17,8 +15,7 @@ sudo make -f Makefile install
 
 The following are required prior building codelite using CodeLite:
 1. wxWidgets (2.8 or later) in Unicode Shared installed on your machine 
-2. wx-config somewhere in yout path
-3. MinGW + WinAPI for MinGW (gcc compiler 3.4.5 or later)
+2. MinGW + WinAPI for MinGW (gcc compiler 3.4.5 or later)
 
 To build: Download CodeLite for Windows (can be downloaded from here: http://codelite.org),
 open the file trunk/LiteEditor.workspace - and hit 'F7'

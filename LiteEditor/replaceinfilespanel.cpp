@@ -133,13 +133,15 @@ void ReplaceInFilesPanel::OnReplaceAll( wxCommandEvent& event )
 		int pos(0);
 		int match_len(0);
 		int offset( 0 );
+		int posInChars(0);
+		int match_lenInChars(0);
 
 		// perform replace all in this file
-		while ( StringFindReplacer::Search(content, offset, m_findWhat, m_flags, pos, match_len) ) {
-			content.Remove(pos, match_len);
-			content.insert(pos, replaceWith);
+		while ( StringFindReplacer::Search(content, offset, m_findWhat, m_flags, pos, match_len, posInChars, match_lenInChars) ) {
+			content.Remove(posInChars, match_lenInChars);
+			content.insert(posInChars, replaceWith);
 			occur++;
-			offset = pos + match_len;
+			offset = posInChars + replaceWith.length(); //match_len;
 		}
 
 		// update the progress bar

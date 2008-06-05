@@ -44,5 +44,9 @@ protected:
 	
 public:
 	static bool Search(const wxString &input, int startOffset, const wxString &find_what, size_t flags, int &pos, int &matchLen);
+	// overloaded method because of that ReplaceAll methods works on wxString and needs results in chars and other methods 
+	// using selection needs results in bytes
+	static bool Search(const wxString &input, int startOffset, const wxString &find_what, size_t flags, int &pos, int &matchLen, 
+						int& posInChars, int& matchLenInChars);
 };
 #endif // __stringsearcher__

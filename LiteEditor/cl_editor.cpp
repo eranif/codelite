@@ -1278,6 +1278,8 @@ bool LEditor::ReplaceAll()
 
 	int pos(0);
 	int match_len(0);
+	int posInChars(0);
+	int match_lenInChars(0);
 
 	wxString txt;
 	if ( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
@@ -1286,11 +1288,11 @@ bool LEditor::ReplaceAll()
 		txt = GetText();
 	}
 
-	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
-		txt.Remove(pos, match_len);
-		txt.insert(pos, replaceWith);
+	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len, posInChars, match_lenInChars) ) {
+		txt.Remove(posInChars, match_lenInChars);
+		txt.insert(posInChars, replaceWith);
 		occur++;
-		offset = pos + match_len;
+		offset = posInChars + replaceWith.length(); // match_len;
 	}
 
 	// replace the buffer

@@ -180,19 +180,33 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 	return false;
 }
 
-bool StringFindReplacer::Search(const wxString& input, int startOffset, const wxString& find_what, size_t flags, int& pos, int& matchLen)
+bool StringFindReplacer::Search(const wxString& input, int startOffset, const wxString& find_what, size_t flags, 
+	int& pos, int& matchLen, int& posInChars, int& matchLenInChars)
 {
 	bool bResult = false;
 	if (flags & wxSD_REGULAREXPRESSION) {
-		bResult = DoRESearch(input, startOffset, find_what, flags, pos, matchLen);
+		bResult = DoRESearch(input, startOffset, find_what, flags, posInChars, matchLenInChars);
 	} else {
-		bResult = DoSimpleSearch(input, startOffset, find_what, flags, pos, matchLen);
+		bResult = DoSimpleSearch(input, startOffset, find_what, flags, posInChars, matchLenInChars);
 	}
 	// correct search Pos and Length owing to non plain ASCII multibyte characters
 	if(bResult)
 	{
-		pos = UTF8Length(input.c_str(), pos);
-		matchLen = UTF8Length(find_what.c_str(), matchLen);
+		pos = UTF8Length(input.c_str(), posInChars);
+		if (flags & wxSD_REGULAREXPRESSION)
+		{
+			matchLen = UTF8Length(input.c_str(), posInChars + matchLenInChars) - pos;
+		}
+		else
+		{
+			matchLen = UTF8Length(find_what.c_str(), matchLenInChars);
+		}
 	}
 	return bResult;
+}
+
+bool StringFindReplacer::Search(const wxString& input, int startOffset, const wxString& find_what, size_t flags, int& pos, int& matchLen)
+{
+	int posInChars(0), matchLenInChars(0);
+	return StringFindReplacer::Search(input, startOffset, find_what, flags, pos, matchLen, posInChars, matchLenInChars);
 }

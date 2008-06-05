@@ -172,6 +172,8 @@ class SearchResult : public wxObject
 	int m_len;
 	wxString m_findWhat;
 	size_t m_flags;
+	int m_columnInChars;
+	int m_lenInChars;
 
 public:
 	//ctor-dtor, copy constructor and assignment operator
@@ -194,6 +196,8 @@ public:
 		m_len = rhs.m_len;
 		m_findWhat = rhs.m_findWhat.c_str();
 		m_flags = rhs.m_flags;
+		m_columnInChars = rhs.m_columnInChars;
+		m_lenInChars = rhs.m_lenInChars;
 		return *this;
 	}
 
@@ -250,6 +254,20 @@ public:
 	//Getters
 	const wxString& GetFindWhat() const {
 		return m_findWhat;
+	}
+	
+	void SetColumnInChars(const int& col) {
+		this->m_columnInChars = col;
+	}
+	const int& GetColumnInChars() const {
+		return m_columnInChars;
+	}
+	
+	void SetLenInChars(const int& len) {
+		this->m_lenInChars = len;
+	}
+	const int& GetLenInChars() const {
+		return m_lenInChars;
 	}
 
 	// return a foramtted message

@@ -571,3 +571,29 @@ void Project::SetFiles(ProjectPtr src)
 	}
 	m_doc.Save(m_fileName.GetFullPath());
 }
+
+bool Project::RenameFile(const wxString& oldName, const wxString& virtualDir, const wxString& newName)
+{
+	wxXmlNode *vd = GetVirtualDir(virtualDir);
+	if ( !vd ) {
+		return false;
+	}
+
+	// Convert the file path to be relative to
+	// the project path
+	DirSaver ds;
+
+	::wxSetWorkingDirectory(m_fileName.GetPath());
+	wxFileName tmp(oldName);
+	tmp.MakeRelativeTo(m_fileName.GetPath());
+
+	wxXmlNode *node = XmlUtils::FindNodeByName(vd, wxT("File"), tmp.GetFullPath());
+	if ( node ) {
+		// update the new name
+		tmp.SetFullName(newName);
+		XmlUtils::UpdateProperty(node, wxT("Name"), tmp.GetFullPath());
+	}
+	
+	SetModified(true);
+	return m_doc.Save(m_fileName.GetFullPath());;	
+}

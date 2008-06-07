@@ -2304,26 +2304,10 @@ void ContextCpp::RetagFile()
 	// event, since the actual file on the disk was not modified
 	//-------------------------------------------------------------------
 	LEditor &ctrl = GetCtrl();
-	ParseRequest *req = new ParseRequest();
-	// Put a request on the parsing thread to update the GUI tree for this file
-	wxFileName fn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
-	req->setDbFile(fn.GetFullPath());
-
-	// Construct an absolute file name for ctags
-	wxFileName absFile( ctrl.GetFileName() );
-	absFile.MakeAbsolute();
-	req->setFile(absFile.GetFullPath());
-
-	//the previous call 'stole' the focus from us...
-	ParseThreadST::Get()->Add(req);
-
-
+	ManagerST::Get()->RetagFile(ctrl.GetFileName().GetFullPath());
+	
 	ctrl.UpdateColours();
 	ctrl.SetActive();
-
-	wxString msg;
-	msg << wxT("Re-tagging file ") << absFile.GetFullName() << wxT("...");
-	Frame::Get()->GetStatusBar()->SetStatusText(msg, 4);
 }
 
 void ContextCpp::OnUserTypedXChars(const wxString &word)

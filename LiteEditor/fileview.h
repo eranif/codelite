@@ -127,6 +127,7 @@ protected:
 	virtual void OnItemBeginDrag(wxTreeEvent &event);
 	virtual void OnItemEndDrag(wxTreeEvent &event);
 	virtual void OnImportDirectory(wxCommandEvent &e);
+	virtual void OnRenameItem(wxCommandEvent &e);
 	virtual void OnCompileItem(wxCommandEvent &e);
 	virtual void SortTree();
 	virtual void SortItem(wxTreeItemId &item);

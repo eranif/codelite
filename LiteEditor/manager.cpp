@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : manager.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : manager.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "precompiled_header.h"
+#include "precompiled_header.h"
 #include "refactorindexbuildjob.h"
 #include "jobqueue.h"
 #include <wx/progdlg.h>
@@ -57,7 +57,7 @@
 #include "editor_creator.h"
 #include "algorithm"
 #include "async_executable_cmd.h"
-#include "fileutils.h" 
+#include "fileutils.h"
 #include "workspace_pane.h"
 #include "close_all_dlg.h"
 #include "vcimporter.h"
@@ -851,7 +851,7 @@ bool Manager::ShowOutputPane(wxString focusWin, bool commit)
 {
 	// make the output pane visible
 	bool showedIt(false);
-	
+
 	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Output"));
 	if ( info.IsOk() && !info.IsShown() ) {
 		info.Show();
@@ -2712,7 +2712,7 @@ void Manager::ReplaceInFiles(const wxString &word, std::list<CppToken> &li)
 		if (!file_name.IsEmpty()) {
 			if (file_name == token.getFilename()) {
 				token.setOffset(token.getOffset()+off);
-			}else{
+			} else {
 				// switched file
 				off = 0;
 				file_name = token.getFilename();
@@ -2743,4 +2743,21 @@ void Manager::ReplaceInFiles(const wxString &word, std::list<CppToken> &li)
 			}
 		}
 	}
+}
+void Manager::RetagFile(const wxString& filename)
+{
+	// retag the file
+	ParseRequest *req = new ParseRequest();
+	// Put a request on the parsing thread to update the GUI tree for this file
+	wxFileName fn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
+	req->setDbFile(fn.GetFullPath().c_str());
+
+	// Construct an absolute file name for ctags
+	wxFileName absFile( filename );
+	absFile.MakeAbsolute();
+	req->setFile(absFile.GetFullPath().c_str());
+	ParseThreadST::Get()->Add(req);
+	
+	// add status message
+	Frame::Get()->GetStatusBar()->SetStatusText(wxString::Format(wxT("Re-tagging file %s..."), absFile.GetFullName().c_str()), 4);
 }

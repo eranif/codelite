@@ -1,35 +1,35 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : fileview.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : fileview.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "fileview.h"
+#include "fileview.h"
 #include "nameanddescdlg.h"
 #include "globals.h"
 #include "importfilesdlg.h"
 #include "manager.h"
 #include "tree.h"
 #include <wx/xrc/xmlres.h>
-#include "wx/imaglist.h" 
+#include "wx/imaglist.h"
 #include <wx/textdlg.h>
 #include <deque>
 #include "new_item_dlg.h"
@@ -75,6 +75,7 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "clean_project_only" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnCleanProjectOnly ), NULL, this );
 	Connect( XRCID( "import_directory" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnImportDirectory ), NULL, this );
 	Connect( XRCID( "compile_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnCompileItem ), NULL, this );
+	Connect( XRCID( "rename_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRenameItem ), NULL, this );
 
 	Connect( XRCID( "remove_project" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "set_as_active" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
@@ -96,6 +97,7 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "clean_project_only" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "import_directory" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "compile_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
+	Connect( XRCID( "rename_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "generate_makefile" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 }
 
@@ -810,10 +812,10 @@ void FileViewTree::OnSaveAsTemplate( wxCommandEvent & WXUNUSED( event ) )
 			if ( dlg->ShowModal() == wxID_OK ) {
 				wxString newName = dlg->GetName();
 				wxString desc  	 = dlg->GetDescription();
-				
+
 				newName = newName.Trim().Trim(false);
 				desc = desc.Trim().Trim(false);
-				
+
 				if ( newName.IsEmpty() == false ) {
 					ManagerST::Get()->SaveProjectTemplate( proj, newName, desc );
 				}
@@ -872,6 +874,7 @@ void FileViewTree::OnCompileItem(wxCommandEvent &e)
 		}
 	}
 }
+
 
 void FileViewTree::OnStopBuild( wxCommandEvent &event )
 {
@@ -1186,4 +1189,56 @@ void FileViewTree::OnRunPremakeStep(wxCommandEvent &event)
 		wxString projectName = GetItemText( item );
 		ManagerST::Get()->RunCustomPreMakeCommand( projectName );
 	}
+}
+
+void FileViewTree::OnRenameItem(wxCommandEvent& e)
+{
+	wxUnusedVar( e );
+	wxTreeItemId item = GetSingleSelection();
+	if ( item.IsOk() ) {
+		FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
+		if (data->GetData().GetKind() == ProjectItem::TypeFile) {
+			wxTreeItemId parent = GetItemParent( item );
+			if ( parent.IsOk() ) {
+
+				wxString path = GetItemPath( parent );
+				wxString proj = path.BeforeFirst(wxT(':'));
+
+				ProjectPtr p = ManagerST::Get()->GetProject(proj);
+				if ( p ) {
+					// prompt user for new name
+					wxString newName = wxGetTextFromUser(wxT("New file name:"), wxT("Rename file:"), GetItemText(item));
+					if ( newName.IsEmpty() == false ) {
+
+						// remove the file from the workspace (this will erase it from the symbol database and will
+						// also close the editor that it is currently opened in (if any)
+						if (ManagerST::Get()->RemoveFile(GetItemText(item), path)) {
+
+							// rename the file
+							wxFileName tmp(data->GetData().GetFile());
+							tmp.SetFullName(newName);
+							wxRenameFile(data->GetData().GetFile(), tmp.GetFullPath());
+
+							// add the new file to the project
+							FileViewItem new_item;
+							new_item.fullpath = tmp.GetFullPath();
+							new_item.displayName = tmp.GetFullName();
+							new_item.virtualDir = path.AfterFirst(wxT(':'));
+							DoAddItem(p, new_item);
+
+							// update the item's info
+							data->SetDisplayName(new_item.displayName);
+							data->SetFile(new_item.fullpath);
+
+							// rename the tree item
+							SetItemText(item, new_item.displayName);
+							
+							ManagerST::Get()->RetagFile(new_item.fullpath);
+
+						}
+					}
+				} // p
+			}// parent.IsOk()
+		}//TypeFile
+	}//item.IsOk()
 }

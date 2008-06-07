@@ -484,7 +484,13 @@ public:
 	 * retag workspace
 	 */
 	void RetagWorkspace();
-
+	
+	/**
+	 * \brief retag a given file
+	 * \param filename
+	 */
+	void RetagFile(const wxString &filename);
+	
 	/**
 	 * Add a debug message in the debug output window
 	 * \param msg 

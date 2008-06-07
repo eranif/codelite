@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : project.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : project.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef PROJECT_H
+#ifndef PROJECT_H
 #define PROJECT_H
 
 #include "wx/treectrl.h"
@@ -34,8 +34,8 @@
 #include <list>
 #include "project_settings.h"
 
-//incase we are using DLL build of wxWdigets, we need to make this class to export its 
-//classes 
+//incase we are using DLL build of wxWdigets, we need to make this class to export its
+//classes
 #ifndef WXDLLIMPEXP_LE_SDK
 #ifdef WXMAKINGDLL_LE_SDK
 #    define WXDLLIMPEXP_LE_SDK WXEXPORT
@@ -44,7 +44,7 @@
 #else /* not making nor using FNB as DLL */
 #    define WXDLLIMPEXP_LE_SDK
 #endif // WXMAKINGDLL_LE_SDK
-#endif 
+#endif
 
 
 /**
@@ -71,31 +71,28 @@ public:
 	wxString m_displayName;
 	wxString m_file;
 	int m_kind;
-	
+
 public:
 	//---------------------------------------------------------------
 	// Constructors, destructor and assignment operator
 	//---------------------------------------------------------------
-	ProjectItem(const wxString &key, const wxString &displayName, const wxString &file, int kind) 
-		: m_key(key)
-		, m_displayName(displayName)
-		, m_file(file)
-		, m_kind(kind)
-	{
+	ProjectItem(const wxString &key, const wxString &displayName, const wxString &file, int kind)
+			: m_key(key)
+			, m_displayName(displayName)
+			, m_file(file)
+			, m_kind(kind) {
 	}
 
-	ProjectItem() : m_key(wxEmptyString), m_displayName(wxEmptyString), m_file(wxEmptyString), m_kind(TypeProject)
-	{}
+	ProjectItem() : m_key(wxEmptyString), m_displayName(wxEmptyString), m_file(wxEmptyString), m_kind(TypeProject) {}
 
-	virtual ~ProjectItem()
-	{}
+	virtual ~ProjectItem() {}
 
-	ProjectItem(const ProjectItem& item){
+	ProjectItem(const ProjectItem& item) {
 		*this = item;
 	}
 
-	ProjectItem &operator=(const ProjectItem &item){
-		if(this == &item){
+	ProjectItem &operator=(const ProjectItem &item) {
+		if (this == &item) {
 			return *this;
 		}
 
@@ -105,21 +102,35 @@ public:
 		m_kind = item.m_kind;
 		return *this;
 	}
-	
+
 	//-----------------------------------------
 	// Setters / Getters
 	//-----------------------------------------
-	const wxString &GetDisplayName() const { return m_displayName; }
-	const wxString &GetFile() const { return m_file; }
-	int GetKind() const { return m_kind; }
+	const wxString &GetDisplayName() const {
+		return m_displayName;
+	}
+	const wxString &GetFile() const {
+		return m_file;
+	}
+	int GetKind() const {
+		return m_kind;
+	}
 
-	void SetDisplayName(const wxString &displayName) { m_displayName = displayName; }
-	void SetFile(const wxString &file) { m_file = file; }
-	void SetKind(int kind) { m_kind = kind; }
+	void SetDisplayName(const wxString &displayName) {
+		m_displayName = displayName;
+	}
+	void SetFile(const wxString &file) {
+		m_file = file;
+	}
+	void SetKind(int kind) {
+		m_kind = kind;
+	}
 
 	//------------------------------------------
 	// operations
-	const wxString& Key() const { return m_key; }
+	const wxString& Key() const {
+		return m_key;
+	}
 };
 
 // useful typedefs
@@ -144,13 +155,13 @@ typedef SmartPtr<Project> ProjectPtr;
  * any damage to your computer, causes your pet to fall ill, increases baldness
  * or makes your car start emitting strange noises when you start it up.
  * This code has no bugs, just undocumented features!
- * 
- * \todo 
  *
- * \bug 
+ * \todo
+ *
+ * \bug
  *
  */
-class WXDLLIMPEXP_LE_SDK Project 
+class WXDLLIMPEXP_LE_SDK Project
 {
 public:
 	static const wxString STATIC_LIBRARY;
@@ -162,10 +173,12 @@ private:
 	wxFileName m_fileName;
 	bool m_tranActive;
 	bool m_isModified;
-	
+
 public:
-	const wxFileName &GetFileName() const { return m_fileName; }
-	
+	const wxFileName &GetFileName() const {
+		return m_fileName;
+	}
+
 	/**
 	 * \brief copy this project and all the files under to new_path
 	 * \param file_name the new path of the project
@@ -173,18 +186,18 @@ public:
 	 * \param description the new project description
 	 */
 	void CopyTo(const wxString &new_path, const wxString &new_name, const wxString &description);
-	
+
 	/**
 	 * \brief copy files (and virtual directories) from src project to this project
-	 * note that this call replaces the files that exists under this project 
+	 * note that this call replaces the files that exists under this project
 	 * \param src
 	 */
 	void SetFiles(ProjectPtr src);
-	
+
 	//--------------------------------------------------
 	// Ctor - Dtor
 	//--------------------------------------------------
-	
+
 	// default constructor
 	Project();
 	virtual ~Project();
@@ -193,25 +206,25 @@ public:
 	 * \return project name
 	 */
 	wxString GetName() const;
-	
-	
+
+
 	/**
 	 * \brief return the project description as appears in the XML file
 	 * \return project description
 	 */
 	wxString GetDescription() const;
-	
+
 	//-----------------------------------
 	// Project operations
 	//-----------------------------------
 	/**
 	 * Load project from file
-	 * \param path 
-	 * \return 
+	 * \param path
+	 * \return
 	 */
-	bool Load(const wxString &path); 
+	bool Load(const wxString &path);
 	/**
-	 * \brief Create new project 
+	 * \brief Create new project
 	 * \param name project name
 	 * \param description project description
 	 * \param path path of the file excluding  the file name (e.g. C:\)
@@ -225,29 +238,37 @@ public:
 	 * \param fileName file full name and path
 	 * \param virtualDir owner virtual directory, if the virtual directory does not exist, a new one will be created
 	 *        and the file will be placed under it
-	 * \return 
+	 * \return
 	 */
 	bool AddFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
-	
+
 	/**
 	 * Remove file from the project
 	 * \param fileName file full path
 	 * \param virtualDir owner virtual directory
-	 * \return 
+	 * \return
 	 */
 	bool RemoveFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
 
 	/**
+	 * Rename file from the project
+	 * \param fileName file full path
+	 * \param virtualDir owner virtual directory
+	 * \return true on success, false otherwise
+	 */
+	bool RenameFile(const wxString &oldName, const wxString &virtualDir, const wxString &newName);
+
+	/**
 	 * Create new virtual directory
 	 * \param vdFullPath VD path to add
-	 * \return 
+	 * \return
 	 */
 	bool CreateVirtualDir(const wxString &vdFullPath, bool mkpath = false);
 
 	/**
 	 * remove a virtual directory
 	 * \param vdFullPath VD path to remove
-	 * \return 
+	 * \return
 	 */
 	bool DeleteVirtualDir(const wxString &vdFullPath);
 
@@ -266,7 +287,7 @@ public:
 
 	/**
 	 * Return list of files in this project
-	 * \param files 
+	 * \param files
 	 */
 	void GetFiles(std::vector<wxFileName> &files, bool absPath = false);
 
@@ -300,21 +321,27 @@ public:
 	 * Return true if a file already exist under the project
 	 */
 	bool IsFileExist(const wxString &fileName);
-	
+
 	/**
 	 * \brief return true of the project was modified (in terms of files removed/added)
 	 */
 	bool IsModified();
-	
+
 	/**
-	 * \brief 
+	 * \brief
 	 */
 	void SetModified(bool mod);
-	
+
 	// Transaction support to reduce overhead of disk writing
-	void BeginTranscation(){m_tranActive = true;}
-	void CommitTranscation(){Save();}
-	bool InTransaction() const{return m_tranActive;}
+	void BeginTranscation() {
+		m_tranActive = true;
+	}
+	void CommitTranscation() {
+		Save();
+	}
+	bool InTransaction() const {
+		return m_tranActive;
+	}
 
 private:
 	// Recursive helper function
@@ -330,7 +357,8 @@ private:
 	void GetFiles(wxXmlNode *parent, std::vector<wxFileName> &files, bool absPath = false);
 };
 
-class ProjectData {
+class ProjectData
+{
 public:
 	wxString m_name;	//< project name
 	wxString m_path;	//< project directoy
@@ -346,7 +374,7 @@ public:
  * Class FilewViewTreeItemData, a user defined class which stores a node private information
  *
  * \date 12-04-2007
- * \author Eran 
+ * \author Eran
  *
  */
 class FilewViewTreeItemData : public wxTreeItemData
@@ -354,7 +382,17 @@ class FilewViewTreeItemData : public wxTreeItemData
 	ProjectItem m_item;
 public:
 	FilewViewTreeItemData(const ProjectItem &item) : m_item(item) { }
-	const ProjectItem &GetData() const { return m_item; }
+	const ProjectItem &GetData() const {
+		return m_item;
+	}
+	
+	void SetDisplayName(const wxString &displayName) {
+		m_item.SetDisplayName(displayName);
+	}
+	
+	void SetFile(const wxString &file) {
+		m_item.SetFile(file);
+	}
 };
 
 #endif // PROJECT_H

@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : ctags_manager.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : ctags_manager.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "precompiled_header.h"
+#include "precompiled_header.h"
 #include "ctags_manager.h"
 #include <wx/txtstrm.h>
 #include <wx/file.h>
@@ -612,7 +612,13 @@ void TagsManager::TagsByScopeAndName(const wxString& scope, const wxString &name
 	for (size_t i=0; i<derivationList.size(); i++) {
 		sql.Empty();
 		if (flags & PartialMatch) {
-			sql << wxT("select * from tags where scope='") << derivationList.at(i) << wxT("' and name like '") << tmpName << wxT("%%' ESCAPE '^' ");
+			// it is more efficent to use <> operators rather than LIKE keyword, since the later forces a full table search
+//			sql << wxT("select * from tags where scope='") << derivationList.at(i) << wxT("' and name like '") << tmpName << wxT("%%' ESCAPE '^' ");
+			wxString upper(name);
+			upper.SetChar(upper.Length()-1, upper.Last()+1);
+
+			sql << wxT("select * from tags where scope='") << derivationList.at(i) << wxT("' and name >= '") << name << wxT("' AND name <= '") << upper << wxT("'");
+			wxLogMessage(sql);
 		} else {
 			sql << wxT("select * from tags where scope='") << derivationList.at(i) << wxT("' and name ='") << name << wxT("' ");
 		}
@@ -785,8 +791,11 @@ void TagsManager::GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &
 	tags.reserve(500);
 	tmpName = name;
 	if (flags == PartialMatch) {
-		tmpName.Replace(wxT("_"), wxT("^_"));
-		sql << wxT("select * from tags where parent='<global>' and name like '") << tmpName << wxT("%%' ESCAPE '^'  ");
+//		tmpName.Replace(wxT("_"), wxT("^_"));
+//		sql << wxT("select * from tags where parent='<global>' and name like '") << tmpName << wxT("%%' ESCAPE '^'  ");
+		wxString upper(name);
+		upper.SetChar(upper.Length()-1, upper.Last()+1);
+		sql << wxT("select * from tags where parent='<global>' and name >= '") << tmpName << wxT("' AND name <= '") << upper << wxT("'");
 	} else {
 		sql << wxT("select * from tags where parent='<global>' and name ='") << tmpName << wxT("'  ");
 	}
@@ -873,25 +882,25 @@ void TagsManager::FindImplDecl(const wxFileName &fileName, int lineno, const wxS
 	tmp = expression;
 	expression.EndsWith(word, &tmp);
 	expression = tmp;
-	
+
 	// add bool guard for the flag
 	BoolGuard guard( &m_useExternalDatabase );
-	
-	if(workspaceOnly) {
+
+	if (workspaceOnly) {
 		// disable scan in external database
 		m_useExternalDatabase = false;
 	}
-	
+
 	wxString scope(text);// = GetLanguage()->GetScope(text);
 	wxString scopeName = GetLanguage()->GetScopeName(scope, NULL);
 	if (expression.IsEmpty()) {
-		
+
 		TagsByScopeAndName(scopeName, word, tmpCandidates, ExactMatch);
-		if(tmpCandidates.empty()){
+		if (tmpCandidates.empty()) {
 			// no match in the given scope, try to collect from global scope as well
 			GetGlobalTags(word, tmpCandidates, ExactMatch);
 		}
-		
+
 		if (!imp) {
 			//collect only implementation
 			FilterImplementation(tmpCandidates, tags);
@@ -1392,12 +1401,12 @@ void TagsManager::AddToExtDbCache(const wxString &query, const std::vector<TagEn
 void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> &tags, bool onlyWorkspace /*flase*/)
 {
 	bool only_workspace(onlyWorkspace);
-	
+
 	// test global parameter m_useExternalDatabase
 	if ( !m_useExternalDatabase ) {
 		only_workspace = true;
 	}
-	
+
 	try {
 		//try the external database first
 		if ( !only_workspace && m_pExternalDb->IsOpen() ) {
@@ -1536,7 +1545,7 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 {
 	std::map<wxString, wxString> tipsMap;
 	std::vector<TagEntryPtr> ctor_tags;
-	
+
 	for (size_t i=0; i<tags.size(); i++) {
 		if (tags.at(i)->GetName() != word)
 			continue;
@@ -1544,7 +1553,7 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 		TagEntryPtr t = tags.at(i);
 		wxString k = t->GetKind();
 		wxString pat = t->GetPattern();
-		
+
 		if (k == wxT("function") || k == wxT("prototype")) {
 			wxString tip;
 			tip << wxT("function:") << t->GetSignature();
@@ -1553,31 +1562,31 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 			// map
 			tipsMap[t->GetSignature()] = tip;
 		} else if (k == wxT("class")) {
-			
+
 			// this tag is a class declaration that matches the word
-			// user is probably is typing something like 
+			// user is probably is typing something like
 			// Class *a = new Class(
 			// or even Class a = Class(
 			// the steps to take from here:
 			// - lookup in the tables for tags that matches path of: WordScope::Word::Word and of type prototype/function
 			wxString scope;
-			if( t->GetScope().IsEmpty() == false && t->GetScope() != wxT("<global>") ) {
+			if ( t->GetScope().IsEmpty() == false && t->GetScope() != wxT("<global>") ) {
 				scope << t->GetScope() << wxT("::");
 			}
-			
+
 			scope << t->GetName();
 			ctor_tags.clear();
 			TagsByScopeAndName(scope, t->GetName(), ctor_tags, ExactMatch);
-			
-			for(size_t i=0; i<ctor_tags.size(); i++){
+
+			for (size_t i=0; i<ctor_tags.size(); i++) {
 				TagEntryPtr ctor_tag = ctor_tags.at(i);
-				if( ctor_tag->GetKind() == wxT("function") || ctor_tag->GetKind() == wxT("prototype") ) {
+				if ( ctor_tag->GetKind() == wxT("function") || ctor_tag->GetKind() == wxT("prototype") ) {
 					wxString tip;
-					tip << wxT("function:") << ctor_tag->GetSignature();	
+					tip << wxT("function:") << ctor_tag->GetSignature();
 					tipsMap[ctor_tag->GetSignature()] = tip;
 				}
 			}
-			
+
 		} else if (k == wxT("macro")) {
 
 			wxString tip;
@@ -1947,15 +1956,17 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 			body << scope << wxT("::");
 		}
 	}
-	
-	if( impl ) {
+
+	if ( impl ) {
 		body << tag->GetName() << NormalizeFunctionSig( tag->GetSignature(), true );
 	} else {
 		body << tag->GetName() << tag->GetSignature();
 	}
-	
-	if ( foo.m_isConst ) {body << wxT(" const");}
-	
+
+	if ( foo.m_isConst ) {
+		body << wxT(" const");
+	}
+
 	if (impl) {
 		body << wxT("\n{\n}\n");
 	} else {

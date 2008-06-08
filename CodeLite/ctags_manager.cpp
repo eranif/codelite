@@ -612,13 +612,12 @@ void TagsManager::TagsByScopeAndName(const wxString& scope, const wxString &name
 	for (size_t i=0; i<derivationList.size(); i++) {
 		sql.Empty();
 		if (flags & PartialMatch) {
-			// it is more efficent to use <> operators rather than LIKE keyword, since the later forces a full table search
-//			sql << wxT("select * from tags where scope='") << derivationList.at(i) << wxT("' and name like '") << tmpName << wxT("%%' ESCAPE '^' ");
-			wxString upper(name);
-			upper.SetChar(upper.Length()-1, upper.Last()+1);
-
-			sql << wxT("select * from tags where scope='") << derivationList.at(i) << wxT("' and name >= '") << name << wxT("' AND name <= '") << upper << wxT("'");
-			wxLogMessage(sql);
+			sql << wxT("select * from tags where scope='") << derivationList.at(i) << wxT("' and name like '") << tmpName << wxT("%%' ESCAPE '^' ");
+//			it is more efficent to use <> operators rather than LIKE keyword, since the later forces a full table search
+//			wxString upper(name);
+//			upper.SetChar(upper.Length()-1, upper.Last()+1);
+//			sql << wxT("select * from tags where scope='") << derivationList.at(i) << wxT("' and name >= '") << name << wxT("' AND name <= '") << upper << wxT("'");
+//			wxLogMessage(sql);
 		} else {
 			sql << wxT("select * from tags where scope='") << derivationList.at(i) << wxT("' and name ='") << name << wxT("' ");
 		}
@@ -791,11 +790,11 @@ void TagsManager::GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &
 	tags.reserve(500);
 	tmpName = name;
 	if (flags == PartialMatch) {
-//		tmpName.Replace(wxT("_"), wxT("^_"));
-//		sql << wxT("select * from tags where parent='<global>' and name like '") << tmpName << wxT("%%' ESCAPE '^'  ");
-		wxString upper(name);
-		upper.SetChar(upper.Length()-1, upper.Last()+1);
-		sql << wxT("select * from tags where parent='<global>' and name >= '") << tmpName << wxT("' AND name <= '") << upper << wxT("'");
+		tmpName.Replace(wxT("_"), wxT("^_"));
+		sql << wxT("select * from tags where parent='<global>' and name like '") << tmpName << wxT("%%' ESCAPE '^'  ");
+//		wxString upper(name);
+//		upper.SetChar(upper.Length()-1, upper.Last()+1);
+//		sql << wxT("select * from tags where parent='<global>' and name >= '") << tmpName << wxT("' AND name <= '") << upper << wxT("'");
 	} else {
 		sql << wxT("select * from tags where parent='<global>' and name ='") << tmpName << wxT("'  ");
 	}

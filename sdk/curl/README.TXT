@@ -1,0 +1,1 @@
+libcurl-4 for Windows / MinGW

@@ -75,7 +75,7 @@ createVariables()
 	echo "WXCFG=${wxcfg}" >> Makefile
 	echo "" >> Makefile
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ " >> Makefile
-	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lwxflatnotebook\$(EXT) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
+	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lcurl -lwxflatnotebook\$(EXT) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
 	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 	
 

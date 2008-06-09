@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "fileview.h"
+#include "frame.h"
 #include "nameanddescdlg.h"
 #include "globals.h"
 #include "importfilesdlg.h"
@@ -755,8 +756,7 @@ void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
 	//open the project properties dialog
 	BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
 	//find the project configuration name that matches the workspace selected configuration
-	ProjectSettingsDlg *dlg = new ProjectSettingsDlg( this,
-	        matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ),
+	ProjectSettingsDlg *dlg = new ProjectSettingsDlg( Frame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ),
 	        projectName,
 	        title );
 	dlg->ShowModal();

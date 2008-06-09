@@ -3099,7 +3099,7 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 #if defined (__WXMSW__) || defined (__WXGTK__)		
 	WebUpdateJobData *data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
 	if(data){
-		if( wxMessageBox(wxString::Format(wxT("A new version is available!\nCurrent version: rev%d\nNew version: rev%d\nWould you like CodeLite to take you to the download page?"), data->GetCurrentVersion(), data->GetNewVersion()), wxT("CodeLite"), wxYES_NO| wxICON_QUESTION) == wxYES ) {
+		if( wxMessageBox(wxString::Format(wxT("A new version is available!\nCurrent version: rev%d\nNew version: rev%d\nWould you like CodeLite to take you to the download page?"), data->GetCurrentVersion(), data->GetNewVersion()), wxT("CodeLite"), wxYES_NO| wxICON_QUESTION, this) == wxYES ) {
 			wxString url = data->GetUrl();
 			wxLaunchDefaultBrowser(url);
 		}

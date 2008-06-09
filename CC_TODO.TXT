@@ -13,3 +13,7 @@
 
 - Check the "Rename Symbol..." on linux & mac for performance
 
+- Generate the 'control' file for the .deb automatically by the configure script
+
+- Implement web update for Mac
+

@@ -2638,7 +2638,7 @@ void Frame::AutoLoadExternalDb()
 			message << wxT("(attaching external symbols database improves CodeCompletion significantly)");
 
 			if (wxMessageBox(message, wxT("Attach symbols database"), wxICON_QUESTION | wxYES_NO | wxCANCEL) == wxYES) {
-				wxString dbname = wxGetSingleChoice(wxT("Select extenal database symbols to attach:"), wxT("Select symbols database"), files);
+				wxString dbname = wxGetSingleChoice(wxT("Select extenal database symbols to attach:"), wxT("Select symbols database"), files, this);
 				if (dbname.IsEmpty() == false) {
 					EditorConfigST::Get()->SetTagsDatabase(dbname);
 					ManagerST::Get()->SetExternalDatabase(wxFileName(dbname));

@@ -724,7 +724,7 @@ void ContextCpp::OnContextOpenDocument(wxCommandEvent &event)
 			choices.Add(files2.at(i).GetFullPath());
 		}
 
-		fileToOpen = wxGetSingleChoice(wxT("Select file to open:"), wxT("Select file"), choices);
+		fileToOpen = wxGetSingleChoice(wxT("Select file to open:"), wxT("Select file"), choices, &GetCtrl());
 	} else if (files2.size() == 1) {
 		fileToOpen = files2.at(0).GetFullPath();
 	}
@@ -869,7 +869,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)
 	wxString choice;
 	if (options.GetCount() > 1) {
 		//multiple matches
-		choice = wxGetSingleChoice(wxT("Select File to Include:"), wxT("Add Include File"), options);
+		choice = wxGetSingleChoice(wxT("Select File to Include:"), wxT("Add Include File"), options, &GetCtrl());
 	} else {
 		choice = options.Item(0);
 	}

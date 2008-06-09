@@ -34,6 +34,10 @@ AboutDlg::AboutDlg( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	this->SetSizer( mainSizer );
 	mainSizer->Fit(this);
+	// focus the OK button, this will allow use to dismiss the dialog with ESC key
+	m_bitmap->SetFocus();
+	// center it, othewise, Mac will present it on top left
+	CenterOnScreen();
 	this->Layout();
 }
 

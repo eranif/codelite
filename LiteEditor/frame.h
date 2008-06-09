@@ -384,6 +384,8 @@ protected:
 	
 	void OnConfigureAccelerators(wxCommandEvent &e);
 	void OnStartPageEvent(wxCommandEvent &e);
+	void OnNewVersionAvailable(wxCommandEvent &e);
+	
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);
 	void ShowBuildConfigurationManager();

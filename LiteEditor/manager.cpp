@@ -410,7 +410,7 @@ void Manager::CreateProject(ProjectData &data)
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->CreateProject(data.m_name,
 	           data.m_path,
-	           data.m_srcProject->GetSettings()->GetProjectType(),
+	           data.m_srcProject->GetSettings()->GetProjectType(wxEmptyString),
 	           errMsg);
 	CHECK_MSGBOX(res);
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(data.m_name, errMsg);

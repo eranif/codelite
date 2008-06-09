@@ -47,6 +47,7 @@ Source: "C:\Development\C++\codelite\trunk\Runtime\lexers\Default\*.xml"; DestDi
 Source: "C:\Development\C++\codelite\trunk\Runtime\lexers\BlackTheme\*.xml"; DestDir: "{app}\lexers\BlackTheme\"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\sdk\curl\lib\libcurl-4.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\bin\ctags-le.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\bin\le_exec.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\bin\makedir.exe"; DestDir: "{app}\bin"; Flags: ignoreversion ; Components: Editor

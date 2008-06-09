@@ -291,7 +291,7 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, bool force)
 		prePreBuildTarget = wxEmptyString;
 	}
 
-	if (settings->GetProjectType() == Project::EXECUTABLE || settings->GetProjectType() == Project::DYNAMIC_LIBRARY) {
+	if (settings->GetProjectType(bldConf->GetName()) == Project::EXECUTABLE || settings->GetProjectType(bldConf->GetName()) == Project::DYNAMIC_LIBRARY) {
 		text << wxT("all: $(OutputFile)\n\n");
 		if ( HasPrebuildCommands(bldConf) ) {
 			text << wxT("$(OutputFile): makeDirStep ") << prePreBuildTarget << wxT(" PreBuild $(Objects)\n");
@@ -308,7 +308,7 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, bool force)
 		}
 	}
 
-	CreateTargets(proj->GetSettings()->GetProjectType(), bldConf, text);
+	CreateTargets(proj->GetSettings()->GetProjectType(bldConf->GetName()), bldConf, text);
 	CreatePostBuildEvents(bldConf, text);
 	CreateMakeDirsTarget(bldConf, targetName, text);
 	CreatePreBuildEvents(bldConf, text);
@@ -456,7 +456,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, wxString &text)
 		}
 		//delete the output file as well
 		wxString exeExt(wxEmptyString);
-		if (proj->GetSettings()->GetProjectType() == Project::EXECUTABLE) {
+		if (proj->GetSettings()->GetProjectType(bldConf->GetName()) == Project::EXECUTABLE) {
 			//under windows, g++ automatically adds the .exe extension to executable
 			//make sure we deletes it as well
 			exeExt = wxT(".exe");

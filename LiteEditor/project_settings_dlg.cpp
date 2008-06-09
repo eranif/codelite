@@ -211,7 +211,7 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	}
 
 	//set the project type
-	wxString projType = projSettingsPtr->GetProjectType();
+	wxString projType = projSettingsPtr->GetProjectType(confName);
 	int sel = m_choiceProjectTypes->FindString(projType);
 	if(sel == wxNOT_FOUND){
 		sel = 0;
@@ -293,6 +293,7 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetCustomBuildWorkingDir(m_customBuildDirPicker->GetPath());
 	buildConf->SetPauseWhenExecEnds(m_checkBoxPauseWhenExecEnds->IsChecked());
 	buildConf->SetSingleFileBuildCommand(m_textCtrl1SingleFileCommand->GetValue());
+	buildConf->SetProjectType(m_choiceProjectTypes->GetStringSelection());
 	
 	//set the pre-build step
 	wxString rules = m_textPreBuildRule->GetValue();

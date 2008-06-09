@@ -38,6 +38,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_compilerType = XmlUtils::ReadString(node, wxT("CompilerType"));
 		m_debuggerType = XmlUtils::ReadString(node, wxT("DebuggerType"));
 		wxXmlNode *compile = XmlUtils::FindFirstByTagName(node, wxT("Compiler"));
+		m_projectType = XmlUtils::ReadString(node, wxT("Type"));
 		
 		// read the compile options
 		if(compile){
@@ -221,7 +222,8 @@ wxXmlNode *BuildConfig::ToXml() const
 	node->AddProperty(wxT("Name"), m_name);
 	node->AddProperty(wxT("CompilerType"), m_compilerType);
 	node->AddProperty(wxT("DebuggerType"), m_debuggerType);
-
+	node->AddProperty(wxT("Type"), m_projectType);
+	
 	wxXmlNode *general = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("General"));
 	general->AddProperty(wxT("OutputFile"), m_outputFile);
 	general->AddProperty(wxT("IntermediateDirectory"), m_intermediateDirectory);

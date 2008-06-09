@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "webupdatethread.h"
 #include "aboutdlg.h"
 #include "buildtabsettingsdata.h" 
 #include "singleinstancethreadjob.h"
@@ -337,7 +338,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, Frame::OnSingleInstanceOpenFiles)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, Frame::OnSingleInstanceRaise)
-
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, Frame::OnNewVersionAvailable)
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 
@@ -380,8 +381,17 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 
 	// start the job queue
 	JobQueueSingleton::Instance()->Start(5);
+	
 	// the single instance job is a presisstent job, so the pool will contain only 4 available threads
 	JobQueueSingleton::Instance()->PushJob(new SingleInstanceThreadJob(this, ManagerST::Get()->GetStarupDirectory()));
+	
+	// add new version notification updater
+	long check(1);
+	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
+	
+	if( check ) {
+		JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
+	}
 
 	//start the editor creator thread
 	EditorCreatorST::Get()->SetParent(GetNotebook());
@@ -3080,4 +3090,16 @@ void Frame::OnSingleInstanceRaise(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	Raise();
+}
+
+void Frame::OnNewVersionAvailable(wxCommandEvent& e)
+{
+	WebUpdateJobData *data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
+	if(data){
+		if( wxMessageBox(wxString::Format(wxT("A new version is available!\nCurrent version: rev%d\nNew version: rev%d\nWould you like CodeLite to take you to the download page?"), data->GetCurrentVersion(), data->GetNewVersion()), wxT("CodeLite"), wxYES_NO| wxICON_QUESTION) == wxYES ) {
+			wxString url = data->GetUrl();
+			wxLaunchDefaultBrowser(url);
+		}
+		delete data;
+	}
 }

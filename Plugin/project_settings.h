@@ -135,7 +135,7 @@ public:
 	void RemoveConfiguration(const wxString &configName);
 
 	//setters/getters
-	const wxString &GetProjectType() const { return m_projectType; }
+	wxString GetProjectType(const wxString &confName);
 	void SetProjectType(const wxString &type) { m_projectType = type;}
 };
 

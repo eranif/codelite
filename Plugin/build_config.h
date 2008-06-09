@@ -199,6 +199,9 @@ public:
 	
 	void SetSingleFileBuildCommand(const wxString& singleFileBuildCommand) {this->m_singleFileBuildCommand = singleFileBuildCommand;}
 	const wxString& GetSingleFileBuildCommand() const {return m_singleFileBuildCommand;}
+	
+	const wxString &GetProjectType() const {return m_projectType;}
+	void SetProjectType(const wxString &projectType) {m_projectType = projectType;}
 };
 
 typedef SmartPtr<BuildConfig> BuildConfigPtr;

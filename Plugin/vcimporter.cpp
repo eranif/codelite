@@ -249,7 +249,7 @@ void VcImporter::AddConfiguration(ProjectSettingsPtr settings, wxXmlNode *config
 	le_conf->SetPreprocessor(XmlUtils::ReadString(cmpNode, wxT("PreprocessorDefinitions")));
 
 	//if project type is DLL or Executable, copy linker settings as well
-	if(	settings->GetProjectType() == Project::EXECUTABLE || settings->GetProjectType() == Project::DYNAMIC_LIBRARY){
+	if(	settings->GetProjectType(le_conf->GetName()) == Project::EXECUTABLE || settings->GetProjectType(le_conf->GetName()) == Project::DYNAMIC_LIBRARY){
 		wxXmlNode *linkNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCLinkerTool"));
 		if(linkNode){
 			le_conf->SetOutputFileName(XmlUtils::ReadString(linkNode, wxT("OutputFile")));

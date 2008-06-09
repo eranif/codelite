@@ -258,9 +258,16 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 	m_singleInstance = new wxCheckBox(m_general, wxID_ANY, wxT("Allow only single instance running"), wxDefaultPosition, wxDefaultSize, 0);
 	bszier->Add(m_singleInstance, 0, wxEXPAND | wxALL, 5);
 	
+	m_checkForNewVersion = new wxCheckBox(m_general, wxID_ANY, wxT("Check for new version on startup"), wxDefaultPosition, wxDefaultSize, 0);
+	bszier->Add(m_checkForNewVersion, 0, wxEXPAND | wxALL, 5);
+	
 	long single_instance(1);
 	EditorConfigST::Get()->GetLongValue(wxT("SingleInstance"), single_instance);
 	m_singleInstance->SetValue(single_instance ? true : false);
+	
+	long check(1);
+	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
+	m_checkForNewVersion->SetValue(check ? true : false);
 	
 	bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
 	m_checkBoxShowSplash->SetValue(showSplash);
@@ -364,6 +371,7 @@ void OptionsDlg::SaveChanges()
 	// save the WordHighlightColour value
 	EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_wordHighlightColour->GetColour().GetAsString());
 	EditorConfigST::Get()->SaveLongValue(wxT("SingleInstance"), m_singleInstance->IsChecked() ? 1 : 0);
+	EditorConfigST::Get()->SaveLongValue(wxT("CheckNewVersion"), m_checkForNewVersion->IsChecked() ? 1 : 0);
 	
 	//check to see of the icon size was modified
 	int oldIconSize(24);

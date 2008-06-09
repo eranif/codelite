@@ -389,7 +389,18 @@ createEndMessage()
 	fi
 }
 
+checkCURL()
+{
+	if [ -d "/usr/include/curl/" ] || [ -d "/usr/local/include/curl/" ] ; then
+		echo "Found cURL installation"
+	else
+		echo "ERROR: Please install libcurl development package (under Ubuntu 7.10, the package name is libcurl4-dev)"
+		exit 1
+	fi
+}
+
 ## main
+checkCURL
 
 ## Create variables needed by the makefile
 enable_debug="no"

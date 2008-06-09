@@ -26,7 +26,7 @@
   </Environment>
   <Project Name="Copyright" Path="Copyright/Copyright.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="wxflatnotebook" ConfigName="ReleaseUnicode"/>

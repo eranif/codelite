@@ -42,6 +42,12 @@ TagsOptionsData::~TagsOptionsData()
 
 void TagsOptionsData::Serialize(Archive &arch)
 {
+	// Hack: remove "extern"
+	int where = m_prep.Index(wxT("extern"));
+	if(where != wxNOT_FOUND) {
+		m_prep.RemoveAt(where);
+	}
+	
 	arch.Write(wxT("m_ccFlags"), m_ccFlags);
 	arch.Write(wxT("m_prep"), m_prep);
 	arch.Write(wxT("m_fileSpec"), m_fileSpec);
@@ -56,6 +62,12 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	arch.Read(wxT("m_fileSpec"), m_fileSpec);
 	arch.Read(wxT("m_languages"), m_languages);
 	arch.Read(wxT("m_minWordLen"), m_minWordLen);
+	
+	// Hack: remove "extern"
+	int where = m_prep.Index(wxT("extern"));
+	if(where != wxNOT_FOUND) {
+		m_prep.RemoveAt(where);
+	}
 }
 
 wxString TagsOptionsData::ToString() const

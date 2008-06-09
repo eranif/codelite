@@ -109,7 +109,11 @@ void FileViewTree::OnBuildInProgress( wxUpdateUIEvent &event )
 FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
 {
 	Create( parent, id, pos, size, style );
-
+	
+	
+//	SetBackgroundColour(*wxBLACK);
+//	SetForegroundColour(wxT("GREY"));
+	
 	// Initialise images map
 	wxImageList *images = new wxImageList( 16, 16, true );
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "project" ) ) );				//0

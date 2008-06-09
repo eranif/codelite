@@ -181,6 +181,10 @@
       <File Name="newkeyshortcutbasedlg.h"/>
       <File Name="newkeyshortcutdlg.cpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="About">
+      <File Name="aboutdlg.cpp"/>
+      <File Name="aboutdlg.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>

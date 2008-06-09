@@ -47,7 +47,11 @@ class SubversionPlugin : public IPlugin
 	friend class SvnDriver;
 	bool m_isValid;
 	bool m_initIsDone;
-	wxMenuItem *m_sepItem;
+	wxMenuItem *m_explorerSepItem;
+	wxMenuItem *m_editorSepItem;
+	wxMenuItem *m_workspaceSepItem;
+	wxMenuItem *m_projectSepItem;
+	
 	
 protected:
 	void SendSvnMenuEvent(int id);

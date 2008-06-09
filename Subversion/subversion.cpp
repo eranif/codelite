@@ -114,7 +114,10 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		, m_svn(NULL)
 		, topWin(NULL)
 		, m_initIsDone(false)
-		, m_sepItem(NULL)
+		, m_explorerSepItem(NULL)
+		, m_editorSepItem(NULL)
+		, m_workspaceSepItem(NULL)
+		, m_projectSepItem(NULL)
 {
 	m_svn = new SvnDriver(this, manager);
 
@@ -443,13 +446,13 @@ void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeFileExplorer) {
 		if (!menu->FindItem(XRCID("SVN_POPUP"))) {
-			m_sepItem = menu->PrependSeparator();
+			m_explorerSepItem = menu->PrependSeparator();
 			menu->Prepend(XRCID("SVN_POPUP"), wxT("Svn"), CreatePopMenu());
 		}
 	} else if (type == MenuTypeEditor) {
 		
 		if (!menu->FindItem(XRCID("SVN_EDITOR_POPUP"))) {
-			m_sepItem = menu->AppendSeparator();
+			m_editorSepItem = menu->AppendSeparator();
 			menu->Append(XRCID("SVN_EDITOR_POPUP"), wxT("Svn"), CreateEditorPopMenu());
 		}
 	} else if (type == MenuTypeFileView_Workspace) {
@@ -459,7 +462,7 @@ void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 		}
 
 		if (!menu->FindItem(XRCID("SVN_WORKSPACE_POPUP"))) {
-			m_sepItem = menu->PrependSeparator();
+			m_workspaceSepItem = menu->PrependSeparator();
 			menu->Prepend(XRCID("SVN_WORKSPACE_POPUP"), wxT("Svn"), CreateWorkspacePopMenu());
 		}
 		
@@ -470,7 +473,7 @@ void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 
 		if (!menu->FindItem(XRCID("SVN_PROJECT_POPUP"))) {
 			//No svn menu
-			m_sepItem = menu->PrependSeparator();
+			m_projectSepItem = menu->PrependSeparator();
 			menu->Prepend(XRCID("SVN_PROJECT_POPUP"), wxT("Svn"), CreateProjectPopMenu());
 		}
 
@@ -483,30 +486,30 @@ void SubversionPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 		wxMenuItem *item = menu->FindItem(XRCID("SVN_POPUP"));
 		if (item) {
 			menu->Destroy(item);
-			menu->Destroy(m_sepItem);
-			m_sepItem = NULL;
+			menu->Destroy(m_explorerSepItem);
+			m_explorerSepItem = NULL;
 		}
 
 	} else if (type == MenuTypeEditor) {
 		wxMenuItem *item = menu->FindItem(XRCID("SVN_EDITOR_POPUP"));
 		if (item) {
 			menu->Destroy(item);
-			menu->Destroy(m_sepItem);
-			m_sepItem = NULL;
+			menu->Destroy(m_editorSepItem);
+			m_editorSepItem = NULL;
 		}
 	} else if (type == MenuTypeFileView_Workspace) {
 		wxMenuItem *item = menu->FindItem(XRCID("SVN_WORKSPACE_POPUP"));
 		if (item) {
 			menu->Destroy(item);
-			menu->Destroy(m_sepItem);
-			m_sepItem = NULL;
+			menu->Destroy(m_workspaceSepItem);
+			m_workspaceSepItem = NULL;
 		}
 	} else if (type == MenuTypeFileView_Project) {
 		wxMenuItem *item = menu->FindItem(XRCID("SVN_PROJECT_POPUP"));
 		if (item) {
 			menu->Destroy(item);
-			menu->Destroy(m_sepItem);
-			m_sepItem = NULL;
+			menu->Destroy(m_projectSepItem);
+			m_projectSepItem = NULL;
 		}
 	}
 }

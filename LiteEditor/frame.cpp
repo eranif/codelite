@@ -23,7 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
-#include "buildtabsettingsdata.h"
+#include "aboutdlg.h"
+#include "buildtabsettingsdata.h" 
 #include "singleinstancethreadjob.h"
 #include "refactorindexbuildjob.h"
 #include "customstatusbar.h"
@@ -972,16 +973,18 @@ void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event)
 
 void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-	wxAboutDialogInfo info;
-	info.SetName(wxT("CodeLite"));
-
-	wxString svnInfo;
-	svnInfo << wxT("SVN Build, Revision: ") << SvnRevision;
-	info.SetVersion(svnInfo);
-	info.SetDescription(wxT("A lightweight cross-platform IDE for C/C++"));
-	info.SetCopyright(wxT("(C) 2007-2008 By Eran Ifrah <eran.ifrah@gmail.com>"));
-	info.SetWebSite(wxT("http://codelite.org/"));
-	wxAboutBox(info);
+//	wxAboutDialogInfo info;
+//	info.SetName(wxT("CodeLite"));
+//
+//	wxString svnInfo;
+//	svnInfo << wxT("SVN Build, Revision: ") << SvnRevision;
+//	info.SetVersion(svnInfo);
+//	info.SetDescription(wxT("A lightweight cross-platform IDE for C/C++"));
+//	info.SetCopyright(wxT("(C) 2007-2008 By Eran Ifrah <eran.ifrah@gmail.com>"));
+//	info.SetWebSite(wxT("http://codelite.org/"));
+//	wxAboutBox(info);
+	AboutDlg dlg(this);
+	dlg.ShowModal();
 }
 
 void Frame::OnClose(wxCloseEvent& event)

@@ -386,12 +386,14 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	JobQueueSingleton::Instance()->PushJob(new SingleInstanceThreadJob(this, ManagerST::Get()->GetStarupDirectory()));
 	
 	// add new version notification updater
+#if defined (__WXMSW__) || defined (__WXGTK__)	
 	long check(1);
 	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
 	
 	if( check ) {
 		JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
 	}
+#endif
 
 	//start the editor creator thread
 	EditorCreatorST::Get()->SetParent(GetNotebook());
@@ -3094,6 +3096,7 @@ void Frame::OnSingleInstanceRaise(wxCommandEvent& e)
 
 void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 {
+#if defined (__WXMSW__) || defined (__WXGTK__)		
 	WebUpdateJobData *data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
 	if(data){
 		if( wxMessageBox(wxString::Format(wxT("A new version is available!\nCurrent version: rev%d\nNew version: rev%d\nWould you like CodeLite to take you to the download page?"), data->GetCurrentVersion(), data->GetNewVersion()), wxT("CodeLite"), wxYES_NO| wxICON_QUESTION) == wxYES ) {
@@ -3102,4 +3105,7 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 		}
 		delete data;
 	}
+#else
+	wxUnusedVar(e);
+#endif
 }

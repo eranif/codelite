@@ -395,7 +395,7 @@
         <SingleFileCommand>make $(CurrentFile).o</SingleFileCommand>
         <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory>/home/eran/devl/codelite/trunk</WorkingDirectory>
+        <WorkingDirectory>/Users/eran/devl/codelite/trunk</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>

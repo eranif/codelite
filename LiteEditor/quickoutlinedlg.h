@@ -55,7 +55,8 @@ protected:
 	DECLARE_EVENT_TABLE()
 	void OnCharHook(wxKeyEvent &e);
 	void OnTextEntered(wxCommandEvent &e);
- 
+	void OnItemSelected(wxCommandEvent &e);
+	
 public:
 	QuickOutlineDlg( wxWindow* parent, const wxString &fileName, int id = wxID_ANY, wxString title = wxEmptyString, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 371,386 ), int style = wxBORDER_SIMPLE);
 	virtual ~QuickOutlineDlg();

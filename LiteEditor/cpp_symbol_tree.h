@@ -28,6 +28,8 @@
 #include "symbol_tree.h"
 #include "stack"
 
+extern const wxEventType wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED;
+
 /// This class represents the GUI tree for the C++ symbols
 class CppSymbolTree : public SymbolTree
 {
@@ -59,7 +61,8 @@ protected:
 	virtual void OnMouseDblClick(wxMouseEvent& event);
 	virtual void OnMouseRightUp(wxTreeEvent& event);
 	virtual void OnItemActivated(wxTreeEvent &event);
-	bool DoItemActivated(wxTreeItemId item, wxEvent &event);
+	bool DoItemActivated(wxTreeItemId item, wxEvent &event, bool notify);
+	
 	wxTreeItemId TryGetPrevItem(wxTreeItemId item);
 
 	DECLARE_DYNAMIC_CLASS(CppSymbolTree)

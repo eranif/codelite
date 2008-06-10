@@ -7,13 +7,13 @@
 ##5. Add the following entry to your /etc/apt/sources.list: deb http://eran-linux:/debs  gutsy restricted (replace eran-linux with your IP/server name)
 echo "removing old deb files..."
 rm *.deb
-rm /usr/local/apache2/htdocs/debs/*.deb
+rm /var/www/debs/*.deb
 echo "Creating new deb file..."
 ./make_deb.sh
 echo "Copying deb to /usr/local/apache2/htdocs/debs/"
-cp *.deb /usr/local/apache2/htdocs/debs
-echo "changing directory to /usr/local/apache2/htdocs/debs/"
-cd /usr/local/apache2/htdocs/debs
+cp *.deb /var/www/debs
+echo "changing directory to /var/www/debs/"
+cd /var/www/debs
 echo "Running: /usr/bin/dpkg-scanpackages tool..."
 /usr/bin/dpkg-scanpackages . /dev/null > Packages
 echo "Compressing Packages..."

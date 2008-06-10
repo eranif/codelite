@@ -1,6 +1,3 @@
-// temporarly this is supported only under Windows & GTK
-#if defined (__WXGTK__) || defined (__WXMSW__)
-
 #include "precompiled_header.h"
 #include <wx/tokenzr.h>
 #include "webupdatethread.h"
@@ -105,6 +102,5 @@ void WebUpdateJob::ParseFile()
 	}
 }
 
-#endif
 
 

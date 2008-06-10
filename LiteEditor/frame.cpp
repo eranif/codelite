@@ -386,15 +386,12 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	JobQueueSingleton::Instance()->PushJob(new SingleInstanceThreadJob(this, ManagerST::Get()->GetStarupDirectory()));
 	
 	// add new version notification updater
-#if defined (__WXMSW__) || defined (__WXGTK__)	
 	long check(1);
 	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
 	
 	if( check ) {
 		JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
 	}
-#endif
-
 	//start the editor creator thread
 	EditorCreatorST::Get()->SetParent(GetNotebook());
 	m_timer = new wxTimer(this, FrameTimerId);

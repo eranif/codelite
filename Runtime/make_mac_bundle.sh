@@ -24,7 +24,6 @@ file_list="${file_list} ${exe_name} "
 ## executable, we can run the following command only once and
 ## use the results to manipulate the plugins as well
 orig_path=`otool -L ${exe_name}  | grep libwx | awk '{print $1;}'`
-
 ## Loop over the files, and update the path of the wx library
 for file in ${file_list}
 do
@@ -36,6 +35,10 @@ do
         done
 done
 
+echo install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}
+install_name_tool -change /usr/lib/libcurl.4.dylib @executable_path/libcurl.4.dylib ${exe_name}
+cp /usr/lib/libcurl.4.dylib ./CodeLite.app/Contents/MacOS/
+
 cp ${exe_name} ./CodeLite.app/Contents/MacOS/${exe_name}
 ## copy the wx dlls to the exeutable path which under Mac is located at ./CodeLite.app/Contents/MacOS/
 for wx_file in ${orig_path}
@@ -43,6 +46,7 @@ do
         echo "Copying ${wx_file} to ./CodeLite.app/Contents/MacOS/"
         cp ${wx_file} ./CodeLite.app/Contents/MacOS/
 done
+
 
 cp -r rc ./CodeLite.app/Contents/SharedSupport/
 cp -r templates ./CodeLite.app/Contents/SharedSupport/

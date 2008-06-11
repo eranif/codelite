@@ -21,6 +21,7 @@
 void cl_scope_error(char *string);
 int  cl_var_parse();
 void syncParser();
+void var_consumeUntil(char c1, char c2);
 
 static VariableList *gs_vars = NULL;
 static std::vector<std::string> gs_names;
@@ -33,6 +34,8 @@ std::string temdecl;
 //---------------------------------------------
 extern char *cl_scope_text;
 extern int cl_scope_lex();
+extern void cl_scope_less(int count);
+
 extern int cl_scope_lineno;
 extern std::vector<std::string> currentScope;
 extern bool setLexerInput(const std::string &in, const std::map<std::string, bool> &ignoreMap);
@@ -128,7 +131,7 @@ external_decl		:	{curr_var.Reset(); gs_names.clear();} variables
 						| 	error { 
 								yyclearin;	//clear lookahead token
 								yyerrok;
-								//printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_var_lval.c_str(), cl_scope_lineno);
+								printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_var_lval.c_str(), cl_scope_lineno);
 								var_syncParser();
 							}
 						;
@@ -180,7 +183,7 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 						//
 						// Functions arguments:
 						// 
-						| '(' variable_decl special_star_amp LE_IDENTIFIER 
+						| '(' variable_decl special_star_amp LE_IDENTIFIER postfix2
 						{
 							if(gs_vars)
 							{
@@ -199,10 +202,10 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								gs_names.clear();
 							}
 						}
-						| ',' variable_decl special_star_amp LE_IDENTIFIER
+						| ',' variable_decl special_star_amp LE_IDENTIFIER postfix2
 						{
 							if(gs_vars)
-							{
+							{ 
 								Variable var;
 								std::string pattern;
 								curr_var.m_pattern = "/^";
@@ -211,10 +214,10 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								curr_var.m_starAmp = $3;
 								curr_var.m_lineno = cl_scope_lineno;
 								
-									//create new variable for every variable name found
-									var = curr_var;
-									var.m_name = $4;
-									gs_vars->push_back(var); 
+								//create new variable for every variable name found
+								var = curr_var;
+								var.m_name = $4;
+								gs_vars->push_back(var); 
 								
 								curr_var.Reset();
 								gs_names.clear();
@@ -234,12 +237,16 @@ variable_name_list: 	LE_IDENTIFIER
 							$$ = $1 + $2 + " " + $3 + $4;
 						}
 						;
+postfix2: /*empty*/
+		| '=' {var_consumeUntil(',', ')');}
+		| ')'
+		;
+		
 postfix: ';'
-		 | '='
-		 | ')'
-		 | '(' { $$ = $1 + var_consumBracketsContent('(');}
-		 | '[' { $$ = $1 + var_consumBracketsContent('[');}
-		 ; 
+		| ')'
+		| '(' { $$ = $1 + var_consumBracketsContent('(');}
+		| '[' { $$ = $1 + var_consumBracketsContent('[');}
+		; 
 /* 
 applicable for C++, for cases where a function is declared as
 void scope::foo(){ ... }
@@ -273,7 +280,7 @@ stmnt_starter		:	/*empty*/ {$$ = "";}
 //						| '(' { $$ = "(";}
 						| '}' { $$ = "}";}
 						| ':' { $$ = ":";}	//e.g. private: std::string m_name;
-						| '=' { $$ = "=";}
+//						| '=' { $$ = "=";}
 						;
 						
 /** Variables **/
@@ -350,9 +357,57 @@ std::string var_consumBracketsContent(char openBrace)
 	return consumedData;
 }
 
+void var_consumeUntil(char c1, char c2)
+{
+	int depth = 0;
+	bool cont(true);
+	
+	while (depth >= 0) {
+		int ch = cl_scope_lex();
+		if(ch == 0)					{ break;}
+		if(ch == c1 && depth == 0) { 
+			cl_scope_less(0);
+			break;
+		}
+		
+		if(ch == c2 && depth == 0) { 
+			cl_scope_less(0);
+			break;
+		}
+		
+		if(ch == ')'){
+			depth--;
+			continue;
+		}
+		else if(ch == '('){
+			depth ++ ;
+			continue;
+		}
+	}
+}
+
 void var_syncParser(){
-	//dont do anything, a hook to allow us to implement some
-	//nice error recovery if needed
+//	int depth = 1;
+//	bool cont(true);
+//	
+//	while (depth > 0 && cont) {
+//		int ch = cl_scope_lex();
+//		if(ch == 0)					{ break;}
+//		if(ch == ',' && depth == 0) { break;}
+//		if(ch == ';' && depth == 0) { break;}
+//		if(ch == ')' && depth == 0) { break;}
+//		
+//		if(ch == ')'){
+//			depth--;
+//			continue;
+//		}
+//		else if(ch == '('){
+//			depth ++ ;
+//			continue;
+//		}
+//		printf("%d ", ch);
+//	}
+//	printf("\n");
 }
 
 // return the scope name at the end of the input string

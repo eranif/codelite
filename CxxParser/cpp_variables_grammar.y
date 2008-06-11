@@ -162,8 +162,6 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 							{
 								Variable var;
 								std::string pattern;
-								curr_var.m_pattern = "/^";
-								curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + $4 + "$/";
 								curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
 								curr_var.m_starAmp = $3;
 								curr_var.m_lineno = cl_scope_lineno;
@@ -171,6 +169,7 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								{
 									//create new variable for every variable name found
 									var = curr_var;
+									var.m_pattern = "/^" + $1 + " " + $2 + " " + gs_names.at(i) + " $/";
 									var.m_name = gs_names.at(i);
 									gs_vars->push_back(var); 
 								}
@@ -178,14 +177,61 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								gs_names.clear();
 							}
 						}
+						//
+						// Functions arguments:
+						// 
+						| '(' variable_decl special_star_amp LE_IDENTIFIER 
+						{
+							if(gs_vars)
+							{
+								Variable var;
+								std::string pattern;
+								curr_var.m_pattern = "/^";
+								curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + $4 + "$/";
+								curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
+								curr_var.m_starAmp = $3;
+								curr_var.m_lineno = cl_scope_lineno;
+								//create new variable for every variable name found
+								var = curr_var;
+								var.m_name = $4;;
+								gs_vars->push_back(var); 
+								curr_var.Reset();
+								gs_names.clear();
+							}
+						}
+						| ',' variable_decl special_star_amp LE_IDENTIFIER
+						{
+							if(gs_vars)
+							{
+								Variable var;
+								std::string pattern;
+								curr_var.m_pattern = "/^";
+								curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + $4 + "$/";
+								curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
+								curr_var.m_starAmp = $3;
+								curr_var.m_lineno = cl_scope_lineno;
+								
+									//create new variable for every variable name found
+									var = curr_var;
+									var.m_name = $4;
+									gs_vars->push_back(var); 
+								
+								curr_var.Reset();
+								gs_names.clear();
+							}
+						}
 						;
 						
-variable_name_list: LE_IDENTIFIER {gs_names.push_back($1);}
-						| variable_name_list ','  LE_IDENTIFIER  
+variable_name_list: 	LE_IDENTIFIER 
+						{
+							gs_names.push_back($1);
+							$$ = $1;
+						}
+						| variable_name_list ','  special_star_amp LE_IDENTIFIER  
 						{ 
 							//collect all the names
-							gs_names.push_back($3);
-							$$ = $1 + $2 + " " + $3 ;
+							gs_names.push_back($4);
+							$$ = $1 + $2 + " " + $3 + $4;
 						}
 						;
 postfix: ';'
@@ -224,7 +270,7 @@ special_star_amp	:	star_list amp_item { $$ = $1 + $2; }
 stmnt_starter		:	/*empty*/ {$$ = "";}
 						| ';' { $$ = ";";}
 						| '{' { $$ = "{";}
-						| '(' { $$ = "(";}
+//						| '(' { $$ = "(";}
 						| '}' { $$ = "}";}
 						| ':' { $$ = ":";}	//e.g. private: std::string m_name;
 						| '=' { $$ = "=";}

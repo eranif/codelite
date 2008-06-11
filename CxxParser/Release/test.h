@@ -17,6 +17,6 @@
 //std::map<wxString, std::list<CppToken>* > m_matches;
 //const bool &is_ok() const;
 //void ~MyClass();
-int a,b,c;
-std::vector<int, int> vector;
-int e, int f;
+int a,b,*c;
+//std::vector<int, int> vector;
+(int e, int *j, std::vector<std::string> &vv);

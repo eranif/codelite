@@ -181,17 +181,16 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 						;
 						
 variable_name_list: LE_IDENTIFIER {gs_names.push_back($1);}
-						/*| variable_name_list ',' LE_IDENTIFIER 
+						| variable_name_list ','  LE_IDENTIFIER  
 						{ 
 							//collect all the names
 							gs_names.push_back($3);
-							$$ = $1 + $2 + " " + $3;
-						}*/
+							$$ = $1 + $2 + " " + $3 ;
+						}
 						;
 postfix: ';'
 		 | '='
 		 | ')'
-		 | ','  
 		 | '(' { $$ = $1 + var_consumBracketsContent('(');}
 		 | '[' { $$ = $1 + var_consumBracketsContent('[');}
 		 ; 

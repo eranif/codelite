@@ -27,7 +27,7 @@
     <File Name="cpp_func_parser.y"/>
   </VirtualDirectory>
   <Settings Type="Executable">
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="./Release/CppParser" IntermediateDirectory="./Release" Command="CppParser" CommandArguments="" WorkingDirectory="./Release" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g;">
         <IncludePath Value="."/>
@@ -39,19 +39,19 @@
       <ResourceCompiler Required="yes" Options=""/>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy *.h ..\CodeLite\.</Command>
-        <Command Enabled="yes">copy *.cpp ..\CodeLite\.</Command>
+        <Command Enabled="no">copy *.h ..\CodeLite\.</Command>
+        <Command Enabled="no">copy *.cpp ..\CodeLite\.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>scope_parser.cpp cpp_lexer.cpp var_parser.cpp cpp_expr_lexer.cpp cpp_expr_parser.cpp cpp_func_parser.cpp
 scope_parser.cpp: cpp_scope_grammar.y
 	yacc -dl  -t -v -pcl_scope_ cpp_scope_grammar.y

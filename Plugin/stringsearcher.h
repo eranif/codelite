@@ -32,7 +32,8 @@ enum {
 	wxSD_MATCHCASE         = 1,
 	wxSD_MATCHWHOLEWORD    = 2,
 	wxSD_REGULAREXPRESSION = 4,
-	wxSD_SEARCH_BACKWARD   = 8
+	wxSD_SEARCH_BACKWARD   = 8,
+	wxSD_USE_EDITOR_ENCODING = 16
 };
 
 class StringFindReplacer {

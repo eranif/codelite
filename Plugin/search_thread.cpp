@@ -22,6 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "editor_config.h"
  #include "search_thread.h"
 #include "wx/event.h"
 #include <wx/txtstrm.h>
@@ -229,8 +230,15 @@ void SearchThread::DoSearchFile(const wxString &fileName, const SearchData *data
 	wxFileOffset size = thefile.Length();
 	wxString fileData;
 	fileData.Alloc(size);
-
-	thefile.ReadAll(&fileData);
+	
+	// support for other encoding
+	if( data->UseEditorFontConfig() ) {
+		wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+		thefile.ReadAll(&fileData, fontEncConv);
+	} else {
+		thefile.ReadAll(&fileData, wxConvUTF8);
+	}
+	
 	wxStringTokenizer tkz(fileData, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);
 	
 	if( data->IsRegularExpression() ){

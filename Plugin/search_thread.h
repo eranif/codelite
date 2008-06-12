@@ -158,6 +158,14 @@ public:
 	const int& GetOutputTab() const {
 		return m_outputTab;
 	}
+	
+	bool UseEditorFontConfig() const {
+		return m_flags & wxSD_USE_EDITOR_ENCODING ? true : false;
+	}
+	
+	void SetUseEditorFontConfig(bool use) {
+		SetOption(wxSD_USE_EDITOR_ENCODING, use);
+	}
 };
 
 //------------------------------------------

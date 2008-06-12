@@ -39,6 +39,7 @@ class wxStaticText;
 #define wxFRD_SEARCHUP						0x00000008
 #define wxFRD_WRAPSEARCH					0x00000010
 #define wxFRD_SELECTIONONLY					0x00000020
+#define wxFRD_USEFONTENCODING				0x00000040
 
 #define FIND_DLG 0
 #define REPLACE_DLG 1

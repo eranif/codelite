@@ -48,6 +48,7 @@ class FindInFilesDialog : public wxDialog
 	wxCheckBox *m_matchCase;
 	wxCheckBox *m_matchWholeWord;
 	wxCheckBox *m_regualrExpression;
+	wxCheckBox *m_fontEncoding;
 	DirPicker *m_dirPicker;
 	wxComboBox *m_fileTypes;
 	wxChoice *m_searchResultsTab;

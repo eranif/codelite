@@ -110,9 +110,7 @@ void FindInFilesDialog::CreateGUIControls()
 	
 	wxArrayString choices;
 	choices.Add(SEARCH_IN_PROJECT);
-//#ifdef __WXMSW__
 	choices.Add(SEARCH_IN_WORKSPACE);
-//#endif	
 	m_dirPicker->SetValues(choices, 1);
 
 	// Add the options
@@ -128,6 +126,9 @@ void FindInFilesDialog::CreateGUIControls()
 	m_regualrExpression = new wxCheckBox(this, wxID_ANY, wxT("Regular &expression"));
 	sz->Add(m_regualrExpression, 1, wxALL | wxEXPAND, 5 );
 
+	m_fontEncoding = new wxCheckBox(this, wxID_ANY, wxT("Use the editor's font encoding (when left unchecked encoding is set to UTF8)"));
+	sz->Add(m_fontEncoding, 1, wxALL | wxEXPAND, 5 );
+	
 	itemStaticText = new wxStaticText( this, wxID_STATIC, wxT("Look at these file &types:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	sz->Add(itemStaticText, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5 );
 
@@ -186,6 +187,7 @@ void FindInFilesDialog::SetData(FindReplaceData &data)
 	m_matchCase->SetValue(data.GetFlags() & wxFRD_MATCHCASE ? true : false);
 	m_matchWholeWord->SetValue(data.GetFlags() & wxFRD_MATCHWHOLEWORD ? true : false);
 	m_regualrExpression->SetValue(data.GetFlags() & wxFRD_REGULAREXPRESSION ? true : false);
+	m_fontEncoding->SetValue(data.GetFlags() & wxFRD_USEFONTENCODING ? true : false);
 }
 
 void FindInFilesDialog::DoSearchReplace()
@@ -235,6 +237,12 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 		} else {
 			flags &= ~(wxFRD_REGULAREXPRESSION);
 		}
+	} else if(btnClicked == m_fontEncoding){
+		if(m_fontEncoding->IsChecked()) {
+			flags |= wxFRD_USEFONTENCODING;
+		} else {
+			flags &= ~(wxFRD_USEFONTENCODING);
+		}
 	}
 
 	// Set the updated flags
@@ -262,6 +270,7 @@ void FindInFilesDialog::ConnectEvents()
 	m_matchCase->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
 	m_matchWholeWord->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
 	m_regualrExpression->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
+	m_fontEncoding->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
 }
 
 void FindInFilesDialog::OnCharEvent(wxKeyEvent &event)
@@ -313,6 +322,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
 	data.SetMatchWholeWord((m_data.GetFlags() & wxFRD_MATCHWHOLEWORD) != 0);
 	data.SetRegularExpression((m_data.GetFlags() & wxFRD_REGULAREXPRESSION) != 0);
 	data.SetRootDir(m_dirPicker->GetPath());
+	data.SetUseEditorFontConfig((m_data.GetFlags() & wxFRD_USEFONTENCODING) != 0);
 	if(m_dirPicker->GetPath() == SEARCH_IN_WORKSPACE){
 
 		wxArrayString files;
@@ -329,3 +339,4 @@ SearchData FindInFilesDialog::DoGetSearchData()
 	data.SetExtensions(m_fileTypes->GetValue());
 	return data;
 }
+

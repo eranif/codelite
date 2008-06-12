@@ -65,5 +65,5 @@
       <GlobalLibPath>"C:/Program Files/Microsoft Visual Studio 8/VC/lib"</GlobalLibPath>
     </Compiler>
   </Compilers>
-  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="C:/MinGW/bin/mingw32-make.EXE" Options="-f" Jobs="2"/>
+  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="mingw32-make" Options="-f" Jobs="2"/>
 </BuildSettings>

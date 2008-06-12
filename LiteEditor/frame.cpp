@@ -641,11 +641,12 @@ void Frame::CreateGUIControls(void)
 	SessionManager::Get().Load(sessConfFile);
 
 	//try to locate the build tools
-	///////////////////////////////////////////////////////
-
-	//TODO:: temporarly disable to automatic tools update
-	//due to bug in overriding user settings
-	ManagerST::Get()->UpdateBuildTools();
+	
+	long fix(1);
+	EditorConfigST::Get()->GetLongValue(wxT("FixBuildToolOnStartup"), fix);
+	if( fix ) {
+		ManagerST::Get()->UpdateBuildTools();
+	}
 
 	Layout();
 }

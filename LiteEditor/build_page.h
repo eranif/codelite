@@ -51,7 +51,7 @@ private:
 protected:
 	wxStaticText* m_staticText;
 	wxChoicebook* m_bookBuildSystems;
-	
+	wxCheckBox *m_fixOnStartup;		
 
 	void CustomInit();
 	wxPanel *CreateBuildSystemPage(const wxString &name);
@@ -69,6 +69,7 @@ class BuildSystemPage : public wxPanel {
 	wxString m_name;
 	wxStaticText* m_staticText19;
 	wxComboBox* m_choiceJobs;
+	
 public:
 	BuildSystemPage(wxWindow *parent, wxString name);
 	virtual ~BuildSystemPage(){}

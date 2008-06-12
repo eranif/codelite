@@ -33,6 +33,7 @@
 
 #include "wx/wxprec.h"
 
+
 #ifdef __BORLANDC__
 #pragma hdrstop
 #endif //__BORLANDC__
@@ -43,6 +44,7 @@
 
 #include "build_page.h"
 #include "build_settings_config.h"
+#include "editor_config.h"
 #include "buildmanager.h"
 
 ///////////////////////////////////////////////////////////////////////////
@@ -56,7 +58,14 @@ BuildPage::BuildPage( wxWindow* parent, int id, wxPoint pos, wxSize size, int st
 	mainSizer->Add( m_staticText, 0, wxALL, 5 );
 	
 	m_bookBuildSystems = new wxChoicebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCHB_DEFAULT );
-	mainSizer->Add( m_bookBuildSystems, 1, wxEXPAND | wxALL, 5 );
+	mainSizer->Add( m_bookBuildSystems, 0, wxEXPAND | wxALL, 5 );
+	
+	m_fixOnStartup = new wxCheckBox(this, wxID_ANY, wxT("Fix build tool path on startup"));
+	mainSizer->Add( m_fixOnStartup, 0, wxEXPAND | wxALL, 5 );
+	
+	long fix(1);
+	EditorConfigST::Get()->GetLongValue(wxT("FixBuildToolOnStartup"), fix);
+	m_fixOnStartup->SetValue(fix ? true : false);
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -88,6 +97,9 @@ void BuildPage::Save()
 			page->Save();
 		}
 	}
+	
+	// save the "fix on startup" flag
+	EditorConfigST::Get()->SaveLongValue(wxT("FixBuildToolOnStartup"), m_fixOnStartup->IsChecked() ? 1 : 0);
 }
 
 //---------------------------------------------------------------

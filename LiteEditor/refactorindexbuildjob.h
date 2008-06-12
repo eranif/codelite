@@ -28,15 +28,18 @@
 #include "cpptoken.h"
 #include <vector>
 #include <wx/filename.h>
+#include "job.h"
 
-class RefactorIndexBuildJob
+class RefactorIndexBuildJob : public Job
 {
 	std::vector<wxFileName> m_files;
+	wxString m_word;
 	
 public:
-	RefactorIndexBuildJob(const std::vector<wxFileName> &files);
+	RefactorIndexBuildJob(const std::vector<wxFileName> &files, const wxChar* word);
 	virtual ~RefactorIndexBuildJob();
-
+	void Process(wxThread *thread);
+	
 public:
 	void Parse(const wxString &word, CppTokensMap &l);
 };

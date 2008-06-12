@@ -2691,14 +2691,9 @@ void Manager::BuildRefactorDatabase(const wxString& word, CppTokensMap &l )
 		}
 	}
 	
-	wxBusyInfo wait(wxT("Please while CodeLite gathers required information..."));
-	wxStopWatch watch;
-	
-	watch.Start();
-	RefactorIndexBuildJob job(files);
+//	JobQueueSingleton::Instance()->PushJob(new RefactorIndexBuildJob(files, word.c_str()));
+	RefactorIndexBuildJob job(files, word.c_str());
 	job.Parse(word, l);
-	long elapsed = watch.Time();
-	wxLogMessage(wxString::Format(wxT("Time to collect symbols: %d milliseconds. Total files scanned: %d"), elapsed, files.size()));
 }
 
 void Manager::ReplaceInFiles(const wxString &word, std::list<CppToken> &li)

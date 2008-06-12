@@ -54,6 +54,7 @@ public:
 	OpenWindowsPanel *m_openWindowsPane;
 	FileExplorer *m_explorer;
 	WorkspaceTab *m_workspaceTab;
+	wxComboBox *m_workspaceConfig;	
 	
 private:
 	void CreateGUIControls();
@@ -72,7 +73,9 @@ public:
 	void DeleteSymbolTree(const wxFileName &filename);
 	void DeleteAllSymbolTrees();
 	void CollpaseAll();
-	
+	void OnConfigurationManager(wxCommandEvent &e);
+	void OnConfigurationManagerUI(wxUpdateUIEvent &e);
+
 	// Return the index of the given tab by name
 	int CaptionToIndex(const wxString &caption);
 
@@ -80,6 +83,7 @@ public:
 	// Setters/Getters
 	//-----------------------------------------------
 	Notebook *GetNotebook() { return m_book; }
+	
 	SymbolTree *GetSymbolTree();
 	FileViewTree *GetFileViewTree();
 	OpenWindowsPanel *GetOpenedWindows() {return m_openWindowsPane;}

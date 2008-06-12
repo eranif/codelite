@@ -32,13 +32,9 @@ class wxComboBox;
 
 class WorkspaceTab : public wxPanel {
 	FileViewTree *m_fileView;
-	wxComboBox *m_workspaceConfig;
 	
-
 	void OnCollapseAll(wxCommandEvent &event);
 	void OnCollapseAllUI(wxUpdateUIEvent &event);
-	void OnConfigurationManager(wxCommandEvent &e);
-	void OnConfigurationManagerUI(wxUpdateUIEvent &e);
 	void DoCollpaseAll();
 	
 protected:	
@@ -52,7 +48,5 @@ public:
 	void CollpaseAll();
 	
 	FileViewTree *GetFileView(){return m_fileView;}
-	wxComboBox *GetComboBox(){return m_workspaceConfig;}
-	
 };
 #endif // __workspacetab__

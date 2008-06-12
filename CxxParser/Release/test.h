@@ -21,3 +21,4 @@ std::map<wxString, std::list<CppToken>* > m_matches;
 int a,b,*c;
 std::vector<int, int> vector;
 (void *buffer = NULL, size_t size, size_t nmemb, void *stream)
+wxStaticLine *line = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );

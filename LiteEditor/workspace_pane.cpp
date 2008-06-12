@@ -1,28 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : workspace_pane.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : workspace_pane.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "workspace_pane.h"
+#include "workspace_pane.h"
+#include "manager.h"
 #include "custom_notebook.h"
 #include "fileview.h"
 #include "cpp_symbol_tree.h"
@@ -76,6 +77,29 @@ void WorkspacePane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
+	// add the workspace configuration dropdown list
+	wxBoxSizer *hsz = new wxBoxSizer(wxHORIZONTAL);
+	
+	wxArrayString choices;
+	m_workspaceConfig = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY|wxALIGN_CENTER_VERTICAL);
+	m_workspaceConfig->Enable(false);
+
+	// Connect an event to handle changes in the choice control
+	ConnectCombo(m_workspaceConfig, Frame::OnWorkspaceConfigChanged);
+	mainSizer->Add(new wxStaticText(this, wxID_ANY, wxT("Selected Configuration:")), 0, wxEXPAND| wxTOP|wxLEFT|wxRIGHT, 5);
+	hsz->Add(m_workspaceConfig, 1, wxEXPAND);
+
+	wxButton *btn = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+	hsz->Add(btn, 0, wxALIGN_CENTER_VERTICAL);
+	mainSizer->Add(hsz, 0, wxEXPAND|wxALL, 5);
+	
+	// add static line separator
+	wxStaticLine *line = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	mainSizer->Add(line, 0, wxEXPAND);
+
+	ConnectButton(btn, WorkspacePane::OnConfigurationManager);
+	btn->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
+
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_TAB_DECORATION);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 
@@ -84,8 +108,8 @@ void WorkspacePane::CreateGUIControls()
 
 	m_explorer = new FileExplorer(m_book, wxT("Explorer"));
 	m_book->AddPage(m_explorer, WorkspacePane::EXPLORER, wxNullBitmap, false);
-	
-	m_winStack = new WindowStack(m_book, wxID_ANY); 
+
+	m_winStack = new WindowStack(m_book, wxID_ANY);
 	m_book->AddPage(m_winStack, WorkspacePane::SYMBOL_VIEW, wxNullBitmap, false);
 
 	m_openWindowsPane = new OpenWindowsPanel(m_book);
@@ -152,7 +176,7 @@ FileViewTree* WorkspacePane::GetFileViewTree()
 
 wxComboBox* WorkspacePane::GetConfigCombBox()
 {
-	return m_workspaceTab->GetComboBox();
+	return m_workspaceConfig;
 }
 
 void WorkspacePane::OnEraseBg(wxEraseEvent &e)
@@ -164,10 +188,10 @@ void WorkspacePane::OnPaint(wxPaintEvent &e)
 {
 	wxUnusedVar(e);
 	wxBufferedPaintDC dc(this);
-	
+
 	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-	
+
 	dc.DrawRectangle(GetClientSize());
 }
 
@@ -179,4 +203,15 @@ void WorkspacePane::OnSize(wxSizeEvent &e)
 void WorkspacePane::CollpaseAll()
 {
 	m_workspaceTab->CollpaseAll();
+}
+
+void WorkspacePane::OnConfigurationManager(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	Frame::Get()->ShowBuildConfigurationManager();
+}
+
+void WorkspacePane::OnConfigurationManagerUI(wxUpdateUIEvent& e)
+{
+	e.Enable( ManagerST::Get()->IsWorkspaceOpen() );
 }

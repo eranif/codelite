@@ -172,7 +172,7 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								{
 									//create new variable for every variable name found
 									var = curr_var;
-									var.m_pattern = "/^" + $1 + " " + $2 + " " + gs_names.at(i) + " $/";
+									var.m_pattern = "/^" + $1 + " " + $2 + " " + $3 + gs_names.at(i) + " $/";
 									var.m_name = gs_names.at(i);
 									gs_vars->push_back(var); 
 								}
@@ -243,6 +243,7 @@ postfix2: /*empty*/
 		;
 		
 postfix: ';'
+		| '='
 		| ')'
 		| '(' { $$ = $1 + var_consumBracketsContent('(');}
 		| '[' { $$ = $1 + var_consumBracketsContent('[');}

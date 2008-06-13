@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="UnitTestCpp" Database=".\UnitTestCpp.tags">
+<CodeLite_Workspace Name="UnitTestCpp" Database="./UnitTestCpp.tags">
   <Project Name="LibUnitTestCpp_POSIX" Path="LibUnitTestCpp_POSIX.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="LibUnitTestCpp_POSIX" ConfigName="PosixDebug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="LibUnitTestCpp_POSIX" ConfigName="PosixRelease"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

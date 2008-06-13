@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="UnitTestCpp" Database=".\UnitTestCpp.tags">
+<CodeLite_Workspace Name="UnitTestCpp" Database="./UnitTestCpp.tags">
   <Project Name="LibUnitTestCpp_WIN" Path="LibUnitTestCpp_WIN.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">

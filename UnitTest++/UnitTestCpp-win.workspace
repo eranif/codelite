@@ -2,10 +2,10 @@
 <CodeLite_Workspace Name="UnitTestCpp" Database="./UnitTestCpp.tags">
   <Project Name="LibUnitTestCpp_WIN" Path="LibUnitTestCpp_WIN.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="LibUnitTestCpp_WIN" ConfigName="WinDebug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
+    <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="LibUnitTestCpp_WIN" ConfigName="WinRelease"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

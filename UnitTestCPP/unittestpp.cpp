@@ -1,3 +1,5 @@
+#include "workspace.h"
+#include "project.h"
 #include "testclassdlg.h"
 #include "newunittestdlg.h"
 #include <wx/ffile.h>
@@ -44,7 +46,7 @@ UnitTestPP::~UnitTestPP()
 
 wxToolBar *UnitTestPP::CreateToolBar(wxWindow *parent)
 {
-	wxToolBar *tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	//wxToolBar *tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	// TODO :: Add your toolbar items here...
 	// Sample code that adds single button to the toolbar
 	// and associates an image to it
@@ -53,7 +55,7 @@ wxToolBar *UnitTestPP::CreateToolBar(wxWindow *parent)
 	// Connect the events to us
 	// parent->Connect(XRCID("new_plugin"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewPlugin), NULL, (wxEvtHandler*)this);
 	// parent->Connect(XRCID("new_plugin"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(UnitTestPP::OnNewPluginUI), NULL, (wxEvtHandler*)this);
-	return tb;
+	return NULL;
 }
 
 void UnitTestPP::CreatePluginMenu(wxMenu *pluginsMenu)
@@ -120,6 +122,7 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 		wxArrayString arr = dlg->GetTestsList();
 		wxString fixture = dlg->GetFixtureName();
 		wxString filename = dlg->GetFileName();
+		wxFileName fn(filename);
 
 		// first open / create the target file
 		if ( wxFileName::FileExists(filename) == false ) {
@@ -129,14 +132,43 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 				wxMessageBox(wxString::Format(wxT("Could not create target file '%s'"), filename.c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
 				return;
 			}
+			
 			file.Close();
+
+			TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
+			wxString file_name;
+			if(m_mgr->GetActiveEditor()) {
+				file_name = m_mgr->GetActiveEditor()->GetFileName().GetFullPath();
+			}
+			
+			if (item.m_item.IsOk() && item.m_fileName.GetFullPath() == file_name) {
+				wxTreeItemId parentItem = m_mgr->GetTree(TreeFileView)->GetItemParent(item.m_item);
+				wxArrayString paths;
+				paths.Add(fn.GetFullPath());
+				if (m_mgr->AddFilesToVirtualFodler(parentItem, paths) == false) {
+					//probably not a virtual folder
+					wxString msg;
+					msg << wxT("CodeLite created the test file successfully, but was unable to add the generated file to any virtual folder\n");
+					msg << wxT("You can right click on virtual folder (in the 'Workspace' tab) and manually add them\n");
+					wxMessageBox(msg, wxT("CodeLite"), wxOK|wxICON_INFORMATION);
+				}
+			}
+//			IEditor *activeEditor = m_mgr->GetActiveEditor();
+//			if (activeEditor && m_mgr->GetWorkspace()) {
+//				wxString err_msg;
+//				ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(activeEditor->GetProjectName(), err_msg);
+//				if (p) {
+//					wxString vd_path = p->GetVDByFileName(activeEditor->GetFileName().GetFullPath());
+//					p->AddFile(fn.GetFullPath(), vd_path);
+//				}
+//			}
 		}
 
 		// file name exist
 		// open the file in the editor
 		m_mgr->OpenFile(filename, wxEmptyString);
 
-		wxFileName fn(filename);
+
 		IEditor *editor = m_mgr->GetActiveEditor();
 		if (!editor || (editor && editor->GetFileName().GetFullPath() != fn.GetFullPath())) {
 			wxMessageBox(wxString::Format(wxT("Could not open target file '%s'"), filename.c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
@@ -148,11 +180,11 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 			// Test<FuncName>
 			wxString name = arr.Item(i);
 			wxString prefix = name.Mid(0, 1);
-			
+
 			name = name.Mid(1);
 			prefix.MakeUpper();
 			prefix << name;
-			
+
 			if ( fixture.IsEmpty() ) {
 				DoCreateSimpleTest(wxT("Test") + prefix, editor);
 			} else {

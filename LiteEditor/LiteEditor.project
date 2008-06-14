@@ -502,5 +502,6 @@ resources.cpp: resources.xrc
     <Project Name="Gizmos"/>
     <Project Name="Cscope"/>
     <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
   </Dependencies>
 </CodeLite_Project>

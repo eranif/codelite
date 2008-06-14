@@ -342,8 +342,13 @@ public:
 	bool InTransaction() const {
 		return m_tranActive;
 	}
-
+	
+	wxString GetVDByFileName(const wxString &file);
+	
 private:
+	
+	wxXmlNode *FindFile(wxXmlNode* parent, const wxString &file);
+	
 	// Recursive helper function
 	void RecursiveAdd(wxXmlNode *xmlNode, ProjectTreePtr &ptp, ProjectTreeNode *nodeParent);
 

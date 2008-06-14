@@ -355,8 +355,8 @@
         <CleanCommand>make clean</CleanCommand>
         <BuildCommand>make </BuildCommand>
         <SingleFileCommand>make $(CurrentFile).o</SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <MakefileGenerationCommand>./configure --enable-debug</MakefileGenerationCommand>
+        <ThirdPartyToolName>configure</ThirdPartyToolName>
         <WorkingDirectory>../</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
@@ -395,8 +395,8 @@
         <CleanCommand>make clean</CleanCommand>
         <BuildCommand>make </BuildCommand>
         <SingleFileCommand>make $(CurrentFile).o</SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <MakefileGenerationCommand>./configure</MakefileGenerationCommand>
+        <ThirdPartyToolName>configure</ThirdPartyToolName>
         <WorkingDirectory>../</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>

@@ -2,15 +2,14 @@
 <wxFormBuilder_Project>
     <FileVersion major="1" minor="9" />
     <object class="Project" expanded="1">
-        <property name="bitmaps"></property>
         <property name="class_decoration"></property>
         <property name="code_generation">C++</property>
+        <property name="disconnect_events">1</property>
         <property name="encoding">UTF-8</property>
         <property name="event_generation">connect</property>
         <property name="file">project_settings_base_dlg</property>
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
-        <property name="icons"></property>
         <property name="internationalize">0</property>
         <property name="name">ProjectSettings</property>
         <property name="namespace"></property>
@@ -875,13 +874,52 @@
                                                 <property name="flag">wxALL|wxEXPAND</property>
                                                 <property name="proportion">0</property>
                                                 <object class="CustomControl" expanded="1">
+                                                    <property name="bg"></property>
                                                     <property name="class">DirPicker</property>
                                                     <property name="construction">m_intermediateDirPicker = new DirPicker(m_generalPage);</property>
+                                                    <property name="context_help"></property>
                                                     <property name="declaration">DirPicker *m_intermediateDirPicker;</property>
+                                                    <property name="enabled">1</property>
+                                                    <property name="fg"></property>
+                                                    <property name="font"></property>
+                                                    <property name="hidden">0</property>
+                                                    <property name="id">wxID_ANY</property>
                                                     <property name="include"></property>
+                                                    <property name="maximum_size"></property>
+                                                    <property name="minimum_size"></property>
                                                     <property name="name">m_intermediateDirPicker</property>
                                                     <property name="permission">protected</property>
+                                                    <property name="pos"></property>
                                                     <property name="settings"></property>
+                                                    <property name="size"></property>
+                                                    <property name="subclass"></property>
+                                                    <property name="tooltip"></property>
+                                                    <property name="window_extra_style"></property>
+                                                    <property name="window_name"></property>
+                                                    <property name="window_style"></property>
+                                                    <event name="OnChar"></event>
+                                                    <event name="OnEnterWindow"></event>
+                                                    <event name="OnEraseBackground"></event>
+                                                    <event name="OnKeyDown"></event>
+                                                    <event name="OnKeyUp"></event>
+                                                    <event name="OnKillFocus"></event>
+                                                    <event name="OnLeaveWindow"></event>
+                                                    <event name="OnLeftDClick"></event>
+                                                    <event name="OnLeftDown"></event>
+                                                    <event name="OnLeftUp"></event>
+                                                    <event name="OnMiddleDClick"></event>
+                                                    <event name="OnMiddleDown"></event>
+                                                    <event name="OnMiddleUp"></event>
+                                                    <event name="OnMotion"></event>
+                                                    <event name="OnMouseEvents"></event>
+                                                    <event name="OnMouseWheel"></event>
+                                                    <event name="OnPaint"></event>
+                                                    <event name="OnRightDClick"></event>
+                                                    <event name="OnRightDown"></event>
+                                                    <event name="OnRightUp"></event>
+                                                    <event name="OnSetFocus"></event>
+                                                    <event name="OnSize"></event>
+                                                    <event name="OnUpdateUI"></event>
                                                 </object>
                                             </object>
                                         </object>
@@ -1281,13 +1319,52 @@
                                                 <property name="flag">wxALL|wxEXPAND</property>
                                                 <property name="proportion">0</property>
                                                 <object class="CustomControl" expanded="1">
+                                                    <property name="bg"></property>
                                                     <property name="class">DirPicker</property>
                                                     <property name="construction">m_workingDirPicker = new DirPicker(m_generalPage);</property>
+                                                    <property name="context_help"></property>
                                                     <property name="declaration">DirPicker *m_workingDirPicker;</property>
+                                                    <property name="enabled">1</property>
+                                                    <property name="fg"></property>
+                                                    <property name="font"></property>
+                                                    <property name="hidden">0</property>
+                                                    <property name="id">wxID_ANY</property>
                                                     <property name="include"></property>
+                                                    <property name="maximum_size"></property>
+                                                    <property name="minimum_size"></property>
                                                     <property name="name">m_workingDirPicker</property>
                                                     <property name="permission">protected</property>
+                                                    <property name="pos"></property>
                                                     <property name="settings"></property>
+                                                    <property name="size"></property>
+                                                    <property name="subclass"></property>
+                                                    <property name="tooltip"></property>
+                                                    <property name="window_extra_style"></property>
+                                                    <property name="window_name"></property>
+                                                    <property name="window_style"></property>
+                                                    <event name="OnChar"></event>
+                                                    <event name="OnEnterWindow"></event>
+                                                    <event name="OnEraseBackground"></event>
+                                                    <event name="OnKeyDown"></event>
+                                                    <event name="OnKeyUp"></event>
+                                                    <event name="OnKillFocus"></event>
+                                                    <event name="OnLeaveWindow"></event>
+                                                    <event name="OnLeftDClick"></event>
+                                                    <event name="OnLeftDown"></event>
+                                                    <event name="OnLeftUp"></event>
+                                                    <event name="OnMiddleDClick"></event>
+                                                    <event name="OnMiddleDown"></event>
+                                                    <event name="OnMiddleUp"></event>
+                                                    <event name="OnMotion"></event>
+                                                    <event name="OnMouseEvents"></event>
+                                                    <event name="OnMouseWheel"></event>
+                                                    <event name="OnPaint"></event>
+                                                    <event name="OnRightDClick"></event>
+                                                    <event name="OnRightDown"></event>
+                                                    <event name="OnRightUp"></event>
+                                                    <event name="OnSetFocus"></event>
+                                                    <event name="OnSize"></event>
+                                                    <event name="OnUpdateUI"></event>
                                                 </object>
                                             </object>
                                         </object>
@@ -4395,13 +4472,52 @@
                                                 <property name="flag">wxALL|wxEXPAND</property>
                                                 <property name="proportion">0</property>
                                                 <object class="CustomControl" expanded="1">
+                                                    <property name="bg"></property>
                                                     <property name="class">DirPicker</property>
                                                     <property name="construction">m_customBuildDirPicker = new DirPicker(m_customBuildPage);</property>
+                                                    <property name="context_help"></property>
                                                     <property name="declaration">DirPicker *m_customBuildDirPicker;</property>
+                                                    <property name="enabled">1</property>
+                                                    <property name="fg"></property>
+                                                    <property name="font"></property>
+                                                    <property name="hidden">0</property>
+                                                    <property name="id">wxID_ANY</property>
                                                     <property name="include">#include &quot;dirpicker.h&quot;</property>
+                                                    <property name="maximum_size"></property>
+                                                    <property name="minimum_size"></property>
                                                     <property name="name">m_customBuildDirPicker</property>
                                                     <property name="permission">protected</property>
+                                                    <property name="pos"></property>
                                                     <property name="settings"></property>
+                                                    <property name="size"></property>
+                                                    <property name="subclass"></property>
+                                                    <property name="tooltip"></property>
+                                                    <property name="window_extra_style"></property>
+                                                    <property name="window_name"></property>
+                                                    <property name="window_style"></property>
+                                                    <event name="OnChar"></event>
+                                                    <event name="OnEnterWindow"></event>
+                                                    <event name="OnEraseBackground"></event>
+                                                    <event name="OnKeyDown"></event>
+                                                    <event name="OnKeyUp"></event>
+                                                    <event name="OnKillFocus"></event>
+                                                    <event name="OnLeaveWindow"></event>
+                                                    <event name="OnLeftDClick"></event>
+                                                    <event name="OnLeftDown"></event>
+                                                    <event name="OnLeftUp"></event>
+                                                    <event name="OnMiddleDClick"></event>
+                                                    <event name="OnMiddleDown"></event>
+                                                    <event name="OnMiddleUp"></event>
+                                                    <event name="OnMotion"></event>
+                                                    <event name="OnMouseEvents"></event>
+                                                    <event name="OnMouseWheel"></event>
+                                                    <event name="OnPaint"></event>
+                                                    <event name="OnRightDClick"></event>
+                                                    <event name="OnRightDown"></event>
+                                                    <event name="OnRightUp"></event>
+                                                    <event name="OnSetFocus"></event>
+                                                    <event name="OnSize"></event>
+                                                    <event name="OnUpdateUI"></event>
                                                 </object>
                                             </object>
                                             <object class="sizeritem" expanded="1">
@@ -4841,7 +4957,7 @@
                                         <property name="proportion">0</property>
                                         <object class="wxChoice" expanded="1">
                                             <property name="bg"></property>
-                                            <property name="choices">&quot;None&quot; &quot;Premake&quot; &quot;QMake&quot; &quot;CMake&quot;</property>
+                                            <property name="choices">&quot;None&quot; &quot;Premake&quot; &quot;QMake&quot; &quot;CMake&quot; &quot;configure&quot;</property>
                                             <property name="context_help"></property>
                                             <property name="enabled">1</property>
                                             <property name="fg"></property>

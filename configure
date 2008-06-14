@@ -358,6 +358,10 @@ createInstallTarget()
 	echo "	@cp -fpr Runtime/config/accelerators.conf.default /usr/local/share/codelite/config/" >> Makefile
 	echo "	@cp -fpr Runtime/codelite.desktop /usr/share/applications/" >> Makefile
 	echo "	@cp -fpr Runtime/codelite.desktop ~/Desktop/" >> Makefile
+	echo "	@mkdir -p /usr/local/include/UnitTest++/" >> Makefile
+	echo "	@mkdir -p /usr/local/lib/" >> Makefile
+	echo "	@cp -fr Runtime/sdk/lib/unix/*.a /usr/local/lib/" >> Makefile
+	echo "	@cp -fr Runtime/sdk/include/UnitTest++/* /usr/local/include/UnitTest++/" >> Makefile
 	echo "	@chmod -R 777 /usr/local/share/codelite" >> Makefile
 	echo "	@chmod +x /usr/local/bin/CodeLite" >> Makefile
 	echo "" >> Makefile
@@ -373,6 +377,8 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  /usr/local/bin/le_killproc.sh" >> Makefile
 	echo "	@\$(RM) -fr  /usr/local/bin/CodeLiteUR" >> Makefile
 	echo "	@\$(RM) -fr  /usr/local/bin/CodeLiteUD" >> Makefile
+	echo "	@\$(RM) -fr  /usr/local/include/UnitTest++/" >> Makefile
+	echo "	@\$(RM) -fr  /usr/local/lib/libUnitTest++.a" >> Makefile
 	echo "	@\$(RM) -fr  /usr/local/share/codelite" >> Makefile
 	echo "	@\$(RM) -fr /usr/share/applications/codelite.desktop" >> Makefile
 	echo "	@\$(RM) -fr ~/Desktop/codelite.desktop" >> Makefile

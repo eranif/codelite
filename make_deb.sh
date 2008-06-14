@@ -41,6 +41,10 @@ mkdir -p fakeroot/usr/share/applications/
 \cp -pr Runtime/*.html fakeroot/usr/local/share/codelite/
 \cp -pr Runtime/astyle.sample fakeroot/usr/local/share/codelite/
 \cp -pr Runtime/images/*.png fakeroot/usr/local/share/codelite/images/
+\mkdir -p fakeroot/usr/local/include/UnitTest++/
+\mkdir -p fakeroot/usr/local/lib/
+\cp -fr Runtime/sdk/lib/unix/*.a fakeroot/usr/local/lib/
+\cp -fr Runtime/sdk/include/UnitTest++/* fakeroot/usr/local/include/UnitTest++/
 chmod -R 777 fakeroot/usr/local/share/codelite
 chmod +x fakeroot/usr/local/bin/CodeLite
 echo creating .deb package...

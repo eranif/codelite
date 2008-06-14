@@ -267,6 +267,12 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	output.Replace(wxT("$(User)"), wxGetUserName());
 	output.Replace(wxT("$(Date)"), now.FormatDate());
 	output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
+	
+#if defined (__WXMSW__) || defined (__WXMAC__)
+	output.Replace(wxT("$(UnitTestCppBase)"), workspace->GetStartupDir());
+#else
+	output.Replace(wxT("$(UnitTestCppBase)"), wxT("/usr/local/"));
+#endif
 
 	//call the environment & workspace variables expand function
 	if ( workspace ) {

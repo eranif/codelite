@@ -138,7 +138,7 @@ void UnitTestPP::DoCreateFixtureTest(const wxString& name, const wxString& fixtu
 {
 	wxString text;
 	
-	text << wxT("TEST_FIXTURE(") << fixture << wxT(", ") << name << wxT(")\n");
+	text << wxT("\nTEST_FIXTURE(") << fixture << wxT(", ") << name << wxT(")\n");
 	text << wxT("{\n");
 	text << wxT("}\n");
 	
@@ -151,7 +151,7 @@ void UnitTestPP::DoCreateSimpleTest(const wxString& name)
 {
 	wxString text;
 	
-	text << wxT("TEST(") << name << wxT(")\n");
+	text << wxT("\nTEST(") << name << wxT(")\n");
 	text << wxT("{\n");
 	text << wxT("}\n");
 	

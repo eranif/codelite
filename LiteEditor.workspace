@@ -25,6 +25,7 @@
     <Variable Name="WorkspacePath" Value="/Development/C++/codelite/trunk"/>
   </Environment>
   <Project Name="Copyright" Path="Copyright/Copyright.project" Active="No"/>
+  <Project Name="UnitTestPP" Path="UnitTestCPP\UnitTestPP.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
@@ -32,6 +33,7 @@
       <Project Name="wxflatnotebook" ConfigName="ReleaseUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="plugin_sdk" ConfigName="ReleaseUnicode"/>
+      <Project Name="UnitTestPP" ConfigName="ReleaseUnicode"/>
       <Project Name="Subversion" ConfigName="ReleaseUnicode"/>
       <Project Name="LiteEditor" ConfigName="ReleaseUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
@@ -48,6 +50,7 @@
       <Project Name="wxflatnotebook" ConfigName="DebugUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="plugin_sdk" ConfigName="DebugUnicode"/>
+      <Project Name="UnitTestPP" ConfigName="DebugUnicode"/>
       <Project Name="Subversion" ConfigName="DebugUnicode"/>
       <Project Name="LiteEditor" ConfigName="DebugUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
@@ -64,6 +67,7 @@
       <Project Name="wxflatnotebook" ConfigName="WinReleaseUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="plugin_sdk" ConfigName="WinReleaseUnicode"/>
+      <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
       <Project Name="Subversion" ConfigName="WinReleaseUnicode"/>
       <Project Name="LiteEditor" ConfigName="WinReleaseUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
@@ -80,6 +84,7 @@
       <Project Name="wxflatnotebook" ConfigName="WinDebugUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="plugin_sdk" ConfigName="WinDebugUnicode"/>
+      <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
       <Project Name="Subversion" ConfigName="WinDebugUnicode"/>
       <Project Name="LiteEditor" ConfigName="WinDebugUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>

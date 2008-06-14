@@ -1,4 +1,6 @@
+#include "testclassdlg.h"
 #include "newunittestdlg.h"
+#include <wx/ffile.h>
 #include <wx/msgdlg.h>
 #include "unittestpp.h"
 #include <wx/app.h>
@@ -103,7 +105,7 @@ wxMenu *UnitTestPP::CreateEditorPopMenu()
 
 	item = new wxMenuItem(menu, XRCID("unittestpp_new_class_test"), wxT("Create tests for &class..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	
+
 	//connect the events
 	m_topWindow->Connect(XRCID("unittestpp_new_simple_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewSimpleTest), NULL, (wxEvtHandler*)this);
 	m_topWindow->Connect(XRCID("unittestpp_new_class_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewClassTest), NULL, (wxEvtHandler*)this);
@@ -113,50 +115,94 @@ wxMenu *UnitTestPP::CreateEditorPopMenu()
 void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	wxMessageBox(wxT("Not implementd yet, be patient :)"));
+	TestClassDlg *dlg = new TestClassDlg(wxTheApp->GetTopWindow(), m_mgr);
+	if (dlg->ShowModal() == wxID_OK) {
+		wxArrayString arr = dlg->GetTestsList();
+		wxString fixture = dlg->GetFixtureName();
+		wxString filename = dlg->GetFileName();
+
+		// first open / create the target file
+		if ( wxFileName::FileExists(filename) == false ) {
+			// the file does not exist!
+			wxFFile file(filename, wxT("wb"));
+			if ( !file.IsOpened() ) {
+				wxMessageBox(wxString::Format(wxT("Could not create target file '%s'"), filename.c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
+				return;
+			}
+			file.Close();
+		}
+
+		// file name exist
+		// open the file in the editor
+		m_mgr->OpenFile(filename, wxEmptyString);
+
+		wxFileName fn(filename);
+		IEditor *editor = m_mgr->GetActiveEditor();
+		if (!editor || (editor && editor->GetFileName().GetFullPath() != fn.GetFullPath())) {
+			wxMessageBox(wxString::Format(wxT("Could not open target file '%s'"), filename.c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
+			return;
+		}
+
+		for (size_t i=0; i<arr.GetCount(); i++) {
+			// Create the test in the format of:
+			// Test<FuncName>
+			wxString name = arr.Item(i);
+			wxString prefix = name.Mid(0, 1);
+			
+			name = name.Mid(1);
+			prefix.MakeUpper();
+			prefix << name;
+			
+			if ( fixture.IsEmpty() ) {
+				DoCreateSimpleTest(wxT("Test") + prefix, editor);
+			} else {
+				DoCreateFixtureTest(wxT("Test") + prefix, fixture, editor);
+			}
+		}
+	}
+	dlg->Destroy();
 }
 
 void UnitTestPP::OnNewSimpleTest(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	NewUnitTestDlg *dlg = new NewUnitTestDlg(wxTheApp->GetTopWindow());
-	if(dlg->ShowModal() == wxID_OK) {
+	if (dlg->ShowModal() == wxID_OK) {
 		// create the unit test
 		wxString testName = dlg->GetTestName();
 		wxString fixture  = dlg->GetFixtureName();
-		
-		if(dlg->UseFixture()) {
-			DoCreateFixtureTest(testName, fixture);
+
+		if (dlg->UseFixture()) {
+			DoCreateFixtureTest(testName, fixture, m_mgr->GetActiveEditor());
 		} else {
-			DoCreateSimpleTest(testName);
+			DoCreateSimpleTest(testName, m_mgr->GetActiveEditor());
 		}
 	}
 	dlg->Destroy();
 }
 
-void UnitTestPP::DoCreateFixtureTest(const wxString& name, const wxString& fixture)
+void UnitTestPP::DoCreateFixtureTest(const wxString& name, const wxString& fixture, IEditor *editor)
 {
 	wxString text;
-	
+
 	text << wxT("\nTEST_FIXTURE(") << fixture << wxT(", ") << name << wxT(")\n");
 	text << wxT("{\n");
 	text << wxT("}\n");
-	
-	if(m_mgr->GetActiveEditor()) {
-		m_mgr->GetActiveEditor()->AppendText(text);
+
+	if (editor) {
+		editor->AppendText(text);
 	}
 }
 
-void UnitTestPP::DoCreateSimpleTest(const wxString& name)
+void UnitTestPP::DoCreateSimpleTest(const wxString& name, IEditor *editor)
 {
 	wxString text;
-	
+
 	text << wxT("\nTEST(") << name << wxT(")\n");
 	text << wxT("{\n");
 	text << wxT("}\n");
-	
-	if(m_mgr->GetActiveEditor()) {
-		m_mgr->GetActiveEditor()->AppendText(text);
+
+	if (editor) {
+		editor->AppendText(text);
 	}
 }
-

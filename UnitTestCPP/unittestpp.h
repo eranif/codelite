@@ -26,8 +26,8 @@ protected:
 	void OnNewSimpleTest(wxCommandEvent &e);
 	void OnNewClassTest(wxCommandEvent &e);
 	
-	void DoCreateSimpleTest(const wxString &name);
-	void DoCreateFixtureTest(const wxString &name, const wxString &fixture);
+	void DoCreateSimpleTest(const wxString &name, IEditor *editor);
+	void DoCreateFixtureTest(const wxString &name, const wxString &fixture, IEditor *editor);
 	
 private:
 	wxMenu *CreateEditorPopMenu();

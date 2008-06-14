@@ -161,6 +161,10 @@
     <File Name="newunittestbasedlg.cpp"/>
     <File Name="newunittestbasedlg.h"/>
     <File Name="newunittestdlg.cpp"/>
+    <File Name="testclassdlg.h"/>
+    <File Name="testclassbasedlg.cpp"/>
+    <File Name="testclassbasedlg.h"/>
+    <File Name="testclassdlg.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
 </CodeLite_Project>

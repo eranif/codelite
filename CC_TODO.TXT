@@ -11,10 +11,13 @@
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
 
-- Check the "Rename Symbol..." on linux & mac for performance
-
 - Generate the 'control' file for the .deb automatically by the configure script
 
 - Convert GetSignature() to a valid C++ code so the parser will be able to read it properly (i.e. replace ',' with ;';')
 
+- UnitTest++:
+  - Complete the 'New class tests'
+  - Add toolbar with the following functiolities:
+	- Run unit tests (output is displayed in default console application)
+	- Run and report (display nice a report)
 

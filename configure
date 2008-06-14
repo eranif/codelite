@@ -468,6 +468,7 @@ echo "Subversion\\" >> Makefile
 echo "CodeFormatter\\" >> Makefile
 echo "ReferenceAnalyser\\" >> Makefile
 echo "Copyright\\" >> Makefile
+echo "UnitTestCPP\\" >> Makefile
 echo "" >> Makefile
 
 echo "plugins_install:\\" >> Makefile
@@ -483,6 +484,7 @@ echo "Subversion_install\\" >> Makefile
 echo "CodeFormatter_install\\" >> Makefile
 echo "ReferenceAnalyser_install\\" >> Makefile
 echo "Copyright_install\\" >> Makefile
+echo "UnitTestCPP_install\\" >> Makefile
 echo "" >> Makefile
 
 echo "clean_plugins:\\" >> Makefile
@@ -498,6 +500,7 @@ echo "Subversion_clean\\" >> Makefile
 echo "CodeFormatter_clean\\" >> Makefile
 echo "ReferenceAnalyser_clean\\" >> Makefile
 echo "Copyright_clean\\" >> Makefile
+echo "UnitTestCPP_clean\\" >> Makefile
 echo "" >> Makefile
 
 ########################################################
@@ -514,6 +517,6 @@ createPluginMakefile "Subversion" "Subversion" "/usr/local/share/codelite/plugin
 createPluginMakefile "CodeFormatter" "CodeFormatter" "/usr/local/share/codelite/plugins/"
 createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "/usr/local/share/codelite/plugins/"
 createPluginMakefile "Copyright" "Copyright" "/usr/local/share/codelite/plugins/"
-
+createPluginMakefile "UnitTestCPP" "UnitTestCPP" "/usr/local/share/codelite/plugins/"
 
 

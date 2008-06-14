@@ -269,7 +269,7 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
 	
 #if defined (__WXMSW__) || defined (__WXMAC__)
-	output.Replace(wxT("$(UnitTestCppBase)"), workspace->GetStartupDir());
+	output.Replace(wxT("$(UnitTestCppBase)"), workspace->GetStartupDir() + wxT("/sdk"));
 #else
 	output.Replace(wxT("$(UnitTestCppBase)"), wxT("/usr/local/"));
 #endif

@@ -37,6 +37,32 @@
 
 static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &fileName);
 
+#ifdef __WXMAC__
+#include <mach-o/dyld.h>
+
+//On Mac we determine the base path using system call
+//_NSGetExecutablePath(path, &path_len);
+static wxString MacGetInstallPath()
+{
+	char path[257];
+	uint32_t path_len = 256;
+	_NSGetExecutablePath(path, &path_len);
+
+	//path now contains
+	//CodeLite.app/Contents/MacOS/
+	wxFileName fname(wxString(path, wxConvUTF8));
+
+	//remove he MacOS part of the exe path
+	wxString file_name = fname.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
+	wxString rest;
+	file_name.EndsWith(wxT("MacOS/"), &rest);
+	rest.Append(wxT("SharedSupport/"));
+
+	return rest;
+}
+#endif
+
+
 static bool ReadFile8BitData(const char *file_name, wxString &content)
 {
 	content.Empty();
@@ -271,8 +297,8 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	
 #if defined (__WXMSW__)
 	output.Replace(wxT("$(UnitTestCppBase)"), workspace->GetStartupDir() + wxT("/sdk"));
-#elif defined (__WXGTK__)
-	output.Replace(wxT("$(UnitTestCppBase)"), wxStandardPaths::Get().GetDataDir() + wxT("/sdk"));
+#elif defined (__WXMAC__)
+	output.Replace(wxT("$(UnitTestCppBase)"), MacGetInstallPath() + wxT("/sdk"));
 #else
 	output.Replace(wxT("$(UnitTestCppBase)"), wxT("/usr/local/"));
 #endif

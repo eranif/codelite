@@ -27,6 +27,7 @@ void TestClassDlg::OnRefreshFunctions( wxCommandEvent& event )
 	}
 
 	if (matches.empty()) {
+		wxMessageBox(wxT("Could not find match for class '")+m_textCtrlClassName->GetValue()+wxT("'"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 
@@ -47,7 +48,7 @@ void TestClassDlg::OnRefreshFunctions( wxCommandEvent& event )
 		theClass = wxGetSingleChoice(wxT("Select class:"), wxT("Select class:"), choices, this);
 	}
 
-	if (theClass.empty()) {
+	if (theClass.empty()) {//user clicked 'Cancel'
 		return;
 	}
 
@@ -118,4 +119,26 @@ wxArrayString TestClassDlg::GetTestsList()
 void TestClassDlg::OnUseFixture(wxCommandEvent& e)
 {
 	m_textCtrlFixtureName->Enable(e.IsChecked());
+}
+
+void TestClassDlg::OnButtonOk(wxCommandEvent& e)
+{
+	// validate the class name
+	if( m_textCtrlFileName->GetValue().IsEmpty() ){
+		wxMessageBox(wxT("Please provide a class name"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		return;
+	}
+	
+	if( m_checkListMethods->GetCount() == 0 ){
+		wxMessageBox(wxT("There are no tests to generate"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		return;
+	}
+	
+	EndModal(wxID_OK);
+}
+
+void TestClassDlg::OnClassNameTyped(wxCommandEvent& e)
+{
+	// scane the database for classes
+	e.Skip();
 }

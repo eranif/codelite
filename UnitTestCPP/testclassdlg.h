@@ -26,6 +26,8 @@ protected:
 	void OnCheckAll(wxCommandEvent &e);
 	void OnUnCheckAll(wxCommandEvent &e);
 	void OnUseFixture(wxCommandEvent &e);
+	void OnButtonOk(wxCommandEvent &e);
+	void OnClassNameTyped(wxCommandEvent &e);
 	
 public:
 	/** Constructor */

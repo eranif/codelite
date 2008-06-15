@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -104,21 +104,25 @@ TestClassBaseDlg::TestClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	this->Centre( wxBOTH );
 	
 	// Connect Events
+	m_textCtrlClassName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TestClassBaseDlg::OnClassNameTyped ), NULL, this );
 	m_buttonRefresh->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnRefreshFunctions ), NULL, this );
 	m_buttonRefresh->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TestClassBaseDlg::OnRefreshButtonUI ), NULL, this );
 	m_checkBox1->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUseActiveEditor ), NULL, this );
 	m_checkBoxUseFixture->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUseFixture ), NULL, this );
 	m_buttonCheckAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnCheckAll ), NULL, this );
 	m_buttonUnCheckAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUnCheckAll ), NULL, this );
+	m_buttonCreate->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnButtonOk ), NULL, this );
 }
 
 TestClassBaseDlg::~TestClassBaseDlg()
 {
 	// Disconnect Events
+	m_textCtrlClassName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TestClassBaseDlg::OnClassNameTyped ), NULL, this );
 	m_buttonRefresh->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnRefreshFunctions ), NULL, this );
 	m_buttonRefresh->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TestClassBaseDlg::OnRefreshButtonUI ), NULL, this );
 	m_checkBox1->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUseActiveEditor ), NULL, this );
 	m_checkBoxUseFixture->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUseFixture ), NULL, this );
 	m_buttonCheckAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnCheckAll ), NULL, this );
 	m_buttonUnCheckAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUnCheckAll ), NULL, this );
+	m_buttonCreate->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnButtonOk ), NULL, this );
 }

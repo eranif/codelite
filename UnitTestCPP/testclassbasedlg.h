@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -49,12 +49,14 @@ class TestClassBaseDlg : public wxDialog
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnClassNameTyped( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnRefreshFunctions( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnRefreshButtonUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnUseActiveEditor( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnUseFixture( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnCheckAll( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnUnCheckAll( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnButtonOk( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:

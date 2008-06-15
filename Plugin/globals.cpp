@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/stdpaths.h>
 #include <wx/dir.h>
 #include "editor_config.h"
 #include "workspace.h"
@@ -268,8 +269,10 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	output.Replace(wxT("$(Date)"), now.FormatDate());
 	output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
 	
-#if defined (__WXMSW__) || defined (__WXMAC__)
+#if defined (__WXMSW__)
 	output.Replace(wxT("$(UnitTestCppBase)"), workspace->GetStartupDir() + wxT("/sdk"));
+#elif defined (__WXGTK__)
+	output.Replace(wxT("$(UnitTestCppBase)"), wxStandardPaths::Get().GetDataDir() + wxT("/sdk"));
 #else
 	output.Replace(wxT("$(UnitTestCppBase)"), wxT("/usr/local/"));
 #endif

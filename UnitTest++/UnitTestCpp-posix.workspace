@@ -5,8 +5,11 @@
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="LibUnitTestCpp_POSIX" ConfigName="PosixDebug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="LibUnitTestCpp_POSIX" ConfigName="PosixRelease"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="MacRelease" Selected="yes">
+      <Project Name="LibUnitTestCpp_POSIX" ConfigName="MacPosixRelease"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

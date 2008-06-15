@@ -14,6 +14,9 @@ mkdir -p ./CodeLite.app/Contents/SharedSupport
 mkdir -p ./CodeLite.app/Contents/SharedSupport/plugins
 mkdir -p ./CodeLite.app/Contents/SharedSupport/debuggers
 mkdir -p ./CodeLite.app/Contents/SharedSupport/config
+mkdir -p ./CodeLite.app/Contents/SharedSupport/sdk/include/UnitTest++/
+mkdir -p ./CodeLite.app/Contents/SharedSupport/sdk/include/UnitTest++/Posix/
+mkdir -p ./CodeLite.app/Contents/SharedSupport/sdk/lib/
 
 
 ## Get list of files to work on
@@ -93,5 +96,10 @@ cp ../lib/Subversion.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/cscope.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/Copyright.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/UnitTestCPP.so ./CodeLite.app/Contents/SharedSupport/plugins/
+
+## Copy the UnitTest++ SDK, 
+cp -fr sdk/include/UnitTest++/*.h ./CodeLite.app/Contents/SharedSupport/sdk/include/UnitTest++/
+cp -fr sdk/include/UnitTest++/Posix/*.h ./CodeLite.app/Contents/SharedSupport/sdk/include/UnitTest++/Posix/
+cp -fr sdk/lib/macos/*.a ./CodeLite.app/Contents/SharedSupport/sdk/lib/
 
 cp ../sdk/ctags/ctags-le ./CodeLite.app/Contents/SharedSupport/

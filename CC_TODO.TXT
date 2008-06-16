@@ -15,10 +15,7 @@
 
 - Convert GetSignature() to a valid C++ code so the parser will be able to read it properly (i.e. replace ',' with ;';')
 
-- UnitTest++:
-  - Add toolbar with the following functiolities:
-	- Run unit tests (output is displayed in default console application)
-	- Run and report (display nice a report)
+- UnitTest++ : move the summary page to the bottom pane
 
 - Plugins: add version to the API, and also add new function that is loaded during initializaton: int GetAPIVersion(){} if a function with this signature is not available
 assume: version 1

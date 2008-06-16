@@ -25,6 +25,8 @@ public:
 protected:
 	void OnNewSimpleTest(wxCommandEvent &e);
 	void OnNewClassTest(wxCommandEvent &e);
+	void OnRunUnitTests(wxCommandEvent &e);
+	void OnRunUnitTestsUI(wxUpdateUIEvent &e);
 	
 	void DoCreateSimpleTest(const wxString &name, IEditor *editor);
 	void DoCreateFixtureTest(const wxString &name, const wxString &fixture, IEditor *editor);

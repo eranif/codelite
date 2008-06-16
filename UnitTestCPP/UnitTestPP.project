@@ -2,6 +2,8 @@
 <CodeLite_Project Name="UnitTestPP">
   <VirtualDirectory Name="src">
     <File Name="unittestpp.cpp"/>
+    <File Name="unittestcppoutputparser.cpp"/>
+    <File Name="unittestcppoutputparser.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="unittestpp.h"/>

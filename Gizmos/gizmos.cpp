@@ -156,9 +156,6 @@ wxToolBar *GizmosPlugin::CreateToolBar(wxWindow *parent)
 		tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class16")), wxT("New Class..."));
 		tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project16")), wxT("New wxWidget Project"));
 	}
-#if defined (__WXMAC__)
-	tb->AddSeparator();
-#endif
 	tb->Realize();
 
 	//Connect the events to us

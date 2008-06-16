@@ -46,16 +46,24 @@ UnitTestPP::~UnitTestPP()
 
 wxToolBar *UnitTestPP::CreateToolBar(wxWindow *parent)
 {
-	//wxToolBar *tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
-	// TODO :: Add your toolbar items here...
-	// Sample code that adds single button to the toolbar
-	// and associates an image to it
-	// tb->AddTool(XRCID("new_plugin"), wxT("New Plugin Wizard..."), wxXmlResource::Get()->LoadBitmap(wxT("plugin_add")), wxT("New Plugin Wizard..."));
-	// tb->Realize();
-	// Connect the events to us
-	// parent->Connect(XRCID("new_plugin"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewPlugin), NULL, (wxEvtHandler*)this);
-	// parent->Connect(XRCID("new_plugin"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(UnitTestPP::OnNewPluginUI), NULL, (wxEvtHandler*)this);
-	return NULL;
+	//support both toolbars icon size
+	int size = m_mgr->GetToolbarIconSize();
+
+	wxToolBar *tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	tb->SetToolBitmapSize(wxSize(size, size));
+
+	if (size == 24) {
+		tb->AddTool(XRCID("run_unit_tests"), wxT("Run Unit tests..."), wxXmlResource::Get()->LoadBitmap(wxT("run_unit_test24")), wxT("Run project as unit test project..."));
+		
+	} else {
+		tb->AddTool(XRCID("run_unit_tests"), wxT("Run Unit tests..."), wxXmlResource::Get()->LoadBitmap(wxT("run_unit_test16")), wxT("Run project as unit test project..."));
+	}
+	tb->Realize();
+
+	//Connect the events to us
+	parent->Connect(XRCID("run_unit_tests"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnRunUnitTests), NULL, (wxEvtHandler*)this);
+	parent->Connect(XRCID("run_unit_tests"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(UnitTestPP::OnRunUnitTestsUI), NULL, (wxEvtHandler*)this);
+	return tb;
 }
 
 void UnitTestPP::CreatePluginMenu(wxMenu *pluginsMenu)
@@ -238,3 +246,12 @@ void UnitTestPP::DoCreateSimpleTest(const wxString& name, IEditor *editor)
 		editor->AppendText(text);
 	}
 }
+
+void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
+{
+}
+
+void UnitTestPP::OnRunUnitTestsUI(wxUpdateUIEvent& e)
+{
+}
+

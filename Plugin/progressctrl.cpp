@@ -40,6 +40,7 @@ ProgressCtrl::ProgressCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
 		: wxPanel(parent, id, pos, size, style)
 		, m_maxRange(100)
 		, m_currValue(0)
+		, m_fillCol(wxT("DARK GREEN"))
 {
 }
 
@@ -90,8 +91,8 @@ void ProgressCtrl::OnPaint(wxPaintEvent& e)
 //	
 //	dc.SetBrush(fillCol);
 	
-	dc.SetPen(wxPen(fillCol));
-	dc.SetBrush(wxBrush(fillCol, wxDOT_DASH));
+	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW)));
+	dc.SetBrush(wxBrush(m_fillCol));
 	dc.DrawRectangle(rr);
 	
 	// calculate the location to place the string

@@ -1,3 +1,10 @@
+#include "unittestspage.h"
+#include "unittestcppoutputparser.h"
+#include <wx/tokenzr.h>
+#include "environmentconfig.h"
+#include "pipedprocess.h"
+#include "dirsaver.h"
+#include "procutils.h"
 #include "workspace.h"
 #include "project.h"
 #include "testclassdlg.h"
@@ -249,9 +256,57 @@ void UnitTestPP::DoCreateSimpleTest(const wxString& name, IEditor *editor)
 
 void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
 {
+	wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
+	wxString wd;
+	wxString cmd = m_mgr->GetProjectExecutionCommand(projectName, wd);
+
+	DirSaver ds;
+	wxSetWorkingDirectory(wd);
+
+	//m_proc will be deleted upon termination
+	m_proc = new PipedProcess(wxNewId(), cmd);
+	if (m_proc) {
+
+		//set the environment variables
+		m_mgr->GetEnv()->ApplyEnv();
+
+		if (m_proc->Start() == 0) {
+
+			//set the environment variables
+			m_mgr->GetEnv()->UnApplyEnv();
+
+			//failed to start the process
+			delete m_proc;
+			return;
+		}
+		m_mgr->GetEnv()->UnApplyEnv();
+		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(UnitTestPP::OnProcessTerminated), NULL, this);
+	}
 }
 
 void UnitTestPP::OnRunUnitTestsUI(wxUpdateUIEvent& e)
 {
+	e.Enable(m_mgr->IsWorkspaceOpen());
 }
 
+void UnitTestPP::OnProcessTerminated(wxProcessEvent& e)
+{
+	wxString output;
+	m_proc->ReadAll(output);
+	delete m_proc;
+	
+	wxArrayString arr = wxStringTokenize(output, wxT("\n"));
+	UnitTestCppOutputParser parser(arr);
+	
+	// parse the results
+	TestSummary summary;
+	parser.Parse(summary);
+	
+	// create new report page, and add it to the editor
+	UnitTestsPage *page = new UnitTestsPage(m_mgr->GetMainNotebook(), summary, m_mgr);
+	m_mgr->GetMainNotebook()->AddPage(page, wxT("UnitTest++ Report"), wxNullBitmap, true);
+	
+	page->UpdateFailedBar((size_t)summary.errorCount, wxEmptyString);
+	page->UpdatePassedBar((size_t)(summary.totalTests - summary.errorCount), wxEmptyString);
+	
+}

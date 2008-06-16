@@ -9,6 +9,7 @@ class UnitTestPP : public IPlugin
 {
 	wxEvtHandler *m_topWindow;
 	wxMenuItem *m_sepItem;
+	PipedProcess *m_proc;
 public:
 	UnitTestPP(IManager *manager);
 	~UnitTestPP();
@@ -27,6 +28,7 @@ protected:
 	void OnNewClassTest(wxCommandEvent &e);
 	void OnRunUnitTests(wxCommandEvent &e);
 	void OnRunUnitTestsUI(wxUpdateUIEvent &e);
+	void OnProcessTerminated(wxProcessEvent &e);
 	
 	void DoCreateSimpleTest(const wxString &name, IEditor *editor);
 	void DoCreateFixtureTest(const wxString &name, const wxString &fixture, IEditor *editor);

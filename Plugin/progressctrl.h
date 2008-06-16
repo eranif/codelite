@@ -32,6 +32,7 @@ class ProgressCtrl : public wxPanel {
 	wxString m_msg;
 	size_t m_maxRange;
 	size_t m_currValue;
+	wxColour m_fillCol;
 	
 public:
 	ProgressCtrl(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style =0);
@@ -46,6 +47,7 @@ public:
 	//Getters
 	const size_t& GetMaxRange() const {return m_maxRange;}
 	const wxString& GetMsg() const {return m_msg;}
+	void SetFillCol(const wxColour &col) {m_fillCol = col;}
 	
 	DECLARE_EVENT_TABLE()
 	void OnPaint(wxPaintEvent &e);

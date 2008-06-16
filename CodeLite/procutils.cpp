@@ -420,7 +420,7 @@ void ProcUtils::SafeExecuteCommand(const wxString &command, wxArrayString &outpu
 	delete proc;
 
 #else
-	ProcUtils::ExecuteCommand(command, output);
+	ProcUtils::ExecuteCommand(tmpCmd, output);
 #endif
 }
 

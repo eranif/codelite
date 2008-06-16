@@ -164,6 +164,14 @@ public:
 	 * \return job queue manager
 	 */
 	virtual JobQueue *GetJobQueue() = 0;
+	
+	/**
+	 * \brief return the project execution command as set in the project's settings
+	 * \param projectName the project
+	 * \param wd starting dirctory
+	 * \return the execution command or wxEmptyString if the project does not exist
+	 */
+	virtual wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd) = 0;
 };
 
 #endif //IMANAGER_H

@@ -81,6 +81,7 @@ public:
 	virtual wxAuiManager* GetDockingManager();
 	virtual EnvironmentConfig* GetEnv();
 	virtual JobQueue *GetJobQueue();
+	virtual wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd);
 	
 	//------------------------------------
 	//End of IManager interface

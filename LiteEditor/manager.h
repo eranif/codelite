@@ -657,6 +657,16 @@ public:
 	
 	void UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< wxAcceleratorEntry > &accelVec);
 	
+	/**
+	 * \brief return the project excution command as it appears in the project settings
+	 * \param projectName
+	 * \param wd the working directory that the command should be running from 
+	 * \param considerPauseWhenExecuting when set to true (default) CodeLite will take into consideration the value set in the project
+	 * settings 'Pause when execution ends' 
+	 * \return project execution command or wxEmptyString if the project does not exist
+	 */
+	wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd, bool considerPauseWhenExecuting = true);
+	
 	//--------------------------------------------------------------------
 	//IDebuggerObserver implementation. These set of functions are called
 	//from the debugger whenever event occurs there
@@ -688,7 +698,7 @@ public:
 	void DbgSetThread(long threadId);
 	bool DbgCanInteract(){return m_dbgCanInteract;}
 	void UpdateDebuggerPane();
-
+	
 protected:
 	Manager(void);
 	virtual ~Manager(void);

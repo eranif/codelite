@@ -317,3 +317,7 @@ JobQueue* PluginManager::GetJobQueue()
 {
 	return JobQueueSingleton::Instance();
 }
+wxString PluginManager::GetProjectExecutionCommand(const wxString& projectName, wxString& wd)
+{
+	return ManagerST::Get()->GetProjectExecutionCommand(projectName, wd, false);
+}

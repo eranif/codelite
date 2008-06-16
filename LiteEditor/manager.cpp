@@ -1281,29 +1281,12 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	if (m_asyncExeCmd && m_asyncExeCmd->IsBusy()) {
 		return;
 	}
-
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(projectName);
-	if (!bldConf) {
-		wxLogMessage(wxT("failed to find project configuration for project '") + projectName);
-		return;
-	}
-
-	//expand variables
-	wxString cmd = bldConf->GetCommand();
-	cmd = ExpandVariables(cmd, GetProject(projectName));
-
-	wxString cmdArgs = bldConf->GetCommandArguments();
-	cmdArgs = ExpandVariables(cmdArgs, GetProject(projectName));
-
-	//execute command & cmdArgs
-	wxString execLine(cmd + wxT(" ") + cmdArgs);
-	wxString wd = bldConf->GetWorkingDirectory();
-	wd = ExpandVariables(wd, GetProject(projectName));
-
-	//change directory to the working directory
-	DirSaver ds;
-
+	wxString wd;
+	wxString execLine = GetProjectExecutionCommand(projectName, wd, true);
 	ProjectPtr proj = GetProject(projectName);
+	
+	DirSaver ds;
+	
 	//print the current directory
 	::wxSetWorkingDirectory(proj->GetFileName().GetPath());
 
@@ -1314,32 +1297,6 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	//execute the command line
 	//the async command is a one time executable object,
 	m_asyncExeCmd = new AsyncExeCmd(GetMainFrame());
-
-#if defined(__WXMAC__)
-	execLine = wxString( wxT("osascript -e 'tell application \"Terminal\"'")) +
-	           wxT(" -e   'activate'") +
-	           wxT(" -e   'do script with command \"cd ") + proj->GetFileName().GetPath() + wxT(" && cd ") + wd + wxT(" && ") + execLine + wxT("\"'") +
-	           wxT(" -e  'end tell'");
-#elif defined(__WXGTK__)
-	//set a console to the execute target
-	wxString term;
-	term << wxT("xterm -title ");
-	term << wxT("'") << execLine << wxT("'");
-	term << wxT(" -e ");
-
-	if ( bldConf->GetPauseWhenExecEnds() ) {
-		term << CL_EXEC_WRAPPER;
-	}
-
-	term << execLine;
-	execLine = term;
-#elif defined (__WXMSW__)
-
-	if (bldConf->GetPauseWhenExecEnds() ) {
-		execLine.Prepend(CL_EXEC_WRAPPER);
-	}
-
-#endif
 
 	//execute the program:
 	//- no hiding the console
@@ -2763,4 +2720,56 @@ void Manager::RetagFile(const wxString& filename)
 	
 	// add status message
 	Frame::Get()->GetStatusBar()->SetStatusText(wxString::Format(wxT("Re-tagging file %s..."), absFile.GetFullName().c_str()), 4);
+}
+
+wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxString &wd, bool considerPauseWhenExecuting)
+{
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(projectName);
+	if (!bldConf) {
+		wxLogMessage(wxT("failed to find project configuration for project '") + projectName + wxT("'"));
+		return wxEmptyString;
+	}
+
+	//expand variables
+	wxString cmd = bldConf->GetCommand();
+	cmd = ExpandVariables(cmd, GetProject(projectName));
+
+	wxString cmdArgs = bldConf->GetCommandArguments();
+	cmdArgs = ExpandVariables(cmdArgs, GetProject(projectName));
+
+	//execute command & cmdArgs
+	wxString execLine(cmd + wxT(" ") + cmdArgs);
+	wd = bldConf->GetWorkingDirectory();
+	wd = ExpandVariables(wd, GetProject(projectName));
+
+	//change directory to the working directory
+	
+	ProjectPtr proj = GetProject(projectName);
+	
+#if defined(__WXMAC__)
+	execLine = wxString( wxT("osascript -e 'tell application \"Terminal\"'")) +
+	           wxT(" -e   'activate'") +
+	           wxT(" -e   'do script with command \"cd ") + proj->GetFileName().GetPath() + wxT(" && cd ") + wd + wxT(" && ") + execLine + wxT("\"'") +
+	           wxT(" -e  'end tell'");
+			   
+#elif defined(__WXGTK__)
+	//set a console to the execute target
+	wxString term;
+	term << wxT("xterm -title ");
+	term << wxT("'") << execLine << wxT("'");
+	term << wxT(" -e ");
+
+	if (considerPauseWhenExecuting && bldConf->GetPauseWhenExecEnds() ) {
+		term << CL_EXEC_WRAPPER;
+	}
+
+	term << execLine;
+	execLine = term;
+#elif defined (__WXMSW__)
+
+	if (considerPauseWhenExecuting && bldConf->GetPauseWhenExecEnds() ) {
+		execLine.Prepend(CL_EXEC_WRAPPER);
+	}
+#endif
+	return execLine;
 }

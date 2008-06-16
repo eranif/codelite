@@ -17,7 +17,7 @@
 #include "progressctrl.h"
 #include <wx/sizer.h>
 #include <wx/statline.h>
-#include <wx/listbox.h>
+#include <wx/listctrl.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -45,10 +45,10 @@ class UnitTestsBasePage : public wxPanel
 		wxStaticText* m_staticTextSuccessTestsNum;
 		wxStaticLine* m_staticline4;
 		wxStaticText* m_staticText16;
-		wxListBox* m_listBoxErrors;
+		wxListCtrl* m_listCtrlErrors;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnItemActivated( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }
 		
 	
 	public:

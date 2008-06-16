@@ -86,18 +86,18 @@ UnitTestsBasePage::UnitTestsBasePage( wxWindow* parent, wxWindowID id, const wxP
 	
 	bSizer8->Add( m_staticText16, 0, wxALL, 5 );
 	
-	m_listBoxErrors = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizer8->Add( m_listBoxErrors, 1, wxALL|wxEXPAND, 5 );
+	m_listCtrlErrors = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_SINGLE_SEL );
+	bSizer8->Add( m_listCtrlErrors, 1, wxALL|wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer8 );
 	this->Layout();
 	
 	// Connect Events
-	m_listBoxErrors->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( UnitTestsBasePage::OnItemActivated ), NULL, this );
+	m_listCtrlErrors->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( UnitTestsBasePage::OnItemActivated ), NULL, this );
 }
 
 UnitTestsBasePage::~UnitTestsBasePage()
 {
 	// Disconnect Events
-	m_listBoxErrors->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( UnitTestsBasePage::OnItemActivated ), NULL, this );
+	m_listCtrlErrors->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( UnitTestsBasePage::OnItemActivated ), NULL, this );
 }

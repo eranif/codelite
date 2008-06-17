@@ -1284,9 +1284,9 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	wxString wd;
 	wxString execLine = GetProjectExecutionCommand(projectName, wd, true);
 	ProjectPtr proj = GetProject(projectName);
-	
+
 	DirSaver ds;
-	
+
 	//print the current directory
 	::wxSetWorkingDirectory(proj->GetFileName().GetPath());
 
@@ -2638,8 +2638,8 @@ void Manager::BuildRefactorDatabase(const wxString& word, CppTokensMap &l )
 	wxArrayString projects;
 	GetProjectList(projects);
 	std::vector<wxFileName> files;
-	
-	
+
+
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		ProjectPtr proj = GetProject(projects.Item(i));
 		if ( proj ) {
@@ -2647,7 +2647,7 @@ void Manager::BuildRefactorDatabase(const wxString& word, CppTokensMap &l )
 			proj->GetFiles(files, true);
 		}
 	}
-	
+
 //	JobQueueSingleton::Instance()->PushJob(new RefactorIndexBuildJob(files, word.c_str()));
 	RefactorIndexBuildJob job(files, word.c_str());
 	job.Parse(word, l);
@@ -2717,7 +2717,7 @@ void Manager::RetagFile(const wxString& filename)
 	absFile.MakeAbsolute();
 	req->setFile(absFile.GetFullPath().c_str());
 	ParseThreadST::Get()->Add(req);
-	
+
 	// add status message
 	Frame::Get()->GetStatusBar()->SetStatusText(wxString::Format(wxT("Re-tagging file %s..."), absFile.GetFullName().c_str()), 4);
 }
@@ -2743,33 +2743,34 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 	wd = ExpandVariables(wd, GetProject(projectName));
 
 	//change directory to the working directory
-	
-	ProjectPtr proj = GetProject(projectName);
-	
+	if ( considerPauseWhenExecuting ) {
+		ProjectPtr proj = GetProject(projectName);
+
 #if defined(__WXMAC__)
-	execLine = wxString( wxT("osascript -e 'tell application \"Terminal\"'")) +
-	           wxT(" -e   'activate'") +
-	           wxT(" -e   'do script with command \"cd ") + proj->GetFileName().GetPath() + wxT(" && cd ") + wd + wxT(" && ") + execLine + wxT("\"'") +
-	           wxT(" -e  'end tell'");
-			   
+		execLine = wxString( wxT("osascript -e 'tell application \"Terminal\"'")) +
+		           wxT(" -e   'activate'") +
+		           wxT(" -e   'do script with command \"cd ") + proj->GetFileName().GetPath() + wxT(" && cd ") + wd + wxT(" && ") + execLine + wxT("\"'") +
+		           wxT(" -e  'end tell'");
+
 #elif defined(__WXGTK__)
-	//set a console to the execute target
-	wxString term;
-	term << wxT("xterm -title ");
-	term << wxT("'") << execLine << wxT("'");
-	term << wxT(" -e ");
+		//set a console to the execute target
+		wxString term;
+		term << wxT("xterm -title ");
+		term << wxT("'") << execLine << wxT("'");
+		term << wxT(" -e ");
 
-	if (considerPauseWhenExecuting && bldConf->GetPauseWhenExecEnds() ) {
-		term << CL_EXEC_WRAPPER;
-	}
+		if (bldConf->GetPauseWhenExecEnds() ) {
+			term << CL_EXEC_WRAPPER;
+		}
 
-	term << execLine;
-	execLine = term;
+		term << execLine;
+		execLine = term;
 #elif defined (__WXMSW__)
 
-	if (considerPauseWhenExecuting && bldConf->GetPauseWhenExecEnds() ) {
-		execLine.Prepend(CL_EXEC_WRAPPER);
-	}
+		if (bldConf->GetPauseWhenExecEnds() ) {
+			execLine.Prepend(CL_EXEC_WRAPPER);
+		}
 #endif
+	}
 	return execLine;
 }

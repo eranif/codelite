@@ -78,9 +78,9 @@ void TestClassDlg::OnUseActiveEditor( wxCommandEvent& event )
 		if (editor) {
 			m_textCtrlFileName->SetValue(editor->GetFileName().GetFullPath());
 		}
-		m_textCtrlFileName->Enable(false);
-	} else {
 		m_textCtrlFileName->Enable(true);
+	} else {
+		m_textCtrlFileName->Enable(false);
 	}
 }
 
@@ -140,5 +140,12 @@ void TestClassDlg::OnButtonOk(wxCommandEvent& e)
 void TestClassDlg::OnClassNameTyped(wxCommandEvent& e)
 {
 	// scane the database for classes
+	if(!m_checkBox1->IsChecked()) {
+		wxString file_name = m_textCtrlFileName->GetValue();
+		wxFileName fn(file_name);
+		fn.SetName(wxT("test_") + m_textCtrlClassName->GetValue().MakeLower());
+		
+		m_textCtrlFileName->SetValue(fn.GetFullPath());
+	}
 	e.Skip();
 }

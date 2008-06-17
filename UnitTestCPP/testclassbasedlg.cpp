@@ -40,8 +40,7 @@ TestClassBaseDlg::TestClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_checkBox1 = new wxCheckBox( this, wxID_ANY, wxT("Generate the tests to the active editor"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBox1->SetValue(true);
+	m_checkBox1 = new wxCheckBox( this, wxID_ANY, wxT("Enter output file name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	
 	fgSizer2->Add( m_checkBox1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	

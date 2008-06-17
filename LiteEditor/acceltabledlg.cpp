@@ -27,6 +27,7 @@
 #include "newkeyshortcutdlg.h"
 #include "acceltabledlg.h"
 #include "manager.h"
+#include <algorithm>
 
 //-------------------------------------------------------------------------------
 //Helper classes for sorting

@@ -37,6 +37,7 @@
 #include <string>
 #include <vector>
 #include <cctype>
+#include <string.h>
 
 using namespace std;
 

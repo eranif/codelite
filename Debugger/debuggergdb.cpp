@@ -31,6 +31,7 @@
 #include "wx/filename.h"
 #include "procutils.h"
 #include "wx/tokenzr.h"
+#include <algorithm>
 
 #ifdef __WXMSW__
 #include "windows.h"

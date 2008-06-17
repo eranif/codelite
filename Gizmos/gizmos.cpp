@@ -34,6 +34,7 @@
 #include "wx/ffile.h"
 #include "newclassdlg.h"
 #include "newwxprojectdlg.h"
+#include <algorithm>
 
 static GizmosPlugin* theGismos = NULL;
 

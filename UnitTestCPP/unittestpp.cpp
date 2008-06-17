@@ -258,12 +258,20 @@ void UnitTestPP::DoCreateSimpleTest(const wxString& name, IEditor *editor)
 void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
 {
 	wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
-	wxString wd;
+	wxString wd, err_msg;
 	wxString cmd = m_mgr->GetProjectExecutionCommand(projectName, wd);
 
 	DirSaver ds;
+	
+	// first we need to CD to the project directory
+	ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(projectName, err_msg);
+	if(p) {
+		::wxSetWorkingDirectory(p->GetFileName().GetPath());
+	}
+	
+	// now change the directory 
 	wxSetWorkingDirectory(wd);
-
+	
 	//m_proc will be deleted upon termination
 	m_proc = new PipedProcess(wxNewId(), cmd);
 	if (m_proc) {
@@ -307,6 +315,10 @@ void UnitTestPP::OnProcessTerminated(wxProcessEvent& e)
 	
 	// create new report page, and add it to the editor
 	static int counter(1);
+	
+	if(summary.totalTests == 0){
+		return;
+	}
 	
 	UnitTestsPage *page = new UnitTestsPage(m_mgr->GetMainNotebook(), summary, m_mgr);
 	m_mgr->GetMainNotebook()->AddPage(page, wxString::Format(wxT("UnitTest++ Report <%d>"), counter), wxNullBitmap, true);

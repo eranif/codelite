@@ -20,6 +20,11 @@ if not exist update\images mkdir update\images
 if not exist update\lexers\Default mkdir update\lexers\Default
 if not exist update\lexers\BlackTheme mkdir update\lexers\BlackTheme
 if not exist update\bin mkdir update\bin
+if not exist update\sdk mkdir update\sdk
+if not exist update\sdk\lib mkdir update\sdk\lib
+if not exist update\sdk\include mkdir update\sdk\include
+if not exist update\sdk\include\UnitTest++ mkdir update\sdk\include\UnitTest++
+if not exist update\sdk\include\UnitTest++\win32 mkdir update\sdk\include\UnitTest++\win32
 
 :: Copy the files
 copy debuggers\*.dll "update\debuggers\"
@@ -45,6 +50,9 @@ copy lexers\Default\*.xml "update\lexers\Default\"
 copy lexers\BlackTheme\*.xml "update\lexers\BlackTheme\"
 copy CodeLite.exe "update\"
 copy bin\*.exe "update\bin\"
-copy bin\premakesinglebuild.lua "update\bin\"
+copy "sdk\lib\win32\*.a" "update\sdk\lib\"
+copy "sdk\include\UnitTest++\*.h" "update\sdk\include\UnitTest++\"
+copy "sdk\include\UnitTest++\win32\*.h" "update\sdk\include\UnitTest++\win32\"
 copy wxmsw28u_gcc*.dll "update\"
 copy ..\sdk\curl\lib\libcurl-4.dll "update\"
+copy bin\premakesinglebuild.lua "update\bin\"

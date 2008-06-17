@@ -41,6 +41,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 UnitTestPP::UnitTestPP(IManager *manager)
 		: IPlugin(manager)
 		, m_sepItem(NULL)
+		, m_proc(NULL)
 {
 	m_longName = wxT("A Unit test plugin based on the UnitTest++ framework");
 	m_shortName = wxT("UnitTestPP");
@@ -277,6 +278,7 @@ void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
 
 			//failed to start the process
 			delete m_proc;
+			m_proc = NULL;
 			return;
 		}
 		m_mgr->GetEnv()->UnApplyEnv();
@@ -286,7 +288,7 @@ void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
 
 void UnitTestPP::OnRunUnitTestsUI(wxUpdateUIEvent& e)
 {
-	e.Enable(m_mgr->IsWorkspaceOpen());
+	e.Enable(m_mgr->IsWorkspaceOpen() && !m_proc);
 }
 
 void UnitTestPP::OnProcessTerminated(wxProcessEvent& e)
@@ -294,6 +296,7 @@ void UnitTestPP::OnProcessTerminated(wxProcessEvent& e)
 	wxString output;
 	m_proc->ReadAll(output);
 	delete m_proc;
+	m_proc = NULL;
 	
 	wxArrayString arr = wxStringTokenize(output, wxT("\n"));
 	UnitTestCppOutputParser parser(arr);
@@ -303,10 +306,23 @@ void UnitTestPP::OnProcessTerminated(wxProcessEvent& e)
 	parser.Parse(summary);
 	
 	// create new report page, and add it to the editor
-	UnitTestsPage *page = new UnitTestsPage(m_mgr->GetMainNotebook(), summary, m_mgr);
-	m_mgr->GetMainNotebook()->AddPage(page, wxT("UnitTest++ Report"), wxNullBitmap, true);
+	static int counter(1);
 	
-	page->UpdateFailedBar((size_t)summary.errorCount, wxEmptyString);
-	page->UpdatePassedBar((size_t)(summary.totalTests - summary.errorCount), wxEmptyString);
+	UnitTestsPage *page = new UnitTestsPage(m_mgr->GetMainNotebook(), summary, m_mgr);
+	m_mgr->GetMainNotebook()->AddPage(page, wxString::Format(wxT("UnitTest++ Report <%d>"), counter), wxNullBitmap, true);
+	counter++;
+	
+	wxString msg;
+	double errCount = summary.errorCount;
+	double totalTests = summary.totalTests;
+	
+	double err_percent = (errCount / totalTests)*100;
+	double pass_percent = ((totalTests - errCount) / totalTests)*100;
+	msg << err_percent << wxT("%");
+	page->UpdateFailedBar((size_t)summary.errorCount, msg);
+	
+	msg.clear();
+	msg << pass_percent << wxT("%");
+	page->UpdatePassedBar((size_t)(summary.totalTests - summary.errorCount), msg);
 	
 }

@@ -149,15 +149,18 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 				return;
 			}
 			
+			// since this is a new file, it will most probably will need the include file
+			file.Write(wxT("#include <UnitTest++.h>\n"));
 			file.Close();
-
+			
 			TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
 			wxString file_name;
 			if(m_mgr->GetActiveEditor()) {
 				file_name = m_mgr->GetActiveEditor()->GetFileName().GetFullPath();
 			}
 			
-			if (item.m_item.IsOk() && item.m_fileName.GetFullPath() == file_name) {
+			wxString fp = item.m_fileName.GetFullPath();
+			if (item.m_item.IsOk() && fp == file_name) {
 				wxTreeItemId parentItem = m_mgr->GetTree(TreeFileView)->GetItemParent(item.m_item);
 				wxArrayString paths;
 				paths.Add(fn.GetFullPath());
@@ -169,15 +172,6 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 					wxMessageBox(msg, wxT("CodeLite"), wxOK|wxICON_INFORMATION);
 				}
 			}
-//			IEditor *activeEditor = m_mgr->GetActiveEditor();
-//			if (activeEditor && m_mgr->GetWorkspace()) {
-//				wxString err_msg;
-//				ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(activeEditor->GetProjectName(), err_msg);
-//				if (p) {
-//					wxString vd_path = p->GetVDByFileName(activeEditor->GetFileName().GetFullPath());
-//					p->AddFile(fn.GetFullPath(), vd_path);
-//				}
-//			}
 		}
 
 		// file name exist

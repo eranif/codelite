@@ -57,5 +57,9 @@ void UnitTestsPage::OnItemActivated(wxListEvent& e)
 	
 	long l;
 	line.ToLong(&l);
-	m_mgr->OpenFile(file, wxEmptyString, l-1);
+	
+	// convert the file to absolute path
+	wxFileName fn(file);
+	fn.MakeAbsolute();
+	m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, l-1);
 }

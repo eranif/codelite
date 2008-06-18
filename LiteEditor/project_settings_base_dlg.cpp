@@ -426,19 +426,19 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_textBuildCommand = new wxTextCtrl( m_customBuildPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer31->Add( m_textBuildCommand, 1, wxALL|wxEXPAND, 5 );
 	
-	m_staticText291 = new wxStaticText( m_customBuildPage, wxID_ANY, wxT("Single File Build Command:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText291->Wrap( -1 );
-	fgSizer31->Add( m_staticText291, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_textCtrl1SingleFileCommand = new wxTextCtrl( m_customBuildPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer31->Add( m_textCtrl1SingleFileCommand, 0, wxALL|wxEXPAND, 5 );
-	
 	m_staticText192 = new wxStaticText( m_customBuildPage, wxID_ANY, wxT("Clean Command:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText192->Wrap( -1 );
 	fgSizer31->Add( m_staticText192, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCleanCommand = new wxTextCtrl( m_customBuildPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer31->Add( m_textCleanCommand, 1, wxALL|wxEXPAND, 5 );
+	
+	m_staticText291 = new wxStaticText( m_customBuildPage, wxID_ANY, wxT("Single File Build Command:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText291->Wrap( -1 );
+	fgSizer31->Add( m_staticText291, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrl1SingleFileCommand = new wxTextCtrl( m_customBuildPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer31->Add( m_textCtrl1SingleFileCommand, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer15->Add( fgSizer31, 0, wxEXPAND, 5 );
 	
@@ -447,7 +447,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	
 	m_staticText29 = new wxStaticText( m_customBuildPage, wxID_ANY, wxT("Makefile Generators:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText29->Wrap( -1 );
-	bSizer191->Add( m_staticText29, 0, wxALL, 5 );
+	bSizer191->Add( m_staticText29, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_staticline11 = new wxStaticLine( m_customBuildPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer191->Add( m_staticline11, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -569,8 +569,8 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_buttonDownPostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_checkEnableCustomBuild->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textBuildCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrl1SingleFileCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textCleanCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
+	m_textCtrl1SingleFileCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_thirdPartyTool->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnChoiceMakefileTool ), NULL, this );
 	m_textCtrlMakefileGenerationCmd->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textDeps->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
@@ -614,8 +614,8 @@ ProjectSettingsBaseDlg::~ProjectSettingsBaseDlg()
 	m_buttonDownPostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_checkEnableCustomBuild->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textBuildCommand->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrl1SingleFileCommand->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textCleanCommand->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
+	m_textCtrl1SingleFileCommand->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_thirdPartyTool->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnChoiceMakefileTool ), NULL, this );
 	m_textCtrlMakefileGenerationCmd->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textDeps->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );

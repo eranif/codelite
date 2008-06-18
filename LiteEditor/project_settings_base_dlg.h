@@ -125,10 +125,10 @@ class ProjectSettingsBaseDlg : public wxDialog
 		DirPicker *m_customBuildDirPicker;
 		wxStaticText* m_staticText181;
 		wxTextCtrl* m_textBuildCommand;
-		wxStaticText* m_staticText291;
-		wxTextCtrl* m_textCtrl1SingleFileCommand;
 		wxStaticText* m_staticText192;
 		wxTextCtrl* m_textCleanCommand;
+		wxStaticText* m_staticText291;
+		wxTextCtrl* m_textCtrl1SingleFileCommand;
 		wxStaticText* m_staticText29;
 		wxStaticLine* m_staticline11;
 		wxChoice* m_thirdPartyTool;
@@ -151,7 +151,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 		
 	
 	public:
-		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 782,502 ), long style = wxDEFAULT_DIALOG_STYLE );
+		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 889,502 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~ProjectSettingsBaseDlg();
 	
 };

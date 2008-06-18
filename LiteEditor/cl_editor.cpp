@@ -136,8 +136,12 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 	if (	!tmpFilename.IsEmpty() ) {
 		OpenFile(m_fileName.GetFullPath(), m_project);
 	}
+	
 //	SetDropTarget(new FileDropTarget());
 	RestoreDefaults();
+	
+	// clear Ctrl+D
+	CmdKeyClear(wxT('D'), wxSCI_SCMOD_CTRL);
 }
 
 void LEditor::RestoreDefaults()

@@ -235,7 +235,7 @@ bool App::OnInit()
 	Manager *mgr = ManagerST::Get();
 
 	//show splashscreen here
-	long style = wxSIMPLE_BORDER;
+	long style = wxBORDER_NONE;
 #if defined (__WXMSW__) || defined (__WXGTK__)
 	style |= wxFRAME_NO_TASKBAR;
 #endif
@@ -259,11 +259,11 @@ bool App::OnInit()
 	bool showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
 	if (showSplash) {
 		wxBitmap bitmap;
-		wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png"));
+		wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png")); 
 		if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
 			wxString mainTitle;
-			mainTitle << wxT("CodeLite - SVN build, Revision: ") << SvnRevision;
-			m_splash = new SplashScreen(bitmap, mainTitle, wxT("For the Windows(R) & Linux environments"),
+//			mainTitle << wxT("CodeLite - SVN build, Revision: ") << SvnRevision;
+			m_splash = new SplashScreen(bitmap, wxEmptyString, wxEmptyString,
 			                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
 			                            3000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 			                            style);

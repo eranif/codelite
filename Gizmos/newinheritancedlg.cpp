@@ -36,6 +36,7 @@ NewIneritanceDlg::NewIneritanceDlg( wxWindow* parent, IManager *mgr, const wxStr
 		m_choiceAccess->SetStringSelection(access);
 	}
 	m_textCtrlInhertiance->SetValue(parentName);
+	Centre();
 }
 
 void NewIneritanceDlg::OnButtonMore( wxCommandEvent& event )

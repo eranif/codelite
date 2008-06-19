@@ -57,6 +57,7 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	}
 	m_textCtrlFileName->Enable( false );
 	GetSizer()->Layout();
+	Centre();
 }
 
 void NewClassDlg::OnListItemActivated( wxListEvent& event )

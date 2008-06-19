@@ -324,8 +324,8 @@ void UnitTestPP::OnProcessTerminated(wxProcessEvent& e)
 	m_proc->ReadAll(output);
 	delete m_proc;
 	m_proc = NULL;
-	
-	wxArrayString arr = wxStringTokenize(output, wxT("\n"));
+
+	wxArrayString arr = wxStringTokenize(output, wxT("\r\n"));
 	UnitTestCppOutputParser parser(arr);
 	
 	// parse the results

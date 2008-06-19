@@ -377,12 +377,16 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		dc.DrawLine(rr.x + rr.width - 1, 0, rr.x + rr.width - 1, rr.y + rr.height);
 		if (m_style & wxVB_TAB_DECORATION) {
 			//draw a single caption colour on top of the active tab
-			wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
+			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+			#ifdef __WXMAC__
+			col = *wxBLACK;
+			#endif
+			wxPen p(col, 1, wxSOLID);
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+1, 1, rr.x+1, rr.y+rr.height+1);
 			dc.DrawLine(rr.x+2, 1, rr.x+2, rr.y+rr.height+1);
 			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
+			p = wxPen( DrawingUtils::LightColour(col, 40), 1, wxSOLID);
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+2, 2, rr.x+2, rr.y+rr.height);
 		}
@@ -393,13 +397,18 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		dc.DrawLine(0, 0, 0, tmpRect.y + tmpRect.height);
 		if (m_style & wxVB_TAB_DECORATION) {
 			//draw a single caption colour on top of the active tab
-			wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
+			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+			#ifdef __WXMAC__
+			col = *wxBLACK;
+			#endif
+
+			wxPen p(col, 1, wxSOLID);
 			dc.SetPen(p);
 
 			dc.DrawLine(rr.x+rr.width-2, 0, rr.x+rr.width-2, rr.y+rr.height);
 			dc.DrawLine(rr.x+rr.width-3, 0, rr.x+rr.width-3, rr.y+rr.height);
 			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
+			p = wxPen( DrawingUtils::LightColour(col, 40) );
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+rr.width-3, 1, rr.x+rr.width-3, rr.y+rr.height-1);
 		}
@@ -547,29 +556,39 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		dc.DrawLine(0, rr.GetHeight()-1, rr.GetWidth(), rr.GetHeight()-1);
 
 		if (m_style & wxVB_TAB_DECORATION) {
-			wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
+			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+			#ifdef __WXMAC__
+			col = *wxBLACK;
+			#endif
+
+			wxPen p(col, 1, wxSOLID);
 			dc.SetPen(p);
 
 			dc.DrawLine(rr.x+1, rr.y+1, rr.x+rr.width-1, rr.y+1);
 			dc.DrawLine(rr.x+1, rr.y+2, rr.x+rr.width-1, rr.y+2);
 
 			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
+			p = wxPen( DrawingUtils::LightColour(col, 40), 1, wxSOLID);
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+2, rr.y+2, rr.x+rr.width-2, rr.y+2);
 		}
 	} else if (!top && GetSelected()) {
 		//draw a line
+		
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(0, 0, rr.GetWidth(), 0);
 
 		if (m_style & wxVB_TAB_DECORATION) {
-			wxPen p(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 1, wxSOLID);
+			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+			#ifdef __WXMAC__
+			col = *wxBLACK;
+			#endif
+			wxPen p(col, 1, wxSOLID);
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+1, rr.y+rr.height-2, rr.x+rr.width-1, rr.y+rr.height-2);
 			dc.DrawLine(rr.x+1, rr.y+rr.height-3, rr.x+rr.width-1, rr.y+rr.height-3);
 			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), 40), 1, wxSOLID);
+			p = wxPen( DrawingUtils::LightColour(col, 40), 1, wxSOLID);
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+2, rr.y+rr.height-3, rr.x+rr.width-2, rr.y+rr.height-3);
 		}

@@ -237,11 +237,11 @@ void SplashScreenWindow::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
     wxBufferedPaintDC dc(this);
 	
-	wxRect rr = GetClientSize();
-	dc.SetPen( wxPen(wxT("WHITE")) );
-	dc.SetBrush( wxBrush(wxT("WHITE")) );
-	dc.DrawRectangle(rr);
-	
+//	wxRect rr = GetClientSize();
+//	dc.SetPen( wxPen(wxT("WHITE")) );
+//	dc.SetBrush( wxBrush(wxT("WHITE")) );
+//	dc.DrawRectangle(rr);
+//	
     if (m_bitmap.Ok()) {
         wxDrawSplashBitmap(dc, m_bitmap, m_mainTitle, m_subTitle);
 	}
@@ -251,21 +251,21 @@ void SplashScreenWindow::OnPaint(wxPaintEvent& WXUNUSED(event))
 
 void SplashScreenWindow::OnEraseBackground(wxEraseEvent& event)
 {
-//    if (event.GetDC())
-//    {
-//        if (m_bitmap.Ok())
-//        {
-//            wxDrawSplashBitmap(* event.GetDC(), m_bitmap, m_mainTitle, m_subTitle);
-//        }
-//    }
-//    else
-//    {
-//        wxClientDC dc(this);
-//        if (m_bitmap.Ok())
-//        {
-//            wxDrawSplashBitmap(dc, m_bitmap, m_mainTitle, m_subTitle);
-//        }
-//    }
+    if (event.GetDC())
+    {
+        if (m_bitmap.Ok())
+        {
+            wxDrawSplashBitmap(* event.GetDC(), m_bitmap, m_mainTitle, m_subTitle);
+        }
+    }
+    else
+    {
+        wxClientDC dc(this);
+        if (m_bitmap.Ok())
+        {
+            wxDrawSplashBitmap(dc, m_bitmap, m_mainTitle, m_subTitle);
+        }
+    }
 	wxUnusedVar(event);
 }
 

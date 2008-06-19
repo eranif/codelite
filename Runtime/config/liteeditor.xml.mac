@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LiteEditor Revision="$(Revision)">
   <ArchiveObject Name="m_tagsOptionsData">
-    <long Value="88" Name="m_ccFlags"/>
+    <long Value="984" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
       <wxString Value="_GLIBCXX_STD=std"/>
       <wxString Value="WXDLLIMPEXP_CORE"/>
@@ -27,7 +27,6 @@
       <wxString Value="ATTRIBUTE_PRINTF_2"/>
 	  <wxString Value="WXDLLIMPEXP_FWD_BASE"/>  
 	  <wxString Value="WXDLLIMPEXP_FWD_CORE"/>   
-	  <wxString Value="extern"/>   
 	  <wxString Value="DLLIMPORT"/>  
 	  <wxString Value="DECLARE_INSTANCE_TYPE"/>  
 	  <wxString Value="emit"/>  

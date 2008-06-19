@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LiteEditor Revision="653">
   <ArchiveObject Name="m_tagsOptionsData">
-    <long Value="88" Name="m_ccFlags"/>
+    <long Value="984" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
       <wxString Value="_GLIBCXX_STD=std"/>
       <wxString Value="WXDLLIMPEXP_CORE"/>

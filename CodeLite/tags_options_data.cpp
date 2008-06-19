@@ -28,7 +28,7 @@
 
 TagsOptionsData::TagsOptionsData() 
 : SerializedObject()
-, m_ccFlags(CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB | CC_CPP_KEYWORD_ASISST)
+, m_ccFlags(CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB | CC_CPP_KEYWORD_ASISST | CC_COLOUR_PROJ_TAGS | CC_COLOUR_VARS)
 , m_fileSpec(wxT("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++"))
 , m_minWordLen(3)
 {

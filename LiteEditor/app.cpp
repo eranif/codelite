@@ -235,7 +235,7 @@ bool App::OnInit()
 	Manager *mgr = ManagerST::Get();
 
 	//show splashscreen here
-	long style = wxBORDER_NONE;
+	long style = wxSIMPLE_BORDER;
 #if defined (__WXMSW__) || defined (__WXGTK__)
 	style |= wxFRAME_NO_TASKBAR;
 #endif

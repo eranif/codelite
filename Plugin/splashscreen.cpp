@@ -34,6 +34,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
+#include <wx/dcbuffer.h>
 #include "wx/wxprec.h"
 #include "wx/splash.h"
 
@@ -234,28 +235,38 @@ static void wxDrawSplashBitmap(	wxDC& dc,
 
 void SplashScreenWindow::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
-    wxPaintDC dc(this);
-    if (m_bitmap.Ok())
+    wxBufferedPaintDC dc(this);
+	
+	wxRect rr = GetClientSize();
+	dc.SetPen( wxPen(wxT("WHITE")) );
+	dc.SetBrush( wxBrush(wxT("WHITE")) );
+	dc.DrawRectangle(rr);
+	
+    if (m_bitmap.Ok()) {
         wxDrawSplashBitmap(dc, m_bitmap, m_mainTitle, m_subTitle);
+	}
+	
+	
 }
 
 void SplashScreenWindow::OnEraseBackground(wxEraseEvent& event)
 {
-    if (event.GetDC())
-    {
-        if (m_bitmap.Ok())
-        {
-            wxDrawSplashBitmap(* event.GetDC(), m_bitmap, m_mainTitle, m_subTitle);
-        }
-    }
-    else
-    {
-        wxClientDC dc(this);
-        if (m_bitmap.Ok())
-        {
-            wxDrawSplashBitmap(dc, m_bitmap, m_mainTitle, m_subTitle);
-        }
-    }
+//    if (event.GetDC())
+//    {
+//        if (m_bitmap.Ok())
+//        {
+//            wxDrawSplashBitmap(* event.GetDC(), m_bitmap, m_mainTitle, m_subTitle);
+//        }
+//    }
+//    else
+//    {
+//        wxClientDC dc(this);
+//        if (m_bitmap.Ok())
+//        {
+//            wxDrawSplashBitmap(dc, m_bitmap, m_mainTitle, m_subTitle);
+//        }
+//    }
+	wxUnusedVar(event);
 }
 
 void SplashScreenWindow::OnMouseEvent(wxMouseEvent& event)

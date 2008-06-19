@@ -54,7 +54,7 @@ UnitTestsPage::UnitTestsPage(wxWindow* parent, const TestSummary& summary, IMana
 	m_listCtrlErrors->InsertColumn(1, wxT("Line"));
 	m_listCtrlErrors->InsertColumn(2, wxT("Description"));
 	
-	wxMessageBox(wxString::Format(wxT("Total of %d error lines"), m_summary.errorLines.size()));
+	//wxMessageBox(wxString::Format(wxT("Total of %d error lines"), m_summary.errorLines.size()));
 	
 	for(size_t i=0; i<m_summary.errorLines.size(); i++){
 		ErrorLineInfo info = m_summary.errorLines.at(i);

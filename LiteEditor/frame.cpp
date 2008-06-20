@@ -1261,6 +1261,11 @@ void Frame::OnFileClose(wxCommandEvent &event)
 
 	GetOpenWindowsPane()->UpdateList();
 	GetMainBook()->Clear();
+	
+	// if no more editors are available, collapse the workspace tree
+	if(GetMainBook()->GetNotebook()->GetPageCount() == 0){
+		GetWorkspacePane()->CollpaseAll();
+	}
 }
 
 void Frame::OnFileClosing(NotebookEvent &event)
@@ -1334,6 +1339,10 @@ void Frame::OnPageClosed(NotebookEvent &event)
 	GetOpenWindowsPane()->UpdateList();
 	//clean the navigation bar
 	GetMainBook()->Clear();
+	// if no more editors are available, collapse the workspace tree
+	if(GetMainBook()->GetNotebook()->GetPageCount() == 0){
+		GetWorkspacePane()->CollpaseAll();
+	}
 }
 
 void Frame::OnFileSaveAll(wxCommandEvent &event)

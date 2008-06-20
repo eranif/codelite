@@ -69,7 +69,10 @@ AccelTableDlg::AccelTableDlg( wxWindow* parent )
 	m_listCtrl1->InsertColumn(2, wxT("Action"));
 	m_listCtrl1->InsertColumn(3, wxT("Accelerator"));
 	
-	PopulateTable();
+	MenuItemDataMap accelMap;
+	ManagerST::Get()->GetAcceleratorMap(accelMap);
+	
+	PopulateTable(accelMap);
 	
 	// center the dialog
 	Centre();
@@ -110,15 +113,12 @@ void AccelTableDlg::OnItemDeselected( wxListEvent& event )
 	m_selectedItem = wxNOT_FOUND;
 }
 
-void AccelTableDlg::PopulateTable()
+void AccelTableDlg::PopulateTable(const MenuItemDataMap &accelMap)
 {
 	m_listCtrl1->Freeze();
 	m_listCtrl1->DeleteAllItems();
 
-	MenuItemDataMap accelMap;
-	ManagerST::Get()->GetAcceleratorMap(accelMap);
-
-	MenuItemDataMap::iterator iter = accelMap.begin();
+	MenuItemDataMap::const_iterator iter = accelMap.begin();
 	std::vector< MenuItemData > itemsVec;
 	//convert the map into vector
 	for (; iter != accelMap.end(); iter++ ) {
@@ -188,4 +188,11 @@ void AccelTableDlg::OnButtonOk(wxCommandEvent &e)
 	EndModal( wxID_OK );
 }
 
-
+void AccelTableDlg::OnButtonDefaults(wxCommandEvent& e)
+{
+	// re-load the default key bindings settings 
+	MenuItemDataMap accelMap;
+	ManagerST::Get()->GetDefaultAcceleratorMap(accelMap);
+	
+	PopulateTable(accelMap);
+}

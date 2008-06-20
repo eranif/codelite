@@ -1,29 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : acceltablebasedlg.h              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -58,6 +34,7 @@ class AccelTableBaseDlg : public wxDialog
 		wxStaticLine* m_staticline1;
 		wxButton* m_button1;
 		wxButton* m_button2;
+		wxButton* m_buttonDefault;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnColClicked( wxListEvent& event ){ event.Skip(); }
@@ -65,6 +42,7 @@ class AccelTableBaseDlg : public wxDialog
 		virtual void OnItemSelected( wxListEvent& event ){ event.Skip(); }
 		virtual void OnItemDeselected( wxListEvent& event ){ event.Skip(); }
 		virtual void OnButtonOk( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnButtonDefaults( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:

@@ -25,6 +25,7 @@
  #ifndef MANAGER_H
 #define MANAGER_H
 
+#include "acceltabledlg.h"
 #include "singleton.h"
 #include "cpptoken.h"
 #include "wx/string.h"
@@ -49,14 +50,6 @@ class wxFrame;
 class LEditor;
 class AsyncExeCmd;
 class QuickWatchDlg;
-
-struct MenuItemData {
-	wxString id;
-	wxString parent;
-	wxString action;
-	wxString accel;
-};
-typedef std::map< wxString, MenuItemData > MenuItemDataMap;
 
 class Manager : public wxEvtHandler, public IDebuggerObserver
 {
@@ -640,6 +633,11 @@ public:
 	 * \brief retrun map of the accelerator table. the StringMap maps between the actions and their accelerators
 	 */
 	void GetAcceleratorMap(MenuItemDataMap& accelMap);
+	
+	/**
+	 * \brief retrun map of the default accelerator table
+	 */
+	void GetDefaultAcceleratorMap(MenuItemDataMap& accelMap);
 	
 	/**
 	 * \brief parse list of files and construct a token database that will be used for refactoring

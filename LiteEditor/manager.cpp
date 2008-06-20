@@ -2774,3 +2774,10 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 	}
 	return execLine;
 }
+
+void Manager::GetDefaultAcceleratorMap(MenuItemDataMap& accelMap)
+{
+	//use the default settings
+	wxString fileName = GetStarupDirectory() + wxT("/config/accelerators.conf.default");
+	LoadAcceleratorTable(fileName, accelMap);
+}

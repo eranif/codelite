@@ -426,8 +426,10 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	}
 
 	if ( IsCompletionBoxShown() == false ) {
-		if (GetWordAtCaret().Len() >= 2) {
-			// user typed more than 3 chars, let the contenxt to handle
+		// display the keywords completion box only if user typed more than 2
+		// chars && the caret is placed at the end of that word
+		long startPos = WordStartPosition(GetCurrentPos(), true);
+		if (GetWordAtCaret().Len() >= 2 && GetCurrentPos() - startPos >= 2 ) {
 			m_context->OnUserTypedXChars(GetWordAtCaret());
 		}
 	}

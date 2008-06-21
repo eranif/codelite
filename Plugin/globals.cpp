@@ -348,21 +348,16 @@ bool CopyDir(const wxString& src, const wxString& target)
 	wxDir dir(from);
 	wxString filename;
 	bool bla = dir.GetFirst(&filename);
-
-	{
-		// set umask to 111 so all copied file will have 666 persmission
-		wxCHANGE_UMASK(111);
-		if (bla) {
-			do {
-
-				if (wxDirExists(from + filename) ) {
-					Mkdir(to + filename);
-					CopyDir(from + filename, to + filename);
-				} else {
-					wxCopyFile(from + filename, to + filename);
-				}
-			} while (dir.GetNext(&filename) );
-		}
+	if (bla) {
+		do {
+			if (wxDirExists(from + filename) ) {
+				Mkdir(to + filename);
+				CopyDir(from + filename, to + filename);
+			} else {
+				// change the umask for files only
+				wxCopyFile(from + filename, to + filename);
+			}
+		} while (dir.GetNext(&filename) );
 	}
 	return true;
 }

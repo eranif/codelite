@@ -66,7 +66,7 @@ static wxString MacGetInstallPath()
 static bool ReadFile8BitData(const char *file_name, wxString &content)
 {
 	content.Empty();
-	
+
 	FILE *fp = fopen(file_name, "rb");
 	if ( fp ) {
 		struct stat buff;
@@ -132,17 +132,17 @@ bool ReadFileWithConversion(const wxString &fileName, wxString &content)
 		// first try the user defined encoding
 		wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
 		file.ReadAll(&content, fontEncConv);
-		
+
 		if (content.IsEmpty()) {
-			
+
 			// now try the Utf8
 			file.ReadAll(&content, wxConvUTF8);
 			if (content.IsEmpty()) {
-				
+
 				// try local 8 bit data
 				const wxCharBuffer name = _C(fileName);
 				ReadFile8BitData(name.data(), content);
-				
+
 			} // UTF8
 		} // user encoding
 		return content.IsEmpty() == false;
@@ -294,7 +294,7 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	output.Replace(wxT("$(User)"), wxGetUserName());
 	output.Replace(wxT("$(Date)"), now.FormatDate());
 	output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
-	
+
 #if defined (__WXMSW__)
 	output.Replace(wxT("$(UnitTestCppBase)"), workspace->GetStartupDir() + wxT("/sdk"));
 #elif defined (__WXMAC__)
@@ -349,16 +349,20 @@ bool CopyDir(const wxString& src, const wxString& target)
 	wxString filename;
 	bool bla = dir.GetFirst(&filename);
 
-	if (bla) {
-		do {
+	{
+		// set umask to 111 so all copied file will have 666 persmission
+		wxCHANGE_UMASK(111);
+		if (bla) {
+			do {
 
-			if (wxDirExists(from + filename) ) {
-				Mkdir(to + filename);
-				CopyDir(from + filename, to + filename);
-			} else {
-				wxCopyFile(from + filename, to + filename);
-			}
-		} while (dir.GetNext(&filename) );
+				if (wxDirExists(from + filename) ) {
+					Mkdir(to + filename);
+					CopyDir(from + filename, to + filename);
+				} else {
+					wxCopyFile(from + filename, to + filename);
+				}
+			} while (dir.GetNext(&filename) );
+		}
 	}
 	return true;
 }

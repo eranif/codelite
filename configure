@@ -349,7 +349,7 @@ createInstallTarget()
 	echo "	@cp -fpr lib/Debugger.so /usr/local/share/codelite/debuggers/" >> Makefile
 	echo "	@cp -fpr lib/CodeFormatter.so /usr/local/share/codelite/plugins/" >> Makefile
 	echo "	@cp -fpr lib/Subversion.so /usr/local/share/codelite/plugins/" >> Makefile
-	echo "	@cp -fpr lib/ReferenceAnalyser.so /usr/local/share/codelite/plugins/" >> Makefile
+#	echo "	@cp -fpr lib/ReferenceAnalyser.so /usr/local/share/codelite/plugins/" >> Makefile
 	echo "	@cp -fpr lib/cscope.so /usr/local/share/codelite/plugins/" >> Makefile
 	echo "	@cp -fpr lib/Gizmos.so /usr/local/share/codelite/plugins/" >> Makefile
 	echo "	@cp -fpr Runtime/index.html /usr/local/share/codelite/" >> Makefile
@@ -467,7 +467,7 @@ echo "Gizmos\\" >> Makefile
 echo "cscope\\" >> Makefile
 echo "Subversion\\" >> Makefile
 echo "CodeFormatter\\" >> Makefile
-echo "ReferenceAnalyser\\" >> Makefile
+#echo "ReferenceAnalyser\\" >> Makefile
 echo "Copyright\\" >> Makefile
 echo "UnitTestCPP\\" >> Makefile
 echo "" >> Makefile
@@ -483,7 +483,7 @@ echo "Gizmos_install\\" >> Makefile
 echo "cscope_install\\" >> Makefile
 echo "Subversion_install\\" >> Makefile
 echo "CodeFormatter_install\\" >> Makefile
-echo "ReferenceAnalyser_install\\" >> Makefile
+#echo "ReferenceAnalyser_install\\" >> Makefile
 echo "Copyright_install\\" >> Makefile
 echo "UnitTestCPP_install\\" >> Makefile
 echo "" >> Makefile
@@ -499,7 +499,7 @@ echo "Gizmos_clean\\" >> Makefile
 echo "cscope_clean\\" >> Makefile
 echo "Subversion_clean\\" >> Makefile
 echo "CodeFormatter_clean\\" >> Makefile
-echo "ReferenceAnalyser_clean\\" >> Makefile
+#echo "ReferenceAnalyser_clean\\" >> Makefile
 echo "Copyright_clean\\" >> Makefile
 echo "UnitTestCPP_clean\\" >> Makefile
 echo "" >> Makefile
@@ -516,7 +516,7 @@ createPluginMakefile "Gizmos" "Gizmos"  "/usr/local/share/codelite/plugins/"
 createPluginMakefile "cscope" "cscope" "/usr/local/share/codelite/plugins/"
 createPluginMakefile "Subversion" "Subversion" "/usr/local/share/codelite/plugins/"
 createPluginMakefile "CodeFormatter" "CodeFormatter" "/usr/local/share/codelite/plugins/"
-createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "/usr/local/share/codelite/plugins/"
+#createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "/usr/local/share/codelite/plugins/"
 createPluginMakefile "Copyright" "Copyright" "/usr/local/share/codelite/plugins/"
 createPluginMakefile "UnitTestCPP" "UnitTestCPP" "/usr/local/share/codelite/plugins/"
 

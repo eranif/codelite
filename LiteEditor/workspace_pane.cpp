@@ -50,8 +50,8 @@ extern wxImageList* CreateSymbolTreeImages();
 #define ADD_WORKSPACE_PAGE(win, name) \
 	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
 		wxAuiPaneInfo info;\
-		DockablePane *pane = new DockablePane(this, m_book, win, name, wxNullBitmap, wxSize(200, 200));\
-		m_mgr->AddPane(pane, info.Name(name).Float().Caption(name));\
+		DockablePane *pane = new DockablePane(GetParent(), m_book, win, name, wxNullBitmap, wxSize(200, 200));\
+		m_mgr->AddPane(pane, info.Name(name).Caption(name));\
 	} else {\
 		m_book->AddPage(win, name, wxNullBitmap, true);\
 	}
@@ -134,6 +134,8 @@ void WorkspacePane::CreateGUIControls()
 
 	m_openWindowsPane = new OpenWindowsPanel(m_book);
 	ADD_WORKSPACE_PAGE(m_openWindowsPane, WorkspacePane::OPEN_FILES);
+	
+	m_mgr->Update();
 }
 
 CppSymbolTree *WorkspacePane::GetTreeByFilename(const wxFileName &filename)

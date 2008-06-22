@@ -147,6 +147,8 @@
       <File Name="notebooknavdialog.h"/>
       <File Name="dockablepane.cpp"/>
       <File Name="dockablepane.h"/>
+      <File Name="detachedpanesinfo.cpp"/>
+      <File Name="detachedpanesinfo.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Static Library">

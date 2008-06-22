@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "editor_config.h"
+#include "detachedpanesinfo.h"
+#include "dockablepane.h"
 #include "dockablepanemenumanager.h"
 #include "workspace_pane.h"
 #include "manager.h"
@@ -48,9 +50,10 @@ extern wxImageList* CreateSymbolTreeImages();
 #define ADD_WORKSPACE_PAGE(win, name) \
 	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
 		wxAuiPaneInfo info;\
-		m_mgr->AddPane(win, info.Name(name).Float().Caption(name));\
+		DockablePane *pane = new DockablePane(this, m_book, win, name, wxNullBitmap, wxSize(200, 200));\
+		m_mgr->AddPane(pane, info.Name(name).Float().Caption(name));\
 	} else {\
-		m_book->AddPage(win, WorkspacePane::FILE_VIEW, wxNullBitmap, true);\
+		m_book->AddPage(win, name, wxNullBitmap, true);\
 	}
 	
 BEGIN_EVENT_TABLE(WorkspacePane, wxPanel)
@@ -87,15 +90,9 @@ void WorkspacePane::CreateGUIControls()
 {
 	// fill up a list of detached panes list
 	wxArrayString detachedPanes;
-	size_t i(0);
-	while(true) {
-		wxString name;
-		name << wxT("DetachedPane") << i;
-		wxString pane_name = EditorConfigST::Get()->GetStringValue(name);
-		if(pane_name.IsEmpty()){break;}
-		detachedPanes.Add(pane_name);
-		i++;
-	}
+	DetachedPanesInfo dpi;
+	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
+	detachedPanes = dpi.GetPanes();
 	
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
@@ -133,10 +130,10 @@ void WorkspacePane::CreateGUIControls()
 	ADD_WORKSPACE_PAGE(m_explorer, WorkspacePane::EXPLORER);
 
 	m_winStack = new WindowStack(m_book, wxID_ANY);
-	ADD_WORKSPACE_PAGE(m_explorer, WorkspacePane::SYMBOL_VIEW);
+	ADD_WORKSPACE_PAGE(m_winStack, WorkspacePane::SYMBOL_VIEW);
 
 	m_openWindowsPane = new OpenWindowsPanel(m_book);
-	ADD_WORKSPACE_PAGE(m_explorer, WorkspacePane::OPEN_FILES);
+	ADD_WORKSPACE_PAGE(m_openWindowsPane, WorkspacePane::OPEN_FILES);
 }
 
 CppSymbolTree *WorkspacePane::GetTreeByFilename(const wxFileName &filename)

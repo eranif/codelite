@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "detachedpanesinfo.h"
 #include "custom_tab.h"
 #include "custom_tabcontainer.h"
 #include "dockablepanemenumanager.h"
@@ -378,16 +379,11 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	m_DPmenuMgr = new DockablePaneMenuManager(GetMenuBar(), &m_mgr);
 	
 	// fill up a list of detached panes list
-	size_t i(0);
-	while(true) {
-		wxString name;
-		name << wxT("DetachedPane") << i;
-		wxString pane_name = EditorConfigST::Get()->GetStringValue(name);
-		if(pane_name.IsEmpty()){
-			break;
-		}
-		m_DPmenuMgr->AddMenu(pane_name);
-		i++;
+	DetachedPanesInfo dpi;
+	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
+	
+	for(size_t i=0; i<dpi.GetPanes().GetCount(); i++) {
+		m_DPmenuMgr->AddMenu(dpi.GetPanes().Item(i));
 	}
 	
 	ManagerST::Get();	// Dummy call
@@ -1002,11 +998,8 @@ void Frame::OnClose(wxCloseEvent& event)
 	
 	// keep list of all detached panes
 	wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
-	for(size_t i=0; i<panes.GetCount(); i++){
-		wxString name;
-		name << wxT("DetachedPane") << i;
-		EditorConfigST::Get()->SaveStringValue(name, panes.Item(i));
-	}
+	DetachedPanesInfo dpi(panes);
+	EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
 	
 	// make sure there are no 'unsaved documents'
 	ManagerST::Get()->CloseAll();

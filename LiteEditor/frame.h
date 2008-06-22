@@ -54,6 +54,7 @@ class Notebook;
 class OpenWindowsPanel;
 class FileExplorer;
 class OutputTabWindow;
+class DockablePaneMenuManager;
 
 //--------------------------------
 // Helper class 
@@ -83,7 +84,6 @@ class Frame : public wxFrame
 	wxArrayString m_files;
 	wxTimer *m_timer;
 	std::map<int, wxString> m_viewAsMap;
-	wxMenu *m_tabRightClickMenu;
 	TagsOptionsData m_tagsOptionsData;
 	wxHtmlWindow *m_welcomePage;
 	DebuggerPane *m_debuggerPane;
@@ -97,14 +97,16 @@ class Frame : public wxFrame
 	wxMenu *m_cppMenu;
 	bool m_highlightWord;
 	bool m_hideOutputPane;
+	DockablePaneMenuManager *m_DPmenuMgr;
 	
 public:		
 	// the access method to the singleton frame is by using the Get method
 	static Frame* Get();
 	static void Initialize(bool loadLastSession);
 	
-	virtual ~Frame(void);
+	DockablePaneMenuManager *GetDockablePaneMenuManager(){return m_DPmenuMgr;}
 	
+	virtual ~Frame(void);
 	void SetFrameFlag(bool set, int flag);
 	
 	/**
@@ -385,6 +387,8 @@ protected:
 	void OnConfigureAccelerators(wxCommandEvent &e);
 	void OnStartPageEvent(wxCommandEvent &e);
 	void OnNewVersionAvailable(wxCommandEvent &e);
+	void OnDetachWorkspaceViewTab(wxCommandEvent &e);
+	void OnDestroyDetachedPane(wxCommandEvent &e);
 	
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);

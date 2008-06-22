@@ -13,8 +13,11 @@
 
 - Generate the 'control' file for the .deb automatically by the configure script
 
-- Convert GetSignature() to a valid C++ code so the parser will be able to read it properly (i.e. replace ',' with ;';')
-
 - Plugins: add version to the API, and also add new function that is loaded during initializaton: int GetAPIVersion(){} if a function with this signature is not available
 assume: version 1
 
+- Allow detaching tabs from the "Workspace View" & "Output View": 
+	- When starting CodeLite, make sure that detached tabs are remained detached
+	- Updated plugins that added pages to the output notebook with a check that if the tab is deatched, make it detach as well 
+	- TogglePane should automatically hide the detached tabs as well
+	

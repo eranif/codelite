@@ -39,6 +39,7 @@ class wxComboBox;
 class FileExplorer;
 class WorkspaceTab;
 class Notebook;
+class wxAuiManager;
 
 class WorkspacePane : public wxPanel 
 {
@@ -55,13 +56,14 @@ public:
 	FileExplorer *m_explorer;
 	WorkspaceTab *m_workspaceTab;
 	wxComboBox *m_workspaceConfig;	
+	wxAuiManager *m_mgr;
 	
 private:
 	void CreateGUIControls();
 	CppSymbolTree *GetTreeByFilename(const wxFileName &filename);
 	
 public:
-	WorkspacePane(wxWindow *parent, const wxString &caption);
+	WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr);
 	virtual ~WorkspacePane();
 	
 	//-----------------------------------------------

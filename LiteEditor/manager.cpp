@@ -853,7 +853,7 @@ bool Manager::ShowOutputPane(wxString focusWin, bool commit)
 	// make the output pane visible
 	bool showedIt(false);
 
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Output"));
+	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Output View"));
 	if ( info.IsOk() && !info.IsShown() ) {
 		info.Show();
 		showedIt = true;
@@ -898,7 +898,7 @@ void Manager::HidePane(const wxString &paneName, bool commit)
 void Manager::ShowWorkspacePane(wxString focusWin, bool commit)
 {
 	// make the output pane visible
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Workspace"));
+	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Workspace View"));
 	if ( info.IsOk() && !info.IsShown() ) {
 		info.Show();
 		if (commit) {
@@ -984,17 +984,16 @@ void Manager::TogglePanes()
 	static bool workspaceShown = false;
 	static bool outputShown = false;
 	static bool debuggerShown = false;
-	static bool fileExplorerShown = false;
 	static bool toggled = false;
 
 	Frame::Get()->Freeze();
 	if (!toggled) {
 		wxAuiPaneInfo info;
-		info = Frame::Get()->GetDockingManager().GetPane(wxT("Output"));
+		info = Frame::Get()->GetDockingManager().GetPane(wxT("Output View"));
 		if ( info.IsOk() ) {
 			outputShown = info.IsShown();
 		}
-		info = Frame::Get()->GetDockingManager().GetPane(wxT("Workspace"));
+		info = Frame::Get()->GetDockingManager().GetPane(wxT("Workspace View"));
 		if ( info.IsOk() ) {
 			workspaceShown = info.IsShown();
 		}
@@ -1004,15 +1003,9 @@ void Manager::TogglePanes()
 			debuggerShown = info.IsShown();
 		}
 
-		info = Frame::Get()->GetDockingManager().GetPane(wxT("File Explorer"));
-		if ( info.IsOk() ) {
-			fileExplorerShown = info.IsShown();
-		}
-
-		HidePane(wxT("Output"), false);
-		HidePane(wxT("Workspace"), false);
+		HidePane(wxT("Output View"), false);
+		HidePane(wxT("Workspace View"), false);
 		HidePane(wxT("Debugger"), false);
-		HidePane(wxT("File Explorer"), false);
 
 		//update changes
 		Frame::Get()->GetDockingManager().Update();
@@ -1030,13 +1023,6 @@ void Manager::TogglePanes()
 
 		if (debuggerShown) {
 			ShowDebuggerPane(false);
-		}
-
-		if (fileExplorerShown) {
-			wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("File Explorer"));
-			if ( info.IsOk() && !info.IsShown() ) {
-				info.Show();
-			}
 		}
 
 		Frame::Get()->GetDockingManager().Update();

@@ -23,9 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "custom_tab.h"
+#include "custom_tabcontainer.h"
+#include "dockablepanemenumanager.h"
+#include "dockablepane.h"
 #include "webupdatethread.h"
 #include "aboutdlg.h"
-#include "buildtabsettingsdata.h" 
+#include "buildtabsettingsdata.h"
 #include "singleinstancethreadjob.h"
 #include "refactorindexbuildjob.h"
 #include "customstatusbar.h"
@@ -339,6 +343,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, Frame::OnSingleInstanceOpenFiles)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, Frame::OnSingleInstanceRaise)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, Frame::OnNewVersionAvailable)
+	EVT_MENU(XRCID("detach_wv_tab"), Frame::OnDetachWorkspaceViewTab)
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 
@@ -369,7 +375,21 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	m_highlightWord = (bool)value;
 
 	CreateGUIControls();
-
+	m_DPmenuMgr = new DockablePaneMenuManager(GetMenuBar(), &m_mgr);
+	
+	// fill up a list of detached panes list
+	size_t i(0);
+	while(true) {
+		wxString name;
+		name << wxT("DetachedPane") << i;
+		wxString pane_name = EditorConfigST::Get()->GetStringValue(name);
+		if(pane_name.IsEmpty()){
+			break;
+		}
+		m_DPmenuMgr->AddMenu(pane_name);
+		i++;
+	}
+	
 	ManagerST::Get();	// Dummy call
 
 	//allow the main frame to receive files by drag and drop
@@ -381,15 +401,15 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 
 	// start the job queue
 	JobQueueSingleton::Instance()->Start(5);
-	
+
 	// the single instance job is a presisstent job, so the pool will contain only 4 available threads
 	JobQueueSingleton::Instance()->PushJob(new SingleInstanceThreadJob(this, ManagerST::Get()->GetStarupDirectory()));
-	
+
 	// add new version notification updater
 	long check(1);
 	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
-	
-	if( check ) {
+
+	if ( check ) {
 		JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
 	}
 	//start the editor creator thread
@@ -402,6 +422,8 @@ Frame::~Frame(void)
 {
 	delete m_timer;
 	ManagerST::Free();
+	delete m_DPmenuMgr;
+
 	// uninitialize AUI manager
 #ifdef __WXMAC__
 	exit(0);
@@ -447,7 +469,7 @@ void Frame::Initialize(bool loadLastSession)
 	//time to create the file explorer
 	m_theFrame->GetFileExplorer()->Scan();
 
-	m_theFrame->GetWorkspacePane()->GetNotebook()->SetAuiManager( &m_theFrame->GetDockingManager(), wxT("Workspace") );
+	m_theFrame->GetWorkspacePane()->GetNotebook()->SetAuiManager( &m_theFrame->GetDockingManager(), wxT("Workspace View") );
 	//load last session?
 	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
 		m_theFrame->LoadSession(wxT("Default"));
@@ -511,17 +533,17 @@ void Frame::CreateGUIControls(void)
 	//---------------------------------------------
 	// Add docking windows
 	//---------------------------------------------
-	m_outputPane = new OutputPane(this, wxT("Output"));
+	m_outputPane = new OutputPane(this, wxT("Output View"));
 	wxAuiPaneInfo paneInfo;
-	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output")).Caption(wxT("Output")).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton());
-	RegisterDockWindow(XRCID("output_pane"), wxT("Output"));
+	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton());
+	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 
 	// Add the explorer pane
-	m_workspacePane = new WorkspacePane(this, wxT("Workspace"));
+	m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
 	              Left().BestSize(250, 300).Layer(2).Position(0).CloseButton(true));
-	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace"));
+	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
 
 	//add the debugger locals tree, make it hidden by default
 	m_debuggerPane = new DebuggerPane(this, wxT("Debugger"));
@@ -529,10 +551,6 @@ void Frame::CreateGUIControls(void)
 	              wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).Hide());
 	RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
-	// Create the notebook for all the files
-//	long style = wxVB_TOP|wxVB_HAS_X|wxVB_BORDER|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
-//	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-//
 	m_mainBook = new MainBook(this);
 	m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(true));
 
@@ -603,32 +621,9 @@ void Frame::CreateGUIControls(void)
 		CreateToolbars24();
 	}
 
-	// load notebooks style
-//	long book_style = 0;
-//	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("Editor"));
-//	if (book_style != wxNOT_FOUND) {
-//		GetNotebook()->SetWindowStyleFlag(book_style);
-//	}
-
-//	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("OutputPane"));
-//	if (book_style != wxNOT_FOUND) {
-//		m_outputPane->GetNotebook()->SetWindowStyleFlag(book_style);
-//	}
-
-//	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("WorkspacePane"));
-//	if (book_style != wxNOT_FOUND) {
-//		m_workspacePane->GetNotebook()->SetWindowStyleFlag(book_style);
-//	}
-
-//	book_style = EditorConfigST::Get()->LoadNotebookStyle(wxT("DebuggerPane"));
-//	if (book_style != wxNOT_FOUND) {
-//		m_debuggerPane->GetNotebook()->SetWindowStyleFlag(book_style);
-//	}
-
 	//load the tab right click menu
-	m_tabRightClickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
-	GetNotebook()->SetRightClickMenu(m_tabRightClickMenu);
-
+	GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")));
+	GetWorkspacePane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("workspace_view_right_click_menu")));
 	m_mgr.Update();
 	SetAutoLayout (true);
 
@@ -641,10 +636,10 @@ void Frame::CreateGUIControls(void)
 	SessionManager::Get().Load(sessConfFile);
 
 	//try to locate the build tools
-	
+
 	long fix(1);
 	EditorConfigST::Get()->GetLongValue(wxT("FixBuildToolOnStartup"), fix);
-	if( fix ) {
+	if ( fix ) {
 		ManagerST::Get()->UpdateBuildTools();
 	}
 
@@ -676,6 +671,7 @@ void Frame::CreateViewAsSubMenu()
 			submenu->Append(item);
 		}
 		menu->Append(viewAsSubMenuID, wxT("View As"), submenu);
+		menu->AppendSeparator();
 	}
 }
 
@@ -800,21 +796,6 @@ void Frame::CreateToolbars24()
 	RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
 	RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
 	RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
-//	RegisterToolbar(XRCID("show_nav_toolbar"), wxT("Navigation Toolbar"));
-//	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(800, -1), wxTB_FLAT | wxTB_NODIVIDER);
-//	tb->SetToolBitmapSize(wxSize(24, 24));
-//	wxArrayString chcs;
-//
-//	wxChoice *cbScope = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(200, -1), chcs);
-//	tb->AddControl(cbScope);
-//
-//	wxChoice *cbFunc = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(600, -1), chcs);
-//	tb->AddControl(cbFunc);
-//
-//	tb->Realize();
-//	info = wxAuiPaneInfo();
-//	m_mgr.AddPane(tb, info.Name(wxT("Navigation Toolbar")).LeftDockable(false).RightDockable(false).Caption(wxT("Navigation Toolbar")).ToolbarPane().Top().Row(2));
-//	m_mainBook = new MainBook(cbFunc, cbScope);
 }
 
 void Frame::CreateToolbars16()
@@ -913,22 +894,6 @@ void Frame::CreateToolbars16()
 	RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
 	RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
 	RegisterToolbar(XRCID("show_debug_toolbar"), wxT("Debugger Toolbar"));
-//	RegisterToolbar(XRCID("show_nav_toolbar"), wxT("Navigation Toolbar"));
-
-//	tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(800, -1), wxTB_FLAT | wxTB_NODIVIDER);
-//	tb->SetToolBitmapSize(wxSize(16, 16));
-//	wxArrayString chcs;
-//	wxChoice *cbScope = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(200, -1), chcs);
-//	tb->AddControl(cbScope);
-//
-//	wxChoice *cbFunc = new wxChoice(tb, wxID_ANY, wxDefaultPosition, wxSize(600, -1), chcs);
-//	tb->AddControl(cbFunc);
-//
-//	tb->Realize();
-//	info = wxAuiPaneInfo();
-//
-//	m_mgr.AddPane(tb, info.Name(wxT("Navigation Toolbar")).LeftDockable(false).RightDockable(false).Caption(wxT("Navigation Toolbar")).ToolbarPane().Top().Row(2));
-//	m_mainBook = new MainBook(cbFunc, cbScope);
 }
 
 void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -983,16 +948,6 @@ void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event)
 
 void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-//	wxAboutDialogInfo info;
-//	info.SetName(wxT("CodeLite"));
-//
-//	wxString svnInfo;
-//	svnInfo << wxT("SVN Build, Revision: ") << SvnRevision;
-//	info.SetVersion(svnInfo);
-//	info.SetDescription(wxT("A lightweight cross-platform IDE for C/C++"));
-//	info.SetCopyright(wxT("(C) 2007-2008 By Eran Ifrah <eran.ifrah@gmail.com>"));
-//	info.SetWebSite(wxT("http://codelite.org/"));
-//	wxAboutBox(info);
 	AboutDlg dlg(this);
 	dlg.ShowModal();
 }
@@ -1044,8 +999,16 @@ void Frame::OnClose(wxCloseEvent& event)
 
 	session.SetTabs(files);
 	SessionManager::Get().Save(wxT("Default"), session);
-
-	//make sure there are no 'unsaved documents'
+	
+	// keep list of all detached panes
+	wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
+	for(size_t i=0; i<panes.GetCount(); i++){
+		wxString name;
+		name << wxT("DetachedPane") << i;
+		EditorConfigST::Get()->SaveStringValue(name, panes.Item(i));
+	}
+	
+	// make sure there are no 'unsaved documents'
 	ManagerST::Get()->CloseAll();
 	event.Skip();
 }
@@ -1261,9 +1224,9 @@ void Frame::OnFileClose(wxCommandEvent &event)
 
 	GetOpenWindowsPane()->UpdateList();
 	GetMainBook()->Clear();
-	
+
 	// if no more editors are available, collapse the workspace tree
-	if(GetMainBook()->GetNotebook()->GetPageCount() == 0){
+	if (GetMainBook()->GetNotebook()->GetPageCount() == 0) {
 		GetWorkspacePane()->CollpaseAll();
 	}
 }
@@ -1340,7 +1303,7 @@ void Frame::OnPageClosed(NotebookEvent &event)
 	//clean the navigation bar
 	GetMainBook()->Clear();
 	// if no more editors are available, collapse the workspace tree
-	if(GetMainBook()->GetNotebook()->GetPageCount() == 0){
+	if (GetMainBook()->GetNotebook()->GetPageCount() == 0) {
 		GetWorkspacePane()->CollpaseAll();
 	}
 }
@@ -1726,29 +1689,29 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 		//read settings for the build output tab
 		m_outputPane->GetBuildTab()->ReloadSettings();
 		m_outputPane->GetBuildTab()->AppendText(wxT("Building: "));
-		
+
 	} else if (event.GetEventType() == wxEVT_BUILD_ADDLINE) {
 		m_outputPane->GetBuildTab()->AppendText(event.GetString());
-		
+
 	} else if (event.GetEventType() == wxEVT_BUILD_ENDED) {
 		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
-		
+
 		m_outputPane->GetBuildTab()->OnBuildEnded();
-		
+
 		// get the build settings
 		BuildTabSettingsData buildSettings;
 		EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &buildSettings);
-		
-		if(buildSettings.GetAutoHide()){
+
+		if (buildSettings.GetAutoHide()) {
 			// implement the auto-hide feature:
 			// incase the build ended with no error nor warnings, and the pane was shown due to the build
 			// process, hide it.
-			if(GetOutputPane()->GetBuildTab()->GetErrorCount() == 0 && GetOutputPane()->GetBuildTab()->GetWarningCount() == 0 && m_hideOutputPane){
+			if (GetOutputPane()->GetBuildTab()->GetErrorCount() == 0 && GetOutputPane()->GetBuildTab()->GetWarningCount() == 0 && m_hideOutputPane) {
 				ManagerST::Get()->HidePane(wxT("Output"), true);
 			}
 		}
 		m_hideOutputPane = false;
-		
+
 		//If the build process was part of a 'Build and Run' command, check whether an erros
 		//occured during build process, if non, launch the output
 		if (m_buildInRun) {
@@ -3103,10 +3066,10 @@ void Frame::OnSingleInstanceRaise(wxCommandEvent& e)
 
 void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 {
-#if defined (__WXMSW__) || defined (__WXGTK__)		
+#if defined (__WXMSW__) || defined (__WXGTK__)
 	WebUpdateJobData *data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
-	if(data){
-		if( wxMessageBox(wxString::Format(wxT("A new version is available!\nCurrent version: rev%d\nNew version: rev%d\nWould you like CodeLite to take you to the download page?"), data->GetCurrentVersion(), data->GetNewVersion()), wxT("CodeLite"), wxYES_NO| wxICON_QUESTION, this) == wxYES ) {
+	if (data) {
+		if ( wxMessageBox(wxString::Format(wxT("A new version is available!\nCurrent version: rev%d\nNew version: rev%d\nWould you like CodeLite to take you to the download page?"), data->GetCurrentVersion(), data->GetNewVersion()), wxT("CodeLite"), wxYES_NO| wxICON_QUESTION, this) == wxYES ) {
 			wxString url = data->GetUrl();
 			wxLaunchDefaultBrowser(url);
 		}
@@ -3115,4 +3078,37 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 #else
 	wxUnusedVar(e);
 #endif
+}
+
+void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
+{
+	size_t sel = GetWorkspacePane()->GetNotebook()->GetSelection();
+	CustomTab *t = GetWorkspacePane()->GetNotebook()->GetTabContainer()->IndexToTab(sel);
+	wxString text = t->GetText();
+	wxBitmap bmp = t->GetBmp();
+	wxWindow *page = t->GetWindow();
+
+	// remove the page from the notebook
+	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
+
+	DockablePane *pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
+	m_DPmenuMgr->AddMenu(text);
+	
+	wxAuiPaneInfo info;
+	m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
+	m_mgr.Update();
+	wxUnusedVar(e);
+}
+
+void Frame::OnDestroyDetachedPane(wxCommandEvent& e)
+{
+	DockablePane *pane = (DockablePane*)(e.GetClientData());
+	if (pane) {
+		m_mgr.DetachPane(pane);
+
+		// remove any menu entries for this pane
+		m_DPmenuMgr->RemoveMenu(pane->GetName());
+		pane->Destroy();
+	}
+	m_mgr.Update();
 }

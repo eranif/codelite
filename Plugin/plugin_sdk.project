@@ -18,6 +18,8 @@
     <File Name="volumelocatorthread.cpp"/>
     <File Name="stringsearcher.cpp"/>
     <File Name="stringsearcher.h"/>
+    <File Name="dockablepanemenumanager.cpp"/>
+    <File Name="dockablepanemenumanager.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="async_executable_cmd.h"/>
@@ -143,6 +145,8 @@
       <File Name="dropbutton.h"/>
       <File Name="notebooknavdialog.cpp"/>
       <File Name="notebooknavdialog.h"/>
+      <File Name="dockablepane.cpp"/>
+      <File Name="dockablepane.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Static Library">

@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "editor_config.h"
+#include "dockablepanemenumanager.h"
 #include "workspace_pane.h"
 #include "manager.h"
 #include "custom_notebook.h"
@@ -43,15 +45,24 @@ const wxString WorkspacePane::EXPLORER  	= wxT("Explorer");
 
 extern wxImageList* CreateSymbolTreeImages();
 
+#define ADD_WORKSPACE_PAGE(win, name) \
+	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
+		wxAuiPaneInfo info;\
+		m_mgr->AddPane(win, info.Name(name).Float().Caption(name));\
+	} else {\
+		m_book->AddPage(win, WorkspacePane::FILE_VIEW, wxNullBitmap, true);\
+	}
+	
 BEGIN_EVENT_TABLE(WorkspacePane, wxPanel)
 	EVT_PAINT(WorkspacePane::OnPaint)
 	EVT_ERASE_BACKGROUND(WorkspacePane::OnEraseBg)
 	EVT_SIZE(WorkspacePane::OnSize)
 END_EVENT_TABLE()
 
-WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption)
+WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr)
 		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
 		, m_caption(caption)
+		, m_mgr(mgr)
 {
 	CreateGUIControls();
 }
@@ -74,12 +85,24 @@ int WorkspacePane::CaptionToIndex(const wxString &caption)
 
 void WorkspacePane::CreateGUIControls()
 {
+	// fill up a list of detached panes list
+	wxArrayString detachedPanes;
+	size_t i(0);
+	while(true) {
+		wxString name;
+		name << wxT("DetachedPane") << i;
+		wxString pane_name = EditorConfigST::Get()->GetStringValue(name);
+		if(pane_name.IsEmpty()){break;}
+		detachedPanes.Add(pane_name);
+		i++;
+	}
+	
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
 	// add the workspace configuration dropdown list
 	wxBoxSizer *hsz = new wxBoxSizer(wxHORIZONTAL);
-	
+
 	wxArrayString choices;
 	m_workspaceConfig = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY|wxALIGN_CENTER_VERTICAL);
 	m_workspaceConfig->Enable(false);
@@ -92,7 +115,7 @@ void WorkspacePane::CreateGUIControls()
 	wxButton *btn = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	hsz->Add(btn, 0, wxALIGN_CENTER_VERTICAL);
 	mainSizer->Add(hsz, 0, wxEXPAND|wxALL, 5);
-	
+
 	// add static line separator
 	wxStaticLine *line = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	mainSizer->Add(line, 0, wxEXPAND);
@@ -102,18 +125,18 @@ void WorkspacePane::CreateGUIControls()
 
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_TAB_DECORATION);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
-
+	
 	m_workspaceTab = new WorkspaceTab(m_book);
-	m_book->AddPage(m_workspaceTab, WorkspacePane::FILE_VIEW, wxNullBitmap, true);
-
+	ADD_WORKSPACE_PAGE(m_workspaceTab, WorkspacePane::FILE_VIEW);
+	
 	m_explorer = new FileExplorer(m_book, wxT("Explorer"));
-	m_book->AddPage(m_explorer, WorkspacePane::EXPLORER, wxNullBitmap, false);
+	ADD_WORKSPACE_PAGE(m_explorer, WorkspacePane::EXPLORER);
 
 	m_winStack = new WindowStack(m_book, wxID_ANY);
-	m_book->AddPage(m_winStack, WorkspacePane::SYMBOL_VIEW, wxNullBitmap, false);
+	ADD_WORKSPACE_PAGE(m_explorer, WorkspacePane::SYMBOL_VIEW);
 
 	m_openWindowsPane = new OpenWindowsPanel(m_book);
-	m_book->AddPage(m_openWindowsPane, WorkspacePane::OPEN_FILES, wxNullBitmap, false);
+	ADD_WORKSPACE_PAGE(m_explorer, WorkspacePane::OPEN_FILES);
 }
 
 CppSymbolTree *WorkspacePane::GetTreeByFilename(const wxFileName &filename)

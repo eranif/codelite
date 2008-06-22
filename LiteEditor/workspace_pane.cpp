@@ -135,6 +135,9 @@ void WorkspacePane::CreateGUIControls()
 	m_openWindowsPane = new OpenWindowsPanel(m_book);
 	ADD_WORKSPACE_PAGE(m_openWindowsPane, WorkspacePane::OPEN_FILES);
 	
+	if(m_book->GetPageCount() > 0){
+		m_book->SetSelection((size_t)0);
+	}
 	m_mgr->Update();
 }
 

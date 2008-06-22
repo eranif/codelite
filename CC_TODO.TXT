@@ -18,5 +18,4 @@ assume: version 1
 
 - Allow detaching tabs from the "Workspace View" & "Output View": 
 	- Updated plugins that added pages to the output notebook with a check that if the tab is deatched, make it detach as well 
-	- TogglePane should automatically hide the detached tabs as well
 	

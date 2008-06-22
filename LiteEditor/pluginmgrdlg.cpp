@@ -32,6 +32,7 @@ PluginMgrDlg::PluginMgrDlg( wxWindow* parent )
 		PluginMgrDlgBase( parent )
 {
 	this->Initialize();
+	Centre();
 }
 
 void PluginMgrDlg::Initialize()

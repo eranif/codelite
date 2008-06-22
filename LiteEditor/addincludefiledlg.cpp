@@ -51,7 +51,7 @@ AddIncludeFileDlg::AddIncludeFileDlg( wxWindow* parent, const wxString &fullpath
 	m_textCtrlPreview->AddText(m_text);
 	m_textCtrlPreview->EmptyUndoBuffer();
 	SetAndMarkLine();
-	
+	Centre();
 	m_textCtrlLineToAdd->SetFocus();
 }
 

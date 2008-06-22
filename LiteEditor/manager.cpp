@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "dockablepanemenumanager.h"
 #include <wx/busyinfo.h>
 #include "refactorindexbuildjob.h"
 #include "jobqueue.h"
@@ -871,6 +872,14 @@ bool Manager::ShowOutputPane(wxString focusWin, bool commit)
 	return showedIt;
 }
 
+void Manager::DoShowPane(const wxString& pane)
+{
+	// make the output pane visible
+	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(pane);
+	if ( info.IsOk() && !info.IsShown() ) {
+		info.Show();
+	}
+}
 
 void Manager::ShowDebuggerPane(bool commit)
 {
@@ -981,50 +990,58 @@ void Manager::SetWorkspaceBuildMatrix(BuildMatrixPtr matrix)
 
 void Manager::TogglePanes()
 {
-	static bool workspaceShown = false;
-	static bool outputShown = false;
-	static bool debuggerShown = false;
 	static bool toggled = false;
+	// list of panes to be toggeled on and off
+	static wxArrayString panes;
 
 	Frame::Get()->Freeze();
 	if (!toggled) {
-		wxAuiPaneInfo info;
-		info = Frame::Get()->GetDockingManager().GetPane(wxT("Output View"));
-		if ( info.IsOk() ) {
-			outputShown = info.IsShown();
-		}
-		info = Frame::Get()->GetDockingManager().GetPane(wxT("Workspace View"));
-		if ( info.IsOk() ) {
-			workspaceShown = info.IsShown();
+		panes.Clear();
+		// create the list of panes to be tested
+		wxArrayString candidates;
+		candidates.Add(wxT("Output View"));
+		candidates.Add(wxT("Workspace View"));
+		candidates.Add(wxT("Debugger"));
+
+		// add the detached tabs list
+		wxArrayString dynamicPanes = Frame::Get()->GetDockablePaneMenuManager()->GetDeatchedPanesList();
+		for(size_t i=0; i<dynamicPanes.GetCount(); i++){
+			candidates.Add(dynamicPanes.Item(i));
 		}
 
-		info = Frame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
-		if ( info.IsOk() ) {
-			debuggerShown = info.IsShown();
+		for (size_t i=0; i<candidates.GetCount(); i++) {
+			wxAuiPaneInfo info;
+			info = Frame::Get()->GetDockingManager().GetPane(candidates.Item(i));
+			if ( info.IsOk() && info.IsShown()) {
+				panes.Add(candidates.Item(i));
+			}
 		}
 
-		HidePane(wxT("Output View"), false);
-		HidePane(wxT("Workspace View"), false);
-		HidePane(wxT("Debugger"), false);
+		// hide the matached panes
+		for (size_t i=0; i<panes.GetCount(); i++) {
+			HidePane(panes.Item(i), false);
+		}
 
 		//update changes
 		Frame::Get()->GetDockingManager().Update();
 		toggled = true;
 
 	} else {
-
-		if (outputShown) {
-			ShowOutputPane(wxEmptyString, false);
+		
+		for(size_t i=0; i<panes.GetCount(); i++){
+			wxString pane_name = panes.Item(i);
+			if( pane_name == wxT("Output View") ){
+				ShowOutputPane(wxEmptyString, false);
+				continue;
+			}
+			if( pane_name == wxT("Workspace View") ){
+				ShowWorkspacePane(wxEmptyString, false);
+				continue;
+			}
+			
+			DoShowPane(pane_name);
 		}
-
-		if (workspaceShown) {
-			ShowWorkspacePane(wxEmptyString, false);
-		}
-
-		if (debuggerShown) {
-			ShowDebuggerPane(false);
-		}
-
+		
 		Frame::Get()->GetDockingManager().Update();
 		toggled = false;
 	}

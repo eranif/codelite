@@ -267,7 +267,7 @@ public:
 	 * \param show set to true to show it, false otherwise
 	 */
 	void ShowMainToolbar(bool show = true);
-
+	
 	/**
 	 * Show the workspace pane and set focus to focusWin
 	 * \param focusWin tab name to set the focus
@@ -701,7 +701,8 @@ protected:
 	Manager(void);
 	virtual ~Manager(void);
 	void OnProcessEnd(wxProcessEvent &event);
-
+	void DoShowPane(const wxString &pane);
+	
 private:
 	void RemoveProjectNameFromOpenFiles(const std::vector<wxFileName> &project_files);
 

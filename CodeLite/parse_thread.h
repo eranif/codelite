@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : parse_thread.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : parse_thread.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CODELITE_PARSE_THREAD_H
+#ifndef CODELITE_PARSE_THREAD_H
 #define CODELITE_PARSE_THREAD_H
 
 #include "entry.h"
@@ -45,7 +45,7 @@ class TagsDatabase;
 
 class WXDLLIMPEXP_CL ParseRequest : public ThreadRequest
 {
-	wxString _file; 
+	wxString _file;
 	wxString _dbfile;
 	wxString _tags;
 public:
@@ -58,12 +58,18 @@ public:
 	void setFile(const wxString &file) ;
 	void setDbFile(const wxString &dbfile) ;
 	void setTags(const wxString &tags) ;
-	
+
 	//Getters
-	const wxString& getDbfile() const {return _dbfile;}
-	const wxString& getFile() const {return _file;}
-	const wxString& getTags() const {return _tags;}
-	
+	const wxString& getDbfile() const {
+		return _dbfile;
+	}
+	const wxString& getFile() const {
+		return _file;
+	}
+	const wxString& getTags() const {
+		return _tags;
+	}
+
 	// copy ctor
 	ParseRequest(const ParseRequest& rhs) ;
 	// assignment operator
@@ -104,7 +110,7 @@ private:
 	 * - wxEVT_CMD_UPD_SYMBOL_TREE_ITEMS
 	 * \param items Vector of items that were modified/deleted/added
 	 */
-	void SendEvent(int evtType, std::vector<std::pair<wxString, TagEntry> >  &items);
+	void SendEvent(int evtType, const wxString &fileName, std::vector<std::pair<wxString, TagEntry> >  &items);
 };
 
 typedef Singleton<ParseThread> ParseThreadST;
@@ -117,16 +123,17 @@ class WXDLLIMPEXP_CL SymbolTreeEvent : public wxNotifyEvent
 	DECLARE_DYNAMIC_CLASS(SymbolTreeEvent)
 	std::vector<std::pair<wxString, TagEntry> >  m_items;
 	wxString m_project;
+	wxString m_fileName;
 
 protected:
 	/**
 	 * @brief we provide our own 'copy' function for the event items
-	 * this is to avoide ref counting of the wxString items 
+	 * this is to avoide ref counting of the wxString items
 	 * @param items
 	 */
 	void CopyItems(const std::vector<std::pair<wxString, TagEntry> > & items) {
 		m_items.clear();
-		for(size_t i=0; i<items.size(); i++){
+		for (size_t i=0; i<items.size(); i++) {
 			std::pair<wxString, TagEntry> p;
 			p.first = items.at(i).first.c_str();
 			p.second = items.at(i).second;
@@ -154,9 +161,10 @@ public:
 	 * \param commandType Event type
 	 * \param winid Window ID
 	 */
-	SymbolTreeEvent(const wxString& project, wxEventType commandType = wxEVT_NULL, int winid = 0)
+	SymbolTreeEvent(const wxString& project, const wxString &fileName, wxEventType commandType = wxEVT_NULL, int winid = 0)
 			: wxNotifyEvent(commandType, winid)
-			, m_project(project.c_str()) {
+			, m_project(project.c_str())
+			, m_fileName(fileName.c_str()){
 	}
 
 	/**
@@ -165,7 +173,8 @@ public:
 	 */
 	SymbolTreeEvent(const SymbolTreeEvent& rhs)
 			: wxNotifyEvent(rhs.GetEventType(), rhs.GetId())
-			, m_project(rhs.m_project.c_str()) {
+			, m_project(rhs.m_project.c_str())
+			, m_fileName(rhs.m_fileName.c_str()){
 		CopyItems(rhs.m_items);
 	}
 
@@ -183,8 +192,17 @@ public:
 	std::vector<std::pair<wxString, TagEntry> >& GetItems() {
 		return m_items;
 	}
+	
 	const wxString& GetProject() const {
 		return m_project;
+	}
+
+	const wxString& GetFileName() const {
+		return m_fileName;
+	}
+	
+	void SetFileName(const wxChar* fileName) {
+		m_fileName = fileName;
 	}
 };
 

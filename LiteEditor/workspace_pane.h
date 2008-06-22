@@ -86,7 +86,7 @@ public:
 	//-----------------------------------------------
 	Notebook *GetNotebook() { return m_book; }
 	
-	SymbolTree *GetSymbolTree();
+	SymbolTree *GetSymbolTree(const wxString &fileName = wxEmptyString);
 	FileViewTree *GetFileViewTree();
 	OpenWindowsPanel *GetOpenedWindows() {return m_openWindowsPane;}
 	const wxString &GetCaption() const {return m_caption;}

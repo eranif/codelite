@@ -55,7 +55,7 @@ extern wxImageList* CreateSymbolTreeImages();
 	} else {\
 		m_book->AddPage(win, name, wxNullBitmap, true);\
 	}
-	
+
 BEGIN_EVENT_TABLE(WorkspacePane, wxPanel)
 	EVT_PAINT(WorkspacePane::OnPaint)
 	EVT_ERASE_BACKGROUND(WorkspacePane::OnEraseBg)
@@ -93,7 +93,7 @@ void WorkspacePane::CreateGUIControls()
 	DetachedPanesInfo dpi;
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
 	detachedPanes = dpi.GetPanes();
-	
+
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
@@ -122,10 +122,10 @@ void WorkspacePane::CreateGUIControls()
 
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_TAB_DECORATION);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
-	
+
 	m_workspaceTab = new WorkspaceTab(m_book);
 	ADD_WORKSPACE_PAGE(m_workspaceTab, WorkspacePane::FILE_VIEW);
-	
+
 	m_explorer = new FileExplorer(m_book, wxT("Explorer"));
 	ADD_WORKSPACE_PAGE(m_explorer, WorkspacePane::EXPLORER);
 
@@ -134,8 +134,8 @@ void WorkspacePane::CreateGUIControls()
 
 	m_openWindowsPane = new OpenWindowsPanel(m_book);
 	ADD_WORKSPACE_PAGE(m_openWindowsPane, WorkspacePane::OPEN_FILES);
-	
-	if(m_book->GetPageCount() > 0){
+
+	if (m_book->GetPageCount() > 0) {
 		m_book->SetSelection((size_t)0);
 	}
 	m_mgr->Update();
@@ -167,14 +167,19 @@ void WorkspacePane::BuildFileTree()
 	m_workspaceTab->BuildFileTree();
 }
 
-SymbolTree *WorkspacePane::GetSymbolTree()
+SymbolTree *WorkspacePane::GetSymbolTree(const wxString &fileName)
 {
-	int id = Frame::Get()->GetNotebook()->GetSelection();
-	if (id != wxNOT_FOUND) {
-		LEditor *editor = dynamic_cast<LEditor*>( Frame::Get()->GetNotebook()->GetPage((size_t)id));
-		if (editor) {
-			return GetTreeByFilename(editor->GetFileName());
+	// if fileName is not empty use it to find the tree
+	if (fileName.IsEmpty()) {
+		int id = Frame::Get()->GetNotebook()->GetSelection();
+		if (id != wxNOT_FOUND) {
+			LEditor *editor = dynamic_cast<LEditor*>( Frame::Get()->GetNotebook()->GetPage((size_t)id));
+			if (editor) {
+				return GetTreeByFilename(editor->GetFileName());
+			}
 		}
+	} else {
+		return GetTreeByFilename(wxFileName(fileName));
 	}
 	return NULL;
 }

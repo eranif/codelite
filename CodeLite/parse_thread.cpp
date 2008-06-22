@@ -165,13 +165,13 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 
 	// Send an event for each operation type
 	if ( !deletedItems.empty() )
-		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM, deletedItems);
+		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM, req->getFile(), deletedItems);
 
 	if ( !newItems.empty() )
-		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM, goodNewItems);
+		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM, req->getFile(), goodNewItems);
 
 	if ( !modifiedItems.empty() )
-		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, modifiedItems);
+		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), modifiedItems);
 		
 	// send "end" event
 	wxCommandEvent e(wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS);
@@ -179,9 +179,10 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 }
 
 
-void ParseThread::SendEvent(int evtType, std::vector<std::pair<wxString, TagEntry> >  &items)
+void ParseThread::SendEvent(int evtType, const wxString &fileName, std::vector<std::pair<wxString, TagEntry> >  &items)
 {
 	SymbolTreeEvent event(items, evtType);
+	event.SetFileName(fileName.c_str());
 	wxPostEvent(m_notifiedWindow, event);
 }
 

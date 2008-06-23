@@ -408,6 +408,7 @@ checkCURL()
 
 generateControlFile() 
 {
+	rm -fr fakeroot/DEBIAN/control
 	echo "Package: CodeLite" >> fakeroot/DEBIAN/control
 	echo "Version: 1.0RC02" >> fakeroot/DEBIAN/control
 	echo "Section: Development " >> fakeroot/DEBIAN/control

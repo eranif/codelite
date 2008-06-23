@@ -183,6 +183,8 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 		wxArrayString arr = dlg->GetTestsList();
 		wxString fixture = dlg->GetFixtureName();
 		wxString filename = dlg->GetFileName();
+		dlg->Destroy();
+		
 		wxFileName fn(filename);
 
 		// first open / create the target file
@@ -246,8 +248,10 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 				DoCreateFixtureTest(wxT("Test") + prefix, fixture, editor);
 			}
 		}
+	} else {
+		// wxID_CANCEL
+		dlg->Destroy();
 	}
-	dlg->Destroy();
 }
 
 void UnitTestPP::OnNewSimpleTest(wxCommandEvent& e)

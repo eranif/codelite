@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "renamesymboldlg.h"
+#include "globals.h"
 
 RenameSymbol::RenameSymbol( wxWindow* parent, const std::list<CppToken>& candidates, const std::list<CppToken> &possCandidates  )
 		:
@@ -85,7 +86,12 @@ void RenameSymbol::AddMatch(const CppToken& token, bool check)
 void RenameSymbol::OnButtonOK(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	// TODO:: validate new name
+	
+	if(!IsValidCppIndetifier(m_textCtrlNewName->GetValue())){
+		wxMessageBox(wxT("Invalid C/C++ symbol name"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		return;
+	}
+	
 	EndModal(wxID_OK);
 }
 

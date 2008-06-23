@@ -578,7 +578,7 @@ bool DbgGdb::RemoveBreak(const wxString &fileName, long lineno)
 	wxString command;
 	wxString fileName_(fileName);
 	fileName_.Replace(wxT("\\"), wxT("/"));
-	command << wxT("clear ") << fileName_ << wxT(":") << lineno;
+	command << wxT("clear \"") << fileName_ << wxT("\":") << lineno;
 	return WriteCommand(command, NULL);
 }
 

@@ -63,6 +63,11 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	return info;
 }
 
+extern "C" EXPORT int GetPluginInterfaceVersion()
+{
+	return PLUGIN_INTERFACE_VERSION;
+}
+
 UnitTestPP::UnitTestPP(IManager *manager)
 		: IPlugin(manager)
 		, m_sepItem(NULL)

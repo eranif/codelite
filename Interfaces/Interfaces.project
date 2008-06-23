@@ -7,6 +7,7 @@
     <File Name="iconfigtool.h"/>
     <File Name="ieditor.h"/>
     <File Name="imanager.h"/>
+    <File Name="plugin_version.h"/>
   </VirtualDirectory>
   <Settings Type="Static Library">
     <Configuration Name="Common" CompilerType="gnu g++" DebuggerType="">

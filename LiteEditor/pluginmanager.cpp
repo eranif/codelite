@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : pluginmanager.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : pluginmanager.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "environmentconfig.h"
+#include "environmentconfig.h"
 #include "jobqueue.h"
 #include "pluginmanager.h"
 #include "pluginsdata.h"
@@ -41,6 +41,7 @@
 #include "wx/xrc/xmlres.h"
 #include "ctags_manager.h"
 #include "fileexplorer.h"
+#include "plugin_version.h"
 
 PluginManager *PluginManager::Get()
 {
@@ -89,7 +90,7 @@ void PluginManager::Load()
 	//get the map of all available plugins
 	m_pluginsInfo = pluginsData.GetInfo();
 	std::map<wxString, PluginInfo> actualPlugins;
-	
+
 	//set the managers
 	//this code assures us that the shared objects will see the same instances as the application
 	//does
@@ -116,7 +117,24 @@ void PluginManager::Load()
 				delete dl;
 				continue;
 			}
-
+			
+			// load the plugin version method
+			// if the methods does not exist, handle it as if it has value of 100 (lowest version API)
+			int interface_version(100);
+			GET_PLUGIN_INTERFACE_VERSION_FUNC pfnInterfaceVersion = (GET_PLUGIN_INTERFACE_VERSION_FUNC) dl->GetSymbol(wxT("GetPluginInterfaceVersion"), &success);
+			if( success ) {
+				interface_version = pfnInterfaceVersion();
+			}
+			
+			if( interface_version != PLUGIN_INTERFACE_VERSION ) {
+				wxLogMessage(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface version is '%d', CodeLite interface version is '%d'"), 
+													fileName.c_str(), 
+													interface_version, 
+													PLUGIN_INTERFACE_VERSION));
+				delete dl;
+				continue;
+			}
+			
 			//check if this dll can be loaded
 			PluginInfo pluginInfo = pfnGetPluginInfo();
 			std::map< wxString, PluginInfo>::const_iterator iter = m_pluginsInfo.find(pluginInfo.GetName());
@@ -128,7 +146,7 @@ void PluginManager::Load()
 				//we have a match
 				PluginInfo pi = iter->second;
 				pluginInfo.SetEnabled(pi.GetEnabled());
-				
+
 				actualPlugins[pluginInfo.GetName()] = pluginInfo;
 				if (pluginInfo.GetEnabled() == false) {
 					delete dl;
@@ -143,7 +161,7 @@ void PluginManager::Load()
 				//mark this plugin as not available
 				pluginInfo.SetEnabled(false);
 				actualPlugins[pluginInfo.GetName()] = pluginInfo;
-				
+
 				delete dl;
 				continue;
 			}

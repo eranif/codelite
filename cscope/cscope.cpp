@@ -53,6 +53,11 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	return info;
 }
 
+extern "C" EXPORT int GetPluginInterfaceVersion()
+{
+	return PLUGIN_INTERFACE_VERSION;
+}
+
 Cscope::Cscope(IManager *manager)
 		: IPlugin(manager)
 		, m_topWindow(NULL)

@@ -190,7 +190,7 @@ static void wxDrawSplashBitmap(	wxDC& dc,
 	wxCoord w, h, w1, h1;
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont smallfont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	font.SetPointSize(14);
+	font.SetPointSize(12);
 	smallfont.SetPointSize(10);
 	dcMem.SetFont(font);
 	dcMem.GetMultiLineTextExtent(mainTitle, &w, &h);
@@ -198,11 +198,11 @@ static void wxDrawSplashBitmap(	wxDC& dc,
 	wxCoord bmpH = bitmap.GetHeight();
 	
 	//draw shadow 
-	dcMem.SetTextForeground(wxT("BLACK"));
+	dcMem.SetTextForeground(wxT("LIGHT GRAY"));
 	
 	dcMem.DrawText(mainTitle, bmpW - w - 9, 11);
 	//draw the text	
-	dcMem.SetTextForeground(wxT("BLACK"));
+	dcMem.SetTextForeground(wxT("DARK GRAY"));
 	dcMem.SetFont(font);
 	
 	//draw the main title

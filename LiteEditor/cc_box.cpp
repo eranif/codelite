@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : cc_box.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : cc_box.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "cc_box.h"
+#include "cc_box.h"
 #include "cl_editor.h"
 #include "globals.h"
 #include <wx/imaglist.h>
@@ -75,11 +75,11 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_h")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("cpp_keyword")));
-	
+
 	// assign the image list and let the control take owner ship (i.e. delete it)
 	m_listCtrl->AssignImageList(il, wxIMAGE_LIST_SMALL);
 	m_listCtrl->InsertColumn(0, wxT("Name"));
-	
+
 	m_listCtrl->SetFocus();
 	// return the focus to scintilla
 	parent->SetActive();
@@ -94,9 +94,9 @@ void CCBox::OnItemActivated( wxListEvent& event )
 
 void CCBox::OnItemDeSelected( wxListEvent& event )
 {
-#ifdef __WXMAC__	
+#ifdef __WXMAC__
 	m_listCtrl->Select(event.m_itemIndex, false);
-#endif	
+#endif
 	m_selectedItem = wxNOT_FOUND;
 }
 
@@ -123,7 +123,7 @@ void CCBox::Adjust()
 
 	int point = parent->GetCurrentPos();
 	wxPoint pt = parent->PointFromPosition(point);
-	
+
 	// add the line height
 	int hh = parent->GetCurrLineHeight();
 	pt.y += hh;
@@ -150,14 +150,14 @@ void CCBox::SelectWord(const wxString& word)
 	long item = m_listCtrl->FindMatch(word);
 	if (item != wxNOT_FOUND) {
 		// first unselect the current item
-		if(m_selectedItem != wxNOT_FOUND && m_selectedItem != item) {
+		if (m_selectedItem != wxNOT_FOUND && m_selectedItem != item) {
 			m_listCtrl->Select(m_selectedItem, false);
 		}
-		
+
 		m_selectedItem = item;
 		SelectItem(m_selectedItem);
 	} else {
-		if(GetAutoHide()) {
+		if (GetAutoHide()) {
 			Hide();
 		}
 	}
@@ -167,10 +167,10 @@ void CCBox::Next()
 {
 	if (m_selectedItem != wxNOT_FOUND) {
 		if (m_selectedItem + 1 < m_listCtrl->GetItemCount()) {
-#ifdef __WXMAC__			
+#ifdef __WXMAC__
 			// unselect current item
 			m_listCtrl->Select(m_selectedItem, false);
-#endif			
+#endif
 			m_selectedItem++;
 			// select next item
 			SelectItem(m_selectedItem);
@@ -182,10 +182,10 @@ void CCBox::Previous()
 {
 	if (m_selectedItem != wxNOT_FOUND) {
 		if (m_selectedItem - 1 >= 0) {
-#ifdef __WXMAC__			
+#ifdef __WXMAC__
 			// unselect current item
 			m_listCtrl->Select(m_selectedItem, false);
-#endif						
+#endif
 			m_selectedItem--;
 
 			// select previous item
@@ -236,7 +236,7 @@ void CCBox::Show(const wxString& word)
 	if (_tags.size() == 1 && m_insertSingleChoice) {
 		m_selectedItem = 0;
 		DoInsertSelection(_tags.at(0).displayName, false);
-		
+
 		// return without calling to wxWindow::Show()
 		return;
 	}
@@ -248,11 +248,11 @@ void CCBox::Show(const wxString& word)
 	m_selectedItem = 0;
 
 	m_selectedItem = m_listCtrl->FindMatch(word);
-	if( m_selectedItem == wxNOT_FOUND && GetAutoHide() ) {
+	if ( m_selectedItem == wxNOT_FOUND && GetAutoHide() ) {
 		// return without calling wxWindow::Show
 		return;
 	}
-	
+
 	if (m_selectedItem == wxNOT_FOUND) {
 		m_selectedItem = 0;
 	}
@@ -260,7 +260,7 @@ void CCBox::Show(const wxString& word)
 	SetSize(BOX_WIDTH, m_height);
 	GetSizer()->Layout();
 	wxWindow::Show();
-	
+
 	SelectItem(m_selectedItem);
 }
 
@@ -271,17 +271,17 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 
 	editor->SetSelection(insertPos, editor->GetCurrentPos());
 	editor->ReplaceSelection(word);
-	
+
 	// incase we are adding a function, add '()' at the end of the function name and place the caret in the middle
 	int img_id = m_listCtrl->OnGetItemImage(m_selectedItem);
-	if(img_id >= 8 && img_id <= 10) { 
-		
+	if (img_id >= 8 && img_id <= 10) {
+
 		// if full declaration was selected, dont do anything,
 		// otherwise, append '()' to the inserted string, place the caret
 		// in the middle, and trigger the function tooltip
-		
-		if(word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
-			// image id in range of 8-10 is function 
+
+		if (word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
+			// image id in range of 8-10 is function
 			editor->InsertText(editor->GetCurrentPos(), wxT("()"));
 			int pos = editor->GetCurrentPos() + 1;
 			editor->SetCurrentPos(pos);
@@ -289,7 +289,17 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 			editor->SetSelectionEnd(pos);
 			// trigger function tip
 			editor->CodeComplete();
-		}		
+
+			if (editor->GetContext()->CallTipContent() == wxT("()")) {
+				// dont place the caret in the middle of the braces, 
+				// and it is OK to cancel the function calltip
+				int new_pos = editor->GetCurrentPos() + 1;
+				editor->SetCurrentPos(new_pos);
+				editor->SetSelectionStart(new_pos);
+				editor->SetSelectionEnd(new_pos);
+				editor->CallTipCancel();
+			}
+		}
 	}
 }
 
@@ -351,10 +361,9 @@ int CCBox::GetImageId(const TagEntry &entry)
 
 	if (entry.GetKind() == wxT("enumerator"))
 		return 13;
-	
+
 	if (entry.GetKind() == wxT("cpp_keyword"))
 		return 17;
-		
+
 	return wxNOT_FOUND;
 }
-

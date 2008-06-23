@@ -2351,3 +2351,12 @@ void ContextCpp::MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryP
 		}
 	}
 }
+
+wxString ContextCpp::CallTipContent()
+{
+	// if we have an active call tip, return its content
+	if(GetCtrl().CallTipActive() && m_ct && m_ct->Count() > 0) {
+		return m_ct->All();
+	}
+	return wxEmptyString;
+}

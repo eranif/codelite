@@ -99,6 +99,7 @@ public:
 	virtual void RemoveMenuDynamicContent(wxMenu *menu);
 	virtual void ApplySettings();
 	virtual void RetagFile();
+	virtual wxString CallTipContent();
 	
 	//override swapfiles features
 	virtual void SwapFiles(const wxFileName &fileName);

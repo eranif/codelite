@@ -2390,7 +2390,7 @@ void Frame::OnNextBuildError(wxCommandEvent &event)
 void Frame::OnNextBuildErrorUI(wxUpdateUIEvent &event)
 {
 	bool isShown(false);
-	wxAuiPaneInfo &info = m_mgr.GetPane(wxT("Output"));
+	wxAuiPaneInfo &info = m_mgr.GetPane(wxT("Output View"));
 	if (info.IsOk()) {
 		isShown = info.IsShown();
 	}

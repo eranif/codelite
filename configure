@@ -406,6 +406,22 @@ checkCURL()
 	fi
 }
 
+generateControlFile() 
+{
+	echo "Package: CodeLite" >> fakeroot/DEBIAN/control
+	echo "Version: 1.0RC02" >> fakeroot/DEBIAN/control
+	echo "Section: Development " >> fakeroot/DEBIAN/control
+	echo "Architecture: i386 amd64" >> fakeroot/DEBIAN/control
+	echo "Essential: no" >> fakeroot/DEBIAN/control
+	echo "Depends: libwxgtk2.8-0, libgtk2.0-0, libcurl3" >> fakeroot/DEBIAN/control
+	echo "Maintainer: Eran Ifrah [eran.ifrah@gmail.com]" >> fakeroot/DEBIAN/control
+	echo "Description: CodeLite is a powerful open-source, cross platform code editor for the C/C++ programming languages (regulary tested on Windows XP sp2, Ubuntu 7.10 Gutsy Gibbon, Fedora Core 6 and Debian lenny/sid). " >> fakeroot/DEBIAN/control
+	echo "		 CodeLite is distributed under the terms of the GPL license." >> fakeroot/DEBIAN/control
+	echo "		 CodeLite uses a sophisticated, yet intuitive interface which allows user to easly " >> fakeroot/DEBIAN/control
+	echo "		 create and build complex projects. " >> fakeroot/DEBIAN/control
+	echo ""  >> fakeroot/DEBIAN/control
+}
+
 ## main
 checkCURL
 
@@ -448,6 +464,7 @@ createRules_archive "sdk/wxflatnotebook/src/wxFlatNotebook/*.cpp " "wxFlatNotebo
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createInstallTarget
 createUnInstallTarget
+generateControlFile
 
 echo "-include \$(OBJ_DIR)/*.d" >> Makefile
 echo "" >> Makefile

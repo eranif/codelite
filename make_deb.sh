@@ -2,7 +2,8 @@
 ## Copy files to the fakeroot directory structure
 
 cur_rev=`svn info | grep Revision | awk '{print $2;}'`
-PKG_NAME=codelite-rev${cur_rev}_i386.deb
+arch=`uname -m`
+PKG_NAME=codelite-rev${cur_rev}_${arch}.deb
 
 EXE_NAME=CodeLiteUR
 mkdir -p fakeroot/usr/local/bin/

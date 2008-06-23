@@ -13,9 +13,6 @@
 
 - Generate the 'control' file for the .deb automatically by the configure script
 
-- Plugins: add version to the API, and also add new function that is loaded during initializaton: int GetAPIVersion(){} if a function with this signature is not available
-assume: version 1
-
 - Allow detaching tabs from the "Workspace View" & "Output View": 
 	- Updated plugins that added pages to the output notebook with a check that if the tab is deatched, make it detach as well 
 	

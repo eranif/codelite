@@ -648,3 +648,13 @@ wxXmlNode* Project::FindFile(wxXmlNode* parent, const wxString& file)
 	}
 	return NULL;
 }
+
+bool Project::RenameVirtualDirectory(const wxString& oldVdPath, const wxString& newName)
+{
+	wxXmlNode *vdNode = GetVirtualDir(oldVdPath);
+	if(vdNode) {
+		XmlUtils::UpdateProperty(vdNode, wxT("Name"), newName);
+		return m_doc.Save(m_fileName.GetFullPath());
+	}
+	return false;
+}

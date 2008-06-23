@@ -257,7 +257,15 @@ public:
 	 * \return true on success, false otherwise
 	 */
 	bool RenameFile(const wxString &oldName, const wxString &virtualDir, const wxString &newName);
-
+	
+	/**
+	 * \brief change the name of a virtual folder
+	 * \param oldVdPath full path of the virtual folder
+	 * \param newName the new name *only* of the virtual folder (without the path)
+	 * \return true on success, false otherwise
+	 */
+	bool RenameVirtualDirectory(const wxString &oldVdPath, const wxString &newName);
+	
 	/**
 	 * Create new virtual directory
 	 * \param vdFullPath VD path to add

@@ -77,6 +77,7 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "import_directory" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnImportDirectory ), NULL, this );
 	Connect( XRCID( "compile_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnCompileItem ), NULL, this );
 	Connect( XRCID( "rename_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRenameItem ), NULL, this );
+	Connect( XRCID( "rename_virtual_folder" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRenameVirtualFolder ), NULL, this );
 
 	Connect( XRCID( "remove_project" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "set_as_active" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
@@ -110,11 +111,11 @@ void FileViewTree::OnBuildInProgress( wxUpdateUIEvent &event )
 FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
 {
 	Create( parent, id, pos, size, style );
-	
-	
+
+
 //	SetBackgroundColour(*wxBLACK);
 //	SetForegroundColour(wxT("GREY"));
-	
+
 	// Initialise images map
 	wxImageList *images = new wxImageList( 16, 16, true );
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "project" ) ) );				//0
@@ -1236,7 +1237,7 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
 
 							// rename the tree item
 							SetItemText(item, new_item.displayName);
-							
+
 							ManagerST::Get()->RetagFile(new_item.fullpath);
 
 						}
@@ -1245,4 +1246,35 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
 			}// parent.IsOk()
 		}//TypeFile
 	}//item.IsOk()
+}
+
+void FileViewTree::OnRenameVirtualFolder(wxCommandEvent& e)
+{
+	wxUnusedVar( e );
+	wxTreeItemId item = GetSingleSelection();
+	if ( item.IsOk() ) {
+		// got the item, prompt user for new name
+		wxString newName = wxGetTextFromUser(wxT("New virtual folder name:"), wxT("Rename virtual folder:"), GetItemText(item));
+		if (newName.IsEmpty() || newName == GetItemText(item)) {
+			// user clicked cancel
+			return;
+		}
+
+		// locate the project
+		wxString path = GetItemPath( item );
+		wxString proj = path.BeforeFirst(wxT(':'));
+
+		path = path.AfterFirst(wxT(':'));
+		ProjectPtr p = ManagerST::Get()->GetProject(proj);
+		if (!p) {
+			wxLogMessage(wxT("failed to rename virtual folder: ") + path + wxT(", reason: could not locate project ") + proj);
+			return;
+		}
+		
+		if (!p->RenameVirtualDirectory(path, newName)) {
+			wxLogMessage(wxT("failed to rename virtual folder: ") + path);
+			return;
+		}
+		SetItemText(item, newName);
+	}
 }

@@ -569,6 +569,10 @@
         <object class="wxMenuItem" name="remove_virtual_folder">
             <label>Remove Virtual Folder</label>
         </object>        
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="rename_virtual_folder">
+            <label>Rename ...</label>
+        </object>        
     </object>
     
     <!-- Project Menu -->

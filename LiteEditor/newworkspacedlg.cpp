@@ -34,6 +34,7 @@ NewWorkspaceDlg::NewWorkspaceDlg( wxWindow* parent )
 {
 	m_textCtrlWorkspacePath->SetValue(wxGetCwd());
 	m_textCtrlWorkspaceName->SetFocus();
+	Centre();
 }
 
 void NewWorkspaceDlg::OnWorkspacePathUpdated( wxCommandEvent& event )

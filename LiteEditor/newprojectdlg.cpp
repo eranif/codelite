@@ -68,6 +68,7 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 	
 	m_textCtrlProjectPath->SetValue( WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
 	m_textCtrlProjName->SetFocus();
+	Centre();
 }
 
 void NewProjectDlg::OnProjectPathUpdated( wxCommandEvent& event )

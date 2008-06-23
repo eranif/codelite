@@ -61,6 +61,8 @@ AttachDbgProcBaseDlg( parent )
 	m_listCtrlProcesses->InsertColumn(1, wxT("Name"));
 
 	RefreshProcessesList();
+	m_listCtrlProcesses->SetFocus();
+	Centre();
 }
 
 void AttachDbgProcDlg::RefreshProcessesList(int colToSort)

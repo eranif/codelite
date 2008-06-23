@@ -1985,3 +1985,9 @@ bool LEditor::IsCompletionBoxShown()
 {
 	return m_ccBox && m_ccBox->IsShown();
 }
+
+int LEditor::GetCurrentLine()
+{
+	int pos = GetCurrentPos();
+	return LineFromPosition(pos);
+}

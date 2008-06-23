@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : testclassbasedlg.h              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -60,6 +35,7 @@ class TestClassBaseDlg : public wxDialog
 	protected:
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrlClassName;
+		wxButton* m_buttonClass;
 		wxButton* m_buttonRefresh;
 		wxCheckBox* m_checkBox1;
 		wxTextCtrl* m_textCtrlFileName;
@@ -75,6 +51,7 @@ class TestClassBaseDlg : public wxDialog
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnClassNameTyped( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnShowClassListDialog( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnRefreshFunctions( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnRefreshButtonUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnUseActiveEditor( wxCommandEvent& event ){ event.Skip(); }

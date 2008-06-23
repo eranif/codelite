@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : testclassbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -42,7 +17,7 @@ TestClassBaseDlg::TestClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 2, 3, 0, 0 );
+	fgSizer1 = new wxFlexGridSizer( 2, 4, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -52,7 +27,10 @@ TestClassBaseDlg::TestClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlClassName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer1->Add( m_textCtrlClassName, 1, wxALL|wxEXPAND, 5 );
+	fgSizer1->Add( m_textCtrlClassName, 0, wxALL|wxEXPAND, 5 );
+	
+	m_buttonClass = new wxButton( this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_buttonClass, 0, wxALL, 5 );
 	
 	m_buttonRefresh = new wxButton( this, wxID_ANY, wxT("&Show Functions..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_buttonRefresh, 0, wxALL, 5 );
@@ -129,6 +107,7 @@ TestClassBaseDlg::TestClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	
 	// Connect Events
 	m_textCtrlClassName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TestClassBaseDlg::OnClassNameTyped ), NULL, this );
+	m_buttonClass->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnShowClassListDialog ), NULL, this );
 	m_buttonRefresh->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnRefreshFunctions ), NULL, this );
 	m_buttonRefresh->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TestClassBaseDlg::OnRefreshButtonUI ), NULL, this );
 	m_checkBox1->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUseActiveEditor ), NULL, this );
@@ -142,6 +121,7 @@ TestClassBaseDlg::~TestClassBaseDlg()
 {
 	// Disconnect Events
 	m_textCtrlClassName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TestClassBaseDlg::OnClassNameTyped ), NULL, this );
+	m_buttonClass->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnShowClassListDialog ), NULL, this );
 	m_buttonRefresh->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnRefreshFunctions ), NULL, this );
 	m_buttonRefresh->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TestClassBaseDlg::OnRefreshButtonUI ), NULL, this );
 	m_checkBox1->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUseActiveEditor ), NULL, this );

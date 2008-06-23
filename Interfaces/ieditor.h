@@ -117,6 +117,12 @@ public:
 	 *	wxSCI_EOL_LF 	2
 	 */
 	virtual int GetEOL() = 0;
+	
+	/**
+	 * \brief return the current line number
+	 * \return the line number starting from 0
+	 */
+	virtual int GetCurrentLine() = 0;
 };
 
 #endif //IEDITOR_H

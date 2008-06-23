@@ -53,13 +53,15 @@ protected:
 	void OnUseFixture(wxCommandEvent &e);
 	void OnButtonOk(wxCommandEvent &e);
 	void OnClassNameTyped(wxCommandEvent &e);
-	
+	void OnShowClassListDialog(wxCommandEvent &e);
+	void DoRefreshFunctions(bool reportError = true);
 public:
 	/** Constructor */
 	TestClassDlg( wxWindow* parent, IManager *mgr );
 	wxArrayString GetTestsList();
 	wxString GetFileName() {return m_textCtrlFileName->GetValue();}
 	wxString GetFixtureName() {return m_textCtrlFixtureName->GetValue();}
+	void SetClassName(const wxString &clsName);
 };
 
 #endif // __testclassdlg__

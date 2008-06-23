@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "unittestspage.h"
+#include "ctags_manager.h"
 #include "unittestcppoutputparser.h"
 #include <wx/tokenzr.h>
 #include "environmentconfig.h"
@@ -163,7 +164,21 @@ wxMenu *UnitTestPP::CreateEditorPopMenu()
 void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
+	
+	//position has changed, compare line numbers
+	wxString clsName;
+	IEditor *editor = m_mgr->GetActiveEditor();
+	if(editor) {
+		int line = editor->GetCurrentLine();
+		TagEntryPtr tag = m_mgr->GetTagsManager()->FunctionFromFileLine(editor->GetFileName(), line+1);
+		if( tag && tag->GetScope().IsEmpty() == false && tag->GetScope() != wxT("<global>") ) {
+			clsName = tag->GetScope();
+		}
+	}
+	
 	TestClassDlg *dlg = new TestClassDlg(wxTheApp->GetTopWindow(), m_mgr);
+	dlg->SetClassName(clsName);
+	
 	if (dlg->ShowModal() == wxID_OK) {
 		wxArrayString arr = dlg->GetTestsList();
 		wxString fixture = dlg->GetFixtureName();

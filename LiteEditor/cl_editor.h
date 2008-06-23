@@ -344,6 +344,7 @@ public:
 	virtual int GetLength() { return wxScintilla::GetLength(); }
 	virtual bool IsModified() {return wxScintilla::GetModify();}
 	virtual int GetEOL() {return wxScintilla::GetEOLMode();}
+	virtual int GetCurrentLine();
 	
 private:
 	void DoSetBreakpoint(const BreakpointInfo &bp);

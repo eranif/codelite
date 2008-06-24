@@ -203,22 +203,28 @@ bool App::OnInit()
 
 #else //__WXMSW__
 	if (homeDir.IsEmpty()) { //did we got a basedir from user?
-		// On windows, we use the InstallPath from the registry
-		wxRegKey *regKey = new wxRegKey(wxT("HKEY_CURRENT_USER\\Software\\LiteEditor\\LiteEditor"));
-		if (regKey->Exists()) {
-			regKey->QueryValue(wxT("InstallPath"), homeDir);
-			regKey->Close();
-		}
-		delete regKey;
-
-		if (homeDir.IsEmpty()) {
-			homeDir = ::wxGetCwd();
-		}
+//		// On windows, we use the InstallPath from the registry
+//		wxRegKey *regKey = new wxRegKey(wxT("HKEY_CURRENT_USER\\Software\\LiteEditor\\LiteEditor"));
+//		if (regKey->Exists()) {
+//			regKey->QueryValue(wxT("InstallPath"), homeDir);
+//			regKey->Close();
+//		}
+//		delete regKey;
+//
+//		if (homeDir.IsEmpty()) {
+//			homeDir = ::wxGetCwd();
+//		}
+		homeDir = ::wxGetCwd();
 	}
-
+	
+	// updatre PATH environment variable with the install directory
+	wxString pathEnv;
+	wxGetEnv(wxT("PATH"), &pathEnv);
+	pathEnv << wxT(";") << homeDir << wxT(";");
+	wxSetEnv(wxT("PATH"), pathEnv);
+	
 	ManagerST::Get()->SetInstallDir( homeDir );
 	EditorConfig::Init( SvnRevision );
-
 #endif
 
 	wxString curdir = wxGetCwd();

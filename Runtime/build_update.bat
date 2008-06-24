@@ -3,7 +3,7 @@
 if exist update rmdir /S /Q update
 
 :: Copy the folders
-xcopy bin\*.exe "update\bin\" /E /I /H /Y /EXCLUDE:excludes
+xcopy bin\*.exe "update\" /E /I /H /Y /EXCLUDE:excludes
 xcopy config\*.default "update\config\" /E /I /H /Y /EXCLUDE:excludes
 xcopy debuggers\*.dll "update\debuggers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy images\* "update\images\" /E /I /H /Y /EXCLUDE:excludes
@@ -21,4 +21,4 @@ xcopy astyle.sample "update\" /Y
 xcopy CodeLite.exe "update\" /Y
 xcopy wxmsw28u_gcc*.dll "update\" /Y
 xcopy ..\sdk\curl\lib\libcurl-4.dll "update\" /Y
-xcopy bin\premakesinglebuild.lua "update\bin\" /Y
+xcopy bin\premakesinglebuild.lua "update\" /Y

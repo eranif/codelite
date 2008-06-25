@@ -136,10 +136,10 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 	if (	!tmpFilename.IsEmpty() ) {
 		OpenFile(m_fileName.GetFullPath(), m_project);
 	}
-	
+
 //	SetDropTarget(new FileDropTarget());
 	RestoreDefaults();
-	
+
 	// clear Ctrl+D
 	CmdKeyClear(wxT('D'), wxSCI_SCMOD_CTRL);
 }
@@ -165,9 +165,7 @@ LEditor::~LEditor()
 
 void LEditor::SetCaretAt(long pos)
 {
-	SetCurrentPos(pos);
-	SetSelectionStart(pos);
-	SetSelectionEnd(pos);
+	DoSetCaretAt(pos);
 	EnsureCaretVisible();
 }
 
@@ -1111,14 +1109,14 @@ void LEditor::FindNext(const FindReplaceData &data)
 		if (res == wxID_OK) {
 			int saved_pos = GetCurrentPos();
 			if (dirDown) {
-				SetCaretAt(0);
+				DoSetCaretAt(0);
 			} else {
-				SetCaretAt(GetLength());
+				DoSetCaretAt(GetLength());
 			}
 
 			if ( !FindAndSelect(data) ) {
 				// restore the caret
-				SetCaretAt( saved_pos );
+				DoSetCaretAt( saved_pos );
 
 				wxMessageBox(wxT("Can not find the string '") + data.GetFindString() + wxT("'"),
 				             wxT("CodeLite"),
@@ -1140,11 +1138,31 @@ bool LEditor::FindAndSelect()
 
 bool LEditor::FindAndSelect(const FindReplaceData &data)
 {
-	int offset = GetCurrentPos();
 	wxString findWhat = data.GetFindString();
-
 	size_t flags = SearchFlags(data);
-
+	int offset = GetCurrentPos();
+	
+	int dummy, dummy_len(0);
+	if( GetSelectedText().IsEmpty() == false) {
+		if(flags & wxSD_SEARCH_BACKWARD) {
+			// searching up
+			if(StringFindReplacer::Search(GetSelectedText(), GetSelectedText().Len(), findWhat, flags, dummy, dummy_len) && dummy_len == (int)GetSelectedText().Len()) {
+				// place the caret at the start of the selection so the search will skip this selected text
+				int sel_start = GetSelectionStart();
+				int sel_end = GetSelectionEnd();
+				sel_end > sel_start ? offset = sel_start : offset = sel_end;
+			}
+		} else {
+			// searching down
+			if(StringFindReplacer::Search(GetSelectedText(), 0, findWhat, flags, dummy, dummy_len) && dummy_len == (int)GetSelectedText().Len()) {
+				// place the caret at the end of the selection so the search will skip this selected text
+				int sel_start = GetSelectionStart();
+				int sel_end = GetSelectionEnd();
+				sel_end > sel_start ? offset = sel_end : offset = sel_start;
+			}			
+		}
+	}
+	
 	int pos(0);
 	int match_len(0);
 
@@ -1990,4 +2008,11 @@ int LEditor::GetCurrentLine()
 {
 	int pos = GetCurrentPos();
 	return LineFromPosition(pos);
+}
+
+void LEditor::DoSetCaretAt(long pos)
+{
+	SetCurrentPos(pos);
+	SetSelectionStart(pos);
+	SetSelectionEnd(pos);
 }

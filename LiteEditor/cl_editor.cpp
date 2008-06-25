@@ -336,14 +336,6 @@ void LEditor::SetProperties()
 	SetLayoutCache(wxSCI_CACHE_DOCUMENT);
 
 	size_t frame_flags = Frame::Get()->GetFrameGeneralInfo().GetFlags();
-	int eolMode (wxSCI_EOL_LF);	//default it to unix
-	if (frame_flags & CL_USE_EOL_CR) {
-		eolMode = wxSCI_EOL_CR;
-	} else if (frame_flags & CL_USE_EOL_CRLF) {
-		eolMode = wxSCI_EOL_CRLF;
-	}
-
-	SetEOLMode(eolMode);
 	SetViewEOL(frame_flags & CL_SHOW_EOL ? true : false);
 
 	//if no right click menu is provided by the context, use scintilla default
@@ -445,7 +437,8 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	int beforeBefore = SafeGetChar(PositionBefore(PositionBefore(pos)));
 	int charCurrnt = SafeGetChar(pos);
 
-	if ( GetSelectedText().IsEmpty() == false) {
+	wxString sel_text = GetSelectedText();
+	if ( sel_text.IsEmpty() == false) {
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 	} else if (	charCurrnt == '<' && charAfter == '<' 	||	//<<
 	            charCurrnt == '<' && charBefore == '<' 	||	//<<
@@ -474,9 +467,21 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	//update line number
 	wxString message;
 	message << wxT("Ln ") << LineFromPosition(pos)+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
-	ManagerST::Get()->SetStatusMessage(message, 3);
-
-	if (GetSelectedText().IsEmpty()) {
+	ManagerST::Get()->SetStatusMessage(message, 2);
+	
+	switch( GetEOLMode() ) {
+	case wxSCI_EOL_CR:
+		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Mac"), 3);
+		break;
+	case wxSCI_EOL_CRLF:
+		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
+		break;
+	default:
+		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Unix"), 3);
+		break;
+	}
+	
+	if (sel_text.IsEmpty()) {
 		// remove indicators
 		SetIndicatorCurrent(2);
 		IndicatorClearRange(0, GetLength());
@@ -1141,12 +1146,12 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 	wxString findWhat = data.GetFindString();
 	size_t flags = SearchFlags(data);
 	int offset = GetCurrentPos();
-	
+
 	int dummy, dummy_len(0);
-	if( GetSelectedText().IsEmpty() == false) {
-		if(flags & wxSD_SEARCH_BACKWARD) {
+	if ( GetSelectedText().IsEmpty() == false) {
+		if (flags & wxSD_SEARCH_BACKWARD) {
 			// searching up
-			if(StringFindReplacer::Search(GetSelectedText(), GetSelectedText().Len(), findWhat, flags, dummy, dummy_len) && dummy_len == (int)GetSelectedText().Len()) {
+			if (StringFindReplacer::Search(GetSelectedText(), GetSelectedText().Len(), findWhat, flags, dummy, dummy_len) && dummy_len == (int)GetSelectedText().Len()) {
 				// place the caret at the start of the selection so the search will skip this selected text
 				int sel_start = GetSelectionStart();
 				int sel_end = GetSelectionEnd();
@@ -1154,15 +1159,15 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 			}
 		} else {
 			// searching down
-			if(StringFindReplacer::Search(GetSelectedText(), 0, findWhat, flags, dummy, dummy_len) && dummy_len == (int)GetSelectedText().Len()) {
+			if (StringFindReplacer::Search(GetSelectedText(), 0, findWhat, flags, dummy, dummy_len) && dummy_len == (int)GetSelectedText().Len()) {
 				// place the caret at the end of the selection so the search will skip this selected text
 				int sel_start = GetSelectionStart();
 				int sel_end = GetSelectionEnd();
 				sel_end > sel_start ? offset = sel_end : offset = sel_start;
-			}			
+			}
 		}
 	}
-	
+
 	int pos(0);
 	int match_len(0);
 
@@ -1395,8 +1400,10 @@ void LEditor::ReloadFile()
 {
 	HideCompletionBox();
 
-	if (m_fileName.GetFullPath().IsEmpty() == true || m_fileName.GetFullPath().StartsWith(wxT("Untitled")))
+	if (m_fileName.GetFullPath().IsEmpty() == true || m_fileName.GetFullPath().StartsWith(wxT("Untitled"))) {
+		SetEOLMode(GetEOLByOS());
 		return;
+	}
 
 	wxString text;
 	ReadFileWithConversion(m_fileName.GetFullPath(), text);
@@ -1410,6 +1417,13 @@ void LEditor::ReloadFile()
 	//update breakpoints
 	UpdateBreakpoints();
 	UpdateColours();
+
+	// set the EOL mode
+	int eol = GetEOLByContent();
+	if (eol == wxNOT_FOUND) {
+		eol = GetEOLByOS();
+	}
+	SetEOLMode(eol);
 }
 
 void LEditor::SetEditorText(const wxString &text)
@@ -2015,4 +2029,54 @@ void LEditor::DoSetCaretAt(long pos)
 	SetCurrentPos(pos);
 	SetSelectionStart(pos);
 	SetSelectionEnd(pos);
+}
+
+int LEditor::GetEOLByContent()
+{
+	if (GetLength() == 0) {
+		return wxNOT_FOUND;
+	}
+
+	// locate the first EOL
+	wxString txt = GetText();
+	size_t pos1 = static_cast<size_t>(txt.Find(wxT("\n")));
+	size_t pos2 = static_cast<size_t>(txt.Find(wxT("\r\n")));
+	size_t pos3 = static_cast<size_t>(txt.Find(wxT("\r")));
+	
+	size_t max_size_t = static_cast<size_t>(-1);
+	// the buffer is not empty but it does not contain any EOL as well
+	if (pos1 == max_size_t && pos2 == max_size_t && pos3 == max_size_t ) {
+		return wxNOT_FOUND;
+	}
+
+	size_t first_eol_pos(0);
+	pos2 < pos1 ? first_eol_pos = pos2 : first_eol_pos = pos1;
+	pos3 < first_eol_pos ? first_eol_pos = pos3 : first_eol_pos = first_eol_pos;
+
+	// get the EOL at first_eol_pos
+	wxChar ch = SafeGetChar(first_eol_pos);
+	if (ch == wxT('\n')) {
+		return wxSCI_EOL_LF;
+	}
+
+	if ( ch == wxT('\r') ) {
+		wxChar secondCh = SafeGetChar(first_eol_pos+1);
+		if (secondCh == wxT('\n')) {
+			return wxSCI_EOL_CRLF;
+		} else {
+			return wxSCI_EOL_CR;
+		}
+	}
+	return wxNOT_FOUND;
+}
+
+int LEditor::GetEOLByOS()
+{
+#if defined(__WXMAC__)
+	return wxSCI_EOL_CR;
+#elif defined(__WXGTK__)
+	return wxSCI_EOL_LF;
+#else
+	return wxSCI_EOL_CRLF;
+#endif
 }

@@ -105,39 +105,30 @@
                 <label>Complete &amp;Word</label>
             </object>                        
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-			<object class="wxMenuItem" name="word_wrap">
-				<label>Word W&amp;rap</label>
-				<checkable>1</checkable>
+			<object class="wxMenuItem" name="convert_eol_win">
+				<label>Convert to Windows Format</label>
 			</object>
-			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-			<object class="wxMenu" name="line_end_chars_menu">
-				<label>Line End Characters</label>
-				<style>wxMENU_TEAROFF</style>
-				<object class="wxMenuItem" name="line_end_cr">
-					<label>CR</label>
-					<radio>1</radio>
-				</object>
-				<object class="wxMenuItem" name="line_end_lf">
-					<label>LF</label>
-					<radio>1</radio>
-				</object>
-				<object class="wxMenuItem" name="line_end_crlf">
-					<label>CR + LF</label>
-					<radio>1</radio>
-				</object>
+			<object class="wxMenuItem" name="convert_eol_unix">
+				<label>Convert to Unix Format</label>
 			</object>
-			<object class="wxMenuItem" name="convert_eol">
-				<label>Convert &amp;Line End Characters</label>
+			<object class="wxMenuItem" name="convert_eol_mac">
+				<label>Convert to Mac Format</label>
 			</object>
-            <object class="wxMenuItem" name="display_eol">
-                <label>&amp;Display EOL</label>
-				<checkable>1</checkable>
-            </object>                        
         </object>
 
         <object class="wxMenu" name="view_menu">
             <label>&amp;View</label>
             <style>wxMENU_TEAROFF</style>
+			<object class="wxMenuItem" name="word_wrap">
+				<label>Word W&amp;rap</label>
+				<checkable>1</checkable>
+			</object>
+			<object class="wxMenuItem" name="display_eol">
+				<label>&amp;Display EOL</label>
+				<checkable>1</checkable>
+			</object>                        
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+
             <object class="wxMenuItem" name="view_welcome_page">
 				<label>Show &amp;Welcome Page</label>
             </object>
@@ -182,6 +173,7 @@
 					<label>Debug ToolBar</label>
 					<checkable>1</checkable>
 				</object>
+				<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 <!--				<object class="wxMenuItem" name="show_nav_toolbar">
 					<label>Navigation ToolBar</label>
 					<checkable>1</checkable> 

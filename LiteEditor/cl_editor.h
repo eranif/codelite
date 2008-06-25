@@ -129,7 +129,11 @@ public:
 
 	// User clicked Ctrl+,
 	void GotoPreviousDefintion();
+	
+	// return the EOL according to the content
+	int GetEOLByContent();
 
+	int GetEOLByOS();
 	/**
 	 * Return true if editor definition contains more
 	 * on its stack

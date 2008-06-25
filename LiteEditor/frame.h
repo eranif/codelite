@@ -362,18 +362,7 @@ protected:
 	void OnUpdateBuildRefactorIndexBar(wxCommandEvent &e);
 	
 	//EOL
-	void OnViewEolUI(wxUpdateUIEvent &e);
-	void OnViewEolCR(wxCommandEvent &e);
-	void OnViewEolLF(wxCommandEvent &e);
-	void OnViewEolCRLF(wxCommandEvent &e);
-	
-	void OnViewEolCR_UI(wxUpdateUIEvent &e);
-	void OnViewEolLF_UI(wxUpdateUIEvent &e);
-	void OnViewEolCRLF_UI(wxUpdateUIEvent &e);
-	
 	void OnConvertEol(wxCommandEvent &e);
-	void OnConvertEolUI(wxUpdateUIEvent &e);
-	
 	void OnViewDisplayEOL(wxCommandEvent &e);
 	void OnViewDisplayEOL_UI(wxUpdateUIEvent &e);
 	

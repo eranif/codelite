@@ -284,15 +284,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("view_welcome_page"), Frame::OnShowWelcomePageUI)
 	EVT_MENU(XRCID("view_welcome_page_at_startup"), Frame::OnLoadWelcomePage)
 	EVT_UPDATE_UI(XRCID("view_welcome_page_at_startup"), Frame::OnLoadWelcomePageUI)
-	EVT_MENU(XRCID("line_end_cr"), Frame::OnViewEolCR)
-	EVT_MENU(XRCID("line_end_lf"), Frame::OnViewEolLF)
-	EVT_MENU(XRCID("line_end_crlf"), Frame::OnViewEolCRLF)
-	EVT_UPDATE_UI(XRCID("line_end_cr"), Frame::OnViewEolCR_UI)
-	EVT_UPDATE_UI(XRCID("line_end_lf"), Frame::OnViewEolLF_UI)
-	EVT_UPDATE_UI(XRCID("line_end_crlf"), Frame::OnViewEolCRLF_UI)
-	EVT_UPDATE_UI(XRCID("line_end_chars_menu"), Frame::OnViewEolUI)
-	EVT_MENU(XRCID("convert_eol"), Frame::OnConvertEol)
-	EVT_UPDATE_UI(XRCID("convert_eol"), Frame::OnConvertEolUI)
+	EVT_MENU(XRCID("convert_eol_win"), Frame::OnConvertEol)
+	EVT_MENU(XRCID("convert_eol_unix"), Frame::OnConvertEol)
+	EVT_MENU(XRCID("convert_eol_mac"), Frame::OnConvertEol)
 	EVT_MENU(XRCID("display_eol"), Frame::OnViewDisplayEOL)
 	EVT_UPDATE_UI(XRCID("display_eol"), Frame::OnViewDisplayEOL_UI)
 
@@ -1284,6 +1278,19 @@ void Frame::OnPageChanged(NotebookEvent &event)
 	title << wxT(" - ") << editor->GetFileName().GetFullPath();
 	SetTitle(title);
 
+	// update status bar message
+	// update status message
+	switch ( editor->GetEOLMode() ) {
+	case wxSCI_EOL_CR:
+		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Mac"), 3);
+		break;
+	case wxSCI_EOL_CRLF:
+		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
+		break;
+	default:
+		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Unix"), 3);
+		break;
+	}
 	editor->SetActive();
 	GetOpenWindowsPane()->SyncSelection();
 	event.Skip();
@@ -2713,95 +2720,32 @@ void Frame::OnFileCloseUI(wxUpdateUIEvent &event)
 	event.Enable(GetNotebook()->GetPageCount() > 0 ? true : false);
 }
 
-void Frame::OnViewEolCR(wxCommandEvent &e)
-{
-	size_t flags = m_frameGeneralInfo.GetFlags();
-	flags &= ~(CL_USE_EOL_CR);
-	flags &= ~(CL_USE_EOL_LF);
-	flags &= ~(CL_USE_EOL_CRLF);
-	m_frameGeneralInfo.SetFlags(flags | CL_USE_EOL_CR);
-
-
-	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
-		if (editor) {
-			editor->SetEOLMode(wxSCI_EOL_CR);
-		}
-	}
-}
-
-void Frame::OnViewEolLF(wxCommandEvent &e)
-{
-	size_t flags = m_frameGeneralInfo.GetFlags();
-	flags &= ~(CL_USE_EOL_CR);
-	flags &= ~(CL_USE_EOL_LF);
-	flags &= ~(CL_USE_EOL_CRLF);
-	m_frameGeneralInfo.SetFlags(flags | CL_USE_EOL_LF);
-	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
-		if (editor) {
-			editor->SetEOLMode(wxSCI_EOL_LF);
-		}
-	}
-}
-
-void Frame::OnViewEolCRLF(wxCommandEvent &e)
-{
-	size_t flags = m_frameGeneralInfo.GetFlags();
-	flags &= ~(CL_USE_EOL_CR);
-	flags &= ~(CL_USE_EOL_LF);
-	flags &= ~(CL_USE_EOL_CRLF);
-	m_frameGeneralInfo.SetFlags(flags | CL_USE_EOL_CRLF);
-	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
-		if (editor) {
-			editor->SetEOLMode(wxSCI_EOL_CRLF);
-		}
-	}
-}
-
-void Frame::OnViewEolUI(wxUpdateUIEvent &e)
-{
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	e.Enable(editor ? true : false);
-}
-
 void Frame::OnConvertEol(wxCommandEvent &e)
 {
 	LEditor *editor = ManagerST::Get()->GetActiveEditor();
 	if (editor) {
-		size_t flags = m_frameGeneralInfo.GetFlags();
-		int eolMode (wxSCI_EOL_LF);	//default it to unix
-		if (flags & CL_USE_EOL_CR) {
-			eolMode = wxSCI_EOL_CR;
-		} else if (flags & CL_USE_EOL_CRLF) {
-			eolMode = wxSCI_EOL_CRLF;
+		int eol(wxSCI_EOL_LF);
+		if (e.GetId() == XRCID("convert_eol_win")) {
+			eol = wxSCI_EOL_CRLF;
+		} else if (e.GetId() == XRCID("convert_eol_mac")) {
+			eol = wxSCI_EOL_CR;
 		}
+		editor->ConvertEOLs(eol);
+		editor->SetEOLMode(eol);
 
-		editor->ConvertEOLs(eolMode);
-		//editor->Colourise(0, wxSCI_INVALID_POSITION);
+		// update status message
+		switch ( eol ) {
+		case wxSCI_EOL_CR:
+			ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Mac"), 3);
+			break;
+		case wxSCI_EOL_CRLF:
+			ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
+			break;
+		default:
+			ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Unix"), 3);
+			break;
+		}
 	}
-}
-
-void Frame::OnConvertEolUI(wxUpdateUIEvent &e)
-{
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	e.Enable(editor ? true : false);
-}
-
-void Frame::OnViewEolCRLF_UI(wxUpdateUIEvent &e)
-{
-	e.Check(m_frameGeneralInfo.GetFlags() & CL_USE_EOL_CRLF ? true : false);
-}
-
-void Frame::OnViewEolCR_UI(wxUpdateUIEvent &e)
-{
-	e.Check(m_frameGeneralInfo.GetFlags() & CL_USE_EOL_CR ? true : false);
-}
-
-void Frame::OnViewEolLF_UI(wxUpdateUIEvent &e)
-{
-	e.Check(m_frameGeneralInfo.GetFlags() & CL_USE_EOL_LF ? true : false);
 }
 
 void Frame::OnViewDisplayEOL(wxCommandEvent &e)

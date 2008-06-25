@@ -493,8 +493,6 @@ void Manager::OpenWorkspace(const wxString &path)
 	wxString dbfile = WorkspaceST::Get()->GetStringProperty(wxT("Database"), errMsg);
 
 	wxFileName fn(dbfile);
-	SetStatusMessage(wxString::Format(wxT("Workspace DB: '%s'"), fn.GetFullName().GetData()), 1);
-
 	// load ctags options
 	wxBusyCursor cursor;
 
@@ -1366,7 +1364,7 @@ void Manager::SetExternalDatabase(const wxFileName &dbname)
 	TagsManagerST::Get()->OpenExternalDatabase(dbname);
 
 	if (TagsManagerST::Get()->GetExtDatabase()->IsOpen()) {
-		SetStatusMessage(wxString::Format(wxT("External DB: '%s'"), dbname.GetFullName().GetData()), 2);
+		SetStatusMessage(wxString::Format(wxT("External DB: '%s'"), dbname.GetFullName().GetData()), 1);
 		EditorConfigST::Get()->SetTagsDatabase(dbname.GetFullPath());
 	}
 }

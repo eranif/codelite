@@ -42,8 +42,10 @@
 #endif //WX_PRECOMP
 
 #include "quickoutlinedlg.h"
+#include "cl_editor.h"
 #include "cpp_symbol_tree.h"
 #include "macros.h"
+#include "manager.h"
 
 extern wxImageList* CreateSymbolTreeImages();
 

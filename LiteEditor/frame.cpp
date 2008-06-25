@@ -377,15 +377,15 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 
 	CreateGUIControls();
 	m_DPmenuMgr = new DockablePaneMenuManager(GetMenuBar(), &m_mgr);
-	
+
 	// fill up a list of detached panes list
 	DetachedPanesInfo dpi;
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
-	
-	for(size_t i=0; i<dpi.GetPanes().GetCount(); i++) {
+
+	for (size_t i=0; i<dpi.GetPanes().GetCount(); i++) {
 		m_DPmenuMgr->AddMenu(dpi.GetPanes().Item(i));
 	}
-	
+
 	ManagerST::Get();	// Dummy call
 
 	//allow the main frame to receive files by drag and drop
@@ -995,12 +995,12 @@ void Frame::OnClose(wxCloseEvent& event)
 
 	session.SetTabs(files);
 	SessionManager::Get().Save(wxT("Default"), session);
-	
+
 	// keep list of all detached panes
 	wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
 	DetachedPanesInfo dpi(panes);
 	EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
-	
+
 	// make sure there are no 'unsaved documents'
 	ManagerST::Get()->CloseAll();
 	event.Skip();
@@ -1975,7 +1975,14 @@ void Frame::OnQuickOutline(wxCommandEvent &event)
 		return;
 
 	QuickOutlineDlg *dlg = new QuickOutlineDlg(this, ManagerST::Get()->GetActiveEditor()->GetFileName().GetFullPath());
-	dlg->ShowModal();
+	if (dlg->ShowModal() == wxID_OK) {
+#ifdef __WXMAC__
+		LEditor *editor = ManagerST::Get()->GetActiveEditor();
+		if (editor) {
+			editor->SetActive();
+		}
+#endif
+	}
 	dlg->Destroy();
 }
 
@@ -3087,7 +3094,7 @@ void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 
 	DockablePane *pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
 	m_DPmenuMgr->AddMenu(text);
-	
+
 	wxAuiPaneInfo info;
 	m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
 	m_mgr.Update();

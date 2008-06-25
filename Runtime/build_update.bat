@@ -3,7 +3,9 @@
 if exist update rmdir /S /Q update
 
 :: Copy the folders
-xcopy bin\*.exe "update\" /E /I /H /Y /EXCLUDE:excludes
+xcopy ctags-le.exe "update\" /E /I /H /Y /EXCLUDE:excludes
+xcopy makedir.exe "update\" /E /I /H /Y /EXCLUDE:excludes
+xcopy le_exec.exe "update\" /E /I /H /Y /EXCLUDE:excludes
 xcopy config\*.default "update\config\" /E /I /H /Y /EXCLUDE:excludes
 xcopy debuggers\*.dll "update\debuggers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy images\* "update\images\" /E /I /H /Y /EXCLUDE:excludes

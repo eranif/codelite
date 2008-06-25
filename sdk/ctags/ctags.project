@@ -74,7 +74,7 @@
     <File Name="strlist.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
-    <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger">
+    <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)d" IntermediateDirectory="./Debug" Command="./$(ProjectName)d" CommandArguments="--excmd=pattern -f- test.h" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
@@ -98,8 +98,8 @@
 </CustomPreBuild>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger">
-      <General OutputFile="../../Runtime/bin/ctags-le.exe" IntermediateDirectory="./Release" Command="./ctags-le" CommandArguments="" WorkingDirectory="../../Runtime/bin/" PauseExecWhenProcTerminates="yes"/>
+    <Configuration Name="Release" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="../../Runtime/ctags-le.exe" IntermediateDirectory="./Release" Command="./ctags-le" CommandArguments="" WorkingDirectory="../../Runtime/bin/" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="">
         <IncludePath Value="."/>
       </Compiler>
@@ -117,7 +117,9 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>

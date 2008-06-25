@@ -1,5 +1,7 @@
 @echo off
-xcopy bin\*.exe "C:\Program Files\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+xcopy ctags-le.exe "C:\Program Files\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+xcopy makedir.exe "C:\Program Files\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+xcopy le_exec.exe "C:\Program Files\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy config\*.default "C:\Program Files\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes
 xcopy debuggers\*.dll "C:\Program Files\CodeLite\debuggers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy images\* "C:\Program Files\CodeLite\images\" /E /I /H /Y /EXCLUDE:excludes

@@ -88,9 +88,16 @@ void UnitTestsPage::OnItemActivated(wxListEvent& e)
 	line.ToLong(&l);
 
 	// convert the file to absolute path
-	wxFileName fn(file);
-	fn.MakeAbsolute();
-	
+	wxString err_msg, cwd;
 	wxString proj = m_mgr->GetWorkspace()->GetActiveProjectName();
+	ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(proj, err_msg);
+	
+	if(p) {
+		cwd = p->GetFileName().GetPath();
+	}
+	
+	wxFileName fn(file);
+	fn.MakeAbsolute(cwd);
+	
 	m_mgr->OpenFile(fn.GetFullPath(), proj, l-1);
 }

@@ -293,8 +293,8 @@ bool App::OnInit()
 	//hide the output &workspace panes
 	if (parser.GetParamCount() > 0) {
 		ManagerST::Get()->HidePane(wxT("Debugger"));
-		ManagerST::Get()->HidePane(wxT("Workspace"));
-		ManagerST::Get()->HidePane(wxT("Output"));
+		ManagerST::Get()->HidePane(wxT("Workspace View"));
+		ManagerST::Get()->HidePane(wxT("Output View"));
 	}
 
 	m_pMainFrame->Show(TRUE);

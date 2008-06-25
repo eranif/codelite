@@ -249,7 +249,7 @@ void Cscope::DoCscopeCommand(const wxString &command, const wxString &endMsg)
 	//make sure that the Output pane is visible
 	wxAuiManager *aui = m_mgr->GetDockingManager();
 	if(aui) {
-		wxAuiPaneInfo &info = aui->GetPane(wxT("Output"));
+		wxAuiPaneInfo &info = aui->GetPane(wxT("Output View"));
 		if (info.IsOk() && !info.IsShown()) {
 			info.Show();
 			aui->Update();

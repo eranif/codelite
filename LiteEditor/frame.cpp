@@ -1700,7 +1700,7 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 			// incase the build ended with no error nor warnings, and the pane was shown due to the build
 			// process, hide it.
 			if (GetOutputPane()->GetBuildTab()->GetErrorCount() == 0 && GetOutputPane()->GetBuildTab()->GetWarningCount() == 0 && m_hideOutputPane) {
-				ManagerST::Get()->HidePane(wxT("Output"), true);
+				ManagerST::Get()->HidePane(wxT("Output View"), true);
 			}
 		}
 		m_hideOutputPane = false;

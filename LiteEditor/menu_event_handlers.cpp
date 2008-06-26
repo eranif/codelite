@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : menu_event_handlers.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : menu_event_handlers.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "menu_event_handlers.h"
+#include "menu_event_handlers.h"
 #include "cl_editor.h"
 #include "frame.h"
 
@@ -33,10 +33,10 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	LEditor *editor = (LEditor*)owner;
-	
+
 	// hide completion box
 	editor->HideCompletionBox();
-		
+
 	if (event.GetId() == wxID_COPY) {
 		editor->Copy();
 	} else if (event.GetId() == wxID_CUT) {
@@ -122,28 +122,24 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &ev
 		editor->DoFindAndReplace(true);
 	} else {
 		FindReplaceDialog *dlg = editor->GetFindReplaceDialog();
-		if (event.GetId() == XRCID("find_next") && dlg) {
-			FindReplaceData data = dlg->GetData();
-			
-			// if we have a selected text, use that text instead of one 
-			// from the dialog
-			if (editor->GetSelectedText().IsEmpty() == false ) {
-				data.SetFindString(editor->GetSelectedText());
-			}
-			
+		FindReplaceData data;
+		if (dlg)
+			data = dlg->GetData();
+		// if we have a selected text, use that text instead of one
+		// from the dialog
+		if (editor->GetSelectedText().IsEmpty() == false ) {
+			data.SetFindString(editor->GetSelectedText());
+		}
+		if (data.GetFindString().IsEmpty()) {
+			return;
+		}
+		
+		if (event.GetId() == XRCID("find_next")) {
 			// set search direction down
 			data.SetFlags(data.GetFlags() & ~(wxFRD_SEARCHUP));
 			editor->FindNext( data );
-			
-		} else if ( event.GetId() == XRCID("find_previous") && dlg) {
-			FindReplaceData data = dlg->GetData();
-			
-			// if we have a selected text, use that text instead of one 
-			// from the dialog
-			if (editor->GetSelectedText().IsEmpty() == false ) {
-				data.SetFindString(editor->GetSelectedText());
-			}
-			
+
+		} else if ( event.GetId() == XRCID("find_previous")) {
 			// set search direction up
 			data.SetFlags(data.GetFlags() | wxFRD_SEARCHUP);
 			editor->FindNext( data );

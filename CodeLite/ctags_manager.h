@@ -442,8 +442,9 @@ public:
 	 * \param kind list of tags kind to return
 	 * \param tags [ouput] the result vector
 	 * \param inherits set to true if you want inherited members as well members 
+	 * \param include_anon included anonymous members (of Unions/structs/enums) 
 	 */
-	void TagsByScope(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags);
+	void TagsByScope(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags, bool include_anon = false);
 	
 	/**
 	 * Find implementation/declaration of symbol

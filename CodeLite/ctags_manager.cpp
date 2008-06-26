@@ -750,7 +750,7 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		filter.Add(wxT("function"));
 		filter.Add(wxT("member"));
 		filter.Add(wxT("prototype"));
-		TagsByScope(scope, filter, candidates);
+		TagsByScope(scope, filter, candidates, false);
 	}
 
 	return candidates.empty() == false;
@@ -2086,7 +2086,7 @@ void TagsManager::GetAllTagsNameAsSpaceDelimString(wxString &tagsList)
 	}
 }
 
-void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags)
+void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags, bool include_anon)
 {
 	wxString sql;
 	std::vector<wxString> derivationList;
@@ -2116,9 +2116,20 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 	for (size_t i=0; i<derivationList.size(); i++) {
 		sql.Empty();
 		wxString tmpScope(derivationList.at(i));
-		sql << wxT("select * from tags where scope='") << tmpScope << wxT("' ") << kindClaus;
+		
+		// incase we have anonymouse unions, we should inclued their values as well
+		wxString anon_sql;
+		if (include_anon) {
+			wxString top, bottom;
+			bottom << tmpScope << wxT("::__anon0");
+			top << tmpScope << wxT("::__anon999");
+			anon_sql << wxT(" OR (scope >= '") << bottom << wxT("' AND scope <= '") << top << wxT("') ");
+		}
+		
+		sql << wxT("select * from tags where scope='") << tmpScope << wxT("' ") << anon_sql << kindClaus;
 		DoExecuteQueury(sql, tags);
 	}
+
 	// and finally sort the results
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
 

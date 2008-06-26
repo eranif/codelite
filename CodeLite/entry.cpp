@@ -145,8 +145,16 @@ void TagEntry::Create(const wxString &fileName,
 						UpdatePath( path ) ;
 					}else{
 						path = GetExtField(wxT("union"));
+						wxString tmpname = path.AfterLast(wxT(':'));
 						if(!path.IsEmpty()){
-							UpdatePath( path ) ;
+							if(!tmpname.StartsWith(wxT("__anon"))) {
+								UpdatePath( path ) ;
+							} else {
+								// anonymouse union, remove the anonymous part from its name
+								path = path.BeforeLast(wxT(':'));
+								path = path.BeforeLast(wxT(':'));
+								UpdatePath( path ) ;
+							}
 						}
 					}
 				}

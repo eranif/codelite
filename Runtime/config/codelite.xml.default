@@ -52,4 +52,7 @@
   <ArchiveObject Name="SingleInstance">
     <long Value="0" Name="m_value"/>
   </ArchiveObject>
+  <ArchiveObject Name="WordHighlightColour">
+    <wxString Value="rgb(255, 128, 0)" Name="m_value"/>
+  </ArchiveObject>
 </LiteEditor>

@@ -125,15 +125,23 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &ev
 		FindReplaceData data;
 		if (dlg)
 			data = dlg->GetData();
+
 		// if we have a selected text, use that text instead of one
 		// from the dialog
 		if (editor->GetSelectedText().IsEmpty() == false ) {
 			data.SetFindString(editor->GetSelectedText());
+			if (dlg) {
+				dlg->GetData().SetFindString(editor->GetSelectedText());
+//				if(dlg->GetData().GetFindStringArr().Index(editor->GetSelectedText()) == wxNOT_FOUND) {
+//					dlg->GetData().GetFindStringArr().Add(editor->GetSelectedText());
+//				}
+			}
 		}
+
 		if (data.GetFindString().IsEmpty()) {
 			return;
 		}
-		
+
 		if (event.GetId() == XRCID("find_next")) {
 			// set search direction down
 			data.SetFlags(data.GetFlags() & ~(wxFRD_SEARCHUP));

@@ -72,6 +72,8 @@
 #define SYMBOLS_MARGIN_ID 	2
 #define FOLD_MARGIN_ID 		3
 
+const wxEventType wxEVT_CMD_UPDATE_STATUS_BAR = wxNewEventType();
+
 //debugger line marker xpm
 extern char *arrow_right_green_xpm[];
 extern char *stop_xpm[];
@@ -467,20 +469,20 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	//update line number
 	wxString message;
 	message << wxT("Ln ") << LineFromPosition(pos)+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
-	ManagerST::Get()->SetStatusMessage(message, 2);
-	
-	switch( GetEOLMode() ) {
+	SetStatusBarMessage(message, 2);
+
+	switch ( GetEOLMode() ) {
 	case wxSCI_EOL_CR:
-		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Mac"), 3);
+		SetStatusBarMessage(wxT("EOL Mode: Mac"), 3);
 		break;
 	case wxSCI_EOL_CRLF:
-		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
+		SetStatusBarMessage(wxT("EOL Mode: Dos/Windows"), 3);
 		break;
 	default:
-		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Unix"), 3);
+		SetStatusBarMessage(wxT("EOL Mode: Unix"), 3);
 		break;
 	}
-	
+
 	if (sel_text.IsEmpty()) {
 		// remove indicators
 		SetIndicatorCurrent(2);
@@ -1576,17 +1578,6 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 		default:
 			break;
 		}
-
-//		// handle completion box control characters that once typed, CL should:
-//		// 1. Insert the selection
-//		// 2. Insert the typed character
-//		if (	event.GetKeyCode() == wxT(' ') ||	// SPACE
-//		        event.ShiftDown() && event.GetKeyCode() == wxT('9') || // (
-//		        event.GetKeyCode() == wxT(',') ||	// < or ,
-//		        event.GetKeyCode() == wxT('.')) {	// > or .
-//			m_ccBox->InsertSelection();
-//			HideCompletionBox();
-//		}
 	}
 	m_context->OnKeyDown(event);
 }
@@ -2042,7 +2033,7 @@ int LEditor::GetEOLByContent()
 	size_t pos1 = static_cast<size_t>(txt.Find(wxT("\n")));
 	size_t pos2 = static_cast<size_t>(txt.Find(wxT("\r\n")));
 	size_t pos3 = static_cast<size_t>(txt.Find(wxT("\r")));
-	
+
 	size_t max_size_t = static_cast<size_t>(-1);
 	// the buffer is not empty but it does not contain any EOL as well
 	if (pos1 == max_size_t && pos2 == max_size_t && pos3 == max_size_t ) {
@@ -2079,4 +2070,13 @@ int LEditor::GetEOLByOS()
 #else
 	return wxSCI_EOL_CRLF;
 #endif
+}
+
+void LEditor::SetStatusBarMessage(const wxString& msg, int field)
+{
+	// send event to main frame to perform the update
+	wxCommandEvent e(wxEVT_CMD_UPDATE_STATUS_BAR);
+	e.SetInt(field);
+	e.SetString(msg);
+	Frame::Get()->AddPendingEvent(e);
 }

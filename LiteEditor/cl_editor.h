@@ -54,6 +54,7 @@ class CCBox;
 	#endif // WXDLLIMPEXP_LE
 #endif
 
+const extern wxEventType wxEVT_CMD_UPDATE_STATUS_BAR;
 /**
  * \ingroup LiteEditor
  * LEditor CodeLite editing component based on Scintilla
@@ -108,7 +109,14 @@ public:
 	// Save content of the editor to a given file (Save As...)
 	// this function prompts the user for selecting file name
 	bool SaveFileAs();
-
+	
+	/**
+	 * \brief send event to the main frame to update the status bar at a given field
+	 * \param msg message to print
+	 * \param field field to print the message
+	 */
+	void SetStatusBarMessage(const wxString &msg, int field);
+	
 	void CompleteWord();
 	
 	// set this editor file name

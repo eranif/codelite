@@ -30,6 +30,8 @@ MoveFuncImplDlg::MoveFuncImplDlg( wxWindow* parent, const wxString &text, const 
 {
 	m_preview->SetText(text);
 	m_filePicker->SetPath(fileName);
+	m_preview->SetFocus();
+	Centre();
 }
 
 void MoveFuncImplDlg::SetText(const wxString &text)

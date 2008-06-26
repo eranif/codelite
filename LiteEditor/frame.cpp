@@ -146,7 +146,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED, Frame::OnSearchThread)
-
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_UPDATE_STATUS_BAR, Frame::OnUpdateStatusBar)
+	
 	//build/debugger events
 	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_ADDLINE, Frame::OnBuildEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_STARTED, Frame::OnBuildEvent)
@@ -3056,4 +3057,11 @@ void Frame::OnDestroyDetachedPane(wxCommandEvent& e)
 		pane->Destroy();
 	}
 	m_mgr.Update();
+}
+
+void Frame::OnUpdateStatusBar(wxCommandEvent& e)
+{
+	wxString msg = e.GetString();
+	int field = e.GetInt();
+	GetStatusBar()->SetStatusText(msg, field);
 }

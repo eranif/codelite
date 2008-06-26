@@ -378,6 +378,7 @@ protected:
 	void OnNewVersionAvailable(wxCommandEvent &e);
 	void OnDetachWorkspaceViewTab(wxCommandEvent &e);
 	void OnDestroyDetachedPane(wxCommandEvent &e);
+	void OnUpdateStatusBar(wxCommandEvent &e);
 	
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);

@@ -301,7 +301,7 @@ public:
 	 * \param name partial tag name 
 	 * \param tags [output] vector of tags
 	 */
-	void TagsByScopeAndName(const wxString& scope, const wxString &name, std::vector<TagEntryPtr> &tags, SearchFlags flags = PartialMatch);
+	void TagsByScopeAndName(const wxString& scope, const wxString &name, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);
 
 	/**
 	 * Return autocompletion candidates based on parsing an expression and retrieving its member from the database.
@@ -707,8 +707,8 @@ protected:
 	void DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> &tags, bool onlyWorkspace = false);
 	void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
 	void RemoveDuplicatesTips(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
-	void GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &tags, SearchFlags flags = PartialMatch);
-	void GetLocalTags(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags, SearchFlags flags = PartialMatch);
+	void GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);
+	void GetLocalTags(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);
 	void TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips);
 	void GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips);
 	DoxygenComment DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix);

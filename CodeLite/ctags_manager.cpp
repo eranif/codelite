@@ -596,7 +596,7 @@ bool TagsManager::IsValidCtagsFile(const wxFileName &filename) const
 // >>>>>>>>>>>>>>>>>>>>> Code Completion API START
 //-----------------------------------------------------------------------------
 
-void TagsManager::TagsByScopeAndName(const wxString& scope, const wxString &name, std::vector<TagEntryPtr> &tags, SearchFlags flags)
+void TagsManager::TagsByScopeAndName(const wxString& scope, const wxString &name, std::vector<TagEntryPtr> &tags, size_t flags)
 {
 	wxString sql;
 	std::vector<wxString> derivationList;
@@ -686,8 +686,8 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		scope = GetLanguage()->GetScope(text);
 		std::vector<TagEntryPtr> tmpCandidates;
 		GetGlobalTags(word, tmpCandidates);
-		GetLocalTags(word, scope, tmpCandidates);
-		GetLocalTags(word, funcSig, tmpCandidates);
+		GetLocalTags(word, scope, tmpCandidates, PartialMatch | IgnoreCaseSensitive);
+		GetLocalTags(word, funcSig, tmpCandidates, PartialMatch | IgnoreCaseSensitive);
 		TagsByScopeAndName(scopeName, word, tmpCandidates);
 		for (size_t i=0; i<additionlScopes.size(); i++) {
 			TagsByScopeAndName(additionlScopes.at(i), word, tmpCandidates);
@@ -782,7 +782,7 @@ void TagsManager::RemoveDuplicatesTips(std::vector<TagEntryPtr>& src, std::vecto
 	}
 }
 
-void TagsManager::GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &tags, SearchFlags flags)
+void TagsManager::GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &tags, size_t flags)
 {
 	wxString sql, tmpName;
 
@@ -802,7 +802,7 @@ void TagsManager::GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
 }
 
-void TagsManager::GetLocalTags(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags, SearchFlags flags)
+void TagsManager::GetLocalTags(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags, size_t flags)
 {
 	//collect tags from the current scope text
 	GetLanguage()->GetLocalVariables(scope, tags, name, flags);

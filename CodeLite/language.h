@@ -47,7 +47,8 @@
 enum SearchFlags
 {
 	PartialMatch = 1,
-	ExactMatch = 2
+	ExactMatch = 2,
+	IgnoreCaseSensitive = 4
 };
 
 class TagsManager;
@@ -185,7 +186,7 @@ public:
 	 *			   'variable' with public access
 	 * \param name optional name to look for (name can be partial).
 	 */
-	void GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &tags, const wxString &name = wxEmptyString, SearchFlags flag = PartialMatch);
+	void GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &tags, const wxString &name = wxEmptyString, size_t flag = PartialMatch);
 	
 	
 	bool VariableFromPattern(const wxString &pattern, Variable &var);

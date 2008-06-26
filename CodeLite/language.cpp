@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : language.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : language.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "precompiled_header.h"
+#include "precompiled_header.h"
 
 #include "language.h"
 #include "variable.h"
@@ -1061,20 +1061,20 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 			//so add a 'void ' infront of the function...
 			wxString pat_tag(pattern);
 			pat_tag = pat_tag.Trim(false).Trim();
-			
+
 			wxString pat3;
-			
+
 			// consider virtual methods as well
 			bool virt(false);
 			virt = pat_tag.StartsWith(wxT("virtual"), &pat3);
-			if( virt ) {
+			if ( virt ) {
 				pat3.Prepend(wxT("void "));
 				pat3.Prepend(wxT("virtual "));
 			} else {
 				pat3 = pat_tag;
 				pat3.Prepend(wxT("void "));
 			}
-						
+
 			const wxCharBuffer patbuf2 = _C(pat3);
 			get_functions(patbuf2.data(), fooList, ignoreTokens);
 			if (fooList.size() == 1) {
@@ -1087,7 +1087,7 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 	return false;
 }
 
-void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &tags, const wxString &name, SearchFlags flags)
+void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &tags, const wxString &name, size_t flags)
 {
 	VariableList li;
 	Variable var;
@@ -1112,12 +1112,22 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 		wxString tagName = _U(var.m_name.c_str());
 
 		//if we have name, collect only tags that matches name
-		if (!name.IsEmpty()) {
-			if (flags == PartialMatch && !tagName.StartsWith(name))
-				continue;
-			if (flags == ExactMatch && tagName != name)
-				continue;
+		if (name.IsEmpty())
+			continue;
+		
+		// incase CaseSensitive is not required, make both string lower case
+		wxString tmpName(name);
+		wxString tmpTagName(tagName);
+		if(flags & IgnoreCaseSensitive) {
+			tmpName.MakeLower();
+			tmpTagName.MakeLower();
 		}
+		
+		if (flags & PartialMatch && !tmpTagName.StartsWith(tmpName))
+			continue;
+			
+		if (flags & ExactMatch && tmpTagName != tmpName)
+			continue;
 
 		TagEntryPtr tag(new TagEntry());
 		tag->SetName(tagName);

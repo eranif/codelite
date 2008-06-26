@@ -23,4 +23,4 @@ xcopy astyle.sample "update\" /Y
 xcopy CodeLite.exe "update\" /Y
 xcopy wxmsw28u_gcc*.dll "update\" /Y
 xcopy ..\sdk\curl\lib\libcurl-4.dll "update\" /Y
-xcopy bin\premakesinglebuild.lua "update\" /Y
+xcopy premakesinglebuild.lua "update\" /Y

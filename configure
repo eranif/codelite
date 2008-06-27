@@ -95,11 +95,21 @@ createVariables()
 createMainTargets()
 {
 	echo "## build tagrets" >> Makefile
+	
+	## default
+	target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins "
+	
+	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
-		echo "all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins post_build_msg" >> Makefile
-	else
-		echo "all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins " >> Makefile
-	fi	
+		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins post_build_msg"
+	fi
+	
+	if [ "$os_name" = "Darwin" ]; then
+		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins mac_bundle"
+	fi
+	
+	## add the "all" target to the makefile
+	echo "${target_all}" >> Makefile
 	echo "" >> Makefile
 
 	echo "ctags: sdk/ctags/Makefile" >> Makefile
@@ -122,6 +132,13 @@ createMainTargets()
 	echo "	\$(RM) -fr \$(OBJ_DIR)" >> Makefile
 	echo "" >> Makefile
 
+	if [ "$os_name" = "Darwin" ]; then
+		echo "mac_bundle: " >> Makefile
+		echo "	@echo Creating Mac bundle..." >> Makefile
+		echo "	@cd Runtime && ./make_mac_bundle.sh" >> Makefile
+		echo "	@echo done" >> Makefile
+		echo "" >> Makefile
+	fi
 }
 
 createObjectList ()

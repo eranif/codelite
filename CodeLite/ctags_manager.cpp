@@ -2283,7 +2283,7 @@ void TagsManager::CacheFile(const wxString& fileName)
 	m_cachedFileFunctionsTags.clear();
 	
 	sql << wxT("select * from tags where file = '")
-		<< fileName << wxT("' and kind='function' order by line DESC");
+		<< fileName << wxT("' and kind in('function', 'prototype') order by line DESC");
 
 	try {
 		wxSQLite3ResultSet rs = m_pDb->Query(sql);

@@ -2279,8 +2279,8 @@ void TagsManager::CacheFile(const wxString& fileName)
 	}
 
 	wxString sql;
-	ClearCachedFile(fileName);
 	m_cachedFile = fileName;
+	m_cachedFileFunctionsTags.clear();
 	
 	sql << wxT("select * from tags where file = '")
 		<< fileName << wxT("' and kind='function' order by line DESC");

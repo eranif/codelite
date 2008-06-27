@@ -567,19 +567,17 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 	if (tags.size() == 1) {
 		//we have a single match, test to see if it a typedef
 		TagEntryPtr tag = tags.at(0);
-		if (tag->GetKind() == wxT("typedef")) {
-			wxString realName = tag->NameFromTyperef(templateInitList);
-			if (realName.IsEmpty() == false) {
-				typeName  = realName;
-				typeScope = tag->GetScope();
+		wxString realName = tag->NameFromTyperef(templateInitList);
+		if (realName.IsEmpty() == false) {
+			typeName  = realName;
+			typeScope = tag->GetScope();
 
-				//incase the realName already includes the scope, remove it from the typename
-				if (!typeScope.IsEmpty() && typeName.StartsWith(typeScope, &typeName)) {
-					//remove any :: prefix
-					typeName.StartsWith(wxT("::"), &typeName);
-				}
-				res = true;
+			//incase the realName already includes the scope, remove it from the typename
+			if (!typeScope.IsEmpty() && typeName.StartsWith(typeScope, &typeName)) {
+				//remove any :: prefix
+				typeName.StartsWith(wxT("::"), &typeName);
 			}
+			res = true;
 		}
 	}
 	return res;

@@ -539,7 +539,10 @@ bool LEditor::SaveFile()
 		wxString projName = GetProjectName();
 		if ( projName.Trim().Trim(false).IsEmpty() )
 			return true;
-
+		
+		// clear cached file, this function does nothing if the file is not cached
+		TagsManagerST::Get()->ClearCachedFile(GetFileName().GetFullPath());
+		
 		m_context->RetagFile();
 	}
 	return true;

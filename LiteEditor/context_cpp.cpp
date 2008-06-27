@@ -2271,26 +2271,6 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 	return false;
 }
 
-//void ContextCpp::OnScopeUpdate(wxCommandEvent& e)
-//{
-//	//we need to update the navigation bar of the main frame
-//	ScopeJobResult *result = reinterpret_cast<ScopeJobResult*>(e.GetClientData());
-//	if( result ) {
-//		LEditor &ctrl = GetCtrl();
-//
-//		// do we still need to update?
-//		TagEntryPtr tag( result->tag );
-//
-//		if(ctrl.GetCurrentLine() == result->last_line) {
-//			// update the scope
-//			Frame::Get()->GetMainBook()->UpdateScope( tag );
-//		}
-//
-//		// delete the result
-//		delete result;
-//	}
-//}
-
 void ContextCpp::OnRetagFile(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
@@ -2305,17 +2285,14 @@ void ContextCpp::OnRetagFile(wxCommandEvent& e)
 
 void ContextCpp::RetagFile()
 {
-	//-------------------------------------------------------------------
-	// Using the CodeParser library, enforces us to notify the parsing
-	// thread once the file is saved. ctags accepts file name, so we
-	// notify him once the file on the disk is changed, there is no
-	// point in notifying the parsing thread on, for example, OnCharAdded
-	// event, since the actual file on the disk was not modified
-	//-------------------------------------------------------------------
 	LEditor &ctrl = GetCtrl();
 	ManagerST::Get()->RetagFile(ctrl.GetFileName().GetFullPath());
 
 	ctrl.UpdateColours();
+	
+	// incase this file is not cache this function does nothing
+	TagsManagerST::Get()->ClearCachedFile(ctrl.GetFileName().GetFullPath());
+	
 	ctrl.SetActive();
 }
 

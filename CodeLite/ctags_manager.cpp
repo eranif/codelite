@@ -1143,7 +1143,12 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 	for (i=0; i<maxVal; i++) {
 		wxString fileTags;
 		wxFileName curFile(files.Item(i));
-
+		
+		// if the cached file is being re-tagged, clear the cache
+		if(IsFileCached(curFile.GetFullPath())) {
+			ClearCachedFile(curFile.GetFullPath());
+		}
+		
 		// update the progress bar
 		wxString msg;
 		msg << wxT("Parsing file: ") << curFile.GetFullName();
@@ -1776,28 +1781,40 @@ TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName &fileName, int li
 	if (!m_pDb) {
 		return NULL;
 	}
-
-	wxString sql;
-	sql << wxT("select * from tags where file = '")
-	<< fileName.GetFullPath()
-	<< wxT("' and line <= ")
-	<< lineno
-	<< wxT(" and kind='function' order by line DESC");
-
-	//we take the first entry
-	try {
-		wxSQLite3ResultSet rs = m_pDb->Query(sql);
-		if ( rs.NextRow() ) {
-			// Construct a TagEntry from the rescord set
-			TagEntryPtr tag(new TagEntry(rs));
-			rs.Finalize();
-			return tag;
+	
+	if(!IsFileCached(fileName.GetFullPath())) {
+		CacheFile(fileName.GetFullPath());
+	} 
+	
+	for(size_t i=0; i<m_cachedFileFunctionsTags.size(); i++){
+		TagEntryPtr t = m_cachedFileFunctionsTags.at(i);
+		if(t->GetLine() <= lineno) {
+			return t;
 		}
-		rs.Finalize();
-	} catch ( wxSQLite3Exception& e) {
-		wxUnusedVar(e);
 	}
 	return NULL;
+//	
+//	wxString sql;
+//	sql << wxT("select * from tags where file = '")
+//	<< fileName.GetFullPath()
+//	<< wxT("' and line <= ")
+//	<< lineno
+//	<< wxT(" and kind='function' order by line DESC");
+//
+//	//we take the first entry
+//	try {
+//		wxSQLite3ResultSet rs = m_pDb->Query(sql);
+//		if ( rs.NextRow() ) {
+//			// Construct a TagEntry from the rescord set
+//			TagEntryPtr tag(new TagEntry(rs));
+//			rs.Finalize();
+//			return tag;
+//		}
+//		rs.Finalize();
+//	} catch ( wxSQLite3Exception& e) {
+//		wxUnusedVar(e);
+//	}
+//	return NULL;
 }
 
 void TagsManager::GetScopesFromFile(const wxFileName &fileName, std::vector< TagEntryPtr > &tags)
@@ -2253,4 +2270,42 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
 			protos[it->first] = it->second;
 		}
 	}
+}
+
+void TagsManager::CacheFile(const wxString& fileName)
+{
+	if (!m_pDb) {
+		return;
+	}
+
+	wxString sql;
+	ClearCachedFile(fileName);
+	m_cachedFile = fileName;
+	
+	sql << wxT("select * from tags where file = '")
+		<< fileName << wxT("' and kind='function' order by line DESC");
+
+	try {
+		wxSQLite3ResultSet rs = m_pDb->Query(sql);
+		while ( rs.NextRow() ) {
+			TagEntryPtr tag(new TagEntry(rs));
+			m_cachedFileFunctionsTags.push_back(tag);
+		}
+		rs.Finalize();
+	} catch ( wxSQLite3Exception& e) {
+		wxUnusedVar(e);
+	}
+}
+
+void TagsManager::ClearCachedFile(const wxString &fileName)
+{
+	if(fileName == m_cachedFile) {
+		m_cachedFile.Clear();
+		m_cachedFileFunctionsTags.clear();
+	}
+}
+
+bool TagsManager::IsFileCached(const wxString& fileName) const
+{
+	return fileName == m_cachedFile;
 }

@@ -150,12 +150,35 @@ class WXDLLIMPEXP_CL TagsManager : public wxEvtHandler
 	Language *m_lang;
 	bool m_useExternalDatabase;
 	
+	// a very primitive cache to cache all the tags of a given file
+	std::vector<TagEntryPtr> m_cachedFileFunctionsTags;
+	wxString m_cachedFile;
+	
 public:
 	
 	void SetLanguage(Language *lang);
 	Language *GetLanguage();
 		
+	/**
+	 * \brief return the currently cached file
+	 */
+	bool IsFileCached(const wxString &fileName) const;
 	
+	/**
+	 * \brief clear the file cached
+	 */
+	void ClearCachedFile(const wxString &fileName);
+	
+	/**
+	 * \brief load fileName into cache, note that this call will clear perivous
+	 * cache 
+	 */
+	void CacheFile(const wxString &fileName);
+	
+	/**
+	 * \brief return the cached file tags
+	 */
+	const std::vector<TagEntryPtr>& GetCachedFileTags() const {return m_cachedFileFunctionsTags;}
 	
 	/**
 	 * Return the CtagsOptions used by the tags manager

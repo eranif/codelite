@@ -318,7 +318,6 @@
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../Interfaces"/>
@@ -327,7 +326,6 @@
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --libs --debug=yes --unicode=yes);$(shell pkg-config --libs gtk+-2.0)">
         <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libwxflatnotebookud.a"/>
         <Library Value="libCodeLiteud.a"/>
         <Library Value="libplugin_sdkud.a"/>
         <Library Value="libwxscintillaud.a"/>
@@ -356,7 +354,6 @@
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../Interfaces"/>
@@ -365,7 +362,6 @@
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --libs --unicode=yes --debug=no);$(shell pkg-config --libs gtk+-2.0)">
         <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libwxflatnotebooku.a"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libplugin_sdku.a"/>
         <Library Value="libwxscintillau.a"/>
@@ -397,7 +393,6 @@ resources.cpp: resources.xrc
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../Interfaces"/>
@@ -415,7 +410,6 @@ resources.cpp: resources.xrc
         <Library Value="libwxscintillaud.a"/>
         <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
-        <Library Value="libwxflatnotebookud.a"/>
         <Library Value="libwxmsw28ud.a"/>
       </Linker>
       <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
@@ -446,7 +440,6 @@ svninfo.cpp:
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../Interfaces"/>
@@ -464,7 +457,6 @@ svninfo.cpp:
         <Library Value="libwxscintillau.a"/>
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
-        <Library Value="libwxflatnotebooku.a"/>
         <Library Value="libwxmsw28u.a"/>
       </Linker>
       <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
@@ -490,7 +482,6 @@ resources.cpp: resources.xrc
     </Configuration>
   </Settings>
   <Dependencies>
-    <Project Name="wxflatnotebook"/>
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>

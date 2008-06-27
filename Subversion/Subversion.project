@@ -54,7 +54,6 @@
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
@@ -63,7 +62,6 @@
       <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes);">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.a"/>
-        <Library Value="libwxflatnotebookud.a"/>
         <Library Value="libCodeLiteud.a"/>
         <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libwxscintillaud.a"/>
@@ -92,7 +90,6 @@
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
@@ -101,7 +98,6 @@
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.a"/>
-        <Library Value="libwxflatnotebooku.a"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libwxscintillau.a"/>
@@ -130,7 +126,6 @@
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
@@ -143,7 +138,6 @@
         <Library Value="libCodeLiteud.a"/>
         <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
-        <Library Value="libwxFlatNotebookud.a"/>
         <Library Value="libwxscintillaud.a"/>
         <Library Value="libwxmsw28ud.a"/>
       </Linker>
@@ -170,7 +164,6 @@
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sdk/wxflatnotebook/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
@@ -179,7 +172,6 @@
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
         <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libwxFlatNotebooku.a"/>
         <Library Value="libplugin_sdku.a"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>

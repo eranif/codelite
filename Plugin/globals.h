@@ -135,5 +135,11 @@ void Mkdir(const wxString &path);
  */
 bool WriteFileWithBackup(const wxString &file_name, const wxString &content, bool backup);
 
+/**
+ * \brief copy text to the clipboard
+ * \return true on success false otherwise
+ */
+bool CopyToClipboard(const wxString &text);
+
 #endif //GLOBALS_H
 

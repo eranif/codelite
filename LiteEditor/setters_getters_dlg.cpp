@@ -141,7 +141,7 @@ wxString SettersGettersDlg::GenerateSetter(TagEntryPtr tag)
 	bool startWithUpper  = m_checkStartWithUppercase->IsChecked();
 
 	Variable var;
-	if(LanguageST::Get()->VariableFromPattern(tag->GetPattern(), var))
+	if(LanguageST::Get()->VariableFromPattern(tag->GetPattern(), tag->GetName(), var))
 	{
 		wxString func;
 		wxString scope = _U(var.m_typeScope.c_str());
@@ -178,7 +178,7 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag)
 	bool startWithUpper  = m_checkStartWithUppercase->IsChecked();
 
 	Variable var;
-	if(LanguageST::Get()->VariableFromPattern(tag->GetPattern(), var))
+	if(LanguageST::Get()->VariableFromPattern(tag->GetPattern(), tag->GetName(), var))
 	{
 		wxString func;
 		wxString scope = _U(var.m_typeScope.c_str());

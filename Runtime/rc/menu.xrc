@@ -686,6 +686,17 @@
     </object>    
 
 	<object class="wxMenu" name="dbg_watch_rmenu">
+		<object class="wxMenuItem" name="copy_expr">
+            <label>Copy Expression</label>
+        </object>
+		<object class="wxMenuItem" name="copy_value">
+            <label>Copy Value</label>
+        </object>
+		<object class="wxMenuItem" name="copy_both">
+            <label>Copy Both</label>
+        </object>
+		
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="edit_expr">
             <label>Edit</label>
         </object>

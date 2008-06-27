@@ -65,7 +65,7 @@ wxString CppCommentCreator::FunctionComment()
 	lang->GetLocalVariables(m_tag->GetSignature(), tags);
 	
 	Variable var;
-	lang->VariableFromPattern(m_tag->GetPattern(), var);
+	lang->VariableFromPattern(m_tag->GetPattern(), m_tag->GetName(), var);
 	
 	comment << wxT("$(FunctionPattern)\n");
 	for(size_t i=0; i<tags.size(); i++)

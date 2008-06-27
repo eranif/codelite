@@ -60,6 +60,9 @@ protected:
 	void DoShowMoreDetails(long item);
 	void OnMenuExpandExpr(wxCommandEvent &event);
 	void OnMenuEditExpr(wxCommandEvent &event);
+	void OnMenuCopyExpr(wxCommandEvent &event);
+	void OnMenuCopyValue(wxCommandEvent &event);
+	void OnMenuCopyBoth(wxCommandEvent &event);
 	void OnMenuDerefExpr(wxCommandEvent &event);
 	void OnListEditLabelEnd(wxListEvent &event);
 

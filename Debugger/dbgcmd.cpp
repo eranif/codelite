@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : dbgcmd.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : dbgcmd.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "dbgcmd.h"
+#include "dbgcmd.h"
 #include "wx/tokenzr.h"
 #include "debuggergdb.h"
 #include "gdblexer.h"
@@ -126,10 +126,10 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 	fileName = fileName.AfterFirst(wxT('"'));
 	fileName = fileName.BeforeLast(wxT('"'));
 	fileName.Replace(wxT("\\\\"), wxT("\\"));
-	
+
 	m_observer->UpdateFileLine(fileName, lineno);
 #else
-	
+
 	// On Mac we use the stack info the
 	// get the current file and line from the debugger
 	wxString tmpLine(line);
@@ -152,7 +152,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 
 	StackEntry entry;
 	ParseStackEntry(tmpLine, entry);
-	
+
 	long line_number;
 	entry.line.ToLong(&line_number);
 	m_observer->UpdateFileLine(entry.file, line_number);
@@ -206,7 +206,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 
 		if (signame == wxT("SIGSEGV")) {
 			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_SIGSEGV);
-		} else if(signame == wxT("EXC_BAD_ACCESS")){
+		} else if (signame == wxT("EXC_BAD_ACCESS")) {
 			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_EXC_BAD_ACCESS);
 		} else {
 			//default
@@ -424,14 +424,17 @@ void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent)
 				displayLine = tmpValue;
 			}
 
-			if (displayLine.IsEmpty() == false) {
-				//make a sub node
-				NodeData data;
-				data.name = displayLine;
-				TreeNode<wxString, NodeData> *child = parent->AddChild(data.name, data);
-				MakeSubTree(child);
-				displayLine.Empty();
+			// display line can be empty (in case of unnamed structures)
+			if (displayLine.empty()) {
+				displayLine = wxT("<unnamed>");
 			}
+			
+			//make a sub node
+			NodeData data;
+			data.name = displayLine;
+			TreeNode<wxString, NodeData> *child = parent->AddChild(data.name, data);
+			MakeSubTree(child);
+			displayLine.Empty();
 		}
 		break;
 		case (int)',':

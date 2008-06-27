@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : simpletable.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : simpletable.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "simpletable.h" 
+#include "simpletable.h"
 #include <wx/textdlg.h> //wxGetTextFromUser
 #include "manager.h"
 #include <wx/xrc/xmlres.h>
@@ -42,6 +42,9 @@ SimpleTable::SimpleTable( wxWindow* parent )
 	Connect(XRCID("del_expr_all"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SimpleTable::OnDeleteAll), NULL, this);
 	Connect(XRCID("expand_expr"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SimpleTable::OnMenuExpandExpr), NULL, this);
 	Connect(XRCID("edit_expr"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SimpleTable::OnMenuEditExpr), NULL, this);
+	Connect(XRCID("copy_expr"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SimpleTable::OnMenuCopyExpr), NULL, this);
+	Connect(XRCID("copy_both"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SimpleTable::OnMenuCopyBoth), NULL, this);
+	Connect(XRCID("copy_value"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SimpleTable::OnMenuCopyValue), NULL, this);
 	Connect(XRCID("dereference_expr"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SimpleTable::OnMenuDerefExpr), NULL, this);
 }
 
@@ -160,7 +163,7 @@ void SimpleTable::AddExpression(const wxString &expr)
 
 	long item = AppendListCtrlRow(m_listTable);
 	this->SetColumnText(item, 0, expr);
-	
+
 	//info.SetState(wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 	//item = m_listTable->InsertItem(info);
 
@@ -290,3 +293,35 @@ void SimpleTable::OnMenuEditExpr(wxCommandEvent &event)
 		}
 	}
 }
+
+void SimpleTable::OnMenuCopyExpr(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	if (m_selectedId != wxNOT_FOUND) {
+		wxString expr = GetColumnText(m_selectedId, 0);
+		// copy expr + value to clipboard
+		CopyToClipboard(expr);
+	}	
+}
+
+void SimpleTable::OnMenuCopyBoth(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	if (m_selectedId != wxNOT_FOUND) {
+		wxString expr = GetColumnText(m_selectedId, 0);
+		wxString value = GetColumnText(m_selectedId, 1);
+		// copy expr + value to clipboard
+		CopyToClipboard(expr + wxT(" ") + value);
+	}
+}
+
+void SimpleTable::OnMenuCopyValue(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	if (m_selectedId != wxNOT_FOUND) {
+		wxString value = GetColumnText(m_selectedId, 1);
+		// copy expr + value to clipboard
+		CopyToClipboard(value);
+	}	
+}
+

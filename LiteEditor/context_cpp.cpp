@@ -1470,8 +1470,17 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 			return;
 		}
 
-		long start = ctrl.WordStartPosition(pos, true);
-		long end   = ctrl.WordEndPosition(pos, true);
+		long start, end;
+		// if thers is no selected text, use the word calculated from the caret position
+		if (ctrl.GetSelectedText().IsEmpty()) {
+			start = ctrl.WordStartPosition(pos, true);
+			end   = ctrl.WordEndPosition(pos, true);
+		} else {
+			// selection is not empty, use it
+			start = ctrl.GetSelectionStart();
+			end = ctrl.GetSelectionEnd();
+		}
+		
 		word = ctrl.GetTextRange(start, end);
 		if (word.IsEmpty()) {
 			return;
@@ -2305,7 +2314,7 @@ void ContextCpp::RetagFile()
 	//-------------------------------------------------------------------
 	LEditor &ctrl = GetCtrl();
 	ManagerST::Get()->RetagFile(ctrl.GetFileName().GetFullPath());
-	
+
 	ctrl.UpdateColours();
 	ctrl.SetActive();
 }
@@ -2313,10 +2322,10 @@ void ContextCpp::RetagFile()
 void ContextCpp::OnUserTypedXChars(const wxString &word)
 {
 	// user typed more than 3 chars, display completion box with C++ keywords
-	if( IsCommentOrString(GetCtrl().GetCurrentPos()) ) {
+	if ( IsCommentOrString(GetCtrl().GetCurrentPos()) ) {
 		return;
 	}
-	
+
 	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_CPP_KEYWORD_ASISST) {
 		std::vector<TagEntryPtr> tags;
 		MakeCppKeywordsTags(word, tags);
@@ -2355,7 +2364,7 @@ void ContextCpp::MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryP
 wxString ContextCpp::CallTipContent()
 {
 	// if we have an active call tip, return its content
-	if(GetCtrl().CallTipActive() && m_ct && m_ct->Count() > 0) {
+	if (GetCtrl().CallTipActive() && m_ct && m_ct->Count() > 0) {
 		return m_ct->All();
 	}
 	return wxEmptyString;

@@ -428,8 +428,8 @@ bool DbgGdb::Break(const wxString &fileName, long lineno)
 	//when using the simple command line interface, use quatations mark
 	//around file names
 //	if (useQuatations) {
-		tmpfileName.Prepend(wxT("\""));
-		tmpfileName.Append(wxT("\""));
+	tmpfileName.Prepend(wxT("\""));
+	tmpfileName.Append(wxT("\""));
 //	}
 
 	command << tmpfileName << wxT(":") << lineno;
@@ -465,8 +465,8 @@ bool DbgGdb::Interrupt()
 			HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)m_debuggeePid);
 			BOOL res = DebugBreakProcessFunc(process);
 			return res == TRUE;
-		} 
-		// on Windows version < XP we need to find a solution for interrupting the 
+		}
+		// on Windows version < XP we need to find a solution for interrupting the
 		// debuggee process
 		return false;
 #else

@@ -189,7 +189,7 @@ public:
 	void GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &tags, const wxString &name = wxEmptyString, size_t flag = PartialMatch);
 	
 	
-	bool VariableFromPattern(const wxString &pattern, Variable &var);
+	bool VariableFromPattern(const wxString &pattern, const wxString &name, Variable &var);
 	bool FunctionFromPattern(const wxString &pattern, clFunction &foo);
 
 private:

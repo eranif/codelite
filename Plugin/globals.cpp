@@ -34,6 +34,7 @@
 #include "wx/listctrl.h"
 #include "wx/ffile.h"
 #include "procutils.h"
+#include <wx/clipbrd.h>
 
 static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &fileName);
 
@@ -394,4 +395,24 @@ bool WriteFileWithBackup(const wxString &file_name, const wxString &content, boo
 	file.Write(content);
 	file.Close();
 	return true;
+}
+
+bool CopyToClipboard(const wxString& text)
+{
+	bool ret(true);
+	
+#if wxUSE_CLIPBOARD
+	if (wxTheClipboard->Open()) {
+		wxTheClipboard->UsePrimarySelection(false);
+		if (!wxTheClipboard->SetData(new wxTextDataObject(text))) {
+			ret = false;
+		}
+		wxTheClipboard->Close();
+	} else {
+		ret = false;
+	}
+#else // wxUSE_CLIPBOARD
+	ret = false;
+#endif
+	return ret;
 }

@@ -923,7 +923,7 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 		} // if(tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype"))
 		else if (tag->GetKind() == wxT("member") || tag->GetKind() == wxT("variable")) {
 			Variable var;
-			if (VariableFromPattern(tag->GetPattern(), var)) {
+			if (VariableFromPattern(tag->GetPattern(), tag->GetName(), var)) {
 				type = _U(var.m_type.c_str());
 				typeScope = var.m_typeScope.empty() ? wxT("<global>") : _U(var.m_typeScope.c_str());
 				return true;
@@ -970,7 +970,7 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 	return false;
 }
 
-bool Language::VariableFromPattern(const wxString &in, Variable &var)
+bool Language::VariableFromPattern(const wxString &in, const wxString &name, Variable &var)
 {
 	VariableList li;
 	wxString pattern(in);
@@ -991,9 +991,13 @@ bool Language::VariableFromPattern(const wxString &in, Variable &var)
 	}
 
 	get_variables(patbuf.data(), li, ignoreTokens);
-	if (li.size() == 1) {
-		var = (*li.begin());
-		return true;
+	VariableList::iterator iter = li.begin();
+	for(; iter != li.end(); iter++){
+		Variable v = *iter;
+		if(name == _U(v.m_name.c_str())) {
+			var = (*iter);
+			return true;
+		}
 	} // if(li.size() == 1)
 	return false;
 }

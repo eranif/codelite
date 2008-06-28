@@ -161,7 +161,6 @@ Manager::Manager(void)
 		, m_quickWatchDlg(NULL)
 		, m_frameLineno(wxNOT_FOUND)
 		, m_useTipWin(false)
-		//, m_debuggerTipWin(NULL)
 		, m_tipWinPos(wxNOT_FOUND)
 {
 }
@@ -2170,9 +2169,11 @@ void Manager::UpdateDebuggerPane()
 			} else if (pane->GetNotebook()->GetCurrentPage() == pane->GetWatchesTable()) {
 				//update the watches table
 				wxArrayString expressions = pane->GetWatchesTable()->GetExpressions();
+				wxString format = pane->GetWatchesTable()->GetDisplayFormat();
 				for (size_t i=0; i<expressions.GetCount(); i++) {
-					dbgr->EvaluateExpressionToString(expressions.Item(i));
+					dbgr->EvaluateExpressionToString(expressions.Item(i), format);
 				}
+				
 			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetFrameListView()) {
 				//update the stack call
 				dbgr->ListFrames();
@@ -2734,7 +2735,7 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 	//expand variables
 	wxString cmd = bldConf->GetCommand();
 	cmd = ExpandVariables(cmd, GetProject(projectName));
-
+ 
 	wxString cmdArgs = bldConf->GetCommandArguments();
 	cmdArgs = ExpandVariables(cmdArgs, GetProject(projectName));
 

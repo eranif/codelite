@@ -325,3 +325,16 @@ void SimpleTable::OnMenuCopyValue(wxCommandEvent& event)
 	}	
 }
 
+void SimpleTable::OnDisplayFormat(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	
+	// refresh the table
+	RefreshValues();
+}
+
+wxString SimpleTable::GetDisplayFormat()
+{
+	return m_choiceDisplayFormat->GetStringSelection();
+}
+

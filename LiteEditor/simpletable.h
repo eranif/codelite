@@ -65,7 +65,8 @@ protected:
 	void OnMenuCopyBoth(wxCommandEvent &event);
 	void OnMenuDerefExpr(wxCommandEvent &event);
 	void OnListEditLabelEnd(wxListEvent &event);
-
+	void OnDisplayFormat(wxCommandEvent &event);
+	
 public:
 	/** Constructor */
 	SimpleTable( wxWindow* parent );
@@ -76,6 +77,7 @@ public:
 	wxArrayString GetExpressions();
 	void Clear();
 	void RefreshValues();
+	wxString GetDisplayFormat();
 };
 
 #endif // __simpletable__

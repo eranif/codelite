@@ -94,7 +94,7 @@ public:
 	virtual bool IsRunning();
 	virtual bool ExecuteCmd(const wxString &cmd);
 	virtual bool EvaluateExpressionToTree(const wxString &expression);
-	virtual bool EvaluateExpressionToString(const wxString &expression);
+	virtual bool EvaluateExpressionToString(const wxString &expression, const wxString &format);
 	virtual bool QueryLocals();
 	virtual bool ListFrames();
 	virtual bool ListThreads(ThreadEntryArray &threads);

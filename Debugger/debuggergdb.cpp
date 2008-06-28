@@ -745,7 +745,7 @@ void DbgGdb::DoProcessAsyncCommand(wxString &line, wxString &id)
 	}
 }
 
-bool DbgGdb::EvaluateExpressionToString(const wxString &expression)
+bool DbgGdb::EvaluateExpressionToString(const wxString &expression, const wxString &format)
 {
 	static int counter(0);
 	wxString watchName(wxT("watch_num_"));
@@ -760,8 +760,17 @@ bool DbgGdb::EvaluateExpressionToString(const wxString &expression)
 		return false;
 	}
 
-	command.Clear();
+	command.clear();
+	command << wxT("-var-set-format ") << watchName << wxT(" ") << format;
+	//first create the expression
+	res = WriteCommand(command, NULL);
+	if (!res) {
+		//probably gdb is down
+		return false;
+	}
+
 	//execute the watch command
+	command.clear();
 	command << wxT("-var-evaluate-expression ") << watchName;
 	res = WriteCommand(command, new DbgCmdHandlerEvalExpr(m_observer, expression));
 	if (!res) {

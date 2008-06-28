@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : debugger.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : debugger.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef DEBUGGER_H
+#ifndef DEBUGGER_H
 #define DEBUGGER_H
 
 #include "wx/string.h"
@@ -30,8 +30,7 @@
 #include "wx/event.h"
 #include "vector"
 
-enum DebuggerCommands
-{
+enum DebuggerCommands {
 	DBG_PAUSE = 0,
 	DBG_NEXT,
 	DBG_STEPIN,
@@ -66,13 +65,13 @@ struct ThreadEntry {
 typedef std::vector<StackEntry> StackEntryArray;
 typedef std::vector<ThreadEntry> ThreadEntryArray;
 
-struct BreakpointInfo 
-{
+struct BreakpointInfo {
 	wxString file;
 	int lineno;
 };
 
-class DebuggerInformation {
+class DebuggerInformation
+{
 public:
 	wxString name;
 	wxString path;
@@ -81,20 +80,19 @@ public:
 	bool breakAtWinMain;
 
 public:
-	DebuggerInformation() 
-	: name(wxEmptyString)
-	, path(wxEmptyString)
-	, enableDebugLog(false)
-	, enablePendingBreakpoints(true)
+	DebuggerInformation()
+			: name(wxEmptyString)
+			, path(wxEmptyString)
+			, enableDebugLog(false)
+			, enablePendingBreakpoints(true)
 #ifdef __WXMAC__
-	, breakAtWinMain(true)
+			, breakAtWinMain(true)
 #else
-	, breakAtWinMain(false)
+			, breakAtWinMain(false)
 #endif
 	{}
 
-	~DebuggerInformation()
-	{}
+	~DebuggerInformation() {}
 };
 
 
@@ -116,20 +114,26 @@ class EnvironmentConfig;
  * \author Eran
  *
  */
-class IDebugger 
+class IDebugger
 {
 protected:
 	IDebuggerObserver *m_observer;
 	DebuggerInformation m_info;
 	EnvironmentConfig *m_env;
-	
+
 public:
 	IDebugger() : m_env(NULL) {};
-	virtual ~IDebugger(){};
-	virtual void SetObserver(IDebuggerObserver *observer) { m_observer = observer; }
-	virtual IDebuggerObserver *GetObserver(){return m_observer;}
-	virtual void SetEnvironment(EnvironmentConfig *env){m_env = env;}
-	
+	virtual ~IDebugger() {};
+	virtual void SetObserver(IDebuggerObserver *observer) {
+		m_observer = observer;
+	}
+	virtual IDebuggerObserver *GetObserver() {
+		return m_observer;
+	}
+	virtual void SetEnvironment(EnvironmentConfig *env) {
+		m_env = env;
+	}
+
 	// Debugger operations
 	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList) = 0;
 	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList) = 0;
@@ -152,14 +156,16 @@ public:
 	virtual bool QueryLocals() = 0;
 	virtual bool ListFrames() = 0;
 	virtual bool SetFrame(int frame) = 0;
-	virtual void SetDebuggerInformation(const DebuggerInformation& info){m_info = info;}
+	virtual void SetDebuggerInformation(const DebuggerInformation& info) {
+		m_info = info;
+	}
 	virtual bool ListThreads(ThreadEntryArray &threads) = 0;
 	virtual bool SelectThread(long threadId) = 0;
 	virtual void Poke() = 0;
 	//We provide two ways of evulating an expressions:
 	//The short one, which returns a string, and long one
 	//which returns a tree of the result
-	virtual bool EvaluateExpressionToString(const wxString &expression) = 0;
+	virtual bool EvaluateExpressionToString(const wxString &expression, const wxString &format) = 0;
 	virtual bool EvaluateExpressionToTree(const wxString &expression) = 0;
 };
 

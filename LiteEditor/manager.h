@@ -67,7 +67,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	bool m_useTipWin;
 	long m_tipWinPos;
 	wxString m_installDir;
-	
+
 public:
 	/*!
 	 * \brief

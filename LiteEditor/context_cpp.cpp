@@ -1470,15 +1470,24 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 			return;
 		}
 
-		long start, end;
+		long start(0), end(0);
+		long sel_start(0), sel_end(0);
+		
+		start = ctrl.WordStartPosition(pos, true);
+		end   = ctrl.WordEndPosition(pos, true);
+		
 		// if thers is no selected text, use the word calculated from the caret position
-		if (ctrl.GetSelectedText().IsEmpty()) {
-			start = ctrl.WordStartPosition(pos, true);
-			end   = ctrl.WordEndPosition(pos, true);
-		} else {
+		if (!ctrl.GetSelectedText().IsEmpty()) {
 			// selection is not empty, use it
-			start = ctrl.GetSelectionStart();
-			end = ctrl.GetSelectionEnd();
+			sel_start = ctrl.GetSelectionStart();
+			sel_end = ctrl.GetSelectionEnd();
+		}
+		
+		// incase the cursor is placed inside the selected text, 
+		// use the entire selected text and not only the "word"
+		if(pos >= sel_start && pos <= sel_end){
+			start = sel_start;
+			end = sel_end;
 		}
 		
 		word = ctrl.GetTextRange(start, end);

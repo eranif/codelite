@@ -940,8 +940,16 @@ void ContextCpp::CompleteWord()
 	long start = rCtrl.WordStartPosition(pos, true);
 	word = rCtrl.GetTextRange(start, pos);
 
-	if (word.IsEmpty())
+	if (word.IsEmpty()) {
+		// incase the 'word' is empty, test the word to the left of the current pos
+		wxChar ch1 = rCtrl.SafeGetChar(pos - 1);
+		wxChar ch2 = rCtrl.SafeGetChar(pos - 2);
+		
+		if(ch1 == wxT('.') || (ch2 == wxT('-') && ch1 == wxT('>')) ) {
+			CodeComplete();
+		}
 		return;
+	}
 
 	TagsManager *mgr = TagsManagerST::Get();
 

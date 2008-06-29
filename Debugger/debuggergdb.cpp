@@ -226,13 +226,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 
 		if (m_info.enablePendingBreakpoints) {
 			//a workaround for the MI pending breakpoint
-#if defined (__WXGTK__) || defined (__WXMAC__)
 			ExecuteCmd(wxT("set breakpoint pending on"));
-#else
-			// Mac & Windows
-			ExecuteCmd(wxT("set auto-solib-add on"));
-			ExecuteCmd(wxT("set stop-on-solib-events 1"));
-#endif
 		}
 
 		//keep the list of breakpoints
@@ -410,29 +404,18 @@ bool DbgGdb::Break(const wxString &fileName, long lineno)
 	wxString tmpfileName(fn.GetFullPath());
 	tmpfileName.Replace(wxT("\\"), wxT("/"));
 
+//#if defined(__WXMSW__) || defined (__WXGTK__)
 	wxString command(wxT("break "));
-//	bool useQuatations(false);
-//#if defined (__WXGTK__) || defined (__WXMAC__)
-//	if (m_info.enablePendingBreakpoints) {
-//		//On GTK however, it works pretty well.
-//		command = wxT("break ");
-//		useQuatations = true;
-//	} else {
-//		command = wxT("-break-insert ");
-//	}
 //#else
-//	// Mac & Windows
-//	command = wxT("-break-insert ");
+//	wxString command(wxT("-break-insert "));
 //#endif
-
-	//when using the simple command line interface, use quatations mark
-	//around file names
-//	if (useQuatations) {
+//
 	tmpfileName.Prepend(wxT("\""));
-	tmpfileName.Append(wxT("\""));
-//	}
-
-	command << tmpfileName << wxT(":") << lineno;
+	command << tmpfileName << wxT(":") << lineno << wxT("\"");
+	if(m_info.enableDebugLog) {
+		m_observer->UpdateAddLine(command);
+	}
+	
 	return WriteCommand(command, new DbgCmdHandlerBp(m_observer, bp, &m_bpList));
 }
 

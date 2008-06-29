@@ -11,8 +11,8 @@
 
 - Create on the fly tabs for the search results (Find In Files & CScope)
 
-- Generate the 'control' file for the .deb automatically by the configure script
-
 - Allow detaching tabs from the "Workspace View" & "Output View": 
 	- Updated plugins that added pages to the output notebook with a check that if the tab is deatched, make it detach as well 
-	
+
+- Optimize tree updating, make it search by pattern and not by line number + file
+

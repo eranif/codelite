@@ -1984,14 +1984,14 @@ void Frame::OnQuickOutline(wxCommandEvent &event)
 
 	QuickOutlineDlg *dlg = new QuickOutlineDlg(this, ManagerST::Get()->GetActiveEditor()->GetFileName().GetFullPath());
 	if (dlg->ShowModal() == wxID_OK) {
-#ifdef __WXMAC__
-		LEditor *editor = ManagerST::Get()->GetActiveEditor();
-		if (editor) {
-			editor->SetActive();
-		}
-#endif
 	}
 	dlg->Destroy();
+#ifdef __WXMAC__
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	if (editor) {
+		editor->SetActive();
+	}
+#endif
 }
 
 void Frame::OnFindType(wxCommandEvent &event)

@@ -2309,3 +2309,15 @@ bool TagsManager::IsFileCached(const wxString& fileName) const
 {
 	return fileName == m_cachedFile;
 }
+
+wxString TagsManager::GetCTagsCmd()
+{
+	wxString cmd;
+	wxString ctagsCmd;
+	ctagsCmd << m_options.ToString() << m_ctagsCmd;
+
+	// build the command, we surround ctags name with double quatations
+	cmd << wxT("\"") << m_ctagsPath.GetFullPath() << wxT("\"") << ctagsCmd;
+	
+	return cmd;
+}

@@ -61,15 +61,16 @@ public:
 	 * Start the process
 	 * \return the process id
 	 */
-	long Start(bool hide = true);
-	bool HasInput(wxString &input);
+	virtual long Start(bool hide = true);
+	
+	virtual bool HasInput(wxString &input);
 	
 	/**
 	 * \brief read all input from the process output stream
 	 * \param input
 	 * \return true if some data was read, false otherwise
 	 */
-	bool ReadAll(wxString &input);
+	virtual bool ReadAll(wxString &input);
 };
 
 #endif // PipedProcess_H

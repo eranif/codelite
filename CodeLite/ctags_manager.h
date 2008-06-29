@@ -158,7 +158,9 @@ public:
 	
 	void SetLanguage(Language *lang);
 	Language *GetLanguage();
-		
+			
+	wxString GetCTagsCmd();
+	
 	/**
 	 * \brief return the currently cached file
 	 */

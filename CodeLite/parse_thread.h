@@ -32,6 +32,7 @@
 #include <memory>
 #include <wx/stopwatch.h>
 #include "worker_thread.h"
+#include "procutils.h"
 
 #ifdef WXMAKINGDLL_CODELITE
 #    define WXDLLIMPEXP_CL WXEXPORT
@@ -48,6 +49,8 @@ class WXDLLIMPEXP_CL ParseRequest : public ThreadRequest
 	wxString _file;
 	wxString _dbfile;
 	wxString _tags;
+	IProcess *m_ctags;
+
 public:
 
 	// ctor/dtor
@@ -68,6 +71,14 @@ public:
 	}
 	const wxString& getTags() const {
 		return _tags;
+	}
+
+	void setCtags(IProcess* ctags) {
+		this->m_ctags = ctags;
+	}
+	
+	IProcess* getCtags() {
+		return m_ctags;
 	}
 
 	// copy ctor
@@ -101,7 +112,9 @@ private:
 	 * \param request the request to process
 	 */
 	void ProcessRequest(ThreadRequest *request);
-
+	
+	void SourceToTags(const wxString &fileName, IProcess *proc, wxString &tags);
+	
 	/**
 	 * Send an event to the window with an array of items that where changed.
 	 * \param evtType Event type to send, one of:
@@ -164,7 +177,7 @@ public:
 	SymbolTreeEvent(const wxString& project, const wxString &fileName, wxEventType commandType = wxEVT_NULL, int winid = 0)
 			: wxNotifyEvent(commandType, winid)
 			, m_project(project.c_str())
-			, m_fileName(fileName.c_str()){
+			, m_fileName(fileName.c_str()) {
 	}
 
 	/**
@@ -174,7 +187,7 @@ public:
 	SymbolTreeEvent(const SymbolTreeEvent& rhs)
 			: wxNotifyEvent(rhs.GetEventType(), rhs.GetId())
 			, m_project(rhs.m_project.c_str())
-			, m_fileName(rhs.m_fileName.c_str()){
+			, m_fileName(rhs.m_fileName.c_str()) {
 		CopyItems(rhs.m_items);
 	}
 
@@ -192,7 +205,7 @@ public:
 	std::vector<std::pair<wxString, TagEntry> >& GetItems() {
 		return m_items;
 	}
-	
+
 	const wxString& GetProject() const {
 		return m_project;
 	}
@@ -200,7 +213,7 @@ public:
 	const wxString& GetFileName() const {
 		return m_fileName;
 	}
-	
+
 	void SetFileName(const wxChar* fileName) {
 		m_fileName = fileName;
 	}

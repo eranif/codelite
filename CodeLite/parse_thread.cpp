@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : parse_thread.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : parse_thread.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "precompiled_header.h"
+#include "precompiled_header.h"
 
 #include "parse_thread.h"
 #include "ctags_manager.h"
@@ -68,7 +68,8 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	//convert the file content into tags
 	wxString tags;
 	wxString file_name(req->getFile());
-	tagmgr->SourceToTags2(file_name, tags);
+//	tagmgr->SourceToTags2(file_name, tags);
+	SourceToTags(file_name, req->getCtags(), tags);
 	req->setTags(tags);
 
 	//----------------------------------------------
@@ -172,7 +173,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 
 	if ( !modifiedItems.empty() )
 		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), modifiedItems);
-		
+
 	// send "end" event
 	wxCommandEvent e(wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS);
 	wxPostEvent(m_notifiedWindow, e);
@@ -212,6 +213,7 @@ ParseRequest &ParseRequest::operator =(const ParseRequest& rhs)
 	setFile(rhs._file);
 	setDbFile(rhs._dbfile);
 	setTags(rhs._tags);
+	setCtags(rhs.m_ctags);
 	return *this;
 }
 
@@ -222,4 +224,37 @@ void ParseRequest::setFile(const wxString& file)
 
 ParseRequest::~ParseRequest()
 {
+}
+
+void ParseThread::SourceToTags(const wxString& fileName, IProcess *proc, wxString &tags)
+{
+	wxString cmd(fileName.c_str());
+	cmd += wxT("\n");
+	if (proc->IsRunning()) {
+
+		proc->Write(cmd);
+
+		// wait from reply from ctags process
+		static int maxPeeks = 1000;
+		int count = 0;
+
+		tags.Empty();
+		while (true) {
+			wxString tmp;
+			proc->ReadAll(tmp);
+			tags << tmp;
+			
+			if (tmp.Trim().Trim(false).EndsWith(wxT("<<EOF>>"))) {
+				count =  0;
+				break;
+			} else {
+				count++;
+				wxMilliSleep(1);
+				if (count >= maxPeeks) {
+					tags.clear();
+					break;
+				}
+			}
+		}
+	}
 }

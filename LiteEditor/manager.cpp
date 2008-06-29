@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "pipedprocess2.h"
 #include "dockablepanemenumanager.h"
 #include <wx/busyinfo.h>
 #include "refactorindexbuildjob.h"
@@ -106,7 +107,7 @@ static wxString CL_EXEC_WRAPPER = wxEmptyString;
 		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);	\
 		return res;												\
 	}
- 
+
 static bool HideDebuggerPane = true;
 
 //--------------------------------------------------------------
@@ -163,6 +164,8 @@ Manager::Manager(void)
 		, m_useTipWin(false)
 		, m_tipWinPos(wxNOT_FOUND)
 {
+	m_ctagsProc = new PipedProcessTS(wxNOT_FOUND, TagsManagerST::Get()->GetCTagsCmd());
+	m_ctagsProc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
 }
 
 Manager::~Manager(void)
@@ -367,6 +370,10 @@ void Manager::UnInitialize()
 	//it is important to release it *before* the TagsManager
 	ParseThreadST::Get()->Stop();
 	ParseThreadST::Free();
+	
+	// good place to stop and kill the ctags process
+	m_ctagsProc->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
+	m_ctagsProc->Terminate();
 
 	TagsManagerST::Free();
 	LanguageST::Free();
@@ -1002,7 +1009,7 @@ void Manager::TogglePanes()
 
 		// add the detached tabs list
 		wxArrayString dynamicPanes = Frame::Get()->GetDockablePaneMenuManager()->GetDeatchedPanesList();
-		for(size_t i=0; i<dynamicPanes.GetCount(); i++){
+		for (size_t i=0; i<dynamicPanes.GetCount(); i++) {
 			candidates.Add(dynamicPanes.Item(i));
 		}
 
@@ -1024,21 +1031,21 @@ void Manager::TogglePanes()
 		toggled = true;
 
 	} else {
-		
-		for(size_t i=0; i<panes.GetCount(); i++){
+
+		for (size_t i=0; i<panes.GetCount(); i++) {
 			wxString pane_name = panes.Item(i);
-			if( pane_name == wxT("Output View") ){
+			if ( pane_name == wxT("Output View") ) {
 				ShowOutputPane(wxEmptyString, false);
 				continue;
 			}
-			if( pane_name == wxT("Workspace View") ){
+			if ( pane_name == wxT("Workspace View") ) {
 				ShowWorkspacePane(wxEmptyString, false);
 				continue;
 			}
-			
+
 			DoShowPane(pane_name);
 		}
-		
+
 		Frame::Get()->GetDockingManager().Update();
 		toggled = false;
 	}
@@ -1313,17 +1320,26 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 
 void Manager::OnProcessEnd(wxProcessEvent &event)
 {
-	m_asyncExeCmd->ProcessEnd(event);
-	m_asyncExeCmd->GetProcess()->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
-	delete m_asyncExeCmd;
-	m_asyncExeCmd = NULL;
+	if(event.GetPid() == m_ctagsProc->GetPid()) {
+		m_ctagsProc->SetRunning(false);
+		
+		// call skip so that the object will not be deleted...
+		event.Skip(false);
+		
+	} else {
+			
+		m_asyncExeCmd->ProcessEnd(event);
+		m_asyncExeCmd->GetProcess()->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
+		delete m_asyncExeCmd;
+		m_asyncExeCmd = NULL;
 
-	//unset the environment variables
-	EnvironmentConfig::Instance()->UnApplyEnv();
+		//unset the environment variables
+		EnvironmentConfig::Instance()->UnApplyEnv();
 
-	//return the focus back to the editor
-	if (GetActiveEditor()) {
-		GetActiveEditor()->SetActive();
+		//return the focus back to the editor
+		if (GetActiveEditor()) {
+			GetActiveEditor()->SetActive();
+		}
 	}
 }
 
@@ -2173,7 +2189,7 @@ void Manager::UpdateDebuggerPane()
 				for (size_t i=0; i<expressions.GetCount(); i++) {
 					dbgr->EvaluateExpressionToString(expressions.Item(i), format);
 				}
-				
+
 			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetFrameListView()) {
 				//update the stack call
 				dbgr->ListFrames();
@@ -2719,6 +2735,13 @@ void Manager::RetagFile(const wxString& filename)
 	wxFileName absFile( filename );
 	absFile.MakeAbsolute();
 	req->setFile(absFile.GetFullPath().c_str());
+	
+	// if ctags process termianted, or it is the first time 
+	// start it
+	if( !m_ctagsProc->IsRunning() ) {
+		m_ctagsProc->Start();
+	}
+	req->setCtags(m_ctagsProc);
 	ParseThreadST::Get()->Add(req);
 
 	// send event to main frame to update the status bar
@@ -2739,7 +2762,7 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 	//expand variables
 	wxString cmd = bldConf->GetCommand();
 	cmd = ExpandVariables(cmd, GetProject(projectName));
- 
+
 	wxString cmdArgs = bldConf->GetCommandArguments();
 	cmdArgs = ExpandVariables(cmdArgs, GetProject(projectName));
 

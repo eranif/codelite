@@ -44,6 +44,16 @@
 #include <tlhelp32.h>
 #endif
 
+class IProcess {
+public:
+	IProcess(){}
+	virtual ~IProcess(){};
+	
+	virtual bool IsRunning() = 0;
+	virtual bool Write(const wxString &msg) = 0;
+	virtual bool ReadAll(wxString &data) = 0;
+};
+
 struct ProcessEntry {
 	wxString name;
 	long pid;

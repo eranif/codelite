@@ -106,8 +106,6 @@
     <File Name="pipedprocess.cpp"/>
     <File Name="consolefinder.cpp"/>
     <File Name="consolefinder.h"/>
-    <File Name="pipedprocess2.cpp"/>
-    <File Name="pipedprocess2.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GUI">
     <VirtualDirectory Name="Controls">

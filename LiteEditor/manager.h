@@ -50,7 +50,6 @@ class wxFrame;
 class LEditor;
 class AsyncExeCmd;
 class QuickWatchDlg;
-class PipedProcessTS;
 
 class Manager : public wxEvtHandler, public IDebuggerObserver
 {
@@ -68,7 +67,6 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	bool m_useTipWin;
 	long m_tipWinPos;
 	wxString m_installDir;
-	PipedProcessTS *m_ctagsProc;
 	
 public:
 	/*!

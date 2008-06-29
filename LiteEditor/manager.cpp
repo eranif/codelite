@@ -23,7 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
-#include "pipedprocess2.h"
 #include "dockablepanemenumanager.h"
 #include <wx/busyinfo.h>
 #include "refactorindexbuildjob.h"
@@ -164,8 +163,6 @@ Manager::Manager(void)
 		, m_useTipWin(false)
 		, m_tipWinPos(wxNOT_FOUND)
 {
-	m_ctagsProc = new PipedProcessTS(wxNOT_FOUND, TagsManagerST::Get()->GetCTagsCmd());
-	m_ctagsProc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
 }
 
 Manager::~Manager(void)
@@ -371,10 +368,6 @@ void Manager::UnInitialize()
 	ParseThreadST::Get()->Stop();
 	ParseThreadST::Free();
 	
-	// good place to stop and kill the ctags process
-	m_ctagsProc->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
-	m_ctagsProc->Terminate();
-
 	TagsManagerST::Free();
 	LanguageST::Free();
 	WorkspaceST::Free();
@@ -1320,26 +1313,17 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 
 void Manager::OnProcessEnd(wxProcessEvent &event)
 {
-	if(event.GetPid() == m_ctagsProc->GetPid()) {
-		m_ctagsProc->SetRunning(false);
-		
-		// call skip so that the object will not be deleted...
-		event.Skip(false);
-		
-	} else {
-			
-		m_asyncExeCmd->ProcessEnd(event);
-		m_asyncExeCmd->GetProcess()->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
-		delete m_asyncExeCmd;
-		m_asyncExeCmd = NULL;
+	m_asyncExeCmd->ProcessEnd(event);
+	m_asyncExeCmd->GetProcess()->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
+	delete m_asyncExeCmd;
+	m_asyncExeCmd = NULL;
 
-		//unset the environment variables
-		EnvironmentConfig::Instance()->UnApplyEnv();
+	//unset the environment variables
+	EnvironmentConfig::Instance()->UnApplyEnv();
 
-		//return the focus back to the editor
-		if (GetActiveEditor()) {
-			GetActiveEditor()->SetActive();
-		}
+	//return the focus back to the editor
+	if (GetActiveEditor()) {
+		GetActiveEditor()->SetActive();
 	}
 }
 
@@ -2735,13 +2719,6 @@ void Manager::RetagFile(const wxString& filename)
 	wxFileName absFile( filename );
 	absFile.MakeAbsolute();
 	req->setFile(absFile.GetFullPath().c_str());
-	
-	// if ctags process termianted, or it is the first time 
-	// start it
-	if( !m_ctagsProc->IsRunning() ) {
-		m_ctagsProc->Start();
-	}
-	req->setCtags(m_ctagsProc);
 	ParseThreadST::Get()->Add(req);
 
 	// send event to main frame to update the status bar

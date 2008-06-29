@@ -68,8 +68,8 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	//convert the file content into tags
 	wxString tags;
 	wxString file_name(req->getFile());
-//	tagmgr->SourceToTags2(file_name, tags);
-	SourceToTags(file_name, req->getCtags(), tags);
+	tagmgr->SourceToTags2(file_name, tags);
+	
 	req->setTags(tags);
 
 	//----------------------------------------------
@@ -163,7 +163,11 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	// results, then nothing more to be done
 	if (m_notifiedWindow == NULL)
 		return;
-
+	
+	// send "end" event
+	wxCommandEvent e(wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS);
+	wxPostEvent(m_notifiedWindow, e);
+	
 	// Send an event for each operation type
 	if ( !deletedItems.empty() )
 		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM, req->getFile(), deletedItems);
@@ -173,10 +177,6 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 
 	if ( !modifiedItems.empty() )
 		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), modifiedItems);
-
-	// send "end" event
-	wxCommandEvent e(wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS);
-	wxPostEvent(m_notifiedWindow, e);
 }
 
 
@@ -213,7 +213,6 @@ ParseRequest &ParseRequest::operator =(const ParseRequest& rhs)
 	setFile(rhs._file);
 	setDbFile(rhs._dbfile);
 	setTags(rhs._tags);
-	setCtags(rhs.m_ctags);
 	return *this;
 }
 
@@ -226,35 +225,35 @@ ParseRequest::~ParseRequest()
 {
 }
 
-void ParseThread::SourceToTags(const wxString& fileName, IProcess *proc, wxString &tags)
-{
-	wxString cmd(fileName.c_str());
-	cmd += wxT("\n");
-	if (proc->IsRunning()) {
-
-		proc->Write(cmd);
-
-		// wait from reply from ctags process
-		static int maxPeeks = 1000;
-		int count = 0;
-
-		tags.Empty();
-		while (true) {
-			wxString tmp;
-			proc->ReadAll(tmp);
-			tags << tmp;
-			
-			if (tmp.Trim().Trim(false).EndsWith(wxT("<<EOF>>"))) {
-				count =  0;
-				break;
-			} else {
-				count++;
-				wxMilliSleep(1);
-				if (count >= maxPeeks) {
-					tags.clear();
-					break;
-				}
-			}
-		}
-	}
-}
+//void ParseThread::SourceToTags(const wxString& fileName, IProcess *proc, wxString &tags)
+//{
+//	wxString cmd(fileName.c_str());
+//	cmd += wxT("\n");
+//	if (proc->IsRunning()) {
+//
+//		proc->Write(cmd);
+//
+//		// wait from reply from ctags process
+//		static int maxPeeks = 1000;
+//		int count = 0;
+//
+//		tags.Empty();
+//		while (true) {
+//			wxString tmp;
+//			proc->ReadAll(tmp);
+//			tags << tmp;
+//			
+//			if (tmp.Trim().Trim(false).EndsWith(wxT("<<EOF>>"))) {
+//				count =  0;
+//				break;
+//			} else {
+//				count++;
+//				wxMilliSleep(1);
+//				if (count >= maxPeeks) {
+//					tags.clear();
+//					break;
+//				}
+//			}
+//		}
+//	}
+//}

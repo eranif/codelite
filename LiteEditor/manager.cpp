@@ -106,7 +106,7 @@ static wxString CL_EXEC_WRAPPER = wxEmptyString;
 		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);	\
 		return res;												\
 	}
-
+ 
 static bool HideDebuggerPane = true;
 
 //--------------------------------------------------------------
@@ -2271,6 +2271,7 @@ void Manager::UpdateLostControl()
 
 void Manager::UpdateBpAdded()
 {
+
 }
 
 void Manager::UpdateExpression(const wxString &expression, const wxString &evaluated)
@@ -2720,8 +2721,11 @@ void Manager::RetagFile(const wxString& filename)
 	req->setFile(absFile.GetFullPath().c_str());
 	ParseThreadST::Get()->Add(req);
 
-	// add status message
-	Frame::Get()->GetStatusBar()->SetStatusText(wxString::Format(wxT("Re-tagging file %s..."), absFile.GetFullName().c_str()), 4);
+	// send event to main frame to update the status bar
+	wxCommandEvent e(wxEVT_CMD_UPDATE_STATUS_BAR);
+	e.SetInt(4);
+	e.SetString(wxString::Format(wxT("Re-tagging file %s..."), absFile.GetFullName().c_str()));
+	Frame::Get()->AddPendingEvent(e);
 }
 
 wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxString &wd, bool considerPauseWhenExecuting)

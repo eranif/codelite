@@ -158,7 +158,6 @@ ContextCpp::ContextCpp(LEditor *container)
 {
 	ApplySettings();
 	Initialize();
-
 }
 
 
@@ -2297,8 +2296,6 @@ void ContextCpp::RetagFile()
 	LEditor &ctrl = GetCtrl();
 	ManagerST::Get()->RetagFile(ctrl.GetFileName().GetFullPath());
 
-	ctrl.UpdateColours();
-	
 	// incase this file is not cache this function does nothing
 	TagsManagerST::Get()->ClearCachedFile(ctrl.GetFileName().GetFullPath());
 	

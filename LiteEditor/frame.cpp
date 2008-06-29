@@ -2978,6 +2978,10 @@ void Frame::OnParsingThreadDone(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	GetStatusBar()->SetStatusText(wxT("Done"), 4);
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	if(editor) {
+		editor->UpdateColours();
+	}
 }
 
 void Frame::OnSingleInstanceOpenFiles(wxCommandEvent& e)

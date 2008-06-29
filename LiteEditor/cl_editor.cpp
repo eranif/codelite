@@ -329,8 +329,16 @@ void LEditor::SetProperties()
 
 	SetTabWidth(tabWidth);
 	SetIndent(tabWidth);
+	
+#ifdef __WXMAC__	
+	// turning off these two greatly improves performance
+	// on Mac
+	SetTwoPhaseDraw(false);
+	SetBufferedDraw(false);
+#else
 	SetTwoPhaseDraw(true);
 	SetBufferedDraw(true);
+#endif
 
 	SetTabIndents(true);
 	SetBackSpaceUnIndents (true);
@@ -345,8 +353,8 @@ void LEditor::SetProperties()
 	UsePopUp(m_rightClickMenu ? false : true);
 	SetIndentationGuides(options->GetShowIndentationGuidelines());
 
-	IndicatorSetUnder(1, true);
-	IndicatorSetUnder(2, true);
+	IndicatorSetUnder(1, false);
+	IndicatorSetUnder(2, false);
 
 	wxColour col2(wxT("LIGHT BLUE"));
 	wxString val2 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
@@ -487,6 +495,11 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 		// remove indicators
 		SetIndicatorCurrent(2);
 		IndicatorClearRange(0, GetLength());
+		
+#ifdef __WXMAC__
+		Refresh();
+#endif
+
 	}
 
 	//let the context handle this as well

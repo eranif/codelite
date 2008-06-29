@@ -15,9 +15,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleVersion</key>
-	<string>??</string>
+	<string>CodeLite version 1.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>??</string>
+	<string>CodeLite version 1.0</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>	
 </dict>

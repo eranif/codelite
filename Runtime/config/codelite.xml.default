@@ -53,7 +53,7 @@
     <long Value="0" Name="m_value"/>
   </ArchiveObject>
   <ArchiveObject Name="WordHighlightColour">
-    <wxString Value="rgb(255, 185, 151)" Name="m_value"/>
+    <wxString Value="red" Name="m_value"/>
   </ArchiveObject>
   <ArchiveObject Name="highlight_word">
     <long Value="1" Name="m_value"/>

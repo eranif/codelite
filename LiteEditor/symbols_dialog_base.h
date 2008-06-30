@@ -1,29 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : symbols_dialog_base.h              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb  1 2007)
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -32,20 +8,16 @@
 #ifndef __symbols_dialog_base__
 #define __symbols_dialog_base__
 
-// Define WX_GCH in order to support precompiled headers with GCC compiler.
-// You have to create the header "wx_pch.h" and include all files needed
-// for compile your gui inside it.
-// Then, compile it and place the file "wx_pch.h.gch" into the same
-// directory that "wx_pch.h".
-#ifdef WX_GCH
-#include <wx_pch.h>
-#else
-#include <wx/wx.h>
-#endif
-
 #include <wx/listctrl.h>
+#include <wx/gdicmn.h>
+#include <wx/font.h>
+#include <wx/colour.h>
+#include <wx/settings.h>
+#include <wx/string.h>
 #include <wx/statline.h>
 #include <wx/button.h>
+#include <wx/sizer.h>
+#include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -55,15 +27,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 class SymbolsDialogBase : public wxDialog 
 {
-	DECLARE_EVENT_TABLE()
 	private:
-		
-		// Private event handlers
-		void _wxFB_OnItemActivated( wxListEvent& event ){ OnItemActivated( event ); }
-		void _wxFB_OnItemSelected( wxListEvent& event ){ OnItemSelected( event ); }
-		void _wxFB_OnButtonOK( wxCommandEvent& event ){ OnButtonOK( event ); }
-		void _wxFB_OnButtonCancel( wxCommandEvent& event ){ OnButtonCancel( event ); }
-		
 	
 	protected:
 		wxListCtrl* m_results;
@@ -79,7 +43,8 @@ class SymbolsDialogBase : public wxDialog
 		
 	
 	public:
-		SymbolsDialogBase( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Resolve Ambiguity"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 600,300 ), int style = wxDEFAULT_DIALOG_STYLE );
+		SymbolsDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Resolve Ambiguity"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 851,428 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~SymbolsDialogBase();
 	
 };
 

@@ -2838,6 +2838,8 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 		}
 		
 	} else {
+		wxLogMessage(wxT("Failed to find[") + pattern + wxT("]"));
+		
 		// match failed, restore the caret
 		editor->SetCurrentPos(curr_pos);
 		editor->SetSelectionStart(curr_pos);

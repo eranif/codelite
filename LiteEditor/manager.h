@@ -668,6 +668,9 @@ public:
 	/**
 	 * \brief find pattern in editor. If match succeeded, try to find 'name' inside the pattern
 	 * and highlight it 
+	 * \param editor editor to search in
+	 * \param pattern pattern to search in the editor
+	 * \param name name to search in pattern
 	 */
 	void FindAndSelect(LEditor* editor, wxString& pattern, const wxString& name);
 	

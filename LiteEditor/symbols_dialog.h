@@ -41,6 +41,7 @@ class SymbolsDialog : public SymbolsDialogBase
 	long m_line;
 	wxString m_file;
 	wxString m_project;
+	wxString m_pattern;
 	long m_selectedItem;
 	
 public:
@@ -70,7 +71,8 @@ public:
 	const wxString &GetFile() const { return m_file; }
 	long GetLine() const { return m_line; }
 	const wxString &GetProject() const { return m_project; }
-
+	const wxString &GetPattern() const { return m_pattern; }
+	
 private:
 	void UpdateFileAndLine(wxListEvent &event);
 

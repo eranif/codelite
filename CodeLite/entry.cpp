@@ -50,6 +50,7 @@ TagEntry::TagEntry()
 , m_name(wxEmptyString)
 , m_id(wxNOT_FOUND)
 , m_scope(wxEmptyString)
+, m_differOnByLineNumber(false)
 {
 }
 
@@ -538,6 +539,7 @@ wxString TagEntry::GetInsertOneStatement()
 wxString TagEntry::GetPattern()
 {
 	//since ctags's pattern is regex, forward slashes are escaped. ('/' becomes '\/')
+	m_pattern.Replace(wxT("\\\\"), wxT("\\"));
 	m_pattern.Replace(wxT("\\/"), wxT("/"));
 	return m_pattern;
 }

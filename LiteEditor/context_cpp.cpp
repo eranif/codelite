@@ -944,8 +944,8 @@ void ContextCpp::CompleteWord()
 		// incase the 'word' is empty, test the word to the left of the current pos
 		wxChar ch1 = rCtrl.SafeGetChar(pos - 1);
 		wxChar ch2 = rCtrl.SafeGetChar(pos - 2);
-		
-		if(ch1 == wxT('.') || (ch2 == wxT('-') && ch1 == wxT('>')) ) {
+
+		if (ch1 == wxT('.') || (ch2 == wxT('-') && ch1 == wxT('>')) ) {
 			CodeComplete();
 		}
 		return;
@@ -1052,15 +1052,29 @@ void ContextCpp::DoGotoSymbol(const std::vector<TagEntryPtr> &tags)
 
 	// Did we get a single match?
 	if (tags.size() == 1) {
-		ManagerST::Get()->OpenFile(	tags[0]->GetFile(),
-		                            wxEmptyString,
-		                            tags[0]->GetLine()-1);
-	} else {
+		TagEntryPtr t = tags.at(0);
+		wxString pattern = t->GetPattern();
+		wxString name = t->GetName();
+
+		if(ManagerST::Get()->OpenFile(	t->GetFile(), wxEmptyString)) {
+			LEditor *editor = ManagerST::Get()->GetActiveEditor();
+			if (editor) {
+				ManagerST::Get()->FindAndSelect(editor, pattern, name);
+			}
+		}
+	} else if (tags.size() > 1) {
 		// popup a dialog offering the results to the user
-		SymbolsDialog *dlg = new SymbolsDialog(&GetCtrl());
+		TagEntryPtr t = tags.at(0);
+		SymbolsDialog *dlg = new SymbolsDialog( &GetCtrl() );
 		dlg->AddSymbols( tags, 0 );
 		if (dlg->ShowModal() == wxID_OK) {
-			ManagerST::Get()->OpenFile(dlg->GetFile(), wxEmptyString, dlg->GetLine()-1);
+			if (ManagerST::Get()->OpenFile(dlg->GetFile(), wxEmptyString)) {
+				wxString pattern = dlg->GetPattern();
+				LEditor *editor = ManagerST::Get()->GetActiveEditor();
+				if (editor) {
+					ManagerST::Get()->FindAndSelect(editor, pattern, t->GetName());
+				}
+			}
 		}
 		dlg->Destroy();
 	}
@@ -1479,24 +1493,24 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 
 		long start(0), end(0);
 		long sel_start(0), sel_end(0);
-		
+
 		start = ctrl.WordStartPosition(pos, true);
 		end   = ctrl.WordEndPosition(pos, true);
-		
+
 		// if thers is no selected text, use the word calculated from the caret position
 		if (!ctrl.GetSelectedText().IsEmpty()) {
 			// selection is not empty, use it
 			sel_start = ctrl.GetSelectionStart();
 			sel_end = ctrl.GetSelectionEnd();
 		}
-		
-		// incase the cursor is placed inside the selected text, 
+
+		// incase the cursor is placed inside the selected text,
 		// use the entire selected text and not only the "word"
-		if(pos >= sel_start && pos <= sel_end){
+		if (pos >= sel_start && pos <= sel_end) {
 			start = sel_start;
 			end = sel_end;
 		}
-		
+
 		word = ctrl.GetTextRange(start, end);
 		if (word.IsEmpty()) {
 			return;
@@ -2306,7 +2320,7 @@ void ContextCpp::RetagFile()
 
 	// incase this file is not cache this function does nothing
 	TagsManagerST::Get()->ClearCachedFile(ctrl.GetFileName().GetFullPath());
-	
+
 	ctrl.SetActive();
 }
 

@@ -42,7 +42,8 @@ SymbolsDialog::SymbolsDialog( wxWindow* parent )
 	m_results->InsertColumn(1, wxT("Kind"));
 	m_results->InsertColumn(2, wxT("File"));
 	m_results->InsertColumn(3, wxT("Line"));
-
+	m_results->InsertColumn(4, wxT("Pattern"));
+	
 	m_results->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(SymbolsDialog::OnItemDeselected), NULL, this);
 	Centre();
 }
@@ -71,6 +72,7 @@ void SymbolsDialog::AddSymbol(const TagEntryPtr &tag, bool sel)
 	SetColumnText(m_results, index, 1, tag->GetKind());
 	SetColumnText(m_results, index, 2, tag->GetFile());
 	SetColumnText(m_results, index, 3, line);
+	SetColumnText(m_results, index, 4, tag->GetPattern());
 }
 
 void SymbolsDialog::AddSymbols(const std::vector<TagEntryPtr> &tags, size_t sel)
@@ -83,6 +85,7 @@ void SymbolsDialog::AddSymbols(const std::vector<TagEntryPtr> &tags, size_t sel)
 	m_results->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	m_results->SetColumnWidth(2, wxLIST_AUTOSIZE);
 	m_results->SetColumnWidth(3, wxLIST_AUTOSIZE);
+	m_results->SetColumnWidth(4, wxLIST_AUTOSIZE);
 	
 	m_results->SetFocus();
 	if (tags.empty() == false) {
@@ -94,22 +97,11 @@ void SymbolsDialog::AddSymbols(const std::vector<TagEntryPtr> &tags, size_t sel)
 
 void SymbolsDialog::UpdateFileAndLine(wxListEvent &event)
 {
-	wxListItem info;
-	info.m_itemId = event.m_itemIndex;
-	info.m_col = 2;
-	info.m_mask = wxLIST_MASK_TEXT;
-
-	if ( m_results->GetItem(info) ) {
-		if (info.m_text.IsEmpty())
-			return;
-		m_file = info.m_text;
-	}
-
-	info.m_col = 3;
-	if ( m_results->GetItem(info) && !info.m_text.IsEmpty()) {
-		info.m_text.ToLong( &m_line );
-	}
-
+	wxString line_number;
+	m_file = GetColumnText(m_results, event.m_itemIndex, 2);
+	line_number = GetColumnText(m_results, event.m_itemIndex, 3);
+	m_pattern = GetColumnText(m_results, event.m_itemIndex, 4);
+	line_number.ToLong( &m_line );
 	m_project = ManagerST::Get()->GetProjectNameByFile(m_file);
 }
 

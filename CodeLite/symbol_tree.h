@@ -51,7 +51,7 @@ class WXDLLIMPEXP_CL MyTreeItemData : public wxTreeItemData
 private:
 	wxString m_fileName;
 	int		 m_lineno;
-	
+	int 	 m_dbId;
 
 public:
     /**
@@ -59,11 +59,12 @@ public:
      * \param filename The full name the file 
 	 * \param filename line no of the symbol
      */
-    MyTreeItemData(const wxString& filename, int lineno) : m_fileName(filename), m_lineno(lineno)
+    MyTreeItemData(const wxString& filename, int lineno, int dbId) : m_fileName(filename), m_lineno(lineno), m_dbId(dbId)
 	{ }
 
 	const wxString &GetFileName() const {return m_fileName;}
 	int GetLineno() const {return m_lineno;}
+	int GetDbId() const{return m_dbId;}
 };
 
 /**

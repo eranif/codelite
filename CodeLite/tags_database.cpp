@@ -22,6 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/longlong.h>
  #include "precompiled_header.h"
 
 #include "tags_database.h"
@@ -226,7 +227,7 @@ void TagsDatabase::Store(const std::vector<DbRecordPtr> &records, const wxFileNa
 		size_t i=0;
 		for(; i<records.size(); i++)
 		{
-			if(records[i]->Store(insertStmt) == TagExist)
+			if(records[i]->Store(insertStmt, this) == TagExist)
 			{
 				// Update the record
 				updateList.push_back(records[i]);
@@ -312,7 +313,7 @@ void TagsDatabase::Store(TagTreePtr tree, const wxFileName& path, bool autoCommi
 				continue;
 
 			//walker.GetNode()->GetData().SetParentId(walker.GetNode()->GetParent()->GetData().GetId());
-			if(walker.GetNode()->GetData().Store(insertStmt) == TagExist)
+			if(walker.GetNode()->GetData().Store(insertStmt, this) == TagExist)
 			{
 				// Update the record
 				updateList.push_back(walker.GetNode()->GetData());
@@ -524,7 +525,7 @@ int TagsDatabase::Insert(DbRecordPtr record)
 	{
 		// Create the statements before the execution
 		wxSQLite3Statement insertStmt = m_db->PrepareStatement(record->GetInsertOneStatement());
-		return record->Store(insertStmt);
+		return record->Store(insertStmt, this);
 	}
 	catch (wxSQLite3Exception& e)
 	{
@@ -600,4 +601,10 @@ void TagsDatabase::GetFiles(const wxString &partialName, std::vector<wxFileName>
 	{
 		wxUnusedVar(e);
 	}
+}
+
+long TagsDatabase::LastRowId() const
+{
+	wxLongLong id = m_db->GetLastRowId();
+	return id.ToLong();
 }

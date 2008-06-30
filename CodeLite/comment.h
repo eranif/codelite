@@ -26,7 +26,7 @@
 #define CODELITE_COMMENT_H
 
 #include "db_record.h"
-
+class TagsDatabase;
 
 #ifdef WXMAKINGDLL_CODELITE
 #    define WXDLLIMPEXP_CL WXEXPORT
@@ -95,7 +95,7 @@ public:
 	 * \param insertPreparedStmnt Prepared statement for insert operation
 	 * \return TagOk, TagExist, TagError
 	 */
-	virtual int Store(wxSQLite3Statement& insertPreparedStmnt);
+	virtual int Store(wxSQLite3Statement& insertPreparedStmnt, TagsDatabase *db);
 
 	/**
 	 * Update this record into db.

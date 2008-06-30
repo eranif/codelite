@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "precompiled_header.h"
+#include "tags_database.h"
 
 #include "entry.h"
 #include "tokenizer.h"
@@ -47,7 +48,6 @@ TagEntry::TagEntry()
 , m_kind(wxT("<unknown>"))
 , m_parent(wxEmptyString)
 , m_name(wxEmptyString)
-, m_position(wxNOT_FOUND)
 , m_id(wxNOT_FOUND)
 , m_scope(wxEmptyString)
 {
@@ -73,8 +73,8 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
 	m_name = rhs.m_name.c_str();
 	m_path = rhs.m_path.c_str();
 	m_hti = rhs.m_hti;
-	m_position = rhs.m_position;
 	m_scope = rhs.m_scope.c_str();
+	m_differOnByLineNumber = rhs.m_differOnByLineNumber;
 	
 	// loop over the map and copy item by item
 	// we use the c_str() method to force our own copy of the string and to avoid 
@@ -90,20 +90,37 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
 bool TagEntry::operator ==(const TagEntry& rhs)
 {
 	//Note: tree item id is not used in this function!
-	return	
+	bool res = 	
 		m_scope == rhs.m_scope &&
 		m_file == rhs.m_file &&
 		m_kind == rhs.m_kind &&
 		m_parent == rhs.m_parent &&
 		m_pattern == rhs.m_pattern &&
+		m_name == rhs.m_name &&
+		m_path == rhs.m_path &&
 		m_lineNumber == rhs.m_lineNumber &&
+		GetInherits() == rhs.GetInherits() &&
+		GetAccess() == rhs.GetAccess() &&
+		GetSignature() == rhs.GetSignature() &&
+		GetTyperef() == rhs.GetTyperef();
+	
+	bool res2 = m_scope == rhs.m_scope &&
+		m_file == rhs.m_file &&
+		m_kind == rhs.m_kind &&
+		m_parent == rhs.m_parent &&
+		m_pattern == rhs.m_pattern &&
 		m_name == rhs.m_name &&
 		m_path == rhs.m_path &&
 		GetInherits() == rhs.GetInherits() &&
 		GetAccess() == rhs.GetAccess() &&
 		GetSignature() == rhs.GetSignature() &&
-		GetPosition() == rhs.GetPosition() &&
 		GetTyperef() == rhs.GetTyperef();
+		
+	if(res2 && !res) {
+		// the entries are differs only in the line numbers
+		m_differOnByLineNumber = true;
+	}
+	return res;
 }
 
 void TagEntry::Create(const wxString &fileName, 
@@ -113,7 +130,6 @@ void TagEntry::Create(const wxString &fileName,
 					  const wxString &kind, 
 					  std::map<wxString, wxString>& extFields)
 {
-	SetPosition( wxNOT_FOUND );
 	SetName( name );
 	SetLine( lineNumber );
 	SetKind( kind.IsEmpty() ? wxT("<unknown>") : kind );
@@ -263,14 +279,13 @@ TagEntry::TagEntry(wxSQLite3ResultSet& rs)
 	m_path = rs.GetString(10);
 	m_extFields[wxT("typeref")] = rs.GetString(11);
 	m_scope = rs.GetString(12);
-	m_position = wxNOT_FOUND;
 }
 
 //----------------------------------------------------------------------------
 // Database operations
 //----------------------------------------------------------------------------
 
-int TagEntry::Store(wxSQLite3Statement& insertPerepareStmnt)
+int TagEntry::Store(wxSQLite3Statement& insertPerepareStmnt, TagsDatabase *db)
 {
 	// If this node is a dummy, (IsOk() == false) we dont insert it to database
 	if( !IsOk() )
@@ -293,6 +308,9 @@ int TagEntry::Store(wxSQLite3Statement& insertPerepareStmnt)
 		insertPerepareStmnt.Bind(12, GetScope());
 		insertPerepareStmnt.ExecuteUpdate();
 		insertPerepareStmnt.Reset();
+		
+		// update the ID
+		SetId( db->LastRowId() );
 
 	}
 	catch(wxSQLite3Exception& exc)

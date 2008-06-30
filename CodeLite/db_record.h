@@ -36,6 +36,8 @@
 #    define WXDLLIMPEXP_CL
 #endif // WXMAKINGDLL_CODELITE
 
+class TagsDatabase;
+
 enum
 {
 	TagOk = 0,
@@ -65,7 +67,7 @@ public:
 	 * \param insertPreparedStmnt Prepared statement for insert operation
 	 * \return TagOk, TagExist, TagError
 	 */
-	virtual int Store(wxSQLite3Statement& insertPreparedStmnt) = 0;
+	virtual int Store(wxSQLite3Statement& insertPreparedStmnt, TagsDatabase *db) = 0;
 
 	/**
 	 * Update this record into db.

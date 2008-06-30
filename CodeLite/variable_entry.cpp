@@ -70,7 +70,7 @@ bool VariableEntry::operator ==(const VariableEntry& rhs)
 // Database opertions
 //---------------------------------------------------------
 
-int VariableEntry::Store(wxSQLite3Statement& insertPreparedStmnt)
+int VariableEntry::Store(wxSQLite3Statement& insertPreparedStmnt, TagsDatabase *db)
 {
 	try
 	{

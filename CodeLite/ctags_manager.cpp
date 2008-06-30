@@ -2321,3 +2321,15 @@ wxString TagsManager::GetCTagsCmd()
 	
 	return cmd;
 }
+
+TagEntryPtr TagsManager::GetWorkspaceTagById(int id)
+{
+	wxString sql;
+	std::vector<TagEntryPtr> tags;
+	sql << wxT("select * from tags where id=") << id;
+	DoExecuteQueury(sql, tags, true);	
+	if(tags.size()==1){
+		return tags.at(0);
+	}
+	return NULL;
+}

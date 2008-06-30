@@ -680,6 +680,12 @@ public:
 	 */
 	wxString NormalizeFunctionSig(const wxString &sig, bool includeVarNames = false);
 	
+	/**
+	 * \brief fetch a workspace tag by its ID
+	 * \return tag or NULL
+	 */
+	TagEntryPtr GetWorkspaceTagById(int id);
+	
 	void GetUnImplementedFunctions(const wxString &scopeName, std::map<wxString, TagEntryPtr> &protos);
 protected:
 	std::map<wxString, bool> m_typeScopeCache;

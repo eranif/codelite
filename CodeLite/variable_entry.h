@@ -36,6 +36,7 @@
 #else
 #    define WXDLLIMPEXP_CL
 #endif
+class TagsDatabase;
 
 class WXDLLIMPEXP_CL VariableEntry : public DbRecord
 {
@@ -96,7 +97,7 @@ public:
 	 * \param insertPreparedStmnt Prepared statement for insert operation
 	 * \return TagOk, TagExist, TagError
 	 */
-	virtual int Store(wxSQLite3Statement& insertPreparedStmnt);
+	virtual int Store(wxSQLite3Statement& insertPreparedStmnt, TagsDatabase *db);
 
 	/**
 	 * Update this record into db.

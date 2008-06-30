@@ -64,7 +64,7 @@ Comment & Comment::operator=(const Comment &rhs)
 	return *this;
 }
 
-int Comment::Store(wxSQLite3Statement& insertPreparedStmnt)
+int Comment::Store(wxSQLite3Statement& insertPreparedStmnt, TagsDatabase* db)
 {
 	try
 	{

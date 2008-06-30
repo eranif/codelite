@@ -2049,23 +2049,29 @@ void Frame::OnImportMakefile(wxCommandEvent &event)
 void Frame::OnAddSymbols(SymbolTreeEvent &event)
 {
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
-	if (tree)
+	if (tree){
+//		wxLogMessage(wxString::Format(wxT("adding %d new symbols"), event.GetItems().size()));
 		tree->AddSymbols(event);
+	}
 }
 
 void Frame::OnDeleteSymbols(SymbolTreeEvent &event)
 {
 	// make sure we direct the events to the correct tree
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
-	if (tree)
+	if (tree){
+//		wxLogMessage(wxString::Format(wxT("deleting %d new symbols"), event.GetItems().size()));
 		tree->DeleteSymbols(event);
+	}
 }
 
 void Frame::OnUpdateSymbols(SymbolTreeEvent &event)
 {
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
-	if (tree)
+	if (tree){
+		wxLogMessage(wxString::Format(wxT("updating %d new symbols"), event.GetItems().size()));
 		tree->UpdateSymbols(event);
+	}
 }
 
 wxString Frame::CreateWorkspaceTable()

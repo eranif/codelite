@@ -145,7 +145,15 @@ bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent &event, bool noti
 
 	wxString filename = itemData->GetFileName();
 	wxString project = ManagerST::Get()->GetProjectNameByFile(filename);
-	int lineno = itemData->GetLineno()-1;
+
+	// fetch the record from the database
+	TagEntryPtr t = TagsManagerST::Get()->GetWorkspaceTagById(itemData->GetDbId());
+	int lineno;
+	if (t) {
+		lineno = t->GetLine() -1;
+	} else {
+		lineno = itemData->GetLineno() -1;
+	}
 
 	// Open the file and set the cursor to line number
 	ManagerST::Get()->OpenFile(filename, project, lineno);

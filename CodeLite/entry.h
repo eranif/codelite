@@ -40,6 +40,8 @@
 #    define WXDLLIMPEXP_CL
 #endif // 
 
+class TagsDatabase;
+
 /**
  * TagEntry is a persistent object which is capable of storing and loading itself from 
  * various inputs:
@@ -66,10 +68,10 @@ class WXDLLIMPEXP_CL TagEntry : public DbRecord
 	wxTreeItemId m_hti;		///< Handle to tree item, not persistent item
 	wxString m_name;		///< Tag name (short name, excluding any scope names)
 	std::map<wxString, wxString> m_extFields; ///< Additional extension fields
-	long	m_position;		///< Position in the document - optional field, not persistent item
 	long	m_id;
 	wxString m_scope;
-
+	bool m_differOnByLineNumber;
+	
 public:
 	/**
 	 * Construct a TagEntry from tagEntry struct
@@ -144,10 +146,12 @@ public:
 	 * Test of this tag is a container (class, union, struct or namespace
 	 */
 	const bool IsContainer() const;
-
+	
 	//------------------------------------------
 	// Operations
 	//------------------------------------------
+	bool GetDifferOnByLineNumber() const {return m_differOnByLineNumber;}
+	
 	int GetId() const { return m_id; }
 	void SetId(int id) { m_id = id;}
 
@@ -162,7 +166,7 @@ public:
 
 	int GetLine() const { return m_lineNumber;}
 	void SetLine(int line) { m_lineNumber = line; }
-
+	
 	wxString GetPattern();
 	void SetPattern(const wxString& pattern) { m_pattern = pattern; }
 
@@ -183,9 +187,6 @@ public:
 	
 	wxString GetInherits() const { return GetExtField(_T("inherits")); }
 	wxString GetTyperef() const { return GetExtField(_T("typeref")); }
-	
-	int GetPosition() const { return m_position; }
-	void SetPosition(int col) { m_position = col; }
 
 	const wxString &GetScope() const {return m_scope;}
 	void SetScope(const wxString &scope){m_scope = scope;}
@@ -252,7 +253,7 @@ public:
 	 * \param insertPreparedStmnt Prepared statement for insert operation
 	 * \return TagOk, TagExist, TagError
 	 */
-	virtual int Store(wxSQLite3Statement& insertPreparedStmnt);
+	virtual int Store(wxSQLite3Statement& insertPreparedStmnt, TagsDatabase *db);
 
 	/**
 	 * Update this record into db.

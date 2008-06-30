@@ -145,7 +145,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 		deletedItems[i].second.Delete(deleteStmt);
 
 	for (i=0; i<newItems.size(); i++) {
-		if (newItems[i].second.Store(insertStmt) == TagOk) {
+		if (newItems[i].second.Store(insertStmt, m_pDb.get()) == TagOk) {
 			goodNewItems.push_back(newItems[i]);
 		}
 	}
@@ -175,10 +175,22 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	if ( !newItems.empty() )
 		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM, req->getFile(), goodNewItems);
 
-	if ( !modifiedItems.empty() )
-		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), modifiedItems);
+	if ( !modifiedItems.empty() ) {
+		// remove from the list all entries that are only modified by line number
+		std::vector<std::pair<wxString, TagEntry> >  realModifiedItems;
+		for(size_t i=0; i<modifiedItems.size(); i++){
+			std::pair<wxString, TagEntry> entry = modifiedItems.at(i);
+			if( !entry.second.GetDifferOnByLineNumber() ){
+				// this a real modified item
+				realModifiedItems.push_back(modifiedItems.at(i));
+			}
+		}
+		
+		if(realModifiedItems.empty() == false) {
+			SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), realModifiedItems);
+		}
+	}
 }
-
 
 void ParseThread::SendEvent(int evtType, const wxString &fileName, std::vector<std::pair<wxString, TagEntry> >  &items)
 {

@@ -118,6 +118,7 @@ public:
 	 */
 	void OpenDatabase(const wxFileName& fileName);
 	
+	long LastRowId() const ;
 	/**
 	 * Create database if not existed already.
 	 */

@@ -26,7 +26,7 @@ SymbolsDialogBase::SymbolsDialogBase( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_results = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_ICON|wxLC_REPORT );
+	m_results = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_ICON|wxLC_REPORT|wxLC_SINGLE_SEL );
 	mainSizer->Add( m_results, 1, wxALL|wxEXPAND, 5 );
 	
 	statLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );

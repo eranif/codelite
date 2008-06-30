@@ -773,14 +773,12 @@ void LEditor::OnModified(wxScintillaEvent& event)
 		SetDirty(true);
 	}
 
-	if (event.GetModificationType() & wxSCI_PERFORMED_UNDO) {
+	if (event.GetModificationType() & wxSCI_PERFORMED_UNDO ||event.GetModificationType() & wxSCI_PERFORMED_REDO ) {
 		if (GetModify() == false) {
 			SetDirty(false);
+		}else{
+			SetDirty(true);
 		}
-	}
-
-	if (event.GetModificationType() & wxSCI_PERFORMED_REDO) {
-		SetDirty(true);
 	}
 }
 

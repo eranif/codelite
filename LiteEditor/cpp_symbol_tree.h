@@ -62,6 +62,7 @@ protected:
 	virtual void OnMouseRightUp(wxTreeEvent& event);
 	virtual void OnItemActivated(wxTreeEvent &event);
 	bool DoItemActivated(wxTreeItemId item, wxEvent &event, bool notify);
+	void FindAndSelect(LEditor *editor, wxString &pattern, const wxString &name);
 	
 	wxTreeItemId TryGetPrevItem(wxTreeItemId item);
 

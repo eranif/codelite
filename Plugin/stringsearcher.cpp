@@ -162,18 +162,19 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 			matchLen = (int)find_str.Len();
 			// mirror the result as well
 			if (flags & wxSD_SEARCH_BACKWARD) {
-				pos = init_size - pos - matchLen;
+				pos = (init_size - (pos + offset + matchLen));
+			} else {
+				pos += offset;
 			}
-
-			pos += offset;
 			return true;
 		} else {
 			// we got a match
 			matchLen = (int)find_str.Len();
 			if (flags & wxSD_SEARCH_BACKWARD) {
-				pos = init_size - pos - matchLen;
+				pos = (init_size - (pos + offset + matchLen));
+			} else {
+				pos += offset;
 			}
-			pos += offset;
 			return true;
 		}
 	}

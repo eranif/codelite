@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "stringsearcher.h"
+#include "cl_editor.h"
 
 #include "cpp_symbol_tree.h"
 #include "manager.h"
@@ -145,18 +147,42 @@ bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent &event, bool noti
 
 	wxString filename = itemData->GetFileName();
 	wxString project = ManagerST::Get()->GetProjectNameByFile(filename);
-
-	// fetch the record from the database
-	TagEntryPtr t = TagsManagerST::Get()->GetWorkspaceTagById(itemData->GetDbId());
-	int lineno;
-	if (t) {
-		lineno = t->GetLine() -1;
-	} else {
-		lineno = itemData->GetLineno() -1;
-	}
+	wxString pattern = itemData->GetPattern();
 
 	// Open the file and set the cursor to line number
-	ManagerST::Get()->OpenFile(filename, project, lineno);
+	ManagerST::Get()->OpenFile(filename, project, wxNOT_FOUND);
+	
+	// get the editor, and search for the pattern in the file
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	if(editor && editor->GetFileName().GetFullPath() == filename){
+		wxString tmpPattern( pattern );
+		FindReplaceData data;
+		tmpPattern.StartsWith(wxT("/^"), &pattern);
+		
+		if(pattern.EndsWith(wxT("$/"))){
+			pattern = pattern.Left(pattern.Len()-2);
+		}
+		
+		size_t flags = wxSD_MATCHCASE;
+
+		data.SetFindString(pattern);
+		data.SetFlags(flags);
+		// keep current position
+		long pos = editor->GetCurrentPos();
+		
+		// set the caret at the document start
+		editor->SetCurrentPos(0);
+		editor->SetSelectionStart(0);
+		editor->SetSelectionEnd(0);
+		
+		if(!editor->FindAndSelect(data)){
+			
+			// match failed, restore the caret
+			editor->SetCurrentPos(pos);
+			editor->SetSelectionStart(pos);
+			editor->SetSelectionEnd(pos);
+		}
+	}
 
 	// post an event that an item was activated
 	if ( notify ) {

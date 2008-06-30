@@ -176,17 +176,14 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM, req->getFile(), goodNewItems);
 
 	if ( !modifiedItems.empty() ) {
-		// remove from the list all entries that are only modified by line number
 		std::vector<std::pair<wxString, TagEntry> >  realModifiedItems;
 		for(size_t i=0; i<modifiedItems.size(); i++){
-			std::pair<wxString, TagEntry> entry = modifiedItems.at(i);
-			if( !entry.second.GetDifferOnByLineNumber() ){
-				// this a real modified item
-				realModifiedItems.push_back(modifiedItems.at(i));
+			std::pair<wxString, TagEntry> p = modifiedItems.at(i);
+			if(!p.second.GetDifferOnByLineNumber()){
+				realModifiedItems.push_back(p);
 			}
 		}
-		
-		if(realModifiedItems.empty() == false) {
+		if(realModifiedItems.empty() == false){
 			SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), realModifiedItems);
 		}
 	}

@@ -50,21 +50,19 @@ class WXDLLIMPEXP_CL MyTreeItemData : public wxTreeItemData
 {
 private:
 	wxString m_fileName;
-	int		 m_lineno;
-	int 	 m_dbId;
-
+	wxString m_pattern;
+	
 public:
     /**
      * Constructor.
      * \param filename The full name the file 
-	 * \param filename line no of the symbol
+	 * \param pattern search pattern for this item in the file
      */
-    MyTreeItemData(const wxString& filename, int lineno, int dbId) : m_fileName(filename), m_lineno(lineno), m_dbId(dbId)
-	{ }
+    MyTreeItemData(const wxString& filename, const wxString& pattern) : m_fileName(filename), m_pattern(pattern)
+	{}
 
 	const wxString &GetFileName() const {return m_fileName;}
-	int GetLineno() const {return m_lineno;}
-	int GetDbId() const{return m_dbId;}
+	const wxString &GetPattern() const {return m_pattern;}
 };
 
 /**

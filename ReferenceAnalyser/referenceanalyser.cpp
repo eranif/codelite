@@ -10,6 +10,9 @@
 static ReferenceAnalyser* thePlugin = NULL;
 
 //Define the plugin entry point
+
+
+
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 {
 	if (thePlugin == 0) {
@@ -18,7 +21,8 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 	return thePlugin;
 }
 
-extern "C" EXPORT PluginInfo GetPluginInfo()
+
+extern "C" EXPORT PluginInfo GetPluginInfo(int i)
 {
     PluginInfo info;
     info.SetAuthor(wxT("Sverre Rabbelier"));
@@ -27,6 +31,9 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     info.SetVersion(wxT("v1.0"));
     return info;
 }
+
+
+
 
 ReferenceAnalyser::ReferenceAnalyser(IManager *manager)
 		: IPlugin(manager)

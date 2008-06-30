@@ -310,7 +310,7 @@ int TagEntry::Store(wxSQLite3Statement& insertPerepareStmnt, TagsDatabase *db)
 		insertPerepareStmnt.Reset();
 		
 		// update the ID
-		SetId( db->LastRowId() );
+//		SetId( db->LastRowId() );
 
 	}
 	catch(wxSQLite3Exception& exc)
@@ -352,6 +352,7 @@ int TagEntry::Update(wxSQLite3Statement& updatePerepareStmnt)
 	}
 	return TagOk;
 }
+
 
 int TagEntry::Delete(wxSQLite3Statement &deletePreparedStmnt)
 {

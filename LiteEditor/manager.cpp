@@ -1617,10 +1617,14 @@ void Manager::CloseExternalDatabase()
 	SetStatusMessage(wxEmptyString, 2);
 }
 
+
+
+
 void Manager::SetStatusMessage(const wxString &msg, int col)
 {
 	Frame::Get()->GetStatusBar()->SetStatusText(msg, col);
 }
+
 
 void Manager::CloseAllButThis(wxWindow *curreditor)
 {

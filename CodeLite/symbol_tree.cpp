@@ -153,9 +153,9 @@ void SymbolTree::BuildTree(const wxFileName &fileName)
 
 	// add three items here:
 	// the globals node, the mcros and the prototype node
-	m_globalsNode    = AppendItem(root, wxT("Global Functions and Variables"), 2, 2, new MyTreeItemData(wxT("Global Functions and Variables"), -1, -1));
-	m_prototypesNode = AppendItem(root, wxT("Functions Prototypes"), 2, 2, new MyTreeItemData(wxT("Functions Prototypes"), -1, -1));
-	m_macrosNode     = AppendItem(root, wxT("Macros"), 2, 2, new MyTreeItemData(wxT("Macros"), -1, -1));
+	m_globalsNode    = AppendItem(root, wxT("Global Functions and Variables"), 2, 2, new MyTreeItemData(wxT("Global Functions and Variables"), wxEmptyString));
+	m_prototypesNode = AppendItem(root, wxT("Functions Prototypes"), 2, 2, new MyTreeItemData(wxT("Functions Prototypes"), wxEmptyString));
+	m_macrosNode     = AppendItem(root, wxT("Macros"), 2, 2, new MyTreeItemData(wxT("Macros"), wxEmptyString));
 
 	// Iterate over the tree and add items
 	m_sortItems.clear();
@@ -226,7 +226,7 @@ void SymbolTree::AddItem(TagNode* node)
 		                 displayName,			// display name
 		                 iconIndex,				// item image index
 		                 iconIndex,				// selected item image
-		                 new MyTreeItemData(node->GetData().GetFile(), node->GetData().GetLine(), node->GetData().GetId()));
+		                 new MyTreeItemData(node->GetData().GetFile(), node->GetData().GetPattern()));
 		node->GetData().SetTreeItemId( hti );
 		m_sortItems[parentHti.m_pItem] = true;
 		m_items[nodeData.Key()] = hti.m_pItem;
@@ -341,7 +341,7 @@ void SymbolTree::UpdateGuiItem(TagEntry& data, const wxString& key)
 
 			} // if(curIconIndex != iconIndex )
 			//update the linenumber and file
-			MyTreeItemData *item_data = new MyTreeItemData(data.GetFile(), data.GetLine(), data.GetId());
+			MyTreeItemData *item_data = new MyTreeItemData(data.GetFile(), data.GetPattern());
 			wxTreeItemData *old_data = GetItemData(itemId);
 			if (old_data)
 				delete old_data;

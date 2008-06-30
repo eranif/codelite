@@ -1114,23 +1114,23 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 		wxString tagName = _U(var.m_name.c_str());
 
 		//if we have name, collect only tags that matches name
-		if (name.IsEmpty())
-			continue;
+		if (name.IsEmpty() == false){
 		
-		// incase CaseSensitive is not required, make both string lower case
-		wxString tmpName(name);
-		wxString tmpTagName(tagName);
-		if(flags & IgnoreCaseSensitive) {
-			tmpName.MakeLower();
-			tmpTagName.MakeLower();
-		}
-		
-		if (flags & PartialMatch && !tmpTagName.StartsWith(tmpName))
-			continue;
+			// incase CaseSensitive is not required, make both string lower case
+			wxString tmpName(name);
+			wxString tmpTagName(tagName);
+			if(flags & IgnoreCaseSensitive) {
+				tmpName.MakeLower();
+				tmpTagName.MakeLower();
+			}
 			
-		if (flags & ExactMatch && tmpTagName != tmpName)
-			continue;
-
+			if (flags & PartialMatch && !tmpTagName.StartsWith(tmpName))
+				continue;
+				
+			if (flags & ExactMatch && tmpTagName != tmpName)
+				continue;
+		} // else no name is specified, collect all tags
+		
 		TagEntryPtr tag(new TagEntry());
 		tag->SetName(tagName);
 		tag->SetKind(wxT("variable"));

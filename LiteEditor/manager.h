@@ -665,6 +665,12 @@ public:
 	 */
 	wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd, bool considerPauseWhenExecuting = true);
 	
+	/**
+	 * \brief find pattern in editor. If match succeeded, try to find 'name' inside the pattern
+	 * and highlight it 
+	 */
+	void FindAndSelect(LEditor* editor, wxString& pattern, const wxString& name);
+	
 	//--------------------------------------------------------------------
 	//IDebuggerObserver implementation. These set of functions are called
 	//from the debugger whenever event occurs there

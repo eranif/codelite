@@ -2791,3 +2791,56 @@ void Manager::GetDefaultAcceleratorMap(MenuItemDataMap& accelMap)
 	wxString fileName = GetStarupDirectory() + wxT("/config/accelerators.conf.default");
 	LoadAcceleratorTable(fileName, accelMap);
 }
+
+void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& name)
+{
+	wxString tmpPattern( pattern );
+	FindReplaceData data;
+	tmpPattern.StartsWith(wxT("/^"), &pattern);
+
+	if (pattern.EndsWith(wxT("$/"))) {
+		pattern = pattern.Left(pattern.Len()-2);
+	}
+
+	size_t flags = wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD;
+
+	data.SetFindString(pattern);
+	data.SetFlags(flags);
+
+	// keep current position
+	long curr_pos = editor->GetCurrentPos();
+	int match_len(0), pos(0);
+
+	// set the caret at the document start
+	editor->SetCurrentPos(0);
+	editor->SetSelectionStart(0);
+	editor->SetSelectionEnd(0);
+
+	if ( StringFindReplacer::Search(editor->GetText(), 0, pattern, flags, pos, match_len) ) {
+		// select only the name at the give text range
+		wxString display_name = name.BeforeFirst(wxT('('));
+		
+		int match_len1(0), pos1(0);
+		flags |= wxSD_SEARCH_BACKWARD;
+		
+		// the inner search is done on the pattern without without the part of the 
+		// signature
+		pattern = pattern.BeforeFirst(wxT('('));
+		if(StringFindReplacer::Search(pattern, pattern.Len(), display_name, flags, pos1, match_len1)){
+			
+			// select only the word
+			editor->SetSelection(pos + pos1, pos + pos1 + match_len1);
+			
+		} else {
+			
+			// as a fallback, mark the whole line
+			editor->SetSelection(pos, pos + match_len);
+		}
+		
+	} else {
+		// match failed, restore the caret
+		editor->SetCurrentPos(curr_pos);
+		editor->SetSelectionStart(curr_pos);
+		editor->SetSelectionEnd(curr_pos);
+	}
+}

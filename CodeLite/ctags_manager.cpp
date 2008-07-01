@@ -750,7 +750,7 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		filter.Add(wxT("function"));
 		filter.Add(wxT("member"));
 		filter.Add(wxT("prototype"));
-		TagsByScope(scope, filter, candidates, false);
+		TagsByScope(scope, filter, candidates, true);
 	}
 
 	return candidates.empty() == false;

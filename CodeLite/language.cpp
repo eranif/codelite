@@ -542,7 +542,7 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 	//typename
 	bool res (false);
 	TagsManager *tagsManager = GetTagsManager();
-	std::vector<TagEntryPtr> tags;
+	std::vector<TagEntryPtr> tags, filtered_tags;
 	wxString path;
 	if (typeScope == wxT("<global>")) {
 		path << typeName;
@@ -563,10 +563,19 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 			tagsManager->FindByPath(path, tags);
 		}
 	}
-
-	if (tags.size() == 1) {
+	
+	
+	// try to remove all tags that are Macros from this list
+	for(size_t i=0; i<tags.size(); i++){
+		TagEntryPtr t = tags.at(i);
+		if(t->GetKind() != wxT("macro")) {
+			filtered_tags.push_back(t);
+		}
+	}
+	
+	if (filtered_tags.size() == 1) {
 		//we have a single match, test to see if it a typedef
-		TagEntryPtr tag = tags.at(0);
+		TagEntryPtr tag = filtered_tags.at(0);
 		wxString realName = tag->NameFromTyperef(templateInitList);
 		if (realName.IsEmpty() == false) {
 			typeName  = realName;

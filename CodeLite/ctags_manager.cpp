@@ -63,7 +63,7 @@ struct tagParseResult {
 	wxString fileName;
 };
 
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, bool> &ignoreTokens);
+extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens);
 //---------------------------------------------------------------------------
 // Tag cache entry
 //---------------------------------------------------------------------------
@@ -2154,14 +2154,8 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 
 wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarNames)
 {
-	wxArrayString prep = GetCtagsOptions().GetPreprocessor();
-	std::map<std::string, bool> ignoreTokens;
-
-	for (size_t i=0; i< prep.GetCount(); i++) {
-		const wxCharBuffer token = _C(prep.Item(i));
-		ignoreTokens[ token.data() ] = true;
-	}
-
+	std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetPreprocessorAsMap();
+	
 	VariableList li;
 	const wxCharBuffer patbuf = _C(sig);
 
@@ -2232,14 +2226,8 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
 		protos[key] = tag;
 	}
 
-	wxArrayString prep = GetCtagsOptions().GetPreprocessor();
-	std::map<std::string, bool> ignoreTokens;
-
-	for (size_t i=0; i< prep.GetCount(); i++) {
-		const wxCharBuffer token = _C(prep.Item(i));
-		ignoreTokens[ token.data() ] = true;
-	}
-
+	std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetPreprocessorAsMap();
+	
 	// remove functions with implementation
 	for ( size_t i=0; i < vimpl.size() ; i++ ) {
 		TagEntryPtr tag = vimpl.at(i);

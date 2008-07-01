@@ -29,3 +29,4 @@ LoginDialog::LoginDialog( wxWindow* parent )
 LoginBaseDialog( parent )
 {
 }
+

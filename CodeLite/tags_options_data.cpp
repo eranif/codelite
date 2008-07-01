@@ -22,6 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "precompiled_header.h"
  #include "tags_options_data.h"
 
 //---------------------------------------------------------
@@ -105,4 +106,24 @@ void TagsOptionsData::SetLanguageSelection(const wxString &lang)
 		m_languages.RemoveAt(where);
 	}
 	m_languages.Insert(lang, 0);
+}
+
+std::map<std::string,std::string> TagsOptionsData::GetPreprocessorAsMap() const
+{
+	std::map<std::string,std::string> tokens;
+	for(size_t i=0; i<m_prep.GetCount(); i++){
+		//const wxCharBuffer bufKey = _C(
+		wxString k = m_prep.Item(i).BeforeFirst(wxT('='));
+		wxString v = m_prep.Item(i).AfterFirst(wxT('='));
+		
+		const wxCharBuffer bufKey = _C(k);
+		std::string key = bufKey.data();
+		std::string value;
+		if(!v.empty()){
+			const wxCharBuffer bufValue = _C(v);
+			value = bufValue.data();
+		}
+		tokens[key] = value;
+	}
+	return tokens;
 }

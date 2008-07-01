@@ -56,8 +56,8 @@
 #include "variable.h"
 #include "function.h"
 
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, bool> &ignoreTokens);
-extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, bool> &ignoreTokens);
+extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens);
+extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens);
 
 static bool IsSource(const wxString &ext)
 {
@@ -1867,7 +1867,7 @@ void ContextCpp::OnFileSaved()
 	std::map< std::string, Variable > var_map;
 	std::map< wxString, TagEntryPtr> foo_map;
 
-	std::map<std::string, bool> ignoreTokens;
+	std::map<std::string, std::string> ignoreTokens;
 
 	const wxCharBuffer patbuf = _C(rCtrl.GetText());
 

@@ -45,10 +45,10 @@
 //cpp_variables_grammar.y
 //expr_garmmar.y
 
-extern std::string get_scope_name(const std::string &in, std::vector<std::string> &additionlNS, const std::map<std::string, bool> &ignoreTokens);
+extern std::string get_scope_name(const std::string &in, std::vector<std::string> &additionlNS, const std::map<std::string, std::string> &ignoreTokens);
 extern ExpressionResult &parse_expression(const std::string &in);
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, bool> &ignoreTokens);
-extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, bool> &ignoreTokens);
+extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens);
+extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens);
 
 //===============================================================
 
@@ -760,17 +760,8 @@ wxString Language::GetScopeName(const wxString &in, std::vector<wxString> *addit
 	const wxCharBuffer buf = _C(in);
 
 	TagsManager *mgr = GetTagsManager();
-	wxArrayString prep = mgr->GetCtagsOptions().GetPreprocessor();
-	std::map<std::string, bool> ignoreTokens;
-
-	for (size_t i=0; i< prep.GetCount(); i++) {
-		const wxCharBuffer token = _C(prep.Item(i));
-		ignoreTokens[ token.data() ] = true;
-	}
-
-	/*	FILE *fp = fopen("C:\\scope.txt", "w+a");
-		fprintf(fp, "%s\n", buf.data());
-		fclose(fp);*/
+	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
+	
 	std::string scope_name = get_scope_name(buf.data(), moreNS, ignoreTokens);
 	wxString scope = _U(scope_name.c_str());
 	if (scope.IsEmpty()) {
@@ -808,14 +799,8 @@ bool Language::TypeFromName(const wxString &name,
 	std::vector<TagEntryPtr> tags;
 
 	TagsManager *mgr = GetTagsManager();
-	wxArrayString prep = mgr->GetCtagsOptions().GetPreprocessor();
-	std::map<std::string, bool> ignoreTokens;
-
-	for (size_t i=0; i< prep.GetCount(); i++) {
-		const wxCharBuffer token = _C(prep.Item(i));
-		ignoreTokens[ token.data() ] = true;
-	}
-
+	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
+	
 	if (!DoSearchByNameAndScope(name, scopeName, tags, type, typeScope)) {
 		if (firstToken) {
 			//can we test visible scope?
@@ -982,14 +967,8 @@ bool Language::VariableFromPattern(const wxString &in, const wxString &name, Var
 	li.clear();
 
 	TagsManager *mgr = GetTagsManager();
-	wxArrayString prep = mgr->GetCtagsOptions().GetPreprocessor();
-	std::map<std::string, bool> ignoreTokens;
-
-	for (size_t i=0; i< prep.GetCount(); i++) {
-		const wxCharBuffer token = _C(prep.Item(i));
-		ignoreTokens[ token.data() ] = true;
-	}
-
+	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
+	
 	get_variables(patbuf.data(), li, ignoreTokens);
 	VariableList::iterator iter = li.begin();
 	for(; iter != li.end(); iter++){
@@ -1025,14 +1004,8 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 	pattern << wxT(';');
 
 	TagsManager *mgr = GetTagsManager();
-	wxArrayString prep = mgr->GetCtagsOptions().GetPreprocessor();
-	std::map<std::string, bool> ignoreTokens;
-
-	for (size_t i=0; i< prep.GetCount(); i++) {
-		const wxCharBuffer token = _C(prep.Item(i));
-		ignoreTokens[ token.data() ] = true;
-	}
-
+	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
+	
 	const wxCharBuffer patbuf = _C(pattern);
 	get_functions(patbuf.data(), fooList, ignoreTokens);
 	if (fooList.size() == 1) {
@@ -1099,14 +1072,8 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 	li.clear();
 
 	TagsManager *mgr = GetTagsManager();
-	wxArrayString prep = mgr->GetCtagsOptions().GetPreprocessor();
-	std::map<std::string, bool> ignoreTokens;
-
-	for (size_t i=0; i< prep.GetCount(); i++) {
-		const wxCharBuffer token = _C(prep.Item(i));
-		ignoreTokens[ token.data() ] = true;
-	}
-
+	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
+	
 	get_variables(patbuf.data(), li, ignoreTokens);
 	VariableList::iterator iter = li.begin();
 	for (; iter != li.end(); iter++) {

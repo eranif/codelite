@@ -12,11 +12,11 @@
 
 extern std::string get_scope_name(const std::string &in,
 	                                  std::vector<std::string > &additionlNS,
-	                                  const std::map<std::string, bool> &ignoreTokens);
+	                                  const std::map<std::string, std::string> &ignoreTokens);
 
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, bool> &ignoreTokens);
+extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens);
 extern ExpressionResult &parse_expression(const std::string &in);
-extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, bool> &ignoreTokens);
+extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens);
 
 void testScopeParser(char *buf);
 void testVarParser(char *buf);
@@ -47,7 +47,7 @@ void testFuncParser(char *buf)
 //	time_t start = GetTickCount();
 	FunctionList li;
 	//fflush(stdout);
-	std::map<std::string, bool> ignoreTokens;
+	std::map<std::string, std::string> ignoreTokens;
 	get_functions(buf, li, ignoreTokens);
 //	time_t end = GetTickCount();
 	for (FunctionList::iterator iter = li.begin(); iter != li.end(); iter++) {
@@ -75,7 +75,7 @@ void testScopeParser(char *buf)
 	printf("===== Testing Scope parser ======\n");
 //	time_t start = GetTickCount();
 	std::vector<std::string> additionNS;
-	std::map<std::string, bool> ignoreTokens;
+	std::map<std::string, std::string> ignoreTokens;
 
 	ignoreTokens["wxT"] = true;
 	std::string scope = get_scope_name(buf, additionNS, ignoreTokens);
@@ -95,7 +95,7 @@ void testVarParser(char *buf)
 	VariableList li;
 //	fflush(stdout);
 
-	std::map<std::string, bool> ignoreTokens;
+	std::map<std::string, std::string> ignoreTokens;
 	get_variables(buf, li, ignoreTokens);
 //	time_t end = GetTickCount();
 	for (VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {

@@ -69,7 +69,7 @@ extern void cl_scope_less(int count);
 
 extern int cl_scope_lineno;
 extern std::vector<std::string> currentScope;
-extern bool setLexerInput(const std::string &in, const std::map<std::string, bool> &ignoreMap);
+extern bool setLexerInput(const std::string &in, const std::map<std::string, std::string> &ignoreMap);
 extern void cl_scope_lex_clean();
 
 /*************** Standard ytab.c continues here *********************/
@@ -507,7 +507,7 @@ void var_syncParser(){
 }
 
 // return the scope name at the end of the input string
-void get_variables(const std::string &in, VariableList &li, const std::map<std::string, bool> &ignoreMap)
+void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap)
 {
 	//provide the lexer with new input
 	if( !setLexerInput(in, ignoreMap) )

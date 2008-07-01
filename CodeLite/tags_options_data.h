@@ -27,6 +27,7 @@
 
 #include "serialized_object.h"
 #include "wx/filename.h"
+#include <map>
 
 #ifndef WXDLLIMPEXP_CL
 #ifdef WXMAKINGDLL_CODELITE
@@ -73,6 +74,8 @@ public:
 
 	const wxArrayString &GetLanguages() const {return m_languages;}
 	const wxArrayString& GetPreprocessor() const {return m_prep;}
+	std::map<std::string, std::string> GetPreprocessorAsMap() const;
+	
 	const size_t& GetFlags() const {return m_ccFlags;}
 	const wxString &GetFileSpec() const{return m_fileSpec;}
 	

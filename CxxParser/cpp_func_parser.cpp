@@ -62,7 +62,7 @@ static clFunction curr_func;
 /*---------------------------------------------*/
 extern char *cl_func_text;
 extern int cl_scope_lex();
-extern bool setLexerInput(const std::string &in, const std::map<std::string, bool> &ignoreTokens);
+extern bool setLexerInput(const std::string &in, const std::map<std::string, std::string> &ignoreTokens);
 extern int cl_scope_lineno;
 extern void cl_scope_lex_clean();
 
@@ -548,7 +548,7 @@ void func_consumeTemplateDecl()
 }
 
 // return the scope name at the end of the input string
-void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, bool> &ignoreTokens)
+void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens)
 {
 	if( !setLexerInput(in, ignoreTokens) )
 	{

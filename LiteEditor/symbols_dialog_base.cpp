@@ -36,12 +36,13 @@ SymbolsDialogBase::SymbolsDialogBase( wxWindow* parent, wxWindowID id, const wxS
 	btnSizer = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_okButton = new wxButton( this, wxID_ANY, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_okButton->SetDefault(); 
 	btnSizer->Add( m_okButton, 0, wxALIGN_RIGHT|wxALL, 5 );
 	
-	m_cancel = new wxButton( this, wxID_ANY, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_cancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_cancel, 0, wxALIGN_RIGHT|wxALL, 5 );
 	
-	mainSizer->Add( btnSizer, 0, wxALIGN_RIGHT, 5 );
+	mainSizer->Add( btnSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();

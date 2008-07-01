@@ -2800,9 +2800,11 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 
 	if (pattern.EndsWith(wxT("$/"))) {
 		pattern = pattern.Left(pattern.Len()-2);
+	} else if(pattern.EndsWith(wxT("/"))) {
+		pattern = pattern.Left(pattern.Len()-1);
 	}
 
-	size_t flags = wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD;
+	size_t flags = wxSD_MATCHCASE;
 
 	data.SetFindString(pattern);
 	data.SetFlags(flags);
@@ -2822,6 +2824,7 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 		
 		int match_len1(0), pos1(0);
 		flags |= wxSD_SEARCH_BACKWARD;
+		flags |= wxSD_MATCHWHOLEWORD;
 		
 		// the inner search is done on the pattern without without the part of the 
 		// signature

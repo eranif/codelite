@@ -24,7 +24,7 @@ static std::vector<std::string> gs_additionlNS;
 //---------------------------------------------
 extern char *cl_scope_text;
 extern int cl_scope_lex();
-extern bool setLexerInput(const std::string &in, const std::map<std::string, bool> &ignoreTokens);
+extern bool setLexerInput(const std::string &in, const std::map<std::string, std::string> &ignoreTokens);
 extern int cl_scope_lineno;
 extern std::vector<std::string> currentScope;
 extern void printScopeName();	//print the current scope name
@@ -519,7 +519,7 @@ void consumeTemplateDecl()
 // return the scope name at the end of the input string
 std::string get_scope_name(	const std::string &in, 
 							std::vector<std::string> &additionalNS,
-							const std::map<std::string, bool> &ignoreTokens)
+							const std::map<std::string, std::string> &ignoreTokens)
 {
 	if( !setLexerInput(in, ignoreTokens) ){
 		return "";

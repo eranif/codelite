@@ -20,7 +20,7 @@ extern std::string cl_func_lval;
 
 std::vector<std::string> currentScope;
 
-bool setLexerInput(const std::string &in, const std::map<std::string, bool> &ignoreTokens);
+bool setLexerInput(const std::string &in, const std::map<std::string, std::string> &ignoreTokens);
 
 std::string getCurrentScope();
 void printScopeName();
@@ -29,10 +29,10 @@ void cl_scope_less(int count);
 
 //we keep a very primitive map with only symbol name
 //that we encountered so far
-std::map<std::string, bool> g_symbols;
-std::map<std::string, bool> g_macros;
+std::map<std::string, std::string> g_symbols;
+std::map<std::string, std::string> g_macros;
 
-static std::map<std::string, bool> g_ignoreList;
+static std::map<std::string, std::string> g_ignoreList;
 
 bool isaTYPE(char *string);
 bool isaMACRO(char *string);
@@ -387,7 +387,7 @@ std::string getCurrentScope()
 }
 
 /*******************************************************************/
-bool setLexerInput(const std::string &in, const std::map<std::string, bool> &ignoreTokens) 
+bool setLexerInput(const std::string &in, const std::map<std::string, std::string> &ignoreTokens) 
 {
 	BEGIN INITIAL;
 	yy_scan_string(in.c_str());

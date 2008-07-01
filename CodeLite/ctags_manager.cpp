@@ -743,10 +743,22 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 
 	//incase the last operator used was '::', retrieve all kinds of tags. Otherwise (-> , . operators were used)
 	//retrieve only the members/prototypes/functions/enums
+	wxArrayString filter;
 	if (oper == wxT("::")) {
-		TagsByScope(scope, candidates);
+		filter.Add(wxT("function"));
+		filter.Add(wxT("member"));
+		filter.Add(wxT("prototype"));
+		filter.Add(wxT("typedef"));
+		filter.Add(wxT("macro"));
+		filter.Add(wxT("enum"));
+		filter.Add(wxT("enumerator"));
+		filter.Add(wxT("union"));
+		filter.Add(wxT("class"));
+		filter.Add(wxT("struct"));
+		TagsByScope(scope, filter, candidates, true);
+		
 	} else {
-		wxArrayString filter;
+		
 		filter.Add(wxT("function"));
 		filter.Add(wxT("member"));
 		filter.Add(wxT("prototype"));
@@ -2137,13 +2149,11 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 		// incase we have anonymouse unions, we should inclued their values as well
 		wxString anon_sql;
 		if (include_anon) {
-			wxString top, bottom;
-			bottom << tmpScope << wxT("::__anon0");
-			top << tmpScope << wxT("::__anon999");
-			anon_sql << wxT(" OR (scope >= '") << bottom << wxT("' AND scope <= '") << top << wxT("') ");
+			anon_sql << wxT(" OR scope GLOB '") << tmpScope << wxT("::__anon*' ") ;
 		}
 		
-		sql << wxT("select * from tags where scope='") << tmpScope << wxT("' ") << anon_sql << kindClaus;
+		sql << wxT("select * from tags where (scope='") << tmpScope << wxT("' ") << anon_sql << wxT(") ") << kindClaus;
+		wxLogMessage(sql);
 		DoExecuteQueury(sql, tags);
 	}
 

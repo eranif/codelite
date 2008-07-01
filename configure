@@ -429,7 +429,7 @@ generateControlFile()
 	echo "Package: CodeLite" >> fakeroot/DEBIAN/control
 	echo "Version: 1.0RC02" >> fakeroot/DEBIAN/control
 	echo "Section: Development " >> fakeroot/DEBIAN/control
-	echo "Architecture: i386 amd64" >> fakeroot/DEBIAN/control
+	echo "Architecture: i386 " >> fakeroot/DEBIAN/control
 	echo "Essential: no" >> fakeroot/DEBIAN/control
 	echo "Depends: libwxgtk2.8-0, libgtk2.0-0, libcurl3" >> fakeroot/DEBIAN/control
 	echo "Maintainer: Eran Ifrah [eran.ifrah@gmail.com]" >> fakeroot/DEBIAN/control

@@ -126,10 +126,14 @@ void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
 	if(data->GetRootDir() == SEARCH_IN_WORKSPACE)
 	{
 		files = data->GetFiles();
+		// filter files which does not match the criteria
+		FilterFiles(files, data);
 	}
 	else if(data->GetRootDir() == SEARCH_IN_PROJECT)
 	{
 		files = data->GetFiles();
+		// filter files which does not match the criteria
+		FilterFiles(files, data);
 	}
 	else
 	{
@@ -153,6 +157,7 @@ void SearchThread::DoSearchFiles(ThreadRequest *req)
 	StopSearch(false);
 	wxArrayString fileList;
 	GetFiles(data, fileList);
+	
 	wxStopWatch sw;
 
 	// Send startup message to main thread
@@ -403,4 +408,41 @@ void SearchThread::SendEvent(wxEventType type)
 		::wxPostEvent(m_notifiedWindow, event);
 	}
 	wxThread::Sleep(5);
+}
+
+void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
+{
+	std::map<wxString, bool> spec;
+	wxString exts = data->GetExtensions();
+	if (exts.Trim().Trim(false) == wxT("*.*") || exts.Trim().Trim(false) == wxT("*")) {
+		spec.clear();
+	} else {
+		wxStringTokenizer tok(exts, wxT(";"));
+		while ( tok.HasMoreTokens() ) {
+			std::pair<wxString, bool> val;
+			val.first = tok.GetNextToken().AfterLast(wxT('*'));
+			val.first = val.first.AfterLast(wxT('.')).MakeLower();
+			val.second = true;
+			spec.insert( val );
+		}
+	}
+	
+	// loop over the files and compare against the list of spec
+	if(spec.empty()){
+		return;
+	}
+	
+	wxArrayString f = files;
+	
+	files.Clear();
+	for(size_t i=0; i<f.GetCount(); i++){
+		wxString ext = f.Item(i).AfterLast(wxT('.'));
+		if(ext.empty()){
+			// add extension less files
+			files.Add(f.Item(i));
+		}else if(spec.find(ext.MakeLower()) != spec.end()) {
+			//this extension exists, add the file
+			files.Add(f.Item(i));
+		}
+	}
 }

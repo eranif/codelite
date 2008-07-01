@@ -450,6 +450,9 @@ private:
 
 	// Internal function
 	bool AdjustLine(wxString &line, int &pos, wxString &findString);
+	
+	// filter 'files' according to the files spec
+	void FilterFiles(wxArrayString &files, const SearchData *data);
 
 };
 

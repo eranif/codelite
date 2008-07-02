@@ -147,7 +147,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_UPDATE_STATUS_BAR, Frame::OnUpdateStatusBar)
-	
+
 	//build/debugger events
 	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_ADDLINE, Frame::OnBuildEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_STARTED, Frame::OnBuildEvent)
@@ -339,6 +339,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, Frame::OnSingleInstanceOpenFiles)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, Frame::OnSingleInstanceRaise)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, Frame::OnNewVersionAvailable)
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE, Frame::OnNewVersionAvailable)
 	EVT_MENU(XRCID("detach_wv_tab"), Frame::OnDetachWorkspaceViewTab)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
 END_EVENT_TABLE()
@@ -2004,7 +2005,13 @@ void Frame::OnFindType(wxCommandEvent &event)
 	if (dlg->ShowModal() == wxID_OK) {
 		TagEntryPtr tag = dlg->GetSelectedTag();
 		if (tag && tag->IsOk()) {
-			ManagerST::Get()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
+			if (ManagerST::Get()->OpenFile(tag->GetFile(), wxEmptyString)) {
+				LEditor *editor = ManagerST::Get()->GetActiveEditor();
+				if (editor) {
+					wxString pattern = tag->GetPattern();
+					ManagerST::Get()->FindAndSelect(editor,  pattern, tag->GetName());
+				}
+			}
 		}
 	}
 	dlg->Destroy();
@@ -2049,7 +2056,7 @@ void Frame::OnImportMakefile(wxCommandEvent &event)
 void Frame::OnAddSymbols(SymbolTreeEvent &event)
 {
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
-	if (tree){
+	if (tree) {
 //		wxLogMessage(wxString::Format(wxT("adding %d new symbols"), event.GetItems().size()));
 		tree->AddSymbols(event);
 	}
@@ -2059,7 +2066,7 @@ void Frame::OnDeleteSymbols(SymbolTreeEvent &event)
 {
 	// make sure we direct the events to the correct tree
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
-	if (tree){
+	if (tree) {
 //		wxLogMessage(wxString::Format(wxT("deleting %d new symbols"), event.GetItems().size()));
 		tree->DeleteSymbols(event);
 	}
@@ -2068,7 +2075,7 @@ void Frame::OnDeleteSymbols(SymbolTreeEvent &event)
 void Frame::OnUpdateSymbols(SymbolTreeEvent &event)
 {
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
-	if (tree){
+	if (tree) {
 		wxLogMessage(wxString::Format(wxT("updating %d new symbols"), event.GetItems().size()));
 		tree->UpdateSymbols(event);
 	}
@@ -2985,7 +2992,7 @@ void Frame::OnParsingThreadDone(wxCommandEvent& e)
 	wxUnusedVar(e);
 	GetStatusBar()->SetStatusText(wxT("Done"), 4);
 	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if(editor) {
+	if (editor) {
 		editor->UpdateColours();
 	}
 }
@@ -3022,18 +3029,18 @@ void Frame::OnSingleInstanceRaise(wxCommandEvent& e)
 
 void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 {
-#if defined (__WXMSW__) || defined (__WXGTK__)
 	WebUpdateJobData *data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
 	if (data) {
-		if ( wxMessageBox(wxString::Format(wxT("A new version is available!\nCurrent version: rev%d\nNew version: rev%d\nWould you like CodeLite to take you to the download page?"), data->GetCurrentVersion(), data->GetNewVersion()), wxT("CodeLite"), wxYES_NO| wxICON_QUESTION, this) == wxYES ) {
-			wxString url = data->GetUrl();
-			wxLaunchDefaultBrowser(url);
+		if (data->IsUpToDate() == false) {
+			if ( wxMessageBox(wxString::Format(wxT("A new version is available!\nCurrent version: rev%d\nNew version: rev%d\nWould you like CodeLite to take you to the download page?"), data->GetCurrentVersion(), data->GetNewVersion()), wxT("CodeLite"), wxYES_NO| wxICON_QUESTION, this) == wxYES ) {
+				wxString url = data->GetUrl();
+				wxLaunchDefaultBrowser(url);
+			}
+		} else {
+			wxLogMessage(wxString::Format(wxT("info: CodeLite is up-to-date (or newer), current: %d, version on site:%d"), data->GetCurrentVersion(), data->GetNewVersion()));
 		}
 		delete data;
 	}
-#else
-	wxUnusedVar(e);
-#endif
 }
 
 void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)

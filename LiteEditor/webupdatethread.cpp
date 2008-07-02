@@ -6,8 +6,10 @@
 extern const wxChar *SvnRevision;
 
 const wxEventType wxEVT_CMD_NEW_VERSION_AVAILABLE = wxNewEventType();
+const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
+
 WebUpdateJob::WebUpdateJob(wxEvtHandler *parent)
-: Job(parent)
+		: Job(parent)
 {
 }
 
@@ -32,8 +34,8 @@ void WebUpdateJob::Process(wxThread* thread)
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L);
 		// fetch!
 		res = curl_easy_perform(curl);
-		
-		if(res == CURLE_OK){
+
+		if (res == CURLE_OK) {
 			// compare the version
 			ParseFile();
 		}
@@ -44,11 +46,11 @@ void WebUpdateJob::Process(wxThread* thread)
 size_t WebUpdateJob::WriteData(void* buffer, size_t size, size_t nmemb, void* obj)
 {
 	WebUpdateJob *job = reinterpret_cast<WebUpdateJob*>(obj);
-	if(job) {
+	if (job) {
 		char *data = new char[size*nmemb+1];
 		memcpy(data, buffer, size*nmemb);
 		data[size*nmemb] = 0;
-		
+
 		job->m_dataRead.Append(_U(data));
 		delete [] data;
 		return size * nmemb;
@@ -64,43 +66,45 @@ void WebUpdateJob::ParseFile()
 #elif defined(__WXMAC__)
 	packageName = wxT("MAC");
 #endif
-	
+
 	wxArrayString lines = wxStringTokenize(m_dataRead, wxT("\n"));
-	for(size_t i=0; i<lines.GetCount(); i++){
+	for (size_t i=0; i<lines.GetCount(); i++) {
 		wxString line = lines.Item(i);
 		line = line.Trim().Trim(false);
-		if(line.StartsWith(wxT("#"))){
+		if (line.StartsWith(wxT("#"))) {
 			//comment line
 			continue;
 		}
-		
+
 		// parse the line
 		wxArrayString tokens = wxStringTokenize(line, wxT("|"));
-		if(tokens.GetCount() > 2){
+		if (tokens.GetCount() > 2) {
 			// find the entry with our package name
-			if(tokens.Item(0).Trim().Trim(false) == packageName){
+			if (tokens.Item(0).Trim().Trim(false) == packageName) {
 				wxString url = tokens.Item(2).Trim().Trim(false);
 				wxString rev = tokens.Item(1).Trim().Trim(false);
 				long currev;
 				long webrev(0);
-				
+
 				// convert strings to long
 				wxString sCurRev(SvnRevision);
 				sCurRev.ToLong(&currev);
-				
+
 				wxString sUrlRev(rev);
 				sUrlRev.ToLong(&webrev);
-				
-				if( webrev > currev ) {
+
+				if ( webrev > currev ) {
 					// notify the user that a new version is available
 					wxCommandEvent e(wxEVT_CMD_NEW_VERSION_AVAILABLE);
-					e.SetClientData(new WebUpdateJobData(url.c_str(), currev, webrev));
+					e.SetClientData(new WebUpdateJobData(url.c_str(), currev, webrev, false));
+					wxPostEvent(m_parent, e);
+				} else {
+					// version is up to date, notify the main thread about it
+					wxCommandEvent e(wxEVT_CMD_VERSION_UPTODATE);
+					e.SetClientData(new WebUpdateJobData(url.c_str(), currev, webrev, true));
 					wxPostEvent(m_parent, e);
 				}
 			}
 		}
 	}
 }
-
-
-

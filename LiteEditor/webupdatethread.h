@@ -4,6 +4,7 @@
 #include "job.h"
 
 extern const wxEventType wxEVT_CMD_NEW_VERSION_AVAILABLE;
+extern const wxEventType wxEVT_CMD_VERSION_UPTODATE;
 
 class WebUpdateJobData
 {
@@ -11,12 +12,14 @@ class WebUpdateJobData
 	wxString m_url;
 	long m_curVersion;
 	long m_newVersion;
-
+	bool m_upToDate;
+	
 public:
-	WebUpdateJobData(const wxString &url, long curVersion, long newVersion)
+	WebUpdateJobData(const wxString &url, long curVersion, long newVersion, bool upToDate)
 			: m_url(url.c_str())
 			, m_curVersion(curVersion) 
 			, m_newVersion(newVersion) 
+			, m_upToDate(upToDate)
 			{}
 			
 	~WebUpdateJobData() {}
@@ -30,6 +33,11 @@ public:
 	long GetNewVersion() const {
 		return m_newVersion;
 	}
+	
+	bool IsUpToDate() const {
+		return m_upToDate;
+	}
+	
 };
 
 class WebUpdateJob : public Job

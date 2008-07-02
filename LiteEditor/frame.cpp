@@ -3037,7 +3037,7 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 				wxLaunchDefaultBrowser(url);
 			}
 		} else {
-			wxLogMessage(wxString::Format(wxT("info: CodeLite is up-to-date (or newer), current: %d, version on site:%d"), data->GetCurrentVersion(), data->GetNewVersion()));
+			wxLogMessage(wxString::Format(wxT("Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"), data->GetCurrentVersion(), data->GetNewVersion()));
 		}
 		delete data;
 	}

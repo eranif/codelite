@@ -323,11 +323,15 @@ bool FindReplaceDialog::Show(int kind)
 	}
 
 	kind == FIND_DLG ? ShowReplaceControls(false) : ShowReplaceControls(true);
-
+	
+	// call Show() here
+	bool res = wxDialog::Show();
+	
+	// and now call the focus methods
 	SetFindReplaceData(m_data);
 	m_findString->SetSelection(-1, -1); // select all
 	m_findString->SetFocus();
-	return wxDialog::Show();
+	return res;
 }
 
 void FindReplaceDialog::ShowReplaceControls(bool show)

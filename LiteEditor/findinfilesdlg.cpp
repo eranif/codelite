@@ -303,10 +303,11 @@ bool FindInFilesDialog::Show()
 	if( IsShown() )
 		return true;
 
+	bool res = wxDialog::Show();
 	SetData(m_data);
 	m_findString->SetSelection(-1, -1); // select all
 	m_findString->SetFocus();
-	return wxDialog::Show();
+	return res;
 }
 
 SearchData FindInFilesDialog::DoGetSearchData()

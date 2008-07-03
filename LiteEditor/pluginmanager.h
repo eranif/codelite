@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : pluginmanager.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : pluginmanager.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef PLUGINMANAGER_H
+#ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
 #include "plugin.h"
@@ -43,23 +43,25 @@ class PluginManager : public IManager
 	std::map<wxString, IPlugin*> m_plugins;
 	std::list< clDynamicLibrary* > m_dl;
 	std::map<wxString, PluginInfo> m_pluginsInfo;
-	
+
 private:
-	PluginManager(){}
+	PluginManager() {}
 	virtual ~PluginManager();
 
 public:
-	
+
 	static PluginManager *Get();
-	
+
 	virtual void Load();
 	virtual void UnLoad();
-	
+
 	/**
 	 * \brief return a map of all loaded plugins
 	 */
-	const std::map<wxString, PluginInfo>& GetPluginsInfo() const {return m_pluginsInfo;}
-	
+	const std::map<wxString, PluginInfo>& GetPluginsInfo() const {
+		return m_pluginsInfo;
+	}
+
 	//------------------------------------
 	//Implementation of IManager interface
 	//------------------------------------
@@ -82,6 +84,7 @@ public:
 	virtual EnvironmentConfig* GetEnv();
 	virtual JobQueue *GetJobQueue();
 	virtual wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd);
+	virtual wxApp *GetTheApp();
 	
 	//------------------------------------
 	//End of IManager interface
@@ -89,7 +92,7 @@ public:
 
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
-	
+
 };
 
 #endif //PLUGINMANAGER_H

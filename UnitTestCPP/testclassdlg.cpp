@@ -127,7 +127,7 @@ void TestClassDlg::OnClassNameTyped(wxCommandEvent& e)
 
 void TestClassDlg::OnShowClassListDialog(wxCommandEvent& e)
 {
-	OpenTypeDlg *dlg = new OpenTypeDlg(wxTheApp->GetTopWindow(), m_manager->GetTagsManager());
+	OpenTypeDlg *dlg = new OpenTypeDlg(m_manager->GetTheApp()->GetTopWindow(), m_manager->GetTagsManager());
 	if (dlg->ShowModal() == wxID_OK) {
 		// do something with the selected text
 		m_textCtrlClassName->SetValue( dlg->GetSelectedTag()->GetName() );

@@ -1,28 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : imanager.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : imanager.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef IMANAGER_H
+
+#ifndef IMANAGER_H
 #define IMANAGER_H
 
 #include "ieditor.h"
@@ -34,20 +35,22 @@ class TagsManager;
 class Workspace;
 class EnvironmentConfig;
 class JobQueue;
+class wxApp;
 
 //--------------------------
 //Auxulary class
 //--------------------------
-class TreeItemInfo {
+class TreeItemInfo
+{
 public:
 	wxTreeItemId m_item;
-	wxFileName m_fileName;	//< FileName where available (FileView & File Explorer trees) 
+	wxFileName m_fileName;	//< FileName where available (FileView & File Explorer trees)
 	wxString m_text;		//< Tree item text (all)
 	int	m_itemType;			//< For FileView items (FileView only)
 };
 
 //---------------------------
-// List of availabla trees 
+// List of availabla trees
 //---------------------------
 enum TreeType {
 	TreeFileView = 0,
@@ -62,20 +65,21 @@ enum TreeType {
  * @author Eran
  * @date 05/07/08
  * @file imanager.h
- * @brief every plugin holds an instance of this class. 
+ * @brief every plugin holds an instance of this class.
  * You should use this class to interact with CodeLite
  */
-class IManager {
+class IManager
+{
 public:
-	IManager(){}
-	virtual ~IManager(){}
-	
+	IManager() {}
+	virtual ~IManager() {}
+
 	//return the current editor
 	/**
-	 * @brief return the active editor 
+	 * @brief return the active editor
 	 * @return pointer to the current editor, or NULL incase the active editor is not of type LEditor or no active editor open
 	 */
-	virtual IEditor *GetActiveEditor() = 0; 
+	virtual IEditor *GetActiveEditor() = 0;
 	/**
 	 * @brief open file and make it the active editor
 	 * @param fileName the file to open - use absolute path
@@ -88,12 +92,12 @@ public:
 	 * @sa IConfigTool
 	 */
 	virtual IConfigTool *GetConfigTool() = 0;
-	
+
 	/**
 	 * @brief return TreeItemInfo for the selected tree item
-	 * @param type the tree we are interested in 
+	 * @param type the tree we are interested in
 	 * @sa TreeItemInfo
-	 * @sa TreeType 
+	 * @sa TreeType
 	 */
 	virtual TreeItemInfo GetSelectedTreeItemInfo(TreeType type) = 0;
 	/**
@@ -104,8 +108,8 @@ public:
 	virtual wxTreeCtrl *GetTree(TreeType type) = 0;
 	/**
 	 * @brief return a pointer to the output pane notebook (the one with the 'output' title)
-	 * @return pointer to Notebook 
-	 * @sa Notebook 
+	 * @return pointer to Notebook
+	 * @sa Notebook
 	 */
 	virtual Notebook *GetOutputPaneNotebook() = 0;
 	/**
@@ -130,7 +134,7 @@ public:
 	virtual TagsManager *GetTagsManager() = 0;
 	/**
 	 * @brief return a pointer to the workspace manager
-	 * @sa Workspace 
+	 * @sa Workspace
 	 */
 	virtual Workspace *GetWorkspace() = 0;
 	/**
@@ -156,7 +160,7 @@ public:
 	virtual wxAuiManager* GetDockingManager() = 0;
 	/**
 	 * @brief return a pointer to the environment manager
-	 * @sa EnvironmentConfig 
+	 * @sa EnvironmentConfig
 	 */
 	virtual EnvironmentConfig *GetEnv() = 0;
 	/**
@@ -164,7 +168,7 @@ public:
 	 * \return job queue manager
 	 */
 	virtual JobQueue *GetJobQueue() = 0;
-	
+
 	/**
 	 * \brief return the project execution command as set in the project's settings
 	 * \param projectName the project
@@ -172,7 +176,11 @@ public:
 	 * \return the execution command or wxEmptyString if the project does not exist
 	 */
 	virtual wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd) = 0;
+
+	/**
+	 * \brief return the application
+	 */
+	virtual wxApp *GetTheApp() = 0;
 };
 
 #endif //IMANAGER_H
-

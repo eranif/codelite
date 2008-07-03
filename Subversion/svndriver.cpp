@@ -231,7 +231,7 @@ void SvnDriver::CommitWithAuth(const wxString &cmd, const TreeItemInfo &item)
 {
 	TRYENTERSVN();
 	wxString command(cmd);
-	LoginDialog *dlg = new LoginDialog(wxTheApp->GetTopWindow());
+	LoginDialog *dlg = new LoginDialog(m_manager->GetTheApp()->GetTopWindow());
 	if (dlg->ShowModal() == wxID_OK) {
 
 		wxString username = dlg->GetUsername();

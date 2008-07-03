@@ -76,7 +76,7 @@ UnitTestPP::UnitTestPP(IManager *manager)
 {
 	m_longName = wxT("A Unit test plugin based on the UnitTest++ framework");
 	m_shortName = wxT("UnitTestPP");
-	m_topWindow = wxTheApp;
+	m_topWindow = m_mgr->GetTheApp();
 }
 
 UnitTestPP::~UnitTestPP()
@@ -176,7 +176,7 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 		}
 	}
 	
-	TestClassDlg *dlg = new TestClassDlg(wxTheApp->GetTopWindow(), m_mgr);
+	TestClassDlg *dlg = new TestClassDlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
 	dlg->SetClassName(clsName);
 	
 	if (dlg->ShowModal() == wxID_OK) {
@@ -257,7 +257,7 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 void UnitTestPP::OnNewSimpleTest(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	NewUnitTestDlg *dlg = new NewUnitTestDlg(wxTheApp->GetTopWindow());
+	NewUnitTestDlg *dlg = new NewUnitTestDlg(m_mgr->GetTheApp()->GetTopWindow());
 	if (dlg->ShowModal() == wxID_OK) {
 		// create the unit test
 		wxString testName = dlg->GetTestName();

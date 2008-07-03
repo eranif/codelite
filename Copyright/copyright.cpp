@@ -78,7 +78,7 @@ Copyright::Copyright(IManager *manager)
 {
 	m_longName = wxT("Copyright Plugin - a small plugin that allows you to place copyright block on top of your source files");
 	m_shortName = wxT("Copyright");
-	m_topWin = wxTheApp;
+	m_topWin = m_mgr->GetTheApp();
 }
 
 Copyright::~Copyright()
@@ -257,7 +257,7 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 void Copyright::OnOptions(wxCommandEvent& e)
 {
 	// pop up the options dialog
-	CopyrightsOptionsDlg *dlg = new CopyrightsOptionsDlg(wxTheApp->GetTopWindow(), m_mgr->GetConfigTool());
+	CopyrightsOptionsDlg *dlg = new CopyrightsOptionsDlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr->GetConfigTool());
 	dlg->ShowModal();
 	dlg->Destroy();
 }

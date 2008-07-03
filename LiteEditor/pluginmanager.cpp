@@ -339,3 +339,8 @@ wxString PluginManager::GetProjectExecutionCommand(const wxString& projectName, 
 {
 	return ManagerST::Get()->GetProjectExecutionCommand(projectName, wd, false);
 }
+
+wxApp* PluginManager::GetTheApp()
+{
+	return wxTheApp;
+}

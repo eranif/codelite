@@ -150,7 +150,7 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 	
 	//Connect items
 	if (!topWin) {
-		topWin = wxTheApp;
+		topWin = m_mgr->GetTheApp();
 	}
 
 	if (topWin) {
@@ -442,7 +442,7 @@ void SubversionPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 	pluginsMenu->Append(wxID_ANY, wxT("Subversion"), menu);
 
 	if (!topWin) {
-		topWin = wxTheApp;
+		topWin = m_mgr->GetTheApp();
 	}
 	topWin->Connect(XRCID("svn_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnOptions), NULL, (wxEvtHandler*)this);
 }

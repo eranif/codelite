@@ -64,7 +64,7 @@ Cscope::Cscope(IManager *manager)
 {
 	m_longName = wxT("Cscope Integration for CodeLite");
 	m_shortName = wxT("Cscope");
-	m_topWindow = wxTheApp;
+	m_topWindow = m_mgr->GetTheApp();
 
 	m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook(), m_mgr);
 	m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, wxT("cscope"), wxXmlResource::Get()->LoadBitmap(wxT("cscope")), false);

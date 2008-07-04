@@ -298,6 +298,12 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("delete_line_end"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_line_start"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("transpose_lines"), Frame::DispatchCommandEvent)
+	
+	EVT_UPDATE_UI(XRCID("delete_line"), Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("delete_line_end"), Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("delete_line_start"), Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("transpose_lines"), Frame::OnFileExistUpdateUI)
+	
 	EVT_MENU(XRCID("to_upper"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("to_lower"), Frame::DispatchCommandEvent)
 	EVT_UPDATE_UI(XRCID("to_upper"), Frame::DispatchUpdateUIEvent)

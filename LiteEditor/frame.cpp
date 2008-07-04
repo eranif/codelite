@@ -418,7 +418,7 @@ Frame::~Frame(void)
 
 	// uninitialize AUI manager
 #if defined(__WXMAC__)||defined(__WXGTK__)
-	exit(0);
+//	exit(0);
 #endif
 	m_mgr.UnInit();
 }

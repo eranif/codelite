@@ -138,15 +138,15 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("svn_repo"));
 	wxString caption( wxT("Subversion") );
 	
-	CustomTab *tab = new CustomTab(book->GetTabContainer(), 
-									wxID_ANY, 
-									caption, 
-									bmp, 
-									false, 
-									book->GetTabContainer()->GetOrientation(), 
-									book->GetBookStyle());
-	tab->SetWindow( svnwin );
-	book->AddPage(tab);
+//	CustomTab *tab = new CustomTab(book->GetTabContainer(), 
+//									wxID_ANY, 
+//									caption, 
+//									bmp, 
+//									false, 
+//									book->GetTabContainer()->GetOrientation(), 
+//									book->GetBookStyle());
+//	tab->SetWindow( svnwin );
+	book->AddPage(svnwin, caption, bmp);
 	
 	//Connect items
 	if (!topWin) {
@@ -569,6 +569,16 @@ void SubversionPlugin::UnPlug()
 	topWin->Disconnect(XRCID("svn_refresh_prj"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnShowReportPrj), NULL, (wxEvtHandler*)this);
 	topWin->Disconnect(XRCID("svn_update_prj"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnUpdatePrj), NULL, (wxEvtHandler*)this);
 	topWin->Disconnect(XRCID("svn_commit_prj"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommitPrj), NULL, (wxEvtHandler*)this);
+	
+	// before this plugin is un-plugged we must remove the tab we added 
+	for(size_t i=0; i<m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++){
+		if(m_mgr->GetOutputPaneNotebook()->GetPageText(i) == wxT("Subversion")) {
+			SvnTab *win = (SvnTab*)m_mgr->GetOutputPaneNotebook()->GetPage(i);
+			m_mgr->GetOutputPaneNotebook()->RemovePage(i, false);
+			win->Destroy();
+			break;
+		}
+	}
 
 	if (m_svn) {
 		m_svn->Shutdown();

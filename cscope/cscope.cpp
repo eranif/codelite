@@ -160,6 +160,15 @@ void Cscope::UnHookPopupMenu(wxMenu *menu, MenuType type)
 
 void Cscope::UnPlug()
 {
+	// before this plugin is un-plugged we must remove the tab we added 
+	for(size_t i=0; i<m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++){
+		if(m_cscopeWin == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
+			m_mgr->GetOutputPaneNotebook()->RemovePage(i, false);
+			m_cscopeWin->Destroy();
+			break;
+		}
+	}
+	
 	CScopeThreadST::Get()->Stop();
 	CScopeThreadST::Free();
 }

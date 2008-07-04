@@ -2153,7 +2153,7 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 		}
 		
 		sql << wxT("select * from tags where (scope='") << tmpScope << wxT("' ") << anon_sql << wxT(") ") << kindClaus;
-		wxLogMessage(sql);
+//		wxLogMessage(sql);
 		DoExecuteQueury(sql, tags);
 	}
 

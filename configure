@@ -60,7 +60,7 @@ createVariables()
 		ext=u
 		debug_flag=""
 		optimization=" -O3 -DREGEXP_UNICODE "
-		wxcfg="\"--unicode=yes --debug=no\""
+		wxcfg="--unicode=yes --debug=no"
 	fi
 
 	echo "OPT=${optimization}" >> Makefile

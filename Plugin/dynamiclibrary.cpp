@@ -50,10 +50,16 @@ clDynamicLibrary::~clDynamicLibrary()
 bool clDynamicLibrary::Load(const wxString &name)
 {
 #if defined (__WXMSW__)
-	return m_lib.Load(name);
+	return m_lib.Load(name, wxDL_NOSHARE);
 #else
 	// open the library
+#ifdef __WXGTK__
+	// on GTK we need to pass RTLD_DEEPBIND otherwise symbols clashes
 	m_dllhandle = dlopen(_C(name), RTLD_LAZY| RTLD_LOCAL | RTLD_DEEPBIND);
+#else	
+	m_dllhandle = dlopen(_C(name), RTLD_LAZY);
+#endif
+
 	if (!m_dllhandle) {
 		wxString error = wxString(dlerror(), wxConvUTF8);
 		return false;

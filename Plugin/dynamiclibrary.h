@@ -30,7 +30,7 @@
 
 class clDynamicLibrary {
 
-#if defined (__WXMSW__) || defined (__WXGTK__)
+#if defined (__WXMSW__)
 	wxDynamicLibrary m_lib;
 #else //Mac OSX
 	void *m_dllhandle;

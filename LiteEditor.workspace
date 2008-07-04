@@ -9,13 +9,13 @@
   <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
   <Project Name="wxscintilla" Path="sdk/wxscintilla/wxscintilla.project"/>
   <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
-  <Project Name="LiteEditor" Path="LiteEditor/LiteEditor.project" Active="No"/>
+  <Project Name="LiteEditor" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
   <Project Name="sqlite3" Path="sqlite3/sqlite3.project"/>
   <Project Name="CodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
   <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project" Active="No"/>
   <Project Name="Interfaces" Path="Interfaces/Interfaces.project"/>
   <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
-  <Project Name="Subversion" Path="Subversion/Subversion.project" Active="Yes"/>
+  <Project Name="Subversion" Path="Subversion/Subversion.project" Active="No"/>
   <Project Name="Gizmos" Path="Gizmos/Gizmos.project" Active="No"/>
   <Project Name="Cscope" Path="cscope/Cscope.project" Active="No"/>
   <Environment>

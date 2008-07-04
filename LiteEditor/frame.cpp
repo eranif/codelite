@@ -294,6 +294,14 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("convert_eol_win"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("convert_eol_unix"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("convert_eol_mac"), Frame::OnFileExistUpdateUI)
+	EVT_MENU(XRCID("delete_line"), Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("delete_line_end"), Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("delete_line_start"), Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("transpose_lines"), Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("to_upper"), Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("to_lower"), Frame::DispatchCommandEvent)
+	EVT_UPDATE_UI(XRCID("to_upper"), Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(XRCID("to_lower"), Frame::DispatchUpdateUIEvent)
 
 	//-----------------------------------------------------------------
 	//C++ context menu

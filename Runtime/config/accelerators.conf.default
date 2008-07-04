@@ -14,6 +14,12 @@ wxID_CUT|Edit|Cut|Ctrl-X
 wxID_COPY|Edit|Copy|Ctrl-C
 wxID_PASTE|Edit|Paste|Ctrl-V
 wxID_DUPLICATE|Edit|Duplicate Line|Ctrl-U
+delete_line_end|Edit|Delete to Line End|
+delete_line_start|Edit|Delete to Line Start|
+delete_line|Edit|Delete Line|Ctrl-L
+to_lower|Edit|Make Lowercase|
+to_upper |Edit|Make Uppercase|
+transpose_lines|Edit|Transpose Lines|Ctrl-T
 wxID_SELECTALL|Edit|Select All|Ctrl-A
 match_brace|Edit|Match Brace|Ctrl-E
 select_to_brace|Edit|Select to Brace|Ctrl-Shift-E

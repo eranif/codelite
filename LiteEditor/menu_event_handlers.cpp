@@ -51,6 +51,18 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 		editor->SelectAll();
 	} else if (event.GetId() == wxID_DUPLICATE) {
 		editor->LineDuplicate();
+	} else if (event.GetId() == XRCID("delete_line_end")) {
+		editor->DelLineRight();
+	} else if (event.GetId() == XRCID("delete_line_start")) {
+		editor->DelLineLeft();
+	} else if (event.GetId() == XRCID("delete_line")) {
+		editor->LineDelete();
+	} else if (event.GetId() == XRCID("to_lower")) {
+		editor->LowerCase();
+	} else if (event.GetId() == XRCID("to_upper")) {
+		editor->UpperCase();
+	} else if (event.GetId() == XRCID("transpose_lines")) {
+		editor->LineTranspose();
 	}
 }
 
@@ -58,7 +70,7 @@ void EditHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event)
 {
 	LEditor *editor = dynamic_cast<LEditor*>(owner);
 
-	if (event.GetId() == wxID_COPY) {
+	if (event.GetId() == wxID_COPY || event.GetId() == XRCID("to_lower") || event.GetId() == XRCID("to_upper")) {
 		event.Enable(editor && ( editor->GetSelectionStart() - editor->GetSelectionEnd() != 0 ));
 	} else if (event.GetId() == wxID_CUT) {
 		event.Enable(editor && ( editor->GetSelectionStart() - editor->GetSelectionEnd() != 0 ));

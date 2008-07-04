@@ -94,7 +94,33 @@
                 <label>Select &amp;All</label>
             </object>            
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>            
-            <object class="wxMenuItem" name="match_brace">
+			<object class="wxMenuItem" name="delete_line">
+				 <label>&amp;Delete Line</label>
+				 <help>Delete the current line</help>
+			 </object>
+			<object class="wxMenuItem" name="delete_line_end">
+				 <label>Delete to Line &amp;End</label>
+				 <help>Delete to end of current line</help>
+			 </object>
+			<object class="wxMenuItem" name="delete_line_start">
+				 <label>Delete to Line &amp;Start</label>
+				 <help>Delete to start of current line</help>
+			 </object>
+			<object class="wxMenuItem" name="transpose_lines">
+				 <label>&amp;Transpose Lines</label>
+				 <help>Swap with the line above</help>
+			 </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/> 
+			<object class="wxMenuItem" name="to_upper">
+				 <label>Make Upper&amp;case</label>
+				 <help>Make selected text uppercase</help>
+			 </object>
+			<object class="wxMenuItem" name="to_lower">
+				 <label>Make &amp;Lowercase</label>
+				 <help>Make selected text lowercase</help>
+			 </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+			<object class="wxMenuItem" name="match_brace">
                 <label>Match &amp;Brace</label>
             </object>            
             <object class="wxMenuItem" name="select_to_brace">

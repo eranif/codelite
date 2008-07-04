@@ -324,8 +324,8 @@ void LEditor::SetProperties()
 	EditorConfigST::Get()->GetLongValue(wxT("EditorTabWidth"), tabWidth);
 	SetTabWidth(tabWidth);
 	SetIndent(tabWidth);
-	
-#ifdef __WXMAC__	
+
+#ifdef __WXMAC__
 	// turning off these two greatly improves performance
 	// on Mac
 	SetTwoPhaseDraw(false);
@@ -490,7 +490,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 		// remove indicators
 		SetIndicatorCurrent(2);
 		IndicatorClearRange(0, GetLength());
-		
+
 #ifdef __WXMAC__
 		Refresh();
 #endif
@@ -547,10 +547,10 @@ bool LEditor::SaveFile()
 		wxString projName = GetProjectName();
 		if ( projName.Trim().Trim(false).IsEmpty() )
 			return true;
-		
+
 		// clear cached file, this function does nothing if the file is not cached
 		TagsManagerST::Get()->ClearCachedFile(GetFileName().GetFullPath());
-		
+
 		m_context->RetagFile();
 	}
 	return true;
@@ -776,7 +776,7 @@ void LEditor::OnModified(wxScintillaEvent& event)
 	if (event.GetModificationType() & wxSCI_PERFORMED_UNDO ||event.GetModificationType() & wxSCI_PERFORMED_REDO ) {
 		if (GetModify() == false) {
 			SetDirty(false);
-		}else{
+		} else {
 			SetDirty(true);
 		}
 	}
@@ -2088,4 +2088,55 @@ void LEditor::SetStatusBarMessage(const wxString& msg, int field)
 	e.SetInt(field);
 	e.SetString(msg);
 	Frame::Get()->AddPendingEvent(e);
+}
+
+void LEditor::ShowFunctionTipFromCurrentPos()
+{
+	// determine the closest open brace from the current caret position
+	int pos = GetCurrentPos();
+	if (m_context->IsCommentOrString(pos)) {
+		return;
+	}
+
+	int depth(0);
+
+	bool exit_loop(false);
+
+	while ( pos > 0 ) {
+		if (m_context->IsCommentOrString(pos)) {
+			pos = PositionBefore(pos);
+			continue;
+		}
+
+		wxChar ch = SafeGetChar(pos);
+		switch (ch) {
+		case wxT('{'):
+					case wxT('}'):
+						case wxT(';'):
+								exit_loop = true;
+			break;
+		case wxT('('):
+						depth ++;
+			if (depth == 1) {
+				pos = PositionAfter(pos);
+				exit_loop = true;
+			} else {
+				pos = PositionBefore(pos);
+			}
+			break;
+		case wxT(')'):
+						depth--;
+			// fall through
+		default:
+			pos = PositionBefore(pos);
+			break;
+		}
+		
+		if(exit_loop) 
+			break;
+	}
+
+	if (depth == 1 && pos >= 0) {
+		m_context->CodeComplete(pos);
+	}
 }

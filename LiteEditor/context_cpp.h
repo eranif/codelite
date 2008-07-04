@@ -80,15 +80,15 @@ private:
 	void DisplayFilesCompletionBox(const wxString &word);
 	bool DoGetFunctionBody(long curPos, long &blockStartPos, long &blockEndPos, wxString &content);
 	void Initialize();
+	void DoCodeComplete(long pos);
 	
 public:
 	ContextCpp(LEditor *container);
 	virtual ~ContextCpp();
 	ContextCpp();
 	virtual ContextBase *NewInstance(LEditor *container);
-
 	virtual void CompleteWord();
-	virtual void CodeComplete();
+	virtual void CodeComplete(long pos = wxNOT_FOUND);
 	virtual void GotoDefinition();
 	virtual void GotoPreviousDefintion();
 	virtual void AutoIndent(const wxChar&);

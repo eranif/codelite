@@ -76,11 +76,11 @@ public:
 	// every Context derived class must implement the following methods
 	virtual ContextBase *NewInstance(LEditor *container) = 0;
 	virtual void CompleteWord() = 0;
-	virtual void CodeComplete() = 0;
+	virtual void CodeComplete(long pos = wxNOT_FOUND) = 0;
 	virtual void GotoDefinition() = 0;
 	virtual void GotoPreviousDefintion() = 0;
 	virtual void CallTipCancel() = 0;
-	virtual bool IsCommentOrString(long WXUNUSED(pos)) = 0;
+	virtual bool IsCommentOrString(long pos) = 0;
 	virtual void OnCallTipClick(wxScintillaEvent& WXUNUSED(event)) = 0;
 	virtual void ApplySettings() = 0;
 	

@@ -400,134 +400,15 @@ void ContextCpp::OnCallTipClick(wxScintillaEvent &event)
 //=============================================================================
 
 //user pressed ., -> or ::
-void ContextCpp::CodeComplete()
+void ContextCpp::CodeComplete(long pos)
 {
-	LEditor &rCtrl = GetCtrl();
-
 	VALIDATE_WORKSPACE();
-
-	long pos = rCtrl.GetCurrentPos();
-	bool showFuncProto = false;
-
-	wxChar ch;
-
-	//	Make sure we are not on a comment section
-	if (IsCommentOrString(pos))
-		return;
-
-	// Search for first non-whitespace wxChar
-	int pos1, pos2, end;
-	ch = rCtrl.PreviousChar(pos, pos1);
-	bool showFullDecl(false);
-
-	switch (ch) {
-	case '.':
-		// Class / Struct completion
-		rCtrl.PreviousChar(pos1, end);
-		break;
-	case '>':
-		// Check previous character if is '-'
-		// We open drop box as well
-		if (rCtrl.PreviousChar(pos1, pos2) == '-') {
-			rCtrl.PreviousChar(pos2, end);
-		} else {
-			return;
-		}
-		break;
-	case ':':
-		// Check previous character if is ':'
-		// We open drop box as well
-		if (rCtrl.PreviousChar(pos1, pos2) == wxT(':')) {
-			rCtrl.PreviousChar(pos2, end);
-			showFullDecl = true;
-		} else {
-			return;
-		}
-		break;
-	case '(':
-		showFuncProto = true;
-		//is this setting is on?
-		if (!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP)) {
-			return;
-		}
-		rCtrl.PreviousChar(pos1, end);
-		break;
-	default:
-		return;
+	long from = pos;
+	if(from == wxNOT_FOUND) {
+		from = GetCtrl().GetCurrentPos();
 	}
-
-	//get expression
-	wxString expr = GetExpression(rCtrl.GetCurrentPos(), false);
-//	if( ch == '(' ) {
-//		expr = GetExpression( rCtrl.PositionBefore(rCtrl.GetCurrentPos()), false);
-//	}
-
-	// get the scope
-	//Optimize the text for large files
-	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
-	int startPos(0);
-	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(rCtrl.GetFileName(), line);
-	if ( t ) {
-		startPos = rCtrl.PositionFromLine( t->GetLine() - 1);
-		if ( startPos > rCtrl.GetCurrentPos() ) {
-			startPos = 0;
-		}
-	}
-
-	wxString text = rCtrl.GetTextRange(startPos, rCtrl.GetCurrentPos());
-	//hack #2
-	//collect all text from 0 - first scope found
-	//this will help us detect statements like 'using namespace foo;'
-	if (startPos) { //> 0
-		//get the first function on this file
-		int endPos(0);
-		int endPos1(0);
-		int endPos2(0);
-		TagEntryPtr t2 = TagsManagerST::Get()->FirstFunctionOfFile(rCtrl.GetFileName());
-		if ( t2 ) {
-			endPos1 = rCtrl.PositionFromLine( t2->GetLine() - 1);
-			if (endPos1 > 0 && endPos1 <= startPos) {
-				endPos = endPos1;
-			}
-		}
-
-		TagEntryPtr t3 = TagsManagerST::Get()->FirstScopeOfFile(rCtrl.GetFileName());
-		if ( t3 ) {
-			endPos2 = rCtrl.PositionFromLine( t3->GetLine() - 1);
-			if (endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) {
-				endPos = endPos2;
-			}
-		}
-
-		wxString globalText = rCtrl.GetTextRange(0, endPos);
-		globalText.Append(wxT(";"));
-		text.Prepend(globalText);
-	}
-
-	std::vector<TagEntryPtr> candidates;
-	if ( showFuncProto ) {
-		//for function prototype, the last char entered was '(', this will break
-		//the logic of the Getexpression() method to workaround this, we search for
-		//expression one char before the current position
-		expr = GetExpression(rCtrl.PositionBefore(rCtrl.GetCurrentPos()), false);
-
-		//display function tooltip
-		int word_end = rCtrl.WordEndPosition(end, true);
-		int word_start = rCtrl.WordStartPosition(end, true);
-
-		// get the token
-		wxString word = rCtrl.GetTextRange(word_start, word_end);
-		m_ct = TagsManagerST::Get()->GetFunctionTip(rCtrl.GetFileName(), line, expr, text, word);
-		if (m_ct && m_ct->Count() > 0) {
-			rCtrl.CallTipCancel();
-			rCtrl.CallTipShow(rCtrl.GetCurrentPos(), m_ct->All());
-			m_tipKind = TipFuncProto;
-		}
-	} else {
-		if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
-			DisplayCompletionBox(candidates, wxEmptyString, showFullDecl);
-		}
-	}
+	
+	DoCodeComplete(from);
 }
 
 void ContextCpp::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
@@ -2374,3 +2255,126 @@ wxString ContextCpp::CallTipContent()
 	}
 	return wxEmptyString;
 }
+void ContextCpp::DoCodeComplete(long pos)
+{
+	long currentPosition = pos;
+	bool showFuncProto = false;
+	
+	wxChar ch;
+
+	//	Make sure we are not on a comment section
+	if (IsCommentOrString(pos))
+		return;
+
+	// Search for first non-whitespace wxChar
+	int pos1, pos2, end;
+	LEditor &rCtrl = GetCtrl();
+	ch = rCtrl.PreviousChar(pos, pos1);
+	bool showFullDecl(false);
+
+	switch (ch) {
+	case '.':
+		// Class / Struct completion
+		rCtrl.PreviousChar(pos1, end);
+		break;
+	case '>':
+		// Check previous character if is '-'
+		// We open drop box as well
+		if (rCtrl.PreviousChar(pos1, pos2) == '-') {
+			rCtrl.PreviousChar(pos2, end);
+		} else {
+			return;
+		}
+		break;
+	case ':':
+		// Check previous character if is ':'
+		// We open drop box as well
+		if (rCtrl.PreviousChar(pos1, pos2) == wxT(':')) {
+			rCtrl.PreviousChar(pos2, end);
+			showFullDecl = true;
+		} else {
+			return;
+		}
+		break;
+	case '(':
+		showFuncProto = true;
+		//is this setting is on?
+		if (!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP)) {
+			return;
+		}
+		rCtrl.PreviousChar(pos1, end);
+		break;
+	default:
+		return;
+	}
+
+	//get expression
+	wxString expr = GetExpression(currentPosition, false);
+	// get the scope
+	//Optimize the text for large files
+	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
+	int startPos(0);
+	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(rCtrl.GetFileName(), line);
+	if ( t ) {
+		startPos = rCtrl.PositionFromLine( t->GetLine() - 1);
+		if ( startPos > currentPosition ) {
+			startPos = 0;
+		}
+	}
+
+	wxString text = rCtrl.GetTextRange(startPos, currentPosition);
+	//hack #2
+	//collect all text from 0 - first scope found
+	//this will help us detect statements like 'using namespace foo;'
+	if (startPos) { //> 0
+		//get the first function on this file
+		int endPos(0);
+		int endPos1(0);
+		int endPos2(0);
+		TagEntryPtr t2 = TagsManagerST::Get()->FirstFunctionOfFile(rCtrl.GetFileName());
+		if ( t2 ) {
+			endPos1 = rCtrl.PositionFromLine( t2->GetLine() - 1);
+			if (endPos1 > 0 && endPos1 <= startPos) {
+				endPos = endPos1;
+			}
+		}
+
+		TagEntryPtr t3 = TagsManagerST::Get()->FirstScopeOfFile(rCtrl.GetFileName());
+		if ( t3 ) {
+			endPos2 = rCtrl.PositionFromLine( t3->GetLine() - 1);
+			if (endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) {
+				endPos = endPos2;
+			}
+		}
+
+		wxString globalText = rCtrl.GetTextRange(0, endPos);
+		globalText.Append(wxT(";"));
+		text.Prepend(globalText);
+	}
+
+	std::vector<TagEntryPtr> candidates;
+	if ( showFuncProto ) {
+		//for function prototype, the last char entered was '(', this will break
+		//the logic of the Getexpression() method to workaround this, we search for
+		//expression one char before the current position
+		expr = GetExpression(rCtrl.PositionBefore(currentPosition), false);
+
+		//display function tooltip
+		int word_end = rCtrl.WordEndPosition(end, true);
+		int word_start = rCtrl.WordStartPosition(end, true);
+
+		// get the token
+		wxString word = rCtrl.GetTextRange(word_start, word_end);
+		m_ct = TagsManagerST::Get()->GetFunctionTip(rCtrl.GetFileName(), line, expr, text, word);
+		if (m_ct && m_ct->Count() > 0) {
+			rCtrl.CallTipCancel();
+			rCtrl.CallTipShow(currentPosition, m_ct->All());
+			m_tipKind = TipFuncProto;
+		}
+	} else {
+		if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
+			DisplayCompletionBox(candidates, wxEmptyString, showFullDecl);
+		}
+	}
+}
+

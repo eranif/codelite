@@ -224,6 +224,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("close_workspace"), Frame::OnWorkspaceOpen)
 	EVT_UPDATE_UI(XRCID("view_as_menu"), Frame::OnFileExistUpdateUI)
 	EVT_MENU(XRCID("complete_word"), Frame::OnCompleteWord)
+	EVT_MENU(XRCID("function_call_tip"), Frame::OnFunctionCalltip)
 	EVT_MENU(XRCID("tags_options"), Frame::OnCtagsOptions)
 	EVT_MENU_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, Frame::DispatchCommandEvent)
 	EVT_UPDATE_UI_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, Frame::DispatchUpdateUIEvent)
@@ -290,6 +291,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("convert_eol_mac"), Frame::OnConvertEol)
 	EVT_MENU(XRCID("display_eol"), Frame::OnViewDisplayEOL)
 	EVT_UPDATE_UI(XRCID("display_eol"), Frame::OnViewDisplayEOL_UI)
+	EVT_UPDATE_UI(XRCID("convert_eol_win"), Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("convert_eol_unix"), Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("convert_eol_mac"), Frame::OnFileExistUpdateUI)
 
 	//-----------------------------------------------------------------
 	//C++ context menu
@@ -314,6 +318,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("configure_accelerators"), Frame::OnConfigureAccelerators)
 	EVT_UPDATE_UI(XRCID("save_file"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("complete_word"), Frame::OnCompleteWordUpdateUI)
+	EVT_UPDATE_UI(XRCID("function_call_tip"), Frame::OnFunctionCalltipUI)
 	EVT_UPDATE_UI(XRCID("execute_no_debug"), Frame::OnExecuteNoDebugUI)
 	EVT_UPDATE_UI(XRCID("dbg_stepin"), Frame::OnDebugCmdUI)
 	EVT_UPDATE_UI(XRCID("dbg_stepout"), Frame::OnDebugCmdUI)
@@ -1087,19 +1092,23 @@ void Frame::OnSwitchWorkspace(wxCommandEvent &event)
 	dlg->Destroy();
 }
 
-//------------------------------------------------------
-// Complete word, complete a word from the current caret
-// position.
-// The list of words, is constructed from the database &
-// from the local scope
-//------------------------------------------------------
-void Frame::OnCompleteWord(wxCommandEvent& WXUNUSED(event))
+void Frame::OnCompleteWord(wxCommandEvent& event)
 {
+	wxUnusedVar(event);
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
 	if ( !editor )
 		return;
 
 	editor->CompleteWord();
+}
+
+void Frame::OnFunctionCalltip(wxCommandEvent& event)
+{
+	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
+	if ( !editor )
+		return;
+	
+	editor->ShowFunctionTipFromCurrentPos();
 }
 
 void Frame::OnBuildExternalDatabase(wxCommandEvent& WXUNUSED(event))
@@ -3081,4 +3090,10 @@ void Frame::OnUpdateStatusBar(wxCommandEvent& e)
 	wxString msg = e.GetString();
 	int field = e.GetInt();
 	GetStatusBar()->SetStatusText(msg, field);
+}
+
+void Frame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
+{
+	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
+	event.Enable(editor ? true : false);
 }

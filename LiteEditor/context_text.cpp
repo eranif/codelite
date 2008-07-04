@@ -51,8 +51,9 @@ void ContextText::AutoIndent(const wxChar &nChar)
 
 // Dont implement this function, maybe derived child will want
 // to do something with it
-void ContextText::CodeComplete()
+void ContextText::CodeComplete(long pos)
 {
+	wxUnusedVar(pos);
 }
 
 // Dont implement this function, maybe derived child will want

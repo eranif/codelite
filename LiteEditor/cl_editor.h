@@ -169,7 +169,12 @@ public:
 
 	// Perform FindNext operation based on the data stored in the FindReplaceData class
 	void FindNext(const FindReplaceData &data);
-
+	
+	/**
+	 * \brief diaply functions' calltip from the current position of the caret
+	 */
+	void ShowFunctionTipFromCurrentPos();
+	
 	/**
 	 * Change the document's syntax highlight
 	 * \param lexerName the syntax highlight's lexer name (as appear in the liteeditor.xml file)

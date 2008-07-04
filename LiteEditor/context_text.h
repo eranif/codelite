@@ -60,7 +60,7 @@ public:
 	// Operations
 	//---------------------------------------
 	virtual void CompleteWord();
-	virtual void CodeComplete();
+	virtual void CodeComplete(long pos = wxNOT_FOUND);
 	virtual void GotoDefinition();
 	virtual void GotoPreviousDefintion();
 	virtual void AutoIndent(const wxChar&);

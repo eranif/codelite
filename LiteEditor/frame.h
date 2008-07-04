@@ -263,6 +263,7 @@ protected:
 	void OnSaveAs(wxCommandEvent& event);
 	void OnFileReload(wxCommandEvent& event);
 	void OnCompleteWord(wxCommandEvent& event);
+	void OnFunctionCalltip(wxCommandEvent& event);
 	void OnDeleteProject(wxCommandEvent& event);
 	void OnBuildExternalDatabase(wxCommandEvent& event);
 	void OnUseExternalDatabase(wxCommandEvent& event);
@@ -276,6 +277,7 @@ protected:
 	void OnFileFindAndReplace(wxCommandEvent &event);
 	void OnFileExistUpdateUI(wxUpdateUIEvent &event);
 	void OnCompleteWordUpdateUI(wxUpdateUIEvent &event);
+	void OnFunctionCalltipUI(wxUpdateUIEvent &event);
 	void OnFindInFiles(wxCommandEvent &event);
 	void OnViewToolbar(wxCommandEvent &event);
 	void OnViewToolbarUI(wxUpdateUIEvent &event);

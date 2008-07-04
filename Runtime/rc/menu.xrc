@@ -104,6 +104,9 @@
             <object class="wxMenuItem" name="complete_word">
                 <label>Complete &amp;Word</label>
             </object>                        
+            <object class="wxMenuItem" name="function_call_tip">
+                <label>Display &amp;Function Calltip</label>
+            </object>                        
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="convert_eol_win">
 				<label>Convert to Windows Format</label>

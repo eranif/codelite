@@ -18,6 +18,7 @@ wxID_SELECTALL|Edit|Select All|Ctrl-A
 match_brace|Edit|Match Brace|Ctrl-E
 select_to_brace|Edit|Select to Brace|Ctrl-Shift-E
 complete_word|Edit|Complete Word|Ctrl-SPACE
+function_call_tip|Edit|Display Function Calltip|Ctrl-Shift-SPACE
 convert_eol_win|Edit|Convert to Windows Format|Ctrl-Shift-W
 convert_eol_unix|Edit|Convert to Unix Format|Ctrl-Shift-U
 convert_eol_mac|Edit|Convert to Mac Format|Ctrl-Shift-M

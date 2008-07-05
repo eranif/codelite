@@ -407,7 +407,10 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		CodeComplete();
 		break;
 	case ')': {
+			// dismiss the current calltip
 			m_context->CallTipCancel();
+			// display the next one
+			ShowFunctionTipFromCurrentPos();
 			break;
 		}
 	case '\n': {
@@ -2093,22 +2096,17 @@ void LEditor::SetStatusBarMessage(const wxString& msg, int field)
 void LEditor::ShowFunctionTipFromCurrentPos()
 {
 	// determine the closest open brace from the current caret position
-	int pos = GetCurrentPos();
-	if (m_context->IsCommentOrString(pos)) {
-		return;
-	}
-
+	int pos = PositionBefore( GetCurrentPos() );
 	int depth(0);
 
 	bool exit_loop(false);
-
 	while ( pos > 0 ) {
+		wxChar ch = SafeGetChar(pos);
 		if (m_context->IsCommentOrString(pos)) {
 			pos = PositionBefore(pos);
 			continue;
 		}
-
-		wxChar ch = SafeGetChar(pos);
+		
 		switch (ch) {
 		case wxT('{'):
 					case wxT('}'):

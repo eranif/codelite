@@ -2259,17 +2259,17 @@ void ContextCpp::DoCodeComplete(long pos)
 {
 	long currentPosition = pos;
 	bool showFuncProto = false;
-	
-	wxChar ch;
-
-	//	Make sure we are not on a comment section
-	if (IsCommentOrString(pos))
-		return;
-
-	// Search for first non-whitespace wxChar
 	int pos1, pos2, end;
 	LEditor &rCtrl = GetCtrl();
-	ch = rCtrl.PreviousChar(pos, pos1);
+	wxChar ch = rCtrl.PreviousChar(pos, pos1);
+	
+	//	Make sure we are not on a comment section
+	if (IsCommentOrString(rCtrl.PositionBefore(pos))){
+		return;
+	}
+
+	// Search for first non-whitespace wxChar
+	
 	bool showFullDecl(false);
 
 	switch (ch) {

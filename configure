@@ -427,7 +427,7 @@ generateControlFile()
 {
 	rm -fr fakeroot/DEBIAN/control
 	echo "Package: CodeLite" >> fakeroot/DEBIAN/control
-	echo "Version: 1.0RC02" >> fakeroot/DEBIAN/control
+	echo "Version: 1.0" >> fakeroot/DEBIAN/control
 	echo "Section: Development " >> fakeroot/DEBIAN/control
 	echo "Architecture: i386 " >> fakeroot/DEBIAN/control
 	echo "Essential: no" >> fakeroot/DEBIAN/control

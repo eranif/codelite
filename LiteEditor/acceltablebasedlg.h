@@ -14,9 +14,9 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/string.h>
-#include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
+#include <wx/statline.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -31,22 +31,23 @@ class AccelTableBaseDlg : public wxDialog
 	
 	protected:
 		wxListCtrl* m_listCtrl1;
+		wxButton* m_buttonEdit;
+		wxButton* m_buttonDefault;
 		wxStaticLine* m_staticline1;
 		wxButton* m_button1;
 		wxButton* m_button2;
-		wxButton* m_buttonDefault;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnColClicked( wxListEvent& event ){ event.Skip(); }
 		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }
 		virtual void OnItemSelected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnItemDeselected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnButtonOk( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnEditButton( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonDefaults( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnButtonOk( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		AccelTableBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Accelerator table:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 819,530 ), long style = wxDEFAULT_DIALOG_STYLE );
+		AccelTableBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Keyboard Shortcuts:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 819,530 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~AccelTableBaseDlg();
 	
 };

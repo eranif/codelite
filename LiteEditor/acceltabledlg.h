@@ -50,11 +50,13 @@ protected:
 	// Handlers for AccelTableBaseDlg events.
 	void OnItemActivated( wxListEvent& event );
 	void OnItemSelected( wxListEvent& event );
-	void OnItemDeselected( wxListEvent& event );
 	void OnColClicked(wxListEvent &event);
 	void PopulateTable(const MenuItemDataMap &accelMap);
 	void OnButtonOk(wxCommandEvent &e);
 	void OnButtonDefaults(wxCommandEvent &e);
+	void OnEditButton(wxCommandEvent &e);
+	
+	void DoItemActivated();
 public:
 	/** Constructor */
 	AccelTableDlg( wxWindow* parent );

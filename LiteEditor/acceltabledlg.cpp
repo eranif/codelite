@@ -83,34 +83,12 @@ AccelTableDlg::AccelTableDlg( wxWindow* parent )
 void AccelTableDlg::OnItemActivated( wxListEvent& event )
 {
 	m_selectedItem = event.m_itemIndex;
-	
-	//build the selected entry
-	MenuItemData mid;
-	mid.id = GetColumnText(m_listCtrl1, m_selectedItem, 0);
-	mid.parent = GetColumnText(m_listCtrl1, m_selectedItem, 1);
-	mid.action = GetColumnText(m_listCtrl1, m_selectedItem, 2);
-	mid.accel = GetColumnText(m_listCtrl1, m_selectedItem, 3);
-	
-	
-	NewKeyShortcutDlg *dlg = new NewKeyShortcutDlg(this, mid);
-	if( dlg->ShowModal() == wxID_OK ) {
-		mid.accel = dlg->GetAccel();
-	}
-	dlg->Destroy();
-	
-	//update the acceleration table
-	SetColumnText(m_listCtrl1, m_selectedItem, 3, mid.accel);
-	m_listCtrl1->SetColumnWidth(3, wxLIST_AUTOSIZE);
+	DoItemActivated();
 }
 
 void AccelTableDlg::OnItemSelected( wxListEvent& event )
 {
 	m_selectedItem = event.m_itemIndex;
-}
-
-void AccelTableDlg::OnItemDeselected( wxListEvent& event )
-{
-	m_selectedItem = wxNOT_FOUND;
 }
 
 void AccelTableDlg::PopulateTable(const MenuItemDataMap &accelMap)
@@ -195,4 +173,32 @@ void AccelTableDlg::OnButtonDefaults(wxCommandEvent& e)
 	ManagerST::Get()->GetDefaultAcceleratorMap(accelMap);
 	
 	PopulateTable(accelMap);
+}
+
+void AccelTableDlg::OnEditButton(wxCommandEvent& e)
+{
+	if(m_selectedItem != wxNOT_FOUND) {
+		DoItemActivated();
+	}
+}
+
+void AccelTableDlg::DoItemActivated()
+{
+	//build the selected entry
+	MenuItemData mid;
+	mid.id = GetColumnText(m_listCtrl1, m_selectedItem, 0);
+	mid.parent = GetColumnText(m_listCtrl1, m_selectedItem, 1);
+	mid.action = GetColumnText(m_listCtrl1, m_selectedItem, 2);
+	mid.accel = GetColumnText(m_listCtrl1, m_selectedItem, 3);
+	
+	
+	NewKeyShortcutDlg *dlg = new NewKeyShortcutDlg(this, mid);
+	if( dlg->ShowModal() == wxID_OK ) {
+		mid.accel = dlg->GetAccel();
+	}
+	dlg->Destroy();
+	
+	//update the acceleration table
+	SetColumnText(m_listCtrl1, m_selectedItem, 3, mid.accel);
+	m_listCtrl1->SetColumnWidth(3, wxLIST_AUTOSIZE);
 }

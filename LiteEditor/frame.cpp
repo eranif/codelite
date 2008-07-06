@@ -2057,30 +2057,10 @@ void Frame::OnFindResource(wxCommandEvent &event)
 	dlg->Destroy();
 }
 
-/*
-void Frame::OnImportMakefileUI(wxUpdateUIEvent &event)
-{
-	event.Enable(false);
-}
-
-void Frame::OnImportMakefile(wxCommandEvent &event)
-{
-	wxUnusedVar(event);
-	const wxString ALL(wxT("Import makefile files (Makefile) |Makefile|")
-	                   wxT("All Files (*)|*"));
-	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open Makefile"), wxEmptyString, wxEmptyString, ALL, wxOPEN | wxFILE_MUST_EXIST | wxMULTIPLE , wxDefaultPosition);
-	if (dlg->ShowModal() == wxID_OK) {
-		ManagerST::Get()->ImportFromMakefile(dlg->GetPath());
-	}
-	dlg->Destroy();
-}
-*/
-
 void Frame::OnAddSymbols(SymbolTreeEvent &event)
 {
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
 	if (tree) {
-//		wxLogMessage(wxString::Format(wxT("adding %d new symbols"), event.GetItems().size()));
 		tree->AddSymbols(event);
 	}
 }
@@ -2090,7 +2070,6 @@ void Frame::OnDeleteSymbols(SymbolTreeEvent &event)
 	// make sure we direct the events to the correct tree
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
 	if (tree) {
-//		wxLogMessage(wxString::Format(wxT("deleting %d new symbols"), event.GetItems().size()));
 		tree->DeleteSymbols(event);
 	}
 }
@@ -2099,7 +2078,6 @@ void Frame::OnUpdateSymbols(SymbolTreeEvent &event)
 {
 	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
 	if (tree) {
-		wxLogMessage(wxString::Format(wxT("updating %d new symbols"), event.GetItems().size()));
 		tree->UpdateSymbols(event);
 	}
 }

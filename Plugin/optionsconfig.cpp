@@ -42,6 +42,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_caretLineColour(wxT("LIGHT BLUE"))
 		, m_indentUsesTabs(true)
 		, m_iconsSize(24)
+		, m_showWhitspaces(0/*wxSCI_WS_INVISIBLE*/)
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
@@ -61,6 +62,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_caretColour = XmlUtils::ReadString(node, wxT("CaretColour"), wxColour(0, 0, 0).GetAsString(wxC2S_HTML_SYNTAX));
 		m_indentUsesTabs = XmlUtils::ReadBool(node, wxT("IndentUsesTabs"), true);
 		m_iconsSize = XmlUtils::ReadLong(node, wxT("ToolbarIconSize"), 24);
+		m_showWhitspaces = XmlUtils::ReadLong(node, wxT("ShowWhitespaces"), 0);
 		SetFileFontEncoding(XmlUtils::ReadString(node, wxT("FileFontEncoding"), wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8)));
 	}
 }
@@ -85,11 +87,16 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
 	n->AddProperty(wxT("CaretColour"), m_caretColour.GetAsString(wxC2S_HTML_SYNTAX));
 	n->AddProperty(wxT("IndentUsesTabs"), BoolToString(m_indentUsesTabs));
-
+	
 	wxString tmp;
 	tmp << m_iconsSize;
 	n->AddProperty(wxT("ToolbarIconSize"), tmp);
+	
+	tmp.clear();
+	tmp << m_showWhitspaces;
+	n->AddProperty(wxT("ShowWhitespaces"), tmp);
 
+	tmp.clear();
 	tmp = wxFontMapper::GetEncodingName(m_fileFontEncoding);
 	n->AddProperty(wxT("FileFontEncoding"), tmp);
 

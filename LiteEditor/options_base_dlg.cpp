@@ -85,6 +85,7 @@ OptionsDlg::OptionsDlg( wxWindow* parent, int id, wxString title, wxPoint pos, w
 	m_book->AddPage( CreateCxxCommentPage(), wxT("C++ Comments"), false);
 
 	m_book->AddPage( CreateSyntaxHighlightPage(), wxT("Syntax Highlight"), false );
+	m_book->AddPage( CreateMiscPage(), wxT("Misc"), false );
 
 	mainSizer->Add( m_book, 1, wxEXPAND | wxALL, 5 );
 
@@ -164,8 +165,6 @@ wxPanel *OptionsDlg::CreateSyntaxHighlightPage()
 
 wxPanel *OptionsDlg::CreateGeneralPage()
 {
-	GeneralInfo info = Frame::Get()->GetFrameGeneralInfo();;
-
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	m_general = new wxPanel( m_book, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* vSz1;
@@ -189,89 +188,57 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 	m_highlighyCaretLine->SetValue(options->GetHighlightCaretLine());
 	bszier->Add( m_highlighyCaretLine, 0, wxALL, 5 );
 
-	wxString iconSize[] = { wxT("Toolbar uses small icons (16x16)"), wxT("Toolbar uses large icons (24x24)") };
-	m_iconSize = new wxChoice( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, 2, iconSize, 0 );
-	bszier->Add( m_iconSize, 0, wxALL|wxEXPAND, 5 );
-
-	if (options->GetIconsSize() == 16) {
-		m_iconSize->SetSelection(0);
-	} else {
-		m_iconSize->SetSelection(1);
-	}
-
-	// file font encoding
-	wxBoxSizer *hsEnc = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText *txtEnc = new wxStaticText( m_general, wxID_ANY, wxT("File font encoding"), wxDefaultPosition, wxDefaultSize, 0 );
-	hsEnc->Add(txtEnc, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-
-	wxArrayString astrEncodings;
-	wxFontEncoding fontEnc;
-	int iCurrSelId = 0;
-	size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
-	for (size_t i = 0; i < iEncCnt; i++) {
-		fontEnc = wxFontMapper::GetEncoding(i);
-		if (wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
-			continue;
-		}
-		astrEncodings.Add(wxFontMapper::GetEncodingName(fontEnc));
-		if (fontEnc == options->GetFileFontEncoding()) {
-			iCurrSelId = i;
-		}
-	}
-	m_fileFontEncoding = new wxChoice( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, astrEncodings, 0 );
-	m_fileFontEncoding->SetSelection(iCurrSelId);
-	hsEnc->Add( m_fileFontEncoding, 1, wxALL|wxEXPAND, 5 );
-
-	bszier->Add( hsEnc, 0, wxEXPAND);
-
 	//set some colour pickers
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 	wxStaticText *txt = new wxStaticText(m_general, wxID_ANY, wxT("Select the caret line background colour:"));
-	hsizer->Add(txt, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	hsizer->Add(txt, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
 	m_caretLineColourPicker = new wxColourPickerCtrl(m_general, wxID_ANY, options->GetCaretLineColour(), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
 	hsizer->Add(m_caretLineColourPicker, 0, wxALL|wxEXPAND, 5);
-	bszier->Add( hsizer, 0, wxEXPAND);
+	bszier->Add( hsizer, 1, wxEXPAND);
 
 	wxStaticLine *line = new wxStaticLine( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bszier->Add(line, 0, wxEXPAND);
 
 	wxBoxSizer *hs1 = new wxBoxSizer(wxHORIZONTAL);
-	txt = new wxStaticText( m_general, wxID_ANY, wxT("Editor Tab Width"), wxDefaultPosition, wxDefaultSize, 0 );
-	hs1->Add(txt, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+	txt = new wxStaticText( m_general, wxID_ANY, wxT("Editor Tab Width:"), wxDefaultPosition, wxDefaultSize, 0 );
+	hs1->Add(txt, 1, wxALIGN_CENTER_VERTICAL | wxALL, 5);
 
 	m_spinCtrlTabWidth = new wxSpinCtrl( m_general, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 8, 4 );
-	hs1->Add( m_spinCtrlTabWidth, 0, wxALL, 5 );
-
+	hs1->Add( m_spinCtrlTabWidth, 1, wxALL, 5 );
+	
+	wxBoxSizer *hs2 = new wxBoxSizer(wxHORIZONTAL);
+	txt = new wxStaticText( m_general, wxID_ANY, wxT("Whitespaces Visibility:"), wxDefaultPosition, wxDefaultSize, 0 );
+	hs2->Add(txt, 1, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+	
+	wxArrayString styles;
+	styles.Add(wxT("Invisible"));
+	styles.Add(wxT("Visible always"));
+	styles.Add(wxT("Visible after indent"));
+	
+	m_whitespaceStyle = new wxChoice(m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, styles, 0);
+	hs2->Add(m_whitespaceStyle, 1, wxEXPAND|wxALL, 5);
+	switch(options->GetShowWhitspaces()) {
+		case 0:
+			m_whitespaceStyle->SetStringSelection(wxT("Invisible"));
+			break;
+		case 1:
+			m_whitespaceStyle->SetStringSelection(wxT("Visible always"));
+			break;
+		case 2:
+			m_whitespaceStyle->SetStringSelection(wxT("Visible after indent"));
+			break;
+		default:
+			m_whitespaceStyle->SetStringSelection(wxT("Invisible"));
+			break;
+	}
+	
 	long value(4);
 	EditorConfigST::Get()->GetLongValue(wxT("EditorTabWidth"), value);
 	m_spinCtrlTabWidth->SetValue(value);
 
 	bszier->Add(hs1, 0, wxEXPAND);
-
-	line = new wxStaticLine( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bszier->Add(line, 0, wxEXPAND);
-
-	m_checkBoxShowSplash = new wxCheckBox( m_general, wxID_ANY, wxT("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
-	bszier->Add(m_checkBoxShowSplash, 0, wxEXPAND | wxALL, 5);
-
-	m_singleInstance = new wxCheckBox(m_general, wxID_ANY, wxT("Allow only single instance running"), wxDefaultPosition, wxDefaultSize, 0);
-	bszier->Add(m_singleInstance, 0, wxEXPAND | wxALL, 5);
-	
-	m_checkForNewVersion = new wxCheckBox(m_general, wxID_ANY, wxT("Check for new version on startup"), wxDefaultPosition, wxDefaultSize, 0);
-	bszier->Add(m_checkForNewVersion, 0, wxEXPAND | wxALL, 5);
-	
-	long single_instance(1);
-	EditorConfigST::Get()->GetLongValue(wxT("SingleInstance"), single_instance);
-	m_singleInstance->SetValue(single_instance ? true : false);
-	
-	long check(1);
-	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
-	m_checkForNewVersion->SetValue(check ? true : false);
-	
-	bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
-	m_checkBoxShowSplash->SetValue(showSplash);
-
+	bszier->Add(hs2, 0, wxEXPAND);
 	vSz1->Add( bszier, 0, wxEXPAND, 5 );
 
 	m_general->SetSizer( vSz1 );
@@ -353,6 +320,7 @@ void OptionsDlg::SaveChanges()
 	if (m_iconSize->GetStringSelection() == wxT("Toolbar uses small icons (16x16)")) {
 		iconSize = 16;
 	}
+	
 	options->SetIconsSize(iconSize);
 	// save file font encoding
 	options->SetFileFontEncoding(m_fileFontEncoding->GetStringSelection());
@@ -365,6 +333,16 @@ void OptionsDlg::SaveChanges()
 		value = 4;
 	}
 
+	// save the whitespace visibility
+	int style(0); // inivisble
+	if(m_whitespaceStyle->GetStringSelection() == wxT("Visible always")) {
+		style = 1;
+	}else if(m_whitespaceStyle->GetStringSelection() == wxT("Visible after indent")) {
+		style = 2;
+	}
+	
+	options->SetShowWhitspaces(style);
+	
 	// save it to configuration file
 	EditorConfigST::Get()->SaveLongValue(wxT("EditorTabWidth"), value);
 
@@ -519,4 +497,77 @@ void OptionsDlg::OnThemeChanged(wxCommandEvent& event)
 	EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), themeName);
 
 	LoadLexers( themeName );
+}
+
+wxPanel* OptionsDlg::CreateMiscPage()
+{
+	GeneralInfo info = Frame::Get()->GetFrameGeneralInfo();
+
+	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+	m_miscPage = new wxPanel( m_book, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* vSz1;
+	vSz1 = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer *bszier = new wxBoxSizer(wxVERTICAL);
+
+	wxString iconSize[] = { wxT("Toolbar uses small icons (16x16)"), wxT("Toolbar uses large icons (24x24)") };
+	m_iconSize = new wxChoice( m_miscPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, 2, iconSize, 0 );
+	bszier->Add( m_iconSize, 0, wxALL|wxEXPAND, 5 );
+
+	if (options->GetIconsSize() == 16) {
+		m_iconSize->SetSelection(0);
+	} else {
+		m_iconSize->SetSelection(1);
+	}
+
+	// file font encoding
+	wxBoxSizer *hsEnc = new wxBoxSizer(wxHORIZONTAL);
+	wxStaticText *txtEnc = new wxStaticText( m_miscPage, wxID_ANY, wxT("File font encoding"), wxDefaultPosition, wxDefaultSize, 0 );
+	hsEnc->Add(txtEnc, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+
+	wxArrayString astrEncodings;
+	wxFontEncoding fontEnc;
+	int iCurrSelId = 0;
+	size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
+	for (size_t i = 0; i < iEncCnt; i++) {
+		fontEnc = wxFontMapper::GetEncoding(i);
+		if (wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
+			continue;
+		}
+		astrEncodings.Add(wxFontMapper::GetEncodingName(fontEnc));
+		if (fontEnc == options->GetFileFontEncoding()) {
+			iCurrSelId = i;
+		}
+	}
+	m_fileFontEncoding = new wxChoice( m_miscPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, astrEncodings, 0 );
+	m_fileFontEncoding->SetSelection(iCurrSelId);
+	hsEnc->Add( m_fileFontEncoding, 1, wxALL|wxEXPAND, 5 );
+
+	bszier->Add( hsEnc, 0, wxEXPAND);
+
+	m_checkBoxShowSplash = new wxCheckBox( m_miscPage, wxID_ANY, wxT("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
+	bszier->Add(m_checkBoxShowSplash, 0, wxEXPAND | wxALL, 5);
+
+	m_singleInstance = new wxCheckBox(m_miscPage, wxID_ANY, wxT("Allow only single instance running"), wxDefaultPosition, wxDefaultSize, 0);
+	bszier->Add(m_singleInstance, 0, wxEXPAND | wxALL, 5);
+	
+	m_checkForNewVersion = new wxCheckBox(m_miscPage, wxID_ANY, wxT("Check for new version on startup"), wxDefaultPosition, wxDefaultSize, 0);
+	bszier->Add(m_checkForNewVersion, 0, wxEXPAND | wxALL, 5);
+	
+	long single_instance(1);
+	EditorConfigST::Get()->GetLongValue(wxT("SingleInstance"), single_instance);
+	m_singleInstance->SetValue(single_instance ? true : false);
+	
+	long check(1);
+	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
+	m_checkForNewVersion->SetValue(check ? true : false);
+	
+	bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
+	m_checkBoxShowSplash->SetValue(showSplash);
+
+	vSz1->Add( bszier, 0, wxEXPAND, 5 );
+
+	m_miscPage->SetSizer( vSz1 );
+	m_miscPage->Layout();
+	vSz1->Fit( m_miscPage );
+	return m_miscPage;
 }

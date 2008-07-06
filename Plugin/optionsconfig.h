@@ -57,6 +57,7 @@ class WXDLLIMPEXP_LE_SDK OptionsConfig : public ConfObject
 	bool	m_indentUsesTabs;
 	int		m_iconsSize;
 	wxFontEncoding m_fileFontEncoding;
+	int m_showWhitspaces;
 	
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -100,6 +101,9 @@ public:
 	void SetFileFontEncoding(const wxString& strFileFontEncoding);
 	wxFontEncoding GetFileFontEncoding() const {return m_fileFontEncoding;}
 	
+	void SetShowWhitspaces(const int& showWhitspaces) {this->m_showWhitspaces = showWhitspaces;}
+	const int& GetShowWhitspaces() const {return m_showWhitspaces;}
+
 	/**
 	 * Return an XML representation of this object
 	 * \return XML node

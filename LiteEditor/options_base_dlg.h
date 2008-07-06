@@ -107,6 +107,10 @@ protected:
 	wxChoice* m_fileFontEncoding;
 	wxCheckBox* m_singleInstance;
 	wxCheckBox* m_checkForNewVersion;
+	wxPanel *m_miscPage;
+	wxChoice *m_whitespaceStyle;
+	
+	
 private:
 	wxPanel *CreateSyntaxHighlightPage();
 	wxPanel *CreateGeneralPage();
@@ -114,6 +118,7 @@ private:
 	wxPanel *CreateBookmarksPage();
 	wxPanel *CreateFoldingPage();
 	wxPanel *CreateCxxCommentPage();
+	wxPanel *CreateMiscPage();
 	void SaveChanges();
 
 public:

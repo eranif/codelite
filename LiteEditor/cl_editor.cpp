@@ -178,6 +178,7 @@ void LEditor::SetProperties()
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	CallTipUseStyle(1);
 
+	SetViewWhiteSpace(options->GetShowWhitspaces());
 	SetMouseDwellTime(250);
 	SetProperty(wxT("fold"), wxT("1"));
 	SetProperty(wxT("fold.html"), wxT("1"));

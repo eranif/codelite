@@ -988,7 +988,7 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
 	std::vector<TagEntryPtr> candidates;
 	wxString path;
 	wxString typeName, typeScope, tmp;
-	std::vector<wxString> tips;
+	std::vector<TagEntryPtr> tips;
 
 	// Trim whitespace from right and left
 	wxString expression(expr);
@@ -1557,9 +1557,9 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 	}
 }
 
-void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips)
+void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<TagEntryPtr> &tips)
 {
-	std::map<wxString, wxString> tipsMap;
+	std::map<wxString, TagEntryPtr> tipsMap;
 	std::vector<TagEntryPtr> ctor_tags;
 
 	for (size_t i=0; i<tags.size(); i++) {
@@ -1571,12 +1571,12 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 		wxString pat = t->GetPattern();
 
 		if (k == wxT("function") || k == wxT("prototype")) {
-			wxString tip;
-			tip << wxT("function:") << t->GetSignature();
-
+//			wxString tip;
+//			tip << wxT("function:") << t->GetSignature();
+//
 			// collect each signature only once, we do this by using
 			// map
-			tipsMap[t->GetSignature()] = tip;
+			tipsMap[t->GetSignature()] = t;
 		} else if (k == wxT("class")) {
 
 			// this tag is a class declaration that matches the word
@@ -1599,7 +1599,7 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 				if ( ctor_tag->GetKind() == wxT("function") || ctor_tag->GetKind() == wxT("prototype") ) {
 					wxString tip;
 					tip << wxT("function:") << ctor_tag->GetSignature();
-					tipsMap[ctor_tag->GetSignature()] = tip;
+					tipsMap[ctor_tag->GetSignature()] = ctor_tag;
 				}
 			}
 
@@ -1623,13 +1623,13 @@ void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, c
 
 					//collect each signature only once, we do this by using
 					//map
-					tipsMap[tip] = tip;
+					tipsMap[tip] = t;
 				}
 			}
 		}
 	}
 
-	for (std::map<wxString, wxString>::iterator iter = tipsMap.begin(); iter != tipsMap.end(); iter++) {
+	for (std::map<wxString, TagEntryPtr>::iterator iter = tipsMap.begin(); iter != tipsMap.end(); iter++) {
 		tips.push_back(iter->second);
 	}
 }

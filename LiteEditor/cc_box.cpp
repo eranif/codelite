@@ -289,8 +289,14 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 			editor->SetSelectionEnd(pos);
 			// trigger function tip
 			editor->CodeComplete();
-
-			if (editor->GetContext()->CallTipContent() == wxT("()")) {
+			
+			wxString tipContent = editor->GetContext()->CallTipContent();
+			int where = tipContent.Find(wxT(" : "));
+			if(where != wxNOT_FOUND) {
+				tipContent = tipContent.Mid(where + 3);
+			}
+			
+			if (tipContent.Trim().Trim(false) == wxT("()")) {
 				// dont place the caret in the middle of the braces, 
 				// and it is OK to cancel the function calltip
 				int new_pos = editor->GetCurrentPos() + 1;

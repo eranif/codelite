@@ -27,6 +27,7 @@
 
 #include "tokenizer.h"
 #include "smart_ptr.h"
+#include "entry.h"
  
 #ifdef WXMAKINGDLL_CODELITE
 #    define WXDLLIMPEXP_CL WXEXPORT
@@ -48,7 +49,7 @@
  */
 class WXDLLIMPEXP_CL clCallTip
 {
-	std::vector<wxString> m_tips;
+	std::vector<TagEntryPtr> m_tips;
 	int m_curr;
 
 public:
@@ -56,7 +57,7 @@ public:
 	 * Constructor
 	 * \param tips input tips 
 	 */
-	clCallTip(const std::vector<wxString> & tips );
+	clCallTip(const std::vector<TagEntryPtr> & tips );
 
 	/**
 	 * default constructor

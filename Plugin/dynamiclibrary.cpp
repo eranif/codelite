@@ -53,7 +53,7 @@ bool clDynamicLibrary::Load(const wxString &name)
 	return m_lib.Load(name, wxDL_NOSHARE);
 #else
 	// open the library
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && defined (ON_64_BITS)
 	// on GTK we need to pass RTLD_DEEPBIND otherwise symbols clashes
 	m_dllhandle = dlopen(_C(name), RTLD_LAZY| RTLD_LOCAL | RTLD_DEEPBIND);
 #else	

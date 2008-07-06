@@ -32,6 +32,7 @@ ThreeButtonDlg::ThreeButtonDlg( wxWindow* parent, const wxString &msg, const wxS
 	SetLabel(caption);
 	GetSizer()->Fit(this);
 	GetSizer()->Layout();
+	Centre();
 }
 
 void ThreeButtonDlg::OnButtonYes(wxCommandEvent &e)

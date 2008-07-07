@@ -1,33 +1,34 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : open_resouce_dlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : open_resouce_dlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version May  5 2007)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
+#include "editor_config.h"
 
 #ifdef WX_PRECOMP
 
@@ -47,11 +48,11 @@
 
 ///////////////////////////////////////////////////////////////////////////
 BEGIN_EVENT_TABLE(OpenResourceDlg, wxDialog)
-EVT_CHAR_HOOK(OpenResourceDlg::OnCharHook)
+	EVT_CHAR_HOOK(OpenResourceDlg::OnCharHook)
 END_EVENT_TABLE()
 
-OpenResourceDlg::OpenResourceDlg( wxWindow* parent, int id, wxString title, wxPoint pos, wxSize size, int style ) 
-: wxDialog( parent, id, title, pos, size, style )
+OpenResourceDlg::OpenResourceDlg( wxWindow* parent, int id, wxString title, wxPoint pos, wxSize size, int style )
+		: wxDialog( parent, id, title, pos, size, style )
 {
 	m_timer = new wxTimer(this);
 	m_timer->Start(100);
@@ -60,45 +61,52 @@ OpenResourceDlg::OpenResourceDlg( wxWindow* parent, int id, wxString title, wxPo
 	ManagerST::Get()->GetWorkspaceFiles(m_files, true);
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
-	
+
 	mainPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* panelSizer;
 	panelSizer = new wxBoxSizer( wxVERTICAL );
-	
+
 	m_staticTitle = new wxStaticText( mainPanel, wxID_ANY, wxT("Find Resource (wildcards are allowed):"), wxDefaultPosition, wxDefaultSize, 0 );
 	panelSizer->Add( m_staticTitle, 0, wxALL, 5 );
 	
 	m_textResourceName = new wxTextCtrl(mainPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	panelSizer->Add( m_textResourceName, 0, wxALL|wxEXPAND, 5 );
-	
+
 	wxStaticText *label = new wxStaticText( mainPanel, wxID_ANY, wxT("Matched resources:"), wxDefaultPosition, wxDefaultSize, 0 );
 	panelSizer->Add( label, 0, wxALL, 5 );
 
-	m_listShortNames = new wxListBox( mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	m_listShortNames = new wxListBox( mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	panelSizer->Add( m_listShortNames, 1, wxALL|wxEXPAND, 5 );
+
+	m_checkBoxPartialMatching = new wxCheckBox( mainPanel, wxID_ANY, wxT("Allow partial matching"), wxDefaultPosition, wxDefaultSize, 0 );
+	panelSizer->Add( m_checkBoxPartialMatching, 0, wxALL|wxEXPAND, 5 );
+	
+	long v(0);
+	EditorConfigST::Get()->GetLongValue(wxT("OpenResourceAllowsPartialMatch"), v);
+	m_checkBoxPartialMatching->SetValue(v == 1 ? true : false);
 	
 	mainPanel->SetSizer( panelSizer );
 	mainPanel->Layout();
 	panelSizer->Fit( mainPanel );
 	mainSizer->Add( mainPanel, 1, wxEXPAND | wxALL, 5 );
-	
+
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	mainSizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
-	
+
 	wxBoxSizer* btnSizer;
 	btnSizer = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_btnOk = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_btnOk, 0, wxALL, 5 );
-	
+
 	m_button2 = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_button2, 0, wxALL, 5 );
-	
+
 	mainSizer->Add( btnSizer, 0, wxALIGN_RIGHT, 5 );
-	
+
 	this->SetSizer( mainSizer );
 	this->Layout();
 	ConnectEvents();
@@ -125,21 +133,25 @@ void OpenResourceDlg::OnTimer(wxTimerEvent &event)
 	wxUnusedVar(event);
 	wxArrayString tmpArr;
 	wxString curSel = m_textResourceName->GetValue();
-	if(!curSel.IsEmpty())
-	{
-		curSel = curSel.MakeLower();
-		for(size_t i=0; i<m_files.size(); i++)
-		{
+	if (!curSel.Trim().Trim(false).IsEmpty()) {
+		
+		curSel = curSel.MakeLower().Trim().Trim(false);
+		
+		for (size_t i=0; i<m_files.size(); i++) {
 			wxString fileName(m_files[i].GetFullName());
 			fileName= fileName.MakeLower();
-			
+
 			//append wildcard at the end
-			if(!curSel.EndsWith(wxT("*"))){
+			if (!curSel.EndsWith(wxT("*"))) {
 				curSel << wxT("*");
 			}
 
-			//test for wild crads as well
-			if(wxMatchWild(curSel, fileName)){
+			// FR# [2008133]
+			if (m_checkBoxPartialMatching->IsChecked() && !curSel.StartsWith(wxT("*"))) {
+				curSel.Prepend(wxT("*"));
+			}
+
+			if (wxMatchWild(curSel, fileName)) {
 				tmpArr.Add(m_files[i].GetFullPath());
 			}
 		}
@@ -149,16 +161,16 @@ void OpenResourceDlg::OnTimer(wxTimerEvent &event)
 	actValues.Sort();
 	tmpArr.Sort();
 
-	if(tmpArr == actValues)
+	if (tmpArr == actValues)
 		return;
 
 	//change was done, update the file list
 	Freeze();
 	m_listShortNames->Clear();
-	for(size_t i=0; i<tmpArr.GetCount(); i++)
+	for (size_t i=0; i<tmpArr.GetCount(); i++)
 		m_listShortNames->Append(tmpArr.Item(i));
 	Thaw();
-	if(m_listShortNames->GetCount() > 0){
+	if (m_listShortNames->GetCount() > 0) {
 		m_listShortNames->Select(0);
 	}
 }
@@ -172,9 +184,8 @@ void OpenResourceDlg::OnButtonCancel(wxCommandEvent &event)
 void OpenResourceDlg::OnButtonOK(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	if(UpdateFileName())
-	{
-		EndModal(wxID_OK);	
+	if (UpdateFileName()) {
+		EndModal(wxID_OK);
 	}
 }
 
@@ -182,87 +193,80 @@ void OpenResourceDlg::OnItemActivated(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 
-	if(UpdateFileName())
-	{
-		EndModal(wxID_OK);	
+	if (UpdateFileName()) {
+		EndModal(wxID_OK);
 	}
 }
 
 bool OpenResourceDlg::UpdateFileName()
 {
 	wxString openWhat = m_listShortNames->GetStringSelection();
-	if(openWhat.IsEmpty())
+	if (openWhat.IsEmpty())
 		return false;
 
 	m_fileName = openWhat;
+	
+	// save the checkbox value into the settings
+	EditorConfigST::Get()->SaveLongValue(wxT("OpenResourceAllowsPartialMatch"), m_checkBoxPartialMatching->IsChecked() ? 1 : 0);
+	
 	return true;
 }
 
 void OpenResourceDlg::OnCharHook(wxKeyEvent &event)
 {
-	if(event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER)
-	{
-		if(m_listShortNames->GetSelection() != wxNOT_FOUND)
-		{
-			if(UpdateFileName()){
+	if (event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
+		if (m_listShortNames->GetSelection() != wxNOT_FOUND) {
+			if (UpdateFileName()) {
+				EndModal(wxID_OK);
+				return;
+			}
+		} else if (m_listShortNames->GetCount() == 1) {
+			m_listShortNames->SetSelection(0);
+			if (UpdateFileName()) {
 				EndModal(wxID_OK);
 				return;
 			}
 		}
-		else if(m_listShortNames->GetCount() == 1)
-		{
-			m_listShortNames->SetSelection(0);
-			if(UpdateFileName()){
-				EndModal(wxID_OK);
+	} else
+		if (event.GetKeyCode() == WXK_DOWN && m_listShortNames->GetCount() > 0) {
+			//up key
+			int cursel = m_listShortNames->GetSelection();
+			if (cursel != wxNOT_FOUND) {
+				//there is a selection in the listbox
+				cursel++;
+				if (cursel >= (int)m_listShortNames->GetCount()) {
+					//already at last item, cant scroll anymore
+					return;
+				}
+				m_listShortNames->SetSelection(cursel);
+				m_listShortNames->Select(cursel);
+				m_listShortNames->SetFirstItem(cursel);
+			} else {
+				//no selection is made
+				m_listShortNames->SetSelection(0);
+				m_listShortNames->Select(0);
+				m_listShortNames->SetFirstItem(0);
+			}
+			return;
+		} else
+			if (event.GetKeyCode() == WXK_UP && m_listShortNames->GetCount() > 0) {
+				//up key
+				int cursel = m_listShortNames->GetSelection();
+				if (cursel != wxNOT_FOUND) {
+					//there is a selection in the listbox
+					cursel--;
+					if (cursel < 0) {
+						//already at first item, cant scroll anymore
+						return;
+					}
+					m_listShortNames->SetSelection(cursel);
+					m_listShortNames->SetFirstItem(cursel);
+				} else {
+					//no selection is made
+					m_listShortNames->SetSelection(0);
+					m_listShortNames->SetFirstItem(0);
+				}
 				return;
 			}
-		}
-	}
-	else
-	if(event.GetKeyCode() == WXK_DOWN && m_listShortNames->GetCount() > 0)
-	{
-		//up key
-		int cursel = m_listShortNames->GetSelection();
-		if(cursel != wxNOT_FOUND)
-		{
-			//there is a selection in the listbox
-			cursel++;
-			if(cursel >= (int)m_listShortNames->GetCount()){
-				//already at last item, cant scroll anymore
-				return;
-			}
-			m_listShortNames->SetSelection(cursel);
-			m_listShortNames->Select(cursel);
-			m_listShortNames->SetFirstItem(cursel);
-		}else{
-			//no selection is made
-			m_listShortNames->SetSelection(0);
-			m_listShortNames->Select(0);
-			m_listShortNames->SetFirstItem(0);
-		}
-		return;
-	}
-	else
-	if(event.GetKeyCode() == WXK_UP && m_listShortNames->GetCount() > 0)
-	{
-		//up key
-		int cursel = m_listShortNames->GetSelection();
-		if(cursel != wxNOT_FOUND)
-		{
-			//there is a selection in the listbox
-			cursel--;
-			if(cursel < 0){
-				//already at first item, cant scroll anymore
-				return;
-			}
-			m_listShortNames->SetSelection(cursel);
-			m_listShortNames->SetFirstItem(cursel);
-		}else{
-			//no selection is made
-			m_listShortNames->SetSelection(0);
-			m_listShortNames->SetFirstItem(0);
-		}
-		return;
-	}
 	event.Skip();
 }

@@ -1,34 +1,36 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : open_type_dlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : open_type_dlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version May  5 2007)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
+#include "opentypevlistctrl.h"
+#include "editor_config.h"
 #ifdef WX_PRECOMP
 
 #include "wx/wxprec.h"
@@ -52,7 +54,6 @@
 static int OpenTypeDlgTimerId = wxNewId();
 
 BEGIN_EVENT_TABLE(OpenTypeDlg, wxDialog)
-	EVT_TIMER(OpenTypeDlgTimerId, OpenTypeDlg::OnTimer)
 	EVT_CHAR_HOOK(OpenTypeDlg::OnCharHook)
 	EVT_LIST_ITEM_ACTIVATED(wxID_ANY, OpenTypeDlg::OnItemActivated)
 END_EVENT_TABLE()
@@ -61,11 +62,10 @@ END_EVENT_TABLE()
 
 OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxString title, wxPoint pos, wxSize size, int style )
 		: wxDialog( parent, id, title, pos, size, style )
+		, m_selectedItem(wxNOT_FOUND)
 {
 	m_tagsManager = tagsMgr;
-	m_timer = new wxTimer(this, OpenTypeDlgTimerId);
-	m_timer->Start(100);
-	
+
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 	wxBoxSizer* mainSizer;
@@ -77,7 +77,7 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 	m_textTypeName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	mainSizer->Add( m_textTypeName, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 
-	m_listTypes = new wxListView(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL);
+	m_listTypes = new OpenTypeVListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_VIRTUAL);
 	mainSizer->Add( m_listTypes, 1, wxALL|wxEXPAND, 5 );
 
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -111,7 +111,7 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 
 	Init();
 	ConnectButton(m_buttonOK, OpenTypeDlg::OnOK);
-
+	ConnectCmdTextUpdated(m_textTypeName, OpenTypeDlg::OnText)
 	this->SetSizer( mainSizer );
 	this->Layout();
 	Centre();
@@ -119,9 +119,7 @@ OpenTypeDlg::OpenTypeDlg( wxWindow* parent, TagsManager *tagsMgr, int id, wxStri
 
 OpenTypeDlg::~OpenTypeDlg()
 {
-	delete m_timer;
 	delete m_il;
-	m_tags.clear();
 }
 
 void OpenTypeDlg::Init()
@@ -130,89 +128,37 @@ void OpenTypeDlg::Init()
 	m_listTypes->InsertColumn(1, wxT("Scope"));
 	m_listTypes->InsertColumn(2, wxT("File"));
 	m_listTypes->InsertColumn(3, wxT("Line"));
-
-	m_tagsManager->OpenType(m_tags);
+	m_listTypes->SetColumnWidth(0, 200);
+	
+	std::vector<TagEntryPtr> tags;
+	m_tagsManager->OpenType(tags);
+	m_listTypes->SetImageList(m_il, wxIMAGE_LIST_SMALL);
+	m_listTypes->SetItems(tags);
+	m_listTypes->SetItemCount(tags.size());
+	
+	if(tags.size()>0){
+		m_listTypes->Select(0, true);
+		m_selectedItem = 0;
+	}
 	this->m_textTypeName->SetFocus();
 }
 
 void OpenTypeDlg::PopulateList()
 {
-	wxString filter = m_textTypeName->GetValue();
-	if (filter.Trim().IsEmpty()) {
-		//clear the list
-		m_listTypes->Freeze();
-		m_listTypes->DeleteAllItems();
-		m_listTypes->Thaw();
-		return;
-	}
-
-	//if filter is the same, dont update the view
-	if (m_filter == filter)
-		return;
-	m_filter = filter;
-
-	m_listTypes->Freeze();
-	m_listTypes->DeleteAllItems();
-	m_listTypes->SetImageList(m_il, wxIMAGE_LIST_SMALL);
-
-	m_itemsData.clear();
-
-	//populate the list view
-	for (size_t i=0; i<m_tags.size(); i++) {
-		filter = filter.MakeLower();
-		if (!filter.EndsWith(wxT("*"))) {
-			filter << wxT("*");
+	long item = m_listTypes->FindMatch(m_textTypeName->GetValue());
+	if (item != wxNOT_FOUND) {
+		// first unselect the current item
+		if (m_selectedItem != wxNOT_FOUND && m_selectedItem != item) {
+			m_listTypes->Select(m_selectedItem, false);
 		}
 
-		TagEntryPtr tag = m_tags.at(i);
-		wxString tagName = tag->GetName();
-
-		tagName = tagName.MakeLower();
-		if (wxMatchWild(filter, tagName)) {
-			// Set the item display name
-			wxString name = tag->GetName();
-
-			//add new line to the list control
-			long row = AppendListCtrlRow(m_listTypes);
-			//set the item name and icon
-			SetColumnText(m_listTypes, row, 0, name, GetTagImage(tag->GetKind()));
-			//set the item scope
-
-			wxString scope;
-			tag->GetScope() == wxT("<global>") ? scope = wxEmptyString : scope = tag->GetScope();
-
-			SetColumnText(m_listTypes, row, 1, scope);
-
-			//set the file name
-			SetColumnText(m_listTypes, row, 2, tag->GetFile());
-
-			wxString lineNumber;
-			lineNumber << tag->GetLine();
-			SetColumnText(m_listTypes, row, 3, lineNumber);
-
-			m_listTypes->SetItemData(row, (long)i);
-		}
+		m_selectedItem = item;
+		m_listTypes->Select(item);
+		m_listTypes->EnsureVisible(item);
 	}
-
-	m_listTypes->SetColumnWidth(0, wxLIST_AUTOSIZE);
+	
+	m_listTypes->SetColumnWidth(0, 200);
 	m_listTypes->SetColumnWidth(2, wxLIST_AUTOSIZE);
-
-	if (m_listTypes->GetItemCount() > 0) {
-		m_listTypes->Focus(0);
-		m_listTypes->Select(0);
-	}
-	m_listTypes->Thaw();
-}
-
-int OpenTypeDlg::GetTagImage(const wxString &kind)
-{
-	if (kind == wxT("namespace"))	return 0;
-	if (kind == wxT("class"))		return 1;
-	if (kind == wxT("struct"))		return 2;
-	if (kind == wxT("typedef"))		return 3;
-	if (kind == wxT("enum"))			return 4;
-	if (kind == wxT("union"))		return 2;
-	return 1;
 }
 
 void OpenTypeDlg::OnCharHook(wxKeyEvent &event)
@@ -222,32 +168,34 @@ void OpenTypeDlg::OnCharHook(wxKeyEvent &event)
 		return;
 	} else if (event.GetKeyCode() == WXK_DOWN) {
 		long selectedItem = m_listTypes->GetFirstSelected();
-		if(selectedItem == wxNOT_FOUND && m_listTypes->GetItemCount() > 0) {
+		if (selectedItem == wxNOT_FOUND && m_listTypes->GetItemCount() > 0) {
 			selectedItem = 0;
 		}
-		if(selectedItem == wxNOT_FOUND)
+		if (selectedItem == wxNOT_FOUND)
 			return;
-			
+
 		//select the next one if we can
-		if(m_listTypes->GetItemCount() > (selectedItem + 1)) {
+		if (m_listTypes->GetItemCount() > (selectedItem + 1)) {
 			//we can select the next one
 			m_listTypes->Select(selectedItem + 1);
 			m_listTypes->Focus(selectedItem + 1);
+			m_selectedItem = selectedItem+1;
 		}
 		return;
 	} else if (event.GetKeyCode() == WXK_UP) {
 		long selectedItem = m_listTypes->GetFirstSelected();
-		if(selectedItem == wxNOT_FOUND && m_listTypes->GetItemCount() > 0) {
+		if (selectedItem == wxNOT_FOUND && m_listTypes->GetItemCount() > 0) {
 			selectedItem = 0;
 		}
-		if(selectedItem == wxNOT_FOUND)
+		if (selectedItem == wxNOT_FOUND)
 			return;
-			
+
 		//select the previous one if we can
-		if((selectedItem - 1) >= 0) {
+		if ((selectedItem - 1) >= 0) {
 			//we can select the next one
 			m_listTypes->Select(selectedItem - 1);
 			m_listTypes->Focus(selectedItem - 1);
+			m_selectedItem = selectedItem-1;
 		}
 		return;
 	}
@@ -256,13 +204,14 @@ void OpenTypeDlg::OnCharHook(wxKeyEvent &event)
 
 void OpenTypeDlg::TryOpenAndEndModal()
 {
-	long item = m_listTypes->GetFirstSelected();
-	long data  = m_listTypes->GetItemData(item);
-	if ((int)m_tags.size() > data && data >= 0) {
-		m_tag = m_tags.at(data);
-		m_tags.clear();
+	TagEntryPtr t = m_listTypes->GetTagAt(m_selectedItem);
+	if(t) {
+		m_tag = t;
+		// save the checkbox value into the settings
+		EndModal(wxID_OK);
+	} else {
+		EndModal(wxID_CANCEL);
 	}
-	EndModal(wxID_OK);
 }
 
 void OpenTypeDlg::OnOK(wxCommandEvent &event)
@@ -273,13 +222,20 @@ void OpenTypeDlg::OnOK(wxCommandEvent &event)
 
 void OpenTypeDlg::OnItemActivated(wxListEvent &event)
 {
-	wxUnusedVar(event);
+	m_selectedItem = event.m_itemIndex;
 	TryOpenAndEndModal();
 
 }
 
-void OpenTypeDlg::OnTimer(wxTimerEvent &event)
+void OpenTypeDlg::OnAllowPartialMatch(wxCommandEvent& e)
 {
-	wxUnusedVar(event);
+	m_filter.empty();
+	PopulateList();
+	e.Skip();
+}
+
+void OpenTypeDlg::OnText(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
 	PopulateList();
 }

@@ -131,6 +131,8 @@
       <File Name="nameanddescbasedlg.cpp"/>
       <File Name="nameanddescbasedlg.h"/>
       <File Name="nameanddescdlg.cpp"/>
+      <File Name="opentypevlistctrl.cpp"/>
+      <File Name="opentypevlistctrl.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="custom_notebook.cpp"/>

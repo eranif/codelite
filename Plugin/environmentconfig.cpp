@@ -70,7 +70,7 @@ wxString EnvironmentConfig::ExpandVariables(const wxString &in)
 	static wxRegEx reVarPattern(wxT("\\$\\(( *)([a-zA-Z0-9_]+)( *)\\)"));
 	wxString result(in);
 	
-	ApplyEnv();
+	ApplyEnv(NULL);
 	
 	EvnVarList vars;
 	ReadObject(wxT("Variables"), &vars);
@@ -98,12 +98,22 @@ wxString EnvironmentConfig::ExpandVariables(const wxString &in)
 	return result;
 }
 
-void EnvironmentConfig::ApplyEnv()
+void EnvironmentConfig::ApplyEnv(StringMap *overrideMap)
 {
 	//read the environments variables
 	EvnVarList vars;
 	ReadObject(wxT("Variables"), &vars);
 	StringMap variables = vars.GetVariables();
+	
+	
+	// if we have an "override map" place all the entries from the override map
+	// into the global map before applying the environment
+	if(overrideMap) {
+		StringMap::iterator it = overrideMap->begin();
+		for(; it != overrideMap->end(); it++){
+			variables[it->first] = it->second;
+		}
+	}
 	
 	StringMap::iterator iter = variables.begin();
 	m_envSnapshot.clear();

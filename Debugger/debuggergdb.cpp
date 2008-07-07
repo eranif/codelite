@@ -196,7 +196,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 	if (m_proc) {
 
 		//set the environment variables
-		m_env->ApplyEnv();
+		m_env->ApplyEnv(NULL);
 
 		if (m_proc->Start() == 0) {
 
@@ -284,7 +284,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 		wxSetWorkingDirectory(cwd);
 
 		//set the environment variables
-		m_env->ApplyEnv();
+		m_env->ApplyEnv(NULL);
 
 		if (m_proc->Start() == 0) {
 			//failed to start the debugger

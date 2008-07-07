@@ -21,6 +21,7 @@
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z:]{0,2}[a-zA-Z\.0-9_/\+\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)( warning:)</Pattern>
       <GlobalIncludePath></GlobalIncludePath>
       <GlobalLibPath></GlobalLibPath>
+      <PathVariable>$(PATH);C:\MinGW\bin</PathVariable>
     </Compiler>
     <Compiler Name="gnu gcc">
       <Switch Name="ArchiveOutput" Value=" "/>
@@ -42,6 +43,7 @@
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z:]{0,2}[a-zA-Z\.0-9_/\+\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)( warning:)</Pattern>
       <GlobalIncludePath></GlobalIncludePath>
       <GlobalLibPath></GlobalLibPath>
+      <PathVariable></PathVariable>
     </Compiler>
     <Compiler Name="VC++">
       <Switch Name="ArchiveOutput" Value="/OUT:"/>
@@ -63,6 +65,7 @@
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:\+\-]+ *)(\()([0-9]+)(\))( \: )(warning)</Pattern>
       <GlobalIncludePath>"C:/Program Files/Microsoft Visual Studio 8/VC/include";.</GlobalIncludePath>
       <GlobalLibPath>"C:/Program Files/Microsoft Visual Studio 8/VC/lib"</GlobalLibPath>
+      <PathVariable></PathVariable>
     </Compiler>
   </Compilers>
   <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="mingw32-make" Options="-f" Jobs="2"/>

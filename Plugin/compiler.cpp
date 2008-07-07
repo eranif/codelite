@@ -67,6 +67,10 @@ Compiler::Compiler(wxXmlNode *node)
 				m_globalLibPath = child->GetNodeContent();
 			}
 			
+			else if(child->GetName() == wxT("PathVariable")){
+				m_pathVariable = child->GetNodeContent();
+			}
+			
 			child = child->GetNext();
 		}
 	} else {
@@ -95,6 +99,7 @@ Compiler::Compiler(wxXmlNode *node)
 		m_tools[wxT("ResourceCompiler")] = wxT("windres");
 		m_globalIncludePath = wxEmptyString;
 		m_globalLibPath = wxEmptyString;
+		m_pathVariable = wxEmptyString;
 	}
 }
 
@@ -150,6 +155,11 @@ wxXmlNode *Compiler::ToXml() const
 	wxXmlNode *globalLibPath = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("GlobalLibPath"));
 	XmlUtils::SetNodeContent(globalLibPath, m_globalLibPath);
 	node->AddChild(globalLibPath);
+	
+	wxXmlNode *pathVariable = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("PathVariable"));
+	XmlUtils::SetNodeContent(pathVariable, m_pathVariable);
+	node->AddChild(pathVariable);
+	
 	return node;
 }
 

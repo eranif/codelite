@@ -64,6 +64,7 @@ class WXDLLIMPEXP_LE_SDK Compiler : public ConfObject {
 	std::map<wxString, wxString> m_tools;
 	wxString m_globalIncludePath;
 	wxString m_globalLibPath;
+	wxString m_pathVariable;
 	
 public:
 	typedef std::map<wxString, wxString>::const_iterator ConstIterator;
@@ -107,6 +108,9 @@ public:
 	void SetGlobalLibPath(const wxString& globalLibPath) {this->m_globalLibPath = globalLibPath;}
 	const wxString& GetGlobalIncludePath() const {return m_globalIncludePath;}
 	const wxString& GetGlobalLibPath() const {return m_globalLibPath;}
+	
+	void SetPathVariable(const wxString& pathVariable) {this->m_pathVariable = pathVariable;}
+	const wxString& GetPathVariable() const {return m_pathVariable;}
 };	
 
 typedef SmartPtr<Compiler> CompilerPtr;

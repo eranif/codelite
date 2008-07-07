@@ -1301,7 +1301,7 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	//execute the program:
 	//- no hiding the console
 	//- no redirection of the stdin/out
-	EnvironmentConfig::Instance()->ApplyEnv();
+	EnvironmentConfig::Instance()->ApplyEnv(NULL);
 	m_asyncExeCmd->Execute(execLine, false, false);
 	if (m_asyncExeCmd->GetProcess()) {
 
@@ -2354,7 +2354,7 @@ void Manager::UpdateBuildTools()
 	wxString path;
 	bool is_ok(true);
 
-	EnvironmentConfig::Instance()->ApplyEnv();
+	EnvironmentConfig::Instance()->ApplyEnv(NULL);
 
 	if (tool.Contains(wxT("$"))) {
 		//expand

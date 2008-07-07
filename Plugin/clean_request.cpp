@@ -22,6 +22,8 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "build_settings_config.h"
+#include "compiler.h"
  #include "clean_request.h"
 #include "environmentconfig.h"
 #include "globals.h"
@@ -49,17 +51,17 @@ void CleanRequest::Process()
 {
 	wxString cmd;
 	wxString errMsg;
+	StringMap om;
+	
 	SetBusy(true);
-
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_project, errMsg);
 	if (!proj) {
 		AppendLine(wxT("Cant find project: ") + m_project);
 		SetBusy(false);
 		return;
 	}
-
+	
 	bool isCustom(false);
-	//TODO:: make the builder name configurable
 	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_projectOnly) {
 		cmd = builder->GetPOCleanCommand(m_project, isCustom);
@@ -67,6 +69,18 @@ void CleanRequest::Process()
 		cmd = builder->GetCleanCommand(m_project, isCustom);
 	}
 
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(m_project);
+	if(bldConf) {
+		wxString cmpType = bldConf->GetCompilerType();
+		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
+		if(cmp) {
+			wxString value( cmp->GetPathVariable() );
+			if(value.Trim().Trim(false).IsEmpty() == false) {
+				om[wxT("PATH")] = value.Trim().Trim(false);
+			}
+		}
+	}
+	
 	SendStartMsg();
 
 	//expand the variables of the command
@@ -97,7 +111,7 @@ void CleanRequest::Process()
 		}
 	
 		//apply environment settings
-		EnvironmentConfig::Instance()->ApplyEnv();
+		EnvironmentConfig::Instance()->ApplyEnv( &om );
 		
 		if (m_proc->Start() == 0) {
 			

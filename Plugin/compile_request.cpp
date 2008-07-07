@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "compile_request.h"
+#include "compiler.h"
+#include "build_settings_config.h"
 #include "globals.h"
 #include "build_config.h"
 #include "environmentconfig.h"
@@ -51,6 +53,7 @@ void CompileRequest::Process()
 	wxString cmd;
 	wxString errMsg;
 	SetBusy(true);
+	StringMap om;
 
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_project, errMsg);
 	if (!proj) {
@@ -79,13 +82,26 @@ void CompileRequest::Process()
 
 	//if we require to run the makefile generation command only, replace the 'cmd' with the
 	//generation command line
-	if (m_premakeOnly) {
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(m_project);
+	if (m_premakeOnly && bldConf) {
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(m_project);
 		if (bldConf) {
 			cmd = bldConf->GetMakeGenerationCommand();
 		}
+		
 	}
-
+	
+	if(bldConf) {
+		wxString cmpType = bldConf->GetCompilerType();
+		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
+		if(cmp) {
+			wxString value( cmp->GetPathVariable() );
+			if(value.Trim().Trim(false).IsEmpty() == false) {
+				om[wxT("PATH")] = value.Trim().Trim(false);
+			}
+		}
+	}
+	
 	if (cmd.IsEmpty()) {
 		//if we got an error string, use it
 		if (errMsg.IsEmpty() == false) {
@@ -149,8 +165,8 @@ void CompileRequest::Process()
 			}
 			AppendLine(text);
 		}
-
-		EnvironmentConfig::Instance()->ApplyEnv();
+	
+		EnvironmentConfig::Instance()->ApplyEnv( &om );
 		if (m_proc->Start() == 0) {
 			wxString message;
 			message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");

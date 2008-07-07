@@ -320,7 +320,7 @@ void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
 	if (m_proc) {
 
 		//set the environment variables
-		m_mgr->GetEnv()->ApplyEnv();
+		m_mgr->GetEnv()->ApplyEnv(NULL);
 
 		if (m_proc->Start() == 0) {
 

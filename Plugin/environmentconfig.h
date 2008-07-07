@@ -38,7 +38,7 @@ public:
 	static void Release();
 	bool Load();  
 	wxString ExpandVariables(const wxString &in); 
-	void ApplyEnv();
+	void ApplyEnv(StringMap *overrideMap);
 	void UnApplyEnv();
 	 
 private:

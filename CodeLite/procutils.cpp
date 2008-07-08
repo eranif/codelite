@@ -166,9 +166,9 @@ void ProcUtils::ExecuteCommand(const wxString &command, wxArrayString &output, l
 	FILE *fp;
 	char line[512];
 	memset(line, 0, sizeof(line));
-	fp = popen(_C(command), "r");
+	fp = popen(command.mb_str(wxConvUTF8), "r");
 	while ( fgets( line, sizeof line, fp)) {
-		output.Add(_U(line));
+		output.Add(wxString(line, wxConvUTF8));
 		memset(line, 0, sizeof(line));
 	}
 

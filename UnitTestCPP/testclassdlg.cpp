@@ -85,7 +85,10 @@ wxArrayString TestClassDlg::GetTestsList()
 	for (unsigned int idx = 0; idx < m_checkListMethods->GetCount(); idx++) {
 		if (m_checkListMethods->IsChecked(idx)) {
 			wxString str = m_checkListMethods->GetString(idx);
-			results.Add(str.BeforeFirst(wxT('(')));
+			
+			str = str.BeforeFirst(wxT('('));
+			EscapeName(str);
+			results.Add(str);
 		}
 	}
 	return results;
@@ -203,3 +206,13 @@ void TestClassDlg::SetClassName(const wxString& clsName)
 	m_textCtrlClassName->SetValue(clsName);
 	DoRefreshFunctions(false);
 }
+
+void TestClassDlg::EscapeName(wxString& name)
+{
+	name.Replace(wxT(" "), wxEmptyString);
+	name.Replace(wxT("~"), wxT("Tilda"));
+	name.Replace(wxT("="), wxT("Shave"));
+	name.Replace(wxT(">"), wxT("Gadol"));
+	name.Replace(wxT("<"), wxT("Katan"));
+}
+

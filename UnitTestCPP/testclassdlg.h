@@ -55,6 +55,7 @@ protected:
 	void OnClassNameTyped(wxCommandEvent &e);
 	void OnShowClassListDialog(wxCommandEvent &e);
 	void DoRefreshFunctions(bool reportError = true);
+	void EscapeName(wxString &name);
 public:
 	/** Constructor */
 	TestClassDlg( wxWindow* parent, IManager *mgr );

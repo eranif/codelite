@@ -148,7 +148,9 @@ void SymbolsDialog::OnCharHook(wxKeyEvent &event)
 			return;
 
 		if (m_results->GetItemCount() > m_selectedItem + 1) {
+			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_DROPHILITED);
 			m_selectedItem ++;
+			
 			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 			m_results->EnsureVisible(m_selectedItem);
 			return;
@@ -164,7 +166,9 @@ void SymbolsDialog::OnCharHook(wxKeyEvent &event)
 		//select the previous one if we can
 		if ((m_selectedItem - 1) >= 0) {
 			//we can select the next one
+			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_DROPHILITED);
 			m_selectedItem --;
+			
 			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 			m_results->EnsureVisible(m_selectedItem);
 		}

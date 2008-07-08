@@ -151,14 +151,11 @@ void OpenTypeDlg::PopulateList()
 		if (m_selectedItem != wxNOT_FOUND && m_selectedItem != item) {
 			m_listTypes->Select(m_selectedItem, false);
 		}
-
 		m_selectedItem = item;
-		m_listTypes->Select(item);
-		m_listTypes->EnsureVisible(item);
+		m_listTypes->Select(m_selectedItem);
+		m_listTypes->EnsureVisible(m_selectedItem);
+		m_listTypes->Focus(m_selectedItem);
 	}
-	
-	m_listTypes->SetColumnWidth(0, 200);
-	m_listTypes->SetColumnWidth(2, wxLIST_AUTOSIZE);
 }
 
 void OpenTypeDlg::OnCharHook(wxKeyEvent &event)
@@ -176,9 +173,18 @@ void OpenTypeDlg::OnCharHook(wxKeyEvent &event)
 
 		//select the next one if we can
 		if (m_listTypes->GetItemCount() > (selectedItem + 1)) {
+			
+#ifdef __WXMAC__
+			// unselect current item
+			m_listTypes->Select(m_selectedItem, false);
+#endif
+			
 			//we can select the next one
 			m_listTypes->Select(selectedItem + 1);
-			m_listTypes->Focus(selectedItem + 1);
+			
+#ifdef __WXMAC__			
+			m_listTypes->EnsureVisible(selectedItem+1);
+#endif			
 			m_selectedItem = selectedItem+1;
 		}
 		return;
@@ -192,9 +198,16 @@ void OpenTypeDlg::OnCharHook(wxKeyEvent &event)
 
 		//select the previous one if we can
 		if ((selectedItem - 1) >= 0) {
+#ifdef __WXMAC__
+			// unselect current item
+			m_listTypes->Select(m_selectedItem, false);
+#endif
 			//we can select the next one
 			m_listTypes->Select(selectedItem - 1);
-			m_listTypes->Focus(selectedItem - 1);
+			
+#ifdef __WXMAC__			
+			m_listTypes->EnsureVisible(selectedItem-1);
+#endif		
 			m_selectedItem = selectedItem-1;
 		}
 		return;
@@ -236,6 +249,6 @@ void OpenTypeDlg::OnAllowPartialMatch(wxCommandEvent& e)
 
 void OpenTypeDlg::OnText(wxCommandEvent& e)
 {
-	wxUnusedVar(e);
 	PopulateList();
+	e.Skip();
 }

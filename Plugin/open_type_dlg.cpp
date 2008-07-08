@@ -184,8 +184,10 @@ void OpenTypeDlg::OnCharHook(wxKeyEvent &event)
 			
 #ifdef __WXMAC__			
 			m_listTypes->EnsureVisible(selectedItem+1);
-#endif			
+#endif		
+			m_listTypes->Focus(selectedItem+1);
 			m_selectedItem = selectedItem+1;
+			
 		}
 		return;
 	} else if (event.GetKeyCode() == WXK_UP) {
@@ -208,6 +210,7 @@ void OpenTypeDlg::OnCharHook(wxKeyEvent &event)
 #ifdef __WXMAC__			
 			m_listTypes->EnsureVisible(selectedItem-1);
 #endif		
+			m_listTypes->Focus(selectedItem-1);
 			m_selectedItem = selectedItem-1;
 		}
 		return;

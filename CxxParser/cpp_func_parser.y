@@ -125,7 +125,7 @@ translation_unit	:		/*empty*/
 						
 external_decl	:	 	{curr_func.Reset();} function_decl
 					| 	error { 
-						//printf("CodeLite: syntax error, unexpected token '%s' found\n", cl_func_lval.c_str());
+							//printf("CodeLite: syntax error, unexpected token '%s' found\n", cl_func_lval.c_str());
 						}
 					;
 						
@@ -152,9 +152,20 @@ template_parameter_list	: /* empty */		{$$ = "";}
 							| template_parameter_list ',' template_parameter {$$ = $1 + $2 + $3;}
 							;
 
-template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp {$$ = $1 + $2 + $3 +$4;}
-							;
-
+template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp 
+						{
+							$$ = $1 +  $2 + $3 +$4;
+						}
+					|  	const_spec nested_scope_specifier basic_type_name special_star_amp 
+						{
+							$$ = $1 +  $2 + $3 +$4;
+						}
+					|  	const_spec nested_scope_specifier LE_IDENTIFIER '<' template_parameter_list '>' special_star_amp
+						{
+							$$ = $1 + $2 + $3 +$4 + $5 + $6 + $7 + " " ;
+						}
+						;
+							
 func_name: LE_IDENTIFIER {$$ = $1;}
 		 | '~' LE_IDENTIFIER {$$ = $1 + $2;}
 		 | LE_OPERATOR any_operator {$$ = $1 + $2;}

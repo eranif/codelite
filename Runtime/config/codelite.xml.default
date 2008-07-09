@@ -21,7 +21,7 @@
       <wxString Value="wxT"/>
       <wxString Value="wxTopLevelWindowNative=wxTopLevelWindowMSW"/>
       <wxString Value="WXUNUSED"/>
-      <wxString Value="wxDEPRECTAED"/>
+      <wxString Value="wxDEPRECATED"/>
       <wxString Value="_T"/>
       <wxString Value="ATTRIBUTE_PRINTF_1"/>
       <wxString Value="ATTRIBUTE_PRINTF_2"/>

@@ -288,8 +288,12 @@ optional_initialization_list: /* empty */
 		| ':' {consumeInitializationList();}
 		;
 
+declare_throw: 	/*empty*/ {$$ = "";}
+			|	LE_THROW '(' template_parameter_list ')' {$$ = $3;}
+			;
+			
 /* functions */ 
-function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl nested_scope_specifier func_name '(' {consumeFuncArgList();} const_spec  '{'
+function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl nested_scope_specifier func_name '(' {consumeFuncArgList();} const_spec declare_throw '{'
 					{
 						//trim down trailing '::' from scope name
 						if($6.find_last_not_of(":") != std::string::npos){

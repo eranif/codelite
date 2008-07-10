@@ -226,8 +226,7 @@ function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec va
 					;
 					
 declare_throw: 	/*empty*/ {$$ = "";}
-			|	LE_THROW '(' nested_scope_specifier LE_IDENTIFIER special_star_amp ')' {$$ = $3 + $4 + $5;}
-			|	LE_THROW '(' basic_type_name special_star_amp ')' {$$ = $3 + $4;}
+			|	LE_THROW '(' template_parameter_list ')' {$$ = $3;}
 			;
 
 func_postfix: '{'

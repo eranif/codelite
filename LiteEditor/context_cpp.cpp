@@ -2184,6 +2184,8 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 
 void ContextCpp::OnRetagFile(wxCommandEvent& e)
 {
+	VALIDATE_WORKSPACE();
+	
 	wxUnusedVar(e);
 	LEditor &ctrl = GetCtrl();
 	if ( ctrl.GetModify() ) {

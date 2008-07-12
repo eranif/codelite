@@ -2775,6 +2775,8 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 	
 	do {
 		again = false;
+		flags = wxSD_MATCHCASE;
+		
 		if ( StringFindReplacer::Search(editor->GetText(), offset, pattern, flags, pos, match_len) ) {
 			// select only the name at the give text range
 			wxString display_name = name.BeforeFirst(wxT('('));
@@ -2791,6 +2793,7 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 				// select only the word
 				if (editor->GetContext()->IsCommentOrString(pos+pos1)) {
 					// try again
+					offset = pos + pos1;
 					again = true;
 				} else {
 					editor->SetSelection(pos + pos1, pos + pos1 + match_len1);

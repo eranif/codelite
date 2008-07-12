@@ -26,7 +26,7 @@
   <Project Name="Copyright" Path="Copyright/Copyright.project" Active="No"/>
   <Project Name="UnitTestPP" Path="UnitTestCPP/UnitTestPP.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
@@ -74,7 +74,7 @@
       <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>

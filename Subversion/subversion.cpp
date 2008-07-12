@@ -926,7 +926,7 @@ void SubversionPlugin::OnUpdateWsp(wxCommandEvent &e)
 	wxString file = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME);
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	//concatenate list of files here
-	m_svn->UpdateFile(wxT("\"") + file + wxT("\""), new SvnIconRefreshHandler(m_mgr, this));
+	m_svn->UpdateFile(wxT("\"") + file + wxT("\""), new UpdatePostCmdAction(m_mgr, this));
 }
 
 void SubversionPlugin::OnCommitWsp(wxCommandEvent &e)
@@ -952,7 +952,7 @@ void SubversionPlugin::OnUpdatePrj(wxCommandEvent &e)
 
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	//concatenate list of files here
-	m_svn->UpdateFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""), new SvnIconRefreshHandler(m_mgr, this));
+	m_svn->UpdateFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""), new UpdatePostCmdAction(m_mgr, this));
 }
 
 void SubversionPlugin::OnCommitPrj(wxCommandEvent &e)

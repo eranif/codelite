@@ -27,11 +27,13 @@ void UpdatePostCmdAction::DoCommand()
 		for (size_t i=0; i<projects.GetCount(); i++) {
 			ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
 			if (p) {
-				projectsFiles.Add(p->GetFileName().GetFullPath());
+				wxString proj = p->GetFileName().GetFullPath();
+				projectsFiles.Add(proj);
 			}
 		}
 		// add the workspace file name as well
-		projectsFiles.Add(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetFullPath());
+		wxString wsp = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetFullPath();
+		projectsFiles.Add(wsp);
 		
 		// parse the lines receieved from the svn output
 		bool reload_workspace(false);
@@ -43,7 +45,7 @@ void UpdatePostCmdAction::DoCommand()
 			        m_text.Item(i).StartsWith(wxT("M "), &file_name) ||
 			        m_text.Item(i).StartsWith(wxT("A "), &file_name)
 			   ) {
-				file_name = file_name.Trim(true).Trim();
+				file_name = file_name.Trim().Trim(false);
 				if (projectsFiles.Index(file_name) != wxNOT_FOUND) {
 					reload_workspace = true;
 					break;

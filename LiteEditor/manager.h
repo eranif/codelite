@@ -177,7 +177,12 @@ public:
 	 * changes
 	 */
 	void CloseWorkspace();
-
+	
+	/**
+	 * \brief close the currently opened workspace and reload it without saving any modifications made to it, if no workspace is opened, this functiond does anything
+	 */
+	void ReloadWorkspace();
+	
 	/**
 	 * Return a tree for the file view of a single project
 	 */
@@ -711,6 +716,7 @@ protected:
 	virtual ~Manager(void);
 	void OnProcessEnd(wxProcessEvent &event);
 	void DoShowPane(const wxString &pane);
+	void DoSetupWorkspace(const wxString &path);
 	
 private:
 	void RemoveProjectNameFromOpenFiles(const std::vector<wxFileName> &project_files);

@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : workspace.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : workspace.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "workspace.h"
+#include "workspace.h"
 #include "environmentconfig.h"
 #include "evnvarlist.h"
 #include "ctags_manager.h"
@@ -550,4 +550,32 @@ BuildConfigPtr Workspace::GetProjSelBuildConf(const wxString &projectName) const
 		}
 	}
 	return NULL;
+}
+
+bool Workspace::ReloadProject(const wxString& file)
+{
+	// first search for the project file
+	ProjectPtr proj(new Project());
+	if (!proj->Load(file)) {
+		wxLogMessage(wxT("Failed to load project file: '") + file + wxT("'"));
+		return false;
+	}
+	m_projects[proj->GetName()] = proj;
+	return true;
+}
+
+void Workspace::ReloadWorkspace()
+{
+	m_doc = wxXmlDocument();
+	
+	// reset the internal cache objects
+	m_projects.clear();
+
+	TagsManager *mgr = TagsManagerST::Get();
+	mgr->CloseDatabase();
+	
+	wxString err_msg;
+	if(!OpenWorkspace(m_fileName.GetFullPath(), err_msg)){
+		wxLogMessage(wxT("Reload workspace: ")+ err_msg);
+	}
 }

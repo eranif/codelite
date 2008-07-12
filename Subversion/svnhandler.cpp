@@ -52,7 +52,11 @@ void SvnDefaultCmdHandler::ProcessEvent(wxCommandEvent &event)
 	} else {
 		m_needLf = true;
 	}
-
+	
+	if(m_postCmd){
+		m_postCmd->AddText(text);
+	}
+	
 	m_svnDriver->PrintMessage(text);
 	if (IsVerificationNeeded(text)) {
 		wxString message, answer;

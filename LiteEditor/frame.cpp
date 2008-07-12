@@ -354,6 +354,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
 	EVT_UPDATE_UI(XRCID("close_file"), Frame::OnFileCloseUI)
 	EVT_MENU(XRCID("link_action"), Frame::OnStartPageEvent)
+	
+	EVT_MENU(XRCID("reload_workspace"), Frame::OnReloadWorkspace)
+	EVT_UPDATE_UI(XRCID("reload_workspace"), Frame::OnReloadWorkspaceUI)
 
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, Frame::OnSingleInstanceOpenFiles)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, Frame::OnSingleInstanceRaise)
@@ -3088,4 +3091,15 @@ void Frame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
 {
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
 	event.Enable(editor ? true : false);
+}
+
+void Frame::OnReloadWorkspace(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	ManagerST::Get()->ReloadWorkspace();
+}
+
+void Frame::OnReloadWorkspaceUI(wxUpdateUIEvent& event)
+{
+	event.Enable(ManagerST::Get()->IsWorkspaceOpen());
 }

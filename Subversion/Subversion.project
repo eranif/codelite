@@ -16,6 +16,8 @@
     <File Name="svnreportgeneratoraction.h"/>
     <File Name="svntab.cpp"/>
     <File Name="svntab.h"/>
+    <File Name="updatepostcmdaction.cpp"/>
+    <File Name="updatepostcmdaction.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="svndriver.h"/>

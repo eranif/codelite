@@ -367,7 +367,7 @@ void Manager::UnInitialize()
 	//it is important to release it *before* the TagsManager
 	ParseThreadST::Get()->Stop();
 	ParseThreadST::Free();
-	
+
 	TagsManagerST::Free();
 	LanguageST::Free();
 	WorkspaceST::Free();
@@ -483,59 +483,12 @@ void Manager::OpenWorkspace(const wxString &path)
 
 	// make sure that the workspace pane is visible
 	ShowWorkspacePane(WorkspacePane::FILE_VIEW);
-
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->OpenWorkspace(path, errMsg);
 	CHECK_MSGBOX(res);
 
-	// update status bar
-	wxString dbfile = WorkspaceST::Get()->GetStringProperty(wxT("Database"), errMsg);
-
-	wxFileName fn(dbfile);
-	// load ctags options
-	wxBusyCursor cursor;
-
-	//initialize some environment variable to be available for this workspace
-	Frame::Get()->GetWorkspacePane()->BuildFileTree();
-
-	//Update the configuration choice on the toolbar
-	DoUpdateConfigChoiceControl();
-
-	//update the 'Recent Workspace' history
-	AddToRecentlyOpenedWorkspaces(path);
-
-	FileExplorer *fe = Frame::Get()->GetFileExplorer();
-	wxFileName filename(path);
-	fe->GetFileTree()->ExpandToPath(filename.GetPath() + wxT("/"));
-
-	//hide the start page
-	Notebook *book = Frame::Get()->GetNotebook();
-	for (size_t i=0; i< (size_t)book->GetPageCount(); i++) {
-		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow*>( book->GetPage(i) );
-		if (win && book->GetPageText(i) == wxT("Welcome!")) {
-			//we found our start page, now hide it
-			book->DeletePage(i);
-			Frame::Get()->GetOpenWindowsPane()->UpdateList();
-			break;
-		}
-	}
-
-	SendCmdEvent(wxEVT_WORKSPACE_LOADED);
-
-	// Re-build refactoring index database
-	// the build is done in a secondary thread
-	wxArrayString projects;
-	GetProjectList(projects);
-	std::vector<wxFileName> projectFiles;
-
-	for (size_t i=0; i<projects.GetCount(); i++) {
-		ProjectPtr proj = GetProject(projects.Item(i));
-		if ( proj ) {
-			//change the directory to the project dir
-			proj->GetFiles(projectFiles, true);
-		}
-	}
-//	BuildRefactorDatabase(projectFiles, true);
+	// do workspace initializations
+	DoSetupWorkspace(path);
 }
 
 void Manager::DoUpdateConfigChoiceControl()
@@ -2800,7 +2753,7 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 
 	if (pattern.EndsWith(wxT("$/"))) {
 		pattern = pattern.Left(pattern.Len()-2);
-	} else if(pattern.EndsWith(wxT("/"))) {
+	} else if (pattern.EndsWith(wxT("/"))) {
 		pattern = pattern.Left(pattern.Len()-1);
 	}
 
@@ -2817,35 +2770,117 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 	editor->SetCurrentPos(0);
 	editor->SetSelectionStart(0);
 	editor->SetSelectionEnd(0);
+	int offset (0);
+	bool again(false);
+	
+	do {
+		again = false;
+		if ( StringFindReplacer::Search(editor->GetText(), offset, pattern, flags, pos, match_len) ) {
+			// select only the name at the give text range
+			wxString display_name = name.BeforeFirst(wxT('('));
 
-	if ( StringFindReplacer::Search(editor->GetText(), 0, pattern, flags, pos, match_len) ) {
-		// select only the name at the give text range
-		wxString display_name = name.BeforeFirst(wxT('('));
-		
-		int match_len1(0), pos1(0);
-		flags |= wxSD_SEARCH_BACKWARD;
-		flags |= wxSD_MATCHWHOLEWORD;
-		
-		// the inner search is done on the pattern without without the part of the 
-		// signature
-		pattern = pattern.BeforeFirst(wxT('('));
-		if(StringFindReplacer::Search(pattern, pattern.Len(), display_name, flags, pos1, match_len1)){
-			
-			// select only the word
-			editor->SetSelection(pos + pos1, pos + pos1 + match_len1);
-			
+			int match_len1(0), pos1(0);
+			flags |= wxSD_SEARCH_BACKWARD;
+			flags |= wxSD_MATCHWHOLEWORD;
+
+			// the inner search is done on the pattern without without the part of the
+			// signature
+			pattern = pattern.BeforeFirst(wxT('('));
+			if (StringFindReplacer::Search(pattern, pattern.Len(), display_name, flags, pos1, match_len1)) {
+
+				// select only the word
+				if (editor->GetContext()->IsCommentOrString(pos+pos1)) {
+					// try again
+					again = true;
+				} else {
+					editor->SetSelection(pos + pos1, pos + pos1 + match_len1);
+				}
+			} else {
+
+				// as a fallback, mark the whole line
+				editor->SetSelection(pos, pos + match_len);
+			}
+
 		} else {
-			
-			// as a fallback, mark the whole line
-			editor->SetSelection(pos, pos + match_len);
+			wxLogMessage(wxT("Failed to find[") + pattern + wxT("]"));
+
+			// match failed, restore the caret
+			editor->SetCurrentPos(curr_pos);
+			editor->SetSelectionStart(curr_pos);
+			editor->SetSelectionEnd(curr_pos);
 		}
-		
-	} else {
-		wxLogMessage(wxT("Failed to find[") + pattern + wxT("]"));
-		
-		// match failed, restore the caret
-		editor->SetCurrentPos(curr_pos);
-		editor->SetSelectionStart(curr_pos);
-		editor->SetSelectionEnd(curr_pos);
+	} while (again);
+}
+
+void Manager::ReloadWorkspace()
+{
+	// if no workspace is currently opened, return
+	if (!IsWorkspaceOpen()) {
+		return;
 	}
+
+	//close any debugging session that is currently opened
+	DbgStop();
+
+	WorkspaceST::Get()->ReloadWorkspace();
+
+	//clear the 'buid' tab
+	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
+
+	//clear the navigation bar
+	Frame::Get()->GetMainBook()->Clear();
+
+	//close all open files, and clear trees
+	Notebook *book = Frame::Get()->GetNotebook();
+	int count = book->GetPageCount();
+	for (int i=count-1; i>=0; i--) {
+		LEditor *page = dynamic_cast<LEditor*>(book->GetPage((size_t)i));
+		if (page) {
+			book->DeletePage((size_t)i);
+		}
+	}
+
+	Frame::Get()->GetNotebook()->Refresh();
+	Frame::Get()->GetWorkspacePane()->BuildFileTree();
+	SetStatusMessage(wxEmptyString, 1);
+
+	DoSetupWorkspace(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
+}
+
+void Manager::DoSetupWorkspace(const wxString &path)
+{
+	// update status bar
+	wxString errMsg;
+	wxString dbfile = WorkspaceST::Get()->GetStringProperty(wxT("Database"), errMsg);
+
+	wxFileName fn(dbfile);
+	// load ctags options
+	wxBusyCursor cursor;
+
+	//initialize some environment variable to be available for this workspace
+	Frame::Get()->GetWorkspacePane()->BuildFileTree();
+
+	//Update the configuration choice on the toolbar
+	DoUpdateConfigChoiceControl();
+
+	//update the 'Recent Workspace' history
+	AddToRecentlyOpenedWorkspaces(path);
+
+	FileExplorer *fe = Frame::Get()->GetFileExplorer();
+	wxFileName filename(path);
+	fe->GetFileTree()->ExpandToPath(filename.GetPath() + wxT("/"));
+
+	//hide the start page
+	Notebook *book = Frame::Get()->GetNotebook();
+	for (size_t i=0; i< (size_t)book->GetPageCount(); i++) {
+		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow*>( book->GetPage(i) );
+		if (win && book->GetPageText(i) == wxT("Welcome!")) {
+			//we found our start page, now hide it
+			book->DeletePage(i);
+			Frame::Get()->GetOpenWindowsPane()->UpdateList();
+			break;
+		}
+	}
+
+	SendCmdEvent(wxEVT_WORKSPACE_LOADED);
 }

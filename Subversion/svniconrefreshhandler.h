@@ -35,6 +35,7 @@ class SubversionPlugin;
 
 class SvnIconRefreshHandler : public SvnPostCmdAction {
 	
+protected:	
 	IManager *m_mgr;
 	SubversionPlugin *m_plugin;
 	

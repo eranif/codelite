@@ -344,3 +344,8 @@ wxApp* PluginManager::GetTheApp()
 {
 	return wxTheApp;
 }
+
+void PluginManager::ReloadWorkspace()
+{
+	ManagerST::Get()->ReloadWorkspace();
+}

@@ -288,6 +288,9 @@
             <object class="wxMenuItem" name="close_workspace">
                 <label>&amp;Close Workspace</label>
             </object>
+            <object class="wxMenuItem" name="reload_workspace">
+                <label>&amp;Reload Workspace</label>
+            </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="import_from_msvs">
 	    		<label>&amp;Import MS Visual Studio Solution File...</label>

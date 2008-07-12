@@ -22,6 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "updatepostcmdaction.h"
  #include "svnreportgeneratoraction.h"
 #include "custom_tab.h"
 #include "svntab.h"
@@ -323,7 +324,7 @@ void SubversionPlugin::OnUpdate(wxCommandEvent &event)
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
-	m_svn->Update();
+	m_svn->Update(new UpdatePostCmdAction(m_mgr, this));
 }
 
 void SubversionPlugin::OnCommit(wxCommandEvent &event)
@@ -353,7 +354,7 @@ void SubversionPlugin::OnUpdateFile(wxCommandEvent &event)
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	IEditor *editor = m_mgr->GetActiveEditor();
 	if (editor) {
-		m_svn->UpdateFile(wxT("\"") + editor->GetFileName().GetFullPath() + wxT("\"")), new SvnIconRefreshHandler(m_mgr, this);
+		m_svn->UpdateFile(wxT("\"") + editor->GetFileName().GetFullPath() + wxT("\""), new UpdatePostCmdAction(m_mgr, this));
 	}
 }
 

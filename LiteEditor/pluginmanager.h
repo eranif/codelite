@@ -85,6 +85,7 @@ public:
 	virtual JobQueue *GetJobQueue();
 	virtual wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd);
 	virtual wxApp *GetTheApp();
+	virtual void ReloadWorkspace();
 	
 	//------------------------------------
 	//End of IManager interface

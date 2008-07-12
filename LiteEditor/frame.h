@@ -286,6 +286,8 @@ protected:
 	void OnProjectNewWorkspace(wxCommandEvent &event);
 	void OnProjectNewProject(wxCommandEvent &event);
 	void OnCreateWorkspace(wxCommandEvent &event);
+	void OnReloadWorkspace(wxCommandEvent &event);
+	void OnReloadWorkspaceUI(wxUpdateUIEvent &event);
 	void OnSwitchWorkspace(wxCommandEvent &event);
 	void OnCloseWorkspace(wxCommandEvent &event);
 	void OnProjectAddProject(wxCommandEvent &event);

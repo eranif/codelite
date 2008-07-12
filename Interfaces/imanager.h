@@ -181,6 +181,11 @@ public:
 	 * \brief return the application
 	 */
 	virtual wxApp *GetTheApp() = 0;
+	
+	/**
+	 * \brief reload the current workspace, this function does not do anything if a workspace is not opened
+	 */
+	virtual void ReloadWorkspace() = 0;
 };
 
 #endif //IMANAGER_H

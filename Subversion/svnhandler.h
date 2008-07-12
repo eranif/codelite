@@ -25,6 +25,7 @@
  #ifndef SVNHANDLER_H
 #define SVNHANDLER_H
 
+#include "svnpostcmdaction.h"
 #include "wx/treectrl.h"
 #include "virtualdirtreectrl.h"
 #include "map"

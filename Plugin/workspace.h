@@ -107,6 +107,12 @@ public:
 	void CloseWorkspace();
 
 	/**
+	 * \brief close the currently open workspace without saving any changes made to it,
+	 * and reload it again 
+	 */
+	void ReloadWorkspace();
+	
+	/**
 	 * \brief
 	 * Create a new project with given name, path and type
 	 * 
@@ -129,6 +135,13 @@ public:
 	 */
 	wxString GetStringProperty(const wxString &propName, wxString &errMsg);
 
+	/**
+	 * \brief reload project 
+	 * \param file project full path
+	 * \return true on success, false otherwise
+	 */
+	bool ReloadProject(const wxString &file);
+	
 	/**
 	 * Find a project by name
 	 * \param projName project name

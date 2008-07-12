@@ -3,8 +3,7 @@
 //
 // copyright            : (C) 2008 by Eran Ifrah                            
 // file name            : svndriver.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
+// 
 // A                                                                        
 //              _____           _      _     _ _                            
 //             /  __ \         | |    | |   (_) |                           
@@ -38,6 +37,8 @@
 #include "logindlg.h"
 
 #define TRYENTERSVN() {if(m_cmd){return;} SelectSvnTab();}
+
+static const wxChar* commandSeparator = wxT("----\n");
 
 BEGIN_EVENT_TABLE(SvnDriver, wxEvtHandler)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE, SvnDriver::OnSvnProcess)
@@ -201,7 +202,7 @@ void SvnDriver::ExecCommand(const wxString &cmd)
 	}
 }
 
-void SvnDriver::Update()
+void SvnDriver::Update(SvnPostCmdAction *handler)
 {
 	TRYENTERSVN()
 
@@ -224,6 +225,7 @@ void SvnDriver::Update()
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("update ") << fileName ;
 	m_curHandler = new SvnDefaultCmdHandler(this, command);
+	m_curHandler->SetPostCmdAction(handler);
 	ExecCommand(command);
 }
 
@@ -433,7 +435,7 @@ void SvnDriver::Delete()
 	wxArrayString output;
 	ProcUtils::ExecuteCommand(command, output);
 	PrintMessage(output);
-	PrintMessage(wxT("----\n"));
+	PrintMessage(commandSeparator);
 }
 
 void SvnDriver::Revert()
@@ -461,7 +463,7 @@ void SvnDriver::Revert()
 	wxArrayString output;
 	ProcUtils::ExecuteCommand(command, output);
 	PrintMessage(output);
-	PrintMessage(wxT("----\n"));
+	PrintMessage(commandSeparator);
 }
 
 void SvnDriver::RevertFile(const wxFileName &fileName, SvnPostCmdAction *handler)
@@ -488,7 +490,7 @@ void SvnDriver::RevertFile(const wxFileName &fileName, SvnPostCmdAction *handler
 	wxArrayString output;
 	ProcUtils::ExecuteCommand(command, output);
 	PrintMessage(output);
-	PrintMessage(wxT("----\n"));
+	PrintMessage(commandSeparator);
 	
 	if(handler) {
 		handler->DoCommand();
@@ -585,7 +587,7 @@ void SvnDriver::Add(const wxFileName &filename, SvnPostCmdAction *handler)
 			dlg->Destroy();
 		} else {
 			PrintMessage(wxT("Nothing to be added\n"));
-			PrintMessage(wxT("----\n"));
+			PrintMessage(commandSeparator);
 		}
 
 	} else {

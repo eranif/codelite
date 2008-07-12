@@ -32,6 +32,7 @@
 #include "async_executable_cmd.h"
 #include "imanager.h"
 #include "vector"
+#include <wx/arrstr.h>
 
 class SvnCmdHandler;
 class SubversionPlugin;
@@ -45,7 +46,8 @@ class SvnDriver : public wxEvtHandler
 	std::vector<SvnCmdHandler*> m_statusCmdQueue;
 	SubversionPlugin *m_plugin;
 	bool m_commitWithPass;
-
+	wxArrayString m_modifiedFiles;
+	
 protected:
 	void OnSvnProcessTerminated(wxProcessEvent &event);
 	void OnSvnProcess(wxCommandEvent &event);
@@ -79,7 +81,7 @@ public:
 
 	//operations taken from the file explorer tree
 	void Abort();
-	void Update();
+	void Update(SvnPostCmdAction *handler);
 	void Commit();
 	void Diff();
 	void Add();

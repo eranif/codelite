@@ -392,7 +392,8 @@ bool WriteFileWithBackup(const wxString &file_name, const wxString &content, boo
 	}
 
 	// write the new content
-	file.Write(content);
+	wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+	file.Write(content, fontEncConv); // JK was without conversion
 	file.Close();
 	return true;
 }

@@ -184,6 +184,11 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 bool StringFindReplacer::Search(const wxString& input, int startOffset, const wxString& find_what, size_t flags,
                                 int& pos, int& matchLen, int& posInChars, int& matchLenInChars)
 {
+	// adjust startOffset due to it is in bytes but should be in chars
+	int iSO = startOffset;
+	while(iSO > 0 && UTF8Length(input, iSO) > startOffset) iSO--;
+	startOffset = iSO;
+	
 	bool bResult = false;
 	if (flags & wxSD_REGULAREXPRESSION) {
 		bResult = DoRESearch(input, startOffset, find_what, flags, posInChars, matchLenInChars);

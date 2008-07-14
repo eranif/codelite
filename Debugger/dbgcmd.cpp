@@ -25,19 +25,46 @@
 #include "dbgcmd.h"
 #include "wx/tokenzr.h"
 #include "debuggergdb.h"
-#include "gdblexer.h"
 #include "precompiled_header.h"
+#include "gdb_result_parser.h"
+
+extern int gdb_result_lex();
+extern bool setGdbLexerInput(const std::string &in);
+extern void gdb_result_lex_clean();
+extern std::string gdb_result_string;
+extern void gdb_result_push_buffer(const std::string &new_input);
+extern void gdb_result_pop_buffer();
+
+static void GDB_STRIP_QUOATES(std::string &currentToken) {
+	wxString str(_U(currentToken.c_str()));
+	wxString rest;
+	
+	if(str.StartsWith(wxT("\""))){
+		str = str.AfterFirst(wxT('"'));
+	}
+	
+	if(str.EndsWith(wxT("\""))){
+		str = str.BeforeLast(wxT('"'));
+	}
+	
+	if(str.StartsWith(wxT("\"\\\\"), &rest)){
+		str = rest;
+	}
+
+	if(str.EndsWith(wxT("\"\\\\"), &rest)){
+		str = rest;
+	}
+	
+	const wxCharBuffer buff = _C(str);
+	currentToken = buff.data();
+}
 
 #define GDB_LEX()\
 	{\
-		currentToken = "";\
-		type = le_gdb_lex();\
-		if(type == LE_GDB_STRING_LITERAL){\
-			currentToken = le_gdb_string_word;\
-		}else{\
-			currentToken = le_gdb_text;\
-		}\
+		type = gdb_result_lex();\
+		currentToken = gdb_result_string;\
 	}
+	
 #define GDB_BREAK(ch)\
 	if(type != (int)ch){\
 		break;\
@@ -108,6 +135,8 @@ static bool ParseFrameLocals(wxString &strline, wxString &name, wxString &v)
 					// remove this string from the original strline
 					strline = strline.Mid(i);
 					break;
+				} else {
+					v << strline.GetChar(i);
 				}
 			} else {
 				name << strline.GetChar(i);
@@ -127,6 +156,8 @@ static bool ParseFrameLocals(wxString &strline, wxString &name, wxString &v)
 					// remove this string from the original strline
 					strline = strline.Mid(i);
 					break;
+				} else {
+					v << strline.GetChar(i);
 				}
 			} else {
 				v << strline.GetChar(i);
@@ -356,14 +387,16 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 	}
 
 	if (m_evaluateExpression == FunctionArguments) {
+		wxLogMessage(strline);
 		MakeTreeFromFrame(strline, tree);
 	} else {
+		wxLogMessage(strline);
 		const wxCharBuffer scannerText =  _C(strline);
-		le_gdb_set_input(scannerText.data());
+		setGdbLexerInput(scannerText.data());
 		MakeTree(tree);
 	}
 
-	le_gdb_lex_clean();
+	gdb_result_lex_clean();
 
 	if (m_evaluateExpression == Locals || m_evaluateExpression == This || m_evaluateExpression == FunctionArguments) {
 		m_observer->UpdateLocals(tree);
@@ -384,7 +417,7 @@ void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent)
 	while (type != 0) {
 		//pattern is *always* name="somename",value="somevalue"
 		//however, value can be a sub tree value="{....}"
-		if (type != LE_GDB_NAME) {
+		if (type != GDB_NAME) {
 			GDB_LEX();
 			continue;
 		}
@@ -394,9 +427,13 @@ void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent)
 		GDB_BREAK('=');
 
 		GDB_LEX();
-		if (type != LE_GDB_WORD && type != LE_GDB_STRING_LITERAL) {
+		if (type != GDB_STRING) {
 			break;
 		}
+		
+		// remove quoates from the name value
+		GDB_STRIP_QUOATES(currentToken);
+		
 		displayLine << _U(currentToken.c_str());
 
 		//comma
@@ -404,55 +441,51 @@ void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent)
 		GDB_BREAK(',');
 		//value
 		GDB_LEX();
-		if (type != LE_GDB_VALUE) {
+		if (type != GDB_VALUE) {
 			break;
 		}
 		GDB_LEX();
 		GDB_BREAK('=');
 
 		GDB_LEX();
-		if (type == (int)'{') {
+		if(type != GDB_STRING){
+			break;
+		}
+		
+		// remove the quoates from the value
+		GDB_STRIP_QUOATES(currentToken);
+		
+		if (currentToken.at(0) == '{') {
 			if (displayLine.IsEmpty() == false) {
 				//open a new node for the tree
 				NodeData data;
 				data.name = displayLine;
 				TreeNode<wxString, NodeData> *child = parent->AddChild(data.name, data);
+				
+				// since we dont want a dummy <unnamed> node, we remove the false
+				// open brace
+				wxString tmp(_U(currentToken.c_str()));
+				tmp = tmp.Mid(1);
+				
+				// also remove the last closing brace
+				tmp = tmp.RemoveLast();
+				
+				const wxCharBuffer buff = _C(tmp);
+				
+				// set new buffer to the 
+				gdb_result_push_buffer(buff.data());
+				
 				MakeSubTree(child);
+				
+				// restore the previous buffer
+				gdb_result_pop_buffer();
 			}
-		} else if (type == (int)'(') {
-			//we encountered an expression of:
-			//(class Notebook *) 0xffeedd00
-			displayLine << wxT(" = ");
-			while ( type != (int)'}') {
-				displayLine << _U(currentToken.c_str()) << wxT(" ");
-				GDB_LEX();
-			}
+		} else  {
+			displayLine << wxT(" = ") << _U(currentToken.c_str());
 			NodeData data;
 			data.name = displayLine;
 			parent->AddChild(data.name, data);
-		} else {
-			//simple case of name = value
-			displayLine << wxT(" = ");
-			wxString val(wxEmptyString);
-			while (type == LE_GDB_CHAR_LITERAL || type == LE_GDB_STRING_LITERAL || type == LE_GDB_WORD || currentToken == "-") {
-				if (type == LE_GDB_STRING_LITERAL) {
-					val << wxT("\"") << _U(currentToken.c_str()) << wxT("\" ");
-				} else {
-					val << _U(currentToken.c_str()) << wxT(" ");
-				}
-				GDB_LEX();
-			}
-
-			if (val.IsEmpty()) {
-				val = wxT("\"\"");
-			}
-			displayLine << val;
-			NodeData data;
-			data.name = displayLine;
-			data.name.Replace(wxT("\\\\\\\\"), wxT("\\"));
-			data.name.Replace(wxT("\\\\"), wxT("\\"));
-			parent->AddChild(data.name, data);
-		}
+		} 
 		displayLine.Empty();
 	}
 }
@@ -468,27 +501,11 @@ void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent)
 	std::string currentToken;
 	int type(0);
 
-
 	GDB_LEX();
 	while (type != 0) {
 		switch (type) {
-		case LE_GDB_WORD:
-		case LE_GDB_STRING_LITERAL:
-		case LE_GDB_NAME:
-		case LE_GDB_VALUE:
-		case LE_GDB_LOCALS:
-		case LE_GDB_DONE:
-		case LE_GDB_CHAR_LITERAL:
-			displayLine << _U(currentToken.c_str()) << wxT(" ");
-			break;
-
-		case (int)':':
-					case (int)'@':
-							displayLine << _U(currentToken.c_str());
-			break;
-
 		case (int)'=':
-						displayLine << wxT("= ");
+			displayLine << wxT("= ");
 			break;
 		case (int)'{': {
 				//create the new child node
@@ -511,7 +528,7 @@ void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent)
 			}
 			break;
 		case (int)',':
-						if (displayLine.IsEmpty() == false) {
+				if (displayLine.IsEmpty() == false) {
 					NodeData nodeData;
 					nodeData.name = displayLine;
 					parent->AddChild(nodeData.name, nodeData);
@@ -519,13 +536,16 @@ void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent)
 				}
 			break;
 		case (int)'}':
-						if (displayLine.IsEmpty() == false) {
+				if (displayLine.IsEmpty() == false) {
 					NodeData nodeData;
 					nodeData.name = displayLine;
 					parent->AddChild(nodeData.name, nodeData);
 					displayLine = wxEmptyString;
 				}
 			return;
+		default:
+			displayLine << _U(currentToken.c_str()) << wxT(" ");
+			break;
 		}
 		GDB_LEX();
 	}
@@ -606,11 +626,12 @@ void DbgCmdHandlerLocals::MakeTreeFromFrame(wxString &strline, TreeNode<wxString
 		text << name << wxT("=") << val;
 
 		const wxCharBuffer scannerText =  _C(text);
-		le_gdb_set_input(scannerText.data());
+		setGdbLexerInput(scannerText.data());
 
 		MakeSubTree(parent);
 
-		le_gdb_lex_clean();
+		gdb_result_lex_clean();
+		
 		name.Clear();
 		val.Clear();
 	}

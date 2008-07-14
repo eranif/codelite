@@ -12,8 +12,8 @@
     <File Name="dbgcmd.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Generated Files">
-    <File Name="gdblexer.h"/>
-    <File Name="gdb_lexer.cpp"/>
+    <File Name="gdb_result_parser.h"/>
+    <File Name="gdb_result.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">

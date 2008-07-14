@@ -387,10 +387,8 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 	}
 
 	if (m_evaluateExpression == FunctionArguments) {
-		wxLogMessage(strline);
 		MakeTreeFromFrame(strline, tree);
 	} else {
-		wxLogMessage(strline);
 		const wxCharBuffer scannerText =  _C(strline);
 		setGdbLexerInput(scannerText.data());
 		MakeTree(tree);

@@ -340,7 +340,7 @@ void BuilderGnuMake::CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString
 		text << wxT("\t@makedir \"") << bldConf->GetIntermediateDirectory() << wxT("\"\n");
 	} else {
 		//other OSs
-		text << wxT("\t@test -d ") << bldConf->GetIntermediateDirectory() << wxT(" || mkdir ") << bldConf->GetIntermediateDirectory() << wxT("\n");
+		text << wxT("\t@test -d ") << bldConf->GetIntermediateDirectory() << wxT(" || mkdir -p ") << bldConf->GetIntermediateDirectory() << wxT("\n");
 	}
 	text << wxT("\n");
 }

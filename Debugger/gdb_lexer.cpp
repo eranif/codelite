@@ -1,28 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : gdb_lexer.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
- #define yy_create_buffer le_gdb__create_buffer
+#define yy_create_buffer le_gdb__create_buffer
 #define yy_delete_buffer le_gdb__delete_buffer
 #define yy_scan_buffer le_gdb__scan_buffer
 #define yy_scan_string le_gdb__scan_string
@@ -475,19 +451,21 @@ char *yytext;
 #define INITIAL 0
 /*************** Includes and Defines *****************************/
 
-#include "gdblexer.h"
+
 #include "errno.h"
-#include "string"
+#include <string>
+#define YYSTYPE std::string
+#include "gdblexer.h"
+#include <vector>
 #include <stdlib.h>
 #include <string.h>
 
-#define YYSTYPE std::string
+
 
 
 std::string le_gdb_string_word;
 static int angleDepth(0);
-
-
+static std::vector<YY_BUFFER_STATE> gs_bufferStack;
 
 #define STATE_INITIAL 1
 #define STATE_ESCAPE  2
@@ -1807,8 +1785,24 @@ void le_gdb_lex_clean(){
 	le_gdb_lineno = 1;
 }
 
+void le_gdb_push_buffer(const std::string &new_input){
+	// keep current buffer state
+	gs_bufferStack.push_back(YY_CURRENT_BUFFER);
+	
+	// create new buffer and use it
+	yy_switch_to_buffer( yy_scan_string(new_input.c_str()) );
+}
+
+void le_gdb_pop_buffer(){
+	// clean current buffer
+	yy_delete_buffer(YY_CURRENT_BUFFER);
+	
+	// create new buffer and use it
+	yy_switch_to_buffer( gs_bufferStack.back() );
+	gs_bufferStack.pop_back();
+}
+
 bool le_gdb_set_input(const YYSTYPE &in){
-	BEGIN INITIAL;
 	yy_scan_string(in.c_str());
 	
 	//update the working file name

@@ -92,11 +92,13 @@ public:
 	enum {
 		EvaluateExpression,
 		Locals,
-		This
+		This,
+		FunctionArguments
 	};
 	
 protected:
 	void MakeTree(TreeNode<wxString, NodeData> *parent);
+	void MakeTreeFromFrame(wxString &strline, TreeNode<wxString, NodeData> *parent);
 	void MakeSubTree(TreeNode<wxString, NodeData> *parent);
 	int m_evaluateExpression;
 	wxString m_expression;

@@ -2151,11 +2151,20 @@ void Manager::UpdateLocals(TreeNode<wxString, NodeData> *tree)
 {
 	NodeData data = tree->GetData();
 	static TreeNode<wxString, NodeData> *thisTree(NULL);
+	static TreeNode<wxString, NodeData> *funcArgsTree(NULL);
+	
 	if (data.name == wxT("*this")) {
 		//append this tree to the local's tree
 		thisTree = tree;//keep the tree and wait for the other call that will come
+	} else if(data.name == wxT("Function Arguments")){
+		funcArgsTree = tree;//keep the tree and wait for the other call that will come
 	} else {
 		//if we already have thisTree, append it as child of this tree
+		if(funcArgsTree) {
+			tree->AddChild(funcArgsTree);
+			funcArgsTree = NULL;
+		}
+		
 		if (thisTree) {
 			tree->AddChild(thisTree);
 			thisTree = NULL;

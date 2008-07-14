@@ -477,6 +477,11 @@ bool DbgGdb::QueryLocals()
 	if (!WriteCommand(wxT("-data-evaluate-expression *this"), new DbgCmdHandlerLocals(m_observer, DbgCmdHandlerLocals::This, wxT("*this")))) {
 		return false;
 	}
+	
+	if(!WriteCommand(wxT("-stack-list-arguments 1 0 0"), new DbgCmdHandlerLocals(m_observer, DbgCmdHandlerLocals::FunctionArguments))) {
+		return false;
+	}
+	
 	return WriteCommand(wxT("-stack-list-locals --all-values"), new DbgCmdHandlerLocals(m_observer));
 }
 

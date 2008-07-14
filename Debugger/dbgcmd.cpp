@@ -92,6 +92,51 @@ static void ParseStackEntry(const wxString &line, StackEntry &entry)
 	}
 }
 
+static bool ParseFrameLocals(wxString &strline, wxString &name, wxString &v)
+{
+	// search for name="XXX"
+	wxString rest;
+	int where = strline.Find(wxT("name=\""));
+	if (where != wxNOT_FOUND) {
+		strline = strline.Mid((size_t)where + 6);
+
+		// serarch for closing quoat
+		for (size_t i=0; i<strline.size(); i++) {
+			if (strline.GetChar(i) == '"') {
+				if (i > 0 && strline.GetChar(i-1) != wxT('\\')) {
+					// this is not an escaped string
+					// remove this string from the original strline
+					strline = strline.Mid(i);
+					break;
+				}
+			} else {
+				name << strline.GetChar(i);
+			}
+		}
+	}
+
+	where = strline.Find(wxT(",value=\""));
+	if (where != wxNOT_FOUND) {
+		strline = strline.Mid((size_t)where+8);
+		// search for
+		// serarch for closing quoat
+		for (size_t i=0; i<strline.size(); i++) {
+			if (strline.GetChar(i) == '"') {
+				if (i > 0 && strline.GetChar(i-1) != wxT('\\')) {
+					// this is not an escaped string
+					// remove this string from the original strline
+					strline = strline.Mid(i);
+					break;
+				}
+			} else {
+				v << strline.GetChar(i);
+			}
+		}
+	}
+
+	return !v.IsEmpty() && !name.IsEmpty();
+}
+
 bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 {
 #if defined (__WXMSW__) || defined (__WXGTK__)
@@ -272,6 +317,9 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 	case This:
 		data.name = wxT("*this");
 		break;
+	case FunctionArguments:
+		data.name = wxT("Function Arguments");
+		break;
 	}
 
 	wxString strline(line), tmpline;
@@ -287,8 +335,17 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 		if (strline.EndsWith(wxT("]"))) {
 			strline = strline.RemoveLast();
 		}
+	} else if (m_evaluateExpression == FunctionArguments) {
+
+		if (strline.StartsWith(wxT("^done,stack-args=[frame={level=\"0\",args=["), &tmpline)) {
+			strline = tmpline;
+		}
+
+		if (strline.EndsWith(wxT("]}]")), &tmpline) {
+			strline = tmpline;
+		}
+
 	} else {
-		//
 		//EvaluateExpression || This
 		if (strline.StartsWith(wxT("^done,value="), &tmpline)) {
 			strline = tmpline;
@@ -298,12 +355,17 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 		}
 	}
 
-	const wxCharBuffer scannerText =  _C(strline);
-	le_gdb_set_input(scannerText.data());
-	MakeTree(tree);
+	if (m_evaluateExpression == FunctionArguments) {
+		MakeTreeFromFrame(strline, tree);
+	} else {
+		const wxCharBuffer scannerText =  _C(strline);
+		le_gdb_set_input(scannerText.data());
+		MakeTree(tree);
+	}
+
 	le_gdb_lex_clean();
 
-	if (m_evaluateExpression == Locals || m_evaluateExpression == This) {
+	if (m_evaluateExpression == Locals || m_evaluateExpression == This || m_evaluateExpression == FunctionArguments) {
 		m_observer->UpdateLocals(tree);
 	} else {
 		m_observer->UpdateQuickWatch(m_expression, tree);
@@ -412,31 +474,42 @@ void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent)
 		switch (type) {
 		case LE_GDB_WORD:
 		case LE_GDB_STRING_LITERAL:
+		case LE_GDB_NAME:
+		case LE_GDB_VALUE:
+		case LE_GDB_LOCALS:
+		case LE_GDB_DONE:
+		case LE_GDB_CHAR_LITERAL:
 			displayLine << _U(currentToken.c_str()) << wxT(" ");
 			break;
+
+		case (int)':':
+					case (int)'@':
+							displayLine << _U(currentToken.c_str());
+			break;
+
 		case (int)'=':
 						displayLine << wxT("= ");
 			break;
 		case (int)'{': {
-			//create the new child node
-			wxString tmpValue;
-			if (displayLine.EndsWith(wxT(" = "), &tmpValue)) {
-				displayLine = tmpValue;
-			}
+				//create the new child node
+				wxString tmpValue;
+				if (displayLine.EndsWith(wxT(" = "), &tmpValue)) {
+					displayLine = tmpValue;
+				}
 
-			// display line can be empty (in case of unnamed structures)
-			if (displayLine.empty()) {
-				displayLine = wxT("<unnamed>");
+				// display line can be empty (in case of unnamed structures)
+				if (displayLine.empty()) {
+					displayLine = wxT("<unnamed>");
+				}
+
+				//make a sub node
+				NodeData data;
+				data.name = displayLine;
+				TreeNode<wxString, NodeData> *child = parent->AddChild(data.name, data);
+				MakeSubTree(child);
+				displayLine.Empty();
 			}
-			
-			//make a sub node
-			NodeData data;
-			data.name = displayLine;
-			TreeNode<wxString, NodeData> *child = parent->AddChild(data.name, data);
-			MakeSubTree(child);
-			displayLine.Empty();
-		}
-		break;
+			break;
 		case (int)',':
 						if (displayLine.IsEmpty() == false) {
 					NodeData nodeData;
@@ -455,6 +528,13 @@ void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent)
 			return;
 		}
 		GDB_LEX();
+	}
+
+	if (type == 0 && !displayLine.IsEmpty()) {
+		NodeData nodeData;
+		nodeData.name = displayLine;
+		parent->AddChild(nodeData.name, nodeData);
+		displayLine = wxEmptyString;
 	}
 }
 
@@ -514,4 +594,24 @@ bool DbgCmdSelectFrame::ProcessOutput(const wxString &line)
 	wxUnusedVar(line);
 	m_observer->UpdateGotControl(DBG_END_STEPPING);
 	return true;
+}
+
+void DbgCmdHandlerLocals::MakeTreeFromFrame(wxString &strline, TreeNode<wxString, NodeData>* parent)
+{
+	wxString displayLine;
+	wxString name, val;
+
+	while (ParseFrameLocals(strline, name, val)) {
+		wxString text;
+		text << name << wxT("=") << val;
+
+		const wxCharBuffer scannerText =  _C(text);
+		le_gdb_set_input(scannerText.data());
+
+		MakeSubTree(parent);
+
+		le_gdb_lex_clean();
+		name.Clear();
+		val.Clear();
+	}
 }

@@ -3,19 +3,38 @@
 #include "gdblexer.h"
 
 char *loadFile(const char *fileName);
+extern void le_gdb_push_buffer(const std::string &new_input);
+extern void le_gdb_pop_buffer();
+	
 int main(int argc, char **argv){
 	
 	char *buff = loadFile("test.h");
+	char *buff2 = loadFile("test2.h");
 	le_gdb_set_input(buff);
 	int type = le_gdb_lex();
 	while(type != 0){
 		if(type == LE_GDB_STRING_LITERAL){
-			printf("[%d] %s\n", type, le_gdb_string_word.c_str());
+			printf("String [%d] %s\n", type, le_gdb_string_word.c_str());
+			le_gdb_push_buffer(buff2);
+			
 		}else{
-			printf("[%d] %s\n", type, le_gdb_text.c_str());
+			printf("Text   [%d] %s\n", type, le_gdb_text);
 		}
 		type = le_gdb_lex(); 
 	}
+	
+	// set back old buffer
+	le_gdb_pop_buffer();
+	type = le_gdb_lex();
+	while(type != 0){
+		if(type == LE_GDB_STRING_LITERAL){
+			printf("String [%d] %s\n", type, le_gdb_string_word.c_str());
+		}else{
+			printf("Text   [%d] %s\n", type, le_gdb_text);
+		}
+		type = le_gdb_lex(); 
+	}
+
 	fflush(stdout);
 	free( buff );
 	return 0;

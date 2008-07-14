@@ -2,13 +2,11 @@
 <CodeLite_Project Name="DebuggerGDB">
   <VirtualDirectory Name="Source Files">
     <File Name="debuggergdb.cpp"/>
-    <File Name="gdbinfolexer.cpp"/>
     <File Name="dbgcmd.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="debuggergdb.h"/>
     <File Name="dirkeeper.h"/>
-    <File Name="gdbinfolexer.h"/>
     <File Name="dbgcmd.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Generated Files">

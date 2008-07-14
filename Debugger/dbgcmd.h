@@ -27,7 +27,6 @@
 
 #include "wx/string.h"
 #include "wx/event.h"
-#include "gdbinfolexer.h"
 #include "debuggerobserver.h"
 #include "debugger.h"
 

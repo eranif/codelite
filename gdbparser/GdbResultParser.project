@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="GdbResultParser">
   <Description/>
+  <VirtualDirectory Name="src">
+    <File Name="main.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Grammar">
+    <File Name="gdb_result.l"/>
+    <File Name="gdb_result.y"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="GeneratedParser">
+    <File Name="gdb_result.cpp"/>
+    <File Name="gdb_result_parser.h"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
-    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
@@ -10,17 +21,20 @@
       <Linker Required="yes" Options=""/>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy gdb_result.cpp ..\Debugger\.</Command>
+        <Command Enabled="yes">copy gdb_result_parser.h ..\Debugger\.</Command>
+      </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>gdb_result_parser.cpp gdb_result_lexer.cpp
 gdb_result_parser.cpp: gdb_result.y
 	yacc -dl  -t -v -pgdb_result_ gdb_result.y
@@ -43,33 +57,18 @@ gdb_result_lexer.cpp: gdb_result.l
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="src">
-    <File Name="main.cpp"/>
-    <File Name="tree_node.h"/>
-    <File Name="tree.h"/>
-    <File Name="gdbnodeddata.cpp"/>
-    <File Name="gdbnodeddata.h"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="Grammar">
-    <File Name="gdb_result.l"/>
-    <File Name="gdb_result.y"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="GeneratedParser">
-    <File Name="gdb_result.cpp"/>
-    <File Name="gdb_result_parser.h"/>
-  </VirtualDirectory>
   <Dependencies/>
 </CodeLite_Project>

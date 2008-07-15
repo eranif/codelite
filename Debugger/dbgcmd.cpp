@@ -390,6 +390,7 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 	} else {
 		const wxCharBuffer scannerText =  _C(strline);
 		setGdbLexerInput(scannerText.data());
+		wxLogMessage(strline);
 		MakeTree(tree);
 	}
 
@@ -512,6 +513,7 @@ void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent)
 			}
 		}
 		displayLine.Empty();
+		GDB_LEX();
 	}
 }
 

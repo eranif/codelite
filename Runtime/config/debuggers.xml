@@ -25,5 +25,6 @@
     <bool Value="0" Name="enableDebugLog"/>
     <bool Value="0" Name="enablePendingBreakpoints"/>
     <bool Value="0" Name="breakAtWinMain"/>
+    <bool Value="0" Name="resolveThis"/>
   </ArchiveObject>
 </Debuggers>

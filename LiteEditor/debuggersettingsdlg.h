@@ -46,7 +46,8 @@ class DebuggerPage : public wxPanel
 	wxCheckBox *m_checkBoxEnablePendingBreakpoints;
 	wxCheckBox *m_checkBoxEnableLog;
 	wxCheckBox *m_checkBreakAtWinMain;
-
+	wxCheckBox *m_checkResolveStarThis;
+	
 public:
 	DebuggerPage(wxWindow *parent, wxString title);
 	virtual ~DebuggerPage();

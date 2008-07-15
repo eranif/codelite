@@ -61,6 +61,10 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 
 	m_checkBreakAtWinMain = new wxCheckBox(this, wxID_ANY, wxT("Automatically set breakpoint at main"), wxDefaultPosition, wxDefaultSize, 0 );
 	sz->Add(m_checkBreakAtWinMain, 0, wxEXPAND|wxALL, 5);
+	
+	m_checkResolveStarThis = new wxCheckBox(this, wxID_ANY, wxT("Resolve '*this' in the 'Locals' view"), wxDefaultPosition, wxDefaultSize, 0 );
+	sz->Add(m_checkResolveStarThis, 0, wxEXPAND|wxALL, 5);
+
 	sz->Layout();
 	
 	DebuggerInformation info;
@@ -69,6 +73,7 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_checkBoxEnableLog->SetValue(info.enableDebugLog);
 		m_checkBoxEnablePendingBreakpoints->SetValue(info.enablePendingBreakpoints);
 		m_checkBreakAtWinMain->SetValue(info.breakAtWinMain);
+		m_checkResolveStarThis->SetValue(info.resolveThis);
 	}
 }
 
@@ -148,7 +153,8 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		info.path = page->m_filePicker->GetPath();
 		info.name = page->m_title;
 		info.breakAtWinMain = page->m_checkBreakAtWinMain->GetValue();
-
+		info.resolveThis = page->m_checkResolveStarThis->GetValue();
+		
 		DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
 	}
 

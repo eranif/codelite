@@ -412,10 +412,10 @@ bool DbgGdb::Break(const wxString &fileName, long lineno)
 //
 	tmpfileName.Prepend(wxT("\""));
 	command << tmpfileName << wxT(":") << lineno << wxT("\"");
-	if(m_info.enableDebugLog) {
+	if (m_info.enableDebugLog) {
 		m_observer->UpdateAddLine(command);
 	}
-	
+
 	return WriteCommand(command, new DbgCmdHandlerBp(m_observer, bp, &m_bpList));
 }
 
@@ -474,14 +474,15 @@ bool DbgGdb::QueryFileLine()
 bool DbgGdb::QueryLocals()
 {
 	//the order of the commands here is important
-	if (!WriteCommand(wxT("-data-evaluate-expression *this"), new DbgCmdHandlerLocals(m_observer, DbgCmdHandlerLocals::This, wxT("*this")))) {
+	if (m_info.resolveThis) {
+		if (!WriteCommand(wxT("-data-evaluate-expression *this"), new DbgCmdHandlerLocals(m_observer, DbgCmdHandlerLocals::This, wxT("*this")))) {
+			return false;
+		}
+	}
+
+	if (!WriteCommand(wxT("-stack-list-arguments 1 0 0"), new DbgCmdHandlerLocals(m_observer, DbgCmdHandlerLocals::FunctionArguments))) {
 		return false;
 	}
-	
-	if(!WriteCommand(wxT("-stack-list-arguments 1 0 0"), new DbgCmdHandlerLocals(m_observer, DbgCmdHandlerLocals::FunctionArguments))) {
-		return false;
-	}
-	
 	return WriteCommand(wxT("-stack-list-locals --all-values"), new DbgCmdHandlerLocals(m_observer));
 }
 

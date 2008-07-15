@@ -78,7 +78,8 @@ public:
 	bool enableDebugLog;
 	bool enablePendingBreakpoints;
 	bool breakAtWinMain;
-
+	bool resolveThis;
+	
 public:
 	DebuggerInformation()
 			: name(wxEmptyString)
@@ -90,6 +91,7 @@ public:
 #else
 			, breakAtWinMain(false)
 #endif
+			, resolveThis(false)
 	{}
 
 	~DebuggerInformation() {}

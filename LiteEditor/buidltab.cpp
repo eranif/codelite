@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : buidltab.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : buidltab.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "editor_config.h"
+#include "editor_config.h"
 #include "frame.h"
 #include "precompiled_header.h"
 #include "frame.h"
@@ -93,10 +93,10 @@ void BuildTab::Initialize()
 
 	font.SetWeight(wxNORMAL);
 	m_sci->StyleSetFont(wxSCI_LEX_GCC_DEFAULT, font);
-	
+
 	m_sci->StyleSetForeground(wxSCI_LEX_GCC_FILE_LINK, wxT("BLUE"));
 	m_sci->StyleSetFont(wxSCI_LEX_GCC_FILE_LINK, font);
-	
+
 	font.SetWeight(options.GetBoldErrFont() ? wxBOLD : wxNORMAL);
 	m_sci->StyleSetFont(wxSCI_LEX_GCC_ERROR, font);
 
@@ -113,19 +113,33 @@ void BuildTab::AppendText(const wxString &text)
 	if (text.Contains(wxT("----------Building project:"))) {
 		LineInfo info;
 
-		info.project = text.AfterFirst(wxT('['));
-		info.project = info.project.BeforeFirst(wxT('-'));
-		TrimString(info.project);
+		wxString projectName = text.AfterFirst(wxT('['));
+		projectName = projectName.Trim(false).Trim();
+		int where = projectName.Find(wxT(" - "));
 
-		info.configuration = text.AfterFirst(wxT('['));
-		info.configuration = info.configuration.AfterFirst(wxT('-'));
-		info.configuration = info.configuration.BeforeFirst(wxT(']'));
-		TrimString(info.configuration);
+		if (where != wxNOT_FOUND) {
+			info.project = projectName.Mid(0, where);
+			TrimString(info.project);
 
-		//keep the information about this line
-		//we use here GetLineCount()-1 since an empty docuement contains
-		//1 line, but scintilla refers to lines from 0
-		m_lineInfo[m_sci->GetLineCount()-1] = info;
+			info.configuration = text.AfterFirst(wxT('['));
+			info.configuration = info.configuration.AfterFirst(wxT('-'));
+			info.configuration = info.configuration.BeforeFirst(wxT(']'));
+			TrimString(info.configuration);
+
+			//keep the information about this line
+			//we use here GetLineCount()-1 since an empty docuement contains
+			//1 line, but scintilla refers to lines from 0
+			m_lineInfo[m_sci->GetLineCount()-1] = info;
+		} else {
+			// do the fallback
+			//set this line with the previous project
+			int lineno = m_sci->GetLineCount()-1;
+			std::map<int, LineInfo>::iterator iter = m_lineInfo.find(lineno-1);
+			if (iter != m_lineInfo.end()) {
+				m_lineInfo[lineno] = iter->second;
+			}
+		}
+
 	} else {
 		//set this line with the previous project
 		int lineno = m_sci->GetLineCount()-1;
@@ -241,17 +255,17 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 		Manager *mgr = ManagerST::Get();
 		std::vector<wxFileName> files;
 		bool fileOpened(false);
-		
+
 		//try to open the file in context of the project
 		wxString project_name = ProjectFromLine(lineClicked);
-		if(project_name.IsEmpty() == false) {
+		if (project_name.IsEmpty() == false) {
 			wxArrayString project_files;
 			mgr->GetProjectFiles(project_name, project_files);
-			
+
 			//search for the given file
-			for(size_t i=0; i< project_files.GetCount(); i++){
+			for (size_t i=0; i< project_files.GetCount(); i++) {
 				wxFileName tmpFileName( project_files.Item(i) );
-				if(tmpFileName.GetFullName() == fn.GetFullName()){
+				if (tmpFileName.GetFullName() == fn.GetFullName()) {
 					//we got a match
 					mgr->OpenFile(tmpFileName.GetFullPath(), wxEmptyString, (int)lineNumber-1);
 					fileOpened = true;
@@ -270,11 +284,11 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 				}
 			}
 		}
-		
-		
+
+
 		mgr->GetWorkspaceFiles(files, true);
 		//Ok no success in the project area... wider the search to workspace level
-		if( !fileOpened ) {
+		if ( !fileOpened ) {
 			for (size_t i=0; i<files.size(); i++) {
 				if (files.at(i).GetFullName() == fn.GetFullName()) {
 					//we have a match
@@ -295,7 +309,7 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 				}
 			}
 		}
-		
+
 		if ( !fileOpened ) {
 			//try to open the file as is
 			//we have a match
@@ -415,16 +429,16 @@ int BuildTab::ColourGccLine(int startLine, const char *line, size_t &fileNameSta
 	wxRegEx re(cmp->GetWarnPattern());
 	if (re.IsValid()) {
 		cmp->GetWarnFileNameIndex().ToLong(&idx);
-		if(re.Matches(lineText)){
+		if (re.Matches(lineText)) {
 			re.GetMatch(&fileNameStart, &fileNameLen, 0);
 			return wxSCI_LEX_GCC_WARNING;
 		}
 	}
-	
+
 	wxRegEx ere(cmp->GetErrPattern());
 	if (re.IsValid()) {
 		cmp->GetErrFileNameIndex().ToLong(&idx);
-		if(ere.Matches(lineText)){
+		if (ere.Matches(lineText)) {
 			ere.GetMatch(&fileNameStart, &fileNameLen, 0);
 			return wxSCI_LEX_GCC_ERROR;
 		}
@@ -448,11 +462,11 @@ int BuildTab::GetErrorCount()
 {
 	int errorCount(0);
 	wxString txt = m_sci->GetText();
-	for(int i=0; i<m_sci->GetLineCount(); i++){
+	for (int i=0; i<m_sci->GetLineCount(); i++) {
 		const wxCharBuffer line = _C(m_sci->GetLine(i));
 		size_t dummy;
 		int res = ColourGccLine(m_sci->PositionFromLine(i), line.data(), dummy, dummy);
-		if(res == wxSCI_LEX_GCC_ERROR) {
+		if (res == wxSCI_LEX_GCC_ERROR) {
 			errorCount++;
 		}
 	}
@@ -463,14 +477,13 @@ int BuildTab::GetWarningCount()
 {
 	int warnCount(0);
 	wxString txt = m_sci->GetText();
-	for(int i=0; i<m_sci->GetLineCount(); i++){
+	for (int i=0; i<m_sci->GetLineCount(); i++) {
 		const wxCharBuffer line = _C(m_sci->GetLine(i));
 		size_t dummy;
 		int res = ColourGccLine(m_sci->PositionFromLine(i), line.data(), dummy, dummy);
-		if(res == wxSCI_LEX_GCC_WARNING) {
+		if (res == wxSCI_LEX_GCC_WARNING) {
 			warnCount++;
 		}
 	}
 	return warnCount;
 }
-

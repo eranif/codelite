@@ -909,7 +909,7 @@ ProjectSettingsPtr Manager::GetProjectSettings(const wxString &projectName) cons
 	wxString errMsg;
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(projectName, errMsg);
 	if ( !proj ) {
-		wxMessageBox(errMsg, wxT("CodeLite"), wxOK | wxICON_HAND);
+		wxLogMessage(errMsg);
 		return NULL;
 	}
 
@@ -921,7 +921,7 @@ void Manager::SetProjectSettings(const wxString &projectName, ProjectSettingsPtr
 	wxString errMsg;
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(projectName, errMsg);
 	if ( !proj ) {
-		wxMessageBox(errMsg, wxT("CodeLite"), wxOK | wxICON_HAND);
+		wxLogMessage(errMsg);
 		return;
 	}
 
@@ -1075,7 +1075,7 @@ ProjectPtr Manager::GetProject(const wxString &name) const
 	wxString errMsg;
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(name, errMsg);
 	if ( !proj ) {
-		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);
+		wxLogMessage(errMsg);
 		return NULL;
 	}
 	return proj;

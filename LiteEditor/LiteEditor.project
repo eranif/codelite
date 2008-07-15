@@ -344,8 +344,8 @@
         <WorkingDirectory>../</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
@@ -380,15 +380,15 @@
         <WorkingDirectory>../</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc -c -v -o resources.cpp resources.xrc
 </CustomPreBuild>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
-      <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./WinDebugUnicode" Command="./CodeLite.exe" CommandArguments="-b . " WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./WinDebugUnicode" Command="./CodeLite.exe" CommandArguments="" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Compiler Required="yes" Options="$(shell wx-config --wxcfg=gcc_dll/mswud --debug=yes --cxxflags --unicode=yes);-Wall;-fno-strict-aliasing;-g">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
@@ -418,13 +418,13 @@ resources.cpp: resources.xrc
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp svninfo.cpp
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
@@ -467,13 +467,13 @@ svninfo.cpp:
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc

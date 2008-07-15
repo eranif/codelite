@@ -17,6 +17,7 @@
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Required="yes" Options=""/>
       <ResourceCompiler Required="no" Options=""/>
@@ -47,10 +48,11 @@ gdb_result_lexer.cpp: gdb_result.l
 </CustomPreBuild>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="">
         <IncludePath Value="."/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Required="yes" Options="-O2"/>
       <ResourceCompiler Required="no" Options=""/>
@@ -66,7 +68,9 @@ gdb_result_lexer.cpp: gdb_result.l
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>

@@ -390,7 +390,6 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 	} else {
 		const wxCharBuffer scannerText =  _C(strline);
 		setGdbLexerInput(scannerText.data());
-		wxLogMessage(strline);
 		MakeTree(tree);
 	}
 

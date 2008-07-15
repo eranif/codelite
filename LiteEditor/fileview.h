@@ -117,6 +117,7 @@ protected:
 	virtual void OnBuildOrder(wxCommandEvent &event);
 	virtual void OnClean(wxCommandEvent &event);
 	virtual void OnBuild(wxCommandEvent &event);
+	virtual void OnReBuild(wxCommandEvent &event);
 	virtual void OnRunPremakeStep(wxCommandEvent &event);
 	virtual void OnBuildProjectOnly(wxCommandEvent &event);
 	virtual void OnCleanProjectOnly(wxCommandEvent &event);

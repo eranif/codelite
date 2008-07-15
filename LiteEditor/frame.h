@@ -89,7 +89,10 @@ class Frame : public wxFrame
 	DebuggerPane *m_debuggerPane;
 	wxToolBar *m_debuggerTb;
 	bool m_buildInRun;
+	
 	bool m_rebuild;
+	wxString m_projectRebuilded;
+	
 	GeneralInfo m_frameGeneralInfo;
 	std::map<int, wxString> m_toolbars;//< map between toolbars and their resource ID
 	std::map<int, wxString> m_panes;//< map between panes and their name
@@ -215,6 +218,12 @@ public:
 	
 	void OnSingleInstanceOpenFiles(wxCommandEvent &e);
 	void OnSingleInstanceRaise(wxCommandEvent &e);
+	
+	/**
+	 * \brief rebuild the give project
+	 * \param projectName
+	 */
+	void RebuildProject(const wxString &projectName);
 	
 private:
 	// make our frame's constructor private

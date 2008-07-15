@@ -372,6 +372,7 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 		, m_findInFilesDlg(NULL)
 		, m_buildInRun(false)
 		, m_rebuild(false)
+		, m_projectRebuilded(wxEmptyString)
 		, m_doingReplaceInFiles(false)
 		, m_cppMenu(NULL)
 		, m_highlightWord(false)
@@ -1756,7 +1757,8 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 		} else if (m_rebuild) {
 			//are we rebuilding?
 			m_rebuild = false;
-			ManagerST::Get()->BuildProject(ManagerST::Get()->GetActiveProjectName());
+			ManagerST::Get()->BuildProject(m_projectRebuilded);
+			m_projectRebuilded.clear();
 		}
 
 		//give back the focus to the editor
@@ -1805,11 +1807,7 @@ void Frame::OnBuildAndRunProject(wxCommandEvent &event)
 void Frame::OnRebuildProject(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
-	if (enable) {
-		m_rebuild = true;
-		ManagerST::Get()->CleanProject(ManagerST::Get()->GetActiveProjectName());
-	}
+	RebuildProject(ManagerST::Get()->GetActiveProjectName());
 }
 
 void Frame::OnBuildProjectUI(wxUpdateUIEvent &event)
@@ -3102,4 +3100,14 @@ void Frame::OnReloadWorkspace(wxCommandEvent& event)
 void Frame::OnReloadWorkspaceUI(wxUpdateUIEvent& event)
 {
 	event.Enable(ManagerST::Get()->IsWorkspaceOpen());
+}
+
+void Frame::RebuildProject(const wxString& projectName)
+{
+	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
+	if (enable) {
+		m_rebuild = true;
+		m_projectRebuilded = projectName;
+		ManagerST::Get()->CleanProject(m_projectRebuilded);
+	}
 }

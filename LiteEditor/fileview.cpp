@@ -68,6 +68,7 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "build_order" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnBuildOrder ), NULL, this );
 	Connect( XRCID( "clean_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnClean ), NULL, this );
 	Connect( XRCID( "build_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnBuild ), NULL, this );
+	Connect( XRCID( "rebuild_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnReBuild ), NULL, this );
 	Connect( XRCID( "generate_makefile" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRunPremakeStep ), NULL, this );
 	Connect( XRCID( "stop_build" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnStopBuild ), NULL, this );
 	Connect( XRCID( "retag_project" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRetagProject ), NULL, this );
@@ -93,6 +94,7 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "build_order" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "clean_project" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "build_project" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
+	Connect( XRCID( "rebuild_project" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "retag_project" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "retag_workspace" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "build_project_only" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
@@ -1276,5 +1278,15 @@ void FileViewTree::OnRenameVirtualFolder(wxCommandEvent& e)
 			return;
 		}
 		SetItemText(item, newName);
+	}
+}
+
+void FileViewTree::OnReBuild(wxCommandEvent& event)
+{
+	wxUnusedVar( event );
+	wxTreeItemId item = GetSingleSelection();
+	if ( item.IsOk() ) {
+		wxString projectName = GetItemText( item );
+		Frame::Get()->RebuildProject( projectName );
 	}
 }

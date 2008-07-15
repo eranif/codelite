@@ -613,20 +613,12 @@
 			<label>Build</label>
 		</object>
 
-		<object class="wxMenuItem" name="stop_build">
-			<label>Stop Build</label>
+		<object class="wxMenuItem" name="rebuild_project">
+			<label>Rebuild</label>
 		</object>
-		
 		<object class="wxMenuItem" name="clean_project">
 			<label>Clean</label>
 		</object>
-		
-		<object class="wxMenuItem" name="export_makefile">
-			<label>Export Makefile</label>
-		</object>
-		
-		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-		
 		<object class="wxMenu" name="project_only">
 			<label>Project Only</label>
 			<style>wxMENU_TEAROFF</style>
@@ -638,7 +630,17 @@
 			</object>
 		</object>
 		
-        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="stop_build">
+			<label>Stop Build</label>
+		</object>
+		
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		
+		<object class="wxMenuItem" name="export_makefile">
+			<label>Export Makefile</label>
+		</object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="set_as_active">
 			<label>Set As Active</label>
 		</object>

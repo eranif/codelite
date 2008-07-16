@@ -553,6 +553,21 @@ wxPanel* OptionsDlg::CreateMiscPage()
 	m_checkForNewVersion = new wxCheckBox(m_miscPage, wxID_ANY, wxT("Check for new version on startup"), wxDefaultPosition, wxDefaultSize, 0);
 	bszier->Add(m_checkForNewVersion, 0, wxEXPAND | wxALL, 5);
 	
+	wxBoxSizer* bSizer2;
+	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
+	
+	wxStaticText *txthistory = new wxStaticText( m_miscPage, wxID_ANY, wxT("Clear Recent workspace / files history"), wxDefaultPosition, wxDefaultSize, 0 );
+	txthistory->Wrap( -1 );
+	bSizer2->Add( txthistory, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_buttonClearHistory = new wxButton( m_miscPage, wxID_ANY, wxT("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer2->Add( m_buttonClearHistory, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	bszier->Add(bSizer2, 0, wxEXPAND | wxALL, 5);
+	
+	ConnectButton(m_buttonClearHistory, OptionsDlg::OnClearHistory);
+	// Connect Events
+	m_buttonClearHistory->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( OptionsDlg::OnClearHistoryUI ), NULL, this );
+	
 	long single_instance(1);
 	EditorConfigST::Get()->GetLongValue(wxT("SingleInstance"), single_instance);
 	m_singleInstance->SetValue(single_instance ? true : false);
@@ -570,4 +585,15 @@ wxPanel* OptionsDlg::CreateMiscPage()
 	m_miscPage->Layout();
 	vSz1->Fit( m_miscPage );
 	return m_miscPage;
+}
+
+void OptionsDlg::OnClearHistory(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	ManagerST::Get()->ClearFileHistory();
+}
+
+void OptionsDlg::OnClearHistoryUI(wxUpdateUIEvent& e)
+{
+	e.Enable(ManagerST::Get()->HasHistory());
 }

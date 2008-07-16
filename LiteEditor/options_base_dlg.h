@@ -69,7 +69,8 @@ class OptionsDlg : public wxDialog
 	void OnButtonCancel( wxCommandEvent& event );
 	void OnButtonApply( wxCommandEvent& event );
 	void OnThemeChanged( wxCommandEvent &event);
-	
+	void OnClearHistory( wxCommandEvent &event);
+	void OnClearHistoryUI(wxUpdateUIEvent &e);
 	void LoadLexers(const wxString &theme);
 	
 protected:
@@ -109,7 +110,7 @@ protected:
 	wxCheckBox* m_checkForNewVersion;
 	wxPanel *m_miscPage;
 	wxChoice *m_whitespaceStyle;
-	
+	wxButton* m_buttonClearHistory;	
 	
 private:
 	wxPanel *CreateSyntaxHighlightPage();

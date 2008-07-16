@@ -532,7 +532,17 @@ public:
 	 * files data
 	 */
 	FileHistory &GetRecentlyOpenedFilesClass() {return m_recentFiles;}
-
+	
+	/**
+	 * \brief clear the recent workspace / files list
+	 */
+	void ClearFileHistory();
+	
+	/**
+	 * \brief return true if the file history is not empty, false otherwise
+	 */
+	bool HasHistory() const;
+	
 	/**
 	 * add workspace file to the recently opened workspaces
 	 */ 

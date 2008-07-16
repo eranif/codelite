@@ -2896,3 +2896,29 @@ void Manager::DoSetupWorkspace(const wxString &path)
 
 	SendCmdEvent(wxEVT_WORKSPACE_LOADED);
 }
+
+void Manager::ClearFileHistory()
+{
+	size_t count = m_recentFiles.GetCount();
+	for(size_t i=0; i<count; i++){
+		m_recentFiles.RemoveFileFromHistory(0);
+	}
+	
+	count = m_recentWorkspaces.GetCount();
+	for(size_t i=0; i<count; i++){
+		m_recentWorkspaces.RemoveFileFromHistory(0);
+	}
+	
+	// synchronized the configuration file as well
+	wxArrayString files;
+	EditorConfig *cfg = EditorConfigST::Get();
+	
+	cfg->SetRecentlyOpenedFies(files);
+	cfg->SetRecentlyOpenedWorkspaces(files);
+	wxMessageBox(wxT("History Cleared!"));
+}
+
+bool Manager::HasHistory() const
+{
+	return m_recentFiles.GetCount()>0 || m_recentWorkspaces.GetCount()>0;
+}

@@ -2152,19 +2152,19 @@ void Manager::UpdateLocals(TreeNode<wxString, NodeData> *tree)
 	NodeData data = tree->GetData();
 	static TreeNode<wxString, NodeData> *thisTree(NULL);
 	static TreeNode<wxString, NodeData> *funcArgsTree(NULL);
-	
+
 	if (data.name == wxT("*this")) {
 		//append this tree to the local's tree
 		thisTree = tree;//keep the tree and wait for the other call that will come
-	} else if(data.name == wxT("Function Arguments")){
+	} else if (data.name == wxT("Function Arguments")) {
 		funcArgsTree = tree;//keep the tree and wait for the other call that will come
 	} else {
 		//if we already have thisTree, append it as child of this tree
-		if(funcArgsTree) {
+		if (funcArgsTree) {
 			tree->AddChild(funcArgsTree);
 			funcArgsTree = NULL;
 		}
-		
+
 		if (thisTree) {
 			tree->AddChild(thisTree);
 			thisTree = NULL;
@@ -2192,18 +2192,15 @@ void Manager::UpdateGotControl(DebuggerReasons reason)
 			signame = wxT("EXC_BAD_ACCESS");
 		}
 		DebugMessage(wxT("Program Received signal ") + signame + wxT("\n"));
-		int answer = wxMessageBox(wxT("Program Received signal ") + signame + wxT("\n")
-		                          wxT("Stack trace can be viewed in the 'Stack' tab\n")
-		                          wxT("Would you like to terminate the debugging session?"), wxT("CodeLite"), wxICON_ERROR|wxYES_NO|wxCANCEL);
-		if (answer == wxYES) {
-			DbgStop();
-		} else if (answer == wxNO) {
-			//Print the stack trace
-			wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
-			if (info.IsShown()) {
-				Frame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::FRAMES);
-				UpdateDebuggerPane();
-			}
+		wxMessageBox(wxT("Program Received signal ") + signame + wxT("\n")
+					 wxT("Stack trace is available in the 'Stack' tab\n"),
+		             wxT("CodeLite"), wxICON_ERROR|wxOK);
+					 
+		//Print the stack trace
+		wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
+		if (info.IsShown()) {
+			Frame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::FRAMES);
+			UpdateDebuggerPane();
 		}
 	}
 	break;
@@ -2781,11 +2778,11 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 	editor->SetSelectionEnd(0);
 	int offset (0);
 	bool again(false);
-	
+
 	do {
 		again = false;
 		flags = wxSD_MATCHCASE;
-		
+
 		if ( StringFindReplacer::Search(editor->GetText(), offset, pattern, flags, pos, match_len) ) {
 			// select only the name at the give text range
 			wxString display_name = name.BeforeFirst(wxT('('));
@@ -2900,19 +2897,19 @@ void Manager::DoSetupWorkspace(const wxString &path)
 void Manager::ClearFileHistory()
 {
 	size_t count = m_recentFiles.GetCount();
-	for(size_t i=0; i<count; i++){
+	for (size_t i=0; i<count; i++) {
 		m_recentFiles.RemoveFileFromHistory(0);
 	}
-	
+
 	count = m_recentWorkspaces.GetCount();
-	for(size_t i=0; i<count; i++){
+	for (size_t i=0; i<count; i++) {
 		m_recentWorkspaces.RemoveFileFromHistory(0);
 	}
-	
+
 	// synchronized the configuration file as well
 	wxArrayString files;
 	EditorConfig *cfg = EditorConfigST::Get();
-	
+
 	cfg->SetRecentlyOpenedFies(files);
 	cfg->SetRecentlyOpenedWorkspaces(files);
 	wxMessageBox(wxT("History Cleared!"));

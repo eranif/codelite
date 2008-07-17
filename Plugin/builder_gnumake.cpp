@@ -364,8 +364,13 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, wxString &text)
 				continue;
 			}
 		}
-
-		text << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix) ");
+		
+		if(IsResource(files[i].GetExt())){
+			// resource files are handled differently
+			text << wxT("$(IntermediateDirectory)/") << files[i].GetFullName() << wxT("$(ObjectSuffix) ");
+		}else{
+			text << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix) ");
+		}
 		if (counter % 10 == 0) {
 			text << wxT("\\\n\t");
 		}
@@ -426,9 +431,11 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, wxString &text)
 			}
 		} else if (IsResource(files.at(i).GetExt()) && bldConf->IsResCompilerRequired() && wxGetOsVersion() & wxOS_WINDOWS ) {
 			//Windows only
+			// we construct an object name which also includes the full name of the reousrce file and appends a .o to the name (to be more
+			// precised, $(ObjectSuffix))
 			wxString objectName;
-			objectName << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix)");
-
+			objectName << wxT("$(IntermediateDirectory)/") << files.at(i).GetFullName() << wxT("$(ObjectSuffix)");
+			
 			wxString fileName   = files[i].GetFullPath(wxPATH_UNIX);
 			text << objectName << wxT(": ") << fileName << wxT("\n");
 			text << wxT("\t") << wxT("$(RcCompilerName) -i ") << fileName << wxT(" $(RcCmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(RcIncludePath) \n\n");
@@ -450,7 +457,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, wxString &text)
 				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName << wxT("\n");
 				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile << wxT("\n");
 			} else if (IsResource(files[i].GetExt()) && bldConf->IsResCompilerRequired() && wxGetOsVersion() & wxOS_WINDOWS) {
-				wxString ofile = files[i].GetName() << wxT("$(ObjectSuffix)");
+				wxString ofile = files[i].GetFullName() << wxT("$(ObjectSuffix)");
 				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << ofile << wxT("\n");
 			}
 		}

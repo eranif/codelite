@@ -3490,7 +3490,7 @@ public:
     int  GetX() const                { return m_x; }
     int  GetY() const                { return m_y; }
     wxString GetDragText()           { return m_dragText; }
-    bool GetDragAllowMove()          { return m_dragAllowMove; }
+    bool GetDragAllowMove()          { return wxDrag_DefaultMove; }
 #ifdef SCI_USE_DND
     wxDragResult GetDragResult()     { return m_dragResult; }
 #endif

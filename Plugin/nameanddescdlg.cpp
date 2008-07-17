@@ -28,6 +28,8 @@ NameAndDescDlg::NameAndDescDlg( wxWindow* parent, const wxString &name )
 		:NameAndDescBaseDlg( parent )
 {
 	m_textCtrlName->SetValue(name);
+	m_textCtrlName->SetFocus();
+	Centre();
 }
 
 void NameAndDescDlg::OnButtonOK( wxCommandEvent& event )

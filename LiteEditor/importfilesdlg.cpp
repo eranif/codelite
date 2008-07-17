@@ -48,6 +48,7 @@ ImportFilesDlg::ImportFilesDlg( wxWindow* parent, const wxString &baseDir )
 	
 	m_textCtrlFileMask->SetValue( options.GetFileMask() );
 	m_checkBoxNoExtFiles->SetValue( options.GetFlags() & IFS_INCLUDE_FILES_WO_EXT ? true : false );
+	Centre();
 }
 
 void ImportFilesDlg::OnButtonCancel(wxCommandEvent &e)

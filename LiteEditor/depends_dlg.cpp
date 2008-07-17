@@ -77,7 +77,9 @@ DependenciesDlg::DependenciesDlg( wxWindow* parent, const wxString &projectName,
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
-
+	
+	m_book->GetChoiceCtrl()->SetFocus();
+	Centre();
 	Init();
 }
 

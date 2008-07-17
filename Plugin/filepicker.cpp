@@ -56,10 +56,10 @@ void FilePicker::CreateControls()
 	SetSizer(mainSizer);
 
 	m_path = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
-	mainSizer->Add(m_path, 1, wxEXPAND | wxALL, 0);
+	mainSizer->Add(m_path, 1, wxEXPAND | wxALL, 5);
 
 	m_button = new wxButton(this, wxID_ANY, m_buttonCaption);
-	mainSizer->Add(m_button, 0, wxLEFT, 5);
+	mainSizer->Add(m_button, 0, wxALL, 5);
 
 	Layout();
 }

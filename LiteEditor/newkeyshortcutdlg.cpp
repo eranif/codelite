@@ -105,6 +105,7 @@ NewKeyShortcutDlg::NewKeyShortcutDlg( wxWindow* parent, const MenuItemData & mid
 	m_staticTextAction->SetLabel( wxT("Action:\t") + m_mid.action );
 	m_textCtrl1->SetValue( m_mid.accel );
 	m_textCtrl1->SetFocus();
+	Centre();
 }
 
 void NewKeyShortcutDlg::OnKeyDown( wxKeyEvent& event )

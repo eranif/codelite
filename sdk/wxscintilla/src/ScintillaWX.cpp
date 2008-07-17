@@ -302,6 +302,7 @@ void ScintillaWX::DoStartDrag() {
     evt.SetPosition (wxMin(sci->GetSelectionStart(), sci->GetSelectionEnd()));
     sci->GetEventHandler()->ProcessEvent (evt);
 
+	pdoc->BeginUndoAction();
     dragText = evt.GetDragText();
     dragRectangle = drag.rectangular;
     if (dragText.Length()) {
@@ -311,11 +312,12 @@ void ScintillaWX::DoStartDrag() {
 
         source.SetData(data);
         dropWentOutside = true;
-        result = source.DoDragDrop(evt.GetDragAllowMove());
+        result = source.DoDragDrop(wxDrag_DefaultMove);
         if (result == wxDragMove && dropWentOutside) ClearSelection();
         inDragDrop = ddNone; // [CHANGED]
         SetDragPosition (invalidPosition);
     }
+	pdoc->EndUndoAction();
 #endif
 }
 

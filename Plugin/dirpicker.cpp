@@ -61,12 +61,14 @@ void DirPicker::CreateControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer(mainSizer);
 
+	size_t flags = wxRIGHT | wxTOP | wxBOTTOM | wxALIGN_CENTER | wxEXPAND;
+	
 	if (m_style & wxDP_USE_TEXTCTRL) {
 		m_path = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
-		mainSizer->Add(m_path, 1, wxEXPAND | wxALL | wxALIGN_CENTER, 5);
+		mainSizer->Add(m_path, 1, flags, 5);
 	} else {
 		m_combo = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
-		mainSizer->Add(m_combo, 1, wxALIGN_CENTER | wxALL | wxEXPAND , 5);
+		mainSizer->Add(m_combo, 1, flags , 5);
 	}
 
 	m_button = new wxButton(this, wxID_ANY, m_buttonCaption, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);

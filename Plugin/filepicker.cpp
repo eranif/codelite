@@ -55,8 +55,10 @@ void FilePicker::CreateControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer(mainSizer);
 
+	size_t flags = wxRIGHT | wxTOP | wxBOTTOM | wxALIGN_CENTER | wxEXPAND;
+	
 	m_path = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
-	mainSizer->Add(m_path, 1, wxEXPAND | wxALL, 5);
+	mainSizer->Add(m_path, 1, flags, 5);
 
 	m_button = new wxButton(this, wxID_ANY, m_buttonCaption);
 	mainSizer->Add(m_button, 0, wxALL, 5);

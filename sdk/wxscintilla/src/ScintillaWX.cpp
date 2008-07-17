@@ -281,10 +281,12 @@ void ScintillaWX::Finalise() {
 
 void ScintillaWX::StartDrag() {
 #if wxUSE_DRAG_AND_DROP
-    // We defer the starting of the DnD, otherwise the LeftUp of a normal
-    // click could be lost and the STC will think it is doing a DnD when the
-    // user just wanted a normal click.
-    startDragTimer->Start (200, true);
+#if wxVERSION_NUMBER >= 2800 && defined(__WXGTK__)
+	// For recent wxGTKs, DnD won't work if we delay with the timer, so go there direct
+	DoStartDrag();
+#else
+     startDragTimer->Start (200, true);
+#endif // wxVERSION_NUMBER >= 2701 && defined(__WXGTK20__) 
 #endif
 }
 

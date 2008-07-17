@@ -123,13 +123,7 @@ void DebuggerSettingsDlg::Initialize()
 			subMenu = wxT("Yes");
 		}
 
-		long item;
-		wxListItem info;
-
-		// Set the item display name
-		info.SetColumn(0);
-		item = m_listCtrl1->InsertItem(info);
-
+		long item = AppendListCtrlRow(m_listCtrl1);
 		SetColumnText(m_listCtrl1, item, 0, cmd.GetName());
 		SetColumnText(m_listCtrl1, item, 1, cmd.GetCommand());
 		SetColumnText(m_listCtrl1, item, 2, subMenu);

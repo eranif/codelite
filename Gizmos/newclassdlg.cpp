@@ -58,6 +58,7 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	m_textCtrlFileName->Enable( false );
 	GetSizer()->Layout();
 	Centre();
+	m_textClassName->SetFocus();
 }
 
 void NewClassDlg::OnListItemActivated( wxListEvent& event )

@@ -487,7 +487,11 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, wxString &text)
 
 void BuilderGnuMake::CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text)
 {
-	text << wxT("\t") << wxT("@makedir $(@D)\n");
+	if (wxGetOsVersion() & wxOS_WINDOWS) {
+		text << wxT("\t") << wxT("@makedir $(@D)\n");
+	} else {
+		text << wxT("\t") << wxT("@mkdir -p $(@D)\n");
+	}
 	
 	if (type == Project::STATIC_LIBRARY) {
 		//create a static library

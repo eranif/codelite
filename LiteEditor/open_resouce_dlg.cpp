@@ -71,7 +71,7 @@ OpenResourceDlg::OpenResourceDlg( wxWindow* parent, int id, wxString title, wxPo
 
 	m_staticTitle = new wxStaticText( mainPanel, wxID_ANY, wxT("Find Resource (wildcards are allowed):"), wxDefaultPosition, wxDefaultSize, 0 );
 	panelSizer->Add( m_staticTitle, 0, wxALL, 5 );
-	
+
 	m_textResourceName = new wxTextCtrl(mainPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	panelSizer->Add( m_textResourceName, 0, wxALL|wxEXPAND, 5 );
 
@@ -81,13 +81,16 @@ OpenResourceDlg::OpenResourceDlg( wxWindow* parent, int id, wxString title, wxPo
 	m_listShortNames = new wxListBox( mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	panelSizer->Add( m_listShortNames, 1, wxALL|wxEXPAND, 5 );
 
+	m_fullText = new wxStaticText( mainPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	panelSizer->Add( m_fullText, 0, wxALL, 5 );
+
 	m_checkBoxPartialMatching = new wxCheckBox( mainPanel, wxID_ANY, wxT("Allow partial matching"), wxDefaultPosition, wxDefaultSize, 0 );
 	panelSizer->Add( m_checkBoxPartialMatching, 0, wxALL|wxEXPAND, 5 );
-	
+
 	long v(0);
 	EditorConfigST::Get()->GetLongValue(wxT("OpenResourceAllowsPartialMatch"), v);
 	m_checkBoxPartialMatching->SetValue(v == 1 ? true : false);
-	
+
 	mainPanel->SetSizer( panelSizer );
 	mainPanel->Layout();
 	panelSizer->Fit( mainPanel );
@@ -134,11 +137,11 @@ void OpenResourceDlg::OnTimer(wxTimerEvent &event)
 	wxArrayString tmpArr;
 	wxString curSel = m_textResourceName->GetValue();
 	if (!curSel.Trim().Trim(false).IsEmpty()) {
-		
+
 		curSel = curSel.MakeLower().Trim().Trim(false);
-		
+
 		for (size_t i=0; i<m_files.size(); i++) {
-			wxString fileName(m_files[i].GetFullName());
+			wxString fileName(m_files.at(i).GetFullName());
 			fileName= fileName.MakeLower();
 
 			//append wildcard at the end
@@ -157,8 +160,18 @@ void OpenResourceDlg::OnTimer(wxTimerEvent &event)
 		}
 	}
 
-	wxArrayString actValues = m_listShortNames->GetStrings();
+	// actValues represents the list of files as they appear in the ListBox
+	// we need to loop over the list box, since the actual full file names
+	// are stored as ClientObject
+	wxArrayString actValues;
+	for (unsigned int i=0; i<m_listShortNames->GetCount(); i++) {
+		wxStringClientData *data = (wxStringClientData *)m_listShortNames->GetClientObject(i);
+		actValues.Add(data->GetData());
+	}
+	// we need to sort the array
 	actValues.Sort();
+
+	// tmpArr contains the list of files (full paths) after filtering the typed pattern
 	tmpArr.Sort();
 
 	if (tmpArr == actValues)
@@ -167,11 +180,16 @@ void OpenResourceDlg::OnTimer(wxTimerEvent &event)
 	//change was done, update the file list
 	Freeze();
 	m_listShortNames->Clear();
-	for (size_t i=0; i<tmpArr.GetCount(); i++)
-		m_listShortNames->Append(tmpArr.Item(i));
+	for (size_t i=0; i<tmpArr.GetCount(); i++) {
+		wxFileName fn(tmpArr.Item(i));
+		m_listShortNames->Append(fn.GetFullName(), new wxStringClientData(tmpArr.Item(i)));
+	}
 	Thaw();
 	if (m_listShortNames->GetCount() > 0) {
 		m_listShortNames->Select(0);
+		// display the full name at the bottom static text control
+		wxStringClientData *data = (wxStringClientData *)m_listShortNames->GetClientObject(0);
+		m_fullText->SetLabel(data->GetData());
 	}
 }
 
@@ -200,15 +218,16 @@ void OpenResourceDlg::OnItemActivated(wxCommandEvent &event)
 
 bool OpenResourceDlg::UpdateFileName()
 {
-	wxString openWhat = m_listShortNames->GetStringSelection();
-	if (openWhat.IsEmpty())
+	int idx = m_listShortNames->GetSelection();
+	if (idx == wxNOT_FOUND) {
 		return false;
+	}
 
-	m_fileName = openWhat;
-	
+	m_fileName = m_fullText->GetLabelText();
+
 	// save the checkbox value into the settings
 	EditorConfigST::Get()->SaveLongValue(wxT("OpenResourceAllowsPartialMatch"), m_checkBoxPartialMatching->IsChecked() ? 1 : 0);
-	
+
 	return true;
 }
 
@@ -227,46 +246,62 @@ void OpenResourceDlg::OnCharHook(wxKeyEvent &event)
 				return;
 			}
 		}
-	} else
-		if (event.GetKeyCode() == WXK_DOWN && m_listShortNames->GetCount() > 0) {
-			//up key
-			int cursel = m_listShortNames->GetSelection();
-			if (cursel != wxNOT_FOUND) {
-				//there is a selection in the listbox
-				cursel++;
-				if (cursel >= (int)m_listShortNames->GetCount()) {
-					//already at last item, cant scroll anymore
-					return;
-				}
-				m_listShortNames->SetSelection(cursel);
-				m_listShortNames->Select(cursel);
-				m_listShortNames->SetFirstItem(cursel);
-			} else {
-				//no selection is made
-				m_listShortNames->SetSelection(0);
-				m_listShortNames->Select(0);
-				m_listShortNames->SetFirstItem(0);
-			}
-			return;
-		} else
-			if (event.GetKeyCode() == WXK_UP && m_listShortNames->GetCount() > 0) {
-				//up key
-				int cursel = m_listShortNames->GetSelection();
-				if (cursel != wxNOT_FOUND) {
-					//there is a selection in the listbox
-					cursel--;
-					if (cursel < 0) {
-						//already at first item, cant scroll anymore
-						return;
-					}
-					m_listShortNames->SetSelection(cursel);
-					m_listShortNames->SetFirstItem(cursel);
-				} else {
-					//no selection is made
-					m_listShortNames->SetSelection(0);
-					m_listShortNames->SetFirstItem(0);
-				}
+	} else if (event.GetKeyCode() == WXK_DOWN && m_listShortNames->GetCount() > 0) {
+		//up key
+		int cursel = m_listShortNames->GetSelection();
+		if (cursel != wxNOT_FOUND) {
+			//there is a selection in the listbox
+			cursel++;
+			if (cursel >= (int)m_listShortNames->GetCount()) {
+				//already at last item, cant scroll anymore
 				return;
 			}
+			m_listShortNames->SetSelection(cursel);
+			m_listShortNames->Select(cursel);
+			m_listShortNames->SetFirstItem(cursel);
+
+			// display the full name at the bottom static text control
+			wxStringClientData *data = (wxStringClientData *)m_listShortNames->GetClientObject(cursel);
+			m_fullText->SetLabel(data->GetData());
+
+		} else {
+			//no selection is made
+			m_listShortNames->SetSelection(0);
+			m_listShortNames->Select(0);
+
+			// display the full name at the bottom static text control
+			wxStringClientData *data = (wxStringClientData *)m_listShortNames->GetClientObject(0);
+			m_fullText->SetLabel(data->GetData());
+
+			m_listShortNames->SetFirstItem(0);
+		}
+		return;
+	} else if (event.GetKeyCode() == WXK_UP && m_listShortNames->GetCount() > 0) {
+		//up key
+		int cursel = m_listShortNames->GetSelection();
+		if (cursel != wxNOT_FOUND) {
+			//there is a selection in the listbox
+			cursel--;
+			if (cursel < 0) {
+				//already at first item, cant scroll anymore
+				return;
+			}
+			m_listShortNames->SetSelection(cursel);
+			m_listShortNames->SetFirstItem(cursel);
+
+			// display the full name at the bottom static text control
+			wxStringClientData *data = (wxStringClientData *)m_listShortNames->GetClientObject(cursel);
+			m_fullText->SetLabel(data->GetData());
+		} else {
+			//no selection is made
+			m_listShortNames->SetSelection(0);
+			m_listShortNames->SetFirstItem(0);
+
+			// display the full name at the bottom static text control
+			wxStringClientData *data = (wxStringClientData *)m_listShortNames->GetClientObject(0);
+			m_fullText->SetLabel(data->GetData());
+		}
+		return;
+	}
 	event.Skip();
 }

@@ -71,6 +71,7 @@ protected:
 	wxButton* m_btnOk;
 	wxButton* m_button2;
 	wxCheckBox *m_checkBoxPartialMatching;
+	wxStaticText *m_fullText;
 	
 public:
 	OpenResourceDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Open Resource:"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 653,393 ), int style = wxDEFAULT_DIALOG_STYLE);

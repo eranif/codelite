@@ -605,7 +605,6 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 
 	text << wxT("## ") << name << wxT("\n");
-	text << wxT("ifeq ($(type),") << name << wxT(")") << wxT("\n");
 	//The following two variables are here for compatibility with MSVS
 	text << wxT("ConfigurationName :=") << name << wxT("\n");
 	text << wxT("IntermediateDirectory :=") << bldConf->GetIntermediateDirectory() << wxT("\n");
@@ -655,7 +654,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 
 	// add the global library path followed by the project library path
 	text << wxT("LibPath :=") << ParseLibPath(cmp->GetGlobalLibPath(), proj->GetName()) << wxT(" ") << ParseLibPath(bldConf->GetLibPath(), proj->GetName()) << wxT("\n");
-	text << wxT("endif\n\n");
+	text << wxT("\n\n");
 }
 
 wxString BuilderGnuMake::ParseIncludePath(const wxString &paths, const wxString &projectName)
@@ -759,7 +758,7 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, bool &isCustom
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 
 	wxString type = Builder::NormalizeConfigName(matrix->GetSelectedConfigurationName());
-	cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\" type=") << type;
+	cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\" ");
 	return cmd;
 }
 

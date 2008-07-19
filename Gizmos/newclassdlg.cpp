@@ -157,6 +157,26 @@ bool NewClassDlg::ValidateInput()
 		wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
 		return false;
 	}
+	
+	if(GetClassFile().IsEmpty()){
+		wxMessageBox(wxT("Empty file name"), wxT("CodeLite"), wxOK|wxICON_WARNING);
+		return false;
+	}
+	
+	wxString cpp_file;
+	cpp_file << GetClassPath() << wxFileName::GetPathSeparator() << GetClassFile() << wxT(".cpp");
+	if( wxFileName::FileExists(cpp_file) ) {
+		if(wxMessageBox(wxString::Format(wxT("A file with this name: '%s' already exists, continue anyway?"), cpp_file.GetData()), wxT("CodeLite"), wxYES_NO|wxICON_WARNING) == wxNO){
+			return false;
+		}
+	}
+	wxString h_file;
+	h_file << GetClassPath() << wxFileName::GetPathSeparator() << GetClassFile() << wxT(".h");
+	if( wxFileName::FileExists(h_file) ) {
+		if(wxMessageBox(wxString::Format(wxT("A file with this name: '%s' already exists, continue anyway?"), h_file.GetData()), wxT("CodeLite"), wxYES_NO|wxICON_WARNING) == wxNO){
+			return false;
+		}
+	}
 	return true;
 }
 

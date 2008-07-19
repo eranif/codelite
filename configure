@@ -73,6 +73,7 @@ createVariables()
 	echo "EXT=${ext}" >> Makefile
 	echo "OUTPUT_DIR=lib" >> Makefile
 	echo "WXCFG=${wxcfg}" >> Makefile
+	echo "DESTDIR=" >> Makefile
 	echo "" >> Makefile
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ " >> Makefile
 	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lcurl -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
@@ -94,7 +95,7 @@ createVariables()
 
 createMainTargets()
 {
-	echo "## build tagrets" >> Makefile
+	echo "## build targets" >> Makefile
 	
 	## default
 	target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins "
@@ -331,57 +332,67 @@ createInstallTarget()
 	
 	echo "core_install:" >> Makefile
 	echo "	@echo installing CodeLite" >> Makefile
-	echo "	@\$(RM) -fr  /usr/local/bin/CodeLite" >> Makefile
-	echo "	@\$(RM) -fr  /usr/local/share/codelite" >> Makefile
-	echo "	@mkdir -p /usr/local/bin" >> Makefile
-	echo "	@cp \$(EXE_NAME) /usr/local/bin/" >> Makefile
-	echo "	@ln -s /usr/local/bin/\$(EXE_NAME_NO_PATH) /usr/local/bin/CodeLite" >> Makefile
-	echo "	@cp Runtime/le_dos2unix.sh /usr/local/bin/" >> Makefile
-	echo "	@cp Runtime/le_exec.sh /usr/local/bin/" >> Makefile
-	echo "	@cp Runtime/le_killproc.sh /usr/local/bin/" >> Makefile
-	echo "	@chmod +x /usr/local/bin/le_dos2unix.sh" >> Makefile
-	echo "	@chmod +x /usr/local/bin/le_exec.sh" >> Makefile
-	echo "	@chmod +x /usr/local/bin/le_killproc.sh" >> Makefile
-	echo "	@cp sdk/ctags/ctags-le /usr/local/bin/" >> Makefile
-	echo "	@mkdir -p /usr/local/share/codelite" >> Makefile
-	echo "	@mkdir -p /usr/local/share/codelite/config" >> Makefile
-	echo "	@mkdir -p /usr/local/share/codelite/debuggers" >> Makefile
-	echo "	@mkdir -p /usr/local/share/codelite/templates" >> Makefile
-	echo "	@mkdir -p /usr/local/share/codelite/plugins" >> Makefile
-	echo "	@mkdir -p /usr/local/share/codelite/images" >> Makefile
-	echo "	@mkdir -p /usr/local/share/codelite/rc" >> Makefile
-	echo "	@mkdir -p /usr/local/share/codelite/lexers" >> Makefile
-	echo "	@mkdir -p /usr/local/share/codelite/lexers/Default" >> Makefile
-	echo "	@mkdir -p /usr/local/share/codelite/lexers/BlackTheme" >> Makefile
-	echo "	@cp -fr Runtime/config/*.xml /usr/local/share/codelite/config/" >> Makefile
-	echo "	@cp -fr Runtime/config/debuggers.xml.gtk /usr/local/share/codelite/config/debuggers.xml" >> Makefile
-	echo "	@cp -fr Runtime/config/codelite.xml.default /usr/local/share/codelite/config/codelite.xml.default" >> Makefile
-	echo "	@cp -fr Runtime/config/codelite.layout.default /usr/local/share/codelite/config/codelite.layout" >> Makefile
-	echo "	@cp -fr Runtime/codelite.desktop /usr/share/applications/codelite.desktop" >> Makefile
-	echo "	@cp -fpr Runtime/rc/*.xrc /usr/local/share/codelite/rc/" >> Makefile
-	echo "	@cp -fpr Runtime/templates/* /usr/local/share/codelite/templates/" >> Makefile
-	echo "	@chmod -R +w /usr/local/share/codelite/templates/* " >> Makefile
-	echo "	@cp -fpr Runtime/lexers/Default/*.xml /usr/local/share/codelite/lexers/Default/" >> Makefile
-	echo "	@cp -fpr Runtime/lexers/BlackTheme/*.xml /usr/local/share/codelite/lexers/BlackTheme/" >> Makefile
-	echo "	@cp -fpr lib/Debugger.so /usr/local/share/codelite/debuggers/" >> Makefile
-	echo "	@cp -fpr lib/CodeFormatter.so /usr/local/share/codelite/plugins/" >> Makefile
-	echo "	@cp -fpr lib/Subversion.so /usr/local/share/codelite/plugins/" >> Makefile
-#	echo "	@cp -fpr lib/ReferenceAnalyser.so /usr/local/share/codelite/plugins/" >> Makefile
-	echo "	@cp -fpr lib/cscope.so /usr/local/share/codelite/plugins/" >> Makefile
-	echo "	@cp -fpr lib/Gizmos.so /usr/local/share/codelite/plugins/" >> Makefile
-	echo "	@cp -fpr Runtime/index.html /usr/local/share/codelite/" >> Makefile
-	echo "	@cp -fpr Runtime/astyle.sample /usr/local/share/codelite/" >> Makefile
-	echo "	@cp -fpr Runtime/svnreport.html /usr/local/share/codelite/" >> Makefile
-	echo "	@cp -fpr Runtime/images/*.png /usr/local/share/codelite/images/" >> Makefile
-	echo "	@cp -fpr Runtime/config/accelerators.conf.default /usr/local/share/codelite/config/" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/share/codelite" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/bin" >> Makefile
+	echo "	@cp \$(EXE_NAME) \$(DESTDIR)$prefix/bin/" >> Makefile
+	if [ "$make_symlink" = "yes" ] ; then
+	  echo "	@ln -s \$(DESTDIR)$prefix/bin/\$(EXE_NAME_NO_PATH) \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
+	  echo "	@chmod +x \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
+	fi
+	echo "	@cp Runtime/le_dos2unix.sh \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@cp Runtime/le_exec.sh \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@cp Runtime/le_killproc.sh \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
+	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
+	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
+	echo "	@cp sdk/ctags/ctags-le \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/applications" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/config" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/debuggers" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/templates" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/plugins" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/images" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/rc" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers/Default" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers/BlackTheme" >> Makefile
+	echo "	@cp -fr Runtime/config/*.xml \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
+	echo "	@cp -fr Runtime/config/debuggers.xml.gtk \$(DESTDIR)$prefix/share/codelite/config/debuggers.xml" >> Makefile
+	echo "	@cp -fr Runtime/config/codelite.xml.default \$(DESTDIR)$prefix/share/codelite/config/codelite.xml.default" >> Makefile
+	echo "	@cp -fr Runtime/config/codelite.layout.default \$(DESTDIR)$prefix/share/codelite/config/codelite.layout" >> Makefile
+    # Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
+	echo "	@if test -w \$(DESTDIR)/usr/share/applications ; then \\" >> Makefile
+	echo "	   cp -fr Runtime/codelite.desktop \$(DESTDIR)/usr/share/applications/codelite.desktop; \\" >> Makefile
+	echo "	fi" >> Makefile
+	echo "	@cp -fpr Runtime/rc/*.xrc \$(DESTDIR)$prefix/share/codelite/rc/" >> Makefile
+	echo "	@cp -fpr Runtime/templates/* \$(DESTDIR)$prefix/share/codelite/templates/" >> Makefile
+	echo "	@chmod -R +w \$(DESTDIR)$prefix/share/codelite/templates/* " >> Makefile
+	echo "	@cp -fpr Runtime/lexers/Default/*.xml \$(DESTDIR)$prefix/share/codelite/lexers/Default/" >> Makefile
+	echo "	@cp -fpr Runtime/lexers/BlackTheme/*.xml \$(DESTDIR)$prefix/share/codelite/lexers/BlackTheme/" >> Makefile
+	echo "	@cp -fpr lib/Debugger.so \$(DESTDIR)$prefix/share/codelite/debuggers/" >> Makefile
+	echo "	@cp -fpr lib/CodeFormatter.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
+	echo "	@cp -fpr lib/Subversion.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
+#	echo "	@cp -fpr lib/ReferenceAnalyser.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
+	echo "	@cp -fpr lib/cscope.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
+	echo "	@cp -fpr lib/Gizmos.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
+	echo "	@cp -fpr Runtime/index.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
+	echo "	@cp -fpr Runtime/astyle.sample \$(DESTDIR)$prefix/share/codelite/" >> Makefile
+	echo "	@cp -fpr Runtime/svnreport.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
+	echo "	@cp -fpr Runtime/images/*.png \$(DESTDIR)$prefix/share/codelite/images/" >> Makefile
+	echo "	@cp -fpr Runtime/config/accelerators.conf.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
 	echo "	@cp -fpr Runtime/codelite.desktop /usr/share/applications/" >> Makefile
-	echo "	@cp -fpr Runtime/codelite.desktop ~/Desktop/" >> Makefile
-	echo "	@mkdir -p /usr/local/include/UnitTest++/" >> Makefile
-	echo "	@mkdir -p /usr/local/lib/" >> Makefile
-	echo "	@cp -fr Runtime/sdk/lib/unix/*.a /usr/local/lib/" >> Makefile
-	echo "	@cp -fr Runtime/sdk/include/UnitTest++/* /usr/local/include/UnitTest++/" >> Makefile
-	echo "	@chmod -R 777 /usr/local/share/codelite" >> Makefile
-	echo "	@chmod +x /usr/local/bin/CodeLite" >> Makefile
+	if [ "$add_desktop_icon" = "yes" ] ; then
+	  if test -d $HOME/Desktop/ ; then
+	    echo "	@cp -fpr Runtime/codelite.desktop $HOME/Desktop/" >> Makefile
+	  fi
+	fi
+	echo "	@mkdir -p \$(DESTDIR)$prefix/include/UnitTest++/" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/lib/" >> Makefile
+	echo "	@cp -fr Runtime/sdk/lib/unix/*.a \$(DESTDIR)$prefix/lib/" >> Makefile
+	echo "	@cp -fr Runtime/sdk/include/UnitTest++/* \$(DESTDIR)$prefix/include/UnitTest++/" >> Makefile
+	echo "	@chmod -R 777 \$(DESTDIR)$prefix/share/codelite" >> Makefile
 	echo "" >> Makefile
 }
 
@@ -389,16 +400,26 @@ createUnInstallTarget()
 {
 	echo "uninstall: " >> Makefile
 	echo "	@echo Uninstalling CodeLite" >> Makefile
-	echo "	@\$(RM) -fr  /usr/local/bin/CodeLite" >> Makefile
-	echo "	@\$(RM) -fr  /usr/local/bin/le_dos2unix.sh" >> Makefile
-	echo "	@\$(RM) -fr  /usr/local/bin/le_exec.sh" >> Makefile
-	echo "	@\$(RM) -fr  /usr/local/bin/le_killproc.sh" >> Makefile
-	echo "	@\$(RM) -fr  /usr/local/bin/CodeLiteUR" >> Makefile
-	echo "	@\$(RM) -fr  /usr/local/bin/CodeLiteUD" >> Makefile
-	echo "	@\$(RM) -fr  /usr/local/include/UnitTest++/" >> Makefile
-	echo "	@\$(RM) -fr  /usr/local/lib/libUnitTest++.a" >> Makefile
-	echo "	@\$(RM) -fr  /usr/local/share/codelite" >> Makefile
-	echo "	@\$(RM) -fr /usr/share/applications/codelite.desktop" >> Makefile
+	if [ "$make_symlink" = "yes" ] ; then
+	  echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
+	fi
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/ctags-le" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUR" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUD" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/include/UnitTest++/" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/lib/libUnitTest++.a" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/share/codelite" >> Makefile
+    # Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
+	echo "	@if test -w \$(DESTDIR)/usr/share/applications ; then \\" >> Makefile
+	if [ "$add_desktop_icon" = "yes" ] ; then
+	  if test -d $HOME/Desktop/ ; then
+	    echo "	  \$(RM) -fr \$(DESTDIR)/usr/share/applications/codelite.desktop; \\" >> Makefile
+	  fi
+	fi
+	echo "	fi" >> Makefile
 	echo "	@\$(RM) -fr ~/Desktop/codelite.desktop" >> Makefile
 	echo "" >> Makefile
 }
@@ -435,9 +456,21 @@ generateControlFile()
 	echo "Maintainer: Eran Ifrah [eran.ifrah@gmail.com]" >> fakeroot/DEBIAN/control
 	echo "Description: CodeLite is a powerful open-source, cross platform code editor for the C/C++ programming languages (regulary tested on Windows XP sp2, Ubuntu 7.10 Gutsy Gibbon, Fedora Core 6 and Debian lenny/sid). " >> fakeroot/DEBIAN/control
 	echo "		 CodeLite is distributed under the terms of the GPL license." >> fakeroot/DEBIAN/control
-	echo "		 CodeLite uses a sophisticated, yet intuitive interface which allows user to easly " >> fakeroot/DEBIAN/control
+	echo "		 CodeLite uses a sophisticated, yet intuitive interface which allows user easily to " >> fakeroot/DEBIAN/control
 	echo "		 create and build complex projects. " >> fakeroot/DEBIAN/control
 	echo ""  >> fakeroot/DEBIAN/control
+}
+
+Show_Help_and_Exit()
+{
+	echo "This is the CodeLite configure script"
+  echo "Usage: ./configure [OPTION]..."
+	echo "Available options:"
+	echo "  --prefix=PREFIX         install files into the filepath PREFIX (the default is /usr/local)"
+	echo "  --enable-debug          create a debug build (the default is disable)"
+	echo "  --help                  show this help"
+
+  exit
 }
 
 ## main
@@ -445,12 +478,47 @@ checkCURL
 
 ## Create variables needed by the makefile
 enable_debug="no"
+prefix="/usr/local"
+for_debian="yes"
+add_desktop_icon="yes"
+make_symlink="yes"
 os_name=`uname -s`
 arch=`uname -m`
 
+
+## Process any arguments that were supplied
+until [ -z "$1" ]  # Until all parameters used up
+do
 if [ "$1" = "--enable-debug" ]; then
 	enable_debug="yes"
+
+   # The next 3 aren't in the Usage, but will prevent undesirable things from happening when e.g. making rpms
+  elif [ "$1" = "--disable-debian" ]; then
+    for_debian="no"
+  elif [ "$1" = "--disable-desktop_icon" ]; then
+    add_desktop_icon="no"
+  elif [ "$1" = "--disable-make_symlink" ]; then
+    make_symlink="no"
+
+  elif [ "$1" = "--help" ]; then
+   Show_Help_and_Exit
+
+  else        # See if there's a --prefix=foo. Do it the hard way, to stay Bourne compatible
+    len=`expr length $1`
+    if [ $len > 9 ]; then  # If not, it can't be a valid prefix
+      if [ "`expr substr $1 1 9`" = "--prefix=" ]; then 
+        prefix=`expr substr $1 10 $len` # $prefix now contains the bit after the '='
+        len=`expr length $prefix`       # Now remove any terminal '/'
+        if [ "`expr substr $prefix $len 1`" = "/" ]; then
+          newlen=`expr $len - 1`
+          prefix=`expr substr $prefix 1 $newlen`
+        fi
+      fi
 fi
+
+  fi
+  shift
+done
 
 ## remove old makefile
 makefile_name="Makefile"
@@ -480,7 +548,9 @@ createRules_archive "Plugin/*.cpp " "SDKObjects" "SDK" "plugin"
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createInstallTarget
 createUnInstallTarget
+if [ "$for_debian" = "yes" ] ; then
 generateControlFile
+fi
 
 echo "-include \$(OBJ_DIR)/*.d" >> Makefile
 echo "" >> Makefile
@@ -544,13 +614,13 @@ echo "" >> Makefile
 ##
 ########################################################
 
-createPluginMakefile "Debugger" "Debugger" "/usr/local/share/codelite/debuggers/"
-createPluginMakefile "Gizmos" "Gizmos"  "/usr/local/share/codelite/plugins/"
-createPluginMakefile "cscope" "cscope" "/usr/local/share/codelite/plugins/"
-createPluginMakefile "Subversion" "Subversion" "/usr/local/share/codelite/plugins/"
-createPluginMakefile "CodeFormatter" "CodeFormatter" "/usr/local/share/codelite/plugins/"
-#createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "/usr/local/share/codelite/plugins/"
-createPluginMakefile "Copyright" "Copyright" "/usr/local/share/codelite/plugins/"
-createPluginMakefile "UnitTestCPP" "UnitTestCPP" "/usr/local/share/codelite/plugins/"
+createPluginMakefile "Debugger" "Debugger" "\$(DESTDIR)$prefix/share/codelite/debuggers/"
+createPluginMakefile "Gizmos" "Gizmos"  "\$(DESTDIR)$prefix/share/codelite/plugins/"
+createPluginMakefile "cscope" "cscope" "\$(DESTDIR)$prefix/share/codelite/plugins/"
+createPluginMakefile "Subversion" "Subversion" "\$(DESTDIR)$prefix/share/codelite/plugins/"
+createPluginMakefile "CodeFormatter" "CodeFormatter" "\$(DESTDIR)$prefix/share/codelite/plugins/"
+#createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "\$(DESTDIR)$prefix/share/codelite/plugins/"
+createPluginMakefile "Copyright" "Copyright" "\$(DESTDIR)$prefix/share/codelite/plugins/"
+createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)$prefix/share/codelite/plugins/"
 
 

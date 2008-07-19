@@ -927,7 +927,7 @@ bool DbgGdb::GetTip(const wxString& expression, wxString& evaluated)
 bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 {
 	wxString output, cmd, var_name;
-	cmd << wxT("-var-create - * ") << expression;
+	cmd << wxT("-var-create - * \"") << expression << wxT("\"");
 
 	if (ExecSyncCmd(cmd, output)) {
 		// delete the temporary variable object

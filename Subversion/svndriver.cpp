@@ -28,6 +28,7 @@
 #include "dirsaver.h"
 #include "svndlg.h"
 #include "wx/ffile.h"
+#include "wx/filefn.h"
 #include "svnhandler.h"
 #include "subversion.h"
 #include "svnlogdlg.h"
@@ -156,18 +157,22 @@ void SvnDriver::OnSvnProcessTerminated(wxProcessEvent &event)
 
 void SvnDriver::DisplayDiffFile(const wxString &fileName, const wxString &content)
 {
-	//Load the output file into the editor
-	wxString tmpFile = wxFileName::GetTempDir();
+	bool hasExternalDiff = !m_plugin->GetOptions().GetDiffCmd().empty();
+	if ( !hasExternalDiff || ( hasExternalDiff && ((m_plugin->GetOptions().GetFlags() & SvnCaptureDiffOutput) != 0) ) )
+	{
+		//Load the output file into the editor
+		wxString tmpFile = wxFileName::GetTempDir();
 
-	wxFileName fn(fileName);
-	tmpFile << wxT("/") << fn.GetFullName() << wxT(".diff");
+		wxFileName fn(fileName);
+		tmpFile << wxT("/") << fn.GetFullName() << wxT(".diff");
 
-	wxFFile file(tmpFile, wxT("w+"));
-	if (file.IsOpened()) {
-		file.Write(content);
-		file.Close();
+		wxFFile file(tmpFile, wxT("w+"));
+		if (file.IsOpened()) {
+			file.Write(content);
+			file.Close();
 
-		m_manager->OpenFile(tmpFile, wxEmptyString);
+			m_manager->OpenFile(tmpFile, wxEmptyString);
+		}
 	}
 }
 
@@ -367,14 +372,56 @@ void SvnDriver::DiffFile(const wxFileName &fileName)
 		file_name = fileName.GetFullName();
 	}
 
+	const wxString& diffCmd = m_plugin->GetOptions().GetDiffCmd();
+	if ( diffCmd.empty() )
+	{
+		#ifdef __WXMSW__
+			file_name.Prepend(wxT("\""));
+			file_name.Append(wxT("\""));
+		#endif
 
-#ifdef __WXMSW__
-	file_name.Prepend(wxT("\""));
-	file_name.Append(wxT("\""));
-#endif
-
-	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
-	command << wxT("diff ") << file_name;
+		command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
+		command << wxT("diff ") << file_name;
+	}
+	else
+	{
+		if ( !::wxFileExists( diffCmd ) )
+		{
+			PrintMessage( wxString::Format( wxT("'%s' is not a valid command.\n%s"), diffCmd.c_str(), commandSeparator ) );
+			return;
+		}
+		
+		// export BASE revision of file to tmp file
+		const wxString& base = wxFileName::CreateTempFileName( wxT("svnExport"), (wxFile*)NULL );
+		::wxRemoveFile( base ); // just want the name, not the file.
+		wxString exportCmd;
+		exportCmd << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
+		exportCmd << wxT("export -r BASE \"") << file_name << wxT("\" ") << base;
+		wxArrayString output;
+		ProcUtils::ExecuteCommand(exportCmd, output);
+		
+		// get number of Base Revision
+		wxString info;
+		ExecInfoCommand( fileName, info );
+		wxString baseRev = SvnXmlParser::GetRevision( info );
+		if ( baseRev.empty() )
+		{
+			baseRev = wxT("base");
+		}
+		else
+		{	
+			baseRev.Prepend(wxT("revision "));
+		}
+		
+		// Build external diff command
+		wxString args = m_plugin->GetOptions().GetDiffArgs();
+		args.Replace( wxT("%base"), base );
+		args.Replace( wxT("%bname"), wxString::Format( wxT("\"%s (%s)\""), file_name.c_str(), baseRev.c_str() ) );
+		args.Replace( wxT("%mine"), wxString::Format( wxT("\"%s\""), file_name.c_str() ) );
+		args.Replace( wxT("%mname"), wxString::Format( wxT("\"%s (working copy)\""), file_name.c_str() ) );
+		command << wxT("\"") << diffCmd << wxT("\" ");
+		command << args;
+	}
 
 	m_curHandler = new SvnDiffCmdHandler(this, command, fileName.GetFullPath());
 	ExecCommand(command);
@@ -386,28 +433,7 @@ void SvnDriver::Diff()
 	wxString command, comment;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
 
-	DirSaver ds;
-	wxString fileName;
-	wxSetWorkingDirectory(item.m_fileName.GetPath());
-
-	//did we get a directory?
-	if (item.m_fileName.IsDir()) {
-		fileName = wxT(".");
-	} else {
-		fileName = item.m_fileName.GetFullName();
-	}
-
-
-#ifdef __WXMSW__
-	fileName.Prepend(wxT("\""));
-	fileName.Append(wxT("\""));
-#endif
-
-	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
-	command << wxT("diff ") << fileName;
-
-	m_curHandler = new SvnDiffCmdHandler(this, command, item.m_fileName.GetFullPath());
-	ExecCommand(command);
+	DiffFile( item.m_fileName );
 }
 
 void SvnDriver::Delete()
@@ -691,6 +717,31 @@ void SvnDriver::ExecStatusCommand(const wxString &path, wxString &output)
 
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml -q --non-interactive --no-ignore ");
+
+	wxArrayString outputArr;
+	ProcUtils::ExecuteCommand(command, outputArr);
+
+	for (size_t i=0; i<outputArr.GetCount(); i++) {
+		output << outputArr.Item(i);
+	}
+}
+
+void SvnDriver::ExecInfoCommand(const wxFileName &filename, wxString &output)
+{
+	wxString command;
+	DirSaver ds;
+	wxSetWorkingDirectory(filename.GetPath());
+
+	//did we get a directory?
+	wxString file_name;
+	if (filename.IsDir()) {
+		file_name = wxT(".");
+	} else {
+		file_name = filename.GetFullName();
+	}
+	
+	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
+	command << wxT("info --xml --non-interactive \"") << file_name << wxT("\"");
 
 	wxArrayString outputArr;
 	ProcUtils::ExecuteCommand(command, outputArr);

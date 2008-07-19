@@ -82,3 +82,24 @@ void SvnXmlParser::GetFiles(const wxString &input, wxArrayString &files, FileSta
 		}
 	}
 }
+
+wxString SvnXmlParser::GetRevision(const wxString& input)
+{
+	wxStringInputStream stream(input);
+	wxXmlDocument doc(stream);
+	if (!doc.IsOk()) {
+		//wxLogMessage(input);
+		return wxEmptyString;
+	}
+
+	wxXmlNode *root = doc.GetRoot();
+	if (root) {
+		wxXmlNode *node = root->GetChildren();
+		while ( node ) {
+			if (node->GetName() == wxT("entry")) {
+				return XmlUtils::ReadString(node, wxT("revision"), wxEmptyString);
+			}
+			node = node->GetNext();
+		}
+	}
+}

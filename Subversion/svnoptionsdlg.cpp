@@ -34,6 +34,10 @@ SvnOptionsBaseDlg( parent )
 	m_checkBoxKeepIconsAutoUpdate->SetValue(m_options.GetFlags() & SvnKeepIconsUpdated ? true : false);
 	m_checkBoxAutoAddNewFiles->SetValue(m_options.GetFlags() & SvnAutoAddFiles ? true : false);
 	m_checkBoxUpdateAfterSave->SetValue(m_options.GetFlags() & SvnUpdateAfterSave ? true : false);
+	m_checkBoxCaptureDiffOutput->SetValue(m_options.GetFlags() & SvnCaptureDiffOutput ? true : false);
+	
+	m_diffExe->SetPath(m_options.GetDiffCmd());
+	m_diffArgs->SetValue(m_options.GetDiffArgs());
 	
 	m_textCtrl1->SetValue(m_options.GetPattern());
 	if(m_checkBoxUseIconsInWorkspace->IsChecked() == false) {
@@ -49,6 +53,8 @@ void SvnOptionsDlg::OnButtonOk( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	m_options.SetExePath(m_filePicker->GetPath());
+	m_options.SetDiffCmd(m_diffExe->GetPath());
+	m_options.SetDiffArgs(m_diffArgs->GetValue());
 	m_options.SetPattern(m_textCtrl1->GetValue());
 	SaveOptions();
 	EndModal(wxID_OK);
@@ -82,6 +88,10 @@ void SvnOptionsDlg::SaveOptions()
 	
 	if(m_checkBoxUseIconsInWorkspace->IsChecked()) {
 		options |= SvnUseIcons;
+	}
+	
+	if(m_checkBoxCaptureDiffOutput->IsChecked()) {
+		options |= SvnCaptureDiffOutput;
 	}
 	m_options.SetFlags( options );
 }

@@ -32,12 +32,15 @@ enum SvnOptionsFlags {
 	SvnKeepIconsUpdated  	= 0x00000002,
 	SvnAutoAddFiles 		= 0x00000004,
 	SvnUpdateAfterSave 		= 0x00000008,
+	SvnCaptureDiffOutput	= 0x00000010
 };
 
 class SvnOptions : public SerializedObject {
 	size_t m_flags;
 	wxString m_exePath;
 	wxString m_pattern;
+	wxString m_diffCmd;
+	wxString m_diffArgs;
 	
 public:
 	SvnOptions();
@@ -55,6 +58,11 @@ public:
 	void SetPattern(const wxString& pattern) {this->m_pattern = pattern;}
 	const wxString& GetPattern() const {return m_pattern;}
 	
+	void SetDiffCmd(const wxString& diffCmd) {this->m_diffCmd = diffCmd;}
+	const wxString& GetDiffCmd() const {return m_diffCmd;}
+	
+	void SetDiffArgs(const wxString& diffArgs) {this->m_diffArgs = diffArgs;}
+	const wxString& GetDiffArgs() const {return m_diffArgs;}
 };
 
 #endif //SVNOPTIONS_H

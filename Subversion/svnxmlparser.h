@@ -51,6 +51,7 @@ public:
 	~SvnXmlParser();
 
 	static void GetFiles(const wxString &input, wxArrayString &files, FileState state = StateModified);
+	static wxString GetRevision(const wxString& input);
 };
 
 #endif //SVNXMLPARSER_H

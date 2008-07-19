@@ -105,7 +105,7 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	info.SetAuthor(wxT("Eran Ifrah"));
 	info.SetName(wxT("Svn"));
 	info.SetDescription(wxT("Subversion - integration of the subversion command line tool"));
-	info.SetVersion(wxT("v1.0"));
+	info.SetVersion(wxT("v1.1"));
 	return info;
 }
 

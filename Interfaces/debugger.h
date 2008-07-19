@@ -135,35 +135,158 @@ public:
 	virtual void SetEnvironment(EnvironmentConfig *env) {
 		m_env = env;
 	}
+	virtual void SetDebuggerInformation(const DebuggerInformation& info) {m_info = info;}
 
+	//-------------------------------------------------------------
 	// Debugger operations
+	//-------------------------------------------------------------
+	
+	/**
+	 * \brief start the debugger 
+	 * \param debuggerPath path to the debugger executable
+	 * \param exeName executable to debug
+	 * \param cwd working directory to set
+	 * \param bpList list of breakpoints to place before running the program
+	 * \return true on success, false otherwise
+	 */
 	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList) = 0;
+	/**
+	 * \brief start the debugger. this method is for convinience and uses the default debugger path
+	 * \param exeName executable to debug
+	 * \param cwd working directory to set
+	 * \param bpList list of breakpoints to place before running the program
+	 * \return true on success, false otherwise
+	 */
 	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList) = 0;
+	/**
+	 * \brief use this method when attempting to attach a running process
+	 * \param debuggerPath debugger path
+	 * \param exeName executable to debug
+ 	 * \param pid the running instance process ID
+	 * \param bpList list of breakpoints to set
+	 * \return 
+	 */
 	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList) = 0;
+	/**
+	 * \brief Run the program under the debugger. This method must be called *after* Start() has been called
+	 * \param args arguments to pass to the debuggee process
+	 * \return true on success, false otherwise
+	 */
 	virtual bool Run(const wxString &args) = 0;
+	/**
+	 * \brief Stop the debugger
+	 * \return true on success, false otherwise
+	 */
 	virtual bool Stop() = 0;
+	/**
+	 * \brief attempt to interrupt the running debugger
+	 * \return true on success, false otherwise
+	 */
 	virtual bool Interrupt() = 0;
+	/**
+	 * \brief return true of the debugger is currently running
+	 * \return true on success, false otherwise
+	 */
 	virtual bool IsRunning() = 0;
+	/**
+	 * \brief step to next line
+	 * \return true on success, false otherwise
+	 */
 	virtual bool Next() = 0;
+	/**
+	 * \brief continue execution of the debugger, until next breakpoint is hit, or program terminates
+	 * \return true on success, false otherwise
+	 */
 	virtual bool Continue() = 0;
+	/**
+	 * \brief step into method
+	 * \return true on success, false otherwise
+	 */
 	virtual bool StepIn() = 0;
+	/**
+	 * \brief step out the current method (gdb's 'finish' command)
+	 * \return true on success, false otherwise
+	 */
 	virtual bool StepOut() = 0;
+	/**
+	 * \brief set break point at given file and line. If the breakpoint was placed successfully, observer->UpdateBpAdded() will be invoked
+	 */
 	virtual bool Break(const wxString &file, long lineno) = 0;
+	/**
+	 * \brief remove breakpoint from given file and line
+	 */
 	virtual bool RemoveBreak(const wxString &file, long lineno) = 0;
+	/**
+	 * \brief remove breakpoint by its internal ID
+	 */
 	virtual bool RemoveBreak(int bid) = 0;
+	/**
+	 * \brief clear all breakpoints set (gdb's 'clear' command)
+	 */
 	virtual bool RemoveAllBreaks() = 0;
+	/**
+	 * \brief ask the debugger to query about its file & line. Once the result arrives, the observer's UpdateFileLine() will be invoked 
+	 */
 	virtual bool QueryFileLine() = 0;
+	/**
+	 * \brief executes a command that does not yield any output from the debugger
+	 */
 	virtual bool ExecuteCmd(const wxString &cmd) = 0;
+	/**
+	 * \brief excute a command and waits from its answer from the debugger
+	 * \param command command to execute
+	 * \param output the debugger response
+	 */
 	virtual bool ExecSyncCmd(const wxString &command, wxString &output) = 0;
+	/**
+	 * \brief ask the debugger to print the current stack local variable. When the results arrives, the observer->UpdateLocals() is called
+	 * \return true on success, false otherwise
+	 */
 	virtual bool QueryLocals() = 0;
+	/**
+	 * \brief list the current stack trace. once the results are received from the debugger, m_observer->UpdateStackList() is invoked
+	 * \return true on success, false otherwise
+	 */
 	virtual bool ListFrames() = 0;
+	
+	/**
+	 * \brief set the frame to be the active frame
+	 * \param frame frame to set active
+	 * \return true on success, false otherwise
+	 */
 	virtual bool SetFrame(int frame) = 0;
-	virtual void SetDebuggerInformation(const DebuggerInformation& info) {
-		m_info = info;
-	}
+	/**
+	 * \brief return list of threads. 
+	 * \param threads [output]
+	 * \return true on success, false otherwise
+	 */
 	virtual bool ListThreads(ThreadEntryArray &threads) = 0;
+	/**
+	 * \brief select threadId to be active
+	 * \param threadId thread id
+	 * \return true on success, false otherwise
+	 */
 	virtual bool SelectThread(long threadId) = 0;
+	/**
+	 * \brief the Poke() method is called at Idle() time by the application so the debugger can read the actual debugger process output and process it
+	 */
 	virtual void Poke() = 0;
+	/**
+	 * \brief return tip for a give expression
+	 * \param expression expression to evaluate
+	 * \param evaluated evaluated value from the debugger
+	 * \return 
+	 */
+	virtual bool GetTip(const wxString &expression, wxString &evaluated) = 0;
+	
+	/**
+	 * \brief resolve expression and return its actual type
+	 * \param expression expression to evaluate
+	 * \param type the type [output]
+	 * \return true on success, false otherwise
+	 */
+	virtual bool ResolveType(const wxString &expression, wxString &type) = 0;
+	
 	//We provide two ways of evulating an expressions:
 	//The short one, which returns a string, and long one
 	//which returns a tree of the result

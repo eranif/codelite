@@ -101,6 +101,8 @@ public:
 	virtual bool SelectThread(long threadId);
 	virtual bool SetFrame(int frame);
 	virtual void Poke();
+	virtual bool GetTip(const wxString &expression, wxString &evaluated);
+	virtual bool ResolveType(const wxString &expression, wxString &type);
 };
 #endif //DBGINTERFACE_H
 

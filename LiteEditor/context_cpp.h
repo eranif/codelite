@@ -38,13 +38,6 @@ class ContextCpp : public ContextBase {
 	std::vector<wxMenuItem*> m_dynItems;
 	wxString m_selectedWord;
 
-	enum TipKind
-	{
-		TipNone = -1,
-		TipHover,
-		TipFuncProto
-	};
-
 	enum CalltipClickPos
 	{
 		Elsewhere = 0,
@@ -52,7 +45,6 @@ class ContextCpp : public ContextBase {
 		ArrowDown
 	};
 
-	TipKind m_tipKind;
 	wxMenu *m_rclickMenu;
 
 	//images used by the C++ context

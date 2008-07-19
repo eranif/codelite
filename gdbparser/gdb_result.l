@@ -78,6 +78,8 @@ args								{RETURN_VAL(GDB_ARGS);}
 level								{RETURN_VAL(GDB_LEVEL);}
 frame                               {RETURN_VAL(GDB_FRAME);}
 locals								{RETURN_VAL(GDB_LOCALS);}
+numchild							{RETURN_VAL(GDB_NUMCHILD);}
+type								{RETURN_VAL(GDB_TYPE);}
 {identifier}        				{RETURN_VAL(GDB_IDENTIFIER);}
 "^"									{RETURN_VAL((int)*yytext);}
 "="									{RETURN_VAL((int)*yytext);}

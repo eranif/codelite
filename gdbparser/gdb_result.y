@@ -36,6 +36,8 @@
 %token GDB_HEX
 %token GDB_FLOAT
 %token GDB_IDENTIFIER
+%token GDB_NUMCHILD
+%token GDB_TYPE
 
 %%
 dummy:

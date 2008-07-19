@@ -32,6 +32,48 @@
 #include "procutils.h"
 #include "wx/tokenzr.h"
 #include <algorithm>
+#include "gdb_result_parser.h"
+
+extern int gdb_result_lex();
+extern bool setGdbLexerInput(const std::string &in);
+extern void gdb_result_lex_clean();
+extern std::string gdb_result_string;
+extern void gdb_result_push_buffer(const std::string &new_input);
+extern void gdb_result_pop_buffer();
+
+static void GDB_STRIP_QUOATES(wxString &currentToken)
+{
+	size_t where = currentToken.find(wxT("\""));
+	if (where != std::string::npos && where == 0) {
+		currentToken.erase(0, 1);
+	}
+
+	where = currentToken.rfind(wxT("\""));
+	if (where != std::string::npos && where == currentToken.length()-1) {
+		currentToken.erase(where);
+	}
+
+	where = currentToken.find(wxT("\"\\\\"));
+	if (where != std::string::npos && where == 0) {
+		currentToken.erase(0, 3);
+	}
+
+	where = currentToken.rfind(wxT("\"\\\\"));
+	if (where != std::string::npos && where == currentToken.length()-3) {
+		currentToken.erase(where);
+	}
+}
+
+#define GDB_NEXT_TOKEN()\
+	{\
+		type = gdb_result_lex();\
+		currentToken = _U(gdb_result_string.c_str());\
+	}
+
+#define GDB_ABORT(ch)\
+	if(type != (int)ch){\
+		break;\
+	}
 
 #ifdef __WXMSW__
 #include "windows.h"
@@ -500,7 +542,13 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 	if (!Write(cmd)) {
 		return false;
 	}
-
+	bool miCommand(false);
+	wxString trimmedCommand(command);
+	
+	if(trimmedCommand.Trim().Trim(false).StartsWith(wxT("-"))){
+		miCommand = true;
+	}
+	
 	//read all output until we found 'XXXXXXXX^done'
 	static wxRegEx reCommand(wxT("^([0-9]{8})"));
 	const int maxPeeks(100);
@@ -537,6 +585,16 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 			}
 
 			//remove trailing new line
+			if(miCommand) {
+				// if the execute command is a GDB MI command, 
+				// remove the command ID (the 8 digit sequence)
+				// and append this line to the output
+				int where = line.Find(cmd_id);
+				if(where != wxNOT_FOUND) {
+					output << line.Mid(where + 8);
+				}
+			}
+			
 			output = output.Trim().Trim(false);
 			return true;
 
@@ -849,4 +907,102 @@ void DbgGdb::OnProcessEndEx(wxProcessEvent &e)
 {
 	InteractiveProcess::OnProcessEnd(e);
 	m_env->UnApplyEnv();
+}
+
+bool DbgGdb::GetTip(const wxString& expression, wxString& evaluated)
+{
+	wxString cmd;
+	cmd << wxT("print ") << expression;
+	if (ExecSyncCmd(cmd, evaluated)) {
+		evaluated = evaluated.Trim().Trim(false);
+		//gdb displays the variable name as $<NUMBER>,
+		//we simply replace it with the actual string
+		static wxRegEx reGdbVar(wxT("^\\$[0-9]+"));
+		reGdbVar.ReplaceFirst(&evaluated, expression);
+		return true;
+	}
+	return false;
+}
+
+bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
+{
+	wxString output, cmd, var_name;
+	cmd << wxT("-var-create - * ") << expression;
+
+	if (ExecSyncCmd(cmd, output)) {
+		// delete the temporary variable object
+		cmd.clear();
+
+		// parse the output
+		// ^done,name="var2",numchild="1",value="{...}",type="orxAABOX"
+		const wxCharBuffer scannerText =  _C(output);
+		setGdbLexerInput(scannerText.data());
+		int type;
+		wxString currentToken;
+
+		do {
+			// ^done
+			GDB_NEXT_TOKEN();
+			GDB_ABORT('^');
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(GDB_DONE);
+			
+			// ,name="..."
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(',');
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(GDB_NAME);
+			GDB_NEXT_TOKEN();
+			GDB_ABORT('=');
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(GDB_STRING);
+			var_name = currentToken;
+			
+			// ,numchild="..."
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(',');
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(GDB_NUMCHILD);
+			GDB_NEXT_TOKEN();
+			GDB_ABORT('=');
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(GDB_STRING);
+			
+			// ,value="..."
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(',');
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(GDB_VALUE);
+			GDB_NEXT_TOKEN();
+			GDB_ABORT('=');
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(GDB_STRING);
+			
+			// ,type="..."
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(',');
+			GDB_NEXT_TOKEN();
+			GDB_ABORT(GDB_TYPE);
+			GDB_NEXT_TOKEN();
+			GDB_ABORT('=');
+			GDB_NEXT_TOKEN();
+			type_name = currentToken;
+			
+		} while (0);
+		gdb_result_lex_clean();
+		
+		GDB_STRIP_QUOATES(type_name);
+		GDB_STRIP_QUOATES(var_name);
+		
+		// delete the variable object
+		cmd.clear();
+		cmd << wxT("-var-delete ") << var_name;
+		
+		// since the above gdb command yields an output, we use the sync command
+		// to get it as well to avoid errors in future calls to the gdb
+		ExecSyncCmd(cmd, output);
+		
+		return type_name.IsEmpty() == false;
+	}
+	return false;
 }

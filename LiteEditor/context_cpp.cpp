@@ -25,6 +25,8 @@
 
 
 #include "precompiled_header.h"
+#include "debuggerconfigtool.h"
+#include "debuggersettings.h"
 #include "parse_thread.h"
 #include "cc_box.h"
 #include <wx/progdlg.h>
@@ -153,7 +155,6 @@ END_EVENT_TABLE()
 
 ContextCpp::ContextCpp(LEditor *container)
 		: ContextBase(container)
-		, m_tipKind(TipNone)
 		, m_rclickMenu(NULL)
 {
 	ApplySettings();
@@ -184,7 +185,6 @@ void ContextCpp::OnDwellEnd(wxScintillaEvent &event)
 {
 	LEditor &rCtrl = GetCtrl();
 	rCtrl.CallTipCancel();
-	m_tipKind = TipNone;
 	event.Skip();
 }
 
@@ -234,7 +234,6 @@ void ContextCpp::OnDwellStart(wxScintillaEvent &event)
 		// cancel any old calltip and display the new one
 		rCtrl.CallTipCancel();
 		rCtrl.CallTipShow(event.GetPosition(), tooltip);
-		m_tipKind = TipHover;
 	}
 }
 
@@ -375,7 +374,6 @@ void ContextCpp::CallTipCancel()
 {
 	LEditor &rCtrl = GetCtrl();
 	rCtrl.CallTipCancel();
-	m_tipKind = TipNone;
 }
 
 void ContextCpp::OnCallTipClick(wxScintillaEvent &event)
@@ -404,10 +402,10 @@ void ContextCpp::CodeComplete(long pos)
 {
 	VALIDATE_WORKSPACE();
 	long from = pos;
-	if(from == wxNOT_FOUND) {
+	if (from == wxNOT_FOUND) {
 		from = GetCtrl().GetCurrentPos();
 	}
-	
+
 	DoCodeComplete(from);
 }
 
@@ -937,7 +935,7 @@ void ContextCpp::DoGotoSymbol(const std::vector<TagEntryPtr> &tags)
 		wxString pattern = t->GetPattern();
 		wxString name = t->GetName();
 
-		if(ManagerST::Get()->OpenFile(	t->GetFile(), wxEmptyString)) {
+		if (ManagerST::Get()->OpenFile(	t->GetFile(), wxEmptyString)) {
 			LEditor *editor = ManagerST::Get()->GetActiveEditor();
 			if (editor) {
 				ManagerST::Get()->FindAndSelect(editor, pattern, name);
@@ -1406,23 +1404,49 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 	}
 
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	wxString cmd;
-	wxString output;
-	cmd << wxT("print ") << word;
-	if (dbgr && dbgr->ExecSyncCmd(cmd, output)) {
-		// cancel any old calltip and display the new one
-		ctrl.CallTipCancel();
-
-		// GDB HACK BEGIN::
-		//gdb displays the variable name as $<NUMBER>,
-		//we simply replace it with the actual string
-		output = output.Trim().Trim(false);
-		static wxRegEx reGdbVar(wxT("^\\$[0-9]+"));
-		reGdbVar.ReplaceFirst(&output, word);
-		// GDB HACK END::
-
-		ctrl.CallTipShow(event.GetPosition(), output);
-		m_tipKind = TipHover;
+	if (dbgr) {
+		DebuggerSettingsData data;
+		DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
+		std::vector<DebuggerCmdData> cmds = data.GetCmds();
+		// before asking for the debugger for tooltip, try
+		// to query the debugger about the type of the
+		// evaluated string
+		wxString type;
+		wxString command(word);
+		
+		if(dbgr->ResolveType(word, type)) {
+			
+			// gdb returns usually expression like:
+			// const string &, so in order to get the actual type
+			// we construct a valid expression by appending a valid identifier followed by a semi colon.
+			wxString expression;
+			
+			expression << wxT("/^");
+			expression << type;
+			expression << wxT(" someValidName;");
+			expression << wxT("$/");
+			
+			Variable variable;
+			if(LanguageST::Get()->VariableFromPattern(expression, wxT("someValidName"), variable)){
+				type = _U(variable.m_type.c_str());
+				for(size_t i=0; i<cmds.size(); i++){
+					DebuggerCmdData cmd = cmds.at(i);
+					if(cmd.GetName() == type){
+						// prepare the string to be evaluated
+						command = cmd.GetCommand();
+						command.Replace(wxT("$(Variable)"), word);
+						break;
+					}
+				}
+			}
+		}
+		
+		wxString output;
+		if (dbgr->GetTip(command, output)) {
+			// cancel any old calltip and display the new one
+			ctrl.CallTipCancel();
+			ctrl.CallTipShow(event.GetPosition(), output);
+		}
 	}
 }
 
@@ -2185,7 +2209,7 @@ bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, Refac
 void ContextCpp::OnRetagFile(wxCommandEvent& e)
 {
 	VALIDATE_WORKSPACE();
-	
+
 	wxUnusedVar(e);
 	LEditor &ctrl = GetCtrl();
 	if ( ctrl.GetModify() ) {
@@ -2264,14 +2288,14 @@ void ContextCpp::DoCodeComplete(long pos)
 	int pos1, pos2, end;
 	LEditor &rCtrl = GetCtrl();
 	wxChar ch = rCtrl.PreviousChar(pos, pos1);
-	
+
 	//	Make sure we are not on a comment section
-	if (IsCommentOrString(rCtrl.PositionBefore(pos))){
+	if (IsCommentOrString(rCtrl.PositionBefore(pos))) {
 		return;
 	}
 
 	// Search for first non-whitespace wxChar
-	
+
 	bool showFullDecl(false);
 
 	switch (ch) {
@@ -2371,7 +2395,6 @@ void ContextCpp::DoCodeComplete(long pos)
 		if (m_ct && m_ct->Count() > 0) {
 			rCtrl.CallTipCancel();
 			rCtrl.CallTipShow(currentPosition, m_ct->All());
-			m_tipKind = TipFuncProto;
 		}
 	} else {
 		if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
@@ -2379,4 +2402,3 @@ void ContextCpp::DoCodeComplete(long pos)
 		}
 	}
 }
-

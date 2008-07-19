@@ -17,3 +17,5 @@
 #define GDB_HEX 273
 #define GDB_FLOAT 274
 #define GDB_IDENTIFIER 275
+#define GDB_NUMCHILD 276
+#define GDB_TYPE 277

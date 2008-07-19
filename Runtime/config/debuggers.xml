@@ -3,7 +3,7 @@
   <ArchiveObject Name="DebuggerCommands">
     <long Value="3" Name="size"/>
     <SerializedObject Name="DebuggerCmd0">
-      <wxString Value="std::vector" Name="m_name"/>
+      <wxString Value="vector" Name="m_name"/>
       <wxString Value="$(Variable).size()" Name="m_command"/>
       <bool Value="0" Name="m_isSubMenu"/>
     </SerializedObject>
@@ -13,7 +13,7 @@
       <bool Value="0" Name="m_isSubMenu"/>
     </SerializedObject>
     <SerializedObject Name="DebuggerCmd2">
-      <wxString Value="std::string" Name="m_name"/>
+      <wxString Value="string" Name="m_name"/>
       <wxString Value="$(Variable).c_str()" Name="m_command"/>
       <bool Value="0" Name="m_isSubMenu"/>
     </SerializedObject>

@@ -128,6 +128,7 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, bool fo
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
 
+	wxString args;
 	if (!isProjectOnly) {
 		for (size_t i=0; i<depsArr.GetCount(); i++) {
 			ProjectPtr dependProj = WorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
@@ -138,33 +139,38 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, bool fo
 
 			GenerateMakefile(dependProj, force);
 			wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, dependProj->GetName());
+			args = wxT("type=");
+			args << NormalizeConfigName(projectSelConf) << wxT(" ");
 			text << wxT("\t@echo ----------Building project:[ ") << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
 
 			//make the paths relative
 			wxFileName fn(dependProj->GetFileName());
 			fn.MakeRelativeTo(wspfile.GetPath());
 
-			text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\" ") << wxT("\n");
+			text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\" ") << args << wxT("\n");
 		}
 	}
 
 	//generate makefile for the project itself
 	GenerateMakefile(proj, force);
 	wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, project);
-	
+	args = wxT("type=");
+	args << NormalizeConfigName(projectSelConf) << wxT(" ");
 	text << wxT("\t@echo ----------Building project:[ ") << project << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
 
 	//make the paths relative
 	wxFileName projectPath(proj->GetFileName());
 	projectPath.MakeRelativeTo(wspfile.GetPath());
-	text << wxT("\t") << GetCdCmd(wspfile, projectPath) << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" ") << wxT("\n");
+	text << wxT("\t") << GetCdCmd(wspfile, projectPath) << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" ") << args << wxT("\n");
 
 	//create the clean target
 	text << wxT("clean:\n");
 	if (!isProjectOnly) {
 		for (size_t i=0; i<depsArr.GetCount(); i++) {
 			wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, depsArr.Item(i));
-			
+			args = wxT("type=");
+			args << NormalizeConfigName(projectSelConf) << wxT(" ");
+
 			ProjectPtr dependProj = WorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
 			//Missing dependencies project? just skip it
 			if (!dependProj) {
@@ -180,16 +186,18 @@ bool BuilderGnuMake::Export(const wxString &project, bool isProjectOnly, bool fo
 			//if the dependencie project is project of type 'Custom Build' - do the custom build instead
 			//of the geenrated makefile
 			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjSelBuildConf(dependProj->GetName());
-			text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\" ") << wxT(" clean\n") ;
+			text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\" ") << args << wxT(" clean\n") ;
 		}
 	}
 
 	//generate makefile for the project itself
 	projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, project);
+	args = wxT("type=");
+	args << NormalizeConfigName(projectSelConf) << wxT(" ");
 	text << wxT("\t@echo ----------Building project:[ ") << project << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
 
 	//make the paths relative
-	text << wxT("\t") << GetCdCmd(wspfile, projectPath) << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" ") << wxT(" clean\n") ;
+	text << wxT("\t") << GetCdCmd(wspfile, projectPath) << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" ") << args << wxT(" clean\n") ;
 
 	//dump the content to file
 	wxFileOutputStream output(fn);
@@ -508,6 +516,8 @@ void BuilderGnuMake::CreatePostBuildEvents(BuildConfigPtr bldConf, wxString &tex
 {
 	BuildCommandList cmds;
 	BuildCommandList::iterator iter;
+	wxString name = bldConf->GetName();
+	name = NormalizeConfigName(name);
 
 	//generate postbuild commands
 	cmds.clear();
@@ -555,6 +565,8 @@ void BuilderGnuMake::CreatePreBuildEvents(BuildConfigPtr bldConf, wxString &text
 {
 	BuildCommandList cmds;
 	BuildCommandList::iterator iter;
+	wxString name = bldConf->GetName();
+	name = NormalizeConfigName(name);
 
 	//add PrePreBuild
 	if (!bldConf->GetPreBuildCustom().IsEmpty()) {
@@ -586,12 +598,16 @@ void BuilderGnuMake::CreatePreBuildEvents(BuildConfigPtr bldConf, wxString &text
 
 void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldConf, wxString &text)
 {
+	wxString name = bldConf->GetName();
+	name = NormalizeConfigName(name);
+
 	wxString cmpType = bldConf->GetCompilerType();
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 
-	text << wxT("## ") << bldConf->GetName() << wxT("\n");
+	text << wxT("## ") << name << wxT("\n");
+	text << wxT("ifeq ($(type),") << name << wxT(")") << wxT("\n");
 	//The following two variables are here for compatibility with MSVS
-	text << wxT("ConfigurationName :=\"") << bldConf->GetName() << wxT("\"\n");
+	text << wxT("ConfigurationName :=") << name << wxT("\n");
 	text << wxT("IntermediateDirectory :=") << bldConf->GetIntermediateDirectory() << wxT("\n");
 	text << wxT("OutDir := $(IntermediateDirectory)\n");
 	text << wxT("LinkerName:=") << cmp->GetTool(wxT("LinkerName")) << wxT("\n");
@@ -639,7 +655,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 
 	// add the global library path followed by the project library path
 	text << wxT("LibPath :=") << ParseLibPath(cmp->GetGlobalLibPath(), proj->GetName()) << wxT(" ") << ParseLibPath(bldConf->GetLibPath(), proj->GetName()) << wxT("\n");
-	text << wxT("\n\n");
+	text << wxT("endif\n\n");
 }
 
 wxString BuilderGnuMake::ParseIncludePath(const wxString &paths, const wxString &projectName)
@@ -742,7 +758,8 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, bool &isCustom
 	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 
-	cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\" ");
+	wxString type = Builder::NormalizeConfigName(matrix->GetSelectedConfigurationName());
+	cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\" type=") << type;
 	return cmd;
 }
 
@@ -769,7 +786,8 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString &project, bool &isCustom
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-	cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\" ") << wxT(" clean");
+	wxString type = Builder::NormalizeConfigName(matrix->GetSelectedConfigurationName());
+	cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\" type=") << type << wxT(" clean");
 	return cmd;
 }
 
@@ -799,7 +817,7 @@ wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project, bool &isCust
 	wxString type = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), project);
 
 	//cd to the project directory
-	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" ");
+	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" type=") << type;
 	return cmd;
 }
 
@@ -829,7 +847,7 @@ wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project, bool &isCust
 	wxString type = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), project);
 
 	//cd to the project directory
-	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" clean");
+	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" type=") << type << wxT(" clean");
 	return cmd;
 }
 
@@ -862,7 +880,7 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 
 	tareget << bldConf->GetIntermediateDirectory() << wxT("/") << fn.GetName() << cmp->GetObjectSuffix();
-	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" ") << tareget;
+	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" type=") << type << wxT(" ") << tareget;
 
 	return EnvironmentConfig::Instance()->ExpandVariables(cmd);
 }

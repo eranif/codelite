@@ -42,6 +42,14 @@ Builder::~Builder()
 {
 }
 
+wxString Builder::NormalizeConfigName(const wxString &confgName)
+{
+	wxString normalized(confgName);
+	TrimString(normalized);
+	normalized.Replace(wxT(" "), wxT("_"));
+	return normalized;
+}
+
 wxString Builder::GetBuildToolFromConfig() const
 {
 	BuildSystemPtr bs = BuildSettingsConfigST::Get()->GetBuildSystem(m_name);

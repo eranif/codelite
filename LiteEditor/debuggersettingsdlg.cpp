@@ -106,7 +106,7 @@ void DebuggerSettingsDlg::Initialize()
 		m_book->AddPage(new DebuggerPage(m_book, debuggers.Item(i)), debuggers.Item(i), true);
 	}
 
-	m_listCtrl1->InsertColumn(0, wxT("Name"));
+	m_listCtrl1->InsertColumn(0, wxT("Type"));
 	m_listCtrl1->InsertColumn(1, wxT("Command"));
 	m_listCtrl1->InsertColumn(2, wxT("Sub Menu?"));
 
@@ -128,6 +128,8 @@ void DebuggerSettingsDlg::Initialize()
 		SetColumnText(m_listCtrl1, item, 1, cmd.GetCommand());
 		SetColumnText(m_listCtrl1, item, 2, subMenu);
 	}
+	m_listCtrl1->SetColumnWidth(0, 100);
+	m_listCtrl1->SetColumnWidth(1, 200);
 }
 
 void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)

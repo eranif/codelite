@@ -1420,7 +1420,8 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 			// const string &, so in order to get the actual type
 			// we construct a valid expression by appending a valid identifier followed by a semi colon.
 			wxString expression;
-			
+		//	wxLogMessage(word + wxT(" resolved into: ") + type);	
+
 			expression << wxT("/^");
 			expression << type;
 			expression << wxT(" someValidName;");
@@ -1439,6 +1440,8 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 					}
 				}
 			}
+		}else{
+		//	wxLogMessage(wxT("ResolveType failed for ") + word);
 		}
 		
 		wxString output;

@@ -932,6 +932,7 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 	if (ExecSyncCmd(cmd, output)) {
 		// delete the temporary variable object
 		cmd.clear();
+	//	wxLogMessage(wxT("ResolveType: gdb returned '") + output + wxT("'"));
 
 		// parse the output
 		// ^done,name="var2",numchild="1",value="{...}",type="orxAABOX"
@@ -967,7 +968,8 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 			GDB_ABORT('=');
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(GDB_STRING);
-			
+	// On Mac this part does not seem to be reported by GDB
+	#ifndef __WXMAC__		
 			// ,value="..."
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(',');
@@ -977,7 +979,7 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 			GDB_ABORT('=');
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(GDB_STRING);
-			
+	#endif	
 			// ,type="..."
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(',');

@@ -46,6 +46,7 @@ SvnOptionsBaseDlg( parent )
 	}
 	// center the dialog
 	Centre();
+	GetSizer()->Fit(this);
 	m_filePicker->SetFocus();
 }
 

@@ -102,4 +102,5 @@ wxString SvnXmlParser::GetRevision(const wxString& input)
 			node = node->GetNext();
 		}
 	}
+	return wxEmptyString;
 }

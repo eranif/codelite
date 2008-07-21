@@ -36,13 +36,8 @@
 #endif // WXMAKINGDLL_LE_SDK
 
 class WXDLLIMPEXP_LE_SDK CompileRequest : public CompilerAction {
-	
-	wxString m_project;
-	bool m_projectOnly;
 	wxString m_fileName;
 	bool m_premakeOnly;
-	wxString m_confToBuild;
-	
 public:
 	/**
 	 * Construct a compilation request. The compiler thread will build the selected project and all
@@ -50,10 +45,7 @@ public:
 	 * \param projectName the selected project to build
 	 * \param configurationName the workspace selected configuration
 	 */
-	CompileRequest(	wxEvtHandler *owner, 
-					const wxString &projectName, 
-					const wxString &confToBuild,
-					bool projectOnly = false, 
+	CompileRequest(	wxEvtHandler *owner, const BuildInfo &buildInfo,
 					const wxString &fileName = wxEmptyString,
 					bool runPremakeOnly = false
 					);
@@ -65,7 +57,7 @@ public:
 	virtual void Process();
 
 	//setters/getters
-	const wxString &GetProjectName() const { return m_project; }
+	const wxString &GetProjectName() const { return m_info.GetProject(); }
 };
 
 #endif // COMPILE_REQUEST_H

@@ -1081,7 +1081,6 @@ ProjectPtr Manager::GetProject(const wxString &name) const
 	return proj;
 }
 
-
 void Manager::PopupProjectDependsDlg(const wxString &projectName)
 {
 	DependenciesDlg *dlg = new DependenciesDlg(GetMainFrame(), projectName);
@@ -1089,19 +1088,10 @@ void Manager::PopupProjectDependsDlg(const wxString &projectName)
 	dlg->Destroy();
 }
 
-void Manager::CleanProject(const wxString &projectName, bool projectOnly)
+void Manager::CleanProject(const BuildInfo &buildInfo)
 {
-	if ( m_cleanRequest && m_cleanRequest->IsBusy() ) {
-		return;
-	}
-
-	if ( m_cleanRequest ) {
-		delete m_cleanRequest;
-	}
-	
-	// TODO :: replace the construction of CleanRequest to include the proper build configuration
-	m_cleanRequest = new CleanRequest(GetMainFrame(), projectName, wxEmptyString, projectOnly);
-	m_cleanRequest->Process();
+	AddBuild( buildInfo );
+	ProcessBuildQueue();
 }
 
 bool Manager::IsBuildEndedSuccessfully() const
@@ -1119,8 +1109,8 @@ bool Manager::IsBuildEndedSuccessfully() const
 
 		//check every line to see if we got an error/warning
 		wxString project(m_compileRequest->GetProjectName());
-		
-		// TODO :: change the call to ' GetProjBuildConf' to pass the correct 
+
+		// TODO :: change the call to ' GetProjBuildConf' to pass the correct
 		// build configuration
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, wxEmptyString);
 		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(bldConf->GetCompilerType());
@@ -1143,31 +1133,10 @@ bool Manager::IsBuildEndedSuccessfully() const
 	return true;
 }
 
-void Manager::BuildProject(const wxString &projectName, bool projectOnly)
+void Manager::BuildProject(const BuildInfo &buildInfo)
 {
-	if ( m_compileRequest && m_compileRequest->IsBusy() ) {
-		return;
-	}
-
-	if ( m_compileRequest ) {
-		delete m_compileRequest;
-		m_compileRequest = NULL;
-	}
-
-	//save all files before compiling, but dont saved new documents
-	SaveAll(false);
-
-	//If a debug session is running, stop it.
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr && dbgr->IsRunning()) {
-		if (wxMessageBox(wxT("This would terminate the current debug session, continue?"),  wxT("Confirm"), wxICON_QUESTION|wxYES_NO|wxCANCEL) != wxYES) {
-			return;
-		} else {
-			DbgStop();
-		}
-	}
-	m_compileRequest = new CompileRequest(GetMainFrame(), projectName, wxEmptyString, projectOnly);
-	m_compileRequest->Process();
+	AddBuild( buildInfo );
+	ProcessBuildQueue();
 }
 
 void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
@@ -1193,8 +1162,9 @@ void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
 			DbgStop();
 		}
 	}
-
-	m_compileRequest = new CompileRequest(GetMainFrame(), projectName, wxEmptyString, false, fileName);
+	
+	BuildInfo info(projectName, wxEmptyString, false, BuildInfo::Build);
+	m_compileRequest = new CompileRequest(GetMainFrame(), info, fileName, false);
 	m_compileRequest->Process();
 }
 
@@ -2197,9 +2167,9 @@ void Manager::UpdateGotControl(DebuggerReasons reason)
 		}
 		DebugMessage(wxT("Program Received signal ") + signame + wxT("\n"));
 		wxMessageBox(wxT("Program Received signal ") + signame + wxT("\n")
-					 wxT("Stack trace is available in the 'Stack' tab\n"),
+		             wxT("Stack trace is available in the 'Stack' tab\n"),
 		             wxT("CodeLite"), wxICON_ERROR|wxOK);
-					 
+
 		//Print the stack trace
 		wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
 		if (info.IsShown()) {
@@ -2401,11 +2371,10 @@ void Manager::RunCustomPreMakeCommand(const wxString &project)
 		delete m_compileRequest;
 		m_compileRequest = NULL;
 	}
-
+	
+	BuildInfo info(project, wxEmptyString, false, BuildInfo::Build);
 	m_compileRequest = new CompileRequest(	GetMainFrame(), //owner window
-											project,	 	//project to build
-											wxEmptyString, 
-											false, 			//not project only
+											info,
 											wxEmptyString, 	//no file name (valid only for build file only)
 											true);			//run premake step only
 	m_compileRequest->Process();
@@ -2924,3 +2893,71 @@ bool Manager::HasHistory() const
 {
 	return m_recentFiles.GetCount()>0 || m_recentWorkspaces.GetCount()>0;
 }
+
+void Manager::AddBuild(const BuildInfo& buildInfo)
+{
+	m_buildQueue.push_back(buildInfo);
+}
+
+void Manager::ProcessBuildQueue()
+{
+	if (m_buildQueue.empty()) {
+		return;
+	}
+
+	// pop the next build build and process it
+	BuildInfo bi = m_buildQueue.front();
+	m_buildQueue.pop_front();
+
+	switch ( bi.GetKind() ) {
+	case BuildInfo::Clean:
+		DoCleanProject(bi);
+		break;
+	case BuildInfo::Build:
+		DoBuildProject(bi);
+		break;
+	}
+}
+
+void Manager::DoBuildProject(const BuildInfo& buildInfo)
+{
+	if ( m_compileRequest && m_compileRequest->IsBusy() ) {
+		return;
+	}
+
+	if ( m_compileRequest ) {
+		delete m_compileRequest;
+		m_compileRequest = NULL;
+	}
+
+	//save all files before compiling, but dont saved new documents
+	SaveAll(false);
+
+	//If a debug session is running, stop it.
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if (dbgr && dbgr->IsRunning()) {
+		if (wxMessageBox(wxT("This would terminate the current debug session, continue?"),  wxT("Confirm"), wxICON_QUESTION|wxYES_NO|wxCANCEL) != wxYES) {
+			return;
+		} else {
+			DbgStop();
+		}
+	}
+	m_compileRequest = new CompileRequest(GetMainFrame(), buildInfo);
+	m_compileRequest->Process();
+}
+
+void Manager::DoCleanProject(const BuildInfo& buildInfo)
+{
+	if ( m_cleanRequest && m_cleanRequest->IsBusy() ) {
+		return;
+	}
+
+	if ( m_cleanRequest ) {
+		delete m_cleanRequest;
+	}
+
+	// TODO :: replace the construction of CleanRequest to include the proper build configuration
+	m_cleanRequest = new CleanRequest(GetMainFrame(), buildInfo);
+	m_cleanRequest->Process();	
+}
+

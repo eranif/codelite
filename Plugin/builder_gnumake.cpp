@@ -137,8 +137,13 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 			}
 
 			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), confToBuild);
-
-			GenerateMakefile(dependProj, confToBuild, force);
+			
+			// incase caller provided with configuration to build, force generation of the makefile
+			GenerateMakefile(dependProj, confToBuild, confToBuild.IsEmpty() ? force : true);
+			// incase we manually specified the configuration to be built, set the project 
+			// as modified, so on next attempt to build it, CodeLite will sync the configuration
+			if(confToBuild.IsEmpty() == false) {dependProj->SetModified( true );}
+			
 			wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, dependProj->GetName());
 			if (confToBuild.IsEmpty() == false) {
 				// incase we use to generate a 'Project Only' makefile,
@@ -158,7 +163,11 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 	}
 
 	//generate makefile for the project itself
-	GenerateMakefile(proj, confToBuild, force);
+	GenerateMakefile(proj, confToBuild, confToBuild.IsEmpty() ? force : true);
+	// incase we manually specified the configuration to be built, set the project 
+	// as modified, so on next attempt to build it, CodeLite will sync the configuration
+	if(confToBuild.IsEmpty() == false) {proj->SetModified( true );}
+
 	wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, project);
 	if (isProjectOnly && confToBuild.IsEmpty() == false) {
 		// incase we use to generate a 'Project Only' makefile,

@@ -32,13 +32,9 @@
 #include "dirsaver.h"
 #include "workspace.h"
 
-CleanRequest::CleanRequest(wxEvtHandler *owner, const wxString &projectName, const wxString &confToBuild, bool projectOnly)
-		: CompilerAction(owner)
-		, m_project(projectName)
-		, m_projectOnly(projectOnly)
-		, m_confTolBuild(confToBuild)
+CleanRequest::CleanRequest(wxEvtHandler *owner, const BuildInfo &info)
+		: CompilerAction(owner, info)
 {
-
 }
 
 CleanRequest::~CleanRequest()
@@ -55,22 +51,22 @@ void CleanRequest::Process()
 	StringMap om;
 	
 	SetBusy(true);
-	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_project, errMsg);
+	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
-		AppendLine(wxT("Cant find project: ") + m_project);
+		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
 		SetBusy(false);
 		return;
 	}
 	
 	bool isCustom(false);
 	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT("GNU makefile for g++/gcc"));
-	if (m_projectOnly) {
-		cmd = builder->GetPOCleanCommand(m_project, m_confTolBuild, isCustom);
+	if (m_info.GetProjectOnly()) {
+		cmd = builder->GetPOCleanCommand(m_info.GetProject(), m_info.GetConfiguration(), isCustom);
 	} else {
-		cmd = builder->GetCleanCommand(m_project, m_confTolBuild, isCustom);
+		cmd = builder->GetCleanCommand(m_info.GetProject(), m_info.GetConfiguration(), isCustom);
 	}
 
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_confTolBuild);
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 	if(bldConf) {
 		wxString cmpType = bldConf->GetCompilerType();
 		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
@@ -85,7 +81,7 @@ void CleanRequest::Process()
 	SendStartMsg();
 
 	//expand the variables of the command
-	cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_project, m_confTolBuild, wxEmptyString);
+	cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_info.GetProject(), m_info.GetConfiguration(), wxEmptyString);
 	m_proc = new clProcess(wxNewId(), cmd);
 
 	if (m_proc) {
@@ -95,7 +91,7 @@ void CleanRequest::Process()
 		if (isCustom) {
 			//first set the path to the project working directory
 			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_confTolBuild);
+			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 			if (buildConf) {
 				wxString wd = buildConf->GetCustomBuildWorkingDir();
 				if (wd.IsEmpty()) {
@@ -106,7 +102,7 @@ void CleanRequest::Process()
 			}
 		}
 
-		if (m_projectOnly ) {
+		if (m_info.GetProjectOnly() ) {
 			//need to change directory to project dir
 			wxSetWorkingDirectory(proj->GetFileName().GetPath());
 		}

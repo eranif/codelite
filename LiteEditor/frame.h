@@ -88,10 +88,7 @@ class Frame : public wxFrame
 	wxHtmlWindow *m_welcomePage;
 	DebuggerPane *m_debuggerPane;
 	wxToolBar *m_debuggerTb;
-	bool m_buildInRun;
-	
-	bool m_rebuild;
-	wxString m_projectRebuilded;
+	bool m_buildAndRun;
 	
 	GeneralInfo m_frameGeneralInfo;
 	std::map<int, wxString> m_toolbars;//< map between toolbars and their resource ID

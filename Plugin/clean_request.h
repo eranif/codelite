@@ -41,17 +41,13 @@
  * \date 07/22/07
  */
 class WXDLLIMPEXP_LE_SDK CleanRequest : public CompilerAction {
-	wxString m_project;
-	bool m_projectOnly;
-	wxString m_confTolBuild;
 public:
 	/**
 	 * Construct a compilation clean request. The compiler thread will clean the selected project and all
 	 * its dependencies as appeard in the build order dialog
 	 * \param projectName the selected project to build
-	 * \param configurationName the workspace selected configuration
 	 */
-	CleanRequest(wxEvtHandler *owner, const wxString &projectName, const wxString &confToBuild, bool projectOnly);
+	CleanRequest(wxEvtHandler *owner, const BuildInfo &info);
 
 	///dtor
 	virtual ~CleanRequest();
@@ -60,7 +56,7 @@ public:
 	virtual void Process();
 
 	//setters/getters
-	const wxString &GetProjectName() const { return m_project; }
+	const wxString &GetProjectName() const { return m_info.GetProject(); }
 };
 
 #endif // CLEAN_REQUEST_H

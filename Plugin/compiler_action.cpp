@@ -29,12 +29,14 @@
 DEFINE_EVENT_TYPE(wxEVT_BUILD_ADDLINE)
 DEFINE_EVENT_TYPE(wxEVT_BUILD_STARTED)
 DEFINE_EVENT_TYPE(wxEVT_BUILD_ENDED)
+DEFINE_EVENT_TYPE(wxEVT_BUILD_STARTED_NOCLEAN)
 
-CompilerAction::CompilerAction(wxEvtHandler *owner)
+CompilerAction::CompilerAction(wxEvtHandler *owner, const BuildInfo &buildInfo)
 : m_proc(NULL)
 , m_owner(owner)
 , m_busy(false)
 , m_stop(false)
+, m_info(buildInfo)
 {
 	m_timer = new wxTimer(this);
 }
@@ -65,16 +67,21 @@ void CompilerAction::SendStartMsg()
 {
 	if( !m_owner)
 		return;
-
-	wxCommandEvent event(wxEVT_BUILD_STARTED);
-	m_owner->AddPendingEvent(event);
+	
+	if(m_info.GetCleanLog()){
+		wxCommandEvent event(wxEVT_BUILD_STARTED);
+		m_owner->AddPendingEvent(event);
+	}else{
+		wxCommandEvent event(wxEVT_BUILD_STARTED_NOCLEAN);
+		m_owner->AddPendingEvent(event);
+	}
 }
 
 void CompilerAction::SendEndMsg()
 {
 	if( !m_owner)
 		return;
-
+	
 	wxCommandEvent event(wxEVT_BUILD_ENDED);
 	m_owner->AddPendingEvent(event);
 }

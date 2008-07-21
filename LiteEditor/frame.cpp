@@ -153,6 +153,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_ADDLINE, Frame::OnBuildEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_STARTED, Frame::OnBuildEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_ENDED, Frame::OnBuildEvent)
+	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_STARTED_NOCLEAN, Frame::OnBuildEvent)
 
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
@@ -375,9 +376,7 @@ Frame* Frame::m_theFrame = NULL;
 Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
 		: wxFrame(pParent, id, title, pos, size, style)
 		, m_findInFilesDlg(NULL)
-		, m_buildInRun(false)
-		, m_rebuild(false)
-		, m_projectRebuilded(wxEmptyString)
+		, m_buildAndRun(false)
 		, m_doingReplaceInFiles(false)
 		, m_cppMenu(NULL)
 		, m_highlightWord(false)
@@ -1717,9 +1716,14 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
 	m_outputPane->GetBuildTab()->CanFocus(true);
-	if (event.GetEventType() == wxEVT_BUILD_STARTED) {
+	if (event.GetEventType() == wxEVT_BUILD_STARTED || event.GetEventType() == wxEVT_BUILD_STARTED_NOCLEAN) {
 		m_hideOutputPane = ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN);
-		m_outputPane->GetBuildTab()->Clear();
+		
+		// do we need to clear the build log?
+		if( event.GetEventType() != wxEVT_BUILD_STARTED_NOCLEAN) {
+			m_outputPane->GetBuildTab()->Clear();
+		}
+		
 		//read settings for the build output tab
 		m_outputPane->GetBuildTab()->ReloadSettings();
 		m_outputPane->GetBuildTab()->AppendText(wxT("Building: "));
@@ -1729,8 +1733,6 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 
 	} else if (event.GetEventType() == wxEVT_BUILD_ENDED) {
 		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
-
-		m_outputPane->GetBuildTab()->OnBuildEnded();
 
 		// get the build settings
 		BuildTabSettingsData buildSettings;
@@ -1748,8 +1750,8 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 
 		//If the build process was part of a 'Build and Run' command, check whether an erros
 		//occured during build process, if non, launch the output
-		if (m_buildInRun) {
-			m_buildInRun = false;
+		if (m_buildAndRun) {
+			m_buildAndRun = false;
 			if (!ManagerST::Get()->IsBuildEndedSuccessfully()) {
 				//build ended with errors
 				if (wxMessageBox(wxT("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES) {
@@ -1759,13 +1761,11 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 				//no errors, execute!
 				ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
 			}
-		} else if (m_rebuild) {
-			//are we rebuilding?
-			m_rebuild = false;
-			ManagerST::Get()->BuildProject(m_projectRebuilded);
-			m_projectRebuilded.clear();
-		}
-
+		} 
+		
+		// process next request from the queue
+		ManagerST::Get()->ProcessBuildQueue();
+		
 		//give back the focus to the editor
 		LEditor *editor = ManagerST::Get()->GetActiveEditor();
 		if (editor) {
@@ -1795,7 +1795,8 @@ void Frame::OnBuildProject(wxCommandEvent &event)
 	wxUnusedVar(event);
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
-		ManagerST::Get()->BuildProject(ManagerST::Get()->GetActiveProjectName());
+		BuildInfo info(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, BuildInfo::Build);
+		ManagerST::Get()->BuildProject( info );
 	}
 }
 
@@ -1804,8 +1805,9 @@ void Frame::OnBuildAndRunProject(wxCommandEvent &event)
 	wxUnusedVar(event);
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
-		m_buildInRun = true;
-		ManagerST::Get()->BuildProject(ManagerST::Get()->GetActiveProjectName());
+		m_buildAndRun = true;
+		BuildInfo info(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, BuildInfo::Build);
+		ManagerST::Get()->BuildProject( info );
 	}
 }
 
@@ -1856,7 +1858,8 @@ void Frame::OnStopExecutedProgram(wxCommandEvent &event)
 void Frame::OnCleanProject(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	ManagerST::Get()->CleanProject(ManagerST::Get()->GetActiveProjectName());
+	BuildInfo buildInfo(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, BuildInfo::Clean);
+	ManagerST::Get()->CleanProject( buildInfo );
 }
 
 void Frame::OnCleanProjectUI(wxUpdateUIEvent &event)
@@ -3111,9 +3114,13 @@ void Frame::RebuildProject(const wxString& projectName)
 {
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
-		m_rebuild = true;
-		m_projectRebuilded = projectName;
-		ManagerST::Get()->CleanProject(m_projectRebuilded);
+		BuildInfo buildInfo(projectName, wxEmptyString, false, BuildInfo::Clean);
+		ManagerST::Get()->AddBuild(buildInfo);
+		
+		buildInfo = BuildInfo(projectName, wxEmptyString, false, BuildInfo::Build);
+		ManagerST::Get()->AddBuild(buildInfo);
+		
+		ManagerST::Get()->ProcessBuildQueue();
 	}
 }
 
@@ -3128,6 +3135,19 @@ void Frame::OnBatchBuild(wxCommandEvent& e)
 	BatchBuildDlg *batchBuild = new BatchBuildDlg(this);
 	if(batchBuild->ShowModal() == wxID_OK){
 		// build the projects
+		std::list<BuildInfo> buildInfoList;
+		batchBuild->GetBuildInfoList(buildInfoList);
+		if(buildInfoList.empty() == false){
+			std::list<BuildInfo>::iterator iter = buildInfoList.begin();
+			
+			// add all build items to queue
+			for(; iter != buildInfoList.end(); iter ++){
+				ManagerST::Get()->AddBuild(*iter);
+			}
+		}
 	}
 	batchBuild->Destroy();
+	
+	// start the build process
+	ManagerST::Get()->ProcessBuildQueue();
 }

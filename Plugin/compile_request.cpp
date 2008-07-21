@@ -33,13 +33,10 @@
 #include "workspace.h"
 #include "dirsaver.h"
 
-CompileRequest::CompileRequest(wxEvtHandler *owner, const wxString &projectName, const wxString &confToBuild, bool projectOnly, const wxString &fileName, bool runPremakeOnly)
-		: CompilerAction(owner)
-		, m_project(projectName)
-		, m_projectOnly(projectOnly)
+CompileRequest::CompileRequest(wxEvtHandler *owner, const BuildInfo &buildInfo, const wxString &fileName, bool runPremakeOnly)
+		: CompilerAction(owner, buildInfo)
 		, m_fileName(fileName)
 		, m_premakeOnly(runPremakeOnly)
-		, m_confToBuild(confToBuild)
 {
 }
 
@@ -56,9 +53,9 @@ void CompileRequest::Process()
 	SetBusy(true);
 	StringMap om;
 
-	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_project, errMsg);
+	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
-		AppendLine(wxT("Cant find project: ") + m_project);
+		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
 		SetBusy(false);
 		return;
 	}
@@ -68,11 +65,11 @@ void CompileRequest::Process()
 	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_fileName.IsEmpty() == false) {
 		//we got a complie request of a single file
-		cmd = builder->GetSingleFileCmd(m_project, m_confToBuild, m_fileName, isCustom, errMsg);
-	} else if (m_projectOnly) {
-		cmd = builder->GetPOBuildCommand(m_project, m_confToBuild, isCustom);
+		cmd = builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, isCustom, errMsg);
+	} else if (m_info.GetProjectOnly()) {
+		cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration(), isCustom);
 	} else {
-		cmd = builder->GetBuildCommand(m_project, m_confToBuild, isCustom);
+		cmd = builder->GetBuildCommand(m_info.GetProject(), m_info.GetConfiguration(), isCustom);
 	}
 
 	SendStartMsg();
@@ -83,9 +80,9 @@ void CompileRequest::Process()
 
 	//if we require to run the makefile generation command only, replace the 'cmd' with the
 	//generation command line
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_confToBuild);
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 	if (m_premakeOnly && bldConf) {
-		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_confToBuild);
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 		if (bldConf) {
 			cmd = bldConf->GetMakeGenerationCommand();
 		}
@@ -122,7 +119,7 @@ void CompileRequest::Process()
 		if (isCustom) {
 			//first set the path to the project working directory
 			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_confToBuild);
+			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 			if (buildConf) {
 				wxString wd = buildConf->GetCustomBuildWorkingDir();
 				if (wd.IsEmpty()) {
@@ -134,7 +131,7 @@ void CompileRequest::Process()
 		}
 
 		//expand the variables of the command
-		cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_project, m_confToBuild, m_fileName);
+		cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
 		
 		//replace the command line
 		m_proc->SetCommand(cmd);
@@ -142,7 +139,7 @@ void CompileRequest::Process()
 		//print the build command
 		AppendLine(cmd + wxT("\n"));
 
-		if (m_projectOnly || m_fileName.IsEmpty() == false) {
+		if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
 			//need to change directory to project dir
 			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
 
@@ -158,7 +155,7 @@ void CompileRequest::Process()
 			//also, send another message to the main frame, indicating which project is being built
 			//and what configuration
 			wxString text;
-			text << wxT("----------Building project:[ ") << m_project << wxT(" - ") << configName << wxT(" ]");
+			text << wxT("----------Building project:[ ") << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
 			if (m_fileName.IsEmpty() == false) {
 				text << wxT(" (Single File Build)----------\n");
 			} else {

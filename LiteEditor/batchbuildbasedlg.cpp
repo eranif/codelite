@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,7 +16,7 @@ BatchBuildBaseDlg::BatchBuildBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText = new wxStaticText( this, wxID_ANY, wxT("Select the configurations you would like to build:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText = new wxStaticText( this, wxID_ANY, wxT("Select the configurations to build/clean:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText->Wrap( -1 );
 	bSizer1->Add( m_staticText, 0, wxALL|wxEXPAND, 5 );
 	

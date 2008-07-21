@@ -196,12 +196,12 @@ void SvnDriver::DisplayLog(const wxString &outputFile, const wxString &content)
 	}
 }
 
-void SvnDriver::ExecCommand(const wxString &cmd)
+void SvnDriver::ExecCommand(const wxString &cmd, bool hide)
 {
 	//execute the command line
 	//the async command is a one time executable object,
 	m_cmd = new AsyncExeCmd(this);
-	m_cmd->Execute(cmd);
+	m_cmd->Execute(cmd, hide);
 	if (m_cmd->GetProcess()) {
 		m_cmd->GetProcess()->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(SvnDriver::OnSvnProcessTerminated), NULL, this);
 	}
@@ -373,7 +373,8 @@ void SvnDriver::DiffFile(const wxFileName &fileName)
 	}
 
 	const wxString& diffCmd = m_plugin->GetOptions().GetDiffCmd();
-	if ( diffCmd.empty() )
+	bool hasExternalDiffCmd = !diffCmd.empty();
+	if ( !hasExternalDiffCmd )
 	{
 		#ifdef __WXMSW__
 			file_name.Prepend(wxT("\""));
@@ -424,7 +425,7 @@ void SvnDriver::DiffFile(const wxFileName &fileName)
 	}
 
 	m_curHandler = new SvnDiffCmdHandler(this, command, fileName.GetFullPath());
-	ExecCommand(command);
+	ExecCommand(command, !hasExternalDiffCmd);
 }
 
 void SvnDriver::Diff()

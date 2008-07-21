@@ -51,7 +51,7 @@ class SvnDriver : public wxEvtHandler
 protected:
 	void OnSvnProcessTerminated(wxProcessEvent &event);
 	void OnSvnProcess(wxCommandEvent &event);
-	void ExecCommand(const wxString &cmd);
+	void ExecCommand(const wxString &cmd, bool hide = true);
 	bool GetFilesList(const wxArrayString& output, wxArrayString &files);
 	void SelectSvnTab();
 	void CommitWithAuth(const wxString &cmd, const TreeItemInfo &item);

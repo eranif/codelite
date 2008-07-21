@@ -2400,6 +2400,7 @@ void ContextCpp::DoCodeComplete(long pos)
 			rCtrl.CallTipShow(currentPosition, m_ct->All());
 		}
 	} else {
+		
 		if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
 			DisplayCompletionBox(candidates, wxEmptyString, showFullDecl);
 		}

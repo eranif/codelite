@@ -118,6 +118,9 @@ void TagsDatabase::CreateSchema()
 		sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS TAGS_UNIQ on tags(kind, path, signature);");
 		m_db->ExecuteUpdate(sql);
 
+		sql = wxT("CREATE INDEX IF NOT EXISTS KIND_IDX on tags(kind);");
+		m_db->ExecuteUpdate(sql);
+		
 		// Create search indexes
 		sql = wxT("CREATE INDEX IF NOT EXISTS TAGS_NAME on tags(name);");
 		m_db->ExecuteUpdate(sql);

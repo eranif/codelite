@@ -33,12 +33,13 @@
 #include "workspace.h"
 #include "dirsaver.h"
 
-CompileRequest::CompileRequest(wxEvtHandler *owner, const wxString &projectName, bool projectOnly, const wxString &fileName, bool runPremakeOnly)
+CompileRequest::CompileRequest(wxEvtHandler *owner, const wxString &projectName, const wxString &confToBuild, bool projectOnly, const wxString &fileName, bool runPremakeOnly)
 		: CompilerAction(owner)
 		, m_project(projectName)
 		, m_projectOnly(projectOnly)
 		, m_fileName(fileName)
 		, m_premakeOnly(runPremakeOnly)
+		, m_confToBuild(confToBuild)
 {
 }
 
@@ -67,11 +68,11 @@ void CompileRequest::Process()
 	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_fileName.IsEmpty() == false) {
 		//we got a complie request of a single file
-		cmd = builder->GetSingleFileCmd(m_project, m_fileName, isCustom, errMsg);
+		cmd = builder->GetSingleFileCmd(m_project, m_confToBuild, m_fileName, isCustom, errMsg);
 	} else if (m_projectOnly) {
-		cmd = builder->GetPOBuildCommand(m_project, isCustom);
+		cmd = builder->GetPOBuildCommand(m_project, m_confToBuild, isCustom);
 	} else {
-		cmd = builder->GetBuildCommand(m_project, isCustom);
+		cmd = builder->GetBuildCommand(m_project, m_confToBuild, isCustom);
 	}
 
 	SendStartMsg();
@@ -82,9 +83,9 @@ void CompileRequest::Process()
 
 	//if we require to run the makefile generation command only, replace the 'cmd' with the
 	//generation command line
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(m_project);
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_confToBuild);
 	if (m_premakeOnly && bldConf) {
-		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(m_project);
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_confToBuild);
 		if (bldConf) {
 			cmd = bldConf->GetMakeGenerationCommand();
 		}
@@ -121,7 +122,7 @@ void CompileRequest::Process()
 		if (isCustom) {
 			//first set the path to the project working directory
 			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjSelBuildConf(m_project);
+			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_confToBuild);
 			if (buildConf) {
 				wxString wd = buildConf->GetCustomBuildWorkingDir();
 				if (wd.IsEmpty()) {
@@ -133,7 +134,7 @@ void CompileRequest::Process()
 		}
 
 		//expand the variables of the command
-		cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_project, m_fileName);
+		cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_project, m_confToBuild, m_fileName);
 		
 		//replace the command line
 		m_proc->SetCommand(cmd);

@@ -1098,8 +1098,9 @@ void Manager::CleanProject(const wxString &projectName, bool projectOnly)
 	if ( m_cleanRequest ) {
 		delete m_cleanRequest;
 	}
-
-	m_cleanRequest = new CleanRequest(GetMainFrame(), projectName, projectOnly);
+	
+	// TODO :: replace the construction of CleanRequest to include the proper build configuration
+	m_cleanRequest = new CleanRequest(GetMainFrame(), projectName, wxEmptyString, projectOnly);
 	m_cleanRequest->Process();
 }
 
@@ -1118,7 +1119,10 @@ bool Manager::IsBuildEndedSuccessfully() const
 
 		//check every line to see if we got an error/warning
 		wxString project(m_compileRequest->GetProjectName());
-		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(project);
+		
+		// TODO :: change the call to ' GetProjBuildConf' to pass the correct 
+		// build configuration
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, wxEmptyString);
 		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(bldConf->GetCompilerType());
 		wxString errPattern = cmp->GetErrPattern();
 		wxString warnPattern = cmp->GetWarnPattern();
@@ -1162,7 +1166,7 @@ void Manager::BuildProject(const wxString &projectName, bool projectOnly)
 			DbgStop();
 		}
 	}
-	m_compileRequest = new CompileRequest(GetMainFrame(), projectName, projectOnly);
+	m_compileRequest = new CompileRequest(GetMainFrame(), projectName, wxEmptyString, projectOnly);
 	m_compileRequest->Process();
 }
 
@@ -1190,7 +1194,7 @@ void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
 		}
 	}
 
-	m_compileRequest = new CompileRequest(GetMainFrame(), projectName, false, fileName);
+	m_compileRequest = new CompileRequest(GetMainFrame(), projectName, wxEmptyString, false, fileName);
 	m_compileRequest->Process();
 }
 
@@ -1744,7 +1748,7 @@ wxString Manager::ExpandVariables(const wxString &expression, ProjectPtr proj)
 	if (editor) {
 		fileName = editor->GetFileName().GetFullPath();
 	}
-	return ExpandAllVariables(expression, WorkspaceST::Get(), project_name, fileName);
+	return ExpandAllVariables(expression, WorkspaceST::Get(), project_name, wxEmptyString, fileName);
 }
 
 //--------------------------- Debugger API -----------------------------
@@ -1790,7 +1794,7 @@ void Manager::DbgStart(long pid)
 		proj = WorkspaceST::Get()->FindProjectByName(GetActiveProjectName(), errMsg);
 		if (proj) {
 			wxSetWorkingDirectory(proj->GetFileName().GetPath());
-			bldConf = WorkspaceST::Get()->GetProjSelBuildConf(proj->GetName());
+			bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), wxEmptyString);
 			if (bldConf) {
 				debuggerName = bldConf->GetDebuggerType();
 				DebuggerMgr::Get().SetActiveDebugger(debuggerName);
@@ -2399,10 +2403,11 @@ void Manager::RunCustomPreMakeCommand(const wxString &project)
 	}
 
 	m_compileRequest = new CompileRequest(	GetMainFrame(), //owner window
-	                                       project,	 	//project to build
-	                                       false, 			//not project only
-	                                       wxEmptyString, 	//no file name (valid only for build file only)
-	                                       true);			//run premake step only
+											project,	 	//project to build
+											wxEmptyString, 
+											false, 			//not project only
+											wxEmptyString, 	//no file name (valid only for build file only)
+											true);			//run premake step only
 	m_compileRequest->Process();
 }
 
@@ -2693,7 +2698,7 @@ void Manager::RetagFile(const wxString& filename)
 
 wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxString &wd, bool considerPauseWhenExecuting)
 {
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(projectName);
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
 	if (!bldConf) {
 		wxLogMessage(wxT("failed to find project configuration for project '") + projectName + wxT("'"));
 		return wxEmptyString;

@@ -130,6 +130,10 @@
       <File Name="buildsettingstab.cpp"/>
       <File Name="buildsettingstabbase.h"/>
       <File Name="buildsettingstabbase.cpp"/>
+      <File Name="batchbuilddlg.h"/>
+      <File Name="batchbuildbasedlg.cpp"/>
+      <File Name="batchbuildbasedlg.h"/>
+      <File Name="batchbuilddlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ProjectSettings">
       <File Name="depend_dlg_page.cpp"/>

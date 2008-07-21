@@ -248,7 +248,7 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 	}
 
 	// expand constants
-	wxString _content = ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, editor->GetFileName().GetFullPath());
+	wxString _content = ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, wxEmptyString, editor->GetFileName().GetFullPath());
 
 	// we are good to go :)
 	editor->InsertText(0, _content);
@@ -411,7 +411,7 @@ void Copyright::MassUpdate(const std::vector<wxFileName> &filtered_files, const 
 		wxFileName fn = filtered_files.at(i);
 
 		wxString file_content;
-		wxString _content = ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, fn.GetFullPath());
+		wxString _content = ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, wxEmptyString, fn.GetFullPath());
 		if (ReadFileWithConversion(fn.GetFullPath(), file_content)) {
 			wxString msg;
 			msg << wxT("Inserting comment to file: ") << fn.GetFullName();

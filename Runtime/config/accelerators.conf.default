@@ -69,10 +69,12 @@ removeall_bookmarks|Search|Remove All Bookmarks|
 new_workspace|Workspace|Create New Workspace...|
 switch_to_workspace|Workspace|Switch to Workspace...|
 close_workspace|Workspace|Close Workspace|
+reload_workspace|Workspace|Reload Workspace|
 import_from_msvs|Workspace|Import MS Visual Studio Solution File...|
 new_project|Workspace|Create New Project|
 add_project|Workspace|Add an Existing Project|
 configuration_manager|Build|Configuration Manager...|
+batch_build|Build|Batch Build...|
 execute_no_debug|Build|Run|Ctrl-F5
 stop_executed_program|Build|Stop|
 build_active_project|Build|Build Project|F7

@@ -308,7 +308,7 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 	wxMenuItem *item(NULL);
 	if ( type == MenuTypeFileView_Project ) {
 
-		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(projectName);
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
 		if (bldConf && bldConf->IsCustomBuild()) {
 			wxString toolName = bldConf->GetToolName();
 			if (toolName != wxT("None")) {
@@ -453,7 +453,7 @@ void FileViewTree::OnExportMakefile( wxCommandEvent &event )
 		//TODO:: make the builder name configurable
 		BuilderPtr builder = BuildManagerST::Get()->GetBuilder( wxT( "GNU makefile for g++/gcc" ) );
 		projectName = GetItemText( item );
-		if ( !builder->Export( projectName, false, true, errMsg ) ) {
+		if ( !builder->Export( projectName, wxEmptyString, false, true, errMsg ) ) {
 			wxMessageBox( errMsg, wxT( "CodeLite" ), wxICON_HAND );
 			return;
 		}

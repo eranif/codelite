@@ -343,6 +343,10 @@
 			<object class="wxMenuItem" name="build_n_run_active_project">
                 <label>Build and Run Pro&amp;ject</label>
             </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="batch_build">
+                <label>Batch Build...</label>
+            </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="next_error">
                 <label>Ne&amp;xt Build Error</label>

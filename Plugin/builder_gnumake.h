@@ -51,27 +51,27 @@ public:
 	 * \param errMsg output
 	 * \return true on success, false otherwise.
 	 */
-	virtual bool Export(const wxString &project, bool isProjectOnly, bool force, wxString &errMsg);
-	virtual wxString GetBuildCommand(const wxString &project, bool &isCustom);
-	virtual wxString GetCleanCommand(const wxString &project, bool &isCustom);
-	virtual wxString GetPOBuildCommand(const wxString &project, bool &isCustom);
-	virtual wxString GetPOCleanCommand(const wxString &project, bool &isCustom);
-	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &fileName, bool &isCustom, wxString &errMsg);
+	virtual bool Export(const wxString &project, const wxString &confToBuild, bool isProjectOnly, bool force, wxString &errMsg);
+	virtual wxString GetBuildCommand(const wxString &project, const wxString &confToBuild, bool &isCustom);
+	virtual wxString GetCleanCommand(const wxString &project, const wxString &confToBuild, bool &isCustom);
+	virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild, bool &isCustom);
+	virtual wxString GetPOCleanCommand(const wxString &project, const wxString &confToBuild, bool &isCustom);
+	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, bool &isCustom, wxString &errMsg);
 
 private:
-	void GenerateMakefile(ProjectPtr proj, bool force);
+	void GenerateMakefile(ProjectPtr proj, const wxString &confToBuild, bool force);
 	void CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldConf, wxString &text);
 	void CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString &targetName, wxString &text);
-	void CreateFileTargets(ProjectPtr proj, wxString &text);
-	void CreateObjectList(ProjectPtr proj, wxString &text);
+	void CreateFileTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text);
+	void CreateObjectList(ProjectPtr proj, const wxString &confToBuild, wxString &text);
 	void CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text);
 	void CreatePreBuildEvents(BuildConfigPtr bldConf, wxString &text);
 	void CreatePostBuildEvents(BuildConfigPtr bldConf, wxString &text);
 	
 	wxString GetCdCmd(const wxFileName &path1, const wxFileName &path2);
 
-	wxString ParseIncludePath(const wxString &paths, const wxString &projectName);
-	wxString ParseLibPath(const wxString &paths, const wxString &projectName);
+	wxString ParseIncludePath(const wxString &paths, const wxString &projectName, const wxString &selConf);
+	wxString ParseLibPath(const wxString &paths, const wxString &projectName, const wxString &selConf);
 	wxString ParseLibs(const wxString &libs);
 	wxString ParsePreprocessor(const wxString &prep);
 	bool HasPrebuildCommands(BuildConfigPtr bldConf) const;

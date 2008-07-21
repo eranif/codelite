@@ -110,7 +110,7 @@ bool IsValidCppFile(const wxString &id);
  * \param fileName file name, to help expand the $(CurrentFile) macro family
  * \return an expanded string. If a macro is unknown it is replaced by empty string
  */
-wxString ExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &fileName);
+wxString ExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &selConf, const wxString &fileName);
 
 /**
  * \brief copy entire directory content (recursievly) from source to target

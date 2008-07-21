@@ -46,7 +46,7 @@ void CompilerAction::AppendLine(const wxString &line)
 
 	wxCommandEvent event(wxEVT_BUILD_ADDLINE);
 	event.SetString(line);
-	m_owner->ProcessEvent(event);
+	m_owner->AddPendingEvent(event);
 
 	m_lines.Add(line);
 }
@@ -67,7 +67,7 @@ void CompilerAction::SendStartMsg()
 		return;
 
 	wxCommandEvent event(wxEVT_BUILD_STARTED);
-	m_owner->ProcessEvent(event);
+	m_owner->AddPendingEvent(event);
 }
 
 void CompilerAction::SendEndMsg()
@@ -76,7 +76,7 @@ void CompilerAction::SendEndMsg()
 		return;
 
 	wxCommandEvent event(wxEVT_BUILD_ENDED);
-	m_owner->ProcessEvent(event);
+	m_owner->AddPendingEvent(event);
 }
 
 void CompilerAction::OnTimer(wxTimerEvent &event)

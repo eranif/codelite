@@ -392,7 +392,8 @@ protected:
 	void OnDetachWorkspaceViewTab(wxCommandEvent &e);
 	void OnDestroyDetachedPane(wxCommandEvent &e);
 	void OnUpdateStatusBar(wxCommandEvent &e);
-	
+	void OnBatchBuild(wxCommandEvent &e);
+	void OnBatchBuildUI(wxUpdateUIEvent &e);
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);
 	void ShowBuildConfigurationManager();

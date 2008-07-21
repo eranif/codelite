@@ -32,10 +32,11 @@
 #include "dirsaver.h"
 #include "workspace.h"
 
-CleanRequest::CleanRequest(wxEvtHandler *owner, const wxString &projectName, bool projectOnly)
+CleanRequest::CleanRequest(wxEvtHandler *owner, const wxString &projectName, const wxString &confToBuild, bool projectOnly)
 		: CompilerAction(owner)
 		, m_project(projectName)
 		, m_projectOnly(projectOnly)
+		, m_confTolBuild(confToBuild)
 {
 
 }
@@ -64,12 +65,12 @@ void CleanRequest::Process()
 	bool isCustom(false);
 	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_projectOnly) {
-		cmd = builder->GetPOCleanCommand(m_project, isCustom);
+		cmd = builder->GetPOCleanCommand(m_project, m_confTolBuild, isCustom);
 	} else {
-		cmd = builder->GetCleanCommand(m_project, isCustom);
+		cmd = builder->GetCleanCommand(m_project, m_confTolBuild, isCustom);
 	}
 
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjSelBuildConf(m_project);
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_confTolBuild);
 	if(bldConf) {
 		wxString cmpType = bldConf->GetCompilerType();
 		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
@@ -84,7 +85,7 @@ void CleanRequest::Process()
 	SendStartMsg();
 
 	//expand the variables of the command
-	cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_project, wxEmptyString);
+	cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_project, m_confTolBuild, wxEmptyString);
 	m_proc = new clProcess(wxNewId(), cmd);
 
 	if (m_proc) {
@@ -94,7 +95,7 @@ void CleanRequest::Process()
 		if (isCustom) {
 			//first set the path to the project working directory
 			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjSelBuildConf(m_project);
+			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_confTolBuild);
 			if (buildConf) {
 				wxString wd = buildConf->GetCustomBuildWorkingDir();
 				if (wd.IsEmpty()) {

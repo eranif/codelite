@@ -534,11 +534,15 @@ bool Workspace::RemoveFile(const wxString &vdFullPath, const wxString &fileName,
 	return proj->RemoveFile(fileName, fixedPath);
 }
 
-BuildConfigPtr Workspace::GetProjSelBuildConf(const wxString &projectName) const
+BuildConfigPtr Workspace::GetProjBuildConf(const wxString &projectName, const wxString &confName) const
 {
 	BuildMatrixPtr matrix = GetBuildMatrix();
-	wxString workspaceConfig = matrix->GetSelectedConfigurationName();
-	wxString projConf = matrix->GetProjectSelectedConf(workspaceConfig, projectName);
+	wxString projConf(confName);
+	
+	if (projConf.IsEmpty()){
+		wxString workspaceConfig = matrix->GetSelectedConfigurationName();
+		projConf = matrix->GetProjectSelectedConf(workspaceConfig, projectName);
+	}
 
 	//Get the project setting and retrieve the selected configuration
 	wxString errMsg;

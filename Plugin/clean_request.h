@@ -43,7 +43,7 @@
 class WXDLLIMPEXP_LE_SDK CleanRequest : public CompilerAction {
 	wxString m_project;
 	bool m_projectOnly;
-
+	wxString m_confTolBuild;
 public:
 	/**
 	 * Construct a compilation clean request. The compiler thread will clean the selected project and all
@@ -51,7 +51,7 @@ public:
 	 * \param projectName the selected project to build
 	 * \param configurationName the workspace selected configuration
 	 */
-	CleanRequest(wxEvtHandler *owner, const wxString &projectName, bool projectOnly);
+	CleanRequest(wxEvtHandler *owner, const wxString &projectName, const wxString &confToBuild, bool projectOnly);
 
 	///dtor
 	virtual ~CleanRequest();

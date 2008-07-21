@@ -41,6 +41,7 @@ class WXDLLIMPEXP_LE_SDK CompileRequest : public CompilerAction {
 	bool m_projectOnly;
 	wxString m_fileName;
 	bool m_premakeOnly;
+	wxString m_confToBuild;
 	
 public:
 	/**
@@ -51,6 +52,7 @@ public:
 	 */
 	CompileRequest(	wxEvtHandler *owner, 
 					const wxString &projectName, 
+					const wxString &confToBuild,
 					bool projectOnly = false, 
 					const wxString &fileName = wxEmptyString,
 					bool runPremakeOnly = false

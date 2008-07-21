@@ -1100,8 +1100,8 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent &event)
 	classPattern.Replace(wxT("$(Name)"), dc.name);
 	funcPattern.Replace(wxT("$(Name)"), dc.name);
 
-	classPattern = ExpandAllVariables(classPattern, WorkspaceST::Get(), editor.GetProjectName(), editor.GetFileName().GetFullPath());
-	funcPattern = ExpandAllVariables(funcPattern, WorkspaceST::Get(), editor.GetProjectName(), editor.GetFileName().GetFullPath());
+	classPattern = ExpandAllVariables(classPattern, WorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
+	funcPattern = ExpandAllVariables(funcPattern, WorkspaceST::Get(), editor.GetProjectName(), wxEmptyString, editor.GetFileName().GetFullPath());
 
 	dc.comment.Replace(wxT("$(ClassPattern)"), classPattern);
 	dc.comment.Replace(wxT("$(FunctionPattern)"), funcPattern);

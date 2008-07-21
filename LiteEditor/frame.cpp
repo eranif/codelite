@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "batchbuilddlg.h"
 #include "detachedpanesinfo.h"
 #include "custom_tab.h"
 #include "custom_tabcontainer.h"
@@ -364,6 +365,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE, Frame::OnNewVersionAvailable)
 	EVT_MENU(XRCID("detach_wv_tab"), Frame::OnDetachWorkspaceViewTab)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
+	
+	EVT_MENU(XRCID("batch_build"), Frame::OnBatchBuild)
+	EVT_UPDATE_UI(XRCID("batch_build"), Frame::OnBatchBuildUI)
+	
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 
@@ -3110,4 +3115,19 @@ void Frame::RebuildProject(const wxString& projectName)
 		m_projectRebuilded = projectName;
 		ManagerST::Get()->CleanProject(m_projectRebuilded);
 	}
+}
+
+void Frame::OnBatchBuildUI(wxUpdateUIEvent& e)
+{
+	bool enable = !ManagerST::Get()->IsBuildInProgress() && ManagerST::Get()->IsWorkspaceOpen();
+	e.Enable(enable);
+}
+
+void Frame::OnBatchBuild(wxCommandEvent& e)
+{
+	BatchBuildDlg *batchBuild = new BatchBuildDlg(this);
+	if(batchBuild->ShowModal() == wxID_OK){
+		// build the projects
+	}
+	batchBuild->Destroy();
 }

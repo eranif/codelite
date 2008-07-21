@@ -246,7 +246,7 @@ public:
 	 * return the project build configuration that matches the
 	 * workspace selected configuration from the build matrix
 	 */
-	BuildConfigPtr GetProjSelBuildConf(const wxString &projectName) const;
+	BuildConfigPtr GetProjBuildConf(const wxString &projectName, const wxString &confName) const;
 
 	wxString ExpandVariables(const wxString &expression) const;
 

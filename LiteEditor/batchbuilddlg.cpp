@@ -1,3 +1,5 @@
+#include <wx/tokenzr.h>
+#include "globals.h"
 #include "manager.h"
 #include "workspace.h"
 #include "batchbuilddlg.h"
@@ -6,32 +8,7 @@ BatchBuildDlg::BatchBuildDlg( wxWindow* parent )
 		: BatchBuildBaseDlg( parent )
 {
 	m_checkListConfigurations->SetFocus();
-
-	// loop over all projects, for each project collect all available
-	// build configurations and add them to the check list control
-	wxArrayString projects;
-	WorkspaceST::Get()->GetProjectList(projects);
-	for (size_t i=0; i<projects.GetCount(); i++) {
-		ProjectPtr p = ManagerST::Get()->GetProject(projects.Item(i));
-		if (p) {
-			ProjectSettingsPtr settings = p->GetSettings();
-			if (settings) {
-				ProjectSettingsCookie cookie;
-				BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
-				while (bldConf) {
-
-					int idx = m_checkListConfigurations->Append( p->GetName() + wxT(" | ") + bldConf->GetName());
-					m_checkListConfigurations->Check((unsigned int)idx, true);
-
-					bldConf = settings->GetNextBuildConfiguration(cookie);
-				}
-			}
-		}
-	}
-	
-	if(m_checkListConfigurations->GetCount()>0){
-		m_checkListConfigurations->Select(0);
-	}
+	DoInitialize();
 }
 
 void BatchBuildDlg::OnItemSelected( wxCommandEvent& event )
@@ -48,6 +25,7 @@ void BatchBuildDlg::OnBuild( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	m_cmd = BuildInfo::Build;
+	DoSaveBatchBuildOrder();
 	EndModal(wxID_OK);
 }
 
@@ -68,6 +46,7 @@ void BatchBuildDlg::OnClean( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	m_cmd = BuildInfo::Clean;
+	DoSaveBatchBuildOrder();
 	EndModal(wxID_OK);
 }
 
@@ -123,7 +102,7 @@ void BatchBuildDlg::OnMoveUp( wxCommandEvent& event )
 
 void BatchBuildDlg::OnMoveUpUI( wxUpdateUIEvent& event )
 {
-	
+	event.Skip();
 }
 
 void BatchBuildDlg::OnMoveDown( wxCommandEvent& event )
@@ -149,12 +128,13 @@ void BatchBuildDlg::OnMoveDown( wxCommandEvent& event )
 
 void BatchBuildDlg::OnMoveDownUI( wxUpdateUIEvent& event )
 {
-	// TODO: Implement OnMoveDownUI
+	event.Skip();
 }
 
 void BatchBuildDlg::OnClose( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
+	DoSaveBatchBuildOrder();
 	EndModal(wxID_CANCEL);
 }
 
@@ -176,4 +156,80 @@ void BatchBuildDlg::GetBuildInfoList(std::list<BuildInfo>& buildInfoList)
 			clean_log = false;
 		}
 	}
+}
+
+void BatchBuildDlg::DoInitialize()
+{
+	// load the previously saved batch build file
+	wxFileName fn(WorkspaceST::Get()->GetWorkspaceFileName());
+	fn.SetExt(wxT("batch_build"));
+	
+	wxString content;
+	wxArrayString arr;
+	if(ReadFileWithConversion(fn.GetFullPath(), content)){
+		arr = wxStringTokenize(content, wxT("\n"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<arr.GetCount(); i++){
+			int idx = m_checkListConfigurations->Append(arr.Item(i));
+			m_checkListConfigurations->Check((unsigned int)idx);
+		}
+	}
+	
+	// loop over all projects, for each project collect all available
+	// build configurations and add them to the check list control
+	wxArrayString projects;
+	WorkspaceST::Get()->GetProjectList(projects);
+	for (size_t i=0; i<projects.GetCount(); i++) {
+		ProjectPtr p = ManagerST::Get()->GetProject(projects.Item(i));
+		if (p) {
+			ProjectSettingsPtr settings = p->GetSettings();
+			if (settings) {
+				ProjectSettingsCookie cookie;
+				BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
+				while (bldConf) {
+					wxString item(p->GetName() + wxT(" | ") + bldConf->GetName());
+					
+					int where = arr.Index(item);
+					if(where == wxNOT_FOUND){
+						// append this item
+						m_checkListConfigurations->Append(item);
+					} else {
+						// this item already been added,
+						// remove it from the arr and continue
+						arr.RemoveAt((size_t)where);
+					}
+
+					bldConf = settings->GetNextBuildConfiguration(cookie);
+				}
+			}
+		}
+	}
+	
+	// check to see which configuration was left in 'arr' 
+	// and remove them from the checklistbox
+	for(size_t i=0; i<arr.GetCount(); i++){
+		int where = m_checkListConfigurations->FindString(arr.Item(i));
+		if(where != wxNOT_FOUND){
+			m_checkListConfigurations->Delete((unsigned int)where);
+		}
+	}
+	arr.clear();
+	
+	if(m_checkListConfigurations->GetCount()>0){
+		m_checkListConfigurations->Select(0);
+	}
+}
+
+void BatchBuildDlg::DoSaveBatchBuildOrder()
+{
+	wxFileName fn(WorkspaceST::Get()->GetWorkspaceFileName());
+	fn.SetExt(wxT("batch_build"));
+	
+	wxString content;
+	for(unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++){
+		if(m_checkListConfigurations->IsChecked(i)) {
+			content << m_checkListConfigurations->GetString(i) << wxT("\n");
+		}
+	}
+	
+	WriteFileWithBackup(fn.GetFullPath(), content, false);
 }

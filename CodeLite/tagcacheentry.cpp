@@ -16,6 +16,7 @@ TagCacheEntry::TagCacheEntry(const wxString &query, const std::vector<TagEntryPt
 
 TagCacheEntry::~TagCacheEntry()
 {
+	m_files.Clear();
 }
 
 bool TagCacheEntry::IsFileRelated(const wxString& fileName) const

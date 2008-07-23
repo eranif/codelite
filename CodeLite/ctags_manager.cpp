@@ -85,7 +85,12 @@ TagsManager::TagsManager() : wxEvtHandler()
 {
 	m_pDb = new TagsDatabase();
 	m_pExternalDb = new TagsDatabase();
-
+	m_extDbCache = new TagsCache();
+	m_workspaceDbCache = new TagsCache();
+	
+	m_extDbCache->SetMAxCacheSize(1000);
+	m_workspaceDbCache->SetMAxCacheSize(500);
+	
 #if defined (__WXMSW__) || defined (__WXGTK__)
 	m_ctagsCmd = wxT("  --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p --filter=yes  --filter-terminator=\"<<EOF>>\" ");
 	m_timer = new wxTimer(this, CtagsMgrTimerId);
@@ -100,6 +105,8 @@ TagsManager::~TagsManager()
 {
 	delete m_pDb;
 	delete m_pExternalDb;
+	delete m_extDbCache;
+	delete m_workspaceDbCache;
 	if (m_timer) {
 		delete m_timer;
 	}
@@ -1114,7 +1121,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
 		strFiles.Add(files.at(i).GetFullPath());
 
 		// clear all the queries which holds reference to this file
-		GetWorkspaceTagsCache().DeleteByFilename(files.at(i).GetFullPath());
+		m_workspaceDbCache->DeleteByFilename(files.at(i).GetFullPath());
 
 	}
 	DoBuildDatabase(strFiles, *m_pDb);
@@ -1398,7 +1405,7 @@ void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> 
 		//try the external database first
 		if ( !only_workspace && m_pExternalDb->IsOpen() ) {
 			//check the cache first
-			TagCacheEntryPtr cachedEntry = m_extDbCache.FindByQuery(sql);
+			TagCacheEntryPtr cachedEntry = m_extDbCache->FindByQuery(sql);
 			if (!cachedEntry) {
 				//nothing found in the cache
 				wxSQLite3ResultSet ex_rs;
@@ -1415,8 +1422,7 @@ void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> 
 				}
 
 				//add results to cache
-				TagCacheEntryPtr newItem( new TagCacheEntry(sql, tmpTags) );
-				m_extDbCache.AddEntry(newItem);
+				m_extDbCache->AddEntry(new TagCacheEntry(sql, tmpTags));
 
 				tags.insert(tags.end(), tmpTags.begin(), tmpTags.end());
 				ex_rs.Finalize();
@@ -1427,7 +1433,7 @@ void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> 
 		}
 
 		//now try the local tags database
-		TagCacheEntryPtr cachedEntry = GetWorkspaceTagsCache().FindByQuery(sql);
+		TagCacheEntryPtr cachedEntry = m_workspaceDbCache->FindByQuery(sql);
 		if ( !cachedEntry ) {
 			std::vector<TagEntryPtr> tmpTags;
 			wxSQLite3ResultSet rs = m_pDb->Query(sql);
@@ -1438,8 +1444,7 @@ void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> 
 			}
 			
 			// cache the result
-			TagCacheEntryPtr newItem(new TagCacheEntry(sql, tmpTags));
-			GetWorkspaceTagsCache().AddEntry(newItem);
+			m_workspaceDbCache->AddEntry(new TagCacheEntry(sql, tmpTags));
 			
 			// append the results 
 			tags.insert(tags.end(), tmpTags.begin(), tmpTags.end());
@@ -1634,7 +1639,7 @@ void TagsManager::CloseDatabase()
 	if (m_pDb) {
 		delete m_pDb;
 		m_pDb = new TagsDatabase();
-		GetWorkspaceTagsCache().Clear();
+		m_workspaceDbCache->Clear();
 	}
 }
 
@@ -1648,7 +1653,7 @@ void TagsManager::CloseExternalDatabase()
 		//clear variables cache
 		m_vars.clear();
 		//clear the cache
-		m_extDbCache.Clear();
+		m_extDbCache->Clear();
 	}
 }
 

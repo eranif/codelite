@@ -135,8 +135,8 @@ class WXDLLIMPEXP_CL TagsManager : public wxEvtHandler
 	std::list<clProcess*> m_gargabeCollector;
 	wxTimer *m_timer;
 	std::vector<VariableEntryPtr> m_vars;
-	TagsCache m_extDbCache;
-	TagsCache m_workspaceDbCache;
+	TagsCache *m_extDbCache;
+	TagsCache *m_workspaceDbCache;
 	Language *m_lang;
 	bool m_useExternalDatabase;
 	
@@ -162,7 +162,7 @@ public:
 	 * clear cached items, user should handle it in the appropriate places 
 	 * (e.g. in the onFileSave() handler) 
 	 */
-	TagsCache& GetWorkspaceTagsCache() {return m_workspaceDbCache;}
+	TagsCache* GetWorkspaceTagsCache() {return m_workspaceDbCache;}
 	
 	/**
 	 * \brief clear the file cached

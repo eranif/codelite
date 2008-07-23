@@ -556,7 +556,7 @@ bool LEditor::SaveFile()
 		TagsManagerST::Get()->ClearCachedFile(GetFileName().GetFullPath());
 		
 		// clear all the queries which holds reference to this file
-		TagsManagerST::Get()->GetWorkspaceTagsCache().DeleteByFilename(GetFileName().GetFullPath());
+		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(GetFileName().GetFullPath());
 		
 		m_context->RetagFile();
 	}

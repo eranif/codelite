@@ -2,8 +2,9 @@
 #include <wx/log.h>
 
 TagsCache::TagsCache()
-: m_maxSize(200)
+: m_maxSize(500)
 {
+	m_cacheQueue.clear();
 }
 
 TagsCache::~TagsCache()
@@ -20,19 +21,23 @@ void TagsCache::AddEntry(TagCacheEntryPtr entry)
 	if(m_cacheQueue.size() > GetMaxCacheSize()){
 		TagCacheEntryPtr deleteItem = m_cacheQueue.back();
 		m_cacheQueue.pop_back();
+		
+		//wxLogMessage(wxString::Format(wxT("Deleted item from cache: %s"), deleteItem->GetQueryKey().c_str()));
 	}
 }
 
 void TagsCache::Clear()
 {
-	m_cacheQueue.clear();
+	if(m_cacheQueue.empty() == false){
+		m_cacheQueue.clear();
+	}
 }
 
 void TagsCache::DeleteByFilename(const wxString& fileName)
 {
 	std::list<TagCacheEntryPtr>::iterator iter = m_cacheQueue.begin();
 	for(; iter != m_cacheQueue.end(); iter++){
-		TagCacheEntryPtr t = *iter;
+		TagCacheEntryPtr t = (*iter);
 		if(t->IsFileRelated(fileName)){
 			iter = m_cacheQueue.erase(iter);
 		}

@@ -2232,7 +2232,7 @@ void ContextCpp::RetagFile()
 	TagsManagerST::Get()->ClearCachedFile(ctrl.GetFileName().GetFullPath());
 
 	// clear all the queries which holds reference to this file
-	TagsManagerST::Get()->GetWorkspaceTagsCache().DeleteByFilename(ctrl.GetFileName().GetFullPath());
+	TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(ctrl.GetFileName().GetFullPath());
 		
 	ctrl.SetActive();
 }

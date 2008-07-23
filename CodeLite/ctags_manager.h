@@ -25,6 +25,7 @@
  #ifndef CODELITE_CTAGS_MANAGER_H
 #define CODELITE_CTAGS_MANAGER_H
 
+#include "tagscache.h"
 #include "wx/event.h"
 #include "wx/process.h"
 #include "cl_process.h"
@@ -134,7 +135,8 @@ class WXDLLIMPEXP_CL TagsManager : public wxEvtHandler
 	std::list<clProcess*> m_gargabeCollector;
 	wxTimer *m_timer;
 	std::vector<VariableEntryPtr> m_vars;
-	std::map<wxString, TagCacheEntryPtr> m_cache;
+	TagsCache m_extDbCache;
+	TagsCache m_workspaceDbCache;
 	Language *m_lang;
 	bool m_useExternalDatabase;
 	
@@ -153,6 +155,14 @@ public:
 	 * \brief return the currently cached file
 	 */
 	bool IsFileCached(const wxString &fileName) const;
+	
+	/**
+	 * \brief return reference to the workspace tags cache
+	 * By default codelite caches tags of all queries executed. In order to 
+	 * clear cached items, user should handle it in the appropriate places 
+	 * (e.g. in the onFileSave() handler) 
+	 */
+	TagsCache& GetWorkspaceTagsCache() {return m_workspaceDbCache;}
 	
 	/**
 	 * \brief clear the file cached
@@ -736,8 +746,6 @@ protected:
 	void FilterImplementation(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	void FilterDeclarations(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	void ConvertPath(TagEntryPtr& tag);
-	bool QueryExtDbCache(const wxString &query, std::vector<TagEntryPtr> &tags);
-	void AddToExtDbCache(const wxString &query, const std::vector<TagEntryPtr> &tags);
 };
 
 /// create the singleton typedef

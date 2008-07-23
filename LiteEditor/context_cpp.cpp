@@ -2231,6 +2231,9 @@ void ContextCpp::RetagFile()
 	// incase this file is not cache this function does nothing
 	TagsManagerST::Get()->ClearCachedFile(ctrl.GetFileName().GetFullPath());
 
+	// clear all the queries which holds reference to this file
+	TagsManagerST::Get()->GetWorkspaceTagsCache().DeleteByFilename(ctrl.GetFileName().GetFullPath());
+		
 	ctrl.SetActive();
 }
 

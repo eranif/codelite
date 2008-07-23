@@ -554,7 +554,10 @@ bool LEditor::SaveFile()
 
 		// clear cached file, this function does nothing if the file is not cached
 		TagsManagerST::Get()->ClearCachedFile(GetFileName().GetFullPath());
-
+		
+		// clear all the queries which holds reference to this file
+		TagsManagerST::Get()->GetWorkspaceTagsCache().DeleteByFilename(GetFileName().GetFullPath());
+		
 		m_context->RetagFile();
 	}
 	return true;

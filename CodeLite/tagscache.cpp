@@ -1,6 +1,8 @@
 #include "tagscache.h"
+#include <wx/log.h>
 
 TagsCache::TagsCache()
+: m_maxSize(200)
 {
 }
 
@@ -10,30 +12,40 @@ TagsCache::~TagsCache()
 
 void TagsCache::AddEntry(TagCacheEntryPtr entry)
 {
+	// add an entry at the bottom of the queue
+	m_cacheQueue.push_front(entry);
+	
+	// incase we exceeded the cache size, delete the least accessed item from
+	// cache - which is the first item in the map
+	if(m_cacheQueue.size() > GetMaxCacheSize()){
+		TagCacheEntryPtr deleteItem = m_cacheQueue.back();
+		m_cacheQueue.pop_back();
+	}
 }
 
 void TagsCache::Clear()
 {
+	m_cacheQueue.clear();
 }
 
 void TagsCache::DeleteByFilename(const wxString& fileName)
 {
-	std::map<wxString, TagCacheEntryPtr>::iterator iter = m_cache.begin();
-	for(; iter != m_cache.end(); iter++){
-		TagCacheEntryPtr t = iter->second;
+	std::list<TagCacheEntryPtr>::iterator iter = m_cacheQueue.begin();
+	for(; iter != m_cacheQueue.end(); iter++){
+		TagCacheEntryPtr t = *iter;
 		if(t->IsFileRelated(fileName)){
-			m_cache.erase(iter);
-			iter = m_cache.begin();
+			iter = m_cacheQueue.erase(iter);
 		}
 	}
 }
 
 TagCacheEntryPtr TagsCache::FindByQuery(const wxString& query)
 {
-	std::map<wxString, TagCacheEntryPtr>::iterator iter = m_cache.find(query);
-	if (iter != m_cache.end()) {
-		return iter->second;
+	std::list<TagCacheEntryPtr>::iterator iter = m_cacheQueue.begin();
+	for(; iter != m_cacheQueue.end(); iter ++){
+		if((*iter)->GetQueryKey() == query) {
+			return *iter;
+		}
 	}
 	return NULL;
 }
-

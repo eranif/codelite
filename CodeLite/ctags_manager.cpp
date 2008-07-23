@@ -64,19 +64,6 @@ struct tagParseResult {
 };
 
 extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens);
-//---------------------------------------------------------------------------
-// Tag cache entry
-//---------------------------------------------------------------------------
-TagCacheEntry::TagCacheEntry(const wxString &query, const std::vector<TagEntryPtr> &tags)
-		: m_query(query)
-		, m_tags(tags)
-{
-}
-
-TagCacheEntry::~TagCacheEntry()
-{
-}
-
 static int CtagsMgrTimerId = wxNewId();
 
 //------------------------------------------------------------------------------
@@ -726,11 +713,18 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 	expression.erase(0, expression.find_first_not_of(trimLeftString));
 	expression.erase(expression.find_last_not_of(trimRightString)+1);
 	wxString oper;
+	
+	wxStopWatch sw;
+	sw.Start();
+	wxLogMessage(wxString::Format(wxT("Calling ProcessExpression")));
 
+	
 	bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 	if (!res) {
 		return false;
 	}
+
+	wxLogMessage(wxString::Format(wxT("ProcessExpression - done %d"), sw.Time()));
 
 	//load all tags from the database that matches typeName & typeScope
 	wxString scope;
@@ -764,7 +758,8 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		filter.Add(wxT("prototype"));
 		TagsByScope(scope, filter, candidates, true);
 	}
-
+	
+	wxLogMessage(wxString::Format(wxT("AutoCompleteCandidates - done %d"), sw.Time()));
 	return candidates.empty() == false;
 }
 

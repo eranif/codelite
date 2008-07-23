@@ -39,6 +39,7 @@
 #include "setters_getters_data.h"
 #include "extdbdata.h"
 #include "language.h"
+#include "tagcacheentry.h"
 
 #ifndef WXDLLIMPEXP_CL
 #ifdef WXMAKINGDLL_CODELITE
@@ -63,19 +64,6 @@ class Language;
 
 #define TagsGlobal 0
 #define TagsGlobalGTK 1
-
-class WXDLLIMPEXP_CL TagCacheEntry {
-	wxString m_query;
-	std::vector<TagEntryPtr> m_tags;
-public:
-	TagCacheEntry(const wxString& query, const std::vector<TagEntryPtr> &tags);
-	~TagCacheEntry();
-
-	const wxString &GetQueryKey() const{return m_query;}
-	const std::vector<TagEntryPtr> &GetTags() const{return m_tags;}
-};
-
-typedef SmartPtr<TagCacheEntry> TagCacheEntryPtr;
 
 struct DoxygenComment {
 	wxString name;

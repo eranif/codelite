@@ -177,4 +177,10 @@
   </Settings>
   <Dependencies/>
   <Dependencies/>
+  <VirtualDirectory Name="TagsCache">
+    <File Name="tagcacheentry.cpp"/>
+    <File Name="tagcacheentry.h"/>
+    <File Name="tagscache.cpp"/>
+    <File Name="tagscache.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>

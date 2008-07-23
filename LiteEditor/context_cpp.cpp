@@ -2380,7 +2380,7 @@ void ContextCpp::DoCodeComplete(long pos)
 		globalText.Append(wxT(";"));
 		text.Prepend(globalText);
 	}
-
+	
 	std::vector<TagEntryPtr> candidates;
 	if ( showFuncProto ) {
 		//for function prototype, the last char entered was '(', this will break

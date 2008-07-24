@@ -70,8 +70,21 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		errMsg << wxT("Cant open project '") << project << wxT("'");
 		return false;
 	}
-
-	wxArrayString depsArr = proj->GetDependencies();
+	
+	// get the selected build configuration
+	wxString bld_conf_name(confToBuild);
+	
+	if(confToBuild.IsEmpty()) {
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
+		if(!bldConf) {
+			errMsg << wxT("Cant find build configuration for project '") << project << wxT("'");
+			return false;
+		}
+		bld_conf_name = bldConf->GetName();
+	}
+	
+	wxArrayString depsArr = proj->GetDependencies(bld_conf_name);
+	
 	wxArrayString removeList;
 	if (!isProjectOnly) {
 		//this function assumes that the working directory is located at the workspace path
@@ -102,7 +115,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		}
 		//update the project dependencies a
 		bool modified = proj->IsModified();
-		proj->SetDependencies(depsArr);
+		proj->SetDependencies(depsArr, bld_conf_name);
 
 		//the set settings functions marks the project as 'modified' this causes
 		//an unneeded makefile generation if the settings was not really modified

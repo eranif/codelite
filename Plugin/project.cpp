@@ -403,30 +403,6 @@ wxArrayString Project::GetDependencies() const
 	return result;
 }
 
-void Project::SetDependencies(wxArrayString &deps)
-{
-	//remove old node
-	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Dependencies"));
-	if (node) {
-		m_doc.GetRoot()->RemoveChild(node);
-		delete node;
-	}
-
-	node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Dependencies"));
-	m_doc.GetRoot()->AddChild(node);
-
-	//create a node for each dependency in the array
-	for (size_t i=0; i<deps.GetCount(); i++) {
-		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
-		child->AddProperty(wxT("Name"), deps.Item(i));
-		node->AddChild(child);
-	}
-
-	//save changes
-	m_doc.Save(m_fileName.GetFullPath());
-	SetModified(true);
-}
-
 void Project::SetModified(bool mod)
 {
 	m_isModified = mod;
@@ -608,14 +584,14 @@ wxString Project::GetVDByFileName(const wxString& file)
 	::wxSetWorkingDirectory(m_fileName.GetPath());
 	wxFileName tmp(file);
 	tmp.MakeRelativeTo(m_fileName.GetPath());
-	
+
 	wxString path(wxEmptyString);
 	wxXmlNode *fileNode = FindFile(m_doc.GetRoot(), tmp.GetFullPath());
-	
-	if(fileNode) {
+
+	if (fileNode) {
 		wxXmlNode *parent = fileNode->GetParent();
-		while( parent ) {
-			if(parent->GetName() == wxT("VirtualDirectory")) {
+		while ( parent ) {
+			if (parent->GetName() == wxT("VirtualDirectory")) {
 				path.Prepend(parent->GetPropVal(wxT("Name"), wxEmptyString));
 				path.Prepend(wxT(":"));
 			} else {
@@ -632,15 +608,15 @@ wxString Project::GetVDByFileName(const wxString& file)
 wxXmlNode* Project::FindFile(wxXmlNode* parent, const wxString& file)
 {
 	wxXmlNode *child = parent->GetChildren();
-	while( child ) {
+	while ( child ) {
 		wxString name = child->GetName();
-		if(name == wxT("File") && child->GetPropVal(wxT("Name"), wxEmptyString) == file) {
+		if (name == wxT("File") && child->GetPropVal(wxT("Name"), wxEmptyString) == file) {
 			return child;
 		}
-		
-		if(child->GetName() == wxT("VirtualDirectory")) {
+
+		if (child->GetName() == wxT("VirtualDirectory")) {
 			wxXmlNode *n = FindFile(child, file);
-			if(n) {
+			if (n) {
 				return n;
 			}
 		}
@@ -652,9 +628,66 @@ wxXmlNode* Project::FindFile(wxXmlNode* parent, const wxString& file)
 bool Project::RenameVirtualDirectory(const wxString& oldVdPath, const wxString& newName)
 {
 	wxXmlNode *vdNode = GetVirtualDir(oldVdPath);
-	if(vdNode) {
+	if (vdNode) {
 		XmlUtils::UpdateProperty(vdNode, wxT("Name"), newName);
 		return m_doc.Save(m_fileName.GetFullPath());
 	}
 	return false;
+}
+
+wxArrayString Project::GetDependencies(const wxString& configuration) const
+{
+	wxArrayString result;
+
+	// dependencies are located directly under the root level
+	wxXmlNode *node = m_doc.GetRoot()->GetChildren();
+	while (node) {
+		if ( node->GetName() == wxT("Dependencies") && node->GetPropVal(wxT("Name"), wxEmptyString) == configuration) {
+			// we have our match
+			wxXmlNode *child = node->GetChildren();
+			while (child) {
+				if (child->GetName() == wxT("Project")) {
+					result.Add(XmlUtils::ReadString(child, wxT("Name")));
+				}
+				child = child->GetNext();
+			}
+			return result;
+		}
+		node = node->GetNext();
+	}
+	
+	// if we are here, it means no match for the given configuration
+	// return the default dependencies
+	return GetDependencies();
+}
+
+void Project::SetDependencies(wxArrayString& deps, const wxString& configuration)
+{
+	// first try to locate the old node
+	wxXmlNode *node = m_doc.GetRoot()->GetChildren();
+	while (node) {
+		if ( node->GetName() == wxT("Dependencies") && node->GetPropVal(wxT("Name"), wxEmptyString) == configuration) {
+			// we have our match
+			node->GetParent()->RemoveChild(node);
+			delete node;
+			break;
+		}
+		node = node->GetNext();
+	}
+	
+	// create new dependencies node
+	node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Dependencies"));
+	node->AddProperty(wxT("Name"), configuration);
+	m_doc.GetRoot()->AddChild(node);
+	
+	//create a node for each dependency in the array
+	for (size_t i=0; i<deps.GetCount(); i++) {
+		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
+		child->AddProperty(wxT("Name"), deps.Item(i));
+		node->AddChild(child);
+	}
+
+	//save changes
+	m_doc.Save(m_fileName.GetFullPath());
+	SetModified(true);	
 }

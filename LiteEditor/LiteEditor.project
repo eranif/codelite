@@ -144,6 +144,8 @@
       <File Name="project_settings_dlg.cpp"/>
       <File Name="project_settings_dlg.h"/>
       <File Name="project_settings_base_dlg.h"/>
+      <File Name="buildorderbasepage.h"/>
+      <File Name="buildorderbasepage.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ProjectManagement">
       <File Name="open_resouce_dlg.cpp"/>

@@ -315,16 +315,18 @@ public:
 	ProjectTreePtr AsTree();
 
 	/**
-	 * Return list of projects that this projects depends on
+	 * \brief return the build order for a given configuration
+	 * \param configuration
 	 */
-	wxArrayString GetDependencies() const;
-
+	wxArrayString GetDependencies(const wxString &configuration) const;
+	
 	/**
-	 * Set list of projects that this projects depends on
+	 * \brief set the dependencies for this project for a given configuration
+	 * \param deps
+	 * \param configuration
 	 */
-	void SetDependencies(wxArrayString &deps);
-
-
+	void SetDependencies(wxArrayString &deps, const wxString &configuration);
+	
 	/**
 	 * Return true if a file already exist under the project
 	 */
@@ -368,6 +370,11 @@ private:
 	wxXmlNode *CreateVD(const wxString &vdFullPath, bool mkpath = false);
 
 	void GetFiles(wxXmlNode *parent, std::vector<wxFileName> &files, bool absPath = false);
+	
+	/**
+	 * Return list of projects that this projects depends on
+	 */
+	wxArrayString GetDependencies() const; 
 };
 
 class ProjectData

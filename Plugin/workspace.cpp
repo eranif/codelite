@@ -392,12 +392,30 @@ bool Workspace::RemoveProject(const wxString &name, wxString &errMsg)
 	for (; iter != m_projects.end(); iter++) {
 		ProjectPtr p = iter->second;
 		if (p) {
-			wxArrayString deps = p->GetDependencies();
-			int where = deps.Index(name);
-			if (where != wxNOT_FOUND) {
-				deps.RemoveAt((size_t)where);
+			wxArrayString configs;
+			// populate the choice control with the list of available configurations for this project
+			ProjectSettingsPtr settings = p->GetSettings();
+			if ( settings ) {
+				ProjectSettingsCookie cookie;
+				BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
+				while (bldConf) {
+					configs.Add(bldConf->GetName());
+					bldConf = settings->GetNextBuildConfiguration(cookie);
+				}
 			}
-			p->SetDependencies(deps);
+
+			// update each configuration of this project
+			for (size_t i=0; i<configs.GetCount(); i++) {
+				
+				wxArrayString deps = p->GetDependencies(configs.Item(i));
+				int where = deps.Index(name);
+				if (where != wxNOT_FOUND) {
+					deps.RemoveAt((size_t)where);
+				}
+				
+				// update the configuration
+				p->SetDependencies(deps, configs.Item(i));
+			}
 		}
 	}
 	return m_doc.Save( m_fileName.GetFullPath() );
@@ -538,8 +556,8 @@ BuildConfigPtr Workspace::GetProjBuildConf(const wxString &projectName, const wx
 {
 	BuildMatrixPtr matrix = GetBuildMatrix();
 	wxString projConf(confName);
-	
-	if (projConf.IsEmpty()){
+
+	if (projConf.IsEmpty()) {
 		wxString workspaceConfig = matrix->GetSelectedConfigurationName();
 		projConf = matrix->GetProjectSelectedConf(workspaceConfig, projectName);
 	}
@@ -571,15 +589,15 @@ bool Workspace::ReloadProject(const wxString& file)
 void Workspace::ReloadWorkspace()
 {
 	m_doc = wxXmlDocument();
-	
+
 	// reset the internal cache objects
 	m_projects.clear();
 
 	TagsManager *mgr = TagsManagerST::Get();
 	mgr->CloseDatabase();
-	
+
 	wxString err_msg;
-	if(!OpenWorkspace(m_fileName.GetFullPath(), err_msg)){
+	if (!OpenWorkspace(m_fileName.GetFullPath(), err_msg)) {
 		wxLogMessage(wxT("Reload workspace: ")+ err_msg);
 	}
 }

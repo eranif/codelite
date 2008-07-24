@@ -350,6 +350,10 @@ void OptionsDlg::SaveChanges()
 	EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_wordHighlightColour->GetColour().GetAsString());
 	EditorConfigST::Get()->SaveLongValue(wxT("SingleInstance"), m_singleInstance->IsChecked() ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("CheckNewVersion"), m_checkForNewVersion->IsChecked() ? 1 : 0);
+	EditorConfigST::Get()->SaveLongValue(wxT("ShowFullPathInFrameTitle"), m_checkFullPathInTitle->IsChecked() ? 1 : 0);
+	
+	// apply the title format changes
+	Frame::Get()->SetFrameTitle(ManagerST::Get()->GetActiveEditor());
 	
 	//check to see of the icon size was modified
 	int oldIconSize(24);
@@ -512,7 +516,7 @@ wxPanel* OptionsDlg::CreateMiscPage()
 	wxString iconSize[] = { wxT("Toolbar uses small icons (16x16)"), wxT("Toolbar uses large icons (24x24)") };
 	m_iconSize = new wxChoice( m_miscPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, 2, iconSize, 0 );
 	bszier->Add( m_iconSize, 0, wxALL|wxEXPAND, 5 );
-
+	
 	if (options->GetIconsSize() == 16) {
 		m_iconSize->SetSelection(0);
 	} else {
@@ -553,6 +557,9 @@ wxPanel* OptionsDlg::CreateMiscPage()
 	m_checkForNewVersion = new wxCheckBox(m_miscPage, wxID_ANY, wxT("Check for new version on startup"), wxDefaultPosition, wxDefaultSize, 0);
 	bszier->Add(m_checkForNewVersion, 0, wxEXPAND | wxALL, 5);
 	
+	m_checkFullPathInTitle = new wxCheckBox(m_miscPage, wxID_ANY, wxT("Show file's full path in frame title"), wxDefaultPosition, wxDefaultSize, 0);
+	bszier->Add(m_checkFullPathInTitle, 0, wxEXPAND | wxALL, 5);
+	
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
@@ -575,7 +582,11 @@ wxPanel* OptionsDlg::CreateMiscPage()
 	long check(1);
 	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
 	m_checkForNewVersion->SetValue(check ? true : false);
-	
+
+	check = 1;
+	EditorConfigST::Get()->GetLongValue(wxT("ShowFullPathInFrameTitle"), check);
+	m_checkFullPathInTitle->SetValue(check ? true : false);
+
 	bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
 	m_checkBoxShowSplash->SetValue(showSplash);
 

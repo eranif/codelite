@@ -111,6 +111,7 @@ protected:
 	wxPanel *m_miscPage;
 	wxChoice *m_whitespaceStyle;
 	wxButton* m_buttonClearHistory;	
+	wxCheckBox* m_checkFullPathInTitle;
 	
 private:
 	wxPanel *CreateSyntaxHighlightPage();

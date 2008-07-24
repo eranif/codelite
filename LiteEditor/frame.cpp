@@ -3160,11 +3160,20 @@ void Frame::SetFrameTitle(LEditor* editor)
 	if(editor && editor->GetModify()) {
 		title << wxT("*");
 	}
+	
 	if(editor) {
-		title << editor->GetFileName().GetFullPath();
+		
+		title << editor->GetFileName().GetFullName();
+		
+		// by default display the full path as well
+		long value(1);
+		EditorConfigST::Get()->GetLongValue(wxT("ShowFullPathInFrameTitle"), value);
+		if(value){
+			title << wxT(" [") << editor->GetFileName().GetFullPath() << wxT("] ");
+		}
 	}
 	
-	title << wxT(" - CodeLite - Revision: ");
+	title << wxT(" CodeLite - Revision: ");
 	title << SvnRevision;
 	SetTitle(title);
 }

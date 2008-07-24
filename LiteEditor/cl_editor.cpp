@@ -564,6 +564,7 @@ bool LEditor::SaveFile()
 		
 		m_context->RetagFile();
 	}
+	SetDirty(false);
 	return true;
 }
 

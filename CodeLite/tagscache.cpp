@@ -27,7 +27,7 @@ void TagsCache::AddEntry(TagCacheEntryPtr entry)
 }
 
 void TagsCache::Clear()
-{
+{ 
 	if(m_cacheQueue.empty() == false){
 		m_cacheQueue.clear();
 	}
@@ -49,7 +49,12 @@ TagCacheEntryPtr TagsCache::FindByQuery(const wxString& query)
 	std::list<TagCacheEntryPtr>::iterator iter = m_cacheQueue.begin();
 	for(; iter != m_cacheQueue.end(); iter ++){
 		if((*iter)->GetQueryKey() == query) {
-			return *iter;
+			TagCacheEntryPtr entry = *iter;
+			m_cacheQueue.erase(iter);
+			
+			// place it at the top of the queue
+			m_cacheQueue.push_front(entry);
+			return entry;
 		}
 	}
 	return NULL;

@@ -1274,21 +1274,15 @@ void Frame::OnFileClosing(NotebookEvent &event)
 	}
 
 	//update the titlebar
-	wxString title(wxT("CodeLite - Revision: "));
-	title << SvnRevision;
-	SetTitle(title);
+	SetFrameTitle(NULL);
 	event.Skip();
 }
 
 void Frame::OnPageChanged(NotebookEvent &event)
 {
-	// pass the event to the editor
-	wxString title(wxT("CodeLite - Revision: "));
-	title << SvnRevision;
-
 	LEditor *editor = dynamic_cast<LEditor*>( GetNotebook()->GetPage(event.GetSelection()) );
 	if ( !editor ) {
-		SetTitle(title);
+		SetFrameTitle(NULL);
 		RemoveCppMenu();
 		return;
 	}
@@ -1307,9 +1301,9 @@ void Frame::OnPageChanged(NotebookEvent &event)
 			GetFileExplorer()->GetFileTree()->ExpandToPath(editor->GetFileName());
 		}
 	}
-
-	title << wxT(" - ") << editor->GetFileName().GetFullPath();
-	SetTitle(title);
+	
+	// construct the title for the main frame
+	SetFrameTitle(editor);
 
 	// update status bar message
 	// update status message
@@ -3150,4 +3144,19 @@ void Frame::OnBatchBuild(wxCommandEvent& e)
 	
 	// start the build process
 	ManagerST::Get()->ProcessBuildQueue();
+}
+
+void Frame::SetFrameTitle(LEditor* editor)
+{
+	wxString title;
+	if(editor && editor->GetModify()) {
+		title << wxT("*");
+	}
+	if(editor) {
+		title << editor->GetFileName().GetFullPath();
+	}
+	
+	title << wxT(" - CodeLite - Revision: ");
+	title << SvnRevision;
+	SetTitle(title);
 }

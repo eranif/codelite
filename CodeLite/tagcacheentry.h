@@ -12,6 +12,13 @@ class TagCacheEntry
 	std::vector<TagEntryPtr> m_tags;
 	wxArrayString m_files;
 	
+protected:
+	/**
+	 * \brief normalize the file name: make it lower case, replace all backslashes with forward slashes
+	 * \param file_name
+	 */
+	wxString NormalizeFileName(const wxString &file_name);
+	
 public:
 	TagCacheEntry(const wxString& query, const std::vector<TagEntryPtr> &tags);
 	~TagCacheEntry();
@@ -28,7 +35,7 @@ public:
 		return m_files;
 	}
 	
-	bool IsFileRelated(const wxString &fileName) const;
+	bool IsFileRelated(const wxString &fileName);
 };
 
 typedef SmartPtr<TagCacheEntry> TagCacheEntryPtr;

@@ -367,9 +367,13 @@ void LEditor::SetDirty(bool dirty)
 	if ( dirty ) {
 		if ( !ManagerST::Get()->GetPageTitle(this).StartsWith(wxT("*")) ) {
 			ManagerST::Get()->SetPageTitle(this, wxT("*") + ManagerST::Get()->GetPageTitle(this));
+			
+			// update the main frame's title as well
+			Frame::Get()->SetFrameTitle(this);
 		}
 	} else {
 		ManagerST::Get()->SetPageTitle(this, GetFileName().GetFullName());
+		Frame::Get()->SetFrameTitle(this);
 	}
 }
 
@@ -2027,6 +2031,7 @@ bool LEditor::IsCompletionBoxShown()
 
 int LEditor::GetCurrentLine()
 {
+	// return the current line number
 	int pos = GetCurrentPos();
 	return LineFromPosition(pos);
 }

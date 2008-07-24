@@ -107,18 +107,32 @@ public:
 	DockablePaneMenuManager *GetDockablePaneMenuManager(){return m_DPmenuMgr;}
 	
 	virtual ~Frame(void);
+	/**
+	 * \brief set frame option flag
+	 * \param set
+	 * \param flag
+	 */
 	void SetFrameFlag(bool set, int flag);
 	
 	/**
-	 * @brief return true if the word under the caret should be highlighted 
+	 * \brief return true if the word under the caret should be highlighted 
+	 * \return 
 	 */
 	bool GetHighlightWord(){return m_highlightWord;}
 	
 	/**
-	 * Return language name by menu item id
+	 * \brief Return language name by menu item id
+	 * \param id
+	 * \return 
 	 */
 	wxString GetViewAsLanguageById(int id) const;
-
+	
+	/**
+	 * \brief 
+	 * \param editor
+	 */
+	void SetFrameTitle(LEditor *editor);
+	
 	/**
 	 * Return the main editor notebook
 	 */

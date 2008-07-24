@@ -5,11 +5,14 @@ TagCacheEntry::TagCacheEntry(const wxString &query, const std::vector<TagEntryPt
 		, m_tags(tags)
 {
 	// populate the files list for this query
-	for(size_t i=0; i<m_tags.size(); i++){
+	for (size_t i=0; i<m_tags.size(); i++) {
 		TagEntryPtr t = m_tags.at(i);
-		if(m_files.Index(t->GetFile()) == wxNOT_FOUND){
+		if (m_files.Index(t->GetFile()) == wxNOT_FOUND) {
+
+			// normalize the file name
+			wxString file_name = NormalizeFileName(t->GetFile());
 			// add it
-			m_files.Add(t->GetFile());
+			m_files.Add(file_name);
 		}
 	}
 }
@@ -19,7 +22,19 @@ TagCacheEntry::~TagCacheEntry()
 	m_files.Clear();
 }
 
-bool TagCacheEntry::IsFileRelated(const wxString& fileName) const
+bool TagCacheEntry::IsFileRelated(const wxString& fileName)
 {
-	return m_files.Index(fileName) != wxNOT_FOUND;
+	wxString file_name = NormalizeFileName(fileName);
+	return m_files.Index(file_name) != wxNOT_FOUND;
+}
+
+wxString TagCacheEntry::NormalizeFileName(const wxString& fileName)
+{
+	// normalize the file name
+	wxString file_name(fileName);
+	file_name.MakeLower();
+	file_name.Replace(wxT("\\"), wxT("/"));
+	file_name.Replace(wxT("//"), wxT("/"));
+	file_name.Trim().Trim(false);
+	return file_name;
 }

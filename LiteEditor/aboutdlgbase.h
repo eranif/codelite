@@ -1,0 +1,53 @@
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// http://www.wxformbuilder.org/
+//
+// PLEASE DO "NOT" EDIT THIS FILE!
+///////////////////////////////////////////////////////////////////////////
+
+#ifndef __aboutdlgbase__
+#define __aboutdlgbase__
+
+#include <wx/bitmap.h>
+#include <wx/image.h>
+#include <wx/icon.h>
+#include <wx/statbmp.h>
+#include <wx/gdicmn.h>
+#include <wx/font.h>
+#include <wx/colour.h>
+#include <wx/settings.h>
+#include <wx/string.h>
+#include <wx/stattext.h>
+#include <wx/hyperlink.h>
+#include <wx/sizer.h>
+#include <wx/statbox.h>
+#include <wx/button.h>
+#include <wx/dialog.h>
+
+///////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class AboutDlgBase
+///////////////////////////////////////////////////////////////////////////////
+class AboutDlgBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticBitmap* m_bitmap;
+		wxStaticText* m_staticTextHomePage;
+		wxHyperlinkCtrl* m_hyperlink1;
+		wxStaticText* m_staticText2;
+		wxHyperlinkCtrl* m_hyperlink2;
+		wxStaticText* m_staticText3;
+		wxStaticText* m_staticTextInformation;
+		wxButton* m_buttonOk;
+	
+	public:
+		AboutDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("About CodeLite"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 645,448 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~AboutDlgBase();
+	
+};
+
+#endif //__aboutdlgbase__

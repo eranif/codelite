@@ -188,6 +188,8 @@
     <VirtualDirectory Name="About">
       <File Name="aboutdlg.cpp"/>
       <File Name="aboutdlg.h"/>
+      <File Name="aboutdlgbase.h"/>
+      <File Name="aboutdlgbase.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">

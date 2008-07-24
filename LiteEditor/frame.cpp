@@ -1568,6 +1568,11 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 				}
 			}
 		}
+		
+		// reset cache if needed
+		if(!(m_tagsOptionsData.GetFlags() & CC_CACHE_WORKSPACE_TAGS)) {
+			tagsMgr->GetWorkspaceTagsCache()->Clear();
+		}
 	}
 	dlg->Destroy();
 }

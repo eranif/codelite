@@ -1432,10 +1432,11 @@ void LEditor::ReloadFile()
 	SetText( text );
 
 	m_modifyTime = GetFileModificationTime(m_fileName.GetFullPath());
-	SetDirty(false);
+	
 	SetSavePoint();
 	EmptyUndoBuffer();
-
+	SetDirty(false);
+	
 	//update breakpoints
 	UpdateBreakpoints();
 	UpdateColours();

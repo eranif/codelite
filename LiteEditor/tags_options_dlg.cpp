@@ -103,7 +103,15 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data, i
 	
 	sbSizer21->Add( m_checkLoadToMemory, 0, wxALL, 5 );
 	
+	wxStaticBoxSizer* sbSizer3;
+	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_generalPage, -1, wxT("Caching:") ), wxVERTICAL );
+	
+	m_checkCacheWorkspaceTags = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Cache workspace tags"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer3->Add(m_checkCacheWorkspaceTags, 0, wxALL, 5);
+	
+	
 	bSizer4->Add( sbSizer21, 0, wxEXPAND | wxALL , 5 );
+	bSizer4->Add( sbSizer3, 0, wxEXPAND | wxALL , 5 );
 	
 	m_generalPage->SetSizer( bSizer4 );
 	m_generalPage->Layout();
@@ -204,6 +212,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkColourLocalVars->SetValue(m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
 	m_checkColourProjTags->SetValue(m_data.GetFlags() & CC_COLOUR_PROJ_TAGS ? true : false);
 	m_checkCppKeywordAssist->SetValue(m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
+	m_checkCacheWorkspaceTags->SetValue(m_data.GetFlags() & CC_CACHE_WORKSPACE_TAGS ? true : false);
 	
 	//initialize the ctags page
 	wxString prep;
@@ -251,6 +260,7 @@ void TagsOptionsDlg::CopyData()
 	SetFlag(CC_COLOUR_VARS, m_checkColourLocalVars->IsChecked());
 	SetFlag(CC_COLOUR_PROJ_TAGS, m_checkColourProjTags->IsChecked());
 	SetFlag(CC_CPP_KEYWORD_ASISST, m_checkCppKeywordAssist->IsChecked());
+	SetFlag(CC_CACHE_WORKSPACE_TAGS, m_checkCacheWorkspaceTags->IsChecked());
 	
 	m_data.SetFileSpec(m_textFileSpec->GetValue());
 	

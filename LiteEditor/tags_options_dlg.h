@@ -76,6 +76,7 @@ protected:
 	wxCheckBox* m_checkColourLocalVars;
 	wxCheckBox* m_checkColourProjTags;
 	wxCheckBox* m_checkCppKeywordAssist;
+	wxCheckBox* m_checkCacheWorkspaceTags;
 	
 protected:
 	void SetFlag(CodeCompletionOpts flag, bool set);

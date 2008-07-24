@@ -1433,7 +1433,14 @@ void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> 
 		}
 
 		//now try the local tags database
-		TagCacheEntryPtr cachedEntry = m_workspaceDbCache->FindByQuery(sql);
+		
+		TagCacheEntryPtr cachedEntry = NULL;
+		
+		// are we using cache?
+		if(GetCtagsOptions().GetFlags() & CC_CACHE_WORKSPACE_TAGS){
+			cachedEntry = m_workspaceDbCache->FindByQuery(sql);
+		}
+		
 		if ( !cachedEntry ) {
 			std::vector<TagEntryPtr> tmpTags;
 			wxSQLite3ResultSet rs = m_pDb->Query(sql);
@@ -1443,18 +1450,21 @@ void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> 
 				tmpTags.push_back(tag);
 			}
 			
-			// cache the result
-			m_workspaceDbCache->AddEntry(new TagCacheEntry(sql, tmpTags));
+			if(GetCtagsOptions().GetFlags() & CC_CACHE_WORKSPACE_TAGS) {
+				// cache the result
+				m_workspaceDbCache->AddEntry(new TagCacheEntry(sql, tmpTags));
+			}
 			
 			// append the results 
 			tags.insert(tags.end(), tmpTags.begin(), tmpTags.end());
-			
+		
 			rs.Finalize();
 			
 		} else {
 			// copy the cached items to our result
 			tags.insert(tags.end(), cachedEntry->GetTags().begin(), cachedEntry->GetTags().end());
-		}
+		}	
+		
 	} catch ( wxSQLite3Exception& e) {
 		wxUnusedVar(e);
 	}

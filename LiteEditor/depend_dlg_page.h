@@ -21,7 +21,9 @@ protected:
 	void OnCheckListItemToggled( wxCommandEvent& event );
 	void OnMoveUp( wxCommandEvent& event );
 	void OnMoveDown( wxCommandEvent& event );
-
+	void OnApplyButton(wxCommandEvent &event);
+	void OnApplyButtonUI(wxUpdateUIEvent &event);
+	
 protected:
 	void Init();
 	void OnUpCommand(wxListBox *list);

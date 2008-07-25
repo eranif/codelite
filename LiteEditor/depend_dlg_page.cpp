@@ -184,3 +184,15 @@ void DependenciesPage::DoPopulateControl(const wxString& configuration)
 	}
 
 }
+
+void DependenciesPage::OnApplyButton(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	Save();
+}
+
+void DependenciesPage::OnApplyButtonUI(wxUpdateUIEvent& event)
+{
+	event.Enable(m_dirty);
+}
+

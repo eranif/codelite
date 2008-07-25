@@ -39,14 +39,17 @@ class DependenciesPageBase : public wxPanel
 		wxCheckListBox* m_checkListProjectList;
 		wxStaticText* m_staticText2;
 		wxListBox* m_listBoxBuildOrder;
-		wxButton* m_buttonUp;
 		wxButton* m_buttonDown;
+		wxButton* m_buttonUp;
+		wxButton* m_buttonApply;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnConfigChanged( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnCheckListItemToggled( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnMoveUp( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnMoveDown( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnMoveUp( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnApplyButton( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnApplyButtonUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		
 	
 	public:

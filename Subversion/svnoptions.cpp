@@ -27,7 +27,7 @@
 SvnOptions::SvnOptions()
 : m_flags(SvnUseIcons | SvnKeepIconsUpdated | SvnAutoAddFiles)
 , m_exePath(wxT("svn"))
-, m_pattern(wxT("*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;"))
+, m_pattern(wxT("*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;*.bak;*.orig"))
 , m_diffCmd(wxEmptyString)
 , m_diffArgs(wxEmptyString)
 {

@@ -48,7 +48,9 @@ public:
 class ConfigurationManagerDlg : public ConfigManagerBaseDlg
 {
 	std::map<int, ConfigEntry> m_projSettingsMap;
-
+	bool m_dirty;
+	wxString m_currentWorkspaceConfiguration;
+	
 protected:
 	void InitDialog();
 
@@ -60,6 +62,7 @@ protected:
 	void OnConfigSelected(wxCommandEvent &event);
 	void OnWorkspaceConfigSelected(wxCommandEvent &event);
 	void OnButtonApply(wxCommandEvent &event);
+	void OnButtonApplyUI(wxUpdateUIEvent &event);
 	void LoadWorkspaceConfiguration(const wxString &confName);
 	void LoadProjectConfiguration(const wxString &projectName);
 	

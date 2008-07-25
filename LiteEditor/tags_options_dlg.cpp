@@ -197,6 +197,8 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data, i
 	Centre();
 	
 	m_checkParseComments->SetFocus();
+	
+	GetSizer()->Fit(this);
 }
 
 void TagsOptionsDlg::InitValues()

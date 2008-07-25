@@ -1,4 +1,4 @@
-#include "AboutDlg.h"
+#include "aboutdlg.h"
 
 AboutDlg::AboutDlg( wxWindow* parent )
 :

@@ -39,6 +39,7 @@ void TagsCache::DeleteByFilename(const wxString& fileName)
 	for(; iter != m_cacheQueue.end(); iter++){
 		TagCacheEntryPtr t = (*iter);
 		if(t->IsFileRelated(fileName)){
+//			wxLogMessage(wxString::Format(wxT("Deleted Cache entry for file: %s"), fileName.c_str()));
 			iter = m_cacheQueue.erase(iter);
 		}
 	}

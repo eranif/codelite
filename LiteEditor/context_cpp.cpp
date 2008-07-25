@@ -2233,7 +2233,13 @@ void ContextCpp::RetagFile()
 
 	// clear all the queries which holds reference to this file
 	TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(ctrl.GetFileName().GetFullPath());
-		
+	
+	// clear also the swapped file
+	wxString targetFile;
+	if(FindSwappedFile(ctrl.GetFileName(), targetFile) && targetFile.IsEmpty() == false){
+		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(targetFile);
+	}
+	
 	ctrl.SetActive();
 }
 

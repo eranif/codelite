@@ -865,7 +865,7 @@ wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project, const wxStri
 		type = confToBuild;
 	}
 	//cd to the project directory
-	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" type=") << type;
+	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" type=") << NormalizeConfigName(type);
 	return cmd;
 }
 
@@ -899,7 +899,7 @@ wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project, const wxStri
 		type = confToBuild;
 	}
 	//cd to the project directory
-	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" type=") << type << wxT(" clean");
+	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" type=") << NormalizeConfigName(type) << wxT(" clean");
 	return cmd;
 }
 
@@ -932,7 +932,7 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 
 	tareget << bldConf->GetIntermediateDirectory() << wxT("/") << fn.GetName() << cmp->GetObjectSuffix();
-	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" type=") << type << wxT(" ") << tareget;
+	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" type=") << NormalizeConfigName(type) << wxT(" ") << tareget;
 
 	return EnvironmentConfig::Instance()->ExpandVariables(cmd);
 }

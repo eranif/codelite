@@ -105,6 +105,9 @@ void CleanRequest::Process()
 		if (m_info.GetProjectOnly() ) {
 			//need to change directory to project dir
 			wxSetWorkingDirectory(proj->GetFileName().GetPath());
+			
+			//print the build command
+			AppendLine(cmd + wxT("\n"));
 		}
 	
 		//apply environment settings

@@ -64,7 +64,7 @@ NewConfigurationDlg::NewConfigurationDlg( wxWindow* parent, const wxString &proj
 	m_staticText1 = new wxStaticText( m_panel1, wxID_ANY, wxT("Configuration Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_staticText1, 0, wxALL, 5 );
 	
-	wxTextValidator validator(wxFILTER_ALPHANUMERIC);
+	wxTextValidator validator(wxFILTER_ASCII);
 	m_textConfigurationName = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, validator );
 	bSizer3->Add( m_textConfigurationName, 0, wxALL|wxEXPAND, 5 );
 	

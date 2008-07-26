@@ -2886,7 +2886,6 @@ void Manager::ClearFileHistory()
 
 	cfg->SetRecentlyOpenedFies(files);
 	cfg->SetRecentlyOpenedWorkspaces(files);
-	wxMessageBox(wxT("History Cleared!"));
 }
 
 bool Manager::HasHistory() const

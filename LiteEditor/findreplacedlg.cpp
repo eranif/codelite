@@ -1,28 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : findreplacedlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : findreplacedlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "findreplacedlg.h"
+#include "findreplacedlg.h"
+#include "editor_config.h"
 #include <wx/gbsizer.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
@@ -81,7 +82,7 @@ bool FindReplaceDialog::Create(wxWindow* parent,
 
 	GetSizer()->Fit(this);
 	Centre();
-	
+
 	m_findString->SetFocus();
 	return true;
 }
@@ -157,18 +158,26 @@ void FindReplaceDialog::CreateGUIControls()
 	SetReplacementsMessage(wxT("Replacements: 0"));
 
 	//set values
-	SetFindReplaceData(m_data);
+	SetFindReplaceData(m_data, true);
 }
 
-void FindReplaceDialog::SetFindReplaceData(FindReplaceData &data)
+void FindReplaceDialog::SetFindReplaceData(FindReplaceData &data, bool focus)
 {
+	m_findString->Freeze();
+
 	m_findString->Clear();
 	m_findString->Append(data.GetFindStringArr());
 	m_findString->SetValue(data.GetFindString());
 
+	m_findString->Thaw();
+
+	m_replaceString->Freeze();
+
 	m_replaceString->Clear();
 	m_replaceString->Append(data.GetReplaceStringArr());
 	m_replaceString->SetValue(data.GetReplaceString());
+
+	m_replaceString->Thaw();
 
 	m_matchCase->SetValue(data.GetFlags() & wxFRD_MATCHCASE ? true : false);
 	m_matchWholeWord->SetValue(data.GetFlags() & wxFRD_MATCHWHOLEWORD ? true : false);
@@ -177,8 +186,10 @@ void FindReplaceDialog::SetFindReplaceData(FindReplaceData &data)
 	m_selectionOnly->SetValue(data.GetFlags() & wxFRD_SELECTIONONLY ? true : false);
 
 	//set the focus to the find string text control
-	m_findString->SetFocus();
-	m_findString->SetSelection(-1, -1); // select all
+	if(focus) {
+		m_findString->SetFocus();
+		m_findString->SetSelection(-1, -1); // select all
+	}
 }
 
 void FindReplaceDialog::OnClick(wxCommandEvent &event)
@@ -187,7 +198,7 @@ void FindReplaceDialog::OnClick(wxCommandEvent &event)
 	size_t flags = m_data.GetFlags();
 	m_data.SetFindString( m_findString->GetValue() );
 	m_data.SetReplaceString( m_replaceString->GetValue() );
-	
+
 	// disable the 'Find/Replace' buttons when the 'Selection only' is enabled
 	if ( m_selectionOnly->IsChecked() ) {
 		m_find->Enable(false);
@@ -246,6 +257,10 @@ void FindReplaceDialog::OnClick(wxCommandEvent &event)
 
 	// Set the updated flags
 	m_data.SetFlags(flags);
+	
+	// update the data of the find/replace dialog, in particular, 
+	// update the history of the Find What / replace with controls
+	SetFindReplaceData(m_data, false);
 }
 
 void FindReplaceDialog::OnClose(wxCloseEvent &event)
@@ -322,13 +337,17 @@ bool FindReplaceDialog::Show(int kind)
 		return true;
 	}
 
-	kind == FIND_DLG ? ShowReplaceControls(false) : ShowReplaceControls(true);
-	
+	if(kind == FIND_DLG) {
+		ShowReplaceControls(false);
+	}else{
+		ShowReplaceControls(true);
+	}
+
 	// call Show() here
 	bool res = wxDialog::Show();
-	
+
 	// and now call the focus methods
-	SetFindReplaceData(m_data);
+	SetFindReplaceData(m_data, true);
 	m_findString->SetSelection(-1, -1); // select all
 	m_findString->SetFocus();
 	return res;
@@ -365,7 +384,7 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
 		gbSizer->Add(m_replaceString, wxGBPosition(1, 1), wxDefaultSpan, wxALL | wxEXPAND, 5 );
 		gbSizer->Add(sz, wxGBPosition(2, 0), wxGBSpan(1, 2),  wxALL | wxEXPAND, 5 );
 	}
-
+	
 	wxString label = show ? wxT("Replace") : wxT("Find");
 	m_replace->Show(show);
 	m_replaceAll->Show(show);
@@ -381,4 +400,79 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
 void FindReplaceDialog::SetReplacementsMessage(const wxString &msg)
 {
 	m_replacementsMsg->SetLabel(msg);
+}
+
+//---------------------------------------------------------------
+// FindReplaceData
+//---------------------------------------------------------------
+
+void FindReplaceData::SetReplaceString(const wxString& str)
+{
+	
+	int where = m_replaceString.Index(str);
+	if (where != wxNOT_FOUND) {
+		m_replaceString.RemoveAt(where);
+	}
+	m_replaceString.Insert(str, 0);
+	
+	long max_value(10);
+	EditorConfigST::Get()->GetLongValue(wxT("MaxItemsInFindReplaceDialog"), max_value);
+	TruncateArray(m_replaceString, (size_t)max_value);
+}
+
+void FindReplaceData::Serialize(Archive& arch)
+{
+	arch.Write(wxT("m_findString"), m_findString);
+	arch.Write(wxT("m_replaceString"), m_replaceString);
+	arch.Write(wxT("m_flags"), (long)m_flags);
+}
+
+void FindReplaceData::DeSerialize(Archive& arch)
+{
+	arch.Read(wxT("m_findString"), m_findString);
+	arch.Read(wxT("m_replaceString"), m_replaceString);
+	arch.Read(wxT("m_flags"), (long&)m_flags);
+	
+	long max_value(10);
+	EditorConfigST::Get()->GetLongValue(wxT("MaxItemsInFindReplaceDialog"), max_value);
+	TruncateArray(m_findString, (size_t)max_value);
+	TruncateArray(m_replaceString, (size_t)max_value);
+}
+
+void FindReplaceData::SetFindString(const wxString& str)
+{
+	int where = m_findString.Index(str);
+	if (where != wxNOT_FOUND) {
+		m_findString.RemoveAt(where);
+	}
+	m_findString.Insert(str, 0);
+	
+	long max_value(10);
+	EditorConfigST::Get()->GetLongValue(wxT("MaxItemsInFindReplaceDialog"), max_value);
+	TruncateArray(m_findString, (size_t)max_value);
+}
+
+wxString FindReplaceData::GetReplaceString() const
+{
+	if (m_replaceString.IsEmpty()) {
+		return wxEmptyString;
+	} else {
+		return m_replaceString.Item(0);
+	}
+}
+
+wxString FindReplaceData::GetFindString() const
+{
+	if (m_findString.IsEmpty()) {
+		return wxEmptyString;
+	} else {
+		return m_findString.Item(0);
+	}
+}
+
+void FindReplaceData::TruncateArray(wxArrayString& arr, size_t maxSize)
+{
+	while(arr.GetCount() > maxSize && arr.GetCount() > 0) {
+		arr.RemoveAt(arr.GetCount()-1);
+	}
 }

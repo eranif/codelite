@@ -112,6 +112,7 @@ protected:
 	wxChoice *m_whitespaceStyle;
 	wxButton* m_buttonClearHistory;	
 	wxCheckBox* m_checkFullPathInTitle;
+	wxSpinCtrl* m_findReplaceHistory;
 	
 private:
 	wxPanel *CreateSyntaxHighlightPage();

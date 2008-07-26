@@ -332,7 +332,13 @@ void OptionsDlg::SaveChanges()
 	if (value < 1 || value > 8) {
 		value = 4;
 	}
-
+	
+	value = m_findReplaceHistory->GetValue();
+	if(value < 1 || value > 50) {
+		value = 10;
+	}
+	EditorConfigST::Get()->SaveLongValue(wxT("MaxItemsInFindReplaceDialog"), value);
+	
 	// save the whitespace visibility
 	int style(0); // inivisble
 	if(m_whitespaceStyle->GetStringSelection() == wxT("Visible always")) {
@@ -569,7 +575,18 @@ wxPanel* OptionsDlg::CreateMiscPage()
 	
 	m_buttonClearHistory = new wxButton( m_miscPage, wxID_ANY, wxT("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonClearHistory, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
 	bszier->Add(bSizer2, 0, wxEXPAND | wxALL, 5);
+	
+	wxBoxSizer* hs1 = new wxBoxSizer( wxHORIZONTAL );
+	
+	wxStaticText *txtHistory = new wxStaticText( m_miscPage, wxID_ANY, wxT("Max items kept in find / replace dialog:"), wxDefaultPosition, wxDefaultSize, 0 );
+	txtHistory->Wrap( -1 );
+	hs1->Add( txtHistory, 1, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	
+	m_findReplaceHistory = new wxSpinCtrl( m_miscPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 50, 10 );
+	hs1->Add( m_findReplaceHistory, 0, wxALL|wxEXPAND, 5 );
+	bszier->Add(hs1, 0, wxEXPAND | wxALL, 5);
 	
 	ConnectButton(m_buttonClearHistory, OptionsDlg::OnClearHistory);
 	// Connect Events
@@ -590,8 +607,12 @@ wxPanel* OptionsDlg::CreateMiscPage()
 	bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
 	m_checkBoxShowSplash->SetValue(showSplash);
 
+	long max_items(10);
+	EditorConfigST::Get()->GetLongValue(wxT("MaxItemsInFindReplaceDialog"), max_items);
+	m_findReplaceHistory->SetValue(max_items);
+	
 	vSz1->Add( bszier, 0, wxEXPAND, 5 );
-
+	
 	m_miscPage->SetSizer( vSz1 );
 	m_miscPage->Layout();
 	vSz1->Fit( m_miscPage );

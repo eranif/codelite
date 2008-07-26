@@ -65,14 +65,14 @@ MainBook::~MainBook()
 
 void MainBook::OnScope(wxCommandEvent &e)
 {
-	wxUnusedVar(e);
-	int sel = e.GetSelection();
-	if(sel != wxNOT_FOUND){
-		TagEntry *tag = (TagEntry*) m_choiceScope->GetClientData(sel);
-		if(tag){
-			ManagerST::Get()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
-		}
-	}
+//	wxUnusedVar(e);
+//	int sel = e.GetSelection();
+//	if(sel != wxNOT_FOUND){
+//		TagEntry *tag = (TagEntry*) m_choiceScope->GetClientData(sel);
+//		if(tag){
+//			ManagerST::Get()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
+//		}
+//	}
 }
 
 void MainBook::OnFunction(wxCommandEvent &e)
@@ -81,7 +81,12 @@ void MainBook::OnFunction(wxCommandEvent &e)
 	if(sel != wxNOT_FOUND){
 		TagEntry *tag = (TagEntry*) m_choiceFunc->GetClientData(sel);
 		if(tag){
-			ManagerST::Get()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
+			LEditor *editor = ManagerST::Get()->GetActiveEditor();
+			if(editor) {
+				wxString pattern(tag->GetPattern());
+				ManagerST::Get()->FindAndSelect(editor, pattern, tag->GetName());
+				editor->SetActive();
+			}
 		}
 	}
 }
@@ -129,40 +134,40 @@ void MainBook::UpdateScope(TagEntryPtr tag)
 
 void MainBook::OnScopeListMouseDown(wxMouseEvent &e)
 {
-	TagsManager *tagsmgr = TagsManagerST::Get();
-	Manager *mgr = ManagerST::Get();
-	
-	if(mgr->IsWorkspaceOpen()){
-		LEditor *editor = mgr->GetActiveEditor();
-		if(editor){
-			std::vector< TagEntryPtr > tags;
-			tagsmgr->GetScopesFromFile(editor->GetFileName(), tags);
-			m_choiceScope->Freeze();
-			wxString cursel;
-			if(m_choiceScope->GetCount() > 0){
-				cursel = m_choiceScope->GetStringSelection();
-			}
-			
-			m_choiceScope->Clear();
-			
-			if(tags.empty()){
-				if(cursel.IsEmpty() == false && cursel != wxT("<global>")){
-					m_choiceScope->Append(wxT("<global>"), (void*)NULL);
-				}
-			}
-			
-			for(size_t i=0; i< tags.size(); i++){
-				m_choiceScope->Append(tags.at(i)->GetPath(), new TagEntry(*tags.at(i)));
-			}
-			
-			if(cursel.IsEmpty() == false){
-				m_choiceScope->SetStringSelection(cursel);
-			}
-			m_choiceScope->Thaw();
-		}
-	}
-	
-	e.Skip();
+//	TagsManager *tagsmgr = TagsManagerST::Get();
+//	Manager *mgr = ManagerST::Get();
+//	
+//	if(mgr->IsWorkspaceOpen()){
+//		LEditor *editor = mgr->GetActiveEditor();
+//		if(editor){
+//			std::vector< TagEntryPtr > tags;
+//			tagsmgr->GetScopesFromFile(editor->GetFileName(), tags);
+//			m_choiceScope->Freeze();
+//			wxString cursel;
+//			if(m_choiceScope->GetCount() > 0){
+//				cursel = m_choiceScope->GetStringSelection();
+//			}
+//			
+//			m_choiceScope->Clear();
+//			
+//			if(tags.empty()){
+//				if(cursel.IsEmpty() == false && cursel != wxT("<global>")){
+//					m_choiceScope->Append(wxT("<global>"), (void*)NULL);
+//				}
+//			}
+//			
+//			for(size_t i=0; i< tags.size(); i++){
+//				m_choiceScope->Append(tags.at(i)->GetPath(), new TagEntry(*tags.at(i)));
+//			}
+//			
+//			if(cursel.IsEmpty() == false){
+//				m_choiceScope->SetStringSelection(cursel);
+//			}
+//			m_choiceScope->Thaw();
+//		}
+//	}
+//	
+//	e.Skip();
 }
 
 void MainBook::OnFuncListMouseDown(wxMouseEvent &e)

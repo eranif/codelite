@@ -1889,6 +1889,8 @@ void TagsManager::TagsFromFileAndScope(const wxFileName& fileName, const wxStrin
 	} catch ( wxSQLite3Exception& e) {
 		wxUnusedVar(e);
 	}
+	
+	std::sort(tags.begin(), tags.end(), SAscendingSort());
 }
 
 bool TagsManager::GetFunctionDetails(const wxFileName &fileName, int lineno, TagEntryPtr &tag, clFunction &func)

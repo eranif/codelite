@@ -903,6 +903,11 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
                                       wxString &typeScope)
 {
 	GetTagsManager()->FindByNameAndScope(name, scopeName, tags);
+	if( tags.empty() ){
+		// try the global scope maybe?
+		GetTagsManager()->FindByNameAndScope(name, wxT("<global>"), tags);
+	}
+		
 	if (tags.size() == 1) {
 		TagEntryPtr tag(tags.at(0));
 		//we have a single match!

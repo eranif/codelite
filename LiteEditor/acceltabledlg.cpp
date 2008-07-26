@@ -198,6 +198,16 @@ void AccelTableDlg::DoItemActivated()
 	}
 	dlg->Destroy();
 	
+	// search the list for similar accelerator
+	int count = m_listCtrl1->GetItemCount();
+	for(int i=0; i<count; i++){
+		if(GetColumnText(m_listCtrl1, i, 3) == mid.accel && m_selectedItem != i && mid.accel.IsEmpty() == false){
+			wxString action = GetColumnText(m_listCtrl1, i, 2);
+			wxMessageBox(wxString::Format(wxT("'%s' is already assigned to: '%s'"), mid.accel.c_str(), action.c_str()), wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING, this);
+			return;
+		}
+	}
+	
 	//update the acceleration table
 	SetColumnText(m_listCtrl1, m_selectedItem, 3, mid.accel);
 	m_listCtrl1->SetColumnWidth(3, wxLIST_AUTOSIZE);

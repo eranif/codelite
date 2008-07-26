@@ -87,8 +87,8 @@
                 <label>Past&amp;e</label>
             </object>
             <object class="wxMenuItem" name="wxID_DUPLICATE">
-                <label>D&amp;uplicate Line</label>
-                <help>Duplcate the current line</help>
+                <label>D&amp;uplicate Selection / Line</label>
+                <help>Duplicate the selection or the entire line</help>
             </object>
             <object class="wxMenuItem" name="wxID_SELECTALL">
                 <label>Select &amp;All</label>

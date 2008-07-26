@@ -50,7 +50,7 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 	} else if (event.GetId() == wxID_SELECTALL) {
 		editor->SelectAll();
 	} else if (event.GetId() == wxID_DUPLICATE) {
-		editor->LineDuplicate();
+		editor->SelectionDuplicate();
 	} else if (event.GetId() == XRCID("delete_line_end")) {
 		editor->DelLineRight();
 	} else if (event.GetId() == XRCID("delete_line_start")) {

@@ -13,7 +13,7 @@ wxID_REDO|Edit|Redo|Ctrl-Y
 wxID_CUT|Edit|Cut|Ctrl-X
 wxID_COPY|Edit|Copy|Ctrl-C
 wxID_PASTE|Edit|Paste|Ctrl-V
-wxID_DUPLICATE|Edit|Duplicate Line|Ctrl-U
+wxID_DUPLICATE|Edit|Duplicate Selection / Line|Ctrl-U
 delete_line_end|Edit|Delete to Line End|
 delete_line_start|Edit|Delete to Line Start|
 delete_line|Edit|Delete Line|Ctrl-L

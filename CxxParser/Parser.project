@@ -26,6 +26,7 @@
     <File Name="expr_lexer.l"/>
     <File Name="cpp_func_parser.y"/>
   </VirtualDirectory>
+  <Dependencies/>
   <Settings Type="Executable">
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="./Release/CppParser" IntermediateDirectory="./Release" Command="CppParser" CommandArguments="" WorkingDirectory="./Release" PauseExecWhenProcTerminates="yes"/>
@@ -81,5 +82,5 @@ cpp_func_parser.cpp: cpp_func_parser.y
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

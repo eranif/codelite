@@ -123,11 +123,11 @@ external_decl			:	class_decl
 						| 	scope_reducer
 						| 	scope_increaer
 						| 	error { 
-								//printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_scope_text, cl_scope_lineno);
-								syncParser();
+//								printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_scope_text, cl_scope_lineno);
+//								syncParser();
 							}
 						;
-						
+
 						
 /*templates*/
 template_arg		:	/* empty */	{ $$ = "";}
@@ -170,9 +170,22 @@ template_parameter_list	: /* empty */		{$$ = "";}
 							| template_parameter_list ',' template_parameter {$$ = $1 + $2 + $3;}
 							;
 
-template_parameter		:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp {$$ = $1 + $2 + $3 +$4;}
-							;
-
+/*template_parameter		:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp {$$ = $1 + $2 + $3 +$4;}
+							;*/
+template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp 
+						{
+							$$ = $1 +  $2 + $3 +$4;
+						}
+					|  	const_spec nested_scope_specifier basic_type_name special_star_amp 
+						{
+							$$ = $1 +  $2 + $3 +$4;
+						}
+					|  	const_spec nested_scope_specifier LE_IDENTIFIER '<' template_parameter_list '>' special_star_amp
+						{
+							$$ = $1 + $2 + $3 +$4 + $5 + $6 + $7 + " " ;
+						}
+						;
+						
 using_namespace:	LE_USING LE_NAMESPACE LE_IDENTIFIER ';'
 					{ 	
 						//printf("Found using namespace %s\n", $3.c_str());

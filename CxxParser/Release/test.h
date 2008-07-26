@@ -22,4 +22,6 @@
 //std::vector<int, int> vector;
 //(void *buffer = NULL, size_t size, size_t nmemb, void *stream)
 //wxStaticLine *line = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-Glib :: SignalProxy0 < void > signal_clicked ( ) ;
+//Glib :: SignalProxy0 < void > signal_clicked ( ) ;
+const std::vector<int> &Class::get_vector() const {
+	

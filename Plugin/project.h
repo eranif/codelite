@@ -300,6 +300,13 @@ public:
 	void GetFiles(std::vector<wxFileName> &files, bool absPath = false);
 
 	/**
+	 * Return list of files in this project - in both absolute and relative path
+	 * \param files relative paths
+	 * \param absFiles absolute paths
+	 */
+	void GetFiles(std::vector<wxFileName> &files, std::vector<wxFileName> &absFiles);
+
+	/**
 	 * Return the project build settings object by name
 	 */
 	ProjectSettingsPtr GetSettings() const;
@@ -370,7 +377,7 @@ private:
 	wxXmlNode *CreateVD(const wxString &vdFullPath, bool mkpath = false);
 
 	void GetFiles(wxXmlNode *parent, std::vector<wxFileName> &files, bool absPath = false);
-	
+	void GetFiles(wxXmlNode *parent, std::vector<wxFileName>& files, std::vector<wxFileName>& absFiles);
 	/**
 	 * Return list of projects that this projects depends on
 	 */

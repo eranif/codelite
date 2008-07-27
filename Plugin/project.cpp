@@ -691,3 +691,36 @@ void Project::SetDependencies(wxArrayString& deps, const wxString& configuration
 	m_doc.Save(m_fileName.GetFullPath());
 	SetModified(true);	
 }
+
+void Project::GetFiles(std::vector<wxFileName>& files, std::vector<wxFileName>& absFiles)
+{
+	DirSaver ds;
+	::wxSetWorkingDirectory(m_fileName.GetPath());
+	GetFiles(m_doc.GetRoot(), files, absFiles);
+}
+
+void Project::GetFiles(wxXmlNode *parent, std::vector<wxFileName>& files, std::vector<wxFileName>& absFiles)
+{
+	if ( !parent ) {
+		return;
+	}
+
+	wxXmlNode *child = parent->GetChildren();
+	while (child) {
+		if (child->GetName() == wxT("File")) {
+			wxString fileName = child->GetPropVal(wxT("Name"), wxEmptyString);
+			wxFileName tmp(fileName);
+			
+			// append the file as it appears
+			files.push_back(tmp);
+			
+			// convert to absolute path
+			tmp.MakeAbsolute();
+			absFiles.push_back(tmp);
+			
+		} else if (child->GetChildren()) {// we could also add a check for VirtualDirectory only
+			GetFiles(child, files, absFiles);
+		}
+		child = child->GetNext();
+	}
+}

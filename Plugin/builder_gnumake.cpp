@@ -446,8 +446,9 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
 	std::vector<wxFileName> files;
 	std::vector<wxFileName> abs_files;
-
-	proj->GetFiles(files);
+	
+	// load both relative and absolute paths
+	proj->GetFiles(files, abs_files);
 
 	// support for full path
 	long use_full_path(0);

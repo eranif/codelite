@@ -52,7 +52,8 @@ protected:
 	wxStaticText* m_staticText;
 	wxChoicebook* m_bookBuildSystems;
 	wxCheckBox *m_fixOnStartup;		
-
+	wxCheckBox *m_useFullPaths;		
+	
 	void CustomInit();
 	wxPanel *CreateBuildSystemPage(const wxString &name);
 

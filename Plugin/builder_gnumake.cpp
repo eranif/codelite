@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "project.h"
+#include "editor_config.h"
 #include "environmentconfig.h"
 #include "evnvarlist.h"
 #include "environmentconfig.h"
@@ -70,21 +71,21 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		errMsg << wxT("Cant open project '") << project << wxT("'");
 		return false;
 	}
-	
+
 	// get the selected build configuration
 	wxString bld_conf_name(confToBuild);
-	
-	if(confToBuild.IsEmpty()) {
+
+	if (confToBuild.IsEmpty()) {
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
-		if(!bldConf) {
+		if (!bldConf) {
 			errMsg << wxT("Cant find build configuration for project '") << project << wxT("'");
 			return false;
 		}
 		bld_conf_name = bldConf->GetName();
 	}
-	
+
 	wxArrayString depsArr = proj->GetDependencies(bld_conf_name);
-	
+
 	wxArrayString removeList;
 	if (!isProjectOnly) {
 		//this function assumes that the working directory is located at the workspace path
@@ -150,13 +151,15 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 			}
 
 			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), confToBuild);
-			
+
 			// incase caller provided with configuration to build, force generation of the makefile
 			GenerateMakefile(dependProj, confToBuild, confToBuild.IsEmpty() ? force : true);
-			// incase we manually specified the configuration to be built, set the project 
+			// incase we manually specified the configuration to be built, set the project
 			// as modified, so on next attempt to build it, CodeLite will sync the configuration
-			if(confToBuild.IsEmpty() == false) {dependProj->SetModified( true );}
-			
+			if (confToBuild.IsEmpty() == false) {
+				dependProj->SetModified( true );
+			}
+
 			wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, dependProj->GetName());
 			if (confToBuild.IsEmpty() == false) {
 				// incase we use to generate a 'Project Only' makefile,
@@ -177,9 +180,11 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 	//generate makefile for the project itself
 	GenerateMakefile(proj, confToBuild, confToBuild.IsEmpty() ? force : true);
-	// incase we manually specified the configuration to be built, set the project 
+	// incase we manually specified the configuration to be built, set the project
 	// as modified, so on next attempt to build it, CodeLite will sync the configuration
-	if(confToBuild.IsEmpty() == false) {proj->SetModified( true );}
+	if (confToBuild.IsEmpty() == false) {
+		proj->SetModified( true );
+	}
 
 	wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, project);
 	if (isProjectOnly && confToBuild.IsEmpty() == false) {
@@ -440,10 +445,19 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 	}
 
 	std::vector<wxFileName> files;
+	std::vector<wxFileName> abs_files;
+
 	proj->GetFiles(files);
 
+	// support for full path
+	long use_full_path(0);
+	EditorConfigST::Get()->GetLongValue(wxT("GenerateFullPathMakefile"), use_full_path);
+	if (use_full_path) {
+		proj->GetFiles(abs_files, true);
+	}
+
 	text << wxT("\n\n");
-	//create rule per object
+	// create rule per object
 	text << wxT("##\n");
 	text << wxT("## Objects\n");
 	text << wxT("##\n");
@@ -454,12 +468,24 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				wxString objectName;
 				objectName << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix)");
 
-				wxString fileName   = files[i].GetFullPath(wxPATH_UNIX);
+				wxString fileName, asbFileName;
+				fileName = files[i].GetFullPath(wxPATH_UNIX);
+
+				if (use_full_path) {
+					// use native format
+					asbFileName = abs_files[i].GetFullPath();
+					asbFileName.Replace(wxT("\\"), wxT("/"));
+				}
+
 				wxString dependFile;
 				dependFile << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix)") << wxT(".d");
-
 				text << objectName << wxT(": ") << fileName << wxT(" ") << dependFile << wxT("\n");
-				text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch)") << fileName << wxT(" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
+
+				if (use_full_path) {
+					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) \"") << asbFileName << wxT("\" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
+				} else {
+					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch)") << fileName << wxT(" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
+				}
 
 				//add the dependencie rule
 				text << dependFile << wxT(":") << wxT("\n");
@@ -469,10 +495,24 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				wxString objectName;
 				objectName << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix)");
 
-				wxString fileName   = files[i].GetFullPath(wxPATH_UNIX);
+				wxString fileName, asbFileName;
+				fileName = files[i].GetFullPath(wxPATH_UNIX);
+
+				if (use_full_path) {
+					// use native format
+					asbFileName = abs_files[i].GetFullPath();
+					asbFileName.Replace(wxT("\\"), wxT("/"));
+				}
+
 				text << objectName << wxT(": ") << fileName << wxT("\n");
-				text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch)") << fileName << wxT(" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath) \n\n");
+				if (use_full_path) {
+					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) \"") << asbFileName << wxT("\" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
+				} else {
+					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch)") << fileName << wxT(" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
+				}
+				text << wxT("\n");
 			}
+
 		} else if (IsResource(files.at(i).GetExt()) && bldConf->IsResCompilerRequired() && wxGetOsVersion() & wxOS_WINDOWS ) {
 			//Windows only
 			// we construct an object name which also includes the full name of the reousrce file and appends a .o to the name (to be more

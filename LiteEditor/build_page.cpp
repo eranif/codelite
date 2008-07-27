@@ -62,10 +62,17 @@ BuildPage::BuildPage( wxWindow* parent, int id, wxPoint pos, wxSize size, int st
 	
 	m_fixOnStartup = new wxCheckBox(this, wxID_ANY, wxT("Fix build tool path on startup"));
 	mainSizer->Add( m_fixOnStartup, 0, wxEXPAND | wxALL, 5 );
-	
+
+	m_useFullPaths = new wxCheckBox(this, wxID_ANY, wxT("When compiling, pass absolute path of the file to the compiler"));
+	mainSizer->Add( m_useFullPaths, 0, wxEXPAND | wxALL, 5 );
+
 	long fix(1);
 	EditorConfigST::Get()->GetLongValue(wxT("FixBuildToolOnStartup"), fix);
 	m_fixOnStartup->SetValue(fix ? true : false);
+	
+	long use_full_path(0);
+	EditorConfigST::Get()->GetLongValue(wxT("GenerateFullPathMakefile"), use_full_path);
+	m_useFullPaths->SetValue(use_full_path ? true : false);
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -100,6 +107,7 @@ void BuildPage::Save()
 	
 	// save the "fix on startup" flag
 	EditorConfigST::Get()->SaveLongValue(wxT("FixBuildToolOnStartup"), m_fixOnStartup->IsChecked() ? 1 : 0);
+	EditorConfigST::Get()->SaveLongValue(wxT("GenerateFullPathMakefile"), m_useFullPaths->IsChecked() ? 1 : 0);
 }
 
 //---------------------------------------------------------------

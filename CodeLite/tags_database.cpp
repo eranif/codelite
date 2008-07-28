@@ -96,6 +96,9 @@ void TagsDatabase::CreateSchema()
 		sql = wxT("PRAGMA synchronous = OFF;");
 		m_db->ExecuteUpdate(sql);
 
+		sql = wxT("PRAGMA journal_mode = OFF;");
+		m_db->ExecuteUpdate(sql);
+		
 		sql = wxT("PRAGMA temp_store = MEMORY;");
 		m_db->ExecuteUpdate(sql);
 

@@ -27,4 +27,5 @@
     </Configuration>
   </Settings>
   <Dependencies/>
+  <Dependencies Name="Common"/>
 </CodeLite_Project>

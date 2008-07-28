@@ -61,7 +61,7 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 		: wxDialog( parent, id, title, pos, size, style | wxRESIZE_BORDER )
 		, m_rightclickMenu(NULL)
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetSizeHints( 800, -1 );
 
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
@@ -134,6 +134,7 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	
 	// center the dialog
 	Centre();
+	GetSizer()->Fit(this);
 }
 
 void AdvancedDlg::LoadCompilers()

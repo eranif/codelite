@@ -44,6 +44,25 @@ enum wxSQLite3TransactionType
   WXSQLITE_TRANSACTION_EXCLUSIVE
 };
 
+enum wxSQLite3LimitType
+{
+  WXSQLITE_LIMIT_LENGTH              = 0,
+  WXSQLITE_LIMIT_SQL_LENGTH          = 1,
+  WXSQLITE_LIMIT_COLUMN              = 2,
+  WXSQLITE_LIMIT_EXPR_DEPTH          = 3,
+  WXSQLITE_LIMIT_COMPOUND_SELECT     = 4,
+  WXSQLITE_LIMIT_VDBE_OP             = 5,
+  WXSQLITE_LIMIT_FUNCTION_ARG        = 6,
+  WXSQLITE_LIMIT_ATTACHED            = 7,
+  WXSQLITE_LIMIT_LIKE_PATTERN_LENGTH = 8,
+  WXSQLITE_LIMIT_VARIABLE_NUMBER     = 9
+};
+
+inline void operator++(wxSQLite3LimitType& value)
+{
+  value = wxSQLite3LimitType(value+1);
+}
+
 /// SQL exception
 class WXDLLIMPEXP_SQLITE3 wxSQLite3Exception
 {
@@ -244,6 +263,12 @@ public:
 
   /// Set the function result as a NULL value
   void SetResultNull();
+
+  /// Set the function result as a zero BLOB value
+  /**
+  * \param blobSize size of the zero filled BLOB value
+  */
+  void SetResultZeroBlob(int blobSize);
 
   /// Set the function result as a exact copy of a function argument
   /**
@@ -746,6 +771,42 @@ public:
   */
   wxDateTime GetTimestamp(const wxString& columnName);
 
+  /// Get a column as a date and time value using the column index
+  /**
+  * The date/time value is expected to be stored in the database as a numeric value (i.e. int64).
+  *
+  * \param columnIndex index of the column. Indices start with 0.
+  * \return value of the column
+  */
+  wxDateTime GetNumericDateTime(int columnIndex);
+
+  /// Get a column as a date and time value using the column name
+  /**
+  * The date/time value is expected to be stored in the database as a numeric value (i.e. int64).
+  *
+  * \param columnName name of the column
+  * \return value of the column
+  */
+  wxDateTime GetNumericDateTime(const wxString& columnName);
+
+  /// Get a column as a date and time value using the column index
+  /**
+  * The date/time value is expected to be stored in the database as a Julian Day Number (i.e. double).
+  *
+  * \param columnIndex index of the column. Indices start with 0.
+  * \return value of the column
+  */
+  wxDateTime GetJulianDayNumber(int columnIndex);
+
+  /// Get a column as a date and time value using the column name
+  /**
+  * The date/time value is expected to be stored in the database as a Julian Day Number (i.e. double).
+  *
+  * \param columnName name of the column
+  * \return value of the column
+  */
+  wxDateTime GetJulianDayNumber(const wxString& columnName);
+
   /// Get a column as a boolean value using the column index
   /**
   * \param columnIndex index of the column. Indices start with 0.
@@ -793,6 +854,12 @@ public:
   /**
   */
   void Finalize();
+
+  /// Get the original SQL string for preparing the query statement
+  /**
+  * \return the original SQL string used to prepare the query statement
+  */
+  wxString GetSQL();
 
 private:
   /// Check the validity of the associated statement
@@ -1160,6 +1227,24 @@ public:
   */
   void BindTimestamp(int paramIndex, const wxDateTime& timestamp);
 
+  /// Bind parameter to a date and time value
+  /**
+  * The date/time value is transferred to the database as a numeric value (i.e. int64).
+  *
+  * \param paramIndex index of the parameter. The first parameter has an index of 1.
+  * \param datetime value of the parameter
+  */
+  void BindNumericDateTime(int paramIndex, const wxDateTime& datetime);
+
+  /// Bind parameter to a date and time value
+  /**
+  * The date/time value is transferred to the database as a Julian Day Number value (i.e. double).
+  *
+  * \param paramIndex index of the parameter. The first parameter has an index of 1.
+  * \param datetime value of the parameter
+  */
+  void BindJulianDayNumber(int paramIndex, const wxDateTime& datetime);
+
   /// Bind parameter to a boolean value
   /**
   * \param paramIndex index of the parameter. The first parameter has an index of 1.
@@ -1173,11 +1258,27 @@ public:
   */
   void BindNull(int paramIndex);
 
+  /// Bind parameter to a Zero BLOB value
+  /**
+  * Space for a BLOB is reserved and filled with binary zeros for later reference 
+  * through a BLOB handle.
+  *
+  * \param paramIndex index of the parameter. The first parameter has an index of 1.
+  * \param blobSize size of the BLOB
+  */
+  void BindZeroBlob(int paramIndex, int blobSize);
+
   /// Clear all parameter bindings
   /**
   * Sets all the parameters in the prepared SQL statement back to NULL. 
   */
   void ClearBindings();
+
+  /// Get the original SQL string for the prepared statement
+  /**
+  * \return the original SQL string used to prepare the statement
+  */
+  wxString GetSQL();
 
   /// Reset the prepared statement
   /**
@@ -1200,6 +1301,85 @@ private:
 
   void* m_db;    ///< associated SQLite3 database
   void* m_stmt;  ///< associated SQLite3 statement
+};
+
+
+/// Represents a SQLite BLOB handle
+class WXDLLIMPEXP_SQLITE3 wxSQLite3Blob
+{
+public:
+  /// Constructor
+  /**
+  */
+  wxSQLite3Blob();
+
+  /// Copy constructor
+  /**
+  */
+  wxSQLite3Blob(const wxSQLite3Blob& blob);
+
+  /// Assignement constructor
+  /**
+  */
+  wxSQLite3Blob& operator=(const wxSQLite3Blob& blob);
+
+  /// Constructor (internal use only)
+  /**
+  */
+  wxSQLite3Blob(void* m_db, void* blobHandle, bool writable);
+
+  /// Destructor
+  /**
+  */
+  virtual ~wxSQLite3Blob();
+
+  /// Read partial BLOB value
+  /**
+   * \param blobValue memory buffer receiving the partial content of the BLOB
+   * \param length length of BLOB content to be read
+   * \param offset offset within BLOB where the read starts
+   * \return the address of the memory buffer
+  */
+  wxMemoryBuffer& Read(wxMemoryBuffer& blobValue, int length, int offset);
+
+  /// Write partial BLOB value
+  /**
+   * \param blobValue memory buffer receiving the partial content of the BLOB
+   * \param offset offset within BLOB where the read starts
+  */
+  void Write(const wxMemoryBuffer& blobValue, int offset);
+
+  /// Check whether the BLOB handle is correctly initialized
+  /**
+   * \return TRUE if the BLOB handle is correctly initialized, FALSE otherweis
+  */
+  bool IsOk();
+
+  /// Check whether the BLOB handle is read only
+  /**
+   * \return TRUE if the BLOB handle is readonly, FALSE otherweis
+  */
+  bool IsReadOnly();
+
+  /// Get the size of the associated BLOB
+  /**
+   * \return the BLOB size
+  */
+  int GetSize();
+
+  /// Finalize the BLOB
+  /**
+  */
+  void Finalize();
+
+private:
+  /// Check for valid BLOB
+  void CheckBlob();
+
+  void* m_db;       ///< associated SQLite3 database handle
+  void* m_blob;     ///< associated SQLite3 BLOB handle
+  bool  m_ok;       ///< flag whether the BLOB handle is correctly initialized
+  bool  m_writable; ///< flag whether the BLOB is writable or read only
 };
 
 
@@ -1245,11 +1425,18 @@ public:
   /**
   * \return TRUE if database has been opened, FALSE otherwise
   */
-  bool IsOpen();
+  bool IsOpen() const;
 
   /// Close a SQLite3 database
   /**
   * Take care that all prepared statements have been finalized!
+  * Starting with version 3.6.0 SQLite has support to finialize all unfinalized
+  * prepared statements. The Close method has been changed to take advantage of
+  * this feature. Nevertheless it is recommended to explicitly finalize all
+  * wxSQLite3Statement instances before closing a database.
+  *
+  * NOTE: Finalizing all wxSQLite3Blob instances before closing a database is still required!
+  * 
   */
   void Close();
 
@@ -1445,6 +1632,31 @@ public:
   */
   wxLongLong GetLastRowId();
 
+  /// Get handle to a read only BLOB
+  /**
+  */
+  wxSQLite3Blob GetReadOnlyBlob(wxLongLong rowId, 
+                                const wxString& columnName, 
+                                const wxString& tableName, 
+                                const wxString& dbName = wxEmptyString);
+
+  /// Get handle to a writable BLOB
+  /**
+  */
+  wxSQLite3Blob GetWritableBlob(wxLongLong rowId, 
+                                const wxString& columnName, 
+                                const wxString& tableName, 
+                                const wxString& dbName = wxEmptyString);
+
+  /// Get handle to a BLOB
+  /**
+  */
+  wxSQLite3Blob GetBlob(wxLongLong rowId, 
+                        const wxString& columnName, 
+                        const wxString& tableName, 
+                        const wxString& dbName = wxEmptyString,
+                        bool writable = true);
+
   /// Interrupt a long running query
   /**
   * Causes any pending database operation to abort and return at its earliest opportunity.
@@ -1596,6 +1808,79 @@ public:
   */
   bool IsEncrypted() const { return m_isEncrypted; }
 
+  /// Query the value of a database limit
+  /**
+  * This method allows to query several database limits. Consult the SQLite
+  * documentation for further explanation.
+  *
+  * \param id The identifier of the limit to be queried
+  * \return the current value of the queried limit
+  */
+  int GetLimit(wxSQLite3LimitType id);
+
+  /// Change a database limit to a new value
+  /**
+  * This method allows to change several database limits. Consult the SQLite
+  * documentation for further explanation.
+  *
+  * \param id The identifier of the limit to be queried
+  * \param newValue The new value of the limit to be set
+  * \return the previous value of the specified limit
+  */
+  int SetLimit(wxSQLite3LimitType id, int newValue);
+
+  /// Convert database limit type to string
+  /**
+  * \param type The database limit type to be converted to string representation.
+  */
+  static wxString LimitTypeToString(wxSQLite3LimitType type);
+
+  /// Initialize the SQLite library
+  /**
+  * Starting with SQLite version 3.6.0 there is a new method to initialize
+  * the SQLite library. Currently an explicit call to this method is not
+  * required, but this behaviour might change in the future of SQLite.
+  * Therefore it is recommended to call this method once before accessing
+  * any SQLite databases.
+  */
+  static void InitializeSQLite();
+
+  /// Shutdown the SQLite library
+  /**
+  * Starting with SQLite version 3.6.0 there is a new method to shutdown
+  * the SQLite library. Currently an explicit call to this method is not
+  * required, but this behaviour might change in the future of SQLite.
+  * Therefore it is recommended to call this method once when no further
+  * access to any SQLite databases is required.
+  */
+  static void ShutdownSQLite();
+
+  /// Get random bytes
+  /**
+  * SQLite contains a high-quality pseudo-random number generator.
+  * This method allows to access it for application specofoc purposes.
+  *
+  * \param n The amount of random bytes to be created
+  * \param random A memory buffer containing the random bytes on return
+  */
+  static bool Randomness(int n, wxMemoryBuffer& random);
+
+  /// Enable or disable SQLite shared cache
+  /**
+  * The cache sharing mode set effects all subsequent database connections.
+  * Existing database connections continue use the sharing mode that was in effect
+  * at the time they were opened.
+  *
+  * Virtual tables cannot be used with a shared cache.
+  */
+  static void SetSharedCache(bool enable);
+
+  /// Check whether SQLite shared cache is enabled
+  /**
+  * \return TRUE if the SQLite shared cache is enabled, FALSE otherwise
+  */
+  static bool IsSharedCacheEnabled() { return ms_sharedCacheEnabled; }
+
   /// Get the version of the underlying SQLite3 library
   /**
   * \return a string which contains the version number of the library
@@ -1619,6 +1904,12 @@ public:
   * \return TRUE if loadable extension support is enabled, FALSE otherwise
   */
   static bool HasLoadExtSupport();
+
+  /// Check whether wxSQLite3 has support for incremental BLOBs
+  /**
+  * \return TRUE if incremental BLOB support is available, FALSE otherwise
+  */
+  static bool HasIncrementalBlobSupport();
 
 protected:
   /// Access SQLite's internal database handle
@@ -1664,9 +1955,11 @@ private:
   int   m_busyTimeoutMs;  ///< Timeout in milli seconds
   bool  m_isEncrypted;    ///< Flag whether the database is encrypted or not
 
-  static bool  ms_hasEncryptionSupport; ///< Flag whether wxSQLite3 has been compiled with encryption support
-  static bool  ms_hasMetaDataSupport;   ///< Flag whether wxSQLite3 has been compiled with meta data support
-  static bool  ms_hasLoadExtSupport;    ///< Flag whether wxSQLite3 has been compiled with loadable extension support
+  static bool  ms_sharedCacheEnabled;        ///< Flag whether SQLite shared cache is enabled
+  static bool  ms_hasEncryptionSupport;      ///< Flag whether wxSQLite3 has been compiled with encryption support
+  static bool  ms_hasMetaDataSupport;        ///< Flag whether wxSQLite3 has been compiled with meta data support
+  static bool  ms_hasLoadExtSupport;         ///< Flag whether wxSQLite3 has been compiled with loadable extension support
+  static bool  ms_hasIncrementalBlobSupport; ///<  Flag whether wxSQLite3 has support for incremental BLOBs
 };
 
 #endif

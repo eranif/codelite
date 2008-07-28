@@ -1008,3 +1008,93 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 	}
 	return false;
 }
+
+bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output)
+{
+	// make the line per WORD size
+#ifdef ON_64_BIT
+	int divider (8);
+#else
+	int divider (4);
+#endif
+
+	int factor((int)(count/divider));
+	if(count % divider != 0){
+		factor = (int)(count / divider) + 1;
+	}
+	
+	// at this point, 'factor' contains the number rows 
+	// and the 'divider' is the columns
+	wxString cmd, dbg_output;
+	cmd << wxT("-data-read-memory \"") << address << wxT("\" x 1 ") << factor << wxT(" ") << divider << wxT(" x");
+	
+	if (ExecSyncCmd(cmd, dbg_output)) {
+		
+		//{addr="0x003d3e24",data=["0x65","0x72","0x61","0x6e"],ascii="eran"},
+		//{addr="0x003d3e28",data=["0x00","0xab","0xab","0xab"],ascii="xxxx"}
+		
+		// search for ,memory=[
+		int where = dbg_output.Find(wxT(",memory=["));
+		if(where != wxNOT_FOUND) {
+			dbg_output = dbg_output.Mid((size_t)(where + 9));
+			
+			const wxCharBuffer scannerText =  _C(dbg_output);
+			setGdbLexerInput(scannerText.data());	
+			
+			int type;
+			wxString currentToken;
+			wxString currentLine;
+			GDB_NEXT_TOKEN();
+				
+			for(int i=0; i<factor && type != 0; i++){
+				currentLine.Clear();
+				
+				while(type != GDB_ADDR) {
+					
+					if(type == 0){break;}
+					
+					GDB_NEXT_TOKEN();
+					continue;
+				}
+				
+				// Eof?
+				if(type == 0){ break;}
+				
+				GDB_NEXT_TOKEN();	//=
+				GDB_NEXT_TOKEN();	//0x003d3e24
+				GDB_STRIP_QUOATES(currentToken);
+				currentLine << currentToken << wxT("\t");
+				
+				GDB_NEXT_TOKEN();	//,
+				GDB_NEXT_TOKEN();	//data
+				GDB_NEXT_TOKEN();	//=
+				GDB_NEXT_TOKEN();	//[
+				
+				for(int yy=0; yy<divider; yy++){
+					GDB_NEXT_TOKEN();	//"0x65"
+					GDB_STRIP_QUOATES(currentToken);
+					currentLine << currentToken << wxT(" ");
+					GDB_NEXT_TOKEN();	//, | ]
+				}
+				
+				GDB_NEXT_TOKEN();	//,
+				GDB_NEXT_TOKEN();	//GDB_ASCII
+				GDB_NEXT_TOKEN();	//=
+				GDB_NEXT_TOKEN();	//ascii_value
+				GDB_STRIP_QUOATES(currentToken);
+				
+				currentLine << currentToken;
+				
+				GDB_STRIP_QUOATES(currentToken);
+				output << currentLine << wxT("\n");
+				GDB_NEXT_TOKEN();
+			}
+			
+			gdb_result_lex_clean();
+			return true;
+		}
+		
+		return true;
+	}
+	return false;
+}

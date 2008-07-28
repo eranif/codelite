@@ -38,6 +38,9 @@
 %token GDB_IDENTIFIER
 %token GDB_NUMCHILD
 %token GDB_TYPE
+%token GDB_DATA
+%token GDB_ADDR
+%token GDB_ASCII
 
 %%
 dummy:

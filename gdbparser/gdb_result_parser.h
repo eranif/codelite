@@ -19,3 +19,6 @@
 #define GDB_IDENTIFIER 275
 #define GDB_NUMCHILD 276
 #define GDB_TYPE 277
+#define GDB_DATA 278
+#define GDB_ADDR 279
+#define GDB_ASCII 280

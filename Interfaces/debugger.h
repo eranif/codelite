@@ -292,6 +292,15 @@ public:
 	//which returns a tree of the result
 	virtual bool EvaluateExpressionToString(const wxString &expression, const wxString &format) = 0;
 	virtual bool EvaluateExpressionToTree(const wxString &expression) = 0;
+	
+	/**
+	 * \brief a request to display memory from address -> address + count. This is a synchronous call
+	 * \param address starting address
+	 * \param count address range
+	 * \param output [output] string containing the formatted result
+	 * \return true on success, false otherwise
+	 */
+	virtual bool WatchMemory(const wxString &address, size_t count, wxString &output) = 0;
 };
 
 

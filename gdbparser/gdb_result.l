@@ -80,6 +80,9 @@ frame                               {RETURN_VAL(GDB_FRAME);}
 locals								{RETURN_VAL(GDB_LOCALS);}
 numchild							{RETURN_VAL(GDB_NUMCHILD);}
 type								{RETURN_VAL(GDB_TYPE);}
+data								{RETURN_VAL(GDB_DATA);}
+addr								{RETURN_VAL(GDB_ADDR);}
+ascii								{RETURN_VAL(GDB_ASCII);}
 {identifier}        				{RETURN_VAL(GDB_IDENTIFIER);}
 "^"									{RETURN_VAL((int)*yytext);}
 "="									{RETURN_VAL((int)*yytext);}

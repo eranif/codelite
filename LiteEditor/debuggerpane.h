@@ -34,6 +34,7 @@ class LocalVarsTree;
 class SimpleTable;
 class BreakpointDlg;
 class ThreadListPanel;
+class MemoryView;
 
 class DebuggerPane : public wxPanel
 {
@@ -43,7 +44,8 @@ public:
 	static const wxString FRAMES;
 	static const wxString BREAKPOINTS;
 	static const wxString THREADS;
-
+	static const wxString MEMORY;
+	
 private:
 	Notebook *m_book;
 	LocalVarsTree *m_localsTree;
@@ -52,6 +54,8 @@ private:
 	ListCtrlPanel *m_frameList;
 	BreakpointDlg *m_breakpoints;
 	ThreadListPanel *m_threads;
+	MemoryView *m_memory;
+	
 	bool m_initDone;
 	
 private:
@@ -69,6 +73,8 @@ public:
 	ListCtrlPanel *GetFrameListView(){return m_frameList;}
 	BreakpointDlg *GetBreakpointView(){return m_breakpoints;}
 	ThreadListPanel *GetThreadsView(){return m_threads;}
+	MemoryView *GetMemoryView(){return m_memory;}
+	
 	Notebook *GetNotebook(){return m_book;}
 	void SelectTab(const wxString &tabName);
 	void Clear();

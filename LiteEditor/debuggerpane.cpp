@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "wx/dcbuffer.h"
+#include "memoryview.h"
 #include "debuggerpane.h"
 #include "localvarstree.h"
 #include "simpletable.h"
@@ -37,6 +38,7 @@ const wxString DebuggerPane::WATCHES = wxT("Watches");
 const wxString DebuggerPane::FRAMES = wxT("Stack");
 const wxString DebuggerPane::BREAKPOINTS = wxT("Breakpoints");
 const wxString DebuggerPane::THREADS = wxT("Threads");
+const wxString DebuggerPane::MEMORY = wxT("Memory");
 
 BEGIN_EVENT_TABLE(DebuggerPane, wxPanel)
 	EVT_PAINT(DebuggerPane::OnPaint)
@@ -92,6 +94,9 @@ void DebuggerPane::CreateGUIControls()
 	m_threads = new ThreadListPanel(m_book);
 	m_book->AddPage(m_threads, THREADS, wxXmlResource::Get()->LoadBitmap(wxT("threads")), false);
 
+	m_memory = new MemoryView(m_book);
+	m_book->AddPage(m_memory, MEMORY, wxXmlResource::Get()->LoadBitmap(wxT("memory_view")), false);
+
 	m_initDone = true;
 }
 
@@ -111,6 +116,7 @@ void DebuggerPane::Clear()
 	GetWatchesTable()->Clear();
 	GetFrameListView()->Clear();
 	GetThreadsView()->Clear();
+	GetMemoryView()->Clear();
 }
 
 void DebuggerPane::OnEraseBg(wxEraseEvent &e)

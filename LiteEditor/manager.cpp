@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "memoryview.h"
 #include "dockablepanemenumanager.h"
 #include <wx/busyinfo.h>
 #include "refactorindexbuildjob.h"
@@ -2094,10 +2095,12 @@ void Manager::UpdateDebuggerPane()
 			//query the watches, to improve performance, we query only
 			//the visible panes
 			if (pane->GetNotebook()->GetCurrentPage() == pane->GetLocalsTree()) {
+				
 				//update the locals tree
 				dbgr->QueryLocals();
 
 			} else if (pane->GetNotebook()->GetCurrentPage() == pane->GetWatchesTable()) {
+				
 				//update the watches table
 				wxArrayString expressions = pane->GetWatchesTable()->GetExpressions();
 				wxString format = pane->GetWatchesTable()->GetDisplayFormat();
@@ -2106,16 +2109,34 @@ void Manager::UpdateDebuggerPane()
 				}
 
 			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetFrameListView()) {
+				
 				//update the stack call
 				dbgr->ListFrames();
+				
 			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetBreakpointView()) {
-				//update the breakpoint view
+				
+				// update the breakpoint view
 				pane->GetBreakpointView()->Initialize();
+				
 			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetThreadsView()) {
-				//update the thread list
+				
+				// update the thread list
 				ThreadEntryArray threads;
 				dbgr->ListThreads(threads);
 				pane->GetThreadsView()->PopulateList(threads);
+				
+			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetMemoryView()){
+				
+				// Update the memory view tab
+				MemoryView *memView = pane->GetMemoryView();
+				if(memView->GetExpression().IsEmpty() == false){
+					
+					wxString output;
+					if(dbgr->WatchMemory(memView->GetExpression(), memView->GetSize(), output)){
+						memView->SetViewString(output);
+					}
+				}
+				
 			}
 		}
 	}

@@ -150,4 +150,5 @@
     </Configuration>
   </Settings>
   <Dependencies/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

@@ -77,7 +77,7 @@ Name: "{userdesktop}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{a
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite "; WorkingDir: "{app}"; Filename: "{app}\CodeLite.exe"; Tasks: quicklaunchicon
 
 [Registry]
-Root: HKCR	; Subkey: "*\shell\Open With CodeLite\command"; ValueType: string; ValueName: ""; ValueData: "{app}\CodeLite.exe -b ""{app}"" %1"
+Root: HKCR	; Subkey: "*\shell\Open With CodeLite\command"; ValueType: string; ValueName: ""; ValueData: "{app}\CodeLite.exe -b ""{app}"" ""%1"""
 
 [Code]
 // Uninstall

@@ -103,6 +103,7 @@ public:
 	virtual void Poke();
 	virtual bool GetTip(const wxString &expression, wxString &evaluated);
 	virtual bool ResolveType(const wxString &expression, wxString &type);
+	virtual bool WatchMemory(const wxString &address, size_t count, wxString &output);
 };
 #endif //DBGINTERFACE_H
 

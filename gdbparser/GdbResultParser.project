@@ -73,4 +73,5 @@ gdb_result_lexer.cpp: gdb_result.l
     </Configuration>
   </Settings>
   <Dependencies/>
+  <Dependencies Name="Debug"/>
 </CodeLite_Project>

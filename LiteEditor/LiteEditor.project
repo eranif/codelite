@@ -314,6 +314,10 @@
     <File Name="findresultscontainer.h"/>
     <File Name="workspacetab.cpp"/>
     <File Name="workspacetab.h"/>
+    <File Name="memoryviewbase.h"/>
+    <File Name="memoryview.cpp"/>
+    <File Name="memoryview.h"/>
+    <File Name="memoryviewbase.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

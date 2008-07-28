@@ -544,11 +544,11 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 	}
 	bool miCommand(false);
 	wxString trimmedCommand(command);
-	
-	if(trimmedCommand.Trim().Trim(false).StartsWith(wxT("-"))){
+
+	if (trimmedCommand.Trim().Trim(false).StartsWith(wxT("-"))) {
 		miCommand = true;
 	}
-	
+
 	//read all output until we found 'XXXXXXXX^done'
 	static wxRegEx reCommand(wxT("^([0-9]{8})"));
 	const int maxPeeks(100);
@@ -585,16 +585,16 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 			}
 
 			//remove trailing new line
-			if(miCommand) {
-				// if the execute command is a GDB MI command, 
+			if (miCommand) {
+				// if the execute command is a GDB MI command,
 				// remove the command ID (the 8 digit sequence)
 				// and append this line to the output
 				int where = line.Find(cmd_id);
-				if(where != wxNOT_FOUND) {
+				if (where != wxNOT_FOUND) {
 					output << line.Mid(where + 8);
 				}
 			}
-			
+
 			output = output.Trim().Trim(false);
 			return true;
 
@@ -932,7 +932,7 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 	if (ExecSyncCmd(cmd, output)) {
 		// delete the temporary variable object
 		cmd.clear();
-	//	wxLogMessage(wxT("ResolveType: gdb returned '") + output + wxT("'"));
+		//	wxLogMessage(wxT("ResolveType: gdb returned '") + output + wxT("'"));
 
 		// parse the output
 		// ^done,name="var2",numchild="1",value="{...}",type="orxAABOX"
@@ -947,7 +947,7 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 			GDB_ABORT('^');
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(GDB_DONE);
-			
+
 			// ,name="..."
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(',');
@@ -958,7 +958,7 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(GDB_STRING);
 			var_name = currentToken;
-			
+
 			// ,numchild="..."
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(',');
@@ -968,8 +968,8 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 			GDB_ABORT('=');
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(GDB_STRING);
-	// On Mac this part does not seem to be reported by GDB
-	#ifndef __WXMAC__		
+			// On Mac this part does not seem to be reported by GDB
+#ifndef __WXMAC__
 			// ,value="..."
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(',');
@@ -979,7 +979,7 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 			GDB_ABORT('=');
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(GDB_STRING);
-	#endif	
+#endif
 			// ,type="..."
 			GDB_NEXT_TOKEN();
 			GDB_ABORT(',');
@@ -989,21 +989,21 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 			GDB_ABORT('=');
 			GDB_NEXT_TOKEN();
 			type_name = currentToken;
-			
+
 		} while (0);
 		gdb_result_lex_clean();
-		
+
 		GDB_STRIP_QUOATES(type_name);
 		GDB_STRIP_QUOATES(var_name);
-		
+
 		// delete the variable object
 		cmd.clear();
 		cmd << wxT("-var-delete ") << var_name;
-		
+
 		// since the above gdb command yields an output, we use the sync command
 		// to get it as well to avoid errors in future calls to the gdb
 		ExecSyncCmd(cmd, output);
-		
+
 		return type_name.IsEmpty() == false;
 	}
 	return false;
@@ -1019,81 +1019,85 @@ bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output
 #endif
 
 	int factor((int)(count/divider));
-	if(count % divider != 0){
+	if (count % divider != 0) {
 		factor = (int)(count / divider) + 1;
 	}
-	
-	// at this point, 'factor' contains the number rows 
+
+	// at this point, 'factor' contains the number rows
 	// and the 'divider' is the columns
 	wxString cmd, dbg_output;
 	cmd << wxT("-data-read-memory \"") << address << wxT("\" x 1 ") << factor << wxT(" ") << divider << wxT(" x");
-	
+
 	if (ExecSyncCmd(cmd, dbg_output)) {
-		
+
 		//{addr="0x003d3e24",data=["0x65","0x72","0x61","0x6e"],ascii="eran"},
 		//{addr="0x003d3e28",data=["0x00","0xab","0xab","0xab"],ascii="xxxx"}
-		
+
 		// search for ,memory=[
-		int where = dbg_output.Find(wxT(",memory=["));
-		if(where != wxNOT_FOUND) {
+		int where = dbg_output.Find(wxT(",memory="));
+		if (where != wxNOT_FOUND) {
 			dbg_output = dbg_output.Mid((size_t)(where + 9));
-			
+
 			const wxCharBuffer scannerText =  _C(dbg_output);
-			setGdbLexerInput(scannerText.data());	
-			
+			setGdbLexerInput(scannerText.data());
+
 			int type;
 			wxString currentToken;
 			wxString currentLine;
 			GDB_NEXT_TOKEN();
-				
-			for(int i=0; i<factor && type != 0; i++){
+
+			for (int i=0; i<factor && type != 0; i++) {
 				currentLine.Clear();
-				
-				while(type != GDB_ADDR) {
-					
-					if(type == 0){break;}
-					
+
+				while (type != GDB_ADDR) {
+
+					if (type == 0) {
+						break;
+					}
+
 					GDB_NEXT_TOKEN();
 					continue;
 				}
-				
+
 				// Eof?
-				if(type == 0){ break;}
-				
+				if (type == 0) {
+					break;
+				}
+
 				GDB_NEXT_TOKEN();	//=
 				GDB_NEXT_TOKEN();	//0x003d3e24
 				GDB_STRIP_QUOATES(currentToken);
 				currentLine << currentToken << wxT("\t");
-				
+
 				GDB_NEXT_TOKEN();	//,
 				GDB_NEXT_TOKEN();	//data
 				GDB_NEXT_TOKEN();	//=
 				GDB_NEXT_TOKEN();	//[
-				
-				for(int yy=0; yy<divider; yy++){
+
+				for (int yy=0; yy<divider; yy++) {
 					GDB_NEXT_TOKEN();	//"0x65"
 					GDB_STRIP_QUOATES(currentToken);
 					currentLine << currentToken << wxT(" ");
 					GDB_NEXT_TOKEN();	//, | ]
 				}
-				
+
 				GDB_NEXT_TOKEN();	//,
 				GDB_NEXT_TOKEN();	//GDB_ASCII
 				GDB_NEXT_TOKEN();	//=
 				GDB_NEXT_TOKEN();	//ascii_value
 				GDB_STRIP_QUOATES(currentToken);
-				
+
 				currentLine << currentToken;
-				
+
 				GDB_STRIP_QUOATES(currentToken);
 				output << currentLine << wxT("\n");
 				GDB_NEXT_TOKEN();
 			}
-			
+
 			gdb_result_lex_clean();
 			return true;
 		}
-		
+
 		return true;
 	}
 	return false;

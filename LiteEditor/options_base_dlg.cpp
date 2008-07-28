@@ -332,6 +332,8 @@ void OptionsDlg::SaveChanges()
 	if (value < 1 || value > 8) {
 		value = 4;
 	}
+	// save it to configuration file
+	EditorConfigST::Get()->SaveLongValue(wxT("EditorTabWidth"), value);
 	
 	value = m_findReplaceHistory->GetValue();
 	if(value < 1 || value > 50) {
@@ -349,9 +351,6 @@ void OptionsDlg::SaveChanges()
 	
 	options->SetShowWhitspaces(style);
 	
-	// save it to configuration file
-	EditorConfigST::Get()->SaveLongValue(wxT("EditorTabWidth"), value);
-
 	// save the WordHighlightColour value
 	EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_wordHighlightColour->GetColour().GetAsString());
 	EditorConfigST::Get()->SaveLongValue(wxT("SingleInstance"), m_singleInstance->IsChecked() ? 1 : 0);

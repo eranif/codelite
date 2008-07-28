@@ -451,7 +451,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 	proj->GetFiles(files, abs_files);
 
 	// support for full path
-	long use_full_path(0);
+	long use_full_path(1);
 	EditorConfigST::Get()->GetLongValue(wxT("GenerateFullPathMakefile"), use_full_path);
 	if (use_full_path) {
 		proj->GetFiles(abs_files, true);

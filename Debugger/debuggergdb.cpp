@@ -1026,7 +1026,7 @@ bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output
 	// at this point, 'factor' contains the number rows
 	// and the 'divider' is the columns
 	wxString cmd, dbg_output;
-	cmd << wxT("-data-read-memory \"") << address << wxT("\" x 1 ") << factor << wxT(" ") << divider << wxT(" x");
+	cmd << wxT("-data-read-memory \"") << address << wxT("\" x 1 ") << factor << wxT(" ") << divider << wxT(" ?");
 
 	if (ExecSyncCmd(cmd, dbg_output)) {
 
@@ -1067,7 +1067,7 @@ bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output
 				GDB_NEXT_TOKEN();	//=
 				GDB_NEXT_TOKEN();	//0x003d3e24
 				GDB_STRIP_QUOATES(currentToken);
-				currentLine << currentToken << wxT("\t");
+				currentLine << currentToken << wxT(": ");
 
 				GDB_NEXT_TOKEN();	//,
 				GDB_NEXT_TOKEN();	//data

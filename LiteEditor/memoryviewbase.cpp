@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -36,7 +36,7 @@ MemoryViewBase::MemoryViewBase( wxWindow* parent, wxWindowID id, const wxPoint& 
 	
 	bSizer1->Add( bSizer2, 0, wxEXPAND, 5 );
 	
-	m_textCtrlMemory = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_READONLY );
+	m_textCtrlMemory = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2 );
 	m_textCtrlMemory->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	
 	bSizer1->Add( m_textCtrlMemory, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );

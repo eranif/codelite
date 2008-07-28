@@ -70,7 +70,7 @@ BuildPage::BuildPage( wxWindow* parent, int id, wxPoint pos, wxSize size, int st
 	EditorConfigST::Get()->GetLongValue(wxT("FixBuildToolOnStartup"), fix);
 	m_fixOnStartup->SetValue(fix ? true : false);
 	
-	long use_full_path(0);
+	long use_full_path(1);
 	EditorConfigST::Get()->GetLongValue(wxT("GenerateFullPathMakefile"), use_full_path);
 	m_useFullPaths->SetValue(use_full_path ? true : false);
 	

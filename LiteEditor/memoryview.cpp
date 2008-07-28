@@ -76,26 +76,26 @@ void MemoryView::SetViewString(const wxString& text)
 			if ((text.GetChar(i) == wxT(' ') || text.GetChar(i) == wxT('\n')) && needColouring) {
 
 				if (text.GetChar(i) == wxT('\n')) {
-					// the last word read was the ascii part of the memory view
-					// read backward until we find a space
-					int xx(i);
-					for(; xx>0; xx--){
-						
-						if(text.GetChar(xx) == wxT(' ')){
-							xx++;
-							break;
-						}
-					}
-					
-					for(; xx<(int)shortLen; xx++){
-						if(text.GetChar(xx) == wxT('\n')){
-							break;
-						}
-						
-						if(text.GetChar(xx) != oldValue.GetChar(xx)){
-							m_textCtrlMemory->SetStyle(xx, xx+1, style);
-						}
-					}
+//					// the last word read was the ascii part of the memory view
+//					// read backward until we find a space
+//					int xx(i);
+//					for(; xx>0; xx--){
+//						
+//						if(text.GetChar(xx) == wxT(' ')){
+//							xx++;
+//							break;
+//						}
+//					}
+//					
+//					for(; xx<(int)shortLen; xx++){
+//						if(text.GetChar(xx) == wxT('\n')){
+//							break;
+//						}
+//						
+//						if(text.GetChar(xx) != oldValue.GetChar(xx)){
+//							m_textCtrlMemory->SetStyle(xx, xx+1, style);
+//						}
+//					}
 					
 				} else {
 					

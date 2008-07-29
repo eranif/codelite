@@ -670,3 +670,12 @@ void DbgCmdHandlerLocals::MakeTreeFromFrame(wxString &strline, TreeNode<wxString
 		val.Clear();
 	}
 }
+
+bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line)
+{
+	// We use this handler as a callback to indicate that gdb has connected to the debugger
+	m_observer->UpdateAddLine(line);
+	
+	// continue execution
+	return m_debugger->Continue();
+}

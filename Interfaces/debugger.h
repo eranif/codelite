@@ -176,9 +176,13 @@ public:
 	/**
 	 * \brief Run the program under the debugger. This method must be called *after* Start() has been called
 	 * \param args arguments to pass to the debuggee process
+	 * \param comm the preferemd communication string, if this string is not empty, the debugger assumes remote debugging is on 
+	 * and will execute a different set of commands for connecting to the debuggee.  
+	 * comm is in the format of HOST:PORT or tty for serial debugging - this feature is currently enabled in GDB only 
 	 * \return true on success, false otherwise
 	 */
-	virtual bool Run(const wxString &args) = 0;
+	virtual bool Run(const wxString &args, const wxString &comm) = 0;
+	
 	/**
 	 * \brief Stop the debugger
 	 * \return true on success, false otherwise

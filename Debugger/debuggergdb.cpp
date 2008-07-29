@@ -145,6 +145,7 @@ static wxString MakeId()
 
 DbgGdb::DbgGdb()
 		: m_debuggeePid(wxNOT_FOUND)
+		, m_isRemote(false)
 {
 #ifdef __WXMSW__
 	Kernel32Dll = LoadLibrary(wxT("kernel32.dll"));
@@ -270,8 +271,8 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 			//a workaround for the MI pending breakpoint
 			ExecuteCmd(wxT("set breakpoint pending on"));
 		}
-		
-		for(size_t i=0; i<cmds.GetCount(); i++){
+
+		for (size_t i=0; i<cmds.GetCount(); i++) {
 			ExecuteCmd(cmds.Item(i));
 		}
 
@@ -362,11 +363,11 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 		ExecuteCmd(wxT("set width 0"));
 		// no pagination
 		ExecuteCmd(wxT("set height 0"));
-		
-		for(size_t i=0; i<cmds.GetCount(); i++){
+
+		for (size_t i=0; i<cmds.GetCount(); i++) {
 			ExecuteCmd(cmds.Item(i));
 		}
-		
+
 		//keep the list of breakpoints
 		m_bpList = bpList;
 		SetBreakpoints();
@@ -397,10 +398,21 @@ bool DbgGdb::Start(const wxString &exeName, const wxString &cwd, const std::vect
 	return Start(wxT("gdb"), exeName, cwd, bpList, cmds);
 }
 
-bool DbgGdb::Run(const wxString &args)
+bool DbgGdb::Run(const wxString &args, const wxString &comm)
 {
-	//add handler for this command
-	return WriteCommand(wxT("-exec-run ") + args, new DbgCmdHandlerAsyncCmd(m_observer));
+	m_isRemote = false;
+	if (comm.IsEmpty()) {
+
+		// add handler for this command
+		return WriteCommand(wxT("-exec-run ") + args, new DbgCmdHandlerAsyncCmd(m_observer));
+
+	} else {
+		// attach to the remote gdb server
+		m_isRemote = true;
+		wxString cmd;
+		cmd << wxT("target remote ") << comm << wxT(" ") << args;
+		return WriteCommand(cmd, new DbgCmdHandlerRemoteDebugging(m_observer, this));
+	}
 }
 
 bool DbgGdb::Stop()
@@ -485,6 +497,8 @@ bool DbgGdb::IsRunning()
 bool DbgGdb::Interrupt()
 {
 	if (m_debuggeePid > 0) {
+		m_observer->UpdateAddLine(wxString::Format(wxT("Interrupting debugee process: %d"), m_debuggeePid));
+		
 #ifdef __WXMSW__
 		if ( DebugBreakProcessFunc ) {
 			// we have DebugBreakProcess
@@ -496,7 +510,6 @@ bool DbgGdb::Interrupt()
 		// debuggee process
 		return false;
 #else
-		m_observer->UpdateAddLine(wxT("Interrupting debugee process"));
 		kill(m_debuggeePid, SIGINT);
 		return true;
 #endif
@@ -657,17 +670,21 @@ void DbgGdb::Poke()
 	wxString line;
 
 	if (m_debuggeePid == wxNOT_FOUND) {
-		std::vector<long> children;
-		ProcUtils::GetChildren(m_proc->GetPid(), children);
-		std::sort(children.begin(), children.end());
-		if (children.empty() == false) {
-			m_debuggeePid = children.at(0);
-		}
+		if (m_isRemote) {
+			m_debuggeePid = m_proc->GetPid();
+		} else {
+			std::vector<long> children;
+			ProcUtils::GetChildren(m_proc->GetPid(), children);
+			std::sort(children.begin(), children.end());
+			if (children.empty() == false) {
+				m_debuggeePid = children.at(0);
+			}
 
-		if (m_debuggeePid != wxNOT_FOUND) {
-			wxString msg;
-			msg << wxT("Debuggee process ID: ") << m_debuggeePid;
-			m_observer->UpdateAddLine(msg);
+			if (m_debuggeePid != wxNOT_FOUND) {
+				wxString msg;
+				msg << wxT("Debuggee process ID: ") << m_debuggeePid;
+				m_observer->UpdateAddLine(msg);
+			}
 		}
 	}
 

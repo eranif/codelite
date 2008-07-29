@@ -1163,7 +1163,7 @@ void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
 			DbgStop();
 		}
 	}
-	
+
 	BuildInfo info(projectName, wxEmptyString, false, BuildInfo::Build);
 	m_compileRequest = new CompileRequest(GetMainFrame(), info, fileName, false);
 	m_compileRequest->Process();
@@ -1845,8 +1845,8 @@ void Manager::DbgStart(long pid)
 	//We can now get all the gathered breakpoints from the manager
 	std::vector<BreakpointInfo> bps;
 	DebuggerMgr::Get().GetBreakpoints(bps);
-	
-	// read 
+
+	// read
 	wxArrayString dbg_cmds;
 	if (pid == wxNOT_FOUND) {
 		//it is now OK to start the debugger...
@@ -1868,23 +1868,41 @@ void Manager::DbgStart(long pid)
 		}
 	}
 
-	//let the active editor get the focus
+	// let the active editor get the focus
 	LEditor *editor = dynamic_cast<LEditor*>(GetActiveEditor());
 	if (editor) {
 		editor->SetActive();
 	}
 
-	//mark that we are waiting for the first GotControl()
+	// mark that we are waiting for the first GotControl()
 	DebugMessage(output);
 	DebugMessage(wxT("Debug session started successfully!\n"));
 
-	//Incase we are attaching to process
-	//do nothing here
-	if (pid == wxNOT_FOUND) {
-		dbgr->Run(args);
+	if (bldConf->GetIsDbgRemoteTarget() && pid == wxNOT_FOUND) {
+
+		// debugging remote target
+		wxString comm;
+		wxString port = bldConf->GetDbgHostPort();
+		wxString host = bldConf->GetDbgHostName();
+		
+		comm << host;
+		
+		host = host.Trim().Trim(false);
+		port = port.Trim().Trim(false);
+		
+		if (port.IsEmpty() == false) {
+			comm << wxT(":") << port;
+		}
+		
+		dbgr->Run(args, comm);
+
+	} else if (pid == wxNOT_FOUND) {
+
+		// debugging local target
+		dbgr->Run(args, wxEmptyString);
 	}
 
-	//and finally make the debugger pane visible
+	// and finally make the debugger pane visible
 	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
 	if (info.IsOk() && !info.IsShown()) {
 		HideDebuggerPane = true;
@@ -2098,12 +2116,12 @@ void Manager::UpdateDebuggerPane()
 			//query the watches, to improve performance, we query only
 			//the visible panes
 			if (pane->GetNotebook()->GetCurrentPage() == pane->GetLocalsTree()) {
-				
+
 				//update the locals tree
 				dbgr->QueryLocals();
 
 			} else if (pane->GetNotebook()->GetCurrentPage() == pane->GetWatchesTable()) {
-				
+
 				//update the watches table
 				wxArrayString expressions = pane->GetWatchesTable()->GetExpressions();
 				wxString format = pane->GetWatchesTable()->GetDisplayFormat();
@@ -2112,34 +2130,34 @@ void Manager::UpdateDebuggerPane()
 				}
 
 			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetFrameListView()) {
-				
+
 				//update the stack call
 				dbgr->ListFrames();
-				
+
 			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetBreakpointView()) {
-				
+
 				// update the breakpoint view
 				pane->GetBreakpointView()->Initialize();
-				
+
 			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetThreadsView()) {
-				
+
 				// update the thread list
 				ThreadEntryArray threads;
 				dbgr->ListThreads(threads);
 				pane->GetThreadsView()->PopulateList(threads);
-				
-			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetMemoryView()){
-				
+
+			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetMemoryView()) {
+
 				// Update the memory view tab
 				MemoryView *memView = pane->GetMemoryView();
-				if(memView->GetExpression().IsEmpty() == false){
-					
+				if (memView->GetExpression().IsEmpty() == false) {
+
 					wxString output;
-					if(dbgr->WatchMemory(memView->GetExpression(), memView->GetSize(), output)){
+					if (dbgr->WatchMemory(memView->GetExpression(), memView->GetSize(), output)) {
 						memView->SetViewString(output);
 					}
 				}
-				
+
 			}
 		}
 	}
@@ -2395,12 +2413,12 @@ void Manager::RunCustomPreMakeCommand(const wxString &project)
 		delete m_compileRequest;
 		m_compileRequest = NULL;
 	}
-	
+
 	BuildInfo info(project, wxEmptyString, false, BuildInfo::Build);
 	m_compileRequest = new CompileRequest(	GetMainFrame(), //owner window
-											info,
-											wxEmptyString, 	//no file name (valid only for build file only)
-											true);			//run premake step only
+	                                       info,
+	                                       wxEmptyString, 	//no file name (valid only for build file only)
+	                                       true);			//run premake step only
 	m_compileRequest->Process();
 }
 
@@ -2981,6 +2999,5 @@ void Manager::DoCleanProject(const BuildInfo& buildInfo)
 
 	// TODO :: replace the construction of CleanRequest to include the proper build configuration
 	m_cleanRequest = new CleanRequest(GetMainFrame(), buildInfo);
-	m_cleanRequest->Process();	
+	m_cleanRequest->Process();
 }
-

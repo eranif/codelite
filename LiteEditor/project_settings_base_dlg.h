@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -92,6 +92,11 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxButton* m_buttonLibraryPath;
 		wxButton* m_buttonLinkerOptions;
 		wxPanel* m_panelDebugger;
+		wxCheckBox* m_checkBoxDbgRemote;
+		wxStaticText* m_staticText31;
+		wxTextCtrl* m_textCtrl1DbgHost;
+		wxStaticText* m_staticText32;
+		wxTextCtrl* m_textCtrlDbgPort;
 		wxStaticText* m_staticText301;
 		wxTextCtrl* m_textCtrlDbgCmds;
 		wxPanel* m_resourceCmpPage;
@@ -150,6 +155,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnDebuggingRemoteTarget( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnChoiceMakefileTool( wxCommandEvent& event ){ event.Skip(); }
 		
 	

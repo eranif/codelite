@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : project_settings_dlg.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : project_settings_dlg.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __project_settings_dlg__
+#ifndef __project_settings_dlg__
 #define __project_settings_dlg__
 
 /**
@@ -40,21 +40,21 @@ class ProjectSettingsDlg : public ProjectSettingsBaseDlg
 	wxString m_projectName;
 	wxString m_configName;
 	wxString m_oldConfigurationName;
-	
+
 protected:
 	void ConnectEvents();
 	void InitDialog(const wxString &configName, const wxString &oldConfig);
 	void DoUpdatePages(bool checked);
-		
+
 	/**
-	 * Copy values from the project settings configuration file to the 
+	 * Copy values from the project settings configuration file to the
 	 * GUI controls
 	 * \param confName configuration name to copy
 	 */
 	void CopyValues(const wxString &confName);
 
 	/**
-	 * Save values from the GUI controls back to 
+	 * Save values from the GUI controls back to
 	 * project settings configuration file
 	 * \param confName configuration name to save
 	 */
@@ -70,7 +70,7 @@ protected:
 	void DisableCustomBuildPage(bool disable);
 	void DisableGeneralPage(bool disable);
 	void DisableCustomMkSteps(bool disable);
-	
+
 	void PopupAddOptionDlg(wxTextCtrl *ctrl);
 
 	void OnEditCommand(wxCheckListBox* list);
@@ -81,7 +81,8 @@ protected:
 	void UpdateConfigurationTypeChoice(const wxString &itemToSelect);
 	
 	virtual void OnCmdEvtVModified( wxCommandEvent& event );
-
+	virtual void OnDebuggingRemoteTarget(wxCommandEvent &e);
+	
 public:
 	/** Constructor */
 	ProjectSettingsDlg( wxWindow* parent, const wxString &configName, const wxString &projectName, const wxString &title );
@@ -92,16 +93,46 @@ public:
 	virtual void OnAddSearchPath(wxCommandEvent &event);
 	virtual void OnAddLibraryPath(wxCommandEvent &event);
 	virtual void OnAddLibrary(wxCommandEvent &event);
-	virtual void OnNewPreBuildCommand(wxCommandEvent & event){ OnNewCommand(m_checkListPreBuildCommands); event.Skip();}
-	virtual void OnEditPreBuildCommand(wxCommandEvent &event){ OnEditCommand(m_checkListPreBuildCommands); event.Skip();}
-	virtual void OnUpPreBuildCommand(wxCommandEvent &event){ OnUpCommand(m_checkListPreBuildCommands); event.Skip();}
-	virtual void OnDownPreBuildCommand(wxCommandEvent &event){ OnDownCommand(m_checkListPreBuildCommands); event.Skip();}
-	virtual void OnDeletePreBuildCommand(wxCommandEvent &event){ OnDeleteCommand(m_checkListPreBuildCommands); event.Skip();}
-	virtual void OnNewPostBuildCommand(wxCommandEvent & event){ OnNewCommand(m_checkListPostBuildCommands); event.Skip();}
-	virtual void OnEditPostBuildCommand(wxCommandEvent &event){ OnEditCommand(m_checkListPostBuildCommands); event.Skip();}
-	virtual void OnUpPostBuildCommand(wxCommandEvent &event){ OnUpCommand(m_checkListPostBuildCommands); event.Skip();}
-	virtual void OnDownPostBuildCommand(wxCommandEvent &event){ OnDownCommand(m_checkListPostBuildCommands); event.Skip();}
-	virtual void OnDeletePostBuildCommand(wxCommandEvent &event){ OnDeleteCommand(m_checkListPostBuildCommands); event.Skip();}
+	virtual void OnNewPreBuildCommand(wxCommandEvent & event) {
+		OnNewCommand(m_checkListPreBuildCommands);
+		event.Skip();
+	}
+	virtual void OnEditPreBuildCommand(wxCommandEvent &event) {
+		OnEditCommand(m_checkListPreBuildCommands);
+		event.Skip();
+	}
+	virtual void OnUpPreBuildCommand(wxCommandEvent &event) {
+		OnUpCommand(m_checkListPreBuildCommands);
+		event.Skip();
+	}
+	virtual void OnDownPreBuildCommand(wxCommandEvent &event) {
+		OnDownCommand(m_checkListPreBuildCommands);
+		event.Skip();
+	}
+	virtual void OnDeletePreBuildCommand(wxCommandEvent &event) {
+		OnDeleteCommand(m_checkListPreBuildCommands);
+		event.Skip();
+	}
+	virtual void OnNewPostBuildCommand(wxCommandEvent & event) {
+		OnNewCommand(m_checkListPostBuildCommands);
+		event.Skip();
+	}
+	virtual void OnEditPostBuildCommand(wxCommandEvent &event) {
+		OnEditCommand(m_checkListPostBuildCommands);
+		event.Skip();
+	}
+	virtual void OnUpPostBuildCommand(wxCommandEvent &event) {
+		OnUpCommand(m_checkListPostBuildCommands);
+		event.Skip();
+	}
+	virtual void OnDownPostBuildCommand(wxCommandEvent &event) {
+		OnDownCommand(m_checkListPostBuildCommands);
+		event.Skip();
+	}
+	virtual void OnDeletePostBuildCommand(wxCommandEvent &event) {
+		OnDeleteCommand(m_checkListPostBuildCommands);
+		event.Skip();
+	}
 	virtual void OnButtonOK(wxCommandEvent &event);
 	virtual void OnButtonApply(wxCommandEvent &event);
 	virtual void OnButtonConfigurationManager(wxCommandEvent &event);
@@ -116,4 +147,3 @@ public:
 };
 
 #endif // __project_settings_dlg__
-

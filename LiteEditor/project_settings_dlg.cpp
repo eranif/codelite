@@ -67,6 +67,10 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 	m_buttonAddResCmpOptions->Enable(!m_checkResourceNeeded->IsChecked());
 	m_buttonAddResCmpPath->Enable(!m_checkResourceNeeded->IsChecked());
 	m_buttonApply->Enable(false);
+	
+	m_textCtrl1DbgHost->Enable(m_checkBoxDbgRemote->IsChecked());
+	m_textCtrlDbgPort->Enable(m_checkBoxDbgRemote->IsChecked());
+	
 	SetSizeHints(780, -1);
 	GetSizer()->Fit(this);
 	Centre();
@@ -182,6 +186,9 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	m_textCtrlMakefileGenerationCmd->SetValue(buildConf->GetMakeGenerationCommand());
 	m_textCtrl1SingleFileCommand->SetValue(buildConf->GetSingleFileBuildCommand());
 	m_textCtrlDbgCmds->SetValue(buildConf->GetDebuggerStartupCmds());
+	m_checkBoxDbgRemote->SetValue(buildConf->GetIsDbgRemoteTarget());
+	m_textCtrl1DbgHost->SetValue(buildConf->GetDbgHostName());
+	m_textCtrlDbgPort->SetValue(buildConf->GetDbgHostPort());
 	
 	//set the custom pre-prebuild step
 	wxString customPreBuild = buildConf->GetPreBuildCustom();
@@ -298,6 +305,9 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetSingleFileBuildCommand(m_textCtrl1SingleFileCommand->GetValue());
 	buildConf->SetProjectType(m_choiceProjectTypes->GetStringSelection());
 	buildConf->SetDebuggerStartupCmds(m_textCtrlDbgCmds->GetValue());
+	buildConf->SetIsDbgRemoteTarget(m_checkBoxDbgRemote->IsChecked());
+	buildConf->SetDbgHostName(m_textCtrl1DbgHost->GetValue());
+	buildConf->SetDbgHostPort(m_textCtrlDbgPort->GetValue());
 	
 	//set the pre-build step
 	wxString rules = m_textPreBuildRule->GetValue();
@@ -679,5 +689,17 @@ void ProjectSettingsDlg::OnChoiceMakefileTool(wxCommandEvent &e)
 		m_textCtrlMakefileGenerationCmd->Enable(true);
 	}
 	
+	OnCmdEvtVModified(e);
+}
+
+void ProjectSettingsDlg::OnDebuggingRemoteTarget(wxCommandEvent& e)
+{
+	if(e.IsChecked()){
+		m_textCtrl1DbgHost->Enable(true);
+		m_textCtrlDbgPort->Enable(true);
+	} else {
+		m_textCtrl1DbgHost->Enable(false);
+		m_textCtrlDbgPort->Enable(false);
+	}
 	OnCmdEvtVModified(e);
 }

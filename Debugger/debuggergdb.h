@@ -56,6 +56,7 @@ class DbgGdb : public InteractiveProcess, public IDebugger
 	long m_debuggeePid;
 	ConsoleFinder m_consoleFinder;
 	std::vector<BreakpointInfo> m_bpList;
+	bool m_isRemote;
 	
 protected:
 	void RegisterHandler(const wxString &id, DbgCmdHandler *cmd);
@@ -78,7 +79,7 @@ public:
 	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
 	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
 	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
-	virtual bool Run(const wxString &args);
+	virtual bool Run(const wxString &args, const wxString &comm);
 	virtual bool Stop();
 	virtual bool Break(const wxString &fileName, long lineno);
 	virtual bool RemoveBreak(int bid);

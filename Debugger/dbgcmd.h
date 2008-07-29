@@ -71,6 +71,18 @@ public:
 	virtual bool ProcessOutput(const wxString &line);
 };
 
+class DbgCmdHandlerRemoteDebugging : public DbgCmdHandler {
+	IDebugger *m_debugger;
+	
+public:
+	DbgCmdHandlerRemoteDebugging(IDebuggerObserver *observer, IDebugger *debugger) : DbgCmdHandler(observer), m_debugger(debugger)
+	{}
+	
+	virtual ~DbgCmdHandlerRemoteDebugging(){}
+
+	virtual bool ProcessOutput(const wxString &line);
+};
+
 class DbgCmdHandlerBp : public DbgCmdHandler {
 	BreakpointInfo m_bp;
 	std::vector< BreakpointInfo > *m_bplist;

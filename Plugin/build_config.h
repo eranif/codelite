@@ -101,6 +101,8 @@ class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject {
 	wxString m_toolName;
 	wxString m_makeGenerationCommand;
 	wxString m_singleFileBuildCommand;
+	wxString m_debuggerStartupCmds;
+	
 	
 private:
 	void FillFromSmiColonString(wxArrayString &arr, const wxString &str);
@@ -202,6 +204,9 @@ public:
 	
 	const wxString &GetProjectType() const {return m_projectType;}
 	void SetProjectType(const wxString &projectType) {m_projectType = projectType;}
+	
+	void SetDebuggerStartupCmds(const wxString& debuggerStartupCmds) {this->m_debuggerStartupCmds = debuggerStartupCmds;}
+	const wxString& GetDebuggerStartupCmds() const {return m_debuggerStartupCmds;}
 };
 
 typedef SmartPtr<BuildConfig> BuildConfigPtr;

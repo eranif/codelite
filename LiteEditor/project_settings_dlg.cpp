@@ -181,6 +181,7 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	m_thirdPartyTool->SetStringSelection(buildConf->GetToolName());
 	m_textCtrlMakefileGenerationCmd->SetValue(buildConf->GetMakeGenerationCommand());
 	m_textCtrl1SingleFileCommand->SetValue(buildConf->GetSingleFileBuildCommand());
+	m_textCtrlDbgCmds->SetValue(buildConf->GetDebuggerStartupCmds());
 	
 	//set the custom pre-prebuild step
 	wxString customPreBuild = buildConf->GetPreBuildCustom();
@@ -296,6 +297,7 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetPauseWhenExecEnds(m_checkBoxPauseWhenExecEnds->IsChecked());
 	buildConf->SetSingleFileBuildCommand(m_textCtrl1SingleFileCommand->GetValue());
 	buildConf->SetProjectType(m_choiceProjectTypes->GetStringSelection());
+	buildConf->SetDebuggerStartupCmds(m_textCtrlDbgCmds->GetValue());
 	
 	//set the pre-build step
 	wxString rules = m_textPreBuildRule->GetValue();

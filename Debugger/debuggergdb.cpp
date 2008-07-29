@@ -198,7 +198,7 @@ void DbgGdb::EmptyQueue()
 	m_handlers.clear();
 }
 
-bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int pid, const std::vector<BreakpointInfo> &bpList)
+bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds)
 {
 	if (IsBusy()) {
 		//dont allow second instance of the debugger
@@ -270,6 +270,10 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 			//a workaround for the MI pending breakpoint
 			ExecuteCmd(wxT("set breakpoint pending on"));
 		}
+		
+		for(size_t i=0; i<cmds.GetCount(); i++){
+			ExecuteCmd(cmds.Item(i));
+		}
 
 		//keep the list of breakpoints
 		m_bpList = bpList;
@@ -286,7 +290,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 	return false;
 }
 
-bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList)
+bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds)
 {
 	if (IsBusy()) {
 		//dont allow second instance of the debugger
@@ -306,7 +310,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 	wxString ptyName;
 	if (!m_consoleFinder.FindConsole(exeName, ptyName)) {
 		SetBusy(false);
-		wxLogMessage(wxT("Failed to allocate console for debugger"));
+		wxLogMessage(wxT("Failed to allocate console for debugger, do u have Xterm installed?"));
 		return false;
 	}
 	cmd << dbgExeName << wxT(" --tty=") << ptyName << wxT(" --interpreter=mi ") << exeName;
@@ -351,21 +355,18 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 		ExecuteCmd(wxT("set unwindonsignal on"));
 
 		if (m_info.enablePendingBreakpoints) {
-			//a workaround for the MI pending breakpoint
-//#if defined (__WXGTK__) || defined (__WXMAC__)
 			ExecuteCmd(wxT("set breakpoint pending on"));
-//#else
-//			// Mac & Windows
-//			ExecuteCmd(wxT("set auto-solib-add on"));
-//			ExecuteCmd(wxT("set stop-on-solib-events 1"));
-//#endif
 		}
 
 		//dont wrap lines
 		ExecuteCmd(wxT("set width 0"));
 		// no pagination
 		ExecuteCmd(wxT("set height 0"));
-
+		
+		for(size_t i=0; i<cmds.GetCount(); i++){
+			ExecuteCmd(cmds.Item(i));
+		}
+		
 		//keep the list of breakpoints
 		m_bpList = bpList;
 		SetBreakpoints();
@@ -391,9 +392,9 @@ bool DbgGdb::WriteCommand(const wxString &command, DbgCmdHandler *handler)
 	return true;
 }
 
-bool DbgGdb::Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList)
+bool DbgGdb::Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds)
 {
-	return Start(wxT("gdb"), exeName, cwd, bpList);
+	return Start(wxT("gdb"), exeName, cwd, bpList, cmds);
 }
 
 bool DbgGdb::Run(const wxString &args)

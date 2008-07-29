@@ -74,11 +74,10 @@ public:
 	DbgGdb();
 	virtual ~DbgGdb();
 
-	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList);
 	virtual bool ExecSyncCmd(const wxString &command, wxString &output);
-	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList);
-	//start debugger, but this time, attach to process
-	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList);
+	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
+	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
+	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
 	virtual bool Run(const wxString &args);
 	virtual bool Stop();
 	virtual bool Break(const wxString &fileName, long lineno);

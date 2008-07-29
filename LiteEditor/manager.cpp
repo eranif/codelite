@@ -1845,10 +1845,13 @@ void Manager::DbgStart(long pid)
 	//We can now get all the gathered breakpoints from the manager
 	std::vector<BreakpointInfo> bps;
 	DebuggerMgr::Get().GetBreakpoints(bps);
-
+	
+	// read 
+	wxArrayString dbg_cmds;
 	if (pid == wxNOT_FOUND) {
 		//it is now OK to start the debugger...
-		if (!dbgr->Start(dbgname, exepath, wd, bps)) {
+		dbg_cmds = wxStringTokenize(bldConf->GetDebuggerStartupCmds(), wxT("\n"), wxTOKEN_STRTOK);
+		if (!dbgr->Start(dbgname, exepath, wd, bps, dbg_cmds)) {
 			wxString errMsg;
 			errMsg << wxT("Failed to initialize debugger: ") << dbgname << wxT("\n");
 			DebugMessage(errMsg);
@@ -1857,7 +1860,7 @@ void Manager::DbgStart(long pid)
 		m_dbgWaitingFirstBp = true;
 	} else {
 		//Attach to process...
-		if (!dbgr->Start(dbgname, exepath, PID, bps)) {
+		if (!dbgr->Start(dbgname, exepath, PID, bps, dbg_cmds)) {
 			wxString errMsg;
 			errMsg << wxT("Failed to initialize debugger: ") << dbgname << wxT("\n");
 			DebugMessage(errMsg);

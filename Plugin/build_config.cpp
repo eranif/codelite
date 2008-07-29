@@ -71,6 +71,12 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 			}
 		}
 
+		// read the postbuild commands
+		wxXmlNode *debugger = XmlUtils::FindFirstByTagName(node, wxT("Debugger"));
+		if(debugger){
+			m_debuggerStartupCmds = debugger->GetNodeContent();
+		}
+		
 		// read the resource compile options
 		wxXmlNode *resCmp = XmlUtils::FindFirstByTagName(node, wxT("ResourceCompiler"));
 		if(resCmp){
@@ -184,6 +190,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_makeGenerationCommand = wxEmptyString;
 		m_toolName = wxEmptyString;
 		m_singleFileBuildCommand = wxEmptyString;
+		m_debuggerStartupCmds = wxEmptyString;
 		
 		BuildSettingsConfigCookie cookie;
 		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
@@ -257,7 +264,7 @@ wxXmlNode *BuildConfig::ToXml() const
 	link->AddProperty(wxT("Required"), BoolToString(m_linkerRequired));
 	link->AddProperty(wxT("Options"), m_linkOptions);
 	node->AddChild(link);
-
+	
 	for(i=0; i<m_libPath.GetCount(); i++){
 		wxXmlNode *option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("LibraryPath"));
 		option->AddProperty(wxT("Value"), m_libPath.Item(i));
@@ -269,7 +276,11 @@ wxXmlNode *BuildConfig::ToXml() const
 		option->AddProperty(wxT("Value"), m_libs.Item(i));
 		link->AddChild(option);
 	}
-
+	
+	wxXmlNode *debuggerCmds = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Debugger"));
+	XmlUtils::SetNodeContent(debuggerCmds, m_debuggerStartupCmds);
+	node->AddChild(debuggerCmds);
+	
 	//add the resource compiler node
 	wxXmlNode *resCmp = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("ResourceCompiler"));
 	resCmp->AddProperty(wxT("Required"), BoolToString(m_isResCmpNeeded));

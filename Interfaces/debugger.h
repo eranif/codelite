@@ -147,26 +147,32 @@ public:
 	 * \param exeName executable to debug
 	 * \param cwd working directory to set
 	 * \param bpList list of breakpoints to place before running the program
+	 * \param cmds list of commands that will be passed to the debugger at startup 
 	 * \return true on success, false otherwise
 	 */
-	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList) = 0;
+	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds) = 0;
+	
 	/**
 	 * \brief start the debugger. this method is for convinience and uses the default debugger path
 	 * \param exeName executable to debug
 	 * \param cwd working directory to set
 	 * \param bpList list of breakpoints to place before running the program
+	 * \param cmds list of commands that will be passed to the debugger at startup 
 	 * \return true on success, false otherwise
 	 */
-	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList) = 0;
+	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds) = 0;
+	
 	/**
 	 * \brief use this method when attempting to attach a running process
 	 * \param debuggerPath debugger path
 	 * \param exeName executable to debug
  	 * \param pid the running instance process ID
 	 * \param bpList list of breakpoints to set
+	 * \param cmds list of commands that will be passed to the debugger at startup
 	 * \return 
 	 */
-	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList) = 0;
+	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds) = 0;
+	
 	/**
 	 * \brief Run the program under the debugger. This method must be called *after* Start() has been called
 	 * \param args arguments to pass to the debuggee process

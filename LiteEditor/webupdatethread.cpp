@@ -1,12 +1,15 @@
+#include <wx/url.h>
 #include "precompiled_header.h"
 #include <wx/tokenzr.h>
 #include "webupdatethread.h"
-#include <curl/curl.h>
+//#include <curl/curl.h>
 
 extern const wxChar *SvnRevision;
 
 const wxEventType wxEVT_CMD_NEW_VERSION_AVAILABLE = wxNewEventType();
 const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
+
+static const size_t DLBUFSIZE = 4096;
 
 WebUpdateJob::WebUpdateJob(wxEvtHandler *parent)
 		: Job(parent)
@@ -19,28 +22,55 @@ WebUpdateJob::~WebUpdateJob()
 
 void WebUpdateJob::Process(wxThread* thread)
 {
-	CURL *curl(NULL);
-	CURLcode res;
-	curl_global_init(CURL_GLOBAL_DEFAULT);
-	curl = curl_easy_init();
-	if (curl) {
-		// set the URL to the packages list
-		curl_easy_setopt(curl, CURLOPT_URL, "http://codelite.org/packages.txt");
-		// set callback for the write operation
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteData);
-		// pass this object to the callback
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
-		// switch off verbose mode
-		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L);
-		// fetch!
-		res = curl_easy_perform(curl);
+//	CURL *curl(NULL);
+//	CURLcode res;
+//	curl_global_init(CURL_GLOBAL_DEFAULT);
+//	curl = curl_easy_init();
+//	if (curl) {
+//		// set the URL to the packages list
+//		curl_easy_setopt(curl, CURLOPT_URL, "http://codelite.org/packages.txt");
+//		// set callback for the write operation
+//		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteData);
+//		// pass this object to the callback
+//		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+//		// switch off verbose mode
+//		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L);
+//		// fetch!
+//		res = curl_easy_perform(curl);
+//
+//		if (res == CURLE_OK) {
+//			// compare the version
+//			ParseFile();
+//		}
+//	}
+//	curl_global_cleanup();
 
-		if (res == CURLE_OK) {
-			// compare the version
-			ParseFile();
+	wxURL url(wxT("http://codelite.org/packages.txt"));
+	if (url.GetError() == wxURL_NOERR) {
+		
+		wxInputStream *in_stream = url.GetInputStream();
+		if (!in_stream) {
+			return;
 		}
+
+		unsigned char buffer[DLBUFSIZE+1];
+		do {
+			
+			in_stream->Read(buffer, DLBUFSIZE);
+			size_t bytes_read = in_stream->LastRead();
+			if (bytes_read > 0) {
+				
+				buffer[bytes_read] = 0;
+				wxString buffRead((const char*)buffer, wxConvUTF8);
+				m_dataRead.Append(buffRead);
+			}
+			
+		} while ( !in_stream->Eof() );
+		
+		delete in_stream;
+		
+		ParseFile();
 	}
-	curl_global_cleanup();
 }
 
 size_t WebUpdateJob::WriteData(void* buffer, size_t size, size_t nmemb, void* obj)
@@ -73,7 +103,7 @@ void WebUpdateJob::ParseFile()
 		line = line.Trim().Trim(false);
 		if (line.StartsWith(wxT("#"))) {
 			//comment line
-			continue;
+			continue; 
 		}
 
 		// parse the line
@@ -104,6 +134,7 @@ void WebUpdateJob::ParseFile()
 					e.SetClientData(new WebUpdateJobData(url.c_str(), currev, webrev, true));
 					wxPostEvent(m_parent, e);
 				}
+				break;
 			}
 		}
 	}

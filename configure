@@ -76,7 +76,7 @@ createVariables()
 	echo "DESTDIR=" >> Makefile
 	echo "" >> Makefile
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ " >> Makefile
-	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lcurl -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
+	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
 	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 	
 
@@ -452,7 +452,7 @@ generateControlFile()
 	echo "Section: Development " >> fakeroot/DEBIAN/control
 	echo "Architecture: i386 " >> fakeroot/DEBIAN/control
 	echo "Essential: no" >> fakeroot/DEBIAN/control
-	echo "Depends: libwxgtk2.8-0, libgtk2.0-0, libcurl3" >> fakeroot/DEBIAN/control
+	echo "Depends: libwxgtk2.8-0, libgtk2.0-0" >> fakeroot/DEBIAN/control
 	echo "Maintainer: Eran Ifrah [eran.ifrah@gmail.com]" >> fakeroot/DEBIAN/control
 	echo "Description: CodeLite is a powerful open-source, cross platform code editor for the C/C++ programming languages (regulary tested on Windows XP sp2, Ubuntu 7.10 Gutsy Gibbon, Fedora Core 6 and Debian lenny/sid). " >> fakeroot/DEBIAN/control
 	echo "		 CodeLite is distributed under the terms of the GPL license." >> fakeroot/DEBIAN/control
@@ -474,7 +474,7 @@ Show_Help_and_Exit()
 }
 
 ## main
-checkCURL
+# checkCURL
 
 ## Create variables needed by the makefile
 enable_debug="no"

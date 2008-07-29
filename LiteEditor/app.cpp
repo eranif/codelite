@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include <wx/socket.h>
 #include "app.h"
 #include <wx/snglinst.h>
 #include <wx/image.h>
@@ -124,6 +125,8 @@ App::~App(void)
 
 bool App::OnInit()
 {
+	wxSocketBase::Initialize();
+	
 #if wxUSE_STACKWALKER
 	//trun on fatal exceptions handler
 	wxHandleFatalExceptions(true);

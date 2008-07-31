@@ -1878,7 +1878,7 @@ void Manager::DbgStart(long pid)
 	DebugMessage(output);
 	DebugMessage(wxT("Debug session started successfully!\n"));
 
-	if (bldConf->GetIsDbgRemoteTarget() && pid == wxNOT_FOUND) {
+	if (bldConf && bldConf->GetIsDbgRemoteTarget() && pid == wxNOT_FOUND) {
 
 		// debugging remote target
 		wxString comm;

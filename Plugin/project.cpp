@@ -455,11 +455,26 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
 	XmlUtils::SetNodeContent(descNode, description);
 
 	// Remove the 'Dependencies'
-	wxXmlNode *deps = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("Dependencies"));
-	if (deps) {
-		doc.GetRoot()->RemoveChild(deps);
-		delete deps;
+	wxXmlNode *deps = doc.GetRoot()->GetChildren();
+	while(deps) {
+		if(deps->GetName() == wxT("Dependencies")) {
+			doc.GetRoot()->RemoveChild(deps);
+			delete deps;
+			
+			// restart the search from the begining
+			deps = doc.GetRoot()->GetChildren();
+			
+		} else {
+			// try next child
+			deps = deps->GetNext();	
+		}
 	}
+	
+//	wxXmlNode *deps = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("Dependencies"));
+//	if (deps) {
+//		doc.GetRoot()->RemoveChild(deps);
+//		delete deps;
+//	}
 
 	// add an empty deps node
 	deps = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Dependencies"));

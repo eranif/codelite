@@ -31,6 +31,7 @@
 #include "custom_notebook.h"
 #include "wx/dcbuffer.h"
 #include "wx/menu.h"
+#include "wx/log.h"
 
 #include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 
@@ -38,6 +39,8 @@ BEGIN_EVENT_TABLE(wxTabContainer, wxPanel)
 	EVT_PAINT(wxTabContainer::OnPaint)
 	EVT_ERASE_BACKGROUND(wxTabContainer::OnEraseBg)
 	EVT_SIZE(wxTabContainer::OnSizeEvent)
+	EVT_LEFT_DCLICK(wxTabContainer::OnDoubleClick)
+	
 END_EVENT_TABLE()
 
 wxTabContainer::wxTabContainer(wxWindow *win, wxWindowID id, int orientation, long style)
@@ -607,4 +610,9 @@ void wxTabContainer::Resize()
 void wxTabContainer::ShowPopupMenu()
 {
 	PopupMenu( m_rightClickMenu );
+}
+
+void wxTabContainer::OnDoubleClick(wxMouseEvent& e)
+{
+	e.Skip();
 }

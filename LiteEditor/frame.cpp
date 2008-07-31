@@ -1187,23 +1187,8 @@ void Frame::OnUseExternalDatabase(wxCommandEvent& WXUNUSED(event))
 // Open new file
 void Frame::OnFileNew(wxCommandEvent &event)
 {
-	static int fileCounter = 0;
 	wxUnusedVar(event);
-
-	wxString fileNameStr(wxT("Untitled"));
-	fileNameStr << ++fileCounter;
-	wxFileName fileName(fileNameStr);
-
-	GetNotebook()->Freeze();
-	//allocate new editor instance using the creator
-	//this is done due to low performance on GTK
-	LEditor *editor = EditorCreatorST::Get()->NewInstance();
-	editor->SetFileName(fileName);
-
-	GetNotebook()->AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
-	GetNotebook()->Thaw();
-	editor->Show(true);
-	editor->SetActive();
+	DoAddNewFile();
 }
 
 void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
@@ -3178,4 +3163,24 @@ void Frame::SetFrameTitle(LEditor* editor)
 	
 	title << wxT("CodeLite");
 	SetTitle(title);
+}
+
+void Frame::DoAddNewFile()
+{
+	static int fileCounter = 0;
+
+	wxString fileNameStr(wxT("Untitled"));
+	fileNameStr << ++fileCounter;
+	wxFileName fileName(fileNameStr);
+
+	GetNotebook()->Freeze();
+	//allocate new editor instance using the creator
+	//this is done due to low performance on GTK
+	LEditor *editor = EditorCreatorST::Get()->NewInstance();
+	editor->SetFileName(fileName);
+
+	GetNotebook()->AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
+	GetNotebook()->Thaw();
+	editor->Show(true);
+	editor->SetActive();
 }

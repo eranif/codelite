@@ -46,6 +46,7 @@ protected:
 	void OnScopeListMouseDown(wxMouseEvent &e);
 	void OnScope(wxCommandEvent &e);
 	void OnFunction(wxCommandEvent &e);
+	void OnMouseDClick(wxMouseEvent &e);
 	
 public:
 	MainBook(wxWindow *parent);

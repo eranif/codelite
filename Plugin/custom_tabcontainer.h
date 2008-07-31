@@ -124,6 +124,7 @@ public:
 	virtual void OnLeaveWindow(wxMouseEvent &e);
 	virtual void OnLeftUp(wxMouseEvent &e);
 	virtual void OnDeleteTab(wxCommandEvent &e);
+	virtual void OnDoubleClick(wxMouseEvent &e);
 
 
 };

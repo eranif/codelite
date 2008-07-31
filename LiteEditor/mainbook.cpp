@@ -22,6 +22,8 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/xrc/xmlres.h>
+#include "frame.h"
  #include "mainbook.h"
 #include "wx/choice.h"
 #include "wx/xrc/xmlres.h"
@@ -31,6 +33,7 @@
 #include "cl_editor.h"
 #include "macros.h"
 #include "custom_notebook.h"
+#include "custom_tabcontainer.h"
 
 MainBook::MainBook(wxWindow *parent)
 : wxPanel( parent )
@@ -55,6 +58,9 @@ MainBook::MainBook(wxWindow *parent)
 	
 	long style = wxVB_TOP|wxVB_HAS_X|wxVB_BORDER|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+	
+	m_book->GetTabContainer()->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainBook::OnMouseDClick), NULL, this);
+	
 	sz->Add(m_book, 1, wxEXPAND);
 	sz->Layout();
 }
@@ -227,4 +233,10 @@ bool MainBook::IsNavBarShown()
 {
 	// it is enough to test only control
 	return m_hsz->IsShown(m_choiceFunc);
+}
+
+void MainBook::OnMouseDClick(wxMouseEvent& e)
+{
+	wxUnusedVar(e);
+	Frame::Get()->DoAddNewFile();
 }

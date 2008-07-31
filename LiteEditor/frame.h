@@ -410,6 +410,7 @@ public:
 	void ShowBuildConfigurationManager();
 	void AddCppMenu();
 	void RemoveCppMenu();
+	void DoAddNewFile();
 	
 	// Any class wishing to process wxWindows events must use this macro
 	DECLARE_EVENT_TABLE()

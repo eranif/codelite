@@ -96,6 +96,11 @@ void WebUpdateJob::ParseFile()
 #elif defined(__WXMAC__)
 	packageName = wxT("MAC");
 #endif
+	
+	// diffrentiate between the 64bit and the 32bit packages
+#ifdef ON_64_BIT
+	packageName << wxT("_64");
+#endif
 
 	wxArrayString lines = wxStringTokenize(m_dataRead, wxT("\n"));
 	for (size_t i=0; i<lines.GetCount(); i++) {

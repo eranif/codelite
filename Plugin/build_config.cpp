@@ -73,6 +73,8 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 
 		// read the postbuild commands
 		wxXmlNode *debugger = XmlUtils::FindFirstByTagName(node, wxT("Debugger"));
+		m_isDbgRemoteTarget = false;
+		
 		if (debugger) {
 			m_isDbgRemoteTarget = XmlUtils::ReadBool(debugger, wxT("IsRemote"));
 			m_dbgHostName = XmlUtils::ReadString(debugger, wxT("RemoteHostName"));

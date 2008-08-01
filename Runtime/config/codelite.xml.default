@@ -20,6 +20,7 @@
       <wxString Value="WXDLLIMPORT"/>
       <wxString Value="wxT"/>
       <wxString Value="wxTopLevelWindowNative=wxTopLevelWindowMSW"/>
+      <wxString Value="wxWindow=wxWindowMSW"/>
       <wxString Value="WXUNUSED"/>
       <wxString Value="wxDEPRECATED"/>
       <wxString Value="_T"/>

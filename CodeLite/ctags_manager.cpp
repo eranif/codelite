@@ -251,13 +251,35 @@ void TagsManager::TagFromLine(const wxString& line, TagEntry& tag)
 				val.ToLong(&lineNumber);
 			} else {
 				if (key == wxT("enum")) {
-					//enums are specials, they are not really a scope
-					//so they should appear when I type:
-					//enumName::
-					//they should be member of their parent (which can be <global>, or class)
+					
+					// enums are specials, they are not really a scope
+					// so they should appear when I type:
+					// enumName::
+					// they should be member of their parent (which can be <global>, or class)
 					val = val.BeforeLast(wxT(':'));
 					val = val.BeforeLast(wxT(':'));
+					
+				} else if(key == wxT("union") || key == wxT("struct")) {
+					
+					// remove the anonymous part of the struct / union
+					if(!val.StartsWith(wxT("__anon"))){
+						// an internal anonymous union / struct
+						// remove all parts of the 
+						wxArrayString scopeArr;
+						wxString tmp, new_val;
+						
+						scopeArr = wxStringTokenize(val, wxT(":"), wxTOKEN_STRTOK);
+						for(size_t i=0; i<scopeArr.GetCount(); i++){
+							if(scopeArr.Item(i).StartsWith(wxT("__anon")) == false) {
+								tmp << scopeArr.Item(i) << wxT("::");
+							}
+						}
+						
+						tmp.EndsWith(wxT("::"), &new_val);
+						val = new_val;
+					}
 				}
+				
 				extFields[key] = val;
 			}
 		}
@@ -2161,10 +2183,10 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 
 		// incase we have anonymouse unions, we should inclued their values as well
 		wxString anon_sql;
-		if (include_anon) {
-			anon_sql << wxT(" OR scope GLOB '") << tmpScope << wxT("::__anon*' ") ;
-		}
-
+//		if (include_anon) {
+//			anon_sql << wxT(" OR scope GLOB '") << tmpScope << wxT("::__anon*' ") ;
+//		}
+//
 		sql << wxT("select * from tags where (scope='") << tmpScope << wxT("' ") << anon_sql << wxT(") ") << kindClaus;
 		DoExecuteQueury(sql, tags);
 	}

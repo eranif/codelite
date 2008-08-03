@@ -240,7 +240,10 @@ bool App::OnInit()
 	// keep the startup directory
 	ManagerST::Get()->SetStarupDirectory(::wxGetCwd());
 	Manager *mgr = ManagerST::Get();
-
+	
+	// set the CTAGS_REPLACEMENT environment variable
+	wxSetEnv(wxT("CTAGS_REPLACEMENTS"), ManagerST::Get()->GetStarupDirectory() + wxT("/ctags.replacements"));
+	
 	//show splashscreen here
 	long style = wxSIMPLE_BORDER;
 #if defined (__WXMSW__) || defined (__WXGTK__)

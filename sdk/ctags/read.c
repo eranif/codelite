@@ -64,7 +64,6 @@ static char *load_file(const char *fileName) {
 
 
 	long bytes = fread(buf, sizeof(char), len, fp);
-	printf("read: %ld\n", bytes);
 	if (bytes != len) {
 		fclose(fp);
 		return 0;

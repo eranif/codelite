@@ -5,7 +5,7 @@
 HEADERS = \
 	args.h ctags.h debug.h entry.h general.h get.h keyword.h \
 	main.h options.h parse.h parsers.h read.h routines.h sort.h \
-	strlist.h vstring.h
+	strlist.h vstring.h string_util.h clist.h
 
 SOURCES = \
 	args.c \
@@ -49,7 +49,9 @@ SOURCES = \
 	verilog.c \
 	vim.c \
 	yacc.c \
-	vstring.c
+	vstring.c\
+	string_util.c\
+	clist.h
 
 ENVIRONMENT_HEADERS = \
     e_amiga.h e_djgpp.h e_mac.h e_msoft.h e_os2.h e_qdos.h e_riscos.h e_vms.h
@@ -99,5 +101,7 @@ OBJECTS = \
 	verilog.$(OBJEXT) \
 	vim.$(OBJEXT) \
 	yacc.$(OBJEXT) \
-	vstring.$(OBJEXT)
+	vstring.$(OBJEXT)\
+	string_util.$(OBJEXT)\
+	clist.$(OBJEXT)
 

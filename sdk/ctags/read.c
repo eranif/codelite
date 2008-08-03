@@ -17,6 +17,8 @@
 
 #include <string.h>
 #include <ctype.h>
+#include "clist.h"
+#include "string_util.h"
 
 #define FILE_WRITE
 #include "read.h"
@@ -42,6 +44,35 @@ extern void freeSourceFileResources (void)
 	vStringDelete (File.path);
 	vStringDelete (File.source.name);
 	vStringDelete (File.line);
+}
+
+static char *load_file(const char *fileName) {
+	FILE *fp;
+	long len;
+	char *buf = NULL;
+
+	fp = fopen(fileName, "rb");
+	if (!fp) {
+		return 0;
+	}
+
+
+	fseek(fp, 0, SEEK_END); 		
+	len = ftell(fp); 				
+	fseek(fp, 0, SEEK_SET); 		
+	buf = (char *)malloc(len+1); 	
+
+
+	long bytes = fread(buf, sizeof(char), len, fp);
+	printf("read: %ld\n", bytes);
+	if (bytes != len) {
+		fclose(fp);
+		return 0;
+	}
+
+	buf[len] = 0;	// make it null terminated string
+	fclose(fp);
+	return buf;
 }
 
 /*
@@ -376,6 +407,9 @@ extern void fileUngetc (int c)
 
 static vString *iFileGetLine (void)
 {
+	static list_t *replacements = (list_t *)0;
+	static int first = 1;
+	
 	vString *result = NULL;
 	int c;
 	if (File.line == NULL)
@@ -398,6 +432,51 @@ static vString *iFileGetLine (void)
 		}
 	} while (c != EOF);
 	Assert (result != NULL  ||  File.eof);
+	
+	/* try to load the file once */
+	if( first ) {
+		char *content = (char*)0;
+		char *file_name = getenv("CTAGS_REPLACEMENTS");
+		
+		first = 0;
+		if(file_name) {
+			/* open the file */
+			content = load_file(file_name);
+			if(content) {
+				replacements = string_split(content, "=");
+				free(content);
+			}
+		}
+	}
+	
+	if( result && replacements && replacements->size ) {
+		
+		int first_loop = 1;
+		char *src = result->buffer;
+		char *new_str = src;
+		char *tmp = 0;
+		list_node_t *node = replacements->head;
+		
+		while( node ) {
+			tmp = string_replace(new_str, ((string_pair_t*)node->data)->key, ((string_pair_t*)node->data)->data);
+			if(!first_loop) {
+				free(new_str);
+			}
+			
+			new_str = tmp;
+			first_loop = 0;
+			
+			/* advance to next item in the list */
+			node = node->next;
+		}
+		
+		if(new_str != result->buffer) {
+			vStringClear(File.line);
+			vStringCatS(File.line, new_str);
+			free(new_str);
+		}
+	}
+	
 	return result;
 }
 
@@ -578,4 +657,5 @@ extern char *readSourceLines (vString* const vLine, fpos_t location, fpos_t endP
 	vStringDelete(tmpstr);
 	return vLine->buffer;
 }
+
 /* vi:set tabstop=4 shiftwidth=4: */

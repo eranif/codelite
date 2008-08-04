@@ -14,7 +14,8 @@ char* string_replace(const char* src, const char* from, const char* to)
 	size_t size = strlen(src) + 1;
 	size_t fromlen = strlen(from);
 	size_t tolen = strlen(to);
-
+	int whole_word = 0;
+	
 	/*
 	 * Allocate the first chunk with enough for the original string.
 	 */
@@ -36,9 +37,29 @@ char* string_replace(const char* src, const char* from, const char* to)
 			/*
 			 * Try to find the search text.
 			 */
-
+			whole_word = 0;
+			
 			const char *match = strstr(src, from);
-			if ( match != NULL ) {
+			if(match) {
+				
+				/* make sure there is a complete word */
+				char ch_before = ' ';
+				char ch_after = ' ';
+				
+				if(match > src) {
+					ch_before = *(match-1);
+				}
+				
+				if(src+strlen(src) >= match + fromlen){
+					ch_after = *(match + fromlen);
+				}
+				
+				if((ch_before == '0' || ch_before == ' ' || ch_before == '\n' || ch_before == '\r') && (ch_after == '0' || ch_after == ' ' || ch_after == '\n' || ch_after == '\r')){
+					whole_word = 1;
+				}
+			}
+			
+			if ( match != NULL && whole_word ) {
 				/*
 				 * Found search text at location 'match'. :)
 				 * Find out how many characters to copy up to the 'match'.

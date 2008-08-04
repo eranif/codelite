@@ -360,7 +360,7 @@ createInstallTarget()
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers/BlackTheme" >> Makefile
 	echo "	@cp -fr Runtime/config/*.xml \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
 	echo "	@cp -fr Runtime/config/debuggers.xml.gtk \$(DESTDIR)$prefix/share/codelite/config/debuggers.xml" >> Makefile
-	echo "	@cp -fr Runtime/config/codelite.xml.default \$(DESTDIR)$prefix/share/codelite/config/codelite.xml.default" >> Makefile
+	echo "	@cp -fr Runtime/config/codelite.xml.default.gtk \$(DESTDIR)$prefix/share/codelite/config/codelite.xml.default" >> Makefile
 	echo "	@cp -fr Runtime/config/codelite.layout.default \$(DESTDIR)$prefix/share/codelite/config/codelite.layout" >> Makefile
     # Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
 	echo "	@if test -w \$(DESTDIR)/usr/share/applications ; then \\" >> Makefile

@@ -551,7 +551,9 @@ bool LEditor::SaveFile()
 		// first save the file content
 		if ( !SaveToFile(m_fileName) )
 			return false;
-
+		
+		SetDirty(false);
+		
 		wxString projName = GetProjectName();
 		if ( projName.Trim().Trim(false).IsEmpty() )
 			return true;
@@ -563,8 +565,9 @@ bool LEditor::SaveFile()
 		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(GetFileName().GetFullPath());
 		
 		m_context->RetagFile();
+	} else {
+		SetDirty(false);
 	}
-	SetDirty(false);
 	return true;
 }
 

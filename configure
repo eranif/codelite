@@ -117,7 +117,7 @@ createMainTargets()
 	echo "	cd sdk/ctags/ && \$(MAKE)" >> Makefile
 	echo "" >> Makefile
 
-	echo "sdk/ctags/Makefile: sdk/ctags/sources.mak" >> Makefile
+	echo "sdk/ctags/Makefile: sdk/ctags/source.mak" >> Makefile
 	echo "	@chmod +x sdk/ctags/configure" >> Makefile
 	echo "	cd sdk/ctags && ./configure" >> Makefile 
 	echo "" >> Makefile

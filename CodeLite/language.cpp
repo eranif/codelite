@@ -907,7 +907,17 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 		// try the global scope maybe?
 		GetTagsManager()->FindByNameAndScope(name, wxT("<global>"), tags);
 	}
-		
+	
+	// filter macros from the result
+	std::vector<TagEntryPtr>::iterator it = tags.begin();
+	for(; it != tags.end(); it++){
+		TagEntryPtr t = *it;
+		if(t->GetKind() == wxT("macro")){
+			tags.erase(it);
+			it = tags.begin();
+		}
+	}
+	
 	if (tags.size() == 1) {
 		TagEntryPtr tag(tags.at(0));
 		//we have a single match!

@@ -823,6 +823,7 @@ extern std::string cl_func_lval;
 std::vector<std::string> currentScope;
 
 bool setLexerInput(const std::string &in, const std::map<std::string, std::string> &ignoreTokens);
+void setUseIgnoreMacros(bool ignore);
 
 std::string getCurrentScope();
 void printScopeName();
@@ -835,6 +836,7 @@ std::map<std::string, std::string> g_symbols;
 std::map<std::string, std::string> g_macros;
 
 static std::map<std::string, std::string> g_ignoreList;
+static bool gs_useMacroIgnore = true;
 
 bool isaTYPE(char *string);
 bool isaMACRO(char *string);
@@ -2635,7 +2637,11 @@ bool isignoredToken(char *string)
 
 bool isaMACRO(char *string)
 {
-	return g_macros.find(string) != g_macros.end();
+	if(gs_useMacroIgnore) {
+		return g_macros.find(string) != g_macros.end();
+	}else{
+		return false;
+	}
 }
 
 void cl_scope_lex_clean()
@@ -2711,6 +2717,10 @@ bool setLexerInput(const std::string &in, const std::map<std::string, std::strin
 	
 	//update the working file name
 	return true;
+}
+
+void setUseIgnoreMacros(bool ignore) {
+	gs_useMacroIgnore = ignore;
 }
 
 int yywrap(){

@@ -234,8 +234,10 @@ void TagEntry::Print()
 wxString TagEntry::Key() const 
 {
 	wxString key;
-	if( GetKind() == wxT("prototype"))
-		key << wxT("[prototype] ");
+	if(GetKind() == wxT("prototype") || GetKind() == wxT("macro")) {
+		key << GetKind() << wxT(": ");
+	}
+	
 	key << GetPath() << GetSignature();
 	return key;
 }

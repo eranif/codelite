@@ -760,7 +760,6 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		filter.Add(wxT("member"));
 		filter.Add(wxT("prototype"));
 		filter.Add(wxT("typedef"));
-		filter.Add(wxT("macro"));
 		filter.Add(wxT("enum"));
 		filter.Add(wxT("enumerator"));
 		filter.Add(wxT("union"));

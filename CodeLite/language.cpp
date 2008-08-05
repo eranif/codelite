@@ -902,19 +902,18 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
                                       wxString &type,
                                       wxString &typeScope)
 {
-	GetTagsManager()->FindByNameAndScope(name, scopeName, tags);
-	if( tags.empty() ){
+	std::vector<TagEntryPtr> tmp_tags;
+	GetTagsManager()->FindByNameAndScope(name, scopeName, tmp_tags);
+	if( tmp_tags.empty() ){
 		// try the global scope maybe?
-		GetTagsManager()->FindByNameAndScope(name, wxT("<global>"), tags);
+		GetTagsManager()->FindByNameAndScope(name, wxT("<global>"), tmp_tags);
 	}
 	
 	// filter macros from the result
-	std::vector<TagEntryPtr>::iterator it = tags.begin();
-	for(; it != tags.end(); it++){
-		TagEntryPtr t = *it;
-		if(t->GetKind() == wxT("macro")){
-			tags.erase(it);
-			it = tags.begin();
+	for(size_t i=0; i<tmp_tags.size(); i++){
+		TagEntryPtr t = tmp_tags.at(i);
+		if(t->GetKind() != wxT("macro")){
+			tags.push_back(t);
 		}
 	}
 	

@@ -16,6 +16,7 @@ protected:
 	void OnTextEntered( wxCommandEvent& event );
 	void OnEvaluate( wxCommandEvent& event );
 	void OnEvaluateUI( wxUpdateUIEvent& event );
+	void OnTextDClick(wxMouseEvent &e);
 	
 public:
 	/** Constructor */

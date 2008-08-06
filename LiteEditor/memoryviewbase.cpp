@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -36,7 +36,7 @@ MemoryViewBase::MemoryViewBase( wxWindow* parent, wxWindowID id, const wxPoint& 
 	
 	bSizer1->Add( bSizer2, 0, wxEXPAND, 5 );
 	
-	m_textCtrlMemory = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2 );
+	m_textCtrlMemory = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2|wxSIMPLE_BORDER );
 	m_textCtrlMemory->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	
 	bSizer1->Add( m_textCtrlMemory, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
@@ -48,6 +48,7 @@ MemoryViewBase::MemoryViewBase( wxWindow* parent, wxWindowID id, const wxPoint& 
 	m_textCtrlExpression->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MemoryViewBase::OnTextEntered ), NULL, this );
 	m_buttonEvaluate->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MemoryViewBase::OnEvaluate ), NULL, this );
 	m_buttonEvaluate->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( MemoryViewBase::OnEvaluateUI ), NULL, this );
+	m_textCtrlMemory->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( MemoryViewBase::OnTextDClick ), NULL, this );
 }
 
 MemoryViewBase::~MemoryViewBase()
@@ -56,4 +57,5 @@ MemoryViewBase::~MemoryViewBase()
 	m_textCtrlExpression->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( MemoryViewBase::OnTextEntered ), NULL, this );
 	m_buttonEvaluate->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MemoryViewBase::OnEvaluate ), NULL, this );
 	m_buttonEvaluate->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( MemoryViewBase::OnEvaluateUI ), NULL, this );
+	m_textCtrlMemory->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( MemoryViewBase::OnTextDClick ), NULL, this );
 }

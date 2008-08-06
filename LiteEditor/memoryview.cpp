@@ -121,3 +121,10 @@ void MemoryView::SetViewString(const wxString& text)
 
 	m_textCtrlMemory->Thaw();
 }
+
+void MemoryView::OnTextDClick(wxMouseEvent& e)
+{
+	wxPoint pt = e.GetPosition();
+	wxUnusedVar(pt);
+}
+

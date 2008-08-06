@@ -365,7 +365,7 @@
                         <property name="value"></property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style"></property>
+                        <property name="window_style">wxSIMPLE_BORDER</property>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>
                         <event name="OnEraseBackground"></event>
@@ -373,7 +373,7 @@
                         <event name="OnKeyUp"></event>
                         <event name="OnKillFocus"></event>
                         <event name="OnLeaveWindow"></event>
-                        <event name="OnLeftDClick"></event>
+                        <event name="OnLeftDClick">OnTextDClick</event>
                         <event name="OnLeftDown"></event>
                         <event name="OnLeftUp"></event>
                         <event name="OnMiddleDClick"></event>

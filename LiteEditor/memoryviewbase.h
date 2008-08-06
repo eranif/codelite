@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -41,6 +41,7 @@ class MemoryViewBase : public wxPanel
 		virtual void OnTextEntered( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnEvaluate( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnEvaluateUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnTextDClick( wxMouseEvent& event ){ event.Skip(); }
 		
 	
 	public:

@@ -1,5 +1,5 @@
 /*
-*   $Id: c.c,v 1.34 2006/05/30 04:37:11 darren Exp $
+*   $Id$
 *
 *   Copyright (c) 1996-2003, Darren Hiebert
 *
@@ -30,9 +30,7 @@
 /*
 *   MACROS
 */
-#define MaxFields   6
 
-#define stringValue(a)      #a
 #define activeToken(st)     ((st)->token [(int) (st)->tokenIndex])
 #define parentDecl(st)      ((st)->parent == NULL ? \
                             DECL_NONE : (st)->parent->declaration)
@@ -70,7 +68,8 @@ typedef enum eKeywordId {
 	KEYWORD_DOUBLE,
 	KEYWORD_ELSE, KEYWORD_ENUM, KEYWORD_EXPLICIT, KEYWORD_EXTERN,
 	KEYWORD_EXTENDS, KEYWORD_EVENT,
-	KEYWORD_FINAL, KEYWORD_FLOAT, KEYWORD_FOR, KEYWORD_FRIEND, KEYWORD_FUNCTION,
+	KEYWORD_FINAL, KEYWORD_FLOAT, KEYWORD_FOR, KEYWORD_FOREACH,
+	KEYWORD_FRIEND, KEYWORD_FUNCTION,
 	KEYWORD_GOTO,
 	KEYWORD_IF, KEYWORD_IMPLEMENTS, KEYWORD_IMPORT, KEYWORD_INLINE, KEYWORD_INT,
 	KEYWORD_INOUT, KEYWORD_INPUT, KEYWORD_INTEGER, KEYWORD_INTERFACE,
@@ -287,7 +286,7 @@ static kindOption CKinds [] = {
 	{ TRUE,  't', "typedef",    "typedefs"},
 	{ TRUE,  'u', "union",      "union names"},
 	{ TRUE,  'v', "variable",   "variable definitions"},
-	{ FALSE, 'x', "externvar",  "external variable declarations"},
+	{ FALSE, 'x', "externvar",  "external and forward variable declarations"},
 };
 
 typedef enum {
@@ -316,13 +315,15 @@ static kindOption CsharpKinds [] = {
 /* Used to index into the JavaKinds table. */
 typedef enum {
 	JK_UNDEFINED = -1,
-	JK_CLASS, JK_FIELD, JK_INTERFACE, JK_LOCAL, JK_METHOD,
-	JK_PACKAGE, JK_ACCESS, JK_CLASS_PREFIX
+	JK_CLASS, JK_ENUM_CONSTANT, JK_FIELD, JK_ENUM, JK_INTERFACE,
+	JK_LOCAL, JK_METHOD, JK_PACKAGE, JK_ACCESS, JK_CLASS_PREFIX
 } javaKind;
 
 static kindOption JavaKinds [] = {
 	{ TRUE,  'c', "class",     "classes"},
+	{ TRUE,  'e', "enum constant", "enum constants"},
 	{ TRUE,  'f', "field",     "fields"},
+	{ TRUE,  'g', "enum",          "enum types"},
 	{ TRUE,  'i', "interface", "interfaces"},
 	{ FALSE, 'l', "local",     "local variables"},
 	{ TRUE,  'm', "method",    "methods"},
@@ -381,8 +382,8 @@ static const keywordDesc KeywordTable [] = {
 	{ "delegate",       KEYWORD_DELEGATE,       { 0, 0, 1, 0, 0 } },
 	{ "delete",         KEYWORD_DELETE,         { 0, 1, 0, 0, 0 } },
 	{ "double",         KEYWORD_DOUBLE,         { 1, 1, 1, 1, 0 } },
-	{ "else",           KEYWORD_ELSE,           { 1, 1, 0, 1, 0 } },
-	{ "enum",           KEYWORD_ENUM,           { 1, 1, 1, 0, 1 } },
+	{ "else",           KEYWORD_ELSE,           { 1, 1, 1, 1, 0 } },
+	{ "enum",           KEYWORD_ENUM,           { 1, 1, 1, 1, 1 } },
 	{ "event",          KEYWORD_EVENT,          { 0, 0, 1, 0, 1 } },
 	{ "explicit",       KEYWORD_EXPLICIT,       { 0, 1, 1, 0, 0 } },
 	{ "extends",        KEYWORD_EXTENDS,        { 0, 0, 0, 1, 1 } },
@@ -390,6 +391,7 @@ static const keywordDesc KeywordTable [] = {
 	{ "final",          KEYWORD_FINAL,          { 0, 0, 0, 1, 0 } },
 	{ "float",          KEYWORD_FLOAT,          { 1, 1, 1, 1, 0 } },
 	{ "for",            KEYWORD_FOR,            { 1, 1, 1, 1, 0 } },
+	{ "foreach",        KEYWORD_FOREACH,        { 0, 0, 1, 0, 0 } },
 	{ "friend",         KEYWORD_FRIEND,         { 0, 1, 0, 0, 0 } },
 	{ "function",       KEYWORD_FUNCTION,       { 0, 0, 0, 0, 1 } },
 	{ "goto",           KEYWORD_GOTO,           { 1, 1, 1, 1, 0 } },
@@ -685,6 +687,7 @@ static boolean isContextualStatement (const statementInfo *const st)
 		case DECL_CLASS:
 		case DECL_ENUM:
 		case DECL_INTERFACE:
+		case DECL_NAMESPACE:
 		case DECL_STRUCT:
 		case DECL_UNION:
 			result = TRUE;
@@ -702,7 +705,7 @@ static boolean isMember (const statementInfo *const st)
 		result = TRUE;
 	else
 		result = (boolean)
-			(st->parent != NULL && (isContextualStatement (st->parent) || st->parent->declaration == DECL_NAMESPACE));
+			(st->parent != NULL && isContextualStatement (st->parent));
 	return result;
 }
 
@@ -713,8 +716,9 @@ static void initMemberInfo (statementInfo *const st)
 	if (st->parent != NULL) switch (st->parent->declaration)
 	{
 		case DECL_ENUM:
+			accessDefault = (isLanguage (Lang_java) ? ACCESS_PUBLIC : ACCESS_UNDEFINED);
+			break;
 		case DECL_NAMESPACE:
-		case DECL_UNION:
 			accessDefault = ACCESS_UNDEFINED;
 			break;
 
@@ -727,6 +731,7 @@ static void initMemberInfo (statementInfo *const st)
 
 		case DECL_INTERFACE:
 		case DECL_STRUCT:
+		case DECL_UNION:
 			accessDefault = ACCESS_PUBLIC;
 			break;
 
@@ -844,6 +849,8 @@ static javaKind javaTagKind (const tagType type)
 	switch (type)
 	{
 		case TAG_CLASS:     result = JK_CLASS;     break;
+		case TAG_ENUM:       result = JK_ENUM;          break;
+		case TAG_ENUMERATOR: result = JK_ENUM_CONSTANT; break;
 		case TAG_FIELD:     result = JK_FIELD;     break;
 		case TAG_INTERFACE: result = JK_INTERFACE; break;
 		case TAG_LOCAL:     result = JK_LOCAL;     break;
@@ -1442,13 +1449,7 @@ static void analyzeIdentifier (tokenInfo *const token)
 		! isIgnoreToken (name, &parensToo, &replacement))
 	{
 		if (replacement != NULL)
-		{
-			//Eran Ifrah: in case we have replacement string, replace the 
-			//token's name as well
-			vStringDelete(token->name);
-			token->name = vStringNewInit(replacement);
 			token->keyword = analyzeKeyword (replacement);
-		}
 		else
 			token->keyword = analyzeKeyword (vStringValue (token->name));
 
@@ -1478,6 +1479,14 @@ static void readIdentifier (tokenInfo *const token, const int firstChar)
 
 	initToken (token);
 
+	/* Bug #1585745: strangely, C++ destructors allow whitespace between
+	 * the ~ and the class name. */
+	if (isLanguage (Lang_cpp) && firstChar == '~')
+	{
+		vStringPut (name, c);
+		c = skipToNonWhite ();
+	}
+
 	do
 	{
 		vStringPut (name, c);
@@ -1488,7 +1497,7 @@ static void readIdentifier (tokenInfo *const token, const int firstChar)
 			first = FALSE;
 		}
 		c = cppGetc ();
-	} while (isident (c) || (isLanguage (Lang_java) && isHighChar (c)));
+	} while (isident (c) || ((isLanguage (Lang_java) || isLanguage (Lang_csharp)) && (isHighChar (c) || c == '.')));
 	vStringTerminate (name);
 	cppUngetc (c);        /* unget non-identifier character */
 
@@ -1511,15 +1520,25 @@ static void readPackageName (tokenInfo *const token, const int firstChar)
 	cppUngetc (c);        /* unget non-package character */
 }
 
-static void readPackage (statementInfo *const st)
+static void readPackageOrNamespace (statementInfo *const st, const declType declaration)
 {
+	st->declaration = declaration;
+	
+	if (declaration == DECL_NAMESPACE && !isLanguage (Lang_csharp))
+	{
+		/* In C++ a namespace is specified one level at a time. */
+		return;
+	}
+	else
+{
+		/* In C#, a namespace can also be specified like a Java package name. */
 	tokenInfo *const token = activeToken (st);
 	Assert (isType (token, TOKEN_KEYWORD));
 	readPackageName (token, skipToNonWhite ());
 	token->type = TOKEN_NAME;
-	st->declaration = DECL_PACKAGE;
 	st->gotName = TRUE;
 	st->haveQualifyingName = TRUE;
+}
 }
 
 static void processName (statementInfo *const st)
@@ -1694,6 +1713,11 @@ static void skipStatement (statementInfo *const st)
 	skipToOneOf (";");
 }
 
+static void processInterface (statementInfo *const st)
+{
+	st->declaration = DECL_INTERFACE;
+}
+
 static void processToken (tokenInfo *const token, statementInfo *const st)
 {
 	switch (token->keyword)        /* is it a reserved word? */
@@ -1722,12 +1746,10 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
 		case KEYWORD_IMPORT:    skipStatement (st);                     break;
 		case KEYWORD_INT:       st->declaration = DECL_BASE;            break;
 		case KEYWORD_INTEGER:   st->declaration = DECL_BASE;            break;
-		case KEYWORD_INTERFACE: st->declaration = DECL_INTERFACE;       break;
+		case KEYWORD_INTERFACE: processInterface (st);                  break;
 		case KEYWORD_LOCAL:     setAccess (st, ACCESS_LOCAL);           break;
 		case KEYWORD_LONG:      st->declaration = DECL_BASE;            break;
-		case KEYWORD_NAMESPACE: st->declaration = DECL_NAMESPACE;       break;
 		case KEYWORD_OPERATOR:  readOperator (st);                      break;
-		case KEYWORD_PACKAGE:   readPackage (st);                       break;
 		case KEYWORD_PRIVATE:   setAccess (st, ACCESS_PRIVATE);         break;
 		case KEYWORD_PROGRAM:   st->declaration = DECL_PROGRAM;         break;
 		case KEYWORD_PROTECTED: setAccess (st, ACCESS_PROTECTED);       break;
@@ -1745,6 +1767,10 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
 		case KEYWORD_VOID:      st->declaration = DECL_BASE;            break;
 		case KEYWORD_VOLATILE:  st->declaration = DECL_BASE;            break;
 		case KEYWORD_VIRTUAL:   st->implementation = IMP_VIRTUAL;       break;
+		case KEYWORD_WCHAR_T:   st->declaration = DECL_BASE;            break;
+		
+		case KEYWORD_NAMESPACE: readPackageOrNamespace (st, DECL_NAMESPACE); break;
+		case KEYWORD_PACKAGE:   readPackageOrNamespace (st, DECL_PACKAGE);   break;
 
 		case KEYWORD_EVENT:
 			if (isLanguage (Lang_csharp))
@@ -1775,6 +1801,7 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
 			break;
 
 		case KEYWORD_FOR:
+		case KEYWORD_FOREACH:
 		case KEYWORD_IF:
 		case KEYWORD_SWITCH:
 		case KEYWORD_WHILE:
@@ -2030,6 +2057,32 @@ static void analyzePostParens (statementInfo *const st, parenInfo *const info)
 	}
 }
 
+static boolean languageSupportsGenerics (void)
+{
+	return (boolean) (isLanguage (Lang_cpp) || isLanguage (Lang_csharp) ||
+		isLanguage (Lang_java));
+}
+
+static void processAngleBracket (void)
+{
+	int c = cppGetc ();
+	if (c == '>') {
+		/* already found match for template */
+	} else if (languageSupportsGenerics () && c != '<' && c != '=') {
+		/* this is a template */
+		cppUngetc (c);
+		skipToMatch ("<>");
+	} else if (c == '<') {
+		/* skip "<<" or "<<=". */
+		c = cppGetc ();
+		if (c != '=') {
+			cppUngetc (c);
+		}
+	} else {
+		cppUngetc (c);
+	}
+}
+
 static int parseParens (statementInfo *const st, parenInfo *const info)
 {
 	tokenInfo *const token = activeToken (st);
@@ -2110,7 +2163,7 @@ static int parseParens (statementInfo *const st, parenInfo *const info)
 
 			case '<':
 				info->isKnrParamList = FALSE;
-				skipToMatch ("<>");
+				processAngleBracket ();
 				break;
 
 			case ')':
@@ -2277,6 +2330,11 @@ static void addContext (statementInfo *const st, const tokenInfo* const token)
 
 static boolean inheritingDeclaration (declType decl)
 {
+	/* C# supports inheritance for enums. C++0x will too, but not yet. */
+	if (decl == DECL_ENUM)
+	{
+		return (boolean) (isLanguage (Lang_csharp));
+	}
 	return (boolean) (
 		decl == DECL_CLASS ||
 		decl == DECL_STRUCT ||
@@ -2285,7 +2343,7 @@ static boolean inheritingDeclaration (declType decl)
 
 static void processColon (statementInfo *const st)
 {
-	int c = skipToNonWhite ();
+	int c = (isLanguage (Lang_cpp) ? cppGetc () : skipToNonWhite ());
 	const boolean doubleColon = (boolean) (c == ':');
 
 	if (doubleColon)
@@ -2323,17 +2381,6 @@ static void processColon (statementInfo *const st)
 	}
 }
 
-static void processAngleBracket (void)
-{
-	int c = cppGetc ();
-	if (c == '>')
-		;  /* already found match for template */
-	else if (isLanguage (Lang_cpp) &&  c != '<' && c != '=')
-		skipToMatch ("<>");        /* this is a template */
-	else
-		cppUngetc (c);
-}
-
 /*  Skips over any initializing value which may follow an '=' character in a
  *  variable definition.
  */
@@ -2361,6 +2408,7 @@ static int skipInitializer (statementInfo *const st)
 			case '[': skipToMatch ("[]"); break;
 			case '(': skipToMatch ("()"); break;
 			case '{': skipToMatch ("{}"); break;
+			case '<': processAngleBracket(); break;
 
 			case '}':
 				if (insideEnumBody (st))
@@ -2393,7 +2441,7 @@ static void processInitializer (statementInfo *const st)
 			setToken (st, TOKEN_SEMICOLON);
 		else if (c == ',')
 			setToken (st, TOKEN_COMMA);
-		else if ('}'  &&  inEnumBody)
+		else if (c == '}'  &&  inEnumBody)
 		{
 			cppUngetc (c);
 			setToken (st, TOKEN_COMMA);
@@ -2410,6 +2458,31 @@ static void parseIdentifier (statementInfo *const st, const int c)
 	readIdentifier (token, c);
 	if (! isType (token, TOKEN_NONE))
 		processToken (token, st);
+}
+
+static void parseJavaAnnotation (statementInfo *const st)
+{
+	/*
+	 * @Override
+	 * @Target(ElementType.METHOD)
+	 * @SuppressWarnings(value = "unchecked")
+	 *
+	 * But watch out for "@interface"!
+	 */
+	tokenInfo *const token = activeToken (st);
+	
+	int c = skipToNonWhite ();
+	readIdentifier (token, c);
+	if (token->keyword == KEYWORD_INTERFACE)
+	{
+		/* Oops. This was actually "@interface" defining a new annotation. */
+		processInterface (st);
+	}
+	else
+	{
+		/* Bug #1691412: skip any annotation arguments. */
+		skipParens ();
+	}
 }
 
 static void parseGeneralToken (statementInfo *const st, const int c)
@@ -2441,6 +2514,10 @@ static void parseGeneralToken (statementInfo *const st, const int c)
 		int c2 = cppGetc ();
 		if (c2 != '=')
 			cppUngetc (c2);
+	}
+	else if (c == '@' && isLanguage (Lang_java))
+	{
+		parseJavaAnnotation (st);
 	}
 	else if (isExternCDecl (st, c))
 	{
@@ -2651,7 +2728,7 @@ static void tagCheck (statementInfo *const st)
 			else if (isType (prev, TOKEN_NAME))
 			{
 				if (isContextualKeyword (prev2))
-					st->scope = SCOPE_EXTERN;
+					makeTag (prev, st, TRUE, TAG_EXTERN_VAR);
 				else
 					qualifyVariableTag (st, prev);
 			}
@@ -2661,6 +2738,13 @@ static void tagCheck (statementInfo *const st)
 					qualifyVariableTag (st, prev2);
 				else
 					qualifyFunctionDeclTag (st, prev2);
+			}
+			if (isLanguage (Lang_java) && token->type == TOKEN_SEMICOLON && insideEnumBody (st))
+			{
+				/* In Java, after an initial enum-like part,
+				 * a semicolon introduces a class-like part.
+				 * See Bug #1730485 for the full rationale. */
+				st->parent->declaration = DECL_CLASS;
 			}
 			break;
 
@@ -2717,7 +2801,7 @@ static boolean findCTags (const unsigned int passCount)
 	boolean retry;
 
 	Assert (passCount < 3);
-	cppInit ((boolean) (passCount > 1));
+	cppInit ((boolean) (passCount > 1), isLanguage (Lang_csharp));
 	Signature = vStringNew ();
 
 	exception = (exception_t) setjmp (Exception);

@@ -1,5 +1,5 @@
 /*
-*   $Id: get.h,v 1.4 2006/05/30 04:37:12 darren Exp $
+*   $Id$
 *
 *   Copyright (c) 1998-2002, Darren Hiebert
 *
@@ -37,12 +37,13 @@
 */
 extern boolean isBraceFormat (void);
 extern unsigned int getDirectiveNestLevel (void);
-extern void cppInit (const boolean state);
+extern void cppInit (const boolean state, const boolean hasAtLiteralStrings);
 extern void cppTerminate (void);
 extern void cppBeginStatement (void);
 extern void cppEndStatement (void);
 extern void cppUngetc (const int c);
 extern int cppGetc (void);
+extern int skipOverCComment (void);
 
 #endif  /* _GET_H */
 

@@ -1,5 +1,5 @@
 /*
-*   $Id: get.c,v 1.9 2006/05/30 04:37:12 darren Exp $
+*   $Id$
 *
 *   Copyright (c) 1996-2002, Darren Hiebert
 *
@@ -63,9 +63,10 @@ enum eState {
 typedef struct sCppState {
 	int		ungetch, ungetch2;   /* ungotten characters, if any */
 	boolean resolveRequired;     /* must resolve if/else/elif/endif branch */
+	boolean hasAtLiteralStrings; /* supports @"c:\" strings */
 	struct sDirective {
 		enum eState state;       /* current directive being processed */
-		boolean	accept;          /* is a directive syntatically permitted? */
+		boolean	accept;          /* is a directive syntactically permitted? */
 		vString * name;          /* macro name */
 		unsigned int nestLevel;  /* level 0 is not used */
 		conditionalInfo ifdef [MaxCppNestingLevel];
@@ -83,6 +84,7 @@ static boolean BraceFormat = FALSE;
 static cppState Cpp = {
 	'\0', '\0',  /* ungetch characters */
 	FALSE,       /* resolveRequired */
+	FALSE,       /* hasAtLiteralStrings */
 	{
 		DRCTV_NONE,  /* state */
 		FALSE,       /* accept */
@@ -106,13 +108,14 @@ extern unsigned int getDirectiveNestLevel (void)
 	return Cpp.directive.nestLevel;
 }
 
-extern void cppInit (const boolean state)
+extern void cppInit (const boolean state, const boolean hasAtLiteralStrings)
 {
 	BraceFormat = state;
 
 	Cpp.ungetch         = '\0';
 	Cpp.ungetch2        = '\0';
 	Cpp.resolveRequired = FALSE;
+	Cpp.hasAtLiteralStrings = hasAtLiteralStrings;
 
 	Cpp.directive.state     = DRCTV_NONE;
 	Cpp.directive.accept    = TRUE;
@@ -304,10 +307,7 @@ static void makeDefineTag (const char *const name)
 		initTagEntry (&e, name);
 		e.lineNumberEntry = (boolean) (Option.locate != EX_PATTERN);
 		e.isFileScope  = isFileScope;
-		//ERAN IFRAH [PATCH START]
-		//keep full lines instead of truncating them
-		e.truncateLine = FALSE;
-		//ERAN IFRAH [PATCH END]
+		e.truncateLine = TRUE;
 		e.kindName     = "macro";
 		e.kind         = 'd';
 		makeTagEntry (&e);
@@ -435,9 +435,9 @@ static Comment isComment (void)
 }
 
 /*  Skips over a C style comment. According to ANSI specification a comment
- *  is treated as white space, so we perform this subsitution.
+ *  is treated as white space, so we perform this substitution.
  */
-static int skipOverCComment (void)
+int skipOverCComment (void)
 {
 	int c = fileGetc ();
 
@@ -480,13 +480,13 @@ static int skipOverCplusComment (void)
 /*  Skips to the end of a string, returning a special character to
  *  symbolically represent a generic string.
  */
-static int skipToEndOfString (void)
+static int skipToEndOfString (boolean ignoreBackslash)
 {
 	int c;
 
 	while ((c = fileGetc ()) != EOF)
 	{
-		if (c == BACKSLASH)
+		if (c == BACKSLASH && ! ignoreBackslash)
 			fileGetc ();  /* throw away next character, too */
 		else if (c == DOUBLE_QUOTE)
 			break;
@@ -567,7 +567,7 @@ process:
 
 			case DOUBLE_QUOTE:
 				Cpp.directive.accept = FALSE;
-				c = skipToEndOfString ();
+				c = skipToEndOfString (FALSE);
 				break;
 
 			case '#':
@@ -642,6 +642,16 @@ process:
 			} break;
 
 			default:
+				if (c == '@' && Cpp.hasAtLiteralStrings)
+				{
+					int next = fileGetc ();
+					if (next == DOUBLE_QUOTE)
+					{
+						Cpp.directive.accept = FALSE;
+						c = skipToEndOfString (TRUE);
+						break;
+					}
+				}
 				Cpp.directive.accept = FALSE;
 				if (directive)
 					ignore = handleDirective (c);

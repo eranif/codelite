@@ -124,7 +124,14 @@ void MemoryView::SetViewString(const wxString& text)
 
 void MemoryView::OnTextDClick(wxMouseEvent& e)
 {
-	wxPoint pt = e.GetPosition();
-	wxUnusedVar(pt);
+	wxUnusedVar(e);
+	// to get the position from the mouse click, we use a workaround:
+	// since the user clicked on the text control, we can assume that there
+	// is no selection. Calling to GetSelection(long*, long*) will give us
+	// the position of the caret
+	if(m_textCtrlMemory->GetStringSelection().IsEmpty()){
+		long from, to;
+		m_textCtrlMemory->GetSelection(&from, &to);
+	}
 }
 

@@ -367,7 +367,7 @@ void LEditor::SetDirty(bool dirty)
 	if ( dirty ) {
 		if ( !ManagerST::Get()->GetPageTitle(this).StartsWith(wxT("*")) ) {
 			ManagerST::Get()->SetPageTitle(this, wxT("*") + ManagerST::Get()->GetPageTitle(this));
-			
+
 			// update the main frame's title as well
 			Frame::Get()->SetFrameTitle(this);
 		}
@@ -408,9 +408,12 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	case ':':
 	case '.':
 	case '>':
-	case '(':
-		CodeComplete();
-		break;
+	case '(': {
+			if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
+				CodeComplete();
+			}
+			break;
+		}
 	case ')': {
 			// dismiss the current calltip
 			m_context->CallTipCancel();
@@ -551,19 +554,19 @@ bool LEditor::SaveFile()
 		// first save the file content
 		if ( !SaveToFile(m_fileName) )
 			return false;
-		
+
 		SetDirty(false);
-		
+
 		wxString projName = GetProjectName();
 		if ( projName.Trim().Trim(false).IsEmpty() )
 			return true;
 
 		// clear cached file, this function does nothing if the file is not cached
 		TagsManagerST::Get()->ClearCachedFile(GetFileName().GetFullPath());
-		
+
 		// clear all the queries which holds reference to this file
 		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(GetFileName().GetFullPath());
-		
+
 		m_context->RetagFile();
 	} else {
 		SetDirty(false);
@@ -1436,11 +1439,11 @@ void LEditor::ReloadFile()
 	SetText( text );
 
 	m_modifyTime = GetFileModificationTime(m_fileName.GetFullPath());
-	
+
 	SetSavePoint();
 	EmptyUndoBuffer();
 	SetDirty(false);
-	
+
 	//update breakpoints
 	UpdateBreakpoints();
 	UpdateColours();
@@ -2120,7 +2123,7 @@ void LEditor::ShowFunctionTipFromCurrentPos()
 			pos = PositionBefore(pos);
 			continue;
 		}
-		
+
 		switch (ch) {
 		case wxT('{'):
 					case wxT('}'):
@@ -2143,8 +2146,8 @@ void LEditor::ShowFunctionTipFromCurrentPos()
 			pos = PositionBefore(pos);
 			break;
 		}
-		
-		if(exit_loop) 
+
+		if (exit_loop)
 			break;
 	}
 

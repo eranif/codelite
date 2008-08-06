@@ -400,6 +400,7 @@ void ContextCpp::OnCallTipClick(wxScintillaEvent &event)
 //user pressed ., -> or ::
 void ContextCpp::CodeComplete(long pos)
 {
+//	wxLogMessage(wxString::Format(wxT("CodeComplete at %d"), pos));
 	VALIDATE_WORKSPACE();
 	long from = pos;
 	if (from == wxNOT_FOUND) {

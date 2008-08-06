@@ -108,6 +108,8 @@ OptionsDlg::OptionsDlg( wxWindow* parent, int id, wxString title, wxPoint pos, w
 
 	m_book->SetFocus();
 	this->SetSizer( mainSizer );
+	mainSizer->Fit(this);
+	
 	this->Layout();
 }
 

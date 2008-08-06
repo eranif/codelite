@@ -38,6 +38,7 @@ char* string_replace(const char* src, const char* from, const char* to)
 			 * Try to find the search text.
 			 */
 			whole_word = 0;
+			static const char word_chars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_";
 			
 			const char *match = strstr(src, from);
 			if(match) {
@@ -54,8 +55,9 @@ char* string_replace(const char* src, const char* from, const char* to)
 					ch_after = *(match + fromlen);
 				}
 				
-				if((ch_before == '0' || ch_before == ' ' || ch_before == '\n' || ch_before == '\r') && (ch_after == '0' || ch_after == ' ' || ch_after == '\n' || ch_after == '\r')){
-					whole_word = 1;
+				whole_word = 1;
+				if(strchr(word_chars, ch_before) || strchr(word_chars, ch_after)){
+					whole_word = 0;
 				}
 			}
 			

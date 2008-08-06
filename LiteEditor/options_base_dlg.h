@@ -59,6 +59,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 class wxNotebook;
 class CommentPage;
+class DialogsPage;
 
 class OptionsDlg : public wxDialog 
 {
@@ -113,6 +114,7 @@ protected:
 	wxButton* m_buttonClearHistory;	
 	wxCheckBox* m_checkFullPathInTitle;
 	wxSpinCtrl* m_findReplaceHistory;
+	DialogsPage* m_dialogsPage;
 	
 private:
 	wxPanel *CreateSyntaxHighlightPage();
@@ -122,6 +124,7 @@ private:
 	wxPanel *CreateFoldingPage();
 	wxPanel *CreateCxxCommentPage();
 	wxPanel *CreateMiscPage();
+	wxPanel *CreateDialogsPage();
 	void SaveChanges();
 
 public:

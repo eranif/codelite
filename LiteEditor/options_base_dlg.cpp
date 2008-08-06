@@ -41,6 +41,7 @@
 #endif //WX_PRECOMP
 
 #include "options_base_dlg.h"
+#include "dialogspage.h"
 #include <wx/dir.h>
 #include "commentpage.h"
 #include "frame.h"
@@ -85,8 +86,8 @@ OptionsDlg::OptionsDlg( wxWindow* parent, int id, wxString title, wxPoint pos, w
 	m_book->AddPage( CreateCxxCommentPage(), wxT("C++ Comments"), false);
 
 	m_book->AddPage( CreateSyntaxHighlightPage(), wxT("Syntax Highlight"), false );
+	m_book->AddPage( CreateDialogsPage(), wxT("Dialogs"), false);
 	m_book->AddPage( CreateMiscPage(), wxT("Misc"), false );
-
 	mainSizer->Add( m_book, 1, wxEXPAND | wxALL, 5 );
 
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -377,7 +378,8 @@ void OptionsDlg::SaveChanges()
 	}
 
 	m_commentPage->Save();
-
+	m_dialogsPage->Save();
+	
 	EditorConfigST::Get()->SetOptions(options);
 	ManagerST::Get()->ApplySettingsChanges();
 }
@@ -629,4 +631,10 @@ void OptionsDlg::OnClearHistory(wxCommandEvent& event)
 void OptionsDlg::OnClearHistoryUI(wxUpdateUIEvent& e)
 {
 	e.Enable(ManagerST::Get()->HasHistory());
+}
+
+wxPanel* OptionsDlg::CreateDialogsPage()
+{
+	m_dialogsPage = new DialogsPage(m_book);
+	return m_dialogsPage;
 }

@@ -1884,16 +1884,16 @@ void Manager::DbgStart(long pid)
 		wxString comm;
 		wxString port = bldConf->GetDbgHostPort();
 		wxString host = bldConf->GetDbgHostName();
-		
+
 		comm << host;
-		
+
 		host = host.Trim().Trim(false);
 		port = port.Trim().Trim(false);
-		
+
 		if (port.IsEmpty() == false) {
 			comm << wxT(":") << port;
 		}
-		
+
 		dbgr->Run(args, comm);
 
 	} else if (pid == wxNOT_FOUND) {
@@ -2800,30 +2800,40 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 		flags = wxSD_MATCHCASE;
 
 		if ( StringFindReplacer::Search(editor->GetText(), offset, pattern, flags, pos, match_len) ) {
-			// select only the name at the give text range
-			wxString display_name = name.BeforeFirst(wxT('('));
 
-			int match_len1(0), pos1(0);
-			flags |= wxSD_SEARCH_BACKWARD;
-			flags |= wxSD_MATCHWHOLEWORD;
-
-			// the inner search is done on the pattern without without the part of the
-			// signature
-			pattern = pattern.BeforeFirst(wxT('('));
-			if (StringFindReplacer::Search(pattern, pattern.Len(), display_name, flags, pos1, match_len1)) {
-
-				// select only the word
-				if (editor->GetContext()->IsCommentOrString(pos+pos1)) {
-					// try again
-					offset = pos + pos1;
-					again = true;
-				} else {
-					editor->SetSelection(pos + pos1, pos + pos1 + match_len1);
-				}
+			int line = editor->LineFromPosition(pos);
+			wxString dbg_line = editor->GetLine(line).Trim().Trim(false);
+			
+			if (dbg_line.Len() != pattern.Trim().Trim(false).Len()) {
+				offset = pos + match_len;
+				again = true;
 			} else {
 
-				// as a fallback, mark the whole line
-				editor->SetSelection(pos, pos + match_len);
+				// select only the name at the give text range
+				wxString display_name = name.BeforeFirst(wxT('('));
+
+				int match_len1(0), pos1(0);
+				flags |= wxSD_SEARCH_BACKWARD;
+				flags |= wxSD_MATCHWHOLEWORD;
+
+				// the inner search is done on the pattern without without the part of the
+				// signature
+				pattern = pattern.BeforeFirst(wxT('('));
+				if (StringFindReplacer::Search(pattern, pattern.Len(), display_name, flags, pos1, match_len1)) {
+
+					// select only the word
+					if (editor->GetContext()->IsCommentOrString(pos+pos1)) {
+						// try again
+						offset = pos + pos1;
+						again = true;
+					} else {
+						editor->SetSelection(pos + pos1, pos + pos1 + match_len1);
+					}
+				} else {
+
+					// as a fallback, mark the whole line
+					editor->SetSelection(pos, pos + match_len);
+				}
 			}
 
 		} else {

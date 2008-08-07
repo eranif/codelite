@@ -534,7 +534,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_staticText26->Wrap( -1 );
 	fgSizer5->Add( m_staticText26, 0, wxALL, 5 );
 	
-	m_textPreBuildRule = new wxTextCtrl( m_customMakefileStep, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB );
+	m_textPreBuildRule = new wxTextCtrl( m_customMakefileStep, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2|wxSIMPLE_BORDER );
 	fgSizer5->Add( m_textPreBuildRule, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer16->Add( fgSizer5, 1, wxEXPAND, 5 );

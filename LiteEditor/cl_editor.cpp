@@ -1615,37 +1615,36 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 	// hide completion box
 	HideCompletionBox();
 
-	// emulate here VS like selection with mouse and ctrl key
-	if (event.m_controlDown) {
-		long pos = PositionFromPointClose(event.GetX(), event.GetY());
-		if (pos == wxSCI_INVALID_POSITION) {
-			event.Skip();
-			return;
-		}
-
-		long start = WordStartPosition(pos, true);
-		long end   = WordEndPosition(pos, true);
-		if (start == end) {
-			//pass it on
-			event.Skip();
-			return;
-		}
-		// select the word
-		SetSelectionStart(start);
-		SetSelectionEnd(end);
-
-		// make the caret visible (if not, scroll to it)
-		EnsureCaretVisible();
-
-		// highlight all occurances of selected word
-		long highlight_word(0);
-
-		EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlight_word);
-		if ( GetSelectedText().IsEmpty() == false && highlight_word) {
-			HighlightWord();
-		}
-		return;
-	}
+//	// emulate here VS like selection with mouse and ctrl key
+//	if (event.m_controlDown) {
+//		long pos = PositionFromPointClose(event.GetX(), event.GetY());
+//		if (pos == wxSCI_INVALID_POSITION) {
+//			event.Skip();
+//			return;
+//		}
+//
+//		long start = WordStartPosition(pos, true);
+//		long end   = WordEndPosition(pos, true);
+//		if (start == end) {
+//			//pass it on
+//			event.Skip();
+//			return;
+//		}
+//		// select the word
+//		SetSelectionStart(start);
+//		SetSelectionEnd(end);
+//
+//		// make the caret visible (if not, scroll to it)
+//		EnsureCaretVisible();
+//
+//		// highlight all occurances of selected word
+//		long highlight_word(0);
+//
+//		EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlight_word);
+//		if ( GetSelectedText().IsEmpty() == false && highlight_word) {
+//			HighlightWord();
+//		}
+//	}
 	event.Skip();
 }
 

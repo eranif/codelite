@@ -1,16 +1,12 @@
+#include <wx/tokenzr.h>
+#include <wx/regex.h>
 #include "manager.h"
 #include "memoryview.h"
+#include "frame.h"
 
 MemoryView::MemoryView( wxWindow* parent )
-		:
-		MemoryViewBase( parent )
+		: MemoryViewBase( parent )
 {
-
-}
-
-void MemoryView::OnTextEntered( wxCommandEvent& event )
-{
-	wxUnusedVar(event);
 }
 
 void MemoryView::OnEvaluate( wxCommandEvent& event )
@@ -75,33 +71,10 @@ void MemoryView::SetViewString(const wxString& text)
 			// reset word
 			if ((text.GetChar(i) == wxT(' ') || text.GetChar(i) == wxT('\n')) && needColouring) {
 
-				if (text.GetChar(i) == wxT('\n')) {
-//					// the last word read was the ascii part of the memory view
-//					// read backward until we find a space
-//					int xx(i);
-//					for(; xx>0; xx--){
-//						
-//						if(text.GetChar(xx) == wxT(' ')){
-//							xx++;
-//							break;
-//						}
-//					}
-//					
-//					for(; xx<(int)shortLen; xx++){
-//						if(text.GetChar(xx) == wxT('\n')){
-//							break;
-//						}
-//						
-//						if(text.GetChar(xx) != oldValue.GetChar(xx)){
-//							m_textCtrlMemory->SetStyle(xx, xx+1, style);
-//						}
-//					}
-					
-				} else {
-					
+				if (text.GetChar(i) != wxT('\n')) {
 					m_textCtrlMemory->SetStyle(start, (long)i, style);
 				}
-				
+
 				start = wxNOT_FOUND;
 				needColouring = false;
 			}
@@ -119,19 +92,57 @@ void MemoryView::SetViewString(const wxString& text)
 		}
 	}
 
+	// loop over the text and set the address in grey colour
+	wxTextAttr addrAttr;
+	addrAttr.SetTextColour(wxT("GREY"));
+	wxFont addrFont = m_textCtrlMemory->GetFont();
+	addrFont.SetWeight(wxBOLD);
+	addrFont.SetStyle(wxFONTSTYLE_ITALIC);
+
+	addrAttr.SetFont(addrFont);
+
+	wxArrayString lines = wxStringTokenize(text, wxT("\n"), wxTOKEN_STRTOK);
+	for (size_t i=0; i<lines.GetCount(); i++) {
+		long addr_end = lines.Item(i).Find(wxT(':'));
+		if (addr_end != wxNOT_FOUND) {
+			long pos = m_textCtrlMemory->XYToPosition(0, (long)i);
+			m_textCtrlMemory->SetStyle(pos, pos + addr_end, addrAttr);
+		}
+	}
 	m_textCtrlMemory->Thaw();
 }
 
-void MemoryView::OnTextDClick(wxMouseEvent& e)
+void MemoryView::OnUpdate(wxCommandEvent& e)
 {
-	wxUnusedVar(e);
-	// to get the position from the mouse click, we use a workaround:
-	// since the user clicked on the text control, we can assume that there
-	// is no selection. Calling to GetSelection(long*, long*) will give us
-	// the position of the caret
-	if(m_textCtrlMemory->GetStringSelection().IsEmpty()){
-		long from, to;
-		m_textCtrlMemory->GetSelection(&from, &to);
-	}
-}
+	static wxRegEx reHex(wxT("[0][x][0-9a-fA-F][0-9a-fA-F]"));
 
+	// extract the text memory from the text control and pass it to the debugger
+	wxString memory;
+	wxArrayString lines = wxStringTokenize(m_textCtrlMemory->GetValue(), wxT("\n"), wxTOKEN_STRTOK);
+	for (size_t i=0; i<lines.GetCount(); i++) {
+		wxString line = lines.Item(i).AfterFirst(wxT(':')).BeforeLast(wxT(':')).Trim().Trim(false);
+		wxArrayString hexValues = wxStringTokenize(line, wxT(" "), wxTOKEN_STRTOK);
+		for (size_t y=0; y<hexValues.GetCount(); y++) {
+			if (reHex.Matches(hexValues.Item(y)) && hexValues.Item(y).Len() == 4) {
+				// OK
+				continue;
+			} else {
+				wxMessageBox(wxString::Format(wxT("Invalid memory value: %s"), hexValues.Item(y).c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
+				// update the pane to old value
+				ManagerST::Get()->UpdateDebuggerPane();
+				return;
+			}
+		}
+
+		if (line.IsEmpty() == false) {
+			memory << line << wxT(" ");
+		}
+	}
+	
+	// set the new memory
+	memory = memory.Trim().Trim(false);
+	ManagerST::Get()->SetMemory(m_textCtrlExpression->GetValue(), GetSize(), memory);
+
+	// update the view
+	ManagerST::Get()->UpdateDebuggerPane();
+}

@@ -13,10 +13,9 @@ class MemoryView : public MemoryViewBase
 {
 protected:
 	// Handlers for MemoryViewBase events.
-	void OnTextEntered( wxCommandEvent& event );
 	void OnEvaluate( wxCommandEvent& event );
 	void OnEvaluateUI( wxUpdateUIEvent& event );
-	void OnTextDClick(wxMouseEvent &e);
+	void OnUpdate(wxCommandEvent &e);
 	
 public:
 	/** Constructor */

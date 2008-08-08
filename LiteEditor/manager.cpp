@@ -2102,6 +2102,14 @@ void Manager::UpdateFileLine(const wxString &filename, int lineno)
 	UpdateDebuggerPane();
 }
 
+void Manager::SetMemory(const wxString& address, size_t count, const wxString &hex_value)
+{
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
+		dbgr->SetMemory(address, count, hex_value);
+	}
+}
+
 void Manager::UpdateDebuggerPane()
 {
 	//Update the debugger pane
@@ -2803,7 +2811,7 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 
 			int line = editor->LineFromPosition(pos);
 			wxString dbg_line = editor->GetLine(line).Trim().Trim(false);
-			
+
 			if (dbg_line.Len() != pattern.Trim().Trim(false).Len()) {
 				offset = pos + match_len;
 				again = true;

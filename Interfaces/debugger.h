@@ -311,6 +311,12 @@ public:
 	 * \return true on success, false otherwise
 	 */
 	virtual bool WatchMemory(const wxString &address, size_t count, wxString &output) = 0;
+	
+	/**
+	 * \brief set memory at given address and of size count. the value to set must be a space delimited 
+	 * hex values (e.g. '0x01 0x02 0x03')
+	 */
+	virtual bool SetMemory(const wxString &address, size_t count, const wxString &hex_value) = 0;
 };
 
 

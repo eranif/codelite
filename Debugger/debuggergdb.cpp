@@ -1105,7 +1105,7 @@ bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output
 				GDB_NEXT_TOKEN();	//ascii_value
 				GDB_STRIP_QUOATES(currentToken);
 
-				currentLine << currentToken;
+				currentLine << wxT(" : ") << currentToken;
 
 				GDB_STRIP_QUOATES(currentToken);
 				output << currentLine << wxT("\n");
@@ -1119,4 +1119,20 @@ bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output
 		return true;
 	}
 	return false;
+}
+
+bool DbgGdb::SetMemory(const wxString& address, size_t count, const wxString& hex_value)
+{
+	wxString cmd;
+	wxString hexCommaDlimArr;
+	wxArrayString hexArr = wxStringTokenize(hex_value, wxT(" "), wxTOKEN_STRTOK);
+	
+	for(size_t i=0; i<hexArr.GetCount(); i++){
+		hexCommaDlimArr << hexArr.Item(i) << wxT(",");
+	}
+	
+	hexCommaDlimArr.RemoveLast();
+	cmd << wxT("set {char[") << count << wxT("]}") << address << wxT("={") << hexCommaDlimArr << wxT("}");
+	
+	return ExecuteCmd(cmd);
 }

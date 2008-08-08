@@ -749,7 +749,8 @@ public:
 		return m_dbgCanInteract;
 	}
 	void UpdateDebuggerPane();
-
+	void SetMemory(const wxString &address, size_t count, const wxString &hex_value);
+	
 protected:
 	Manager(void);
 	virtual ~Manager(void);

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -15,8 +15,9 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/textctrl.h>
-#include <wx/button.h>
 #include <wx/sizer.h>
+#include <wx/statline.h>
+#include <wx/button.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -34,14 +35,17 @@ class MemoryViewBase : public wxPanel
 		wxTextCtrl* m_textCtrlExpression;
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrlSize;
-		wxButton* m_buttonEvaluate;
+		wxStaticLine* m_staticline1;
 		wxTextCtrl* m_textCtrlMemory;
+		wxButton* m_buttonEvaluate;
+		wxButton* m_buttonUpdate;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnTextEntered( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnTextDClick( wxMouseEvent& event ){ event.Skip(); }
 		virtual void OnEvaluate( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnEvaluateUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void OnTextDClick( wxMouseEvent& event ){ event.Skip(); }
+		virtual void OnUpdate( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:

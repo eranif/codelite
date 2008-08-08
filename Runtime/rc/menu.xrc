@@ -685,13 +685,15 @@
     
     <!-- Workspace -->
      <object class="wxMenu" name="workspace_popup_menu">
-        <object class="wxMenuItem" name="new_project">
+        <object class="wxMenuItem" name="build_workspace">
+            <label>Build Workspace</label>
+        </object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="new_project">
             <label>Create New Project</label>
-            <help>Create new Project and add it to the current workspace</help>
         </object>
         <object class="wxMenuItem" name="add_project">
             <label>Add an Existing Project</label>
-            <help>Add an existing project to the current workspace</help>
         </object>            
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="retag_workspace">

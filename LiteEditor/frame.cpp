@@ -359,7 +359,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	
 	EVT_MENU(XRCID("reload_workspace"), Frame::OnReloadWorkspace)
 	EVT_UPDATE_UI(XRCID("reload_workspace"), Frame::OnReloadWorkspaceUI)
-
+	EVT_UPDATE_UI(XRCID("build_workspace"), Frame::OnBuildWorkspaceUI)
+	EVT_MENU(XRCID("build_workspace"), Frame::OnBuildWorkspace)
+	
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, Frame::OnSingleInstanceOpenFiles)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, Frame::OnSingleInstanceRaise)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, Frame::OnNewVersionAvailable)
@@ -3183,4 +3185,26 @@ void Frame::DoAddNewFile()
 	GetNotebook()->Thaw();
 	editor->Show(true);
 	editor->SetActive();
+}
+
+void Frame::OnBuildWorkspace(wxCommandEvent& e)
+{
+	wxArrayString projects;
+	ManagerST::Get()->GetProjectList(projects);
+	for(size_t i=0; i<projects.GetCount(); i++){
+		BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(projects.Item(i), wxEmptyString);
+		if(buildConf){
+			BuildInfo bi(projects.Item(i), buildConf->GetName(), false, BuildInfo::Build);
+			bi.SetCleanLog(i == 0);
+			ManagerST::Get()->AddBuild(bi);
+		}
+	}
+	
+	// start the build process
+	ManagerST::Get()->ProcessBuildQueue();	
+}
+
+void Frame::OnBuildWorkspaceUI(wxUpdateUIEvent& e)
+{
+	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
 }

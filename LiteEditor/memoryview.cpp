@@ -7,6 +7,7 @@
 MemoryView::MemoryView( wxWindow* parent )
 		: MemoryViewBase( parent )
 {
+	m_buttonUpdate->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( MemoryView::OnUpdateUI ), NULL, this );
 }
 
 void MemoryView::OnEvaluate( wxCommandEvent& event )
@@ -45,8 +46,6 @@ void MemoryView::SetViewString(const wxString& text)
 	wxString oldValue = m_textCtrlMemory->GetValue();
 
 	m_textCtrlMemory->Clear();
-
-
 	// first check that we are trying to view the same addresses
 	wxString newAddr = text.BeforeFirst(wxT(':'));
 	wxString oldAddr = oldValue.BeforeFirst(wxT(':'));
@@ -109,6 +108,8 @@ void MemoryView::SetViewString(const wxString& text)
 			m_textCtrlMemory->SetStyle(pos, pos + addr_end, addrAttr);
 		}
 	}
+	
+	m_textCtrlMemory->DiscardEdits(); // make this operation undoable
 	m_textCtrlMemory->Thaw();
 }
 
@@ -145,4 +146,9 @@ void MemoryView::OnUpdate(wxCommandEvent& e)
 
 	// update the view
 	ManagerST::Get()->UpdateDebuggerPane();
+}
+
+void MemoryView::OnUpdateUI(wxUpdateUIEvent& event)
+{
+	event.Enable(m_textCtrlMemory->IsModified());
 }

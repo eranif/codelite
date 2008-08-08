@@ -505,7 +505,7 @@ resources.cpp: resources.xrc
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode">
+  <Dependencies Name="WinReleaseUnicode">
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
@@ -519,7 +519,7 @@ resources.cpp: resources.xrc
     <Project Name="Copyright"/>
     <Project Name="UnitTestPP"/>
   </Dependencies>
-  <Dependencies Name="WinReleaseUnicode">
+  <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>

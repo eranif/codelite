@@ -16,6 +16,7 @@ protected:
 	void OnEvaluate( wxCommandEvent& event );
 	void OnEvaluateUI( wxUpdateUIEvent& event );
 	void OnUpdate(wxCommandEvent &e);
+	void OnUpdateUI(wxUpdateUIEvent &event);
 	
 public:
 	/** Constructor */

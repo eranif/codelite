@@ -33,6 +33,7 @@
 #endif
 #endif 
 
+
 Comment::Comment(wxSQLite3ResultSet & rs)
 {
 	m_comment = rs.GetString(0);

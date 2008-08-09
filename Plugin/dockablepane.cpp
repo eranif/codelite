@@ -8,7 +8,7 @@
 const wxEventType wxEVT_CMD_DELETE_DOCKPANE = wxNewEventType();
 
 BEGIN_EVENT_TABLE(DockablePane, wxPanel)
-EVT_ERASE_BACKGROUND(DockablePane::OnEraseBackground)
+EVT_ERASE_BACKGROUND(DockablePane::OnEraseBg)
 EVT_PAINT(DockablePane::OnPaint)
 END_EVENT_TABLE()
 

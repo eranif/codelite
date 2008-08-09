@@ -22,6 +22,10 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/aui/framemanager.h>
+#include "dockablepane.h"
+#include "editor_config.h"
+#include "detachedpanesinfo.h"
  #include "wx/dcbuffer.h"
 #include "memoryview.h"
 #include "debuggerpane.h"
@@ -40,6 +44,15 @@ const wxString DebuggerPane::BREAKPOINTS = wxT("Breakpoints");
 const wxString DebuggerPane::THREADS = wxT("Threads");
 const wxString DebuggerPane::MEMORY = wxT("Memory");
 
+#define ADD_DEBUGGER_PAGE(win, name, bmp) \
+	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
+		wxAuiPaneInfo info;\
+		DockablePane *pane = new DockablePane(GetParent(), m_book, win, name, bmp, wxSize(200, 200));\
+		m_mgr->AddPane(pane, info.Name(name).Caption(name));\
+	} else {\
+		m_book->AddPage(win, name, bmp, false);\
+	}
+	
 BEGIN_EVENT_TABLE(DebuggerPane, wxPanel)
 	EVT_PAINT(DebuggerPane::OnPaint)
 	EVT_ERASE_BACKGROUND(DebuggerPane::OnEraseBg)
@@ -47,10 +60,11 @@ BEGIN_EVENT_TABLE(DebuggerPane, wxPanel)
 	EVT_BOOK_PAGE_CHANGED(wxID_ANY, DebuggerPane::OnPageChanged)
 END_EVENT_TABLE()
 
-DebuggerPane::DebuggerPane(wxWindow *parent, const wxString &caption)
+DebuggerPane::DebuggerPane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr)
 		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300))
 		, m_caption(caption)
 		, m_initDone(false)
+		, m_mgr(mgr)
 {
 	CreateGUIControls();
 }
@@ -77,26 +91,32 @@ void DebuggerPane::CreateGUIControls()
 
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TAB_DECORATION|wxVB_TOP);
 	mainSizer->Add(m_book, 1, wxEXPAND|wxALL, 1);
-
+	
+	// load list of detached panes
+	wxArrayString detachedPanes;
+	DetachedPanesInfo dpi;
+	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
+	detachedPanes = dpi.GetPanes();
+	
 	m_localsTree = new LocalVarsTree(m_book, wxID_ANY);
-	m_book->AddPage(m_localsTree, LOCALS, wxXmlResource::Get()->LoadBitmap(wxT("locals_view")), true);
+	ADD_DEBUGGER_PAGE(m_localsTree, LOCALS, wxXmlResource::Get()->LoadBitmap(wxT("locals_view")));
 
 	//add the watches view
 	m_watchesTable = new SimpleTable(m_book);
-	m_book->AddPage(m_watchesTable, WATCHES, wxXmlResource::Get()->LoadBitmap(wxT("watches")), false);
-
+	ADD_DEBUGGER_PAGE(m_watchesTable, WATCHES, wxXmlResource::Get()->LoadBitmap(wxT("watches")));
+	
 	m_frameList = new ListCtrlPanel(m_book);
-	m_book->AddPage(m_frameList, FRAMES, wxXmlResource::Get()->LoadBitmap(wxT("frames")), false);
+	ADD_DEBUGGER_PAGE(m_frameList, FRAMES, wxXmlResource::Get()->LoadBitmap(wxT("frames")));
 
 	m_breakpoints = new BreakpointDlg(m_book);
-	m_book->AddPage(m_breakpoints, BREAKPOINTS, wxXmlResource::Get()->LoadBitmap(wxT("breakpoint")), false);
+	ADD_DEBUGGER_PAGE(m_breakpoints, BREAKPOINTS, wxXmlResource::Get()->LoadBitmap(wxT("breakpoint")));
 
 	m_threads = new ThreadListPanel(m_book);
-	m_book->AddPage(m_threads, THREADS, wxXmlResource::Get()->LoadBitmap(wxT("threads")), false);
+	ADD_DEBUGGER_PAGE(m_threads, THREADS, wxXmlResource::Get()->LoadBitmap(wxT("threads")));
 
 	m_memory = new MemoryView(m_book);
-	m_book->AddPage(m_memory, MEMORY, wxXmlResource::Get()->LoadBitmap(wxT("memory_view")), false);
-
+	ADD_DEBUGGER_PAGE(m_memory, MEMORY, wxXmlResource::Get()->LoadBitmap(wxT("memory_view")));
+	
 	m_initDone = true;
 }
 

@@ -171,4 +171,5 @@
     <File Name="copyrights_proj_sel_dlg.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

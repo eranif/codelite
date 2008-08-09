@@ -300,12 +300,12 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("delete_line_end"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_line_start"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("transpose_lines"), Frame::DispatchCommandEvent)
-	
+
 	EVT_UPDATE_UI(XRCID("delete_line"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("delete_line_end"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("delete_line_start"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("transpose_lines"), Frame::OnFileExistUpdateUI)
-	
+
 	EVT_MENU(XRCID("to_upper"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("to_lower"), Frame::DispatchCommandEvent)
 	EVT_UPDATE_UI(XRCID("to_upper"), Frame::DispatchUpdateUIEvent)
@@ -356,22 +356,23 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
 	EVT_UPDATE_UI(XRCID("close_file"), Frame::OnFileCloseUI)
 	EVT_MENU(XRCID("link_action"), Frame::OnStartPageEvent)
-	
+
 	EVT_MENU(XRCID("reload_workspace"), Frame::OnReloadWorkspace)
 	EVT_UPDATE_UI(XRCID("reload_workspace"), Frame::OnReloadWorkspaceUI)
 	EVT_UPDATE_UI(XRCID("build_workspace"), Frame::OnBuildWorkspaceUI)
 	EVT_MENU(XRCID("build_workspace"), Frame::OnBuildWorkspace)
-	
+
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, Frame::OnSingleInstanceOpenFiles)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, Frame::OnSingleInstanceRaise)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, Frame::OnNewVersionAvailable)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE, Frame::OnNewVersionAvailable)
 	EVT_MENU(XRCID("detach_wv_tab"), Frame::OnDetachWorkspaceViewTab)
+	EVT_MENU(XRCID("detach_dv_tab"), Frame::OnDetachDebuggerViewTab)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
-	
+
 	EVT_MENU(XRCID("batch_build"), Frame::OnBatchBuild)
 	EVT_UPDATE_UI(XRCID("batch_build"), Frame::OnBatchBuildUI)
-	
+
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 
@@ -567,7 +568,7 @@ void Frame::CreateGUIControls(void)
 	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
 
 	//add the debugger locals tree, make it hidden by default
-	m_debuggerPane = new DebuggerPane(this, wxT("Debugger"));
+	m_debuggerPane = new DebuggerPane(this, wxT("Debugger"), &m_mgr);
 	m_mgr.AddPane(m_debuggerPane,
 	              wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).Hide());
 	RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
@@ -645,6 +646,7 @@ void Frame::CreateGUIControls(void)
 	//load the tab right click menu
 	GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")));
 	GetWorkspacePane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("workspace_view_right_click_menu")));
+	GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("debugger_view_right_click_menu")));
 	m_mgr.Update();
 	SetAutoLayout (true);
 
@@ -1132,7 +1134,7 @@ void Frame::OnFunctionCalltip(wxCommandEvent& event)
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
 	if ( !editor )
 		return;
-	
+
 	editor->ShowFunctionTipFromCurrentPos();
 }
 
@@ -1236,7 +1238,7 @@ void Frame::OnFileClose(wxCommandEvent &event)
 	// if no more editors are available, collapse the workspace tree
 	if (GetMainBook()->GetNotebook()->GetPageCount() == 0) {
 		GetWorkspacePane()->CollpaseAll();
-		
+
 		// also, update the title bar
 		SetFrameTitle(NULL);
 	}
@@ -1292,7 +1294,7 @@ void Frame::OnPageChanged(NotebookEvent &event)
 			GetFileExplorer()->GetFileTree()->ExpandToPath(editor->GetFileName());
 		}
 	}
-	
+
 	// construct the title for the main frame
 	SetFrameTitle(editor);
 
@@ -1559,9 +1561,9 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 				}
 			}
 		}
-		
+
 		// reset cache if needed
-		if(!(m_tagsOptionsData.GetFlags() & CC_CACHE_WORKSPACE_TAGS)) {
+		if (!(m_tagsOptionsData.GetFlags() & CC_CACHE_WORKSPACE_TAGS)) {
 			tagsMgr->GetWorkspaceTagsCache()->Clear();
 		}
 	}
@@ -1708,12 +1710,12 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 	m_outputPane->GetBuildTab()->CanFocus(true);
 	if (event.GetEventType() == wxEVT_BUILD_STARTED || event.GetEventType() == wxEVT_BUILD_STARTED_NOCLEAN) {
 		m_hideOutputPane = ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN);
-		
+
 		// do we need to clear the build log?
-		if( event.GetEventType() != wxEVT_BUILD_STARTED_NOCLEAN) {
+		if ( event.GetEventType() != wxEVT_BUILD_STARTED_NOCLEAN) {
 			m_outputPane->GetBuildTab()->Clear();
 		}
-		
+
 		//read settings for the build output tab
 		m_outputPane->GetBuildTab()->ReloadSettings();
 		m_outputPane->GetBuildTab()->AppendText(wxT("Building: "));
@@ -1751,11 +1753,11 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 				//no errors, execute!
 				ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
 			}
-		} 
-		
+		}
+
 		// process next request from the queue
 		ManagerST::Get()->ProcessBuildQueue();
-		
+
 		//give back the focus to the editor
 		LEditor *editor = ManagerST::Get()->GetActiveEditor();
 		if (editor) {
@@ -3106,10 +3108,10 @@ void Frame::RebuildProject(const wxString& projectName)
 	if (enable) {
 		BuildInfo buildInfo(projectName, wxEmptyString, false, BuildInfo::Clean);
 		ManagerST::Get()->AddBuild(buildInfo);
-		
+
 		buildInfo = BuildInfo(projectName, wxEmptyString, false, BuildInfo::Build);
 		ManagerST::Get()->AddBuild(buildInfo);
-		
+
 		ManagerST::Get()->ProcessBuildQueue();
 	}
 }
@@ -3123,21 +3125,21 @@ void Frame::OnBatchBuildUI(wxUpdateUIEvent& e)
 void Frame::OnBatchBuild(wxCommandEvent& e)
 {
 	BatchBuildDlg *batchBuild = new BatchBuildDlg(this);
-	if(batchBuild->ShowModal() == wxID_OK){
+	if (batchBuild->ShowModal() == wxID_OK) {
 		// build the projects
 		std::list<BuildInfo> buildInfoList;
 		batchBuild->GetBuildInfoList(buildInfoList);
-		if(buildInfoList.empty() == false){
+		if (buildInfoList.empty() == false) {
 			std::list<BuildInfo>::iterator iter = buildInfoList.begin();
-			
+
 			// add all build items to queue
-			for(; iter != buildInfoList.end(); iter ++){
+			for (; iter != buildInfoList.end(); iter ++) {
 				ManagerST::Get()->AddBuild(*iter);
 			}
 		}
 	}
 	batchBuild->Destroy();
-	
+
 	// start the build process
 	ManagerST::Get()->ProcessBuildQueue();
 }
@@ -3145,24 +3147,24 @@ void Frame::OnBatchBuild(wxCommandEvent& e)
 void Frame::SetFrameTitle(LEditor* editor)
 {
 	wxString title;
-	if(editor && editor->GetModify()) {
+	if (editor && editor->GetModify()) {
 		title << wxT("*");
 	}
-	
-	if(editor) {
-		
+
+	if (editor) {
+
 		title << editor->GetFileName().GetFullName() << wxT(" ");
-		
+
 		// by default display the full path as well
 		long value(1);
 		EditorConfigST::Get()->GetLongValue(wxT("ShowFullPathInFrameTitle"), value);
-		if(value){
+		if (value) {
 			title << wxT("[") << editor->GetFileName().GetFullPath() << wxT("] ");
 		}
-		
+
 		title << wxT("- ");
 	}
-	
+
 	title << wxT("CodeLite");
 	SetTitle(title);
 }
@@ -3191,20 +3193,40 @@ void Frame::OnBuildWorkspace(wxCommandEvent& e)
 {
 	wxArrayString projects;
 	ManagerST::Get()->GetProjectList(projects);
-	for(size_t i=0; i<projects.GetCount(); i++){
+	for (size_t i=0; i<projects.GetCount(); i++) {
 		BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(projects.Item(i), wxEmptyString);
-		if(buildConf){
+		if (buildConf) {
 			BuildInfo bi(projects.Item(i), buildConf->GetName(), false, BuildInfo::Build);
 			bi.SetCleanLog(i == 0);
 			ManagerST::Get()->AddBuild(bi);
 		}
 	}
-	
+
 	// start the build process
-	ManagerST::Get()->ProcessBuildQueue();	
+	ManagerST::Get()->ProcessBuildQueue();
 }
 
 void Frame::OnBuildWorkspaceUI(wxUpdateUIEvent& e)
 {
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
+}
+
+void Frame::OnDetachDebuggerViewTab(wxCommandEvent& e)
+{
+	size_t sel = GetDebuggerPane()->GetNotebook()->GetSelection();
+	CustomTab *t = GetDebuggerPane()->GetNotebook()->GetTabContainer()->IndexToTab(sel);
+	wxString text = t->GetText();
+	wxBitmap bmp = t->GetBmp();
+	wxWindow *page = t->GetWindow();
+
+	// remove the page from the notebook
+	GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
+
+	DockablePane *pane = new DockablePane(this, GetDebuggerPane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
+	m_DPmenuMgr->AddMenu(text);
+
+	wxAuiPaneInfo info;
+	m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
+	m_mgr.Update();
+	wxUnusedVar(e);
 }

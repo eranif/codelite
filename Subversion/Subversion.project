@@ -199,4 +199,5 @@
     </Configuration>
   </Settings>
   <Dependencies/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

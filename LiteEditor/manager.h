@@ -716,6 +716,13 @@ public:
 	 */
 	void ProcessBuildQueue();
 
+	/**
+	 * \brief test if pane_name is resides in the wxAuiManager and is visible
+	 * \param pane_name pane name to search for
+	 * \return true on success (exist in the AUI manager and visible), false otherwise
+	 */
+	bool IsPaneVisible(const wxString &pane_name);
+	
 	//--------------------------------------------------------------------
 	//IDebuggerObserver implementation. These set of functions are called
 	//from the debugger whenever event occurs there

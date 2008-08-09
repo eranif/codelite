@@ -582,20 +582,32 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 				break;
 			}
 		}
+		
+		if(m_info.enableDebugLog) {
+			m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), line.c_str()));
+		}
+		
 		counter = 0;
 		if (reCommand.Matches(line)) {
 			//not a gdb message, get the command associated with the message
 			wxString cmd_id = reCommand.GetMatch(line, 1);
 			if (cmd_id != id) {
+				
 				long expcId(0), recvId(0);
 				cmd_id.ToLong(&recvId);
 				id.ToLong(&expcId);
 
-				if (expcId > recvId) {
-					//we can keep waiting for our ID
-					continue;
+				// first, process this reply, since it might be an output from a previous command
+				// strip the id from the line
+				line = line.Mid(8);
+				DoProcessAsyncCommand(line, cmd_id);
+				
+				if(recvId > expcId) {
+					// if we are here, it means that the received ID is greater than ours...
+					// so we probably will never get it ..
+					return false;
 				}
-				return false;
+				continue;
 			}
 
 			//remove trailing new line

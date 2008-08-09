@@ -14,6 +14,12 @@ class DockablePane : public wxPanel {
 	wxBitmap m_bmp;
 	
 	void DockPaneBackToNotebook(wxCommandEvent &e);
+	
+	void OnEraseBg(wxEraseEvent &e) { wxUnusedVar(e); }
+	void OnPaint(wxPaintEvent &e);
+	
+	DECLARE_EVENT_TABLE();
+	
 public:
 	DockablePane(wxWindow *parent, Notebook *book, wxWindow *child, const wxString &title, const wxBitmap &bmp = wxNullBitmap, wxSize size = wxDefaultSize);
 	virtual ~DockablePane();

@@ -307,7 +307,9 @@ static void makeDefineTag (const char *const name)
 		initTagEntry (&e, name);
 		e.lineNumberEntry = (boolean) (Option.locate != EX_PATTERN);
 		e.isFileScope  = isFileScope;
-		e.truncateLine = TRUE;
+		// Eran Ifrah [START]
+		e.truncateLine = FALSE;
+		// Eran Ifrah [END]
 		e.kindName     = "macro";
 		e.kind         = 'd';
 		makeTagEntry (&e);

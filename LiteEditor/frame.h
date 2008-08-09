@@ -1,35 +1,35 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : frame.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : frame.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef LITEEDITOR_FRAME_H
+#ifndef LITEEDITOR_FRAME_H
 #define LITEEDITOR_FRAME_H
- 
+
 #include "wx/combobox.h"
 #include "generalinfo.h"
 #include <wx/dcbuffer.h>
 #include <wx/process.h>
-#include "wx/aui/aui.h" 
+#include "wx/aui/aui.h"
 #include "wx/frame.h"
 #include "findinfilesdlg.h"
 #include "cl_editor.h"
@@ -57,7 +57,7 @@ class OutputTabWindow;
 class DockablePaneMenuManager;
 
 //--------------------------------
-// Helper class 
+// Helper class
 //--------------------------------
 
 struct StartPageData {
@@ -66,15 +66,9 @@ struct StartPageData {
 	wxString action;
 };
 
-/**
- * The main frame class
- * \author Eran Ifrah
- */
 class Frame : public wxFrame
 {
-//	Notebook *m_book;
 	MainBook *m_mainBook;
-	
 	static Frame* m_theFrame;
 	wxAuiManager m_mgr;
 	OutputPane *m_outputPane;
@@ -89,23 +83,24 @@ class Frame : public wxFrame
 	DebuggerPane *m_debuggerPane;
 	wxToolBar *m_debuggerTb;
 	bool m_buildAndRun;
-	
+
 	GeneralInfo m_frameGeneralInfo;
-	std::map<int, wxString> m_toolbars;//< map between toolbars and their resource ID
-	std::map<int, wxString> m_panes;//< map between panes and their name
+	std::map<int, wxString> m_toolbars;
+	std::map<int, wxString> m_panes;
 	bool m_doingReplaceInFiles;
 	wxMenu *m_cppMenu;
 	bool m_highlightWord;
 	bool m_hideOutputPane;
 	DockablePaneMenuManager *m_DPmenuMgr;
-	
-public:		
-	// the access method to the singleton frame is by using the Get method
+
+public:
 	static Frame* Get();
 	static void Initialize(bool loadLastSession);
-	
-	DockablePaneMenuManager *GetDockablePaneMenuManager(){return m_DPmenuMgr;}
-	
+
+	DockablePaneMenuManager *GetDockablePaneMenuManager() {
+		return m_DPmenuMgr;
+	}
+
 	virtual ~Frame(void);
 	/**
 	 * \brief set frame option flag
@@ -113,80 +108,96 @@ public:
 	 * \param flag
 	 */
 	void SetFrameFlag(bool set, int flag);
-	
+
 	/**
-	 * \brief return true if the word under the caret should be highlighted 
-	 * \return 
+	 * \brief return true if the word under the caret should be highlighted
+	 * \return
 	 */
-	bool GetHighlightWord(){return m_highlightWord;}
-	
+	bool GetHighlightWord() {
+		return m_highlightWord;
+	}
+
 	/**
 	 * \brief Return language name by menu item id
 	 * \param id
-	 * \return 
+	 * \return
 	 */
 	wxString GetViewAsLanguageById(int id) const;
-	
+
 	/**
-	 * \brief 
+	 * \brief
 	 * \param editor
 	 */
 	void SetFrameTitle(LEditor *editor);
-	
+
 	/**
 	 * Return the main editor notebook
 	 */
-	Notebook *GetNotebook() { 
-		return m_mainBook->GetNotebook(); 
+	Notebook *GetNotebook() {
+		return m_mainBook->GetNotebook();
 	}
-	
-	MainBook* GetMainBook() const {return m_mainBook;}
-	
+
+	MainBook* GetMainBook() const {
+		return m_mainBook;
+	}
+
 	/**
 	 * Close the current file
 	 */
 	void CloseActiveFile();
-	
+
 	/**
 	 * \return the output pane (the bottom pane)
 	 */
-	OutputPane *GetOutputPane() { return m_outputPane; }
+	OutputPane *GetOutputPane() {
+		return m_outputPane;
+	}
 
 	/**
-	 * return the debugger pane 
-	 * \return 
+	 * return the debugger pane
+	 * \return
 	 */
-	DebuggerPane *GetDebuggerPane(){return m_debuggerPane;}
+	DebuggerPane *GetDebuggerPane() {
+		return m_debuggerPane;
+	}
 
 	/**
 	 * \return the workspace pane (the one that contained the Symbol view & class view)
 	 */
-	WorkspacePane *GetWorkspacePane() { return m_workspacePane; }
+	WorkspacePane *GetWorkspacePane() {
+		return m_workspacePane;
+	}
 
 	/**
 	 * return the file explorer pane
 	 */
 	FileExplorer *GetFileExplorer();
-	
+
 	/**
 	 * \brief return the open windows list pane pointer
 	 */
 	OpenWindowsPanel *GetOpenWindowsPane();
-	
+
 	/**
 	 * \return return AUI docking manager
 	 */
-	wxAuiManager& GetDockingManager() { return m_mgr; }
+	wxAuiManager& GetDockingManager() {
+		return m_mgr;
+	}
 
 	/**
 	 * return the find in files dialog pointer
 	 */
-	FindInFilesDialog *GetFindInFilesDlg(){return m_findInFilesDlg;}
-	
+	FindInFilesDialog *GetFindInFilesDlg() {
+		return m_findInFilesDlg;
+	}
+
 	/**
 	 * Return the debugger toolbar
 	 */
-	wxToolBar *GetDebuggerToolbar(){return m_debuggerTb;}
+	wxToolBar *GetDebuggerToolbar() {
+		return m_debuggerTb;
+	}
 
 	/**
 	 * close editor's page
@@ -197,7 +208,7 @@ public:
 	 * \param veto [output] set to true to veto the page closer
 	 */
 	void ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete, bool &veto);
-	
+
 	/**
 	 * Load session into LE
 	 */
@@ -210,39 +221,41 @@ public:
 
 	void RegisterToolbar(int menuItemId, const wxString &name);
 	void RegisterDockWindow(int menuItemId, const wxString &name);
-	
+
 	wxComboBox *GetConfigChoice();
-	const GeneralInfo& GetFrameGeneralInfo() const {return m_frameGeneralInfo;}
-	
+	const GeneralInfo& GetFrameGeneralInfo() const {
+		return m_frameGeneralInfo;
+	}
+
 	/**
-	 * \brief loop over all known OutputTabWindows available, and match them against the 
-	 * 		  child wxScintilla pointer 
-	 * \param win the window that owns the focus 
+	 * \brief loop over all known OutputTabWindows available, and match them against the
+	 * 		  child wxScintilla pointer
+	 * \param win the window that owns the focus
 	 * \return OutputTabWindow pointer, or NULL if non matched
 	 */
 	OutputTabWindow *FindOutputTabWindowByPtr(wxWindow *win);
-	
+
 	/**
-	 * \brief start replace all 
+	 * \brief start replace all
 	 */
 	void DoReplaceAll();
-	
+
 	void OnSingleInstanceOpenFiles(wxCommandEvent &e);
 	void OnSingleInstanceRaise(wxCommandEvent &e);
-	
+
 	/**
 	 * \brief rebuild the give project
 	 * \param projectName
 	 */
 	void RebuildProject(const wxString &projectName);
-	
+
 private:
 	// make our frame's constructor private
 	Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLIP_CHILDREN);
 	wxString CreateWorkspaceTable();
 	wxString CreateFilesTable();
 
-private:	
+private:
 	/**
 	 * Construct all the GUI controls of the main frame. this function is called
 	 * at construction time
@@ -260,9 +273,9 @@ private:
 	void ViewPaneUI(const wxString &paneName, wxUpdateUIEvent&event);
 	void ViewPane(const wxString &paneName, wxCommandEvent &event);
 	void CreateViewAsSubMenu();
-    void CreateRecentlyOpenedFilesMenu();
+	void CreateRecentlyOpenedFilesMenu();
 	void CreateRecentlyOpenedWorkspacesMenu();
-	void CreateWelcomePage();	
+	void CreateWelcomePage();
 	void CreateMenuBar();
 	void UpgradeExternalDbExt();
 	void AutoLoadExternalDb();
@@ -343,7 +356,7 @@ protected:
 	void OnHighlightWord(wxCommandEvent &event);
 	void OnShowNavBar(wxCommandEvent &e);
 	void OnShowNavBarUI(wxUpdateUIEvent &e);
-	
+
 	// this event is sent from the notebook container to the frame
 	void OnFileClosing(NotebookEvent &event);
 	void OnPageChanged(NotebookEvent &event);
@@ -354,14 +367,14 @@ protected:
 	void OnDeleteSymbols(SymbolTreeEvent &event);
 	void OnUpdateSymbols(SymbolTreeEvent &event);
 	void OnParsingThreadDone(wxCommandEvent &e);
-	
+
 	void OnRecentFile(wxCommandEvent &event);
 	void OnRecentWorkspace(wxCommandEvent &event);
 	void OnBackwardForward(wxCommandEvent &event);
 	void OnBackwardForwardUI(wxUpdateUIEvent &event);
 	void OnFixDatabasePaths(wxCommandEvent &event);
 	void OnFixDatabasePathsUI(wxUpdateUIEvent &event);
-	
+
 	void OnDebug(wxCommandEvent &e);
 	void OnDebugUI(wxUpdateUIEvent &e);
 	void OnDebugStop(wxCommandEvent &e);
@@ -386,23 +399,24 @@ protected:
 	void OnUpdateBuildRefactorIndexBar(wxCommandEvent &e);
 	void OnBuildWorkspace(wxCommandEvent &e);
 	void OnBuildWorkspaceUI(wxUpdateUIEvent &e);
-	
+
 	//EOL
 	void OnConvertEol(wxCommandEvent &e);
 	void OnViewDisplayEOL(wxCommandEvent &e);
 	void OnViewDisplayEOL_UI(wxUpdateUIEvent &e);
-	
+
 	//Docking windows events
 	void OnViewPane(wxCommandEvent &event);
 	void OnViewPaneUI(wxUpdateUIEvent &event);
-	
+
 	void OnManagePlugins(wxCommandEvent &e);
 	void OnCppContextMenu(wxCommandEvent &e);
-	
+
 	void OnConfigureAccelerators(wxCommandEvent &e);
 	void OnStartPageEvent(wxCommandEvent &e);
 	void OnNewVersionAvailable(wxCommandEvent &e);
 	void OnDetachWorkspaceViewTab(wxCommandEvent &e);
+	void OnDetachDebuggerViewTab(wxCommandEvent &e);
 	void OnDestroyDetachedPane(wxCommandEvent &e);
 	void OnUpdateStatusBar(wxCommandEvent &e);
 	void OnBatchBuild(wxCommandEvent &e);
@@ -413,7 +427,7 @@ public:
 	void AddCppMenu();
 	void RemoveCppMenu();
 	void DoAddNewFile();
-	
+
 	// Any class wishing to process wxWindows events must use this macro
 	DECLARE_EVENT_TABLE()
 };

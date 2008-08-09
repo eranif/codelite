@@ -272,4 +272,5 @@
     <File Name="job.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

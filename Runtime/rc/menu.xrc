@@ -464,7 +464,13 @@
         </object>
 	</object>
 	
-    <object class="wxMenu" name="editor_tab_right_click">
+    <object class="wxMenu" name="debugger_view_right_click_menu">
+		<object class="wxMenuItem" name="detach_dv_tab">
+            <label>Detach</label>
+        </object>
+	</object>
+	
+	<object class="wxMenu" name="editor_tab_right_click">
 		<object class="wxMenuItem" name="close_file">
             <label>Close</label>
         </object>

@@ -832,16 +832,41 @@ void Manager::DoShowPane(const wxString& pane)
 	}
 }
 
-void Manager::ShowDebuggerPane(bool commit)
+void Manager::ShowDebuggerPane(bool show)
 {
 	// make the output pane visible
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
-	if ( info.IsOk() && !info.IsShown() ) {
-		info.Show();
-		if (commit) {
-			Frame::Get()->GetDockingManager().Update();
+	wxArrayString dbgPanes;
+	dbgPanes.Add(wxT("Debugger"));
+	dbgPanes.Add(DebuggerPane::LOCALS);
+	dbgPanes.Add(DebuggerPane::FRAMES);
+	dbgPanes.Add(DebuggerPane::WATCHES);
+	dbgPanes.Add(DebuggerPane::BREAKPOINTS);
+	dbgPanes.Add(DebuggerPane::THREADS);
+	dbgPanes.Add(DebuggerPane::MEMORY);
+	
+	if(show) {
+
+		for(size_t i=0; i<dbgPanes.GetCount(); i++){
+			wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(dbgPanes.Item(i));
+			// show all debugger related panes
+			if ( info.IsOk() && !info.IsShown() ) {
+				info.Show();
+			}
+		}
+	
+	}else{
+		
+		// hide all debugger related panes
+		for(size_t i=0; i<dbgPanes.GetCount(); i++){
+			wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(dbgPanes.Item(i));
+			// show all debugger related panes
+			if ( info.IsOk() && info.IsShown() ) {
+				info.Hide();
+			}
 		}
 	}
+	Frame::Get()->GetDockingManager().Update();
+	
 }
 
 void Manager::HidePane(const wxString &paneName, bool commit)
@@ -1906,7 +1931,7 @@ void Manager::DbgStart(long pid)
 	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
 	if (info.IsOk() && !info.IsShown()) {
 		HideDebuggerPane = true;
-		ShowDebuggerPane();
+		ShowDebuggerPane(true);
 	}
 }
 
@@ -1937,13 +1962,16 @@ void Manager::DbgStop()
 	DebuggerMgr::Get().SetActiveDebugger(wxEmptyString);
 
 	DebugMessage(wxT("Debug session ended\n"));
-	//update toolbar state
+	
+	// update toolbar state
 	UpdateStopped();
-	//and finally, hide the debugger pane (if we caused it to appear)
+	
+	// and finally, hide the debugger pane (if we caused it to appear)
 	if (HideDebuggerPane) {
 		HideDebuggerPane = false;
-		HidePane(wxT("Debugger"));
+		ShowDebuggerPane(false);
 	}
+	
 	//mark the debugger as non interactive
 	m_dbgCanInteract = false;
 }
@@ -2113,63 +2141,76 @@ void Manager::SetMemory(const wxString& address, size_t count, const wxString &h
 void Manager::UpdateDebuggerPane()
 {
 	//Update the debugger pane
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
-	if (info.IsShown()) {
-		DebuggerPane *pane = Frame::Get()->GetDebuggerPane();
-		if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetBreakpointView()) {
-			pane->GetBreakpointView()->Initialize();
+	DebuggerPane *pane = Frame::Get()->GetDebuggerPane();
+	
+	if ((IsPaneVisible(wxT("Debugger")) && pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetBreakpointView())) {
+		pane->GetBreakpointView()->Initialize();
+	}
+	
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
+
+		//--------------------------------------------------------------------
+		// Lookup the selected tab in the debugger notebook and update it
+		// once this is done, we need to go throu the list of detached panes
+		// and scan for another debugger tabs which are visible and need to be
+		// updated
+		//--------------------------------------------------------------------
+
+		if ((IsPaneVisible(wxT("Debugger")) && pane->GetNotebook()->GetCurrentPage() == pane->GetLocalsTree()) || IsPaneVisible(DebuggerPane::LOCALS) ) {
+
+			//update the locals tree
+			dbgr->QueryLocals();
+
 		}
-		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-		if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
-			//query the watches, to improve performance, we query only
-			//the visible panes
-			if (pane->GetNotebook()->GetCurrentPage() == pane->GetLocalsTree()) {
 
-				//update the locals tree
-				dbgr->QueryLocals();
+		if ((IsPaneVisible(wxT("Debugger")) && pane->GetNotebook()->GetCurrentPage() == pane->GetWatchesTable()) || IsPaneVisible(DebuggerPane::WATCHES) ) {
 
-			} else if (pane->GetNotebook()->GetCurrentPage() == pane->GetWatchesTable()) {
-
-				//update the watches table
-				wxArrayString expressions = pane->GetWatchesTable()->GetExpressions();
-				wxString format = pane->GetWatchesTable()->GetDisplayFormat();
-				for (size_t i=0; i<expressions.GetCount(); i++) {
-					dbgr->EvaluateExpressionToString(expressions.Item(i), format);
-				}
-
-			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetFrameListView()) {
-
-				//update the stack call
-				dbgr->ListFrames();
-
-			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetBreakpointView()) {
-
-				// update the breakpoint view
-				pane->GetBreakpointView()->Initialize();
-
-			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetThreadsView()) {
-
-				// update the thread list
-				ThreadEntryArray threads;
-				dbgr->ListThreads(threads);
-				pane->GetThreadsView()->PopulateList(threads);
-
-			} else if (pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetMemoryView()) {
-
-				// Update the memory view tab
-				MemoryView *memView = pane->GetMemoryView();
-				if (memView->GetExpression().IsEmpty() == false) {
-
-					wxString output;
-					if (dbgr->WatchMemory(memView->GetExpression(), memView->GetSize(), output)) {
-						memView->SetViewString(output);
-					}
-				}
-
+			//update the watches table
+			wxArrayString expressions = pane->GetWatchesTable()->GetExpressions();
+			wxString format = pane->GetWatchesTable()->GetDisplayFormat();
+			for (size_t i=0; i<expressions.GetCount(); i++) {
+				dbgr->EvaluateExpressionToString(expressions.Item(i), format);
 			}
+
 		}
+		if ((IsPaneVisible(wxT("Debugger")) && pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetFrameListView()) || IsPaneVisible(DebuggerPane::FRAMES)) {
+
+			//update the stack call
+			dbgr->ListFrames();
+
+		}
+		if ((IsPaneVisible(wxT("Debugger")) && pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetBreakpointView()) || IsPaneVisible(DebuggerPane::BREAKPOINTS)) {
+
+			// update the breakpoint view
+			pane->GetBreakpointView()->Initialize();
+
+		}
+		if ((IsPaneVisible(wxT("Debugger")) && pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetThreadsView()) || IsPaneVisible(DebuggerPane::THREADS)) {
+
+			// update the thread list
+			ThreadEntryArray threads;
+			dbgr->ListThreads(threads);
+			pane->GetThreadsView()->PopulateList(threads);
+
+		}
+		if ((IsPaneVisible(wxT("Debugger")) && pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetMemoryView()) || IsPaneVisible(DebuggerPane::MEMORY)) {
+
+			// Update the memory view tab
+			MemoryView *memView = pane->GetMemoryView();
+			if (memView->GetExpression().IsEmpty() == false) {
+
+				wxString output;
+				if (dbgr->WatchMemory(memView->GetExpression(), memView->GetSize(), output)) {
+					memView->SetViewString(output);
+				}
+			}
+
+		}
+
 	}
 }
+
 
 void Manager::UpdateLocals(TreeNode<wxString, NodeData> *tree)
 {
@@ -2812,7 +2853,8 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 			int line = editor->LineFromPosition(pos);
 			wxString dbg_line = editor->GetLine(line).Trim().Trim(false);
 
-			if (dbg_line.Len() != pattern.Trim().Trim(false).Len()) {
+			wxString tmp_pattern(pattern);
+			if (dbg_line.Len() != tmp_pattern.Trim().Trim(false).Len()) {
 				offset = pos + match_len;
 				again = true;
 			} else {
@@ -3018,4 +3060,13 @@ void Manager::DoCleanProject(const BuildInfo& buildInfo)
 	// TODO :: replace the construction of CleanRequest to include the proper build configuration
 	m_cleanRequest = new CleanRequest(GetMainFrame(), buildInfo);
 	m_cleanRequest->Process();
+}
+
+bool Manager::IsPaneVisible(const wxString& pane_name)
+{
+	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(pane_name);
+	if (info.IsOk() && info.IsShown()) {
+		return true;
+	}
+	return false;
 }

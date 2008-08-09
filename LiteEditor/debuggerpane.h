@@ -35,6 +35,7 @@ class SimpleTable;
 class BreakpointDlg;
 class ThreadListPanel;
 class MemoryView;
+class wxAuiManager;
 
 class DebuggerPane : public wxPanel
 {
@@ -55,15 +56,15 @@ private:
 	BreakpointDlg *m_breakpoints;
 	ThreadListPanel *m_threads;
 	MemoryView *m_memory;
-	
 	bool m_initDone;
+	wxAuiManager *m_mgr;
 	
 private:
 	void CreateGUIControls();
 	void OnPageChanged(NotebookEvent &event);
 
 public:
-	DebuggerPane(wxWindow *parent, const wxString &caption);
+	DebuggerPane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr);
 	virtual ~DebuggerPane();
 
 	//setters/getters

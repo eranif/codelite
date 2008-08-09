@@ -30,6 +30,7 @@
 #include <wx/arrstr.h>
 #include "wx/filename.h"
 #include <wx/gdicmn.h>
+#include <vector>
 
 class wxXmlNode;
 
@@ -44,6 +45,7 @@ class wxXmlNode;
 #endif // WXDLLIMPEXP_CL
 
 class SerializedObject;
+class TabInfo;
 
 WX_DECLARE_STRING_HASH_MAP( wxString, StringMap );
 
@@ -83,6 +85,8 @@ public:
 	void Write(const wxString &name, wxPoint pt);
 	void Write(const wxString &name, const StringMap &str_map);
 	void Write(const wxString &name, const wxColour &colour);
+	void Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
+	
 	
 	//--------------------
 	// Read API
@@ -99,9 +103,12 @@ public:
 	void Read(const wxString &name, StringMap &str_map);
 	void Read(const wxString &name, SerializedObject *obj);
 	void Read(const wxString &name, wxColour &colour);	
+	void Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
 	
 private:
 	void WriteSimple(long value, const wxString &typeName, const wxString &name);
 	void ReadSimple(long &value, const wxString &typeName, const wxString &name);
 };
+
+
 #endif //ARCHIVE_H

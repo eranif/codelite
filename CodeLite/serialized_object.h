@@ -53,4 +53,31 @@ public:
 	virtual void DeSerialize(Archive &arch) = 0;
 };
 
+
+class WXDLLIMPEXP_CL TabInfo : public SerializedObject
+{
+	wxString m_fileName;
+	int m_firstVisibleLine;
+	int m_currentLine;
+	wxArrayString m_bookmarks;
+public:
+	// setters
+	void SetFileName(const wxString& _fileName) {this->m_fileName = _fileName;}
+	void SetFirstVisibleLine(const int& _firstVisibleLine) {this->m_firstVisibleLine = _firstVisibleLine;}
+	void SetCurrentLine(const int& _currentLine) {this->m_currentLine = _currentLine;}
+	void SetBookmarks(const wxArrayString& _bookmarks) {this->m_bookmarks = _bookmarks;}
+	//getters
+	const wxString& GetFileName() {return this->m_fileName;}
+	const int& GetFirstVisibleLine() {return this->m_firstVisibleLine;}
+	const int& GetCurrentLine() {return this->m_currentLine;}
+	const wxArrayString& GetBookmarks() {return this->m_bookmarks;}
+	
+	TabInfo();
+	virtual ~TabInfo();
+	
+	void Serialize(Archive &arch);
+	void DeSerialize(Archive &arch);
+};
+
+
 #endif //SERIALIZED_OBJECT_H

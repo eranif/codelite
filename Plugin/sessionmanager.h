@@ -27,6 +27,7 @@
 
 #include "serialized_object.h"
 #include "wx/xml/xml.h"
+#include <vector>
 
 /**
  * \class SessionEntry
@@ -38,17 +39,20 @@ class SessionEntry : public SerializedObject {
 	int m_selectedTab;
 	wxArrayString m_tabs;
 	wxString m_workspaceName;
+	std::vector<TabInfo> m_vTabInfoArr;
 
 public:
 	//Setters
 	void SetSelectedTab(const int& selectedTab) {this->m_selectedTab = selectedTab;}
-	void SetTabs(const wxArrayString& tabs) {this->m_tabs = tabs;}
+	//void SetTabs(const wxArrayString& tabs) {this->m_tabs = tabs;}
 	void SetWorkspaceName(const wxString& workspaceName) {this->m_workspaceName = workspaceName;}
+	void SetTabInfoArr(const std::vector<TabInfo>& _vTabInfoArr) {m_vTabInfoArr = _vTabInfoArr;}
 	
 	//Getters
 	const int& GetSelectedTab() const {return m_selectedTab;}
-	const wxArrayString& GetTabs() const {return m_tabs;}
+	//const wxArrayString& GetTabs() const {return m_tabs;}
 	const wxString& GetWorkspaceName() const {return m_workspaceName;}
+	const std::vector<TabInfo>& GetTabInfoArr() {return m_vTabInfoArr;}
 	
 	SessionEntry();
 	virtual ~SessionEntry();

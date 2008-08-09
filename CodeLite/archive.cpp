@@ -48,6 +48,34 @@ static wxXmlNode *FindNodeByName(const wxXmlNode *parent, const wxString &tagNam
 	return NULL;
 }
 
+
+// class Tab info
+TabInfo::TabInfo()
+{
+}
+
+TabInfo::~TabInfo()
+{
+}
+
+void TabInfo::DeSerialize(Archive &arch)
+{
+	arch.Read(wxT("FileName"), m_fileName);
+	arch.Read(wxT("FirstVisibleLine"), m_firstVisibleLine);
+	arch.Read(wxT("CurrentLine"), m_currentLine);
+	arch.Read(wxT("Bookmarks"), m_bookmarks);
+}
+
+void TabInfo::Serialize(Archive &arch) 
+{
+	arch.Write(wxT("FileName"), m_fileName);
+	arch.Write(wxT("FirstVisibleLine"), m_firstVisibleLine);
+	arch.Write(wxT("CurrentLine"), m_currentLine);
+	arch.Write(wxT("Bookmarks"), m_bookmarks);
+}
+
+
+// class Archive
 Archive::Archive()
 		: m_root(NULL)
 {
@@ -92,6 +120,26 @@ void Archive::Write(const wxString &name, const wxArrayString &arr)
 		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxString"));
 		node->AddChild(child);
 		child->AddProperty(wxT("Value"), arr.Item(i));
+	}
+}
+
+void Archive::Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr)
+{
+	if (!m_root) {
+		return;
+	}
+	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TabInfoArray"));
+	m_root->AddChild(node);
+	node->AddProperty(wxT("Name"), name);
+
+	//add an entry for each wxString in the array
+	for(size_t i=0; i<_vTabInfoArr.size(); i++)
+	{
+		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TabInfo"));
+		Archive arch;
+		arch.SetXmlNode(child);
+		_vTabInfoArr[i].Serialize(arch);
+		node->AddChild(child);
 	}
 }
 
@@ -167,6 +215,30 @@ void Archive::Read(const wxString &name, wxArrayString &arr)
 				wxString value;
 				value = child->GetPropVal(wxT("Value"), wxEmptyString);
 				arr.Add(value);
+			}
+			child = child->GetNext();
+		}
+	}
+}
+
+void Archive::Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr)
+{
+	if (!m_root) {
+		return;
+	}
+
+	Archive arch;
+	wxXmlNode *node = FindNodeByName(m_root, wxT("TabInfoArray"), name);
+	if (node) {
+		//fill the output array with the values
+		_vTabInfoArr.clear();
+		wxXmlNode *child = node->GetChildren();
+		while (child) {
+			if (child->GetName() == wxT("TabInfo")) {
+				arch.SetXmlNode(child);
+				TabInfo oTabInfo;
+				oTabInfo.DeSerialize(arch);
+				_vTabInfoArr.push_back(oTabInfo);
 			}
 			child = child->GetNext();
 		}
@@ -399,3 +471,4 @@ void Archive::Write(const wxString& name, const wxColour& colour)
 	node->AddProperty(wxT("Value"), colour.GetAsString());
 	node->AddProperty(wxT("Name"), name);
 }
+

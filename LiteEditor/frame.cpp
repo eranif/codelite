@@ -1013,15 +1013,34 @@ void Frame::OnClose(wxCloseEvent& event)
 	session.SetWorkspaceName(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
 
 	//loop over the open editors, and get their file name
-	wxArrayString files;
+	//wxArrayString files;
+	std::vector<TabInfo> vTabInfoArr;
 	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
 		if (editor) {
-			files.Add(editor->GetFileName().GetFullPath());
+			//files.Add(editor->GetFileName().GetFullPath());
+
+			TabInfo oTabInfo;
+			oTabInfo.SetFileName(editor->GetFileName().GetFullPath());
+			oTabInfo.SetFirstVisibleLine(editor->GetFirstVisibleLine());
+			oTabInfo.SetCurrentLine(editor->GetCurrentLine());
+			// bookmarks
+			wxArrayString astrBookmarks;
+			int nLine = 0;
+			const int nMask = 128;
+			while ((nLine = editor->MarkerNext(nLine, nMask)) >= 0) {
+				wxString strBM(wxEmptyString);
+				strBM << nLine;
+				astrBookmarks.Add(strBM);
+				nLine++;
+			}
+			oTabInfo.SetBookmarks(astrBookmarks);
+			vTabInfoArr.push_back(oTabInfo);
 		}
 	}
 
-	session.SetTabs(files);
+	//session.SetTabs(files);
+	session.SetTabInfoArr(vTabInfoArr);
 	SessionManager::Get().Save(wxT("Default"), session);
 
 	// keep list of all detached panes
@@ -1048,9 +1067,27 @@ void Frame::LoadSession(const wxString &sessionName)
 	}
 
 	//restore notebook tabs
-	const wxArrayString &files = session.GetTabs();
-	for (size_t i=0; i<files.GetCount(); i++) {
-		ManagerST::Get()->OpenFile(files.Item(i), wxEmptyString);
+	const std::vector<TabInfo> &vTabInfoArr = session.GetTabInfoArr();
+	if (vTabInfoArr.size() > 0) {
+		for (size_t i=0; i<vTabInfoArr.size(); i++) {
+			TabInfo ti = vTabInfoArr[i];
+			wxString strFN = ti.GetFileName();
+			int iCurLine = ti.GetCurrentLine();
+			ManagerST::Get()->OpenFile(
+			    strFN, wxEmptyString, iCurLine);
+
+			LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
+			if (editor) {
+				editor->ScrollToLine(ti.GetFirstVisibleLine());
+				// bookmarks
+				const wxArrayString &astrBookmarks = ti.GetBookmarks();
+				long nLine = 0;
+				for (size_t i=0; i<astrBookmarks.GetCount(); i++) {
+					if (astrBookmarks.Item(i).ToLong(&nLine))
+						editor->MarkerAdd(nLine, 0x7);
+				}
+			}
+		}
 	}
 
 	//set selected tab

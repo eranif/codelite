@@ -82,6 +82,8 @@
 #include "threadlistpanel.h"
 #include "plugin.h"
 #include "custom_notebook.h"
+#include "sessionmanager.h"
+#include <vector>
 //
 // The CodeLite manager class
 //
@@ -455,6 +457,43 @@ void Manager::CloseWorkspace()
 
 	//clear any pending & actual breakpoints from the debugger manager
 	//DebuggerMgr::Get().DelAllBreakpoints();
+
+	//save the current session before closing
+	SessionEntry session;
+	session.SetSelectedTab(Frame::Get()->GetNotebook()->GetSelection());
+	session.SetWorkspaceName(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
+
+	//loop over the open editors, and get their file name
+	//wxArrayString files;
+	std::vector<TabInfo> vTabInfoArr;
+	for (size_t i=0; i<Frame::Get()->GetNotebook()->GetPageCount(); i++) {
+		LEditor *editor = dynamic_cast<LEditor*>(Frame::Get()->GetNotebook()->GetPage((size_t)i));
+		if (editor) {
+			//files.Add(editor->GetFileName().GetFullPath());
+
+			TabInfo oTabInfo;
+			oTabInfo.SetFileName(editor->GetFileName().GetFullPath());
+			oTabInfo.SetFirstVisibleLine(editor->GetFirstVisibleLine());
+			oTabInfo.SetCurrentLine(editor->GetCurrentLine());
+			// bookmarks
+			wxArrayString astrBookmarks;
+			int nLine = 0;
+			const int nMask = 128;
+			while ((nLine = editor->MarkerNext(nLine, nMask)) >= 0) {
+				wxString strBM(wxEmptyString);
+				strBM << nLine;
+				astrBookmarks.Add(strBM);
+				nLine++;
+			}
+			oTabInfo.SetBookmarks(astrBookmarks);
+			vTabInfoArr.push_back(oTabInfo);
+		}
+	}
+	//session.SetTabs(files);
+	session.SetTabInfoArr(vTabInfoArr);
+
+	//wxMessageBox(wxString::Format(wxT("Rozmiar wektora: %d."), vTabInfoArr.size()));
+	SessionManager::Get().Save(wxT("Default"), session);
 
 	WorkspaceST::Get()->CloseWorkspace();
 	//clear the 'buid' tab
@@ -843,21 +882,21 @@ void Manager::ShowDebuggerPane(bool show)
 	dbgPanes.Add(DebuggerPane::BREAKPOINTS);
 	dbgPanes.Add(DebuggerPane::THREADS);
 	dbgPanes.Add(DebuggerPane::MEMORY);
-	
-	if(show) {
 
-		for(size_t i=0; i<dbgPanes.GetCount(); i++){
+	if (show) {
+
+		for (size_t i=0; i<dbgPanes.GetCount(); i++) {
 			wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(dbgPanes.Item(i));
 			// show all debugger related panes
 			if ( info.IsOk() && !info.IsShown() ) {
 				info.Show();
 			}
 		}
-	
-	}else{
-		
+
+	} else {
+
 		// hide all debugger related panes
-		for(size_t i=0; i<dbgPanes.GetCount(); i++){
+		for (size_t i=0; i<dbgPanes.GetCount(); i++) {
 			wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(dbgPanes.Item(i));
 			// show all debugger related panes
 			if ( info.IsOk() && info.IsShown() ) {
@@ -866,7 +905,7 @@ void Manager::ShowDebuggerPane(bool show)
 		}
 	}
 	Frame::Get()->GetDockingManager().Update();
-	
+
 }
 
 void Manager::HidePane(const wxString &paneName, bool commit)
@@ -1962,16 +2001,16 @@ void Manager::DbgStop()
 	DebuggerMgr::Get().SetActiveDebugger(wxEmptyString);
 
 	DebugMessage(wxT("Debug session ended\n"));
-	
+
 	// update toolbar state
 	UpdateStopped();
-	
+
 	// and finally, hide the debugger pane (if we caused it to appear)
 	if (HideDebuggerPane) {
 		HideDebuggerPane = false;
 		ShowDebuggerPane(false);
 	}
-	
+
 	//mark the debugger as non interactive
 	m_dbgCanInteract = false;
 }
@@ -2142,11 +2181,11 @@ void Manager::UpdateDebuggerPane()
 {
 	//Update the debugger pane
 	DebuggerPane *pane = Frame::Get()->GetDebuggerPane();
-	
+
 	if ((IsPaneVisible(wxT("Debugger")) && pane->GetNotebook()->GetCurrentPage() == (wxWindow*)pane->GetBreakpointView())) {
 		pane->GetBreakpointView()->Initialize();
 	}
-	
+
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() && DbgCanInteract() ) {
 
@@ -2964,6 +3003,41 @@ void Manager::DoSetupWorkspace(const wxString &path)
 			book->DeletePage(i);
 			Frame::Get()->GetOpenWindowsPane()->UpdateList();
 			break;
+		}
+	}
+
+	// load the session like it was saved
+	if (Frame::Get()->GetFrameGeneralInfo().GetFlags() & CL_LOAD_LAST_SESSION) {
+		SessionEntry session;
+		if (SessionManager::Get().FindSession(path, session)) {
+			//restore notebook tabs
+			const std::vector<TabInfo> &vTabInfoArr = session.GetTabInfoArr();
+			if (vTabInfoArr.size() > 0) {
+				for (size_t i=0; i<vTabInfoArr.size(); i++) {
+					TabInfo ti = vTabInfoArr[i];
+					wxString strFN = ti.GetFileName();
+					int iCurLine = ti.GetCurrentLine();
+					ManagerST::Get()->OpenFile(
+					    strFN, wxEmptyString, iCurLine);
+
+					LEditor *editor = dynamic_cast<LEditor*>(Frame::Get()->GetNotebook()->GetPage((size_t)i));
+					if (editor) {
+						editor->ScrollToLine(ti.GetFirstVisibleLine());
+						// bookmarks
+						const wxArrayString &astrBookmarks = ti.GetBookmarks();
+						long nLine = 0;
+						for (size_t i=0; i<astrBookmarks.GetCount(); i++) {
+							if (astrBookmarks.Item(i).ToLong(&nLine))
+								editor->MarkerAdd(nLine, 0x7);
+						}
+					}
+				}
+			}
+			//set selected tab
+			int selection = session.GetSelectedTab();
+			if (selection >= 0 && selection < (int)Frame::Get()->GetNotebook()->GetPageCount()) {
+				Frame::Get()->GetNotebook()->SetSelection(selection);
+			}
 		}
 	}
 

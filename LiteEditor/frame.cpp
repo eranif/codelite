@@ -3229,6 +3229,7 @@ void Frame::DoAddNewFile()
 void Frame::OnBuildWorkspace(wxCommandEvent& e)
 {
 	// start the build process
+	wxUnusedVar(e);
 	ManagerST::Get()->BuildWorkspace();
 }
 
@@ -3255,4 +3256,27 @@ void Frame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 	m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
 	m_mgr.Update();
 	wxUnusedVar(e);
+}
+
+void Frame::OnCleanWorkspace(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	ManagerST::Get()->CleanWorkspace();
+}
+
+void Frame::OnCleanWorkspaceUI(wxUpdateUIEvent& e)
+{
+	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
+}
+
+void Frame::OnReBuildWorkspace(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	ManagerST::Get()->CleanWorkspace();
+	ManagerST::Get()->BuildWorkspace();
+}
+
+void Frame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
+{
+	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
 }

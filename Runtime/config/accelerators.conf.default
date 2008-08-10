@@ -79,6 +79,8 @@ execute_no_debug|Build|Run|Ctrl-F5
 stop_executed_program|Build|Stop|
 build_active_project|Build|Build Project|F7
 build_workspace|Build|Build Workspace|Ctrl-Shift-B
+rebuild_workspace|Build|Rebuild Workspace|
+clean_workspace|Build|Clean Workspace|
 compile_active_file|Build|Compile Current File|Ctrl-F7
 clean_active_project|Build|Clean Project|
 stop_active_project_build|Build|Stop Build|

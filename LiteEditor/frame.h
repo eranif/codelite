@@ -397,8 +397,13 @@ protected:
 	void OnCloseAllButThis(wxCommandEvent &e);
 	void OnWorkspaceMenuUI(wxUpdateUIEvent &e);
 	void OnUpdateBuildRefactorIndexBar(wxCommandEvent &e);
+
 	void OnBuildWorkspace(wxCommandEvent &e);
 	void OnBuildWorkspaceUI(wxUpdateUIEvent &e);
+	void OnCleanWorkspace(wxCommandEvent &e);
+	void OnCleanWorkspaceUI(wxUpdateUIEvent &e);
+	void OnReBuildWorkspace(wxCommandEvent &e);
+	void OnReBuildWorkspaceUI(wxUpdateUIEvent &e);
 
 	//EOL
 	void OnConvertEol(wxCommandEvent &e);

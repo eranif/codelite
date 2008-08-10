@@ -1242,6 +1242,9 @@ void Manager::StopBuild()
 	if ( m_compileRequest ) {
 		m_compileRequest->Stop();
 	}
+	
+	// clear the build queue as well
+	this->m_buildQueue.clear();
 }
 
 bool Manager::IsBuildInProgress() const

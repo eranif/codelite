@@ -3228,19 +3228,8 @@ void Frame::DoAddNewFile()
 
 void Frame::OnBuildWorkspace(wxCommandEvent& e)
 {
-	wxArrayString projects;
-	ManagerST::Get()->GetProjectList(projects);
-	for (size_t i=0; i<projects.GetCount(); i++) {
-		BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(projects.Item(i), wxEmptyString);
-		if (buildConf) {
-			BuildInfo bi(projects.Item(i), buildConf->GetName(), false, BuildInfo::Build);
-			bi.SetCleanLog(i == 0);
-			ManagerST::Get()->AddBuild(bi);
-		}
-	}
-
 	// start the build process
-	ManagerST::Get()->ProcessBuildQueue();
+	ManagerST::Get()->BuildWorkspace();
 }
 
 void Frame::OnBuildWorkspaceUI(wxUpdateUIEvent& e)

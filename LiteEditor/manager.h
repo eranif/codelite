@@ -715,7 +715,21 @@ public:
 	 * \brief process the next build job
 	 */
 	void ProcessBuildQueue();
-
+	
+	/**
+	 * \brief build the entire workspace. This operation is equal to 
+	 * manually right clicking on each project in the workspace and selecting
+	 * 'build' 
+	 */
+	void BuildWorkspace();
+	
+	/**
+	 * \brief clean the entire workspace. This operation is equal to 
+	 * manually right clicking on each project in the workspace and selecting
+	 * 'clean' 
+	 */
+	void CleanWorkspace();
+	
 	/**
 	 * \brief test if pane_name is resides in the wxAuiManager and is visible
 	 * \param pane_name pane name to search for
@@ -766,6 +780,7 @@ protected:
 	void DoSetupWorkspace(const wxString &path);
 	void DoCleanProject(const BuildInfo &buildInfo);
 	void DoBuildProject(const BuildInfo &buildInfo);
+	void DoCmdWorkspace(int cmd);
 	
 private:
 	void RemoveProjectNameFromOpenFiles(const std::vector<wxFileName> &project_files);

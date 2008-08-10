@@ -327,6 +327,9 @@
 			<object class="wxMenuItem" name="build_active_project">
                 <label>&amp;Build Project</label>
             </object>
+			<object class="wxMenuItem" name="build_workspace">
+                <label>&amp;Build Workspace</label>
+            </object>
 			<object class="wxMenuItem" name="compile_active_file">
                 <label>&amp;Compile Current File</label>
             </object>

@@ -3144,3 +3144,55 @@ bool Manager::IsPaneVisible(const wxString& pane_name)
 	}
 	return false;
 }
+
+void Manager::BuildWorkspace()
+{
+	DoCmdWorkspace(BuildInfo::Build);
+	// start the build process
+	ProcessBuildQueue();
+}
+
+void Manager::CleanWorkspace()
+{
+	DoCmdWorkspace(BuildInfo::Clean);
+	// start the build process
+	ProcessBuildQueue();
+}
+
+void Manager::DoCmdWorkspace(int cmd)
+{
+	// get list of projects
+	wxArrayString projects;
+	wxArrayString optimizedList;
+	
+	ManagerST::Get()->GetProjectList(projects);
+	
+	for(size_t i=0; i<projects.GetCount(); i++){
+		ProjectPtr p = GetProject(projects.Item(i));
+		BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(projects.Item(i), wxEmptyString);
+		if(p && buildConf){
+			wxArrayString deps = p->GetDependencies(buildConf->GetName());
+			for(size_t j=0; j<deps.GetCount(); j++){
+				// add a project only if it does not exist yet
+				if(optimizedList.Index(deps.Item(j)) == wxNOT_FOUND){
+					optimizedList.Add(deps.Item(j));
+				}
+			}
+			// add the project itself now, again only if it is not included yet
+			if(optimizedList.Index(projects.Item(i)) == wxNOT_FOUND){
+				optimizedList.Add(projects.Item(i));
+			}
+		}
+	}
+	
+	// add a build/clean project only command for every project in the optimized list
+	for(size_t i=0; i<optimizedList.GetCount(); i++){
+		BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(optimizedList.Item(i), wxEmptyString);
+		if (buildConf) {
+			BuildInfo bi(optimizedList.Item(i), buildConf->GetName(), true, cmd);
+			bi.SetCleanLog(i == 0);
+			AddBuild( bi );
+		}
+	}
+}
+

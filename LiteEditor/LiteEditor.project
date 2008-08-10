@@ -362,7 +362,7 @@
         <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
       <ResourceCompiler Required="no" Options="$(shell wx-config --rcflags)"/>
       <PreBuild/>
       <PostBuild/>
@@ -375,8 +375,8 @@
         <WorkingDirectory>../</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
@@ -399,7 +399,7 @@
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
       <ResourceCompiler Required="no" Options="$(shell wx-config --rcflags)"/>
       <PreBuild/>
       <PostBuild/>
@@ -412,7 +412,7 @@
         <WorkingDirectory>../</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc -c -v -o resources.cpp resources.xrc
@@ -438,23 +438,23 @@ resources.cpp: resources.xrc
         <Library Value="libCodeLiteud.a"/>
         <Library Value="libwxscintillaud.a"/>
         <Library Value="libwxsqlite3ud.a"/>
-        <Library Value="libsqlite3_debug.a"/>
+        <Library Value="libsqlite3.a"/>
         <Library Value="libwxmsw28ud.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
       <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp svninfo.cpp
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
@@ -486,7 +486,7 @@ svninfo.cpp:
         <Library Value="libsqlite3.a"/>
         <Library Value="libwxmsw28u.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
       <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
       <PreBuild>
         <Command Enabled="yes">autorev .</Command>
@@ -495,13 +495,13 @@ svninfo.cpp:
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc

@@ -93,9 +93,6 @@ void TagsDatabase::CreateSchema()
 	// tables and indices)
 	try
 	{
-		sql = wxT("PRAGMA journal_mode = OFF;");
-		m_db->ExecuteUpdate(sql);
-		
 		sql = wxT("PRAGMA temp_store = MEMORY;");
 		m_db->ExecuteUpdate(sql);
 

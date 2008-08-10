@@ -1198,16 +1198,20 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 	}
 
 	unsigned int cur = 0;
+	
+	// begin transaction
+	db.Begin();
+	
 	for (std::list<tagParseResult>::iterator iter = trees.begin(); iter != trees.end(); iter++) {
 		wxString msg;
 		msg << wxT("Saving symbols from file: ") << (*iter).fileName;
 		prgDlg->Update(maxVal + cur, msg);
 
-		db.Store((*iter).tree, wxFileName());
+		db.Store((*iter).tree, wxFileName(), false);
 		if (GetParseComments()) {
 			// drop all old entries from this file
 			try {
-				db.Store(*(*iter).comments, wxFileName());
+				db.Store(*(*iter).comments, wxFileName(), false);
 			} catch ( wxSQLite3Exception & e) {
 				wxUnusedVar(e);
 			}
@@ -1215,10 +1219,20 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 			//free the vector
 			delete (*iter).comments;
 		}
+		
+//		// commit every 17 files
+//		if(cur % 17 == 0) {
+//			db.Commit();
+//			db.Begin();
+//		}
+//		
 		cur++;
 	}
+	
+	// commit transaction
+	db.Commit();
 
-	//update the variable table
+	// update the variable table
 	if (rootPath) {
 		DbRecordPtr record(new VariableEntry(*rootPath, *rootPath));
 		db.Begin();

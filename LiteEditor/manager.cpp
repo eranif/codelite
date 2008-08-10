@@ -3199,3 +3199,9 @@ void Manager::DoCmdWorkspace(int cmd)
 	}
 }
 
+void Manager::RebuildWorkspace()
+{
+	DoCmdWorkspace(BuildInfo::Clean);
+	DoCmdWorkspace(BuildInfo::Build);
+	ProcessBuildQueue();
+}

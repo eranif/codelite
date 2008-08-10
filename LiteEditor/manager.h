@@ -731,6 +731,13 @@ public:
 	void CleanWorkspace();
 	
 	/**
+	 * \brief clean, followed by buid of the entire workspace. This operation is equal to 
+	 * manually right clicking on each project in the workspace and selecting
+	 * 'clean' 
+	 */
+	void RebuildWorkspace();
+	
+	/**
 	 * \brief test if pane_name is resides in the wxAuiManager and is visible
 	 * \param pane_name pane name to search for
 	 * \return true on success (exist in the AUI manager and visible), false otherwise

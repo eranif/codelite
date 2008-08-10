@@ -361,6 +361,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("reload_workspace"), Frame::OnReloadWorkspaceUI)
 	EVT_UPDATE_UI(XRCID("build_workspace"), Frame::OnBuildWorkspaceUI)
 	EVT_MENU(XRCID("build_workspace"), Frame::OnBuildWorkspace)
+	EVT_UPDATE_UI(XRCID("clean_workspace"), Frame::OnCleanWorkspaceUI)
+	EVT_MENU(XRCID("clean_workspace"), Frame::OnCleanWorkspace)
+	EVT_UPDATE_UI(XRCID("rebuild_workspace"), Frame::OnReBuildWorkspaceUI)
+	EVT_MENU(XRCID("rebuild_workspace"), Frame::OnReBuildWorkspace)
 
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, Frame::OnSingleInstanceOpenFiles)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, Frame::OnSingleInstanceRaise)
@@ -3272,8 +3276,7 @@ void Frame::OnCleanWorkspaceUI(wxUpdateUIEvent& e)
 void Frame::OnReBuildWorkspace(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	ManagerST::Get()->CleanWorkspace();
-	ManagerST::Get()->BuildWorkspace();
+	ManagerST::Get()->RebuildWorkspace();
 }
 
 void Frame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)

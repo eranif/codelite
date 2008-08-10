@@ -9,9 +9,11 @@
     <File Name="imanager.h"/>
     <File Name="plugin_version.h"/>
   </VirtualDirectory>
+  <Dependencies/>
+  <Dependencies Name="Common"/>
   <Settings Type="Static Library">
-    <Configuration Name="Common" CompilerType="gnu g++" DebuggerType="">
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="./Debug"/>
+    <Configuration Name="Common" CompilerType="gnu g++" DebuggerType="" Type="">
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
       </Compiler>
@@ -19,19 +21,48 @@
         <LibraryPath Value="."/>
         <LibraryPath Value="Debug"/>
       </Linker>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName></ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="" Type="">
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes"/>
+      <Compiler Required="yes" Options="-g">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Required="yes" Options="-O0">
+        <LibraryPath Value="."/>
+        <LibraryPath Value="Debug"/>
+      </Linker>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName></ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies/>
-  <Dependencies Name="Common"/>
 </CodeLite_Project>

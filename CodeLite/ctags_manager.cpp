@@ -63,7 +63,7 @@ struct tagParseResult {
 	wxString fileName;
 };
 
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens);
+extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens, bool isUsedWithinFunc);
 static int CtagsMgrTimerId = wxNewId();
 
 //------------------------------------------------------------------------------
@@ -1219,13 +1219,6 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 			//free the vector
 			delete (*iter).comments;
 		}
-		
-//		// commit every 17 files
-//		if(cur % 17 == 0) {
-//			db.Commit();
-//			db.Begin();
-//		}
-//		
 		cur++;
 	}
 	
@@ -2216,7 +2209,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarN
 	VariableList li;
 	const wxCharBuffer patbuf = _C(sig);
 
-	get_variables(patbuf.data(), li, ignoreTokens);
+	get_variables(patbuf.data(), li, ignoreTokens, true);
 
 	//construct a function signature from the results
 	wxString output;

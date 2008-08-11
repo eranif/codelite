@@ -25,7 +25,7 @@ void var_consumeUntil(char c1, char c2);
 
 static VariableList *gs_vars = NULL;
 static std::vector<std::string> gs_names;
-
+static bool g_isUsedWithinFunc = false;
 Variable curr_var;
 std::string temdecl;
 
@@ -224,7 +224,49 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								gs_names.clear();
 							}
 						}
-						;
+						| '(' variable_decl special_star_amp postfix3
+						{
+							if(gs_vars)
+							{ 
+								Variable var;
+								std::string pattern;
+								curr_var.m_pattern = "/^";
+								curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + "$/";
+								curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
+								curr_var.m_starAmp = $3;
+								curr_var.m_lineno = cl_scope_lineno;
+								
+								//create new variable for every variable name found
+								var = curr_var;
+								var.m_name = "";
+								gs_vars->push_back(var); 
+								
+								curr_var.Reset();
+								gs_names.clear();
+							}
+						}
+						| ',' variable_decl special_star_amp postfix3
+						{
+							if(gs_vars)
+							{ 
+								Variable var;
+								std::string pattern;
+								curr_var.m_pattern = "/^";
+								curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + "$/";
+								curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
+								curr_var.m_starAmp = $3;
+								curr_var.m_lineno = cl_scope_lineno;
+								
+								//create new variable for every variable name found
+								var = curr_var;
+								var.m_name = "";
+								gs_vars->push_back(var); 
+								
+								curr_var.Reset();
+								gs_names.clear();
+							}
+						};
+						
 						
 variable_name_list: 	LE_IDENTIFIER 
 						{
@@ -238,6 +280,11 @@ variable_name_list: 	LE_IDENTIFIER
 							$$ = $1 + $2 + " " + $3 + $4;
 						}
 						;
+
+postfix3: ',' 
+		| ')'
+		;
+		
 postfix2: /*empty*/
 		| '=' {var_consumeUntil(',', ')');}
 		| ')'
@@ -411,9 +458,9 @@ void var_syncParser(){
 //	}
 //	printf("\n");
 }
-
+ 
 // return the scope name at the end of the input string
-void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap)
+void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc)
 {
 	//provide the lexer with new input
 	if( !setLexerInput(in, ignoreMap) ){
@@ -424,13 +471,19 @@ void get_variables(const std::string &in, VariableList &li, const std::map<std::
 	gs_vars = &li;
 	setUseIgnoreMacros(false);
 	
+	// the 'g_isUsedWithinFunc' allows us to parse variabels without name
+	// this is typical when used as function declaration (e.g. void setValue(bool);)
+	g_isUsedWithinFunc = isUsedWithinFunc;
+	
 	//call tghe main parsing routine
 	cl_var_parse();
 	gs_vars = NULL;
 	
 	// restore settings 
 	setUseIgnoreMacros(true);
+	g_isUsedWithinFunc = false;
 	
 	//do the lexer cleanup
 	cl_scope_lex_clean();
 }
+

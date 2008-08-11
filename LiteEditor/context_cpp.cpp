@@ -58,7 +58,7 @@
 #include "variable.h"
 #include "function.h"
 
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens);
+extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens, bool isUsedWithinFunc);
 extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens);
 
 static bool IsSource(const wxString &ext)
@@ -1781,7 +1781,7 @@ void ContextCpp::OnFileSaved()
 	const wxCharBuffer patbuf = _C(rCtrl.GetText());
 
 	//collect list of variables
-	get_variables( patbuf.data(), var_list, ignoreTokens );
+	get_variables( patbuf.data(), var_list, ignoreTokens, false);
 
 	//list all functions of this file
 	std::vector< TagEntryPtr > tags;

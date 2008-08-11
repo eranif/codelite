@@ -47,7 +47,7 @@
 
 extern std::string get_scope_name(const std::string &in, std::vector<std::string> &additionlNS, const std::map<std::string, std::string> &ignoreTokens);
 extern ExpressionResult &parse_expression(const std::string &in);
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens);
+extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens, bool isUsedWithinFunc);
 extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens);
 
 //===============================================================
@@ -815,8 +815,8 @@ bool Language::TypeFromName(const wxString &name,
 			//can we test visible scope?
 			const wxCharBuffer buf = _C(text);
 			const wxCharBuffer buf2 = _C(extraScope);
-			get_variables(buf.data(), li, ignoreTokens);
-			get_variables(buf2.data(), li, ignoreTokens);
+			get_variables(buf.data(), li, ignoreTokens, false);
+			get_variables(buf2.data(), li, ignoreTokens, false);
 
 			//search for a full match in the returned list
 			for (VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
@@ -852,7 +852,7 @@ bool Language::TypeFromName(const wxString &name,
 	} else {
 		if (tags.size() > 0) {
 			const wxCharBuffer buf = _C(tags.at(0)->GetPattern());
-			get_variables(buf.data(), li, ignoreTokens);
+			get_variables(buf.data(), li, ignoreTokens, false);
 			//search for a full match in the returned list
 			for (VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
 				Variable var = (*iter);
@@ -992,7 +992,7 @@ bool Language::VariableFromPattern(const wxString &in, const wxString &name, Var
 	TagsManager *mgr = GetTagsManager();
 	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
 	
-	get_variables(patbuf.data(), li, ignoreTokens);
+	get_variables(patbuf.data(), li, ignoreTokens, false);
 	VariableList::iterator iter = li.begin();
 	for(; iter != li.end(); iter++){
 		Variable v = *iter;
@@ -1097,7 +1097,7 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 	TagsManager *mgr = GetTagsManager();
 	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
 	
-	get_variables(patbuf.data(), li, ignoreTokens);
+	get_variables(patbuf.data(), li, ignoreTokens, false);
 	VariableList::iterator iter = li.begin();
 	for (; iter != li.end(); iter++) {
 		var = (*iter);

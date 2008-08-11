@@ -14,7 +14,7 @@ extern std::string get_scope_name(const std::string &in,
 	                                  std::vector<std::string > &additionlNS,
 	                                  const std::map<std::string, std::string> &ignoreTokens);
 
-extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens);
+extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc);
 extern ExpressionResult &parse_expression(const std::string &in);
 extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens);
 
@@ -34,8 +34,8 @@ int main()
 	char *buf = loadFile("test.h");
 	
 	//print the scope name
-	testScopeParser(buf);
-	//testVarParser(buf);
+	//testScopeParser(buf);
+	testVarParser(buf);
 	//testExprParser(buf);
 	//testFuncParser(buf);
 	free(buf);
@@ -96,7 +96,7 @@ void testVarParser(char *buf)
 //	fflush(stdout);
 
 	std::map<std::string, std::string> ignoreTokens;
-	get_variables(buf, li, ignoreTokens);
+	get_variables(buf, li, ignoreTokens, true);
 //	time_t end = GetTickCount();
 	for (VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
 		Variable var = *iter;

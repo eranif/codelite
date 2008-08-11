@@ -22,6 +22,7 @@ copy le_exec.exe "update\" /Y
 copy astyle.sample "update\" /Y
 copy CodeLite.exe "update\" /Y
 copy wxmsw28u_gcc*.dll "update\" /Y
+copy libsqlite3.dll "update\" /Y
 copy ..\InnoSetup\license.txt "update\" /Y
 copy ..\sdk\wxconfig\wx-config.exe "update\" /Y
 copy ..\sdk\curl\lib\libcurl-4.dll "update\" /Y

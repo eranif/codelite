@@ -77,7 +77,7 @@ createVariables()
 	echo "" >> Makefile
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ " >> Makefile
 	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
-	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
+	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib -lsqlite3-cl \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 	
 
 	if [ "$is_plugin" = "no" ]; then
@@ -98,15 +98,15 @@ createMainTargets()
 	echo "## build targets" >> Makefile
 	
 	## default
-	target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins "
+	target_all="all :  pre_build CodeLite Scintilla SQLiteDll SQLite SDK LiteEditor ctags Plugins "
 	
 	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
-		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins post_build_msg"
+		target_all="all :  pre_build CodeLite Scintilla SQLiteDll SQLite SDK LiteEditor ctags Plugins post_build_msg"
 	fi
 	
 	if [ "$os_name" = "Darwin" ]; then
-		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins mac_bundle"
+		target_all="all :  pre_build CodeLite Scintilla SQLiteDll SQLite SDK LiteEditor ctags Plugins mac_bundle"
 	fi
 	
 	## add the "all" target to the makefile
@@ -191,6 +191,45 @@ createRules_archive ()
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
 	echo "	ar rcu \$(OUTPUT_DIR)/lib${libname}\$(EXT).a \$(${object_list_name})" >> Makefile
 	echo "	ranlib \$(OUTPUT_DIR)/lib${libname}\$(EXT).a " >> Makefile
+	echo >> Makefile
+}
+
+createRules_sharedObject_no_link_flags ()
+{
+	files_list=$1
+	object_list_name=$2
+	rule_name=$3
+	libname=$4
+	for a_file in $files_list
+	do 
+
+		a_file_with_ext=`basename $a_file`
+		a_file_no_ext=`basename $a_file .cxx`
+		a_file_no_ext=`basename $a_file_no_ext .cpp`
+		a_file_no_ext=`basename $a_file_no_ext .c`
+		file_extension=`basename $a_file | cut -d. -f2`
+		
+		if [ "$file_extension" = "c" ]; then
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		else
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		fi
+	done
+	echo >> Makefile
+	
+	shared_obj_switch=" -shared "
+	if [ "$os_name" = "Darwin" ]; then
+		shared_obj_switch=" -dynamiclib "
+	fi
+	
+	echo "${rule_name}: \$(${object_list_name})" >> Makefile
+	echo "	\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) " >> Makefile
 	echo >> Makefile
 }
 
@@ -342,6 +381,7 @@ createInstallTarget()
 	fi
 	echo "	@cp Runtime/le_dos2unix.sh \$(DESTDIR)$prefix/bin/" >> Makefile
 	echo "	@cp Runtime/le_exec.sh \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@cp lib/libsqlite3-cl.so /usr/lib/" >> Makefile
 	echo "	@cp Runtime/le_killproc.sh \$(DESTDIR)$prefix/bin/" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
@@ -403,6 +443,7 @@ createUnInstallTarget()
 	if [ "$make_symlink" = "yes" ] ; then
 	  echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
 	fi
+	echo "	@\$(RM) -fr  /usr/lib/libsqlite3-cl.so" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
@@ -446,11 +487,16 @@ checkCURL()
 
 generateControlFile() 
 {
+	Arc="i386"
+	if [ "$arch" = "x86_64" ]; then
+		Arc="amd64"
+        fi
+
 	rm -fr fakeroot/DEBIAN/control
 	echo "Package: CodeLite" >> fakeroot/DEBIAN/control
 	echo "Version: 1.0" >> fakeroot/DEBIAN/control
 	echo "Section: Development " >> fakeroot/DEBIAN/control
-	echo "Architecture: i386 " >> fakeroot/DEBIAN/control
+	echo "Architecture: ${Arc} " >> fakeroot/DEBIAN/control
 	echo "Essential: no" >> fakeroot/DEBIAN/control
 	echo "Depends: libwxgtk2.8-0, libgtk2.0-0" >> fakeroot/DEBIAN/control
 	echo "Maintainer: Eran Ifrah [eran.ifrah@gmail.com]" >> fakeroot/DEBIAN/control
@@ -534,8 +580,9 @@ createVariables "no"
 createObjectList "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects"
 createObjectList "CodeLite/*.cpp" "CodeLiteObjects"
 createObjectList "LiteEditor/*.cpp" "LiteEditorObjects"
-createObjectList "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects"
+createObjectList "sdk/wxsqlite3/src/*.cpp " "wxSqlite3Objects"
 createObjectList "Plugin/*.cpp" "SDKObjects"
+createObjectList "sqlite3/*.c" "cl_sqlite3"
 
 createMainTargets
 echo >> Makefile
@@ -543,7 +590,8 @@ echo >> Makefile
 ## Create the rules
 createRules_archive "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects" "Scintilla" "wxscintilla"
 createRules_archive "CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "codelite"
-createRules_archive "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "wxsqlite3"
+createRules_archive "sdk/wxsqlite3/src/*.cpp" "wxSqlite3Objects" "SQLite" "wxsqlite3"
+createRules_sharedObject_no_link_flags "sqlite3/*.c" "cl_sqlite3" "SQLiteDll" "libsqlite3-cl"
 createRules_archive "Plugin/*.cpp " "SDKObjects" "SDK" "plugin"
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createInstallTarget

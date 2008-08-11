@@ -93,6 +93,9 @@ void TagsDatabase::CreateSchema()
 	// tables and indices)
 	try
 	{
+		sql = wxT("PRAGMA journal_mode = OFF;");
+		m_db->ExecuteUpdate(sql);
+
 		sql = wxT("PRAGMA temp_store = MEMORY;");
 		m_db->ExecuteUpdate(sql);
 
@@ -116,6 +119,9 @@ void TagsDatabase::CreateSchema()
 		m_db->ExecuteUpdate(sql);
 
 		sql = wxT("CREATE INDEX IF NOT EXISTS KIND_IDX on tags(kind);");
+		m_db->ExecuteUpdate(sql);
+		
+		sql = wxT("CREATE INDEX IF NOT EXISTS FILE_IDX on tags(file);");
 		m_db->ExecuteUpdate(sql);
 		
 		// Create search indexes

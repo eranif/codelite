@@ -1204,7 +1204,7 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 	
 	for (std::list<tagParseResult>::iterator iter = trees.begin(); iter != trees.end(); iter++) {
 		wxString msg;
-		msg << wxT("Saving symbols from file: ") << (*iter).fileName;
+		msg << wxT("Saving symbols of: ") << (*iter).fileName;
 		prgDlg->Update(maxVal + cur, msg);
 
 		db.Store((*iter).tree, wxFileName(), false);

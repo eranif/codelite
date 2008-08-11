@@ -10,6 +10,7 @@ xcopy templates\ "C:\Program Files\CodeLite\templates\" /E /I /H /Y /EXCLUDE:exc
 xcopy *.html "C:\Program Files\CodeLite\" /H /Y /EXCLUDE:excludes
 :: Copy the misc files
 copy ctags-le.exe "C:\Program Files\CodeLite\" /Y
+copy libsqlite3.dll "C:\Program Files\CodeLite\" /Y
 copy makedir.exe "C:\Program Files\CodeLite\" /Y
 copy le_exec.exe "C:\Program Files\CodeLite\" /Y
 copy CodeLite.exe "C:\Program Files\CodeLite\" /Y

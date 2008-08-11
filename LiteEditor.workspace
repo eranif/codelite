@@ -77,7 +77,7 @@
     <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
-      <Project Name="sqlite3" ConfigName="Debug"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="plugin_sdk" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
       <Project Name="Subversion" ConfigName="WinDebugUnicode"/>

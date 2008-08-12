@@ -8,6 +8,11 @@ QueueCommand::QueueCommand(const wxString& project, const wxString& configuratio
 {
 }
 
+QueueCommand::QueueCommand(int kind)
+		: m_kind(kind)
+{
+}
+
 QueueCommand::~QueueCommand()
 {
 }

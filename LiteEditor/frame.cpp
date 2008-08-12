@@ -2379,8 +2379,37 @@ void Frame::OnDebug(wxCommandEvent &e)
 		//debugger is already running -> probably a continue command
 		mgr->DbgStart();
 	} else if (mgr->IsWorkspaceOpen()) {
-		//debugger is not running, but workspace is opened -> start debug session
-		mgr->DbgStart();
+		
+		// Debugger is not running, but workspace is opened -> start debug session
+		long build_first(wxID_NO);
+		bool answer(false);
+		
+		if(!EditorConfigST::Get()->GetLongValue(wxT("BuildBeforeDebug"), build_first)){
+			// value does not exist in the configuration file, prompt the user
+			ThreeButtonDlg *dlg = new ThreeButtonDlg(this, wxT("Would you like to build the project before debugging it?"), wxT("CodeLite"));
+			build_first = dlg->ShowModal();
+			answer = dlg->GetDontAskMeAgain();
+			dlg->Destroy();
+			
+			if(answer && build_first != wxID_CANCEL){
+				// save the answer
+				EditorConfigST::Get()->SaveLongValue(wxT("BuildBeforeDebug"), build_first);
+			}
+			
+		} 
+		
+		// if build first is required, palce a build command on the queue
+		if(build_first == wxID_OK){
+			QueueCommand bldCmd(WorkspaceST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::Build);
+			ManagerST::Get()->PushQueueCommand(bldCmd);
+		}
+		
+		// placae a debug command
+		QueueCommand dbgCmd(QueueCommand::Debug);
+		ManagerST::Get()->PushQueueCommand(dbgCmd);
+		
+		// trigger the commands queue
+		ManagerST::Get()->ProcessCommandQueue();
 	}
 }
 

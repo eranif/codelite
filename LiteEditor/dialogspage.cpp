@@ -13,10 +13,12 @@ void DialogsPage::Initialize()
 	long adjustCpuNumber(0);
 	long replaceWrapAround(0);
 	long findNextWrapAround(0);
+	long buildBeforeDebug(0);
 	
 	EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), adjustCpuNumber);
 	EditorConfigST::Get()->GetLongValue(wxT("ReplaceWrapAroundAnswer"), replaceWrapAround);
 	EditorConfigST::Get()->GetLongValue(wxT("FindNextWrapAroundAnswer"), findNextWrapAround);
+	EditorConfigST::Get()->GetLongValue(wxT("BuildBeforeDebug"), buildBeforeDebug);
 	
 	int idx;
 	
@@ -31,6 +33,9 @@ void DialogsPage::Initialize()
 	// the value stored is wxID_OK / wxID_NO
 	idx = m_checkListAnswers->Append(wxT("Wrap around 'Find' operation"));
 	m_checkListAnswers->Check((unsigned int)idx, findNextWrapAround == wxID_OK);
+	
+	idx = m_checkListAnswers->Append(wxT("Always Build before debugging"));
+	m_checkListAnswers->Check((unsigned int)idx, buildBeforeDebug == wxID_OK);
 }
 
 void DialogsPage::Save()
@@ -38,4 +43,5 @@ void DialogsPage::Save()
 	EditorConfigST::Get()->SaveLongValue(wxT("AdjustCPUNumber"), m_checkListAnswers->IsChecked(0) ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("ReplaceWrapAroundAnswer"), m_checkListAnswers->IsChecked(1) ? wxID_OK : wxID_NO);
 	EditorConfigST::Get()->SaveLongValue(wxT("FindNextWrapAroundAnswer"), m_checkListAnswers->IsChecked(2) ? wxID_OK : wxID_NO);
+	EditorConfigST::Get()->SaveLongValue(wxT("BuildBeforeDebug"), m_checkListAnswers->IsChecked(3) ? wxID_OK : wxID_NO);
 }

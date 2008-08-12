@@ -1804,7 +1804,7 @@ void Manager::DbgStart(long pid)
 	BuildConfigPtr bldConf;
 	ProjectPtr proj;
 	long PID(-1);
-
+	
 	if (pid == 1) { //attach to process
 		AttachDbgProcDlg *dlg = new AttachDbgProcDlg(NULL);
 		if (dlg->ShowModal() == wxID_OK) {
@@ -1892,13 +1892,13 @@ void Manager::DbgStart(long pid)
 	//and collect the breakpoints from the user
 	DebuggerMgr::Get().DelAllBreakpoints();
 
-	//Loop through the open editors and let each editor
-	//a chance to update the debugger manager whith any line
-	//changes (i.e. file was edited and breakpoints were moved)
-	//this loop must take place before the debugger startup
-	//or else call to UpdateBreakpoint() will yield an attempt to
-	//actually add the breakpoint before Run() is called - this can
-	//be a problem when adding breakpoint to dll files
+	// Loop through the open editors and let each editor
+	// a chance to update the debugger manager whith any line
+	// changes (i.e. file was edited and breakpoints were moved)
+	// this loop must take place before the debugger startup
+	// or else call to UpdateBreakpoint() will yield an attempt to
+	// actually add the breakpoint before Run() is called - this can
+	// be a problem when adding breakpoint to dll files. 
 	if (wxNOT_FOUND == pid) {
 		Notebook *book = Frame::Get()->GetNotebook();
 		for (size_t i=0; i<book->GetPageCount(); i++) {
@@ -3093,6 +3093,9 @@ void Manager::ProcessCommandQueue()
 		break;
 	case QueueCommand::Build:
 		DoBuildProject(bi);
+		break;
+	case QueueCommand::Debug:
+		DbgStart(wxNOT_FOUND);
 		break;
 	}
 }

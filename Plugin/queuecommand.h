@@ -20,6 +20,7 @@ public:
 
 public:
 	QueueCommand(const wxString &project, const wxString &configuration, bool projectOnly, int kind);
+	QueueCommand(int kind);
 	~QueueCommand();
 
 	//----------------------------------------

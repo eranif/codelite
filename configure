@@ -77,7 +77,7 @@ createVariables()
 	echo "" >> Makefile
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ " >> Makefile
 	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
-	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib -lsqlite3-cl \$(shell wx-config --libs \$(WXCFG))" >> Makefile
+	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 	
 
 	if [ "$is_plugin" = "no" ]; then
@@ -98,15 +98,15 @@ createMainTargets()
 	echo "## build targets" >> Makefile
 	
 	## default
-	target_all="all :  pre_build CodeLite Scintilla SQLiteDll SQLite SDK LiteEditor ctags Plugins "
+	target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins "
 	
 	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
-		target_all="all :  pre_build CodeLite Scintilla SQLiteDll SQLite SDK LiteEditor ctags Plugins post_build_msg"
+		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins post_build_msg"
 	fi
 	
 	if [ "$os_name" = "Darwin" ]; then
-		target_all="all :  pre_build CodeLite Scintilla SQLiteDll SQLite SDK LiteEditor ctags Plugins mac_bundle"
+		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins mac_bundle"
 	fi
 	
 	## add the "all" target to the makefile
@@ -381,7 +381,7 @@ createInstallTarget()
 	fi
 	echo "	@cp Runtime/le_dos2unix.sh \$(DESTDIR)$prefix/bin/" >> Makefile
 	echo "	@cp Runtime/le_exec.sh \$(DESTDIR)$prefix/bin/" >> Makefile
-	echo "	@cp lib/libsqlite3-cl.so /usr/lib/" >> Makefile
+#	echo "	@cp lib/libsqlite3-cl.so /usr/lib/" >> Makefile
 	echo "	@cp Runtime/le_killproc.sh \$(DESTDIR)$prefix/bin/" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
@@ -443,7 +443,7 @@ createUnInstallTarget()
 	if [ "$make_symlink" = "yes" ] ; then
 	  echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
 	fi
-	echo "	@\$(RM) -fr  /usr/lib/libsqlite3-cl.so" >> Makefile
+#	echo "	@\$(RM) -fr  /usr/lib/libsqlite3-cl.so" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
@@ -590,8 +590,8 @@ echo >> Makefile
 ## Create the rules
 createRules_archive "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects" "Scintilla" "wxscintilla"
 createRules_archive "CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "codelite"
-createRules_archive "sdk/wxsqlite3/src/*.cpp" "wxSqlite3Objects" "SQLite" "wxsqlite3"
-createRules_sharedObject_no_link_flags "sqlite3/*.c" "cl_sqlite3" "SQLiteDll" "libsqlite3-cl"
+createRules_archive "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "wxsqlite3"
+#createRules_sharedObject_no_link_flags "sqlite3/*.c" "cl_sqlite3" "SQLiteDll" "libsqlite3-cl"
 createRules_archive "Plugin/*.cpp " "SDKObjects" "SDK" "plugin"
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createInstallTarget

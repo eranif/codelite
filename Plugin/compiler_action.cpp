@@ -31,7 +31,7 @@ DEFINE_EVENT_TYPE(wxEVT_BUILD_STARTED)
 DEFINE_EVENT_TYPE(wxEVT_BUILD_ENDED)
 DEFINE_EVENT_TYPE(wxEVT_BUILD_STARTED_NOCLEAN)
 
-CompilerAction::CompilerAction(wxEvtHandler *owner, const BuildInfo &buildInfo)
+CompilerAction::CompilerAction(wxEvtHandler *owner, const QueueCommand &buildInfo)
 : m_proc(NULL)
 , m_owner(owner)
 , m_busy(false)

@@ -24,7 +24,7 @@ void BatchBuildDlg::OnItemToggled( wxCommandEvent& event )
 void BatchBuildDlg::OnBuild( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	m_cmd = BuildInfo::Build;
+	m_cmd = QueueCommand::Build;
 	DoSaveBatchBuildOrder();
 	EndModal(wxID_OK);
 }
@@ -45,7 +45,7 @@ void BatchBuildDlg::OnBuildUI( wxUpdateUIEvent& event )
 void BatchBuildDlg::OnClean( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	m_cmd = BuildInfo::Clean;
+	m_cmd = QueueCommand::Clean;
 	DoSaveBatchBuildOrder();
 	EndModal(wxID_OK);
 }
@@ -138,7 +138,7 @@ void BatchBuildDlg::OnClose( wxCommandEvent& event )
 	EndModal(wxID_CANCEL);
 }
 
-void BatchBuildDlg::GetBuildInfoList(std::list<BuildInfo>& buildInfoList)
+void BatchBuildDlg::GetBuildInfoList(std::list<QueueCommand>& buildInfoList)
 {
 	bool clean_log(true);
 	for(unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++){
@@ -150,7 +150,7 @@ void BatchBuildDlg::GetBuildInfoList(std::list<BuildInfo>& buildInfoList)
 			project = project.Trim().Trim(false);
 			config = config.Trim().Trim(false);
 			
-			BuildInfo buildInfo(project, config, true, m_cmd);
+			QueueCommand buildInfo(project, config, true, m_cmd);
 			buildInfo.SetCleanLog(clean_log);
 			buildInfoList.push_back(buildInfo);
 			clean_log = false;

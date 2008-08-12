@@ -849,7 +849,7 @@ void FileViewTree::OnClean( wxCommandEvent &event )
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
 		
-		BuildInfo buildInfo(projectName, wxEmptyString, false, BuildInfo::Clean);
+		QueueCommand buildInfo(projectName, wxEmptyString, false, QueueCommand::Clean);
 		ManagerST::Get()->CleanProject( buildInfo );
 	}
 }
@@ -860,7 +860,7 @@ void FileViewTree::OnBuild( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		BuildInfo buildInfo(projectName, wxEmptyString, false, BuildInfo::Build);
+		QueueCommand buildInfo(projectName, wxEmptyString, false, QueueCommand::Build);
 		ManagerST::Get()->BuildProject( buildInfo );
 	}
 }
@@ -1007,7 +1007,7 @@ void FileViewTree::OnBuildProjectOnly( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		BuildInfo info(projectName, wxEmptyString, true, BuildInfo::Build);
+		QueueCommand info(projectName, wxEmptyString, true, QueueCommand::Build);
 		ManagerST::Get()->BuildProject( info );
 	}
 }
@@ -1018,7 +1018,7 @@ void FileViewTree::OnCleanProjectOnly( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		BuildInfo info(projectName, wxEmptyString, true, BuildInfo::Clean);
+		QueueCommand info(projectName, wxEmptyString, true, QueueCommand::Clean);
 		ManagerST::Get()->CleanProject( info );
 	}
 }

@@ -32,7 +32,7 @@
 #include "dirsaver.h"
 #include "workspace.h"
 
-CleanRequest::CleanRequest(wxEvtHandler *owner, const BuildInfo &info)
+CleanRequest::CleanRequest(wxEvtHandler *owner, const QueueCommand &info)
 		: CompilerAction(owner, info)
 {
 }

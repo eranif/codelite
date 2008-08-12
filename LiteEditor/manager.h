@@ -70,7 +70,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	bool m_useTipWin;
 	long m_tipWinPos;
 	wxString m_installDir;
-	std::list<BuildInfo> m_buildQueue;
+	std::list<QueueCommand> m_buildQueue;
 
 public:
 	/*!
@@ -395,13 +395,13 @@ public:
 	 * Pass a command to the compiler thread to clean the
 	 * given project
 	 */
-	void CleanProject(const BuildInfo &buildInfo);
+	void CleanProject(const QueueCommand &buildInfo);
 
 	/**
 	 * Pass a command to the compiler thread to build the
 	 * given project
 	 */
-	void BuildProject(const BuildInfo &buildInfo);
+	void BuildProject(const QueueCommand &buildInfo);
 
 	/**
 	 * \brief when building using custom build, execute the makefile generation command provided by the user
@@ -709,12 +709,12 @@ public:
 	 * \brief add build job to the internal queue
 	 * \param buildInfo
 	 */
-	void AddBuild(const BuildInfo &buildInfo);
+	void PushQueueCommand(const QueueCommand &buildInfo);
 
 	/**
 	 * \brief process the next build job
 	 */
-	void ProcessBuildQueue();
+	void ProcessCommandQueue();
 	
 	/**
 	 * \brief build the entire workspace. This operation is equal to 
@@ -785,8 +785,8 @@ protected:
 	void OnProcessEnd(wxProcessEvent &event);
 	void DoShowPane(const wxString &pane);
 	void DoSetupWorkspace(const wxString &path);
-	void DoCleanProject(const BuildInfo &buildInfo);
-	void DoBuildProject(const BuildInfo &buildInfo);
+	void DoCleanProject(const QueueCommand &buildInfo);
+	void DoBuildProject(const QueueCommand &buildInfo);
 	void DoCmdWorkspace(int cmd);
 	
 private:

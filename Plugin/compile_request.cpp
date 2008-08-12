@@ -33,7 +33,7 @@
 #include "workspace.h"
 #include "dirsaver.h"
 
-CompileRequest::CompileRequest(wxEvtHandler *owner, const BuildInfo &buildInfo, const wxString &fileName, bool runPremakeOnly)
+CompileRequest::CompileRequest(wxEvtHandler *owner, const QueueCommand &buildInfo, const wxString &fileName, bool runPremakeOnly)
 		: CompilerAction(owner, buildInfo)
 		, m_fileName(fileName)
 		, m_premakeOnly(runPremakeOnly)

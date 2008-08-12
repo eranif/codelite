@@ -1153,10 +1153,10 @@ void Manager::PopupProjectDependsDlg(const wxString &projectName)
 	dlg->Destroy();
 }
 
-void Manager::CleanProject(const BuildInfo &buildInfo)
+void Manager::CleanProject(const QueueCommand &buildInfo)
 {
-	AddBuild( buildInfo );
-	ProcessBuildQueue();
+	PushQueueCommand( buildInfo );
+	ProcessCommandQueue();
 }
 
 bool Manager::IsBuildEndedSuccessfully() const
@@ -1198,10 +1198,10 @@ bool Manager::IsBuildEndedSuccessfully() const
 	return true;
 }
 
-void Manager::BuildProject(const BuildInfo &buildInfo)
+void Manager::BuildProject(const QueueCommand &buildInfo)
 {
-	AddBuild( buildInfo );
-	ProcessBuildQueue();
+	PushQueueCommand( buildInfo );
+	ProcessCommandQueue();
 }
 
 void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
@@ -1228,7 +1228,7 @@ void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
 		}
 	}
 
-	BuildInfo info(projectName, wxEmptyString, false, BuildInfo::Build);
+	QueueCommand info(projectName, wxEmptyString, false, QueueCommand::Build);
 	m_compileRequest = new CompileRequest(GetMainFrame(), info, fileName, false);
 	m_compileRequest->Process();
 }
@@ -2505,7 +2505,7 @@ void Manager::RunCustomPreMakeCommand(const wxString &project)
 		m_compileRequest = NULL;
 	}
 
-	BuildInfo info(project, wxEmptyString, false, BuildInfo::Build);
+	QueueCommand info(project, wxEmptyString, false, QueueCommand::Build);
 	m_compileRequest = new CompileRequest(	GetMainFrame(), //owner window
 	                                       info,
 	                                       wxEmptyString, 	//no file name (valid only for build file only)
@@ -3072,32 +3072,32 @@ bool Manager::HasHistory() const
 	return m_recentFiles.GetCount()>0 || m_recentWorkspaces.GetCount()>0;
 }
 
-void Manager::AddBuild(const BuildInfo& buildInfo)
+void Manager::PushQueueCommand(const QueueCommand& buildInfo)
 {
 	m_buildQueue.push_back(buildInfo);
 }
 
-void Manager::ProcessBuildQueue()
+void Manager::ProcessCommandQueue()
 {
 	if (m_buildQueue.empty()) {
 		return;
 	}
 
 	// pop the next build build and process it
-	BuildInfo bi = m_buildQueue.front();
+	QueueCommand bi = m_buildQueue.front();
 	m_buildQueue.pop_front();
 
 	switch ( bi.GetKind() ) {
-	case BuildInfo::Clean:
+	case QueueCommand::Clean:
 		DoCleanProject(bi);
 		break;
-	case BuildInfo::Build:
+	case QueueCommand::Build:
 		DoBuildProject(bi);
 		break;
 	}
 }
 
-void Manager::DoBuildProject(const BuildInfo& buildInfo)
+void Manager::DoBuildProject(const QueueCommand& buildInfo)
 {
 	if ( m_compileRequest && m_compileRequest->IsBusy() ) {
 		return;
@@ -3124,7 +3124,7 @@ void Manager::DoBuildProject(const BuildInfo& buildInfo)
 	m_compileRequest->Process();
 }
 
-void Manager::DoCleanProject(const BuildInfo& buildInfo)
+void Manager::DoCleanProject(const QueueCommand& buildInfo)
 {
 	if ( m_cleanRequest && m_cleanRequest->IsBusy() ) {
 		return;
@@ -3150,16 +3150,16 @@ bool Manager::IsPaneVisible(const wxString& pane_name)
 
 void Manager::BuildWorkspace()
 {
-	DoCmdWorkspace(BuildInfo::Build);
+	DoCmdWorkspace(QueueCommand::Build);
 	// start the build process
-	ProcessBuildQueue();
+	ProcessCommandQueue();
 }
 
 void Manager::CleanWorkspace()
 {
-	DoCmdWorkspace(BuildInfo::Clean);
+	DoCmdWorkspace(QueueCommand::Clean);
 	// start the build process
-	ProcessBuildQueue();
+	ProcessCommandQueue();
 }
 
 void Manager::DoCmdWorkspace(int cmd)
@@ -3192,16 +3192,16 @@ void Manager::DoCmdWorkspace(int cmd)
 	for(size_t i=0; i<optimizedList.GetCount(); i++){
 		BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(optimizedList.Item(i), wxEmptyString);
 		if (buildConf) {
-			BuildInfo bi(optimizedList.Item(i), buildConf->GetName(), true, cmd);
+			QueueCommand bi(optimizedList.Item(i), buildConf->GetName(), true, cmd);
 			bi.SetCleanLog(i == 0);
-			AddBuild( bi );
+			PushQueueCommand( bi );
 		}
 	}
 }
 
 void Manager::RebuildWorkspace()
 {
-	DoCmdWorkspace(BuildInfo::Clean);
-	DoCmdWorkspace(BuildInfo::Build);
-	ProcessBuildQueue();
+	DoCmdWorkspace(QueueCommand::Clean);
+	DoCmdWorkspace(QueueCommand::Build);
+	ProcessCommandQueue();
 }

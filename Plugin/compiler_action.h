@@ -26,6 +26,7 @@
 #define COMPILER_ACTION_H
 
 #include "worker_thread.h"
+#include "queuecommand.h"
 #include "wx/event.h"
 #include "cl_process.h"
 #include "wx/timer.h"
@@ -43,77 +44,6 @@ DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_BUILD_STARTED, wxID_ANY)
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_BUILD_ENDED, wxID_ANY)
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_BUILD_STARTED_NOCLEAN, wxID_ANY)
 
-// ====================================================================
-// Build information
-// ====================================================================
-class BuildInfo
-{
-	wxString m_project;
-	wxString m_configuration;
-	bool m_projectOnly;
-	int m_kind;
-	bool m_cleanLog;
-
-public:
-	enum {
-		Build,
-		Clean
-	};
-
-public:
-	BuildInfo(const wxString &project, const wxString &configuration, bool projectOnly, int kind)
-			: m_project(project)
-			, m_configuration(configuration)
-			, m_projectOnly(projectOnly)
-			, m_kind(kind)
-			, m_cleanLog(true) {
-	}
-
-	~BuildInfo() {};
-
-	//----------------------------------------
-	// Setters/Getters
-	//----------------------------------------
-
-	void SetConfiguration(const wxString& configuration) {
-		this->m_configuration = configuration;
-	}
-	void SetProject(const wxString& project) {
-		this->m_project = project;
-	}
-
-	const wxString& GetConfiguration() const {
-		return m_configuration;
-	}
-	const wxString& GetProject() const {
-		return m_project;
-	}
-
-	void SetProjectOnly(const bool& projectOnly) {
-		this->m_projectOnly = projectOnly;
-	}
-
-	const bool& GetProjectOnly() const {
-		return m_projectOnly;
-	}
-
-	void SetKind(const int& kind) {
-		this->m_kind = kind;
-	}
-	const int& GetKind() const {
-		return m_kind;
-	}
-
-	void SetCleanLog(const bool& cleanLog) {
-		this->m_cleanLog = cleanLog;
-	}
-	
-	const bool& GetCleanLog() const {
-		return m_cleanLog;
-	}
-
-};
-
 /**
  * \class CompilerAction
  * \brief
@@ -129,7 +59,7 @@ protected:
 	bool m_busy;
 	bool m_stop;
 	wxArrayString m_lines;
-	BuildInfo m_info;
+	QueueCommand m_info;
 	
 protected:
 	virtual void OnTimer(wxTimerEvent &event);
@@ -154,7 +84,7 @@ public:
 public:
 	//construct a compiler action
 	// \param owner the window owner for this action
-	CompilerAction(wxEvtHandler *owner, const BuildInfo &buildInfo);
+	CompilerAction(wxEvtHandler *owner, const QueueCommand &buildInfo);
 
 	/**
 	 * \brief

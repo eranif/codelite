@@ -38,6 +38,8 @@
     <File Name="search_thread.h"/>
     <File Name="workspace.h"/>
     <File Name="volumelocatorthread.h"/>
+    <File Name="queuecommand.cpp"/>
+    <File Name="queuecommand.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
     <File Name="xmlutils.cpp"/>

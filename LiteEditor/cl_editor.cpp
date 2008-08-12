@@ -1078,7 +1078,7 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 			if (!conf->GetLongValue(wxT("ReplaceWrapAroundAnswer"), res)) {
 				ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, msg, wxT("CodeLite"));
 				res = dlg->ShowModal();
-				if (dlg->GetDontAskMeAgain()) {
+				if (dlg->GetDontAskMeAgain() && res != wxID_CANCEL) {
 					//save this answer
 					conf->SaveLongValue(wxT("ReplaceWrapAroundAnswer"), res);
 				}
@@ -1133,7 +1133,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 		if (!conf->GetLongValue(wxT("FindNextWrapAroundAnswer"), res)) {
 			ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, msg, wxT("CodeLite"));
 			res = dlg->ShowModal();
-			if (dlg->GetDontAskMeAgain()) {
+			if (dlg->GetDontAskMeAgain() && res != wxID_CANCEL) {
 				//save this answer
 				conf->SaveLongValue(wxT("FindNextWrapAroundAnswer"), res);
 			}

@@ -1797,7 +1797,7 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 		}
 
 		// process next request from the queue
-		ManagerST::Get()->ProcessBuildQueue();
+		ManagerST::Get()->ProcessCommandQueue();
 
 		//give back the focus to the editor
 		LEditor *editor = ManagerST::Get()->GetActiveEditor();
@@ -1828,7 +1828,7 @@ void Frame::OnBuildProject(wxCommandEvent &event)
 	wxUnusedVar(event);
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
-		BuildInfo info(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, BuildInfo::Build);
+		QueueCommand info(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::Build);
 		ManagerST::Get()->BuildProject( info );
 	}
 }
@@ -1839,7 +1839,7 @@ void Frame::OnBuildAndRunProject(wxCommandEvent &event)
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
 		m_buildAndRun = true;
-		BuildInfo info(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, BuildInfo::Build);
+		QueueCommand info(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::Build);
 		ManagerST::Get()->BuildProject( info );
 	}
 }
@@ -1891,7 +1891,7 @@ void Frame::OnStopExecutedProgram(wxCommandEvent &event)
 void Frame::OnCleanProject(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	BuildInfo buildInfo(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, BuildInfo::Clean);
+	QueueCommand buildInfo(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::Clean);
 	ManagerST::Get()->CleanProject( buildInfo );
 }
 
@@ -3147,13 +3147,13 @@ void Frame::RebuildProject(const wxString& projectName)
 {
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
-		BuildInfo buildInfo(projectName, wxEmptyString, false, BuildInfo::Clean);
-		ManagerST::Get()->AddBuild(buildInfo);
+		QueueCommand buildInfo(projectName, wxEmptyString, false, QueueCommand::Clean);
+		ManagerST::Get()->PushQueueCommand(buildInfo);
 
-		buildInfo = BuildInfo(projectName, wxEmptyString, false, BuildInfo::Build);
-		ManagerST::Get()->AddBuild(buildInfo);
+		buildInfo = QueueCommand(projectName, wxEmptyString, false, QueueCommand::Build);
+		ManagerST::Get()->PushQueueCommand(buildInfo);
 
-		ManagerST::Get()->ProcessBuildQueue();
+		ManagerST::Get()->ProcessCommandQueue();
 	}
 }
 
@@ -3168,21 +3168,21 @@ void Frame::OnBatchBuild(wxCommandEvent& e)
 	BatchBuildDlg *batchBuild = new BatchBuildDlg(this);
 	if (batchBuild->ShowModal() == wxID_OK) {
 		// build the projects
-		std::list<BuildInfo> buildInfoList;
+		std::list<QueueCommand> buildInfoList;
 		batchBuild->GetBuildInfoList(buildInfoList);
 		if (buildInfoList.empty() == false) {
-			std::list<BuildInfo>::iterator iter = buildInfoList.begin();
+			std::list<QueueCommand>::iterator iter = buildInfoList.begin();
 
 			// add all build items to queue
 			for (; iter != buildInfoList.end(); iter ++) {
-				ManagerST::Get()->AddBuild(*iter);
+				ManagerST::Get()->PushQueueCommand(*iter);
 			}
 		}
 	}
 	batchBuild->Destroy();
 
 	// start the build process
-	ManagerST::Get()->ProcessBuildQueue();
+	ManagerST::Get()->ProcessCommandQueue();
 }
 
 void Frame::SetFrameTitle(LEditor* editor)

@@ -1,0 +1,64 @@
+#include "queuecommand.h"
+QueueCommand::QueueCommand(const wxString& project, const wxString& configuration, bool projectOnly, int kind)
+		: m_project(project)
+		, m_configuration(configuration)
+		, m_projectOnly(projectOnly)
+		, m_kind(kind)
+		, m_cleanLog(true)
+{
+}
+
+QueueCommand::~QueueCommand()
+{
+}
+
+
+void QueueCommand::SetConfiguration(const wxString& configuration)
+{
+	this->m_configuration = configuration;
+}
+
+void QueueCommand::SetProject(const wxString& project)
+{
+	this->m_project = project;
+}
+
+const wxString& QueueCommand::GetConfiguration() const
+{
+	return m_configuration;
+}
+
+const wxString& QueueCommand::GetProject() const
+{
+	return m_project;
+}
+
+void QueueCommand::SetProjectOnly(const bool& projectOnly)
+{
+	this->m_projectOnly = projectOnly;
+}
+
+const bool& QueueCommand::GetProjectOnly() const
+{
+	return m_projectOnly;
+}
+
+void QueueCommand::SetKind(const int& kind)
+{
+	this->m_kind = kind;
+}
+
+const int& QueueCommand::GetKind() const
+{
+	return m_kind;
+}
+
+void QueueCommand::SetCleanLog(const bool& cleanLog)
+{
+	this->m_cleanLog = cleanLog;
+}
+
+const bool& QueueCommand::GetCleanLog() const
+{
+	return m_cleanLog;
+}

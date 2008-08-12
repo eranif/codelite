@@ -580,9 +580,9 @@ createVariables "no"
 createObjectList "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects"
 createObjectList "CodeLite/*.cpp" "CodeLiteObjects"
 createObjectList "LiteEditor/*.cpp" "LiteEditorObjects"
-createObjectList "sdk/wxsqlite3/src/*.cpp " "wxSqlite3Objects"
+createObjectList "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects"
 createObjectList "Plugin/*.cpp" "SDKObjects"
-createObjectList "sqlite3/*.c" "cl_sqlite3"
+#createObjectList "sqlite3/*.c" "cl_sqlite3"
 
 createMainTargets
 echo >> Makefile

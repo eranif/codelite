@@ -55,6 +55,8 @@ find_in_files|Search|Find In Files...|Ctrl-Shift-F
 wxID_FIND|Search|Find...|Ctrl-F
 wxID_REPLACE|Search|Replace...|Ctrl-H
 find_next|Search|Find Next|F3
+find_next_at_caret|Search|Find Word At Caret|Ctrl-F3
+find_previous_at_caret|Search|Find Word At Caret Backward|Ctrl-Shift-F3
 find_previous|Search|Find Previous|Shift-F3
 find_resource|Search|Find Resource...|Ctrl-Shift-R
 find_type|Search|Find Type...|Ctrl-Shift-T

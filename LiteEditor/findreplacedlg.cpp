@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "findreplacedlg.h"
+#include <wx/msgdlg.h>
 #include "editor_config.h"
 #include <wx/gbsizer.h>
 #include <wx/textctrl.h>
@@ -43,6 +44,13 @@ BEGIN_EVENT_TABLE(FindReplaceDialog, wxDialog)
 	EVT_CLOSE(FindReplaceDialog::OnClose)
 	EVT_CHAR_HOOK(FindReplaceDialog::OnKeyDown)
 END_EVENT_TABLE()
+
+#define VALIDATE_FINDWHAT(){\
+	if(m_findString->GetValue().Trim().IsEmpty()){\
+			wxMessageBox(wxT("'Find What' is empty"));\
+			return;\
+		}\
+}
 
 FindReplaceDialog::FindReplaceDialog()
 		: wxDialog()
@@ -209,12 +217,16 @@ void FindReplaceDialog::OnClick(wxCommandEvent &event)
 	}
 
 	if (btnClicked == m_find) {
+		VALIDATE_FINDWHAT();
 		SendEvent(wxEVT_FRD_FIND_NEXT);
 	} else if (btnClicked == m_replace) {
+		VALIDATE_FINDWHAT();
 		SendEvent(wxEVT_FRD_REPLACE);
 	} else if (btnClicked == m_replaceAll) {
+		VALIDATE_FINDWHAT();
 		SendEvent(wxEVT_FRD_REPLACEALL);
 	} else if (btnClicked == m_markAll) {
+		VALIDATE_FINDWHAT();
 		SendEvent(wxEVT_FRD_BOOKMARKALL);
 	} else if (btnClicked == m_clearBookmarks) {
 		SendEvent(wxEVT_FRD_CLEARBOOKMARKS);

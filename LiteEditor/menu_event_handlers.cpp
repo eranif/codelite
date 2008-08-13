@@ -133,6 +133,15 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &ev
 	} else if ( event.GetId() == wxID_REPLACE ) {
 		editor->DoFindAndReplace(true);
 	} else {
+		wxString selWord;
+		if (event.GetId() == XRCID("find_next_at_caret") || event.GetId() == XRCID("find_previous_at_caret")) {
+			wxString selection( editor->GetSelectedText() );
+			if (selection.IsEmpty()) {
+				// select the word
+				selWord = editor->GetWordAtCaret();
+			}
+		}
+
 		FindReplaceDialog *dlg = LEditor::GetFindReplaceDialog();
 		FindReplaceData *data;
 		if (!dlg) {
@@ -140,11 +149,25 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &ev
 		} else {
 			data = &dlg->GetData();
 		}
-		
+
 		// if we have a selected text, use that text instead of one
 		// from the dialog
-		if (editor->GetSelectedText().IsEmpty() == false ) {
-			data->SetFindString(editor->GetSelectedText());
+		if (editor->GetSelectedText().IsEmpty() == false || selWord.IsEmpty() == false) {
+			
+			if(selWord.IsEmpty()) {
+				data->SetFindString(editor->GetSelectedText());
+			}else{
+				// set the word to search from the word under the caret
+				// also set the current search position accordingly 
+				if(event.GetId() == XRCID("find_next_at_caret")){
+					// search is going forward, so place the current position at the start of the word
+					editor->SetCurrentPos(editor->WordStartPosition(editor->GetCurrentPos(), true));
+				} else {
+					// search is going backward
+					editor->SetCurrentPos(editor->WordEndPosition(editor->GetCurrentPos(), true));
+				}
+				data->SetFindString(selWord);
+			}
 			if (dlg) {
 				dlg->GetData().SetFindString(editor->GetSelectedText());
 			}
@@ -154,12 +177,12 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &ev
 			return;
 		}
 
-		if (event.GetId() == XRCID("find_next")) {
+		if (event.GetId() == XRCID("find_next") || event.GetId() == XRCID("find_next_at_caret")) {
 			// set search direction down
 			data->SetFlags(data->GetFlags() & ~(wxFRD_SEARCHUP));
 			editor->FindNext( *data );
 
-		} else if ( event.GetId() == XRCID("find_previous")) {
+		} else if ( event.GetId() == XRCID("find_previous") || event.GetId() == XRCID("find_previous_at_caret")) {
 			// set search direction up
 			data->SetFlags(data->GetFlags() | wxFRD_SEARCHUP);
 			editor->FindNext( *data );

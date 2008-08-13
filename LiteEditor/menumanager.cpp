@@ -48,6 +48,8 @@ MenuManager::MenuManager(void)
 	PushHandler(new FindReplaceHandler(wxID_FIND));
 	PushHandler(new FindReplaceHandler(wxID_REPLACE));
 	PushHandler(new FindReplaceHandler(XRCID("find_next")));
+	PushHandler(new FindReplaceHandler(XRCID("find_next_at_caret")));
+	PushHandler(new FindReplaceHandler(XRCID("find_previous_at_caret")));
 	PushHandler(new FindReplaceHandler(XRCID("find_previous")));
 	PushHandler(new GotoHandler(XRCID("goto_linenumber")));
 	PushHandler(new BookmarkHandler(XRCID("toggle_bookmark")));

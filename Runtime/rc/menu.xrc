@@ -235,8 +235,14 @@
             <object class="wxMenuItem" name="find_previous">
                 <label>Find &amp;Previous</label>
             </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="find_resource">
+            <object class="wxMenuItem" name="find_next_at_caret">
+                <label>Find Word At Caret</label>
+            </object>
+            <object class="wxMenuItem" name="find_previous_at_caret">
+                <label>Find Word At Caret Backward</label>
+            </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+			<object class="wxMenuItem" name="find_resource">
                 <label>Find &amp;Resource...</label>
             </object>
             <object class="wxMenuItem" name="find_type">

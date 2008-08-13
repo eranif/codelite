@@ -1361,50 +1361,42 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 		return iter->second;
 	}
 
+	long value(0);
 	wxString sql;
-
-	long value = 0;
-	sql << wxT("select count(*) from tags where name='") << typeName << wxT("' and scope='") << scope << wxT("'");
+	sql << wxT("select ID from tags where name='") << typeName << wxT("' and scope='") << scope << wxT("' LIMIT 1");
 
 	for (size_t i=0; i<2; i++) {
 
 		if (i == 1) {
 			// Second try, change the SQL query to test against the global scope
 			sql.Clear();
-			sql << wxT("select count(*) from tags where name='") << typeName << wxT("' and scope='<global>'");
-			value = 0;
+			sql << wxT("select ID from tags where name='") << typeName << wxT("' and scope='<global>' LIMIT 1");
 		}
 
 		wxSQLite3ResultSet rs = m_pDb->Query(sql);
 		try {
 			if (rs.NextRow()) {
-				rs.GetAsString(0).ToLong(&value);
-				if (value > 0) {
-					if (i == 1) {
-						scope = wxT("<global>");
-					}
-					return true;
+				if (i == 1) {
+					scope = wxT("<global>");
 				}
+				return true;
+				
 			}
 
 			if ( m_pExternalDb->IsOpen() ) {
+				
 				wxSQLite3ResultSet ex_rs;
 				ex_rs = m_pExternalDb->Query(sql);
-
-				// add results from external database to the workspace database
 				if ( ex_rs.NextRow() ) {
-					ex_rs.GetAsString(0).ToLong(&value);
-					if (value > 0) {
-						if (i == 1) {
-							scope = wxT("<global>");
-							return true;
-						}
-						m_typeScopeCache[cacheKey] = true;
+					if (i == 1) {
+						scope = wxT("<global>");
 						return true;
-					} else {
-						if ( i == 1 ) {
-							m_typeScopeCache[cacheKey] = false;
-						}
+					}
+					m_typeScopeCache[cacheKey] = true;
+					return true;
+				} else {
+					if( i == 1 ){
+						m_typeScopeCache[cacheKey] = false;
 					}
 				}
 				ex_rs.Finalize();

@@ -70,6 +70,9 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	if (where != wxNOT_FOUND) {
 		m_prep.RemoveAt(where);
 	}
+	
+	//TODO :: remove the CC_CACHE_WORKSPACE_TAGS
+	m_ccFlags &= ~(CC_CACHE_WORKSPACE_TAGS);
 }
 
 wxString TagsOptionsData::ToString() const

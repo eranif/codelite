@@ -214,6 +214,9 @@ void TagsOptionsDlg::InitValues()
 	m_checkColourLocalVars->SetValue(m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
 	m_checkColourProjTags->SetValue(m_data.GetFlags() & CC_COLOUR_PROJ_TAGS ? true : false);
 	m_checkCppKeywordAssist->SetValue(m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
+	
+	// TODO:: until the cache is fixed properly, disable this option
+	m_checkCacheWorkspaceTags->Disable();
 	m_checkCacheWorkspaceTags->SetValue(m_data.GetFlags() & CC_CACHE_WORKSPACE_TAGS ? true : false);
 	
 	//initialize the ctags page

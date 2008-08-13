@@ -47,19 +47,6 @@ BEGIN_EVENT_TABLE(SvnDriver, wxEvtHandler)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, SvnDriver::OnSvnProcess)
 END_EVENT_TABLE()
 
-static void StripComments(wxString &comment)
-{
-	wxStringTokenizer tok(comment, wxT("\n"), wxTOKEN_STRTOK);
-	comment.Clear();
-	while (tok.HasMoreTokens()) {
-		wxString line = tok.GetNextToken();
-		line = line.Trim().Trim(false);
-		if (!line.StartsWith(wxT("#"))) {
-			comment << line << wxT("\n");
-		}
-	}
-}
-
 SvnDriver::SvnDriver(SubversionPlugin *plugin, IManager *mgr)
 		: m_cmd(NULL)
 		, m_manager(mgr)
@@ -296,7 +283,6 @@ void SvnDriver::Commit()
 
 	if (dlg->ShowModal() == wxID_OK) {
 		comment = dlg->GetValue();
-		StripComments(comment);
 		command.Clear();
 		command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 		command << wxT("commit ") << fileName << wxT(" -m \"") << comment << wxT("\"");
@@ -332,7 +318,6 @@ void SvnDriver::CommitFile(const wxString &fileName, SvnPostCmdAction *handler)
 	TreeItemInfo dummy;
 	if (dlg->ShowModal() == wxID_OK) {
 		comment = dlg->GetValue();
-		StripComments(comment);
 		command.Clear();
 		command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 		command << wxT("commit ") << fileName << wxT(" -m \"") << comment << wxT("\"");

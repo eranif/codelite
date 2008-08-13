@@ -41,7 +41,7 @@ class SvnDlg : public SvnBaseDlg
 public:
 	/** Constructor */
 	SvnDlg( wxWindow* parent );
-	wxString GetValue() const { return m_textCtrl->GetValue(); }
+	wxString GetValue() const ;
 	void SetValue( const wxString &value ) { m_textCtrl->SetValue(value); }
 };
 

@@ -1,54 +1,58 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : svndlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : svndlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "svndlg.h"
+#include "svndlg.h"
 #include "wx/tokenzr.h"
 #include "svncommitmsgsmgr.h"
 
-static void StripComments(wxString &comment)
+static void EscapeComment(wxString &comment)
 {
+	// first remove the comment section of the text
 	wxStringTokenizer tok(comment, wxT("\n"), wxTOKEN_STRTOK);
 	comment.Clear();
-	while(tok.HasMoreTokens()){
+	while (tok.HasMoreTokens()) {
 		wxString line = tok.GetNextToken();
 		line = line.Trim().Trim(false);
-		if(!line.StartsWith(wxT("#"))){
+		if (!line.StartsWith(wxT("#"))) {
 			comment << line << wxT("\n");
 		}
 	}
+	
+	// SVN does not like any quotation marks in the comment -> escape them 
+	comment.Replace(wxT("\""), wxT("\\\""));
 }
 
 SvnDlg::SvnDlg( wxWindow* parent )
-:
-SvnBaseDlg( parent )
+		:
+		SvnBaseDlg( parent )
 {
 	wxArrayString msgs;
-	
+
 	SvnCommitMsgsMgr::Instance()->GetAllMessages( msgs );
 	m_comboBoxLastCommitMsgs->Append( msgs );
-	
-	if( msgs.GetCount() > 0 ) {
+
+	if ( msgs.GetCount() > 0 ) {
 		m_comboBoxLastCommitMsgs->SetSelection( msgs.GetCount()-1 );
 	}
 	m_textCtrl->SetFocus();
@@ -64,9 +68,15 @@ void SvnDlg::OnLastCommitMsgSelected(wxCommandEvent &e)
 void SvnDlg::OnButtonOK(wxCommandEvent &e)
 {
 	wxString comment = m_textCtrl->GetValue();
-	StripComments( comment );
-	
+	EscapeComment( comment );
+
 	SvnCommitMsgsMgr::Instance()->AddMessage( comment );
-	
+
 	EndModal( wxID_OK );
+}
+wxString SvnDlg::GetValue() const
+{
+	wxString comment( m_textCtrl->GetValue() );
+	EscapeComment(comment);
+	return comment;
 }

@@ -601,12 +601,21 @@ bool LEditor::SaveFileAs()
 // an internal function that does the actual file writing to disk
 bool LEditor::SaveToFile(const wxFileName &fileName)
 {
+	wxString tmp_file;
 	wxFFile file(fileName.GetFullPath().GetData(), wxT("wb"));
 	if (file.IsOpened() == false) {
 		// Nothing to be done
-		wxString msg = wxString::Format(wxT("Failed to open file %s"), fileName.GetFullPath().GetData());
-		wxMessageBox( msg );
-		return false;
+		if(wxMessageBox(wxString::Format(wxT("Failed to open file '%s' for write, Override it?"), fileName.GetFullPath().GetData()), wxT("CodeLite"), wxYES_NO|wxICON_WARNING) == wxYES){
+			// try to override it
+			time_t curt = GetFileModificationTime(fileName.GetFullPath());
+			tmp_file << fileName.GetFullPath() << curt;
+			if(file.Open(tmp_file.c_str(), wxT("wb")) == false){
+				wxMessageBox(wxString::Format(wxT("Failed to open file '%s' for write"), tmp_file.c_str()), wxT("CodeLite"), wxOK|wxICON_WARNING);
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 
 	// save the file using the user's defined encoding
@@ -614,6 +623,14 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	file.Write(GetText(), fontEncConv);
 	file.Close();
 
+	// if the saving was done to a temporary file, override it
+	if(tmp_file.IsEmpty() == false){
+		if(wxRenameFile(tmp_file, fileName.GetFullPath(), true) == false){
+			wxMessageBox(wxString::Format(wxT("Failed to override read-only file")), wxT("CodeLite"), wxOK|wxICON_WARNING);
+			return false;
+		}
+	}
+	
 	//update the modification time of the file
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
 	SetSavePoint();

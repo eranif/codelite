@@ -489,12 +489,15 @@ void Manager::CloseWorkspace()
 			vTabInfoArr.push_back(oTabInfo);
 		}
 	}
-	//session.SetTabs(files);
+
+	// Save the current session
 	session.SetTabInfoArr(vTabInfoArr);
-
-	//wxMessageBox(wxString::Format(wxT("Rozmiar wektora: %d."), vTabInfoArr.size()));
-	SessionManager::Get().Save(wxT("Default"), session);
-
+	SessionManager::Get().Save(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session);
+	
+	// since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
+	// default
+	SessionManager::Get().SetLastWorkspaceName(wxT("Default"));
+	
 	WorkspaceST::Get()->CloseWorkspace();
 	//clear the 'buid' tab
 	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
@@ -3013,6 +3016,10 @@ void Manager::DoSetupWorkspace(const wxString &path)
 	if (Frame::Get()->GetFrameGeneralInfo().GetFlags() & CL_LOAD_LAST_SESSION) {
 		SessionEntry session;
 		if (SessionManager::Get().FindSession(path, session)) {
+			
+			// set this session as the active one
+			SessionManager::Get().SetLastWorkspaceName(path);
+			
 			//restore notebook tabs
 			const std::vector<TabInfo> &vTabInfoArr = session.GetTabInfoArr();
 			if (vTabInfoArr.size() > 0) {

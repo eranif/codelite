@@ -92,7 +92,7 @@ bool SessionManager::Load(const wxString &fileName)
 	}
 
 	m_doc.Load(m_fileName.GetFullPath());
-	return true;
+	return m_doc.IsOk();
 }
 
 bool SessionManager::FindSession(const wxString &name, SessionEntry &session)
@@ -103,23 +103,6 @@ bool SessionManager::FindSession(const wxString &name, SessionEntry &session)
 
 	// find last active workspace name if searched is Default
 	wxString strSessionName = name;
-	//wxMessageBox(wxT("FS: ")+strSessionName);
-	if (strSessionName == wxT("Default")) {
-		wxXmlNode *node =  m_doc.GetRoot()->GetChildren();
-		while (node) {
-			if (node->GetName() == wxT("LastActiveWorkspace")) {
-				//we found our session, remove it
-				wxXmlNode *childNode =  node->GetChildren();
-				if (childNode) {
-					strSessionName = childNode->GetContent();
-				}
-				break;
-			}
-			node = node->GetNext();
-		}
-	}
-
-	//wxMessageBox(wxT("FS2: ")+strSessionName);
 	wxXmlNode *node =  m_doc.GetRoot()->GetChildren();
 	while (node) {
 		if (node->GetName() == wxT("Session")) {
@@ -133,24 +116,6 @@ bool SessionManager::FindSession(const wxString &name, SessionEntry &session)
 		}
 		node = node->GetNext();
 	}
-	// if not found last active, then try find Default
-	//wxMessageBox(wxT("FS3: ")+strSessionName);
-	if (strSessionName != wxT("Default")) {
-		strSessionName = wxT("Default");
-		node =  m_doc.GetRoot()->GetChildren();
-		while (node) {
-			if (node->GetName() == wxT("Session")) {
-				if (XmlUtils::ReadString(node, wxT("Name")) == strSessionName) {
-					//we found our session
-					Archive arch;
-					arch.SetXmlNode(node);
-					session.DeSerialize(arch);
-					return true;
-				}
-			}
-			node = node->GetNext();
-		}
-	}
 	return false;
 }
 
@@ -162,14 +127,11 @@ bool SessionManager::Save(const wxString &name, SessionEntry &session)
 
 	// if saving Default then change name to workspace anme and path
 	wxString strSessionName = name;
-	if (strSessionName == wxT("Default"))
-		strSessionName = session.GetWorkspaceName();
+
 	// if session entry has no workspace name, then do not save
 	if (strSessionName.length() == 0)
 		return false;
 
-	bool bSessionRemoved = false;
-	bool bLastActWrkspcRemoved = false;
 	wxXmlNode *node =  m_doc.GetRoot()->GetChildren();
 	while (node) {
 		if (node->GetName() == wxT("Session")) {
@@ -182,48 +144,56 @@ bool SessionManager::Save(const wxString &name, SessionEntry &session)
 		}
 		node = node->GetNext();
 	}
-	node =  m_doc.GetRoot()->GetChildren();
-	while (node) {
-		if (node->GetName() == wxT("LastActiveWorkspace")) {
-			//we found our session, remove it
-			m_doc.GetRoot()->RemoveChild(node);
-			// remove CDATA child node
-			wxXmlNode *childNode = NULL;
-			wxXmlNode *nextChild = node->GetChildren();
-			while (nextChild) {
-				childNode = nextChild;
-				nextChild = childNode->GetNext();
-				node->RemoveChild(childNode);
-				delete childNode;
-			}
-			delete node;
-			//bLastActWrkspcRemoved = true;
-			break;
-		}
-//		if(bSessionRemoved && bLastActWrkspcRemoved)
-//			break;
-		node = node->GetNext();
-	}
-
-	//create new node with workspace name (and path) and insert it
-	wxXmlNode *lastWorkspaceName = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("LastActiveWorkspace"));
-	wxXmlNode *lastWorkspaceNameT = new wxXmlNode(NULL, wxXML_TEXT_NODE, wxT("LastActiveWorkspace"), session.GetWorkspaceName());
-	lastWorkspaceName->AddChild(lastWorkspaceNameT);
-	m_doc.GetRoot()->AddChild(lastWorkspaceName);
 
 	//create new node and insert it
 	wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Session"));
 	m_doc.GetRoot()->AddChild(child);
 	child->AddProperty(wxT("Name"), strSessionName);
 
-//	wxXmlProperty *lastActiveWrkspc = new wxXmlProperty(wxT("LastActiveWrkspc"), session.GetWorkspaceName());
-//	if(m_doc.GetRoot()->HasProp(wxT("LastActiveWrkspc")))
-//		m_doc.GetRoot()->DeleteProperty(wxT("LastActiveWrkspc"));
-//	m_doc.GetRoot()->SetProperties(lastActiveWrkspc);
-
 	Archive arch;
 	arch.SetXmlNode(child);
 	session.Serialize(arch);
 	//save the file
 	return m_doc.Save(m_fileName.GetFullPath());
+}
+
+void SessionManager::SetLastWorkspaceName(const wxString& name)
+{
+	// first delete the old entry
+	wxXmlNode *node = m_doc.GetRoot()->GetChildren();
+	while (node) {
+		if (node->GetName() == wxT("LastActiveWorkspace")) {
+			m_doc.GetRoot()->RemoveChild(node);
+			delete node;
+			break;
+		}
+		node = node->GetNext();
+	}
+
+	// set new one
+	wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("LastActiveWorkspace"));
+	m_doc.GetRoot()->AddChild(child);
+	XmlUtils::SetNodeContent(child, name);
+
+	// save changes
+	m_doc.Save(m_fileName.GetFullPath());
+}
+
+wxString SessionManager::GetLastSession()
+{
+	// try to locate the 'LastActiveWorkspace' entry
+	// if it does not exist or it exist with value empty return 'Default'
+	// otherwise, return its content
+	wxXmlNode *node = m_doc.GetRoot()->GetChildren();
+	while (node) {
+		if (node->GetName() == wxT("LastActiveWorkspace")) {
+			if (node->GetNodeContent().IsEmpty()) {
+				return wxT("Default");
+			} else {
+				return node->GetNodeContent();
+			}
+		}
+		node = node->GetNext();
+	}
+	return wxT("Default");
 }

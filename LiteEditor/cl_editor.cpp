@@ -1367,7 +1367,7 @@ bool LEditor::ReplaceAll()
 		txt.Remove(posInChars, match_lenInChars);
 		txt.insert(posInChars, replaceWith);
 		occur++;
-		offset = posInChars + replaceWith.length(); // match_len;
+		offset = pos + replaceWith.length(); // match_len;
 	}
 
 	// replace the buffer

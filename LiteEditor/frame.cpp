@@ -1018,7 +1018,10 @@ void Frame::OnClose(wxCloseEvent& event)
 	//save the current session before closing
 	SessionEntry session;
 	session.SetSelectedTab(GetNotebook()->GetSelection());
-	session.SetWorkspaceName(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
+	
+	if(ManagerST::Get()->IsWorkspaceOpen()){
+		session.SetWorkspaceName(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
+	}
 
 	//loop over the open editors, and get their file name
 	//wxArrayString files;
@@ -1049,7 +1052,13 @@ void Frame::OnClose(wxCloseEvent& event)
 
 	//session.SetTabs(files);
 	session.SetTabInfoArr(vTabInfoArr);
-	SessionManager::Get().Save(wxT("Default"), session);
+	if(ManagerST::Get()->IsWorkspaceOpen()) {
+		SessionManager::Get().Save(WorkspaceST::Get()->GetName(), session);
+		SessionManager::Get().SetLastWorkspaceName(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
+	} else {
+		SessionManager::Get().Save(wxT("Default"), session);
+		SessionManager::Get().SetLastWorkspaceName(wxT("Default"));
+	}
 
 	// keep list of all detached panes
 	wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();

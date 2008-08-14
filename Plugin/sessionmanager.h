@@ -81,6 +81,8 @@ public:
 	bool Load(const wxString &fileName);
 	bool Save(const wxString &name, SessionEntry &session);
 	bool FindSession(const wxString &name, SessionEntry &session);
+	void SetLastWorkspaceName(const wxString &name);
+	wxString GetLastSession();
 };
 
 #endif //SESSIONMANAGER_H

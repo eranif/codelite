@@ -276,7 +276,6 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 			output.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			output.Replace(wxT("$(ProjectName)"), project_name);
 			if(bldConf) {
-				wxLogMessage(wxString::Format(wxT("No build configuration could find for project '%s'"), proj->GetName().c_str()));
 				output.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
 				output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
 				output.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());

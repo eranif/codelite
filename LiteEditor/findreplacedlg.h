@@ -214,7 +214,7 @@ protected:
 	void ConnectEvents();
 	void OnClick(wxCommandEvent &event);
 	void SendEvent(wxEventType type);
-
+	
 	void OnKeyDown(wxKeyEvent &event);
 	DECLARE_EVENT_TABLE()
 	void OnClose(wxCloseEvent &event);

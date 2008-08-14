@@ -106,8 +106,8 @@ void FindReplaceDialog::CreateGUIControls()
 	gbSizer = new wxGridBagSizer();
 	SetSizer(hMainSzier);
 
-	hMainSzier->Add(gbSizer, 3, wxEXPAND | wxALL, 5);
-	hMainSzier->Add(btnSizer, 1, wxALL, 5);
+	hMainSzier->Add(gbSizer, 1, wxEXPAND | wxALL, 5);
+	hMainSzier->Add(btnSizer, 0, wxALL, 5);
 
 	wxStaticText* itemStaticText;
 	itemStaticText = new wxStaticText( this, wxID_STATIC, wxT("Find What:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
@@ -331,11 +331,12 @@ void FindReplaceDialog::SendEvent(wxEventType type)
 	wxCommandEvent event(type, GetId());
 	event.SetEventObject(this);
 
-	if ( GetEventOwner() == NULL )
+	if ( GetEventOwner() == NULL ){
 		GetEventHandler()->ProcessEvent( event );
-	else
+	}else{
 		// If an event owner was provided, pass it the event
 		GetEventOwner()->ProcessEvent( event );
+	}
 }
 
 bool FindReplaceDialog::Show(int kind)

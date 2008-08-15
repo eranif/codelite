@@ -91,7 +91,7 @@ public:
 	void ChangeLog();
 	void Delete();
 	void Revert();
-	
+	void ResolveConflictedFile(const wxFileName &filename, SvnPostCmdAction *handler = NULL);
 	DECLARE_EVENT_TABLE()
 };
 

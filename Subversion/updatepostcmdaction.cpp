@@ -16,7 +16,6 @@ void UpdatePostCmdAction::DoCommand()
 {
 	// call the parent command
 	SvnIconRefreshHandler::DoCommand();
-
 	if (m_mgr->IsWorkspaceOpen()) {
 		// test to see if any of the modified files is a project / workspace file
 		wxArrayString projects;

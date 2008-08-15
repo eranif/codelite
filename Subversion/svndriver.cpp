@@ -292,6 +292,21 @@ void SvnDriver::Commit()
 	dlg->Destroy();
 }
 
+void SvnDriver::ResolveConflictedFile(const wxFileName& filename, SvnPostCmdAction* handler)
+{
+	TRYENTERSVN()
+	wxString command;
+	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
+	command << wxT(" resolved \"") << filename.GetFullPath() << wxT("\"");
+		
+	// set the post command
+	if(handler){
+		m_curHandler = new SvnDefaultCmdHandler(this, command);
+		m_curHandler->SetPostCmdAction(handler);
+	}
+	ExecCommand(command);
+}
+
 void SvnDriver::CommitFile(const wxString &fileName, SvnPostCmdAction *handler)
 {
 	TRYENTERSVN()

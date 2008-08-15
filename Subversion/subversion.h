@@ -123,7 +123,8 @@ protected:
 	void OnShowReportPrj(wxCommandEvent &e);
 	void OnUpdatePrj(wxCommandEvent &e);
 	void OnCommitPrj(wxCommandEvent &e);
-
+	void OnResolveConflictFile(wxCommandEvent &e);
+	void OnResolveConflict(wxCommandEvent &e);
 };
 
 #endif //SUBVERSION_H

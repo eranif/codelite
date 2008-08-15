@@ -502,7 +502,7 @@ void Frame::Initialize(bool loadLastSession)
 	m_theFrame->GetWorkspacePane()->GetNotebook()->SetAuiManager( &m_theFrame->GetDockingManager(), wxT("Workspace View") );
 	//load last session?
 	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
-		m_theFrame->LoadSession(wxT("Default"));
+		m_theFrame->LoadSession(SessionManager::Get().GetLastSession());
 	}
 
 	SetGccColourFunction( BuildTab::ColourGccLine );

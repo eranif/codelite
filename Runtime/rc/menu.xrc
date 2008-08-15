@@ -739,11 +739,12 @@
             <label>Compile</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="rename_item">
+            <label>Rename...</label>
+        </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="remove_item">
             <label>Remove</label>
-        </object>
-		<object class="wxMenuItem" name="rename_item">
-            <label>Rename</label>
         </object>
 	</object>
     

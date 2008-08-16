@@ -311,6 +311,7 @@ createPluginMakefile()
 	plugin_path=$1
 	plugin_name=$2
 	install_path=$3
+	post_install_path=$4
 	
 	echo "Generating ${plugin_path}/Makefile..."
 	current_wd=`pwd`
@@ -324,7 +325,7 @@ createPluginMakefile()
 
 	createVariables "yes"
 	createObjectList "*.cpp" "${plugin_name}Objects"
-	createPluginTargets "${plugin_name}"	
+	createPluginTargets "${plugin_name}" "${post_install_path}"
 	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}"
 
 	## restore the path
@@ -347,8 +348,10 @@ createPluginMakefile()
 createPluginTargets()
 {
 	plugin_name=$1
+	runtime_path=$2
+	
 	echo "## build tagrets" >> Makefile
-	echo "all :  pre_build ${plugin_name}" >> Makefile
+	echo "all :  pre_build ${plugin_name} post_build" >> Makefile
 	echo "" >> Makefile
 	echo "pre_build:" >> Makefile
 	echo "	@echo =================================================" >> Makefile
@@ -360,6 +363,11 @@ createPluginTargets()
 	echo "clean:" >> Makefile
 	echo "	\$(RM) ${base_dir}/\$(OUTPUT_DIR)/${plugin_name}.so" >> Makefile
 	echo "	\$(RM) -fr \$(OBJ_DIR)" >> Makefile
+	echo "	\$(RM) -fr ${runtime_path}/${plugin_name}.so" >> Makefile
+	echo "" >> Makefile
+	
+	echo "post_build:" >> Makefile
+	echo "	cp -fr ${base_dir}/\$(OUTPUT_DIR)/${plugin_name}.so ${runtime_path}/." >> Makefile
 	echo "" >> Makefile
 
 }
@@ -660,13 +668,13 @@ echo "" >> Makefile
 ##
 ########################################################
 
-createPluginMakefile "Debugger" "Debugger" "\$(DESTDIR)$prefix/share/codelite/debuggers/"
-createPluginMakefile "Gizmos" "Gizmos"  "\$(DESTDIR)$prefix/share/codelite/plugins/"
-createPluginMakefile "cscope" "cscope" "\$(DESTDIR)$prefix/share/codelite/plugins/"
-createPluginMakefile "Subversion" "Subversion" "\$(DESTDIR)$prefix/share/codelite/plugins/"
-createPluginMakefile "CodeFormatter" "CodeFormatter" "\$(DESTDIR)$prefix/share/codelite/plugins/"
-#createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "\$(DESTDIR)$prefix/share/codelite/plugins/"
-createPluginMakefile "Copyright" "Copyright" "\$(DESTDIR)$prefix/share/codelite/plugins/"
-createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)$prefix/share/codelite/plugins/"
+createPluginMakefile "Debugger" "Debugger" "\$(DESTDIR)$prefix/share/codelite/debuggers/" "../Runtime/debuggers"
+createPluginMakefile "Gizmos" "Gizmos"  "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
+createPluginMakefile "cscope" "cscope" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
+createPluginMakefile "Subversion" "Subversion" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
+createPluginMakefile "CodeFormatter" "CodeFormatter" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
+#createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
+createPluginMakefile "Copyright" "Copyright" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
+createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 
 

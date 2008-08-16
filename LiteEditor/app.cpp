@@ -338,6 +338,15 @@ int App::OnExit()
 
 bool App::CopySettings(const wxString &destDir, wxString& installPath)
 {
+#if defined (__WXGTK__)
+	// By default everything's been installed to /usr/local/*
+	// However check, as --prefix= might have put things elsewhere
+	if ( ! LocateConfPath( installPath ) ) {
+		wxLogMessage( wxT("Help, I couldn't find CodeLite's resource files!\nPlease check your installation") ); 
+		return false;
+	}
+#endif
+
 	bool fileExist = wxFileName::FileExists( destDir + wxT("/config/codelite.xml") );
 	bool copyAnyways(true);
 
@@ -353,12 +362,6 @@ bool App::CopySettings(const wxString &destDir, wxString& installPath)
 		// copy new settings from the global installation location which is currently located at
 		// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
 		///////////////////////////////////////////////////////////////////////////////////////////
-#if defined (__WXGTK__)
-    if ( ! LocateConfPath( installPath ) ) {		// However check, as --prefix= might have put things elsewhere
-			wxLogMessage( wxT("Help, I couldn't find CodeLite's resource files!\nPlease check your installation") ); 
-			return false;
-		}
-#endif
 		CopyDir(installPath + wxT("/templates/"), destDir + wxT("/templates/"));
 		CopyDir(installPath + wxT("/lexers/"), destDir + wxT("/lexers/"));
 		massCopy  (installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));

@@ -616,6 +616,7 @@ void Frame::CreateGUIControls(void)
 	// set the path to ctags - assumes that ctags-le is located under the same path codelite exe
 	wxFileName exePath( wxStandardPaths::Get().GetExecutablePath() );
 	tagsManager->SetCtagsPath(exePath.GetPath());
+	tagsManager->StartCtagsProcess();
 #endif
 
 	//--------------------------------------------------------------------------------------

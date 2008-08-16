@@ -521,6 +521,8 @@ bool FileViewTree::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &pa
 
 void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 {
+	static wxString start_path(wxEmptyString);
+	
 	wxTreeItemId item = GetSingleSelection();
 	if ( !item.IsOk() ) {
 		return;
@@ -534,15 +536,23 @@ void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 
 	wxArrayString paths;
 	ProjectPtr proj = ManagerST::Get()->GetProject( project );
-	wxFileDialog *dlg = new wxFileDialog( this, wxT( "Add Existing Item" ), proj->GetFileName().GetPath(), wxEmptyString, ALL, wxFD_MULTIPLE | wxOPEN | wxFILE_MUST_EXIST , wxDefaultPosition );
+	if(start_path.IsEmpty()) {
+		start_path = proj->GetFileName().GetPath();
+	}
+	
+	wxFileDialog *dlg = new wxFileDialog( this, wxT( "Add Existing Item" ), start_path, wxEmptyString, ALL, wxFD_MULTIPLE | wxOPEN | wxFILE_MUST_EXIST , wxDefaultPosition );
 	if ( dlg->ShowModal() == wxID_OK ) {
-
 		dlg->GetPaths( paths );
+		
+		if(paths.IsEmpty() == false){
+			// keep the last used path
+			wxFileName fn(paths.Item(0));
+			start_path = fn.GetPath();
+		}
 		AddFilesToVirtualFodler(item, paths);
 	}
-
-	SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&paths);
 	dlg->Destroy();
+	SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&paths);
 }
 
 void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )

@@ -115,6 +115,7 @@ createMainTargets()
 
 	echo "ctags: sdk/ctags/Makefile" >> Makefile
 	echo "	cd sdk/ctags/ && \$(MAKE)" >> Makefile
+	echo "	cp -fr sdk/ctags/ctags-le Runtime/." >> Makefile
 	echo "" >> Makefile
 
 	echo "sdk/ctags/Makefile: sdk/ctags/source.mak" >> Makefile

@@ -334,7 +334,7 @@ int App::OnExit()
 	return 0;
 }
 
-void App::CopySettings(const wxString &destDir, const wxString &installPath)
+void App::CopySettings(const wxString &destDir, wxString installPath)
 {
 	bool fileExist = wxFileName::FileExists( destDir + wxT("/config/codelite.xml") );
 	bool copyAnyways(true);
@@ -351,6 +351,10 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 		// copy new settings from the global installation location which is currently located at
 		// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
 		///////////////////////////////////////////////////////////////////////////////////////////
+#if defined (__WXGTK__)
+    if ( ! LocateConfPath( installPath ) )    // However check, as --prefix= might have put things elsewhere
+        return;                               // Abort if not found, to avoid error messages
+#endif
 		CopyDir(installPath + wxT("/templates/"), destDir + wxT("/templates/"));
 		CopyDir(installPath + wxT("/lexers/"), destDir + wxT("/lexers/"));
 		massCopy  (installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
@@ -366,6 +370,21 @@ void App::CopySettings(const wxString &destDir, const wxString &installPath)
 
 	}
 }
+
+#if defined (__WXGTK__)
+bool App::LocateConfPath( wxString& installPath )
+{
+  // By default, installPath will be /usr/local/share/codelite/
+  if ( wxFileName::DirExists( installPath ) ) return true;
+  installPath = wxT("/usr/share/codelite");  // Next likeliest: this is where distros will put it
+  if ( wxFileName::DirExists( installPath ) ) return true;
+  installPath = wxT("/etc/codelite");        // OK, try the officially-correct place (though it should really be a foo.conf file)
+  if ( wxFileName::DirExists( installPath ) ) return true;
+  if ( wxFileName::FileExists( wxT("./config/accelerators.conf.default") ) )  // Last chance. If we're running from an "uninstalled" CL binary...
+    { installPath = wxT("./"); return true; }
+  return false;
+}
+#endif
 
 void App::OnFatalException()
 {

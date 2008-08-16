@@ -414,7 +414,6 @@ createInstallTarget()
 	echo "	@cp -fpr lib/Debugger.so \$(DESTDIR)$prefix/share/codelite/debuggers/" >> Makefile
 	echo "	@cp -fpr lib/CodeFormatter.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
 	echo "	@cp -fpr lib/Subversion.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
-#	echo "	@cp -fpr lib/ReferenceAnalyser.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
 	echo "	@cp -fpr lib/cscope.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
 	echo "	@cp -fpr lib/Gizmos.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
 	echo "	@cp -fpr Runtime/index.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
@@ -422,7 +421,6 @@ createInstallTarget()
 	echo "	@cp -fpr Runtime/svnreport.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
 	echo "	@cp -fpr Runtime/images/*.png \$(DESTDIR)$prefix/share/codelite/images/" >> Makefile
 	echo "	@cp -fpr Runtime/config/accelerators.conf.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
-	echo "	@cp -fpr Runtime/codelite.desktop /usr/share/applications/" >> Makefile
 	if [ "$add_desktop_icon" = "yes" ] ; then
 	  if test -d $HOME/Desktop/ ; then
 	    echo "	@cp -fpr Runtime/codelite.desktop $HOME/Desktop/" >> Makefile

@@ -37,10 +37,14 @@ class App : public wxApp
 
 private:	// Methods
 	bool ReadControlFile(wxString &installPath, long &installRev);
-	void CopySettings(const wxString &destDir, const wxString &installPath);
+	void CopySettings(const wxString &destDir, wxString installPath);
 	bool CheckRevision(const wxString &fileName);
 	bool CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);
-	
+
+#if defined (__WXGTK__)
+  bool LocateConfPath(wxString& installPath);
+#endif
+
 #ifdef __WXMSW__	
 	HINSTANCE m_handler;
 #endif

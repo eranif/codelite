@@ -179,8 +179,9 @@ bool App::OnInit()
 		wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
 
 		//copy the settings from the global location if needed
-		ManagerST::Get()->SetInstallDir( wxStandardPaths::Get().GetDataDir() );
-		CopySettings(homeDir, wxStandardPaths::Get().GetDataDir());
+		wxString installPath( wxStandardPaths::Get().GetDataDir() );
+		if ( ! CopySettings(homeDir, installPath ) ) return false;
+		ManagerST::Get()->SetInstallDir( installPath );
 
 	} else {
 		wxFileName fn(homeDir);
@@ -201,9 +202,10 @@ bool App::OnInit()
 	wxMkDir((homeDir + wxT("/templates/")).ToAscii(), 0777);
 	wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
 
-	ManagerST::Get()->SetInstallDir( MacGetBasePath() );
+	wxString installPath( MacGetBasePath() );
+	ManagerST::Get()->SetInstallDir( installPath );
 	//copy the settings from the global location if needed
-	CopySettings(homeDir, MacGetBasePath());
+	CopySettings(homeDir, installPath);
 
 #else //__WXMSW__
 	if (homeDir.IsEmpty()) { //did we got a basedir from user?
@@ -334,7 +336,7 @@ int App::OnExit()
 	return 0;
 }
 
-void App::CopySettings(const wxString &destDir, wxString installPath)
+bool App::CopySettings(const wxString &destDir, wxString& installPath)
 {
 	bool fileExist = wxFileName::FileExists( destDir + wxT("/config/codelite.xml") );
 	bool copyAnyways(true);
@@ -352,8 +354,10 @@ void App::CopySettings(const wxString &destDir, wxString installPath)
 		// /usr/local/share/codelite/ (Linux) or at codelite.app/Contents/SharedSupport
 		///////////////////////////////////////////////////////////////////////////////////////////
 #if defined (__WXGTK__)
-    if ( ! LocateConfPath( installPath ) )    // However check, as --prefix= might have put things elsewhere
-        return;                               // Abort if not found, to avoid error messages
+    if ( ! LocateConfPath( installPath ) ) {		// However check, as --prefix= might have put things elsewhere
+			wxLogMessage( wxT("Help, I couldn't find CodeLite's resource files!\nPlease check your installation") ); 
+			return false;
+		}
 #endif
 		CopyDir(installPath + wxT("/templates/"), destDir + wxT("/templates/"));
 		CopyDir(installPath + wxT("/lexers/"), destDir + wxT("/lexers/"));
@@ -369,6 +373,8 @@ void App::CopySettings(const wxString &destDir, wxString installPath)
 		wxCopyFile(installPath + wxT("/config/accelerators.conf.default"), destDir + wxT("/config/accelerators.conf.default"));
 
 	}
+	
+	return true;
 }
 
 #if defined (__WXGTK__)
@@ -381,7 +387,7 @@ bool App::LocateConfPath( wxString& installPath )
   installPath = wxT("/etc/codelite");        // OK, try the officially-correct place (though it should really be a foo.conf file)
   if ( wxFileName::DirExists( installPath ) ) return true;
   if ( wxFileName::FileExists( wxT("./config/accelerators.conf.default") ) )  // Last chance. If we're running from an "uninstalled" CL binary...
-    { installPath = wxT("./"); return true; }
+    { installPath = wxGetCwd();	return true; }
   return false;
 }
 #endif

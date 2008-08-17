@@ -47,10 +47,6 @@ Source: "C:\Development\C++\codelite\trunk\Runtime\templates\*"; DestDir: "{app}
 Source: "C:\Development\C++\codelite\trunk\Runtime\lexers\Default\*.xml"; DestDir: "{app}\lexers\Default\"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\lexers\BlackTheme\*.xml"; DestDir: "{app}\lexers\BlackTheme\"; Excludes: "*.svn*"; Flags: ignoreversion ; Components: Editor
 
-; Copy SDK libraries
-Source: "C:\Development\C++\codelite\trunk\Runtime\sdk\lib\win32\*"; DestDir: "{app}\sdk\lib"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\sdk\include\UnitTest++\*"; DestDir: "{app}\sdk\include\UnitTest++\"; Flags: recursesubdirs ; Components: Editor
-
 Source: "C:\Development\C++\codelite\trunk\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\sdk\curl\lib\libcurl-4.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
@@ -59,6 +55,7 @@ Source: "C:\Development\C++\codelite\trunk\Runtime\le_exec.exe"; DestDir: "{app}
 Source: "C:\Development\C++\codelite\trunk\Runtime\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\src\*"; DestDir: "{app}\src"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

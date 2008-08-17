@@ -1,16 +1,28 @@
 #!/bin/sh
-file_exist=`test -f LiteEditor/svninfo.cpp`
-file_exist=$?
+has_file=0
+has_svn=0
 
-if [ $file_exist -eq 1 ]
-then
-       ## file does not exist, create an empty file
-       touch LiteEditor/svninfo.cpp
+if (test -f LiteEditor/svninfo.cpp); then
+	has_file=1
 fi
 
-cur_rev=`svn info | grep Revision | awk '{print $2;}'`
+if (test -d ".svn"); then
+	has_svn=1
+fi
 
+# not under svn, but we do have the svninfo file, do nothing 
+if [ $has_file -eq 1 ] && [ $has_svn -eq 0 ]; then
+       ## file does not exist, create an empty file
+       exit 0
+fi
+
+# under svn
 rm -fr LiteEditor/svninfo.cpp
+if [ $has_svn -eq 1 ]; then
+	cur_rev=`svn info | grep Revision | awk '{print $2;}'`
+else
+	cur_rev=""
+fi
 
 ## generate the svninfo file 
 echo "#include <wx/string.h>" >> LiteEditor/svninfo.cpp

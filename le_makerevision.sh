@@ -13,7 +13,7 @@ fi
 # not under svn, but we do have the svninfo file, do nothing 
 if [ $has_file -eq 1 ] && [ $has_svn -eq 0 ]; then
        ## file does not exist, create an empty file
-       exit 0
+       return 0
 fi
 
 # under svn

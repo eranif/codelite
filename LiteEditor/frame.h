@@ -356,7 +356,8 @@ protected:
 	void OnHighlightWord(wxCommandEvent &event);
 	void OnShowNavBar(wxCommandEvent &e);
 	void OnShowNavBarUI(wxUpdateUIEvent &e);
-
+	void OnOpenShellFromFilePath(wxCommandEvent &e);
+	
 	// this event is sent from the notebook container to the frame
 	void OnFileClosing(NotebookEvent &event);
 	void OnPageChanged(NotebookEvent &event);

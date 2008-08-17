@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "dirsaver.h"
 #include "batchbuilddlg.h"
 #include "detachedpanesinfo.h"
 #include "custom_tab.h"
@@ -158,6 +159,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
 	EVT_MENU(XRCID("copy_file_path"), Frame::OnCopyFilePathOnly)
+	EVT_MENU(XRCID("open_shell_from_filepath"), Frame::OnOpenShellFromFilePath)
+	EVT_UPDATE_UI(XRCID("open_shell_from_filepath"), Frame::OnFileExistUpdateUI)
+	
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE, Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, Frame::OnOutputWindowEvent)
@@ -3329,4 +3333,18 @@ void Frame::OnReBuildWorkspace(wxCommandEvent& e)
 void Frame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
 {
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
+}
+
+void Frame::OnOpenShellFromFilePath(wxCommandEvent& e)
+{
+	// get the file path
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	if(editor){
+		wxString filepath = editor->GetFileName().GetPath();
+		DirSaver ds;
+		wxSetWorkingDirectory(filepath);
+		if(!ProcUtils::Shell()){
+			wxLogMessage(wxString::Format(wxT("Failed to open shell at '%s'"), filepath.c_str()));
+		}
+	}
 }

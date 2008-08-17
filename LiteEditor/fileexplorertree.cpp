@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "fileexplorertree.h"
+#include "dirsaver.h"
 #include "manager.h"
 #include "wx/xrc/xmlres.h"
 #include "pluginmanager.h"
@@ -231,7 +232,10 @@ void FileExplorerTree::OnOpenShell(wxCommandEvent &event)
 	wxTreeItemId item = GetSelection();
 	if (item.IsOk()) {
 		wxFileName fullpath = GetFullPath(item);
+		
+		DirSaver ds;
 		wxSetWorkingDirectory(fullpath.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+		
 		if (!ProcUtils::Shell()) {
 			wxMessageBox(wxT("Failed to load shell terminal"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 			return;

@@ -435,10 +435,6 @@ createInstallTarget()
 	    echo "	@cp -fpr Runtime/codelite.desktop $HOME/Desktop/" >> Makefile
 	  fi
 	fi
-	echo "	@mkdir -p \$(DESTDIR)$prefix/include/UnitTest++/" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/lib/" >> Makefile
-	echo "	@cp -fr Runtime/sdk/lib/unix/*.a \$(DESTDIR)$prefix/lib/" >> Makefile
-	echo "	@cp -fr Runtime/sdk/include/UnitTest++/* \$(DESTDIR)$prefix/include/UnitTest++/" >> Makefile
 	echo "	@chmod -R 777 \$(DESTDIR)$prefix/share/codelite" >> Makefile
 	echo "" >> Makefile
 }

@@ -6,10 +6,9 @@
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
-        <IncludePath Value="&quot;$(UnitTestCppBase)/include/UnitTest++/&quot;"/>
       </Compiler>
       <Linker Required="yes" Options="">
-        <LibraryPath Value="&quot;$(UnitTestCppBase)/lib&quot;"/>
+        <LibraryPath Value=""/>
         <Library Value="libUnitTest++.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
@@ -32,10 +31,9 @@
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="">
         <IncludePath Value="."/>
-        <IncludePath Value="&quot;$(UnitTestCppBase)/include/UnitTest++/&quot;"/>
       </Compiler>
       <Linker Required="yes" Options="-O2">
-        <LibraryPath Value="&quot;$(UnitTestCppBase)/lib&quot;"/>
+        <LibraryPath Value=""/>
         <Library Value="libUnitTest++.a"/>
       </Linker>
       <ResourceCompiler Required="no" Options=""/>

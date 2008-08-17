@@ -4,6 +4,7 @@ AboutDlg::AboutDlg( wxWindow* parent )
 :
 AboutDlgBase( parent )
 {
+	m_buttonOk->SetFocus();
 	GetSizer()->Fit(this);
 }
 

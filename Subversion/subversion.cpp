@@ -782,18 +782,25 @@ wxString SubversionPlugin::FormatRaws(const wxArrayString &lines, const wxString
 
 		content << wxT("<tr><td><font size=2 face=\"Verdana\">");
 		content << wxT("<a href=\"action:open-file:") << lines.Item(i) << wxT("\" >") << lines.Item(i) << wxT("</a>") ;
-
+		
+		// incase the file is already using an absolute path, dont use basePath
+		wxString _basePath = basePath;
+		wxFileName fn(lines.Item(i));
+		if(fn.IsAbsolute()){
+			_basePath = wxEmptyString;
+		}
+		
 		//for modified files, add Diff menu
 		switch (state) {
 		case SvnXmlParser::StateModified:
 			content << wxT(" - ");
-			content << wxT("<a href=\"action:diff:") << basePath << lines.Item(i) << wxT("\" >") << wxT("Diff") << wxT("</a>");
+			content << wxT("<a href=\"action:diff:") << _basePath << lines.Item(i) << wxT("\" >") << wxT("Diff") << wxT("</a>");
 			content << wxT(" ");
-			content << wxT("<a href=\"action:revert-$(Origin):") << basePath << lines.Item(i) << wxT("\" >") << wxT("Revert") << wxT("</a>");
+			content << wxT("<a href=\"action:revert-$(Origin):") << _basePath << lines.Item(i) << wxT("\" >") << wxT("Revert") << wxT("</a>");
 			break;
 		case SvnXmlParser::StateUnversioned:
 			content << wxT(" - ");
-			content << wxT("<a href=\"action:add-$(Origin):") << basePath << lines.Item(i) << wxT("\" >") << wxT("Add") << wxT("</a>");
+			content << wxT("<a href=\"action:add-$(Origin):") << _basePath << lines.Item(i) << wxT("\" >") << wxT("Add") << wxT("</a>");
 			break;
 		default:
 			break;

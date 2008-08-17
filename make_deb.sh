@@ -23,6 +23,7 @@ mkdir -p fakeroot/usr/local/share/codelite/templates
 mkdir -p fakeroot/usr/local/share/codelite/plugins
 mkdir -p fakeroot/usr/local/share/codelite/images
 mkdir -p fakeroot/usr/local/share/codelite/rc
+mkdir -p fakeroot/usr/local/share/codelite/src
 mkdir -p fakeroot/usr/local/share/codelite/lexers
 mkdir -p fakeroot/usr/share/applications/
 \cp -pr Runtime/config/build_settings.xml fakeroot/usr/local/share/codelite/config/build_settings.xml
@@ -43,6 +44,7 @@ mkdir -p fakeroot/usr/share/applications/
 \cp -pr lib/UnitTestCPP.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr Runtime/*.html fakeroot/usr/local/share/codelite/
 \cp -pr Runtime/astyle.sample fakeroot/usr/local/share/codelite/
+\cp -pr Runtime/src/* fakeroot/usr/local/share/codelite/src/
 \cp -pr Runtime/images/*.png fakeroot/usr/local/share/codelite/images/
 chmod -R 777 fakeroot/usr/local/share/codelite
 chmod +x fakeroot/usr/local/bin/CodeLite

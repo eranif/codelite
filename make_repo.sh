@@ -6,7 +6,7 @@
 ##4. Compress the Packages file to dists/gutsy/restricted/binary-i386/Packages.gz
 ##5. Add the following entry to your /etc/apt/sources.list: deb http://eran-linux:/debs  gutsy restricted (replace eran-linux with your IP/server name)
 echo "removing old deb files..."
-rm *.deb
+rm -fr *.deb
 rm /var/www/debs/*.deb
 echo "Creating new deb file..."
 ./make_deb.sh

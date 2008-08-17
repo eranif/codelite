@@ -390,7 +390,6 @@ createInstallTarget()
 	fi
 	echo "	@cp Runtime/le_dos2unix.sh \$(DESTDIR)$prefix/bin/" >> Makefile
 	echo "	@cp Runtime/le_exec.sh \$(DESTDIR)$prefix/bin/" >> Makefile
-#	echo "	@cp lib/libsqlite3-cl.so /usr/lib/" >> Makefile
 	echo "	@cp Runtime/le_killproc.sh \$(DESTDIR)$prefix/bin/" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
@@ -407,6 +406,7 @@ createInstallTarget()
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers/Default" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers/BlackTheme" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/src/" >> Makefile
 	echo "	@cp -fr Runtime/config/*.xml \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
 	echo "	@cp -fr Runtime/config/debuggers.xml.gtk \$(DESTDIR)$prefix/share/codelite/config/debuggers.xml" >> Makefile
 	echo "	@cp -fr Runtime/config/codelite.xml.default.gtk \$(DESTDIR)$prefix/share/codelite/config/codelite.xml.default" >> Makefile
@@ -430,6 +430,7 @@ createInstallTarget()
 	echo "	@cp -fpr Runtime/svnreport.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
 	echo "	@cp -fpr Runtime/images/*.png \$(DESTDIR)$prefix/share/codelite/images/" >> Makefile
 	echo "	@cp -fpr Runtime/config/accelerators.conf.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
+	echo "	@cp -fpr Runtime/src/*.gz \$(DESTDIR)$prefix/share/codelite/src/" >> Makefile
 	if [ "$add_desktop_icon" = "yes" ] ; then
 	  if test -d $HOME/Desktop/ ; then
 	    echo "	@cp -fpr Runtime/codelite.desktop $HOME/Desktop/" >> Makefile

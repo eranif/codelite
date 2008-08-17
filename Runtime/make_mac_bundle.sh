@@ -57,6 +57,7 @@ cp astyle.sample ./CodeLite.app/Contents/SharedSupport/
 cp index.html ./CodeLite.app/Contents/SharedSupport/
 cp svnreport.html ./CodeLite.app/Contents/SharedSupport/
 cp icon.icns ./CodeLite.app/Contents/Resources/
+cp -pr src/*.gz ./CodeLite.app/Contents/Resources/
 
 ## copy empty layout file
 cp config/codelite.layout.default ./CodeLite.app/Contents/SharedSupport/config/codelite.layout

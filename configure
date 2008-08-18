@@ -477,11 +477,15 @@ generateControlFile()
 	Arc="i386"
 	if [ "$arch" = "x86_64" ]; then
 		Arc="amd64"
-        fi
-
+    fi
+	
+	build_version="0"	
+	if test -d ".svn"; then
+		build_version=`svn info | grep Revision | awk '{print $2;}'`
+	fi
 	rm -fr fakeroot/DEBIAN/control
 	echo "Package: CodeLite" >> fakeroot/DEBIAN/control
-	echo "Version: 1.0" >> fakeroot/DEBIAN/control
+	echo "Version: 1.0.${build_version}" >> fakeroot/DEBIAN/control
 	echo "Section: Development " >> fakeroot/DEBIAN/control
 	echo "Architecture: ${Arc} " >> fakeroot/DEBIAN/control
 	echo "Essential: no" >> fakeroot/DEBIAN/control

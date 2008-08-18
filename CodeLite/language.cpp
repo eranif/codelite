@@ -816,7 +816,7 @@ bool Language::TypeFromName(const wxString &name,
 			const wxCharBuffer buf = _C(text);
 			const wxCharBuffer buf2 = _C(extraScope);
 			get_variables(buf.data(), li, ignoreTokens, false);
-			get_variables(buf2.data(), li, ignoreTokens, false);
+			get_variables(buf2.data(), li, ignoreTokens, true);
 
 			//search for a full match in the returned list
 			for (VariableList::iterator iter = li.begin(); iter != li.end(); iter++) {
@@ -1090,17 +1090,25 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 	VariableList li;
 	Variable var;
 	wxString pattern(in);
-
+	
+	pattern = pattern.Trim().Trim(false);
 	const wxCharBuffer patbuf = _C(pattern);
 	li.clear();
 
 	TagsManager *mgr = GetTagsManager();
 	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
 	
-	get_variables(patbuf.data(), li, ignoreTokens, false);
+	// incase the 'in' string starts with '(' it is most likely that the input string is the 
+	// function signature in that case we pass 'true' as the fourth parameter to get_variables(..)
+	get_variables(patbuf.data(), li, ignoreTokens, pattern.StartsWith(wxT("(")));
+	
 	VariableList::iterator iter = li.begin();
 	for (; iter != li.end(); iter++) {
 		var = (*iter);
+		if(var.m_name.empty()){
+			continue;
+		}
+		
 		wxString tagName = _U(var.m_name.c_str());
 
 		//if we have name, collect only tags that matches name

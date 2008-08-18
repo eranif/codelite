@@ -180,7 +180,7 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								curr_var.Reset();
 								gs_names.clear();
 							}
-						}
+						} 
 						//
 						// Functions arguments:
 						// 
@@ -205,7 +205,7 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 						}
 						| ',' variable_decl special_star_amp LE_IDENTIFIER postfix2
 						{
-							if(gs_vars)
+							if(gs_vars && g_isUsedWithinFunc)
 							{ 
 								Variable var;
 								std::string pattern;
@@ -226,7 +226,7 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 						}
 						| '(' variable_decl special_star_amp postfix3
 						{
-							if(gs_vars)
+							if(gs_vars && g_isUsedWithinFunc)
 							{ 
 								Variable var;
 								std::string pattern;
@@ -244,10 +244,13 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								curr_var.Reset();
 								gs_names.clear();
 							}
+							if($4 == ",") {
+								cl_scope_less(0);
+							}
 						}
 						| ',' variable_decl special_star_amp postfix3
 						{
-							if(gs_vars)
+							if(gs_vars && g_isUsedWithinFunc)
 							{ 
 								Variable var;
 								std::string pattern;
@@ -264,6 +267,9 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								
 								curr_var.Reset();
 								gs_names.clear();
+							}
+							if($4 == ",") {
+								cl_scope_less(0);
 							}
 						};
 						

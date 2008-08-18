@@ -69,6 +69,8 @@ void testExprParser(char *buf)
 	res.Print();
 }
 
+void doo(int ii, int value, int stat) {
+}
 
 void testScopeParser(char *buf)
 {

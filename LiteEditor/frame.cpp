@@ -1167,6 +1167,7 @@ void Frame::OnCloseWorkspace(wxCommandEvent &event)
 	if (ManagerST::Get()->IsWorkspaceOpen()) {
 		ManagerST::Get()->CloseWorkspace();
 		GetConfigChoice()->Enable(false);
+		ShowWelcomePage();
 	}
 }
 
@@ -2601,14 +2602,7 @@ void Frame::OnShowWelcomePageUI(wxUpdateUIEvent &event)
 
 void Frame::OnShowWelcomePage(wxCommandEvent &event)
 {
-	//check if the welcome page is not 'on'
-	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-		if (GetNotebook()->GetPage((size_t)i) == m_welcomePage) {
-			GetNotebook()->SetSelection((size_t)i);
-			return;
-		}
-	}
-	CreateWelcomePage();
+	ShowWelcomePage();
 }
 
 void Frame::LoadPlugins()
@@ -3347,4 +3341,16 @@ void Frame::OnOpenShellFromFilePath(wxCommandEvent& e)
 			wxLogMessage(wxString::Format(wxT("Failed to open shell at '%s'"), filepath.c_str()));
 		}
 	}
+}
+
+void Frame::ShowWelcomePage()
+{
+	//check if the welcome page is not 'on'
+	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
+		if (GetNotebook()->GetPage((size_t)i) == m_welcomePage) {
+			GetNotebook()->SetSelection((size_t)i);
+			return;
+		}
+	}
+	CreateWelcomePage();
 }

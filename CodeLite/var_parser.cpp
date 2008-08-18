@@ -807,7 +807,7 @@ case 27:
 break;
 case 28:
 {
-							if(gs_vars)
+							if(gs_vars && g_isUsedWithinFunc)
 							{ 
 								Variable var;
 								std::string pattern;
@@ -829,7 +829,7 @@ case 28:
 break;
 case 29:
 {
-							if(gs_vars)
+							if(gs_vars && g_isUsedWithinFunc)
 							{ 
 								Variable var;
 								std::string pattern;
@@ -847,11 +847,14 @@ case 29:
 								curr_var.Reset();
 								gs_names.clear();
 							}
+							if(yyvsp[0] == ",") {
+								cl_scope_less(0);
+							}
 						}
 break;
 case 30:
 {
-							if(gs_vars)
+							if(gs_vars && g_isUsedWithinFunc)
 							{ 
 								Variable var;
 								std::string pattern;
@@ -868,6 +871,9 @@ case 30:
 								
 								curr_var.Reset();
 								gs_names.clear();
+							}
+							if(yyvsp[0] == ",") {
+								cl_scope_less(0);
 							}
 						}
 break;

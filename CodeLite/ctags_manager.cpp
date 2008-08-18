@@ -2135,13 +2135,13 @@ void TagsManager::GetFunctions(std::vector< TagEntryPtr > &tags, const wxString 
 	DoExecuteQueury(sql, tags, onlyWorkspace);
 }
 
-void TagsManager::GetAllTagsNameAsSpaceDelimString(wxString &tagsList)
+void TagsManager::GetAllTagsNames(wxArrayString &tagsList)
 {
 	try {
 		wxString query(wxT("select distinct name from tags where kind in('class' , 'struct', 'function', 'typedef', 'prototype', 'enum') order by name ASC"));
 		wxSQLite3ResultSet res = m_pDb->Query(query);
 		while (res.NextRow()) {
-			tagsList << res.GetString(0) << wxT(" ");
+			tagsList.Add(res.GetString(0));
 		}
 	} catch (wxSQLite3Exception &e) {
 		wxUnusedVar(e);

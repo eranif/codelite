@@ -666,7 +666,7 @@ public:
 	 * \brief return space delimited list of all unique string names in the database
 	 * \param tagsList
 	 */
-	void GetAllTagsNameAsSpaceDelimString(wxString &tagsList);
+	void GetAllTagsNames(wxArrayString &tagsList);
 	
 	/**
 	 * \brief return normalize function signature. This function strips any default values or variable

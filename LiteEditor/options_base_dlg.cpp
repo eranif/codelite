@@ -318,7 +318,10 @@ void OptionsDlg::SaveChanges()
 	options->SetShowIndentationGuidelines( m_showIndentationGuideLines->IsChecked() );
 	options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
 	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
-
+	options->SetFoldAtElse(m_foldAtElse->IsChecked());
+	options->SetFoldCompact(m_foldCompact->IsChecked());
+	options->SetFoldPreprocessor(m_foldPreprocessor->IsChecked());
+	
 	int iconSize(24);
 	if (m_iconSize->GetStringSelection() == wxT("Toolbar uses small icons (16x16)")) {
 		iconSize = 16;
@@ -455,9 +458,20 @@ wxPanel* OptionsDlg::CreateFoldingPage()
 
 	m_checkBoxMarkFoldedLine = new wxCheckBox( page, wxID_ANY, wxT("Underline Folded Line"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxMarkFoldedLine->SetValue(options->GetUnderlineFoldLine());
-
 	sz->Add( m_checkBoxMarkFoldedLine, 0, wxALL, 5 );
-
+	
+	m_foldPreprocessor = new wxCheckBox( page, wxID_ANY, wxT("Fold Preprocessors"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_foldPreprocessor->SetValue(options->GetFoldCompact());
+	sz->Add( m_foldPreprocessor, 0, wxALL, 5 );
+	
+	m_foldCompact = new wxCheckBox( page, wxID_ANY, wxT("Fold Compact"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_foldCompact->SetValue(options->GetFoldCompact());
+	sz->Add( m_foldCompact, 0, wxALL, 5 );
+	
+	m_foldAtElse = new wxCheckBox( page, wxID_ANY, wxT("Fold At Else"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_foldAtElse->SetValue(options->GetFoldAtElse());
+	sz->Add( m_foldAtElse, 0, wxALL, 5 );
+	
 	m_staticText1 = new wxStaticText( page, wxID_ANY, wxT("Fold Style:"), wxDefaultPosition, wxDefaultSize, 0 );
 	sz->Add( m_staticText1, 0, wxALL, 5 );
 

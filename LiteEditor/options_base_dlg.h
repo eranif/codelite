@@ -115,6 +115,9 @@ protected:
 	wxCheckBox* m_checkFullPathInTitle;
 	wxSpinCtrl* m_findReplaceHistory;
 	DialogsPage* m_dialogsPage;
+	wxCheckBox *m_foldCompact;
+	wxCheckBox *m_foldAtElse;
+	wxCheckBox *m_foldPreprocessor;
 	
 private:
 	wxPanel *CreateSyntaxHighlightPage();

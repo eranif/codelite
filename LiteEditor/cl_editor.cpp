@@ -182,12 +182,13 @@ void LEditor::SetProperties()
 	SetMouseDwellTime(250);
 	SetProperty(wxT("fold"), wxT("1"));
 	SetProperty(wxT("fold.html"), wxT("1"));
-	SetProperty(wxT("fold.preprocessor"), wxT("1"));
 	SetProperty(wxT("styling.within.preprocessor"), wxT("1"));
-	SetProperty(wxT("fold.compact"), wxT("1"));
-	SetProperty(wxT("fold.at.else"), wxT("1"));
 	SetProperty(wxT("fold.comment"), wxT("1"));
-
+	
+	SetProperty(wxT("fold.at.else"), options->GetFoldAtElse() ? wxT("1") : wxT("0"));
+	SetProperty(wxT("fold.preprocessor"), options->GetFoldPreprocessor() ? wxT("1") : wxT("0"));
+	SetProperty(wxT("fold.compact"), options->GetFoldCompact() ? wxT("1") : wxT("0"));
+	
 	// Fold and comments as well
 	SetProperty(wxT("fold.comment"), wxT("1"));
 	SetModEventMask (wxSCI_MOD_DELETETEXT | wxSCI_MOD_INSERTTEXT  | wxSCI_PERFORMED_UNDO  | wxSCI_PERFORMED_REDO );

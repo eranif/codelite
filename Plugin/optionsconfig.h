@@ -58,6 +58,9 @@ class WXDLLIMPEXP_LE_SDK OptionsConfig : public ConfObject
 	int		m_iconsSize;
 	wxFontEncoding m_fileFontEncoding;
 	int m_showWhitspaces;
+	bool m_foldCompact;
+	bool m_foldAtElse;
+	bool m_foldPreprocessor;
 	
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -103,7 +106,14 @@ public:
 	
 	void SetShowWhitspaces(const int& showWhitspaces) {this->m_showWhitspaces = showWhitspaces;}
 	const int& GetShowWhitspaces() const {return m_showWhitspaces;}
-
+	
+	void SetFoldAtElse(const bool& foldAtElse) {this->m_foldAtElse = foldAtElse;}
+	void SetFoldCompact(const bool& foldCompact) {this->m_foldCompact = foldCompact;}
+	const bool& GetFoldAtElse() const {return m_foldAtElse;}
+	const bool& GetFoldCompact() const {return m_foldCompact;}
+	void SetFoldPreprocessor(const bool& foldPreprocessor) {this->m_foldPreprocessor = foldPreprocessor;}
+	const bool& GetFoldPreprocessor() const {return m_foldPreprocessor;}
+	
 	/**
 	 * Return an XML representation of this object
 	 * \return XML node

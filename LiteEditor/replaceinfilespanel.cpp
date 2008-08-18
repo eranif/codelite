@@ -141,7 +141,7 @@ void ReplaceInFilesPanel::OnReplaceAll( wxCommandEvent& event )
 			content.Remove(posInChars, match_lenInChars);
 			content.insert(posInChars, replaceWith);
 			occur++;
-			offset = posInChars + replaceWith.length(); //match_len;
+			offset = pos + replaceWith.length(); // match_len;
 		}
 
 		// update the progress bar

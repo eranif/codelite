@@ -37,7 +37,18 @@
 #include "svnxmlparser.h"
 #include "logindlg.h"
 
-#define TRYENTERSVN() {if(m_cmd){return;} SelectSvnTab();}
+#define ENTER_SVN_AND_SELECT() {\
+	if(m_cmd){\
+		return;\
+	}\
+	SelectSvnTab();\
+}
+
+#define ENTER_SVN() {\
+	if(m_cmd){\
+		return;\
+	}\
+}
 
 static const wxChar* commandSeparator = wxT("----\n");
 
@@ -90,6 +101,13 @@ void SvnDriver::SelectSvnTab()
 			book->SetSelection(i);
 			break;
 		}
+	}
+	
+	// make sure the Ouput view is visible
+	wxAuiPaneInfo &info = m_manager->GetDockingManager()->GetPane(wxT("Output View"));
+	if(info.IsOk() && !info.IsShown()){
+		info.Show();
+		m_manager->GetDockingManager()->Update();
 	}
 }
 
@@ -196,7 +214,7 @@ void SvnDriver::ExecCommand(const wxString &cmd, bool hide)
 
 void SvnDriver::Update(SvnPostCmdAction *handler)
 {
-	TRYENTERSVN()
+	ENTER_SVN_AND_SELECT()
 
 	wxString command;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
@@ -223,7 +241,7 @@ void SvnDriver::Update(SvnPostCmdAction *handler)
 
 void SvnDriver::CommitWithAuth(const wxString &cmd, const TreeItemInfo &item)
 {
-	TRYENTERSVN();
+	ENTER_SVN_AND_SELECT();
 	wxString command(cmd);
 	LoginDialog *dlg = new LoginDialog(m_manager->GetTheApp()->GetTopWindow());
 	if (dlg->ShowModal() == wxID_OK) {
@@ -245,7 +263,7 @@ void SvnDriver::CommitWithAuth(const wxString &cmd, const TreeItemInfo &item)
 
 void SvnDriver::Commit()
 {
-	TRYENTERSVN()
+	ENTER_SVN_AND_SELECT()
 	wxString command, comment;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
 
@@ -294,7 +312,7 @@ void SvnDriver::Commit()
 
 void SvnDriver::ResolveConflictedFile(const wxFileName& filename, SvnPostCmdAction* handler)
 {
-	TRYENTERSVN()
+	ENTER_SVN_AND_SELECT()
 	wxString command;
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT(" resolved \"") << filename.GetFullPath() << wxT("\"");
@@ -309,7 +327,7 @@ void SvnDriver::ResolveConflictedFile(const wxFileName& filename, SvnPostCmdActi
 
 void SvnDriver::CommitFile(const wxString &fileName, SvnPostCmdAction *handler)
 {
-	TRYENTERSVN()
+	ENTER_SVN_AND_SELECT()
 	wxString command, comment;
 
 	//get the comment to enter
@@ -345,7 +363,7 @@ void SvnDriver::CommitFile(const wxString &fileName, SvnPostCmdAction *handler)
 
 void SvnDriver::UpdateFile(const wxString &fileName, SvnPostCmdAction *handler)
 {
-	TRYENTERSVN()
+	ENTER_SVN_AND_SELECT()
 
 	wxString command;
 	wxString file_name(fileName);
@@ -358,7 +376,7 @@ void SvnDriver::UpdateFile(const wxString &fileName, SvnPostCmdAction *handler)
 
 void SvnDriver::DiffFile(const wxFileName &fileName)
 {
-	TRYENTERSVN()
+	ENTER_SVN_AND_SELECT()
 	wxString command, comment;
 
 	DirSaver ds;
@@ -430,7 +448,7 @@ void SvnDriver::DiffFile(const wxFileName &fileName)
 
 void SvnDriver::Diff()
 {
-	TRYENTERSVN()
+	ENTER_SVN_AND_SELECT()
 	wxString command, comment;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
 
@@ -439,7 +457,7 @@ void SvnDriver::Diff()
 
 void SvnDriver::Delete()
 {
-	TRYENTERSVN();
+	ENTER_SVN_AND_SELECT();
 	wxString command, comment;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
 
@@ -467,7 +485,7 @@ void SvnDriver::Delete()
 
 void SvnDriver::Revert()
 {
-	TRYENTERSVN();
+	ENTER_SVN_AND_SELECT();
 	wxString command, comment;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
 
@@ -495,7 +513,7 @@ void SvnDriver::Revert()
 
 void SvnDriver::RevertFile(const wxFileName &fileName, SvnPostCmdAction *handler)
 {
-	TRYENTERSVN();
+	ENTER_SVN_AND_SELECT();
 	wxString command, comment;
 
 	DirSaver ds;
@@ -527,7 +545,7 @@ void SvnDriver::RevertFile(const wxFileName &fileName, SvnPostCmdAction *handler
 
 void SvnDriver::ChangeLog()
 {
-	TRYENTERSVN()
+	ENTER_SVN_AND_SELECT()
 	wxString command, comment;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
 
@@ -566,7 +584,7 @@ void SvnDriver::ChangeLog()
 
 void SvnDriver::Add(const wxFileName &filename, SvnPostCmdAction *handler)
 {
-	TRYENTERSVN()
+	ENTER_SVN_AND_SELECT()
 	wxString command;
 	DirSaver ds;
 	wxString fileName;
@@ -657,7 +675,7 @@ bool SvnDriver::GetFilesList(const wxArrayString& output, wxArrayString &files)
 
 void SvnDriver::Cleanup()
 {
-	TRYENTERSVN()
+	ENTER_SVN_AND_SELECT()
 	wxString command;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
 
@@ -696,8 +714,6 @@ void SvnDriver::PrintMessage(const wxString &text)
 			break;
 		}
 	}
-	SelectSvnTab();
-
 	if (svnWin) {
 		svnWin->AppendText(text);
 	}

@@ -184,6 +184,9 @@ void LEditor::SetProperties()
 	SetProperty(wxT("fold.html"), wxT("1"));
 	SetProperty(wxT("fold.preprocessor"), wxT("1"));
 	SetProperty(wxT("styling.within.preprocessor"), wxT("1"));
+	SetProperty(wxT("fold.compact"), wxT("1"));
+	SetProperty(wxT("fold.at.else"), wxT("1"));
+	SetProperty(wxT("fold.comment"), wxT("1"));
 
 	// Fold and comments as well
 	SetProperty(wxT("fold.comment"), wxT("1"));

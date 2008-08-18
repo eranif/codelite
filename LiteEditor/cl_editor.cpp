@@ -182,6 +182,7 @@ void LEditor::SetProperties()
 	SetMouseDwellTime(250);
 	SetProperty(wxT("fold"), wxT("1"));
 	SetProperty(wxT("fold.html"), wxT("1"));
+	SetProperty(wxT("fold.preprocessor"), wxT("1"));
 	SetProperty(wxT("styling.within.preprocessor"), wxT("1"));
 
 	// Fold and comments as well

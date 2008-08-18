@@ -1405,7 +1405,11 @@ void Manager::RetagWorkspace()
 	wxArrayString projects;
 	GetProjectList(projects);
 	std::vector<wxFileName> projectFiles;
-
+	
+	// in the case of retagging the entire workspace
+	// it is faster to drop the tables instead of deleting
+	TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
+	
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		ProjectPtr proj = GetProject(projects.Item(i));
 		if ( proj ) {

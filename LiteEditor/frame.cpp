@@ -1062,7 +1062,7 @@ void Frame::OnClose(wxCloseEvent& event)
 	//session.SetTabs(files);
 	session.SetTabInfoArr(vTabInfoArr);
 	if(ManagerST::Get()->IsWorkspaceOpen()) {
-		SessionManager::Get().Save(WorkspaceST::Get()->GetName(), session);
+		SessionManager::Get().Save(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session);
 		SessionManager::Get().SetLastWorkspaceName(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
 	} else {
 		SessionManager::Get().Save(wxT("Default"), session);

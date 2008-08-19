@@ -78,6 +78,8 @@ const wxEventType wxEVT_CMD_UPDATE_STATUS_BAR = wxNewEventType();
 extern char *arrow_right_green_xpm[];
 extern char *stop_xpm[];
 
+extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen); 
+
 BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_SCI_CHARADDED(wxID_ANY, LEditor::OnCharAdded)
 	EVT_SCI_MARGINCLICK(wxID_ANY, LEditor::OnMarginClick)
@@ -1198,11 +1200,11 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 	size_t flags = SearchFlags(data);
 	int offset = GetCurrentPos();
 
-	int dummy, dummy_len(0);
+	int dummy, dummy_len(0), dummy_c, dummy_len_c(0);
 	if ( GetSelectedText().IsEmpty() == false) {
 		if (flags & wxSD_SEARCH_BACKWARD) {
 			// searching up
-			if (StringFindReplacer::Search(GetSelectedText(), GetSelectedText().Len(), findWhat, flags, dummy, dummy_len) && dummy_len == (int)GetSelectedText().Len()) {
+			if (StringFindReplacer::Search(GetSelectedText(), GetSelectedText().Len(), findWhat, flags, dummy, dummy_len, dummy_c, dummy_len_c) && dummy_len_c == (int)GetSelectedText().Len()) {
 				// place the caret at the start of the selection so the search will skip this selected text
 				int sel_start = GetSelectionStart();
 				int sel_end = GetSelectionEnd();
@@ -1210,7 +1212,7 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 			}
 		} else {
 			// searching down
-			if (StringFindReplacer::Search(GetSelectedText(), 0, findWhat, flags, dummy, dummy_len) && dummy_len == (int)GetSelectedText().Len()) {
+			if (StringFindReplacer::Search(GetSelectedText(), 0, findWhat, flags, dummy, dummy_len, dummy_c, dummy_len_c) && dummy_len_c == (int)GetSelectedText().Len()) {
 				// place the caret at the end of the selection so the search will skip this selected text
 				int sel_start = GetSelectionStart();
 				int sel_end = GetSelectionEnd();
@@ -1372,7 +1374,7 @@ bool LEditor::ReplaceAll()
 		txt.Remove(posInChars, match_lenInChars);
 		txt.insert(posInChars, replaceWith);
 		occur++;
-		offset = pos + replaceWith.length(); // match_len;
+		offset = pos + UTF8Length(replaceWith, replaceWith.length()); // match_len;
 	}
 
 	// replace the buffer

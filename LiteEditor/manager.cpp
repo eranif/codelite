@@ -84,6 +84,8 @@
 #include "custom_notebook.h"
 #include "sessionmanager.h"
 #include <vector>
+
+extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen); 
 //
 // The CodeLite manager class
 //
@@ -2918,7 +2920,7 @@ void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& 
 				// the inner search is done on the pattern without without the part of the
 				// signature
 				pattern = pattern.BeforeFirst(wxT('('));
-				if (StringFindReplacer::Search(pattern, pattern.Len(), display_name, flags, pos1, match_len1)) {
+				if (StringFindReplacer::Search(pattern, UTF8Length(pattern, pattern.Len()), display_name, flags, pos1, match_len1)) {
 
 					// select only the word
 					if (editor->GetContext()->IsCommentOrString(pos+pos1)) {

@@ -29,6 +29,8 @@
 #include "cl_editor.h"
 #include "manager.h"
 
+extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen); 
+
 ReplaceInFilesPanel::ReplaceInFilesPanel( wxWindow* parent )
 		:
 		ReplaceInFilesBasePanel( parent )
@@ -141,7 +143,7 @@ void ReplaceInFilesPanel::OnReplaceAll( wxCommandEvent& event )
 			content.Remove(posInChars, match_lenInChars);
 			content.insert(posInChars, replaceWith);
 			occur++;
-			offset = pos + replaceWith.length(); // match_len;
+			offset = pos + UTF8Length(replaceWith, replaceWith.length()); // match_len;
 		}
 
 		// update the progress bar

@@ -520,6 +520,11 @@ void Manager::CloseWorkspace()
 	Frame::Get()->GetNotebook()->Refresh();
 	Frame::Get()->GetWorkspacePane()->BuildFileTree();
 	SetStatusMessage(wxEmptyString, 1);
+	
+#ifdef __WXMSW__	
+	// Under Windows, and in order to avoid locking the directory set the working directoy back to the startup directory
+	wxSetWorkingDirectory(GetStarupDirectory());
+#endif	
 }
 
 void Manager::OpenWorkspace(const wxString &path)

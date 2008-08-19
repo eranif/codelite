@@ -59,7 +59,7 @@ wxString Workspace::ExpandVariables(const wxString &expression) const
 void Workspace::CloseWorkspace()
 {
 	if (m_doc.IsOk()) {
-		m_doc.Save(m_fileName.GetFullName());
+		m_doc.Save(m_fileName.GetFullPath());
 		m_doc = wxXmlDocument();
 	}
 
@@ -67,8 +67,7 @@ void Workspace::CloseWorkspace()
 	// reset the internal cache objects
 	m_projects.clear();
 
-	TagsManager *mgr = TagsManagerST::Get();
-	mgr->CloseDatabase();
+	TagsManagerST::Get()->CloseDatabase();
 }
 
 

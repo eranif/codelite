@@ -27,6 +27,7 @@
 #include <wx/txtstrm.h>
 #include <wx/sstream.h>
 #include "wx/msgdlg.h"
+#include <wx/filename.h>
 
 PipedProcess::PipedProcess(int id, const wxString &cmdLine)
 : wxProcess(NULL, id)

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "pipedprocess.h"
+#include <wx/stdpaths.h>
 #include <wx/txtstrm.h>
 #include <wx/sstream.h>
 #include "wx/msgdlg.h"
@@ -50,10 +51,11 @@ void PipedProcess::SetPid(long pid)
 
 void PipedProcess::Terminate()
 {
-
 #ifdef __WXGTK__
 	wxString cmd;
-	cmd << wxT("le_killproc.sh ") << GetPid();
+	wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+	wxFileName script(exePath.GetPath(), wxT("le_killproc.sh"));
+	cmd << wxT("/bin/sh -f ") << script.GetFullPath() << wxT(" ") << GetPid();
 	wxExecute(cmd, wxEXEC_ASYNC);
 #else
 	wxKillError rc;

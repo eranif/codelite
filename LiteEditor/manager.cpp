@@ -2852,8 +2852,8 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 
 		if (bldConf->GetPauseWhenExecEnds() ) {
 			wxFileName exePath( wxStandardPaths::Get().GetExecutablePath() );
-			wxFileName exeWrapper(exePath.GetPath(), CL_EXEC_WRAPPER);
-			term << exeWrapper.GetFullPath() << wxT(" ");
+			wxFileName exeWrapper(exePath.GetPath(), wxT("le_exec.sh"));
+			term << wxT("/bin/sh -f ") << exeWrapper.GetFullPath() << wxT(" ");
 		}
 
 		term << execLine;

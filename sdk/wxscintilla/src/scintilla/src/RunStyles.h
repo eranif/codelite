@@ -23,13 +23,14 @@ public:
 public:
 	RunStyles();
 	~RunStyles();
-	int Length();
-	int ValueAt(int position);
+	int Length() const;
+	int ValueAt(int position) const;
 	int FindNextChange(int position, int end);
 	int StartRun(int position);
 	int EndRun(int position);
 	// Returns true if some values may have changed
 	bool FillRange(int &position, int value, int &fillLength);
+	void SetValueAt(int position, int value);
 	void InsertSpace(int position, int insertLength);
 	void DeleteAll();
 	void DeleteRange(int position, int deleteLength);

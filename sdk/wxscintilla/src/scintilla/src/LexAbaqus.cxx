@@ -1,10 +1,11 @@
 // Scintilla source code edit control
-/** @file LexAPDL.cxx
- ** Lexer for APDL. Based on the lexer for Assembler by The Black Horus.
- ** By Hadar Raz.
+/** @file LexABAQUS.cxx
+ ** Lexer for ABAQUS. Based on the lexer for APDL by Hadar Raz.
+ ** By Sergio Lucato.
  **/
-// Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
+
+// Code folding copyied and modified from LexBasic.cxx
 
 #include <stdlib.h>
 #include <string.h>
@@ -40,7 +41,7 @@ static inline bool IsAnOperator(char ch) {
 	return false;
 }
 
-static void ColouriseAPDLDoc(unsigned int startPos, int length, int initStyle, WordList *keywordlists[],
+static void ColouriseABAQUSDoc(unsigned int startPos, int length, int initStyle, WordList *keywordlists[],
                             Accessor &styler) {
 
 	int stringStart = ' ';
@@ -53,73 +54,73 @@ static void ColouriseAPDLDoc(unsigned int startPos, int length, int initStyle, W
 	WordList &functions = *keywordlists[5];
 
 	// Do not leak onto next line
-	initStyle = SCE_APDL_DEFAULT;
+	initStyle = SCE_ABAQUS_DEFAULT;
 	StyleContext sc(startPos, length, initStyle, styler);
 
 	for (; sc.More(); sc.Forward()) {
 		// Determine if the current state should terminate.
-		if (sc.state == SCE_APDL_NUMBER) {
+		if (sc.state == SCE_ABAQUS_NUMBER) {
 			if (!(IsADigit(sc.ch) || sc.ch == '.' || (sc.ch == 'e' || sc.ch == 'E') ||
 				((sc.ch == '+' || sc.ch == '-') && (sc.chPrev == 'e' || sc.chPrev == 'E')))) {
-				sc.SetState(SCE_APDL_DEFAULT);
+				sc.SetState(SCE_ABAQUS_DEFAULT);
 			}
-		} else if (sc.state == SCE_APDL_COMMENT) {
+		} else if (sc.state == SCE_ABAQUS_COMMENT) {
 			if (sc.atLineEnd) {
-				sc.SetState(SCE_APDL_DEFAULT);
+				sc.SetState(SCE_ABAQUS_DEFAULT);
 			}
-		} else if (sc.state == SCE_APDL_COMMENTBLOCK) {
+		} else if (sc.state == SCE_ABAQUS_COMMENTBLOCK) {
 			if (sc.atLineEnd) {
 				if (sc.ch == '\r') {
 				sc.Forward();
 				}
-				sc.ForwardSetState(SCE_APDL_DEFAULT);
+				sc.ForwardSetState(SCE_ABAQUS_DEFAULT);
 			}
-		} else if (sc.state == SCE_APDL_STRING) {
+		} else if (sc.state == SCE_ABAQUS_STRING) {
 			if (sc.atLineEnd) {
-				sc.SetState(SCE_APDL_DEFAULT);
+				sc.SetState(SCE_ABAQUS_DEFAULT);
 			} else if ((sc.ch == '\'' && stringStart == '\'') || (sc.ch == '\"' && stringStart == '\"')) {
-				sc.ForwardSetState(SCE_APDL_DEFAULT);
+				sc.ForwardSetState(SCE_ABAQUS_DEFAULT);
 			}
-		} else if (sc.state == SCE_APDL_WORD) {
+		} else if (sc.state == SCE_ABAQUS_WORD) {
 			if (!IsAWordChar(sc.ch)) {
 				char s[100];
 				sc.GetCurrentLowered(s, sizeof(s));
 				if (processors.InList(s)) {
-					sc.ChangeState(SCE_APDL_PROCESSOR);
+					sc.ChangeState(SCE_ABAQUS_PROCESSOR);
 				} else if (slashcommands.InList(s)) {
-					sc.ChangeState(SCE_APDL_SLASHCOMMAND);
+					sc.ChangeState(SCE_ABAQUS_SLASHCOMMAND);
 				} else if (starcommands.InList(s)) {
-					sc.ChangeState(SCE_APDL_STARCOMMAND);
+					sc.ChangeState(SCE_ABAQUS_STARCOMMAND);
 				} else if (commands.InList(s)) {
-					sc.ChangeState(SCE_APDL_COMMAND);
+					sc.ChangeState(SCE_ABAQUS_COMMAND);
 				} else if (arguments.InList(s)) {
-					sc.ChangeState(SCE_APDL_ARGUMENT);
+					sc.ChangeState(SCE_ABAQUS_ARGUMENT);
 				} else if (functions.InList(s)) {
-					sc.ChangeState(SCE_APDL_FUNCTION);
+					sc.ChangeState(SCE_ABAQUS_FUNCTION);
 				}
-				sc.SetState(SCE_APDL_DEFAULT);
+				sc.SetState(SCE_ABAQUS_DEFAULT);
 			}
-		} else if (sc.state == SCE_APDL_OPERATOR) {
+		} else if (sc.state == SCE_ABAQUS_OPERATOR) {
 			if (!IsAnOperator(static_cast<char>(sc.ch))) {
-			    sc.SetState(SCE_APDL_DEFAULT);
+			    sc.SetState(SCE_ABAQUS_DEFAULT);
 			}
 		}
 
 		// Determine if a new state should be entered.
-		if (sc.state == SCE_APDL_DEFAULT) {
-			if (sc.ch == '!' && sc.chNext == '!') {
-				sc.SetState(SCE_APDL_COMMENTBLOCK);
+		if (sc.state == SCE_ABAQUS_DEFAULT) {
+			if (sc.ch == '*' && sc.chNext == '*') {
+				sc.SetState(SCE_ABAQUS_COMMENTBLOCK);
 			} else if (sc.ch == '!') {
-				sc.SetState(SCE_APDL_COMMENT);
+				sc.SetState(SCE_ABAQUS_COMMENT);
 			} else if (IsADigit(sc.ch) || (sc.ch == '.' && IsADigit(sc.chNext))) {
-				sc.SetState(SCE_APDL_NUMBER);
+				sc.SetState(SCE_ABAQUS_NUMBER);
 			} else if (sc.ch == '\'' || sc.ch == '\"') {
-				sc.SetState(SCE_APDL_STRING);
+				sc.SetState(SCE_ABAQUS_STRING);
 				stringStart = sc.ch;
 			} else if (IsAWordChar(sc.ch) || ((sc.ch == '*' || sc.ch == '/') && !isgraph(sc.chPrev))) {
-				sc.SetState(SCE_APDL_WORD);
+				sc.SetState(SCE_ABAQUS_WORD);
 			} else if (IsAnOperator(static_cast<char>(sc.ch))) {
-				sc.SetState(SCE_APDL_OPERATOR);
+				sc.SetState(SCE_ABAQUS_OPERATOR);
 			}
 		}
 	}
@@ -127,9 +128,7 @@ static void ColouriseAPDLDoc(unsigned int startPos, int length, int initStyle, W
 }
 
 //------------------------------------------------------------------------------
-// 06-27-07 Sergio Lucato
-// - Included code folding for Ansys APDL lexer
-// - Copyied from LexBasic.cxx and modified for APDL
+// This copyied and modified from LexBasic.cxx
 //------------------------------------------------------------------------------
 
 /* Bits:
@@ -167,21 +166,26 @@ static int LowerCase(int c)
 	return c;
 }
 
-static int CheckAPDLFoldPoint(char const *token, int &level) {
-	if (!strcmp(token, "*if") ||
-		!strcmp(token, "*do") ||
-		!strcmp(token, "*dowhile") ) {
+static int CheckABAQUSFoldPoint(char const *token, int &level) {
+	if (!strcmp(token, "*step") ||
+		!strcmp(token, "*part") ||
+		!strcmp(token, "*instance") ||
+		!strcmp(token, "*assembly") ||
+		!strcmp(token, "***region") ) {
 		level |= SC_FOLDLEVELHEADERFLAG;
 		return 1;
 	}
-	if (!strcmp(token, "*endif") ||
-		!strcmp(token, "*enddo") ) {
+	if (!strcmp(token, "*end step") ||
+		!strcmp(token, "*end part") ||
+		!strcmp(token, "*end instance") ||
+		!strcmp(token, "*end assembly") ||
+		!strcmp(token, "***end region") ) {
 		return -1;
 	}
 	return 0;
 }
 
-static void FoldAPDLDoc(unsigned int startPos, int length, int,
+static void FoldABAQUSDoc(unsigned int startPos, int length, int,
 	WordList *[], Accessor &styler) {
 
 	int line = styler.GetLine(startPos);
@@ -201,7 +205,7 @@ static void FoldAPDLDoc(unsigned int startPos, int length, int,
 				word[wordlen] = static_cast<char>(LowerCase(c));
 				if (!IsIdentifier(c)) { // done with token
 					word[wordlen] = '\0';
-					go = CheckAPDLFoldPoint(word, level);
+					go = CheckABAQUSFoldPoint(word, level);
 					if (!go) {
 						// Treat any whitespace as single blank, for
 						// things like "End   Function".
@@ -243,7 +247,7 @@ static void FoldAPDLDoc(unsigned int startPos, int length, int,
 	}
 }
 
-static const char * const apdlWordListDesc[] = {
+static const char * const abaqusWordListDesc[] = {
     "processors",
     "commands",
     "slashommands",
@@ -253,4 +257,4 @@ static const char * const apdlWordListDesc[] = {
     0
 };
 
-LexerModule lmAPDL(SCLEX_APDL, ColouriseAPDLDoc, "apdl", FoldAPDLDoc, apdlWordListDesc);
+LexerModule lmAbaqus(SCLEX_ABAQUS, ColouriseABAQUSDoc, "abaqus", FoldABAQUSDoc, abaqusWordListDesc);

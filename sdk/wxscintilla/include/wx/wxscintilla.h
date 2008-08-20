@@ -401,20 +401,30 @@
 #define wxSCI_LEX_INNOSETUP 76
 #define wxSCI_LEX_OPAL 77
 #define wxSCI_LEX_SPICE 78
+#define wxSCI_LEX_D 79
+#define wxSCI_LEX_CMAKE 80
+#define wxSCI_LEX_GAP 81
+#define wxSCI_LEX_PLM 82
+#define wxSCI_LEX_PROGRESS 83
+#define wxSCI_LEX_ABAQUS 84
+#define wxSCI_LEX_ASYMPTOTE 85
+#define wxSCI_LEX_R 86
+#define wxSCI_LEX_MAGIK 87
+#define wxSCI_LEX_POWERSHELL 88
 
 //ERAN 
-#define wxSCI_LEX_GCC	84
+#define wxSCI_LEX_GCC	150
 #define wxSCI_LEX_GCC_DEFAULT 0
 #define wxSCI_LEX_GCC_ERROR	  1
 #define wxSCI_LEX_GCC_WARNING 2
 #define wxSCI_LEX_GCC_BUILDING 3
 #define wxSCI_LEX_GCC_FILE_LINK 4
 
-#define wxSCI_LEX_FIF 85
+#define wxSCI_LEX_FIF 151
 #define wxSCI_LEX_FIF_DEFAULT 0
 #define wxSCI_LEX_FIF_FILE	  1
 
-#define wxSCI_LEX_SVN 86
+#define wxSCI_LEX_SVN 152
 #define wxSCI_LEX_SVN_DEFAULT 	0
 #define wxSCI_LEX_SVN_UPDATED  	1
 #define wxSCI_LEX_SVN_CONFLICT  2

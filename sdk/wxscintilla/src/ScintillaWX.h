@@ -22,6 +22,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "Platform.h"
+#include "SplitVector.h"
+#include "Partitioning.h"
+#include "RunStyles.h"
 #include "Scintilla.h"
 #include "ScintillaWidget.h"
 #ifdef SCI_LEXER
@@ -32,9 +35,6 @@
 #endif
 #include "ContractionState.h"
 #include "SVector.h"
-#include "SplitVector.h"
-#include "Partitioning.h"
-#include "RunStyles.h"
 #include "CellBuffer.h"
 #include "CallTip.h"
 #include "KeyMap.h"

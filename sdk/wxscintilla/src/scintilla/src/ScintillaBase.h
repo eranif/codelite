@@ -8,12 +8,6 @@
 #ifndef SCINTILLABASE_H
 #define SCINTILLABASE_H
 
-#ifdef __WXMAC__
-# include "Editor.h"
-# include "Platform.h"
-# include "CallTip.h"
-#endif
-
 #ifdef SCI_NAMESPACE
 namespace Scintilla {
 #endif

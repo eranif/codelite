@@ -810,6 +810,11 @@ void Window::SetTitle (const char *s)
 	GETWIN(id)->SetLabel (sci2wx(s));
 }
 
+PRectangle Window::GetMonitorRect(Point pt)
+{
+	return PRectangle();
+}
+
 #ifdef SCI_NAMESPACE
 }
 #endif

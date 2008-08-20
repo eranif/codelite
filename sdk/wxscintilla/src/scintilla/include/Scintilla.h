@@ -118,6 +118,7 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 #define SC_MARK_ARROWS 24
 #define SC_MARK_PIXMAP 25
 #define SC_MARK_FULLRECT 26
+#define SC_MARK_LEFTRECT 27
 #define SC_MARK_CHARACTER 10000
 #define SC_MARKNUM_FOLDEREND 25
 #define SC_MARKNUM_FOLDEROPENMID 26
@@ -159,7 +160,7 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 #define STYLE_INDENTGUIDE 37
 #define STYLE_CALLTIP 38
 #define STYLE_LASTPREDEFINED 39
-#define STYLE_MAX 127
+#define STYLE_MAX 255
 #define SC_CHARSET_ANSI 0
 #define SC_CHARSET_DEFAULT 1
 #define SC_CHARSET_BALTIC 186
@@ -298,6 +299,10 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 #define SCI_GETCOLUMN 2129
 #define SCI_SETHSCROLLBAR 2130
 #define SCI_GETHSCROLLBAR 2131
+#define SC_IV_NONE 0
+#define SC_IV_REAL 1
+#define SC_IV_LOOKFORWARD 2
+#define SC_IV_LOOKBOTH 3
 #define SCI_SETINDENTATIONGUIDES 2132
 #define SCI_GETINDENTATIONGUIDES 2133
 #define SCI_SETHIGHLIGHTGUIDE 2134
@@ -448,6 +453,8 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 #define SCI_GETLAYOUTCACHE 2273
 #define SCI_SETSCROLLWIDTH 2274
 #define SCI_GETSCROLLWIDTH 2275
+#define SCI_SETSCROLLWIDTHTRACKING 2516
+#define SCI_GETSCROLLWIDTHTRACKING 2517
 #define SCI_TEXTWIDTH 2276
 #define SCI_SETENDATLASTLINE 2277
 #define SCI_GETENDATLASTLINE 2278
@@ -499,6 +506,7 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 #define SCI_ZOOMOUT 2334
 #define SCI_DELWORDLEFT 2335
 #define SCI_DELWORDRIGHT 2336
+#define SCI_DELWORDRIGHTEND 2518
 #define SCI_LINECUT 2337
 #define SCI_LINEDELETE 2338
 #define SCI_LINETRANSPOSE 2339
@@ -659,6 +667,7 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 #define SCI_INDICATOREND 2509
 #define SCI_SETPOSITIONCACHE 2514
 #define SCI_GETPOSITIONCACHE 2515
+#define SCI_COPYALLOWLINE 2519
 #define SCI_STARTRECORD 3001
 #define SCI_STOPRECORD 3002
 #define SCI_SETLEXER 4001
@@ -688,7 +697,8 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 #define SC_MULTILINEUNDOREDO 0x1000
 #define SC_STARTACTION 0x2000
 #define SC_MOD_CHANGEINDICATOR 0x4000
-#define SC_MODEVENTMASKALL 0x6FFF
+#define SC_MOD_CHANGELINESTATE 0x8000
+#define SC_MODEVENTMASKALL 0xFFFF
 #define SCEN_CHANGE 768
 #define SCEN_SETFOCUS 512
 #define SCEN_KILLFOCUS 256

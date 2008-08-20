@@ -77,11 +77,11 @@ RunStyles::~RunStyles() {
 	styles = NULL;
 }
 
-int RunStyles::Length() {
+int RunStyles::Length() const {
 	return starts->PositionFromPartition(starts->Partitions());
 }
 
-int RunStyles::ValueAt(int position) {
+int RunStyles::ValueAt(int position) const {
 	return styles->ValueAt(starts->PartitionFromPosition(position));
 }
 
@@ -149,6 +149,11 @@ bool RunStyles::FillRange(int &position, int value, int &fillLength) {
 		RemoveRunIfSameAsPrevious(runStart);
 	}
 	return true;
+}
+
+void RunStyles::SetValueAt(int position, int value) {
+	int len = 1;
+	FillRange(position, value, len);
 }
 
 void RunStyles::InsertSpace(int position, int insertLength) {

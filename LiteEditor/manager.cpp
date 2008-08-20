@@ -91,9 +91,9 @@ extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 //
 //
 #if defined (__WXMSW__)
-static wxString CL_EXEC_WRAPPER = wxT("le_exec.exe ");
+static wxString CL_EXEC_WRAPPER = wxT("le_exec.exe");
 #elif defined (__WXGTK__)
-static wxString CL_EXEC_WRAPPER = wxT("le_exec.sh ");
+static wxString CL_EXEC_WRAPPER = wxT("le_exec.sh");
 #else
 static wxString CL_EXEC_WRAPPER = wxEmptyString;
 #endif
@@ -2850,7 +2850,9 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 		term << wxT(" -e ");
 
 		if (bldConf->GetPauseWhenExecEnds() ) {
-			term << CL_EXEC_WRAPPER;
+			wxFileName exePath( wxStandardPaths::Get().GetExecutablePath() );
+			wxFileName exeWrapper(exePath.GetPath(), CL_EXEC_WRAPPER);
+			term << exeWrapper.GetFullPath() << wxT(" ");
 		}
 
 		term << execLine;
@@ -2858,7 +2860,7 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 #elif defined (__WXMSW__)
 
 		if (bldConf->GetPauseWhenExecEnds() ) {
-			execLine.Prepend(CL_EXEC_WRAPPER);
+			execLine.Prepend(CL_EXEC_WRAPPER + wxT(" "));
 		}
 #endif
 	}

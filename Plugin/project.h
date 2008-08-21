@@ -173,7 +173,8 @@ private:
 	wxFileName m_fileName;
 	bool m_tranActive;
 	bool m_isModified;
-
+	std::map<wxString, wxXmlNode*> m_vdCache;
+	
 public:
 	const wxFileName &GetFileName() const {
 		return m_fileName;
@@ -242,6 +243,15 @@ public:
 	 */
 	bool AddFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
 
+	/**
+	 * Add file to the project - dont check for file duplication, this 
+	 * \param fileName file full name and path
+	 * \param virtualDir owner virtual directory, if the virtual directory does not exist, a new one will be created
+	 *        and the file will be placed under it
+	 * \return true on success, false otherwise
+	 */
+	bool FastAddFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
+	
 	/**
 	 * Remove file from the project
 	 * \param fileName file full path

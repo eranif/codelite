@@ -522,7 +522,7 @@ bool FileViewTree::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &pa
 void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 {
 	static wxString start_path(wxEmptyString);
-	
+
 	wxTreeItemId item = GetSingleSelection();
 	if ( !item.IsOk() ) {
 		return;
@@ -536,15 +536,15 @@ void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 
 	wxArrayString paths;
 	ProjectPtr proj = ManagerST::Get()->GetProject( project );
-	if(start_path.IsEmpty()) {
+	if (start_path.IsEmpty()) {
 		start_path = proj->GetFileName().GetPath();
 	}
-	
+
 	wxFileDialog *dlg = new wxFileDialog( this, wxT( "Add Existing Item" ), start_path, wxEmptyString, ALL, wxFD_MULTIPLE | wxOPEN | wxFILE_MUST_EXIST , wxDefaultPosition );
 	if ( dlg->ShowModal() == wxID_OK ) {
 		dlg->GetPaths( paths );
-		
-		if(paths.IsEmpty() == false){
+
+		if (paths.IsEmpty() == false) {
 			// keep the last used path
 			wxFileName fn(paths.Item(0));
 			start_path = fn.GetPath();
@@ -858,7 +858,7 @@ void FileViewTree::OnClean( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		
+
 		QueueCommand buildInfo(projectName, wxEmptyString, false, QueueCommand::Clean);
 		ManagerST::Get()->CleanProject( buildInfo );
 	}
@@ -1164,7 +1164,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 			relativePath.Append(wxT(":"));
 
 			fvitem.virtualDir = relativePath;
-			DoAddItem(proj, fvitem);
+			DoAddItem(proj, fvitem, false);
 
 			wxString msg;
 			msg << wxT("Adding file: ") << fn.GetFullPath();
@@ -1182,24 +1182,29 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	ManagerST::Get()->AddProject(proj->GetFileName().GetFullPath());
 }
 
-void FileViewTree::DoAddItem(ProjectPtr proj, const FileViewItem &item)
+void FileViewTree::DoAddItem(ProjectPtr proj, const FileViewItem &item, bool checkDuplication)
 {
 	if (!proj) {
 		return;
 	}
 
-	Manager *mgr = ManagerST::Get();
-	//make sure that this file does not exist
-	wxString projName = mgr->GetProjectNameByFile(item.fullpath);
-	if (projName.IsEmpty()) {
-		//first add the virtual directory, if it already exist,
-		//this function does nothing
-		proj->CreateVirtualDir(item.virtualDir, true);
+	if (checkDuplication){
+		if(ManagerST::Get()->GetProjectNameByFile(item.fullpath).IsEmpty() == false) {
+			return;
+		}
+	}
 
-		//add the file.
-		//For performance reasons, we dont go through the Workspace API
-		//but directly through the project API
+	// first add the virtual directory, if it already exist,
+	// this function does nothing
+	proj->CreateVirtualDir(item.virtualDir, true);
+
+	// add the file.
+	// For performance reasons, we dont go through the Workspace API
+	// but directly through the project API
+	if(checkDuplication){
 		proj->AddFile(item.fullpath, item.virtualDir);
+	}else{
+		proj->FastAddFile(item.fullpath, item.virtualDir);
 	}
 }
 
@@ -1246,7 +1251,7 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
 							new_item.fullpath = tmp.GetFullPath();
 							new_item.displayName = tmp.GetFullName();
 							new_item.virtualDir = path.AfterFirst(wxT(':'));
-							DoAddItem(p, new_item);
+							DoAddItem(p, new_item, true);
 
 							// update the item's info
 							data->SetDisplayName(new_item.displayName);
@@ -1287,7 +1292,7 @@ void FileViewTree::OnRenameVirtualFolder(wxCommandEvent& e)
 			wxLogMessage(wxT("failed to rename virtual folder: ") + path + wxT(", reason: could not locate project ") + proj);
 			return;
 		}
-		
+
 		if (!p->RenameVirtualDirectory(path, newName)) {
 			wxLogMessage(wxT("failed to rename virtual folder: ") + path);
 			return;

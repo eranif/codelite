@@ -40,10 +40,13 @@ Project::Project()
 
 Project::~Project()
 {
+	m_vdCache.clear();
 }
 
 bool Project::Create(const wxString &name, const wxString &description, const wxString &path, const wxString &projType)
 {
+	m_vdCache.clear();
+	
 	m_fileName = path + wxFileName::GetPathSeparator() + name + wxT(".project");
 	m_fileName.MakeAbsolute();
 
@@ -85,7 +88,9 @@ bool Project::Load(const wxString &path)
 	if ( !m_doc.Load(path) ) {
 		return false;
 	}
-
+	
+	m_vdCache.clear();
+	
 	m_fileName = path;
 	m_fileName.MakeAbsolute();
 	SetModified(true);
@@ -95,14 +100,23 @@ bool Project::Load(const wxString &path)
 wxXmlNode *Project::GetVirtualDir(const wxString &vdFullPath)
 {
 	wxStringTokenizer tkz(vdFullPath, wxT(":"));
-
+	
+	// test the cache
+	std::map<wxString, wxXmlNode*>::iterator iter = m_vdCache.find(vdFullPath);
+	if(iter != m_vdCache.end()){
+		return iter->second;
+	}
+	
 	wxXmlNode *parent = m_doc.GetRoot();
 	while ( tkz.HasMoreTokens() ) {
 		parent = XmlUtils::FindNodeByName(parent, wxT("VirtualDirectory"), tkz.GetNextToken());
 		if ( !parent ) {
+			m_vdCache[vdFullPath] = NULL;
 			return NULL;
 		}
 	}
+	// cache the result
+	m_vdCache[vdFullPath] = parent;
 	return parent;
 }
 
@@ -144,6 +158,10 @@ wxXmlNode *Project::CreateVD(const wxString &vdFullPath, bool mkpath)
 	if (!InTransaction()) {
 		m_doc.Save(m_fileName.GetFullPath());
 	}
+	
+	// cache the result
+	m_vdCache[vdFullPath] = node;
+
 	return node;
 }
 
@@ -212,7 +230,13 @@ bool Project::DeleteVirtualDir(const wxString &vdFullPath)
 		if ( parent ) {
 			parent->RemoveChild( vd );
 		}
-
+		
+		// remove the entry from the cache
+		std::map<wxString, wxXmlNode*>::iterator iter = m_vdCache.find(vdFullPath);
+		if(iter != m_vdCache.end()){
+			m_vdCache.erase(iter);
+		}
+		
 		delete vd;
 		SetModified(true);
 		return m_doc.Save(m_fileName.GetFullPath());
@@ -738,4 +762,29 @@ void Project::GetFiles(wxXmlNode *parent, std::vector<wxFileName>& files, std::v
 		}
 		child = child->GetNext();
 	}
+}
+
+bool Project::FastAddFile(const wxString& fileName, const wxString& virtualDir)
+{
+	wxXmlNode *vd = GetVirtualDir(virtualDir);
+	if ( !vd ) {
+		return false;
+	}
+
+	// Convert the file path to be relative to
+	// the project path
+	DirSaver ds;
+
+	::wxSetWorkingDirectory(m_fileName.GetPath());
+	wxFileName tmp(fileName);
+	tmp.MakeRelativeTo(m_fileName.GetPath());
+
+	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
+	node->AddProperty(wxT("Name"), tmp.GetFullPath());
+	vd->AddChild(node);
+	if (!InTransaction()) {
+		m_doc.Save(m_fileName.GetFullPath());
+	}
+	SetModified(true);
+	return true;
 }

@@ -113,6 +113,7 @@ copyrights_options|Plugins::Copyright|Insert Copyright Block|
 insert_copyrights|Plugins::Copyright|Batch Insert of Copyright Block|
 batch_insert_copyrights|Plugins::Copyright|Settings...|
 options|Settings|Editor...|Alt-O
+synatx_highlight|Settings|Syntax Highlight...|
 configure_accelerators|Settings|Configure accelerators...|
 add_envvar|Settings|Environment Variables...|Ctrl-Shift-V
 advance_settings|Settings|Build Settings...|

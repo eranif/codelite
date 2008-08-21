@@ -76,7 +76,6 @@ class OptionsDlg : public wxDialog
 	
 protected:
 	wxNotebook* m_book;
-	wxNotebook *m_lexersBook;
 	wxPanel* m_general;
 	wxCheckBox* m_checkBoxDisplayFoldMargin;
 	wxCheckBox* m_checkBoxMarkFoldedLine;
@@ -101,8 +100,7 @@ protected:
 	wxChoice* m_iconSize;
 	wxCheckBox* m_checkBoxShowSplash;
 	CommentPage *m_commentPage;
-	wxChoice* m_themes;
-	wxString m_startingTheme;
+	
 	wxSpinCtrl* m_spinCtrlTabWidth;
 	wxColourPickerCtrl *m_caretLineColourPicker;
 	wxColourPickerCtrl *m_wordHighlightColour;
@@ -120,9 +118,8 @@ protected:
 	wxCheckBox *m_foldPreprocessor;
 	
 private:
-	wxPanel *CreateSyntaxHighlightPage();
 	wxPanel *CreateGeneralPage();
-	wxPanel *CreateLexerPage(wxWindow *parent, LexerConfPtr lexer);
+	
 	wxPanel *CreateBookmarksPage();
 	wxPanel *CreateFoldingPage();
 	wxPanel *CreateCxxCommentPage();

@@ -85,7 +85,6 @@ OptionsDlg::OptionsDlg( wxWindow* parent, int id, wxString title, wxPoint pos, w
 	//add C++ comment page
 	m_book->AddPage( CreateCxxCommentPage(), wxT("C++ Comments"), false);
 
-	m_book->AddPage( CreateSyntaxHighlightPage(), wxT("Syntax Highlight"), false );
 	m_book->AddPage( CreateDialogsPage(), wxT("Dialogs"), false);
 	m_book->AddPage( CreateMiscPage(), wxT("Misc"), false );
 	mainSizer->Add( m_book, 1, wxEXPAND | wxALL, 5 );
@@ -112,58 +111,6 @@ OptionsDlg::OptionsDlg( wxWindow* parent, int id, wxString title, wxPoint pos, w
 	mainSizer->Fit(this);
 	
 	this->Layout();
-}
-
-wxPanel *OptionsDlg::CreateSyntaxHighlightPage()
-{
-	wxPanel *page = new wxPanel( m_book, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
-	page->SetSizer(sz);
-
-	wxArrayString themesArr;
-
-	wxString path = ManagerST::Get()->GetStarupDirectory();
-	path << wxT("/lexers/");
-
-	wxArrayString files;
-	wxArrayString dirs;
-	wxDir::GetAllFiles(path, &files, wxEmptyString, wxDIR_DIRS | wxDIR_FILES);
-	//filter out all non-directories
-	wxFileName base_path( path );
-	for (size_t i=0; i<files.GetCount(); i++) {
-		wxFileName fn( files.Item(i) );
-		wxString new_path( fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) );
-		if (new_path != base_path.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR)) {
-			fn.MakeRelativeTo(base_path.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-			new_path = fn.GetPath();
-			if (dirs.Index(new_path) == wxNOT_FOUND) {
-				dirs.Add(new_path);
-			}
-		}
-	}
-	wxStaticText *txt = new wxStaticText(page, wxID_ANY, wxT("Colouring scheme:"), wxDefaultPosition, wxDefaultSize, 0);
-	sz->Add(txt, 0, wxEXPAND|wxALL, 5);
-	
-	m_themes = new wxChoice(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, dirs, 0 );
-	sz->Add(m_themes, 0, wxEXPAND|wxALL, 5);
-
-	if (m_themes->IsEmpty() == false) {
-		int where = m_themes->FindString(EditorConfigST::Get()->GetStringValue( wxT("LexerTheme") ));
-		if ( where != wxNOT_FOUND) {
-			m_themes->SetSelection( where );
-		}
-	}
-
-	long style = wxNB_DEFAULT;
-	m_lexersBook = new wxNotebook(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-	sz->Add(m_lexersBook, 1, wxEXPAND | wxALL, 5);
-	m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-
-	LoadLexers(m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection());
-
-	m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
-	ConnectChoice(m_themes, OptionsDlg::OnThemeChanged);
-	return page;
 }
 
 wxPanel *OptionsDlg::CreateGeneralPage()
@@ -250,11 +197,6 @@ wxPanel *OptionsDlg::CreateGeneralPage()
 	return m_general;
 }
 
-wxPanel *OptionsDlg::CreateLexerPage(wxWindow *parent, LexerConfPtr lexer)
-{
-	return new LexerPage(parent, lexer);
-}
-
 void OptionsDlg::OnButtonOK(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
@@ -268,36 +210,17 @@ void OptionsDlg::OnButtonApply(wxCommandEvent &event)
 {
 	SaveChanges();
 	ManagerST::Get()->ApplySettingsChanges();
-
-	m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
 	wxUnusedVar(event);
 }
 
 void OptionsDlg::OnButtonCancel(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	wxString curSelTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
-	if (curSelTheme != m_startingTheme) {
-		//restore the starting theme
-		EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), m_startingTheme);
-		EditorConfigST::Get()->LoadLexers();
-	}
-
 	EndModal(wxID_CANCEL);
 }
 
 void OptionsDlg::SaveChanges()
 {
-
-	int max = m_lexersBook->GetPageCount();
-	for (int i=0; i<max; i++) {
-		wxWindow *win = m_lexersBook->GetPage((size_t)i);
-		LexerPage *page = dynamic_cast<LexerPage*>( win );
-		if ( page ) {
-			page->SaveSettings();
-		}
-	}
-
 	if (m_checkBoxShowSplash->IsChecked()) {
 		Frame::Get()->SetFrameFlag(true, CL_SHOW_SPLASH);
 	} else {
@@ -488,42 +411,6 @@ wxPanel* OptionsDlg::CreateCxxCommentPage()
 {
 	m_commentPage = new CommentPage(m_book);
 	return m_commentPage;
-}
-
-void OptionsDlg::LoadLexers(const wxString& theme)
-{
-	Freeze();
-	bool selected = true;
-
-	//remove old lexers
-	if (m_lexersBook->GetPageCount() > 0) {
-		m_lexersBook->DeleteAllPages();
-	}
-
-	//update the theme name
-	EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), theme);
-
-	//load all lexers
-	EditorConfigST::Get()->LoadLexers();
-
-	EditorConfig::ConstIterator iter = EditorConfigST::Get()->LexerBegin();
-	for (; iter != EditorConfigST::Get()->LexerEnd(); iter++) {
-		LexerConfPtr lexer = iter->second;
-		m_lexersBook->AddPage(CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), selected);
-		selected = false;
-	}
-	Thaw();
-}
-
-void OptionsDlg::OnThemeChanged(wxCommandEvent& event)
-{
-	int sel = event.GetSelection();
-	wxString themeName = m_themes->GetString((unsigned int)sel);
-
-	//update the configuration with the new lexer's theme
-	EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), themeName);
-
-	LoadLexers( themeName );
 }
 
 wxPanel* OptionsDlg::CreateMiscPage()

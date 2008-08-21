@@ -432,6 +432,8 @@ protected:
 	void OnUpdateStatusBar(wxCommandEvent &e);
 	void OnBatchBuild(wxCommandEvent &e);
 	void OnBatchBuildUI(wxUpdateUIEvent &e);
+	void OnSyntaxHighlight(wxCommandEvent &e);
+	
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);
 	void ShowBuildConfigurationManager();

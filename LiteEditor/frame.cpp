@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "syntaxhighlightdlg.h"
 #include "dirsaver.h"
 #include "batchbuilddlg.h"
 #include "detachedpanesinfo.h"
@@ -384,7 +385,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 
 	EVT_MENU(XRCID("batch_build"), Frame::OnBatchBuild)
 	EVT_UPDATE_UI(XRCID("batch_build"), Frame::OnBatchBuildUI)
-
+	EVT_MENU(XRCID("syntax_highlight"), Frame::OnSyntaxHighlight)
+	
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 
@@ -3353,4 +3355,11 @@ void Frame::ShowWelcomePage()
 		}
 	}
 	CreateWelcomePage();
+}
+
+void Frame::OnSyntaxHighlight(wxCommandEvent& e)
+{
+	SyntaxHighlightDlg *dlg = new SyntaxHighlightDlg(this);
+	dlg->ShowModal();
+	dlg->Destroy();
 }

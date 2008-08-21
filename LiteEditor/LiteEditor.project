@@ -88,6 +88,10 @@
       <File Name="dialogspage.cpp"/>
       <File Name="dialogspage.h"/>
       <File Name="dialogspagebase.cpp"/>
+      <File Name="syntaxhighlightdlg.h"/>
+      <File Name="syntaxhighlightbasedlg.cpp"/>
+      <File Name="syntaxhighlightbasedlg.h"/>
+      <File Name="syntaxhighlightdlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>

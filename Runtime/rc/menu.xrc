@@ -438,6 +438,9 @@
             <object class="wxMenuItem" name="options">
                 <label>&amp;Editor...</label>
             </object>
+			<object class="wxMenuItem" name="syntax_highlight">
+                <label>&amp;Syntax Highlight...</label>
+            </object>
 			<object class="wxMenuItem" name="configure_accelerators">
                 <label>Keyboard &amp;shortcuts...</label>
             </object>

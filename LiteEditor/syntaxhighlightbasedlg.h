@@ -1,0 +1,49 @@
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// http://www.wxformbuilder.org/
+//
+// PLEASE DO "NOT" EDIT THIS FILE!
+///////////////////////////////////////////////////////////////////////////
+
+#ifndef __syntaxhighlightbasedlg__
+#define __syntaxhighlightbasedlg__
+
+#include <wx/statline.h>
+#include <wx/gdicmn.h>
+#include <wx/font.h>
+#include <wx/colour.h>
+#include <wx/settings.h>
+#include <wx/string.h>
+#include <wx/button.h>
+#include <wx/sizer.h>
+#include <wx/dialog.h>
+
+///////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class SyntaxHighlightBaseDlg
+///////////////////////////////////////////////////////////////////////////////
+class SyntaxHighlightBaseDlg : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticLine* m_staticline1;
+		wxButton* m_buttonOk;
+		wxButton* m_buttonCancel;
+		wxButton* m_buttonApply;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnButtonCancel( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnButtonApply( wxCommandEvent& event ){ event.Skip(); }
+		
+	
+	public:
+		SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Syntax Highlight:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,373 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~SyntaxHighlightBaseDlg();
+	
+};
+
+#endif //__syntaxhighlightbasedlg__

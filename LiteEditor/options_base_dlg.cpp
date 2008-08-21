@@ -461,7 +461,7 @@ wxPanel* OptionsDlg::CreateFoldingPage()
 	sz->Add( m_checkBoxMarkFoldedLine, 0, wxALL, 5 );
 	
 	m_foldPreprocessor = new wxCheckBox( page, wxID_ANY, wxT("Fold Preprocessors"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_foldPreprocessor->SetValue(options->GetFoldCompact());
+	m_foldPreprocessor->SetValue(options->GetFoldPreprocessor());
 	sz->Add( m_foldPreprocessor, 0, wxALL, 5 );
 	
 	m_foldCompact = new wxCheckBox( page, wxID_ANY, wxT("Fold Compact"), wxDefaultPosition, wxDefaultSize, 0 );

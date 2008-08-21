@@ -3,7 +3,7 @@
 
 cur_rev=`svn info | grep Revision | awk '{print $2;}'`
 arch=`uname -m`
-PKG_NAME=codelite-rev${cur_rev}_${arch}.deb
+PKG_NAME=codelite-1.0.${cur_rev}_${arch}.deb
 
 EXE_NAME=CodeLiteUR
 mkdir -p fakeroot/usr/local/bin/

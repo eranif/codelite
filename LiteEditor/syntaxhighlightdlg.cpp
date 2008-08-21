@@ -13,6 +13,7 @@ SyntaxHighlightBaseDlg( parent )
 	GetSizer()->Insert(0, CreateSyntaxHighlightPage());
 	GetSizer()->Layout();
 	GetSizer()->Fit(this);
+	m_buttonOk->SetFocus();
 }
 
 void SyntaxHighlightDlg::OnButtonOK( wxCommandEvent& event )

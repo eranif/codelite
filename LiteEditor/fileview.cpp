@@ -1109,6 +1109,8 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 
 	wxString path = dlg->GetBaseDir();
 	bool noExtFiles = dlg->GetIncludeFilesWoExt();
+	bool checkDuplicates = dlg->GetCheckForDuplicates();
+	
 	wxString mask = dlg->GetFileMask();
 	dlg->Destroy();
 
@@ -1164,7 +1166,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 			relativePath.Append(wxT(":"));
 
 			fvitem.virtualDir = relativePath;
-			DoAddItem(proj, fvitem, false);
+			DoAddItem(proj, fvitem, checkDuplicates);
 
 			wxString msg;
 			msg << wxT("Adding file: ") << fn.GetFullPath();

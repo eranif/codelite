@@ -32,8 +32,7 @@ ImportFilesDlg::ImportFilesDlg( wxWindow* parent, const wxString &baseDir )
 : ImportFilesBaseDlg( parent )
 , m_baseDir(baseDir)
 {
-	m_dirpicker->SetPath(m_baseDir);
-	//read the data from the configuration file
+//read the data from the configuration file
 	ImportFilesSettings options;
 	if(!EditorConfigST::Get()->ReadObject(wxT("import_dir_options"), &options)){
 		//first time, read the settings from the ctags options
@@ -46,8 +45,10 @@ ImportFilesDlg::ImportFilesDlg( wxWindow* parent, const wxString &baseDir )
 		options.SetFlags(flags);
 	}
 	
+	m_textCtrlDirPath->SetValue(m_baseDir);
 	m_textCtrlFileMask->SetValue( options.GetFileMask() );
 	m_checkBoxNoExtFiles->SetValue( options.GetFlags() & IFS_INCLUDE_FILES_WO_EXT ? true : false );
+	m_checkBoxCheckDuplicates->SetValue( options.GetFlags() & IFS_NO_DUPLICATES ? true : false );
 	Centre();
 }
 
@@ -62,8 +63,8 @@ void ImportFilesDlg::OnButtonOK(wxCommandEvent &e)
 	wxUnusedVar(e);
 	
 	//validate that the input directory does exists
-	if( !wxDir::Exists(m_dirpicker->GetPath()) ){
-		wxMessageBox(wxT("'") + m_dirpicker->GetPath() + wxT("': No such directory"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+	if( !wxDir::Exists(m_textCtrlDirPath->GetValue()) ){
+		wxMessageBox(wxT("'") + m_textCtrlDirPath->GetValue() + wxT("': No such directory"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 	
@@ -74,9 +75,22 @@ void ImportFilesDlg::OnButtonOK(wxCommandEvent &e)
 	if(m_checkBoxNoExtFiles->IsChecked()){
 		flags |= IFS_INCLUDE_FILES_WO_EXT;
 	}
+	if(m_checkBoxCheckDuplicates->IsChecked()){
+		flags |= IFS_NO_DUPLICATES;
+	}
 	
 	options.SetFlags(flags);
 	EditorConfigST::Get()->WriteObject(wxT("import_dir_options"), &options);
 	
 	EndModal(wxID_OK);
+}
+
+void ImportFilesDlg::OnBrowse(wxCommandEvent& e)
+{
+	wxString path = wxDirSelector(wxT("Select a folder:"), m_baseDir);
+	m_textCtrlDirPath->SetValue(path);
+	
+	if(path.IsEmpty() == false){
+		m_baseDir = path;
+	}
 }

@@ -312,6 +312,7 @@ void ScintillaWX::DoStartDrag() {
 
         source.SetData(data);
         dropWentOutside = true;
+        inDragDrop = ddDragging;
         result = source.DoDragDrop(wxDrag_DefaultMove);
         if (result == wxDragMove && dropWentOutside) ClearSelection();
         inDragDrop = ddNone; // [CHANGED]

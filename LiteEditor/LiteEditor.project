@@ -40,6 +40,10 @@
       <File Name="attachdbgprocbasedlg.cpp"/>
       <File Name="attachdbgprocbasedlg.h"/>
       <File Name="attachdbgprocdlg.cpp"/>
+      <File Name="quickdebugdlg.h"/>
+      <File Name="quickdebugbase.cpp"/>
+      <File Name="quickdebugbase.h"/>
+      <File Name="quickdebugdlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Wizard">
       <File Name="ext_db_page3.h"/>

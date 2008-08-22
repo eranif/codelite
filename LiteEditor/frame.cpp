@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "quickdebugdlg.h"
 #include "syntaxhighlightdlg.h"
 #include "dirsaver.h"
 #include "batchbuilddlg.h"
@@ -162,7 +163,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("copy_file_path"), Frame::OnCopyFilePathOnly)
 	EVT_MENU(XRCID("open_shell_from_filepath"), Frame::OnOpenShellFromFilePath)
 	EVT_UPDATE_UI(XRCID("open_shell_from_filepath"), Frame::OnFileExistUpdateUI)
-	
+
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE, Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, Frame::OnOutputWindowEvent)
@@ -386,6 +387,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("batch_build"), Frame::OnBatchBuild)
 	EVT_UPDATE_UI(XRCID("batch_build"), Frame::OnBatchBuildUI)
 	EVT_MENU(XRCID("syntax_highlight"), Frame::OnSyntaxHighlight)
+	EVT_MENU(XRCID("quick_debug"), Frame::OnQuickDebug)
+	EVT_UPDATE_UI(XRCID("quick_debug"), Frame::OnQuickDebugUI)
 	
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
@@ -1029,8 +1032,8 @@ void Frame::OnClose(wxCloseEvent& event)
 	//save the current session before closing
 	SessionEntry session;
 	session.SetSelectedTab(GetNotebook()->GetSelection());
-	
-	if(ManagerST::Get()->IsWorkspaceOpen()){
+
+	if (ManagerST::Get()->IsWorkspaceOpen()) {
 		session.SetWorkspaceName(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
 	}
 
@@ -1063,7 +1066,7 @@ void Frame::OnClose(wxCloseEvent& event)
 
 	//session.SetTabs(files);
 	session.SetTabInfoArr(vTabInfoArr);
-	if(ManagerST::Get()->IsWorkspaceOpen()) {
+	if (ManagerST::Get()->IsWorkspaceOpen()) {
 		SessionManager::Get().Save(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session);
 		SessionManager::Get().SetLastWorkspaceName(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
 	} else {
@@ -2404,35 +2407,35 @@ void Frame::OnDebug(wxCommandEvent &e)
 		//debugger is already running -> probably a continue command
 		mgr->DbgStart();
 	} else if (mgr->IsWorkspaceOpen()) {
-		
+
 		// Debugger is not running, but workspace is opened -> start debug session
 		long build_first(wxID_NO);
 		bool answer(false);
-		
-		if(!EditorConfigST::Get()->GetLongValue(wxT("BuildBeforeDebug"), build_first)){
+
+		if (!EditorConfigST::Get()->GetLongValue(wxT("BuildBeforeDebug"), build_first)) {
 			// value does not exist in the configuration file, prompt the user
 			ThreeButtonDlg *dlg = new ThreeButtonDlg(this, wxT("Would you like to build the project before debugging it?"), wxT("CodeLite"));
 			build_first = dlg->ShowModal();
 			answer = dlg->GetDontAskMeAgain();
 			dlg->Destroy();
-			
-			if(answer && build_first != wxID_CANCEL){
+
+			if (answer && build_first != wxID_CANCEL) {
 				// save the answer
 				EditorConfigST::Get()->SaveLongValue(wxT("BuildBeforeDebug"), build_first);
 			}
-			
-		} 
-		
+
+		}
+
 		// if build first is required, palce a build command on the queue
-		if(build_first == wxID_OK){
+		if (build_first == wxID_OK) {
 			QueueCommand bldCmd(WorkspaceST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::Build);
 			ManagerST::Get()->PushQueueCommand(bldCmd);
 		}
-		
+
 		// placae a debug command
 		QueueCommand dbgCmd(QueueCommand::Debug);
 		ManagerST::Get()->PushQueueCommand(dbgCmd);
-		
+
 		// trigger the commands queue
 		ManagerST::Get()->ProcessCommandQueue();
 	}
@@ -3335,11 +3338,11 @@ void Frame::OnOpenShellFromFilePath(wxCommandEvent& e)
 {
 	// get the file path
 	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if(editor){
+	if (editor) {
 		wxString filepath = editor->GetFileName().GetPath();
 		DirSaver ds;
 		wxSetWorkingDirectory(filepath);
-		if(!ProcUtils::Shell()){
+		if (!ProcUtils::Shell()) {
 			wxLogMessage(wxString::Format(wxT("Failed to open shell at '%s'"), filepath.c_str()));
 		}
 	}
@@ -3362,4 +3365,45 @@ void Frame::OnSyntaxHighlight(wxCommandEvent& e)
 	SyntaxHighlightDlg *dlg = new SyntaxHighlightDlg(this);
 	dlg->ShowModal();
 	dlg->Destroy();
+}
+
+void Frame::OnQuickDebug(wxCommandEvent& e)
+{
+	// launch the debugger
+	QuickDebugDlg *dlg = new QuickDebugDlg(this);
+	if (dlg->ShowModal() == wxID_OK) {
+		
+		DebuggerMgr::Get().SetActiveDebugger(dlg->GetDebuggerName());
+		IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
+		
+		if (dbgr && !dbgr->IsRunning()) {
+			
+			std::vector<BreakpointInfo> bpList;
+			wxString exepath = dlg->GetExe();
+			wxString wd = dlg->GetWorkingDirectory();
+			wxArrayString cmds = dlg->GetStartupCmds();
+
+			// update the debugger information
+			DebuggerInformation dinfo;
+			DebuggerMgr::Get().GetDebuggerInformation(dlg->GetDebuggerName(), dinfo);
+			dinfo.breakAtWinMain = true;
+			DebuggerMgr::Get().DelAllBreakpoints();
+			
+			wxString dbgname = dinfo.path;
+			dbgname = EnvironmentConfig::Instance()->ExpandVariables(dbgname);
+			
+			// launch the debugger
+			dbgr->SetObserver(ManagerST::Get());
+			dbgr->SetDebuggerInformation(dinfo);
+			dbgr->Start(dbgname, exepath, wd, bpList, cmds);
+			dbgr->Run(dlg->GetArguments(), wxEmptyString);
+		}
+	}
+	dlg->Destroy();
+}
+
+void Frame::OnQuickDebugUI(wxUpdateUIEvent& e)
+{
+	IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
+	e.Enable(dbgr && !dbgr->IsRunning());
 }

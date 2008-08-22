@@ -362,6 +362,8 @@ protected:
 	void OnShowNavBar(wxCommandEvent &e);
 	void OnShowNavBarUI(wxUpdateUIEvent &e);
 	void OnOpenShellFromFilePath(wxCommandEvent &e);
+	void OnQuickDebug(wxCommandEvent &e);
+	void OnQuickDebugUI(wxUpdateUIEvent &e);
 	
 	// this event is sent from the notebook container to the frame
 	void OnFileClosing(NotebookEvent &event);

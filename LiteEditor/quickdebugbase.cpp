@@ -1,0 +1,113 @@
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// http://www.wxformbuilder.org/
+//
+// PLEASE DO "NOT" EDIT THIS FILE!
+///////////////////////////////////////////////////////////////////////////
+
+#include "quickdebugbase.h"
+
+///////////////////////////////////////////////////////////////////////////
+
+QuickDebugBase::QuickDebugBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer1;
+	bSizer1 = new wxBoxSizer( wxVERTICAL );
+	
+	wxBoxSizer* bSizer3;
+	bSizer3 = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer1;
+	fgSizer1 = new wxFlexGridSizer( 2, 3, 0, 0 );
+	fgSizer1->AddGrowableCol( 1 );
+	fgSizer1->SetFlexibleDirection( wxBOTH );
+	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Select executable:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2->Wrap( -1 );
+	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlExePath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_textCtrlExePath, 0, wxALL|wxEXPAND, 5 );
+	
+	m_buttonBrowseExe = new wxButton( this, wxID_ANY, wxT("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_buttonBrowseExe, 0, wxALL, 5 );
+	
+	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("Working directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5->Wrap( -1 );
+	fgSizer1->Add( m_staticText5, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrl5 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_textCtrl5, 0, wxALL|wxEXPAND, 5 );
+	
+	m_buttonBrowseWD = new wxButton( this, wxID_ANY, wxT("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_buttonBrowseWD, 0, wxALL, 5 );
+	
+	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Program arguments:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlArgs = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_textCtrlArgs, 0, wxALL|wxEXPAND, 5 );
+	
+	m_panel1 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	fgSizer1->Add( m_panel1, 1, wxEXPAND | wxALL, 5 );
+	
+	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Select debugger:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	fgSizer1->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxArrayString m_choiceDebuggersChoices;
+	m_choiceDebuggers = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceDebuggersChoices, 0 );
+	m_choiceDebuggers->SetSelection( 0 );
+	fgSizer1->Add( m_choiceDebuggers, 0, wxALL|wxEXPAND, 5 );
+	
+	m_panel2 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	fgSizer1->Add( m_panel2, 1, wxEXPAND | wxALL, 5 );
+	
+	bSizer3->Add( fgSizer1, 0, wxEXPAND, 5 );
+	
+	m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Startup commands:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6->Wrap( -1 );
+	bSizer3->Add( m_staticText6, 0, wxALL, 5 );
+	
+	m_textCtrlCmds = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	bSizer3->Add( m_textCtrlCmds, 1, wxALL|wxEXPAND, 5 );
+	
+	bSizer1->Add( bSizer3, 1, wxEXPAND, 5 );
+	
+	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer2;
+	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_buttonDebug = new wxButton( this, wxID_OK, wxT("Debug"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDebug->SetDefault(); 
+	bSizer2->Add( m_buttonDebug, 0, wxALL, 5 );
+	
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer2->Add( m_buttonCancel, 0, wxALL, 5 );
+	
+	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	this->SetSizer( bSizer1 );
+	this->Layout();
+	
+	// Connect Events
+	m_buttonBrowseExe->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickDebugBase::OnButtonBrowseExe ), NULL, this );
+	m_buttonBrowseWD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickDebugBase::OnButtonBrowseWD ), NULL, this );
+	m_buttonDebug->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickDebugBase::OnButtonDebug ), NULL, this );
+	m_buttonCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickDebugBase::OnButtonCancel ), NULL, this );
+}
+
+QuickDebugBase::~QuickDebugBase()
+{
+	// Disconnect Events
+	m_buttonBrowseExe->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickDebugBase::OnButtonBrowseExe ), NULL, this );
+	m_buttonBrowseWD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickDebugBase::OnButtonBrowseWD ), NULL, this );
+	m_buttonDebug->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickDebugBase::OnButtonDebug ), NULL, this );
+	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickDebugBase::OnButtonCancel ), NULL, this );
+}

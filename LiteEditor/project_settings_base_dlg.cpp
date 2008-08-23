@@ -293,7 +293,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	
 	bSizer192->Add( fgSizer61, 0, wxRIGHT|wxLEFT|wxEXPAND, 15 );
 	
-	m_staticText301 = new wxStaticText( m_panelDebugger, wxID_ANY, wxT("Enter here a list of commands that will be passed to the debugger on starup:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText301 = new wxStaticText( m_panelDebugger, wxID_ANY, wxT("Enter here any commands that should be passed to the debugger on startup:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText301->Wrap( -1 );
 	bSizer192->Add( m_staticText301, 0, wxALL, 5 );
 	

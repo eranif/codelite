@@ -3126,7 +3126,7 @@
                                             <property name="font"></property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Enter here a list of commands that will be passed to the debugger on starup:</property>
+                                            <property name="label">Enter here any commands that should be passed to the debugger on startup:</property>
                                             <property name="maximum_size"></property>
                                             <property name="minimum_size"></property>
                                             <property name="name">m_staticText301</property>

@@ -158,7 +158,9 @@ void SvnIconRefreshHandler::ColourTree(wxTreeCtrl *tree, wxTreeItemId &parent, c
 	if (data && data->GetData().GetKind() == ProjectItem::TypeFile) {
 		//we found a leaf of the tree
 		wxString fileName = data->GetData().GetFile();
-		ColourPath(tree, parent, fileName, modifiedPaths, conflictedPaths);
+		
+		wxFileName fn(fileName);
+		ColourPath(tree, parent, fn.GetFullPath(), modifiedPaths, conflictedPaths);
 		return;
 	}
 	

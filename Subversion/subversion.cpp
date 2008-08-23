@@ -634,23 +634,37 @@ void SubversionPlugin::OnAppInitDone(wxCommandEvent &event) {
 void SubversionPlugin::DoGetWspSvnStatus(wxArrayString &output) {
 	wxString command;
 
-	//get list of files
-	std::vector<wxFileName> fileNames;
+	//get list of paths to check
+	std::vector<wxFileName> projectFiles;
+	std::map<wxString, bool> workspaceFolders;
+	
 	wxString errMsg;
-
 	wxArrayString projects;
+	
 	m_mgr->GetWorkspace()->GetProjectList(projects);
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), errMsg);
-		fileNames.push_back(p->GetFileName());
+		if(p){
+			// for each project get list of its files
+			projectFiles.clear();
+			p->GetFiles(projectFiles, true);
+			
+			// map the folders of each file 
+			for(size_t j=0; j<projectFiles.size(); j++){
+				workspaceFolders[projectFiles.at(j).GetPath()] = true;
+			}
+		}
 	}
-
+	
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive --no-ignore -q ");
+	
 	//concatenate list of files here
-	for (size_t i=0; i< fileNames.size(); i++) {
-		command << wxT("\"") <<  fileNames.at(i).GetPath() << wxT("\" ");
+	std::map<wxString, bool>::iterator iter = workspaceFolders.begin();
+	for (; iter != workspaceFolders.end(); iter++) {
+		command << wxT("\"") <<  iter->first << wxT("\" ");
 	}
+
 	ProcUtils::ExecuteCommand(command, output);
 }
 

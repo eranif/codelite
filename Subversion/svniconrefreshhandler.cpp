@@ -74,31 +74,36 @@ void SvnIconRefreshHandler::UpdateIcons()
 	}
 
 	//get list of paths to check
-	std::vector<wxFileName> fileNames;
+	std::vector<wxFileName> projectFiles;
+	std::map<wxString, bool> workspaceFolders;
+	
 	wxString errMsg;
-
 	wxArrayString projects;
-	ProjectIconInfoMap pi;
-
+	
 	m_mgr->GetWorkspace()->GetProjectList(projects);
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), errMsg);
-		fileNames.push_back(p->GetFileName());
-
-		ProjectIconInfo info;
-		info.name = p->GetName();
-		info.path = p->GetFileName().GetPath();
-		info.state = SvnXmlParser::StateOK;
-		pi[info.name] =  info;
+		if(p){
+			// for each project get list of its files
+			projectFiles.clear();
+			p->GetFiles(projectFiles, true);
+			
+			// map the folders of each file 
+			for(size_t j=0; j<projectFiles.size(); j++){
+				workspaceFolders[projectFiles.at(j).GetPath()] = true;
+			}
+		}
 	}
 
 	//get list of files
 	wxString command;
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive --no-ignore -q ");
+	
 	//concatenate list of files here
-	for (size_t i=0; i< fileNames.size(); i++) {
-		command << wxT("\"") <<  fileNames.at(i).GetPath() << wxT("\" ");
+	std::map<wxString, bool>::iterator iter = workspaceFolders.begin();
+	for (; iter != workspaceFolders.end(); iter++) {
+		command << wxT("\"") <<  iter->first << wxT("\" ");
 	}
 
 	wxArrayString output;

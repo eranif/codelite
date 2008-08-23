@@ -39,7 +39,7 @@
 
 const wxString DebuggerPane::LOCALS = wxT("Locals");
 const wxString DebuggerPane::WATCHES = wxT("Watches");
-const wxString DebuggerPane::FRAMES = wxT("Stack");
+const wxString DebuggerPane::FRAMES = wxT("Call Stack");
 const wxString DebuggerPane::BREAKPOINTS = wxT("Breakpoints");
 const wxString DebuggerPane::THREADS = wxT("Threads");
 const wxString DebuggerPane::MEMORY = wxT("Memory");

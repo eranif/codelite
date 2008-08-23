@@ -147,9 +147,12 @@ void TaskPanel::DoDisplayResults()
 		
 		wxFileName fn(res.GetFileName());
 		
+		wxString pattern(res.GetPattern().AfterFirst(wxT(':')));
+		pattern.Trim().Trim(false);
+		
 		// type, comment, line, file
 		SetColumnText(m_listCtrlTasks, index, 0, type);
-		SetColumnText(m_listCtrlTasks, index, 1, res.GetPattern().AfterFirst(wxT(':')));
+		SetColumnText(m_listCtrlTasks, index, 1, pattern);
 		SetColumnText(m_listCtrlTasks, index, 2, strLine);
 		SetColumnText(m_listCtrlTasks, index, 3, fn.GetFullPath());
 	}

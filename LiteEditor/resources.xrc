@@ -1,5 +1,6 @@
 <resource>
 	<object class="wxBitmap" name="tab">res/tab.png</object>
+	<object class="wxBitmap" name="todo">res/todo.png</object>
 	<object class="wxBitmap" name="memory_view">res/memory_view.png</object>
 	<object class="wxBitmap" name="cpp_keyword">res/cpp_blue.png</object>
 	<object class="wxBitmap" name="About">res/about_img.png</object>

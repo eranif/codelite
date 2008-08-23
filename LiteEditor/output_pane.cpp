@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "output_pane.h"
+#include "taskpanel.h"
 #include "replaceinfilespanel.h"
 #include "findresultscontainer.h"
 #include "findresultstab.h"
@@ -37,11 +38,13 @@
 #include "custom_notebook.h"
 #include "wx/dcbuffer.h"
 
-const wxString OutputPane::FIND_IN_FILES_WIN = wxT("Find Results");
-const wxString OutputPane::BUILD_WIN         = wxT("Build");
-const wxString OutputPane::OUTPUT_WIN        = wxT("Output");
-const wxString OutputPane::OUTPUT_DEBUG       = wxT("Debug");
-const wxString OutputPane::REPLACE_IN_FILES   = wxT("Replace Results");
+const wxString OutputPane::FIND_IN_FILES_WIN= wxT("Find Results");
+const wxString OutputPane::BUILD_WIN        = wxT("Build");
+const wxString OutputPane::OUTPUT_WIN		= wxT("Output");
+const wxString OutputPane::OUTPUT_DEBUG     = wxT("Debug");
+const wxString OutputPane::REPLACE_IN_FILES = wxT("Replace Results");
+const wxString OutputPane::TASKS			= wxT("Tasks");
+const wxString OutputPane::TRACE_TAB		= wxT("Trace");
 
 BEGIN_EVENT_TABLE(OutputPane, wxPanel)
 EVT_PAINT(OutputPane::OnPaint)
@@ -92,6 +95,7 @@ void OutputPane::CreateGUIControls()
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
 	m_outputDebug = new ShellTab(m_book, wxID_ANY, OUTPUT_DEBUG);
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
+	m_taskPanel = new TaskPanel(m_book);
 	
 	//place a trace window in the notebook as well
 	wxTextCtrl *text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
@@ -103,7 +107,8 @@ void OutputPane::CreateGUIControls()
 	m_book->AddPage(m_buildWin, BUILD_WIN, wxXmlResource::Get()->LoadBitmap(wxT("build")), false);
 	m_book->AddPage(m_outputWind, OUTPUT_WIN, wxXmlResource::Get()->LoadBitmap(wxT("output_win")), false);
 	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")), false);
-	m_book->AddPage(text, wxT("Trace"), wxXmlResource::Get()->LoadBitmap(wxT("debug_window")), false);
+	m_book->AddPage(text, TRACE_TAB, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")), false);
+	m_book->AddPage(m_taskPanel, TASKS, wxXmlResource::Get()->LoadBitmap(wxT("todo")), false);
 
 	mainSizer->Fit(this);
 	mainSizer->Layout();

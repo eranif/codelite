@@ -116,9 +116,10 @@ void SearchThread::ProcessRequest(ThreadRequest *req)
 	m_summary = SearchSummary();
 	DoSearchFiles(req);
 	m_summary.SetElapsedTime(sw.Time());
-
+	
+	SearchData *sd = (SearchData*)req;
 	// Send search end event 
-	SendEvent(wxEVT_SEARCH_THREAD_SEARCHEND);
+	SendEvent(wxEVT_SEARCH_THREAD_SEARCHEND, sd->GetOwner());
 }
 
 void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
@@ -161,7 +162,7 @@ void SearchThread::DoSearchFiles(ThreadRequest *req)
 	wxStopWatch sw;
 
 	// Send startup message to main thread
-	if( m_notifiedWindow ){
+	if( m_notifiedWindow || data->GetOwner() ){
 		wxString message;
 		wxCommandEvent event(wxEVT_SEARCH_THREAD_SEARCHSTARTED, GetId());
 		message << wxT("====== Searching for: '") << data->GetFindString();
@@ -190,7 +191,11 @@ void SearchThread::DoSearchFiles(ThreadRequest *req)
 		//set the rquested output tab
 		event.SetInt(data->GetOutputTab());
 		
-		::wxPostEvent(m_notifiedWindow, event);
+		if(data->GetOwner()){
+			::wxPostEvent(data->GetOwner(), event);
+		}else if(m_notifiedWindow){
+			::wxPostEvent(m_notifiedWindow, event);
+		}
 	}
 
 	for(size_t i=0; i<fileList.Count(); i++){
@@ -199,7 +204,7 @@ void SearchThread::DoSearchFiles(ThreadRequest *req)
 		// give user chance to cancel the search ...
 		if( TestStopSearch() ) {
 			// Send cancel event
-			SendEvent(wxEVT_SEARCH_THREAD_SEARCHCANCELED);
+			SendEvent(wxEVT_SEARCH_THREAD_SEARCHCANCELED, data->GetOwner());
 			StopSearch(false);
 			break;
 		}
@@ -266,7 +271,7 @@ void SearchThread::DoSearchFile(const wxString &fileName, const SearchData *data
 	}
 
 	if( m_results.empty() == false )
-		SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND);
+		SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND, data->GetOwner());
 }
 void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const wxString &fileName, const SearchData *data)
 {
@@ -382,9 +387,9 @@ bool SearchThread::AdjustLine(wxString &line, int &pos, wxString &findString)
 }
 
 
-void SearchThread::SendEvent(wxEventType type)
+void SearchThread::SendEvent(wxEventType type, wxEvtHandler *owner)
 {
-	if( !m_notifiedWindow )
+	if( !m_notifiedWindow && !owner)
 		return;
 
 	wxCommandEvent event(type, GetId());
@@ -403,9 +408,11 @@ void SearchThread::SendEvent(wxEventType type)
 	{
 		event.SetString(wxT("Search cancelled by user"));
 	}
-
-	if( m_notifiedWindow ){
-		::wxPostEvent(m_notifiedWindow, event);
+	
+	if(owner) {
+		wxPostEvent(owner, event);
+	} else if(m_notifiedWindow ){
+		wxPostEvent(m_notifiedWindow, event);
 	}
 	wxThread::Sleep(5);
 }

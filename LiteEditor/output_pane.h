@@ -38,6 +38,7 @@ class FindResultsTab;
 class FindResultsContainer;
 class ReplaceInFilesPanel;
 class Notebook;
+class TaskPanel;
 
 /**
  * \ingroup LiteEditor
@@ -67,6 +68,8 @@ public:
 	static const wxString OUTPUT_WIN;
 	static const wxString OUTPUT_DEBUG;
 	static const wxString REPLACE_IN_FILES;
+	static const wxString TASKS;
+	static const wxString TRACE_TAB;
 
 	Notebook *m_book;
 	wxString m_caption;
@@ -76,6 +79,7 @@ public:
 	BuildTab *m_buildWin;
 	FindResultsContainer *m_findResultsTab;
 	ReplaceInFilesPanel *m_replaceResultsTab;
+	TaskPanel *m_taskPanel;
 	int m_fifTabToUse;
 	
 private:

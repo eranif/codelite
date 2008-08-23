@@ -52,9 +52,10 @@ class SearchData : public ThreadRequest
 	wxString m_validExt;
 	wxArrayString m_files;
 	int m_outputTab;
-	
+	wxEvtHandler *m_owner;
+
 	friend class SearchThread;
-	
+
 private:
 	// An internal helper function that set/remove an option bit
 	void SetOption(int option, bool set) {
@@ -72,7 +73,8 @@ public:
 			, m_rootDir(wxEmptyString)
 			, m_findString(wxEmptyString)
 			, m_flags(0)
-			, m_outputTab(0) {}
+			, m_outputTab(0)
+			, m_owner(NULL) {}
 
 	SearchData(const SearchData &rhs) {
 		*this = rhs;
@@ -90,6 +92,7 @@ public:
 		m_rootDir = rhs.m_rootDir;
 		m_files = rhs.m_files;
 		m_outputTab = rhs.m_outputTab;
+		m_owner = rhs.m_owner;
 		return *this;
 	}
 
@@ -158,14 +161,22 @@ public:
 	const int& GetOutputTab() const {
 		return m_outputTab;
 	}
-	
+
 	bool UseEditorFontConfig() const {
 		return m_flags & wxSD_USE_EDITOR_ENCODING ? true : false;
 	}
-	
+
 	void SetUseEditorFontConfig(bool use) {
 		SetOption(wxSD_USE_EDITOR_ENCODING, use);
 	}
+
+	void SetOwner(wxEvtHandler* owner) {
+		this->m_owner = owner;
+	}
+	wxEvtHandler* GetOwner() const{
+		return m_owner;
+	}
+
 };
 
 //------------------------------------------
@@ -196,7 +207,7 @@ public:
 	SearchResult& operator=(const SearchResult &rhs) {
 		if (this == &rhs)
 			return *this;
-			
+
 		m_column = rhs.m_column;
 		m_lineNumber = rhs.m_lineNumber;
 		m_pattern = rhs.m_pattern.c_str();
@@ -215,7 +226,7 @@ public:
 	void SetFlags(const size_t& flags) {
 		this->m_flags = flags;
 	}
-	
+
 	const size_t& GetFlags() const {
 		return m_flags;
 	}
@@ -263,14 +274,14 @@ public:
 	const wxString& GetFindWhat() const {
 		return m_findWhat;
 	}
-	
+
 	void SetColumnInChars(const int& col) {
 		this->m_columnInChars = col;
 	}
 	const int& GetColumnInChars() const {
 		return m_columnInChars;
 	}
-	
+
 	void SetLenInChars(const int& len) {
 		this->m_lenInChars = len;
 	}
@@ -443,14 +454,14 @@ private:
 	void DoSearchLineRE(const wxString &line, const int lineNum, const wxString &fileName, const SearchData *data);
 
 	// Send an event to the notified window
-	void SendEvent(wxEventType type);
+	void SendEvent(wxEventType type, wxEvtHandler *owner);
 
 	// return a compiled regex object for the expression
 	wxRegEx &GetRegex(const wxString &expr, bool matchCase);
 
 	// Internal function
 	bool AdjustLine(wxString &line, int &pos, wxString &findString);
-	
+
 	// filter 'files' according to the files spec
 	void FilterFiles(wxArrayString &files, const SearchData *data);
 

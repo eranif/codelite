@@ -330,6 +330,10 @@
     <File Name="memoryview.cpp"/>
     <File Name="memoryview.h"/>
     <File Name="memoryviewbase.cpp"/>
+    <File Name="taskpanel.h"/>
+    <File Name="taskbasepanel.cpp"/>
+    <File Name="taskbasepanel.h"/>
+    <File Name="taskpanel.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

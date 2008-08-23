@@ -100,7 +100,7 @@
                         <property name="value"># Enter commit log here.Lines starting with the pound sign (#), are &#x0A;# ignored&#x0A;</property>
                         <property name="window_extra_style"></property>
                         <property name="window_name"></property>
-                        <property name="window_style">wxSIMPLE_BORDER</property>
+                        <property name="window_style"></property>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>
                         <event name="OnEraseBackground"></event>

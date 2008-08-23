@@ -16,7 +16,7 @@ SvnBaseDlg::SvnBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	m_textCtrl = new wxTextCtrl( this, wxID_ANY, wxT("# Enter commit log here.Lines starting with the pound sign (#), are \n# ignored\n"), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2|wxSIMPLE_BORDER );
+	m_textCtrl = new wxTextCtrl( this, wxID_ANY, wxT("# Enter commit log here.Lines starting with the pound sign (#), are \n# ignored\n"), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
 	bSizer1->Add( m_textCtrl, 1, wxALL|wxEXPAND, 5 );
 	
 	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Last commit messages:"), wxDefaultPosition, wxDefaultSize, 0 );

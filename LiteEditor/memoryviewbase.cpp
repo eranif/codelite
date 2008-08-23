@@ -39,7 +39,7 @@ MemoryViewBase::MemoryViewBase( wxWindow* parent, wxWindowID id, const wxPoint& 
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_textCtrlMemory = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_RICH2|wxSIMPLE_BORDER );
+	m_textCtrlMemory = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_RICH2 );
 	m_textCtrlMemory->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	
 	bSizer3->Add( m_textCtrlMemory, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );

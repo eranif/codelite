@@ -123,9 +123,12 @@ void CompileRequest::Process()
 			if (buildConf) {
 				wxString wd = buildConf->GetCustomBuildWorkingDir();
 				if (wd.IsEmpty()) {
+					// use the project path
 					wd = proj->GetFileName().GetPath();
+				}else { 
+					// expand macros from path
+					wd = ExpandAllVariables(wd, WorkspaceST::Get(), proj->GetName(), buildConf->GetName(), wxEmptyString);
 				}
-
 				::wxSetWorkingDirectory(wd);
 			}
 		}

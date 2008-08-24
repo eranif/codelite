@@ -1760,19 +1760,26 @@ void Manager::GetProjectFiles(const wxString &project, wxArrayString &files)
 {
 	std::vector<wxFileName> fileNames;
 	ProjectPtr p = GetProject(project);
-	p->GetFiles(fileNames, true);
+	
+	if(p){
+		p->GetFiles(fileNames, true);
 
-	//convert std::vector to wxArrayString
-	for (std::vector<wxFileName>::iterator it = fileNames.begin(); it != fileNames.end(); it ++) {
-		files.Add((*it).GetFullPath());
+		//convert std::vector to wxArrayString
+		for (std::vector<wxFileName>::iterator it = fileNames.begin(); it != fileNames.end(); it ++) {
+			files.Add((*it).GetFullPath());
+		}
 	}
 }
 
 void Manager::GetWorkspaceFiles(wxArrayString &files)
 {
+	if(!IsWorkspaceOpen()){
+		return;
+	}
+	
 	wxArrayString projects;
 	GetProjectList(projects);
-
+	
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		GetProjectFiles(projects.Item(i), files);
 	}

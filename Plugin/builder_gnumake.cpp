@@ -356,8 +356,10 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 			text << wxT("$(OutputFile): ") << prePreBuildTarget << wxT(" $(Objects)\n");
 		}
 	}
-
-	CreateTargets(proj->GetSettings()->GetProjectType(bldConf->GetName()), bldConf, text);
+	
+	if(bldConf->IsLinkerRequired()){
+		CreateTargets(proj->GetSettings()->GetProjectType(bldConf->GetName()), bldConf, text);
+	}
 	CreatePostBuildEvents(bldConf, text);
 	CreateMakeDirsTarget(bldConf, targetName, text);
 	CreatePreBuildEvents(bldConf, text);

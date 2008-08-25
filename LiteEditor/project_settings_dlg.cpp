@@ -59,9 +59,12 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 		m_resourceCmpPage->Enable(false);
 		DisableCustomBuildPage(false);
 	}else{
+		if(m_checkLinkerNeeded->IsChecked()){
+			DisableLinkerPage(true);
+		}
 		DisableCustomBuildPage(true);
 	}
-
+	
 	m_textAddResCmpOptions->Enable(!m_checkResourceNeeded->IsChecked());
 	m_textAddResCmpPath->Enable(!m_checkResourceNeeded->IsChecked());
 	m_buttonAddResCmpOptions->Enable(!m_checkResourceNeeded->IsChecked());

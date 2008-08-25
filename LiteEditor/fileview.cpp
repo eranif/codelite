@@ -1094,7 +1094,6 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	wxString message;
 	message << wxT("Select Directory to import:");
 
-
 	wxString vdPath = GetItemPath( item );
 	wxString project;
 	project = vdPath.BeforeFirst(wxT(':'));
@@ -1109,7 +1108,6 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 
 	wxString path = dlg->GetBaseDir();
 	bool noExtFiles = dlg->GetIncludeFilesWoExt();
-	bool checkDuplicates = dlg->GetCheckForDuplicates();
 	
 	wxString mask = dlg->GetFileMask();
 	dlg->Destroy();
@@ -1131,11 +1129,11 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	dir.Traverse(trv);
 	files = trv.GetFiles();
 
-	//loop over the files and construct for each file a record with
-	//the following information:
-	//-virtual directory (full path, starting from project level)
-	//-display name
-	//-full path of the file
+	// loop over the files and construct for each file a record with
+	// the following information:
+	// -virtual directory (full path, starting from project level)
+	// -display name
+	// -full path of the file
 	proj->BeginTranscation();
 	{
 		// Create a progress dialog
@@ -1143,10 +1141,24 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 		prgDlg->GetSizer()->Fit(prgDlg);
 		prgDlg->Layout();
 		prgDlg->Centre();
-
+		
+		// get list of files 
+		std::vector<wxFileName> vExistingFiles;
+		wxArrayString existingFiles;
+		
+		proj->GetFiles(vExistingFiles, true);
+		for(size_t i=0; i<vExistingFiles.size(); i++){
+			existingFiles.Add(vExistingFiles.at(i).GetFullPath());
+		}
+		
 		for (size_t i=0; i<files.GetCount(); i++) {
 			wxFileName fn(files.Item(i));
-			wxString filename = files.Item(i);
+			
+			// if the file already exist, skip it
+			if(existingFiles.Index(fn.GetFullPath()) != wxNOT_FOUND){
+				continue;
+			}
+			
 			FileViewItem fvitem;
 			fvitem.fullpath = fn.GetFullPath();
 			fvitem.displayName = fn.GetFullName();
@@ -1166,7 +1178,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 			relativePath.Append(wxT(":"));
 
 			fvitem.virtualDir = relativePath;
-			DoAddItem(proj, fvitem, checkDuplicates);
+			DoAddItem(proj, fvitem);
 
 			wxString msg;
 			msg << wxT("Adding file: ") << fn.GetFullPath();
@@ -1184,16 +1196,10 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	ManagerST::Get()->AddProject(proj->GetFileName().GetFullPath());
 }
 
-void FileViewTree::DoAddItem(ProjectPtr proj, const FileViewItem &item, bool checkDuplication)
+void FileViewTree::DoAddItem(ProjectPtr proj, const FileViewItem &item)
 {
 	if (!proj) {
 		return;
-	}
-
-	if (checkDuplication){
-		if(ManagerST::Get()->GetProjectNameByFile(item.fullpath).IsEmpty() == false) {
-			return;
-		}
 	}
 
 	// first add the virtual directory, if it already exist,
@@ -1203,11 +1209,7 @@ void FileViewTree::DoAddItem(ProjectPtr proj, const FileViewItem &item, bool che
 	// add the file.
 	// For performance reasons, we dont go through the Workspace API
 	// but directly through the project API
-	if(checkDuplication){
-		proj->AddFile(item.fullpath, item.virtualDir);
-	}else{
-		proj->FastAddFile(item.fullpath, item.virtualDir);
-	}
+	proj->FastAddFile(item.fullpath, item.virtualDir);
 }
 
 void FileViewTree::OnRunPremakeStep(wxCommandEvent &event)
@@ -1239,21 +1241,27 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
 					wxString newName = wxGetTextFromUser(wxT("New file name:"), wxT("Rename file:"), GetItemText(item));
 					if ( newName.IsEmpty() == false ) {
 
+						wxFileName tmp(data->GetData().GetFile());
+						tmp.SetFullName(newName);
+						
+						if(tmp.FileExists()){
+							wxMessageBox(wxT("File with that name already exist!"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+							return;
+						}
+						
 						// remove the file from the workspace (this will erase it from the symbol database and will
 						// also close the editor that it is currently opened in (if any)
 						if (ManagerST::Get()->RemoveFile(GetItemText(item), path)) {
 
 							// rename the file
-							wxFileName tmp(data->GetData().GetFile());
-							tmp.SetFullName(newName);
 							wxRenameFile(data->GetData().GetFile(), tmp.GetFullPath());
-
+						
 							// add the new file to the project
 							FileViewItem new_item;
 							new_item.fullpath = tmp.GetFullPath();
 							new_item.displayName = tmp.GetFullName();
 							new_item.virtualDir = path.AfterFirst(wxT(':'));
-							DoAddItem(p, new_item, true);
+							DoAddItem(p, new_item);
 
 							// update the item's info
 							data->SetDisplayName(new_item.displayName);

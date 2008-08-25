@@ -153,7 +153,7 @@ private:
 	void DoRemoveVirtualFolder(wxTreeItemId &parent);
 	void DoRemoveItem(wxTreeItemId &item);
 	void DoItemActivated(wxTreeItemId &item, wxEvent &event);
-	void DoAddItem(ProjectPtr proj, const FileViewItem &item, bool checkDuplication);
+	void DoAddItem(ProjectPtr proj, const FileViewItem &item);
 	
 	wxTreeItemId GetSingleSelection();
 	size_t GetMultiSelection(wxArrayTreeItemIds &arr);

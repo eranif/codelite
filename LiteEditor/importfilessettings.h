@@ -28,8 +28,7 @@
 
 
 enum {
-	IFS_INCLUDE_FILES_WO_EXT 	= 0x00000001,
-	IFS_NO_DUPLICATES 			= 0x00000002
+	IFS_INCLUDE_FILES_WO_EXT 	= 0x00000001
 };
 
 class ImportFilesSettings : public SerializedObject

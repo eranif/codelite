@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -47,10 +47,6 @@ ImportFilesBaseDlg::ImportFilesBaseDlg( wxWindow* parent, wxWindowID id, const w
 	
 	panelSizer->Add( m_checkBoxNoExtFiles, 0, wxALL, 5 );
 	
-	m_checkBoxCheckDuplicates = new wxCheckBox( m_mainPanel, wxID_ANY, wxT("Check for duplicates files"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	panelSizer->Add( m_checkBoxCheckDuplicates, 0, wxALL, 5 );
-	
 	m_mainPanel->SetSizer( panelSizer );
 	m_mainPanel->Layout();
 	panelSizer->Fit( m_mainPanel );
@@ -78,7 +74,6 @@ ImportFilesBaseDlg::ImportFilesBaseDlg( wxWindow* parent, wxWindowID id, const w
 	
 	// Connect Events
 	m_buttonBrowse->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ImportFilesBaseDlg::OnBrowse ), NULL, this );
-	m_checkBoxCheckDuplicates->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ImportFilesBaseDlg::OnCheckForForFileDuplicates ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ImportFilesBaseDlg::OnButtonOK ), NULL, this );
 	m_buttonCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ImportFilesBaseDlg::OnButtonCancel ), NULL, this );
 }
@@ -87,7 +82,6 @@ ImportFilesBaseDlg::~ImportFilesBaseDlg()
 {
 	// Disconnect Events
 	m_buttonBrowse->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ImportFilesBaseDlg::OnBrowse ), NULL, this );
-	m_checkBoxCheckDuplicates->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ImportFilesBaseDlg::OnCheckForForFileDuplicates ), NULL, this );
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ImportFilesBaseDlg::OnButtonOK ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ImportFilesBaseDlg::OnButtonCancel ), NULL, this );
 }

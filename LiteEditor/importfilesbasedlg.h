@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -40,14 +40,12 @@ class ImportFilesBaseDlg : public wxDialog
 		wxStaticText* m_staticText2;
 		wxTextCtrl* m_textCtrlFileMask;
 		wxCheckBox* m_checkBoxNoExtFiles;
-		wxCheckBox* m_checkBoxCheckDuplicates;
 		wxStaticLine* m_staticline;
 		wxButton* m_buttonOK;
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnBrowse( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnCheckForForFileDuplicates( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonCancel( wxCommandEvent& event ){ event.Skip(); }
 		

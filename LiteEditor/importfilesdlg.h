@@ -45,7 +45,6 @@ public:
 	/** Constructor */
 	ImportFilesDlg( wxWindow* parent, const wxString &baseDir );
 	bool GetIncludeFilesWoExt() const {return m_checkBoxNoExtFiles->IsChecked();}
-	bool GetCheckForDuplicates() const {return m_checkBoxCheckDuplicates->IsChecked();}
 	wxString GetFileMask() const {return m_textCtrlFileMask->GetValue();}
 	wxString GetBaseDir() const {return m_textCtrlDirPath->GetValue();}
 };

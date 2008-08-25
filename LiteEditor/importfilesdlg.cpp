@@ -48,7 +48,6 @@ ImportFilesDlg::ImportFilesDlg( wxWindow* parent, const wxString &baseDir )
 	m_textCtrlDirPath->SetValue(m_baseDir);
 	m_textCtrlFileMask->SetValue( options.GetFileMask() );
 	m_checkBoxNoExtFiles->SetValue( options.GetFlags() & IFS_INCLUDE_FILES_WO_EXT ? true : false );
-	m_checkBoxCheckDuplicates->SetValue( options.GetFlags() & IFS_NO_DUPLICATES ? true : false );
 	m_buttonBrowse->SetFocus();
 	Centre();
 }
@@ -75,9 +74,6 @@ void ImportFilesDlg::OnButtonOK(wxCommandEvent &e)
 	size_t flags(0);
 	if(m_checkBoxNoExtFiles->IsChecked()){
 		flags |= IFS_INCLUDE_FILES_WO_EXT;
-	}
-	if(m_checkBoxCheckDuplicates->IsChecked()){
-		flags |= IFS_NO_DUPLICATES;
 	}
 	
 	options.SetFlags(flags);

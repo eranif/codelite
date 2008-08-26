@@ -2432,8 +2432,10 @@ void Frame::OnDebug(wxCommandEvent &e)
 			ManagerST::Get()->PushQueueCommand(bldCmd);
 		}
 
-		// placae a debug command
+		// place a debug command
 		QueueCommand dbgCmd(QueueCommand::Debug);
+		// make sure that build was success before proceeding
+		dbgCmd.SetCheckBuildSuccess(true); 
 		ManagerST::Get()->PushQueueCommand(dbgCmd);
 
 		// trigger the commands queue

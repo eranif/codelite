@@ -3112,15 +3112,20 @@ void Manager::ProcessCommandQueue()
 	}
 
 	// pop the next build build and process it
-	QueueCommand bi = m_buildQueue.front();
+	QueueCommand qcmd = m_buildQueue.front();
 	m_buildQueue.pop_front();
-
-	switch ( bi.GetKind() ) {
+	
+	if(qcmd.GetCheckBuildSuccess() && !IsBuildEndedSuccessfully()){
+		// build failed, remove command from the queue
+		return;
+	}
+	
+	switch ( qcmd.GetKind() ) {
 	case QueueCommand::Clean:
-		DoCleanProject(bi);
+		DoCleanProject(qcmd);
 		break;
 	case QueueCommand::Build:
-		DoBuildProject(bi);
+		DoBuildProject(qcmd);
 		break;
 	case QueueCommand::Debug:
 		DbgStart(wxNOT_FOUND);

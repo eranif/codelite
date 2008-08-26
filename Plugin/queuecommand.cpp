@@ -5,6 +5,7 @@ QueueCommand::QueueCommand(const wxString& project, const wxString& configuratio
 		, m_projectOnly(projectOnly)
 		, m_kind(kind)
 		, m_cleanLog(true)
+		, m_checkBuildSuccess(false)
 {
 }
 

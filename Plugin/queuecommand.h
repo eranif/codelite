@@ -10,6 +10,7 @@ class QueueCommand
 	bool m_projectOnly;
 	int m_kind;
 	bool m_cleanLog;
+	bool m_checkBuildSuccess;
 
 public:
 	enum {
@@ -37,6 +38,12 @@ public:
 	const int& GetKind() const ;
 	void SetCleanLog(const bool& cleanLog) ;
 	const bool& GetCleanLog() const ;
+	void SetCheckBuildSuccess(const bool& checkBuildSuccess) {
+		this->m_checkBuildSuccess = checkBuildSuccess;
+	}
+	const bool& GetCheckBuildSuccess() const {
+		return m_checkBuildSuccess;
+	}
 };
 
 #endif // __queuecommand__

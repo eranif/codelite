@@ -82,7 +82,8 @@ void WorkspaceTab::OnCollapseAllUI(wxUpdateUIEvent &event)
 }
 void WorkspaceTab::DoCollpaseAll()
 {
-if(ManagerST::Get()->IsWorkspaceOpen() == false) {
+	
+	if(ManagerST::Get()->IsWorkspaceOpen() == false) {
 		return;
 	}
 	
@@ -95,6 +96,8 @@ if(ManagerST::Get()->IsWorkspaceOpen() == false) {
 		return;
 	}
 	
+	m_fileView->Freeze();
+	
 	//iterate over all the projects items and collapse them all
 	wxTreeItemIdValue cookie;
 	wxTreeItemId child = m_fileView->GetFirstChild(root, cookie);
@@ -102,6 +105,8 @@ if(ManagerST::Get()->IsWorkspaceOpen() == false) {
 		m_fileView->CollapseAllChildren(child);
 		child = m_fileView->GetNextChild(root, cookie);
 	}
+	
+	m_fileView->Thaw();
 }
 
 void WorkspaceTab::CollpaseAll()

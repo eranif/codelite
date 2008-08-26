@@ -2434,8 +2434,9 @@ void Frame::OnDebug(wxCommandEvent &e)
 
 		// place a debug command
 		QueueCommand dbgCmd(QueueCommand::Debug);
-		// make sure that build was success before proceeding
-		dbgCmd.SetCheckBuildSuccess(true); 
+		
+		// make sure that build was success before proceeding (only when build_first flag is on)
+		dbgCmd.SetCheckBuildSuccess(build_first == wxID_OK); 
 		ManagerST::Get()->PushQueueCommand(dbgCmd);
 
 		// trigger the commands queue

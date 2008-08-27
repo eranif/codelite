@@ -533,7 +533,7 @@ void Manager::OpenWorkspace(const wxString &path)
 	CloseWorkspace();
 
 	// make sure that the workspace pane is visible
-	ShowWorkspacePane(WorkspacePane::FILE_VIEW);
+//	ShowWorkspacePane(WorkspacePane::FILE_VIEW);
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->OpenWorkspace(path, errMsg);
 	CHECK_MSGBOX(res);

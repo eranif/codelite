@@ -658,7 +658,7 @@ public:
 	 * \param file
 	 * \param map
 	 */
-	void LoadAcceleratorTable(const wxString &file, MenuItemDataMap &map);
+	void LoadAcceleratorTable(const wxArrayString &files, MenuItemDataMap &map);
 
 	/**
 	 * \brief retrun map of the accelerator table. the StringMap maps between the actions and their accelerators
@@ -788,6 +788,7 @@ protected:
 	void DoCleanProject(const QueueCommand &buildInfo);
 	void DoBuildProject(const QueueCommand &buildInfo);
 	void DoCmdWorkspace(int cmd);
+	void DoGetAccelFiles(wxArrayString &files);
 	
 private:
 	void RemoveProjectNameFromOpenFiles(const std::vector<wxFileName> &project_files);

@@ -2539,15 +2539,10 @@ void Manager::UpdateMenuAccelerators()
 {
 	MenuItemDataMap menuMap;
 
-	//try to locate the user's settings
-	wxString fileName( GetStarupDirectory() + wxT("/config/accelerators.conf") );
-	if ( !wxFileName::FileExists( GetStarupDirectory() + wxT("/config/accelerators.conf") ) ) {
-
-		//use the default settings
-		fileName = GetStarupDirectory() + wxT("/config/accelerators.conf.default");
-	}
-
-	LoadAcceleratorTable(fileName, menuMap);
+	wxArrayString files;
+	DoGetAccelFiles(files);
+	
+	LoadAcceleratorTable(files, menuMap);
 	wxMenuBar *bar = Frame::Get()->GetMenuBar();
 
 	wxString content;
@@ -2644,16 +2639,23 @@ void Manager::DumpMenu(wxMenu *menu, const wxString &label, wxString &content)
 	}
 }
 
-void Manager::LoadAcceleratorTable(const wxString &file, MenuItemDataMap &accelMap)
+void Manager::LoadAcceleratorTable(const wxArrayString &files, MenuItemDataMap &accelMap)
 {
 	wxString content;
-	if (!ReadFileWithConversion(file, content)) {
-		return;
+	for(size_t i=0; i<files.GetCount(); i++){
+		wxString tmpContent;
+		if(ReadFileWithConversion(files.Item(i), tmpContent)){
+			wxLogMessage(wxString::Format(wxT("Loading accelerators from '%s'"), files.Item(i).c_str()));
+			content << wxT("\n") << tmpContent;
+		}
 	}
-
+	
 	wxArrayString lines = wxStringTokenize(content, wxT("\n"));
 	for (size_t i = 0; i < lines.GetCount(); i ++ ) {
-
+		if(lines.Item(i).Trim().Trim(false).IsEmpty()){
+			continue;
+		}
+		
 		MenuItemData item;
 		wxString line = lines.Item(i);
 
@@ -2719,13 +2721,9 @@ void Manager::UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< w
 
 void Manager::GetAcceleratorMap(MenuItemDataMap& accelMap)
 {
-	wxString fileName( GetStarupDirectory() + wxT("/config/accelerators.conf") );
-	if ( !wxFileName::FileExists( GetStarupDirectory() + wxT("/config/accelerators.conf") ) ) {
-
-		//use the default settings
-		fileName = GetStarupDirectory() + wxT("/config/accelerators.conf.default");
-	}
-	LoadAcceleratorTable(fileName, accelMap);
+	wxArrayString files;
+	DoGetAccelFiles(files);
+	LoadAcceleratorTable(files, accelMap);
 }
 
 void Manager::BuildRefactorDatabase(const wxString& word, CppTokensMap &l )
@@ -2879,7 +2877,13 @@ void Manager::GetDefaultAcceleratorMap(MenuItemDataMap& accelMap)
 {
 	//use the default settings
 	wxString fileName = GetStarupDirectory() + wxT("/config/accelerators.conf.default");
-	LoadAcceleratorTable(fileName, accelMap);
+	wxArrayString files;
+	files.Add(fileName);
+	
+	// append the content of all '*.accelerators' from the plugins 
+	// resources table
+	wxDir::GetAllFiles(GetInstallDir() + wxT("/plugins/resources/"), &files, wxT("*.accelerators"), wxDIR_FILES);	
+	LoadAcceleratorTable(files, accelMap);
 }
 
 void Manager::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& name)
@@ -3240,4 +3244,22 @@ void Manager::RebuildWorkspace()
 	DoCmdWorkspace(QueueCommand::Clean);
 	DoCmdWorkspace(QueueCommand::Build);
 	ProcessCommandQueue();
+}
+
+void Manager::DoGetAccelFiles(wxArrayString& files)
+{
+	//try to locate the user's settings
+	wxString fileName( GetStarupDirectory() + wxT("/config/accelerators.conf") );
+	if ( !wxFileName::FileExists( GetStarupDirectory() + wxT("/config/accelerators.conf") ) ) {
+
+		//use the default settings
+		fileName = GetStarupDirectory() + wxT("/config/accelerators.conf.default");
+		files.Add(fileName);
+		
+		// append the content of all '*.accelerators' from the plugins 
+		// resources table
+		wxDir::GetAllFiles(GetInstallDir() + wxT("/plugins/resources/"), &files, wxT("*.accelerators"), wxDIR_FILES);
+	} else {
+		files.Add(fileName);
+	}
 }

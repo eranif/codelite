@@ -21,6 +21,7 @@ mkdir -p fakeroot/usr/local/share/codelite/config
 mkdir -p fakeroot/usr/local/share/codelite/debuggers
 mkdir -p fakeroot/usr/local/share/codelite/templates
 mkdir -p fakeroot/usr/local/share/codelite/plugins
+mkdir -p fakeroot/usr/local/share/codelite/plugins/resources
 mkdir -p fakeroot/usr/local/share/codelite/images
 mkdir -p fakeroot/usr/local/share/codelite/rc
 mkdir -p fakeroot/usr/local/share/codelite/src
@@ -42,6 +43,8 @@ mkdir -p fakeroot/usr/share/applications/
 \cp -pr lib/Gizmos.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/cscope.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/UnitTestCPP.so fakeroot/usr/local/share/codelite/plugins/
+\cp -pr lib/ExternalTools.so fakeroot/usr/local/share/codelite/plugins/
+\cp -pr Runtime/plugins/resources/* fakeroot/usr/local/share/codelite/plugins/resources/
 \cp -pr Runtime/*.html fakeroot/usr/local/share/codelite/
 \cp -pr Runtime/astyle.sample fakeroot/usr/local/share/codelite/
 \cp -pr Runtime/src/* fakeroot/usr/local/share/codelite/src/

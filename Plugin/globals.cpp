@@ -295,16 +295,19 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	wxDateTime now = wxDateTime::Now();
 	output.Replace(wxT("$(User)"), wxGetUserName());
 	output.Replace(wxT("$(Date)"), now.FormatDate());
-	output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
+	
+	if(workspace){
+		output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
+	}
 
-#if defined (__WXMSW__)
-	output.Replace(wxT("$(UnitTestCppBase)"), workspace->GetStartupDir() + wxT("/sdk"));
-#elif defined (__WXMAC__)
-	output.Replace(wxT("$(UnitTestCppBase)"), MacGetInstallPath() + wxT("/sdk"));
-#else
-	output.Replace(wxT("$(UnitTestCppBase)"), wxT("/usr/local/"));
-#endif
-
+//#if defined (__WXMSW__)
+//	output.Replace(wxT("$(UnitTestCppBase)"), workspace->GetStartupDir() + wxT("/sdk"));
+//#elif defined (__WXMAC__)
+//	output.Replace(wxT("$(UnitTestCppBase)"), MacGetInstallPath() + wxT("/sdk"));
+//#else
+//	output.Replace(wxT("$(UnitTestCppBase)"), wxT("/usr/local/"));
+//#endif
+//
 	//call the environment & workspace variables expand function
 	if ( workspace ) {
 		output = workspace->ExpandVariables(output);

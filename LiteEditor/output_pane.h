@@ -39,6 +39,7 @@ class FindResultsContainer;
 class ReplaceInFilesPanel;
 class Notebook;
 class TaskPanel;
+class TaskBasePanel;
 
 /**
  * \ingroup LiteEditor
@@ -79,7 +80,7 @@ public:
 	BuildTab *m_buildWin;
 	FindResultsContainer *m_findResultsTab;
 	ReplaceInFilesPanel *m_replaceResultsTab;
-	TaskPanel *m_taskPanel;
+	TaskBasePanel *m_taskPanel;
 	int m_fifTabToUse;
 	
 private:

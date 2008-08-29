@@ -137,6 +137,10 @@
       <File Name="nameanddescdlg.cpp"/>
       <File Name="opentypevlistctrl.cpp"/>
       <File Name="opentypevlistctrl.h"/>
+      <File Name="macrosdlg.h"/>
+      <File Name="macrosbasedlg.cpp"/>
+      <File Name="macrosbasedlg.h"/>
+      <File Name="macrosdlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="custom_notebook.cpp"/>
@@ -277,4 +281,5 @@
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

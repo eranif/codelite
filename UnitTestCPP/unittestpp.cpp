@@ -57,7 +57,7 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 extern "C" EXPORT PluginInfo GetPluginInfo()
 {
 	PluginInfo info;
-	info.SetAuthor(wxGetUserName());
+	info.SetAuthor(wxT("Eran Ifrah"));
 	info.SetName(wxT("UnitTestPP"));
 	info.SetDescription(wxT("A Unit test plugin based on the UnitTest++ framework"));
 	info.SetVersion(wxT("v1.0"));

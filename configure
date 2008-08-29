@@ -575,7 +575,6 @@ createObjectList "CodeLite/*.cpp" "CodeLiteObjects"
 createObjectList "LiteEditor/*.cpp" "LiteEditorObjects"
 createObjectList "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects"
 createObjectList "Plugin/*.cpp" "SDKObjects"
-#createObjectList "sqlite3/*.c" "cl_sqlite3"
 
 createMainTargets
 echo >> Makefile
@@ -584,7 +583,6 @@ echo >> Makefile
 createRules_archive "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects" "Scintilla" "wxscintilla"
 createRules_archive "CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "codelite"
 createRules_archive "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "wxsqlite3"
-#createRules_sharedObject_no_link_flags "sqlite3/*.c" "cl_sqlite3" "SQLiteDll" "libsqlite3-cl"
 createRules_archive "Plugin/*.cpp " "SDKObjects" "SDK" "plugin"
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createInstallTarget
@@ -611,9 +609,9 @@ echo "Gizmos\\" >> Makefile
 echo "cscope\\" >> Makefile
 echo "Subversion\\" >> Makefile
 echo "CodeFormatter\\" >> Makefile
-#echo "ReferenceAnalyser\\" >> Makefile
 echo "Copyright\\" >> Makefile
 echo "UnitTestCPP\\" >> Makefile
+echo "ExternalTools\\" >> Makefile
 echo "" >> Makefile
 
 echo "plugins_install:\\" >> Makefile
@@ -630,6 +628,7 @@ echo "CodeFormatter_install\\" >> Makefile
 #echo "ReferenceAnalyser_install\\" >> Makefile
 echo "Copyright_install\\" >> Makefile
 echo "UnitTestCPP_install\\" >> Makefile
+echo "ExternalTools_install\\" >> Makefile
 echo "" >> Makefile
 
 echo "clean_plugins:\\" >> Makefile
@@ -646,6 +645,7 @@ echo "CodeFormatter_clean\\" >> Makefile
 #echo "ReferenceAnalyser_clean\\" >> Makefile
 echo "Copyright_clean\\" >> Makefile
 echo "UnitTestCPP_clean\\" >> Makefile
+echo "ExternalTools_clean\\" >> Makefile
 echo "" >> Makefile
 
 ########################################################
@@ -660,8 +660,7 @@ createPluginMakefile "Gizmos" "Gizmos"  "\$(DESTDIR)$prefix/share/codelite/plugi
 createPluginMakefile "cscope" "cscope" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "Subversion" "Subversion" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "CodeFormatter" "CodeFormatter" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-#createPluginMakefile "ReferenceAnalyser" "ReferenceAnalyser" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "Copyright" "Copyright" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-
+createPluginMakefile "ExternalTools" "ExternalTools" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 

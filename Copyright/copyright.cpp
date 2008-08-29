@@ -57,7 +57,7 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 extern "C" EXPORT PluginInfo GetPluginInfo()
 {
 	PluginInfo info;
-	info.SetAuthor(wxGetUserName());
+	info.SetAuthor(wxT("Eran Ifrah"));
 	info.SetName(wxT("Copyright"));
 	info.SetDescription(wxT("Copyright Plugin - a small plugin that allows you to place copyright block on top of your source files"));
 	info.SetVersion(wxT("v1.0"));

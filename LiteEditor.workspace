@@ -25,6 +25,7 @@
   </Environment>
   <Project Name="Copyright" Path="Copyright/Copyright.project" Active="No"/>
   <Project Name="UnitTestPP" Path="UnitTestCPP/UnitTestPP.project" Active="No"/>
+  <Project Name="ExternalTools" Path="ExternalTools\ExternalTools.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
@@ -36,6 +37,7 @@
       <Project Name="LiteEditor" ConfigName="ReleaseUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="ReleaseUnicode"/>
+      <Project Name="ExternalTools" ConfigName="ReleaseUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="ReleaseUnicode"/>
       <Project Name="Cscope" ConfigName="ReleaseUnicode"/>
       <Project Name="Copyright" ConfigName="ReleaseUnicode"/>
@@ -52,6 +54,7 @@
       <Project Name="LiteEditor" ConfigName="DebugUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="DebugUnicode"/>
+      <Project Name="ExternalTools" ConfigName="DebugUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="DebugUnicode"/>
       <Project Name="Cscope" ConfigName="DebugUnicode"/>
       <Project Name="Copyright" ConfigName="DebugUnicode"/>
@@ -68,6 +71,7 @@
       <Project Name="LiteEditor" ConfigName="WinReleaseUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
+      <Project Name="ExternalTools" ConfigName="WinReleaseUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinReleaseUnicode"/>
       <Project Name="Cscope" ConfigName="WinReleaseUnicode"/>
       <Project Name="Copyright" ConfigName="WinReleaseUnicode"/>
@@ -84,6 +88,7 @@
       <Project Name="LiteEditor" ConfigName="WinDebugUnicode"/>
       <Project Name="Interfaces" ConfigName="Debug"/>
       <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
+      <Project Name="ExternalTools" ConfigName="WinDebugUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
       <Project Name="Cscope" ConfigName="WinDebugUnicode"/>
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>

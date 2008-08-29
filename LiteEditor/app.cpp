@@ -211,6 +211,7 @@ bool App::OnInit()
 	if (homeDir.IsEmpty()) { //did we got a basedir from user?
 		homeDir = ::wxGetCwd();
 	}
+	wxFileName fnHomdDir(homeDir + wxT("/"));
 	
 	// try to locate the menu/rc.xrc file
 	wxFileName fn(homeDir + wxT("/rc"), wxT("menu.xrc"));
@@ -218,6 +219,11 @@ bool App::OnInit()
 		// we got wrong home directory
 		wxFileName appFn( wxAppBase::argv[0] );
 		homeDir = appFn.GetPath();
+	}
+	
+	if(fnHomdDir.IsRelative()){
+		fnHomdDir.MakeAbsolute();
+		homeDir = fnHomdDir.GetPath();
 	}
 	
 	// updatre PATH environment variable with the install directory

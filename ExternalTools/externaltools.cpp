@@ -1,3 +1,4 @@
+#include "dirsaver.h"
 #include <wx/app.h>
 #include "workspace.h"
 #include "globals.h"
@@ -152,7 +153,7 @@ void ExternalToolsPlugin::OnLaunchExternalTool(wxCommandEvent& e)
 
 void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 {
-	wxString command;
+	wxString command, working_dir;
 	wxString current_file;
 	
 	if(m_mgr->GetActiveEditor()){
@@ -160,13 +161,21 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 	}
 	
 	command << wxT("\"") << ti.GetPath() << wxT("\" ") << ti.GetArguments();
+	working_dir = ti.GetWd();
 	
 	if(m_mgr->IsWorkspaceOpen()){
 		command = ExpandAllVariables(command, m_mgr->GetWorkspace(), m_mgr->GetWorkspace()->GetActiveProjectName(), wxEmptyString, current_file);
+		working_dir = ExpandAllVariables(working_dir, m_mgr->GetWorkspace(), m_mgr->GetWorkspace()->GetActiveProjectName(), wxEmptyString, current_file);
 	} else {
 		command = ExpandAllVariables(command, NULL, wxEmptyString, wxEmptyString, current_file);
+		working_dir = ExpandAllVariables(working_dir, NULL, wxEmptyString, wxEmptyString, current_file);
 	}
 	
-	wxExecute(command);
+	{
+		// change the directory to the requested working directory
+		DirSaver ds;
+		wxSetWorkingDirectory(working_dir);
+		wxExecute(command);
+	}
 }
 

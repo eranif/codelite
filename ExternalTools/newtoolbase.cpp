@@ -16,7 +16,7 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	bSizer1->SetMinSize( wxSize( 500,-1 ) ); 
+	bSizer1->SetMinSize( wxSize( 700,-1 ) ); 
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 2, 3, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );

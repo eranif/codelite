@@ -134,11 +134,11 @@
       <File Name="src/scintilla/src/LexGCC.cxx"/>
       <File Name="src/scintilla/src/LexFIF.cxx"/>
       <File Name="src/scintilla/src/LexSVN.cxx"/>
-      <File Name="src\scintilla\src\LexAbaqus.cxx"/>
-      <File Name="src\scintilla\src\LexASY.cxx"/>
-      <File Name="src\scintilla\src\LexMagik.cxx"/>
-      <File Name="src\scintilla\src\LexPowerShell.cxx"/>
-      <File Name="src\scintilla\src\LexR.cxx"/>
+      <File Name="src/scintilla/src/LexAbaqus.cxx"/>
+      <File Name="src/scintilla/src/LexASY.cxx"/>
+      <File Name="src/scintilla/src/LexMagik.cxx"/>
+      <File Name="src/scintilla/src/LexPowerShell.cxx"/>
+      <File Name="src/scintilla/src/LexR.cxx"/>
     </VirtualDirectory>
     <VirtualDirectory Name="include">
       <File Name="src/scintilla/include/Accessor.h"/>

@@ -80,7 +80,7 @@ void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& path, co
 {
 	// try to see if 'id' already exist in the list control
 	long item(wxNOT_FOUND);
-	for(size_t i=0; i<m_listCtrlTools->GetItemCount(); i++){
+	for(size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++){
 		if(GetColumnText(m_listCtrlTools, i, 0) == id){
 			item = i;
 			break;
@@ -119,7 +119,7 @@ void ExternalToolDlg::DoEditEntry(long item)
 std::vector<ToolInfo> ExternalToolDlg::GetTools()
 {
 	std::vector<ToolInfo> tools;
-	for(size_t i=0; i<m_listCtrlTools->GetItemCount(); i++){
+	for(size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++){
 		ToolInfo ti;
 		ti.SetId(GetColumnText(m_listCtrlTools, i, 0));
 		ti.SetPath(GetColumnText(m_listCtrlTools, i, 1));

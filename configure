@@ -386,6 +386,7 @@ createInstallTarget()
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/debuggers" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/templates" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/plugins" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/plugins/resources" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/images" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/rc" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers" >> Makefile
@@ -393,6 +394,7 @@ createInstallTarget()
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers/BlackTheme" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/src/" >> Makefile
 	echo "	@cp -fr Runtime/config/*.xml \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
+	echo "	@cp -fr Runtime/plugins/resources/*.* \$(DESTDIR)$prefix/share/codelite/plugins/resources/" >> Makefile
 	echo "	@cp -fr Runtime/config/debuggers.xml.gtk \$(DESTDIR)$prefix/share/codelite/config/debuggers.xml" >> Makefile
 	echo "	@cp -fr Runtime/config/codelite.xml.default.gtk \$(DESTDIR)$prefix/share/codelite/config/codelite.xml.default" >> Makefile
 	echo "	@cp -fr Runtime/config/codelite.layout.default \$(DESTDIR)$prefix/share/codelite/config/codelite.layout" >> Makefile

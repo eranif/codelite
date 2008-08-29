@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="GdbResultParser" Database=".\GdbResultParser.tags">
+<CodeLite_Workspace Name="GdbResultParser" Database="./GdbResultParser.tags">
   <Project Name="GdbResultParser" Path="GdbResultParser.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">

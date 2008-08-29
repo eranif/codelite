@@ -23,8 +23,8 @@
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy gdb_result.cpp ..\Debugger\.</Command>
-        <Command Enabled="yes">copy gdb_result_parser.h ..\Debugger\.</Command>
+        <Command Enabled="yes">copy gdb_result.cpp ../Debugger/.</Command>
+        <Command Enabled="yes">copy gdb_result_parser.h ../Debugger/.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <CleanCommand/>

@@ -12,6 +12,7 @@ mkdir -p ./CodeLite.app/Contents/MacOS
 mkdir -p ./CodeLite.app/Contents/Resources
 mkdir -p ./CodeLite.app/Contents/SharedSupport
 mkdir -p ./CodeLite.app/Contents/SharedSupport/plugins
+mkdir -p ./CodeLite.app/Contents/SharedSupport/plugins/resources/
 mkdir -p ./CodeLite.app/Contents/SharedSupport/debuggers
 mkdir -p ./CodeLite.app/Contents/SharedSupport/config
 
@@ -95,3 +96,5 @@ cp ../lib/cscope.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/Copyright.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/UnitTestCPP.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../sdk/ctags/ctags-le ./CodeLite.app/Contents/SharedSupport/
+cp plugins/resources/*.* ./CodeLite.app/Contents/SharedSupport/plugins/resources/
+

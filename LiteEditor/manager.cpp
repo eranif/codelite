@@ -3263,3 +3263,4 @@ void Manager::DoGetAccelFiles(wxArrayString& files)
 		files.Add(fileName);
 	}
 }
+

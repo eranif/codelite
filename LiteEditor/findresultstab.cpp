@@ -99,6 +99,7 @@ void FindResultsTab::OnMouseDClick(wxScintillaEvent &event)
 		if(editor) {
 			if(col >= 0 && matchLen >= 0){
 				int offset = editor->PositionFromLine(lineNumber-1);
+        editor->EnsureVisible(lineNumber-1);
 				editor->SetSelection(offset + col, offset + col + matchLen);
 			}
 		}

@@ -339,7 +339,7 @@ void ViewAsHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event
 }
 
 //----------------------------------------------------
-// Word wrap hanlder
+// Word wrap handler
 //----------------------------------------------------
 
 void WordWrapHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event)
@@ -362,6 +362,27 @@ void WordWrapHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event
 	}
 
 	editor->SetWrapMode(event.IsChecked() ? wxSCI_WRAP_WORD : wxSCI_WRAP_NONE);
+}
+//----------------------------------------------------
+// Fold handler
+//----------------------------------------------------
+
+void FoldHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
+{
+	wxUnusedVar(event);
+	LEditor *editor = dynamic_cast<LEditor*>(owner);
+	if ( !editor ) {
+		return;
+	}
+
+	if (event.GetId() == XRCID("toggle_fold")) editor->ToggleCurrentFold();
+	  else editor->FoldAll();
+}
+
+void FoldHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event)
+{
+	wxUnusedVar(owner);
+	wxUnusedVar(event);
 }
 
 void DebuggerMenuHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)

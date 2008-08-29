@@ -60,6 +60,8 @@ MenuManager::MenuManager(void)
 	PushHandler(new GotoDefinitionHandler(XRCID("goto_previous_definition")));
 	PushHandler(new ViewAsHandler(viewAsMenuItemID));
 	PushHandler(new WordWrapHandler(XRCID("word_wrap")));
+	PushHandler(new FoldHandler(XRCID("toggle_fold")));
+	PushHandler(new FoldHandler(XRCID("fold_all")));
 	PushHandler(new DebuggerMenuHandler(XRCID("insert_breakpoint")));
 	PushHandler(new DebuggerMenuHandler(XRCID("delete_breakpoint")));
 }

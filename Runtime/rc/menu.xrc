@@ -152,6 +152,13 @@
 				<label>Word W&amp;rap</label>
 				<checkable>1</checkable>
 			</object>
+			<object class="wxMenuItem" name="toggle_fold">
+				<label>Toggle Current &amp;Fold</label>
+			</object>
+			<object class="wxMenuItem" name="fold_all">
+				<label>Toggle &amp;All Folds</label>
+        <help>Toggle current fold, and make all others match</help>
+			</object>
 			<object class="wxMenuItem" name="display_eol">
 				<label>&amp;Display EOL</label>
 				<checkable>1</checkable>

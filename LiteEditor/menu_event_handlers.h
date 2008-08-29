@@ -168,6 +168,20 @@ public:
 };
 
 //-------------------------------------------------
+// Folding
+//-------------------------------------------------
+class FoldHandler : public MenuEventHandler 
+{
+public:
+	FoldHandler(int id) : MenuEventHandler(id){};
+	virtual ~FoldHandler(){};
+
+public:
+	virtual void ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event);
+	virtual void ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event);
+};
+
+//-------------------------------------------------
 // Debugger handler
 //-------------------------------------------------
 class DebuggerMenuHandler : public MenuEventHandler 

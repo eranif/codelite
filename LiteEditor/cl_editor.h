@@ -213,7 +213,10 @@ public:
 	bool ReplaceAll();
 	// mark all occurances
 	bool MarkAll();
-	
+
+  void ToggleCurrentFold();
+  void FoldAll();
+
 	static FindReplaceDialog* GetFindReplaceDialog() { return m_findReplaceDlg; }
 
 	// Util function

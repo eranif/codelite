@@ -1226,6 +1226,8 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 
 	if ( StringFindReplacer::Search(GetText(), offset, findWhat, flags, pos, match_len) ) {
 
+		int line = LineFromPosition(pos);
+		if ( line >= 0 ) EnsureVisible(line);
 		if ( flags & wxSD_SEARCH_BACKWARD ) {
 			SetSelection(pos + match_len, pos);
 		} else {
@@ -1264,6 +1266,42 @@ size_t LEditor::SearchFlags(const FindReplaceData &data)
 	return flags;
 }
 
+//----------------------------------------------
+// Folds
+//----------------------------------------------
+void LEditor::ToggleCurrentFold()
+{
+  int line = GetCurrentLine();
+  if ( line >= 0 ) ToggleFold( line );
+}
+
+  // If the cursor is on/in/below an open fold, collapse all. Otherwise expand all
+void LEditor::FoldAll()
+{
+  // Colourise(0,-1);  SciTE did this here, but it doesn't seem to accomplish anything
+
+  // First find the current fold-point, and ask it whether or not it's folded
+  int lineSeek = GetCurrentLine();
+  while ( true ) {
+    if ( GetFoldLevel(lineSeek) & wxSCI_FOLDLEVELHEADERFLAG )  break;
+    int parentline = GetFoldParent( lineSeek );  // See if we're inside a fold area
+    if ( parentline >= 0 ) { lineSeek = parentline; break; }
+     else lineSeek--; // Must have been between folds
+    if ( lineSeek < 0 ) return;
+  }
+  bool expanded = GetFoldExpanded(lineSeek);
+
+  // Now go through the whole document, toggling folds that match the original one
+  int maxLine = GetLineCount();
+  for (int line = 0; line < maxLine; line++) {  // For every line
+    int level = GetFoldLevel(line);
+  // The next statement means: If this level is a Fold start
+    if ((level & wxSCI_FOLDLEVELHEADERFLAG) &&
+            (wxSCI_FOLDLEVELBASE == (level & wxSCI_FOLDLEVELNUMBERMASK))) {
+      if ( GetFoldExpanded(line) == expanded ) ToggleFold( line );
+    }
+  }
+}
 //----------------------------------------------
 // Bookmarks
 //----------------------------------------------

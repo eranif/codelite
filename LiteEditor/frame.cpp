@@ -243,6 +243,12 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("options"), Frame::OnViewOptions)
 	EVT_UPDATE_UI(XRCID("word_wrap"), Frame::DispatchUpdateUIEvent)
 	EVT_MENU(XRCID("word_wrap"), Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("toggle_fold"), Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("fold_all"), Frame::DispatchCommandEvent)
+	
+	EVT_UPDATE_UI(XRCID("toggle_fold"), Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("fold_all"), Frame::OnFileExistUpdateUI)
+	
 	EVT_MENU(XRCID("configuration_manager"), Frame::OnConfigurationManager)
 	EVT_UPDATE_UI(XRCID("configuration_manager"), Frame::OnWorkspaceOpen)
 	EVT_MENU(XRCID("toggle_panes"), Frame::OnTogglePanes)

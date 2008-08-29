@@ -29,6 +29,8 @@ convert_eol_win|Edit|Convert to Windows Format|Ctrl-Shift-W
 convert_eol_unix|Edit|Convert to Unix Format|Ctrl-Shift-U
 convert_eol_mac|Edit|Convert to Mac Format|Ctrl-Shift-M
 word_wrap|View|Word Wrap|
+toggle_fold|View|Toggle Current Fold|Alt-RIGHT
+fold_all|View|Toggle All Folds|Ctrl-Alt-RIGHT
 display_eol|View|Display EOL|
 view_welcome_page|View|Show Welcome Page|
 view_welcome_page_at_startup|View|Load Welcome Page at Startup|

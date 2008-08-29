@@ -95,19 +95,26 @@ wxToolBar *ExternalToolsPlugin::CreateToolBar(wxWindow *parent)
 		wxFileName icon24(ti.GetIcon24());
 		wxFileName icon16(ti.GetIcon16());
 
-		if (size == 24 && icon24.FileExists()) {
-			wxBitmap bmp;
-			bmp.LoadFile(icon24.GetFullPath(), wxBITMAP_TYPE_PNG);
-			if (bmp.IsOk() && bmp.GetHeight() == 24) {
-				m_tb->AddTool(wxXmlResource::GetXRCID(ti.GetId().c_str()), ti.GetName(), bmp, ti.GetName());
+		if (size == 24) {
+			wxBitmap bmp(wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default24")));
+			if(icon24.FileExists()){
+				bmp.LoadFile(icon24.GetFullPath(), wxBITMAP_TYPE_PNG);
+				if(bmp.IsOk() == false){
+					bmp = wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default24"));
+				}
+			}
+			m_tb->AddTool(wxXmlResource::GetXRCID(ti.GetId().c_str()), ti.GetName(), bmp, ti.GetName());
+			
+		} else if (size == 16) {
+			wxBitmap bmp(wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default16")));
+			if(icon16.FileExists()){
+				bmp.LoadFile(icon16.GetFullPath(), wxBITMAP_TYPE_PNG);
+				if(bmp.IsOk() == false){
+					bmp = wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default16"));
+				}
 			}
 
-		} else if (size == 16 && icon16.FileExists()) {
-			wxBitmap bmp;
-			bmp.LoadFile(icon16.GetFullPath(), wxBITMAP_TYPE_PNG);
-			if (bmp.IsOk() && bmp.GetHeight() == 16) {
-				m_tb->AddTool(wxXmlResource::GetXRCID(ti.GetId().c_str()), ti.GetName(), bmp, ti.GetName());
-			}
+			m_tb->AddTool(wxXmlResource::GetXRCID(ti.GetId().c_str()), ti.GetName(), bmp, ti.GetName());
 		}
 	}
 

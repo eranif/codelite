@@ -16,6 +16,7 @@ ExternalToolBaseDlg::ExternalToolBaseDlg( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
+	bSizer6->SetMinSize( wxSize( 700,250 ) ); 
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxHORIZONTAL );
 	
@@ -55,6 +56,9 @@ ExternalToolBaseDlg::ExternalToolBaseDlg( wxWindow* parent, wxWindowID id, const
 	
 	this->SetSizer( bSizer6 );
 	this->Layout();
+	bSizer6->Fit( this );
+	
+	this->Centre( wxBOTH );
 	
 	// Connect Events
 	m_listCtrlTools->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( ExternalToolBaseDlg::OnItemActivated ), NULL, this );

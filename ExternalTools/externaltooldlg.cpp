@@ -29,9 +29,9 @@ void ExternalToolDlg::OnItemSelected( wxListEvent& event )
 
 void ExternalToolDlg::OnButtonNew( wxCommandEvent& event )
 {
-	NewToolDlg dlg(this, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString );
+	NewToolDlg dlg(this, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString );
 	if (dlg.ShowModal() == wxID_OK) {
-		DoUpdateEntry(dlg.GetToolId(), dlg.GetPath(), dlg.GetWorkingDirectory(), dlg.GetArguments());
+		DoUpdateEntry(dlg.GetToolId(), dlg.GetToolName(), dlg.GetPath(), dlg.GetWorkingDirectory(), dlg.GetArguments(), dlg.GetIcon16(), dlg.GetIcon24());
 	}
 }
 
@@ -65,18 +65,24 @@ void ExternalToolDlg::OnButtonDeleteUI( wxUpdateUIEvent& event )
 void ExternalToolDlg::Initialize()
 {
 	m_listCtrlTools->InsertColumn(0, wxT("ID"));
-	m_listCtrlTools->InsertColumn(1, wxT("Path"));
-	m_listCtrlTools->InsertColumn(2, wxT("Arguments"));
-	m_listCtrlTools->InsertColumn(3, wxT("Working directory"));
+	m_listCtrlTools->InsertColumn(1, wxT("Name"));
+	m_listCtrlTools->InsertColumn(2, wxT("Path"));
+	m_listCtrlTools->InsertColumn(3, wxT("Arguments"));
+	m_listCtrlTools->InsertColumn(4, wxT("Working directory"));
+	m_listCtrlTools->InsertColumn(5, wxT("Small Icon"));
+	m_listCtrlTools->InsertColumn(6, wxT("Large Icon"));
 
 	// TODO: populate the list from the settings
 	m_listCtrlTools->SetColumnWidth(0, 100);
 	m_listCtrlTools->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(2, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(3, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(4, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(5, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(6, wxLIST_AUTOSIZE);
 }
 
-void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& path, const wxString& workingDirectory, const wxString& arguments)
+void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& name, const wxString& path, const wxString& workingDirectory, const wxString& arguments, const wxString &icon16, const wxString &icon24)
 {
 	// try to see if 'id' already exist in the list control
 	long item(wxNOT_FOUND);
@@ -93,26 +99,35 @@ void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& path, co
 	}
 	
 	SetColumnText(m_listCtrlTools, item, 0, id);
-	SetColumnText(m_listCtrlTools, item, 1, path);
-	SetColumnText(m_listCtrlTools, item, 2, arguments);
-	SetColumnText(m_listCtrlTools, item, 3, workingDirectory);
+	SetColumnText(m_listCtrlTools, item, 1, name);
+	SetColumnText(m_listCtrlTools, item, 2, path);
+	SetColumnText(m_listCtrlTools, item, 3, arguments);
+	SetColumnText(m_listCtrlTools, item, 4, workingDirectory);
+	SetColumnText(m_listCtrlTools, item, 5, icon16);
+	SetColumnText(m_listCtrlTools, item, 6, icon24);
 
 	m_listCtrlTools->SetColumnWidth(0, 150);
 	m_listCtrlTools->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(2, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(3, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(4, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(5, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(6, wxLIST_AUTOSIZE);
 }
 
 void ExternalToolDlg::DoEditEntry(long item)
 {
 	wxString id = GetColumnText(m_listCtrlTools, m_item, 0);
-	wxString path = GetColumnText(m_listCtrlTools, m_item, 1);
-	wxString args = GetColumnText(m_listCtrlTools, m_item, 2);
-	wxString wd = GetColumnText(m_listCtrlTools, m_item, 3);
-
-	NewToolDlg dlg(this, id, path, wd, args);
+	wxString name = GetColumnText(m_listCtrlTools, m_item, 1);
+	wxString path = GetColumnText(m_listCtrlTools, m_item, 2);
+	wxString args = GetColumnText(m_listCtrlTools, m_item, 3);
+	wxString wd = GetColumnText(m_listCtrlTools, m_item, 4);
+	wxString icon16 = GetColumnText(m_listCtrlTools, m_item, 5);
+	wxString icon24 = GetColumnText(m_listCtrlTools, m_item, 6);
+	
+	NewToolDlg dlg(this, id, name, path, wd, args, icon16, icon24);
 	if (dlg.ShowModal() == wxID_OK) {
-		DoUpdateEntry(dlg.GetToolId(), dlg.GetPath(), dlg.GetWorkingDirectory(), dlg.GetArguments());
+		DoUpdateEntry(dlg.GetToolId(), dlg.GetToolName(), dlg.GetPath(), dlg.GetWorkingDirectory(), dlg.GetArguments(), dlg.GetIcon16(), dlg.GetIcon24());
 	}
 }
 
@@ -122,9 +137,12 @@ std::vector<ToolInfo> ExternalToolDlg::GetTools()
 	for(size_t i=0; i<(size_t)m_listCtrlTools->GetItemCount(); i++){
 		ToolInfo ti;
 		ti.SetId(GetColumnText(m_listCtrlTools, i, 0));
-		ti.SetPath(GetColumnText(m_listCtrlTools, i, 1));
-		ti.SetArguments(GetColumnText(m_listCtrlTools, i, 2));
-		ti.SetWd(GetColumnText(m_listCtrlTools, i, 3));
+		ti.SetName(GetColumnText(m_listCtrlTools, i, 1));
+		ti.SetPath(GetColumnText(m_listCtrlTools, i, 2));
+		ti.SetArguments(GetColumnText(m_listCtrlTools, i, 3));
+		ti.SetWd(GetColumnText(m_listCtrlTools, i, 4));
+		ti.SetIcon16(GetColumnText(m_listCtrlTools, i, 5));
+		ti.SetIcon24(GetColumnText(m_listCtrlTools, i, 6));
 		tools.push_back(ti);
 	}
 	return tools;
@@ -139,15 +157,21 @@ void ExternalToolDlg::SetTools(const std::vector<ToolInfo>& tools)
 		ToolInfo ti = tools.at(i);
 		long item = AppendListCtrlRow(m_listCtrlTools);
 		SetColumnText(m_listCtrlTools, item, 0, ti.GetId());
-		SetColumnText(m_listCtrlTools, item, 1, ti.GetPath());
-		SetColumnText(m_listCtrlTools, item, 2, ti.GetArguments());
-		SetColumnText(m_listCtrlTools, item, 3, ti.GetWd());
+		SetColumnText(m_listCtrlTools, item, 1, ti.GetName());
+		SetColumnText(m_listCtrlTools, item, 2, ti.GetPath());
+		SetColumnText(m_listCtrlTools, item, 3, ti.GetArguments());
+		SetColumnText(m_listCtrlTools, item, 4, ti.GetWd());
+		SetColumnText(m_listCtrlTools, item, 5, ti.GetIcon16());
+		SetColumnText(m_listCtrlTools, item, 6, ti.GetIcon24());
 	}
 	
 	m_listCtrlTools->SetColumnWidth(0, 150);
 	m_listCtrlTools->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(2, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(3, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(4, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(5, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(6, wxLIST_AUTOSIZE);
 	
 	m_listCtrlTools->Thaw();
 }

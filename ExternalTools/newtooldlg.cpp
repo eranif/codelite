@@ -3,7 +3,7 @@
 #include <wx/filedlg.h>
 #include "macrosdlg.h"
 
-NewToolDlg::NewToolDlg( wxWindow* parent, const wxString &id, const wxString &path, const wxString &wd, const wxString &args  )
+NewToolDlg::NewToolDlg( wxWindow* parent, const wxString &id, const wxString &name, const wxString &path, const wxString &wd, const wxString &args, const wxString &icon16, const wxString &icon24)
 		: NewToolBase( parent )
 {
 	m_choiceId->SetFocus();
@@ -11,6 +11,9 @@ NewToolDlg::NewToolDlg( wxWindow* parent, const wxString &id, const wxString &pa
 	m_choiceId->SetStringSelection(id);
 	m_textCtrlPath->SetValue(path);
 	m_textCtrlWd->SetValue(wd);
+	m_textCtrlIcon16->SetValue(icon16);
+	m_textCtrlIcon24->SetValue(icon24);
+	m_textCtrlName->SetValue(name);
 }
 
 void NewToolDlg::OnButtonBrowsePath( wxCommandEvent& event )
@@ -51,3 +54,23 @@ void NewToolDlg::OnButtonCancel( wxCommandEvent& event )
 	wxUnusedVar(event);
 	EndModal(wxID_CANCEL);
 }
+void NewToolDlg::OnButtonBrowseIcon16(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	wxString path = m_textCtrlIcon16->GetValue();
+	wxString new_path = wxFileSelector(wxT("Select a program:"), path.c_str(), NULL, wxT("png"));
+	if (new_path.IsEmpty() == false) {
+		m_textCtrlIcon16->SetValue(new_path);
+	}
+}
+
+void NewToolDlg::OnButtonBrowseIcon24(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	wxString path = m_textCtrlIcon24->GetValue();
+	wxString new_path = wxFileSelector(wxT("Select a program:"), path.c_str(), NULL, wxT("png"));
+	if (new_path.IsEmpty() == false) {
+		m_textCtrlIcon24->SetValue(new_path);
+	}
+}
+

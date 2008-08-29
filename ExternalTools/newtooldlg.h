@@ -18,15 +18,20 @@ protected:
 	void OnButtonHelp( wxCommandEvent& event );
 	void OnButtonOk( wxCommandEvent& event );
 	void OnButtonCancel( wxCommandEvent& event );
+	void OnButtonBrowseIcon16(wxCommandEvent &event);
+	void OnButtonBrowseIcon24(wxCommandEvent &event);
 	
 public:
 	/** Constructor */
-	NewToolDlg( wxWindow* parent, const wxString &name, const wxString &path, const wxString &wd, const wxString &args );
+	NewToolDlg( wxWindow* parent, const wxString &id, const wxString &name, const wxString &path, const wxString &wd, const wxString &args, const wxString &icon16, const wxString &icon24);
 	
 	wxString GetPath() const {return m_textCtrlPath->GetValue();}
 	wxString GetWorkingDirectory() const {return m_textCtrlWd->GetValue();}
 	wxString GetArguments() const {return m_textCtrlArguments->GetValue();}
 	wxString GetToolId() const {return m_choiceId->GetStringSelection();}
+	wxString GetToolName() const {return m_textCtrlName->GetValue();}
+	wxString GetIcon16() const {return m_textCtrlIcon16->GetValue();}
+	wxString GetIcon24() const {return m_textCtrlIcon24->GetValue();}
 };
 
 #endif // __newtooldlg__

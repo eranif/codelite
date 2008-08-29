@@ -51,7 +51,7 @@ class ExternalToolBaseDlg : public wxDialog
 		
 	
 	public:
-		ExternalToolBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("External Tools"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 592,275 ), long style = wxDEFAULT_DIALOG_STYLE );
+		ExternalToolBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("External Tools"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~ExternalToolBaseDlg();
 	
 };

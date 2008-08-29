@@ -3,13 +3,19 @@
 
 #include "plugin.h"
 #include "externaltoolsdata.h"
+class wxToolBar;
 
 class ExternalToolsPlugin : public IPlugin
 {
+	wxToolBar *m_tb;
 	wxEvtHandler *topWin;
+	
+protected:	
 	void OnSettings(wxCommandEvent &e);
 	void OnLaunchExternalTool(wxCommandEvent &e);
 	void DoLaunchTool(const ToolInfo &ti);
+	void DoRecreateToolbar();
+	
 public:
 	ExternalToolsPlugin(IManager *manager);
 	~ExternalToolsPlugin();

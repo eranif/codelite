@@ -61,6 +61,7 @@
 		Toolbar bitmaps (24x24) 
 	-->
 	<object class="wxBitmap" name="outline24">res/24/text_tree.png</object>
+	<object class="wxBitmap" name="configure_ext_tools24">res/24/external_tools24.png</object>
 	<object class="wxBitmap" name="folder24">res/24/folder24.png</object>
 	<object class="wxBitmap" name="refresh24">res/24/refresh.png</object>
 	<object class="wxBitmap" name="reload24">res/24/revert.png</object>
@@ -110,6 +111,7 @@
 		Toolbar bitmaps (16x16) 
 	-->
 	<object class="wxBitmap" name="outline16">res/16/text_tree.png</object>
+	<object class="wxBitmap" name="configure_ext_tools16">res/16/external_tools16.png</object>
 	<object class="wxBitmap" name="folder16">res/16/folder24.png</object>
 	<object class="wxBitmap" name="refresh16">res/16/refresh.png</object>
 	<object class="wxBitmap" name="reload16">res/16/revert.png</object>

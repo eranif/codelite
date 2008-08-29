@@ -3,14 +3,6 @@ ToolInfo::ToolInfo()
 {
 }
 
-ToolInfo::ToolInfo(const wxString& id, const wxString& path, const wxString& args, const wxString& wd)
-		: m_id(id)
-		, m_path(path)
-		, m_arguments(args)
-		, m_wd(wd)
-{
-}
-
 ToolInfo::~ToolInfo()
 {
 }
@@ -21,13 +13,20 @@ void ToolInfo::DeSerialize(Archive& arch)
 	arch.Read(wxT("m_path"), m_path);
 	arch.Read(wxT("m_arguments"), m_arguments);
 	arch.Read(wxT("m_wd"), m_wd);
+	arch.Read(wxT("m_name"), m_name);
+	arch.Read(wxT("m_icon16"), m_icon16);
+	arch.Read(wxT("m_icon24"), m_icon24);
 }
+
 void ToolInfo::Serialize(Archive& arch)
 {
 	arch.Write(wxT("m_id"), m_id);
 	arch.Write(wxT("m_path"), m_path);
 	arch.Write(wxT("m_arguments"), m_arguments);
 	arch.Write(wxT("m_wd"), m_wd);
+	arch.Write(wxT("m_name"), m_name);
+	arch.Write(wxT("m_icon16"), m_icon16);
+	arch.Write(wxT("m_icon24"), m_icon24);
 }
 
 //----------------------------------------------------------------

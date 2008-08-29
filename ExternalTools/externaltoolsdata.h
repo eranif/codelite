@@ -10,9 +10,11 @@ class ToolInfo : public SerializedObject
 	wxString m_path;
 	wxString m_arguments;
 	wxString m_wd;
+	wxString m_name;
+	wxString m_icon16;
+	wxString m_icon24;
 
 public:
-	ToolInfo(const wxString &id, const wxString &path, const wxString &args, const wxString &wd);
 	ToolInfo();
 	~ToolInfo();
 
@@ -44,6 +46,24 @@ public:
 	const wxString& GetWd() const {
 		return m_wd;
 	}
+	void SetName(const wxString &name) {
+		this->m_name = name;
+	}
+	const wxString &GetName() const {
+		return m_name;
+	}
+	void SetIcon16(const wxString& icon16) {
+		this->m_icon16 = icon16;
+	}
+	void SetIcon24(const wxString& icon24) {
+		this->m_icon24 = icon24;
+	}
+	const wxString& GetIcon16() const {
+		return m_icon16;
+	}
+	const wxString& GetIcon24() const {
+		return m_icon24;
+	}
 };
 
 class ExternalToolsData : public SerializedObject
@@ -55,7 +75,7 @@ public:
 
 	const std::vector<ToolInfo>& GetTools() const;
 	void SetTools(const std::vector<ToolInfo>& tools);
-	
+
 	virtual void DeSerialize(Archive &arch);
 	virtual void Serialize(Archive &arch);
 };

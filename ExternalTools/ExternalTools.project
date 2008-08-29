@@ -172,6 +172,6 @@
     <File Name="externaltoolsbasedlg.cpp"/>
     <File Name="externaltoolsbasedlg.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

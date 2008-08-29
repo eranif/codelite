@@ -36,6 +36,18 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	m_panel2 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	fgSizer1->Add( m_panel2, 1, wxEXPAND | wxALL, 5 );
 	
+	m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6->Wrap( -1 );
+	fgSizer1->Add( m_staticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlName->SetToolTip( wxT("The name is used to identify this tool in the 'External Tools' toobar") );
+	
+	fgSizer1->Add( m_textCtrlName, 0, wxALL|wxEXPAND, 5 );
+	
+	m_panel3 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	fgSizer1->Add( m_panel3, 1, wxEXPAND | wxALL, 5 );
+	
 	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Tool path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -44,7 +56,6 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	fgSizer1->Add( m_textCtrlPath, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowsePath = new wxButton( this, wxID_ANY, wxT("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
-	m_buttonBrowsePath->SetDefault(); 
 	fgSizer1->Add( m_buttonBrowsePath, 0, wxALL, 5 );
 	
 	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Working directory:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -67,10 +78,39 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	m_buttonHelp = new wxButton( this, wxID_ANY, wxT("Help..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_buttonHelp, 0, wxALL, 5 );
 	
+	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	fgSizer1->Add( m_staticline1, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	
+	m_staticline3 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	fgSizer1->Add( m_staticline3, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	
+	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	fgSizer1->Add( m_staticline4, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	
+	m_staticText7 = new wxStaticText( this, wxID_ANY, wxT("Toolbar icon (16x16):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7->Wrap( -1 );
+	fgSizer1->Add( m_staticText7, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlIcon16 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_textCtrlIcon16, 1, wxALL|wxEXPAND, 5 );
+	
+	m_buttonBrowseIcon16 = new wxButton( this, wxID_ANY, wxT("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_buttonBrowseIcon16, 0, wxALL, 5 );
+	
+	m_staticText8 = new wxStaticText( this, wxID_ANY, wxT("Toolbar icon (24x24):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText8->Wrap( -1 );
+	fgSizer1->Add( m_staticText8, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlIcon24 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_textCtrlIcon24, 0, wxALL|wxEXPAND, 5 );
+	
+	m_buttonBrowseIcon24 = new wxButton( this, wxID_ANY, wxT("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_buttonBrowseIcon24, 0, wxALL, 5 );
+	
 	bSizer1->Add( fgSizer1, 0, wxEXPAND, 5 );
 	
-	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
+	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer1->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
 	
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
@@ -95,6 +135,8 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	m_buttonBrowsePath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowsePath ), NULL, this );
 	m_buttonBrowseWd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseWD ), NULL, this );
 	m_buttonHelp->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonHelp ), NULL, this );
+	m_buttonBrowseIcon16->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseIcon16 ), NULL, this );
+	m_buttonBrowseIcon24->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseIcon24 ), NULL, this );
 	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonOk ), NULL, this );
 	m_buttonCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonCancel ), NULL, this );
 }
@@ -106,6 +148,8 @@ NewToolBase::~NewToolBase()
 	m_buttonBrowsePath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowsePath ), NULL, this );
 	m_buttonBrowseWd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseWD ), NULL, this );
 	m_buttonHelp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonHelp ), NULL, this );
+	m_buttonBrowseIcon16->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseIcon16 ), NULL, this );
+	m_buttonBrowseIcon24->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseIcon24 ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonOk ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonCancel ), NULL, this );
 }

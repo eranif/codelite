@@ -8,6 +8,7 @@ ExternalToolDlg::ExternalToolDlg( wxWindow* parent )
 		, m_item(wxNOT_FOUND)
 {
 	Initialize();
+	m_listCtrlTools->SetFocus();
 }
 
 void ExternalToolDlg::OnItemActivated( wxListEvent& event )

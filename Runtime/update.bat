@@ -14,6 +14,7 @@ copy ctags-le.exe "C:\Program Files\CodeLite\" /Y
 copy makedir.exe "C:\Program Files\CodeLite\" /Y
 copy le_exec.exe "C:\Program Files\CodeLite\" /Y
 copy CodeLite.exe "C:\Program Files\CodeLite\" /Y
+copy patch.exe "C:\Program Files\CodeLite\" /Y
 copy astyle.sample "C:\Program Files\CodeLite\" /Y
 copy ..\sdk\wxconfig\wx-config.exe "C:\Program Files\CodeLite\" /Y
 copy ..\sdk\curl\lib\libcurl-4.dll "C:\Program Files\CodeLite\" /Y

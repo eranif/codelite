@@ -8,6 +8,7 @@ xcopy debuggers\*.dll "update\debuggers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy images\* "update\images\" /E /I /H /Y /EXCLUDE:excludes
 xcopy lexers\*.xml "update\lexers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy plugins\*.dll "update\plugins\" /E /I /H /Y /EXCLUDE:excludes
+xcopy plugins\resources\*.* "update\plugins\resources" /E /I /H /Y /EXCLUDE:excludes
 xcopy rc\*.xrc "update\rc\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\* "update\templates\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "update\" /H /Y /EXCLUDE:excludes
@@ -21,6 +22,7 @@ copy makedir.exe "update\" /Y
 copy le_exec.exe "update\" /Y
 copy astyle.sample "update\" /Y
 copy CodeLite.exe "update\" /Y
+copy patch.exe "update\" /Y
 copy wxmsw28u_gcc*.dll "update\" /Y
 copy ..\InnoSetup\license.txt "update\" /Y
 copy ..\sdk\wxconfig\wx-config.exe "update\" /Y

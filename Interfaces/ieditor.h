@@ -123,6 +123,18 @@ public:
 	 * \return the line number starting from 0
 	 */
 	virtual int GetCurrentLine() = 0;
+	
+	/**
+	 * \brief replace the selection with 'text'. This function does nothing if there is no selected text
+	 * \param text text to replace the selection
+	 */
+	virtual void ReplaceSelection (const wxString& text) = 0;
+	
+	/**
+	 * \brief return the selected text. 
+	 * \return the selected text, or wxEmptyString if no selection exist in the document
+	 */
+	virtual wxString GetSelection() = 0;
 };
 
 #endif //IEDITOR_H

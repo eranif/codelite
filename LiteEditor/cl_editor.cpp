@@ -2216,3 +2216,13 @@ void LEditor::ShowFunctionTipFromCurrentPos()
 		m_context->CodeComplete(pos);
 	}
 }
+
+wxString LEditor::GetSelection()
+{
+	return wxScintilla::GetSelectedText();
+}
+
+void LEditor::ReplaceSelection(const wxString& text)
+{
+	wxScintilla::ReplaceSelection(text);
+}

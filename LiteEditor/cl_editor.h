@@ -365,6 +365,8 @@ public:
 	virtual bool IsModified() {return wxScintilla::GetModify();}
 	virtual int GetEOL() {return wxScintilla::GetEOLMode();}
 	virtual int GetCurrentLine();
+	virtual void ReplaceSelection(const wxString &text);
+	virtual wxString GetSelection(); 
 	
 private:
 	void DoSetBreakpoint(const BreakpointInfo &bp);

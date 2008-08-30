@@ -12,3 +12,9 @@
 - Allow detaching tabs from the "Output View": 
 	- Updated plugins that added pages to the output notebook with a check that if the tab is deatched, make it detach as well 
 
+- Add 'Apply patch' to Subversion
+
+- Implement 'Show change log' in web update dialog
+
+- Fix 'add function implementation' to incase file is ended with '#endif', add the function on top of it
+

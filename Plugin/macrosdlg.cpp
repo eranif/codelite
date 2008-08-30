@@ -38,14 +38,14 @@ void MacrosDlg::Initialize()
 	AddMacro(wxT("$(ProjectName)"), wxT("Expands to the current project name as appears in the 'File View'"));
 	AddMacro(wxT("$(IntermediateDirectory)"), wxT("Expands to the current project intermediate directory path, as set in the project settings"));
 	AddMacro(wxT("$(ConfigurationName)"), wxT("Expands to the current project selected configuration"));
-	AddMacro(wxT("$(OutDir)"), wxT("An alias to $(ConfigurationName)"));
+	AddMacro(wxT("$(OutDir)"), wxT("An alias to $(IntermediateDirectory)"));
 	AddMacro(wxT("$(CurrentFileName)"), wxT("Expands to current file name (without extension and path)"));
 	AddMacro(wxT("$(CurrentFilePath)"), wxT("Expands to current file path"));
 	AddMacro(wxT("$(CurrentFileFullPath)"), wxT("Expands to current file full path (path and full name)"));
 	AddMacro(wxT("$(User)"), wxT("Expands to logged-in user as defined by the OS"));
 	AddMacro(wxT("$(Date)"), wxT("Expands to current date"));
 	AddMacro(wxT("$(CodeLitePath)"), wxT("Expands to CodeLite's startup directory on (e.g. on Unix it exapnds to ~/.codelite/"));
-	AddMacro(wxT("`expression`"), wxT("backticks: evaluates the expression inside the backticks into string"));
+	AddMacro(wxT("`expression`"), wxT("backticks: evaluates the expression inside the backticks into a string"));
 	
 	// resize columns
 	m_listCtrlMacros->SetColumnWidth(0, wxLIST_AUTOSIZE);

@@ -76,12 +76,21 @@ wxString MacGetBasePath()
 }
 #endif
 
+#if wxVERSION_NUMBER < 2900
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
 	{wxCMD_LINE_SWITCH, wxT("v"), wxT("version"), wxT("Print current version"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_OPTION, wxT("b"), wxT("basedir"),  wxT("The base directory of CodeLite"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_PARAM,  NULL, NULL, wxT("input file"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_NONE }
 };
+#else
+static const wxCmdLineEntryDesc cmdLineDesc[] = {
+	{wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_OPTION, "b", "basedir",  "The base directory of CodeLite", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_PARAM,  NULL, NULL, "input file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_NONE }
+};
+#endif
 
 static void massCopy(const wxString &sourceDir, const wxString &spec, const wxString &destDir)
 {

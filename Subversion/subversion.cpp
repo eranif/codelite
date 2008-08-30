@@ -60,8 +60,8 @@ int WorkspaceOkIconId 		= wxNOT_FOUND;
 int FileModifiedIconId		= wxNOT_FOUND;
 int FileConflictIconId 		= wxNOT_FOUND;
 int FileOkIconId			= wxNOT_FOUND;
-int FolderModifiedIconId		= wxNOT_FOUND;
-int FolderConflictIconId 		= wxNOT_FOUND;
+int FolderModifiedIconId	= wxNOT_FOUND;
+int FolderConflictIconId 	= wxNOT_FOUND;
 int FolderOkIconId			= wxNOT_FOUND;
 
 static bool IsIgnoredFile(const wxString &file, const wxString &patten) {
@@ -133,15 +133,6 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 
 	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("svn_repo"));
 	wxString caption( wxT("Subversion") );
-
-//	CustomTab *tab = new CustomTab(book->GetTabContainer(),
-//									wxID_ANY,
-//									caption,
-//									bmp,
-//									false,
-//									book->GetTabContainer()->GetOrientation(),
-//									book->GetBookStyle());
-//	tab->SetWindow( svnwin );
 	book->AddPage(svnwin, caption, bmp);
 
 	//Connect items
@@ -164,6 +155,7 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		topWin->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommit), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_add"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnSvnAdd), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_diff"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnDiff), NULL, (wxEvtHandler*)this);
+		topWin->Connect(XRCID("svn_patch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnPatch), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_refresh"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnShowSvnStatus_FileExplorer), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_cleanup"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCleanup), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_changelog"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnChangeLog), NULL, (wxEvtHandler*)this);
@@ -275,9 +267,13 @@ wxMenu *SubversionPlugin::CreatePopMenu() {
 
 	menu->AppendSeparator();
 
-	item = new wxMenuItem(menu, XRCID("svn_diff"), wxT("D&iff"), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("svn_diff"), wxT("Show D&iff"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
+	item = new wxMenuItem(menu, XRCID("svn_patch"), wxT("Apply &Patch"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	menu->AppendSeparator();
+	
 	item = new wxMenuItem(menu, XRCID("svn_changelog"), wxT("Create Change &Log"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	menu->AppendSeparator();
@@ -1024,4 +1020,10 @@ void SubversionPlugin::SendSvnMenuEvent(int id) {
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, id);
 	event.SetEventObject(this);
 	wxPostEvent(this, event);
+}
+
+void SubversionPlugin::OnPatch(wxCommandEvent& e)
+{
+	m_svn->PrintMessage(wxT("----\nApplying patch ...\n"));
+	m_svn->ApplyPatch(new SvnIconRefreshHandler(m_mgr, this));
 }

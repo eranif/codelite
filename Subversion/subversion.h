@@ -125,6 +125,7 @@ protected:
 	void OnCommitPrj(wxCommandEvent &e);
 	void OnResolveConflictFile(wxCommandEvent &e);
 	void OnResolveConflict(wxCommandEvent &e);
+	void OnPatch(wxCommandEvent &e);
 };
 
 #endif //SUBVERSION_H

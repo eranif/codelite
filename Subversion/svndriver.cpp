@@ -1,27 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : svndriver.cpp              
-// 
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : svndriver.cpp
+//
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "svndriver.h"
+#include "globals.h"
+#include "svndriver.h"
+#include <wx/filedlg.h>
 #include "svntab.h"
 #include "svnpostcmdaction.h"
 #include "wx/tokenzr.h"
@@ -38,17 +40,17 @@
 #include "logindlg.h"
 
 #define ENTER_SVN_AND_SELECT() {\
-	if(m_cmd){\
-		return;\
-	}\
-	SelectSvnTab();\
-}
+		if(m_cmd){\
+			return;\
+		}\
+		SelectSvnTab();\
+	}
 
 #define ENTER_SVN() {\
-	if(m_cmd){\
-		return;\
-	}\
-}
+		if(m_cmd){\
+			return;\
+		}\
+	}
 
 static const wxChar* commandSeparator = wxT("----\n");
 
@@ -102,10 +104,10 @@ void SvnDriver::SelectSvnTab()
 			break;
 		}
 	}
-	
+
 	// make sure the Ouput view is visible
 	wxAuiPaneInfo &info = m_manager->GetDockingManager()->GetPane(wxT("Output View"));
-	if(info.IsOk() && !info.IsShown()){
+	if (info.IsOk() && !info.IsShown()) {
 		info.Show();
 		m_manager->GetDockingManager()->Update();
 	}
@@ -163,8 +165,7 @@ void SvnDriver::OnSvnProcessTerminated(wxProcessEvent &event)
 void SvnDriver::DisplayDiffFile(const wxString &fileName, const wxString &content)
 {
 	bool hasExternalDiff = !m_plugin->GetOptions().GetDiffCmd().empty();
-	if ( !hasExternalDiff || ( hasExternalDiff && ((m_plugin->GetOptions().GetFlags() & SvnCaptureDiffOutput) != 0) ) )
-	{
+	if ( !hasExternalDiff || ( hasExternalDiff && ((m_plugin->GetOptions().GetFlags() & SvnCaptureDiffOutput) != 0) ) ) {
 		//Load the output file into the editor
 		wxString tmpFile = wxFileName::GetTempDir();
 
@@ -316,9 +317,9 @@ void SvnDriver::ResolveConflictedFile(const wxFileName& filename, SvnPostCmdActi
 	wxString command;
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT(" resolved \"") << filename.GetFullPath() << wxT("\"");
-		
+
 	// set the post command
-	if(handler){
+	if (handler) {
 		m_curHandler = new SvnDefaultCmdHandler(this, command);
 		m_curHandler->SetPostCmdAction(handler);
 	}
@@ -392,24 +393,20 @@ void SvnDriver::DiffFile(const wxFileName &fileName)
 
 	const wxString& diffCmd = m_plugin->GetOptions().GetDiffCmd();
 	bool hasExternalDiffCmd = !diffCmd.empty();
-	if ( !hasExternalDiffCmd )
-	{
-		#ifdef __WXMSW__
-			file_name.Prepend(wxT("\""));
-			file_name.Append(wxT("\""));
-		#endif
+	if ( !hasExternalDiffCmd ) {
+#ifdef __WXMSW__
+		file_name.Prepend(wxT("\""));
+		file_name.Append(wxT("\""));
+#endif
 
 		command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 		command << wxT("diff ") << file_name;
-	}
-	else
-	{
-		if ( !::wxFileExists( diffCmd ) )
-		{
+	} else {
+		if ( !::wxFileExists( diffCmd ) ) {
 			PrintMessage( wxString::Format( wxT("'%s' is not a valid command.\n%s"), diffCmd.c_str(), commandSeparator ) );
 			return;
 		}
-		
+
 		// export BASE revision of file to tmp file
 		const wxString& base = wxFileName::CreateTempFileName( wxT("svnExport"), (wxFile*)NULL );
 		::wxRemoveFile( base ); // just want the name, not the file.
@@ -418,20 +415,17 @@ void SvnDriver::DiffFile(const wxFileName &fileName)
 		exportCmd << wxT("export -r BASE \"") << file_name << wxT("\" ") << base;
 		wxArrayString output;
 		ProcUtils::ExecuteCommand(exportCmd, output);
-		
+
 		// get number of Base Revision
 		wxString info;
 		ExecInfoCommand( fileName, info );
 		wxString baseRev = SvnXmlParser::GetRevision( info );
-		if ( baseRev.empty() )
-		{
+		if ( baseRev.empty() ) {
 			baseRev = wxT("base");
-		}
-		else
-		{	
+		} else {
 			baseRev.Prepend(wxT("revision "));
 		}
-		
+
 		// Build external diff command
 		wxString args = m_plugin->GetOptions().GetDiffArgs();
 		args.Replace( wxT("%base"), base );
@@ -536,8 +530,8 @@ void SvnDriver::RevertFile(const wxFileName &fileName, SvnPostCmdAction *handler
 	ProcUtils::ExecuteCommand(command, output);
 	PrintMessage(output);
 	PrintMessage(commandSeparator);
-	
-	if(handler) {
+
+	if (handler) {
 		handler->DoCommand();
 		delete handler;
 	}
@@ -651,7 +645,7 @@ void SvnDriver::Add(const wxFileName &filename, SvnPostCmdAction *handler)
 
 	}
 	//free the handler
-	if(handler) {
+	if (handler) {
 		delete handler;
 	}
 }
@@ -756,7 +750,7 @@ void SvnDriver::ExecInfoCommand(const wxFileName &filename, wxString &output)
 	} else {
 		file_name = filename.GetFullName();
 	}
-	
+
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("info --xml --non-interactive \"") << file_name << wxT("\"");
 
@@ -772,5 +766,64 @@ void SvnDriver::Abort()
 {
 	if (m_cmd) {
 		m_cmd->Stop();
+	}
+}
+
+void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
+{
+	// pass the SVN guard
+	ENTER_SVN_AND_SELECT()
+	
+	wxString command;
+	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
+
+	if (item.m_fileName.IsDir()) {
+		DirSaver ds;
+		wxSetWorkingDirectory(item.m_fileName.GetPath());
+
+		// open a file selector to select the patch file
+		const wxString ALL(	wxT("Patch files (*.patch)|*.patch|")
+							wxT("Diff files (*.diff)|*.diff|")
+		                    wxT("All Files (*)|*"));
+
+		wxFileDialog fdlg(m_manager->GetTheApp()->GetTopWindow(),
+		                                      wxT("Select a patch file"),
+		                                      item.m_fileName.GetPath(),
+		                                      wxEmptyString,
+		                                      ALL,
+		                                      wxFD_OPEN | wxFILE_MUST_EXIST,
+		                                      wxDefaultPosition);
+		if(fdlg.ShowModal() == wxID_OK){
+			// try to load and convert the file into the platform line ending
+			wxString fileContent, convertedContent;
+			wxString eol(wxT("\n"));
+			
+#if defined(__WXMSW__)
+			eol = wxT("\r\n");
+#endif
+			if(!ReadFileWithConversion(fdlg.GetPath(), fileContent)){
+				PrintMessage(wxString::Format(wxT("Failed to read patch file '%s'"), fdlg.GetPath().c_str()));
+				return;
+			}
+			
+			wxArrayString lines = wxStringTokenize(fileContent, wxT("\r\n"), wxTOKEN_STRTOK);
+			for(size_t i=0; i<lines.GetCount(); i++){
+				convertedContent << lines.Item(i) << eol;
+			}
+			
+			wxString tmpFileName(fdlg.GetPath()+wxT(".tmp"));
+			if(!WriteFileWithBackup(tmpFileName, convertedContent, false)){
+				// failed to write the temporary file
+				PrintMessage(wxString::Format(wxT("Failed to convert patch file EOL mode '%s'"), tmpFileName.c_str()));
+				return;
+			}
+			
+			// execute the command
+			command << wxT("patch -p0 -i \"") << tmpFileName << wxT("\"");
+			m_curHandler = new SvnDefaultCmdHandler(this, command);
+			m_curHandler->SetPostCmdAction(handler);
+			
+			ExecCommand(command);
+		}
 	}
 }

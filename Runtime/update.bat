@@ -5,6 +5,7 @@ xcopy debuggers\*.dll "C:\Program Files\CodeLite\debuggers\" /E /I /H /Y /EXCLUD
 xcopy images\* "C:\Program Files\CodeLite\images\" /E /I /H /Y /EXCLUDE:excludes
 xcopy lexers\*.xml "C:\Program Files\CodeLite\lexers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy plugins\*.dll "C:\Program Files\CodeLite\plugins\" /E /I /H /Y /EXCLUDE:excludes
+xcopy plugins\resources\*.* "C:\Program Files\CodeLite\plugins\resources\" /E /I /H /Y /EXCLUDE:excludes
 xcopy rc\*.xrc "C:\Program Files\CodeLite\rc\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\ "C:\Program Files\CodeLite\templates\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "C:\Program Files\CodeLite\" /H /Y /EXCLUDE:excludes

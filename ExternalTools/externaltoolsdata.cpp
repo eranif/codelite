@@ -23,12 +23,14 @@ void ToolInfo::DeSerialize(Archive& arch)
 
 void ToolInfo::Serialize(Archive& arch)
 {
+	
 	arch.Write(wxT("m_id"), m_id);
 	arch.Write(wxT("m_path"), m_path);
 	arch.Write(wxT("m_arguments"), m_arguments);
 	arch.Write(wxT("m_wd"), m_wd);
 	arch.Write(wxT("m_name"), m_name);
 	arch.Write(wxT("m_icon16"), m_icon16);
+	arch.Write(wxT("m_icon24"), m_icon24);
 	arch.Write(wxT("m_captureOutput"), m_captureOutput);
 }
 

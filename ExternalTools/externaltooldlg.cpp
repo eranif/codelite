@@ -30,9 +30,16 @@ void ExternalToolDlg::OnItemSelected( wxListEvent& event )
 
 void ExternalToolDlg::OnButtonNew( wxCommandEvent& event )
 {
-	NewToolDlg dlg(this, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString );
+	NewToolDlg dlg(this, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, false );
 	if (dlg.ShowModal() == wxID_OK) {
-		DoUpdateEntry(dlg.GetToolId(), dlg.GetToolName(), dlg.GetPath(), dlg.GetWorkingDirectory(), dlg.GetArguments(), dlg.GetIcon16(), dlg.GetIcon24());
+		DoUpdateEntry(	dlg.GetToolId(), 
+						dlg.GetToolName(), 
+						dlg.GetPath(), 
+						dlg.GetWorkingDirectory(), 
+						dlg.GetArguments(), 
+						dlg.GetIcon16(), 
+						dlg.GetIcon24(), 
+						dlg.GetCaptureProcessOutput());
 	}
 }
 
@@ -72,6 +79,7 @@ void ExternalToolDlg::Initialize()
 	m_listCtrlTools->InsertColumn(4, wxT("Working directory"));
 	m_listCtrlTools->InsertColumn(5, wxT("Small Icon"));
 	m_listCtrlTools->InsertColumn(6, wxT("Large Icon"));
+	m_listCtrlTools->InsertColumn(7, wxT("Capture Output"));
 
 	// TODO: populate the list from the settings
 	m_listCtrlTools->SetColumnWidth(0, 100);
@@ -81,9 +89,10 @@ void ExternalToolDlg::Initialize()
 	m_listCtrlTools->SetColumnWidth(4, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(5, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(6, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(7, wxLIST_AUTOSIZE);
 }
 
-void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& name, const wxString& path, const wxString& workingDirectory, const wxString& arguments, const wxString &icon16, const wxString &icon24)
+void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& name, const wxString& path, const wxString& workingDirectory, const wxString& arguments, const wxString &icon16, const wxString &icon24, bool captureOutput)
 {
 	// try to see if 'id' already exist in the list control
 	long item(wxNOT_FOUND);
@@ -106,7 +115,8 @@ void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& name, co
 	SetColumnText(m_listCtrlTools, item, 4, workingDirectory);
 	SetColumnText(m_listCtrlTools, item, 5, icon16);
 	SetColumnText(m_listCtrlTools, item, 6, icon24);
-
+	SetColumnText(m_listCtrlTools, item, 7, captureOutput ? wxT("Yes") : wxT("No"));
+	
 	m_listCtrlTools->SetColumnWidth(0, 150);
 	m_listCtrlTools->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(2, wxLIST_AUTOSIZE);
@@ -114,6 +124,7 @@ void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& name, co
 	m_listCtrlTools->SetColumnWidth(4, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(5, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(6, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(7, wxLIST_AUTOSIZE);
 }
 
 void ExternalToolDlg::DoEditEntry(long item)
@@ -125,10 +136,18 @@ void ExternalToolDlg::DoEditEntry(long item)
 	wxString wd = GetColumnText(m_listCtrlTools, m_item, 4);
 	wxString icon16 = GetColumnText(m_listCtrlTools, m_item, 5);
 	wxString icon24 = GetColumnText(m_listCtrlTools, m_item, 6);
+	bool captureOutput = GetColumnText(m_listCtrlTools, m_item, 7) == wxT("Yes") ? true : false;
 	
-	NewToolDlg dlg(this, id, name, path, wd, args, icon16, icon24);
+	NewToolDlg dlg(this, id, name, path, wd, args, icon16, icon24, captureOutput);
 	if (dlg.ShowModal() == wxID_OK) {
-		DoUpdateEntry(dlg.GetToolId(), dlg.GetToolName(), dlg.GetPath(), dlg.GetWorkingDirectory(), dlg.GetArguments(), dlg.GetIcon16(), dlg.GetIcon24());
+		DoUpdateEntry(	dlg.GetToolId(), 
+						dlg.GetToolName(), 
+						dlg.GetPath(), 
+						dlg.GetWorkingDirectory(), 
+						dlg.GetArguments(), 
+						dlg.GetIcon16(), 
+						dlg.GetIcon24(), 
+						dlg.GetCaptureProcessOutput());
 	}
 }
 
@@ -144,6 +163,8 @@ std::vector<ToolInfo> ExternalToolDlg::GetTools()
 		ti.SetWd(GetColumnText(m_listCtrlTools, i, 4));
 		ti.SetIcon16(GetColumnText(m_listCtrlTools, i, 5));
 		ti.SetIcon24(GetColumnText(m_listCtrlTools, i, 6));
+		ti.SetCaptureOutput(GetColumnText(m_listCtrlTools, i, 7) == wxT("Yes") ? true : false);
+		
 		tools.push_back(ti);
 	}
 	return tools;
@@ -164,6 +185,7 @@ void ExternalToolDlg::SetTools(const std::vector<ToolInfo>& tools)
 		SetColumnText(m_listCtrlTools, item, 4, ti.GetWd());
 		SetColumnText(m_listCtrlTools, item, 5, ti.GetIcon16());
 		SetColumnText(m_listCtrlTools, item, 6, ti.GetIcon24());
+		SetColumnText(m_listCtrlTools, item, 7, ti.GetCaptureOutput() ? wxT("Yes") : wxT("No"));
 	}
 	
 	m_listCtrlTools->SetColumnWidth(0, 150);
@@ -173,6 +195,7 @@ void ExternalToolDlg::SetTools(const std::vector<ToolInfo>& tools)
 	m_listCtrlTools->SetColumnWidth(4, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(5, wxLIST_AUTOSIZE);
 	m_listCtrlTools->SetColumnWidth(6, wxLIST_AUTOSIZE);
+	m_listCtrlTools->SetColumnWidth(7, wxLIST_AUTOSIZE);
 	
 	m_listCtrlTools->Thaw();
 }

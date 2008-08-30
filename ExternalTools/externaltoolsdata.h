@@ -13,6 +13,7 @@ class ToolInfo : public SerializedObject
 	wxString m_name;
 	wxString m_icon16;
 	wxString m_icon24;
+	bool m_captureOutput;
 
 public:
 	ToolInfo();
@@ -64,6 +65,14 @@ public:
 	const wxString& GetIcon24() const {
 		return m_icon24;
 	}
+
+	void SetCaptureOutput(const bool& captureOutput) {
+		this->m_captureOutput = captureOutput;
+	}
+	const bool& GetCaptureOutput() const {
+		return m_captureOutput;
+	}
+
 };
 
 class ExternalToolsData : public SerializedObject

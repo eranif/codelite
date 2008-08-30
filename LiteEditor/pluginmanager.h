@@ -86,6 +86,8 @@ public:
 	virtual wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd);
 	virtual wxApp *GetTheApp();
 	virtual void ReloadWorkspace();
+	virtual IPlugin* GetPlugin(const wxString &pluginName);
+	virtual void AppendOutputMsg(const wxString &msg);
 	
 	//------------------------------------
 	//End of IManager interface

@@ -83,13 +83,11 @@ wxString SettersGettersDlg::GenerateFunctions()
 	wxString code;
 	GenerateSetters(code);
 	if (code.IsEmpty() == false) {
-		code.Prepend(wxT("//Setters\n"));
 		code << wxT("\n\n");
 	}
 	wxString settersCode;
 	GenerateGetters(settersCode);
 	if (settersCode.IsEmpty() == false) {
-		code << wxT("//Getters\n");
 		code << settersCode << wxT("\n");
 	}
 	return code;

@@ -75,8 +75,8 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	m_textCtrlArguments = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_textCtrlArguments, 1, wxALL|wxEXPAND, 5 );
 	
-	m_buttonHelp = new wxButton( this, wxID_ANY, wxT("Help..."), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer1->Add( m_buttonHelp, 0, wxALL, 5 );
+	m_panel31 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	fgSizer1->Add( m_panel31, 1, wxEXPAND | wxALL, 5 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	fgSizer1->Add( m_staticline1, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
@@ -109,6 +109,10 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	
 	bSizer1->Add( fgSizer1, 0, wxEXPAND, 5 );
 	
+	m_checkBoxCaptureProcessOutput = new wxCheckBox( this, wxID_ANY, wxT("Capture process output"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	bSizer1->Add( m_checkBoxCaptureProcessOutput, 0, wxALL, 5 );
+	
 	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
 	
@@ -122,6 +126,9 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonCancel, 0, wxALL, 5 );
 	
+	m_buttonHelp = new wxButton( this, wxID_ANY, wxT("Help..."), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer2->Add( m_buttonHelp, 0, wxALL, 5 );
+	
 	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	this->SetSizer( bSizer1 );
@@ -134,11 +141,11 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	m_choiceId->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NewToolBase::OnIdSelected ), NULL, this );
 	m_buttonBrowsePath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowsePath ), NULL, this );
 	m_buttonBrowseWd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseWD ), NULL, this );
-	m_buttonHelp->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonHelp ), NULL, this );
 	m_buttonBrowseIcon16->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseIcon16 ), NULL, this );
 	m_buttonBrowseIcon24->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseIcon24 ), NULL, this );
 	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonOk ), NULL, this );
 	m_buttonCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonCancel ), NULL, this );
+	m_buttonHelp->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonHelp ), NULL, this );
 }
 
 NewToolBase::~NewToolBase()
@@ -147,9 +154,9 @@ NewToolBase::~NewToolBase()
 	m_choiceId->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NewToolBase::OnIdSelected ), NULL, this );
 	m_buttonBrowsePath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowsePath ), NULL, this );
 	m_buttonBrowseWd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseWD ), NULL, this );
-	m_buttonHelp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonHelp ), NULL, this );
 	m_buttonBrowseIcon16->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseIcon16 ), NULL, this );
 	m_buttonBrowseIcon24->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonBrowseIcon24 ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonOk ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonCancel ), NULL, this );
+	m_buttonHelp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewToolBase::OnButtonHelp ), NULL, this );
 }

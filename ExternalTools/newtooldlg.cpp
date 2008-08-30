@@ -3,7 +3,7 @@
 #include <wx/filedlg.h>
 #include "macrosdlg.h"
 
-NewToolDlg::NewToolDlg( wxWindow* parent, const wxString &id, const wxString &name, const wxString &path, const wxString &wd, const wxString &args, const wxString &icon16, const wxString &icon24)
+NewToolDlg::NewToolDlg( wxWindow* parent, const wxString &id, const wxString &name, const wxString &path, const wxString &wd, const wxString &args, const wxString &icon16, const wxString &icon24, bool captureOutput)
 		: NewToolBase( parent )
 {
 	m_choiceId->SetFocus();
@@ -14,6 +14,7 @@ NewToolDlg::NewToolDlg( wxWindow* parent, const wxString &id, const wxString &na
 	m_textCtrlIcon16->SetValue(icon16);
 	m_textCtrlIcon24->SetValue(icon24);
 	m_textCtrlName->SetValue(name);
+	m_checkBoxCaptureProcessOutput->SetValue(captureOutput);
 }
 
 void NewToolDlg::OnButtonBrowsePath( wxCommandEvent& event )

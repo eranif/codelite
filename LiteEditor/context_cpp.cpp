@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 
+#include "pluginmanager.h"
 #include "precompiled_header.h"
 #include "debuggerconfigtool.h"
 #include "debuggersettings.h"
@@ -1189,6 +1190,12 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event) {
 		wxString code = s_dlg->GetGenCode();
 		if (code.IsEmpty() == false) {
 			editor.InsertTextWithIndentation(code, lineno);
+		}
+		IPlugin *formatter = PluginManager::Get()->GetPlugin(wxT("CodeFormatter"));
+		if(formatter){
+			// code formatter is available, format the current source file
+			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("format_source"));
+			Frame::Get()->GetEventHandler()->AddPendingEvent(e);
 		}
 	}
 }

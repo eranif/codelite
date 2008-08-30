@@ -15,7 +15,7 @@ class ExternalToolDlg : public ExternalToolBaseDlg
 {
 	long m_item;
 private:
-	void DoUpdateEntry(const wxString& id, const wxString& name, const wxString& path, const wxString& workingDirectory, const wxString& arguments, const wxString &icon16, const wxString &icon24);
+	void DoUpdateEntry(const wxString& id, const wxString& name, const wxString& path, const wxString& workingDirectory, const wxString& arguments, const wxString &icon16, const wxString &icon24, bool captureOutput);
 	void DoEditEntry(long item);
 	
 protected:

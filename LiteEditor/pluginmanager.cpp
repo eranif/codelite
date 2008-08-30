@@ -349,3 +349,17 @@ void PluginManager::ReloadWorkspace()
 {
 	ManagerST::Get()->ReloadWorkspace();
 }
+
+IPlugin* PluginManager::GetPlugin(const wxString& pluginName)
+{
+	std::map<wxString, IPlugin*>::iterator iter = m_plugins.find(pluginName);
+	if(iter != m_plugins.end()){
+		return iter->second;
+	}
+	return NULL;
+}
+
+void PluginManager::AppendOutputMsg(const wxString& msg)
+{
+	ManagerST::Get()->OutputMessage(msg);
+}

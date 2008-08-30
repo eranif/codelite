@@ -36,6 +36,7 @@ class Workspace;
 class EnvironmentConfig;
 class JobQueue;
 class wxApp;
+class IPlugin;
 
 //--------------------------
 //Auxulary class
@@ -186,6 +187,19 @@ public:
 	 * \brief reload the current workspace, this function does not do anything if a workspace is not opened
 	 */
 	virtual void ReloadWorkspace() = 0;
+	
+	/**
+	 * \brief search for loaded plugin by its name, if the plugin is loaded returns its pointer
+	 * \param pluginName plugin to search 
+	 * \return pointer to the plugin or NULL if it is not loaded
+	 */
+	virtual IPlugin *GetPlugin(const wxString &pluginName) = 0;
+	
+	/**
+	 * \brief print message into the 'output' tab of the 'Output View' pane
+	 * \param msg message to append
+	 */
+	virtual void AppendOutputMsg(const wxString &msg) = 0;
 };
 
 #endif //IMANAGER_H

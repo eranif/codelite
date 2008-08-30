@@ -1,4 +1,6 @@
+#include "environmentconfig.h"
 #include <wx/aui/framemanager.h>
+#include "async_executable_cmd.h"
 #include <wx/bitmap.h>
 #include "dirsaver.h"
 #include <wx/app.h>
@@ -9,8 +11,15 @@
 #include "externaltools.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/log.h>
+#include <algorithm>
 
 static ExternalToolsPlugin* thePlugin = NULL;
+
+struct DecSort {
+	bool operator()(const ToolInfo &t1, const ToolInfo &t2) {
+		return t1.GetName().CmpNoCase(t2.GetName()) > 0;
+	}
+};
 
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
@@ -36,14 +45,24 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 	return PLUGIN_INTERFACE_VERSION;
 }
 
+BEGIN_EVENT_TABLE(ExternalToolsPlugin, IPlugin)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE, ExternalToolsPlugin::OnToolProcess)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, ExternalToolsPlugin::OnToolProcess)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, 	ExternalToolsPlugin::OnToolProcess)
+END_EVENT_TABLE()
+
 ExternalToolsPlugin::ExternalToolsPlugin(IManager *manager)
 		: IPlugin(manager)
 		, topWin(NULL)
+		, m_pipedProcess(NULL)
 {
 	m_longName = wxT("A plugin that allows user to launch external tools from within CodeLite");
 	m_shortName = wxT("ExternalTools");
 	topWin = m_mgr->GetTheApp();
 
+	topWin->Connect(XRCID("stop_external_tool"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnStopExternalTool), NULL, (wxEvtHandler*)this);
+	topWin->Connect(XRCID("stop_external_tool"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnStopExternalToolUI), NULL, (wxEvtHandler*)this);
+	
 	topWin->Connect(XRCID("external_tool_0"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
 	topWin->Connect(XRCID("external_tool_1"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
 	topWin->Connect(XRCID("external_tool_2"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
@@ -54,11 +73,25 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager *manager)
 	topWin->Connect(XRCID("external_tool_7"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
 	topWin->Connect(XRCID("external_tool_8"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
 	topWin->Connect(XRCID("external_tool_9"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
+
+	topWin->Connect(XRCID("external_tool_0"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Connect(XRCID("external_tool_1"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Connect(XRCID("external_tool_2"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Connect(XRCID("external_tool_3"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Connect(XRCID("external_tool_4"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Connect(XRCID("external_tool_5"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Connect(XRCID("external_tool_6"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Connect(XRCID("external_tool_7"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Connect(XRCID("external_tool_8"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Connect(XRCID("external_tool_9"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
 }
 
 ExternalToolsPlugin::~ExternalToolsPlugin()
 {
 	topWin->Disconnect(XRCID("external_tools_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnSettings), NULL, (wxEvtHandler*)this);
+	topWin->Disconnect(XRCID("stop_external_tool"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnStopExternalTool), NULL, (wxEvtHandler*)this);
+	topWin->Disconnect(XRCID("stop_external_tool"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnStopExternalToolUI), NULL, (wxEvtHandler*)this);
+	
 	topWin->Disconnect(XRCID("external_tool_0"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
 	topWin->Disconnect(XRCID("external_tool_1"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
 	topWin->Disconnect(XRCID("external_tool_2"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
@@ -69,6 +102,17 @@ ExternalToolsPlugin::~ExternalToolsPlugin()
 	topWin->Disconnect(XRCID("external_tool_7"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
 	topWin->Disconnect(XRCID("external_tool_8"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
 	topWin->Disconnect(XRCID("external_tool_9"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
+
+	topWin->Disconnect(XRCID("external_tool_0"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Disconnect(XRCID("external_tool_1"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Disconnect(XRCID("external_tool_2"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Disconnect(XRCID("external_tool_3"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Disconnect(XRCID("external_tool_4"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Disconnect(XRCID("external_tool_5"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Disconnect(XRCID("external_tool_6"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Disconnect(XRCID("external_tool_7"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Disconnect(XRCID("external_tool_8"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	topWin->Disconnect(XRCID("external_tool_9"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
 }
 
 wxToolBar *ExternalToolsPlugin::CreateToolBar(wxWindow *parent)
@@ -84,32 +128,37 @@ wxToolBar *ExternalToolsPlugin::CreateToolBar(wxWindow *parent)
 
 	if (size == 24) {
 		m_tb->AddTool(XRCID("external_tools_settings"), wxT("Configure external tools..."), wxXmlResource::Get()->LoadBitmap(wxT("configure_ext_tools24")), wxT("Configure external tools..."));
+		m_tb->AddTool(XRCID("stop_external_tool"), wxT("Stop external tool"), wxXmlResource::Get()->LoadBitmap(wxT("stop_external_tool24")), wxT("Stop external tool"));
 	} else {
 		m_tb->AddTool(XRCID("external_tools_settings"), wxT("Configure external tools..."), wxXmlResource::Get()->LoadBitmap(wxT("configure_ext_tools16")), wxT("Configure external tools..."));
+		m_tb->AddTool(XRCID("stop_external_tool"), wxT("Stop external tool"), wxXmlResource::Get()->LoadBitmap(wxT("stop_external_tool16")), wxT("Stop external tool"));
 	}
 	m_tb->AddSeparator();
+
+	std::vector<ToolInfo> tools = inData.GetTools();
+	std::sort(tools.begin(), tools.end(), DecSort());
 	
-	for (size_t i=0; i<inData.GetTools().size(); i++) {
-		ToolInfo ti = inData.GetTools().at(i);
+	for (size_t i=0; i<tools.size(); i++) {
+		ToolInfo ti = tools.at(i);
 
 		wxFileName icon24(ti.GetIcon24());
 		wxFileName icon16(ti.GetIcon16());
 
 		if (size == 24) {
 			wxBitmap bmp(wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default24")));
-			if(icon24.FileExists()){
+			if (icon24.FileExists()) {
 				bmp.LoadFile(icon24.GetFullPath(), wxBITMAP_TYPE_PNG);
-				if(bmp.IsOk() == false){
+				if (bmp.IsOk() == false) {
 					bmp = wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default24"));
 				}
 			}
 			m_tb->AddTool(wxXmlResource::GetXRCID(ti.GetId().c_str()), ti.GetName(), bmp, ti.GetName());
-			
+
 		} else if (size == 16) {
 			wxBitmap bmp(wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default16")));
-			if(icon16.FileExists()){
+			if (icon16.FileExists()) {
 				bmp.LoadFile(icon16.GetFullPath(), wxBITMAP_TYPE_PNG);
-				if(bmp.IsOk() == false){
+				if (bmp.IsOk() == false) {
 					bmp = wxXmlResource::Get()->LoadBitmap(wxT("ext_tool_default16"));
 				}
 			}
@@ -199,12 +248,49 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 		working_dir = ExpandAllVariables(working_dir, NULL, wxEmptyString, wxEmptyString, current_file);
 	}
 
-	{
+	if (ti.GetCaptureOutput() == false) {
 		// change the directory to the requested working directory
 		DirSaver ds;
 		wxSetWorkingDirectory(working_dir);
+
+		// apply environment
+		m_mgr->GetEnv()->ApplyEnv(NULL);
 		wxExecute(command);
+		m_mgr->GetEnv()->UnApplyEnv();
+
+	} else {
+		// create a piped process
+		if (m_pipedProcess && m_pipedProcess->IsBusy()) {
+			// a process is already running
+			return;
+		}
+
+		m_pipedProcess = new AsyncExeCmd(this);
+		m_mgr->GetEnv()->ApplyEnv(NULL);
+		
+		DirSaver ds;
+		wxSetWorkingDirectory(working_dir);
+		
+		// hide console if any,
+		// redirect output
+		m_pipedProcess->Execute(command, true, true);
+		if (m_pipedProcess->GetProcess()) {
+			// select the 'Output' tab
+			SelectOutputTab();
+			
+			// success
+			m_pipedProcess->GetProcess()->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(ExternalToolsPlugin::OnProcessEnd), NULL, this);
+		}
+		m_mgr->GetEnv()->UnApplyEnv();
 	}
+}
+
+void ExternalToolsPlugin::OnProcessEnd(wxProcessEvent &event)
+{
+	m_pipedProcess->ProcessEnd(event);
+	m_pipedProcess->GetProcess()->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(ExternalToolsPlugin::OnProcessEnd), NULL, this);
+	delete m_pipedProcess;
+	m_pipedProcess = NULL;
 }
 
 void ExternalToolsPlugin::DoRecreateToolbar()
@@ -225,3 +311,59 @@ void ExternalToolsPlugin::DoRecreateToolbar()
 	// Apply changes
 	m_mgr->GetDockingManager()->Update();
 }
+
+bool ExternalToolsPlugin::IsRedirectedToolRunning()
+{
+	if (m_pipedProcess == NULL)
+		return false;
+
+	return (m_pipedProcess && m_pipedProcess->IsBusy());
+}
+
+void ExternalToolsPlugin::OnToolProcess(wxCommandEvent& event)
+{
+	wxString msg(event.GetString());
+	msg = msg.Trim().Trim(false);
+	m_mgr->AppendOutputMsg(msg + wxT("\n"));
+}
+
+void ExternalToolsPlugin::OnLaunchExternalToolUI(wxUpdateUIEvent& e)
+{
+	e.Enable(!IsRedirectedToolRunning());
+}
+
+void ExternalToolsPlugin::SelectOutputTab()
+{
+	// make sure the Ouput view is visible
+	wxAuiPaneInfo &info = m_mgr->GetDockingManager()->GetPane(wxT("Output View"));
+	if(info.IsOk() && !info.IsShown()){
+		info.Show();
+		m_mgr->GetDockingManager()->Update();
+	}
+	
+	Notebook *book = m_mgr->GetOutputPaneNotebook();
+	wxString curSel = book->GetPageText((size_t)book->GetSelection());
+	if (curSel == wxT("Output")) {
+		return;
+	}
+
+	for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
+		if (book->GetPageText(i) == wxT("Output")) {
+			book->SetSelection(i);
+			break;
+		}
+	}
+}
+
+void ExternalToolsPlugin::OnStopExternalTool(wxCommandEvent& e)
+{
+	if(m_pipedProcess) {
+		m_pipedProcess->Stop();
+	}
+}
+
+void ExternalToolsPlugin::OnStopExternalToolUI(wxUpdateUIEvent& e)
+{
+	e.Enable(this->IsRedirectedToolRunning());
+}
+

@@ -1,10 +1,13 @@
+#include <wx/msgdlg.h>
+#include "externaltoolsdata.h"
 #include "newtooldlg.h"
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include "macrosdlg.h"
 
-NewToolDlg::NewToolDlg( wxWindow* parent, const wxString &id, const wxString &name, const wxString &path, const wxString &wd, const wxString &args, const wxString &icon16, const wxString &icon24, bool captureOutput)
+NewToolDlg::NewToolDlg( wxWindow* parent, IManager *mgr, const wxString &id, const wxString &name, const wxString &path, const wxString &wd, const wxString &args, const wxString &icon16, const wxString &icon24, bool captureOutput)
 		: NewToolBase( parent )
+		, m_mgr(mgr)
 {
 	m_choiceId->SetFocus();
 	m_textCtrlArguments->SetValue(args);
@@ -47,7 +50,22 @@ void NewToolDlg::OnButtonHelp( wxCommandEvent& event )
 void NewToolDlg::OnButtonOk( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	EndModal(wxID_OK);
+	int rc(wxID_OK);
+	
+	// load all the tools
+	ExternalToolsData inData;
+	m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
+	for(size_t i=0; i<inData.GetTools().size(); i++){
+		if(GetToolId() == inData.GetTools().at(i).GetId()){
+			int answer = wxMessageBox(wxString::Format(wxT("Continue updating tool ID '%s'"), GetToolId().c_str()), wxT("CodeLite"), wxYES_NO|wxCANCEL, this);
+			if(answer != wxYES){
+				rc = wxID_CANCEL;
+			}
+			break;
+		}
+	}
+	
+	EndModal(rc);
 }
 
 void NewToolDlg::OnButtonCancel( wxCommandEvent& event )

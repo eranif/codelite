@@ -1,11 +1,13 @@
 #include "globals.h"
+#include <wx/msgdlg.h>
 #include "externaltoolsdata.h"
 #include "newtooldlg.h"
 #include "externaltooldlg.h"
 
-ExternalToolDlg::ExternalToolDlg( wxWindow* parent )
+ExternalToolDlg::ExternalToolDlg( wxWindow* parent, IManager *mgr )
 		: ExternalToolBaseDlg( parent )
 		, m_item(wxNOT_FOUND)
+		, m_mgr(mgr)
 {
 	Initialize();
 	m_listCtrlTools->SetFocus();
@@ -30,7 +32,7 @@ void ExternalToolDlg::OnItemSelected( wxListEvent& event )
 
 void ExternalToolDlg::OnButtonNew( wxCommandEvent& event )
 {
-	NewToolDlg dlg(this, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, false );
+	NewToolDlg dlg(this, m_mgr, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, wxEmptyString, false );
 	if (dlg.ShowModal() == wxID_OK) {
 		DoUpdateEntry(	dlg.GetToolId(), 
 						dlg.GetToolName(), 
@@ -46,7 +48,7 @@ void ExternalToolDlg::OnButtonNew( wxCommandEvent& event )
 void ExternalToolDlg::OnButtonNewUI( wxUpdateUIEvent& event )
 {
 	// maximum of 10 items
-	event.Enable(m_listCtrlTools->GetItemCount() < 10);
+	event.Enable(m_listCtrlTools->GetItemCount() < MAX_TOOLS);
 }
 
 void ExternalToolDlg::OnButtonEdit( wxCommandEvent& event )
@@ -62,7 +64,9 @@ void ExternalToolDlg::OnButtonEditUI( wxUpdateUIEvent& event )
 
 void ExternalToolDlg::OnButtonDelete( wxCommandEvent& event )
 {
-	m_listCtrlTools->DeleteItem(m_item);
+	if(wxMessageBox(wxT("Are you sure you want to delete this tool?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES){
+		m_listCtrlTools->DeleteItem(m_item);
+	}
 }
 
 void ExternalToolDlg::OnButtonDeleteUI( wxUpdateUIEvent& event )
@@ -138,7 +142,7 @@ void ExternalToolDlg::DoEditEntry(long item)
 	wxString icon24 = GetColumnText(m_listCtrlTools, m_item, 6);
 	bool captureOutput = GetColumnText(m_listCtrlTools, m_item, 7) == wxT("Yes") ? true : false;
 	
-	NewToolDlg dlg(this, id, name, path, wd, args, icon16, icon24, captureOutput);
+	NewToolDlg dlg(this, m_mgr, id, name, path, wd, args, icon16, icon24, captureOutput);
 	if (dlg.ShowModal() == wxID_OK) {
 		DoUpdateEntry(	dlg.GetToolId(), 
 						dlg.GetToolName(), 

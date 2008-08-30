@@ -33,7 +33,7 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	m_choiceId->SetSelection( 0 );
 	fgSizer1->Add( m_choiceId, 0, wxALL|wxEXPAND, 5 );
 	
-	m_panel2 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel2 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_panel2, 1, wxEXPAND | wxALL, 5 );
 	
 	m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -45,7 +45,7 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	
 	fgSizer1->Add( m_textCtrlName, 0, wxALL|wxEXPAND, 5 );
 	
-	m_panel3 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel3 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_panel3, 1, wxEXPAND | wxALL, 5 );
 	
 	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Tool path:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -75,7 +75,7 @@ NewToolBase::NewToolBase( wxWindow* parent, wxWindowID id, const wxString& title
 	m_textCtrlArguments = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_textCtrlArguments, 1, wxALL|wxEXPAND, 5 );
 	
-	m_panel31 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel31 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_panel31, 1, wxEXPAND | wxALL, 5 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );

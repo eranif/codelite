@@ -4,6 +4,8 @@
 #include <vector>
 #include "serialized_object.h"
 
+#define MAX_TOOLS 10
+
 class ToolInfo : public SerializedObject
 {
 	wxString m_id;

@@ -63,27 +63,11 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager *manager)
 	topWin->Connect(XRCID("stop_external_tool"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnStopExternalTool), NULL, (wxEvtHandler*)this);
 	topWin->Connect(XRCID("stop_external_tool"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnStopExternalToolUI), NULL, (wxEvtHandler*)this);
 	
-	topWin->Connect(XRCID("external_tool_0"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Connect(XRCID("external_tool_1"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Connect(XRCID("external_tool_2"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Connect(XRCID("external_tool_3"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Connect(XRCID("external_tool_4"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Connect(XRCID("external_tool_5"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Connect(XRCID("external_tool_6"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Connect(XRCID("external_tool_7"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Connect(XRCID("external_tool_8"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Connect(XRCID("external_tool_9"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-
-	topWin->Connect(XRCID("external_tool_0"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Connect(XRCID("external_tool_1"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Connect(XRCID("external_tool_2"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Connect(XRCID("external_tool_3"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Connect(XRCID("external_tool_4"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Connect(XRCID("external_tool_5"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Connect(XRCID("external_tool_6"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Connect(XRCID("external_tool_7"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Connect(XRCID("external_tool_8"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Connect(XRCID("external_tool_9"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	for(int i=0; i<MAX_TOOLS; i++){
+		wxString winid = wxString::Format(wxT("external_tool_%d"), i);
+		topWin->Connect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
+		topWin->Connect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	}
 }
 
 ExternalToolsPlugin::~ExternalToolsPlugin()
@@ -92,27 +76,11 @@ ExternalToolsPlugin::~ExternalToolsPlugin()
 	topWin->Disconnect(XRCID("stop_external_tool"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnStopExternalTool), NULL, (wxEvtHandler*)this);
 	topWin->Disconnect(XRCID("stop_external_tool"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnStopExternalToolUI), NULL, (wxEvtHandler*)this);
 	
-	topWin->Disconnect(XRCID("external_tool_0"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_1"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_2"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_3"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_4"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_5"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_6"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_7"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_8"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_9"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
-
-	topWin->Disconnect(XRCID("external_tool_0"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_1"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_2"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_3"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_4"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_5"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_6"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_7"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_8"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
-	topWin->Disconnect(XRCID("external_tool_9"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	for(int i=0; i<MAX_TOOLS; i++){
+		wxString winid = wxString::Format(wxT("external_tool_%d"), i);
+		topWin->Disconnect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
+		topWin->Disconnect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ExternalToolsPlugin::OnLaunchExternalToolUI), NULL, this);
+	}
 }
 
 wxToolBar *ExternalToolsPlugin::CreateToolBar(wxWindow *parent)
@@ -202,7 +170,7 @@ void ExternalToolsPlugin::OnSettings(wxCommandEvent& e)
 {
 	ExternalToolsData inData;
 	m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
-	ExternalToolDlg dlg(m_mgr->GetTheApp()->GetTopWindow());
+	ExternalToolDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
 	dlg.SetTools(inData.GetTools());
 
 	if (dlg.ShowModal() == wxID_OK) {

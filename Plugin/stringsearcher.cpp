@@ -24,9 +24,18 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "stringsearcher.h"
 #include <wx/regex.h>
-#include <algorithm>
 
 extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
+
+static wxString Reverse(const wxString &str)
+{
+	// reverse the string content
+	wxString tmp;
+	for(int i=(int)str.length()-1; i>=0; i--){
+		tmp << str.GetChar(i);
+	}
+	return tmp;
+}
 
 wxString StringFindReplacer::GetString(const wxString& input, int from, bool search_up)
 {
@@ -113,8 +122,8 @@ bool StringFindReplacer::DoSimpleSearch(const wxString& input, int startOffset, 
 
 	// incase we are scanning backwared, revert the strings
 	if ( flags & wxSD_SEARCH_BACKWARD ) {
-		std::reverse(find_str.begin(), find_str.end());
-		std::reverse(str.begin(), str.end());
+		find_str = Reverse(find_str);
+		str = Reverse(str);
 	} else {
 		offset = startOffset;
 	}
@@ -186,7 +195,7 @@ bool StringFindReplacer::Search(const wxString& input, int startOffset, const wx
 {
 	// adjust startOffset due to it is in bytes but should be in chars
 	int iSO = startOffset;
-	while(iSO > 0 && UTF8Length(input, iSO) > startOffset) iSO--;
+	while(iSO > 0 && (int)UTF8Length(input, iSO) > startOffset) iSO--;
 	startOffset = iSO;
 	
 	bool bResult = false;

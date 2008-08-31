@@ -367,7 +367,7 @@ wxSQLite3ResultSet TagsDatabase::SelectTagsByFile(const wxString& file, const wx
 
 	wxString query;
 	query << wxT("select * from tags where file='") << file << wxT("' ");
-	return m_db->ExecuteQuery(query.GetData());
+	return m_db->ExecuteQuery(query);
 }
 
 

@@ -1624,17 +1624,13 @@ void Manager::CloseExternalDatabase()
 	TagsManager *mgr = TagsManagerST::Get();
 	mgr->CloseExternalDatabase();
 	//remove the entry from the status bar
-	SetStatusMessage(wxEmptyString, 2);
+	SetStatusMessage(wxEmptyString, 1);
 }
-
-
-
 
 void Manager::SetStatusMessage(const wxString &msg, int col)
 {
 	Frame::Get()->GetStatusBar()->SetStatusText(msg, col);
 }
-
 
 void Manager::CloseAllButThis(wxWindow *curreditor)
 {

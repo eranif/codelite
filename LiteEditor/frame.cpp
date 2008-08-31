@@ -519,7 +519,8 @@ void Frame::Initialize(bool loadLastSession)
 	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
 		m_theFrame->LoadSession(SessionManager::Get().GetLastSession());
 	}
-
+	
+	m_theFrame->SendSizeEvent();
 	SetGccColourFunction( BuildTab::ColourGccLine );
 }
 

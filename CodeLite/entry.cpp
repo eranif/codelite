@@ -204,7 +204,7 @@ void TagEntry::Create(const tagEntry& entry)
 	{
 		wxString key = _U(entry.fields.list[i].key);
 		wxString value = _U(entry.fields.list[i].value);
-		m_extFields[key] = _U(value);
+		m_extFields[key] = value;
 	}
 	Create(	_U(entry.file), 
 		_U(entry.name), 

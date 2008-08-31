@@ -1188,7 +1188,7 @@ void Frame::OnSwitchWorkspace(wxCommandEvent &event)
 	wxUnusedVar(event);
 	const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|")
 	                   wxT("All Files (*)|*"));
-	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxOPEN | wxFILE_MUST_EXIST | wxMULTIPLE , wxDefaultPosition);
+	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE , wxDefaultPosition);
 	if (dlg->ShowModal() == wxID_OK) {
 		ManagerST::Get()->OpenWorkspace(dlg->GetPath());
 	}
@@ -1253,7 +1253,7 @@ void Frame::OnUseExternalDatabase(wxCommandEvent& WXUNUSED(event))
 	                                     ManagerST::Get()->GetStarupDirectory(),
 	                                     wxEmptyString,
 	                                     ALL,
-	                                     wxOPEN | wxFILE_MUST_EXIST | wxMULTIPLE ,
+	                                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE ,
 	                                     wxDefaultPosition);
 
 	if (dlg->ShowModal() == wxID_OK) {
@@ -1276,7 +1276,7 @@ void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 	const wxString ALL(	wxT("All Files (*)|*"));
 	static wxString s_openPath(wxEmptyString);
 
-	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open File"), s_openPath, wxEmptyString, ALL, wxOPEN | wxFILE_MUST_EXIST | wxFD_MULTIPLE, wxDefaultPosition);
+	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open File"), s_openPath, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE, wxDefaultPosition);
 	if (dlg->ShowModal() == wxID_OK) {
 		wxArrayString paths;
 		dlg->GetPaths(paths);
@@ -1597,7 +1597,7 @@ void Frame::OnProjectAddProject(wxCommandEvent &event)
 	// Prompt user for project path
 	const wxString ALL(	wxT("CodeLite Projects (*.project)|*.project|")
 	                    wxT("All Files (*)|*"));
-	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open Project"), wxEmptyString, wxEmptyString, ALL, wxOPEN | wxFILE_MUST_EXIST , wxDefaultPosition);
+	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open Project"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST , wxDefaultPosition);
 	if (dlg->ShowModal() == wxID_OK) {
 		// Open it
 		ManagerST::Get()->AddProject(dlg->GetPath());
@@ -2329,7 +2329,7 @@ void Frame::OnFixDatabasePaths(wxCommandEvent &event)
 	                                      ManagerST::Get()->GetStarupDirectory(),
 	                                      wxEmptyString,
 	                                      ALL,
-	                                      wxOPEN | wxFILE_MUST_EXIST,
+	                                      wxFD_OPEN | wxFD_FILE_MUST_EXIST,
 	                                      wxDefaultPosition);
 
 	if (fdlg->ShowModal() == wxID_OK) {
@@ -2397,7 +2397,7 @@ void Frame::OnImportMSVS(wxCommandEvent &e)
 	wxUnusedVar(e);
 	const wxString ALL(wxT("MS Visual Studio Solution File (*.sln)|*.sln|")
 	                   wxT("All Files (*)|*"));
-	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open MS Solution File"), wxEmptyString, wxEmptyString, ALL, wxOPEN | wxFILE_MUST_EXIST, wxDefaultPosition);
+	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open MS Solution File"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
 	if (dlg->ShowModal() == wxID_OK) {
 		ManagerST::Get()->ImportMSVSSolution(dlg->GetPath());
 	}

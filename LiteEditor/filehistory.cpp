@@ -34,7 +34,7 @@ FileHistory::~FileHistory()
 
 void FileHistory::GetFiles(wxArrayString &files)
 {
-	for(size_t i=0; i<m_fileHistoryN; i++)
+	for(size_t i=0; i<GetCount(); i++)
 	{
 		files.Add(m_fileHistory[i]);
 	}

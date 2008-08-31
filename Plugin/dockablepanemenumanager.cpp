@@ -1,3 +1,4 @@
+#include <wx/control.h>
 #include <wx/aui/aui.h>
 #include <wx/app.h>
 #include <wx/xrc/xmlres.h>

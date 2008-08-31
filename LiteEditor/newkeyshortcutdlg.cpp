@@ -27,7 +27,12 @@
 static const struct wxKeyName
 {
     wxKeyCode code;
+  // Pre-2.9 wxTRANSLATE returned  a wxChar*, since then it's char*
+#if wxVERSION_NUMBER < 2900
     const wxChar *name;
+#else
+    const char *name;
+#endif
 } wxKeyNames[] =
 {
     { WXK_DELETE, wxTRANSLATE("DEL") },

@@ -90,30 +90,34 @@ static void InitSQLite3DLL()
 
 #endif // wxUSE_DYNAMIC_SQLITE3_LOAD
 
-// Error messages
+// Error messages. Pre-2.9 wxTRANSLATE returned  a wxChar*; since then it's char*
+#if wxVERSION_NUMBER < 2900
+  #define wxSomething wxChar
+#else
+  #define wxSomething char
+#endif
+const wxSomething* wxERRMSG_NODB          = wxTRANSLATE("No Database opened");
+const wxSomething* wxERRMSG_NOSTMT        = wxTRANSLATE("Statement not accessible");
+const wxSomething* wxERRMSG_NOMEM         = wxTRANSLATE("Out of memory");
+const wxSomething* wxERRMSG_DECODE        = wxTRANSLATE("Cannot decode binary");
+const wxSomething* wxERRMSG_INVALID_INDEX = wxTRANSLATE("Invalid field index");
+const wxSomething* wxERRMSG_INVALID_NAME  = wxTRANSLATE("Invalid field name");
+const wxSomething* wxERRMSG_INVALID_ROW   = wxTRANSLATE("Invalid row index");
+const wxSomething* wxERRMSG_INVALID_QUERY = wxTRANSLATE("Invalid scalar query");
 
-const wxChar* wxERRMSG_NODB          = wxTRANSLATE("No Database opened");
-const wxChar* wxERRMSG_NOSTMT        = wxTRANSLATE("Statement not accessible");
-const wxChar* wxERRMSG_NOMEM         = wxTRANSLATE("Out of memory");
-const wxChar* wxERRMSG_DECODE        = wxTRANSLATE("Cannot decode binary");
-const wxChar* wxERRMSG_INVALID_INDEX = wxTRANSLATE("Invalid field index");
-const wxChar* wxERRMSG_INVALID_NAME  = wxTRANSLATE("Invalid field name");
-const wxChar* wxERRMSG_INVALID_ROW   = wxTRANSLATE("Invalid row index");
-const wxChar* wxERRMSG_INVALID_QUERY = wxTRANSLATE("Invalid scalar query");
+const wxSomething* wxERRMSG_NORESULT      = wxTRANSLATE("Null Results pointer");
+const wxSomething* wxERRMSG_BIND_STR      = wxTRANSLATE("Error binding string param");
+const wxSomething* wxERRMSG_BIND_INT      = wxTRANSLATE("Error binding int param");
+const wxSomething* wxERRMSG_BIND_INT64    = wxTRANSLATE("Error binding int64 param");
+const wxSomething* wxERRMSG_BIND_DBL      = wxTRANSLATE("Error binding double param");
+const wxSomething* wxERRMSG_BIND_BLOB     = wxTRANSLATE("Error binding blob param");
+const wxSomething* wxERRMSG_BIND_DATETIME = wxTRANSLATE("Error binding date/time param");
+const wxSomething* wxERRMSG_BIND_NULL     = wxTRANSLATE("Error binding NULL param");
+const wxSomething* wxERRMSG_BIND_CLEAR    = wxTRANSLATE("Error clearing bindings");
 
-const wxChar* wxERRMSG_NORESULT      = wxTRANSLATE("Null Results pointer");
-const wxChar* wxERRMSG_BIND_STR      = wxTRANSLATE("Error binding string param");
-const wxChar* wxERRMSG_BIND_INT      = wxTRANSLATE("Error binding int param");
-const wxChar* wxERRMSG_BIND_INT64    = wxTRANSLATE("Error binding int64 param");
-const wxChar* wxERRMSG_BIND_DBL      = wxTRANSLATE("Error binding double param");
-const wxChar* wxERRMSG_BIND_BLOB     = wxTRANSLATE("Error binding blob param");
-const wxChar* wxERRMSG_BIND_DATETIME = wxTRANSLATE("Error binding date/time param");
-const wxChar* wxERRMSG_BIND_NULL     = wxTRANSLATE("Error binding NULL param");
-const wxChar* wxERRMSG_BIND_CLEAR    = wxTRANSLATE("Error clearing bindings");
-
-const wxChar* wxERRMSG_NOMETADATA    = wxTRANSLATE("Meta data support not available");
-const wxChar* wxERRMSG_NOCODEC       = wxTRANSLATE("Encryption support not available");
-const wxChar* wxERRMSG_NOLOADEXT     = wxTRANSLATE("Loadable extension support not available");
+const wxSomething* wxERRMSG_NOMETADATA    = wxTRANSLATE("Meta data support not available");
+const wxSomething* wxERRMSG_NOCODEC       = wxTRANSLATE("Encryption support not available");
+const wxSomething* wxERRMSG_NOLOADEXT     = wxTRANSLATE("Loadable extension support not available");
 
 // ----------------------------------------------------------------------------
 // inline conversion from UTF8 strings to wxStringe

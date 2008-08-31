@@ -24,7 +24,7 @@ void NewToolDlg::OnButtonBrowsePath( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
 	wxString path = m_textCtrlPath->GetValue();
-	wxString new_path = wxFileSelector(wxT("Select a program:"), path.c_str(), NULL, NULL, wxFileSelectorDefaultWildcardStr, 0, this);
+	wxString new_path = wxFileSelector(wxT("Select a program:"), path.c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
 	if (new_path.IsEmpty() == false) {
 		m_textCtrlPath->SetValue(new_path);
 	}
@@ -77,7 +77,7 @@ void NewToolDlg::OnButtonBrowseIcon16(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
 	wxString path = m_textCtrlIcon16->GetValue();
-	wxString new_path = wxFileSelector(wxT("Select an icon:"), path.c_str(), NULL, NULL, wxFileSelectorDefaultWildcardStr, 0, this);
+	wxString new_path = wxFileSelector(wxT("Select an icon:"), path.c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
 	if (new_path.IsEmpty() == false) {
 		m_textCtrlIcon16->SetValue(new_path);
 	}
@@ -87,7 +87,7 @@ void NewToolDlg::OnButtonBrowseIcon24(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
 	wxString path = m_textCtrlIcon24->GetValue();
-	wxString new_path = wxFileSelector(wxT("Select an icon:"), path.c_str(), NULL, NULL, wxFileSelectorDefaultWildcardStr, 0, this);
+	wxString new_path = wxFileSelector(wxT("Select an icon:"), path.c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
 	if (new_path.IsEmpty() == false) {
 		m_textCtrlIcon24->SetValue(new_path);
 	}

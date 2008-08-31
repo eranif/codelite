@@ -791,7 +791,7 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 		                                      item.m_fileName.GetPath(),
 		                                      wxEmptyString,
 		                                      ALL,
-		                                      wxFD_OPEN | wxFILE_MUST_EXIST,
+		                                      wxFD_OPEN | wxFD_FILE_MUST_EXIST,
 		                                      wxDefaultPosition);
 		if(fdlg.ShowModal() == wxID_OK){
 			// try to load and convert the file into the platform line ending

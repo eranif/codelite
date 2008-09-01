@@ -65,6 +65,8 @@ find_type|Search|Find Type...|Ctrl-Shift-T
 find_symbol|Search|Quick Outline...|Ctrl-Shift-O
 goto_definition|Search|Find Symbol|Ctrl-D
 goto_previous_definition|Search|Go To Previous Location|Ctrl-P
+wxID_BACKWARD|Search|Navigate Backward|Ctrl-Shift-K
+wxID_FORWARD|Search|Navigate Forward|Ctrl-K
 goto_linenumber|Search|Go To...|Ctrl-G
 toggle_bookmark|Search|Toggle Bookmark|Ctrl-B
 next_bookmark|Search|Next Bookmark|F2

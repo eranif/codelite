@@ -44,6 +44,7 @@
       <wxString Value="_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD)=namespace std{"/>
       <wxString Value="_GLIBCXX_END_NESTED_NAMESPACE=}"/>
       <wxString Value="_GLIBCXX_STD=std"/>    
+      <wxString Value="WXDLLIMPEXP_SCI"/>    
     </wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">

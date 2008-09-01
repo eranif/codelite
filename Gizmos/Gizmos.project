@@ -179,6 +179,6 @@
     </Configuration>
   </Settings>
   <Dependencies/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

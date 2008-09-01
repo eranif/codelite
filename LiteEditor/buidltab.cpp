@@ -388,7 +388,12 @@ int BuildTab::ColourGccLine(int startLine, const char *line, size_t &fileNameSta
 	if (lineText.StartsWith(wxT("Building:"))) {
 		return wxSCI_LEX_GCC_BUILDING;
 	}
-
+	
+	static wxRegEx reSummary(wxT("[0-9]+ errors, [0-9]+ warnings"));
+	if(reSummary.IsValid() && reSummary.Matches(lineText)){
+		return wxSCI_LEX_GCC_BUILDING;
+	}
+	
 	wxRegEx re(cmp->GetWarnPattern());
 	if (re.IsValid()) {
 		cmp->GetWarnFileNameIndex().ToLong(&idx);

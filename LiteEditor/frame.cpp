@@ -1781,10 +1781,13 @@ void Frame::OnAdvanceSettings(wxCommandEvent &event)
 
 void Frame::OnBuildEvent(wxCommandEvent &event)
 {
+	static wxStopWatch sw;
+	
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
 	m_outputPane->GetBuildTab()->CanFocus(true);
 	if (event.GetEventType() == wxEVT_BUILD_STARTED || event.GetEventType() == wxEVT_BUILD_STARTED_NOCLEAN) {
+		sw.Start();
 		m_hideOutputPane = ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN);
 
 		// do we need to clear the build log?
@@ -1800,6 +1803,28 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 		m_outputPane->GetBuildTab()->AppendText(event.GetString());
 
 	} else if (event.GetEventType() == wxEVT_BUILD_ENDED) {
+		// take the elapsed time from the stopwatch
+		long elapsed = sw.Time();
+		
+		// format it into human-readable 
+		long sec(0);
+		long hours(0);
+		long minutes(0);
+		
+		// convert to seconds
+		elapsed = elapsed / 1000;
+		hours = elapsed / 3600;
+		
+		elapsed = elapsed % 3600;
+		minutes = elapsed / 60;
+		sec = elapsed % 60;
+		
+		m_outputPane->GetBuildTab()->AppendText(
+						 wxString::Format(wxT("%d errors, %d warnings, total time: %s seconds\n"), 
+						 GetOutputPane()->GetBuildTab()->GetErrorCount(),
+						 GetOutputPane()->GetBuildTab()->GetWarningCount(),
+						 wxString::Format(wxT("%02d:%02d:%02d"), hours, minutes, sec).c_str()));
+						
 		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
 
 		// get the build settings

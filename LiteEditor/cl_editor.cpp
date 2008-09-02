@@ -585,23 +585,21 @@ bool LEditor::SaveFileAs()
 {
 	// Prompt the user for a new file name
 	const wxString ALL(wxT("All Files (*)|*"));
-	wxFileDialog *dlg = new wxFileDialog(this, wxT("Save As"), m_fileName.GetPath(), m_fileName.GetFullName(), ALL,
-	                                     wxFD_SAVE | wxFD_OVERWRITE_PROMPT ,
-	                                     wxDefaultPosition);
+	wxFileDialog dlg(this, wxT("Save As"), m_fileName.GetPath(), m_fileName.GetFullName(), ALL,
+	                 wxFD_SAVE | wxFD_OVERWRITE_PROMPT ,
+	                 wxDefaultPosition);
 
-	if (dlg->ShowModal() == wxID_OK) {
+	if (dlg.ShowModal() == wxID_OK) {
 		// get the path
-		wxFileName name(dlg->GetPath());
+		wxFileName name(dlg.GetPath());
 		if ( !SaveToFile(name) ) {
 			wxMessageBox(wxT("Failed to save file"), wxT("Error"), wxOK | wxICON_ERROR);
 			return false;
 		}
 		m_fileName = name;
-		delete dlg;
+		SetDirty(false);
 		return true;
 	}
-
-	delete dlg;
 	return false;
 }
 

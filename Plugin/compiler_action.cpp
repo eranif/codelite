@@ -165,9 +165,11 @@ void CompilerAction::DoSetWorkingDirectory(ProjectPtr proj, bool isCustom)
 {
 	//when using custom build, user can select different working directory
 	if (proj) {
+		
+		//first set the path to the project working directory
+		::wxSetWorkingDirectory(proj->GetFileName().GetPath());
+			
 		if (isCustom) {
-			//first set the path to the project working directory
-			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
 			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 			if (buildConf) {
 				wxString wd = buildConf->GetCustomBuildWorkingDir();

@@ -80,14 +80,26 @@ void TaskPanel::OnItemActivated( wxListEvent& event )
 
 void TaskPanel::OnSearchThread(wxCommandEvent& e)
 {
-	if (e.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED || e.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
+	if (e.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED){
+		// always free the allocated message string
+		wxString *str = (wxString*)e.GetClientData();
+		if(str){delete str;}
 		
 		// re-enable the search button
 		m_buttonSearch->Enable();
 		m_buttonStop->Disable();
 		
 		DoDisplayResults();
+	}else if (e.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND){
+		// always free the allocated message string
+		SearchSummary *summary = (SearchSummary*)e.GetClientData();
+		if(summary){delete summary;}
 		
+		// re-enable the search button
+		m_buttonSearch->Enable();
+		m_buttonStop->Disable();
+		
+		DoDisplayResults();
 	} else if (e.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
 		
 		//add an entry to the replace panel
@@ -99,6 +111,10 @@ void TaskPanel::OnSearchThread(wxCommandEvent& e)
 		delete res;
 		
 	} else if (e.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
+		// always free the allocated message string
+		wxString *str = (wxString*)e.GetClientData();
+		if(str){delete str;}
+		
 		DoClearResults();
 	}
 }

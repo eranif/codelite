@@ -1474,10 +1474,24 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 		//which requires different handling code
 
 		//the only event that reallty interesting us, is the match find
-		if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED || event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
+		if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED){
+			
+			// always free the allocated message string
+			wxString *str = (wxString*)event.GetClientData();
+			if(str){delete str;}
+			
 			m_doingReplaceInFiles = false;
 			GetOutputPane()->GetReplaceResultsTab()->ShowResults();
-
+			
+		} else if(event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
+			
+			// always free the allocated message string
+			SearchSummary *summary = (SearchSummary*)event.GetClientData();
+			if(summary){delete summary;}
+			
+			m_doingReplaceInFiles = false;
+			GetOutputPane()->GetReplaceResultsTab()->ShowResults();
+			
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
 			//add an entry to the replace panel
 			SearchResultList *res = (SearchResultList*)event.GetClientData();
@@ -1486,6 +1500,10 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 			GetOutputPane()->GetReplaceResultsTab()->AddResults(res);
 
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
+			// always free the allocated message string
+			wxString *str = (wxString*)event.GetClientData();
+			if(str){delete str;}
+			
 			ManagerST::Get()->ShowOutputPane(OutputPane::REPLACE_IN_FILES);
 			GetOutputPane()->GetReplaceResultsTab()->Clear();
 		}
@@ -1505,8 +1523,10 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
 			
 			wxString *str = (wxString*)event.GetClientData();
-			m_outputPane->GetFindResultsTab()->AppendText(*str + wxT("\n"));
-			delete str;
+			if(str){
+				m_outputPane->GetFindResultsTab()->AppendText(*str + wxT("\n"));
+				delete str;
+			}
 			
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
 			// make sure that the output pane is visible and selection
@@ -1518,8 +1538,10 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 
 			m_outputPane->GetFindResultsTab()->Clear();
 			wxString *str = (wxString*)event.GetClientData();
-			m_outputPane->GetFindResultsTab()->AppendText(*str + wxT("\n"));
-			delete str;
+			if(str){
+				m_outputPane->GetFindResultsTab()->AppendText(*str + wxT("\n"));
+				delete str;
+			}
 
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
 

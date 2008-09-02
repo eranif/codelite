@@ -277,9 +277,11 @@ bool Manager::OpenFile(const wxString &file_name, const wxString &projectName, i
 		int lineno = editor->LineFromPosition(position);
 		editor->GotoLine( lineno );
 		editor->SetCaretAt( position );
+		editor->EnsureVisible(lineno);
 	} else {
 		if (!(fileWasOpenedInNB && lineno == wxNOT_FOUND)) {
 			editor->GotoLine( lineno );
+			editor->EnsureVisible(lineno);
 		}
 	}
 
@@ -2049,6 +2051,7 @@ void Manager::DbgMarkDebuggerLine(const wxString &fileName, int lineno)
 	if (editor && editor->GetFileName().GetFullPath() == fn.GetFullPath()) {
 		editor->HighlightLine(lineno);
 		editor->GotoLine(lineno-1);
+		editor->EnsureVisible(lineno-1);
 	} else {
 		OpenFile(fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND);
 		editor = GetActiveEditor();

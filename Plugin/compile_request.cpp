@@ -115,7 +115,7 @@ void CompileRequest::Process()
 	if (m_proc) {
 		DirSaver ds;
 
-		DoSetWorkingDirectory(proj, isCustom);
+		DoSetWorkingDirectory(proj, isCustom, m_fileName.IsEmpty() == false);
 
 		//expand the variables of the command
 		cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
@@ -129,7 +129,7 @@ void CompileRequest::Process()
 		if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
 			
 			// set working directory
-			DoSetWorkingDirectory(proj, isCustom);
+			DoSetWorkingDirectory(proj, isCustom, m_fileName.IsEmpty() == false);
 
 			wxString configName;
 			int where = cmd.Find(wxT("type="));

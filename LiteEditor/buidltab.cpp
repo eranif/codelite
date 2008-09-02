@@ -287,6 +287,7 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 				m_sci->MarkerDeleteAll(0x7);
 				m_sci->MarkerAdd(m_nextBuildError_lastLine, 0x7);
 				m_sci->GotoLine(m_nextBuildError_lastLine);
+				m_sci->EnsureVisible(m_nextBuildError_lastLine);
 			}
 		}
 	}
@@ -478,6 +479,7 @@ bool BuildTab::DoOpenFile(const wxArrayString& files, const wxFileName &fn, int 
 				m_sci->MarkerDeleteAll(0x7);
 				m_sci->MarkerAdd(m_nextBuildError_lastLine, 0x7);
 				m_sci->GotoLine(m_nextBuildError_lastLine);
+				m_sci->EnsureVisible(m_nextBuildError_lastLine);
 			}
 			return true;
 		}
@@ -498,6 +500,7 @@ bool BuildTab::DoOpenFile(const wxArrayString& files, const wxFileName &fn, int 
 				m_sci->MarkerDeleteAll(0x7);
 				m_sci->MarkerAdd(m_nextBuildError_lastLine, 0x7);
 				m_sci->GotoLine(m_nextBuildError_lastLine);
+				m_sci->EnsureVisible(m_nextBuildError_lastLine);
 			}
 			return true;
 		}

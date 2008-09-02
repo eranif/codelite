@@ -68,7 +68,7 @@ protected:
 	virtual void PrintOutput();
 	virtual void DoPrintOutput(const wxString &out, const wxString &errs);
 	void CleanUp();
-	void DoSetWorkingDirectory(ProjectPtr proj, bool isCustom);
+	void DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool isFileOnly);
 	
 public:
 	bool IsBusy() const {

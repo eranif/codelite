@@ -234,6 +234,7 @@ void GotoHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 
 			if (line > 0) {
 				editor->GotoLine(line - 1);
+				editor->EnsureVisible(line - 1);
 				break;
 			} else {
 				editor->GotoLine(0);

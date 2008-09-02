@@ -1364,6 +1364,7 @@ void LEditor::FindNextMarker()
 			GotoLine(nFoundLine);
 		}
 	}
+	if (nFoundLine >= 0) EnsureVisible(nFoundLine);
 }
 
 void LEditor::FindPrevMarker()
@@ -1383,6 +1384,7 @@ void LEditor::FindPrevMarker()
 			GotoLine(nFoundLine);
 		}
 	}
+	if (nFoundLine >= 0) EnsureVisible(nFoundLine);
 }
 
 bool LEditor::ReplaceAll()

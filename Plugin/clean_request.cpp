@@ -87,7 +87,7 @@ void CleanRequest::Process()
 	if (m_proc) {
 
 		DirSaver ds;
-		DoSetWorkingDirectory(proj, isCustom);
+		DoSetWorkingDirectory(proj, isCustom, false);
 		
 		if (m_info.GetProjectOnly() ) {
 			//need to change directory to project dir

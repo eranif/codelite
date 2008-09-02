@@ -161,15 +161,15 @@ void CompilerAction::CleanUp()
 	SendEndMsg();
 }
 
-void CompilerAction::DoSetWorkingDirectory(ProjectPtr proj, bool isCustom)
+void CompilerAction::DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool isFileOnly)
 {
 	//when using custom build, user can select different working directory
 	if (proj) {
-		
-		//first set the path to the project working directory
-		::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-			
 		if (isCustom) {
+			if(m_info.GetProjectOnly() || isFileOnly) {
+				//first set the path to the project working directory
+				::wxSetWorkingDirectory(proj->GetFileName().GetPath());
+			}
 			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 			if (buildConf) {
 				wxString wd = buildConf->GetCustomBuildWorkingDir();
@@ -181,6 +181,11 @@ void CompilerAction::DoSetWorkingDirectory(ProjectPtr proj, bool isCustom)
 					wd = ExpandAllVariables(wd, WorkspaceST::Get(), proj->GetName(), buildConf->GetName(), wxEmptyString);
 				}
 				::wxSetWorkingDirectory(wd);
+			}
+		} else {
+			if(m_info.GetProjectOnly() || isFileOnly) {
+				//first set the path to the project working directory
+				::wxSetWorkingDirectory(proj->GetFileName().GetPath());
 			}
 		}
 	}

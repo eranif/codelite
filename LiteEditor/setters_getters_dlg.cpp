@@ -68,6 +68,7 @@ void SettersGettersDlg::Init(const std::vector<TagEntryPtr> &tags, const wxFileN
 	m_textPreview->SetReadOnly(false);
 	m_textPreview->Create(wxEmptyString, m_file);
 	m_textPreview->GotoLine(m_lineno);
+	m_textPreview->EnsureVisible(m_lineno);
 	m_textPreview->SetReadOnly(true);
 	UpdatePreview();
 }

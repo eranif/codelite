@@ -47,7 +47,7 @@ public:
 
 //Setters
 	void SetFile(const wxString& file) {
-		this->m_file = file;
+		this->m_file = file.c_str();
 	}
 	void SetKind(const int& kind) {
 		this->m_kind = kind;
@@ -56,10 +56,10 @@ public:
 		this->m_line = line;
 	}
 	void SetPattern(const wxString& pattern) {
-		this->m_pattern = pattern;
+		this->m_pattern = pattern.c_str();
 	}
 	void SetScope(const wxString& scope) {
-		this->m_scope = scope;
+		this->m_scope = scope.c_str();
 	}
 //Getters
 	const wxString& GetFile() const {

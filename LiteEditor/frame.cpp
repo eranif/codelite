@@ -1503,7 +1503,11 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 			m_outputPane->GetFindResultsTab()->AppendText(msg);
 			delete res;
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
-			m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
+			
+			wxString *str = (wxString*)event.GetClientData();
+			m_outputPane->GetFindResultsTab()->AppendText(*str + wxT("\n"));
+			delete str;
+			
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
 			// make sure that the output pane is visible and selection
 			// is set to the 'Find In Files' tab
@@ -1513,7 +1517,9 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 			GetOutputPane()->SetFindResultsTab(event.GetInt());
 
 			m_outputPane->GetFindResultsTab()->Clear();
-			m_outputPane->GetFindResultsTab()->AppendText(event.GetString() + wxT("\n"));
+			wxString *str = (wxString*)event.GetClientData();
+			m_outputPane->GetFindResultsTab()->AppendText(*str + wxT("\n"));
+			delete str;
 
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
 

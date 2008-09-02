@@ -1,61 +1,61 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : search_thread.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : search_thread.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "editor_config.h"
- #include "search_thread.h"
+#include "search_thread.h"
 #include "wx/event.h"
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
 #include <iostream>
 #include <wx/tokenzr.h>
 #include <wx/dir.h>
-#include <wx/log.h> 
+#include <wx/log.h>
 #include "dirtraverser.h"
 #include "macros.h"
 #include "workspace.h"
 
 #define ADJUST_LINE_AND_CONT(modLine, pos, findString)	\
-{														\
-	if( !AdjustLine(modLine, pos, findString) ){		\
-		break;											\
-	} else {											\
-		continue;										\
-	}													\
-}
+	{														\
+		if( !AdjustLine(modLine, pos, findString) ){		\
+			break;											\
+		} else {											\
+			continue;										\
+		}													\
+	}
 
 const wxEventType wxEVT_SEARCH_THREAD_MATCHFOUND = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHEND = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHCANCELED = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHSTARTED = wxNewEventType();
 
-extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen); 
+extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
 //----------------------------------------------------------------
 // SearchData
 //----------------------------------------------------------------
 
-const wxString& SearchData::GetExtensions() const 
+const wxString& SearchData::GetExtensions() const
 {
 	return m_validExt;
 }
@@ -65,9 +65,9 @@ const wxString& SearchData::GetExtensions() const
 //----------------------------------------------------------------
 
 SearchThread::SearchThread()
-: WorkerThread()
-, m_wordChars(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"))
-, m_reExpr(wxT(""))
+		: WorkerThread()
+		, m_wordChars(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"))
+		, m_reExpr(wxT(""))
 {
 	IndexWordChars();
 }
@@ -79,7 +79,7 @@ SearchThread::~SearchThread()
 void SearchThread::IndexWordChars()
 {
 	m_wordCharsMap.clear();
-	for(size_t i=0; i<m_wordChars.Length(); i++){
+	for (size_t i=0; i<m_wordChars.Length(); i++) {
 		m_wordCharsMap[m_wordChars.GetChar(i)] = true;
 	}
 }
@@ -92,14 +92,14 @@ void SearchThread::SetWordChars(const wxString &chars)
 
 wxRegEx& SearchThread::GetRegex(const wxString &expr, bool matchCase)
 {
-	if(m_reExpr == expr && matchCase == m_matchCase){
+	if (m_reExpr == expr && matchCase == m_matchCase) {
 		return m_regex;
 	} else {
 		m_reExpr = expr;
 		m_matchCase = matchCase;
 
 		int flags = wxRE_DEFAULT;
-		if( !matchCase ) flags |= wxRE_ICASE;
+		if ( !matchCase ) flags |= wxRE_ICASE;
 		m_regex.Compile(m_reExpr, flags);
 	}
 	return m_regex;
@@ -116,28 +116,23 @@ void SearchThread::ProcessRequest(ThreadRequest *req)
 	m_summary = SearchSummary();
 	DoSearchFiles(req);
 	m_summary.SetElapsedTime(sw.Time());
-	
+
 	SearchData *sd = (SearchData*)req;
-	// Send search end event 
+	// Send search end event
 	SendEvent(wxEVT_SEARCH_THREAD_SEARCHEND, sd->GetOwner());
 }
 
 void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
 {
-	if(data->GetRootDir() == SEARCH_IN_WORKSPACE)
-	{
+	if (data->GetRootDir() == SEARCH_IN_WORKSPACE) {
 		files = data->GetFiles();
 		// filter files which does not match the criteria
 		FilterFiles(files, data);
-	}
-	else if(data->GetRootDir() == SEARCH_IN_PROJECT)
-	{
+	} else if (data->GetRootDir() == SEARCH_IN_PROJECT) {
 		files = data->GetFiles();
 		// filter files which does not match the criteria
 		FilterFiles(files, data);
-	}
-	else
-	{
+	} else {
 		DirTraverser traverser(data->GetExtensions());
 		wxDir dir(data->GetRootDir());
 		dir.Traverse(traverser);
@@ -149,60 +144,60 @@ void SearchThread::DoSearchFiles(ThreadRequest *req)
 {
 	SearchData *data = static_cast<SearchData*>(req);
 	// Get all files
-	if( data->GetRootDir().IsEmpty())
+	if ( data->GetRootDir().IsEmpty())
 		return;
 
-	if( data->GetFindString().IsEmpty() )
+	if ( data->GetFindString().IsEmpty() )
 		return;
 
 	StopSearch(false);
 	wxArrayString fileList;
 	GetFiles(data, fileList);
-	
+
 	wxStopWatch sw;
 
 	// Send startup message to main thread
-	if( m_notifiedWindow || data->GetOwner() ){
+	if ( m_notifiedWindow || data->GetOwner() ) {
 		wxString message;
 		wxCommandEvent event(wxEVT_SEARCH_THREAD_SEARCHSTARTED, GetId());
 		message << wxT("====== Searching for: '") << data->GetFindString();
 		message << wxT("';\tMatch case: ");
-		if( data->IsMatchCase() ){
+		if ( data->IsMatchCase() ) {
 			message << wxT("true ");
 		} else {
 			message << wxT("false ");
 		}
 
 		message << wxT(";\tMatch whole word: ");
-		if( data->IsMatchWholeWord() ){
+		if ( data->IsMatchWholeWord() ) {
 			message << wxT("true ");
 		} else {
 			message << wxT("false ");
 		}
 
 		message << wxT(";\tRegular expression: ");
-		if( data->IsRegularExpression() ){
+		if ( data->IsRegularExpression() ) {
 			message << wxT("true;");
 		} else {
 			message << wxT("false; ======");
 		}
-		event.SetString(message);
-		
+		event.SetClientData(new wxString(message.c_str()));
+
 		//set the rquested output tab
 		event.SetInt(data->GetOutputTab());
-		
-		if(data->GetOwner()){
+
+		if (data->GetOwner()) {
 			::wxPostEvent(data->GetOwner(), event);
-		}else if(m_notifiedWindow){
+		} else if (m_notifiedWindow) {
 			::wxPostEvent(m_notifiedWindow, event);
 		}
 	}
 
-	for(size_t i=0; i<fileList.Count(); i++){
+	for (size_t i=0; i<fileList.Count(); i++) {
 		m_summary.SetNumFileScanned((int)i+1);
 
 		// give user chance to cancel the search ...
-		if( TestStopSearch() ) {
+		if ( TestStopSearch() ) {
 			// Send cancel event
 			SendEvent(wxEVT_SEARCH_THREAD_SEARCHCANCELED, data->GetOwner());
 			StopSearch(false);
@@ -232,7 +227,7 @@ void SearchThread::DoSearchFile(const wxString &fileName, const SearchData *data
 {
 	// Process single lines
 	int lineNumber = 1;
-	if(!wxFileName::FileExists(fileName)){
+	if (!wxFileName::FileExists(fileName)) {
 		return;
 	}
 
@@ -240,20 +235,20 @@ void SearchThread::DoSearchFile(const wxString &fileName, const SearchData *data
 	wxFileOffset size = thefile.Length();
 	wxString fileData;
 	fileData.Alloc(size);
-	
+
 	// support for other encoding
-	if( data->UseEditorFontConfig() ) {
+	if ( data->UseEditorFontConfig() ) {
 		wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
 		thefile.ReadAll(&fileData, fontEncConv);
 	} else {
 		thefile.ReadAll(&fileData, wxConvUTF8);
 	}
-	
+
 	wxStringTokenizer tkz(fileData, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);
-	
-	if( data->IsRegularExpression() ){
+
+	if ( data->IsRegularExpression() ) {
 		// regular expression search
-		while(tkz.HasMoreTokens()){
+		while (tkz.HasMoreTokens()) {
 			// Read the next line
 			wxString line = tkz.NextToken();
 			DoSearchLineRE(line, lineNumber, fileName, data);
@@ -261,7 +256,7 @@ void SearchThread::DoSearchFile(const wxString &fileName, const SearchData *data
 		}
 	} else {
 		// simple search
-		while(tkz.HasMoreTokens()){
+		while (tkz.HasMoreTokens()) {
 
 			// Read the next line
 			wxString line = tkz.NextToken();
@@ -270,7 +265,7 @@ void SearchThread::DoSearchFile(const wxString &fileName, const SearchData *data
 		}
 	}
 
-	if( m_results.empty() == false )
+	if ( m_results.empty() == false )
 		SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND, data->GetOwner());
 }
 void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const wxString &fileName, const SearchData *data)
@@ -280,14 +275,14 @@ void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const
 	int iCorrectedCol = 0;
 	int iCorrectedLen = 0;
 	wxString modLine = line;
-	if( re.IsValid() ){
-		while( re.Matches(modLine)) {
+	if ( re.IsValid() ) {
+		while ( re.Matches(modLine)) {
 			size_t start, len;
 			re.GetMatch(&start, &len);
 			col += start;
 
 			m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
-			
+
 			// Notify our match
 			// correct search Pos and Length owing to non plain ASCII multibyte characters
 			iCorrectedCol = UTF8Length(line.c_str(), col);
@@ -306,7 +301,7 @@ void SearchThread::DoSearchLineRE(const wxString &line, const int lineNum, const
 			col += len;
 
 			// adjust the line
-			if(line.Length() - col <= 0)
+			if (line.Length() - col <= 0)
 				break;
 			modLine = modLine.Right(line.Length() - col);
 		}
@@ -318,7 +313,7 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 	wxString findString = data->GetFindString();
 	wxString modLine = line;
 
-	if( !data->IsMatchCase() ){
+	if ( !data->IsMatchCase() ) {
 		modLine = modLine.MakeLower();
 		findString = findString.MakeLower();
 	}
@@ -327,26 +322,26 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 	int col = 0;
 	int iCorrectedCol = 0;
 	int iCorrectedLen = 0;
-	while( pos != wxNOT_FOUND ){
+	while ( pos != wxNOT_FOUND ) {
 		pos = modLine.Find(findString);
-		if(pos != wxNOT_FOUND){
+		if (pos != wxNOT_FOUND) {
 			col += pos;
 
 			// we have a match
-			if( data->IsMatchWholeWord() ){
+			if ( data->IsMatchWholeWord() ) {
 
 				// make sure that the word before is not in the wordChars map
-				if((pos > 0) && (m_wordCharsMap.find(modLine.GetChar(pos-1)) != m_wordCharsMap.end()) )
+				if ((pos > 0) && (m_wordCharsMap.find(modLine.GetChar(pos-1)) != m_wordCharsMap.end()) )
 					ADJUST_LINE_AND_CONT(modLine, pos, findString);
 
 				// if we have more characters to the right, make sure that the first char does not match any
 				// in the wordCharsMap
-				if(pos + findString.Length() <= modLine.Length()){
+				if (pos + findString.Length() <= modLine.Length()) {
 					wxChar nextCh = modLine.GetChar(pos+findString.Length());
-					if(m_wordCharsMap.find(nextCh) != m_wordCharsMap.end())
+					if (m_wordCharsMap.find(nextCh) != m_wordCharsMap.end())
 						ADJUST_LINE_AND_CONT(modLine, pos, findString);
-				}		
-			} 
+				}
+			}
 
 			m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
 
@@ -364,10 +359,10 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 			result.SetLen(iCorrectedLen);
 			result.SetFindWhat(data->GetFindString());
 			result.SetFlags(data->m_flags);
-			
+
 			m_results.push_back(result);
-			if( !AdjustLine(modLine, pos, findString) ){
-				break;									
+			if ( !AdjustLine(modLine, pos, findString) ) {
+				break;
 			}
 			col += (int)findString.Length();
 		}
@@ -377,7 +372,7 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 bool SearchThread::AdjustLine(wxString &line, int &pos, wxString &findString)
 {
 	// adjust the current line
-	if( line.Length() - (pos + findString.Length()) >= findString.Length()){
+	if ( line.Length() - (pos + findString.Length()) >= findString.Length()) {
 		line = line.Right(line.Length() - (pos + findString.Length()));
 		pos += (int)findString.Length();
 		return true;
@@ -389,29 +384,24 @@ bool SearchThread::AdjustLine(wxString &line, int &pos, wxString &findString)
 
 void SearchThread::SendEvent(wxEventType type, wxEvtHandler *owner)
 {
-	if( !m_notifiedWindow && !owner)
+	if ( !m_notifiedWindow && !owner)
 		return;
 
 	wxCommandEvent event(type, GetId());
 
-	if(type == wxEVT_SEARCH_THREAD_MATCHFOUND)
-	{
+	if (type == wxEVT_SEARCH_THREAD_MATCHFOUND) {
 		event.SetClientData( new SearchResultList(m_results) );
 		m_results.clear();
-	}
-	else if(type == wxEVT_SEARCH_THREAD_SEARCHEND)
-	{
+	} else if (type == wxEVT_SEARCH_THREAD_SEARCHEND) {
 		// Nothing to do
 		event.SetClientData( new SearchSummary(m_summary) );
+	} else if (type == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
+		event.SetClientData(new wxString(wxT("Search cancelled by user")));
 	}
-	else if(type == wxEVT_SEARCH_THREAD_SEARCHCANCELED)
-	{
-		event.SetString(wxT("Search cancelled by user"));
-	}
-	
-	if(owner) {
+
+	if (owner) {
 		wxPostEvent(owner, event);
-	} else if(m_notifiedWindow ){
+	} else if (m_notifiedWindow ) {
 		wxPostEvent(m_notifiedWindow, event);
 	}
 	wxThread::Sleep(5);
@@ -427,27 +417,27 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 		wxStringTokenizer tok(exts, wxT(";"));
 		while ( tok.HasMoreTokens() ) {
 			std::pair<wxString, bool> val;
-			val.first = tok.GetNextToken().AfterLast(wxT('*'));
-			val.first = val.first.AfterLast(wxT('.')).MakeLower();
+			val.first = tok.GetNextToken().AfterLast(wxT('*')).c_str();
+			val.first = val.first.AfterLast(wxT('.')).MakeLower().c_str();
 			val.second = true;
 			spec.insert( val );
 		}
 	}
-	
+
 	// loop over the files and compare against the list of spec
-	if(spec.empty()){
+	if (spec.empty()) {
 		return;
 	}
-	
+
 	wxArrayString f = files;
-	
+
 	files.Clear();
-	for(size_t i=0; i<f.GetCount(); i++){
+	for (size_t i=0; i<f.GetCount(); i++) {
 		wxString ext = f.Item(i).AfterLast(wxT('.'));
-		if(ext.empty()){
+		if (ext.empty()) {
 			// add extension less files
 			files.Add(f.Item(i));
-		}else if(spec.find(ext.MakeLower()) != spec.end()) {
+		} else if (spec.find(ext.MakeLower()) != spec.end()) {
 			//this extension exists, add the file
 			files.Add(f.Item(i));
 		}

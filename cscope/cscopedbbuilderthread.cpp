@@ -22,6 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "cscopestatusmessage.h"
  #include "procutils.h"
 #include "dirsaver.h"
 #include "wx/filefn.h"
@@ -59,10 +60,13 @@ void CscopeDbBuilderThread::ProcessRequest(ThreadRequest *request)
 	
 	CscopeResultTable *result = ParseResults( output );
 	SendStatusEvent( wxT("Done"), 100, req->GetOwner() );
+
+	// send status message 
+	SendStatusEvent(req->GetEndMsg(), 100, req->GetOwner());
 	
+	// send the results
 	wxCommandEvent e(wxEVT_CSCOPE_THREAD_DONE);
 	e.SetClientData(result);
-	e.SetString(req->GetEndMsg());
 	req->GetOwner()->AddPendingEvent(e);
 }
 
@@ -120,7 +124,10 @@ CscopeResultTable* CscopeDbBuilderThread::ParseResults(const wxArrayString &outp
 void CscopeDbBuilderThread::SendStatusEvent(const wxString &msg, int percent, wxEvtHandler *owner)
 {
 	wxCommandEvent e(wxEVT_CSCOPE_THREAD_UPDATE_STATUS);
-	e.SetString(msg);
-	e.SetInt(percent);
+	CScopeStatusMessage *statusMsg = new CScopeStatusMessage();
+	statusMsg->SetMessage(msg);
+	statusMsg->SetPercentage(percent);
+	e.SetClientData(statusMsg);
+	
 	owner->AddPendingEvent(e);
 }

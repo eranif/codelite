@@ -6,6 +6,8 @@
     <File Name="cscopedbbuilderthread.h"/>
     <File Name="cscopeentrydata.cpp"/>
     <File Name="cscopeentrydata.h"/>
+    <File Name="cscopestatusmessage.cpp"/>
+    <File Name="cscopestatusmessage.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="cscope.h"/>
@@ -167,6 +169,6 @@
     </Configuration>
   </Settings>
   <Dependencies/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

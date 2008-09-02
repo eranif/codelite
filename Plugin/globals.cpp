@@ -286,9 +286,15 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 		wxFileName fn(fileName);
 
 		output.Replace(wxT("$(CurrentFileName)"), fn.GetName());
-		output.Replace(wxT("$(CurrentFilePath)"), fn.GetPath());
+		
+		wxString fpath(fn.GetPath());
+		fpath.Replace(wxT("\\"), wxT("/"));
+		output.Replace(wxT("$(CurrentFilePath)"), fpath);
 		output.Replace(wxT("$(CurrentFileExt)"), fn.GetExt());
-		output.Replace(wxT("$(CurrentFileFullPath)"), fn.GetFullPath());
+		
+		wxString ffullpath(fn.GetFullPath());
+		ffullpath.Replace(wxT("\\"), wxT("/"));
+		output.Replace(wxT("$(CurrentFileFullPath)"), ffullpath);
 	}
 
 	//exapnd common macros
@@ -300,14 +306,6 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 		output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
 	}
 
-//#if defined (__WXMSW__)
-//	output.Replace(wxT("$(UnitTestCppBase)"), workspace->GetStartupDir() + wxT("/sdk"));
-//#elif defined (__WXMAC__)
-//	output.Replace(wxT("$(UnitTestCppBase)"), MacGetInstallPath() + wxT("/sdk"));
-//#else
-//	output.Replace(wxT("$(UnitTestCppBase)"), wxT("/usr/local/"));
-//#endif
-//
 	//call the environment & workspace variables expand function
 	if ( workspace ) {
 		output = workspace->ExpandVariables(output);

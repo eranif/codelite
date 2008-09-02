@@ -115,23 +115,7 @@ void CompileRequest::Process()
 	if (m_proc) {
 		DirSaver ds;
 
-		//when using custom build, user can select different working directory
-		if (isCustom) {
-			//first set the path to the project working directory
-			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
-			if (buildConf) {
-				wxString wd = buildConf->GetCustomBuildWorkingDir();
-				if (wd.IsEmpty()) {
-					// use the project path
-					wd = proj->GetFileName().GetPath();
-				}else { 
-					// expand macros from path
-					wd = ExpandAllVariables(wd, WorkspaceST::Get(), proj->GetName(), buildConf->GetName(), wxEmptyString);
-				}
-				::wxSetWorkingDirectory(wd);
-			}
-		}
+		DoSetWorkingDirectory(proj, isCustom);
 
 		//expand the variables of the command
 		cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
@@ -143,8 +127,9 @@ void CompileRequest::Process()
 		AppendLine(cmd + wxT("\n"));
 
 		if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
-			//need to change directory to project dir
-			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
+			
+			// set working directory
+			DoSetWorkingDirectory(proj, isCustom);
 
 			wxString configName;
 			int where = cmd.Find(wxT("type="));

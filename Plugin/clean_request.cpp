@@ -87,24 +87,8 @@ void CleanRequest::Process()
 	if (m_proc) {
 
 		DirSaver ds;
-
-		if (isCustom) {
-			//first set the path to the project working directory
-			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
-			if (buildConf) {
-				wxString wd = buildConf->GetCustomBuildWorkingDir();
-				if (wd.IsEmpty()) {
-					wd = proj->GetFileName().GetPath();
-				} else { 
-					// expand macros from path
-					wd = ExpandAllVariables(wd, WorkspaceST::Get(), proj->GetName(), buildConf->GetName(), wxEmptyString);
-				}
-
-				::wxSetWorkingDirectory(wd);
-			}
-		}
-
+		DoSetWorkingDirectory(proj, isCustom);
+		
 		if (m_info.GetProjectOnly() ) {
 			//need to change directory to project dir
 			wxSetWorkingDirectory(proj->GetFileName().GetPath());

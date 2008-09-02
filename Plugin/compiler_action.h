@@ -26,6 +26,7 @@
 #define COMPILER_ACTION_H
 
 #include "worker_thread.h"
+#include "project.h"
 #include "queuecommand.h"
 #include "wx/event.h"
 #include "cl_process.h"
@@ -67,7 +68,8 @@ protected:
 	virtual void PrintOutput();
 	virtual void DoPrintOutput(const wxString &out, const wxString &errs);
 	void CleanUp();
-
+	void DoSetWorkingDirectory(ProjectPtr proj, bool isCustom);
+	
 public:
 	bool IsBusy() const {
 		return m_busy;

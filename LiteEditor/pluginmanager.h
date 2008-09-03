@@ -78,6 +78,7 @@ public:
 	virtual TagsManager *GetTagsManager();
 	virtual Workspace *GetWorkspace();
 	virtual bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths);
+	virtual bool AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths);
 	virtual int GetToolbarIconSize();
 	virtual Notebook *GetMainNotebook();
 	virtual wxAuiManager* GetDockingManager();

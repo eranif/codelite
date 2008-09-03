@@ -26,7 +26,7 @@
 #ifndef PLUGIN_VERSION_H
 #define PLUGIN_VERSION_H
 
-// Increment this numer when any of the files in the interface project is modified
-#define PLUGIN_INTERFACE_VERSION 104
+// Increment this number whenever any of the files in the interface project is modified
+#define PLUGIN_INTERFACE_VERSION 105
 
 #endif // PLUGIN_VERSION_H

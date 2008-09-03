@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/tokenzr.h>
 #include "fileview.h"
 #include "frame.h"
 #include "nameanddescdlg.h"
@@ -476,6 +477,56 @@ void FileViewTree::OnSortItem( wxCommandEvent &WXUNUSED( event ) )
 {
 	wxTreeItemId item = GetSingleSelection();
 	SortItem(item);
+}
+
+bool FileViewTree::AddFilesToVirtualFodler(const wxString& vdFullPath, wxArrayString& paths)
+{
+	wxArrayString actualAdded;
+	ManagerST::Get()->AddFilesToProject( paths, vdFullPath, actualAdded );
+
+	// locate the item
+	wxTreeItemId item = GetRootItem();
+	wxArrayString tokens = wxStringTokenize(vdFullPath, wxT(":"), wxTOKEN_STRTOK);
+
+	for (size_t i=0; i<tokens.GetCount(); i++) {
+		if (item.IsOk() && HasChildren(item)) {
+
+			// loop over the children of this node, and search for a match
+			wxTreeItemIdValue cookie;
+			wxTreeItemId child = GetFirstChild(item, cookie);
+			while (child.IsOk()) {
+				if (GetItemText(child) == tokens.Item(i)) {
+					item = child;
+					break;
+				}
+				child = GetNextChild(child, cookie);
+			}
+		}
+	}
+
+	if (item.IsOk()) {
+		for ( size_t i=0; i<actualAdded.Count(); i++ ) {
+
+			// Add the tree node
+			wxFileName fnFileName( actualAdded.Item( i ) );
+			wxString path( vdFullPath );
+			path += wxT( ":" );
+			path += fnFileName.GetFullName();
+			ProjectItem projItem( path, fnFileName.GetFullName(), fnFileName.GetFullPath(), ProjectItem::TypeFile );
+
+			wxTreeItemId hti = AppendItem(	item,						// parent
+			                               projItem.GetDisplayName(),	// display name
+			                               GetIconIndex( projItem ),		// item image index
+			                               GetIconIndex( projItem ),		// selected item image
+			                               new FilewViewTreeItemData( projItem ) );
+			wxUnusedVar( hti );
+		}
+
+		SortItem(item);
+		Expand( item );
+		return true;
+	}
+	return false;
 }
 
 bool FileViewTree::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths)
@@ -1108,7 +1159,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 
 	wxString path = dlg->GetBaseDir();
 	bool noExtFiles = dlg->GetIncludeFilesWoExt();
-	
+
 	wxString mask = dlg->GetFileMask();
 	dlg->Destroy();
 
@@ -1141,24 +1192,24 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 		prgDlg->GetSizer()->Fit(prgDlg);
 		prgDlg->Layout();
 		prgDlg->Centre();
-		
-		// get list of files 
+
+		// get list of files
 		std::vector<wxFileName> vExistingFiles;
 		wxArrayString existingFiles;
-		
+
 		proj->GetFiles(vExistingFiles, true);
-		for(size_t i=0; i<vExistingFiles.size(); i++){
+		for (size_t i=0; i<vExistingFiles.size(); i++) {
 			existingFiles.Add(vExistingFiles.at(i).GetFullPath());
 		}
-		
+
 		for (size_t i=0; i<files.GetCount(); i++) {
 			wxFileName fn(files.Item(i));
-			
+
 			// if the file already exist, skip it
-			if(existingFiles.Index(fn.GetFullPath()) != wxNOT_FOUND){
+			if (existingFiles.Index(fn.GetFullPath()) != wxNOT_FOUND) {
 				continue;
 			}
-			
+
 			FileViewItem fvitem;
 			fvitem.fullpath = fn.GetFullPath();
 			fvitem.displayName = fn.GetFullName();
@@ -1243,19 +1294,19 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
 
 						wxFileName tmp(data->GetData().GetFile());
 						tmp.SetFullName(newName);
-						
-						if(tmp.FileExists()){
+
+						if (tmp.FileExists()) {
 							wxMessageBox(wxT("File with that name already exist!"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 							return;
 						}
-						
+
 						// remove the file from the workspace (this will erase it from the symbol database and will
 						// also close the editor that it is currently opened in (if any)
 						if (ManagerST::Get()->RemoveFile(GetItemText(item), path)) {
 
 							// rename the file
 							wxRenameFile(data->GetData().GetFile(), tmp.GetFullPath());
-						
+
 							// add the new file to the project
 							FileViewItem new_item;
 							new_item.fullpath = tmp.GetFullPath();

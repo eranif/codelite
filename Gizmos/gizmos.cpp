@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "gizmos.h"
+#include "workspace.h"
 #include "ctags_manager.h"
 #include "newplugindata.h"
 #include "entry.h"
@@ -465,18 +466,9 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 	wxArrayString paths;
 	paths.Add(srcFile);
 	paths.Add(hdrFile);
-
-	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-	if (item.m_item.IsOk()) {
-		if (m_mgr->AddFilesToVirtualFodler(item.m_item, paths) == false) {
-			//probably not a virtual folder
-			wxString msg;
-			msg << wxT("CodeLite created the class successfully, but was unable to add the generated files to any virtual folder (since non was selected)\n");
-			msg << wxT("You can right click on virtual folder (in the 'Files' tab) and manually add them\n");
-			msg << wxT("To avoid this error in the future, select the target virtual folder before creating the class");
-			wxMessageBox(msg, wxT("CodeLite"), wxOK|wxICON_INFORMATION);
-		}
-	}
+	
+	wxString err_msg;
+	m_mgr->AddFilesToVirtualFodler(info.virtualDirectory, paths);
 }
 
 void GizmosPlugin::OnNewWxProject(wxCommandEvent &e)

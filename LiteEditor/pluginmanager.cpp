@@ -306,6 +306,11 @@ bool PluginManager::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &p
 	return Frame::Get()->GetWorkspacePane()->GetFileViewTree()->AddFilesToVirtualFodler(item, paths);
 }
 
+bool PluginManager::AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths)
+{
+	return Frame::Get()->GetWorkspacePane()->GetFileViewTree()->AddFilesToVirtualFodler(vdFullPath, paths);
+}
+
 int PluginManager::GetToolbarIconSize()
 {
 	//for now return 24 by default

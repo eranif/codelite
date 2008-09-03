@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -64,7 +64,7 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	m_buttonBrowseFolder = new wxButton( this, wxID_ANY, wxT("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_buttonBrowseFolder, 0, wxALL, 5 );
 	
-	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Select Vitual Directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Select Virtual Directory:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	

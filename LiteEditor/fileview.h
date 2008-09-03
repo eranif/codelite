@@ -98,6 +98,7 @@ public:
 	void ExpandToPath(const wxString &project, const wxFileName &fileName);
 	
 	bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths);
+	bool AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths);
 	
 protected:
 	virtual void OnPopupMenu(wxTreeEvent &event);

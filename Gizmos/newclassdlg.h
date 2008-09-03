@@ -44,6 +44,7 @@ struct NewClassInfo {
 	wxString name;
 	wxString path;
 	wxString fileName;
+	wxString virtualDirectory;
 	bool isSingleton;
 	bool isAssingable;
 	bool isVirtualDtor;
@@ -84,6 +85,7 @@ public:
 	wxString GetClassPath();
 	wxString GetClassFile();
 	bool IsCopyableClass(){return !m_checkBoxCopyable->IsChecked();}
+	wxString GetVirtualDirectoryPath() {return m_textCtrlVD->GetValue();}
 };
 
 #endif // __newclassdlg__

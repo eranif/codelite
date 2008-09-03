@@ -138,6 +138,7 @@ public:
 	 * @sa Workspace
 	 */
 	virtual Workspace *GetWorkspace() = 0;
+	
 	/**
 	 * @brief add files to a virtual folder in the project
 	 * @param item a tree item which represents the tree item of the virtual folder
@@ -145,6 +146,15 @@ public:
 	 * @return true on sucesss, false otherwise
 	 */
 	virtual bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths) = 0;
+	
+	/**
+	 * @brief add files to a virtual folder in the project
+	 * @param vdFullPath virtual directory full path in the form of <project>:vd1:vd2:...:vdN
+	 * @param paths an array of files to add
+	 * @return true on sucesss, false otherwise
+	 */
+	virtual bool AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths) = 0;	
+	
 	/**
 	 * @brief return the size of the icons used by CodeLite
 	 * @return 16 or 24

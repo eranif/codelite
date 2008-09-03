@@ -13,9 +13,12 @@ class Workspace;
 class VirtualDirectorySelector : public VirtualDirectorySelectorBase
 {
 	Workspace *m_workspace;
+	wxString m_initialPath;
+	
+public:
+	static wxString DoGetPath(wxTreeCtrl* tree, const wxTreeItemId &item, bool validateFolder);
 	
 protected:
-	wxString DoGetPath(const wxTreeItemId &item);
 	void DoBuildTree();
 	
 protected:
@@ -27,8 +30,9 @@ protected:
 	
 public:
 	/** Constructor */
-	VirtualDirectorySelector( wxWindow* parent, Workspace *wsp );
+	VirtualDirectorySelector( wxWindow* parent, Workspace *wsp, const wxString &initialPath = wxEmptyString );
 	wxString GetVirtualDirectoryPath() const {return m_staticTextPreview->GetLabel();}
+	bool SelectPath(const wxString &path);
 };
 
 #endif // __virtualdirectoryselector__

@@ -43,17 +43,28 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	m_listCtrl1->InsertColumn(1, wxT("Access"));
 
 	TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
+	if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory){
+		wxString path = VirtualDirectorySelector::DoGetPath(m_mgr->GetTree(TreeFileView), item.m_item, false);
+		if(path.IsEmpty() == false){
+			m_textCtrlVD->SetValue(path);
+		}
+	}
+	
 	//set the class path to be the active project path
 	wxString errMsg;
 	if (m_mgr->GetWorkspace()) {
 		if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
+			
 			m_textCtrlGenFilePath->SetValue(item.m_fileName.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+			
 		} else {
+			
 			wxString projname = m_mgr->GetWorkspace()->GetActiveProjectName();
 			ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projname, errMsg);
 			if (proj) {
 				m_textCtrlGenFilePath->SetValue(proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			}
+			
 		}
 	}
 	m_textCtrlFileName->Enable( false );
@@ -195,6 +206,7 @@ void NewClassDlg::GetNewClassInfo(NewClassInfo &info)
 	info.isVirtualDtor = m_checkBoxVirtualDtor->IsChecked();
 	info.implAllPureVirtual = m_checkBoxImplPureVirtual->IsChecked();
 	info.implAllVirtual = m_checkBoxImplVirtual->IsChecked();
+	info.virtualDirectory = m_textCtrlVD->GetValue();
 }
 
 wxString NewClassDlg::GetClassFile()
@@ -263,7 +275,7 @@ void NewClassDlg::OnBrowseFolder(wxCommandEvent& e)
 void NewClassDlg::OnBrowseVD(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	VirtualDirectorySelector dlg(this, m_mgr->GetWorkspace());
+	VirtualDirectorySelector dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetLabel());
 	if(dlg.ShowModal() == wxID_OK){
 		m_textCtrlVD->SetValue(dlg.GetVirtualDirectoryPath());
 	}

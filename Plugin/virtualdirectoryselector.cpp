@@ -4,6 +4,7 @@
 #include <deque>
 #include "virtualdirectoryselector.h"
 #include "tree_node.h"
+#include <wx/imaglist.h>
 
 VirtualDirectorySelector::VirtualDirectorySelector( wxWindow* parent, Workspace *wsp, const wxString &initialPath)
 		: VirtualDirectorySelectorBase( parent )

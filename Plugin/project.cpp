@@ -788,3 +788,32 @@ bool Project::FastAddFile(const wxString& fileName, const wxString& virtualDir)
 	SetModified(true);
 	return true;
 }
+
+void Project::DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, wxString>* tree)
+{
+	wxXmlNode *child = parent->GetChildren();
+	while(child){
+		if(child->GetName() == wxT("VirtualDirectory")){
+			TreeNode<wxString, wxString>* node = new TreeNode<wxString, wxString>(child->GetName(), child->GetName());
+			tree->AddChild(node);
+			
+			// test to see if it has children
+			if(child->GetChildren()){
+				DoGetVirtualDirectories(child, node);
+			}
+		}
+		child = child->GetNext();
+	}
+}
+
+TreeNode<wxString,wxString>* Project::GetVirtualDirectories()
+{
+	TreeNode<wxString, wxString> *parent = new TreeNode<wxString, wxString>(wxEmptyString, wxEmptyString);
+	DoGetVirtualDirectories(m_doc.GetRoot(), parent);
+	if(parent->GetChilds().empty()){
+		// no virtual folders
+		delete parent;
+		parent = NULL;
+	}
+	return parent;
+}

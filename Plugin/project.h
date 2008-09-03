@@ -372,8 +372,14 @@ public:
 	
 	wxString GetVDByFileName(const wxString &file);
 	
-private:
+	/**
+	 * \brief return Tree representation of all virtual folders of this project
+	 * \return tree node. return NULL if no virtual folders exist
+	 */
+	TreeNode<wxString, wxString>* GetVirtualDirectories();
 	
+private:
+	void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, wxString>* tree);
 	wxXmlNode *FindFile(wxXmlNode* parent, const wxString &file);
 	
 	// Recursive helper function

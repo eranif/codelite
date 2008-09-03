@@ -192,6 +192,11 @@ bool NewClassDlg::ValidateInput()
 			return false;
 		}
 	}
+	
+	if(GetVirtualDirectoryPath().IsEmpty()){
+		wxMessageBox(wxT("Please select a virtual directory"), wxT("CodeLite"), wxOK|wxICON_WARNING);
+		return false;
+	}
 	return true;
 }
 

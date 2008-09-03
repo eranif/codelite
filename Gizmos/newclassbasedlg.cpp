@@ -1,29 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : newclassbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -63,7 +39,7 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	bSizer1->Add( m_staticline2, 0, wxEXPAND|wxALL|wxALIGN_CENTER_HORIZONTAL, 0 );
 	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer1 = new wxFlexGridSizer( 2, 3, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -75,12 +51,28 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	m_textClassName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_textClassName, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Class folder:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_panel2 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	fgSizer1->Add( m_panel2, 1, wxEXPAND | wxALL, 5 );
+	
+	m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Generated Files Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_dirPicker = new DirPicker(this, wxID_ANY);
-	fgSizer1->Add( m_dirPicker, 0, wxALL|wxEXPAND, 5 );
+	m_textCtrlGenFilePath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_textCtrlGenFilePath, 1, wxALL|wxEXPAND, 5 );
+	
+	m_buttonBrowseFolder = new wxButton( this, wxID_ANY, wxT("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_buttonBrowseFolder, 0, wxALL, 5 );
+	
+	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Select Vitual Directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlVD = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	fgSizer1->Add( m_textCtrlVD, 0, wxALL|wxEXPAND, 5 );
+	
+	m_buttonSelectVD = new wxButton( this, wxID_ANY, wxT("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_buttonSelectVD, 0, wxALL, 5 );
 	
 	bSizer1->Add( fgSizer1, 0, wxEXPAND, 5 );
 	
@@ -167,8 +159,12 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	this->SetSizer( bSizer1 );
 	this->Layout();
 	
+	this->Centre( wxBOTH );
+	
 	// Connect Events
 	m_textClassName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewClassBaseDlg::OnTextEnter ), NULL, this );
+	m_buttonBrowseFolder->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseFolder ), NULL, this );
+	m_buttonSelectVD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseVD ), NULL, this );
 	m_checkBoxEnterFileName->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckEnterFileNameManually ), NULL, this );
 	m_listCtrl1->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( NewClassBaseDlg::OnListItemActivated ), NULL, this );
 	m_listCtrl1->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( NewClassBaseDlg::OnListItemDeSelected ), NULL, this );
@@ -178,4 +174,21 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	m_buttonDelInheritance->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( NewClassBaseDlg::OnButtonDeleteUI ), NULL, this );
 	m_checkBoxImplVirtual->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckImpleAllVirtualFunctions ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnButtonOK ), NULL, this );
+}
+
+NewClassBaseDlg::~NewClassBaseDlg()
+{
+	// Disconnect Events
+	m_textClassName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewClassBaseDlg::OnTextEnter ), NULL, this );
+	m_buttonBrowseFolder->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseFolder ), NULL, this );
+	m_buttonSelectVD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseVD ), NULL, this );
+	m_checkBoxEnterFileName->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckEnterFileNameManually ), NULL, this );
+	m_listCtrl1->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( NewClassBaseDlg::OnListItemActivated ), NULL, this );
+	m_listCtrl1->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( NewClassBaseDlg::OnListItemDeSelected ), NULL, this );
+	m_listCtrl1->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( NewClassBaseDlg::OnListItemSelected ), NULL, this );
+	m_buttonAddInheritance->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnButtonAdd ), NULL, this );
+	m_buttonDelInheritance->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnButtonDelete ), NULL, this );
+	m_buttonDelInheritance->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( NewClassBaseDlg::OnButtonDeleteUI ), NULL, this );
+	m_checkBoxImplVirtual->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckImpleAllVirtualFunctions ), NULL, this );
+	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnButtonOK ), NULL, this );
 }

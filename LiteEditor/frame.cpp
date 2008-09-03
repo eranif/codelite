@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+/*#include "virtualdirectoryselector.h"*/
 #include "quickdebugdlg.h"
 #include "syntaxhighlightdlg.h"
 #include "dirsaver.h"
@@ -1003,6 +1004,9 @@ void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 	AboutDlg dlg(this);
 	dlg.SetInfo(wxString::Format(wxT("SVN build, revision: %s"), SvnRevision));
 	dlg.ShowModal();
+	
+/*	VirtualDirectorySelector dlg(this, WorkspaceST::Get());
+	dlg.ShowModal();*/
 }
 
 void Frame::OnClose(wxCloseEvent& event)

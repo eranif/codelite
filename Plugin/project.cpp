@@ -789,12 +789,17 @@ bool Project::FastAddFile(const wxString& fileName, const wxString& virtualDir)
 	return true;
 }
 
-void Project::DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, wxString>* tree)
+void Project::DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree)
 {
 	wxXmlNode *child = parent->GetChildren();
 	while(child){
 		if(child->GetName() == wxT("VirtualDirectory")){
-			TreeNode<wxString, wxString>* node = new TreeNode<wxString, wxString>(child->GetName(), child->GetName());
+			
+			VisualWorkspaceNode data;
+			data.name = XmlUtils::ReadString(child, wxT("Name"));
+			data.type = ProjectItem::TypeVirtualDirectory;
+			
+			TreeNode<wxString, VisualWorkspaceNode>* node = new TreeNode<wxString, VisualWorkspaceNode>(data.name, data, tree);
 			tree->AddChild(node);
 			
 			// test to see if it has children
@@ -806,14 +811,14 @@ void Project::DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, wxSt
 	}
 }
 
-TreeNode<wxString,wxString>* Project::GetVirtualDirectories()
+TreeNode<wxString, VisualWorkspaceNode>* Project::GetVirtualDirectories(TreeNode<wxString, VisualWorkspaceNode> *workspace)
 {
-	TreeNode<wxString, wxString> *parent = new TreeNode<wxString, wxString>(wxEmptyString, wxEmptyString);
+	VisualWorkspaceNode data;
+	data.name = GetName();
+	data.type = ProjectItem::TypeProject;
+	
+	TreeNode<wxString, VisualWorkspaceNode> *parent = new TreeNode<wxString, VisualWorkspaceNode>(GetName(), data, workspace);
 	DoGetVirtualDirectories(m_doc.GetRoot(), parent);
-	if(parent->GetChilds().empty()){
-		// no virtual folders
-		delete parent;
-		parent = NULL;
-	}
+	workspace->AddChild(parent);
 	return parent;
 }

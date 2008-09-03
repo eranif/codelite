@@ -46,6 +46,11 @@
 #endif // WXMAKINGDLL_LE_SDK
 #endif
 
+struct VisualWorkspaceNode {
+	wxString name;
+	int type;
+	wxTreeItemId itemId;
+};
 
 /**
  * \class ProjectItem
@@ -376,10 +381,10 @@ public:
 	 * \brief return Tree representation of all virtual folders of this project
 	 * \return tree node. return NULL if no virtual folders exist
 	 */
-	TreeNode<wxString, wxString>* GetVirtualDirectories();
+	TreeNode<wxString, VisualWorkspaceNode>* GetVirtualDirectories(TreeNode<wxString, VisualWorkspaceNode>* workspace);
 	
 private:
-	void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, wxString>* tree);
+	void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);
 	wxXmlNode *FindFile(wxXmlNode* parent, const wxString &file);
 	
 	// Recursive helper function

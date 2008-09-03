@@ -70,6 +70,8 @@ protected:
 	bool ValidateInput();
 	void OnTextEnter(wxCommandEvent &e);
 	void OnCheckImpleAllVirtualFunctions(wxCommandEvent &e);
+	void OnBrowseFolder(wxCommandEvent &e);
+	void OnBrowseVD(wxCommandEvent &e);
 	
 public:
 	/** Constructor */

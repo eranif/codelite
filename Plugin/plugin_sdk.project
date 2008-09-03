@@ -123,6 +123,10 @@
       <File Name="splashscreen.h"/>
       <File Name="progressctrl.cpp"/>
       <File Name="progressctrl.h"/>
+      <File Name="virtualdirectoryselectorbase.h"/>
+      <File Name="virtualdirectoryselector.cpp"/>
+      <File Name="virtualdirectoryselector.h"/>
+      <File Name="virtualdirectoryselectorbase.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="threebuttondlg.h"/>

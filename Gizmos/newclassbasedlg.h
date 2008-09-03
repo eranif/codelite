@@ -1,29 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : newclassbasedlg.h              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -34,6 +10,7 @@
 
 #include <wx/bitmap.h>
 #include <wx/image.h>
+#include <wx/icon.h>
 #include <wx/statbmp.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
@@ -45,10 +22,9 @@
 #include <wx/statline.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include "dirpicker.h"
+#include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/listctrl.h>
-#include <wx/button.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -69,8 +45,13 @@ class NewClassBaseDlg : public wxDialog
 		wxStaticLine* m_staticline2;
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textClassName;
+		wxPanel* m_panel2;
 		wxStaticText* m_staticText2;
-		DirPicker *m_dirPicker;
+		wxTextCtrl* m_textCtrlGenFilePath;
+		wxButton* m_buttonBrowseFolder;
+		wxStaticText* m_staticText4;
+		wxTextCtrl* m_textCtrlVD;
+		wxButton* m_buttonSelectVD;
 		wxStaticLine* m_staticline6;
 		wxCheckBox* m_checkBoxEnterFileName;
 		wxTextCtrl* m_textCtrlFileName;
@@ -90,6 +71,8 @@ class NewClassBaseDlg : public wxDialog
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnTextEnter( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnBrowseFolder( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnBrowseVD( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnCheckEnterFileNameManually( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnListItemActivated( wxListEvent& event ){ event.Skip(); }
 		virtual void OnListItemDeSelected( wxListEvent& event ){ event.Skip(); }
@@ -103,6 +86,7 @@ class NewClassBaseDlg : public wxDialog
 	
 	public:
 		NewClassBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("New Class"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 690,631 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~NewClassBaseDlg();
 	
 };
 

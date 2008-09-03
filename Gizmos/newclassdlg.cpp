@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "newclassdlg.h"
+#include "virtualdirectoryselector.h"
 #include "wx/xrc/xmlres.h"
 #include "newinheritancedlg.h"
 #include "imanager.h"
@@ -46,12 +47,12 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	wxString errMsg;
 	if (m_mgr->GetWorkspace()) {
 		if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
-			m_dirPicker->SetPath(item.m_fileName.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+			m_textCtrlGenFilePath->SetValue(item.m_fileName.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 		} else {
 			wxString projname = m_mgr->GetWorkspace()->GetActiveProjectName();
 			ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projname, errMsg);
 			if (proj) {
-				m_dirPicker->SetPath(proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+				m_textCtrlGenFilePath->SetValue(proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			}
 		}
 	}
@@ -139,6 +140,9 @@ void NewClassDlg::OnButtonOK(wxCommandEvent &e)
 	EndModal(wxID_OK);
 }
 
+/**
+ * \brief 
+ */
 bool NewClassDlg::ValidateInput()
 {
 	//validate the class name
@@ -150,7 +154,7 @@ bool NewClassDlg::ValidateInput()
 	}
 
 	//validate the path of the class
-	wxString path(m_dirPicker->GetPath());
+	wxString path(m_textCtrlGenFilePath->GetValue());
 	if (!wxDir::Exists(path)) {
 		wxString msg;
 		msg << wxT("'") << path << wxT("': directory does not exist");
@@ -236,9 +240,31 @@ void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent &e)
 
 wxString NewClassDlg::GetClassPath()
 {
-	if(m_dirPicker->GetPath().Trim().IsEmpty()) {
+	if(m_textCtrlGenFilePath->GetValue().Trim().IsEmpty()) {
 		return wxT(".");
 	} else {
-		return m_dirPicker->GetPath();
+		return m_textCtrlGenFilePath->GetValue();
+	}
+}
+
+void NewClassDlg::OnBrowseFolder(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	wxString initPath;
+	if(wxFileName::DirExists(m_textCtrlGenFilePath->GetValue())){
+		initPath = m_textCtrlGenFilePath->GetValue();
+	}
+	wxString new_path = wxDirSelector(wxT("Select Generated Files Path:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	if(new_path.IsEmpty() == false){
+		m_textCtrlGenFilePath->SetValue(new_path);
+	}
+}
+
+void NewClassDlg::OnBrowseVD(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	VirtualDirectorySelector dlg(this, m_mgr->GetWorkspace());
+	if(dlg.ShowModal() == wxID_OK){
+		m_textCtrlVD->SetValue(dlg.GetVirtualDirectoryPath());
 	}
 }

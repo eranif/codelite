@@ -280,7 +280,7 @@ void NewClassDlg::OnBrowseFolder(wxCommandEvent& e)
 void NewClassDlg::OnBrowseVD(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	VirtualDirectorySelector dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetLabel());
+	VirtualDirectorySelector dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetValue());
 	if(dlg.ShowModal() == wxID_OK){
 		m_textCtrlVD->SetValue(dlg.GetVirtualDirectoryPath());
 	}

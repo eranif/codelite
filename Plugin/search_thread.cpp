@@ -435,11 +435,15 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 	for (size_t i=0; i<f.GetCount(); i++) {
 		wxString ext = f.Item(i).AfterLast(wxT('.'));
 		if (ext.empty()) {
-			// add extension less files
-			files.Add(f.Item(i));
+			// add extensionless files (first checking for duplicates)
+			if (files.Index( f.Item(i)) == wxNOT_FOUND){
+				files.Add(f.Item(i));
+			}
 		} else if (spec.find(ext.MakeLower()) != spec.end()) {
-			//this extension exists, add the file
-			files.Add(f.Item(i));
+			//this extension exists, add the file (first checking for duplicates)
+			if (files.Index( f.Item(i)) == wxNOT_FOUND){
+				files.Add(f.Item(i));
+			}
 		}
 	}
 }

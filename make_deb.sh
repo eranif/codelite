@@ -28,6 +28,7 @@ mkdir -p fakeroot/usr/local/share/codelite/src
 mkdir -p fakeroot/usr/local/share/codelite/lexers
 mkdir -p fakeroot/usr/share/applications/
 \cp -pr Runtime/config/build_settings.xml.default fakeroot/usr/local/share/codelite/config/build_settings.xml.default
+\cp -pr Runtime/config/plugins.xml.default fakeroot/usr/local/share/codelite/config/plugins.xml.default
 \cp -pr Runtime/config/debuggers.xml.gtk fakeroot/usr/local/share/codelite/config/debuggers.xml.default
 \cp -pr Runtime/config/accelerators.conf.default fakeroot/usr/local/share/codelite/config/accelerators.conf.default
 \cp -pr Runtime/config/codelite.xml.default.gtk fakeroot/usr/local/share/codelite/config/codelite.xml.default

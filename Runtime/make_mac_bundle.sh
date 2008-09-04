@@ -64,6 +64,7 @@ cp -pr src/*.gz ./CodeLite.app/Contents/Resources/
 cp config/codelite.layout.default ./CodeLite.app/Contents/SharedSupport/config/codelite.layout
 cp config/accelerators.conf.default ./CodeLite.app/Contents/SharedSupport/config/
 cp config/build_settings.xml.default ./CodeLite.app/Contents/SharedSupport/config
+cp config/plugins.xml.default ./CodeLite.app/Contents/SharedSupport/config
 
 ##
 ## replace the revision macro

@@ -395,6 +395,7 @@ createInstallTarget()
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/src/" >> Makefile
 	echo "	@cp -fr Runtime/plugins/resources/*.* \$(DESTDIR)$prefix/share/codelite/plugins/resources/" >> Makefile
 	echo "	@cp -fr Runtime/config/build_settings.xml.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
+	echo "	@cp -fr Runtime/config/plugins.xml.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
 	echo "	@cp -fr Runtime/config/debuggers.xml.gtk \$(DESTDIR)$prefix/share/codelite/config/debuggers.xml.default" >> Makefile
 	echo "	@cp -fr Runtime/config/codelite.xml.default.gtk \$(DESTDIR)$prefix/share/codelite/config/codelite.xml.default" >> Makefile
 	echo "	@cp -fr Runtime/config/codelite.layout.default \$(DESTDIR)$prefix/share/codelite/config/codelite.layout" >> Makefile

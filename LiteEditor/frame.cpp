@@ -556,7 +556,7 @@ void Frame::CreateGUIControls(void)
 #endif
 
 	//initialize debugger configuration tool
-	DebuggerConfigTool::Get()->Load(ManagerST::Get()->GetStarupDirectory() + wxT("/config/debuggers.xml"), wxT("DebuggerSettings"));
+	DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"));
 	WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
 
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);

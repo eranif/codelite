@@ -36,10 +36,11 @@ Source: "C:\wxWidgets-2.8.7\lib\gcc_dll\wxmsw28u_gcc_custom.dll"; DestDir: "{app
 Source: "C:\Development\C++\codelite\trunk\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Program Files\CodeLite\common.tags"; DestDir: "{app}"; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\sdk\wxconfig\wx-config.exe"; DestDir: "{app}"; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\config\codelite.xml.default"; DestDir: "{app}\config"; DestName: codelite.xml.default; Components: Editor;
-Source: "C:\Development\C++\codelite\trunk\Runtime\config\accelerators.conf.default"; DestDir: "{app}\config"; DestName: accelerators.conf.default; Components: Editor;
-Source: "C:\Development\C++\codelite\trunk\Runtime\config\debuggers.xml"; DestDir: "{app}\config"; Components: Editor;
-Source: "C:\Development\C++\codelite\trunk\Runtime\config\build_settings.xml"; DestDir: "{app}\config"; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\codelite.xml.default"; DestDir: "{app}\config"; Components: Editor;
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\plugins.xml.default"; DestDir: "{app}\config";  Components: Editor;
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\accelerators.conf.default"; DestDir: "{app}\config"; Components: Editor;
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\debuggers.xml.default"; DestDir: "{app}\config"; Components: Editor;
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\build_settings.xml.default"; DestDir: "{app}\config"; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\config\codelite.layout.default"; DestDir: "{app}\config"; DestName: codelite.layout; Flags: ignoreversion ; Components: Editor

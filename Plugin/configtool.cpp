@@ -22,6 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "conffilelocator.h"
  #include "configtool.h"
 #include "xmlutils.h"
 #include "serialized_object.h"
@@ -37,24 +38,13 @@ ConfigTool::~ConfigTool()
 {
 }
 
-bool ConfigTool::Load(const wxString &fileName, const wxString &rootName)
+bool ConfigTool::Load(const wxString &basename)
 {
-	wxFileName fn(fileName);
-	m_fileName = fn.GetFullPath();
+	wxString initialSettings = ConfFileLocator::Instance()->Locate(basename);
+	bool loaded = m_doc.Load(initialSettings);
 	
-	if(fn.FileExists() == false){
-		//no such file, create an empty file
-		wxString content;
-		
-		content << wxT("<") << rootName << wxT("/>");
-		wxFFile file;
-		file.Open(fn.GetFullPath(), wxT("w+b"));
-		if(file.IsOpened()){
-			file.Write(content);
-			file.Close();
-		}
-	}
-	return m_doc.Load(m_fileName);
+	m_fileName = ConfFileLocator::Instance()->GetLocalCopy(basename);
+	return loaded;
 }
 
 bool ConfigTool::WriteObject(const wxString &name, SerializedObject *obj)

@@ -39,11 +39,12 @@ class ConfigTool
 {
 	wxXmlDocument m_doc;
 	wxString m_fileName;
+	
 public:
 	ConfigTool();
 	~ConfigTool();
 	
-	bool Load(const wxString &filename, const wxString &rootName);
+	bool Load(const wxString &basename);
 	bool WriteObject(const wxString &name, SerializedObject *obj);
 	bool ReadObject(const wxString &name, SerializedObject *obj);
 };

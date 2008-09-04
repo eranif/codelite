@@ -63,7 +63,7 @@ cp -pr src/*.gz ./CodeLite.app/Contents/Resources/
 ## copy empty layout file
 cp config/codelite.layout.default ./CodeLite.app/Contents/SharedSupport/config/codelite.layout
 cp config/accelerators.conf.default ./CodeLite.app/Contents/SharedSupport/config/
-cp config/build_settings.xml ./CodeLite.app/Contents/SharedSupport/config
+cp config/build_settings.xml.default ./CodeLite.app/Contents/SharedSupport/config
 
 ##
 ## replace the revision macro
@@ -86,7 +86,7 @@ cat config/liteeditor.xml.mac | sed s/\$\(Revision\)/${cur_rev}/g >> ./CodeLite.
 ## replace the executable name according to the configuration used in the build
 cat Info.plist.template | sed s/EXE_NAME/${exe_name}/g >> ./CodeLite.app/Contents/Info.plist
 
-cp config/debuggers.xml ./CodeLite.app/Contents/SharedSupport/config
+cp config/debuggers.xml.default ./CodeLite.app/Contents/SharedSupport/config
 
 cp ../lib/CodeFormatter.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/Debugger.so ./CodeLite.app/Contents/SharedSupport/debuggers/

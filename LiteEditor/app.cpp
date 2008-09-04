@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2008 by Eran Ifrah
@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/socket.h>
+#include "conffilelocator.h"
 #include "app.h"
 #include <wx/snglinst.h>
 #include <wx/image.h>
@@ -256,6 +257,10 @@ bool App::OnInit()
 
 	// keep the startup directory
 	ManagerST::Get()->SetStarupDirectory(::wxGetCwd());
+	
+	// Initialize the configuration file locater
+	ConfFileLocator::Instance()->Initialize(ManagerST::Get()->GetInstallDir(), ManagerST::Get()->GetStarupDirectory());
+	
 	Manager *mgr = ManagerST::Get();
 	
 	// set the CTAGS_REPLACEMENT environment variable
@@ -348,6 +353,7 @@ bool App::OnInit()
 
 int App::OnExit()
 {
+	ConfFileLocator::Release();
 	return 0;
 }
 
@@ -381,17 +387,13 @@ bool App::CopySettings(const wxString &destDir, wxString& installPath)
 		CopyDir(installPath + wxT("/lexers/"), destDir + wxT("/lexers/"));
 		massCopy  (installPath + wxT("/images/"), wxT("*.png"), destDir + wxT("/images/"));
 		massCopy  (installPath + wxT("/"), wxT("*.tags"), destDir + wxT("/"));
-		wxCopyFile(installPath + wxT("/config/build_settings.xml"), destDir + wxT("/config/build_settings.xml"));
 		wxCopyFile(installPath + wxT("/config/codelite.xml.default"), destDir + wxT("/config/codelite.xml.default"));
-		wxCopyFile(installPath + wxT("/config/debuggers.xml"), destDir + wxT("/config/debuggers.xml"));
 		wxCopyFile(installPath + wxT("/rc/menu.xrc"), destDir + wxT("/rc/menu.xrc"));
 		wxCopyFile(installPath + wxT("/index.html"), destDir + wxT("/index.html"));
 		wxCopyFile(installPath + wxT("/svnreport.html"), destDir + wxT("/svnreport.html"));
 		wxCopyFile(installPath + wxT("/astyle.sample"), destDir + wxT("/astyle.sample"));
 		wxCopyFile(installPath + wxT("/config/accelerators.conf.default"), destDir + wxT("/config/accelerators.conf.default"));
-
 	}
-	
 	return true;
 }
 

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "build_settings_config.h"
+#include "conffilelocator.h"
 #include "xmlutils.h"
 #include <wx/ffile.h>
 
@@ -38,17 +39,11 @@ BuildSettingsConfig::~BuildSettingsConfig()
 
 bool BuildSettingsConfig::Load()
 {
-	m_fileName = wxFileName(wxT("config/build_settings.xml"));
-	m_fileName.MakeAbsolute();
-	if(!m_fileName.FileExists()){
-		//create a new empty file with this name so the load function will not 
-		//fail
-		wxFFile file(m_fileName.GetFullPath(), wxT("a"));
-		if(file.IsOpened()){
-			file.Close();
-		}
-	}
-	return m_doc->Load(m_fileName.GetFullPath());
+	wxString initialSettings = ConfFileLocator::Instance()->Locate(wxT("config/build_settings.xml"));
+	bool loaded = m_doc->Load(initialSettings);
+	
+	m_fileName = ConfFileLocator::Instance()->GetLocalCopy(wxT("config/build_settings.xml"));
+	return loaded;
 }
 
 wxXmlNode* BuildSettingsConfig::GetCompilerNode(const wxString& name) const

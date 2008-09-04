@@ -38,6 +38,7 @@ BuildMatrix::BuildMatrix(wxXmlNode *node){
 	}else{
 		//construct default empty mapping with a default build configuration
 		m_configurationList.push_back(new WorkspaceConfiguration(wxT("Debug"), true));
+		m_configurationList.push_back(new WorkspaceConfiguration(wxT("Release"), false));
 	}
 }
 

@@ -204,7 +204,7 @@ bool VcImporter::ConvertProject(VcProjectData &data)
 	//now we can create the project
 	wxFileName fn(data.filepath);
 	fn.MakeAbsolute();
-	if(!WorkspaceST::Get()->CreateProject(data.name, fn.GetPath(), projectType, errMsg)){
+	if(!WorkspaceST::Get()->CreateProject(data.name, fn.GetPath(), projectType, true, errMsg)){
 		return false;
 	}
 	

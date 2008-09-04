@@ -194,20 +194,39 @@ void Workspace::AddProjectToBuildMatrix(ProjectPtr prj)
 	std::list<WorkspaceConfigurationPtr> wspList = matrix->GetConfigurations();
 	std::list<WorkspaceConfigurationPtr>::iterator iter = wspList.begin();
 	for (; iter !=  wspList.end(); iter++) {
-		WorkspaceConfiguration::ConfigMappingList prjList = (*iter)->GetMapping();
+		WorkspaceConfigurationPtr workspaceConfig = (*iter);
+		WorkspaceConfiguration::ConfigMappingList prjList = workspaceConfig->GetMapping();
 
 		ProjectSettingsCookie cookie;
 		BuildConfigPtr prjBldConf = prj->GetSettings()->GetFirstBuildConfiguration(cookie);
+		BuildConfigPtr matchConf;
+		
 		if ( !prjBldConf ) {
 			// the project does not have any settings, create new one and add it
 			prj->SetSettings(new ProjectSettings(NULL));
 			prjBldConf = prj->GetSettings()->GetFirstBuildConfiguration(cookie);
+			matchConf = prjBldConf;
+		} else {
+			
+			matchConf = prjBldConf;
+			
+			// try to locate the best match to add to the workspace 
+			while( prjBldConf ){
+				if(prjBldConf->GetName() == workspaceConfig->GetName()){
+					// we found a suitable match use it instead of the default one
+					matchConf = prjBldConf;
+					break;
+				}
+				prjBldConf = prj->GetSettings()->GetNextBuildConfiguration(cookie);
+			}
 		}
-		ConfigMappingEntry entry(prj->GetName(), prjBldConf->GetName());
+		
+		ConfigMappingEntry entry(prj->GetName(), matchConf->GetName());
 		prjList.push_back(entry);
 		(*iter)->SetConfigMappingList(prjList);
 		matrix->SetConfiguration((*iter));
 	}
+	
 	SetBuildMatrix(matrix);
 }
 
@@ -233,7 +252,7 @@ void Workspace::RemoveProjectFromBuildMatrix(ProjectPtr prj)
 	SetBuildMatrix(matrix);
 }
 
-bool Workspace::CreateProject(const wxString &name, const wxString &path, const wxString &type, wxString &errMsg)
+bool Workspace::CreateProject(const wxString &name, const wxString &path, const wxString &type, bool addToBuildMatrix, wxString &errMsg)
 {
 	if ( !m_doc.IsOk() ) {
 		errMsg = wxT("No workspace open");
@@ -260,7 +279,9 @@ bool Workspace::CreateProject(const wxString &name, const wxString &path, const 
 	}
 
 	m_doc.Save(m_fileName.GetFullPath());
-	AddProjectToBuildMatrix(proj);
+	if(addToBuildMatrix){
+		AddProjectToBuildMatrix(proj);
+	}
 	return true;
 }
 

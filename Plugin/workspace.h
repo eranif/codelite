@@ -127,7 +127,7 @@ public:
 	 * \returns
 	 * true on success false otherwise
 	 */
-	bool CreateProject(const wxString &name, const wxString &path, const wxString &type, wxString &errMsg);
+	bool CreateProject(const wxString &name, const wxString &path, const wxString &type, bool addToBuildMatrix, wxString &errMsg);
 
 	/**
 	 * \brief get a string property from the worksapce file
@@ -250,6 +250,13 @@ public:
 
 	wxString ExpandVariables(const wxString &expression) const;
 
+	/**
+	 * \brief add project to the workspace build matrix. By default CodeLite will try to match the best project configuration
+	 * to the workspace configuration (i.e. Debug -> Debug, if no suitable match found, it will use the first one) 
+	 * \param prj
+	 */
+	void AddProjectToBuildMatrix(ProjectPtr prj);
+	
 private:
 	/**
 	 * Do the actual add project 
@@ -258,7 +265,7 @@ private:
 	 */
 	bool DoAddProject(const wxString &path, wxString &errMsg);
 
-	void AddProjectToBuildMatrix(ProjectPtr prj);
+	
 	void RemoveProjectFromBuildMatrix(ProjectPtr prj);
 };
 

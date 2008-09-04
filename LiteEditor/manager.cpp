@@ -86,7 +86,7 @@
 #include "sessionmanager.h"
 #include <vector>
 
-extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen); 
+extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 //
 // The CodeLite manager class
 //
@@ -420,11 +420,16 @@ void Manager::CreateProject(ProjectData &data)
 	bool res = WorkspaceST::Get()->CreateProject(data.m_name,
 	           data.m_path,
 	           data.m_srcProject->GetSettings()->GetProjectType(wxEmptyString),
+	           false,
 	           errMsg);
 	CHECK_MSGBOX(res);
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(data.m_name, errMsg);
+	
 	//copy the project settings to the new one
 	proj->SetSettings(data.m_srcProject->GetSettings());
+	
+	// now add the new project to the build matrix
+	WorkspaceST::Get()->AddProjectToBuildMatrix(proj);
 	ProjectSettingsPtr settings = proj->GetSettings();
 
 	//set the compiler type
@@ -498,11 +503,11 @@ void Manager::CloseWorkspace()
 	// Save the current session
 	session.SetTabInfoArr(vTabInfoArr);
 	SessionManager::Get().Save(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session);
-	
+
 	// since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
 	// default
 	SessionManager::Get().SetLastWorkspaceName(wxT("Default"));
-	
+
 	WorkspaceST::Get()->CloseWorkspace();
 	//clear the 'buid' tab
 	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
@@ -523,11 +528,11 @@ void Manager::CloseWorkspace()
 	Frame::Get()->GetNotebook()->Refresh();
 	Frame::Get()->GetWorkspacePane()->BuildFileTree();
 	SetStatusMessage(wxEmptyString, 1);
-	
-#ifdef __WXMSW__	
+
+#ifdef __WXMSW__
 	// Under Windows, and in order to avoid locking the directory set the working directoy back to the startup directory
 	wxSetWorkingDirectory(GetStarupDirectory());
-#endif	
+#endif
 }
 
 void Manager::OpenWorkspace(const wxString &path)
@@ -1255,7 +1260,7 @@ void Manager::StopBuild()
 	if ( m_compileRequest ) {
 		m_compileRequest->Stop();
 	}
-	
+
 	// clear the build queue as well
 	this->m_buildQueue.clear();
 }
@@ -1415,11 +1420,11 @@ void Manager::RetagWorkspace()
 	wxArrayString projects;
 	GetProjectList(projects);
 	std::vector<wxFileName> projectFiles;
-	
+
 	// in the case of retagging the entire workspace
 	// it is faster to drop the tables instead of deleting
 	TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
-	
+
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		ProjectPtr proj = GetProject(projects.Item(i));
 		if ( proj ) {
@@ -1758,8 +1763,8 @@ void Manager::GetProjectFiles(const wxString &project, wxArrayString &files)
 {
 	std::vector<wxFileName> fileNames;
 	ProjectPtr p = GetProject(project);
-	
-	if(p){
+
+	if (p) {
 		p->GetFiles(fileNames, true);
 
 		//convert std::vector to wxArrayString
@@ -1771,13 +1776,13 @@ void Manager::GetProjectFiles(const wxString &project, wxArrayString &files)
 
 void Manager::GetWorkspaceFiles(wxArrayString &files)
 {
-	if(!IsWorkspaceOpen()){
+	if (!IsWorkspaceOpen()) {
 		return;
 	}
-	
+
 	wxArrayString projects;
 	GetProjectList(projects);
-	
+
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		GetProjectFiles(projects.Item(i), files);
 	}
@@ -1824,7 +1829,7 @@ void Manager::DbgStart(long pid)
 	BuildConfigPtr bldConf;
 	ProjectPtr proj;
 	long PID(-1);
-	
+
 	if (pid == 1) { //attach to process
 		AttachDbgProcDlg *dlg = new AttachDbgProcDlg(NULL);
 		if (dlg->ShowModal() == wxID_OK) {
@@ -1918,7 +1923,7 @@ void Manager::DbgStart(long pid)
 	// this loop must take place before the debugger startup
 	// or else call to UpdateBreakpoint() will yield an attempt to
 	// actually add the breakpoint before Run() is called - this can
-	// be a problem when adding breakpoint to dll files. 
+	// be a problem when adding breakpoint to dll files.
 	if (wxNOT_FOUND == pid) {
 		Notebook *book = Frame::Get()->GetNotebook();
 		for (size_t i=0; i<book->GetPageCount(); i++) {
@@ -2540,7 +2545,7 @@ void Manager::UpdateMenuAccelerators()
 
 	wxArrayString files;
 	DoGetAccelFiles(files);
-	
+
 	LoadAcceleratorTable(files, menuMap);
 	wxMenuBar *bar = Frame::Get()->GetMenuBar();
 
@@ -2641,20 +2646,20 @@ void Manager::DumpMenu(wxMenu *menu, const wxString &label, wxString &content)
 void Manager::LoadAcceleratorTable(const wxArrayString &files, MenuItemDataMap &accelMap)
 {
 	wxString content;
-	for(size_t i=0; i<files.GetCount(); i++){
+	for (size_t i=0; i<files.GetCount(); i++) {
 		wxString tmpContent;
-		if(ReadFileWithConversion(files.Item(i), tmpContent)){
+		if (ReadFileWithConversion(files.Item(i), tmpContent)) {
 			wxLogMessage(wxString::Format(wxT("Loading accelerators from '%s'"), files.Item(i).c_str()));
 			content << wxT("\n") << tmpContent;
 		}
 	}
-	
+
 	wxArrayString lines = wxStringTokenize(content, wxT("\n"));
 	for (size_t i = 0; i < lines.GetCount(); i ++ ) {
-		if(lines.Item(i).Trim().Trim(false).IsEmpty()){
+		if (lines.Item(i).Trim().Trim(false).IsEmpty()) {
 			continue;
 		}
-		
+
 		MenuItemData item;
 		wxString line = lines.Item(i);
 
@@ -2878,10 +2883,10 @@ void Manager::GetDefaultAcceleratorMap(MenuItemDataMap& accelMap)
 	wxString fileName = GetStarupDirectory() + wxT("/config/accelerators.conf.default");
 	wxArrayString files;
 	files.Add(fileName);
-	
-	// append the content of all '*.accelerators' from the plugins 
+
+	// append the content of all '*.accelerators' from the plugins
 	// resources table
-	wxDir::GetAllFiles(GetInstallDir() + wxT("/plugins/resources/"), &files, wxT("*.accelerators"), wxDIR_FILES);	
+	wxDir::GetAllFiles(GetInstallDir() + wxT("/plugins/resources/"), &files, wxT("*.accelerators"), wxDIR_FILES);
 	LoadAcceleratorTable(files, accelMap);
 }
 
@@ -3040,10 +3045,10 @@ void Manager::DoSetupWorkspace(const wxString &path)
 	if (Frame::Get()->GetFrameGeneralInfo().GetFlags() & CL_LOAD_LAST_SESSION) {
 		SessionEntry session;
 		if (SessionManager::Get().FindSession(path, session)) {
-			
+
 			// set this session as the active one
 			SessionManager::Get().SetLastWorkspaceName(path);
-			
+
 			//restore notebook tabs
 			const std::vector<TabInfo> &vTabInfoArr = session.GetTabInfoArr();
 			if (vTabInfoArr.size() > 0) {
@@ -3117,12 +3122,12 @@ void Manager::ProcessCommandQueue()
 	// pop the next build build and process it
 	QueueCommand qcmd = m_buildQueue.front();
 	m_buildQueue.pop_front();
-	
-	if(qcmd.GetCheckBuildSuccess() && !IsBuildEndedSuccessfully()){
+
+	if (qcmd.GetCheckBuildSuccess() && !IsBuildEndedSuccessfully()) {
 		// build failed, remove command from the queue
 		return;
 	}
-	
+
 	switch ( qcmd.GetKind() ) {
 	case QueueCommand::Clean:
 		DoCleanProject(qcmd);
@@ -3206,29 +3211,29 @@ void Manager::DoCmdWorkspace(int cmd)
 	// get list of projects
 	wxArrayString projects;
 	wxArrayString optimizedList;
-	
+
 	ManagerST::Get()->GetProjectList(projects);
-	
-	for(size_t i=0; i<projects.GetCount(); i++){
+
+	for (size_t i=0; i<projects.GetCount(); i++) {
 		ProjectPtr p = GetProject(projects.Item(i));
 		BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(projects.Item(i), wxEmptyString);
-		if(p && buildConf){
+		if (p && buildConf) {
 			wxArrayString deps = p->GetDependencies(buildConf->GetName());
-			for(size_t j=0; j<deps.GetCount(); j++){
+			for (size_t j=0; j<deps.GetCount(); j++) {
 				// add a project only if it does not exist yet
-				if(optimizedList.Index(deps.Item(j)) == wxNOT_FOUND){
+				if (optimizedList.Index(deps.Item(j)) == wxNOT_FOUND) {
 					optimizedList.Add(deps.Item(j));
 				}
 			}
 			// add the project itself now, again only if it is not included yet
-			if(optimizedList.Index(projects.Item(i)) == wxNOT_FOUND){
+			if (optimizedList.Index(projects.Item(i)) == wxNOT_FOUND) {
 				optimizedList.Add(projects.Item(i));
 			}
 		}
 	}
-	
+
 	// add a build/clean project only command for every project in the optimized list
-	for(size_t i=0; i<optimizedList.GetCount(); i++){
+	for (size_t i=0; i<optimizedList.GetCount(); i++) {
 		BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(optimizedList.Item(i), wxEmptyString);
 		if (buildConf) {
 			QueueCommand bi(optimizedList.Item(i), buildConf->GetName(), true, cmd);
@@ -3254,12 +3259,11 @@ void Manager::DoGetAccelFiles(wxArrayString& files)
 		//use the default settings
 		fileName = GetStarupDirectory() + wxT("/config/accelerators.conf.default");
 		files.Add(fileName);
-		
-		// append the content of all '*.accelerators' from the plugins 
+
+		// append the content of all '*.accelerators' from the plugins
 		// resources table
 		wxDir::GetAllFiles(GetInstallDir() + wxT("/plugins/resources/"), &files, wxT("*.accelerators"), wxDIR_FILES);
 	} else {
 		files.Add(fileName);
 	}
 }
-

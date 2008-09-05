@@ -100,7 +100,7 @@ public:
 	virtual wxString CallTipContent(){return wxEmptyString;}
 	
 	//override this method if you wish to provide context based right click menu
-	virtual wxMenu *GetMenu() {return NULL;}
+	virtual wxMenu *GetMenu() ;
 };
 
 typedef SmartPtr<ContextBase> ContextBasePtr;

@@ -63,6 +63,8 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 		editor->UpperCase();
 	} else if (event.GetId() == XRCID("transpose_lines")) {
 		editor->LineTranspose();
+	} else if (event.GetId() == wxID_DELETE) {
+		editor->DeleteBack();
 	}
 }
 
@@ -86,7 +88,7 @@ void EditHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event)
 		event.Enable(editor && editor->CanRedo());
 	} else if (event.GetId() == wxID_SELECTALL) {
 		event.Enable(editor && editor->GetLength() > 0);
-	} else if (event.GetId() == wxID_DUPLICATE) {
+	} else if (event.GetId() == wxID_DUPLICATE || event.GetId() == wxID_DELETE) {
 		event.Enable(true);
 	} else {
 		event.Enable(false);

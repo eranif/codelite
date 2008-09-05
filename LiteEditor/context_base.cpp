@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/xrc/xmlres.h>
 #include "context_base.h"
 #include "drawingutils.h"
 #include <vector>
@@ -127,5 +128,9 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 			rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
 		}
 	}
+}
 
+wxMenu* ContextBase::GetMenu()
+{
+	return wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
 }

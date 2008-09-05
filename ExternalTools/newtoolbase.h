@@ -18,8 +18,8 @@
 #include <wx/panel.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
-#include <wx/statline.h>
 #include <wx/sizer.h>
+#include <wx/statbox.h>
 #include <wx/checkbox.h>
 #include <wx/dialog.h>
 
@@ -49,17 +49,14 @@ class NewToolBase : public wxDialog
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textCtrlArguments;
 		wxPanel* m_panel31;
-		wxStaticLine* m_staticline1;
-		wxStaticLine* m_staticline3;
-		wxStaticLine* m_staticline4;
-		wxStaticText* m_staticText7;
-		wxTextCtrl* m_textCtrlIcon16;
-		wxButton* m_buttonBrowseIcon16;
 		wxStaticText* m_staticText8;
 		wxTextCtrl* m_textCtrlIcon24;
 		wxButton* m_buttonBrowseIcon24;
+		wxStaticText* m_staticText7;
+		wxTextCtrl* m_textCtrlIcon16;
+		wxButton* m_buttonBrowseIcon16;
+		wxCheckBox* m_checkBoxSaveAllFilesBefore;
 		wxCheckBox* m_checkBoxCaptureProcessOutput;
-		wxStaticLine* m_staticline2;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
 		wxButton* m_buttonHelp;
@@ -68,8 +65,8 @@ class NewToolBase : public wxDialog
 		virtual void OnIdSelected( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonBrowsePath( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonBrowseWD( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonBrowseIcon16( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonBrowseIcon24( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnButtonBrowseIcon16( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonOk( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonCancel( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonHelp( wxCommandEvent& event ){ event.Skip(); }

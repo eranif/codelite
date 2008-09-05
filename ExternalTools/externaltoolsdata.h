@@ -16,6 +16,7 @@ class ToolInfo : public SerializedObject
 	wxString m_icon16;
 	wxString m_icon24;
 	bool m_captureOutput;
+	bool m_saveAllFiles;
 
 public:
 	ToolInfo();
@@ -75,6 +76,12 @@ public:
 		return m_captureOutput;
 	}
 
+	void SetSaveAllFiles(const bool& saveAllFiles) {
+		this->m_saveAllFiles = saveAllFiles;
+	}
+	const bool& GetSaveAllFiles() const {
+		return m_saveAllFiles;
+	}
 };
 
 class ExternalToolsData : public SerializedObject

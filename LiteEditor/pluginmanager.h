@@ -89,6 +89,7 @@ public:
 	virtual void ReloadWorkspace();
 	virtual IPlugin* GetPlugin(const wxString &pluginName);
 	virtual void AppendOutputMsg(const wxString &msg);
+	virtual void SaveAll();
 	
 	//------------------------------------
 	//End of IManager interface

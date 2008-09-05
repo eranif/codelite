@@ -210,6 +210,11 @@ public:
 	 * \param msg message to append
 	 */
 	virtual void AppendOutputMsg(const wxString &msg) = 0;
+	
+	/**
+	 * \brief save all modified files
+	 */
+	virtual void SaveAll() = 0;
 };
 
 #endif //IMANAGER_H

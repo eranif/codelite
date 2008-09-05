@@ -368,3 +368,9 @@ void PluginManager::AppendOutputMsg(const wxString& msg)
 {
 	ManagerST::Get()->OutputMessage(msg);
 }
+
+void PluginManager::SaveAll()
+{
+	ManagerST::Get()->SaveAll(false);
+}
+

@@ -19,11 +19,13 @@ void ToolInfo::DeSerialize(Archive& arch)
 	
 	m_captureOutput = false;
 	arch.Read(wxT("m_captureOutput"), m_captureOutput);
+	
+	m_saveAllFiles = false;
+	arch.Read(wxT("m_saveAllFiles"), m_saveAllFiles);
 }
 
 void ToolInfo::Serialize(Archive& arch)
 {
-	
 	arch.Write(wxT("m_id"), m_id);
 	arch.Write(wxT("m_path"), m_path);
 	arch.Write(wxT("m_arguments"), m_arguments);
@@ -32,6 +34,7 @@ void ToolInfo::Serialize(Archive& arch)
 	arch.Write(wxT("m_icon16"), m_icon16);
 	arch.Write(wxT("m_icon24"), m_icon24);
 	arch.Write(wxT("m_captureOutput"), m_captureOutput);
+	arch.Write(wxT("m_saveAllFiles"), m_saveAllFiles);
 }
 
 //----------------------------------------------------------------

@@ -5,7 +5,7 @@
 #include <wx/filedlg.h>
 #include "macrosdlg.h"
 
-NewToolDlg::NewToolDlg( wxWindow* parent, IManager *mgr, const wxString &id, const wxString &name, const wxString &path, const wxString &wd, const wxString &args, const wxString &icon16, const wxString &icon24, bool captureOutput)
+NewToolDlg::NewToolDlg( wxWindow* parent, IManager *mgr, const wxString &id, const wxString &name, const wxString &path, const wxString &wd, const wxString &args, const wxString &icon16, const wxString &icon24, bool captureOutput, bool saveAllFiles)
 		: NewToolBase( parent )
 		, m_mgr(mgr)
 {
@@ -18,6 +18,7 @@ NewToolDlg::NewToolDlg( wxWindow* parent, IManager *mgr, const wxString &id, con
 	m_textCtrlIcon24->SetValue(icon24);
 	m_textCtrlName->SetValue(name);
 	m_checkBoxCaptureProcessOutput->SetValue(captureOutput);
+	m_checkBoxSaveAllFilesBefore->SetValue(saveAllFiles);
 }
 
 void NewToolDlg::OnButtonBrowsePath( wxCommandEvent& event )

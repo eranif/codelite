@@ -215,7 +215,12 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 		command = ExpandAllVariables(command, NULL, wxEmptyString, wxEmptyString, current_file);
 		working_dir = ExpandAllVariables(working_dir, NULL, wxEmptyString, wxEmptyString, current_file);
 	}
-
+	
+	// check to see if we require to save all files before continuing
+	if(ti.GetSaveAllFiles()){
+		m_mgr->SaveAll();
+	}
+	
 	if (ti.GetCaptureOutput() == false) {
 		// change the directory to the requested working directory
 		DirSaver ds;

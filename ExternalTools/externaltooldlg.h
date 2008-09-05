@@ -18,7 +18,7 @@ class ExternalToolDlg : public ExternalToolBaseDlg
 	IManager *m_mgr;
 	
 private:
-	void DoUpdateEntry(const wxString& id, const wxString& name, const wxString& path, const wxString& workingDirectory, const wxString& arguments, const wxString &icon16, const wxString &icon24, bool captureOutput);
+	void DoUpdateEntry(const wxString& id, const wxString& name, const wxString& path, const wxString& workingDirectory, const wxString& arguments, const wxString &icon16, const wxString &icon24, bool captureOutput, bool saveAllFiles);
 	void DoEditEntry(long item);
 	
 protected:

@@ -26,7 +26,7 @@ protected:
 	
 public:
 	/** Constructor */
-	NewToolDlg( wxWindow* parent, IManager *mgr, const wxString &id, const wxString &name, const wxString &path, const wxString &wd, const wxString &args, const wxString &icon16, const wxString &icon24, bool captureOutput);
+	NewToolDlg( wxWindow* parent, IManager *mgr, const wxString &id, const wxString &name, const wxString &path, const wxString &wd, const wxString &args, const wxString &icon16, const wxString &icon24, bool captureOutput, bool saveAllFiles);
 	
 	wxString GetPath() const {return m_textCtrlPath->GetValue();}
 	wxString GetWorkingDirectory() const {return m_textCtrlWd->GetValue();}
@@ -36,6 +36,7 @@ public:
 	wxString GetIcon16() const {return m_textCtrlIcon16->GetValue();}
 	wxString GetIcon24() const {return m_textCtrlIcon24->GetValue();}
 	bool GetCaptureProcessOutput() const {return m_checkBoxCaptureProcessOutput->IsChecked();}
+	bool GetSaveAllFiles() const {return m_checkBoxSaveAllFilesBefore->IsChecked();}
 };
 
 #endif // __newtooldlg__

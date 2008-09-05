@@ -142,6 +142,18 @@ void CCBox::Adjust()
 			m_height = diff;
 		}
 	}
+	
+	// adjust the X axis
+	if(size.x - pt.x < BOX_WIDTH){
+		// the box is too wide to fit the screen
+		if(size.x > BOX_WIDTH){
+			// the screen can contain the completion box
+			pt.x = size.x - BOX_WIDTH;
+		}else{
+			// this will provive the maximum visible area
+			pt.x = 0;
+		}
+	}
 	Move(pt);
 }
 

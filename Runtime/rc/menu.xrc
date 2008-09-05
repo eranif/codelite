@@ -577,7 +577,7 @@
             <label>Comment Selection</label>
         </object>
         <object class="wxMenuItem" name="comment_line">
-            <label>Comment Line</label>
+            <label>Toggle Line Comment</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="retag_file">

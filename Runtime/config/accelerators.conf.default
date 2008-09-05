@@ -134,7 +134,7 @@ move_impl|C++::Code Generation / Refactoring|Move Function Implementation to...|
 add_impl|C++::Code Generation / Refactoring|Add Function Implementation...|
 rename_function|C++::Code Generation / Refactoring|Rename Symbol...|
 comment_selection|C++|Comment Selection|Ctrl-Shift-C
-comment_line|C++|Comment Line|Ctrl-Shift-P
+comment_line|C++|Toggle Line Comment|Ctrl-Shift-P
 add_include_file|C++|Add Include File|Ctrl-Shift-I
 insert_breakpoint|C++|Toggle Breakpoint|F9
 toggle_bookmark|C++|Toggle Bookmark|Ctrl-B

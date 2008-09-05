@@ -1121,11 +1121,29 @@ void ContextCpp::OnCommentLine(wxCommandEvent &event) {
 	}
 
 	editor.BeginUndoAction();
+	
+	bool doingComment(true);
+	// if the starting line is already commented,
+	// perform the 'uncomment' operation
+	int first_post = editor.PositionFromLine(line_start);
+	if(editor.GetStyleAt(first_post) == wxSCI_C_COMMENTLINE){
+		// this line is C++ comment line
+		doingComment = false;
+	}
+	
 	//comment all the lines
 	int i(line_start);
 	for (i=line_start; i<= line_end; i++) {
 		int start = editor.PositionFromLine(i);
-		editor.InsertText(start, wxT("//"));
+		if( ! doingComment ){
+			if(editor.GetStyleAt(start) == wxSCI_C_COMMENTLINE){
+				editor.SetCaretAt(start + 2);
+				editor.DeleteBack();
+				editor.DeleteBack();
+			}
+		}else{
+			editor.InsertText(start, wxT("//"));
+		}
 	}
 
 	//place the caret at the end of the commented line

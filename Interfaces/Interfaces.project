@@ -10,7 +10,6 @@
     <File Name="plugin_version.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="Common"/>
   <Settings Type="Static Library">
     <Configuration Name="Common" CompilerType="gnu g++" DebuggerType="" Type="">
       <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes"/>
@@ -66,4 +65,5 @@
     </Configuration>
   </Settings>
   <Dependencies Name="Debug"/>
+  <Dependencies Name="Common"/>
 </CodeLite_Project>

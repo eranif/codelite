@@ -26,6 +26,7 @@
   <Project Name="Copyright" Path="Copyright/Copyright.project" Active="No"/>
   <Project Name="UnitTestPP" Path="UnitTestCPP/UnitTestPP.project" Active="No"/>
   <Project Name="ExternalTools" Path="ExternalTools/ExternalTools.project" Active="No"/>
+  <Project Name="snipwiz" Path="SnipWiz\snipwiz.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
@@ -43,6 +44,7 @@
       <Project Name="Copyright" ConfigName="ReleaseUnicode"/>
       <Project Name="CodeLite" ConfigName="ReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
+      <Project Name="snipwiz" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
@@ -60,11 +62,13 @@
       <Project Name="Copyright" ConfigName="DebugUnicode"/>
       <Project Name="CodeLite" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
+      <Project Name="snipwiz" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="snipwiz" ConfigName="WinReleaseUnicode"/>
       <Project Name="plugin_sdk" ConfigName="WinReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
       <Project Name="Subversion" ConfigName="WinReleaseUnicode"/>
@@ -82,6 +86,7 @@
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="snipwiz" ConfigName="WinDebugUnicode"/>
       <Project Name="plugin_sdk" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
       <Project Name="Subversion" ConfigName="WinDebugUnicode"/>

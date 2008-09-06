@@ -183,6 +183,6 @@
     <File Name="tagscache.cpp"/>
     <File Name="tagscache.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

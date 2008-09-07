@@ -4,14 +4,12 @@
     <File Name="snipwiz.cpp"/>
     <File Name="wxSerialize.cpp"/>
     <File Name="swStringDb.cpp"/>
-    <File Name="swclasswizdlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="snipwiz.h"/>
     <File Name="wxSerialize.h"/>
     <File Name="swGlobals.h"/>
     <File Name="swStringDb.h"/>
-    <File Name="swclasswizdlg.h"/>
     <File Name="AboutHtml.h"/>
   </VirtualDirectory>
   <Dependencies/>

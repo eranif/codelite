@@ -16,6 +16,7 @@
 #endif
 
 #include <wx/filename.h>
+#include "templateclassdlg.h"
 #include <wx/wfstream.h>
 #include <wx/textdlg.h>
 #include <wx/numdlg.h>
@@ -24,7 +25,6 @@
 #include "swGlobals.h"
 #include "snipwiz.h"
 #include "wxSerialize.h"
-#include "swclasswizdlg.h"
 #include "workspace.h"
 //------------------------------------------------------------
 
@@ -392,10 +392,9 @@ void SnipWiz::OnClassWizard( wxCommandEvent& e )
 	if ( !editor )
 		return;
 
-	swClassWizDlg dlg( m_mgr->GetTheApp()->GetTopWindow() );
-
+	TemplateClassDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr);
+	
 	wxString errMsg, projectPath, projectName;
-
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo( TreeFileView );
 
 	projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
@@ -408,13 +407,11 @@ void SnipWiz::OnClassWizard( wxCommandEvent& e )
 				projectPath =  proj->GetFileName().GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 		}
 	}
-	dlg.m_pPlugin = this;
-	dlg.SetManager( m_mgr );
-	dlg.SetCurEol( editor->GetEOL() );
-	dlg.SetPluginPath( m_pluginPath );
+	dlg.SetCurEol(editor->GetEOL() );
+	dlg.SetPluginPath(m_pluginPath );
 	dlg.SetProjectPath( projectPath );
 	dlg.ShowModal();
-	if ( dlg.IsModified() )
+	if ( dlg.GetModified() )
 		m_modified = true;
 }
 //------------------------------------------------------------

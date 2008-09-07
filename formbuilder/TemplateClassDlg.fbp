@@ -128,7 +128,7 @@
                         <object class="notebookpage" expanded="1">
                             <property name="bitmap"></property>
                             <property name="label">Generate</property>
-                            <property name="select">0</property>
+                            <property name="select">1</property>
                             <object class="wxPanel" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
@@ -1120,7 +1120,7 @@
                         <object class="notebookpage" expanded="1">
                             <property name="bitmap"></property>
                             <property name="label">Templates</property>
-                            <property name="select">1</property>
+                            <property name="select">0</property>
                             <object class="wxPanel" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
@@ -1597,7 +1597,7 @@
                                             <object class="notebookpage" expanded="1">
                                                 <property name="bitmap"></property>
                                                 <property name="label">Header File</property>
-                                                <property name="select">0</property>
+                                                <property name="select">1</property>
                                                 <object class="wxPanel" expanded="1">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
@@ -1654,7 +1654,7 @@
                                                                 <property name="context_help"></property>
                                                                 <property name="enabled">1</property>
                                                                 <property name="fg"></property>
-                                                                <property name="font"></property>
+                                                                <property name="font">,90,90,-1,76,0</property>
                                                                 <property name="hidden">0</property>
                                                                 <property name="id">wxID_ANY</property>
                                                                 <property name="maximum_size"></property>
@@ -1706,7 +1706,7 @@
                                             <object class="notebookpage" expanded="1">
                                                 <property name="bitmap"></property>
                                                 <property name="label">Implementation File</property>
-                                                <property name="select">1</property>
+                                                <property name="select">0</property>
                                                 <object class="wxPanel" expanded="1">
                                                     <property name="bg"></property>
                                                     <property name="context_help"></property>
@@ -1763,7 +1763,7 @@
                                                                 <property name="context_help"></property>
                                                                 <property name="enabled">1</property>
                                                                 <property name="fg"></property>
-                                                                <property name="font"></property>
+                                                                <property name="font">,90,90,-1,76,0</property>
                                                                 <property name="hidden">0</property>
                                                                 <property name="id">wxID_ANY</property>
                                                                 <property name="maximum_size"></property>

@@ -143,7 +143,7 @@ TemplateClassBaseDlg::TemplateClassBaseDlg( wxWindow* parent, wxWindowID id, con
 	ID_PANEL->SetSizer( bSizer2 );
 	ID_PANEL->Layout();
 	bSizer2->Fit( ID_PANEL );
-	ID_NOTEBOOK1->AddPage( ID_PANEL, wxT("Generate"), false );
+	ID_NOTEBOOK1->AddPage( ID_PANEL, wxT("Generate"), true );
 	ID_PANEL1 = new wxPanel( ID_NOTEBOOK1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -185,30 +185,34 @@ TemplateClassBaseDlg::TemplateClassBaseDlg( wxWindow* parent, wxWindowID id, con
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
 	m_textCtrlHeader = new wxTextCtrl( m_panel3, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlHeader->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
 	bSizer6->Add( m_textCtrlHeader, 1, wxALL|wxEXPAND, 5 );
 	
 	m_panel3->SetSizer( bSizer6 );
 	m_panel3->Layout();
 	bSizer6->Fit( m_panel3 );
-	m_notebookFiles->AddPage( m_panel3, wxT("Header File"), false );
+	m_notebookFiles->AddPage( m_panel3, wxT("Header File"), true );
 	m_panel4 = new wxPanel( m_notebookFiles, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer61;
 	bSizer61 = new wxBoxSizer( wxVERTICAL );
 	
 	m_textCtrlImpl = new wxTextCtrl( m_panel4, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlImpl->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
 	bSizer61->Add( m_textCtrlImpl, 1, wxALL|wxEXPAND, 5 );
 	
 	m_panel4->SetSizer( bSizer61 );
 	m_panel4->Layout();
 	bSizer61->Fit( m_panel4 );
-	m_notebookFiles->AddPage( m_panel4, wxT("Implementation File"), true );
+	m_notebookFiles->AddPage( m_panel4, wxT("Implementation File"), false );
 	
 	bSizer4->Add( m_notebookFiles, 1, wxEXPAND|wxALL, 1 );
 	
 	ID_PANEL1->SetSizer( bSizer4 );
 	ID_PANEL1->Layout();
 	bSizer4->Fit( ID_PANEL1 );
-	ID_NOTEBOOK1->AddPage( ID_PANEL1, wxT("Templates"), true );
+	ID_NOTEBOOK1->AddPage( ID_PANEL1, wxT("Templates"), false );
 	
 	bSizer1->Add( ID_NOTEBOOK1, 1, wxALL|wxEXPAND, 2 );
 	

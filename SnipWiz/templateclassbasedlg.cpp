@@ -135,7 +135,6 @@ TemplateClassBaseDlg::TemplateClassBaseDlg( wxWindow* parent, wxWindowID id, con
 	bSizer3->Add( m_buttonGenerate, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_buttonCancel = new wxButton( ID_PANEL, wxID_CANCEL, wxT("&Quit"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_buttonCancel->SetDefault(); 
 	bSizer3->Add( m_buttonCancel, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	bSizer2->Add( bSizer3, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );

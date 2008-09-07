@@ -57,7 +57,7 @@ void TaskPanel::OnSearch( wxCommandEvent& event )
 	}
 
 	// always scan for all, the filter be done in the display part
-	data.SetFindString(wxT("//( *)((TODO)|(ATTN)|(FIXME)|(BUG)):"));
+	data.SetFindString(wxT("//( *)((TODO)|(ATTN)|(FIXME)|(BUG))"));
 	data.SetOwner(this);
 	SearchThreadST::Get()->PerformSearch(data);
 	
@@ -140,13 +140,29 @@ void TaskPanel::DoDisplayResults()
 		SearchResult res = *iter;
 		
 		// extract the 'Kind'
-		int where(wxNOT_FOUND);
+		int where2(wxNOT_FOUND);
+		
+		wxArrayString keywords;
+		keywords.Add(wxT("FIXME"));
+		keywords.Add(wxT("BUG"));
+		keywords.Add(wxT("TODO"));
+		keywords.Add(wxT("ATTN"));
+		
+		wxString pattern;
 		wxString type;
-		where = res.GetPattern().Find(wxT("//"));
-		if(where != wxNOT_FOUND){
-			type = res.GetPattern().Mid((size_t)where+2);
-			type = type.BeforeFirst(wxT(':'));
-			type.Trim().Trim(false);
+		
+		static wxString trimLeftString(wxT(":-\t "));
+		for(size_t i=0; i<keywords.GetCount(); i++) {
+			wxString lowPattern(res.GetPattern());
+			lowPattern.MakeLower();
+			where2 = lowPattern.Find(keywords.Item(i).Lower());
+			if(where2 != wxNOT_FOUND){
+				pattern = res.GetPattern().Mid(where2 + keywords.Item(i).Length());
+				pattern.erase(0, pattern.find_first_not_of(trimLeftString));
+				pattern.Trim().Trim(false);
+				type = keywords.Item(i);
+				break;
+			}
 		}
 		
 		// Filter out non matching entries
@@ -160,11 +176,7 @@ void TaskPanel::DoDisplayResults()
 		// set the line number
 		wxString strLine;
 		strLine << res.GetLineNumber();
-		
 		wxFileName fn(res.GetFileName());
-		
-		wxString pattern(res.GetPattern().AfterFirst(wxT(':')));
-		pattern.Trim().Trim(false);
 		
 		// type, comment, line, file
 		SetColumnText(m_listCtrlTasks, index, 0, type);

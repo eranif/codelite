@@ -82,6 +82,7 @@ protected:
 	
 	virtual void OnCmdEvtVModified( wxCommandEvent& event );
 	virtual void OnDebuggingRemoteTarget(wxCommandEvent &e);
+	virtual void OnButtonHelp(wxCommandEvent &e);
 	
 public:
 	/** Constructor */

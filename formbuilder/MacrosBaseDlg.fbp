@@ -33,7 +33,7 @@
             <property name="name">MacrosBaseDlg</property>
             <property name="pos"></property>
             <property name="size">646,507</property>
-            <property name="style">wxDEFAULT_DIALOG_STYLE</property>
+            <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
             <property name="subclass"></property>
             <property name="title">Available Macros:</property>
             <property name="tooltip"></property>

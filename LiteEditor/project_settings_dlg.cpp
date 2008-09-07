@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "project_settings_dlg.h"
+#include "macrosdlg.h"
 #include "add_option_dialog.h"
 #include "free_text_dialog.h"
 #include "manager.h"
@@ -705,4 +706,11 @@ void ProjectSettingsDlg::OnDebuggingRemoteTarget(wxCommandEvent& e)
 		m_textCtrlDbgPort->Enable(false);
 	}
 	OnCmdEvtVModified(e);
+}
+
+void ProjectSettingsDlg::OnButtonHelp(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	MacrosDlg dlg(this);
+	dlg.ShowModal();
 }

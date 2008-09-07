@@ -39,7 +39,7 @@ class MacrosBaseDlg : public wxDialog
 		
 	
 	public:
-		MacrosBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Available Macros:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 646,507 ), long style = wxDEFAULT_DIALOG_STYLE );
+		MacrosBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Available Macros:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 646,507 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~MacrosBaseDlg();
 	
 };

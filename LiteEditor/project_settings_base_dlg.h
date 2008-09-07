@@ -149,6 +149,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxTextCtrl* m_textPreBuildRule;
 		wxStaticText* m_staticText24;
 		wxStaticLine* m_staticline1;
+		wxButton* m_buttonHelp;
 		wxButton* m_buttonOK;
 		wxButton* m_buttonCancel;
 		wxButton* m_buttonApply;
@@ -157,6 +158,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnDebuggingRemoteTarget( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnChoiceMakefileTool( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnButtonHelp( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:

@@ -293,10 +293,9 @@ void SnipWiz::OnMenuPaste( wxCommandEvent& e )
 wxString SnipWiz::FormatOutput( IEditor* pEditor, const wxString& text )
 {
 	wxString output = text;
-	int curEol = pEditor->GetEOL();
 	int curPos = pEditor->GetCurrentPosition();
 	wxString tabs = GetTabs( pEditor, curPos );
-	output.Replace( wxT( "\n" ), eol[curEol] + tabs );
+	output.Replace( wxT( "\n" ), wxT( "\n" ) + tabs );
 	return output;
 }
 

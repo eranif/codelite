@@ -143,8 +143,20 @@ void SnipWiz::HookPopupMenu( wxMenu *menu, MenuType type )
 			wxMenu *newMenu = CreateSubMenu();
 			menu->Append( IDM_BASE, plugName, newMenu );
 		}
+	} else 	if (type == MenuTypeFileView_Folder) {
+		//Create the popup menu for the virtual folders
+		wxMenuItem *item(NULL);
+
+		item = new wxMenuItem(menu, wxID_SEPARATOR);
+		menu->Prepend(item);
+		m_vdDynItems.push_back(item);
+
+		item = new wxMenuItem(menu, IDM_CLASS_WIZ, wxT("New Class from Template..."), wxEmptyString, wxITEM_NORMAL);
+		menu->Prepend(item);
+		m_vdDynItems.push_back(item);
 	}
 }
+
 //------------------------------------------------------------
 
 void SnipWiz::UnHookPopupMenu( wxMenu *menu, MenuType type )
@@ -159,8 +171,15 @@ void SnipWiz::UnHookPopupMenu( wxMenu *menu, MenuType type )
 			menu->Destroy( m_sepItem );
 			m_sepItem = NULL;
 		}
+	} else if (type == MenuTypeFileView_Folder) {
+		std::vector<wxMenuItem*>::iterator iter = m_vdDynItems.begin();
+		for (; iter != m_vdDynItems.end(); iter++) {
+			menu->Destroy(*iter);
+		}
+		m_vdDynItems.clear();
 	}
 }
+
 //------------------------------------------------------------
 
 void SnipWiz::UnPlug()

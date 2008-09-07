@@ -55,6 +55,9 @@ void TemplateClassDlg::Initialize()
 		m_projectPath =  item.m_fileName.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	}
 	m_textCtrlVD->SetValue( m_virtualFolder );
+	if(m_virtualFolder.IsEmpty() == false){
+		m_staticProjectTreeFolder->SetForegroundColour(wxColour(0,128,0));
+	}
 	m_textCtrlFilePath->SetValue( m_projectPath );
 }
 
@@ -78,8 +81,8 @@ void TemplateClassDlg::OnBrowseVD( wxCommandEvent& event )
 	VirtualDirectorySelector dlg( this, m_pManager->GetWorkspace(), m_textCtrlVD->GetValue() );
 	if ( dlg.ShowModal() == wxID_OK ) {
 		m_textCtrlVD->SetValue( dlg.GetVirtualDirectoryPath() );
-		m_textCtrlVD->SetForegroundColour(wxColour(0,128,0));
-		m_textCtrlVD->Refresh();
+		m_staticProjectTreeFolder->SetForegroundColour(wxColour(0,128,0));
+		m_staticProjectTreeFolder->Refresh();
 	}
 }
 
@@ -110,12 +113,16 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 
 	wxString buffer = GetStringDb()->GetString( baseClass, swHeader );
 	buffer.Replace( swPhClass, newClassName );
+	buffer.Replace(wxT("\v"), eol[m_curEol].c_str());
+	
 	files.Add( m_projectPath + m_textCtrlHeaderFile->GetValue() );
 	SaveBufferToFile( files.Item(0), buffer );
 
 	buffer = wxString::Format( wxT( "#include \"%s\"%s%s" ), m_textCtrlHeaderFile->GetValue().c_str(), eol[m_curEol].c_str(), eol[m_curEol].c_str() );
 	buffer += GetStringDb()->GetString( baseClass, swSource );
 	buffer.Replace( swPhClass, newClassName );
+	buffer.Replace(wxT("\v"), eol[m_curEol].c_str());
+	
 	files.Add( m_projectPath + m_textCtrlCppFile->GetValue() );
 	SaveBufferToFile( files.Item(1), buffer );
 
@@ -124,8 +131,8 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 	}
 
 	wxString msg;
-	msg << wxString::Format( wxT( "%s\n" ), files[0].c_str() )
-	<< wxString::Format( wxT( "%s\n\n" ), files[1].c_str() )
+	msg << wxString::Format( wxT( "%s%s" ), files.Item(0).c_str(), eol[m_curEol].c_str())
+	<< wxString::Format( wxT( "%s%s%s" ), files.Item(0).c_str(), eol[m_curEol].c_str(), eol[m_curEol].c_str())
 	<< wxT( "Files successfully created." );
 	wxMessageBox(msg, wxT( "Add template class" ));
 	EndModal(wxID_OK);

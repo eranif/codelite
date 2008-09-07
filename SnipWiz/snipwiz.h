@@ -14,10 +14,13 @@
 
 #include "plugin.h"
 #include "swStringDb.h"
+#include <vector>
 
 class wxMenuItem;
 class SnipWiz : public IPlugin
 {
+	std::vector<wxMenuItem*> m_vdDynItems;
+	
 public:
 	/// returns StringDB
 	swStringDb* GetStringDb() {	return &m_StringDb; }

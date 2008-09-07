@@ -45,6 +45,7 @@ mkdir -p fakeroot/usr/share/applications/
 \cp -pr lib/cscope.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/UnitTestCPP.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/ExternalTools.so fakeroot/usr/local/share/codelite/plugins/
+\cp -pr lib/SnipWiz.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr Runtime/plugins/resources/*.* fakeroot/usr/local/share/codelite/plugins/resources/
 \cp -pr Runtime/*.html fakeroot/usr/local/share/codelite/
 \cp -pr Runtime/astyle.sample fakeroot/usr/local/share/codelite/

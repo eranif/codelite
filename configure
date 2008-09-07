@@ -615,6 +615,7 @@ echo "CodeFormatter\\" >> Makefile
 echo "Copyright\\" >> Makefile
 echo "UnitTestCPP\\" >> Makefile
 echo "ExternalTools\\" >> Makefile
+echo "SnipWiz\\" >> Makefile
 echo "" >> Makefile
 
 echo "plugins_install:\\" >> Makefile
@@ -632,6 +633,7 @@ echo "CodeFormatter_install\\" >> Makefile
 echo "Copyright_install\\" >> Makefile
 echo "UnitTestCPP_install\\" >> Makefile
 echo "ExternalTools_install\\" >> Makefile
+echo "SnipWiz_install\\" >> Makefile
 echo "" >> Makefile
 
 echo "clean_plugins:\\" >> Makefile
@@ -648,7 +650,7 @@ echo "CodeFormatter_clean\\" >> Makefile
 #echo "ReferenceAnalyser_clean\\" >> Makefile
 echo "Copyright_clean\\" >> Makefile
 echo "UnitTestCPP_clean\\" >> Makefile
-echo "ExternalTools_clean\\" >> Makefile
+echo "SnipWiz_clean\\" >> Makefile
 echo "" >> Makefile
 
 ########################################################
@@ -666,4 +668,5 @@ createPluginMakefile "CodeFormatter" "CodeFormatter" "\$(DESTDIR)$prefix/share/c
 createPluginMakefile "Copyright" "Copyright" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "ExternalTools" "ExternalTools" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
+createPluginMakefile "SnipWiz" "SnipWiz" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 

@@ -97,6 +97,7 @@ cp ../lib/cscope.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/Copyright.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/UnitTestCPP.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/ExternalTools.so ./CodeLite.app/Contents/SharedSupport/plugins/
+cp ../lib/SnipWiz.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../sdk/ctags/ctags-le ./CodeLite.app/Contents/SharedSupport/
 cp plugins/resources/*.* ./CodeLite.app/Contents/SharedSupport/plugins/resources/
 

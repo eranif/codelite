@@ -909,8 +909,14 @@ void FileViewTree::OnClean( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-
-		QueueCommand buildInfo(projectName, wxEmptyString, false, QueueCommand::Clean);
+		wxString conf;
+		
+		// get the selected configuration to be built
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+		if(bldConf) {
+			conf = bldConf->GetName();
+		}
+		QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
 		ManagerST::Get()->CleanProject( buildInfo );
 	}
 }
@@ -921,7 +927,15 @@ void FileViewTree::OnBuild( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		QueueCommand buildInfo(projectName, wxEmptyString, false, QueueCommand::Build);
+		
+		wxString conf;
+		// get the selected configuration to be built
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+		if(bldConf) {
+			conf = bldConf->GetName();
+		}
+		
+		QueueCommand buildInfo(projectName, conf, false, QueueCommand::Build);
 		ManagerST::Get()->BuildProject( buildInfo );
 	}
 }
@@ -1068,7 +1082,15 @@ void FileViewTree::OnBuildProjectOnly( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		QueueCommand info(projectName, wxEmptyString, true, QueueCommand::Build);
+		
+		wxString conf;
+		// get the selected configuration to be built
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+		if(bldConf) {
+			conf = bldConf->GetName();
+		}
+		
+		QueueCommand info(projectName, conf, true, QueueCommand::Build);
 		ManagerST::Get()->BuildProject( info );
 	}
 }
@@ -1079,7 +1101,15 @@ void FileViewTree::OnCleanProjectOnly( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		QueueCommand info(projectName, wxEmptyString, true, QueueCommand::Clean);
+		
+		wxString conf;
+		// get the selected configuration to be built
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+		if(bldConf) {
+			conf = bldConf->GetName();
+		}
+		
+		QueueCommand info(projectName, conf, true, QueueCommand::Clean);
 		ManagerST::Get()->CleanProject( info );
 	}
 }

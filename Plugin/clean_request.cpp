@@ -92,11 +92,23 @@ void CleanRequest::Process()
 		if (m_info.GetProjectOnly() ) {
 			//need to change directory to project dir
 			wxSetWorkingDirectory(proj->GetFileName().GetPath());
-			
-			//print the build command
-			AppendLine(cmd + wxT("\n"));
 		}
-	
+		//print the build command
+		AppendLine(cmd + wxT("\n"));
+		
+		// print the prefix message of the build start. This is important since the parser relies 
+		// on this message 
+		if(isCustom || m_info.GetProjectOnly()){
+			wxString configName(m_info.GetConfiguration());
+			
+			//also, send another message to the main frame, indicating which project is being built
+			//and what configuration
+			wxString text;
+			text << wxT("----------Building project:[ ") << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
+			text << wxT("----------\n");
+			AppendLine(text);
+		}
+		
 		//apply environment settings
 		EnvironmentConfig::Instance()->ApplyEnv( &om );
 		

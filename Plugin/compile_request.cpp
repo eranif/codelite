@@ -125,21 +125,16 @@ void CompileRequest::Process()
 		
 		//print the build command
 		AppendLine(cmd + wxT("\n"));
-
 		if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
-			
 			// set working directory
 			DoSetWorkingDirectory(proj, isCustom, m_fileName.IsEmpty() == false);
-
-			wxString configName;
-			int where = cmd.Find(wxT("type="));
-			if (where != wxNOT_FOUND) {
-				configName = cmd.Mid((size_t)where);
-				//skip type=
-				configName = configName.AfterFirst(wxT('='));
-				configName = configName.BeforeFirst(wxT(' '));
-			}
-
+		}
+		
+		// print the prefix message of the build start. This is important since the parser relies 
+		// on this message 
+		if(isCustom || m_info.GetProjectOnly() || m_fileName.IsEmpty() == false){
+			wxString configName(m_info.GetConfiguration());
+			
 			//also, send another message to the main frame, indicating which project is being built
 			//and what configuration
 			wxString text;

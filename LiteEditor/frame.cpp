@@ -1831,7 +1831,7 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 
 		//read settings for the build output tab
 		m_outputPane->GetBuildTab()->ReloadSettings();
-		m_outputPane->GetBuildTab()->AppendText(wxT("Building: "));
+		m_outputPane->GetBuildTab()->AppendText(wxT("Building: \n"));
 
 	} else if (event.GetEventType() == wxEVT_BUILD_ADDLINE) {
 		m_outputPane->GetBuildTab()->AppendText(event.GetString());

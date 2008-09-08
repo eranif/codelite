@@ -59,6 +59,7 @@ void TemplateClassDlg::Initialize()
 		m_staticProjectTreeFolder->SetForegroundColour(wxColour(0,128,0));
 	}
 	m_textCtrlFilePath->SetValue( m_projectPath );
+	m_textCtrlClassName->SetFocus();
 }
 
 void TemplateClassDlg::OnClassNameEntered( wxCommandEvent& event )

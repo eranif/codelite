@@ -233,6 +233,10 @@ void SnipWiz::OnMenuSnippets( wxCommandEvent &e )
 		wxString key = m_snippets.Item( e.GetId() - IDM_ADDSTART );
 		wxString srText = m_StringDb.GetSnippetString( key );
 		wxString selection = editor->GetSelection();
+		// replace template eols with current
+		int curEol = editor->GetEOL();
+		if(srText.Find(eol[2])  != wxNOT_FOUND )
+			srText.Replace( eol[2], eol[curEol].c_str() );
 		// selection ?
 		if ( srText.Find( SELECTION ) != wxNOT_FOUND )
 			srText.Replace( SELECTION, selection.c_str() );
@@ -294,8 +298,9 @@ wxString SnipWiz::FormatOutput( IEditor* pEditor, const wxString& text )
 {
 	wxString output = text;
 	int curPos = pEditor->GetCurrentPosition();
+	int curEol = pEditor->GetEOL();
 	wxString tabs = GetTabs( pEditor, curPos );
-	output.Replace( wxT( "\n" ), wxT( "\n" ) + tabs );
+	output.Replace( eol[curEol], eol[curEol] + tabs );
 	return output;
 }
 

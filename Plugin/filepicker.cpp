@@ -42,6 +42,13 @@ FilePicker::FilePicker(wxWindow *parent,
 , m_defaultFile(defaultFile)
 , m_wildCard(wildCard)
 {
+
+#if defined(__WXGTK__) || defined (__WXMAC__)
+	if(m_wildCard == wxT("*.*")){
+		m_wildCard = wxT("*");
+	}
+#endif
+
 	CreateControls();
 	ConnectEvents();
 }

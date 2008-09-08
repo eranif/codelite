@@ -367,6 +367,14 @@ public:
 	virtual int GetCurrentLine();
 	virtual void ReplaceSelection(const wxString &text);
 	virtual wxString GetSelection(); 
+	virtual void SelectText(int startPos, int len);
+	
+	// User Indicators API
+	virtual void SetUserIndicatorStyleAndColour(int style, const wxColour &colour);
+	virtual void SetUserIndicator(int startPos, int len);
+	virtual void ClearUserIndicators();
+	virtual int  GetUserIndicatorStart(int pos);
+	virtual int  GetUserIndicatorEnd(int pos);
 	
 private:
 	void DoSetBreakpoint(const BreakpointInfo &bp);

@@ -72,6 +72,8 @@
 #define SYMBOLS_MARGIN_ID 	2
 #define FOLD_MARGIN_ID 		3
 
+#define USER_INDICATOR 		3
+
 const wxEventType wxEVT_CMD_UPDATE_STATUS_BAR = wxNewEventType();
 
 //debugger line marker xpm
@@ -358,7 +360,8 @@ void LEditor::SetProperties()
 
 	IndicatorSetUnder(1, false);
 	IndicatorSetUnder(2, false);
-
+	SetUserIndicatorStyleAndColour(wxSCI_INDIC_SQUIGGLE, wxT("RED"));
+	
 	wxColour col2(wxT("LIGHT BLUE"));
 	wxString val2 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
 	if (val2.IsEmpty() == false) {
@@ -2225,4 +2228,39 @@ wxString LEditor::GetSelection()
 void LEditor::ReplaceSelection(const wxString& text)
 {
 	wxScintilla::ReplaceSelection(text);
+}
+
+void LEditor::ClearUserIndicators()
+{
+	SetIndicatorCurrent(USER_INDICATOR);
+	IndicatorClearRange(0, GetLength());
+}
+
+int LEditor::GetUserIndicatorEnd(int pos)
+{
+	return wxScintilla::IndicatorEnd(USER_INDICATOR, pos);
+}
+
+int LEditor::GetUserIndicatorStart(int pos)
+{
+	return wxScintilla::IndicatorStart(USER_INDICATOR, pos);
+}
+
+void LEditor::SelectText(int startPos, int len)
+{
+	SetSelectionStart(startPos);
+	SetSelectionEnd(startPos + len);
+}
+
+void LEditor::SetUserIndicator(int startPos, int len)
+{
+	SetIndicatorCurrent(USER_INDICATOR);
+	IndicatorFillRange(startPos, len);
+}
+
+void LEditor::SetUserIndicatorStyleAndColour(int style, const wxColour& colour)
+{
+	IndicatorSetForeground(USER_INDICATOR, colour);
+	IndicatorSetStyle(USER_INDICATOR, style);
+	IndicatorSetUnder(USER_INDICATOR, true);
 }

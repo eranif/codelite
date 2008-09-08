@@ -41,7 +41,7 @@ static bool IsSource(const wxString &ext)
 {
 	wxString e(ext);
 	e = e.MakeLower();
-	return e == wxT("cpp") || e == wxT("cxx") || e == wxT("c") || e == wxT("c++") || e == wxT("cc");
+	return e == wxT("cpp") || e == wxT("cxx") || e == wxT("c") || e == wxT("c++") || e == wxT("cc") || e == wxT("m") || e == wxT("mm");
 }
 
 static bool IsResource(const wxString &ext)
@@ -471,7 +471,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				wxString objectName;
 				objectName << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix)");
 
-				wxString fileName, asbFileName;
+				wxString fileName, asbFileName, macObjCFlag;
 				fileName = files[i].GetFullPath(wxPATH_UNIX);
 
 				if (use_full_path) {
@@ -479,15 +479,23 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 					asbFileName = abs_files[i].GetFullPath();
 					asbFileName.Replace(wxT("\\"), wxT("/"));
 				}
-
+				
 				wxString dependFile;
 				dependFile << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix)") << wxT(".d");
 				text << objectName << wxT(": ") << fileName << wxT(" ") << dependFile << wxT("\n");
-
+				
+				if(files[i].GetExt() == wxT("m")){
+					// C file 
+					macObjCFlag = wxT(" -x objective-c ");
+				} else if(files[i].GetExt() == wxT("mm")){
+					// C++ file
+					macObjCFlag = wxT(" -x objective-c++ ");
+				}
+				
 				if (use_full_path) {
-					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) \"") << asbFileName << wxT("\" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
+					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) ") << macObjCFlag << wxT("\"") << asbFileName << wxT("\" $(CmpOptions)  ")  << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
 				} else {
-					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch)") << fileName << wxT(" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
+					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) ") << macObjCFlag << fileName << wxT(" $(CmpOptions)  ")  << macObjCFlag << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
 				}
 
 				//add the dependencie rule

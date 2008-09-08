@@ -215,52 +215,6 @@ public:
 	 * \brief save all modified files
 	 */
 	virtual void SaveAll() = 0;
-	
-	/**
-	 * \brief select text at given position and length
-	 * \param startPos selection start position
-	 * \param len number of characters to select
-	 */
-	virtual void SelectText(int startPos, int len);
-	/**
-	 * \brief set user indicator style and colour
-	 * \param style can be any of 
-	 *  #define wxSCI_INDIC_PLAIN 0 
-	 *  #define wxSCI_INDIC_SQUIGGLE 1
-	 *  #define wxSCI_INDIC_TT 2
-	 *  #define wxSCI_INDIC_DIAGONAL 3
-	 *  #define wxSCI_INDIC_STRIKE 4
-	 *  #define wxSCI_INDIC_HIDDEN 5
-	 *  #define wxSCI_INDIC_BOX 6  
-	 *  #define wxSCI_INDIC_ROUNDBOX 7
-	 * \param colour indicator colour
-	 */
-	virtual void SetUserIndicatorStyleAndColour(int style, const wxColour &colour) = 0;
-	/**
-	 * \brief set indicator at startPos with given length
-	 * \param startPos position to set the indicator
-	 * \param len indicator's length
-	 */
-	virtual void SetUserIndicator(int startPos, int len) = 0;
-	
-	/**
-	 * \brief clear all user indicators from the document
-	 */
-	virtual void ClearUserIndicators() = 0;
-	
-	/**
-	 * \brief return the first user indicator starting from 'pos'. along with 'GetUserIndicatorEnd' caller can 
-	 * iterate through all user indicator in the document 
-	 * \param pos position to search from
-	 * \return start position of the indicator
-	 */
-	virtual int  GetUserIndicatorStart(int pos) = 0;
-	/**
-	 * \brief return end of indicator range from pos
-	 * \param pos position to search from
-	 * \return end of indicator range
-	 */
-	virtual int  GetUserIndicatorEnd(int pos) = 0;
 };
 
 #endif //IMANAGER_H

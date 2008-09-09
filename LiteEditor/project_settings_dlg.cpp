@@ -711,6 +711,6 @@ void ProjectSettingsDlg::OnDebuggingRemoteTarget(wxCommandEvent& e)
 void ProjectSettingsDlg::OnButtonHelp(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	MacrosDlg dlg(this);
+	MacrosDlg dlg(this, MacrosDlg::MacrosProject);
 	dlg.ShowModal();
 }

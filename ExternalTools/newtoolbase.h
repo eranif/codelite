@@ -15,7 +15,6 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/choice.h>
-#include <wx/panel.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
@@ -36,10 +35,10 @@ class NewToolBase : public wxDialog
 	protected:
 		wxStaticText* m_staticText5;
 		wxChoice* m_choiceId;
-		wxPanel* m_panel2;
+		
 		wxStaticText* m_staticText6;
 		wxTextCtrl* m_textCtrlName;
-		wxPanel* m_panel3;
+		
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrlPath;
 		wxButton* m_buttonBrowsePath;
@@ -48,7 +47,7 @@ class NewToolBase : public wxDialog
 		wxButton* m_buttonBrowseWd;
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textCtrlArguments;
-		wxPanel* m_panel31;
+		
 		wxStaticText* m_staticText8;
 		wxTextCtrl* m_textCtrlIcon24;
 		wxButton* m_buttonBrowseIcon24;

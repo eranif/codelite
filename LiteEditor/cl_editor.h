@@ -375,6 +375,8 @@ public:
 	virtual void ClearUserIndicators();
 	virtual int  GetUserIndicatorStart(int pos);
 	virtual int  GetUserIndicatorEnd(int pos);
+	virtual int GetLexerId();
+	virtual int GetStyleAtPos(int pos);
 	
 private:
 	void DoSetBreakpoint(const BreakpointInfo &bp);

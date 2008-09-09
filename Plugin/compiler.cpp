@@ -27,6 +27,7 @@
 
 Compiler::Compiler(wxXmlNode *node)
 {
+	m_fileTypes.clear();
 	if(node){
 		m_name = XmlUtils::ReadString(node, wxT("Name"));
 		wxXmlNode *child = node->GetChildren();
@@ -44,7 +45,20 @@ Compiler::Compiler(wxXmlNode *node)
 					m_objectSuffix = XmlUtils::ReadString(child, wxT("Value"));
 				}
 			}
-
+			else if(child->GetName() == wxT("File")){
+				Compiler::CmpFileTypeInfo ft;
+				ft.compilation_line = XmlUtils::ReadString(child, wxT("CompilationLine"));
+				ft.extension = XmlUtils::ReadString(child, wxT("Extension")).Lower();
+				
+				long kind = (long)CmpFileKindSource;
+				if(XmlUtils::ReadLong(child, wxT("Kind"), kind) == CmpFileKindSource){
+					ft.kind = CmpFileKindSource;
+				}else{
+					ft.kind = CmpFileKindResource;
+				}
+				m_fileTypes[ft.extension] = ft;
+			}
+			
 			else if(child->GetName() == wxT("Pattern")){
 				if(XmlUtils::ReadString(child, wxT("Name")) == wxT("Error")){
 					//found the error description
@@ -101,6 +115,17 @@ Compiler::Compiler(wxXmlNode *node)
 		m_globalLibPath = wxEmptyString;
 		m_pathVariable = wxEmptyString;
 	}
+	
+	if(m_fileTypes.empty()){
+		AddCmpFileType(wxT("cpp"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("cxx"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("c++"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("c"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("cc"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("m"), CmpFileKindSource, wxT("$(CompilerName) -X objective-c $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("mm"), CmpFileKindSource, wxT("$(CompilerName) -X objective-c++ $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("rc"), CmpFileKindResource, wxT("$(RcCompilerName) -i \"$(FileFullPath)\" $(RcCmpOptions)   $(ObjectSwitch)$(IntermediateDirectory)/$(FileFullName)$(ObjectSuffix) $(RcIncludePath)"));
+	}
 }
 
 Compiler::~Compiler()
@@ -127,7 +152,21 @@ wxXmlNode *Compiler::ToXml() const
 		child->AddProperty(wxT("Value"), iter->second);
 		node->AddChild(child);
 	}
-
+	
+	std::map<wxString, Compiler::CmpFileTypeInfo>::const_iterator it = m_fileTypes.begin();
+	for(; it != m_fileTypes.end(); it++){
+		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
+		Compiler::CmpFileTypeInfo ft = it->second;
+		child->AddProperty(wxT("Extension"), ft.extension);
+		child->AddProperty(wxT("CompilationLine"), ft.compilation_line);
+		
+		wxString strKind;
+		strKind << (long)ft.kind;
+		child->AddProperty(wxT("Kind"), strKind);
+		
+		node->AddChild(child);
+	}
+	
 	wxXmlNode *options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
 	options->AddProperty(wxT("Name"), wxT("ObjectSuffix"));
 	options->AddProperty(wxT("Value"), m_objectSuffix);
@@ -179,4 +218,23 @@ wxString Compiler::GetTool(const wxString &name) const
 		return wxEmptyString;
 	}
 	return iter->second;
+}
+
+bool Compiler::GetCmpFileType(const wxString& extension, Compiler::CmpFileTypeInfo &ft)
+{
+	std::map<wxString, Compiler::CmpFileTypeInfo>::iterator iter = m_fileTypes.find(extension.Lower());
+	if(iter == m_fileTypes.end()){
+		return false;
+	}
+	ft = iter->second;
+	return true;
+}
+
+void Compiler::AddCmpFileType(const wxString &extension, CmpFileKind type, const wxString &compile_line)
+{
+	Compiler::CmpFileTypeInfo ft;
+	ft.extension = extension.Lower();
+	ft.compilation_line = compile_line;
+	ft.kind = type;
+	m_fileTypes[extension] = ft;
 }

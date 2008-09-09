@@ -2264,3 +2264,13 @@ void LEditor::SetUserIndicatorStyleAndColour(int style, const wxColour& colour)
 	IndicatorSetStyle(USER_INDICATOR, style);
 	IndicatorSetUnder(USER_INDICATOR, true);
 }
+
+int LEditor::GetLexerId()
+{
+	return GetLexer();
+}
+
+int LEditor::GetStyleAtPos(int pos)
+{
+	return GetStyleAt(pos);
+}

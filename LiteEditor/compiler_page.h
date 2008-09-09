@@ -94,6 +94,7 @@ protected:
 	wxStaticText* m_staticText12;
 	wxTextCtrl* m_textSOLinker;
 	wxStaticText* m_staticText10;
+	wxStaticText* m_staticText23;
 	wxTextCtrl* m_textArchiveTool;
 	wxStaticText* m_staticText14;
 	wxTextCtrl* m_textResourceCmp;
@@ -102,17 +103,30 @@ protected:
 	wxListCtrl* m_listSwitches;
 	wxStaticText* m_staticText20;
 	wxTextCtrl* m_textCtrlPathVariable;
-
+	wxPanel* m_panel4;
+	wxListCtrl* m_listCtrlFileTypes;
+	wxButton* m_buttonNewFileType;
+	wxButton* m_buttonDeleteFileType;
+	
 	wxString m_selSwitchName ;
 	wxString m_selSwitchValue;
 	wxString m_cmpname;
-
+	long m_selectedFileType;
+	
+protected:
 	// Virtual event handlers, overide them in your derived class
 	virtual void OnItemActivated( wxListEvent& event );
 	virtual void OnItemSelected( wxListEvent& event );
 
+	virtual void OnFileTypeActivated( wxListEvent& event );
+	virtual void OnFileTypeDeSelected( wxListEvent& event );
+	virtual void OnFileTypeSelected( wxListEvent& event );
+	virtual void OnNewFileType( wxCommandEvent& event );
+	virtual void OnDeleteFileType( wxCommandEvent& event );
+		
 	void EditSwitch();
 	void InitSwitches();
+	void InitFileTypes();
 	void CustomInitialize();
 	void ConnectEvents();
 	void AddSwitch(const wxString &name, const wxString &value, bool choose);

@@ -42,6 +42,8 @@
 #endif //WX_PRECOMP
 
 #include "compiler_page.h"
+#include "editcmpfileinfodlg.h"
+#include "globals.h"
 #include "macros.h"
 #include "editor_config.h"
 #include "build_settings_config.h"
@@ -49,6 +51,7 @@
 CompilerPage::CompilerPage( wxWindow* parent, wxString name, int id, wxPoint pos, wxSize size, int style )
 		: wxScrolledWindow( parent, id, pos, size, style )
 		, m_cmpname(name)
+		, m_selectedFileType(wxNOT_FOUND)
 {
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
@@ -282,22 +285,64 @@ CompilerPage::CompilerPage( wxWindow* parent, wxString name, int id, wxPoint pos
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 
-	m_staticText8 = new wxStaticText( m_panel3, wxID_ANY, wxT("Switches:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText8 = new wxStaticText( m_panel3, wxID_ANY, wxT("Double click on an entry to modify it:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText8->Wrap( -1 );
 	bSizer3->Add( m_staticText8, 0, wxALL, 5 );
 
-	m_listSwitches = new wxListCtrl( m_panel3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+	m_listSwitches = new wxListCtrl( m_panel3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
 	bSizer3->Add( m_listSwitches, 1, wxEXPAND|wxALL, 5 );
 
 	m_panel3->SetSizer( bSizer3 );
 	m_panel3->Layout();
 	bSizer3->Fit( m_panel3 );
 	m_notebook1->AddPage( m_panel3, wxT("Switches"), false );
+	m_panel4 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer10;
+	bSizer10 = new wxBoxSizer( wxVERTICAL );
+
+	m_staticText23 = new wxStaticText( m_panel4, wxID_ANY, wxT("Double click on an entry to modify it:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText23->Wrap( -1 );
+	bSizer10->Add( m_staticText23, 0, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxHORIZONTAL );
+
+	m_listCtrlFileTypes = new wxListCtrl( m_panel4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
+	bSizer12->Add( m_listCtrlFileTypes, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer* bSizer111;
+	bSizer111 = new wxBoxSizer( wxVERTICAL );
+
+	m_buttonNewFileType = new wxButton( m_panel4, wxID_ANY, wxT("New..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonNewFileType->SetDefault();
+	bSizer111->Add( m_buttonNewFileType, 0, wxALL, 5 );
+
+	m_buttonDeleteFileType = new wxButton( m_panel4, wxID_ANY, wxT("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer111->Add( m_buttonDeleteFileType, 0, wxALL, 5 );
+
+	bSizer12->Add( bSizer111, 0, 0, 5 );
+
+	bSizer10->Add( bSizer12, 1, wxEXPAND, 5 );
+
+	m_panel4->SetSizer( bSizer10 );
+	m_panel4->Layout();
+	bSizer10->Fit( m_panel4 );
+	m_notebook1->AddPage( m_panel4, wxT("File Types"), false );
 
 	mainSizer->Add( m_notebook1, 1, wxEXPAND | wxALL, 5 );
 
 	this->SetSizer( mainSizer );
 	this->Layout();
+
+	// Connect Events
+	m_listSwitches->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerPage::OnItemActivated ), NULL, this );
+	m_listSwitches->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerPage::OnItemSelected ), NULL, this );
+	m_listCtrlFileTypes->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerPage::OnFileTypeActivated ), NULL, this );
+	m_listCtrlFileTypes->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CompilerPage::OnFileTypeDeSelected ), NULL, this );
+	m_listCtrlFileTypes->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerPage::OnFileTypeSelected ), NULL, this );
+	m_buttonNewFileType->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPage::OnNewFileType ), NULL, this );
+	m_buttonDeleteFileType->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPage::OnDeleteFileType ), NULL, this );
+
 	CustomInitialize();
 }
 
@@ -320,8 +365,9 @@ void CompilerPage::CustomInitialize()
 	m_textCtrlGlobalIncludePath->SetValue(cmp->GetGlobalIncludePath());
 	m_textCtrlGlobalLibPath->SetValue(cmp->GetGlobalLibPath());
 	m_textCtrlPathVariable->SetValue(cmp->GetPathVariable());
-	
+
 	InitSwitches();
+	InitFileTypes();
 	ConnectEvents();
 }
 
@@ -344,27 +390,33 @@ void CompilerPage::Save()
 	cmp->SetGlobalIncludePath(m_textCtrlGlobalIncludePath->GetValue());
 	cmp->SetGlobalLibPath(m_textCtrlGlobalLibPath->GetValue());
 	cmp->SetPathVariable(m_textCtrlPathVariable->GetValue());
-	
+
+	std::map<wxString, Compiler::CmpFileTypeInfo> fileTypes;
+	int count = m_listCtrlFileTypes->GetItemCount();
+	for (int i=0; i<count; i++) {
+		Compiler::CmpFileTypeInfo ft;
+		ft.extension = GetColumnText(m_listCtrlFileTypes, i, 0);
+		ft.kind = GetColumnText(m_listCtrlFileTypes, i, 1) == wxT("Resource") ? Compiler::CmpFileKindResource : Compiler::CmpFileKindSource;
+		ft.compilation_line = GetColumnText(m_listCtrlFileTypes, i, 2);
+
+		fileTypes[ft.extension] = ft;
+	}
+
+	cmp->SetFileTypes(fileTypes);
+
 	BuildSettingsConfigST::Get()->SetCompiler(cmp);//save changes
 }
 
 void CompilerPage::AddSwitch(const wxString &name, const wxString &value, bool choose)
 {
-	wxListItem info;
-	info.SetText(name);
-	info.SetColumn(0);
-	if (choose == true) {
-		info.SetState(wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+	long item = AppendListCtrlRow(m_listSwitches);
+	SetColumnText(m_listSwitches, item, 0, name);
+	SetColumnText(m_listSwitches, item, 1, value);
+
+	if (choose) {
 		m_selSwitchName = name;
 		m_selSwitchValue = value;
 	}
-	long item = m_listSwitches->InsertItem(info);
-
-	info.SetColumn(1);
-	info.SetId(item);
-	info.SetText(value);
-	info.SetState(0);
-	m_listSwitches->SetItem(info);
 }
 
 void CompilerPage::ConnectEvents()
@@ -440,4 +492,81 @@ void CompilerPage::EditSwitch()
 		InitSwitches();
 	}
 	dlg->Destroy();
+}
+
+void CompilerPage::OnFileTypeActivated(wxListEvent& event)
+{
+	if (m_selectedFileType != wxNOT_FOUND) {
+		EditCmpFileInfo dlg(this);
+		dlg.SetCompilationLine(GetColumnText(m_listCtrlFileTypes, m_selectedFileType, 2));
+		dlg.SetExtension(GetColumnText(m_listCtrlFileTypes, m_selectedFileType, 0));
+		dlg.SetKind(GetColumnText(m_listCtrlFileTypes, m_selectedFileType, 1));
+
+		if (dlg.ShowModal() == wxID_OK) {
+			SetColumnText(m_listCtrlFileTypes, m_selectedFileType, 2, dlg.GetCompilationLine());
+			SetColumnText(m_listCtrlFileTypes, m_selectedFileType, 0, dlg.GetExtension().Lower());
+			SetColumnText(m_listCtrlFileTypes, m_selectedFileType, 1, dlg.GetKind());
+		}
+	}
+}
+
+void CompilerPage::OnFileTypeDeSelected(wxListEvent& event)
+{
+	m_selectedFileType = wxNOT_FOUND;
+}
+
+void CompilerPage::OnFileTypeSelected(wxListEvent& event)
+{
+	m_selectedFileType = event.m_itemIndex;
+}
+
+void CompilerPage::OnDeleteFileType(wxCommandEvent& event)
+{
+	if (m_selectedFileType != wxNOT_FOUND) {
+		if (wxMessageBox(wxT("Are you sure you want to delete this file type?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
+			m_listCtrlFileTypes->DeleteItem(m_selectedFileType);
+			m_selectedFileType = wxNOT_FOUND;
+		}
+	}
+}
+
+void CompilerPage::OnNewFileType(wxCommandEvent& event)
+{
+	EditCmpFileInfo dlg(this);
+	if (dlg.ShowModal() == wxID_OK) {
+		long newItem = AppendListCtrlRow(m_listCtrlFileTypes);
+		SetColumnText(m_listCtrlFileTypes, newItem, 2, dlg.GetCompilationLine());
+		SetColumnText(m_listCtrlFileTypes, newItem, 0, dlg.GetExtension().Lower());
+		SetColumnText(m_listCtrlFileTypes, newItem, 1, dlg.GetKind());
+	}
+}
+
+void CompilerPage::InitFileTypes()
+{
+	m_listCtrlFileTypes->Freeze();
+	m_listCtrlFileTypes->ClearAll();
+	m_listCtrlFileTypes->InsertColumn(0, wxT("Extension"));
+	m_listCtrlFileTypes->InsertColumn(1, wxT("Kind"));
+	m_listCtrlFileTypes->InsertColumn(2, wxT("Compilation Line"));
+
+	//populate the list control
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(m_cmpname);
+	if (cmp) {
+		std::map<wxString, Compiler::CmpFileTypeInfo> fileTypes = cmp->GetFileTypes();
+		std::map<wxString, Compiler::CmpFileTypeInfo>::iterator iter = fileTypes.begin();
+		for ( ; iter != fileTypes.end(); iter++ ) {
+			Compiler::CmpFileTypeInfo ft = iter->second;
+
+			long item = AppendListCtrlRow(m_listCtrlFileTypes);
+			SetColumnText(m_listCtrlFileTypes, item, 0, ft.extension);
+			SetColumnText(m_listCtrlFileTypes, item, 1, ft.kind == Compiler::CmpFileKindSource ? wxT("Source") : wxT("Resource"));
+			SetColumnText(m_listCtrlFileTypes, item, 2, ft.compilation_line);
+		}
+	}
+
+	m_listCtrlFileTypes->SetColumnWidth(0, 70);
+	m_listCtrlFileTypes->SetColumnWidth(1, 70);
+	m_listCtrlFileTypes->SetColumnWidth(2, wxLIST_AUTOSIZE);
+
+	m_listCtrlFileTypes->Thaw();
 }

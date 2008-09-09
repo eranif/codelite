@@ -183,6 +183,18 @@ public:
 	 * \return end of indicator range
 	 */
 	virtual int  GetUserIndicatorEnd(int pos) = 0;
+	
+	/**
+	 * \brief return the style at given position. Depends on the current lexer (Different lexers have different styles)
+	 * \param pos the position inside the editor styles.
+	 * \return style number.
+	 */
+	virtual int GetStyleAtPos(int pos) = 0;
+	
+	/**
+	 * \brief return the editor's lexer ID as described in wxscintilla.h (wxSCI_LEX_*)
+	 */
+	virtual int GetLexerId() = 0;
 };
 
 #endif //IEDITOR_H

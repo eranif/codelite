@@ -37,20 +37,6 @@
 #include "wx/sstream.h"
 #include "globals.h"
 
-static bool IsSource(const wxString &ext)
-{
-	wxString e(ext);
-	e = e.MakeLower();
-	return e == wxT("cpp") || e == wxT("cxx") || e == wxT("c") || e == wxT("c++") || e == wxT("cc") || e == wxT("m") || e == wxT("mm");
-}
-
-static bool IsResource(const wxString &ext)
-{
-	wxString e(ext);
-	e = e.MakeLower();
-	return e == wxT("rc");
-}
-
 BuilderGnuMake::BuilderGnuMake()
 		: Builder(wxT("GNU makefile for g++/gcc"), wxT("make"), wxT("-f"))
 {
@@ -356,8 +342,8 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
 			text << wxT("$(OutputFile): ") << prePreBuildTarget << wxT(" $(Objects)\n");
 		}
 	}
-	
-	if(bldConf->IsLinkerRequired()){
+
+	if (bldConf->IsLinkerRequired()) {
 		CreateTargets(proj->GetSettings()->GetProjectType(bldConf->GetName()), bldConf, text);
 	}
 	CreatePostBuildEvents(bldConf, text);
@@ -403,23 +389,30 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
 	text << wxT("Objects=");
 
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
-	int counter = 1;
-	for (size_t i=0; i<files.size(); i++) {
-		if ( !IsSource(files[i].GetExt())) {
-			//test resource file
-			if (wxGetOsVersion() & wxOS_WINDOWS) {
-				if (!(IsResource(files[i].GetExt()) && bldConf && bldConf->IsResCompilerRequired())) {
-					continue;
-				}
-			} else {
-				continue;
-			}
-		}
+	wxString cmpType = bldConf->GetCompilerType();
 
-		if (IsResource(files[i].GetExt())) {
+	//get the compiler settings
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
+
+	int counter = 1;
+	Compiler::CmpFileTypeInfo ft;
+		
+	for (size_t i=0; i<files.size(); i++) {
+		
+		// is this a valid file?
+		if (!cmp->GetCmpFileType(files[i].GetExt(), ft))
+			continue;
+
+		if ((wxGetOsVersion() & wxOS_WINDOWS) && ft.kind == Compiler::CmpFileKindResource && bldConf && !bldConf->IsResCompilerRequired()) {
+			// we are on Windows, the file type is Resource and resource compiler is not required
+			continue;
+		}
+		
+		if (ft.kind == Compiler::CmpFileKindResource) {
 			// resource files are handled differently
 			text << wxT("$(IntermediateDirectory)/") << files[i].GetFullName() << wxT("$(ObjectSuffix) ");
 		} else {
+			// Compiler::CmpFileKindSource file
 			text << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix) ");
 		}
 		if (counter % 10 == 0) {
@@ -446,18 +439,10 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 		isGnu = true;
 	}
 
-	std::vector<wxFileName> files;
-	std::vector<wxFileName> abs_files;
-	
-	// load both relative and absolute paths
-	proj->GetFiles(files, abs_files);
+	std::vector<wxFileName> abs_files, rel_paths;
 
 	// support for full path
-	long use_full_path(1);
-	EditorConfigST::Get()->GetLongValue(wxT("GenerateFullPathMakefile"), use_full_path);
-	if (use_full_path) {
-		proj->GetFiles(abs_files, true);
-	}
+	proj->GetFiles(rel_paths, abs_files);
 
 	text << wxT("\n\n");
 	// create rule per object
@@ -465,75 +450,52 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 	text << wxT("## Objects\n");
 	text << wxT("##\n");
 
-	for (size_t i=0; i<files.size(); i++) {
-		if (IsSource(files[i].GetExt()) ) {
-			if (isGnu) {
+	Compiler::CmpFileTypeInfo ft;
+	for (size_t i=0; i<abs_files.size(); i++) {
+		// is this file interests the compiler?
+		if (cmp->GetCmpFileType(abs_files.at(i).GetExt().Lower(), ft) ) {
+			wxString absFileName;
+			wxFileName fn( abs_files.at(i) );
+			wxString compilationLine = ft.compilation_line;
+
+			compilationLine.Replace(wxT("$(FileName)"), fn.GetName());
+			compilationLine.Replace(wxT("$(FileFullName)"), fn.GetFullName());
+			compilationLine.Replace(wxT("$(FileFullPath)"), fn.GetFullPath());
+
+			// use UNIX style slashes
+			absFileName = abs_files[i].GetFullPath();
+			absFileName.Replace(wxT("\\"), wxT("/"));
+			compilationLine.Replace(wxT("\\"), wxT("/"));
+
+			if (ft.kind == Compiler::CmpFileKindSource) {
 				wxString objectName;
-				objectName << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix)");
-
-				wxString fileName, asbFileName, macObjCFlag;
-				fileName = files[i].GetFullPath(wxPATH_UNIX);
-
-				if (use_full_path) {
-					// use native format
-					asbFileName = abs_files[i].GetFullPath();
-					asbFileName.Replace(wxT("\\"), wxT("/"));
-				}
-				
 				wxString dependFile;
-				dependFile << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix)") << wxT(".d");
-				text << objectName << wxT(": ") << fileName << wxT(" ") << dependFile << wxT("\n");
-				
-				if(files[i].GetExt() == wxT("m")){
-					// C file 
-					macObjCFlag = wxT(" -x objective-c ");
-				} else if(files[i].GetExt() == wxT("mm")){
-					// C++ file
-					macObjCFlag = wxT(" -x objective-c++ ");
-				}
-				
-				if (use_full_path) {
-					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) ") << macObjCFlag << wxT("\"") << asbFileName << wxT("\" $(CmpOptions)  ")  << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
-				} else {
-					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) ") << macObjCFlag << fileName << wxT(" $(CmpOptions)  ")  << macObjCFlag << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
+
+				objectName << wxT("$(IntermediateDirectory)/") << fn.GetName() << wxT("$(ObjectSuffix)");
+				if (isGnu) {
+					dependFile << wxT("$(IntermediateDirectory)/") << fn.GetName() << wxT("$(ObjectSuffix)") << wxT(".d");
 				}
 
-				//add the dependencie rule
-				text << dependFile << wxT(":") << wxT("\n");
-				text << wxT("\t") << wxT("@$(CompilerName) $(CmpOptions) $(IncludePath) -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM ") << fileName << wxT("\n\n");
+				// set the file rule
+				text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT(" ") << dependFile << wxT("\n");
+				text << wxT("\t") << compilationLine << wxT("\n");
 
-			} else {
+				if (isGnu) {
+					//add the dependencie rule
+					text << dependFile << wxT(":") << wxT("\n");
+					text << wxT("\t") << wxT("@$(CompilerName) $(CmpOptions) $(IncludePath) -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM \"") << absFileName << wxT("\"\n\n");
+				}
+
+			} else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired() && wxGetOsVersion() & wxOS_WINDOWS ) {
+				//Windows only
+				// we construct an object name which also includes the full name of the reousrce file and appends a .o to the name (to be more
+				// precised, $(ObjectSuffix))
 				wxString objectName;
-				objectName << wxT("$(IntermediateDirectory)/") << files[i].GetName() << wxT("$(ObjectSuffix)");
+				objectName << wxT("$(IntermediateDirectory)/") << fn.GetFullName() << wxT("$(ObjectSuffix)");
 
-				wxString fileName, asbFileName;
-				fileName = files[i].GetFullPath(wxPATH_UNIX);
-
-				if (use_full_path) {
-					// use native format
-					asbFileName = abs_files[i].GetFullPath();
-					asbFileName.Replace(wxT("\\"), wxT("/"));
-				}
-
-				text << objectName << wxT(": ") << fileName << wxT("\n");
-				if (use_full_path) {
-					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) \"") << asbFileName << wxT("\" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
-				} else {
-					text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch)") << fileName << wxT(" $(CmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(IncludePath)\n");
-				}
-				text << wxT("\n");
+				text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
+				text << wxT("\t") << compilationLine << wxT("\n");
 			}
-
-		} else if (IsResource(files.at(i).GetExt()) && bldConf->IsResCompilerRequired() && wxGetOsVersion() & wxOS_WINDOWS ) {
-			//Windows only
-			// we construct an object name which also includes the full name of the reousrce file and appends a .o to the name (to be more
-			// precised, $(ObjectSuffix))
-			wxString objectName;
-			objectName << wxT("$(IntermediateDirectory)/") << files.at(i).GetFullName() << wxT("$(ObjectSuffix)");
-
-			wxString fileName   = files[i].GetFullPath(wxPATH_UNIX);
-			text << objectName << wxT(": ") << fileName << wxT("\n");
-			text << wxT("\t") << wxT("$(RcCompilerName) -i ") << fileName << wxT(" $(RcCmpOptions)  ") << wxT(" $(ObjectSwitch)") << objectName << wxT(" $(RcIncludePath) \n\n");
 		}
 	}
 
@@ -545,17 +507,25 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
 	if (wxGetOsVersion() & wxOS_WINDOWS) {
 		//windows clean command
-		for (size_t i=0; i<files.size(); i++) {
-			if (IsSource(files[i].GetExt())) {
-				wxString objectName = files[i].GetName() << wxT("$(ObjectSuffix)");
-				wxString dependFile = files[i].GetName() << wxT("$(ObjectSuffix)") << wxT(".d");
-				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName << wxT("\n");
-				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile << wxT("\n");
-			} else if (IsResource(files[i].GetExt()) && bldConf->IsResCompilerRequired() && wxGetOsVersion() & wxOS_WINDOWS) {
-				wxString ofile = files[i].GetFullName() << wxT("$(ObjectSuffix)");
-				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << ofile << wxT("\n");
+		for (size_t i=0; i<abs_files.size(); i++) {
+
+			Compiler::CmpFileTypeInfo ft;
+			if (cmp->GetCmpFileType(abs_files[i].GetExt(), ft)) {
+
+				if (ft.kind == Compiler::CmpFileKindSource) {
+
+					wxString objectName = abs_files[i].GetName() << wxT("$(ObjectSuffix)");
+					wxString dependFile = abs_files[i].GetName() << wxT("$(ObjectSuffix)") << wxT(".d");
+					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName << wxT("\n");
+					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile << wxT("\n");
+
+				} else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired()) {
+					wxString ofile = abs_files[i].GetFullName() << wxT("$(ObjectSuffix)");
+					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << ofile << wxT("\n");
+				}
 			}
 		}
+
 		//delete the output file as well
 		wxString exeExt(wxEmptyString);
 		if (proj->GetSettings()->GetProjectType(bldConf->GetName()) == Project::EXECUTABLE) {
@@ -567,16 +537,18 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 		text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)") << exeExt << wxT("\n");;
 	} else {
 		//on linux we dont really need resource compiler...
-		for (size_t i=0; i<files.size(); i++) {
-			if ( !IsSource(files[i].GetExt()) )
-				continue;
+		for (size_t i=0; i<abs_files.size(); i++) {
+			Compiler::CmpFileTypeInfo ft;
+			if (cmp->GetCmpFileType(abs_files[i].GetExt(), ft) && ft.kind == Compiler::CmpFileKindSource) {
 
-			wxString objectName = files[i].GetName() << wxT("$(ObjectSuffix)");
-			wxString dependFile = files[i].GetName() << wxT("$(ObjectSuffix)") << wxT(".d");
+				wxString objectName = abs_files[i].GetName() << wxT("$(ObjectSuffix)");
+				wxString dependFile = abs_files[i].GetName() << wxT("$(ObjectSuffix)") << wxT(".d");
 
-			text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName << wxT("\n");
-			text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile << wxT("\n");
+				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName << wxT("\n");
+				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile << wxT("\n");
+			}
 		}
+
 		//delete the output file as well
 		text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)\n");
 	}
@@ -584,7 +556,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 	if (isGnu) {
 		text << wxT("\n-include $(IntermediateDirectory)/*.d\n");
 	}
-	text << wxT("\n");
+	text << wxT("\n\n");
 }
 
 void BuilderGnuMake::CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text)

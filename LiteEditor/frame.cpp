@@ -3451,7 +3451,7 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 			wxString exepath = dlg->GetExe();
 			wxString wd = dlg->GetWorkingDirectory();
 			wxArrayString cmds = dlg->GetStartupCmds();
-
+			
 			// update the debugger information
 			DebuggerInformation dinfo;
 			DebuggerMgr::Get().GetDebuggerInformation(dlg->GetDebuggerName(), dinfo);
@@ -3464,8 +3464,23 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 			// launch the debugger
 			dbgr->SetObserver(ManagerST::Get());
 			dbgr->SetDebuggerInformation(dinfo);
+			
+			// Loop through the open editors, and update breakpoints
+			for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
+				LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
+				if (editor) {
+					editor->UpdateBreakpoints();
+				}
+			}
+			
+			// get an updated list of breakpoints
+			DebuggerMgr::Get().GetBreakpoints(bpList);
+			
 			dbgr->Start(dbgname, exepath, wd, bpList, cmds);
 			dbgr->Run(dlg->GetArguments(), wxEmptyString);
+			
+			// and finally make sure that the debugger pane is visiable
+			ManagerST::Get()->ShowDebuggerPane();
 		}
 	}
 	dlg->Destroy();

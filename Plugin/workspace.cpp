@@ -74,7 +74,13 @@ void Workspace::CloseWorkspace()
 bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
 {
 	CloseWorkspace();
-	m_fileName = wxFileName(fileName);
+	wxFileName workSpaceFile(fileName);
+	if(workSpaceFile.FileExists() == false){
+		errMsg = wxString::Format(wxT("Workspace file no longer exist: '%s'"), fileName.c_str());
+		return false;
+	}
+	
+	m_fileName = workSpaceFile;
 	m_doc.Load(m_fileName.GetFullPath());
 	if ( !m_doc.IsOk() ) {
 		errMsg = wxT("Corrupted workspace file");

@@ -72,8 +72,12 @@ SnipWiz::SnipWiz( IManager *manager )
 	// get plugin path
 	m_pluginPath = m_mgr->GetStartupDirectory();
 	m_pluginPath += wxFILE_SEP_PATH;
-	m_pluginPath += wxT( "plugins" );
+	m_pluginPath += wxT( "templates" );
 	m_pluginPath += wxFILE_SEP_PATH;
+	if ( ! wxFileName::DirExists(m_pluginPath) ){
+		wxFileName::Mkdir(m_pluginPath);
+	}
+  
 	m_StringDb.SetCompress( true );
 
 	m_StringDb.Load( m_pluginPath + defaultTmplFile );
@@ -90,8 +94,6 @@ SnipWiz::SnipWiz( IManager *manager )
 //------------------------------------------------------------
 SnipWiz::~SnipWiz()
 {
-	wxString filename = m_pluginPath + defaultFile;
-
 	if ( m_modified )
 		m_StringDb.Save( m_pluginPath + defaultTmplFile );
 

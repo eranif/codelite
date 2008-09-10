@@ -650,6 +650,7 @@ echo "CodeFormatter_clean\\" >> Makefile
 #echo "ReferenceAnalyser_clean\\" >> Makefile
 echo "Copyright_clean\\" >> Makefile
 echo "UnitTestCPP_clean\\" >> Makefile
+echo "ExternalTools_clean\\" >> Makefile
 echo "SnipWiz_clean\\" >> Makefile
 echo "" >> Makefile
 

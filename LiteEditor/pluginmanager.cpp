@@ -374,3 +374,7 @@ void PluginManager::SaveAll()
 	ManagerST::Get()->SaveAll(false);
 }
 
+wxString PluginManager::GetInstallDirectory() const
+{
+	return ManagerST::Get()->GetInstallDir();
+}

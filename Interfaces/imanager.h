@@ -118,15 +118,24 @@ public:
 	 * @return a full path to the startup directory
 	 */
 	virtual wxString GetStartupDirectory() const = 0;
+	
+	/**
+	 * @brief return the installation directory of codelite
+	 * @return a full path to codelite installation
+	 */
+	virtual wxString GetInstallDirectory() const = 0;
+	
 	/**
 	 * @brief add project to the workspace
 	 * @param path full path to the project to add
 	 */
 	virtual void AddProject(const wxString & path) = 0;
+	
 	/**
 	 * @brief return true of a workspace is already open
 	 */
 	virtual bool IsWorkspaceOpen() const = 0;
+	
 	/**
 	 * @brief return an instance to the tags manager - which allows access to CodeLite CodeCompletion API
 	 * @return a pointer to the tags manager

@@ -90,6 +90,7 @@ public:
 	virtual IPlugin* GetPlugin(const wxString &pluginName);
 	virtual void AppendOutputMsg(const wxString &msg);
 	virtual void SaveAll();
+	virtual wxString GetInstallDirectory() const;
 	
 	//------------------------------------
 	//End of IManager interface

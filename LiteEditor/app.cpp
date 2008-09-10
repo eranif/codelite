@@ -347,7 +347,9 @@ bool App::OnInit()
 			ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString);
 		}
 	}
-
+	
+	wxLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
+	wxLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStarupDirectory().c_str()));
 	return TRUE;
 }
 

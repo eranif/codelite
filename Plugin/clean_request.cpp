@@ -73,6 +73,7 @@ void CleanRequest::Process()
 		if(cmp) {
 			wxString value( cmp->GetPathVariable() );
 			if(value.Trim().Trim(false).IsEmpty() == false) {
+				wxLogMessage(wxString::Format(wxT("Setting PATH to '%s'"), value.c_str()));
 				om[wxT("PATH")] = value.Trim().Trim(false);
 			}
 		}

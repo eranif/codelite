@@ -202,28 +202,37 @@ void Workspace::AddProjectToBuildMatrix(ProjectPtr prj)
 	for (; iter !=  wspList.end(); iter++) {
 		WorkspaceConfigurationPtr workspaceConfig = (*iter);
 		WorkspaceConfiguration::ConfigMappingList prjList = workspaceConfig->GetMapping();
-
+		wxString wspCnfName = workspaceConfig->GetName();
+		
 		ProjectSettingsCookie cookie;
-		BuildConfigPtr prjBldConf = prj->GetSettings()->GetFirstBuildConfiguration(cookie);
+		
+		// getSettings is a bit misleading, since it actually create new instance which represents the layout
+		// of the XML
+		ProjectSettingsPtr settings = prj->GetSettings();
+		BuildConfigPtr prjBldConf = settings->GetFirstBuildConfiguration(cookie);
 		BuildConfigPtr matchConf;
 		
 		if ( !prjBldConf ) {
 			// the project does not have any settings, create new one and add it
-			prj->SetSettings(new ProjectSettings(NULL));
-			prjBldConf = prj->GetSettings()->GetFirstBuildConfiguration(cookie);
+			prj->SetSettings(settings);
+			
+			settings = prj->GetSettings();
+			prjBldConf = settings->GetFirstBuildConfiguration(cookie);
 			matchConf = prjBldConf;
+			
 		} else {
 			
 			matchConf = prjBldConf;
 			
 			// try to locate the best match to add to the workspace 
 			while( prjBldConf ){
-				if(prjBldConf->GetName() == workspaceConfig->GetName()){
+				wxString projBldConfName = prjBldConf->GetName();
+				if(wspCnfName == projBldConfName){
 					// we found a suitable match use it instead of the default one
 					matchConf = prjBldConf;
 					break;
 				}
-				prjBldConf = prj->GetSettings()->GetNextBuildConfiguration(cookie);
+				prjBldConf = settings->GetNextBuildConfiguration(cookie);
 			}
 		}
 		

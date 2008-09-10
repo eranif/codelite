@@ -149,7 +149,9 @@ public:
 			return *this;
 
 		m_ref = rhs.m_ref;
-		m_ref->IncRef();
+		if (m_ref) {
+			m_ref->IncRef();
+		}
 		return *this;
 	}
 

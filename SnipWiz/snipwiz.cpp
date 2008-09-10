@@ -61,6 +61,21 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 	return PLUGIN_INTERFACE_VERSION;
 }
 
+//------------------------------------------------------------
+// When creating new file, we default the EOL mode to 
+// the OS conventions
+static int GetEOLByOS()
+{
+#if defined(__WXMAC__)
+	return 1/*wxSCI_EOL_CR*/;
+#elif defined(__WXGTK__)
+	return 2/*wxSCI_EOL_LF*/;
+#else
+	return 0/*wxSCI_EOL_CRLF*/;
+#endif
+}
+
+//------------------------------------------------------------
 SnipWiz::SnipWiz( IManager *manager )
 		: IPlugin( manager )
 {
@@ -231,7 +246,7 @@ void SnipWiz::OnMenuSnippets( wxCommandEvent &e )
 
 	bool crtl = ::wxGetKeyState( WXK_CONTROL );
 
-	if ( e.GetId() >= IDM_ADDSTART && e.GetId() < ( IDM_ADDSTART + m_snippets.GetCount() ) ) {
+	if ( e.GetId() >= IDM_ADDSTART && e.GetId() < ( IDM_ADDSTART + (int)m_snippets.GetCount() ) ) {
 		wxString key = m_snippets.Item( e.GetId() - IDM_ADDSTART );
 		wxString srText = m_StringDb.GetSnippetString( key );
 		wxString selection = editor->GetSelection();
@@ -383,7 +398,7 @@ long SnipWiz::GetCurrentIndentation( IEditor *pEditor, long pos )
 	long tabCount = 0;
 	wxChar ch = ( pEditor->GetEOL() == 1 ) ? wxT( '\r' ) : wxT( '\n' );
 	buffer = buffer.AfterLast( ch );
-	for ( long i = 0;i < buffer.Len();i++ )
+	for ( long i = 0;i < (long)buffer.Len();i++ )
 		if ( buffer.GetChar( i ) == wxT( '\t' ) )
 			tabCount++;
 
@@ -413,10 +428,6 @@ IEditor* SnipWiz::GetEditor()
 //------------------------------------------------------------
 void SnipWiz::OnClassWizard( wxCommandEvent& e )
 {
-	IEditor *editor = GetEditor();
-	if ( !editor )
-		return;
-
 	TemplateClassDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr);
 	
 	wxString errMsg, projectPath, projectName;
@@ -432,11 +443,15 @@ void SnipWiz::OnClassWizard( wxCommandEvent& e )
 				projectPath =  proj->GetFileName().GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 		}
 	}
-	dlg.SetCurEol(editor->GetEOL() );
+
+	dlg.SetCurEol(GetEOLByOS());
 	dlg.SetPluginPath(m_pluginPath );
 	dlg.SetProjectPath( projectPath );
 	dlg.ShowModal();
-	if ( dlg.GetModified() )
+	
+	if ( dlg.GetModified() ){
 		m_modified = true;
+	}
+	
 }
 //------------------------------------------------------------

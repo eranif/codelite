@@ -12,6 +12,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/log.h>
 #include <algorithm>
+#include "plugin_version.h"
 
 static ExternalToolsPlugin* thePlugin = NULL;
 

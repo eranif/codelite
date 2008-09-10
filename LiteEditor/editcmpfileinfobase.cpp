@@ -64,7 +64,7 @@ EditCmpFileInfoBase::EditCmpFileInfoBase( wxWindow* parent, wxWindowID id, const
 	m_buttonOk->SetDefault(); 
 	bSizer2->Add( m_buttonOk, 0, wxALL, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_ANY, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );

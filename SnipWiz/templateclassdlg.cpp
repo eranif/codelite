@@ -133,7 +133,7 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 
 	wxString msg;
 	msg << wxString::Format( wxT( "%s%s" ), files.Item(0).c_str(), eol[m_curEol].c_str())
-	<< wxString::Format( wxT( "%s%s%s" ), files.Item(0).c_str(), eol[m_curEol].c_str(), eol[m_curEol].c_str())
+	<< wxString::Format( wxT( "%s%s%s" ), files.Item(1).c_str(), eol[m_curEol].c_str(), eol[m_curEol].c_str())
 	<< wxT( "Files successfully created." );
 	wxMessageBox(msg, wxT( "Add template class" ));
 	EndModal(wxID_OK);

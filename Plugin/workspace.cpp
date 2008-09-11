@@ -571,6 +571,10 @@ bool Workspace::RemoveFile(const wxString &vdFullPath, const wxString &fileName,
 
 	// Construct new path excluding the first token
 	size_t count = tkz.CountTokens();
+	if (!count) {
+		errMsg = wxT("Malformed project name");
+		return false;
+	}
 
 	for (size_t i=0; i<count-1; i++) {
 		fixedPath += tkz.GetNextToken();

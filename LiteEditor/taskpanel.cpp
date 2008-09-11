@@ -41,6 +41,7 @@ void TaskPanel::OnSearch( wxCommandEvent& event )
 	data.SetRegularExpression(true);
 	data.SetMatchCase(false);
 	data.SetMatchWholeWord(false);
+	data.SetUseEditorFontConfig(true);
 
 	// prepare a list of files to search
 	if (m_choiceScope->GetStringSelection() == SEARCH_IN_WORKSPACE) {

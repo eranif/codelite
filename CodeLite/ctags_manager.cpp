@@ -1138,6 +1138,11 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
 	DeleteFilesTags(files);
 	wxArrayString strFiles;
 	for (size_t i=0; i<files.size(); i++) {
+		if(!IsValidCtagsFile(files.at(i).GetFullPath()))
+		{
+			wxLogMessage(wxT("Not valid C tags file type: %s. Skipping."), files.at(i).GetFullPath().c_str());
+			continue;
+		}
 
 		strFiles.Add(files.at(i).GetFullPath());
 

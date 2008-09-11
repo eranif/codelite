@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : cl_editor.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : cl_editor.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef LITEEDITOR_EDITOR_H
+#ifndef LITEEDITOR_EDITOR_H
 #define LITEEDITOR_EDITOR_H
 
 #include <wx/wxscintilla.h>
@@ -42,16 +42,16 @@
 class wxFindReplaceDialog;
 class CCBox;
 
-//incase we are using DLL build of wxWdigets, we need to make this class to export its 
-//classes 
+//incase we are using DLL build of wxWdigets, we need to make this class to export its
+//classes
 #ifndef WXDLLIMPEXP_LE
-	#ifdef WXMAKINGDLL
-	#    define WXDLLIMPEXP_LE WXEXPORT
-	#elif defined(WXUSINGDLL)
-	#    define WXDLLIMPEXP_LE WXIMPORT
-	#else 
-	#    define WXDLLIMPEXP_LE
-	#endif // WXDLLIMPEXP_LE
+#ifdef WXMAKINGDLL
+#    define WXDLLIMPEXP_LE WXEXPORT
+#elif defined(WXUSINGDLL)
+#    define WXDLLIMPEXP_LE WXIMPORT
+#else
+#    define WXDLLIMPEXP_LE
+#endif // WXDLLIMPEXP_LE
 #endif
 
 const extern wxEventType wxEVT_CMD_UPDATE_STATUS_BAR;
@@ -63,7 +63,7 @@ const extern wxEventType wxEVT_CMD_UPDATE_STATUS_BAR;
  * -# Find and replace
  * -# Bookmarks
  * -# Folding
- * -# Find definition of a symbol 
+ * -# Find definition of a symbol
  * and many many more
  *
  * \version 1.0
@@ -92,9 +92,12 @@ class LEditor : public wxScintilla, public IEditor
 	time_t m_modifyTime;
 	std::map<int, wxString> m_customCmds;
 	CCBox *m_ccBox;
-	
+	bool m_isVisible;
+
 public:
-	static FindReplaceData &GetFindReplaceData(){return m_findReplaceData;}
+	static FindReplaceData &GetFindReplaceData() {
+		return m_findReplaceData;
+	}
 
 public:
 	/// Construct a LEditor object
@@ -102,33 +105,39 @@ public:
 
 	/// Default destructor
 	virtual ~LEditor();
-	
+
 	// Save the editor data into file
 	virtual bool SaveFile();
 
 	// Save content of the editor to a given file (Save As...)
 	// this function prompts the user for selecting file name
 	bool SaveFileAs();
-	
+
 	/**
 	 * \brief send event to the main frame to update the status bar at a given field
 	 * \param msg message to print
 	 * \param field field to print the message
 	 */
 	void SetStatusBarMessage(const wxString &msg, int field);
-	
+
 	void CompleteWord();
-	
+
 	// set this editor file name
-	void SetFileName(const wxFileName &name) { m_fileName = name; }
+	void SetFileName(const wxFileName &name) {
+		m_fileName = name;
+	}
 
 	// Return the project name
-	const wxString &GetProject() const { return m_project; }
+	const wxString &GetProject() const {
+		return m_project;
+	}
 	// Set the project name
-	void SetProject(const wxString &proj) { m_project = proj; }
+	void SetProject(const wxString &proj) {
+		m_project = proj;
+	}
 
-	// Attempt to display a list of members 
-	// after a '.' or '->' operator has been inserted into 
+	// Attempt to display a list of members
+	// after a '.' or '->' operator has been inserted into
 	// the code
 	void CodeComplete();
 
@@ -137,7 +146,7 @@ public:
 
 	// User clicked Ctrl+,
 	void GotoPreviousDefintion();
-	
+
 	// return the EOL according to the content
 	int GetEOLByContent();
 
@@ -146,12 +155,14 @@ public:
 	 * Return true if editor definition contains more
 	 * on its stack
 	 */
-	bool CanGotoPreviousDefintion() { return NavMgr::Get()->CanPrev(); }
+	bool CanGotoPreviousDefintion() {
+		return NavMgr::Get()->CanPrev();
+	}
 
-	// Load a file 
+	// Load a file
 	void OpenFile(const wxString& fileName, const wxString& project);
-	
-	// Callback function for UI events 
+
+	// Callback function for UI events
 	void OnUpdateUI(wxUpdateUIEvent &event);
 
 	// Callback function for menu command events
@@ -163,18 +174,18 @@ public:
 	// Popup a find/replace dialog
 	void DoFindAndReplace(bool isReplaceDlg);
 
-	// set this page as active, this usually happened when user changed the notebook 
+	// set this page as active, this usually happened when user changed the notebook
 	// page to this one
 	virtual void SetActive();
 
 	// Perform FindNext operation based on the data stored in the FindReplaceData class
 	void FindNext(const FindReplaceData &data);
-	
+
 	/**
 	 * \brief diaply functions' calltip from the current position of the caret
 	 */
 	void ShowFunctionTipFromCurrentPos();
-	
+
 	/**
 	 * Change the document's syntax highlight
 	 * \param lexerName the syntax highlight's lexer name (as appear in the liteeditor.xml file)
@@ -193,10 +204,12 @@ public:
 	 */
 	void RestoreDefaults();
 
-	/** 
+	/**
 	 * Return the document context object
 	 */
-	ContextBasePtr GetContext() const { return m_context; }
+	ContextBasePtr GetContext() const {
+		return m_context;
+	}
 
 	// Bookmark API
 	//-----------------------------------------
@@ -209,15 +222,17 @@ public:
 	void FindNextMarker();
 	// Find previous marker and move cursor to that line
 	void FindPrevMarker();
-	// Replace all 
+	// Replace all
 	bool ReplaceAll();
 	// mark all occurances
 	bool MarkAll();
 
-  void ToggleCurrentFold();
-  void FoldAll();
+	void ToggleCurrentFold();
+	void FoldAll();
 
-	static FindReplaceDialog* GetFindReplaceDialog() { return m_findReplaceDlg; }
+	static FindReplaceDialog* GetFindReplaceDialog() {
+		return m_findReplaceDlg;
+	}
 
 	// Util function
 	int SafeGetChar(int pos);
@@ -225,7 +240,7 @@ public:
 	wxChar NextChar(const int& pos, int &foundPos);
 	int  FindString (const wxString &str, int flags, const bool down, long pos);
 	void SetDirty(bool dirty);
-	
+
 	bool FindAndSelect();
 	bool FindAndSelect(const FindReplaceData &data);
 
@@ -244,7 +259,7 @@ public:
 
 	/**
 	 * Attempt to match brace backward
-	 * \param chCloseBrace the closing brace character (can be one of: '}' ')' ']') 
+	 * \param chCloseBrace the closing brace character (can be one of: '}' ')' ']')
 	 * \param pos position to start the match
 	 * \param matchedPos output, the position of the matched brace
 	 * \return true on match false otherwise
@@ -268,14 +283,16 @@ public:
 	 * \return browsing record
 	 */
 	BrowseRecord CreateBrowseRecord();
-	bool IsContextMenuOn() const {return m_popupIsOn;}
-	
+	bool IsContextMenuOn() const {
+		return m_popupIsOn;
+	}
+
 	/**
 	 * @brief return an approximation of the line height
 	 * @return line height
 	 */
 	int GetCurrLineHeight();
-	
+
 	/**
 	 * toggle break point at the current line & file
 	 * the second version is using BreakpointInfo
@@ -284,28 +301,28 @@ public:
 	void ToggleBreakpoint(const BreakpointInfo &bp);
 
 	/**
-	 * remove breakpoint from current file and 
+	 * remove breakpoint from current file and
 	 * from the carte line number
 	 */
 	void DelBreakpoint();
 
 	/**
-	 * remove breakpoint from current file and 
+	 * remove breakpoint from current file and
 	 * from the carte line number
 	 */
 	virtual void DelBreakpoint(const BreakpointInfo &bp);
 	virtual void UpdateBreakpoints();
-	
+
 	//--------------------------------
 	// breakpoint visualisation
 	//--------------------------------
 	void SetBreakpointMarker(int lineno);
 	virtual void DelBreakpointMarker(int lineno);
 	virtual void DelAllBreakpointMarkers();
-	
+
 	virtual void HighlightLine(int lineno);
 	virtual void UnHighlightAll();
-	
+
 	//----------------------------------
 	//File modifications
 	//----------------------------------
@@ -313,62 +330,84 @@ public:
 	/**
 	 * return/set the last modification time that was made by the editor
 	 */
-	time_t GetEditorLastModifiedTime() const {return m_modifyTime;}
-	void SetEditorLastModifiedTime(time_t modificationTime) {m_modifyTime = modificationTime;}
-	
+	time_t GetEditorLastModifiedTime() const {
+		return m_modifyTime;
+	}
+	void SetEditorLastModifiedTime(time_t modificationTime) {
+		m_modifyTime = modificationTime;
+	}
+
 	/**
 	 * \brief run through the file content and update colours for the
-	 * functions / locals 
+	 * functions / locals
 	 */
 	void UpdateColours();
-	
+
 	/**
 	 * @brief display completion box. This function also moves the completion box to the current position
 	 * @param tags list of tags to work with
-	 * @param word part of the word 
+	 * @param word part of the word
 	 * @param showFullDecl display full function declaration
 	 */
 	void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl, bool autoHide = false, bool autoInsertSingleChoice = true);
-	
+
 	/**
 	 * @brief hide the completion box if it is active.
 	 */
 	void HideCompletionBox();
-	
+
 	/**
 	 * @brief return true if the completion box is visible
 	 */
 	bool IsCompletionBoxShown();
-	
+
 	/**
 	 * @brief highlight the word where the cursor is at
-	 * @param highlight  
+	 * @param highlight
 	 */
 	void HighlightWord(bool highlight = true);
-	
+
 	/**
 	 *--------------------------------------------------
 	 * Implemetation for IEditor interace
 	 *--------------------------------------------------
 	 */
-	virtual wxString GetEditorText() {return GetText();}
+	virtual wxString GetEditorText() {
+		return GetText();
+	}
 	virtual void SetEditorText(const wxString &text);
 	virtual void ReloadFile();
-	virtual void SetCaretAt(long pos);	
-	virtual long GetCurrentPosition(){return GetCurrentPos();}
-	virtual const wxFileName& GetFileName() const { return m_fileName; }
-	virtual const wxString &GetProjectName() const { return m_project; }
+	virtual void SetCaretAt(long pos);
+	virtual long GetCurrentPosition() {
+		return GetCurrentPos();
+	}
+	virtual const wxFileName& GetFileName() const {
+		return m_fileName;
+	}
+	virtual const wxString &GetProjectName() const {
+		return m_project;
+	}
 	virtual wxString GetWordAtCaret() ;
-	virtual void AppendText(const wxString &text) { wxScintilla::AppendText(text); }
-	virtual void InsertText(int pos, const wxString &text) { wxScintilla::InsertText(pos, text); }
-	virtual int GetLength() { return wxScintilla::GetLength(); }
-	virtual bool IsModified() {return wxScintilla::GetModify();}
-	virtual int GetEOL() {return wxScintilla::GetEOLMode();}
+	virtual void AppendText(const wxString &text) {
+		wxScintilla::AppendText(text);
+	}
+	virtual void InsertText(int pos, const wxString &text) {
+		wxScintilla::InsertText(pos, text);
+	}
+	virtual int GetLength() {
+		return wxScintilla::GetLength();
+	}
+	virtual bool IsModified() {
+		return wxScintilla::GetModify();
+	}
+	virtual int GetEOL() {
+		return wxScintilla::GetEOLMode();
+	}
 	virtual int GetCurrentLine();
 	virtual void ReplaceSelection(const wxString &text);
-	virtual wxString GetSelection(); 
+	virtual wxString GetSelection();
 	virtual void SelectText(int startPos, int len);
-	
+
 	// User Indicators API
 	virtual void SetUserIndicatorStyleAndColour(int style, const wxColour &colour);
 	virtual void SetUserIndicator(int startPos, int len);
@@ -377,7 +416,16 @@ public:
 	virtual int  GetUserIndicatorEnd(int pos);
 	virtual int GetLexerId();
 	virtual int GetStyleAtPos(int pos);
-	
+
+	//----------------------------------------------------------------------------
+	//----------------------------------------------------------------------------
+
+	void SetIsVisible(const bool& isVisible) {
+		this->m_isVisible = isVisible;
+	}
+	const bool& GetIsVisible() const {
+		return m_isVisible;
+	}
 private:
 	void DoSetBreakpoint(const BreakpointInfo &bp);
 	void SetProperties();
@@ -387,10 +435,10 @@ private:
 	void BraceMatch(const bool& bSelRegion);
 	void BraceMatch(long pos);
 	void DoHighlightWord();
-	
+
 	// Conevert FindReplaceDialog flags to wxSD flags
 	size_t SearchFlags(const FindReplaceData &data);
-	
+
 	void AddDebuggerContextMenu(wxMenu *menu);
 	void RemoveDebuggerContextMenu(wxMenu *menu);
 

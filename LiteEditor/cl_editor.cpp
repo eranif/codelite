@@ -80,7 +80,7 @@ const wxEventType wxEVT_CMD_UPDATE_STATUS_BAR = wxNewEventType();
 extern char *arrow_right_green_xpm[];
 extern char *stop_xpm[];
 
-extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen); 
+extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
 BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_SCI_CHARADDED(wxID_ANY, LEditor::OnCharAdded)
@@ -128,6 +128,7 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 		, m_popupIsOn(false)
 		, m_modifyTime(0)
 		, m_ccBox(NULL)
+		, m_isVisible(true)
 {
 	Show(!hidden);
 	ms_bookmarkShapes[wxT("Small Rectangle")] = wxSCI_MARK_SMALLRECT;
@@ -188,11 +189,11 @@ void LEditor::SetProperties()
 	SetProperty(wxT("fold.html"), wxT("1"));
 	SetProperty(wxT("styling.within.preprocessor"), wxT("1"));
 	SetProperty(wxT("fold.comment"), wxT("1"));
-	
+
 	SetProperty(wxT("fold.at.else"), options->GetFoldAtElse() ? wxT("1") : wxT("0"));
 	SetProperty(wxT("fold.preprocessor"), options->GetFoldPreprocessor() ? wxT("1") : wxT("0"));
 	SetProperty(wxT("fold.compact"), options->GetFoldCompact() ? wxT("1") : wxT("0"));
-	
+
 	// Fold and comments as well
 	SetProperty(wxT("fold.comment"), wxT("1"));
 	SetModEventMask (wxSCI_MOD_DELETETEXT | wxSCI_MOD_INSERTTEXT  | wxSCI_PERFORMED_UNDO  | wxSCI_PERFORMED_REDO );
@@ -361,7 +362,7 @@ void LEditor::SetProperties()
 	IndicatorSetUnder(1, false);
 	IndicatorSetUnder(2, false);
 	SetUserIndicatorStyleAndColour(wxSCI_INDIC_SQUIGGLE, wxT("RED"));
-	
+
 	wxColour col2(wxT("LIGHT BLUE"));
 	wxString val2 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
 	if (val2.IsEmpty() == false) {
@@ -375,15 +376,20 @@ void LEditor::SetProperties()
 void LEditor::SetDirty(bool dirty)
 {
 	if ( dirty ) {
-		if ( !ManagerST::Get()->GetPageTitle(this).StartsWith(wxT("*")) ) {
-			ManagerST::Get()->SetPageTitle(this, wxT("*") + ManagerST::Get()->GetPageTitle(this));
+		if ( GetIsVisible() ) {
+			if ( !ManagerST::Get()->GetPageTitle(this).StartsWith(wxT("*")) ) {
 
-			// update the main frame's title as well
-			Frame::Get()->SetFrameTitle(this);
+				ManagerST::Get()->SetPageTitle(this, wxT("*") + ManagerST::Get()->GetPageTitle(this));
+
+				// update the main frame's title as well
+				Frame::Get()->SetFrameTitle(this);
+			}
 		}
 	} else {
-		ManagerST::Get()->SetPageTitle(this, GetFileName().GetFullName());
-		Frame::Get()->SetFrameTitle(this);
+		if ( GetIsVisible() ) {
+			ManagerST::Get()->SetPageTitle(this, GetFileName().GetFullName());
+			Frame::Get()->SetFrameTitle(this);
+		}
 	}
 }
 
@@ -613,11 +619,11 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	wxFFile file(fileName.GetFullPath().GetData(), wxT("wb"));
 	if (file.IsOpened() == false) {
 		// Nothing to be done
-		if(wxMessageBox(wxString::Format(wxT("Failed to open file '%s' for write, Override it?"), fileName.GetFullPath().GetData()), wxT("CodeLite"), wxYES_NO|wxICON_WARNING) == wxYES){
+		if (wxMessageBox(wxString::Format(wxT("Failed to open file '%s' for write, Override it?"), fileName.GetFullPath().GetData()), wxT("CodeLite"), wxYES_NO|wxICON_WARNING) == wxYES) {
 			// try to override it
 			time_t curt = GetFileModificationTime(fileName.GetFullPath());
 			tmp_file << fileName.GetFullPath() << curt;
-			if(file.Open(tmp_file.c_str(), wxT("wb")) == false){
+			if (file.Open(tmp_file.c_str(), wxT("wb")) == false) {
 				wxMessageBox(wxString::Format(wxT("Failed to open file '%s' for write"), tmp_file.c_str()), wxT("CodeLite"), wxOK|wxICON_WARNING);
 				return false;
 			}
@@ -632,13 +638,13 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	file.Close();
 
 	// if the saving was done to a temporary file, override it
-	if(tmp_file.IsEmpty() == false){
-		if(wxRenameFile(tmp_file, fileName.GetFullPath(), true) == false){
+	if (tmp_file.IsEmpty() == false) {
+		if (wxRenameFile(tmp_file, fileName.GetFullPath(), true) == false) {
 			wxMessageBox(wxString::Format(wxT("Failed to override read-only file")), wxT("CodeLite"), wxOK|wxICON_WARNING);
 			return false;
 		}
 	}
-	
+
 	//update the modification time of the file
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
 	SetSavePoint();
@@ -1054,7 +1060,7 @@ void LEditor::SetActive()
 
 // Popup a Find/Replace dialog
 /**
- * \brief 
+ * \brief
  * \param isReplaceDlg
  */
 void LEditor::DoFindAndReplace(bool isReplaceDlg)
@@ -1276,36 +1282,38 @@ size_t LEditor::SearchFlags(const FindReplaceData &data)
 //----------------------------------------------
 void LEditor::ToggleCurrentFold()
 {
-  int line = GetCurrentLine();
-  if ( line >= 0 ) ToggleFold( line );
+	int line = GetCurrentLine();
+	if ( line >= 0 ) ToggleFold( line );
 }
 
-  // If the cursor is on/in/below an open fold, collapse all. Otherwise expand all
+// If the cursor is on/in/below an open fold, collapse all. Otherwise expand all
 void LEditor::FoldAll()
 {
-  // Colourise(0,-1);  SciTE did this here, but it doesn't seem to accomplish anything
+	// Colourise(0,-1);  SciTE did this here, but it doesn't seem to accomplish anything
 
-  // First find the current fold-point, and ask it whether or not it's folded
-  int lineSeek = GetCurrentLine();
-  while ( true ) {
-    if ( GetFoldLevel(lineSeek) & wxSCI_FOLDLEVELHEADERFLAG )  break;
-    int parentline = GetFoldParent( lineSeek );  // See if we're inside a fold area
-    if ( parentline >= 0 ) { lineSeek = parentline; break; }
-     else lineSeek--; // Must have been between folds
-    if ( lineSeek < 0 ) return;
-  }
-  bool expanded = GetFoldExpanded(lineSeek);
+	// First find the current fold-point, and ask it whether or not it's folded
+	int lineSeek = GetCurrentLine();
+	while ( true ) {
+		if ( GetFoldLevel(lineSeek) & wxSCI_FOLDLEVELHEADERFLAG )  break;
+		int parentline = GetFoldParent( lineSeek );  // See if we're inside a fold area
+		if ( parentline >= 0 ) {
+			lineSeek = parentline;
+			break;
+		} else lineSeek--; // Must have been between folds
+		if ( lineSeek < 0 ) return;
+	}
+	bool expanded = GetFoldExpanded(lineSeek);
 
-  // Now go through the whole document, toggling folds that match the original one
-  int maxLine = GetLineCount();
-  for (int line = 0; line < maxLine; line++) {  // For every line
-    int level = GetFoldLevel(line);
-  // The next statement means: If this level is a Fold start
-    if ((level & wxSCI_FOLDLEVELHEADERFLAG) &&
-            (wxSCI_FOLDLEVELBASE == (level & wxSCI_FOLDLEVELNUMBERMASK))) {
-      if ( GetFoldExpanded(line) == expanded ) ToggleFold( line );
-    }
-  }
+	// Now go through the whole document, toggling folds that match the original one
+	int maxLine = GetLineCount();
+	for (int line = 0; line < maxLine; line++) {  // For every line
+		int level = GetFoldLevel(line);
+		// The next statement means: If this level is a Fold start
+		if ((level & wxSCI_FOLDLEVELHEADERFLAG) &&
+		        (wxSCI_FOLDLEVELBASE == (level & wxSCI_FOLDLEVELNUMBERMASK))) {
+			if ( GetFoldExpanded(line) == expanded ) ToggleFold( line );
+		}
+	}
 }
 //----------------------------------------------
 // Bookmarks

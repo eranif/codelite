@@ -2109,7 +2109,10 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 
 	// create an empty hidden instance of LEditor
 	LEditor *editor = new LEditor(Frame::Get()->GetNotebook(), wxID_ANY, wxSize(1, 1), wxEmptyString, wxEmptyString, true);
-
+	
+	// mark it as non visible control, so frame title updates will not take place
+	editor->SetIsVisible(false);
+	
 	// Get expressions for the CC to work with:
 	RefactorSource target;
 	std::list<CppToken> candidates;

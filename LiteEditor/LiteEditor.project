@@ -208,6 +208,7 @@
       <File Name="aboutdlg.h"/>
       <File Name="aboutdlgbase.h"/>
       <File Name="aboutdlgbase.cpp"/>
+      <File Name="contributers.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">

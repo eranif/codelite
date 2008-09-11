@@ -1,11 +1,10 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#include <wx/xrc/xmlres.h>
 #include "aboutdlgbase.h"
 
 ///////////////////////////////////////////////////////////////////////////
@@ -17,8 +16,31 @@ AboutDlgBase::AboutDlgBase( wxWindow* parent, wxWindowID id, const wxString& tit
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_bitmap = new wxStaticBitmap( this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("About")), wxDefaultPosition, wxDefaultSize, 0 );
-	mainSizer->Add( m_bitmap, 1, wxEXPAND, 5 );
+	m_notebook1 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_panel1 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer3;
+	bSizer3 = new wxBoxSizer( wxVERTICAL );
+	
+	m_bitmap = new wxStaticBitmap( m_panel1, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer3->Add( m_bitmap, 1, wxEXPAND, 5 );
+	
+	m_panel1->SetSizer( bSizer3 );
+	m_panel1->Layout();
+	bSizer3->Fit( m_panel1 );
+	m_notebook1->AddPage( m_panel1, wxT("About"), true );
+	m_panel4 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer4;
+	bSizer4 = new wxBoxSizer( wxVERTICAL );
+	
+	m_htmlWin3 = new wxHtmlWindow( m_panel4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
+	bSizer4->Add( m_htmlWin3, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	m_panel4->SetSizer( bSizer4 );
+	m_panel4->Layout();
+	bSizer4->Fit( m_panel4 );
+	m_notebook1->AddPage( m_panel4, wxT("Credits"), false );
+	
+	mainSizer->Add( m_notebook1, 1, wxEXPAND | wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );

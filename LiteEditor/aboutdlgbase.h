@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -17,9 +17,12 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/string.h>
+#include <wx/sizer.h>
+#include <wx/panel.h>
+#include <wx/html/htmlwin.h>
+#include <wx/notebook.h>
 #include <wx/stattext.h>
 #include <wx/hyperlink.h>
-#include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -35,7 +38,11 @@ class AboutDlgBase : public wxDialog
 	private:
 	
 	protected:
+		wxNotebook* m_notebook1;
+		wxPanel* m_panel1;
 		wxStaticBitmap* m_bitmap;
+		wxPanel* m_panel4;
+		wxHtmlWindow* m_htmlWin3;
 		wxStaticText* m_staticTextHomePage;
 		wxHyperlinkCtrl* m_hyperlink1;
 		wxStaticText* m_staticText2;

@@ -451,14 +451,9 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 		wxString ext = f.Item(i).AfterLast(wxT('.'));
 		if (ext.empty()) {
 			// add extensionless files (first checking for duplicates)
-			if (files.Index( f.Item(i)) == wxNOT_FOUND){
-				files.Add(f.Item(i));
-			}
+			files.Add(f.Item(i));
 		} else if (spec.find(ext.MakeLower()) != spec.end()) {
-			//this extension exists, add the file (first checking for duplicates)
-			if (files.Index( f.Item(i)) == wxNOT_FOUND){
-				files.Add(f.Item(i));
-			}
+			files.Add(f.Item(i));
 		}
 	}
 }

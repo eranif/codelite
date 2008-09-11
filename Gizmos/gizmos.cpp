@@ -285,7 +285,8 @@ void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
 		content.Replace(wxT("$(BaseFileName)"), baseFileName);
 		content.Replace(wxT("$(PluginShortName)"), data.GetPluginName());
 		content.Replace(wxT("$(PluginLongName)"), data.GetPluginDescription());
-
+		content.Replace(wxT("$(UserName)"), wxGetUserName().c_str());
+		
 		file.Open(srcFile, wxT("w+b"));
 		file.Write(content);
 		file.Close();
@@ -303,7 +304,8 @@ void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
 		content.Replace(wxT("$(BaseFileName)"), baseFileName);
 		content.Replace(wxT("$(PluginShortName)"), data.GetPluginName());
 		content.Replace(wxT("$(PluginLongName)"), data.GetPluginDescription());
-
+		content.Replace(wxT("$(UserName)"), wxGetUserName().c_str());
+		
 		file.Open(headerFile, wxT("w+b"));
 		file.Write(content);
 		file.Close();

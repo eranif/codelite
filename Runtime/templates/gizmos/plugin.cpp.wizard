@@ -15,7 +15,7 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 extern "C" EXPORT PluginInfo GetPluginInfo()
 {
 	PluginInfo info;
-	info.SetAuthor(wxGetUserName());
+	info.SetAuthor(wxT("$(UserName)"));
 	info.SetName(wxT("$(PluginShortName)"));
 	info.SetDescription(wxT("$(PluginLongName)"));
 	info.SetVersion(wxT("v1.0"));

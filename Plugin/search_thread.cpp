@@ -430,6 +430,7 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 		uniqueFileList.insert(files.Item(i));
 	}
 	
+	files.Clear();
 	// remove duplicate files from the file array
 	std::set<wxString>::iterator iter = uniqueFileList.begin();
 	for(; iter != uniqueFileList.end(); iter++){

@@ -338,8 +338,8 @@ CompilerPage::CompilerPage( wxWindow* parent, wxString name, int id, wxPoint pos
 	m_listSwitches->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerPage::OnItemActivated ), NULL, this );
 	m_listSwitches->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerPage::OnItemSelected ), NULL, this );
 	m_listCtrlFileTypes->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerPage::OnFileTypeActivated ), NULL, this );
-	m_listCtrlFileTypes->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CompilerPage::OnFileTypeDeSelected ), NULL, this );
 	m_listCtrlFileTypes->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerPage::OnFileTypeSelected ), NULL, this );
+	m_listCtrlFileTypes->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CompilerPage::OnFileTypeDeSelected ), NULL, this );
 	m_buttonNewFileType->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPage::OnNewFileType ), NULL, this );
 	m_buttonDeleteFileType->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerPage::OnDeleteFileType ), NULL, this );
 
@@ -508,16 +508,21 @@ void CompilerPage::OnFileTypeActivated(wxListEvent& event)
 			SetColumnText(m_listCtrlFileTypes, m_selectedFileType, 1, dlg.GetKind());
 		}
 	}
+	event.Skip();
 }
 
 void CompilerPage::OnFileTypeDeSelected(wxListEvent& event)
 {
+#ifndef __WXMAC__	
 	m_selectedFileType = wxNOT_FOUND;
+#endif	
+	event.Skip();
 }
 
 void CompilerPage::OnFileTypeSelected(wxListEvent& event)
 {
 	m_selectedFileType = event.m_itemIndex;
+	event.Skip();
 }
 
 void CompilerPage::OnDeleteFileType(wxCommandEvent& event)

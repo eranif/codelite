@@ -1053,6 +1053,10 @@ void LEditor::SetActive()
 }
 
 // Popup a Find/Replace dialog
+/**
+ * \brief 
+ * \param isReplaceDlg
+ */
 void LEditor::DoFindAndReplace(bool isReplaceDlg)
 {
 	if ( m_findReplaceDlg == NULL ) {

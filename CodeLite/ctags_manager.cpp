@@ -1464,6 +1464,9 @@ void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> 
 		// are we using cache?
 		if(GetCtagsOptions().GetFlags() & CC_CACHE_WORKSPACE_TAGS){
 			cachedEntry = m_workspaceDbCache->FindByQuery(sql);
+			if(cachedEntry){
+//				wxLogMessage(wxString::Format(wxT("Found entry in cache: %s"), sql.c_str()));
+			}
 		}
 		
 		if ( !cachedEntry ) {

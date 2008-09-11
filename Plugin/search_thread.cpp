@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <set>
 #include "editor_config.h"
 #include "search_thread.h"
 #include "wx/event.h"
@@ -424,14 +425,27 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 		}
 	}
 
-	// loop over the files and compare against the list of spec
+	std::set<wxString> uniqueFileList;
+	for(size_t i=0; i<files.GetCount(); i++){
+		uniqueFileList.insert(files.Item(i));
+	}
+	
+	// remove duplicate files from the file array
+	std::set<wxString>::iterator iter = uniqueFileList.begin();
+	for(; iter != uniqueFileList.end(); iter++){
+		files.Add(*iter);
+	}
+	
+	// if there is no spec, we are done here
 	if (spec.empty()) {
 		return;
 	}
 
+	// loop over the files and compare against the list of spec
 	wxArrayString f = files;
-
 	files.Clear();
+	
+	// filter files by extension
 	for (size_t i=0; i<f.GetCount(); i++) {
 		wxString ext = f.Item(i).AfterLast(wxT('.'));
 		if (ext.empty()) {

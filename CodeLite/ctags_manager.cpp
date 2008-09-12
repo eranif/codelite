@@ -617,8 +617,11 @@ void TagsManager::TagsByScopeAndName(const wxString& scope, const wxString &name
 	wxString sql;
 	std::vector<wxString> derivationList;
 	//add this scope as well to the derivation list
-	derivationList.push_back(scope);
-	GetDerivationList(scope, derivationList);
+	
+	wxString _scopeName = DoReplaceMacros( scope );
+	derivationList.push_back(_scopeName);
+	
+	GetDerivationList(_scopeName, derivationList);
 
 	//make enough room for max of 500 elements in the vector
 	tags.reserve(500);
@@ -644,8 +647,10 @@ void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr> &t
 	wxString sql;
 	std::vector<wxString> derivationList;
 	//add this scope as well to the derivation list
-	derivationList.push_back(scope);
-	GetDerivationList(scope, derivationList);
+	wxString _scopeName = DoReplaceMacros( scope );
+	derivationList.push_back(_scopeName);
+	
+	GetDerivationList(_scopeName, derivationList);
 
 	//make enough room for max of 500 elements in the vector
 	tags.reserve(500);
@@ -2172,8 +2177,9 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 	std::vector<wxString> derivationList;
 
 	//add this scope as well to the derivation list
-	derivationList.push_back(scopeName);
-	GetDerivationList(scopeName, derivationList);
+	wxString _scopeName = DoReplaceMacros( scopeName );
+	derivationList.push_back(_scopeName);
+	GetDerivationList(_scopeName, derivationList);
 
 	//make enough room for max of 500 elements in the vector
 	tags.reserve(500);
@@ -2198,13 +2204,7 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 		wxString tmpScope(derivationList.at(i));
 		tmpScope = DoReplaceMacros(tmpScope);
 		
-		// incase we have anonymouse unions, we should inclued their values as well
-		wxString anon_sql;
-//		if (include_anon) {
-//			anon_sql << wxT(" OR scope GLOB '") << tmpScope << wxT("::__anon*' ") ;
-//		}
-//
-		sql << wxT("select * from tags where (scope='") << tmpScope << wxT("' ") << anon_sql << wxT(") ") << kindClaus;
+		sql << wxT("select * from tags where (scope='") << tmpScope << wxT("') ") << kindClaus;
 		DoExecuteQueury(sql, tags);
 	}
 

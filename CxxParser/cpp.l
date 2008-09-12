@@ -317,7 +317,14 @@ bool isaTYPE(char *string)
 
 bool isignoredToken(char *string)
 {
-	return g_ignoreList.find(string) != g_ignoreList.end();
+	std::map<std::string, std::string>::iterator iter = g_ignoreList.find(string);
+	if(iter == g_ignoreList.end()){
+		/* this string is not in the ignore macro list */
+		return false;
+	} else {
+		/* it exist, but maybe it has a replacement */
+		return iter->second.empty();
+	}
 }
 
 bool isaMACRO(char *string)

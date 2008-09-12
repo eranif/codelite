@@ -53,7 +53,6 @@ class WXDLLIMPEXP_LE_SDK OptionsConfig : public ConfObject
 	bool m_displayLineNumbers;
 	bool m_showIndentationGuidelines;
 	wxColour m_caretLineColour;
-	wxColour m_caretColour;
 	bool	m_indentUsesTabs;
 	int		m_iconsSize;
 	wxFontEncoding m_fileFontEncoding;
@@ -93,8 +92,6 @@ public:
 	void SetShowIndentationGuidelines(bool b){ m_showIndentationGuidelines = b; }
 	void SetCaretLineColour(wxColour c) { m_caretLineColour = c;}
 	
-	void SetCaretColour(const wxColour& caretColour) {this->m_caretColour = caretColour;}
-	const wxColour& GetCaretColour() const {return m_caretColour;}
 	void SetIndentUsesTabs(const bool& indentUsesTabs) {this->m_indentUsesTabs = indentUsesTabs;}
 	const bool& GetIndentUsesTabs() const {return m_indentUsesTabs;}
 	

@@ -20,11 +20,11 @@
 #include "wxSerialize.h"
 
 wxSerialize::wxSerialize(wxInputStream &stream, size_t version, const wxString &header, bool partialMode)
-	: m_writeMode(false)
-	, m_idstr(stream)
-	, m_partialMode(partialMode)
-	, m_otmp(&m_tmpostr)
+	: m_partialMode(partialMode)
+	, m_writeMode(false)
 	, m_odstr(m_otmp)
+	, m_idstr(stream)
+	, m_otmp(&m_tmpostr)
 	, m_itmp(m_tmpistr)
 {
     InitAll();
@@ -86,14 +86,14 @@ wxSerialize::wxSerialize(wxInputStream &stream, size_t version, const wxString &
 }
 
 wxSerialize::wxSerialize(wxOutputStream &stream, size_t version, const wxString &header, bool partialMode)
-	: m_writeMode(true)
-	, m_odstr(stream)
+	: m_headerStr(header)
+	, m_version(version)
 	, m_partialMode(partialMode)
-	, m_itmp(m_tmpistr)
+	, m_writeMode(true)
+	, m_odstr(stream)
 	, m_idstr(m_itmp)
 	, m_otmp(&m_tmpostr)
-	, m_version(version)
-	, m_headerStr(header)
+	, m_itmp(m_tmpistr)
 {
     InitAll();
 
@@ -734,7 +734,7 @@ wxString wxSerialize::LoadString()
             // conversion then it's tough luck as this build is not unicode then
             str.Alloc(len+1);
             wxInt16 *buf = new wxInt16[len+1];
-            for(int i = 0; i < len; i++)
+            for(int i = 0; i < (int)len; i++)
             {
                 // we need to load per 16 bits because they
                 // need to optionally be swapped to convert
@@ -745,7 +745,6 @@ wxString wxSerialize::LoadString()
             delete[] buf;
 		}
 	}
-
 	return str;
 }
 
@@ -1083,7 +1082,7 @@ void wxSerialize::SaveString(const wxString &value)
 		    // we write in unicode even when we are not compiled
 		    // in unicode. This means writing pairs of wxInt16
 		    // bytes. We need optional conversion in wxUint16
-            for(int i = 0; i < len; i++)
+            for(int i = 0; i < (int)len; i++)
                 SaveUint16((wxUint16)value.GetChar(i));
 		}
 	}

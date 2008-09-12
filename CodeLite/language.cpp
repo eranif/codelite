@@ -274,14 +274,16 @@ bool Language::ProcessExpression(const wxString& stmt,
 		m_parentVar.Reset();
 		wxString templateInitList;
 		result = ParseExpression(word);
-		word.clear();
+		
 
 		//parsing failed?
 		if (result.m_name.empty()) {
+			wxLogMessage(wxString::Format(wxT("Failed to parse '%s' from '%s'"), word.c_str(), statement.c_str()));
 			evaluationSucceeded = false;
 			break;
 		}
-
+		
+		word.clear();
 		//no tokens before this, what we need to do now, is find the TagEntry
 		//that corrseponds to the result
 		if (result.m_isaType) {
@@ -298,19 +300,24 @@ bool Language::ProcessExpression(const wxString& stmt,
 
 			typeScope = result.m_scope.empty() ? wxT("<global>") : _U(result.m_scope.c_str());
 			if (scopeName == wxT("<global>")) {
+				wxLogMessage(wxString::Format(wxT("'this' can not be used in the global scope")));
 				evaluationSucceeded = false;
 				break;
 			}
 			if (op == wxT("::")) {
+				wxLogMessage(wxString::Format(wxT("'this' can not be used with operator ::")));
+			
 				evaluationSucceeded = false;
 				break;
 			} // if(oper == wxT("::"))
 
 			if (result.m_isPtr && op == wxT(".")) {
+				wxLogMessage(wxString::Format(wxT("Did you mean to use '->' instead of '.' ?")));
 				evaluationSucceeded = false;
 				break;
 			}
 			if (!result.m_isPtr && op == wxT("->")) {
+				wxLogMessage(wxString::Format(wxT("Can not use '->' operator on a non pointer object")));
 				evaluationSucceeded = false;
 				break;
 			}
@@ -356,7 +363,8 @@ bool Language::ProcessExpression(const wxString& stmt,
 
 			//get the derivation list of the typename
 			bool res(false);
-			res = TypeFromName(	_U(result.m_name.c_str()),
+			wxString _name(_U(result.m_name.c_str()));
+			res = TypeFromName(	_name,
 			                    visibleScope,
 			                    lastFuncSig,
 			                    scopeToSearch,
@@ -368,7 +376,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 				evaluationSucceeded = false;
 				break;
 			}
-
+			
 			//do typedef subsitute
 			wxString tmp_name(typeName);
 			while (OnTypedef(typeName, typeScope, templateInitList, scopeName)) {
@@ -392,12 +400,12 @@ bool Language::ProcessExpression(const wxString& stmt,
 				}
 			}
 
-			//try match any overloading operator to the typeName
+			// try match any overloading operator to the typeName
 			wxString tmpTypeName(typeName);
 			if ( op == wxT("->") && OnArrowOperatorOverloading(typeName, typeScope) ) {
 
-				//there is an operator overloading for ->
-				//do the whole typedef/template subsitute again
+				// there is an operator overloading for ->
+				// do the whole typedef/template subsitute again
 				wxString tmp_name(typeName);
 				while (OnTypedef(typeName, typeScope, templateInitList, scopeName)) {
 					if (tmp_name == typeName) {
@@ -407,9 +415,9 @@ bool Language::ProcessExpression(const wxString& stmt,
 					tmp_name = typeName;
 				}
 
-				//When template is found, replace the typeName with the temporary type name
-				//usually it will replace 'T' with the parent type, such as
-				//'Singleton'
+				// When template is found, replace the typeName with the temporary type name
+				// usually it will replace 'T' with the parent type, such as
+				// 'Singleton'
 				if (templateInitList.IsEmpty() == false) {
 					m_parentVar.m_isTemplate = true;
 					m_parentVar.m_templateDecl = _C(templateInitList);
@@ -417,7 +425,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 					m_parentVar.m_typeScope = _C(typeScope);
 				}
 
-				//do template subsitute
+				// do template subsitute
 				if (OnTemplates(typeName, typeScope, m_parentVar)) {
 					//do typedef subsitute
 					wxString tmp_name(typeName);
@@ -970,9 +978,6 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 		if (allthesame && !tags.empty()) {
 			return true;
 		}
-		wxString msg;
-		msg << wxT("Too many matches for ") << name << wxT(", using scope: ") << scopeName;
-//		wxLogMessage(msg);
 		return false;
 	}
 	return false;

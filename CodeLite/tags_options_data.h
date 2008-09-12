@@ -76,6 +76,7 @@ public:
 	const wxArrayString &GetLanguages() const {return m_languages;}
 	const wxArrayString& GetPreprocessor() const {return m_prep;}
 	std::map<std::string, std::string> GetPreprocessorAsMap() const;
+	std::map<wxString, wxString> GetPreprocessorAsWxMap() const;
 	
 	const size_t& GetFlags() const {return m_ccFlags;}
 	const wxString &GetFileSpec() const{return m_fileSpec;}

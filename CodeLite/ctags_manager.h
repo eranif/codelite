@@ -746,6 +746,8 @@ protected:
 	void FilterImplementation(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	void FilterDeclarations(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	void ConvertPath(TagEntryPtr& tag);
+	
+	wxString DoReplaceMacros(wxString name);
 };
 
 /// create the singleton typedef

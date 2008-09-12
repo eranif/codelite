@@ -134,8 +134,9 @@ std::map<std::string,std::string> TagsOptionsData::GetPreprocessorAsMap() const
 	std::map<std::string,std::string> tokens;
 	for (size_t i=0; i<m_prep.GetCount(); i++) {
 		//const wxCharBuffer bufKey = _C(
-		wxString k = m_prep.Item(i).BeforeFirst(wxT('='));
-		wxString v = m_prep.Item(i).AfterFirst(wxT('='));
+		wxString item = m_prep.Item(i).Trim().Trim(false);
+		wxString k = item.BeforeFirst(wxT('='));
+		wxString v = item.AfterFirst(wxT('='));
 
 		const wxCharBuffer bufKey = _C(k);
 		std::string key = bufKey.data();
@@ -145,6 +146,18 @@ std::map<std::string,std::string> TagsOptionsData::GetPreprocessorAsMap() const
 			value = bufValue.data();
 		}
 		tokens[key] = value;
+	}
+	return tokens;
+}
+
+std::map<wxString, wxString> TagsOptionsData::GetPreprocessorAsWxMap() const
+{
+	std::map<wxString, wxString> tokens;
+	for (size_t i=0; i<m_prep.GetCount(); i++) {
+		wxString item = m_prep.Item(i).Trim().Trim(false);
+		wxString k = item.BeforeFirst(wxT('='));
+		wxString v = item.AfterFirst(wxT('='));
+		tokens[k] = v;
 	}
 	return tokens;
 }

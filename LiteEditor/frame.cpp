@@ -1922,7 +1922,17 @@ void Frame::OnBuildProject(wxCommandEvent &event)
 	wxUnusedVar(event);
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
-		QueueCommand info(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::Build);
+		
+		wxString conf, projectName;
+		projectName = ManagerST::Get()->GetActiveProjectName();
+		
+		// get the selected configuration to be built
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+		if(bldConf) {
+			conf = bldConf->GetName();
+		}
+		
+		QueueCommand info(projectName, conf, false, QueueCommand::Build);
 		ManagerST::Get()->BuildProject( info );
 	}
 }
@@ -1985,7 +1995,17 @@ void Frame::OnStopExecutedProgram(wxCommandEvent &event)
 void Frame::OnCleanProject(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	QueueCommand buildInfo(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::Clean);
+	
+	wxString conf, projectName;
+	projectName = ManagerST::Get()->GetActiveProjectName();
+	
+	// get the selected configuration to be built
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+	if(bldConf) {
+		conf = bldConf->GetName();
+	}
+
+	QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
 	ManagerST::Get()->CleanProject( buildInfo );
 }
 

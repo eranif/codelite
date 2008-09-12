@@ -652,12 +652,16 @@ void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr> &t
 
 	for (size_t i=0; i<derivationList.size(); i++) {
 		sql.Empty();
+		
 		wxString tmpScope(derivationList.at(i));
+		tmpScope = DoReplaceMacros(tmpScope);
+		
 		sql << wxT("select * from tags where scope='") << tmpScope << wxT("'  ");
 		DoExecuteQueury(sql, tags);
+		
 	}
+	
 	// and finally sort the results
-
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
 
 }
@@ -740,6 +744,7 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 
 	bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 	if (!res) {
+		wxLogMessage(wxString::Format(wxT("Failed to resolve %s"), expression.c_str()));
 		return false;
 	}
 
@@ -751,7 +756,6 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		scope << typeScope << wxT("::") << typeName;
 
 	//this function will retrieve the ineherited tags as well
-
 	//incase the last operator used was '::', retrieve all kinds of tags. Otherwise (-> , . operators were used)
 	//retrieve only the members/prototypes/functions/enums
 	wxArrayString filter;
@@ -1315,7 +1319,9 @@ void TagsManager::StoreComments(const std::vector<DbRecordPtr> &comments, const 
 
 void TagsManager::FindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags)
 {
-	DoFindByNameAndScope(name, scope, tags);
+	wxString _name = DoReplaceMacros(name);
+	wxString _scope = DoReplaceMacros(scope);
+	DoFindByNameAndScope(_name, _scope, tags);
 
 	// Sort the results base on their name
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
@@ -1366,23 +1372,27 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 		return iter->second;
 	}
 
-	long value(0);
+	// replace macros:  
+	// replace the provided typeName and scope with user defined macros as appeared in the PreprocessorMap
+	wxString _typeName = DoReplaceMacros(typeName);
+	wxString _scope = DoReplaceMacros(scope);
+	
 	wxString sql;
-	sql << wxT("select ID from tags where name='") << typeName << wxT("' and scope='") << scope << wxT("' LIMIT 1");
+	sql << wxT("select ID from tags where name='") << _typeName << wxT("' and scope='") << _scope << wxT("' LIMIT 1");
 
 	for (size_t i=0; i<2; i++) {
 
 		if (i == 1) {
 			// Second try, change the SQL query to test against the global scope
 			sql.Clear();
-			sql << wxT("select ID from tags where name='") << typeName << wxT("' and scope='<global>' LIMIT 1");
+			sql << wxT("select ID from tags where name='") << _typeName << wxT("' and scope='<global>' LIMIT 1");
 		}
 
 		wxSQLite3ResultSet rs = m_pDb->Query(sql);
 		try {
 			if (rs.NextRow()) {
 				if (i == 1) {
-					scope = wxT("<global>");
+					_scope = wxT("<global>");
 				}
 				return true;
 				
@@ -1394,7 +1404,7 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 				ex_rs = m_pExternalDb->Query(sql);
 				if ( ex_rs.NextRow() ) {
 					if (i == 1) {
-						scope = wxT("<global>");
+						_scope = wxT("<global>");
 						return true;
 					}
 					m_typeScopeCache[cacheKey] = true;
@@ -2186,7 +2196,8 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 	for (size_t i=0; i<derivationList.size(); i++) {
 		sql.Empty();
 		wxString tmpScope(derivationList.at(i));
-
+		tmpScope = DoReplaceMacros(tmpScope);
+		
 		// incase we have anonymouse unions, we should inclued their values as well
 		wxString anon_sql;
 //		if (include_anon) {
@@ -2370,4 +2381,22 @@ TagEntryPtr TagsManager::GetWorkspaceTagById(int id)
 		return tags.at(0);
 	}
 	return NULL;
+}
+
+wxString TagsManager::DoReplaceMacros(wxString name)
+{
+	// replace macros:  
+	// replace the provided typeName and scope with user defined macros as appeared in the PreprocessorMap
+	wxString _name(name);
+	
+	std::map<wxString, wxString> iTokens = GetCtagsOptions().GetPreprocessorAsWxMap();
+	std::map<wxString, wxString>::iterator it = iTokens.end();
+	
+	it = iTokens.find(name);
+	if(it != iTokens.end()){
+		if(it->second.empty() == false){
+			_name = it->second;
+		}
+	}
+	return _name;
 }

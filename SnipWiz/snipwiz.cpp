@@ -364,18 +364,18 @@ void SnipWiz::OnSettings( wxCommandEvent& e )
 // generate some default entries
 void SnipWiz::IntSnippets()
 {
-	m_StringDb.SetSnippetString( wxT( "//-" ), wxT( "//------------------------------------------------------------$" ) );
-	m_StringDb.SetSnippetString( wxT( "wxT(\"" ), wxT( "wxT(\"$\")" ) );
-	m_StringDb.SetSnippetString( wxT( "wxT(@" ), wxT( "wxT( @ )" ) );
-	m_StringDb.SetSnippetString( wxT( "if(@" ) , wxT( "if ( @ )\n{\n\t$\n}" ) );
-	m_StringDb.SetSnippetString( wxT( "whi(@" ) , wxT( "while ( @ )\n{\n\t$\n}" ) );
-	m_StringDb.SetSnippetString( wxT( "(@)" ), wxT( "( @ )$" ) );
-	m_StringDb.SetSnippetString( wxT( "{@}" ) , wxT( "{ @ }$" ) );
-	m_StringDb.SetSnippetString( wxT( "[@]" ), wxT( "[ @ ]$" ) );
-	m_StringDb.SetSnippetString( wxT( "wxU(@" ), wxT( "wxUnusedVar( @ );$" ) );
-	m_StringDb.SetSnippetString( wxT( "for(@" ), wxT( "for( @ = 0; @  < $; @++ )$" ) );
-	m_StringDb.SetSnippetString( wxT( "for(Ii" ), wxT( "for( int i = 0; i  < @; i++ )$" ) );
-	m_StringDb.SetSnippetString( wxT( "for(Ui" ), wxT( "for( unsigned int i = 0; i  < @; i++ )$" ) );
+	m_StringDb.SetSnippetString( wxT( "//-" ), wxT( "//------------------------------------------------------------@" ) );
+	m_StringDb.SetSnippetString( wxT( "wxT(\"" ), wxT( "wxT(\"@\")" ) );
+	m_StringDb.SetSnippetString( wxT( "wxT($" ), wxT( "wxT( $ )" ) );
+	m_StringDb.SetSnippetString( wxT( "if($" ) , wxT( "if ( $ )\n{\n\t@\n}" ) );
+	m_StringDb.SetSnippetString( wxT( "whi($" ) , wxT( "while ( $ )\n{\n\t@\n}" ) );
+	m_StringDb.SetSnippetString( wxT( "($)" ), wxT( "( $ )@" ) );
+	m_StringDb.SetSnippetString( wxT( "{$}" ) , wxT( "{ $ }@" ) );
+	m_StringDb.SetSnippetString( wxT( "[$]" ), wxT( "[ $ ]@" ) );
+	m_StringDb.SetSnippetString( wxT( "wxU($" ), wxT( "wxUnusedVar( $ );@" ) );
+	m_StringDb.SetSnippetString( wxT( "for($" ), wxT( "for( $ = 0; $  < @; $++ )" ) );
+	m_StringDb.SetSnippetString( wxT( "for(Ii" ), wxT( "for( int i = 0; i  < $; i++ )@" ) );
+	m_StringDb.SetSnippetString( wxT( "for(Ui" ), wxT( "for( unsigned int i = 0; i  < $; i++ )@" ) );
 }
 
 //------------------------------------------------------------

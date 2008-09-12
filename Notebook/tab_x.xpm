@@ -1,4 +1,4 @@
-const char* _tab_x_button_xpm[] = {
+static const char* _tab_x_button_xpm[] = {
 /* width height num_colors chars_per_pixel */
 "    16    16        8            1",
 /* colors */

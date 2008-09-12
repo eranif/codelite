@@ -31,7 +31,7 @@
 // Images used by the checktreectrl
 
 /* XPM */
-static char *Checkbox_off_xpm[] = {
+static const char *Checkbox_off_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 11 1",
 "$ c #F7F7F7",
@@ -66,7 +66,7 @@ static char *Checkbox_off_xpm[] = {
 
 
 /* XPM */
-static char *Checkbox_on_xpm[] = {
+static const char *Checkbox_on_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 10 1",
 "# c #F7F7F7",

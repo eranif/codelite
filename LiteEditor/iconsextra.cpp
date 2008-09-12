@@ -43,7 +43,7 @@ unsigned char cubes_alpha[]={
 };
 
 /* XPM */
-char *cubes_xpm[] = {
+const char *cubes_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 159 2",
 ",. c #3DBB20",
@@ -226,7 +226,7 @@ char *cubes_xpm[] = {
 
 
 /* XPM */
-char *arrow_right_green_xpm[] = {
+const char *arrow_right_green_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 91 1",
 "  c Black",
@@ -341,7 +341,7 @@ char *arrow_right_green_xpm[] = {
 
 
 /* XPM */
-char *stop_xpm[] = {
+const char *stop_xpm[] = {
 /* width height num_colors chars_per_pixel */
 "    16    16        8            1",
 /* colors */

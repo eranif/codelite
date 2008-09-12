@@ -1,5 +1,5 @@
 /* XPM */
-static char *bg_bright_xpm[] = {
+static const char *bg_bright_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "101 34 254 2",
 "1  c #CACAC9",

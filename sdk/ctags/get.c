@@ -24,6 +24,8 @@
 #include "read.h"
 #include "vstring.h"
 
+extern vString *QuotedString;
+
 /*
 *   MACROS
 */
@@ -485,13 +487,25 @@ static int skipOverCplusComment (void)
 static int skipToEndOfString (boolean ignoreBackslash)
 {
 	int c;
-
+	
+	if(QuotedString == NULL) {
+		QuotedString = vStringNew();
+	}
+	
+	vStringClear(QuotedString);
+	vStringCatS(QuotedString, "\"");
+	
 	while ((c = fileGetc ()) != EOF)
 	{
-		if (c == BACKSLASH && ! ignoreBackslash)
+		if (c == BACKSLASH && ! ignoreBackslash){
 			fileGetc ();  /* throw away next character, too */
-		else if (c == DOUBLE_QUOTE)
+		} else if (c == DOUBLE_QUOTE) {
+			vStringPut(QuotedString, c);
+			vStringTerminate(QuotedString);
 			break;
+		} else {
+			vStringPut(QuotedString, c);
+		}
 	}
 	return STRING_SYMBOL;  /* symbolic representation of string */
 }

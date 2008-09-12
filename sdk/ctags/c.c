@@ -258,6 +258,7 @@ static langType Lang_csharp;
 static langType Lang_java;
 static langType Lang_vera;
 static vString *Signature;
+vString *QuotedString = NULL;
 static boolean CollectingSignature;
 
 /* Number used to uniquely identify anonymous structs and unions. */
@@ -1381,8 +1382,16 @@ static void skipToMatch (const char *const pair)
 
 	while (matchLevel > 0  &&  (c = skipToNonWhite ()) != EOF)
 	{
-		if (CollectingSignature)
-			vStringPut (Signature, c);
+		if (CollectingSignature) {
+			if(c == STRING_SYMBOL){
+				vStringCatS(Signature, QuotedString->buffer);
+				vStringDelete(QuotedString);
+				QuotedString = NULL;
+			} else {
+				vStringPut (Signature, c);
+			}
+		}
+		
 		if (c == begin)
 		{
 			++matchLevel;

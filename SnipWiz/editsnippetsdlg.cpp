@@ -50,6 +50,10 @@ void EditSnippetsDlg::OnChangeSnippet( wxCommandEvent& event )
 		return;
 	}
 	
+	// if menu entry has changed, delete old entry in list
+	if(curListKey.Cmp(m_textCtrlMenuEntry->GetValue()) != 0)
+		GetStringDb()->DeleteSnippetKey(curListKey);
+		
 	GetStringDb()->SetSnippetString(m_textCtrlMenuEntry->GetValue(), m_textCtrlSnippet->GetValue());
 	m_listBox1->SetString(index, m_textCtrlMenuEntry->GetValue());
 	m_modified = true;

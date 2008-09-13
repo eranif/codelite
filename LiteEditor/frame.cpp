@@ -23,7 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
-/*#include "virtualdirectoryselector.h"*/
 #include "quickdebugdlg.h"
 #include "syntaxhighlightdlg.h"
 #include "dirsaver.h"
@@ -398,6 +397,14 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("syntax_highlight"), Frame::OnSyntaxHighlight)
 	EVT_MENU(XRCID("quick_debug"), Frame::OnQuickDebug)
 	EVT_UPDATE_UI(XRCID("quick_debug"), Frame::OnQuickDebugUI)
+	
+	// Whitespace
+	EVT_UPDATE_UI(XRCID("whitepsace_invisible"), Frame::OnShowWhitespaceUI)
+	EVT_UPDATE_UI(XRCID("whitepsace_always"), Frame::OnShowWhitespaceUI)
+	EVT_UPDATE_UI(XRCID("whitespace_visiable_after_indent"), Frame::OnShowWhitespaceUI)
+	EVT_MENU(XRCID("whitepsace_invisible"), Frame::OnShowWhitespace)
+	EVT_MENU(XRCID("whitepsace_always"), Frame::OnShowWhitespace)
+	EVT_MENU(XRCID("whitespace_visiable_after_indent"), Frame::OnShowWhitespace)
 	
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
@@ -1006,9 +1013,6 @@ void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 	AboutDlg dlg(this);
 	dlg.SetInfo(wxString::Format(wxT("SVN build, revision: %s"), SvnRevision));
 	dlg.ShowModal();
-	
-/*	VirtualDirectorySelector dlg(this, WorkspaceST::Get());
-	dlg.ShowModal();*/
 }
 
 void Frame::OnClose(wxCloseEvent& event)
@@ -3510,4 +3514,39 @@ void Frame::OnQuickDebugUI(wxUpdateUIEvent& e)
 {
 	IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
 	e.Enable(dbgr && !dbgr->IsRunning());
+}
+
+void Frame::OnShowWhitespaceUI(wxUpdateUIEvent& e)
+{
+	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+	if(e.GetId() == XRCID("whitepsace_invisible")) {
+		e.Check(options->GetShowWhitspaces() == 0);
+	} else if(e.GetId() == XRCID("whitepsace_always")) {
+		e.Check(options->GetShowWhitspaces() == 1);
+	} else if(e.GetId() == XRCID("whitespace_visiable_after_indent")) {
+		e.Check(options->GetShowWhitspaces() == 2);
+	}
+}
+
+void Frame::OnShowWhitespace(wxCommandEvent& e)
+{
+	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+	if(e.GetId() == XRCID("whitepsace_invisible")) {
+		options->SetShowWhitspaces(0);
+	} else if(e.GetId() == XRCID("whitepsace_always")) {
+		options->SetShowWhitspaces(1);
+	} else if(e.GetId() == XRCID("whitespace_visiable_after_indent")) {
+		options->SetShowWhitspaces(2);
+	}
+	
+	// Loop through the open editors, and update breakpoints
+	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
+		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
+		if (editor) {
+			editor->SetViewWhiteSpace(options->GetShowWhitspaces());
+		}
+	}
+	
+	// save the settings
+	EditorConfigST::Get()->SetOptions(options);
 }

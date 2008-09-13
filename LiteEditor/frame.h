@@ -435,6 +435,8 @@ protected:
 	void OnBatchBuild(wxCommandEvent &e);
 	void OnBatchBuildUI(wxUpdateUIEvent &e);
 	void OnSyntaxHighlight(wxCommandEvent &e);
+	void OnShowWhitespaceUI(wxUpdateUIEvent &e);
+	void OnShowWhitespace(wxCommandEvent &e);
 	
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);

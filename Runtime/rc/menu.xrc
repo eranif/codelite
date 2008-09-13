@@ -6,11 +6,9 @@
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="new_file">
                 <label>&amp;New File</label>
-                <help>Create an empty new file</help>
             </object>
             <object class="wxMenuItem" name="open_file">
                 <label>&amp;Open File...</label> 
-                <help>Open an existing file</help>
             </object>
 			<object class="wxMenuItem" name="refresh_file">
 				<label>&amp;Reload File</label>
@@ -18,26 +16,21 @@
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="save_file">
                 <label>&amp;Save File</label>
-                <help>Save the existing file</help>
             </object>
             <object class="wxMenuItem" name="save_file_as">
                 <label>Save As...</label>
-                <help>Save current file as...</help>
             </object>
             <object class="wxMenuItem" name="save_all">
                 <label>Save all files</label>
-                <help>Save all open files</help>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 
             <object class="wxMenuItem" name="close_file">
                 <label>&amp;Close</label>
-                <help>Close Current File</help>
             </object> 
             
             <object class="wxMenuItem" name="wxID_CLOSE_ALL">
                 <label>Close All</label>
-                <help>Close All Files</help>
             </object> 
             
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
@@ -60,7 +53,6 @@
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>     
             <object class="wxMenuItem" name="exit_app">
                 <label>E&amp;xit</label>
-                <help>Close LiteEditor</help>
             </object>
         </object>
         
@@ -88,7 +80,6 @@
             </object>
             <object class="wxMenuItem" name="wxID_DUPLICATE">
                 <label>D&amp;uplicate Selection / Line</label>
-                <help>Duplicate the selection or the entire line</help>
             </object>
             <object class="wxMenuItem" name="wxID_SELECTALL">
                 <label>Select &amp;All</label>
@@ -96,28 +87,22 @@
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>            
 			<object class="wxMenuItem" name="delete_line">
 				 <label>&amp;Delete Line</label>
-				 <help>Delete the current line</help>
 			 </object>
 			<object class="wxMenuItem" name="delete_line_end">
 				 <label>Delete to Line &amp;End</label>
-				 <help>Delete to end of current line</help>
 			 </object>
 			<object class="wxMenuItem" name="delete_line_start">
 				 <label>Delete to Line &amp;Start</label>
-				 <help>Delete to start of current line</help>
 			 </object>
 			<object class="wxMenuItem" name="transpose_lines">
 				 <label>&amp;Transpose Lines</label>
-				 <help>Swap with the line above</help>
 			 </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/> 
 			<object class="wxMenuItem" name="to_upper">
 				 <label>Make Upper&amp;case</label>
-				 <help>Make selected text uppercase</help>
 			 </object>
 			<object class="wxMenuItem" name="to_lower">
 				 <label>Make &amp;Lowercase</label>
-				 <help>Make selected text lowercase</help>
 			 </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="match_brace">
@@ -157,12 +142,26 @@
 			</object>
 			<object class="wxMenuItem" name="fold_all">
 				<label>Toggle &amp;All Folds</label>
-        <help>Toggle current fold, and make all others match</help>
 			</object>
 			<object class="wxMenuItem" name="display_eol">
 				<label>&amp;Display EOL</label>
 				<checkable>1</checkable>
-			</object>                        
+			</object>
+			<object class="wxMenu" name="display_whitespaces">
+				<label>Show Whitespace</label>
+				<object class="wxMenuItem" name="whitepsace_invisible">
+					<label>Invisible</label>
+					<radio>1</radio>
+				</object>
+				<object class="wxMenuItem" name="whitepsace_always">
+					<label>Show Always</label>
+					<radio>1</radio>
+				</object>
+				<object class="wxMenuItem" name="whitespace_visiable_after_indent">
+					<label>Visible After First Indent</label>
+					<radio>1</radio>
+				</object>
+			</object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 
             <object class="wxMenuItem" name="view_welcome_page">
@@ -219,7 +218,6 @@
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="toggle_panes">
                 <label>&amp;Toggle All Panes</label>
-                <help>Hide all panes and maximize the editing area</help>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         </object>
@@ -292,11 +290,9 @@
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenuItem" name="new_workspace">
                 <label>Create &amp;New Workspace...</label>
-                <help>Create New workspace</help>
             </object>
             <object class="wxMenuItem" name="switch_to_workspace">
                 <label>&amp;Switch to Workspace...</label>
-                <help>Switch to an existing workspace</help>
             </object>
             <object class="wxMenuItem" name="close_workspace">
                 <label>&amp;Close Workspace</label>
@@ -307,17 +303,14 @@
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="import_from_msvs">
 	    		<label>&amp;Import MS Visual Studio Solution File...</label>
-				<help>Import a workspace from a MS Visual Studio solution file</help>
 			</object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 
             <object class="wxMenuItem" name="new_project">
                 <label>Create New &amp;Project</label>
-                <help>Create new Project and add it to the current workspace</help>
             </object>
             <object class="wxMenuItem" name="add_project">
                 <label>&amp;Add an Existing Project</label>
-                <help>Add an existing project to the current workspace</help>
             </object>            
         </object>
         

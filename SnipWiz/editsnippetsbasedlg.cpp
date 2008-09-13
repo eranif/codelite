@@ -42,7 +42,7 @@ EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const
 	
 	bSizer6->Add( bSizer7, 1, wxEXPAND, 5 );
 	
-	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, wxT("Use @ as placeholder for selection and $ to set the caret position.\ne.g. for(@ = 0; @ < $; @++)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, wxT("Use $ as placeholder for selection and @ to set the caret position.\ne.g. for($ = 0; $ < @; $++)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	bSizer6->Add( m_staticText2, 0, wxALL, 5 );
 	

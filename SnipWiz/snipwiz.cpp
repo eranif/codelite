@@ -31,8 +31,8 @@
 #define FRLSNIPWIZ_VERSION 1000
 #define FRLSNIPWIZ_HEADER _T("Code snippet wizard file")
 
-#define CARET		wxT("$")
-#define SELECTION	wxT("@")
+#define CARET		wxT("@")
+#define SELECTION	wxT("$")
 ////------------------------------------------------------------
 static SnipWiz* thePlugin = NULL;
 

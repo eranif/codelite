@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : codeformatterdlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : codeformatterdlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "codeformatter.h"
+#include "codeformatter.h"
 #include "codeformatterdlg.h"
 
 CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, size_t flags, const wxString &sampleCode )
@@ -37,13 +37,13 @@ CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, size_t 
 	// Initialise dialog
 	m_textCtrlPreview->SetValue(m_sampleCode);
 	InitDialog();
-	
+
 	// center the dialog
 	Centre();
-	
+
 	GetSizer()->Fit(this);
 	UpdatePreview();
-	
+
 	m_radioBoxPredefinedStyle->SetFocus();
 }
 
@@ -90,9 +90,10 @@ void CodeFormatterDlg::InitDialog()
 	} else if (m_options.GetOptions() & AS_KR) {
 		selection = 2;
 	}
+
 	m_radioBoxPredefinedStyle->SetSelection(selection);
 
-	selection = 2;//AS_BRACKETS_LINUX
+	selection = 4; // None
 	if (m_options.GetOptions() & AS_BRACKETS_BREAK_CLOSING) {
 		selection = 0;
 	} else if (m_options.GetOptions() & AS_BRACKETS_ATTACH) {
@@ -218,7 +219,7 @@ void CodeFormatterDlg::OnCheckBox( wxCommandEvent& event )
 		flag = AS_INDENT_CASE;
 	} else if (obj == m_checkBoxIndetSwitch) {
 		flag = AS_INDENT_SWITCHES;
-	} else if( obj == m_checkBoxIndentUsesTabs) {
+	} else if ( obj == m_checkBoxIndentUsesTabs) {
 		flag = AS_INDENT_USES_TABS;
 	}
 
@@ -256,4 +257,38 @@ void CodeFormatterDlg::UpdatePreview()
 	wxString output;
 	m_cf->AstyleFormat(m_sampleCode, m_options.ToString(), output);
 	m_textCtrlPreview->SetValue(output);
+	
+	UpdatePredefinedHelpText();
+}
+
+void CodeFormatterDlg::UpdatePredefinedHelpText()
+{
+	int sel = m_radioBoxPredefinedStyle->GetSelection();
+	switch ( sel ) {
+	case 0: // AS_GNU
+		m_staticTextPredefineHelp->SetLabel(
+			wxT("GNU style formatting/indenting.  Brackets are broken,\n")
+			wxT("blocks are indented, and indentation is 2 spaces. \n")
+			wxT("Namespaces, classes, and switches are NOT indented."));
+		break;
+	case 1: // AS_JAVA
+		m_staticTextPredefineHelp->SetLabel(
+		    wxT("Java style formatting/indenting. Brackets are attached,\n")
+		    wxT("indentation is 4 spaces. Switches are NOT indented.")
+		);
+		break;
+	case 2: // AS_KR
+		m_staticTextPredefineHelp->SetLabel(
+		    wxT("Kernighan & Ritchie style formatting/indenting.\nBrackets are attached, indentation is 4 spaces.\nNamespaces, classes, and switches are NOT indented.")
+		);
+		break;
+	case 3: // AS_KR
+		m_staticTextPredefineHelp->SetLabel(
+		    wxT("Linux style formatting/indenting.\nAll brackets are linux style, indentation is 8 spaces.\nNamespaces, classes, and switches are NOT indented.")
+		);
+		break;
+	case 4: // AS_ANSI
+		m_staticTextPredefineHelp->SetLabel(wxT("ANSI style formatting/indenting.\nBrackets are broken, indentation is 4 spaces.\nNamespaces, classes, and switches are NOT indented."));
+		break;
+	}
 }

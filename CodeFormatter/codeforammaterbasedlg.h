@@ -1,29 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : codeforammaterbasedlg.h              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -33,16 +9,21 @@
 #define __codeforammaterbasedlg__
 
 #include <wx/string.h>
-#include <wx/radiobox.h>
+#include <wx/stattext.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-#include <wx/textctrl.h>
+#include <wx/radiobox.h>
 #include <wx/panel.h>
+#include <wx/bitmap.h>
+#include <wx/image.h>
+#include <wx/icon.h>
+#include <wx/checkbox.h>
+#include <wx/notebook.h>
+#include <wx/textctrl.h>
 #include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -58,8 +39,12 @@ class CodeFormatterBaseDlg : public wxDialog
 	private:
 	
 	protected:
-		wxPanel* m_panel1;
+		wxNotebook* m_notebook1;
+		wxPanel* m_panel2;
+		wxStaticText* m_staticText2;
 		wxRadioBox* m_radioBoxPredefinedStyle;
+		wxStaticText* m_staticTextPredefineHelp;
+		wxPanel* m_panel3;
 		wxRadioBox* m_radioBoxBrackets;
 		wxCheckBox* m_checkBoxIndentUsesTabs;
 		wxCheckBox* m_checkBoxIndetClass;
@@ -96,7 +81,8 @@ class CodeFormatterBaseDlg : public wxDialog
 		
 	
 	public:
-		CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("AStyle Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 589,618 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Formatter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~CodeFormatterBaseDlg();
 	
 };
 

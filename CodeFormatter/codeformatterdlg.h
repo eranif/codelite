@@ -53,6 +53,7 @@ protected:
 	void InitDialog();
 	void UpdateCheckBox(wxCheckBox *obj, size_t flag);
 	void UpdatePreview();
+	void UpdatePredefinedHelpText();
 	
 public:
 	/** Constructor */

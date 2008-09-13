@@ -9,7 +9,7 @@
 createRevisionFile()
 {
 	chmod +x ./le_makerevision.sh
-	. ./le_makerevision.sh
+	spuriousvariable=./le_makerevision.sh  # We don't use the result but without the var, 'exit 0' in le_makerevision.sh aborts this script too
 }
 
 createVariables()
@@ -496,7 +496,7 @@ generateControlFile()
 	echo "Essential: no" >> fakeroot/DEBIAN/control
 	echo "Depends: libwxgtk2.8-0, libgtk2.0-0" >> fakeroot/DEBIAN/control
 	echo "Maintainer: Eran Ifrah [eran.ifrah@gmail.com]" >> fakeroot/DEBIAN/control
-	echo "Description: CodeLite is a powerful open-source, cross platform code editor for the C/C++ programming languages (regulary tested on Windows XP sp2, Ubuntu 7.10 Gutsy Gibbon, Fedora Core 6 and Debian lenny/sid). " >> fakeroot/DEBIAN/control
+	echo "Description: CodeLite is a powerful open-source, cross platform code editor for the C/C++ programming languages (regularly tested on Windows XP sp2, Ubuntu 8.04 Hardy Heron, Fedora Core 9 and Debian lenny/sid). " >> fakeroot/DEBIAN/control
 	echo "		 CodeLite is distributed under the terms of the GPL license." >> fakeroot/DEBIAN/control
 	echo "		 CodeLite uses a sophisticated, yet intuitive interface which allows user easily to " >> fakeroot/DEBIAN/control
 	echo "		 create and build complex projects. " >> fakeroot/DEBIAN/control

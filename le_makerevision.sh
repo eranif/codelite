@@ -12,8 +12,8 @@ fi
 
 # not under svn, but we do have the svninfo file, do nothing 
 if [ $has_file -eq 1 ] && [ $has_svn -eq 0 ]; then
-       ## file does not exist, create an empty file
-       return 0
+       ## file already exists, and we can't update it
+       exit 0
 fi
 
 # under svn

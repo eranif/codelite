@@ -69,9 +69,24 @@ AccelTableDlg::AccelTableDlg( wxWindow* parent )
 	m_listCtrl1->InsertColumn(2, wxT("Action"));
 	m_listCtrl1->InsertColumn(3, wxT("Accelerator"));
 	
-	MenuItemDataMap accelMap;
+	MenuItemDataMap accelMap, defAccelMap;
 	ManagerST::Get()->GetAcceleratorMap(accelMap);
 	
+	// load the default accelerator map
+	ManagerST::Get()->GetDefaultAcceleratorMap(defAccelMap);
+	
+	// loop over default accelerators map, and search for items that does not exist in the user's list
+	std::map< wxString, MenuItemData >::iterator it = defAccelMap.begin();
+	for(; it != defAccelMap.end(); it++){
+		if(accelMap.find(it->first) == accelMap.end()){
+			// this item does not exist in the users accelerators
+			// probably a new accelerator that was added to the default
+			// files directly via update/manully modified it
+			accelMap[it->first] = it->second;
+		}
+	}
+
+
 	PopulateTable(accelMap);
 	
 	// center the dialog

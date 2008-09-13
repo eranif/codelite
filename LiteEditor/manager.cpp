@@ -2541,12 +2541,28 @@ void Manager::RunCustomPreMakeCommand(const wxString &project)
 
 void Manager::UpdateMenuAccelerators()
 {
-	MenuItemDataMap menuMap;
+	MenuItemDataMap menuMap, defAccelMap;
 
 	wxArrayString files;
 	DoGetAccelFiles(files);
-
+	
+	// load user accelerators map
 	LoadAcceleratorTable(files, menuMap);
+	
+	// load the default accelerator map
+	GetDefaultAcceleratorMap(defAccelMap);
+	
+	// loop over default accelerators map, and search for items that does not exist in the user's list
+	std::map< wxString, MenuItemData >::iterator it = defAccelMap.begin();
+	for(; it != defAccelMap.end(); it++){
+		if(menuMap.find(it->first) == menuMap.end()){
+			// this item does not exist in the users accelerators
+			// probably a new accelerator that was added to the default
+			// files directly via update/manully modified it
+			menuMap[it->first] = it->second;
+		}
+	}
+	
 	wxMenuBar *bar = Frame::Get()->GetMenuBar();
 
 	wxString content;

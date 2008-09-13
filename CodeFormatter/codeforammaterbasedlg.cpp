@@ -31,13 +31,13 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_staticText2->Wrap( -1 );
 	sbSizer3->Add( m_staticText2, 1, wxALL|wxEXPAND, 5 );
 	
-	bSizer8->Add( sbSizer3, 0, wxEXPAND, 5 );
+	bSizer8->Add( sbSizer3, 0, wxEXPAND|wxALL, 5 );
 	
 	wxString m_radioBoxPredefinedStyleChoices[] = { wxT("GNU"), wxT("Java"), wxT("K&&R"), wxT("Linux"), wxT("ANSI") };
 	int m_radioBoxPredefinedStyleNChoices = sizeof( m_radioBoxPredefinedStyleChoices ) / sizeof( wxString );
 	m_radioBoxPredefinedStyle = new wxRadioBox( m_panel2, wxID_ANY, wxT("Predefined Style:"), wxDefaultPosition, wxDefaultSize, m_radioBoxPredefinedStyleNChoices, m_radioBoxPredefinedStyleChoices, 1, wxRA_SPECIFY_COLS );
 	m_radioBoxPredefinedStyle->SetSelection( 0 );
-	bSizer8->Add( m_radioBoxPredefinedStyle, 0, wxALL|wxEXPAND, 0 );
+	bSizer8->Add( m_radioBoxPredefinedStyle, 0, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer4;
 	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_panel2, wxID_ANY, wxEmptyString ), wxVERTICAL );
@@ -46,7 +46,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_staticTextPredefineHelp->Wrap( -1 );
 	sbSizer4->Add( m_staticTextPredefineHelp, 1, wxALL|wxEXPAND, 5 );
 	
-	bSizer8->Add( sbSizer4, 1, wxEXPAND, 5 );
+	bSizer8->Add( sbSizer4, 1, wxEXPAND|wxALL, 5 );
 	
 	m_panel2->SetSizer( bSizer8 );
 	m_panel2->Layout();
@@ -60,7 +60,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	int m_radioBoxBracketsNChoices = sizeof( m_radioBoxBracketsChoices ) / sizeof( wxString );
 	m_radioBoxBrackets = new wxRadioBox( m_panel3, wxID_ANY, wxT("Brackets:"), wxDefaultPosition, wxDefaultSize, m_radioBoxBracketsNChoices, m_radioBoxBracketsChoices, 1, wxRA_SPECIFY_ROWS );
 	m_radioBoxBrackets->SetSelection( 3 );
-	bSizer3->Add( m_radioBoxBrackets, 0, wxALL|wxEXPAND, 0 );
+	bSizer3->Add( m_radioBoxBrackets, 0, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Indentation:") ), wxVERTICAL );
@@ -116,7 +116,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	
 	sbSizer1->Add( gSizer1, 0, wxEXPAND, 5 );
 	
-	bSizer3->Add( sbSizer1, 0, wxEXPAND, 5 );
+	bSizer3->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxT("Formatting Options:") ), wxVERTICAL );
@@ -170,7 +170,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	
 	sbSizer2->Add( gSizer2, 0, wxEXPAND, 5 );
 	
-	bSizer3->Add( sbSizer2, 0, wxEXPAND, 5 );
+	bSizer3->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
 	
 	m_panel3->SetSizer( bSizer3 );
 	m_panel3->Layout();

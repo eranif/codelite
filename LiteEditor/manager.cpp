@@ -129,13 +129,13 @@ std::string GetCurrentFileName()
 }
 
 /**
- * \brief strip accelerators and nemonics from given text
+ * \brief strip accelerators and mnemonics from given text
  * \param text
  * \return
  */
 static wxString StripAccelAndNemonics(const wxString &text)
 {
-	//possible nemonics:
+	//possible mnemonics:
 	//_ and &
 	wxString stripedText( text );
 	stripedText.Replace(wxT("_"), wxEmptyString);
@@ -145,7 +145,7 @@ static wxString StripAccelAndNemonics(const wxString &text)
 
 /**
  * \brief remove any accelerator key from the menu text and return only
- * the text including any nemonics
+ * the text including any mnemonics
  * \param text
  * \return
  */
@@ -240,7 +240,7 @@ bool Manager::OpenFile(const wxString &file_name, const wxString &projectName, i
 		}
 	}
 
-	//even in cases were a porject name is empty, we try
+	//even in cases were a project name is empty, we try
 	//to match a project name to the actual file. otherwise, CC may not work
 	//since it depends on a valid project name in the editor
 	if (projectName.IsEmpty()) {
@@ -347,7 +347,7 @@ void Manager::SaveAll(bool includeUntitled)
 		if ( !editor )
 			continue;
 
-		//if 'includeUntitled' is not true, dont save new documents that have
+		//if 'include Untitled' is not true, don't save new documents that have
 		//not been saved to disk yet
 		if (!includeUntitled && editor->GetFileName().GetFullPath().StartsWith(wxT("Untitled"))) {
 			continue;
@@ -509,7 +509,7 @@ void Manager::CloseWorkspace()
 	SessionManager::Get().SetLastWorkspaceName(wxT("Default"));
 
 	WorkspaceST::Get()->CloseWorkspace();
-	//clear the 'buid' tab
+	//clear the 'build' tab
 	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
 
 	//clear the navigation bar
@@ -530,7 +530,7 @@ void Manager::CloseWorkspace()
 	SetStatusMessage(wxEmptyString, 1);
 
 #ifdef __WXMSW__
-	// Under Windows, and in order to avoid locking the directory set the working directoy back to the startup directory
+	// Under Windows, and in order to avoid locking the directory set the working directory back to the start up directory
 	wxSetWorkingDirectory(GetStarupDirectory());
 #endif
 }
@@ -601,7 +601,7 @@ void Manager::AddProject(const wxString & path)
 	bool res = WorkspaceST::Get()->AddProject(path, errMsg);
 	CHECK_MSGBOX(res);
 
-	//retag the newly added project
+	//re-tag the newly added project
 	wxFileName fn(path);
 	wxString projectName( fn.GetName() );
 
@@ -650,7 +650,7 @@ void Manager::RemoveProjectNameFromOpenFiles(const std::vector<wxFileName> &proj
 {
 	//go over all open tabs, if a file belongs to the closed
 	//project, remove the project name from the container editor,
-	//this will pervent the parser thread to parse this file after
+	//this will prevent the parser thread to parse this file after
 	//its parent project was removed
 	Notebook *book = Frame::Get()->GetNotebook();
 	for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
@@ -795,7 +795,7 @@ void Manager::AddFilesToProject(const wxArrayString &files, const wxString &vdFu
 		vFiles.push_back(actualAdded.Item(i));
 	}
 
-	//retag the added files
+	//re-tag the added files
 	if (vFiles.empty() == false) {
 		TagsManagerST::Get()->RetagFiles(vFiles);
 	}
@@ -1024,7 +1024,7 @@ void Manager::SetWorkspaceBuildMatrix(BuildMatrixPtr matrix)
 void Manager::TogglePanes()
 {
 	static bool toggled = false;
-	// list of panes to be toggeled on and off
+	// list of panes to be toggled on and off
 	static wxArrayString panes;
 
 	Frame::Get()->Freeze();
@@ -1050,7 +1050,7 @@ void Manager::TogglePanes()
 			}
 		}
 
-		// hide the matached panes
+		// hide the matched panes
 		for (size_t i=0; i<panes.GetCount(); i++) {
 			HidePane(panes.Item(i), false);
 		}
@@ -1126,7 +1126,7 @@ void Manager::GetProjectTemplateList(std::list<ProjectPtr> &list)
 			list.push_back(proj);
 		}
 	} else {
-		//if we eneded up here, it means the insallation got screwed up since
+		//if we ended up here, it means the installation got screwed up since
 		//there should be at least 8 project templates !
 		//create 3 default empty projects
 		ProjectPtr exeProj(new Project());
@@ -1308,7 +1308,7 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	::wxSetWorkingDirectory(wd);
 
 	//execute the command line
-	//the async command is a one time executable object,
+	//the a sync command is a one time executable object,
 	m_asyncExeCmd = new AsyncExeCmd(GetMainFrame());
 
 	//execute the program:
@@ -1410,7 +1410,7 @@ void Manager::RetagProject(const wxString &projectName)
 		std::vector<wxFileName> projectFiles;
 		proj->GetFiles(projectFiles, true);
 
-		//call tags manager for retagging
+		//call tags manager for re-tagging
 		TagsManagerST::Get()->RetagFiles(projectFiles);
 	}
 }
@@ -1421,7 +1421,7 @@ void Manager::RetagWorkspace()
 	GetProjectList(projects);
 	std::vector<wxFileName> projectFiles;
 
-	// in the case of retagging the entire workspace
+	// in the case of re-tagging the entire workspace
 	// it is faster to drop the tables instead of deleting
 	TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
 
@@ -1432,7 +1432,7 @@ void Manager::RetagWorkspace()
 			proj->GetFiles(projectFiles, true);
 		}
 	}
-	//call tags manager for retagging
+	//call tags manager for re-tagging
 	TagsManagerST::Get()->RetagFiles(projectFiles);
 }
 
@@ -1868,7 +1868,7 @@ void Manager::DbgStart(long pid)
 	//make sure we have an active debugger
 	IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
 	if (!dbgr) {
-		//No deubgger available,
+		//No debugger available,
 		wxString message;
 		message << wxT("Failed to launch debugger '") << debuggerName << wxT("': debugger not loaded\n");
 		message << wxT("Make sure that you have an open workspace and that the active project is of type 'Executable'");
@@ -1918,9 +1918,9 @@ void Manager::DbgStart(long pid)
 	DebuggerMgr::Get().DelAllBreakpoints();
 
 	// Loop through the open editors and let each editor
-	// a chance to update the debugger manager whith any line
+	// a chance to update the debugger manager with any line
 	// changes (i.e. file was edited and breakpoints were moved)
-	// this loop must take place before the debugger startup
+	// this loop must take place before the debugger start up
 	// or else call to UpdateBreakpoint() will yield an attempt to
 	// actually add the breakpoint before Run() is called - this can
 	// be a problem when adding breakpoint to dll files.
@@ -2220,7 +2220,7 @@ void Manager::UpdateDebuggerPane()
 
 		//--------------------------------------------------------------------
 		// Lookup the selected tab in the debugger notebook and update it
-		// once this is done, we need to go throu the list of detached panes
+		// once this is done, we need to go through the list of detached panes
 		// and scan for another debugger tabs which are visible and need to be
 		// updated
 		//--------------------------------------------------------------------
@@ -2313,7 +2313,7 @@ void Manager::UpdateStopped()
 
 void Manager::UpdateGotControl(DebuggerReasons reason)
 {
-	//put us ontop of the z-order window
+	//put us on top of the z-order window
 	Frame::Get()->Raise();
 	m_dbgCanInteract = true;
 
@@ -2558,7 +2558,7 @@ void Manager::UpdateMenuAccelerators()
 		if(menuMap.find(it->first) == menuMap.end()){
 			// this item does not exist in the users accelerators
 			// probably a new accelerator that was added to the default
-			// files directly via update/manully modified it
+			// files directly via update/manually modified it
 			menuMap[it->first] = it->second;
 		}
 	}
@@ -2573,7 +2573,7 @@ void Manager::UpdateMenuAccelerators()
 		UpdateMenu(menu, menuMap, accelVec);
 	}
 
-	//Incase we still have items to map, map them. this can happen for items
+	//In case we still have items to map, map them. this can happen for items
 	//which exist in the list but does not have any menu associated to them in the menu bar (e.g. C++ menu)
 	if (menuMap.empty() == false) {
 //		wxString msg;
@@ -2781,7 +2781,7 @@ void Manager::ReplaceInFiles(const wxString &word, std::list<CppToken> &li)
 	for (; iter != li.end(); iter++) {
 		CppToken token = *iter;
 
-		// update next token offset incase we are still in the same file
+		// update next token offset in case we are still in the same file
 		if (!file_name.IsEmpty()) {
 			if (file_name == token.getFilename()) {
 				token.setOffset(token.getOffset()+off);
@@ -2819,7 +2819,7 @@ void Manager::ReplaceInFiles(const wxString &word, std::list<CppToken> &li)
 }
 void Manager::RetagFile(const wxString& filename)
 {
-	// retag the file
+	// re-tag the file
 	ParseRequest *req = new ParseRequest();
 	// Put a request on the parsing thread to update the GUI tree for this file
 	wxFileName fn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
@@ -2999,7 +2999,7 @@ void Manager::ReloadWorkspace()
 
 	WorkspaceST::Get()->ReloadWorkspace();
 
-	//clear the 'buid' tab
+	//clear the 'build' tab
 	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
 
 	//clear the navigation bar

@@ -37,6 +37,17 @@
 #include "wx/sstream.h"
 #include "globals.h"
 
+static wxString GetMakeDirCmd(BuildConfigPtr bldConf) {
+	wxString text;
+	if (wxGetOsVersion() & wxOS_WINDOWS) {
+		text << wxT("@makedir \"") << bldConf->GetIntermediateDirectory() << wxT("\"");
+	} else {
+		//other OSs
+		text << wxT("@test -d ") << bldConf->GetIntermediateDirectory() << wxT(" || mkdir -p ") << bldConf->GetIntermediateDirectory();
+	}
+	return text;
+}
+
 BuilderGnuMake::BuilderGnuMake()
 		: Builder(wxT("GNU makefile for g++/gcc"), wxT("make"), wxT("-f"))
 {
@@ -372,14 +383,7 @@ void BuilderGnuMake::CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString
 {
 	text << wxT("\n");
 	text << targetName << wxT(":\n");
-
-	if (wxGetOsVersion() & wxOS_WINDOWS) {
-		text << wxT("\t@makedir \"") << bldConf->GetIntermediateDirectory() << wxT("\"\n");
-	} else {
-		//other OSs
-		text << wxT("\t@test -d ") << bldConf->GetIntermediateDirectory() << wxT(" || mkdir -p ") << bldConf->GetIntermediateDirectory() << wxT("\n");
-	}
-	text << wxT("\n");
+	text << wxT("\t") << GetMakeDirCmd(bldConf) << wxT("\n");
 }
 
 void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBuild, wxString &text)
@@ -477,12 +481,14 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				}
 
 				// set the file rule
-				text << objectName << wxT(": makeDirStep ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT(" ") << dependFile << wxT("\n");
+				text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT(" ") << dependFile << wxT("\n");
+				text << wxT("\t") << GetMakeDirCmd(bldConf) << wxT("\n");
 				text << wxT("\t") << compilationLine << wxT("\n");
 
 				if (isGnu) {
 					//add the dependencie rule
-					text << dependFile << wxT(": makeDirStep ") << wxT("\n");
+					text << dependFile << wxT(": ") << wxT("\n");
+					text << wxT("\t") << GetMakeDirCmd(bldConf) << wxT("\n");
 					text << wxT("\t") << wxT("@$(CompilerName) $(CmpOptions) $(IncludePath) -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM \"") << absFileName << wxT("\"\n\n");
 				}
 
@@ -493,7 +499,8 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				wxString objectName;
 				objectName << wxT("$(IntermediateDirectory)/") << fn.GetFullName() << wxT("$(ObjectSuffix)");
 
-				text << objectName << wxT(": makeDirStep ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
+				text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
+				text << wxT("\t") << GetMakeDirCmd(bldConf) << wxT("\n");
 				text << wxT("\t") << compilationLine << wxT("\n");
 			}
 		}

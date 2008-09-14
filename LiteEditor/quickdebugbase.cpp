@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -74,6 +74,8 @@ QuickDebugBase::QuickDebugBase( wxWindow* parent, wxWindowID id, const wxString&
 	bSizer3->Add( m_staticText6, 0, wxALL, 5 );
 	
 	m_textCtrlCmds = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlCmds->SetMinSize( wxSize( -1,150 ) );
+	
 	bSizer3->Add( m_textCtrlCmds, 1, wxALL|wxEXPAND, 5 );
 	
 	bSizer1->Add( bSizer3, 1, wxEXPAND, 5 );
@@ -95,6 +97,8 @@ QuickDebugBase::QuickDebugBase( wxWindow* parent, wxWindowID id, const wxString&
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	
+	this->Centre( wxBOTH );
 	
 	// Connect Events
 	m_buttonBrowseExe->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( QuickDebugBase::OnButtonBrowseExe ), NULL, this );

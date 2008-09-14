@@ -384,7 +384,7 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
 		//reposition the options static sizer
 		gbSizer->Detach(sz);
 		gbSizer->Add(sz, wxGBPosition(1, 0), wxGBSpan(1, 2),  wxALL | wxEXPAND, 5 );
-
+		
 	} else {
 		// is this dialog is already a 'Replace' dialog?
 		if (!isFindDlg) {
@@ -404,7 +404,8 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
 	m_replaceString->Show(show);
 	m_replacementsMsg->Show(show);
 	m_replaceWithLabel->Show(show);
-
+	m_selectionOnly->Show(show);
+	
 	SetLabel(label);
 	this->Fit();
 	GetSizer()->Layout();

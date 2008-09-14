@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -59,7 +59,7 @@ class QuickDebugBase : public wxDialog
 		
 	
 	public:
-		QuickDebugBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Quick Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 559,370 ), long style = wxDEFAULT_DIALOG_STYLE );
+		QuickDebugBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Quick Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 559,370 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~QuickDebugBase();
 	
 };

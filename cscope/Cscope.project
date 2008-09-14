@@ -8,6 +8,8 @@
     <File Name="cscopeentrydata.h"/>
     <File Name="cscopestatusmessage.cpp"/>
     <File Name="cscopestatusmessage.h"/>
+    <File Name="csscopeconfdata.cpp"/>
+    <File Name="csscopeconfdata.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="cscope.h"/>

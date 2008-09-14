@@ -48,6 +48,7 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	this->Layout();
 	
 	// Connect Events
+	m_choiceSearchScope->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( CscopeTabBase::OnChangeSearchScope ), NULL, this );
 	m_buttonClear->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CscopeTabBase::OnClearResults ), NULL, this );
 	m_buttonClear->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnClearResultsUI ), NULL, this );
 	m_treeCtrlResults->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( CscopeTabBase::OnLeftDClick ), NULL, this );
@@ -57,6 +58,7 @@ CscopeTabBase::CscopeTabBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 CscopeTabBase::~CscopeTabBase()
 {
 	// Disconnect Events
+	m_choiceSearchScope->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( CscopeTabBase::OnChangeSearchScope ), NULL, this );
 	m_buttonClear->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CscopeTabBase::OnClearResults ), NULL, this );
 	m_buttonClear->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CscopeTabBase::OnClearResultsUI ), NULL, this );
 	m_treeCtrlResults->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( CscopeTabBase::OnLeftDClick ), NULL, this );

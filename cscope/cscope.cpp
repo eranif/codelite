@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "csscopeconfdata.h"
 #include "cscopestatusmessage.h"
 #include "dirsaver.h"
 #include "cscope.h"
@@ -204,6 +205,10 @@ wxMenu *Cscope::CreateEditorPopMenu()
 
 wxString Cscope::DoCreateListFile()
 {
+	// get the scope
+	CSscopeConfData settings;
+	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+
 	wxArrayString projects;
 	m_mgr->GetWorkspace()->GetProjectList(projects);
 	wxString err_msg;
@@ -211,8 +216,17 @@ wxString Cscope::DoCreateListFile()
 	std::vector< wxFileName > tmpfiles;
 	m_cscopeWin->SetMessage(wxT("Creating file list..."), 5);
 
-	for (size_t i=0; i< projects.GetCount(); i++) {
-		ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
+	if (settings.GetScanScope() == SCOPE_ENTIRE_WORKSPACE) {
+		for (size_t i=0; i< projects.GetCount(); i++) {
+			ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
+			if ( proj ) {
+				proj->GetFiles(tmpfiles, true);
+			}
+		}
+	} else {
+		// SCOPE_ACTIVE_PROJECT
+		wxString projName = m_mgr->GetWorkspace()->GetActiveProjectName();
+		ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projName, err_msg);
 		if ( proj ) {
 			proj->GetFiles(tmpfiles, true);
 		}
@@ -300,7 +314,7 @@ void Cscope::OnFindSymbol(wxCommandEvent &e)
 	wxString command;
 	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -L -0 ") << word << wxT(" -i ") << list_file;
-	endMsg << wxT("cscope results for: find C symbol '") << word << wxT("':");
+	endMsg << wxT("cscope results for: find C symbol '") << word << wxT("'");
 	DoCscopeCommand(command, endMsg);
 }
 
@@ -317,7 +331,7 @@ void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
 	wxString command;
 	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -L -1 ") << word << wxT(" -i ") << list_file;
-	endMsg << wxT("cscope results for: find global definition of '") << word << wxT("':");
+	endMsg << wxT("cscope results for: find global definition of '") << word << wxT("'");
 	DoCscopeCommand(command, endMsg);
 }
 
@@ -335,7 +349,7 @@ void Cscope::OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e)
 	wxString command;
 	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -L -2 ") << word << wxT(" -i ") << list_file;
-	endMsg << wxT("cscope results for: functions called by '") << word << wxT("':");
+	endMsg << wxT("cscope results for: functions called by '") << word << wxT("'");
 	DoCscopeCommand(command, endMsg);
 }
 
@@ -353,7 +367,7 @@ void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
 	wxString command;
 	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -L -3 ") << word << wxT(" -i ") << list_file;
-	endMsg << wxT("cscope results for: functions calling '") << word << wxT("':");
+	endMsg << wxT("cscope results for: functions calling '") << word << wxT("'");
 	DoCscopeCommand(command, endMsg);
 }
 

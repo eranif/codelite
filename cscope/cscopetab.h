@@ -64,6 +64,7 @@ protected:
 	void FreeTable();
 	void OnClearResults(wxCommandEvent &e);
 	void OnClearResultsUI(wxUpdateUIEvent &e);
+	void OnChangeSearchScope(wxCommandEvent &e);
 	
 public:
 	/** Constructor */

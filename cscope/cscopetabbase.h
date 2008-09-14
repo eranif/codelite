@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -9,15 +9,15 @@
 #define __cscopetabbase__
 
 #include <wx/string.h>
-#include <wx/choice.h>
+#include <wx/stattext.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include <wx/choice.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/treectrl.h>
-#include <wx/stattext.h>
 #include <wx/gauge.h>
 #include <wx/panel.h>
 
@@ -32,6 +32,7 @@ class CscopeTabBase : public wxPanel
 	private:
 	
 	protected:
+		wxStaticText* m_staticText2;
 		wxChoice* m_choiceSearchScope;
 		wxButton* m_buttonClear;
 		wxTreeCtrl* m_treeCtrlResults;

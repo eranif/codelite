@@ -4,6 +4,9 @@
 #include "serialized_object.h"
 #include <wx/string.h>
 
+#define SCOPE_ENTIRE_WORKSPACE wxT("Entire Workspace")
+#define SCOPE_ACTIVE_PROJECT   wxT("Active Project")
+
 class CSscopeConfData : public SerializedObject
 {
 	wxString m_scanScope;

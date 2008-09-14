@@ -1,28 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : cscopetab.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : cscopetab.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "cscopetab.h"
+#include "csscopeconfdata.h"
+#include "cscopetab.h"
 #include "cscopedbbuilderthread.h"
 #include "imanager.h"
 #include "workspace.h"
@@ -32,7 +33,11 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 		, m_table(NULL)
 		, m_mgr(mgr)
 {
-} 
+	CSscopeConfData data;
+	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
+	m_choiceSearchScope->SetStringSelection(data.GetScanScope());
+	SetMessage(wxT("Ready"), 0);
+}
 
 void CscopeTab::OnItemActivated( wxTreeEvent& event )
 {
@@ -163,4 +168,11 @@ void CscopeTab::OnClearResults(wxCommandEvent &e)
 void CscopeTab::OnClearResultsUI(wxUpdateUIEvent& e)
 {
 	e.Enable(m_treeCtrlResults->IsEmpty() == false);
+}
+
+void CscopeTab::OnChangeSearchScope(wxCommandEvent& e)
+{
+	CSscopeConfData data;
+	data.SetScanScope(m_choiceSearchScope->GetStringSelection());
+	m_mgr->GetConfigTool()->WriteObject(wxT("CscopeSettings"), &data);
 }

@@ -22,6 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/tokenzr.h>
  #include "globals.h"
 #include <wx/ffile.h>
 #include "newkeyshortcutdlg.h"
@@ -216,7 +217,7 @@ void AccelTableDlg::DoItemActivated()
 	// search the list for similar accelerator
 	int count = m_listCtrl1->GetItemCount();
 	for(int i=0; i<count; i++){
-		if(GetColumnText(m_listCtrl1, i, 3) == mid.accel && m_selectedItem != i && mid.accel.IsEmpty() == false){
+		if(Compare(GetColumnText(m_listCtrl1, i, 3), mid.accel) && m_selectedItem != i && mid.accel.IsEmpty() == false){
 			wxString action = GetColumnText(m_listCtrl1, i, 2);
 			wxMessageBox(wxString::Format(wxT("'%s' is already assigned to: '%s'"), mid.accel.c_str(), action.c_str()), wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING, this);
 			return;
@@ -226,4 +227,21 @@ void AccelTableDlg::DoItemActivated()
 	//update the acceleration table
 	SetColumnText(m_listCtrl1, m_selectedItem, 3, mid.accel);
 	m_listCtrl1->SetColumnWidth(3, wxLIST_AUTOSIZE);
+}
+
+bool AccelTableDlg::Compare(const wxString& accel1, const wxString& accel2)
+{
+	wxArrayString accel1Tokens = wxStringTokenize(accel1, wxT("-"));
+	wxArrayString accel2Tokens = wxStringTokenize(accel2, wxT("-"));
+	
+	if(accel1Tokens.GetCount() != accel2Tokens.GetCount()){
+		return false;
+	}
+	
+	for(size_t i=0; i<accel1Tokens.GetCount(); i++){
+		if(accel2Tokens.Index(accel1Tokens.Item(i), false) == wxNOT_FOUND){
+			return false;
+		}
+	}
+	return true;
 }

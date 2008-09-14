@@ -57,6 +57,8 @@ protected:
 	void OnEditButton(wxCommandEvent &e);
 	
 	void DoItemActivated();
+	bool Compare(const wxString &accel1, const wxString &accel2);
+	
 public:
 	/** Constructor */
 	AccelTableDlg( wxWindow* parent );

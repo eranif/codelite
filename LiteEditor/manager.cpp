@@ -1245,8 +1245,15 @@ void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
 			DbgStop();
 		}
 	}
-
-	QueueCommand info(projectName, wxEmptyString, false, QueueCommand::Build);
+	
+	wxString conf;
+	// get the selected configuration to be built
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+	if(bldConf) {
+		conf = bldConf->GetName();
+	}
+	
+	QueueCommand info(projectName, conf, false, QueueCommand::Build);
 	m_compileRequest = new CompileRequest(GetMainFrame(), info, fileName, false);
 	m_compileRequest->Process();
 }
@@ -2530,8 +2537,15 @@ void Manager::RunCustomPreMakeCommand(const wxString &project)
 		delete m_compileRequest;
 		m_compileRequest = NULL;
 	}
-
-	QueueCommand info(project, wxEmptyString, false, QueueCommand::Build);
+	
+	wxString conf;
+	// get the selected configuration to be built
+	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, wxEmptyString);
+	if(bldConf) {
+		conf = bldConf->GetName();
+	}
+	
+	QueueCommand info(project, conf, false, QueueCommand::Build);
 	m_compileRequest = new CompileRequest(	GetMainFrame(), //owner window
 	                                       info,
 	                                       wxEmptyString, 	//no file name (valid only for build file only)

@@ -477,12 +477,12 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				}
 
 				// set the file rule
-				text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT(" ") << dependFile << wxT("\n");
+				text << objectName << wxT(": makeDirStep ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT(" ") << dependFile << wxT("\n");
 				text << wxT("\t") << compilationLine << wxT("\n");
 
 				if (isGnu) {
 					//add the dependencie rule
-					text << dependFile << wxT(":") << wxT("\n");
+					text << dependFile << wxT(": makeDirStep ") << wxT("\n");
 					text << wxT("\t") << wxT("@$(CompilerName) $(CmpOptions) $(IncludePath) -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM \"") << absFileName << wxT("\"\n\n");
 				}
 
@@ -493,7 +493,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				wxString objectName;
 				objectName << wxT("$(IntermediateDirectory)/") << fn.GetFullName() << wxT("$(ObjectSuffix)");
 
-				text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
+				text << objectName << wxT(": makeDirStep ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
 				text << wxT("\t") << compilationLine << wxT("\n");
 			}
 		}

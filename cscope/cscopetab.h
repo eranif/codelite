@@ -63,6 +63,7 @@ protected:
 	void DoItemActivated( wxTreeItemId &item, wxEvent &event );
 	void FreeTable();
 	void OnClearResults(wxCommandEvent &e);
+	void OnClearResultsUI(wxUpdateUIEvent &e);
 	
 public:
 	/** Constructor */

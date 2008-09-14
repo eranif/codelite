@@ -159,3 +159,8 @@ void CscopeTab::OnClearResults(wxCommandEvent &e)
 	SetMessage(wxT("Ready"), 0);
 	Clear();
 }
+
+void CscopeTab::OnClearResultsUI(wxUpdateUIEvent& e)
+{
+	e.Enable(m_treeCtrlResults->IsEmpty() == false);
+}

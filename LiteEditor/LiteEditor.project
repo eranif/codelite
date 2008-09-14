@@ -560,4 +560,15 @@ resources.cpp: resources.xrc
     <Project Name="ExternalTools"/>
     <Project Name="snipwiz"/>
   </Dependencies>
+  <VirtualDirectory Name="scripts">
+    <File Name="..\Runtime\build_update.bat"/>
+    <File Name="..\Runtime\update.bat"/>
+    <File Name="..\Runtime\make_mac_bundle.sh"/>
+    <File Name="..\Runtime\le_killproc.sh"/>
+    <File Name="..\Runtime\le_exec.sh"/>
+    <File Name="..\configure"/>
+    <File Name="..\make_src_targz.sh"/>
+    <File Name="..\make_deb.sh"/>
+    <File Name="..\make_repo.sh"/>
+  </VirtualDirectory>
 </CodeLite_Project>

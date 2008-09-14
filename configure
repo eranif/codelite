@@ -9,7 +9,7 @@
 createRevisionFile()
 {
 	chmod +x ./le_makerevision.sh
-	spuriousvariable=./le_makerevision.sh  # We don't use the result but without the var, 'exit 0' in le_makerevision.sh aborts this script too
+	./le_makerevision.sh
 }
 
 createVariables()

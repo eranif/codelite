@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="File2hex" Database=".\File2hex.tags">
+<CodeLite_Workspace Name="File2hex" Database="./File2hex.tags">
   <Project Name="File2Hex" Path="File2Hex.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">

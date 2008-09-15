@@ -16,8 +16,8 @@
 #include <wx/settings.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/sizer.h>
 #include <wx/button.h>
+#include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -43,6 +43,10 @@ class EditSnippetsBaseDlg : public wxDialog
 		wxListBox* m_listBox1;
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrlMenuEntry;
+		
+		wxStaticText* m_staticText3;
+		wxTextCtrl* m_textCtrlAccelerator;
+		wxButton* m_buttonShortcut;
 		wxStaticText* m_staticText2;
 		wxTextCtrl* m_textCtrlSnippet;
 		wxButton* m_buttonAdd;
@@ -55,6 +59,7 @@ class EditSnippetsBaseDlg : public wxDialog
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnItemSelected( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnButtonKeyShortcut( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAddSnippet( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAddSnippetUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnChangeSnippet( wxCommandEvent& event ){ event.Skip(); }

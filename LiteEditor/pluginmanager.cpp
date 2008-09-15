@@ -378,3 +378,8 @@ wxString PluginManager::GetInstallDirectory() const
 {
 	return ManagerST::Get()->GetInstallDir();
 }
+
+IKeyboard* PluginManager::GetKeyboardManager()
+{
+	return &m_keyboardMgr;
+}

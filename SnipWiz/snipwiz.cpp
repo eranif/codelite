@@ -347,7 +347,7 @@ wxMenu* SnipWiz::CreateSubMenu()
 // opens settings
 void SnipWiz::OnSettings( wxCommandEvent& e )
 {
-	EditSnippetsDlg dlg( m_mgr->GetTheApp()->GetTopWindow(), this );
+	EditSnippetsDlg dlg( m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr );
 	dlg.ShowModal();
 
 	if ( dlg.GetModified() ) {

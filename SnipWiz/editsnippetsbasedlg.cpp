@@ -11,7 +11,7 @@
 
 EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetSizeHints( wxSize( 400,-1 ), wxDefaultSize );
 	
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
@@ -30,24 +30,40 @@ EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
-	wxBoxSizer* bSizer7;
-	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
+	wxFlexGridSizer* fgSizer1;
+	fgSizer1 = new wxFlexGridSizer( 2, 3, 0, 0 );
+	fgSizer1->AddGrowableCol( 1 );
+	fgSizer1->SetFlexibleDirection( wxBOTH );
+	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_staticText1 = new wxStaticText( m_panel2, wxID_ANY, wxT("Menu Entry:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
-	bSizer7->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlMenuEntry = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( m_textCtrlMenuEntry, 1, wxALL, 5 );
+	fgSizer1->Add( m_textCtrlMenuEntry, 1, wxALL|wxEXPAND, 5 );
 	
-	bSizer6->Add( bSizer7, 1, wxEXPAND, 5 );
+	
+	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_staticText3 = new wxStaticText( m_panel2, wxID_ANY, wxT("Keyboard Shortcut:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	fgSizer1->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlAccelerator = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	fgSizer1->Add( m_textCtrlAccelerator, 0, wxALL|wxEXPAND, 5 );
+	
+	m_buttonShortcut = new wxButton( m_panel2, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_buttonShortcut, 0, wxALL, 5 );
+	
+	bSizer6->Add( fgSizer1, 1, wxEXPAND, 5 );
 	
 	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, wxT("Use $ as placeholder for selection and @ to set the caret position.\ne.g. for($ = 0; $ < @; $++)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	bSizer6->Add( m_staticText2, 0, wxALL, 5 );
 	
 	m_textCtrlSnippet = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_TAB|wxTE_RICH2 );
-	m_textCtrlSnippet->SetMinSize( wxSize( -1,200 ) );
+	m_textCtrlSnippet->SetMinSize( wxSize( 300,200 ) );
 	
 	bSizer6->Add( m_textCtrlSnippet, 0, wxALL|wxEXPAND, 5 );
 	
@@ -102,6 +118,7 @@ EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const
 	
 	// Connect Events
 	m_listBox1->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( EditSnippetsBaseDlg::OnItemSelected ), NULL, this );
+	m_buttonShortcut->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditSnippetsBaseDlg::OnButtonKeyShortcut ), NULL, this );
 	m_buttonAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditSnippetsBaseDlg::OnAddSnippet ), NULL, this );
 	m_buttonAdd->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditSnippetsBaseDlg::OnAddSnippetUI ), NULL, this );
 	m_buttonChange->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditSnippetsBaseDlg::OnChangeSnippet ), NULL, this );
@@ -114,6 +131,7 @@ EditSnippetsBaseDlg::~EditSnippetsBaseDlg()
 {
 	// Disconnect Events
 	m_listBox1->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( EditSnippetsBaseDlg::OnItemSelected ), NULL, this );
+	m_buttonShortcut->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditSnippetsBaseDlg::OnButtonKeyShortcut ), NULL, this );
 	m_buttonAdd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditSnippetsBaseDlg::OnAddSnippet ), NULL, this );
 	m_buttonAdd->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditSnippetsBaseDlg::OnAddSnippetUI ), NULL, this );
 	m_buttonChange->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditSnippetsBaseDlg::OnChangeSnippet ), NULL, this );

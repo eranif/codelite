@@ -28,6 +28,7 @@
 
 #include "ieditor.h"
 #include "iconfigtool.h"
+#include "ikeyboard.h"
 #include "wx/treectrl.h"
 #include "custom_notebook.h"
 
@@ -224,6 +225,11 @@ public:
 	 * \brief save all modified files
 	 */
 	virtual void SaveAll() = 0;
+	
+	/**
+	 * @brief return the keyboard manager
+	 */
+	virtual IKeyboard *GetKeyboardManager() = 0;
 };
 
 #endif //IMANAGER_H

@@ -33,6 +33,7 @@
 #include "wx/treectrl.h"
 #include "dynamiclibrary.h"
 #include "plugindata.h"
+#include "keyboardmanager.h"
 
 class Notebook;
 class EnvironmentConfig;
@@ -43,7 +44,8 @@ class PluginManager : public IManager
 	std::map<wxString, IPlugin*> m_plugins;
 	std::list< clDynamicLibrary* > m_dl;
 	std::map<wxString, PluginInfo> m_pluginsInfo;
-
+	KeyboardManager m_keyboardMgr;
+	
 private:
 	PluginManager() {}
 	virtual ~PluginManager();
@@ -91,6 +93,7 @@ public:
 	virtual void AppendOutputMsg(const wxString &msg);
 	virtual void SaveAll();
 	virtual wxString GetInstallDirectory() const;
+	virtual IKeyboard *GetKeyboardManager();
 	
 	//------------------------------------
 	//End of IManager interface

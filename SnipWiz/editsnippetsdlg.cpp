@@ -1,11 +1,13 @@
+#include "ikeyboard.h"
 #include "editsnippetsdlg.h"
 #include "snipwiz.h"
 #include <wx/msgdlg.h>
 #include "AboutHtml.h"
 
-EditSnippetsDlg::EditSnippetsDlg( wxWindow* parent, SnipWiz *plugin )
+EditSnippetsDlg::EditSnippetsDlg( wxWindow* parent, SnipWiz *plugin, IManager *manager )
 		: EditSnippetsBaseDlg( parent )
 		, m_pPlugin(plugin)
+		, m_manager(manager)
 {
 	Initialize();
 	m_listBox1->SetFocus();
@@ -17,6 +19,15 @@ void EditSnippetsDlg::OnItemSelected( wxCommandEvent& event )
 	wxString selection = m_listBox1->GetStringSelection();
 	m_textCtrlMenuEntry->SetValue(selection);
 	m_textCtrlSnippet->SetValue(GetStringDb()->GetSnippetString(selection));
+	MenuItemDataMap accelMap;
+	m_manager->GetKeyboardManager()->GetAccelerators(accelMap);
+	MenuItemDataMap::iterator iter = accelMap.find(selection);
+	if (iter != accelMap.end()) {
+		MenuItemData mid = iter->second;
+		m_textCtrlAccelerator->SetValue(mid.accel);
+	} else {
+		m_textCtrlAccelerator->SetValue(wxT(""));
+	}
 }
 
 void EditSnippetsDlg::OnAddSnippet( wxCommandEvent& event )
@@ -43,17 +54,17 @@ void EditSnippetsDlg::OnChangeSnippet( wxCommandEvent& event )
 {
 	wxString curListKey = m_listBox1->GetStringSelection();
 	int index = m_listBox1->GetSelection();
-	
+
 	// check if list key is not equal new menu entry and if it is an used key
 	if (curListKey.Cmp(m_textCtrlMenuEntry->GetValue()) != 0 && GetStringDb()->IsSnippetKey(m_textCtrlMenuEntry->GetValue())) {
 		::wxMessageBox(wxT("Menu entry is not unique!"));
 		return;
 	}
-	
+
 	// if menu entry has changed, delete old entry in list
-	if(curListKey.Cmp(m_textCtrlMenuEntry->GetValue()) != 0)
+	if (curListKey.Cmp(m_textCtrlMenuEntry->GetValue()) != 0)
 		GetStringDb()->DeleteSnippetKey(curListKey);
-		
+
 	GetStringDb()->SetSnippetString(m_textCtrlMenuEntry->GetValue(), m_textCtrlSnippet->GetValue());
 	m_listBox1->SetString(index, m_textCtrlMenuEntry->GetValue());
 	m_modified = true;
@@ -71,7 +82,7 @@ void EditSnippetsDlg::OnRemoveSnippet( wxCommandEvent& event )
 {
 	wxString key = m_listBox1->GetStringSelection();
 	int index = m_listBox1->GetSelection();
-	
+
 	GetStringDb()->DeleteSnippetKey(key);
 	m_listBox1->Delete(index);
 
@@ -93,18 +104,18 @@ void EditSnippetsDlg::Initialize()
 	wxTextAttr attribs = m_textCtrlSnippet->GetDefaultStyle();
 	wxArrayInt tabs = attribs.GetTabs();
 	int tab = 70;
-	for (int i = 1; i < 20; i++){
+	for (int i = 1; i < 20; i++) {
 		tabs.Add(tab * i);
 	}
-	
+
 	attribs.SetTabs(tabs);
 	m_textCtrlSnippet->SetDefaultStyle(attribs);
-	
+
 	wxArrayString keys;
 	GetStringDb()->GetAllSnippetKeys(keys);
 	m_listBox1->Append(keys);
 
-	if(m_listBox1->IsEmpty() == false) {
+	if (m_listBox1->IsEmpty() == false) {
 		SelectItem(0);
 	}
 	m_htmlWinAbout->SetPage(wxString::FromUTF8(snipwizhtml_txt));
@@ -114,12 +125,61 @@ void EditSnippetsDlg::SelectItem(long index)
 {
 	m_listBox1->SetSelection(index);
 	wxString snippetStr = m_listBox1->GetString((unsigned int)index);
-	
+
 	m_textCtrlMenuEntry->SetValue(snippetStr);
 	m_textCtrlSnippet->SetValue(GetStringDb()->GetSnippetString(snippetStr));
+
+	MenuItemDataMap accelMap;
+	m_manager->GetKeyboardManager()->GetAccelerators(accelMap);
+	MenuItemDataMap::iterator iter = accelMap.find(snippetStr);
+	if (iter != accelMap.end()) {
+		MenuItemData mid = iter->second;
+		m_textCtrlAccelerator->SetValue(mid.accel);
+	} else {
+		m_textCtrlAccelerator->SetValue(wxT(""));
+	}
 }
 
 swStringDb* EditSnippetsDlg::GetStringDb()
 {
 	return m_pPlugin->GetStringDb();
+}
+
+void EditSnippetsDlg::OnButtonKeyShortcut(wxCommandEvent& e)
+{
+	wxArrayString keys;
+	GetStringDb()->GetAllSnippetKeys(keys);
+	keys.Sort();
+
+	int index = keys.Index(m_textCtrlMenuEntry->GetValue());
+	if (index != wxNOT_FOUND) {
+		int id = 20050 + index;
+
+		wxString strId;
+		strId << id;
+
+		MenuItemData mid;
+		mid.id = strId;
+		mid.action = m_textCtrlMenuEntry->GetValue();
+		mid.parent = wxT("Plugins::SnipWiz");
+
+		MenuItemDataMap accelMap;
+		m_manager->GetKeyboardManager()->GetAccelerators(accelMap);
+
+		if (m_manager->GetKeyboardManager()->PopupNewKeyboardShortcutDlg(this, mid) == wxID_OK) {
+			
+			if (m_manager->GetKeyboardManager()->IsDuplicate(accelMap, mid.accel) && mid.accel.IsEmpty() == false) {
+				wxMessageBox(wxT("Accelerator already exist"), wxT("CodeLite"), wxOK|wxCENTRE, this);
+				return;
+			}
+			
+			if (m_manager->GetKeyboardManager()->AddAccelerator(accelMap, mid)) {
+				m_manager->GetKeyboardManager()->Update(accelMap);
+				m_textCtrlAccelerator->SetValue(mid.accel);
+			}
+			
+			m_textCtrlAccelerator->SetValue(mid.accel);
+			
+		}
+	}
 }

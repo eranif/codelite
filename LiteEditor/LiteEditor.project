@@ -345,6 +345,8 @@
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>
     <File Name="pluginmanager.cpp"/>
+    <File Name="keyboardmanager.cpp"/>
+    <File Name="keyboardmanager.h"/>
   </VirtualDirectory>
   <Dependencies>
     <Project Name="wxscintilla"/>

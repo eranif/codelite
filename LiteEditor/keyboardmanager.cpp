@@ -14,7 +14,7 @@ KeyboardManager::~KeyboardManager()
 
 bool KeyboardManager::AddAccelerator(MenuItemDataMap &accelMap, const MenuItemData& menuItemData)
 {
-	if ( IsDuplicate(accelMap, menuItemData.accel) ) {
+	if ( menuItemData.accel.IsEmpty() == false && IsDuplicate(accelMap, menuItemData.accel) ) {
 		return false;
 	}
 	

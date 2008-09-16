@@ -111,7 +111,7 @@
 	
 	<!-- 
 		Toolbar bitmaps (16x16) 
-	-->
+	--> 
 	<object class="wxBitmap" name="outline16">res/16/text_tree.png</object>
 	<object class="wxBitmap" name="configure_ext_tools16">res/16/external_tools16.png</object>
 	<object class="wxBitmap" name="ext_tool_default16">res/16/gear16.png</object>

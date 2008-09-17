@@ -2499,7 +2499,12 @@ void Frame::OnDebug(wxCommandEvent &e)
 		//debugger is already running -> probably a continue command
 		mgr->DbgStart();
 	} else if (mgr->IsWorkspaceOpen()) {
-
+		
+		if(WorkspaceST::Get()->GetActiveProjectName().IsEmpty()) {
+			wxLogMessage(wxT("Attempting to debug workspace with no active project? Ignoring."));
+			return;
+		}
+		
 		// Debugger is not running, but workspace is opened -> start debug session
 		long build_first(wxID_NO);
 		bool answer(false);

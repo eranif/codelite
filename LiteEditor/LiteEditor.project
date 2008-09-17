@@ -540,7 +540,7 @@ resources.cpp: resources.xrc
     <File Name="../make_deb.sh"/>
     <File Name="../make_repo.sh"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode">
+  <Dependencies Name="WinReleaseUnicode">
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
@@ -556,7 +556,7 @@ resources.cpp: resources.xrc
     <Project Name="ExternalTools"/>
     <Project Name="snipwiz"/>
   </Dependencies>
-  <Dependencies Name="WinReleaseUnicode">
+  <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>

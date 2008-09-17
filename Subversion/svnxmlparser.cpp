@@ -70,7 +70,7 @@ void SvnXmlParser::GetFiles(const wxString &input, wxArrayString &files, FileSta
 						wxXmlNode *status = XmlUtils::FindFirstByTagName(child, wxT("wc-status"));
 						if (status) {
 							wxString item = XmlUtils::ReadString(status, wxT("item"), wxEmptyString);
-							if (path.IsEmpty() == false && searchedState.Contains(item)) {
+							if (path.IsEmpty() == false && searchedState.Contains(item) && files.Index(path) == wxNOT_FOUND) {
 								files.Add(path);
 							}
 						}

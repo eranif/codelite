@@ -362,6 +362,16 @@
     <Project Name="Copyright"/>
     <Project Name="UnitTestPP"/>
   </Dependencies>
+  <VirtualDirectory Name="scripts">
+    <File Name="../Runtime/build_update.bat"/>
+    <File Name="../Runtime/update.bat"/>
+    <File Name="../Runtime/make_mac_bundle.sh"/>
+    <File Name="../Runtime/le_killproc.sh"/>
+    <File Name="../Runtime/le_exec.sh"/>
+    <File Name="../make_src_targz.sh"/>
+    <File Name="../make_deb.sh"/>
+    <File Name="../make_repo.sh"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="../Runtime/CodeLiteUD" IntermediateDirectory="./DebugUnicode" Command="./CodeLiteUD" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
@@ -497,7 +507,7 @@ svninfo.cpp:
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
       </Compiler>
-      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --unicode=yes --libs );-Wl,--subsystem,windows -mwindows;">
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --unicode=yes --libs );-Wl,--subsystem,windows -mwindows;-Wl,-M=codeltie.map">
         <LibraryPath Value="."/>
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.a"/>
@@ -530,16 +540,6 @@ resources.cpp: resources.xrc
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="scripts">
-    <File Name="../Runtime/build_update.bat"/>
-    <File Name="../Runtime/update.bat"/>
-    <File Name="../Runtime/make_mac_bundle.sh"/>
-    <File Name="../Runtime/le_killproc.sh"/>
-    <File Name="../Runtime/le_exec.sh"/>
-    <File Name="../make_src_targz.sh"/>
-    <File Name="../make_deb.sh"/>
-    <File Name="../make_repo.sh"/>
-  </VirtualDirectory>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>

@@ -52,7 +52,8 @@ class WXDLLIMPEXP_CL DirTraverser : public wxDirTraverser
 {
 	wxArrayString m_files;
 	wxString m_filespec;
-	std::map<wxString, bool> m_specMap;
+	wxArrayString m_specArray;
+	
 	bool m_extlessFiles;
 	wxArrayString m_excludeDirs;
 

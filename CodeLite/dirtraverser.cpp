@@ -32,32 +32,27 @@ DirTraverser::DirTraverser(const wxString &filespec, bool includeExtLessFiles)
 		, m_filespec(filespec)
 		, m_extlessFiles(includeExtLessFiles)
 {
-	if (m_filespec.Trim() == wxT("*.*") || m_filespec.Trim() == wxT("*")) {
-		m_specMap.clear();
-	} else {
-		wxStringTokenizer tok(m_filespec, wxT(";"));
-		while ( tok.HasMoreTokens() ) {
-			std::pair<wxString, bool> val;
-			val.first = tok.GetNextToken().AfterLast(wxT('*'));
-			val.first = val.first.AfterLast(wxT('.')).MakeLower();
-			val.second = true;
-			m_specMap.insert( val );
-		}
-	}
+	m_specArray = wxStringTokenize(filespec, wxT(";"), wxTOKEN_STRTOK);
 }
 
 wxDirTraverseResult DirTraverser::OnFile(const wxString& filename)
 {
 	// add the file to our array
 	wxFileName fn(filename);
-
-	if ( m_specMap.empty() ) {
-		m_files.Add(filename);
-	} else if (fn.GetExt().IsEmpty() & m_extlessFiles) {
-		m_files.Add(filename);
-	} else if (m_specMap.find(fn.GetExt().MakeLower()) != m_specMap.end()) {
+	
+	for(size_t i=0; i<m_specArray.GetCount(); i++){
+		if(wxMatchWild(m_specArray.Item(i), fn.GetFullName())){
+			m_files.Add(filename);
+			return wxDIR_CONTINUE;
+		}
+	}
+	
+	// if we reached this point, no pattern was suitable for our file
+	// test for extensionless file flag
+	if (fn.GetExt().IsEmpty() && m_extlessFiles) {
 		m_files.Add(filename);
 	}
+	
 	return wxDIR_CONTINUE;
 }
 

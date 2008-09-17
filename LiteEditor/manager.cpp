@@ -168,6 +168,7 @@ Manager::Manager(void)
 		, m_frameLineno(wxNOT_FOUND)
 		, m_useTipWin(false)
 		, m_tipWinPos(wxNOT_FOUND)
+		, m_inShutdown(false)
 {
 }
 
@@ -424,10 +425,10 @@ void Manager::CreateProject(ProjectData &data)
 	           errMsg);
 	CHECK_MSGBOX(res);
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(data.m_name, errMsg);
-	
+
 	//copy the project settings to the new one
 	proj->SetSettings(data.m_srcProject->GetSettings());
-	
+
 	// now add the new project to the build matrix
 	WorkspaceST::Get()->AddProjectToBuildMatrix(proj);
 	ProjectSettingsPtr settings = proj->GetSettings();
@@ -462,6 +463,8 @@ void Manager::CreateProject(ProjectData &data)
 
 void Manager::CloseWorkspace()
 {
+	SetInShutdown(true);
+
 	//close any debugging session that is currently opened
 	DbgStop();
 
@@ -547,6 +550,7 @@ void Manager::OpenWorkspace(const wxString &path)
 
 	// do workspace initializations
 	DoSetupWorkspace(path);
+	SetInShutdown(false);
 }
 
 void Manager::DoUpdateConfigChoiceControl()
@@ -1245,14 +1249,14 @@ void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
 			DbgStop();
 		}
 	}
-	
+
 	wxString conf;
 	// get the selected configuration to be built
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-	if(bldConf) {
+	if (bldConf) {
 		conf = bldConf->GetName();
 	}
-	
+
 	QueueCommand info(projectName, conf, false, QueueCommand::Build);
 	m_compileRequest = new CompileRequest(GetMainFrame(), info, fileName, false);
 	m_compileRequest->Process();
@@ -2537,14 +2541,14 @@ void Manager::RunCustomPreMakeCommand(const wxString &project)
 		delete m_compileRequest;
 		m_compileRequest = NULL;
 	}
-	
+
 	wxString conf;
 	// get the selected configuration to be built
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, wxEmptyString);
-	if(bldConf) {
+	if (bldConf) {
 		conf = bldConf->GetName();
 	}
-	
+
 	QueueCommand info(project, conf, false, QueueCommand::Build);
 	m_compileRequest = new CompileRequest(	GetMainFrame(), //owner window
 	                                       info,
@@ -2559,24 +2563,24 @@ void Manager::UpdateMenuAccelerators()
 
 	wxArrayString files;
 	DoGetAccelFiles(files);
-	
+
 	// load user accelerators map
 	LoadAcceleratorTable(files, menuMap);
-	
+
 	// load the default accelerator map
 	GetDefaultAcceleratorMap(defAccelMap);
-	
+
 	// loop over default accelerators map, and search for items that does not exist in the user's list
 	std::map< wxString, MenuItemData >::iterator it = defAccelMap.begin();
-	for(; it != defAccelMap.end(); it++){
-		if(menuMap.find(it->first) == menuMap.end()){
+	for (; it != defAccelMap.end(); it++) {
+		if (menuMap.find(it->first) == menuMap.end()) {
 			// this item does not exist in the users accelerators
 			// probably a new accelerator that was added to the default
 			// files directly via update/manually modified it
 			menuMap[it->first] = it->second;
 		}
 	}
-	
+
 	wxMenuBar *bar = Frame::Get()->GetMenuBar();
 
 	wxString content;
@@ -2833,23 +2837,27 @@ void Manager::ReplaceInFiles(const wxString &word, std::list<CppToken> &li)
 }
 void Manager::RetagFile(const wxString& filename)
 {
-	// re-tag the file
-	ParseRequest *req = new ParseRequest();
-	// Put a request on the parsing thread to update the GUI tree for this file
-	wxFileName fn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
-	req->setDbFile(fn.GetFullPath().c_str());
+	if (!GetInShutdown()) {
+		// re-tag the file
+		ParseRequest *req = new ParseRequest();
+		// Put a request on the parsing thread to update the GUI tree for this file
+		wxFileName fn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
+		req->setDbFile(fn.GetFullPath().c_str());
 
-	// Construct an absolute file name for ctags
-	wxFileName absFile( filename );
-	absFile.MakeAbsolute();
-	req->setFile(absFile.GetFullPath().c_str());
-	ParseThreadST::Get()->Add(req);
+		// Construct an absolute file name for ctags
+		wxFileName absFile( filename );
+		absFile.MakeAbsolute();
+		req->setFile(absFile.GetFullPath().c_str());
+		ParseThreadST::Get()->Add(req);
 
-	// send event to main frame to update the status bar
-	wxCommandEvent e(wxEVT_CMD_UPDATE_STATUS_BAR);
-	e.SetInt(4);
-	e.SetString(wxString::Format(wxT("Re-tagging file %s..."), absFile.GetFullName().c_str()));
-	Frame::Get()->AddPendingEvent(e);
+		// send event to main frame to update the status bar
+		wxCommandEvent e(wxEVT_CMD_UPDATE_STATUS_BAR);
+		e.SetInt(4);
+		e.SetString(wxString::Format(wxT("Re-tagging file %s..."), absFile.GetFullName().c_str()));
+		Frame::Get()->AddPendingEvent(e);
+	} else {
+		wxLogMessage(wxString::Format(wxT("Workspace in being closed, skipping re-tag for file %s"), filename.c_str()));
+	}
 }
 
 wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxString &wd, bool considerPauseWhenExecuting)

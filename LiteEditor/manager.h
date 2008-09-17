@@ -71,6 +71,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	long m_tipWinPos;
 	wxString m_installDir;
 	std::list<QueueCommand> m_buildQueue;
+	bool m_inShutdown;
 
 public:
 	/*!
@@ -138,6 +139,13 @@ public:
 	 */
 	void SaveAll(bool includeUntitled = true);
 
+	void SetInShutdown(const bool& inShutdown) {
+		this->m_inShutdown = inShutdown;
+	}
+	
+	const bool& GetInShutdown() const {
+		return m_inShutdown;
+	}
 	/*!
 	 * \brief
 	 * Free all singleton objects initialised in CodeLite
@@ -715,35 +723,35 @@ public:
 	 * \brief process the next build job
 	 */
 	void ProcessCommandQueue();
-	
+
 	/**
-	 * \brief build the entire workspace. This operation is equal to 
+	 * \brief build the entire workspace. This operation is equal to
 	 * manually right clicking on each project in the workspace and selecting
-	 * 'build' 
+	 * 'build'
 	 */
 	void BuildWorkspace();
-	
+
 	/**
-	 * \brief clean the entire workspace. This operation is equal to 
+	 * \brief clean the entire workspace. This operation is equal to
 	 * manually right clicking on each project in the workspace and selecting
-	 * 'clean' 
+	 * 'clean'
 	 */
 	void CleanWorkspace();
-	
+
 	/**
-	 * \brief clean, followed by buid of the entire workspace. This operation is equal to 
+	 * \brief clean, followed by buid of the entire workspace. This operation is equal to
 	 * manually right clicking on each project in the workspace and selecting
-	 * 'clean' 
+	 * 'clean'
 	 */
 	void RebuildWorkspace();
-	
+
 	/**
 	 * \brief test if pane_name is resides in the wxAuiManager and is visible
 	 * \param pane_name pane name to search for
 	 * \return true on success (exist in the AUI manager and visible), false otherwise
 	 */
 	bool IsPaneVisible(const wxString &pane_name);
-	
+
 	//--------------------------------------------------------------------
 	//IDebuggerObserver implementation. These set of functions are called
 	//from the debugger whenever event occurs there
@@ -778,7 +786,7 @@ public:
 	}
 	void UpdateDebuggerPane();
 	void SetMemory(const wxString &address, size_t count, const wxString &hex_value);
-	
+
 protected:
 	Manager(void);
 	virtual ~Manager(void);
@@ -789,7 +797,7 @@ protected:
 	void DoBuildProject(const QueueCommand &buildInfo);
 	void DoCmdWorkspace(int cmd);
 	void DoGetAccelFiles(wxArrayString &files);
-	
+
 private:
 	void RemoveProjectNameFromOpenFiles(const std::vector<wxFileName> &project_files);
 

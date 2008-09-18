@@ -1609,20 +1609,14 @@ void Manager::AddToRecentlyOpenedFiles(const wxString &fileName)
 
 void Manager::AddToRecentlyOpenedWorkspaces(const wxString &fileName)
 {
-	//get list recently opened files
-	wxArrayString files;
-	EditorConfig *cfg = EditorConfigST::Get();
-	cfg->GetRecentlyOpenedWorkspaces(files);
+	// Add this workspace to the history. Don't check for uniqueness:
+	// if it's already on the list, wxFileHistory will move it to the top
+	m_recentWorkspaces.AddFileToHistory(fileName);
 
-	if (files.Index(fileName) == wxNOT_FOUND) {
-		//the file does not exist, add it and save the list
-		files.Add(fileName);
-		m_recentWorkspaces.AddFileToHistory(fileName);
-	}
-	files.Empty();
 	//sync between the history object and the configuration file
+	wxArrayString files;
 	m_recentWorkspaces.GetFiles(files);
-	cfg->SetRecentlyOpenedWorkspaces(files);
+	EditorConfigST::Get()->SetRecentlyOpenedWorkspaces(files);
 }
 
 void Manager::GetRecentlyOpenedFiles(wxArrayString &files)

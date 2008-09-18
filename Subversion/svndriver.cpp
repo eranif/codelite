@@ -782,9 +782,8 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 		wxSetWorkingDirectory(item.m_fileName.GetPath());
 
 		// open a file selector to select the patch file
-		const wxString ALL(	wxT("Patch files (*.patch)|*.patch|")
-							wxT("Diff files (*.diff)|*.diff|")
-		                    wxT("All Files (*)|*"));
+		const wxString ALL(	wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|")
+							wxT("All Files (*)|*"));
 
 		wxFileDialog fdlg(m_manager->GetTheApp()->GetTopWindow(),
 		                                      wxT("Select a patch file"),

@@ -1590,21 +1590,14 @@ LEditor *Manager::GetActiveEditor() const
 
 void Manager::AddToRecentlyOpenedFiles(const wxString &fileName)
 {
-	//get list recently opened files
-	wxArrayString files;
-	EditorConfig *cfg = EditorConfigST::Get();
-	cfg->GetRecentlyOpenedFies(files);
+	// Add this file to the history. Don't check for uniqueness:
+	// if it's already on the list, wxFileHistory will move it to the top
+	m_recentFiles.AddFileToHistory(fileName);
 
-	if (files.Index(fileName) == wxNOT_FOUND) {
-		//the file does not exist, add it and save the list
-		files.Add(fileName);
-		m_recentFiles.AddFileToHistory(fileName);
-	}
-
-	files.Empty();
 	//sync between the history object and the configuration file
+	wxArrayString files;
 	m_recentFiles.GetFiles(files);
-	cfg->SetRecentlyOpenedFies(files);
+	EditorConfigST::Get()->SetRecentlyOpenedFies(files);
 }
 
 void Manager::AddToRecentlyOpenedWorkspaces(const wxString &fileName)

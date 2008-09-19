@@ -43,6 +43,10 @@ void InteractiveProcess::OnTimer(wxTimerEvent &WXUNUSED(event))
 		m_proc->Terminate();
 		return;
 	}
+//#if defined (__WXGTK__)
+	// This is a convenient place to generate an idle event that will do dbgr->Poke()
+	wxWakeUpIdle();
+//#endif
 }
 
 void InteractiveProcess::OnProcessEnd(wxProcessEvent& event)

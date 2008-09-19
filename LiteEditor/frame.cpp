@@ -2606,7 +2606,11 @@ void Frame::OnIdle(wxIdleEvent &e)
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
 		dbgr->Poke();
-		e.RequestMore();
+#if defined (__WXGTK__)
+	// wxGTK gets its fix of idle events from InteractiveProcess::OnTimer
+#else
+//		e.RequestMore();
+#endif
 	}
 }
 

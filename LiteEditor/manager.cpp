@@ -3155,9 +3155,13 @@ void Manager::ProcessCommandQueue()
 
 	switch ( qcmd.GetKind() ) {
 	case QueueCommand::Clean:
+		// make sure that the 'Output View' is open
+		ShowOutputPane(OutputPane::BUILD_WIN);
 		DoCleanProject(qcmd);
 		break;
 	case QueueCommand::Build:
+		// make sure that the 'Output View' is open
+		ShowOutputPane(OutputPane::BUILD_WIN);
 		DoBuildProject(qcmd);
 		break;
 	case QueueCommand::Debug:

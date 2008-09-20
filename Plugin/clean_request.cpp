@@ -66,6 +66,12 @@ void CleanRequest::Process()
 		cmd = builder->GetCleanCommand(m_info.GetProject(), m_info.GetConfiguration(), isCustom);
 	}
 
+	if ( cmd.IsEmpty() ) {
+		AppendLine(wxT("Sorry, there is no 'Clean' command available\n"));
+		SetBusy(false);
+		return;
+	}
+
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 	if(bldConf) {
 		wxString cmpType = bldConf->GetCompilerType();
@@ -77,8 +83,12 @@ void CleanRequest::Process()
 				om[wxT("PATH")] = value.Trim().Trim(false);
 			}
 		}
+	} else {
+		AppendLine(wxT("Sorry, couldn't find the Build configuration\n"));
+		SetBusy(false);
+		return;
 	}
-	
+
 	SendStartMsg();
 
 	//expand the variables of the command

@@ -76,6 +76,11 @@
 
 const wxEventType wxEVT_CMD_UPDATE_STATUS_BAR = wxNewEventType();
 
+#ifndef wxScintillaEventHandler
+#define wxScintillaEventHandler(func) \
+	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
+#endif
+
 //debugger line marker xpm
 extern char *arrow_right_green_xpm[];
 extern char *stop_xpm[];
@@ -85,7 +90,6 @@ extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_SCI_CHARADDED(wxID_ANY, LEditor::OnCharAdded)
 	EVT_SCI_MARGINCLICK(wxID_ANY, LEditor::OnMarginClick)
-	EVT_SCI_DWELLSTART(wxID_ANY, LEditor::OnDwellStart)
 	EVT_SCI_CALLTIP_CLICK(wxID_ANY, LEditor::OnCallTipClick)
 	EVT_SCI_DWELLEND(wxID_ANY, LEditor::OnDwellEnd)
 	EVT_SCI_MODIFIED(wxID_ANY, LEditor::OnModified)
@@ -147,6 +151,8 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 //	SetDropTarget(new FileDropTarget());
 	RestoreDefaults();
 
+	Connect(wxEVT_SCI_DWELLSTART, wxScintillaEventHandler(LEditor::OnDwellStart), NULL, this);
+	
 	// clear Ctrl+D
 	CmdKeyClear(wxT('D'), wxSCI_SCMOD_CTRL);
 }

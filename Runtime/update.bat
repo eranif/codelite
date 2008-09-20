@@ -1,6 +1,7 @@
 @echo off
 
 xcopy config\*.default "C:\Program Files\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes
+xcopy config\build_settings.xml.default.win "C:\Program Files\CodeLite\config\build_settings.xml.default" /E /I /H /Y /EXCLUDE:excludes
 xcopy debuggers\*.dll "C:\Program Files\CodeLite\debuggers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy images\* "C:\Program Files\CodeLite\images\" /E /I /H /Y /EXCLUDE:excludes
 xcopy lexers\*.xml "C:\Program Files\CodeLite\lexers\" /E /I /H /Y /EXCLUDE:excludes

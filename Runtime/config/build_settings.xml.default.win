@@ -68,5 +68,5 @@
       <PathVariable></PathVariable>
     </Compiler>
   </Compilers>
-  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="make" Options="-f" Jobs="2"/>
+  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="mingw32-make.exe" Options="-f" Jobs="2"/>
 </BuildSettings>

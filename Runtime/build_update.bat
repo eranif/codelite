@@ -11,6 +11,7 @@ xcopy plugins\*.dll "update\plugins\" /E /I /H /Y /EXCLUDE:excludes
 xcopy plugins\resources\*.* "update\plugins\resources" /E /I /H /Y /EXCLUDE:excludes
 xcopy rc\*.xrc "update\rc\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\* "update\templates\" /E /I /H /Y /EXCLUDE:excludes
+xcopy templates\formbuilder\* "C:\Program Files\CodeLite\templates\formbuilder\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "update\" /H /Y /EXCLUDE:excludes
 :: Copy the UnitTest++ files
 xcopy sdk\lib\win32\*.a "update\sdk\lib\" /Y

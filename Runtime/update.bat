@@ -9,6 +9,7 @@ xcopy plugins\*.dll "C:\Program Files\CodeLite\plugins\" /E /I /H /Y /EXCLUDE:ex
 xcopy plugins\resources\*.* "C:\Program Files\CodeLite\plugins\resources\" /E /I /H /Y /EXCLUDE:excludes
 xcopy rc\*.xrc "C:\Program Files\CodeLite\rc\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\ "C:\Program Files\CodeLite\templates\" /E /I /H /Y /EXCLUDE:excludes
+xcopy templates\formbuilder\* "C:\Program Files\CodeLite\templates\formbuilder\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "C:\Program Files\CodeLite\" /H /Y /EXCLUDE:excludes
 :: Copy the misc files
 copy ctags-le.exe "C:\Program Files\CodeLite\" /Y

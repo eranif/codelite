@@ -555,6 +555,7 @@ resources.cpp: resources.xrc
     <Project Name="UnitTestPP"/>
     <Project Name="ExternalTools"/>
     <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
   </Dependencies>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="wxscintilla"/>
@@ -571,5 +572,6 @@ resources.cpp: resources.xrc
     <Project Name="UnitTestPP"/>
     <Project Name="ExternalTools"/>
     <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
   </Dependencies>
 </CodeLite_Project>

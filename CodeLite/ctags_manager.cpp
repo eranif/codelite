@@ -636,7 +636,7 @@ void TagsManager::TagsByScopeAndName(const wxString& scope, const wxString &name
 		} else {
 			sql << wxT("select * from tags where scope='") << derivationList.at(i) << wxT("' and name ='") << name << wxT("' ");
 		}
-		DoExecuteQueury(sql, tags);
+		DoExecuteQueury(sql, false, tags);
 	}
 
 	// and finally sort the results
@@ -663,7 +663,7 @@ void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr> &t
 		tmpScope = DoReplaceMacros(tmpScope);
 
 		sql << wxT("select * from tags where scope='") << tmpScope << wxT("'  ");
-		DoExecuteQueury(sql, tags);
+		DoExecuteQueury(sql, false, tags);
 
 	}
 
@@ -840,7 +840,7 @@ void TagsManager::GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &
 	} else {
 		sql << wxT("select * from tags where parent='<global>' and name ='") << tmpName << wxT("'  ");
 	}
-	DoExecuteQueury(sql, tags);
+	DoExecuteQueury(sql, true, tags);
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
 }
 
@@ -1082,14 +1082,14 @@ void TagsManager::OpenType(std::vector<TagEntryPtr> &tags)
 {
 	wxString sql;
 	sql << wxT("select * from tags where kind in ('class', 'namespace', 'struct', 'union', 'enum', 'typedef') order by name DESC");
-	DoExecuteQueury(sql, tags);
+	DoExecuteQueury(sql, true, tags);
 }
 
 void TagsManager::FindSymbol(const wxString& name, std::vector<TagEntryPtr> &tags)
 {
 	wxString query;
 	query << wxT("select * from tags where name='") << name << wxT("'  ");
-	DoExecuteQueury(query, tags);
+	DoExecuteQueury(query, true, tags);
 }
 
 void TagsManager::DeleteFilesTags(const std::vector<wxFileName> &projectFiles)
@@ -1346,7 +1346,7 @@ void TagsManager::FindByPath(const wxString &path, std::vector<TagEntryPtr> &tag
 {
 	wxString sql;
 	sql << wxT("select * from tags where path='") << path << wxT("'  ");
-	DoExecuteQueury(sql, tags);
+	DoExecuteQueury(sql, false, tags);
 }
 
 void TagsManager::DoFindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags)
@@ -1354,7 +1354,7 @@ void TagsManager::DoFindByNameAndScope(const wxString &name, const wxString &sco
 	wxString sql;
 	if (scope == wxT("<global>")) {
 		sql << wxT("select * from tags where name='") << name << wxT("' and parent='<global>'  ");
-		DoExecuteQueury(sql, tags);
+		DoExecuteQueury(sql, false, tags);
 	} else {
 		std::vector<wxString> derivationList;
 		derivationList.push_back(scope);
@@ -1366,7 +1366,7 @@ void TagsManager::DoFindByNameAndScope(const wxString &name, const wxString &sco
 			path_ << derivationList.at(i) << wxT("::") << name ;
 
 			sql << wxT("select * from tags where path='") << path_ << wxT("'  ");
-			DoExecuteQueury(sql, tags);
+			DoExecuteQueury(sql, false, tags);
 		}
 	}
 }
@@ -1442,7 +1442,7 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 	return false;
 }
 
-void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> &tags, bool onlyWorkspace /*flase*/)
+void TagsManager::DoExecuteQueury(const wxString &sql, bool queryBothDB, std::vector<TagEntryPtr> &tags, bool onlyWorkspace /*flase*/)
 {
 	bool only_workspace(onlyWorkspace);
 	size_t count_before = tags.size();
@@ -1485,7 +1485,7 @@ void TagsManager::DoExecuteQueury(const wxString &sql, std::vector<TagEntryPtr> 
 
 		// Now try the local tags database, but only if 
 		// no matches were found in the external database
-		if ( count_before == tags.size() ) {
+		if ( count_before == tags.size() || queryBothDB ) {
 			TagCacheEntryPtr cachedEntry = NULL;
 
 			// are we using cache?
@@ -1550,7 +1550,7 @@ bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> 
 
 	std::vector<TagEntryPtr> tags;
 	TagEntryPtr tag;
-	DoExecuteQueury(sql, tags);
+	DoExecuteQueury(sql, false, tags);
 	if (tags.size() == 1) {
 		tag = tags.at(0);
 	} else {
@@ -1726,7 +1726,7 @@ DoxygenComment TagsManager::GenerateDoxygenComment(const wxString &file, const i
 		wxString sql;
 		sql << wxT("select * from tags where file='") << file << wxT("' and line=") << line + 1 <<  wxT(" ");
 		std::vector<TagEntryPtr> tags;
-		DoExecuteQueury(sql, tags);
+		DoExecuteQueury(sql, true, tags);
 		if (tags.empty() || tags.size() > 1)
 			return DoxygenComment();
 
@@ -1789,7 +1789,7 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxString &kind, s
 		sql.Empty();
 		wxString tmpScope(derivationList.at(i));
 		sql << wxT("select * from tags where scope='") << tmpScope << wxT("' and kind='") << kind << wxT("' ");;
-		DoExecuteQueury(sql, tags, onlyWorkspace);
+		DoExecuteQueury(sql, false, tags, onlyWorkspace);
 	}
 	// and finally sort the results
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
@@ -2113,7 +2113,7 @@ void TagsManager::GetClasses(std::vector< TagEntryPtr > &tags, bool onlyWorkspac
 {
 	wxString sql;
 	sql << wxT("select * from tags where kind in ('class', 'struct', 'union') order by name ASC");
-	DoExecuteQueury(sql, tags, onlyWorkspace);
+	DoExecuteQueury(sql, true, tags, onlyWorkspace);
 }
 
 void TagsManager::StripComments(const wxString &text, wxString &stippedText)
@@ -2165,7 +2165,7 @@ void TagsManager::GetFunctions(std::vector< TagEntryPtr > &tags, const wxString 
 		sql << wxT(" and file='") << fileName << wxT("'");
 	}
 	sql << wxT("  order by name ASC");
-	DoExecuteQueury(sql, tags, onlyWorkspace);
+	DoExecuteQueury(sql, true, tags, onlyWorkspace);
 }
 
 void TagsManager::GetAllTagsNames(wxArrayString &tagsList)
@@ -2215,7 +2215,7 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 		tmpScope = DoReplaceMacros(tmpScope);
 
 		sql << wxT("select * from tags where (scope='") << tmpScope << wxT("') ") << kindClaus;
-		DoExecuteQueury(sql, tags);
+		DoExecuteQueury(sql, false, tags);
 	}
 
 	// and finally sort the results
@@ -2386,7 +2386,7 @@ TagEntryPtr TagsManager::GetWorkspaceTagById(int id)
 	wxString sql;
 	std::vector<TagEntryPtr> tags;
 	sql << wxT("select * from tags where id=") << id;
-	DoExecuteQueury(sql, tags, true);
+	DoExecuteQueury(sql, false, tags, true);
 	if (tags.size()==1) {
 		return tags.at(0);
 	}

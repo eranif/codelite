@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "performance.h"
 #include "ctags_manager.h"
 #include <wx/txtstrm.h>
 #include <wx/file.h>
@@ -673,6 +674,8 @@ void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr> &t
 
 bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int lineno, const wxString& expr, const wxString& text, const wxString &word, std::vector<TagEntryPtr> &candidates)
 {
+	PERF_START("WordCompletionCandidates");
+	
 	candidates.clear();
 	wxString path, tmp;
 	wxString typeName, typeScope;
@@ -717,6 +720,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		wxString typeName, typeScope;
 		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 		if (!res) {
+			PERF_END("WordCompletionCandidates");
 			return false;
 		}
 
@@ -731,11 +735,15 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		TagsByScope(scope, tmpCandidates);
 		RemoveDuplicates(tmpCandidates, candidates);
 	}
+	
+	PERF_END("WordCompletionCandidates");
 	return true;
 }
 
 bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno, const wxString& expr, const wxString& text, std::vector<TagEntryPtr>& candidates)
 {
+	PERF_START("AutoCompleteCandidates");
+	
 	candidates.clear();
 	wxString path;
 	wxString typeName, typeScope;
@@ -749,6 +757,7 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 
 	bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 	if (!res) {
+		PERF_END("AutoCompleteCandidates");
 		wxLogMessage(wxString::Format(wxT("Failed to resolve %s"), expression.c_str()));
 		return false;
 	}
@@ -783,7 +792,9 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		filter.Add(wxT("prototype"));
 		TagsByScope(scope, filter, candidates, true);
 	}
-
+	
+	PERF_END("AutoCompleteCandidates");
+	
 	return candidates.empty() == false;
 }
 

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/socket.h>
+#include "performance.h"
 #include "conffilelocator.h"
 #include "app.h"
 #include <wx/snglinst.h>
@@ -302,6 +303,9 @@ bool App::OnInit()
 		}
 		wxYield();
 	}
+	
+	// redirect stderr
+	PERF_INIT();
 
 	// Create the main application window (a dialog in this case)
 	// NOTE: Vertical dimension comprises the caption bar.

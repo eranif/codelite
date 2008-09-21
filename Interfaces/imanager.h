@@ -166,6 +166,14 @@ public:
 	virtual bool AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths) = 0;	
 	
 	/**
+	 * @brief create virtual folder to parentPath
+	 * @param parentPath parent virtual directory full path in the form of <project>:vd1:vd2:...:vdN which must exist
+	 * @param vdName child VD name 
+	 * @return true on success, false otherwise
+	 */
+	virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName) = 0;
+	
+	/**
 	 * @brief return the size of the icons used by CodeLite
 	 * @return 16 or 24
 	 */
@@ -186,43 +194,43 @@ public:
 	virtual EnvironmentConfig *GetEnv() = 0;
 	/**
 	 * @brief return a pointer to the job queue manager
-	 * \return job queue manager
+	 * @return job queue manager
 	 */
 	virtual JobQueue *GetJobQueue() = 0;
 
 	/**
-	 * \brief return the project execution command as set in the project's settings
-	 * \param projectName the project
-	 * \param wd starting dirctory
-	 * \return the execution command or wxEmptyString if the project does not exist
+	 * @brief return the project execution command as set in the project's settings
+	 * @param projectName the project
+	 * @param wd starting dirctory
+	 * @return the execution command or wxEmptyString if the project does not exist
 	 */
 	virtual wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd) = 0;
 
 	/**
-	 * \brief return the application
+	 * @brief return the application
 	 */
 	virtual wxApp *GetTheApp() = 0;
 	
 	/**
-	 * \brief reload the current workspace, this function does not do anything if a workspace is not opened
+	 * @brief reload the current workspace, this function does not do anything if a workspace is not opened
 	 */
 	virtual void ReloadWorkspace() = 0;
 	
 	/**
-	 * \brief search for loaded plugin by its name, if the plugin is loaded returns its pointer
-	 * \param pluginName plugin to search 
-	 * \return pointer to the plugin or NULL if it is not loaded
+	 * @brief search for loaded plugin by its name, if the plugin is loaded returns its pointer
+	 * @param pluginName plugin to search 
+	 * @return pointer to the plugin or NULL if it is not loaded
 	 */
 	virtual IPlugin *GetPlugin(const wxString &pluginName) = 0;
 	
 	/**
-	 * \brief print message into the 'output' tab of the 'Output View' pane
-	 * \param msg message to append
+	 * @brief print message into the 'output' tab of the 'Output View' pane
+	 * @param msg message to append
 	 */
 	virtual void AppendOutputMsg(const wxString &msg) = 0;
 	
 	/**
-	 * \brief save all modified files
+	 * @brief save all modified files
 	 */
 	virtual void SaveAll() = 0;
 	

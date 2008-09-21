@@ -743,39 +743,36 @@ void FileViewTree::DoRemoveVirtualFolder( wxTreeItemId &item )
 
 void FileViewTree::OnNewVirtualFolder( wxCommandEvent & WXUNUSED( event ) )
 {
-	wxTreeItemId item = GetSingleSelection();
-	DoAddVirtualFolder( item );
-}
-
-void FileViewTree::DoAddVirtualFolder( wxTreeItemId &parent )
-{
 	static int count = 0;
 	wxString defaultName( wxT( "NewDirectory" ) );
 	defaultName << count++;
 
-	wxTextEntryDialog *dlg = new wxTextEntryDialog( NULL, wxT( "Virtual Directory Name:" ), wxT( "New Virtual Directory" ), defaultName );
-	dlg->Centre();
-	if ( dlg->ShowModal() == wxID_OK ) {
-		wxString path = GetItemPath( parent );
-		if ( dlg->GetValue().Trim().IsEmpty() )
-			return;
+	wxTreeItemId item = GetSingleSelection();
 
-		path += wxT( ":" );
-		path += dlg->GetValue();
-
-		ProjectItem itemData( path, dlg->GetValue(), wxEmptyString, ProjectItem::TypeVirtualDirectory );
-		AppendItem(	parent,								// parent
-		            itemData.GetDisplayName(),	// display name
-		            GetIconIndex( itemData ),		// item image index
-		            GetIconIndex( itemData ),		// selected item image
-		            new FilewViewTreeItemData( itemData ) );
-
-		SortItem( parent );
-		Expand( parent );
-
-		ManagerST::Get()->AddVirtualDirectory( path );
+	wxTextEntryDialog dlg( NULL, wxT( "Virtual Directory Name:" ), wxT( "New Virtual Directory" ), defaultName );
+	dlg.Centre();
+	if ( dlg.ShowModal() == wxID_OK && dlg.GetValue().Trim().IsEmpty() == false) {
+		DoAddVirtualFolder( item, dlg.GetValue() );
 	}
-	dlg->Destroy();
+}
+
+void FileViewTree::DoAddVirtualFolder( wxTreeItemId &parent, const wxString &text )
+{
+	wxString path = GetItemPath( parent );
+	path += wxT( ":" );
+	path += text;
+
+	ProjectItem itemData( path, text, wxEmptyString, ProjectItem::TypeVirtualDirectory );
+	AppendItem(	parent,								// parent
+	            itemData.GetDisplayName(),			// display name
+	            GetIconIndex( itemData ),			// item image index
+	            GetIconIndex( itemData ),			// selected item image
+	            new FilewViewTreeItemData( itemData ) );
+
+	SortItem( parent );
+	Expand( parent );
+
+	ManagerST::Get()->AddVirtualDirectory( path );
 }
 
 wxString FileViewTree::GetItemPath( wxTreeItemId &item )
@@ -910,10 +907,10 @@ void FileViewTree::OnClean( wxCommandEvent &event )
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
 		wxString conf;
-		
+
 		// get the selected configuration to be built
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-		if(bldConf) {
+		if (bldConf) {
 			conf = bldConf->GetName();
 		}
 		QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
@@ -927,14 +924,14 @@ void FileViewTree::OnBuild( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		
+
 		wxString conf;
 		// get the selected configuration to be built
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-		if(bldConf) {
+		if (bldConf) {
 			conf = bldConf->GetName();
 		}
-		
+
 		QueueCommand buildInfo(projectName, conf, false, QueueCommand::Build);
 		ManagerST::Get()->BuildProject( buildInfo );
 	}
@@ -1082,14 +1079,14 @@ void FileViewTree::OnBuildProjectOnly( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		
+
 		wxString conf;
 		// get the selected configuration to be built
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-		if(bldConf) {
+		if (bldConf) {
 			conf = bldConf->GetName();
 		}
-		
+
 		QueueCommand info(projectName, conf, true, QueueCommand::Build);
 		ManagerST::Get()->BuildProject( info );
 	}
@@ -1101,14 +1098,14 @@ void FileViewTree::OnCleanProjectOnly( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		
+
 		wxString conf;
 		// get the selected configuration to be built
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-		if(bldConf) {
+		if (bldConf) {
 			conf = bldConf->GetName();
 		}
-		
+
 		QueueCommand info(projectName, conf, true, QueueCommand::Clean);
 		ManagerST::Get()->CleanProject( info );
 	}
@@ -1163,6 +1160,23 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId &parent, const wxString &
 	}
 	return wxTreeItemId();
 }
+
+wxTreeItemId FileViewTree::ItemByFullPath(const wxString &fullPath)
+{
+	if (!ItemHasChildren(GetRootItem()))
+		return wxTreeItemId();
+
+	wxTreeItemId parent = GetRootItem();
+	wxArrayString texts = wxStringTokenize(fullPath, wxT(":"), wxTOKEN_STRTOK);
+	for (size_t i=0; i<texts.GetCount(); i++) {
+		parent = DoGetItemByText(parent, texts.Item(i));
+		if (parent.IsOk() == false) {
+			return wxTreeItemId();
+		}
+	}
+	return parent;
+}
+
 
 void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 {
@@ -1400,4 +1414,41 @@ void FileViewTree::OnReBuild(wxCommandEvent& event)
 		wxString projectName = GetItemText( item );
 		Frame::Get()->RebuildProject( projectName );
 	}
+}
+
+wxTreeItemId FileViewTree::DoGetItemByText(const wxTreeItemId& parent, const wxString &text)
+{
+	if (!parent.IsOk()) {
+		return wxTreeItemId();
+	}
+
+	if (!ItemHasChildren(parent)) {
+		return wxTreeItemId();
+	}
+
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = GetFirstChild(parent, cookie);
+	while (child.IsOk()) {
+		if (GetItemText(child) == text) {
+			return child;
+		}
+		child = GetNextChild(parent, cookie);
+	}
+	return wxTreeItemId();
+}
+
+bool FileViewTree::CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName)
+{
+	// try to locate that VD first, if it exists, do nothing
+	wxTreeItemId item = ItemByFullPath(wxString::Format(wxT("%s:%s"), parentPath.c_str(), vdName.c_str()));
+	if(item.IsOk()){
+		return true;
+	}
+	
+	item = ItemByFullPath(parentPath);
+	if(item.IsOk()){
+		DoAddVirtualFolder(item, vdName);
+		return true;
+	}
+	return false;
 }

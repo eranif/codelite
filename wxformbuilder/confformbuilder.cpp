@@ -1,6 +1,6 @@
 #include "confformbuilder.h"
 ConfFormBuilder::ConfFormBuilder()
-: m_command(wxT("$(wxfb) $(wxfb_project"))
+: m_command(wxT("$(wxfb) $(wxfb_project)"))
 {
 }
 

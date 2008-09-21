@@ -383,3 +383,8 @@ IKeyboard* PluginManager::GetKeyboardManager()
 {
 	return &m_keyboardMgr;
 }
+
+bool PluginManager::CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName)
+{
+	return Frame::Get()->GetWorkspacePane()->GetFileViewTree()->CreateVirtualDirectory(parentPath, vdName);
+}

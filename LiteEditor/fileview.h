@@ -99,7 +99,7 @@ public:
 	
 	bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths);
 	bool AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths);
-	
+	bool CreateVirtualDirectory(const wxString &parentPath, const wxString &vdName);
 protected:
 	virtual void OnPopupMenu(wxTreeEvent &event);
 	virtual void OnItemActivated(wxTreeEvent &event);
@@ -134,6 +134,7 @@ protected:
 	virtual void SortTree();
 	virtual void SortItem(wxTreeItemId &item);
 	virtual void OnRenameVirtualFolder(wxCommandEvent &e);
+	virtual wxTreeItemId ItemByFullPath(const wxString &fullPath);
 	
 	// Tree sorting
 	virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
@@ -150,11 +151,12 @@ private:
 
 	void DoRemoveProject(const wxString &name);
 	void DoSetProjectActive(wxTreeItemId &item);
-	void DoAddVirtualFolder(wxTreeItemId &parent);
+	void DoAddVirtualFolder(wxTreeItemId &parent, const wxString &text);
 	void DoRemoveVirtualFolder(wxTreeItemId &parent);
 	void DoRemoveItem(wxTreeItemId &item);
 	void DoItemActivated(wxTreeItemId &item, wxEvent &event);
 	void DoAddItem(ProjectPtr proj, const FileViewItem &item);
+	wxTreeItemId DoGetItemByText(const wxTreeItemId &parent, const wxString &text);
 	
 	wxTreeItemId GetSingleSelection();
 	size_t GetMultiSelection(wxArrayTreeItemIds &arr);

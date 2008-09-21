@@ -1,11 +1,14 @@
 #ifndef __wxFormBuilder__
 #define __wxFormBuilder__
 
+#include "wxfbitemdlg.h"
 #include "plugin.h"
+class wxMenuItem;
 
 class wxFormBuilder : public IPlugin
 {
 	wxEvtHandler *m_topWin;
+	wxMenuItem* m_separatorItem;
 	
 public:
 	wxFormBuilder(IManager *manager);
@@ -13,7 +16,12 @@ public:
 	
 protected:
 	void OnSettings(wxCommandEvent &e);
+	void OnNewDialog(wxCommandEvent &e);
+	void OnNewFrame(wxCommandEvent &e);
+	void OnNewPanel(wxCommandEvent &e);
 	
+	wxMenu *CreatePopupMenu();
+	void DoCreateWxFormBuilderProject(const wxFBItemInfo &data);
 public:
 	//--------------------------------------------
 	//Abstract methods

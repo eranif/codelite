@@ -94,6 +94,7 @@ public:
 	virtual void SaveAll();
 	virtual wxString GetInstallDirectory() const;
 	virtual IKeyboard *GetKeyboardManager();
+	virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName);
 	
 	//------------------------------------
 	//End of IManager interface

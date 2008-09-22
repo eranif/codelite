@@ -148,7 +148,7 @@ wxMenu* wxFormBuilder::CreatePopupMenu()
 void wxFormBuilder::OnNewDialog(wxCommandEvent& e)
 {
 	wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
-	dlg.SetLabel(wxT("New wxDialog"));
+	dlg.SetTitle(wxT("New wxDialog"));
 	if (dlg.ShowModal() == wxID_OK) {
 		wxFBItemInfo info;
 		info = dlg.GetData();
@@ -161,7 +161,7 @@ void wxFormBuilder::OnNewDialog(wxCommandEvent& e)
 void wxFormBuilder::OnNewFrame(wxCommandEvent& e)
 {
 	wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
-	dlg.SetLabel(wxT("New wxFrame"));
+	dlg.SetTitle(wxT("New wxFrame"));
 	if (dlg.ShowModal() == wxID_OK) {
 		wxFBItemInfo info;
 		info = dlg.GetData();
@@ -174,7 +174,7 @@ void wxFormBuilder::OnNewFrame(wxCommandEvent& e)
 void wxFormBuilder::OnNewPanel(wxCommandEvent& e)
 {
 	wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
-	dlg.SetLabel(wxT("New wxPanel"));
+	dlg.SetTitle(wxT("New wxPanel"));
 	if (dlg.ShowModal() == wxID_OK) {
 		wxFBItemInfo info;
 		info = dlg.GetData();

@@ -5,9 +5,11 @@ cur_rev=`svn info | grep Revision | awk '{print $2;}'`
 arch=`uname -m`
 PKG_NAME=codelite-1.0.${cur_rev}_${arch}.deb
 
+## clear previous packaged files
+\rm -fr fakeroot/usr/
+
 EXE_NAME=CodeLiteUR
 mkdir -p fakeroot/usr/local/bin/
-
 cp ./Runtime/${EXE_NAME} fakeroot/usr/local/bin/CodeLite
 cp Runtime/le_dos2unix.sh fakeroot/usr/local/bin/
 cp Runtime/le_killproc.sh fakeroot/usr/local/bin/
@@ -46,11 +48,16 @@ mkdir -p fakeroot/usr/share/applications/
 \cp -pr lib/UnitTestCPP.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/ExternalTools.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/SnipWiz.so fakeroot/usr/local/share/codelite/plugins/
+\cp -pr lib/wxformbuilder.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr Runtime/plugins/resources/*.* fakeroot/usr/local/share/codelite/plugins/resources/
 \cp -pr Runtime/*.html fakeroot/usr/local/share/codelite/
 \cp -pr Runtime/astyle.sample fakeroot/usr/local/share/codelite/
 \cp -pr Runtime/src/* fakeroot/usr/local/share/codelite/src/
 \cp -pr Runtime/images/*.png fakeroot/usr/local/share/codelite/images/
+
+## Clean all .svn files
+find fakeroot/usr/ -name ".svn" | xargs rm -fr
+
 chmod -R 777 fakeroot/usr/local/share/codelite
 chmod +x fakeroot/usr/local/bin/CodeLite
 echo creating .deb package...

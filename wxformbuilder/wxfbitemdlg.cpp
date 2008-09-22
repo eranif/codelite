@@ -12,6 +12,8 @@ wxFBItemDlg::wxFBItemDlg( wxWindow* parent, IManager *mgr )
 	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory ) {
 		m_textCtrlVD->SetValue(VirtualDirectorySelector::DoGetPath( m_mgr->GetTree( TreeFileView ), item.m_item, false ));
 	}
+	m_textCtrlClassName->SetFocus();
+	GetSizer()->Fit(this);
 }
 
 void wxFBItemDlg::OnGenerate( wxCommandEvent& event )

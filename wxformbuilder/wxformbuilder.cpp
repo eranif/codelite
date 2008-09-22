@@ -189,7 +189,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
 	// add new virtual folder to the selected virtual directory
 	m_mgr->CreateVirtualDirectory(data.virtualFolder, wxT("formbuilder"));
 
-	wxString templateFile(m_mgr->GetStartupDirectory() + wxT("/templates/formbuilder/"));
+	wxString templateFile(m_mgr->GetInstallDirectory() + wxT("/templates/formbuilder/"));
 
 	switch (data.kind) {
 	default:

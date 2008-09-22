@@ -616,6 +616,7 @@ echo "Copyright\\" >> Makefile
 echo "UnitTestCPP\\" >> Makefile
 echo "ExternalTools\\" >> Makefile
 echo "SnipWiz\\" >> Makefile
+echo "wxformbuilder\\" >> Makefile
 echo "" >> Makefile
 
 echo "plugins_install:\\" >> Makefile
@@ -634,6 +635,7 @@ echo "Copyright_install\\" >> Makefile
 echo "UnitTestCPP_install\\" >> Makefile
 echo "ExternalTools_install\\" >> Makefile
 echo "SnipWiz_install\\" >> Makefile
+echo "wxformbuilder_install\\" >> Makefile
 echo "" >> Makefile
 
 echo "clean_plugins:\\" >> Makefile
@@ -652,6 +654,7 @@ echo "Copyright_clean\\" >> Makefile
 echo "UnitTestCPP_clean\\" >> Makefile
 echo "ExternalTools_clean\\" >> Makefile
 echo "SnipWiz_clean\\" >> Makefile
+echo "wxformbuilder_clean\\" >> Makefile
 echo "" >> Makefile
 
 ########################################################
@@ -670,4 +673,5 @@ createPluginMakefile "Copyright" "Copyright" "\$(DESTDIR)$prefix/share/codelite/
 createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "ExternalTools" "ExternalTools" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "SnipWiz" "SnipWiz" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
+createPluginMakefile "wxformbuilder" "wxformbuilder" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 

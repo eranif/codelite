@@ -15,6 +15,7 @@ FormBuildSettingsDlg::FormBuildSettingsDlg( wxWindow* parent, IManager *mgr )
 	m_textCtrlFBPath->SetValue(data.GetFbPath());
 	
 	m_textCtrlFBPath->SetFocus();
+	GetSizer()->Fit(this);
 }
 
 void FormBuildSettingsDlg::OnButtonBrowse( wxCommandEvent& event )

@@ -108,11 +108,11 @@ void wxFormBuilder::HookPopupMenu(wxMenu *menu, MenuType type)
 		bool isFbpFile(false);
 		TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo( TreeFileView );
 		if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeFile ) {
-			if(item.m_fileName.GetExt() == wxT("fbp")) {
+			if (item.m_fileName.GetExt() == wxT("fbp")) {
 				isFbpFile = true;
 			}
 		}
-		
+
 		if (!m_openWithWxFbItem && isFbpFile) {
 			m_openWithWxFbSepItem = menu->PrependSeparator();
 			m_openWithWxFbItem = menu->Prepend(XRCID("wxfb_open"), wxT("Open with wxFormBuilder..."));
@@ -276,12 +276,12 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
 
 void wxFormBuilder::OpenWithWxFb(wxCommandEvent& e)
 {
-	// get the file name 
+	// get the file name
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo( TreeFileView );
 	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeFile ) {
-		if(item.m_fileName.GetExt() == wxT("fbp")) {
+		if (item.m_fileName.GetExt() == wxT("fbp")) {
 			DoLaunchWxFB(item.m_fileName.GetFullPath());
-		}else{
+		} else {
 			wxMessageBox(wxT("Please select a 'fbp' (Form Builder Project) file only"), wxT("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION);
 			return;
 		}
@@ -294,6 +294,27 @@ void wxFormBuilder::DoLaunchWxFB(const wxString& file)
 	ConfFormBuilder confData;
 	m_mgr->GetConfigTool()->ReadObject(wxT("wxFormBuilder"), &confData);
 	wxString fbpath = confData.GetFbPath();
+
+#ifdef __WXGTK__
+	if (fbpath.IsEmpty()) {
+		// try to locate the file at '/usr/bin' or '/usr/local/bin'
+		if (wxFileName::FileExists(wxT("/usr/local/bin/wxformbuilder"))) {
+			fbpath = wxT("/usr/local/bin/wxformbuilder");
+		} else if(wxFileName::FileExists(wxT("/usr/bin/wxformbuilder"))) {
+			fbpath = wxT("/usr/bin/wxformbuilder");
+		}
+	}
+#endif
+
+#ifdef __WXMSW__
+	if (fbpath.IsEmpty()) {
+		// try to locate the file at '/usr/bin' or '/usr/local/bin'
+		if (wxFileName::FileExists(wxT("C:\\Program Files\\wxFormBuilder\\wxFormBuilder.exe"))) {
+			fbpath = wxT("C:\\Program Files\\wxFormBuilder\\wxFormBuilder.exe");
+		}
+	}
+#endif
+
 	if (fbpath.IsEmpty()) {
 		wxMessageBox(wxT("Failed to launch wxFormBuilder, no path specified\nPlease set wxFormBuilder path from Plugins -> wxFormBuilder -> Settings..."),
 		             wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);

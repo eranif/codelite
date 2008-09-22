@@ -388,3 +388,8 @@ bool PluginManager::CreateVirtualDirectory(const wxString& parentPath, const wxS
 {
 	return Frame::Get()->GetWorkspacePane()->GetFileViewTree()->CreateVirtualDirectory(parentPath, vdName);
 }
+
+OptionsConfigPtr PluginManager::GetEditorSettings()
+{
+    return EditorConfigST::Get()->GetOptions();
+}

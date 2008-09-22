@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "globals.h"
+#include "editor_config.h"
 #include "codeformatter.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/app.h> //wxInitialize/wxUnInitialize
@@ -156,7 +157,25 @@ void CodeFormatter::DoFormatFile(IEditor *editor)
 	FormatOptions fmtroptions;
 	m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
 	wxString options = fmtroptions.ToString();
-
+    
+    wxString extraOptions;
+    
+    if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
+        extraOptions << wxT(" -t");
+    } else {
+        extraOptions << wxT(" -s");
+    }
+    
+    // read the tab size from the global settings
+    SimpleLongValue tabWidth;
+    tabWidth.SetValue(4);
+    
+	m_mgr->GetConfigTool()->ReadObject(wxT("EditorTabWidth"), &tabWidth);
+    extraOptions << tabWidth.GetValue() << wxT(" ");
+    
+    // append the extran options
+    options << extraOptions;
+    
 	wxString output;
 	AstyleFormat(editor->GetEditorText(), options, output);
 	if (output.IsEmpty() == false) {

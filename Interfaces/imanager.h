@@ -31,6 +31,7 @@
 #include "ikeyboard.h"
 #include "wx/treectrl.h"
 #include "custom_notebook.h"
+#include "optionsconfig.h"
 
 class TagsManager;
 class Workspace;
@@ -238,6 +239,11 @@ public:
 	 * @brief return the keyboard manager
 	 */
 	virtual IKeyboard *GetKeyboardManager() = 0;
+    
+	/**
+	 * @brief return the editor's settings object
+	 */
+    virtual OptionsConfigPtr GetEditorSettings() = 0;
 };
 
 #endif //IMANAGER_H

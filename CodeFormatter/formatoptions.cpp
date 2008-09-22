@@ -133,11 +133,11 @@ wxString FormatOptions::ToString() const
 		options << wxT(" -U ");
 	}
 	
-	if (m_options & AS_INDENT_USES_TABS) {
-		options << wxT(" -t4 ");
-	} else {
-		options << wxT(" -s4 ");
-	}
+//	if (m_options & AS_INDENT_USES_TABS) {
+//		options << wxT(" -t4 ");
+//	} else {
+//		options << wxT(" -s4 ");
+//	}
 	
 	return options;
 }

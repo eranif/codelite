@@ -187,8 +187,10 @@ void wxFormBuilder::OnNewPanel(wxCommandEvent& e)
 void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
 {
 	// add new virtual folder to the selected virtual directory
-	m_mgr->CreateVirtualDirectory(data.virtualFolder, wxT("formbuilder"));
-
+	wxString formbuilderVD;
+	formbuilderVD = data.virtualFolder.BeforeFirst(wxT(':'));
+	
+	m_mgr->CreateVirtualDirectory(formbuilderVD, wxT("formbuilder"));
 	wxString templateFile(m_mgr->GetInstallDirectory() + wxT("/templates/formbuilder/"));
 
 	switch (data.kind) {
@@ -243,7 +245,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
 		// add the file to the project
 		wxArrayString paths;
 		paths.Add(fbpFile.GetFullPath());
-		m_mgr->AddFilesToVirtualFodler(data.virtualFolder + wxT(":formbuilder"), paths);
+		m_mgr->AddFilesToVirtualFodler(project + wxT(":formbuilder"), paths);
 		
 		// and launch wxFB
 		ConfFormBuilder confData;

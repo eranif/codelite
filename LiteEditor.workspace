@@ -29,7 +29,7 @@
   <Project Name="snipwiz" Path="SnipWiz/snipwiz.project" Active="No"/>
   <Project Name="wxFormBuilder" Path="wxformbuilder/wxFormBuilder.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
@@ -67,7 +67,7 @@
       <Project Name="snipwiz" ConfigName="DebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>

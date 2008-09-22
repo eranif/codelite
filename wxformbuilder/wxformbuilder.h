@@ -9,6 +9,8 @@ class wxFormBuilder : public IPlugin
 {
 	wxEvtHandler *m_topWin;
 	wxMenuItem* m_separatorItem;
+	wxMenuItem* m_openWithWxFbItem;
+	wxMenuItem* m_openWithWxFbSepItem;
 	
 public:
 	wxFormBuilder(IManager *manager);
@@ -19,9 +21,12 @@ protected:
 	void OnNewDialog(wxCommandEvent &e);
 	void OnNewFrame(wxCommandEvent &e);
 	void OnNewPanel(wxCommandEvent &e);
+	void OpenWithWxFb(wxCommandEvent &e);
 	
 	wxMenu *CreatePopupMenu();
 	void DoCreateWxFormBuilderProject(const wxFBItemInfo &data);
+	void DoLaunchWxFB(const wxString &file);
+	
 public:
 	//--------------------------------------------
 	//Abstract methods

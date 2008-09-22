@@ -46,7 +46,6 @@ class CodeFormatterBaseDlg : public wxDialog
 		wxStaticText* m_staticTextPredefineHelp;
 		wxPanel* m_panel3;
 		wxRadioBox* m_radioBoxBrackets;
-		wxCheckBox* m_checkBoxIndentUsesTabs;
 		wxCheckBox* m_checkBoxIndetClass;
 		wxCheckBox* m_checkBoxIndentBrackets;
 		wxCheckBox* m_checkBoxIndetSwitch;

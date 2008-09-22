@@ -68,11 +68,6 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	wxGridSizer* gSizer1;
 	gSizer1 = new wxGridSizer( 5, 2, 0, 0 );
 	
-	m_checkBoxIndentUsesTabs = new wxCheckBox( m_panel3, wxID_ANY, wxT("Indent using tab characters"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxIndentUsesTabs->SetValue(true);
-	
-	gSizer1->Add( m_checkBoxIndentUsesTabs, 0, wxALL, 5 );
-	
 	m_checkBoxIndetClass = new wxCheckBox( m_panel3, wxID_ANY, wxT("Class"), wxDefaultPosition, wxDefaultSize, 0 );
 	
 	gSizer1->Add( m_checkBoxIndetClass, 0, wxALL, 5 );
@@ -214,7 +209,6 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg( wxWindow* parent, wxWindowID id, con
 	// Connect Events
 	m_radioBoxPredefinedStyle->Connect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( CodeFormatterBaseDlg::OnRadioBoxPredefinedStyle ), NULL, this );
 	m_radioBoxBrackets->Connect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( CodeFormatterBaseDlg::OnRadioBoxBrackets ), NULL, this );
-	m_checkBoxIndentUsesTabs->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CodeFormatterBaseDlg::OnCheckBox ), NULL, this );
 	m_checkBoxIndetClass->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CodeFormatterBaseDlg::OnCheckBox ), NULL, this );
 	m_checkBoxIndentBrackets->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CodeFormatterBaseDlg::OnCheckBox ), NULL, this );
 	m_checkBoxIndetSwitch->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CodeFormatterBaseDlg::OnCheckBox ), NULL, this );
@@ -243,7 +237,6 @@ CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
 	// Disconnect Events
 	m_radioBoxPredefinedStyle->Disconnect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( CodeFormatterBaseDlg::OnRadioBoxPredefinedStyle ), NULL, this );
 	m_radioBoxBrackets->Disconnect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( CodeFormatterBaseDlg::OnRadioBoxBrackets ), NULL, this );
-	m_checkBoxIndentUsesTabs->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CodeFormatterBaseDlg::OnCheckBox ), NULL, this );
 	m_checkBoxIndetClass->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CodeFormatterBaseDlg::OnCheckBox ), NULL, this );
 	m_checkBoxIndentBrackets->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CodeFormatterBaseDlg::OnCheckBox ), NULL, this );
 	m_checkBoxIndetSwitch->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CodeFormatterBaseDlg::OnCheckBox ), NULL, this );

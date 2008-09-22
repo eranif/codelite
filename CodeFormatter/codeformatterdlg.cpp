@@ -75,7 +75,6 @@ void CodeFormatterDlg::InitDialog()
 	UpdateCheckBox(m_checkBoxIndetCase,AS_INDENT_CASE);
 	UpdateCheckBox(m_checkBoxIndetClass,AS_INDENT_CASE);
 	UpdateCheckBox(m_checkBoxIndetSwitch,AS_INDENT_SWITCHES);
-	UpdateCheckBox(m_checkBoxIndentUsesTabs, AS_INDENT_USES_TABS);
 
 	//update the two radio box controls
 	int selection(3);	//AS_LINUX
@@ -219,8 +218,6 @@ void CodeFormatterDlg::OnCheckBox( wxCommandEvent& event )
 		flag = AS_INDENT_CASE;
 	} else if (obj == m_checkBoxIndetSwitch) {
 		flag = AS_INDENT_SWITCHES;
-	} else if ( obj == m_checkBoxIndentUsesTabs) {
-		flag = AS_INDENT_USES_TABS;
 	}
 
 	size_t options = m_options.GetOptions();

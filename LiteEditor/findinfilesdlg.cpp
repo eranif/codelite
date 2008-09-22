@@ -111,6 +111,7 @@ void FindInFilesDialog::CreateGUIControls()
 	wxArrayString choices;
 	choices.Add(SEARCH_IN_PROJECT);
 	choices.Add(SEARCH_IN_WORKSPACE);
+	choices.Add(SEARCH_IN_CURR_FILE_PROJECT);
 	m_dirPicker->SetValues(choices, 1);
 
 	// Add the options
@@ -331,8 +332,23 @@ SearchData FindInFilesDialog::DoGetSearchData()
 		data.SetFiles(files);
 		
 	}else if(m_dirPicker->GetPath() == SEARCH_IN_PROJECT){
+		
 		wxArrayString files;
 		ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
+		data.SetFiles(files);
+		
+	}else if(m_dirPicker->GetPath() == SEARCH_IN_CURR_FILE_PROJECT){
+		
+		wxArrayString files;
+		wxString project = ManagerST::Get()->GetActiveProjectName();
+		
+		if(ManagerST::Get()->GetActiveEditor()){
+			// use the active file's project
+			wxFileName activeFile = ManagerST::Get()->GetActiveEditor()->GetFileName();
+			project = ManagerST::Get()->GetProjectNameByFile(activeFile.GetFullPath());
+		}
+		
+		ManagerST::Get()->GetProjectFiles(project, files);
 		data.SetFiles(files);
 	}
 	

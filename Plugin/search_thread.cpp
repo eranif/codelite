@@ -125,11 +125,7 @@ void SearchThread::ProcessRequest(ThreadRequest *req)
 
 void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
 {
-	if (data->GetRootDir() == SEARCH_IN_WORKSPACE) {
-		files = data->GetFiles();
-		// filter files which does not match the criteria
-		FilterFiles(files, data);
-	} else if (data->GetRootDir() == SEARCH_IN_PROJECT) {
+	if (data->GetRootDir() == SEARCH_IN_WORKSPACE || data->GetRootDir() == SEARCH_IN_CURR_FILE_PROJECT || data->GetRootDir() == SEARCH_IN_PROJECT) {
 		files = data->GetFiles();
 		// filter files which does not match the criteria
 		FilterFiles(files, data);

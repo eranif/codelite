@@ -122,12 +122,13 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
 	// Initialise images map
 	wxImageList *images = new wxImageList( 16, 16, true );
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "project" ) ) );				//0
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "folder" ) ) );				//1
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "folder" ) ) );					//1
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_c" ) ) );			//2
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_cplusplus" ) ) );	//3
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_h" ) ) );			//4
 	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_text" ) ) );		//5
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "workspace" ) ) );			//6
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "workspace" ) ) );				//6
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "wxfb" ) ) );					//7
 	AssignImageList( images );
 
 	Connect( GetId(), wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler( FileViewTree::OnPopupMenu ) );
@@ -249,6 +250,8 @@ int FileViewTree::GetIconIndex( const ProjectItem &item )
 			icondIndex = 4;
 		} else if ( filename.GetExt().CmpNoCase( wxT( "hpp" ) ) == 0 ) {
 			icondIndex = 4;
+		} else if ( filename.GetExt().CmpNoCase(wxT("fbp")) == 0) {
+			icondIndex = 7;
 		} else {
 			icondIndex = 5;
 		}

@@ -272,7 +272,12 @@ void wxFormBuilder::OpenWithWxFb(wxCommandEvent& e)
 	// get the file name 
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo( TreeFileView );
 	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeFile ) {
-		DoLaunchWxFB(item.m_fileName.GetFullPath());
+		if(item.m_fileName.GetExt() == wxT("fbp")) {
+			DoLaunchWxFB(item.m_fileName.GetFullPath());
+		}else{
+			wxMessageBox(wxT("Please select a 'fbp' (Form Builder Project) file only"), wxT("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION);
+			return;
+		}
 	}
 }
 

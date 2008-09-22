@@ -63,6 +63,9 @@ int FileOkIconId			= wxNOT_FOUND;
 int FolderModifiedIconId	= wxNOT_FOUND;
 int FolderConflictIconId 	= wxNOT_FOUND;
 int FolderOkIconId			= wxNOT_FOUND;
+int wxFBModifiedIconId		= wxNOT_FOUND;
+int wxFBOkIconId			= wxNOT_FOUND;
+int wxFBConflictIconId		= wxNOT_FOUND;
 
 static bool IsIgnoredFile(const wxString &file, const wxString &patten) {
 	wxStringTokenizer tkz(patten, wxT(";"), wxTOKEN_STRTOK);
@@ -203,7 +206,18 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		FolderOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_ok")));
 		FolderModifiedIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_modified")));
 		FolderConflictIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_conflict")));
-
+		
+		// wxFormBuilder support
+		wxString basePath(m_mgr->GetInstallDirectory() + wxT("/plugins/resources/"));
+		wxBitmap wxfb_ok, wxfb_modified, wxfb_conflict;
+		
+		wxfb_ok.LoadFile(basePath + wxT("wxfb_ok.png"), wxBITMAP_TYPE_PNG);
+		wxfb_modified.LoadFile(basePath + wxT("wxfb_modified.png"), wxBITMAP_TYPE_PNG);
+		wxfb_conflict.LoadFile(basePath + wxT("wxfb_conflict.png"), wxBITMAP_TYPE_PNG);
+		
+		wxFBConflictIconId = tree->GetImageList()->Add(wxfb_conflict);
+		wxFBOkIconId = tree->GetImageList()->Add(wxfb_ok);
+		wxFBModifiedIconId = tree->GetImageList()->Add(wxfb_modified);
 	}
 }
 

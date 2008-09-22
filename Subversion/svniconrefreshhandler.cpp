@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : svniconrefreshhandler.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : svniconrefreshhandler.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "svniconrefreshhandler.h"
+#include "svniconrefreshhandler.h"
 #include "procutils.h"
 #include "subversion.h"
 #include "workspace.h"
@@ -49,6 +49,9 @@ extern int FileOkIconId;
 extern int FolderModifiedIconId;
 extern int FolderConflictIconId;
 extern int FolderOkIconId;
+extern int wxFBModifiedIconId;
+extern int wxFBOkIconId;
+extern int wxFBConflictIconId;
 
 SvnIconRefreshHandler::SvnIconRefreshHandler(IManager *mgr, SubversionPlugin *plugin)
 		: m_mgr(mgr)
@@ -76,20 +79,20 @@ void SvnIconRefreshHandler::UpdateIcons()
 	//get list of paths to check
 	std::vector<wxFileName> projectFiles;
 	std::map<wxString, bool> workspaceFolders;
-	
+
 	wxString errMsg;
 	wxArrayString projects;
-	
+
 	m_mgr->GetWorkspace()->GetProjectList(projects);
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), errMsg);
-		if(p){
+		if (p) {
 			// for each project get list of its files
 			projectFiles.clear();
 			p->GetFiles(projectFiles, true);
-			
-			// map the folders of each file 
-			for(size_t j=0; j<projectFiles.size(); j++){
+
+			// map the folders of each file
+			for (size_t j=0; j<projectFiles.size(); j++) {
 				workspaceFolders[projectFiles.at(j).GetPath()] = true;
 			}
 		}
@@ -99,7 +102,7 @@ void SvnIconRefreshHandler::UpdateIcons()
 	wxString command;
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive --no-ignore -q ");
-	
+
 	//concatenate list of files here
 	std::map<wxString, bool>::iterator iter = workspaceFolders.begin();
 	for (; iter != workspaceFolders.end(); iter++) {
@@ -163,12 +166,12 @@ void SvnIconRefreshHandler::ColourTree(wxTreeCtrl *tree, wxTreeItemId &parent, c
 	if (data && data->GetData().GetKind() == ProjectItem::TypeFile) {
 		//we found a leaf of the tree
 		wxString fileName = data->GetData().GetFile();
-		
+
 		wxFileName fn(fileName);
 		ColourPath(tree, parent, fn.GetFullPath(), modifiedPaths, conflictedPaths);
 		return;
 	}
-	
+
 	//container, might be workspace, project or virtual folder
 	if (tree->ItemHasChildren(parent)) {
 		//loop over the children
@@ -179,11 +182,11 @@ void SvnIconRefreshHandler::ColourTree(wxTreeCtrl *tree, wxTreeItemId &parent, c
 			child = tree->GetNextChild(parent, cookie);
 		}
 	}
-	
+
 	if (data && data->GetData().GetKind() == ProjectItem::TypeProject) {
 		//we found a leaf of the tree
 		wxString fileName = data->GetData().GetFile();
-		
+
 		SvnXmlParser::FileState state ( SvnXmlParser::StateOK );
 
 		if (conflictedPaths.Index(fileName) != wxNOT_FOUND) {
@@ -217,7 +220,7 @@ void SvnIconRefreshHandler::DoColourPath(wxTreeCtrl *tree, wxTreeItemId &item, S
 	int imgid;
 	FilewViewTreeItemData *data = (FilewViewTreeItemData *) tree->GetItemData(item);
 	if (data) {
-		imgid = GetIcon(data->GetData().GetKind(), state);
+		imgid = GetIcon(data->GetData().GetKind(), data->GetData().GetFile(), state);
 		int curimgid_ = tree->GetItemImage(item);
 		if (imgid != wxNOT_FOUND && imgid > curimgid_) {
 			tree->SetItemImage(item, imgid, wxTreeItemIcon_Normal);
@@ -231,7 +234,7 @@ void SvnIconRefreshHandler::DoColourPath(wxTreeCtrl *tree, wxTreeItemId &item, S
 			data = NULL;
 			data = (FilewViewTreeItemData *) tree->GetItemData(parent);
 			if (data) {
-				imgid = GetIcon(data->GetData().GetKind(), state);
+				imgid = GetIcon(data->GetData().GetKind(), data->GetData().GetFile(), state);
 				int curimgid = tree->GetItemImage(parent);
 				//replce the icon only if the severity is higher, that is only these state shifts are allowed:
 				//non-versionsed -> ok
@@ -247,16 +250,32 @@ void SvnIconRefreshHandler::DoColourPath(wxTreeCtrl *tree, wxTreeItemId &item, S
 	}
 }
 
-int SvnIconRefreshHandler::GetIcon(int kind, SvnXmlParser::FileState state)
+int SvnIconRefreshHandler::GetIcon(int kind, const wxString &filename, SvnXmlParser::FileState state)
 {
 	switch (kind) {
 
-	case ProjectItem::TypeFile:
-		if (state == SvnXmlParser::StateConflict)
-			return FileConflictIconId;
-		if (state == SvnXmlParser::StateModified)
-			return FileModifiedIconId;
-		return FileOkIconId;
+	case ProjectItem::TypeFile: {
+		if (state == SvnXmlParser::StateConflict) {
+			if (filename.AfterLast(wxT('.')) == wxT("fbp")) {
+				return wxFBConflictIconId;
+			} else {
+				return FileConflictIconId;
+			}
+		}
+		if (state == SvnXmlParser::StateModified) {
+			if (filename.AfterLast(wxT('.')) == wxT("fbp")) {
+				return wxFBModifiedIconId;
+			} else {
+				return FileConflictIconId;
+			}
+		}
+
+		if (filename.AfterLast(wxT('.')) == wxT("fbp")) {
+			return wxFBOkIconId;
+		} else {
+			return FileOkIconId;
+		}
+	}
 
 	case ProjectItem::TypeProject:
 		if (state == SvnXmlParser::StateConflict)
@@ -292,7 +311,7 @@ void SvnIconRefreshHandler::ResetIcons(wxTreeCtrl *tree, wxTreeItemId &item)
 	//get the item data
 	FilewViewTreeItemData *data = (FilewViewTreeItemData *) tree->GetItemData(item);
 	if (data) {
-		int imgid = GetIcon(data->GetData().GetKind(), SvnXmlParser::StateOK);
+		int imgid = GetIcon(data->GetData().GetKind(), data->GetData().GetFile(), SvnXmlParser::StateOK);
 		if (imgid != wxNOT_FOUND) {
 			tree->SetItemImage(item, imgid, wxTreeItemIcon_Normal);
 			tree->SetItemImage(item, imgid, wxTreeItemIcon_Selected);

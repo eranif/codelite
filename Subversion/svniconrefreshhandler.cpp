@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "svniconrefreshhandler.h"
+#include "svniconrefreshhandler.h" 
 #include "procutils.h"
 #include "subversion.h"
 #include "workspace.h"
@@ -266,7 +266,7 @@ int SvnIconRefreshHandler::GetIcon(int kind, const wxString &filename, SvnXmlPar
 			if (filename.AfterLast(wxT('.')) == wxT("fbp")) {
 				return wxFBModifiedIconId;
 			} else {
-				return FileConflictIconId;
+				return FileModifiedIconId;
 			}
 		}
 

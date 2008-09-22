@@ -105,12 +105,19 @@ void wxFormBuilder::HookPopupMenu(wxMenu *menu, MenuType type)
 			menu->Append(XRCID("WXFB_POPUP"), wxT("wxFormBuilder"), CreatePopupMenu());
 		}
 	} else if (type == MenuTypeFileView_File) {
-		if (!m_openWithWxFbItem) {
-			m_openWithWxFbSepItem = menu->AppendSeparator();
-			m_openWithWxFbItem = menu->Append(XRCID("wxfb_open"), wxT("Open with wxFormBuilder..."));
+		bool isFbpFile(false);
+		TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo( TreeFileView );
+		if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeFile ) {
+			if(item.m_fileName.GetExt() == wxT("fbp")) {
+				isFbpFile = true;
+			}
+		}
+		
+		if (!m_openWithWxFbItem && isFbpFile) {
+			m_openWithWxFbSepItem = menu->PrependSeparator();
+			m_openWithWxFbItem = menu->Prepend(XRCID("wxfb_open"), wxT("Open with wxFormBuilder..."));
 		}
 	}
-
 }
 
 void wxFormBuilder::UnHookPopupMenu(wxMenu *menu, MenuType type)

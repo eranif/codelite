@@ -55,6 +55,13 @@ int ConsoleFinder::RunConsole(const wxString &title)
 	wxString term;
 
 #if defined (__WXGTK__)
+
+	wxString where;
+	if(!ExeLocator::Locate(wxT("xterm"), where)){
+		wxMessageBox(wxT("Failed to locate 'xterm' application required by CodeLite, please install it and try again!"), wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
+		return -1;
+	}
+	
 	cmd << wxT("xterm -title ");
 	cmd << wxT("'") << title << wxT("'");
 	cmd << wxT(" -e ");

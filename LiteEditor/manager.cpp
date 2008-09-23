@@ -1827,6 +1827,14 @@ void Manager::DbgStart(long pid)
 	BuildConfigPtr bldConf;
 	ProjectPtr proj;
 	long PID(-1);
+	
+#if defined(__WXGTK__)
+	wxString where;
+	if(!ExeLocator::Locate(wxT("xterm"), where)){
+		wxMessageBox(wxT("Failed to locate 'xterm' application required by CodeLite, please install it and try again!"), wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING, Frame::Get());
+		return;
+	}
+#endif 
 
 	if (pid == 1) { //attach to process
 		AttachDbgProcDlg *dlg = new AttachDbgProcDlg(NULL);

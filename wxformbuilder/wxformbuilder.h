@@ -26,6 +26,7 @@ protected:
 	wxMenu *CreatePopupMenu();
 	void DoCreateWxFormBuilderProject(const wxFBItemInfo &data);
 	void DoLaunchWxFB(const wxString &file);
+	wxString GetWxFBPath();
 	
 public:
 	//--------------------------------------------

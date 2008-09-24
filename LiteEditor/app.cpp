@@ -321,14 +321,14 @@ bool App::OnInit()
 	// update the accelerators table
 	ManagerST::Get()->UpdateMenuAccelerators();
 
-	//if the application started with a given file name,
-	//which is not a workspace
-	//hide the output &workspace panes
-	if (parser.GetParamCount() > 0) {
-		ManagerST::Get()->HidePane(wxT("Debugger"));
-		ManagerST::Get()->HidePane(wxT("Workspace View"));
-		ManagerST::Get()->HidePane(wxT("Output View"));
-	}
+//	//if the application started with a given file name,
+//	//which is not a workspace
+//	//hide the output &workspace panes
+//	if (parser.GetParamCount() > 0) {
+//		ManagerST::Get()->HidePane(wxT("Debugger"));
+//		ManagerST::Get()->HidePane(wxT("Workspace View"));
+//		ManagerST::Get()->HidePane(wxT("Output View"));
+//	}
 
 	m_pMainFrame->Show(TRUE);
 	SetTopWindow(m_pMainFrame);

@@ -632,17 +632,17 @@ void Frame::CreateGUIControls(void)
 	EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
 	TagsManager *tagsManager = TagsManagerST::Get();
+	
 #if defined (__WXMSW__)
 	//start ctags process
-	tagsManager->StartCtagsProcess();
+	wxFileName exePath( wxStandardPaths::Get().GetExecutablePath() );
+	tagsManager->SetCtagsPath(exePath.GetPath());
 #elif defined (__WXMAC__)
 	// On Mac OSX, search the ctags-le in the correct path
 	tagsManager->SetCtagsPath(wxStandardPaths::Get().GetDataDir());
 #else
 	// set the path to ctags - assumes that ctags-le is located under the same path codelite exe
-	wxFileName exePath( wxStandardPaths::Get().GetExecutablePath() );
-	tagsManager->SetCtagsPath(exePath.GetPath());
-	tagsManager->StartCtagsProcess();
+	tagsManager->SetCtagsPath(wxT("/usr/lib/CodeLite"));
 #endif
 
 	//--------------------------------------------------------------------------------------

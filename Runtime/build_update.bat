@@ -18,7 +18,7 @@ xcopy sdk\lib\win32\*.a "update\sdk\lib\" /Y
 xcopy sdk\include\UnitTest++\*.h "update\sdk\include\UnitTest++\" /Y
 xcopy sdk\include\UnitTest++\win32\*.h "update\sdk\include\UnitTest++\win32\" /Y
 :: Copy the misc files
-copy ctags-le.exe "update\" /Y
+copy ctags.dll "update\" /Y
 copy makedir.exe "update\" /Y
 copy le_exec.exe "update\" /Y
 copy astyle.sample "update\" /Y

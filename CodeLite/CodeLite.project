@@ -26,6 +26,7 @@
     <File Name="winprocess.cpp"/>
     <File Name="cl_calltip.cpp"/>
     <File Name="performance.cpp"/>
+    <File Name="dynamiclibrary.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>
@@ -61,6 +62,8 @@
     <File Name="extdbdata.h"/>
     <File Name="cl_calltip.h"/>
     <File Name="performance.h"/>
+    <File Name="libctags.h"/>
+    <File Name="dynamiclibrary.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GeneratedFiles">
     <File Name="expression_result.h"/>

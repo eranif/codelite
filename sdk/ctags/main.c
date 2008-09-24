@@ -22,8 +22,9 @@
 *   INCLUDE FILES
 */
 #include "general.h"  /* must always come first */
-
 #include <string.h>
+#include "clist.h"
+#include "libctags.h"
 
 /*  To provide timings features if available.
  */
@@ -47,7 +48,7 @@
 # define ANCHOR_BUF_SIZE 512
 # define ANCHOR_SIZE (sizeof (struct AnchorPath) + ANCHOR_BUF_SIZE)
 # ifdef __SASC
-   extern struct DosLibrary *DOSBase;
+extern struct DosLibrary *DOSBase;
 #  include <pragmas/dos_pragmas.h>
 # endif
 #endif
@@ -82,6 +83,12 @@
 #include "options.h"
 #include "read.h"
 #include "routines.h"
+/** 
+ * Some globals
+ */
+static list_t *gList = NULL; 
+static char  **gArgv = NULL;
+static int     gArgc = 0;
 
 /*
 *   MACROS
@@ -91,17 +98,20 @@
 /*
 *   DATA DEFINITIONS
 */
-static struct { long files, lines, bytes; } Totals = { 0, 0, 0 };
+static struct
+{
+	long files, lines, bytes;
+} Totals = { 0, 0, 0 };
 
 #ifdef AMIGA
 # include "ctags.h"
-  static const char *VERsion = "$VER: "PROGRAM_NAME" "PROGRAM_VERSION" "
+static const char *VERsion = "$VER: "PROGRAM_NAME" "PROGRAM_VERSION" "
 # ifdef __SASC
-  __AMIGADATE__
+                             __AMIGADATE__
 # else
-  __DATE__
+                             __DATE__
 # endif
-  " "AUTHOR_NAME" $";
+                             " "AUTHOR_NAME" $";
 #endif
 
 /*
@@ -114,8 +124,8 @@ static boolean createTagsForEntry (const char *const entryName);
 */
 
 extern void addTotals (
-		const unsigned int files, const long unsigned int lines,
-		const long unsigned int bytes)
+	    const unsigned int files, const long unsigned int lines,
+	    const long unsigned int bytes)
 {
 	Totals.files += files;
 	Totals.lines += lines;
@@ -127,13 +137,13 @@ extern boolean isDestinationStdout (void)
 	boolean toStdout = FALSE;
 
 	if (Option.xref  ||  Option.filter  ||
-		(Option.tagFileName != NULL  &&  (strcmp (Option.tagFileName, "-") == 0
+	        (Option.tagFileName != NULL  &&  (strcmp (Option.tagFileName, "-") == 0
 #if defined (VMS)
-	|| strcmp (Option.tagFileName, "sys$output") == 0
+	                                          || strcmp (Option.tagFileName, "sys$output") == 0
 #else
-	|| strcmp (Option.tagFileName, "/dev/stdout") == 0
+	                                          || strcmp (Option.tagFileName, "/dev/stdout") == 0
 #endif
-		)))
+	                                         )))
 		toStdout = TRUE;
 	return toStdout;
 }
@@ -151,7 +161,7 @@ static boolean recurseUsingOpendir (const char *const dirName)
 		while ((entry = readdir (dir)) != NULL)
 		{
 			if (strcmp (entry->d_name, ".") != 0  &&
-				strcmp (entry->d_name, "..") != 0)
+			        strcmp (entry->d_name, "..") != 0)
 			{
 				vString *filePath;
 				if (strcmp (dirName, ".") == 0)
@@ -170,8 +180,8 @@ static boolean recurseUsingOpendir (const char *const dirName)
 #elif defined (HAVE_FINDFIRST) || defined (HAVE__FINDFIRST)
 
 static boolean createTagsForWildcardEntry (
-		const char *const pattern, const size_t dirLength,
-		const char *const entryName)
+    const char *const pattern, const size_t dirLength,
+    const char *const entryName)
 {
 	boolean resize = FALSE;
 	/* we must not recurse into the directories "." or ".." */
@@ -200,17 +210,18 @@ static boolean createTagsForWildcardUsingFindfirst (const char *const pattern)
 		result = _findnext (&fileInfo);
 	}
 #elif defined (HAVE__FINDFIRST)
-	struct _finddata_t fileInfo;
-	intptr_t /*findfirst_t*/ hFile = _findfirst (pattern, &fileInfo);
-	if (hFile != -1L)
+struct _finddata_t fileInfo;
+intptr_t /*findfirst_t*/ hFile = _findfirst (pattern, &fileInfo);
+if (hFile != -1L)
+{
+	do
 	{
-		do
-		{
-			const char *const entry = (const char *) fileInfo.name;
-			resize |= createTagsForWildcardEntry (pattern, dirLength, entry);
-		} while (_findnext (hFile, &fileInfo) == 0);
-		_findclose (hFile);
+		const char *const entry = (const char *) fileInfo.name;
+		resize |= createTagsForWildcardEntry (pattern, dirLength, entry);
 	}
+	while (_findnext (hFile, &fileInfo) == 0);
+	_findclose (hFile);
+}
 #endif
 	return resize;
 }
@@ -221,7 +232,7 @@ static boolean createTagsForAmigaWildcard (const char *const pattern)
 {
 	boolean resize = FALSE;
 	struct AnchorPath *const anchor =
-			(struct AnchorPath *) eMalloc ((size_t) ANCHOR_SIZE);
+				    (struct AnchorPath *) eMalloc ((size_t) ANCHOR_SIZE);
 	LONG result;
 
 	memset (anchor, 0, (size_t) ANCHOR_SIZE);
@@ -230,11 +241,11 @@ static boolean createTagsForAmigaWildcard (const char *const pattern)
 #ifdef APF_DODOT
 	anchor->ap_Flags = APF_DODOT | APF_DOWILD;
 #else
-	anchor->ap_Flags = APF_DoDot | APF_DoWild;
+anchor->ap_Flags = APF_DoDot | APF_DoWild;
 #endif
 	result = MatchFirst ((UBYTE *) pattern, anchor);
 	while (result == 0)
-	{
+{
 		resize |= createTagsForEntry ((char *) anchor->ap_Buf);
 		result = MatchNext (anchor);
 	}
@@ -318,7 +329,7 @@ static boolean createTagsForWildcardArg (const char *const arg)
 	 *  be expanded by the findfirst/_findfirst functions.
 	 */
 	if (Option.recurse  &&
-		(strcmp (patternS, ".") == 0  ||  strcmp (patternS, "..") == 0))
+	        (strcmp (patternS, ".") == 0  ||  strcmp (patternS, "..") == 0))
 	{
 		vStringPut (pattern, OUTPUT_PATH_SEPARATOR);
 		vStringCatS (pattern, "*.*");
@@ -423,27 +434,27 @@ static clock_t clock (void)
 static void printTotals (const clock_t *const timeStamps)
 {
 	const unsigned long totalTags = TagFile.numTags.added +
-									TagFile.numTags.prev;
+	                                TagFile.numTags.prev;
 
 	fprintf (errout, "%ld file%s, %ld line%s (%ld kB) scanned",
-			Totals.files, plural (Totals.files),
-			Totals.lines, plural (Totals.lines),
-			Totals.bytes/1024L);
+	         Totals.files, plural (Totals.files),
+	         Totals.lines, plural (Totals.lines),
+	         Totals.bytes/1024L);
 #ifdef CLOCK_AVAILABLE
 	{
 		const double interval = ((double) (timeStamps [1] - timeStamps [0])) /
-								CLOCKS_PER_SEC;
+		CLOCKS_PER_SEC;
 
 		fprintf (errout, " in %.01f seconds", interval);
 		if (interval != (double) 0.0)
 			fprintf (errout, " (%lu kB/s)",
-					(unsigned long) (Totals.bytes / interval) / 1024L);
+			         (unsigned long) (Totals.bytes / interval) / 1024L);
 	}
 #endif
 	fputc ('\n', errout);
 
 	fprintf (errout, "%lu tag%s added to tag file",
-			TagFile.numTags.added, plural (TagFile.numTags.added));
+	         TagFile.numTags.added, plural (TagFile.numTags.added));
 	if (Option.append)
 		fprintf (errout, " (now %lu tags)", totalTags);
 	fputc ('\n', errout);
@@ -453,14 +464,14 @@ static void printTotals (const clock_t *const timeStamps)
 		fprintf (errout, "%lu tag%s sorted", totalTags, plural (totalTags));
 #ifdef CLOCK_AVAILABLE
 		fprintf (errout, " in %.02f seconds",
-				((double) (timeStamps [2] - timeStamps [1])) / CLOCKS_PER_SEC);
+		         ((double) (timeStamps [2] - timeStamps [1])) / CLOCKS_PER_SEC);
 #endif
 		fputc ('\n', errout);
 	}
 
 #ifdef DEBUG
 	fprintf (errout, "longest tag line = %lu\n",
-			(unsigned long) TagFile.max.line);
+	         (unsigned long) TagFile.max.line);
 #endif
 }
 
@@ -474,13 +485,13 @@ static void makeTags (cookedArgs *args)
 	clock_t timeStamps [3];
 	boolean resize = FALSE;
 	boolean files = (boolean)(! cArgOff (args) || Option.fileList != NULL
-							  || Option.filter);
+	                          || Option.filter);
 
 	if (! files)
 	{
 		if (filesRequired ())
 			error (FATAL, "No files specified. Try \"%s --help\".",
-				getExecutableName ());
+			       getExecutableName ());
 		else if (! Option.recurse && ! etagsInclude ())
 			return;
 	}
@@ -521,28 +532,90 @@ static void makeTags (cookedArgs *args)
 #undef timeStamp
 }
 
-/*
- *		Start up code
- */
+/*------------------------------------------------------------------------------------
+/*------------------------------------------------------------------------------------
+/*------------------------------------------------------------------------------------
+/*------------------------------------------------------------------------------------
+ 
+/** Internal method to this file **/
+static void ctags_make_argv(const char *str, const char *filename);
+static void ctags_init(const char *options, const char* filename);
+static char *load_file(const char *fileName);
 
-extern int main (int __unused__ argc, char **argv)
+char *load_file(const char *fileName)
 {
-	cookedArgs *args;
-#ifdef VMS
-	extern int getredirection (int *ac, char ***av);
+	FILE *fp;
+	long len;
+	char *buf = NULL;
+	long bytes;
+	
+	fp = fopen(fileName, "rb");
+	if (!fp) {
+		return NULL;
+	}
 
-	/* do wildcard expansion and I/O redirection */
-	getredirection (&argc, &argv);
-#endif
+	//read the whole file
+	fseek(fp, 0, SEEK_END); 		//go to end
+	len = ftell(fp); 					//get position at end (length)
+	fseek(fp, 0, SEEK_SET); 		//go to begining
+	buf = (char *)malloc(len+1); 	//malloc buffer
 
+	//read into buffer
+	bytes = fread(buf, sizeof(char), len, fp);
+	printf("read: %ld\n", bytes);
+	if (bytes != len) {
+		fclose(fp);
+		printf("failed to read from file 'test.h': %s\n", strerror(errno));
+		return NULL;
+	}
+
+	buf[len] = 0;	// make it null terminated string
+	fclose(fp);
+	return buf;
+}
+
+/** Create tags from argv **/
+extern char *ctags_make_tags (const char *cmd, const char *infile)
+{
+	FILE *f = NULL;
+	char *tags = NULL;
+	long size = 0;
+	char * file_name = NULL;
+	
+	ctags_init( cmd, infile );
+	cookedArgs *args = cArgNewFromArgv (gArgv);
+	previewFirstOption (args);
+	parseOptions (args);
+	checkOptions ();
+	makeTags (args);
+	cArgDelete (args);
+	stringListClear(Option.ignore);
+	
+	/* open the tags file, read it and convert it into char* */
+	file_name = malloc(strlen(TagFile.directory) + 6);
+	memset(file_name, 0, strlen(TagFile.directory) + 6);
+	strcpy(file_name, TagFile.directory);
+	strcat(file_name, "/tags");
+	
+	tags = load_file(file_name);
+	
+	free(file_name);
+	return tags;
+}
+
+void ctags_init(const char *options, const char *filename)
+{
+	/* convert options to **argv */
+	ctags_make_argv(options, filename);
+	
 #ifdef AMIGA
 	/* This program doesn't work when started from the Workbench */
-	if (argc == 0)
+	if (gArgc == 0)
 		exit (1);
 #endif
 
 #ifdef __EMX__
-	_wildcard (&argc, &argv);  /* expand wildcards in argument list */
+	_wildcard (&gArgc, &gArgv);  /* expand wildcards in argument list */
 #endif
 
 #if defined (macintosh) && BUILD_MPW_TOOL == 0
@@ -550,23 +623,18 @@ extern int main (int __unused__ argc, char **argv)
 #endif
 
 	setCurrentDirectory ();
-	setExecutableName (*argv++);
+	setExecutableName (*gArgv++);
 	checkRegex ();
-
-	args = cArgNewFromArgv (argv);
-	previewFirstOption (args);
-	testEtagsInvocation ();
+	
+	/*testEtagsInvocation ();*/
 	initializeParsing ();
 	initOptions ();
-	readOptionConfiguration ();
+	/*readOptionConfiguration ();*/
 	verbose ("Reading initial options from command line\n");
-	parseOptions (args);
-	checkOptions ();
-	makeTags (args);
+}
 
-	/*  Clean up.
-	 */
-	cArgDelete (args);
+extern void ctags_shutdown()
+{
 	freeKeywordTable ();
 	freeRoutineResources ();
 	freeSourceFileResources ();
@@ -574,9 +642,70 @@ extern int main (int __unused__ argc, char **argv)
 	freeOptionResources ();
 	freeParserResources ();
 	freeRegexResources ();
+	list_destroy(gList);
+	
+	gArgc = 0;
+	gArgv = NULL;
+	gList = NULL;
+}
 
-	exit (0);
+void ctags_make_argv(const char *str, const char *filename)
+{
+	size_t i=0;
+	list_node_t *node = NULL;
+	char *tmp = NULL;
+	
+	tmp = strdup(str);
+	
+	list_init( &gList );
+	list_append(gList, strdup("ctags"));
+	
+	char *token = strtok(tmp, " ");
+	while (token)
+	{
+		list_append(gList, strdup(token));
+		token = strtok(NULL, " ");
+	}
+	
+	list_append(gList, strdup(filename));
+	list_append(gList, NULL);
+	
+	gArgv = (char**)malloc(gList->size * sizeof(char*));
+	node = gList->head;
+	
+	while( node )
+	{
+		gArgv[i] = node->data;
+		node = node->next;
+		i++;
+	}
+	
+	free(tmp);
+	gArgc = (int)gList->size-1;
+}
+
+extern void ctags_free(char *ptr)
+{
+	if( ptr ) 
+	{
+		free( ptr );
+	}
+}
+
+#if HAS_MAIN
+int main(int argc, char **argv)
+{
+	int i = 0;
+	for (i=0; i<10000; i++)
+	{
+		char *tags = ctags_make_tags("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p  -IwxT,_T", "test.h");
+		printf("%s\n\n\n\n\n", tags);
+		free(tags);
+	}
+
+	ctags_shutdown();
 	return 0;
 }
+#endif
 
 /* vi:set tabstop=4 shiftwidth=4: */

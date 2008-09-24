@@ -12,5 +12,8 @@
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="ctags" ConfigName="Release"/>
     </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Devel" Selected="no">
+      <Project Name="ctags" ConfigName="Devel"/>
+    </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

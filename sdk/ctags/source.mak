@@ -51,7 +51,8 @@ SOURCES = \
 	yacc.c \
 	vstring.c\
 	string_util.c\
-	clist.h
+	clist.h\
+	libctags.h\
 
 ENVIRONMENT_HEADERS = \
     e_amiga.h e_djgpp.h e_mac.h e_msoft.h e_os2.h e_qdos.h e_riscos.h e_vms.h

@@ -189,6 +189,7 @@ extern void freeKeywordTable (void)
 			}
 		}
 		eFree (HashTable);
+		HashTable = NULL;
 	}
 }
 

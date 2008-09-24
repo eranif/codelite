@@ -23,6 +23,7 @@
 */
 #include "general.h"  /* must always come first */
 #include <string.h>
+#include <errno.h>
 #include "clist.h"
 #include "libctags.h"
 
@@ -562,7 +563,6 @@ char *load_file(const char *fileName)
 
 	//read into buffer
 	bytes = fread(buf, sizeof(char), len, fp);
-	printf("read: %ld\n", bytes);
 	if (bytes != len) {
 		fclose(fp);
 		printf("failed to read from file 'test.h': %s\n", strerror(errno));

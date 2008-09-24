@@ -22,12 +22,6 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  6 2007)
-// http://www.wxformbuilder.org/
-//
-// PLEASE DO "NOT" EDIT THIS FILE!
-///////////////////////////////////////////////////////////////////////////
 
 #ifndef __tags_options_dlg__
 #define __tags_options_dlg__
@@ -55,6 +49,7 @@ protected:
 	wxNotebook* m_mainBook;
 	wxPanel* m_generalPage;
 	wxCheckBox* m_checkParseComments;
+	wxCheckBox* m_checkDisableParseOnSave;
 	wxCheckBox* m_checkDisplayComments;
 	wxCheckBox* m_checkDisplayTypeInfo;
 	wxCheckBox* m_checkDisplayFunctionTip;

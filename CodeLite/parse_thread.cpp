@@ -61,8 +61,8 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	wxString dbfile  = req->getDbfile();
 	wxString file  = req->getFile();
 
-	//req->tags should contain the tags
-	//convert the file to tags
+	// req->tags should contain the tags
+	// convert the file to tags
 	TagsManager *tagmgr = TagsManagerST::Get();
 
 	//convert the file content into tags

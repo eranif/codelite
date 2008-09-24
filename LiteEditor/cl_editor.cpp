@@ -152,7 +152,7 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 	RestoreDefaults();
 
 	Connect(wxEVT_SCI_DWELLSTART, wxScintillaEventHandler(LEditor::OnDwellStart), NULL, this);
-	
+
 	// clear Ctrl+D
 	CmdKeyClear(wxT('D'), wxSCI_SCMOD_CTRL);
 }
@@ -571,7 +571,7 @@ bool LEditor::SaveFile()
 	if (this->GetModify()) {
 		if (GetFileName().GetFullName().Find(wxT("Untitled")) != -1 || GetFileName().GetFullName().IsEmpty()) {
 			return SaveFileAs();
-		}
+		} 
 
 		// first save the file content
 		if ( !SaveToFile(m_fileName) )
@@ -588,6 +588,10 @@ bool LEditor::SaveFile()
 
 		// clear all the queries which holds reference to this file
 		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(GetFileName().GetFullPath());
+
+		if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISABLE_AUTO_PARSING) {
+			return true;
+		}
 
 		m_context->RetagFile();
 	} else {

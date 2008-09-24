@@ -66,8 +66,10 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data, i
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_generalPage, -1, wxT("General:") ), wxVERTICAL );
 	
-	m_checkParseComments = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Parse comments"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkDisableParseOnSave = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Disable auto parsing of saved files"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer2->Add( m_checkDisableParseOnSave, 0, wxALL, 5 );
 	
+	m_checkParseComments = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Parse comments"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer2->Add( m_checkParseComments, 0, wxALL, 5 );
 	
 	m_checkDisplayComments = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Display comments in tooltip"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -214,6 +216,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkColourLocalVars->SetValue(m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
 	m_checkColourProjTags->SetValue(m_data.GetFlags() & CC_COLOUR_PROJ_TAGS ? true : false);
 	m_checkCppKeywordAssist->SetValue(m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
+	m_checkDisableParseOnSave->SetValue(m_data.GetFlags() & CC_DISABLE_AUTO_PARSING ? true : false);
 	
 	// TODO:: until the cache is fixed properly, disable this option
 	m_checkCacheWorkspaceTags->Disable();
@@ -266,6 +269,7 @@ void TagsOptionsDlg::CopyData()
 	SetFlag(CC_COLOUR_PROJ_TAGS, m_checkColourProjTags->IsChecked());
 	SetFlag(CC_CPP_KEYWORD_ASISST, m_checkCppKeywordAssist->IsChecked());
 	SetFlag(CC_CACHE_WORKSPACE_TAGS, m_checkCacheWorkspaceTags->IsChecked());
+	SetFlag(CC_DISABLE_AUTO_PARSING, m_checkDisableParseOnSave->IsChecked());
 	
 	m_data.SetFileSpec(m_textFileSpec->GetValue());
 	

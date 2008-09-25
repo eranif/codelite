@@ -75,12 +75,12 @@ extern void get_variables(const std::string &in, VariableList &li, const std::ma
 // CTAGS Manager
 //------------------------------------------------------------------------------
 TagsManager::TagsManager() : wxEvtHandler()
-		, m_canDeleteCtags(true)
-		, m_lang(NULL)
-		, m_useExternalDatabase(true)
 		, pfnCtagsMakeTags(NULL)
 		, pfnCtagsFree(NULL)
 		, pfnCtagsShutdown(NULL)
+		, m_canDeleteCtags(true)
+		, m_lang(NULL)
+		, m_useExternalDatabase(true)
 {
 	m_pDb = new TagsDatabase();
 	m_pExternalDb = new TagsDatabase();
@@ -356,15 +356,20 @@ void TagsManager::SetCtagsPath(const wxString& path)
 void TagsManager::LoadCtagsAPI()
 {
 	if( !m_ctagDll.IsLoaded() ) {
-		
-		m_ctagDll.Load(m_ctagsDllPath + wxT("/ctags") + wxDynamicLibrary::GetDllExt());
+
+#if defined(__WXMAC__)||defined(__WXGTK__)
+		wxString ext(wxT(".so"));
+#else
+		wxString ext(wxT(".dll"));
+#endif
+	
+		m_ctagDll.Load(m_ctagsDllPath + wxT("/ctags") + ext);
 		if( !m_ctagDll.IsLoaded() ) {
 			wxLogMessage(wxT("Failed to load ctags library !"));
 			return;
 		}
 		
 		bool success(false);
-		
 		pfnCtagsMakeTags = (CTAGS_MAKE_TAGS_FUNC) m_ctagDll.GetSymbol(wxT("ctags_make_tags"), &success);
 		pfnCtagsFree = (CTAGS_FREE_FUNC) m_ctagDll.GetSymbol(wxT("ctags_free"), &success);
 		pfnCtagsShutdown = (CTAGS_SHUDOWN_FUNC) m_ctagDll.GetSymbol(wxT("ctags_shutdown"), &success);
@@ -386,7 +391,11 @@ void TagsManager::SourceToTags2(const wxFileName &fileName, wxString &tags)
 	wxCriticalSectionLocker locker( m_cs );
 
 	LoadCtagsAPI();
-
+	if ( !pfnCtagsFree || !pfnCtagsMakeTags || ! pfnCtagsShutdown ) {
+		wxLogMessage(wxT("ERROR: Missing ctags API functions!"));
+		return;
+	}
+	
 	// Get ctags flags from the map
 	wxString ctagsCmd;
 	ctagsCmd << m_options.ToString() << wxT(" --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");

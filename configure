@@ -100,6 +100,7 @@ createMainTargets()
 
 	echo "ctags: sdk/ctags/Makefile" >> Makefile
 	echo "	cd sdk/ctags/ && \$(MAKE)" >> Makefile
+	echo "	cp -fr sdk/ctags/ctags-le Runtime/." >> Makefile
 	echo "" >> Makefile
 
 	echo "sdk/ctags/Makefile: sdk/ctags/source.mak" >> Makefile
@@ -367,8 +368,6 @@ createInstallTarget()
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/share/codelite" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/bin" >> Makefile
-	echo "	@mkdir -p /usr/lib/codelite/" >> Makefile
-	echo "	@cp sdk/ctags/ctags.so /usr/lib/codelite/" >> Makefile
 	echo "	@cp \$(EXE_NAME) \$(DESTDIR)$prefix/bin/" >> Makefile
 	if [ "$make_symlink" = "yes" ] ; then
 	  echo "	@ln -s \$(DESTDIR)$prefix/bin/\$(EXE_NAME_NO_PATH) \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
@@ -380,6 +379,7 @@ createInstallTarget()
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
+	echo "	@cp sdk/ctags/ctags-le \$(DESTDIR)$prefix/bin/" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/applications" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/config" >> Makefile
@@ -436,10 +436,10 @@ createUnInstallTarget()
 	  echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
 	fi
 #	echo "	@\$(RM) -fr  /usr/lib/libsqlite3-cl.so" >> Makefile
-	echo "	@\$(RM) -fr  /usr/lib/codelite/" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/ctags-le" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUR" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUD" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/include/UnitTest++/" >> Makefile

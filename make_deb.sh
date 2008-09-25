@@ -17,8 +17,7 @@ cp Runtime/le_exec.sh fakeroot/usr/local/bin/
 chmod +x fakeroot/usr/local/bin/le_dos2unix.sh
 chmod +x fakeroot/usr/local/bin/le_killproc.sh
 chmod +x fakeroot/usr/local/bin/le_exec.sh
-mkdir -p fakeroot/usr/lib/codelite
-cp sdk/ctags/ctags.so  fakeroot/usr/lib/codelite
+cp sdk/ctags/ctags-le fakeroot/usr/local/bin/
 mkdir -p fakeroot/usr/local/share/codelite
 mkdir -p fakeroot/usr/local/share/codelite/config
 mkdir -p fakeroot/usr/local/share/codelite/debuggers

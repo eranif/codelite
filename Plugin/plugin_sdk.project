@@ -51,6 +51,8 @@
     <File Name="globals.cpp"/>
     <File Name="exelocator.h"/>
     <File Name="exelocator.cpp"/>
+    <File Name="dynamiclibrary.h"/>
+    <File Name="dynamiclibrary.cpp"/>
     <File Name="conffilelocator.cpp"/>
     <File Name="conffilelocator.h"/>
   </VirtualDirectory>

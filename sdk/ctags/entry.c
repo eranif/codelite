@@ -420,8 +420,8 @@ extern void openTagFile (void)
 			else
 			{
 				TagFile.fp = fopen (TagFile.name, "w");
-/*				if (TagFile.fp != NULL)
-					addPseudoTags ();*/
+				if (TagFile.fp != NULL)
+					addPseudoTags ();
 			}
 		}
 		if (TagFile.fp == NULL)

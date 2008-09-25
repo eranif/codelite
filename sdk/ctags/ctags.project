@@ -72,7 +72,6 @@
     <File Name="routines.h"/>
     <File Name="sort.h"/>
     <File Name="strlist.h"/>
-    <File Name="libctags.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="utils">
@@ -81,23 +80,17 @@
     <File Name="clist.h"/>
     <File Name="string_util.c"/>
   </VirtualDirectory>
-  <Dependencies Name="Devel"/>
-  <Dependencies Name="Debug"/>
-  <Settings Type="Dynamic Library">
-    <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Dynamic Library">
-      <General OutputFile="../../Runtime/ctags.dll" IntermediateDirectory="./Debug" Command="./$(ProjectName)d" CommandArguments="--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p  -IwxT,_T test.h" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+  <Settings Type="Executable">
+    <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)d" IntermediateDirectory="./Debug" Command="./$(ProjectName)d" CommandArguments="--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p  -IwxT,_T test.h" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="yes" Options="">
-        <Library Value="kernel32"/>
-      </Linker>
+      <Linker Required="yes" Options=""/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
-      <PostBuild>
-        <Command Enabled="no">copy libctags.h ..\..\CodeLite\.</Command>
-      </PostBuild>
+      <PostBuild/>
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>
         <BuildCommand></BuildCommand>
@@ -113,21 +106,16 @@
 </CustomPreBuild>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="Devel" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="./Devel/ctagdev" IntermediateDirectory="./Devel" Command="ctagdev" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="-g">
+    <Configuration Name="Release" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="../../Runtime/ctags-le.exe" IntermediateDirectory="./Release" Command="./ctags-le" CommandArguments="" WorkingDirectory="../../Runtime/bin/" PauseExecWhenProcTerminates="yes"/>
+      <Compiler Required="yes" Options="">
         <IncludePath Value="."/>
-        <Preprocessor Value="HAS_MAIN"/>
       </Compiler>
-      <Linker Required="yes" Options="">
-        <Library Value="kernel32"/>
-      </Linker>
+      <Linker Required="yes" Options="-O2"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
-      <PostBuild>
-        <Command Enabled="no">copy libctags.h ..\..\CodeLite\.</Command>
-      </PostBuild>
+      <PostBuild/>
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>
         <BuildCommand></BuildCommand>
@@ -141,33 +129,7 @@
         <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Dynamic Library">
-      <General OutputFile="../../Runtime/ctags.dll" IntermediateDirectory="./Release" Command="./ctags-le" CommandArguments="" WorkingDirectory="../../Runtime/bin/" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="">
-        <IncludePath Value="."/>
-      </Compiler>
-      <Linker Required="yes" Options="-O2"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
-      <ResourceCompiler Required="no" Options=""/>
-      <PreBuild/>
-      <PostBuild>
-        <Command Enabled="no">copy libctags.h ..\..\CodeLite\.</Command>
-      </PostBuild>
-      <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
-      </AdditionalRules>
-    </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
 </CodeLite_Project>

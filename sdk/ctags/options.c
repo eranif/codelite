@@ -92,7 +92,7 @@ typedef const struct {
 */
 
 static boolean NonOptionEncountered;
-static stringList *OptionFiles = NULL;
+static stringList *OptionFiles;
 static stringList* Excluded;
 static boolean FilesRequired = TRUE;
 static boolean SkipConfiguration;
@@ -1751,21 +1751,19 @@ extern void readOptionConfiguration (void)
 
 extern void initOptions (void)
 {
-	if( OptionFiles == NULL ) 
-	{
-		OptionFiles = stringListNew ();
-		verbose ("Setting option defaults\n");
-		installHeaderListDefaults ();
-		verbose ("  Installing default language mappings:\n");
-		installLanguageMapDefaults ();
+	OptionFiles = stringListNew ();
+	verbose ("Setting option defaults\n");
+	installHeaderListDefaults ();
+	verbose ("  Installing default language mappings:\n");
+	installLanguageMapDefaults ();
 
-		/* always excluded by default */
-		verbose ("  Installing default exclude patterns:\n");
-		processExcludeOption (NULL, "EIFGEN");
-		processExcludeOption (NULL, "SCCS");
-		processExcludeOption (NULL, "RCS");
-		processExcludeOption (NULL, "CVS");
-	}
+	/* always excluded by default */
+	verbose ("  Installing default exclude patterns:\n");
+	processExcludeOption (NULL, "EIFGEN");
+	processExcludeOption (NULL, "SCCS");
+	processExcludeOption (NULL, "RCS");
+	processExcludeOption (NULL, "CVS");
+
 }
 
 extern void freeOptionResources (void)

@@ -26,8 +26,6 @@
 #define CODELITE_CTAGS_MANAGER_H
 
 #include "tagscache.h"
-#include "dynamiclibrary.h"
-#include "libctags.h"
 #include "wx/event.h"
 #include "wx/process.h"
 #include "cl_process.h"
@@ -120,35 +118,39 @@ class WXDLLIMPEXP_CL TagsManager : public wxEvtHandler
 
 	TagsDatabase *m_pDb;
 	TagsDatabase *m_pExternalDb;
-	
+
 	wxCriticalSection m_cs;
-	clDynamicLibrary m_ctagDll;
-	CTAGS_MAKE_TAGS_FUNC pfnCtagsMakeTags;
-	CTAGS_FREE_FUNC pfnCtagsFree;
-	CTAGS_SHUDOWN_FUNC pfnCtagsShutdown;
+
+	wxFileName m_ctagsPath;
+#if defined (__WXMSW__) || defined (__WXGTK__)	
+	clProcess* m_ctags;
+#endif
+
 	wxString m_ctagsCmd;
 	wxStopWatch m_watch;
 	TagsOptionsData m_options;
 	std::map<int, clProcess*> m_processes;
 	bool m_parseComments;
 	bool m_canDeleteCtags;
+	std::list<clProcess*> m_gargabeCollector;
+	wxTimer *m_timer;
 	std::vector<VariableEntryPtr> m_vars;
 	TagsCache *m_extDbCache;
 	TagsCache *m_workspaceDbCache;
 	Language *m_lang;
 	bool m_useExternalDatabase;
+	
+	// a very primitive cache to cache all the tags of a given file
 	std::vector<TagEntryPtr> m_cachedFileFunctionsTags;
 	wxString m_cachedFile;
-	wxString m_ctagsDllPath;
-	
-private:
-	void LoadCtagsAPI();
 	
 public:
 	
 	void SetLanguage(Language *lang);
 	Language *GetLanguage();
 			
+	wxString GetCTagsCmd();
+	
 	/**
 	 * \brief return the currently cached file
 	 */
@@ -265,6 +267,26 @@ public:
 	 * \param fileName File name
 	 */
 	void Delete(const wxFileName& path, const wxString& fileName);
+
+#if defined (__WXMSW__) || defined (__WXGTK__)
+	/**
+	 * Start a ctags process on a filter mode. 
+	 * By default, TagsManager will try to launch the ctags process using the following command line:
+	 * \code
+	 * ctags --fields=aKmSsni --filter=yes --filter-terminator="<<EOF>>\n"
+	 * \endcode
+	 * 
+	 * It is possible to add a full path to ctags exectuable by calling the SetCtagsPath() function.
+	 */
+	clProcess *StartCtagsProcess();
+
+	/**
+	 * Restart ctags process.
+	 * \param kind 
+	 * \return 
+	 */
+	void RestartCtagsProcess();
+#endif
 
 	/**
 	 * Test if filename matches the current ctags file spec.
@@ -414,6 +436,19 @@ public:
 	 * \param &tags 
 	 */
 	void OpenType(std::vector<TagEntryPtr> &tags);
+
+	/**
+	 * return string containing a code section to be inserted into the document. By providing 
+	 * decl which is not null, this function will split the generated code into two - decl & impl
+	 * \param scope the current text from begining of the document up to the cursor pos, this
+	 *        string will be parsed by CodeLite to determine the current scope
+	 * \param data user's settings for the generation of the getters/setters
+	 * \param tags list of members to create setters/getters for them. 
+	 * \param impl [output] the generated code - implementation, if 'decl' member is null,
+	          it will include the declaration as well
+     * \param decl [output] if not null, will contain the declaration part of the functions
+     */
+	void GenerateSettersGetters(const wxString &scope, const SettersGettersData &data, const std::vector<TagEntryPtr> &tags, wxString &impl, wxString *decl = NULL);
 
 	/**
 	 * return tags belongs to given scope and kind
@@ -650,10 +685,18 @@ public:
 	TagEntryPtr GetWorkspaceTagById(int id);
 	
 	void GetUnImplementedFunctions(const wxString &scopeName, std::map<wxString, TagEntryPtr> &protos);
-	
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
-	
+
+	/**
+	 * Handler ctags process termination
+	 */
+#if defined (__WXMSW__) || defined (__WXGTK__)
+	void OnCtagsEnd(wxProcessEvent& event);
+#endif
+	void OnTimer(wxTimerEvent &event);
+	DECLARE_EVENT_TABLE()
+
 private: 
 	/**
 	 * Construct a TagsManager object, for internal use

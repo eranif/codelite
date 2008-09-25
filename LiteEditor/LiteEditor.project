@@ -558,8 +558,8 @@ resources.cpp: resources.xrc
     <Project Name="wxFormBuilder"/>
   </Dependencies>
   <Dependencies Name="WinReleaseUnicode">
-    <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
+    <Project Name="wxscintilla"/>
     <Project Name="wxsqlite3"/>
     <Project Name="CodeLite"/>
     <Project Name="plugin_sdk"/>

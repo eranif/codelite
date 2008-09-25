@@ -41,6 +41,8 @@ void SyntaxHighlightDlg::OnButtonCancel( wxCommandEvent& event )
 void SyntaxHighlightDlg::OnButtonApply( wxCommandEvent& event )
 {
 	SaveChanges();
+	ManagerST::Get()->ApplySettingsChanges();
+	
 	m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
 	wxUnusedVar(event);
 }

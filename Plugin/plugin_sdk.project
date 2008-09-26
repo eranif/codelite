@@ -286,6 +286,6 @@
     <File Name="job.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

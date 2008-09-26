@@ -2033,9 +2033,7 @@ void ContextCpp::AutoAddComment()
 		rCtrl.SetLineIndentation(line, prevLineIndet);
 		//place the caret at the end of the line
 		int dummy = rCtrl.GetLineIndentation(line);
-		if (rCtrl.GetUseTabs()) {
-			dummy = dummy / indentSize;
-		}
+		dummy = dummy / indentSize;
 
 		if (prepre_style == wxSCI_C_COMMENT || prepre_style == wxSCI_C_COMMENTDOC) {
 			rCtrl.InsertText(curpos + dummy, wxT(" *"));

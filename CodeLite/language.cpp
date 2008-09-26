@@ -469,7 +469,7 @@ bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &pa
 	bool res (false);
 	//make sure that the type really exist
 	TagsManager *tagsManager = GetTagsManager();
-	if (!tagsManager->IsTypeAndScopeExists(typeName, typeScope)) {
+	if (!tagsManager->IsTypeAndScopeContainer(typeName, typeScope)) {
 		if (parent.m_isTemplate) {
 			//we need to test the parent declaration line
 			std::vector< TagEntryPtr > tagsVec;

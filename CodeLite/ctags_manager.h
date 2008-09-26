@@ -648,6 +648,14 @@ public:
 	bool IsTypeAndScopeExists(const wxString &typeName, wxString &scope);
 	
 	/**
+	 * \brief return true if type & scope do exist in the symbols database and is container
+	 * \param typeName
+	 * \param scope
+	 * \return 
+	 */
+	bool IsTypeAndScopeContainer(const wxString &typeName, wxString &scope);
+	
+	/**
 	 * \brief try to process a given expression and evaluate it into type & typescope
 	 * \param expression
 	 * \param type
@@ -687,6 +695,7 @@ public:
 	void GetUnImplementedFunctions(const wxString &scopeName, std::map<wxString, TagEntryPtr> &protos);
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
+	std::map<wxString, bool> m_typeScopeContainerCache;
 
 	/**
 	 * Handler ctags process termination

@@ -1371,6 +1371,75 @@ void TagsManager::DoFindByNameAndScope(const wxString &name, const wxString &sco
 	}
 }
 
+bool TagsManager::IsTypeAndScopeContainer(const wxString& typeName, wxString& scope)
+{
+	wxString cacheKey;
+	cacheKey << typeName << wxT("@") << scope;
+
+	if (!m_pExternalDb->IsOpen()) {
+		m_typeScopeContainerCache.clear();
+	}
+
+	//we search the cache first, note that the cache
+	//is used only for the external database
+	std::map<wxString, bool>::iterator iter = m_typeScopeContainerCache.find(cacheKey);
+	if (iter != m_typeScopeContainerCache.end()) {
+		return iter->second;
+	}
+
+	// replace macros:
+	// replace the provided typeName and scope with user defined macros as appeared in the PreprocessorMap
+	wxString _typeName = DoReplaceMacros(typeName);
+	wxString _scope = DoReplaceMacros(scope);
+
+	wxString sql;
+	sql << wxT("select ID from tags where name='") << _typeName << wxT("' and scope='") << _scope << wxT("' and KIND IN('struct', 'class') (LIMIT 1");
+
+	for (size_t i=0; i<2; i++) {
+
+		if (i == 1) {
+			// Second try, change the SQL query to test against the global scope
+			sql.Clear();
+			sql << wxT("select ID from tags where name='") << _typeName << wxT("' and scope='<global>' LIMIT 1");
+		}
+
+		wxSQLite3ResultSet rs = m_pDb->Query(sql);
+		try {
+			if (rs.NextRow()) {
+				if (i == 1) {
+					_scope = wxT("<global>");
+				}
+				return true;
+
+			}
+
+			if ( m_pExternalDb->IsOpen() ) {
+
+				wxSQLite3ResultSet ex_rs;
+				ex_rs = m_pExternalDb->Query(sql);
+				if ( ex_rs.NextRow() ) {
+					if (i == 1) {
+						_scope = wxT("<global>");
+						return true;
+					}
+					m_typeScopeContainerCache[cacheKey] = true;
+					return true;
+				} else {
+					if ( i == 1 ) {
+						m_typeScopeContainerCache[cacheKey] = false;
+					}
+				}
+			}
+		} catch ( wxSQLite3Exception& e) {
+			wxUnusedVar(e);
+			return false;
+		}
+
+		// no match, try to find the typeName in the global scope
+	}
+	return false;
+}
+
 bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope)
 {
 	wxString cacheKey;
@@ -1429,9 +1498,7 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 						m_typeScopeCache[cacheKey] = false;
 					}
 				}
-				ex_rs.Finalize();
 			}
-			rs.Finalize();
 		} catch ( wxSQLite3Exception& e) {
 			wxUnusedVar(e);
 			return false;

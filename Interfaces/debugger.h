@@ -79,6 +79,7 @@ public:
 	bool enablePendingBreakpoints;
 	bool breakAtWinMain;
 	bool resolveThis;
+	bool showTerminal;
 	
 public:
 	DebuggerInformation()
@@ -86,14 +87,10 @@ public:
 			, path(wxEmptyString)
 			, enableDebugLog(false)
 			, enablePendingBreakpoints(true)
-#ifdef __WXMAC__
-			, breakAtWinMain(true)
-#else
 			, breakAtWinMain(false)
-#endif
 			, resolveThis(false)
+			, showTerminal(false)
 	{}
-
 	~DebuggerInformation() {}
 };
 

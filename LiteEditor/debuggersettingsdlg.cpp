@@ -65,6 +65,9 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 	m_checkResolveStarThis = new wxCheckBox(this, wxID_ANY, wxT("Resolve '*this' in the 'Locals' view"), wxDefaultPosition, wxDefaultSize, 0 );
 	sz->Add(m_checkResolveStarThis, 0, wxEXPAND|wxALL, 5);
 
+	m_checkShowTerminal = new wxCheckBox(this, wxID_ANY, wxT("Show debugger terminal"), wxDefaultPosition, wxDefaultSize, 0 );
+	sz->Add(m_checkShowTerminal, 0, wxEXPAND|wxALL, 5);
+
 	sz->Layout();
 	
 	DebuggerInformation info;
@@ -74,6 +77,7 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_checkBoxEnablePendingBreakpoints->SetValue(info.enablePendingBreakpoints);
 		m_checkBreakAtWinMain->SetValue(info.breakAtWinMain);
 		m_checkResolveStarThis->SetValue(info.resolveThis);
+		m_checkShowTerminal->SetValue(info.showTerminal);
 	}
 }
 
@@ -148,8 +152,9 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		info.enablePendingBreakpoints = page->m_checkBoxEnablePendingBreakpoints->GetValue();
 		info.path = page->m_filePicker->GetPath();
 		info.name = page->m_title;
-		info.breakAtWinMain = page->m_checkBreakAtWinMain->GetValue();
-		info.resolveThis = page->m_checkResolveStarThis->GetValue();
+		info.breakAtWinMain = page->m_checkBreakAtWinMain->IsChecked();
+		info.resolveThis = page->m_checkResolveStarThis->IsChecked();
+		info.showTerminal = page->m_checkShowTerminal->IsChecked();
 		
 		DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
 	}

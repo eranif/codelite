@@ -333,7 +333,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 		//set the environment variables
 		m_env->ApplyEnv(NULL);
 
-		if (m_proc->Start() == 0) {
+		if (m_proc->Start( !m_info.showTerminal ) == 0) {
 			//failed to start the debugger
 			delete m_proc;
 			SetBusy(false);

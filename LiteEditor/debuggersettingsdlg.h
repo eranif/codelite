@@ -47,6 +47,7 @@ class DebuggerPage : public wxPanel
 	wxCheckBox *m_checkBoxEnableLog;
 	wxCheckBox *m_checkBreakAtWinMain;
 	wxCheckBox *m_checkResolveStarThis;
+	wxCheckBox *m_checkShowTerminal;
 	
 public:
 	DebuggerPage(wxWindow *parent, wxString title);

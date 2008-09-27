@@ -51,6 +51,7 @@ void DebuggersData::Serialize(Archive &arch)
 		arch.Write(wxT("enablePendingBreakpoints"), info.enablePendingBreakpoints);
 		arch.Write(wxT("breakAtWinMain"), info.breakAtWinMain);
 		arch.Write(wxT("resolveThis"), info.resolveThis);
+		arch.Write(wxT("showTerminal"), info.showTerminal);
 	}
 }
 
@@ -66,6 +67,7 @@ void DebuggersData::DeSerialize(Archive &arch)
 		arch.Read(wxT("enablePendingBreakpoints"), info.enablePendingBreakpoints);
 		arch.Read(wxT("breakAtWinMain"), info.breakAtWinMain);
 		arch.Read(wxT("resolveThis"), info.resolveThis);
+		arch.Read(wxT("showTerminal"), info.showTerminal);
 		m_debuggers.push_back(info);
 	}
 }

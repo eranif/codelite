@@ -29,45 +29,7 @@
   <Project Name="snipwiz" Path="SnipWiz/snipwiz.project" Active="No"/>
   <Project Name="wxFormBuilder" Path="wxformbuilder/wxFormBuilder.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Release Unicode" Selected="no">
-      <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
-      <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
-      <Project Name="sqlite3" ConfigName="Common"/>
-      <Project Name="plugin_sdk" ConfigName="ReleaseUnicode"/>
-      <Project Name="UnitTestPP" ConfigName="ReleaseUnicode"/>
-      <Project Name="Subversion" ConfigName="ReleaseUnicode"/>
-      <Project Name="LiteEditor" ConfigName="ReleaseUnicode"/>
-      <Project Name="Interfaces" ConfigName="Common"/>
-      <Project Name="Gizmos" ConfigName="ReleaseUnicode"/>
-      <Project Name="ExternalTools" ConfigName="ReleaseUnicode"/>
-      <Project Name="DebuggerGDB" ConfigName="ReleaseUnicode"/>
-      <Project Name="Cscope" ConfigName="ReleaseUnicode"/>
-      <Project Name="Copyright" ConfigName="ReleaseUnicode"/>
-      <Project Name="CodeLite" ConfigName="ReleaseUnicode"/>
-      <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
-      <Project Name="snipwiz" ConfigName="DebugUnicode"/>
-      <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>
-    </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
-      <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
-      <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
-      <Project Name="sqlite3" ConfigName="Common"/>
-      <Project Name="plugin_sdk" ConfigName="DebugUnicode"/>
-      <Project Name="UnitTestPP" ConfigName="DebugUnicode"/>
-      <Project Name="Subversion" ConfigName="DebugUnicode"/>
-      <Project Name="LiteEditor" ConfigName="DebugUnicode"/>
-      <Project Name="Interfaces" ConfigName="Common"/>
-      <Project Name="Gizmos" ConfigName="DebugUnicode"/>
-      <Project Name="ExternalTools" ConfigName="DebugUnicode"/>
-      <Project Name="DebuggerGDB" ConfigName="DebugUnicode"/>
-      <Project Name="Cscope" ConfigName="DebugUnicode"/>
-      <Project Name="Copyright" ConfigName="DebugUnicode"/>
-      <Project Name="CodeLite" ConfigName="DebugUnicode"/>
-      <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
-      <Project Name="snipwiz" ConfigName="DebugUnicode"/>
-      <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>
-    </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
@@ -104,6 +66,25 @@
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Unix" Selected="yes">
+      <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
+      <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
+      <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="snipwiz" ConfigName="DebugUnicode"/>
+      <Project Name="plugin_sdk" ConfigName="DebugUnicode"/>
+      <Project Name="UnitTestPP" ConfigName="DebugUnicode"/>
+      <Project Name="Subversion" ConfigName="DebugUnicode"/>
+      <Project Name="LiteEditor" ConfigName="Unix"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="Gizmos" ConfigName="DebugUnicode"/>
+      <Project Name="ExternalTools" ConfigName="DebugUnicode"/>
+      <Project Name="DebuggerGDB" ConfigName="Unix"/>
+      <Project Name="Cscope" ConfigName="DebugUnicode"/>
+      <Project Name="Copyright" ConfigName="DebugUnicode"/>
+      <Project Name="CodeLite" ConfigName="DebugUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

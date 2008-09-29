@@ -376,174 +376,6 @@
     <File Name="../make_deb.sh"/>
     <File Name="../make_repo.sh"/>
   </VirtualDirectory>
-  <Settings Type="Executable">
-    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="../Runtime/CodeLiteUD" IntermediateDirectory="./DebugUnicode" Command="./CodeLiteUD" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
-      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);$(shell pkg-config --cflags gtk+-2.0)">
-        <IncludePath Value="."/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxscintilla/include"/>
-        <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../Interfaces"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Required="yes" Options="-O2;$(shell wx-config --libs --debug=yes --unicode=yes);$(shell pkg-config --libs gtk+-2.0)">
-        <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libCodeLiteud.a"/>
-        <Library Value="libplugin_sdkud.a"/>
-        <Library Value="libwxscintillaud.a"/>
-        <Library Value="libwxsqlite3ud.a"/>
-        <Library Value="libsqlite3.a"/>
-      </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""/>
-      <ResourceCompiler Required="no" Options="$(shell wx-config --rcflags)"/>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="yes">
-        <CleanCommand>make clean</CleanCommand>
-        <BuildCommand>make </BuildCommand>
-        <SingleFileCommand>make $(CurrentFile).o</SingleFileCommand>
-        <MakefileGenerationCommand>./configure --enable-debug</MakefileGenerationCommand>
-        <ThirdPartyToolName>configure</ThirdPartyToolName>
-        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="../Runtime/CodeLiteUR" IntermediateDirectory="./ReleaseUnicode" Command="./CodeLiteUR" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
-      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;$(shell pkg-config --cflags gtk+-2.0);-Wall;-fno-strict-aliasing">
-        <IncludePath Value="."/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxscintilla/include"/>
-        <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../Interfaces"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Required="yes" Options="-O2;$(shell wx-config --libs --unicode=yes --debug=no);$(shell pkg-config --libs gtk+-2.0)">
-        <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libCodeLiteu.a"/>
-        <Library Value="libplugin_sdku.a"/>
-        <Library Value="libwxscintillau.a"/>
-        <Library Value="libwxsqlite3u.a"/>
-        <Library Value="libsqlite3.a"/>
-      </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""/>
-      <ResourceCompiler Required="no" Options="$(shell wx-config --rcflags)"/>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="yes">
-        <CleanCommand>make clean</CleanCommand>
-        <BuildCommand>make </BuildCommand>
-        <SingleFileCommand>make $(CurrentFile).o</SingleFileCommand>
-        <MakefileGenerationCommand>./configure</MakefileGenerationCommand>
-        <ThirdPartyToolName>configure</ThirdPartyToolName>
-        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild>resources.cpp
-resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc
-</CustomPreBuild>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./WinDebugUnicode" Command="./CodeLite.exe" CommandArguments="-b ." WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
-      <Compiler Required="yes" Options="$(shell wx-config --wxcfg=gcc_dll/mswud --debug=yes --cxxflags --unicode=yes);-Wall;-fno-strict-aliasing;-g">
-        <IncludePath Value="."/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxscintilla/include"/>
-        <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../Interfaces"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Required="yes" Options="-g;$(shell wx-config --debug=yes --libs --unicode=yes);-Wl,--subsystem,windows -mwindows;">
-        <LibraryPath Value="."/>
-        <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libplugin_sdkud.a"/>
-        <Library Value="libCodeLiteud.a"/>
-        <Library Value="libwxscintillaud.a"/>
-        <Library Value="libwxsqlite3ud.a"/>
-        <Library Value="libsqlite3.a"/>
-        <Library Value="libwxmsw28ud.a"/>
-      </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""/>
-      <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
-        <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild>resources.cpp svninfo.cpp
-resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-
-svninfo.cpp:
-	autorev .
-</CustomPreBuild>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./WinReleaseUnicode" Command="./CodeLite.exe" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
-      <Compiler Required="yes" Options="$(shell wx-config --wxcfg=gcc_dll/mswu --debug=no --cxxflags --unicode=yes);-O2;-Wall;-fno-strict-aliasing ">
-        <IncludePath Value="."/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxscintilla/include"/>
-        <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../Interfaces"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --unicode=yes --libs );-Wl,--subsystem,windows -mwindows;-Wl,-M=codelite.map;">
-        <LibraryPath Value="."/>
-        <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libplugin_sdku.a"/>
-        <Library Value="libCodeLiteu.a"/>
-        <Library Value="libwxscintillau.a"/>
-        <Library Value="libwxsqlite3u.a"/>
-        <Library Value="libsqlite3.a"/>
-        <Library Value="libwxmsw28u.a"/>
-      </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""/>
-      <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
-      <PreBuild>
-        <Command Enabled="yes">autorev .</Command>
-      </PreBuild>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
-        <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild>resources.cpp
-resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
-      </AdditionalRules>
-    </Configuration>
-  </Settings>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
@@ -578,4 +410,137 @@ resources.cpp: resources.xrc
     <Project Name="snipwiz"/>
     <Project Name="wxFormBuilder"/>
   </Dependencies>
+  <Settings Type="Executable">
+    <Configuration Name="Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="../Runtime/CodeLiteUR" IntermediateDirectory="./ReleaseUnicode" Command="./CodeLiteUR" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;$(shell pkg-config --cflags gtk+-2.0);-Wall;-fno-strict-aliasing">
+        <IncludePath Value="."/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../Interfaces"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --libs --unicode=yes --debug=no);$(shell pkg-config --libs gtk+-2.0)">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libCodeLiteu.a"/>
+        <Library Value="libplugin_sdku.a"/>
+        <Library Value="libwxscintillau.a"/>
+        <Library Value="libwxsqlite3u.a"/>
+        <Library Value="libsqlite3.a"/>
+      </Linker>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
+      <ResourceCompiler Required="no" Options="$(shell wx-config --rcflags)"/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <Target Name="configure --enable-debug">./configure --enable-debug</Target>
+        <Target Name="configure">./configure</Target>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make </BuildCommand>
+        <SingleFileCommand>make $(CurrentFile).o</SingleFileCommand>
+        <MakefileGenerationCommand>./configure</MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>resources.cpp
+resources.cpp: resources.xrc
+	wxrc -c -v -o resources.cpp resources.xrc
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./WinDebugUnicode" Command="./CodeLite.exe" CommandArguments="-b ." WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <Compiler Required="yes" Options="$(shell wx-config --wxcfg=gcc_dll/mswud --debug=yes --cxxflags --unicode=yes);-Wall;-fno-strict-aliasing;-g">
+        <IncludePath Value="."/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../Interfaces"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Required="yes" Options="-g;$(shell wx-config --debug=yes --libs --unicode=yes);-Wl,--subsystem,windows -mwindows;">
+        <LibraryPath Value="."/>
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdkud.a"/>
+        <Library Value="libCodeLiteud.a"/>
+        <Library Value="libwxscintillaud.a"/>
+        <Library Value="libwxsqlite3ud.a"/>
+        <Library Value="libsqlite3.a"/>
+        <Library Value="libwxmsw28ud.a"/>
+      </Linker>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
+      <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
+        <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>resources.cpp svninfo.cpp
+resources.cpp: resources.xrc
+	wxrc /c /v /o resources.cpp resources.xrc
+
+svninfo.cpp:
+	autorev .
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./WinReleaseUnicode" Command="./CodeLite.exe" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
+      <Compiler Required="yes" Options="$(shell wx-config --wxcfg=gcc_dll/mswu --debug=no --cxxflags --unicode=yes);-O2;-Wall;-fno-strict-aliasing ">
+        <IncludePath Value="."/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../Interfaces"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --unicode=yes --libs );-Wl,--subsystem,windows -mwindows;-Wl,-M=codelite.map;">
+        <LibraryPath Value="."/>
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdku.a"/>
+        <Library Value="libCodeLiteu.a"/>
+        <Library Value="libwxscintillau.a"/>
+        <Library Value="libwxsqlite3u.a"/>
+        <Library Value="libsqlite3.a"/>
+        <Library Value="libwxmsw28u.a"/>
+      </Linker>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
+      <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
+      <PreBuild>
+        <Command Enabled="yes">autorev .</Command>
+      </PreBuild>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
+        <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>resources.cpp
+resources.cpp: resources.xrc
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
 </CodeLite_Project>

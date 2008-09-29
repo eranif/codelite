@@ -113,3 +113,13 @@ void EnvVarDlg::SetValue(const wxString& name)
 	m_textValue->SetValue(name);
 }
 
+void EnvVarDlg::DisableName()
+{
+	m_textName->Enable(false);
+}
+
+void EnvVarDlg::DisableValue()
+{
+	m_textValue->Enable(false);
+}
+

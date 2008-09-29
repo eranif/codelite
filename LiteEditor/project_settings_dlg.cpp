@@ -853,12 +853,13 @@ void ProjectSettingsDlg::DoEditItem(long item)
 		dlg.SetStaticText2(wxT("Command:"));
 		dlg.SetName(target);
 		dlg.SetValue(cmd);
-
+		
+		// dont allow user to modify the common targets
+		if(target == CUSTOM_TARGET_BUILD || target == CUSTOM_TARGET_CLEAN || target == CUSTOM_TARGET_COMPILE_SINGLE_FILE){
+			dlg.DisableName();
+		}
+		
 		if (dlg.ShowModal() == wxID_OK) {
-			if(GetTargetCommand(dlg.GetName()).IsEmpty() == false){
-				wxMessageBox(wxString::Format(wxT("Target '%s' already exist!"), dlg.GetName().c_str()), wxT("CodeLite"), wxICON_WARNING|wxCENTER|wxOK, this);
-				return;
-			}
 			DoUpdateItem(item, dlg.GetName(), dlg.GetValue());
 		}
 	}

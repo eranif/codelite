@@ -52,7 +52,8 @@ class EnvVarDlg : public wxDialog
 	void SetValue(const wxString &name);
 	void SetStaticText1(const wxString &txt);
 	void SetStaticText2(const wxString &txt);
-
+	void DisableName();
+	void DisableValue();
 };
 
 #endif //__envvar_dlg__

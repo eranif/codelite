@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "dirsaver.h"
 #include "envvar_dlg.h"
 #include <wx/dirdlg.h>
 #include "project_settings_dlg.h"
@@ -886,7 +887,24 @@ wxString ProjectSettingsDlg::GetTargetCommand(const wxString& target)
 
 void ProjectSettingsDlg::OnBrowseCustomBuildWD(wxCommandEvent& e)
 {
-	wxString new_path = wxDirSelector(wxT("Select working directory:"), m_textCtrlCustomBuildWD->GetValue(), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	DirSaver ds;
+	
+	// Since all paths are relative to the project, set the working directory to the 
+	// current project path
+	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
+	if(p){
+		wxSetWorkingDirectory(p->GetFileName().GetPath());
+	}
+	
+	wxFileName fn(m_textCtrlCustomBuildWD->GetValue());
+	wxString initPath(wxEmptyString);
+	
+	if(fn.DirExists()) {
+		fn.MakeAbsolute();
+		initPath = fn.GetFullPath();
+	}
+	
+	wxString new_path = wxDirSelector(wxT("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if(new_path.IsEmpty() == false){
 		m_textCtrlCustomBuildWD->SetValue(new_path);
 	}
@@ -894,7 +912,23 @@ void ProjectSettingsDlg::OnBrowseCustomBuildWD(wxCommandEvent& e)
 
 void ProjectSettingsDlg::OnBrowseCommandWD(wxCommandEvent& e)
 {
-	wxString new_path = wxDirSelector(wxT("Select working directory:"), m_textCtrlCommandWD->GetValue(), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	DirSaver ds;
+	
+	// Since all paths are relative to the project, set the working directory to the 
+	// current project path
+	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
+	if(p){
+		wxSetWorkingDirectory(p->GetFileName().GetPath());
+	}
+	
+	wxFileName fn(m_textCtrlCommandWD->GetValue());
+	wxString initPath(wxEmptyString);
+	if(fn.DirExists()) {
+		fn.MakeAbsolute();
+		initPath = fn.GetFullPath();
+	}
+	
+	wxString new_path = wxDirSelector(wxT("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if(new_path.IsEmpty() == false){
 		m_textCtrlCommandWD->SetValue(new_path);
 	}
@@ -902,7 +936,23 @@ void ProjectSettingsDlg::OnBrowseCommandWD(wxCommandEvent& e)
 
 void ProjectSettingsDlg::OnBrowseIntermediateDir(wxCommandEvent& e)
 {
-	wxString new_path = wxDirSelector(wxT("Select working directory:"), m_textCtrlItermediateDir->GetValue(), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	DirSaver ds;
+	
+	// Since all paths are relative to the project, set the working directory to the 
+	// current project path
+	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
+	if(p){
+		wxSetWorkingDirectory(p->GetFileName().GetPath());
+	}
+
+	wxFileName fn(m_textCtrlItermediateDir->GetValue());
+	wxString initPath(wxEmptyString);
+	
+	if(fn.DirExists()) {
+		fn.MakeAbsolute();
+		initPath = fn.GetFullPath();
+	}
+	wxString new_path = wxDirSelector(wxT("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if(new_path.IsEmpty() == false){
 		m_textCtrlItermediateDir->SetValue(new_path);
 	}

@@ -73,7 +73,8 @@ EnvVarDlg::EnvVarDlg( wxWindow* parent, wxWindowID id, const wxString& title, co
 	this->SetSizer( bSizer4 );
 	this->Layout();
 	bSizer4->Fit( this );
-
+	
+	m_textName->SetFocus();
 	this->Centre( wxBOTH );
 }
 

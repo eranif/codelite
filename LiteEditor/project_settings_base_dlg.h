@@ -26,7 +26,7 @@
 #include <wx/icon.h>
 #include <wx/gbsizer.h>
 #include <wx/checklst.h>
-#include "dirpicker.h"
+#include <wx/listctrl.h>
 #include <wx/statbox.h>
 #include <wx/notebook.h>
 #include <wx/dialog.h>
@@ -50,22 +50,30 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxPanel* m_generalPage;
 		wxStaticText* m_staticText22;
 		wxChoice* m_choiceProjectTypes;
+		
 		wxStaticText* m_staticText191;
 		wxChoice* m_choiceCompilerType;
+		
 		wxStaticText* m_staticText231;
 		wxChoice* m_choiceDebugger;
+		
 		wxStaticText* m_staticText15;
 		wxTextCtrl* m_textOutputFilePicker;
+		
 		wxStaticText* m_staticText16;
-		DirPicker *m_intermediateDirPicker;
+		wxTextCtrl* m_textCtrlItermediateDir;
+		wxButton* m_buttonBrowseIM_WD;
 		wxStaticText* m_staticText17;
 		wxStaticLine* m_staticline5;
 		wxStaticText* m_staticText18;
 		wxTextCtrl* m_textCommand;
+		
 		wxStaticText* m_staticText19;
 		wxTextCtrl* m_textCommandArguments;
+		
 		wxStaticText* m_staticText20;
-		DirPicker *m_workingDirPicker;
+		wxTextCtrl* m_textCtrlCommandWD;
+		wxButton* m_buttonBrowseCommandWD;
 		wxCheckBox* m_checkBoxPauseWhenExecEnds;
 		wxPanel* m_compilerPage;
 		wxCheckBox* m_checkCompilerNeeded;
@@ -128,16 +136,15 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxButton* m_buttonDownPostBuildCmd;
 		wxPanel* m_customBuildPage;
 		wxCheckBox* m_checkEnableCustomBuild;
-		wxStaticLine* m_staticline82;
-		wxStaticText* m_staticText27;
-		DirPicker *m_customBuildDirPicker;
-		wxStaticText* m_staticText181;
-		wxTextCtrl* m_textBuildCommand;
-		wxStaticText* m_staticText192;
-		wxTextCtrl* m_textCleanCommand;
-		wxStaticText* m_staticText291;
-		wxTextCtrl* m_textCtrl1SingleFileCommand;
-		wxButton* m_buttonCustomTargets;
+		wxStaticLine* m_staticline12;
+		wxStaticText* m_staticText33;
+		wxTextCtrl* m_textCtrlCustomBuildWD;
+		wxButton* m_buttonBrowseCustomBuildWD;
+		wxListCtrl* m_listCtrlTargets;
+		wxStaticLine* m_staticline13;
+		wxButton* m_buttonNewCustomTarget;
+		wxButton* m_buttonEditCustomTarget;
+		wxButton* m_buttonDeleteCustomTarget;
 		wxStaticText* m_staticText29;
 		wxStaticLine* m_staticline11;
 		wxChoice* m_thirdPartyTool;
@@ -157,8 +164,17 @@ class ProjectSettingsBaseDlg : public wxDialog
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnBrowseIntermediateDir( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnBrowseCommandWD( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnDebuggingRemoteTarget( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnCustomTargets( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnBrowseCustomBuildWD( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }
+		virtual void OnItemSelected( wxListEvent& event ){ event.Skip(); }
+		virtual void OnNewTarget( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnEditTarget( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnEditTargetUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnDeleteTarget( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnDeleteTargetUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnChoiceMakefileTool( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonHelp( wxCommandEvent& event ){ event.Skip(); }
 		

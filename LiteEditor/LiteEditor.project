@@ -162,10 +162,6 @@
       <File Name="project_settings_base_dlg.h"/>
       <File Name="buildorderbasepage.h"/>
       <File Name="buildorderbasepage.cpp"/>
-      <File Name="customtargetsdlg.h"/>
-      <File Name="customtargetsbase.cpp"/>
-      <File Name="customtargetsbase.h"/>
-      <File Name="customtargetsdlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ProjectManagement">
       <File Name="open_resouce_dlg.cpp"/>

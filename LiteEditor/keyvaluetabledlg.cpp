@@ -132,15 +132,19 @@ void KeyValueTableDlg::InitVars()
 void KeyValueTableDlg::OnEditVar(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	EnvVarDlg *dlg = new EnvVarDlg(this, m_selectedVarName, m_selectedVarValue);
-	if(dlg->ShowModal() == wxID_OK){
-		DbRecordPtr record(new VariableEntry(dlg->GetName(), dlg->GetValue()));
+	EnvVarDlg dlg(this);//, m_selectedVarName, m_selectedVarValue);
+	dlg.SetStaticText1(wxT("Variable Name:"));
+	dlg.SetStaticText1(wxT("Variable Value:"));
+	dlg.SetName(m_selectedVarName);
+	dlg.SetValue(m_selectedVarValue);
+	
+	if(dlg.ShowModal() == wxID_OK){
+		DbRecordPtr record(new VariableEntry(dlg.GetName(), dlg.GetValue()));
 		m_db->Begin();
 		m_db->Update(record);
 		m_db->Commit();
 		InitVars();
 	}
-	dlg->Destroy();
 }
 
 void KeyValueTableDlg::OnItemSelected(wxListEvent &event)

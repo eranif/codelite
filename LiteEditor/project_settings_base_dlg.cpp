@@ -483,6 +483,16 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	
 	bSizer15->Add( fgSizer31, 0, wxEXPAND, 5 );
 	
+	wxBoxSizer* bSizer20;
+	bSizer20 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_buttonCustomTargets = new wxButton( m_customBuildPage, wxID_ANY, wxT("More Custom Targets..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCustomTargets->SetToolTip( wxT("Click on this button to add more targets other than the 'built-in' targets Build and Clean (e.g. make distclean)\nthese commands will be available from the project context menu -> 'Custom Build Targets' sub menu") );
+	
+	bSizer20->Add( m_buttonCustomTargets, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	bSizer15->Add( bSizer20, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
 	wxBoxSizer* bSizer191;
 	bSizer191 = new wxBoxSizer( wxHORIZONTAL );
 	
@@ -622,6 +632,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_textBuildCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textCleanCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textCtrl1SingleFileCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
+	m_buttonCustomTargets->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCustomTargets ), NULL, this );
 	m_thirdPartyTool->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnChoiceMakefileTool ), NULL, this );
 	m_textCtrlMakefileGenerationCmd->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textDeps->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
@@ -672,6 +683,7 @@ ProjectSettingsBaseDlg::~ProjectSettingsBaseDlg()
 	m_textBuildCommand->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textCleanCommand->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textCtrl1SingleFileCommand->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
+	m_buttonCustomTargets->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCustomTargets ), NULL, this );
 	m_thirdPartyTool->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnChoiceMakefileTool ), NULL, this );
 	m_textCtrlMakefileGenerationCmd->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_textDeps->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );

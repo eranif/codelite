@@ -75,6 +75,7 @@ void CompileRequest::Process()
 	SendStartMsg();
 	if (!isCustom && m_premakeOnly) {
 		AppendLine(wxT("Empty makefile generation command (see Project Settings -> Custom Build)"));
+		SetBusy(false);
 		return;
 	}
 

@@ -45,6 +45,8 @@
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
+static const wxString gsCustomTargetsMenu(wxT("Custom Build Targets"));
+
 BEGIN_EVENT_TABLE( FileViewTree, wxTreeCtrl )
 	EVT_TREE_BEGIN_DRAG( wxID_ANY, FileViewTree::OnItemBeginDrag )
 	EVT_TREE_END_DRAG( wxID_ANY, FileViewTree::OnItemEndDrag )
@@ -308,8 +310,10 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
 
 void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString &projectName )
 {
-	wxMenuItem *itemSep(NULL);
+	std::vector<wxMenuItem*> dynItems;
 	wxMenuItem *item(NULL);
+	std::map<wxString, wxString> targets;
+	
 	if ( type == MenuTypeFileView_Project ) {
 
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
@@ -317,13 +321,43 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 			wxString toolName = bldConf->GetToolName();
 			if (toolName != wxT("None")) {
 				//add the custom execution command
-				itemSep = new wxMenuItem(menu, wxID_SEPARATOR);
-				menu->Prepend(itemSep);
+				item = new wxMenuItem(menu, wxID_SEPARATOR);
+				menu->Prepend(item);
+				dynItems.push_back(item);
 
 				wxString menu_text(wxT("Run ") + toolName);
 
 				item = new wxMenuItem(menu, XRCID("generate_makefile"), menu_text, wxEmptyString, wxITEM_NORMAL);
 				menu->Prepend(item);
+				dynItems.push_back(item);
+			}
+
+			// append the custom build targets
+			targets = bldConf->GetCustomTargets();
+			if (targets.empty() == false) {
+				wxMenu *customTargetsMenu = new wxMenu();
+
+				// get list of custom targets, and create menu entry for each target
+				std::map<wxString, wxString>::iterator iter = targets.begin();
+				for (; iter != targets.end(); iter++) {
+					item = new wxMenuItem(customTargetsMenu, wxXmlResource::GetXRCID(iter->first.c_str()), iter->first, wxEmptyString, wxITEM_NORMAL);
+					customTargetsMenu->Append(item);
+					Frame::Get()->Connect(wxXmlResource::GetXRCID(iter->first.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnBuildCustomTarget));
+				}
+				
+				// iterator over the menu items and search for 'Project Only' target
+				// this is the position that we want to place our custom targets menu
+				wxMenuItemList items = menu->GetMenuItems();
+				wxMenuItemList::iterator liter = items.begin();
+				size_t position(0);
+				for(; liter != items.end(); liter++){
+					wxMenuItem *mi = *liter;
+					if(mi->GetId() == XRCID("project_only")){
+						break;
+					}
+					position++;
+				}
+				menu->Insert(position, XRCID("custom_targets"), gsCustomTargetsMenu, customTargetsMenu);
 			}
 		}
 	}
@@ -331,18 +365,29 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 	if (ManagerST::Get()->IsBuildInProgress() == false) {
 		PluginManager::Get()->HookPopupMenu( menu, type );
 	}
+	
 	PopupMenu( menu );
+	
 	if (ManagerST::Get()->IsBuildInProgress() == false) {
 		//let the plugins remove their hooked content
 		PluginManager::Get()->UnHookPopupMenu( menu, type );
 	}
 
 	//remove the custom makefile hooked menu items
-	if (item) {
-		menu->Destroy(item);
+	for (size_t i=0; i<dynItems.size(); i++) {
+		menu->Destroy(dynItems.at(i));
 	}
-	if (itemSep) {
-		menu->Destroy(itemSep);
+	
+	// remove the dynamic menus added by the 'Custom Targets'
+	int customTargetsID = menu->FindItem(gsCustomTargetsMenu);
+	if(customTargetsID != wxNOT_FOUND){
+		menu->Destroy(customTargetsID);
+		
+		// disconnect events
+		std::map<wxString, wxString>::iterator iter = targets.begin();
+		for (; iter != targets.end(); iter++) {
+			Frame::Get()->Disconnect(wxXmlResource::GetXRCID(iter->first.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnBuildCustomTarget));
+		}
 	}
 }
 
@@ -1444,12 +1489,12 @@ bool FileViewTree::CreateVirtualDirectory(const wxString& parentPath, const wxSt
 {
 	// try to locate that VD first, if it exists, do nothing
 	wxTreeItemId item = ItemByFullPath(wxString::Format(wxT("%s:%s"), parentPath.c_str(), vdName.c_str()));
-	if(item.IsOk()){
+	if (item.IsOk()) {
 		return true;
 	}
-	
+
 	item = ItemByFullPath(parentPath);
-	if(item.IsOk()){
+	if (item.IsOk()) {
 		DoAddVirtualFolder(item, vdName);
 		return true;
 	}

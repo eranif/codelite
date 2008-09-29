@@ -1943,6 +1943,40 @@ void Frame::OnBuildProject(wxCommandEvent &event)
 	}
 }
 
+void Frame::OnBuildCustomTarget(wxCommandEvent& event)
+{
+	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
+	if (enable) {
+		
+		wxString projectName, targetName;
+		projectName = ManagerST::Get()->GetActiveProjectName();
+		
+		// get the selected configuration to be built
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+		if(bldConf) {
+			std::map<wxString, wxString> targets = bldConf->GetCustomTargets();
+			std::map<wxString, wxString>::iterator iter = targets.begin();
+			for (; iter != targets.end(); iter++) {
+				if(wxXmlResource::GetXRCID(iter->first.c_str()) == event.GetId()){
+					targetName = iter->first;
+					break;
+				}
+			}
+			
+			if(targetName.IsEmpty()){
+				wxLogMessage(wxString::Format(wxT("Failed to find Custom Build Target for event ID=%d"), event.GetId()));
+				return;
+			}
+			
+			QueueCommand info(projectName, bldConf->GetName(), false, QueueCommand::CustomBuild);
+			info.SetCustomBuildTarget(targetName);
+			
+			ManagerST::Get()->PushQueueCommand(info);
+			ManagerST::Get()->ProcessCommandQueue();
+		}
+	}
+}
+
 void Frame::OnBuildAndRunProject(wxCommandEvent &event)
 {
 	wxUnusedVar(event);

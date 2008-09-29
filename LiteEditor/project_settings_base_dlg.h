@@ -137,6 +137,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxTextCtrl* m_textCleanCommand;
 		wxStaticText* m_staticText291;
 		wxTextCtrl* m_textCtrl1SingleFileCommand;
+		wxButton* m_buttonCustomTargets;
 		wxStaticText* m_staticText29;
 		wxStaticLine* m_staticline11;
 		wxChoice* m_thirdPartyTool;
@@ -157,6 +158,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnDebuggingRemoteTarget( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnCustomTargets( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnChoiceMakefileTool( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonHelp( wxCommandEvent& event ){ event.Skip(); }
 		

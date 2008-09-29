@@ -29,6 +29,7 @@
 #include <wx/arrstr.h>
 #include "wx/string.h"
 #include <list>
+#include <map>
 
 #ifndef WXDLLIMPEXP_LE_SDK
 #ifdef WXMAKINGDLL_LE_SDK
@@ -112,6 +113,7 @@ class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject
 	bool m_isDbgRemoteTarget;
 	wxString m_dbgHostName;
 	wxString m_dbgHostPort;
+	std::map<wxString, wxString> m_customTargets;
 
 private:
 	void FillFromSmiColonString(wxArrayString &arr, const wxString &str);
@@ -360,6 +362,13 @@ public:
 	}
 	const wxString& GetDbgHostPort() const {
 		return m_dbgHostPort;
+	}
+
+	void SetCustomTargets(const std::map<wxString, wxString>& customTargets) {
+		this->m_customTargets = customTargets;
+	}
+	const std::map<wxString, wxString>& GetCustomTargets() const {
+		return m_customTargets;
 	}
 };
 

@@ -58,8 +58,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 {
 	friend class Singleton<Manager>;
 	wxString  m_startupDir;
-	CleanRequest *m_cleanRequest;
-	CompileRequest *m_compileRequest;
+	CompilerAction *m_compilerRequest;
 	AsyncExeCmd *m_asyncExeCmd;
 	FileHistory m_recentFiles;
 	FileHistory m_recentWorkspaces;
@@ -795,6 +794,7 @@ protected:
 	void DoSetupWorkspace(const wxString &path);
 	void DoCleanProject(const QueueCommand &buildInfo);
 	void DoBuildProject(const QueueCommand &buildInfo);
+	void DoCustomBuild(const QueueCommand &buildInfo);
 	void DoCmdWorkspace(int cmd);
 	void DoGetAccelFiles(wxArrayString &files);
 

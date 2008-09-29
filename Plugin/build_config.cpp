@@ -141,6 +141,12 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 					m_toolName = child->GetNodeContent();
 				} else if (child->GetName() == wxT("MakefileGenerationCommand")) {
 					m_makeGenerationCommand = child->GetNodeContent();
+				} else if (child->GetName() == wxT("Target")) {
+					wxString target_name = child->GetPropVal(wxT("Name"), wxT(""));
+					wxString target_cmd = child->GetNodeContent();
+					if(target_name.IsEmpty() == false) {
+						m_customTargets[target_name] = target_cmd;
+					}
 				}
 				child = child->GetNext();
 			}
@@ -354,7 +360,18 @@ wxXmlNode *BuildConfig::ToXml() const
 
 	wxXmlNode *clnCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("CleanCommand"));
 	XmlUtils::SetNodeContent(clnCmd, m_customCleanCmd);
-
+	
+	// add all 'Targets'
+	std::map<wxString, wxString>::const_iterator ir = m_customTargets.begin();
+	for(; ir != m_customTargets.end(); ir++) {
+		wxString target_name = ir->first;
+		wxString target_cmd = ir->second;
+		
+		wxXmlNode *customTarget = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("Target"));
+		customTarget->AddProperty(wxT("Name"), target_name);
+		XmlUtils::SetNodeContent(customTarget, target_cmd);
+	}
+	
 	//add the additional rules
 	wxXmlNode *additionalCmds = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("AdditionalRules"));
 	node->AddChild(additionalCmds);

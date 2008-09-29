@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "project_settings_dlg.h"
+#include "customtargetsdlg.h"
 #include "macrosdlg.h"
 #include "add_option_dialog.h"
 #include "free_text_dialog.h"
@@ -143,6 +144,8 @@ void ProjectSettingsDlg::ClearValues()
 	m_checkResourceNeeded->SetValue(true);
 	m_checkBoxPauseWhenExecEnds->SetValue(true);
 	m_textCtrl1SingleFileCommand->SetValue(wxEmptyString);
+	m_targets.clear();
+	
 	DisableCustomBuildPage(true);
 }
 
@@ -155,7 +158,10 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 		ClearValues();
 		return;
 	}
-
+	
+	// Initialize the targets
+	m_targets = buildConf->GetCustomTargets();
+	
 	wxArrayString searchArr, libPath, libs;
 	BuildCommandList preBuildCmds, postBuildCmds;
 
@@ -279,7 +285,8 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	}
 	wxArrayString searchArr, libPath, libs;
 	BuildCommandList preBuildCmds, postBuildCmds;
-
+	
+	buildConf->SetCustomTargets(m_targets);
 	buildConf->SetOutputFileName(m_textOutputFilePicker->GetValue());
 	buildConf->SetIntermediateDirectory(m_intermediateDirPicker->GetPath());
 	buildConf->SetCommand(m_textCommand->GetValue());
@@ -422,6 +429,7 @@ void ProjectSettingsDlg::DisableCustomBuildPage(bool disable)
 	m_customBuildDirPicker->Enable(!disable);
 	m_thirdPartyTool->Enable(!disable);
 	m_textCtrl1SingleFileCommand->Enable(!disable);
+	m_buttonCustomTargets->Enable(!disable);
 	
 	if(!disable) {
 		if(m_thirdPartyTool->GetStringSelection() == wxT("None")) {
@@ -713,4 +721,13 @@ void ProjectSettingsDlg::OnButtonHelp(wxCommandEvent& e)
 	wxUnusedVar(e);
 	MacrosDlg dlg(this, MacrosDlg::MacrosProject);
 	dlg.ShowModal();
+}
+
+void ProjectSettingsDlg::OnCustomTargets(wxCommandEvent& e)
+{
+	CustomTargetsDlg dlg(this);
+	dlg.SetTargets(m_targets);
+	if(dlg.ShowModal() == wxID_OK){
+		m_targets = dlg.GetTargets();
+	}
 }

@@ -144,20 +144,24 @@ void EnvVarsTableDlg::InitVars()
 void EnvVarsTableDlg::OnEditVar(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	EnvVarDlg *dlg = new EnvVarDlg(this, m_selectedVarName, m_selectedVarValue);
-	if(dlg->ShowModal() == wxID_OK){
+	EnvVarDlg dlg(this);//, m_selectedVarName, m_selectedVarValue);
+	dlg.SetStaticText1(wxT("Variable Name:"));
+	dlg.SetStaticText1(wxT("Variable Value:"));
+	dlg.SetName(m_selectedVarName);
+	dlg.SetValue(m_selectedVarValue);
+	
+	if(dlg.ShowModal() == wxID_OK){
 		EvnVarList vars;
 		EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
 		
 		StringMap varMap = vars.GetVariables();
-		varMap[dlg->GetName()] = dlg->GetValue();
+		varMap[dlg.GetName()] = dlg.GetValue();
 		
 		vars.SetVariables( varMap );
 		EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
 		
 		InitVars();
 	}
-	dlg->Destroy();
 }
 
 void EnvVarsTableDlg::OnNewVar(wxCommandEvent &event)

@@ -20,6 +20,8 @@
     <File Name="stringsearcher.h"/>
     <File Name="dockablepanemenumanager.cpp"/>
     <File Name="dockablepanemenumanager.h"/>
+    <File Name="custombuildrequest.cpp"/>
+    <File Name="custombuildrequest.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="async_executable_cmd.h"/>

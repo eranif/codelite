@@ -11,11 +11,13 @@ class QueueCommand
 	int m_kind;
 	bool m_cleanLog;
 	bool m_checkBuildSuccess;
+	wxString m_customBuildTarget;
 
 public:
 	enum {
 		Build,
 		Clean,
+		CustomBuild,
 		Debug
 	};
 
@@ -43,6 +45,12 @@ public:
 	}
 	const bool& GetCheckBuildSuccess() const {
 		return m_checkBuildSuccess;
+	}
+	void SetCustomBuildTarget(const wxString& customBuildTarget) {
+		this->m_customBuildTarget = customBuildTarget;
+	}
+	const wxString& GetCustomBuildTarget() const {
+		return m_customBuildTarget;
 	}
 };
 

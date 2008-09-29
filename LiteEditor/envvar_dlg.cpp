@@ -115,11 +115,13 @@ void EnvVarDlg::SetValue(const wxString& name)
 
 void EnvVarDlg::DisableName()
 {
+	m_textValue->SetFocus();
 	m_textName->Enable(false);
 }
 
 void EnvVarDlg::DisableValue()
 {
+	m_textName->SetFocus();
 	m_textValue->Enable(false);
 }
 

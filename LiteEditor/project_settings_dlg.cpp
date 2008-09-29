@@ -485,7 +485,7 @@ void ProjectSettingsDlg::DisableCustomBuildPage(bool disable)
 	m_buttonNewCustomTarget->Enable(!disable);
 	m_buttonEditCustomTarget->Enable(!disable);
 	m_buttonDeleteCustomTarget->Enable(!disable);
-
+	
 	if (!disable) {
 		if (m_thirdPartyTool->GetStringSelection() == wxT("None")) {
 			m_textCtrlMakefileGenerationCmd->Enable(false);
@@ -831,7 +831,7 @@ void ProjectSettingsDlg::OnDeleteTargetUI(wxUpdateUIEvent& e)
 {
 	if(m_selecteCustomTaregt != wxNOT_FOUND){
 		wxString name = GetColumnText(m_listCtrlTargets, m_selecteCustomTaregt, 0);
-		e.Enable(name != CUSTOM_TARGET_BUILD && name != CUSTOM_TARGET_CLEAN && name != CUSTOM_TARGET_COMPILE_SINGLE_FILE);
+		e.Enable(name != CUSTOM_TARGET_BUILD && name != CUSTOM_TARGET_CLEAN && name != CUSTOM_TARGET_COMPILE_SINGLE_FILE && m_checkEnableCustomBuild->IsChecked());
 	} else {
 		e.Enable(false);
 	}
@@ -839,7 +839,7 @@ void ProjectSettingsDlg::OnDeleteTargetUI(wxUpdateUIEvent& e)
 
 void ProjectSettingsDlg::OnEditTargetUI(wxUpdateUIEvent& e)
 {
-	e.Enable(m_selecteCustomTaregt != wxNOT_FOUND);
+	e.Enable(m_selecteCustomTaregt != wxNOT_FOUND && m_checkEnableCustomBuild->IsChecked());
 }
 
 void ProjectSettingsDlg::DoEditItem(long item)

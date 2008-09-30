@@ -1,3 +1,4 @@
+#include "windowattrmanager.h"
 #include "quickdebuginfo.h"
 #include <wx/tokenzr.h>
 #include "editor_config.h"
@@ -14,6 +15,8 @@ QuickDebugBase( parent )
 	m_buttonDebug->SetFocus();
 	GetSizer()->SetMinSize(550, wxNOT_FOUND);
 	GetSizer()->Fit(this);
+	
+	WindowAttrManager::Load(this, wxT("QuickDebugDlgAttr"), NULL);
 }
 
 void QuickDebugDlg::Initialize()
@@ -64,12 +67,14 @@ void QuickDebugDlg::OnButtonDebug( wxCommandEvent& event )
 	info.SetArguments(m_textCtrlArgs->GetValue());
 	EditorConfigST::Get()->WriteObject(wxT("QuickDebugDlg"), &info);
 	
+	WindowAttrManager::Save(this, wxT("QuickDebugDlgAttr"), NULL);
 	EndModal(wxID_OK);
 }
 
 void QuickDebugDlg::OnButtonCancel( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
+	WindowAttrManager::Save(this, wxT("QuickDebugDlgAttr"), NULL);
 	EndModal(wxID_CANCEL);
 }
 

@@ -1,10 +1,11 @@
+#include "windowattrmanager.h"
 #include "macrosdlg.h"
 #include "editcmpfileinfodlg.h"
 
 EditCmpFileInfo::EditCmpFileInfo( wxWindow* parent)
 		: EditCmpFileInfoBase( parent )
 {
-
+	WindowAttrManager::Load(this, wxT("EditCmpFileInfo"), NULL);
 }
 
 void EditCmpFileInfo::OnFileTypeText( wxCommandEvent& event )
@@ -57,4 +58,9 @@ void EditCmpFileInfo::OnButtonHelp(wxCommandEvent& event)
 	wxUnusedVar(event);
 	MacrosDlg dlg(this, MacrosDlg::MacrosCompiler);
 	dlg.ShowModal();
+}
+
+EditCmpFileInfo::~EditCmpFileInfo()
+{
+	WindowAttrManager::Save(this, wxT("EditCmpFileInfo"), NULL);
 }

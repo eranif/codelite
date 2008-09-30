@@ -492,3 +492,31 @@ void EditorConfig::LoadLexers()
 		m_lexers[lexer->GetName()] = lexer;
 	}
 }
+
+//--------------------------------------------------
+// Simple rectangle class wrapper
+//--------------------------------------------------
+SimpleRectValue::SimpleRectValue()
+{
+}
+
+SimpleRectValue::~SimpleRectValue()
+{
+}
+
+void SimpleRectValue::DeSerialize(Archive& arch)
+{
+	wxPoint pos;
+	wxSize size;
+	
+	arch.Read(wxT("TopLeft"), pos);
+	arch.Read(wxT("Size"), size);
+	
+	m_rect = wxRect(pos, size);
+}
+
+void SimpleRectValue::Serialize(Archive& arch)
+{
+	arch.Write(wxT("TopLeft"), m_rect.GetTopLeft());
+	arch.Write(wxT("Size"), m_rect.GetSize());
+}

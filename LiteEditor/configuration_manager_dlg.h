@@ -74,6 +74,7 @@ protected:
 public:
 	/** Constructor */
 	ConfigurationManagerDlg( wxWindow* parent );
+	virtual ~ConfigurationManagerDlg();
 };
 
 #endif // __configuration_manager_dlg__

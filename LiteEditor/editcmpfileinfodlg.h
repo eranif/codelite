@@ -22,6 +22,8 @@ protected:
 public:
 	/** Constructor */
 	EditCmpFileInfo( wxWindow* parent);
+	virtual ~EditCmpFileInfo();
+	
 	wxString GetCompilationLine() {
 		return m_textCtrl2->GetValue();
 	}

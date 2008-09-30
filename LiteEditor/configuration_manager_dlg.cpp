@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "windowattrmanager.h"
 #include "configuration_manager_dlg.h"
 #include "manager.h"
 #include "new_configuration_dlg.h"
@@ -40,6 +41,8 @@ ConfigurationManagerDlg::ConfigurationManagerDlg( wxWindow* parent )
 {
 	PopulateConfigurations();
 	InitDialog();
+	
+	WindowAttrManager::Load(this, wxT("ConfigurationManagerDlg"), NULL);
 }
 
 
@@ -350,4 +353,9 @@ void ConfigurationManagerDlg::SaveCurrentSettings()
 void ConfigurationManagerDlg::OnButtonApplyUI(wxUpdateUIEvent& event)
 {
 	event.Enable(m_dirty);
+}
+
+ConfigurationManagerDlg::~ConfigurationManagerDlg()
+{
+	WindowAttrManager::Save(this, wxT("ConfigurationManagerDlg"), NULL);
 }

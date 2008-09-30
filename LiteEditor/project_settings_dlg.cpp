@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "dirsaver.h"
+#include "windowattrmanager.h"
 #include "envvar_dlg.h"
 #include <wx/dirdlg.h>
 #include "project_settings_dlg.h"
@@ -86,9 +87,17 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 	m_textCtrl1DbgHost->Enable(m_checkBoxDbgRemote->IsChecked());
 	m_textCtrlDbgPort->Enable(m_checkBoxDbgRemote->IsChecked());
 
-	SetSizeHints(780, -1);
+	//SetSizeHints(780, -1);
 	GetSizer()->Fit(this);
 	Centre();
+	
+	WindowAttrManager::Load(this, wxT("ProjectSettingsDlg"), NULL);
+	
+}
+
+ProjectSettingsDlg::~ProjectSettingsDlg()
+{
+	WindowAttrManager::Save(this, wxT("ProjectSettingsDlg"), NULL);
 }
 
 void ProjectSettingsDlg::UpdateConfigurationTypeChoice(const wxString &itemToSelect)
@@ -958,4 +967,3 @@ void ProjectSettingsDlg::OnBrowseIntermediateDir(wxCommandEvent& e)
 		m_textCtrlItermediateDir->SetValue(new_path);
 	}
 }
-

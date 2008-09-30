@@ -41,6 +41,7 @@
 #else
 #include <wx/wx.h>
 #endif //WX_PRECOMP
+#include "windowattrmanager.h"
 #include "macros.h"
 #include "buildsettingstab.h"
 #include "advanced_settings.h"
@@ -135,6 +136,8 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	// center the dialog
 	Centre();
 	GetSizer()->Fit(this);
+	
+	WindowAttrManager::Load(this, wxT("BuildSettingsDlg"), NULL);
 }
 
 void AdvancedDlg::LoadCompilers()
@@ -157,6 +160,7 @@ void AdvancedDlg::LoadCompilers()
 AdvancedDlg::~AdvancedDlg()
 {
 	delete m_rightclickMenu;
+	WindowAttrManager::Save(this, wxT("BuildSettingsDlg"), NULL);
 }
 
 void AdvancedDlg::OnButtonNewClicked(wxCommandEvent &event)

@@ -1180,6 +1180,16 @@ void Frame::OnFileReload(wxCommandEvent &event)
 	if ( !editor )
 		return;
 
+	if ( editor->GetModify() ) {
+		// Ask user if he really wants to lose all changes
+		wxString msg;
+		msg << wxT("The file '") << editor->GetFileName().GetFullName() << wxT("' has been altered.\n");
+		msg << wxT("Are you sure you want to lose all changes?");
+		if ( wxMessageBox(msg, wxT("Confirm"),wxYES_NO) != wxYES ) {
+			return;
+		}
+	}
+		
 	editor->ReloadFile();
 }
 

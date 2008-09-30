@@ -28,6 +28,8 @@
 #include "wx/filename.h"
 #include "wx/string.h"
 #include <wx/colour.h>
+#include "entry.h"
+#include <vector>
 
 //------------------------------------------------------------------
 // Defines the interface to the editor control
@@ -195,6 +197,31 @@ public:
 	 * \brief return the editor's lexer ID as described in wxscintilla.h (wxSCI_LEX_*)
 	 */
 	virtual int GetLexerId() = 0;
+	
+		/**
+	 * @brief displays teh code completion box. Unlike the previous metho, this method accepts owner and sends an event once selection is made
+	 * @param tags list if tags to display
+	 * @param word part of the word
+	 * @param owner event handler to be notified once a selection is made
+	 */
+	virtual void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, wxEvtHandler *owner) = 0;
+	
+	/**
+	 * @brief register new user image fot TagEntry kind
+	 * @param kind the kind string that will be associated with the bitmap (TagEntry::GetKind())
+	 * @param bmp 16x16 bitmap
+	 */
+	virtual void RegisterImageForKind(const wxString& kind, const wxBitmap& bmp) = 0;
+	
+	/**
+	 * @brief return true if the completion box is visible
+	 */
+	virtual bool IsCompletionBoxShown() = 0;
+	
+	/**
+	 * @brief hide the completion box if it is active.
+	 */
+	virtual void HideCompletionBox() = 0;
 };
 
 #endif //IEDITOR_H

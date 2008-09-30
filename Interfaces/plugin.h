@@ -74,7 +74,9 @@ enum {
 	//clientData is the project name (wxString)
 	wxEVT_PROJ_ADDED,
 	//clientData is NULL
-	wxEVT_INIT_DONE
+	wxEVT_INIT_DONE,
+	//clientData is the selected word (wxString)
+	wxEVT_CCBOX_SELECTION_MADE
 };
 
 //------------------------------------------------------------------

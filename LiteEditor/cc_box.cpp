@@ -28,6 +28,7 @@
 #include <wx/imaglist.h>
 #include <wx/xrc/xmlres.h>
 #include "entry.h"
+#include "plugin.h"
 
 #define BOX_HEIGHT 200
 #define BOX_WIDTH  300
@@ -39,6 +40,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 		, m_height(BOX_HEIGHT)
 		, m_autoHide(autoHide)
 		, m_insertSingleChoice(autoInsertSingleChoice)
+		, m_owner(NULL)
 {
 	Hide();
 
@@ -105,7 +107,7 @@ void CCBox::OnItemSelected( wxListEvent& event )
 	m_selectedItem = event.m_itemIndex;
 }
 
-void CCBox::Show(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl)
+void CCBox::Show(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl, wxEvtHandler *owner)
 {
 	if (tags.empty()) {
 		return;
@@ -114,6 +116,7 @@ void CCBox::Show(const std::vector<TagEntryPtr> &tags, const wxString &word, boo
 	//m_height = BOX_HEIGHT;
 	m_tags = tags;
 	m_showFullDecl = showFullDecl;
+	m_owner = owner;
 	Show(word);
 }
 
@@ -142,14 +145,14 @@ void CCBox::Adjust()
 			m_height = diff;
 		}
 	}
-	
+
 	// adjust the X axis
-	if(size.x - pt.x < BOX_WIDTH){
+	if (size.x - pt.x < BOX_WIDTH) {
 		// the box is too wide to fit the screen
-		if(size.x > BOX_WIDTH){
+		if (size.x > BOX_WIDTH) {
 			// the screen can contain the completion box
 			pt.x = size.x - BOX_WIDTH;
-		}else{
+		} else {
 			// this will provive the maximum visible area
 			pt.x = 0;
 		}
@@ -278,44 +281,53 @@ void CCBox::Show(const wxString& word)
 
 void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 {
-	LEditor *editor = (LEditor*)GetParent();
-	int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
+	if (m_owner) {
+		
+		// simply send an event and dismiss the dialog
+		wxCommandEvent e(wxEVT_CCBOX_SELECTION_MADE);
+		e.SetClientData( (void*)&word );
+		m_owner->ProcessEvent(e);
+		
+	} else {
+		LEditor *editor = (LEditor*)GetParent();
+		int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
 
-	editor->SetSelection(insertPos, editor->GetCurrentPos());
-	editor->ReplaceSelection(word);
+		editor->SetSelection(insertPos, editor->GetCurrentPos());
+		editor->ReplaceSelection(word);
 
-	// incase we are adding a function, add '()' at the end of the function name and place the caret in the middle
-	int img_id = m_listCtrl->OnGetItemImage(m_selectedItem);
-	if (img_id >= 8 && img_id <= 10) {
+		// incase we are adding a function, add '()' at the end of the function name and place the caret in the middle
+		int img_id = m_listCtrl->OnGetItemImage(m_selectedItem);
+		if (img_id >= 8 && img_id <= 10) {
 
-		// if full declaration was selected, dont do anything,
-		// otherwise, append '()' to the inserted string, place the caret
-		// in the middle, and trigger the function tooltip
+			// if full declaration was selected, dont do anything,
+			// otherwise, append '()' to the inserted string, place the caret
+			// in the middle, and trigger the function tooltip
 
-		if (word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
-			// image id in range of 8-10 is function
-			editor->InsertText(editor->GetCurrentPos(), wxT("()"));
-			int pos = editor->GetCurrentPos() + 1;
-			editor->SetCurrentPos(pos);
-			editor->SetSelectionStart(pos);
-			editor->SetSelectionEnd(pos);
-			// trigger function tip
-			editor->CodeComplete();
-			
-			wxString tipContent = editor->GetContext()->CallTipContent();
-			int where = tipContent.Find(wxT(" : "));
-			if(where != wxNOT_FOUND) {
-				tipContent = tipContent.Mid(where + 3);
-			}
-			
-			if (tipContent.Trim().Trim(false) == wxT("()")) {
-				// dont place the caret in the middle of the braces, 
-				// and it is OK to cancel the function calltip
-				int new_pos = editor->GetCurrentPos() + 1;
-				editor->SetCurrentPos(new_pos);
-				editor->SetSelectionStart(new_pos);
-				editor->SetSelectionEnd(new_pos);
-				editor->CallTipCancel();
+			if (word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
+				// image id in range of 8-10 is function
+				editor->InsertText(editor->GetCurrentPos(), wxT("()"));
+				int pos = editor->GetCurrentPos() + 1;
+				editor->SetCurrentPos(pos);
+				editor->SetSelectionStart(pos);
+				editor->SetSelectionEnd(pos);
+				// trigger function tip
+				editor->CodeComplete();
+
+				wxString tipContent = editor->GetContext()->CallTipContent();
+				int where = tipContent.Find(wxT(" : "));
+				if (where != wxNOT_FOUND) {
+					tipContent = tipContent.Mid(where + 3);
+				}
+
+				if (tipContent.Trim().Trim(false) == wxT("()")) {
+					// dont place the caret in the middle of the braces,
+					// and it is OK to cancel the function calltip
+					int new_pos = editor->GetCurrentPos() + 1;
+					editor->SetCurrentPos(new_pos);
+					editor->SetSelectionStart(new_pos);
+					editor->SetSelectionEnd(new_pos);
+					editor->CallTipCancel();
+				}
 			}
 		}
 	}
@@ -383,5 +395,26 @@ int CCBox::GetImageId(const TagEntry &entry)
 	if (entry.GetKind() == wxT("cpp_keyword"))
 		return 17;
 
+	// try the user defined images
+	std::map<wxString, int>::iterator iter = m_userImages.find(entry.GetKind());
+	if (iter != m_userImages.end()) {
+		return iter->second;
+	}
 	return wxNOT_FOUND;
+}
+
+void CCBox::RegisterImageForKind(const wxString& kind, const wxBitmap& bmp)
+{
+	wxImageList *il = m_listCtrl->GetImageList(wxIMAGE_LIST_SMALL);
+	if (il && bmp.IsOk()) {
+		std::map<wxString, int>::iterator iter = m_userImages.find(kind);
+		
+		if(iter == m_userImages.end()) {
+			int id = il->Add(bmp);
+			m_userImages[kind] = id;
+		}else {
+			// an entry for this kind already exist, replace the current image with new one
+			il->Replace(iter->second, bmp);
+		}
+	} 
 }

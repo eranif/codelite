@@ -36,6 +36,7 @@ class CppToken
 	size_t offset;		// file offset
 	wxString filename;
 	wxString line;
+	int lineno;
 
 public:
 	CppToken();
@@ -81,6 +82,14 @@ public:
 	
 	const wxString& getLine() const {
 		return line;
+	}
+
+	void setLineNo(const int& lineno) {
+		this->lineno = lineno;
+	}
+	
+	const int getLineNo() const {
+		return lineno;
 	}
 
 	void print();

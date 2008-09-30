@@ -25,7 +25,7 @@
  #include "renamesymboldlg.h"
 #include "globals.h"
 
-RenameSymbol::RenameSymbol( wxWindow* parent, const std::list<CppToken>& candidates, const std::list<CppToken> &possCandidates  )
+RenameSymbol::RenameSymbol( wxWindow* parent, const std::list<CppToken>& candidates, const std::list<CppToken> &possCandidates, const wxString& oldname/* = wxT("")*/  )
 		:
 		RenameSymbolBase( parent )
 {
@@ -47,6 +47,8 @@ RenameSymbol::RenameSymbol( wxWindow* parent, const std::list<CppToken>& candida
 	if (m_tokens.empty() == false) {
 		DoSelectFile(m_tokens.at((size_t)0));
 	}
+
+	m_textCtrlNewName->SetValue(oldname);
 	m_textCtrlNewName->SetFocus();
 }
 
@@ -72,7 +74,7 @@ void RenameSymbol::AddMatch(const CppToken& token, bool check)
 {
 	wxString msg;
 	wxFileName fn(token.getFilename());
-	msg << token.getLine() << wxT(": At ") << fn.GetFullName() << wxT(" pos ") << token.getOffset();
+	msg << token.getLine() << wxT(": At ") << fn.GetFullName() << wxString::Format( wxT(" line %u"), token.getLineNo() );
 
 	msg.Replace(wxT("\n"), wxT(" "));
 	msg.Replace(wxT("\r\n"), wxT(" "));

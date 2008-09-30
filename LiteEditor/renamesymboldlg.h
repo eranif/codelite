@@ -52,7 +52,7 @@ protected:
 	
 public:
 	/** Constructor */
-	RenameSymbol( wxWindow* parent, const std::list<CppToken>& candidates, const std::list<CppToken> &possCandidates );
+	RenameSymbol( wxWindow* parent, const std::list<CppToken>& candidates, const std::list<CppToken> &possCandidates, const wxString& oldname = wxT("") );
 	void GetMatches(std::list<CppToken>& matches);
 	wxString GetWord() const { return m_textCtrlNewName->GetValue(); }
 };

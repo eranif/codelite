@@ -2135,7 +2135,8 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	for (; iter != tokens.end(); iter++) {
 		CppToken token = *iter;
 		editor->Create(wxEmptyString, token.getFilename());
-		token.setLine( editor->GetLine( editor->LineFromPosition( (int)token.getOffset() ) ) );
+		token.setLineNo( editor->LineFromPosition( (int)token.getOffset() ) + 1 );
+		token.setLine( editor->GetLine( token.getLineNo()-1 ) );
 
 		wxString msg;
 		wxFileName f(token.getFilename());
@@ -2182,7 +2183,7 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	prgDlg->Destroy();
 
 	// display the refactor dialog
-	RenameSymbol *dlg = new RenameSymbol(&rCtrl, candidates, possibleCandidates);
+	RenameSymbol *dlg = new RenameSymbol(&rCtrl, candidates, possibleCandidates, source.name);
 	if (dlg->ShowModal() == wxID_OK) {
 		std::list<CppToken> matches;
 

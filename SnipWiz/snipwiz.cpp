@@ -245,7 +245,13 @@ void SnipWiz::OnMenuSnippets( wxCommandEvent &e )
 		return;
 
 	bool crtl = ::wxGetKeyState( WXK_CONTROL );
-
+	bool sourceIsMenu( false );
+	
+	wxMenu *m = dynamic_cast<wxMenu*>( e.GetEventObject() );
+	if(m) {
+		sourceIsMenu = true;
+	}
+		
 	if ( e.GetId() >= IDM_ADDSTART && e.GetId() < ( IDM_ADDSTART + (int)m_snippets.GetCount() ) ) {
 		wxString key = m_snippets.Item( e.GetId() - IDM_ADDSTART );
 		wxString srText = m_StringDb.GetSnippetString( key );
@@ -259,7 +265,7 @@ void SnipWiz::OnMenuSnippets( wxCommandEvent &e )
 			srText.Replace( SELECTION, selection.c_str() );
 
 		// if the user pressed control while clicking
-		if ( crtl ) {
+		if ( crtl && sourceIsMenu ) {
 			m_clipboard = srText;
 			// remove caret mark if there
 			srText.Replace( CARET, wxT( "" ) );

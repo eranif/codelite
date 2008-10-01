@@ -161,7 +161,7 @@ void EditSnippetsDlg::OnButtonKeyShortcut(wxCommandEvent& e)
 		MenuItemData mid;
 		mid.id = strId;
 		mid.action = m_textCtrlMenuEntry->GetValue();
-		mid.parent = wxT("2");
+		mid.parent = wxT("Plugins::SnipWiz");
 
 		MenuItemDataMap accelMap;
 		m_manager->GetKeyboardManager()->GetAccelerators(accelMap);

@@ -295,7 +295,7 @@ bool App::OnInit()
 		wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png")); 
 		if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
 			wxString mainTitle;
-			mainTitle << wxT("Revision: ") << SvnRevision;
+			mainTitle << wxT("v1.0.") << SvnRevision;
 			m_splash = new SplashScreen(bitmap, mainTitle, wxEmptyString,
 			                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
 			                            3000, NULL, -1, wxDefaultPosition, wxDefaultSize,

@@ -202,7 +202,7 @@ static void wxDrawSplashBitmap(	wxDC& dc,
 	
 	dcMem.DrawText(mainTitle, bmpW - w - 9, 11);
 	//draw the text	
-	dcMem.SetTextForeground(wxT("DARK GRAY"));
+	dcMem.SetTextForeground(wxT("BLACK"));
 	dcMem.SetFont(font);
 	
 	//draw the main title

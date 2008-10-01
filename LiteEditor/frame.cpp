@@ -1010,7 +1010,10 @@ void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event)
 
 void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-	AboutDlg dlg(this);
+	wxString mainTitle;
+	mainTitle << wxT("v1.0.") << SvnRevision;
+	
+	AboutDlg dlg(this, mainTitle);
 	dlg.SetInfo(wxString::Format(wxT("SVN build, revision: %s"), SvnRevision));
 	dlg.ShowModal();
 }

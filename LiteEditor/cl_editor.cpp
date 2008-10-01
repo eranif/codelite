@@ -388,13 +388,18 @@ void LEditor::SetDirty(bool dirty)
 				ManagerST::Get()->SetPageTitle(this, wxT("*") + ManagerST::Get()->GetPageTitle(this));
 
 				// update the main frame's title as well
-				Frame::Get()->SetFrameTitle(this);
+				if(ManagerST::Get()->GetActiveEditor() == this) {
+					Frame::Get()->SetFrameTitle(this);
+				}
 			}
 		}
 	} else {
 		if ( GetIsVisible() ) {
 			ManagerST::Get()->SetPageTitle(this, GetFileName().GetFullName());
-			Frame::Get()->SetFrameTitle(this);
+			
+			if(ManagerST::Get()->GetActiveEditor() == this) {
+				Frame::Get()->SetFrameTitle(this);
+			}
 		}
 	}
 }
@@ -1114,6 +1119,12 @@ void LEditor::DoFindAndReplace(bool isReplaceDlg)
 		//if this string does not exist in the array add it
 		m_findReplaceDlg->GetData().SetFindString(GetSelectedText());
 	}
+
+	if (isReplaceDlg) { // Zeroise
+		m_findReplaceDlg->ResetReplacedCount();
+		m_findReplaceDlg->SetReplacementsMessage(frd_dontshowzeros);
+	}
+
 	m_findReplaceDlg->Show(isReplaceDlg ? REPLACE_DLG : FIND_DLG);
 }
 
@@ -1288,6 +1299,8 @@ bool LEditor::Replace(const FindReplaceData &data)
 		size_t flags = SearchFlags(data);
 		if ( StringFindReplacer::Search(GetSelectedText(), 0, data.GetFindString(), flags, pos, match_len) ) {
 			ReplaceSelection(data.GetReplaceString());
+			m_findReplaceDlg->IncReplacedCount();
+			m_findReplaceDlg->SetReplacementsMessage();
 		}
 	}
 
@@ -1433,7 +1446,6 @@ void LEditor::FindPrevMarker()
 
 bool LEditor::ReplaceAll()
 {
-	int occur = 0;
 	int offset( 0 );
 
 	wxString findWhat = m_findReplaceDlg->GetData().GetFindString();
@@ -1455,7 +1467,7 @@ bool LEditor::ReplaceAll()
 	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len, posInChars, match_lenInChars) ) {
 		txt.Remove(posInChars, match_lenInChars);
 		txt.insert(posInChars, replaceWith);
-		occur++;
+		m_findReplaceDlg->IncReplacedCount();
 		offset = pos + UTF8Length(replaceWith, replaceWith.length()); // match_len;
 	}
 
@@ -1478,10 +1490,8 @@ bool LEditor::ReplaceAll()
 
 	EndUndoAction();
 
-	wxString message;
-	message << wxT("Replacements: ") << occur;
-	m_findReplaceDlg->SetReplacementsMessage(message);
-	return occur > 0;
+	m_findReplaceDlg->SetReplacementsMessage();
+	return m_findReplaceDlg->GetReplacedCount() > 0;
 }
 
 bool LEditor::MarkAll()

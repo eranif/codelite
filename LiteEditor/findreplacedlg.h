@@ -141,6 +141,8 @@ class wxComboBox;
 class wxGridBagSizer;
 class wxStaticBoxSizer;
 
+enum frd_showzero { frd_dontshowzeros, frd_showzeros };
+
 class FindReplaceDialog : public wxDialog
 {
 	wxEvtHandler *m_owner;
@@ -168,6 +170,7 @@ class FindReplaceDialog : public wxDialog
 	wxGridBagSizer *gbSizer;
 	wxStaticBoxSizer *sz;
 	int m_kind;
+	unsigned int m_replacedCount;
 
 public:
 	virtual ~FindReplaceDialog( );
@@ -205,7 +208,16 @@ public:
 	}
 
 	// Set the replacements message
-	void SetReplacementsMessage(const wxString &msg);
+	void SetReplacementsMessage( enum frd_showzero showzero = frd_showzeros );
+	unsigned int GetReplacedCount() {
+		return m_replacedCount;
+	}
+	void IncReplacedCount() {
+		++m_replacedCount;
+	}
+	void ResetReplacedCount() {
+		m_replacedCount = 0;
+	}
 	void SetFindReplaceData(FindReplaceData& data, bool focus);
 
 protected:

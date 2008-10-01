@@ -163,7 +163,7 @@ void FindReplaceDialog::CreateGUIControls()
 	m_replacementsMsg = new wxStaticText(this, wxID_ANY, wxEmptyString);
 	btnSizer->Add(m_replacementsMsg, 1, wxALL | wxEXPAND, 5 );
 	//gbSizer->Add(m_replacementsMsg, wxGBPosition(3, 0), wxGBSpan(1, 2), wxALL | wxEXPAND, 5);
-	SetReplacementsMessage(wxT("Replacements: 0"));
+	SetReplacementsMessage(frd_dontshowzeros);
 
 	//set values
 	SetFindReplaceData(m_data, true);
@@ -411,9 +411,13 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
 	GetSizer()->Layout();
 }
 
-void FindReplaceDialog::SetReplacementsMessage(const wxString &msg)
+void FindReplaceDialog::SetReplacementsMessage( enum frd_showzero showzero /*= frd_showzeros*/ )
 {
-	m_replacementsMsg->SetLabel(msg);
+	if ( showzero==frd_dontshowzeros && GetReplacedCount()==0 ) { // Don't show a count of 0 before any replacement has started
+		m_replacementsMsg->SetLabel(wxString::Format(wxT("Replacements:")));
+	} else {
+		m_replacementsMsg->SetLabel(wxString::Format(wxT("Replacements: %u"), GetReplacedCount() ));
+	}
 }
 
 //---------------------------------------------------------------

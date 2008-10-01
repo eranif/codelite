@@ -547,7 +547,7 @@ if [ "$1" = "--enable-debug" ]; then
 
   else        # See if there's a --prefix=foo. Do it the hard way, to stay Bourne compatible
     len=`expr length $1`
-    if [ $len > 9 ]; then  # If not, it can't be a valid prefix
+    if [ $len -gt 9 ]; then  # If not, it can't be a valid prefix
       if [ "`expr substr $1 1 9`" = "--prefix=" ]; then 
         prefix=`expr substr $1 10 $len` # $prefix now contains the bit after the '='
         len=`expr length $prefix`       # Now remove any terminal '/'

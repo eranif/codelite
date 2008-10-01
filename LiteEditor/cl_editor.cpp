@@ -1117,7 +1117,12 @@ void LEditor::DoFindAndReplace(bool isReplaceDlg)
 	//if there is a selection, set it
 	if (GetSelectedText().IsEmpty() == false) {
 		//if this string does not exist in the array add it
-		m_findReplaceDlg->GetData().SetFindString(GetSelectedText());
+		wxString Selection(GetSelectedText());
+		if ( !Selection.Contains(wxT("\n")) ) {
+			// Don't try to use a multiline selection as the 'find' token. It looks ugly and
+			// it won't be what the user wants (it'll be the 'Replace in Selection' selection)
+			m_findReplaceDlg->GetData().SetFindString(GetSelectedText());
+		}
 	}
 
 	if (isReplaceDlg) { // Zeroise
@@ -1490,6 +1495,9 @@ bool LEditor::ReplaceAll()
 
 	EndUndoAction();
 
+	if ( m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY ) {
+		m_findReplaceDlg->ResetSelectionOnlyFlag();
+	}
 	m_findReplaceDlg->SetReplacementsMessage();
 	return m_findReplaceDlg->GetReplacedCount() > 0;
 }

@@ -218,6 +218,7 @@ public:
 	void ResetReplacedCount() {
 		m_replacedCount = 0;
 	}
+	void ResetSelectionOnlyFlag();
 	void SetFindReplaceData(FindReplaceData& data, bool focus);
 
 protected:

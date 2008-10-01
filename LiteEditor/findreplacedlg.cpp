@@ -267,8 +267,10 @@ void FindReplaceDialog::OnClick(wxCommandEvent &event)
 		}
 	}
 
-	// Set the updated flags
-	m_data.SetFlags(flags);
+	// Set the updated flags, unless it was ReplaceAll which does this itself
+	if (btnClicked != m_replaceAll) {
+		m_data.SetFlags(flags);
+	}
 	
 	// update the data of the find/replace dialog, in particular, 
 	// update the history of the Find What / replace with controls
@@ -418,6 +420,12 @@ void FindReplaceDialog::SetReplacementsMessage( enum frd_showzero showzero /*= f
 	} else {
 		m_replacementsMsg->SetLabel(wxString::Format(wxT("Replacements: %u"), GetReplacedCount() ));
 	}
+}
+
+void FindReplaceDialog::ResetSelectionOnlyFlag()
+{
+	size_t flags = GetData().GetFlags();
+	GetData().SetFlags( flags & ~(wxFRD_SELECTIONONLY) );
 }
 
 //---------------------------------------------------------------

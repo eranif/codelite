@@ -28,6 +28,7 @@
   <Project Name="ExternalTools" Path="ExternalTools/ExternalTools.project" Active="No"/>
   <Project Name="snipwiz" Path="SnipWiz/snipwiz.project" Active="No"/>
   <Project Name="wxFormBuilder" Path="wxformbuilder/wxFormBuilder.project" Active="No"/>
+  <Project Name="abbreviation" Path="abbreviation\abbreviation.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
@@ -36,6 +37,7 @@
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="WinReleaseUnicode"/>
       <Project Name="plugin_sdk" ConfigName="WinReleaseUnicode"/>
+      <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
       <Project Name="Subversion" ConfigName="WinReleaseUnicode"/>
       <Project Name="LiteEditor" ConfigName="WinReleaseUnicode"/>
@@ -55,6 +57,7 @@
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="WinDebugUnicode"/>
       <Project Name="plugin_sdk" ConfigName="WinDebugUnicode"/>
+      <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
       <Project Name="Subversion" ConfigName="WinDebugUnicode"/>
       <Project Name="LiteEditor" ConfigName="WinDebugUnicode"/>
@@ -67,7 +70,7 @@
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix" Selected="no">
+    <WorkspaceConfiguration Name="Unix" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>
@@ -85,6 +88,7 @@
       <Project Name="Copyright" ConfigName="DebugUnicode"/>
       <Project Name="CodeLite" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
+      <Project Name="abbreviation" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

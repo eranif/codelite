@@ -31,6 +31,7 @@
 #include "wx/filename.h"
 #include <wx/gdicmn.h>
 #include <vector>
+#include <map>
 
 class wxXmlNode;
 
@@ -86,7 +87,7 @@ public:
 	void Write(const wxString &name, const StringMap &str_map);
 	void Write(const wxString &name, const wxColour &colour);
 	void Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
-	
+	void Write(const wxString &name, const std::map<wxString, wxString> &strinMap);
 	
 	//--------------------
 	// Read API
@@ -104,6 +105,7 @@ public:
 	void Read(const wxString &name, SerializedObject *obj);
 	void Read(const wxString &name, wxColour &colour);	
 	void Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
+	void Read(const wxString &name, std::map<wxString, wxString> &strinMap);
 	
 private:
 	void WriteSimple(long value, const wxString &typeName, const wxString &name);

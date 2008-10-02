@@ -277,7 +277,7 @@ public:
 	 * \param pos position to insert the text
 	 */
 	void InsertTextWithIndentation(const wxString &text, int pos);
-
+	
 	/**
 	 * \brief create browsing crecord from the editor's current position
 	 * \return browsing record
@@ -431,6 +431,27 @@ public:
 	virtual int  GetUserIndicatorEnd(int pos);
 	virtual int GetLexerId();
 	virtual int GetStyleAtPos(int pos);
+	
+	/**
+	 * @brief Get position of start of word.
+	 * @param pos from position
+	 * @param onlyWordCharacters
+	 */
+	virtual int WordStartPos (int pos, bool onlyWordCharacters);
+
+	/**
+	 * @brief  Get position of end of word.
+	 * @param pos from position
+	 * @param onlyWordCharacters
+	 */
+    virtual int WordEndPos (int pos, bool onlyWordCharacters);
+	
+	/**
+	 * Insert text to the editor and keeping the indentation
+	 * \param text text to enter
+	 * \param pos position to insert the text
+	 */
+	virtual wxString FormatTextKeepIndent(const wxString &text, int pos);
 
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------

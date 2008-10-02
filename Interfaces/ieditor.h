@@ -222,6 +222,27 @@ public:
 	 * @brief hide the completion box if it is active.
 	 */
 	virtual void HideCompletionBox() = 0;
+	
+	/**
+	 * @brief Get position of start of word.
+	 * @param pos from position
+	 * @param onlyWordCharacters
+	 */
+	virtual int WordStartPos (int pos, bool onlyWordCharacters) = 0;
+
+	/**
+	 * @brief  Get position of end of word.
+	 * @param pos from position
+	 * @param onlyWordCharacters
+	 */
+    virtual int WordEndPos (int pos, bool onlyWordCharacters) = 0;
+	
+	/**
+	 * Insert text to the editor and keeping the current position line indentation
+	 * \param text text to enter
+	 * \param pos position to insert the text
+	 */
+	virtual wxString FormatTextKeepIndent(const wxString &text, int pos) = 0;
 };
 
 #endif //IEDITOR_H

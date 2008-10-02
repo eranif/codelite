@@ -48,6 +48,28 @@ static wxXmlNode *FindNodeByName(const wxXmlNode *parent, const wxString &tagNam
 	return NULL;
 }
 
+static void SetNodeContent(wxXmlNode *node, const wxString &text)
+{
+	wxXmlNode *n = node->GetChildren();
+	wxXmlNode *contentNode = NULL;
+    while (n)
+    {
+		if (n->GetType() == wxXML_TEXT_NODE || n->GetType() == wxXML_CDATA_SECTION_NODE){
+			contentNode = n;
+			break;
+		}
+        n = n->GetNext();
+    }
+
+	if(contentNode) {
+		// remove old node
+		node->RemoveChild(contentNode);
+		delete contentNode;
+	}
+	
+	contentNode = new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, text);
+	node->AddChild( contentNode );
+}
 
 // class Tab info
 TabInfo::TabInfo()
@@ -472,3 +494,46 @@ void Archive::Write(const wxString& name, const wxColour& colour)
 	node->AddProperty(wxT("Name"), name);
 }
 
+void Archive::Write(const wxString& name, const std::map<wxString, wxString>& strinMap)
+{
+	if (!m_root) {
+		return;
+	}
+
+	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("std_string_map"));
+	m_root->AddChild(node);
+	node->AddProperty(wxT("Name"), name);
+
+	//add an entry for each wxString in the array
+	std::map<wxString, wxString>::const_iterator iter = strinMap.begin();
+	for ( ; iter != strinMap.end(); iter++ ) {
+		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
+		node->AddChild(child);
+		child->AddProperty(wxT("Key"), iter->first);
+		SetNodeContent(child, iter->second);
+	}
+}
+
+void Archive::Read(const wxString& name, std::map<wxString, wxString>& strinMap)
+{
+	if (!m_root) {
+		return;
+	}
+
+	wxXmlNode *node = FindNodeByName(m_root, wxT("std_string_map"), name);
+	if (node) {
+		//fill the output array with the values
+		strinMap.clear();
+		wxXmlNode *child = node->GetChildren();
+		while (child) {
+			if (child->GetName() == wxT("MapEntry")) {
+				wxString value;
+				wxString key;
+				key = child->GetPropVal(wxT("Key"), wxEmptyString);
+				value = child->GetNodeContent();
+				strinMap[key] = value;
+			}
+			child = child->GetNext();
+		}
+	}
+}

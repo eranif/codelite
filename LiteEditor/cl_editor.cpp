@@ -1609,23 +1609,53 @@ void LEditor::Create(const wxString &project, const wxFileName &fileName)
 
 void LEditor::InsertTextWithIndentation(const wxString &text, int lineno)
 {
+	wxString textTag = FormatTextKeepIndent(text, PositionFromLine(lineno));
+	InsertText(PositionFromLine(lineno), textTag);
+}
+
+wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos)
+{
 	//keep the page idnetation level
 	wxString textToInsert(text);
-	int lineStartPos = PositionFromLine(lineno);
+	
 	int indentSize = GetIndent();
-	int indent = GetLineIndentation(lineno);
-	if (GetTabIndents()) {
+	int indent = GetLineIndentation(LineFromPosition(pos));
+		
+	wxString indentBlock;
+	if(GetUseTabs()){
 		indent = indent / indentSize;
+		for(int i=0; i<indent; i++){
+			indentBlock << wxT("\t");
+		}
+	} else {
+		for(int i=0; i<indent; i++){
+			indentBlock << wxT(" ");
+		}
 	}
-
-	wxStringTokenizer tkz(textToInsert, wxT("\n"));
+	
+	wxString eol;
+	switch(this->GetEOLMode()){
+	case wxSCI_EOL_CR:
+		eol = wxT("\r");
+		break;
+	case wxSCI_EOL_CRLF:
+		eol = wxT("\r\n");
+		break;
+	case wxSCI_EOL_LF:
+		eol = wxT("\n");
+		break;
+	}
+	
+	textToInsert.Replace(wxT("\r"), wxT("\n"));
+	wxArrayString lines = wxStringTokenize(textToInsert, wxT("\n"), wxTOKEN_STRTOK);
+	
 	textToInsert.Clear();
-	while (tkz.HasMoreTokens()) {
-		for (int i=0; i<indent; i++)
-			textToInsert << wxT("\t");
-		textToInsert << tkz.NextToken() << wxT("\n");
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		textToInsert << indentBlock;
+		textToInsert << lines.Item(i) << eol;
 	}
-	InsertText(lineStartPos, textToInsert);
+	
+	return textToInsert;
 }
 
 void LEditor::OnContextMenu(wxContextMenuEvent &event)
@@ -2356,4 +2386,14 @@ void LEditor::RegisterImageForKind(const wxString& kind, const wxBitmap& bmp)
 	}
 	
 	m_ccBox->RegisterImageForKind(kind, bmp);
+}
+
+int LEditor::WordStartPos(int pos, bool onlyWordCharacters)
+{
+	return wxScintilla::WordStartPosition(pos, onlyWordCharacters);
+}
+
+int LEditor::WordEndPos(int pos, bool onlyWordCharacters)
+{
+	return wxScintilla::WordEndPosition(pos, onlyWordCharacters);
 }

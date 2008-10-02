@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : plugin_version.h              
+// file name            : abbreviationentry.h              
 //                                                                          
 // -------------------------------------------------------------------------
 // A                                                                        
@@ -23,10 +23,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PLUGIN_VERSION_H
-#define PLUGIN_VERSION_H
+#ifndef __abbreviationentry__
+#define __abbreviationentry__
 
-// Increment this number whenever any of the files in the interface project is modified
-#define PLUGIN_INTERFACE_VERSION 114
+#include "serialized_object.h"
 
-#endif // PLUGIN_VERSION_H
+class AbbreviationEntry : public SerializedObject
+{
+	std::map<wxString, wxString> m_entries;
+
+public:
+	AbbreviationEntry();
+	virtual ~AbbreviationEntry();
+
+public:
+	virtual void DeSerialize(Archive &arch);
+	virtual void Serialize(Archive &arch);
+
+	void SetEntries(const std::map<wxString, wxString>& entries) {
+		this->m_entries = entries;
+	}
+	const std::map<wxString, wxString>& GetEntries() const {
+		return m_entries;
+	}
+};
+#endif // __abbreviationentry__

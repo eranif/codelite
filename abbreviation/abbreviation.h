@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : plugin_version.h              
+// file name            : abbreviation.h              
 //                                                                          
 // -------------------------------------------------------------------------
 // A                                                                        
@@ -23,10 +23,33 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef PLUGIN_VERSION_H
-#define PLUGIN_VERSION_H
+#ifndef __abbreviation__
+#define __abbreviation__
 
-// Increment this number whenever any of the files in the interface project is modified
-#define PLUGIN_INTERFACE_VERSION 114
+#include "plugin.h"
 
-#endif // PLUGIN_VERSION_H
+class AbbreviationPlugin : public IPlugin
+{
+	wxEvtHandler *m_topWindow;
+protected:
+	void OnSettings(wxCommandEvent &e);
+	void OnAbbreviations(wxCommandEvent &e);
+	void OnAbbrevSelected(wxCommandEvent &e);
+	void InitDefaults();
+	
+public:
+	AbbreviationPlugin(IManager *manager);
+	~AbbreviationPlugin();
+	
+	//--------------------------------------------
+	//Abstract methods
+	//--------------------------------------------
+	virtual wxToolBar *CreateToolBar(wxWindow *parent);
+	virtual void CreatePluginMenu(wxMenu *pluginsMenu);
+	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
+	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
+	virtual void UnPlug();
+};
+
+#endif //abbreviation
+

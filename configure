@@ -617,6 +617,7 @@ echo "UnitTestCPP\\" >> Makefile
 echo "ExternalTools\\" >> Makefile
 echo "SnipWiz\\" >> Makefile
 echo "wxformbuilder\\" >> Makefile
+echo "abbreviation\\" >> Makefile
 echo "" >> Makefile
 
 echo "plugins_install:\\" >> Makefile
@@ -636,6 +637,7 @@ echo "UnitTestCPP_install\\" >> Makefile
 echo "ExternalTools_install\\" >> Makefile
 echo "SnipWiz_install\\" >> Makefile
 echo "wxformbuilder_install\\" >> Makefile
+echo "abbreviation_install\\" >> Makefile
 echo "" >> Makefile
 
 echo "clean_plugins:\\" >> Makefile
@@ -655,6 +657,7 @@ echo "UnitTestCPP_clean\\" >> Makefile
 echo "ExternalTools_clean\\" >> Makefile
 echo "SnipWiz_clean\\" >> Makefile
 echo "wxformbuilder_clean\\" >> Makefile
+echo "abbreviation_clean\\" >> Makefile
 echo "" >> Makefile
 
 ########################################################
@@ -674,4 +677,4 @@ createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)$prefix/share/codel
 createPluginMakefile "ExternalTools" "ExternalTools" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "SnipWiz" "SnipWiz" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "wxformbuilder" "wxformbuilder" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-
+createPluginMakefile "abbreviation" "abbreviation" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"

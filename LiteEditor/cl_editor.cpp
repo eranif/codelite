@@ -388,7 +388,7 @@ void LEditor::SetDirty(bool dirty)
 				ManagerST::Get()->SetPageTitle(this, wxT("*") + ManagerST::Get()->GetPageTitle(this));
 
 				// update the main frame's title as well
-				if(ManagerST::Get()->GetActiveEditor() == this) {
+				if (ManagerST::Get()->GetActiveEditor() == this) {
 					Frame::Get()->SetFrameTitle(this);
 				}
 			}
@@ -396,8 +396,8 @@ void LEditor::SetDirty(bool dirty)
 	} else {
 		if ( GetIsVisible() ) {
 			ManagerST::Get()->SetPageTitle(this, GetFileName().GetFullName());
-			
-			if(ManagerST::Get()->GetActiveEditor() == this) {
+
+			if (ManagerST::Get()->GetActiveEditor() == this) {
 				Frame::Get()->SetFrameTitle(this);
 			}
 		}
@@ -1118,9 +1118,14 @@ void LEditor::DoFindAndReplace(bool isReplaceDlg)
 	if (GetSelectedText().IsEmpty() == false) {
 		//if this string does not exist in the array add it
 		wxString Selection(GetSelectedText());
-		if ( !(Selection.Contains(wxT("\n")) && (m_findReplaceDlg->GetData().GetFlags() & wxFRD_SELECTIONONLY)) ) {
-			// Don't try to use a multiline selection as the 'find' token. It looks ugly and
-			// it won't be what the user wants (it'll be the 'Replace in Selection' selection)
+		if (isReplaceDlg) {
+			if ( !Selection.Contains(wxT("\n")) ) {
+				// Don't try to use a multiline selection as the 'find' token. It looks ugly and
+				// it won't be what the user wants (it'll be the 'Replace in Selection' selection)
+				m_findReplaceDlg->GetData().SetFindString(GetSelectedText());
+			}
+		} else {
+			// always set the find string in 'Find' dialog
 			m_findReplaceDlg->GetData().SetFindString(GetSelectedText());
 		}
 	}
@@ -1617,24 +1622,24 @@ wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos)
 {
 	//keep the page idnetation level
 	wxString textToInsert(text);
-	
+
 	int indentSize = GetIndent();
 	int indent = GetLineIndentation(LineFromPosition(pos));
-		
+
 	wxString indentBlock;
-	if(GetUseTabs()){
+	if (GetUseTabs()) {
 		indent = indent / indentSize;
-		for(int i=0; i<indent; i++){
+		for (int i=0; i<indent; i++) {
 			indentBlock << wxT("\t");
 		}
 	} else {
-		for(int i=0; i<indent; i++){
+		for (int i=0; i<indent; i++) {
 			indentBlock << wxT(" ");
 		}
 	}
-	
+
 	wxString eol;
-	switch(this->GetEOLMode()){
+	switch (this->GetEOLMode()) {
 	case wxSCI_EOL_CR:
 		eol = wxT("\r");
 		break;
@@ -1645,16 +1650,16 @@ wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos)
 		eol = wxT("\n");
 		break;
 	}
-	
+
 	textToInsert.Replace(wxT("\r"), wxT("\n"));
 	wxArrayString lines = wxStringTokenize(textToInsert, wxT("\n"), wxTOKEN_STRTOK);
-	
+
 	textToInsert.Clear();
-	for(size_t i=0; i<lines.GetCount(); i++) {
+	for (size_t i=0; i<lines.GetCount(); i++) {
 		textToInsert << indentBlock;
 		textToInsert << lines.Item(i) << eol;
 	}
-	
+
 	return textToInsert;
 }
 
@@ -2380,11 +2385,11 @@ int LEditor::GetStyleAtPos(int pos)
 
 void LEditor::RegisterImageForKind(const wxString& kind, const wxBitmap& bmp)
 {
-	if( m_ccBox == NULL ) {
+	if ( m_ccBox == NULL ) {
 		// create new completion box
 		m_ccBox = new CCBox(this);
 	}
-	
+
 	m_ccBox->RegisterImageForKind(kind, bmp);
 }
 

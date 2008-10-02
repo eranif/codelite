@@ -55,23 +55,25 @@ void AbbreviationsSettingsDlg::DoPopulateItems()
 	
 }
 
-void AbbreviationsSettingsDlg::DoSelectItem(unsigned int item)
+void AbbreviationsSettingsDlg::DoSelectItem(int item)
 {
-	wxString name = m_listBoxAbbreviations->GetString(item);
-	m_activeItemName = name;
-	m_currSelection = item;
-	
-	m_textCtrlName->SetValue(name);
-	
-	AbbreviationEntry data;
-	m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
-	
-	std::map<wxString, wxString> entries = data.GetEntries();
-	std::map<wxString, wxString>::iterator iter = entries.find(name);
-	if(iter != entries.end()){
-		m_textCtrlExpansion->SetValue(iter->second);
+	if(item >= 0){
+		wxString name = m_listBoxAbbreviations->GetString(item);
+		m_activeItemName = name;
+		m_currSelection = item;
+		
+		m_textCtrlName->SetValue(name);
+		
+		AbbreviationEntry data;
+		m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+		
+		std::map<wxString, wxString> entries = data.GetEntries();
+		std::map<wxString, wxString>::iterator iter = entries.find(name);
+		if(iter != entries.end()){
+			m_textCtrlExpansion->SetValue(iter->second);
+		}
+		m_dirty = false;
 	}
-	m_dirty = false;
 }
 
 void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
@@ -86,13 +88,13 @@ void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
 		return;
 	}
 	
+	// delete the entry from the configuration file
+	DoDeleteEntry(m_activeItemName);
+	
 	// delete it
 	m_listBoxAbbreviations->Delete((unsigned int) m_currSelection);
 	m_textCtrlExpansion->Clear();
 	m_textCtrlName->Clear();
-	
-	// delete the entry from the configuration file
-	DoDeleteEntry(m_activeItemName);
 	
 	// select the previous item in the list
 	if(m_listBoxAbbreviations->IsEmpty() == false){

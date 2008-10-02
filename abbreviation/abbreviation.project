@@ -60,17 +60,17 @@
       <General OutputFile="$(ConfigurationName)/abbreviation.dll" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2">
         <IncludePath Value="."/>
-        <IncludePath Value="..\..\trunk/Interfaces"/>
-        <IncludePath Value="..\..\trunk/CodeLite"/>
-        <IncludePath Value="..\..\trunk/Plugin"/>
-        <IncludePath Value="..\..\trunk/sqlite3"/>
-        <IncludePath Value="..\..\trunk/sdk/wxsqlite3/include"/>
+        <IncludePath Value="../../trunk/Interfaces"/>
+        <IncludePath Value="../../trunk/CodeLite"/>
+        <IncludePath Value="../../trunk/Plugin"/>
+        <IncludePath Value="../../trunk/sqlite3"/>
+        <IncludePath Value="../../trunk/sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
-        <LibraryPath Value="..\..\trunk/lib/gcc_lib"/>
+        <LibraryPath Value="../../trunk/lib/gcc_lib"/>
         <Library Value="libplugin_sdku.a"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>

@@ -55,7 +55,7 @@ protected:
 	
 private:	
 	void DoPopulateItems();
-	void DoSelectItem(unsigned int item);
+	void DoSelectItem(int item);
 	void DoSaveCurrent();
 	void DoDeleteEntry(const wxString &name);
 	

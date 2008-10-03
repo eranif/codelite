@@ -376,6 +376,9 @@
     <File Name="../make_deb.sh"/>
     <File Name="../make_repo.sh"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="formbuilder">
+    <File Name="quickfindbarbase.fbp"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="../Runtime/CodeLiteUR" IntermediateDirectory="./ReleaseUnicode" Command="./CodeLiteUD" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
@@ -509,9 +512,6 @@ resources.cpp: resources.xrc
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="formbuilder">
-    <File Name="quickfindbarbase.fbp"/>
-  </VirtualDirectory>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>

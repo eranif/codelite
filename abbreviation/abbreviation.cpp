@@ -163,11 +163,32 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
 		}
 
 		// format the text to insert
+		bool appendEol(false);
+		if(text.EndsWith(wxT("\r")) || text.EndsWith(wxT("\n"))) {
+			appendEol = true;
+		}
+		
 		text = editor->FormatTextKeepIndent(text, selStart);
-
+		
 		// remove the first line indenation that might have been placed by CL
-		text.Trim(false);
-
+		text.Trim(false).Trim();
+		
+		if(appendEol) {
+			wxString eol;
+			switch (editor->GetEOL()) {
+			case 1:
+				eol = wxT("\r");
+				break;
+			case 0:
+				eol = wxT("\r\n");
+				break;
+			case 2:
+				eol = wxT("\n");
+				break;
+			}
+			text << eol;
+		}
+		
 		//--------------------------------------------
 		// replace any place holders
 		//--------------------------------------------

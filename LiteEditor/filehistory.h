@@ -33,6 +33,10 @@ public:
 	FileHistory();
 	virtual ~FileHistory();
 	
+	/**
+	 * \brief 
+	 * \param files
+	 */
 	void GetFiles(wxArrayString &files);
 };
 #endif //FILE_HISTORY_H

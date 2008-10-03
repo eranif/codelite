@@ -33,12 +33,14 @@
 class wxChoice;
 class Notebook;
 class wxBoxSizer;
+class QuickFindBar;
 
 class MainBook : public wxPanel
 {
 	wxChoice *m_choiceFunc;
 	wxChoice *m_choiceScope;
 	Notebook *m_book;
+	QuickFindBar *m_quickFindBar;
 	wxBoxSizer *m_hsz;
 	
 protected:
@@ -58,7 +60,9 @@ public:
 	void ShowNavBar(bool s);
 	void HideNavBar(){ ShowNavBar(false); }
 	bool IsNavBarShown();
-	
+	bool IsQuickBarShown();
+	void ShowQuickBar(bool s);
+	void HideQuickBar(){ ShowQuickBar(false); }
 };
 
 #endif //MAINBOOK_H

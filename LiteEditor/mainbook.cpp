@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "quickfindbar.h"
 #include "frame.h"
  #include "mainbook.h"
 #include "wx/choice.h"
@@ -52,9 +53,7 @@ MainBook::MainBook(wxWindow *parent)
 	
 	//Connect events
 	m_choiceFunc->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(MainBook::OnFuncListMouseDown), NULL, this);
-	//m_choiceScope->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(MainBook::OnScopeListMouseDown), NULL, this);
 	ConnectChoice(m_choiceFunc, MainBook::OnFunction);
-	//ConnectChoice(m_choiceScope, MainBook::OnScope);
 	
 	long style = wxVB_TOP|wxVB_HAS_X|wxVB_BORDER|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -62,6 +61,8 @@ MainBook::MainBook(wxWindow *parent)
 	m_book->GetTabContainer()->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainBook::OnMouseDClick), NULL, this);
 	
 	sz->Add(m_book, 1, wxEXPAND);
+	m_quickFindBar = new QuickFindBar(this);
+	sz->Add(m_quickFindBar, 0, wxEXPAND);
 	sz->Layout();
 }
 
@@ -71,14 +72,7 @@ MainBook::~MainBook()
 
 void MainBook::OnScope(wxCommandEvent &e)
 {
-//	wxUnusedVar(e);
-//	int sel = e.GetSelection();
-//	if(sel != wxNOT_FOUND){
-//		TagEntry *tag = (TagEntry*) m_choiceScope->GetClientData(sel);
-//		if(tag){
-//			ManagerST::Get()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
-//		}
-//	}
+	wxUnusedVar(e);
 }
 
 void MainBook::OnFunction(wxCommandEvent &e)
@@ -140,40 +134,7 @@ void MainBook::UpdateScope(TagEntryPtr tag)
 
 void MainBook::OnScopeListMouseDown(wxMouseEvent &e)
 {
-//	TagsManager *tagsmgr = TagsManagerST::Get();
-//	Manager *mgr = ManagerST::Get();
-//	
-//	if(mgr->IsWorkspaceOpen()){
-//		LEditor *editor = mgr->GetActiveEditor();
-//		if(editor){
-//			std::vector< TagEntryPtr > tags;
-//			tagsmgr->GetScopesFromFile(editor->GetFileName(), tags);
-//			m_choiceScope->Freeze();
-//			wxString cursel;
-//			if(m_choiceScope->GetCount() > 0){
-//				cursel = m_choiceScope->GetStringSelection();
-//			}
-//			
-//			m_choiceScope->Clear();
-//			
-//			if(tags.empty()){
-//				if(cursel.IsEmpty() == false && cursel != wxT("<global>")){
-//					m_choiceScope->Append(wxT("<global>"), (void*)NULL);
-//				}
-//			}
-//			
-//			for(size_t i=0; i< tags.size(); i++){
-//				m_choiceScope->Append(tags.at(i)->GetPath(), new TagEntry(*tags.at(i)));
-//			}
-//			
-//			if(cursel.IsEmpty() == false){
-//				m_choiceScope->SetStringSelection(cursel);
-//			}
-//			m_choiceScope->Thaw();
-//		}
-//	}
-//	
-//	e.Skip();
+	wxUnusedVar(e);
 }
 
 void MainBook::OnFuncListMouseDown(wxMouseEvent &e)
@@ -239,4 +200,28 @@ void MainBook::OnMouseDClick(wxMouseEvent& e)
 {
 	wxUnusedVar(e);
 	Frame::Get()->DoAddNewFile();
+}
+
+bool MainBook::IsQuickBarShown()
+{
+	// it is enough to test only control
+	return m_hsz->IsShown(m_quickFindBar);
+}
+
+void MainBook::ShowQuickBar(bool s)
+{
+	wxSizer *sz = GetSizer();
+	if( s ) {
+		if( !sz->IsShown(m_quickFindBar) ) {
+			sz->Show(m_quickFindBar);
+		}
+		m_quickFindBar->GetTextCtrl()->SetFocus();
+		m_quickFindBar->GetTextCtrl()->SelectAll();
+	} else { // Hide
+		if( sz->IsShown(m_quickFindBar) ) {
+			sz->Hide(m_quickFindBar);
+		}
+	}
+	m_book->Refresh();
+	sz->Layout();
 }

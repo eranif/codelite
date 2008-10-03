@@ -42,18 +42,6 @@
 class wxFindReplaceDialog;
 class CCBox;
 
-//incase we are using DLL build of wxWdigets, we need to make this class to export its
-//classes
-#ifndef WXDLLIMPEXP_LE
-#ifdef WXMAKINGDLL
-#    define WXDLLIMPEXP_LE WXEXPORT
-#elif defined(WXUSINGDLL)
-#    define WXDLLIMPEXP_LE WXIMPORT
-#else
-#    define WXDLLIMPEXP_LE
-#endif // WXDLLIMPEXP_LE
-#endif
-
 const extern wxEventType wxEVT_CMD_UPDATE_STATUS_BAR;
 /**
  * \ingroup LiteEditor
@@ -93,7 +81,7 @@ class LEditor : public wxScintilla, public IEditor
 	std::map<int, wxString> m_customCmds;
 	CCBox *m_ccBox;
 	bool m_isVisible;
-
+	
 public:
 	static FindReplaceData &GetFindReplaceData() {
 		return m_findReplaceData;
@@ -173,7 +161,7 @@ public:
 
 	// Popup a find/replace dialog
 	void DoFindAndReplace(bool isReplaceDlg);
-
+	
 	// set this page as active, this usually happened when user changed the notebook
 	// page to this one
 	virtual void SetActive();

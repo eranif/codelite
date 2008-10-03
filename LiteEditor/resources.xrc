@@ -1,4 +1,6 @@
 <resource>
+	<object class="wxBitmap" name="close_panel">res/close_panel.png</object>
+	<object class="wxBitmap" name="close_panel_push">res/close_panel_push.png</object>
 	<object class="wxBitmap" name="wxfb">res/wxfb.png</object>
 	<object class="wxBitmap" name="tab">res/tab.png</object>
 	<object class="wxBitmap" name="todo">res/todo.png</object>

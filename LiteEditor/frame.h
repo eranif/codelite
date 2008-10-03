@@ -322,6 +322,7 @@ protected:
 	void OnCompleteWordUpdateUI(wxUpdateUIEvent &event);
 	void OnFunctionCalltipUI(wxUpdateUIEvent &event);
 	void OnFindInFiles(wxCommandEvent &event);
+	void OnIncrementalSearch(wxCommandEvent &event);
 	void OnViewToolbar(wxCommandEvent &event);
 	void OnViewToolbarUI(wxUpdateUIEvent &event);
 	void OnViewOptions(wxCommandEvent &event);

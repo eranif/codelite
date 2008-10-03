@@ -247,7 +247,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("word_wrap"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("toggle_fold"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("fold_all"), Frame::DispatchCommandEvent)
-	
+	EVT_MENU(XRCID("incremental_search"), Frame::OnIncrementalSearch)
 	EVT_UPDATE_UI(XRCID("toggle_fold"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("fold_all"), Frame::OnFileExistUpdateUI)
 	
@@ -2173,8 +2173,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 				}
 			}
 		}
-
-
+		
 		//send initialization end event
 		SendCmdEvent(wxEVT_INIT_DONE);
 	}
@@ -3605,4 +3604,9 @@ void Frame::OnShowWhitespace(wxCommandEvent& e)
 	
 	// save the settings
 	EditorConfigST::Get()->SetOptions(options);
+}
+
+void Frame::OnIncrementalSearch(wxCommandEvent& event)
+{
+	GetMainBook()->ShowQuickBar(true);
 }

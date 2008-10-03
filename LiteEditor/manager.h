@@ -750,7 +750,7 @@ public:
 	 * \return true on success (exist in the AUI manager and visible), false otherwise
 	 */
 	bool IsPaneVisible(const wxString &pane_name);
-
+	
 	//--------------------------------------------------------------------
 	//IDebuggerObserver implementation. These set of functions are called
 	//from the debugger whenever event occurs there

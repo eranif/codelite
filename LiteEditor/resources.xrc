@@ -18,7 +18,7 @@
     <object class="wxBitmap" name="enum">res/enum.png</object>    
     <object class="wxBitmap" name="enumerator">res/enumee.xpm</object>  
     <object class="wxBitmap" name="class">res/class.png</object>
-    <object class="wxBitmap" name="typedef">res/typedef.xpm</object>     
+    <object class="wxBitmap" name="typedef">res/typedef.xpm</object>
     <object class="wxBitmap" name="project">res/cubes_yellow.png</object>
 	<object class="wxBitmap" name="globals">res/cube_green.png</object>
     <object class="wxBitmap" name="namespace">res/namespace.png</object>   

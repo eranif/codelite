@@ -816,7 +816,7 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, const wxString
 	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
 
 	wxString type = Builder::NormalizeConfigName(matrix->GetSelectedConfigurationName());
-	cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\" ");
+	cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\"");
 	return cmd;
 }
 
@@ -878,7 +878,7 @@ wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project, const wxStri
 		type = confToBuild;
 	}
 	//cd to the project directory
-	cmd << buildTool << wxT(" \"") << project << wxT(".mk\" ") ;
+	cmd << buildTool << wxT(" \"") << project << wxT(".mk\"") ;
 	return cmd;
 }
 

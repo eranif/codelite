@@ -5118,7 +5118,7 @@
                                                     <event name="OnRightUp"></event>
                                                     <event name="OnSetFocus"></event>
                                                     <event name="OnSize"></event>
-                                                    <event name="OnText"></event>
+                                                    <event name="OnText">OnCmdEvtVModified</event>
                                                     <event name="OnTextEnter"></event>
                                                     <event name="OnTextMaxLen"></event>
                                                     <event name="OnTextURL"></event>

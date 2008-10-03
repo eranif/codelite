@@ -651,6 +651,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_buttonUpPostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_buttonDownPostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_checkEnableCustomBuild->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlCustomBuildWD->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_buttonBrowseCustomBuildWD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnBrowseCustomBuildWD ), NULL, this );
 	m_listCtrlTargets->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( ProjectSettingsBaseDlg::OnItemActivated ), NULL, this );
 	m_listCtrlTargets->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( ProjectSettingsBaseDlg::OnItemSelected ), NULL, this );
@@ -710,6 +711,7 @@ ProjectSettingsBaseDlg::~ProjectSettingsBaseDlg()
 	m_buttonUpPostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_buttonDownPostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_checkEnableCustomBuild->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlCustomBuildWD->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
 	m_buttonBrowseCustomBuildWD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnBrowseCustomBuildWD ), NULL, this );
 	m_listCtrlTargets->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( ProjectSettingsBaseDlg::OnItemActivated ), NULL, this );
 	m_listCtrlTargets->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( ProjectSettingsBaseDlg::OnItemSelected ), NULL, this );

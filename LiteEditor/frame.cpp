@@ -248,6 +248,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("toggle_fold"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("fold_all"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("incremental_search"), Frame::OnIncrementalSearch)
+	EVT_UPDATE_UI(XRCID("incremental_search"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("toggle_fold"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("fold_all"), Frame::OnFileExistUpdateUI)
 	
@@ -1421,8 +1422,10 @@ void Frame::OnPageClosed(NotebookEvent &event)
 {
 	wxUnusedVar(event);
 	GetOpenWindowsPane()->UpdateList();
+	
 	//clean the navigation bar
 	GetMainBook()->Clear();
+	
 	// if no more editors are available, collapse the workspace tree
 	if (GetMainBook()->GetNotebook()->GetPageCount() == 0) {
 		GetWorkspacePane()->CollpaseAll();

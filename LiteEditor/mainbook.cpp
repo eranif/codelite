@@ -102,6 +102,9 @@ void MainBook::Clear()
 	m_choiceScope->Clear();
 	m_choiceFunc->Thaw();
 	m_choiceScope->Thaw();
+	
+	// remove the QuickBar (if visible)
+	HideQuickBar();
 }
 
 void MainBook::UpdateScope(TagEntryPtr tag)

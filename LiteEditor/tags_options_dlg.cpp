@@ -42,6 +42,7 @@
 #endif //WX_PRECOMP
 
 #include "tags_options_dlg.h"
+#include "windowattrmanager.h"
 #include "macros.h"
 #include "wx/tokenzr.h"
 #include "add_option_dialog.h"
@@ -56,6 +57,12 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data)
 	InitValues();
 	
 	m_checkParseComments->SetFocus();
+	WindowAttrManager::Load(this, wxT("TagsOptionsDlgAttr"), NULL);
+}
+
+TagsOptionsDlg::~TagsOptionsDlg()
+{
+	WindowAttrManager::Save(this, wxT("TagsOptionsDlgAttr"), NULL);
 }
 
 void TagsOptionsDlg::InitValues()

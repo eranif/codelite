@@ -53,6 +53,7 @@ protected:
 	
 public:
 	TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data);
+	virtual ~TagsOptionsDlg();
 	TagsOptionsData &GetData() {return m_data;}
 };
 

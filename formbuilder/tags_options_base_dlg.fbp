@@ -33,7 +33,7 @@
             <property name="name">TagsOptionsBaseDlg</property>
             <property name="pos"></property>
             <property name="size">-1,-1</property>
-            <property name="style">wxDEFAULT_DIALOG_STYLE</property>
+            <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
             <property name="subclass"></property>
             <property name="title">Tags Options</property>
             <property name="tooltip"></property>

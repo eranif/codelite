@@ -634,16 +634,20 @@ void ProjectSettingsDlg::OnEditCommand(wxCheckListBox *list)
 	if (sel == wxNOT_FOUND) {
 		return;
 	}
-
-	FreeTextDialog *dlg = new FreeTextDialog(this, selectedString);
-	if (dlg->ShowModal() == wxID_OK) {
-		wxString value = dlg->GetValue();
+	
+	// on GTK it looks like that the state of the item in the list
+	// is changed after calling 'SetString'
+	bool selectIt = list->IsChecked((unsigned int) sel);
+	
+	FreeTextDialog dlg(this, selectedString);
+	if (dlg.ShowModal() == wxID_OK) {
+		wxString value = dlg.GetValue();
 		TrimString(value);
 		if (value.IsEmpty() == false) {
-			list->SetString(sel, value);
+			list->SetString((unsigned int)sel, value);
+			list->Check((unsigned int)sel, selectIt);
 		}
 	}
-	dlg->Destroy();
 }
 
 void ProjectSettingsDlg::OnUpCommand(wxCheckListBox *list)

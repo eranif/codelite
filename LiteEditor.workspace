@@ -77,18 +77,18 @@
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="DebugUnicode"/>
       <Project Name="plugin_sdk" ConfigName="DebugUnicode"/>
+      <Project Name="abbreviation" ConfigName="DebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="DebugUnicode"/>
       <Project Name="Subversion" ConfigName="DebugUnicode"/>
       <Project Name="LiteEditor" ConfigName="Unix"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="DebugUnicode"/>
       <Project Name="ExternalTools" ConfigName="DebugUnicode"/>
-      <Project Name="DebuggerGDB" ConfigName="Unix"/>
+      <Project Name="DebuggerGDB" ConfigName="DebugUnicode"/>
       <Project Name="Cscope" ConfigName="DebugUnicode"/>
       <Project Name="Copyright" ConfigName="DebugUnicode"/>
       <Project Name="CodeLite" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
-      <Project Name="abbreviation" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

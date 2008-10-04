@@ -176,6 +176,7 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 	int chPrevNonWhite = ' ';
 	int visibleChars = 0;
 	bool lastWordWasUUID = false;
+	bool lastOpSetScope = false;
 	int styleBeforeDCKeyword = SCE_C_DEFAULT;
 	bool continuationLine = false;
 
@@ -255,10 +256,12 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 					if (keywords.InList(s)) {
 						lastWordWasUUID = strcmp(s, "uuid") == 0;
 						sc.ChangeState(SCE_C_WORD);
-					} else if (keywords2.InList(s)) {
+					} else if (!lastOpSetScope && keywords2.InList(s)) {
 						sc.ChangeState(SCE_C_WORD2);
-					} else if (keywords4.InList(s)) {
+					} else if (!lastOpSetScope && keywords4.InList(s)) {
 						sc.ChangeState(SCE_C_GLOBALCLASS);
+					} else {
+						lastOpSetScope = false;
 					}
 					sc.SetState(SCE_C_DEFAULT);
 				}
@@ -453,9 +456,19 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 				}
 			} else if (isoperator(static_cast<char>(sc.ch))) {
 				sc.SetState(SCE_C_OPERATOR);
+				lastOpSetScope = false;
+				if (sc.Match('.') || sc.Match(':', ':') || sc.Match('-', '>')) {
+					// check for operators '.', '::', and '->' (but not '.*', '::*', or '->*')
+					if (sc.ch != '.') sc.Forward();
+					if (sc.chNext != '*')
+						lastOpSetScope = true;
+					else
+						sc.Forward();
+				}
 			}
 		}
 
+		if (sc.state != SCE_C_OPERATOR && sc.state != SCE_C_IDENTIFIER) lastOpSetScope = false;
 		if (!IsASpace(sc.ch) && !IsSpaceEquiv(sc.state)) {
 			chPrevNonWhite = sc.ch;
 			visibleChars++;

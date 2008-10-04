@@ -1798,7 +1798,10 @@ void ContextCpp::OnFileSaved()
 	std::map< std::string, Variable > var_map;
 	std::map< wxString, TagEntryPtr> foo_map;
 	std::map<std::string, std::string> ignoreTokens;
+	
 	wxArrayString varList;
+	wxArrayString projectTags;
+	
 	LEditor &rCtrl = GetCtrl();
 	VALIDATE_WORKSPACE();
 
@@ -1807,51 +1810,31 @@ void ContextCpp::OnFileSaved()
 		return;
 	}
 
-	//wxSCI_C_WORD2
+	// wxSCI_C_WORD2
 	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS) {
-		//get list of all tags from the workspace
-		wxArrayString projectTags;
-		wxString flatStr;
+		
+		// get list of all tags from the workspace
 		TagsManagerST::Get()->GetAllTagsNames(projectTags);
-		for (size_t i=0; i< projectTags.GetCount(); i++) {
-			flatStr << projectTags.Item(i) << wxT(" ");
-		}
-		rCtrl.SetKeyWords(1, flatStr);
-	} else {
-		rCtrl.SetKeyWords(1, wxEmptyString);
 	}
 
-	//wxSCI_C_GLOBALCLASS
+	// wxSCI_C_GLOBALCLASS
 	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS) {
 		//---------------------------------------------------------------------
 		// Colour local variables
 		//---------------------------------------------------------------------
 		const wxCharBuffer patbuf = _C(rCtrl.GetText());
-		//collect list of variables
+		
+		// collect list of variables
 		get_variables( patbuf.data(), var_list, ignoreTokens, false);
-		//list all functions of this file
+		
+		// list all functions of this file
 		std::vector< TagEntryPtr > tags;
 		TagsManagerST::Get()->GetFunctions(tags, rCtrl.GetFileName().GetFullPath());
-		for (size_t i=0; i< tags.size(); i++) {
-			foo_map[tags.at(i)->GetName()] = tags.at(i);
-		}
 
-		// cross reference between the two lists, if any of the tokens exist in
-		// both lists, then it will be considered as function
-
-		//remove duplicates
 		VariableList::iterator viter = var_list.begin();
 		for (; viter != var_list.end(); viter++ ) {
-			Variable var = *viter;
-			wxString name = _U(var.m_name.c_str());
-			if (foo_map.find(name) == foo_map.end()) {
-				var_map[var.m_name] = var;
-			}
-		}
-
-		std::map< std::string, Variable >::iterator it2 = var_map.begin();
-		for (; it2 != var_map.end(); it2++ ) {
-			varList.Add(_U(it2->second.m_name.c_str()));
+			Variable vv = *viter;
+			varList.Add(_U(vv.m_name.c_str()));
 		}
 
 		// parse all function's arguments and add them as well
@@ -1870,7 +1853,24 @@ void ContextCpp::OnFileSaved()
 				}
 			}
 		}
-
+	}
+	
+	size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
+	if(cc_flags & CC_COLOUR_WORKSPACE_TAGS) {
+		wxString flatStr;
+		for (size_t i=0; i< projectTags.GetCount(); i++) {
+			// add only entries that does not appear in the variable list
+			if(varList.Index(projectTags.Item(i)) == wxNOT_FOUND) {
+				flatStr << projectTags.Item(i) << wxT(" ");
+			}
+		}
+		rCtrl.SetKeyWords(1, flatStr);
+	} else {
+		rCtrl.SetKeyWords(1, wxEmptyString);
+	}
+	
+	if(cc_flags & CC_COLOUR_VARS) {
+		// convert it to space delimited string
 		wxString varFlatStr;
 		for (size_t i=0; i< varList.GetCount(); i++) {
 			varFlatStr << varList.Item(i) << wxT(" ");

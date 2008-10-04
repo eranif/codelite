@@ -9,6 +9,9 @@
       <wxString Value="WXDLLIMPEXP_XRC"/>
       <wxString Value="WXDLLIMPEXP_ADV"/>
       <wxString Value="WXDLLIMPEXP_AUI"/>
+      <wxString Value="WXDLLIMPEXP_CL"/>
+      <wxString Value="WXDLLIMPEXP_LE_SDK"/>
+      <wxString Value="WXDLLIMPEXP_SQLITE3"/>
       <wxString Value="WXMAKINGDLL"/>
       <wxString Value="WXUSINGDLL"/>
       <wxString Value="_CRTIMP"/>

@@ -107,7 +107,7 @@ Archive::~Archive()
 {
 }
 
-void Archive::Write(const wxString &name, SerializedObject *obj)
+bool Archive::Write(const wxString &name, SerializedObject *obj)
 {
 	Archive arch;
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("SerializedObject"));
@@ -116,22 +116,25 @@ void Archive::Write(const wxString &name, SerializedObject *obj)
 
 	arch.SetXmlNode(node);
 	obj->Serialize(arch);
+	return true;
 }
 
-void Archive::Read(const wxString &name, SerializedObject *obj)
+bool Archive::Read(const wxString &name, SerializedObject *obj)
 {
 	Archive arch;
 	wxXmlNode *node = FindNodeByName(m_root, wxT("SerializedObject"), name);
 	if (node) {
 		arch.SetXmlNode(node);
 		obj->DeSerialize(arch);
+		return true;
 	}
+	return false;
 }
 
-void Archive::Write(const wxString &name, const wxArrayString &arr)
+bool Archive::Write(const wxString &name, const wxArrayString &arr)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxArrayString"));
 	m_root->AddChild(node);
@@ -143,12 +146,13 @@ void Archive::Write(const wxString &name, const wxArrayString &arr)
 		node->AddChild(child);
 		child->AddProperty(wxT("Value"), arr.Item(i));
 	}
+	return true;
 }
 
-void Archive::Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr)
+bool Archive::Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TabInfoArray"));
 	m_root->AddChild(node);
@@ -163,12 +167,13 @@ void Archive::Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr)
 		_vTabInfoArr[i].Serialize(arch);
 		node->AddChild(child);
 	}
+	return true;
 }
 
-void Archive::Write(const wxString &name, const StringMap &str_map)
+bool Archive::Write(const wxString &name, const StringMap &str_map)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("StringMap"));
@@ -183,12 +188,13 @@ void Archive::Write(const wxString &name, const StringMap &str_map)
 		child->AddProperty(wxT("Key"), iter->first);
 		child->AddProperty(wxT("Value"), iter->second);
 	}
+	return true;
 }
 
-void Archive::Write(const wxString &name, wxSize size)
+bool Archive::Write(const wxString &name, wxSize size)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxSize"));
@@ -201,12 +207,13 @@ void Archive::Write(const wxString &name, wxSize size)
 
 	node->AddProperty(wxT("x"), xstr);
 	node->AddProperty(wxT("y"), ystr);
+	return true;
 }
 
-void Archive::Write(const wxString &name, wxPoint pt)
+bool Archive::Write(const wxString &name, wxPoint pt)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxPoint"));
@@ -219,12 +226,13 @@ void Archive::Write(const wxString &name, wxPoint pt)
 
 	node->AddProperty(wxT("x"), xstr);
 	node->AddProperty(wxT("y"), ystr);
+	return true;
 }
 
-void Archive::Read(const wxString &name, wxArrayString &arr)
+bool Archive::Read(const wxString &name, wxArrayString &arr)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	wxXmlNode *node = FindNodeByName(m_root, wxT("wxArrayString"), name);
@@ -240,13 +248,15 @@ void Archive::Read(const wxString &name, wxArrayString &arr)
 			}
 			child = child->GetNext();
 		}
+		return true;
 	}
+	return false;
 }
 
-void Archive::Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr)
+bool Archive::Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	Archive arch;
@@ -264,13 +274,15 @@ void Archive::Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr)
 			}
 			child = child->GetNext();
 		}
+		return true;
 	}
+	return false;
 }
 
-void Archive::Read(const wxString &name, StringMap &str_map)
+bool Archive::Read(const wxString &name, StringMap &str_map)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	wxXmlNode *node = FindNodeByName(m_root, wxT("StringMap"), name);
@@ -288,13 +300,15 @@ void Archive::Read(const wxString &name, StringMap &str_map)
 			}
 			child = child->GetNext();
 		}
+		return true;
 	}
+	return false;
 }
 
-void Archive::Read(const wxString &name, wxSize &size)
+bool Archive::Read(const wxString &name, wxSize &size)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	wxXmlNode *node = FindNodeByName(m_root, wxT("wxSize"), name);
@@ -308,13 +322,15 @@ void Archive::Read(const wxString &name, wxSize &size)
 		value = node->GetPropVal(wxT("y"), wxEmptyString);
 		value.ToLong(&v);
 		size.y = v;
+		return true;
 	}
+	return false;
 }
 
-void Archive::Read(const wxString &name, wxPoint &pt)
+bool Archive::Read(const wxString &name, wxPoint &pt)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	wxXmlNode *node = FindNodeByName(m_root, wxT("wxPoint"), name);
@@ -328,108 +344,100 @@ void Archive::Read(const wxString &name, wxPoint &pt)
 		value = node->GetPropVal(wxT("y"), wxEmptyString);
 		value.ToLong(&v);
 		pt.y = v;
+		return true;
 	}
+	return false;
 }
 
-void Archive::Write(const wxString &name, int value)
+bool Archive::Write(const wxString &name, int value)
 {
-	if (!m_root) {
-		return;
-	}
-
-	WriteSimple(value, wxT("int"), name);
+	return WriteSimple(value, wxT("int"), name);
 }
 
-void Archive::Read(const wxString &name, int &value)
+bool Archive::Read(const wxString &name, int &value)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	long v;
-	ReadSimple(v, wxT("int"), name);
+	bool res = ReadSimple(v, wxT("int"), name);
 	value = v;
+	return res;
 }
 
-void Archive::Write(const wxString &name, long value)
+bool Archive::Write(const wxString &name, long value)
 {
-	if (!m_root) {
-		return;
-	}
-	WriteSimple(value, wxT("long"), name);
+	return WriteSimple(value, wxT("long"), name);
 }
 
-void Archive::Read(const wxString &name, long &value)
+bool Archive::Read(const wxString &name, long &value)
 {
-	if (!m_root) {
-		return;
-	}
-	ReadSimple(value, wxT("long"), name);
+	return ReadSimple(value, wxT("long"), name);
 }
 
-void Archive::Write(const wxString &name, bool value)
+bool Archive::Write(const wxString &name, bool value)
 {
-	if (!m_root) {
-		return;
-	}
-	WriteSimple(value ? 1 : 0, wxT("bool"), name);
+	return WriteSimple(value ? 1 : 0, wxT("bool"), name);
 }
 
-void Archive::Read(const wxString &name, bool &value)
+bool Archive::Read(const wxString &name, bool &value)
 {
-	if (!m_root) { 
-		return;
-	}
-
 	long v;
-	ReadSimple(v, wxT("bool"), name);
+	bool res = ReadSimple(v, wxT("bool"), name);
 	v  == 0 ? value = false : value = true;
+	return res;
 }
 
-void Archive::Write(const wxString &name, const wxString &str)
+bool Archive::Write(const wxString &name, const wxString &str)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxString"));
 	m_root->AddChild(node);
 	node->AddProperty(wxT("Value"), str);
 	node->AddProperty(wxT("Name"), name);
+	return true;
 }
 
-void Archive::Read(const wxString &name, wxString &value)
+bool Archive::Read(const wxString &name, wxString &value)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 	wxXmlNode *node = FindNodeByName(m_root, wxT("wxString"), name);
 	if (node) {
 		value = node->GetPropVal(wxT("Value"), wxEmptyString);
+		return true;
 	}
+	return false;
 }
 
-void Archive::Read(const wxString &name, size_t &value)
+bool Archive::Read(const wxString &name, size_t &value)
 {
 	long v = 0;
-	Read(name, v);
+	bool res = Read(name, v);
 	value = v;
+	return res;
 }
 
-void Archive::Read(const wxString &name, wxFileName &fileName)
+bool Archive::Read(const wxString &name, wxFileName &fileName)
 {
 	wxString value;
-	Read(name, value);
+	bool res = Read(name, value);
 	fileName = wxFileName(value);
+	return res;
 }
 
-void Archive::Write(const wxString &name, size_t value)
+bool Archive::Write(const wxString &name, size_t value)
 {
-	Write(name, (long)value);
+	return Write(name, (long)value);
 }
 
-void Archive::Write(const wxString &name, const wxFileName &fileName)
+bool Archive::Write(const wxString &name, const wxFileName &fileName)
 {
-	Write(name, fileName.GetFullPath());
+	return Write(name, fileName.GetFullPath());
 }
 
 void Archive::SetXmlNode(wxXmlNode *node)
@@ -437,10 +445,10 @@ void Archive::SetXmlNode(wxXmlNode *node)
 	m_root = node;
 }
 
-void Archive::WriteSimple(long value, const wxString &typeName, const wxString &name)
+bool Archive::WriteSimple(long value, const wxString &typeName, const wxString &name)
 {
 	if (!m_root)
-		return;
+		return false;
 
 	wxString propValue;
 	propValue << value;
@@ -449,25 +457,28 @@ void Archive::WriteSimple(long value, const wxString &typeName, const wxString &
 	m_root->AddChild(node);
 	node->AddProperty(wxT("Value"), propValue);
 	node->AddProperty(wxT("Name"), name);
+	return true;
 }
 
-void Archive::ReadSimple(long &value, const wxString &typeName, const wxString &name)
+bool Archive::ReadSimple(long &value, const wxString &typeName, const wxString &name)
 {
 	if (!m_root)
-		return;
+		return false;
 
 	value = 0;
 	wxXmlNode *node = FindNodeByName(m_root, typeName, name);
 	if (node) {
 		wxString val = node->GetPropVal(wxT("Value"), wxEmptyString);
 		val.ToLong(&value);
+		return true;
 	}
+	return false;
 }
 
-void Archive::Read(const wxString& name, wxColour& colour)
+bool Archive::Read(const wxString& name, wxColour& colour)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	wxXmlNode *node = FindNodeByName(m_root, wxT("wxColour"), name);
@@ -477,27 +488,29 @@ void Archive::Read(const wxString& name, wxColour& colour)
 	}
 
 	if (value.IsEmpty()) {
-		return;
+		return false;
 	}
 
 	colour = wxColour(value);
+	return true;
 }
 
-void Archive::Write(const wxString& name, const wxColour& colour)
+bool Archive::Write(const wxString& name, const wxColour& colour)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxColour"));
 	m_root->AddChild(node);
 	node->AddProperty(wxT("Value"), colour.GetAsString());
 	node->AddProperty(wxT("Name"), name);
+	return true;
 }
 
-void Archive::Write(const wxString& name, const std::map<wxString, wxString>& strinMap)
+bool Archive::Write(const wxString& name, const std::map<wxString, wxString>& strinMap)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("std_string_map"));
@@ -512,12 +525,13 @@ void Archive::Write(const wxString& name, const std::map<wxString, wxString>& st
 		child->AddProperty(wxT("Key"), iter->first);
 		SetNodeContent(child, iter->second);
 	}
+	return true;
 }
 
-void Archive::Read(const wxString& name, std::map<wxString, wxString>& strinMap)
+bool Archive::Read(const wxString& name, std::map<wxString, wxString>& strinMap)
 {
 	if (!m_root) {
-		return;
+		return false;
 	}
 
 	wxXmlNode *node = FindNodeByName(m_root, wxT("std_string_map"), name);
@@ -535,5 +549,7 @@ void Archive::Read(const wxString& name, std::map<wxString, wxString>& strinMap)
 			}
 			child = child->GetNext();
 		}
+		return true;
 	}
+	return false;
 }

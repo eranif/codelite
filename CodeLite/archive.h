@@ -74,42 +74,42 @@ public:
 	//--------------------
 	// Write API
 	//--------------------
-	void Write(const wxString &name, SerializedObject *obj);
-	void Write(const wxString &name, int value);
-	void Write(const wxString &name, bool value);
-	void Write(const wxString &name, long value);
-	void Write(const wxString &name, const wxString &str);
-	void Write(const wxString &name, const wxArrayString &arr);
-	void Write(const wxString &name, const wxFileName &fileName);
-	void Write(const wxString &name, size_t value);
-	void Write(const wxString &name, wxSize size);
-	void Write(const wxString &name, wxPoint pt);
-	void Write(const wxString &name, const StringMap &str_map);
-	void Write(const wxString &name, const wxColour &colour);
-	void Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
-	void Write(const wxString &name, const std::map<wxString, wxString> &strinMap);
+	bool Write(const wxString &name, SerializedObject *obj);
+	bool Write(const wxString &name, int value);
+	bool Write(const wxString &name, bool value);
+	bool Write(const wxString &name, long value);
+	bool Write(const wxString &name, const wxString &str);
+	bool Write(const wxString &name, const wxArrayString &arr);
+	bool Write(const wxString &name, const wxFileName &fileName);
+	bool Write(const wxString &name, size_t value);
+	bool Write(const wxString &name, wxSize size);
+	bool Write(const wxString &name, wxPoint pt);
+	bool Write(const wxString &name, const StringMap &str_map);
+	bool Write(const wxString &name, const wxColour &colour);
+	bool Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
+	bool Write(const wxString &name, const std::map<wxString, wxString> &strinMap);
 	
 	//--------------------
 	// Read API
 	//--------------------
-	void Read(const wxString &name, int &value);
-	void Read(const wxString &name, bool &value);
-	void Read(const wxString &name, long &value);
-	void Read(const wxString &name, wxString &value);
-	void Read(const wxString &name, wxArrayString &arr);
-	void Read(const wxString &name, wxFileName &fileName);
-	void Read(const wxString &name, size_t &value);
-	void Read(const wxString &name, wxSize &size);
-	void Read(const wxString &name, wxPoint &pt);
-	void Read(const wxString &name, StringMap &str_map);
-	void Read(const wxString &name, SerializedObject *obj);
-	void Read(const wxString &name, wxColour &colour);	
-	void Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
-	void Read(const wxString &name, std::map<wxString, wxString> &strinMap);
+	bool Read(const wxString &name, int &value);
+	bool Read(const wxString &name, bool &value);
+	bool Read(const wxString &name, long &value);
+	bool Read(const wxString &name, wxString &value);
+	bool Read(const wxString &name, wxArrayString &arr);
+	bool Read(const wxString &name, wxFileName &fileName);
+	bool Read(const wxString &name, size_t &value);
+	bool Read(const wxString &name, wxSize &size);
+	bool Read(const wxString &name, wxPoint &pt);
+	bool Read(const wxString &name, StringMap &str_map);
+	bool Read(const wxString &name, SerializedObject *obj);
+	bool Read(const wxString &name, wxColour &colour);	
+	bool Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
+	bool Read(const wxString &name, std::map<wxString, wxString> &strinMap);
 	
 private:
-	void WriteSimple(long value, const wxString &typeName, const wxString &name);
-	void ReadSimple(long &value, const wxString &typeName, const wxString &name);
+	bool WriteSimple(long value, const wxString &typeName, const wxString &name);
+	bool ReadSimple(long &value, const wxString &typeName, const wxString &name);
 };
 
 

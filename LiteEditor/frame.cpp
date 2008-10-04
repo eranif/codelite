@@ -1669,23 +1669,25 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 	bool colTags(false);
 	bool newColVars(false);
 	bool newColTags(false);
-
+	size_t colourTypes(0);
+	
 	colVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
-	colTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_PROJ_TAGS ? true : false);
-
-	TagsOptionsDlg *dlg = new TagsOptionsDlg(this, m_tagsOptionsData);
-	if (dlg->ShowModal() == wxID_OK) {
+	colTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
+	colourTypes = m_tagsOptionsData.GetCcColourFlags();
+	
+	TagsOptionsDlg dlg(this, m_tagsOptionsData);
+	if (dlg.ShowModal() == wxID_OK) {
 		TagsManager *tagsMgr = TagsManagerST::Get();
-		m_tagsOptionsData = dlg->GetData();
+		m_tagsOptionsData = dlg.GetData();
 
 		newColVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
-		newColTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_PROJ_TAGS ? true : false);
+		newColTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
 
 		tagsMgr->SetCtagsOptions(m_tagsOptionsData);
 		EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
 		//do we need to colourise?
-		if (newColTags != colTags || newColVars != colVars) {
+		if (newColTags != colTags || newColVars != colVars || colourTypes != m_tagsOptionsData.GetCcColourFlags()) {
 			for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
 				LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(i));
 				if (editor) {
@@ -1699,7 +1701,6 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 			tagsMgr->GetWorkspaceTagsCache()->Clear();
 		}
 	}
-	dlg->Destroy();
 }
 
 void Frame::RegisterToolbar(int menuItemId, const wxString &name)

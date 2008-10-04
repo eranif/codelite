@@ -118,6 +118,8 @@
       <File Name="movefuncimplbasedlg.cpp"/>
       <File Name="movefuncimplbasedlg.h"/>
       <File Name="movefuncimpldlg.cpp"/>
+      <File Name="tags_options_base_dlg.h"/>
+      <File Name="tags_options_base_dlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
       <File Name="compiler_page.cpp"/>

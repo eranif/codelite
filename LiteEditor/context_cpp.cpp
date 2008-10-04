@@ -1803,12 +1803,12 @@ void ContextCpp::OnFileSaved()
 	VALIDATE_WORKSPACE();
 
 	// if there is nothing to color, go ahead and return
-	if ( !(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_PROJ_TAGS) && !(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS) ) {
+	if ( !(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS) && !(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS) ) {
 		return;
 	}
 
 	//wxSCI_C_WORD2
-	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_PROJ_TAGS) {
+	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS) {
 		//get list of all tags from the workspace
 		wxArrayString projectTags;
 		wxString flatStr;

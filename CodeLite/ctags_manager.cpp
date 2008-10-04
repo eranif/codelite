@@ -2237,12 +2237,40 @@ void TagsManager::GetFunctions(std::vector< TagEntryPtr > &tags, const wxString 
 
 void TagsManager::GetAllTagsNames(wxArrayString &tagsList)
 {
+	size_t kind = GetCtagsOptions().GetCcColourFlags();
+	wxArrayString kindArr;
+	
+	if( kind & CC_COLOUR_CLASS) {kindArr.Add(wxT("class"));}
+	if( kind & CC_COLOUR_ENUM) {kindArr.Add(wxT("enum"));}
+	if( kind & CC_COLOUR_FUNCTION) {kindArr.Add(wxT("function"));}
+	if( kind & CC_COLOUR_MACRO) {kindArr.Add(wxT("macro"));}
+	if( kind & CC_COLOUR_NAMESPACE) {kindArr.Add(wxT("namespace"));}
+	if( kind & CC_COLOUR_PROTOTYPE) {kindArr.Add(wxT("prototype"));}
+	if( kind & CC_COLOUR_STRUCT) {kindArr.Add(wxT("struct"));}
+	if( kind & CC_COLOUR_TYPEDEF) {kindArr.Add(wxT("typedef"));}
+	if( kind & CC_COLOUR_UNION) {kindArr.Add(wxT("union"));}
+	
+	if( kindArr.IsEmpty() ) {return;}
+	
 	try {
-		wxString query(wxT("select distinct name from tags where kind in('class' , 'struct', 'function', 'typedef', 'prototype', 'enum') order by name ASC"));
+		
+		wxString whereClause;
+		whereClause << wxT(" kind IN (");
+		for(size_t i=0; i<kindArr.GetCount(); i++){
+			whereClause << wxT("'") << kindArr.Item(i) << wxT("',");
+		}
+		
+		whereClause = whereClause.BeforeLast(wxT(','));
+		whereClause << wxT(") ");
+		
+		wxString query(wxT("SELECT DISTINCT name FROM tags WHERE "));
+		query << whereClause << wxT(" order by name ASC");
+		
 		wxSQLite3ResultSet res = m_pDb->Query(query);
 		while (res.NextRow()) {
 			tagsList.Add(res.GetString(0));
 		}
+		
 	} catch (wxSQLite3Exception &e) {
 		wxUnusedVar(e);
 	}

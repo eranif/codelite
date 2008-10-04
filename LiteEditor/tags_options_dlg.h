@@ -26,12 +26,7 @@
 #ifndef __tags_options_dlg__
 #define __tags_options_dlg__
 
-#include <wx/wx.h>
-
-#include <wx/panel.h>
-#include <wx/notebook.h> 
-#include <wx/statline.h>
-#include <wx/button.h>
+#include "tags_options_base_dlg.h"
 #include "serialized_object.h"
 #include "wx/filename.h"
 #include "tags_options_data.h"
@@ -41,55 +36,23 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class TagsOptionsDlg
 ///////////////////////////////////////////////////////////////////////////////
-class TagsOptionsDlg : public wxDialog 
+class TagsOptionsDlg : public TagsOptionsBaseDlg 
 {
-private:
-
-protected:
-	wxNotebook* m_mainBook;
-	wxPanel* m_generalPage;
-	wxCheckBox* m_checkParseComments;
-	wxCheckBox* m_checkDisableParseOnSave;
-	wxCheckBox* m_checkDisplayComments;
-	wxCheckBox* m_checkDisplayTypeInfo;
-	wxCheckBox* m_checkDisplayFunctionTip;
-	wxCheckBox* m_checkLoadLastDB;
-	wxCheckBox* m_checkLoadToMemory;
-	wxPanel* m_ctagsPage;
-	wxStaticText* m_staticText1;
-	wxTextCtrl* m_textPrep;
-	wxButton* m_buttonAdd;
-	wxStaticText* m_staticText3;
-	wxTextCtrl* m_textFileSpec;
-	wxStaticText* m_staticText5;
-	wxComboBox* m_comboBoxLang;
-	wxCheckBox* m_checkFilesWithoutExt;
-	wxStaticLine* m_staticline1;
-	wxButton* m_buttonOK;
-	wxButton* m_buttonCancel;
 	TagsOptionsData m_data;
-	wxCheckBox* m_checkColourLocalVars;
-	wxCheckBox* m_checkColourProjTags;
-	wxCheckBox* m_checkCppKeywordAssist;
-	wxCheckBox* m_checkCacheWorkspaceTags;
+	size_t m_colour_flags;
 	
 protected:
 	void SetFlag(CodeCompletionOpts flag, bool set);
-
+	void SetColouringFlag(CodeCompletionColourOpts flag, bool set);
+	
 	void InitValues();
 	void CopyData();
 	void OnButtonOK(wxCommandEvent &event);
 	void OnButtonAdd(wxCommandEvent &event);
-
+	void OnColourWorkspaceUI(wxUpdateUIEvent &e);
+	
 public:
-	TagsOptionsDlg( wxWindow* parent, 
-					const TagsOptionsData& data,					
-				    int id = wxID_ANY, 
-				    wxString title = wxT("Tags Options"), 
-				    wxPoint pos = wxDefaultPosition, 
-				    wxSize size = wxSize(600, 450), 
-				    int style = wxDEFAULT_DIALOG_STYLE);
-
+	TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data);
 	TagsOptionsData &GetData() {return m_data;}
 };
 

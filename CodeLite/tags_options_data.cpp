@@ -30,7 +30,8 @@
 
 TagsOptionsData::TagsOptionsData()
 		: SerializedObject()
-		, m_ccFlags(CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB | CC_CPP_KEYWORD_ASISST | CC_COLOUR_PROJ_TAGS | CC_COLOUR_VARS)
+		, m_ccFlags(CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB | CC_CPP_KEYWORD_ASISST | CC_COLOUR_WORKSPACE_TAGS | CC_COLOUR_VARS)
+		, m_ccColourFlags(CC_COLOUR_DEFAULT)
 		, m_fileSpec(wxT("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++"))
 		, m_minWordLen(3)
 {
@@ -51,6 +52,7 @@ void TagsOptionsData::Serialize(Archive &arch)
 	}
 
 	arch.Write(wxT("m_ccFlags"), m_ccFlags);
+	arch.Write(wxT("m_ccColourFlags"), m_ccColourFlags);
 	arch.Write(wxT("m_prep"), m_prep);
 	arch.Write(wxT("m_fileSpec"), m_fileSpec);
 	arch.Write(wxT("m_languages"), m_languages);
@@ -60,6 +62,10 @@ void TagsOptionsData::Serialize(Archive &arch)
 void TagsOptionsData::DeSerialize(Archive &arch)
 {
 	arch.Read(wxT("m_ccFlags"), m_ccFlags);
+	if( !arch.Read(wxT("m_ccColourFlags"), m_ccColourFlags) ) {
+		m_ccColourFlags = CC_COLOUR_DEFAULT;
+	}
+	
 	arch.Read(wxT("m_prep"), m_prep);
 	arch.Read(wxT("m_fileSpec"), m_fileSpec);
 	arch.Read(wxT("m_languages"), m_languages);
@@ -70,7 +76,7 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	if (where != wxNOT_FOUND) {
 		m_prep.RemoveAt(where);
 	}
-	
+
 	//TODO :: remove the CC_CACHE_WORKSPACE_TAGS
 	m_ccFlags &= ~(CC_CACHE_WORKSPACE_TAGS);
 }
@@ -98,20 +104,20 @@ wxString TagsOptionsData::ToString() const
 				options += wxT(",");
 			}
 		}
-		
+
 		options.RemoveLast();
 		options += wxT(" ");
 	}
-	
+
 	// write the file content
-	if(file_name.IsEmpty() == false) {
+	if (file_name.IsEmpty() == false) {
 		wxFFile fp(file_name, wxT("w+b"));
-		if(fp.IsOpened()){
+		if (fp.IsOpened()) {
 			fp.Write(file_content);
 			fp.Close();
 		}
 	}
-	
+
 	if (GetLanguages().IsEmpty() == false) {
 		options += wxT(" --language-force=");
 		options += GetLanguages().Item(0);

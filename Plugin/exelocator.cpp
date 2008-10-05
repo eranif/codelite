@@ -30,7 +30,7 @@ bool ExeLocator::Locate(const wxString &name, wxString &where)
 	wxString command;
 	wxArrayString output;
 	command << wxT("which \"") << name << wxT("\"");
-	ProcUtils::ExecuteCommand(command, output);
+	ProcUtils::SafeExecuteCommand(command, output);
 	
 	if(output.IsEmpty() == false){
 		wxString interstingLine = output.Item(0);

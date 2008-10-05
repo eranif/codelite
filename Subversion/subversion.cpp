@@ -67,6 +67,12 @@ int wxFBModifiedIconId		= wxNOT_FOUND;
 int wxFBOkIconId			= wxNOT_FOUND;
 int wxFBConflictIconId		= wxNOT_FOUND;
 
+#define VALIDATE_SVNPATH(){\
+	if(!SanityCheck()){\
+		return;\
+	}\
+}
+
 static bool IsIgnoredFile(const wxString &file, const wxString &patten) {
 	wxStringTokenizer tkz(patten, wxT(";"), wxTOKEN_STRTOK);
 	while (tkz.HasMoreTokens()) {
@@ -76,18 +82,6 @@ static bool IsIgnoredFile(const wxString &file, const wxString &patten) {
 	}
 	return false;
 }
-
-#define VALIDATE_SVNPATH()\
-	{\
-		ExeLocator locator;\
-		wxString where;\
-		if(!locator.Locate(m_options.GetExePath(), where)){\
-			wxString message;\
-			message << wxT("SVN plugin error: failed to locate svn client installed (searched for: ") << m_options.GetExePath() << wxT(")");\
-			wxLogMessage(message);\
-			return;\
-		}\
-	}
 
 static SubversionPlugin* theSvnPlugin = NULL;
 
@@ -1040,4 +1034,22 @@ void SubversionPlugin::OnPatch(wxCommandEvent& e)
 {
 	m_svn->PrintMessage(wxT("----\nApplying patch ...\n"));
 	m_svn->ApplyPatch(new SvnIconRefreshHandler(m_mgr, this));
+}
+
+bool SubversionPlugin::SanityCheck()
+{
+	static bool hasSvn = false;
+	
+	if(!hasSvn) {
+		ExeLocator locator;
+		wxString where;
+		if(!locator.Locate(m_options.GetExePath(), where)){
+			wxString message;
+			message << wxT("SVN plugin error: failed to locate svn client installed (searched for: ") << m_options.GetExePath() << wxT(")");
+			wxLogMessage(message);
+			return false;
+		}
+		hasSvn = true;
+	}
+	return hasSvn;
 }

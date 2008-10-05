@@ -55,6 +55,7 @@ class SubversionPlugin : public IPlugin
 	
 protected:
 	void SendSvnMenuEvent(int id);
+	bool SanityCheck();
 	
 public:
 	SubversionPlugin(IManager *manager);

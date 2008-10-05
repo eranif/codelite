@@ -261,7 +261,7 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 		if (project_name.IsEmpty() == false) {
 			wxArrayString project_files;
 			mgr->GetProjectFiles(project_name, project_files);
-			fileOpened = DoOpenFile(project_files, fn, lineNumber, lineClicked);
+			fileOpened = DoTryOpenFile(project_files, fn, lineNumber, lineClicked);
 		}
 
 
@@ -269,7 +269,7 @@ bool BuildTab::OnBuildWindowDClick(const wxString &line, int lineClicked)
 		
 		// Ok no success in the project area... wider the search to workspace level
 		if ( !fileOpened ) {
-			fileOpened = DoOpenFile(files, fn, lineNumber, lineClicked);
+			fileOpened = DoTryOpenFile(files, fn, lineNumber, lineClicked);
 		}
 
 		if ( !fileOpened ) {
@@ -457,53 +457,47 @@ int BuildTab::GetWarningCount()
 	return warnCount;
 }
 
-bool BuildTab::DoOpenFile(const wxArrayString& files, const wxFileName &fn, int lineNumber, int lineClicked)
+bool BuildTab::DoTryOpenFile(const wxArrayString& files, const wxFileName &fn, int lineNumber, int lineClicked)
 {
 	// Iterate over the files twice:
 	// first, try to full path
 	// if the first iteration failes, iterate the files again
 	// and compare full name only
+	if(fn.IsAbsolute()){
+		return DoOpenFile(fn, lineNumber, lineClicked);
+	}
 	
 	for (size_t i=0; i< files.GetCount(); i++) {
 		wxFileName tmpFileName( files.Item(i) );
 		if (tmpFileName.GetFullPath() == fn.GetFullPath()) {
-			//we got a match
-			ManagerST::Get()->OpenFile(tmpFileName.GetFullPath(), wxEmptyString, (int)lineNumber-1);
-			if (lineClicked != wxNOT_FOUND || m_nextBuildError_lastLine != wxNOT_FOUND) {
-				if (lineClicked != wxNOT_FOUND) {
-					//the call came from mouse double click, update
-					//the m_nextBuildError_lastLine member
-					m_nextBuildError_lastLine = lineClicked;
-				}
-
-				m_sci->MarkerDeleteAll(0x7);
-				m_sci->MarkerAdd(m_nextBuildError_lastLine, 0x7);
-				m_sci->GotoLine(m_nextBuildError_lastLine);
-				m_sci->EnsureVisible(m_nextBuildError_lastLine);
-			}
-			return true;
+			return DoOpenFile(tmpFileName, lineNumber, lineClicked);
 		}
 	}
 	
 	for (size_t i=0; i< files.GetCount(); i++) {
 		wxFileName tmpFileName( files.Item(i) );
 		if (tmpFileName.GetFullName() == fn.GetFullName()) {
-			//we got a match
-			ManagerST::Get()->OpenFile(tmpFileName.GetFullPath(), wxEmptyString, (int)lineNumber-1);
-			if (lineClicked != wxNOT_FOUND || m_nextBuildError_lastLine != wxNOT_FOUND) {
-				if (lineClicked != wxNOT_FOUND) {
-					//the call came from mouse double click, update
-					//the m_nextBuildError_lastLine member
-					m_nextBuildError_lastLine = lineClicked;
-				}
-
-				m_sci->MarkerDeleteAll(0x7);
-				m_sci->MarkerAdd(m_nextBuildError_lastLine, 0x7);
-				m_sci->GotoLine(m_nextBuildError_lastLine);
-				m_sci->EnsureVisible(m_nextBuildError_lastLine);
-			}
-			return true;
+			return DoOpenFile(tmpFileName, lineNumber, lineClicked);
 		}
 	}
 	return false;
+}
+
+bool BuildTab::DoOpenFile(const wxFileName& fn, int lineNumber, int lineClicked)
+{
+	//we got a match
+	ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString, (int)lineNumber-1);
+	if (lineClicked != wxNOT_FOUND || m_nextBuildError_lastLine != wxNOT_FOUND) {
+		if (lineClicked != wxNOT_FOUND) {
+			//the call came from mouse double click, update
+			//the m_nextBuildError_lastLine member
+			m_nextBuildError_lastLine = lineClicked;
+		}
+
+		m_sci->MarkerDeleteAll(0x7);
+		m_sci->MarkerAdd(m_nextBuildError_lastLine, 0x7);
+		m_sci->GotoLine(m_nextBuildError_lastLine);
+		m_sci->EnsureVisible(m_nextBuildError_lastLine);
+	}
+	return true;
 }

@@ -51,7 +51,9 @@ protected:
 	void Initialize();
 	
 	wxString ProjectFromLine(int line);
-	bool DoOpenFile(const wxArrayString& files, const wxFileName &fn, int lineNumber, int lineClicked);
+	bool DoTryOpenFile(const wxArrayString& files, const wxFileName &fn, int lineNumber, int lineClicked);
+	bool DoOpenFile(const wxFileName &fn, int lineNumber, int lineClicked);
+	
 	
 public:
 	BuildTab(wxWindow *parent, wxWindowID id, const wxString &name);

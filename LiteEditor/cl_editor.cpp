@@ -366,8 +366,14 @@ void LEditor::SetProperties()
 	UsePopUp(m_rightClickMenu ? false : true);
 	SetIndentationGuides(options->GetShowIndentationGuidelines());
 
+#ifdef __WXMAC__
+	IndicatorSetUnder(1, false);
+	IndicatorSetUnder(2, false);
+#else
 	IndicatorSetUnder(1, true);
 	IndicatorSetUnder(2, true);
+#endif
+
 	SetUserIndicatorStyleAndColour(wxSCI_INDIC_SQUIGGLE, wxT("RED"));
 
 	wxColour col2(wxT("LIGHT BLUE"));

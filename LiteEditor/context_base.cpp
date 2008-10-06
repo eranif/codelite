@@ -73,8 +73,13 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 	rCtrl.SetStyleBits(rCtrl.GetStyleBitsNeeded());
 
 	// by default indicators are set to be opaque rounded box
+#ifdef __WXMAC__	
+	rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_BOX);
+	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_BOX);
+#else
 	rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
+#endif
 
 	std::list<StyleProperty> styles = lexPtr->GetProperties();
 	std::list<StyleProperty>::iterator iter = styles.begin();

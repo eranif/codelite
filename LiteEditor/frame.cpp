@@ -103,6 +103,7 @@
 #include "openwindowspanel.h"
 #include "workspace_pane.h"
 #include "globals.h"
+#include "workspacetab.h"
 #include "fileexplorer.h"
 #include "custom_notebook.h"
 
@@ -1340,7 +1341,7 @@ void Frame::OnFileClose(wxCommandEvent &event)
 	GetMainBook()->Clear();
 
 	// if no more editors are available, collapse the workspace tree
-	if (GetMainBook()->GetNotebook()->GetPageCount() == 0) {
+	if (GetWorkspaceTab()->GetIsLinkedToEditor() && GetMainBook()->GetNotebook()->GetPageCount() == 0) {
 		GetWorkspacePane()->CollpaseAll();
 
 		// also, update the title bar
@@ -1393,8 +1394,10 @@ void Frame::OnPageChanged(NotebookEvent &event)
 	//update the symbol view as well in case we are in a workspace context
 	if (!editor->GetProject().IsEmpty()) {
 		GetWorkspacePane()->DisplaySymbolTree(editor->GetFileName());
-		GetWorkspacePane()->GetFileViewTree()->ExpandToPath(editor->GetProject(), editor->GetFileName());
-		if (GetFileExplorer()->GetIsLinkedToEditor()) {
+        if (GetWorkspaceTab()->GetIsLinkedToEditor()) {
+            GetWorkspacePane()->GetFileViewTree()->ExpandToPath(editor->GetProject(), editor->GetFileName());
+		}
+        if (GetFileExplorer()->GetIsLinkedToEditor()) {
 			GetFileExplorer()->GetFileTree()->ExpandToPath(editor->GetFileName());
 		}
 	}
@@ -1429,7 +1432,7 @@ void Frame::OnPageClosed(NotebookEvent &event)
 	GetMainBook()->Clear();
 	
 	// if no more editors are available, collapse the workspace tree
-	if (GetMainBook()->GetNotebook()->GetPageCount() == 0) {
+	if (GetWorkspaceTab()->GetIsLinkedToEditor() && GetMainBook()->GetNotebook()->GetPageCount() == 0) {
 		GetWorkspacePane()->CollpaseAll();
 	}
 }
@@ -2203,7 +2206,9 @@ void Frame::OnFileCloseAll(wxCommandEvent &event)
 
 	GetMainBook()->Clear();
 	GetOpenWindowsPane()->UpdateList();
-	GetWorkspacePane()->CollpaseAll();
+	if (GetWorkspaceTab()->GetIsLinkedToEditor()) {
+        GetWorkspacePane()->CollpaseAll();
+    }
 
 	RemoveCppMenu();
 }
@@ -2956,6 +2961,11 @@ void Frame::OnCloseAllButThis(wxCommandEvent &e)
 OpenWindowsPanel *Frame::GetOpenWindowsPane()
 {
 	return GetWorkspacePane()->GetOpenedWindows();
+}
+
+WorkspaceTab *Frame::GetWorkspaceTab()
+{
+    return GetWorkspacePane()->GetWorkspaceTab();
 }
 
 FileExplorer *Frame::GetFileExplorer()

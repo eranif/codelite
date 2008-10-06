@@ -91,6 +91,7 @@ public:
 	OpenWindowsPanel *GetOpenedWindows() {return m_openWindowsPane;}
 	const wxString &GetCaption() const {return m_caption;}
 	wxComboBox *GetConfigCombBox();
+    WorkspaceTab *GetWorkspaceTab(){return m_workspaceTab;}
 	FileExplorer *GetFileExplorer(){return m_explorer;}
 	
 	DECLARE_EVENT_TABLE()

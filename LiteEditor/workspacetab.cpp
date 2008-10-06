@@ -27,6 +27,7 @@
 #include "workspacetab.h"
 #include "manager.h"
 #include "fileview.h"
+#include "editor_config.h"
 #include "wx/combobox.h"
 #include "wx/sizer.h"
 #include "wx/button.h"
@@ -35,7 +36,11 @@
 
 WorkspaceTab::WorkspaceTab(wxWindow *parent)
 : wxPanel(parent)
+, m_isLinkedToEditor(true)
 {
+	long link(1);
+	EditorConfigST::Get()->GetLongValue(wxT("LinkWorkspaceViewToEditor"), link);
+	m_isLinkedToEditor = link ? true : false;
 	CreateGUIControls();
 }
 
@@ -60,10 +65,13 @@ void WorkspaceTab::CreateGUIControls()
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL);
 	
 	tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
-	tb->Realize();
+	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
+    tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
+    tb->Realize();
 	
 	Connect( XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnCollapseAll ));
 	Connect( XRCID("collapse_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceTab::OnCollapseAllUI ));
+	Connect( XRCID("link_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnLinkEditor ));
 	
 	//add the fileview tab
 	m_fileView = new FileViewTree(this, wxID_ANY);
@@ -112,4 +120,12 @@ void WorkspaceTab::DoCollpaseAll()
 void WorkspaceTab::CollpaseAll()
 {
 	DoCollpaseAll();
+}
+
+void WorkspaceTab::OnLinkEditor(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	m_isLinkedToEditor = !m_isLinkedToEditor;
+	// save the value
+	EditorConfigST::Get()->SaveLongValue(wxT("LinkWorkspaceViewToEditor"), m_isLinkedToEditor ? 1 : 0);
 }

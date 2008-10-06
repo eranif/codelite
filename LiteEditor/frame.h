@@ -52,6 +52,7 @@ class WorkspacePane;
 class wxToolBar;
 class Notebook;
 class OpenWindowsPanel;
+class WorkspaceTab;
 class FileExplorer;
 class OutputTabWindow;
 class DockablePaneMenuManager;
@@ -168,6 +169,11 @@ public:
 		return m_workspacePane;
 	}
 
+	/**
+	 * return the workspace tab pane
+	 */
+    WorkspaceTab *GetWorkspaceTab();
+    
 	/**
 	 * return the file explorer pane
 	 */

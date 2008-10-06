@@ -32,6 +32,7 @@ class wxComboBox;
 
 class WorkspaceTab : public wxPanel {
 	FileViewTree *m_fileView;
+    bool m_isLinkedToEditor;
 	
 	void OnCollapseAll(wxCommandEvent &event);
 	void OnCollapseAllUI(wxUpdateUIEvent &event);
@@ -46,7 +47,10 @@ public:
 	
 	void BuildFileTree();
 	void CollpaseAll();
-	
+
+    void OnLinkEditor(wxCommandEvent &e);
+
 	FileViewTree *GetFileView(){return m_fileView;}
+    const bool& GetIsLinkedToEditor() const {return m_isLinkedToEditor;}
 };
 #endif // __workspacetab__

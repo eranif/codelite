@@ -343,6 +343,7 @@ protected:
 	void OnBuildProject(wxCommandEvent &event);
 	void OnBuildAndRunProject(wxCommandEvent &event);
 	void OnRebuildProject(wxCommandEvent &event);
+	void OnRetagWorkspace(wxCommandEvent &event);
 	void OnBuildProjectUI(wxUpdateUIEvent &event);
 	void OnStopBuild(wxCommandEvent &event);
 	void OnStopBuildUI(wxUpdateUIEvent &event);

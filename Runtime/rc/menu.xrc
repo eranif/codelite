@@ -316,6 +316,11 @@
             <object class="wxMenuItem" name="add_project">
                 <label>&amp;Add an Existing Project</label>
             </object>            
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+			<object class="wxMenuItem" name="retag_workspace">
+				<label>Retag Workspace</label>
+			</object>      
+
         </object>
         
         <object class="wxMenu" name="build_menu">
@@ -762,7 +767,7 @@
         </object>
         <object class="wxMenuItem" name="add_project">
             <label>Add an Existing Project</label>
-        </object>            
+        </object>    
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="retag_workspace">
             <label>Retag Workspace</label>
@@ -774,10 +779,6 @@
 		<object class="wxMenuItem" name="reload_workspace">
             <label>Reload Workspace</label>
         </object>		
-        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenuItem" name="add_envvar">
-            <label>Environment Variables...</label>
-        </object>
     </object>
     
 	<object class="wxMenu" name="file_tree_file">

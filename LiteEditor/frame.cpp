@@ -346,7 +346,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("add_include_file"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("rename_function"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("retag_file"), Frame::OnCppContextMenu)
-
+	EVT_MENU(XRCID("retag_workspace"), Frame::OnRetagWorkspace)
+	
 	EVT_MENU(XRCID("show_nav_toolbar"), Frame::OnShowNavBar)
 	EVT_UPDATE_UI(XRCID("show_nav_toolbar"), Frame::OnShowNavBarUI)
 
@@ -366,6 +367,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("rebuild_active_project"), Frame::OnBuildProjectUI)
 	EVT_UPDATE_UI(XRCID("refresh_file"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("find_type"), Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("retag_workspace"), Frame::OnWorkspaceOpen)
 	EVT_UPDATE_UI(XRCID("find_symbol"), Frame::OnCompleteWordUpdateUI)
 	EVT_UPDATE_UI(XRCID("goto_definition"), Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(XRCID("goto_previous_definition"), Frame::DispatchUpdateUIEvent)
@@ -3612,5 +3614,12 @@ void Frame::OnShowWhitespace(wxCommandEvent& e)
 
 void Frame::OnIncrementalSearch(wxCommandEvent& event)
 {
+	wxUnusedVar( event );
 	GetMainBook()->ShowQuickBar(true);
+}
+
+void Frame::OnRetagWorkspace(wxCommandEvent& event)
+{
+	wxUnusedVar( event );
+	ManagerST::Get()->RetagWorkspace();
 }

@@ -191,6 +191,10 @@ void wxFormBuilder::OnNewPanel(wxCommandEvent& e)
 {
 	wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
 	dlg.SetTitle(wxT("New wxPanel"));
+	
+	// no need for title in wxPanel
+	dlg.DisableTitleField();
+	
 	if (dlg.ShowModal() == wxID_OK)
 	{
 		wxFBItemInfo info;

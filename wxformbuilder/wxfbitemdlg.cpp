@@ -30,7 +30,14 @@ void wxFBItemDlg::OnGenerate( wxCommandEvent& event )
 
 void wxFBItemDlg::OnGenerateUI( wxUpdateUIEvent& event )
 {
-	event.Enable(!m_textCtrlClassName->IsEmpty() && !m_textCtrlTitle->IsEmpty() && !m_textCtrlVD->IsEmpty());
+	bool titleCondition;
+	if(m_textCtrlTitle->IsEnabled()){
+		titleCondition = !m_textCtrlTitle->IsEmpty();
+	} else {
+		titleCondition = true;
+	}
+	
+	event.Enable(!m_textCtrlClassName->IsEmpty() && titleCondition && !m_textCtrlVD->IsEmpty());
 }
 
 void wxFBItemDlg::OnCancel( wxCommandEvent& event )
@@ -57,4 +64,9 @@ wxFBItemInfo wxFBItemDlg::GetData()
 	info.file = m_textCtrlClassName->GetValue().Lower();
 	
 	return info;
+}
+
+void wxFBItemDlg::DisableTitleField()
+{
+	m_textCtrlTitle->Enable(false);
 }

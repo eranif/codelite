@@ -64,6 +64,7 @@ public:
 	/** Constructor */
 	wxFBItemDlg( wxWindow* parent, IManager *mgr );
 	wxFBItemInfo GetData();
+	void DisableTitleField();
 };
 
 #endif // __wxfbitemdlg__

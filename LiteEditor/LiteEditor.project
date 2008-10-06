@@ -229,6 +229,10 @@
     <File Name="singleinstancethreadjob.h"/>
     <File Name="webupdatethread.cpp"/>
     <File Name="webupdatethread.h"/>
+    <File Name="newversionbasedlg.cpp"/>
+    <File Name="newversionbasedlg.h"/>
+    <File Name="newversiondlg.h"/>
+    <File Name="newversiondlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Controls">
     <File Name="checktreectrl.cpp"/>
@@ -380,6 +384,7 @@
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="quickfindbarbase.fbp"/>
+    <File Name="newversionbasedlg.fbp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "newversiondlg.h"
 #include "quickdebugdlg.h"
 #include "syntaxhighlightdlg.h"
 #include "dirsaver.h"
@@ -3291,7 +3292,10 @@ void Frame::OnNewVersionAvailable(wxCommandEvent& e)
 	WebUpdateJobData *data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
 	if (data) {
 		if (data->IsUpToDate() == false) {
-			if ( wxMessageBox(wxString::Format(wxT("A new version is available!\nCurrent version: rev%d\nNew version: rev%d\nWould you like CodeLite to take you to the download page?"), data->GetCurrentVersion(), data->GetNewVersion()), wxT("CodeLite"), wxYES_NO| wxICON_QUESTION, this) == wxYES ) {
+			NewVersionDlg dlg(this);
+			dlg.SetMessage(wxString::Format(wxT("A new version is available!\nCurrent version: rev%d\nNew version: rev%d\nWould you like CodeLite to take you to the download page?"), data->GetCurrentVersion(), data->GetNewVersion()));
+			dlg.SetReleaseNotesURL(data->GetReleaseNotes());
+			if(dlg.ShowModal() == wxID_OK){
 				wxString url = data->GetUrl();
 				wxLaunchDefaultBrowser(url);
 			}

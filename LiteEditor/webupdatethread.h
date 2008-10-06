@@ -13,15 +13,17 @@ class WebUpdateJobData
 	long m_curVersion;
 	long m_newVersion;
 	bool m_upToDate;
-	
+	wxString m_releaseNotes;
+
 public:
-	WebUpdateJobData(const wxString &url, long curVersion, long newVersion, bool upToDate)
+	WebUpdateJobData(const wxString &url, const wxString &releaseNotes, long curVersion, long newVersion, bool upToDate)
 			: m_url(url.c_str())
-			, m_curVersion(curVersion) 
-			, m_newVersion(newVersion) 
+			, m_curVersion(curVersion)
+			, m_newVersion(newVersion)
 			, m_upToDate(upToDate)
-			{}
-			
+			, m_releaseNotes(releaseNotes)
+	{}
+
 	~WebUpdateJobData() {}
 
 	const wxString& GetUrl() const {
@@ -33,11 +35,17 @@ public:
 	long GetNewVersion() const {
 		return m_newVersion;
 	}
-	
+
 	bool IsUpToDate() const {
 		return m_upToDate;
 	}
-	
+
+	void SetReleaseNotes(const wxString& releaseNotes) {
+		this->m_releaseNotes = releaseNotes;
+	}
+	const wxString& GetReleaseNotes() const {
+		return m_releaseNotes;
+	}
 };
 
 class WebUpdateJob : public Job
@@ -54,5 +62,3 @@ public:
 	virtual void Process(wxThread *thread);
 };
 #endif // __webupdatethread__
-
-

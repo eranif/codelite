@@ -113,11 +113,13 @@ void WebUpdateJob::ParseFile()
 
 		// parse the line
 		wxArrayString tokens = wxStringTokenize(line, wxT("|"));
-		if (tokens.GetCount() > 2) {
+		if (tokens.GetCount() > 3) {
 			// find the entry with our package name
 			if (tokens.Item(0).Trim().Trim(false) == packageName) {
 				wxString url = tokens.Item(2).Trim().Trim(false);
 				wxString rev = tokens.Item(1).Trim().Trim(false);
+				wxString releaseNotesUrl = tokens.Item(3).Trim().Trim(false);
+				
 				long currev;
 				long webrev(0);
 
@@ -131,12 +133,12 @@ void WebUpdateJob::ParseFile()
 				if ( webrev > currev ) {
 					// notify the user that a new version is available
 					wxCommandEvent e(wxEVT_CMD_NEW_VERSION_AVAILABLE);
-					e.SetClientData(new WebUpdateJobData(url.c_str(), currev, webrev, false));
+					e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), currev, webrev, false));
 					wxPostEvent(m_parent, e);
 				} else {
 					// version is up to date, notify the main thread about it
 					wxCommandEvent e(wxEVT_CMD_VERSION_UPTODATE);
-					e.SetClientData(new WebUpdateJobData(url.c_str(), currev, webrev, true));
+					e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), currev, webrev, true));
 					wxPostEvent(m_parent, e);
 				}
 				break;

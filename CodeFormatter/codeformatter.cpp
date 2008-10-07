@@ -248,3 +248,8 @@ void CodeFormatter::UnPlug()
 {
 	//nothing to do
 }
+
+IManager* CodeFormatter::GetManager()
+{
+	return m_mgr;
+}

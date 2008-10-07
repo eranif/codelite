@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "codeformatter.h"
+#include "windowattrmanager.h"
 #include "codeformatterdlg.h"
 
 CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, size_t flags, const wxString &sampleCode )
@@ -30,6 +31,9 @@ CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, size_t 
 		, m_cf(cf)
 		, m_sampleCode(sampleCode)
 {
+	// center the dialog
+	Centre();
+	
 	m_options.SetOption(flags);
 	m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterDlg::OnOK), NULL, this);
 	m_buttonHelp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterDlg::OnHelp), NULL, this);
@@ -38,13 +42,12 @@ CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, size_t 
 	m_textCtrlPreview->SetValue(m_sampleCode);
 	InitDialog();
 
-	// center the dialog
-	Centre();
-
 	GetSizer()->Fit(this);
 	UpdatePreview();
 
 	m_radioBoxPredefinedStyle->SetFocus();
+	
+	WindowAttrManager::Load(this, wxT("CodeFormatterDlgAttr"), m_cf->GetManager()->GetConfigTool());
 }
 
 void CodeFormatterDlg::UpdateCheckBox(wxCheckBox *obj, size_t flag)
@@ -288,4 +291,9 @@ void CodeFormatterDlg::UpdatePredefinedHelpText()
 		m_staticTextPredefineHelp->SetLabel(wxT("ANSI style formatting/indenting.\nBrackets are broken, indentation is 4 spaces.\nNamespaces, classes, and switches are NOT indented."));
 		break;
 	}
+}
+
+CodeFormatterDlg::~CodeFormatterDlg()
+{
+	WindowAttrManager::Save(this, wxT("CodeFormatterDlgAttr"), m_cf->GetManager()->GetConfigTool());
 }

@@ -41,6 +41,7 @@ public:
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnPlug();
 	
+	IManager *GetManager(); 
 	//event handlers
 	void OnFormat(wxCommandEvent &e);
 	void OnFormatOptions(wxCommandEvent &e);

@@ -196,7 +196,7 @@ void FindReplaceDialog::SetFindReplaceData(FindReplaceData &data, bool focus)
 	//set the focus to the find string text control
 	if(focus) {
 		m_findString->SetFocus();
-		m_findString->SetSelection(-1, -1); // select all
+		m_findString->SelectAll();
 	}
 }
 

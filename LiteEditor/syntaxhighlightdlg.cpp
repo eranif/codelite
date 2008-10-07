@@ -1,4 +1,5 @@
 #include "lexer_page.h"
+#include "windowattrmanager.h"
 #include <wx/notebook.h>
 #include "macros.h"
 #include "editor_config.h"
@@ -10,10 +11,11 @@ SyntaxHighlightDlg::SyntaxHighlightDlg( wxWindow* parent )
 :
 SyntaxHighlightBaseDlg( parent )
 {
-	GetSizer()->Insert(0, CreateSyntaxHighlightPage());
+	GetSizer()->Insert(0, CreateSyntaxHighlightPage(), 1, wxALL|wxEXPAND, 5);
 	GetSizer()->Layout();
 	GetSizer()->Fit(this);
 	m_buttonOk->SetFocus();
+	WindowAttrManager::Load(this, wxT("SyntaxHighlightDlgAttr"), NULL);
 }
 
 void SyntaxHighlightDlg::OnButtonOK( wxCommandEvent& event )
@@ -151,3 +153,9 @@ void SyntaxHighlightDlg::SaveChanges()
 		}
 	}
 }
+
+SyntaxHighlightDlg::~SyntaxHighlightDlg()
+{
+	WindowAttrManager::Save(this, wxT("SyntaxHighlightDlgAttr"), NULL);
+}
+

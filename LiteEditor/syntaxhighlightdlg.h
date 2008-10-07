@@ -33,6 +33,8 @@ protected:
 public:
 	/** Constructor */
 	SyntaxHighlightDlg( wxWindow* parent );
+	virtual ~SyntaxHighlightDlg();
+	
 };
 
 #endif // __syntaxhighlightdlg__

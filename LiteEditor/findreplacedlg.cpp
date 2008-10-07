@@ -235,6 +235,8 @@ void FindReplaceDialog::OnClick(wxCommandEvent &event)
 		SendEvent(wxEVT_FRD_CLOSE);
 		// Hide the dialog
 		Hide();
+		// Make sure the Search in Selected Text flag is clear, otherwise we can't Find Next
+		flags &= ~(wxFRD_SELECTIONONLY);
 	} else if (btnClicked == m_matchCase) {
 		if (m_matchCase->IsChecked()) {
 			flags |= wxFRD_MATCHCASE;
@@ -303,6 +305,11 @@ void FindReplaceDialog::OnKeyDown(wxKeyEvent &event)
 		//hide the find/replace dialog
 		if (IsShown()) {
 			Hide();
+		// Make sure the Search in Selected Text flag is clear, otherwise we can't Find Next
+			ResetSelectionOnlyFlag();
+		// For similar reasons, ensure the Find and Replace buttons are enabled
+			m_find->Enable(true);
+			m_replace->Enable(true);
 			event.Skip(false);
 			return;
 		}

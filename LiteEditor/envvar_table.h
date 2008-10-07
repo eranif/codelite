@@ -56,7 +56,12 @@ protected:
 	void OnDeleteVar(wxCommandEvent &event);
 	void OnItemSelected(wxListEvent &event);
 	void OnItemActivated(wxListEvent &event);
-
+	void OnSelectionValid(wxUpdateUIEvent &event);
+	
+	void DoEditItem(long item);
+	void OnButtonOk(wxCommandEvent &e);
+	void OnButtonCancel(wxCommandEvent &e);
+	
 protected:
 	wxListCtrl* m_listVarsTable;
 	wxStaticLine* m_staticline4;
@@ -64,12 +69,12 @@ protected:
 	wxButton* m_buttonCancel;
 	wxButton* m_buttonNew;
 	wxButton* m_editButton;
-	wxString m_selectedVarName;
-	wxString m_selectedVarValue;
+	wxButton* m_buttonOk;
+	long m_selectedItem;
 
 public:
-	EnvVarsTableDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Environment Variables"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 552,330 ), int style = wxDEFAULT_DIALOG_STYLE );
-
+	EnvVarsTableDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Environment Variables"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 552,330 ), int style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+	~EnvVarsTableDlg();
 };
 
 #endif //__envvar_table__

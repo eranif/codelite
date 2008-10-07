@@ -235,6 +235,8 @@ public:
 	bool Replace();
 	bool Replace(const FindReplaceData &data);
 
+	void RecalcHorizontalScrollbar();
+
 	/**
 	 * Add marker to the current line
 	 */

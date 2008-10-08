@@ -47,6 +47,10 @@
 #include "splashscreen.h"
 #include <wx/stdpaths.h>
 
+#if defined(__WXMAC__)||defined(__WXGTK__)
+#include <signal.h> // sigprocmask
+#endif
+
 #ifdef __WXMSW__
 #include <wx/msw/registry.h> //registry keys
 #endif
@@ -136,6 +140,13 @@ App::~App(void)
 
 bool App::OnInit()
 {
+#if defined(__WXGTK__) || defined(__WXMAC__)
+	// install signal handlers
+	sigset_t mask_set;
+	sigfillset( &mask_set );
+	sigprocmask(SIG_SETMASK, &mask_set, NULL);
+#endif
+	
 	wxSocketBase::Initialize();
 	
 #if wxUSE_STACKWALKER

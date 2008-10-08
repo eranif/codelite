@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "debuggergdb.h"
+#include "exelocator.h"
 #include "environmentconfig.h"
 #include "dirkeeper.h"
 #include "dbgcmd.h"
@@ -212,7 +213,15 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 	if (dbgExeName.IsEmpty()) {
 		dbgExeName = wxT("gdb");
 	}
-
+	
+	wxString actualPath;
+	if(ExeLocator::Locate(dbgExeName, actualPath) == false){
+		wxMessageBox(wxString::Format(wxT("Failed to locate gdb! at '%s'"), dbgExeName.c_str()),
+					 wxT("CodeLite"));
+		SetBusy(false);
+		return false;
+	}
+	
 #if defined (__WXGTK__)
 	//On GTK and other platforms, open a new terminal and direct all
 	//debugee process into it
@@ -305,6 +314,15 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 	if (dbgExeName.IsEmpty()) {
 		dbgExeName = wxT("gdb");
 	}
+	
+	wxString actualPath;
+	if(ExeLocator::Locate(dbgExeName, actualPath) == false){
+		wxMessageBox(wxString::Format(wxT("Failed to locate gdb! at '%s'"), dbgExeName.c_str()),
+					 wxT("CodeLite"));
+		SetBusy(false);
+		return false;
+	}
+	
 #if defined (__WXGTK__)
 	//On GTK and other platforms, open a new terminal and direct all
 	//debugee process into it
@@ -680,6 +698,9 @@ void DbgGdb::Poke()
 	static wxRegEx reCommand(wxT("^([0-9]{8})"));
 	//poll the debugger output
 	wxString line;
+	if( !m_proc ) {
+		return;
+	}
 
 	if (m_debuggeePid == wxNOT_FOUND) {
 		if (m_isRemote) {

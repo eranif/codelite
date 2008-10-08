@@ -129,6 +129,8 @@ void ProjectSettingsDlg::InitDialog(const wxString &configName, const wxString &
 		// save old values before replacing them
 		SaveValues(oldConfig);
 	}
+	
+	ClearValues();
 	CopyValues(m_choiceConfigurationType->GetStringSelection());
 	DoUpdatePages(m_checkEnableCustomBuild->IsChecked());
 }
@@ -163,15 +165,15 @@ void ProjectSettingsDlg::ClearValues()
 	m_checkBoxPauseWhenExecEnds->SetValue(true);
 
 	m_listCtrlTargets->DeleteAllItems();
-	long item = AppendListCtrlRow(m_listCtrlTargets);
-	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_BUILD);
-
-	item = AppendListCtrlRow(m_listCtrlTargets);
-	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_CLEAN);
-
-	item = AppendListCtrlRow(m_listCtrlTargets);
-	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_COMPILE_SINGLE_FILE);
-
+//	long item = AppendListCtrlRow(m_listCtrlTargets);
+//	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_BUILD);
+//
+//	item = AppendListCtrlRow(m_listCtrlTargets);
+//	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_CLEAN);
+//
+//	item = AppendListCtrlRow(m_listCtrlTargets);
+//	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_COMPILE_SINGLE_FILE);
+//
 	DisableCustomBuildPage(true);
 }
 
@@ -233,10 +235,8 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 		SetColumnText(m_listCtrlTargets, item, 1, titer->second);
 	}
 
-	if ( m_listCtrlTargets->GetItemCount() > 3 ) {
-		m_listCtrlTargets->SetColumnWidth(0, wxLIST_AUTOSIZE);
-		m_listCtrlTargets->SetColumnWidth(1, wxLIST_AUTOSIZE);
-	}
+	m_listCtrlTargets->SetColumnWidth(0, 150);
+	m_listCtrlTargets->SetColumnWidth(1, 300);
 
 	m_checkEnableCustomBuild->SetValue(buildConf->IsCustomBuild());
 
@@ -800,6 +800,8 @@ void ProjectSettingsDlg::OnDeleteTarget(wxCommandEvent& e)
 	if (m_selecteCustomTaregt != wxNOT_FOUND) {
 		m_listCtrlTargets->DeleteItem(m_selecteCustomTaregt);
 		m_selecteCustomTaregt = wxNOT_FOUND;
+		
+		m_buttonApply->Enable(true);
 	}
 }
 
@@ -820,6 +822,7 @@ void ProjectSettingsDlg::OnNewTarget(wxCommandEvent& e)
 	dlg.SetStaticText1(wxT("Target Name:"));
 	dlg.SetStaticText2(wxT("Command:"));
 	if (dlg.ShowModal() == wxID_OK) {
+		m_buttonApply->Enable(true);
 		if(GetTargetCommand(dlg.GetName()).IsEmpty() == false){
 			wxMessageBox(wxString::Format(wxT("Target '%s' already exist!"), dlg.GetName().c_str()), wxT("CodeLite"), wxICON_WARNING|wxCENTER|wxOK, this);
 			return;
@@ -874,6 +877,7 @@ void ProjectSettingsDlg::DoEditItem(long item)
 		
 		if (dlg.ShowModal() == wxID_OK) {
 			DoUpdateItem(item, dlg.GetName(), dlg.GetValue());
+			m_buttonApply->Enable(true);
 		}
 	}
 }
@@ -883,10 +887,8 @@ void ProjectSettingsDlg::DoUpdateItem(long item, const wxString& target, const w
 	SetColumnText(m_listCtrlTargets, item, 0, target);
 	SetColumnText(m_listCtrlTargets, item, 1, cmd);
 
-	if (m_listCtrlTargets->GetItemCount()) {
-		m_listCtrlTargets->SetColumnWidth(0, wxLIST_AUTOSIZE);
-		m_listCtrlTargets->SetColumnWidth(1, wxLIST_AUTOSIZE);
-	}
+	m_listCtrlTargets->SetColumnWidth(0, 150);
+	m_listCtrlTargets->SetColumnWidth(1, 300);
 }
 
 wxString ProjectSettingsDlg::GetTargetCommand(const wxString& target)

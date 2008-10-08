@@ -114,6 +114,7 @@ class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject
 	wxString m_dbgHostName;
 	wxString m_dbgHostPort;
 	std::map<wxString, wxString> m_customTargets;
+	wxString m_debuggerPath;
 
 private:
 	void FillFromSmiColonString(wxArrayString &arr, const wxString &str);
@@ -369,6 +370,12 @@ public:
 	}
 	const std::map<wxString, wxString>& GetCustomTargets() const {
 		return m_customTargets;
+	}
+	void SetDebuggerPath(const wxString& debuggerPath) {
+		this->m_debuggerPath = debuggerPath;
+	}
+	const wxString& GetDebuggerPath() const {
+		return m_debuggerPath;
 	}
 };
 

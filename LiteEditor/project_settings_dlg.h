@@ -98,6 +98,7 @@ protected:
 	virtual void OnItemSelected(wxListEvent &e);
 	virtual void OnDeleteTargetUI(wxUpdateUIEvent &e);
 	virtual void OnEditTargetUI(wxUpdateUIEvent &e);
+	virtual void OnSelectDebuggerPath(wxCommandEvent &e);
 	
 	void DoEditItem(long item);
 	void DoUpdateItem(long item, const wxString& target, const wxString& cmd);

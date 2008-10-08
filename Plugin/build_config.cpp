@@ -79,6 +79,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 			m_isDbgRemoteTarget = XmlUtils::ReadBool(debugger, wxT("IsRemote"));
 			m_dbgHostName = XmlUtils::ReadString(debugger, wxT("RemoteHostName"));
 			m_dbgHostPort = XmlUtils::ReadString(debugger, wxT("RemoteHostPort"));
+			m_debuggerPath = XmlUtils::ReadString(debugger, wxT("DebuggerPath"));
 			m_debuggerStartupCmds = debugger->GetNodeContent();
 		}
 
@@ -293,6 +294,7 @@ wxXmlNode *BuildConfig::ToXml() const
 	debugger->AddProperty(wxT("IsRemote"), BoolToString(m_isDbgRemoteTarget));
 	debugger->AddProperty(wxT("RemoteHostName"), m_dbgHostName);
 	debugger->AddProperty(wxT("RemoteHostPort"), m_dbgHostPort);
+	debugger->AddProperty(wxT("DebuggerPath"), m_debuggerPath);
 	
 	XmlUtils::SetNodeContent(debugger, m_debuggerStartupCmds);
 	node->AddChild(debugger);

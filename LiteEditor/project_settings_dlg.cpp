@@ -165,15 +165,7 @@ void ProjectSettingsDlg::ClearValues()
 	m_checkBoxPauseWhenExecEnds->SetValue(true);
 
 	m_listCtrlTargets->DeleteAllItems();
-//	long item = AppendListCtrlRow(m_listCtrlTargets);
-//	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_BUILD);
-//
-//	item = AppendListCtrlRow(m_listCtrlTargets);
-//	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_CLEAN);
-//
-//	item = AppendListCtrlRow(m_listCtrlTargets);
-//	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_COMPILE_SINGLE_FILE);
-//
+	m_textCtrlDebuggerPath->Clear();
 	DisableCustomBuildPage(true);
 }
 
@@ -252,7 +244,9 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	m_checkBoxDbgRemote->SetValue(buildConf->GetIsDbgRemoteTarget());
 	m_textCtrl1DbgHost->SetValue(buildConf->GetDbgHostName());
 	m_textCtrlDbgPort->SetValue(buildConf->GetDbgHostPort());
-
+	
+	m_textCtrlDebuggerPath->SetValue(buildConf->GetDebuggerPath());
+	
 	//set the custom pre-prebuild step
 	wxString customPreBuild = buildConf->GetPreBuildCustom();
 
@@ -382,7 +376,8 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetIsDbgRemoteTarget(m_checkBoxDbgRemote->IsChecked());
 	buildConf->SetDbgHostName(m_textCtrl1DbgHost->GetValue());
 	buildConf->SetDbgHostPort(m_textCtrlDbgPort->GetValue());
-
+	buildConf->SetDebuggerPath(m_textCtrlDebuggerPath->GetValue());
+	
 	//set the pre-build step
 	wxString rules = m_textPreBuildRule->GetValue();
 	wxString deps = m_textDeps->GetValue();
@@ -973,3 +968,15 @@ void ProjectSettingsDlg::OnBrowseIntermediateDir(wxCommandEvent& e)
 		m_textCtrlItermediateDir->SetValue(new_path);
 	}
 }
+
+void ProjectSettingsDlg::OnSelectDebuggerPath(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	wxString path(m_textCtrlDebuggerPath->GetValue());
+	if(wxFileName::FileExists(path)){
+		m_textCtrlDebuggerPath->SetValue(wxFileSelector(wxT("Select file:"), path.c_str()));
+	}else{
+		m_textCtrlDebuggerPath->SetValue(wxFileSelector(wxT("Select file:")));
+	}
+}
+

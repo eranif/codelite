@@ -100,11 +100,16 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxButton* m_buttonLibraryPath;
 		wxButton* m_buttonLinkerOptions;
 		wxPanel* m_panelDebugger;
+		wxStaticText* m_staticText321;
+		wxTextCtrl* m_textCtrlDebuggerPath;
+		wxButton* m_buttonSelectDebugger;
+		wxStaticLine* m_staticline121;
 		wxCheckBox* m_checkBoxDbgRemote;
 		wxStaticText* m_staticText31;
 		wxTextCtrl* m_textCtrl1DbgHost;
 		wxStaticText* m_staticText32;
 		wxTextCtrl* m_textCtrlDbgPort;
+		wxStaticLine* m_staticline131;
 		wxStaticText* m_staticText301;
 		wxTextCtrl* m_textCtrlDbgCmds;
 		wxPanel* m_resourceCmpPage;
@@ -166,6 +171,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 		virtual void OnCmdEvtVModified( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnBrowseIntermediateDir( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnBrowseCommandWD( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnSelectDebuggerPath( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnDebuggingRemoteTarget( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnBrowseCustomBuildWD( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }
@@ -180,7 +186,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 		
 	
 	public:
-		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 734,502 ), long style = wxDEFAULT_DIALOG_STYLE );
+		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 734,502 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~ProjectSettingsBaseDlg();
 	
 };

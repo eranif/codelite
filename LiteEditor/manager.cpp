@@ -1889,6 +1889,15 @@ void Manager::DbgStart(long pid)
 	//set the debugger information
 	DebuggerInformation dinfo;
 	DebuggerMgr::Get().GetDebuggerInformation(debuggerName, dinfo);
+	
+	// if user override the debugger path, apply it
+	if(bldConf){
+		wxString userDebuggr = bldConf->GetDebuggerPath();
+		userDebuggr.Trim().Trim(false);
+		if(userDebuggr.IsEmpty() == false){
+			dinfo.path = userDebuggr;
+		}
+	}
 	dbgr->SetDebuggerInformation(dinfo);
 
 	if (pid == wxNOT_FOUND) {
@@ -1906,8 +1915,17 @@ void Manager::DbgStart(long pid)
 	//get the debugger path to execute
 	DebuggerInformation dbginfo;
 	DebuggerMgr::Get().GetDebuggerInformation(debuggerName, dbginfo);
+	
+	// if user override the debugger path, apply it
+	if(bldConf){
+		wxString userDebuggr = bldConf->GetDebuggerPath();
+		userDebuggr.Trim().Trim(false);
+		if(userDebuggr.IsEmpty() == false){
+			dbginfo.path = userDebuggr;
+		}
+	}
+	
 	wxString dbgname = dbginfo.path;
-
 	dbgname = EnvironmentConfig::Instance()->ExpandVariables(dbgname);
 
 	//set focus to the output debug pane

@@ -107,6 +107,12 @@ public:
 	 */
 	void SwapTabs(CustomTab *tab);
 
+	/**
+	 * \brief get tab being dragged, if any
+	 * \return tab being dragged
+	 */
+	const CustomTab* GetDraggedTab() const { return m_draggedTab; }
+
 	//Setters
 	void SetOrientation(const int& orientation) ;
 	const int& GetOrientation() const {return m_orientation;}

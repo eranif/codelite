@@ -182,6 +182,48 @@ void CustomTab::OnMouseEnterWindow(wxMouseEvent &e)
 	e.Skip();
 }
 
+#if defined (__WXGTK__)
+bool CustomTab::AvoidRepeatSwaps(wxWindow* win, const wxPoint& pt) const
+{
+	// In the wxGTK version of tab DnD doesn't (can't) use wxEVT_ENTER_WINDOW
+	// If you swap a short tab with a long one, the pointer ends up inside the old window.
+	// This results in a swap-back-and-forth as the mouse moves further along
+	// So veto swapping with the last-swapped tab, unless mouse direction has reversed
+
+	static wxWindow* lastwin = NULL;
+	// Holds the x or y position of the last mouse-movement event
+	static int lastposition = 0;
+	// Were we going left/up or right/down last time we swapped
+	static bool lastdirection;
+
+	// The bools flag whether current movement is (up or) to the right, or (down) left; & has this reversed
+	bool UpOrRight, SameDirection;
+
+	wxTabContainer* parent = (wxTabContainer*)GetParent();
+	if (parent->GetOrientation() == wxLEFT || parent->GetOrientation() == wxRIGHT) {
+		UpOrRight = pt.y > lastposition;
+		lastposition = pt.y; } else {
+		UpOrRight = pt.x > lastposition;
+		lastposition = pt.x;
+	}
+
+	SameDirection = (lastdirection==UpOrRight);
+	lastdirection = UpOrRight;
+
+	// See if we're still over the last-swapped tab
+	if (win != lastwin) {
+		// This is a different tab, so we must be about to swap it.
+		// Permit this, and store win and direction
+		lastwin = win;
+		lastdirection = UpOrRight;
+		return true; } else {
+		// Same window. If we're still travelling in the original direction, don't swap back!
+		return !SameDirection;
+  }
+}
+#endif //defined (__WXGTK__)
+
+
 void CustomTab::OnMouseMove(wxMouseEvent &e)
 {
 	//mark this tab as the dragged one, only if the left down action
@@ -198,6 +240,21 @@ void CustomTab::OnMouseMove(wxMouseEvent &e)
 
 void CustomTab::OnLeftUp(wxMouseEvent &e)
 {
+#if defined (__WXGTK__)
+	// wxGTK doesn't recognise changes of event-window while dragging, so tab DnD fails
+	// Work around this using wxFindWindowAtPointer
+	if (m_leftDown && !(m_style & wxVB_NODND)) {
+		wxTabContainer* parent = (wxTabContainer*)GetParent();
+		wxPoint pt; wxWindow* win = wxFindWindowAtPointer(pt);
+		if (win != parent->GetDraggedTab()) {
+			CustomTab* tab = static_cast<CustomTab *>(win);
+			if (tab && AvoidRepeatSwaps(tab, pt)) {
+				parent->SwapTabs(tab);
+			}
+		}
+	}
+#endif //defined (__WXGTK__)
+
 	wxUnusedVar(e);
 	m_leftDown = false;
 	wxTabContainer *parent = (wxTabContainer*)GetParent();

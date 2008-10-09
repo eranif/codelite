@@ -86,6 +86,10 @@ public:
 	void SetHeightPadding(const int& heightPadding) {this->m_heightPadding = heightPadding;}
 	const int& GetHeightPadding() const {return m_heightPadding;}
 	
+#if defined (__WXGTK__)
+	bool AvoidRepeatSwaps(wxWindow* win, const wxPoint& pt) const;
+#endif //defined (__WXGTK__)
+
 	//Setters
 	void SetXPadding(const int& x_padding) {this->m_x_padding = x_padding;}
 	const int& GetXPadding() const {return m_x_padding;}

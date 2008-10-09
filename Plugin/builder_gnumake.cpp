@@ -141,6 +141,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 	if (!isProjectOnly) {
 		for (size_t i=0; i<depsArr.GetCount(); i++) {
+			bool isCustom(false);
 			ProjectPtr dependProj = WorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
 			if (!dependProj) {
 				continue;
@@ -148,11 +149,14 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 			wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, dependProj->GetName());
 			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
-
+			if(dependProjbldConf && dependProjbldConf->IsCustomBuild()){
+				isCustom = true;
+			}
+			
 			// incase caller provided with configuration to build, force generation of the makefile
 			// if the dependency project is not custom, we generate the makefile for it
 			// ourself
-			if( !dependProjbldConf->IsCustomBuild() ){
+			if( !isCustom ){
 				GenerateMakefile(dependProj, projectSelConf, confToBuild.IsEmpty() ? force : true);
 			}
 			
@@ -169,7 +173,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 			fn.MakeRelativeTo(wspfile.GetPath());
 			
 			// if we are using custom build command, invoke it instead of calling the generated makefile
-			if( !dependProjbldConf->IsCustomBuild() ){
+			if( !isCustom ){
 				text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\"\n");
 			} else {
 				text << wxT("\t") << GetCdCmd(wspfile, fn) << dependProjbldConf->GetCustomBuildCmd() << wxT("\n");
@@ -203,6 +207,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 	text << wxT("clean:\n");
 	if (!isProjectOnly) {
 		for (size_t i=0; i<depsArr.GetCount(); i++) {
+			bool isCustom(false);
 			wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, depsArr.Item(i));
 			
 			ProjectPtr dependProj = WorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
@@ -219,10 +224,13 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 			//if the dependencie project is project of type 'Custom Build' - do the custom build instead
 			//of the geenrated makefile
-			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), confToBuild);
+			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
+			if(dependProjbldConf && dependProjbldConf->IsCustomBuild()){
+				isCustom = true;
+			}
 			
 			// if we are using custom build command, invoke it instead of calling the generated makefile
-			if( !dependProjbldConf->IsCustomBuild() ){
+			if( !isCustom ){
 				text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\"  clean\n");
 			} else {
 				text << wxT("\t") << GetCdCmd(wspfile, fn) << dependProjbldConf->GetCustomCleanCmd() << wxT("\n");

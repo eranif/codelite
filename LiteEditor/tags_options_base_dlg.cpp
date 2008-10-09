@@ -116,7 +116,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	
 	sbSizer4->Add( fgSizer3, 0, wxEXPAND|wxRIGHT|wxLEFT, 15 );
 	
-	bSizer4->Add( sbSizer4, 1, wxEXPAND|wxALL, 5 );
+	bSizer4->Add( sbSizer4, 0, wxEXPAND|wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer21;
 	sbSizer21 = new wxStaticBoxSizer( new wxStaticBox( m_generalPage, wxID_ANY, wxT("External Symbols Database:") ), wxVERTICAL );
@@ -158,7 +158,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	bSizer5->Add( m_textPrep, 1, wxEXPAND|wxTOP|wxBOTTOM|wxLEFT, 5 );
 	
 	m_buttonAdd = new wxButton( m_ctagsPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer5->Add( m_buttonAdd, 0, wxALL, 5 );
+	bSizer5->Add( m_buttonAdd, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 	
 	fgSizer2->Add( bSizer5, 1, wxEXPAND|wxALL, 5 );
 	
@@ -189,7 +189,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	bSizer6->Fit( m_ctagsPage );
 	m_mainBook->AddPage( m_ctagsPage, wxT("Advanced"), false );
 	
-	mainSizer->Add( m_mainBook, 0, wxEXPAND | wxALL, 5 );
+	mainSizer->Add( m_mainBook, 1, wxEXPAND | wxALL, 5 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	mainSizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );

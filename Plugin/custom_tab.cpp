@@ -226,20 +226,7 @@ bool CustomTab::AvoidRepeatSwaps(wxWindow* win, const wxPoint& pt) const
 
 void CustomTab::OnMouseMove(wxMouseEvent &e)
 {
-	//mark this tab as the dragged one, only if the left down action
-	//was taken place on this tab!
-	if (e.LeftIsDown() && m_leftDown) {
-		//left is down, check to see if the tab is being dragged
-		wxTabContainer *parent = (wxTabContainer*)GetParent();
-		if (parent) {
-			parent->SetDraggedTab(this);
-		}
-	}
-	e.Skip();
-}
-
-void CustomTab::OnLeftUp(wxMouseEvent &e)
-{
+	
 #if defined (__WXGTK__)
 	// wxGTK doesn't recognise changes of event-window while dragging, so tab DnD fails
 	// Work around this using wxFindWindowAtPointer
@@ -255,6 +242,20 @@ void CustomTab::OnLeftUp(wxMouseEvent &e)
 	}
 #endif //defined (__WXGTK__)
 
+	//mark this tab as the dragged one, only if the left down action
+	//was taken place on this tab!
+	if (e.LeftIsDown() && m_leftDown) {
+		//left is down, check to see if the tab is being dragged
+		wxTabContainer *parent = (wxTabContainer*)GetParent();
+		if (parent) {
+			parent->SetDraggedTab(this);
+		}
+	}
+	e.Skip();
+}
+
+void CustomTab::OnLeftUp(wxMouseEvent &e)
+{
 	wxUnusedVar(e);
 	m_leftDown = false;
 	wxTabContainer *parent = (wxTabContainer*)GetParent();

@@ -150,7 +150,11 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
 
 			// incase caller provided with configuration to build, force generation of the makefile
-			GenerateMakefile(dependProj, projectSelConf, confToBuild.IsEmpty() ? force : true);
+			// if the dependency project is not custom, we generate the makefile for it
+			// ourself
+			if( !dependProjbldConf->IsCustomBuild() ){
+				GenerateMakefile(dependProj, projectSelConf, confToBuild.IsEmpty() ? force : true);
+			}
 			
 			// incase we manually specified the configuration to be built, set the project
 			// as modified, so on next attempt to build it, CodeLite will sync the configuration
@@ -163,8 +167,13 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 			//make the paths relative
 			wxFileName fn(dependProj->GetFileName());
 			fn.MakeRelativeTo(wspfile.GetPath());
-
-			text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\" \n");
+			
+			// if we are using custom build command, invoke it instead of calling the generated makefile
+			if( !dependProjbldConf->IsCustomBuild() ){
+				text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\"\n");
+			} else {
+				text << wxT("\t") << GetCdCmd(wspfile, fn) << dependProjbldConf->GetCustomBuildCmd() << wxT("\n");
+			}
 		}
 	}
 
@@ -211,7 +220,13 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 			//if the dependencie project is project of type 'Custom Build' - do the custom build instead
 			//of the geenrated makefile
 			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), confToBuild);
-			text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\"  clean\n") ;
+			
+			// if we are using custom build command, invoke it instead of calling the generated makefile
+			if( !dependProjbldConf->IsCustomBuild() ){
+				text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\"  clean\n");
+			} else {
+				text << wxT("\t") << GetCdCmd(wspfile, fn) << dependProjbldConf->GetCustomCleanCmd() << wxT("\n");
+			}
 		}
 	}
 

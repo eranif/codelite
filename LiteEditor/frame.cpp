@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "imanager.h"
 #include "newversiondlg.h"
 #include "quickdebugdlg.h"
 #include "syntaxhighlightdlg.h"
@@ -1984,7 +1985,14 @@ void Frame::OnBuildCustomTarget(wxCommandEvent& event)
 	if (enable) {
 		
 		wxString projectName, targetName;
-		projectName = ManagerST::Get()->GetActiveProjectName();
+		// get the project name
+		TreeItemInfo item = GetWorkspacePane()->GetFileViewTree()->GetSelectedItemInfo();
+		if(item.m_itemType != ProjectItem::TypeProject){
+			return;
+		}
+		
+		// set teh project name
+		projectName = item.m_text;
 		
 		// get the selected configuration to be built
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);

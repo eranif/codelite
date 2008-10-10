@@ -106,6 +106,7 @@ static wxRegEx reInfoProgram1(wxT("\\(LWP[ \t]([0-9]+)\\)"));
 static wxRegEx reInfoProgram2(wxT("child process ([0-9]+)"));
 //Using the running image of child thread 4124.0x117c
 static wxRegEx reInfoProgram3(wxT("Using the running image of child thread ([0-9]+)"));
+static wxRegEx reConnectionRefused(wxT("[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: No connection could be made because the target machine actively refused it."));
 
 DebuggerInfo GetDebuggerInfo()
 {
@@ -696,6 +697,7 @@ bool DbgGdb::FilterMessage(const wxString &msg)
 void DbgGdb::Poke()
 {
 	static wxRegEx reCommand(wxT("^([0-9]{8})"));
+	
 	//poll the debugger output
 	wxString line;
 	if( !m_proc ) {
@@ -745,7 +747,14 @@ void DbgGdb::Poke()
 				m_observer->UpdateAddLine(strdebug);
 			}
 		}
-
+	
+		if(reConnectionRefused.Matches(line)){
+			StipString(line);
+			m_observer->UpdateAddLine(line);
+			m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
+			return;
+		}
+		
 		line.Replace(wxT("(gdb)"), wxEmptyString);
 		if (line.IsEmpty()) {
 			break;

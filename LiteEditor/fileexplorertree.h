@@ -33,10 +33,15 @@ class wxMenu;
 class FileExplorerTree : public wxVirtualDirTreeCtrl
 {
 	wxMenu *m_rclickMenu;
+	bool m_itemsAdded;	// flags new items when node expanded, so we can call DoTagsUpdated()
+    
 private:
 	void DoOpenItem(const wxTreeItemId& item);
 	void DoOpenItemInTextEditor(const wxTreeItemId& item);
 	void DoItemActivated(const wxTreeItemId &item);
+    
+	void OnTagsUpdated(wxCommandEvent &e);
+	void DoTagsUpdated(const std::vector<wxFileName>& files, bool bold);
 	
 public:
 	FileExplorerTree(wxWindow *parent, wxWindowID id = wxID_ANY);
@@ -55,6 +60,8 @@ protected:
 	virtual void OnKeyDown( wxTreeEvent &event );
 	virtual void OnOpenShell(wxCommandEvent &event);
 	virtual void OnOpenWidthDefaultApp(wxCommandEvent &e);
+	virtual void OnExpanded(wxTreeEvent &event);
+	virtual void OnAddedItems(const wxTreeItemId &parent);
 };
 
 #endif //FILEEXPLORERTREE_H

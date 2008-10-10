@@ -263,7 +263,7 @@ private:
 	/** Built in swap algoritm */
 	void SwapItem(VdtcTreeItemBaseArray &items, int a, int b);
 
-	wxTreeItemId DoFindItemByPath(const wxFileName &path);
+	wxTreeItemId DoFindItemByPath(const wxFileName &path, bool scandirs = true);
 	
 	// -- event handlers --
 
@@ -381,9 +381,11 @@ public:
 	/**
 	 * \brief find item which holds fullpath
 	 * \param fullpath fullpath to search
+	 * \param scandirs whether to search the actual file system (true) 
+	 *                 or just search the already-loaded tree (false)
 	 * \return tree item or invalid incase no match found
 	 */
-	wxTreeItemId GetItemByFullPath(const wxFileName &fullpath);
+	wxTreeItemId GetItemByFullPath(const wxFileName &fullpath, bool scandirs = true);
 	
 	// --- handlers ---
 

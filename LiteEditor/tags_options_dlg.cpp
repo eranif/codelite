@@ -79,6 +79,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkColourProjTags->SetValue(m_data.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
 	m_checkCppKeywordAssist->SetValue(m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
 	m_checkDisableParseOnSave->SetValue(m_data.GetFlags() & CC_DISABLE_AUTO_PARSING ? true : false);
+	m_checkBoxMarkTagsFilesInBold->SetValue(m_data.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
 	
 	m_checkBoxClass->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_CLASS);
 	m_checkBoxEnum->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_ENUM);
@@ -89,6 +90,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkBoxStruct->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_STRUCT);
 	m_checkBoxTypedef->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_TYPEDEF);
 	m_checkBoxUnion->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_UNION);
+	
 	
 	//initialize the ctags page
 	wxString prep;
@@ -137,6 +139,7 @@ void TagsOptionsDlg::CopyData()
 	SetFlag(CC_CACHE_WORKSPACE_TAGS, false);
 	SetFlag(CC_DISABLE_AUTO_PARSING, m_checkDisableParseOnSave->IsChecked());
 	SetFlag(CC_COLOUR_WORKSPACE_TAGS, m_checkColourProjTags->IsChecked());
+	SetFlag(CC_MARK_TAGS_FILES_IN_BOLD, m_checkBoxMarkTagsFilesInBold->IsChecked());
 	
 	SetColouringFlag(CC_COLOUR_CLASS, m_checkBoxClass->IsChecked());
 	SetColouringFlag(CC_COLOUR_ENUM, m_checkBoxEnum->IsChecked());

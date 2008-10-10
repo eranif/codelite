@@ -1675,10 +1675,15 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 	bool colTags(false);
 	bool newColVars(false);
 	bool newColTags(false);
+	bool markFilesAsBold(false);
+	bool newMarkFilesAsBold(false);
+	
 	size_t colourTypes(0);
 	
 	colVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
 	colTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
+	markFilesAsBold = (m_tagsOptionsData.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
+	
 	colourTypes = m_tagsOptionsData.GetCcColourFlags();
 	
 	TagsOptionsDlg dlg(this, m_tagsOptionsData);
@@ -1688,7 +1693,8 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 
 		newColVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
 		newColTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
-
+		newMarkFilesAsBold = (m_tagsOptionsData.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
+		
 		tagsMgr->SetCtagsOptions(m_tagsOptionsData);
 		EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
@@ -1701,7 +1707,13 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 				}
 			}
 		}
-
+		
+		// do we need to update the file tree to mark tags files
+		// as bold?
+		if(markFilesAsBold != newMarkFilesAsBold) {
+			TagsManagerST::Get()->NotifyFileTree(newMarkFilesAsBold);
+		}
+		
 		// reset cache if needed
 		if (!(m_tagsOptionsData.GetFlags() & CC_CACHE_WORKSPACE_TAGS)) {
 			tagsMgr->GetWorkspaceTagsCache()->Clear();

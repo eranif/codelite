@@ -41,6 +41,7 @@ class TagsOptionsBaseDlg : public wxDialog
 	protected:
 		wxNotebook* m_mainBook;
 		wxPanel* m_generalPage;
+		wxCheckBox* m_checkBoxMarkTagsFilesInBold;
 		wxCheckBox* m_checkDisableParseOnSave;
 		wxCheckBox* m_checkParseComments;
 		wxCheckBox* m_checkDisplayComments;

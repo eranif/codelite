@@ -25,6 +25,7 @@
 #include "fileexplorertree.h"
 #include "dirsaver.h"
 #include "manager.h"
+#include "ctags_manager.h"
 #include "wx/xrc/xmlres.h"
 #include "pluginmanager.h"
 #include "globals.h"
@@ -35,11 +36,13 @@
 BEGIN_EVENT_TABLE(FileExplorerTree, wxVirtualDirTreeCtrl)
 	EVT_TREE_ITEM_MENU(wxID_ANY, FileExplorerTree::OnContextMenu)
 	EVT_TREE_ITEM_ACTIVATED(wxID_ANY, FileExplorerTree::OnItemActivated)
+	EVT_TREE_ITEM_EXPANDED(wxID_ANY, FileExplorerTree::OnExpanded)
 END_EVENT_TABLE()
 
 FileExplorerTree::FileExplorerTree(wxWindow *parent, wxWindowID id)
 		: wxVirtualDirTreeCtrl(parent, id)
 		, m_rclickMenu(NULL)
+		, m_itemsAdded(false)
 {
 	m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("file_explorer_menu"));
 	Connect(XRCID("open_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenFile), NULL, this);
@@ -50,6 +53,9 @@ FileExplorerTree::FileExplorerTree(wxWindow *parent, wxWindowID id)
 	Connect(XRCID("open_with_default_application"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenWidthDefaultApp), NULL, this);
 	Connect(GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler( FileExplorerTree::OnMouseDblClick ) );
 	Connect(GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(FileExplorerTree::OnKeyDown));
+	
+	TagsManagerST::Get()->Connect(wxEVT_UPDATE_FILETREE_EVENT, wxCommandEventHandler(FileExplorerTree::OnTagsUpdated), NULL, this);
+    Connect(GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(FileExplorerTree::OnKeyDown));
 }
 
 FileExplorerTree::~FileExplorerTree()
@@ -217,13 +223,22 @@ void FileExplorerTree::OnRefreshNode(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	wxTreeItemId item = GetSelection();
+	wxFileName   path = GetFullPath(item); // save here because item gets clobbered by DoReloadNode()
+    
 	Freeze();
+    
+	m_itemsAdded = false;
 	DoReloadNode(item);
+	if (m_itemsAdded) { // check if new items need to be bolded
+		if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD) {
+			std::vector<wxFileName> files;
+			TagsManagerST::Get()->GetFiles(GetFullPath(item).GetFullPath(), files);
+			DoTagsUpdated(files, true);
+		}
+		m_itemsAdded = false;
+	}
+    
 	Thaw();
-
-	/*	wxCommandEvent e(wxEVT_FILE_EXP_REFRESHED, GetId());
-		e.SetEventObject(this);
-		GetEventHandler()->ProcessEvent(e);*/
 }
 
 void FileExplorerTree::OnOpenShell(wxCommandEvent &event)
@@ -267,4 +282,85 @@ void FileExplorerTree::OnOpenWidthDefaultApp(wxCommandEvent& e)
 			DoOpenItem( item );
 		}
 	}
+}
+
+void FileExplorerTree::OnExpanded(wxTreeEvent &event)
+{
+    wxTreeItemId item = event.GetItem();
+    if (item.IsOk() && m_itemsAdded) { // check if new items need to be bolded
+		if( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ){
+			std::vector<wxFileName> files;
+			TagsManagerST::Get()->GetFiles(GetFullPath(item).GetFullPath(), files);
+			DoTagsUpdated(files, true);
+		}
+        m_itemsAdded = false;
+    }
+}
+
+void FileExplorerTree::OnAddedItems(const wxTreeItemId &parent)
+{
+    m_itemsAdded = true;
+}
+
+void FileExplorerTree::OnTagsUpdated(wxCommandEvent &e)
+{
+	std::vector<wxFileName> *files = (std::vector<wxFileName>*)e.GetClientData();
+	if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD){
+		DoTagsUpdated(*files, e.GetInt() ? true : false);
+	}
+}
+
+// Mark files (and their directories) bold in file explorer
+// Intended to highlight files that contribute tags.
+void FileExplorerTree::DoTagsUpdated(const std::vector<wxFileName>& files, bool bold)
+{
+    // we use this map as a queue of nodes to check, where nodes are guaranteed to be sorted
+    // by full pathname, and no duplicates will occur
+    std::map<wxString, std::pair<wxTreeItemId, bool> > nodes;
+	
+	// insert the list of files in the map
+    for (unsigned i = 0; i < files.size(); i++) {
+        wxTreeItemId id = GetItemByFullPath(files[i], false);
+        if (id.IsOk())
+            // note: use GetFullPath(id) to get the path, rather than files[i], in case 
+            // the returned node is an ancestor dir of the file (this happens when the file 
+            // explorer tree is not fully expanded, which is most of the time).
+            nodes[GetFullPath(id).GetFullPath()] = std::make_pair(id, bold);
+    }
+    if (nodes.empty())
+        return;
+        
+    Freeze();
+    // now we process the queue.  first, note we traverse the map in reverse.  this way we 
+    // always process all children of a node before we process the node itself.  the 'bold'
+    // flag of a given directory is just the logical-or of all the bold flags of its children
+    // but we want to compute this lazily.
+    for (std::map<wxString, std::pair<wxTreeItemId, bool> >::reverse_iterator n = nodes.rbegin();
+             n != nodes.rend(); n++) {
+        wxTreeItemId id = n->second.first;
+        bold = n->second.second;
+        if (!bold && IsDirNode(id)) {
+            // need to make sure no other child of directory is still bold before we can clear it
+            wxTreeItemIdValue cookie = 0;
+            for (wxTreeItemId ch = GetFirstChild(id, cookie); ch.IsOk(); ch = GetNextChild(id, cookie))
+                if (IsBold(ch)) {
+                    bold = true;
+                    break;
+                }
+        }
+        if (IsBold(id) == bold) {
+            // this node's bold flag is still the same, so we can short-circuit the upward propagation
+            // from this node.
+            continue;
+        }
+        // update the node's flag, and propagate upwards.
+        SetItemBold(id, bold);
+        id = GetItemParent(id);
+        if (id.IsOk()) {
+            wxString path = GetFullPath(id).GetFullPath();
+            // here's the logical-or part, at least for the paths that we are explicitly processing:
+            nodes.insert(std::make_pair(path, std::make_pair(id, false))).first->second.second |= bold;
+        }
+    }
+    Thaw();	
 }

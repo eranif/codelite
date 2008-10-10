@@ -589,6 +589,9 @@ void TagsDatabase::GetFiles(const wxString &partialName, std::vector<wxFileName>
 {
 	try
 	{
+		bool match_path = (!partialName.IsEmpty() && 
+				    partialName.Last() == wxFileName::GetPathSeparator());
+        
 		wxString query;
 		wxString tmpName(partialName);
 		tmpName.Replace(wxT("_"), wxT("^_"));
@@ -598,7 +601,8 @@ void TagsDatabase::GetFiles(const wxString &partialName, std::vector<wxFileName>
 		wxSQLite3ResultSet res = m_db->ExecuteQuery(query);
 		while(res.NextRow()){
 			wxFileName fileName(res.GetString(0));
-			if(fileName.GetFullName().StartsWith(partialName)){
+			wxString match = match_path ? fileName.GetFullPath() : fileName.GetFullName();
+			if(match.StartsWith(partialName)) {
 				files.push_back(fileName);
 			}
 		}

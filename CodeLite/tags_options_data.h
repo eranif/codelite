@@ -29,16 +29,6 @@
 #include "wx/filename.h"
 #include <map>
 
-#ifndef WXDLLIMPEXP_CL
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_CL
-#endif // WXMAKINGDLL_CODELITE
-#endif // WXDLLIMPEXP_CL
-
 enum CodeCompletionOpts {
 	CC_PARSE_COMMENTS			= 0x00000001,
 	CC_DISP_COMMENTS			= 0x00000002,
@@ -52,6 +42,7 @@ enum CodeCompletionOpts {
 	CC_CPP_KEYWORD_ASISST		= 0x00000200,
 	CC_CACHE_WORKSPACE_TAGS		= 0x00000400,
 	CC_DISABLE_AUTO_PARSING		= 0x00000800,
+	CC_MARK_TAGS_FILES_IN_BOLD	= 0x00001000
 };
 
 enum CodeCompletionColourOpts {
@@ -68,7 +59,7 @@ enum CodeCompletionColourOpts {
 									CC_COLOUR_ENUM | CC_COLOUR_PROTOTYPE
 };
 
-class WXDLLIMPEXP_CL TagsOptionsData : public SerializedObject
+class TagsOptionsData : public SerializedObject
 {
 	size_t m_ccFlags;
 	size_t m_ccColourFlags;

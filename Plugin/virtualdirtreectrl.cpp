@@ -201,7 +201,7 @@ int wxVirtualDirTreeCtrl::ScanFromDir(VdtcTreeItemBase *item, const wxFileName &
 				AddItemsToTreeCtrl(item, addedItems);
 
 				// call handler to tell that the items are on the tree ctrl
-				OnAddedItems(item);
+				OnAddedItems(item->GetId());
 			}
 		}
 
@@ -417,11 +417,11 @@ wxFileName wxVirtualDirTreeCtrl::GetFullPath(const wxTreeItemId &id)
 	return value;
 }
 
-wxTreeItemId wxVirtualDirTreeCtrl::GetItemByFullPath(const wxFileName &fullpath)
+wxTreeItemId wxVirtualDirTreeCtrl::GetItemByFullPath(const wxFileName &fullpath, bool scandirs)
 {
-	wxTreeItemId id = DoFindItemByPath(fullpath);
+	wxTreeItemId id = DoFindItemByPath(fullpath, scandirs);
 #ifdef __WXMSW__			
-	if(id.IsOk()){
+	if(scandirs && id.IsOk()){
 		_cache[fullpath.GetFullPath()] = id.m_pItem;
 	}
 #endif	
@@ -449,7 +449,7 @@ wxTreeItemId wxVirtualDirTreeCtrl::ExpandToPath(const wxFileName &path)
 	return item; 
 }
 
-wxTreeItemId wxVirtualDirTreeCtrl::DoFindItemByPath(const wxFileName &path)
+wxTreeItemId wxVirtualDirTreeCtrl::DoFindItemByPath(const wxFileName &path, bool scandirs)
 {
 	wxTreeItemId value((void *)0);
 	wxFileName seekpath;
@@ -502,7 +502,7 @@ wxTreeItemId wxVirtualDirTreeCtrl::DoFindItemByPath(const wxFileName &path)
 					// names loaded from disk, we call ScanFromDir (it will abort anywayz
 					// when there are items in the dir)
 
-					if(ptr->IsDir())
+					if(scandirs && ptr->IsDir())
 					{
 						// TODO: This getfullpath might be a too high load, we can also
 						// walk along with the path, but that is a bit more tricky.
@@ -518,7 +518,7 @@ wxTreeItemId wxVirtualDirTreeCtrl::DoFindItemByPath(const wxFileName &path)
 
 			// now, if not found we break out
 			if(not_found)
-				return value;
+				return scandirs ? value : curr;
 		}
 		
 		if(path.GetFullPath() != seekpath.GetFullPath()) {
@@ -542,7 +542,7 @@ wxTreeItemId wxVirtualDirTreeCtrl::DoFindItemByPath(const wxFileName &path)
 			}
 			
 			if(not_found)
-				return value;
+				return scandirs ? value : curr;
 		}
 		return curr;
 	}

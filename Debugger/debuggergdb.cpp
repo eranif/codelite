@@ -106,8 +106,12 @@ static wxRegEx reInfoProgram1(wxT("\\(LWP[ \t]([0-9]+)\\)"));
 static wxRegEx reInfoProgram2(wxT("child process ([0-9]+)"));
 //Using the running image of child thread 4124.0x117c
 static wxRegEx reInfoProgram3(wxT("Using the running image of child thread ([0-9]+)"));
-static wxRegEx reConnectionRefused(wxT("[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: No connection could be made because the target machine actively refused it."));
 
+#ifdef __WXMSW__
+ static wxRegEx reConnectionRefused(wxT("[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: No connection could be made because the target machine actively refused it."));
+#else
+ static wxRegEx reConnectionRefused(wxT("[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: Connection refused."));
+#endif
 DebuggerInfo GetDebuggerInfo()
 {
 	DebuggerInfo info = {

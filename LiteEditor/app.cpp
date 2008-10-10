@@ -142,9 +142,10 @@ bool App::OnInit()
 {
 #if defined(__WXGTK__) || defined(__WXMAC__)
 	// install signal handlers
-	sigset_t mask_set;
+/*	sigset_t mask_set;
 	sigfillset( &mask_set );
 	sigprocmask(SIG_SETMASK, &mask_set, NULL);
+*/
 #endif
 	
 	wxSocketBase::Initialize();

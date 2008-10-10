@@ -39,7 +39,7 @@ ConsoleFinder::~ConsoleFinder()
 void ConsoleFinder::FreeConsole()
 {
 	if(m_nConsolePid){
-		wxKill(m_nConsolePid);
+		wxKill(m_nConsolePid, wxSIGKILL);
 		m_nConsolePid = 0;
 	}
 }

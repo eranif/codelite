@@ -409,6 +409,10 @@ bool DbgGdb::WriteCommand(const wxString &command, DbgCmdHandler *handler)
 	wxString cmd;
 	wxString id = MakeId( );
 	cmd << id << command;
+	
+	if(m_info.enableDebugLog) {
+		m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), cmd.c_str()));
+	}
 	if (!Write(cmd)) {
 		return false;
 	}
@@ -482,12 +486,7 @@ bool DbgGdb::Break(const wxString &fileName, long lineno)
 	wxString tmpfileName(fn.GetFullPath());
 	tmpfileName.Replace(wxT("\\"), wxT("/"));
 
-//#if defined(__WXMSW__) || defined (__WXGTK__)
 	wxString command(wxT("break "));
-//#else
-//	wxString command(wxT("-break-insert "));
-//#endif
-//
 	tmpfileName.Prepend(wxT("\""));
 	command << tmpfileName << wxT(":") << lineno << wxT("\"");
 	if (m_info.enableDebugLog) {
@@ -567,6 +566,9 @@ bool DbgGdb::QueryLocals()
 
 bool DbgGdb::ExecuteCmd(const wxString &cmd)
 {
+	if(m_info.enableDebugLog) {
+		m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), cmd.c_str()));
+	}
 	return Write(cmd);
 }
 
@@ -576,6 +578,9 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 	wxString id = MakeId( );
 	cmd << id << command;
 	//send the command to gdb
+	if(m_info.enableDebugLog) {
+		m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), cmd.c_str()));
+	}
 	if (!Write(cmd)) {
 		return false;
 	}
@@ -754,6 +759,9 @@ void DbgGdb::Poke()
 	
 		if(reConnectionRefused.Matches(line)){
 			StipString(line);
+#ifdef __WXGTK__
+			m_consoleFinder.FreeConsole();
+#endif
 			m_observer->UpdateAddLine(line);
 			m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
 			return;

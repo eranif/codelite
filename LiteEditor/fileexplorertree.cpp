@@ -53,9 +53,7 @@ FileExplorerTree::FileExplorerTree(wxWindow *parent, wxWindowID id)
 	Connect(XRCID("open_with_default_application"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenWidthDefaultApp), NULL, this);
 	Connect(GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler( FileExplorerTree::OnMouseDblClick ) );
 	Connect(GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(FileExplorerTree::OnKeyDown));
-	
 	TagsManagerST::Get()->Connect(wxEVT_UPDATE_FILETREE_EVENT, wxCommandEventHandler(FileExplorerTree::OnTagsUpdated), NULL, this);
-    Connect(GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(FileExplorerTree::OnKeyDown));
 }
 
 FileExplorerTree::~FileExplorerTree()

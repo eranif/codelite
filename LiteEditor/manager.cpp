@@ -539,10 +539,15 @@ void Manager::OpenWorkspace(const wxString &path)
 	CloseWorkspace();
 
 	// make sure that the workspace pane is visible
-//	ShowWorkspacePane(WorkspacePane::FILE_VIEW);
+	// ShowWorkspacePane(WorkspacePane::FILE_VIEW);
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->OpenWorkspace(path, errMsg);
-	CHECK_MSGBOX(res);
+	if(!res) {
+		// in case part of the workspace was opened, close the workspace
+		CloseWorkspace();
+		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);
+		return;
+	}
 
 	// do workspace initializations
 	DoSetupWorkspace(path);

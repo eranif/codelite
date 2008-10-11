@@ -75,11 +75,11 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
 {
 	CloseWorkspace();
 	wxFileName workSpaceFile(fileName);
-	if(workSpaceFile.FileExists() == false){
+	if (workSpaceFile.FileExists() == false) {
 		errMsg = wxString::Format(wxT("Workspace file no longer exist: '%s'"), fileName.c_str());
 		return false;
 	}
-	
+
 	m_fileName = workSpaceFile;
 	m_doc.Load(m_fileName.GetFullPath());
 	if ( !m_doc.IsOk() ) {
@@ -97,7 +97,12 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
 			wxString projectPath = child->GetPropVal(wxT("Path"), wxEmptyString);
 
 			if ( !DoAddProject(projectPath, errMsg) ) {
-				return false;
+				if (wxMessageBox(wxString::Format(wxT("Error occured while loading project, error was:\n%s\nDo you want to skip it and continue loading the workspace?"), errMsg.c_str()),
+				                 wxT("CodeLite"), wxYES_NO|wxICON_QUESTION|wxCENTER) == wxNO) {
+					return false;
+				} else {
+					wxLogMessage(wxString::Format(wxT("WARNING: Project '%s' was not loaded"), projectPath.c_str()));
+				}
 			}
 		}
 		child = child->GetNext();
@@ -198,38 +203,38 @@ void Workspace::AddProjectToBuildMatrix(ProjectPtr prj)
 
 	BuildMatrixPtr matrix = GetBuildMatrix();
 	wxString selConfName = matrix->GetSelectedConfigurationName();
-	
+
 	std::list<WorkspaceConfigurationPtr> wspList = matrix->GetConfigurations();
 	std::list<WorkspaceConfigurationPtr>::iterator iter = wspList.begin();
 	for (; iter !=  wspList.end(); iter++) {
 		WorkspaceConfigurationPtr workspaceConfig = (*iter);
 		WorkspaceConfiguration::ConfigMappingList prjList = workspaceConfig->GetMapping();
 		wxString wspCnfName = workspaceConfig->GetName();
-		
+
 		ProjectSettingsCookie cookie;
-		
+
 		// getSettings is a bit misleading, since it actually create new instance which represents the layout
 		// of the XML
 		ProjectSettingsPtr settings = prj->GetSettings();
 		BuildConfigPtr prjBldConf = settings->GetFirstBuildConfiguration(cookie);
 		BuildConfigPtr matchConf;
-		
+
 		if ( !prjBldConf ) {
 			// the project does not have any settings, create new one and add it
 			prj->SetSettings(settings);
-			
+
 			settings = prj->GetSettings();
 			prjBldConf = settings->GetFirstBuildConfiguration(cookie);
 			matchConf = prjBldConf;
-			
+
 		} else {
-			
+
 			matchConf = prjBldConf;
-			
-			// try to locate the best match to add to the workspace 
-			while( prjBldConf ){
+
+			// try to locate the best match to add to the workspace
+			while ( prjBldConf ) {
 				wxString projBldConfName = prjBldConf->GetName();
-				if(wspCnfName == projBldConfName){
+				if (wspCnfName == projBldConfName) {
 					// we found a suitable match use it instead of the default one
 					matchConf = prjBldConf;
 					break;
@@ -237,16 +242,16 @@ void Workspace::AddProjectToBuildMatrix(ProjectPtr prj)
 				prjBldConf = settings->GetNextBuildConfiguration(cookie);
 			}
 		}
-		
+
 		ConfigMappingEntry entry(prj->GetName(), matchConf->GetName());
 		prjList.push_back(entry);
 		(*iter)->SetConfigMappingList(prjList);
 		matrix->SetConfiguration((*iter));
 	}
-	
+
 	// and set the configuration name
 	matrix->SetSelectedConfigurationName(selConfName);
-	
+
 	SetBuildMatrix(matrix);
 }
 
@@ -299,7 +304,7 @@ bool Workspace::CreateProject(const wxString &name, const wxString &path, const 
 	}
 
 	m_doc.Save(m_fileName.GetFullPath());
-	if(addToBuildMatrix){
+	if (addToBuildMatrix) {
 		AddProjectToBuildMatrix(proj);
 	}
 	return true;
@@ -446,13 +451,13 @@ bool Workspace::RemoveProject(const wxString &name, wxString &errMsg)
 
 			// update each configuration of this project
 			for (size_t i=0; i<configs.GetCount(); i++) {
-				
+
 				wxArrayString deps = p->GetDependencies(configs.Item(i));
 				int where = deps.Index(name);
 				if (where != wxNOT_FOUND) {
 					deps.RemoveAt((size_t)where);
 				}
-				
+
 				// update the configuration
 				p->SetDependencies(deps, configs.Item(i));
 			}

@@ -281,6 +281,7 @@ void FindInFilesDialog::OnCharEvent(wxKeyEvent &event)
 		return;
 	} 
 	else if(event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER){
+		m_data.SetFindString( m_findString->GetValue() );
 		DoSearch();
 		return;
 	}

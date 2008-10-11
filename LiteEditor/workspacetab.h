@@ -37,6 +37,9 @@ class WorkspaceTab : public wxPanel {
 	void OnCollapseAll(wxCommandEvent &event);
 	void OnCollapseAllUI(wxUpdateUIEvent &event);
 	void DoCollpaseAll();
+	void OnLinkEditor(wxCommandEvent &e);
+	void OnGoHome(wxCommandEvent &e);
+	void OnGoHomeUI(wxUpdateUIEvent &event);
 	
 protected:	
 	void CreateGUIControls();
@@ -47,8 +50,6 @@ public:
 	
 	void BuildFileTree();
 	void CollpaseAll();
-
-    void OnLinkEditor(wxCommandEvent &e);
 
 	FileViewTree *GetFileView(){return m_fileView;}
     const bool& GetIsLinkedToEditor() const {return m_isLinkedToEditor;}

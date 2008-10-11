@@ -1166,7 +1166,7 @@ void FileViewTree::ExpandToPath(const wxString &project, const wxFileName &fileN
 	while (child.IsOk()) {
 		FilewViewTreeItemData *childData = static_cast<FilewViewTreeItemData*>( GetItemData( child ) );
 		if (childData->GetData().GetDisplayName() == project) {
-			wxTreeItemId fileItem = FindItemByPath(child, ManagerST::Get()->GetProjectCwd( project ), fileName.GetFullPath());
+			wxTreeItemId fileItem = fileName.GetName().IsEmpty() ? child : FindItemByPath(child, ManagerST::Get()->GetProjectCwd( project ), fileName.GetFullPath());
 			if (fileItem.IsOk()) {
 				SelectItem(fileItem);
 			} else {

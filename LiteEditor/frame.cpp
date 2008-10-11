@@ -529,6 +529,7 @@ void Frame::Initialize(bool loadLastSession)
 
 	//time to create the file explorer
 	m_theFrame->GetFileExplorer()->Scan();
+	SendCmdEvent(wxEVT_FILE_EXP_INIT_DONE);
 
 	m_theFrame->GetWorkspacePane()->GetNotebook()->SetAuiManager( &m_theFrame->GetDockingManager(), wxT("Workspace View") );
 	//load last session?

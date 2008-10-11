@@ -31,6 +31,9 @@
 #include "macros.h" 
 #include "globals.h"
 #include "plugin.h"
+#include "editor_config.h"
+#include "manager.h"
+#include "workspace_pane.h"
 
 FileExplorer::FileExplorer(wxWindow *parent, const wxString &caption)
 : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 300))
@@ -40,6 +43,9 @@ FileExplorer::FileExplorer(wxWindow *parent, const wxString &caption)
 , m_thread(this)
 #endif
 {
+	long link(1);
+	EditorConfigST::Get()->GetLongValue(wxT("LinkFileExplorerToEditor"), link);
+	m_isLinkedToEditor = link ? true : false;
 	CreateGUIControls();
 }
 
@@ -70,9 +76,14 @@ void FileExplorer::CreateGUIControls()
 	mainSizer->Add(tb, 0, wxEXPAND);
 	
 	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
+	tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
+	tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
+	tb->AddTool(XRCID("go_home"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Goto Current Directory"), wxITEM_NORMAL);
 	tb->Realize();
 	
 	Connect( XRCID("link_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileExplorer::OnLinkEditor ));
+	Connect( XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileExplorer::OnCollapseAll ));
+	Connect( XRCID("go_home"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileExplorer::OnGoHome ));
 
 	mainSizer->Layout();
 
@@ -102,7 +113,6 @@ void FileExplorer::Scan()
 	}
 	
 	m_fileTree->ExpandToPath(fn);
-	SendCmdEvent(wxEVT_FILE_EXP_INIT_DONE);
 }
 
 #ifdef __WXMSW__
@@ -137,8 +147,49 @@ void FileExplorer::OnVolumes(wxCommandEvent &e)
 
 #endif
 
+void FileExplorer::OnCollapseAll(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+    
+	wxTreeItemId root = m_fileTree->GetRootItem();
+	if(root.IsOk() == false) {
+		return;
+	}
+	
+	if(m_fileTree->ItemHasChildren(root) == false) {
+		return;
+	}
+	
+	m_fileTree->Freeze();
+	
+	//iterate over all the projects items and collapse them all
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = m_fileTree->GetFirstChild(root, cookie);
+	while( child.IsOk() ) {
+		m_fileTree->CollapseAllChildren(child);
+		child = m_fileTree->GetNextChild(root, cookie);
+	}
+	
+	m_fileTree->Thaw();
+    
+	wxTreeItemId sel = m_fileTree->GetSelection();
+	if (sel.IsOk())
+		m_fileTree->EnsureVisible(sel);
+}
+
+void FileExplorer::OnGoHome(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	ManagerST::Get()->ShowWorkspacePane(WorkspacePane::EXPLORER);
+	this->Freeze();
+	Scan();
+	this->Thaw();
+}
+
 void FileExplorer::OnLinkEditor(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	m_isLinkedToEditor = !m_isLinkedToEditor;
+	// save the value
+	EditorConfigST::Get()->SaveLongValue(wxT("LinkFileExplorerToEditor"), m_isLinkedToEditor ? 1 : 0);
 }

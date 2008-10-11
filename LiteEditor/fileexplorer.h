@@ -50,18 +50,19 @@ private:
 	void OnRootChanged(wxCommandEvent &e);
 	void OnVolumes(wxCommandEvent &e);
 #endif
+	void OnCollapseAll(wxCommandEvent &e);
+	void OnGoHome(wxCommandEvent &e);
+	void OnLinkEditor(wxCommandEvent &e);
 
 public:
 	FileExplorer(wxWindow *parent, const wxString &caption);
 	virtual ~FileExplorer();
+    
+	void Scan();	
 
 	//setters/getters
 	const wxString &GetCaption() const{return m_caption;}
 	FileExplorerTree *GetFileTree() {return m_fileTree;}
-	void OnLinkEditor(wxCommandEvent &e);
-	void Scan();
-	
-	void SetIsLinkedToEditor(const bool& isLinkedToEditor) {this->m_isLinkedToEditor = isLinkedToEditor;}
 	const bool& GetIsLinkedToEditor() const {return m_isLinkedToEditor;}
 };
 

@@ -33,6 +33,7 @@
 #include "wx/button.h"
 #include "frame.h"
 #include "macros.h"
+#include "workspace_pane.h"
 
 WorkspaceTab::WorkspaceTab(wxWindow *parent)
 : wxPanel(parent)
@@ -64,15 +65,18 @@ void WorkspaceTab::CreateGUIControls()
 	//tree items
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL);
 	
-	tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
 	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
-    tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
-    tb->Realize();
+	tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
+	tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
+	tb->AddTool(XRCID("go_home"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Goto Active Project"), wxITEM_NORMAL);
+	tb->Realize();
 	
+	Connect( XRCID("link_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnLinkEditor ));
 	Connect( XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnCollapseAll ));
 	Connect( XRCID("collapse_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceTab::OnCollapseAllUI ));
-	Connect( XRCID("link_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnLinkEditor ));
-	
+	Connect( XRCID("go_home"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnGoHome ));
+	Connect( XRCID("go_home"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceTab::OnGoHomeUI ));
+    
 	//add the fileview tab
 	m_fileView = new FileViewTree(this, wxID_ANY);
 	sz->Add(m_fileView, 1, wxEXPAND|wxTOP, 2);
@@ -115,6 +119,10 @@ void WorkspaceTab::DoCollpaseAll()
 	}
 	
 	m_fileView->Thaw();
+    
+	wxTreeItemId sel = m_fileView->GetSelection();
+	if (sel.IsOk())
+		m_fileView->EnsureVisible(sel);
 }
 
 void WorkspaceTab::CollpaseAll()
@@ -128,4 +136,23 @@ void WorkspaceTab::OnLinkEditor(wxCommandEvent &e)
 	m_isLinkedToEditor = !m_isLinkedToEditor;
 	// save the value
 	EditorConfigST::Get()->SaveLongValue(wxT("LinkWorkspaceViewToEditor"), m_isLinkedToEditor ? 1 : 0);
+}
+
+void WorkspaceTab::OnGoHome(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	wxString activeProject = ManagerST::Get()->GetActiveProjectName();
+	if (activeProject.IsEmpty()) {
+		return;
+	}
+	ManagerST::Get()->ShowWorkspacePane(WorkspacePane::FILE_VIEW);
+	m_fileView->ExpandToPath(activeProject, wxFileName());
+	wxTreeItemId sel = m_fileView->GetSelection();
+	if (sel.IsOk() && m_fileView->ItemHasChildren(sel))
+		m_fileView->Expand(sel);
+}
+
+void WorkspaceTab::OnGoHomeUI(wxUpdateUIEvent &event)
+{
+	event.Enable(!ManagerST::Get()->GetActiveProjectName().IsEmpty());
 }

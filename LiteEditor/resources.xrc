@@ -59,6 +59,7 @@
 	<object class="wxBitmap" name="wx_project_header">res/wxproject.png</object>
 	<object class="wxBitmap" name="colourise">res/colorize.png</object>
 	<object class="wxBitmap" name="collapse">res/collapse.png</object>
+	<object class="wxBitmap" name="gohome">res/gohome.png</object>
 	
 	<!-- 
 		Toolbar bitmaps (24x24) 

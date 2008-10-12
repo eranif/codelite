@@ -34,6 +34,10 @@
 // Configuration Manager
 //----------------------------------------------------------------------------
 
+static int wxStringCmpFunc(const wxString& item1, const wxString& item2) 
+{
+	return item1.CmpNoCase(item2);
+}
 
 ConfigurationManagerDlg::ConfigurationManagerDlg( wxWindow* parent )
 		: ConfigManagerBaseDlg( parent )
@@ -132,7 +136,8 @@ void ConfigurationManagerDlg::PopulateConfigurations()
 
 	wxArrayString projects;
 	ManagerST::Get()->GetProjectList(projects);
-
+	projects.Sort(wxStringCmpFunc);
+	
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		wxString selConf = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(),  projects.Item(i));
 		AddEntry(projects.Item(i), selConf);

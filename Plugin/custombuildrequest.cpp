@@ -6,7 +6,7 @@
 #include "custombuildrequest.h"
 #include "workspace.h"
 CustomBuildRequest::CustomBuildRequest(wxEvtHandler *owner, const QueueCommand &buildInfo)
-		: CompilerAction(owner, buildInfo)
+		: ShellCommand(owner, buildInfo)
 {
 }
 

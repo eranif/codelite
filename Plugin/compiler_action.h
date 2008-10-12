@@ -25,25 +25,16 @@
 #ifndef COMPILER_ACTION_H
 #define COMPILER_ACTION_H
 
-#include "worker_thread.h"
 #include "project.h"
 #include "queuecommand.h"
 #include "wx/event.h"
 #include "cl_process.h"
 #include "wx/timer.h"
 
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
-
-DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_BUILD_ADDLINE, wxID_ANY)
-DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_BUILD_STARTED, wxID_ANY)
-DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_BUILD_ENDED, wxID_ANY)
-DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_BUILD_STARTED_NOCLEAN, wxID_ANY)
+extern const wxEventType wxEVT_SHELL_COMMAND_ADDLINE;
+extern const wxEventType wxEVT_SHELL_COMMAND_STARTED;
+extern const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED;
+extern const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN;
 
 /**
  * \class CompilerAction
@@ -51,7 +42,7 @@ DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_BUILD_STARTED_NOCLEAN, wxI
  * \author Eran
  * \date 07/22/07
  */
-class WXDLLIMPEXP_LE_SDK CompilerAction : public wxEvtHandler, public ThreadRequest
+class ShellCommand : public wxEvtHandler
 {
 protected:
 	clProcess *m_proc;
@@ -86,13 +77,13 @@ public:
 public:
 	//construct a compiler action
 	// \param owner the window owner for this action
-	CompilerAction(wxEvtHandler *owner, const QueueCommand &buildInfo);
+	ShellCommand(wxEvtHandler *owner, const QueueCommand &buildInfo);
 
 	/**
 	 * \brief
 	 * \return
 	 */
-	virtual ~CompilerAction() {
+	virtual ~ShellCommand() {
 		delete m_timer;
 	};
 

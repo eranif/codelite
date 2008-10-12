@@ -40,7 +40,7 @@
  * \author Eran
  * \date 07/22/07
  */
-class WXDLLIMPEXP_LE_SDK CleanRequest : public CompilerAction {
+class WXDLLIMPEXP_LE_SDK CleanRequest : public ShellCommand {
 public:
 	/**
 	 * Construct a compilation clean request. The compiler thread will clean the selected project and all

@@ -34,7 +34,7 @@
 #include "dirsaver.h"
 
 CompileRequest::CompileRequest(wxEvtHandler *owner, const QueueCommand &buildInfo, const wxString &fileName, bool runPremakeOnly)
-		: CompilerAction(owner, buildInfo)
+		: ShellCommand(owner, buildInfo)
 		, m_fileName(fileName)
 		, m_premakeOnly(runPremakeOnly)
 {

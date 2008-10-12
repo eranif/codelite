@@ -303,7 +303,7 @@ protected:
 	//----------------------------------------------------
 	void OnIdle(wxIdleEvent &e);
 	void OnSearchThread(wxCommandEvent &event);
-	void OnBuildEvent(wxCommandEvent &event);
+	void OnShellCommandEvent(wxCommandEvent &event);
 	void OnQuit(wxCommandEvent& WXUNUSED(event));
 	void OnClose(wxCloseEvent &event);
 	void OnAddSourceFile(wxCommandEvent& event);

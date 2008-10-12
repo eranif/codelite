@@ -33,7 +33,7 @@
 #include "workspace.h"
 
 CleanRequest::CleanRequest(wxEvtHandler *owner, const QueueCommand &info)
-		: CompilerAction(owner, info)
+		: ShellCommand(owner, info)
 {
 }
 

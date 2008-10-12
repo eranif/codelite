@@ -2,7 +2,7 @@
 #define __custombuildrequest__
 #include "compiler_action.h"
 
-class CustomBuildRequest : public CompilerAction
+class CustomBuildRequest : public ShellCommand
 {
 public:
 	CustomBuildRequest(wxEvtHandler *owner, const QueueCommand &buildInfo);

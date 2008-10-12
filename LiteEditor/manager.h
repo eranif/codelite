@@ -58,7 +58,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 {
 	friend class Singleton<Manager>;
 	wxString  m_startupDir;
-	CompilerAction *m_compilerRequest;
+	ShellCommand *m_shellProcess;
 	AsyncExeCmd *m_asyncExeCmd;
 	FileHistory m_recentFiles;
 	FileHistory m_recentWorkspaces;

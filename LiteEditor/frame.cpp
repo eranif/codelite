@@ -156,10 +156,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_UPDATE_STATUS_BAR, Frame::OnUpdateStatusBar)
 
 	//build/debugger events
-	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_ADDLINE, Frame::OnBuildEvent)
-	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_STARTED, Frame::OnBuildEvent)
-	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_ENDED, Frame::OnBuildEvent)
-	EVT_COMMAND(wxID_ANY, wxEVT_BUILD_STARTED_NOCLEAN, Frame::OnBuildEvent)
+	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_ADDLINE, Frame::OnShellCommandEvent)
+	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_STARTED, Frame::OnShellCommandEvent)
+	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnShellCommandEvent)
+	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, Frame::OnShellCommandEvent)
 
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
@@ -1856,19 +1856,19 @@ void Frame::OnAdvanceSettings(wxCommandEvent &event)
 	dlg->Destroy();
 }
 
-void Frame::OnBuildEvent(wxCommandEvent &event)
+void Frame::OnShellCommandEvent(wxCommandEvent &event)
 {
 	static wxStopWatch sw;
 	
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
 	m_outputPane->GetBuildTab()->CanFocus(true);
-	if (event.GetEventType() == wxEVT_BUILD_STARTED || event.GetEventType() == wxEVT_BUILD_STARTED_NOCLEAN) {
+	if (event.GetEventType() == wxEVT_SHELL_COMMAND_STARTED || event.GetEventType() == wxEVT_SHELL_COMMAND_STARTED_NOCLEAN) {
 		sw.Start();
 		m_hideOutputPane = ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN);
 
 		// do we need to clear the build log?
-		if ( event.GetEventType() != wxEVT_BUILD_STARTED_NOCLEAN) {
+		if ( event.GetEventType() != wxEVT_SHELL_COMMAND_STARTED_NOCLEAN) {
 			m_outputPane->GetBuildTab()->Clear();
 		}
 
@@ -1876,10 +1876,10 @@ void Frame::OnBuildEvent(wxCommandEvent &event)
 		m_outputPane->GetBuildTab()->ReloadSettings();
 		m_outputPane->GetBuildTab()->AppendText(wxT("Building: \n"));
 
-	} else if (event.GetEventType() == wxEVT_BUILD_ADDLINE) {
+	} else if (event.GetEventType() == wxEVT_SHELL_COMMAND_ADDLINE) {
 		m_outputPane->GetBuildTab()->AppendText(event.GetString());
 
-	} else if (event.GetEventType() == wxEVT_BUILD_ENDED) {
+	} else if (event.GetEventType() == wxEVT_SHELL_COMMAND_PROCESS_ENDED) {
 		// take the elapsed time from the stopwatch
 		long elapsed = sw.Time();
 		

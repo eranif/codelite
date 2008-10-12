@@ -161,7 +161,7 @@ static wxString StripAccel(const wxString &text)
 //---------------------------------------------------------------
 
 Manager::Manager(void)
-		: m_compilerRequest(NULL)
+		: m_shellProcess(NULL)
 		, m_asyncExeCmd(NULL)
 		, m_dbgCanInteract(false)
 		, m_quickWatchDlg(NULL)
@@ -175,9 +175,9 @@ Manager::Manager(void)
 Manager::~Manager(void)
 {
 	UnInitialize();
-	if (m_compilerRequest) {
-		delete m_compilerRequest;
-		m_compilerRequest = NULL;
+	if (m_shellProcess) {
+		delete m_shellProcess;
+		m_shellProcess = NULL;
 	}
 }
 
@@ -1185,12 +1185,12 @@ void Manager::CleanProject(const QueueCommand &buildInfo)
 bool Manager::IsBuildEndedSuccessfully() const
 {
 	//build is still running?
-	if ( m_compilerRequest && m_compilerRequest->IsBusy() ) {
+	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		return false;
 	}
 
 	wxArrayString lines;
-	CompileRequest *cr = dynamic_cast<CompileRequest*>( m_compilerRequest );
+	CompileRequest *cr = dynamic_cast<CompileRequest*>( m_shellProcess );
 	if (cr) {
 		if (!cr->GetLines(lines)) {
 			return false;
@@ -1230,13 +1230,13 @@ void Manager::BuildProject(const QueueCommand &buildInfo)
 
 void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
 {
-	if ( m_compilerRequest && m_compilerRequest->IsBusy() ) {
+	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		return;
 	}
 
-	if ( m_compilerRequest ) {
-		delete m_compilerRequest;
-		m_compilerRequest = NULL;
+	if ( m_shellProcess ) {
+		delete m_shellProcess;
+		m_shellProcess = NULL;
 	}
 
 	//save all files before compiling, but dont saved new documents
@@ -1260,18 +1260,18 @@ void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
 	}
 
 	QueueCommand info(projectName, conf, false, QueueCommand::Build);
-	m_compilerRequest = new CompileRequest(GetMainFrame(), info, fileName, false);
-	m_compilerRequest->Process();
+	m_shellProcess = new CompileRequest(GetMainFrame(), info, fileName, false);
+	m_shellProcess->Process();
 }
 
 void Manager::StopBuild()
 {
-	if ( m_compilerRequest && !m_compilerRequest->IsBusy() ) {
+	if ( m_shellProcess && !m_shellProcess->IsBusy() ) {
 		return;
 	}
 
-	if ( m_compilerRequest ) {
-		m_compilerRequest->Stop();
+	if ( m_shellProcess ) {
+		m_shellProcess->Stop();
 	}
 
 	// clear the build queue as well
@@ -1280,7 +1280,7 @@ void Manager::StopBuild()
 
 bool Manager::IsBuildInProgress() const
 {
-	return m_compilerRequest && m_compilerRequest->IsBusy();
+	return m_shellProcess && m_shellProcess->IsBusy();
 }
 
 bool Manager::IsProgramRunning() const
@@ -2548,13 +2548,13 @@ void Manager::OutputMessage(wxString msg)
 
 void Manager::RunCustomPreMakeCommand(const wxString &project)
 {
-	if ( m_compilerRequest && m_compilerRequest->IsBusy() ) {
+	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		return;
 	}
 
-	if ( m_compilerRequest ) {
-		delete m_compilerRequest;
-		m_compilerRequest = NULL;
+	if ( m_shellProcess ) {
+		delete m_shellProcess;
+		m_shellProcess = NULL;
 	}
 
 	wxString conf;
@@ -2565,11 +2565,11 @@ void Manager::RunCustomPreMakeCommand(const wxString &project)
 	}
 
 	QueueCommand info(project, conf, false, QueueCommand::Build);
-	m_compilerRequest = new CompileRequest(	GetMainFrame(), //owner window
+	m_shellProcess = new CompileRequest(	GetMainFrame(), //owner window
 	                                        info,
 	                                        wxEmptyString, 	//no file name (valid only for build file only)
 	                                        true);			//run premake step only
-	m_compilerRequest->Process();
+	m_shellProcess->Process();
 }
 
 void Manager::UpdateMenuAccelerators()
@@ -3211,13 +3211,13 @@ void Manager::ProcessCommandQueue()
 
 void Manager::DoBuildProject(const QueueCommand& buildInfo)
 {
-	if ( m_compilerRequest && m_compilerRequest->IsBusy() ) {
+	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		return;
 	}
 
-	if ( m_compilerRequest ) {
-		delete m_compilerRequest;
-		m_compilerRequest = NULL;
+	if ( m_shellProcess ) {
+		delete m_shellProcess;
+		m_shellProcess = NULL;
 	}
 
 	//save all files before compiling, but dont saved new documents
@@ -3232,23 +3232,23 @@ void Manager::DoBuildProject(const QueueCommand& buildInfo)
 			DbgStop();
 		}
 	}
-	m_compilerRequest = new CompileRequest(GetMainFrame(), buildInfo);
-	m_compilerRequest->Process();
+	m_shellProcess = new CompileRequest(GetMainFrame(), buildInfo);
+	m_shellProcess->Process();
 }
 
 void Manager::DoCleanProject(const QueueCommand& buildInfo)
 {
-	if ( m_compilerRequest && m_compilerRequest->IsBusy() ) {
+	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		return;
 	}
 
-	if ( m_compilerRequest ) {
-		delete m_compilerRequest;
+	if ( m_shellProcess ) {
+		delete m_shellProcess;
 	}
 
 	// TODO :: replace the construction of CleanRequest to include the proper build configuration
-	m_compilerRequest = new CleanRequest(GetMainFrame(), buildInfo);
-	m_compilerRequest->Process();
+	m_shellProcess = new CleanRequest(GetMainFrame(), buildInfo);
+	m_shellProcess->Process();
 }
 
 bool Manager::IsPaneVisible(const wxString& pane_name)
@@ -3338,13 +3338,13 @@ void Manager::DoGetAccelFiles(wxArrayString& files)
 
 void Manager::DoCustomBuild(const QueueCommand& buildInfo)
 {
-	if ( m_compilerRequest && m_compilerRequest->IsBusy() ) {
+	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		return;
 	}
 
-	if ( m_compilerRequest ) {
-		delete m_compilerRequest;
-		m_compilerRequest = NULL;
+	if ( m_shellProcess ) {
+		delete m_shellProcess;
+		m_shellProcess = NULL;
 	}
 
 	//save all files before compiling, but dont saved new documents
@@ -3359,6 +3359,6 @@ void Manager::DoCustomBuild(const QueueCommand& buildInfo)
 			DbgStop();
 		}
 	}
-	m_compilerRequest = new CustomBuildRequest(GetMainFrame(), buildInfo);
-	m_compilerRequest->Process();
+	m_shellProcess = new CustomBuildRequest(GetMainFrame(), buildInfo);
+	m_shellProcess->Process();
 }

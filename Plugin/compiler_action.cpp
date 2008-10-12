@@ -28,12 +28,12 @@
 #include "compiler_action.h"
 #include "wx/tokenzr.h"
 
-DEFINE_EVENT_TYPE(wxEVT_BUILD_ADDLINE)
-DEFINE_EVENT_TYPE(wxEVT_BUILD_STARTED)
-DEFINE_EVENT_TYPE(wxEVT_BUILD_ENDED)
-DEFINE_EVENT_TYPE(wxEVT_BUILD_STARTED_NOCLEAN)
+const wxEventType wxEVT_SHELL_COMMAND_ADDLINE = wxNewEventType();
+const wxEventType wxEVT_SHELL_COMMAND_STARTED = wxNewEventType();
+const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED = wxNewEventType();
+const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN = wxNewEventType();
 
-CompilerAction::CompilerAction(wxEvtHandler *owner, const QueueCommand &buildInfo)
+ShellCommand::ShellCommand(wxEvtHandler *owner, const QueueCommand &buildInfo)
 		: m_proc(NULL)
 		, m_owner(owner)
 		, m_busy(false)
@@ -43,19 +43,19 @@ CompilerAction::CompilerAction(wxEvtHandler *owner, const QueueCommand &buildInf
 	m_timer = new wxTimer(this);
 }
 
-void CompilerAction::AppendLine(const wxString &line)
+void ShellCommand::AppendLine(const wxString &line)
 {
 	if ( !m_owner)
 		return;
 
-	wxCommandEvent event(wxEVT_BUILD_ADDLINE);
+	wxCommandEvent event(wxEVT_SHELL_COMMAND_ADDLINE);
 	event.SetString(line);
 	m_owner->AddPendingEvent(event);
 
 	m_lines.Add(line);
 }
 
-void CompilerAction::Stop()
+void ShellCommand::Stop()
 {
 	m_stop = true;
 	//kill the build process
@@ -65,30 +65,30 @@ void CompilerAction::Stop()
 	}
 }
 
-void CompilerAction::SendStartMsg()
+void ShellCommand::SendStartMsg()
 {
 	if ( !m_owner)
 		return;
 
 	if (m_info.GetCleanLog()) {
-		wxCommandEvent event(wxEVT_BUILD_STARTED);
+		wxCommandEvent event(wxEVT_SHELL_COMMAND_STARTED);
 		m_owner->AddPendingEvent(event);
 	} else {
-		wxCommandEvent event(wxEVT_BUILD_STARTED_NOCLEAN);
+		wxCommandEvent event(wxEVT_SHELL_COMMAND_STARTED_NOCLEAN);
 		m_owner->AddPendingEvent(event);
 	}
 }
 
-void CompilerAction::SendEndMsg()
+void ShellCommand::SendEndMsg()
 {
 	if ( !m_owner)
 		return;
 
-	wxCommandEvent event(wxEVT_BUILD_ENDED);
+	wxCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
 	m_owner->AddPendingEvent(event);
 }
 
-void CompilerAction::OnTimer(wxTimerEvent &event)
+void ShellCommand::OnTimer(wxTimerEvent &event)
 {
 	wxUnusedVar(event);
 	if ( m_stop ) {
@@ -98,14 +98,14 @@ void CompilerAction::OnTimer(wxTimerEvent &event)
 	PrintOutput();
 }
 
-void CompilerAction::PrintOutput()
+void ShellCommand::PrintOutput()
 {
 	wxString data, errors;
 	m_proc->HasInput(data, errors);
 	DoPrintOutput(data, errors);
 }
 
-void CompilerAction::OnProcessEnd(wxProcessEvent& event)
+void ShellCommand::OnProcessEnd(wxProcessEvent& event)
 {
 	wxUnusedVar(event);
 	if ( !m_stop ) {
@@ -125,7 +125,7 @@ void CompilerAction::OnProcessEnd(wxProcessEvent& event)
 	event.Skip();
 }
 
-void CompilerAction::DoPrintOutput(const wxString &out, const wxString &err)
+void ShellCommand::DoPrintOutput(const wxString &out, const wxString &err)
 {
 	//loop over the lines read from the compiler
 	wxStringTokenizer tkz(out, wxT("\n"));
@@ -153,7 +153,7 @@ void CompilerAction::DoPrintOutput(const wxString &out, const wxString &err)
 	}
 }
 
-void CompilerAction::CleanUp()
+void ShellCommand::CleanUp()
 {
 	m_timer->Stop();
 	m_busy = false;
@@ -161,7 +161,7 @@ void CompilerAction::CleanUp()
 	SendEndMsg();
 }
 
-void CompilerAction::DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool isFileOnly)
+void ShellCommand::DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool isFileOnly)
 {
 	//when using custom build, user can select different working directory
 	if (proj) {

@@ -35,7 +35,7 @@
 #    define WXDLLIMPEXP_LE_SDK
 #endif // WXMAKINGDLL_LE_SDK
 
-class WXDLLIMPEXP_LE_SDK CompileRequest : public CompilerAction {
+class WXDLLIMPEXP_LE_SDK CompileRequest : public ShellCommand {
 	wxString m_fileName;
 	bool m_premakeOnly;
 public:

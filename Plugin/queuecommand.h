@@ -14,11 +14,14 @@ class QueueCommand
 	wxString m_customBuildTarget;
 
 public:
+	// Command's kind
 	enum {
 		Build,
 		Clean,
 		CustomBuild,
-		Debug
+		Debug,
+		Cmd,
+		BatchCmds
 	};
 
 public:

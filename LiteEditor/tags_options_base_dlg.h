@@ -54,11 +54,14 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxCheckBox* m_checkBoxStruct;
 		wxCheckBox* m_checkBoxFunction;
 		wxCheckBox* m_checkBoxEnum;
+		wxCheckBox* m_checkBoxEnumerator;
 		wxCheckBox* m_checkBoxUnion;
 		wxCheckBox* m_checkBoxPrototype;
 		wxCheckBox* m_checkBoxTypedef;
 		wxCheckBox* m_checkBoxMacro;
 		wxCheckBox* m_checkBoxNamespace;
+		wxCheckBox* m_checkBoxMember;
+		wxCheckBox* m_checkBoxVariable;
 		wxCheckBox* m_checkLoadLastDB;
 		wxCheckBox* m_checkLoadToMemory;
 		wxPanel* m_ctagsPage;

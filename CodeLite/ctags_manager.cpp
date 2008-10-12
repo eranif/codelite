@@ -2256,6 +2256,9 @@ void TagsManager::GetAllTagsNames(wxArrayString &tagsList)
 	if( kind & CC_COLOUR_STRUCT) {kindArr.Add(wxT("struct"));}
 	if( kind & CC_COLOUR_TYPEDEF) {kindArr.Add(wxT("typedef"));}
 	if( kind & CC_COLOUR_UNION) {kindArr.Add(wxT("union"));}
+	if( kind & CC_COLOUR_ENUMERATOR) {kindArr.Add(wxT("enumerator"));}	
+	if( kind & CC_COLOUR_VARIABLE) {kindArr.Add(wxT("variable"));}	
+	if( kind & CC_COLOUR_MEMBER) {kindArr.Add(wxT("member"));}	
 	
 	if( kindArr.IsEmpty() ) {return;}
 	

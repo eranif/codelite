@@ -90,7 +90,9 @@ void TagsOptionsDlg::InitValues()
 	m_checkBoxStruct->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_STRUCT);
 	m_checkBoxTypedef->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_TYPEDEF);
 	m_checkBoxUnion->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_UNION);
-	
+	m_checkBoxEnumerator->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_ENUMERATOR);
+	m_checkBoxMember->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_MEMBER);
+	m_checkBoxVariable->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
 	
 	//initialize the ctags page
 	wxString prep;
@@ -150,6 +152,9 @@ void TagsOptionsDlg::CopyData()
 	SetColouringFlag(CC_COLOUR_STRUCT, m_checkBoxStruct->IsChecked());
 	SetColouringFlag(CC_COLOUR_TYPEDEF, m_checkBoxTypedef->IsChecked());
 	SetColouringFlag(CC_COLOUR_UNION, m_checkBoxUnion->IsChecked());
+	SetColouringFlag(CC_COLOUR_ENUMERATOR, m_checkBoxEnumerator->IsChecked());
+	SetColouringFlag(CC_COLOUR_VARIABLE, m_checkBoxVariable->IsChecked());
+	SetColouringFlag(CC_COLOUR_MEMBER, m_checkBoxMember->IsChecked());
 	
 	m_data.SetFileSpec(m_textFileSpec->GetValue());
 	wxArrayString prep = wxStringTokenize(m_textPrep->GetValue(), wxT(";"), wxTOKEN_STRTOK);

@@ -80,7 +80,7 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 	rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
 #endif
-
+	
 	std::list<StyleProperty> styles = lexPtr->GetProperties();
 	std::list<StyleProperty>::iterator iter = styles.begin();
 	for (; iter != styles.end(); iter++) {

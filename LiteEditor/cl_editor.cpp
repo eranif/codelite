@@ -73,7 +73,8 @@
 #define SYMBOLS_MARGIN_ID 	2
 #define FOLD_MARGIN_ID 		3
 
-#define USER_INDICATOR 		3
+#define USER_INDICATOR 				3
+#define HYPERLINK_INDICATOR 		4
 
 const wxEventType wxEVT_CMD_UPDATE_STATUS_BAR = wxNewEventType();
 
@@ -98,6 +99,8 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_CONTEXT_MENU(LEditor::OnContextMenu)
 	EVT_KEY_DOWN(LEditor::OnKeyDown)
 	EVT_LEFT_DOWN(LEditor::OnLeftDown)
+	EVT_LEFT_UP(LEditor::OnLeftUp)
+	EVT_LEAVE_WINDOW(LEditor::OnLeaveWindow)
 	EVT_SCI_DOUBLECLICK(wxID_ANY, LEditor::OnLeftDClick)
 
 	// Find and replace dialog
@@ -134,6 +137,8 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 		, m_modifyTime(0)
 		, m_ccBox(NULL)
 		, m_isVisible(true)
+		, m_hyperLinkIndicatroStart(wxNOT_FOUND)
+		, m_hyperLinkIndicatroEnd(wxNOT_FOUND)
 {
 	Show(!hidden);
 	ms_bookmarkShapes[wxT("Small Rectangle")] = wxSCI_MARK_SMALLRECT;
@@ -369,9 +374,11 @@ void LEditor::SetProperties()
 #ifdef __WXMAC__
 	IndicatorSetUnder(1, false);
 	IndicatorSetUnder(2, false);
+	IndicatorSetUnder(HYPERLINK_INDICATOR, false);
 #else
 	IndicatorSetUnder(1, true);
 	IndicatorSetUnder(2, true);
+	IndicatorSetUnder(HYPERLINK_INDICATOR, true);
 #endif
 
 	SetUserIndicatorStyleAndColour(wxSCI_INDIC_SQUIGGLE, wxT("RED"));
@@ -384,6 +391,7 @@ void LEditor::SetProperties()
 
 	IndicatorSetForeground(1, options->GetBookmarkBgColour());
 	IndicatorSetForeground(2, col2);
+	IndicatorSetStyle(HYPERLINK_INDICATOR, wxSCI_INDIC_PLAIN);
 }
 
 void LEditor::SetDirty(bool dirty)
@@ -1454,6 +1462,9 @@ void LEditor::DelAllMarkers()
 
 	SetIndicatorCurrent(2);
 	IndicatorClearRange(0, GetLength());
+	
+	SetIndicatorCurrent(HYPERLINK_INDICATOR);
+	IndicatorClearRange(0, GetLength());
 }
 
 void LEditor::FindNextMarker()
@@ -1811,41 +1822,67 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 	m_context->OnKeyDown(event);
 }
 
+void LEditor::OnLeftUp(wxMouseEvent& event)
+{
+	if(m_hyperLinkIndicatroStart != wxNOT_FOUND && m_hyperLinkIndicatroEnd != wxNOT_FOUND){
+		// indicator is highlighted
+		long pos = PositionFromPointClose(event.GetX(), event.GetY());
+		if(pos >= m_hyperLinkIndicatroStart && pos <= m_hyperLinkIndicatroEnd){ 
+			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, 
+							 event.m_altDown ? XRCID("find_impl") 
+											 : XRCID("find_decl"));
+			Frame::Get()->AddPendingEvent(e);
+		}
+	}
+	
+	// clear the hyper link indicators
+	m_hyperLinkIndicatroStart = wxNOT_FOUND;
+	m_hyperLinkIndicatroEnd = wxNOT_FOUND;
+	
+	SetIndicatorCurrent(HYPERLINK_INDICATOR);
+	IndicatorClearRange(0, GetLength());
+	event.Skip();
+}
+
+void LEditor::OnLeaveWindow(wxMouseEvent& event)
+{
+	m_hyperLinkIndicatroStart = wxNOT_FOUND;
+	m_hyperLinkIndicatroEnd = wxNOT_FOUND;
+	
+	SetIndicatorCurrent(HYPERLINK_INDICATOR);
+	IndicatorClearRange(0, GetLength());
+	event.Skip();
+}
+
 void LEditor::OnLeftDown(wxMouseEvent &event)
 {
 	// hide completion box
 	HideCompletionBox();
-
-//	// emulate here VS like selection with mouse and ctrl key
-//	if (event.m_controlDown) {
-//		long pos = PositionFromPointClose(event.GetX(), event.GetY());
-//		if (pos == wxSCI_INVALID_POSITION) {
-//			event.Skip();
-//			return;
-//		}
-//
-//		long start = WordStartPosition(pos, true);
-//		long end   = WordEndPosition(pos, true);
-//		if (start == end) {
-//			//pass it on
-//			event.Skip();
-//			return;
-//		}
-//		// select the word
-//		SetSelectionStart(start);
-//		SetSelectionEnd(end);
-//
-//		// make the caret visible (if not, scroll to it)
-//		EnsureCaretVisible();
-//
-//		// highlight all occurances of selected word
-//		long highlight_word(0);
-//
-//		EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlight_word);
-//		if ( GetSelectedText().IsEmpty() == false && highlight_word) {
-//			HighlightWord();
-//		}
-//	}
+	
+	if(event.m_controlDown){
+		SetIndicatorCurrent(HYPERLINK_INDICATOR);
+		long pos = PositionFromPointClose(event.GetX(), event.GetY());
+		
+		IndicatorSetForeground(HYPERLINK_INDICATOR, wxT("NAVY"));
+		
+		if (pos != wxSCI_INVALID_POSITION) {
+			int curstyle = GetStyleAt(pos);
+			// optimize the marker to mark only styles which may contain
+			// tags
+			if(curstyle == wxSCI_C_WORD2 || curstyle == wxSCI_C_GLOBALCLASS || curstyle == wxSCI_C_IDENTIFIER){
+				
+				m_hyperLinkIndicatroStart = WordStartPos(pos, true);
+				m_hyperLinkIndicatroEnd   = WordEndPos(pos, true);
+				
+				if(m_hyperLinkIndicatroEnd > m_hyperLinkIndicatroStart){
+					IndicatorFillRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd - m_hyperLinkIndicatroStart);
+				} else {
+					m_hyperLinkIndicatroStart = wxNOT_FOUND;
+					m_hyperLinkIndicatroEnd = wxNOT_FOUND;
+				}
+			}
+		}
+	}
 	event.Skip();
 }
 

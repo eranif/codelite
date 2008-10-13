@@ -81,6 +81,8 @@ class LEditor : public wxScintilla, public IEditor
 	std::map<int, wxString> m_customCmds;
 	CCBox *m_ccBox;
 	bool m_isVisible;
+	int m_hyperLinkIndicatroStart;
+	int m_hyperLinkIndicatroEnd;
 	
 public:
 	static FindReplaceData &GetFindReplaceData() {
@@ -481,6 +483,8 @@ private:
 	void OnContextMenu(wxContextMenuEvent &event);
 	void OnKeyDown(wxKeyEvent &event);
 	void OnLeftDown(wxMouseEvent &event);
+	void OnLeftUp(wxMouseEvent &event);
+	void OnLeaveWindow(wxMouseEvent &event);
 	void OnLeftDClick(wxScintillaEvent &event);
 	void OnPopupMenuUpdateUI(wxUpdateUIEvent &event);
 	void OnDbgQuickWatch(wxCommandEvent &event);

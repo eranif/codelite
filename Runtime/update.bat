@@ -1,23 +1,23 @@
 @echo off
 
-xcopy config\*.default "C:\Program Files\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes
-xcopy config\build_settings.xml.default.win "C:\Program Files\CodeLite\config\build_settings.xml.default" /E /I /H /Y /EXCLUDE:excludes
-xcopy debuggers\*.dll "C:\Program Files\CodeLite\debuggers\" /E /I /H /Y /EXCLUDE:excludes
-xcopy images\* "C:\Program Files\CodeLite\images\" /E /I /H /Y /EXCLUDE:excludes
-xcopy lexers\*.xml "C:\Program Files\CodeLite\lexers\" /E /I /H /Y /EXCLUDE:excludes
-xcopy plugins\*.dll "C:\Program Files\CodeLite\plugins\" /E /I /H /Y /EXCLUDE:excludes
-xcopy plugins\resources\*.* "C:\Program Files\CodeLite\plugins\resources\" /E /I /H /Y /EXCLUDE:excludes
-xcopy rc\*.xrc "C:\Program Files\CodeLite\rc\" /E /I /H /Y /EXCLUDE:excludes
-xcopy templates\ "C:\Program Files\CodeLite\templates\" /E /I /H /Y /EXCLUDE:excludes
-xcopy templates\formbuilder\* "C:\Program Files\CodeLite\templates\formbuilder\" /E /I /H /Y /EXCLUDE:excludes
-xcopy *.html "C:\Program Files\CodeLite\" /H /Y /EXCLUDE:excludes
+xcopy config\*.default "%ProgramFiles%\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes
+xcopy config\build_settings.xml.default.win "%ProgramFiles%\CodeLite\config\build_settings.xml.default" /E /I /H /Y /EXCLUDE:excludes
+xcopy debuggers\*.dll "%ProgramFiles%\CodeLite\debuggers\" /E /I /H /Y /EXCLUDE:excludes
+xcopy images\* "%ProgramFiles%\CodeLite\images\" /E /I /H /Y /EXCLUDE:excludes
+xcopy lexers\*.xml "%ProgramFiles%\CodeLite\lexers\" /E /I /H /Y /EXCLUDE:excludes
+xcopy plugins\*.dll "%ProgramFiles%\CodeLite\plugins\" /E /I /H /Y /EXCLUDE:excludes
+xcopy plugins\resources\*.* "%ProgramFiles%\CodeLite\plugins\resources\" /E /I /H /Y /EXCLUDE:excludes
+xcopy rc\*.xrc "%ProgramFiles%\CodeLite\rc\" /E /I /H /Y /EXCLUDE:excludes
+xcopy templates\ "%ProgramFiles%\CodeLite\templates\" /E /I /H /Y /EXCLUDE:excludes
+xcopy templates\formbuilder\* "%ProgramFiles%\CodeLite\templates\formbuilder\" /E /I /H /Y /EXCLUDE:excludes
+xcopy *.html "%ProgramFiles%\CodeLite\" /H /Y /EXCLUDE:excludes
 :: Copy the misc files
-copy ctags-le.exe "C:\Program Files\CodeLite\" /Y
-copy makedir.exe "C:\Program Files\CodeLite\" /Y
-copy le_exec.exe "C:\Program Files\CodeLite\" /Y
-copy CodeLite.exe "C:\Program Files\CodeLite\" /Y
-copy patch.exe "C:\Program Files\CodeLite\" /Y
-copy astyle.sample "C:\Program Files\CodeLite\" /Y
-copy ..\sdk\wxconfig\wx-config.exe "C:\Program Files\CodeLite\" /Y
-copy ..\sdk\curl\lib\libcurl-4.dll "C:\Program Files\CodeLite\" /Y
+copy ctags-le.exe "%ProgramFiles%\CodeLite\" /Y
+copy makedir.exe "%ProgramFiles%\CodeLite\" /Y
+copy le_exec.exe "%ProgramFiles%\CodeLite\" /Y
+copy CodeLite.exe "%ProgramFiles%\CodeLite\" /Y
+copy patch.exe "%ProgramFiles%\CodeLite\" /Y
+copy astyle.sample "%ProgramFiles%\CodeLite\" /Y
+copy ..\sdk\wxconfig\wx-config.exe "%ProgramFiles%\CodeLite\" /Y
+copy ..\sdk\curl\lib\libcurl-4.dll "%ProgramFiles%\CodeLite\" /Y
 copy ..\sdk\curl\lib\libcurl-4.dll . /Y

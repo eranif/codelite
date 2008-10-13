@@ -37,7 +37,8 @@
 #include "wx/sstream.h"
 #include "globals.h"
 
-static wxString GetMakeDirCmd(BuildConfigPtr bldConf) {
+static wxString GetMakeDirCmd(BuildConfigPtr bldConf)
+{
 	wxString text;
 	if (wxGetOsVersion() & wxOS_WINDOWS) {
 		text << wxT("@makedir \"") << bldConf->GetIntermediateDirectory() << wxT("\"");
@@ -149,17 +150,10 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 			wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, dependProj->GetName());
 			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
-			if(dependProjbldConf && dependProjbldConf->IsCustomBuild()){
+			if (dependProjbldConf && dependProjbldConf->IsCustomBuild()) {
 				isCustom = true;
 			}
-			
-			// incase caller provided with configuration to build, force generation of the makefile
-			// if the dependency project is not custom, we generate the makefile for it
-			// ourself
-			if( !isCustom ){
-				GenerateMakefile(dependProj, projectSelConf, confToBuild.IsEmpty() ? force : true);
-			}
-			
+
 			// incase we manually specified the configuration to be built, set the project
 			// as modified, so on next attempt to build it, CodeLite will sync the configuration
 			if (confToBuild.IsEmpty() == false) {
@@ -167,22 +161,28 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 			}
 
 			text << wxT("\t@echo ----------Building project:[ ") << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
-
-			//make the paths relative
+			// make the paths relative
 			wxFileName fn(dependProj->GetFileName());
 			fn.MakeRelativeTo(wspfile.GetPath());
-			
-			// if we are using custom build command, invoke it instead of calling the generated makefile
-			if( !isCustom ){
-				text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\"\n");
-			} else {
+
+			// we handle custom builds and non-custom build separatly:
+			if ( isCustom ) {
+				
+				CreateCustomPreBuildEvents(dependProjbldConf, text);
 				text << wxT("\t") << GetCdCmd(wspfile, fn) << dependProjbldConf->GetCustomBuildCmd() << wxT("\n");
+				CreateCustomPostBuildEvents(dependProjbldConf, text);
+				
+			} else {
+				// generate the dependency project makefile
+				GenerateMakefile(dependProj, projectSelConf, confToBuild.IsEmpty() ? force : true);
+				text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\"\n");
 			}
 		}
 	}
 
-	//generate makefile for the project itself
+	// Generate makefile for the project itself
 	GenerateMakefile(proj, confToBuild, confToBuild.IsEmpty() ? force : true);
+
 	// incase we manually specified the configuration to be built, set the project
 	// as modified, so on next attempt to build it, CodeLite will sync the configuration
 	if (confToBuild.IsEmpty() == false) {
@@ -209,7 +209,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		for (size_t i=0; i<depsArr.GetCount(); i++) {
 			bool isCustom(false);
 			wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, depsArr.Item(i));
-			
+
 			ProjectPtr dependProj = WorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
 			//Missing dependencies project? just skip it
 			if (!dependProj) {
@@ -225,12 +225,12 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 			//if the dependencie project is project of type 'Custom Build' - do the custom build instead
 			//of the geenrated makefile
 			BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
-			if(dependProjbldConf && dependProjbldConf->IsCustomBuild()){
+			if (dependProjbldConf && dependProjbldConf->IsCustomBuild()) {
 				isCustom = true;
 			}
-			
+
 			// if we are using custom build command, invoke it instead of calling the generated makefile
-			if( !isCustom ){
+			if ( !isCustom ) {
 				text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\"  clean\n");
 			} else {
 				text << wxT("\t") << GetCdCmd(wspfile, fn) << dependProjbldConf->GetCustomCleanCmd() << wxT("\n");
@@ -245,7 +245,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		// we allow the caller to override the selected configuration with 'confToBuild' parameter
 		projectSelConf = confToBuild;
 	}
-	
+
 	text << wxT("\t@echo ----------Building project:[ ") << project << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
 
 	//make the paths relative
@@ -406,9 +406,9 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
 
 	int counter = 1;
 	Compiler::CmpFileTypeInfo ft;
-		
+
 	for (size_t i=0; i<files.size(); i++) {
-		
+
 		// is this a valid file?
 		if (!cmp->GetCmpFileType(files[i].GetExt(), ft))
 			continue;
@@ -417,7 +417,7 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
 			// we are on Windows, the file type is Resource and resource compiler is not required
 			continue;
 		}
-		
+
 		if (ft.kind == Compiler::CmpFileKindResource) {
 			// resource files are handled differently
 			text << wxT("$(IntermediateDirectory)/") << files[i].GetFullName() << wxT("$(ObjectSuffix) ");
@@ -815,20 +815,12 @@ wxString BuilderGnuMake::ParseLibs(const wxString &libs)
 	return slibs;
 }
 
-wxString BuilderGnuMake::GetBuildCommand(const wxString &project, const wxString &confToBuild, bool &isCustom)
+wxString BuilderGnuMake::GetBuildCommand(const wxString &project, const wxString &confToBuild)
 {
 	wxString errMsg, cmd;
-	isCustom = false;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
 	if (!bldConf) {
 		return wxEmptyString;
-	}
-
-	if ( bldConf->IsCustomBuild() ) {
-		//we got a custom build here, return the command as appears in the
-		//'custom build line'
-		isCustom = true;
-		return bldConf->GetCustomBuildCmd();
 	}
 
 	//generate the makefile
@@ -843,20 +835,12 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, const wxString
 	return cmd;
 }
 
-wxString BuilderGnuMake::GetCleanCommand(const wxString &project, const wxString &confToBuild, bool &isCustom)
+wxString BuilderGnuMake::GetCleanCommand(const wxString &project, const wxString &confToBuild)
 {
 	wxString errMsg, cmd;
-	isCustom = false;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
 	if (!bldConf) {
 		return wxEmptyString;
-	}
-
-	if ( bldConf->IsCustomBuild() ) {
-		//we got a custom build here, return the command as appears in the
-		//'custom build line'
-		isCustom = true;
-		return bldConf->GetCustomCleanCmd();
 	}
 
 	//generate the makefile
@@ -871,20 +855,12 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString &project, const wxString
 	return cmd;
 }
 
-wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project, const wxString &confToBuild, bool &isCustom)
+wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project, const wxString &confToBuild)
 {
 	wxString errMsg, cmd;
-	isCustom = false;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
 	if (!bldConf) {
 		return wxEmptyString;
-	}
-
-	if ( bldConf->IsCustomBuild() ) {
-		//we got a custom build here, return the command as appears in the
-		//'custom build command'
-		isCustom = true;
-		return bldConf->GetCustomBuildCmd();
 	}
 
 	//generate the makefile
@@ -905,20 +881,12 @@ wxString BuilderGnuMake::GetPOBuildCommand(const wxString &project, const wxStri
 	return cmd;
 }
 
-wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project, const wxString &confToBuild, bool &isCustom)
+wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project, const wxString &confToBuild)
 {
 	wxString errMsg, cmd;
-	isCustom = false;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
 	if (!bldConf) {
 		return wxEmptyString;
-	}
-
-	if ( bldConf->IsCustomBuild() ) {
-		//we got a custom build here, return the command as appears in the
-		//'custom build clean command'
-		isCustom = true;
-		return bldConf->GetCustomCleanCmd();
 	}
 
 	//generate the makefile
@@ -939,17 +907,12 @@ wxString BuilderGnuMake::GetPOCleanCommand(const wxString &project, const wxStri
 	return cmd;
 }
 
-wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, bool &isCustom, wxString &errMsg)
+wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg)
 {
 	wxString cmd;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
 	if (!bldConf) {
 		return wxEmptyString;
-	}
-
-	if (bldConf->IsCustomBuild()) {
-		isCustom = true;
-		return bldConf->GetSingleFileBuildCommand();
 	}
 
 	//generate the makefile
@@ -984,4 +947,54 @@ wxString BuilderGnuMake::GetCdCmd(const wxFileName &path1, const wxFileName &pat
 		cd_cmd << wxT("cd \"") << path2.GetPath() << wxT("\" && ");
 	}
 	return cd_cmd;
+}
+
+void BuilderGnuMake::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString& text)
+{
+	BuildCommandList cmds;
+	BuildCommandList::iterator iter;
+	
+	cmds.clear();
+	bldConf->GetPreBuildCommands(cmds);
+	bool first(true);
+	if (!cmds.empty()) {
+		iter = cmds.begin();
+		for (; iter != cmds.end(); iter++) {
+			if (iter->GetEnabled()) {
+				if (first) {
+					text << wxT("\t@echo Executing Post Build commands ...\n");
+					first = false;
+				}
+				text << wxT("\t") << iter->GetCommand() << wxT("\n");
+			}
+		}
+		if (!first) {
+			text << wxT("\t@echo Done\n");
+		}
+	}
+}
+
+void BuilderGnuMake::CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString& text)
+{
+	BuildCommandList cmds;
+	BuildCommandList::iterator iter;
+	
+	cmds.clear();
+	bldConf->GetPostBuildCommands(cmds);
+	bool first(true);
+	if (!cmds.empty()) {
+		iter = cmds.begin();
+		for (; iter != cmds.end(); iter++) {
+			if (iter->GetEnabled()) {
+				if (first) {
+					text << wxT("\t@echo Executing Pre Build commands ...\n");
+					first = false;
+				}
+				text << wxT("\t") << iter->GetCommand() << wxT("\n");
+			}
+		}
+		if (!first) {
+			text << wxT("\t@echo Done\n");
+		}
+	}
 }

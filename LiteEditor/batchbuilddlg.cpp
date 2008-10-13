@@ -32,13 +32,13 @@ void BatchBuildDlg::OnBuild( wxCommandEvent& event )
 void BatchBuildDlg::OnBuildUI( wxUpdateUIEvent& event )
 {
 	bool enable(false);
-	for(unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++){
-		if(m_checkListConfigurations->IsChecked(i)) {
+	for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
+		if (m_checkListConfigurations->IsChecked(i)) {
 			enable = true;
 			break;
 		}
 	}
-	
+
 	event.Enable(enable);
 }
 
@@ -53,20 +53,20 @@ void BatchBuildDlg::OnClean( wxCommandEvent& event )
 void BatchBuildDlg::OnCleanUI( wxUpdateUIEvent& event )
 {
 	bool enable(false);
-	for(unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++){
-		if(m_checkListConfigurations->IsChecked(i)) {
+	for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
+		if (m_checkListConfigurations->IsChecked(i)) {
 			enable = true;
 			break;
 		}
 	}
-	
+
 	event.Enable(enable);
 }
 
 void BatchBuildDlg::OnCheckAll( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	for(unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++){
+	for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
 		m_checkListConfigurations->Check(i, true);
 	}
 }
@@ -74,7 +74,7 @@ void BatchBuildDlg::OnCheckAll( wxCommandEvent& event )
 void BatchBuildDlg::OnUnCheckAll( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	for(unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++){
+	for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
 		m_checkListConfigurations->Check(i, false);
 	}
 }
@@ -82,14 +82,14 @@ void BatchBuildDlg::OnUnCheckAll( wxCommandEvent& event )
 void BatchBuildDlg::OnMoveUp( wxCommandEvent& event )
 {
 	wxString selectedString  = m_checkListConfigurations->GetStringSelection();
-	
+
 	int sel = m_checkListConfigurations->GetSelection();
-	if(sel == wxNOT_FOUND){
+	if (sel == wxNOT_FOUND) {
 		return;
 	}
 	bool checked = m_checkListConfigurations->IsChecked(sel);
 	sel --;
-	if(sel < 0){
+	if (sel < 0) {
 		return;
 	}
 
@@ -108,12 +108,12 @@ void BatchBuildDlg::OnMoveUpUI( wxUpdateUIEvent& event )
 void BatchBuildDlg::OnMoveDown( wxCommandEvent& event )
 {
 	int sel = m_checkListConfigurations->GetSelection();
-	if(sel == wxNOT_FOUND){
+	if (sel == wxNOT_FOUND) {
 		return;
 	}
 	bool checked = m_checkListConfigurations->IsChecked(sel);
 	sel ++;
-	if(sel >= (int)m_checkListConfigurations->GetCount()){
+	if (sel >= (int)m_checkListConfigurations->GetCount()) {
 		return;
 	}
 
@@ -141,19 +141,36 @@ void BatchBuildDlg::OnClose( wxCommandEvent& event )
 void BatchBuildDlg::GetBuildInfoList(std::list<QueueCommand>& buildInfoList)
 {
 	bool clean_log(true);
-	for(unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++){
-		if(m_checkListConfigurations->IsChecked(i)) {
+	for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
+		if (m_checkListConfigurations->IsChecked(i)) {
 			wxString text = m_checkListConfigurations->GetString(i);
 			wxString project = text.BeforeFirst(wxT('|'));
 			wxString config  = text.AfterFirst(wxT('|'));
+
+			project.Trim().Trim(false);
+			config.Trim().Trim(false);
 			
-			project = project.Trim().Trim(false);
-			config = config.Trim().Trim(false);
-			
-			QueueCommand buildInfo(project, config, true, m_cmd);
-			buildInfo.SetCleanLog(clean_log);
-			buildInfoList.push_back(buildInfo);
-			clean_log = false;
+			// get the selected configuration to be built
+			BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, config);
+			if (bldConf) {
+				
+				QueueCommand buildInfo(project, config, true, m_cmd);
+				// handle custom build projects properly
+				if (bldConf->IsCustomBuild()) {
+					buildInfo.SetKind(QueueCommand::CustomBuild);
+					switch (m_cmd) {
+					case QueueCommand::Build:
+						buildInfo.SetCustomBuildTarget(wxT("Build"));
+						break;
+					case QueueCommand::Clean:
+						buildInfo.SetCustomBuildTarget(wxT("Clean"));
+						break;
+					}
+				}
+				buildInfo.SetCleanLog(clean_log);
+				buildInfoList.push_back(buildInfo);
+				clean_log = false;
+			}
 		}
 	}
 }
@@ -163,17 +180,17 @@ void BatchBuildDlg::DoInitialize()
 	// load the previously saved batch build file
 	wxFileName fn(WorkspaceST::Get()->GetWorkspaceFileName());
 	fn.SetExt(wxT("batch_build"));
-	
+
 	wxString content;
 	wxArrayString arr;
-	if(ReadFileWithConversion(fn.GetFullPath(), content)){
+	if (ReadFileWithConversion(fn.GetFullPath(), content)) {
 		arr = wxStringTokenize(content, wxT("\n"), wxTOKEN_STRTOK);
-		for(size_t i=0; i<arr.GetCount(); i++){
+		for (size_t i=0; i<arr.GetCount(); i++) {
 			int idx = m_checkListConfigurations->Append(arr.Item(i));
 			m_checkListConfigurations->Check((unsigned int)idx);
 		}
 	}
-	
+
 	// loop over all projects, for each project collect all available
 	// build configurations and add them to the check list control
 	wxArrayString projects;
@@ -187,9 +204,9 @@ void BatchBuildDlg::DoInitialize()
 				BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
 				while (bldConf) {
 					wxString item(p->GetName() + wxT(" | ") + bldConf->GetName());
-					
+
 					int where = arr.Index(item);
-					if(where == wxNOT_FOUND){
+					if (where == wxNOT_FOUND) {
 						// append this item
 						m_checkListConfigurations->Append(item);
 					} else {
@@ -203,18 +220,18 @@ void BatchBuildDlg::DoInitialize()
 			}
 		}
 	}
-	
-	// check to see which configuration was left in 'arr' 
+
+	// check to see which configuration was left in 'arr'
 	// and remove them from the checklistbox
-	for(size_t i=0; i<arr.GetCount(); i++){
+	for (size_t i=0; i<arr.GetCount(); i++) {
 		int where = m_checkListConfigurations->FindString(arr.Item(i));
-		if(where != wxNOT_FOUND){
+		if (where != wxNOT_FOUND) {
 			m_checkListConfigurations->Delete((unsigned int)where);
 		}
 	}
 	arr.clear();
-	
-	if(m_checkListConfigurations->GetCount()>0){
+
+	if (m_checkListConfigurations->GetCount()>0) {
 		m_checkListConfigurations->Select(0);
 	}
 }
@@ -223,13 +240,13 @@ void BatchBuildDlg::DoSaveBatchBuildOrder()
 {
 	wxFileName fn(WorkspaceST::Get()->GetWorkspaceFileName());
 	fn.SetExt(wxT("batch_build"));
-	
+
 	wxString content;
-	for(unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++){
-		if(m_checkListConfigurations->IsChecked(i)) {
+	for (unsigned int i=0; i<m_checkListConfigurations->GetCount(); i++) {
+		if (m_checkListConfigurations->IsChecked(i)) {
 			content << m_checkListConfigurations->GetString(i) << wxT("\n");
 		}
 	}
-	
+
 	WriteFileWithBackup(fn.GetFullPath(), content, false);
 }

@@ -30,15 +30,7 @@
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
 
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
-
-class WXDLLIMPEXP_LE_SDK BuilderGnuMake : public Builder 
+class BuilderGnuMake : public Builder 
 {
 public:
 	BuilderGnuMake();
@@ -52,11 +44,11 @@ public:
 	 * \return true on success, false otherwise.
 	 */
 	virtual bool Export(const wxString &project, const wxString &confToBuild, bool isProjectOnly, bool force, wxString &errMsg);
-	virtual wxString GetBuildCommand(const wxString &project, const wxString &confToBuild, bool &isCustom);
-	virtual wxString GetCleanCommand(const wxString &project, const wxString &confToBuild, bool &isCustom);
-	virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild, bool &isCustom);
-	virtual wxString GetPOCleanCommand(const wxString &project, const wxString &confToBuild, bool &isCustom);
-	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, bool &isCustom, wxString &errMsg);
+	virtual wxString GetBuildCommand(const wxString &project, const wxString &confToBuild);
+	virtual wxString GetCleanCommand(const wxString &project, const wxString &confToBuild);
+	virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild);
+	virtual wxString GetPOCleanCommand(const wxString &project, const wxString &confToBuild);
+	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg);
 
 private:
 	void GenerateMakefile(ProjectPtr proj, const wxString &confToBuild, bool force);
@@ -67,6 +59,9 @@ private:
 	void CreateTargets(const wxString &type, BuildConfigPtr bldConf, wxString &text);
 	void CreatePreBuildEvents(BuildConfigPtr bldConf, wxString &text);
 	void CreatePostBuildEvents(BuildConfigPtr bldConf, wxString &text);
+	
+	void CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString &text);
+	void CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString &text);
 	
 	wxString GetCdCmd(const wxFileName &path1, const wxFileName &path2);
 

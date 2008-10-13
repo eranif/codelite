@@ -399,18 +399,6 @@ public:
 	void PopupProjectDependsDlg(const wxString &projectName);
 
 	/**
-	 * Pass a command to the compiler thread to clean the
-	 * given project
-	 */
-	void CleanProject(const QueueCommand &buildInfo);
-
-	/**
-	 * Pass a command to the compiler thread to build the
-	 * given project
-	 */
-	void BuildProject(const QueueCommand &buildInfo);
-
-	/**
 	 * \brief when building using custom build, execute the makefile generation command provided by the user
 	 * \param project project to execute it for
 	 */

@@ -1176,12 +1176,6 @@ void Manager::PopupProjectDependsDlg(const wxString &projectName)
 	dlg->Destroy();
 }
 
-void Manager::CleanProject(const QueueCommand &buildInfo)
-{
-	PushQueueCommand( buildInfo );
-	ProcessCommandQueue();
-}
-
 bool Manager::IsBuildEndedSuccessfully() const
 {
 	//build is still running?
@@ -1222,12 +1216,6 @@ bool Manager::IsBuildEndedSuccessfully() const
 	return true;
 }
 
-void Manager::BuildProject(const QueueCommand &buildInfo)
-{
-	PushQueueCommand( buildInfo );
-	ProcessCommandQueue();
-}
-
 void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
 {
 	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
@@ -1260,7 +1248,19 @@ void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
 	}
 
 	QueueCommand info(projectName, conf, false, QueueCommand::Build);
-	m_shellProcess = new CompileRequest(GetMainFrame(), info, fileName, false);
+	if(bldConf && bldConf->IsCustomBuild()){
+		info.SetCustomBuildTarget(wxT("Compile Single File"));
+		info.SetKind(QueueCommand::CustomBuild);
+	}
+	
+	switch (info.GetKind()) {
+	case QueueCommand::Build:
+		m_shellProcess = new CompileRequest(GetMainFrame(), info, fileName, false);	
+		break;
+	case  QueueCommand::CustomBuild:
+		m_shellProcess = new CustomBuildRequest(GetMainFrame(), info, fileName);
+		break;
+	}
 	m_shellProcess->Process();
 }
 
@@ -3305,6 +3305,17 @@ void Manager::DoCmdWorkspace(int cmd)
 		BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(optimizedList.Item(i), wxEmptyString);
 		if (buildConf) {
 			QueueCommand bi(optimizedList.Item(i), buildConf->GetName(), true, cmd);
+			if(buildConf->IsCustomBuild()){
+				bi.SetKind(QueueCommand::CustomBuild);
+				switch( cmd ) {
+				case QueueCommand::Build:
+					bi.SetCustomBuildTarget(wxT("Build"));
+					break;
+				case QueueCommand::Clean:
+					bi.SetCustomBuildTarget(wxT("Clean"));
+					break;
+				}
+			}
 			bi.SetCleanLog(i == 0);
 			PushQueueCommand( bi );
 		}
@@ -3359,6 +3370,6 @@ void Manager::DoCustomBuild(const QueueCommand& buildInfo)
 			DbgStop();
 		}
 	}
-	m_shellProcess = new CustomBuildRequest(GetMainFrame(), buildInfo);
+	m_shellProcess = new CustomBuildRequest(GetMainFrame(), buildInfo, wxEmptyString);
 	m_shellProcess->Process();
 }

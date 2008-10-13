@@ -962,7 +962,13 @@ void FileViewTree::OnClean( wxCommandEvent &event )
 			conf = bldConf->GetName();
 		}
 		QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
-		ManagerST::Get()->CleanProject( buildInfo );
+		
+		if(bldConf && bldConf->IsCustomBuild()) {
+			buildInfo.SetKind(QueueCommand::CustomBuild);
+			buildInfo.SetCustomBuildTarget(wxT("Clean"));
+		}
+		ManagerST::Get()->PushQueueCommand(buildInfo);
+		ManagerST::Get()->ProcessCommandQueue();
 	}
 }
 
@@ -979,9 +985,14 @@ void FileViewTree::OnBuild( wxCommandEvent &event )
 		if (bldConf) {
 			conf = bldConf->GetName();
 		}
-
+		
 		QueueCommand buildInfo(projectName, conf, false, QueueCommand::Build);
-		ManagerST::Get()->BuildProject( buildInfo );
+		if(bldConf && bldConf->IsCustomBuild()){
+			buildInfo.SetKind(QueueCommand::CustomBuild);
+			buildInfo.SetCustomBuildTarget(wxT("Build"));
+		}
+		ManagerST::Get()->PushQueueCommand(buildInfo);
+		ManagerST::Get()->ProcessCommandQueue();
 	}
 }
 
@@ -1136,7 +1147,12 @@ void FileViewTree::OnBuildProjectOnly( wxCommandEvent &event )
 		}
 
 		QueueCommand info(projectName, conf, true, QueueCommand::Build);
-		ManagerST::Get()->BuildProject( info );
+		if(bldConf && bldConf->IsCustomBuild()){
+			info.SetKind(QueueCommand::CustomBuild);
+			info.SetCustomBuildTarget(wxT("Build"));
+		}
+		ManagerST::Get()->PushQueueCommand( info );
+		ManagerST::Get()->ProcessCommandQueue();
 	}
 }
 
@@ -1155,7 +1171,13 @@ void FileViewTree::OnCleanProjectOnly( wxCommandEvent &event )
 		}
 
 		QueueCommand info(projectName, conf, true, QueueCommand::Clean);
-		ManagerST::Get()->CleanProject( info );
+		if(bldConf && bldConf->IsCustomBuild()) {
+			info.SetKind(QueueCommand::CustomBuild);
+			info.SetCustomBuildTarget(wxT("Clean"));
+		}
+		
+		ManagerST::Get()->PushQueueCommand(info);
+		ManagerST::Get()->ProcessCommandQueue();
 	}
 }
 

@@ -58,12 +58,11 @@ void CleanRequest::Process()
 		return;
 	}
 	
-	bool isCustom(false);
 	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_info.GetProjectOnly()) {
-		cmd = builder->GetPOCleanCommand(m_info.GetProject(), m_info.GetConfiguration(), isCustom);
+		cmd = builder->GetPOCleanCommand(m_info.GetProject(), m_info.GetConfiguration());
 	} else {
-		cmd = builder->GetCleanCommand(m_info.GetProject(), m_info.GetConfiguration(), isCustom);
+		cmd = builder->GetCleanCommand(m_info.GetProject(), m_info.GetConfiguration());
 	}
 
 	if ( cmd.IsEmpty() ) {
@@ -98,7 +97,7 @@ void CleanRequest::Process()
 	if (m_proc) {
 
 		DirSaver ds;
-		DoSetWorkingDirectory(proj, isCustom, false);
+		DoSetWorkingDirectory(proj, false, false);
 		
 		if (m_info.GetProjectOnly() ) {
 			//need to change directory to project dir
@@ -109,7 +108,7 @@ void CleanRequest::Process()
 		
 		// print the prefix message of the build start. This is important since the parser relies 
 		// on this message 
-		if(isCustom || m_info.GetProjectOnly()){
+		if(m_info.GetProjectOnly()){
 			wxString configName(m_info.GetConfiguration());
 			
 			//also, send another message to the main frame, indicating which project is being built

@@ -1976,7 +1976,12 @@ void Frame::OnBuildProject(wxCommandEvent &event)
 		}
 		
 		QueueCommand info(projectName, conf, false, QueueCommand::Build);
-		ManagerST::Get()->BuildProject( info );
+		if(bldConf && bldConf->IsCustomBuild()){
+			info.SetKind(QueueCommand::CustomBuild);
+			info.SetCustomBuildTarget(wxT("Build"));
+		}
+		ManagerST::Get()->PushQueueCommand( info );
+		ManagerST::Get()->ProcessCommandQueue();
 	}
 }
 
@@ -2027,8 +2032,24 @@ void Frame::OnBuildAndRunProject(wxCommandEvent &event)
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
 		m_buildAndRun = true;
-		QueueCommand info(ManagerST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::Build);
-		ManagerST::Get()->BuildProject( info );
+		
+		wxString projectName = ManagerST::Get()->GetActiveProjectName();
+		wxString conf;
+		// get the selected configuration to be built
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+		if (bldConf) {
+			conf = bldConf->GetName();
+		}
+		
+		QueueCommand info(projectName, conf, false, QueueCommand::Build);
+		
+		if(bldConf && bldConf->IsCustomBuild()){
+			info.SetKind(QueueCommand::CustomBuild);
+			info.SetCustomBuildTarget(wxT("Build"));
+		}
+		
+		ManagerST::Get()->PushQueueCommand( info );
+		ManagerST::Get()->ProcessCommandQueue();
 	}
 }
 
@@ -2088,9 +2109,14 @@ void Frame::OnCleanProject(wxCommandEvent &event)
 	if(bldConf) {
 		conf = bldConf->GetName();
 	}
-
+	
 	QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
-	ManagerST::Get()->CleanProject( buildInfo );
+	if(bldConf && bldConf->IsCustomBuild()){
+		buildInfo.SetKind(QueueCommand::CustomBuild);
+		buildInfo.SetCustomBuildTarget(wxT("Clean"));
+	}
+	ManagerST::Get()->PushQueueCommand(buildInfo);
+	ManagerST::Get()->ProcessCommandQueue();
 }
 
 void Frame::OnCleanProjectUI(wxUpdateUIEvent &event)
@@ -3383,12 +3409,31 @@ void Frame::RebuildProject(const wxString& projectName)
 {
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
-		QueueCommand buildInfo(projectName, wxEmptyString, false, QueueCommand::Clean);
+		wxString conf;
+		// get the selected configuration to be built
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+		if(bldConf) {
+			conf = bldConf->GetName();
+		}
+	
+		// first we place a clean command 
+		QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
+		if(bldConf && bldConf->IsCustomBuild()){
+			buildInfo.SetKind(QueueCommand::CustomBuild);
+			buildInfo.SetCustomBuildTarget(wxT("Clean"));
+		}
 		ManagerST::Get()->PushQueueCommand(buildInfo);
-
-		buildInfo = QueueCommand(projectName, wxEmptyString, false, QueueCommand::Build);
+		
+		// now we place a build command
+		buildInfo = QueueCommand(projectName, conf, false, QueueCommand::Build);
+		
+		if(bldConf && bldConf->IsCustomBuild()){
+			buildInfo.SetKind(QueueCommand::CustomBuild);
+			buildInfo.SetCustomBuildTarget(wxT("Build"));
+		}
 		ManagerST::Get()->PushQueueCommand(buildInfo);
-
+		
+		// process the queue
 		ManagerST::Get()->ProcessCommandQueue();
 	}
 }

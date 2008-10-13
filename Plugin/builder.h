@@ -29,14 +29,6 @@
 #include "smart_ptr.h"
 #include "wx/event.h"
 
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
-
 /**
  * \ingroup SDK
  * this class defines the interface of a build system
@@ -48,7 +40,7 @@
  *
  * \author Eran
  */
-class WXDLLIMPEXP_LE_SDK Builder {
+class Builder {
 protected:
 	wxString m_name;
 	wxString m_buildTool;
@@ -111,13 +103,13 @@ public:
 	 * Return the command that should be executed for performing the clean
 	 * task
 	 */
-	virtual wxString GetCleanCommand(const wxString &project, const wxString &confToBuild, bool &isCustom) = 0;
+	virtual wxString GetCleanCommand(const wxString &project, const wxString &confToBuild) = 0;
 
 	/** 
 	 * Return the command that should be executed for performing the build
 	 * task for a given project
 	 */
-	virtual wxString GetBuildCommand(const wxString &project, const wxString &confToBuild, bool &isCustom) = 0;
+	virtual wxString GetBuildCommand(const wxString &project, const wxString &confToBuild) = 0;
 
 	//-----------------------------------------------------------------
 	// Project Only API
@@ -126,13 +118,13 @@ public:
 	 * Return the command that should be executed for performing the clean
 	 * task - for the project only (excluding dependencies)
 	 */
-	virtual wxString GetPOCleanCommand(const wxString &project, const wxString &confToBuild, bool &isCustom) = 0;
+	virtual wxString GetPOCleanCommand(const wxString &project, const wxString &confToBuild) = 0;
 
 	/** 
 	 * Return the command that should be executed for performing the build
 	 * task for a given project - for the project only (excluding dependencies)
 	 */
-	virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild, bool &isCustom) = 0;
+	virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild) = 0;
 	
 	/**
 	 * \brief create a command to execute for compiling single source file
@@ -141,7 +133,7 @@ public:
 	 * \param errMsg [output]
 	 * \return the command
 	 */
-	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, bool &isCustom, wxString &errMsg) = 0;
+	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg) = 0;
 };
 
 typedef SmartPtr<Builder> BuilderPtr;

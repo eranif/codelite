@@ -60,25 +60,19 @@ void CompileRequest::Process()
 		return;
 	}
 
-	//TODO:: make the builder name configurable
-	bool isCustom(false);
+	// TODO:: make the builder name configurable
 	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_fileName.IsEmpty() == false) {
 		//we got a complie request of a single file
-		cmd = builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, isCustom, errMsg);
+		cmd = builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg);
 	} else if (m_info.GetProjectOnly()) {
-		cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration(), isCustom);
+		cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
 	} else {
-		cmd = builder->GetBuildCommand(m_info.GetProject(), m_info.GetConfiguration(), isCustom);
+		cmd = builder->GetBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
 	}
 
 	SendStartMsg();
-	if (!isCustom && m_premakeOnly) {
-		AppendLine(wxT("Empty makefile generation command (see Project Settings -> Custom Build)"));
-		SetBusy(false);
-		return;
-	}
-
+	
 	//if we require to run the makefile generation command only, replace the 'cmd' with the
 	//generation command line
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
@@ -117,7 +111,7 @@ void CompileRequest::Process()
 	if (m_proc) {
 		DirSaver ds;
 
-		DoSetWorkingDirectory(proj, isCustom, m_fileName.IsEmpty() == false);
+		DoSetWorkingDirectory(proj, false, m_fileName.IsEmpty() == false);
 
 		//expand the variables of the command
 		cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
@@ -129,12 +123,12 @@ void CompileRequest::Process()
 		AppendLine(cmd + wxT("\n"));
 		if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
 			// set working directory
-			DoSetWorkingDirectory(proj, isCustom, m_fileName.IsEmpty() == false);
+			DoSetWorkingDirectory(proj, false, m_fileName.IsEmpty() == false);
 		}
 		
 		// print the prefix message of the build start. This is important since the parser relies 
 		// on this message 
-		if(isCustom || m_info.GetProjectOnly() || m_fileName.IsEmpty() == false){
+		if(m_info.GetProjectOnly() || m_fileName.IsEmpty() == false){
 			wxString configName(m_info.GetConfiguration());
 			
 			//also, send another message to the main frame, indicating which project is being built

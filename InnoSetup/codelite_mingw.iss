@@ -23,7 +23,7 @@ InternalCompressLevel=ultra
 Name: "eng"; MessagesFile: "compiler:Default.isl"
 
 [Components]
-Name: "Editor"; Description: "CodeLite IDE (Editor + Plugins)"; Types: full custom; Flags: fixed;
+Name: "Editor"; Description: "CodeLite IDE (Editor + Plugins)"; Types: full custom;
 Name: "MinGW"; Description: "MinGW 3.4.5 full (gcc/g++/gdb/WinAPI)"; Types: full;
 
 [Tasks]

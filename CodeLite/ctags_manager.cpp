@@ -1686,7 +1686,8 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 		tip.erase(0, tip.find_first_not_of(trimString));
 		tip.erase(tip.find_last_not_of(trimString)+1);
 		tip.Replace(wxT("\t"), wxT(" "));
-
+        while (tip.Replace(wxT("  "), wxT(" "))) {}
+        
 		tip.Prepend(comment);
 		tips.push_back(tip);
 	}

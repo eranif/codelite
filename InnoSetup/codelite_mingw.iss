@@ -58,16 +58,16 @@ Source: "C:\Development\C++\codelite\trunk\Runtime\patch.exe"; DestDir: "{app}";
 Source: "C:\Development\C++\codelite\trunk\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\src\*"; DestDir: "{app}\src"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\MinGW\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
+Source: "C:\MinGW-3.4.5\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-3.4.5\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-3.4.5\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-3.4.5\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-3.4.5\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-3.4.5\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-3.4.5\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-3.4.5\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-3.4.5\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-3.4.5\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}"

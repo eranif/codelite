@@ -29,6 +29,7 @@
 #include "app.h"
 #include <wx/snglinst.h>
 #include <wx/image.h>
+#include <wx/filefn.h>
 
 #include "xmlutils.h"
 #include "editor_config.h"
@@ -249,11 +250,20 @@ bool App::OnInit()
 		homeDir = fnHomdDir.GetPath();
 	}
 	
-	// updatre PATH environment variable with the install directory
+	// Update PATH environment variable with the install directory and
+	// MinGW default installation (if exists)
 	wxString pathEnv;
-	wxGetEnv(wxT("PATH"), &pathEnv);
-	pathEnv << wxT(";") << homeDir << wxT(";");
-	wxSetEnv(wxT("PATH"), pathEnv);
+	if(wxGetEnv(wxT("PATH"), &pathEnv) == false){
+		wxLogMessage(_("WARNING: Failed to load environment variable PATH!"));
+	} else {
+		pathEnv << wxT(";") << homeDir << wxT(";");
+		if(wxDirExists(wxT("C:\\MinGW-3.4.5\\bin"))){
+			pathEnv << wxT("C:\\MinGW-3.4.5\\bin;");
+		}
+		if(wxSetEnv(wxT("PATH"), pathEnv) == false){
+			wxLogMessage(_("WARNING: Failed to update environment variable PATH"));
+		}
+	}
 	
 	ManagerST::Get()->SetInstallDir( homeDir );
 	EditorConfig::Init( SvnRevision );

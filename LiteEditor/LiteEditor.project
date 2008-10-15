@@ -96,6 +96,10 @@
       <File Name="syntaxhighlightbasedlg.cpp"/>
       <File Name="syntaxhighlightbasedlg.h"/>
       <File Name="syntaxhighlightdlg.cpp"/>
+      <File Name="editorsettingsgeneralpagebase.cpp"/>
+      <File Name="editorsettingsgeneralpagebase.h"/>
+      <File Name="editorsettingsgeneralpage.h"/>
+      <File Name="editorsettingsgeneralpage.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>
@@ -385,6 +389,7 @@
   <VirtualDirectory Name="formbuilder">
     <File Name="quickfindbarbase.fbp"/>
     <File Name="newversionbasedlg.fbp"/>
+    <File Name="editorsettingsgeneralpagebase.fbp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">

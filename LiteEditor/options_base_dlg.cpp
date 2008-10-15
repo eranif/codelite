@@ -29,6 +29,8 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
+#include "editorsettingsgeneralpage.h"
+#include "windowattrmanager.h"
 #include "wx/wxprec.h"
 #include <wx/fontmap.h>
 
@@ -109,92 +111,20 @@ OptionsDlg::OptionsDlg( wxWindow* parent, int id, wxString title, wxPoint pos, w
 	m_book->SetFocus();
 	this->SetSizer( mainSizer );
 	mainSizer->Fit(this);
-	
 	this->Layout();
+	
+	WindowAttrManager::Load(this, wxT("OptionsDlgAttr"), NULL);
+}
+
+OptionsDlg::~OptionsDlg()
+{
+	WindowAttrManager::Save(this, wxT("OptionsDlgAttr"), NULL);
 }
 
 wxPanel *OptionsDlg::CreateGeneralPage()
 {
-	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-	m_general = new wxPanel( m_book, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* vSz1;
-	vSz1 = new wxBoxSizer( wxVERTICAL );
-
-	wxBoxSizer *bszier = new wxBoxSizer(wxVERTICAL);
-
-	m_displayLineNumbers = new wxCheckBox( m_general, wxID_ANY, wxT("Display Line Numbers"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_displayLineNumbers->SetValue(options->GetDisplayLineNumbers());
-	bszier->Add( m_displayLineNumbers, 0, wxALL, 5 );
-
-	m_indentsUsesTabs = new wxCheckBox( m_general, wxID_ANY, wxT("Use Tabs For Indentation"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_indentsUsesTabs->SetValue(options->GetIndentUsesTabs());
-	bszier->Add( m_indentsUsesTabs, 0, wxALL, 5 );
-
-	m_showIndentationGuideLines = new wxCheckBox( m_general, wxID_ANY, wxT("Show Indentation Guidelines"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_showIndentationGuideLines->SetValue(options->GetShowIndentationGuidelines());
-	bszier->Add( m_showIndentationGuideLines, 0, wxALL, 5 );
-
-	m_highlighyCaretLine = new wxCheckBox( m_general, wxID_ANY, wxT("Highlight Caret Line"), wxDefaultPosition, wxDefaultSize, 0);
-	m_highlighyCaretLine->SetValue(options->GetHighlightCaretLine());
-	bszier->Add( m_highlighyCaretLine, 0, wxALL, 5 );
-
-	//set some colour pickers
-	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText *txt = new wxStaticText(m_general, wxID_ANY, wxT("Select the caret line background colour:"));
-	hsizer->Add(txt, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-
-	m_caretLineColourPicker = new wxColourPickerCtrl(m_general, wxID_ANY, options->GetCaretLineColour(), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
-	hsizer->Add(m_caretLineColourPicker, 0, wxALL|wxEXPAND, 5);
-	bszier->Add( hsizer, 1, wxEXPAND);
-
-	wxStaticLine *line = new wxStaticLine( m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bszier->Add(line, 0, wxEXPAND);
-
-	wxBoxSizer *hs1 = new wxBoxSizer(wxHORIZONTAL);
-	txt = new wxStaticText( m_general, wxID_ANY, wxT("Editor Tab Width:"), wxDefaultPosition, wxDefaultSize, 0 );
-	hs1->Add(txt, 1, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-
-	m_spinCtrlTabWidth = new wxSpinCtrl( m_general, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 8, 4 );
-	hs1->Add( m_spinCtrlTabWidth, 1, wxALL, 5 );
-	
-	wxBoxSizer *hs2 = new wxBoxSizer(wxHORIZONTAL);
-	txt = new wxStaticText( m_general, wxID_ANY, wxT("Whitespaces Visibility:"), wxDefaultPosition, wxDefaultSize, 0 );
-	hs2->Add(txt, 1, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-	
-	wxArrayString styles;
-	styles.Add(wxT("Invisible"));
-	styles.Add(wxT("Visible always"));
-	styles.Add(wxT("Visible after indent"));
-	
-	m_whitespaceStyle = new wxChoice(m_general, wxID_ANY, wxDefaultPosition, wxDefaultSize, styles, 0);
-	hs2->Add(m_whitespaceStyle, 1, wxEXPAND|wxALL, 5);
-	switch(options->GetShowWhitspaces()) {
-		case 0:
-			m_whitespaceStyle->SetStringSelection(wxT("Invisible"));
-			break;
-		case 1:
-			m_whitespaceStyle->SetStringSelection(wxT("Visible always"));
-			break;
-		case 2:
-			m_whitespaceStyle->SetStringSelection(wxT("Visible after indent"));
-			break;
-		default:
-			m_whitespaceStyle->SetStringSelection(wxT("Invisible"));
-			break;
-	}
-	
-	long value(4);
-	EditorConfigST::Get()->GetLongValue(wxT("EditorTabWidth"), value);
-	m_spinCtrlTabWidth->SetValue(value);
-
-	bszier->Add(hs1, 0, wxEXPAND);
-	bszier->Add(hs2, 0, wxEXPAND);
-	vSz1->Add( bszier, 0, wxEXPAND, 5 );
-
-	m_general->SetSizer( vSz1 );
-	m_general->Layout();
-	vSz1->Fit( m_general );
-	return m_general;
+	m_genPage = new EditorSettingsGeneralPage( m_book );
+	return m_genPage;
 }
 
 void OptionsDlg::OnButtonOK(wxCommandEvent &event)
@@ -236,11 +166,6 @@ void OptionsDlg::SaveChanges()
 	options->SetBookmarkShape( m_bookmarkShape->GetStringSelection());
 	options->SetBookmarkBgColour( m_bgColourPicker->GetColour() );
 	options->SetBookmarkFgColour( m_fgColourPicker->GetColour() );
-	options->SetHighlightCaretLine( m_highlighyCaretLine->IsChecked() );
-	options->SetDisplayLineNumbers( m_displayLineNumbers->IsChecked() );
-	options->SetShowIndentationGuidelines( m_showIndentationGuideLines->IsChecked() );
-	options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
-	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
 	options->SetFoldAtElse(m_foldAtElse->IsChecked());
 	options->SetFoldCompact(m_foldCompact->IsChecked());
 	options->SetFoldPreprocessor(m_foldPreprocessor->IsChecked());
@@ -254,31 +179,12 @@ void OptionsDlg::SaveChanges()
 	// save file font encoding
 	options->SetFileFontEncoding(m_fileFontEncoding->GetStringSelection());
 	
-	// save the tab width
-	int value = m_spinCtrlTabWidth->GetValue();
-
-	// make sure we are saving correct values
-	if (value < 1 || value > 8) {
-		value = 4;
-	}
-	// save it to configuration file
-	EditorConfigST::Get()->SaveLongValue(wxT("EditorTabWidth"), value);
 	
-	value = m_findReplaceHistory->GetValue();
+	int value = m_findReplaceHistory->GetValue();
 	if(value < 1 || value > 50) {
 		value = 10;
 	}
 	EditorConfigST::Get()->SaveLongValue(wxT("MaxItemsInFindReplaceDialog"), value);
-	
-	// save the whitespace visibility
-	int style(0); // inivisble
-	if(m_whitespaceStyle->GetStringSelection() == wxT("Visible always")) {
-		style = 1;
-	}else if(m_whitespaceStyle->GetStringSelection() == wxT("Visible after indent")) {
-		style = 2;
-	}
-	
-	options->SetShowWhitspaces(style);
 	
 	// save the WordHighlightColour value
 	EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_wordHighlightColour->GetColour().GetAsString());
@@ -305,6 +211,7 @@ void OptionsDlg::SaveChanges()
 
 	m_commentPage->Save();
 	m_dialogsPage->Save();
+	m_genPage->Save(options); 
 	
 	EditorConfigST::Get()->SetOptions(options);
 	ManagerST::Get()->ApplySettingsChanges();

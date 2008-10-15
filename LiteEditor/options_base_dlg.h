@@ -60,6 +60,7 @@
 class wxNotebook;
 class CommentPage;
 class DialogsPage;
+class EditorSettingsGeneralPage;
 
 class OptionsDlg : public wxDialog 
 {
@@ -76,7 +77,6 @@ class OptionsDlg : public wxDialog
 	
 protected:
 	wxNotebook* m_book;
-	wxPanel* m_general;
 	wxCheckBox* m_checkBoxDisplayFoldMargin;
 	wxCheckBox* m_checkBoxMarkFoldedLine;
 	wxStaticText* m_staticText1;
@@ -88,10 +88,6 @@ protected:
 	wxColourPickerCtrl* m_bgColourPicker;
 	wxStaticText* m_staticText5;
 	wxColourPickerCtrl* m_fgColourPicker;
-	wxCheckBox* m_highlighyCaretLine;
-	wxCheckBox* m_displayLineNumbers;
-	wxCheckBox* m_showIndentationGuideLines;
-	wxCheckBox* m_indentsUsesTabs;
 	wxPanel* m_syntaxHighlightPage;
 	wxStaticLine* m_staticline1;
 	wxButton* m_okButton;
@@ -101,14 +97,11 @@ protected:
 	wxCheckBox* m_checkBoxShowSplash;
 	CommentPage *m_commentPage;
 	
-	wxSpinCtrl* m_spinCtrlTabWidth;
-	wxColourPickerCtrl *m_caretLineColourPicker;
 	wxColourPickerCtrl *m_wordHighlightColour;
 	wxChoice* m_fileFontEncoding;
 	wxCheckBox* m_singleInstance;
 	wxCheckBox* m_checkForNewVersion;
 	wxPanel *m_miscPage;
-	wxChoice *m_whitespaceStyle;
 	wxButton* m_buttonClearHistory;	
 	wxCheckBox* m_checkFullPathInTitle;
 	wxSpinCtrl* m_findReplaceHistory;
@@ -116,10 +109,10 @@ protected:
 	wxCheckBox *m_foldCompact;
 	wxCheckBox *m_foldAtElse;
 	wxCheckBox *m_foldPreprocessor;
+	EditorSettingsGeneralPage *m_genPage;
 	
 private:
 	wxPanel *CreateGeneralPage();
-	
 	wxPanel *CreateBookmarksPage();
 	wxPanel *CreateFoldingPage();
 	wxPanel *CreateCxxCommentPage();
@@ -128,8 +121,8 @@ private:
 	void SaveChanges();
 
 public:
-	OptionsDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Editor's Settings"), wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_DIALOG_STYLE );
-
+	OptionsDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Editor's Settings"), wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+	virtual ~OptionsDlg();
 };
 
 #endif //__options_base_dlg__

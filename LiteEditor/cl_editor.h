@@ -469,7 +469,8 @@ private:
 
 	void AddDebuggerContextMenu(wxMenu *menu);
 	void RemoveDebuggerContextMenu(wxMenu *menu);
-
+	void DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
+	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
 	DECLARE_EVENT_TABLE()
 	void OnCharAdded(wxScintillaEvent& event);
 	void OnMarginClick(wxScintillaEvent& event);
@@ -483,6 +484,8 @@ private:
 	void OnContextMenu(wxContextMenuEvent &event);
 	void OnKeyDown(wxKeyEvent &event);
 	void OnLeftDown(wxMouseEvent &event);
+	void OnMiddleDown(wxMouseEvent &event);
+	void OnMiddleUp(wxMouseEvent &event);
 	void OnLeftUp(wxMouseEvent &event);
 	void OnLeaveWindow(wxMouseEvent &event);
 	void OnLeftDClick(wxScintillaEvent &event);

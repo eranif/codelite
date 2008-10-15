@@ -90,6 +90,7 @@ extern char *stop_xpm[];
 extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
 BEGIN_EVENT_TABLE(LEditor, wxScintilla)
+
 	EVT_SCI_CHARADDED(wxID_ANY, LEditor::OnCharAdded)
 	EVT_SCI_MARGINCLICK(wxID_ANY, LEditor::OnMarginClick)
 	EVT_SCI_CALLTIP_CLICK(wxID_ANY, LEditor::OnCallTipClick)
@@ -99,11 +100,11 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_CONTEXT_MENU(LEditor::OnContextMenu)
 	EVT_KEY_DOWN(LEditor::OnKeyDown)
 	EVT_LEFT_DOWN(LEditor::OnLeftDown)
+	EVT_MIDDLE_DOWN(LEditor::OnMiddleDown)
+	EVT_MIDDLE_UP(LEditor::OnMiddleUp)
 	EVT_LEFT_UP(LEditor::OnLeftUp)
 	EVT_LEAVE_WINDOW(LEditor::OnLeaveWindow)
 	EVT_SCI_DOUBLECLICK(wxID_ANY, LEditor::OnLeftDClick)
-
-	// Find and replace dialog
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_FIND_NEXT, LEditor::OnFindDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_REPLACE, LEditor::OnFindDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_REPLACEALL, LEditor::OnFindDialog)
@@ -550,7 +551,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 
 	}
 
-    RecalcHorizontalScrollbar();
+	RecalcHorizontalScrollbar();
 
 	//let the context handle this as well
 	m_context->OnSciUpdateUI(event);
@@ -1031,35 +1032,35 @@ bool LEditor::MatchBraceBack(const wxChar& chCloseBrace, const long &pos, long &
 
 void LEditor::RecalcHorizontalScrollbar()
 {
-   // recalculate and set the length of horizontal scrollbar
-   int maxPixel = 0;
-   int startLine = GetFirstVisibleLine();
-   int endLine =  startLine + LinesOnScreen();
-   if (endLine >= (GetLineCount() - 1))
-      endLine--;
+	// recalculate and set the length of horizontal scrollbar
+	int maxPixel = 0;
+	int startLine = GetFirstVisibleLine();
+	int endLine =  startLine + LinesOnScreen();
+	if (endLine >= (GetLineCount() - 1))
+		endLine--;
 
-   for (int i = startLine; i <= endLine; i++) {
-      int visibleLine = (int) DocLineFromVisible(i);         //get actual visible line, folding may offset lines
-      int endPosition = GetLineEndPosition(visibleLine);      //get character position from begin
-      int beginPosition = PositionFromLine(visibleLine);      //and end of line
+	for (int i = startLine; i <= endLine; i++) {
+		int visibleLine = (int) DocLineFromVisible(i);         //get actual visible line, folding may offset lines
+		int endPosition = GetLineEndPosition(visibleLine);      //get character position from begin
+		int beginPosition = PositionFromLine(visibleLine);      //and end of line
 
-      wxPoint beginPos = PointFromPosition(beginPosition);
-      wxPoint endPos = PointFromPosition(endPosition);
+		wxPoint beginPos = PointFromPosition(beginPosition);
+		wxPoint endPos = PointFromPosition(endPosition);
 
-      int curLen = endPos.x - beginPos.x;
-      
-      if (maxPixel < curLen) //If its the largest line yet
-         maxPixel = curLen;
-   }
+		int curLen = endPos.x - beginPos.x;
 
-   if (maxPixel == 0)
-      maxPixel++;                                 //make sure maxPixel is valid
+		if (maxPixel < curLen) //If its the largest line yet
+			maxPixel = curLen;
+	}
 
-   int currentLength = GetScrollWidth();               //Get current scrollbar size
-   if (currentLength != maxPixel) {
-      //And if it is not the same, update it
-      SetScrollWidth(maxPixel);
-   }
+	if (maxPixel == 0)
+		maxPixel++;                                 //make sure maxPixel is valid
+
+	int currentLength = GetScrollWidth();               //Get current scrollbar size
+	if (currentLength != maxPixel) {
+		//And if it is not the same, update it
+		SetScrollWidth(maxPixel);
+	}
 }
 
 //--------------------------------------------------------
@@ -1141,7 +1142,7 @@ void LEditor::SetActive()
 	SetFocus();
 	SetSCIFocus(true);
 
-    m_context->SetActive();
+	m_context->SetActive();
 }
 
 // Popup a Find/Replace dialog
@@ -1464,7 +1465,7 @@ void LEditor::DelAllMarkers()
 
 	SetIndicatorCurrent(2);
 	IndicatorClearRange(0, GetLength());
-	
+
 	SetIndicatorCurrent(HYPERLINK_INDICATOR);
 	IndicatorClearRange(0, GetLength());
 }
@@ -1826,23 +1827,10 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 
 void LEditor::OnLeftUp(wxMouseEvent& event)
 {
-	if(m_hyperLinkIndicatroStart != wxNOT_FOUND && m_hyperLinkIndicatroEnd != wxNOT_FOUND){
-		// indicator is highlighted
-		long pos = PositionFromPointClose(event.GetX(), event.GetY());
-		if(pos >= m_hyperLinkIndicatroStart && pos <= m_hyperLinkIndicatroEnd){ 
-			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, 
-							 event.m_altDown ? XRCID("find_impl") 
-											 : XRCID("find_decl"));
-			Frame::Get()->AddPendingEvent(e);
-		}
-	}
-	
-	// clear the hyper link indicators
-	m_hyperLinkIndicatroStart = wxNOT_FOUND;
-	m_hyperLinkIndicatroEnd = wxNOT_FOUND;
-	
-	SetIndicatorCurrent(HYPERLINK_INDICATOR);
-	IndicatorClearRange(0, GetLength());
+	long value(0);
+	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
+
+	if (!value) { DoQuickJump(event, false); }
 	event.Skip();
 }
 
@@ -1850,40 +1838,47 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
 {
 	m_hyperLinkIndicatroStart = wxNOT_FOUND;
 	m_hyperLinkIndicatroEnd = wxNOT_FOUND;
-	
+
 	SetIndicatorCurrent(HYPERLINK_INDICATOR);
 	IndicatorClearRange(0, GetLength());
 	event.Skip();
+}
+
+void LEditor::OnMiddleUp(wxMouseEvent& event)
+{
+	long value(0);
+	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
+	
+	if (value) { 
+		long pos = PositionFromPointClose(event.GetX(), event.GetY());		
+		if(pos != wxNOT_FOUND){
+			DoSetCaretAt(pos);
+		}
+		DoQuickJump(event, true); 
+	}
+	event.Skip();
+}
+
+void LEditor::OnMiddleDown(wxMouseEvent& event)
+{
+	long value(0);
+	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
+	if (value) {
+		DoMarkHyperlink(event, true);
+		return;
+	}
 }
 
 void LEditor::OnLeftDown(wxMouseEvent &event)
 {
 	// hide completion box
 	HideCompletionBox();
-	
-	if(event.m_controlDown){
-		SetIndicatorCurrent(HYPERLINK_INDICATOR);
-		long pos = PositionFromPointClose(event.GetX(), event.GetY());
-		
-		IndicatorSetForeground(HYPERLINK_INDICATOR, wxT("NAVY"));
-		
-		if (pos != wxSCI_INVALID_POSITION) {
-			int curstyle = GetStyleAt(pos);
-			// optimize the marker to mark only styles which may contain
-			// tags
-			if(curstyle == wxSCI_C_WORD2 || curstyle == wxSCI_C_GLOBALCLASS || curstyle == wxSCI_C_IDENTIFIER){
-				
-				m_hyperLinkIndicatroStart = WordStartPos(pos, true);
-				m_hyperLinkIndicatroEnd   = WordEndPos(pos, true);
-				
-				if(m_hyperLinkIndicatroEnd > m_hyperLinkIndicatroStart){
-					IndicatorFillRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd - m_hyperLinkIndicatroStart);
-				} else {
-					m_hyperLinkIndicatroStart = wxNOT_FOUND;
-					m_hyperLinkIndicatroEnd = wxNOT_FOUND;
-				}
-			}
-		}
+
+	long value(0);
+	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
+
+	if (!value) {
+		DoMarkHyperlink(event, false);
 	}
 	event.Skip();
 }
@@ -2482,4 +2477,62 @@ int LEditor::WordStartPos(int pos, bool onlyWordCharacters)
 int LEditor::WordEndPos(int pos, bool onlyWordCharacters)
 {
 	return wxScintilla::WordEndPosition(pos, onlyWordCharacters);
+}
+
+void LEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
+{
+	if (event.m_controlDown || isMiddle) {
+		SetIndicatorCurrent(HYPERLINK_INDICATOR);
+		long pos = PositionFromPointClose(event.GetX(), event.GetY());
+
+		IndicatorSetForeground(HYPERLINK_INDICATOR, wxT("NAVY"));
+
+		if (pos != wxSCI_INVALID_POSITION) {
+			int curstyle = GetStyleAt(pos);
+			// optimize the marker to mark only styles which may contain
+			// tags
+			if (curstyle == wxSCI_C_WORD2 || curstyle == wxSCI_C_GLOBALCLASS || curstyle == wxSCI_C_IDENTIFIER) {
+
+				m_hyperLinkIndicatroStart = WordStartPos(pos, true);
+				m_hyperLinkIndicatroEnd   = WordEndPos(pos, true);
+
+				if (m_hyperLinkIndicatroEnd > m_hyperLinkIndicatroStart) {
+					IndicatorFillRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd - m_hyperLinkIndicatroStart);
+				} else {
+					m_hyperLinkIndicatroStart = wxNOT_FOUND;
+					m_hyperLinkIndicatroEnd = wxNOT_FOUND;
+				}
+			}
+		}
+	}
+}
+void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
+{
+	if (m_hyperLinkIndicatroStart != wxNOT_FOUND && m_hyperLinkIndicatroEnd != wxNOT_FOUND) {
+		// indicator is highlighted
+		long pos = PositionFromPointClose(event.GetX(), event.GetY());
+		if (pos >= m_hyperLinkIndicatroStart && pos <= m_hyperLinkIndicatroEnd) {
+			
+			if(isMiddle) {
+			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED,
+			                 event.m_controlDown ? XRCID("find_impl")
+			                 : XRCID("find_decl"));
+			Frame::Get()->AddPendingEvent(e);
+			}else {
+			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED,
+			                 event.m_altDown ? XRCID("find_impl")
+			                 : XRCID("find_decl"));
+			Frame::Get()->AddPendingEvent(e);
+			}
+			
+		}
+	}
+
+	// clear the hyper link indicators
+	m_hyperLinkIndicatroStart = wxNOT_FOUND;
+	m_hyperLinkIndicatroEnd = wxNOT_FOUND;
+
+	SetIndicatorCurrent(HYPERLINK_INDICATOR);
+	IndicatorClearRange(0, GetLength());
+	event.Skip();
 }

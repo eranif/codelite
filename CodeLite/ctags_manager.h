@@ -575,10 +575,9 @@ public:
 	/**
 	 * @brief return list of scopes from a given file. This function is used by the navigation bar
 	 * @param name
-	 * @param scope
-	 * @param tags
+	 * @param scopes
 	 */
-	void GetScopesFromFile(const wxFileName &fileName, std::vector<TagEntryPtr> &tags);
+	void GetScopesFromFile(const wxFileName &fileName, std::vector<wxString> &scopes);
 
 	/**
 	 * @brief return the scope's member type, for example:

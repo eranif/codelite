@@ -98,6 +98,7 @@ public:
 	virtual void RetagFile(){}
 	virtual void OnUserTypedXChars(const wxString &word) { wxUnusedVar(word); }
 	virtual wxString CallTipContent(){return wxEmptyString;}
+    virtual void SetActive(){}
 	
 	//override this method if you wish to provide context based right click menu
 	virtual wxMenu *GetMenu() ;

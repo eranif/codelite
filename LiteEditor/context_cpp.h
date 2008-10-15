@@ -92,6 +92,7 @@ public:
 	virtual void ApplySettings();
 	virtual void RetagFile();
 	virtual wxString CallTipContent();
+    virtual void SetActive();
 	
 	//override swapfiles features
 	virtual void SwapFiles(const wxFileName &fileName);

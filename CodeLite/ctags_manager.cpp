@@ -1968,24 +1968,23 @@ TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName &fileName, int li
 //	return NULL;
 }
 
-void TagsManager::GetScopesFromFile(const wxFileName &fileName, std::vector< TagEntryPtr > &tags)
+void TagsManager::GetScopesFromFile(const wxFileName &fileName, std::vector< wxString > &scopes)
 {
 	if (!m_workspaceDatabase) {
 		return;
 	}
 
 	wxString sql;
-	sql << wxT("select * from tags where file = '")
-	<< fileName.GetFullPath()
-	<< wxT("' and kind in('class', 'struct', 'union')");
+	sql << wxT("select distinct scope from tags where file = '")
+	<< fileName.GetFullPath() << wxT("' ")
+    << wxT(" and kind in('prototype', 'function', 'enum')")
+	<< wxT(" order by scope ASC");
 
 	//we take the first entry
 	try {
 		wxSQLite3ResultSet rs = m_workspaceDatabase->Query(sql);
 		while ( rs.NextRow() ) {
-			// Construct a TagEntry from the rescord set
-			TagEntryPtr tag(new TagEntry(rs));
-			tags.push_back(tag);
+            scopes.push_back(rs.GetString(0));
 		}
 		rs.Finalize();
 	} catch ( wxSQLite3Exception& e) {
@@ -2003,7 +2002,7 @@ void TagsManager::TagsFromFileAndScope(const wxFileName& fileName, const wxStrin
 	sql << wxT("select * from tags where file = '")
 	<< fileName.GetFullPath() << wxT("' ")
 	<< wxT(" and scope='") << scopeName << wxT("' ")
-	<< wxT(" and kind in('prototype', 'function', 'enum')");
+    << wxT(" and kind in('prototype', 'function', 'enum')");
 
 	//we take the first entry
 	try {

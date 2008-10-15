@@ -1140,6 +1140,8 @@ void LEditor::SetActive()
 
 	SetFocus();
 	SetSCIFocus(true);
+
+    m_context->SetActive();
 }
 
 // Popup a Find/Replace dialog

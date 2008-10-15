@@ -52,6 +52,8 @@ MainBook::MainBook(wxWindow *parent)
 	m_hsz->Add(m_choiceFunc, 1, wxEXPAND);
 	
 	//Connect events
+    m_choiceScope->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(MainBook::OnScopeListMouseDown), NULL, this);
+    ConnectChoice(m_choiceScope, MainBook::OnScope);
 	m_choiceFunc->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(MainBook::OnFuncListMouseDown), NULL, this);
 	ConnectChoice(m_choiceFunc, MainBook::OnFunction);
 	
@@ -66,13 +68,30 @@ MainBook::MainBook(wxWindow *parent)
 	sz->Layout();
 }
 
+// makes sure client data is also deleted, to avoid memory leak
+static void ClearChoiceFunc(wxChoice *fch) 
+{
+    while (fch->IsEmpty() == false) {
+        TagEntry *tag = (TagEntry *) fch->GetClientData(0);
+        delete tag;
+        fch->SetClientData(0, NULL);
+        fch->Delete(0);
+    }
+}
+
 MainBook::~MainBook()
 {
+    ClearChoiceFunc(m_choiceFunc);
 }
 
 void MainBook::OnScope(wxCommandEvent &e)
 {
-	wxUnusedVar(e);
+	int sel = e.GetSelection();
+    if (sel != wxNOT_FOUND) {
+        m_choiceFunc->Freeze();
+        ClearChoiceFunc(m_choiceFunc);
+        m_choiceFunc->Thaw();
+    }
 }
 
 void MainBook::OnFunction(wxCommandEvent &e)
@@ -98,7 +117,7 @@ void MainBook::Clear()
 		
 	m_choiceFunc->Freeze();
 	m_choiceScope->Freeze();
-	m_choiceFunc->Clear();
+	ClearChoiceFunc(m_choiceFunc);
 	m_choiceScope->Clear();
 	m_choiceFunc->Thaw();
 	m_choiceScope->Thaw();
@@ -109,27 +128,22 @@ void MainBook::Clear()
 
 void MainBook::UpdateScope(TagEntryPtr tag)
 {
-	if(!tag){
-		return;
-	}
-
 	if(!m_choiceFunc ||  !m_choiceScope)
 		return;
 
-	wxString function;
-	function << tag->GetName() << tag->GetSignature();
-	
 	m_choiceFunc->Freeze();
 	m_choiceScope->Freeze();
 	
-	m_choiceFunc->Clear(); 
+	ClearChoiceFunc(m_choiceFunc); 
 	m_choiceScope->Clear();
 	
-	m_choiceFunc->AppendString(function);
-	m_choiceScope->AppendString(tag->GetScope());
+    if (tag) {
+        m_choiceFunc->Append(tag->GetName() + tag->GetSignature(), new TagEntry(*tag));
+        m_choiceScope->AppendString(tag->GetScope());
 	
-	m_choiceFunc->SetSelection(0);
-	m_choiceScope->SetSelection(0);
+        m_choiceFunc->SetSelection(0);
+        m_choiceScope->SetSelection(0);
+    }
 
 	m_choiceFunc->Thaw();
 	m_choiceScope->Thaw();
@@ -137,7 +151,26 @@ void MainBook::UpdateScope(TagEntryPtr tag)
 
 void MainBook::OnScopeListMouseDown(wxMouseEvent &e)
 {
-	wxUnusedVar(e);
+	TagsManager *tagsmgr = TagsManagerST::Get();
+	Manager *mgr = ManagerST::Get();
+	if(mgr->IsWorkspaceOpen()){
+		LEditor *editor = mgr->GetActiveEditor();
+		if(editor){
+            wxString cursel = m_choiceScope->GetStringSelection();
+            std::vector< wxString > scopes;
+            tagsmgr->GetScopesFromFile(editor->GetFileName(), scopes);
+            m_choiceScope->Freeze();
+            m_choiceScope->Clear();
+            for (unsigned i = 0; i < scopes.size(); i++) {
+                m_choiceScope->AppendString(scopes[i]);
+            }
+            if (!cursel.IsEmpty()) {
+                m_choiceScope->SetStringSelection(cursel);
+            }
+            m_choiceScope->Thaw();
+		}
+    }
+    e.Skip();
 }
 
 void MainBook::OnFuncListMouseDown(wxMouseEvent &e)
@@ -156,7 +189,7 @@ void MainBook::OnFuncListMouseDown(wxMouseEvent &e)
 				cursel = m_choiceFunc->GetStringSelection();
 			}
 			
-			m_choiceFunc->Clear();
+			ClearChoiceFunc(m_choiceFunc);
 			for(size_t i=0; i< tags.size(); i++){
 				m_choiceFunc->Append(tags.at(i)->GetName() + tags.at(i)->GetSignature(), new TagEntry(*tags.at(i)));
 			}

@@ -1348,6 +1348,12 @@ void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)
 	}
 }
 
+void ContextCpp::SetActive()
+{
+    wxScintillaEvent dummy;
+    OnSciUpdateUI(dummy);
+}
+
 void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
 {
 	wxUnusedVar(event);

@@ -44,6 +44,7 @@ class ShellWindow : public wxPanel
 	wxArrayString m_history;
 	int m_cur;
 	bool m_keepFocus;
+    bool m_outputScrolls;
 
 protected:
 	void ConnectEvents();
@@ -55,12 +56,14 @@ public:
 
 	//Setters
 	void SetHandler(wxEvtHandler*& handler) {this->m_handler = handler;}
+    void SetScrollOnOutput(bool scroll) { this->m_outputScrolls = scroll; }
 	
 	//Getters
 	const wxEvtHandler* GetHandler() const {return m_handler;}
 	const wxTextCtrl* GetInWin() const {return m_inWin;}
 	const wxScintilla* GetOutWin() const {return m_outWin;}
-	
+	bool GetScrollOnOutput() { return m_outputScrolls; }
+    
 	void AppendLine(const wxString &text);
 	void Clear();
 	void OnKeyDown(wxKeyEvent &event);

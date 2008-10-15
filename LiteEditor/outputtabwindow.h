@@ -34,10 +34,12 @@ protected:
 	wxString m_name;
 	wxScintilla *m_sci;
 	bool m_canFocus;
+    bool m_outputScrolls;
 	
 protected:
 	virtual void CreateGUIControl();
 	//Event handlers
+    virtual void OnOutputScrolls(wxCommandEvent &e);
 	virtual void OnClearAll(wxCommandEvent &e);
 	virtual void OnWordWrap(wxCommandEvent &e);
 	virtual void OnMouseDClick(wxScintillaEvent &event){event.Skip();}

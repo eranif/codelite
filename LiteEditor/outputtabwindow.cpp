@@ -39,6 +39,7 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
 		: wxPanel(parent, id)
 		, m_name(name)
 		, m_canFocus(true)
+        , m_outputScrolls(true)
 {
 	CreateGUIControl();
 }
@@ -55,6 +56,16 @@ void OutputTabWindow::CreateGUIControl()
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxTB_NODIVIDER);
 
 	int id;
+    
+    id = wxNewId();
+    tb->AddTool(id,
+                wxT("Scroll on Output"),
+                wxXmlResource::Get()->LoadBitmap(wxT("link_editor")),
+                wxT("Scroll on Output"),
+                wxITEM_CHECK);
+    tb->ToggleTool(id, m_outputScrolls);
+    Connect(id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnOutputScrolls ));
+    
 	// dont allow 'clear all' button for the build window
 	if (m_name != OutputPane::BUILD_WIN) {
 		id = wxNewId();
@@ -116,6 +127,11 @@ void OutputTabWindow::CreateGUIControl()
 	Connect(wxEVT_SCI_HOTSPOT_CLICK, wxScintillaEventHandler(OutputTabWindow::OnHotspotClicked), NULL, this);
 }
 
+void OutputTabWindow::OnOutputScrolls(wxCommandEvent &e)
+{
+    m_outputScrolls = !m_outputScrolls;
+}
+
 void OutputTabWindow::OnWordWrap(wxCommandEvent &e)
 {
 	if (m_sci->GetWrapMode() == wxSCI_WRAP_WORD) {
@@ -131,23 +147,27 @@ void OutputTabWindow::AppendText(const wxString &text)
 	// enable writing
 	m_sci->SetReadOnly(false);
 
-	// the next 4 lines make sure that the caret is at last line
-	// and is visible
-	m_sci->SetSelectionEnd(m_sci->GetLength());
-	m_sci->SetSelectionStart(m_sci->GetLength());
-	m_sci->SetCurrentPos(m_sci->GetLength());
-	m_sci->EnsureCaretVisible();
-
+    if (m_outputScrolls) {
+        // the next 4 lines make sure that the caret is at last line
+        // and is visible
+        m_sci->SetSelectionEnd(m_sci->GetLength());
+        m_sci->SetSelectionStart(m_sci->GetLength());
+        m_sci->SetCurrentPos(m_sci->GetLength());
+        m_sci->EnsureCaretVisible();
+    }
+    
 	// add the text
-	m_sci->AddText( text );
+	m_sci->InsertText(m_sci->GetLength(), text );
 
-	// the next 4 lines make sure that the caret is at last line
-	// and is visible
-	m_sci->SetSelectionEnd(m_sci->GetLength());
-	m_sci->SetSelectionStart(m_sci->GetLength());
-	m_sci->SetCurrentPos(m_sci->GetLength());
-	m_sci->EnsureCaretVisible();
-
+    if (m_outputScrolls) {
+        // the next 4 lines make sure that the caret is at last line
+        // and is visible
+        m_sci->SetSelectionEnd(m_sci->GetLength());
+        m_sci->SetSelectionStart(m_sci->GetLength());
+        m_sci->SetCurrentPos(m_sci->GetLength());
+        m_sci->EnsureCaretVisible();
+    }
+    
 	// enable readonly mode
 	m_sci->SetReadOnly(true);
 }

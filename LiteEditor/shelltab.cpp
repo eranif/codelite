@@ -42,12 +42,25 @@ ShellTab::~ShellTab()
 
 void ShellTab::CreateGUIControl()
 {
-	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
+	m_window = new ShellWindow(this, ManagerST::Get());
+
+    wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer(mainSizer);
 	//Create the toolbar
 	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxTB_NODIVIDER);
 
-	int id = wxNewId();
+	int id;
+
+    id = wxNewId();
+    tb->AddTool(id,
+                wxT("Scroll on Output"),
+                wxXmlResource::Get()->LoadBitmap(wxT("link_editor")),
+                wxT("Scroll on Output"),
+                wxITEM_CHECK);
+    tb->ToggleTool(id, m_window->GetScrollOnOutput());
+    Connect(id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( ShellTab::OnOutputScrolls ));
+
+    id = wxNewId();
 	tb->AddTool(id, 
 				wxT("Clear All"), 
 				wxXmlResource::Get()->LoadBitmap(wxT("document_delete")), 
@@ -65,7 +78,6 @@ void ShellTab::CreateGUIControl()
 	tb->Realize(); 
 	mainSizer->Add(tb, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
 	
-	m_window = new ShellWindow(this, ManagerST::Get());
 	ManagerST::Get()->Connect(m_window->GetId(), wxEVT_SHELLWIN_LINE_ENTERED, wxCommandEventHandler(Manager::OnOutputWindow), NULL, ManagerST::Get());
 	ManagerST::Get()->Connect(m_window->GetId(), wxEVT_SHELLWIN_LINE_ENTERED, wxCommandEventHandler(Manager::OnDebuggerWindow), NULL, ManagerST::Get());
 
@@ -78,6 +90,10 @@ void ShellTab::Clear()
 	m_window->Clear();
 }
 
+void ShellTab::OnOutputScrolls(wxCommandEvent &e)
+{
+    m_window->SetScrollOnOutput(!m_window->GetScrollOnOutput());
+}
 
 void ShellTab::OnClearAll(wxCommandEvent &e)
 {

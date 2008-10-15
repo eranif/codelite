@@ -40,6 +40,7 @@ ShellWindow::ShellWindow(wxWindow *parent, wxEvtHandler *handler)
 : wxPanel(parent)
 , m_handler(handler)
 , m_cur(wxNOT_FOUND)
+, m_outputScrolls(true)
 {
 	Initialize();
 	ConnectEvents();
@@ -97,24 +98,28 @@ void ShellWindow::ConnectEvents()
 
 void ShellWindow::AppendLine(const wxString &text)
 {
-	// the next 4 lines make sure that the caret is at last line
-	// and is visible. This is done before adding the data
-	m_outWin->SetSelectionEnd(m_outWin-> GetLength());
-	m_outWin->SetSelectionStart(m_outWin->GetLength());
-	m_outWin->SetCurrentPos(m_outWin->GetLength());
-	m_outWin->EnsureCaretVisible();
-
+    if (m_outputScrolls) {
+        // the next 4 lines make sure that the caret is at last line
+        // and is visible. This is done before adding the data
+        m_outWin->SetSelectionEnd(m_outWin-> GetLength());
+        m_outWin->SetSelectionStart(m_outWin->GetLength());
+        m_outWin->SetCurrentPos(m_outWin->GetLength());
+        m_outWin->EnsureCaretVisible();
+    }
+    
 	// add the text to the control
 	m_outWin->SetReadOnly(false);
-	m_outWin->AddText( text );						
+	m_outWin->InsertText( m_outWin->GetLength(), text );						
 	m_outWin->SetReadOnly(true);
 
-	// the next 4 lines make sure that the caret is at last line
-	// and is visible. This is done before adding the data
-	m_outWin->SetSelectionEnd(m_outWin->GetLength());
-	m_outWin->SetSelectionStart(m_outWin->GetLength());
-	m_outWin->SetCurrentPos(m_outWin->GetLength());
-	m_outWin->EnsureCaretVisible();
+    if (m_outputScrolls) {
+        // the next 4 lines make sure that the caret is at last line
+        // and is visible. This is done before adding the data
+        m_outWin->SetSelectionEnd(m_outWin->GetLength());
+        m_outWin->SetSelectionStart(m_outWin->GetLength());
+        m_outWin->SetCurrentPos(m_outWin->GetLength());
+        m_outWin->EnsureCaretVisible();
+    }
 }
 
 void ShellWindow::Clear()

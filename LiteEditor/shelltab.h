@@ -37,6 +37,7 @@ class ShellTab : public wxPanel
 
 protected:
 	void CreateGUIControl();
+    void OnOutputScrolls(wxCommandEvent &e);
 	void OnClearAll(wxCommandEvent &e);
 	void OnWordWrap(wxCommandEvent &e);
 

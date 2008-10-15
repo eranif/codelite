@@ -31,6 +31,7 @@
 #include "globals.h"
 #include "dirsaver.h"
 #include "procutils.h"
+#include "frame.h"
 #include <wx/mimetype.h>
 
 BEGIN_EVENT_TABLE(FileExplorerTree, wxVirtualDirTreeCtrl)
@@ -49,6 +50,7 @@ FileExplorerTree::FileExplorerTree(wxWindow *parent, wxWindowID id)
 	Connect(XRCID("open_file_in_text_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenFileInTextEditor), NULL, this);
 	Connect(XRCID("refresh_node"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnRefreshNode), NULL, this);
 	Connect(XRCID("delete_node"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnDeleteNode), NULL, this);
+    Connect(XRCID("search_node"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnSearchNode), NULL, this);
 	Connect(XRCID("open_shell"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenShell), NULL, this);
 	Connect(XRCID("open_with_default_application"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenWidthDefaultApp), NULL, this);
 	Connect(GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler( FileExplorerTree::OnMouseDblClick ) );
@@ -114,6 +116,17 @@ void FileExplorerTree::OnDeleteNode(wxCommandEvent &e)
 	}
 
 	e.Skip();
+}
+
+void FileExplorerTree::OnSearchNode(wxCommandEvent &e)
+{
+    wxTreeItemId item = GetSelection();
+    if (item.IsOk()) {
+        wxCommandEvent ff(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_in_files"));
+        ff.SetString(GetFullPath(item).GetFullPath());
+        Frame::Get()->AddPendingEvent(ff);
+    }
+    e.Skip();
 }
 
 void FileExplorerTree::OnContextMenu(wxTreeEvent &event)

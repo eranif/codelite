@@ -89,6 +89,8 @@ public:
 	void SetEventOwner(wxEvtHandler *owner) { m_owner = owner; }
 	wxEvtHandler *GetEventOwner() const { return m_owner; }
 
+    void SetRootDir(const wxString &rootDir);
+    
 protected:
 	void CreateGUIControls();
 	void ConnectEvents();

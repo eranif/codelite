@@ -56,6 +56,7 @@ protected:
 	virtual void OnOpenFileInTextEditor(wxCommandEvent &event);
 	virtual void OnRefreshNode(wxCommandEvent &event);
 	virtual void OnDeleteNode(wxCommandEvent &event);
+    virtual void OnSearchNode(wxCommandEvent &event);
 	virtual void OnMouseDblClick( wxMouseEvent &event );
 	virtual void OnKeyDown( wxTreeEvent &event );
 	virtual void OnOpenShell(wxCommandEvent &event);

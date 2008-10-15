@@ -842,6 +842,10 @@
             <label>Delete</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="search_node">
+            <label>Search...</label>
+        </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="open_file">
             <label>&amp;Open</label>
         </object>

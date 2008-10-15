@@ -191,6 +191,11 @@ void FindInFilesDialog::SetData(FindReplaceData &data)
 	m_fontEncoding->SetValue(data.GetFlags() & wxFRD_USEFONTENCODING ? true : false);
 }
 
+void FindInFilesDialog::SetRootDir(const wxString &rootDir)
+{
+    m_dirPicker->SetPath(rootDir);
+}
+
 void FindInFilesDialog::DoSearchReplace()
 {
 	//send event to the main frame

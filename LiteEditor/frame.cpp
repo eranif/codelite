@@ -1592,7 +1592,6 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 
 void Frame::OnFindInFiles(wxCommandEvent &event)
 {
-	wxUnusedVar(event);
 	if ( m_findInFilesDlg == NULL ) {
 		m_findInFilesDlg = new FindInFilesDialog(this, m_data);
 	}
@@ -1601,6 +1600,10 @@ void Frame::OnFindInFiles(wxCommandEvent &event)
 		wxMessageBox(wxT("The search thread is currently busy in 'replace in files' operations"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
 	}
+
+	wxString rootDir = event.GetString();
+    if (!rootDir.IsEmpty())
+        m_findInFilesDlg->SetRootDir(rootDir);
 
 	m_findInFilesDlg->SetEventOwner(GetEventHandler());
 	if ( m_findInFilesDlg->IsShown() ) {

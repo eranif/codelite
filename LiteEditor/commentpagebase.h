@@ -47,6 +47,10 @@ class CommentPageBase : public wxPanel
 		wxTextCtrl* m_textCtrlFunctionPattern;
 		wxStaticLine* m_staticline5;
 		wxStaticText* m_staticText12;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnUseAtPrefix( wxCommandEvent& event ){ event.Skip(); }
+		
 	
 	public:
 		CommentPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 644,439 ), long style = wxTAB_TRAVERSAL );

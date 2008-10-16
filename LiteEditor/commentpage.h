@@ -38,6 +38,8 @@ class CommentPage : public CommentPageBase
 protected:
 	// Handlers for CommentPageBase events.
 	void Initialize();
+	void OnUseAtPrefix(wxCommandEvent &e);
+	void DoSetPrefix();
 	
 public:
 	/** Constructor */

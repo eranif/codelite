@@ -57,4 +57,29 @@ void CommentPage::Initialize()
 	m_checkBoxContinueCppComment->SetValue( data.GetContinueCppComment() );
 	m_checkBoxUseShtroodel->SetValue( data.GetUseShtroodel() );
 	m_checkBoxUseSlash2Starts->SetValue( data.GetUseSlash2Stars() );
+	
+	DoSetPrefix();
+}
+
+void CommentPage::OnUseAtPrefix(wxCommandEvent& e)
+{
+	DoSetPrefix();
+}
+
+void CommentPage::DoSetPrefix()
+{
+	bool useShtroodel = m_checkBoxUseShtroodel->IsChecked();
+	
+	wxString classPrefix = m_textCtrlClassPattern->GetValue();
+	wxString funcPrefix  = m_textCtrlFunctionPattern->GetValue();
+	
+	if( useShtroodel ){
+		classPrefix.Replace(wxT("\\"), wxT("@"));
+		funcPrefix.Replace(wxT("\\"), wxT("@"));
+	} else {
+		classPrefix.Replace(wxT("@"), wxT("\\"));
+		funcPrefix.Replace(wxT("@"), wxT("\\"));
+	}
+	m_textCtrlClassPattern->SetValue(classPrefix);
+	m_textCtrlFunctionPattern->SetValue(funcPrefix);
 }

@@ -100,8 +100,13 @@ CommentPageBase::CommentPageBase( wxWindow* parent, wxWindowID id, const wxPoint
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	
+	// Connect Events
+	m_checkBoxUseShtroodel->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CommentPageBase::OnUseAtPrefix ), NULL, this );
 }
 
 CommentPageBase::~CommentPageBase()
 {
+	// Disconnect Events
+	m_checkBoxUseShtroodel->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( CommentPageBase::OnUseAtPrefix ), NULL, this );
 }

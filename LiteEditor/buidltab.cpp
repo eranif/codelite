@@ -474,10 +474,44 @@ bool BuildTab::DoTryOpenFile(const wxArrayString& files, const wxFileName &fn, i
 		}
 	}
 	
+	std::vector<wxFileName> matches;
+	
 	for (size_t i=0; i< files.GetCount(); i++) {
 		wxFileName tmpFileName( files.Item(i) );
 		if (tmpFileName.GetFullName() == fn.GetFullName()) {
-			return DoOpenFile(tmpFileName, lineNumber, lineClicked);
+			matches.push_back(tmpFileName);
+		}
+	}
+	
+	wxString lastDir;
+	wxArrayString dirs = fn.GetDirs();
+	if(dirs.GetCount() > 0){
+		lastDir = dirs.Last();
+	}
+	
+	if(matches.size() == 1){
+		
+		return DoOpenFile(matches.at(0), lineNumber, lineClicked);
+		
+	} else if(matches.size() > 1){
+		// take the best match
+		std::vector<wxFileName> betterMatches;
+		for(size_t i=0; i<matches.size(); i++){
+			
+			wxFileName filename(matches.at(i));
+			wxArrayString tmpdirs = filename.GetDirs();
+			if(tmpdirs.GetCount() > 0){
+				if(tmpdirs.Last() == lastDir){
+					betterMatches.push_back(filename);
+				}
+			}		
+		}
+		
+		if(betterMatches.size() == 1){
+			return DoOpenFile(betterMatches.at(0), lineNumber, lineClicked);
+		} else {
+			// open the first match
+			return DoOpenFile(matches.at(0), lineNumber, lineClicked);
 		}
 	}
 	return false;

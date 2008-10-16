@@ -51,6 +51,7 @@ FileExplorerTree::FileExplorerTree(wxWindow *parent, wxWindowID id)
 	Connect(XRCID("refresh_node"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnRefreshNode), NULL, this);
 	Connect(XRCID("delete_node"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnDeleteNode), NULL, this);
     Connect(XRCID("search_node"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnSearchNode), NULL, this);
+    Connect(XRCID("tag_node"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnTagNode), NULL, this);
 	Connect(XRCID("open_shell"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenShell), NULL, this);
 	Connect(XRCID("open_with_default_application"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorerTree::OnOpenWidthDefaultApp), NULL, this);
 	Connect(GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler( FileExplorerTree::OnMouseDblClick ) );
@@ -129,12 +130,28 @@ void FileExplorerTree::OnSearchNode(wxCommandEvent &e)
     e.Skip();
 }
 
+void FileExplorerTree::OnTagNode(wxCommandEvent &e)
+{
+    wxTreeItemId item = GetSelection();
+    if (item.IsOk()) {
+        wxString path = GetFullPath(item).GetFullPath();
+        wxCommandEvent td(wxEVT_COMMAND_MENU_SELECTED, XRCID("create_ext_database"));
+        td.SetString(path);
+        Frame::Get()->AddPendingEvent(td);
+    }
+    e.Skip();
+}
+
 void FileExplorerTree::OnContextMenu(wxTreeEvent &event)
 {
 	wxTreeItemId item = event.GetItem();
 	if (item.IsOk()) {
 		SelectItem(item);
 		if (m_rclickMenu) {
+            wxMenuItem *tagItem = m_rclickMenu->FindChildItem(XRCID("tag_node"));
+            if (tagItem) {
+                tagItem->Enable(IsDirNode(item));
+            }
 			//let the plugins hook their content
 			PluginManager::Get()->HookPopupMenu(m_rclickMenu, MenuTypeFileExplorer);
 			PopupMenu(m_rclickMenu);

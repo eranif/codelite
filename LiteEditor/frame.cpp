@@ -1246,16 +1246,16 @@ void Frame::OnFunctionCalltip(wxCommandEvent& event)
 	editor->ShowFunctionTipFromCurrentPos();
 }
 
-void Frame::OnBuildExternalDatabase(wxCommandEvent& WXUNUSED(event))
+void Frame::OnBuildExternalDatabase(wxCommandEvent& event)
 {
-	DoBuildExternalDatabase();
+	DoBuildExternalDatabase(event.GetString());
 }
 
-void Frame::DoBuildExternalDatabase()
+void Frame::DoBuildExternalDatabase(const wxString &dir)
 {
 	ExtDbData data;
 	ExtDbWizard *wiz = new ExtDbWizard(this, wxID_ANY);
-	if (wiz->Run(data)) {
+	if (wiz->Run(data, dir)) {
 		// build the external database
 		wxFileName dbname(ManagerST::Get()->GetStarupDirectory() + PATH_SEP + data.dbName);
 		data.dbName = dbname.GetFullPath();

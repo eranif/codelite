@@ -59,6 +59,7 @@ class ExtDbPage1 : public wxWizardPageSimple
 	public:
 		ExtDbPage1(wxWizard* parent);
 		wxString GetPath() const { return m_dirPicker->GetPath(); }
+        void SetPath(const wxString &dir) { m_dirPicker->SetPath(dir); }
 
 		DECLARE_EVENT_TABLE();
 	

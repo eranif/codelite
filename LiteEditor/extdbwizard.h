@@ -45,9 +45,10 @@ public:
 	/**
 	 * Start the wizard
 	 * \param info if the wizard succeeded, info will contain the data collected from user
+     * \param dir initial directory.  if not null, wizard will advance to 2nd page immediately    
 	 * \return true on successfull run, false otherwise
 	 */
-	bool Run(ExtDbData &info);
+	bool Run(ExtDbData &info, const wxString &dir = wxEmptyString);
 	
 	DECLARE_EVENT_TABLE();
 	void OnPageChanging(wxWizardEvent &e);

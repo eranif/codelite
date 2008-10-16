@@ -295,7 +295,7 @@ private:
 	void CreateMenuBar();
 	void UpgradeExternalDbExt();
 	void AutoLoadExternalDb();
-	void DoBuildExternalDatabase();
+	void DoBuildExternalDatabase(const wxString &dir = wxEmptyString);
 
 protected:
 	//----------------------------------------------------

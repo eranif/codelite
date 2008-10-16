@@ -26,6 +26,7 @@
 #include <wx/busyinfo.h>
 #include "editor_config.h"
 #include <wx/xrc/xmlres.h>
+#include <wx/dir.h>
 
 BEGIN_EVENT_TABLE(ExtDbWizard, wxWizard)
 	EVT_WIZARD_PAGE_CHANGING(wxID_ANY, ExtDbWizard::OnPageChanging)
@@ -52,7 +53,7 @@ ExtDbWizard::~ExtDbWizard()
 {
 }
 
-bool ExtDbWizard::Run(ExtDbData &data)
+bool ExtDbWizard::Run(ExtDbData &data, const wxString &dir)
 {
 	wxSize sz1 = m_page1->GetSizer()->CalcMin();
 	wxSize sz2 = m_page2->GetSizer()->CalcMin();
@@ -64,7 +65,17 @@ bool ExtDbWizard::Run(ExtDbData &data)
 	if(maxSize.GetWidth() < sz3.GetWidth()) maxSize = sz3;
 		
 	SetPageSize(maxSize);
-	bool res = RunWizard(m_page1);
+    
+    wxWizardPageSimple *first = m_page1;
+    if (!dir.IsEmpty()) {
+        static_cast<ExtDbPage1*>(m_page1)->SetPath(dir);
+        if (wxDir::Exists(dir)) {
+            first = m_page2;
+            static_cast<ExtDbPage2*>(first)->BuildTree(dir);
+        } 
+    }
+
+    bool res = RunWizard(first);
 	if(res){
 		data.rootPath	 = ((ExtDbPage1*)m_page1)->GetPath();
 		data.dbName 	 = ((ExtDbPage3*)m_page3)->GetDbName();

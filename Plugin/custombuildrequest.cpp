@@ -1,3 +1,5 @@
+#include "buildmanager.h"
+#include <wx/ffile.h>
 #include "environmentconfig.h"
 #include "globals.h"
 #include "dirsaver.h"
@@ -87,6 +89,11 @@ void CustomBuildRequest::Process()
 		//expand the variables of the command
 		cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
 
+		// in case our configuration includes post/pre build commands
+		// we generate a makefile to include them as well and we update
+		// the build command
+		DoUpdateCommand(cmd, proj, bldConf);
+		
 		//replace the command line
 		m_proc->SetCommand(cmd);
 
@@ -115,4 +122,77 @@ void CustomBuildRequest::Process()
 		Connect(wxEVT_TIMER, wxTimerEventHandler(CustomBuildRequest::OnTimer), NULL, this);
 		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(CustomBuildRequest::OnProcessEnd), NULL, this);
 	}
+}
+
+void CustomBuildRequest::DoUpdateCommand(wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf)
+{
+	BuildCommandList preBuildCmds, postBuildCmds;
+	wxArrayString pre, post;
+	bldConf->GetPreBuildCommands(preBuildCmds);
+	bldConf->GetPostBuildCommands(postBuildCmds);
+	
+	// collect all enabled commands
+	BuildCommandList::iterator iter = preBuildCmds.begin();
+	for(; iter != preBuildCmds.end(); iter ++){
+		BuildCommand command = *iter;
+		if(command.GetEnabled()){
+			pre.Add(command.GetCommand());
+		}
+	}
+	
+	iter = postBuildCmds.begin();
+	for(; iter != postBuildCmds.end(); iter ++){
+		BuildCommand command = *iter;
+		if(command.GetEnabled()){
+			post.Add(command.GetCommand());
+		}
+	}
+	
+	if(pre.empty() && post.empty()){
+		return;
+	}
+	
+	// we need to create a makefile which includes all the pre-build, the actual build command and the post-build commands
+	// (in this exact order).
+	
+	wxString makefile;
+	makefile << wxT(".PHONY: all\n");
+	makefile << wxT("all:\n");
+	
+	if(pre.IsEmpty() == false){
+		makefile << wxT("\t@echo Executing Pre Build commands ...\n");
+		for(size_t i=0; i<pre.GetCount(); i++){
+			makefile << wxT("\t@") << pre.Item(i) << wxT("\n");
+		}
+		makefile << wxT("\t@echo Done\n");
+	}
+	
+	// add the command
+	makefile << wxT("\t@") << cmd << wxT("\n");
+	
+	if(post.IsEmpty() == false){
+		makefile << wxT("\t@echo Executing Post Build commands ...\n");
+		for(size_t i=0; i<post.GetCount(); i++){
+			makefile << wxT("\t@") << post.Item(i) << wxT("\n");
+		}
+		makefile << wxT("\t@echo Done\n");
+	}
+	
+	// write the makefile
+	wxFFile output;
+	wxString fn;
+	
+	fn << proj->GetName() << wxT(".mk");
+	
+	output.Open(fn, wxT("w+"));
+	if (output.IsOpened()) {
+		output.Write( makefile );
+		output.Close();
+	}
+	
+	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
+	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
+	
+	cmd.Clear();
+	cmd << buildTool << wxT(" \"") << fn << wxT("\"");
 }

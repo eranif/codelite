@@ -65,8 +65,6 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 	if (m_checkEnableCustomBuild->IsChecked()) {
 		DisableLinkerPage(true);
 		DisableCompilerPage(true);
-		m_postBuildPage->Enable(false);
-		m_preBuildPage->Enable(false);
 		m_checkCompilerNeeded->Enable(false);
 		m_checkLinkerNeeded->Enable(false);
 		m_resourceCmpPage->Enable(false);
@@ -465,18 +463,11 @@ void ProjectSettingsDlg::DoUpdatePages(bool checked)
 	if (checked) {
 		m_checkLinkerNeeded->Enable(false);
 		m_checkCompilerNeeded->Enable(false);
-		m_postBuildPage->Enable(false);
-		m_preBuildPage->Enable(false);
 		m_resourceCmpPage->Enable(false);
-
 	} else {
-
 		m_checkLinkerNeeded->Enable(true);
 		m_checkCompilerNeeded->Enable(true);
-		m_postBuildPage->Enable(true);
-		m_preBuildPage->Enable(true);
 		m_resourceCmpPage->Enable(true);
-
 	}
 }
 

@@ -63,8 +63,20 @@ ExtDbPage2::ExtDbPage2(wxWizard* parent)
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 
+	wxBoxSizer *sz1 = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer *buttonSizer = new wxBoxSizer( wxVERTICAL );
+	
+	m_checkAllButton = new wxButton(m_panel1, wxID_ANY, wxT("Check All"));
+	buttonSizer->Add(m_checkAllButton, 0, wxALL, 5);
+	
+	m_clearButton = new wxButton(m_panel1, wxID_ANY, wxT("Clear"));
+	buttonSizer->Add(m_clearButton, 0, wxALL, 5);
+	
 	m_includeDirs = new CheckDirTreeCtrl( m_panel1, wxEmptyString, wxID_ANY);
-	bSizer2->Add(m_includeDirs, 1, wxEXPAND | wxALL, 5 );
+	sz1->Add(m_includeDirs, 1, wxALL|wxEXPAND, 5);
+	sz1->Add(buttonSizer);
+	
+	bSizer2->Add(sz1, 1, wxEXPAND | wxALL, 5 );
 
 	wxString fileMask = EditorConfigST::Get()->GetStringValue(wxT("WizardFileMask"));
 	if (fileMask.IsEmpty()) {
@@ -100,7 +112,10 @@ ExtDbPage2::ExtDbPage2(wxWizard* parent)
 
 	this->SetSizer( bSizer1 );
 	this->Layout();
-
+	
+	
+	ConnectButton(m_checkAllButton, ExtDbPage2::OnCheckAll)
+	ConnectButton(m_clearButton, ExtDbPage2::OnClear)
 }
 
 void ExtDbPage2::GetIncludeDirs(wxArrayString &arr)
@@ -122,3 +137,16 @@ bool ExtDbPage2::GetParseFilesWithoutExtension()
 {
 	return m_parseFileWithNoExtension->IsChecked();
 }
+
+void ExtDbPage2::OnCheckAll(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	m_includeDirs->RecursiveCheck(m_includeDirs->GetRootItem());
+}
+
+void ExtDbPage2::OnClear(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	m_includeDirs->RecursiveCheck(m_includeDirs->GetRootItem(), false);
+}
+

@@ -1346,10 +1346,9 @@ void Frame::OnFileClose(wxCommandEvent &event)
 	// if no more editors are available, collapse the workspace tree
 	if (GetWorkspaceTab()->GetIsLinkedToEditor() && GetMainBook()->GetNotebook()->GetPageCount() == 0) {
 		GetWorkspacePane()->CollpaseAll();
-
-		// also, update the title bar
-		SetFrameTitle(NULL);
 	}
+	// also, update the title bar
+	SetFrameTitle(NULL);
 }
 
 void Frame::OnFileClosing(NotebookEvent &event)

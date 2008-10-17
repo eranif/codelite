@@ -85,6 +85,7 @@
 #include "plugin.h"
 #include "custom_notebook.h"
 #include "sessionmanager.h"
+#include "workspacetab.h"
 #include <vector>
 
 extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
@@ -296,7 +297,7 @@ bool Manager::OpenFile(const wxString &file_name, const wxString &projectName, i
 	editor->SetProject( projName );
 
 	//Synchronize the file view tree
-	if (IsWorkspaceOpen()) {
+	if (IsWorkspaceOpen() && Frame::Get()->GetWorkspacePane()->GetWorkspaceTab()->GetIsLinkedToEditor()) {
 		Frame::Get()->GetWorkspacePane()->GetFileViewTree()->ExpandToPath(editor->GetProject(), editor->GetFileName());
 	}
 

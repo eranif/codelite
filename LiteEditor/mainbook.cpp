@@ -251,6 +251,13 @@ void MainBook::ShowQuickBar(bool s)
 		if( !sz->IsShown(m_quickFindBar) ) {
 			sz->Show(m_quickFindBar);
 		}
+		LEditor *editor = ManagerST::Get()->GetActiveEditor();
+		if (editor) {
+			wxString selText = editor->GetSelectedText();
+			if (selText.IsEmpty() == false) {
+                m_quickFindBar->GetTextCtrl()->SetValue(selText);
+			}
+		}
 		m_quickFindBar->GetTextCtrl()->SetFocus();
 		m_quickFindBar->GetTextCtrl()->SelectAll();
 	} else { // Hide

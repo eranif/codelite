@@ -110,7 +110,6 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
 
 	// Load the database
 	wxString dbfile = GetStringProperty(wxT("Database"), errMsg);
-	wxString exDbfile = GetStringProperty(wxT("ExternalDatabase"), errMsg);
 	if ( dbfile.IsEmpty() ) {
 		errMsg = wxT("Missing 'Database' value in workspace '");
 		return false;

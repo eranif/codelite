@@ -70,13 +70,10 @@ void ShellCommand::SendStartMsg()
 	if ( !m_owner)
 		return;
 
-	if (m_info.GetCleanLog()) {
-		wxCommandEvent event(wxEVT_SHELL_COMMAND_STARTED);
-		m_owner->AddPendingEvent(event);
-	} else {
-		wxCommandEvent event(wxEVT_SHELL_COMMAND_STARTED_NOCLEAN);
-		m_owner->AddPendingEvent(event);
-	}
+    wxCommandEvent event(m_info.GetCleanLog() ? wxEVT_SHELL_COMMAND_STARTED
+                                              : wxEVT_SHELL_COMMAND_STARTED_NOCLEAN);
+    event.SetString(m_info.GetSynopsis());
+    m_owner->AddPendingEvent(event);
 }
 
 void ShellCommand::SendEndMsg()
@@ -85,6 +82,7 @@ void ShellCommand::SendEndMsg()
 		return;
 
 	wxCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+    event.SetString(m_info.GetSynopsis());
 	m_owner->AddPendingEvent(event);
 }
 

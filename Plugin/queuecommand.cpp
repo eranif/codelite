@@ -68,3 +68,27 @@ const bool& QueueCommand::GetCleanLog() const
 {
 	return m_cleanLog;
 }
+
+wxString QueueCommand::DeriveSynopsis() const
+{
+    wxString synopsis;
+    switch (m_kind) {
+        case Build:
+            synopsis << wxT("Building ");
+            break;
+		case Clean:
+            synopsis << wxT("Cleaning ");
+            break;
+		case CustomBuild:
+            synopsis << wxT("Making '") << m_customBuildTarget << wxT("' In ");
+            break;
+		case Debug:
+            synopsis << wxT("Debugging ");
+            break;
+        default:
+            synopsis << wxT("In ");
+            break;
+    }
+    synopsis << m_project << wxT(" (") << m_configuration << wxT(")");
+    return synopsis;
+}

@@ -1878,6 +1878,7 @@ void Frame::OnShellCommandEvent(wxCommandEvent &event)
 		m_outputPane->GetBuildTab()->ReloadSettings();
 		m_outputPane->GetBuildTab()->AppendText(wxT("Building: \n"));
 
+        SetStatusText(event.GetString(), 4);
 	} else if (event.GetEventType() == wxEVT_SHELL_COMMAND_ADDLINE) {
 		m_outputPane->GetBuildTab()->AppendText(event.GetString());
 
@@ -1906,6 +1907,8 @@ void Frame::OnShellCommandEvent(wxCommandEvent &event)
 						
 		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
 
+        SetStatusText(wxT("Done"), 4);
+        
 		// get the build settings
 		BuildTabSettingsData buildSettings;
 		EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &buildSettings);
@@ -3294,7 +3297,7 @@ void Frame::OnShowNavBarUI(wxUpdateUIEvent& e)
 void Frame::OnParsingThreadDone(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	GetStatusBar()->SetStatusText(wxT("Done"), 4);
+	GetStatusBar()->SetStatusText(wxT("Ready"));
 	LEditor *editor = ManagerST::Get()->GetActiveEditor();
 	if (editor) {
 		editor->UpdateColours();

@@ -12,6 +12,7 @@ class QueueCommand
 	bool m_cleanLog;
 	bool m_checkBuildSuccess;
 	wxString m_customBuildTarget;
+    mutable wxString m_synopsis;
 
 public:
 	// Command's kind
@@ -55,6 +56,15 @@ public:
 	const wxString& GetCustomBuildTarget() const {
 		return m_customBuildTarget;
 	}
+    const wxString& GetSynopsis() const {
+        if (m_synopsis.IsEmpty())
+            m_synopsis = DeriveSynopsis();
+        return m_synopsis;
+    }
+    void SetSynopsis(const wxString& synopsis) {
+        m_synopsis = synopsis;
+    }
+    wxString DeriveSynopsis() const;
 };
 
 #endif // __queuecommand__

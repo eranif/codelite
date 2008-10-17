@@ -2873,7 +2873,7 @@ void Manager::RetagFile(const wxString& filename)
 
 		// send event to main frame to update the status bar
 		wxCommandEvent e(wxEVT_CMD_UPDATE_STATUS_BAR);
-		e.SetInt(4);
+		e.SetInt(0);
 		e.SetString(wxString::Format(wxT("Re-tagging file %s..."), absFile.GetFullName().c_str()));
 		Frame::Get()->AddPendingEvent(e);
 	} else {

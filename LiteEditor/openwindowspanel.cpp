@@ -22,6 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/xrc/xmlres.h>
  #include "openwindowspanel.h"
 #include "frame.h"
 #include <wx/clntdata.h>
@@ -29,8 +30,17 @@
 
 OpenWindowsPanel::OpenWindowsPanel( wxWindow* parent )
 		: 
-		OpenWindowsPanelBase( parent )
+		OpenWindowsPanelBase( parent ),
+        m_rclickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")))
 {
+}
+
+OpenWindowsPanel::~OpenWindowsPanel()
+{
+	if (m_rclickMenu) {
+		delete m_rclickMenu;
+		m_rclickMenu = NULL;
+	}
 }
 
 void OpenWindowsPanel::Clear()
@@ -113,6 +123,11 @@ void OpenWindowsPanel::OnChar(wxKeyEvent& event)
 void OpenWindowsPanel::OnRightUp( wxMouseEvent& event )
 {
 	wxUnusedVar(event);
+    int sel = m_fileList->GetSelection();
+    if (sel != wxNOT_FOUND) {
+        DoOpenSelectedItem(sel);
+        PopupMenu(m_rclickMenu);
+    }
 }
 
 void OpenWindowsPanel::DoOpenSelectedItem(int item)

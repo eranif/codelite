@@ -140,6 +140,7 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 		, m_isVisible(true)
 		, m_hyperLinkIndicatroStart(wxNOT_FOUND)
 		, m_hyperLinkIndicatroEnd(wxNOT_FOUND)
+        , m_hyperLinkType(wxID_NONE)
 {
 	Show(!hidden);
 	ms_bookmarkShapes[wxT("Small Rectangle")] = wxSCI_MARK_SMALLRECT;
@@ -1838,6 +1839,7 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
 {
 	m_hyperLinkIndicatroStart = wxNOT_FOUND;
 	m_hyperLinkIndicatroEnd = wxNOT_FOUND;
+    m_hyperLinkType = wxID_NONE;
 
 	SetIndicatorCurrent(HYPERLINK_INDICATOR);
 	IndicatorClearRange(0, GetLength());
@@ -2488,21 +2490,13 @@ void LEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
 		IndicatorSetForeground(HYPERLINK_INDICATOR, wxT("NAVY"));
 
 		if (pos != wxSCI_INVALID_POSITION) {
-			int curstyle = GetStyleAt(pos);
-			// optimize the marker to mark only styles which may contain
-			// tags
-			if (curstyle == wxSCI_C_WORD2 || curstyle == wxSCI_C_GLOBALCLASS || curstyle == wxSCI_C_IDENTIFIER) {
-
-				m_hyperLinkIndicatroStart = WordStartPos(pos, true);
-				m_hyperLinkIndicatroEnd   = WordEndPos(pos, true);
-
-				if (m_hyperLinkIndicatroEnd > m_hyperLinkIndicatroStart) {
-					IndicatorFillRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd - m_hyperLinkIndicatroStart);
-				} else {
-					m_hyperLinkIndicatroStart = wxNOT_FOUND;
-					m_hyperLinkIndicatroEnd = wxNOT_FOUND;
-				}
-			}
+            m_hyperLinkType = m_context->GetHyperlinkRange(pos, m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd);
+            if (m_hyperLinkType != wxID_NONE) {
+                IndicatorFillRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd - m_hyperLinkIndicatroStart);
+            } else {
+                m_hyperLinkIndicatroStart = wxNOT_FOUND;
+                m_hyperLinkIndicatroEnd = wxNOT_FOUND;
+            }
 		}
 	}
 }
@@ -2511,20 +2505,10 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 	if (m_hyperLinkIndicatroStart != wxNOT_FOUND && m_hyperLinkIndicatroEnd != wxNOT_FOUND) {
 		// indicator is highlighted
 		long pos = PositionFromPointClose(event.GetX(), event.GetY());
-		if (pos >= m_hyperLinkIndicatroStart && pos <= m_hyperLinkIndicatroEnd) {
-			
-			if(isMiddle) {
-			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED,
-			                 event.m_controlDown ? XRCID("find_impl")
-			                 : XRCID("find_decl"));
-			Frame::Get()->AddPendingEvent(e);
-			}else {
-			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED,
-			                 event.m_altDown ? XRCID("find_impl")
-			                 : XRCID("find_decl"));
-			Frame::Get()->AddPendingEvent(e);
-			}
-			
+		if (m_hyperLinkIndicatroStart <= pos && pos <= m_hyperLinkIndicatroEnd) {
+			bool altLink = isMiddle && event.m_controlDown || !isMiddle && event.m_altDown;
+            m_context->GoHyperlink(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd, 
+                                   m_hyperLinkType, altLink);
 		}
 	}
 

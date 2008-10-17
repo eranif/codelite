@@ -93,7 +93,11 @@ public:
 	virtual void RetagFile();
 	virtual wxString CallTipContent();
     virtual void SetActive();
-	
+    
+    // ctrl-click style navigation support
+	virtual int GetHyperlinkRange(int pos, int &start, int &end);
+    virtual void GoHyperlink(int start, int end, int type, bool alt);
+    
 	//override swapfiles features
 	virtual void SwapFiles(const wxFileName &fileName);
 
@@ -142,7 +146,7 @@ private:
 	void PrependMenuItemSeparator(wxMenu* menu);
 	int FindLineToAddInclude();
 	void MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
-	
+	void DoOpenWorkspaceFile();
 	
 	/**
 	 * \brief try to find a swapped file for this rhs. The logic is based on the C++ coding conventions

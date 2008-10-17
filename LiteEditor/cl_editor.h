@@ -83,6 +83,7 @@ class LEditor : public wxScintilla, public IEditor
 	bool m_isVisible;
 	int m_hyperLinkIndicatroStart;
 	int m_hyperLinkIndicatroEnd;
+    int m_hyperLinkType;
 	
 public:
 	static FindReplaceData &GetFindReplaceData() {

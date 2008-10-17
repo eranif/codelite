@@ -579,48 +579,8 @@ wxString ContextCpp::GetWordUnderCaret()
 
 void ContextCpp::OnContextOpenDocument(wxCommandEvent &event)
 {
-
 	wxUnusedVar(event);
-
-	wxFileName fileName(m_selectedWord);
-	wxString tmpName(m_selectedWord);
-	tmpName.Replace(wxT("\\"), wxT("/"));
-
-	std::vector<wxFileName> files, files2;
-	TagsManagerST::Get()->GetFiles(fileName.GetFullName(), files);
-	//filter out the all files that does not have an exact match
-	for (size_t i=0; i<files.size(); i++) {
-		wxString curFileName = files.at(i).GetFullPath();
-		curFileName.Replace(wxT("\\"), wxT("/"));
-		if (curFileName.EndsWith(tmpName)) {
-			files2.push_back(files.at(i));
-		}
-	}
-
-	wxString fileToOpen;
-	if (files2.size() > 1) {
-		wxArrayString choices;
-		for (size_t i=0; i<files2.size(); i++) {
-			choices.Add(files2.at(i).GetFullPath());
-		}
-
-		fileToOpen = wxGetSingleChoice(wxT("Select file to open:"), wxT("Select file"), choices, &GetCtrl());
-	} else if (files2.size() == 1) {
-		fileToOpen = files2.at(0).GetFullPath();
-	}
-
-
-	if (fileToOpen.IsEmpty() == false) {
-		//we got a match
-		LEditor &rCtrl = GetCtrl();
-
-		//only provide the file name to the manager and let him
-		//decide what is the correct project name
-		ManagerST::Get()->OpenFile(fileToOpen, wxEmptyString);
-
-		// Keep the current position as well
-		NavMgr::Get()->Push(rCtrl.CreateBrowseRecord());
-	}
+	DoOpenWorkspaceFile();
 }
 
 void ContextCpp::RemoveMenuDynamicContent(wxMenu *menu)
@@ -1350,8 +1310,8 @@ void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)
 
 void ContextCpp::SetActive()
 {
-    wxScintillaEvent dummy;
-    OnSciUpdateUI(dummy);
+	wxScintillaEvent dummy;
+	OnSciUpdateUI(dummy);
 }
 
 void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
@@ -1804,10 +1764,10 @@ void ContextCpp::OnFileSaved()
 	std::map< std::string, Variable > var_map;
 	std::map< wxString, TagEntryPtr> foo_map;
 	std::map<std::string, std::string> ignoreTokens;
-	
+
 	wxArrayString varList;
 	wxArrayString projectTags;
-	
+
 	LEditor &rCtrl = GetCtrl();
 	VALIDATE_WORKSPACE();
 
@@ -1818,7 +1778,7 @@ void ContextCpp::OnFileSaved()
 
 	// wxSCI_C_WORD2
 	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS) {
-		
+
 		// get list of all tags from the workspace
 		TagsManagerST::Get()->GetAllTagsNames(projectTags);
 	}
@@ -1829,10 +1789,10 @@ void ContextCpp::OnFileSaved()
 		// Colour local variables
 		//---------------------------------------------------------------------
 		const wxCharBuffer patbuf = _C(rCtrl.GetText());
-		
+
 		// collect list of variables
 		get_variables( patbuf.data(), var_list, ignoreTokens, false);
-		
+
 		// list all functions of this file
 		std::vector< TagEntryPtr > tags;
 		TagsManagerST::Get()->GetFunctions(tags, rCtrl.GetFileName().GetFullPath());
@@ -1860,13 +1820,13 @@ void ContextCpp::OnFileSaved()
 			}
 		}
 	}
-	
+
 	size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
-	if(cc_flags & CC_COLOUR_WORKSPACE_TAGS) {
+	if (cc_flags & CC_COLOUR_WORKSPACE_TAGS) {
 		wxString flatStr;
 		for (size_t i=0; i< projectTags.GetCount(); i++) {
 			// add only entries that does not appear in the variable list
-			if(varList.Index(projectTags.Item(i)) == wxNOT_FOUND) {
+			if (varList.Index(projectTags.Item(i)) == wxNOT_FOUND) {
 				flatStr << projectTags.Item(i) << wxT(" ");
 			}
 		}
@@ -1874,8 +1834,8 @@ void ContextCpp::OnFileSaved()
 	} else {
 		rCtrl.SetKeyWords(1, wxEmptyString);
 	}
-	
-	if(cc_flags & CC_COLOUR_VARS) {
+
+	if (cc_flags & CC_COLOUR_VARS) {
 		// convert it to space delimited string
 		wxString varFlatStr;
 		for (size_t i=0; i< varList.GetCount(); i++) {
@@ -2113,10 +2073,10 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 
 	// create an empty hidden instance of LEditor
 	LEditor *editor = new LEditor(Frame::Get()->GetNotebook(), wxID_ANY, wxSize(1, 1), wxEmptyString, wxEmptyString, true);
-	
+
 	// mark it as non visible control, so frame title updates will not take place
 	editor->SetIsVisible(false);
-	
+
 	// Get expressions for the CC to work with:
 	RefactorSource target;
 	std::list<CppToken> candidates;
@@ -2134,10 +2094,10 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	TagsOptionsData data = TagsManagerST::Get()->GetCtagsOptions();
 	data.SetFlags(data.GetFlags() | CC_CACHE_WORKSPACE_TAGS);
 	TagsManagerST::Get()->SetCtagsOptions( data );
-	
+
 	// clear the caching flag
 	data.SetFlags(data.GetFlags() & ~(CC_CACHE_WORKSPACE_TAGS));
-	
+
 	for (; iter != tokens.end(); iter++) {
 		CppToken token = *iter;
 		editor->Create(wxEmptyString, token.getFilename());
@@ -2181,7 +2141,7 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 			possibleCandidates.push_back( token );
 		}
 	}
-	
+
 	// restore CC flags
 	TagsManagerST::Get()->SetCtagsOptions( data );
 
@@ -2487,5 +2447,76 @@ void ContextCpp::DoCodeComplete(long pos)
 		if (TagsManagerST::Get()->AutoCompleteCandidates(rCtrl.GetFileName(), line, expr, text, candidates)) {
 			DisplayCompletionBox(candidates, wxEmptyString, showFullDecl);
 		}
+	}
+}
+
+int ContextCpp::GetHyperlinkRange(int pos, int &start, int &end)
+{
+	LEditor &rCtrl = GetCtrl();
+	int lineNum = rCtrl.LineFromPosition(pos);
+	wxString fileName;
+	wxString line = rCtrl.GetLine(lineNum);
+	if (IsIncludeStatement(line, &fileName)) {
+		start = rCtrl.PositionFromLine(lineNum)+line.find(fileName);
+		end = start + fileName.size();
+		return start <= pos && pos <= end ? XRCID("open_include_file") : wxID_NONE;
+	}
+	return ContextBase::GetHyperlinkRange(pos, start, end);
+}
+
+void ContextCpp::GoHyperlink(int start, int end, int type, bool alt)
+{
+	if (type == XRCID("open_include_file")) {
+		m_selectedWord = GetCtrl().GetTextRange(start, end);
+		DoOpenWorkspaceFile();
+	} else {
+		if (type == XRCID("find_tag")) {
+			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED,
+			                 alt ? XRCID("find_impl") : XRCID("find_decl"));
+			Frame::Get()->AddPendingEvent(e);
+		}
+	}
+}
+
+void ContextCpp::DoOpenWorkspaceFile()
+{
+	wxFileName fileName(m_selectedWord);
+	wxString tmpName(m_selectedWord);
+	tmpName.Replace(wxT("\\"), wxT("/"));
+
+	std::vector<wxFileName> files, files2;
+	TagsManagerST::Get()->GetFiles(fileName.GetFullName(), files);
+	//filter out the all files that does not have an exact match
+	for (size_t i=0; i<files.size(); i++) {
+		wxString curFileName = files.at(i).GetFullPath();
+		curFileName.Replace(wxT("\\"), wxT("/"));
+		if (curFileName.EndsWith(tmpName)) {
+			files2.push_back(files.at(i));
+		}
+	}
+
+	wxString fileToOpen;
+	if (files2.size() > 1) {
+		wxArrayString choices;
+		for (size_t i=0; i<files2.size(); i++) {
+			choices.Add(files2.at(i).GetFullPath());
+		}
+
+		fileToOpen = wxGetSingleChoice(wxT("Select file to open:"), wxT("Select file"), choices, &GetCtrl());
+	} else if (files2.size() == 1) {
+		fileToOpen = files2.at(0).GetFullPath();
+	}
+
+
+	if (fileToOpen.IsEmpty() == false) {
+		//we got a match
+		LEditor &rCtrl = GetCtrl();
+
+		//only provide the file name to the manager and let him
+		//decide what is the correct project name
+		ManagerST::Get()->OpenFile(fileToOpen, wxEmptyString);
+
+		// Keep the current position as well
+		NavMgr::Get()->Push(rCtrl.CreateBrowseRecord());
 	}
 }

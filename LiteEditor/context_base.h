@@ -99,7 +99,11 @@ public:
 	virtual void OnUserTypedXChars(const wxString &word) { wxUnusedVar(word); }
 	virtual wxString CallTipContent(){return wxEmptyString;}
     virtual void SetActive(){}
-	
+    
+    // ctrl-click style navigation support
+	virtual int  GetHyperlinkRange(int pos, int &start, int &end);
+    virtual void GoHyperlink(int start, int end, int type, bool alt);
+    
 	//override this method if you wish to provide context based right click menu
 	virtual wxMenu *GetMenu() ;
 };

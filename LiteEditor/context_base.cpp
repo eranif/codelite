@@ -28,6 +28,7 @@
 #include <vector>
 #include "editor_config.h"
 #include "cl_editor.h"
+#include "frame.h"
 
 ContextBase::ContextBase(LEditor *container)
 		: m_container(container)
@@ -133,6 +134,28 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 			rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
 		}
 	}
+}
+
+int ContextBase::GetHyperlinkRange(int pos, int &start, int &end)
+{
+    LEditor &rCtrl = GetCtrl();
+    int curstyle = rCtrl.GetStyleAt(pos);
+    if (curstyle == wxSCI_C_WORD2 || curstyle == wxSCI_C_GLOBALCLASS || curstyle == wxSCI_C_IDENTIFIER) {
+        // get tag as hyperlink
+        start = rCtrl.WordStartPos(pos, true);
+        end = rCtrl.WordEndPos(pos, true);
+        if (start < end)
+            return XRCID("find_tag");
+    }
+    return wxID_NONE;
+}
+
+void ContextBase::GoHyperlink(int start, int end, int type, bool alt)
+{
+    wxUnusedVar(start);
+    wxUnusedVar(end);
+	wxUnusedVar(type);
+	wxUnusedVar(alt);
 }
 
 wxMenu* ContextBase::GetMenu()

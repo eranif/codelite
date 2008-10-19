@@ -14,7 +14,7 @@
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="no" Options=""/>
+      <Linker Required="yes" Options=""/>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
@@ -28,7 +28,7 @@
       <Compiler Required="yes" Options="">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="no" Options="">
+      <Linker Required="yes" Options="">
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>

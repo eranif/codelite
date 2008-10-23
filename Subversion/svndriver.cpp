@@ -794,7 +794,7 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 		                                      wxDefaultPosition);
 		if(fdlg.ShowModal() == wxID_OK){
 			// try to load and convert the file into the platform line ending
-			wxString fileContent, convertedContent;
+			wxString fileContent;
 			wxString eol(wxT("\n"));
 			
 #if defined(__WXMSW__)
@@ -805,13 +805,11 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 				return;
 			}
 			
-			wxArrayString lines = wxStringTokenize(fileContent, wxT("\r\n"), wxTOKEN_STRTOK);
-			for(size_t i=0; i<lines.GetCount(); i++){
-				convertedContent << lines.Item(i) << eol;
-			}
+			fileContent.Replace(wxT("\r\n"), wxT("\n"));
+			fileContent.Replace(wxT("\n"), eol);
 			
 			wxString tmpFileName(fdlg.GetPath()+wxT(".tmp"));
-			if(!WriteFileWithBackup(tmpFileName, convertedContent, false)){
+			if(!WriteFileWithBackup(tmpFileName, fileContent, false)){
 				// failed to write the temporary file
 				PrintMessage(wxString::Format(wxT("Failed to convert patch file EOL mode '%s'"), tmpFileName.c_str()));
 				return;

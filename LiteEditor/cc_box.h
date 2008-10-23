@@ -102,6 +102,8 @@ public:
 	 * @param bmp 16x16 bitmap
 	 */
 	void RegisterImageForKind(const wxString &kind, const wxBitmap &bmp);
+	void NextPage();
+	void PreviousPage();
 };
 
 #endif // __cc_box__

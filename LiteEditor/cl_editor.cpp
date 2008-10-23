@@ -1803,6 +1803,12 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 		case WXK_DOWN:
 			m_ccBox->Next();
 			return;
+		case WXK_PAGEUP:
+			m_ccBox->PreviousPage();
+			return;
+		case WXK_PAGEDOWN:
+			m_ccBox->NextPage();
+			return;
 		case WXK_BACK: {
 
 			if (event.ControlDown()) {

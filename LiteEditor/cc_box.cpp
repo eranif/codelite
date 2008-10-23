@@ -109,7 +109,8 @@ void CCBox::OnItemSelected( wxListEvent& event )
 
 void CCBox::Show(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl, wxEvtHandler *owner)
 {
-	if (tags.empty()) {
+	if (tags.empty())
+	{
 		return;
 	}
 
@@ -134,11 +135,13 @@ void CCBox::Adjust()
 	wxSize size = parent->GetClientSize();
 	int diff = size.y - pt.y;
 	m_height = BOX_HEIGHT;
-	if (diff < BOX_HEIGHT) {
+	if (diff < BOX_HEIGHT)
+	{
 		pt.y -= BOX_HEIGHT;
 		pt.y -= hh;
 
-		if (pt.y < 0) {
+		if (pt.y < 0)
+		{
 			// the completion box is out of screen, resotre original size
 			pt.y += BOX_HEIGHT;
 			pt.y += hh;
@@ -147,12 +150,16 @@ void CCBox::Adjust()
 	}
 
 	// adjust the X axis
-	if (size.x - pt.x < BOX_WIDTH) {
+	if (size.x - pt.x < BOX_WIDTH)
+	{
 		// the box is too wide to fit the screen
-		if (size.x > BOX_WIDTH) {
+		if (size.x > BOX_WIDTH)
+		{
 			// the screen can contain the completion box
 			pt.x = size.x - BOX_WIDTH;
-		} else {
+		}
+		else
+		{
 			// this will provive the maximum visible area
 			pt.x = 0;
 		}
@@ -163,16 +170,21 @@ void CCBox::Adjust()
 void CCBox::SelectWord(const wxString& word)
 {
 	long item = m_listCtrl->FindMatch(word);
-	if (item != wxNOT_FOUND) {
+	if (item != wxNOT_FOUND)
+	{
 		// first unselect the current item
-		if (m_selectedItem != wxNOT_FOUND && m_selectedItem != item) {
+		if (m_selectedItem != wxNOT_FOUND && m_selectedItem != item)
+		{
 			m_listCtrl->Select(m_selectedItem, false);
 		}
 
 		m_selectedItem = item;
 		SelectItem(m_selectedItem);
-	} else {
-		if (GetAutoHide()) {
+	}
+	else
+	{
+		if (GetAutoHide())
+		{
 			Hide();
 		}
 	}
@@ -180,8 +192,10 @@ void CCBox::SelectWord(const wxString& word)
 
 void CCBox::Next()
 {
-	if (m_selectedItem != wxNOT_FOUND) {
-		if (m_selectedItem + 1 < m_listCtrl->GetItemCount()) {
+	if (m_selectedItem != wxNOT_FOUND)
+	{
+		if (m_selectedItem + 1 < m_listCtrl->GetItemCount())
+		{
 #ifdef __WXMAC__
 			// unselect current item
 			m_listCtrl->Select(m_selectedItem, false);
@@ -195,8 +209,10 @@ void CCBox::Next()
 
 void CCBox::Previous()
 {
-	if (m_selectedItem != wxNOT_FOUND) {
-		if (m_selectedItem - 1 >= 0) {
+	if (m_selectedItem != wxNOT_FOUND)
+	{
+		if (m_selectedItem - 1 >= 0)
+		{
 #ifdef __WXMAC__
 			// unselect current item
 			m_listCtrl->Select(m_selectedItem, false);
@@ -224,10 +240,13 @@ void CCBox::Show(const wxString& word)
 	CCItemInfo item;
 	m_listCtrl->DeleteAllItems();
 
-	if (m_tags.empty() == false) {
-		for (; i<m_tags.size(); i++) {
+	if (m_tags.empty() == false)
+	{
+		for (; i<m_tags.size(); i++)
+		{
 			TagEntryPtr tag = m_tags.at(i);
-			if (lastName != m_tags.at(i)->GetName()) {
+			if (lastName != m_tags.at(i)->GetName())
+			{
 
 				item.displayName =  tag->GetName();
 				item.imgId = GetImageId(*m_tags.at(i));
@@ -236,9 +255,11 @@ void CCBox::Show(const wxString& word)
 				lastName = tag->GetName();
 			}
 
-			if (m_showFullDecl) {
+			if (m_showFullDecl)
+			{
 				//collect only declarations
-				if (m_tags.at(i)->GetKind() == wxT("prototype")) {
+				if (m_tags.at(i)->GetKind() == wxT("prototype"))
+				{
 					item.displayName =  tag->GetName()+tag->GetSignature();
 					item.imgId = GetImageId(*m_tags.at(i));
 					_tags.push_back(item);
@@ -248,7 +269,8 @@ void CCBox::Show(const wxString& word)
 		}
 	}
 
-	if (_tags.size() == 1 && m_insertSingleChoice) {
+	if (_tags.size() == 1 && m_insertSingleChoice)
+	{
 		m_selectedItem = 0;
 		DoInsertSelection(_tags.at(0).displayName, false);
 
@@ -263,12 +285,14 @@ void CCBox::Show(const wxString& word)
 	m_selectedItem = 0;
 
 	m_selectedItem = m_listCtrl->FindMatch(word);
-	if ( m_selectedItem == wxNOT_FOUND && GetAutoHide() ) {
+	if ( m_selectedItem == wxNOT_FOUND && GetAutoHide() )
+	{
 		// return without calling wxWindow::Show
 		return;
 	}
 
-	if (m_selectedItem == wxNOT_FOUND) {
+	if (m_selectedItem == wxNOT_FOUND)
+	{
 		m_selectedItem = 0;
 	}
 
@@ -281,14 +305,17 @@ void CCBox::Show(const wxString& word)
 
 void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 {
-	if (m_owner) {
-		
+	if (m_owner)
+	{
+
 		// simply send an event and dismiss the dialog
 		wxCommandEvent e(wxEVT_CCBOX_SELECTION_MADE);
 		e.SetClientData( (void*)&word );
 		m_owner->ProcessEvent(e);
-		
-	} else {
+
+	}
+	else
+	{
 		LEditor *editor = (LEditor*)GetParent();
 		int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
 
@@ -297,13 +324,15 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 
 		// incase we are adding a function, add '()' at the end of the function name and place the caret in the middle
 		int img_id = m_listCtrl->OnGetItemImage(m_selectedItem);
-		if (img_id >= 8 && img_id <= 10) {
+		if (img_id >= 8 && img_id <= 10)
+		{
 
 			// if full declaration was selected, dont do anything,
 			// otherwise, append '()' to the inserted string, place the caret
 			// in the middle, and trigger the function tooltip
 
-			if (word.Find(wxT("(")) == wxNOT_FOUND && triggerTip) {
+			if (word.Find(wxT("(")) == wxNOT_FOUND && triggerTip)
+			{
 				// image id in range of 8-10 is function
 				editor->InsertText(editor->GetCurrentPos(), wxT("()"));
 				int pos = editor->GetCurrentPos() + 1;
@@ -315,11 +344,13 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 
 				wxString tipContent = editor->GetContext()->CallTipContent();
 				int where = tipContent.Find(wxT(" : "));
-				if (where != wxNOT_FOUND) {
+				if (where != wxNOT_FOUND)
+				{
 					tipContent = tipContent.Mid(where + 3);
 				}
 
-				if (tipContent.Trim().Trim(false) == wxT("()")) {
+				if (tipContent.Trim().Trim(false) == wxT("()"))
+				{
 					// dont place the caret in the middle of the braces,
 					// and it is OK to cancel the function calltip
 					int new_pos = editor->GetCurrentPos() + 1;
@@ -335,7 +366,8 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 
 void CCBox::InsertSelection()
 {
-	if (m_selectedItem == wxNOT_FOUND) {
+	if (m_selectedItem == wxNOT_FOUND)
+	{
 		return;
 	}
 
@@ -397,7 +429,8 @@ int CCBox::GetImageId(const TagEntry &entry)
 
 	// try the user defined images
 	std::map<wxString, int>::iterator iter = m_userImages.find(entry.GetKind());
-	if (iter != m_userImages.end()) {
+	if (iter != m_userImages.end())
+	{
 		return iter->second;
 	}
 	return wxNOT_FOUND;
@@ -406,15 +439,75 @@ int CCBox::GetImageId(const TagEntry &entry)
 void CCBox::RegisterImageForKind(const wxString& kind, const wxBitmap& bmp)
 {
 	wxImageList *il = m_listCtrl->GetImageList(wxIMAGE_LIST_SMALL);
-	if (il && bmp.IsOk()) {
+	if (il && bmp.IsOk())
+	{
 		std::map<wxString, int>::iterator iter = m_userImages.find(kind);
-		
-		if(iter == m_userImages.end()) {
+
+		if (iter == m_userImages.end())
+		{
 			int id = il->Add(bmp);
 			m_userImages[kind] = id;
-		}else {
+		}
+		else
+		{
 			// an entry for this kind already exist, replace the current image with new one
 			il->Replace(iter->second, bmp);
 		}
-	} 
+	}
+}
+
+void CCBox::NextPage()
+{
+	if (m_selectedItem != wxNOT_FOUND)
+	{
+		if (m_selectedItem + 1 < m_listCtrl->GetItemCount())
+		{
+#ifdef __WXMAC__
+// unselect current item
+			m_listCtrl->Select(m_selectedItem, false);
+#endif
+			m_selectedItem += 10;
+// select next item
+			SelectItem(m_selectedItem);
+		}
+		else
+		{
+#ifdef __WXMAC__
+// unselect current item
+			m_listCtrl->Select(m_selectedItem, false);
+#endif
+			m_selectedItem = m_listCtrl->GetItemCount() - 1;
+// select next item
+			SelectItem(m_selectedItem);
+		}
+	}
+}
+
+void CCBox::PreviousPage()
+{
+	if (m_selectedItem != wxNOT_FOUND)
+	{
+		if (m_selectedItem - 10 >= 0)
+		{
+#ifdef __WXMAC__
+// unselect current item
+			m_listCtrl->Select(m_selectedItem, false);
+#endif
+			m_selectedItem -= 10;
+
+// select previous item
+			SelectItem(m_selectedItem);
+		}
+		else
+		{
+#ifdef __WXMAC__
+// unselect current item
+			m_listCtrl->Select(m_selectedItem, false);
+#endif
+			m_selectedItem = 0;
+
+// select previous item
+			SelectItem(m_selectedItem);
+		}
+	}
 }

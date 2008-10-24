@@ -50,6 +50,7 @@ wxFormBuilder::wxFormBuilder(IManager *manager)
 	m_topWin = m_mgr->GetTheApp();
 
 	m_topWin->Connect(XRCID("wxfb_new_dialog"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxFormBuilder::OnNewDialog), NULL, this);
+	m_topWin->Connect(XRCID("wxfb_new_dialog_with_buttons"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxFormBuilder::OnNewDialogWithButtons), NULL, this);
 	m_topWin->Connect(XRCID("wxfb_new_frame"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxFormBuilder::OnNewFrame), NULL, this);
 	m_topWin->Connect(XRCID("wxfb_new_panel"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxFormBuilder::OnNewPanel), NULL, this);
 	m_topWin->Connect(XRCID("wxfb_open"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxFormBuilder::OpenWithWxFb), NULL, this);
@@ -150,6 +151,9 @@ wxMenu* wxFormBuilder::CreatePopupMenu()
 
 	item = new wxMenuItem(menu, XRCID("wxfb_new_dialog"), wxT("New wxDialog..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
+	
+	item = new wxMenuItem(menu, XRCID("wxfb_new_dialog_with_buttons"), wxT("New wxDialog with Default Buttons..."), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
 
 	item = new wxMenuItem(menu, XRCID("wxfb_new_frame"), wxT("New wxFrame..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
@@ -224,6 +228,9 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
 		break;
 	case wxFBItemKind_Panel:
 		templateFile << wxT("PanelTemplate.fbp");
+		break;
+	case wxFBItemKind_Dialog_With_Buttons:
+		templateFile << wxT("DialogTemplateWithButtons.fbp");
 		break;
 	}
 
@@ -371,4 +378,18 @@ wxString wxFormBuilder::GetWxFBPath()
 	}
 #endif
 	return fbpath;
+}
+
+void wxFormBuilder::OnNewDialogWithButtons(wxCommandEvent& e)
+{
+	wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
+	dlg.SetTitle(wxT("New wxDialog with Default Buttons"));
+	if (dlg.ShowModal() == wxID_OK)
+	{
+		wxFBItemInfo info;
+		info = dlg.GetData();
+		info.kind = wxFBItemKind_Dialog_With_Buttons;
+
+		DoCreateWxFormBuilderProject(info);
+	}
 }

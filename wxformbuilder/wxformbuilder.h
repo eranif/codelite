@@ -44,6 +44,7 @@ public:
 protected:
 	void OnSettings(wxCommandEvent &e);
 	void OnNewDialog(wxCommandEvent &e);
+	void OnNewDialogWithButtons(wxCommandEvent &e);
 	void OnNewFrame(wxCommandEvent &e);
 	void OnNewPanel(wxCommandEvent &e);
 	void OpenWithWxFb(wxCommandEvent &e);

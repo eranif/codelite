@@ -37,6 +37,7 @@ class IManager;
 enum wxFBItemKind {
 	wxFBItemKind_Unknown,
 	wxFBItemKind_Dialog,
+	wxFBItemKind_Dialog_With_Buttons,
 	wxFBItemKind_Frame,
 	wxFBItemKind_Panel
 };

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "wx/xrc/xmlres.h"
+#include "windowattrmanager.h"
 #include "imanager.h"
 #include "newwxprojectdlg.h"
 #include "wx/msgdlg.h"
@@ -35,6 +36,7 @@ NewWxProjectDlg::NewWxProjectDlg( wxWindow* parent, IManager *mgr  )
 	m_bitmap1->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("wx_project_header")));
 	m_choiceApplicationType->SetSelection(wxProjectTypeGUI);
 	m_dirPicker->SetPath(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
+	m_textCtrlName->SetFocus();
 
 #if defined (__WXMSW__)	
 	m_checkBoxMWindows->SetValue(true);
@@ -42,7 +44,12 @@ NewWxProjectDlg::NewWxProjectDlg( wxWindow* parent, IManager *mgr  )
 	m_checkBoxMWindows->SetValue(false);
 	m_checkBoxMWindows->Enable(false);
 #endif
+	WindowAttrManager::Load(this, wxT("NewWxProjectDlgAttr"), m_mgr->GetConfigTool());
+}
 
+NewWxProjectDlg::~NewWxProjectDlg()
+{
+	WindowAttrManager::Save(this, wxT("NewWxProjectDlgAttr"), m_mgr->GetConfigTool());
 }
 
 void NewWxProjectDlg::OnButtonCancel(wxCommandEvent &e)
@@ -75,6 +82,14 @@ bool NewWxProjectDlg::ValidateInput()
 		wxMessageBox(msg, wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return false;
 	}
+
+	wxString path = m_dirPicker->GetPath();
+	wxFileName::Mkdir(path, 0777, wxPATH_MKDIR_FULL);
+	if ( !wxDirExists(path) ) {
+		wxMessageBox(wxString::Format(wxT("Failed to create the path: %s\nA permissions problem, perhaps?"), path.c_str() ), wxT("Error"), wxOK | wxICON_HAND);
+		return false;
+	}
+
 	return true;
 }
 

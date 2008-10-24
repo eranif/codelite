@@ -18,6 +18,7 @@ SetupIconFile=box_software.ico
 Compression=lzma/ultra
 SolidCompression=true
 InternalCompressLevel=ultra
+PrivilegesRequired=none
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"

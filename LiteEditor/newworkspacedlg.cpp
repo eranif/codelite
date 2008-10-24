@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "newworkspacedlg.h"
+#include "windowattrmanager.h"
 #include "globals.h"
 #include "wx/msgdlg.h"
 #include "wx/dirdlg.h"
@@ -34,7 +35,14 @@ NewWorkspaceDlg::NewWorkspaceDlg( wxWindow* parent )
 {
 	m_textCtrlWorkspacePath->SetValue(wxGetCwd());
 	m_textCtrlWorkspaceName->SetFocus();
+	
+	WindowAttrManager::Load(this, wxT("NewWorkspaceDlgAttr"), NULL);
 	Centre();
+}
+
+NewWorkspaceDlg::~NewWorkspaceDlg()
+{
+	WindowAttrManager::Save(this, wxT("NewWorkspaceDlgAttr"), NULL);
 }
 
 void NewWorkspaceDlg::OnWorkspacePathUpdated( wxCommandEvent& event )
@@ -82,7 +90,7 @@ void NewWorkspaceDlg::OnButtonCreate( wxCommandEvent& event )
 	
 	if( m_checkBoxCreateSeparateDir->IsChecked() ){
 		// dont test the result
-		Mkdir(fn.GetPath());
+		fn.Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
 	}
 	
 	if ( !wxDirExists(fn.GetPath()) ) {

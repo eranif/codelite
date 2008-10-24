@@ -91,7 +91,7 @@ class NewWxProjectBaseDlg : public wxDialog
 		
 	
 	public:
-		NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("New wxWidgets Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 528,390 ), long style = wxDEFAULT_DIALOG_STYLE );
+		NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("New wxWidgets Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~NewWxProjectBaseDlg();
 	
 };

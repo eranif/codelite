@@ -46,6 +46,7 @@ protected:
 public:
 	/** Constructor */
 	NewWorkspaceDlg( wxWindow* parent );
+	virtual ~NewWorkspaceDlg();
 	
 	wxString GetFilePath() const {return m_workspacePath;}
 };

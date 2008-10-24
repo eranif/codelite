@@ -79,6 +79,8 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlName = new wxTextCtrl( m_panelBasicInfo, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlName->SetToolTip( wxT("Choose a name to give the project") );
+	
 	fgSizer1->Add( m_textCtrlName, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText2 = new wxStaticText( m_panelBasicInfo, wxID_ANY, wxT("Project Path:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -96,6 +98,9 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	int m_choiceApplicationTypeNChoices = sizeof( m_choiceApplicationTypeChoices ) / sizeof( wxString );
 	m_choiceApplicationType = new wxChoice( m_panelBasicInfo, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceApplicationTypeNChoices, m_choiceApplicationTypeChoices, 0 );
 	m_choiceApplicationType->SetSelection( 0 );
+	m_choiceApplicationType->SetToolTip( wxT("The normal choice will be 'GUI application', but choose 'Simple main' for a wx console app") );
+	m_choiceApplicationType->SetMinSize( wxSize( -1,30 ) );
+
 	fgSizer1->Add( m_choiceApplicationType, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer2->Add( fgSizer1, 1, wxEXPAND, 5 );
@@ -117,8 +122,9 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	
 	bSizer2->Add( m_checkBoxUnicode, 0, wxALL, 5 );
 	
-	m_checkBoxMWindows = new wxCheckBox( m_panelBasicInfo, wxID_ANY, wxT("When creating GUI application, add flag -mwindows to avoid terminal console (Windows Only)"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxMWindows->SetValue(true);
+	m_checkBoxMWindows = new wxCheckBox( m_panelBasicInfo, wxID_ANY, wxT("Add -mwindows flag to avoid a terminal console in MSWin GUI apps"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	m_checkBoxMWindows->SetToolTip( wxT("Without this flag, there will be an unnecessary, visible terminal window when your app runs on MSWindows") );
 	
 	bSizer2->Add( m_checkBoxMWindows, 0, wxALL, 5 );
 	
@@ -151,6 +157,7 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	bSizer1->Fit( this );
 	
 	// Connect Events
 	m_choiceApplicationType->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NewWxProjectBaseDlg::OnChoiceChanged ), NULL, this );

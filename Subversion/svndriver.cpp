@@ -818,8 +818,12 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 			// execute the command
 			command << wxT("patch -p0 -i \"") << tmpFileName << wxT("\"");
 			m_curHandler = new SvnDefaultCmdHandler(this, command);
-			m_curHandler->SetPostCmdAction(handler);
 			
+			if(handler) {
+				// set the temporary file name
+				handler->SetFile(tmpFileName);
+			}
+			m_curHandler->SetPostCmdAction(handler);
 			ExecCommand(command);
 		}
 	}

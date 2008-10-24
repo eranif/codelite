@@ -31,12 +31,14 @@ class SvnPostCmdAction
 {
 protected:
 	wxArrayString m_text;
-
+	wxString m_file;
+	
 public:
 	SvnPostCmdAction();
 	virtual ~SvnPostCmdAction();
 
 	virtual void DoCommand() = 0;
 	virtual void AddText(const wxString &text){m_text.Add(text);}
+	virtual void SetFile(const wxString &file){m_file = file.c_str();}
 };
 #endif // __svnpostcmdaction__

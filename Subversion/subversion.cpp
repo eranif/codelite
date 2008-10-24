@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "updatepostcmdaction.h"
+#include "applypatchpostcmdaction.h"
 #include "svnreportgeneratoraction.h"
 #include "custom_tab.h"
 #include "svntab.h"
@@ -1033,7 +1034,7 @@ void SubversionPlugin::SendSvnMenuEvent(int id) {
 void SubversionPlugin::OnPatch(wxCommandEvent& e)
 {
 	m_svn->PrintMessage(wxT("----\nApplying patch ...\n"));
-	m_svn->ApplyPatch(new SvnIconRefreshHandler(m_mgr, this));
+	m_svn->ApplyPatch(new ApplyPatchPostCmdAction(m_mgr, this));
 }
 
 bool SubversionPlugin::SanityCheck()

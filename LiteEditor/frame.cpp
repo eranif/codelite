@@ -164,6 +164,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
 	EVT_MENU(XRCID("copy_file_path"), Frame::OnCopyFilePathOnly)
+    EVT_MENU(XRCID("show_in_workspace"), Frame::OnShowInWorkspace)
+    EVT_UPDATE_UI(XRCID("show_in_workspace"), Frame::OnShowInWorkspaceUI)
+    EVT_MENU(XRCID("show_in_explorer"), Frame::OnShowInExplorer)
+    EVT_UPDATE_UI(XRCID("show_in_explorer"), Frame::OnShowInExplorerUI)
 	EVT_MENU(XRCID("open_shell_from_filepath"), Frame::OnOpenShellFromFilePath)
 	EVT_UPDATE_UI(XRCID("open_shell_from_filepath"), Frame::OnFileExistUpdateUI)
 
@@ -3702,4 +3706,54 @@ void Frame::OnRetagWorkspace(wxCommandEvent& event)
 {
 	wxUnusedVar( event );
 	ManagerST::Get()->RetagWorkspace();
+}
+
+void Frame::OnShowInExplorer(wxCommandEvent& e)
+{
+       LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    if (editor) {
+        wxFileName filepath = editor->GetFileName();
+        if (filepath.FileExists()) {
+            GetFileExplorer()->GetFileTree()->ExpandToPath(filepath);
+            ManagerST::Get()->ShowWorkspacePane(WorkspacePane::EXPLORER);
+        }
+    }
+}
+
+void Frame::OnShowInExplorerUI(wxUpdateUIEvent& e)
+{
+    e.Enable(false);
+       LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    if (editor) {
+        wxFileName filepath = editor->GetFileName();
+        if (filepath.FileExists()) {
+            e.Enable(true);
+        }
+    }
+}
+
+void Frame::OnShowInWorkspace(wxCommandEvent& e)
+{
+       LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    if (editor) {
+        wxString project = editor->GetProject();
+        wxFileName filepath = editor->GetFileName();
+        if (!project.IsEmpty()) {
+            GetWorkspaceTab()->GetFileView()->ExpandToPath(project, filepath);
+            ManagerST::Get()->ShowWorkspacePane(WorkspacePane::FILE_VIEW);
+        }
+    }
+}
+
+void Frame::OnShowInWorkspaceUI(wxUpdateUIEvent& e)
+{
+    e.Enable(false);
+    LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    if (editor) {
+        wxString project = editor->GetProject();
+        wxFileName filepath = editor->GetFileName();
+        if (!project.IsEmpty()) {
+            e.Enable(true);
+        }
+    }
 }

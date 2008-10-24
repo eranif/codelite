@@ -136,6 +136,10 @@ void WorkspaceTab::OnLinkEditor(wxCommandEvent &e)
 	m_isLinkedToEditor = !m_isLinkedToEditor;
 	// save the value
 	EditorConfigST::Get()->SaveLongValue(wxT("LinkWorkspaceViewToEditor"), m_isLinkedToEditor ? 1 : 0);
+    if (m_isLinkedToEditor) {
+        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("show_in_workspace"));
+        Frame::Get()->AddPendingEvent(event);
+    }
 }
 
 void WorkspaceTab::OnGoHome(wxCommandEvent &e)

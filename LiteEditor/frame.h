@@ -374,6 +374,10 @@ protected:
 	void OnHighlightWord(wxCommandEvent &event);
 	void OnShowNavBar(wxCommandEvent &e);
 	void OnShowNavBarUI(wxUpdateUIEvent &e);
+    void OnShowInWorkspace(wxCommandEvent &e);
+    void OnShowInWorkspaceUI(wxUpdateUIEvent &e);
+    void OnShowInExplorer(wxCommandEvent &e);
+    void OnShowInExplorerUI(wxUpdateUIEvent &e);
 	void OnOpenShellFromFilePath(wxCommandEvent &e);
 	void OnQuickDebug(wxCommandEvent &e);
 	void OnQuickDebugUI(wxUpdateUIEvent &e);

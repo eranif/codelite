@@ -34,6 +34,7 @@
 #include "editor_config.h"
 #include "manager.h"
 #include "workspace_pane.h"
+#include "frame.h"
 
 FileExplorer::FileExplorer(wxWindow *parent, const wxString &caption)
 : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 300))
@@ -192,4 +193,8 @@ void FileExplorer::OnLinkEditor(wxCommandEvent &e)
 	m_isLinkedToEditor = !m_isLinkedToEditor;
 	// save the value
 	EditorConfigST::Get()->SaveLongValue(wxT("LinkFileExplorerToEditor"), m_isLinkedToEditor ? 1 : 0);
+    if (m_isLinkedToEditor) {
+        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("show_in_explorer"));
+        Frame::Get()->AddPendingEvent(event);
+    }
 }

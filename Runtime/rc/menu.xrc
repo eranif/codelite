@@ -524,6 +524,13 @@
             <label>Save As</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="show_in_workspace">
+            <label>Show In Workspace</label>
+        </object>
+        <object class="wxMenuItem" name="show_in_explorer">
+            <label>Show In Explorer</label>
+        </object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="copy_file_name">
             <label>Copy Full Path to Clipboard</label>
         </object>

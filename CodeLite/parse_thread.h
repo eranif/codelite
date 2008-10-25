@@ -44,7 +44,7 @@
 
 class TagsDatabase;
 
-class WXDLLIMPEXP_CL ParseRequest : public ThreadRequest
+class ParseRequest : public ThreadRequest
 {
 	wxString _file;
 	wxString _dbfile;
@@ -122,9 +122,8 @@ typedef Singleton<ParseThread> ParseThreadST;
 /**
  * Holds information about events associated with SymbolTree object.
  */
-class WXDLLIMPEXP_CL SymbolTreeEvent : public wxNotifyEvent
+class SymbolTreeEvent : public wxNotifyEvent
 {
-	DECLARE_DYNAMIC_CLASS(SymbolTreeEvent)
 	std::vector<std::pair<wxString, TagEntry> >  m_items;
 	wxString m_project;
 	wxString m_fileName;

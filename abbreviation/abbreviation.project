@@ -173,6 +173,6 @@
   <VirtualDirectory Name="formbuilder">
     <File Name="abbreviationssettingsbase.fbp"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

@@ -41,6 +41,28 @@
 
 class IManager;
 
+class ParseThreadEventData
+{
+	wxString m_fileName;
+	std::vector<std::pair<wxString, TagEntry> >  m_items;
+public:
+	ParseThreadEventData() {}
+	~ParseThreadEventData() {}
+
+	void SetFileName(const wxString& fileName) {
+		this->m_fileName = fileName.c_str();
+	}
+	void SetItems(const std::vector<std::pair<wxString, TagEntry> >& items) {
+		this->m_items = items;
+	}
+	const wxString& GetFileName() const {
+		return m_fileName;
+	}
+	const std::vector<std::pair<wxString, TagEntry> >& GetItems() const {
+		return m_items;
+	}
+};
+
 /**
  * Possible popup menu
  */
@@ -57,7 +79,7 @@ enum MenuType {
 //Plugins events
 //
 enum {
-	//clientData is fileName (wxString)
+	//clientData is fileName (wxString*)
 	wxEVT_FILE_SAVED			 = 3450,
 	//clientData is NULL
 	wxEVT_FILE_EXP_REFRESHED,
@@ -65,18 +87,24 @@ enum {
 	wxEVT_WORKSPACE_LOADED,
 	//clientData is NULL
 	wxEVT_FILE_EXP_INIT_DONE,
-	//clientData is list of files added to project (wxArrayString)
+	//clientData is list of files added to project (wxArrayString*)
 	wxEVT_PROJ_FILE_ADDED,
-	//clientData is the fileName which has been removed (wxString)
+	//clientData is the fileName which has been removed (wxString*)
 	wxEVT_PROJ_FILE_REMOVED,
-	//clientData is the project name (wxString)
+	//clientData is the project name (wxString*)
 	wxEVT_PROJ_REMOVED,
-	//clientData is the project name (wxString)
+	//clientData is the project name (wxString*)
 	wxEVT_PROJ_ADDED,
 	//clientData is NULL
 	wxEVT_INIT_DONE,
-	//clientData is the selected word (wxString)
-	wxEVT_CCBOX_SELECTION_MADE
+	//clientData is the selected word (wxString*)
+	wxEVT_CCBOX_SELECTION_MADE,
+	//clientData is ParseThreadEventData*
+	wxEVT_SYNBOL_TREE_UPDATE_ITEM,
+	//clientData is ParseThreadEventData*
+	wxEVT_SYNBOL_TREE_DELETE_ITEM,
+	//clientData is ParseThreadEventData*
+	wxEVT_SYNBOL_TREE_ADD_ITEM
 };
 
 //------------------------------------------------------------------

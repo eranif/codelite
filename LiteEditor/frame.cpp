@@ -2343,6 +2343,13 @@ void Frame::OnAddSymbols(SymbolTreeEvent &event)
 	if (tree) {
 		tree->AddSymbols(event);
 	}
+	
+	// Notify the plugins
+	ParseThreadEventData data;
+	data.SetFileName(event.GetFileName());
+	data.SetItems(event.GetItems());
+	
+	SendCmdEvent(wxEVT_SYNBOL_TREE_ADD_ITEM, (void*)&data);
 }
 
 void Frame::OnDeleteSymbols(SymbolTreeEvent &event)
@@ -2352,6 +2359,14 @@ void Frame::OnDeleteSymbols(SymbolTreeEvent &event)
 	if (tree) {
 		tree->DeleteSymbols(event);
 	}
+	
+	// Notify the plugins
+	ParseThreadEventData data;
+	data.SetFileName(event.GetFileName());
+	data.SetItems(event.GetItems());
+	
+	SendCmdEvent(wxEVT_SYNBOL_TREE_DELETE_ITEM, (void*)&data);
+
 }
 
 void Frame::OnUpdateSymbols(SymbolTreeEvent &event)
@@ -2360,6 +2375,13 @@ void Frame::OnUpdateSymbols(SymbolTreeEvent &event)
 	if (tree) {
 		tree->UpdateSymbols(event);
 	}
+	
+	// Notify the plugins
+	ParseThreadEventData data;
+	data.SetFileName(event.GetFileName());
+	data.SetItems(event.GetItems());
+	
+	SendCmdEvent(wxEVT_SYNBOL_TREE_UPDATE_ITEM, (void*)&data);
 }
 
 wxString Frame::CreateWorkspaceTable()

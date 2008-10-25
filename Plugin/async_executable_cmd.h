@@ -38,6 +38,7 @@
 #endif // WXMAKINGDLL_LE_SDK
 
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_ASYNC_PROC_ADDLINE, wxID_ANY)
+DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_ASYNC_PROC_ADDERRLINE, wxID_ANY)
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_ASYNC_PROC_STARTED, wxID_ANY)
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE_SDK, wxEVT_ASYNC_PROC_ENDED, wxID_ANY)
 
@@ -79,7 +80,7 @@ public:
 		return NULL;
 	}
 
-	void AppendLine(const wxString &line);
+	void AppendLine(const wxString &line, bool isErr = false);
 	void SendStartMsg();
 	void SendEndMsg(int exitCode);
 	void Terminate();

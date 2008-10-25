@@ -47,9 +47,10 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 }
 
 BEGIN_EVENT_TABLE(ExternalToolsPlugin, IPlugin)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE, ExternalToolsPlugin::OnToolProcess)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, ExternalToolsPlugin::OnToolProcess)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, 	ExternalToolsPlugin::OnToolProcess)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE,    ExternalToolsPlugin::OnToolProcess)
+    EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDERRLINE, ExternalToolsPlugin::OnToolProcess)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED,    ExternalToolsPlugin::OnToolProcess)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, 	   ExternalToolsPlugin::OnToolProcess)
 END_EVENT_TABLE()
 
 ExternalToolsPlugin::ExternalToolsPlugin(IManager *manager)

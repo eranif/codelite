@@ -171,9 +171,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("open_shell_from_filepath"), Frame::OnOpenShellFromFilePath)
 	EVT_UPDATE_UI(XRCID("open_shell_from_filepath"), Frame::OnFileExistUpdateUI)
 
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE, Frame::OnOutputWindowEvent)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, Frame::OnOutputWindowEvent)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, Frame::OnOutputWindowEvent)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE,    Frame::OnOutputWindowEvent)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDERRLINE, Frame::OnOutputWindowEvent)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED,    Frame::OnOutputWindowEvent)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED,      Frame::OnOutputWindowEvent)
 	EVT_MENU(wxID_CLOSE_ALL, Frame::OnFileCloseAll)
 	EVT_MENU(XRCID("fix_ext_database"), Frame::OnFixDatabasePaths)
 	EVT_MENU(XRCID("exit_app"), Frame::OnQuit)
@@ -1962,6 +1963,9 @@ void Frame::OnOutputWindowEvent(wxCommandEvent &event)
 		m_outputPane->GetOutputWindow()->Clear();
 		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());
 	} else if (event.GetEventType() == wxEVT_ASYNC_PROC_ADDLINE) {
+		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());
+	} else if (event.GetEventType() == wxEVT_ASYNC_PROC_ADDERRLINE) {
+        // might want to highlight this line (eg bold or different bg color?
 		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());
 	} else if (event.GetEventType() == wxEVT_ASYNC_PROC_ENDED) {
 		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());

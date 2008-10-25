@@ -55,9 +55,10 @@
 static const wxChar* commandSeparator = wxT("----\n");
 
 BEGIN_EVENT_TABLE(SvnDriver, wxEvtHandler)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE, SvnDriver::OnSvnProcess)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED, SvnDriver::OnSvnProcess)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, SvnDriver::OnSvnProcess)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE,    SvnDriver::OnSvnProcess)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDERRLINE, SvnDriver::OnSvnProcess)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED,    SvnDriver::OnSvnProcess)
+	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED,      SvnDriver::OnSvnProcess)
 END_EVENT_TABLE()
 
 SvnDriver::SvnDriver(SubversionPlugin *plugin, IManager *mgr)

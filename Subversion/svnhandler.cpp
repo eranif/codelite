@@ -148,11 +148,14 @@ void SvnDiffCmdHandler::ProcessEvent(wxCommandEvent &event)
 	}
 
 	if (event.GetEventType() == wxEVT_ASYNC_PROC_ADDLINE) {
-		m_content << event.GetString();
-		m_content = m_content.Trim().Trim(false);
-		m_content << wxT("\n");
+		m_content << text;
+        // diff format is whitespace-sensitive.  do not trim or alter.
+		//m_content = m_content.Trim().Trim(false);
+		//m_content << wxT("\n");
 	} else {
-		m_svnDriver->PrintMessage(text);
+        if (!text.IsEmpty()) {
+            m_svnDriver->PrintMessage(text);
+        }
 		if (event.GetEventType() == wxEVT_ASYNC_PROC_ENDED) {
 			//Create a diff file and open it in the editor
 			m_svnDriver->DisplayDiffFile(m_fileName, m_content);
@@ -170,7 +173,7 @@ void SvnChangeLogCmdHandler::ProcessEvent(wxCommandEvent &event)
 	}
 
 	if (event.GetEventType() == wxEVT_ASYNC_PROC_ADDLINE) {
-		m_content << event.GetString();
+		m_content << text;
 		m_content = m_content.Trim().Trim(false);
 		m_content << wxT("\n");
 	} else {

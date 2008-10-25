@@ -26,6 +26,7 @@
 #include "wx/tokenzr.h"
 
 DEFINE_EVENT_TYPE(wxEVT_ASYNC_PROC_ADDLINE)
+DEFINE_EVENT_TYPE(wxEVT_ASYNC_PROC_ADDERRLINE)
 DEFINE_EVENT_TYPE(wxEVT_ASYNC_PROC_STARTED)
 DEFINE_EVENT_TYPE(wxEVT_ASYNC_PROC_ENDED)
 
@@ -55,12 +56,12 @@ AsyncExeCmd::~AsyncExeCmd()
 	}
 };
 
-void AsyncExeCmd::AppendLine(const wxString &line)
+void AsyncExeCmd::AppendLine(const wxString &line, bool isErr)
 {
 	if ( !m_owner)
 		return;
 
-	wxCommandEvent event(wxEVT_ASYNC_PROC_ADDLINE);
+	wxCommandEvent event(isErr ?  wxEVT_ASYNC_PROC_ADDERRLINE : wxEVT_ASYNC_PROC_ADDLINE);
 	event.SetEventObject(this);
 	event.SetString(line);
 	m_owner->ProcessEvent(event);
@@ -134,7 +135,7 @@ void AsyncExeCmd::DoPrintOutput(const wxString &out, const wxString &err)
 	if (!err.IsEmpty()) {
 		wxStringTokenizer tt(err, wxT("\n"));
 		while (tt.HasMoreTokens()) {
-			AppendLine(tt.NextToken() + wxT("\n"));
+			AppendLine(tt.NextToken() + wxT("\n"), true);
 		}
 	}
 }

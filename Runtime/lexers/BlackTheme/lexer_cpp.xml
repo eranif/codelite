@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Lexer Name="C++" Id="3">
-  <KeyWords0>and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast continue default delete        do double dynamic_cast else enum explicit export extern false float for friend goto if inline int long mutable namespace        new not not_eq operator or or_eq private protected public register reinterpret_cast return short signed Sizeof static        static_cast struct switch template this throw true try typedef typeid typename union unsigned using virtual void volatile        wchar_t while xor xor_eq</KeyWords0>
+  <KeyWords0>and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast continue default delete do double dynamic_cast else enum explicit export extern false float for friend goto if inline int long mutable namespace        new not not_eq operator or or_eq private protected public register reinterpret_cast return short signed Sizeof static        static_cast struct switch template this throw true try typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq  assert exit abort NULL</KeyWords0>
   <KeyWords1></KeyWords1>
   <KeyWords2></KeyWords2>
   <KeyWords3></KeyWords3>

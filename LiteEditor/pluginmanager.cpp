@@ -107,6 +107,8 @@ void PluginManager::Load()
 			wxString fileName( files.Item( i ) );
 			if ( !dl->Load( fileName ) ) {
 				wxLogMessage( wxT( "Failed to load plugin's dll: " ) + fileName );
+                if (!dl->GetError().IsEmpty())
+                    wxLogMessage(dl->GetError());
 				delete dl;
 				continue;
 			}
@@ -114,6 +116,9 @@ void PluginManager::Load()
 			bool success( false );
 			GET_PLUGIN_INFO_FUNC pfnGetPluginInfo = ( GET_PLUGIN_INFO_FUNC )dl->GetSymbol( wxT( "GetPluginInfo" ), &success );
 			if ( !success ) {
+                wxLogMessage(wxT("Failed to find GetPluginInfo in dll: ") + fileName);
+                if (!dl->GetError().IsEmpty())
+                    wxLogMessage(dl->GetError());
 				delete dl;
 				continue;
 			}
@@ -124,7 +129,11 @@ void PluginManager::Load()
 			GET_PLUGIN_INTERFACE_VERSION_FUNC pfnInterfaceVersion = (GET_PLUGIN_INTERFACE_VERSION_FUNC) dl->GetSymbol(wxT("GetPluginInterfaceVersion"), &success);
 			if( success ) {
 				interface_version = pfnInterfaceVersion();
-			}
+			} else {
+                wxLogMessage(wxT("Failed to find GetPluginInterfaceVersion() in dll: ") + fileName);
+                if (!dl->GetError().IsEmpty())
+                    wxLogMessage(dl->GetError());
+            }
 			
 			if( interface_version != PLUGIN_INTERFACE_VERSION ) {
 				wxLogMessage(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface version is '%d', CodeLite interface version is '%d'"), 
@@ -157,6 +166,9 @@ void PluginManager::Load()
 			//try and load the plugin
 			GET_PLUGIN_CREATE_FUNC pfn = ( GET_PLUGIN_CREATE_FUNC )dl->GetSymbol( wxT( "CreatePlugin" ), &success );
 			if ( !success ) {
+                wxLogMessage(wxT("Failed to find CreatePlugin() in dll: ") + fileName);
+                if (!dl->GetError().IsEmpty())
+                    wxLogMessage(dl->GetError());
 
 				//mark this plugin as not available
 				pluginInfo.SetEnabled(false);

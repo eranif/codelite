@@ -150,6 +150,8 @@ bool DebuggerMgr::LoadDebuggers()
 		wxString fileName(files.Item(i));
 		if(!dl->Load(fileName)){
 			wxLogMessage(wxT("Failed to load debugger's dll: ") + fileName);
+            if (!dl->GetError().IsEmpty())
+                wxLogMessage(dl->GetError());
 			delete dl;
 			continue;
 		}
@@ -157,6 +159,9 @@ bool DebuggerMgr::LoadDebuggers()
 		bool success(false);
 		GET_DBG_INFO_FUNC pfn = (GET_DBG_INFO_FUNC)dl->GetSymbol(wxT("GetDebuggerInfo"), &success);
 		if(!success){
+            wxLogMessage(wxT("Failed to find GetDebuggerInfo() in dll: ") + fileName);
+            if (!dl->GetError().IsEmpty())
+                wxLogMessage(dl->GetError());
 			//dl->Unload();
 			delete dl;
 			continue;
@@ -167,6 +172,9 @@ bool DebuggerMgr::LoadDebuggers()
 		success = false;
 		GET_DBG_CREATE_FUNC pfnInitDbg = (GET_DBG_CREATE_FUNC)dl->GetSymbol(info.initFuncName, &success);
 		if(!success){
+            wxLogMessage(wxT("Failed to find init function in dll: ") + fileName);
+            if (!dl->GetError().IsEmpty())
+                wxLogMessage(dl->GetError());
 			dl->Detach();
 			delete dl;
 			continue;

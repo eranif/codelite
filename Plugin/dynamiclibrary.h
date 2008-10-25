@@ -35,7 +35,8 @@ class clDynamicLibrary {
 #else //Mac OSX
 	void *m_dllhandle;
 #endif
-
+    wxString m_error;
+    
 public:
 	clDynamicLibrary();
 	~clDynamicLibrary();
@@ -43,6 +44,7 @@ public:
 	bool Load(const wxString &name);
 	void Detach();
 	void* GetSymbol(const wxString &name, bool *success);
-
+    
+    wxString GetError() {return m_error;}
 };
 #endif // __dynamiclibrary__

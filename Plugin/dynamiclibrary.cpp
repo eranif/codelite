@@ -49,6 +49,7 @@ clDynamicLibrary::~clDynamicLibrary()
 
 bool clDynamicLibrary::Load(const wxString &name)
 {
+    m_error.Clear();
 #if defined (__WXMSW__)
 	return m_lib.Load(name, wxDL_NOSHARE);
 #else
@@ -61,7 +62,7 @@ bool clDynamicLibrary::Load(const wxString &name)
 #endif
 
 	if (!m_dllhandle) {
-		wxString error = wxString(dlerror(), wxConvUTF8);
+		m_error = wxString(dlerror(), wxConvUTF8);
 		return false;
 	}
 	return true;
@@ -70,6 +71,7 @@ bool clDynamicLibrary::Load(const wxString &name)
 
 void clDynamicLibrary::Detach()
 {
+    m_error.Clear();    
 #if defined (__WXMSW__)
 	m_lib.Detach();
 #else
@@ -82,6 +84,7 @@ void clDynamicLibrary::Detach()
 
 void *clDynamicLibrary::GetSymbol(const wxString &name, bool *success)
 {
+    m_error.Clear();
 #if defined (__WXMSW__)
 	bool rc;
 	void *symb = m_lib.GetSymbol(name, &rc);
@@ -96,6 +99,7 @@ void *clDynamicLibrary::GetSymbol(const wxString &name, bool *success)
 		*success = true;
 	}else{
 		*success = false;
+        m_error = wxString(dlerror(), wxConvUTF8);
 	}
 	return symb;
 #endif

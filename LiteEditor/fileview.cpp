@@ -667,8 +667,8 @@ void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
 	wxString projName = path.BeforeFirst( wxT( ':' ) );
 	wxString projCwd = ManagerST::Get()->GetProjectCwd( projName );
 
-	NewItemDlg *dlg = new NewItemDlg( this, projCwd, wxID_ANY, wxT( "New Item" ) );
-
+	NewItemDlg *dlg = new NewItemDlg( Frame::Get(), projCwd);
+	dlg->SetTitle(_("New Item"));
 	if ( dlg->ShowModal() == wxID_OK ) {
 		wxString filename = dlg->GetFileName().GetFullPath();
 		ManagerST::Get()->AddNewFileToProject( filename, path );

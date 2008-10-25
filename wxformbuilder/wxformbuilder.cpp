@@ -167,7 +167,7 @@ wxMenu* wxFormBuilder::CreatePopupMenu()
 void wxFormBuilder::OnNewDialog(wxCommandEvent& e)
 {
 	wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
-	dlg.SetTitle(wxT("New wxDialog"));
+	dlg.SetTitle(_("New wxDialog"));
 	if (dlg.ShowModal() == wxID_OK)
 	{
 		wxFBItemInfo info;
@@ -181,7 +181,7 @@ void wxFormBuilder::OnNewDialog(wxCommandEvent& e)
 void wxFormBuilder::OnNewFrame(wxCommandEvent& e)
 {
 	wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
-	dlg.SetTitle(wxT("New wxFrame"));
+	dlg.SetTitle(_("New wxFrame"));
 	if (dlg.ShowModal() == wxID_OK)
 	{
 		wxFBItemInfo info;
@@ -194,7 +194,7 @@ void wxFormBuilder::OnNewFrame(wxCommandEvent& e)
 void wxFormBuilder::OnNewPanel(wxCommandEvent& e)
 {
 	wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
-	dlg.SetTitle(wxT("New wxPanel"));
+	dlg.SetTitle(_("New wxPanel"));
 	
 	// no need for title in wxPanel
 	dlg.DisableTitleField();
@@ -383,7 +383,7 @@ wxString wxFormBuilder::GetWxFBPath()
 void wxFormBuilder::OnNewDialogWithButtons(wxCommandEvent& e)
 {
 	wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
-	dlg.SetTitle(wxT("New wxDialog with Default Buttons"));
+	dlg.SetTitle(_("New wxDialog with Default Buttons"));
 	if (dlg.ShowModal() == wxID_OK)
 	{
 		wxFBItemInfo info;

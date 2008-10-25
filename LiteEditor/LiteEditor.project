@@ -186,6 +186,8 @@
       <File Name="newprojectbasedlg.cpp"/>
       <File Name="newprojectbasedlg.h"/>
       <File Name="newprojectdlg.cpp"/>
+      <File Name="new_item_base_dlg.h"/>
+      <File Name="new_item_base_dlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Plugins">
       <File Name="pluginmgrdlg.h"/>

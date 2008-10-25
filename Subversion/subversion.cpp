@@ -667,7 +667,13 @@ void SubversionPlugin::DoGetWspSvnStatus(wxArrayString &output) {
 	//concatenate list of files here
 	std::map<wxString, bool>::iterator iter = workspaceFolders.begin();
 	for (; iter != workspaceFolders.end(); iter++) {
-		command << wxT("\"") <<  iter->first << wxT("\" ");
+        wxFileName svndir = wxFileName::DirName(iter->first);
+        svndir.AppendDir(wxT(".svn"));
+        if (svndir.DirExists()) {
+            command << wxT("\"") <<  iter->first << wxT("\" ");
+        } else {
+            m_svn->PrintMessage(wxString::Format(wxT("Skipping non-versioned directory: %s\n"), iter->first.c_str()));
+        }
 	}
 
 	ProcUtils::ExecuteCommand(command, output);
@@ -758,9 +764,13 @@ void SubversionPlugin::DoGetPrjSvnStatus(wxArrayString &output) {
 
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive --no-ignore -q ");
-	//concatenate list of files here
-	command << wxT("\"") <<  p->GetFileName().GetPath() << wxT("\" ");
-	ProcUtils::ExecuteCommand(command, output);
+	
+	if(wxFileName::DirExists(p->GetFileName().GetPath() + wxFileName::GetPathSeparator() + wxT(".svn"))){
+		command << wxT("\"") <<  p->GetFileName().GetPath() << wxT("\" ");
+		ProcUtils::ExecuteCommand(command, output);
+	} else {
+		m_svn->PrintMessage(wxString::Format(_("Directory '%s' is not under SVN\n"), p->GetFileName().GetFullPath().c_str()));
+	}
 }
 
 void SubversionPlugin::DoGeneratePrjReport() {

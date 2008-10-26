@@ -398,7 +398,7 @@ public:
 	 */
 	void HighlightWord(bool highlight = true);
 	
-	wxString GetTrimmedText(bool &textWasModified);
+	void TrimText();
 	
 	/**
 	 *--------------------------------------------------

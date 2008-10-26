@@ -687,17 +687,17 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 
 	// save the file using the user's defined encoding
 	wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
-	
-	bool textWasModified(false);
+
 	LEditorState state;
+	GetEditorState(state);
 	
-	wxString trimmedText = GetTrimmedText(textWasModified);
-	file.Write(trimmedText, fontEncConv);
-	if(textWasModified) {
-		GetEditorState(state);
-	}
+	// trim lines / append LF if needed
+	TrimText();
+	
+	// write the content
+	file.Write(GetText(), fontEncConv);
 	file.Close();
-	
+
 	// if the saving was done to a temporary file, override it
 	if (tmp_file.IsEmpty() == false) {
 		if (wxRenameFile(tmp_file, fileName.GetFullPath(), true) == false) {
@@ -705,11 +705,9 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 			return false;
 		}
 	}
-
-	if(textWasModified){
-		SetText(trimmedText);
-		SetEditorState(state);
-	}
+	
+	// restore editor state
+	SetEditorState(state);
 	
 	//update the modification time of the file
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
@@ -1709,7 +1707,7 @@ wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos)
 	}
 
 	wxString eol = GetEolString();
-	
+
 	textToInsert.Replace(wxT("\r"), wxT("\n"));
 	wxArrayString lines = wxStringTokenize(textToInsert, wxT("\n"), wxTOKEN_STRTOK);
 
@@ -2531,38 +2529,44 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 	event.Skip();
 }
 
-wxString LEditor::GetTrimmedText(bool &textWasModified)
+void LEditor::TrimText()
 {
 	long trim(0);
 	long appendLf(0);
 	EditorConfigST::Get()->GetLongValue(wxT("EditorTrimEmptyLines"), trim);
 	EditorConfigST::Get()->GetLongValue(wxT("EditorAppendLf"), appendLf);
-	
-	textWasModified = false;
-	if(!trim && !appendLf) {
-		return GetText();
+
+	if (!trim && !appendLf) {
+		return;
 	}
-	
-	wxString text = GetText();
-	wxString eol(GetEolString());
-	
-	if(trim) {
-		text.Replace(wxT("\r\n"), wxT("\n"));
-		wxArrayString lines = wxStringTokenize(text, wxT("\n"), wxTOKEN_RET_EMPTY);
-		
-		text.Clear();
-		for(size_t i=0; i<lines.GetCount(); i++){
-			wxString line = lines.Item(i);
-			line = line.Trim();
-			text << line << eol;
+
+	if (trim) {
+		int maxLines = GetLineCount();
+		for (int line = 0; line < maxLines; line++) {
+			int lineStart = PositionFromLine(line);
+			int lineEnd = GetLineEndPosition(line);
+			int i = lineEnd-1;
+			wxChar ch = (wxChar)(GetCharAt(i));
+			while ((i >= lineStart) && ((ch == _T(' ')) || (ch == _T('\t')))) {
+				i--;
+				ch = (wxChar)(GetCharAt(i));
+			}
+			if (i < (lineEnd-1)) {
+				SetTargetStart(i+1);
+				SetTargetEnd(lineEnd);
+				ReplaceTarget(_T(""));
+			}
 		}
-		textWasModified = true;
-	} else if(appendLf && !text.EndsWith(eol)){
-		textWasModified = true;
-		text.Append(eol);
-	}
+	} 
 	
-	return text;
+	if (appendLf) {
+		// The following code was adapted from the SciTE sourcecode
+        int maxLines = GetLineCount();
+        int enddoc = PositionFromLine(maxLines);
+        if(maxLines <= 1 || enddoc > PositionFromLine(maxLines-1))
+            InsertText(enddoc,GetEolString());
+		
+	}
 }
 
 wxString LEditor::GetEolString()
@@ -2586,14 +2590,14 @@ void LEditor::GetEditorState(LEditorState& s)
 {
 	int mask(0);
 	mask |= 256;
-	
+
 	// collect breakpoints
 	int lineno = MarkerNext(0, mask);
 	while (lineno >= 0) {
 		s.breakpoints.push_back(lineno);
 		lineno = MarkerNext(lineno+1, mask);
 	}
-	
+
 	// collect all bookmarks
 	mask = 128;
 	lineno = MarkerNext(0, mask);
@@ -2601,18 +2605,18 @@ void LEditor::GetEditorState(LEditorState& s)
 		s.markers.push_back(lineno);
 		lineno = MarkerNext(lineno+1, mask);
 	}
-	
+
 	s.caretPosition = GetCurrentPos();
 }
 
 void LEditor::SetEditorState(const LEditorState& s)
 {
-	for(size_t i=0; i<s.markers.size(); i++){
+	for (size_t i=0; i<s.markers.size(); i++) {
 		int line_number = s.markers.at(i);
 		MarkerAdd(line_number, 0x7);
 	}
-	
-	for(size_t i=0; i<s.breakpoints.size(); i++){
+
+	for (size_t i=0; i<s.breakpoints.size(); i++) {
 		int line_number = s.breakpoints.at(i);
 		MarkerAdd(line_number, 0x7);
 	}

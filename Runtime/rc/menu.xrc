@@ -384,6 +384,9 @@
             <object class="wxMenuItem" name="start_debugger">
                 <label>&amp;Start/Continue Debugger</label>
             </object>
+            <object class="wxMenuItem" name="restart_debugger">
+                <label>&amp;Restart Debugger</label>
+            </object>
             <object class="wxMenuItem" name="attach_debugger">
                 <label>&amp;Attach to process...</label>
             </object>

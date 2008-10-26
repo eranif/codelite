@@ -296,7 +296,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(wxID_BACKWARD, Frame::OnBackwardForwardUI)
 	EVT_MENU(wxID_BACKWARD, Frame::OnBackwardForward)
 	EVT_MENU(XRCID("start_debugger"), Frame::OnDebug)
+	EVT_MENU(XRCID("restart_debugger"), Frame::OnDebugRestart)
 	EVT_MENU(XRCID("stop_debugger"), Frame::OnDebugStop)
+	EVT_UPDATE_UI(XRCID("restart_debugger"), Frame::OnDebugRestartUI)	
 	EVT_MENU(XRCID("insert_breakpoint"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_breakpoint"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("pause_debugger"), Frame::OnDebugCmd)
@@ -855,6 +857,7 @@ void Frame::CreateToolbars24()
 	m_debuggerTb->AddTool(XRCID("start_debugger"), wxT("Start / Continue debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_start24")), wxT("Start / Continue debugger"));
 	m_debuggerTb->AddTool(XRCID("stop_debugger"), wxT("Stop debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stop24")), wxT("Stop debugger"));
 	m_debuggerTb->AddTool(XRCID("pause_debugger"), wxT("Pause debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_pause24")), wxT("Pause debugger"));
+	m_debuggerTb->AddTool(XRCID("restart_debugger"), wxT("Restart debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_restart24")), wxT("Restart debugger"));
 	m_debuggerTb->AddSeparator();
 	m_debuggerTb->AddTool(XRCID("show_cursor"), wxT("Show Current Line"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_green_right24")), wxT("Show Current Line"));
 	m_debuggerTb->AddSeparator();
@@ -953,6 +956,7 @@ void Frame::CreateToolbars16()
 	m_debuggerTb->AddTool(XRCID("start_debugger"), wxT("Start / Continue debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_start16")), wxT("Start / Continue debugger"));
 	m_debuggerTb->AddTool(XRCID("stop_debugger"), wxT("Stop debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stop16")), wxT("Stop debugger"));
 	m_debuggerTb->AddTool(XRCID("pause_debugger"), wxT("Pause debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_pause16")), wxT("Pause debugger"));
+	m_debuggerTb->AddTool(XRCID("restart_debugger"), wxT("Restart debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_restart16")), wxT("Restart debugger"));
 	m_debuggerTb->AddSeparator();
 	m_debuggerTb->AddTool(XRCID("show_cursor"), wxT("Show Current Line"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_green_right16")), wxT("Show Current Line"));
 	m_debuggerTb->AddSeparator();
@@ -2684,6 +2688,20 @@ void Frame::OnDebug(wxCommandEvent &e)
 void Frame::OnDebugUI(wxUpdateUIEvent &e)
 {
 	e.Enable(true);
+}
+
+void Frame::OnDebugRestart(wxCommandEvent &e)
+{
+	if (DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning())
+	{
+		OnDebugStop(e);
+	}
+	OnDebug(e);
+}
+
+void Frame::OnDebugRestartUI(wxUpdateUIEvent &e)
+{
+	e.Enable(DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning());
 }
 
 void Frame::OnDebugStop(wxCommandEvent &e)

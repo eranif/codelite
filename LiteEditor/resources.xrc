@@ -99,6 +99,7 @@
 	<object class="wxBitmap" name="arrow_next24">res/24/next.png</object>	
 	<object class="wxBitmap" name="arrow_back24">res/24/previous.png</object>	
 	<object class="wxBitmap" name="debugger_start24">res/24/debugger_start.png</object>
+	<object class="wxBitmap" name="debugger_restart24">res/24/debugger_restart.png</object>
 	<object class="wxBitmap" name="debugger_stop24">res/24/debugger_stop.png</object> 
 	<object class="wxBitmap" name="debugger_pause24">res/24/debugger_pause.png</object>
 	<object class="wxBitmap" name="debugger_stepin24">res/24/debugger_stepin.png</object>	
@@ -113,7 +114,7 @@
 	<object class="wxBitmap" name="highlight24">res/24/highlight.png</object>
 	<object class="wxBitmap" name="run_unit_test24">res/24/run_unit_test.png</object>
 	
-	<!-- 
+	<!--
 		Toolbar bitmaps (16x16) 
 	--> 
 	<object class="wxBitmap" name="outline16">res/16/text_tree.png</object>
@@ -151,6 +152,7 @@
 	<object class="wxBitmap" name="arrow_next16">res/16/next.png</object>	
 	<object class="wxBitmap" name="arrow_back16">res/16/previous.png</object>	
 	<object class="wxBitmap" name="debugger_start16">res/16/debugger_start.png</object>
+	<object class="wxBitmap" name="debugger_restart16">res/16/debugger_restart.png</object>
 	<object class="wxBitmap" name="debugger_stop16">res/16/debugger_stop.png</object> 
 	<object class="wxBitmap" name="debugger_pause16">res/16/debugger_pause.png</object>
 	<object class="wxBitmap" name="debugger_stepin16">res/16/debugger_stepin.png</object>	

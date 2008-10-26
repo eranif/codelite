@@ -402,6 +402,8 @@ protected:
 
 	void OnDebug(wxCommandEvent &e);
 	void OnDebugUI(wxUpdateUIEvent &e);
+	void OnDebugRestart(wxCommandEvent &e);
+	void OnDebugRestartUI(wxUpdateUIEvent &e);
 	void OnDebugStop(wxCommandEvent &e);
 	void OnDebugStopUI(wxUpdateUIEvent &e);
 	void OnDebugManageBreakpointsUI(wxUpdateUIEvent &e);

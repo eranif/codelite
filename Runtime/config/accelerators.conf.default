@@ -98,9 +98,10 @@ rebuild_active_project|Build|Rebuild Project|
 build_n_run_active_project|Build|Build and Run Project|Ctrl-F9
 next_error|Build|Next Build Error|F4
 start_debugger|Debug|Start/Continue Debugger|F5
+restart_debugger|Debug|Restart Debugger|Ctrl-Shift-F5
 attach_debugger|Debug|Attach to process...|
 pause_debugger|Debug|Pause debugger|
-stop_debugger|Debug|Stop debugger|
+stop_debugger|Debug|Stop debugger|Shift-F5
 dbg_stepin|Debug|Step Into|F11
 dbg_next|Debug|Next|F10
 dbg_stepout|Debug|Step Out|Shift-F11

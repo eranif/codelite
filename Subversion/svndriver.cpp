@@ -173,7 +173,7 @@ void SvnDriver::DisplayDiffFile(const wxString &fileName, const wxString &conten
 		wxFileName fn(fileName);
 		tmpFile << wxT("/") << fn.GetFullName() << wxT(".diff");
 
-		wxFFile file(tmpFile, wxT("w+"));
+		wxFFile file(tmpFile, wxT("wb+"));
 		if (file.IsOpened()) {
 			file.Write(content);
 			file.Close();

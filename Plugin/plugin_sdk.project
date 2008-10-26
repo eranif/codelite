@@ -133,6 +133,8 @@
       <File Name="virtualdirectoryselector.cpp"/>
       <File Name="virtualdirectoryselector.h"/>
       <File Name="virtualdirectoryselectorbase.cpp"/>
+      <File Name="windowstack.h"/>
+      <File Name="windowstack.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="threebuttondlg.h"/>

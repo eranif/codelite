@@ -245,8 +245,6 @@
     <File Name="checktreectrl.h"/>
     <File Name="checkdirtreectrl.cpp"/>
     <File Name="checkdirtreectrl.h"/>
-    <File Name="windowstack.h"/>
-    <File Name="windowstack.cpp"/>
     <File Name="fileexplorertree.cpp"/>
     <File Name="fileexplorertree.h"/>
     <File Name="debuggertip.cpp"/>

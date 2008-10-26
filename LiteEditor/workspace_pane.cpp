@@ -47,14 +47,14 @@ const wxString WorkspacePane::EXPLORER  	= wxT("Explorer");
 
 extern wxImageList* CreateSymbolTreeImages();
 
-//#define ADD_WORKSPACE_PAGE(win, name) \
-//	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
-//		wxAuiPaneInfo info;\
-//		DockablePane *pane = new DockablePane(GetParent(), m_book, win, name, wxNullBitmap, wxSize(200, 200));\
-//		m_mgr->AddPane(pane, info.Name(name).Caption(name));\
-//	} else {\
-//		m_book->AddPage(win, name, wxNullBitmap, true);\
-//	}
+/*#define ADD_WORKSPACE_PAGE(win, name) \
+	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
+		wxAuiPaneInfo info;\
+		DockablePane *pane = new DockablePane(GetParent(), m_book, win, name, wxNullBitmap, wxSize(200, 200));\
+		m_mgr->AddPane(pane, info.Name(name).Caption(name));\
+	} else {\
+		m_book->AddPage(win, name, wxNullBitmap, true);\
+	}*/
 
 #define ADD_WORKSPACE_PAGE(win, name) \
 	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\

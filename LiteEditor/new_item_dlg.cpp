@@ -46,6 +46,7 @@
 #include "wx/textctrl.h"
 #include "dirsaver.h"
 #include "macros.h"
+#include <wx/imaglist.h>
 
 static const wxString FileTypeCpp = wxT("C++ Source File (.cpp)");
 static const wxString FileTypeC = wxT("C Source File (.c)");

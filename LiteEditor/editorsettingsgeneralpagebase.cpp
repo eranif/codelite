@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -84,6 +84,19 @@ EditorSettingsGeneralPageBase::EditorSettingsGeneralPageBase( wxWindow* parent, 
 	m_radioBoxNavigationMethod = new wxRadioBox( this, wxID_ANY, wxT("Quick Code Navigation "), wxDefaultPosition, wxDefaultSize, m_radioBoxNavigationMethodNChoices, m_radioBoxNavigationMethodChoices, 1, wxRA_SPECIFY_COLS );
 	m_radioBoxNavigationMethod->SetSelection( 0 );
 	mainSizer->Add( m_radioBoxNavigationMethod, 0, wxALL|wxEXPAND, 5 );
+	
+	wxStaticBoxSizer* sbSizer3;
+	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Save Options") ), wxVERTICAL );
+	
+	m_checkBoxTrimLine = new wxCheckBox( this, wxID_ANY, wxT("When saving file, trim empty lines"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	sbSizer3->Add( m_checkBoxTrimLine, 0, wxALL, 5 );
+	
+	m_checkBoxAppendLF = new wxCheckBox( this, wxID_ANY, wxT("If missing, append EOL at end of file"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	sbSizer3->Add( m_checkBoxAppendLF, 0, wxALL, 5 );
+	
+	mainSizer->Add( sbSizer3, 0, wxEXPAND|wxALL, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();

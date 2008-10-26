@@ -140,7 +140,7 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 		, m_isVisible(true)
 		, m_hyperLinkIndicatroStart(wxNOT_FOUND)
 		, m_hyperLinkIndicatroEnd(wxNOT_FOUND)
-        , m_hyperLinkType(wxID_NONE)
+		, m_hyperLinkType(wxID_NONE)
 {
 	Show(!hidden);
 	ms_bookmarkShapes[wxT("Small Rectangle")] = wxSCI_MARK_SMALLRECT;
@@ -687,9 +687,17 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 
 	// save the file using the user's defined encoding
 	wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
-	file.Write(GetText(), fontEncConv);
+	
+	bool textWasModified(false);
+	LEditorState state;
+	
+	wxString trimmedText = GetTrimmedText(textWasModified);
+	file.Write(trimmedText, fontEncConv);
+	if(textWasModified) {
+		GetEditorState(state);
+	}
 	file.Close();
-
+	
 	// if the saving was done to a temporary file, override it
 	if (tmp_file.IsEmpty() == false) {
 		if (wxRenameFile(tmp_file, fileName.GetFullPath(), true) == false) {
@@ -698,6 +706,11 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 		}
 	}
 
+	if(textWasModified){
+		SetText(trimmedText);
+		SetEditorState(state);
+	}
+	
 	//update the modification time of the file
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
 	SetSavePoint();
@@ -1695,19 +1708,8 @@ wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos)
 		}
 	}
 
-	wxString eol;
-	switch (this->GetEOLMode()) {
-	case wxSCI_EOL_CR:
-		eol = wxT("\r");
-		break;
-	case wxSCI_EOL_CRLF:
-		eol = wxT("\r\n");
-		break;
-	case wxSCI_EOL_LF:
-		eol = wxT("\n");
-		break;
-	}
-
+	wxString eol = GetEolString();
+	
 	textToInsert.Replace(wxT("\r"), wxT("\n"));
 	wxArrayString lines = wxStringTokenize(textToInsert, wxT("\n"), wxTOKEN_STRTOK);
 
@@ -1837,7 +1839,9 @@ void LEditor::OnLeftUp(wxMouseEvent& event)
 	long value(0);
 	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
 
-	if (!value) { DoQuickJump(event, false); }
+	if (!value) {
+		DoQuickJump(event, false);
+	}
 	event.Skip();
 }
 
@@ -1845,7 +1849,7 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
 {
 	m_hyperLinkIndicatroStart = wxNOT_FOUND;
 	m_hyperLinkIndicatroEnd = wxNOT_FOUND;
-    m_hyperLinkType = wxID_NONE;
+	m_hyperLinkType = wxID_NONE;
 
 	SetIndicatorCurrent(HYPERLINK_INDICATOR);
 	IndicatorClearRange(0, GetLength());
@@ -1856,13 +1860,13 @@ void LEditor::OnMiddleUp(wxMouseEvent& event)
 {
 	long value(0);
 	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
-	
-	if (value) { 
-		long pos = PositionFromPointClose(event.GetX(), event.GetY());		
-		if(pos != wxNOT_FOUND){
+
+	if (value) {
+		long pos = PositionFromPointClose(event.GetX(), event.GetY());
+		if (pos != wxNOT_FOUND) {
 			DoSetCaretAt(pos);
 		}
-		DoQuickJump(event, true); 
+		DoQuickJump(event, true);
 	}
 	event.Skip();
 }
@@ -2496,13 +2500,13 @@ void LEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
 		IndicatorSetForeground(HYPERLINK_INDICATOR, wxT("NAVY"));
 
 		if (pos != wxSCI_INVALID_POSITION) {
-            m_hyperLinkType = m_context->GetHyperlinkRange(pos, m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd);
-            if (m_hyperLinkType != wxID_NONE) {
-                IndicatorFillRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd - m_hyperLinkIndicatroStart);
-            } else {
-                m_hyperLinkIndicatroStart = wxNOT_FOUND;
-                m_hyperLinkIndicatroEnd = wxNOT_FOUND;
-            }
+			m_hyperLinkType = m_context->GetHyperlinkRange(pos, m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd);
+			if (m_hyperLinkType != wxID_NONE) {
+				IndicatorFillRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd - m_hyperLinkIndicatroStart);
+			} else {
+				m_hyperLinkIndicatroStart = wxNOT_FOUND;
+				m_hyperLinkIndicatroEnd = wxNOT_FOUND;
+			}
 		}
 	}
 }
@@ -2513,8 +2517,8 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 		long pos = PositionFromPointClose(event.GetX(), event.GetY());
 		if (m_hyperLinkIndicatroStart <= pos && pos <= m_hyperLinkIndicatroEnd) {
 			bool altLink = isMiddle && event.m_controlDown || !isMiddle && event.m_altDown;
-            m_context->GoHyperlink(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd, 
-                                   m_hyperLinkType, altLink);
+			m_context->GoHyperlink(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd,
+			                       m_hyperLinkType, altLink);
 		}
 	}
 
@@ -2525,4 +2529,92 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 	SetIndicatorCurrent(HYPERLINK_INDICATOR);
 	IndicatorClearRange(0, GetLength());
 	event.Skip();
+}
+
+wxString LEditor::GetTrimmedText(bool &textWasModified)
+{
+	long trim(0);
+	long appendLf(0);
+	EditorConfigST::Get()->GetLongValue(wxT("EditorTrimEmptyLines"), trim);
+	EditorConfigST::Get()->GetLongValue(wxT("EditorAppendLf"), appendLf);
+	
+	textWasModified = false;
+	if(!trim && !appendLf) {
+		return GetText();
+	}
+	
+	wxString text = GetText();
+	wxString eol(GetEolString());
+	
+	if(trim) {
+		text.Replace(wxT("\r\n"), wxT("\n"));
+		wxArrayString lines = wxStringTokenize(text, wxT("\n"), wxTOKEN_RET_EMPTY);
+		
+		text.Clear();
+		for(size_t i=0; i<lines.GetCount(); i++){
+			wxString line = lines.Item(i);
+			line = line.Trim();
+			text << line << eol;
+		}
+		textWasModified = true;
+	} else if(appendLf && !text.EndsWith(eol)){
+		textWasModified = true;
+		text.Append(eol);
+	}
+	
+	return text;
+}
+
+wxString LEditor::GetEolString()
+{
+	wxString eol;
+	switch (this->GetEOLMode()) {
+	case wxSCI_EOL_CR:
+		eol = wxT("\r");
+		break;
+	case wxSCI_EOL_CRLF:
+		eol = wxT("\r\n");
+		break;
+	case wxSCI_EOL_LF:
+		eol = wxT("\n");
+		break;
+	}
+	return eol;
+}
+
+void LEditor::GetEditorState(LEditorState& s)
+{
+	int mask(0);
+	mask |= 256;
+	
+	// collect breakpoints
+	int lineno = MarkerNext(0, mask);
+	while (lineno >= 0) {
+		s.breakpoints.push_back(lineno);
+		lineno = MarkerNext(lineno+1, mask);
+	}
+	
+	// collect all bookmarks
+	mask = 128;
+	lineno = MarkerNext(0, mask);
+	while (lineno >= 0) {
+		s.markers.push_back(lineno);
+		lineno = MarkerNext(lineno+1, mask);
+	}
+	
+	s.caretPosition = GetCurrentPos();
+}
+
+void LEditor::SetEditorState(const LEditorState& s)
+{
+	for(size_t i=0; i<s.markers.size(); i++){
+		int line_number = s.markers.at(i);
+		MarkerAdd(line_number, 0x7);
+	}
+	
+	for(size_t i=0; i<s.breakpoints.size(); i++){
+		int line_number = s.breakpoints.at(i);
+		MarkerAdd(line_number, 0x7);
+	}
+	SetCaretAt(s.caretPosition);
 }

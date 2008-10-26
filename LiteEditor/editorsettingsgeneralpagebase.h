@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -45,6 +45,8 @@ class EditorSettingsGeneralPageBase : public wxPanel
 		wxStaticText* m_staticText4;
 		wxChoice* m_whitespaceStyle;
 		wxRadioBox* m_radioBoxNavigationMethod;
+		wxCheckBox* m_checkBoxTrimLine;
+		wxCheckBox* m_checkBoxAppendLF;
 	
 	public:
 		EditorSettingsGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );

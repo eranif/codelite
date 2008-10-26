@@ -42,6 +42,17 @@
 class wxFindReplaceDialog;
 class CCBox;
 
+/**
+ * @class LEditorState
+ * a container for the editor state (breakpoints, bookmarks and current position)
+ */ 
+struct LEditorState
+{
+	std::vector<int> breakpoints;
+	std::vector<int> markers;
+	int caretPosition;
+};
+
 const extern wxEventType wxEVT_CMD_UPDATE_STATUS_BAR;
 /**
  * \ingroup LiteEditor
@@ -103,7 +114,19 @@ public:
 	// Save content of the editor to a given file (Save As...)
 	// this function prompts the user for selecting file name
 	bool SaveFileAs();
-
+	
+	/**
+	 * @brief save the editor current state (in terms of breakpoints, bookmarks & current position)
+	 * @param s state structure
+	 */
+	void GetEditorState(LEditorState &s);
+	
+	/**
+	 * @brief set the editor current state (in terms of breakpoints, bookmarks & current position)
+	 * @param s state structure
+	 */
+	void SetEditorState(const LEditorState &s);
+	
 	/**
 	 * \brief send event to the main frame to update the status bar at a given field
 	 * \param msg message to print
@@ -374,7 +397,9 @@ public:
 	 * @param highlight
 	 */
 	void HighlightWord(bool highlight = true);
-
+	
+	wxString GetTrimmedText(bool &textWasModified);
+	
 	/**
 	 *--------------------------------------------------
 	 * Implemetation for IEditor interace
@@ -472,6 +497,8 @@ private:
 	void RemoveDebuggerContextMenu(wxMenu *menu);
 	void DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
 	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
+	wxString GetEolString();
+	
 	DECLARE_EVENT_TABLE()
 	void OnCharAdded(wxScintillaEvent& event);
 	void OnMarginClick(wxScintillaEvent& event);

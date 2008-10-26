@@ -36,6 +36,14 @@ EditorSettingsGeneralPage::EditorSettingsGeneralPage( wxWindow* parent )
 	if(value == 1){
 		m_radioBoxNavigationMethod->SetSelection(1);
 	}
+	
+	long trim(0);
+	EditorConfigST::Get()->GetLongValue(wxT("EditorTrimEmptyLines"), trim);
+	m_checkBoxTrimLine->SetValue(trim ? true : false);
+	
+	long appendLf(0);
+	EditorConfigST::Get()->GetLongValue(wxT("EditorAppendLf"), appendLf);
+	m_checkBoxAppendLF->SetValue(appendLf ? true : false);
 }
 
 void EditorSettingsGeneralPage::Save(OptionsConfigPtr options)
@@ -66,4 +74,6 @@ void EditorSettingsGeneralPage::Save(OptionsConfigPtr options)
 
 	options->SetShowWhitspaces(style);
 	EditorConfigST::Get()->SaveLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), m_radioBoxNavigationMethod->GetSelection());
+	EditorConfigST::Get()->SaveLongValue(wxT("EditorTrimEmptyLines"), m_checkBoxTrimLine->IsChecked() ? 1 : 0);
+	EditorConfigST::Get()->SaveLongValue(wxT("EditorAppendLf"), m_checkBoxAppendLF->IsChecked() ? 1 : 0);
 }

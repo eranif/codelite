@@ -403,6 +403,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE, Frame::OnNewVersionAvailable)
 	EVT_MENU(XRCID("detach_wv_tab"), Frame::OnDetachWorkspaceViewTab)
 	EVT_MENU(XRCID("detach_dv_tab"), Frame::OnDetachDebuggerViewTab)
+    EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE, Frame::OnNewDetachedPane)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
 
 	EVT_MENU(XRCID("batch_build"), Frame::OnBatchBuild)
@@ -450,13 +451,13 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	CreateGUIControls();
 	m_DPmenuMgr = new DockablePaneMenuManager(GetMenuBar(), &m_mgr);
 
-	// fill up a list of detached panes list
-	DetachedPanesInfo dpi;
-	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
-
-	for (size_t i=0; i<dpi.GetPanes().GetCount(); i++) {
-		m_DPmenuMgr->AddMenu(dpi.GetPanes().Item(i));
-	}
+//	// fill up a list of detached panes list
+//	DetachedPanesInfo dpi;
+//	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
+//
+//	for (size_t i=0; i<dpi.GetPanes().GetCount(); i++) {
+//		m_DPmenuMgr->AddMenu(dpi.GetPanes().Item(i));
+//	}
 
 	ManagerST::Get();	// Dummy call
 
@@ -3413,12 +3414,25 @@ void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
 
 	DockablePane *pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
-	m_DPmenuMgr->AddMenu(text);
-
-	wxAuiPaneInfo info;
-	m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
-	m_mgr.Update();
+//	m_DPmenuMgr->AddMenu(text);
+//
+//	wxAuiPaneInfo info;
+//	m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
+//	m_mgr.Update();
 	wxUnusedVar(e);
+}
+
+void Frame::OnNewDetachedPane(wxCommandEvent &e)
+{
+	DockablePane *pane = (DockablePane*)(e.GetClientData());
+	if (pane) {
+        wxString text = pane->GetName();
+        m_DPmenuMgr->AddMenu(text);
+
+        wxAuiPaneInfo info;
+        m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
+        m_mgr.Update();
+    }
 }
 
 void Frame::OnDestroyDetachedPane(wxCommandEvent& e)
@@ -3430,8 +3444,8 @@ void Frame::OnDestroyDetachedPane(wxCommandEvent& e)
 		// remove any menu entries for this pane
 		m_DPmenuMgr->RemoveMenu(pane->GetName());
 		pane->Destroy();
+        m_mgr.Update();
 	}
-	m_mgr.Update();
 }
 
 void Frame::OnUpdateStatusBar(wxCommandEvent& e)
@@ -3586,11 +3600,11 @@ void Frame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 	GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
 
 	DockablePane *pane = new DockablePane(this, GetDebuggerPane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
-	m_DPmenuMgr->AddMenu(text);
-
-	wxAuiPaneInfo info;
-	m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
-	m_mgr.Update();
+//	m_DPmenuMgr->AddMenu(text);
+//
+//	wxAuiPaneInfo info;
+//	m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
+//	m_mgr.Update();
 	wxUnusedVar(e);
 }
 

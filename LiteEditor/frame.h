@@ -449,6 +449,7 @@ protected:
 	void OnNewVersionAvailable(wxCommandEvent &e);
 	void OnDetachWorkspaceViewTab(wxCommandEvent &e);
 	void OnDetachDebuggerViewTab(wxCommandEvent &e);
+    void OnNewDetachedPane(wxCommandEvent &e);
 	void OnDestroyDetachedPane(wxCommandEvent &e);
 	void OnUpdateStatusBar(wxCommandEvent &e);
 	void OnBatchBuild(wxCommandEvent &e);

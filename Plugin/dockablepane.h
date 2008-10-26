@@ -5,7 +5,9 @@
 #include <wx/toolbar.h>
 class Notebook;
 
+extern const wxEventType wxEVT_CMD_NEW_DOCKPANE;
 extern const wxEventType wxEVT_CMD_DELETE_DOCKPANE;
+
 class DockablePane : public wxPanel {
 	wxToolBar *m_tb;
 	wxWindow *m_child;
@@ -13,7 +15,7 @@ class DockablePane : public wxPanel {
 	wxString m_text;
 	wxBitmap m_bmp;
 	
-	void DockPaneBackToNotebook(wxCommandEvent &e);
+	void ClosePane(wxCommandEvent &e);
 	
 	void OnEraseBg(wxEraseEvent &e) { wxUnusedVar(e); }
 	void OnPaint(wxPaintEvent &e);

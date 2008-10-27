@@ -44,14 +44,14 @@ const wxString DebuggerPane::BREAKPOINTS = wxT("Breakpoints");
 const wxString DebuggerPane::THREADS = wxT("Threads");
 const wxString DebuggerPane::MEMORY = wxT("Memory");
 
-//#define ADD_DEBUGGER_PAGE(win, name, bmp) \
-//	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
-//		wxAuiPaneInfo info;\
-//		DockablePane *pane = new DockablePane(GetParent(), m_book, win, name, bmp, wxSize(200, 200));\
-//		m_mgr->AddPane(pane, info.Name(name).Caption(name));\
-//	} else {\
-//		m_book->AddPage(win, name, bmp, false);\
-//	}
+/*#define ADD_DEBUGGER_PAGE(win, name, bmp) \
+	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
+		wxAuiPaneInfo info;\
+		DockablePane *pane = new DockablePane(GetParent(), m_book, win, name, bmp, wxSize(200, 200));\
+		m_mgr->AddPane(pane, info.Name(name).Caption(name));\
+	} else {\
+		m_book->AddPage(win, name, bmp, false);\
+	}*/
 
 #define ADD_DEBUGGER_PAGE(win, name, bmp) \
 	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\

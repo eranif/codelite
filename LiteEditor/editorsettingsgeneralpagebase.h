@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -21,6 +21,7 @@
 #include <wx/spinctrl.h>
 #include <wx/choice.h>
 #include <wx/radiobox.h>
+#include <wx/radiobut.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -47,9 +48,20 @@ class EditorSettingsGeneralPageBase : public wxPanel
 		wxRadioBox* m_radioBoxNavigationMethod;
 		wxCheckBox* m_checkBoxTrimLine;
 		wxCheckBox* m_checkBoxAppendLF;
+		wxRadioButton* m_radioBtnRMDisabled;
+		wxRadioButton* m_radioBtnRMLine;
+		wxRadioButton* m_radioBtnRMBackground;
+		wxStaticText* m_staticText41;
+		wxSpinCtrl* m_rightMarginColumn;
+		wxStaticText* m_staticText5;
+		wxColourPickerCtrl* m_rightMarginColour;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnRightMarginIndicator( wxCommandEvent& event ){ event.Skip(); }
+		
 	
 	public:
-		EditorSettingsGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
+		EditorSettingsGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 650,552 ), long style = wxTAB_TRAVERSAL );
 		~EditorSettingsGeneralPageBase();
 	
 };

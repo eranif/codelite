@@ -1,3 +1,4 @@
+#include <wx/wxscintilla.h>
 #include "editor_config.h"
 #include "editorsettingsgeneralpage.h"
 
@@ -44,6 +45,14 @@ EditorSettingsGeneralPage::EditorSettingsGeneralPage( wxWindow* parent )
 	long appendLf(0);
 	EditorConfigST::Get()->GetLongValue(wxT("EditorAppendLf"), appendLf);
 	m_checkBoxAppendLF->SetValue(appendLf ? true : false);
+    
+    m_radioBtnRMDisabled->SetValue(options->GetEdgeMode() == wxSCI_EDGE_NONE);
+    m_radioBtnRMLine->SetValue(options->GetEdgeMode() == wxSCI_EDGE_LINE);
+    m_radioBtnRMBackground->SetValue(options->GetEdgeMode() == wxSCI_EDGE_BACKGROUND);
+    m_rightMarginColumn->SetValue(options->GetEdgeColumn());
+    m_rightMarginColour->SetColour(options->GetEdgeColour());
+	
+	EnableDisableRightMargin();
 }
 
 void EditorSettingsGeneralPage::Save(OptionsConfigPtr options)
@@ -76,4 +85,29 @@ void EditorSettingsGeneralPage::Save(OptionsConfigPtr options)
 	EditorConfigST::Get()->SaveLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), m_radioBoxNavigationMethod->GetSelection());
 	EditorConfigST::Get()->SaveLongValue(wxT("EditorTrimEmptyLines"), m_checkBoxTrimLine->IsChecked() ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("EditorAppendLf"), m_checkBoxAppendLF->IsChecked() ? 1 : 0);
+    
+    options->SetEdgeMode(m_radioBtnRMLine->GetValue()       ? wxSCI_EDGE_LINE :
+                         m_radioBtnRMBackground->GetValue() ? wxSCI_EDGE_BACKGROUND
+                                                            : wxSCI_EDGE_NONE);
+    options->SetEdgeColumn(m_rightMarginColumn->GetValue());
+    options->SetEdgeColour(m_rightMarginColour->GetColour());
+}
+
+void EditorSettingsGeneralPage::OnRightMarginIndicator(wxCommandEvent& e)
+{
+	EnableDisableRightMargin();
+}
+void EditorSettingsGeneralPage::EnableDisableRightMargin()
+{
+	if(m_radioBtnRMDisabled->GetValue()){
+		m_rightMarginColour->Disable();
+		m_rightMarginColumn->Disable();
+		m_staticText41->Disable();
+		m_staticText5->Disable();
+	} else {
+		m_rightMarginColour->Enable();
+		m_rightMarginColumn->Enable();
+		m_staticText41->Enable();
+		m_staticText5->Enable();
+	}	
 }

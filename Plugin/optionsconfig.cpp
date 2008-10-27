@@ -46,6 +46,9 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_foldCompact(false)
 		, m_foldAtElse(false)
 		, m_foldPreprocessor(false)
+        , m_edgeMode(0)
+        , m_edgeColumn(80)
+        , m_edgeColour(wxColour(wxT("LIGHT GRAY")))
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
@@ -69,6 +72,9 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_foldAtElse = XmlUtils::ReadBool(node, wxT("FoldAtElse"));
 		m_foldPreprocessor = XmlUtils::ReadBool(node, wxT("FoldPreprocessor"));
 		SetFileFontEncoding(XmlUtils::ReadString(node, wxT("FileFontEncoding"), wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8)));
+        m_edgeMode = XmlUtils::ReadLong(node, wxT("EdgeMode"), 0);
+        m_edgeColumn = XmlUtils::ReadLong(node, wxT("EdgeColumn"), 80);
+        m_edgeColour = XmlUtils::ReadString(node, wxT("EdgeColour"), wxT("LIGHT GREY"));
 	}
 }
 
@@ -103,6 +109,16 @@ wxXmlNode *OptionsConfig::ToXml() const
 	tmp << m_showWhitspaces;
 	n->AddProperty(wxT("ShowWhitespaces"), tmp);
 
+    tmp.clear();
+    tmp << m_edgeMode;
+    n->AddProperty(wxT("EdgeMode"), tmp);
+    
+    tmp.clear();
+    tmp << m_edgeColumn;
+    n->AddProperty(wxT("EdgeColumn"), tmp);
+    
+    n->AddProperty(wxT("EdgeColour"), m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
+    
 	tmp.clear();
 	tmp = wxFontMapper::GetEncodingName(m_fileFontEncoding);
 	n->AddProperty(wxT("FileFontEncoding"), tmp);

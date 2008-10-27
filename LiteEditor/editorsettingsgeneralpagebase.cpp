@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -67,7 +67,7 @@ EditorSettingsGeneralPageBase::EditorSettingsGeneralPageBase( wxWindow* parent, 
 	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Whitespace visibility:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
-	fgSizer2->Add( m_staticText4, 0, wxALL, 5 );
+	fgSizer2->Add( m_staticText4, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	wxString m_whitespaceStyleChoices[] = { wxT("Invisible"), wxT("Visible always"), wxT("Visible after indent") };
 	int m_whitespaceStyleNChoices = sizeof( m_whitespaceStyleChoices ) / sizeof( wxString );
@@ -85,6 +85,9 @@ EditorSettingsGeneralPageBase::EditorSettingsGeneralPageBase( wxWindow* parent, 
 	m_radioBoxNavigationMethod->SetSelection( 0 );
 	mainSizer->Add( m_radioBoxNavigationMethod, 0, wxALL|wxEXPAND, 5 );
 	
+	wxBoxSizer* bSizer2;
+	bSizer2 = new wxBoxSizer( wxVERTICAL );
+	
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Save Options") ), wxVERTICAL );
 	
@@ -96,13 +99,65 @@ EditorSettingsGeneralPageBase::EditorSettingsGeneralPageBase( wxWindow* parent, 
 	
 	sbSizer3->Add( m_checkBoxAppendLF, 0, wxALL, 5 );
 	
-	mainSizer->Add( sbSizer3, 0, wxEXPAND|wxALL, 5 );
+	bSizer2->Add( sbSizer3, 0, wxALL|wxEXPAND, 5 );
+	
+	wxStaticBoxSizer* sbSizer4;
+	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Right Margin Indicator") ), wxVERTICAL );
+	
+	wxBoxSizer* bSizer3;
+	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_radioBtnRMDisabled = new wxRadioButton( this, wxID_ANY, wxT("Disabled"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+	m_radioBtnRMDisabled->SetValue( true ); 
+	bSizer3->Add( m_radioBtnRMDisabled, 0, wxALL, 5 );
+	
+	m_radioBtnRMLine = new wxRadioButton( this, wxID_ANY, wxT("Line"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer3->Add( m_radioBtnRMLine, 0, wxALL, 5 );
+	
+	m_radioBtnRMBackground = new wxRadioButton( this, wxID_ANY, wxT("Background"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer3->Add( m_radioBtnRMBackground, 0, wxALL, 5 );
+	
+	sbSizer4->Add( bSizer3, 0, wxEXPAND, 5 );
+	
+	wxFlexGridSizer* fgSizer3;
+	fgSizer3 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer3->AddGrowableCol( 1 );
+	fgSizer3->SetFlexibleDirection( wxBOTH );
+	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText41 = new wxStaticText( this, wxID_ANY, wxT("Indicator Column:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText41->Wrap( -1 );
+	fgSizer3->Add( m_staticText41, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	m_rightMarginColumn = new wxSpinCtrl( this, wxID_ANY, wxT("80"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 256, 0 );
+	fgSizer3->Add( m_rightMarginColumn, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("Indicator Colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5->Wrap( -1 );
+	fgSizer3->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	m_rightMarginColour = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 192, 192, 192 ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
+	fgSizer3->Add( m_rightMarginColour, 0, wxALL|wxEXPAND, 5 );
+	
+	sbSizer4->Add( fgSizer3, 1, wxEXPAND|wxALL, 5 );
+	
+	bSizer2->Add( sbSizer4, 0, wxALL|wxEXPAND, 5 );
+	
+	mainSizer->Add( bSizer2, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
-	mainSizer->Fit( this );
+	
+	// Connect Events
+	m_radioBtnRMDisabled->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( EditorSettingsGeneralPageBase::OnRightMarginIndicator ), NULL, this );
+	m_radioBtnRMLine->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( EditorSettingsGeneralPageBase::OnRightMarginIndicator ), NULL, this );
+	m_radioBtnRMBackground->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( EditorSettingsGeneralPageBase::OnRightMarginIndicator ), NULL, this );
 }
 
 EditorSettingsGeneralPageBase::~EditorSettingsGeneralPageBase()
 {
+	// Disconnect Events
+	m_radioBtnRMDisabled->Disconnect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( EditorSettingsGeneralPageBase::OnRightMarginIndicator ), NULL, this );
+	m_radioBtnRMLine->Disconnect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( EditorSettingsGeneralPageBase::OnRightMarginIndicator ), NULL, this );
+	m_radioBtnRMBackground->Disconnect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( EditorSettingsGeneralPageBase::OnRightMarginIndicator ), NULL, this );
 }

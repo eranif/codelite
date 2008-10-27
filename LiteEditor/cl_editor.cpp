@@ -277,6 +277,11 @@ void LEditor::SetProperties()
 	SetMarginSensitive(FOLD_MARGIN_ID, true);
 	SetMarginSensitive(SYMBOLS_MARGIN_ID, true);
 
+    // Right margin
+    SetEdgeMode(options->GetEdgeMode());
+    SetEdgeColumn(options->GetEdgeColumn());
+    SetEdgeColour(options->GetEdgeColour());
+
 	//---------------------------------------------------
 	// Fold settings
 	//---------------------------------------------------

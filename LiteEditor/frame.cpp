@@ -3414,11 +3414,7 @@ void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
 
 	DockablePane *pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
-//	m_DPmenuMgr->AddMenu(text);
-//
-//	wxAuiPaneInfo info;
-//	m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
-//	m_mgr.Update();
+	wxUnusedVar(pane);
 	wxUnusedVar(e);
 }
 
@@ -3600,11 +3596,7 @@ void Frame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 	GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
 
 	DockablePane *pane = new DockablePane(this, GetDebuggerPane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
-//	m_DPmenuMgr->AddMenu(text);
-//
-//	wxAuiPaneInfo info;
-//	m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
-//	m_mgr.Update();
+	wxUnusedVar(pane);
 	wxUnusedVar(e);
 }
 

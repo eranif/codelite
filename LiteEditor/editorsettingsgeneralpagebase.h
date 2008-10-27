@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -39,6 +39,7 @@ class EditorSettingsGeneralPageBase : public wxPanel
 		wxCheckBox* m_indentsUsesTabs;
 		wxCheckBox* m_showIndentationGuideLines;
 		wxCheckBox* m_highlighyCaretLine;
+		wxCheckBox* m_checkBoxMatchBraces;
 		wxStaticText* m_staticText2;
 		wxColourPickerCtrl* m_caretLineColourPicker;
 		wxStaticText* m_staticText3;

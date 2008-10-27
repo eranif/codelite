@@ -45,7 +45,7 @@ class CCBox;
 /**
  * @class LEditorState
  * a container for the editor state (breakpoints, bookmarks and current position)
- */ 
+ */
 struct LEditorState
 {
 	std::vector<int> breakpoints;
@@ -95,7 +95,8 @@ class LEditor : public wxScintilla, public IEditor
 	int m_hyperLinkIndicatroStart;
 	int m_hyperLinkIndicatroEnd;
     int m_hyperLinkType;
-	
+	bool m_hightlightMatchedBraces;
+
 public:
 	static FindReplaceData &GetFindReplaceData() {
 		return m_findReplaceData;
@@ -114,19 +115,19 @@ public:
 	// Save content of the editor to a given file (Save As...)
 	// this function prompts the user for selecting file name
 	bool SaveFileAs();
-	
+
 	/**
 	 * @brief save the editor current state (in terms of breakpoints, bookmarks & current position)
 	 * @param s state structure
 	 */
 	void GetEditorState(LEditorState &s);
-	
+
 	/**
 	 * @brief set the editor current state (in terms of breakpoints, bookmarks & current position)
 	 * @param s state structure
 	 */
 	void SetEditorState(const LEditorState &s);
-	
+
 	/**
 	 * \brief send event to the main frame to update the status bar at a given field
 	 * \param msg message to print
@@ -187,7 +188,7 @@ public:
 
 	// Popup a find/replace dialog
 	void DoFindAndReplace(bool isReplaceDlg);
-	
+
 	// set this page as active, this usually happened when user changed the notebook
 	// page to this one
 	virtual void SetActive();
@@ -293,7 +294,7 @@ public:
 	 * \param pos position to insert the text
 	 */
 	void InsertTextWithIndentation(const wxString &text, int pos);
-	
+
 	/**
 	 * \brief create browsing crecord from the editor's current position
 	 * \return browsing record
@@ -366,7 +367,7 @@ public:
 	 * @param showFullDecl display full function declaration
 	 */
 	void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl, bool autoHide = false, bool autoInsertSingleChoice = true);
-	
+
 	/**
 	 * @brief displays teh code completion box. Unlike the previous metho, this method accepts owner and sends an event once selection is made
 	 * @param tags list if tags to display
@@ -374,19 +375,19 @@ public:
 	 * @param owner event handler to be notified once a selection is made
 	 */
 	virtual void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, wxEvtHandler *owner);
-	
+
 	/**
 	 * @brief register new user image fot TagEntry kind
 	 * @param kind the kind string that will be associated with the bitmap (TagEntry::GetKind())
 	 * @param bmp 16x16 bitmap
 	 */
 	virtual void RegisterImageForKind(const wxString &kind, const wxBitmap &bmp);
-	
+
 	/**
 	 * @brief return true if the completion box is visible
 	 */
 	virtual bool IsCompletionBoxShown();
-	
+
 	/**
 	 * @brief hide the completion box if it is active.
 	 */
@@ -397,9 +398,9 @@ public:
 	 * @param highlight
 	 */
 	void HighlightWord(bool highlight = true);
-	
+
 	void TrimText();
-	
+
 	/**
 	 *--------------------------------------------------
 	 * Implemetation for IEditor interace
@@ -449,7 +450,7 @@ public:
 	virtual int  GetUserIndicatorEnd(int pos);
 	virtual int GetLexerId();
 	virtual int GetStyleAtPos(int pos);
-	
+
 	/**
 	 * @brief Get position of start of word.
 	 * @param pos from position
@@ -463,7 +464,7 @@ public:
 	 * @param onlyWordCharacters
 	 */
     virtual int WordEndPos (int pos, bool onlyWordCharacters);
-	
+
 	/**
 	 * Insert text to the editor and keeping the indentation
 	 * \param text text to enter
@@ -498,7 +499,7 @@ private:
 	void DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
 	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
 	wxString GetEolString();
-	
+
 	DECLARE_EVENT_TABLE()
 	void OnCharAdded(wxScintillaEvent& event);
 	void OnMarginClick(wxScintillaEvent& event);

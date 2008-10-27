@@ -197,6 +197,10 @@ void LEditor::SetProperties()
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	CallTipUseStyle(1);
 
+	m_hightlightMatchedBraces = options->GetHighlightMatchedBraces();
+	if(!m_hightlightMatchedBraces)
+		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+
 	SetViewWhiteSpace(options->GetShowWhitspaces());
 	SetMouseDwellTime(250);
 	SetProperty(wxT("fold"), wxT("1"));
@@ -277,10 +281,10 @@ void LEditor::SetProperties()
 	SetMarginSensitive(FOLD_MARGIN_ID, true);
 	SetMarginSensitive(SYMBOLS_MARGIN_ID, true);
 
-    // Right margin
-    SetEdgeMode(options->GetEdgeMode());
-    SetEdgeColumn(options->GetEdgeColumn());
-    SetEdgeColour(options->GetEdgeColour());
+	// Right margin
+	SetEdgeMode(options->GetEdgeMode());
+	SetEdgeColumn(options->GetEdgeColumn());
+	SetEdgeColour(options->GetEdgeColour());
 
 	//---------------------------------------------------
 	// Fold settings
@@ -503,32 +507,33 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	int charCurrnt = SafeGetChar(pos);
 
 	wxString sel_text = GetSelectedText();
-	if ( sel_text.IsEmpty() == false) {
-		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
-	} else if (	charCurrnt == '<' && charAfter == '<' 	||	//<<
-	            charCurrnt == '<' && charBefore == '<' 	||	//<<
-	            charCurrnt == '>' && charAfter == '>' 	||	//>>
-	            charCurrnt == '>' && charBefore == '>'  ||	//>>
-	            beforeBefore == '<' && charBefore == '<'||	//<<
-	            beforeBefore == '>' && charBefore == '>'||	//>>
-	            beforeBefore == '-' && charBefore == '>'||	//->
-	            charCurrnt == '>' && charBefore == '-'	) {	//->
-		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
-	} else {
-
-		if ((charCurrnt == '{' || charCurrnt == '[' || GetCharAt(pos) == '<' || charCurrnt == '(') && !m_context->IsCommentOrString(pos)) {
-			BraceMatch((long)pos);
-		} else if ((charBefore == '{' || charBefore == '<' || charBefore == '[' || charBefore == '(') && !m_context->IsCommentOrString(PositionBefore(pos))) {
-			BraceMatch((long)PositionBefore(pos));
-		} else if ((charCurrnt == '}' || charCurrnt == ']' || charCurrnt == '>' || charCurrnt == ')') && !m_context->IsCommentOrString(pos)) {
-			BraceMatch((long)pos);
-		} else if ((charBefore == '}' || charBefore == '>' || charBefore == ']' ||charBefore == ')') && !m_context->IsCommentOrString(PositionBefore(pos))) {
-			BraceMatch((long)PositionBefore(pos));
-		} else {
+	if (m_hightlightMatchedBraces) {
+		if ( sel_text.IsEmpty() == false) {
 			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+		} else if (	charCurrnt == '<' && charAfter == '<' 	||	//<<
+		            charCurrnt == '<' && charBefore == '<' 	||	//<<
+		            charCurrnt == '>' && charAfter == '>' 	||	//>>
+		            charCurrnt == '>' && charBefore == '>'  ||	//>>
+		            beforeBefore == '<' && charBefore == '<'||	//<<
+		            beforeBefore == '>' && charBefore == '>'||	//>>
+		            beforeBefore == '-' && charBefore == '>'||	//->
+		            charCurrnt == '>' && charBefore == '-'	) {	//->
+			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+		} else {
+
+			if ((charCurrnt == '{' || charCurrnt == '[' || GetCharAt(pos) == '<' || charCurrnt == '(') && !m_context->IsCommentOrString(pos)) {
+				BraceMatch((long)pos);
+			} else if ((charBefore == '{' || charBefore == '<' || charBefore == '[' || charBefore == '(') && !m_context->IsCommentOrString(PositionBefore(pos))) {
+				BraceMatch((long)PositionBefore(pos));
+			} else if ((charCurrnt == '}' || charCurrnt == ']' || charCurrnt == '>' || charCurrnt == ')') && !m_context->IsCommentOrString(pos)) {
+				BraceMatch((long)pos);
+			} else if ((charBefore == '}' || charBefore == '>' || charBefore == ']' ||charBefore == ')') && !m_context->IsCommentOrString(PositionBefore(pos))) {
+				BraceMatch((long)PositionBefore(pos));
+			} else {
+				wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+			}
 		}
 	}
-
 	//update line number
 	wxString message;
 	message << wxT("Ln ") << LineFromPosition(pos)+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
@@ -695,10 +700,10 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 
 	LEditorState state;
 	GetEditorState(state);
-	
+
 	// trim lines / append LF if needed
 	TrimText();
-	
+
 	// write the content
 	file.Write(GetText(), fontEncConv);
 	file.Close();
@@ -710,10 +715,10 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 			return false;
 		}
 	}
-	
+
 	// restore editor state
 	SetEditorState(state);
-	
+
 	//update the modification time of the file
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
 	SetSavePoint();
@@ -2562,15 +2567,15 @@ void LEditor::TrimText()
 				ReplaceTarget(_T(""));
 			}
 		}
-	} 
-	
+	}
+
 	if (appendLf) {
 		// The following code was adapted from the SciTE sourcecode
-        int maxLines = GetLineCount();
-        int enddoc = PositionFromLine(maxLines);
-        if(maxLines <= 1 || enddoc > PositionFromLine(maxLines-1))
-            InsertText(enddoc,GetEolString());
-		
+		int maxLines = GetLineCount();
+		int enddoc = PositionFromLine(maxLines);
+		if (maxLines <= 1 || enddoc > PositionFromLine(maxLines-1))
+			InsertText(enddoc,GetEolString());
+
 	}
 }
 

@@ -26,32 +26,32 @@ EditorSettingsGeneralPage::EditorSettingsGeneralPage( wxWindow* parent )
 		m_whitespaceStyle->SetStringSelection(wxT("Invisible"));
 		break;
 	}
-	
+
 	long value(4);
 	EditorConfigST::Get()->GetLongValue(wxT("EditorTabWidth"), value);
 	m_spinCtrlTabWidth->SetValue(value);
-	
+
 	value = 0;
 	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
 	m_radioBoxNavigationMethod->SetSelection(0);
 	if(value == 1){
 		m_radioBoxNavigationMethod->SetSelection(1);
 	}
-	
+
 	long trim(0);
 	EditorConfigST::Get()->GetLongValue(wxT("EditorTrimEmptyLines"), trim);
 	m_checkBoxTrimLine->SetValue(trim ? true : false);
-	
+
 	long appendLf(0);
 	EditorConfigST::Get()->GetLongValue(wxT("EditorAppendLf"), appendLf);
 	m_checkBoxAppendLF->SetValue(appendLf ? true : false);
-    
+
     m_radioBtnRMDisabled->SetValue(options->GetEdgeMode() == wxSCI_EDGE_NONE);
     m_radioBtnRMLine->SetValue(options->GetEdgeMode() == wxSCI_EDGE_LINE);
     m_radioBtnRMBackground->SetValue(options->GetEdgeMode() == wxSCI_EDGE_BACKGROUND);
     m_rightMarginColumn->SetValue(options->GetEdgeColumn());
     m_rightMarginColour->SetColour(options->GetEdgeColour());
-	
+	m_checkBoxMatchBraces->SetValue(options->GetHighlightMatchedBraces());
 	EnableDisableRightMargin();
 }
 
@@ -62,6 +62,7 @@ void EditorSettingsGeneralPage::Save(OptionsConfigPtr options)
 	options->SetShowIndentationGuidelines( m_showIndentationGuideLines->IsChecked() );
 	options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
 	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
+	options->SetHighlightMatchedBraces(m_checkBoxMatchBraces->IsChecked());
 
 	// save the tab width
 	int value = m_spinCtrlTabWidth->GetValue();
@@ -85,7 +86,7 @@ void EditorSettingsGeneralPage::Save(OptionsConfigPtr options)
 	EditorConfigST::Get()->SaveLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), m_radioBoxNavigationMethod->GetSelection());
 	EditorConfigST::Get()->SaveLongValue(wxT("EditorTrimEmptyLines"), m_checkBoxTrimLine->IsChecked() ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("EditorAppendLf"), m_checkBoxAppendLF->IsChecked() ? 1 : 0);
-    
+
     options->SetEdgeMode(m_radioBtnRMLine->GetValue()       ? wxSCI_EDGE_LINE :
                          m_radioBtnRMBackground->GetValue() ? wxSCI_EDGE_BACKGROUND
                                                             : wxSCI_EDGE_NONE);
@@ -109,5 +110,5 @@ void EditorSettingsGeneralPage::EnableDisableRightMargin()
 		m_rightMarginColumn->Enable();
 		m_staticText41->Enable();
 		m_staticText5->Enable();
-	}	
+	}
 }

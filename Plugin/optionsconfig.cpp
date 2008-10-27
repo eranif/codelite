@@ -49,10 +49,11 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         , m_edgeMode(0)
         , m_edgeColumn(80)
         , m_edgeColour(wxColour(wxT("LIGHT GRAY")))
+		, m_highlightMatchedBraces(true)
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
-	
+
 	if ( node ) {
 		m_displayFoldMargin = XmlUtils::ReadBool(node, wxT("DisplayFoldMargin"));
 		m_underlineFoldLine = XmlUtils::ReadBool(node, wxT("UnderlineFoldedLine"));
@@ -75,6 +76,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         m_edgeMode = XmlUtils::ReadLong(node, wxT("EdgeMode"), 0);
         m_edgeColumn = XmlUtils::ReadLong(node, wxT("EdgeColumn"), 80);
         m_edgeColour = XmlUtils::ReadString(node, wxT("EdgeColour"), wxT("LIGHT GREY"));
+		m_highlightMatchedBraces = XmlUtils::ReadBool(node, wxT("HighlightMatchedBraces"), true);
 	}
 }
 
@@ -100,11 +102,12 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("FoldCompact"), BoolToString(m_foldCompact));
 	n->AddProperty(wxT("FoldAtElse"), BoolToString(m_foldAtElse));
 	n->AddProperty(wxT("FoldPreprocessor"), BoolToString(m_foldPreprocessor));
-	
+	n->AddProperty(wxT("HighlightMatchedBraces"), BoolToString(m_highlightMatchedBraces));
+
 	wxString tmp;
 	tmp << m_iconsSize;
 	n->AddProperty(wxT("ToolbarIconSize"), tmp);
-	
+
 	tmp.clear();
 	tmp << m_showWhitspaces;
 	n->AddProperty(wxT("ShowWhitespaces"), tmp);
@@ -112,13 +115,13 @@ wxXmlNode *OptionsConfig::ToXml() const
     tmp.clear();
     tmp << m_edgeMode;
     n->AddProperty(wxT("EdgeMode"), tmp);
-    
+
     tmp.clear();
     tmp << m_edgeColumn;
     n->AddProperty(wxT("EdgeColumn"), tmp);
-    
+
     n->AddProperty(wxT("EdgeColour"), m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
-    
+
 	tmp.clear();
 	tmp = wxFontMapper::GetEncodingName(m_fileFontEncoding);
 	n->AddProperty(wxT("FileFontEncoding"), tmp);

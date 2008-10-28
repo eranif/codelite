@@ -83,7 +83,7 @@ void TagsManagementDlg::OnTagsDbSelected( wxListEvent& event )
 void TagsManagementDlg::OnAddDatabase( wxCommandEvent& event )
 {
 	// open file selector and select database
-	wxString path = ManagerST::Get()->GetInstallDir();
+	wxString path = ManagerST::Get()->GetStarupDirectory();
 	wxString new_db = wxFileSelector(_("Select tags database:"), path.c_str(), wxT(""), wxT(""), wxT("*.tags"), 0, this);
 	if (new_db.IsEmpty() == false) {
 		wxLogMessage(new_db);

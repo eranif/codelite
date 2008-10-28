@@ -173,7 +173,7 @@ public:
 	 * return the workspace tab pane
 	 */
     WorkspaceTab *GetWorkspaceTab();
-    
+
 	/**
 	 * return the file explorer pane
 	 */
@@ -254,17 +254,17 @@ public:
 	 * \param projectName
 	 */
 	void RebuildProject(const wxString &projectName);
-	
+
 	/**
 	 * \brief display the welcome page
 	 */
 	void ShowWelcomePage();
-	
+
 	/**
 	 * \brief handle custom build targets events
 	 */
 	void OnBuildCustomTarget(wxCommandEvent &event);
-	
+
 private:
 	// make our frame's constructor private
 	Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLIP_CHILDREN);
@@ -381,7 +381,7 @@ protected:
 	void OnOpenShellFromFilePath(wxCommandEvent &e);
 	void OnQuickDebug(wxCommandEvent &e);
 	void OnQuickDebugUI(wxUpdateUIEvent &e);
-	
+
 	// this event is sent from the notebook container to the frame
 	void OnFileClosing(NotebookEvent &event);
 	void OnPageChanged(NotebookEvent &event);
@@ -397,8 +397,6 @@ protected:
 	void OnRecentWorkspace(wxCommandEvent &event);
 	void OnBackwardForward(wxCommandEvent &event);
 	void OnBackwardForwardUI(wxUpdateUIEvent &event);
-	void OnFixDatabasePaths(wxCommandEvent &event);
-	void OnFixDatabasePathsUI(wxUpdateUIEvent &event);
 
 	void OnDebug(wxCommandEvent &e);
 	void OnDebugUI(wxUpdateUIEvent &e);
@@ -458,7 +456,7 @@ protected:
 	void OnSyntaxHighlight(wxCommandEvent &e);
 	void OnShowWhitespaceUI(wxUpdateUIEvent &e);
 	void OnShowWhitespace(wxCommandEvent &e);
-	
+
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);
 	void ShowBuildConfigurationManager();

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -37,6 +37,8 @@ class TagsManagementBaseDlg : public wxDialog
 		wxListCtrl* m_listCtrlDatabases;
 		wxButton* m_buttonAdd;
 		wxButton* m_buttonRemove;
+		wxButton* m_buttonSetActive;
+		wxButton* m_buttonFixPaths;
 		wxStaticText* m_staticTextFullPath;
 		wxStaticText* m_staticText1;
 		wxListCtrl* m_listCtrlPaths;
@@ -50,6 +52,8 @@ class TagsManagementBaseDlg : public wxDialog
 		virtual void OnAddDatabase( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnRemoveDatabase( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnRemoveDatabaseUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnSetActive( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnFixPaths( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnOk( wxCommandEvent& event ){ event.Skip(); }
 		
 	

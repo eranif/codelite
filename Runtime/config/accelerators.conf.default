@@ -111,7 +111,7 @@ quick_debug|Debug|Quick Debug...|
 create_ext_database|Tags|Create external tags database...|
 open_ext_database|Tags|Attach external tags database...|
 close_ext_database|Tags|Close external tags database|
-fix_ext_database|Tags|Fix external tags database paths...|
+manage_tags|Tags|Manage external tags databases...|
 manage_plugins|Plugins|Manage Plugins...|
 format_source|Plugins::Source Code Formatter|Format Current Source|Ctrl-I
 formatter_options|Plugins::Source Code Formatter|Options...|

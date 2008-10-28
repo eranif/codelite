@@ -177,7 +177,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED,    Frame::OnOutputWindowEvent)
 	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED,      Frame::OnOutputWindowEvent)
 	EVT_MENU(wxID_CLOSE_ALL, Frame::OnFileCloseAll)
-	EVT_MENU(XRCID("fix_ext_database"), Frame::OnFixDatabasePaths)
 	EVT_MENU(XRCID("exit_app"), Frame::OnQuit)
 	EVT_MENU(XRCID("save_file"), Frame::OnSave)
 	EVT_MENU(XRCID("save_file_as"), Frame::OnSaveAs)
@@ -260,7 +259,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("incremental_search"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("toggle_fold"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("fold_all"), Frame::OnFileExistUpdateUI)
-	
+
 	EVT_MENU(XRCID("configuration_manager"), Frame::OnConfigurationManager)
 	EVT_UPDATE_UI(XRCID("configuration_manager"), Frame::OnWorkspaceOpen)
 	EVT_MENU(XRCID("toggle_panes"), Frame::OnTogglePanes)
@@ -299,7 +298,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("start_debugger"), Frame::OnDebug)
 	EVT_MENU(XRCID("restart_debugger"), Frame::OnDebugRestart)
 	EVT_MENU(XRCID("stop_debugger"), Frame::OnDebugStop)
-	EVT_UPDATE_UI(XRCID("restart_debugger"), Frame::OnDebugRestartUI)	
+	EVT_UPDATE_UI(XRCID("restart_debugger"), Frame::OnDebugRestartUI)
 	EVT_MENU(XRCID("insert_breakpoint"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_breakpoint"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("pause_debugger"), Frame::OnDebugCmd)
@@ -341,7 +340,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("to_upper"), Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(XRCID("to_lower"), Frame::DispatchUpdateUIEvent)
 	EVT_MENU(XRCID("manage_tags"), Frame::OnManageTags)
-	
+
 	//-----------------------------------------------------------------
 	//C++ context menu
 	//-----------------------------------------------------------------
@@ -359,7 +358,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("rename_function"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("retag_file"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("retag_workspace"), Frame::OnRetagWorkspace)
-	
+
 	EVT_MENU(XRCID("show_nav_toolbar"), Frame::OnShowNavBar)
 	EVT_UPDATE_UI(XRCID("show_nav_toolbar"), Frame::OnShowNavBarUI)
 
@@ -413,7 +412,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("syntax_highlight"), Frame::OnSyntaxHighlight)
 	EVT_MENU(XRCID("quick_debug"), Frame::OnQuickDebug)
 	EVT_UPDATE_UI(XRCID("quick_debug"), Frame::OnQuickDebugUI)
-	
+
 	// Whitespace
 	EVT_UPDATE_UI(XRCID("whitepsace_invisible"), Frame::OnShowWhitespaceUI)
 	EVT_UPDATE_UI(XRCID("whitepsace_always"), Frame::OnShowWhitespaceUI)
@@ -421,7 +420,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("whitepsace_invisible"), Frame::OnShowWhitespace)
 	EVT_MENU(XRCID("whitepsace_always"), Frame::OnShowWhitespace)
 	EVT_MENU(XRCID("whitespace_visiable_after_indent"), Frame::OnShowWhitespace)
-	
+
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 
@@ -546,7 +545,7 @@ void Frame::Initialize(bool loadLastSession)
 	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
 		m_theFrame->LoadSession(SessionManager::Get().GetLastSession());
 	}
-	
+
 	m_theFrame->SendSizeEvent();
 	SetGccColourFunction( BuildTab::ColourGccLine );
 }
@@ -1031,7 +1030,7 @@ void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	wxString mainTitle;
 	mainTitle << wxT("v1.0.") << SvnRevision;
-	
+
 	AboutDlg dlg(this, mainTitle);
 	dlg.SetInfo(wxString::Format(wxT("SVN build, revision: %s"), SvnRevision));
 	dlg.ShowModal();
@@ -1211,7 +1210,7 @@ void Frame::OnFileReload(wxCommandEvent &event)
 			return;
 		}
 	}
-		
+
 	editor->ReloadFile();
 }
 
@@ -1228,7 +1227,7 @@ void Frame::OnCloseWorkspace(wxCommandEvent &event)
 void Frame::OnSwitchWorkspace(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	
+
 	// not it is time to prompt user for new workspace to open
 	const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|")
 	                   wxT("All Files (*)|*"));
@@ -1441,10 +1440,10 @@ void Frame::OnPageClosed(NotebookEvent &event)
 {
 	wxUnusedVar(event);
 	GetOpenWindowsPane()->UpdateList();
-	
+
 	//clean the navigation bar
 	GetMainBook()->Clear();
-	
+
 	// if no more editors are available, collapse the workspace tree
 	if (GetWorkspaceTab()->GetIsLinkedToEditor() && GetMainBook()->GetNotebook()->GetPageCount() == 0) {
 		GetWorkspacePane()->CollpaseAll();
@@ -1522,23 +1521,23 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 
 		//the only event that reallty interesting us, is the match find
 		if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED){
-			
+
 			// always free the allocated message string
 			wxString *str = (wxString*)event.GetClientData();
 			if(str){delete str;}
-			
+
 			m_doingReplaceInFiles = false;
 			GetOutputPane()->GetReplaceResultsTab()->ShowResults();
-			
+
 		} else if(event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
-			
+
 			// always free the allocated message string
 			SearchSummary *summary = (SearchSummary*)event.GetClientData();
 			if(summary){delete summary;}
-			
+
 			m_doingReplaceInFiles = false;
 			GetOutputPane()->GetReplaceResultsTab()->ShowResults();
-			
+
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
 			//add an entry to the replace panel
 			SearchResultList *res = (SearchResultList*)event.GetClientData();
@@ -1550,7 +1549,7 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 			// always free the allocated message string
 			wxString *str = (wxString*)event.GetClientData();
 			if(str){delete str;}
-			
+
 			ManagerST::Get()->ShowOutputPane(OutputPane::REPLACE_IN_FILES);
 			GetOutputPane()->GetReplaceResultsTab()->Clear();
 		}
@@ -1568,13 +1567,13 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 			m_outputPane->GetFindResultsTab()->AppendText(msg);
 			delete res;
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
-			
+
 			wxString *str = (wxString*)event.GetClientData();
 			if(str){
 				m_outputPane->GetFindResultsTab()->AppendText(*str + wxT("\n"));
 				delete str;
 			}
-			
+
 		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
 			// make sure that the output pane is visible and selection
 			// is set to the 'Find In Files' tab
@@ -1693,15 +1692,15 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 	bool newColTags(false);
 	bool markFilesAsBold(false);
 	bool newMarkFilesAsBold(false);
-	
+
 	size_t colourTypes(0);
-	
+
 	colVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
 	colTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
 	markFilesAsBold = (m_tagsOptionsData.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
-	
+
 	colourTypes = m_tagsOptionsData.GetCcColourFlags();
-	
+
 	TagsOptionsDlg dlg(this, m_tagsOptionsData);
 	if (dlg.ShowModal() == wxID_OK) {
 		TagsManager *tagsMgr = TagsManagerST::Get();
@@ -1710,7 +1709,7 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 		newColVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
 		newColTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
 		newMarkFilesAsBold = (m_tagsOptionsData.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
-		
+
 		tagsMgr->SetCtagsOptions(m_tagsOptionsData);
 		EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
@@ -1723,13 +1722,13 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 				}
 			}
 		}
-		
+
 		// do we need to update the file tree to mark tags files
 		// as bold?
 		if(markFilesAsBold != newMarkFilesAsBold) {
 			TagsManagerST::Get()->NotifyFileTree(newMarkFilesAsBold);
 		}
-		
+
 		// reset cache if needed
 		if (!(m_tagsOptionsData.GetFlags() & CC_CACHE_WORKSPACE_TAGS)) {
 			tagsMgr->GetWorkspaceTagsCache()->Clear();
@@ -1873,7 +1872,7 @@ void Frame::OnAdvanceSettings(wxCommandEvent &event)
 void Frame::OnShellCommandEvent(wxCommandEvent &event)
 {
 	static wxStopWatch sw;
-	
+
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
 	m_outputPane->GetBuildTab()->CanFocus(true);
@@ -1897,30 +1896,30 @@ void Frame::OnShellCommandEvent(wxCommandEvent &event)
 	} else if (event.GetEventType() == wxEVT_SHELL_COMMAND_PROCESS_ENDED) {
 		// take the elapsed time from the stopwatch
 		long elapsed = sw.Time();
-		
-		// format it into human-readable 
+
+		// format it into human-readable
 		long sec(0);
 		long hours(0);
 		long minutes(0);
-		
+
 		// convert to seconds
 		elapsed = elapsed / 1000;
 		hours = elapsed / 3600;
-		
+
 		elapsed = elapsed % 3600;
 		minutes = elapsed / 60;
 		sec = elapsed % 60;
-		
+
 		m_outputPane->GetBuildTab()->AppendText(
-						 wxString::Format(wxT("%d errors, %d warnings, total time: %s seconds\n"), 
+						 wxString::Format(wxT("%d errors, %d warnings, total time: %s seconds\n"),
 						 GetOutputPane()->GetBuildTab()->GetErrorCount(),
 						 GetOutputPane()->GetBuildTab()->GetWarningCount(),
 						 wxString::Format(wxT("%02d:%02d:%02d"), hours, minutes, sec).c_str()));
-						
+
 		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
 
         SetStatusText(wxT("Done"), 4);
-        
+
 		// get the build settings
 		BuildTabSettingsData buildSettings;
 		EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &buildSettings);
@@ -1985,16 +1984,16 @@ void Frame::OnBuildProject(wxCommandEvent &event)
 	wxUnusedVar(event);
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
-		
+
 		wxString conf, projectName;
 		projectName = ManagerST::Get()->GetActiveProjectName();
-		
+
 		// get the selected configuration to be built
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
 		if(bldConf) {
 			conf = bldConf->GetName();
 		}
-		
+
 		QueueCommand info(projectName, conf, false, QueueCommand::Build);
 		if(bldConf && bldConf->IsCustomBuild()){
 			info.SetKind(QueueCommand::CustomBuild);
@@ -2009,17 +2008,17 @@ void Frame::OnBuildCustomTarget(wxCommandEvent& event)
 {
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
-		
+
 		wxString projectName, targetName;
 		// get the project name
 		TreeItemInfo item = GetWorkspacePane()->GetFileViewTree()->GetSelectedItemInfo();
 		if(item.m_itemType != ProjectItem::TypeProject){
 			return;
 		}
-		
+
 		// set teh project name
 		projectName = item.m_text;
-		
+
 		// get the selected configuration to be built
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
 		if(bldConf) {
@@ -2031,15 +2030,15 @@ void Frame::OnBuildCustomTarget(wxCommandEvent& event)
 					break;
 				}
 			}
-			
+
 			if(targetName.IsEmpty()){
 				wxLogMessage(wxString::Format(wxT("Failed to find Custom Build Target for event ID=%d"), event.GetId()));
 				return;
 			}
-			
+
 			QueueCommand info(projectName, bldConf->GetName(), false, QueueCommand::CustomBuild);
 			info.SetCustomBuildTarget(targetName);
-			
+
 			ManagerST::Get()->PushQueueCommand(info);
 			ManagerST::Get()->ProcessCommandQueue();
 		}
@@ -2052,7 +2051,7 @@ void Frame::OnBuildAndRunProject(wxCommandEvent &event)
 	bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
 	if (enable) {
 		m_buildAndRun = true;
-		
+
 		wxString projectName = ManagerST::Get()->GetActiveProjectName();
 		wxString conf;
 		// get the selected configuration to be built
@@ -2060,14 +2059,14 @@ void Frame::OnBuildAndRunProject(wxCommandEvent &event)
 		if (bldConf) {
 			conf = bldConf->GetName();
 		}
-		
+
 		QueueCommand info(projectName, conf, false, QueueCommand::Build);
-		
+
 		if(bldConf && bldConf->IsCustomBuild()){
 			info.SetKind(QueueCommand::CustomBuild);
 			info.SetCustomBuildTarget(wxT("Build"));
 		}
-		
+
 		ManagerST::Get()->PushQueueCommand( info );
 		ManagerST::Get()->ProcessCommandQueue();
 	}
@@ -2120,16 +2119,16 @@ void Frame::OnStopExecutedProgram(wxCommandEvent &event)
 void Frame::OnCleanProject(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	
+
 	wxString conf, projectName;
 	projectName = ManagerST::Get()->GetActiveProjectName();
-	
+
 	// get the selected configuration to be built
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
 	if(bldConf) {
 		conf = bldConf->GetName();
 	}
-	
+
 	QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
 	if(bldConf && bldConf->IsCustomBuild()){
 		buildInfo.SetKind(QueueCommand::CustomBuild);
@@ -2250,7 +2249,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 				}
 			}
 		}
-		
+
 		//send initialization end event
 		SendCmdEvent(wxEVT_INIT_DONE);
 	}
@@ -2350,12 +2349,12 @@ void Frame::OnAddSymbols(SymbolTreeEvent &event)
 	if (tree) {
 		tree->AddSymbols(event);
 	}
-	
+
 	// Notify the plugins
 	ParseThreadEventData data;
 	data.SetFileName(event.GetFileName());
 	data.SetItems(event.GetItems());
-	
+
 	SendCmdEvent(wxEVT_SYNBOL_TREE_ADD_ITEM, (void*)&data);
 }
 
@@ -2366,12 +2365,12 @@ void Frame::OnDeleteSymbols(SymbolTreeEvent &event)
 	if (tree) {
 		tree->DeleteSymbols(event);
 	}
-	
+
 	// Notify the plugins
 	ParseThreadEventData data;
 	data.SetFileName(event.GetFileName());
 	data.SetItems(event.GetItems());
-	
+
 	SendCmdEvent(wxEVT_SYNBOL_TREE_DELETE_ITEM, (void*)&data);
 
 }
@@ -2382,12 +2381,12 @@ void Frame::OnUpdateSymbols(SymbolTreeEvent &event)
 	if (tree) {
 		tree->UpdateSymbols(event);
 	}
-	
+
 	// Notify the plugins
 	ParseThreadEventData data;
 	data.SetFileName(event.GetFileName());
 	data.SetItems(event.GetItems());
-	
+
 	SendCmdEvent(wxEVT_SYNBOL_TREE_UPDATE_ITEM, (void*)&data);
 }
 
@@ -2550,42 +2549,6 @@ void Frame::OnBackwardForwardUI(wxUpdateUIEvent &event)
 	}
 }
 
-void Frame::OnFixDatabasePaths(wxCommandEvent &event)
-{
-	wxUnusedVar(event);
-	const wxString ALL(	wxT("Tags Database File (*.tags)|*.tags|")
-	                    wxT("All Files (*)|*"));
-
-	wxFileDialog *fdlg = new wxFileDialog(this,
-	                                      wxT("Select an external database:"),
-	                                      ManagerST::Get()->GetStarupDirectory(),
-	                                      wxEmptyString,
-	                                      ALL,
-	                                      wxFD_OPEN | wxFD_FILE_MUST_EXIST,
-	                                      wxDefaultPosition);
-
-	if (fdlg->ShowModal() == wxID_OK) {
-		// get the path
-		wxFileName dbname(fdlg->GetPath());
-		TagsDatabase db;
-		db.OpenDatabase(dbname);
-
-		KeyValueTableDlg *dlg = new KeyValueTableDlg(this, &db);
-		dlg->ShowModal();
-
-		//notify tags manager to reload the file paths from the database
-		TagsManagerST::Get()->ReloadExtDbPaths();
-
-		dlg->Destroy();
-	}
-	fdlg->Destroy();
-}
-
-void Frame::OnFixDatabasePathsUI(wxUpdateUIEvent &event)
-{
-	event.Enable(true);
-}
-
 void Frame::CreateWelcomePage()
 {
 	Manager *mgr = ManagerST::Get();
@@ -2646,12 +2609,12 @@ void Frame::OnDebug(wxCommandEvent &e)
 		//debugger is already running -> probably a continue command
 		mgr->DbgStart();
 	} else if (mgr->IsWorkspaceOpen()) {
-		
+
 		if(WorkspaceST::Get()->GetActiveProjectName().IsEmpty()) {
 			wxLogMessage(wxT("Attempting to debug workspace with no active project? Ignoring."));
 			return;
 		}
-		
+
 		// Debugger is not running, but workspace is opened -> start debug session
 		long build_first(wxID_NO);
 		bool answer(false);
@@ -2678,9 +2641,9 @@ void Frame::OnDebug(wxCommandEvent &e)
 
 		// place a debug command
 		QueueCommand dbgCmd(QueueCommand::Debug);
-		
+
 		// make sure that build was success before proceeding (only when build_first flag is on)
-		dbgCmd.SetCheckBuildSuccess(build_first == wxID_OK); 
+		dbgCmd.SetCheckBuildSuccess(build_first == wxID_OK);
 		ManagerST::Get()->PushQueueCommand(dbgCmd);
 
 		// trigger the commands queue
@@ -3480,24 +3443,24 @@ void Frame::RebuildProject(const wxString& projectName)
 		if(bldConf) {
 			conf = bldConf->GetName();
 		}
-	
-		// first we place a clean command 
+
+		// first we place a clean command
 		QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
 		if(bldConf && bldConf->IsCustomBuild()){
 			buildInfo.SetKind(QueueCommand::CustomBuild);
 			buildInfo.SetCustomBuildTarget(wxT("Clean"));
 		}
 		ManagerST::Get()->PushQueueCommand(buildInfo);
-		
+
 		// now we place a build command
 		buildInfo = QueueCommand(projectName, conf, false, QueueCommand::Build);
-		
+
 		if(bldConf && bldConf->IsCustomBuild()){
 			buildInfo.SetKind(QueueCommand::CustomBuild);
 			buildInfo.SetCustomBuildTarget(wxT("Build"));
 		}
 		ManagerST::Get()->PushQueueCommand(buildInfo);
-		
+
 		// process the queue
 		ManagerST::Get()->ProcessCommandQueue();
 	}
@@ -3537,7 +3500,7 @@ void Frame::SetFrameTitle(LEditor* editor)
 	if (editor && editor->GetModify()) {
 		title << wxT("*");
 	}
-	
+
 	LEditor *activeEditor = ManagerST::Get()->GetActiveEditor();
 	if (editor && activeEditor == editor) {
 		title << editor->GetFileName().GetFullName() << wxT(" ");
@@ -3662,30 +3625,30 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 	// launch the debugger
 	QuickDebugDlg *dlg = new QuickDebugDlg(this);
 	if (dlg->ShowModal() == wxID_OK) {
-		
+
 		DebuggerMgr::Get().SetActiveDebugger(dlg->GetDebuggerName());
 		IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
-		
+
 		if (dbgr && !dbgr->IsRunning()) {
-			
+
 			std::vector<BreakpointInfo> bpList;
 			wxString exepath = dlg->GetExe();
 			wxString wd = dlg->GetWorkingDirectory();
 			wxArrayString cmds = dlg->GetStartupCmds();
-			
+
 			// update the debugger information
 			DebuggerInformation dinfo;
 			DebuggerMgr::Get().GetDebuggerInformation(dlg->GetDebuggerName(), dinfo);
 			dinfo.breakAtWinMain = true;
 			DebuggerMgr::Get().DelAllBreakpoints();
-			
+
 			wxString dbgname = dinfo.path;
 			dbgname = EnvironmentConfig::Instance()->ExpandVariables(dbgname);
-			
+
 			// launch the debugger
 			dbgr->SetObserver(ManagerST::Get());
 			dbgr->SetDebuggerInformation(dinfo);
-			
+
 			// Loop through the open editors, and update breakpoints
 			for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
 				LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
@@ -3693,13 +3656,13 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 					editor->UpdateBreakpoints();
 				}
 			}
-			
+
 			// get an updated list of breakpoints
 			DebuggerMgr::Get().GetBreakpoints(bpList);
-			
+
 			dbgr->Start(dbgname, exepath, wd, bpList, cmds);
 			dbgr->Run(dlg->GetArguments(), wxEmptyString);
-			
+
 			// and finally make sure that the debugger pane is visiable
 			ManagerST::Get()->ShowDebuggerPane();
 		}
@@ -3735,7 +3698,7 @@ void Frame::OnShowWhitespace(wxCommandEvent& e)
 	} else if(e.GetId() == XRCID("whitespace_visiable_after_indent")) {
 		options->SetShowWhitspaces(2);
 	}
-	
+
 	// Loop through the open editors, and update breakpoints
 	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
@@ -3743,7 +3706,7 @@ void Frame::OnShowWhitespace(wxCommandEvent& e)
 			editor->SetViewWhiteSpace(options->GetShowWhitspaces());
 		}
 	}
-	
+
 	// save the settings
 	EditorConfigST::Get()->SetOptions(options);
 }

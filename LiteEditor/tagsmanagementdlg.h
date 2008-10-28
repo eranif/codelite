@@ -16,7 +16,7 @@ class TagsManagementDlg : public TagsManagementBaseDlg
 	
 	long IsFileExist(const wxFileName &filename);
 	void DoDeleteItem(long item);
-	long DoAddItem(const wxFileName &fn);
+	long DoAddItem(const wxFileName &fn, bool isActive);
 	
 protected:
 	// Handlers for TagsManagementBaseDlg events.

@@ -1,4 +1,5 @@
 #include "tagsmanagementdlg.h"
+#include "ctags_manager.h"
 #include "editor_config.h"
 #include "tagsmanagementconf.h"
 #include <wx/xrc/xmlres.h>
@@ -17,6 +18,7 @@ TagsManagementDlg::TagsManagementDlg( wxWindow* parent )
 
 	wxImageList *il = new wxImageList(16, 16, true);
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("svn_repo")));
+	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("tags_selected")));
 	m_listCtrlDatabases->AssignImageList(il, wxIMAGE_LIST_SMALL);
 
 	// populate the control
@@ -25,8 +27,16 @@ TagsManagementDlg::TagsManagementDlg( wxWindow* parent )
 
 	for (size_t i=0; i<data.GetFiles().GetCount(); i++) {
 		wxFileName fn(data.GetFiles().Item(i));
-		DoAddItem(fn);
+		if (fn.FileExists()) {
+			DoAddItem(fn, false);
+		}
 	}
+
+	TagsDatabase *activeDb = TagsManagerST::Get()->GetExtDatabase();
+	if (activeDb && activeDb->IsOpen()) {
+		DoAddItem(activeDb->GetDatabaseFileName(), true);
+	}
+
 	WindowAttrManager::Load(this, wxT("TagsManagementDlgAttr"), NULL);
 }
 
@@ -69,7 +79,7 @@ void TagsManagementDlg::OnAddDatabase( wxCommandEvent& event )
 	if (new_db.IsEmpty() == false) {
 		wxLogMessage(new_db);
 		wxFileName fn(new_db);
-		DoAddItem(fn);
+		DoAddItem(fn, false);
 	}
 }
 
@@ -105,13 +115,15 @@ void TagsManagementDlg::DoDeleteItem(long item)
 	m_listCtrlDatabases->DeleteItem(item);
 }
 
-long TagsManagementDlg::DoAddItem(const wxFileName& fn)
+long TagsManagementDlg::DoAddItem(const wxFileName& fn, bool isActive)
 {
 	long item = IsFileExist(fn);
 	if (item == wxNOT_FOUND) {
 		item = AppendListCtrlRow(m_listCtrlDatabases);
-		SetColumnText(m_listCtrlDatabases, item, 0, fn.GetFullName(), 0);
+		SetColumnText(m_listCtrlDatabases, item, 0, fn.GetFullName(), isActive ? 1 : 0);
 		m_listCtrlDatabases->SetItemPtrData(item, (wxUIntPtr)new wxFileName(fn));
+	} else {
+		SetColumnText(m_listCtrlDatabases, item, 0, fn.GetFullName(), isActive ? 1 : 0);
 	}
 	return item;
 }

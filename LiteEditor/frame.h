@@ -442,6 +442,7 @@ protected:
 	void OnViewPaneUI(wxUpdateUIEvent &event);
 
 	void OnManagePlugins(wxCommandEvent &e);
+	void OnManageTags(wxCommandEvent &e);
 	void OnCppContextMenu(wxCommandEvent &e);
 
 	void OnConfigureAccelerators(wxCommandEvent &e);

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "tagsmanagementdlg.h"
 #include "imanager.h"
 #include "newversiondlg.h"
 #include "quickdebugdlg.h"
@@ -339,7 +340,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("to_lower"), Frame::DispatchCommandEvent)
 	EVT_UPDATE_UI(XRCID("to_upper"), Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(XRCID("to_lower"), Frame::DispatchUpdateUIEvent)
-
+	EVT_MENU(XRCID("manage_tags"), Frame::OnManageTags)
+	
 	//-----------------------------------------------------------------
 	//C++ context menu
 	//-----------------------------------------------------------------
@@ -3806,4 +3808,10 @@ void Frame::OnShowInWorkspaceUI(wxUpdateUIEvent& e)
             e.Enable(true);
         }
     }
+}
+
+void Frame::OnManageTags(wxCommandEvent& e)
+{
+	TagsManagementDlg dlg(this);
+	dlg.ShowModal();
 }

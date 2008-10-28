@@ -108,6 +108,8 @@
     <File Name="quickdebuginfo.h"/>
     <File Name="windowattrmanager.cpp"/>
     <File Name="windowattrmanager.h"/>
+    <File Name="tagsmanagementconf.cpp"/>
+    <File Name="tagsmanagementconf.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ProcessControl">
     <File Name="pipedprocess.h"/>

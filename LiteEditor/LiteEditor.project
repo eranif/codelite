@@ -218,6 +218,12 @@
       <File Name="aboutdlgbase.cpp"/>
       <File Name="contributers.h"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="Tags">
+      <File Name="tagsmanagementbasedlg.cpp"/>
+      <File Name="tagsmanagementbasedlg.h"/>
+      <File Name="tagsmanagementdlg.h"/>
+      <File Name="tagsmanagementdlg.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>
@@ -390,6 +396,7 @@
     <File Name="quickfindbarbase.fbp"/>
     <File Name="newversionbasedlg.fbp"/>
     <File Name="editorsettingsgeneralpagebase.fbp"/>
+    <File Name="tagsmanagementbasedlg.fbp"/>
   </VirtualDirectory>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>

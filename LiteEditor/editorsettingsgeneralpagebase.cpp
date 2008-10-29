@@ -17,53 +17,49 @@ EditorSettingsGeneralPageBase::EditorSettingsGeneralPageBase( wxWindow* parent, 
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Guides") ), wxVERTICAL );
 	
-	wxGridSizer* gSizer1;
-	gSizer1 = new wxGridSizer( 2, 2, 0, 0 );
+	wxFlexGridSizer* fgSizer2;
+	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer2->AddGrowableCol( 1 );
+	fgSizer2->SetFlexibleDirection( wxBOTH );
+	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_displayLineNumbers = new wxCheckBox( this, wxID_ANY, wxT("Display line numbers"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	gSizer1->Add( m_displayLineNumbers, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer2->Add( m_displayLineNumbers, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxMatchBraces = new wxCheckBox( this, wxID_ANY, wxT("Highlight matched braces"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	gSizer1->Add( m_checkBoxMatchBraces, 0, wxALL, 5 );
-	
-	m_highlighyCaretLine = new wxCheckBox( this, wxID_ANY, wxT("Highlight caret line"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	gSizer1->Add( m_highlighyCaretLine, 0, wxALL, 5 );
+	fgSizer2->Add( m_checkBoxMatchBraces, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_showIndentationGuideLines = new wxCheckBox( this, wxID_ANY, wxT("Show indentation guidelines"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	gSizer1->Add( m_showIndentationGuideLines, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer2->Add( m_showIndentationGuideLines, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	sbSizer1->Add( gSizer1, 1, wxEXPAND, 5 );
+	m_highlighyCaretLine = new wxCheckBox( this, wxID_ANY, wxT("Highlight caret line"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	wxBoxSizer* bSizer14;
-	bSizer14 = new wxBoxSizer( wxHORIZONTAL );
+	fgSizer2->Add( m_highlighyCaretLine, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_staticText9 = new wxStaticText( this, wxID_ANY, wxT("Caret line background colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText9->Wrap( -1 );
-	bSizer14->Add( m_staticText9, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	fgSizer2->Add( m_staticText9, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_caretLineColourPicker = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
-	bSizer14->Add( m_caretLineColourPicker, 1, wxEXPAND|wxLEFT|wxRIGHT, 5 );
-	
-	sbSizer1->Add( bSizer14, 0, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer13;
-	bSizer13 = new wxBoxSizer( wxHORIZONTAL );
+	fgSizer2->Add( m_caretLineColourPicker, 0, wxEXPAND|wxALL, 5 );
 	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Whitespace visibility:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
-	bSizer13->Add( m_staticText4, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	fgSizer2->Add( m_staticText4, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	wxString m_whitespaceStyleChoices[] = { wxT("Invisible"), wxT("Visible always"), wxT("Visible after indentation"), wxT("Indentation only") };
 	int m_whitespaceStyleNChoices = sizeof( m_whitespaceStyleChoices ) / sizeof( wxString );
 	m_whitespaceStyle = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_whitespaceStyleNChoices, m_whitespaceStyleChoices, 0 );
 	m_whitespaceStyle->SetSelection( 0 );
-	bSizer13->Add( m_whitespaceStyle, 1, wxALL|wxEXPAND, 5 );
+	fgSizer2->Add( m_whitespaceStyle, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	sbSizer1->Add( bSizer13, 0, wxEXPAND, 5 );
+	
+	fgSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	sbSizer1->Add( fgSizer2, 1, wxEXPAND, 5 );
 	
 	mainSizer->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
 	

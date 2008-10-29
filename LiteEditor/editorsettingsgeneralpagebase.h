@@ -14,10 +14,10 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/clrpicker.h>
 #include <wx/choice.h>
+#include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/spinctrl.h>
 #include <wx/radiobut.h>
@@ -37,12 +37,13 @@ class EditorSettingsGeneralPageBase : public wxPanel
 	protected:
 		wxCheckBox* m_displayLineNumbers;
 		wxCheckBox* m_checkBoxMatchBraces;
-		wxCheckBox* m_highlighyCaretLine;
 		wxCheckBox* m_showIndentationGuideLines;
+		wxCheckBox* m_highlighyCaretLine;
 		wxStaticText* m_staticText9;
 		wxColourPickerCtrl* m_caretLineColourPicker;
 		wxStaticText* m_staticText4;
 		wxChoice* m_whitespaceStyle;
+		
 		wxCheckBox* m_indentsUsesTabs;
 		wxStaticText* m_staticText3;
 		wxSpinCtrl* m_indentWidth;

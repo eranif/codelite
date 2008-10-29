@@ -48,7 +48,7 @@
 *   DATA DECLARATIONS
 */
 
-enum { NumTokens = 11 }; 
+enum { NumTokens = 11 };
 
 typedef enum eException {
 	ExceptionNone, ExceptionEOF, ExceptionFormattingError,
@@ -1290,7 +1290,7 @@ static void qualifyVariableTag (const statementInfo *const st,
 			if (isLanguage (Lang_java) || isLanguage (Lang_csharp))
 				makeTag (nameToken, st,
 						(boolean) (st->member.access == ACCESS_PRIVATE), TAG_FIELD);
-			else if (st->scope == SCOPE_GLOBAL  ||  st->scope == SCOPE_STATIC)
+			else if (st->scope == SCOPE_GLOBAL  ||  st->scope == SCOPE_STATIC || st->scope == SCOPE_EXTERN)
 				makeTag (nameToken, st, TRUE, TAG_MEMBER);
 		}
 		else
@@ -1391,7 +1391,7 @@ static void skipToMatch (const char *const pair)
 				vStringPut (Signature, c);
 			}
 		}
-		
+
 		if (c == begin)
 		{
 			++matchLevel;
@@ -1532,7 +1532,7 @@ static void readPackageName (tokenInfo *const token, const int firstChar)
 static void readPackageOrNamespace (statementInfo *const st, const declType declaration)
 {
 	st->declaration = declaration;
-	
+
 	if (declaration == DECL_NAMESPACE && !isLanguage (Lang_csharp))
 	{
 		/* In C++ a namespace is specified one level at a time. */
@@ -1777,7 +1777,7 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
 		case KEYWORD_VOLATILE:  st->declaration = DECL_BASE;            break;
 		case KEYWORD_VIRTUAL:   st->implementation = IMP_VIRTUAL;       break;
 		case KEYWORD_WCHAR_T:   st->declaration = DECL_BASE;            break;
-		
+
 		case KEYWORD_NAMESPACE: readPackageOrNamespace (st, DECL_NAMESPACE); break;
 		case KEYWORD_PACKAGE:   readPackageOrNamespace (st, DECL_PACKAGE);   break;
 
@@ -2479,7 +2479,7 @@ static void parseJavaAnnotation (statementInfo *const st)
 	 * But watch out for "@interface"!
 	 */
 	tokenInfo *const token = activeToken (st);
-	
+
 	int c = skipToNonWhite ();
 	readIdentifier (token, c);
 	if (token->keyword == KEYWORD_INTERFACE)

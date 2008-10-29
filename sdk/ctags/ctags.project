@@ -87,7 +87,7 @@
         <IncludePath Value="."/>
       </Compiler>
       <Linker Required="yes" Options=""/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
@@ -112,7 +112,7 @@
         <IncludePath Value="."/>
       </Compiler>
       <Linker Required="yes" Options="-O2"/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>

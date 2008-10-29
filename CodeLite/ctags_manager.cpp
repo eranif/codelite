@@ -676,7 +676,7 @@ void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr> &t
 bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int lineno, const wxString& expr, const wxString& text, const wxString &word, std::vector<TagEntryPtr> &candidates)
 {
 	PERF_START("WordCompletionCandidates");
-	
+
 	candidates.clear();
 	wxString path, tmp;
 	wxString typeName, typeScope;
@@ -736,7 +736,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		TagsByScope(scope, tmpCandidates);
 		RemoveDuplicates(tmpCandidates, candidates);
 	}
-	
+
 	PERF_END("WordCompletionCandidates");
 	return true;
 }
@@ -744,7 +744,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno, const wxString& expr, const wxString& text, std::vector<TagEntryPtr>& candidates)
 {
 	PERF_START("AutoCompleteCandidates");
-	
+
 	candidates.clear();
 	wxString path;
 	wxString typeName, typeScope;
@@ -793,9 +793,9 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		filter.Add(wxT("prototype"));
 		TagsByScope(scope, filter, candidates, true);
 	}
-	
+
 	PERF_END("AutoCompleteCandidates");
-	
+
 	return candidates.empty() == false;
 }
 
@@ -1107,7 +1107,7 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName> &projectFiles)
 	m_workspaceDatabase->Begin();
 	m_workspaceDatabase->ExecuteUpdate(query);
 	m_workspaceDatabase->Commit();
-    
+
 	UpdateFileTree(projectFiles, false);
 }
 
@@ -1555,7 +1555,7 @@ void TagsManager::DoExecuteQueury(const wxString &sql, bool queryBothDB, std::ve
 			}
 		}
 
-		// Now try the local tags database, but only if 
+		// Now try the local tags database, but only if
 		// no matches were found in the external database
 		if ( count_before == tags.size() || queryBothDB ) {
 			TagCacheEntryPtr cachedEntry = NULL;
@@ -1687,7 +1687,7 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 		tip.erase(tip.find_last_not_of(trimString)+1);
 		tip.Replace(wxT("\t"), wxT(" "));
         while (tip.Replace(wxT("  "), wxT(" "))) {}
-        
+
 		tip.Prepend(comment);
 		tips.push_back(tip);
 	}
@@ -2246,7 +2246,7 @@ void TagsManager::GetAllTagsNames(wxArrayString &tagsList)
 {
 	size_t kind = GetCtagsOptions().GetCcColourFlags();
 	wxArrayString kindArr;
-	
+
 	if( kind & CC_COLOUR_CLASS) {kindArr.Add(wxT("class"));}
 	if( kind & CC_COLOUR_ENUM) {kindArr.Add(wxT("enum"));}
 	if( kind & CC_COLOUR_FUNCTION) {kindArr.Add(wxT("function"));}
@@ -2256,31 +2256,31 @@ void TagsManager::GetAllTagsNames(wxArrayString &tagsList)
 	if( kind & CC_COLOUR_STRUCT) {kindArr.Add(wxT("struct"));}
 	if( kind & CC_COLOUR_TYPEDEF) {kindArr.Add(wxT("typedef"));}
 	if( kind & CC_COLOUR_UNION) {kindArr.Add(wxT("union"));}
-	if( kind & CC_COLOUR_ENUMERATOR) {kindArr.Add(wxT("enumerator"));}	
-	if( kind & CC_COLOUR_VARIABLE) {kindArr.Add(wxT("variable"));}	
-	if( kind & CC_COLOUR_MEMBER) {kindArr.Add(wxT("member"));}	
-	
+	if( kind & CC_COLOUR_ENUMERATOR) {kindArr.Add(wxT("enumerator"));}
+	if( kind & CC_COLOUR_VARIABLE) {kindArr.Add(wxT("variable"));}
+	if( kind & CC_COLOUR_MEMBER) {kindArr.Add(wxT("member"));}
+
 	if( kindArr.IsEmpty() ) {return;}
-	
+
 	try {
-		
+
 		wxString whereClause;
 		whereClause << wxT(" kind IN (");
 		for(size_t i=0; i<kindArr.GetCount(); i++){
 			whereClause << wxT("'") << kindArr.Item(i) << wxT("',");
 		}
-		
+
 		whereClause = whereClause.BeforeLast(wxT(','));
 		whereClause << wxT(") ");
-		
+
 		wxString query(wxT("SELECT DISTINCT name FROM tags WHERE "));
 		query << whereClause << wxT(" order by name ASC");
-		
+
 		wxSQLite3ResultSet res = m_workspaceDatabase->Query(query);
 		while (res.NextRow()) {
 			tagsList.Add(res.GetString(0));
 		}
-		
+
 	} catch (wxSQLite3Exception &e) {
 		wxUnusedVar(e);
 	}
@@ -2516,7 +2516,7 @@ wxString TagsManager::DoReplaceMacros(wxString name)
 	return _name;
 }
 
-// wrapper function to update the file tree given a list of files. 
+// wrapper function to update the file tree given a list of files.
 void TagsManager::UpdateFileTree(const std::vector<wxFileName> &files, bool bold)
 {
 	if(GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD) {
@@ -2544,18 +2544,18 @@ void TagsManager::OnUpdateFileTreeEvent(wxCommandEvent& e)
 void TagsManager::NotifyFileTree(bool bold)
 {
 	size_t origFlags = GetCtagsOptions().GetFlags();
-	
+
 	// we temporarly set the flag CC_MARK_TAGS_FILES_IN_BOLD
 	m_tagsOptions.SetFlags(origFlags | CC_MARK_TAGS_FILES_IN_BOLD);
-	
+
 	if(m_workspaceDatabase && m_workspaceDatabase->IsOpen()){
 		UpdateFileTree(m_workspaceDatabase, bold);
 	}
-	
+
 	if(m_externalDatabase && m_externalDatabase->IsOpen()){
 		UpdateFileTree(m_externalDatabase, bold);
 	}
-	
+
 	// restore original flags
 	m_tagsOptions.SetFlags(origFlags);
 }

@@ -586,12 +586,19 @@
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
                             <property name="flag">wxEXPAND</property>
-                            <property name="proportion">0</property>
-                            <object class="wxBoxSizer" expanded="1">
+                            <property name="proportion">1</property>
+                            <object class="wxFlexGridSizer" expanded="1">
+                                <property name="cols">2</property>
+                                <property name="flexible_direction">wxBOTH</property>
+                                <property name="growablecols">1</property>
+                                <property name="growablerows"></property>
+                                <property name="hgap">0</property>
                                 <property name="minimum_size"></property>
-                                <property name="name">bSizer5</property>
-                                <property name="orient">wxHORIZONTAL</property>
+                                <property name="name">fgSizer31</property>
+                                <property name="non_flexible_grow_mode">wxFLEX_GROWMODE_SPECIFIED</property>
                                 <property name="permission">none</property>
+                                <property name="rows">2</property>
+                                <property name="vgap">0</property>
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
                                     <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
@@ -645,8 +652,8 @@
                                 </object>
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
-                                    <property name="flag">wxALL</property>
-                                    <property name="proportion">1</property>
+                                    <property name="flag">wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL</property>
+                                    <property name="proportion">0</property>
                                     <object class="wxSpinCtrl" expanded="1">
                                         <property name="bg"></property>
                                         <property name="context_help"></property>
@@ -698,17 +705,6 @@
                                         <event name="OnUpdateUI"></event>
                                     </object>
                                 </object>
-                            </object>
-                        </object>
-                        <object class="sizeritem" expanded="1">
-                            <property name="border">5</property>
-                            <property name="flag">wxEXPAND</property>
-                            <property name="proportion">0</property>
-                            <object class="wxBoxSizer" expanded="1">
-                                <property name="minimum_size"></property>
-                                <property name="name">bSizer51</property>
-                                <property name="orient">wxHORIZONTAL</property>
-                                <property name="permission">none</property>
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
                                     <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
@@ -762,8 +758,8 @@
                                 </object>
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
-                                    <property name="flag">wxALL</property>
-                                    <property name="proportion">1</property>
+                                    <property name="flag">wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL</property>
+                                    <property name="proportion">0</property>
                                     <object class="wxSpinCtrl" expanded="1">
                                         <property name="bg"></property>
                                         <property name="context_help"></property>

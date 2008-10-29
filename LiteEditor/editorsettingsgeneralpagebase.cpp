@@ -72,29 +72,27 @@ EditorSettingsGeneralPageBase::EditorSettingsGeneralPageBase( wxWindow* parent, 
 	
 	sbSizer6->Add( m_indentsUsesTabs, 0, wxALL, 5 );
 	
-	wxBoxSizer* bSizer5;
-	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
+	wxFlexGridSizer* fgSizer31;
+	fgSizer31 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer31->AddGrowableCol( 1 );
+	fgSizer31->SetFlexibleDirection( wxBOTH );
+	fgSizer31->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Columns per indentation level:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
-	bSizer5->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	fgSizer31->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_indentWidth = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 20, 4 );
-	bSizer5->Add( m_indentWidth, 1, wxALL, 5 );
-	
-	sbSizer6->Add( bSizer5, 0, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer51;
-	bSizer51 = new wxBoxSizer( wxHORIZONTAL );
+	fgSizer31->Add( m_indentWidth, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_staticText31 = new wxStaticText( this, wxID_ANY, wxT("Columns per tab character in document:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText31->Wrap( -1 );
-	bSizer51->Add( m_staticText31, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	fgSizer31->Add( m_staticText31, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_tabWidth = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 20, 4 );
-	bSizer51->Add( m_tabWidth, 1, wxALL, 5 );
+	fgSizer31->Add( m_tabWidth, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	sbSizer6->Add( bSizer51, 0, wxEXPAND, 5 );
+	sbSizer6->Add( fgSizer31, 1, wxEXPAND, 5 );
 	
 	mainSizer->Add( sbSizer6, 0, wxALL|wxEXPAND, 5 );
 	

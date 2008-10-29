@@ -417,10 +417,11 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("whitepsace_invisible"), Frame::OnShowWhitespaceUI)
 	EVT_UPDATE_UI(XRCID("whitepsace_always"), Frame::OnShowWhitespaceUI)
 	EVT_UPDATE_UI(XRCID("whitespace_visiable_after_indent"), Frame::OnShowWhitespaceUI)
+    EVT_UPDATE_UI(XRCID("whitespace_indent_only"), Frame::OnShowWhitespaceUI)
 	EVT_MENU(XRCID("whitepsace_invisible"), Frame::OnShowWhitespace)
 	EVT_MENU(XRCID("whitepsace_always"), Frame::OnShowWhitespace)
 	EVT_MENU(XRCID("whitespace_visiable_after_indent"), Frame::OnShowWhitespace)
-
+	EVT_MENU(XRCID("whitespace_indent_only"), Frame::OnShowWhitespace)
 END_EVENT_TABLE()
 Frame* Frame::m_theFrame = NULL;
 
@@ -3685,7 +3686,9 @@ void Frame::OnShowWhitespaceUI(wxUpdateUIEvent& e)
 		e.Check(options->GetShowWhitspaces() == 1);
 	} else if(e.GetId() == XRCID("whitespace_visiable_after_indent")) {
 		e.Check(options->GetShowWhitspaces() == 2);
-	}
+	} else if (e.GetId() == XRCID("whitespace_indent_only")) {
+        e.Check(options->GetShowWhitspaces() == 3);
+    }
 }
 
 void Frame::OnShowWhitespace(wxCommandEvent& e)
@@ -3697,7 +3700,9 @@ void Frame::OnShowWhitespace(wxCommandEvent& e)
 		options->SetShowWhitspaces(1);
 	} else if(e.GetId() == XRCID("whitespace_visiable_after_indent")) {
 		options->SetShowWhitspaces(2);
-	}
+	} else if (e.GetId() == XRCID("whitespace_indent_only")) {
+        options->SetShowWhitspaces(3);
+    }
 
 	// Loop through the open editors, and update breakpoints
 	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {

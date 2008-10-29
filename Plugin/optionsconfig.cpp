@@ -41,42 +41,46 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_showIndentationGuidelines(false)
 		, m_caretLineColour(wxT("LIGHT BLUE"))
 		, m_indentUsesTabs(true)
+        , m_indentWidth(4)
+        , m_tabWidth(4)
 		, m_iconsSize(24)
 		, m_showWhitspaces(0/*wxSCI_WS_INVISIBLE*/)
 		, m_foldCompact(false)
 		, m_foldAtElse(false)
 		, m_foldPreprocessor(false)
-        , m_edgeMode(0)
+        , m_edgeMode(0/*wxSCI_EDGE_NONE*/)
         , m_edgeColumn(80)
-        , m_edgeColour(wxColour(wxT("LIGHT GRAY")))
+        , m_edgeColour(wxColour(wxT("LIGHT GREY")))
 		, m_highlightMatchedBraces(true)
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
 
 	if ( node ) {
-		m_displayFoldMargin = XmlUtils::ReadBool(node, wxT("DisplayFoldMargin"));
-		m_underlineFoldLine = XmlUtils::ReadBool(node, wxT("UnderlineFoldedLine"));
-		m_foldStyle = XmlUtils::ReadString(node, wxT("FoldStyle"));
-		m_displayBookmarkMargin = XmlUtils::ReadBool(node, wxT("DisplayBookmarkMargin"));
-		m_bookmarkShape = XmlUtils::ReadString(node, wxT("BookmarkShape"));
-		m_bookmarkBgColour = XmlUtils::ReadString(node, wxT("BookmarkBgColour"));
-		m_bookmarkFgColour = XmlUtils::ReadString(node, wxT("BookmarkFgColour"));
-		m_highlightCaretLine = XmlUtils::ReadBool(node, wxT("HighlightCaretLine"));
-		m_displayLineNumbers = XmlUtils::ReadBool(node, wxT("ShowLineNumber"));
-		m_showIndentationGuidelines = XmlUtils::ReadBool(node, wxT("IndentationGuides"));
-		m_caretLineColour = XmlUtils::ReadString(node, wxT("CaretLineColour"), wxColour(255, 255, 220).GetAsString(wxC2S_HTML_SYNTAX));
-		m_indentUsesTabs = XmlUtils::ReadBool(node, wxT("IndentUsesTabs"), true);
-		m_iconsSize = XmlUtils::ReadLong(node, wxT("ToolbarIconSize"), 24);
-		m_showWhitspaces = XmlUtils::ReadLong(node, wxT("ShowWhitespaces"), 0);
-		m_foldCompact = XmlUtils::ReadBool(node, wxT("FoldCompact"));
-		m_foldAtElse = XmlUtils::ReadBool(node, wxT("FoldAtElse"));
-		m_foldPreprocessor = XmlUtils::ReadBool(node, wxT("FoldPreprocessor"));
+		m_displayFoldMargin = XmlUtils::ReadBool(node, wxT("DisplayFoldMargin"), m_displayFoldMargin);
+		m_underlineFoldLine = XmlUtils::ReadBool(node, wxT("UnderlineFoldedLine"), m_underlineFoldLine);
+		m_foldStyle = XmlUtils::ReadString(node, wxT("FoldStyle"), m_foldStyle);
+		m_displayBookmarkMargin = XmlUtils::ReadBool(node, wxT("DisplayBookmarkMargin"), m_displayBookmarkMargin);
+		m_bookmarkShape = XmlUtils::ReadString(node, wxT("BookmarkShape"),m_bookmarkShape);
+		m_bookmarkBgColour = XmlUtils::ReadString(node, wxT("BookmarkBgColour"), m_bookmarkBgColour.GetAsString(wxC2S_HTML_SYNTAX));
+		m_bookmarkFgColour = XmlUtils::ReadString(node, wxT("BookmarkFgColour"), m_bookmarkFgColour.GetAsString(wxC2S_HTML_SYNTAX));
+		m_highlightCaretLine = XmlUtils::ReadBool(node, wxT("HighlightCaretLine"), m_highlightCaretLine);
+		m_displayLineNumbers = XmlUtils::ReadBool(node, wxT("ShowLineNumber"), m_displayLineNumbers);
+		m_showIndentationGuidelines = XmlUtils::ReadBool(node, wxT("IndentationGuides"), m_showIndentationGuidelines);
+		m_caretLineColour = XmlUtils::ReadString(node, wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
+		m_indentUsesTabs = XmlUtils::ReadBool(node, wxT("IndentUsesTabs"), m_indentUsesTabs);
+        m_indentWidth = XmlUtils::ReadLong(node, wxT("IndentWidth"), m_indentWidth);
+        m_tabWidth = XmlUtils::ReadLong(node, wxT("TabWidth"), m_tabWidth);
+		m_iconsSize = XmlUtils::ReadLong(node, wxT("ToolbarIconSize"), m_iconsSize);
+		m_showWhitspaces = XmlUtils::ReadLong(node, wxT("ShowWhitespaces"), m_showWhitspaces);
+		m_foldCompact = XmlUtils::ReadBool(node, wxT("FoldCompact"), m_foldCompact);
+		m_foldAtElse = XmlUtils::ReadBool(node, wxT("FoldAtElse"), m_foldAtElse);
+		m_foldPreprocessor = XmlUtils::ReadBool(node, wxT("FoldPreprocessor"), m_foldPreprocessor);
 		SetFileFontEncoding(XmlUtils::ReadString(node, wxT("FileFontEncoding"), wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8)));
-        m_edgeMode = XmlUtils::ReadLong(node, wxT("EdgeMode"), 0);
-        m_edgeColumn = XmlUtils::ReadLong(node, wxT("EdgeColumn"), 80);
-        m_edgeColour = XmlUtils::ReadString(node, wxT("EdgeColour"), wxT("LIGHT GREY"));
-		m_highlightMatchedBraces = XmlUtils::ReadBool(node, wxT("HighlightMatchedBraces"), true);
+        m_edgeMode = XmlUtils::ReadLong(node, wxT("EdgeMode"), m_edgeMode);
+        m_edgeColumn = XmlUtils::ReadLong(node, wxT("EdgeColumn"), m_edgeColumn);
+        m_edgeColour = XmlUtils::ReadString(node, wxT("EdgeColour"), m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
+		m_highlightMatchedBraces = XmlUtils::ReadBool(node, wxT("HighlightMatchedBraces"), m_highlightMatchedBraces);
 	}
 }
 
@@ -105,6 +109,14 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("HighlightMatchedBraces"), BoolToString(m_highlightMatchedBraces));
 
 	wxString tmp;
+    tmp << m_indentWidth;
+    n->AddProperty(wxT("IndentWidth"), tmp);
+    
+    tmp.clear();
+    tmp << m_tabWidth;
+    n->AddProperty(wxT("TabWidth"), tmp);
+    
+    tmp.clear();
 	tmp << m_iconsSize;
 	n->AddProperty(wxT("ToolbarIconSize"), tmp);
 

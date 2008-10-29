@@ -241,11 +241,26 @@ OptionsConfigPtr EditorConfig::GetOptions() const
 {
 	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Options"));
 	// node can be null ...
-	return new OptionsConfig(node);
+	OptionsConfigPtr opts = new OptionsConfig(node);
+    
+    // import legacy tab-width setting into opts
+    long tabWidth(opts->GetTabWidth());
+    if (const_cast<EditorConfig*>(this)->GetLongValue(wxT("EditorTabWidth"), tabWidth)) {
+        opts->SetTabWidth(tabWidth);
+    }
+    
+    return opts;
 }
 
 void EditorConfig::SetOptions(OptionsConfigPtr opts)
 {
+    // remove legacy tab-width setting
+	wxXmlNode *child = XmlUtils::FindNodeByName(m_doc->GetRoot(), wxT("ArchiveObject"), wxT("EditorTabWidth"));
+	if (child) {
+		m_doc->GetRoot()->RemoveChild(child);
+		delete child;
+	}
+
 	// locate the current node
 	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Options"));
 	if ( node ) {

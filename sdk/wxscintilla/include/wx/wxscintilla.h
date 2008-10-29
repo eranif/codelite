@@ -72,6 +72,7 @@
 #define wxSCI_WS_INVISIBLE 0
 #define wxSCI_WS_VISIBLEALWAYS 1
 #define wxSCI_WS_VISIBLEAFTERINDENT 2
+#define wxSCI_WS_INDENTVISIBLE 3
 #define wxSCI_EOL_CRLF 0
 #define wxSCI_EOL_CR 1
 #define wxSCI_EOL_LF 2

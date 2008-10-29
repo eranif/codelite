@@ -153,28 +153,17 @@ void CodeFormatter::OnFormat(wxCommandEvent &e)
 void CodeFormatter::DoFormatFile(IEditor *editor)
 {
 	long curpos = editor->GetCurrentPosition();
+    
 	//execute the formatter
 	FormatOptions fmtroptions;
 	m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
 	wxString options = fmtroptions.ToString();
     
-    wxString extraOptions;
-    
-    if(m_mgr->GetEditorSettings()->GetIndentUsesTabs()) {
-        extraOptions << wxT(" -t");
-    } else {
-        extraOptions << wxT(" -s");
-    }
-    
-    // read the tab size from the global settings
-    SimpleLongValue tabWidth;
-    tabWidth.SetValue(4);
-    
-	m_mgr->GetConfigTool()->ReadObject(wxT("EditorTabWidth"), &tabWidth);
-    extraOptions << tabWidth.GetValue() << wxT(" ");
-    
-    // append the extran options
-    options << extraOptions;
+    //determine indentation method and amount
+    bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
+    int tabWidth = m_mgr->GetEditorSettings()->GetTabWidth();
+    int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
+    options << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
     
 	wxString output;
 	AstyleFormat(editor->GetEditorText(), options, output);

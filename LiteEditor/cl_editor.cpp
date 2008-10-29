@@ -353,12 +353,6 @@ void LEditor::SetProperties()
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 
-	// by default we use tab size 4
-	long tabWidth(4);
-	EditorConfigST::Get()->GetLongValue(wxT("EditorTabWidth"), tabWidth);
-	SetTabWidth(tabWidth);
-	SetIndent(tabWidth);
-
 #ifdef __WXMAC__
 	// turning off these two greatly improves performance
 	// on Mac
@@ -369,9 +363,14 @@ void LEditor::SetProperties()
 	SetBufferedDraw(true);
 #endif
 
+    //indentation settings
 	SetTabIndents(true);
 	SetBackSpaceUnIndents (true);
-	SetUseTabs (options->GetIndentUsesTabs());
+	SetUseTabs(options->GetIndentUsesTabs());
+	SetTabWidth(options->GetTabWidth());
+	SetIndent(options->GetIndentWidth());
+	SetIndentationGuides(options->GetShowIndentationGuidelines());
+    
 	SetLayoutCache(wxSCI_CACHE_DOCUMENT);
 
 	size_t frame_flags = Frame::Get()->GetFrameGeneralInfo().GetFlags();
@@ -380,7 +379,6 @@ void LEditor::SetProperties()
 	//if no right click menu is provided by the context, use scintilla default
 	//right click menu
 	UsePopUp(m_rightClickMenu ? false : true);
-	SetIndentationGuides(options->GetShowIndentationGuidelines());
 
 #ifdef __WXMAC__
 	IndicatorSetUnder(1, false);

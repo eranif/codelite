@@ -40,7 +40,7 @@ public:
 
 enum IndentView {ivNone, ivReal, ivLookForward, ivLookBoth};
 
-enum WhiteSpaceVisibility {wsInvisible=0, wsVisibleAlways=1, wsVisibleAfterIndent=2};
+enum WhiteSpaceVisibility {wsInvisible=0, wsVisibleAlways=1, wsVisibleAfterIndent=2, wsIndentVisible=3};
 
 /**
  */

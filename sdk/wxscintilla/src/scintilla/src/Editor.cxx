@@ -2204,6 +2204,13 @@ void Editor::DrawIndicators(Surface *surface, ViewStyle &vsDraw, int line, int x
 	}
 }
 
+inline bool isWSvisible(bool inIndentation, WhiteSpaceVisibility wsv)
+{
+    return wsv == wsVisibleAlways || 
+           wsv == wsIndentVisible && inIndentation ||
+           wsv == wsVisibleAfterIndent && !inIndentation;
+}
+
 void DrawTextBlob(Surface *surface, ViewStyle &vsDraw, PRectangle rcSegment,
 				  const char *s, ColourAllocated textBack, ColourAllocated textFore, bool twoPhaseDraw) {
 	if (!twoPhaseDraw) {
@@ -2372,8 +2379,7 @@ void Editor::DrawLine(Surface *surface, ViewStyle &vsDraw, int line, int lineVis
 			ColourAllocated textBack = TextBackground(vsDraw, overrideBackground, background, inSelection, inHotspot, styleMain, i, ll);
 			if (ll->chars[i] == '\t') {
 				// Tab display
-				if (drawWhitespaceBackground &&
-				        (!inIndentation || vsDraw.viewWhitespace == wsVisibleAlways))
+				if (drawWhitespaceBackground && isWSvisible(inIndentation, vsDraw.viewWhitespace))
 					textBack = vsDraw.whitespaceBackground.allocated;
 				surface->FillRectangle(rcSegment, textBack);
 			} else if (IsControlCharacter(ll->chars[i])) {
@@ -2387,8 +2393,7 @@ void Editor::DrawLine(Surface *surface, ViewStyle &vsDraw, int line, int lineVis
 				        (inIndentation && vsDraw.viewIndentationGuides == ivReal)) {
 					for (int cpos = 0; cpos <= i - startseg; cpos++) {
 						if (ll->chars[cpos + startseg] == ' ') {
-							if (drawWhitespaceBackground &&
-							        (!inIndentation || vsDraw.viewWhitespace == wsVisibleAlways)) {
+							if (drawWhitespaceBackground && isWSvisible(inIndentation, vsDraw.viewWhitespace)) {
 								PRectangle rcSpace(ll->positions[cpos + startseg] + xStart - subLineStart,
 									rcSegment.top,
 									ll->positions[cpos + startseg + 1] + xStart - subLineStart,
@@ -2456,8 +2461,7 @@ void Editor::DrawLine(Surface *surface, ViewStyle &vsDraw, int line, int lineVis
 			if (ll->chars[i] == '\t') {
 				// Tab display
 				if (!twoPhaseDraw) {
-					if (drawWhitespaceBackground &&
-					        (!inIndentation || vsDraw.viewWhitespace == wsVisibleAlways))
+					if (drawWhitespaceBackground && isWSvisible(inIndentation, vsDraw.viewWhitespace))
 						textBack = vsDraw.whitespaceBackground.allocated;
 					surface->FillRectangle(rcSegment, textBack);
 				}
@@ -2476,7 +2480,7 @@ void Editor::DrawLine(Surface *surface, ViewStyle &vsDraw, int line, int lineVis
 					}
 				}
 				if (vsDraw.viewWhitespace != wsInvisible) {
-					if (!inIndentation || vsDraw.viewWhitespace == wsVisibleAlways) {
+                    if (isWSvisible(inIndentation, vsDraw.viewWhitespace)) {
 						PRectangle rcTab(rcSegment.left + 1, rcSegment.top + 4,
 						        rcSegment.right - 1, rcSegment.bottom - vsDraw.maxDescent);
 						DrawTabArrow(surface, rcTab, rcSegment.top + vsDraw.lineHeight / 2);
@@ -2519,10 +2523,9 @@ void Editor::DrawLine(Surface *surface, ViewStyle &vsDraw, int line, int lineVis
 							if (vsDraw.viewWhitespace != wsInvisible) {
 								if (vsDraw.whitespaceForegroundSet)
 									textFore = vsDraw.whitespaceForeground.allocated;
-								if (!inIndentation || vsDraw.viewWhitespace == wsVisibleAlways) {
+                                if (isWSvisible(inIndentation, vsDraw.viewWhitespace)) {
 									int xmid = (ll->positions[cpos + startseg] + ll->positions[cpos + startseg + 1]) / 2;
-									if (!twoPhaseDraw && drawWhitespaceBackground &&
-									        (!inIndentation || vsDraw.viewWhitespace == wsVisibleAlways)) {
+									if (!twoPhaseDraw && drawWhitespaceBackground) {
 										textBack = vsDraw.whitespaceBackground.allocated;
 										PRectangle rcSpace(ll->positions[cpos + startseg] + xStart - subLineStart,
 											rcSegment.top,

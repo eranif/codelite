@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -15,13 +15,13 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
-#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/clrpicker.h>
-#include <wx/spinctrl.h>
 #include <wx/choice.h>
-#include <wx/radiobox.h>
+#include <wx/statbox.h>
+#include <wx/spinctrl.h>
 #include <wx/radiobut.h>
+#include <wx/radiobox.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -36,19 +36,18 @@ class EditorSettingsGeneralPageBase : public wxPanel
 	
 	protected:
 		wxCheckBox* m_displayLineNumbers;
-		wxCheckBox* m_indentsUsesTabs;
-		wxCheckBox* m_showIndentationGuideLines;
-		wxCheckBox* m_highlighyCaretLine;
 		wxCheckBox* m_checkBoxMatchBraces;
-		wxStaticText* m_staticText2;
+		wxCheckBox* m_highlighyCaretLine;
+		wxCheckBox* m_showIndentationGuideLines;
+		wxStaticText* m_staticText9;
 		wxColourPickerCtrl* m_caretLineColourPicker;
-		wxStaticText* m_staticText3;
-		wxSpinCtrl* m_spinCtrlTabWidth;
 		wxStaticText* m_staticText4;
 		wxChoice* m_whitespaceStyle;
-		wxRadioBox* m_radioBoxNavigationMethod;
-		wxCheckBox* m_checkBoxTrimLine;
-		wxCheckBox* m_checkBoxAppendLF;
+		wxCheckBox* m_indentsUsesTabs;
+		wxStaticText* m_staticText3;
+		wxSpinCtrl* m_indentWidth;
+		wxStaticText* m_staticText31;
+		wxSpinCtrl* m_tabWidth;
 		wxRadioButton* m_radioBtnRMDisabled;
 		wxRadioButton* m_radioBtnRMLine;
 		wxRadioButton* m_radioBtnRMBackground;
@@ -56,13 +55,17 @@ class EditorSettingsGeneralPageBase : public wxPanel
 		wxSpinCtrl* m_rightMarginColumn;
 		wxStaticText* m_staticText5;
 		wxColourPickerCtrl* m_rightMarginColour;
+		wxCheckBox* m_checkBoxTrimLine;
+		wxCheckBox* m_checkBoxAppendLF;
+		wxRadioBox* m_radioBoxNavigationMethod;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnHighlightCaretLine( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnRightMarginIndicator( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		EditorSettingsGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 650,552 ), long style = wxTAB_TRAVERSAL );
+		EditorSettingsGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~EditorSettingsGeneralPageBase();
 	
 };

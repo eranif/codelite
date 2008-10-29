@@ -140,6 +140,7 @@ public:
 	const wxString &GetCompilerType() const {
 		return m_compilerType;
 	}
+	
 	void SetCompilerType(const wxString &cmpType) {
 		m_compilerType = cmpType;
 	}

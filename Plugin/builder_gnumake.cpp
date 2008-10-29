@@ -955,7 +955,7 @@ void BuilderGnuMake::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxStrin
 	BuildCommandList::iterator iter;
 	
 	cmds.clear();
-	bldConf->GetPreBuildCommands(cmds);
+	bldConf->GetPostBuildCommands(cmds);
 	bool first(true);
 	if (!cmds.empty()) {
 		iter = cmds.begin();
@@ -980,7 +980,7 @@ void BuilderGnuMake::CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString
 	BuildCommandList::iterator iter;
 	
 	cmds.clear();
-	bldConf->GetPostBuildCommands(cmds);
+	bldConf->GetPreBuildCommands(cmds);
 	bool first(true);
 	if (!cmds.empty()) {
 		iter = cmds.begin();

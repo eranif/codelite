@@ -97,7 +97,7 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="maximum_size"></property>
-                                <property name="minimum_size">300,200</property>
+                                <property name="minimum_size">-1,-1</property>
                                 <property name="name">m_listCtrlDatabases</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
@@ -155,7 +155,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag"></property>
+                            <property name="flag">wxEXPAND</property>
                             <property name="proportion">0</property>
                             <object class="wxBoxSizer" expanded="0">
                                 <property name="minimum_size"></property>
@@ -164,7 +164,7 @@
                                 <property name="permission">none</property>
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
-                                    <property name="flag">wxALL</property>
+                                    <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="proportion">0</property>
                                     <object class="wxButton" expanded="1">
                                         <property name="bg"></property>
@@ -216,7 +216,7 @@
                                 </object>
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
-                                    <property name="flag">wxALL</property>
+                                    <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="proportion">0</property>
                                     <object class="wxButton" expanded="1">
                                         <property name="bg"></property>
@@ -268,7 +268,7 @@
                                 </object>
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
-                                    <property name="flag">wxALL</property>
+                                    <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="proportion">0</property>
                                     <object class="wxButton" expanded="1">
                                         <property name="bg"></property>
@@ -320,7 +320,7 @@
                                 </object>
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
-                                    <property name="flag">wxALL</property>
+                                    <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="proportion">0</property>
                                     <object class="wxButton" expanded="1">
                                         <property name="bg"></property>
@@ -512,7 +512,7 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="maximum_size"></property>
-                                <property name="minimum_size">-1,100</property>
+                                <property name="minimum_size">-1,-1</property>
                                 <property name="name">m_listCtrlPaths</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>

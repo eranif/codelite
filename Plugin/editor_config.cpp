@@ -73,6 +73,7 @@ void SimpleStringValue::DeSerialize(Archive &arch)
 wxString EditorConfig::m_svnRevision;
 
 EditorConfig::EditorConfig()
+: m_transcation(false)
 {
 	m_doc = new wxXmlDocument();
 }
@@ -156,7 +157,7 @@ wxString EditorConfig::LoadPerspective(const wxString &Name) const
 		//add an Layout node
 		wxXmlNode *newChild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Layout"));
 		m_doc->GetRoot()->AddChild(newChild);
-		m_doc->Save(m_fileName.GetFullPath());
+		DoSave();
 		layoutNode = newChild;
 	}
 
@@ -209,7 +210,7 @@ wxString EditorConfig::LoadPerspective(const wxString &Name) const
 //				wxString strStyle;
 //				strStyle << style;
 //				XmlUtils::UpdateProperty(child, wxT("Style"), strStyle);
-//				m_doc->Save(m_fileName.GetFullPath());
+//				DoSave();
 //				return;
 //			}
 //		}
@@ -223,7 +224,7 @@ wxString EditorConfig::LoadPerspective(const wxString &Name) const
 //	strStyle << style;
 //	newChild->AddProperty(wxT("Style"), strStyle);
 //	layoutNode->AddChild(newChild);
-//	m_doc->Save(m_fileName.GetFullPath());
+//	DoSave();
 //}
 //
 
@@ -269,7 +270,7 @@ void EditorConfig::SetOptions(OptionsConfigPtr opts)
 	}
 
 	m_doc->GetRoot()->AddChild(opts->ToXml());
-	m_doc->Save(m_fileName.GetFullPath());
+	DoSave();
 }
 
 void EditorConfig::SetTagsDatabase(const wxString &dbName)
@@ -283,7 +284,7 @@ void EditorConfig::SetTagsDatabase(const wxString &dbName)
 		node->AddProperty(wxT("Path"), dbName);
 		m_doc->GetRoot()->AddChild(node);
 	}
-	m_doc->Save(m_fileName.GetFullPath());
+	DoSave();
 }
 
 wxString EditorConfig::GetTagsDatabase() const
@@ -333,7 +334,7 @@ void EditorConfig::SetRecentlyOpenedFies(const wxArrayString &files)
 	}
 
 	//save the data to disk
-	m_doc->Save(m_fileName.GetFullPath());
+	DoSave();
 }
 
 
@@ -373,7 +374,7 @@ void EditorConfig::SetRecentlyOpenedWorkspaces(const wxArrayString &files)
 	}
 
 	//save the data to disk
-	m_doc->Save(m_fileName.GetFullPath());
+	DoSave();
 }
 
 bool EditorConfig::WriteObject(const wxString &name, SerializedObject *obj)
@@ -396,7 +397,7 @@ bool EditorConfig::WriteObject(const wxString &name, SerializedObject *obj)
 	//serialize the object into the archive
 	obj->Serialize(arch);
 	//save the archive
-	return m_doc->Save(m_fileName.GetFullPath());
+	return DoSave();
 }
 
 bool EditorConfig::ReadObject(const wxString &name, SerializedObject *obj)
@@ -425,7 +426,7 @@ void EditorConfig::SetRevision(const wxString &rev)
 	}
 
 	XmlUtils::UpdateProperty(root, wxT("Revision"), rev);
-	m_doc->Save(m_fileName.GetFullPath());
+	DoSave();
 }
 
 
@@ -508,6 +509,25 @@ void EditorConfig::LoadLexers()
 	}
 }
 
+void EditorConfig::Begin()
+{
+	m_transcation = true;
+}
+
+void EditorConfig::Save()
+{
+	m_transcation = false;
+	DoSave();
+}
+
+bool EditorConfig::DoSave() const
+{
+	if(m_transcation){
+		return true;
+	}
+	return m_doc->Save(m_fileName.GetFullPath());
+}
+
 //--------------------------------------------------
 // Simple rectangle class wrapper
 //--------------------------------------------------
@@ -535,3 +555,4 @@ void SimpleRectValue::Serialize(Archive& arch)
 	arch.Write(wxT("TopLeft"), m_rect.GetTopLeft());
 	arch.Write(wxT("Size"), m_rect.GetSize());
 }
+

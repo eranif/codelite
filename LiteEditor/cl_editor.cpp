@@ -2160,7 +2160,18 @@ void LEditor::UpdateColours()
 	}
 
 	//colourise the document
-	Colourise(0, wxSCI_INVALID_POSITION);
+	int startLine = GetFirstVisibleLine();
+	int endLine =  startLine + LinesOnScreen();
+	if (endLine >= (GetLineCount() - 1))
+		endLine--;
+	
+	int startPos = PositionFromLine(startLine);
+	int endPos   = PositionFromLine(endLine);
+	if(startPos >= endPos){
+		Colourise(startPos, wxSCI_INVALID_POSITION);
+	}else{
+		Colourise(startPos, endPos);
+	}
 }
 
 int LEditor::SafeGetChar(int pos)

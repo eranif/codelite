@@ -159,6 +159,11 @@ void OptionsDlg::SaveChanges()
 
 	// construct an OptionsConfig object and update the configuration
 	OptionsConfigPtr options(new OptionsConfig(NULL));
+	
+	// for performance reasons, we start a transaction for the configuration
+	// file
+	EditorConfigST::Get()->Begin();
+	
 	options->SetDisplayFoldMargin( m_checkBoxDisplayFoldMargin->IsChecked() );
 	options->SetUnderlineFoldLine( m_checkBoxMarkFoldedLine->IsChecked() );
 	options->SetFoldStyle(m_foldStyleChoice->GetStringSelection());
@@ -214,6 +219,10 @@ void OptionsDlg::SaveChanges()
 	m_genPage->Save(options); 
 	
 	EditorConfigST::Get()->SetOptions(options);
+	
+	// save the modifications to the disk
+	EditorConfigST::Get()->Save();
+	
 	ManagerST::Get()->ApplySettingsChanges();
 }
 

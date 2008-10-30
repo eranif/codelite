@@ -139,7 +139,6 @@ void FileExplorerTree::OnTagNode(wxCommandEvent &e)
         td.SetString(path);
         Frame::Get()->AddPendingEvent(td);
     }
-    e.Skip();
 }
 
 void FileExplorerTree::OnContextMenu(wxTreeEvent &event)

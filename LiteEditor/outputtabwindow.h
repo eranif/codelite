@@ -40,6 +40,7 @@ protected:
 	virtual void CreateGUIControl();
 	//Event handlers
     virtual void OnOutputScrolls(wxCommandEvent &e);
+	virtual void OnSciUpdateUI(wxScintillaEvent &event);
 	virtual void OnClearAll(wxCommandEvent &e);
 	virtual void OnWordWrap(wxCommandEvent &e);
 	virtual void OnMouseDClick(wxScintillaEvent &event){event.Skip();}
@@ -47,6 +48,7 @@ protected:
 	virtual void OnStyleNeeded(wxScintillaEvent &event){event.Skip();}
 	virtual void OnCompilerColours(wxCommandEvent &event){event.Skip();};
 	virtual bool AcceptsFocus() const {return m_canFocus;}
+	void RecalcHorizontalScrollbar();
 	
 public:
 	OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString &name);

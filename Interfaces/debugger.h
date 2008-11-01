@@ -218,7 +218,7 @@ public:
 	/**
 	 * \brief set break point at given file and line. If the breakpoint was placed successfully, observer->UpdateBpAdded() will be invoked
 	 */
-	virtual bool Break(const wxString &file, long lineno) = 0;
+	virtual bool Break(const wxString &file, long lineno, bool temporary) = 0;
 	/**
 	 * \brief remove breakpoint from given file and line
 	 */

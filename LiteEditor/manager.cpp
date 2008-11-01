@@ -2363,9 +2363,10 @@ void Manager::UpdateGotControl(DebuggerReasons reason)
 		}
 	}
 	break;
-	case DBG_END_STEPPING://finished one of the following: next/step/nexti/stepi
-	case DBG_FUNC_FINISHED:
-	case DBG_BP_HIT: { //breakpoint reached
+	case DBG_END_STEPPING:	// finished one of the following: next/step/nexti/stepi
+	case DBG_FUNC_FINISHED:	
+	case DBG_UNKNOWN:		// the most common reason: temporary breakpoint
+	case DBG_BP_HIT: { 		// breakpoint reached
 		//query the current line and file
 		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 		if (dbgr && dbgr->IsRunning()) {

@@ -2056,6 +2056,11 @@ void LEditor::AddDebuggerContextMenu(wxMenu *menu)
 	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgAddWatch), NULL, this);
 	m_dynItems.push_back(item);
 
+	item = new wxMenuItem(menu, wxNewId(), _("Run to cursor"));
+	menu->Prepend(item);
+	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
+	m_dynItems.push_back(item);
+
 	//---------------------------------------------
 	//add custom commands
 	//---------------------------------------------
@@ -2634,4 +2639,14 @@ void LEditor::SetEditorState(const LEditorState& s)
 		MarkerAdd(line_number, 0x7);
 	}
 	SetCaretAt(s.caretPosition);
+}
+
+void LEditor::OnDbgRunToCursor(wxCommandEvent& event)
+{
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	
+	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()){
+		dbgr->Break(GetFileName().GetFullPath(), GetCurrentLine()+1, true);
+		dbgr->Continue();
+	}
 }

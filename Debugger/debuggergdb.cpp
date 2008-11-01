@@ -472,11 +472,11 @@ void DbgGdb::SetBreakpoints()
 {
 	for (size_t i=0; i< m_bpList.size(); i++) {
 		BreakpointInfo bpinfo = m_bpList.at(i);
-		Break(bpinfo.file, bpinfo.lineno);
+		Break(bpinfo.file, bpinfo.lineno, false);
 	}
 }
 
-bool DbgGdb::Break(const wxString &fileName, long lineno)
+bool DbgGdb::Break(const wxString &fileName, long lineno, bool temporary)
 {
 	wxFileName fn(fileName);
 	BreakpointInfo bp;
@@ -487,6 +487,10 @@ bool DbgGdb::Break(const wxString &fileName, long lineno)
 	tmpfileName.Replace(wxT("\\"), wxT("/"));
 
 	wxString command(wxT("break "));
+	if(temporary) {
+		command = wxT("tbreak ");
+	}
+	
 	tmpfileName.Prepend(wxT("\""));
 	command << tmpfileName << wxT(":") << lineno << wxT("\"");
 	if (m_info.enableDebugLog) {

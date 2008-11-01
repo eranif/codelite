@@ -232,7 +232,7 @@ bool DebuggerMgr::AddBreakpoint(const BreakpointInfo &bp)
 {
 	IDebugger *dbgr = GetActiveDebugger();
 	if(dbgr && dbgr->IsRunning()){
-		dbgr->Break(bp.file, bp.lineno);
+		dbgr->Break(bp.file, bp.lineno, false);
 	}
 	//if a breakpoint with this file and line already exist
 	//dont add it

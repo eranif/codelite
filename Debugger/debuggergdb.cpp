@@ -135,9 +135,9 @@ static void StipString(wxString &string)
 	string = string.AfterFirst(wxT('"'));
 	string = string.BeforeLast(wxT('"'));
 
-	//replace \\n with nothing
+	string.Replace(wxT("\\\\n"), wxT("\n"));
 	string.Replace(wxT("\\n"), wxEmptyString);
-	string.Replace(wxT("\\t"), wxEmptyString);
+	string.Replace(wxT("\\\\t"), wxT("\t"));
 	string.Replace(wxT("\\\""), wxT("\""));
 }
 

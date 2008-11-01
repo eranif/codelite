@@ -736,7 +736,14 @@ void Language::ParseComments(const wxFileName &fileName, std::vector<DbRecordPtr
 				m_scanner->ClearComment();
 				continue;
 			}
-
+			
+			// save the previous comment buffer
+			if ( comment.IsEmpty() == false ) {
+				comments->push_back( static_cast<DbRecord*>( new Comment( comment, fileName.GetFullPath(), line - 1)) );
+				comment.Empty();
+				line = -1;
+			}
+			
 			// first time or no comment is buffer
 			if ( comment.IsEmpty() ) {
 				comment = m_scanner->GetComment();
@@ -745,14 +752,11 @@ void Language::ParseComments(const wxFileName &fileName, std::vector<DbRecordPtr
 				continue;
 			}
 
-			if ( comment.IsEmpty() == false ) {
-				comments->push_back( static_cast<DbRecord*>( new Comment( comment, fileName.GetFullPath(), line - 1)) );
-				comment.Empty();
-				line = -1;
-			}
-
 			comments->push_back( static_cast<DbRecord*>( new Comment( m_scanner->GetComment(), fileName.GetFullPath(), m_scanner->lineno()-1)) );
+			comment.Empty();
+			line = -1;
 			m_scanner->ClearComment();
+			
 		} else if ( type == CComment ) {
 			comments->push_back( static_cast<DbRecord*>( new Comment( m_scanner->GetComment(), fileName.GetFullPath(), m_scanner->lineno()) ) );
 			m_scanner->ClearComment();

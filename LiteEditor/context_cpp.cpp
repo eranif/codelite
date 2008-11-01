@@ -1440,6 +1440,11 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		if (dbgr->GetTip(command, output)) {
 			// cancel any old calltip and display the new one
 			ctrl.CallTipCancel();
+			
+			// wxScintilla's tooltip does not present \t characters
+			// so we replace it with 4 spaces
+			output.Replace(wxT("\t"), wxT("    "));
+			
 			ctrl.CallTipShow(event.GetPosition(), output);
 		}
 	}

@@ -119,6 +119,12 @@ void NewProjectDlg::OnButtonCreate(wxCommandEvent &e)
 		Mkdir(fn.GetPath());
 	}
 	
+	// dont allow whitespace in project name
+	if(m_textCtrlProjName->GetValue().Find(wxT(" ")) != wxNOT_FOUND){
+		wxMessageBox(wxT("Whitespace is not allowed in project name"), wxT("Error"), wxOK | wxICON_HAND | wxCENTER, this);
+		return;
+	}
+	
 	if ( !wxDirExists(fn.GetPath()) ) {
 		wxMessageBox(wxT("Invalid path: ") + fn.GetPath(), wxT("Error"), wxOK | wxICON_HAND);
 		return;

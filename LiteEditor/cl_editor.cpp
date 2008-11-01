@@ -2165,13 +2165,7 @@ void LEditor::UpdateColours()
 	if (endLine >= (GetLineCount() - 1))
 		endLine--;
 	
-	int startPos = PositionFromLine(startLine);
-	int endPos   = PositionFromLine(endLine);
-	if(startPos >= endPos){
-		Colourise(startPos, wxSCI_INVALID_POSITION);
-	}else{
-		Colourise(startPos, endPos);
-	}
+	Colourise(0, wxSCI_INVALID_POSITION);
 }
 
 int LEditor::SafeGetChar(int pos)

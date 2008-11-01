@@ -81,18 +81,18 @@ protected:
 	//
 	//Helper functions
 	///////////////////////////////////////////////////////
-	wxString FormatRaws(const wxArrayString &lines, const wxString &basePath, SvnXmlParser::FileState state);
-	void DoMakeHTML(const wxArrayString &outpout, const wxString &basePath);
+	wxString FormatRaws(const wxArrayString &lines, const wxString &basePath, SvnXmlParser::FileState state, bool inclOutOfDate = false);
+	void DoMakeHTML(const wxArrayString &outpout, const wxString &basePath, bool inclOutOfDate = false);
 	ProjectPtr GetSelectedProject();
 	
-	void DoGetSvnStatus(const wxString &basePath, wxArrayString &output);
-	void DoGenerateReport(const wxString &basePath);
+	void DoGetSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate = false);
+	void DoGenerateReport(const wxString &basePath, bool inclOutOfDate = false);
 	
-	void DoGenerateWspReport();
-	void DoGetWspSvnStatus(wxArrayString &output);
+	void DoGenerateWspReport(bool inclOutOfDate = false);
+	void DoGetWspSvnStatus(wxArrayString &output, bool inclOutOfDate = false);
 	
-	void DoGetPrjSvnStatus(wxArrayString &output);
-	void DoGeneratePrjReport();
+	void DoGetPrjSvnStatus(wxArrayString &output, bool inclOutOfDate = false);
+	void DoGeneratePrjReport(bool inclOutOfDate = false);
 	
 	// event handlers
 	///////////////////////////////////////////////////////
@@ -102,6 +102,7 @@ protected:
 	void OnCleanup(wxCommandEvent &event);
 	void OnFileSaved(wxCommandEvent &event);
 	void OnShowSvnStatus_FileExplorer(wxCommandEvent &event);
+	void OnShowSvnServerStatus_FileExplorer(wxCommandEvent &event);
 	void OnFileExplorerInitDone(wxCommandEvent &event);
 	void OnOptions(wxCommandEvent &event);
 	void OnChangeLog(wxCommandEvent &event);
@@ -119,9 +120,11 @@ protected:
 	void OnRefrshIconsStatus(wxCommandEvent &e);
 	void OnRefreshIconsCond(wxCommandEvent &e);
 	void OnShowReportWsp(wxCommandEvent &e);
+	void OnShowServerReportWsp(wxCommandEvent &e);
 	void OnUpdateWsp(wxCommandEvent &e);
 	void OnCommitWsp(wxCommandEvent &e);
 	void OnShowReportPrj(wxCommandEvent &e);
+	void OnShowServerReportPrj(wxCommandEvent &e);
 	void OnUpdatePrj(wxCommandEvent &e);
 	void OnCommitPrj(wxCommandEvent &e);
 	void OnResolveConflictFile(wxCommandEvent &e);

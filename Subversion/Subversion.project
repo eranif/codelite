@@ -51,7 +51,6 @@
     <File Name="logindlgbase.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
       <General OutputFile="../Runtime/plugins/Subversion.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
@@ -209,4 +208,8 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinReleaseUnicode"/>
+  <VirtualDirectory Name="HTML">
+    <File Name="..\Runtime\svnreport.html"/>
+  </VirtualDirectory>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

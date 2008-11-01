@@ -43,7 +43,10 @@ public:
 		StateModified		= 0x00000002,
 
 		//wc-status: unversioned
-		StateUnversioned	= 0x00000004
+		StateUnversioned	= 0x00000004,
+        
+        //repos-status: modified
+        StateOutOfDate      = 0x00000008
 	};
 
 public:

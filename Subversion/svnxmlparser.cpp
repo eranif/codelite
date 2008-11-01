@@ -38,18 +38,23 @@ SvnXmlParser::~SvnXmlParser()
 
 void SvnXmlParser::GetFiles(const wxString &input, wxArrayString &files, FileState state)
 {
-	wxString searchedState;
+	wxString wcSearchedState;
 	if (state & StateConflict) {
-		searchedState << wxT("conflicted");
+		wcSearchedState << wxT("conflicted");
 	}
 
 	if (state & StateModified) {
-		searchedState << wxT(" modified added merged deleted ");
+		wcSearchedState << wxT(" modified added merged deleted ");
 	}
 
 	if (state & StateUnversioned) {
-		searchedState << wxT(" unversioned ignored ");
+		wcSearchedState << wxT(" unversioned ignored ");
 	}
+    
+    wxString repSearchedState;
+    if (state & StateOutOfDate) {
+        repSearchedState << wxT(" modified ");
+    }
 
 	wxStringInputStream stream(input);
 	wxXmlDocument doc(stream);
@@ -67,13 +72,22 @@ void SvnXmlParser::GetFiles(const wxString &input, wxArrayString &files, FileSta
 				while (child) {
 					if (child->GetName() == wxT("entry")) {
 						wxString path = XmlUtils::ReadString(child, wxT("path"), wxEmptyString);
-						wxXmlNode *status = XmlUtils::FindFirstByTagName(child, wxT("wc-status"));
-						if (status) {
-							wxString item = XmlUtils::ReadString(status, wxT("item"), wxEmptyString);
-							if (path.IsEmpty() == false && searchedState.Contains(item) && files.Index(path) == wxNOT_FOUND) {
-								files.Add(path);
-							}
-						}
+                        if (!path.IsEmpty()) {
+                            wxXmlNode *status = XmlUtils::FindFirstByTagName(child, wxT("wc-status"));
+                            if (status) {
+                                wxString item = XmlUtils::ReadString(status, wxT("item"), wxEmptyString);
+                                if (wcSearchedState.Contains(item) && files.Index(path) == wxNOT_FOUND) {
+                                    files.Add(path);
+                                }
+                            }
+                            status = XmlUtils::FindFirstByTagName(child, wxT("repos-status"));
+                            if (status) {
+                                wxString item = XmlUtils::ReadString(status, wxT("item"), wxEmptyString);
+                                if (repSearchedState.Contains(item) && files.Index(path) == wxNOT_FOUND) {
+                                    files.Add(path);
+                                }
+                            }
+                        }
 					}
 					child = child->GetNext();
 				}

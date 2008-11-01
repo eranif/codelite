@@ -514,6 +514,19 @@ void Frame::Initialize(bool loadLastSession)
 	EditorConfig *cfg = EditorConfigST::Get();
 	GeneralInfo inf;
 	cfg->ReadObject(wxT("GeneralInfo"), &inf);
+	
+	int screenW = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
+	int screenH = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
+	
+	// validate the frame loaded pos & size
+	if(inf.GetFramePosition().x < 0 || inf.GetFramePosition().x > screenW) {
+		inf.SetFramePosition(wxPoint(30, 3));
+	} 
+	
+	if(inf.GetFramePosition().y < 0 || inf.GetFramePosition().y > screenH) {
+		inf.SetFrameSize(wxSize(800, 600));
+	}
+	
 	m_theFrame = new Frame(	NULL,
 	                        wxID_ANY,
 	                        title,

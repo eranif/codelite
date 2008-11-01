@@ -695,10 +695,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 
 	// save the file using the user's defined encoding
 	wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
-
-	LEditorState state;
-	GetEditorState(state);
-
+	
 	// trim lines / append LF if needed
 	TrimText();
 
@@ -713,9 +710,6 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 			return false;
 		}
 	}
-
-	// restore editor state
-	SetEditorState(state);
 
 	//update the modification time of the file
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
@@ -2636,7 +2630,7 @@ void LEditor::SetEditorState(const LEditorState& s)
 
 	for (size_t i=0; i<s.breakpoints.size(); i++) {
 		int line_number = s.breakpoints.at(i);
-		MarkerAdd(line_number, 0x7);
+		MarkerAdd(line_number, 0x8);
 	}
 	SetCaretAt(s.caretPosition);
 }

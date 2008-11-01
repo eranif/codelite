@@ -6,7 +6,7 @@
 		<td ALIGN="CENTER">
 		<h2>
 		<font size="3" face="Verdana">
-		SVN Status Report (source: $(Origin))
+		SVN $(RptType) Status Report [$(Origin)]
 		</font>
 		</h2>
 		</td>
@@ -23,6 +23,17 @@
 		</font>
 		</td>
 	</tr>
+    <hr>
+    <tr>
+        <td>
+            <font size="2" face="Verdana">
+            <table valign="top">
+                <tr> <td>Generated:</td> <td><b>$(DateTime)</b></td> </tr>
+                <tr> <td>Base Path:</td> <td><b>$(BasePath)</b></td> </tr>
+            </table>
+            </font>
+        </td>
+    </tr>
 	<hr>
 	<tr>
 		<td bgcolor="Plum"  ALIGN="CENTER">

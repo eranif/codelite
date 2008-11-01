@@ -82,16 +82,16 @@ protected:
 	//Helper functions
 	///////////////////////////////////////////////////////
 	wxString FormatRaws(const wxArrayString &lines, const wxString &basePath, SvnXmlParser::FileState state, bool inclOutOfDate = false);
-	void DoMakeHTML(const wxArrayString &outpout, const wxString &basePath, bool inclOutOfDate = false);
+	void DoMakeHTML(const wxArrayString &outpout, const wxString &origin, const wxString &basePath, bool inclOutOfDate = false);
 	ProjectPtr GetSelectedProject();
 	
 	void DoGetSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate = false);
 	void DoGenerateReport(const wxString &basePath, bool inclOutOfDate = false);
 	
 	void DoGenerateWspReport(bool inclOutOfDate = false);
-	void DoGetWspSvnStatus(wxArrayString &output, bool inclOutOfDate = false);
+	void DoGetWspSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate = false);
 	
-	void DoGetPrjSvnStatus(wxArrayString &output, bool inclOutOfDate = false);
+	void DoGetPrjSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate = false);
 	void DoGeneratePrjReport(bool inclOutOfDate = false);
 	
 	// event handlers

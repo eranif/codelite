@@ -658,11 +658,11 @@ void SubversionPlugin::OnAppInitDone(wxCommandEvent &event) {
 	m_initIsDone = true;
 }
 
-void SubversionPlugin::DoGetWspSvnStatus(wxArrayString &output, bool inclOutOfDate) {
+void SubversionPlugin::DoGetWspSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate) {
 	//get list of paths to check
 	std::map<wxString, bool> workspaceFolders;
 	
-    workspaceFolders[m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath()] = true;
+    workspaceFolders[basePath] = true;
     
 	wxString errMsg;
 	wxArrayString projects;
@@ -761,19 +761,8 @@ static int compare_files(const wxString &first, const wxString &second)
     return firstFile.GetExt().CmpNoCase(secondFile.GetExt());
 }
 
-void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &basePath, bool inclOutOfDate) {
+void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &origin, const wxString &basePath, bool inclOutOfDate) {
 	Notebook *book =  m_mgr->GetMainNotebook();
-
-	wxString origin(wxT("explorer"));
-	wxString _base(basePath);
-	if (basePath == wxT("workspace")) {
-		origin = wxT("workspace");
-		_base.Empty();
-	} else if (basePath == wxT("project")) {
-		origin = wxT("project");
-		_base.Empty();
-	}
-
 
 	book->Freeze();
 	for ( size_t i=0; i< book->GetPageCount(); i++) {
@@ -808,30 +797,32 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
     files.Clear();
     SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateOutOfDate);
     files.Sort(compare_files);
-    formatStr = FormatRaws(files, _base, SvnXmlParser::StateOutOfDate, inclOutOfDate);
+    formatStr = FormatRaws(files, basePath, SvnXmlParser::StateOutOfDate, inclOutOfDate);
     content.Replace(wxT("$(OutOfDateFiles)"), formatStr);
 
 	files.Clear();
 	SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateModified);
     files.Sort(compare_files);
-	formatStr = FormatRaws(files, _base, SvnXmlParser::StateModified);
+	formatStr = FormatRaws(files, basePath, SvnXmlParser::StateModified);
 	content.Replace(wxT("$(ModifiedFiles)"), formatStr);
 
 	files.Clear();
 	SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateConflict);
     files.Sort(compare_files);
-	formatStr = FormatRaws(files, _base, SvnXmlParser::StateConflict);
+	formatStr = FormatRaws(files, basePath, SvnXmlParser::StateConflict);
 	content.Replace(wxT("$(ConflictFiles)"), formatStr);
 
 	files.Clear();
 	SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateUnversioned);
     files.Sort(compare_files);
-	formatStr = FormatRaws(files, _base, SvnXmlParser::StateUnversioned);
+	formatStr = FormatRaws(files, basePath, SvnXmlParser::StateUnversioned);
 	content.Replace(wxT("$(UnversionedFiles)"), formatStr);
-
-	content.Replace(wxT("$(BasePath)"), _base);
+    
+    content.Replace(wxT("$(RptType)"), inclOutOfDate ? wxT("Online") : wxT("Offline"));
 	content.Replace(wxT("$(Origin)"), origin);
-
+	content.Replace(wxT("$(BasePath)"), basePath);
+	content.Replace(wxT("$(DateTime)"), wxDateTime::Now().Format());
+    
 	reportPage->SetPage(content);
 
 	//create new report
@@ -839,46 +830,46 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &b
 	book->Thaw();
 }
 
-void SubversionPlugin::DoGetPrjSvnStatus(wxArrayString &output, bool inclOutOfDate) {
+void SubversionPlugin::DoGetPrjSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate) {
 	//get the selected project name
 	wxString command;
-	ProjectPtr p = GetSelectedProject();
-	if (!p) {
-		return;
-	}
-    
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive -q --no-ignore ");
 	if (inclOutOfDate) {
         command << wxT("-u ");
     }
-    
-	if(wxFileName::DirExists(p->GetFileName().GetPath() + wxFileName::GetPathSeparator() + wxT(".svn"))){
-		command << wxT("\"") <<  p->GetFileName().GetPath() << wxT("\" ");
+    wxFileName dir(basePath);
+    dir.AppendDir(wxT(".svn"));
+	if(dir.DirExists()){
+		command << wxT("\"") <<  basePath << wxT("\" ");
 		ProcUtils::ExecuteCommand(command, output);
 	} else {
-		m_svn->PrintMessage(wxString::Format(_("Directory '%s' is not under SVN\n"), p->GetFileName().GetFullPath().c_str()));
+		m_svn->PrintMessage(wxString::Format(_("Directory '%s' is not under SVN\n"), basePath.c_str()));
 	}
 }
 
 void SubversionPlugin::DoGeneratePrjReport(bool inclOutOfDate) {
+    wxString basePath;
 	wxArrayString output;
-	DoGetPrjSvnStatus(output, inclOutOfDate);
-
-	DoMakeHTML(output, wxT("project"), inclOutOfDate);
+	ProjectPtr p = GetSelectedProject();
+	if (p) {
+        basePath = p->GetFileName().GetPath();
+		DoGetPrjSvnStatus(basePath, output, inclOutOfDate);
+	}
+	DoMakeHTML(output, wxT("project"), basePath, inclOutOfDate);
 }
 
 void SubversionPlugin::DoGenerateWspReport(bool inclOutOfDate) {
+    wxString basePath = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath();
 	wxArrayString output;
-	DoGetWspSvnStatus(output, inclOutOfDate);
-
-	DoMakeHTML(output, wxT("workspace"), inclOutOfDate);
+	DoGetWspSvnStatus(basePath, output, inclOutOfDate);
+	DoMakeHTML(output, wxT("workspace"), basePath, inclOutOfDate);
 }
 
 void SubversionPlugin::DoGenerateReport(const wxString &basePath, bool inclOutOfDate) {
 	wxArrayString output;
 	DoGetSvnStatus(basePath, output, inclOutOfDate);
-	DoMakeHTML(output, basePath, inclOutOfDate);
+	DoMakeHTML(output, wxT("explorer"), basePath, inclOutOfDate);
 }
 
 wxString SubversionPlugin::FormatRaws(const wxArrayString &lines, const wxString &basePath, SvnXmlParser::FileState state, bool inclOutOfDate) {
@@ -903,11 +894,8 @@ wxString SubversionPlugin::FormatRaws(const wxArrayString &lines, const wxString
 			continue;
 		}
         
-		// make sure we have a full file path
 		wxFileName fn(lines.Item(i));
-		if (!fn.IsAbsolute()) {
-            fn.PrependDir(basePath);
-		}
+        fn.MakeAbsolute();
 		
         if (lastDir != fn.GetPath()) {
             lineCol.Set(lineCol.Red() == 0xff ? 0xd0 : 0xff, 0xff, 0xff);
@@ -915,7 +903,9 @@ wxString SubversionPlugin::FormatRaws(const wxArrayString &lines, const wxString
         content << wxT("<tr bgcolor=\"") << lineCol.GetAsString(wxC2S_HTML_SYNTAX)<< wxT("\">");
         
         if (lastDir != fn.GetPath()) {
-            content << wxT("<td align=\"left\">") << fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) << wxT("</td>");
+            wxFileName rfn = fn;
+            rfn.MakeRelativeTo(basePath);
+            content << wxT("<td align=\"left\">") << rfn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) << wxT("</td>");
         } else {
             content << wxT("<td>&nbsp;</td>");
         }

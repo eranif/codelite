@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <wxFormBuilder_Project>
-    <FileVersion major="1" minor="8" />
+    <FileVersion major="1" minor="9" />
     <object class="Project" expanded="1">
-        <property name="bitmaps"></property>
         <property name="class_decoration"></property>
         <property name="code_generation">C++</property>
+        <property name="disconnect_events">1</property>
         <property name="encoding">UTF-8</property>
         <property name="event_generation">connect</property>
         <property name="file">quickwatchbasedlg</property>
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
-        <property name="icons"></property>
         <property name="internationalize">0</property>
         <property name="name">quickwatchdlg</property>
         <property name="namespace"></property>
@@ -187,13 +186,52 @@
                                 <property name="flag">wxALL|wxEXPAND</property>
                                 <property name="proportion">1</property>
                                 <object class="CustomControl" expanded="1">
+                                    <property name="bg"></property>
                                     <property name="class">LocalVarsTree*</property>
                                     <property name="construction">m_localVarsTree = new LocalVarsTree(m_panel1, wxID_ANY);</property>
+                                    <property name="context_help"></property>
                                     <property name="declaration">LocalVarsTree *m_localVarsTree;</property>
+                                    <property name="enabled">1</property>
+                                    <property name="fg"></property>
+                                    <property name="font"></property>
+                                    <property name="hidden">0</property>
+                                    <property name="id">wxID_ANY</property>
                                     <property name="include">#include &quot;localvarstree.h&quot;</property>
+                                    <property name="maximum_size"></property>
+                                    <property name="minimum_size"></property>
                                     <property name="name">m_localVarsTree</property>
                                     <property name="permission">protected</property>
+                                    <property name="pos"></property>
                                     <property name="settings"></property>
+                                    <property name="size"></property>
+                                    <property name="subclass"></property>
+                                    <property name="tooltip"></property>
+                                    <property name="window_extra_style"></property>
+                                    <property name="window_name"></property>
+                                    <property name="window_style"></property>
+                                    <event name="OnChar"></event>
+                                    <event name="OnEnterWindow"></event>
+                                    <event name="OnEraseBackground"></event>
+                                    <event name="OnKeyDown"></event>
+                                    <event name="OnKeyUp"></event>
+                                    <event name="OnKillFocus"></event>
+                                    <event name="OnLeaveWindow"></event>
+                                    <event name="OnLeftDClick"></event>
+                                    <event name="OnLeftDown"></event>
+                                    <event name="OnLeftUp"></event>
+                                    <event name="OnMiddleDClick"></event>
+                                    <event name="OnMiddleDown"></event>
+                                    <event name="OnMiddleUp"></event>
+                                    <event name="OnMotion"></event>
+                                    <event name="OnMouseEvents"></event>
+                                    <event name="OnMouseWheel"></event>
+                                    <event name="OnPaint"></event>
+                                    <event name="OnRightDClick"></event>
+                                    <event name="OnRightDown"></event>
+                                    <event name="OnRightUp"></event>
+                                    <event name="OnSetFocus"></event>
+                                    <event name="OnSize"></event>
+                                    <event name="OnUpdateUI"></event>
                                 </object>
                             </object>
                         </object>
@@ -215,7 +253,7 @@
                             <object class="wxButton" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
-                                <property name="default">0</property>
+                                <property name="default">1</property>
                                 <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 21 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -92,6 +92,7 @@ TagsManagementBaseDlg::TagsManagementBaseDlg( wxWindow* parent, wxWindowID id, c
 	this->Centre( wxBOTH );
 	
 	// Connect Events
+	m_listCtrlDatabases->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( TagsManagementBaseDlg::OnTagsDbActivated ), NULL, this );
 	m_listCtrlDatabases->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( TagsManagementBaseDlg::OnTagsDbDeSelected ), NULL, this );
 	m_listCtrlDatabases->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( TagsManagementBaseDlg::OnTagsDbSelected ), NULL, this );
 	m_buttonAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsManagementBaseDlg::OnAddDatabase ), NULL, this );
@@ -107,6 +108,7 @@ TagsManagementBaseDlg::TagsManagementBaseDlg( wxWindow* parent, wxWindowID id, c
 TagsManagementBaseDlg::~TagsManagementBaseDlg()
 {
 	// Disconnect Events
+	m_listCtrlDatabases->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( TagsManagementBaseDlg::OnTagsDbActivated ), NULL, this );
 	m_listCtrlDatabases->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( TagsManagementBaseDlg::OnTagsDbDeSelected ), NULL, this );
 	m_listCtrlDatabases->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( TagsManagementBaseDlg::OnTagsDbSelected ), NULL, this );
 	m_buttonAdd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsManagementBaseDlg::OnAddDatabase ), NULL, this );

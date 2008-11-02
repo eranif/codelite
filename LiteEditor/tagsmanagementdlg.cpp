@@ -203,3 +203,17 @@ void TagsManagementDlg::DoLoadPathsTable(const wxFileName& fn)
 		}
 	}
 }
+
+void TagsManagementDlg::OnTagsDbActivated(wxListEvent& event)
+{
+	m_itemDb = event.m_itemIndex;
+	if (m_itemDb != wxNOT_FOUND) {
+		wxFileName *fn = (wxFileName *)m_listCtrlDatabases->GetItemData(m_itemDb);
+		if (fn) {
+			for (long i=0; i<m_listCtrlDatabases->GetItemCount(); i++) {
+				SetColumnText(m_listCtrlDatabases, i, 0, GetColumnText(m_listCtrlDatabases, i, 0), i == m_itemDb ? 1 : 0);
+			}
+			ManagerST::Get()->SetExternalDatabase(*fn);
+		}
+	}
+}

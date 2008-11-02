@@ -463,14 +463,25 @@ bool BuildTab::DoTryOpenFile(const wxArrayString& files, const wxFileName &fn, i
 	// first, try to full path
 	// if the first iteration failes, iterate the files again
 	// and compare full name only
-	if(fn.IsAbsolute()){
+	if(fn.IsAbsolute() && !fn.GetFullPath().Contains(wxT(".."))){
 		return DoOpenFile(fn, lineNumber, lineClicked);
+	}
+	
+	// try to convert it to absolute path
+	wxFileName f1(fn);
+	if(f1.MakeAbsolute() && !f1.GetFullPath().Contains(wxT(".."))){
+		return DoOpenFile(f1, lineNumber, lineClicked);
 	}
 	
 	for (size_t i=0; i< files.GetCount(); i++) {
 		wxFileName tmpFileName( files.Item(i) );
 		if (tmpFileName.GetFullPath() == fn.GetFullPath()) {
-			return DoOpenFile(tmpFileName, lineNumber, lineClicked);
+			wxFileName tt(tmpFileName);
+			if(tt.MakeAbsolute()){
+				return DoOpenFile(tt, lineNumber, lineClicked);
+			}else{
+				return DoOpenFile(tmpFileName, lineNumber, lineClicked);
+			}
 		}
 	}
 	
@@ -490,8 +501,12 @@ bool BuildTab::DoTryOpenFile(const wxArrayString& files, const wxFileName &fn, i
 	}
 	
 	if(matches.size() == 1){
-		
-		return DoOpenFile(matches.at(0), lineNumber, lineClicked);
+		wxFileName tt(matches.at(0));
+		if(tt.MakeAbsolute()){
+			return DoOpenFile(tt, lineNumber, lineClicked);
+		}else{
+			return DoOpenFile(matches.at(0), lineNumber, lineClicked);
+		}
 		
 	} else if(matches.size() > 1){
 		// take the best match
@@ -508,10 +523,20 @@ bool BuildTab::DoTryOpenFile(const wxArrayString& files, const wxFileName &fn, i
 		}
 		
 		if(betterMatches.size() == 1){
-			return DoOpenFile(betterMatches.at(0), lineNumber, lineClicked);
+			wxFileName tt(betterMatches.at(0));
+			if(tt.MakeAbsolute()){
+				return DoOpenFile(tt, lineNumber, lineClicked);
+			}else{
+				return DoOpenFile(betterMatches.at(0), lineNumber, lineClicked);
+			}
 		} else {
 			// open the first match
-			return DoOpenFile(matches.at(0), lineNumber, lineClicked);
+			wxFileName tt(matches.at(0));
+			if(tt.MakeAbsolute()){
+				return DoOpenFile(tt, lineNumber, lineClicked);
+			}else{
+				return DoOpenFile(matches.at(0), lineNumber, lineClicked);
+			}
 		}
 	}
 	return false;

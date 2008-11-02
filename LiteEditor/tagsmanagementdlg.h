@@ -23,6 +23,7 @@ protected:
 	// Handlers for TagsManagementBaseDlg events.
 	void OnTagsDbDeSelected( wxListEvent& event );
 	void OnTagsDbSelected( wxListEvent& event );
+	void OnTagsDbActivated(wxListEvent &event);
 	void OnAddDatabase( wxCommandEvent& event );
 	void OnRemoveDatabase( wxCommandEvent& event );
 	void OnRemoveDatabaseUI( wxUpdateUIEvent& event );

@@ -131,7 +131,7 @@
                                 <event name="OnListDeleteItem"></event>
                                 <event name="OnListEndLabelEdit"></event>
                                 <event name="OnListInsertItem"></event>
-                                <event name="OnListItemActivated"></event>
+                                <event name="OnListItemActivated">OnTagsDbActivated</event>
                                 <event name="OnListItemDeselected">OnTagsDbDeSelected</event>
                                 <event name="OnListItemFocused"></event>
                                 <event name="OnListItemMiddleClick"></event>

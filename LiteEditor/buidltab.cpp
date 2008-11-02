@@ -467,12 +467,13 @@ bool BuildTab::DoTryOpenFile(const wxArrayString& files, const wxFileName &fn, i
 		return DoOpenFile(fn, lineNumber, lineClicked);
 	}
 	
+/*	
 	// try to convert it to absolute path
 	wxFileName f1(fn);
 	if(f1.MakeAbsolute() && !f1.GetFullPath().Contains(wxT(".."))){
 		return DoOpenFile(f1, lineNumber, lineClicked);
 	}
-	
+i*/	
 	for (size_t i=0; i< files.GetCount(); i++) {
 		wxFileName tmpFileName( files.Item(i) );
 		if (tmpFileName.GetFullPath() == fn.GetFullPath()) {

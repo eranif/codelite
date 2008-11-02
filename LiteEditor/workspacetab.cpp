@@ -63,7 +63,7 @@ void WorkspaceTab::CreateGUIControls()
 	
 	//add toolbar on top of the workspace tab that includes a single button that collapse all 
 	//tree items
-	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL);
+	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
 	
 	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
@@ -79,8 +79,8 @@ void WorkspaceTab::CreateGUIControls()
     
 	//add the fileview tab
 	m_fileView = new FileViewTree(this, wxID_ANY);
-	sz->Add(m_fileView, 1, wxEXPAND|wxTOP, 2);
 	sz->Add(tb, 0, wxEXPAND, 0);
+	sz->Add(m_fileView, 1, wxEXPAND|wxTOP, 2);
 }
 
 void WorkspaceTab::BuildFileTree()

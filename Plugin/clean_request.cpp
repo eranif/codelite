@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "build_settings_config.h"
+#include "macros.h"
 #include "compiler.h"
  #include "clean_request.h"
 #include "environmentconfig.h"
@@ -114,7 +115,7 @@ void CleanRequest::Process()
 			//also, send another message to the main frame, indicating which project is being built
 			//and what configuration
 			wxString text;
-			text << wxT("----------Building project:[ ") << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
+			text << CLEAN_PROJECT_PREFIX << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
 			text << wxT("----------\n");
 			AppendLine(text);
 		}

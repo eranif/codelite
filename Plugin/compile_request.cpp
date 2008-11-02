@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "compile_request.h"
+#include "macros.h"
 #include "compiler.h"
 #include "build_settings_config.h"
 #include "globals.h"
@@ -134,7 +135,7 @@ void CompileRequest::Process()
 			//also, send another message to the main frame, indicating which project is being built
 			//and what configuration
 			wxString text;
-			text << wxT("----------Building project:[ ") << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
+			text << BUILD_PROJECT_PREFIX << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
 			if (m_fileName.IsEmpty() == false) {
 				text << wxT(" (Single File Build)----------\n");
 			} else {

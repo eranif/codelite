@@ -186,7 +186,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 				dependProj->SetModified( true );
 			}
 
-			text << wxT("\t@echo ----------Building project:[ ") << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
+			text << wxT("\t@echo ") << BUILD_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
 			// make the paths relative
 			wxFileName fn(dependProj->GetFileName());
 			fn.MakeRelativeTo(wspfile.GetPath());
@@ -224,7 +224,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		projectSelConf = confToBuild;
 	}
 
-	text << wxT("\t@echo ----------Building project:[ ") << project << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
+	text << wxT("\t@echo ") << BUILD_PROJECT_PREFIX << project << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
 
 	//make the paths relative
 	wxFileName projectPath(proj->GetFileName());
@@ -244,7 +244,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 				continue;
 			}
 
-			text << wxT("\t@echo ----------Building project:[ ") << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
+			text << wxT("\t@echo ") << CLEAN_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
 
 			//make the paths relative
 			wxFileName fn(dependProj->GetFileName());
@@ -274,7 +274,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		projectSelConf = confToBuild;
 	}
 
-	text << wxT("\t@echo ----------Building project:[ ") << project << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
+	text << wxT("\t@echo ") << CLEAN_PROJECT_PREFIX << project << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
 
 	//make the paths relative
 	text << wxT("\t") << GetCdCmd(wspfile, projectPath) << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" clean\n") ;

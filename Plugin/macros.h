@@ -89,6 +89,8 @@ const wxString BUILD_END_MSG       = wxT("----------Build Ended----------\n");
 const wxString SEARCH_IN_WORKSPACE = wxT("Entire Workspace");
 const wxString SEARCH_IN_PROJECT   = wxT("Active Project");
 const wxString SEARCH_IN_CURR_FILE_PROJECT = wxT("Current File's Project");
+const wxString BUILD_PROJECT_PREFIX = wxT("----------Building project:[ ");
+const wxString CLEAN_PROJECT_PREFIX = wxT("----------Cleaning project:[ ");
 
 #ifdef __WXMSW__
 #define PATH_SEP wxT("\\")

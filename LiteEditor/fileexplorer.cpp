@@ -71,10 +71,10 @@ void FileExplorer::CreateGUIControls()
 #endif
 
 	m_fileTree = new FileExplorerTree(this, wxID_ANY);
-	mainSizer->Add(m_fileTree, 1, wxEXPAND|wxALL, 1);
+	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
 	
-	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL);
 	mainSizer->Add(tb, 0, wxEXPAND);
+	mainSizer->Add(m_fileTree, 1, wxEXPAND|wxALL, 1);
 	
 	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);

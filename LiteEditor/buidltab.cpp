@@ -110,7 +110,7 @@ void BuildTab::AppendText(const wxString &text)
 	// Parse the text and keep information
 	//----------------------------------------------
 	//Keep information about this line
-	if (text.Contains(wxT("----------Building project:"))) {
+	if (text.Contains(BUILD_PROJECT_PREFIX)) {
 		LineInfo info;
 
 		wxString projectName = text.AfterFirst(wxT('['));

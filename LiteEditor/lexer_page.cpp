@@ -1,29 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : lexer_page.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : lexer_page.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb  1 2007) 
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Feb  1 2007)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -50,45 +50,46 @@
 
 ///////////////////////////////////////////////////////////////////////////
 BEGIN_EVENT_TABLE( LexerPage, wxPanel )
-EVT_LISTBOX( wxID_ANY, LexerPage::OnItemSelected )
-EVT_FONTPICKER_CHANGED(wxID_ANY, LexerPage::OnFontChanged)
-EVT_COLOURPICKER_CHANGED(wxID_ANY, LexerPage::OnColourChanged)
+	EVT_LISTBOX( wxID_ANY, LexerPage::OnItemSelected )
+	EVT_FONTPICKER_CHANGED(wxID_ANY, LexerPage::OnFontChanged)
+	EVT_COLOURPICKER_CHANGED(wxID_ANY, LexerPage::OnColourChanged)
 END_EVENT_TABLE()
 
-LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos, wxSize size, int style ) 
-: wxPanel(parent, id, pos, wxSize(1, 1), style)
-, m_lexer(lexer)
-, m_selection(0)
+LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos, wxSize size, int style )
+		: wxPanel(parent, id, pos, wxSize(1, 1), style)
+		, m_lexer(lexer)
+		, m_selection(0)
+		, m_isModified(false)
 {
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
-	
+
 	wxStaticText *static_text = new wxStaticText( this, wxID_ANY, wxT("Language Attributes:"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add(static_text, 0, wxEXPAND | wxALL, 5);
-	
+
 	wxBoxSizer* sbSizer5;
 	sbSizer5 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_properties = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_HSCROLL); 
+	m_properties = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_HSCROLL);
 	m_properties->SetSizeHints(200, -1);
 	sbSizer5->Add( m_properties, 0, wxALL|wxEXPAND, 5 );
 
 	m_propertyList = m_lexer->GetProperties();
 	std::list<StyleProperty>::iterator it = m_propertyList.begin();
 
-	for(; it != m_propertyList.end(); it++){
+	for (; it != m_propertyList.end(); it++) {
 		m_properties->Append((*it).GetName());
 	}
 	m_properties->SetSelection(0);
 
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
-	
+
 	wxString initialColor = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString();
 	wxString bgInitialColor = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString();
 	wxFont initialFont = wxNullFont;
 
-	if(m_propertyList.empty() == false){
+	if (m_propertyList.empty() == false) {
 		StyleProperty p;
 		p = (*m_propertyList.begin());
 		initialColor = p.GetFgColour();
@@ -106,22 +107,22 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 
 	text = new wxStaticText(this, wxID_ANY, wxT("Edit Keywords:"));
 	gbz->Add(text, wxGBPosition(0, 0), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
-	
+
 	wxBoxSizer *btnSizers = new wxBoxSizer(wxHORIZONTAL);
 	gbz->Add( btnSizers, wxGBPosition(0, 1), wxGBSpan(1, 1), wxALL|wxEXPAND, 5);
-	
+
 	wxButton *btn0 = new wxButton(this, wxID_ANY, wxT("Set &0"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	btnSizers->Add(btn0, 0, wxEXPAND|wxALL, 0);
-	
+
 	wxButton *btn1 = new wxButton(this, wxID_ANY, wxT("Set &1"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	btnSizers->Add(btn1, 0, wxEXPAND|wxALL, 0);
-	
+
 	wxButton *btn2 = new wxButton(this, wxID_ANY, wxT("Set &2"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	btnSizers->Add(btn2, 0, wxEXPAND|wxALL, 0);
-	
+
 	wxButton *btn3 = new wxButton(this, wxID_ANY, wxT("Set &3"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	btnSizers->Add(btn3, 0, wxEXPAND|wxALL, 0);
-	
+
 	wxButton *btn4 = new wxButton(this, wxID_ANY, wxT("Set &4"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	btnSizers->Add(btn4, 0, wxEXPAND|wxALL, 0);
 
@@ -146,7 +147,7 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 	//globals settings for whole styles
 	wxStaticLine *line = new wxStaticLine(this);
 	gbz->Add(line, wxGBPosition(4, 0), wxGBSpan(1, 2), wxALL|wxEXPAND, 10);
-	
+
 	text = new wxStaticText(this, wxID_ANY, wxT("Global font:"));
 	gbz->Add( text, wxGBPosition(5, 0), wxGBSpan(1, 1), wxALL|wxEXPAND, 5 );
 
@@ -163,28 +164,29 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 	sbSizer5->Add( bSizer7, 1, wxEXPAND, 5 );
 
 	wxBoxSizer *hs = new wxBoxSizer(wxHORIZONTAL);//, this, wxT("File Types:"));
-	m_fileSpec = new wxTextCtrl(this, wxID_ANY, m_lexer->GetFileSpec()); 
+	m_fileSpec = new wxTextCtrl(this, wxID_ANY, m_lexer->GetFileSpec());
 	hs->Add(m_fileSpec, 1, wxALL | wxEXPAND, 5);
 
 	bSizer6->Add( sbSizer5, 1, wxEXPAND, 5 );
-	
+
 	static_text = new wxStaticText( this, wxID_ANY, wxT("File Masking:"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add(static_text, 0, wxEXPAND | wxALL, 5);
 	bSizer6->Add( hs, 0, wxEXPAND, 5 );
-	
+
 	this->SetSizer( bSizer6 );
 	this->Layout();
 
-	if(m_propertyList.empty()){
+	if (m_propertyList.empty()) {
 		m_fontPicker->Enable(false);
 		m_colourPicker->Enable(false);
 	}
-	
+
 	ConnectButton(btn0, LexerPage::OnEditKeyWordsButton0);
 	ConnectButton(btn1, LexerPage::OnEditKeyWordsButton1);
 	ConnectButton(btn2, LexerPage::OnEditKeyWordsButton2);
 	ConnectButton(btn3, LexerPage::OnEditKeyWordsButton3);
 	ConnectButton(btn4, LexerPage::OnEditKeyWordsButton4);
+	ConnectCmdTextUpdated(m_fileSpec, LexerPage::OnText)
 }
 
 void LexerPage::OnItemSelected(wxCommandEvent & event)
@@ -194,8 +196,8 @@ void LexerPage::OnItemSelected(wxCommandEvent & event)
 	m_selection = event.GetSelection();
 
 	std::list<StyleProperty>::iterator iter = m_propertyList.begin();
-	for(; iter != m_propertyList.end(); iter++){
-		if(iter->GetName() == selectionString){
+	for (; iter != m_propertyList.end(); iter++) {
+		if (iter->GetName() == selectionString) {
 			// update font & color
 			StyleProperty p = (*iter);
 			wxString colour = p.GetFgColour();
@@ -216,21 +218,22 @@ void LexerPage::OnItemSelected(wxCommandEvent & event)
 
 void LexerPage::OnFontChanged(wxFontPickerEvent &event)
 {
+	m_isModified = true;
 	// update font
 	wxObject *obj = event.GetEventObject();
-	if(obj == m_fontPicker){
+	if (obj == m_fontPicker) {
 		wxFont font = event.GetFont();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
-		for(int i=0; i<m_selection; i++)
+		for (int i=0; i<m_selection; i++)
 			iter++;
 
 		iter->SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
 		iter->SetFaceName(font.GetFaceName());
 		iter->SetFontSize(font.GetPointSize());
-	}else if(obj == m_globalFontPicker){
+	} else if (obj == m_globalFontPicker) {
 		wxFont font = event.GetFont();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
-		for(; iter != m_propertyList.end(); iter++){
+		for (; iter != m_propertyList.end(); iter++) {
 			iter->SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
 			iter->SetFaceName(font.GetFaceName());
 			iter->SetFontSize(font.GetPointSize());
@@ -242,26 +245,27 @@ void LexerPage::OnFontChanged(wxFontPickerEvent &event)
 
 void LexerPage::OnColourChanged(wxColourPickerEvent &event)
 {
+	m_isModified = true;
 	//update colour
 	wxObject *obj = event.GetEventObject();
-	if(obj == m_colourPicker){
+	if (obj == m_colourPicker) {
 		wxColour colour = event.GetColour();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
-		for(int i=0; i<m_selection; i++)
+		for (int i=0; i<m_selection; i++)
 			iter++;
 
 		iter->SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
-	}else if(obj == m_bgColourPicker){
+	} else if (obj == m_bgColourPicker) {
 		wxColour colour = event.GetColour();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
-		for(int i=0; i<m_selection; i++)
+		for (int i=0; i<m_selection; i++)
 			iter++;
 
 		iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
-	}else if(obj == m_globalBgColourPicker){
+	} else if (obj == m_globalBgColourPicker) {
 		wxColour colour = event.GetColour();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
-		for(; iter != m_propertyList.end(); iter++){
+		for (; iter != m_propertyList.end(); iter++) {
 			iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 		}
 		//update the style background colour as well
@@ -271,9 +275,12 @@ void LexerPage::OnColourChanged(wxColourPickerEvent &event)
 
 void LexerPage::SaveSettings()
 {
-	m_lexer->SetProperties( m_propertyList );
-	m_lexer->SetFileSpec( m_fileSpec->GetValue() );
-	m_lexer->Save();
+	if (GetIsModified()) {
+		m_lexer->SetProperties( m_propertyList );
+		m_lexer->SetFileSpec( m_fileSpec->GetValue() );
+		m_lexer->Save();
+		m_isModified = false;
+	}
 }
 
 void LexerPage::OnEditKeyWordsButton0(wxCommandEvent& event)
@@ -310,8 +317,15 @@ void LexerPage::EditKeyWords(int set)
 {
 	wxString keywords = m_lexer->GetKeyWords(set);
 	FreeTextDialog *dlg = new FreeTextDialog(this, keywords);
-	if(dlg->ShowModal() == wxID_OK){
+	if (dlg->ShowModal() == wxID_OK) {
+		m_isModified = true;
 		m_lexer->SetKeyWords(dlg->GetValue(), set);
 	}
 	dlg->Destroy();
+}
+
+void LexerPage::OnText(wxCommandEvent& e)
+{
+	m_isModified = true;
+	e.Skip();
 }

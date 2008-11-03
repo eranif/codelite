@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : lexer_page.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : lexer_page.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Feb  1 2007)
 // http://www.wxformbuilder.org/
 //
@@ -54,11 +54,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class LexerPage
 ///////////////////////////////////////////////////////////////////////////////
-class LexerPage : public wxPanel 
+class LexerPage : public wxPanel
 {
 	LexerConfPtr m_lexer;
 	std::list<StyleProperty> m_propertyList;
 	int m_selection;
+	bool m_isModified;
 
 	DECLARE_EVENT_TABLE()
 
@@ -80,12 +81,17 @@ protected:
 	virtual void OnEditKeyWordsButton2(wxCommandEvent &event);
 	virtual void OnEditKeyWordsButton3(wxCommandEvent &event);
 	virtual void OnEditKeyWordsButton4(wxCommandEvent &event);
-	
+	virtual void OnText(wxCommandEvent &e);
+
 	void EditKeyWords(int set);
-	
+
 public:
 	LexerPage( wxWindow* parent, LexerConfPtr lexer, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 285,300 ), int style = wxTAB_TRAVERSAL );
 	void SaveSettings();
+	
+	const bool& GetIsModified() const {
+		return m_isModified;
+	}
 };
 
 #endif //__lexer_page__

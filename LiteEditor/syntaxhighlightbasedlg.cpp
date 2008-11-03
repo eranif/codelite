@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -30,7 +30,14 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id,
 	buttonSizer->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	m_buttonApply = new wxButton( this, wxID_ANY, wxT("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonApply->SetToolTip( wxT("Apply the current changes to the editor without closing the dialog") );
+	
 	buttonSizer->Add( m_buttonApply, 0, wxALL, 5 );
+	
+	m_buttonDefaults = new wxButton( this, wxID_ANY, wxT("Defaults..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDefaults->SetToolTip( wxT("Restore all lexers to default values") );
+	
+	buttonSizer->Add( m_buttonDefaults, 0, wxALL, 5 );
 	
 	bSizer1->Add( buttonSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
@@ -43,6 +50,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id,
 	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonOK ), NULL, this );
 	m_buttonCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonCancel ), NULL, this );
 	m_buttonApply->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonApply ), NULL, this );
+	m_buttonDefaults->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnRestoreDefaults ), NULL, this );
 }
 
 SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
@@ -51,4 +59,5 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonOK ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonCancel ), NULL, this );
 	m_buttonApply->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnButtonApply ), NULL, this );
+	m_buttonDefaults->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SyntaxHighlightBaseDlg::OnRestoreDefaults ), NULL, this );
 }

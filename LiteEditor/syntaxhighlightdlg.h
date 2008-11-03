@@ -24,6 +24,7 @@ protected:
 	void OnButtonCancel( wxCommandEvent& event );
 	void OnButtonApply( wxCommandEvent& event );
 	void OnThemeChanged(wxCommandEvent& event);
+	void OnRestoreDefaults(wxCommandEvent &e);
 	
 	wxPanel *CreateSyntaxHighlightPage();
 	void LoadLexers(const wxString& theme);	

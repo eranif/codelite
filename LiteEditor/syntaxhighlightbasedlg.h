@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -33,11 +33,13 @@ class SyntaxHighlightBaseDlg : public wxDialog
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
 		wxButton* m_buttonApply;
+		wxButton* m_buttonDefaults;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonCancel( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonApply( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnRestoreDefaults( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:

@@ -1,4 +1,6 @@
 #include "lexer_page.h"
+#include <wx/xrc/xmlres.h>
+#include "frame.h"
 #include "windowattrmanager.h"
 #include <wx/notebook.h>
 #include "macros.h"
@@ -34,7 +36,7 @@ void SyntaxHighlightDlg::OnButtonCancel( wxCommandEvent& event )
 	if (curSelTheme != m_startingTheme) {
 		//restore the starting theme
 		EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), m_startingTheme);
-		EditorConfigST::Get()->LoadLexers();
+		EditorConfigST::Get()->LoadLexers(false);
 	}
 
 	EndModal(wxID_CANCEL);
@@ -115,7 +117,7 @@ void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
 	EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), theme);
 
 	//load all lexers
-	EditorConfigST::Get()->LoadLexers();
+	EditorConfigST::Get()->LoadLexers(false);
 
 	EditorConfig::ConstIterator iter = EditorConfigST::Get()->LexerBegin();
 	for (; iter != EditorConfigST::Get()->LexerEnd(); iter++) {
@@ -159,3 +161,17 @@ SyntaxHighlightDlg::~SyntaxHighlightDlg()
 	WindowAttrManager::Save(this, wxT("SyntaxHighlightDlgAttr"), NULL);
 }
 
+void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& e)
+{
+	if(wxMessageBox(_("Are you sure you want to load all default syntax highlight settings and lose all your changes?"), wxT("CodeLite"), wxYES_NO|wxCANCEL|wxICON_QUESTION|wxCENTER, this) != wxYES){
+		return;
+	}
+	
+	// restore the default lexers
+	EditorConfigST::Get()->LoadLexers(true);
+	ManagerST::Get()->ApplySettingsChanges();
+	
+	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
+	Frame::Get()->AddPendingEvent(event);
+	EndModal(wxID_OK);
+}

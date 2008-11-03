@@ -90,7 +90,7 @@ void RenameSymbol::OnButtonOK(wxCommandEvent& e)
 	wxUnusedVar(e);
 	
 	if(!IsValidCppIndetifier(m_textCtrlNewName->GetValue())){
-		wxMessageBox(wxT("Invalid C/C++ symbol name"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(_("Invalid C/C++ symbol name"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 	

@@ -64,7 +64,7 @@ void ImportFilesDlg::OnButtonOK(wxCommandEvent &e)
 	
 	//validate that the input directory does exists
 	if( !wxDir::Exists(m_textCtrlDirPath->GetValue()) ){
-		wxMessageBox(wxT("'") + m_textCtrlDirPath->GetValue() + wxT("': No such directory"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(_("'") + m_textCtrlDirPath->GetValue() + wxT("': No such directory"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 	

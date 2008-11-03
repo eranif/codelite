@@ -47,7 +47,7 @@ END_EVENT_TABLE()
 
 #define VALIDATE_FINDWHAT(){\
 	if(m_findString->GetValue().Trim().IsEmpty()){\
-			wxMessageBox(wxT("'Find What' is empty"));\
+			wxMessageBox(_("'Find What' is empty"));\
 			return;\
 		}\
 }

@@ -53,7 +53,7 @@ void UpdatePostCmdAction::DoCommand()
 		}
 
 		if (reload_workspace) {
-			if(wxMessageBox(wxT("Workspace settings have been modified, would you like to reload the workspace?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxYES){
+			if(wxMessageBox(_("Workspace settings have been modified, would you like to reload the workspace?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxYES){
 				m_mgr->ReloadWorkspace();
 			}
 		}

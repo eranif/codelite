@@ -1410,7 +1410,7 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
 						tmp.SetFullName(newName);
 
 						if (tmp.FileExists()) {
-							wxMessageBox(wxT("File with that name already exist!"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+							wxMessageBox(_("File with that name already exist!"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 							return;
 						}
 

@@ -76,14 +76,14 @@ void PluginWizardPage1::OnValidate(wxWizardEvent &event)
 	
 	//we dont accept empty plugin names
 	if(name.IsEmpty()){
-		wxMessageBox(wxT("Missing plugin name"), wxT("CodeLite"), wxOK | wxICON_WARNING);
+		wxMessageBox(_("Missing plugin name"), wxT("CodeLite"), wxOK | wxICON_WARNING);
 		event.Veto();
 		return;
 	}
 	//a valid name must contains only 
 	//[A-Za-z_]
 	if(name.find_first_not_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")) != wxString::npos){
-		wxMessageBox(wxT("Invalid characters in plugin name\nonly [A-Za-z_] are allowed"), wxT("CodeLite"), wxOK | wxICON_WARNING);
+		wxMessageBox(_("Invalid characters in plugin name\nonly [A-Za-z_] are allowed"), wxT("CodeLite"), wxOK | wxICON_WARNING);
 		event.Veto();
 		return;
 	}

@@ -108,7 +108,7 @@ void ExtDbPage3::OnValidate(wxWizardEvent &event)
 	wxString dbname(m_comboDbName->GetValue());
 	TrimString(dbname);
 	if(dbname.IsEmpty() && event.GetDirection()){
-		wxMessageBox(wxT("Database name can not be empty"));
+		wxMessageBox(_("Database name can not be empty"));
 		event.Veto();
 		return;
 	}

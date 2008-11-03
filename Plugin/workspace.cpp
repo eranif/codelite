@@ -196,7 +196,7 @@ wxString Workspace::GetStringProperty(const wxString &propName, wxString &errMsg
 void Workspace::AddProjectToBuildMatrix(ProjectPtr prj)
 {
 	if (!prj) {
-		wxMessageBox(wxT("AddProjectToBuildMatrix was called with NULL project"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(_("AddProjectToBuildMatrix was called with NULL project"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 
@@ -366,7 +366,7 @@ bool Workspace::AddProject(const wxString & path, wxString &errMsg)
 		node->AddProperty(wxT("Active"), m_projects.size() == 1 ? wxT("Yes") : wxT("No"));
 		m_doc.GetRoot()->AddChild(node);
 		if (!m_doc.Save(m_fileName.GetFullPath())) {
-			wxMessageBox(wxT("Failed to save workspace file to disk. Please check that you have permission to write to disk"),
+			wxMessageBox(_("Failed to save workspace file to disk. Please check that you have permission to write to disk"),
 			             wxT("CodeLite"), wxICON_ERROR | wxOK);
 			return false;
 		}

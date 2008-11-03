@@ -515,8 +515,8 @@ bool App::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir
 
 		m_singleInstance = new wxSingleInstanceChecker(name);
 		if (m_singleInstance->IsAnotherRunning()) {
-//			wxMessageBox(wxT("Another is running!"));
-//			wxMessageBox(wxT("CodeLite is configured to allow only single instance running.\nThis can be modified from the 'Settings -> Editor' menu"), wxT("CodeLite"), wxOK | wxICON_ERROR);
+//			wxMessageBox(_("Another is running!"));
+//			wxMessageBox(_("CodeLite is configured to allow only single instance running.\nThis can be modified from the 'Settings -> Editor' menu"), wxT("CodeLite"), wxOK | wxICON_ERROR);
 			// prepare commands file for the running instance
 			wxString files;
 			for (size_t i=0; i< parser.GetParamCount(); i++) {
@@ -545,7 +545,7 @@ bool App::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir
 			}
 			return false;
 		} else {
-//			wxMessageBox(wxT("No other instances!"));
+//			wxMessageBox(_("No other instances!"));
 		}
 	}
 	return true;

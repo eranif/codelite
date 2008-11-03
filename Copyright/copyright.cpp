@@ -218,20 +218,20 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 
 	// make sure that the template file exists
 	if ( !wxFileName::FileExists(data.GetTemplateFilename()) ) {
-		wxMessageBox(wxString::Format(wxT("Template file name '%s', does not exist!"), data.GetTemplateFilename().GetData()), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(wxString::Format(_("Template file name '%s', does not exist!"), data.GetTemplateFilename().GetData()), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 
 	// read the copyrights file
 	wxString content;
 	if ( !ReadFileWithConversion(data.GetTemplateFilename(), content) ) {
-		wxMessageBox(wxString::Format(wxT("Failed to read template file '%s'"), data.GetTemplateFilename().c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(wxString::Format(_("Failed to read template file '%s'"), data.GetTemplateFilename().c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 
 	IEditor *editor = m_mgr->GetActiveEditor();
 	if ( !editor ) {
-		wxMessageBox(wxString::Format(wxT("There is no active editor\n")), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(wxString::Format(_("There is no active editor\n")), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 
@@ -242,7 +242,7 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 	scanner.FindAll( l );
 
 	if ( !l.is_empty() ) {
-		if ( wxMessageBox(wxT("Template file contains text which is not comment, continue anyways?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxNO ) {
+		if ( wxMessageBox(_("Template file contains text which is not comment, continue anyways?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxNO ) {
 			return;
 		}
 	}
@@ -266,7 +266,7 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
 {
 	// pop up the projects selection dialog
 	if (m_mgr->IsWorkspaceOpen() == false) {
-		wxMessageBox(wxT("Batch insert requires a workspace to be opened"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(_("Batch insert requires a workspace to be opened"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 
@@ -274,7 +274,7 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
 	for (size_t i=0; i<book->GetPageCount(); i++) {
 		IEditor *editor = dynamic_cast<IEditor*>(book->GetPage(i));
 		if (editor && editor->IsModified()) {
-			wxMessageBox(wxT("Please save all un-saved documents before continuing"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+			wxMessageBox(_("Please save all un-saved documents before continuing"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 			return;
 		}
 	}
@@ -332,7 +332,7 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
 {
 	// pop up the projects selection dialog
 	if (m_mgr->IsWorkspaceOpen() == false) {
-		wxMessageBox(wxT("Batch insert requires a workspace to be opened"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(_("Batch insert requires a workspace to be opened"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 
@@ -340,7 +340,7 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
 	for (size_t i=0; i<book->GetPageCount(); i++) {
 		IEditor *editor = dynamic_cast<IEditor*>(book->GetPage(i));
 		if (editor && editor->IsModified()) {
-			wxMessageBox(wxT("Please save all un-saved documents before continuing"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+			wxMessageBox(_("Please save all un-saved documents before continuing"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 			return;
 		}
 	}
@@ -451,7 +451,7 @@ bool Copyright::Validate(wxString& content)
 	scanner.FindAll( l );
 
 	if ( !l.is_empty() ) {
-		if ( wxMessageBox(wxT("Template file contains text which is not comment, continue anyways?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxNO ) {
+		if ( wxMessageBox(_("Template file contains text which is not comment, continue anyways?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxNO ) {
 			return false;
 		}
 	}

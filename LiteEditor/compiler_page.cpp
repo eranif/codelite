@@ -528,7 +528,7 @@ void CompilerPage::OnFileTypeSelected(wxListEvent& event)
 void CompilerPage::OnDeleteFileType(wxCommandEvent& event)
 {
 	if (m_selectedFileType != wxNOT_FOUND) {
-		if (wxMessageBox(wxT("Are you sure you want to delete this file type?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
+		if (wxMessageBox(_("Are you sure you want to delete this file type?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 			m_listCtrlFileTypes->DeleteItem(m_selectedFileType);
 			m_selectedFileType = wxNOT_FOUND;
 		}

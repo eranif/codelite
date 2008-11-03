@@ -209,7 +209,7 @@ void OptionsDlg::SaveChanges()
 	if (oldIconSize != iconSize) {
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 0);
 		//notify the user
-		wxMessageBox(wxT("Toolbar icons size change, requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		wxMessageBox(_("Toolbar icons size change, requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 	} else {
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
 	}

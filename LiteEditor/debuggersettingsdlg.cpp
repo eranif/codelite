@@ -212,7 +212,7 @@ void DebuggerSettingsDlg::OnNewShortcut(wxCommandEvent &e)
 			if(name == existingName){
 				dlg->Destroy();
 				wxString msg;
-				wxMessageBox(wxT("Debugger shortcut with the same name already exist"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
+				wxMessageBox(_("Debugger shortcut with the same name already exist"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
 				return;
 			}
 		}

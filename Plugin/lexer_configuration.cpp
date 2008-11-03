@@ -134,9 +134,6 @@ void LexerConf::Parse(wxXmlNode *element)
 
 LexerConf::~LexerConf()
 {
-	if(m_doc.IsOk()){
-		m_doc.Save(m_fileName.GetFullPath());
-	}
 }
 
 wxXmlNode *LexerConf::ToXml() const

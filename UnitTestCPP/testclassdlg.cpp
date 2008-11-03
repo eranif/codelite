@@ -103,12 +103,12 @@ void TestClassDlg::OnButtonOk(wxCommandEvent& e)
 {
 	// validate the class name
 	if ( m_textCtrlFileName->GetValue().IsEmpty() ) {
-		wxMessageBox(wxT("Please provide a class name"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(_("Please provide a class name"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 
 	if ( m_checkListMethods->GetCount() == 0 ) {
-		wxMessageBox(wxT("There are no tests to generate"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+		wxMessageBox(_("There are no tests to generate"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
 
@@ -156,7 +156,7 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
 
 	if (matches.empty()) {
 		if(repportError){
-			wxMessageBox(wxT("Could not find match for class '")+m_textCtrlClassName->GetValue()+wxT("'"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+			wxMessageBox(_("Could not find match for class '")+m_textCtrlClassName->GetValue()+wxT("'"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		}
 		return;
 	}

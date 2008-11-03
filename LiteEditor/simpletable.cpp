@@ -156,7 +156,7 @@ void SimpleTable::AddExpression(const wxString &expr)
 	for (int i=0; i<count; i++) {
 		wxString exp = this->GetColumnText(i, 0);
 		if (exp == expr) {
-			wxMessageBox(wxT("A similar expression already exist in the watches table"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
+			wxMessageBox(_("A similar expression already exist in the watches table"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
 			return;
 		}
 	}

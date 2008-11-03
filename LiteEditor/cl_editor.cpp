@@ -644,7 +644,7 @@ bool LEditor::SaveFileAs()
 		// get the path
 		wxFileName name(dlg.GetPath());
 		if ( !SaveToFile(name) ) {
-			wxMessageBox(wxT("Failed to save file"), wxT("Error"), wxOK | wxICON_ERROR);
+			wxMessageBox(_("Failed to save file"), wxT("Error"), wxOK | wxICON_ERROR);
 			return false;
 		}
 		m_fileName = name;
@@ -791,7 +791,7 @@ void LEditor::UpdateBreakpoints()
 void LEditor::DoSetBreakpoint(const BreakpointInfo &bp)
 {
 	if (!DebuggerMgr::Get().AddBreakpoint(bp)) {
-		wxMessageBox(wxT("Failed to insert breakpoint"));
+		wxMessageBox(_("Failed to insert breakpoint"));
 		return;
 	}
 	if (bp.lineno-1 < 0) {
@@ -1253,7 +1253,7 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 					SetCaretAt( saved_pos );
 
 					// popup a message
-					wxMessageBox(wxT("Can not find the string '") + m_findReplaceDlg->GetData().GetFindString() + wxT("'"),
+					wxMessageBox(_("Can not find the string '") + m_findReplaceDlg->GetData().GetFindString() + wxT("'"),
 					             wxT("CodeLite"),
 					             wxICON_WARNING);
 				}
@@ -1304,7 +1304,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 				// restore the caret
 				DoSetCaretAt( saved_pos );
 
-				wxMessageBox(wxT("Can not find the string '") + data.GetFindString() + wxT("'"),
+				wxMessageBox(_("Can not find the string '") + data.GetFindString() + wxT("'"),
 				             wxT("CodeLite"),
 				             wxICON_WARNING);
 			}

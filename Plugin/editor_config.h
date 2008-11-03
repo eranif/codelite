@@ -126,7 +126,7 @@ class EditorConfig : public IConfigTool
 public:
 
 	//load lexers again, based on the active theme
-	void LoadLexers();
+	void LoadLexers(bool loadDefault);
 	static void Init(const wxChar *revision) {
 		m_svnRevision = revision;
 	}

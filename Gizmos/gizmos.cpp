@@ -276,7 +276,7 @@ void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
 		filename = m_mgr->GetStartupDirectory() + wxT("/templates/gizmos/plugin.cpp.wizard");
 		content.Clear();
 		if (!ReadFileWithConversion(filename, content)) {
-			wxMessageBox(wxT("Failed to load wizard's file 'plugin.cpp.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
+			wxMessageBox(_("Failed to load wizard's file 'plugin.cpp.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
 			return;
 		}
 
@@ -295,7 +295,7 @@ void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
 		filename = m_mgr->GetStartupDirectory() + wxT("/templates/gizmos/plugin.h.wizard");
 		content.Clear();
 		if (!ReadFileWithConversion(filename, content)) {
-			wxMessageBox(wxT("Failed to load wizard's file 'plugin.h.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
+			wxMessageBox(_("Failed to load wizard's file 'plugin.h.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
 			return;
 		}
 

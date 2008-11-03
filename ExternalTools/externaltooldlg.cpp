@@ -65,7 +65,7 @@ void ExternalToolDlg::OnButtonEditUI( wxUpdateUIEvent& event )
 
 void ExternalToolDlg::OnButtonDelete( wxCommandEvent& event )
 {
-	if(wxMessageBox(wxT("Are you sure you want to delete this tool?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES){
+	if(wxMessageBox(_("Are you sure you want to delete this tool?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES){
 		m_listCtrlTools->DeleteItem(m_item);
 	}
 }

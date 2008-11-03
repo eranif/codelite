@@ -1621,7 +1621,7 @@ void Frame::OnFindInFiles(wxCommandEvent &event)
 	}
 
 	if (m_doingReplaceInFiles) {
-		wxMessageBox(wxT("The search thread is currently busy in 'replace in files' operations"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		wxMessageBox(_("The search thread is currently busy in 'replace in files' operations"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
 	}
 
@@ -1954,7 +1954,7 @@ void Frame::OnShellCommandEvent(wxCommandEvent &event)
 			m_buildAndRun = false;
 			if (!ManagerST::Get()->IsBuildEndedSuccessfully()) {
 				//build ended with errors
-				if (wxMessageBox(wxT("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES) {
+				if (wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES) {
 					ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
 				}
 			} else {
@@ -3205,7 +3205,7 @@ void Frame::OnManagePlugins(wxCommandEvent &e)
 {
 	PluginMgrDlg *dlg = new PluginMgrDlg(this);
 	if (dlg->ShowModal() == wxID_OK) {
-		wxMessageBox(wxT("Changes will take place after restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		wxMessageBox(_("Changes will take place after restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 	}
 	dlg->Destroy();
 }
@@ -3342,7 +3342,7 @@ void Frame::OnSingleInstanceOpenFiles(wxCommandEvent& e)
 			// if file is workspace, load it
 			if (fn.GetExt() == wxT("workspace")) {
 				if ( ManagerST::Get()->IsWorkspaceOpen() ) {
-					if (wxMessageBox(wxT("Close this workspace, and load workspace '") + fn.GetFullName() + wxT("'"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxNO) {
+					if (wxMessageBox(_("Close this workspace, and load workspace '") + fn.GetFullName() + wxT("'"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxNO) {
 						continue;
 					}
 				}

@@ -320,7 +320,7 @@ void wxFormBuilder::OpenWithWxFb(wxCommandEvent& e)
 		}
 		else
 		{
-			wxMessageBox(wxT("Please select a 'fbp' (Form Builder Project) file only"), wxT("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION);
+			wxMessageBox(_("Please select a 'fbp' (Form Builder Project) file only"), wxT("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION);
 			return;
 		}
 	}
@@ -331,7 +331,7 @@ void wxFormBuilder::DoLaunchWxFB(const wxString& file)
 	wxString fbpath = GetWxFBPath();
 	if (fbpath.IsEmpty())
 	{
-		wxMessageBox(wxT("Failed to launch wxFormBuilder, no path specified\nPlease set wxFormBuilder path from Plugins -> wxFormBuilder -> Settings..."),
+		wxMessageBox(_("Failed to launch wxFormBuilder, no path specified\nPlease set wxFormBuilder path from Plugins -> wxFormBuilder -> Settings..."),
 		             wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
 		return;
 	}

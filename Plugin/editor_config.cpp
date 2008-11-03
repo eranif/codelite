@@ -73,7 +73,7 @@ void SimpleStringValue::DeSerialize(Archive &arch)
 wxString EditorConfig::m_svnRevision;
 
 EditorConfig::EditorConfig()
-: m_transcation(false)
+		: m_transcation(false)
 {
 	m_doc = new wxXmlDocument();
 }
@@ -117,7 +117,7 @@ bool EditorConfig::Load()
 	}
 
 	// load CodeLite lexers
-	LoadLexers();
+	LoadLexers(false);
 
 	// make sure that the file name is set to .xml and not .default
 	m_fileName.SetFullName(wxT("codelite.xml"));
@@ -243,19 +243,19 @@ OptionsConfigPtr EditorConfig::GetOptions() const
 	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Options"));
 	// node can be null ...
 	OptionsConfigPtr opts = new OptionsConfig(node);
-    
-    // import legacy tab-width setting into opts
-    long tabWidth(opts->GetTabWidth());
-    if (const_cast<EditorConfig*>(this)->GetLongValue(wxT("EditorTabWidth"), tabWidth)) {
-        opts->SetTabWidth(tabWidth);
-    }
-    
-    return opts;
+
+	// import legacy tab-width setting into opts
+	long tabWidth(opts->GetTabWidth());
+	if (const_cast<EditorConfig*>(this)->GetLongValue(wxT("EditorTabWidth"), tabWidth)) {
+		opts->SetTabWidth(tabWidth);
+	}
+
+	return opts;
 }
 
 void EditorConfig::SetOptions(OptionsConfigPtr opts)
 {
-    // remove legacy tab-width setting
+	// remove legacy tab-width setting
 	wxXmlNode *child = XmlUtils::FindNodeByName(m_doc->GetRoot(), wxT("ArchiveObject"), wxT("EditorTabWidth"));
 	if (child) {
 		m_doc->GetRoot()->RemoveChild(child);
@@ -462,8 +462,10 @@ void EditorConfig::SaveStringValue(const wxString &key, const wxString &value)
 	WriteObject(key, &data);
 }
 
-void EditorConfig::LoadLexers()
+void EditorConfig::LoadLexers(bool loadDefault)
 {
+	m_lexers.clear();
+
 	wxString theme = GetStringValue(wxT("LexerTheme"));
 	if (theme.IsEmpty()) {
 		theme = wxT("Default");
@@ -501,7 +503,13 @@ void EditorConfig::LoadLexers()
 		wxFileName fn(files.Item(i));
 		wxString userLexer( fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) + fn.GetName() +  wxT(".") + wxGetUserName() + wxT("_xml"));
 		if ( wxFileName::FileExists( userLexer ) ) {
-			fileToLoad = userLexer;
+			if (!loadDefault) {
+				fileToLoad = userLexer;
+			} else {
+				// backup the old file
+				wxRenameFile(userLexer, userLexer + wxT(".orig"));
+				wxRemoveFile(userLexer);
+			}
 		}
 
 		LexerConfPtr lexer(new LexerConf( fileToLoad ));
@@ -522,7 +530,7 @@ void EditorConfig::Save()
 
 bool EditorConfig::DoSave() const
 {
-	if(m_transcation){
+	if (m_transcation) {
 		return true;
 	}
 	return m_doc->Save(m_fileName.GetFullPath());
@@ -543,10 +551,10 @@ void SimpleRectValue::DeSerialize(Archive& arch)
 {
 	wxPoint pos;
 	wxSize size;
-	
+
 	arch.Read(wxT("TopLeft"), pos);
 	arch.Read(wxT("Size"), size);
-	
+
 	m_rect = wxRect(pos, size);
 }
 
@@ -555,4 +563,3 @@ void SimpleRectValue::Serialize(Archive& arch)
 	arch.Write(wxT("TopLeft"), m_rect.GetTopLeft());
 	arch.Write(wxT("Size"), m_rect.GetSize());
 }
-

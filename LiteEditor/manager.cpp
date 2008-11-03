@@ -1089,7 +1089,7 @@ void Manager::TogglePanes()
 bool Manager::CreateDefaultNewCompiler(const wxString &name)
 {
 	if (BuildSettingsConfigST::Get()->IsCompilerExist(name)) {
-		wxMessageBox(wxT("A compiler with this name already exist"), wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(_("A compiler with this name already exist"), wxT("Error"), wxOK | wxICON_HAND);
 		return false;
 	}
 
@@ -1101,7 +1101,7 @@ bool Manager::CreateDefaultNewCompiler(const wxString &name)
 
 bool Manager::DeleteCompiler(const wxString &name)
 {
-	if (wxMessageBox(wxT("Remove Compiler?"), wxT("Confirm"), wxYES_NO | wxICON_QUESTION) == wxYES) {
+	if (wxMessageBox(_("Remove Compiler?"), wxT("Confirm"), wxYES_NO | wxICON_QUESTION) == wxYES) {
 		BuildSettingsConfigST::Get()->DeleteCompiler(name);
 		return true;
 	}
@@ -1233,7 +1233,7 @@ void Manager::CompileFile(const wxString &projectName, const wxString &fileName)
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
-		if (wxMessageBox(wxT("This would terminate the current debug session, continue?"),  wxT("Confirm"), wxICON_QUESTION|wxYES_NO|wxCANCEL) != wxYES) {
+		if (wxMessageBox(_("This would terminate the current debug session, continue?"),  wxT("Confirm"), wxICON_QUESTION|wxYES_NO|wxCANCEL) != wxYES) {
 			return;
 		} else {
 			DbgStop();
@@ -1833,7 +1833,7 @@ void Manager::DbgStart(long pid)
 #if defined(__WXGTK__)
 	wxString where;
 	if (!ExeLocator::Locate(wxT("xterm"), where)) {
-		wxMessageBox(wxT("Failed to locate 'xterm' application required by CodeLite, please install it and try again!"), wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING, Frame::Get());
+		wxMessageBox(_("Failed to locate 'xterm' application required by CodeLite, please install it and try again!"), wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING, Frame::Get());
 		return;
 	}
 #endif
@@ -1971,7 +1971,7 @@ void Manager::DbgStart(long pid)
 		dbg_cmds = wxStringTokenize(bldConf->GetDebuggerStartupCmds(), wxT("\n"), wxTOKEN_STRTOK);
 		if (!dbgr->Start(dbgname, exepath, wd, bps, dbg_cmds)) {
 			wxString errMsg;
-			errMsg << wxT("Failed to initialize debugger: ") << dbgname << wxT("\n");
+			errMsg << _("Failed to initialize debugger: ") << dbgname << _("\n");
 			DebugMessage(errMsg);
 			return;
 		}
@@ -1980,7 +1980,7 @@ void Manager::DbgStart(long pid)
 		//Attach to process...
 		if (!dbgr->Start(dbgname, exepath, PID, bps, dbg_cmds)) {
 			wxString errMsg;
-			errMsg << wxT("Failed to initialize debugger: ") << dbgname << wxT("\n");
+			errMsg << _("Failed to initialize debugger: ") << dbgname << _("\n");
 			DebugMessage(errMsg);
 			return;
 		}
@@ -1994,7 +1994,7 @@ void Manager::DbgStart(long pid)
 
 	// mark that we are waiting for the first GotControl()
 	DebugMessage(output);
-	DebugMessage(wxT("Debug session started successfully!\n"));
+	DebugMessage(_("Debug session started successfully!\n"));
 
 	if (bldConf && bldConf->GetIsDbgRemoteTarget() && pid == wxNOT_FOUND) {
 
@@ -2054,7 +2054,7 @@ void Manager::DbgStop()
 	dbgr->Stop();
 	DebuggerMgr::Get().SetActiveDebugger(wxEmptyString);
 
-	DebugMessage(wxT("Debug session ended\n"));
+	DebugMessage(_("Debug session ended\n"));
 
 	// update toolbar state
 	UpdateStopped();
@@ -2350,9 +2350,9 @@ void Manager::UpdateGotControl(DebuggerReasons reason)
 		if (reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS) {
 			signame = wxT("EXC_BAD_ACCESS");
 		}
-		DebugMessage(wxT("Program Received signal ") + signame + wxT("\n"));
-		wxMessageBox(wxT("Program Received signal ") + signame + wxT("\n")
-		             wxT("Stack trace is available in the 'Stack' tab\n"),
+		DebugMessage(_("Program Received signal ") + signame + _("\n"));
+		wxMessageBox(_("Program Received signal ") + signame + _("\n") + 
+		             _("Stack trace is available in the 'Stack' tab\n"),
 		             wxT("CodeLite"), wxICON_ERROR|wxOK);
 
 		//Print the stack trace
@@ -2389,7 +2389,7 @@ void Manager::UpdateLostControl()
 	//hide the marker
 	DbgUnMarkDebuggerLine();
 	m_dbgCanInteract = false;
-	DebugMessage(wxT("Continuing...\n"));
+	DebugMessage(_("Continuing...\n"));
 }
 
 void Manager::UpdateBpAdded()
@@ -3227,7 +3227,7 @@ void Manager::DoBuildProject(const QueueCommand& buildInfo)
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
-		if (wxMessageBox(wxT("This would terminate the current debug session, continue?"),  wxT("Confirm"), wxICON_QUESTION|wxYES_NO|wxCANCEL) != wxYES) {
+		if (wxMessageBox(_("This would terminate the current debug session, continue?"),  wxT("Confirm"), wxICON_QUESTION|wxYES_NO|wxCANCEL) != wxYES) {
 			return;
 		} else {
 			DbgStop();
@@ -3365,7 +3365,7 @@ void Manager::DoCustomBuild(const QueueCommand& buildInfo)
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
-		if (wxMessageBox(wxT("This would terminate the current debug session, continue?"),  wxT("Confirm"), wxICON_QUESTION|wxYES_NO|wxCANCEL) != wxYES) {
+		if (wxMessageBox(_("This would terminate the current debug session, continue?"),  wxT("Confirm"), wxICON_QUESTION|wxYES_NO|wxCANCEL) != wxYES) {
 			return;
 		} else {
 			DbgStop();

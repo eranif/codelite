@@ -174,7 +174,7 @@ bool NewClassDlg::ValidateInput()
 	}
 	
 	if(GetClassFile().IsEmpty()){
-		wxMessageBox(wxT("Empty file name"), wxT("CodeLite"), wxOK|wxICON_WARNING);
+		wxMessageBox(_("Empty file name"), wxT("CodeLite"), wxOK|wxICON_WARNING);
 		return false;
 	}
 	
@@ -194,7 +194,7 @@ bool NewClassDlg::ValidateInput()
 	}
 	
 	if(GetVirtualDirectoryPath().IsEmpty()){
-		wxMessageBox(wxT("Please select a virtual directory"), wxT("CodeLite"), wxOK|wxICON_WARNING);
+		wxMessageBox(_("Please select a virtual directory"), wxT("CodeLite"), wxOK|wxICON_WARNING);
 		return false;
 	}
 	return true;

@@ -33,7 +33,7 @@ void EditSnippetsDlg::OnItemSelected( wxCommandEvent& event )
 void EditSnippetsDlg::OnAddSnippet( wxCommandEvent& event )
 {
 	if (GetStringDb()->IsSnippetKey(m_textCtrlMenuEntry->GetValue())) {
-		wxMessageBox(wxT("Menu entry is not unique!"));
+		wxMessageBox(_("Menu entry is not unique!"));
 		return;
 	}
 	GetStringDb()->SetSnippetString(m_textCtrlMenuEntry->GetValue(), m_textCtrlSnippet->GetValue());
@@ -57,7 +57,7 @@ void EditSnippetsDlg::OnChangeSnippet( wxCommandEvent& event )
 
 	// check if list key is not equal new menu entry and if it is an used key
 	if (curListKey.Cmp(m_textCtrlMenuEntry->GetValue()) != 0 && GetStringDb()->IsSnippetKey(m_textCtrlMenuEntry->GetValue())) {
-		::wxMessageBox(wxT("Menu entry is not unique!"));
+		::wxMessageBox(_("Menu entry is not unique!"));
 		return;
 	}
 
@@ -169,7 +169,7 @@ void EditSnippetsDlg::OnButtonKeyShortcut(wxCommandEvent& e)
 		if (m_manager->GetKeyboardManager()->PopupNewKeyboardShortcutDlg(this, mid) == wxID_OK) {
 			
 			if (m_manager->GetKeyboardManager()->IsDuplicate(accelMap, mid.accel) && mid.accel.IsEmpty() == false) {
-				wxMessageBox(wxT("Accelerator already exist"), wxT("CodeLite"), wxOK|wxCENTRE, this);
+				wxMessageBox(_("Accelerator already exist"), wxT("CodeLite"), wxOK|wxCENTRE, this);
 				return;
 			}
 			

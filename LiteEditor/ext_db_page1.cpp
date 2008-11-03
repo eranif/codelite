@@ -91,7 +91,7 @@ void ExtDbPage1::OnValidate(wxWizardEvent &event)
     //validate that there is a valid name to the database
     wxFileName path(m_dirPicker->GetPath());
     if (!path.DirExists()){
-        wxMessageBox(wxT("Invalid input directory"));
+        wxMessageBox(_("Invalid input directory"));
         event.Veto();
         return;
     }

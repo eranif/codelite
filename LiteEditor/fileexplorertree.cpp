@@ -93,7 +93,7 @@ void FileExplorerTree::OnDeleteNode(wxCommandEvent &e)
 			msg << wxT("'") << GetItemText(item) << wxT("' is a directory. Are you sure you want to remove it and its content?");
 			if (wxMessageBox(msg, wxT("Remove Directory"), wxICON_WARNING|wxYES_NO|wxCANCEL) == wxYES) {
 				if (!RemoveDirectory(fp)) {
-					wxMessageBox(wxT("Failed to remove directory"), wxT("Remove Directory"), wxICON_ERROR | wxOK);
+					wxMessageBox(_("Failed to remove directory"), wxT("Remove Directory"), wxICON_ERROR | wxOK);
 				} else {
 					needRefresh = true;
 				}
@@ -279,7 +279,7 @@ void FileExplorerTree::OnOpenShell(wxCommandEvent &event)
 		wxSetWorkingDirectory(fullpath.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 		
 		if (!ProcUtils::Shell()) {
-			wxMessageBox(wxT("Failed to load shell terminal"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+			wxMessageBox(_("Failed to load shell terminal"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 			return;
 		}
 	}

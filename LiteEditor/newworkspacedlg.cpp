@@ -94,7 +94,7 @@ void NewWorkspaceDlg::OnButtonCreate( wxCommandEvent& event )
 	}
 	
 	if ( !wxDirExists(fn.GetPath()) ) {
-		wxMessageBox(wxT("Invalid path: ") + fn.GetPath(), wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(_("Invalid path: ") + fn.GetPath(), wxT("Error"), wxOK | wxICON_HAND);
 		return;
 	}
 	EndModal(wxID_OK);

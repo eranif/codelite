@@ -1646,7 +1646,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 
 	wxString scopeName = TagsManagerST::Get()->GetScopeName(context);
 	if (scopeName.IsEmpty() || scopeName == wxT("<global>")) {
-		wxMessageBox(wxT("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + wxT(")"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		wxMessageBox(_("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + wxT(")"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
 	}
 
@@ -1744,7 +1744,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 
 		if (DoGetFunctionBody(curPos, blockStartPos, blockEndPos, content)) {
 			//function already has body ...
-			wxMessageBox(wxT("Function '") + tag->GetName() + wxT("' already has a body"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+			wxMessageBox(_("Function '") + tag->GetName() + wxT("' already has a body"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 			return;
 		}
 
@@ -2045,7 +2045,7 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	for (size_t i=0; i<book->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(book->GetPage(i));
 		if (editor && editor->GetModify()) {
-			wxMessageBox(wxT("Please save on all un-saved files before refactoring"));
+			wxMessageBox(_("Please save on all un-saved files before refactoring"));
 			return;
 		}
 	}

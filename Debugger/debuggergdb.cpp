@@ -130,15 +130,19 @@ IDebugger *CreateDebuggerGDB()
 }
 
 // Removes MI additional characters from string
-static void StipString(wxString &string)
+static void StripString(wxString &string)
 {
+	string.Replace(wxT("\\n\""), wxT("\""));
 	string = string.AfterFirst(wxT('"'));
 	string = string.BeforeLast(wxT('"'));
-
-	string.Replace(wxT("\\\\n"), wxT("\n"));
-	string.Replace(wxT("\\n"), wxEmptyString);
-	string.Replace(wxT("\\\\t"), wxT("\t"));
 	string.Replace(wxT("\\\""), wxT("\""));
+
+	string = string.Trim().Trim(false);
+	
+//	string.Replace(wxT("\\\\"), wxT("\\"));
+//	string.Replace(wxT("\\\\n"), wxT("\n"));
+//	string.Replace(wxT("\\n"), wxEmptyString);
+//	string.Replace(wxT("\\\\t"), wxT("\t"));
 }
 
 static wxString MakeId()
@@ -657,7 +661,7 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 			return true;
 
 		} else {
-			StipString(line);
+			StripString(line);
 			if (!line.Contains(command)) {
 				output << line << wxT("\n");
 			}
@@ -762,7 +766,7 @@ void DbgGdb::Poke()
 		}
 	
 		if(reConnectionRefused.Matches(line)){
-			StipString(line);
+			StripString(line);
 #ifdef __WXGTK__
 			m_consoleFinder.FreeConsole();
 #endif
@@ -781,7 +785,7 @@ void DbgGdb::Poke()
 
 		if (line.StartsWith(wxT("~")) || line.StartsWith(wxT("&"))) {
 			//just an informative line,
-			StipString(line);
+			StripString(line);
 			//filter out some gdb error lines...
 			if (FilterMessage(line)) {
 				continue;
@@ -818,7 +822,7 @@ void DbgGdb::DoProcessAsyncCommand(wxString &line, wxString &id)
 		if (handler) {
 			delete handler;
 		}
-		StipString(line);
+		StripString(line);
 		//We also need to pass the control back to the program
 		m_observer->UpdateGotControl(DBG_CMD_ERROR);
 

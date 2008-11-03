@@ -439,6 +439,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 	int position( pos );
 	int at(position);
 	bool prevGt(false);
+	bool prevColon(false);
 	while (cont && depth >= 0) {
 		wxChar ch =ctrl->PreviousChar(position, at, true);
 		position = at;
@@ -467,6 +468,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 						// dont include this token
 						at = ctrl->PositionAfter(at);
 			cont = false;
+			prevColon = false;
 			break;
 		case wxT('-'):
 						if (prevGt) {
@@ -481,6 +483,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 						cont = false;
 					}
 				}
+			prevColon = false;
 			break;
 		case wxT(' '):
 					case wxT('\n'):
@@ -488,6 +491,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 							case wxT('\t'):
 								case wxT('\r'):
 										prevGt = false;
+			prevColon = false;
 			if (depth <= 0) {
 				cont = false;
 				break;
@@ -496,17 +500,18 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 		case wxT('{'):
 					case wxT('='):
 							prevGt = false;
+			prevColon = false;
 			cont = false;
 			break;
 		case wxT('('):
 					case wxT('['):
 							depth--;
 			prevGt = false;
+			prevColon = false;
 			if (depth < 0) {
 				//dont include this token
 				at =ctrl->PositionAfter(at);
 				cont = false;
-				break;
 			}
 			break;
 		case wxT(','):
@@ -518,7 +523,9 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 										case wxT('^'):
 											case wxT('|'):
 												case wxT('%'):
-														prevGt = false;
+													case wxT('?'):
+															prevGt = false;
+			prevColon = false;
 			if (depth <= 0) {
 
 				//dont include this token
@@ -528,10 +535,12 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 			break;
 		case wxT('>'):
 						prevGt = true;
+			prevColon = false;
 			depth++;
 			break;
 		case wxT('<'):
 						prevGt = false;
+			prevColon = false;
 			depth--;
 			if (depth < 0) {
 
@@ -543,10 +552,12 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor)
 		case wxT(')'):
 					case wxT(']'):
 							prevGt = false;
+			prevColon = false;
 			depth++;
 			break;
 		default:
 			prevGt = false;
+			prevColon = false;
 			break;
 		}
 	}
@@ -826,7 +837,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 	TagsManagerST::Get()->GetFiles(fileName, files);
 	std::sort(files.begin(), files.end(), SFileSort());
 
-	if ( files.empty() == false )	{
+	if ( files.empty() == false ) {
 		for (; i<files.size()-1; i++) {
 			list.Append(files.at(i).GetFullName() + GetFileImageString(files.at(i).GetExt()) + wxT("@"));
 		}
@@ -1440,11 +1451,11 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		if (dbgr->GetTip(command, output)) {
 			// cancel any old calltip and display the new one
 			ctrl.CallTipCancel();
-			
+
 			// wxScintilla's tooltip does not present \t characters
 			// so we replace it with 4 spaces
 			output.Replace(wxT("\t"), wxT("    "));
-			
+
 			ctrl.CallTipShow(event.GetPosition(), output);
 		}
 	}

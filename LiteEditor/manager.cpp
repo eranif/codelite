@@ -1308,6 +1308,8 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 		return;
 	}
 	wxString wd;
+	
+	// we call it here once for the 'wd' 
 	wxString execLine = GetProjectExecutionCommand(projectName, wd, true);
 	ProjectPtr proj = GetProject(projectName);
 
@@ -1328,13 +1330,16 @@ void Manager::ExecuteNoDebug(const wxString &projectName)
 	//- no hiding the console
 	//- no redirection of the stdin/out
 	EnvironmentConfig::Instance()->ApplyEnv(NULL);
+	
+	// call it again here to get the actual exection line - we do it here since
+	// the environment has been applied
+	execLine = GetProjectExecutionCommand(projectName, wd, true);
 	m_asyncExeCmd->Execute(execLine, false, false);
+	
 	if (m_asyncExeCmd->GetProcess()) {
-
 		m_asyncExeCmd->GetProcess()->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(Manager::OnProcessEnd), NULL, this);
-	} else {
-		EnvironmentConfig::Instance()->UnApplyEnv();
 	}
+	EnvironmentConfig::Instance()->UnApplyEnv();
 }
 
 void Manager::OnProcessEnd(wxProcessEvent &event)
@@ -2920,9 +2925,15 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 		term << wxT(" -e ");
 
 		if (bldConf->GetPauseWhenExecEnds() ) {
+			wxString ld_lib_path;
 			wxFileName exePath( wxStandardPaths::Get().GetExecutablePath() );
 			wxFileName exeWrapper(exePath.GetPath(), wxT("le_exec.sh"));
-			term << wxT("/bin/sh -f ") << exeWrapper.GetFullPath() << wxT(" ");
+			
+			if(wxGetEnv(wxT("LD_LIBRARY_PATH"), &ld_lib_path) && ld_lib_path.IsEmpty() == false){
+				term << wxT("/bin/sh -f ") << exeWrapper.GetFullPath() << wxT(" LD_LIBRARY_PATH=") << ld_lib_path << wxT(" ");
+			}else{
+				term << wxT("/bin/sh -f ") << exeWrapper.GetFullPath() << wxT(" ");
+			}
 		}
 
 		term << execLine;

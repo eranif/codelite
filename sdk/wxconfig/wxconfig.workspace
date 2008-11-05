@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="wxconfig" Database=".\wxconfig.tags">
+<CodeLite_Workspace Name="wxconfig" Database="./wxconfig.tags">
   <Project Name="wx-config" Path="wx-config.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">

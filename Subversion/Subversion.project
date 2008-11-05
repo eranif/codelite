@@ -208,7 +208,7 @@
     </Configuration>
   </Settings>
   <VirtualDirectory Name="HTML">
-    <File Name="..\Runtime\svnreport.html"/>
+    <File Name="../Runtime/svnreport.html"/>
   </VirtualDirectory>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>

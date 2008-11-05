@@ -29,7 +29,7 @@
   <Project Name="snipwiz" Path="SnipWiz/snipwiz.project" Active="No"/>
   <Project Name="wxFormBuilder" Path="wxformbuilder/wxFormBuilder.project" Active="No"/>
   <Project Name="abbreviation" Path="abbreviation/abbreviation.project" Active="No"/>
-  <Project Name="SymbolView" Path="SymbolView\SymbolView.project" Active="No"/>
+  <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>

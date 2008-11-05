@@ -4,7 +4,7 @@
     <Variable Name="WorkspaceName" Value="Plugins"/>
     <Variable Name="WorkspacePath" Value="/home/eran/devl/codelite/trunk"/>
   </Environment>
-  <Project Name="SymbolView" Path="SymbolView\SymbolView.project" Active="Yes"/>
+  <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="SymbolView" ConfigName="WinReleaseUnicode"/>
@@ -12,7 +12,7 @@
     <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
       <Project Name="SymbolView" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="SymbolView" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release Unicode" Selected="yes">

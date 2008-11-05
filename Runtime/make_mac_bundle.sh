@@ -3,7 +3,7 @@
 ## extract the file name from the Makefile
 exe_name=`cat ../Makefile | grep ^EXE_NAME_NO_PATH | cut -d= -f2`
 
-## Run install_name_tool on the executable to bundle 
+## Run install_name_tool on the executable to bundle
 ## libwx with the bundle
 
 
@@ -72,7 +72,7 @@ cp config/plugins.xml.default ./CodeLite.app/Contents/SharedSupport/config
 cur_rev=`svn info | grep Revision | awk '{print $2;}'`
 file_exist=`test -f ./CodeLite.app/Contents/SharedSupport/config/liteeditor.xml`
 file_exist=$?
-if [ $file_exist -eq 1 ] 
+if [ $file_exist -eq 1 ]
 then
 	## file does not exist, create an empty file
 	touch ./CodeLite.app/Contents/SharedSupport/config/codelite.xml
@@ -97,6 +97,7 @@ cp ../lib/cscope.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/Copyright.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/UnitTestCPP.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/ExternalTools.so ./CodeLite.app/Contents/SharedSupport/plugins/
+cp ../lib/SymbolView.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/SnipWiz.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/wxformbuilder.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/abbreviation.so ./CodeLite.app/Contents/SharedSupport/plugins/

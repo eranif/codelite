@@ -1,11 +1,11 @@
 #!/bin/sh
 
 ########################################################
-## This file is part of CodeLite project and 
+## This file is part of CodeLite project and
 ## it is released under the terms of GPLv2 or later
 ## Copyrights Eran Ifrah (c) 2008
 ########################################################
-	
+
 createRevisionFile()
 {
 	chmod +x ./le_makerevision.sh
@@ -14,7 +14,7 @@ createRevisionFile()
 
 createVariables()
 {
-	## set the compiler name 
+	## set the compiler name
 	compiler_name="g++ "
 	c_compiler_name="gcc "
 	exe_name="Runtime/CodeLite"
@@ -61,10 +61,10 @@ createVariables()
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ " >> Makefile
 	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
 	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
-	
+
 
 	if [ "$is_plugin" = "no" ]; then
-		echo "INCLUDES := \$(INCLUDES) -ILiteEditor " >> Makefile 
+		echo "INCLUDES := \$(INCLUDES) -ILiteEditor " >> Makefile
 	fi
 	echo "" >> Makefile
 	if [ "$os_name" != "Darwin" ] ; then
@@ -73,7 +73,7 @@ createVariables()
 	else
 		echo "CCFLAGS := \$(CCFLAGS) -D__APPLE__ -DMACOSX" >> Makefile
 	fi
-	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include	 -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite " >> Makefile 
+	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include	 -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite " >> Makefile
 	echo "" >> Makefile
 	echo "" >> Makefile
 }
@@ -81,19 +81,19 @@ createVariables()
 createMainTargets()
 {
 	echo "## build targets" >> Makefile
-	
+
 	## default
 	target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins "
-	
+
 	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
 		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins post_build_msg"
 	fi
-	
+
 	if [ "$os_name" = "Darwin" ]; then
 		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins mac_bundle"
 	fi
-	
+
 	## add the "all" target to the makefile
 	echo "${target_all}" >> Makefile
 	echo "" >> Makefile
@@ -105,7 +105,7 @@ createMainTargets()
 
 	echo "sdk/ctags/Makefile: sdk/ctags/source.mak" >> Makefile
 	echo "	@chmod +x sdk/ctags/configure" >> Makefile
-	echo "	cd sdk/ctags && ./configure" >> Makefile 
+	echo "	cd sdk/ctags && ./configure" >> Makefile
 	echo "" >> Makefile
 
 	echo "pre_build:" >> Makefile
@@ -132,7 +132,7 @@ createObjectList ()
 {
 	files_list=$1
 	object_list_name=$2
-	
+
 	echo "${object_list_name} = \\"  >> Makefile
 	for a_file in $files_list
 	do
@@ -152,14 +152,14 @@ createRules_archive ()
 	rule_name=$3
 	libname=$4
 	for a_file in $files_list
-	do 
+	do
 
 		a_file_with_ext=`basename $a_file`
 		a_file_no_ext=`basename $a_file .cxx`
 		a_file_no_ext=`basename $a_file_no_ext .cpp`
 		a_file_no_ext=`basename $a_file_no_ext .c`
 		file_extension=`basename $a_file | cut -d. -f2`
-		
+
 		if [ "$file_extension" = "c" ]; then
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
@@ -173,7 +173,7 @@ createRules_archive ()
 		fi
 	done
 	echo >> Makefile
-	
+
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
 	echo "	ar rcu \$(OUTPUT_DIR)/lib${libname}\$(EXT).a \$(${object_list_name})" >> Makefile
 	echo "	ranlib \$(OUTPUT_DIR)/lib${libname}\$(EXT).a " >> Makefile
@@ -187,14 +187,14 @@ createRules_sharedObject_no_link_flags ()
 	rule_name=$3
 	libname=$4
 	for a_file in $files_list
-	do 
+	do
 
 		a_file_with_ext=`basename $a_file`
 		a_file_no_ext=`basename $a_file .cxx`
 		a_file_no_ext=`basename $a_file_no_ext .cpp`
 		a_file_no_ext=`basename $a_file_no_ext .c`
 		file_extension=`basename $a_file | cut -d. -f2`
-		
+
 		if [ "$file_extension" = "c" ]; then
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
@@ -208,12 +208,12 @@ createRules_sharedObject_no_link_flags ()
 		fi
 	done
 	echo >> Makefile
-	
+
 	shared_obj_switch=" -shared "
 	if [ "$os_name" = "Darwin" ]; then
 		shared_obj_switch=" -dynamiclib "
 	fi
-	
+
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
 	echo "	\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) " >> Makefile
 	echo >> Makefile
@@ -226,14 +226,14 @@ createRules_sharedObject ()
 	rule_name=$3
 	libname=$4
 	for a_file in $files_list
-	do 
+	do
 
 		a_file_with_ext=`basename $a_file`
 		a_file_no_ext=`basename $a_file .cxx`
 		a_file_no_ext=`basename $a_file_no_ext .cpp`
 		a_file_no_ext=`basename $a_file_no_ext .c`
 		file_extension=`basename $a_file | cut -d. -f2`
-		
+
 		if [ "$file_extension" = "c" ]; then
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
@@ -247,12 +247,12 @@ createRules_sharedObject ()
 		fi
 	done
 	echo >> Makefile
-	
+
 	shared_obj_switch=" -shared "
 	if [ "$os_name" = "Darwin" ]; then
 		shared_obj_switch=" -dynamiclib "
 	fi
-	
+
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
 	echo "	\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
 	echo >> Makefile
@@ -265,14 +265,14 @@ createRules_exe ()
 	rule_name=$3
 	exename=$4
 	for a_file in $files_list
-	do 
+	do
 
 		a_file_with_ext=`basename $a_file`
 		a_file_no_ext=`basename $a_file .cxx`
 		a_file_no_ext=`basename $a_file_no_ext .cpp`
 		a_file_no_ext=`basename $a_file_no_ext .c`
 		file_extension=`basename $a_file | cut -d. -f2`
-		
+
 		if [ "$file_extension" = "c" ]; then
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
@@ -286,7 +286,7 @@ createRules_exe ()
 		fi
 	done
 	echo >> Makefile
-	
+
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
 	echo "	\$(CMP) -o ${exename} \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
 	echo >> Makefile
@@ -298,14 +298,14 @@ createPluginMakefile()
 	plugin_name=$2
 	install_path=$3
 	post_install_path=$4
-	
+
 	echo "Generating ${plugin_path}/Makefile..."
 	current_wd=`pwd`
 	cd ${plugin_path}
-	
+
 	## remove old Makefile
 	rm -fr Makefile
-	
+
 	## set the plugin path relative to the main path
 	base_dir=".."
 
@@ -316,7 +316,7 @@ createPluginMakefile()
 
 	## restore the path
 	cd ${current_wd}
-	
+
 	echo ".PHONY: ${plugin_name} ${plugin_name}_clean ${plugin_name}_install" >> Makefile
 	echo "${plugin_name}:" >> Makefile
 	echo "	cd ${plugin_path} && \$(MAKE) -f Makefile" >> Makefile
@@ -325,7 +325,7 @@ createPluginMakefile()
 	echo "${plugin_name}_clean:" >> Makefile
 	echo "	cd ${plugin_path} && \$(MAKE) -f Makefile clean" >> Makefile
 	echo "" >> Makefile
-	
+
 	echo "${plugin_name}_install:" >> Makefile
 	echo "	cp \$(OUTPUT_DIR)/${plugin_name}.so ${install_path}" >> Makefile
 	echo "" >> Makefile
@@ -335,7 +335,7 @@ createPluginTargets()
 {
 	plugin_name=$1
 	runtime_path=$2
-	
+
 	echo "## build tagrets" >> Makefile
 	echo "all :  pre_build ${plugin_name} post_build" >> Makefile
 	echo "" >> Makefile
@@ -351,7 +351,7 @@ createPluginTargets()
 	echo "	\$(RM) -fr \$(OBJ_DIR)" >> Makefile
 	echo "	\$(RM) -fr ${runtime_path}/${plugin_name}.so" >> Makefile
 	echo "" >> Makefile
-	
+
 	echo "post_build:" >> Makefile
 	echo "	cp -fr ${base_dir}/\$(OUTPUT_DIR)/${plugin_name}.so ${runtime_path}/." >> Makefile
 	echo "" >> Makefile
@@ -362,7 +362,7 @@ createInstallTarget()
 {
 	echo "install: core_install plugins_install" >> Makefile
 	echo "" >> Makefile
-	
+
 	echo "core_install:" >> Makefile
 	echo "	@echo installing CodeLite" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
@@ -457,7 +457,7 @@ createUnInstallTarget()
 	echo "" >> Makefile
 }
 
-createEndMessage() 
+createEndMessage()
 {
 	if [ "$os_name" = "Linux" ]; then
 		echo "post_build_msg:" >> Makefile
@@ -477,14 +477,14 @@ checkCURL()
 	fi
 }
 
-generateControlFile() 
+generateControlFile()
 {
 	Arc="i386"
 	if [ "$arch" = "x86_64" ]; then
 		Arc="amd64"
     fi
-	
-	build_version="0"	
+
+	build_version="0"
 	if test -d ".svn"; then
 		build_version=`svn info | grep Revision | awk '{print $2;}'`
 	fi
@@ -548,7 +548,7 @@ if [ "$1" = "--enable-debug" ]; then
   else        # See if there's a --prefix=foo. Do it the hard way, to stay Bourne compatible
     len=`expr length $1`
     if [ $len -gt 9 ]; then  # If not, it can't be a valid prefix
-      if [ "`expr substr $1 1 9`" = "--prefix=" ]; then 
+      if [ "`expr substr $1 1 9`" = "--prefix=" ]; then
         prefix=`expr substr $1 10 $len` # $prefix now contains the bit after the '='
         len=`expr length $prefix`       # Now remove any terminal '/'
         if [ "`expr substr $prefix $len 1`" = "/" ]; then
@@ -618,12 +618,13 @@ echo "ExternalTools\\" >> Makefile
 echo "SnipWiz\\" >> Makefile
 echo "wxformbuilder\\" >> Makefile
 echo "abbreviation\\" >> Makefile
+echo "SymbolView\\" >> Makefile
 echo "" >> Makefile
 
 echo "plugins_install:\\" >> Makefile
 ########################################################
 ##
-## For all plugins you add, you can add an entry here for 
+## For all plugins you add, you can add an entry here for
 ## the install target
 ########################################################
 echo "Debugger_install\\" >> Makefile
@@ -631,13 +632,13 @@ echo "Gizmos_install\\" >> Makefile
 echo "cscope_install\\" >> Makefile
 echo "Subversion_install\\" >> Makefile
 echo "CodeFormatter_install\\" >> Makefile
-#echo "ReferenceAnalyser_install\\" >> Makefile
 echo "Copyright_install\\" >> Makefile
 echo "UnitTestCPP_install\\" >> Makefile
 echo "ExternalTools_install\\" >> Makefile
 echo "SnipWiz_install\\" >> Makefile
 echo "wxformbuilder_install\\" >> Makefile
 echo "abbreviation_install\\" >> Makefile
+echo "SymbolView_install\\" >> Makefile
 echo "" >> Makefile
 
 echo "clean_plugins:\\" >> Makefile
@@ -651,13 +652,13 @@ echo "Gizmos_clean\\" >> Makefile
 echo "cscope_clean\\" >> Makefile
 echo "Subversion_clean\\" >> Makefile
 echo "CodeFormatter_clean\\" >> Makefile
-#echo "ReferenceAnalyser_clean\\" >> Makefile
 echo "Copyright_clean\\" >> Makefile
 echo "UnitTestCPP_clean\\" >> Makefile
 echo "ExternalTools_clean\\" >> Makefile
 echo "SnipWiz_clean\\" >> Makefile
 echo "wxformbuilder_clean\\" >> Makefile
 echo "abbreviation_clean\\" >> Makefile
+echo "SymbolView_clean\\" >> Makefile
 echo "" >> Makefile
 
 ########################################################
@@ -678,3 +679,4 @@ createPluginMakefile "ExternalTools" "ExternalTools" "\$(DESTDIR)$prefix/share/c
 createPluginMakefile "SnipWiz" "SnipWiz" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "wxformbuilder" "wxformbuilder" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "abbreviation" "abbreviation" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
+createPluginMakefile "SymbolView" "SymbolView" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"

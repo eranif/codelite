@@ -38,8 +38,8 @@ static void EscapeComment(wxString &comment)
 			comment << line << wxT("\n");
 		}
 	}
-	
-	// SVN does not like any quotation marks in the comment -> escape them 
+
+	// SVN does not like any quotation marks in the comment -> escape them
 	comment.Replace(wxT("\""), wxT("\\\""));
 }
 
@@ -79,4 +79,10 @@ wxString SvnDlg::GetValue() const
 	wxString comment( m_textCtrl->GetValue() );
 	EscapeComment(comment);
 	return comment;
+}
+
+void SvnDlg::SetValue(const wxString& value)
+{
+	m_textCtrl->SetValue(value);
+	m_textCtrl->SelectAll();
 }

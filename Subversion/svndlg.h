@@ -42,7 +42,7 @@ public:
 	/** Constructor */
 	SvnDlg( wxWindow* parent );
 	wxString GetValue() const ;
-	void SetValue( const wxString &value ) { m_textCtrl->SetValue(value); }
+	void SetValue( const wxString &value ) ;
 };
 
 #endif // __svndlg__

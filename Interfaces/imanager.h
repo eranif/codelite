@@ -88,8 +88,9 @@ public:
 	 * @param fileName the file to open - use absolute path
 	 * @param projectName project to associate this file - can be wxEmptyString
 	 * @param lineno if lineno is not wxNOT_FOUD, the caret will placed on this line number
+     * @return true if file opened    
 	 */
-	virtual void OpenFile(const wxString &fileName, const wxString &projectName, int lineno = wxNOT_FOUND) = 0;
+	virtual bool OpenFile(const wxString &fileName, const wxString &projectName = wxEmptyString, int lineno = wxNOT_FOUND) = 0;
 	/**
 	 * @brief return a pointer to the configuration tool
 	 * @sa IConfigTool
@@ -109,6 +110,12 @@ public:
 	 * @sa TreeType
 	 */
 	virtual wxTreeCtrl *GetTree(TreeType type) = 0;
+	/**
+	 * @brief return a pointer to the workspace pane notebook (the one with the 'workspace' title)
+	 * @return pointer to Notebook
+	 * @sa Notebook
+	 */
+	virtual Notebook *GetWorkspacePaneNotebook() = 0;
 	/**
 	 * @brief return a pointer to the output pane notebook (the one with the 'output' title)
 	 * @return pointer to Notebook
@@ -244,6 +251,11 @@ public:
 	 * @brief return the editor's settings object
 	 */
     virtual OptionsConfigPtr GetEditorSettings() = 0;
+    
+    /**
+     * @brief search for pattern in active editor and select name if found
+     */
+    virtual void FindAndSelect(const wxString& pattern, const wxString& name) = 0;
 };
 
 #endif //IMANAGER_H

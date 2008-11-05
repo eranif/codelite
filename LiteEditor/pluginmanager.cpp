@@ -283,9 +283,14 @@ Notebook *PluginManager::GetOutputPaneNotebook()
 	return Frame::Get()->GetOutputPane()->GetNotebook();
 }
 
-void PluginManager::OpenFile(const wxString &fileName, const wxString &projectName, int lineno)
+Notebook *PluginManager::GetWorkspacePaneNotebook()
 {
-	ManagerST::Get()->OpenFile(fileName, projectName, lineno);
+    return Frame::Get()->GetWorkspacePane()->GetNotebook();
+}
+
+bool PluginManager::OpenFile(const wxString &fileName, const wxString &projectName, int lineno)
+{
+	return ManagerST::Get()->OpenFile(fileName, projectName, lineno);
 }
 
 wxString PluginManager::GetStartupDirectory() const
@@ -404,4 +409,12 @@ bool PluginManager::CreateVirtualDirectory(const wxString& parentPath, const wxS
 OptionsConfigPtr PluginManager::GetEditorSettings()
 {
     return EditorConfigST::Get()->GetOptions();
+}
+
+void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name)
+{
+    LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    if (editor) {
+        ManagerST::Get()->FindAndSelect(editor, const_cast<wxString&>(pattern), name);
+    }
 }

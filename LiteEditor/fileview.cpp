@@ -651,7 +651,8 @@ void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 		AddFilesToVirtualFodler(item, paths);
 	}
 	dlg->Destroy();
-	SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&paths);
+	// this event is already sent by AddFilesToVirtualFodler() -> AddFilesToProject()
+ 	//SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&paths);
 }
 
 void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
@@ -688,9 +689,10 @@ void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
 		SortItem(item);
 		Expand( item );
 
-		wxArrayString arrStr;
-		arrStr.Add(filename);
-		SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&arrStr);
+                // event moved to Manager::AddFileToProject()
+		//wxArrayString arrStr;
+		//arrStr.Add(filename);
+		//SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&arrStr);
 	}
 
 	dlg->Destroy();
@@ -758,7 +760,8 @@ void FileViewTree::DoRemoveItem( wxTreeItemId &item )
 				wxString file_name(data->GetData().GetFile());
 				Delete( item );
 
-				SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&file_name);
+				wxArrayString files(1, &file_name);
+ 				SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&files);
 			}
 		}
 	}

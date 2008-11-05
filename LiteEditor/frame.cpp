@@ -1396,6 +1396,7 @@ void Frame::OnFileClosing(NotebookEvent &event)
 		if (!editor->GetProject().IsEmpty()) {
 			GetWorkspacePane()->DeleteSymbolTree(editor->GetFileName());
 		}
+                SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 	}
 
 	//update the titlebar
@@ -1447,6 +1448,7 @@ void Frame::OnPageChanged(NotebookEvent &event)
 	}
 	editor->SetActive();
 	GetOpenWindowsPane()->SyncSelection();
+        SendCmdEvent(wxEVT_ACTIVE_EDITOR_CHANGED, (IEditor*)editor);
 	event.Skip();
 }
 
@@ -1501,6 +1503,7 @@ void Frame::ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete,
 			} else {
 				if ( doDelete ) {
 					GetWorkspacePane()->DeleteSymbolTree(editor->GetFileName());
+                                        SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 					GetNotebook()->DeletePage(index, notify);
 				}
 			}
@@ -1513,6 +1516,7 @@ void Frame::ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete,
 			// just delete the tab without saving the changes
 			if ( doDelete ) {
 				GetWorkspacePane()->DeleteSymbolTree(editor->GetFileName());
+                                SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 				GetNotebook()->DeletePage(index, notify);
 			}
 			break;
@@ -1521,6 +1525,7 @@ void Frame::ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete,
 		// file is not modified, just remove the tab
 		if ( doDelete ) {
 			GetWorkspacePane()->DeleteSymbolTree(editor->GetFileName());
+                        SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 			GetNotebook()->DeletePage(index, notify);
 		} // if( doDelete )
 	}
@@ -2913,6 +2918,7 @@ void Frame::OnAppActivated(wxActivateEvent &e)
 
 	if (files.empty() == false) {
 		TagsManagerST::Get()->RetagFiles( files );
+                SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&files);
 	}
 
 	e.Skip();
@@ -3399,13 +3405,13 @@ void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 
 void Frame::OnNewDetachedPane(wxCommandEvent &e)
 {
-	DockablePane *pane = (DockablePane*)(e.GetClientData());
-	if (pane) {
+    DockablePane *pane = (DockablePane*)(e.GetClientData());
+    if (pane) {
         wxString text = pane->GetName();
         m_DPmenuMgr->AddMenu(text);
 
         wxAuiPaneInfo info;
-        m_mgr.AddPane(pane, info.Name(text).Float().Caption(text));
+        m_mgr.AddPane(pane, info.Name(text).Float().Caption(text).SetFlag(wxAuiPaneInfo::optionHidden, pane->GetBook() == NULL));
         m_mgr.Update();
     }
 }

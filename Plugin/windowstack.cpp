@@ -38,6 +38,27 @@ WindowStack::~WindowStack()
 	Clear();
 }
 
+void WindowStack::DoSelect(wxWindow *win, const wxString &key)
+{
+    Freeze();
+    //remove the old selection
+    if(m_selection){
+        m_mainSizer->Detach(m_selection);
+        m_selection->Hide();
+    }
+    if (win) {
+        m_mainSizer->Add(win, 1, wxEXPAND);
+        win->Show();
+        m_selection = win;
+        m_selectionKey = key;
+    } else {
+        m_selection = NULL;
+        m_selectionKey.Clear();
+    }
+    m_mainSizer->Layout();
+    Thaw();
+}
+ 
 void WindowStack::Add(wxWindow *win, const wxString &key)
 {
 	if(!win || key.IsEmpty()){
@@ -51,69 +72,79 @@ void WindowStack::Add(wxWindow *win, const wxString &key)
 
 void WindowStack::Select(const wxString &key)
 {
-	//find the window
-	std::map<wxString, wxWindow*>::iterator iter = m_windows.find(key);
-	if(iter == m_windows.end()){
-		return;
-	}
-
-	wxWindow *win = iter->second;
-	if(!win){
-		m_windows.erase(iter);
-		return;
-	}
-	
-	Freeze();
-	//remove the old selection
-	if(m_selection){
-		m_mainSizer->Detach(m_selection);
-		m_selection->Hide();
-	}
-
-	m_mainSizer->Add(win, 1, wxEXPAND);
-	win->Show();
-	m_selection = win;
-	m_mainSizer->Layout();
-	Thaw();
+    wxWindow *win = Find(key);
+    if (win) {
+        DoSelect(win, key);
+    }
 }
 
+void WindowStack::Select(wxWindow* win)
+{
+    wxString key = Find(win);
+    if (!key.IsEmpty()) {
+        DoSelect(win, key);
+    }
+}
+
+void WindowStack::SelectNone()
+{
+    DoSelect(NULL, wxEmptyString);
+}
+  
 void WindowStack::Clear()
 {
-	if(m_selection){
-		m_mainSizer->Detach(m_selection);
-		m_selection->Hide();
-	}
-	
-	m_mainSizer->Layout();
-	m_selection = NULL;
-	m_windows.clear();
+    SelectNone();
+    m_selection = NULL;
+    m_selectionKey.Clear();
+    m_windows.clear();
 }
 
-void WindowStack::Delete(const wxString &key)
+wxWindow* WindowStack::Remove(const wxString &key)
 {
-	std::map<wxString, wxWindow*>::iterator iter = m_windows.find(key);
-	if(iter == m_windows.end()){
-		return;
-	}
+    std::map<wxString, wxWindow*>::iterator iter = m_windows.find(key);
+    if(iter == m_windows.end()){
+	return NULL;
+    }
 
-	wxWindow *win = iter->second;
-	if(!win){
-		return;
-	}
+    wxWindow *win = iter->second;
+    if(!win){
+        return NULL;
+    }
 	
-	Freeze();
-	m_mainSizer->Detach(win);
-	m_mainSizer->Layout();
-	win->Hide();
-	//if the removed page was also the selection, unselect it
-	if(win == m_selection){
-		m_selection = NULL;
-	}
-	m_windows.erase(iter);
-	win->Destroy();
-	Thaw();
+    if (m_selection == win) {
+        SelectNone();
+    }
+  
+    m_windows.erase(iter);
+     
+    return win;
 }
 
+wxString WindowStack::Remove(wxWindow* win)
+{
+    wxString key = Find(win);
+    if (!key.IsEmpty()) {
+        Remove(key);
+    }
+    return key;
+}
+
+void WindowStack::Delete(const wxString &key) 
+{
+    wxWindow *win = Remove(key);
+    if (win) { 
+        win->Destroy(); 
+    }
+}
+
+void WindowStack::Delete(wxWindow *win) 
+{
+    wxString key = Remove(win);
+    if (!key.IsEmpty()) { 
+        win->Destroy(); 
+    }
+}
+    
 wxWindow *WindowStack::Find(const wxString &key)
 {
 	std::map<wxString, wxWindow*>::iterator iter = m_windows.find(key);
@@ -121,4 +152,22 @@ wxWindow *WindowStack::Find(const wxString &key)
 		return NULL;
 	}
 	return iter->second;
+}
+
+wxString WindowStack::Find(wxWindow *win) 
+{
+    for (std::map<wxString,wxWindow*>::iterator iter = m_windows.begin();
+            iter != m_windows.end(); iter++) {
+        if (iter->second == win)
+            return iter->first;
+    }
+    return wxEmptyString;
+}
+
+void WindowStack::GetKeys(std::vector<wxString> &keys) const
+{
+    for (std::map<wxString,wxWindow*>::const_iterator iter = m_windows.begin();
+            iter != m_windows.end(); iter++) {
+        keys.push_back(iter->first);
+    }
 }

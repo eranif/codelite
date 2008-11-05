@@ -73,7 +73,8 @@ public:
 	virtual TreeItemInfo GetSelectedTreeItemInfo(TreeType type);
 	virtual wxTreeCtrl *GetTree(TreeType type);
 	virtual Notebook *GetOutputPaneNotebook();
-	virtual void OpenFile(const wxString &fileName, const wxString &projectName, int lineno = wxNOT_FOUND);
+        virtual Notebook *GetWorkspacePaneNotebook();
+	virtual bool OpenFile(const wxString &fileName, const wxString &projectName = wxEmptyString, int lineno = wxNOT_FOUND);
 	virtual wxString GetStartupDirectory() const;
 	virtual void AddProject(const wxString & path);
 	virtual bool IsWorkspaceOpen() const;
@@ -96,6 +97,7 @@ public:
 	virtual IKeyboard *GetKeyboardManager();
 	virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName);
 	virtual OptionsConfigPtr GetEditorSettings();
+    virtual void FindAndSelect(const wxString& pattern, const wxString& name);
     
 	//------------------------------------
 	//End of IManager interface

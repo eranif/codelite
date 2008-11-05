@@ -41,6 +41,7 @@
 
 #define ENTER_SVN_AND_SELECT() {\
 		if(m_cmd){\
+			PrintMessage(_("INFO: SVN is currently busy, command is ignored\n"));\
 			return;\
 		}\
 		SelectSvnTab();\
@@ -149,9 +150,9 @@ void SvnDriver::OnSvnProcessTerminated(wxProcessEvent &event)
 		wxSetWorkingDirectory(item.m_fileName.GetPath());
 		wxArrayString output;
 
-		PrintMessage(wxT("Performning cleanup...\n"));
+		PrintMessage(_("Performning cleanup...\n"));
 		ProcUtils::ExecuteCommand(command, output);
-		PrintMessage(wxT("Done\n"));
+		PrintMessage(_("Done\n"));
 		CommitWithAuth(cmd, item);
 
 	} else {
@@ -297,19 +298,18 @@ void SvnDriver::Commit()
 	}
 
 	//Get Log message from user
-	SvnDlg *dlg = new SvnDlg(NULL);
-	text.Prepend(dlg->GetValue()+wxT("# Svn status:\n"));
-	dlg->SetValue(text);
+	SvnDlg dlg(NULL);
+	text.Prepend(dlg.GetValue()+wxT("# Svn status:\n"));
+	dlg.SetValue(text);
 
-	if (dlg->ShowModal() == wxID_OK) {
-		comment = dlg->GetValue();
+	if (dlg.ShowModal() == wxID_OK) {
+		comment = dlg.GetValue();
 		command.Clear();
 		command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 		command << wxT("commit ") << fileName << wxT(" -m \"") << comment << wxT("\"");
 		m_curHandler = new SvnCommitCmdHandler(this, command, item);
 		ExecCommand(command);
 	}
-	dlg->Destroy();
 }
 
 void SvnDriver::ResolveConflictedFile(const wxFileName& filename, SvnPostCmdAction* handler)
@@ -622,11 +622,11 @@ void SvnDriver::Add(const wxFileName &filename, SvnPostCmdAction *handler)
 
 				}
 			} else {
-				PrintMessage(wxT("Operation Canceled\n"));
+				PrintMessage(_("Operation Canceled\n"));
 			}
 			dlg->Destroy();
 		} else {
-			PrintMessage(wxT("Nothing to be added\n"));
+			PrintMessage(_("Nothing to be added\n"));
 			PrintMessage(commandSeparator);
 		}
 

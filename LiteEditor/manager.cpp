@@ -524,7 +524,7 @@ void Manager::CloseWorkspace()
 			book->DeletePage((size_t)i);
 		}
 	}
-
+        SendCmdEvent(wxEVT_WORKSPACE_CLOSED);
 	Frame::Get()->GetNotebook()->Refresh();
 	Frame::Get()->GetWorkspacePane()->BuildFileTree();
 
@@ -642,7 +642,12 @@ bool Manager::RemoveProject(const wxString &name)
 		proj->GetFiles(projectFiles, true);
 		TagsManagerST::Get()->DeleteFilesTags(projectFiles);
 		RemoveProjectNameFromOpenFiles(projectFiles);
-	} // if(proj)
+                wxArrayString prjfls;
+                for (size_t i = 0; i < projectFiles.size(); i++) {
+                    prjfls.Add(projectFiles[i].GetFullPath());
+                }
+                SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*) &prjfls);	
+        } // if(proj)
 
 	Frame::Get()->GetWorkspacePane()->GetFileViewTree()->BuildTree();
 	//notify plugins
@@ -766,6 +771,7 @@ bool Manager::AddFileToProject(const wxString &fileName, const wxString &vdFullP
 	//project
 	wxArrayString files;
 	files.Add(fileName);
+        SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&files);
 	return true;
 }
 
@@ -805,7 +811,9 @@ void Manager::AddFilesToProject(const wxArrayString &files, const wxString &vdFu
 		TagsManagerST::Get()->RetagFiles(vFiles);
 	}
 
-	SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&actualAdded);
+	if (!actualAdded.IsEmpty()) {
+            SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&actualAdded);
+        }
 }
 
 bool Manager::RemoveFile(const wxString &fileName, const wxString &vdFullPath)
@@ -1430,6 +1438,7 @@ void Manager::RetagProject(const wxString &projectName)
 
 		//call tags manager for re-tagging
 		TagsManagerST::Get()->RetagFiles(projectFiles);
+                SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&projectFiles);
 	}
 }
 
@@ -1452,6 +1461,7 @@ void Manager::RetagWorkspace()
 	}
 	//call tags manager for re-tagging
 	TagsManagerST::Get()->RetagFiles(projectFiles);
+        SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&projectFiles);
 }
 
 void Manager::WriteProgram(const wxString &line)
@@ -1720,6 +1730,7 @@ void Manager::CloseAll()
 
 	//remove all symbol trees from the outline view
 	Frame::Get()->GetWorkspacePane()->DeleteAllSymbolTrees();
+        SendCmdEvent(wxEVT_ALL_EDITORS_CLOSED);
 }
 
 bool Manager::MoveFileToVD(const wxString &fileName, const wxString &srcVD, const wxString &targetVD)

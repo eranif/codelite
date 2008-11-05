@@ -89,7 +89,7 @@ enum {
 	wxEVT_FILE_EXP_INIT_DONE,
 	//clientData is list of files added to project (wxArrayString*)
 	wxEVT_PROJ_FILE_ADDED,
-	//clientData is the fileName which has been removed (wxString*)
+	//clientData is list of files which have been removed (wxArrayString*)
 	wxEVT_PROJ_FILE_REMOVED,
 	//clientData is the project name (wxString*)
 	wxEVT_PROJ_REMOVED,
@@ -104,7 +104,17 @@ enum {
 	//clientData is ParseThreadEventData*
 	wxEVT_SYNBOL_TREE_DELETE_ITEM,
 	//clientData is ParseThreadEventData*
-	wxEVT_SYNBOL_TREE_ADD_ITEM
+	wxEVT_SYNBOL_TREE_ADD_ITEM,
+    //clientData is list of files which have been retagged (std::vector<wxFileName>*)
+    wxEVT_FILE_RETAGGED,
+    //clientData is active editor (IEditor*)
+    wxEVT_ACTIVE_EDITOR_CHANGED,
+    //clientData is closing editor (IEditor*)
+    wxEVT_EDITOR_CLOSING,
+    //clientData is NULL
+    wxEVT_ALL_EDITORS_CLOSED,
+    //clientData is NULL
+    wxEVT_WORKSPACE_CLOSED
 };
 
 //------------------------------------------------------------------

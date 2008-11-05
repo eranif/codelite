@@ -26,5 +26,6 @@ public:
 	DockablePane(wxWindow *parent, Notebook *book, wxWindow *child, const wxString &title, const wxBitmap &bmp = wxNullBitmap, wxSize size = wxDefaultSize);
 	virtual ~DockablePane();
 	wxString GetName() {return m_text;}
+        Notebook *GetBook() {return m_book;}
 };
 #endif // __dockablepane__

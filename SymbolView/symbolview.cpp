@@ -65,6 +65,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 SymbolViewPlugin::~SymbolViewPlugin()
 {
     UnPlug();
+    thePlugin = NULL;
 }
 
 
@@ -99,8 +100,8 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
     m_image[wxT("file")]                = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));
     
     m_image[wxT("class_view")]          = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("class_view")));
-    m_image[wxT("namespace")]           = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("namespace")));
     m_image[wxT("globals")]             = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("globals")));
+    m_image[wxT("namespace")]           = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("namespace")));
 
     m_image[wxT("macro")]               = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("typedef")), wxColor(0, 128, 128));
     m_image[wxT("macro_protected")]     = m_image[wxT("macro")];
@@ -270,7 +271,7 @@ void SymbolViewPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 
 void SymbolViewPlugin::UnPlug()
 {
-    if (m_symView)
+    if (!m_symView)
         return;
         
     wxEvtHandler *topwin = m_mgr->GetTheApp();
@@ -287,8 +288,15 @@ void SymbolViewPlugin::UnPlug()
     topwin->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewPlugin::OnActiveEditorChanged), NULL, this);
     topwin->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewPlugin::OnEditorClosed), NULL, this);
     
-    wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
-    m_symView->GetParent()->ProcessEvent(event);
+    Notebook *notebook = m_mgr->GetWorkspacePaneNotebook();
+    size_t notepos = notebook->GetPageIndex(m_symView);
+    if (notepos != Notebook::npos) {
+        notebook->DeletePage(notepos);
+    } else {
+        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
+        m_symView->GetParent()->ProcessEvent(event);
+    }
+    
     m_symView = NULL;
 }
 
@@ -577,6 +585,7 @@ int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxStrin
             if (files.first != files.second) {
                 wxTreeItemId child = tree->AppendItem(parent, wxEmptyString);
                 SetNodeData(tree, child, tag);
+                range.second = m_pathTags.upper_bound(tag.GetScope()); // recalculate invalidated upper-bound
                 count++;
             }
         }
@@ -616,6 +625,7 @@ int SymbolViewPlugin::UpdateSymbol(const TagEntry &tag)
                 treetag->SetLine(tag.GetLine());
             } else {
                 SetNodeData(tree, id, tag);
+                range.second = m_pathTags.upper_bound(tag.GetScope()); // recalculate invalidated upper-bound
             }
             count++;
         }
@@ -934,7 +944,9 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
         for (std::map<TagKey,TreeNode>::iterator i = tagsToDelete.begin(); i != tagsToDelete.end(); i++) {
             wxTreeCtrl *tree = i->second.first;
             wxTreeItemId id = i->second.second;
-            tree->Delete(id);
+            if (id.IsOk()) {
+                tree->Delete(id);
+            }
         }
         
         m_viewStack->Thaw();

@@ -61,12 +61,8 @@ public:
         
         ~TagTreeData() 
         {
-            if (!m_view->m_pathTags.empty()) {
-                m_view->m_pathTags.erase(m_pathIter);
-            }
-            if (!m_view->m_fileTags.empty()) {
-                m_view->m_fileTags.erase(m_fileIter);
-            }
+            m_view->m_pathTags.erase(m_pathIter);
+            m_view->m_fileTags.erase(m_fileIter);
         }
     };
 

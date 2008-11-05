@@ -195,6 +195,14 @@ void SymbolTree::AddItem(TagNode* node)
 	if (nodeData.GetName().IsEmpty())
 		return;
 
+        wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        if (nodeData.GetKind() == wxT("prototype")) {
+            font.SetStyle(wxFONTSTYLE_ITALIC);
+        }
+        if (nodeData.GetAccess() == wxT("public")) {
+            font.SetWeight(wxFONTWEIGHT_BOLD);
+        }
+        
 	//-------------------------------------------------------------------------------
 	// We gather globals together under special node
 	//-------------------------------------------------------------------------------
@@ -227,6 +235,7 @@ void SymbolTree::AddItem(TagNode* node)
 		                 iconIndex,				// item image index
 		                 iconIndex,				// selected item image
 		                 new MyTreeItemData(node->GetData().GetFile(), node->GetData().GetPattern()));
+                SetItemFont(hti, font);
 		node->GetData().SetTreeItemId( hti );
 		m_sortItems[parentHti.m_pItem] = true;
 		m_items[nodeData.Key()] = hti.m_pItem;

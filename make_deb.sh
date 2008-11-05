@@ -47,7 +47,7 @@ mkdir -p fakeroot/usr/share/applications/
 \cp -pr lib/cscope.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/UnitTestCPP.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/ExternalTools.so fakeroot/usr/local/share/codelite/plugins/
-\cp -pr lib/SymbolView.so fakeroot/usr/local/share/codelite/plugins/
+#\cp -pr lib/SymbolView.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/SnipWiz.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/wxformbuilder.so fakeroot/usr/local/share/codelite/plugins/
 \cp -pr lib/abbreviation.so fakeroot/usr/local/share/codelite/plugins/

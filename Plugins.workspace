@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Workspace Name="Plugins" Database="./Plugins.tags">
-  <Project Name="ReferenceAnalyser" Path="ReferenceAnalyser/ReferenceAnalyser.project" Active="No"/>
-  <Project Name="MakefileImporter" Path="MakefileParser/MakefileImporter.project" Active="Yes"/>
   <Environment>
     <Variable Name="WorkspaceName" Value="Plugins"/>
     <Variable Name="WorkspacePath" Value="/home/eran/devl/codelite/trunk"/>
   </Environment>
+  <Project Name="SymbolView" Path="SymbolView\SymbolView.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
-      <Project Name="ReferenceAnalyser" ConfigName="WinReleaseUnicode"/>
-      <Project Name="MakefileImporter" ConfigName="WinReleaseUnicode"/>
+      <Project Name="SymbolView" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Debug Unicode" Selected="no">
-      <Project Name="ReferenceAnalyser" ConfigName="DebugUnicode"/>
-      <Project Name="MakefileImporter" ConfigName="DebugUnicode"/>
+      <Project Name="SymbolView" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
-      <Project Name="ReferenceAnalyser" ConfigName="WinDebugUnicode"/>
-      <Project Name="MakefileImporter" ConfigName="WinDebugUnicode"/>
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+      <Project Name="SymbolView" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release Unicode" Selected="yes">
-      <Project Name="ReferenceAnalyser" ConfigName="ReleaseUnicode"/>
-      <Project Name="MakefileImporter" ConfigName="ReleaseUnicode"/>
+      <Project Name="SymbolView" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

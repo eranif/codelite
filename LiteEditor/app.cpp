@@ -86,15 +86,19 @@ wxString MacGetBasePath()
 #if wxVERSION_NUMBER < 2900
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
 	{wxCMD_LINE_SWITCH, wxT("v"), wxT("version"), wxT("Print current version"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-	{wxCMD_LINE_OPTION, wxT("b"), wxT("basedir"),  wxT("The base directory of CodeLite"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-	{wxCMD_LINE_PARAM,  NULL, NULL, wxT("input file"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_SWITCH, wxT("h"), wxT("help"), wxT("Print usage"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_OPTION, wxT("l"), wxT("line"), wxT("Open the file at a given line number"), wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_OPTION, wxT("b"), wxT("basedir"),  wxT("Use this path as CodeLite installation path"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_PARAM,  NULL, NULL, wxT("Input file"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_NONE }
 };
 #else
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
 	{wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_OPTION, "l", "line", "Open the file at a given line number", wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_OPTION, "b", "basedir",  "The base directory of CodeLite", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-	{wxCMD_LINE_PARAM,  NULL, NULL, "input file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
+	{wxCMD_LINE_PARAM,  NULL, NULL, "Input file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
 	{wxCMD_LINE_NONE }
 };
 #endif
@@ -181,7 +185,13 @@ bool App::OnInit()
 	if (parser.Parse() != 0) {
 		return false;
 	}
-
+	
+	if(parser.Found(wxT("h"))){
+		// print usage
+		parser.Usage();
+		return false;
+	}
+	
 	wxString newBaseDir(wxEmptyString);
 	if (parser.Found(wxT("b"), &newBaseDir)) {
 		homeDir = newBaseDir;
@@ -337,20 +347,8 @@ bool App::OnInit()
 	Frame::Initialize( parser.GetParamCount() == 0 );
 	m_pMainFrame = Frame::Get();
 
-	// Center the dialog when first shown
-//	m_pMainFrame->Centre();
-
 	// update the accelerators table
 	ManagerST::Get()->UpdateMenuAccelerators();
-
-//	//if the application started with a given file name,
-//	//which is not a workspace
-//	//hide the output &workspace panes
-//	if (parser.GetParamCount() > 0) {
-//		ManagerST::Get()->HidePane(wxT("Debugger"));
-//		ManagerST::Get()->HidePane(wxT("Workspace View"));
-//		ManagerST::Get()->HidePane(wxT("Output View"));
-//	}
 
 	m_pMainFrame->Show(TRUE);
 	SetTopWindow(m_pMainFrame);
@@ -360,6 +358,14 @@ bool App::OnInit()
 		m_splash->Destroy();
 	}
 
+	long lineNumber(0);
+	parser.Found(wxT("l"), &lineNumber);
+	if(lineNumber > 0){
+		lineNumber--;
+	}else{
+		lineNumber = 0;
+	}
+	
 	for (size_t i=0; i< parser.GetParamCount(); i++) {
 		wxString argument = parser.GetParam(i);
 
@@ -370,7 +376,7 @@ bool App::OnInit()
 		if (fn.GetExt() == wxT("workspace")) {
 			ManagerST::Get()->OpenWorkspace(fn.GetFullPath());
 		} else {
-			ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString);
+			ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNumber);
 		}
 	}
 	

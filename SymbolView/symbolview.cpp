@@ -625,7 +625,7 @@ int SymbolViewPlugin::UpdateSymbol(const TagEntry &tag)
                 treetag->SetLine(tag.GetLine());
             } else {
                 SetNodeData(tree, id, tag);
-                range.second = m_pathTags.upper_bound(tag.GetScope()); // recalculate invalidated upper-bound
+                range.second = m_pathTags.upper_bound(tag.Key()); // recalculate invalidated upper-bound
             }
             count++;
         }
@@ -649,6 +649,7 @@ int SymbolViewPlugin::DeleteSymbol(const TagEntry &tag)
             tree->DeleteChildren(id);
             next++; // this has to come between deleting the children and deleting the node itself, or the iterator might get invalidated
             tree->Delete(id);
+            range.second = m_pathTags.upper_bound(tag.Key()); // recalculate invalidated upper-bound
             count++;
         } else {
             next++; // skip
@@ -663,13 +664,10 @@ int SymbolViewPlugin::DeleteSymbol(const TagEntry &tag)
 int SymbolViewPlugin::DeleteFileSymbols(const wxString &file)
 {
     int count = 0;
-    File2TagRange range = m_fileTags.equal_range(file); 
-    for (File2TagMap::iterator next = range.first; range.first != range.second; range.first = next) {
-        wxTreeCtrl *tree = range.first->second.first;
-        wxTreeItemId id = range.first->second.second;
-        TagTreeData *treetag = (TagTreeData*) tree->GetItemData(id);
-        tree->DeleteChildren(id);
-        next++; // this has to come between deleting the children and deleting the node itself, or the iterator might get invalidated
+    File2TagMap::iterator iter;
+    while ((iter = m_fileTags.find(file)) != m_fileTags.end()) {
+        wxTreeCtrl *tree = iter->second.first;
+        wxTreeItemId id = iter->second.second;
         tree->Delete(id);
         count++;
     }
@@ -1118,8 +1116,18 @@ void SymbolViewPlugin::OnEditorClosed(wxCommandEvent& e)
                 viewStack->Delete(proj->GetFileName().GetFullPath());
             }
         }
-        // make sure active editor's tree is visible
-        ShowSymbolTree();
+        if (m_mgr->GetActiveEditor() != editor) {
+            // show tree of active editor
+            ShowSymbolTree();
+        } else {
+            // if there's tree left to show in the current view mode, show it
+            viewStack = (WindowStack*) m_viewStack->GetSelected();
+            std::vector<wxString> keys;
+            viewStack->GetKeys(keys);
+            if (!keys.empty()) {
+                viewStack->Select(keys[0]);
+            }
+        }
         m_viewStack->Thaw();
     }
     e.Skip();

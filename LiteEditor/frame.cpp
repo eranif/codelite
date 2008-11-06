@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include <set>
 #include "tagsmanagementdlg.h"
 #include "imanager.h"
 #include "newversiondlg.h"
@@ -145,6 +146,7 @@ static void PostStartPageEvent(const wxString &action, const wxString &file_name
 BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_IDLE(Frame::OnIdle)
 	EVT_ACTIVATE(Frame::OnAppActivated)
+	EVT_MENU(XRCID("full_screen"), Frame::OnShowFullScreen)
 	EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY, Frame::OnAddSymbols)
 	EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
@@ -514,19 +516,19 @@ void Frame::Initialize(bool loadLastSession)
 	EditorConfig *cfg = EditorConfigST::Get();
 	GeneralInfo inf;
 	cfg->ReadObject(wxT("GeneralInfo"), &inf);
-	
+
 	int screenW = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
 	int screenH = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
-	
+
 	// validate the frame loaded pos & size
 	if(inf.GetFramePosition().x < 0 || inf.GetFramePosition().x > screenW) {
 		inf.SetFramePosition(wxPoint(30, 3));
-	} 
-	
+	}
+
 	if(inf.GetFramePosition().y < 0 || inf.GetFramePosition().y > screenH) {
 		inf.SetFrameSize(wxSize(800, 600));
 	}
-	
+
 	m_theFrame = new Frame(	NULL,
 	                        wxID_ANY,
 	                        title,
@@ -3801,4 +3803,44 @@ void Frame::OnManageTags(wxCommandEvent& e)
 {
 	TagsManagementDlg dlg(this);
 	dlg.ShowModal();
+}
+
+void Frame::OnShowFullScreen(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	static std::set<wxString> s_toolbars;
+
+	if(IsFullScreen()) {
+
+		// show all toolbars that were hiddne due to fullscreen mode
+		std::set<wxString>::iterator iter = s_toolbars.begin();
+		for(; iter != s_toolbars.end(); iter++){
+			wxAuiPaneInfo &info = GetDockingManager().GetPane(*iter);
+			if(info.IsOk() && info.IsShown() == false){
+				info.Show();
+			}
+		}
+
+		// apply the changes
+		GetDockingManager().Update();
+
+		// clear the list
+		s_toolbars.clear();
+
+		ShowFullScreen(false);
+	} else {
+		// get list of all shown toolbars
+		std::map<int, wxString>::iterator iter = m_toolbars.begin();
+		for(; iter != m_toolbars.end(); iter++){
+			wxAuiPaneInfo &info = GetDockingManager().GetPane(iter->second);
+			if(info.IsOk() && info.IsShown()){
+				s_toolbars.insert(iter->second);
+				info.Hide();
+			}
+		}
+
+		// apply the changes
+		GetDockingManager().Update();
+		ShowFullScreen(true);
+	}
 }

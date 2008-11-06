@@ -167,7 +167,10 @@
 				</object>
 			</object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-
+			<object class="wxMenuItem" name="full_screen">
+				<label>Full Screen...</label>
+            </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="view_welcome_page">
 				<label>Show &amp;Welcome Page</label>
             </object>

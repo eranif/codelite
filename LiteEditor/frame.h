@@ -456,6 +456,7 @@ protected:
 	void OnSyntaxHighlight(wxCommandEvent &e);
 	void OnShowWhitespaceUI(wxUpdateUIEvent &e);
 	void OnShowWhitespace(wxCommandEvent &e);
+	void OnShowFullScreen(wxCommandEvent &e);
 
 public:
 	void OnWorkspaceConfigChanged(wxCommandEvent &event);

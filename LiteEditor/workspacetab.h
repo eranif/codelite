@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : workspacetab.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : workspacetab.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef __workspacetab__
@@ -33,21 +33,23 @@ class wxComboBox;
 class WorkspaceTab : public wxPanel {
 	FileViewTree *m_fileView;
     bool m_isLinkedToEditor;
-	
+
 	void OnCollapseAll(wxCommandEvent &event);
 	void OnCollapseAllUI(wxUpdateUIEvent &event);
 	void DoCollpaseAll();
 	void OnLinkEditor(wxCommandEvent &e);
 	void OnGoHome(wxCommandEvent &e);
 	void OnGoHomeUI(wxUpdateUIEvent &event);
-	
-protected:	
+	void OnProjectSettingsUI(wxUpdateUIEvent &event);
+	void OnProjectSettings(wxCommandEvent &e);
+
+protected:
 	void CreateGUIControls();
-	
+
 public:
 	WorkspaceTab(wxWindow *parent);
 	~WorkspaceTab();
-	
+
 	void BuildFileTree();
 	void CollpaseAll();
 

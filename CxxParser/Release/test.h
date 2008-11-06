@@ -20,10 +20,21 @@
 //std::map<wxString, std::list<CppToken>* > m_matches;
 //int a,b,*c;
 //std::vector<int, int> vector;
-(void *buffer, size_t size, size_t nmemb, void *stream)
+//(void *buffer, size_t size, size_t nmemb, void *stream)
 //wxStaticLine *line = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 //Glib :: SignalProxy0 < void > signal_clicked ( ) ;
 //const std::vector<int> &Class::get_vector() const {
 //(std::vector<int>&, int name)
 //(SOCKET,char*,int,int);
-	
+
+void SymbolViewPlugin::SetNodeData(wxTreeCtrl *tree, wxTreeItemId id, const TagEntry &tag)
+{
+	wxString key = treetag ? treetag->Key() : tree->GetItemText(id);
+}
+
+void SymbolViewPlugin::SortChildren()
+{
+}
+
+int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxString, wxString> &filePaths)
+{

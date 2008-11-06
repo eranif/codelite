@@ -37,12 +37,12 @@
         <LibraryPath Value="."/>
         <LibraryPath Value="./Release"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""></Debugger>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="yes" Options=""/>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy *.h ../CodeLite/.</Command>
-        <Command Enabled="yes">copy *.cpp ../CodeLite/.</Command>
+        <Command Enabled="yes">copy *.h ..\CodeLite\.</Command>
+        <Command Enabled="yes">copy *.cpp ..\CodeLite\.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>

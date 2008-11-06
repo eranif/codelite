@@ -122,6 +122,7 @@ external_decl			:	class_decl
 						|	using_namespace
 						| 	scope_reducer
 						| 	scope_increaer
+						|  	question_expression
 						| 	error { 
 //								printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_scope_text, cl_scope_lineno);
 //								syncParser();
@@ -245,6 +246,11 @@ scope_increaer	:	'{' {
 								printScopeName();
 							 }
 
+question_expression : '?' 
+						{
+							consumeNotIncluding(';');
+						}
+						
 class_keyword: 	LE_CLASS		{$$ = $1;}
 					|	LE_STRUCT	{$$ = $1;}
 					;
@@ -529,6 +535,22 @@ void consumeTemplateDecl()
 		{
 			depth ++ ;
 			continue;
+		}
+	}
+}
+
+//swallow all tokens up to the first '{'
+void consumeNotIncluding(int ch){
+	while( true ){
+		int c = cl_scope_lex();
+		if(c == 0){ // EOF?
+			break;
+		}
+		
+		//keep the function signature
+		if(c == ch){
+			cl_scope_less(0);
+			break;
 		}
 	}
 }

@@ -20,8 +20,8 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 		thePlugin = new SymbolViewPlugin(manager);
 	}
 	return thePlugin;
-} 
- 
+}
+
 extern "C" EXPORT PluginInfo GetPluginInfo()
 {
 	PluginInfo info;
@@ -29,6 +29,9 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
 	info.SetName(wxT("SymbolView"));
 	info.SetDescription(wxT("Show Symbols of File, Project, or Workspace"));
 	info.SetVersion(wxT("v1.0"));
+
+	// this plugin starts as disabled by default
+	info.SetEnabled(false);
 	return info;
 }
 
@@ -56,7 +59,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
     LoadImagesAndIndexes();
     CreateGUIControls();
     Connect();
-    
+
     m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"));
     //new DockablePane(manager->GetDockingManager()->GetManagedWindow(), NULL, m_symView, wxT("Symbol View"), wxNullBitmap, wxSize(200, 200));
 }
@@ -79,15 +82,15 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
     m_viewModeNames[vmCurrentFile]      = wxT("Current File");
     m_viewModeNames[vmCurrentProject]   = wxT("Current Project");
     m_viewModeNames[vmCurrentWorkspace] = wxT("Current Workspace");
-    
+
     m_imagesList = new wxImageList(16, 16);
-    
+
     // ATTN: the order of the images in this list determines the sorting of tree children (along with the child names).
     // That is why we sometimes reload the same image rather than just referring to the prior index.
-    
+
     m_image[wxT("workspace")]           = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("workspace")));
     m_image[wxT("project")]             = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("project")));
-    
+
     m_image[wxT("h")]                   = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_h")));
     m_image[wxT("hpp")]                 = m_image[wxT("h")];
 
@@ -96,9 +99,9 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
     m_image[wxT("cxx")]                 = m_image[wxT("cpp")];
     m_image[wxT("c++")]                 = m_image[wxT("cpp")];
     m_image[wxT("cc")]                  = m_image[wxT("cpp")];
-    
+
     m_image[wxT("file")]                = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));
-    
+
     m_image[wxT("class_view")]          = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("class_view")));
     m_image[wxT("globals")]             = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("globals")));
     m_image[wxT("namespace")]           = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("namespace")));
@@ -142,12 +145,12 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
     m_image[wxT("prototype_protected")] = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_protected")));
     m_image[wxT("prototype_private")]   = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_private")));
     m_image[wxT("prototype")]           = m_image[wxT("prototype_public")];
-    
+
     m_image[wxT("function_public")]     = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_public")));
     m_image[wxT("function_protected")]  = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_protected")));
-    m_image[wxT("function_private")]    = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_private")));    
+    m_image[wxT("function_private")]    = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("func_private")));
     m_image[wxT("function")]            = m_image[wxT("function_public")];
-    
+
     m_image[wxT("method_public")]       = m_image[wxT("function_public")];
     m_image[wxT("method_protected")]    = m_image[wxT("function_protected")];
     m_image[wxT("method_private")]      = m_image[wxT("function_private")];
@@ -160,18 +163,18 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
     m_image[wxT("variable")]            = m_image[wxT("member_public")];
 
     m_image[wxT("enumerator")]          = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("enumerator")));
-    
+
     m_image[wxT("default")]             = m_imagesList->Add(wxXmlResource::Get()->LoadBitmap(wxT("struct"))); // fallback for anything else
 }
 
 void SymbolViewPlugin::CreateGUIControls()
 {
     m_symView = new wxPanel(m_mgr->GetDockingManager()->GetManagedWindow());
-    
+
     wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
     m_symView->SetSizer(sz);
 
-    wxToolBar *tb = new wxToolBar(m_symView, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL);    
+    wxToolBar *tb = new wxToolBar(m_symView, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL);
     tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
     tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
     tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
@@ -182,14 +185,14 @@ void SymbolViewPlugin::CreateGUIControls()
     // sizer for the drop button and view-mode choice box
     wxBoxSizer *ch = new wxBoxSizer(wxHORIZONTAL);
     sz->Add(ch, 0, wxEXPAND|wxALL, 1);
-    
+
     m_viewStack = new WindowStack(m_symView);
     sz->Add(m_viewStack, 1, wxEXPAND|wxALL, 1);
     for (int i = 0; i < vmMax; i++) {
         m_viewStack->Add(new WindowStack(m_viewStack), m_viewModeNames[i]);
     }
     m_viewStack->Select(m_viewModeNames[vmCurrentFile]);
-    
+
     m_viewChoice = new wxChoice(m_symView, wxID_ANY);
     m_viewChoice->AppendString(m_viewModeNames[vmCurrentFile]);
     m_viewChoice->Select(0);
@@ -197,7 +200,7 @@ void SymbolViewPlugin::CreateGUIControls()
 
     m_stackChoice = new StackButton(m_symView, (WindowStack*) m_viewStack->GetSelected());
     ch->Add(m_stackChoice, 0, wxEXPAND|wxALL, 1);
-    
+
     sz->Layout();
 }
 
@@ -208,7 +211,7 @@ void SymbolViewPlugin::Connect()
     m_symView->Connect(XRCID("collapse_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SymbolViewPlugin::OnCollapseAllUI), NULL, this);
     m_symView->Connect(XRCID("gohome"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnGoHome), NULL, this);
     m_symView->Connect(XRCID("gohome"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SymbolViewPlugin::OnGoHomeUI), NULL, this);
-    
+
     m_stackChoice->Connect(wxID_ANY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SymbolViewPlugin::OnGoHomeUI), NULL, this);
 
     m_viewChoice->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(SymbolViewPlugin::OnViewModeMouseDown), NULL, this);
@@ -283,7 +286,7 @@ void SymbolViewPlugin::UnPlug()
 {
     if (!m_symView)
         return;
-        
+
     wxEvtHandler *topwin = m_mgr->GetTheApp();
 
     topwin->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SymbolViewPlugin::OnWorkspaceLoaded), NULL, this);
@@ -297,7 +300,7 @@ void SymbolViewPlugin::UnPlug()
     topwin->Disconnect(wxEVT_FILE_RETAGGED, wxCommandEventHandler(SymbolViewPlugin::OnFileRetagged), NULL, this);
     topwin->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewPlugin::OnActiveEditorChanged), NULL, this);
     topwin->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewPlugin::OnEditorClosed), NULL, this);
-    
+
     Notebook *notebook = m_mgr->GetWorkspacePaneNotebook();
     size_t notepos = notebook->GetPageIndex(m_symView);
     if (notepos != Notebook::npos) {
@@ -306,7 +309,7 @@ void SymbolViewPlugin::UnPlug()
         wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
         m_symView->GetParent()->ProcessEvent(event);
     }
-    
+
     m_symView = NULL;
 }
 
@@ -317,7 +320,7 @@ void SymbolViewPlugin::UnPlug()
 
 /**
  * Determine a symbol tree path from the current editor, using the current view mode.
- */ 
+ */
 wxString SymbolViewPlugin::GetSymbolsPath(IEditor* editor)
 {
     switch (GetViewMode()) {
@@ -328,7 +331,7 @@ wxString SymbolViewPlugin::GetSymbolsPath(IEditor* editor)
             break;
         case vmCurrentProject: {
             wxString dummy;
-            wxString projectName = 
+            wxString projectName =
                 editor && !editor->GetProjectName().IsEmpty() ? editor->GetProjectName()
                                                               : m_mgr->GetWorkspace()->GetActiveProjectName();
             ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(projectName, dummy);
@@ -345,15 +348,15 @@ wxString SymbolViewPlugin::GetSymbolsPath(IEditor* editor)
     }
     return wxEmptyString;
 }
-    
+
 /**
- * Produce a list of files that contain tags, based on the name of the specified path.  If path is the workspace file, 
- * gets all files in workspace.  If path is project file, gets all files in that project.  Else if path is a source 
+ * Produce a list of files that contain tags, based on the name of the specified path.  If path is the workspace file,
+ * gets all files in workspace.  If path is project file, gets all files in that project.  Else if path is a source
  * file, gets just that file and maybe a corresponding header file.
- */ 
+ */
 void SymbolViewPlugin::GetFiles(const wxFileName &path, wxArrayString &files)
 {
-    if (!m_mgr->IsWorkspaceOpen()) 
+    if (!m_mgr->IsWorkspaceOpen())
         return;
     wxFileName workspaceFileName = m_mgr->GetWorkspace()->GetWorkspaceFileName();
     wxArrayString projectNames;
@@ -361,7 +364,7 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, wxArrayString &files)
     for (size_t i = 0; i < projectNames.Count(); i++) {
         wxString dummy;
         ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(projectNames[i], dummy);
-        if (!project) 
+        if (!project)
             continue;
         wxFileName projectFileName = project->GetFileName();
         std::vector<wxFileName> projectFiles;
@@ -384,13 +387,13 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, wxArrayString &files)
 
 /**
  * For a given set of source files, returns the set of trees (id'd by their path name) that want to show
- * tags from those source files. 
- */ 
+ * tags from those source files.
+ */
 void SymbolViewPlugin::GetPaths(const wxArrayString &files, std::multimap<wxString, wxString> &filePaths)
 {
     if (!m_mgr->IsWorkspaceOpen())
         return;
-        
+
     wxString workspaceFileName = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetFullPath();
 
     // convert to set for faster membership testing, while adding obvious paths (own file, and entire workspace)
@@ -401,14 +404,14 @@ void SymbolViewPlugin::GetPaths(const wxArrayString &files, std::multimap<wxStri
             filePaths.insert(std::make_pair(files[i], workspaceFileName));
         }
     }
-    
+
     // get projects that each file belongs to.
     wxArrayString projectNames;
     m_mgr->GetWorkspace()->GetProjectList(projectNames);
     for (size_t i = 0; i < projectNames.Count(); i++) {
         wxString dummy;
         ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(projectNames[i], dummy);
-        if (!project) 
+        if (!project)
             continue;
         wxString projectFileName = project->GetFileName().GetFullPath();
         std::vector<wxFileName> projectFiles;
@@ -436,8 +439,8 @@ void SymbolViewPlugin::GetPaths(const wxArrayString &files, std::multimap<wxStri
 /**
  * Given list of files, return all tags in the workspace database that are found in those files.
  * An empty list implicitly means to get all tags in the workspace (for speed).  Also filter on
- * scope, if provided. 
- */ 
+ * scope, if provided.
+ */
 wxSQLite3ResultSet SymbolViewPlugin::GetTags(const wxString &scope, const wxArrayString &files)
 {
     wxString sql;
@@ -471,7 +474,7 @@ IMPLEMENT_DYNAMIC_CLASS(SymbolViewPlugin::SymTree, wxTreeCtrl)
 
 /**
  * Compares two nodes.  Used by wxTreeCtrl::SortChildren()
- */ 
+ */
 int SymbolViewPlugin::SymTree::OnCompareItems(const wxTreeItemId &id1, const wxTreeItemId &id2)
 {
     int cmp = GetItemImage(id1) - GetItemImage(id2);
@@ -479,9 +482,9 @@ int SymbolViewPlugin::SymTree::OnCompareItems(const wxTreeItemId &id1, const wxT
 }
 
 
-/** 
+/**
  * Find and return the sym tree matching the specified path, or NULL if not found.
- */ 
+ */
 SymbolViewPlugin::SymTree* SymbolViewPlugin::FindSymbolTree(const wxString& path)
 {
     for (size_t i = 0; i < m_viewModeNames.Count(); i++) {
@@ -497,7 +500,7 @@ SymbolViewPlugin::SymTree* SymbolViewPlugin::FindSymbolTree(const wxString& path
 
 /**
  * Returns the root node or correct top-level grouping node in which global tag belongs.
- */ 
+ */
 wxTreeItemId SymbolViewPlugin::GetParentForGlobalTag(SymTree *tree, const TagEntry &tag)
 {
     if (tag.GetKind() == wxT("macro"))
@@ -511,7 +514,7 @@ wxTreeItemId SymbolViewPlugin::GetParentForGlobalTag(SymTree *tree, const TagEnt
 
 /**
  * Sets tree node appearance parameters (icon, font, etc) from tag data.
- */ 
+ */
 void SymbolViewPlugin::SetNodeData(wxTreeCtrl *tree, wxTreeItemId id, const TagEntry &tag)
 {
     // attach tag data to the tree node
@@ -521,12 +524,12 @@ void SymbolViewPlugin::SetNodeData(wxTreeCtrl *tree, wxTreeItemId id, const TagE
     } else {
         treetag = new TagTreeData(this, tree, id, tag);
     }
-    
+
     // display name
     wxString displayName = treetag->GetName();
     displayName << treetag->GetSignature();
     tree->SetItemText(id, displayName);
-    
+
     // icon
     wxString icon;
     icon << treetag->GetKind();
@@ -539,7 +542,7 @@ void SymbolViewPlugin::SetNodeData(wxTreeCtrl *tree, wxTreeItemId id, const TagE
     }
     int index = iter->second;
     tree->SetItemImage(id, index);
-    
+
     // font
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     if (treetag->GetKind() == wxT("prototype")) {
@@ -549,10 +552,10 @@ void SymbolViewPlugin::SetNodeData(wxTreeCtrl *tree, wxTreeItemId id, const TagE
         font.SetWeight(wxFONTWEIGHT_BOLD);
     }
     tree->SetItemFont(id, font);
-    
+
     // whether or not it has an expander
     tree->SetItemHasChildren(id, treetag->IsContainer());
-    
+
     // add parent node to set of nodes that need their children sorted
     WindowStack *viewStack = (WindowStack*) tree->GetParent();
     id = tree->GetItemParent(id);
@@ -564,7 +567,7 @@ void SymbolViewPlugin::SetNodeData(wxTreeCtrl *tree, wxTreeItemId id, const TagE
 
 /**
  * Sort children of a bunch of nodes.
- */ 
+ */
 void SymbolViewPlugin::SortChildren()
 {
     for (std::map<TagKey, TreeNode>::iterator i = m_sortNodes.begin(); i != m_sortNodes.end(); i++) {
@@ -578,7 +581,7 @@ void SymbolViewPlugin::SortChildren()
 
 /**
  * Add new symbol to all trees that would currently be showing it.
- */ 
+ */
 int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxString, wxString> &filePaths)
 {
     int count = 0;
@@ -591,7 +594,7 @@ int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxStrin
             // make sure the scope tag came from a valid file relative to the new tag's file
             // (for example if tag is Foo::Foo() from file foo.cpp, then class Foo can come from files foo.cpp or foo.h
             // -- where foo.cpp and foo.h are in the same project)
-            std::pair<std::multimap<wxString,wxString>::const_iterator, 
+            std::pair<std::multimap<wxString,wxString>::const_iterator,
                       std::multimap<wxString,wxString>::const_iterator> files = filePaths.equal_range(treetag->GetFile());
             while (files.first != files.second && files.first->second != tag.GetFile()) {
                 files.first++;
@@ -605,7 +608,7 @@ int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxStrin
         }
     } else {
         // tag is a global symbol so look for all trees showing tags from tag's file (file tree, project tree, workspace tree)
-        std::pair<std::multimap<wxString,wxString>::const_iterator, 
+        std::pair<std::multimap<wxString,wxString>::const_iterator,
                   std::multimap<wxString,wxString>::const_iterator> files = filePaths.equal_range(tag.GetFile());
         for (; files.first != files.second; files.first++) {
             SymTree *tree = FindSymbolTree(files.first->second);
@@ -622,7 +625,7 @@ int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxStrin
 
 /**
  * Update all nodes in all trees that represent the specified tag.
- */ 
+ */
 int SymbolViewPlugin::UpdateSymbol(const TagEntry &tag)
 {
     int count = 0;
@@ -649,7 +652,7 @@ int SymbolViewPlugin::UpdateSymbol(const TagEntry &tag)
 
 /**
  * Delete all nodes in all trees that represent the specified tag.
- */ 
+ */
 int SymbolViewPlugin::DeleteSymbol(const TagEntry &tag)
 {
     int count = 0;
@@ -674,7 +677,7 @@ int SymbolViewPlugin::DeleteSymbol(const TagEntry &tag)
 
 /**
  * Remove from all trees any nodes whose symbols came from specified file.
- */ 
+ */
 int SymbolViewPlugin::DeleteFileSymbols(const wxString &file)
 {
     int count = 0;
@@ -690,11 +693,11 @@ int SymbolViewPlugin::DeleteFileSymbols(const wxString &file)
 
 /**
  * Dynamically add the children of the specified tree node by querying the workspace database.
- */ 
+ */
 int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 {
     int count = 0;
-    
+
     // root node gets special grouping children
     if (id == tree->GetRootItem()) {
         tree->m_globals = tree->AppendItem(id, wxT("Global Functions and Variables"), m_image[wxT("globals")]);
@@ -703,20 +706,20 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
     } else {
         tree->SetItemHasChildren(id, false);
     }
-    
+
     // get scope to scan for tags
     TagTreeData *treetag = (TagTreeData*) tree->GetItemData(id);
     wxString scope = treetag ? treetag->GetPath() : wxString(wxT("<global>"));
-    
+
     // get files to scan for tags
     wxArrayString files;
     ViewMode viewMode = GetViewMode();
     if (viewMode != vmCurrentWorkspace) {
-        WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected(); 
+        WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
         wxFileName path = viewStack->Find(tree);
         GetFiles(path, files);
     }
-    
+
     // query database for the tags that go under this node
     wxSQLite3ResultSet res = GetTags(scope, files);
     while (res.NextRow()) {
@@ -728,18 +731,18 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
         count++;
     }
     SortChildren();
-    
+
     return count;
 }
 
 /**
  * Initialize a brand new symbol tree for the specified path.
- */ 
+ */
 void SymbolViewPlugin::CreateSymbolTree(const wxString &path, WindowStack *parent)
 {
     if (path.IsEmpty() || !parent)
         return;
-        
+
     // make new empty tree
     SymTree *tree = new SymTree(parent);
     parent->Add(tree, path);
@@ -754,11 +757,11 @@ void SymbolViewPlugin::CreateSymbolTree(const wxString &path, WindowStack *paren
     } else {
         root = tree->AddRoot(fn.GetFullName(), m_image[wxT("file")]);
     }
-    
+
     // add the top level children and expand
     LoadChildren(tree, root);
     tree->Expand(root);
-    
+
     // hook up event handlers
     tree->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(SymbolViewPlugin::OnNodeExpanding), NULL, this);
     tree->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(SymbolViewPlugin::OnNodeActivated), NULL, this);
@@ -766,7 +769,7 @@ void SymbolViewPlugin::CreateSymbolTree(const wxString &path, WindowStack *paren
 
 /**
  * Select the symbol tree in the specified viewStack (use current if NULL).  Create it if necessary.
- */ 
+ */
 void SymbolViewPlugin::ShowSymbolTree()
 {
     wxString path = GetSymbolsPath(m_mgr->GetActiveEditor());
@@ -790,7 +793,7 @@ void SymbolViewPlugin::ShowSymbolTree()
 
 /**
  * Show list of possible view modes for user to choose.
- */ 
+ */
 void SymbolViewPlugin::OnViewModeMouseDown(wxMouseEvent& e)
 {
     m_viewChoice->Freeze();
@@ -805,7 +808,7 @@ void SymbolViewPlugin::OnViewModeMouseDown(wxMouseEvent& e)
 
 /**
  * Change to selected view and, if no tree is selected in the new view, show current editor's tree.
- */ 
+ */
 void SymbolViewPlugin::OnViewTypeChanged(wxCommandEvent& e)
 {
     m_viewStack->Select(e.GetString());
@@ -825,7 +828,7 @@ void SymbolViewPlugin::OnStackChoiceUI(wxUpdateUIEvent& e)
 
 /**
  * Respond to click of the "Collapse All" toolbar button by collapsing the currently shown symbol tree.
- */ 
+ */
 void SymbolViewPlugin::OnCollapseAll(wxCommandEvent& e)
 {
     WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
@@ -834,7 +837,7 @@ void SymbolViewPlugin::OnCollapseAll(wxCommandEvent& e)
         tree->Freeze();
         tree->CollapseAll();
         tree->Expand(tree->GetRootItem());
-        tree->Thaw();    
+        tree->Thaw();
     }
     e.Skip();
 }
@@ -847,7 +850,7 @@ void SymbolViewPlugin::OnCollapseAllUI(wxUpdateUIEvent& e)
 
 /**
  * Jump to the current editor's symbol tree.
- */ 
+ */
 void SymbolViewPlugin::OnGoHome(wxCommandEvent& e)
 {
     ShowSymbolTree();
@@ -862,7 +865,7 @@ void SymbolViewPlugin::OnGoHomeUI(wxUpdateUIEvent& e)
 
 /**
  * Toggle the link-to-editor state.  If now linked, get rid of extraneous symbol trees.
- */ 
+ */
 void SymbolViewPlugin::OnLinkEditor(wxCommandEvent& e)
 {
     m_isLinkedToEditor = !m_isLinkedToEditor;
@@ -874,7 +877,7 @@ void SymbolViewPlugin::OnLinkEditor(wxCommandEvent& e)
 
 /**
  * Add children (if necessary) to the node that the user has expanded.
- */ 
+ */
 void SymbolViewPlugin::OnNodeExpanding(wxTreeEvent& e)
 {
     SymTree *tree = (SymTree*) e.GetEventObject();
@@ -887,7 +890,7 @@ void SymbolViewPlugin::OnNodeExpanding(wxTreeEvent& e)
 
 /**
  * Open the chosen symbol's file, and select the text where it is defined.
- */ 
+ */
 void SymbolViewPlugin::OnNodeActivated(wxTreeEvent& e)
 {
     wxTreeCtrl *tree = (wxTreeCtrl*) e.GetEventObject();
@@ -903,16 +906,16 @@ void SymbolViewPlugin::OnNodeActivated(wxTreeEvent& e)
 
 /**
  * Display and handle right-click menu for tree item.
- */ 
+ */
 void SymbolViewPlugin::OnNodeContextMenu(wxTreeEvent& e)
 {
-    // TODO: show right-click menu 
+    // TODO: show right-click menu
     e.Skip();
 }
 
 /**
  * Respond to workspace loaded by, if in workspace view mode, showing the workspace symbol tree.
- */ 
+ */
 void SymbolViewPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
 {
     if (GetViewMode() == vmCurrentWorkspace) {
@@ -923,7 +926,7 @@ void SymbolViewPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
 
 /**
  * When workspace is closed, clear everything.
- */ 
+ */
 void SymbolViewPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 {
     m_viewStack->Freeze();
@@ -939,14 +942,14 @@ void SymbolViewPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 
 /**
  * Respond to files retagged by updating all trees: add, modify, or delete tags as necessary.
- * @note This function is also called when a new project is added to the workspace. 
- */ 
+ * @note This function is also called when a new project is added to the workspace.
+ */
 void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 {
     std::vector<wxFileName> *files = (std::vector<wxFileName>*) e.GetClientData();
     if (files && !files->empty()) {
         m_viewStack->Freeze();
-        
+
         // collect files that have been retagged, and all tags in current trees that came from these files
         wxArrayString paths;
         std::map<TagKey, TreeNode> tagsToDelete;
@@ -959,8 +962,8 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
                 tagsToDelete[TagKey(tag->GetFile(), tag->Key())] = TreeNode(tree,id);
             }
         }
-                
-        // query database for current tags of retagged files.  
+
+        // query database for current tags of retagged files.
         // update or add new symbols and remove those from the to-delete list
         std::multimap<wxString,wxString> filePaths;
         GetPaths(paths, filePaths);
@@ -981,7 +984,7 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
                 tree->Delete(id);
             }
         }
-        
+
         m_viewStack->Thaw();
     }
     e.Skip();
@@ -989,13 +992,13 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 
 /**
  * Respond to files added to existing project by fixing up our maps and trees.
- */ 
+ */
 void SymbolViewPlugin::OnProjectFileAdded(wxCommandEvent& e)
 {
     wxArrayString *files = (wxArrayString*) e.GetClientData();
     if (files && !files->IsEmpty()) {
         m_viewStack->Freeze();
-        
+
         std::multimap<wxString, wxString> filePaths;
         GetPaths(*files, filePaths);
         wxSQLite3ResultSet res = GetTags(wxEmptyString, *files);
@@ -1003,7 +1006,7 @@ void SymbolViewPlugin::OnProjectFileAdded(wxCommandEvent& e)
             AddSymbol(res, filePaths);
         }
         SortChildren();
-        
+
         m_viewStack->Thaw();
     }
     e.Skip();
@@ -1011,7 +1014,7 @@ void SymbolViewPlugin::OnProjectFileAdded(wxCommandEvent& e)
 
 /**
  * Respond to files removed from a project by fixing up our maps and trees.
- */ 
+ */
 void SymbolViewPlugin::OnProjectFileRemoved(wxCommandEvent& e)
 {
     wxArrayString *files = (wxArrayString*) e.GetClientData();
@@ -1034,7 +1037,7 @@ void SymbolViewPlugin::OnProjectFileRemoved(wxCommandEvent& e)
 /**
  * Placeholder function for now, since there is nothing to do.  Adding of project's files is
  * handled by OnFileRetagged() which is called first.
- */ 
+ */
 void SymbolViewPlugin::OnProjectAdded(wxCommandEvent& e)
 {
     e.Skip();
@@ -1043,7 +1046,7 @@ void SymbolViewPlugin::OnProjectAdded(wxCommandEvent& e)
 /**
  * Placeholder function for now, since there is nothing to do.  Removal of project's files is
  * handled by OnProjectFileRemoved() which is called first.
- */ 
+ */
 void SymbolViewPlugin::OnProjectRemoved(wxCommandEvent& e)
 {
     e.Skip();
@@ -1051,7 +1054,7 @@ void SymbolViewPlugin::OnProjectRemoved(wxCommandEvent& e)
 
 /**
  * Respond to added symbols event (from ParseThread) by fixing up our maps and trees.
- */ 
+ */
 void SymbolViewPlugin::OnSymbolsAdded(wxCommandEvent& e)
 {
     ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
@@ -1073,7 +1076,7 @@ void SymbolViewPlugin::OnSymbolsAdded(wxCommandEvent& e)
 
 /**
  * Respond to updated symbols event (from ParseThread) by fixing up our maps and trees.
- */ 
+ */
 void SymbolViewPlugin::OnSymbolsUpdated(wxCommandEvent& e)
 {
     ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
@@ -1091,7 +1094,7 @@ void SymbolViewPlugin::OnSymbolsUpdated(wxCommandEvent& e)
 
 /**
  * Respond to deleted symbols event (from ParseThread) by fixing up our maps and trees.
- */ 
+ */
 void SymbolViewPlugin::OnSymbolsDeleted(wxCommandEvent& e)
 {
     ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
@@ -1113,7 +1116,7 @@ void SymbolViewPlugin::OnSymbolsDeleted(wxCommandEvent& e)
 
 /**
  * Respond to active editor change by, if allowed, showing the appropriate symbol tree.
- */ 
+ */
 void SymbolViewPlugin::OnActiveEditorChanged(wxCommandEvent& e)
 {
     WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
@@ -1125,7 +1128,7 @@ void SymbolViewPlugin::OnActiveEditorChanged(wxCommandEvent& e)
 
 /**
  * Remove the editor's symbol tree.  If no other editors viewing the same project, remove the project symbol tree.
- */ 
+ */
 void SymbolViewPlugin::OnEditorClosed(wxCommandEvent& e)
 {
     IEditor *editor = (IEditor*) e.GetClientData();
@@ -1145,7 +1148,7 @@ void SymbolViewPlugin::OnEditorClosed(wxCommandEvent& e)
             bool deleteit = true;
             for (size_t i = 0; i < files.size() && deleteit; i++) {
                 deleteit = !viewStack->Find(files[i].GetFullPath());
-            } 
+            }
             if (deleteit) {
                 viewStack = (WindowStack*) m_viewStack->Find(m_viewModeNames[vmCurrentProject]);
                 viewStack->Delete(proj->GetFileName().GetFullPath());
@@ -1170,16 +1173,16 @@ void SymbolViewPlugin::OnEditorClosed(wxCommandEvent& e)
 
 /**
  * When all editors are closed, remove all file trees and all project trees except for the active project.
- */ 
+ */
 void SymbolViewPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 {
     if (m_isLinkedToEditor) {
         m_viewStack->Freeze();
-        
+
         // remove all the file trees
         WindowStack *viewStack = (WindowStack*) m_viewStack->Find(m_viewModeNames[vmCurrentFile]);
         viewStack->Clear();
-        
+
         // remove the project trees (except active project)
         viewStack = (WindowStack*) m_viewStack->Find(m_viewModeNames[vmCurrentProject]);
         wxWindow *save = NULL;
@@ -1193,7 +1196,7 @@ void SymbolViewPlugin::OnAllEditorsClosed(wxCommandEvent& e)
         if (save) {
             viewStack->Add(save, savePath);
         }
-        
+
         if (GetViewMode() == vmCurrentProject) {
             ShowSymbolTree();
         }

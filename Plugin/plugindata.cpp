@@ -25,6 +25,7 @@
 #include "plugindata.h"
 
 PluginInfo::PluginInfo()
+: enabled(true)
 {
 }
 

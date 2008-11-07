@@ -550,6 +550,7 @@ resources.cpp: resources.xrc
     <Project Name="snipwiz"/>
     <Project Name="wxFormBuilder"/>
     <Project Name="abbreviation"/>
+    <Project Name="SymbolView"/>
   </Dependencies>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
@@ -568,5 +569,6 @@ resources.cpp: resources.xrc
     <Project Name="snipwiz"/>
     <Project Name="wxFormBuilder"/>
     <Project Name="abbreviation"/>
+    <Project Name="SymbolView"/>
   </Dependencies>
 </CodeLite_Project>

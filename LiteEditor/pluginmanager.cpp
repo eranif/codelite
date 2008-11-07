@@ -122,7 +122,7 @@ void PluginManager::Load()
 				delete dl;
 				continue;
 			}
-			
+
 			// load the plugin version method
 			// if the methods does not exist, handle it as if it has value of 100 (lowest version API)
 			int interface_version(100);
@@ -134,25 +134,30 @@ void PluginManager::Load()
                 if (!dl->GetError().IsEmpty())
                     wxLogMessage(dl->GetError());
             }
-			
+
 			if( interface_version != PLUGIN_INTERFACE_VERSION ) {
-				wxLogMessage(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface version is '%d', CodeLite interface version is '%d'"), 
-													fileName.c_str(), 
-													interface_version, 
+				wxLogMessage(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface version is '%d', CodeLite interface version is '%d'"),
+													fileName.c_str(),
+													interface_version,
 													PLUGIN_INTERFACE_VERSION));
 				delete dl;
 				continue;
 			}
-			
-			//check if this dll can be loaded
+
+			// Check if this dll can be loaded
 			PluginInfo pluginInfo = pfnGetPluginInfo();
 			std::map< wxString, PluginInfo>::const_iterator iter = m_pluginsInfo.find(pluginInfo.GetName());
 			if (iter == m_pluginsInfo.end()) {
-				//new plugin?, add it
-				pluginInfo.SetEnabled(true);
+				//new plugin?, add it and use the default enabled/disabled for this plugin
 				actualPlugins[pluginInfo.GetName()] = pluginInfo;
+				if(pluginInfo.GetEnabled() == false) {
+					delete dl;
+					continue;
+				}
 			} else {
-				//we have a match
+				// we have a match!
+				// it means that this plugin was already found in the plugins configuration file,
+				// use the value set in it to determine whether this plugin should be enabled or disabled
 				PluginInfo pi = iter->second;
 				pluginInfo.SetEnabled(pi.GetEnabled());
 

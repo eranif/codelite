@@ -25,6 +25,7 @@
  #include "wx/image.h"
 #include "drawingutils.h"
 #include "custom_tab.h"
+#include "windowstack.h"
 #include "wx/menu.h"
 #include "wx/settings.h"
 #include "wx/dcbuffer.h"
@@ -36,125 +37,171 @@ static unsigned char list_bits[] = {
    0x0f, 0xf8, 0xff, 0xff, 0x0f, 0xf8, 0x1f, 0xfc, 0x3f, 0xfe, 0x7f, 0xff,
    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
    
-BEGIN_EVENT_TABLE(DropButton, wxPanel)
-	EVT_LEFT_DOWN(DropButton::OnLeftDown)
-	EVT_LEFT_UP(DropButton::OnLeftUp)
-	EVT_PAINT(DropButton::OnPaint)
-	EVT_ERASE_BACKGROUND(DropButton::OnEraseBg)
+BEGIN_EVENT_TABLE(DropButtonBase, wxPanel)
+    EVT_LEFT_DOWN(DropButtonBase::OnLeftDown)
+    EVT_PAINT(DropButtonBase::OnPaint)
 END_EVENT_TABLE()
 
-DropButton::DropButton(wxWindow *parent, wxTabContainer *tabContainer)
-		: wxPanel(parent)
-		, m_tabContainer(tabContainer)
-		, m_state (BTN_NONE)
+DropButtonBase::DropButtonBase(wxWindow *parent)
+    : wxPanel(parent)
+    , m_state (BTN_NONE)
 {
-	SetSizeHints(16, 16);
+    SetSizeHints(16, 16);
 	
-	//create a drop down arrow image
-	wxColour color(*wxBLACK);
-	wxImage img = wxBitmap((const char*)list_bits, 16, 16).ConvertToImage();
+    //create a drop down arrow image
+    wxColour color(*wxBLACK);
+    wxImage img = wxBitmap((const char*)list_bits, 16, 16).ConvertToImage();
     img.Replace(0, 0, 0, 123, 123, 123);
     img.Replace(255,255,255,color.Red(),color.Green(),color.Blue());
     img.SetMaskColour(123, 123, 123);
-	m_arrowDownBmp = wxBitmap(img);
+    m_arrowDownBmp = wxBitmap(img);
+}
+
+DropButtonBase::~DropButtonBase()
+{
+}
+
+void DropButtonBase::OnLeftDown(wxMouseEvent &e)
+{
+    size_t count = GetItemCount();
+    if (count == 0) {
+        return;
+    }
+
+    wxRect rr = GetSize();
+    wxMenu popupMenu;
+
+#ifdef __WXMSW__
+    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+#endif
+
+    for (size_t i=0; i<count; i++) {
+        wxString text = GetItem(i);
+        bool selected = IsItemSelected(i);
+
+        wxMenuItem *item = new wxMenuItem(&popupMenu, static_cast<int>(i), text, text, wxITEM_CHECK);
+        
+        //set the font
+#ifdef __WXMSW__
+        if (selected) {
+            font.SetWeight(wxBOLD);
+        }
+        item->SetFont(font);
+#endif
+        popupMenu.Append( item );
+
+        //mark the selected item
+        item->Check(selected);
+
+        //restore font
+#ifdef __WXMSW__
+        font.SetWeight(wxNORMAL);
+#endif
+    }
+
+    // connect an event handler to our menu
+    popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DropButtonBase::OnMenuSelection), NULL, this);
+
+    m_state = BTN_PUSHED;
+    Refresh();
+    PopupMenu( &popupMenu, 0, rr.y + rr.height );
+
+    m_state = BTN_NONE;
+    Refresh();
+}
+
+void DropButtonBase::OnPaint(wxPaintEvent &e)
+{
+    wxUnusedVar(e);
+
+    wxRect rr = GetSize();
+    wxRect r1(rr.x, rr.y, rr.width, rr.height/2);
+    wxRect r2(rr.x, rr.y+rr.height/2, rr.width, rr.height/2);
+    
+    wxBufferedPaintDC dc(this);
+    wxColour lightColour  = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    dc.SetPen(lightColour);
+    dc.SetBrush(lightColour);
+    dc.DrawRectangle(rr);
+    
+    if (IsEnabled() && GetItemCount() > 0) {
+        dc.DrawBitmap(m_arrowDownBmp, 0, 0, true);
+    }
+}
+
+
+
+DropButton::DropButton(wxWindow* parent, wxTabContainer* tabContainer)
+    : DropButtonBase(parent)
+    , m_tabContainer(tabContainer)
+{
 }
 
 DropButton::~DropButton()
 {
 }
 
-void DropButton::OnLeftDown(wxMouseEvent &e)
+size_t DropButton::GetItemCount()
 {
-	size_t count = m_tabContainer->GetTabsCount();
-	if (count == 0) {
-		return;
-	}
-
-	wxRect rr = GetSize();
-	wxMenu popupMenu;
-
-#ifdef __WXMSW__
-	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#endif
-
-	for (size_t i=0; i<count; i++) {
-		CustomTab *tab = m_tabContainer->IndexToTab(i);
-		bool selected( false );
-
-		if (m_tabContainer->GetSelection() == tab) {
-			selected = true;
-		}
-
-		wxMenuItem *item = new wxMenuItem(&popupMenu, static_cast<int>(i), tab->GetText(), tab->GetText(), wxITEM_CHECK);
-		
-		//set the font
-#ifdef __WXMSW__
-		if (selected) {
-			font.SetWeight(wxBOLD);
-		}
-		item->SetFont(font);
-#endif
-		popupMenu.Append( item );
-
-		//mark the selected item
-		item->Check(selected);
-
-		//restore font
-#ifdef __WXMSW__
-		font.SetWeight(wxNORMAL);
-#endif
+    return m_tabContainer ? m_tabContainer->GetTabsCount() : 0;
 }
 
-	// connect an event handler to our menu
-	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DropButton::OnMenuSelection), NULL, this);
-
-	m_state = BTN_PUSHED;
-	Refresh();
-	PopupMenu( &popupMenu, 0, rr.y + rr.height );
-	
-	m_state = BTN_NONE;
-	Refresh();
+wxString DropButton::GetItem(size_t n)
+{
+    return m_tabContainer->IndexToTab(n)->GetText();
 }
 
-void DropButton::OnLeftUp(wxMouseEvent &e)
+bool DropButton::IsItemSelected(size_t n)
 {
-}
-
-void DropButton::OnEraseBg(wxEraseEvent &e)
-{
-	//do noting
-}
-
-void DropButton::OnPaint(wxPaintEvent &e)
-{
-	wxUnusedVar(e);
-	wxBufferedPaintDC dc(this);
-
-	wxRect rr = GetSize();
-
-	wxColour darkColour  = DrawingUtils::LightColour( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 30 );
-	wxColour borderColour  = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-	wxColour lightColour  = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-	
-	wxRect r1(rr.x, rr.y, rr.width, rr.height/2);
-	wxRect r2(rr.x, rr.y+rr.height/2, rr.width, rr.height/2);
-	
-	dc.SetPen(lightColour);
-	dc.SetBrush(lightColour);
-	dc.DrawRectangle(rr);
-	
-	if(m_tabContainer->GetTabsCount() == 0) {
-		return;
-	}
-	
-	//draw the arrow bitmp
-	dc.DrawBitmap(m_arrowDownBmp, 0, 0, true);
+    return m_tabContainer->GetSelection() == m_tabContainer->IndexToTab(n);
 }
 
 void DropButton::OnMenuSelection(wxCommandEvent &e)
 {
-	size_t item = (size_t)e.GetId();
+    size_t item = (size_t)e.GetId();
 
-	CustomTab *tab = m_tabContainer->IndexToTab(item);
-	m_tabContainer->SetSelection(tab, true);
+    CustomTab *tab = m_tabContainer->IndexToTab(item);
+    m_tabContainer->SetSelection(tab, true);
 }
+
+StackButton::StackButton(wxWindow* parent, WindowStack* windowStack)
+    : DropButtonBase(parent)
+    , m_windowStack(windowStack)
+{
+}
+
+
+
+StackButton::~StackButton()
+{
+}
+
+size_t StackButton::GetItemCount()
+{
+    m_windowKeys.clear();
+    if (m_windowStack) {
+        m_windowStack->GetKeys(m_windowKeys);
+    }
+    return m_windowKeys.size();
+}
+
+wxString StackButton::GetItem(size_t n)
+{
+    return m_windowKeys[n];
+}
+
+void StackButton::SetWindowStack(WindowStack* windowStack)
+{
+    m_windowStack = windowStack;
+}
+
+bool StackButton::IsItemSelected(size_t n)
+{
+    return m_windowKeys[n] == m_windowStack->GetSelectedKey();
+}
+
+void StackButton::OnMenuSelection(wxCommandEvent& e)
+{
+    m_windowStack->Select(m_windowKeys[e.GetId()]);
+}
+

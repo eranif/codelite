@@ -8,6 +8,7 @@
 #include "plugin.h"
 #include "dockablepane.h"
 #include "windowstack.h"
+#include "dropbutton.h"
 
 class SymbolViewPlugin : public IPlugin
 {
@@ -108,6 +109,7 @@ private:
     //Members
     //--------------------------------------------
     wxPanel *m_symView;         ///< Container of symbol browser GUI elements
+    StackButton *m_stackChoice; ///< Allows user to select a tree in the current view mode
     wxChoice *m_viewChoice;     ///< User can select a view mode
     WindowStack *m_viewStack;   ///< Shows current symbols for selected view mode
     
@@ -182,6 +184,10 @@ private:
     void OnLinkEditor(wxCommandEvent &e);
     void OnCollapseAll(wxCommandEvent &e);
     void OnGoHome(wxCommandEvent &e);
+    
+    void OnStackChoiceUI(wxUpdateUIEvent &e);
+    void OnCollapseAllUI(wxUpdateUIEvent &e);
+    void OnGoHomeUI(wxUpdateUIEvent &e);
     
     void OnNodeExpanding(wxTreeEvent &e);
     void OnNodeContextMenu(wxTreeEvent &e);

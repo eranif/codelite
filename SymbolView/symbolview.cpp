@@ -175,35 +175,45 @@ void SymbolViewPlugin::CreateGUIControls()
     tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
     tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
     tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
-    tb->AddTool(XRCID("gohome"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Go to Active Project"), wxITEM_NORMAL);
+    tb->AddTool(XRCID("gohome"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Go to Active Editor Symbolss"), wxITEM_NORMAL);
     tb->Realize();
     sz->Add(tb, 0, wxEXPAND);
-   
-    m_viewChoice = new wxChoice(m_symView, wxID_ANY);
-    m_viewChoice->AppendString(m_viewModeNames[vmCurrentFile]);
-    m_viewChoice->Select(0);
-    sz->Add(m_viewChoice, 0, wxEXPAND|wxALL, 1);
 
+    // sizer for the drop button and view-mode choice box
+    wxBoxSizer *ch = new wxBoxSizer(wxHORIZONTAL);
+    sz->Add(ch, 0, wxEXPAND|wxALL, 1);
+    
     m_viewStack = new WindowStack(m_symView);
     sz->Add(m_viewStack, 1, wxEXPAND|wxALL, 1);
-    
     for (int i = 0; i < vmMax; i++) {
         m_viewStack->Add(new WindowStack(m_viewStack), m_viewModeNames[i]);
     }
     m_viewStack->Select(m_viewModeNames[vmCurrentFile]);
+    
+    m_viewChoice = new wxChoice(m_symView, wxID_ANY);
+    m_viewChoice->AppendString(m_viewModeNames[vmCurrentFile]);
+    m_viewChoice->Select(0);
+    ch->Add(m_viewChoice, 1, wxEXPAND|wxALL, 1);
+
+    m_stackChoice = new StackButton(m_symView, (WindowStack*) m_viewStack->GetSelected());
+    ch->Add(m_stackChoice, 0, wxEXPAND|wxALL, 1);
     
     sz->Layout();
 }
 
 void SymbolViewPlugin::Connect()
 {
-    m_viewChoice->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(SymbolViewPlugin::OnViewModeMouseDown), NULL, this);
-    ConnectChoice(m_viewChoice, SymbolViewPlugin::OnViewTypeChanged);
-
     m_symView->Connect(XRCID("link_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnLinkEditor), NULL, this);
     m_symView->Connect(XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnCollapseAll), NULL, this);
+    m_symView->Connect(XRCID("collapse_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SymbolViewPlugin::OnCollapseAllUI), NULL, this);
     m_symView->Connect(XRCID("gohome"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnGoHome), NULL, this);
+    m_symView->Connect(XRCID("gohome"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SymbolViewPlugin::OnGoHomeUI), NULL, this);
     
+    m_stackChoice->Connect(wxID_ANY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SymbolViewPlugin::OnGoHomeUI), NULL, this);
+
+    m_viewChoice->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(SymbolViewPlugin::OnViewModeMouseDown), NULL, this);
+    m_viewChoice->Connect(wxID_ANY, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnViewTypeChanged), NULL, this);
+
     wxEvtHandler *topwin = m_mgr->GetTheApp();
     topwin->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SymbolViewPlugin::OnWorkspaceLoaded), NULL, this);
     topwin->Connect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SymbolViewPlugin::OnProjectFileAdded), NULL, this);
@@ -408,12 +418,15 @@ void SymbolViewPlugin::GetPaths(const wxArrayString &files, std::multimap<wxStri
             wxString filePath = fileName.GetFullPath();
             if (fileset.find(filePath) != fileset.end()) {
                 filePaths.insert(std::make_pair(filePath, projectFileName));
-                if (fileName.GetExt() != wxT("h")) {
-                    // TODO: replace this code with a "real" solution based on actual file dependencies.
-                    // for now, make sure .h file also includes corresponding .c or .cpp file.
-                    // FIXME: this only works if the .h file is in the same directory as the .c/.cpp file.
-                    fileName.SetExt(wxT("h"));
-                    filePaths.insert(std::make_pair(fileName.GetFullPath(), filePath));
+            }
+            if (fileName.GetExt() != wxT("h")) {
+                // TODO: replace this code with a "real" solution based on actual file dependencies.
+                // for now, make sure .h file also includes corresponding .c or .cpp file.
+                // FIXME: this only works if the .h file is in the same directory as the .c/.cpp file.
+                fileName.SetExt(wxT("h"));
+                wxString headerPath = fileName.GetFullPath();
+                if (fileset.find(headerPath) != fileset.end()) {
+                    filePaths.insert(std::make_pair(headerPath, filePath));
                 }
             }
         }
@@ -558,6 +571,7 @@ void SymbolViewPlugin::SortChildren()
         wxTreeCtrl *tree = i->second.first;
         wxTreeItemId id = i->second.second;
         tree->SortChildren(id);
+        tree->SetItemHasChildren(id);
     }
     m_sortNodes.clear();
 }
@@ -686,6 +700,8 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
         tree->m_globals = tree->AppendItem(id, wxT("Global Functions and Variables"), m_image[wxT("globals")]);
         tree->m_protos  = tree->AppendItem(id, wxT("Functions Prototypes"),           m_image[wxT("globals")]);
         tree->m_macros  = tree->AppendItem(id, wxT("Macros"),                         m_image[wxT("globals")]);
+    } else {
+        tree->SetItemHasChildren(id, false);
     }
     
     // get scope to scan for tags
@@ -794,10 +810,17 @@ void SymbolViewPlugin::OnViewTypeChanged(wxCommandEvent& e)
 {
     m_viewStack->Select(e.GetString());
     WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
+    m_stackChoice->SetWindowStack(viewStack);
     if (viewStack->GetSelected() == NULL || m_isLinkedToEditor) {
         ShowSymbolTree();
     }
     e.Skip();
+}
+
+void SymbolViewPlugin::OnStackChoiceUI(wxUpdateUIEvent& e)
+{
+    WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
+    e.Enable(!m_isLinkedToEditor && viewStack->GetSelected() != NULL);
 }
 
 /**
@@ -816,6 +839,12 @@ void SymbolViewPlugin::OnCollapseAll(wxCommandEvent& e)
     e.Skip();
 }
 
+void SymbolViewPlugin::OnCollapseAllUI(wxUpdateUIEvent& e)
+{
+    WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
+    e.Enable(viewStack->GetSelected() != NULL);
+}
+
 /**
  * Jump to the current editor's symbol tree.
  */ 
@@ -823,6 +852,12 @@ void SymbolViewPlugin::OnGoHome(wxCommandEvent& e)
 {
     ShowSymbolTree();
     e.Skip();
+}
+
+void SymbolViewPlugin::OnGoHomeUI(wxUpdateUIEvent& e)
+{
+    WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
+    e.Enable(!m_isLinkedToEditor && viewStack->GetSelected() != NULL);
 }
 
 /**

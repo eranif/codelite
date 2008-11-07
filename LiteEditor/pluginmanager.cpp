@@ -421,5 +421,6 @@ void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name)
     LEditor *editor = ManagerST::Get()->GetActiveEditor();
     if (editor) {
         ManagerST::Get()->FindAndSelect(editor, const_cast<wxString&>(pattern), name);
+		editor->SetActive();
     }
 }

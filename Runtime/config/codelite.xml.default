@@ -3,6 +3,7 @@
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="984" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
+	  <wxString Value="EXPORT"/>
       <wxString Value="WXDLLIMPEXP_CORE"/>
       <wxString Value="WXDLLIMPEXP_BASE"/>
       <wxString Value="WXDLLIMPEXP_XML"/>
@@ -46,8 +47,8 @@
       <wxString Value="_GLIBCXX_END_NAMESPACE=}"/>
       <wxString Value="_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD)=namespace std{"/>
       <wxString Value="_GLIBCXX_END_NESTED_NAMESPACE=}"/>
-      <wxString Value="_GLIBCXX_STD=std"/>    
-      <wxString Value="WXDLLIMPEXP_SCI"/>    
+      <wxString Value="_GLIBCXX_STD=std"/>
+      <wxString Value="WXDLLIMPEXP_SCI"/>
     </wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">
@@ -72,5 +73,5 @@
   </ArchiveObject>
   <ArchiveObject Name="GenerateFullPathMakefile">
     <long Value="1" Name="m_value"/>
-  </ArchiveObject>  
+  </ArchiveObject>
 </LiteEditor>

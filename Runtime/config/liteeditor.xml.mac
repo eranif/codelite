@@ -3,6 +3,7 @@
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="984" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
+	  <wxString Value="EXPORT"/>
       <wxString Value="_GLIBCXX_STD=std"/>
       <wxString Value="WXDLLIMPEXP_CORE"/>
       <wxString Value="WXDLLIMPEXP_BASE"/>
@@ -19,25 +20,30 @@
       <wxString Value="WXDLLEXPORT"/>
       <wxString Value="WXDLLIMPORT"/>
       <wxString Value="wxT"/>
-      <wxString Value="wxTopLevelWindowNative=wxTopLevelWindowMSW"/>
+      <wxString Value="wxTopLevelWindowNative=wxTopLevelWindowMac"/>
       <wxString Value="WXUNUSED"/>
       <wxString Value="wxDEPRECTAED"/>
       <wxString Value="_T"/>
       <wxString Value="ATTRIBUTE_PRINTF_1"/>
       <wxString Value="ATTRIBUTE_PRINTF_2"/>
-	  <wxString Value="WXDLLIMPEXP_FWD_BASE"/>  
-	  <wxString Value="WXDLLIMPEXP_FWD_CORE"/>   
-	  <wxString Value="DLLIMPORT"/>  
-	  <wxString Value="DECLARE_INSTANCE_TYPE"/>  
-	  <wxString Value="emit"/>  
-	  <wxString Value="Q_OBJECT"/>  
-	  <wxString Value="Q_PACKED"/>  
-	  <wxString Value="Q_GADGET"/>  
-	  <wxString Value="QT_BEGIN_HEADER"/>  
-	  <wxString Value="QT_END_HEADER"/>  
-	  <wxString Value="Q_REQUIRED_RESULT"/>  
-	  <wxString Value="Q_INLINE_TEMPLATE"/>  
-	  <wxString Value="Q_OUTOFLINE_TEMPLATE"/>    
+	  <wxString Value="WXDLLIMPEXP_FWD_BASE"/>
+	  <wxString Value="WXDLLIMPEXP_FWD_CORE"/>
+	  <wxString Value="DLLIMPORT"/>
+	  <wxString Value="DECLARE_INSTANCE_TYPE"/>
+	  <wxString Value="emit"/>
+	  <wxString Value="Q_OBJECT"/>
+	  <wxString Value="Q_PACKED"/>
+	  <wxString Value="Q_GADGET"/>
+	  <wxString Value="QT_BEGIN_HEADER"/>
+	  <wxString Value="QT_END_HEADER"/>
+	  <wxString Value="Q_REQUIRED_RESULT"/>
+	  <wxString Value="Q_INLINE_TEMPLATE"/>
+	  <wxString Value="Q_OUTOFLINE_TEMPLATE"/>
+	  <wxString Value="_GLIBCXX_BEGIN_NAMESPACE(std)=namespace std{"/>
+      <wxString Value="_GLIBCXX_END_NAMESPACE=}"/>
+      <wxString Value="_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD)=namespace std{"/>
+      <wxString Value="_GLIBCXX_END_NESTED_NAMESPACE=}"/>
+      <wxString Value="_GLIBCXX_STD=std"/>
 	</wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">

@@ -35,7 +35,7 @@ display_eol|View|Display EOL|
 whitepsace_invisible|View::Show Whitespace|Invisible|Alt-F1
 whitepsace_always|View::Show Whitespace|Show Always|Alt-F2
 whitespace_visiable_after_indent|View::Show Whitespace|Visible After First Indent|Alt-F3
-full_screen|View|Full Screen...|Ctrl-F11
+full_screen|View|Full Screen...|Alt-M
 view_welcome_page|View|Show Welcome Page|
 view_welcome_page_at_startup|View|Load Welcome Page at Startup|
 output_pane|View|Output Pane|Ctrl-Alt-O

@@ -175,7 +175,7 @@ void SymbolViewPlugin::CreateGUIControls()
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	m_symView->SetSizer(sz);
 
-	wxToolBar *tb = new wxToolBar(m_symView, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL);
+	wxToolBar *tb = new wxToolBar(m_symView, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
 	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
 	tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);

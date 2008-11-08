@@ -57,12 +57,13 @@ void SymbolsDialog::AddSymbol(const TagEntryPtr &tag, bool sel)
 	//-------------------------------------------------------
 
 	// Set the item display name
-	wxString tmp(tag->GetFullDisplayName()), name;
-	if (tmp.EndsWith(wxT(": [prototype]"), &name)) {
-		displayName = name;
-	} else {
-		displayName = tmp;
-	}
+	wxString tmp(tag->GetFullDisplayName())/*, name*/;
+	displayName = tmp;
+//	if (tmp.EndsWith(wxT(": [prototype]"), &name)) {
+//		displayName = name;
+//	} else {
+//		displayName = tmp;
+//	}
 
 	wxString line;
 	line << tag->GetLine();

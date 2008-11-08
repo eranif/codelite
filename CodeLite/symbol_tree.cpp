@@ -248,7 +248,7 @@ void SymbolTree::SelectItemByName(const wxString &name)
 	for (; iter != m_items.end(); iter++) {
 		wxString tmpkey = iter->first;
 		wxString key(tmpkey);
-		tmpkey.StartsWith(wxT("[prototype] "), &key);
+//		tmpkey.StartsWith(wxT("[prototype] "), &key);
 		wxString path = key.BeforeFirst(wxT('('));
 		//get the name from the path
 		path = path.AfterLast(wxT(':'));

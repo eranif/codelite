@@ -246,10 +246,6 @@ wxString TagEntry::GetDisplayName() const
 {
 	wxString name;
 	name << GetName() << GetSignature();
-	if(GetKind() == wxT("prototype"))
-	{
-		name << wxT(": [prototype]");
-	}
 	return name;
 }
 

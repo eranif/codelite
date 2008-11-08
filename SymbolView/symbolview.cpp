@@ -955,6 +955,10 @@ void SymbolViewPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 		}
 	}
 	m_viewStack->Thaw();
+	
+	// set the view mode to current file, this to avoid long waiting on opening next workspace
+	m_viewStack->Select(m_viewModeNames[vmCurrentFile]);
+	m_viewChoice->SetStringSelection(m_viewModeNames[vmCurrentFile]);
 	e.Skip();
 }
 

@@ -968,8 +968,16 @@ void SymbolViewPlugin::OnWorkspaceClosed(wxCommandEvent& e)
  */
 void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 {
+	wxBusyCursor bc;
+	wxBusyInfo *msg(NULL);
+	
 	std::vector<wxFileName> *files = (std::vector<wxFileName>*) e.GetClientData();
 	if (files && !files->empty()) {
+		if(files->size() > 1 && GetViewMode() != vmCurrentFile) {
+			// project / workspace been retagged
+			msg = new wxBusyInfo(_("Updating SymbolView tree, please wait..."));
+		}
+		
 		m_viewStack->Freeze();
 
 		// collect files that have been retagged, and all tags in current trees that came from these files
@@ -1008,6 +1016,10 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 		}
 
 		m_viewStack->Thaw();
+		if(msg){
+			// destroy the busy info message
+			delete msg;
+		}
 	}
 	e.Skip();
 }

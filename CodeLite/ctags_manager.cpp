@@ -784,6 +784,7 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		filter.Add(wxT("union"));
 		filter.Add(wxT("class"));
 		filter.Add(wxT("struct"));
+		filter.Add(wxT("namespace"));
 		TagsByScope(scope, filter, candidates, true);
 
 	} else {

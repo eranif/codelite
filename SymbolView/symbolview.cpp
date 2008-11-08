@@ -777,15 +777,15 @@ void SymbolViewPlugin::ShowSymbolTree()
 {
 	wxString path = GetSymbolsPath(m_mgr->GetActiveEditor());
 	if (!path.IsEmpty()) {
-		m_viewStack->Freeze();
 		WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
 		if (viewStack->GetSelectedKey() != path) {
+			m_viewStack->Freeze();
 			if (!viewStack->Find(path)) {
 				CreateSymbolTree(path, viewStack);
 			}
 			viewStack->Select(path);
+			m_viewStack->Thaw();
 		}
-		m_viewStack->Thaw();
 	}
 }
 

@@ -1,11 +1,13 @@
 #include <set>
-#include <wx/xrc/xmlres.h>
 #include <wx/app.h>
 #include <wx/log.h>
 #include "macros.h"
 #include "workspace.h"
 #include "ctags_manager.h"
 #include "symbolview.h"
+#include <wx/busyinfo.h>
+#include <wx/utils.h>
+#include <wx/xrc/xmlres.h>
 
 
 //--------------------------------------------
@@ -781,7 +783,23 @@ void SymbolViewPlugin::ShowSymbolTree()
 		if (viewStack->GetSelectedKey() != path) {
 			m_viewStack->Freeze();
 			if (!viewStack->Find(path)) {
+				bool displayMsg = path.EndsWith(wxT(".workspace")) || path.EndsWith(wxT(".project"));
+				
+				wxWindowDisabler disableAll;
+				wxBusyCursor cursor;
+				
+				// since this operation can take a while, display message to user
+				wxBusyInfo *wait_msg(NULL);
+				if(displayMsg){
+					wait_msg = new wxBusyInfo(wxString::Format(_("Building SymbolView tree, please wait...")));
+				}
+
 				CreateSymbolTree(path, viewStack);
+
+				if(displayMsg){
+					delete wait_msg;
+				}
+
 			}
 			viewStack->Select(path);
 			m_viewStack->Thaw();

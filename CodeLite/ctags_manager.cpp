@@ -292,11 +292,15 @@ void TagsManager::TagFromLine(const wxString& line, TagEntry& tag)
             // enumName::
             // they should be member of their parent (which can be <global>, or class)
             // but we want to know the "enum" type they belong to, so save that in typeref,
-            // then patch the enum field to lift the enumerator into the enclosing scope
+            // then patch the enum field to lift the enumerator into the enclosing scope.
+            // watch out for anonymous enums -- leave their typeref field blank.
             std::map<wxString,wxString>::iterator e = extFields.find(wxT("enum"));
             if (e != extFields.end()) {
-                extFields[wxT("typeref")] = e->second;
+                wxString typeref = e->second;
                 e->second = e->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
+                if (!typeref.AfterLast(wxT(':')).StartsWith(wxT("__anon"))) {
+                    extFields[wxT("typeref")] = typeref;
+                }
             }
         }
         

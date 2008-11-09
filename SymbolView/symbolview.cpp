@@ -487,8 +487,9 @@ wxSQLite3ResultSet SymbolViewPlugin::GetTags(const std::multimap<wxString,wxStri
 			sql << wxT(")");
 		}
 	}
-
 	sql << wxT(";");
+    //wxLogMessage(sql);
+    
 	return m_mgr->GetTagsManager()->GetDatabase()->Query(sql);
 }
 
@@ -658,24 +659,26 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 
 	// get scope and kind to scan for tags (also: enumerators indicate their parent enum via "typeref" in the db)
 	TagTreeData *treetag = (TagTreeData*) tree->GetItemData(id);
-	if (!treetag) {
-		sqlopts.insert(std::make_pair(wxString(wxT("scope")), wxString(wxT("<global>"))));
-		sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("enumerator"))));
-	} else if (treetag->GetKind() != wxT("enum")) {
-		sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetPath()));
-		sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("enumerator"))));
-		sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("macro"))));
-		sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("variable"))));
-	} else {
-		sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetScope()));
-		sqlopts.insert(std::make_pair(wxString(wxT("typeref")), treetag->GetPath()));
-		sqlopts.insert(std::make_pair(wxString(wxT("kind")), wxString(wxT("enumerator"))));
-	}
+    if (!treetag) {
+        sqlopts.insert(std::make_pair(wxString(wxT("scope")), wxString(wxT("<global>"))));
+    } else if (treetag->GetKind() != wxT("enum")) {
+        sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetPath()));
+        sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("macro"))));
+        sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("variable"))));
+    } else {
+        sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetScope()));
+        sqlopts.insert(std::make_pair(wxString(wxT("typeref")), treetag->GetPath()));
+        sqlopts.insert(std::make_pair(wxString(wxT("kind")), wxString(wxT("enumerator"))));
+    }
 
 	// query database for the tags that go under this node
 	wxSQLite3ResultSet res = GetTags(sqlopts);
 	while (res.NextRow()) {
 		TagEntry tag(res);
+		if (tag.GetKind() == wxT("enumerator") && !tag.GetTyperef().IsEmpty() 
+                && (!treetag || treetag->GetKind() != wxT("enum"))) 
+            // typed enumerators go under their enum instead of here
+            continue; 
 		wxTreeItemId parent = id != tree->GetRootItem() ? id : GetParentForGlobalTag(tree, tag);
 		// create child node, add our custom tag data to it, and set its appearance accordingly
 		wxTreeItemId child = tree->AppendItem(parent, wxEmptyString);
@@ -703,6 +706,8 @@ int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxStrin
 		for (Path2TagRange range = m_pathTags.equal_range(tagScope); range.first != range.second; range.first++) {
 			wxTreeCtrl *tree = range.first->second.first;
 			wxTreeItemId parent = range.first->second.second;
+            if (!tree->IsExpanded(parent) && tree->GetChildrenCount(parent) == 0)
+                continue; // don't add symbols to unexpanded node or it will fool LoadChildren()
 			TagTreeData *treetag = (TagTreeData*) tree->GetItemData(parent);
 			// make sure the scope tag came from a valid file relative to the new tag's file
 			// (for example if tag is Foo::Foo() from file foo.cpp, then class Foo can come from files foo.cpp or foo.h
@@ -1243,11 +1248,27 @@ void SymbolViewPlugin::OnSymbolsUpdated(wxCommandEvent& e)
 	ParseThreadEventData *data = (ParseThreadEventData*) e.GetClientData();
 	if (data && !data->GetItems().empty()) {
 		m_viewStack->Freeze();
+
+		wxArrayString files;
+		std::multimap<wxString, wxString> filePaths;
+
+		files.Add(data->GetFileName());
+		GetPaths(files, filePaths);
+
 		const std::vector<std::pair<wxString,TagEntry> > &tags = data->GetItems();
 		for (size_t i = 0; i < tags.size(); i++) {
-			UpdateSymbol(tags[i].second);
+            if (tags[i].second.GetKind() != wxT("enumerator")) {
+                UpdateSymbol(tags[i].second);
+            } else {
+                // must remove and re-add enumerators in case tree location changed 
+                // due to possible change in typeref
+                DeleteSymbol(tags[i].second);
+                AddSymbol(tags[i].second, filePaths);
+            }
 		}
+        AddDeferredSymbols(filePaths);
 		SortChildren();
+        
 		m_viewStack->Thaw();
 	}
 	e.Skip();

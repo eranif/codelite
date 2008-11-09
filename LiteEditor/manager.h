@@ -70,8 +70,9 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	long m_tipWinPos;
 	wxString m_installDir;
 	std::list<QueueCommand> m_buildQueue;
-	bool m_inShutdown;
-
+	bool m_workspceClosing;
+	bool m_isShutdown;
+	
 public:
 	/*!
 	 * \brief
@@ -138,13 +139,22 @@ public:
 	 */
 	void SaveAll(bool includeUntitled = true);
 
-	void SetInShutdown(const bool& inShutdown) {
-		this->m_inShutdown = inShutdown;
+	void SetWorkspaceClosing(const bool& inShutdown) {
+		this->m_workspceClosing = inShutdown;
 	}
 	
-	const bool& GetInShutdown() const {
-		return m_inShutdown;
+	const bool& IsWorkspaceClosing() const {
+		return m_workspceClosing;
 	}
+	
+	bool IsShutdownInProgress() const {
+		return m_isShutdown;
+	}
+	
+	void SetShutdownInProgress(bool b) {
+		m_isShutdown = b;
+	}
+	
 	/*!
 	 * \brief
 	 * Free all singleton objects initialised in CodeLite

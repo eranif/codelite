@@ -1054,6 +1054,8 @@ void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void Frame::OnClose(wxCloseEvent& event)
 {
+	ManagerST::Get()->SetShutdownInProgress(true);
+	
 	// Stop the search thread
 	ManagerST::Get()->KillProgram();
 	ManagerST::Get()->DbgStop();

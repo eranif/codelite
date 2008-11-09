@@ -309,15 +309,13 @@ void SymbolViewPlugin::UnPlug()
 	Notebook *notebook = m_mgr->GetWorkspacePaneNotebook();
 	size_t notepos = notebook->GetPageIndex(m_symView);
 	if (notepos != Notebook::npos) {
-		notebook->DeletePage(notepos);
+		notebook->RemovePage(notepos, false);
+		m_symView->Destroy();
 	} else {
-		wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
-		m_symView->GetParent()->ProcessEvent(event);
+		m_symView->Destroy();
 	}
-
 	m_symView = NULL;
 }
-
 
 //--------------------------------------------
 //Helper methods

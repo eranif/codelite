@@ -333,7 +333,7 @@ bool App::OnInit()
 			                            3000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 			                            style);
 		}
-		wxYield();
+		wxTheApp->Yield(true);
 	}
 	
 	// redirect stderr

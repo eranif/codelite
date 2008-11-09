@@ -843,6 +843,7 @@ void SymbolViewPlugin::UpdateTrees(const wxArrayString &files, bool removeOld)
 	SmartPtr<wxBusyInfo> wait_msg;
 	if (GetViewMode() != vmCurrentFile && files.Count() > 2) {
 		wait_msg.Reset(new wxBusyInfo(_("Updating SymbolView tree, please wait...")));
+		m_mgr->GetTheApp()->Yield(true);
 	}
 	wxBusyCursor bc;
 	wxWindowDisabler disableAll;

@@ -2,6 +2,7 @@
 #include <wx/app.h>
 #include <wx/log.h>
 #include "macros.h"
+#include "detachedpanesinfo.h"
 #include "workspace.h"
 #include "ctags_manager.h"
 #include "symbolview.h"
@@ -63,10 +64,20 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 	CreateGUIControls();
 	Connect();
 
-	m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"));
-	//new DockablePane(manager->GetDockingManager()->GetManagedWindow(), NULL, m_symView, wxT("Symbol View"), wxNullBitmap, wxSize(200, 200));
-}
+// add our tab. If the tab is detached make it detached as well
+// otherwise, add it to the workspace view
+	wxArrayString detachedPanes;
+	DetachedPanesInfo dpi;
+	m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
+	detachedPanes = dpi.GetPanes();
 
+	if (detachedPanes.Index(wxT("Symbols")) != wxNOT_FOUND) {
+	new DockablePane(	m_mgr->GetDockingManager()->GetManagedWindow(),
+	                  m_mgr->GetWorkspacePaneNotebook(), m_symView, wxT("Symbols"), wxNullBitmap, wxSize(200, 200));
+	} else {
+		m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"));
+	}
+}
 
 SymbolViewPlugin::~SymbolViewPlugin()
 {
@@ -203,7 +214,7 @@ void SymbolViewPlugin::CreateGUIControls()
 
 	m_stackChoice = new StackButton(m_symView, (WindowStack*) m_viewStack->GetSelected());
 	m_choiceSizer->Add(m_stackChoice, 0, wxEXPAND|wxALL, 1);
-	
+
 	// by default the drop-down button is hidden
 	m_choiceSizer->Hide(m_stackChoice);
 	sz->Layout();
@@ -361,7 +372,7 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, std::multimap<wxString,w
 {
 	if (!m_mgr->IsWorkspaceOpen())
 		return;
-    wxString sqlFileKey = wxT("file");
+	wxString sqlFileKey = wxT("file");
 	wxString fullPath = path.GetFullPath();
 	wxString workspaceFileName = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetFullPath();
 	wxArrayString projectNames;
@@ -385,8 +396,8 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, std::multimap<wxString,w
 				// FIXME: this only works if the .h file is in the same directory as the .c/.cpp file.
 				fileName.SetExt(path.GetExt());
 				if (fullPath == fileName.GetFullPath()) {
-                    sqlopts.insert(std::make_pair(sqlFileKey, file));
-                }
+					sqlopts.insert(std::make_pair(sqlFileKey, file));
+				}
 			}
 		}
 	}
@@ -452,31 +463,31 @@ wxSQLite3ResultSet SymbolViewPlugin::GetTags(const std::multimap<wxString,wxStri
 {
 	wxString sql = wxT("select * from tags");
 
-    bool firstclause = true;
-    std::multimap<wxString,wxString>::const_iterator iter = sqlopts.begin();
-    while (iter != sqlopts.end()) {
-        std::multimap<wxString,wxString>::const_iterator next = sqlopts.upper_bound(iter->first);
+	bool firstclause = true;
+	std::multimap<wxString,wxString>::const_iterator iter = sqlopts.begin();
+	while (iter != sqlopts.end()) {
+		std::multimap<wxString,wxString>::const_iterator next = sqlopts.upper_bound(iter->first);
 
-        wxString key = iter->first;
-        wxString val = iter->second;
-        bool negate  = iter->first.StartsWith(wxT("!"), &key);
+		wxString key = iter->first;
+		wxString val = iter->second;
+		bool negate  = iter->first.StartsWith(wxT("!"), &key);
 
-        sql << (firstclause ? wxT(" where ") : wxT(" and ")) << key;
-        firstclause = false;
+		sql << (firstclause ? wxT(" where ") : wxT(" and ")) << key;
+		firstclause = false;
 
-        if (++iter == next) {
-            // single value for this key: use = or != to test
-            sql << (negate ? wxT(" != '") : wxT(" = '")) << val << wxT("'");
-        } else {
-            // multiple values for this key: make a list
-            sql << (negate ? wxT(" not in ('") : wxT(" in ('")) << val << wxT("'");
-            do {
-                val = iter->second;
-                sql << wxT(", '") << val << wxT("'");
-            } while (++iter != next);
-            sql << wxT(")");
-        }
-    }
+		if (++iter == next) {
+			// single value for this key: use = or != to test
+			sql << (negate ? wxT(" != '") : wxT(" = '")) << val << wxT("'");
+		} else {
+			// multiple values for this key: make a list
+			sql << (negate ? wxT(" not in ('") : wxT(" in ('")) << val << wxT("'");
+			do {
+				val = iter->second;
+				sql << wxT(", '") << val << wxT("'");
+			} while (++iter != next);
+			sql << wxT(")");
+		}
+	}
 
 	sql << wxT(";");
 	return m_mgr->GetTagsManager()->GetDatabase()->Query(sql);
@@ -491,23 +502,23 @@ IMPLEMENT_DYNAMIC_CLASS(SymbolViewPlugin::SymTree, wxTreeCtrl)
 
 int SymbolViewPlugin::SymTree::IsCtorOrDtor(const wxTreeItemId &id)
 {
-    if (!id.IsOk() || GetRootItem() == id)
-        return 0;
-    TagTreeData *childtag = (TagTreeData*) GetItemData(id);
-    if (!childtag || childtag->GetKind() != wxT("function") && childtag->GetKind() != wxT("prototype"))
-        return 0;
+	if (!id.IsOk() || GetRootItem() == id)
+		return 0;
+	TagTreeData *childtag = (TagTreeData*) GetItemData(id);
+	if (!childtag || childtag->GetKind() != wxT("function") && childtag->GetKind() != wxT("prototype"))
+		return 0;
 
-    wxTreeItemId parent = GetItemParent(id);
-    if (!parent.IsOk())
-        return 0;
-    TagTreeData *parenttag = (TagTreeData*) GetItemData(parent);
-    if (!parenttag || parenttag->GetKind() != wxT("class") && parenttag->GetKind() != wxT("struct"))
-        return 0;
+	wxTreeItemId parent = GetItemParent(id);
+	if (!parent.IsOk())
+		return 0;
+	TagTreeData *parenttag = (TagTreeData*) GetItemData(parent);
+	if (!parenttag || parenttag->GetKind() != wxT("class") && parenttag->GetKind() != wxT("struct"))
+		return 0;
 
-    wxString name = childtag->GetName();
-    name.StartsWith(wxT("~"), &name);
+	wxString name = childtag->GetName();
+	name.StartsWith(wxT("~"), &name);
 
-    return name == parenttag->GetName() ? 1 : 0;
+	return name == parenttag->GetName() ? 1 : 0;
 }
 
 /**
@@ -515,13 +526,13 @@ int SymbolViewPlugin::SymTree::IsCtorOrDtor(const wxTreeItemId &id)
  */
 int SymbolViewPlugin::SymTree::OnCompareItems(const wxTreeItemId &id1, const wxTreeItemId &id2)
 {
-    int cmp = 0;
-    cmp = IsCtorOrDtor(id2) - IsCtorOrDtor(id1);
-    if (cmp)
-        return cmp;
+	int cmp = 0;
+	cmp = IsCtorOrDtor(id2) - IsCtorOrDtor(id1);
+	if (cmp)
+		return cmp;
 	cmp = GetItemImage(id1) - GetItemImage(id2);
-    if (cmp)
-        return cmp;
+	if (cmp)
+		return cmp;
 	return wxTreeCtrl::OnCompareItems(id1, id2);
 }
 
@@ -637,7 +648,7 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 		tree->SetItemHasChildren(id, false);
 	}
 
-    std::multimap<wxString,wxString> sqlopts;
+	std::multimap<wxString,wxString> sqlopts;
 
 	// get files to scan for tags
 	ViewMode viewMode = GetViewMode();
@@ -648,19 +659,19 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 
 	// get scope and kind to scan for tags (also: enumerators indicate their parent enum via "typeref" in the db)
 	TagTreeData *treetag = (TagTreeData*) tree->GetItemData(id);
-    if (!treetag) {
-        sqlopts.insert(std::make_pair(wxString(wxT("scope")), wxString(wxT("<global>"))));
-        sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("enumerator"))));
-    } else if (treetag->GetKind() != wxT("enum")) {
-        sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetPath()));
-        sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("enumerator"))));
-        sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("macro"))));
-        sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("variable"))));
-    } else {
-        sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetScope()));
-        sqlopts.insert(std::make_pair(wxString(wxT("typeref")), treetag->GetPath()));
-        sqlopts.insert(std::make_pair(wxString(wxT("kind")), wxString(wxT("enumerator"))));
-    }
+	if (!treetag) {
+		sqlopts.insert(std::make_pair(wxString(wxT("scope")), wxString(wxT("<global>"))));
+		sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("enumerator"))));
+	} else if (treetag->GetKind() != wxT("enum")) {
+		sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetPath()));
+		sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("enumerator"))));
+		sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("macro"))));
+		sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("variable"))));
+	} else {
+		sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetScope()));
+		sqlopts.insert(std::make_pair(wxString(wxT("typeref")), treetag->GetPath()));
+		sqlopts.insert(std::make_pair(wxString(wxT("kind")), wxString(wxT("enumerator"))));
+	}
 
 	// query database for the tags that go under this node
 	wxSQLite3ResultSet res = GetTags(sqlopts);
@@ -683,13 +694,13 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxString, wxString> &filePaths)
 {
 	int count = 0;
-    wxString tagScope = tag.GetScope();
+	wxString tagScope = tag.GetScope();
 	if (tag.GetKind() == wxT("enumerator") && !tag.GetTyperef().IsEmpty()) {
 		tagScope = tag.GetTyperef();
 	}
 	if (tagScope != wxT("<global>")) {
 		// tag is a scoped symbol (eg "Foo::Foo") so look for matching scope nodes to add it to as a child
-        int oldcount = count;
+		int oldcount = count;
 		for (Path2TagRange range = m_pathTags.equal_range(tagScope); range.first != range.second; range.first++) {
 			wxTreeCtrl *tree = range.first->second.first;
 			wxTreeItemId parent = range.first->second.second;
@@ -698,7 +709,7 @@ int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxStrin
 			// (for example if tag is Foo::Foo() from file foo.cpp, then class Foo can come from files foo.cpp or foo.h
 			// -- where foo.cpp and foo.h are in the same project)
 			std::pair<std::multimap<wxString,wxString>::const_iterator,
-                      std::multimap<wxString,wxString>::const_iterator> files = filePaths.equal_range(treetag->GetFile());
+			std::multimap<wxString,wxString>::const_iterator> files = filePaths.equal_range(treetag->GetFile());
 			while (files.first != files.second && files.first->second != tag.GetFile()) {
 				files.first++;
 			}
@@ -709,11 +720,11 @@ int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxStrin
 				count++;
 			}
 		}
-        if (oldcount == count) {
-            // no scope in which to place this tag!  probably the parent hasn't been added yet (there's no
-            // guarantee on the order tags come back from the db). queue the tag to be handled later.
-            m_deferredTags.push(tag);
-        }
+		if (oldcount == count) {
+			// no scope in which to place this tag!  probably the parent hasn't been added yet (there's no
+			// guarantee on the order tags come back from the db). queue the tag to be handled later.
+			m_deferredTags.push(tag);
+		}
 	} else {
 		// tag is a global symbol so look for all trees showing tags from tag's file (file tree, project tree, workspace tree)
 		std::pair<std::multimap<wxString,wxString>::const_iterator,
@@ -805,18 +816,18 @@ int SymbolViewPlugin::DeleteFileSymbols(const wxString &file)
  */
 void SymbolViewPlugin::AddDeferredSymbols(const std::multimap<wxString, wxString> &filePaths)
 {
-    size_t oldsize = size_t(-1);
-    while (m_deferredTags.size() < oldsize) {
-        oldsize = m_deferredTags.size();
-        for (size_t n = oldsize; n > 0; n--) {
-            TagEntry tag = m_deferredTags.front();
-            m_deferredTags.pop();
-            AddSymbol(tag, filePaths);
-        }
-    }
-    while (!m_deferredTags.empty()) {
-        m_deferredTags.pop();
-    }
+	size_t oldsize = size_t(-1);
+	while (m_deferredTags.size() < oldsize) {
+		oldsize = m_deferredTags.size();
+		for (size_t n = oldsize; n > 0; n--) {
+			TagEntry tag = m_deferredTags.front();
+			m_deferredTags.pop();
+			AddSymbol(tag, filePaths);
+		}
+	}
+	while (!m_deferredTags.empty()) {
+		m_deferredTags.pop();
+	}
 }
 
 /**
@@ -825,58 +836,58 @@ void SymbolViewPlugin::AddDeferredSymbols(const std::multimap<wxString, wxString
  */
 void SymbolViewPlugin::UpdateTrees(const wxArrayString &files, bool removeOld)
 {
-    SmartPtr<wxBusyInfo> wait_msg;
-    if (GetViewMode() != vmCurrentFile && files.Count() > 2) {
-        wait_msg.Reset(new wxBusyInfo(_("Updating SymbolView tree, please wait...")));
-    }
-    wxBusyCursor bc;
-    wxWindowDisabler disableAll;
+	SmartPtr<wxBusyInfo> wait_msg;
+	if (GetViewMode() != vmCurrentFile && files.Count() > 2) {
+		wait_msg.Reset(new wxBusyInfo(_("Updating SymbolView tree, please wait...")));
+	}
+	wxBusyCursor bc;
+	wxWindowDisabler disableAll;
 
-    std::multimap<wxString,wxString> sqlopts;
-    std::map<TagKey, TreeNode> tagsToDelete;
+	std::multimap<wxString,wxString> sqlopts;
+	std::map<TagKey, TreeNode> tagsToDelete;
 
-    // collect files that have been retagged, and all tags in current trees that came from these files (if removing old)
-    wxString sqlFileKey = wxT("file");
-    for (size_t i = 0; i < files.Count(); i++) {
-        sqlopts.insert(std::make_pair(sqlFileKey, files[i]));
-        if (removeOld) {
-            for (File2TagRange range = m_fileTags.equal_range(files[i]); range.first != range.second; range.first++) {
-                wxTreeCtrl *tree = range.first->second.first;
-                wxTreeItemId id = range.first->second.second;
-                TagTreeData *tag = (TagTreeData*) tree->GetItemData(id);
-                tagsToDelete[TagKey(tag->GetFile(), tag->Key())] = TreeNode(tree,id);
-            }
-        }
-    }
+	// collect files that have been retagged, and all tags in current trees that came from these files (if removing old)
+	wxString sqlFileKey = wxT("file");
+	for (size_t i = 0; i < files.Count(); i++) {
+		sqlopts.insert(std::make_pair(sqlFileKey, files[i]));
+		if (removeOld) {
+			for (File2TagRange range = m_fileTags.equal_range(files[i]); range.first != range.second; range.first++) {
+				wxTreeCtrl *tree = range.first->second.first;
+				wxTreeItemId id = range.first->second.second;
+				TagTreeData *tag = (TagTreeData*) tree->GetItemData(id);
+				tagsToDelete[TagKey(tag->GetFile(), tag->Key())] = TreeNode(tree,id);
+			}
+		}
+	}
 
-    // for the set of files retagged, find paths of all symbol trees showing tags from those files
-    std::multimap<wxString,wxString> treePaths;
-    GetPaths(files, treePaths);
+	// for the set of files retagged, find paths of all symbol trees showing tags from those files
+	std::multimap<wxString,wxString> treePaths;
+	GetPaths(files, treePaths);
 
-    // query database for current tags of retagged files.
-    // update or add new symbols and remove these from the to-delete list
-    wxSQLite3ResultSet res = GetTags(sqlopts);
-    while (res.NextRow()) {
-        TagEntry tag(res);
-        if (removeOld && UpdateSymbol(tag)) {
-            tagsToDelete.erase(TagKey(tag.GetFile(), tag.Key()));
-        } else {
-            AddSymbol(tag, treePaths);
-        }
-    }
-    AddDeferredSymbols(treePaths);
-    SortChildren();
+	// query database for current tags of retagged files.
+	// update or add new symbols and remove these from the to-delete list
+	wxSQLite3ResultSet res = GetTags(sqlopts);
+	while (res.NextRow()) {
+		TagEntry tag(res);
+		if (removeOld && UpdateSymbol(tag)) {
+			tagsToDelete.erase(TagKey(tag.GetFile(), tag.Key()));
+		} else {
+			AddSymbol(tag, treePaths);
+		}
+	}
+	AddDeferredSymbols(treePaths);
+	SortChildren();
 
-    if (removeOld) {
-        // remove from trees all tags no longer in the database
-        for (std::map<TagKey,TreeNode>::iterator i = tagsToDelete.begin(); i != tagsToDelete.end(); i++) {
-            wxTreeCtrl *tree = i->second.first;
-            wxTreeItemId id = i->second.second;
-            if (id.IsOk()) {
-                tree->Delete(id);
-            }
-        }
-    }
+	if (removeOld) {
+		// remove from trees all tags no longer in the database
+		for (std::map<TagKey,TreeNode>::iterator i = tagsToDelete.begin(); i != tagsToDelete.end(); i++) {
+			wxTreeCtrl *tree = i->second.first;
+			wxTreeItemId id = i->second.second;
+			if (id.IsOk()) {
+				tree->Delete(id);
+			}
+		}
+	}
 }
 
 /**
@@ -887,12 +898,12 @@ void SymbolViewPlugin::CreateSymbolTree(const wxString &path, WindowStack *paren
 	if (path.IsEmpty() || !parent)
 		return;
 
-    SmartPtr<wxBusyInfo> wait_msg;
-    if (GetViewMode() != vmCurrentFile) {
-        wait_msg.Reset(new wxBusyInfo(_("Building SymbolView tree, please wait...")));
-    }
-    wxBusyCursor bc;
-    wxWindowDisabler disableAll;
+	SmartPtr<wxBusyInfo> wait_msg;
+	if (GetViewMode() != vmCurrentFile) {
+		wait_msg.Reset(new wxBusyInfo(_("Building SymbolView tree, please wait...")));
+	}
+	wxBusyCursor bc;
+	wxWindowDisabler disableAll;
 
 	// make new empty tree
 	SymTree *tree = new SymTree(parent);
@@ -933,28 +944,28 @@ void SymbolViewPlugin::ShowSymbolTree()
 				CreateSymbolTree(path, viewStack);
 			}
 			viewStack->Select(path);
-            m_viewStack->Thaw();
+			m_viewStack->Thaw();
 		}
 	}
 }
 
 bool SymbolViewPlugin::DoActivateSelection(wxTreeCtrl* tree)
 {
-    if (!tree)
-        return false;
+	if (!tree)
+		return false;
 
-    wxTreeItemId id = tree->GetSelection();
-    if (!id.IsOk())
-        return false;
+	wxTreeItemId id = tree->GetSelection();
+	if (!id.IsOk())
+		return false;
 
-    TagTreeData *tag = (TagTreeData*) tree->GetItemData(id);
-    if (!tag)
-        return false;
+	TagTreeData *tag = (TagTreeData*) tree->GetItemData(id);
+	if (!tag)
+		return false;
 
-    if (tag->GetFile().IsEmpty() || !m_mgr->OpenFile(tag->GetFile()))
-        return false;
+	if (tag->GetFile().IsEmpty() || !m_mgr->OpenFile(tag->GetFile()))
+		return false;
 
-    m_mgr->FindAndSelect(tag->GetPattern(), tag->GetName());
+	m_mgr->FindAndSelect(tag->GetPattern(), tag->GetName());
 	return true;
 }
 
@@ -974,7 +985,7 @@ void SymbolViewPlugin::OnViewModeMouseDown(wxMouseEvent& e)
 		m_viewChoice->AppendString(m_viewModeNames[i]);
 	}
 	m_viewChoice->SetStringSelection(m_viewStack->GetSelectedKey());
-    m_viewChoice->Thaw();
+	m_viewChoice->Thaw();
 	e.Skip();
 }
 
@@ -1072,13 +1083,13 @@ void SymbolViewPlugin::OnNodeExpanding(wxTreeEvent& e)
 void SymbolViewPlugin::OnNodeKeyDown(wxTreeEvent& e)
 {
 	wxTreeCtrl *tree = dynamic_cast<wxTreeCtrl*>(e.GetEventObject());
-    switch (e.GetKeyCode()) {
-        case WXK_RETURN:
-            if (DoActivateSelection(tree))
-                return; // no e.Skip() or the node will expand too
-            break;
-    }
-    e.Skip();
+	switch (e.GetKeyCode()) {
+	case WXK_RETURN:
+		if (DoActivateSelection(tree))
+			return; // no e.Skip() or the node will expand too
+		break;
+	}
+	e.Skip();
 }
 
 /**
@@ -1087,9 +1098,9 @@ void SymbolViewPlugin::OnNodeKeyDown(wxTreeEvent& e)
 void SymbolViewPlugin::OnNodeDClick(wxMouseEvent& e)
 {
 	wxTreeCtrl *tree = dynamic_cast<wxTreeCtrl*>( e.GetEventObject() );
-    if (!DoActivateSelection(tree)) {
-        e.Skip(); // only if activation fails, or node will expand too
-    }
+	if (!DoActivateSelection(tree)) {
+		e.Skip(); // only if activation fails, or node will expand too
+	}
 }
 
 /**
@@ -1138,11 +1149,11 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 {
 	std::vector<wxFileName> *files = (std::vector<wxFileName>*) e.GetClientData();
 	if (files && !files->empty()) {
-        wxArrayString filePaths;
-        for (size_t i = 0; i < files->size(); i++) {
-            filePaths.Add(files->at(i).GetFullPath());
-        }
-        UpdateTrees(filePaths, true);
+		wxArrayString filePaths;
+		for (size_t i = 0; i < files->size(); i++) {
+			filePaths.Add(files->at(i).GetFullPath());
+		}
+		UpdateTrees(filePaths, true);
 	}
 	e.Skip();
 }
@@ -1154,7 +1165,7 @@ void SymbolViewPlugin::OnProjectFileAdded(wxCommandEvent& e)
 {
 	wxArrayString *files = (wxArrayString*) e.GetClientData();
 	if (files && !files->IsEmpty()) {
-        UpdateTrees(*files, false);
+		UpdateTrees(*files, false);
 	}
 	e.Skip();
 }
@@ -1217,7 +1228,7 @@ void SymbolViewPlugin::OnSymbolsAdded(wxCommandEvent& e)
 		for (size_t i = 0; i < tags.size(); i++) {
 			AddSymbol(tags[i].second, filePaths);
 		}
-        AddDeferredSymbols(filePaths);
+		AddDeferredSymbols(filePaths);
 		SortChildren();
 
 		m_viewStack->Thaw();
@@ -1304,7 +1315,7 @@ void SymbolViewPlugin::OnEditorClosed(wxCommandEvent& e)
 				viewStack->Delete(proj->GetFileName().GetFullPath());
 			}
 		}
-        viewStack = (WindowStack*) m_viewStack->GetSelected();
+		viewStack = (WindowStack*) m_viewStack->GetSelected();
 		if (m_mgr->GetActiveEditor() != editor) {
 			// show tree of active editor
 			ShowSymbolTree();
@@ -1335,7 +1346,7 @@ void SymbolViewPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 		wxString savePath, dummy;
 		ProjectPtr curProj = m_mgr->GetWorkspace()->FindProjectByName(m_mgr->GetWorkspace()->GetActiveProjectName(), dummy);
 		if (curProj) {
-            savePath = curProj->GetFileName().GetFullPath();
+			savePath = curProj->GetFileName().GetFullPath();
 			save = viewStack->Remove(savePath);
 		}
 		viewStack->Clear();

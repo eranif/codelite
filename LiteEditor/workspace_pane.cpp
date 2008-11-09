@@ -128,6 +128,7 @@ void WorkspacePane::CreateGUIControls()
 	btn->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
 
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_TAB_DECORATION);
+    m_book->SetAuiManager(m_mgr, m_caption);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 
 	m_workspaceTab = new WorkspaceTab(m_book);

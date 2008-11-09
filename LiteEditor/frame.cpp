@@ -453,15 +453,6 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	m_highlightWord = (bool)value;
 
 	CreateGUIControls();
-	m_DPmenuMgr = new DockablePaneMenuManager(GetMenuBar(), &m_mgr);
-
-//	// fill up a list of detached panes list
-//	DetachedPanesInfo dpi;
-//	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
-//
-//	for (size_t i=0; i<dpi.GetPanes().GetCount(); i++) {
-//		m_DPmenuMgr->AddMenu(dpi.GetPanes().Item(i));
-//	}
 
 	ManagerST::Get();	// Dummy call
 
@@ -556,7 +547,6 @@ void Frame::Initialize(bool loadLastSession)
 	m_theFrame->GetFileExplorer()->Scan();
 	SendCmdEvent(wxEVT_FILE_EXP_INIT_DONE);
 
-	m_theFrame->GetWorkspacePane()->GetNotebook()->SetAuiManager( &m_theFrame->GetDockingManager(), wxT("Workspace View") );
 	//load last session?
 	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
 		m_theFrame->LoadSession(SessionManager::Get().GetLastSession());
@@ -617,11 +607,18 @@ void Frame::CreateGUIControls(void)
 
 	// Load the menubar from XRC and set this frame's menubar to it.
 	SetMenuBar(wxXmlResource::Get()->LoadMenuBar(wxT("main_menu")));
+    
+    // Set up dynamic parts of menu.
+	CreateViewAsSubMenu();
+	CreateRecentlyOpenedFilesMenu();
+	CreateRecentlyOpenedWorkspacesMenu();
+	m_DPmenuMgr = new DockablePaneMenuManager(GetMenuBar(), &m_mgr);
 
 	//---------------------------------------------
 	// Add docking windows
 	//---------------------------------------------
-	m_outputPane = new OutputPane(this, wxT("Output View"));
+
+    m_outputPane = new OutputPane(this, wxT("Output View"));
 	wxAuiPaneInfo paneInfo;
 	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton());
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
@@ -653,9 +650,6 @@ void Frame::CreateGUIControls(void)
 	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING, NotebookEventHandler(Frame::OnFileClosing), NULL, this);
 	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSED, NotebookEventHandler(Frame::OnPageClosed), NULL, this);
 
-	CreateViewAsSubMenu();
-	CreateRecentlyOpenedFilesMenu();
-	CreateRecentlyOpenedWorkspacesMenu();
 	BuildSettingsConfigST::Get()->Load();
 
 	//load dialog properties
@@ -2877,6 +2871,7 @@ void Frame::LoadPlugins()
 
 		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == SvnRevision) {
 			m_mgr.LoadPerspective(pers);
+			m_mgr.Update();
 		} else {
 			EditorConfigST::Get()->SetRevision(SvnRevision);
 		}
@@ -3415,7 +3410,7 @@ void Frame::OnNewDetachedPane(wxCommandEvent &e)
         m_DPmenuMgr->AddMenu(text);
 
         wxAuiPaneInfo info;
-        m_mgr.AddPane(pane, info.Name(text).Float().Caption(text).SetFlag(wxAuiPaneInfo::optionHidden, pane->GetBook() == NULL));
+        m_mgr.AddPane(pane, info.Name(text).Caption(text));
         m_mgr.Update();
     }
 }

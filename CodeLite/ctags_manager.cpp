@@ -256,16 +256,7 @@ void TagsManager::TagFromLine(const wxString& line, TagEntry& tag)
 			if (key == wxT("line") && !val.IsEmpty()) {
 				val.ToLong(&lineNumber);
 			} else {
-				if (key == wxT("enum")) {
-
-					// enums are specials, they are not really a scope
-					// so they should appear when I type:
-					// enumName::
-					// they should be member of their parent (which can be <global>, or class)
-					val = val.BeforeLast(wxT(':'));
-					val = val.BeforeLast(wxT(':'));
-
-				} else if (key == wxT("union") || key == wxT("struct")) {
+				if (key == wxT("union") || key == wxT("struct")) {
 
 					// remove the anonymous part of the struct / union
 					if (!val.StartsWith(wxT("__anon"))) {
@@ -295,6 +286,20 @@ void TagsManager::TagFromLine(const wxString& line, TagEntry& tag)
 	name = name.Trim();
 	fileName = fileName.Trim();
 	pattern = pattern.Trim();
+        
+        if (kind == wxT("enumerator")) {
+            // enums are specials, they are not really a scope so they should appear when I type:
+            // enumName::
+            // they should be member of their parent (which can be <global>, or class)
+            // but we want to know the "enum" type they belong to, so save that in typeref,
+            // then patch the enum field to lift the enumerator into the enclosing scope
+            std::map<wxString,wxString>::iterator e = extFields.find(wxT("enum"));
+            if (e != extFields.end()) {
+                extFields[wxT("typeref")] = e->second;
+                e->second = e->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
+            }
+        }
+        
 	tag.Create(fileName, name, lineNumber, pattern, kind, extFields);
 }
 

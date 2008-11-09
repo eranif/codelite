@@ -2,6 +2,7 @@
 #define __SymbolView__
 
 #include <map>
+#include <queue>
 #include <wx/choice.h>
 #include <wx/imaglist.h>
 #include <wx/treectrl.h>
@@ -78,6 +79,7 @@ public:
         SymTree() { }
         SymTree(wxWindow *parent) : wxTreeCtrl(parent) { }
 
+        int IsCtorOrDtor(const wxTreeItemId &id);
         int OnCompareItems(const wxTreeItemId &id1, const wxTreeItemId &id2);
 
         wxTreeItemId m_globals, m_protos, m_macros;
@@ -112,7 +114,7 @@ private:
     StackButton *m_stackChoice; ///< Allows user to select a tree in the current view mode
     wxChoice *m_viewChoice;     ///< User can select a view mode
     WindowStack *m_viewStack;   ///< Shows current symbols for selected view mode
-
+	wxBoxSizer* m_choiceSizer;	///< Sizer for the drop button & the view mode
     bool m_isLinkedToEditor;    ///< Controls whether visible symbol tree changes when active editor changes
 
     wxArrayString m_viewModeNames;      ///< User-visible names for view modes
@@ -138,6 +140,12 @@ private:
     File2TagMap m_fileTags;
 
     /**
+     * If a scoped symbol is read from the db before its scope is, then we won't have a place to put it in
+     * the tree.  Such symbols go here until they can be added.
+     */
+    std::queue<TagEntry> m_deferredTags;
+
+    /**
      * During tree updates, accumulates the set of nodes that need their children sorted.  Sorting is deferred
      * till after all nodes have been updated.  The key is a specially constructed path from tree's file path
      * plus the path to the node in the tree.  (Normally I would just use a std::set<TreeNode> because that's all
@@ -156,9 +164,9 @@ private:
     //Helper methods
     //--------------------------------------------
     wxString GetSymbolsPath(IEditor *editor);
-    void GetFiles(const wxFileName &path, wxArrayString &files);
+    void GetFiles(const wxFileName &path, std::multimap<wxString,wxString> &files);
     void GetPaths(const wxArrayString &files, std::multimap<wxString,wxString> &filePaths);
-    wxSQLite3ResultSet GetTags(const wxString &scope, const wxArrayString &files);
+    wxSQLite3ResultSet GetTags(const std::multimap<wxString,wxString> &sqlopts);
 
     //--------------------------------------------
     //Tree-related methods
@@ -167,11 +175,13 @@ private:
     wxTreeItemId GetParentForGlobalTag(SymTree *tree, const TagEntry &tag);
     void SetNodeData(wxTreeCtrl *tree, wxTreeItemId id, const TagEntry &tag);
     void SortChildren();
+    int  LoadChildren(SymTree *tree, wxTreeItemId id);
     int  AddSymbol(const TagEntry &tag, const std::multimap<wxString,wxString> &filePaths);
     int  UpdateSymbol(const TagEntry &tag);
     int  DeleteSymbol(const TagEntry &tag);
     int  DeleteFileSymbols(const wxString &file);
-    int  LoadChildren(SymTree *tree, wxTreeItemId id);
+    void AddDeferredSymbols(const std::multimap<wxString,wxString> &filePaths);
+    void UpdateTrees(const wxArrayString &files, bool removeOld);
     void CreateSymbolTree(const wxString &path, WindowStack *parent);
     void ShowSymbolTree();
 	bool DoActivateSelection(wxTreeCtrl *tree);
@@ -191,8 +201,9 @@ private:
     void OnGoHomeUI(wxUpdateUIEvent &e);
 
     void OnNodeExpanding(wxTreeEvent &e);
+    void OnNodeKeyDown(wxTreeEvent &e);
+	void OnNodeDClick(wxMouseEvent &e);
     void OnNodeContextMenu(wxTreeEvent &e);
-    void OnNodeActivated(wxTreeEvent &e);
 
     void OnWorkspaceLoaded(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
@@ -210,7 +221,6 @@ private:
     void OnActiveEditorChanged(wxCommandEvent &e);
     void OnEditorClosed(wxCommandEvent &e);
     void OnAllEditorsClosed(wxCommandEvent &e);
-	void OnNodeDClick(wxMouseEvent &e);
 };
 
 

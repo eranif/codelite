@@ -72,7 +72,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 	detachedPanes = dpi.GetPanes();
 
 	if (detachedPanes.Index(wxT("Symbols")) != wxNOT_FOUND) {
-	new DockablePane(	m_mgr->GetDockingManager()->GetManagedWindow(),
+	new DockablePane(	m_mgr->GetWorkspacePaneNotebook(),
 	                  m_mgr->GetWorkspacePaneNotebook(), m_symView, wxT("Symbols"), wxNullBitmap, wxSize(200, 200));
 	} else {
 		m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"));
@@ -183,7 +183,7 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
 
 void SymbolViewPlugin::CreateGUIControls()
 {
-	m_symView = new wxPanel(m_mgr->GetDockingManager()->GetManagedWindow());
+	m_symView = new wxPanel(m_mgr->GetWorkspacePaneNotebook());
 
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	m_symView->SetSizer(sz);
@@ -321,10 +321,9 @@ void SymbolViewPlugin::UnPlug()
 	size_t notepos = notebook->GetPageIndex(m_symView);
 	if (notepos != Notebook::npos) {
 		notebook->RemovePage(notepos, false);
-		m_symView->Destroy();
-	} else {
-		m_symView->Destroy();
 	}
+	
+	m_symView->Destroy();
 	m_symView = NULL;
 }
 

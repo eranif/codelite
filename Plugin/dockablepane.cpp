@@ -38,7 +38,7 @@ DockablePane::DockablePane(wxWindow* parent, Notebook* book, wxWindow* child, co
     
     wxCommandEvent event(wxEVT_CMD_NEW_DOCKPANE);
 	event.SetClientData(this);
-	parent->ProcessEvent(event);
+	parent->AddPendingEvent(event);
 }
 
 DockablePane::~DockablePane()

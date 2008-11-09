@@ -2871,7 +2871,6 @@ void Frame::LoadPlugins()
 
 		if ( pers.IsEmpty() == false && EditorConfigST::Get()->GetRevision() == SvnRevision) {
 			m_mgr.LoadPerspective(pers);
-			m_mgr.Update();
 		} else {
 			EditorConfigST::Get()->SetRevision(SvnRevision);
 		}
@@ -3393,7 +3392,13 @@ void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 	wxString text = t->GetText();
 	wxBitmap bmp = t->GetBmp();
 	wxWindow *page = t->GetWindow();
-
+	
+	if(text == wxT("Symbols")) {
+		// FIXME: for now, disable the 'Symbol' view from the ability to be detached
+		wxMessageBox(_("Detaching plugins tabs are not yet supported"), wxT("CodeLite"));
+		return;
+	}
+	
 	// remove the page from the notebook
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
 

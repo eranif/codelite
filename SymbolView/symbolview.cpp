@@ -843,7 +843,7 @@ void SymbolViewPlugin::UpdateTrees(const wxArrayString &files, bool removeOld)
 	SmartPtr<wxBusyInfo> wait_msg;
 	if (GetViewMode() != vmCurrentFile && files.Count() > 2) {
 		wait_msg.Reset(new wxBusyInfo(_("Updating SymbolView tree, please wait...")));
-		m_mgr->GetTheApp()->Yield(true);
+		m_mgr->GetTheApp()->Yield();
 	}
 	wxBusyCursor bc;
 	wxWindowDisabler disableAll;
@@ -906,6 +906,7 @@ void SymbolViewPlugin::CreateSymbolTree(const wxString &path, WindowStack *paren
 	SmartPtr<wxBusyInfo> wait_msg;
 	if (GetViewMode() != vmCurrentFile) {
 		wait_msg.Reset(new wxBusyInfo(_("Building SymbolView tree, please wait...")));
+		m_mgr->GetTheApp()->Yield();
 	}
 	wxBusyCursor bc;
 	wxWindowDisabler disableAll;

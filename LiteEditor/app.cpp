@@ -332,8 +332,8 @@ bool App::OnInit()
 			                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
 			                            3000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 			                            style);
+			wxTheApp->Yield();
 		}
-		wxTheApp->Yield(true);
 	}
 	
 	// redirect stderr

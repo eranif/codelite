@@ -134,11 +134,11 @@ about|Help|About...|
 swap_files|C++|Swap Header/Implementation file|F12
 find_decl|C++|Goto Declaration|
 find_impl|C++|Goto Implementation|
-insert_doxy_comment|C++::Code Generation / Refactoring|Insert Doxygen Comment|
+insert_doxy_comment|C++::Code Generation / Refactoring|Insert Doxygen Comment|Ctrl-Shift-D
 setters_getters|C++::Code Generation / Refactoring|Generate Setters/Getters...|
 move_impl|C++::Code Generation / Refactoring|Move Function Implementation to...|
 add_impl|C++::Code Generation / Refactoring|Add Function Implementation...|
-rename_function|C++::Code Generation / Refactoring|Rename Symbol...|
+rename_function|C++::Code Generation / Refactoring|Rename Symbol...|Ctrl-Shift-H
 comment_selection|C++|Comment Selection|Ctrl-Shift-C
 comment_line|C++|Toggle Line Comment|Ctrl-Shift-P
 add_include_file|C++|Add Include File|Ctrl-Shift-I

@@ -3218,12 +3218,15 @@ void Manager::ProcessCommandQueue()
 
 	switch ( qcmd.GetKind() ) {
 	case QueueCommand::CustomBuild:
+		Frame::Get()->SetHideOutputPane(ShowOutputPane(OutputPane::BUILD_WIN));
 		DoCustomBuild ( qcmd );
 		break;
 	case QueueCommand::Clean:
+		Frame::Get()->SetHideOutputPane(ShowOutputPane(OutputPane::BUILD_WIN));
 		DoCleanProject ( qcmd );
 		break;
 	case QueueCommand::Build:
+		Frame::Get()->SetHideOutputPane(ShowOutputPane(OutputPane::BUILD_WIN));
 		DoBuildProject ( qcmd );
 		break;
 	case QueueCommand::Debug:

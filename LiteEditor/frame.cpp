@@ -1895,8 +1895,7 @@ void Frame::OnShellCommandEvent(wxCommandEvent &event)
 	m_outputPane->GetBuildTab()->CanFocus(true);
 	if (event.GetEventType() == wxEVT_SHELL_COMMAND_STARTED || event.GetEventType() == wxEVT_SHELL_COMMAND_STARTED_NOCLEAN) {
 		sw.Start();
-		m_hideOutputPane = ManagerST::Get()->ShowOutputPane(OutputPane::BUILD_WIN);
-
+		
 		// do we need to clear the build log?
 		if ( event.GetEventType() != wxEVT_SHELL_COMMAND_STARTED_NOCLEAN) {
 			m_outputPane->GetBuildTab()->Clear();
@@ -1981,7 +1980,8 @@ void Frame::OnOutputWindowEvent(wxCommandEvent &event)
 {
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
-	m_hideOutputPane = ManagerST::Get()->ShowOutputPane(OutputPane::OUTPUT_WIN);
+	SetHideOutputPane(ManagerST::Get()->ShowOutputPane(OutputPane::OUTPUT_WIN));
+	
 	if (event.GetEventType() == wxEVT_ASYNC_PROC_STARTED) {
 		m_outputPane->GetOutputWindow()->Clear();
 		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());

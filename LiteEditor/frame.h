@@ -104,30 +104,37 @@ public:
 
 	virtual ~Frame(void);
 	/**
-	 * \brief set frame option flag
-	 * \param set
-	 * \param flag
+	 * @brief set frame option flag
+	 * @param set
+	 * @param flag
 	 */
 	void SetFrameFlag(bool set, int flag);
 
 	/**
-	 * \brief return true if the word under the caret should be highlighted
-	 * \return
+	 * @brief set the 'hide output pane' flag. If set to true, upon shell command termination,
+	 * codelite will auto-hide the output pane 
+	 * @param hideOutputPane 
+	 */
+	void SetHideOutputPane(const bool& hideOutputPane) {this->m_hideOutputPane = hideOutputPane;}
+	
+	/**
+	 * @brief return true if the word under the caret should be highlighted
+	 * @return
 	 */
 	bool GetHighlightWord() {
 		return m_highlightWord;
 	}
 
 	/**
-	 * \brief Return language name by menu item id
-	 * \param id
-	 * \return
+	 * @brief Return language name by menu item id
+	 * @param id
+	 * @return
 	 */
 	wxString GetViewAsLanguageById(int id) const;
 
 	/**
-	 * \brief
-	 * \param editor
+	 * @brief
+	 * @param editor
 	 */
 	void SetFrameTitle(LEditor *editor);
 
@@ -148,7 +155,7 @@ public:
 	void CloseActiveFile();
 
 	/**
-	 * \return the output pane (the bottom pane)
+	 * @return the output pane (the bottom pane)
 	 */
 	OutputPane *GetOutputPane() {
 		return m_outputPane;
@@ -156,14 +163,14 @@ public:
 
 	/**
 	 * return the debugger pane
-	 * \return
+	 * @return
 	 */
 	DebuggerPane *GetDebuggerPane() {
 		return m_debuggerPane;
 	}
 
 	/**
-	 * \return the workspace pane (the one that contained the Symbol view & class view)
+	 * @return the workspace pane (the one that contained the Symbol view & class view)
 	 */
 	WorkspacePane *GetWorkspacePane() {
 		return m_workspacePane;
@@ -172,7 +179,7 @@ public:
 	/**
 	 * return the workspace tab pane
 	 */
-    WorkspaceTab *GetWorkspaceTab();
+	WorkspaceTab *GetWorkspaceTab();
 
 	/**
 	 * return the file explorer pane
@@ -180,12 +187,12 @@ public:
 	FileExplorer *GetFileExplorer();
 
 	/**
-	 * \brief return the open windows list pane pointer
+	 * @brief return the open windows list pane pointer
 	 */
 	OpenWindowsPanel *GetOpenWindowsPane();
 
 	/**
-	 * \return return AUI docking manager
+	 * @return return AUI docking manager
 	 */
 	wxAuiManager& GetDockingManager() {
 		return m_mgr;
@@ -207,11 +214,11 @@ public:
 
 	/**
 	 * close editor's page
-	 * \param editor the notebook parent of the page
-	 * \param notify send notebook page closure event
-	 * \param index page index in the notebook
-	 * \param doDelete delete the page from the notebook as well
-	 * \param veto [output] set to true to veto the page closer
+	 * @param editor the notebook parent of the page
+	 * @param notify send notebook page closure event
+	 * @param index page index in the notebook
+	 * @param doDelete delete the page from the notebook as well
+	 * @param veto [output] set to true to veto the page closer
 	 */
 	void ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete, bool &veto);
 
@@ -234,15 +241,15 @@ public:
 	}
 
 	/**
-	 * \brief loop over all known OutputTabWindows available, and match them against the
+	 * @brief loop over all known OutputTabWindows available, and match them against the
 	 * 		  child wxScintilla pointer
-	 * \param win the window that owns the focus
-	 * \return OutputTabWindow pointer, or NULL if non matched
+	 * @param win the window that owns the focus
+	 * @return OutputTabWindow pointer, or NULL if non matched
 	 */
 	OutputTabWindow *FindOutputTabWindowByPtr(wxWindow *win);
 
 	/**
-	 * \brief start replace all
+	 * @brief start replace all
 	 */
 	void DoReplaceAll();
 
@@ -250,18 +257,18 @@ public:
 	void OnSingleInstanceRaise(wxCommandEvent &e);
 
 	/**
-	 * \brief rebuild the give project
-	 * \param projectName
+	 * @brief rebuild the give project
+	 * @param projectName
 	 */
 	void RebuildProject(const wxString &projectName);
 
 	/**
-	 * \brief display the welcome page
+	 * @brief display the welcome page
 	 */
 	void ShowWelcomePage();
 
 	/**
-	 * \brief handle custom build targets events
+	 * @brief handle custom build targets events
 	 */
 	void OnBuildCustomTarget(wxCommandEvent &event);
 
@@ -279,8 +286,8 @@ private:
 	void CreateGUIControls(void);
 	/**
 	 * Helper function that prompt user with a simple wxTextEntry dialog
-	 * \param msg message to display to user
-	 * \return user's string or wxEmptyString if 'Cancel' pressed.
+	 * @param msg message to display to user
+	 * @return user's string or wxEmptyString if 'Cancel' pressed.
 	 */
 	void DispatchCommandEvent(wxCommandEvent &event);
 	void DispatchUpdateUIEvent(wxUpdateUIEvent &event);
@@ -374,10 +381,10 @@ protected:
 	void OnHighlightWord(wxCommandEvent &event);
 	void OnShowNavBar(wxCommandEvent &e);
 	void OnShowNavBarUI(wxUpdateUIEvent &e);
-    void OnShowInWorkspace(wxCommandEvent &e);
-    void OnShowInWorkspaceUI(wxUpdateUIEvent &e);
-    void OnShowInExplorer(wxCommandEvent &e);
-    void OnShowInExplorerUI(wxUpdateUIEvent &e);
+	void OnShowInWorkspace(wxCommandEvent &e);
+	void OnShowInWorkspaceUI(wxUpdateUIEvent &e);
+	void OnShowInExplorer(wxCommandEvent &e);
+	void OnShowInExplorerUI(wxUpdateUIEvent &e);
 	void OnOpenShellFromFilePath(wxCommandEvent &e);
 	void OnQuickDebug(wxCommandEvent &e);
 	void OnQuickDebugUI(wxUpdateUIEvent &e);
@@ -448,7 +455,7 @@ protected:
 	void OnNewVersionAvailable(wxCommandEvent &e);
 	void OnDetachWorkspaceViewTab(wxCommandEvent &e);
 	void OnDetachDebuggerViewTab(wxCommandEvent &e);
-    void OnNewDetachedPane(wxCommandEvent &e);
+	void OnNewDetachedPane(wxCommandEvent &e);
 	void OnDestroyDetachedPane(wxCommandEvent &e);
 	void OnUpdateStatusBar(wxCommandEvent &e);
 	void OnBatchBuild(wxCommandEvent &e);

@@ -1981,7 +1981,7 @@ void Frame::OnOutputWindowEvent(wxCommandEvent &event)
 {
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
-	ManagerST::Get()->ShowOutputPane(OutputPane::OUTPUT_WIN);
+	m_hideOutputPane = ManagerST::Get()->ShowOutputPane(OutputPane::OUTPUT_WIN);
 	if (event.GetEventType() == wxEVT_ASYNC_PROC_STARTED) {
 		m_outputPane->GetOutputWindow()->Clear();
 		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());

@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/socket.h>
-#include "performance.h"
 #include "conffilelocator.h"
 #include "app.h"
 #include <wx/snglinst.h>
@@ -47,6 +46,9 @@
 #include "wx/dir.h"
 #include "splashscreen.h"
 #include <wx/stdpaths.h>
+
+#define __PERFORMANCE
+#include "performance.h"
 
 #if defined(__WXMAC__)||defined(__WXGTK__)
 #include <signal.h> // sigprocmask
@@ -278,7 +280,7 @@ bool App::OnInit()
 	ManagerST::Get()->SetInstallDir( homeDir );
 	EditorConfig::Init( SvnRevision );
 #endif
-
+		
 	wxString curdir = wxGetCwd();
 	::wxSetWorkingDirectory(homeDir);
 	// Load all of the XRC files that will be used. You can put everything
@@ -290,6 +292,9 @@ bool App::OnInit()
 
 	// keep the startup directory
 	ManagerST::Get()->SetStarupDirectory(::wxGetCwd());
+	
+	// set the performance output file name
+	PERF_OUTPUT(wxString::Format(wxT("%s/codelite.perf"), wxGetCwd().c_str()).mb_str(wxConvUTF8));
 	
 	// Initialize the configuration file locater
 	ConfFileLocator::Instance()->Initialize(ManagerST::Get()->GetInstallDir(), ManagerST::Get()->GetStarupDirectory());
@@ -336,9 +341,6 @@ bool App::OnInit()
 		}
 	}
 	
-	// redirect stderr
-	PERF_INIT();
-
 	// Create the main application window (a dialog in this case)
 	// NOTE: Vertical dimension comprises the caption bar.
 	//       Horizontal dimension has to take into account the thin

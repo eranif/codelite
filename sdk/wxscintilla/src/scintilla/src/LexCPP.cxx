@@ -256,10 +256,10 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 					if (keywords.InList(s)) {
 						lastWordWasUUID = strcmp(s, "uuid") == 0;
 						sc.ChangeState(SCE_C_WORD);
-					} else if (!lastOpSetScope && keywords2.InList(s)) {
-						sc.ChangeState(SCE_C_WORD2);
 					} else if (!lastOpSetScope && keywords4.InList(s)) {
 						sc.ChangeState(SCE_C_GLOBALCLASS);
+					} else if (!lastOpSetScope && keywords2.InList(s)) {
+						sc.ChangeState(SCE_C_WORD2);
 					} else {
 						lastOpSetScope = false;
 					}

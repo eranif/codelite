@@ -59,6 +59,9 @@
 #include "variable.h"
 #include "function.h"
 
+//#define __PERFORMANCE
+#include "performance.h"
+
 extern void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreTokens, bool isUsedWithinFunc);
 extern void get_functions(const std::string &in, FunctionList &li, const std::map<std::string, std::string> &ignoreTokens);
 
@@ -1776,6 +1779,8 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 
 void ContextCpp::OnFileSaved()
 {
+    PERF_FUNCTION();
+    
 	VariableList var_list;
 	std::map< std::string, Variable > var_map;
 	std::map< wxString, TagEntryPtr> foo_map;
@@ -1804,15 +1809,23 @@ void ContextCpp::OnFileSaved()
 		//---------------------------------------------------------------------
 		// Colour local variables
 		//---------------------------------------------------------------------
+        PERF_BLOCK("Getting Locals")
+        {
+            
 		const wxCharBuffer patbuf = _C(rCtrl.GetText());
 
 		// collect list of variables
 		get_variables( patbuf.data(), var_list, ignoreTokens, false);
 
+        }
+        
 		// list all functions of this file
 		std::vector< TagEntryPtr > tags;
 		TagsManagerST::Get()->GetFunctions(tags, rCtrl.GetFileName().GetFullPath());
 
+        PERF_BLOCK("Adding Functions")
+        {
+            
 		VariableList::iterator viter = var_list.begin();
 		for (; viter != var_list.end(); viter++ ) {
 			Variable vv = *viter;
@@ -1835,16 +1848,21 @@ void ContextCpp::OnFileSaved()
 				}
 			}
 		}
+        
+        }
 	}
 
+    PERF_BLOCK("Setting Keywords")
+    {
+        
 	size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
 	if (cc_flags & CC_COLOUR_WORKSPACE_TAGS) {
 		wxString flatStr;
 		for (size_t i=0; i< projectTags.GetCount(); i++) {
 			// add only entries that does not appear in the variable list
-			if (varList.Index(projectTags.Item(i)) == wxNOT_FOUND) {
+			//if (varList.Index(projectTags.Item(i)) == wxNOT_FOUND) {
 				flatStr << projectTags.Item(i) << wxT(" ");
-			}
+			//}
 		}
 		rCtrl.SetKeyWords(1, flatStr);
 	} else {
@@ -1861,6 +1879,8 @@ void ContextCpp::OnFileSaved()
 	} else {
 		rCtrl.SetKeyWords(3, wxEmptyString);
 	}
+    
+    }
 }
 
 void ContextCpp::ApplySettings()

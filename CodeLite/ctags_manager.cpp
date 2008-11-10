@@ -23,7 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
-#include "performance.h"
 #include "ctags_manager.h"
 #include <wx/txtstrm.h>
 #include <wx/file.h>
@@ -40,6 +39,9 @@
 #include "wx/timer.h"
 #include "variable_entry.h"
 #include "procutils.h"
+
+//#define __PERFORMANCE
+#include "performance.h"
 
 const wxEventType wxEVT_UPDATE_FILETREE_EVENT = wxNewEventType();
 
@@ -730,7 +732,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		wxString typeName, typeScope;
 		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 		if (!res) {
-			PERF_END("WordCompletionCandidates");
+			PERF_END();
 			return false;
 		}
 
@@ -746,7 +748,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		RemoveDuplicates(tmpCandidates, candidates);
 	}
 
-	PERF_END("WordCompletionCandidates");
+	PERF_END();
 	return true;
 }
 
@@ -767,7 +769,7 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 
 	bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 	if (!res) {
-		PERF_END("AutoCompleteCandidates");
+		PERF_END();
 		wxLogMessage(wxString::Format(wxT("Failed to resolve %s"), expression.c_str()));
 		return false;
 	}
@@ -804,7 +806,7 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		TagsByScope(scope, filter, candidates, true);
 	}
 
-	PERF_END("AutoCompleteCandidates");
+	PERF_END();
 
 	return candidates.empty() == false;
 }

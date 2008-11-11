@@ -33,12 +33,13 @@ DockablePane::DockablePane(wxWindow* parent, Notebook* book, wxWindow* child, co
     Connect(XRCID("close_pane"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( DockablePane::ClosePane ));
     
 	m_child->Reparent(this);
+
 	sz->Add(m_child, 1, wxEXPAND|wxALL, 2);
 	sz->Layout();
     
     wxCommandEvent event(wxEVT_CMD_NEW_DOCKPANE);
 	event.SetClientData(this);
-	parent->AddPendingEvent(event);
+	parent->ProcessEvent(event);
 }
 
 DockablePane::~DockablePane()

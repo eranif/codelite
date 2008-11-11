@@ -66,17 +66,17 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 
 // add our tab. If the tab is detached make it detached as well
 // otherwise, add it to the workspace view
-	wxArrayString detachedPanes;
-	DetachedPanesInfo dpi;
-	m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
-	detachedPanes = dpi.GetPanes();
-
-	if (detachedPanes.Index(wxT("Symbols")) != wxNOT_FOUND) {
-	new DockablePane(	m_mgr->GetWorkspacePaneNotebook(),
-	                  m_mgr->GetWorkspacePaneNotebook(), m_symView, wxT("Symbols"), wxNullBitmap, wxSize(200, 200));
-	} else {
+//	wxArrayString detachedPanes;
+//	DetachedPanesInfo dpi;
+//	m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
+//	detachedPanes = dpi.GetPanes();
+//
+//	if (detachedPanes.Index(wxT("Symbols")) != wxNOT_FOUND) {
+//	new DockablePane(	m_mgr->GetWorkspacePaneNotebook(),
+//	                  m_mgr->GetWorkspacePaneNotebook(), m_symView, wxT("Symbols"), wxNullBitmap, wxSize(200, 200));
+//	} else {
 		m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"));
-	}
+//	}
 }
 
 SymbolViewPlugin::~SymbolViewPlugin()
@@ -321,7 +321,10 @@ void SymbolViewPlugin::UnPlug()
 	size_t notepos = notebook->GetPageIndex(m_symView);
 	if (notepos != Notebook::npos) {
 		notebook->RemovePage(notepos, false);
-	}
+	} else {
+        wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
+        m_symView->ProcessEvent(e);
+    }
 	
 	m_symView->Destroy();
 	m_symView = NULL;

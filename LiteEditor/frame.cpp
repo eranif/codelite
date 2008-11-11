@@ -3393,11 +3393,11 @@ void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 	wxBitmap bmp = t->GetBmp();
 	wxWindow *page = t->GetWindow();
 	
-	if(text == wxT("Symbols")) {
-		// FIXME: for now, disable the 'Symbol' view from the ability to be detached
-		wxMessageBox(_("Detaching plugins tabs are not yet supported"), wxT("CodeLite"));
-		return;
-	}
+//	if(text == wxT("Symbols")) {
+//		// FIXME: for now, disable the 'Symbol' view from the ability to be detached
+//		wxMessageBox(_("Detaching plugins tabs are not yet supported"), wxT("CodeLite"));
+//		return;
+//	}
 	
 	// remove the page from the notebook
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);

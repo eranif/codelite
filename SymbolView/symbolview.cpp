@@ -64,19 +64,19 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 	CreateGUIControls();
 	Connect();
 
-	// add our tab. If the tab is detached make it detached as well
-	// otherwise, add it to the workspace view
-	wxArrayString detachedPanes;
-	DetachedPanesInfo dpi;
-	m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
-	detachedPanes = dpi.GetPanes();
-
-	if (detachedPanes.Index(wxT("Symbols")) != wxNOT_FOUND) {
-	new DockablePane(	m_mgr->GetDockingManager()->GetManagedWindow(),
-	                  m_mgr->GetWorkspacePaneNotebook(), m_symView, wxT("Symbols"), wxNullBitmap, wxSize(200, 200));
-	} else {
+//	// add our tab. If the tab is detached make it detached as well
+//	// otherwise, add it to the workspace view
+//	wxArrayString detachedPanes;
+//	DetachedPanesInfo dpi;
+//	m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
+//	detachedPanes = dpi.GetPanes();
+//
+//	if (detachedPanes.Index(wxT("Symbols")) != wxNOT_FOUND) {
+//	new DockablePane(	m_mgr->GetDockingManager()->GetManagedWindow(),
+//	                  m_mgr->GetWorkspacePaneNotebook(), m_symView, wxT("Symbols"), wxNullBitmap, wxSize(200, 200));
+//	} else {
 		m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"));
-	}
+//	}
 }
 
 SymbolViewPlugin::~SymbolViewPlugin()
@@ -183,7 +183,7 @@ void SymbolViewPlugin::LoadImagesAndIndexes()
 
 void SymbolViewPlugin::CreateGUIControls()
 {
-	m_symView = new wxPanel(m_mgr->GetDockingManager()->GetManagedWindow());
+	m_symView = new wxPanel(m_mgr->GetWorkspacePaneNotebook());
 
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	m_symView->SetSizer(sz);

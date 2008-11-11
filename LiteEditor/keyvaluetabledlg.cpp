@@ -134,7 +134,8 @@ void KeyValueTableDlg::OnEditVar(wxCommandEvent &event)
 	wxUnusedVar(event);
 	EnvVarDlg dlg(this);//, m_selectedVarName, m_selectedVarValue);
 	dlg.SetStaticText1(wxT("Variable Name:"));
-	dlg.SetStaticText1(wxT("Variable Value:"));
+	dlg.SetStaticText2(wxT("Variable Value:"));
+	dlg.DisableName();
 	dlg.SetName(m_selectedVarName);
 	dlg.SetValue(m_selectedVarValue);
 	

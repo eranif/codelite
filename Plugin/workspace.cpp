@@ -257,6 +257,8 @@ void Workspace::AddProjectToBuildMatrix(ProjectPtr prj)
 void Workspace::RemoveProjectFromBuildMatrix(ProjectPtr prj)
 {
 	BuildMatrixPtr matrix = GetBuildMatrix();
+	wxString selConfName = matrix->GetSelectedConfigurationName();
+	
 	std::list<WorkspaceConfigurationPtr> wspList = matrix->GetConfigurations();
 	std::list<WorkspaceConfigurationPtr>::iterator iter = wspList.begin();
 	for (; iter !=  wspList.end(); iter++) {
@@ -273,6 +275,9 @@ void Workspace::RemoveProjectFromBuildMatrix(ProjectPtr prj)
 		(*iter)->SetConfigMappingList(prjList);
 		matrix->SetConfiguration((*iter));
 	}
+	
+	// and set the configuration name
+	matrix->SetSelectedConfigurationName(selConfName);
 	SetBuildMatrix(matrix);
 }
 

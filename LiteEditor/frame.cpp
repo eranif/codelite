@@ -3319,6 +3319,13 @@ void Frame::OnHighlightWord(wxCommandEvent& event)
 void Frame::OnShowNavBar(wxCommandEvent& e)
 {
 	m_mainBook->ShowNavBar(e.IsChecked());
+	if(e.IsChecked()){
+		LEditor *editor = ManagerST::Get()->GetActiveEditor();
+		if(editor) {
+			int lastLine = editor->LineFromPosition(editor->GetCurrentPos());
+			GetMainBook()->UpdateScope( TagsManagerST::Get()->FunctionFromFileLine(editor->GetFileName(), lastLine+1) );
+		}
+	}
 }
 
 void Frame::OnShowNavBarUI(wxUpdateUIEvent& e)

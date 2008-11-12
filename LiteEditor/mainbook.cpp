@@ -72,7 +72,7 @@ void MainBook::ShowNavBar(bool s)
 
 bool MainBook::IsNavBarShown()
 {
-	return GetSizer()->IsShown(m_navBar);
+	return m_navBar->IsShown();
 }
 
 void MainBook::OnMouseDClick(wxMouseEvent& e)

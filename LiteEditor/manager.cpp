@@ -1257,7 +1257,10 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 	if ( bldConf ) {
 		conf = bldConf->GetName();
 	}
-
+	
+	// display the output pane
+	Frame::Get()->SetHideOutputPane( ShowOutputPane(OutputPane::BUILD_WIN ) );
+	
 	QueueCommand info ( projectName, conf, false, QueueCommand::Build );
 	if ( bldConf && bldConf->IsCustomBuild() ) {
 		info.SetCustomBuildTarget ( wxT ( "Compile Single File" ) );

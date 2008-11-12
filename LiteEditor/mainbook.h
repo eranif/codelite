@@ -22,46 +22,39 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef MAINBOOK_H
+#ifndef MAINBOOK_H
 #define MAINBOOK_H
 
-#include "wx/event.h"
-#include "wx/string.h"
-#include "entry.h"
 #include <wx/panel.h>
+#include "entry.h"
 
-class wxChoice;
+class NavBar;
 class Notebook;
-class wxBoxSizer;
 class QuickFindBar;
 
 class MainBook : public wxPanel
 {
-	wxChoice *m_choiceFunc;
-	wxChoice *m_choiceScope;
+	NavBar *m_navBar;
 	Notebook *m_book;
 	QuickFindBar *m_quickFindBar;
-	wxBoxSizer *m_hsz;
 	
 protected:
-	void OnFuncListMouseDown(wxMouseEvent &e);
-	void OnScopeListMouseDown(wxMouseEvent &e);
-	void OnScope(wxCommandEvent &e);
-	void OnFunction(wxCommandEvent &e);
 	void OnMouseDClick(wxMouseEvent &e);
 	
 public:
 	MainBook(wxWindow *parent);
 	~MainBook();
+    
 	Notebook *GetNotebook() {return m_book;}
 	
 	void UpdateScope(TagEntryPtr tag);
 	void Clear();
-	void ShowNavBar(bool s);
+    
+	void ShowNavBar(bool s = true);
 	void HideNavBar(){ ShowNavBar(false); }
 	bool IsNavBarShown();
-	bool IsQuickBarShown();
-	void ShowQuickBar(bool s);
+    
+	void ShowQuickBar(bool s = true);
 	void HideQuickBar(){ ShowQuickBar(false); }
 };
 

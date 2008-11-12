@@ -265,6 +265,8 @@
     <File Name="quickfindbarbase.h"/>
     <File Name="quickfindbar.h"/>
     <File Name="quickfindbar.cpp"/>
+    <File Name="navbar.h"/>
+    <File Name="navbar.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

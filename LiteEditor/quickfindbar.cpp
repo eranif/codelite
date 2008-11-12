@@ -1,12 +1,34 @@
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//
+// copyright            : (C) 2008 by Eran Ifrah                            
+// file name            : quickfindbar.cpp              
+//                                                                          
+// -------------------------------------------------------------------------
+// A                                                                        
+//              _____           _      _     _ _                            
+//             /  __ \         | |    | |   (_) |                           
+//             | /  \/ ___   __| | ___| |    _| |_ ___                      
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
+//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
+//                                                                          
+//                                                  F i l e                 
+//                                                                          
+//    This program is free software; you can redistribute it and/or modify  
+//    it under the terms of the GNU General Public License as published by  
+//    the Free Software Foundation; either version 2 of the License, or     
+//    (at your option) any later version.                                   
+//                                                                          
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 #include "stringsearcher.h"
 #include "cl_editor.h"
 #include "manager.h"
-#include <wx/xrc/xmlres.h>
 #include "quickfindbar.h"
-#include "frame.h"
 
 QuickFindBar::QuickFindBar( wxWindow* parent )
-		: QuickFindBarBase( parent )
+    : QuickFindBarBase( parent )
 {
 	Hide();
 }
@@ -24,11 +46,7 @@ void QuickFindBar::OnButtonPrevious( wxCommandEvent& event )
 void QuickFindBar::OnButtonClose(wxCommandEvent& e)
 {
 	wxUnusedVar( e );
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if(editor) {
-		editor->SetActive();
-	}
-	Frame::Get()->GetMainBook()->HideQuickBar();
+    DoShow(false);
 }
 
 void QuickFindBar::DoSearch(bool next, bool incremental)
@@ -100,15 +118,46 @@ void QuickFindBar::OnText(wxCommandEvent& e)
 
 void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 {
-	if( e.GetKeyCode() == WXK_ESCAPE ) {
-		LEditor *editor = ManagerST::Get()->GetActiveEditor();
-		if(editor) {
-			editor->SetActive();
+    switch (e.GetKeyCode()) {
+        case WXK_ESCAPE:
+            DoShow(false);
+            break;
+        case '\r':
+            if (e.AltDown()) {
+                DoSearch(false, false);
+            } else {
+                e.Skip();
+            }
+            break;
+        default:
+            e.Skip();
+            break;
+    }
+}
+
+void QuickFindBar::DoShow(bool s)
+{
+    if (!Show(s))
+        return;
+        
+    wxSizer *sz = GetParent()->GetSizer();
+    sz->Show(this, s, true);
+    sz->Layout();
+    
+    LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    if (!editor) {
+        // nothing to do
+    } else if (!s) {
+        // return focus to active editor
+		editor->SetActive();
+    } else {
+        // copy selection from editor, and take focus
+		wxString selText = editor->GetSelectedText();
+		if (!selText.IsEmpty()) {
+            // FIXME: should only take one line at most
+            m_textCtrlFindWhat->SetValue(selText);
 		}
-		
-		Frame::Get()->GetMainBook()->HideQuickBar();
-		return;
-	}
-	e.Skip();
-	
+		m_textCtrlFindWhat->SelectAll();
+		m_textCtrlFindWhat->SetFocus();
+   }
 }

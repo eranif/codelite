@@ -20,7 +20,7 @@ TagsManagementBaseDlg::TagsManagementBaseDlg( wxWindow* parent, wxWindowID id, c
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_listCtrlDatabases = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_SINGLE_SEL );
-	bSizer3->Add( m_listCtrlDatabases, 1, wxALL|wxEXPAND, 5 );
+	bSizer3->Add( m_listCtrlDatabases, 2, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -68,7 +68,7 @@ TagsManagementBaseDlg::TagsManagementBaseDlg( wxWindow* parent, wxWindowID id, c
 	
 	bSizer5->Add( m_listCtrlPaths, 1, wxALL|wxEXPAND, 5 );
 	
-	mainSizer->Add( bSizer5, 0, wxEXPAND, 5 );
+	mainSizer->Add( bSizer5, 1, wxEXPAND, 5 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	mainSizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );

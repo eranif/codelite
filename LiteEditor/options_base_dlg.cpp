@@ -30,6 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "editorsettingsgeneralpage.h"
+#include "pluginmanager.h"
 #include "windowattrmanager.h"
 #include "wx/wxprec.h"
 #include <wx/fontmap.h>
@@ -76,19 +77,19 @@ OptionsDlg::OptionsDlg( wxWindow* parent, int id, wxString title, wxPoint pos, w
 	m_book->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 
 	//create the general page
-	m_book->AddPage( CreateGeneralPage(), wxT("General"), true );
+	m_book->AddPage( CreateGeneralPage(), _("General"), true );
 
 	//create the folding page
-	m_book->AddPage( CreateFoldingPage(), wxT("Folding"), false);
+	m_book->AddPage( CreateFoldingPage(), _("Folding"), false);
 
 	//Create the bookmark page
-	m_book->AddPage( CreateBookmarksPage(), wxT("Bookmarks"), false);
+	m_book->AddPage( CreateBookmarksPage(), _("Bookmarks"), false);
 
 	//add C++ comment page
-	m_book->AddPage( CreateCxxCommentPage(), wxT("C++ Comments"), false);
+	m_book->AddPage( CreateCxxCommentPage(), _("C++ Comments"), false);
 
-	m_book->AddPage( CreateDialogsPage(), wxT("Dialogs"), false);
-	m_book->AddPage( CreateMiscPage(), wxT("Misc"), false );
+	m_book->AddPage( CreateDialogsPage(), _("Dialogs"), false);
+	m_book->AddPage( CreateMiscPage(), _("Misc"), false );
 	mainSizer->Add( m_book, 1, wxEXPAND | wxALL, 5 );
 
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -97,13 +98,13 @@ OptionsDlg::OptionsDlg( wxWindow* parent, int id, wxString title, wxPoint pos, w
 	wxBoxSizer* btnSizer;
 	btnSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_okButton = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_okButton = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_okButton, 0, wxALIGN_RIGHT|wxALL, 5 );
 
-	m_cancelButton = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_cancelButton = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_cancelButton, 0, wxALIGN_RIGHT|wxALL, 5 );
 
-	m_applyButton = new wxButton( this, wxID_APPLY, wxT("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_applyButton = new wxButton( this, wxID_APPLY, _("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_applyButton, 0, wxALIGN_RIGHT|wxALL, 5 );
 
 	mainSizer->Add( btnSizer, 0, wxALIGN_RIGHT, 5 );
@@ -176,7 +177,7 @@ void OptionsDlg::SaveChanges()
 	options->SetFoldPreprocessor(m_foldPreprocessor->IsChecked());
 	
 	int iconSize(24);
-	if (m_iconSize->GetStringSelection() == wxT("Toolbar uses small icons (16x16)")) {
+	if (m_iconSize->GetStringSelection() == _("Toolbar uses small icons (16x16)")) {
 		iconSize = 16;
 	}
 	
@@ -197,19 +198,24 @@ void OptionsDlg::SaveChanges()
 	EditorConfigST::Get()->SaveLongValue(wxT("CheckNewVersion"), m_checkForNewVersion->IsChecked() ? 1 : 0);
 	EditorConfigST::Get()->SaveLongValue(wxT("ShowFullPathInFrameTitle"), m_checkFullPathInTitle->IsChecked() ? 1 : 0);
 	
+	bool oldUseSingleToolbar = !PluginManager::Get()->AllowToolbar();
+	EditorConfigST::Get()->SaveLongValue(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);
+	
 	// apply the title format changes
 	Frame::Get()->SetFrameTitle(ManagerST::Get()->GetActiveEditor());
 	
 	//check to see of the icon size was modified
 	int oldIconSize(24);
+	
 	OptionsConfigPtr oldOptions = EditorConfigST::Get()->GetOptions();
 	if (oldOptions) {
 		oldIconSize = oldOptions->GetIconsSize();
 	}
-	if (oldIconSize != iconSize) {
+	
+	if (oldIconSize != iconSize || oldUseSingleToolbar != m_useSingleToolbar->IsChecked()) {
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 0);
 		//notify the user
-		wxMessageBox(_("Toolbar icons size change, requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		wxMessageBox(_("Some of the changes made requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 	} else {
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
 	}
@@ -235,15 +241,15 @@ wxPanel* OptionsDlg::CreateBookmarksPage()
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	page->SetSizer(sz);
 
-	m_displayBookmarkMargin = new wxCheckBox(page, wxID_ANY, wxT("Display Selection / Bookmark margin"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_displayBookmarkMargin = new wxCheckBox(page, wxID_ANY, _("Display Selection / Bookmark margin"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_displayBookmarkMargin->SetValue(options->GetDisplayBookmarkMargin());
 
 	sz->Add( m_displayBookmarkMargin, 0, wxALL, 5 );
 
-	m_staticText6 = new wxStaticText( page, wxID_ANY, wxT("Bookmark Shape:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6 = new wxStaticText( page, wxID_ANY, _("Bookmark Shape:"), wxDefaultPosition, wxDefaultSize, 0 );
 	sz->Add( m_staticText6, 0, wxALL, 5 );
 
-	wxString m_bookmarkShapeChoices[] = { wxT("Small Rectangle"), wxT("Rounded Rectangle"), wxT("Circle"), wxT("Small Arrow") };
+	wxString m_bookmarkShapeChoices[] = { _("Small Rectangle"), _("Rounded Rectangle"), _("Circle"), _("Small Arrow") };
 	int m_bookmarkShapeNChoices = sizeof( m_bookmarkShapeChoices ) / sizeof( wxString );
 	m_bookmarkShape = new wxChoice( page, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_bookmarkShapeNChoices, m_bookmarkShapeChoices, 0 );
 	sz->Add( m_bookmarkShape, 0, wxALL|wxEXPAND, 5 );
@@ -252,19 +258,19 @@ wxPanel* OptionsDlg::CreateBookmarksPage()
 	wxGridSizer* gSizer1;
 	gSizer1 = new wxGridSizer( 3, 2, 0, 0 );
 
-	m_staticText4 = new wxStaticText( page, wxID_ANY, wxT("Select the bookmark background colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( page, wxID_ANY, _("Select the bookmark background colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_staticText4, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_bgColourPicker = new wxColourPickerCtrl(page, wxID_ANY, options->GetBookmarkBgColour(), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
 	gSizer1->Add( m_bgColourPicker, 0, wxALIGN_RIGHT|wxALL, 5 );
 
-	m_staticText5 = new wxStaticText( page, wxID_ANY, wxT("Select the bookmark forground colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5 = new wxStaticText( page, wxID_ANY, _("Select the bookmark forground colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_fgColourPicker = new wxColourPickerCtrl( page, wxID_ANY, options->GetBookmarkFgColour(), wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL);
 	gSizer1->Add( m_fgColourPicker, 0, wxALIGN_RIGHT|wxALL, 5 );
 
-	wxStaticText *t1 = new wxStaticText( page, wxID_ANY, wxT("Select word highlight colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText *t1 = new wxStaticText( page, wxID_ANY, _("Select word highlight colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer1->Add( t1, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	wxColour col1(wxT("LIGHT BLUE"));
@@ -290,31 +296,31 @@ wxPanel* OptionsDlg::CreateFoldingPage()
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	page->SetSizer(sz);
 
-	m_checkBoxDisplayFoldMargin = new wxCheckBox( page, wxID_ANY, wxT("Display Folding Margin"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxDisplayFoldMargin = new wxCheckBox( page, wxID_ANY, _("Display Folding Margin"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxDisplayFoldMargin->SetValue(options->GetDisplayFoldMargin());
 
 	sz->Add( m_checkBoxDisplayFoldMargin, 0, wxALL, 5 );
 
-	m_checkBoxMarkFoldedLine = new wxCheckBox( page, wxID_ANY, wxT("Underline Folded Line"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxMarkFoldedLine = new wxCheckBox( page, wxID_ANY, _("Underline Folded Line"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxMarkFoldedLine->SetValue(options->GetUnderlineFoldLine());
 	sz->Add( m_checkBoxMarkFoldedLine, 0, wxALL, 5 );
 	
-	m_foldPreprocessor = new wxCheckBox( page, wxID_ANY, wxT("Fold Preprocessors"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_foldPreprocessor = new wxCheckBox( page, wxID_ANY, _("Fold Preprocessors"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_foldPreprocessor->SetValue(options->GetFoldPreprocessor());
 	sz->Add( m_foldPreprocessor, 0, wxALL, 5 );
 	
-	m_foldCompact = new wxCheckBox( page, wxID_ANY, wxT("Fold Compact"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_foldCompact = new wxCheckBox( page, wxID_ANY, _("Fold Compact"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_foldCompact->SetValue(options->GetFoldCompact());
 	sz->Add( m_foldCompact, 0, wxALL, 5 );
 	
-	m_foldAtElse = new wxCheckBox( page, wxID_ANY, wxT("Fold At Else"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_foldAtElse = new wxCheckBox( page, wxID_ANY, _("Fold At Else"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_foldAtElse->SetValue(options->GetFoldAtElse());
 	sz->Add( m_foldAtElse, 0, wxALL, 5 );
 	
-	m_staticText1 = new wxStaticText( page, wxID_ANY, wxT("Fold Style:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( page, wxID_ANY, _("Fold Style:"), wxDefaultPosition, wxDefaultSize, 0 );
 	sz->Add( m_staticText1, 0, wxALL, 5 );
 
-	wxString m_foldStyleChoiceChoices[] = { wxT("Simple"), wxT("Arrows"), wxT("Flatten Tree Square Headers"), wxT("Flatten Tree Circular Headers") };
+	wxString m_foldStyleChoiceChoices[] = { _("Simple"), _("Arrows"), _("Flatten Tree Square Headers"), _("Flatten Tree Circular Headers") };
 	int m_foldStyleChoiceNChoices = sizeof( m_foldStyleChoiceChoices ) / sizeof( wxString );
 	m_foldStyleChoice = new wxChoice( page, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_foldStyleChoiceNChoices, m_foldStyleChoiceChoices, 0 );
 	sz->Add( m_foldStyleChoice, 0, wxALL|wxEXPAND, 5 );
@@ -339,7 +345,7 @@ wxPanel* OptionsDlg::CreateMiscPage()
 	vSz1 = new wxBoxSizer( wxVERTICAL );
 	wxBoxSizer *bszier = new wxBoxSizer(wxVERTICAL);
 
-	wxString iconSize[] = { wxT("Toolbar uses small icons (16x16)"), wxT("Toolbar uses large icons (24x24)") };
+	wxString iconSize[] = { _("Toolbar uses small icons (16x16)"), _("Toolbar uses large icons (24x24)") };
 	m_iconSize = new wxChoice( m_miscPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, 2, iconSize, 0 );
 	bszier->Add( m_iconSize, 0, wxALL|wxEXPAND, 5 );
 	
@@ -349,9 +355,14 @@ wxPanel* OptionsDlg::CreateMiscPage()
 		m_iconSize->SetSelection(1);
 	}
 
+	m_useSingleToolbar = new wxCheckBox( m_miscPage, wxID_ANY, _("Use single toolbar"), wxDefaultPosition, wxDefaultSize, 0 );
+	bszier->Add(m_useSingleToolbar, 0, wxEXPAND | wxALL, 5);
+	
+	m_useSingleToolbar->SetValue(!PluginManager::Get()->AllowToolbar());
+	
 	// file font encoding
 	wxBoxSizer *hsEnc = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText *txtEnc = new wxStaticText( m_miscPage, wxID_ANY, wxT("File font encoding"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText *txtEnc = new wxStaticText( m_miscPage, wxID_ANY, _("File font encoding"), wxDefaultPosition, wxDefaultSize, 0 );
 	hsEnc->Add(txtEnc, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
 
 	wxArrayString astrEncodings;
@@ -374,33 +385,33 @@ wxPanel* OptionsDlg::CreateMiscPage()
 
 	bszier->Add( hsEnc, 0, wxEXPAND);
 
-	m_checkBoxShowSplash = new wxCheckBox( m_miscPage, wxID_ANY, wxT("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxShowSplash = new wxCheckBox( m_miscPage, wxID_ANY, _("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
 	bszier->Add(m_checkBoxShowSplash, 0, wxEXPAND | wxALL, 5);
 
-	m_singleInstance = new wxCheckBox(m_miscPage, wxID_ANY, wxT("Allow only single instance running"), wxDefaultPosition, wxDefaultSize, 0);
+	m_singleInstance = new wxCheckBox(m_miscPage, wxID_ANY, _("Allow only single instance running"), wxDefaultPosition, wxDefaultSize, 0);
 	bszier->Add(m_singleInstance, 0, wxEXPAND | wxALL, 5);
 	
-	m_checkForNewVersion = new wxCheckBox(m_miscPage, wxID_ANY, wxT("Check for new version on startup"), wxDefaultPosition, wxDefaultSize, 0);
+	m_checkForNewVersion = new wxCheckBox(m_miscPage, wxID_ANY, _("Check for new version on startup"), wxDefaultPosition, wxDefaultSize, 0);
 	bszier->Add(m_checkForNewVersion, 0, wxEXPAND | wxALL, 5);
 	
-	m_checkFullPathInTitle = new wxCheckBox(m_miscPage, wxID_ANY, wxT("Show file's full path in frame title"), wxDefaultPosition, wxDefaultSize, 0);
+	m_checkFullPathInTitle = new wxCheckBox(m_miscPage, wxID_ANY, _("Show file's full path in frame title"), wxDefaultPosition, wxDefaultSize, 0);
 	bszier->Add(m_checkFullPathInTitle, 0, wxEXPAND | wxALL, 5);
 	
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
-	wxStaticText *txthistory = new wxStaticText( m_miscPage, wxID_ANY, wxT("Clear Recent workspace / files history"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText *txthistory = new wxStaticText( m_miscPage, wxID_ANY, _("Clear Recent workspace / files history"), wxDefaultPosition, wxDefaultSize, 0 );
 	txthistory->Wrap( -1 );
 	bSizer2->Add( txthistory, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_buttonClearHistory = new wxButton( m_miscPage, wxID_ANY, wxT("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonClearHistory = new wxButton( m_miscPage, wxID_ANY, _("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonClearHistory, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	bszier->Add(bSizer2, 0, wxEXPAND | wxALL, 5);
 	
 	wxBoxSizer* hs1 = new wxBoxSizer( wxHORIZONTAL );
 	
-	wxStaticText *txtHistory = new wxStaticText( m_miscPage, wxID_ANY, wxT("Max items kept in find / replace dialog:"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText *txtHistory = new wxStaticText( m_miscPage, wxID_ANY, _("Max items kept in find / replace dialog:"), wxDefaultPosition, wxDefaultSize, 0 );
 	txtHistory->Wrap( -1 );
 	hs1->Add( txtHistory, 1, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	

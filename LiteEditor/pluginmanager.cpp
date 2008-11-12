@@ -34,6 +34,7 @@
 #include <wx/log.h>
 #include <wx/dir.h>
 #include "frame.h"
+#include "generalinfo.h"
 #include "editor_config.h"
 #include "fileexplorertree.h"
 #include "workspace_pane.h"
@@ -427,9 +428,30 @@ void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name)
 
 bool PluginManager::AllowToolbar()
 {
+	long v;
+	if(EditorConfigST::Get()->GetLongValue(wxT("UseSingleToolbar"), v)){
+		return v ? false : true;
+	} else {
+		// entry does not exist 
 #ifdef __WXMAC__
-	return false;
+		return false;
 #else
-	return true;
+		return true;
 #endif
+	}
+}
+
+void PluginManager::EnableToolbars()
+{
+	// In case, plugins are now allowed to insert toolbars, disable the toolbars_menu item
+	if (AllowToolbar() == false) {
+		int ii = Frame::Get()->GetMenuBar()->FindMenu( wxT( "View" ) );
+		if ( ii != wxNOT_FOUND ) {
+			wxMenu *viewMenu = Frame::Get()->GetMenuBar()->GetMenu( ii );
+			wxMenuItem *item = viewMenu->FindItem( XRCID("toolbars_menu") );
+			if (item) {
+				item->Enable(false);
+			}
+		}
+	}
 }

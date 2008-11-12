@@ -111,8 +111,27 @@ wxToolBar *UnitTestPP::CreateToolBar(wxWindow *parent)
 
 void UnitTestPP::CreatePluginMenu(wxMenu *pluginsMenu)
 {
-	//TODO:: create the menu for the 'Plugin' menu entry in the
-	//menu bar
+	//Create the popup menu for the file explorer
+	//The only menu that we are interseted is the file explorer menu
+	wxMenu* menu = new wxMenu();
+	wxMenuItem *item(NULL);
+
+	item = new wxMenuItem(menu, XRCID("unittestpp_new_simple_test"), wxT("Create new &test..."), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	item = new wxMenuItem(menu, XRCID("unittestpp_new_class_test"), wxT("Create tests for &class..."), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	
+	menu->AppendSeparator();
+	
+	item = new wxMenuItem(menu, XRCID("run_unit_tests"), wxT("Run Project as UnitTest++ and report"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	
+	pluginsMenu->Append(wxID_ANY, wxT("UnitTest++"), menu);
+	
+	//connect the events
+	m_topWindow->Connect(XRCID("unittestpp_new_simple_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewSimpleTest), NULL, (wxEvtHandler*)this);
+	m_topWindow->Connect(XRCID("unittestpp_new_class_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewClassTest), NULL, (wxEvtHandler*)this);
 }
 
 void UnitTestPP::HookPopupMenu(wxMenu *menu, MenuType type)
@@ -129,8 +148,8 @@ void UnitTestPP::UnHookPopupMenu(wxMenu *menu, MenuType type)
 		wxMenuItem *item = menu->FindItem(XRCID("UNITTESTPP_EDITOR_POPUP"));
 		if (item) {
 			menu->Destroy(item);
-			m_topWindow->Disconnect(XRCID("unittestpp_new_simple_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewSimpleTest), NULL, (wxEvtHandler*)this);
-			m_topWindow->Disconnect(XRCID("unittestpp_new_class_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewClassTest), NULL, (wxEvtHandler*)this);
+//			m_topWindow->Disconnect(XRCID("unittestpp_new_simple_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewSimpleTest), NULL, (wxEvtHandler*)this);
+//			m_topWindow->Disconnect(XRCID("unittestpp_new_class_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewClassTest), NULL, (wxEvtHandler*)this);
 		}
 
 		if (m_sepItem) {
@@ -142,7 +161,6 @@ void UnitTestPP::UnHookPopupMenu(wxMenu *menu, MenuType type)
 
 void UnitTestPP::UnPlug()
 {
-	//TODO:: perform the unplug action for this plugin
 }
 
 
@@ -159,9 +177,6 @@ wxMenu *UnitTestPP::CreateEditorPopMenu()
 	item = new wxMenuItem(menu, XRCID("unittestpp_new_class_test"), wxT("Create tests for &class..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
-	//connect the events
-	m_topWindow->Connect(XRCID("unittestpp_new_simple_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewSimpleTest), NULL, (wxEvtHandler*)this);
-	m_topWindow->Connect(XRCID("unittestpp_new_class_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewClassTest), NULL, (wxEvtHandler*)this);
 	return menu;
 }
 

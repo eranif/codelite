@@ -110,6 +110,7 @@ protected:
 	wxCheckBox *m_foldAtElse;
 	wxCheckBox *m_foldPreprocessor;
 	EditorSettingsGeneralPage *m_genPage;
+	wxCheckBox *m_useSingleToolbar;
 	
 private:
 	wxPanel *CreateGeneralPage();

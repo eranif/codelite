@@ -56,7 +56,8 @@ public:
 
 	virtual void Load();
 	virtual void UnLoad();
-
+	virtual void EnableToolbars();
+	
 	/**
 	 * \brief return a map of all loaded plugins
 	 */

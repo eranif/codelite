@@ -707,7 +707,7 @@ void Frame::CreateGUIControls(void)
 	} else {
 		CreateToolbars24();
 	}
-
+	
 	//load the tab right click menu
 	GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")));
 	GetWorkspacePane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("workspace_view_right_click_menu")));
@@ -2299,7 +2299,10 @@ void Frame::OnTimer(wxTimerEvent &event)
 				}
 			}
 		}
-
+		
+		// enable/disable plugins toolbar functionality
+		PluginManager::Get()->EnableToolbars();
+		
 		//send initialization end event
 		SendCmdEvent(wxEVT_INIT_DONE);
 	}

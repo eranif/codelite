@@ -67,7 +67,11 @@ void MainBook::UpdateScope(TagEntryPtr tag)
 
 void MainBook::ShowNavBar(bool s)
 {
+	Freeze();
     m_navBar->DoShow(s);
+	Thaw();
+	
+	Refresh();
 }
 
 bool MainBook::IsNavBarShown()

@@ -107,8 +107,8 @@ void PluginManager::Load()
 			wxString fileName( files.Item( i ) );
 			if ( !dl->Load( fileName ) ) {
 				wxLogMessage( wxT( "Failed to load plugin's dll: " ) + fileName );
-                if (!dl->GetError().IsEmpty())
-                    wxLogMessage(dl->GetError());
+				if (!dl->GetError().IsEmpty())
+					wxLogMessage(dl->GetError());
 				delete dl;
 				continue;
 			}
@@ -116,9 +116,9 @@ void PluginManager::Load()
 			bool success( false );
 			GET_PLUGIN_INFO_FUNC pfnGetPluginInfo = ( GET_PLUGIN_INFO_FUNC )dl->GetSymbol( wxT( "GetPluginInfo" ), &success );
 			if ( !success ) {
-                wxLogMessage(wxT("Failed to find GetPluginInfo in dll: ") + fileName);
-                if (!dl->GetError().IsEmpty())
-                    wxLogMessage(dl->GetError());
+				wxLogMessage(wxT("Failed to find GetPluginInfo in dll: ") + fileName);
+				if (!dl->GetError().IsEmpty())
+					wxLogMessage(dl->GetError());
 				delete dl;
 				continue;
 			}
@@ -127,19 +127,19 @@ void PluginManager::Load()
 			// if the methods does not exist, handle it as if it has value of 100 (lowest version API)
 			int interface_version(100);
 			GET_PLUGIN_INTERFACE_VERSION_FUNC pfnInterfaceVersion = (GET_PLUGIN_INTERFACE_VERSION_FUNC) dl->GetSymbol(wxT("GetPluginInterfaceVersion"), &success);
-			if( success ) {
+			if ( success ) {
 				interface_version = pfnInterfaceVersion();
 			} else {
-                wxLogMessage(wxT("Failed to find GetPluginInterfaceVersion() in dll: ") + fileName);
-                if (!dl->GetError().IsEmpty())
-                    wxLogMessage(dl->GetError());
-            }
+				wxLogMessage(wxT("Failed to find GetPluginInterfaceVersion() in dll: ") + fileName);
+				if (!dl->GetError().IsEmpty())
+					wxLogMessage(dl->GetError());
+			}
 
-			if( interface_version != PLUGIN_INTERFACE_VERSION ) {
+			if ( interface_version != PLUGIN_INTERFACE_VERSION ) {
 				wxLogMessage(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface version is '%d', CodeLite interface version is '%d'"),
-													fileName.c_str(),
-													interface_version,
-													PLUGIN_INTERFACE_VERSION));
+				                              fileName.c_str(),
+				                              interface_version,
+				                              PLUGIN_INTERFACE_VERSION));
 				delete dl;
 				continue;
 			}
@@ -150,7 +150,7 @@ void PluginManager::Load()
 			if (iter == m_pluginsInfo.end()) {
 				//new plugin?, add it and use the default enabled/disabled for this plugin
 				actualPlugins[pluginInfo.GetName()] = pluginInfo;
-				if(pluginInfo.GetEnabled() == false) {
+				if (pluginInfo.GetEnabled() == false) {
 					delete dl;
 					continue;
 				}
@@ -171,9 +171,9 @@ void PluginManager::Load()
 			//try and load the plugin
 			GET_PLUGIN_CREATE_FUNC pfn = ( GET_PLUGIN_CREATE_FUNC )dl->GetSymbol( wxT( "CreatePlugin" ), &success );
 			if ( !success ) {
-                wxLogMessage(wxT("Failed to find CreatePlugin() in dll: ") + fileName);
-                if (!dl->GetError().IsEmpty())
-                    wxLogMessage(dl->GetError());
+				wxLogMessage(wxT("Failed to find CreatePlugin() in dll: ") + fileName);
+				if (!dl->GetError().IsEmpty())
+					wxLogMessage(dl->GetError());
 
 				//mark this plugin as not available
 				pluginInfo.SetEnabled(false);
@@ -290,7 +290,7 @@ Notebook *PluginManager::GetOutputPaneNotebook()
 
 Notebook *PluginManager::GetWorkspacePaneNotebook()
 {
-    return Frame::Get()->GetWorkspacePane()->GetNotebook();
+	return Frame::Get()->GetWorkspacePane()->GetNotebook();
 }
 
 bool PluginManager::OpenFile(const wxString &fileName, const wxString &projectName, int lineno)
@@ -380,7 +380,7 @@ void PluginManager::ReloadWorkspace()
 IPlugin* PluginManager::GetPlugin(const wxString& pluginName)
 {
 	std::map<wxString, IPlugin*>::iterator iter = m_plugins.find(pluginName);
-	if(iter != m_plugins.end()){
+	if (iter != m_plugins.end()) {
 		return iter->second;
 	}
 	return NULL;
@@ -413,14 +413,23 @@ bool PluginManager::CreateVirtualDirectory(const wxString& parentPath, const wxS
 
 OptionsConfigPtr PluginManager::GetEditorSettings()
 {
-    return EditorConfigST::Get()->GetOptions();
+	return EditorConfigST::Get()->GetOptions();
 }
 
 void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name)
 {
-    LEditor *editor = ManagerST::Get()->GetActiveEditor();
-    if (editor) {
-        ManagerST::Get()->FindAndSelect(editor, const_cast<wxString&>(pattern), name);
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	if (editor) {
+		ManagerST::Get()->FindAndSelect(editor, const_cast<wxString&>(pattern), name);
 		editor->SetActive();
-    }
+	}
+}
+
+bool PluginManager::AllowToolbar()
+{
+#ifdef __WXMAC__
+	return false;
+#else
+	return true;
+#endif
 }

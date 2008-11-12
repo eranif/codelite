@@ -186,6 +186,15 @@ public:
 	 * @return 16 or 24
 	 */
 	virtual int GetToolbarIconSize() = 0;
+	
+	/**
+	 * @brief return true if toobars are allowed for plugins. This is useful for the Mac port of 
+	 * codelite. On Mac, only single toolbar is allowed in the application (otherwise, the application
+	 * does not feet into the environment) 
+	 * @return true if plugin can create a toolbar, false otherwise
+	 */
+	virtual bool AllowToolbar() = 0;
+	
 	/**
 	 * @brief return a pointer to the main notebook (the editor' book)
 	 * @return pointer to the main notebook

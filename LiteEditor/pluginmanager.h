@@ -98,7 +98,8 @@ public:
 	virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName);
 	virtual OptionsConfigPtr GetEditorSettings();
     virtual void FindAndSelect(const wxString& pattern, const wxString& name);
-    
+	virtual bool AllowToolbar();
+	
 	//------------------------------------
 	//End of IManager interface
 	//------------------------------------

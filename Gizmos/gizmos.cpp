@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : gizmos.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : gizmos.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "gizmos.h"
+#include "gizmos.h"
 #include "workspace.h"
 #include "ctags_manager.h"
 #include "newplugindata.h"
@@ -148,22 +148,25 @@ GizmosPlugin::~GizmosPlugin()
 
 wxToolBar *GizmosPlugin::CreateToolBar(wxWindow *parent)
 {
-	//support both toolbars icon size
-	int size = m_mgr->GetToolbarIconSize();
+	wxToolBar *tb(NULL);
+	if (m_mgr->AllowToolbar()) {
+		//support both toolbars icon size
+		int size = m_mgr->GetToolbarIconSize();
 
-	wxToolBar *tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
-	tb->SetToolBitmapSize(wxSize(size, size));
+		tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb->SetToolBitmapSize(wxSize(size, size));
 
-	if (size == 24) {
-		tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("New Plugin Wizard..."));
-		tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class24")), wxT("New Class..."));
-		tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project24")), wxT("New wxWidget Project"));
-	} else {
-		tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("New Plugin Wizard..."));
-		tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class16")), wxT("New Class..."));
-		tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project16")), wxT("New wxWidget Project"));
+		if (size == 24) {
+			tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("New Plugin Wizard..."));
+			tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class24")), wxT("New Class..."));
+			tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project24")), wxT("New wxWidget Project"));
+		} else {
+			tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("New Plugin Wizard..."));
+			tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class16")), wxT("New Class..."));
+			tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project16")), wxT("New wxWidget Project"));
+		}
+		tb->Realize();
 	}
-	tb->Realize();
 
 	//Connect the events to us
 	parent->Connect(XRCID("new_plugin"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnNewPlugin), NULL, (wxEvtHandler*)this);
@@ -180,8 +183,15 @@ wxToolBar *GizmosPlugin::CreateToolBar(wxWindow *parent)
 
 void GizmosPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 {
-	//TODO:: create the menu for the 'Plugin' menu entry in the
-	//menu bar
+	wxMenu *menu = new wxMenu();
+	wxMenuItem *item(NULL);
+	item = new wxMenuItem(menu, XRCID("new_plugin"), _("New CodeLite Plugin Wizard..."), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	item = new wxMenuItem(menu, XRCID("new_class"), _("New Class Wizard..."), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	item = new wxMenuItem(menu, XRCID("new_wx_project"), _("New wxWidgets Project Wizard..."), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	pluginsMenu->Append(wxID_ANY, _("Gizmos"), menu);
 }
 
 void GizmosPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
@@ -286,7 +296,7 @@ void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
 		content.Replace(wxT("$(PluginShortName)"), data.GetPluginName());
 		content.Replace(wxT("$(PluginLongName)"), data.GetPluginDescription());
 		content.Replace(wxT("$(UserName)"), wxGetUserName().c_str());
-		
+
 		file.Open(srcFile, wxT("w+b"));
 		file.Write(content);
 		file.Close();
@@ -305,7 +315,7 @@ void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
 		content.Replace(wxT("$(PluginShortName)"), data.GetPluginName());
 		content.Replace(wxT("$(PluginLongName)"), data.GetPluginDescription());
 		content.Replace(wxT("$(UserName)"), wxGetUserName().c_str());
-		
+
 		file.Open(headerFile, wxT("w+b"));
 		file.Write(content);
 		file.Close();
@@ -468,7 +478,7 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 	wxArrayString paths;
 	paths.Add(srcFile);
 	paths.Add(hdrFile);
-	
+
 	wxString err_msg;
 	m_mgr->AddFilesToVirtualFodler(info.virtualDirectory, paths);
 }

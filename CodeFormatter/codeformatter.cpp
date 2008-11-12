@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : codeformatter.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : codeformatter.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "globals.h"
+#include "globals.h"
 #include "editor_config.h"
 #include "codeformatter.h"
 #include <wx/xrc/xmlres.h>
@@ -100,25 +100,28 @@ CodeFormatter::~CodeFormatter()
 
 wxToolBar *CodeFormatter::CreateToolBar(wxWindow *parent)
 {
-	//support both toolbars icon size
-	int size = m_mgr->GetToolbarIconSize();
+	wxToolBar *tb(NULL);
+	if (m_mgr->AllowToolbar()) {
+		//support both toolbars icon size
+		int size = m_mgr->GetToolbarIconSize();
 
-	wxToolBar *tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
-	tb->SetToolBitmapSize(wxSize(size, size));
+		tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb->SetToolBitmapSize(wxSize(size, size));
 
-	if (size == 24) {
-		tb->AddTool(XRCID("format_source"), wxT("Format Source"), wxXmlResource::Get()->LoadBitmap(wxT("code_format24")), wxT("Format Source Code"));
-		tb->AddTool(XRCID("formatter_options"), wxT("Format Options"), wxXmlResource::Get()->LoadBitmap(wxT("code_format_options24")), wxT("Source Code Formatter Options..."));
-	} else {
-		//16
-		tb->AddTool(XRCID("format_source"), wxT("Format Source"), wxXmlResource::Get()->LoadBitmap(wxT("code_format16")), wxT("Format Source Code"));
-		tb->AddTool(XRCID("formatter_options"), wxT("Format Options"), wxXmlResource::Get()->LoadBitmap(wxT("code_format_options16")), wxT("Source Code Formatter Options..."));
-	}
+		if (size == 24) {
+			tb->AddTool(XRCID("format_source"), wxT("Format Source"), wxXmlResource::Get()->LoadBitmap(wxT("code_format24")), wxT("Format Source Code"));
+			tb->AddTool(XRCID("formatter_options"), wxT("Format Options"), wxXmlResource::Get()->LoadBitmap(wxT("code_format_options24")), wxT("Source Code Formatter Options..."));
+		} else {
+			//16
+			tb->AddTool(XRCID("format_source"), wxT("Format Source"), wxXmlResource::Get()->LoadBitmap(wxT("code_format16")), wxT("Format Source Code"));
+			tb->AddTool(XRCID("formatter_options"), wxT("Format Options"), wxXmlResource::Get()->LoadBitmap(wxT("code_format_options16")), wxT("Source Code Formatter Options..."));
+		}
 
 #if defined (__WXMAC__)
-	tb->AddSeparator();
+		tb->AddSeparator();
 #endif
-	tb->Realize();
+		tb->Realize();
+	}
 
 	//Connect the events to us
 	parent->Connect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
@@ -153,33 +156,33 @@ void CodeFormatter::OnFormat(wxCommandEvent &e)
 void CodeFormatter::DoFormatFile(IEditor *editor)
 {
 	long curpos = editor->GetCurrentPosition();
-    
+
 	//execute the formatter
 	FormatOptions fmtroptions;
 	m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
 	wxString options = fmtroptions.ToString();
-    
-    //determine indentation method and amount
-    bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
-    int tabWidth = m_mgr->GetEditorSettings()->GetTabWidth();
-    int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
-    options << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
-    
+
+	//determine indentation method and amount
+	bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
+	int tabWidth = m_mgr->GetEditorSettings()->GetTabWidth();
+	int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
+	options << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
+
 	wxString output;
 	AstyleFormat(editor->GetEditorText(), options, output);
 	if (output.IsEmpty() == false) {
-		
+
 		// append new-line
 		wxString eol;
-		if( editor->GetEOL() == 0 ) {// CRLF
+		if ( editor->GetEOL() == 0 ) {// CRLF
 			eol = wxT("\r\n");
-		} else if( editor->GetEOL() == 1 ) { // CR
+		} else if ( editor->GetEOL() == 1 ) { // CR
 			eol = wxT("\r");
 		} else {
 			eol = wxT("\n");
 		}
 		output << eol;
-		
+
 		editor->SetEditorText(output);
 		editor->SetCaretAt(curpos);
 	}

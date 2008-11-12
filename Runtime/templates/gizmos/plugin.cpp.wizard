@@ -40,35 +40,56 @@ $(PluginName)::~$(PluginName)()
 
 wxToolBar *$(PluginName)::CreateToolBar(wxWindow *parent)
 {
-	/*
-	//support both toolbars icon size
-	int size = m_mgr->GetToolbarIconSize();
-
-	wxToolBar *tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
-	tb->SetToolBitmapSize(wxSize(size, size));
+	// Create the toolbar to be used by the plugin
+	wxToolBar *tb(NULL);
 	
-	// TODO :: insert tools here to the toolbar, notice how the plugin should create code that supports 24x24 and 16x16 icons size
-	if (size == 24) {
-		tb->AddTool(XRCID("run_unit_tests"), wxT("Run Unit tests..."), wxXmlResource::Get()->LoadBitmap(wxT("run_unit_test24")), wxT("Run project as unit test project..."));
+/*	
+	// You can use the below code a snippet:
+ 	// First, check that CodeLite allows plugin to register plugins
+	if (m_mgr->AllowToolbar()) {
+		// Support both toolbars icon size
+		int size = m_mgr->GetToolbarIconSize();
 		
-	} else {
-		tb->AddTool(XRCID("run_unit_tests"), wxT("Run Unit tests..."), wxXmlResource::Get()->LoadBitmap(wxT("run_unit_test16")), wxT("Run project as unit test project..."));
+		// Allocate new toolbar, which will be freed later by CodeLite
+		tb = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		
+		// Set the toolbar size
+		tb->SetToolBitmapSize(wxSize(size, size));
+		
+		// Add tools to the plugins toolbar. You must provide 2 sets of icons: 24x24 and 16x16
+		if (size == 24) {
+			tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("New Plugin Wizard..."));
+			tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class24")), wxT("New Class..."));
+			tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project24")), wxT("New wxWidget Project"));
+		} else {
+			tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("New Plugin Wizard..."));
+			tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class16")), wxT("New Class..."));
+			tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project16")), wxT("New wxWidget Project"));
+		}
+		// And finally, we must call 'Realize()'
+		tb->Realize();
 	}
-	tb->Realize();
-
-	//Connect the events to us
-	// TODO:: connect the events to parent window, but direct them to us using the Connect() method
-	parent->Connect(XRCID("run_unit_tests"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnRunUnitTests), NULL, (wxEvtHandler*)this);
-	parent->Connect(XRCID("run_unit_tests"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(UnitTestPP::OnRunUnitTestsUI), NULL, (wxEvtHandler*)this);
+	
+	// return the toolbar, it can be NULL if CodeLite does not allow plugins to register toolbars
+	// or in case the plugin simply does not require toolbar
+*/
 	return tb;
-	*/
-	return NULL;
 }
 
 void $(PluginName)::CreatePluginMenu(wxMenu *pluginsMenu)
 {
-	//TODO:: create the menu for the 'Plugin' menu entry in the
-	//menu bar
+/*	
+	// You can use the below code a snippet:
+ 	wxMenu *menu = new wxMenu();
+	wxMenuItem *item(NULL);
+	item = new wxMenuItem(menu, XRCID("new_plugin"), _("New CodeLite Plugin Wizard..."), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	item = new wxMenuItem(menu, XRCID("new_class"), _("New Class Wizard..."), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	item = new wxMenuItem(menu, XRCID("new_wx_project"), _("New wxWidgets Project Wizard..."), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+	pluginsMenu->Append(wxID_ANY, _("Gizmos"), menu);
+*/
 }
 
 void $(PluginName)::HookPopupMenu(wxMenu *menu, MenuType type)

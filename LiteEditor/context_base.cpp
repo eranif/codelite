@@ -85,32 +85,34 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 	std::list<StyleProperty> styles = lexPtr->GetProperties();
 	std::list<StyleProperty>::iterator iter = styles.begin();
 	for (; iter != styles.end(); iter++) {
-		StyleProperty st = (*iter);
-		int size = st.GetFontSize();
-		wxString face = st.GetFaceName();
-		bool bold = st.IsBold();
-
+		StyleProperty sp = (*iter);
+		int size = sp.GetFontSize();
+		wxString face = sp.GetFaceName();
+		bool bold = sp.IsBold();
+		bool italic = sp.GetItalic();
+		bool underline = sp.GetUnderlined();
+		
 		// handle special cases
-		if ( st.GetId() == -1 ) {
+		if ( sp.GetId() == -1 ) {
 			// fold margin foreground colour
-			rCtrl.SetFoldMarginColour(true, st.GetBgColour());
-			rCtrl.SetFoldMarginHiColour(true, st.GetFgColour());
-		} else if ( st.GetId() == -2 ) {
+			rCtrl.SetFoldMarginColour(true, sp.GetBgColour());
+			rCtrl.SetFoldMarginHiColour(true, sp.GetFgColour());
+		} else if ( sp.GetId() == -2 ) {
 			// selection colour
-			rCtrl.SetSelForeground(true, st.GetFgColour());
-			rCtrl.SetSelBackground(true, st.GetBgColour());
-		} else if ( st.GetId() == -3 ) {
+			rCtrl.SetSelForeground(true, sp.GetFgColour());
+			rCtrl.SetSelBackground(true, sp.GetBgColour());
+		} else if ( sp.GetId() == -3 ) {
 			// caret colour
-			rCtrl.SetCaretForeground(st.GetFgColour());
+			rCtrl.SetCaretForeground(sp.GetFgColour());
 		} else {
 			wxFont font;
-			if (st.GetId() == wxSCI_STYLE_CALLTIP) {
+			if (sp.GetId() == wxSCI_STYLE_CALLTIP) {
 				font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 			} else {
-				font = wxFont(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
+				font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
 			}
 
-			if (st.GetId() == 0) { //default
+			if (sp.GetId() == 0) { //default
 				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
 				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
 				rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
@@ -128,10 +130,10 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 				}
 			}
 
-			rCtrl.StyleSetFont(st.GetId(), font);
-			rCtrl.StyleSetSize(st.GetId(), (*iter).GetFontSize());
-			rCtrl.StyleSetForeground(st.GetId(), (*iter).GetFgColour());
-			rCtrl.StyleSetBackground(st.GetId(), (*iter).GetBgColour());
+			rCtrl.StyleSetFont(sp.GetId(), font);
+			rCtrl.StyleSetSize(sp.GetId(), (*iter).GetFontSize());
+			rCtrl.StyleSetForeground(sp.GetId(), (*iter).GetFgColour());
+			rCtrl.StyleSetBackground(sp.GetId(), (*iter).GetBgColour());
 		}
 	}
 }

@@ -219,27 +219,31 @@ void LexerPage::OnItemSelected(wxCommandEvent & event)
 void LexerPage::OnFontChanged(wxFontPickerEvent &event)
 {
 	m_isModified = true;
-	// update font
+	// update f
 	wxObject *obj = event.GetEventObject();
 	if (obj == m_fontPicker) {
-		wxFont font = event.GetFont();
+		wxFont f = event.GetFont();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
 		for (int i=0; i<m_selection; i++)
 			iter++;
 
-		iter->SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
-		iter->SetFaceName(font.GetFaceName());
-		iter->SetFontSize(font.GetPointSize());
+		iter->SetBold(f.GetWeight() == wxFONTWEIGHT_BOLD);
+		iter->SetFaceName(f.GetFaceName());
+		iter->SetFontSize(f.GetPointSize());
+		iter->SetUnderlined(f.GetUnderlined());
+		iter->SetItalic(f.GetStyle() == wxITALIC);
 	} else if (obj == m_globalFontPicker) {
-		wxFont font = event.GetFont();
+		wxFont f = event.GetFont();
 		std::list<StyleProperty>::iterator iter = m_propertyList.begin();
 		for (; iter != m_propertyList.end(); iter++) {
-			iter->SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
-			iter->SetFaceName(font.GetFaceName());
-			iter->SetFontSize(font.GetPointSize());
+			iter->SetBold(f.GetWeight() == wxFONTWEIGHT_BOLD);
+			iter->SetFaceName(f.GetFaceName());
+			iter->SetFontSize(f.GetPointSize());
+			iter->SetUnderlined(f.GetUnderlined());
+			iter->SetItalic(f.GetStyle() == wxITALIC);
 		}
-		//update the style font picker as well
-		m_fontPicker->SetSelectedFont(font);
+		//update the style f picker as well
+		m_fontPicker->SetSelectedFont(f);
 	}
 }
 

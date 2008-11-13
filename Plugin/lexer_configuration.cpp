@@ -27,6 +27,11 @@
 #include "xmlutils.h"
 #include "macros.h"
 
+static bool StringTolBool(const wxString &s) {
+	bool res = s.CmpNoCase(wxT("Yes")) == 0 ? true : false;
+	return res;
+}
+
 LexerConf::LexerConf(const wxString &fileName)
 : m_fileName(fileName)
 {
@@ -117,13 +122,19 @@ void LexerConf::Parse(wxXmlNode *element)
 					// Read the font attributes
 					wxString Name = XmlUtils::ReadString(prop, wxT("Name"), wxT("DEFAULT"));
 					wxString bold = XmlUtils::ReadString(prop, wxT("Bold"), wxT("no"));
+					wxString italic = XmlUtils::ReadString(prop, wxT("Italic"), wxT("no"));
+					wxString underline = XmlUtils::ReadString(prop, wxT("Underline"), wxT("no"));
+					wxString strikeout = XmlUtils::ReadString(prop, wxT("Strikeout"), wxT("no"));
 					wxString face = XmlUtils::ReadString(prop, wxT("Face"), wxT("Courier"));
 					wxString colour = XmlUtils::ReadString(prop, wxT("Colour"), wxT("black"));
 					wxString bgcolour = XmlUtils::ReadString(prop, wxT("BgColour"), wxT("white"));
 					long fontSize = XmlUtils::ReadLong(prop, wxT("Size"), 10);
 					long propId   = XmlUtils::ReadLong(prop, wxT("Id"), 0);
 					
-					StyleProperty property = StyleProperty(propId, colour, bgcolour, fontSize, Name, face, bold.CmpNoCase(wxT("Yes")) == 0);
+					StyleProperty property = StyleProperty(propId, colour, bgcolour, fontSize, Name, face, 
+										StringTolBool(bold), 
+										StringTolBool(italic),
+										StringTolBool(underline));
 					m_properties.push_back( property );
 				}
 				prop = prop->GetNext();
@@ -188,7 +199,9 @@ wxXmlNode *LexerConf::ToXml() const
 		property->AddProperty(wxT("Face"), p.GetFaceName());
 		property->AddProperty(wxT("Colour"), p.GetFgColour());
 		property->AddProperty(wxT("BgColour"), p.GetBgColour());
-
+		property->AddProperty(wxT("Italic"), BoolToString(p.GetItalic()));
+		property->AddProperty(wxT("Underline"), BoolToString(p.GetUnderlined()));
+		
 		wxString strSize;
 		strSize << p.GetFontSize();
 		property->AddProperty(wxT("Size"), strSize);

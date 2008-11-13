@@ -11,7 +11,7 @@ DefaultDirName={pf}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-mingw3.4.5
+OutputBaseFilename=codelite-mingw3.4.5-wx2.8.9
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -26,6 +26,7 @@ Name: "eng"; MessagesFile: "compiler:Default.isl"
 [Components]
 Name: "Editor"; Description: "CodeLite IDE (Editor + Plugins)"; Types: full custom;
 Name: "MinGW"; Description: "MinGW 3.4.5 full (gcc/g++/gdb/WinAPI)"; Types: full;
+Name: "wxWidgets_2_8_9"; Description: "wxWidgets framework, built as monolithic shared debug/release"; Types: full;
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -69,7 +70,7 @@ Source: "C:\MinGW-3.4.5\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\MinGW-3.4.5\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-3.4.5\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-3.4.5\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
-
+Source: "C:\Development\C++\codelite\trunk\Runtime\wxWidgets-2.8.9\*"; DestDir: "{code:GetWxInstallDir}"; Flags: recursesubdirs ; Components: wxWidgets_2_8_9
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}"
@@ -80,11 +81,13 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite "; Workin
 [Registry]
 Root: HKCR	; Subkey: "*\shell\Open With CodeLite\command"; ValueType: string; ValueName: ""; ValueData: "{app}\CodeLite.exe -b ""{app}"" ""%1"""
 Root: HKCU	; Subkey: "SOFTWARE\CodeLite\"; ValueType: string; ValueName: "mingw"; ValueData: "{code:GetMinGWInstallDir}"
+Root: HKCU	; Subkey: "SOFTWARE\CodeLite\"; ValueType: string; ValueName: "wx"; ValueData: "{code:GetWxInstallDir}"
 
 [Code]
 var
   MinGW_Page: TInputDirWizardPage;
-
+  Wx_Page: TInputDirWizardPage;
+  
 procedure CreateMinGWPage();
 begin
   MinGW_Page := CreateInputDirPage(wpSelectComponents,
@@ -100,14 +103,35 @@ begin
   MinGW_Page.Values[0] := ExpandConstant('{sd}\MinGW-3.4.5\');
 end;
 
+procedure CreateWxPage();
+begin
+  Wx_Page := CreateInputDirPage(wpSelectComponents,
+          'Select wxWidgets Installation Folder', 'Where should setup place wxWidgets?',
+          'wxWidgets will be stored in the following folder.'#13#10#13#10 +
+          'To continue, click Next. If you would like to select a different folder, click Browse.',
+          False, 'New Folder');
+
+  // Add item (with an empty caption)
+  Wx_Page.Add('');
+
+  // Set initial value (optional)
+  Wx_Page.Values[0] := ExpandConstant('{sd}\wxWidgets-2.8.9\');
+end;
+
 function GetMinGWInstallDir(Param: String): String;
 begin
   Result := MinGW_Page.Values[0];
 end;
 
+function GetWxInstallDir(Param: String): String;
+begin
+  Result := Wx_Page.Values[0];
+end;
+
 procedure InitializeWizard();
 begin
   CreateMinGWPage();
+  CreateWxPage();  
 end;
 
 // Uninstall
@@ -131,6 +155,11 @@ begin
 
   if PageID = MinGW_Page.ID then begin
     if IsComponentSelected('MinGW') = False then
+      Result := True;
+  end
+
+  if PageID = Wx_Page.ID then begin
+    if IsComponentSelected('wxWidgets_2_8_9') = False then
       Result := True;
   end
 end;

@@ -324,8 +324,13 @@ bool App::OnInit()
 		wxRegKey rk(wxT("HKEY_CURRENT_USER\\Software\\CodeLite"));
 		if(rk.Exists()) {
 			wxString strWx, strMingw;
-			rk.QueryValue(wxT("wx"), strWx);
-			rk.QueryValue(wxT("mingw"), strMingw);
+			if(rk.HasValue(wxT("wx"))){
+				rk.QueryValue(wxT("wx"), strWx);
+			}
+			
+			if(rk.HasValue(wxT("mingw"))){
+				rk.QueryValue(wxT("mingw"), strMingw);
+			}
 			
 			long up;
 			if( !cfg->GetLongValue(wxT("UpdateWxPaths"), up) ){

@@ -207,8 +207,8 @@ void LexerPage::OnItemSelected(wxCommandEvent & event)
 			int size = p.GetFontSize();
 			wxString face = p.GetFaceName();
 			bool bold = p.IsBold();
-
-			font = wxFont(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
+			
+			font = wxFont(size, wxFONTFAMILY_TELETYPE, p.GetItalic() ? wxITALIC : wxNORMAL, bold ? wxBOLD : wxNORMAL, p.GetUnderlined(), face);
 			m_fontPicker->SetSelectedFont(font);
 			m_bgColourPicker->SetColour(bgColour);
 			m_colourPicker->SetColour(colour);

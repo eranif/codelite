@@ -80,6 +80,8 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite "; Workin
 
 [Registry]
 Root: HKCR	; Subkey: "*\shell\Open With CodeLite\command"; ValueType: string; ValueName: ""; ValueData: "{app}\CodeLite.exe -b ""{app}"" ""%1"""
+Root: HKCU	; Subkey: "SOFTWARE\CodeLite\mingw"; ValueType: string; ValueName: ""; ValueData: "{code:GetMinGWInstallDir}"
+Root: HKCU	; Subkey: "SOFTWARE\CodeLite\wx"; ValueType: string; ValueName: ""; ValueData: "{code:GetWxInstallDir}"
 
 [Code]
 var

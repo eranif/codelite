@@ -24,11 +24,14 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/socket.h>
+#include "evnvarlist.h"
+#include "environmentconfig.h"
 #include "conffilelocator.h"
 #include "app.h"
 #include <wx/snglinst.h>
 #include <wx/image.h>
 #include <wx/filefn.h>
+#include "dirsaver.h"
 
 #include "xmlutils.h"
 #include "editor_config.h"
@@ -262,21 +265,6 @@ bool App::OnInit()
 		homeDir = fnHomdDir.GetPath();
 	}
 	
-	// Update PATH environment variable with the install directory and
-	// MinGW default installation (if exists)
-	wxString pathEnv;
-	if(wxGetEnv(wxT("PATH"), &pathEnv) == false){
-		wxLogMessage(_("WARNING: Failed to load environment variable PATH!"));
-	} else {
-		pathEnv << wxT(";") << homeDir << wxT(";");
-		if(wxDirExists(wxT("C:\\MinGW-3.4.5\\bin"))){
-			pathEnv << wxT("C:\\MinGW-3.4.5\\bin;");
-		}
-		if(wxSetEnv(wxT("PATH"), pathEnv) == false){
-			wxLogMessage(_("WARNING: Failed to update environment variable PATH"));
-		}
-	}
-	
 	ManagerST::Get()->SetInstallDir( homeDir );
 	EditorConfig::Init( SvnRevision );
 #endif
@@ -322,6 +310,52 @@ bool App::OnInit()
 	if ( !CheckSingularity(parser, curdir) ) {
 		return false;
 	}
+
+#ifdef __WXMSW__
+	// Update PATH environment variable with the install directory and
+	// MinGW default installation (if exists)
+	wxString pathEnv;
+	if(wxGetEnv(wxT("PATH"), &pathEnv) == false){
+		wxLogMessage(_("WARNING: Failed to load environment variable PATH!"));
+	} else {
+		pathEnv << wxT(";") << homeDir << wxT(";");
+		
+		// read the installation path of MinGW & WX
+		wxRegKey rk(wxT("HKEY_CURRENT_USER\\Software\\CodeLite"));
+		if(rk.Exists()) {
+			wxString strWx, strMingw;
+			rk.QueryValue(wxT("wx"), strWx);
+			rk.QueryValue(wxT("mingw"), strMingw);
+			
+			long up;
+			if( !cfg->GetLongValue(wxT("UpdateWxPaths"), up) ){
+				if(strWx.IsEmpty() == false) {
+					// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
+					EvnVarList vars;
+					EnvironmentConfig::Instance()->Load();
+					
+					EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+					StringMap varMap = vars.GetVariables();
+					varMap[wxT("WXWIN")] = strWx;
+					varMap[wxT("WXCFG")] = wxT("gcc_dll\\mswu");
+					
+					vars.SetVariables(varMap);
+					
+					EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
+					cfg->SaveLongValue(wxT("UpdateWxPaths"), 1);
+				}
+			}
+			
+			if(strMingw.IsEmpty() == false) {
+				pathEnv << wxT(";") << strMingw << wxT("\\bin");
+			}
+		}
+		
+		if(wxSetEnv(wxT("PATH"), pathEnv) == false){
+			wxLogMessage(_("WARNING: Failed to update environment variable PATH"));
+		}
+	}
+#endif
 
 	GeneralInfo inf;
 	cfg->ReadObject(wxT("GeneralInfo"), &inf);

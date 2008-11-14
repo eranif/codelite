@@ -58,6 +58,10 @@ void FileExplorer::CreateGUIControls()
 {
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
+
+	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
+	
+	mainSizer->Add(tb, 0, wxEXPAND);
 	
 #ifdef __WXMSW__
 	wxArrayString volumes;
@@ -71,9 +75,6 @@ void FileExplorer::CreateGUIControls()
 #endif
 
 	m_fileTree = new FileExplorerTree(this, wxID_ANY);
-	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
-	
-	mainSizer->Add(tb, 0, wxEXPAND);
 	mainSizer->Add(m_fileTree, 1, wxEXPAND|wxALL, 1);
 	
 	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);

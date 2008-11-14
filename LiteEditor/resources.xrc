@@ -3,6 +3,7 @@
 	<object class="wxBitmap" name="tags_selected">res/tags_selected.png</object>
 	<object class="wxBitmap" name="close_panel_push">res/close_panel_push.png</object>
 	<object class="wxBitmap" name="project_settings">res/cubes_yellow_preferences.png</object>
+	<object class="wxBitmap" name="set_active">res/cubes_yellow_popup.png</object>
 	<object class="wxBitmap" name="wxfb">res/wxfb.png</object>
 	<object class="wxBitmap" name="tab">res/tab.png</object>
 	<object class="wxBitmap" name="todo">res/todo.png</object>

@@ -33,7 +33,11 @@ class wxComboBox;
 class WorkspaceTab : public wxPanel {
 	FileViewTree *m_fileView;
     bool m_isLinkedToEditor;
-
+	
+private:
+	void DoShowPopupMenu();
+	
+protected:
 	void OnCollapseAll(wxCommandEvent &event);
 	void OnCollapseAllUI(wxUpdateUIEvent &event);
 	void DoCollpaseAll();
@@ -42,7 +46,9 @@ class WorkspaceTab : public wxPanel {
 	void OnGoHomeUI(wxUpdateUIEvent &event);
 	void OnProjectSettingsUI(wxUpdateUIEvent &event);
 	void OnProjectSettings(wxCommandEvent &e);
-
+	void OnShowProjectListPopup(wxCommandEvent &e);
+	void OnMenuSelection(wxCommandEvent &e);
+	
 protected:
 	void CreateGUIControls();
 

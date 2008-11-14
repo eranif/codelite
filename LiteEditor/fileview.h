@@ -58,11 +58,11 @@ public:
 
 	/**
 	 * Parameterized constructor.
-	 * \param parent Tree parent window
-	 * \param id Window id
-	 * \param pos Window position
-	 * \param size Window size
-	 * \param style Window style
+	 * @param parent Tree parent window
+	 * @param id Window id
+	 * @param pos Window position
+	 * @param size Window size
+	 * @param style Window style
 	 */
 	FileViewTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 	
@@ -73,27 +73,32 @@ public:
 
 	/**
 	 * Create tree, usually called after constructing FileViewTree with default constructor.
-	 * \param parent Tree parent window
-	 * \param id Window id
-	 * \param pos Window position
-	 * \param size Window size
-	 * \param style Window style
+	 * @param parent Tree parent window
+	 * @param id Window id
+	 * @param pos Window position
+	 * @param size Window size
+	 * @param style Window style
 	 */
 	virtual void Create(wxWindow *parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 
 	// Build the actual tree from the workspace
 	void BuildTree();
 	
+	/**
+	 * @brief mark project with given name as active project
+	 * @param projectName
+	 */
+	void MarkActive(const wxString &projectName);
 	
 	/**
-	 * \brief return the current selected item information
+	 * @brief return the current selected item information
 	 */
 	TreeItemInfo GetSelectedItemInfo();
 	
 	/**
 	 * Make sure that fileName under project is visible
-	 * \param &project 
-	 * \param &fileName 
+	 * @param &project 
+	 * @param &fileName 
 	 */
 	void ExpandToPath(const wxString &project, const wxFileName &fileName);
 	

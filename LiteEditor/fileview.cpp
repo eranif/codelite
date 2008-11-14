@@ -313,7 +313,7 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 	std::vector<wxMenuItem*> dynItems;
 	wxMenuItem *item(NULL);
 	std::map<wxString, wxString> targets;
-	
+
 	if ( type == MenuTypeFileView_Project ) {
 
 		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
@@ -344,15 +344,15 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 					customTargetsMenu->Append(item);
 					Frame::Get()->Connect(wxXmlResource::GetXRCID(iter->first.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnBuildCustomTarget));
 				}
-				
+
 				// iterator over the menu items and search for 'Project Only' target
 				// this is the position that we want to place our custom targets menu
 				wxMenuItemList items = menu->GetMenuItems();
 				wxMenuItemList::iterator liter = items.begin();
 				size_t position(0);
-				for(; liter != items.end(); liter++){
+				for (; liter != items.end(); liter++) {
 					wxMenuItem *mi = *liter;
-					if(mi->GetId() == XRCID("project_only")){
+					if (mi->GetId() == XRCID("project_only")) {
 						break;
 					}
 					position++;
@@ -365,9 +365,9 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 	if (ManagerST::Get()->IsBuildInProgress() == false) {
 		PluginManager::Get()->HookPopupMenu( menu, type );
 	}
-	
+
 	PopupMenu( menu );
-	
+
 	if (ManagerST::Get()->IsBuildInProgress() == false) {
 		//let the plugins remove their hooked content
 		PluginManager::Get()->UnHookPopupMenu( menu, type );
@@ -377,12 +377,12 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
 	for (size_t i=0; i<dynItems.size(); i++) {
 		menu->Destroy(dynItems.at(i));
 	}
-	
+
 	// remove the dynamic menus added by the 'Custom Targets'
 	int customTargetsID = menu->FindItem(gsCustomTargetsMenu);
-	if(customTargetsID != wxNOT_FOUND){
+	if (customTargetsID != wxNOT_FOUND) {
 		menu->Destroy(customTargetsID);
-		
+
 		// disconnect events
 		std::map<wxString, wxString>::iterator iter = targets.begin();
 		for (; iter != targets.end(); iter++) {
@@ -652,7 +652,7 @@ void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 	}
 	dlg->Destroy();
 	// this event is already sent by AddFilesToVirtualFodler() -> AddFilesToProject()
- 	//SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&paths);
+	//SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&paths);
 }
 
 void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
@@ -689,7 +689,7 @@ void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
 		SortItem(item);
 		Expand( item );
 
-                // event moved to Manager::AddFileToProject()
+		// event moved to Manager::AddFileToProject()
 		//wxArrayString arrStr;
 		//arrStr.Add(filename);
 		//SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&arrStr);
@@ -761,7 +761,7 @@ void FileViewTree::DoRemoveItem( wxTreeItemId &item )
 				Delete( item );
 
 				wxArrayString files(1, &file_name);
- 				SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&files);
+				SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&files);
 			}
 		}
 	}
@@ -965,8 +965,8 @@ void FileViewTree::OnClean( wxCommandEvent &event )
 			conf = bldConf->GetName();
 		}
 		QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
-		
-		if(bldConf && bldConf->IsCustomBuild()) {
+
+		if (bldConf && bldConf->IsCustomBuild()) {
 			buildInfo.SetKind(QueueCommand::CustomBuild);
 			buildInfo.SetCustomBuildTarget(wxT("Clean"));
 		}
@@ -988,9 +988,9 @@ void FileViewTree::OnBuild( wxCommandEvent &event )
 		if (bldConf) {
 			conf = bldConf->GetName();
 		}
-		
+
 		QueueCommand buildInfo(projectName, conf, false, QueueCommand::Build);
-		if(bldConf && bldConf->IsCustomBuild()){
+		if (bldConf && bldConf->IsCustomBuild()) {
 			buildInfo.SetKind(QueueCommand::CustomBuild);
 			buildInfo.SetCustomBuildTarget(wxT("Build"));
 		}
@@ -1150,7 +1150,7 @@ void FileViewTree::OnBuildProjectOnly( wxCommandEvent &event )
 		}
 
 		QueueCommand info(projectName, conf, true, QueueCommand::Build);
-		if(bldConf && bldConf->IsCustomBuild()){
+		if (bldConf && bldConf->IsCustomBuild()) {
 			info.SetKind(QueueCommand::CustomBuild);
 			info.SetCustomBuildTarget(wxT("Build"));
 		}
@@ -1174,11 +1174,11 @@ void FileViewTree::OnCleanProjectOnly( wxCommandEvent &event )
 		}
 
 		QueueCommand info(projectName, conf, true, QueueCommand::Clean);
-		if(bldConf && bldConf->IsCustomBuild()) {
+		if (bldConf && bldConf->IsCustomBuild()) {
 			info.SetKind(QueueCommand::CustomBuild);
 			info.SetCustomBuildTarget(wxT("Clean"));
 		}
-		
+
 		ManagerST::Get()->PushQueueCommand(info);
 		ManagerST::Get()->ProcessCommandQueue();
 	}
@@ -1524,4 +1524,19 @@ bool FileViewTree::CreateVirtualDirectory(const wxString& parentPath, const wxSt
 		return true;
 	}
 	return false;
+}
+
+void FileViewTree::MarkActive(const wxString& projectName)
+{
+	// find previous active project and remove its bold style
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = GetFirstChild( GetRootItem(), cookie );
+	while ( child.IsOk() ) {
+		FilewViewTreeItemData *childData = static_cast<FilewViewTreeItemData*>( GetItemData( child ) );
+		if ( childData->GetData().GetDisplayName() == projectName ) {
+			DoSetProjectActive(child);
+			break;
+		}
+		child = GetNextChild( GetRootItem(), cookie );
+	}
 }

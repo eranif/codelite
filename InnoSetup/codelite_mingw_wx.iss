@@ -11,7 +11,7 @@ DefaultDirName={pf}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-mingw3.4.5-wx2.8.9
+OutputBaseFilename=codelite-mingw3.4.5-wx2.8.7
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -26,7 +26,7 @@ Name: "eng"; MessagesFile: "compiler:Default.isl"
 [Components]
 Name: "Editor"; Description: "CodeLite IDE (Editor + Plugins)"; Types: full custom;
 Name: "MinGW"; Description: "MinGW 3.4.5 full (gcc/g++/gdb/WinAPI)"; Types: full;
-Name: "wxWidgets_2_8_9"; Description: "wxWidgets framework, built as monolithic shared debug/release"; Types: full;
+Name: "wxWidgets_2_8_7"; Description: "wxWidgets framework, built as monolithic shared debug/release"; Types: full;
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -70,7 +70,7 @@ Source: "C:\MinGW-3.4.5\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\MinGW-3.4.5\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-3.4.5\bin\libiconv2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-3.4.5\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
-Source: "C:\Development\C++\codelite\trunk\Runtime\wxWidgets-2.8.9\*"; DestDir: "{code:GetWxInstallDir}"; Flags: recursesubdirs ; Components: wxWidgets_2_8_9
+Source: "C:\Development\C++\codelite\trunk\Runtime\wxWidgets-2.8.7\*"; DestDir: "{code:GetWxInstallDir}"; Flags: recursesubdirs ; Components: wxWidgets_2_8_7
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}"
@@ -115,7 +115,7 @@ begin
   Wx_Page.Add('');
 
   // Set initial value (optional)
-  Wx_Page.Values[0] := ExpandConstant('{sd}\wxWidgets-2.8.9\');
+  Wx_Page.Values[0] := ExpandConstant('{sd}\wxWidgets-2.8.7\');
 end;
 
 function GetMinGWInstallDir(Param: String): String;
@@ -159,7 +159,7 @@ begin
   end
 
   if PageID = Wx_Page.ID then begin
-    if IsComponentSelected('wxWidgets_2_8_9') = False then
+    if IsComponentSelected('wxWidgets_2_8_7') = False then
       Result := True;
   end
 end;

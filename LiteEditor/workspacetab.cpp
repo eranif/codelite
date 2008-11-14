@@ -83,7 +83,8 @@ void WorkspaceTab::CreateGUIControls()
 	Connect( XRCID("project_properties"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceTab::OnProjectSettingsUI ));
 	Connect( XRCID("project_properties"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnProjectSettings) );
 	Connect( XRCID("set_project_active"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( WorkspaceTab::OnShowProjectListPopup) );
-
+	Connect( XRCID("set_project_active"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WorkspaceTab::OnProjectSettingsUI ));
+	
 	//add the fileview tab
 	m_fileView = new FileViewTree(this, wxID_ANY);
 	sz->Add(tb, 0, wxEXPAND, 0);

@@ -39,6 +39,7 @@ void CopyrightsConfigData::DeSerialize(Archive& arch)
 	arch.Read(wxT("m_templateFilename"), m_templateFilename);
 	arch.Read(wxT("m_fileMasking"), m_fileMasking);
 	arch.Read(wxT("m_backupFiles"), m_backupFiles);
+	arch.Read(wxT("m_ignoreString"), m_ignoreString);
 }
 
 void CopyrightsConfigData::Serialize(Archive& arch)
@@ -46,4 +47,5 @@ void CopyrightsConfigData::Serialize(Archive& arch)
 	arch.Write(wxT("m_templateFilename"), m_templateFilename);
 	arch.Write(wxT("m_fileMasking"), m_fileMasking);
 	arch.Write(wxT("m_backupFiles"), m_backupFiles);
+	arch.Write(wxT("m_ignoreString"), m_ignoreString);
 }

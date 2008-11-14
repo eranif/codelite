@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : copyright.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : copyright.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include <wx/filefn.h>
+#include <wx/filefn.h>
 #include <wx/progdlg.h>
 #include <wx/ffile.h>
 #include <wx/tokenzr.h>
@@ -142,7 +142,7 @@ void Copyright::HookPopupMenu(wxMenu *menu, MenuType type)
 		if (!menu->FindItem(XRCID("batch_insert_copyrights"))) {
 			menu->Prepend(XRCID("batch_insert_copyrights"), wxT("Batch Insert of Copyright Block"), wxEmptyString);
 		}
-		
+
 	} else if (type == MenuTypeFileView_Project) {
 		if ( !m_projectSepItem ) {
 			m_projectSepItem = menu->PrependSeparator();
@@ -175,7 +175,7 @@ void Copyright::UnHookPopupMenu(wxMenu *menu, MenuType type)
 	} else if (type == MenuTypeFileExplorer) {
 		//TODO::Unhook  items for the file explorer context menu
 	} else if (type == MenuTypeFileView_Workspace) {
-		
+
 		wxMenuItem *item = menu->FindItem(XRCID("batch_insert_copyrights"));
 		if (item) {
 			menu->Destroy( item );
@@ -185,7 +185,7 @@ void Copyright::UnHookPopupMenu(wxMenu *menu, MenuType type)
 			menu->Destroy( m_workspaceSepItem );
 			m_workspaceSepItem = NULL;
 		}
-		
+
 	} else if (type == MenuTypeFileView_Project) {
 		wxMenuItem *item = menu->FindItem(XRCID("insert_prj_copyrights"));
 		if (item) {
@@ -251,6 +251,11 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 	wxString _content = ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, wxEmptyString, editor->GetFileName().GetFullPath());
 
 	// we are good to go :)
+	if (editor->GetEditorText().Find(data.GetIgnoreString()) != wxNOT_FOUND) {
+		wxLogMessage(_("File contains ignore string, skipping it"));
+		return;
+	}
+
 	editor->InsertText(0, _content);
 }
 
@@ -319,8 +324,8 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
 				filtered_files.push_back( files.at(i) );
 			}
 		}
-		
-		if(filtered_files.empty() == false) {
+
+		if (filtered_files.empty() == false) {
 			MassUpdate(filtered_files, content);
 		}
 
@@ -385,7 +390,7 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
 	}
 
 	// update files
-	if(filtered_files.empty() == false) {
+	if (filtered_files.empty() == false) {
 		MassUpdate(filtered_files, content);
 	}
 }
@@ -396,7 +401,7 @@ void Copyright::MassUpdate(const std::vector<wxFileName> &filtered_files, const 
 	if (wxMessageBox(wxString::Format(wxT("You are about to modifiy %d files, continue?"), filtered_files.size()), wxT("CodeLite"), wxYES_NO|wxICON_QUESTION) == wxNO) {
 		return;
 	}
-	
+
 	wxProgressDialog* prgDlg = NULL;
 	prgDlg = new wxProgressDialog (wxT("Processing file ..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)filtered_files.size(), NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT );
 	prgDlg->GetSizer()->Fit(prgDlg);
@@ -414,14 +419,25 @@ void Copyright::MassUpdate(const std::vector<wxFileName> &filtered_files, const 
 		wxString _content = ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, wxEmptyString, fn.GetFullPath());
 		if (ReadFileWithConversion(fn.GetFullPath(), file_content)) {
 			wxString msg;
-			msg << wxT("Inserting comment to file: ") << fn.GetFullName();
-			if (!prgDlg->Update(i, msg)) {
-				prgDlg->Destroy();
-				return;
-			}
+			// if the file contains the ignore string, skip this file
+			if (file_content.Find(data.GetIgnoreString()) != wxNOT_FOUND) {
 
-			file_content.Prepend(_content);
-			WriteFileWithBackup(fn.GetFullPath(), file_content, data.GetBackupFiles());
+				msg << wxT("File contains ignore string, skipping it: ") << fn.GetFullName();
+				if (!prgDlg->Update(i, msg)) {
+					prgDlg->Destroy();
+					return;
+				}
+			} else {
+
+				msg << wxT("Inserting comment to file: ") << fn.GetFullName();
+				if (!prgDlg->Update(i, msg)) {
+					prgDlg->Destroy();
+					return;
+				}
+
+				file_content.Prepend(_content);
+				WriteFileWithBackup(fn.GetFullPath(), file_content, data.GetBackupFiles());
+			}
 		}
 	}
 	prgDlg->Destroy();

@@ -22,8 +22,9 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -35,7 +36,7 @@
 
 CopyrightsOptionsBaseDlg::CopyrightsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetSizeHints( wxSize( -1,-1 ), wxDefaultSize );
 	
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
@@ -51,6 +52,9 @@ CopyrightsOptionsBaseDlg::CopyrightsOptionsBaseDlg( wxWindow* parent, wxWindowID
 	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlFileName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlFileName->SetToolTip( wxT("Select the path to the file containing the template header to be prepended to the source files") );
+	m_textCtrlFileName->SetMinSize( wxSize( 300,-1 ) );
+	
 	fgSizer1->Add( m_textCtrlFileName, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonBrowse = new wxButton( this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
@@ -63,23 +67,38 @@ CopyrightsOptionsBaseDlg::CopyrightsOptionsBaseDlg( wxWindow* parent, wxWindowID
 	m_textCtrlFileMaksing = new wxTextCtrl( this, wxID_ANY, wxT("*.hpp;*.h;*.hxx;*.inl;*.h++"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_textCtrlFileMaksing, 0, wxALL|wxEXPAND, 5 );
 	
-	filler1 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	fgSizer1->Add( filler1, 1, wxEXPAND | wxALL, 5 );
+	
+	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Ignore String:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	fgSizer1->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlIgnoreString = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlIgnoreString->SetToolTip( wxT("Set here a string that once found in the source file CodeLite will not prepend the Copyrights block to the file") );
+	
+	fgSizer1->Add( m_textCtrlIgnoreString, 0, wxALL|wxEXPAND, 5 );
+	
+	
+	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_checkBoxBackup = new wxCheckBox( this, wxID_ANY, wxT("Backup modified files"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxBackup->SetValue(true);
 	
-	fgSizer1->Add( m_checkBoxBackup, 0, wxALL, 5 );
+	fgSizer1->Add( m_checkBoxBackup, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	bSizer1->Add( fgSizer1, 1, wxEXPAND|wxALL, 5 );
 	
-	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
+	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	bSizer1->Add( fgSizer1, 0, wxEXPAND|wxALL, 5 );
+	
+	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer1->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
 	
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonSave = new wxButton( this, wxID_CANCEL, wxT("&Save"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonSave = new wxButton( this, wxID_OK, wxT("&Save"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonSave->SetDefault(); 
 	bSizer2->Add( m_buttonSave, 0, wxALL, 5 );
 	
@@ -90,6 +109,9 @@ CopyrightsOptionsBaseDlg::CopyrightsOptionsBaseDlg( wxWindow* parent, wxWindowID
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	bSizer1->Fit( this );
+	
+	this->Centre( wxBOTH );
 	
 	// Connect Events
 	m_buttonBrowse->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CopyrightsOptionsBaseDlg::OnSelectFile ), NULL, this );

@@ -1,3 +1,10 @@
+################################################################################
+## This file is part of CodeLite IDE and is released 
+## under the terms of the GNU General Public License as published by  
+##    the Free Software Foundation; either version 2 of the License, or     
+##    (at your option) any later version.                              
+################################################################################
+
 #!/bin/sh
 has_file=0
 has_svn=0

@@ -1,3 +1,11 @@
+################################################################################
+## This file is part of CodeLite IDE and is released 
+## under the terms of the GNU General Public License as published by  
+##    the Free Software Foundation; either version 2 of the License, or     
+##    (at your option) any later version.                              
+################################################################################
+
+
 #########################################################################################################################
 ##1. Install Apache and create the folder debs under its htdocs directory
 ##2. Copy the .deb file to /usr/local/apache2/htdocs/debs

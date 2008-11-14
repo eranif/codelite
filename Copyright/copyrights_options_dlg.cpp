@@ -37,6 +37,7 @@ CopyrightsOptionsDlg::CopyrightsOptionsDlg( wxWindow* parent, IConfigTool *confi
 	m_textCtrlFileMaksing->SetValue( data.GetFileMasking());
 	m_textCtrlFileName->SetValue(data.GetTemplateFilename());
 	m_checkBoxBackup->SetValue( data.GetBackupFiles() );
+	m_textCtrlIgnoreString->SetValue( data.GetIgnoreString() );
 	m_textCtrlFileName->SetFocus();
 	
 	Centre();
@@ -63,7 +64,7 @@ void CopyrightsOptionsDlg::OnButtonSave(wxCommandEvent& event)
 	data.SetFileMasking( m_textCtrlFileMaksing->GetValue() );
 	data.SetTemplateFilename( m_textCtrlFileName->GetValue() );
 	data.SetBackupFiles( m_checkBoxBackup->IsChecked() );
-	
+	data.SetIgnoreString( m_textCtrlIgnoreString->GetValue() );
 	m_conf->WriteObject(wxT("CopyrightsConfig"), &data);
 	EndModal(wxID_OK);
 }

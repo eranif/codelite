@@ -22,8 +22,9 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -40,7 +41,6 @@
 #include <wx/settings.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
-#include <wx/panel.h>
 #include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/statline.h>
@@ -62,9 +62,13 @@ class CopyrightsOptionsBaseDlg : public wxDialog
 		wxButton* m_buttonBrowse;
 		wxStaticText* m_staticText2;
 		wxTextCtrl* m_textCtrlFileMaksing;
-		wxPanel* filler1;
+		
+		wxStaticText* m_staticText3;
+		wxTextCtrl* m_textCtrlIgnoreString;
+		
 		wxCheckBox* m_checkBoxBackup;
-		wxStaticLine* m_staticline1;
+		
+		wxStaticLine* m_staticline2;
 		wxButton* m_buttonSave;
 		wxButton* m_buttonCancel;
 		
@@ -74,7 +78,7 @@ class CopyrightsOptionsBaseDlg : public wxDialog
 		
 	
 	public:
-		CopyrightsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Copyrights Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 606,170 ), long style = wxDEFAULT_DIALOG_STYLE );
+		CopyrightsOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Copyrights Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~CopyrightsOptionsBaseDlg();
 	
 };

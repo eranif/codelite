@@ -36,6 +36,11 @@
 #include "macros.h"
 #include "workspace_pane.h"
 
+static int wxStringCmpFunc(const wxString& item1, const wxString& item2) 
+{
+	return item1.CmpNoCase(item2);
+}
+
 WorkspaceTab::WorkspaceTab(wxWindow *parent)
 		: wxPanel(parent)
 		, m_isLinkedToEditor(true)
@@ -211,6 +216,7 @@ void WorkspaceTab::DoShowPopupMenu()
 	
 	wxArrayString projects;
 	ManagerST::Get()->GetProjectList(projects);
+	projects.Sort(wxStringCmpFunc);
 	
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		wxString text = projects.Item(i);

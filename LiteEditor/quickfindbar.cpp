@@ -137,12 +137,11 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 
 void QuickFindBar::DoShow(bool s)
 {
-    if (!Show(s))
-        return;
-        
-    wxSizer *sz = GetParent()->GetSizer();
-    sz->Show(this, s, true);
-    sz->Layout();
+    if (Show(s)) {
+        wxSizer *sz = GetParent()->GetSizer();
+        sz->Show(this, s, true);
+        sz->Layout();
+    }
     
     LEditor *editor = ManagerST::Get()->GetActiveEditor();
     if (!editor) {

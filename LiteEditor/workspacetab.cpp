@@ -252,6 +252,7 @@ void WorkspaceTab::OnMenuSelection(wxCommandEvent& e)
 	wxArrayString projects;
 	size_t sel = (size_t)e.GetId();
 	ManagerST::Get()->GetProjectList(projects);
+	projects.Sort(wxStringCmpFunc);
 	
 	if(sel < projects.GetCount()) {
 		GetFileView()->MarkActive(projects.Item(sel));

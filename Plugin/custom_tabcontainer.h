@@ -58,6 +58,21 @@ protected:
 	
 	bool IsVisible(CustomTab *tab, bool fullShown = true);
 	
+	/**
+	 * @brief return the index of the first visible tab
+	 */
+	size_t GetFirstVisibleTab();
+	
+	/**
+	 * @brief return the index of the last visible tab
+	 */
+	size_t GetLastVisibleTab();
+	
+	/**
+	 * @brief show maximum tabs as possible.
+	 */
+	void DoShowMaxTabs();
+	
 public:
 	wxTabContainer(wxWindow *win, wxWindowID id = wxID_ANY, int orientation = wxLEFT, long style = 0);
 	virtual ~wxTabContainer();
@@ -76,40 +91,40 @@ public:
 	void Resize();
 	
 	/**
-	 * \brief delete tab from the tab container (also destroying it)
-	 * \param deleteTab tab to delete
-	 * \param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
+	 * @brief delete tab from the tab container (also destroying it)
+	 * @param deleteTab tab to delete
+	 * @param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
 	 */
 	void DeletePage(CustomTab *deleteTab, bool notify);
 	
 	/**
-	 * \brief remove tab from the tab container (the tab will *not* be destroyed)
-	 * \param removePage tab to remove
-	 * \param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
+	 * @brief remove tab from the tab container (the tab will *not* be destroyed)
+	 * @param removePage tab to remove
+	 * @param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
 	 */
 	void RemovePage(CustomTab *removePage, bool notify);
 	
 	/**
-	 * \brief return previous selection
-	 * \return previous selection, or NULL if history list is empty
+	 * @brief return previous selection
+	 * @return previous selection, or NULL if history list is empty
 	 */
 	CustomTab* GetPreviousSelection();
 	
 	/**
-	 * \brief set tab as being dragged
-	 * \param tab
+	 * @brief set tab as being dragged
+	 * @param tab
 	 */
 	void SetDraggedTab(CustomTab *tab);
 
 	/**
-	 * \brief swap tab with the dragged one
-	 * \param tab swap dragged tab this one
+	 * @brief swap tab with the dragged one
+	 * @param tab swap dragged tab this one
 	 */
 	void SwapTabs(CustomTab *tab);
 
 	/**
-	 * \brief get tab being dragged, if any
-	 * \return tab being dragged
+	 * @brief get tab being dragged, if any
+	 * @return tab being dragged
 	 */
 	const CustomTab* GetDraggedTab() const { return m_draggedTab; }
 

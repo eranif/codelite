@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : custom_tabcontainer.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : custom_tabcontainer.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "dropbutton.h"
+#include "dropbutton.h"
 #include "custom_tabcontainer.h"
 #include "drawingutils.h"
 #include "wx/settings.h"
@@ -40,7 +40,7 @@ BEGIN_EVENT_TABLE(wxTabContainer, wxPanel)
 	EVT_ERASE_BACKGROUND(wxTabContainer::OnEraseBg)
 	EVT_SIZE(wxTabContainer::OnSizeEvent)
 	EVT_LEFT_DCLICK(wxTabContainer::OnDoubleClick)
-	
+
 END_EVENT_TABLE()
 
 wxTabContainer::wxTabContainer(wxWindow *win, wxWindowID id, int orientation, long style)
@@ -335,6 +335,7 @@ void wxTabContainer::OnEraseBg(wxEraseEvent &)
 
 void wxTabContainer::OnSizeEvent(wxSizeEvent &e)
 {
+	DoShowMaxTabs();
 	Refresh();
 	e.Skip();
 }
@@ -550,11 +551,14 @@ void wxTabContainer::EnsureVisible(CustomTab *tab)
 				m_tabsSizer->Layout();
 
 				if (IsVisible(tab)) {
+					DoShowMaxTabs();
 					break;
 				}
 			}
 		}
 		Thaw();
+	} else {
+		DoShowMaxTabs();
 	}
 }
 
@@ -563,10 +567,10 @@ bool wxTabContainer::IsVisible(CustomTab *tab, bool fullShown)
 	wxPoint pos = tab->GetPosition();
 	wxSize tabSize = tab->GetSize();
 	wxRect rr = GetSize();
-	
+
 	bool cond0(true);
-	if(rr.width > tabSize.x && fullShown) {
-		//the visible area has enough space to show the entire 
+	if (rr.width > tabSize.x && fullShown) {
+		//the visible area has enough space to show the entire
 		//tab, force it
 		cond0 = !(pos.x + tabSize.x > rr.x + rr.width);
 	}
@@ -615,4 +619,60 @@ void wxTabContainer::ShowPopupMenu()
 void wxTabContainer::OnDoubleClick(wxMouseEvent& e)
 {
 	e.Skip();
+}
+
+size_t wxTabContainer::GetFirstVisibleTab()
+{
+	for ( size_t i=0; i< GetTabsCount(); i++ ) {
+		if (m_tabsSizer->IsShown(i)) {
+			return i;
+		}
+	}
+	return Notebook::npos;
+}
+
+size_t wxTabContainer::GetLastVisibleTab()
+{
+	size_t last( Notebook::npos );
+	for ( size_t i=0; i< GetTabsCount(); i++ ) {
+		if (m_tabsSizer->IsShown(i)) {
+			last = i;
+		}
+	}
+	return last;
+}
+
+void wxTabContainer::DoShowMaxTabs()
+{
+	if (GetTabsCount() == 0) {
+		return;
+	}
+
+	Freeze();
+	
+	size_t first = GetFirstVisibleTab();
+	size_t last  = GetLastVisibleTab();
+	
+	CustomTab *t2 = IndexToTab(last);
+	
+	if (first != Notebook::npos && last != Notebook::npos && last != first) {
+		int i = (int) first;
+		for (; i>=0; i--) {
+			m_tabsSizer->Show((size_t)i);
+			m_tabsSizer->Layout();
+			CustomTab *t1 = IndexToTab((size_t)i);
+	
+			if (t1 && IsVisible(t1) && t2 && IsVisible(t2)) {
+				// continue;
+				continue;
+			} else {
+				i++;
+				m_tabsSizer->Show((size_t)i);
+				m_tabsSizer->Layout();
+				break;
+			}
+		}
+	}
+	Thaw();
+	Refresh();
 }

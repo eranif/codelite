@@ -251,11 +251,15 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 	wxString _content = ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, wxEmptyString, editor->GetFileName().GetFullPath());
 
 	// we are good to go :)
-	if (editor->GetEditorText().Find(data.GetIgnoreString()) != wxNOT_FOUND) {
-		wxLogMessage(_("File contains ignore string, skipping it"));
-		return;
-	}
+	wxString ignoreString = data.GetIgnoreString();
+	ignoreString = ignoreString.Trim().Trim(false);
 
+	if (ignoreString.IsEmpty() == false) {
+		if (editor->GetEditorText().Find(data.GetIgnoreString()) != wxNOT_FOUND) {
+			wxLogMessage(_("File contains ignore string, skipping it"));
+			return;
+		}
+	}
 	editor->InsertText(0, _content);
 }
 
@@ -418,14 +422,20 @@ void Copyright::MassUpdate(const std::vector<wxFileName> &filtered_files, const 
 		wxString file_content;
 		wxString _content = ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, wxEmptyString, fn.GetFullPath());
 		if (ReadFileWithConversion(fn.GetFullPath(), file_content)) {
-			wxString msg;
-			// if the file contains the ignore string, skip this file
-			if (file_content.Find(data.GetIgnoreString()) != wxNOT_FOUND) {
 
-				msg << wxT("File contains ignore string, skipping it: ") << fn.GetFullName();
-				if (!prgDlg->Update(i, msg)) {
-					prgDlg->Destroy();
-					return;
+			wxString msg;
+
+			// if the file contains the ignore string, skip this file
+			wxString ignoreString = data.GetIgnoreString();
+			ignoreString = ignoreString.Trim().Trim(false);
+
+			if (ignoreString.IsEmpty() == false) {
+				if (file_content.Find(data.GetIgnoreString()) != wxNOT_FOUND) {
+					msg << wxT("File contains ignore string, skipping it: ") << fn.GetFullName();
+					if (!prgDlg->Update(i, msg)) {
+						prgDlg->Destroy();
+						return;
+					}
 				}
 			} else {
 

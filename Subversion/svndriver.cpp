@@ -189,11 +189,11 @@ void SvnDriver::DisplayLog(const wxString &outputFile, const wxString &content)
 	//Load the output file into the editor
 	wxString tmpFile(outputFile);
 	if (tmpFile.IsEmpty()) {
-		tmpFile = wxFileName::GetTempDir();
-#ifdef __WXGTK__
-		tmpFile << wxT("/");
-#endif
-		tmpFile << wxT("ChangeLog.txt");
+//		tmpFile = wxFileName::GetTempDir();
+//#ifdef __WXGTK__
+//		tmpFile << wxT("/");
+//#endif
+		tmpFile << wxFileName::CreateTempFileName(wxT("SvnLog"));
 	}
 
 	wxFFile file(tmpFile, wxT("w+"));
@@ -571,7 +571,7 @@ void SvnDriver::ChangeLog()
 		command << wxT(" log ") << fileName;
 		command << wxT(" -r ") << fromStr << wxT(":") << toStr;
 
-		m_curHandler = new SvnChangeLogCmdHandler(this, outputFile, command);
+		m_curHandler = new SvnChangeLogCmdHandler(this, outputFile, command, dlg->GetFlags());
 		ExecCommand(command);
 	}
 	dlg->Destroy();

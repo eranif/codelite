@@ -20,6 +20,7 @@
 #include <wx/sizer.h>
 #include <wx/statline.h>
 #include "filepicker.h"
+#include <wx/checkbox.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
 
@@ -41,6 +42,7 @@ class SvnLogBaseDialog : public wxDialog
 		wxStaticLine* m_staticline2;
 		wxStaticText* m_staticText5;
 		FilePicker *m_filePicker;
+		wxCheckBox* m_checkBoxPrettyReport;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOK;
 		wxButton* m_buttonCancel;

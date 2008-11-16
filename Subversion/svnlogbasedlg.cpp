@@ -50,6 +50,11 @@ SvnLogBaseDialog::SvnLogBaseDialog( wxWindow* parent, wxWindowID id, const wxStr
 	m_filePicker = new FilePicker(this, wxID_ANY);
 	bSizer1->Add( m_filePicker, 0, wxALL|wxEXPAND, 5 );
 	
+	m_checkBoxPrettyReport = new wxCheckBox( this, wxID_ANY, _("Create compact change log"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxPrettyReport->SetValue(true);
+	
+	bSizer1->Add( m_checkBoxPrettyReport, 0, wxALL, 5 );
+	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
 	

@@ -39,6 +39,7 @@ public:
 	wxString GetFilePath() const{return m_filePicker->GetPath();}
 	wxString GetFromRevision() const{return m_textCtrlFromRevision->GetValue();}
 	wxString GetToRevision() const {return m_textCtrlToRevision->GetValue();}
+	size_t GetFlags();
 	
 public:
 	/** Constructor */

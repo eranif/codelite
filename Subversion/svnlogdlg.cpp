@@ -23,10 +23,20 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "svnlogdlg.h"
+#include "svnhandler.h"
 
 SvnLogDlg::SvnLogDlg( wxWindow* parent )
 :
 SvnLogBaseDialog( parent )
 {
 
+}
+
+size_t SvnLogDlg::GetFlags()
+{
+	size_t flags (0);
+	if(m_checkBoxPrettyReport->IsChecked()) {
+		flags |= SvnChangeLog_Compact;
+	}
+	return flags;
 }

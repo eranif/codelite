@@ -90,13 +90,20 @@ public:
 	virtual void ProcessEvent(wxCommandEvent &event);
 };
 
+enum {
+	SvnChangeLog_Compact = 0x00000001,
+};
+
 class SvnChangeLogCmdHandler : public SvnCmdHandler {
 	wxString m_content;
 	wxString m_outputFile;
+	size_t m_flags;
+	
 public:
-	SvnChangeLogCmdHandler(SvnDriver *driver, const wxString &outputFile, const wxString &cmd) 
+	SvnChangeLogCmdHandler(SvnDriver *driver, const wxString &outputFile, const wxString &cmd, size_t flags) 
 	: SvnCmdHandler(driver, cmd) 
 	, m_outputFile(outputFile)
+	, m_flags(flags)
 	{}
 	
 	virtual ~SvnChangeLogCmdHandler(){}

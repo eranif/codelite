@@ -69,12 +69,13 @@ int wxFBOkIconId			= wxNOT_FOUND;
 int wxFBConflictIconId		= wxNOT_FOUND;
 
 #define VALIDATE_SVNPATH(){\
-	if(!SanityCheck()){\
-		return;\
-	}\
-}
+		if(!SanityCheck()){\
+			return;\
+		}\
+	}
 
-static bool IsIgnoredFile(const wxString &file, const wxString &patten) {
+static bool IsIgnoredFile(const wxString &file, const wxString &patten)
+{
 	wxStringTokenizer tkz(patten, wxT(";"), wxTOKEN_STRTOK);
 	while (tkz.HasMoreTokens()) {
 		if (wxMatchWild(tkz.NextToken(), file)) {
@@ -87,7 +88,8 @@ static bool IsIgnoredFile(const wxString &file, const wxString &patten) {
 static SubversionPlugin* theSvnPlugin = NULL;
 
 //Define the plugin entry point
-extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager) {
+extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
+{
 	if (theSvnPlugin == 0) {
 		theSvnPlugin = new SubversionPlugin(manager);
 	}
@@ -95,7 +97,8 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager) {
 }
 
 //Define the plugin entry point
-extern "C" EXPORT PluginInfo GetPluginInfo() {
+extern "C" EXPORT PluginInfo GetPluginInfo()
+{
 	PluginInfo info;
 	info.SetAuthor(wxT("Eran Ifrah"));
 	info.SetName(wxT("Svn"));
@@ -104,7 +107,8 @@ extern "C" EXPORT PluginInfo GetPluginInfo() {
 	return info;
 }
 
-extern "C" EXPORT int GetPluginInterfaceVersion() {
+extern "C" EXPORT int GetPluginInterfaceVersion()
+{
 	return PLUGIN_INTERFACE_VERSION;
 }
 
@@ -117,7 +121,8 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		, m_explorerSepItem(NULL)
 		, m_editorSepItem(NULL)
 		, m_workspaceSepItem(NULL)
-		, m_projectSepItem(NULL) {
+		, m_projectSepItem(NULL)
+{
 	m_svn = new SvnDriver(this, manager);
 
 	manager->GetConfigTool()->ReadObject(wxT("SubversionOptions"), &m_options);
@@ -204,22 +209,23 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		FolderOkIconId			= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_ok")));
 		FolderModifiedIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_modified")));
 		FolderConflictIconId 		= tree->GetImageList()->Add(wxXmlResource::Get()->LoadBitmap(wxT("folder_conflict")));
-		
+
 		// wxFormBuilder support
 		wxString basePath(m_mgr->GetInstallDirectory() + wxT("/plugins/resources/"));
 		wxBitmap wxfb_ok, wxfb_modified, wxfb_conflict;
-		
+
 		wxfb_ok.LoadFile(basePath + wxT("wxfb_ok.png"), wxBITMAP_TYPE_PNG);
 		wxfb_modified.LoadFile(basePath + wxT("wxfb_modified.png"), wxBITMAP_TYPE_PNG);
 		wxfb_conflict.LoadFile(basePath + wxT("wxfb_conflict.png"), wxBITMAP_TYPE_PNG);
-		
+
 		wxFBConflictIconId = tree->GetImageList()->Add(wxfb_conflict);
 		wxFBOkIconId = tree->GetImageList()->Add(wxfb_ok);
 		wxFBModifiedIconId = tree->GetImageList()->Add(wxfb_modified);
 	}
 }
 
-wxMenu *SubversionPlugin::CreateEditorPopMenu() {
+wxMenu *SubversionPlugin::CreateEditorPopMenu()
+{
 	//Create the popup menu for the file explorer
 	//The only menu that we are interseted is the file explorer menu
 	wxMenu* menu = new wxMenu();
@@ -248,7 +254,8 @@ wxMenu *SubversionPlugin::CreateEditorPopMenu() {
 	return menu;
 }
 
-wxMenu *SubversionPlugin::CreatePopMenu() {
+wxMenu *SubversionPlugin::CreatePopMenu()
+{
 	//Create the popup menu for the file explorer
 	//The only menu that we are interseted is the file explorer menu
 	wxMenu* menu = new wxMenu();
@@ -273,7 +280,7 @@ wxMenu *SubversionPlugin::CreatePopMenu() {
 
 	item = new wxMenuItem(menu, XRCID("svn_revert"), wxT("&Revert"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	
+
 	item = new wxMenuItem(menu, XRCID("svn_resolve_conflicted_file"), wxT("Resol&ve"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
@@ -285,7 +292,7 @@ wxMenu *SubversionPlugin::CreatePopMenu() {
 	item = new wxMenuItem(menu, XRCID("svn_patch"), wxT("Apply &Patch"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	menu->AppendSeparator();
-	
+
 	item = new wxMenuItem(menu, XRCID("svn_changelog"), wxT("Create Change &Log"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	menu->AppendSeparator();
@@ -300,28 +307,32 @@ wxMenu *SubversionPlugin::CreatePopMenu() {
 	return menu;
 }
 
-SubversionPlugin::~SubversionPlugin() {
+SubversionPlugin::~SubversionPlugin()
+{
 	SvnCommitMsgsMgr::Release();
 	UnPlug();
 }
 
-void SubversionPlugin::OnSvnAbort(wxCommandEvent &event) {
+void SubversionPlugin::OnSvnAbort(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
 	m_svn->PrintMessage(wxT("----\nAborting ...\n"));
 	m_svn->Abort();
 }
 
-void SubversionPlugin::OnChangeLog(wxCommandEvent &event) {
+void SubversionPlugin::OnChangeLog(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
 	m_svn->ChangeLog();
 }
 
-void SubversionPlugin::OnResolveConflict(wxCommandEvent& e) {
+void SubversionPlugin::OnResolveConflict(wxCommandEvent& e)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(e);
-	
+
 	// this methods is invoked from the file level menu (file explorer / workspace view)
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
 	if (item.m_fileName.FileExists()) {
@@ -332,7 +343,8 @@ void SubversionPlugin::OnResolveConflict(wxCommandEvent& e) {
 	}
 }
 
-void SubversionPlugin::OnResolveConflictFile(wxCommandEvent& e) {
+void SubversionPlugin::OnResolveConflictFile(wxCommandEvent& e)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(e);
 
@@ -343,28 +355,32 @@ void SubversionPlugin::OnResolveConflictFile(wxCommandEvent& e) {
 	}
 }
 
-void SubversionPlugin::OnCleanup(wxCommandEvent &event) {
+void SubversionPlugin::OnCleanup(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
 	m_svn->PrintMessage(wxT("----\nPerforming cleanup ...\n"));
 	m_svn->Cleanup();
 }
 
-void SubversionPlugin::OnUpdate(wxCommandEvent &event) {
+void SubversionPlugin::OnUpdate(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	m_svn->Update(new UpdatePostCmdAction(m_mgr, this));
 }
 
-void SubversionPlugin::OnCommit(wxCommandEvent &event) {
+void SubversionPlugin::OnCommit(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
 	m_svn->PrintMessage(wxT("----\nCommitting ...\n"));
 	m_svn->Commit();
 }
 
-void SubversionPlugin::OnCommitFile(wxCommandEvent &event) {
+void SubversionPlugin::OnCommitFile(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
 	m_svn->PrintMessage(wxT("----\nCommitting ...\n"));
@@ -375,7 +391,8 @@ void SubversionPlugin::OnCommitFile(wxCommandEvent &event) {
 	}
 }
 
-void SubversionPlugin::OnUpdateFile(wxCommandEvent &event) {
+void SubversionPlugin::OnUpdateFile(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
@@ -385,21 +402,24 @@ void SubversionPlugin::OnUpdateFile(wxCommandEvent &event) {
 	}
 }
 
-void SubversionPlugin::OnSvnAdd(wxCommandEvent &event) {
+void SubversionPlugin::OnSvnAdd(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
 	m_svn->PrintMessage(wxT("----\nAdding file(s)...\n"));
 	m_svn->Add();
 }
 
-void SubversionPlugin::OnDiff(wxCommandEvent &event) {
+void SubversionPlugin::OnDiff(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
 	m_svn->PrintMessage(wxT("----\nCreating diff file...\n"));
 	m_svn->Diff();
 }
 
-void SubversionPlugin::OnDiffFile(wxCommandEvent &event) {
+void SubversionPlugin::OnDiffFile(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
 	m_svn->PrintMessage(wxT("----\nCreating diff file...\n"));
@@ -410,7 +430,8 @@ void SubversionPlugin::OnDiffFile(wxCommandEvent &event) {
 	}
 }
 
-void SubversionPlugin::OnRevertFile(wxCommandEvent &e) {
+void SubversionPlugin::OnRevertFile(wxCommandEvent &e)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(e);
 	IEditor *editor = m_mgr->GetActiveEditor();
@@ -419,19 +440,22 @@ void SubversionPlugin::OnRevertFile(wxCommandEvent &e) {
 	}
 }
 
-void SubversionPlugin::OnDelete(wxCommandEvent &e) {
+void SubversionPlugin::OnDelete(wxCommandEvent &e)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(e);
 	m_svn->Delete();
 }
 
-void SubversionPlugin::OnRevert(wxCommandEvent &e) {
+void SubversionPlugin::OnRevert(wxCommandEvent &e)
+{
 	VALIDATE_SVNPATH();
 	wxUnusedVar(e);
 	m_svn->Revert();
 }
 
-void SubversionPlugin::OnShowSvnStatus_FileExplorer(wxCommandEvent &event) {
+void SubversionPlugin::OnShowSvnStatus_FileExplorer(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
 	if (item.m_item.IsOk()) {
@@ -447,7 +471,8 @@ void SubversionPlugin::OnShowSvnStatus_FileExplorer(wxCommandEvent &event) {
 	event.Skip();
 }
 
-void SubversionPlugin::OnShowSvnServerStatus_FileExplorer(wxCommandEvent &event) {
+void SubversionPlugin::OnShowSvnServerStatus_FileExplorer(wxCommandEvent &event)
+{
 	VALIDATE_SVNPATH();
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
 	if (item.m_item.IsOk()) {
@@ -463,12 +488,14 @@ void SubversionPlugin::OnShowSvnServerStatus_FileExplorer(wxCommandEvent &event)
 	event.Skip();
 }
 
-wxToolBar *SubversionPlugin::CreateToolBar(wxWindow *parent) {
+wxToolBar *SubversionPlugin::CreateToolBar(wxWindow *parent)
+{
 	wxUnusedVar(parent);
 	return NULL;
 }
 
-void SubversionPlugin::CreatePluginMenu(wxMenu *pluginsMenu) {
+void SubversionPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
+{
 	wxMenu *menu = new wxMenu();
 	wxMenuItem *item(NULL);
 
@@ -482,7 +509,8 @@ void SubversionPlugin::CreatePluginMenu(wxMenu *pluginsMenu) {
 	topWin->Connect(XRCID("svn_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnOptions), NULL, (wxEvtHandler*)this);
 }
 
-void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type) {
+void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
+{
 	if (type == MenuTypeFileExplorer) {
 		if (!menu->FindItem(XRCID("SVN_POPUP"))) {
 			m_explorerSepItem = menu->PrependSeparator();
@@ -519,7 +547,8 @@ void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type) {
 	}
 }
 
-void SubversionPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type) {
+void SubversionPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
+{
 	if (type == MenuTypeFileExplorer) {
 		wxMenuItem *item = menu->FindItem(XRCID("SVN_POPUP"));
 		if (item) {
@@ -552,7 +581,8 @@ void SubversionPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type) {
 	}
 }
 
-void SubversionPlugin::OnFileSaved(wxCommandEvent &e) {
+void SubversionPlugin::OnFileSaved(wxCommandEvent &e)
+{
 	VALIDATE_SVNPATH();
 
 	SvnOptions options;
@@ -568,7 +598,8 @@ void SubversionPlugin::OnFileSaved(wxCommandEvent &e) {
 	e.Skip();
 }
 
-void SubversionPlugin::OnOptions(wxCommandEvent &event) {
+void SubversionPlugin::OnOptions(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 	SvnOptionsDlg *dlg = new SvnOptionsDlg(NULL, m_options);
 	if (dlg->ShowModal() == wxID_OK) {
@@ -578,7 +609,8 @@ void SubversionPlugin::OnOptions(wxCommandEvent &event) {
 	dlg->Destroy();
 }
 
-void SubversionPlugin::UnPlug() {
+void SubversionPlugin::UnPlug()
+{
 	topWin->Disconnect(XRCID("svn_commit_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommitFile), NULL, (wxEvtHandler*)this);
 	topWin->Disconnect(XRCID("svn_update_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnUpdateFile), NULL, (wxEvtHandler*)this);
 	topWin->Disconnect(XRCID("svn_revert_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnRevertFile), NULL, (wxEvtHandler*)this);
@@ -627,11 +659,13 @@ void SubversionPlugin::UnPlug() {
 	}
 }
 
-void SubversionPlugin::OnFileExplorerInitDone(wxCommandEvent &event) {
+void SubversionPlugin::OnFileExplorerInitDone(wxCommandEvent &event)
+{
 	wxUnusedVar(event);
 }
 
-void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event) {
+void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event)
+{
 	if (IsWorkspaceUnderSvn() == false) {
 		return;
 	}
@@ -654,114 +688,118 @@ void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event) {
 	event.Skip();
 }
 
-void SubversionPlugin::OnAppInitDone(wxCommandEvent &event) {
+void SubversionPlugin::OnAppInitDone(wxCommandEvent &event)
+{
 	m_initIsDone = true;
 }
 
-void SubversionPlugin::DoGetWspSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate) {
+void SubversionPlugin::DoGetWspSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate)
+{
 	//get list of paths to check
 	std::map<wxString, bool> workspaceFolders;
-	
-    workspaceFolders[basePath] = true;
-    
+
+	workspaceFolders[basePath] = true;
+
 	wxString errMsg;
 	wxArrayString projects;
 	m_mgr->GetWorkspace()->GetProjectList(projects);
 	for (size_t i=0; i<projects.GetCount(); i++) {
 		ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), errMsg);
-		if(p){
-            workspaceFolders[p->GetFileName().GetPath()] = true;
+		if (p) {
+			workspaceFolders[p->GetFileName().GetPath()] = true;
 			// for each project get list of its files and map the folders
-            std::vector<wxFileName> projectFiles;
+			std::vector<wxFileName> projectFiles;
 			p->GetFiles(projectFiles, true);
-			for(size_t j=0; j<projectFiles.size(); j++){
-                workspaceFolders[projectFiles.at(j).GetPath()] = true;
+			for (size_t j=0; j<projectFiles.size(); j++) {
+				workspaceFolders[projectFiles.at(j).GetPath()] = true;
 			}
 		}
 	}
-	
-    //form basic svn command line
+
+	//form basic svn command line
 	wxString command;
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive -q --no-ignore ");
-    if (inclOutOfDate) {
-        command << wxT("-u ");
-    }
+	if (inclOutOfDate) {
+		command << wxT("-u ");
+	}
 
-	//build list of directories 
+	//build list of directories
 	std::map<wxString, bool>::iterator iter = workspaceFolders.begin(), next = iter;
 	for (next++; iter != workspaceFolders.end(); iter = next++) {
-        wxFileName dir = wxFileName::DirName(iter->first);
-        
-        //check that this directory is actually under svn control
-        dir.AppendDir(wxT(".svn"));
-        if (!dir.DirExists()) {
-            m_svn->PrintMessage(wxString::Format(wxT("Skipping non-versioned directory: %s\n"), iter->first.c_str()));
-            workspaceFolders.erase(iter);
-            continue;
-        }
-        dir.RemoveLastDir();
-        
-        //check that this directory is not a child of another directory under svn control
-        do {
-            dir.RemoveLastDir();
-        } while (dir.GetDirCount() > 0 && workspaceFolders.find(dir.GetPath()) == workspaceFolders.end());
-        if (dir.GetDirCount() > 0) {
-            workspaceFolders.erase(iter);
-            continue;
-        }
-        
-        //directory passed tests, so add it to the cmd line
-        command << wxT("\"") <<  iter->first << wxT("\" ");
+		wxFileName dir = wxFileName::DirName(iter->first);
+
+		//check that this directory is actually under svn control
+		dir.AppendDir(wxT(".svn"));
+		if (!dir.DirExists()) {
+			m_svn->PrintMessage(wxString::Format(wxT("Skipping non-versioned directory: %s\n"), iter->first.c_str()));
+			workspaceFolders.erase(iter);
+			continue;
+		}
+		dir.RemoveLastDir();
+
+		//check that this directory is not a child of another directory under svn control
+		do {
+			dir.RemoveLastDir();
+		} while (dir.GetDirCount() > 0 && workspaceFolders.find(dir.GetPath()) == workspaceFolders.end());
+		if (dir.GetDirCount() > 0) {
+			workspaceFolders.erase(iter);
+			continue;
+		}
+
+		//directory passed tests, so add it to the cmd line
+		command << wxT("\"") <<  iter->first << wxT("\" ");
 	}
-    
-    m_svn->PrintMessage(wxString::Format(wxT("Executing: %s\n"), command.c_str()));
+
+	m_svn->PrintMessage(wxString::Format(wxT("Executing: %s\n"), command.c_str()));
 	ProcUtils::ExecuteCommand(command, output);
 }
 
-void SubversionPlugin::DoGetSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate) {
+void SubversionPlugin::DoGetSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate)
+{
 	wxString command;
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive -q --no-ignore ");
-    if (inclOutOfDate) {
-        command << wxT("-u ");
-    }
-    command << wxT("\"") << basePath << wxT("\"");
+	if (inclOutOfDate) {
+		command << wxT("-u ");
+	}
+	command << wxT("\"") << basePath << wxT("\"");
 	ProcUtils::ExecuteCommand(command, output);
 }
 
 static int compare_files(const wxString &first, const wxString &second)
 {
-    wxFileName firstFile(first);
-    wxFileName secondFile(second);
-    
-    firstFile.MakeAbsolute();
-    secondFile.MakeAbsolute();
-    
-    int cmp = firstFile.GetVolume().CmpNoCase(secondFile.GetVolume());
-    if (cmp != 0)
-        return cmp;
-        
-    wxArrayString firstDirs = firstFile.GetDirs();
-    wxArrayString secondDirs = secondFile.GetDirs();
-    for (size_t i = 0; i < firstDirs.Count() && i < secondDirs.Count(); i++) {
-        cmp = firstDirs[i].CmpNoCase(secondDirs[i]);
-        if (cmp != 0) 
-            return cmp;
-    }
-    
-    cmp = firstDirs.Count()-secondDirs.Count();
-    if (cmp != 0)
-        return cmp;
-        
-    cmp = firstFile.GetName().CmpNoCase(secondFile.GetName());
-    if (cmp != 0)
-        return cmp;
-        
-    return firstFile.GetExt().CmpNoCase(secondFile.GetExt());
+	wxFileName firstFile(first);
+	wxFileName secondFile(second);
+
+	firstFile.MakeAbsolute();
+	secondFile.MakeAbsolute();
+
+	int cmp = firstFile.GetVolume().CmpNoCase(secondFile.GetVolume());
+	if (cmp != 0)
+		return cmp;
+
+	wxArrayString firstDirs = firstFile.GetDirs();
+	wxArrayString secondDirs = secondFile.GetDirs();
+	for (size_t i = 0; i < firstDirs.Count() && i < secondDirs.Count(); i++) {
+		cmp = firstDirs[i].CmpNoCase(secondDirs[i]);
+		if (cmp != 0)
+			return cmp;
+	}
+
+	cmp = firstDirs.Count()-secondDirs.Count();
+	if (cmp != 0)
+		return cmp;
+
+	cmp = firstFile.GetName().CmpNoCase(secondFile.GetName());
+	if (cmp != 0)
+		return cmp;
+
+	return firstFile.GetExt().CmpNoCase(secondFile.GetExt());
 }
 
-void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &origin, const wxString &basePath, bool inclOutOfDate) {
+void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &origin, const wxString &basePath, bool inclOutOfDate)
+{
 	Notebook *book =  m_mgr->GetMainNotebook();
 
 	book->Freeze();
@@ -792,37 +830,37 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &o
 	//replace the page macros
 	//$(ModifiedFiles)
 	wxArrayString files;
-    wxString formatStr;
-    
-    files.Clear();
-    SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateOutOfDate);
-    files.Sort(compare_files);
-    formatStr = FormatRaws(files, basePath, SvnXmlParser::StateOutOfDate, inclOutOfDate);
-    content.Replace(wxT("$(OutOfDateFiles)"), formatStr);
+	wxString formatStr;
+
+	files.Clear();
+	SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateOutOfDate);
+	files.Sort(compare_files);
+	formatStr = FormatRaws(files, basePath, SvnXmlParser::StateOutOfDate, inclOutOfDate);
+	content.Replace(wxT("$(OutOfDateFiles)"), formatStr);
 
 	files.Clear();
 	SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateModified);
-    files.Sort(compare_files);
+	files.Sort(compare_files);
 	formatStr = FormatRaws(files, basePath, SvnXmlParser::StateModified);
 	content.Replace(wxT("$(ModifiedFiles)"), formatStr);
 
 	files.Clear();
 	SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateConflict);
-    files.Sort(compare_files);
+	files.Sort(compare_files);
 	formatStr = FormatRaws(files, basePath, SvnXmlParser::StateConflict);
 	content.Replace(wxT("$(ConflictFiles)"), formatStr);
 
 	files.Clear();
 	SvnXmlParser::GetFiles(rawData, files, SvnXmlParser::StateUnversioned);
-    files.Sort(compare_files);
+	files.Sort(compare_files);
 	formatStr = FormatRaws(files, basePath, SvnXmlParser::StateUnversioned);
 	content.Replace(wxT("$(UnversionedFiles)"), formatStr);
-    
-    content.Replace(wxT("$(RptType)"), inclOutOfDate ? wxT("Online") : wxT("Offline"));
+
+	content.Replace(wxT("$(RptType)"), inclOutOfDate ? wxT("Online") : wxT("Offline"));
 	content.Replace(wxT("$(Origin)"), origin);
 	content.Replace(wxT("$(BasePath)"), basePath);
 	content.Replace(wxT("$(DateTime)"), wxDateTime::Now().Format());
-    
+
 	reportPage->SetPage(content);
 
 	//create new report
@@ -830,17 +868,18 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &o
 	book->Thaw();
 }
 
-void SubversionPlugin::DoGetPrjSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate) {
+void SubversionPlugin::DoGetPrjSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate)
+{
 	//get the selected project name
 	wxString command;
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive -q --no-ignore ");
 	if (inclOutOfDate) {
-        command << wxT("-u ");
-    }
-    wxFileName dir(basePath);
-    dir.AppendDir(wxT(".svn"));
-	if(dir.DirExists()){
+		command << wxT("-u ");
+	}
+	wxFileName dir(basePath);
+	dir.AppendDir(wxT(".svn"));
+	if (dir.DirExists()) {
 		command << wxT("\"") <<  basePath << wxT("\" ");
 		ProcUtils::ExecuteCommand(command, output);
 	} else {
@@ -848,72 +887,76 @@ void SubversionPlugin::DoGetPrjSvnStatus(const wxString &basePath, wxArrayString
 	}
 }
 
-void SubversionPlugin::DoGeneratePrjReport(bool inclOutOfDate) {
-    wxString basePath;
+void SubversionPlugin::DoGeneratePrjReport(bool inclOutOfDate)
+{
+	wxString basePath;
 	wxArrayString output;
 	ProjectPtr p = GetSelectedProject();
 	if (p) {
-        basePath = p->GetFileName().GetPath();
+		basePath = p->GetFileName().GetPath();
 		DoGetPrjSvnStatus(basePath, output, inclOutOfDate);
 	}
 	DoMakeHTML(output, wxT("project"), basePath, inclOutOfDate);
 }
 
-void SubversionPlugin::DoGenerateWspReport(bool inclOutOfDate) {
-    wxString basePath = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath();
+void SubversionPlugin::DoGenerateWspReport(bool inclOutOfDate)
+{
+	wxString basePath = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath();
 	wxArrayString output;
 	DoGetWspSvnStatus(basePath, output, inclOutOfDate);
 	DoMakeHTML(output, wxT("workspace"), basePath, inclOutOfDate);
 }
 
-void SubversionPlugin::DoGenerateReport(const wxString &basePath, bool inclOutOfDate) {
+void SubversionPlugin::DoGenerateReport(const wxString &basePath, bool inclOutOfDate)
+{
 	wxArrayString output;
 	DoGetSvnStatus(basePath, output, inclOutOfDate);
 	DoMakeHTML(output, wxT("explorer"), basePath, inclOutOfDate);
 }
 
-wxString SubversionPlugin::FormatRaws(const wxArrayString &lines, const wxString &basePath, SvnXmlParser::FileState state, bool inclOutOfDate) {
+wxString SubversionPlugin::FormatRaws(const wxArrayString &lines, const wxString &basePath, SvnXmlParser::FileState state, bool inclOutOfDate)
+{
 	SvnOptions data;
 	m_mgr->GetConfigTool()->ReadObject(wxT("SubversionOptions"), &data);
 
 	wxString content;
 	content << wxT("<tr><td><font size=2 face=\"Verdana\"><center>");
-    
+
 	if (!lines.IsEmpty()) {
-        content << wxT("<table width=100% cellspacing=\"0\" cellpadding=\"2\">");
-    } else if (state != SvnXmlParser::StateOutOfDate || inclOutOfDate) {
+		content << wxT("<table width=100% cellspacing=\"0\" cellpadding=\"2\">");
+	} else if (state != SvnXmlParser::StateOutOfDate || inclOutOfDate) {
 		content << wxT("<b>No files were found.</b>");
 	} else {
-        content << wxT("<b>Query not made.</b>");
-    }
+		content << wxT("<b>Query not made.</b>");
+	}
 
-    wxColour lineCol(0xd0,0xff,0xff);
-    wxString lastDir;
+	wxColour lineCol(0xd0,0xff,0xff);
+	wxString lastDir;
 	for (size_t i=0; i<lines.GetCount(); i++) {
 		if ( IsIgnoredFile(lines.Item(i), data.GetPattern() ) ) {
 			continue;
 		}
-        
+
 		wxFileName fn(lines.Item(i));
-        fn.MakeAbsolute();
-		
-        if (lastDir != fn.GetPath()) {
-            lineCol.Set(lineCol.Red() == 0xff ? 0xd0 : 0xff, 0xff, 0xff);
-        }
-        content << wxT("<tr bgcolor=\"") << lineCol.GetAsString(wxC2S_HTML_SYNTAX)<< wxT("\">");
-        
-        if (lastDir != fn.GetPath()) {
-            wxFileName rfn = fn;
-            rfn.MakeRelativeTo(basePath);
-            content << wxT("<td align=\"left\">") << rfn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) << wxT("</td>");
-        } else {
-            content << wxT("<td>&nbsp;</td>");
-        }
-        
+		fn.MakeAbsolute();
+
+		if (lastDir != fn.GetPath()) {
+			lineCol.Set(lineCol.Red() == 0xff ? 0xd0 : 0xff, 0xff, 0xff);
+		}
+		content << wxT("<tr bgcolor=\"") << lineCol.GetAsString(wxC2S_HTML_SYNTAX)<< wxT("\">");
+
+		if (lastDir != fn.GetPath()) {
+			wxFileName rfn = fn;
+			rfn.MakeRelativeTo(basePath);
+			content << wxT("<td align=\"left\">") << rfn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR) << wxT("</td>");
+		} else {
+			content << wxT("<td>&nbsp;</td>");
+		}
+
 		content << wxT("<td><a href=\"action:open-file:") << lines.Item(i) << wxT("\" >");
-        content << fn.GetFullName();
-        content << wxT("</a></td>") ;
-		
+		content << fn.GetFullName();
+		content << wxT("</a></td>") ;
+
 		//for modified files, add Diff menu
 		switch (state) {
 		case SvnXmlParser::StateModified:
@@ -922,28 +965,29 @@ wxString SubversionPlugin::FormatRaws(const wxArrayString &lines, const wxString
 			break;
 		case SvnXmlParser::StateUnversioned:
 			content << wxT("<td><a href=\"action:add-$(Origin):") << fn.GetFullPath() << wxT("\" >") << wxT("Add") << wxT("</a></td>");
-            content << wxT("<td>&nbsp;</td>");
+			content << wxT("<td>&nbsp;</td>");
 			break;
-        case SvnXmlParser::StateOutOfDate:
-            content << wxT("<td><a href=\"action:update-$(Origin):") << fn.GetFullPath() << wxT("\" >") << wxT("Update") << wxT("</a></td>");
-            content << wxT("<td>&nbsp;</td>");
+		case SvnXmlParser::StateOutOfDate:
+			content << wxT("<td><a href=\"action:update-$(Origin):") << fn.GetFullPath() << wxT("\" >") << wxT("Update") << wxT("</a></td>");
+			content << wxT("<td>&nbsp;</td>");
 		default:
-            content << wxT("<td>&nbsp;</td>");
-            content << wxT("<td>&nbsp;</td>");
+			content << wxT("<td>&nbsp;</td>");
+			content << wxT("<td>&nbsp;</td>");
 			break;
 		}
 
-        content << wxT("</tr>");
-        lastDir = fn.GetPath();
+		content << wxT("</tr>");
+		lastDir = fn.GetPath();
 	}
-    if (!lines.IsEmpty()) {
-        content << wxT("</table>");
-    }
-    content << wxT("</center></font></td></tr>");
+	if (!lines.IsEmpty()) {
+		content << wxT("</table>");
+	}
+	content << wxT("</center></font></td></tr>");
 	return content;
 }
 
-void SubversionPlugin::OnLinkClicked(wxHtmlLinkEvent &e) {
+void SubversionPlugin::OnLinkClicked(wxHtmlLinkEvent &e)
+{
 	wxHtmlLinkInfo info = e.GetLinkInfo();
 	wxString action = info.GetHref();
 
@@ -954,21 +998,21 @@ void SubversionPlugin::OnLinkClicked(wxHtmlLinkEvent &e) {
 		wxString fileName = action.AfterFirst(wxT(':'));
 
 		wxFileName fn(fileName);
-        
+
 		if (command == wxT("commit-all-explorer")) {
 			m_svn->CommitFile(wxT("\"") + fn.GetFullPath() + wxT("\""));
 		} else if (command == wxT("commit-all-project")) {
 			SendSvnMenuEvent(XRCID("svn_commit_prj"));
 		} else if (command == wxT("commit-all-workspace")) {
 			SendSvnMenuEvent(XRCID("svn_commit_wsp"));
-            
+
 		} else if (command == wxT("update-all-explorer")) {
-			m_svn->UpdateFile(wxT("\"") + fn.GetFullPath() + wxT("\""));   
+			m_svn->UpdateFile(wxT("\"") + fn.GetFullPath() + wxT("\""));
 		} else if (command == wxT("update-all-project")) {
 			SendSvnMenuEvent(XRCID("svn_update_prj"));
 		} else if (command == wxT("update-all-workspace")) {
 			SendSvnMenuEvent(XRCID("svn_update_wsp"));
-            
+
 		} else if (command == wxT("refresh-explorer")) {
 			SendSvnMenuEvent(XRCID("svn_refresh"));
 		} else if (command == wxT("refresh-project")) {
@@ -985,35 +1029,36 @@ void SubversionPlugin::OnLinkClicked(wxHtmlLinkEvent &e) {
 
 		} else if (command == wxT("diff")) {
 			m_svn->DiffFile(fn);
-            
+
 		} else if (command == wxT("add-explorer")) {
 			m_svn->Add(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh")));
 		} else if (command == wxT("add-project")) {
 			m_svn->Add(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh_prj")));
 		} else if (command == wxT("add-workspace")) {
 			m_svn->Add(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh_wsp")));
-            
+
 		} else if (command == wxT("revert-explorer")) {
 			m_svn->RevertFile(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh")));
 		} else if (command == wxT("revert-project")) {
 			m_svn->RevertFile(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh_prj")));
 		} else if (command == wxT("revert-workspace")) {
 			m_svn->RevertFile(fn, new SvnReportGeneratorAction(this, XRCID("svn_refresh_wsp")));
-            
+
 		} else if (command == wxT("update-explorer")) {
 			m_svn->UpdateFile(wxT("\"") + fn.GetFullPath() + wxT("\""), new SvnReportGeneratorAction(this, XRCID("svn_svr_refresh")));
 		} else if (command == wxT("update-project")) {
 			m_svn->UpdateFile(wxT("\"") + fn.GetFullPath() + wxT("\""), new SvnReportGeneratorAction(this, XRCID("svn_svr_refresh_prj")));
 		} else if (command == wxT("update-workspace")) {
 			m_svn->UpdateFile(wxT("\"") + fn.GetFullPath() + wxT("\""), new SvnReportGeneratorAction(this, XRCID("svn_svr_refresh_wsp")));
-            
+
 		} else {
 			e.Skip();
 		}
 	}
 }
 
-wxMenu* SubversionPlugin::CreateWorkspacePopMenu() {
+wxMenu* SubversionPlugin::CreateWorkspacePopMenu()
+{
 	//Create the popup menu for the file explorer
 	//The only menu that we are interseted is the file explorer menu
 	wxMenu* menu = new wxMenu();
@@ -1036,7 +1081,8 @@ wxMenu* SubversionPlugin::CreateWorkspacePopMenu() {
 	return menu;
 }
 
-wxMenu* SubversionPlugin::CreateProjectPopMenu() {
+wxMenu* SubversionPlugin::CreateProjectPopMenu()
+{
 	//Create the popup menu for the file explorer
 	//The only menu that we are interseted is the file explorer menu
 	wxMenu* menu = new wxMenu();
@@ -1059,44 +1105,51 @@ wxMenu* SubversionPlugin::CreateProjectPopMenu() {
 	return menu;
 }
 
-void SubversionPlugin::OnShowReportWsp(wxCommandEvent &e) {
+void SubversionPlugin::OnShowReportWsp(wxCommandEvent &e)
+{
 	wxUnusedVar(e);
 	wxWindowDisabler disabler;
 	DoGenerateWspReport();
 }
 
-void SubversionPlugin::OnShowServerReportWsp(wxCommandEvent &e) {
+void SubversionPlugin::OnShowServerReportWsp(wxCommandEvent &e)
+{
 	wxUnusedVar(e);
 	wxWindowDisabler disabler;
 	DoGenerateWspReport(true);
 }
 
-void SubversionPlugin::OnUpdateWsp(wxCommandEvent &e) {
+void SubversionPlugin::OnUpdateWsp(wxCommandEvent &e)
+{
 	wxString file = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME);
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	//concatenate list of files here
 	m_svn->UpdateFile(wxT("\"") + file + wxT("\""), new UpdatePostCmdAction(m_mgr, this));
 }
 
-void SubversionPlugin::OnCommitWsp(wxCommandEvent &e) {
+void SubversionPlugin::OnCommitWsp(wxCommandEvent &e)
+{
 	wxString file = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME);
 	m_svn->PrintMessage(wxT("----\nCommitting ...\n"));
 	m_svn->CommitFile(wxT("\"") + file + wxT("\""), new SvnIconRefreshHandler(m_mgr, this));
 }
 
-void SubversionPlugin::OnShowReportPrj(wxCommandEvent &e) {
+void SubversionPlugin::OnShowReportPrj(wxCommandEvent &e)
+{
 	wxUnusedVar(e);
 	wxWindowDisabler disabler;
 	DoGeneratePrjReport();
 }
 
-void SubversionPlugin::OnShowServerReportPrj(wxCommandEvent &e) {
+void SubversionPlugin::OnShowServerReportPrj(wxCommandEvent &e)
+{
 	wxUnusedVar(e);
 	wxWindowDisabler disabler;
 	DoGeneratePrjReport(true);
 }
 
-void SubversionPlugin::OnUpdatePrj(wxCommandEvent &e) {
+void SubversionPlugin::OnUpdatePrj(wxCommandEvent &e)
+{
 	ProjectPtr p = GetSelectedProject();
 	if (!p) {
 		return;
@@ -1107,7 +1160,8 @@ void SubversionPlugin::OnUpdatePrj(wxCommandEvent &e) {
 	m_svn->UpdateFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""), new UpdatePostCmdAction(m_mgr, this));
 }
 
-void SubversionPlugin::OnCommitPrj(wxCommandEvent &e) {
+void SubversionPlugin::OnCommitPrj(wxCommandEvent &e)
+{
 	ProjectPtr p = GetSelectedProject();
 	if (!p) {
 		return;
@@ -1117,7 +1171,8 @@ void SubversionPlugin::OnCommitPrj(wxCommandEvent &e) {
 	m_svn->CommitFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""), new SvnIconRefreshHandler(m_mgr, this));
 }
 
-ProjectPtr SubversionPlugin::GetSelectedProject() {
+ProjectPtr SubversionPlugin::GetSelectedProject()
+{
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
 	if ( item.m_text.IsEmpty() ) {
 		return NULL;
@@ -1131,23 +1186,34 @@ ProjectPtr SubversionPlugin::GetSelectedProject() {
 	return p;
 }
 
-void SubversionPlugin::OnRefrshIconsStatus(wxCommandEvent &e) {
+void SubversionPlugin::OnRefrshIconsStatus(wxCommandEvent &e)
+{
 	wxWindowDisabler disabler;
+
+	wxBusyInfo wait_msg(_("Updating SVN Icons, please wait..."));
+	m_mgr->GetTheApp()->Yield();
+		
 	SvnIconRefreshHandler handler(m_mgr, this);
 	handler.DoCommand();
 	e.Skip();
 }
 
-void SubversionPlugin::OnRefreshIconsCond(wxCommandEvent &e) {
-	wxWindowDisabler disabler;
+void SubversionPlugin::OnRefreshIconsCond(wxCommandEvent &e)
+{
 	if (m_options.GetFlags() & SvnKeepIconsUpdated) {
+		wxWindowDisabler disabler;
+		
+		wxBusyInfo wait_msg(_("Updating SVN Icons, please wait..."));
+		m_mgr->GetTheApp()->Yield();
+		
 		SvnIconRefreshHandler handler(m_mgr, this);
 		handler.DoCommand();
 	}
 	e.Skip();
 }
 
-bool SubversionPlugin::IsWorkspaceUnderSvn() {
+bool SubversionPlugin::IsWorkspaceUnderSvn()
+{
 	if (!m_mgr->IsWorkspaceOpen()) {
 		//no workspace is opened
 		return false;
@@ -1163,7 +1229,8 @@ bool SubversionPlugin::IsWorkspaceUnderSvn() {
 	return false;
 }
 
-void SubversionPlugin::SendSvnMenuEvent(int id) {
+void SubversionPlugin::SendSvnMenuEvent(int id)
+{
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, id);
 	event.SetEventObject(this);
 	wxPostEvent(this, event);
@@ -1178,11 +1245,11 @@ void SubversionPlugin::OnPatch(wxCommandEvent& e)
 bool SubversionPlugin::SanityCheck()
 {
 	static bool hasSvn = false;
-	
-	if(!hasSvn) {
+
+	if (!hasSvn) {
 		ExeLocator locator;
 		wxString where;
-		if(!locator.Locate(m_options.GetExePath(), where)){
+		if (!locator.Locate(m_options.GetExePath(), where)) {
 			wxString message;
 			message << wxT("SVN plugin error: failed to locate svn client installed (searched for: ") << m_options.GetExePath() << wxT(")");
 			wxLogMessage(message);

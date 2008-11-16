@@ -1,28 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : svnbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
@@ -41,10 +16,10 @@ SvnBaseDlg::SvnBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	m_textCtrl = new wxTextCtrl( this, wxID_ANY, wxT("# Enter commit log here.Lines starting with the pound sign (#), are \n# ignored\n"), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrl = new wxTextCtrl( this, wxID_ANY, _("# Enter commit log here.Lines starting with the pound sign (#), are \n# ignored\n"), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
 	bSizer1->Add( m_textCtrl, 1, wxALL|wxEXPAND, 5 );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Last commit messages:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Last commit messages:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	bSizer1->Add( m_staticText1, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	
@@ -57,16 +32,18 @@ SvnBaseDlg::SvnBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonOK, 0, wxALL, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	
+	this->Centre( wxBOTH );
 	
 	// Connect Events
 	m_comboBoxLastCommitMsgs->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( SvnBaseDlg::OnLastCommitMsgSelected ), NULL, this );

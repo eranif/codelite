@@ -1,28 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : project_settings_base_dlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
@@ -372,7 +347,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_staticText301->Wrap( -1 );
 	bSizer192->Add( m_staticText301, 0, wxALL, 5 );
 	
-	m_textCtrlDbgCmds = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH|wxSIMPLE_BORDER );
+	m_textCtrlDbgCmds = new wxTextCtrl( m_panelDebugger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH );
 	bSizer192->Add( m_textCtrlDbgCmds, 1, wxALL|wxEXPAND, 5 );
 	
 	m_panelDebugger->SetSizer( bSizer192 );
@@ -613,7 +588,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_staticText26->Wrap( -1 );
 	fgSizer5->Add( m_staticText26, 0, wxALL, 5 );
 	
-	m_textPreBuildRule = new wxTextCtrl( m_customMakefileStep, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2|wxSIMPLE_BORDER );
+	m_textPreBuildRule = new wxTextCtrl( m_customMakefileStep, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
 	fgSizer5->Add( m_textPreBuildRule, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer16->Add( fgSizer5, 1, wxEXPAND, 5 );

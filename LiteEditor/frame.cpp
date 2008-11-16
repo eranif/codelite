@@ -1372,7 +1372,6 @@ void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 		}
 	}
 	dlg->Destroy();
-	GetOpenWindowsPane()->UpdateList();
 }
 
 void Frame::OnFileClose(wxCommandEvent &event)
@@ -1390,7 +1389,6 @@ void Frame::OnFileClose(wxCommandEvent &event)
 	//this function does not send notification about page deletion, so we need to manually add the CppMenu()
 	AddCppMenu();
 
-	GetOpenWindowsPane()->UpdateList();
 	GetMainBook()->Clear();
 
 	// if no more editors are available, collapse the workspace tree
@@ -1472,7 +1470,6 @@ void Frame::OnPageChanged(NotebookEvent &event)
 		break;
 	}
 	editor->SetActive();
-	GetOpenWindowsPane()->SyncSelection();
 	SendCmdEvent(wxEVT_ACTIVE_EDITOR_CHANGED, (IEditor*)editor);
 	event.Skip();
 }
@@ -1480,7 +1477,6 @@ void Frame::OnPageChanged(NotebookEvent &event)
 void Frame::OnPageClosed(NotebookEvent &event)
 {
 	wxUnusedVar(event);
-	GetOpenWindowsPane()->UpdateList();
 
 	//clean the navigation bar
 	GetMainBook()->Clear();
@@ -2325,7 +2321,6 @@ void Frame::OnFileCloseAll(wxCommandEvent &event)
 	SetTitle(title);
 
 	GetMainBook()->Clear();
-	GetOpenWindowsPane()->UpdateList();
 	if (GetWorkspaceTab()->GetIsLinkedToEditor()) {
 		GetWorkspacePane()->CollpaseAll();
 	}

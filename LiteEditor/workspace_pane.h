@@ -46,7 +46,6 @@ class WorkspacePane : public wxPanel
 public:
 	static const wxString SYMBOL_VIEW;
 	static const wxString FILE_VIEW;
-	static const wxString OPEN_FILES;
 	static const wxString EXPLORER;
 	
 	Notebook *m_book;

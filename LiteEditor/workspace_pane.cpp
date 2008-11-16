@@ -42,7 +42,6 @@
 
 const wxString WorkspacePane::SYMBOL_VIEW 	= wxT("Outline");
 const wxString WorkspacePane::FILE_VIEW   	= wxT("Workspace");
-const wxString WorkspacePane::OPEN_FILES  	= wxT("Tabs");
 const wxString WorkspacePane::EXPLORER  	= wxT("Explorer");
 
 extern wxImageList* CreateSymbolTreeImages();
@@ -140,8 +139,8 @@ void WorkspacePane::CreateGUIControls()
 	m_winStack = new WindowStack(m_book, wxID_ANY);
 	ADD_WORKSPACE_PAGE(m_winStack, WorkspacePane::SYMBOL_VIEW);
 
-	m_openWindowsPane = new OpenWindowsPanel(m_book);
-	ADD_WORKSPACE_PAGE(m_openWindowsPane, WorkspacePane::OPEN_FILES);
+	m_openWindowsPane = new OpenWindowsPanel(m_book, wxT("Tabs"));
+	ADD_WORKSPACE_PAGE(m_openWindowsPane, m_openWindowsPane->GetCaption());
 
 	if (m_book->GetPageCount() > 0) {
 		m_book->SetSelection((size_t)0);

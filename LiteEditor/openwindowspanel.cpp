@@ -23,16 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
- #include "openwindowspanel.h"
-#include "frame.h"
 #include <wx/clntdata.h>
+#include "frame.h"
 #include "manager.h"
+#include "openwindowspanel.h"
 
-OpenWindowsPanel::OpenWindowsPanel( wxWindow* parent )
-		: 
-		OpenWindowsPanelBase( parent ),
-        m_rclickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")))
+OpenWindowsPanel::OpenWindowsPanel( wxWindow* parent, const wxString &caption )
+    : OpenWindowsPanelBase( parent )
+    , m_caption(caption)
+    , m_rclickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")))
 {
+    wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
+    wxTheApp->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OpenWindowsPanel::OnEditorClosing), NULL, this);
+    wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
 }
 
 OpenWindowsPanel::~OpenWindowsPanel()
@@ -43,81 +46,57 @@ OpenWindowsPanel::~OpenWindowsPanel()
 	}
 }
 
-void OpenWindowsPanel::Clear()
+int OpenWindowsPanel::EditorItem(LEditor *editor)
 {
-	m_fileList->Clear();
+    if (editor) {
+        wxString path = editor->GetFileName().GetFullPath();
+        for (unsigned i = 0; i < m_fileList->GetCount(); i++) {
+            wxStringClientData *data = dynamic_cast<wxStringClientData *>(m_fileList->GetClientObject(i));
+            if (data->GetData() == path)
+                return i;
+        }
+    }
+    return wxNOT_FOUND;
 }
 
-void OpenWindowsPanel::UpdateList()
+void OpenWindowsPanel::DoOpenSelectedItem(int item)
 {
-	m_fileList->Freeze();
-	m_fileList->Clear();
-	Notebook *book = Frame::Get()->GetNotebook();
-	for (size_t i=0; i< book->GetPageCount(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(book->GetPage(i));
-		if (editor) {
-			wxString txt = book->GetPageText(i);
-			m_fileList->Append(txt, new wxStringClientData(editor->GetFileName().GetFullPath()));
-		}
-	}
-	SyncSelection();
-	m_fileList->Thaw();
+	wxStringClientData *data = dynamic_cast<wxStringClientData *>(m_fileList->GetClientObject(item));
+    ManagerST::Get()->OpenFile(data->GetData(), wxEmptyString);
 }
 
-void OpenWindowsPanel::SyncSelection()
+void OpenWindowsPanel::DoCloseSelectedItem(int item)
 {
-	Notebook *book = Frame::Get()->GetNotebook();
-	size_t sel = book->GetSelection();
-	if (sel != Notebook::npos) {
-		LEditor *editor = dynamic_cast<LEditor*>(book->GetPage(sel));
-		if (editor) {
-			//Ok, the selection is a valid editor (unlike the Welcome page)
-			wxString fullname = editor->GetFileName().GetFullPath();
-			for (size_t i=0; i< m_fileList->GetCount(); i++) {
-				wxStringClientData *data = dynamic_cast<wxStringClientData *>(m_fileList->GetClientObject((unsigned int)i));
-				if (data && data->GetData() == fullname) {
-					m_fileList->Select((int)i);
-				}
-			}
-		}
-	}
+    DoOpenSelectedItem(item); // make sure the editor is selected in MainBook
+    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_file"));
+    ProcessEvent(e);
 }
 
 void OpenWindowsPanel::OnKeyDown( wxKeyEvent& event )
 {
-	if(	event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER){
-		int selection = m_fileList->GetSelection();
-		if(selection != wxNOT_FOUND){
-			DoOpenSelectedItem(selection);
-			return;
-		}
-	}
-	event.Skip();
+    switch (event.GetKeyCode()) {
+        case WXK_RETURN:
+        case WXK_NUMPAD_ENTER:
+        case WXK_SPACE:
+            if (m_fileList->GetSelection() != wxNOT_FOUND) {
+                DoOpenSelectedItem(m_fileList->GetSelection());
+            }
+            break;
+        case WXK_DELETE:
+            if (m_fileList->GetSelection() != wxNOT_FOUND) {
+                DoCloseSelectedItem(m_fileList->GetSelection());
+                m_fileList->SetFocus();
+            }
+            break;
+        default:
+            event.Skip();
+            break;
+    }
 }
 
 void OpenWindowsPanel::OnItemDClicked( wxCommandEvent& event )
 {
-	int item = event.GetSelection();
-	DoOpenSelectedItem(item);
-}
-
-void OpenWindowsPanel::OnItemSelected(wxCommandEvent &e)
-{
-//	int item = e.GetSelection();
-//	DoOpenSelectedItem(item);
-	e.Skip();
-}
-
-void OpenWindowsPanel::OnChar(wxKeyEvent& event)
-{
-	if(	event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER){
-		int selection = m_fileList->GetSelection();
-		if(selection != wxNOT_FOUND){
-			DoOpenSelectedItem(selection);
-			return;
-		}
-	}
-	event.Skip();
+	DoOpenSelectedItem(event.GetSelection());
 }
 
 void OpenWindowsPanel::OnRightUp( wxMouseEvent& event )
@@ -130,13 +109,45 @@ void OpenWindowsPanel::OnRightUp( wxMouseEvent& event )
     }
 }
 
-void OpenWindowsPanel::DoOpenSelectedItem(int item)
+void OpenWindowsPanel::OnChar(wxKeyEvent& event)
 {
-	wxStringClientData *data = dynamic_cast<wxStringClientData *>(m_fileList->GetClientObject((unsigned int)item));
-	if (data) {
-		wxString fullpath = data->GetData();
-		//open this file...
-		Manager *mgr = ManagerST::Get();
-		mgr->OpenFile(fullpath, wxEmptyString);
-	}
+    OnKeyDown(event);
+}
+
+void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    int i = EditorItem(editor);
+    if (i != wxNOT_FOUND && i == m_fileList->GetSelection())
+        return;
+        
+    m_fileList->Freeze();
+    if (i == wxNOT_FOUND) {
+        Notebook *book = Frame::Get()->GetNotebook();
+        wxString txt = book->GetPageText(book->GetPageIndex(editor));
+        wxStringClientData *data = new wxStringClientData(editor->GetFileName().GetFullPath());
+        i = m_fileList->Append(txt, data);
+    }
+    m_fileList->Select(i);
+    m_fileList->EnsureVisible(i);
+    m_fileList->Thaw();
+}
+
+void OpenWindowsPanel::OnAllEditorsClosed(wxCommandEvent& e)
+{
+    e.Skip();
+    m_fileList->Clear();
+}
+
+void OpenWindowsPanel::OnEditorClosing(wxCommandEvent& e)
+{
+    e.Skip();
+    LEditor *editor = dynamic_cast<LEditor*>((IEditor*) e.GetClientData());
+    int i = EditorItem(editor);
+    if (i != wxNOT_FOUND) {
+        m_fileList->Freeze();
+        m_fileList->Delete(i);
+        m_fileList->Thaw();
+    }
 }

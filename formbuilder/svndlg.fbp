@@ -10,7 +10,7 @@
         <property name="file">svnbasedlg</property>
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
-        <property name="internationalize">0</property>
+        <property name="internationalize">1</property>
         <property name="name">SvnDlg</property>
         <property name="namespace"></property>
         <property name="path">../Subversion</property>
@@ -20,7 +20,7 @@
         <property name="use_microsoft_bom">0</property>
         <object class="Dialog" expanded="1">
             <property name="bg"></property>
-            <property name="center"></property>
+            <property name="center">wxBOTH</property>
             <property name="context_help"></property>
             <property name="enabled">1</property>
             <property name="extra_style"></property>
@@ -33,7 +33,7 @@
             <property name="name">SvnBaseDlg</property>
             <property name="pos"></property>
             <property name="size">497,369</property>
-            <property name="style">wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP</property>
+            <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
             <property name="subclass"></property>
             <property name="title">Enter SVN commit comment:</property>
             <property name="tooltip"></property>

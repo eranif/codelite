@@ -230,7 +230,6 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
 			wxString f1 = editor->GetFileName().GetFullPath();
 			wxString f2 = fileName.GetFullPath();
 			if ( f1 == f2 ) {
-				notebook->SetSelection ( nCount );
 				selection = ( int ) nCount;
 				fileWasOpenedInNB = true;
 				break;
@@ -265,7 +264,7 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
 		editor = EditorCreatorST::Get()->NewInstance();
 		editor->Create ( projName, fileName );
 		editor->SetSyntaxHighlight ( editor->GetContext()->GetName() );
-		notebook->AddPage ( editor, fileName.GetFullName(), wxNullBitmap, true );
+		notebook->AddPage ( editor, fileName.GetFullName(), wxNullBitmap);
 		notebook->Thaw();
 		selection = ( int ) notebook->GetPageCount()-1;
 		updTree = true;
@@ -306,8 +305,6 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
 		Frame::Get()->GetFileExplorer()->GetFileTree()->ExpandToPath ( editor->GetFileName() );
 	}
 
-	//update the open files list
-	Frame::Get()->GetOpenWindowsPane()->UpdateList();
 	editor->SetActive();
 
 	if ( returnFocusWin ) {
@@ -1676,7 +1673,6 @@ void Manager::CloseAll()
 {
 	bool modifyDetected = false;
 	Notebook *book = Frame::Get()->GetNotebook();
-	Frame::Get()->GetOpenWindowsPane()->Clear();
 
 	//check if any of the files is modified
 	for ( size_t i=0; i<book->GetPageCount(); i++ ) {
@@ -3127,7 +3123,6 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 		if ( win && book->GetPageText ( i ) == wxT ( "Welcome!" ) ) {
 			//we found our start page, now hide it
 			book->DeletePage ( i );
-			Frame::Get()->GetOpenWindowsPane()->UpdateList();
 			break;
 		}
 	}

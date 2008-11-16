@@ -52,7 +52,7 @@ FreeTextDialog::FreeTextDialog( wxWindow* parent, wxString value, int id, wxStri
 	wxBoxSizer* bSizer23;
 	bSizer23 = new wxBoxSizer( wxVERTICAL );
 	
-	m_text = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2|wxBORDER_SIMPLE);
+	m_text = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2);
 	bSizer23->Add( m_text, 1, wxALL|wxEXPAND, 5 );
 	m_text->SetValue(value);
 

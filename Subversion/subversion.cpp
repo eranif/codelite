@@ -1195,7 +1195,6 @@ void SubversionPlugin::OnRefrshIconsStatus(wxCommandEvent &e)
 		
 	SvnIconRefreshHandler handler(m_mgr, this);
 	handler.DoCommand();
-	e.Skip();
 }
 
 void SubversionPlugin::OnRefreshIconsCond(wxCommandEvent &e)
@@ -1209,7 +1208,6 @@ void SubversionPlugin::OnRefreshIconsCond(wxCommandEvent &e)
 		SvnIconRefreshHandler handler(m_mgr, this);
 		handler.DoCommand();
 	}
-	e.Skip();
 }
 
 bool SubversionPlugin::IsWorkspaceUnderSvn()

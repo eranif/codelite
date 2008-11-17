@@ -69,7 +69,7 @@ enum
 #define VDTC_ICON_FILE     2
 
 /// Minimal amount of levels to scan per run
-#define VDTC_MIN_SCANDEPTH 2
+#define VDTC_MIN_SCANDEPTH 1
 
 /// No settings, take default
 #define wxVDTC_DEFAULT      0

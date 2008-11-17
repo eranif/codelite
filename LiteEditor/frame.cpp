@@ -169,8 +169,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("copy_file_path"), Frame::OnCopyFilePathOnly)
 	EVT_MENU(XRCID("show_in_workspace"), Frame::OnShowInWorkspace)
 	EVT_UPDATE_UI(XRCID("show_in_workspace"), Frame::OnShowInWorkspaceUI)
-	EVT_MENU(XRCID("show_in_explorer"), Frame::OnShowInExplorer)
-	EVT_UPDATE_UI(XRCID("show_in_explorer"), Frame::OnShowInExplorerUI)
 	EVT_MENU(XRCID("open_shell_from_filepath"), Frame::OnOpenShellFromFilePath)
 	EVT_UPDATE_UI(XRCID("open_shell_from_filepath"), Frame::OnFileExistUpdateUI)
 
@@ -544,8 +542,8 @@ void Frame::Initialize(bool loadLastSession)
 	m_theFrame->LoadPlugins();
 
 	//time to create the file explorer
-	m_theFrame->GetFileExplorer()->Scan();
-	SendCmdEvent(wxEVT_FILE_EXP_INIT_DONE);
+    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("go_home"));
+    m_theFrame->GetFileExplorer()->ProcessEvent(e);
 
 	//load last session?
 	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
@@ -1447,9 +1445,6 @@ void Frame::OnPageChanged(NotebookEvent &event)
 		GetWorkspacePane()->DisplaySymbolTree(editor->GetFileName());
 		if (GetWorkspaceTab()->GetIsLinkedToEditor()) {
 			GetWorkspacePane()->GetFileViewTree()->ExpandToPath(editor->GetProject(), editor->GetFileName());
-		}
-		if (GetFileExplorer()->GetIsLinkedToEditor()) {
-			GetFileExplorer()->GetFileTree()->ExpandToPath(editor->GetFileName());
 		}
 	}
 
@@ -3068,11 +3063,6 @@ void Frame::OnCloseAllButThis(wxCommandEvent &e)
 	}
 }
 
-OpenWindowsPanel *Frame::GetOpenWindowsPane()
-{
-	return GetWorkspacePane()->GetOpenedWindows();
-}
-
 WorkspaceTab *Frame::GetWorkspaceTab()
 {
 	return GetWorkspacePane()->GetWorkspaceTab();
@@ -3786,30 +3776,6 @@ void Frame::OnRetagWorkspace(wxCommandEvent& event)
 {
 	wxUnusedVar( event );
 	ManagerST::Get()->RetagWorkspace();
-}
-
-void Frame::OnShowInExplorer(wxCommandEvent& e)
-{
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if (editor) {
-		wxFileName filepath = editor->GetFileName();
-		if (filepath.FileExists()) {
-			GetFileExplorer()->GetFileTree()->ExpandToPath(filepath);
-			ManagerST::Get()->ShowWorkspacePane(WorkspacePane::EXPLORER);
-		}
-	}
-}
-
-void Frame::OnShowInExplorerUI(wxUpdateUIEvent& e)
-{
-	e.Enable(false);
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if (editor) {
-		wxFileName filepath = editor->GetFileName();
-		if (filepath.FileExists()) {
-			e.Enable(true);
-		}
-	}
 }
 
 void Frame::OnShowInWorkspace(wxCommandEvent& e)

@@ -659,13 +659,14 @@ void SubversionPlugin::UnPlug()
 	}
 }
 
-void SubversionPlugin::OnFileExplorerInitDone(wxCommandEvent &event)
+void SubversionPlugin::OnFileExplorerInitDone(wxCommandEvent &e)
 {
-	wxUnusedVar(event);
+	e.Skip();
 }
 
-void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event)
+void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &e)
 {
+	e.Skip();
 	if (IsWorkspaceUnderSvn() == false) {
 		return;
 	}
@@ -673,7 +674,7 @@ void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event)
 	if (m_options.GetFlags() & SvnAutoAddFiles) {
 		void *cdata(NULL);
 		wxArrayString *files(NULL);
-		cdata = event.GetClientData();
+		cdata = e.GetClientData();
 		if (cdata) {
 			files = (wxArrayString*)cdata;
 			for (size_t i=0; i< files->GetCount(); i++) {
@@ -685,12 +686,12 @@ void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &event)
 		SvnIconRefreshHandler handler(m_mgr, this);
 		handler.DoCommand();
 	}
-	event.Skip();
 }
 
-void SubversionPlugin::OnAppInitDone(wxCommandEvent &event)
+void SubversionPlugin::OnAppInitDone(wxCommandEvent &e)
 {
 	m_initIsDone = true;
+    e.Skip();
 }
 
 void SubversionPlugin::DoGetWspSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate)

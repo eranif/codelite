@@ -187,11 +187,6 @@ public:
 	FileExplorer *GetFileExplorer();
 
 	/**
-	 * @brief return the open windows list pane pointer
-	 */
-	OpenWindowsPanel *GetOpenWindowsPane();
-
-	/**
 	 * @return return AUI docking manager
 	 */
 	wxAuiManager& GetDockingManager() {

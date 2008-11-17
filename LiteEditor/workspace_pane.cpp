@@ -42,7 +42,6 @@
 
 const wxString WorkspacePane::SYMBOL_VIEW 	= wxT("Outline");
 const wxString WorkspacePane::FILE_VIEW   	= wxT("Workspace");
-const wxString WorkspacePane::EXPLORER  	= wxT("Explorer");
 
 extern wxImageList* CreateSymbolTreeImages();
 
@@ -134,7 +133,7 @@ void WorkspacePane::CreateGUIControls()
 	ADD_WORKSPACE_PAGE(m_workspaceTab, WorkspacePane::FILE_VIEW);
 
 	m_explorer = new FileExplorer(m_book, wxT("Explorer"));
-	ADD_WORKSPACE_PAGE(m_explorer, WorkspacePane::EXPLORER);
+	ADD_WORKSPACE_PAGE(m_explorer, m_explorer->GetCaption());
 
 	m_winStack = new WindowStack(m_book, wxID_ANY);
 	ADD_WORKSPACE_PAGE(m_winStack, WorkspacePane::SYMBOL_VIEW);

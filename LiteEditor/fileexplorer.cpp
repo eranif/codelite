@@ -72,9 +72,11 @@ void FileExplorer::CreateGUIControls()
 	
 	m_volumes = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, volumes, 0 );
 	mainSizer->Add(m_volumes, 0, wxEXPAND|wxALL, 1);
+	ConnectChoice(m_volumes, FileExplorer::OnVolumeChanged);
 #endif
 
 	m_fileTree = new FileExplorerTree(this, wxID_ANY);
+	m_fileTree->Connect(wxVDTC_ROOT_CHANGED, wxCommandEventHandler(FileExplorer::OnRootChanged), NULL, this);
 	mainSizer->Add(m_fileTree, 1, wxEXPAND|wxALL, 1);
 	
 	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
@@ -89,41 +91,75 @@ void FileExplorer::CreateGUIControls()
 
 	mainSizer->Layout();
 
-#ifdef __WXMSW__
-	m_fileTree->Connect(wxVDTC_ROOT_CHANGED, wxCommandEventHandler(FileExplorer::OnRootChanged), NULL, this);
-	ConnectChoice(m_volumes, FileExplorer::OnVolumeChanged);
-#endif
+    wxTheApp->Connect(XRCID("show_in_explorer"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorer::OnShowFile), NULL, this);
+    wxTheApp->Connect(XRCID("show_in_explorer"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileExplorer::OnShowFileUI), NULL, this);
+    wxTheApp->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(FileExplorer::OnWorkspaceLoaded), NULL, this);
+    wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(FileExplorer::OnActiveEditorChanged), NULL, this);
 }
 
-void FileExplorer::Scan()
-{
-	wxString cwd = wxGetCwd();
-	cwd << wxT("/");
-	wxFileName fn(cwd);
-	if(fn.HasVolume()){
-		wxString root;
-		root << fn.GetVolume() << wxT(":\\");
-		m_fileTree->SetRootPath(root, false, wxVDTC_DEFAULT);
-#ifdef __WXMSW__
-		if(m_volumes->FindString(fn.GetVolume() + wxT(":\\")) == wxNOT_FOUND) {
-			m_volumes->AppendString(fn.GetVolume() + wxT(":\\"));
-		}
-		m_volumes->SetStringSelection(fn.GetVolume() + wxT(":\\"));
-#endif
-	}else{
-		m_fileTree->SetRootPath(wxT("/"), false, wxVDTC_DEFAULT);
-	}
-	
-	m_fileTree->ExpandToPath(fn);
-}
-
-#ifdef __WXMSW__
-void FileExplorer::OnVolumeChanged(wxCommandEvent &e)
+void FileExplorer::OnCollapseAll(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-	//Get the selection
-	wxString newRoot = m_volumes->GetStringSelection();
-	m_fileTree->SetRootPath(newRoot);
+    m_fileTree->CollapseAll();
+    wxTreeItemId root = m_fileTree->GetRootItem();
+    if (root.IsOk()) {
+        m_fileTree->Expand(m_fileTree->GetRootItem());
+    }
+	wxTreeItemId sel = m_fileTree->GetSelection();
+	if (sel.IsOk()) {
+		m_fileTree->EnsureVisible(sel);
+    }
+}
+
+void FileExplorer::OnGoHome(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	m_fileTree->ExpandToPath(wxGetCwd());
+}
+
+void FileExplorer::OnLinkEditor(wxCommandEvent &e)
+{
+	m_isLinkedToEditor = !m_isLinkedToEditor;
+	EditorConfigST::Get()->SaveLongValue(wxT("LinkFileExplorerToEditor"), m_isLinkedToEditor ? 1 : 0);
+    if (m_isLinkedToEditor) {
+        OnActiveEditorChanged(e);
+    }
+}
+
+void FileExplorer::OnShowFile(wxCommandEvent& e)
+{
+    LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    if (editor && editor->GetFileName().FileExists()) {
+        m_fileTree->ExpandToPath(editor->GetFileName());
+        ManagerST::Get()->ShowWorkspacePane(m_caption);
+    }
+    e.Skip();
+}
+
+void FileExplorer::OnShowFileUI(wxUpdateUIEvent& e)
+{
+	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	e.Enable(editor && editor->GetFileName().FileExists());
+}
+
+void FileExplorer::OnActiveEditorChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    if (m_isLinkedToEditor) {
+        LEditor *editor = ManagerST::Get()->GetActiveEditor();
+        if (editor && editor->GetFileName().FileExists()) {
+            m_fileTree->ExpandToPath(editor->GetFileName());
+        }
+    }
+}
+
+void FileExplorer::OnWorkspaceLoaded(wxCommandEvent& e)
+{
+    e.Skip();
+    wxUnusedVar(e);
+    if (m_isLinkedToEditor) {
+        m_fileTree->ExpandToPath(WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
+    }
 }
 
 void FileExplorer::OnRootChanged(wxCommandEvent &e)
@@ -131,9 +167,22 @@ void FileExplorer::OnRootChanged(wxCommandEvent &e)
 	wxTreeItemId root = m_fileTree->GetRootItem();
 	if(root.IsOk()){
 		wxString vol = m_fileTree->GetItemText(root);
-		this->m_volumes->SetStringSelection(vol);
+#ifdef __WXMSW__
+        if(m_volumes->FindString(vol) == wxNOT_FOUND) {
+            m_volumes->AppendString(vol);
+        }
+		m_volumes->SetStringSelection(vol);
+#endif
+        SendCmdEvent(wxEVT_FILE_EXP_INIT_DONE); //TODO: pass &vol?
 	}
 	e.Skip();
+}
+
+#ifdef __WXMSW__
+void FileExplorer::OnVolumeChanged(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	m_fileTree->SetRootPath(m_volumes->GetStringSelection());
 }
 
 void FileExplorer::OnVolumes(wxCommandEvent &e)
@@ -146,56 +195,4 @@ void FileExplorer::OnVolumes(wxCommandEvent &e)
 	}
 	m_volumes->Append(volumes);
 }
-
 #endif
-
-void FileExplorer::OnCollapseAll(wxCommandEvent &e)
-{
-	wxUnusedVar(e);
-    
-	wxTreeItemId root = m_fileTree->GetRootItem();
-	if(root.IsOk() == false) {
-		return;
-	}
-	
-	if(m_fileTree->ItemHasChildren(root) == false) {
-		return;
-	}
-	
-	m_fileTree->Freeze();
-	
-	//iterate over all the projects items and collapse them all
-	wxTreeItemIdValue cookie;
-	wxTreeItemId child = m_fileTree->GetFirstChild(root, cookie);
-	while( child.IsOk() ) {
-		m_fileTree->CollapseAllChildren(child);
-		child = m_fileTree->GetNextChild(root, cookie);
-	}
-	
-	m_fileTree->Thaw();
-    
-	wxTreeItemId sel = m_fileTree->GetSelection();
-	if (sel.IsOk())
-		m_fileTree->EnsureVisible(sel);
-}
-
-void FileExplorer::OnGoHome(wxCommandEvent &e)
-{
-	wxUnusedVar(e);
-	ManagerST::Get()->ShowWorkspacePane(WorkspacePane::EXPLORER);
-	this->Freeze();
-	Scan();
-	this->Thaw();
-}
-
-void FileExplorer::OnLinkEditor(wxCommandEvent &e)
-{
-	wxUnusedVar(e);
-	m_isLinkedToEditor = !m_isLinkedToEditor;
-	// save the value
-	EditorConfigST::Get()->SaveLongValue(wxT("LinkFileExplorerToEditor"), m_isLinkedToEditor ? 1 : 0);
-    if (m_isLinkedToEditor) {
-        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("show_in_explorer"));
-        Frame::Get()->AddPendingEvent(event);
-    }
-}

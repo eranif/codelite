@@ -301,10 +301,6 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
 		Frame::Get()->GetWorkspacePane()->GetFileViewTree()->ExpandToPath ( editor->GetProject(), editor->GetFileName() );
 	}
 
-	if ( Frame::Get()->GetFileExplorer()->GetIsLinkedToEditor() ) {
-		Frame::Get()->GetFileExplorer()->GetFileTree()->ExpandToPath ( editor->GetFileName() );
-	}
-
 	editor->SetActive();
 
 	if ( returnFocusWin ) {
@@ -3111,10 +3107,6 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 
 	//update the 'Recent Workspace' history
 	AddToRecentlyOpenedWorkspaces ( path );
-
-	FileExplorer *fe = Frame::Get()->GetFileExplorer();
-	wxFileName filename ( path );
-	fe->GetFileTree()->ExpandToPath ( filename.GetPath() + wxT ( "/" ) );
 
 	//hide the start page
 	Notebook *book = Frame::Get()->GetNotebook();

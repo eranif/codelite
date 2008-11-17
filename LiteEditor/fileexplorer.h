@@ -37,33 +37,32 @@ private:
 	FileExplorerTree *m_fileTree;
 	wxString m_caption;
 	bool m_isLinkedToEditor;
-	
+
+	void CreateGUIControls();
+ 	
+    void OnLinkEditor(wxCommandEvent &e);
+    void OnCollapseAll(wxCommandEvent &e);
+	void OnGoHome(wxCommandEvent &e);
+    void OnShowFile(wxCommandEvent &e);
+    void OnShowFileUI(wxUpdateUIEvent &e);
+    void OnWorkspaceLoaded(wxCommandEvent &e);
+    void OnActiveEditorChanged(wxCommandEvent &e);
+	void OnRootChanged(wxCommandEvent &e);
+
 #ifdef __WXMSW__
 	wxChoice *m_volumes;
 	VolumeLocatorThread m_thread;
-#endif
 
-private:
-	void CreateGUIControls();
-#ifdef __WXMSW__
 	void OnVolumeChanged(wxCommandEvent &e);
-	void OnRootChanged(wxCommandEvent &e);
 	void OnVolumes(wxCommandEvent &e);
 #endif
-	void OnCollapseAll(wxCommandEvent &e);
-	void OnGoHome(wxCommandEvent &e);
-	void OnLinkEditor(wxCommandEvent &e);
 
 public:
 	FileExplorer(wxWindow *parent, const wxString &caption);
 	virtual ~FileExplorer();
     
-	void Scan();	
-
-	//setters/getters
 	const wxString &GetCaption() const{return m_caption;}
 	FileExplorerTree *GetFileTree() {return m_fileTree;}
-	const bool& GetIsLinkedToEditor() const {return m_isLinkedToEditor;}
 };
 
 #endif //FILEEXPLORER_H

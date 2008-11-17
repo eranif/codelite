@@ -48,6 +48,9 @@
 #include "globals.h"
 #include "plugin.h"
 
+//#define __PERFORMANCE
+#include "performance.h"
+
 // WDR: class implementations
 
 //----------------------------------------------------------------------------
@@ -173,6 +176,9 @@ int wxVirtualDirTreeCtrl::ScanFromDir(VdtcTreeItemBase *item, const wxFileName &
 		// in the tree (on disk) and check if all new items are present, else add them
 		if(reload){
 			DeleteChildren(item->GetId());
+#ifdef __WXMSW__
+            _cache.clear();
+#endif
 		}
 
 		// if no items, then go iterate and get everything in this branch
@@ -223,7 +229,7 @@ int wxVirtualDirTreeCtrl::ScanFromDir(VdtcTreeItemBase *item, const wxFileName &
 			{
 				wxFileName tp = path;
 				tp.AppendDir(b->GetName());
-				value += ScanFromDir(b, tp, (level == -1 ? -1 : level-1), reload);
+				value += ScanFromDir(b, tp, (level == -1 ? -1 : level-1), false);
 			}
 
 			child = GetNextChild(item->GetId(), cookie);
@@ -380,6 +386,9 @@ void wxVirtualDirTreeCtrl::AddItemsToTreeCtrl(VdtcTreeItemBase *item, VdtcTreeIt
 		t = items[i];
 		if(t){
 			wxTreeItemId newItem = AppendItem(id, t->GetCaption(), t->GetIconId(), t->GetSelectedIconId(), t);
+            if (t->IsDir()) {
+                SetItemHasChildren(newItem);
+            }
 			//keep the newly added item in the cache
 #ifdef __WXMSW__	
 			wxString fullpath = GetFullPath(newItem).GetFullPath();
@@ -419,134 +428,94 @@ wxFileName wxVirtualDirTreeCtrl::GetFullPath(const wxTreeItemId &id)
 
 wxTreeItemId wxVirtualDirTreeCtrl::GetItemByFullPath(const wxFileName &fullpath, bool scandirs)
 {
+#ifdef __WXMSW__	
+	// try the cache
+	std::map< wxString, void* >::const_iterator iter = _cache.find(fullpath.GetFullPath());
+	if (iter != _cache.end()) {
+        return iter->second;
+    }
+#endif
+
 	wxTreeItemId id = DoFindItemByPath(fullpath, scandirs);
+    
 #ifdef __WXMSW__			
-	if(scandirs && id.IsOk()){
+	if (scandirs && id.IsOk()) {
 		_cache[fullpath.GetFullPath()] = id.m_pItem;
 	}
-#endif	
+#endif
+
 	return id;
 }
 
 wxTreeItemId wxVirtualDirTreeCtrl::ExpandToPath(const wxFileName &path)
 {
-	wxTreeItemId item = DoFindItemByPath(path);
-	
-	if(item.IsOk()){
-#ifdef __WXMSW__			
-		if(item.IsOk()){
-			_cache[path.GetFullPath()] = item.m_pItem;
-		}
-#endif	
-		if(ItemHasChildren(item)){
+    wxTreeItemId item = GetItemByFullPath(path);
+	if (item.IsOk()){
+		if (ItemHasChildren(item)) {
 			Expand(item);
 		}
 		SelectItem(item);
-		//notify that this tree has expanded
+        EnsureVisible(item);
 		SendCmdEvent(wxEVT_FILE_EXP_REFRESHED);
-		return item;
 	}
 	return item; 
 }
 
 wxTreeItemId wxVirtualDirTreeCtrl::DoFindItemByPath(const wxFileName &path, bool scandirs)
 {
-	wxTreeItemId value((void *)0);
+    PERF_FUNCTION();
+    
+    wxString volume = path.HasVolume() ? path.GetVolume()+wxT(":\\") : wxString(wxT("/"));
+
+    // look for volume
+	wxTreeItemId curr = GetRootItem();
+    if (!curr.IsOk() || GetItemText(curr) != volume) {
+        // not the same volume
+        if (!scandirs || !SetRootPath(volume, true, GetExtraFlags())) {
+            return wxTreeItemId();
+        }
+        curr = GetRootItem();
+    }
+    
+    // look for directories in the path
 	wxFileName seekpath;
-	wxArrayString paths;
-	VdtcTreeItemBase *ptr;
-	paths = path.GetDirs();
-	
-#ifdef __WXMSW__	
-	//first try the cache
-	std::map< wxString, void* >::const_iterator iter = _cache.find(path.GetFullPath());
-	if(iter != _cache.end()){
-		return iter->second;
-	}
-#endif
-
-	// start in root section, and find the path sections that
-	// match the sequence
-
-	wxTreeItemId root = GetRootItem();
-	if(root.IsOk())
-	{
-		//make sure we are on the same volume...
-		if(path.HasVolume()){
-			wxString volume(path.GetVolume() + wxT(":\\"));
-			if(GetItemText(root) != volume){
-				//not the same volume, change the volume and try to expand again
-				SetRootPath(volume, true);
-				return DoFindItemByPath(path);
-			}
-		}
-
-		wxTreeItemId curr = root, id;
-		for(size_t i = 0; i < paths.GetCount(); i++)
-		{
-			// scan for name on this level of children
-			wxString currpath = paths[i];
-			bool not_found = true;
-			wxTreeItemIdValue cookie;
-
-			id = GetFirstChild(curr, cookie);
-			while(not_found && id.IsOk())
-			{
-				ptr = (VdtcTreeItemBase *)GetItemData(id);
-				not_found = !ptr->GetName().IsSameAs(currpath, false);
-
-				// prevent overwriting id
-				if(!not_found)
-				{
-					// we found the name, now to ensure there are more
-					// names loaded from disk, we call ScanFromDir (it will abort anywayz
-					// when there are items in the dir)
-
-					if(scandirs && ptr->IsDir())
-					{
-						// TODO: This getfullpath might be a too high load, we can also
-						// walk along with the path, but that is a bit more tricky.
-						seekpath = GetFullPath(id);
-						ScanFromDir(ptr, seekpath, VDTC_MIN_SCANDEPTH);
-					}
-
-					curr = id;
-				}
-				else
-					id = GetNextChild(curr, cookie);
-			}
-
-			// now, if not found we break out
-			if(not_found)
-				return scandirs ? value : curr;
-		}
-		
-		if(path.GetFullPath() != seekpath.GetFullPath()) {
-			//we still has one more test to do: the name
-			wxTreeItemIdValue cookie;
-			wxString fullname = path.GetFullName();
-			bool not_found = true;
-			id = GetFirstChild(curr, cookie);
-			while(not_found && id.IsOk())
-			{
-				ptr = (VdtcTreeItemBase *)GetItemData(id);
-				not_found = !ptr->GetName().IsSameAs(fullname, false);
-
-				// prevent overwriting id
-				if(!not_found)
-				{
-					curr = id;
-				}
-				else
-					id = GetNextChild(curr, cookie);
-			}
-			
-			if(not_found)
-				return scandirs ? value : curr;
-		}
-		return curr;
-	}
-	return value;
+    if (path.HasVolume()) {
+        seekpath.SetVolume(path.GetVolume());
+    }
+    bool found = true;
+    for (size_t i = 0; i < path.GetDirs().GetCount() && found; i++) {
+        found = false;
+        wxTreeItemIdValue cookie;
+        for (wxTreeItemId id = GetFirstChild(curr, cookie); id.IsOk(); id = GetNextChild(curr, cookie)) {
+            VdtcTreeItemBase *ptr = (VdtcTreeItemBase *)GetItemData(id);
+            // FIXME: should IsSameAs() case-sensitivity flag depend on platform?
+            if (ptr->IsDir() && ptr->GetName().IsSameAs(path.GetDirs()[i], false)) {
+                found = true;
+                curr = id;
+                seekpath.AppendDir(path.GetDirs()[i]);
+                if (scandirs) {
+                    // make sure child nodes are loaded from disk
+                    ScanFromDir(ptr, GetFullPath(ptr->GetId()), VDTC_MIN_SCANDEPTH);
+                }
+                break;
+            }
+        }
+    }
+    if (found && path.HasName()) {
+        // look for the final path element (should be a file but might be a directory)
+        found = false;
+        wxTreeItemIdValue cookie;
+        for (wxTreeItemId id = GetFirstChild(curr, cookie); id.IsOk() && !found; id = GetNextChild(curr, cookie)) {
+            VdtcTreeItemBase *ptr = (VdtcTreeItemBase *)GetItemData(id);
+            // FIXME: should IsSameAs() case-sensitivity flag depend on platform?
+            if (ptr->GetName().IsSameAs(path.GetFullName(), false)) {
+                found = true;
+                curr = id;
+                break;
+            }
+        }
+    }
+    return found || !scandirs ? curr : wxTreeItemId();
 }
 
 bool wxVirtualDirTreeCtrl::IsRootNode(const wxTreeItemId &id)

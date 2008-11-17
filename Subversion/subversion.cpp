@@ -182,7 +182,7 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		topWin->Connect(XRCID("svn_update_prj"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnUpdatePrj), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_commit_prj"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommitPrj), NULL, (wxEvtHandler*)this);
 
-		topWin->Connect(XRCID("svn_refresh_icons"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatus), NULL, (wxEvtHandler*)this);
+		topWin->Connect(XRCID("svn_refresh_icons"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatusInternal), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("editor_resolve_conflicted_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnResolveConflictFile), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_resolve_conflicted_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnResolveConflict), NULL, (wxEvtHandler*)this);
 	}
@@ -1196,19 +1196,13 @@ void SubversionPlugin::OnRefrshIconsStatus(wxCommandEvent &e)
 		
 	SvnIconRefreshHandler handler(m_mgr, this);
 	handler.DoCommand();
+	e.Skip();
 }
 
 void SubversionPlugin::OnRefreshIconsCond(wxCommandEvent &e)
 {
-	if (m_options.GetFlags() & SvnKeepIconsUpdated) {
-		wxWindowDisabler disabler;
-		
-		wxBusyInfo wait_msg(_("Updating SVN Icons, please wait..."));
-		m_mgr->GetTheApp()->Yield();
-		
-		SvnIconRefreshHandler handler(m_mgr, this);
-		handler.DoCommand();
-	}
+	DoRefreshIcons();
+	e.Skip();
 }
 
 bool SubversionPlugin::IsWorkspaceUnderSvn()
@@ -1257,4 +1251,23 @@ bool SubversionPlugin::SanityCheck()
 		hasSvn = true;
 	}
 	return hasSvn;
+}
+
+void SubversionPlugin::DoRefreshIcons()
+{
+	if (m_options.GetFlags() & SvnKeepIconsUpdated) {
+		wxWindowDisabler disabler;
+		
+		wxBusyInfo wait_msg(_("Updating SVN Icons, please wait..."));
+		m_mgr->GetTheApp()->Yield();
+		
+		SvnIconRefreshHandler handler(m_mgr, this);
+		handler.DoCommand();
+	}
+}
+
+void SubversionPlugin::OnRefrshIconsStatusInternal(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	DoRefreshIcons();
 }

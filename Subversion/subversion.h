@@ -84,6 +84,7 @@ protected:
 	wxString FormatRaws(const wxArrayString &lines, const wxString &basePath, SvnXmlParser::FileState state, bool inclOutOfDate = false);
 	void DoMakeHTML(const wxArrayString &outpout, const wxString &origin, const wxString &basePath, bool inclOutOfDate = false);
 	ProjectPtr GetSelectedProject();
+	void DoRefreshIcons();
 	
 	void DoGetSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate = false);
 	void DoGenerateReport(const wxString &basePath, bool inclOutOfDate = false);
@@ -118,6 +119,7 @@ protected:
 	void OnRevertFile(wxCommandEvent &e);
 	void OnLinkClicked(wxHtmlLinkEvent &e);
 	void OnRefrshIconsStatus(wxCommandEvent &e);
+	void OnRefrshIconsStatusInternal(wxCommandEvent &e);
 	void OnRefreshIconsCond(wxCommandEvent &e);
 	void OnShowReportWsp(wxCommandEvent &e);
 	void OnShowServerReportWsp(wxCommandEvent &e);

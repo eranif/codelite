@@ -447,7 +447,7 @@ void SvnDriver::Diff()
 	wxString command, comment;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
 
-	DiffFile( item.m_fileName );
+	DiffFile( item.m_text );
 }
 
 void SvnDriver::Delete()

@@ -198,7 +198,7 @@ void LEditor::SetProperties()
 	CallTipUseStyle(1);
 
 	m_hightlightMatchedBraces = options->GetHighlightMatchedBraces();
-	if(!m_hightlightMatchedBraces)
+	if (!m_hightlightMatchedBraces)
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 
 	SetViewWhiteSpace(options->GetShowWhitspaces());
@@ -363,14 +363,14 @@ void LEditor::SetProperties()
 	SetBufferedDraw(true);
 #endif
 
-    //indentation settings
+	//indentation settings
 	SetTabIndents(true);
 	SetBackSpaceUnIndents (true);
 	SetUseTabs(options->GetIndentUsesTabs());
 	SetTabWidth(options->GetTabWidth());
 	SetIndent(options->GetIndentWidth());
 	SetIndentationGuides(options->GetShowIndentationGuidelines());
-    
+
 	SetLayoutCache(wxSCI_CACHE_DOCUMENT);
 
 	size_t frame_flags = Frame::Get()->GetFrameGeneralInfo().GetFlags();
@@ -584,6 +584,21 @@ void LEditor::OnMarginClick(wxScintillaEvent& event)
 		{
 			int nLine = LineFromPosition(event.GetPosition());
 			ToggleFold(nLine);
+
+			int caret_pos = GetCurrentPos();
+			if (caret_pos != wxNOT_FOUND) {
+				int caret_line = LineFromPosition(caret_pos);
+				if (caret_line != wxNOT_FOUND && GetLineVisible(caret_line) == false) {
+					// the caret line is hidden, make sure the caret is visible
+					while (caret_line >= 0) {
+						if ((GetFoldLevel(caret_line) & wxSCI_FOLDLEVELHEADERFLAG) && GetLineVisible(caret_line)) {
+							SetCaretAt(PositionFromLine(caret_line));
+							break;
+						}
+						caret_line--;
+					}
+				}
+			}
 		}
 		break;
 	default:
@@ -695,7 +710,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 
 	// save the file using the user's defined encoding
 	wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
-	
+
 	// trim lines / append LF if needed
 	TrimText();
 
@@ -1402,7 +1417,20 @@ size_t LEditor::SearchFlags(const FindReplaceData &data)
 void LEditor::ToggleCurrentFold()
 {
 	int line = GetCurrentLine();
-	if ( line >= 0 ) ToggleFold( line );
+	if ( line >= 0 ) {
+		ToggleFold( line );
+
+		if (GetLineVisible(line) == false) {
+			// the caret line is hidden, make sure the caret is visible
+			while (line >= 0) {
+				if ((GetFoldLevel(line) & wxSCI_FOLDLEVELHEADERFLAG) && GetLineVisible(line)) {
+					SetCaretAt(PositionFromLine(line));
+					break;
+				}
+				line--;
+			}
+		}
+	}
 }
 
 // If the cursor is on/in/below an open fold, collapse all. Otherwise expand all
@@ -1433,7 +1461,24 @@ void LEditor::FoldAll()
 			if ( GetFoldExpanded(line) == expanded ) ToggleFold( line );
 		}
 	}
+
+	// make sure the caret is visible. If it was hidden, place it at the first visible line
+	int curpos = GetCurrentPos();
+	if (curpos != wxNOT_FOUND) {
+		int curline = LineFromPosition(curpos);
+		if (curline != wxNOT_FOUND && GetLineVisible(curline) == false) {
+			// the caret line is hidden, make sure the caret is visible
+			while (curline >= 0) {
+				if ((GetFoldLevel(curline) & wxSCI_FOLDLEVELHEADERFLAG) && GetLineVisible(curline)) {
+					SetCaretAt(PositionFromLine(curline));
+					break;
+				}
+				curline--;
+			}
+		}
+	}
 }
+
 //----------------------------------------------
 // Bookmarks
 //----------------------------------------------
@@ -2163,7 +2208,7 @@ void LEditor::UpdateColours()
 	int endLine =  startLine + LinesOnScreen();
 	if (endLine >= (GetLineCount() - 1))
 		endLine--;
-	
+
 	Colourise(0, wxSCI_INVALID_POSITION);
 }
 
@@ -2638,8 +2683,8 @@ void LEditor::SetEditorState(const LEditorState& s)
 void LEditor::OnDbgRunToCursor(wxCommandEvent& event)
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	
-	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()){
+
+	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
 		dbgr->Break(GetFileName().GetFullPath(), GetCurrentLine()+1, true);
 		dbgr->Continue();
 	}

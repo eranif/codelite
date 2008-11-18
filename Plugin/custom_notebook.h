@@ -183,6 +183,13 @@ public:
 	size_t GetPageIndex(wxWindow *page);
 	
 	/**
+	 * \brief return page index by page text
+	 * \param text text to search for
+	 * \return page index, or Notebook::npos if page does not exist in the notebook
+	 */
+	size_t GetPageIndex(const wxString &text);
+	
+	/**
 	 * \brief set the text for page at a given index
 	 * \param index page's index
 	 * \param text new text

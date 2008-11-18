@@ -43,6 +43,7 @@
 #include "ctags_manager.h"
 #include "fileexplorer.h"
 #include "plugin_version.h"
+#include "workspacetab.h"
 
 PluginManager *PluginManager::Get()
 {
@@ -266,7 +267,7 @@ TreeItemInfo PluginManager::GetSelectedTreeItemInfo( TreeType type )
 	case TreeFileExplorer:
 		return Frame::Get()->GetFileExplorer()->GetFileTree()->GetSelectedItemInfo();
 	case TreeFileView:
-		return Frame::Get()->GetWorkspacePane()->GetFileViewTree()->GetSelectedItemInfo();
+		return Frame::Get()->GetWorkspaceTab()->GetFileView()->GetSelectedItemInfo();
 	default:
 		return info;
 	}
@@ -278,7 +279,7 @@ wxTreeCtrl *PluginManager::GetTree(TreeType type)
 	case TreeFileExplorer:
 		return Frame::Get()->GetFileExplorer()->GetFileTree();
 	case TreeFileView:
-		return Frame::Get()->GetWorkspacePane()->GetFileViewTree();
+		return Frame::Get()->GetWorkspaceTab()->GetFileView();
 	default:
 		return NULL;
 	}
@@ -326,12 +327,12 @@ Workspace *PluginManager::GetWorkspace()
 
 bool PluginManager::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths)
 {
-	return Frame::Get()->GetWorkspacePane()->GetFileViewTree()->AddFilesToVirtualFodler(item, paths);
+	return Frame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFodler(item, paths);
 }
 
 bool PluginManager::AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths)
 {
-	return Frame::Get()->GetWorkspacePane()->GetFileViewTree()->AddFilesToVirtualFodler(vdFullPath, paths);
+	return Frame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFodler(vdFullPath, paths);
 }
 
 int PluginManager::GetToolbarIconSize()
@@ -409,7 +410,7 @@ IKeyboard* PluginManager::GetKeyboardManager()
 
 bool PluginManager::CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName)
 {
-	return Frame::Get()->GetWorkspacePane()->GetFileViewTree()->CreateVirtualDirectory(parentPath, vdName);
+	return Frame::Get()->GetWorkspaceTab()->GetFileView()->CreateVirtualDirectory(parentPath, vdName);
 }
 
 OptionsConfigPtr PluginManager::GetEditorSettings()

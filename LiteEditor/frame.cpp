@@ -260,8 +260,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("toggle_fold"), Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("fold_all"), Frame::OnFileExistUpdateUI)
 
-	EVT_MENU(XRCID("configuration_manager"), Frame::OnConfigurationManager)
-	EVT_UPDATE_UI(XRCID("configuration_manager"), Frame::OnWorkspaceOpen)
 	EVT_MENU(XRCID("toggle_panes"), Frame::OnTogglePanes)
 	EVT_MENU(XRCID("add_envvar"), Frame::OnAddEnvironmentVariable)
 	EVT_MENU(XRCID("advance_settings"), Frame::OnAdvanceSettings)
@@ -1256,7 +1254,6 @@ void Frame::OnCloseWorkspace(wxCommandEvent &event)
 	wxUnusedVar(event);
 	if (ManagerST::Get()->IsWorkspaceOpen()) {
 		ManagerST::Get()->CloseWorkspace();
-		GetConfigChoice()->Enable(false);
 		ShowWelcomePage();
 	}
 }
@@ -1391,7 +1388,7 @@ void Frame::OnFileClose(wxCommandEvent &event)
 
 	// if no more editors are available, collapse the workspace tree
 	if (GetWorkspaceTab()->GetIsLinkedToEditor() && GetMainBook()->GetNotebook()->GetPageCount() == 0) {
-		GetWorkspacePane()->CollpaseAll();
+		GetWorkspaceTab()->CollpaseAll();
 	}
 	// also, update the title bar
 	SetFrameTitle(NULL);
@@ -1399,11 +1396,10 @@ void Frame::OnFileClose(wxCommandEvent &event)
 
 void Frame::OnFileClosing(NotebookEvent &event)
 {
-	// get the page that is now closing
-
 	//always remove the c++ menu
 	RemoveCppMenu();
 
+	// get the page that is now closing
 	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(event.GetSelection()));
 	if ( !editor )
 		return;
@@ -1413,14 +1409,9 @@ void Frame::OnFileClosing(NotebookEvent &event)
 	if ( veto ) {
 		event.Veto();
 	} else {
-		//update the symbol view
-		if (!editor->GetProject().IsEmpty()) {
-			GetWorkspacePane()->DeleteSymbolTree(editor->GetFileName());
-		}
 		SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 	}
 
-	//update the titlebar
 	SetFrameTitle(NULL);
 	event.Skip();
 }
@@ -1442,9 +1433,8 @@ void Frame::OnPageChanged(NotebookEvent &event)
 
 	//update the symbol view as well in case we are in a workspace context
 	if (!editor->GetProject().IsEmpty()) {
-		GetWorkspacePane()->DisplaySymbolTree(editor->GetFileName());
 		if (GetWorkspaceTab()->GetIsLinkedToEditor()) {
-			GetWorkspacePane()->GetFileViewTree()->ExpandToPath(editor->GetProject(), editor->GetFileName());
+			GetWorkspaceTab()->GetFileView()->ExpandToPath(editor->GetProject(), editor->GetFileName());
 		}
 	}
 
@@ -1478,7 +1468,7 @@ void Frame::OnPageClosed(NotebookEvent &event)
 
 	// if no more editors are available, collapse the workspace tree
 	if (GetWorkspaceTab()->GetIsLinkedToEditor() && GetMainBook()->GetNotebook()->GetPageCount() == 0) {
-		GetWorkspacePane()->CollpaseAll();
+		GetWorkspaceTab()->CollpaseAll();
 	}
 }
 
@@ -1518,7 +1508,6 @@ void Frame::ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete,
 				return;
 			} else {
 				if ( doDelete ) {
-					GetWorkspacePane()->DeleteSymbolTree(editor->GetFileName());
 					SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 					GetNotebook()->DeletePage(index, notify);
 				}
@@ -1531,7 +1520,6 @@ void Frame::ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete,
 		case wxNO:
 			// just delete the tab without saving the changes
 			if ( doDelete ) {
-				GetWorkspacePane()->DeleteSymbolTree(editor->GetFileName());
 				SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 				GetNotebook()->DeletePage(index, notify);
 			}
@@ -1540,7 +1528,6 @@ void Frame::ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete,
 	} else {
 		// file is not modified, just remove the tab
 		if ( doDelete ) {
-			GetWorkspacePane()->DeleteSymbolTree(editor->GetFileName());
 			SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 			GetNotebook()->DeletePage(index, notify);
 		} // if( doDelete )
@@ -1852,12 +1839,6 @@ void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 	dlg->Destroy();
 }
 
-void Frame::OnConfigurationManager(wxCommandEvent &event)
-{
-	wxUnusedVar(event);
-	ShowBuildConfigurationManager();
-}
-
 void Frame::OnTogglePanes(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
@@ -2052,7 +2033,7 @@ void Frame::OnBuildCustomTarget(wxCommandEvent& event)
 
 		wxString projectName, targetName;
 		// get the project name
-		TreeItemInfo item = GetWorkspacePane()->GetFileViewTree()->GetSelectedItemInfo();
+		TreeItemInfo item = GetWorkspaceTab()->GetFileView()->GetSelectedItemInfo();
 		if (item.m_itemType != ProjectItem::TypeProject) {
 			return;
 		}
@@ -2205,24 +2186,6 @@ void Frame::OnExecuteNoDebugUI(wxUpdateUIEvent &event)
 	             !ManagerST::Get()->IsProgramRunning());
 }
 
-void Frame::OnWorkspaceConfigChanged(wxCommandEvent &event)
-{
-	wxString selectionStr = event.GetString();
-
-	//update the workspace configuration file
-	ManagerST::Get()->SetWorkspaceConfigurationName(selectionStr);
-
-	//force makefile generation upon configuration change
-	wxArrayString projs;
-	ManagerST::Get()->GetProjectList(projs);
-	for ( size_t i=0; i< projs.GetCount(); i++ ) {
-		ProjectPtr proj = ManagerST::Get()->GetProject( projs.Item(i) );
-		if ( proj ) {
-			proj->SetModified(true);
-		}
-	}
-}
-
 void Frame::OnTimer(wxTimerEvent &event)
 {
 	static bool first(true);
@@ -2317,7 +2280,7 @@ void Frame::OnFileCloseAll(wxCommandEvent &event)
 
 	GetMainBook()->Clear();
 	if (GetWorkspaceTab()->GetIsLinkedToEditor()) {
-		GetWorkspacePane()->CollpaseAll();
+		GetWorkspaceTab()->CollpaseAll();
 	}
 
 	RemoveCppMenu();
@@ -2388,11 +2351,6 @@ void Frame::OnFindResource(wxCommandEvent &event)
 
 void Frame::OnAddSymbols(SymbolTreeEvent &event)
 {
-	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
-	if (tree) {
-		tree->AddSymbols(event);
-	}
-
 	// Notify the plugins
 	ParseThreadEventData data;
 	data.SetFileName(event.GetFileName());
@@ -2403,12 +2361,6 @@ void Frame::OnAddSymbols(SymbolTreeEvent &event)
 
 void Frame::OnDeleteSymbols(SymbolTreeEvent &event)
 {
-	// make sure we direct the events to the correct tree
-	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
-	if (tree) {
-		tree->DeleteSymbols(event);
-	}
-
 	// Notify the plugins
 	ParseThreadEventData data;
 	data.SetFileName(event.GetFileName());
@@ -2420,11 +2372,6 @@ void Frame::OnDeleteSymbols(SymbolTreeEvent &event)
 
 void Frame::OnUpdateSymbols(SymbolTreeEvent &event)
 {
-	SymbolTree *tree = GetWorkspacePane()->GetSymbolTree(event.GetFileName());
-	if (tree) {
-		tree->UpdateSymbols(event);
-	}
-
 	// Notify the plugins
 	ParseThreadEventData data;
 	data.SetFileName(event.GetFileName());
@@ -3083,11 +3030,6 @@ void Frame::OnLoadWelcomePageUI(wxUpdateUIEvent &event)
 	event.Check(m_frameGeneralInfo.GetFlags() & CL_SHOW_WELCOME_PAGE ? true : false);
 }
 
-wxComboBox *Frame::GetConfigChoice()
-{
-	return GetWorkspacePane()->GetConfigCombBox();
-}
-
 void Frame::OnFileCloseUI(wxUpdateUIEvent &event)
 {
 	event.Enable(GetNotebook()->GetPageCount() > 0 ? true : false);
@@ -3237,25 +3179,6 @@ void Frame::OnManagePlugins(wxCommandEvent &e)
 void Frame::DoReplaceAll()
 {
 	m_doingReplaceInFiles = true;
-}
-
-void Frame::ShowBuildConfigurationManager()
-{
-	ConfigurationManagerDlg *dlg = new ConfigurationManagerDlg(this);
-	dlg->ShowModal();
-	dlg->Destroy();
-
-	//force makefile generation upon configuration change
-	if (ManagerST::Get()->IsWorkspaceOpen()) {
-		wxArrayString projs;
-		ManagerST::Get()->GetProjectList(projs);
-		for ( size_t i=0; i< projs.GetCount(); i++ ) {
-			ProjectPtr proj = ManagerST::Get()->GetProject( projs.Item(i) );
-			if ( proj ) {
-				proj->SetModified(true);
-			}
-		}
-	}
 }
 
 void Frame::AddCppMenu()

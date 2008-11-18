@@ -85,6 +85,8 @@ enum {
 	wxEVT_FILE_EXP_REFRESHED,
 	//clientData is NULL
 	wxEVT_WORKSPACE_LOADED,
+    //clientData is NULL
+	wxEVT_WORKSPACE_CONFIG_CHANGED,
 	//clientData is NULL
 	wxEVT_FILE_EXP_INIT_DONE,
 	//clientData is list of files added to project (wxArrayString*)

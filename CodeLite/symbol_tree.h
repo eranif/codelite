@@ -149,9 +149,9 @@ public:
 		AssignImageList(images);
 	};
 
-	void AddSymbols(SymbolTreeEvent& event);
-	void DeleteSymbols(SymbolTreeEvent& event);
-	void UpdateSymbols(SymbolTreeEvent& event);
+	void AddSymbols(const std::vector<std::pair<wxString, TagEntry> > &items);
+	void DeleteSymbols(const std::vector<std::pair<wxString, TagEntry> > &items);
+	void UpdateSymbols(const std::vector<std::pair<wxString, TagEntry> > &items);
 
 	/**
 	 * return the file name assocaited with this symbol tree

@@ -451,15 +451,6 @@ public:
 	 */
 	void ExecuteNoDebug(const wxString &projectName);
 
-	// Update the toolbar's configuration choice controls
-	void DoUpdateConfigChoiceControl();
-
-	/**
-	 * Set the workspace active build configuration name
-	 * \param name active configuration name
-	 */
-	void SetWorkspaceConfigurationName(const wxString &name);
-
 	/**
 	 * Return the active's project build configuration that matches
 	 * the workspace selected configuration

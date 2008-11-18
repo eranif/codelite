@@ -300,7 +300,6 @@ void ConfigurationManagerDlg::OnButtonApply(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	SaveCurrentSettings();
-	ManagerST::Get()->DoUpdateConfigChoiceControl();
 }
 
 
@@ -323,9 +322,7 @@ WorkspaceConfiguration::ConfigMappingList ConfigurationManagerDlg::GetCurrentSet
 
 void ConfigurationManagerDlg::OnButtonOK(wxCommandEvent &event)
 {
-	wxUnusedVar(event);
-	SaveCurrentSettings();
-	ManagerST::Get()->DoUpdateConfigChoiceControl();
+	OnButtonApply(event);
 	EndModal(wxID_OK);
 }
 

@@ -230,7 +230,6 @@ public:
 	void RegisterToolbar(int menuItemId, const wxString &name);
 	void RegisterDockWindow(int menuItemId, const wxString &name);
 
-	wxComboBox *GetConfigChoice();
 	const GeneralInfo& GetFrameGeneralInfo() const {
 		return m_frameGeneralInfo;
 	}
@@ -344,7 +343,6 @@ protected:
 	void OnCloseWorkspace(wxCommandEvent &event);
 	void OnProjectAddProject(wxCommandEvent &event);
 	void OnWorkspaceOpen(wxUpdateUIEvent &event);
-	void OnConfigurationManager(wxCommandEvent &event);
 	void OnAddEnvironmentVariable(wxCommandEvent &event);
 	void OnAdvanceSettings(wxCommandEvent &event);
 	void OnCtagsOptions(wxCommandEvent &event);
@@ -461,8 +459,6 @@ protected:
 	void OnShowFullScreen(wxCommandEvent &e);
 
 public:
-	void OnWorkspaceConfigChanged(wxCommandEvent &event);
-	void ShowBuildConfigurationManager();
 	void AddCppMenu();
 	void RemoveCppMenu();
 	void DoAddNewFile();

@@ -358,6 +358,17 @@ size_t Notebook::GetPageIndex(wxWindow *page)
 	return Notebook::npos;
 }
 
+size_t Notebook::GetPageIndex(const wxString& text)
+{
+	for(size_t i=0; i< m_tabs->GetTabsCount(); i++) {
+		CustomTab *tab = m_tabs->IndexToTab(i);
+		if(tab->GetText() == text) {
+			return i;
+		}
+	}
+	return Notebook::npos;
+}
+
 void Notebook::SetPageText(size_t index, const wxString &text)
 {
 	CustomTab *tab = m_tabs->IndexToTab(index);
@@ -381,3 +392,4 @@ void Notebook::DeleteAllPages()
 	
 	Thaw();
 }
+

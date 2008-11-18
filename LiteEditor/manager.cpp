@@ -283,10 +283,6 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
 		}
 	}
 
-	//update the symbol tree
-	if ( updTree && !editor->GetProject().IsEmpty() )
-		Frame::Get()->GetWorkspacePane()->BuildSymbolTree ( fileName );
-
 	//update the 'Recent file' history
 	AddToRecentlyOpenedFiles ( fileName.GetFullPath() );
 
@@ -297,8 +293,8 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
 	editor->SetProject ( projName );
 
 	//Synchronize the file view tree
-	if ( IsWorkspaceOpen() && Frame::Get()->GetWorkspacePane()->GetWorkspaceTab()->GetIsLinkedToEditor() ) {
-		Frame::Get()->GetWorkspacePane()->GetFileViewTree()->ExpandToPath ( editor->GetProject(), editor->GetFileName() );
+	if ( IsWorkspaceOpen() && Frame::Get()->GetWorkspaceTab()->GetIsLinkedToEditor() ) {
+		Frame::Get()->GetWorkspaceTab()->GetFileView()->ExpandToPath ( editor->GetProject(), editor->GetFileName() );
 	}
 
 	editor->SetActive();
@@ -522,7 +518,7 @@ void Manager::CloseWorkspace()
 		SendCmdEvent ( wxEVT_WORKSPACE_CLOSED );
 	}
 	Frame::Get()->GetNotebook()->Refresh();
-	Frame::Get()->GetWorkspacePane()->BuildFileTree();
+	Frame::Get()->GetWorkspaceTab()->BuildFileTree();
 
 #ifdef __WXMSW__
 	// Under Windows, and in order to avoid locking the directory set the working directory back to the start up directory
@@ -548,33 +544,6 @@ void Manager::OpenWorkspace ( const wxString &path )
 	// do workspace initializations
 	DoSetupWorkspace ( path );
 	SetWorkspaceClosing ( false );
-}
-
-void Manager::DoUpdateConfigChoiceControl()
-{
-	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-	wxComboBox *choice = Frame::Get()->GetConfigChoice();
-
-	choice->Enable ( true );
-	choice->Freeze();
-
-	std::list<WorkspaceConfigurationPtr> confs = matrix->GetConfigurations();
-	std::list<WorkspaceConfigurationPtr>::iterator iter = confs.begin();
-	choice->Clear();
-	for ( ; iter != confs.end(); iter++ ) {
-		choice->Append ( ( *iter )->GetName() );
-	}
-
-	if ( choice->GetCount() > 0 ) {
-		int where = choice->FindString ( matrix->GetSelectedConfigurationName() );
-		if ( where != wxNOT_FOUND ) {
-			choice->SetSelection ( where );
-		} else {
-			choice->SetSelection ( 0 );
-		}
-	}
-
-	choice->Thaw();
 }
 
 ProjectTreePtr Manager::GetProjectFileViewTree ( const wxString &projectName )
@@ -616,8 +585,7 @@ void Manager::AddProject ( const wxString & path )
 void Manager::RebuildFileView()
 {
 	// update symbol tree
-	WorkspacePane *wp = Frame::Get()->GetWorkspacePane();
-	wp->BuildFileTree();
+	Frame::Get()->GetWorkspaceTab()->BuildFileTree();
 }
 
 bool Manager::RemoveProject ( const wxString &name )
@@ -645,7 +613,7 @@ bool Manager::RemoveProject ( const wxString &name )
 		SendCmdEvent ( wxEVT_PROJ_FILE_REMOVED, ( void* ) &prjfls );
 	} // if(proj)
 
-	Frame::Get()->GetWorkspacePane()->GetFileViewTree()->BuildTree();
+	Frame::Get()->GetWorkspaceTab()->GetFileView()->BuildTree();
 	//notify plugins
 	SendCmdEvent ( wxEVT_PROJ_REMOVED, ( void* ) &name );
 
@@ -958,10 +926,10 @@ void Manager::ShowWorkspacePane ( wxString focusWin, bool commit )
 	}
 
 	// set the selection to focus win
-	WorkspacePane *pane = Frame::Get()->GetWorkspacePane();
-	int index = pane->CaptionToIndex ( focusWin );
-	if ( index != wxNOT_FOUND && ( size_t ) index != pane->GetNotebook()->GetSelection() ) {
-		pane->GetNotebook()->SetSelection ( ( size_t ) index );
+    Notebook *book = Frame::Get()->GetWorkspacePane()->GetNotebook();
+	int index = book->GetPageIndex ( focusWin );
+	if ( index != wxNOT_FOUND && ( size_t ) index != book->GetSelection() ) {
+		book->SetSelection ( ( size_t ) index );
 	}
 }
 
@@ -1028,6 +996,7 @@ BuildMatrixPtr Manager::GetWorkspaceBuildMatrix() const
 void Manager::SetWorkspaceBuildMatrix ( BuildMatrixPtr matrix )
 {
 	WorkspaceST::Get()->SetBuildMatrix ( matrix );
+    SendCmdEvent(wxEVT_WORKSPACE_CONFIG_CHANGED);
 }
 
 void Manager::TogglePanes()
@@ -1363,13 +1332,6 @@ void Manager::OnProcessEnd ( wxProcessEvent &event )
 	if ( GetActiveEditor() ) {
 		GetActiveEditor()->SetActive();
 	}
-}
-
-void Manager::SetWorkspaceConfigurationName ( const wxString &name )
-{
-	BuildMatrixPtr matrix = GetWorkspaceBuildMatrix();
-	matrix->SetSelectedConfigurationName ( name );
-	SetWorkspaceBuildMatrix ( matrix );
 }
 
 void Manager::ShowMainToolbar ( bool show )
@@ -1725,9 +1687,6 @@ void Manager::CloseAll()
 	if ( dlg ) {
 		dlg->Destroy();
 	}
-
-	//remove all symbol trees from the outline view
-	Frame::Get()->GetWorkspacePane()->DeleteAllSymbolTrees();
 
 	if ( !IsShutdownInProgress() ) {
 		SendCmdEvent ( wxEVT_ALL_EDITORS_CLOSED );
@@ -3083,7 +3042,7 @@ void Manager::ReloadWorkspace()
 	}
 
 	Frame::Get()->GetNotebook()->Refresh();
-	Frame::Get()->GetWorkspacePane()->BuildFileTree();
+	Frame::Get()->GetWorkspaceTab()->BuildFileTree();
 	SetStatusMessage ( wxEmptyString, 1 );
 
 	DoSetupWorkspace ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
@@ -3100,10 +3059,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 	wxBusyCursor cursor;
 
 	//initialize some environment variable to be available for this workspace
-	Frame::Get()->GetWorkspacePane()->BuildFileTree();
-
-	//Update the configuration choice on the toolbar
-	DoUpdateConfigChoiceControl();
+	Frame::Get()->GetWorkspaceTab()->BuildFileTree();
 
 	//update the 'Recent Workspace' history
 	AddToRecentlyOpenedWorkspaces ( path );
@@ -3157,7 +3113,6 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 			}
 		}
 	}
-
 	SendCmdEvent ( wxEVT_WORKSPACE_LOADED );
 }
 

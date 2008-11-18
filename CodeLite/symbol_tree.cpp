@@ -307,17 +307,13 @@ int SymbolTree::GetItemIconIndex(const wxString &kind, const wxString &access)
 	return index;
 }
 
-void SymbolTree::UpdateSymbols(SymbolTreeEvent& event)
+void SymbolTree::UpdateSymbols(const std::vector<std::pair<wxString, TagEntry> > &items)
 {
 	if ( !m_tree )
 		return;
 
-	std::vector<std::pair<wxString, TagEntry> > items = event.GetItems();
-
-
-	size_t i=0;
 	Freeze();
-	for (; i<items.size(); i++) {
+	for (size_t i=0; i<items.size(); i++) {
 		wxString key = items[i].first;
 		TagEntry data= items[i].second;
 
@@ -359,13 +355,12 @@ void SymbolTree::UpdateGuiItem(TagEntry& data, const wxString& key)
 	}
 }
 
-void SymbolTree::DeleteSymbols(SymbolTreeEvent& event)
+void SymbolTree::DeleteSymbols(const std::vector<std::pair<wxString, TagEntry> > &items)
 {
 	if (!m_tree)
 		return;
 
 	std::map<void*, bool> deletedMap;
-	std::vector<std::pair<wxString, TagEntry> > items = event.GetItems();
 
 	Freeze();
 	for (size_t i=0; i<items.size(); i++) {
@@ -402,13 +397,12 @@ void SymbolTree::GetItemChildrenRecursive(wxTreeItemId &parent, std::map<void*, 
 	deletedMap[parent.m_pItem] = true;
 }
 
-void SymbolTree::AddSymbols(SymbolTreeEvent& event)
+void SymbolTree::AddSymbols(const std::vector<std::pair<wxString, TagEntry> > &items)
 {
 	if (!m_tree)
 		return;
 
 	m_sortItems.clear();
-	std::vector<std::pair<wxString, TagEntry> > items = event.GetItems();
 	Freeze();
 	for (size_t i=0; i<items.size(); i++) {
 		TagEntry data = items.at(i).second;

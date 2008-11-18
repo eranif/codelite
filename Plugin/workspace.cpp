@@ -139,6 +139,11 @@ void Workspace::SetBuildMatrix(BuildMatrixPtr mapping)
 	}
 	parent->AddChild(mapping->ToXml());
 	m_doc.Save(m_fileName.GetFullPath());
+        
+    // force regeneration of makefiles for all projects
+	for (std::map<wxString, ProjectPtr>::iterator iter = m_projects.begin(); iter != m_projects.end(); iter++) {
+        iter->second->SetModified(true);
+	}
 }
 
 bool Workspace::CreateWorkspace(const wxString &name, const wxString &path, wxString &errMsg)

@@ -36,6 +36,7 @@
 #include "archive.h"
 #include "environmentconfig.h"
 #include "buidltab.h"
+#include "errorstab.h"
 #include "fileexplorer.h"
 #include "manager.h"
 #include "ctags_manager.h"
@@ -498,6 +499,9 @@ void Manager::CloseWorkspace()
     
 	//clear the 'build' tab
 	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
+	
+	//clear the 'errors' tab
+	Frame::Get()->GetOutputPane()->GetErrorsTab()->Clear();
 
 	//clear the navigation bar
 	Frame::Get()->GetMainBook()->Clear();
@@ -3014,6 +3018,9 @@ void Manager::ReloadWorkspace()
 
 	//clear the 'build' tab
 	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
+
+	//clear the 'errors' tab
+	Frame::Get()->GetOutputPane()->GetErrorsTab()->Clear();
 
 	//clear the navigation bar
 	Frame::Get()->GetMainBook()->Clear();

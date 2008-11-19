@@ -22,7 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "output_pane.h"
+ #include "output_pane.h" 
 #include "taskpanel.h"
 #include "replaceinfilespanel.h"
 #include "findresultscontainer.h"
@@ -35,11 +35,14 @@
 #include "macros.h"
 #include "shell_window.h"
 #include "buidltab.h"
+#include "errorstab.h"
+#include "errorscontainer.h"
 #include "custom_notebook.h"
 #include "wx/dcbuffer.h"
 
 const wxString OutputPane::FIND_IN_FILES_WIN= wxT("Find Results");
 const wxString OutputPane::BUILD_WIN        = wxT("Build");
+const wxString OutputPane::ERRORS_WIN       = wxT("Errors");
 const wxString OutputPane::OUTPUT_WIN		= wxT("Output");
 const wxString OutputPane::OUTPUT_DEBUG     = wxT("Debug");
 const wxString OutputPane::REPLACE_IN_FILES = wxT("Replace Results");
@@ -93,6 +96,8 @@ void OutputPane::CreateGUIControls()
 	m_findResultsTab = new FindResultsContainer(m_book, wxID_ANY);
 	m_replaceResultsTab = new ReplaceInFilesPanel(m_book);
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
+	//m_errorsWin = new ErrorsTab(m_book, wxID_ANY, ERRORS_WIN);
+	m_errorsWin = new ErrorsContainer(m_book, wxID_ANY);
 	m_outputDebug = new ShellTab(m_book, wxID_ANY, OUTPUT_DEBUG);
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
 	m_taskPanel = new TaskPanel(m_book);
@@ -105,6 +110,7 @@ void OutputPane::CreateGUIControls()
 	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, wxXmlResource::Get()->LoadBitmap(wxT("find_results")), false);
 	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, wxXmlResource::Get()->LoadBitmap(wxT("refresh16")), false);
 	m_book->AddPage(m_buildWin, BUILD_WIN, wxXmlResource::Get()->LoadBitmap(wxT("build")), false);
+	m_book->AddPage(m_errorsWin, ERRORS_WIN, wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")), false);
 	m_book->AddPage(m_outputWind, OUTPUT_WIN, wxXmlResource::Get()->LoadBitmap(wxT("output_win")), false);
 	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")), false);
 	m_book->AddPage(text, TRACE_TAB, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")), false);
@@ -166,4 +172,9 @@ void OutputPane::OnSize(wxSizeEvent &e)
 {
 	Refresh();
 	e.Skip();
+}
+
+ErrorsTab *OutputPane::GetErrorsTab()
+{
+	return m_errorsWin->GetErrorsTab();
 }

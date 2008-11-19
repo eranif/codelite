@@ -363,6 +363,10 @@
     <File Name="taskbasepanel.cpp"/>
     <File Name="taskbasepanel.h"/>
     <File Name="taskpanel.cpp"/>
+    <File Name="errorstab.h"/>
+    <File Name="errorscontainer.cpp"/>
+    <File Name="errorscontainer.h"/>
+    <File Name="errorstab.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

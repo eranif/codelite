@@ -57,6 +57,7 @@
 #include "shell_window.h"
 #include "findresultstab.h"
 #include "buidltab.h"
+#include "errorstab.h"
 #include "frame.h"
 #include "splashscreen.h"
 #include "wx/stdpaths.h"
@@ -1885,6 +1886,7 @@ void Frame::OnShellCommandEvent(wxCommandEvent &event)
 		// do we need to clear the build log?
 		if ( event.GetEventType() != wxEVT_SHELL_COMMAND_STARTED_NOCLEAN) {
 			m_outputPane->GetBuildTab()->Clear();
+			m_outputPane->GetErrorsTab()->Clear();
 		}
 
 		//read settings for the build output tab
@@ -1894,7 +1896,7 @@ void Frame::OnShellCommandEvent(wxCommandEvent &event)
 		SetStatusText(event.GetString(), 4);
 	} else if (event.GetEventType() == wxEVT_SHELL_COMMAND_ADDLINE) {
 		m_outputPane->GetBuildTab()->AppendText(event.GetString());
-
+		m_outputPane->GetErrorsTab()->AppendText(event.GetString());
 	} else if (event.GetEventType() == wxEVT_SHELL_COMMAND_PROCESS_ENDED) {
 		// take the elapsed time from the stopwatch
 		long elapsed = sw.Time();
@@ -2703,6 +2705,7 @@ void Frame::OnIdle(wxIdleEvent &e)
 void Frame::OnNextBuildError(wxCommandEvent &event)
 {
 	GetOutputPane()->GetBuildTab()->ProcessEvent(event);
+	GetOutputPane()->GetErrorsTab()->ProcessEvent(event);
 }
 
 void Frame::OnNextBuildErrorUI(wxUpdateUIEvent &event)

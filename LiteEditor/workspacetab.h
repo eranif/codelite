@@ -22,44 +22,50 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __workspacetab__
+#ifndef __workspacetab__
 #define __workspacetab__
 
 #include <wx/panel.h>
 
 class FileViewTree;
-class wxComboBox;
 
-class WorkspaceTab : public wxPanel {
+class WorkspaceTab : public wxPanel 
+{
 	FileViewTree *m_fileView;
-    bool m_isLinkedToEditor;
+    wxString      m_caption;
+    bool          m_isLinkedToEditor;
 	
-private:
-	void DoShowPopupMenu();
-	
-protected:
-	void OnCollapseAll(wxCommandEvent &event);
-	void OnCollapseAllUI(wxUpdateUIEvent &event);
-	void DoCollpaseAll();
-	void OnLinkEditor(wxCommandEvent &e);
-	void OnGoHome(wxCommandEvent &e);
-	void OnGoHomeUI(wxUpdateUIEvent &event);
-	void OnProjectSettingsUI(wxUpdateUIEvent &event);
-	void OnProjectSettings(wxCommandEvent &e);
-	void OnShowProjectListPopup(wxCommandEvent &e);
-	void OnMenuSelection(wxCommandEvent &e);
-	
-protected:
 	void CreateGUIControls();
+    void ConnectEvents();
+    
+	void OnLinkEditor           (wxCommandEvent  &e);
+	void OnCollapseAll          (wxCommandEvent  &e);
+	void OnCollapseAllUI        (wxUpdateUIEvent &e);
+	void OnGoHome               (wxCommandEvent  &e);
+	void OnGoHomeUI             (wxUpdateUIEvent &e);
+	void OnProjectSettingsUI    (wxUpdateUIEvent &e);
+	void OnProjectSettings      (wxCommandEvent  &e);
+    void OnShowFile             (wxCommandEvent  &e);
+    void OnShowFileUI           (wxUpdateUIEvent &e);
+	void OnShowProjectListPopup (wxCommandEvent  &e);
+	void OnMenuSelection        (wxCommandEvent  &e);
+    
+    void OnWorkspaceLoaded      (wxCommandEvent  &e);
+    void OnWorkspaceClosed      (wxCommandEvent  &e);
+    void OnProjectAdded         (wxCommandEvent  &e);
+    void OnProjectRemoved       (wxCommandEvent  &e);
+    void OnProjectFileAdded     (wxCommandEvent  &e);
+    void OnProjectFileRemoved   (wxCommandEvent  &e);
+    void OnActiveEditorChanged  (wxCommandEvent  &e);
+    void OnEditorClosing        (wxCommandEvent  &e);
+    void OnAllEditorsClosed     (wxCommandEvent  &e);
+	
 
 public:
-	WorkspaceTab(wxWindow *parent);
+	WorkspaceTab(wxWindow *parent, const wxString &caption);
 	~WorkspaceTab();
 
-	void BuildFileTree();
-	void CollpaseAll();
-
-	FileViewTree *GetFileView(){return m_fileView;}
-    const bool& GetIsLinkedToEditor() const {return m_isLinkedToEditor;}
+	FileViewTree   *GetFileView()       { return m_fileView; }
+    const wxString &GetCaption () const { return m_caption;  }
 };
 #endif // __workspacetab__

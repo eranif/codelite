@@ -79,16 +79,25 @@ enum MenuType {
 //Plugins events
 //
 enum {
-	//clientData is fileName (wxString*)
-	wxEVT_FILE_SAVED			 = 3450,
 	//clientData is NULL
-	wxEVT_FILE_EXP_REFRESHED,
+	wxEVT_INIT_DONE = 3450,
+    
 	//clientData is NULL
 	wxEVT_WORKSPACE_LOADED,
     //clientData is NULL
 	wxEVT_WORKSPACE_CONFIG_CHANGED,
 	//clientData is NULL
+    wxEVT_WORKSPACE_CLOSED,
+    
+    //clientData is NULL
+	wxEVT_FILE_VIEW_INIT_DONE,
+	//clientData is NULL
+	wxEVT_FILE_VIEW_REFRESHED,
+    //clientData is NULL
 	wxEVT_FILE_EXP_INIT_DONE,
+	//clientData is NULL
+	wxEVT_FILE_EXP_REFRESHED,
+    
 	//clientData is list of files added to project (wxArrayString*)
 	wxEVT_PROJ_FILE_ADDED,
 	//clientData is list of files which have been removed (wxArrayString*)
@@ -97,26 +106,27 @@ enum {
 	wxEVT_PROJ_REMOVED,
 	//clientData is the project name (wxString*)
 	wxEVT_PROJ_ADDED,
-	//clientData is NULL
-	wxEVT_INIT_DONE,
+    
 	//clientData is the selected word (wxString*)
 	wxEVT_CCBOX_SELECTION_MADE,
+    
+	//clientData is fileName (wxString*)
+	wxEVT_FILE_SAVED,
+    //clientData is list of files which have been retagged (std::vector<wxFileName>*)
+    wxEVT_FILE_RETAGGED,
 	//clientData is ParseThreadEventData*
 	wxEVT_SYNBOL_TREE_UPDATE_ITEM,
 	//clientData is ParseThreadEventData*
 	wxEVT_SYNBOL_TREE_DELETE_ITEM,
 	//clientData is ParseThreadEventData*
 	wxEVT_SYNBOL_TREE_ADD_ITEM,
-    //clientData is list of files which have been retagged (std::vector<wxFileName>*)
-    wxEVT_FILE_RETAGGED,
+    
     //clientData is active editor (IEditor*)
     wxEVT_ACTIVE_EDITOR_CHANGED,
     //clientData is closing editor (IEditor*)
     wxEVT_EDITOR_CLOSING,
     //clientData is NULL
     wxEVT_ALL_EDITORS_CLOSED,
-    //clientData is NULL
-    wxEVT_WORKSPACE_CLOSED
 };
 
 //------------------------------------------------------------------

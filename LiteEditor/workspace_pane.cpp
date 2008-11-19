@@ -39,8 +39,6 @@
 #include "workspacetab.h"
 #include "workspace_pane.h"
 
-const wxString WorkspacePane::FILE_VIEW   	= wxT("Workspace");
-
 
 WorkspacePane::WorkspacePane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr)
     : wxPanel(parent)
@@ -99,8 +97,8 @@ void WorkspacePane::CreateGUIControls()
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
 	wxArrayString detachedPanes = dpi.GetPanes();
 
-	m_workspaceTab = new WorkspaceTab(m_book);
-	ADD_WORKSPACE_PAGE(m_workspaceTab, WorkspacePane::FILE_VIEW);
+	m_workspaceTab = new WorkspaceTab(m_book, wxT("Workspace"));
+	ADD_WORKSPACE_PAGE(m_workspaceTab, m_workspaceTab->GetCaption());
 
 	m_explorer = new FileExplorer(m_book, wxT("Explorer"));
 	ADD_WORKSPACE_PAGE(m_explorer, m_explorer->GetCaption());

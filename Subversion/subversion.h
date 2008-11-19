@@ -46,7 +46,6 @@ class SubversionPlugin : public IPlugin
 	SvnOptions m_options;	
 	friend class SvnDriver;
 	bool m_isValid;
-	bool m_initIsDone;
 	wxMenuItem *m_explorerSepItem;
 	wxMenuItem *m_editorSepItem;
 	wxMenuItem *m_workspaceSepItem;
@@ -104,7 +103,6 @@ protected:
 	void OnFileSaved(wxCommandEvent &event);
 	void OnShowSvnStatus_FileExplorer(wxCommandEvent &event);
 	void OnShowSvnServerStatus_FileExplorer(wxCommandEvent &event);
-	void OnFileExplorerInitDone(wxCommandEvent &event);
 	void OnOptions(wxCommandEvent &event);
 	void OnChangeLog(wxCommandEvent &event);
 	void OnSvnAbort(wxCommandEvent &event);
@@ -112,7 +110,6 @@ protected:
 	void OnDelete(wxCommandEvent &event);
 	void OnRevert(wxCommandEvent &event);
 	void OnProjectFileAdded(wxCommandEvent &event);
-	void OnAppInitDone(wxCommandEvent &event);
 	void OnCommitFile(wxCommandEvent &e);
 	void OnUpdateFile(wxCommandEvent &e);
 	void OnDiffFile(wxCommandEvent &e);

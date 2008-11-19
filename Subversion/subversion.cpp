@@ -117,7 +117,6 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		, m_svnMenu(NULL)
 		, m_svn(NULL)
 		, topWin(NULL)
-		, m_initIsDone(false)
 		, m_explorerSepItem(NULL)
 		, m_editorSepItem(NULL)
 		, m_workspaceSepItem(NULL)
@@ -145,14 +144,11 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 
 	if (topWin) {
 		topWin->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(SubversionPlugin::OnFileSaved), NULL, this);
-		topWin->Connect(wxEVT_FILE_EXP_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnFileExplorerInitDone), NULL, this);
 		topWin->Connect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SubversionPlugin::OnProjectFileAdded), NULL, this);
-		topWin->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond), NULL, this);
-		topWin->Connect(wxEVT_PROJ_ADDED, wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond), NULL, this);
-		topWin->Connect(wxEVT_PROJ_REMOVED, wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond), NULL, this);
-		topWin->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnAppInitDone), NULL, this);
+		topWin->Connect(wxEVT_FILE_VIEW_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatus), NULL, this);
+        topWin->Connect(wxEVT_FILE_VIEW_REFRESHED, wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond), NULL, this);
+        
 		topWin->Connect(wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler(SubversionPlugin::OnLinkClicked), NULL, this);
-		topWin->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatus), NULL, this);
 
 		topWin->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnUpdate), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_commit"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommit), NULL, (wxEvtHandler*)this);
@@ -611,6 +607,13 @@ void SubversionPlugin::OnOptions(wxCommandEvent &event)
 
 void SubversionPlugin::UnPlug()
 {
+    topWin->Disconnect(wxEVT_FILE_SAVED, wxCommandEventHandler(SubversionPlugin::OnFileSaved), NULL, this);
+    topWin->Disconnect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SubversionPlugin::OnProjectFileAdded), NULL, this);
+    topWin->Disconnect(wxEVT_FILE_VIEW_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatus), NULL, this);
+    topWin->Disconnect(wxEVT_FILE_VIEW_REFRESHED, wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond), NULL, this);
+    
+    topWin->Disconnect(wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler(SubversionPlugin::OnLinkClicked), NULL, this);
+
 	topWin->Disconnect(XRCID("svn_commit_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommitFile), NULL, (wxEvtHandler*)this);
 	topWin->Disconnect(XRCID("svn_update_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnUpdateFile), NULL, (wxEvtHandler*)this);
 	topWin->Disconnect(XRCID("svn_revert_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnRevertFile), NULL, (wxEvtHandler*)this);
@@ -659,11 +662,6 @@ void SubversionPlugin::UnPlug()
 	}
 }
 
-void SubversionPlugin::OnFileExplorerInitDone(wxCommandEvent &e)
-{
-	e.Skip();
-}
-
 void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &e)
 {
 	e.Skip();
@@ -682,16 +680,6 @@ void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &e)
 			}
 		}
 	}
-	if (m_options.GetFlags() & SvnKeepIconsUpdated) {
-		SvnIconRefreshHandler handler(m_mgr, this);
-		handler.DoCommand();
-	}
-}
-
-void SubversionPlugin::OnAppInitDone(wxCommandEvent &e)
-{
-	m_initIsDone = true;
-    e.Skip();
 }
 
 void SubversionPlugin::DoGetWspSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate)
@@ -1189,19 +1177,15 @@ ProjectPtr SubversionPlugin::GetSelectedProject()
 
 void SubversionPlugin::OnRefrshIconsStatus(wxCommandEvent &e)
 {
-	wxWindowDisabler disabler;
-
-	wxBusyInfo wait_msg(_("Updating SVN Icons, please wait..."));
-	m_mgr->GetTheApp()->Yield();
-		
-	SvnIconRefreshHandler handler(m_mgr, this);
-	handler.DoCommand();
+	DoRefreshIcons();
 	e.Skip();
 }
 
 void SubversionPlugin::OnRefreshIconsCond(wxCommandEvent &e)
 {
-	DoRefreshIcons();
+  	if (m_options.GetFlags() & SvnKeepIconsUpdated) {
+        DoRefreshIcons();
+    }
 	e.Skip();
 }
 
@@ -1255,19 +1239,20 @@ bool SubversionPlugin::SanityCheck()
 
 void SubversionPlugin::DoRefreshIcons()
 {
-	if (m_options.GetFlags() & SvnKeepIconsUpdated) {
-		wxWindowDisabler disabler;
-		
-		wxBusyInfo wait_msg(_("Updating SVN Icons, please wait..."));
-		m_mgr->GetTheApp()->Yield();
-		
-		SvnIconRefreshHandler handler(m_mgr, this);
-		handler.DoCommand();
-	}
+    if (!m_mgr->IsWorkspaceOpen())
+        return;
+        
+    wxWindowDisabler disabler;
+    
+    wxBusyInfo wait_msg(_("Updating SVN Icons, please wait..."));
+    m_mgr->GetTheApp()->Yield();
+    
+    SvnIconRefreshHandler handler(m_mgr, this);
+    handler.DoCommand();
 }
 
 void SubversionPlugin::OnRefrshIconsStatusInternal(wxCommandEvent& e)
 {
-	wxUnusedVar(e);
+	wxUnusedVar(e); // don't skip
 	DoRefreshIcons();
 }

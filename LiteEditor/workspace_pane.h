@@ -38,9 +38,6 @@ class WorkspaceTab;
 
 class WorkspacePane : public wxPanel 
 {
-public:
-	static const wxString FILE_VIEW;
-	
 private:
 	wxString          m_caption;
 	wxComboBox       *m_workspaceConfig;	

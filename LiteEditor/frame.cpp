@@ -167,8 +167,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
 	EVT_MENU(XRCID("copy_file_path"), Frame::OnCopyFilePathOnly)
-	EVT_MENU(XRCID("show_in_workspace"), Frame::OnShowInWorkspace)
-	EVT_UPDATE_UI(XRCID("show_in_workspace"), Frame::OnShowInWorkspaceUI)
 	EVT_MENU(XRCID("open_shell_from_filepath"), Frame::OnOpenShellFromFilePath)
 	EVT_UPDATE_UI(XRCID("open_shell_from_filepath"), Frame::OnFileExistUpdateUI)
 
@@ -1386,11 +1384,6 @@ void Frame::OnFileClose(wxCommandEvent &event)
 
 	GetMainBook()->Clear();
 
-	// if no more editors are available, collapse the workspace tree
-	if (GetWorkspaceTab()->GetIsLinkedToEditor() && GetMainBook()->GetNotebook()->GetPageCount() == 0) {
-		GetWorkspaceTab()->CollpaseAll();
-	}
-	// also, update the title bar
 	SetFrameTitle(NULL);
 }
 
@@ -1431,13 +1424,6 @@ void Frame::OnPageChanged(NotebookEvent &event)
 		RemoveCppMenu();
 	}
 
-	//update the symbol view as well in case we are in a workspace context
-	if (!editor->GetProject().IsEmpty()) {
-		if (GetWorkspaceTab()->GetIsLinkedToEditor()) {
-			GetWorkspaceTab()->GetFileView()->ExpandToPath(editor->GetProject(), editor->GetFileName());
-		}
-	}
-
 	// construct the title for the main frame
 	SetFrameTitle(editor);
 
@@ -1465,11 +1451,6 @@ void Frame::OnPageClosed(NotebookEvent &event)
 
 	//clean the navigation bar
 	GetMainBook()->Clear();
-
-	// if no more editors are available, collapse the workspace tree
-	if (GetWorkspaceTab()->GetIsLinkedToEditor() && GetMainBook()->GetNotebook()->GetPageCount() == 0) {
-		GetWorkspaceTab()->CollpaseAll();
-	}
 }
 
 void Frame::OnFileSaveAll(wxCommandEvent &event)
@@ -2279,9 +2260,6 @@ void Frame::OnFileCloseAll(wxCommandEvent &event)
 	SetTitle(title);
 
 	GetMainBook()->Clear();
-	if (GetWorkspaceTab()->GetIsLinkedToEditor()) {
-		GetWorkspaceTab()->CollpaseAll();
-	}
 
 	RemoveCppMenu();
 }
@@ -3699,32 +3677,6 @@ void Frame::OnRetagWorkspace(wxCommandEvent& event)
 {
 	wxUnusedVar( event );
 	ManagerST::Get()->RetagWorkspace();
-}
-
-void Frame::OnShowInWorkspace(wxCommandEvent& e)
-{
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if (editor) {
-		wxString project = editor->GetProject();
-		wxFileName filepath = editor->GetFileName();
-		if (!project.IsEmpty()) {
-			GetWorkspaceTab()->GetFileView()->ExpandToPath(project, filepath);
-			ManagerST::Get()->ShowWorkspacePane(WorkspacePane::FILE_VIEW);
-		}
-	}
-}
-
-void Frame::OnShowInWorkspaceUI(wxUpdateUIEvent& e)
-{
-	e.Enable(false);
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if (editor) {
-		wxString project = editor->GetProject();
-		wxFileName filepath = editor->GetFileName();
-		if (!project.IsEmpty()) {
-			e.Enable(true);
-		}
-	}
 }
 
 void Frame::OnManageTags(wxCommandEvent& e)

@@ -283,7 +283,6 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
 		}
 	}
 
-	//update the 'Recent file' history
 	AddToRecentlyOpenedFiles ( fileName.GetFullPath() );
 
 	if ( selection != wxNOT_FOUND ) {
@@ -291,12 +290,6 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
 	}
 
 	editor->SetProject ( projName );
-
-	//Synchronize the file view tree
-	if ( IsWorkspaceOpen() && Frame::Get()->GetWorkspaceTab()->GetIsLinkedToEditor() ) {
-		Frame::Get()->GetWorkspaceTab()->GetFileView()->ExpandToPath ( editor->GetProject(), editor->GetFileName() );
-	}
-
 	editor->SetActive();
 
 	if ( returnFocusWin ) {
@@ -389,7 +382,7 @@ void Manager::UnInitialize()
 void Manager::CreateWorkspace ( const wxString &name, const wxString &path )
 {
 	// make sure that the workspace pane is visible
-	ShowWorkspacePane ( WorkspacePane::FILE_VIEW );
+	ShowWorkspacePane (Frame::Get()->GetWorkspaceTab()->GetCaption());
 
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->CreateWorkspace ( name, path, errMsg );
@@ -445,7 +438,10 @@ void Manager::CreateProject ( ProjectData &data )
 			wxCopyFile ( f.GetFullPath(), f.GetFullName() );
 		}
 	}
-	RebuildFileView();
+    
+    wxString projectName = proj->GetName();
+    RetagProject ( projectName );
+    SendCmdEvent ( wxEVT_PROJ_ADDED, ( void* ) &projectName );
 }
 
 void Manager::CloseWorkspace()
@@ -499,6 +495,7 @@ void Manager::CloseWorkspace()
 	SessionManager::Get().SetLastWorkspaceName ( wxT ( "Default" ) );
 
 	WorkspaceST::Get()->CloseWorkspace();
+    
 	//clear the 'build' tab
 	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
 
@@ -514,11 +511,11 @@ void Manager::CloseWorkspace()
 			book->DeletePage ( ( size_t ) i );
 		}
 	}
+	Frame::Get()->GetNotebook()->Refresh();
+    
 	if ( !IsShutdownInProgress() ) {
 		SendCmdEvent ( wxEVT_WORKSPACE_CLOSED );
 	}
-	Frame::Get()->GetNotebook()->Refresh();
-	Frame::Get()->GetWorkspaceTab()->BuildFileTree();
 
 #ifdef __WXMSW__
 	// Under Windows, and in order to avoid locking the directory set the working directory back to the start up directory
@@ -571,21 +568,10 @@ void Manager::AddProject ( const wxString & path )
 	bool res = WorkspaceST::Get()->AddProject ( path, errMsg );
 	CHECK_MSGBOX ( res );
 
-	//re-tag the newly added project
 	wxFileName fn ( path );
 	wxString projectName ( fn.GetName() );
-
 	RetagProject ( projectName );
-	RebuildFileView();
-
-	//notify plugins
 	SendCmdEvent ( wxEVT_PROJ_ADDED, ( void* ) &projectName );
-}
-
-void Manager::RebuildFileView()
-{
-	// update symbol tree
-	Frame::Get()->GetWorkspaceTab()->BuildFileTree();
 }
 
 bool Manager::RemoveProject ( const wxString &name )
@@ -613,8 +599,6 @@ bool Manager::RemoveProject ( const wxString &name )
 		SendCmdEvent ( wxEVT_PROJ_FILE_REMOVED, ( void* ) &prjfls );
 	} // if(proj)
 
-	Frame::Get()->GetWorkspaceTab()->GetFileView()->BuildTree();
-	//notify plugins
 	SendCmdEvent ( wxEVT_PROJ_REMOVED, ( void* ) &name );
 
 	return true;
@@ -810,6 +794,9 @@ bool Manager::RemoveFile ( const wxString &fileName, const wxString &vdFullPath 
 	CHECK_MSGBOX_BOOL ( res );
 
 	RemoveFileFromSymbolTree ( absPath, project );
+    wxArrayString files(1, &fileName);
+    SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&files);
+
 	return true;
 }
 
@@ -3042,7 +3029,6 @@ void Manager::ReloadWorkspace()
 	}
 
 	Frame::Get()->GetNotebook()->Refresh();
-	Frame::Get()->GetWorkspaceTab()->BuildFileTree();
 	SetStatusMessage ( wxEmptyString, 1 );
 
 	DoSetupWorkspace ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
@@ -3058,13 +3044,12 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 	// load ctags options
 	wxBusyCursor cursor;
 
-	//initialize some environment variable to be available for this workspace
-	Frame::Get()->GetWorkspaceTab()->BuildFileTree();
-
 	//update the 'Recent Workspace' history
 	AddToRecentlyOpenedWorkspaces ( path );
 
-	//hide the start page
+	SendCmdEvent ( wxEVT_WORKSPACE_LOADED );
+
+    //hide the start page
 	Notebook *book = Frame::Get()->GetNotebook();
 	for ( size_t i=0; i< ( size_t ) book->GetPageCount(); i++ ) {
 		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow*> ( book->GetPage ( i ) );
@@ -3113,7 +3098,6 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 			}
 		}
 	}
-	SendCmdEvent ( wxEVT_WORKSPACE_LOADED );
 }
 
 void Manager::ClearFileHistory()

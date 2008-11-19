@@ -44,6 +44,8 @@ OpenWindowsPanel::~OpenWindowsPanel()
 		delete m_rclickMenu;
 		m_rclickMenu = NULL;
 	}
+    // clear list now, or wxGTK seems to crash on exit
+    m_fileList->Clear();
 }
 
 int OpenWindowsPanel::EditorItem(LEditor *editor)
@@ -83,6 +85,7 @@ void OpenWindowsPanel::OnKeyDown( wxKeyEvent& event )
             }
             break;
         case WXK_DELETE:
+        case WXK_NUMPAD_DELETE:
             if (m_fileList->GetSelection() != wxNOT_FOUND) {
                 DoCloseSelectedItem(m_fileList->GetSelection());
                 m_fileList->SetFocus();

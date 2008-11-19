@@ -619,6 +619,9 @@
         <object class="wxMenuItem" name="wxID_PASTE">
             <label>Paste</label>
         </object>
+		<object class="wxMenuItem" name="wxID_DELETE">
+            <label>Delete</label>
+        </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="wxID_SELECTALL">
             <label>Select All</label>

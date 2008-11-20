@@ -161,9 +161,9 @@ void ShellWindow::OnKeyDown(wxKeyEvent &event)
 				if(m_cur+1 < (int)m_history.GetCount() && !m_history.IsEmpty()) m_cur++;
 				wxString itemToDisplay = m_history.Item((size_t)m_cur);
 				m_inWin->SetValue(itemToDisplay);
-				m_inWin->SetSelection(m_inWin->GetLastPosition(), m_inWin->GetLastPosition());
+				m_inWin->SetInsertionPoint(m_inWin->GetLastPosition());
 			}
-			break;
+			return;
 		}
 	case WXK_DOWN:
 		{
@@ -171,9 +171,9 @@ void ShellWindow::OnKeyDown(wxKeyEvent &event)
 				if(m_cur-1 >= 0 && !m_history.IsEmpty()) m_cur--;
 				wxString itemToDisplay = m_history.Item((size_t)m_cur);
 				m_inWin->SetValue(itemToDisplay);
-				m_inWin->SetSelection(m_inWin->GetLastPosition(), m_inWin->GetLastPosition());
+				m_inWin->SetInsertionPoint(m_inWin->GetLastPosition());
 			}
-			break;
+			return;
 		}
 	default:
 		break;

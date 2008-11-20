@@ -70,7 +70,7 @@ void ErrorsContainer::Initialize()
 	fsz->Add( m_buttonErrors,   0, wxALL|wxALIGN_CENTER_VERTICAL,            5 );
 	fsz->Add( m_buttonWarnings, 0, wxALL|wxALIGN_CENTER_VERTICAL,            5 );
 	sz ->Add( fsz,              0, wxEXPAND,         5 );
-	sz ->Add( m_errorsTab,      0, wxALL | wxEXPAND, 5 );
+	sz ->Add( m_errorsTab,      1, wxALL | wxEXPAND, 5 );
 
 	this->SetSizer( sz );
 	this->Layout();

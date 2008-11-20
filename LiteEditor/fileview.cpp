@@ -525,25 +525,7 @@ bool FileViewTree::AddFilesToVirtualFodler(const wxString& vdFullPath, wxArraySt
 	ManagerST::Get()->AddFilesToProject( paths, vdFullPath, actualAdded );
 
 	// locate the item
-	wxTreeItemId item = GetRootItem();
-	wxArrayString tokens = wxStringTokenize(vdFullPath, wxT(":"), wxTOKEN_STRTOK);
-
-	for (size_t i=0; i<tokens.GetCount(); i++) {
-		if (item.IsOk() && HasChildren(item)) {
-
-			// loop over the children of this node, and search for a match
-			wxTreeItemIdValue cookie;
-			wxTreeItemId child = GetFirstChild(item, cookie);
-			while (child.IsOk()) {
-				if (GetItemText(child) == tokens.Item(i)) {
-					item = child;
-					break;
-				}
-				child = GetNextChild(child, cookie);
-			}
-		}
-	}
-
+	wxTreeItemId item = ItemByFullPath(vdFullPath);
 	if (item.IsOk()) {
 		for ( size_t i=0; i<actualAdded.Count(); i++ ) {
 

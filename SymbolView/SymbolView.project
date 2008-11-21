@@ -54,17 +54,17 @@
       <General OutputFile="$(ConfigurationName)/SymbolView.dll" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2;-fPIC">
         <IncludePath Value="."/>
-        <IncludePath Value="../../My Software/My Sources/codelite/Interfaces"/>
-        <IncludePath Value="../../My Software/My Sources/codelite/CodeLite"/>
-        <IncludePath Value="../../My Software/My Sources/codelite/Plugin"/>
-        <IncludePath Value="../../My Software/My Sources/codelite/sqlite3"/>
-        <IncludePath Value="../../My Software/My Sources/codelite/sdk/wxsqlite3/include"/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sqlite3"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
-        <LibraryPath Value="../../My Software/My Sources/codelite/lib/gcc_lib"/>
+        <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.a"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
@@ -168,4 +168,5 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="ReleaseUnicode"/>
 </CodeLite_Project>

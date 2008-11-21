@@ -265,6 +265,48 @@ public:
      * @brief search for pattern in active editor and select name if found
      */
     virtual void FindAndSelect(const wxString& pattern, const wxString& name) = 0;
+    
+    /**
+     * @brief show a (short) message in the status bar
+     */  
+    virtual void SetStatusMessage(const wxString &msg, int col, int id) = 0;
+    
+    void SetStatusMessage(const wxString &msg, int id)
+        { SetStatusMessage(msg, 0, id); }
 };
+
+
+class PluginStatusMessage
+{
+    IManager *m_mgr;
+    int m_col;
+    int m_id;
+public:
+    PluginStatusMessage(IManager *mgr, const wxString &msg, int col, int id)
+        : m_mgr(mgr)
+        , m_col(col)
+        , m_id(id)
+        { mgr->SetStatusMessage(msg, col, id); }
+    PluginStatusMessage(IManager *mgr, const wxString &msg, int id)
+        : m_mgr(mgr)
+        , m_col(0)
+        , m_id(id)
+        { mgr->SetStatusMessage(msg, 0, id); }
+    ~PluginStatusMessage()
+        { m_mgr->SetStatusMessage(wxEmptyString, m_col, m_id); }
+};
+
+
+class PluginBusyMessage : public PluginStatusMessage, public wxBusyCursor
+{
+public:
+    PluginBusyMessage(IManager *mgr, const wxString &msg, int col, int id)
+        : PluginStatusMessage(mgr, msg, col, id)
+        { }
+    PluginBusyMessage(IManager *mgr, const wxString &msg, int id)
+        : PluginStatusMessage(mgr, msg, id)
+        { }
+};
+
 
 #endif //IMANAGER_H

@@ -456,3 +456,8 @@ void PluginManager::EnableToolbars()
 		}
 	}
 }
+
+void PluginManager::SetStatusMessage(const wxString &msg, int col, int id)
+{
+    Frame::Get()->SetStatusMessage(msg, 0, id);
+}

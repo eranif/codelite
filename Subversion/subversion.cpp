@@ -313,6 +313,7 @@ void SubversionPlugin::OnSvnAbort(wxCommandEvent &event)
 {
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
+    
 	m_svn->PrintMessage(wxT("----\nAborting ...\n"));
 	m_svn->Abort();
 }
@@ -363,6 +364,7 @@ void SubversionPlugin::OnUpdate(wxCommandEvent &event)
 {
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
+    PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion"));
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	m_svn->Update(new UpdatePostCmdAction(m_mgr, this));
 }
@@ -371,6 +373,7 @@ void SubversionPlugin::OnCommit(wxCommandEvent &event)
 {
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
+    PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion"));
 	m_svn->PrintMessage(wxT("----\nCommitting ...\n"));
 	m_svn->Commit();
 }
@@ -379,6 +382,7 @@ void SubversionPlugin::OnCommitFile(wxCommandEvent &event)
 {
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
+    PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion"));
 	m_svn->PrintMessage(wxT("----\nCommitting ...\n"));
 	//get the current active editor name
 	IEditor *editor = m_mgr->GetActiveEditor();
@@ -391,6 +395,7 @@ void SubversionPlugin::OnUpdateFile(wxCommandEvent &event)
 {
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
+    PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion"));
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	IEditor *editor = m_mgr->GetActiveEditor();
 	if (editor) {
@@ -684,6 +689,11 @@ void SubversionPlugin::OnProjectFileAdded(wxCommandEvent &e)
 
 void SubversionPlugin::DoGetWspSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate)
 {
+    SmartPtr<PluginBusyMessage> wait_msg;
+    if (inclOutOfDate) {
+        wait_msg.Reset(new PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion")));
+    }
+    
 	//get list of paths to check
 	std::map<wxString, bool> workspaceFolders;
 
@@ -746,6 +756,11 @@ void SubversionPlugin::DoGetWspSvnStatus(const wxString &basePath, wxArrayString
 
 void SubversionPlugin::DoGetSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate)
 {
+    SmartPtr<PluginBusyMessage> wait_msg;
+    if (inclOutOfDate) {
+        wait_msg.Reset(new PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion")));
+    }
+    
 	wxString command;
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive -q --no-ignore ");
@@ -859,6 +874,11 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &o
 
 void SubversionPlugin::DoGetPrjSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate)
 {
+    SmartPtr<PluginBusyMessage> wait_msg;
+    if (inclOutOfDate) {
+        wait_msg.Reset(new PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion")));
+    }
+    
 	//get the selected project name
 	wxString command;
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
@@ -1144,6 +1164,7 @@ void SubversionPlugin::OnUpdatePrj(wxCommandEvent &e)
 		return;
 	}
 
+    PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion"));
 	m_svn->PrintMessage(wxT("----\nUpdating ...\n"));
 	//concatenate list of files here
 	m_svn->UpdateFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""), new UpdatePostCmdAction(m_mgr, this));
@@ -1156,6 +1177,7 @@ void SubversionPlugin::OnCommitPrj(wxCommandEvent &e)
 		return;
 	}
 
+    PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion"));
 	m_svn->PrintMessage(wxT("----\nCommitting ...\n"));
 	m_svn->CommitFile(wxT("\"") + p->GetFileName().GetPath() + wxT("\""), new SvnIconRefreshHandler(m_mgr, this));
 }
@@ -1241,11 +1263,9 @@ void SubversionPlugin::DoRefreshIcons()
 {
     if (!m_mgr->IsWorkspaceOpen())
         return;
-        
-    wxWindowDisabler disabler;
     
-    wxBusyInfo wait_msg(_("Updating SVN Icons, please wait..."));
-    m_mgr->GetTheApp()->Yield();
+	wxWindowDisabler disabler;   
+    PluginBusyMessage wait_msg(m_mgr, wxT("Updating SVN Icons..."), XRCID("subversion"));
     
     SvnIconRefreshHandler handler(m_mgr, this);
     handler.DoCommand();

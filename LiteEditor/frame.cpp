@@ -683,10 +683,10 @@ void Frame::CreateGUIControls(void)
 	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
 //	wxStatusBar* statusBar = new CustomStatusBar(this, wxID_ANY);
 	SetStatusBar(statusBar);
-	GetStatusBar()->SetFieldsCount(5);
-
-	GetStatusBar()->SetStatusText(wxT("Ready"));
-
+    m_status.resize(5);
+	GetStatusBar()->SetFieldsCount(m_status.size());
+    SetStatusMessage(wxT("Ready"), 0);
+    SetStatusMessage(wxT("Done"), m_status.size()-1);
 
 	//update ctags options
 	TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
@@ -1432,13 +1432,13 @@ void Frame::OnPageChanged(NotebookEvent &event)
 	// update status message
 	switch ( editor->GetEOLMode() ) {
 	case wxSCI_EOL_CR:
-		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Mac"), 3);
+		SetStatusMessage(wxT("EOL Mode: Mac"), 3);
 		break;
 	case wxSCI_EOL_CRLF:
-		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
+		SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
 		break;
 	default:
-		ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Unix"), 3);
+		SetStatusMessage(wxT("EOL Mode: Unix"), 3);
 		break;
 	}
 	editor->SetActive();
@@ -1893,7 +1893,7 @@ void Frame::OnShellCommandEvent(wxCommandEvent &event)
 		m_outputPane->GetBuildTab()->ReloadSettings();
 		m_outputPane->GetBuildTab()->AppendText(wxT("Building: \n"));
 
-		SetStatusText(event.GetString(), 4);
+		SetStatusMessage(event.GetString(), 4, XRCID("build"));
 	} else if (event.GetEventType() == wxEVT_SHELL_COMMAND_ADDLINE) {
 		m_outputPane->GetBuildTab()->AppendText(event.GetString());
 		m_outputPane->GetErrorsTab()->AppendText(event.GetString());
@@ -1922,7 +1922,7 @@ void Frame::OnShellCommandEvent(wxCommandEvent &event)
 
 		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
 
-		SetStatusText(wxT("Done"), 4);
+		SetStatusMessage(wxEmptyString, 4, XRCID("build"));
 
 		// get the build settings
 		BuildTabSettingsData buildSettings;
@@ -3032,13 +3032,13 @@ void Frame::OnConvertEol(wxCommandEvent &e)
 		// update status message
 		switch ( eol ) {
 		case wxSCI_EOL_CR:
-			ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Mac"), 3);
+			SetStatusMessage(wxT("EOL Mode: Mac"), 3);
 			break;
 		case wxSCI_EOL_CRLF:
-			ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
+			SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
 			break;
 		default:
-			ManagerST::Get()->SetStatusMessage(wxT("EOL Mode: Unix"), 3);
+			SetStatusMessage(wxT("EOL Mode: Unix"), 3);
 			break;
 		}
 	}
@@ -3260,7 +3260,7 @@ void Frame::OnShowNavBarUI(wxUpdateUIEvent& e)
 void Frame::OnParsingThreadDone(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	GetStatusBar()->SetStatusText(wxT("Ready"));
+	SetStatusMessage(wxEmptyString, 0, XRCID("retag_file"));
 	LEditor *editor = ManagerST::Get()->GetActiveEditor();
 	if (editor) {
 		editor->UpdateColours();
@@ -3368,7 +3368,23 @@ void Frame::OnUpdateStatusBar(wxCommandEvent& e)
 {
 	wxString msg = e.GetString();
 	int field = e.GetInt();
-	GetStatusBar()->SetStatusText(msg, field);
+    SetStatusMessage(msg, field);
+}
+
+void Frame::SetStatusMessage(const wxString &msg, int col, int id)
+{
+    if (col < 0 || col >= m_status.size())
+        return;
+    wxString text = msg;
+    if (!msg.IsEmpty()) {
+        m_status[col][id] = msg;
+    } else {
+        m_status[col].erase(id);
+        if (!m_status[col].empty()) {
+            text = m_status[col].begin()->second;
+        }
+    }
+    SetStatusText(text, col);
 }
 
 void Frame::OnFunctionCalltipUI(wxUpdateUIEvent& event)

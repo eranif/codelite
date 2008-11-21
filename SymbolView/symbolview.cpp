@@ -868,13 +868,7 @@ void SymbolViewPlugin::AddDeferredSymbols(const std::multimap<wxString, wxString
  */
 void SymbolViewPlugin::UpdateTrees(const wxArrayString &files, bool removeOld)
 {
-	SmartPtr<wxBusyInfo> wait_msg;
-	if (GetViewMode() != vmCurrentFile && files.Count() > 2) {
-		wait_msg.Reset(new wxBusyInfo(_("Updating SymbolView tree, please wait...")));
-		m_mgr->GetTheApp()->Yield();
-	}
-	wxBusyCursor bc;
-	wxWindowDisabler disableAll;
+    PluginBusyMessage wait_msg(m_mgr, wxT("Updating SymbolView tree..."), XRCID("symbolview"));
 
 	std::multimap<wxString,wxString> sqlopts;
 	std::map<TagKey, TreeNode> tagsToDelete;
@@ -930,14 +924,8 @@ void SymbolViewPlugin::CreateSymbolTree(const wxString &path, WindowStack *paren
 {
 	if (path.IsEmpty() || !parent)
 		return;
-
-	SmartPtr<wxBusyInfo> wait_msg;
-	if (GetViewMode() != vmCurrentFile) {
-		wait_msg.Reset(new wxBusyInfo(_("Building SymbolView tree, please wait...")));
-		m_mgr->GetTheApp()->Yield();
-	}
-	wxBusyCursor bc;
-	wxWindowDisabler disableAll;
+        
+    PluginBusyMessage wait_msg(m_mgr, wxT("Building SymbolView tree..."), XRCID("symbolview"));
 
 	// make new empty tree
 	SymTree *tree = new SymTree(parent);

@@ -1354,7 +1354,7 @@ void Manager::SetExternalDatabase ( const wxFileName &dbname )
 	TagsManagerST::Get()->OpenExternalDatabase ( dbname );
 
 	if ( TagsManagerST::Get()->GetExtDatabase()->IsOpen() ) {
-		SetStatusMessage ( wxString::Format ( wxT ( "External DB: '%s'" ), dbname.GetFullName().GetData() ), 1 );
+		Frame::Get()->SetStatusMessage ( wxString::Format ( wxT ( "External DB: '%s'" ), dbname.GetFullName().GetData() ), 1 );
 		EditorConfigST::Get()->SetTagsDatabase ( dbname.GetFullPath() );
 	}
 }
@@ -1598,12 +1598,7 @@ void Manager::CloseExternalDatabase()
 	TagsManager *mgr = TagsManagerST::Get();
 	mgr->CloseExternalDatabase();
 	//remove the entry from the status bar
-	SetStatusMessage ( wxEmptyString, 1 );
-}
-
-void Manager::SetStatusMessage ( const wxString &msg, int col )
-{
-	Frame::Get()->GetStatusBar()->SetStatusText ( msg, col );
+	Frame::Get()->SetStatusMessage ( wxEmptyString, 1 );
 }
 
 void Manager::CloseAllButThis ( wxWindow *curreditor )
@@ -2837,13 +2832,17 @@ void Manager::RetagFile ( const wxString& filename )
 		wxFileName absFile ( filename );
 		absFile.MakeAbsolute();
 		req->setFile ( absFile.GetFullPath().c_str() );
+        
+        wxString msg = wxString::Format(wxT( "Re-tagging file %s..." ), absFile.GetFullName().c_str());
+        Frame::Get()->SetStatusMessage(msg, XRCID("retag_file"));
+        
 		ParseThreadST::Get()->Add ( req );
 
 		// send event to main frame to update the status bar
-		wxCommandEvent e ( wxEVT_CMD_UPDATE_STATUS_BAR );
-		e.SetInt ( 0 );
-		e.SetString ( wxString::Format ( wxT ( "Re-tagging file %s..." ), absFile.GetFullName().c_str() ) );
-		Frame::Get()->AddPendingEvent ( e );
+		//wxCommandEvent e ( wxEVT_CMD_UPDATE_STATUS_BAR );
+		//e.SetInt ( 0 );
+		//e.SetString ( wxString::Format ( wxT ( "Re-tagging file %s..." ), absFile.GetFullName().c_str() ) );
+		//Frame::Get()->AddPendingEvent ( e );
 	} else {
 		wxLogMessage ( wxString::Format ( wxT ( "Workspace in being closed, skipping re-tag for file %s" ), filename.c_str() ) );
 	}
@@ -3036,7 +3035,7 @@ void Manager::ReloadWorkspace()
 	}
 
 	Frame::Get()->GetNotebook()->Refresh();
-	SetStatusMessage ( wxEmptyString, 1 );
+	Frame::Get()->SetStatusMessage ( wxEmptyString, 1 );
 
 	DoSetupWorkspace ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
 }

@@ -88,6 +88,7 @@ class Frame : public wxFrame
 	GeneralInfo m_frameGeneralInfo;
 	std::map<int, wxString> m_toolbars;
 	std::map<int, wxString> m_panes;
+    std::vector<std::map<int, wxString> > m_status;
 	bool m_doingReplaceInFiles;
 	wxMenu *m_cppMenu;
 	bool m_highlightWord;
@@ -266,6 +267,11 @@ public:
 	 */
 	void OnBuildCustomTarget(wxCommandEvent &event);
 
+    /**
+     * @brief set a status message
+     */ 
+    void SetStatusMessage(const wxString &msg, int col, int id = wxID_ANY);
+    
 private:
 	// make our frame's constructor private
 	Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLIP_CHILDREN);

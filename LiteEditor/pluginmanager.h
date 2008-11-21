@@ -100,7 +100,8 @@ public:
 	virtual OptionsConfigPtr GetEditorSettings();
     virtual void FindAndSelect(const wxString& pattern, const wxString& name);
 	virtual bool AllowToolbar();
-	
+	virtual void SetStatusMessage(const wxString &msg, int col, int id);
+    
 	//------------------------------------
 	//End of IManager interface
 	//------------------------------------

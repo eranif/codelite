@@ -579,13 +579,6 @@ public:
 	void GetRecentlyOpenedWorkspaces(wxArrayString &files);
 
 	/**
-	 * insert message to the status bar at a given column
-	 * \param msg
-	 * \param col
-	 */
-	void SetStatusMessage(const wxString &msg, int col);
-
-	/**
 	 * close all opened documents
 	 */
 	void CloseAll();

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="static-library-wx-enabled">
 	<Description>
-		A project that produces a static library (archive). The settings of this project already includes
-		the paths required by wxWidgets using the wx-config tool. Note that this project is set to work 
-		with the GNU toolchain (gdb, g++)
+		A project that produces a static library (archive).
+The settings of this project already includes the paths required by wxWidgets using the wx-config tool.
+Note that this project is set to work with the GNU toolchain (gdb, g++)
 	</Description>
   <VirtualDirectory Name="src"/>
   <VirtualDirectory Name="include"/>

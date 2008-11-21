@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="Non-code project">
+  <Description>
+    A project to contain files that don't get compiled.
+You might use it for your program's manual or web-pages, or even your shopping list.
+  </Description>
+  <Dependencies/>
+</CodeLite_Project>

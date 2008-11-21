@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="vc-static-lib">
 	<Description>
-		A project that produces a static library (.lib). Note that this project is set to work 
-		with the Microsoft(R) toolchain (CL, LINK)
+		A project that produces a static library (.lib).
+Note that this project is set to work with the Microsoft(R) toolchain (CL, LINK)
 	</Description>
   <VirtualDirectory Name="src"/>
   <VirtualDirectory Name="include"/>

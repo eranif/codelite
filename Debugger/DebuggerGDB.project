@@ -62,6 +62,7 @@
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+        <Preprocessor Value="ON_64_BIT"/>
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
         <LibraryPath Value="../lib/gcc_lib"/>

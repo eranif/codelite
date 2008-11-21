@@ -463,7 +463,7 @@
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options="$(shell wx-config --rcflags)"/>
       <PreBuild/>
       <PostBuild/>
@@ -478,7 +478,7 @@
         <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc -c -v -o resources.cpp resources.xrc
@@ -496,6 +496,7 @@ resources.cpp: resources.xrc
         <IncludePath Value="../Interfaces"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="ON_64_BIT"/>
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --unicode=yes --libs );$(shell pkg-config --libs gtk+-2.0)">
         <LibraryPath Value="."/>
@@ -506,7 +507,7 @@ resources.cpp: resources.xrc
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options="$(shell wx-config --rcflags)"/>
       <PreBuild>
         <Command Enabled="yes">cd ../ &amp;&amp; ./le_makerevision.sh</Command>
@@ -515,13 +516,13 @@ resources.cpp: resources.xrc
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc -c -v -o resources.cpp resources.xrc
@@ -550,7 +551,7 @@ resources.cpp: resources.xrc
         <Library Value="libsqlite3.a"/>
         <Library Value="libwxmsw28ud.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
       <PreBuild/>
       <PostBuild/>
@@ -559,13 +560,13 @@ resources.cpp: resources.xrc
         <Target Name="configure">./configure</Target>
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp svninfo.cpp
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
@@ -597,7 +598,7 @@ svninfo.cpp:
         <Library Value="libsqlite3.a"/>
         <Library Value="libwxmsw28u.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
       <PreBuild>
         <Command Enabled="yes">autorev .</Command>
@@ -606,13 +607,13 @@ svninfo.cpp:
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc

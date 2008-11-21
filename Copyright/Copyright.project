@@ -23,6 +23,7 @@
   <Dependencies/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
       <General OutputFile="../Runtime/plugins/Copyright.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
@@ -44,25 +45,25 @@
         <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library">
-      <General OutputFile="../Runtime/plugins/Copyright.dll" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/plugins/Copyright.so" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2;-fPIC">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
@@ -81,21 +82,23 @@
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
@@ -120,21 +123,21 @@
         <Library Value="libsqlite3.a"/>
         <Library Value="libwxmsw28ud.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
@@ -159,23 +162,22 @@
         <Library Value="libsqlite3.a"/>
         <Library Value="libwxmsw28u.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="ReleaseUnicode"/>
 </CodeLite_Project>

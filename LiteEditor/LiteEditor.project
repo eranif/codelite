@@ -404,9 +404,47 @@
     <File Name="editorsettingsgeneralpagebase.fbp"/>
     <File Name="tagsmanagementbasedlg.fbp"/>
   </VirtualDirectory>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Subversion"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="SymbolView"/>
+  </Dependencies>
+  <Dependencies Name="WinReleaseUnicode">
+    <Project Name="sqlite3"/>
+    <Project Name="wxscintilla"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Subversion"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="SymbolView"/>
+  </Dependencies>
   <Settings Type="Executable">
     <Configuration Name="Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="../Runtime/CodeLiteUR" IntermediateDirectory="./ReleaseUnicode" Command="./CodeLiteUD" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/CodeLiteUR" IntermediateDirectory="./ReleaseUnicode" Command="./CodeLiteUR" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;$(shell pkg-config --cflags gtk+-2.0);-Wall;-fno-strict-aliasing">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
@@ -438,6 +476,49 @@
         <MakefileGenerationCommand>./configure</MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
         <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild>resources.cpp
+resources.cpp: resources.xrc
+	wxrc -c -v -o resources.cpp resources.xrc
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="UnixCodeLite" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="../Runtime/CodeLite" IntermediateDirectory="./ReleaseUnicode" Command="./CodeLite" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes"/>
+      <Compiler Required="yes" Options="$(shell wx-config --debug=no --cxxflags --unicode=yes);$(shell pkg-config --cflags gtk+-2.0);-O2;-Wall;-fno-strict-aliasing ;-fPIC">
+        <IncludePath Value="."/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../Interfaces"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --unicode=yes --libs );$(shell pkg-config --libs gtk+-2.0)">
+        <LibraryPath Value="."/>
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdku.a"/>
+        <Library Value="libCodeLiteu.a"/>
+        <Library Value="libwxscintillau.a"/>
+        <Library Value="libwxsqlite3u.a"/>
+        <Library Value="libsqlite3.a"/>
+      </Linker>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <ResourceCompiler Required="no" Options="$(shell wx-config --rcflags)"/>
+      <PreBuild>
+        <Command Enabled="yes">cd ../ &amp;&amp; ./le_makerevision.sh</Command>
+      </PreBuild>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
+        <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
@@ -539,7 +620,7 @@ resources.cpp: resources.xrc
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode">
+  <Dependencies Name="UnixCodeLite">
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
@@ -552,29 +633,5 @@ resources.cpp: resources.xrc
     <Project Name="Cscope"/>
     <Project Name="Copyright"/>
     <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="SymbolView"/>
-  </Dependencies>
-  <Dependencies Name="WinReleaseUnicode">
-    <Project Name="sqlite3"/>
-    <Project Name="wxscintilla"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="Subversion"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="SymbolView"/>
   </Dependencies>
 </CodeLite_Project>

@@ -31,7 +31,7 @@
   <Project Name="abbreviation" Path="abbreviation/abbreviation.project" Active="No"/>
   <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
@@ -73,7 +73,7 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix" Selected="no">
+    <WorkspaceConfiguration Name="Unix_Mac_Custom_Makefile" Selected="no">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>
@@ -93,6 +93,27 @@
       <Project Name="CodeLite" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
       <Project Name="abbreviation" ConfigName="DebugUnicode"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="yes">
+      <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
+      <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
+      <Project Name="wxFormBuilder" ConfigName="ReleaseUnicode"/>
+      <Project Name="UnitTestPP" ConfigName="ReleaseUnicode"/>
+      <Project Name="SymbolView" ConfigName="ReleaseUnicode"/>
+      <Project Name="Subversion" ConfigName="ReleaseUnicode"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="snipwiz" ConfigName="ReleaseUnicode"/>
+      <Project Name="plugin_sdk" ConfigName="ReleaseUnicode"/>
+      <Project Name="LiteEditor" ConfigName="UnixCodeLite"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="Gizmos" ConfigName="ReleaseUnicode"/>
+      <Project Name="ExternalTools" ConfigName="ReleaseUnicode"/>
+      <Project Name="DebuggerGDB" ConfigName="ReleaseUnicode"/>
+      <Project Name="Cscope" ConfigName="ReleaseUnicode"/>
+      <Project Name="Copyright" ConfigName="ReleaseUnicode"/>
+      <Project Name="CodeLite" ConfigName="ReleaseUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
+      <Project Name="abbreviation" ConfigName="ReleaseUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

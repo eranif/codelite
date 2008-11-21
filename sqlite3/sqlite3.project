@@ -6,26 +6,33 @@
   <VirtualDirectory Name="Header Files">
     <File Name="sqlite3.h"/>
   </VirtualDirectory>
+  <Dependencies/>
   <Settings Type="Static Library">
-    <Configuration Name="Common" CompilerType="gnu gcc" DebuggerType="">
-      <General OutputFile="../lib/gcc_lib/libsqlite3.a" IntermediateDirectory="./Release_static" Command="" CommandArguments="" WorkingDirectory=""/>
-      <Compiler Required="yes" Options="-O2">
+    <Configuration Name="Common" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Static Library">
+      <General OutputFile="../lib/gcc_lib/libsqlite3.a" IntermediateDirectory="./Release_static" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <Compiler Required="yes" Options="-O2;-fPIC">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Required="yes" Options=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="yes" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f sqlite3.mk type=ReleaseANSIStaticLibrary clean</CleanCommand>
         <BuildCommand>mingw32-make -f sqlite3.mk type=ReleaseANSIStaticLibrary</BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies/>
   <Dependencies Name="Common"/>
 </CodeLite_Project>

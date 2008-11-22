@@ -48,7 +48,7 @@ ContinuousBuild::ContinuousBuild(IManager *manager)
 	m_view = new ContinousBuildPane(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
 
 	// add our page to the output pane notebook
-	m_mgr->GetOutputPaneNotebook()->AddPage(m_view, wxT("Continous Build"), LoadBitmapFile(wxT("compfile.png")), false);
+	m_mgr->GetOutputPaneNotebook()->AddPage(m_view, wxT("Continuous Build"), LoadBitmapFile(wxT("compfile.png")), false);
 
 	m_topWin = m_mgr->GetTheApp();
 	m_topWin->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);

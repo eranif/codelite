@@ -14,6 +14,10 @@ ContinousBuildPane::ContinousBuildPane( wxWindow* parent, IManager *manager, Con
 		m_choiceNumberOfJobs->Append(wxString::Format(wxT("%d"), i));
 	}
 	m_choiceNumberOfJobs->SetSelection(0);
+	ContinousBuildConf conf;
+	m_mgr->GetConfigTool()->ReadObject(wxT("ContinousBuildConf"), &conf);
+	
+	m_checkBox1->SetValue(conf.GetEnabled());
 }
 
 void ContinousBuildPane::OnEnableCB( wxCommandEvent& event )

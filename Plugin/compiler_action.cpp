@@ -23,15 +23,16 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "environmentconfig.h"
+#include <wx/xrc/xmlres.h>
 #include "globals.h"
 #include "workspace.h"
 #include "compiler_action.h"
 #include "wx/tokenzr.h"
 
-const wxEventType wxEVT_SHELL_COMMAND_ADDLINE = wxNewEventType();
-const wxEventType wxEVT_SHELL_COMMAND_STARTED = wxNewEventType();
-const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED = wxNewEventType();
-const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN = wxNewEventType();
+const wxEventType wxEVT_SHELL_COMMAND_ADDLINE = XRCID("wxEVT_SHELL_COMMAND_ADDLINE");
+const wxEventType wxEVT_SHELL_COMMAND_STARTED = XRCID("wxEVT_SHELL_COMMAND_STARTED");
+const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED = XRCID("wxEVT_SHELL_COMMAND_PROCESS_ENDED");
+const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN = XRCID("wxEVT_SHELL_COMMAND_STARTED_NOCLEAN");
 
 ShellCommand::ShellCommand(wxEvtHandler *owner, const QueueCommand &buildInfo)
 		: m_proc(NULL)

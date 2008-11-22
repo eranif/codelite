@@ -32,6 +32,7 @@
 #include "wx/treectrl.h"
 #include "custom_notebook.h"
 #include "optionsconfig.h"
+#include "queuecommand.h"
 
 class TagsManager;
 class Workspace;
@@ -39,6 +40,8 @@ class EnvironmentConfig;
 class JobQueue;
 class wxApp;
 class IPlugin;
+class BuildManager;
+class BuildSettingsConfig;
 
 //--------------------------
 //Auxulary class
@@ -270,7 +273,41 @@ public:
      * @brief show a (short) message in the status bar
      */  
     virtual void SetStatusMessage(const wxString &msg, int col, int id) = 0;
-    
+	
+	/**
+	 * @brief start processing commands from the queue
+	 */
+	virtual void ProcessCommandQueue() = 0;
+	
+	/**
+	 * @brief place a command on the internal queue of codelite to be processed. Each command is executed on 
+	 * a separated process. The queue will not start processing, until a call to ProcessCommandQueue() is issued
+	 * @param cmd command to process
+	 */
+	virtual void PushQueueCommand(const QueueCommand &cmd) = 0;
+	
+	/**
+	 * @brief stop the current process execution and clear all commands from the queue
+	 */
+	virtual void StopAndClearQueue() = 0;
+	
+	/**
+	 * @brief return the project name of a file 
+	 * @param fullPathFileName file to search
+	 * @return project name or wxEmptyString if the search failed
+	 */
+	virtual wxString GetProjectNameByFile( const wxString &fullPathFileName ) = 0;
+	
+	/**
+	 * @brief accessor to singleton object in the application
+	 */
+	virtual BuildManager *GetBuildManager() = 0;
+	
+	/**
+	 * @brief accessor to singleton object in the application
+	 */
+	virtual BuildSettingsConfig *GetBuildSettingsConfigManager() = 0;
+	
     void SetStatusMessage(const wxString &msg, int id)
         { SetStatusMessage(msg, 0, id); }
 };

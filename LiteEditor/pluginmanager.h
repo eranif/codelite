@@ -38,6 +38,8 @@
 class Notebook;
 class EnvironmentConfig;
 class JobQueue;
+class BuildSettingsConfig;
+class BuildManager;
 
 class PluginManager : public IManager
 {
@@ -101,7 +103,13 @@ public:
     virtual void FindAndSelect(const wxString& pattern, const wxString& name);
 	virtual bool AllowToolbar();
 	virtual void SetStatusMessage(const wxString &msg, int col, int id);
-    
+	virtual void PushQueueCommand(const QueueCommand &cmd);
+	virtual void ProcessCommandQueue();
+	virtual void StopAndClearQueue();
+	virtual wxString GetProjectNameByFile( const wxString &fullPathFileName );
+	virtual BuildManager *GetBuildManager();
+	virtual BuildSettingsConfig *GetBuildSettingsConfigManager();
+	
 	//------------------------------------
 	//End of IManager interface
 	//------------------------------------

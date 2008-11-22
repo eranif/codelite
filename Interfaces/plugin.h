@@ -212,6 +212,22 @@ public:
 		wxUnusedVar(type);
 		wxUnusedVar(menu);
 	};
+	
+	/**
+	 * @brief load image file from /path/to/install/plugins/resources/
+	 * @param name file name (name+extension)
+	 * @return Bitmap of wxNullBitmap if no match was found
+	 */
+	virtual wxBitmap LoadBitmapFile(const wxString &name, wxBitmapType type = wxBITMAP_TYPE_PNG) {
+		wxBitmap bmp;
+		wxString basePath(m_mgr->GetInstallDirectory() + wxT("/plugins/resources/"));
+	
+		bmp.LoadFile(basePath + name, type);
+		if(bmp.IsOk()) {
+			return bmp;
+		}
+		return wxNullBitmap;
+	}
 };
 
 //Every dll must contain at least this function

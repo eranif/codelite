@@ -54,7 +54,7 @@ public:
 	virtual ~CompileRequest();
 
 	//process the request
-	virtual void Process();
+	virtual void Process(IManager *manager = NULL);
 
 	//setters/getters
 	const wxString &GetProjectName() const { return m_info.GetProject(); }

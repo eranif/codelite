@@ -31,6 +31,8 @@
 #include "cl_process.h"
 #include "wx/timer.h"
 
+class IManager;
+
 extern const wxEventType wxEVT_SHELL_COMMAND_ADDLINE;
 extern const wxEventType wxEVT_SHELL_COMMAND_STARTED;
 extern const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED;
@@ -91,7 +93,7 @@ public:
 	 * \brief
 	 * \return
 	 */
-	virtual void Process() = 0;
+	virtual void Process(IManager *manager = NULL) = 0;
 
 	void AppendLine(const wxString &line);
 	void SendStartMsg();

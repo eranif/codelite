@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="SymbolView">
+<CodeLite_Project Name="ContinuousBuild">
   <VirtualDirectory Name="src">
-    <File Name="symbolview.cpp"/>
+    <File Name="continuousbuild.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
-    <File Name="symbolview.h"/>
+    <File Name="continuousbuild.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode"/>
+  <VirtualDirectory Name="UI">
+    <File Name="continousbuildbasepane.cpp"/>
+    <File Name="continousbuildbasepane.h"/>
+    <File Name="continousbuildpane.cpp"/>
+    <File Name="continousbuildpane.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="formbuilder">
+    <File Name="continousbuildbasepane.fbp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Configuration">
+    <File Name="continousbuildconf.cpp"/>
+    <File Name="continousbuildconf.h"/>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library">
-      <General OutputFile="$(ConfigurationName)/SymbolView.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/plugins/ContinuousBuild.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
@@ -23,35 +34,35 @@
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
-      <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes);">
+      <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes);-g">
         <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libplugin_sdkud.a"/>
-        <Library Value="libCodeLiteud.a"/>
+        <Library Value="libpluginu.a"/>
+        <Library Value="libcodeliteud.a"/>
         <Library Value="libwxsqlite3ud.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
-      <PostBuild>
-        <Command Enabled="yes">cp $(OutputFile) ../lib/gcc_lib</Command>
-      </PostBuild>
+      <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library">
-      <General OutputFile="../Runtime/plugins/SymbolView.so" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2;-fPIC">
+      <General OutputFile="../Runtime/plugins/ContinuousBuild.so" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
@@ -64,30 +75,32 @@
       </Compiler>
       <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);">
         <LibraryPath Value="../lib/gcc_lib"/>
-        <Library Value="libplugin_sdku.a"/>
-        <Library Value="libCodeLiteu.a"/>
+        <Library Value="libpluginu.a"/>
+        <Library Value="libcodeliteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library">
-      <General OutputFile="../Runtime/plugins/SymbolView.dll" IntermediateDirectory="./WinDebugUnicode" Command="./CodeLite" CommandArguments="-b ." WorkingDirectory="$(WorkspacePath)/Runtime" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/plugins/ContinuousBuild.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
@@ -108,25 +121,27 @@
         <Library Value="libsqlite3.a"/>
         <Library Value="libwxmsw28ud.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library">
-      <General OutputFile="../Runtime/plugins/SymbolView.dll" IntermediateDirectory="./WinReleaseUnicode" Command="./CodeLite" CommandArguments="-b ." WorkingDirectory="$(WorkspacePath)/Runtime" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/plugins/ContinuousBuild.dll" IntermediateDirectory="./WinReleaseUnicode" Command="./CodeLite.exe" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Compiler Required="yes" Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
@@ -147,24 +162,26 @@
         <Library Value="libsqlite3.a"/>
         <Library Value="libwxmsw28u.a"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

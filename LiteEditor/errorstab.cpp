@@ -43,7 +43,7 @@
 #endif
 
 BEGIN_EVENT_TABLE(ErrorsTab, wxPanel)
-	EVT_MENU(XRCID("next_error"), ErrorsTab::OnNextBuildError)
+//	EVT_MENU(XRCID("next_error"), ErrorsTab::OnNextBuildError)
 END_EVENT_TABLE()
 
 // NOTE: copied much from buidltab.cpp (BuildTab class). It is actually better to refactor the redundant code
@@ -106,58 +106,58 @@ void ErrorsTab::Initialize()
 	m_sci->StyleSetHotSpot(wxSCI_LEX_GCC_FILE_LINK, true);
 }
 
-void ErrorsTab::OnNextBuildError(wxCommandEvent &event)
-{
-	wxUnusedVar(event);
-	
-	if ( m_sci->GetLineCount() <= 0 ) {
-		return;
-	}
-	
-	// iterate through the lines, keeping the last known one
-	// and pass the text on to OnBuildWindowDClick
-	int startAt;
-	if ((m_nextBuildError_lastLine < 0) || (m_nextBuildError_lastLine >= m_sci->GetLineCount()))
-	{
-		startAt = 0;
-	}
-	else 
-	{
-		startAt = m_nextBuildError_lastLine+1;
-	}
-	
-	bool match(false);
-	for (m_nextBuildError_lastLine = startAt; m_nextBuildError_lastLine < m_sci->GetLineCount(); ++m_nextBuildError_lastLine)
-	{
-		if (m_lineInfo[m_nextBuildError_lastLine].type & m_IncludeResults)
-		{
-			wxString lineText = m_sci->GetLine(m_nextBuildError_lastLine);
-			lineText.Replace(wxT("\\"), wxT("/"));
-			if (OnBuildWindowDClick(m_nextBuildError_lastLine)) {
-				match = true;
-				break;
-			}
-		}
-	}
-
-	//no match? try from top again
-	if (!match && startAt > 0) {
-		wxLogDebug(wxT("no match"));
-		for (m_nextBuildError_lastLine = 0; m_nextBuildError_lastLine < startAt; ++m_nextBuildError_lastLine)
-		{
-			if (m_lineInfo[m_nextBuildError_lastLine].type & m_IncludeResults)
-			{
-				wxString lineText = m_sci->GetLine(m_nextBuildError_lastLine);
-				lineText.Replace(wxT("\\"), wxT("/"));
-				if (OnBuildWindowDClick(m_nextBuildError_lastLine)) {
-					match = true;
-					break;
-				}
-			}
-		}
-	}
-}
-
+//void ErrorsTab::OnNextBuildError(wxCommandEvent &event)
+//{
+//	wxUnusedVar(event);
+//	
+//	if ( m_sci->GetLineCount() <= 0 ) {
+//		return;
+//	}
+//	
+//	// iterate through the lines, keeping the last known one
+//	// and pass the text on to OnBuildWindowDClick
+//	int startAt;
+//	if ((m_nextBuildError_lastLine < 0) || (m_nextBuildError_lastLine >= m_sci->GetLineCount()))
+//	{
+//		startAt = 0;
+//	}
+//	else 
+//	{
+//		startAt = m_nextBuildError_lastLine+1;
+//	}
+//	
+//	bool match(false);
+//	for (m_nextBuildError_lastLine = startAt; m_nextBuildError_lastLine < m_sci->GetLineCount(); ++m_nextBuildError_lastLine)
+//	{
+//		if (m_lineInfo[m_nextBuildError_lastLine].type & m_IncludeResults)
+//		{
+//			wxString lineText = m_sci->GetLine(m_nextBuildError_lastLine);
+//			lineText.Replace(wxT("\\"), wxT("/"));
+//			if (OnBuildWindowDClick(m_nextBuildError_lastLine)) {
+//				match = true;
+//				break;
+//			}
+//		}
+//	}
+//
+//	//no match? try from top again
+//	if (!match && startAt > 0) {
+//		wxLogDebug(wxT("no match"));
+//		for (m_nextBuildError_lastLine = 0; m_nextBuildError_lastLine < startAt; ++m_nextBuildError_lastLine)
+//		{
+//			if (m_lineInfo[m_nextBuildError_lastLine].type & m_IncludeResults)
+//			{
+//				wxString lineText = m_sci->GetLine(m_nextBuildError_lastLine);
+//				lineText.Replace(wxT("\\"), wxT("/"));
+//				if (OnBuildWindowDClick(m_nextBuildError_lastLine)) {
+//					match = true;
+//					break;
+//				}
+//			}
+//		}
+//	}
+//}
+//
 void ErrorsTab::Clear()
 {
 	OutputTabWindow::Clear();

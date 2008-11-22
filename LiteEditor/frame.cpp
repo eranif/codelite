@@ -2705,7 +2705,7 @@ void Frame::OnIdle(wxIdleEvent &e)
 void Frame::OnNextBuildError(wxCommandEvent &event)
 {
 	GetOutputPane()->GetBuildTab()->ProcessEvent(event);
-	GetOutputPane()->GetErrorsTab()->ProcessEvent(event);
+//	GetOutputPane()->GetErrorsTab()->ProcessEvent(event);
 }
 
 void Frame::OnNextBuildErrorUI(wxUpdateUIEvent &event)
@@ -3373,7 +3373,7 @@ void Frame::OnUpdateStatusBar(wxCommandEvent& e)
 
 void Frame::SetStatusMessage(const wxString &msg, int col, int id)
 {
-    if (col < 0 || col >= m_status.size())
+    if (col < 0 || col >= (int)m_status.size())
         return;
     wxString text = msg;
     if (!msg.IsEmpty()) {

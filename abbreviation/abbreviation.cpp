@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : abbreviation.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : abbreviation.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -68,7 +68,7 @@ AbbreviationPlugin::AbbreviationPlugin(IManager *manager)
 	m_shortName = wxT("abbreviation");
 	m_topWindow = m_mgr->GetTheApp();
 	m_topWindow->Connect(wxEVT_CCBOX_SELECTION_MADE, wxCommandEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
-		
+
 	InitDefaults();
 }
 
@@ -165,6 +165,9 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
 	if (!editor || !str)
 		return;
 
+	// hide the completion box
+	editor->HideCompletionBox();
+
 	// search for abbreviation that matches str
 	// prepate list of abbreviations
 	AbbreviationEntry data;
@@ -189,16 +192,16 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
 
 		// format the text to insert
 		bool appendEol(false);
-		if(text.EndsWith(wxT("\r")) || text.EndsWith(wxT("\n"))) {
+		if (text.EndsWith(wxT("\r")) || text.EndsWith(wxT("\n"))) {
 			appendEol = true;
 		}
-		
+
 		text = editor->FormatTextKeepIndent(text, selStart);
-		
+
 		// remove the first line indenation that might have been placed by CL
 		text.Trim(false).Trim();
-		
-		if(appendEol) {
+
+		if (appendEol) {
 			wxString eol;
 			switch (editor->GetEOL()) {
 			case 1:
@@ -213,7 +216,7 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
 			}
 			text << eol;
 		}
-		
+
 		//--------------------------------------------
 		// replace any place holders
 		//--------------------------------------------
@@ -225,7 +228,7 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
 			wxString replaceWith = wxGetTextFromUser(wxString::Format(wxT("Enter replacement for '%s':"), v.c_str()), wxT("CodeLite"));
 			text.Replace(v, replaceWith);
 		}
-		
+
 		// locate the caret
 		int where = text.Find(wxT("|"));
 		if (where == wxNOT_FOUND) {
@@ -245,12 +248,12 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
 
 void AbbreviationPlugin::InitDefaults()
 {
-		// check to see if there are any abbreviations configured
+	// check to see if there are any abbreviations configured
 	AbbreviationEntry data;
 	m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
 
 	// search for the old item
-	if(data.GetEntries().empty()){
+	if (data.GetEntries().empty()) {
 		// fill some default abbreviations
 		std::map<wxString, wxString> entries;
 		entries[wxT("main")] = wxT("int main(int argc, char **argv)\n{\n\t|\n}\n");
@@ -260,7 +263,7 @@ void AbbreviationPlugin::InitDefaults()
 		entries[wxT("for_size")] = wxT("for(size_t i=0; i<|; i++)\n{\n}\n");
 		entries[wxT("for_int")] = wxT("for(int i=0; i<|; i++)\n{\n}\n");
 		data.SetEntries(entries);
-		
+
 		m_mgr->GetConfigTool()->WriteObject(wxT("AbbreviationsData"), &data);
 	}
 }

@@ -30,6 +30,7 @@
   <Project Name="wxFormBuilder" Path="wxformbuilder/wxFormBuilder.project" Active="No"/>
   <Project Name="abbreviation" Path="abbreviation/abbreviation.project" Active="No"/>
   <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
+  <Project Name="ContinuousBuild" Path="ContinuousBuild\ContinuousBuild.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
@@ -48,6 +49,7 @@
       <Project Name="DebuggerGDB" ConfigName="WinReleaseUnicode"/>
       <Project Name="Cscope" ConfigName="WinReleaseUnicode"/>
       <Project Name="Copyright" ConfigName="WinReleaseUnicode"/>
+      <Project Name="ContinuousBuild" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
@@ -69,6 +71,7 @@
       <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
       <Project Name="Cscope" ConfigName="WinDebugUnicode"/>
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
+      <Project Name="ContinuousBuild" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
@@ -93,6 +96,7 @@
       <Project Name="CodeLite" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
       <Project Name="abbreviation" ConfigName="DebugUnicode"/>
+      <Project Name="ContinuousBuild" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
@@ -111,6 +115,7 @@
       <Project Name="DebuggerGDB" ConfigName="ReleaseUnicode"/>
       <Project Name="Cscope" ConfigName="ReleaseUnicode"/>
       <Project Name="Copyright" ConfigName="ReleaseUnicode"/>
+      <Project Name="ContinuousBuild" ConfigName="ReleaseUnicode"/>
       <Project Name="CodeLite" ConfigName="ReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="ReleaseUnicode"/>

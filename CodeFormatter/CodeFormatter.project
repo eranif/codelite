@@ -23,8 +23,6 @@
     <File Name="codeformatterdlg.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="WinDebugUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
       <General OutputFile="../Runtime/plugins/CodeFormatter.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
@@ -183,4 +181,6 @@
     </Configuration>
   </Settings>
   <Dependencies Name="ReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

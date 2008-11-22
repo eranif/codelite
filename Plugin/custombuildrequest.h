@@ -34,13 +34,13 @@ class CustomBuildRequest : public ShellCommand
 	wxString m_fileName;
 	
 protected:
-	void DoUpdateCommand(wxString &cmd, ProjectPtr proj, BuildConfigPtr bldConf);
+	void DoUpdateCommand(IManager *manager, wxString &cmd, ProjectPtr proj, BuildConfigPtr bldConf);
 	
 public:
 	CustomBuildRequest(wxEvtHandler *owner, const QueueCommand &buildInfo, const wxString &fileName);
 	virtual ~CustomBuildRequest();
 	
 public:
-	virtual void Process();
+	virtual void Process(IManager *manager = NULL);
 };
 #endif // __custombuildrequest__

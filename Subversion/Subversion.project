@@ -54,8 +54,6 @@
   <VirtualDirectory Name="HTML">
     <File Name="../Runtime/svnreport.html"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
       <General OutputFile="../Runtime/plugins/Subversion.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
@@ -214,4 +212,6 @@
     </Configuration>
   </Settings>
   <Dependencies Name="ReleaseUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

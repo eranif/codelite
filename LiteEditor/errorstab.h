@@ -65,7 +65,7 @@ private:
 	
 protected:
 	bool OnBuildWindowDClick(int lineClicked);
-	void OnNextBuildError(wxCommandEvent &event);
+//	void OnNextBuildError(wxCommandEvent &event);
 	void OnMouseDClick(wxScintillaEvent &event);
 	void OnHotspotClicked(wxScintillaEvent &event);
 	

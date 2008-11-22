@@ -25,6 +25,7 @@
 
 #include "buildmanager.h"
 #include "macros.h"
+#include "imanager.h"
 #include <wx/ffile.h>
 #include "environmentconfig.h"
 #include "globals.h"
@@ -43,7 +44,7 @@ CustomBuildRequest::~CustomBuildRequest()
 {
 }
 
-void CustomBuildRequest::Process()
+void CustomBuildRequest::Process(IManager *manager)
 {
 	wxString cmd;
 	wxString errMsg;
@@ -51,8 +52,11 @@ void CustomBuildRequest::Process()
 	StringMap om;
 
 	SendStartMsg();
-
-	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_info.GetProject(), errMsg);
+	
+	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
+	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
+	
+	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
 		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
 		SetBusy(false);
@@ -60,7 +64,7 @@ void CustomBuildRequest::Process()
 	}
 
 	//TODO:: make the builder name configurable
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
+	BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 	if ( !bldConf ) {
 		wxLogMessage(wxString::Format(wxT("Failed to find build configuration for project '%s' and configuration '%s'"), m_info.GetProject().c_str(), m_info.GetConfiguration().c_str()));
 		SetBusy(false);
@@ -68,7 +72,7 @@ void CustomBuildRequest::Process()
 	}
 
 	wxString cmpType = bldConf->GetCompilerType();
-	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
+	CompilerPtr cmp = bsc->GetCompiler(cmpType);
 	if (cmp) {
 		wxString value( cmp->GetPathVariable() );
 		if (value.Trim().Trim(false).IsEmpty() == false) {
@@ -115,12 +119,12 @@ void CustomBuildRequest::Process()
 		DoSetWorkingDirectory(proj, true, false);
 
 		//expand the variables of the command
-		cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
+		cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
 
 		// in case our configuration includes post/pre build commands
 		// we generate a makefile to include them as well and we update
 		// the build command
-		DoUpdateCommand(cmd, proj, bldConf);
+		DoUpdateCommand(manager, cmd, proj, bldConf);
 
 		//replace the command line
 		m_proc->SetCommand(cmd);
@@ -157,13 +161,16 @@ void CustomBuildRequest::Process()
 	}
 }
 
-void CustomBuildRequest::DoUpdateCommand(wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf)
+void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf)
 {
 	BuildCommandList preBuildCmds, postBuildCmds;
 	wxArrayString pre, post;
 	bldConf->GetPreBuildCommands(preBuildCmds);
 	bldConf->GetPostBuildCommands(postBuildCmds);
 
+	BuildManager *bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
+	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
+	
 	// collect all enabled commands
 	BuildCommandList::iterator iter = preBuildCmds.begin();
 	for (; iter != preBuildCmds.end(); iter ++) {
@@ -223,8 +230,8 @@ void CustomBuildRequest::DoUpdateCommand(wxString& cmd, ProjectPtr proj, BuildCo
 		output.Close();
 	}
 
-	wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
-	buildTool = WorkspaceST::Get()->ExpandVariables(buildTool);
+	wxString buildTool = bm->GetSelectedBuilder()->GetBuildToolCommand(true);
+	buildTool = w->ExpandVariables(buildTool);
 
 	cmd.Clear();
 	cmd << buildTool << wxT(" \"") << fn << wxT("\"");

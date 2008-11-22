@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "compile_request.h"
+#include "imanager.h"
 #include "macros.h"
 #include "compiler.h"
 #include "build_settings_config.h"
@@ -47,14 +48,18 @@ CompileRequest::~CompileRequest()
 }
 
 //do the actual cleanup
-void CompileRequest::Process()
+void CompileRequest::Process(IManager *manager)
 {
 	wxString cmd;
 	wxString errMsg;
 	SetBusy(true);
 	StringMap om;
-
-	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_info.GetProject(), errMsg);
+	
+	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
+	BuildManager *bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
+	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
+	
+	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
 		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
 		SetBusy(false);
@@ -62,7 +67,7 @@ void CompileRequest::Process()
 	}
 
 	// TODO:: make the builder name configurable
-	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT("GNU makefile for g++/gcc"));
+	BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_fileName.IsEmpty() == false) {
 		//we got a complie request of a single file
 		cmd = builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg);
@@ -76,9 +81,9 @@ void CompileRequest::Process()
 	
 	//if we require to run the makefile generation command only, replace the 'cmd' with the
 	//generation command line
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
+	BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 	if (m_premakeOnly && bldConf) {
-		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
+		BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 		if (bldConf) {
 			cmd = bldConf->GetMakeGenerationCommand();
 		}
@@ -87,7 +92,7 @@ void CompileRequest::Process()
 	
 	if(bldConf) {
 		wxString cmpType = bldConf->GetCompilerType();
-		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
+		CompilerPtr cmp = bsc->GetCompiler(cmpType);
 		if(cmp) {
 			wxString value( cmp->GetPathVariable() );
 			if(value.Trim().Trim(false).IsEmpty() == false) {
@@ -115,7 +120,7 @@ void CompileRequest::Process()
 		DoSetWorkingDirectory(proj, false, m_fileName.IsEmpty() == false);
 
 		//expand the variables of the command
-		cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
+		cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
 		
 		//replace the command line
 		m_proc->SetCommand(cmd);

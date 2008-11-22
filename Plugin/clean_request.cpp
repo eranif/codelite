@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "build_settings_config.h"
+#include "imanager.h"
 #include "macros.h"
 #include "compiler.h"
  #include "clean_request.h"
@@ -45,21 +46,26 @@ CleanRequest::~CleanRequest()
 
 
 //do the actual cleanup
-void CleanRequest::Process()
+void CleanRequest::Process(IManager *manager)
 {
 	wxString cmd;
 	wxString errMsg;
 	StringMap om;
 	
 	SetBusy(true);
-	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_info.GetProject(), errMsg);
+	
+	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());	
+	BuildManager *bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
+	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
+	
+	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
 		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
 		SetBusy(false);
 		return;
 	}
 	
-	BuilderPtr builder = BuildManagerST::Get()->GetBuilder(wxT("GNU makefile for g++/gcc"));
+	BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_info.GetProjectOnly()) {
 		cmd = builder->GetPOCleanCommand(m_info.GetProject(), m_info.GetConfiguration());
 	} else {
@@ -72,10 +78,10 @@ void CleanRequest::Process()
 		return;
 	}
 
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
+	BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
 	if(bldConf) {
 		wxString cmpType = bldConf->GetCompilerType();
-		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
+		CompilerPtr cmp = bsc->GetCompiler(cmpType);
 		if(cmp) {
 			wxString value( cmp->GetPathVariable() );
 			if(value.Trim().Trim(false).IsEmpty() == false) {
@@ -92,7 +98,7 @@ void CleanRequest::Process()
 	SendStartMsg();
 
 	//expand the variables of the command
-	cmd = ExpandAllVariables(cmd, WorkspaceST::Get(), m_info.GetProject(), m_info.GetConfiguration(), wxEmptyString);
+	cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), wxEmptyString);
 	m_proc = new clProcess(wxNewId(), cmd);
 
 	if (m_proc) {

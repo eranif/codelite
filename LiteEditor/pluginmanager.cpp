@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "environmentconfig.h"
+#include "build_settings_config.h"
+#include "buildmanager.h"
 #include "jobqueue.h"
 #include "pluginmanager.h"
 #include "pluginsdata.h"
@@ -461,3 +463,34 @@ void PluginManager::SetStatusMessage(const wxString &msg, int col, int id)
 {
     Frame::Get()->SetStatusMessage(msg, 0, id);
 }
+
+void PluginManager::ProcessCommandQueue()
+{
+	ManagerST::Get()->ProcessCommandQueue();
+}
+
+void PluginManager::PushQueueCommand(const QueueCommand& cmd)
+{
+	ManagerST::Get()->PushQueueCommand(cmd);
+}
+
+void PluginManager::StopAndClearQueue()
+{
+	ManagerST::Get()->StopBuild();
+}
+
+wxString PluginManager::GetProjectNameByFile(const wxString& fullPathFileName)
+{
+	return ManagerST::Get()->GetProjectNameByFile(fullPathFileName);
+}
+
+BuildManager* PluginManager::GetBuildManager()
+{
+	return BuildManagerST::Get();
+}
+
+BuildSettingsConfig* PluginManager::GetBuildSettingsConfigManager()
+{
+	return BuildSettingsConfigST::Get();
+}
+

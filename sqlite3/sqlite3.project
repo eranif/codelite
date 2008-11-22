@@ -14,23 +14,21 @@
         <IncludePath Value="."/>
       </Compiler>
       <Linker Required="yes" Options=""/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""/>
       <ResourceCompiler Required="yes" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f sqlite3.mk type=ReleaseANSIStaticLibrary clean</CleanCommand>
         <BuildCommand>mingw32-make -f sqlite3.mk type=ReleaseANSIStaticLibrary</BuildCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
   </Settings>

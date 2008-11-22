@@ -55,6 +55,7 @@ void CustomBuildRequest::Process(IManager *manager)
 	
 	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
 	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
+	EnvironmentConfig *env(manager ? manager->GetEnv() : EnvironmentConfig::Instance());
 	
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
@@ -144,7 +145,7 @@ void CustomBuildRequest::Process(IManager *manager)
 		text << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]----------\n");
 
 		AppendLine(text);
-		EnvironmentConfig::Instance()->ApplyEnv( &om );
+		env->ApplyEnv( &om );
 		if (m_proc->Start() == 0) {
 			wxString message;
 			message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");
@@ -154,7 +155,7 @@ void CustomBuildRequest::Process(IManager *manager)
 			SetBusy(false);
 			return;
 		}
-
+		env->UnApplyEnv();
 		m_timer->Start(10);
 		Connect(wxEVT_TIMER, wxTimerEventHandler(CustomBuildRequest::OnTimer), NULL, this);
 		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(CustomBuildRequest::OnProcessEnd), NULL, this);

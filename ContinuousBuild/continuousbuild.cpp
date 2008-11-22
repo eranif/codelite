@@ -8,7 +8,6 @@
 #include "continousbuildconf.h"
 
 static ContinuousBuild* thePlugin = NULL;
-
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 {
@@ -57,7 +56,7 @@ ContinuousBuild::ContinuousBuild(IManager *manager)
 
 ContinuousBuild::~ContinuousBuild()
 {
-	if(m_shellProcess) {
+	if (m_shellProcess) {
 		delete m_shellProcess;
 		m_shellProcess = NULL;
 	}
@@ -117,38 +116,38 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 {
 	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		// add the build to the queue
-		if(m_files.Index(fileName) == wxNOT_FOUND){
+		if (m_files.Index(fileName) == wxNOT_FOUND) {
 			m_files.Add(fileName);
 			// update the UI
 			m_view->AddFile(fileName);
 		}
 		return;
 	}
-	
+
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 		m_shellProcess = NULL;
 	}
 
 	wxString conf;
-	
+
 	// get the file's project name
 	wxString projectName = m_mgr->GetProjectNameByFile(fileName);
-	if(projectName.IsEmpty()) {
+	if (projectName.IsEmpty()) {
 		return;
 	}
-	
+
 	// get the selected configuration to be built
 	BuildConfigPtr bldConf = m_mgr->GetWorkspace()->GetProjBuildConf ( projectName, wxEmptyString );
 	if ( !bldConf ) {
 		return;
 	}
-	
+
 	m_currentBuildInfo.project = projectName;
 	m_currentBuildInfo.file = fileName;
-	
+
 	m_view->AddFile(fileName);
-	
+
 	// construct a build command
 	QueueCommand info ( projectName, conf, false, QueueCommand::Build );
 	if ( bldConf && bldConf->IsCustomBuild() ) {
@@ -188,16 +187,16 @@ void ContinuousBuild::OnShellProcessEnded(wxCommandEvent& e)
 	// remove the file from the UI
 	m_view->RemoveFile(m_currentBuildInfo.file);
 	m_view->SetStatusMessage(wxEmptyString);
-	
+
 	// TODO:: handle the output here
 	m_currentBuildInfo.Clear();
-	
+
 	// if the queue is not empty, start another build
-	if(m_files.IsEmpty() == false) {
-		
+	if (m_files.IsEmpty() == false) {
+
 		wxString fileName = m_files.Item(0);
 		m_files.RemoveAt(0);
-		
+
 		DoBuild(fileName);
 	}
 }
@@ -206,7 +205,7 @@ void ContinuousBuild::StopAll()
 {
 	// empty the queue
 	m_files.Clear();
-	
+
 	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		m_shellProcess->Stop();
 	}

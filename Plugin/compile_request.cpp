@@ -58,6 +58,7 @@ void CompileRequest::Process(IManager *manager)
 	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
 	BuildManager *bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
 	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
+	EnvironmentConfig *env(manager ? manager->GetEnv() : EnvironmentConfig::Instance());
 	
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
@@ -149,19 +150,21 @@ void CompileRequest::Process(IManager *manager)
 			AppendLine(text);
 		}
 	
-		EnvironmentConfig::Instance()->ApplyEnv( &om );
+		env->ApplyEnv( &om );
 		if (m_proc->Start() == 0) {
 			wxString message;
 			message << wxT("Failed to start build process, command: ") << cmd << wxT(", process terminated with exit code: 0");
-			EnvironmentConfig::Instance()->UnApplyEnv();
+			env->UnApplyEnv();
 			AppendLine(message);
 			delete m_proc;
 			SetBusy(false);
 			return;
 		}
 
+		env->UnApplyEnv();
+			
 		m_timer->Start(10);
 		Connect(wxEVT_TIMER, wxTimerEventHandler(CompileRequest::OnTimer), NULL, this);
 		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(CompileRequest::OnProcessEnd), NULL, this);
-	}
+	} 
 }

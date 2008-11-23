@@ -252,8 +252,8 @@ void LEditor::SetProperties()
 	// Line numbes
 	SetMarginType(NUMBER_MARGIN_ID, wxSCI_MARGIN_NUMBER);
 
-	// line number margin displays every thing but folding, bookmarks (256) and breakpoint (512)
-	SetMarginMask(NUMBER_MARGIN_ID, ~(256 | 512 | 128 | wxSCI_MASK_FOLDERS));
+	// line number margin displays every thing but folding, bookmarks and breakpoint
+	SetMarginMask(NUMBER_MARGIN_ID, ~(mt_breakpoints | mt_folds | mt_bookmarks | wxSCI_MASK_FOLDERS));
 
 	// Separators
 	SetMarginType(SEP_MARGIN_ID, wxSCI_MARGIN_FORE);
@@ -790,7 +790,7 @@ void LEditor::UpdateBreakpoints()
 
 	//collect the actual breakpoint according to the markers set
 	int mask(0);
-	mask |= 256;
+	mask |= mt_breakpoints;
 	int lineno = MarkerNext(0, mask);
 	while (lineno >= 0) {
 		BreakpointInfo bp;
@@ -1499,18 +1499,18 @@ void LEditor::DelMarker()
 void LEditor::ToggleMarker()
 {
 	// Add/Remove marker
-	// First we check if we already have a marker
+	if ( !LineIsMarked(mt_bookmarks) )
+		AddMarker();
+	else
+		DelMarker();
+}
+
+bool LEditor::LineIsMarked(enum marker_type markertype)
+{
 	int nPos = GetCurrentPos();
 	int nLine = LineFromPosition(nPos);
 	int nBits = MarkerGet(nLine);
-	bool bHasMraker = nBits & 128 ? true : false;
-
-	if ( !bHasMraker )
-		//Delete it
-		AddMarker();
-	else
-		//Add one
-		DelMarker();
+	return (nBits & markertype ? true : false);
 }
 
 void LEditor::DelAllMarkers()
@@ -1533,7 +1533,7 @@ void LEditor::FindNextMarker()
 {
 	int nPos = GetCurrentPos();
 	int nLine = LineFromPosition(nPos);
-	int mask = 128;
+	int mask = mt_bookmarks;
 	int nFoundLine = MarkerNext(nLine + 1, mask);
 	if (nFoundLine >= 0) {
 		// mark this place before jumping to next marker
@@ -1553,7 +1553,7 @@ void LEditor::FindPrevMarker()
 {
 	int nPos = GetCurrentPos();
 	int nLine = LineFromPosition(nPos);
-	int mask = 128;
+	int mask = mt_bookmarks;
 	int nFoundLine = MarkerPrevious(nLine - 1, mask);
 	if (nFoundLine >= 0) {
 		GotoLine(nFoundLine);
@@ -1770,8 +1770,8 @@ wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos)
 void LEditor::OnContextMenu(wxContextMenuEvent &event)
 {
 	if (m_rightClickMenu) {
-		CallTipCancel();
-		wxString selectText = GetSelectedText();
+
+    wxString selectText = GetSelectedText();
 		wxPoint pt = event.GetPosition();
 		wxPoint clientPt = ScreenToClient(pt);
 		int closePos = PositionFromPointClose(clientPt.x, clientPt.y);
@@ -1996,7 +1996,7 @@ void LEditor::DelBreakpointMarker(int lineno)
 void LEditor::DelAllBreakpointMarkers()
 {
 	int mask(0);
-	mask |= 256;
+	mask |= mt_breakpoints;
 	int lineno = MarkerNext(0, mask);
 	while (lineno >= 0) {
 		MarkerDelete(lineno, 0x8);
@@ -2043,7 +2043,7 @@ void LEditor::ToggleBreakpoint(const BreakpointInfo &bp)
 	//we are assuming that this call is made from a caller,
 	//so the line numbers needs to be adjusted (reduce by 1)
 	int mask = MarkerGet(bp.lineno-1);
-	if (mask & 256) {
+	if (mask & mt_breakpoints) {
 		//we have breakpoint
 		DelBreakpoint(bp);
 	} else {
@@ -2646,7 +2646,7 @@ wxString LEditor::GetEolString()
 void LEditor::GetEditorState(LEditorState& s)
 {
 	int mask(0);
-	mask |= 256;
+	mask |= mt_breakpoints;
 
 	// collect breakpoints
 	int lineno = MarkerNext(0, mask);
@@ -2656,7 +2656,7 @@ void LEditor::GetEditorState(LEditorState& s)
 	}
 
 	// collect all bookmarks
-	mask = 128;
+	mask = mt_bookmarks;
 	lineno = MarkerNext(0, mask);
 	while (lineno >= 0) {
 		s.markers.push_back(lineno);

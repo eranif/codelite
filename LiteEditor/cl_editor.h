@@ -75,6 +75,8 @@ const extern wxEventType wxEVT_CMD_UPDATE_STATUS_BAR;
  */
 class LEditor : public wxScintilla, public IEditor
 {
+	enum marker_type { mt_bookmarks=128, mt_breakpoints=256, mt_folds=512 };
+
 	wxFileName m_fileName;
 	wxString m_project;
 	wxStopWatch m_watch;
@@ -229,6 +231,8 @@ public:
 	// Bookmark API
 	//-----------------------------------------
 
+	// Is there currently a marker at the current line?
+	bool LineIsMarked(enum marker_type markertype);
 	// Toggle marker at the current line
 	void ToggleMarker();
 	// Delete all markers from the current document

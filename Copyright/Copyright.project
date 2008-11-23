@@ -21,7 +21,6 @@
     <File Name="copyrights_proj_sel_dlg.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="ReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
       <General OutputFile="../Runtime/plugins/Copyright.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
@@ -178,4 +177,5 @@
   </Settings>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
 </CodeLite_Project>

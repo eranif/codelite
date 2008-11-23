@@ -128,4 +128,7 @@
   <Dependencies Name="WinDebugUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>
+  <Dependencies Name="ReleaseUnicode">
+    <Project Name="sqlite3"/>
+  </Dependencies>
 </CodeLite_Project>

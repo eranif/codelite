@@ -180,7 +180,7 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
 </CodeLite_Project>

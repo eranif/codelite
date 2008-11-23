@@ -18,7 +18,6 @@
     <File Name="externaltoolsbasedlg.cpp"/>
     <File Name="externaltoolsbasedlg.h"/>
   </VirtualDirectory>
-  <Dependencies Name="ReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library">
       <General OutputFile="../Runtime/plugins/ExternalTools.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
@@ -175,4 +174,5 @@
   </Settings>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
 </CodeLite_Project>

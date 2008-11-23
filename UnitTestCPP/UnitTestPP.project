@@ -23,7 +23,6 @@
     <File Name="unittestspage.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="ReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="" Type="">
       <General OutputFile="$(ConfigurationName)/UnitTestPP.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
@@ -180,4 +179,5 @@
   </Settings>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
 </CodeLite_Project>

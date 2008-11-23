@@ -8,7 +8,6 @@
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library">
       <General OutputFile="$(ConfigurationName)/SymbolView.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
@@ -167,4 +166,5 @@
   </Settings>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
 </CodeLite_Project>

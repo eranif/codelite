@@ -620,6 +620,7 @@ echo "SnipWiz\\" >> Makefile
 echo "wxformbuilder\\" >> Makefile
 echo "abbreviation\\" >> Makefile
 echo "SymbolView\\" >> Makefile
+echo "ContinuousBuild\\" >> Makefile
 echo "" >> Makefile
 
 echo "plugins_install:\\" >> Makefile
@@ -640,6 +641,7 @@ echo "SnipWiz_install\\" >> Makefile
 echo "wxformbuilder_install\\" >> Makefile
 echo "abbreviation_install\\" >> Makefile
 echo "SymbolView_install\\" >> Makefile
+echo "ContinuousBuild_install\\" >> Makefile
 echo "" >> Makefile
 
 echo "clean_plugins:\\" >> Makefile
@@ -660,6 +662,7 @@ echo "SnipWiz_clean\\" >> Makefile
 echo "wxformbuilder_clean\\" >> Makefile
 echo "abbreviation_clean\\" >> Makefile
 echo "SymbolView_clean\\" >> Makefile
+echo "ContinuousBuild_clean\\" >> Makefile
 echo "" >> Makefile
 
 ########################################################
@@ -681,3 +684,4 @@ createPluginMakefile "SnipWiz" "SnipWiz" "\$(DESTDIR)$prefix/share/codelite/plug
 createPluginMakefile "wxformbuilder" "wxformbuilder" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "abbreviation" "abbreviation" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
 createPluginMakefile "SymbolView" "SymbolView" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
+createPluginMakefile "ContinuousBuild" "ContinuousBuild" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"

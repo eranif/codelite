@@ -98,6 +98,7 @@ cp ../lib/Copyright.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/UnitTestCPP.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/ExternalTools.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/SymbolView.so ./CodeLite.app/Contents/SharedSupport/plugins/
+cp ../lib/ContinuousBuild.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/SnipWiz.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/wxformbuilder.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/abbreviation.so ./CodeLite.app/Contents/SharedSupport/plugins/

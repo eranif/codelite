@@ -250,6 +250,18 @@ public:
 	virtual void AppendOutputMsg(const wxString &msg) = 0;
 	
 	/**
+	 * @brief append message to the errorTab
+	 * @param msg
+	 * @param clean set to true if the errortab should be cleared  before appending the message 
+	 */
+	virtual void AppendErrorTabMsg(const wxString &msg, bool clean) = 0;
+	
+	/**
+	 * @brief focus the errorTab window if there are some errors / warnings in it
+	 */
+	virtual void ShowErrorTabIfNeeded() = 0;
+	
+	/**
 	 * @brief save all modified files
 	 */
 	virtual void SaveAll() = 0;

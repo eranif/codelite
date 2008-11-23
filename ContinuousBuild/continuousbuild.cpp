@@ -1,4 +1,5 @@
 #include "continuousbuild.h"
+#include "build_settings_config.h"
 #include "workspace.h"
 #include "custombuildrequest.h"
 #include "compile_request.h"
@@ -114,6 +115,10 @@ void ContinuousBuild::OnFileSaved(wxCommandEvent& e)
 
 void ContinuousBuild::DoBuild(const wxString& fileName)
 {
+	if(m_mgr->IsWorkspaceOpen() == false) {
+		return;
+	}
+	
 	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		// add the build to the queue
 		if (m_files.Index(fileName) == wxNOT_FOUND) {
@@ -130,7 +135,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 	}
 
 	wxString conf;
-
+	
 	// get the file's project name
 	wxString projectName = m_mgr->GetProjectNameByFile(fileName);
 	if (projectName.IsEmpty()) {
@@ -145,7 +150,11 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 
 	m_currentBuildInfo.project = projectName;
 	m_currentBuildInfo.file = fileName;
-
+	
+	if( !IsCompilable(fileName) ) {
+		return;
+	}
+	
 	m_view->AddFile(fileName);
 
 	// construct a build command
@@ -188,7 +197,7 @@ void ContinuousBuild::OnShellProcessEnded(wxCommandEvent& e)
 	m_view->RemoveFile(m_currentBuildInfo.file);
 	m_view->SetStatusMessage(wxEmptyString);
 
-	// TODO:: handle the output here
+	DoReportErrors();
 	m_currentBuildInfo.Clear();
 
 	// if the queue is not empty, start another build
@@ -209,4 +218,44 @@ void ContinuousBuild::StopAll()
 	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		m_shellProcess->Stop();
 	}
+}
+
+void ContinuousBuild::DoReportErrors()
+{
+	for(size_t i=0; i<m_currentBuildInfo.output.GetCount(); i++){
+		m_mgr->AppendErrorTabMsg(m_currentBuildInfo.output.Item(i), i==0);
+	}
+	m_mgr->ShowErrorTabIfNeeded();
+}
+
+bool ContinuousBuild::IsCompilable(const wxString& fileName)
+{
+	CompilerPtr cmp = DoGetCompiler();
+	if(cmp) {
+		Compiler::CmpFileTypeInfo ft;
+		bool res = cmp->GetCmpFileType(fileName.AfterLast(wxT('.')), ft);
+		return res && ft.kind == Compiler::CmpFileKindSource;
+	}
+	return false;
+}
+
+CompilerPtr ContinuousBuild::DoGetCompiler()
+{
+	wxString err_msg;
+	ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(m_currentBuildInfo.project, err_msg);
+	if(proj) {
+		ProjectSettingsPtr settings = proj->GetSettings();
+		if(settings) {
+			// get the selected workspace configuration
+			BuildMatrixPtr matrix = m_mgr->GetWorkspace()->GetBuildMatrix();
+			wxString projConf = matrix->GetProjectSelectedConf ( matrix->GetSelectedConfigurationName(), m_currentBuildInfo.project );
+			BuildConfigPtr bldConf = settings->GetBuildConfiguration(projConf);
+			if(bldConf){
+				wxString type = bldConf->GetCompilerType();
+//				wxLogMessage(wxString::Format(wxT("Compiler type=%s, for configuration=%s"), type.c_str(), projConf.c_str()));
+				return m_mgr->GetBuildSettingsConfigManager()->GetCompiler(type);
+			}
+		}
+	}
+	return NULL;
 }

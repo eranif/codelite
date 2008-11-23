@@ -23,7 +23,7 @@ ContinousBuildPane::ContinousBuildPane( wxWindow* parent, IManager *manager, Con
 void ContinousBuildPane::OnEnableCB( wxCommandEvent& event )
 {
 	if(event.IsChecked() && wxThread::GetCPUCount() == 1) {
-		if(wxMessageBox(_("Your computer only has one CPU, are you sure you want to enable the continous build feature?"), wxT("CodeLite"), wxYES_NO|wxICON_QUESTION|wxCENTER) == wxNO) {
+		if(wxMessageBox(_("Your computer only has one CPU, are you sure you want to enable the continuous build?"), wxT("CodeLite"), wxYES_NO|wxICON_QUESTION|wxCENTER) == wxNO) {
 			return;
 		}
 	}

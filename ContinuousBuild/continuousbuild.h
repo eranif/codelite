@@ -2,6 +2,7 @@
 #define __ContinuousBuild__
 
 #include "plugin.h"
+#include "compiler.h"
 
 class wxEvtHandler;
 class ContinousBuildPane;
@@ -29,7 +30,10 @@ class ContinuousBuild : public IPlugin
 
 public:
 	void DoBuild(const wxString &fileName);
-
+	void DoReportErrors();
+	bool IsCompilable(const wxString &fileName);
+	CompilerPtr DoGetCompiler();
+	
 public:
 	ContinuousBuild(IManager *manager);
 	~ContinuousBuild();

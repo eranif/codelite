@@ -109,6 +109,8 @@ public:
 	virtual wxString GetProjectNameByFile( const wxString &fullPathFileName );
 	virtual BuildManager *GetBuildManager();
 	virtual BuildSettingsConfig *GetBuildSettingsConfigManager();
+	virtual void AppendErrorTabMsg(const wxString &msg, bool clean);
+	virtual void ShowErrorTabIfNeeded();
 	
 	//------------------------------------
 	//End of IManager interface

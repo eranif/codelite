@@ -32,7 +32,7 @@
   <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
   <Project Name="ContinuousBuild" Path="ContinuousBuild/ContinuousBuild.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
@@ -98,7 +98,7 @@
       <Project Name="abbreviation" ConfigName="DebugUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="no">
+    <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="ReleaseUnicode"/>

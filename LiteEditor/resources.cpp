@@ -38,13 +38,8 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_all.h>
 
-#if wxCHECK_VERSION(2,8,5) && wxABI_VERSION >= 20805
-    #define XRC_ADD_FILE(name, data, size, mime) \
-        wxMemoryFSHandler::AddFileWithMimeType(name, data, size, mime)
-#else
     #define XRC_ADD_FILE(name, data, size, mime) \
         wxMemoryFSHandler::AddFile(name, data, size)
-#endif
 
 static size_t xml_res_size_0 = 3668;
 static unsigned char xml_res_file_0[] = {

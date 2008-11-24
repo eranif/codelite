@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : simpletablebase.h              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -34,25 +9,20 @@
 #define __simpletablebase__
 
 #include <wx/string.h>
-#include <wx/bitmap.h>
-#include <wx/image.h>
-#include <wx/icon.h>
+#include <wx/button.h>
 #include <wx/gdicmn.h>
-#include <wx/toolbar.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/statline.h>
 #include <wx/listctrl.h>
 #include <wx/stattext.h>
 #include <wx/choice.h>
-#include <wx/sizer.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
-#define ID_TOOLNEW 2500
-#define ID_TOOLDELETE 2501
-#define ID_TOOLDELETEALL 2502
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class SimpleTableBase
@@ -62,7 +32,10 @@ class SimpleTableBase : public wxPanel
 	private:
 	
 	protected:
-		wxToolBar* m_toolBar2;
+		wxButton* m_button1;
+		wxButton* m_button2;
+		wxButton* m_button3;
+		wxStaticLine* m_staticline1;
 		wxListCtrl* m_listTable;
 		wxStaticText* m_staticTextDisplayText;
 		wxChoice* m_choiceDisplayFormat;

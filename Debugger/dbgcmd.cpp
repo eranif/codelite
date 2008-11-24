@@ -358,7 +358,11 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 	if (m_evaluateExpression == Locals) {
 		strline = strline.AfterFirst(wxT('['));
 		strline = strline.BeforeLast(wxT(']'));
+#ifdef __WXMAC__		
+		if (strline.StartsWith(wxT("^done,locals={"), &tmpline)) {
+#else			
 		if (strline.StartsWith(wxT("^done,locals=["), &tmpline)) {
+#endif			
 			strline = tmpline;
 		}
 
@@ -366,8 +370,11 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 			strline = strline.RemoveLast();
 		}
 	} else if (m_evaluateExpression == FunctionArguments) {
-
+#ifdef __WXMAC__
+		if (strline.StartsWith(wxT("^done,stack-args={frame={level=\"0\",args={"), &tmpline)) {
+#else			
 		if (strline.StartsWith(wxT("^done,stack-args=[frame={level=\"0\",args=["), &tmpline)) {
+#endif			
 			strline = tmpline;
 		}
 

@@ -356,17 +356,15 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 	TreeNode<wxString, NodeData> *tree = new TreeNode<wxString, NodeData>(data.name, data);
 
 	if (m_evaluateExpression == Locals) {
+#ifdef __WXMAC__		
+		strline = strline.AfterFirst(wxT('{'));
+		strline = strline.BeforeLast(wxT('}'));
+		if (strline.EndsWith(wxT("}"))) {
+#else			
 		strline = strline.AfterFirst(wxT('['));
 		strline = strline.BeforeLast(wxT(']'));
-#ifdef __WXMAC__		
-		if (strline.StartsWith(wxT("^done,locals={"), &tmpline)) {
-#else			
-		if (strline.StartsWith(wxT("^done,locals=["), &tmpline)) {
-#endif			
-			strline = tmpline;
-		}
-
 		if (strline.EndsWith(wxT("]"))) {
+#endif			
 			strline = strline.RemoveLast();
 		}
 	} else if (m_evaluateExpression == FunctionArguments) {

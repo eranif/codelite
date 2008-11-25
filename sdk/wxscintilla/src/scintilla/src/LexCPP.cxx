@@ -20,111 +20,10 @@
 #include "Scintilla.h"
 #include "SciLexer.h"
 #include "CharacterSet.h"
-#include "string"
 
 #ifdef SCI_NAMESPACE
 using namespace Scintilla;
 #endif
-
-#if 0
-extern std::string GetCurrentFileName();
-#endif
-
-static bool IsDisabledCodeEnd(Accessor &styler, StyleContext &sc, int &depth) {
-	char buf[6];
-	int offset(0);
-	
-	char chWhite(0);
-	//skip all prefix whitespaces
-	do {
-		offset++;
-		chWhite = styler.SafeGetCharAt(sc.currentPos+offset, 0);
-	} while( chWhite && (chWhite == '\t' || chWhite == ' '));
-	
-	buf[0] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[1] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[2] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[3] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[4] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[5] = 0;
-	
-	if (strcmp(buf, "endif") == 0) {
-		if(depth == 0) {
-			sc.Forward(5);
-			return true;
-		} else {
-			depth--;
-		}
-	}
-	return false;
-}
-
-#if 0
-static bool IsPrepBlockStart(Accessor &styler, StyleContext &sc) {
-	//check if this is a pre-preocessor block start
-	//#if
-	//#ifdef 
-	char buf[6];
-	int offset(0);
-	
-	char chWhite(0);
-	//skip all prefix whitespaces
-	do {
-		offset++;
-		chWhite = styler.SafeGetCharAt(sc.currentPos+offset, 0);
-	} while( chWhite && (chWhite == '\t' || chWhite == ' '));
-	
-	buf[0] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[1] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[2] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[3] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[4] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[5] = 0;
-
-	if (strncmp(buf, "if", 2) == 0 || strcmp(buf, "ifdef") == 0) {
-		return true;
-	}
-	return false;
-}
-#endif
-
-static bool IsDisabledCode(Accessor &styler, StyleContext &sc) {
-	char buf[4];
-	int offset(0);
-	
-	char chWhite(0);
-	//skip all prefix whitespaces
-	do {
-		offset++;
-		chWhite = styler.SafeGetCharAt(sc.currentPos+offset, 0);
-	} while( chWhite && (chWhite == '\t' || chWhite == ' '));
-	
-	buf[0] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[1] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[2] = styler.SafeGetCharAt(sc.currentPos+offset, 0); offset++;
-	buf[3] = 0;
-
-	if (strcmp(buf, "if ") == 0 || strcmp(buf, "if\t") == 0) {
-		//we found 'if ', check whether the next word is '0'
-		char chNext = styler.SafeGetCharAt(sc.currentPos+offset, 0);
-		while ( chNext ) {
-			if (chNext == '\t' || chNext == ' ') {
-				//skip whitespaces
-				offset++;
-				chNext = styler.SafeGetCharAt(sc.currentPos+offset, 0);
-				continue;
-			} else {
-				//we got a valid char (which is not whitespace nor null)
-				if (chNext == '0') {
-					sc.SetState(SCE_C_PREPROCESSOR_DISABLED);
-					return true;
-				}
-				break;
-			}
-		}
-	}
-	return false;
-}
 
 static bool IsSpaceEquiv(int state) {
 	return (state <= SCE_C_COMMENTDOC) ||
@@ -164,7 +63,7 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 	CharacterSet setOKBeforeRE(CharacterSet::setNone, "([{=,:;!%^&*|?~+-");
 	CharacterSet setCouldBePostOp(CharacterSet::setNone, "+-");
 
-	CharacterSet setDoxygen(CharacterSet::setLower, "$@\\&<>#{}[]");
+	CharacterSet setDoxygen(CharacterSet::setAlpha, "$@\\&<>#{}[]");
 
 	CharacterSet setWordStart(CharacterSet::setAlpha, "_", 0x80, true);
 	CharacterSet setWord(CharacterSet::setAlphaNum, "._", 0x80, true);
@@ -279,20 +178,6 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 					}
 				}
 				break;
-		case SCE_C_PREPROCESSOR_DISABLED:
-			if (visibleChars == 0 && sc.ch == '#') {
-#if 0				
-				if(IsPrepBlockStart(styler, sc)){
-					//nested block, increase the depth
-					depth++;
-				} else 
-#endif			
-				int dummy(0);
-				if(IsDisabledCodeEnd(styler, sc, dummy)){
-					sc.ForwardSetState(SCE_C_DEFAULT);
-				}
-			}
-			break;
 			case SCE_C_COMMENT:
 				if (sc.Match('*', '/')) {
 					sc.Forward();
@@ -442,10 +327,8 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 			} else if (sc.ch == '\'') {
 				sc.SetState(SCE_C_CHARACTER);
 			} else if (sc.ch == '#' && visibleChars == 0) {
-				if ( !IsDisabledCode(styler, sc)) {
 				// Preprocessor commands are alone on their line
 				sc.SetState(SCE_C_PREPROCESSOR);
-
 				// Skip whitespace between # and preprocessor word
 				do {
 					sc.Forward();
@@ -453,11 +336,10 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 				if (sc.atLineEnd) {
 					sc.SetState(SCE_C_DEFAULT);
 				}
-				}
 			} else if (isoperator(static_cast<char>(sc.ch))) {
 				sc.SetState(SCE_C_OPERATOR);
 				lastOpSetScope = false;
-				if (sc.Match('.') || sc.Match(':', ':') || sc.Match('-', '>')) {
+				if (sc.Match('.') || sc.Match(':', ':') || sc.Match('-', '>') || sc.Match(':', '~')) {
 					// check for operators '.', '::', and '->' (but not '.*', '::*', or '->*')
 					if (sc.ch != '.') sc.Forward();
 					if (sc.chNext != '*')

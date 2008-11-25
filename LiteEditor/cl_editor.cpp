@@ -2706,6 +2706,7 @@ void LEditor::OnDbgRunToCursor(wxCommandEvent& event)
 void LEditor::DoInsertBrace(wxChar ch, int pos)
 {
 	if(!m_autoAddMatchedBrace) return;
+	if(m_context->IsCommentOrString(pos)) return;
 	
 	wxChar matchedBrace(0);
 	switch(ch) {

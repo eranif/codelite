@@ -357,6 +357,10 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 
 	if (m_evaluateExpression == Locals) {
 #ifdef __WXMAC__		
+		strline.Replace(wxT(" \\n "), wxT(""));
+		strline.Replace(wxT("{\\n "), wxT(""));
+		strline.Replace(wxT("\\n}"), wxT(""));
+		
 		strline = strline.AfterFirst(wxT('{'));
 		strline = strline.BeforeLast(wxT('}'));
 		if (strline.EndsWith(wxT("}"))) {

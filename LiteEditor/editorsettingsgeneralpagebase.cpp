@@ -1,28 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : editorsettingsgeneralpagebase.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
@@ -43,26 +18,43 @@ EditorSettingsGeneralPageBase::EditorSettingsGeneralPageBase( wxWindow* parent, 
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Guides") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer2 = new wxFlexGridSizer( 2, 3, 0, 0 );
 	fgSizer2->AddGrowableCol( 1 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_displayLineNumbers = new wxCheckBox( this, wxID_ANY, wxT("Display line numbers"), wxDefaultPosition, wxDefaultSize, 0 );
 	
+	m_displayLineNumbers->SetToolTip( wxT("Disply line numbers margin") );
+	
 	fgSizer2->Add( m_displayLineNumbers, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxMatchBraces = new wxCheckBox( this, wxID_ANY, wxT("Highlight matched braces"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	m_checkBoxMatchBraces->SetToolTip( wxT("When enabled, mark matching brace with unique colour") );
 	
 	fgSizer2->Add( m_checkBoxMatchBraces, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_showIndentationGuideLines = new wxCheckBox( this, wxID_ANY, wxT("Show indentation guidelines"), wxDefaultPosition, wxDefaultSize, 0 );
 	
+	m_showIndentationGuideLines->SetToolTip( wxT("Display horizontal guides for matching braces \"{\"") );
+	
 	fgSizer2->Add( m_showIndentationGuideLines, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_highlighyCaretLine = new wxCheckBox( this, wxID_ANY, wxT("Highlight caret line"), wxDefaultPosition, wxDefaultSize, 0 );
 	
+	m_highlighyCaretLine->SetToolTip( wxT("Set different background colour for the line containing the caret") );
+	
 	fgSizer2->Add( m_highlighyCaretLine, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_checkBoxAutoCompleteBraces = new wxCheckBox( this, wxID_ANY, wxT("Auto Complete Braces"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	m_checkBoxAutoCompleteBraces->SetToolTip( wxT("Automatically insert corresponding },],) when user typed {,(,[") );
+	
+	fgSizer2->Add( m_checkBoxAutoCompleteBraces, 0, wxALL, 5 );
+	
+	
+	fgSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_staticText9 = new wxStaticText( this, wxID_ANY, wxT("Caret line background colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText9->Wrap( -1 );
@@ -70,6 +62,9 @@ EditorSettingsGeneralPageBase::EditorSettingsGeneralPageBase( wxWindow* parent, 
 	
 	m_caretLineColourPicker = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
 	fgSizer2->Add( m_caretLineColourPicker, 0, wxEXPAND|wxALL, 5 );
+	
+	
+	fgSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Whitespace visibility:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );

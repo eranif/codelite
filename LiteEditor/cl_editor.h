@@ -98,7 +98,8 @@ class LEditor : public wxScintilla, public IEditor
 	int m_hyperLinkIndicatroEnd;
     int m_hyperLinkType;
 	bool m_hightlightMatchedBraces;
-
+	bool m_autoAddMatchedBrace;
+	
 public:
 	static FindReplaceData &GetFindReplaceData() {
 		return m_findReplaceData;
@@ -502,6 +503,7 @@ private:
 	void RemoveDebuggerContextMenu(wxMenu *menu);
 	void DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
 	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
+	void DoInsertBrace(wxChar ch, int pos);
 	wxString GetEolString();
 
 	DECLARE_EVENT_TABLE()

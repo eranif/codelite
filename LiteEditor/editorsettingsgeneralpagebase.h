@@ -1,28 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : editorsettingsgeneralpagebase.h              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
@@ -64,8 +39,11 @@ class EditorSettingsGeneralPageBase : public wxPanel
 		wxCheckBox* m_checkBoxMatchBraces;
 		wxCheckBox* m_showIndentationGuideLines;
 		wxCheckBox* m_highlighyCaretLine;
+		wxCheckBox* m_checkBoxAutoCompleteBraces;
+		
 		wxStaticText* m_staticText9;
 		wxColourPickerCtrl* m_caretLineColourPicker;
+		
 		wxStaticText* m_staticText4;
 		wxChoice* m_whitespaceStyle;
 		

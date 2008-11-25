@@ -35,7 +35,8 @@ EditorSettingsGeneralPage::EditorSettingsGeneralPage( wxWindow* parent )
 	m_displayLineNumbers->SetValue(options->GetDisplayLineNumbers());
 	m_checkBoxMatchBraces->SetValue(options->GetHighlightMatchedBraces());    
 	m_showIndentationGuideLines->SetValue(options->GetShowIndentationGuidelines());
-    
+    m_checkBoxAutoCompleteBraces->SetValue(options->GetAutoAddMatchedBraces());
+	
 	m_highlighyCaretLine->SetValue(options->GetHighlightCaretLine());
 	m_caretLineColourPicker->SetColour(options->GetCaretLineColour());
     EnableDisableCaretLineColourPicker();
@@ -90,7 +91,8 @@ void EditorSettingsGeneralPage::Save(OptionsConfigPtr options)
 	options->SetHighlightCaretLine( m_highlighyCaretLine->IsChecked() );
     
 	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
-
+	options->SetAutoAddMatchedBraces(m_checkBoxAutoCompleteBraces->IsChecked());
+	
 	// save the whitespace visibility
 	int style(wxSCI_WS_INVISIBLE); // inivisble
 	if (m_whitespaceStyle->GetStringSelection() == wxT("Visible always")) {

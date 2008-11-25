@@ -141,6 +141,8 @@ LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxSt
 		, m_hyperLinkIndicatroStart(wxNOT_FOUND)
 		, m_hyperLinkIndicatroEnd(wxNOT_FOUND)
 		, m_hyperLinkType(wxID_NONE)
+		, m_hightlightMatchedBraces(true)
+		, m_autoAddMatchedBrace(false)
 {
 	Show(!hidden);
 	ms_bookmarkShapes[wxT("Small Rectangle")] = wxSCI_MARK_SMALLRECT;
@@ -198,6 +200,8 @@ void LEditor::SetProperties()
 	CallTipUseStyle(1);
 
 	m_hightlightMatchedBraces = options->GetHighlightMatchedBraces();
+	m_autoAddMatchedBrace = options->GetAutoAddMatchedBraces();
+	
 	if (!m_hightlightMatchedBraces)
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 
@@ -456,15 +460,24 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		m_context->AutoIndent(event.GetKey());
 
 	switch ( event.GetKey() ) {
+	case '[':
+	case '<':
+	case '{':
+	case '(':
+			if(event.GetKey() == '('){
+				if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
+					CodeComplete();
+				}
+			}
+			DoInsertBrace(event.GetKey(), GetCurrentPos());
+			break;
 	case ':':
 	case '.':
 	case '>':
-	case '(': {
 			if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
 				CodeComplete();
 			}
 			break;
-		}
 	case ')': {
 			// dismiss the current calltip
 			m_context->CallTipCancel();
@@ -2688,4 +2701,24 @@ void LEditor::OnDbgRunToCursor(wxCommandEvent& event)
 		dbgr->Break(GetFileName().GetFullPath(), GetCurrentLine()+1, true);
 		dbgr->Continue();
 	}
+}
+
+void LEditor::DoInsertBrace(wxChar ch, int pos)
+{
+	if(!m_autoAddMatchedBrace) return;
+	
+	wxChar matchedBrace(0);
+	switch(ch) {
+	case wxT('('): matchedBrace = wxT(')'); break;
+	case wxT('['): matchedBrace = wxT(']'); break;
+	case wxT('{'): matchedBrace = wxT('}'); break;
+	default: return;
+	}
+	
+	// if there is already matched brace, dont add another one
+	if(SafeGetChar(pos) == (int)matchedBrace) {
+		return;
+	}
+	
+	InsertText(pos, matchedBrace);
 }

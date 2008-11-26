@@ -478,7 +478,16 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 				CodeComplete();
 			}
 			break;
+    case ']':
+    case '}':
 	case ')': {
+
+            DoRemoveBrace(event.GetKey(), GetCurrentPos());
+            
+            if(event.GetKey() != ')'){
+                break;
+            }            
+            
 			// dismiss the current calltip
 			m_context->CallTipCancel();
 			// display the next one
@@ -2716,10 +2725,23 @@ void LEditor::DoInsertBrace(wxChar ch, int pos)
 	default: return;
 	}
 	
-	// if there is already matched brace, dont add another one
-	if(SafeGetChar(pos) == (int)matchedBrace) {
-		return;
-	}
-	
 	InsertText(pos, matchedBrace);
+}
+
+void LEditor::DoRemoveBrace(wxChar ch, int pos)
+{
+	if(!m_autoAddMatchedBrace) return;
+	if(m_context->IsCommentOrString(pos)) return;
+
+    wxChar matchedBrace(0);
+	switch(ch) {
+	case wxT(')'): matchedBrace = wxT('('); break;
+	case wxT(']'): matchedBrace = wxT('['); break;
+	case wxT('}'): matchedBrace = wxT('{'); break;
+	default: return;
+	}
+    
+    if(matchedBrace == SafeGetChar(pos-2)){
+        wxScintilla::DeleteBackNotLine();
+    }
 }

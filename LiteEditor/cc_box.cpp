@@ -335,10 +335,12 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 			{
 				// image id in range of 8-10 is function
 				editor->InsertText(editor->GetCurrentPos(), wxT("()"));
-				int pos = editor->GetCurrentPos() + 1;
-				editor->SetCurrentPos(pos);
+				editor->CharRight();
+				int pos = editor->GetCurrentPos();
 				editor->SetSelectionStart(pos);
 				editor->SetSelectionEnd(pos);
+				editor->SetIndicatorCurrent(5); // Move MATCH_INDICATOR to cl_editor.h
+				editor->IndicatorFillRange(pos, 1);
 				// trigger function tip
 				editor->CodeComplete();
 

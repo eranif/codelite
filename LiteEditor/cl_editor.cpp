@@ -75,6 +75,7 @@
 
 #define USER_INDICATOR 				3
 #define HYPERLINK_INDICATOR 		4
+#define MATCH_INDICATOR             5
 
 const wxEventType wxEVT_CMD_UPDATE_STATUS_BAR = wxNewEventType();
 
@@ -388,10 +389,12 @@ void LEditor::SetProperties()
 	IndicatorSetUnder(1, false);
 	IndicatorSetUnder(2, false);
 	IndicatorSetUnder(HYPERLINK_INDICATOR, false);
+	IndicatorSetUnder(MATCH_INDICATOR, false);
 #else
 	IndicatorSetUnder(1, true);
 	IndicatorSetUnder(2, true);
 	IndicatorSetUnder(HYPERLINK_INDICATOR, true);
+	IndicatorSetUnder(MATCH_INDICATOR, true);
 #endif
 
 	SetUserIndicatorStyleAndColour(wxSCI_INDIC_SQUIGGLE, wxT("RED"));
@@ -405,6 +408,7 @@ void LEditor::SetProperties()
 	IndicatorSetForeground(1, options->GetBookmarkBgColour());
 	IndicatorSetForeground(2, col2);
 	IndicatorSetStyle(HYPERLINK_INDICATOR, wxSCI_INDIC_PLAIN);
+	IndicatorSetStyle(MATCH_INDICATOR, wxSCI_INDIC_BOX);
 }
 
 void LEditor::SetDirty(bool dirty)
@@ -437,10 +441,12 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	// set the page title as dirty
 	SetDirty(true);
 
+	int pos = GetCurrentPos();
+	
 	// get the word and select it in the completion box
 	if (IsCompletionBoxShown()) {
-		int pos = WordStartPosition(GetCurrentPos(), true);
-		wxString word = GetTextRange(pos, GetCurrentPos());
+		int start = WordStartPosition(pos, true);
+		wxString word = GetTextRange(start, pos);
 
 		if ( word.IsEmpty() ) {
 			HideCompletionBox();
@@ -450,65 +456,76 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	}
 
 	// make sure line is visible
-	int curLine = LineFromPosition(GetCurrentPos());
+	int curLine = LineFromPosition(pos);
 	if ( !GetFoldExpanded(curLine) ) {
 		ToggleFold(curLine);
 	}
 
-	// Always do auto-indentation
-	if (event.GetKey() == ':' || event.GetKey() == '}' || event.GetKey() == '\n')
-		m_context->AutoIndent(event.GetKey());
-
+	if (IndicatorValueAt(MATCH_INDICATOR, pos) && event.GetKey() == GetCharAt(pos)) {
+		CharRight();
+		DeleteBack();
+	}
+	
+	wxChar matchChar = 0;
 	switch ( event.GetKey() ) {
-	case '[':
-	case '<':
-	case '{':
 	case '(':
-			if(event.GetKey() == '('){
-				if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
-					CodeComplete();
-				}
+			if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
+				CodeComplete();
 			}
-			DoInsertBrace(event.GetKey(), GetCurrentPos());
+			matchChar = ')';
+			break;
+	case '[':
+			matchChar = ']';
+			break;
+	case '{':
+			matchChar = '}';
 			break;
 	case ':':
+			m_context->AutoIndent(event.GetKey());
+			// fall through...
 	case '.':
 	case '>':
 			if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
 				CodeComplete();
 			}
 			break;
-    case ']':
     case '}':
-	case ')': {
-
-            DoRemoveBrace(event.GetKey(), GetCurrentPos());
-            
-            if(event.GetKey() != ')'){
-                break;
-            }            
-            
-			// dismiss the current calltip
+			m_context->AutoIndent(event.GetKey());
+			// fall through...
+    case ']':
 			m_context->CallTipCancel();
-			// display the next one
 			ShowFunctionTipFromCurrentPos();
 			break;
-		}
-	case '\n': {
+	case '\n': 
+			m_context->AutoIndent(event.GetKey());
 			// incase we are typing in a folded line, make sure it is visible
-			int  nLineNumber = LineFromPosition(GetCurrentPos());
-			EnsureVisible(nLineNumber+1);
+			EnsureVisible(curLine+1);
 			break;
-		}
 	default:
 		break;
 	}
 
+	if (matchChar && m_autoAddMatchedBrace && !m_context->IsCommentOrString(pos)) {
+		InsertText(pos, matchChar);
+		if (matchChar != '}') {
+			SetIndicatorCurrent(MATCH_INDICATOR);
+			IndicatorFillRange(pos, 1);	
+		} else {
+			InsertText(pos, wxT('\n'));
+			CharRight();
+			m_context->AutoIndent(wxT('}'));
+			SetCurrentPos(pos);
+			InsertText(pos, wxT('\n'));
+			CharRight();
+			m_context->AutoIndent(wxT('\n'));
+		}
+	}
+	
 	if ( IsCompletionBoxShown() == false ) {
 		// display the keywords completion box only if user typed more than 2
 		// chars && the caret is placed at the end of that word
-		long startPos = WordStartPosition(GetCurrentPos(), true);
-		if (GetWordAtCaret().Len() >= 2 && GetCurrentPos() - startPos >= 2 ) {
+		long startPos = WordStartPosition(pos, true);
+		if (GetWordAtCaret().Len() >= 2 && pos - startPos >= 2 ) {
 			m_context->OnUserTypedXChars(GetWordAtCaret());
 		}
 	}
@@ -554,11 +571,21 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 			}
 		}
 	}
+	
+	int curLine = LineFromPosition(pos);
+	
 	//update line number
 	wxString message;
-	message << wxT("Ln ") << LineFromPosition(pos)+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
+	message << wxT("Ln ") << curLine+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
 	SetStatusBarMessage(message, 2);
 
+	SetIndicatorCurrent(MATCH_INDICATOR);
+	IndicatorClearRange(0, pos);
+	int end = PositionFromLine(curLine+1);
+	if (end >= pos && end < GetTextLength()) {
+		IndicatorClearRange(end, GetTextLength()-end);
+	}
+	
 	switch ( GetEOLMode() ) {
 	case wxSCI_EOL_CR:
 		SetStatusBarMessage(wxT("EOL Mode: Mac"), 3);
@@ -2710,38 +2737,4 @@ void LEditor::OnDbgRunToCursor(wxCommandEvent& event)
 		dbgr->Break(GetFileName().GetFullPath(), GetCurrentLine()+1, true);
 		dbgr->Continue();
 	}
-}
-
-void LEditor::DoInsertBrace(wxChar ch, int pos)
-{
-	if(!m_autoAddMatchedBrace) return;
-	if(m_context->IsCommentOrString(pos)) return;
-	
-	wxChar matchedBrace(0);
-	switch(ch) {
-	case wxT('('): matchedBrace = wxT(')'); break;
-	case wxT('['): matchedBrace = wxT(']'); break;
-	case wxT('{'): matchedBrace = wxT('}'); break;
-	default: return;
-	}
-	
-	InsertText(pos, matchedBrace);
-}
-
-void LEditor::DoRemoveBrace(wxChar ch, int pos)
-{
-	if(!m_autoAddMatchedBrace) return;
-	if(m_context->IsCommentOrString(pos)) return;
-
-    wxChar matchedBrace(0);
-	switch(ch) {
-	case wxT(')'): matchedBrace = wxT('('); break;
-	case wxT(']'): matchedBrace = wxT('['); break;
-	case wxT('}'): matchedBrace = wxT('{'); break;
-	default: return;
-	}
-    
-    if(matchedBrace == SafeGetChar(pos-2)){
-        wxScintilla::DeleteBackNotLine();
-    }
 }

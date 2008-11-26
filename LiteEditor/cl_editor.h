@@ -503,8 +503,6 @@ private:
 	void RemoveDebuggerContextMenu(wxMenu *menu);
 	void DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
 	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
-	void DoInsertBrace(wxChar ch, int pos);
-	void DoRemoveBrace(wxChar ch, int pos);
 	wxString GetEolString();
 
 	DECLARE_EVENT_TABLE()

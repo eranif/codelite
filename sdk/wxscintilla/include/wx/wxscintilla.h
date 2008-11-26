@@ -3351,6 +3351,7 @@ public:
 	// Modern indicators
 	void SetIndicatorCurrent(int indicator);
 	int  GetIndicatorCurrent();
+	int IndicatorValueAt(int indicator, int position);
 	void IndicatorFillRange(int position, int len);
 	void IndicatorClearRange(int position, int len);
 	int IndicatorStart(int indicator, int position);

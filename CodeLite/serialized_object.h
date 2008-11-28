@@ -67,10 +67,10 @@ public:
 	void SetCurrentLine(const int& _currentLine) {this->m_currentLine = _currentLine;}
 	void SetBookmarks(const wxArrayString& _bookmarks) {this->m_bookmarks = _bookmarks;}
 	//getters
-	const wxString& GetFileName() {return this->m_fileName;}
-	const int& GetFirstVisibleLine() {return this->m_firstVisibleLine;}
-	const int& GetCurrentLine() {return this->m_currentLine;}
-	const wxArrayString& GetBookmarks() {return this->m_bookmarks;}
+	const wxString& GetFileName() const {return this->m_fileName;}
+	const int& GetFirstVisibleLine() const {return this->m_firstVisibleLine;}
+	const int& GetCurrentLine() const {return this->m_currentLine;}
+	const wxArrayString& GetBookmarks() const {return this->m_bookmarks;}
 	
 	TabInfo();
 	virtual ~TabInfo();

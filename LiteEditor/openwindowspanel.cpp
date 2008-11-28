@@ -127,8 +127,7 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
         
     m_fileList->Freeze();
     if (i == wxNOT_FOUND) {
-        Notebook *book = Frame::Get()->GetNotebook();
-        wxString txt = book->GetPageText(book->GetPageIndex(editor));
+        wxString txt = editor->GetFileName().GetFullName();
         wxStringClientData *data = new wxStringClientData(editor->GetFileName().GetFullPath());
         i = m_fileList->Append(txt, data);
     }

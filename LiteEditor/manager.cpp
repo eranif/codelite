@@ -60,7 +60,6 @@
 #include "depends_dlg.h"
 #include "build_settings_config.h"
 #include "dirsaver.h"
-#include "editor_creator.h"
 #include "algorithm"
 #include "async_executable_cmd.h"
 #include "fileutils.h"
@@ -201,183 +200,52 @@ void Manager::OpenFile ( const BrowseRecord &rec )
 
 bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName, int lineno, long position )
 {
-	wxFileName fileName ( file_name );
-	wxString projName ( projectName );
-	Notebook *notebook = Frame::Get()->GetNotebook();
-	bool updTree = false;
-	bool fileWasOpenedInNB ( false );
-	int selection ( wxNOT_FOUND );
-	wxWindow *returnFocusWin ( NULL );
-
+     // TODO: somebody else should deal with this
+	wxWindow *returnFocusWin = NULL;
 	wxWindow *focusWin = wxWindow::FindFocus();
 	if ( focusWin == Frame::Get()->GetOutputPane()->GetDebugWindow()->GetInWin() ) {
 		returnFocusWin = focusWin;
 	}
 
-	//make sure that the notebook is visible
-	wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT ( "Editor" ) );
-	if ( info.IsOk() && !info.IsShown() ) {
-		info.Show();
-		Frame::Get()->GetDockingManager().Update();
-	}
-
-	// Search to see if this file is already opened
-	// in the notebook
-	LEditor* editor = NULL;
-	size_t nCount = 0;
-	for ( ; nCount < ( size_t ) notebook ->GetPageCount(); nCount++ ) {
-		editor = dynamic_cast<LEditor*> ( notebook ->GetPage ( nCount ) );
-		if ( editor ) {
-			wxString f1 = editor->GetFileName().GetFullPath();
-			wxString f2 = fileName.GetFullPath();
-			if ( f1 == f2 ) {
-				selection = ( int ) nCount;
-				fileWasOpenedInNB = true;
-				break;
-			}
-			editor = NULL;
-		}
-	}
-
-	//even in cases were a project name is empty, we try
-	//to match a project name to the actual file. otherwise, CC may not work
-	//since it depends on a valid project name in the editor
-	if ( projectName.IsEmpty() ) {
-		projName = GetProjectNameByFile ( fileName.GetFullPath() );
-	}
-
-	if ( !editor ) {
-		/// Open the file and read the text
-		if ( fileName.IsOk() == false ) {
-			wxLogMessage ( wxT ( "Invalid file name: " ) + fileName.GetFullPath() );
-			return false;
-		}
-
-		// make sure that the file exist
-		if ( !fileName.FileExists() ) {
-			wxLogMessage ( wxT ( "File: " ) + fileName.GetFullPath() + wxT ( " does not exist!" ) );
-			return false;
-		}
-
-		// Create new editor and add it to the notebook
-		notebook->Freeze();
-		// create new instance from pool
-		editor = EditorCreatorST::Get()->NewInstance();
-		editor->Create ( projName, fileName );
-		editor->SetSyntaxHighlight ( editor->GetContext()->GetName() );
-		notebook->AddPage ( editor, fileName.GetFullName(), wxNullBitmap);
-		notebook->Thaw();
-		selection = ( int ) notebook->GetPageCount()-1;
-		updTree = true;
-	}
-
-	// Go to tag line number and gives scintilla the focus
-	if ( position != wxNOT_FOUND ) {
-		int lineno = editor->LineFromPosition ( position );
-		editor->GotoLine ( lineno );
-		editor->SetCaretAt ( position );
-		editor->EnsureVisible ( lineno );
-	} else {
-		if ( ! ( fileWasOpenedInNB && lineno == wxNOT_FOUND ) ) {
-			editor->GotoLine ( lineno );
-			editor->EnsureVisible ( lineno );
-		}
-	}
-
-	AddToRecentlyOpenedFiles ( fileName.GetFullPath() );
-
-	if ( selection != wxNOT_FOUND ) {
-		notebook->SetSelection ( selection );
-	}
-
-	editor->SetProject ( projName );
-	editor->SetActive();
-
-	if ( returnFocusWin ) {
+    bool res = Frame::Get()->GetMainBook()->OpenFile(file_name, projectName, lineno, position) != NULL;
+    
+   	if (returnFocusWin) {
 		returnFocusWin->SetFocus();
 	}
-	return true;
-}
-
-void Manager::SetPageTitle ( wxWindow *page, const wxString &name )
-{
-	Notebook *nb = Frame::Get()->GetNotebook();
-	size_t selection = nb->GetPageIndex ( page );
-	if ( selection != Notebook::npos ) {
-		Frame::Get()->GetNotebook()->SetPageText ( selection, name );
-	}
-}
-
-const wxString Manager::GetPageTitle ( wxWindow *page )
-{
-	Notebook *nb = Frame::Get()->GetNotebook();
-	size_t selection = nb->GetPageIndex ( page );
-	if ( selection != Notebook::npos ) {
-		return Frame::Get()->GetNotebook()->GetPageText ( selection );
-	} else {
-		return wxEmptyString;
-	}
+    
+    return res;
 }
 
 void Manager::SaveAll ( bool includeUntitled )
 {
-	Notebook *book = Frame::Get()->GetNotebook();
-	size_t count = book->GetPageCount();
-
-	for ( size_t i=0; i<count; i++ ) {
-		LEditor* editor = dynamic_cast<LEditor*> ( book->GetPage ( i ) );
-		if ( !editor )
-			continue;
-
-		//if 'include Untitled' is not true, don't save new documents that have
-		//not been saved to disk yet
-		if ( !includeUntitled && editor->GetFileName().GetFullPath().StartsWith ( wxT ( "Untitled" ) ) ) {
-			continue;
-		}
-
-		if ( editor->GetModify() ) {
-			editor->SaveFile();
-		}
-	}
+    return Frame::Get()->GetMainBook()->SaveAll(includeUntitled);
 }
 
 void Manager::UnInitialize()
 {
-	//stop the debugger
+	//stop background processes
 	DbgStop();
-	DebuggerMgr::Free();
-
-	// Release singleton objects
-
-	// stop the job queue thread
 	JobQueueSingleton::Instance()->Stop();
-	JobQueueSingleton::Release();
-
-	//since the parser is making use of the TagsManager,
-	//it is important to release it *before* the TagsManager
 	ParseThreadST::Get()->Stop();
-	ParseThreadST::Free();
-
-	TagsManagerST::Free();
+ 	SearchThreadST::Get()->Stop();
+   
+    //free all plugins
+	PluginManager::Get()->UnLoad();
+    
+	// release singleton objects
+	DebuggerMgr::Free();
+	JobQueueSingleton::Release();
+	ParseThreadST::Free();  //since the parser is making use of the TagsManager,
+	TagsManagerST::Free();  //it is important to release it *before* the TagsManager
 	LanguageST::Free();
 	WorkspaceST::Free();
 	ContextManager::Free();
 	BuildManagerST::Free();
 	BuildSettingsConfigST::Free();
-
-	// Stop the search thread and free its resources
-	SearchThreadST::Get()->Stop();
 	SearchThreadST::Free();
-
-	//stop the creator thread
-	EditorCreatorST::Free();
 	MenuManager::Free();
 	EditorConfigST::Free();
 	EnvironmentConfig::Release();
-
-	//free all plugins
-	PluginManager::Get()->UnLoad();
-
 }
 
 void Manager::CreateWorkspace ( const wxString &name, const wxString &path )
@@ -452,43 +320,10 @@ void Manager::CloseWorkspace()
 	//close any debugging session that is currently opened
 	DbgStop();
 
-	//clear any pending & actual breakpoints from the debugger manager
-	//DebuggerMgr::Get().DelAllBreakpoints();
-
 	//save the current session before closing
 	SessionEntry session;
-	session.SetSelectedTab ( Frame::Get()->GetNotebook()->GetSelection() );
 	session.SetWorkspaceName ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
-
-	//loop over the open editors, and get their file name
-	//wxArrayString files;
-	std::vector<TabInfo> vTabInfoArr;
-	for ( size_t i=0; i<Frame::Get()->GetNotebook()->GetPageCount(); i++ ) {
-		LEditor *editor = dynamic_cast<LEditor*> ( Frame::Get()->GetNotebook()->GetPage ( ( size_t ) i ) );
-		if ( editor ) {
-			//files.Add(editor->GetFileName().GetFullPath());
-
-			TabInfo oTabInfo;
-			oTabInfo.SetFileName ( editor->GetFileName().GetFullPath() );
-			oTabInfo.SetFirstVisibleLine ( editor->GetFirstVisibleLine() );
-			oTabInfo.SetCurrentLine ( editor->GetCurrentLine() );
-			// bookmarks
-			wxArrayString astrBookmarks;
-			int nLine = 0;
-			const int nMask = 128;
-			while ( ( nLine = editor->MarkerNext ( nLine, nMask ) ) >= 0 ) {
-				wxString strBM ( wxEmptyString );
-				strBM << nLine;
-				astrBookmarks.Add ( strBM );
-				nLine++;
-			}
-			oTabInfo.SetBookmarks ( astrBookmarks );
-			vTabInfoArr.push_back ( oTabInfo );
-		}
-	}
-
-	// Save the current session
-	session.SetTabInfoArr ( vTabInfoArr );
+    Frame::Get()->GetMainBook()->SaveSession(session);
 	SessionManager::Get().Save ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session );
 
 	// since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
@@ -503,20 +338,6 @@ void Manager::CloseWorkspace()
 	//clear the 'errors' tab
 	Frame::Get()->GetOutputPane()->GetErrorsTab()->Clear();
 
-	//clear the navigation bar
-	Frame::Get()->GetMainBook()->Clear();
-
-	//close all open files, and clear trees
-	Notebook *book = Frame::Get()->GetNotebook();
-	int count = book->GetPageCount();
-	for ( int i=count-1; i>=0; i-- ) {
-		LEditor *page = dynamic_cast<LEditor*> ( book->GetPage ( ( size_t ) i ) );
-		if ( page ) {
-			book->DeletePage ( ( size_t ) i );
-		}
-	}
-	Frame::Get()->GetNotebook()->Refresh();
-    
 	if ( !IsShutdownInProgress() ) {
 		SendCmdEvent ( wxEVT_WORKSPACE_CLOSED );
 	}
@@ -595,7 +416,6 @@ bool Manager::RemoveProject ( const wxString &name )
 		std::vector<wxFileName> projectFiles;
 		proj->GetFiles ( projectFiles, true );
 		TagsManagerST::Get()->DeleteFilesTags ( projectFiles );
-		RemoveProjectNameFromOpenFiles ( projectFiles );
 		wxArrayString prjfls;
 		for ( size_t i = 0; i < projectFiles.size(); i++ ) {
 			prjfls.Add ( projectFiles[i].GetFullPath() );
@@ -606,27 +426,6 @@ bool Manager::RemoveProject ( const wxString &name )
 	SendCmdEvent ( wxEVT_PROJ_REMOVED, ( void* ) &name );
 
 	return true;
-}
-
-void Manager::RemoveProjectNameFromOpenFiles ( const std::vector<wxFileName> &project_files )
-{
-	//go over all open tabs, if a file belongs to the closed
-	//project, remove the project name from the container editor,
-	//this will prevent the parser thread to parse this file after
-	//its parent project was removed
-	Notebook *book = Frame::Get()->GetNotebook();
-	for ( size_t i=0; i< ( size_t ) book->GetPageCount(); i++ ) {
-		LEditor *editor = dynamic_cast<LEditor*> ( book->GetPage ( i ) );
-		if ( editor ) {
-			wxString openFileFP = editor->GetFileName().GetFullPath();
-			for ( size_t j=0; j<project_files.size(); j++ ) {
-				if ( openFileFP == project_files.at ( j ).GetFullPath() ) {
-					editor->SetProject ( wxEmptyString );
-					break;
-				}
-			}
-		}
-	}
 }
 
 wxString Manager::GetActiveProjectName()
@@ -770,28 +569,11 @@ void Manager::AddFilesToProject ( const wxArrayString &files, const wxString &vd
 
 bool Manager::RemoveFile ( const wxString &fileName, const wxString &vdFullPath )
 {
-	// First, close any open tab with this file
-	Notebook* nb = dynamic_cast<Notebook*> ( Frame::Get()->GetNotebook() );
-	if ( !nb ) {
-		return false;
-	}
-
 	wxString project = vdFullPath.BeforeFirst ( wxT ( ':' ) );
 	wxFileName absPath ( fileName );
 	absPath.MakeAbsolute ( GetProjectCwd ( project ) );
 
-	int count = nb->GetPageCount();
-	for ( int i=0; i<count; i++ ) {
-		LEditor *editor = dynamic_cast<LEditor*> ( nb->GetPage ( static_cast<size_t> ( i ) ) );
-		if ( editor ) {
-			wxString fn = editor->GetFileName().GetFullPath();
-
-			if ( fn == absPath.GetFullPath() && editor->GetProject() == project ) {
-				nb->DeletePage ( static_cast<size_t> ( i ) );
-				break;
-			}
-		}
-	}
+    Frame::Get()->GetMainBook()->ClosePage(absPath.GetFullPath());
 
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->RemoveFile ( vdFullPath, fileName, errMsg );
@@ -924,35 +706,9 @@ void Manager::ShowWorkspacePane ( wxString focusWin, bool commit )
 	}
 }
 
-ContextBasePtr Manager::NewContextByFileName ( const wxFileName &fileName, LEditor *parent ) const
-{
-	EditorConfig::ConstIterator iter = EditorConfigST::Get()->LexerBegin();
-	for ( ; iter != EditorConfigST::Get()->LexerEnd(); iter++ ) {
-		LexerConfPtr lexer = iter->second;
-		wxString lexExt = lexer->GetFileSpec();
-		wxStringTokenizer tkz ( lexExt, wxT ( ";" ) );
-		while ( tkz.HasMoreTokens() ) {
-			if ( wxMatchWild ( tkz.NextToken(), fileName.GetFullName() ) ) {
-				return ContextManager::Get()->NewContext ( parent, lexer->GetName() );
-			}
-		}
-	}
-
-	// return the default context
-	return ContextManager::Get()->NewContext ( parent, wxT ( "Text" ) );
-}
-
 void Manager::ApplySettingsChanges()
 {
-	Notebook *book = Frame::Get()->GetNotebook();
-	size_t count = ( size_t ) book->GetPageCount();
-	for ( size_t i=0; i<count; i++ ) {
-		LEditor *editor = dynamic_cast<LEditor*> ( book->GetPage ( i ) );
-		if ( editor ) {
-			// the open page is of type LEditor
-			editor->SetSyntaxHighlight ( editor->GetContext()->GetName() );
-		}
-	}
+    Frame::Get()->GetMainBook()->ApplySettingsChanges();
 }
 
 ProjectSettingsPtr Manager::GetProjectSettings ( const wxString &projectName ) const
@@ -1526,35 +1282,9 @@ void Manager::ImportFromMakefile(const wxString &path)
 }
 */
 
-LEditor *Manager::FindEditorByFileName ( const wxString &fileName ) const
-{
-	Notebook *book = Frame::Get()->GetNotebook();
-	if ( !book ) {
-		return NULL;
-	}
-	book->GetPageCount();
-	for ( size_t i=0; i<book->GetPageCount(); i++ ) {
-		LEditor *editor = dynamic_cast<LEditor*> ( book->GetPage ( i ) );
-		if ( editor && editor->GetFileName().GetFullPath() == fileName ) {
-			return editor;
-		}
-	}
-	return NULL;
-}
-
 LEditor *Manager::GetActiveEditor() const
 {
-	Notebook *book = Frame::Get()->GetNotebook();
-	if ( !book ) {
-		return NULL;
-	}
-
-	size_t selected = book->GetSelection();
-	if ( selected == Notebook::npos )
-		return NULL;
-
-	LEditor *editor = dynamic_cast<LEditor*> ( book->GetPage ( selected ) );
-	return editor;
+    return Frame::Get()->GetMainBook()->GetActiveEditor();
 }
 
 void Manager::AddToRecentlyOpenedFiles ( const wxString &fileName )
@@ -1601,84 +1331,6 @@ void Manager::CloseExternalDatabase()
 	Frame::Get()->SetStatusMessage ( wxEmptyString, 1 );
 }
 
-void Manager::CloseAllButThis ( wxWindow *curreditor )
-{
-	Notebook *book = Frame::Get()->GetNotebook();
-	bool idxToDelete ( 0 );//can be 1 or 0
-	while ( book->GetPageCount() > 1 ) {
-		if ( book->GetPage ( 0 ) == curreditor ) {
-			idxToDelete = 1;
-		}
-		book->DeletePage ( idxToDelete );
-	}
-}
-
-void Manager::CloseAll()
-{
-	bool modifyDetected = false;
-	Notebook *book = Frame::Get()->GetNotebook();
-
-	//check if any of the files is modified
-	for ( size_t i=0; i<book->GetPageCount(); i++ ) {
-		LEditor *editor = dynamic_cast<LEditor*> ( book->GetPage ( i ) );
-		if ( editor ) {
-			if ( editor->GetModify() ) {
-				modifyDetected = true;
-				break;
-			}
-		}
-	}
-
-	int retCode ( CLOSEALL_DISCARDALL );
-	CloseAllDialog *dlg ( NULL );
-
-	if ( modifyDetected ) {
-		dlg = new CloseAllDialog ( Frame::Get() );
-		retCode = dlg->ShowModal();
-		dlg->Destroy();
-	}
-
-	switch ( retCode ) {
-	case CLOSEALL_SAVEALL: {
-		ManagerST::Get()->SaveAll();
-		//and now close them all
-		book->DeleteAllPages();
-		book->Refresh();
-	}
-	break;
-	case CLOSEALL_DISCARDALL: {
-		book->DeleteAllPages();
-		book->Refresh();
-	}
-	break;
-	case CLOSEALL_ASKFOREACHFILE: {
-		int count = book->GetPageCount();
-		for ( int i=0; i<count; i++ ) {
-			LEditor* editor = dynamic_cast<LEditor*> ( book->GetPage ( ( size_t ) i ) );
-			if ( !editor )
-				continue;
-
-			bool veto;
-			Frame::Get()->ClosePage ( editor, false, book->GetSelection(), true, veto );
-		}
-		//once all files have been prompted if needed, remove them all
-		book->DeleteAllPages();
-		book->Refresh();
-	}
-	break;
-	default:
-		break;
-	}
-
-	if ( dlg ) {
-		dlg->Destroy();
-	}
-
-	if ( !IsShutdownInProgress() ) {
-		SendCmdEvent ( wxEVT_ALL_EDITORS_CLOSED );
-	}
-}
-
 bool Manager::MoveFileToVD ( const wxString &fileName, const wxString &srcVD, const wxString &targetVD )
 {
 	// to move the file between targets, we need to change the file path, we do this
@@ -1691,33 +1343,21 @@ bool Manager::MoveFileToVD ( const wxString &fileName, const wxString &srcVD, co
 
 	//set a dir saver point
 	wxFileName fn ( fileName );
-
+    wxArrayString files(1, fn.GetFullPath());
+    
 	//remove the file from the source project
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->RemoveFile ( srcVD, fileName, errMsg );
 	CHECK_MSGBOX_BOOL ( res );
-
+    SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*) &files);
+    
 	// Add the file to the project
 	res = WorkspaceST::Get()->AddNewFile ( targetVD, fn.GetFullPath(), errMsg );
 	if ( !res ) {
 		//file or virtual dir does not exist
 		return false;
 	}
-	//if the file is currently open, replace its project name
-	//in the editor container
-	// First, close any open tab with this file
-	Notebook* nb = Frame::Get()->GetNotebook();
-	int count = nb->GetPageCount();
-	for ( int i=0; i<count; i++ ) {
-		LEditor *editor = dynamic_cast<LEditor*> ( nb->GetPage ( static_cast<size_t> ( i ) ) );
-		if ( editor ) {
-			wxString currFile = editor->GetFileName().GetFullPath();
-			if ( currFile == fn.GetFullPath() ) {
-				editor->SetProject ( targetProject.Trim() );
-				break;
-			}
-		}
-	}
+    SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*) &files);
 	return true;
 }
 
@@ -1913,13 +1553,7 @@ void Manager::DbgStart ( long pid )
 	// actually add the breakpoint before Run() is called - this can
 	// be a problem when adding breakpoint to dll files.
 	if ( wxNOT_FOUND == pid ) {
-		Notebook *book = Frame::Get()->GetNotebook();
-		for ( size_t i=0; i<book->GetPageCount(); i++ ) {
-			LEditor *editor = dynamic_cast<LEditor*> ( book->GetPage ( i ) );
-			if ( editor ) {
-				editor->UpdateBreakpoints();
-			}
-		}
+        Frame::Get()->GetMainBook()->UpdateBreakpoints();
 	}
 
 	//We can now get all the gathered breakpoints from the manager
@@ -2057,13 +1691,7 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 void Manager::DbgUnMarkDebuggerLine()
 {
 	//remove all debugger markers from all editors
-	Notebook *book = Frame::Get()->GetNotebook();
-	for ( size_t i=0; i<book->GetPageCount(); i++ ) {
-		LEditor *editor = dynamic_cast<LEditor*> ( book->GetPage ( i ) );
-		if ( editor ) {
-			editor->UnHighlightAll();
-		}
-	}
+    Frame::Get()->GetMainBook()->UnHighlightAll();
 }
 
 void Manager::OnOutputWindow ( wxCommandEvent &e )
@@ -2092,7 +1720,7 @@ void Manager::DbgDeleteBreakpoint ( const BreakpointInfo &bp )
 {
 	DebuggerMgr::Get().DelBreakpoint ( bp );
 	//update the editor
-	LEditor *editor = FindEditorByFileName ( bp.file );
+	LEditor *editor = Frame::Get()->GetMainBook()->FindEditor ( bp.file );
 	if ( editor ) {
 		editor->DelBreakpointMarker ( bp.lineno-1 );
 	}
@@ -2106,17 +1734,7 @@ void Manager::DbgDeleteAllBreakpoints()
 
 	DebuggerMgr::Get().DelAllBreakpoints();
 	//update the editor
-	Notebook *book = Frame::Get()->GetNotebook();
-	if ( !book ) {
-		return;
-	}
-
-	for ( size_t i=0; i<book->GetPageCount(); i++ ) {
-		LEditor *editor = dynamic_cast<LEditor*> ( book->GetPage ( i ) );
-		if ( editor ) {
-			editor->DelAllBreakpointMarkers();
-		}
-	}
+    Frame::Get()->GetMainBook()->DelAllBreakpointMarkers();
 }
 
 void Manager::DbgDoSimpleCommand ( int cmd )
@@ -2824,6 +2442,7 @@ void Manager::RetagFile ( const wxString& filename )
 
 		// re-tag the file
 		ParseRequest *req = new ParseRequest();
+        
 		// Put a request on the parsing thread to update the GUI tree for this file
 		wxFileName fn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
 		req->setDbFile ( fn.GetFullPath().c_str() );
@@ -2837,12 +2456,6 @@ void Manager::RetagFile ( const wxString& filename )
         Frame::Get()->SetStatusMessage(msg, XRCID("retag_file"));
         
 		ParseThreadST::Get()->Add ( req );
-
-		// send event to main frame to update the status bar
-		//wxCommandEvent e ( wxEVT_CMD_UPDATE_STATUS_BAR );
-		//e.SetInt ( 0 );
-		//e.SetString ( wxString::Format ( wxT ( "Re-tagging file %s..." ), absFile.GetFullName().c_str() ) );
-		//Frame::Get()->AddPendingEvent ( e );
 	} else {
 		wxLogMessage ( wxString::Format ( wxT ( "Workspace in being closed, skipping re-tag for file %s" ), filename.c_str() ) );
 	}
@@ -2924,83 +2537,7 @@ void Manager::GetDefaultAcceleratorMap ( MenuItemDataMap& accelMap )
 
 void Manager::FindAndSelect ( LEditor* editor, wxString& pattern, const wxString& name )
 {
-	wxString tmpPattern ( pattern );
-	FindReplaceData data;
-	tmpPattern.StartsWith ( wxT ( "/^" ), &pattern );
-
-	if ( pattern.EndsWith ( wxT ( "$/" ) ) ) {
-		pattern = pattern.Left ( pattern.Len()-2 );
-	} else if ( pattern.EndsWith ( wxT ( "/" ) ) ) {
-		pattern = pattern.Left ( pattern.Len()-1 );
-	}
-
-	size_t flags = wxSD_MATCHCASE;
-
-	data.SetFindString ( pattern );
-	data.SetFlags ( flags );
-
-	// keep current position
-	long curr_pos = editor->GetCurrentPos();
-	int match_len ( 0 ), pos ( 0 );
-
-	// set the caret at the document start
-	editor->SetCurrentPos ( 0 );
-	editor->SetSelectionStart ( 0 );
-	editor->SetSelectionEnd ( 0 );
-	int offset ( 0 );
-	bool again ( false );
-
-	do {
-		again = false;
-		flags = wxSD_MATCHCASE;
-
-		if ( StringFindReplacer::Search ( editor->GetText(), offset, pattern, flags, pos, match_len ) ) {
-
-			int line = editor->LineFromPosition ( pos );
-			wxString dbg_line = editor->GetLine ( line ).Trim().Trim ( false );
-
-			wxString tmp_pattern ( pattern );
-			if ( dbg_line.Len() != tmp_pattern.Trim().Trim ( false ).Len() ) {
-				offset = pos + match_len;
-				again = true;
-			} else {
-
-				// select only the name at the give text range
-				wxString display_name = name.BeforeFirst ( wxT ( '(' ) );
-
-				int match_len1 ( 0 ), pos1 ( 0 );
-				flags |= wxSD_SEARCH_BACKWARD;
-				flags |= wxSD_MATCHWHOLEWORD;
-
-				// the inner search is done on the pattern without without the part of the
-				// signature
-				pattern = pattern.BeforeFirst ( wxT ( '(' ) );
-				if ( StringFindReplacer::Search ( pattern, UTF8Length ( pattern, pattern.Len() ), display_name, flags, pos1, match_len1 ) ) {
-
-					// select only the word
-					if ( editor->GetContext()->IsCommentOrString ( pos+pos1 ) ) {
-						// try again
-						offset = pos + pos1;
-						again = true;
-					} else {
-						editor->SetSelection ( pos + pos1, pos + pos1 + match_len1 );
-					}
-				} else {
-
-					// as a fallback, mark the whole line
-					editor->SetSelection ( pos, pos + match_len );
-				}
-			}
-
-		} else {
-			wxLogMessage ( wxT ( "Failed to find[" ) + pattern + wxT ( "]" ) );
-
-			// match failed, restore the caret
-			editor->SetCurrentPos ( curr_pos );
-			editor->SetSelectionStart ( curr_pos );
-			editor->SetSelectionEnd ( curr_pos );
-		}
-	} while ( again );
+    editor->FindAndSelect(pattern, name);
 }
 
 void Manager::ReloadWorkspace()
@@ -3021,22 +2558,6 @@ void Manager::ReloadWorkspace()
 	//clear the 'errors' tab
 	Frame::Get()->GetOutputPane()->GetErrorsTab()->Clear();
 
-	//clear the navigation bar
-	Frame::Get()->GetMainBook()->Clear();
-
-	//close all open files, and clear trees
-	Notebook *book = Frame::Get()->GetNotebook();
-	int count = book->GetPageCount();
-	for ( int i=count-1; i>=0; i-- ) {
-		LEditor *page = dynamic_cast<LEditor*> ( book->GetPage ( ( size_t ) i ) );
-		if ( page ) {
-			book->DeletePage ( ( size_t ) i );
-		}
-	}
-
-	Frame::Get()->GetNotebook()->Refresh();
-	Frame::Get()->SetStatusMessage ( wxEmptyString, 1 );
-
 	DoSetupWorkspace ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
 }
 
@@ -3055,17 +2576,6 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 
 	SendCmdEvent ( wxEVT_WORKSPACE_LOADED );
 
-    //hide the start page
-	Notebook *book = Frame::Get()->GetNotebook();
-	for ( size_t i=0; i< ( size_t ) book->GetPageCount(); i++ ) {
-		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow*> ( book->GetPage ( i ) );
-		if ( win && book->GetPageText ( i ) == wxT ( "Welcome!" ) ) {
-			//we found our start page, now hide it
-			book->DeletePage ( i );
-			break;
-		}
-	}
-
 	// load the session like it was saved
 	if ( Frame::Get()->GetFrameGeneralInfo().GetFlags() & CL_LOAD_LAST_SESSION ) {
 		SessionEntry session;
@@ -3075,33 +2585,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 			SessionManager::Get().SetLastWorkspaceName ( path );
 
 			//restore notebook tabs
-			const std::vector<TabInfo> &vTabInfoArr = session.GetTabInfoArr();
-			if ( vTabInfoArr.size() > 0 ) {
-				for ( size_t i=0; i<vTabInfoArr.size(); i++ ) {
-					TabInfo ti = vTabInfoArr[i];
-					wxString strFN = ti.GetFileName();
-					int iCurLine = ti.GetCurrentLine();
-					ManagerST::Get()->OpenFile (
-					    strFN, wxEmptyString, iCurLine );
-
-					LEditor *editor = dynamic_cast<LEditor*> ( Frame::Get()->GetNotebook()->GetPage ( ( size_t ) i ) );
-					if ( editor ) {
-						editor->ScrollToLine ( ti.GetFirstVisibleLine() );
-						// bookmarks
-						const wxArrayString &astrBookmarks = ti.GetBookmarks();
-						long nLine = 0;
-						for ( size_t i=0; i<astrBookmarks.GetCount(); i++ ) {
-							if ( astrBookmarks.Item ( i ).ToLong ( &nLine ) )
-								editor->MarkerAdd ( nLine, 0x7 );
-						}
-					}
-				}
-			}
-			//set selected tab
-			int selection = session.GetSelectedTab();
-			if ( selection >= 0 && selection < ( int ) Frame::Get()->GetNotebook()->GetPageCount() ) {
-				Frame::Get()->GetNotebook()->SetSelection ( selection );
-			}
+            Frame::Get()->GetMainBook()->RestoreSession(session);
 		}
 	}
 }

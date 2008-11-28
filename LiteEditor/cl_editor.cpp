@@ -77,8 +77,6 @@
 #define HYPERLINK_INDICATOR 		4
 #define MATCH_INDICATOR             5
 
-const wxEventType wxEVT_CMD_UPDATE_STATUS_BAR = wxNewEventType();
-
 #ifndef wxScintillaEventHandler
 #define wxScintillaEventHandler(func) \
 	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
@@ -96,8 +94,9 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_SCI_MARGINCLICK(wxID_ANY, LEditor::OnMarginClick)
 	EVT_SCI_CALLTIP_CLICK(wxID_ANY, LEditor::OnCallTipClick)
 	EVT_SCI_DWELLEND(wxID_ANY, LEditor::OnDwellEnd)
-	EVT_SCI_MODIFIED(wxID_ANY, LEditor::OnModified)
 	EVT_SCI_UPDATEUI(wxID_ANY, LEditor::OnSciUpdateUI)
+    EVT_SCI_SAVEPOINTREACHED(wxID_ANY, LEditor::OnSavePoint)
+    EVT_SCI_SAVEPOINTLEFT(wxID_ANY, LEditor::OnSavePoint)
 	EVT_CONTEXT_MENU(LEditor::OnContextMenu)
 	EVT_KEY_DOWN(LEditor::OnKeyDown)
 	EVT_LEFT_DOWN(LEditor::OnLeftDown)
@@ -130,61 +129,45 @@ time_t GetFileModificationTime(const wxString &filename)
 	return buff.st_mtime;
 }
 
-LEditor::LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxString& fileName, const wxString& project, bool hidden)
-		: wxScintilla(parent, id, wxDefaultPosition, size)
-		, m_fileName(fileName)
-		, m_project(project)
-		, m_rightClickMenu(NULL)
-		, m_popupIsOn(false)
-		, m_modifyTime(0)
-		, m_ccBox(NULL)
-		, m_isVisible(true)
-		, m_hyperLinkIndicatroStart(wxNOT_FOUND)
-		, m_hyperLinkIndicatroEnd(wxNOT_FOUND)
-		, m_hyperLinkType(wxID_NONE)
+LEditor::LEditor(wxWindow* parent)
+    : wxScintilla              (parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
+    , m_rightClickMenu         (NULL)
+    , m_popupIsOn              (false)
+    , m_modifyTime             (0)
+    , m_ccBox                  (NULL)
+    , m_isVisible              (true)
+    , m_hyperLinkIndicatroStart(wxNOT_FOUND)
+    , m_hyperLinkIndicatroEnd  (wxNOT_FOUND)
+    , m_hyperLinkType          (wxID_NONE)
 		, m_hightlightMatchedBraces(true)
 		, m_autoAddMatchedBrace(false)
 {
-	Show(!hidden);
-	ms_bookmarkShapes[wxT("Small Rectangle")] = wxSCI_MARK_SMALLRECT;
+	ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSCI_MARK_SMALLRECT;
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
-	ms_bookmarkShapes[wxT("Small Arrow")] = wxSCI_MARK_ARROW;
-	ms_bookmarkShapes[wxT("Circle")] = wxSCI_MARK_CIRCLE;
+	ms_bookmarkShapes[wxT("Small Arrow")]       = wxSCI_MARK_ARROW;
+	ms_bookmarkShapes[wxT("Circle")]            = wxSCI_MARK_CIRCLE;
 
-	m_fileName.MakeAbsolute();
-
-	// If file name is provided, open it
-	wxString tmpFilename(m_fileName.GetName());
-	if (	!tmpFilename.IsEmpty() ) {
-		OpenFile(m_fileName.GetFullPath(), m_project);
-	}
-
-//	SetDropTarget(new FileDropTarget());
-	RestoreDefaults();
-
+	SetSyntaxHighlight();
+	CmdKeyClear(wxT('D'), wxSCI_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
 	Connect(wxEVT_SCI_DWELLSTART, wxScintillaEventHandler(LEditor::OnDwellStart), NULL, this);
-
-	// clear Ctrl+D
-	CmdKeyClear(wxT('D'), wxSCI_SCMOD_CTRL);
 }
 
-void LEditor::RestoreDefaults()
+LEditor::~LEditor()
 {
-	//the order is important, SetSyntaxHighlight must be called before SetProperties
-	//do not change it
-	SetSyntaxHighlight();
+}
+
+time_t LEditor::GetFileLastModifiedTime() const
+{
+    return GetFileModificationTime(m_fileName.GetFullPath());
 }
 
 void LEditor::SetSyntaxHighlight()
 {
 	ClearDocumentStyle();
-	m_context = ManagerST::Get()->NewContextByFileName(m_fileName, this);
+	m_context = ContextManager::Get()->NewContextByFileName(this, m_fileName);
 	SetProperties();
-	Colourise(0, wxSCI_INVALID_POSITION);
-}
-
-LEditor::~LEditor()
-{
+	UpdateColours();
+    m_context->SetActive();
 }
 
 void LEditor::SetCaretAt(long pos)
@@ -411,36 +394,23 @@ void LEditor::SetProperties()
 	IndicatorSetStyle(MATCH_INDICATOR, wxSCI_INDIC_BOX);
 }
 
-void LEditor::SetDirty(bool dirty)
+void LEditor::OnSavePoint(wxScintillaEvent &event)
 {
-	if ( dirty ) {
-		if ( GetIsVisible() ) {
-			if ( !ManagerST::Get()->GetPageTitle(this).StartsWith(wxT("*")) ) {
-
-				ManagerST::Get()->SetPageTitle(this, wxT("*") + ManagerST::Get()->GetPageTitle(this));
-
-				// update the main frame's title as well
-				if (ManagerST::Get()->GetActiveEditor() == this) {
-					Frame::Get()->SetFrameTitle(this);
-				}
-			}
-		}
-	} else {
-		if ( GetIsVisible() ) {
-			ManagerST::Get()->SetPageTitle(this, GetFileName().GetFullName());
-
-			if (ManagerST::Get()->GetActiveEditor() == this) {
-				Frame::Get()->SetFrameTitle(this);
-			}
-		}
-	}
+    if (!GetIsVisible())
+        return;
+    wxString title;
+    if (GetModify()) {
+        title << wxT("*");
+    }
+    title << GetFileName().GetFullName();
+    Frame::Get()->GetMainBook()->SetPageTitle(this, title);
+    if (Frame::Get()->GetMainBook()->GetActiveEditor() == this) {
+        Frame::Get()->SetFrameTitle(this);
+    }
 }
 
 void LEditor::OnCharAdded(wxScintillaEvent& event)
 {
-	// set the page title as dirty
-	SetDirty(true);
-
 	int pos = GetCurrentPos();
 	
 	// get the word and select it in the completion box
@@ -577,7 +547,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	//update line number
 	wxString message;
 	message << wxT("Ln ") << curLine+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
-	SetStatusBarMessage(message, 2);
+	Frame::Get()->SetStatusMessage(message, 2);
 
 	SetIndicatorCurrent(MATCH_INDICATOR);
 	IndicatorClearRange(0, pos);
@@ -588,13 +558,13 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	
 	switch ( GetEOLMode() ) {
 	case wxSCI_EOL_CR:
-		SetStatusBarMessage(wxT("EOL Mode: Mac"), 3);
+		Frame::Get()->SetStatusMessage(wxT("EOL Mode: Mac"), 3);
 		break;
 	case wxSCI_EOL_CRLF:
-		SetStatusBarMessage(wxT("EOL Mode: Dos/Windows"), 3);
+		Frame::Get()->SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
 		break;
 	default:
-		SetStatusBarMessage(wxT("EOL Mode: Unix"), 3);
+		Frame::Get()->SetStatusMessage(wxT("EOL Mode: Unix"), 3);
 		break;
 	}
 
@@ -673,8 +643,6 @@ bool LEditor::SaveFile()
 		if ( !SaveToFile(m_fileName) )
 			return false;
 
-		SetDirty(false);
-
 		wxString projName = GetProjectName();
 		if ( projName.Trim().Trim(false).IsEmpty() )
 			return true;
@@ -690,8 +658,6 @@ bool LEditor::SaveFile()
 		}
 
 		m_context->RetagFile();
-	} else {
-		SetDirty(false);
 	}
 	return true;
 }
@@ -712,7 +678,6 @@ bool LEditor::SaveFileAs()
 			return false;
 		}
 		m_fileName = name;
-		SetDirty(false);
 		return true;
 	}
 	return false;
@@ -778,22 +743,19 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	//update the modification time of the file
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
 	SetSavePoint();
+    
+	// update the file name (remove the star from the file name)
+	Frame::Get()->GetMainBook()->SetPageTitle(this, fileName.GetFullName());
+
+	if (fileName.GetExt() != m_fileName.GetExt()) {
+		// new context is required
+        SetSyntaxHighlight();
+	}
 
 	//fire a wxEVT_FILE_SAVED event
 	wxString file_name = fileName.GetFullPath();
 	SendCmdEvent(wxEVT_FILE_SAVED, (void*)&file_name);
 
-	// update the file name (remove the star from the file name)
-	ManagerST::Get()->SetPageTitle(this, fileName.GetFullName());
-
-	// Update context if needed
-	if (fileName.GetExt() != m_fileName.GetExt()) {
-		// new context is required
-		ClearDocumentStyle();
-		m_context = ManagerST::Get()->NewContextByFileName(fileName, this);
-		Colourise(0, wxSCI_INVALID_POSITION);
-		SetProperties();
-	}
 	return true;
 }
 
@@ -803,6 +765,7 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 	m_context = ContextManager::Get()->NewContext(this, lexerName);
 	SetProperties();
 	UpdateColours();
+    m_context->SetActive();
 }
 
 void LEditor::OpenFile(const wxString &fileName, const wxString &project)
@@ -940,25 +903,6 @@ void LEditor::OnDwellEnd(wxScintillaEvent & event)
 void LEditor::OnCallTipClick(wxScintillaEvent& event)
 {
 	m_context->OnCallTipClick(event);
-}
-
-void LEditor::OnModified(wxScintillaEvent& event)
-{
-	if (event.GetModificationType() & wxSCI_MOD_INSERTTEXT) {
-		SetDirty(true);
-	}
-
-	if (event.GetModificationType() & wxSCI_MOD_DELETETEXT) {
-		SetDirty(true);
-	}
-
-	if (event.GetModificationType() & wxSCI_PERFORMED_UNDO ||event.GetModificationType() & wxSCI_PERFORMED_REDO ) {
-		if (GetModify() == false) {
-			SetDirty(false);
-		} else {
-			SetDirty(true);
-		}
-	}
 }
 
 void LEditor::OnMenuCommand(wxCommandEvent &event)
@@ -1211,6 +1155,8 @@ void LEditor::BraceMatch(const bool& bSelRegion)
 
 void LEditor::SetActive()
 {
+    Frame::Get()->SetFrameTitle(this);
+    
 	// if the find and replace dialog is opened, set ourself
 	// as the event owners
 	if ( m_findReplaceDlg ) {
@@ -1221,6 +1167,9 @@ void LEditor::SetActive()
 	SetSCIFocus(true);
 
 	m_context->SetActive();
+    
+    wxScintillaEvent dummy;
+    OnSciUpdateUI(dummy);
 }
 
 // Popup a Find/Replace dialog
@@ -1429,6 +1378,91 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 		return true;
 	}
 	return false;
+}
+
+bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
+{
+	wxString pattern ( _pattern );
+	pattern.StartsWith ( wxT ( "/^" ), &pattern );
+
+	if ( pattern.EndsWith ( wxT ( "$/" ) ) ) {
+		pattern = pattern.Left ( pattern.Len()-2 );
+	} else if ( pattern.EndsWith ( wxT ( "/" ) ) ) {
+		pattern = pattern.Left ( pattern.Len()-1 );
+	}
+
+	size_t flags = wxSD_MATCHCASE;
+
+	FindReplaceData data;
+	data.SetFindString ( pattern );
+	data.SetFlags ( flags );
+
+	// keep current position
+	long curr_pos = GetCurrentPos();
+	int match_len ( 0 ), pos ( 0 );
+
+	// set the caret at the document start
+	SetCurrentPos ( 0 );
+	SetSelectionStart ( 0 );
+	SetSelectionEnd ( 0 );
+	int offset ( 0 );
+	bool again ( false );
+    bool res = false;
+    
+	do {
+		again = false;
+		flags = wxSD_MATCHCASE;
+
+		if ( StringFindReplacer::Search ( GetText(), offset, pattern, flags, pos, match_len ) ) {
+
+			int line = LineFromPosition ( pos );
+			wxString dbg_line = GetLine ( line ).Trim().Trim ( false );
+
+			wxString tmp_pattern ( pattern );
+			if ( dbg_line.Len() != tmp_pattern.Trim().Trim ( false ).Len() ) {
+				offset = pos + match_len;
+				again = true;
+			} else {
+
+				// select only the name at the give text range
+				wxString display_name = name.BeforeFirst ( wxT ( '(' ) );
+
+				int match_len1 ( 0 ), pos1 ( 0 );
+				flags |= wxSD_SEARCH_BACKWARD;
+				flags |= wxSD_MATCHWHOLEWORD;
+
+				// the inner search is done on the pattern without without the part of the
+				// signature
+				pattern = pattern.BeforeFirst ( wxT ( '(' ) );
+				if ( StringFindReplacer::Search ( pattern, UTF8Length ( pattern, pattern.Len() ), display_name, flags, pos1, match_len1 ) ) {
+
+					// select only the word
+					if ( GetContext()->IsCommentOrString ( pos+pos1 ) ) {
+						// try again
+						offset = pos + pos1;
+						again = true;
+					} else {
+						SetSelection ( pos + pos1, pos + pos1 + match_len1 );
+                        res = true;
+					}
+				} else {
+
+					// as a fallback, mark the whole line
+					SetSelection ( pos, pos + match_len );
+                    res = true;
+				}
+			}
+
+		} else {
+			wxLogMessage ( wxT ( "Failed to find[" ) + pattern + wxT ( "]" ) );
+
+			// match failed, restore the caret
+			SetCurrentPos ( curr_pos );
+			SetSelectionStart ( curr_pos );
+			SetSelectionEnd ( curr_pos );
+		}
+	} while ( again );
+    return res;
 }
 
 bool LEditor::Replace(const FindReplaceData &data)
@@ -1730,12 +1764,10 @@ void LEditor::ReloadFile()
 	wxString text;
 	ReadFileWithConversion(m_fileName.GetFullPath(), text);
 	SetText( text );
-
-	m_modifyTime = GetFileModificationTime(m_fileName.GetFullPath());
+	m_modifyTime = GetFileLastModifiedTime();
 
 	SetSavePoint();
 	EmptyUndoBuffer();
-	SetDirty(false);
 
 	//update breakpoints
 	UpdateBreakpoints();
@@ -1752,11 +1784,7 @@ void LEditor::ReloadFile()
 void LEditor::SetEditorText(const wxString &text)
 {
 	HideCompletionBox();
-
-	SetText( text );
-	SetDirty(true);
-
-	//update breakpoints
+	SetText(text);
 	UpdateBreakpoints();
 }
 
@@ -1766,14 +1794,11 @@ void LEditor::Create(const wxString &project, const wxFileName &fileName)
 	SetFileName(fileName);
 	// set the project name
 	SetProject(project);
-	// reload the file from disk
-	ReloadFile();
-	// mark this editor as non-modified to avoid non-needed confirm dialogs
-	SetSavePoint();
-	EmptyUndoBuffer();
 	// let the editor choose the syntax highlight to use according to file extension
 	// and set the editor properties to default
-	RestoreDefaults();
+	SetSyntaxHighlight();
+	// reload the file from disk
+	ReloadFile();
 }
 
 void LEditor::InsertTextWithIndentation(const wxString &text, int lineno)
@@ -2463,15 +2488,6 @@ int LEditor::GetEOLByOS()
 #else
 	return wxSCI_EOL_CRLF;
 #endif
-}
-
-void LEditor::SetStatusBarMessage(const wxString& msg, int field)
-{
-	// send event to main frame to perform the update
-	wxCommandEvent e(wxEVT_CMD_UPDATE_STATUS_BAR);
-	e.SetInt(field);
-	e.SetString(msg);
-	Frame::Get()->AddPendingEvent(e);
 }
 
 void LEditor::ShowFunctionTipFromCurrentPos()

@@ -83,7 +83,6 @@
 #include "build_settings_config.h"
 #include "list"
 #include "macros.h"
-#include "editor_creator.h"
 #include "async_executable_cmd.h"
 #include "open_resouce_dlg.h"
 #include "open_type_dlg.h"
@@ -121,7 +120,6 @@ typedef int (*_GCC_COLOUR_FUNC_PTR)(int, const char*, size_t&, size_t&);
 extern const wxChar *SvnRevision;
 extern char *cubes_xpm[];
 extern unsigned char cubes_alpha[];
-extern time_t GetFileModificationTime(const wxString &fileName);
 extern void SetGccColourFunction(_GCC_COLOUR_FUNC_PTR func);
 static int FrameTimerId = wxNewId();
 
@@ -157,7 +155,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED, Frame::OnSearchThread)
-	EVT_COMMAND(wxID_ANY, wxEVT_CMD_UPDATE_STATUS_BAR, Frame::OnUpdateStatusBar)
 
 	//build/debugger events
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_ADDLINE, Frame::OnShellCommandEvent)
@@ -472,7 +469,6 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 		JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
 	}
 	//start the editor creator thread
-	EditorCreatorST::Get()->SetParent(GetNotebook());
 	m_timer = new wxTimer(this, FrameTimerId);
 	m_timer->Start(1000);
 }
@@ -640,11 +636,6 @@ void Frame::CreateGUIControls(void)
 		m_mainBook->ShowNavBar( false );
 	}
 
-	// Connect the main notebook events
-	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(Frame::OnPageChanged), NULL, this);
-	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSING, NotebookEventHandler(Frame::OnFileClosing), NULL, this);
-	GetNotebook()->Connect(wxEVT_COMMAND_BOOK_PAGE_CLOSED, NotebookEventHandler(Frame::OnPageClosed), NULL, this);
-
 	BuildSettingsConfigST::Get()->Load();
 
 	//load dialog properties
@@ -704,7 +695,6 @@ void Frame::CreateGUIControls(void)
 	}
 	
 	//load the tab right click menu
-	GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")));
 	GetWorkspacePane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("workspace_view_right_click_menu")));
 	GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("debugger_view_right_click_menu")));
 	m_mgr.Update();
@@ -1015,10 +1005,10 @@ void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void Frame::DispatchCommandEvent(wxCommandEvent &event)
 {
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
-	if ( !editor ) {
+	LEditor* editor = GetMainBook()->GetActiveEditor();
+	if ( !editor ) 
 		return;
-	}
+
 	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
 		//keep the old id as int and override the value set in the event object
 		//to trick the event system
@@ -1030,15 +1020,10 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 
 void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 {
-	if ( GetNotebook()->GetPageCount() == 0 ) {
-		event.Enable(false);
+	LEditor* editor = GetMainBook()->GetActiveEditor();
+	if ( !editor ) 
 		return;
-	}
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
-	if ( !editor ) {
-		event.Enable(false);
-		return;
-	}
+
 	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
 		//keep the old id as int and override the value set in the event object
 		//to trick the event system
@@ -1050,7 +1035,7 @@ void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 
 void Frame::OnFileExistUpdateUI(wxUpdateUIEvent &event)
 {
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(GetNotebook()->GetSelection()));
+	LEditor* editor = GetMainBook()->GetActiveEditor();
 	if ( !editor ) {
 		event.Enable(false);
 	} else {
@@ -1102,150 +1087,71 @@ void Frame::OnClose(wxCloseEvent& event)
 	}
 
 	//save the current session before closing
-	SessionEntry session;
-	session.SetSelectedTab(GetNotebook()->GetSelection());
-
-	if (ManagerST::Get()->IsWorkspaceOpen()) {
-		session.SetWorkspaceName(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
-	}
-
-	//loop over the open editors, and get their file name
-	//wxArrayString files;
-	std::vector<TabInfo> vTabInfoArr;
-	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
-		if (editor) {
-			//files.Add(editor->GetFileName().GetFullPath());
-
-			TabInfo oTabInfo;
-			oTabInfo.SetFileName(editor->GetFileName().GetFullPath());
-			oTabInfo.SetFirstVisibleLine(editor->GetFirstVisibleLine());
-			oTabInfo.SetCurrentLine(editor->GetCurrentLine());
-			// bookmarks
-			wxArrayString astrBookmarks;
-			int nLine = 0;
-			const int nMask = 128;
-			while ((nLine = editor->MarkerNext(nLine, nMask)) >= 0) {
-				wxString strBM(wxEmptyString);
-				strBM << nLine;
-				astrBookmarks.Add(strBM);
-				nLine++;
-			}
-			oTabInfo.SetBookmarks(astrBookmarks);
-			vTabInfoArr.push_back(oTabInfo);
-		}
-	}
-
-	//session.SetTabs(files);
-	session.SetTabInfoArr(vTabInfoArr);
-	if (ManagerST::Get()->IsWorkspaceOpen()) {
-		SessionManager::Get().Save(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session);
-		SessionManager::Get().SetLastWorkspaceName(WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
-	} else {
-		SessionManager::Get().Save(wxT("Default"), session);
-		SessionManager::Get().SetLastWorkspaceName(wxT("Default"));
-	}
+    wxString sessionName = ManagerST::Get()->IsWorkspaceOpen() ? WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath()
+                                                               : wxString(wxT("Default"));
+ 	SessionEntry session;
+    session.SetWorkspaceName(sessionName);
+    GetMainBook()->SaveSession(session);
+    SessionManager::Get().Save(sessionName, session);
+    SessionManager::Get().SetLastWorkspaceName(sessionName);
+   
+	// make sure there are no 'unsaved documents'
+	GetMainBook()->CloseAll();
 
 	// keep list of all detached panes
 	wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
 	DetachedPanesInfo dpi(panes);
 	EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
 
-	// make sure there are no 'unsaved documents'
-	ManagerST::Get()->CloseAll();
 	event.Skip();
 }
 
 void Frame::LoadSession(const wxString &sessionName)
 {
 	SessionEntry session;
-	if (!SessionManager::Get().FindSession(sessionName, session)) {
-		return;
-	}
-
-	//load the workspace first (if any was opened)
-	wxString wspFile = session.GetWorkspaceName();
-	if (wspFile.IsEmpty() == false) {
-		ManagerST::Get()->OpenWorkspace(wspFile);
-	}
-
-	//restore notebook tabs
-	const std::vector<TabInfo> &vTabInfoArr = session.GetTabInfoArr();
-	if (vTabInfoArr.size() > 0) {
-		for (size_t i=0; i<vTabInfoArr.size(); i++) {
-			TabInfo ti = vTabInfoArr[i];
-			wxString strFN = ti.GetFileName();
-			int iCurLine = ti.GetCurrentLine();
-			ManagerST::Get()->OpenFile(
-			    strFN, wxEmptyString, iCurLine);
-
-			LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
-			if (editor) {
-				editor->ScrollToLine(ti.GetFirstVisibleLine());
-				// bookmarks
-				const wxArrayString &astrBookmarks = ti.GetBookmarks();
-				long nLine = 0;
-				for (size_t i=0; i<astrBookmarks.GetCount(); i++) {
-					if (astrBookmarks.Item(i).ToLong(&nLine))
-						editor->MarkerAdd(nLine, 0x7);
-				}
-			}
-		}
-	}
-
-	//set selected tab
-	int selection = session.GetSelectedTab();
-	if (selection >= 0 && selection < (int)GetNotebook()->GetPageCount()) {
-		GetNotebook()->SetSelection(selection);
-	}
+	if (SessionManager::Get().FindSession(sessionName, session)) {
+        wxString wspFile = session.GetWorkspaceName();
+        if (wspFile.IsEmpty() == false) {
+            ManagerST::Get()->OpenWorkspace(wspFile);
+        } else {
+            // no workspace to open, so just restore any previously open editors
+            GetMainBook()->RestoreSession(session);
+        }
+    }
 }
 
 void Frame::OnSave(wxCommandEvent& WXUNUSED(event))
 {
-	if (!GetNotebook()->GetCurrentPage())
-		return;
-
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
-	if ( !editor )
-		return;
-
-	// SaveFile contains the logic of "Untiltled" files
-	editor->SaveFile();
+    LEditor *editor = GetMainBook()->GetActiveEditor();
+    if (editor) {
+        editor->SaveFile();
+    }
 }
 
 void Frame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
 {
-	if (!GetNotebook()->GetCurrentPage())
-		return;
-
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
-	if ( !editor )
-		return;
-
-	editor->SaveFileAs();
+    LEditor *editor = GetMainBook()->GetActiveEditor();
+    if (editor) {
+        editor->SaveFileAs();
+    }
 }
 
 void Frame::OnFileReload(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	if (!GetNotebook()->GetCurrentPage())
-		return;
-
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
-	if ( !editor )
-		return;
-
-	if ( editor->GetModify() ) {
-		// Ask user if he really wants to lose all changes
-		wxString msg;
-		msg << wxT("The file '") << editor->GetFileName().GetFullName() << wxT("' has been altered.\n");
-		msg << wxT("Are you sure you want to lose all changes?");
-		if ( wxMessageBox(msg, wxT("Confirm"),wxYES_NO) != wxYES ) {
-			return;
-		}
-	}
-
-	editor->ReloadFile();
+    LEditor *editor = GetMainBook()->GetActiveEditor();
+    if (editor) {
+        if ( editor->GetModify() ) {
+            // Ask user if he really wants to lose all changes
+            wxString msg;
+            msg << wxT("The file '") << editor->GetFileName().GetFullName() << wxT("' has been altered.\n");
+            msg << wxT("Are you sure you want to lose all changes?");
+            if ( wxMessageBox(msg, wxT("Confirm"),wxYES_NO) != wxYES ) {
+                return;
+            }
+        }
+        editor->ReloadFile();
+    }
 }
 
 void Frame::OnCloseWorkspace(wxCommandEvent &event)
@@ -1274,20 +1180,19 @@ void Frame::OnSwitchWorkspace(wxCommandEvent &event)
 void Frame::OnCompleteWord(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
-	if ( !editor )
-		return;
-
-	editor->CompleteWord();
+    LEditor *editor = GetMainBook()->GetActiveEditor();
+    if (editor) {
+        editor->CompleteWord();
+    }
 }
 
 void Frame::OnFunctionCalltip(wxCommandEvent& event)
 {
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
-	if ( !editor )
-		return;
-
-	editor->ShowFunctionTipFromCurrentPos();
+	wxUnusedVar(event);
+    LEditor *editor = GetMainBook()->GetActiveEditor();
+    if (editor) {
+        editor->ShowFunctionTipFromCurrentPos();
+    }
 }
 
 void Frame::OnBuildExternalDatabase(wxCommandEvent& event)
@@ -1344,7 +1249,7 @@ void Frame::OnUseExternalDatabase(wxCommandEvent& WXUNUSED(event))
 void Frame::OnFileNew(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	DoAddNewFile();
+    GetMainBook()->NewEditor();
 }
 
 void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
@@ -1357,7 +1262,7 @@ void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 		wxArrayString paths;
 		dlg->GetPaths(paths);
 		for (size_t i=0; i<paths.GetCount(); i++) {
-			ManagerST::Get()->OpenFile(paths.Item(i), wxEmptyString);
+			GetMainBook()->OpenFile(paths.Item(i));
 		}
 
 		if (paths.GetCount() > 0) {
@@ -1371,149 +1276,25 @@ void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 void Frame::OnFileClose(wxCommandEvent &event)
 {
 	wxUnusedVar( event );
-	RemoveCppMenu();
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
-	if ( editor ) {
-		bool veto;
-		ClosePage(editor, false, GetNotebook()->GetSelection(), true, veto);
-	} else {
-		GetNotebook()->DeletePage((size_t) GetNotebook()->GetSelection());
-	}
-
-	//this function does not send notification about page deletion, so we need to manually add the CppMenu()
-	AddCppMenu();
-
-	GetMainBook()->Clear();
-
-	SetFrameTitle(NULL);
-}
-
-void Frame::OnFileClosing(NotebookEvent &event)
-{
-	//always remove the c++ menu
-	RemoveCppMenu();
-
-	// get the page that is now closing
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(event.GetSelection()));
-	if ( !editor )
-		return;
-
-	bool veto;
-	ClosePage(editor, true, event.GetSelection(), false, veto);
-	if ( veto ) {
-		event.Veto();
-	} else {
-		SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
-	}
-
-	SetFrameTitle(NULL);
-	event.Skip();
-}
-
-void Frame::OnPageChanged(NotebookEvent &event)
-{
-	LEditor *editor = dynamic_cast<LEditor*>( GetNotebook()->GetPage(event.GetSelection()) );
-	if ( !editor ) {
-		SetFrameTitle(NULL);
-		RemoveCppMenu();
-		return;
-	}
-
-	if ( editor->GetContext()->GetName() == wxT("C++") ) {
-		AddCppMenu();
-	} else {
-		RemoveCppMenu();
-	}
-
-	// construct the title for the main frame
-	SetFrameTitle(editor);
-
-	// update status bar message
-	// update status message
-	switch ( editor->GetEOLMode() ) {
-	case wxSCI_EOL_CR:
-		SetStatusMessage(wxT("EOL Mode: Mac"), 3);
-		break;
-	case wxSCI_EOL_CRLF:
-		SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
-		break;
-	default:
-		SetStatusMessage(wxT("EOL Mode: Unix"), 3);
-		break;
-	}
-	editor->SetActive();
-	SendCmdEvent(wxEVT_ACTIVE_EDITOR_CHANGED, (IEditor*)editor);
-	event.Skip();
-}
-
-void Frame::OnPageClosed(NotebookEvent &event)
-{
-	wxUnusedVar(event);
-
-	//clean the navigation bar
-	GetMainBook()->Clear();
+    wxWindow *win = GetMainBook()->GetCurrentPage();
+    if (win != NULL) {
+        RemoveCppMenu();
+        GetMainBook()->ClosePage(win);
+        AddCppMenu();
+    }
 }
 
 void Frame::OnFileSaveAll(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	ManagerST::Get()->SaveAll();
+	GetMainBook()->SaveAll(true);
 }
 
 void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 {
-	LEditor* editor = ManagerST::Get()->GetActiveEditor();
-
-	// This menu item is enabled only if the current editor
-	// belongs to a project
+	LEditor* editor = GetMainBook()->GetActiveEditor();
+	// This menu item is enabled only if the current editor belongs to a project
 	event.Enable(editor && ManagerST::Get()->IsWorkspaceOpen());
-}
-
-void Frame::ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete, bool &veto)
-{
-	veto = false;
-	if (index == Notebook::npos) return;
-
-	if ( editor->GetModify() ) {
-		// prompt user to save file
-		wxString msg;
-		msg << wxT("Save changes to '") << editor->GetFileName().GetFullName() << wxT("' ?");
-		int answer = wxMessageBox(msg, wxT("Confirm"),wxYES_NO | wxCANCEL);
-		switch ( answer ) {
-		case wxYES: {
-			// try to save the file, if an error occured, return without
-			// closing the tab
-			if ( !editor->SaveFile() ) {
-				//we faild in saving the file, dont allow the tab removal
-				//process to continue
-				veto = true;
-				return;
-			} else {
-				if ( doDelete ) {
-					SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
-					GetNotebook()->DeletePage(index, notify);
-				}
-			}
-		}
-		break;
-		case wxCANCEL:
-			veto = true;
-			return; // do nothing
-		case wxNO:
-			// just delete the tab without saving the changes
-			if ( doDelete ) {
-				SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
-				GetNotebook()->DeletePage(index, notify);
-			}
-			break;
-		}
-	} else {
-		// file is not modified, just remove the tab
-		if ( doDelete ) {
-			SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
-			GetNotebook()->DeletePage(index, notify);
-		} // if( doDelete )
-	}
 }
 
 void Frame::OnSearchThread(wxCommandEvent &event)
@@ -1632,17 +1413,15 @@ void Frame::OnFindInFiles(wxCommandEvent &event)
 		return;
 	}
 
-	//if we have an open editor, and a selected text, make this text
-	//the search string
-	if (GetNotebook()->GetPageCount() > 0) {
-		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)GetNotebook()->GetSelection()));
-		if (editor) {
-			wxString selText = editor->GetSelectedText();
-			if (selText.IsEmpty() == false) {
-				m_findInFilesDlg->GetData().SetFindString(selText);
-			}
-		}
-	}
+	//if we have an open editor, and a selected text, make this text the search string
+    LEditor *editor = GetMainBook()->GetActiveEditor();
+    if (editor) {
+        wxString selText = editor->GetSelectedText();
+        if (selText.IsEmpty() == false) {
+			m_findInFilesDlg->GetData().SetFindString(selText);
+ 		}
+    }
+    
 	m_findInFilesDlg->Show();
 }
 
@@ -1725,12 +1504,7 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 
 		//do we need to colourise?
 		if (newColTags != colTags || newColVars != colVars || colourTypes != m_tagsOptionsData.GetCcColourFlags()) {
-			for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-				LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(i));
-				if (editor) {
-					editor->UpdateColours();
-				}
-			}
+			GetMainBook()->UpdateColours();
 		}
 
 		// do we need to update the file tree to mark tags files
@@ -1957,7 +1731,7 @@ void Frame::OnShellCommandEvent(wxCommandEvent &event)
 		ManagerST::Get()->ProcessCommandQueue();
 
 		//give back the focus to the editor
-		LEditor *editor = ManagerST::Get()->GetActiveEditor();
+		LEditor *editor = GetMainBook()->GetActiveEditor();
 		if (editor) {
 			editor->SetActive();
 		}
@@ -2245,7 +2019,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 	}
 
 	//clear navigation queue
-	if (GetNotebook()->GetPageCount() == 0) {
+	if (GetMainBook()->GetCurrentPage() == 0) {
 		NavMgr::Get()->Clear();
 	}
 	event.Skip();
@@ -2254,14 +2028,12 @@ void Frame::OnTimer(wxTimerEvent &event)
 void Frame::OnFileCloseAll(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	ManagerST::Get()->CloseAll();
+    GetMainBook()->CloseAll();
 
 	//update the title bar
 	wxString title(wxT("CodeLite - Revision: "));
 	title << SvnRevision;
 	SetTitle(title);
-
-	GetMainBook()->Clear();
 
 	RemoveCppMenu();
 }
@@ -2272,18 +2044,18 @@ void Frame::OnQuickOutline(wxCommandEvent &event)
 	if (ManagerST::Get()->IsWorkspaceOpen() == false)
 		return;
 
-	if (!ManagerST::Get()->GetActiveEditor())
+	if (!GetMainBook()->GetActiveEditor())
 		return;
 
-	if (ManagerST::Get()->GetActiveEditor()->GetProject().IsEmpty())
+	if (GetMainBook()->GetActiveEditor()->GetProject().IsEmpty())
 		return;
 
-	QuickOutlineDlg *dlg = new QuickOutlineDlg(this, ManagerST::Get()->GetActiveEditor()->GetFileName().GetFullPath());
+	QuickOutlineDlg *dlg = new QuickOutlineDlg(this, GetMainBook()->GetActiveEditor()->GetFileName().GetFullPath());
 	if (dlg->ShowModal() == wxID_OK) {
 	}
 	dlg->Destroy();
 #ifdef __WXMAC__
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {
 		editor->SetActive();
 	}
@@ -2300,13 +2072,10 @@ void Frame::OnFindType(wxCommandEvent &event)
 	if (dlg->ShowModal() == wxID_OK) {
 		TagEntryPtr tag = dlg->GetSelectedTag();
 		if (tag && tag->IsOk()) {
-			if (ManagerST::Get()->OpenFile(tag->GetFile(), wxEmptyString)) {
-				LEditor *editor = ManagerST::Get()->GetActiveEditor();
-				if (editor) {
-					wxString pattern = tag->GetPattern();
-					ManagerST::Get()->FindAndSelect(editor,  pattern, tag->GetName());
-				}
-			}
+            LEditor *editor = GetMainBook()->OpenFile(tag->GetFile());
+            if (editor) {
+                editor->FindAndSelect(tag->GetPattern(), tag->GetName());
+            }
 		}
 	}
 	dlg->Destroy();
@@ -2528,7 +2297,7 @@ void Frame::CreateWelcomePage()
 	if (!file.IsOpened()) {
 		return;
 	}
-	m_welcomePage = new wxHtmlWindow(GetNotebook(), wxID_ANY);
+	wxHtmlWindow *welcomePage = new wxHtmlWindow(GetMainBook(), wxID_ANY);
 
 	wxString content;
 	file.ReadAll(&content);
@@ -2553,8 +2322,8 @@ void Frame::CreateWelcomePage()
 	content.Replace(wxT("$(ACTIVE_CAPTION)"), active_caption.GetAsString());
 	content.Replace(wxT("$(ACTIVE_CAPTION_TEXT)"), active_caption_txt.GetAsString());
 
-	m_welcomePage->SetPage(content);
-	GetNotebook()->AddPage(m_welcomePage, wxT("Welcome!"), wxNullBitmap, true);
+	welcomePage->SetPage(content);
+	GetMainBook()->AddPage(welcomePage, wxT("Welcome!"), wxNullBitmap, true);
 }
 
 void Frame::OnImportMSVS(wxCommandEvent &e)
@@ -2789,13 +2558,7 @@ void Frame::OnLoadLastSession(wxCommandEvent &event)
 
 void Frame::OnShowWelcomePageUI(wxUpdateUIEvent &event)
 {
-	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-		if (GetNotebook()->GetPage((size_t)i) == m_welcomePage) {
-			event.Enable(false);
-			return;
-		}
-	}
-	event.Enable(true);
+	event.Enable(GetMainBook()->FindPage(wxT("Welcome!")) == NULL);
 }
 
 void Frame::OnShowWelcomePage(wxCommandEvent &event)
@@ -2833,46 +2596,11 @@ void Frame::LoadPlugins()
 
 void Frame::OnAppActivated(wxActivateEvent &e)
 {
-	if (!m_theFrame || e.GetActive() == false) {
-		e.Skip();
-		return;
-	}
-
-	//check if the welcome page is not 'on'
-	std::vector<wxFileName> files;
-	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
-		if (editor) {
-			//test to see if the file was modified
-			time_t diskTime = GetFileModificationTime(editor->GetFileName().GetFullPath());
-			time_t editTime = editor->GetEditorLastModifiedTime();
-			if (diskTime > editTime) {
-				//set the editor time to match the disk time
-				editor->SetEditorLastModifiedTime(diskTime);
-
-				wxString msg;
-				msg << wxT("The File '");
-				msg << editor->GetFileName().GetFullName();
-				msg << wxT("' was modified\n");
-				msg << wxT("outside of the editor, would you like to reload it?");
-				if (wxMessageBox(msg, wxT("Confirm"), wxYES_NO | wxCANCEL | wxICON_QUESTION) == wxYES) {
-					editor->ReloadFile();
-				}
-
-				if (editor->GetProject().IsEmpty() == false && ManagerST::Get()->IsWorkspaceOpen()) {
-					//retag the file
-					files.push_back(editor->GetFileName());
-				}
-			}
-		}
-	}
-
-	if (files.empty() == false) {
-		TagsManagerST::Get()->RetagFiles( files );
-		SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&files);
-	}
-
-	e.Skip();
+	if (m_theFrame && e.GetActive()) {
+		m_theFrame->GetMainBook()->ReloadExternallyModified();
+    } else {
+	    e.Skip();
+    }
 }
 
 void Frame::UpgradeExternalDbExt()
@@ -2943,32 +2671,23 @@ void Frame::OnCompileFile(wxCommandEvent &e)
 	wxUnusedVar(e);
 	Manager *mgr = ManagerST::Get();
 	if (mgr->IsWorkspaceOpen() && !mgr->IsBuildInProgress()) {
-		//get the current active docuemnt
-		size_t curpage = GetNotebook()->GetSelection();
-		if (curpage != Notebook::npos) {
-			LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)curpage));
-			if (editor && editor->GetProject().IsEmpty() == false) {
-				mgr->CompileFile(editor->GetProject(), editor->GetFileName().GetFullPath());
-			}
-		}
+        LEditor *editor = GetMainBook()->GetActiveEditor();
+        if (editor && !editor->GetProject().IsEmpty()) {
+            mgr->CompileFile(editor->GetProject(), editor->GetFileName().GetFullPath());
+        }
 	}
 }
 
 void Frame::OnCompileFileUI(wxUpdateUIEvent &e)
 {
+	e.Enable(false);
 	Manager *mgr = ManagerST::Get();
 	if (mgr->IsWorkspaceOpen() && !mgr->IsBuildInProgress()) {
-		//get the current active docuemnt
-		size_t curpage = GetNotebook()->GetSelection();
-		if (curpage != Notebook::npos) {
-			LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)curpage));
-			if (editor && editor->GetProject().IsEmpty() == false) {
-				e.Enable(true);
-				return;
-			}
-		}
+        LEditor *editor = GetMainBook()->GetActiveEditor();
+        if (editor && !editor->GetProject().IsEmpty()) {
+            e.Enable(true);
+        }
 	}
-	e.Enable(false);
 }
 
 void Frame::OnDebugAttach(wxCommandEvent &event)
@@ -2982,13 +2701,10 @@ void Frame::OnDebugAttach(wxCommandEvent &event)
 void Frame::OnCloseAllButThis(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-	//Start the debugger
-	Manager *mgr = ManagerST::Get();
-
-	size_t sel = GetNotebook()->GetSelection();
-	if (sel != Notebook::npos) {
-		mgr->CloseAllButThis(GetNotebook()->GetPage((size_t)sel));
-	}
+    wxWindow *win = GetMainBook()->GetCurrentPage();
+    if (win != NULL) {
+        GetMainBook()->CloseAllButThis(win);
+    }
 }
 
 WorkspaceTab *Frame::GetWorkspaceTab()
@@ -3013,12 +2729,12 @@ void Frame::OnLoadWelcomePageUI(wxUpdateUIEvent &event)
 
 void Frame::OnFileCloseUI(wxUpdateUIEvent &event)
 {
-	event.Enable(GetNotebook()->GetPageCount() > 0 ? true : false);
+	event.Enable(GetMainBook()->GetCurrentPage() != NULL);
 }
 
 void Frame::OnConvertEol(wxCommandEvent &e)
 {
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {
 		int eol(wxSCI_EOL_LF);
 		if (e.GetId() == XRCID("convert_eol_win")) {
@@ -3028,7 +2744,7 @@ void Frame::OnConvertEol(wxCommandEvent &e)
 		}
 		editor->ConvertEOLs(eol);
 		editor->SetEOLMode(eol);
-
+#if 0
 		// update status message
 		switch ( eol ) {
 		case wxSCI_EOL_CR:
@@ -3041,6 +2757,7 @@ void Frame::OnConvertEol(wxCommandEvent &e)
 			SetStatusMessage(wxT("EOL Mode: Unix"), 3);
 			break;
 		}
+#endif
 	}
 }
 
@@ -3057,17 +2774,12 @@ void Frame::OnViewDisplayEOL(wxCommandEvent &e)
 	}
 
 	m_frameGeneralInfo.SetFlags(frame_flags);
-	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
-		if (editor) {
-			editor->SetViewEOL(visible);
-		}
-	}
+	GetMainBook()->SetViewEOL(visible);
 }
 
 void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 {
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	LEditor *editor = GetMainBook()->GetActiveEditor();
 	bool hasEditor = editor ? true : false;
 	if (!hasEditor) {
 		e.Enable(false);
@@ -3078,29 +2790,9 @@ void Frame::OnViewDisplayEOL_UI(wxUpdateUIEvent &e)
 	e.Check(m_frameGeneralInfo.GetFlags() & CL_SHOW_EOL ? true : false);
 }
 
-OutputTabWindow* Frame::FindOutputTabWindowByPtr(wxWindow *win)
-{
-	Notebook *book = GetOutputPane()->GetNotebook();
-	for (size_t i=0; i< (size_t)book->GetPageCount(); i++) {
-		if (book->GetPageText(i) == OutputPane::BUILD_WIN) {
-			OutputTabWindow *tabWin = dynamic_cast< OutputTabWindow* > ( book->GetPage(i) );
-			if (tabWin && tabWin->GetInternalWindow() == win) {
-				return tabWin;
-			}
-		}
-
-		if (book->GetPageText(i) == OutputPane::FIND_IN_FILES_WIN) {
-			if (GetOutputPane()->GetFindResultsTab()->GetInternalWindow() == win) {
-				return GetOutputPane()->GetFindResultsTab();
-			}
-		}
-	}
-	return NULL;
-}
-
 void Frame::OnCopyFilePath(wxCommandEvent &event)
 {
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {
 		wxString fileName = editor->GetFileName().GetFullPath();
 #if wxUSE_CLIPBOARD
@@ -3118,7 +2810,7 @@ void Frame::OnCopyFilePath(wxCommandEvent &event)
 }
 void Frame::OnCopyFilePathOnly(wxCommandEvent &event)
 {
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {
 		wxString fileName = editor->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
 #if wxUSE_CLIPBOARD
@@ -3164,19 +2856,9 @@ void Frame::DoReplaceAll()
 
 void Frame::AddCppMenu()
 {
-	size_t selection = GetNotebook()->GetSelection();
-	if ( selection == Notebook::npos ) {
+    LEditor *editor = GetMainBook()->GetActiveEditor();
+	if (!editor || editor->GetContext()->GetName() != wxT("C++"))
 		return;
-	}
-
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(selection));
-	if ( !editor ) {
-		return;
-	}
-
-	if (editor->GetContext()->GetName() != wxT("C++")) {
-		return;
-	}
 
 	//load the C++ menu and append one to the menu bar
 	if (GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
@@ -3197,19 +2879,10 @@ void Frame::RemoveCppMenu()
 void Frame::OnCppContextMenu(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-
-	size_t selection = GetNotebook()->GetSelection();
-	if ( selection == Notebook::npos ) {
-		return;
-	}
-
-	//get the active editor
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage(selection));
-	if ( !editor ) {
-		return;
-	}
-
-	editor->GetContext()->ProcessEvent( e );
+    LEditor *editor = GetMainBook()->GetActiveEditor();
+	if (editor) {
+        editor->GetContext()->ProcessEvent(e);
+    }
 }
 
 void Frame::OnConfigureAccelerators(wxCommandEvent &e)
@@ -3229,32 +2902,19 @@ void Frame::OnHighlightWord(wxCommandEvent& event)
 	if (event.IsChecked()) {
 		EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 1);
 	} else {
-		// remove all highlights from all open editors
-		for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-			LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
-			if (editor) {
-				editor->HighlightWord(false);
-			}
-		}
+		GetMainBook()->HighlightWord(false);
 		EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 0);
 	}
 }
 
 void Frame::OnShowNavBar(wxCommandEvent& e)
 {
-	m_mainBook->ShowNavBar(e.IsChecked());
-	if (e.IsChecked()) {
-		LEditor *editor = ManagerST::Get()->GetActiveEditor();
-		if (editor) {
-			int lastLine = editor->LineFromPosition(editor->GetCurrentPos());
-			GetMainBook()->UpdateScope( TagsManagerST::Get()->FunctionFromFileLine(editor->GetFileName(), lastLine+1) );
-		}
-	}
+	GetMainBook()->ShowNavBar(e.IsChecked());
 }
 
 void Frame::OnShowNavBarUI(wxUpdateUIEvent& e)
 {
-	e.Check( m_mainBook->IsNavBarShown() );
+	e.Check(GetMainBook()->IsNavBarShown());
 }
 
 void Frame::OnParsingThreadDone(wxCommandEvent& e)
@@ -3324,12 +2984,6 @@ void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 	wxBitmap bmp = t->GetBmp();
 	wxWindow *page = t->GetWindow();
 
-//	if(text == wxT("Symbols")) {
-//		// FIXME: for now, disable the 'Symbol' view from the ability to be detached
-//		wxMessageBox(_("Detaching plugins tabs are not yet supported"), wxT("CodeLite"));
-//		return;
-//	}
-
 	// remove the page from the notebook
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
 
@@ -3364,13 +3018,6 @@ void Frame::OnDestroyDetachedPane(wxCommandEvent& e)
 	}
 }
 
-void Frame::OnUpdateStatusBar(wxCommandEvent& e)
-{
-	wxString msg = e.GetString();
-	int field = e.GetInt();
-    SetStatusMessage(msg, field);
-}
-
 void Frame::SetStatusMessage(const wxString &msg, int col, int id)
 {
     if (col < 0 || col >= (int)m_status.size())
@@ -3389,7 +3036,7 @@ void Frame::SetStatusMessage(const wxString &msg, int col, int id)
 
 void Frame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
 {
-	LEditor* editor = dynamic_cast<LEditor*>(GetNotebook()->GetCurrentPage());
+	LEditor* editor = GetMainBook()->GetActiveEditor();
 	event.Enable(editor ? true : false);
 }
 
@@ -3488,26 +3135,6 @@ void Frame::SetFrameTitle(LEditor* editor)
 	SetTitle(title);
 }
 
-void Frame::DoAddNewFile()
-{
-	static int fileCounter = 0;
-
-	wxString fileNameStr(wxT("Untitled"));
-	fileNameStr << ++fileCounter;
-	wxFileName fileName(fileNameStr);
-
-	GetNotebook()->Freeze();
-	//allocate new editor instance using the creator
-	//this is done due to low performance on GTK
-	LEditor *editor = EditorCreatorST::Get()->NewInstance();
-	editor->SetFileName(fileName);
-
-	GetNotebook()->AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
-	GetNotebook()->Thaw();
-	editor->Show(true);
-	editor->SetActive();
-}
-
 void Frame::OnBuildWorkspace(wxCommandEvent& e)
 {
 	// start the build process
@@ -3561,7 +3188,7 @@ void Frame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
 void Frame::OnOpenShellFromFilePath(wxCommandEvent& e)
 {
 	// get the file path
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {
 		wxString filepath = editor->GetFileName().GetPath();
 		DirSaver ds;
@@ -3574,14 +3201,12 @@ void Frame::OnOpenShellFromFilePath(wxCommandEvent& e)
 
 void Frame::ShowWelcomePage()
 {
-	//check if the welcome page is not 'on'
-	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-		if (GetNotebook()->GetPage((size_t)i) == m_welcomePage) {
-			GetNotebook()->SetSelection((size_t)i);
-			return;
-		}
-	}
-	CreateWelcomePage();
+    wxWindow *win = GetMainBook()->FindPage(wxT("Welcome!"));
+    if (win) {
+        GetMainBook()->SelectPage(win);
+    } else {
+        CreateWelcomePage();
+    }
 }
 
 void Frame::OnSyntaxHighlight(wxCommandEvent& e)
@@ -3620,13 +3245,7 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 			dbgr->SetObserver(ManagerST::Get());
 			dbgr->SetDebuggerInformation(dinfo);
 
-			// Loop through the open editors, and update breakpoints
-			for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-				LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
-				if (editor) {
-					editor->UpdateBreakpoints();
-				}
-			}
+			GetMainBook()->UpdateBreakpoints();
 
 			// get an updated list of breakpoints
 			DebuggerMgr::Get().GetBreakpoints(bpList);
@@ -3674,13 +3293,7 @@ void Frame::OnShowWhitespace(wxCommandEvent& e)
 		options->SetShowWhitspaces(3);
 	}
 
-	// Loop through the open editors, and update breakpoints
-	for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(GetNotebook()->GetPage((size_t)i));
-		if (editor) {
-			editor->SetViewWhiteSpace(options->GetShowWhitspaces());
-		}
-	}
+	GetMainBook()->ShowWhitespace(options->GetShowWhitspaces());
 
 	// save the settings
 	EditorConfigST::Get()->SetOptions(options);

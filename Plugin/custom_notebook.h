@@ -128,18 +128,18 @@ public:
 	 * \brief remove page from the book without destroying it
 	 * \param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
 	 */
-	void RemovePage(size_t page, bool notify = true);
+	bool RemovePage(size_t page, bool notify = true);
 
 	/**
 	 * \brief delete page from the book and destroy it as well
 	 * \param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
 	 */
-	void DeletePage(size_t page, bool notify = true);
+	bool DeletePage(size_t page, bool notify = true);
 	
 	/**
-	 * \brief delete all the pages in the notebook, this function does not fire any events
+	 * \brief delete all the pages in the notebook
 	 */
-	void DeleteAllPages();
+	bool DeleteAllPages(bool notify = false);
 	
 	/**
 	 * \brief set an AUI manager for this book. This allows the book to automatically detect chanegs in 

@@ -80,7 +80,6 @@ class Frame : public wxFrame
 	wxTimer *m_timer;
 	std::map<int, wxString> m_viewAsMap;
 	TagsOptionsData m_tagsOptionsData;
-	wxHtmlWindow *m_welcomePage;
 	DebuggerPane *m_debuggerPane;
 	wxToolBar *m_debuggerTb;
 	bool m_buildAndRun;
@@ -209,16 +208,6 @@ public:
 	}
 
 	/**
-	 * close editor's page
-	 * @param editor the notebook parent of the page
-	 * @param notify send notebook page closure event
-	 * @param index page index in the notebook
-	 * @param doDelete delete the page from the notebook as well
-	 * @param veto [output] set to true to veto the page closer
-	 */
-	void ClosePage(LEditor *editor, bool notify, size_t index, bool doDelete, bool &veto);
-
-	/**
 	 * Load session into LE
 	 */
 	void LoadSession(const wxString &sessionName);
@@ -234,14 +223,6 @@ public:
 	const GeneralInfo& GetFrameGeneralInfo() const {
 		return m_frameGeneralInfo;
 	}
-
-	/**
-	 * @brief loop over all known OutputTabWindows available, and match them against the
-	 * 		  child wxScintilla pointer
-	 * @param win the window that owns the focus
-	 * @return OutputTabWindow pointer, or NULL if non matched
-	 */
-	OutputTabWindow *FindOutputTabWindowByPtr(wxWindow *win);
 
 	/**
 	 * @brief start replace all
@@ -452,7 +433,6 @@ protected:
 	void OnDetachDebuggerViewTab(wxCommandEvent &e);
 	void OnNewDetachedPane(wxCommandEvent &e);
 	void OnDestroyDetachedPane(wxCommandEvent &e);
-	void OnUpdateStatusBar(wxCommandEvent &e);
 	void OnBatchBuild(wxCommandEvent &e);
 	void OnBatchBuildUI(wxUpdateUIEvent &e);
 	void OnSyntaxHighlight(wxCommandEvent &e);
@@ -463,7 +443,6 @@ protected:
 public:
 	void AddCppMenu();
 	void RemoveCppMenu();
-	void DoAddNewFile();
 
 	// Any class wishing to process wxWindows events must use this macro
 	DECLARE_EVENT_TABLE()

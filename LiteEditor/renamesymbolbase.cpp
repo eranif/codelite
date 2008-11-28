@@ -69,7 +69,7 @@ RenameSymbolBase::RenameSymbolBase( wxWindow* parent, wxWindowID id, const wxStr
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Preview:") ), wxVERTICAL );
 	
-	m_preview = new LEditor(this, wxID_ANY, wxDefaultSize, wxEmptyString, wxEmptyString);
+	m_preview = new LEditor(this);
 	sbSizer1->Add( m_preview, 1, wxALL|wxEXPAND, 5 );
 	
 	bSizer1->Add( sbSizer1, 1, wxALL|wxEXPAND, 5 );

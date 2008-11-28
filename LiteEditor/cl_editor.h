@@ -53,7 +53,6 @@ struct LEditorState
 	int caretPosition;
 };
 
-const extern wxEventType wxEVT_CMD_UPDATE_STATUS_BAR;
 /**
  * \ingroup LiteEditor
  * LEditor CodeLite editing component based on Scintilla
@@ -107,7 +106,7 @@ public:
 
 public:
 	/// Construct a LEditor object
-	LEditor(wxWindow* parent, wxWindowID id, const wxSize& size, const wxString& fileName, const wxString& project, bool hidden = false);
+	LEditor(wxWindow* parent);
 
 	/// Default destructor
 	virtual ~LEditor();
@@ -130,13 +129,6 @@ public:
 	 * @param s state structure
 	 */
 	void SetEditorState(const LEditorState &s);
-
-	/**
-	 * \brief send event to the main frame to update the status bar at a given field
-	 * \param msg message to print
-	 * \param field field to print the message
-	 */
-	void SetStatusBarMessage(const wxString &msg, int field);
 
 	void CompleteWord();
 
@@ -216,13 +208,6 @@ public:
 	virtual void SetSyntaxHighlight();
 
 	/**
-	 * Reset the editor to its default state:
-	 * -# Syntax highlight is set according to file extension
-	 * -# Setproperties() is called
-	 */
-	void RestoreDefaults();
-
-	/**
 	 * Return the document context object
 	 */
 	ContextBasePtr GetContext() const {
@@ -259,11 +244,11 @@ public:
 	wxChar PreviousChar(const int& pos, int &foundPos, bool wantWhitespace = false);
 	wxChar NextChar(const int& pos, int &foundPos);
 	int  FindString (const wxString &str, int flags, const bool down, long pos);
-	void SetDirty(bool dirty);
 
 	bool FindAndSelect();
 	bool FindAndSelect(const FindReplaceData &data);
-
+    bool FindAndSelect(const wxString &pattern, const wxString &name);
+    
 	bool Replace();
 	bool Replace(const FindReplaceData &data);
 
@@ -349,6 +334,11 @@ public:
 	//File modifications
 	//----------------------------------
 
+    /**
+     * return the last modification time (on disk) of editor's underlying file
+     */ 
+    time_t GetFileLastModifiedTime() const;
+    
 	/**
 	 * return/set the last modification time that was made by the editor
 	 */
@@ -506,13 +496,13 @@ private:
 	wxString GetEolString();
 
 	DECLARE_EVENT_TABLE()
+    void OnSavePoint(wxScintillaEvent &event);
 	void OnCharAdded(wxScintillaEvent& event);
 	void OnMarginClick(wxScintillaEvent& event);
 	void OnChange(wxScintillaEvent& event);
 	void OnDwellStart(wxScintillaEvent& event);
 	void OnDwellEnd(wxScintillaEvent& event);
 	void OnCallTipClick(wxScintillaEvent& event);
-	void OnModified(wxScintillaEvent& event);
 	void OnSciUpdateUI(wxScintillaEvent &event);
 	void OnFindDialog(wxCommandEvent &event);
 	void OnContextMenu(wxContextMenuEvent &event);

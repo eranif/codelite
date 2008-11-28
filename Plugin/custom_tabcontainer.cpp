@@ -462,20 +462,20 @@ CustomTab* wxTabContainer::GetPreviousSelection()
 	return static_cast<CustomTab*>( m_history.Item(0));
 }
 
-void wxTabContainer::DeletePage(CustomTab *deleteTab, bool notify)
+bool wxTabContainer::DeletePage(CustomTab *deleteTab, bool notify)
 {
 	DoRemoveTab(deleteTab, true, notify);
 }
 
-void wxTabContainer::RemovePage(CustomTab *removePage, bool notify)
+bool wxTabContainer::RemovePage(CustomTab *removePage, bool notify)
 {
 	DoRemoveTab(removePage, false, notify);
 }
 
-void wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notify)
+bool wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notify)
 {
 	if (deleteTab == NULL) {
-		return;
+		return false;
 	}
 
 	size_t pageIndex = TabToIndex( deleteTab );
@@ -487,7 +487,7 @@ void wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notif
 		GetParent()->ProcessEvent(event);
 
 		if (!event.IsAllowed()) {
-			return;
+			return false;
 		}
 	}
 
@@ -528,6 +528,8 @@ void wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notif
 		event.SetEventObject( GetParent() );
 		GetParent()->ProcessEvent(event);
 	}
+    
+    return true;
 }
 
 void wxTabContainer::EnsureVisible(CustomTab *tab)

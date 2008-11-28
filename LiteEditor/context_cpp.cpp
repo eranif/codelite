@@ -1348,7 +1348,7 @@ void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
 		if (ctrl.LineFromPosition(curpos) != lastLine) {
 
 			lastLine = ctrl.LineFromPosition(curpos);
-			Frame::Get()->GetMainBook()->UpdateScope( TagsManagerST::Get()->FunctionFromFileLine(ctrl.GetFileName(), lastLine+1) );
+			Frame::Get()->GetMainBook()->UpdateNavBar(&ctrl);
 
 		}
 	}
@@ -2108,9 +2108,8 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	wxLogMessage(msg);
 
 	// create an empty hidden instance of LEditor
-	LEditor *editor = new LEditor(Frame::Get()->GetNotebook(), wxID_ANY, wxSize(1, 1), wxEmptyString, wxEmptyString, true);
-
-	// mark it as non visible control, so frame title updates will not take place
+	LEditor *editor = new LEditor(rCtrl.GetParent());
+    editor->Show(false);
 	editor->SetIsVisible(false);
 
 	// Get expressions for the CC to work with:

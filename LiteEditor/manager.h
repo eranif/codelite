@@ -123,18 +123,6 @@ public:
 
 	/*!
 	 * \brief
-	 * Set the title for the page (tab)
-	 */
-	void SetPageTitle(wxWindow *page, const wxString &name);
-
-	/*!
-	 * \brief
-	 * Return the page title
-	 */
-	const wxString GetPageTitle(wxWindow *win);
-
-	/*!
-	 * \brief
 	 * Save all open documents
 	 */
 	void SaveAll(bool includeUntitled = true);
@@ -304,14 +292,6 @@ public:
 	 * Hide pane
 	 */
 	void HidePane(const wxString &paneName, bool commit = true);
-
-	/**
-	 * Return the context by file name
-	 * \param fileName
-	 * \param parent the lexer's parent
-	 * \return lexer , if no lexer is matched with the fileName, the "Default" context is returned
-	 */
-	ContextBasePtr NewContextByFileName(const wxFileName &fileName, LEditor *parent) const;
 
 	/**
 	 * Reload configuration changes and apply them on open documents
@@ -526,11 +506,6 @@ public:
 	LEditor *GetActiveEditor() const;
 
 	/**
-	 * Return the container editor for fileName or NULL
-	 */
-	LEditor *FindEditorByFileName(const wxString &fileName) const;
-
-	/**
 	 * add single file to the recently opened files
 	 */
 	void AddToRecentlyOpenedFiles(const wxString &fileName);
@@ -578,16 +553,6 @@ public:
 	 */
 	void GetRecentlyOpenedWorkspaces(wxArrayString &files);
 
-	/**
-	 * close all opened documents
-	 */
-	void CloseAll();
-
-	/**
-	 * \brief close all open editors except for the active one
-	 */
-	void CloseAllButThis(wxWindow *curreditor);
-
 	bool MoveFileToVD(const wxString &fileName, const wxString &srcVD, const wxString &targetVD);
 
 	/**
@@ -628,7 +593,7 @@ public:
 	 */
 	void UpdateBuildTools();
 
-	/**
+ 	/**
 	 * \brief open file specified by the 'fileName' parameter and append 'text'
 	 * to its content
 	 * \param fileName file to open. Must be in full path
@@ -781,8 +746,6 @@ protected:
 	void DoGetAccelFiles(wxArrayString &files);
 
 private:
-	void RemoveProjectNameFromOpenFiles(const std::vector<wxFileName> &project_files);
-
 	/**
 	 * Update the symbol & file tress
 	 */

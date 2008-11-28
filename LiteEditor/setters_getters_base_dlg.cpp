@@ -91,7 +91,7 @@ SettersGettersBaseDlg::SettersGettersBaseDlg( wxWindow* parent, wxWindowID id, c
 	m_staticText31->Wrap( -1 );
 	bSizer3->Add( m_staticText31, 0, wxALL, 5 );
 	
-	m_textPreview = new LEditor(this, wxID_ANY, wxDefaultSize, wxEmptyString, wxEmptyString, false);
+	m_textPreview = new LEditor(this);
 	m_textPreview->SetUseTabs( false );
 	m_textPreview->SetTabWidth( 4 );
 	m_textPreview->SetIndent( 4 );

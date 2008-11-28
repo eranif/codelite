@@ -22,17 +22,18 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "notebooknavdialog.h"
+#include <wx/xrc/xmlres.h>
+#include "notebooknavdialog.h"
 #include "custom_notebook.h"
 #include "custom_tab.h"
 #include "custom_tabcontainer.h"
 #include "wx/sizer.h"
 
 
-const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGED = wxNewEventType();
-const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGING = wxNewEventType();
-const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING = wxNewEventType();
-const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED = wxNewEventType();
+const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGED  = XRCID("notebook_page_changing");
+const wxEventType wxEVT_COMMAND_BOOK_PAGE_CHANGING = XRCID("notebook_page_changed");
+const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSING  = XRCID("notebook_page_closing");
+const wxEventType wxEVT_COMMAND_BOOK_PAGE_CLOSED   = XRCID("notebook_page_closed");
 
 BEGIN_EVENT_TABLE(Notebook, wxPanel)
 	EVT_NAVIGATION_KEY(Notebook::OnNavigationKey)
@@ -167,25 +168,29 @@ size_t Notebook::GetPageCount() const
 	return m_tabs->GetTabsCount();
 }
 
-void Notebook::RemovePage(size_t page, bool notify)
+bool Notebook::RemovePage(size_t page, bool notify)
 {
+    bool res = false;
 	Freeze();
 	CustomTab *tab = m_tabs->IndexToTab(page);
 	if (tab) {
-		m_tabs->RemovePage(tab, notify);
+		res = m_tabs->RemovePage(tab, notify);
 	}
 	Thaw();
+    return res;
 
 }
 
-void Notebook::DeletePage(size_t page, bool notify)
+bool Notebook::DeletePage(size_t page, bool notify)
 {
+    bool res = false;
 	Freeze();
 	CustomTab *tab = m_tabs->IndexToTab(page);
 	if (tab) {
-		m_tabs->DeletePage(tab, notify);
+		res = m_tabs->DeletePage(tab, notify);
 	}
 	Thaw();
+    return res;
 }
 
 wxString Notebook::GetPageText(size_t page) const
@@ -381,15 +386,17 @@ void Notebook::SetPageText(size_t index, const wxString &text)
 	}
 }
 
-void Notebook::DeleteAllPages()
+bool Notebook::DeleteAllPages(bool notify)
 {
+    bool res = true;
 	Freeze();
 	
 	size_t count = m_tabs->GetTabsCount();
-	for(size_t i=0; i<count; i++){
-		DeletePage(0, false);
+	for(size_t i=0; i<count && res; i++){
+		res = DeletePage(0, notify);
 	}
 	
 	Thaw();
+    return res;
 }
 

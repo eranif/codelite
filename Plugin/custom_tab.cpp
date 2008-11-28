@@ -22,7 +22,8 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "custom_tab.h"
+#include <wx/xrc/xmlres.h>
+#include "custom_tab.h"
 #include "tab_x_pressed.xpm"
 #include "tab_x.xpm"
 #include "wx/dcbuffer.h"
@@ -46,7 +47,7 @@ BEGIN_EVENT_TABLE(CustomTab, wxPanel)
 	EVT_RIGHT_DOWN(CustomTab::OnRightDown)
 END_EVENT_TABLE()
 
-const wxEventType wxEVT_CMD_DELETE_TAB = wxNewEventType();
+const wxEventType wxEVT_CMD_DELETE_TAB = XRCID("custom_tab_delete");
 
 CustomTab::CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const wxBitmap &bmp, bool selected, int orientation, long style)
 		: wxPanel(win, id)

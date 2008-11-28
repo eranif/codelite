@@ -273,7 +273,6 @@
     <File Name="context_text.h"/>
     <File Name="context_cpp.h"/>
     <File Name="context_manager.h"/>
-    <File Name="editor_creator.h"/>
     <File Name="generic_context.h"/>
     <File Name="menu_event_handlers.h"/>
     <File Name="context_base.cpp"/>
@@ -283,7 +282,6 @@
     <File Name="generic_context.cpp"/>
     <File Name="menumanager.cpp"/>
     <File Name="menu_event_handlers.cpp"/>
-    <File Name="editor_creator.cpp"/>
     <File Name="cl_editor.cpp"/>
     <File Name="cl_editor.h"/>
     <File Name="renamesymboldlg.h"/>

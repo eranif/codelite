@@ -22,6 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <wx/tokenzr.h>
  #include "context_manager.h"
 #include "context_cpp.h"
 #include "context_text.h"
@@ -51,13 +52,32 @@ ContextManager::~ContextManager()
 {
 }
 
-ContextBasePtr ContextManager::NewContext(wxWindow *parent, const wxString &lexerName)
+ContextBasePtr ContextManager::NewContext(LEditor *parent, const wxString &lexerName)
 {
 	// this function is actually a big switch ....
 	std::map<wxString, ContextBasePtr>::iterator iter = m_contextPool.find(lexerName);
 	if( iter == m_contextPool.end()){
-		return m_contextPool[wxT("Text")]->NewInstance((LEditor*)parent);
+		return m_contextPool[wxT("Text")]->NewInstance(parent);
 	}
 
 	return iter->second->NewInstance((LEditor*)parent);
 }
+
+ContextBasePtr ContextManager::NewContextByFileName (LEditor *parent, const wxFileName &fileName)
+{
+	EditorConfig::ConstIterator iter = EditorConfigST::Get()->LexerBegin();
+	for ( ; iter != EditorConfigST::Get()->LexerEnd(); iter++ ) {
+		LexerConfPtr lexer = iter->second;
+		wxString lexExt = lexer->GetFileSpec();
+		wxStringTokenizer tkz ( lexExt, wxT ( ";" ) );
+		while ( tkz.HasMoreTokens() ) {
+			if ( wxMatchWild ( tkz.NextToken(), fileName.GetFullName() ) ) {
+				return ContextManager::Get()->NewContext ( parent, lexer->GetName() );
+			}
+		}
+	}
+
+	// return the default context
+	return ContextManager::Get()->NewContext ( parent, wxT ( "Text" ) );
+}
+

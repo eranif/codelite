@@ -26,36 +26,83 @@
 #define MAINBOOK_H
 
 #include <wx/panel.h>
-#include "entry.h"
-
-class NavBar;
-class Notebook;
-class QuickFindBar;
+#include "sessionmanager.h"
+#include "navbar.h"
+#include "quickfindbar.h"
+#include "custom_notebook.h"
 
 class MainBook : public wxPanel
 {
-	NavBar *m_navBar;
-	Notebook *m_book;
+private:
+	NavBar       *m_navBar;
+	Notebook     *m_book;
 	QuickFindBar *m_quickFindBar;
 	
-protected:
-	void OnMouseDClick(wxMouseEvent &e);
-	
+    void CreateGuiControls();
+    void ConnectEvents    ();
+
+    void OnMouseDClick       (wxMouseEvent   &e);
+    void OnPageChanging      (NotebookEvent  &e);
+    void OnPageChanged       (NotebookEvent  &e);
+    void OnPageClosing       (NotebookEvent  &e);
+    void OnPageClosed        (NotebookEvent  &e);
+    void OnProjectFileAdded  (wxCommandEvent &e);
+	void OnProjectFileRemoved(wxCommandEvent &e);
+    void OnWorkspaceLoaded   (wxCommandEvent &e);
+    void OnWorkspaceClosed   (wxCommandEvent &e);
+    
 public:
 	MainBook(wxWindow *parent);
 	~MainBook();
     
 	Notebook *GetNotebook() {return m_book;}
 	
-	void UpdateScope(TagEntryPtr tag);
-	void Clear();
+	void ShowQuickBar (bool s = true)       { m_quickFindBar->DoShow(s); }
+	void ShowNavBar   (bool s = true);
+	void UpdateNavBar (LEditor *editor);
+	bool IsNavBarShown()                    { return m_navBar->IsShown(); }
+
+    void SaveSession   (SessionEntry &session);
+    void RestoreSession(SessionEntry &session);
+     
+    LEditor *GetActiveEditor();
+	LEditor *FindEditor     (const wxString &fileName);
+    bool     CloseEditor    (const wxString &fileName) { return ClosePage(FindEditor(fileName)); }
     
-	void ShowNavBar(bool s = true);
-	void HideNavBar(){ ShowNavBar(false); }
-	bool IsNavBarShown();
+    wxWindow *GetCurrentPage();
+    wxWindow *FindPage      (const wxString &text);
     
-	void ShowQuickBar(bool s = true);
-	void HideQuickBar(){ ShowQuickBar(false); }
+    LEditor *NewEditor();
+    
+	LEditor *OpenFile(const wxString &file_name, const wxString &projectName = wxEmptyString,
+	                  int lineno = wxNOT_FOUND, long position = wxNOT_FOUND);
+	LEditor *OpenFile(const BrowseRecord &rec)
+        { return OpenFile(rec.filename, rec.project, rec.lineno, rec.position); }
+
+    bool AddPage   (wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
+    bool SelectPage(wxWindow *win);
+
+	void SaveAll(bool includeUntitled = false);
+    
+    void ReloadExternallyModified();
+
+    bool ClosePage      (const wxString &text) { return ClosePage(FindPage(text)); }
+    bool ClosePage      (wxWindow *win);
+	void CloseAllButThis(wxWindow *win);
+	void CloseAll       ();
+
+	wxString GetPageTitle(wxWindow *win);
+	void     SetPageTitle(wxWindow *page, const wxString &name);
+    
+    // TODO: replace these functions with event handlers
+	void ApplySettingsChanges   ();
+    void UnHighlightAll         ();
+    void DelAllBreakpointMarkers();
+    void SetViewEOL             (bool visible);
+    void HighlightWord          (bool hl);
+    void ShowWhitespace         (int ws);
+    void UpdateColours          ();
+    void UpdateBreakpoints      ();
 };
 
 #endif //MAINBOOK_H

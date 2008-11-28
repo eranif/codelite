@@ -60,6 +60,7 @@ class DockablePaneMenuManager;
 //--------------------------------
 // Helper class
 //--------------------------------
+extern const wxEventType wxEVT_UPDATE_STATUS_BAR;
 
 struct StartPageData {
 	wxString name;
@@ -439,7 +440,8 @@ protected:
 	void OnShowWhitespaceUI(wxUpdateUIEvent &e);
 	void OnShowWhitespace(wxCommandEvent &e);
 	void OnShowFullScreen(wxCommandEvent &e);
-
+	void OnSetStatusMessage(wxCommandEvent &e);
+	
 public:
 	void AddCppMenu();
 	void RemoveCppMenu();

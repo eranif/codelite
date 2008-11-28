@@ -95,8 +95,8 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_SCI_CALLTIP_CLICK(wxID_ANY, LEditor::OnCallTipClick)
 	EVT_SCI_DWELLEND(wxID_ANY, LEditor::OnDwellEnd)
 	EVT_SCI_UPDATEUI(wxID_ANY, LEditor::OnSciUpdateUI)
-    EVT_SCI_SAVEPOINTREACHED(wxID_ANY, LEditor::OnSavePoint)
-    EVT_SCI_SAVEPOINTLEFT(wxID_ANY, LEditor::OnSavePoint)
+	EVT_SCI_SAVEPOINTREACHED(wxID_ANY, LEditor::OnSavePoint)
+	EVT_SCI_SAVEPOINTLEFT(wxID_ANY, LEditor::OnSavePoint)
 	EVT_CONTEXT_MENU(LEditor::OnContextMenu)
 	EVT_KEY_DOWN(LEditor::OnKeyDown)
 	EVT_LEFT_DOWN(LEditor::OnLeftDown)
@@ -130,17 +130,17 @@ time_t GetFileModificationTime(const wxString &filename)
 }
 
 LEditor::LEditor(wxWindow* parent)
-    : wxScintilla              (parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
-    , m_rightClickMenu         (NULL)
-    , m_popupIsOn              (false)
-    , m_modifyTime             (0)
-    , m_ccBox                  (NULL)
-    , m_isVisible              (true)
-    , m_hyperLinkIndicatroStart(wxNOT_FOUND)
-    , m_hyperLinkIndicatroEnd  (wxNOT_FOUND)
-    , m_hyperLinkType          (wxID_NONE)
-		, m_hightlightMatchedBraces(true)
-		, m_autoAddMatchedBrace(false)
+		: wxScintilla              	(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1))
+		, m_rightClickMenu         	(NULL)
+		, m_popupIsOn              	(false)
+		, m_modifyTime             	(0)
+		, m_ccBox                  	(NULL)
+		, m_isVisible              	(true)
+		, m_hyperLinkIndicatroStart	(wxNOT_FOUND)
+		, m_hyperLinkIndicatroEnd  	(wxNOT_FOUND)
+		, m_hyperLinkType          	(wxID_NONE)
+		, m_hightlightMatchedBraces	(true)
+		, m_autoAddMatchedBrace		(false)
 {
 	ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSCI_MARK_SMALLRECT;
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
@@ -158,7 +158,7 @@ LEditor::~LEditor()
 
 time_t LEditor::GetFileLastModifiedTime() const
 {
-    return GetFileModificationTime(m_fileName.GetFullPath());
+	return GetFileModificationTime(m_fileName.GetFullPath());
 }
 
 void LEditor::SetSyntaxHighlight()
@@ -167,7 +167,7 @@ void LEditor::SetSyntaxHighlight()
 	m_context = ContextManager::Get()->NewContextByFileName(this, m_fileName);
 	SetProperties();
 	UpdateColours();
-    m_context->SetActive();
+	m_context->SetActive();
 }
 
 void LEditor::SetCaretAt(long pos)
@@ -185,7 +185,7 @@ void LEditor::SetProperties()
 
 	m_hightlightMatchedBraces = options->GetHighlightMatchedBraces();
 	m_autoAddMatchedBrace = options->GetAutoAddMatchedBraces();
-	
+
 	if (!m_hightlightMatchedBraces)
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 
@@ -396,23 +396,23 @@ void LEditor::SetProperties()
 
 void LEditor::OnSavePoint(wxScintillaEvent &event)
 {
-    if (!GetIsVisible())
-        return;
-    wxString title;
-    if (GetModify()) {
-        title << wxT("*");
-    }
-    title << GetFileName().GetFullName();
-    Frame::Get()->GetMainBook()->SetPageTitle(this, title);
-    if (Frame::Get()->GetMainBook()->GetActiveEditor() == this) {
-        Frame::Get()->SetFrameTitle(this);
-    }
+	if (!GetIsVisible())
+		return;
+	wxString title;
+	if (GetModify()) {
+		title << wxT("*");
+	}
+	title << GetFileName().GetFullName();
+	Frame::Get()->GetMainBook()->SetPageTitle(this, title);
+	if (Frame::Get()->GetMainBook()->GetActiveEditor() == this) {
+		Frame::Get()->SetFrameTitle(this);
+	}
 }
 
 void LEditor::OnCharAdded(wxScintillaEvent& event)
 {
 	int pos = GetCurrentPos();
-	
+
 	// get the word and select it in the completion box
 	if (IsCompletionBoxShown()) {
 		int start = WordStartPosition(pos, true);
@@ -435,42 +435,42 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		CharRight();
 		DeleteBack();
 	}
-	
+
 	wxChar matchChar = 0;
 	switch ( event.GetKey() ) {
 	case '(':
-			if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
-				CodeComplete();
-			}
-			matchChar = ')';
-			break;
+		if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
+			CodeComplete();
+		}
+		matchChar = ')';
+		break;
 	case '[':
-			matchChar = ']';
-			break;
+		matchChar = ']';
+		break;
 	case '{':
-			matchChar = '}';
-			break;
+		matchChar = '}';
+		break;
 	case ':':
-			m_context->AutoIndent(event.GetKey());
-			// fall through...
+		m_context->AutoIndent(event.GetKey());
+		// fall through...
 	case '.':
 	case '>':
-			if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
-				CodeComplete();
-			}
-			break;
-    case '}':
-			m_context->AutoIndent(event.GetKey());
-			// fall through...
-    case ']':
-			m_context->CallTipCancel();
-			ShowFunctionTipFromCurrentPos();
-			break;
-	case '\n': 
-			m_context->AutoIndent(event.GetKey());
-			// incase we are typing in a folded line, make sure it is visible
-			EnsureVisible(curLine+1);
-			break;
+		if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
+			CodeComplete();
+		}
+		break;
+	case '}':
+		m_context->AutoIndent(event.GetKey());
+		// fall through...
+	case ']':
+		m_context->CallTipCancel();
+		ShowFunctionTipFromCurrentPos();
+		break;
+	case '\n':
+		m_context->AutoIndent(event.GetKey());
+		// incase we are typing in a folded line, make sure it is visible
+		EnsureVisible(curLine+1);
+		break;
 	default:
 		break;
 	}
@@ -479,7 +479,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		InsertText(pos, matchChar);
 		if (matchChar != '}') {
 			SetIndicatorCurrent(MATCH_INDICATOR);
-			IndicatorFillRange(pos, 1);	
+			IndicatorFillRange(pos, 1);
 		} else {
 			InsertText(pos, wxT('\n'));
 			CharRight();
@@ -490,7 +490,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			m_context->AutoIndent(wxT('\n'));
 		}
 	}
-	
+
 	if ( IsCompletionBoxShown() == false ) {
 		// display the keywords completion box only if user typed more than 2
 		// chars && the caret is placed at the end of that word
@@ -541,30 +541,33 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 			}
 		}
 	}
-	
+
 	int curLine = LineFromPosition(pos);
-	
+
 	//update line number
 	wxString message;
 	message << wxT("Ln ") << curLine+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
-	Frame::Get()->SetStatusMessage(message, 2);
-
+	
+	// Always update the status bar with event, calling it directly causes performance degredation
+	DoSetStatusMessage(message, 2);
+	
 	SetIndicatorCurrent(MATCH_INDICATOR);
 	IndicatorClearRange(0, pos);
+	
 	int end = PositionFromLine(curLine+1);
 	if (end >= pos && end < GetTextLength()) {
 		IndicatorClearRange(end, GetTextLength()-end);
 	}
-	
+
 	switch ( GetEOLMode() ) {
 	case wxSCI_EOL_CR:
-		Frame::Get()->SetStatusMessage(wxT("EOL Mode: Mac"), 3);
+		DoSetStatusMessage(wxT("EOL Mode: Mac"), 3);
 		break;
 	case wxSCI_EOL_CRLF:
-		Frame::Get()->SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
+		DoSetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
 		break;
 	default:
-		Frame::Get()->SetStatusMessage(wxT("EOL Mode: Unix"), 3);
+		DoSetStatusMessage(wxT("EOL Mode: Unix"), 3);
 		break;
 	}
 
@@ -743,13 +746,13 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	//update the modification time of the file
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
 	SetSavePoint();
-    
+
 	// update the file name (remove the star from the file name)
 	Frame::Get()->GetMainBook()->SetPageTitle(this, fileName.GetFullName());
 
 	if (fileName.GetExt() != m_fileName.GetExt()) {
 		// new context is required
-        SetSyntaxHighlight();
+		SetSyntaxHighlight();
 	}
 
 	//fire a wxEVT_FILE_SAVED event
@@ -765,7 +768,7 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 	m_context = ContextManager::Get()->NewContext(this, lexerName);
 	SetProperties();
 	UpdateColours();
-    m_context->SetActive();
+	m_context->SetActive();
 }
 
 void LEditor::OpenFile(const wxString &fileName, const wxString &project)
@@ -1155,8 +1158,8 @@ void LEditor::BraceMatch(const bool& bSelRegion)
 
 void LEditor::SetActive()
 {
-    Frame::Get()->SetFrameTitle(this);
-    
+	Frame::Get()->SetFrameTitle(this);
+
 	// if the find and replace dialog is opened, set ourself
 	// as the event owners
 	if ( m_findReplaceDlg ) {
@@ -1167,9 +1170,9 @@ void LEditor::SetActive()
 	SetSCIFocus(true);
 
 	m_context->SetActive();
-    
-    wxScintillaEvent dummy;
-    OnSciUpdateUI(dummy);
+
+	wxScintillaEvent dummy;
+	OnSciUpdateUI(dummy);
 }
 
 // Popup a Find/Replace dialog
@@ -1407,8 +1410,8 @@ bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 	SetSelectionEnd ( 0 );
 	int offset ( 0 );
 	bool again ( false );
-    bool res = false;
-    
+	bool res = false;
+
 	do {
 		again = false;
 		flags = wxSD_MATCHCASE;
@@ -1443,13 +1446,13 @@ bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 						again = true;
 					} else {
 						SetSelection ( pos + pos1, pos + pos1 + match_len1 );
-                        res = true;
+						res = true;
 					}
 				} else {
 
 					// as a fallback, mark the whole line
 					SetSelection ( pos, pos + match_len );
-                    res = true;
+					res = true;
 				}
 			}
 
@@ -1462,7 +1465,7 @@ bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 			SetSelectionEnd ( curr_pos );
 		}
 	} while ( again );
-    return res;
+	return res;
 }
 
 bool LEditor::Replace(const FindReplaceData &data)
@@ -1845,7 +1848,7 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 {
 	if (m_rightClickMenu) {
 
-    wxString selectText = GetSelectedText();
+		wxString selectText = GetSelectedText();
 		wxPoint pt = event.GetPosition();
 		wxPoint clientPt = ScreenToClient(pt);
 		int closePos = PositionFromPointClose(clientPt.x, clientPt.y);
@@ -2753,4 +2756,13 @@ void LEditor::OnDbgRunToCursor(wxCommandEvent& event)
 		dbgr->Break(GetFileName().GetFullPath(), GetCurrentLine()+1, true);
 		dbgr->Continue();
 	}
+}
+
+void LEditor::DoSetStatusMessage(const wxString& msg, int col)
+{
+	wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
+	e.SetEventObject(this);
+	e.SetString(msg);
+	e.SetInt(col);
+	Frame::Get()->AddPendingEvent(e);
 }

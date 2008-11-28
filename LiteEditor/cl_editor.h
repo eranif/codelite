@@ -485,7 +485,8 @@ private:
 	void BraceMatch(const bool& bSelRegion);
 	void BraceMatch(long pos);
 	void DoHighlightWord();
-
+	void DoSetStatusMessage(const wxString &msg, int col);
+	
 	// Conevert FindReplaceDialog flags to wxSD flags
 	size_t SearchFlags(const FindReplaceData &data);
 

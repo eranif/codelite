@@ -123,6 +123,8 @@ extern unsigned char cubes_alpha[];
 extern void SetGccColourFunction(_GCC_COLOUR_FUNC_PTR func);
 static int FrameTimerId = wxNewId();
 
+const wxEventType wxEVT_UPDATE_STATUS_BAR = XRCID("update_status_bar");
+
 //----------------------------------------------------------------
 // Helper method
 //----------------------------------------------------------------
@@ -150,7 +152,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone)
-
+	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, Frame::OnSearchThread)
@@ -3355,4 +3357,11 @@ void Frame::OnShowFullScreen(wxCommandEvent& e)
 		GetDockingManager().Update();
 		ShowFullScreen(true);
 	}
+}
+
+void Frame::OnSetStatusMessage(wxCommandEvent& e)
+{
+	wxString msg = e.GetString();
+	int col = e.GetInt();
+	SetStatusMessage(msg, col);
 }

@@ -1113,7 +1113,7 @@ void Frame::LoadSession(const wxString &sessionName)
 	SessionEntry session;
 	if (SessionManager::Get().FindSession(sessionName, session)) {
         wxString wspFile = session.GetWorkspaceName();
-        if (wspFile.IsEmpty() == false) {
+        if (wspFile.IsEmpty() == false && wspFile != wxT("Default")) {
             ManagerST::Get()->OpenWorkspace(wspFile);
         } else {
             // no workspace to open, so just restore any previously open editors

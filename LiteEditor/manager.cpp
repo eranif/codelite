@@ -206,9 +206,14 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
 	if ( focusWin == Frame::Get()->GetOutputPane()->GetDebugWindow()->GetInWin() ) {
 		returnFocusWin = focusWin;
 	}
-
-    bool res = Frame::Get()->GetMainBook()->OpenFile(file_name, projectName, lineno, position) != NULL;
-    
+	
+	bool res(false);
+    LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(file_name, projectName, lineno, position);
+	if(editor){
+		res = true;
+		editor->SetActive();
+	}
+	
    	if (returnFocusWin) {
 		returnFocusWin->SetFocus();
 	}

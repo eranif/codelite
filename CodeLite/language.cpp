@@ -33,6 +33,9 @@
 #include <wx/ffile.h>
 #include "map"
 
+//#define __PERFORMANCE
+#include "performance.h"
+
 #ifdef __VISUALC__
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -80,8 +83,10 @@ Language::~Language()
 /// Return the visible scope until pchStopWord is encountered
 wxString Language::GetScope(const wxString& srcString)
 {
-	wxArrayString scope_stack;
-	wxString currScope;
+	wxString wxcurrScope;
+	std::vector<std::string> scope_stack;
+	std::string currScope;
+	
 	int type;
 
 	// Initialize the scanner with the string to search
@@ -103,9 +108,8 @@ wxString Language::GetScope(const wxString& srcString)
 
 		// eat up all tokens until next line
 		if ( prepLine && m_scanner->lineno() == curline) {
-			wxString word = _U(m_scanner->YYText());
-			currScope += _T(" ");
-			currScope += word;
+			currScope += " ";
+			currScope += m_scanner->YYText();
 			continue;
 		}
 
@@ -114,55 +118,52 @@ wxString Language::GetScope(const wxString& srcString)
 		// Get the current line number, it will help us detect preprocessor lines
 		changedLine = (m_scanner->lineno() > curline);
 		if (changedLine) {
-			currScope << wxT("\n");
+			currScope += "\n";
 		}
 
 		curline = m_scanner->lineno();
-
-		// For debug purposes
-		wxString word = _U(m_scanner->YYText());
 		switch (type) {
 		case (int)'(':
-						currScope += _T("\n");
+			currScope += "\n";
 			scope_stack.push_back(currScope);
-			currScope = wxT("(\n");
+			currScope = "(\n";
 			break;
 		case (int)'{':
-						currScope += _T("\n");
+			currScope += "\n";
 			scope_stack.push_back(currScope);
-			currScope = _T("{\n");
+			currScope = "{\n";
 			break;
 		case (int)')':
-						// Discard the current scope since it is completed
-						if ( !scope_stack.empty() ) {
+				// Discard the current scope since it is completed
+				if ( !scope_stack.empty() ) {
 					currScope = scope_stack.back();
 					scope_stack.pop_back();
-					currScope += _T("()");
+					currScope += "()";
 				} else
-					currScope = wxEmptyString;
+					currScope.clear();
 			break;
 		case (int)'}':
 						// Discard the current scope since it is completed
-						if ( !scope_stack.empty() ) {
+				if ( !scope_stack.empty() ) {
 					currScope = scope_stack.back();
 					scope_stack.pop_back();
-					currScope += _T("\n{}\n");
+					currScope += "\n{}\n";
 				} else {
-					currScope = wxEmptyString;
+					currScope.clear();
 				}
 			break;
 		case (int)'#':
-						if (changedLine) {
+				if (changedLine) {
 					// We are at the start of a new line
 					// consume everything until new line is found or end of text
-					currScope += _T(" ");
-					currScope += _U(m_scanner->YYText());
+					currScope += " ";
+					currScope += m_scanner->YYText();
 					prepLine = true;
 					break;
 				}
 		default:
-			currScope += _T(" ");
-			currScope += _U(m_scanner->YYText());
+			currScope += " ";
+			currScope += m_scanner->YYText();
 			break;
 		}
 	}
@@ -172,15 +173,15 @@ wxString Language::GetScope(const wxString& srcString)
 	if (scope_stack.empty())
 		return srcString;
 
-	currScope = wxEmptyString;
+	currScope.clear();
 	size_t i = 0;
 	for (; i < scope_stack.size(); i++)
-		currScope += scope_stack[i];
+		currScope += scope_stack.at(i);
 
 	// if the current scope is not empty, terminate it with ';' and return
-	if ( currScope.IsEmpty() == false ) {
-		currScope += _T(";");
-		return currScope;
+	if ( currScope.empty() == false ) {
+		currScope += ";";
+		return _U(currScope.c_str());
 	}
 
 	return srcString;
@@ -236,6 +237,8 @@ bool Language::ProcessExpression(const wxString& stmt,
                                  wxString &typeScope,	//output
                                  wxString &oper)		//output
 {
+	PERF_START("Language::ProcessExpression");
+	
 	ExpressionResult result;
 	wxString statement( stmt );
 	bool evaluationSucceeded = true;
@@ -252,20 +255,27 @@ bool Language::ProcessExpression(const wxString& stmt,
 	wxString op;
 	wxString lastFuncSig;
 	wxString accumulatedScope;
-
 	std::vector<TagEntry> tags;
-	wxString visibleScope = GetScope(text);
-	std::vector<wxString> additionalScopes;
-	wxString scopeName = GetScopeName(text, &additionalScopes);
-
-	TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
-	if (tag) {
-		lastFuncSig = tag->GetSignature();
-	}
-
+	wxString visibleScope, scopeName;
 	wxString parentTypeName, parentTypeScope;
 	wxString grandParentTypeName, grandParentTypeScope;
 
+	PERF_BLOCK("GetScope"){
+		visibleScope = GetScope(text);
+	}
+	
+	std::vector<wxString> additionalScopes;
+	PERF_BLOCK("GetScopeName"){
+		scopeName = GetScopeName(text, &additionalScopes);
+	}
+
+	PERF_BLOCK("FunctionFromFileLine"){
+		TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
+		if (tag) {
+			lastFuncSig = tag->GetSignature();
+		}
+	}
+	
 	//get next token using the tokenscanner object
 	m_tokenScanner->SetText(_C(statement));
 	Variable parent;
@@ -364,18 +374,21 @@ bool Language::ProcessExpression(const wxString& stmt,
 			//get the derivation list of the typename
 			bool res(false);
 			wxString _name(_U(result.m_name.c_str()));
-			res = TypeFromName(	_name,
-			                    visibleScope,
-			                    lastFuncSig,
-			                    scopeToSearch,
-			                    additionalScopes,
-			                    parentTypeName.IsEmpty(),
-			                    typeName,	//output
-			                    typeScope);	//output
+			PERF_BLOCK("TypeFromName"){
+				res = TypeFromName(	_name,
+									visibleScope,
+									lastFuncSig,
+									scopeToSearch,
+									additionalScopes,
+									parentTypeName.IsEmpty(),
+									typeName,	//output
+									typeScope);	//output
+			}
+			
 			if (!res) {
 				evaluationSucceeded = false;
 				break;
-			}
+			}	
 			
 			//do typedef subsitute
 			wxString tmp_name(typeName);
@@ -461,6 +474,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 		parentTypeName = typeName;
 		parentTypeScope = typeScope;
 	}
+	PERF_END();
 	return evaluationSucceeded;
 }
 

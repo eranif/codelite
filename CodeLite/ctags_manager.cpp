@@ -751,11 +751,11 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 	PERF_END();
 	return true;
 }
-
+ 
 bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno, const wxString& expr, const wxString& text, std::vector<TagEntryPtr>& candidates)
-{
+{ 
 	PERF_START("AutoCompleteCandidates");
-
+ 
 	candidates.clear();
 	wxString path;
 	wxString typeName, typeScope;
@@ -767,11 +767,13 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 	expression.erase(expression.find_last_not_of(trimRightString)+1);
 	wxString oper;
 
-	bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
-	if (!res) {
-		PERF_END();
-		wxLogMessage(wxString::Format(wxT("Failed to resolve %s"), expression.c_str()));
-		return false;
+	PERF_BLOCK("ProcessExpression"){
+		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
+		if (!res) {
+			PERF_END();
+			wxLogMessage(wxString::Format(wxT("Failed to resolve %s"), expression.c_str()));
+			return false;
+		}
 	}
 
 	//load all tags from the database that matches typeName & typeScope
@@ -796,14 +798,19 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		filter.Add(wxT("class"));
 		filter.Add(wxT("struct"));
 		filter.Add(wxT("namespace"));
-		TagsByScope(scope, filter, candidates, true);
+		
+		PERF_BLOCK("TagsByScope"){
+			TagsByScope(scope, filter, candidates, true);	
+		}
 
 	} else {
 
 		filter.Add(wxT("function"));
 		filter.Add(wxT("member"));
 		filter.Add(wxT("prototype"));
-		TagsByScope(scope, filter, candidates, true);
+		PERF_BLOCK("TagsByScope"){
+			TagsByScope(scope, filter, candidates, true);
+		}
 	}
 
 	PERF_END();

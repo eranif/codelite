@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : symbolview.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : symbolview.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -100,7 +100,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 //	new DockablePane(	m_mgr->GetDockingManager()->GetManagedWindow(),
 //	                  m_mgr->GetWorkspacePaneNotebook(), m_symView, wxT("Symbols"), wxNullBitmap, wxSize(200, 200));
 //	} else {
-		m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"));
+	m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"));
 //	}
 }
 
@@ -347,10 +347,10 @@ void SymbolViewPlugin::UnPlug()
 	if (notepos != Notebook::npos) {
 		notebook->RemovePage(notepos, false);
 	} else {
-        wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
-        m_symView->ProcessEvent(e);
-    }
-	
+		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
+		m_symView->ProcessEvent(e);
+	}
+
 	m_symView->Destroy();
 	m_symView = NULL;
 }
@@ -516,11 +516,13 @@ wxSQLite3ResultSet SymbolViewPlugin::GetTags(const std::multimap<wxString,wxStri
 		}
 	}
 	sql << wxT(";");
-    //wxLogMessage(sql);
-    
-	return m_mgr->GetTagsManager()->GetDatabase()->Query(sql);
-}
+	//wxLogMessage(sql);
 
+	if (m_mgr->GetTagsManager()->GetDatabase()) {
+		return m_mgr->GetTagsManager()->GetDatabase()->Query(sql);
+	}
+	return wxSQLite3ResultSet();
+}
 
 //--------------------------------------------
 //Tree-related methods
@@ -687,34 +689,40 @@ int SymbolViewPlugin::LoadChildren(SymTree *tree, wxTreeItemId id)
 
 	// get scope and kind to scan for tags (also: enumerators indicate their parent enum via "typeref" in the db)
 	TagTreeData *treetag = (TagTreeData*) tree->GetItemData(id);
-    if (!treetag) {
-        sqlopts.insert(std::make_pair(wxString(wxT("scope")), wxString(wxT("<global>"))));
-    } else if (treetag->GetKind() != wxT("enum")) {
-        sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetPath()));
-        sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("macro"))));
-        sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("variable"))));
-    } else {
-        sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetScope()));
-        sqlopts.insert(std::make_pair(wxString(wxT("typeref")), treetag->GetPath()));
-        sqlopts.insert(std::make_pair(wxString(wxT("kind")), wxString(wxT("enumerator"))));
-    }
+	if (!treetag) {
+		sqlopts.insert(std::make_pair(wxString(wxT("scope")), wxString(wxT("<global>"))));
+	} else if (treetag->GetKind() != wxT("enum")) {
+		sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetPath()));
+		sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("macro"))));
+		sqlopts.insert(std::make_pair(wxString(wxT("!kind")), wxString(wxT("variable"))));
+	} else {
+		sqlopts.insert(std::make_pair(wxString(wxT("scope")), treetag->GetScope()));
+		sqlopts.insert(std::make_pair(wxString(wxT("typeref")), treetag->GetPath()));
+		sqlopts.insert(std::make_pair(wxString(wxT("kind")), wxString(wxT("enumerator"))));
+	}
 
 	// query database for the tags that go under this node
 	wxSQLite3ResultSet res = GetTags(sqlopts);
-	while (res.NextRow()) {
-		TagEntry tag(res);
-		if (tag.GetKind() == wxT("enumerator") && !tag.GetTyperef().IsEmpty() 
-                && (!treetag || treetag->GetKind() != wxT("enum"))) 
-            // typed enumerators go under their enum instead of here
-            continue; 
-		wxTreeItemId parent = id != tree->GetRootItem() ? id : GetParentForGlobalTag(tree, tag);
-		// create child node, add our custom tag data to it, and set its appearance accordingly
-		wxTreeItemId child = tree->AppendItem(parent, wxEmptyString);
-		SetNodeData(tree, child, tag);
-		count++;
+	try {
+		if (!res.Eof()) {
+			while (res.NextRow()) {
+				TagEntry tag(res);
+				if (tag.GetKind() == wxT("enumerator") && !tag.GetTyperef().IsEmpty()
+				        && (!treetag || treetag->GetKind() != wxT("enum")))
+					// typed enumerators go under their enum instead of here
+					continue;
+				wxTreeItemId parent = id != tree->GetRootItem() ? id : GetParentForGlobalTag(tree, tag);
+				// create child node, add our custom tag data to it, and set its appearance accordingly
+				wxTreeItemId child = tree->AppendItem(parent, wxEmptyString);
+				SetNodeData(tree, child, tag);
+				count++;
+			}
+
+		}
+	} catch (wxSQLite3Exception &e) {
+		wxLogMessage(e.GetMessage());
 	}
 	SortChildren();
-
 	return count;
 }
 
@@ -734,8 +742,8 @@ int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxStrin
 		for (Path2TagRange range = m_pathTags.equal_range(tagScope); range.first != range.second; range.first++) {
 			wxTreeCtrl *tree = range.first->second.first;
 			wxTreeItemId parent = range.first->second.second;
-            if (!tree->IsExpanded(parent) && tree->GetChildrenCount(parent) == 0)
-                continue; // don't add symbols to unexpanded node or it will fool LoadChildren()
+			if (!tree->IsExpanded(parent) && tree->GetChildrenCount(parent) == 0)
+				continue; // don't add symbols to unexpanded node or it will fool LoadChildren()
 			TagTreeData *treetag = (TagTreeData*) tree->GetItemData(parent);
 			// make sure the scope tag came from a valid file relative to the new tag's file
 			// (for example if tag is Foo::Foo() from file foo.cpp, then class Foo can come from files foo.cpp or foo.h
@@ -868,7 +876,7 @@ void SymbolViewPlugin::AddDeferredSymbols(const std::multimap<wxString, wxString
  */
 void SymbolViewPlugin::UpdateTrees(const wxArrayString &files, bool removeOld)
 {
-    PluginBusyMessage wait_msg(m_mgr, wxT("Updating SymbolView tree..."), XRCID("symbolview"));
+	PluginBusyMessage wait_msg(m_mgr, wxT("Updating SymbolView tree..."), XRCID("symbolview"));
 
 	std::multimap<wxString,wxString> sqlopts;
 	std::map<TagKey, TreeNode> tagsToDelete;
@@ -924,8 +932,8 @@ void SymbolViewPlugin::CreateSymbolTree(const wxString &path, WindowStack *paren
 {
 	if (path.IsEmpty() || !parent)
 		return;
-        
-    PluginBusyMessage wait_msg(m_mgr, wxT("Building SymbolView tree..."), XRCID("symbolview"));
+
+	PluginBusyMessage wait_msg(m_mgr, wxT("Building SymbolView tree..."), XRCID("symbolview"));
 
 	// make new empty tree
 	SymTree *tree = new SymTree(parent);
@@ -1275,18 +1283,18 @@ void SymbolViewPlugin::OnSymbolsUpdated(wxCommandEvent& e)
 
 		const std::vector<std::pair<wxString,TagEntry> > &tags = data->GetItems();
 		for (size_t i = 0; i < tags.size(); i++) {
-            if (tags[i].second.GetKind() != wxT("enumerator")) {
-                UpdateSymbol(tags[i].second);
-            } else {
-                // must remove and re-add enumerators in case tree location changed 
-                // due to possible change in typeref
-                DeleteSymbol(tags[i].second);
-                AddSymbol(tags[i].second, filePaths);
-            }
+			if (tags[i].second.GetKind() != wxT("enumerator")) {
+				UpdateSymbol(tags[i].second);
+			} else {
+				// must remove and re-add enumerators in case tree location changed
+				// due to possible change in typeref
+				DeleteSymbol(tags[i].second);
+				AddSymbol(tags[i].second, filePaths);
+			}
 		}
-        AddDeferredSymbols(filePaths);
+		AddDeferredSymbols(filePaths);
 		SortChildren();
-        
+
 		m_viewStack->Thaw();
 	}
 	e.Skip();
@@ -1319,9 +1327,11 @@ void SymbolViewPlugin::OnSymbolsDeleted(wxCommandEvent& e)
  */
 void SymbolViewPlugin::OnActiveEditorChanged(wxCommandEvent& e)
 {
-	WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
-	if (viewStack->GetSelected() == NULL || m_isLinkedToEditor) {
-		ShowSymbolTree();
+	if (m_mgr->IsWorkspaceOpen()) {
+		WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
+		if (viewStack->GetSelected() == NULL || m_isLinkedToEditor) {
+			ShowSymbolTree();
+		}
 	}
 	e.Skip();
 }
@@ -1332,7 +1342,7 @@ void SymbolViewPlugin::OnActiveEditorChanged(wxCommandEvent& e)
 void SymbolViewPlugin::OnEditorClosed(wxCommandEvent& e)
 {
 	IEditor *editor = (IEditor*) e.GetClientData();
-	if (editor && !editor->GetProjectName().IsEmpty() && m_isLinkedToEditor) {
+	if (editor && !editor->GetProjectName().IsEmpty() && m_isLinkedToEditor && m_mgr->IsWorkspaceOpen()) {
 		// delete file's symbol tree
 		WindowStack *viewStack = (WindowStack*) m_viewStack->Find(m_viewModeNames[vmCurrentFile]);
 		viewStack->Delete(editor->GetFileName().GetFullPath());
@@ -1372,7 +1382,7 @@ void SymbolViewPlugin::OnEditorClosed(wxCommandEvent& e)
  */
 void SymbolViewPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 {
-	if (m_isLinkedToEditor) {
+	if (m_isLinkedToEditor && m_mgr->IsWorkspaceOpen()) {
 
 		// remove all the file trees
 		WindowStack *viewStack = (WindowStack*) m_viewStack->Find(m_viewModeNames[vmCurrentFile]);

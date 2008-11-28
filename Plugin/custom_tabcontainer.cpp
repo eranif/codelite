@@ -464,12 +464,12 @@ CustomTab* wxTabContainer::GetPreviousSelection()
 
 bool wxTabContainer::DeletePage(CustomTab *deleteTab, bool notify)
 {
-	DoRemoveTab(deleteTab, true, notify);
+	return DoRemoveTab(deleteTab, true, notify);
 }
 
 bool wxTabContainer::RemovePage(CustomTab *removePage, bool notify)
 {
-	DoRemoveTab(removePage, false, notify);
+	return DoRemoveTab(removePage, false, notify);
 }
 
 bool wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notify)

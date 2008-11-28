@@ -95,7 +95,7 @@ public:
 	virtual void ReloadWorkspace();
 	virtual IPlugin* GetPlugin(const wxString &pluginName);
 	virtual void AppendOutputMsg(const wxString &msg);
-	virtual void SaveAll();
+	virtual bool SaveAll();
 	virtual wxString GetInstallDirectory() const;
 	virtual IKeyboard *GetKeyboardManager();
 	virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName);

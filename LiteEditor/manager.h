@@ -125,7 +125,7 @@ public:
 	 * \brief
 	 * Save all open documents
 	 */
-	void SaveAll(bool includeUntitled = true);
+	bool SaveAll(bool askUser = true, bool includeUntitled = false);
 
 	void SetWorkspaceClosing(const bool& inShutdown) {
 		this->m_workspceClosing = inShutdown;

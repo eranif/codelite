@@ -264,7 +264,7 @@ public:
 	/**
 	 * @brief save all modified files
 	 */
-	virtual void SaveAll() = 0;
+	virtual bool SaveAll() = 0;
 	
 	/**
 	 * @brief return the keyboard manager

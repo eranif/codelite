@@ -248,9 +248,8 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 	}
 
 	// check to see if we require to save all files before continuing
-	if (ti.GetSaveAllFiles()) {
-		m_mgr->SaveAll();
-	}
+	if (ti.GetSaveAllFiles() && !m_mgr->SaveAll())
+		return;
 
 	if (ti.GetCaptureOutput() == false) {
 		// change the directory to the requested working directory

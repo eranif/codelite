@@ -110,26 +110,41 @@ void MainBook::OnPageChanged(NotebookEvent &e)
     SendCmdEvent(wxEVT_ACTIVE_EDITOR_CHANGED, (IEditor*)editor);
 }
 
+bool MainBook::AskUserToSave(LEditor *editor)
+{
+	if (!editor || !editor->GetModify())
+		return true;
+		
+	// unsaved changes
+	wxString msg;
+	msg << wxT("Save changes to '") << editor->GetFileName().GetFullName() << wxT("' ?");
+	long style = wxYES_NO;
+	if (!ManagerST::Get()->IsShutdownInProgress()) {
+		style |= wxCANCEL;
+	}
+	
+	int answer = wxMessageBox(msg, wxT("Confirm"), style);
+	switch (answer) {
+		case wxYES:
+			return editor->SaveFile();
+		case wxNO:
+			editor->SetSavePoint();
+			return true;
+		case wxCANCEL:
+			return false;
+	}
+}
+
 void MainBook::OnPageClosing(NotebookEvent &e)
 {
     LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(e.GetSelection()));
-    if (!editor)
-        return;
-	if (editor->GetModify()) {
-		// unsaved changes
-		wxString msg;
-		msg << wxT("Save changes to '") << editor->GetFileName().GetFullName() << wxT("' ?");
-		long style = wxYES_NO;
-		if (!ManagerST::Get()->IsShutdownInProgress()) {
-			style |= wxCANCEL;
-		}
-		int answer = wxMessageBox(msg, wxT("Confirm"), style);
-		if (answer == wxCANCEL || answer == wxYES && !editor->SaveFile()) {
-			e.Veto();
-			return;
-		}
+    if (!editor) {
+        ; // the page is not an editor
+	} else if (AskUserToSave(editor)) {
+		SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
+	} else {
+		e.Veto();
 	}
-	SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
 }
 
 void MainBook::OnPageClosed(NotebookEvent &e)
@@ -191,7 +206,7 @@ void MainBook::OnProjectFileRemoved(wxCommandEvent &e)
 void MainBook::OnWorkspaceClosed(wxCommandEvent &e)
 {
     e.Skip();
-    CloseAll();
+    CloseAll(); // make sure no unsaved files
 }
 
 void MainBook::UpdateNavBar(LEditor *editor)
@@ -341,7 +356,11 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
             editor->GotoLine(lineno);
         }
         editor->EnsureCaretVisible();
-        m_book->SetSelection(m_book->GetPageIndex(editor));
+		if (GetActiveEditor() == editor) {
+			editor->SetActive();
+		} else {
+			m_book->SetSelection(m_book->GetPageIndex(editor));
+		}
         ManagerST::Get()->AddToRecentlyOpenedFiles(fileName.GetFullPath());
     }
     
@@ -365,16 +384,19 @@ bool MainBook::SelectPage(wxWindow *win)
     return true;
 }
 
-void MainBook::SaveAll(bool includeUntitled)
+bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 {
-	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
+	bool res = true;
+	for (size_t i = 0; i < m_book->GetPageCount() && res; i++) {
 		LEditor* editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
-		if (!editor || !editor->GetModify())
+		if (!editor)
 			continue;
-		if (!includeUntitled && editor->GetFileName().GetFullPath().StartsWith(wxT("Untitled")))
+		if (!includeUntitled && editor->GetFileName().GetFullPath().StartsWith(wxT("Untitled"))) {
 			continue; //don't save new documents that have not been saved to disk yet
-        editor->SaveFile();
+		}
+		res = askUser ? AskUserToSave(editor) : editor->SaveFile();
 	}
+	return res;
 }
 
 void MainBook::ReloadExternallyModified()
@@ -393,11 +415,9 @@ void MainBook::ReloadExternallyModified()
         editor->SetEditorLastModifiedTime(diskTime);
 
         wxString msg;
-        msg << wxT("The File '");
-        msg << editor->GetFileName().GetFullName();
-        msg << wxT("' was modified\n");
+        msg << wxT("The file '") << editor->GetFileName().GetFullName() << wxT("' was modified\n");
         msg << wxT("outside of the editor, would you like to reload it?");
-        if (wxMessageBox(msg, wxT("Confirm"), wxYES_NO | wxCANCEL | wxICON_QUESTION) != wxYES)
+        if (wxMessageBox(msg, wxT("Confirm"), wxYES_NO | wxICON_QUESTION) != wxYES)
             continue;
             
         editor->ReloadFile();
@@ -440,7 +460,7 @@ void MainBook::CloseAll()
     }
     switch ( retCode ) {
         case CLOSEALL_SAVEALL: 
-            SaveAll();
+            SaveAll(false, false);
             break;
         case CLOSEALL_DISCARDALL:
             for (size_t i = 0; i < m_book->GetPageCount(); i++) {
@@ -500,7 +520,7 @@ void MainBook::DelAllBreakpointMarkers()
 
 void MainBook::SetViewEOL(bool visible)
 {
-    for (size_t i=0; i<GetNotebook()->GetPageCount(); i++) {
+    for (size_t i = 0; i < m_book->GetPageCount(); i++) {
         LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
         if (editor) {
             editor->SetViewEOL(visible);

@@ -2060,16 +2060,6 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 {
 	VALIDATE_WORKSPACE();
 
-	// make sure there are no un-saved files before refactoring
-	Notebook *book = Frame::Get()->GetNotebook();
-	for (size_t i=0; i<book->GetPageCount(); i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(book->GetPage(i));
-		if (editor && editor->GetModify()) {
-			wxMessageBox(_("Please save on all un-saved files before refactoring"));
-			return;
-		}
-	}
-
 	LEditor &rCtrl = GetCtrl();
 	CppTokensMap l;
 
@@ -2089,6 +2079,9 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 		// parsing of the initial expression failed, abort
 		return;
 	}
+
+	if (!Frame::Get()->GetMainBook()->SaveAll(true, false))
+		return;
 
 	wxLogMessage(wxT("Refactoring: ") + source.name + wxT(" of scope: ") + source.scope);
 

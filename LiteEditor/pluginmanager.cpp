@@ -350,7 +350,7 @@ int PluginManager::GetToolbarIconSize()
 
 Notebook* PluginManager::GetMainNotebook()
 {
-	return Frame::Get()->GetNotebook();
+	return Frame::Get()->GetMainBook()->GetNotebook();
 }
 
 wxAuiManager* PluginManager::GetDockingManager()
@@ -396,9 +396,9 @@ void PluginManager::AppendOutputMsg(const wxString& msg)
 	ManagerST::Get()->OutputMessage(msg);
 }
 
-void PluginManager::SaveAll()
+bool PluginManager::SaveAll()
 {
-	ManagerST::Get()->SaveAll(false);
+	return ManagerST::Get()->SaveAll();
 }
 
 wxString PluginManager::GetInstallDirectory() const

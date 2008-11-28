@@ -139,13 +139,6 @@ public:
 	 */
 	void SetFrameTitle(LEditor *editor);
 
-	/**
-	 * Return the main editor notebook
-	 */
-	Notebook *GetNotebook() {
-		return m_mainBook->GetNotebook();
-	}
-
 	MainBook* GetMainBook() const {
 		return m_mainBook;
 	}

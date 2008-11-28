@@ -1289,7 +1289,7 @@ void Frame::OnFileClose(wxCommandEvent &event)
 void Frame::OnFileSaveAll(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	GetMainBook()->SaveAll(true);
+	GetMainBook()->SaveAll(false, true);
 }
 
 void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)

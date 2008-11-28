@@ -211,7 +211,6 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
     LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(file_name, projectName, lineno, position);
 	if(editor){
 		res = true;
-		editor->SetActive();
 	}
 	
    	if (returnFocusWin) {
@@ -221,9 +220,9 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
     return res;
 }
 
-void Manager::SaveAll ( bool includeUntitled )
+bool Manager::SaveAll(bool askUser, bool includeUntitled)
 {
-    return Frame::Get()->GetMainBook()->SaveAll(includeUntitled);
+    return Frame::Get()->GetMainBook()->SaveAll(askUser, includeUntitled);
 }
 
 void Manager::UnInitialize()
@@ -953,7 +952,8 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 	}
 
 	//save all files before compiling, but dont saved new documents
-	SaveAll ( false );
+	if (!SaveAll())
+		return;
 
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -2671,7 +2671,8 @@ void Manager::DoBuildProject ( const QueueCommand& buildInfo )
 	}
 
 	//save all files before compiling, but dont saved new documents
-	SaveAll ( false );
+	if (!SaveAll())
+		return;
 
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -2809,7 +2810,8 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 	}
 
 	//save all files before compiling, but dont saved new documents
-	SaveAll ( false );
+	if (!SaveAll()) 
+		return;
 
 	//If a debug session is running, stop it.
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();

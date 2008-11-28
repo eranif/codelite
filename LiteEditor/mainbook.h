@@ -51,6 +51,8 @@ private:
     void OnWorkspaceLoaded   (wxCommandEvent &e);
     void OnWorkspaceClosed   (wxCommandEvent &e);
     
+	bool AskUserToSave(LEditor *editor);
+	
 public:
 	MainBook(wxWindow *parent);
 	~MainBook();
@@ -82,7 +84,7 @@ public:
     bool AddPage   (wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
     bool SelectPage(wxWindow *win);
 
-	void SaveAll(bool includeUntitled = false);
+	bool SaveAll(bool askUser, bool includeUntitled);
     
     void ReloadExternallyModified();
 

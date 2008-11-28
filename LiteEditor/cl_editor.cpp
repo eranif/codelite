@@ -481,6 +481,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			SetIndicatorCurrent(MATCH_INDICATOR);
 			IndicatorFillRange(pos, 1);
 		} else {
+			BeginUndoAction();
 			InsertText(pos, wxT('\n'));
 			CharRight();
 			m_context->AutoIndent(wxT('}'));
@@ -488,6 +489,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			InsertText(pos, wxT('\n'));
 			CharRight();
 			m_context->AutoIndent(wxT('\n'));
+			EndUndoAction();
 		}
 	}
 

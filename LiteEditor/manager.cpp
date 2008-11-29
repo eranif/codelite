@@ -952,7 +952,7 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 	}
 
 	//save all files before compiling, but dont saved new documents
-	if (!SaveAll())
+	if (!SaveAll(false))
 		return;
 
 	//If a debug session is running, stop it.
@@ -2671,7 +2671,7 @@ void Manager::DoBuildProject ( const QueueCommand& buildInfo )
 	}
 
 	//save all files before compiling, but dont saved new documents
-	if (!SaveAll())
+	if (!SaveAll(false))
 		return;
 
 	//If a debug session is running, stop it.
@@ -2810,7 +2810,7 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 	}
 
 	//save all files before compiling, but dont saved new documents
-	if (!SaveAll()) 
+	if (!SaveAll(false)) 
 		return;
 
 	//If a debug session is running, stop it.

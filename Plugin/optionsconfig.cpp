@@ -31,7 +31,7 @@
 OptionsConfig::OptionsConfig(wxXmlNode *node)
 		: m_displayFoldMargin(true)
 		, m_underlineFoldLine(false)
-		, m_foldStyle(wxT("Arrows with Background Colour"))
+		, m_foldStyle(wxT("Arrows"))
 		, m_displayBookmarkMargin(true)
 		, m_bookmarkShape(wxT("Small Arrow"))
 		, m_bookmarkBgColour(wxColour(12, 133, 222))

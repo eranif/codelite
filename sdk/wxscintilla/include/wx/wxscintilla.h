@@ -116,6 +116,8 @@
 #define wxSCI_MARK_ARROWS 24
 #define wxSCI_MARK_PIXMAP 25
 #define wxSCI_MARK_FULLRECT 26
+#define wxSCI_MARK_ARROW_IN_BOX 100
+#define wxSCI_MARK_ARROWDOWN_IN_BOX 101
 #define wxSCI_MARK_CHARACTER 10000
 
 // Markers used for outlining column.

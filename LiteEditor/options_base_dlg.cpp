@@ -320,7 +320,7 @@ wxPanel* OptionsDlg::CreateFoldingPage()
 	m_staticText1 = new wxStaticText( page, wxID_ANY, _("Fold Style:"), wxDefaultPosition, wxDefaultSize, 0 );
 	sz->Add( m_staticText1, 0, wxALL, 5 );
 
-	wxString m_foldStyleChoiceChoices[] = { _("Simple"), _("Arrows"), _("Flatten Tree Square Headers"), _("Flatten Tree Circular Headers") };
+	wxString m_foldStyleChoiceChoices[] = { _("Simple"), _("Arrows"), _("Arrows with Background Colour"), _("Flatten Tree Square Headers"), _("Flatten Tree Circular Headers") };
 	int m_foldStyleChoiceNChoices = sizeof( m_foldStyleChoiceChoices ) / sizeof( wxString );
 	m_foldStyleChoice = new wxChoice( page, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_foldStyleChoiceNChoices, m_foldStyleChoiceChoices, 0 );
 	sz->Add( m_foldStyleChoice, 0, wxALL|wxEXPAND, 5 );

@@ -305,6 +305,17 @@ void LEditor::SetProperties()
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_MINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 
+	} else if ( options->GetFoldStyle() == wxT("Arrows with Background Colour") ) {
+		wxColour tmp_bgcol(wxT("LIGHT BLUE"));
+		wxColour bgcol = DrawingUtils::LightColour(tmp_bgcol, 20);
+		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_ARROWDOWN_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_ARROW_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_FULLRECT, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_FULLRECT, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_ARROW_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_ARROWDOWN_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_FULLRECT, wxColor(0xff, 0xff, 0xff), bgcol);
+
 	} else if ( options->GetFoldStyle() == wxT("Arrows") ) {
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_ARROWDOWN, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_ARROW, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
@@ -459,13 +470,13 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			CodeComplete();
 		}
 		break;
-	case '}':
-		m_context->AutoIndent(event.GetKey());
-		// fall through...
-	case ']':
+	case ')':
 		m_context->CallTipCancel();
 		ShowFunctionTipFromCurrentPos();
 		break;
+	case '}':
+		m_context->AutoIndent(event.GetKey());
+		// fall through...
 	case '\n':
 		m_context->AutoIndent(event.GetKey());
 		// incase we are typing in a folded line, make sure it is visible
@@ -479,6 +490,9 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		InsertText(pos, matchChar);
 		if (matchChar != '}') {
 			SetIndicatorCurrent(MATCH_INDICATOR);
+			// use grey colour rather than black, otherwise this indicator is invisible when using the 
+			// black theme
+			IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
 			IndicatorFillRange(pos, 1);
 		} else {
 			BeginUndoAction();

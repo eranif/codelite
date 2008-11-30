@@ -119,6 +119,8 @@ typedef sptr_t (*SciFnDirect)(sptr_t ptr, unsigned int iMessage, uptr_t wParam, 
 #define SC_MARK_PIXMAP 25
 #define SC_MARK_FULLRECT 26
 #define SC_MARK_LEFTRECT 27
+#define SC_MARK_ARROW_IN_BOX 100
+#define SC_MARK_ARROWDOWN_IN_BOX 101
 #define SC_MARK_CHARACTER 10000
 #define SC_MARKNUM_FOLDEREND 25
 #define SC_MARKNUM_FOLDEROPENMID 26

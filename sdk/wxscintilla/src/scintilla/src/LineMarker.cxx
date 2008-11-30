@@ -108,6 +108,21 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
 		};
 		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
                  		fore.allocated, back.allocated);
+						
+	} else if (markType == SC_MARK_ARROW_IN_BOX) {
+		Point pts[] = {
+    		Point(centreX - dimOn4, centreY - dimOn2),
+    		Point(centreX - dimOn4, centreY + dimOn2),
+    		Point(centreX + dimOn2 - dimOn4, centreY),
+		};
+		surface->FillRectangle(rcWhole, back.allocated);
+		
+		ColourDesired des;
+		des.Set(0, 0, 0);
+		ColourAllocated alloc(des.AsLong());
+		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
+                 		back.allocated, alloc);
+
 
 	} else if (markType == SC_MARK_ARROWDOWN) {
 		Point pts[] = {
@@ -117,6 +132,21 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
 		};
 		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
                  		fore.allocated, back.allocated);
+
+	} else if (markType == SC_MARK_ARROWDOWN_IN_BOX) {
+		Point pts[] = {
+    		Point(centreX - dimOn2, centreY - dimOn4),
+    		Point(centreX + dimOn2, centreY - dimOn4),
+    		Point(centreX, centreY + dimOn2 - dimOn4),
+		};
+	
+		surface->FillRectangle(rcWhole, back.allocated);
+		
+		ColourDesired des;
+		des.Set(0, 0, 0);
+		ColourAllocated alloc(des.AsLong());
+		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
+                 		back.allocated, alloc);
 
 	} else if (markType == SC_MARK_PLUS) {
 		Point pts[] = {

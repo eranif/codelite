@@ -186,8 +186,10 @@ void LEditor::SetProperties()
 	m_hightlightMatchedBraces = options->GetHighlightMatchedBraces();
 	m_autoAddMatchedBrace = options->GetAutoAddMatchedBraces();
 
-	if (!m_hightlightMatchedBraces)
+	if (!m_hightlightMatchedBraces) {
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+        SetHighlightGuide(0);
+    }
 
 	SetViewWhiteSpace(options->GetShowWhitspaces());
 	SetMouseDwellTime(250);
@@ -368,7 +370,7 @@ void LEditor::SetProperties()
 	SetUseTabs(options->GetIndentUsesTabs());
 	SetTabWidth(options->GetTabWidth());
 	SetIndent(options->GetIndentWidth());
-	SetIndentationGuides(options->GetShowIndentationGuidelines());
+	SetIndentationGuides(options->GetShowIndentationGuidelines() ? 3 : 0);
 
 	SetLayoutCache(wxSCI_CACHE_DOCUMENT);
 
@@ -530,6 +532,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	int charCurrnt = SafeGetChar(pos);
 
 	wxString sel_text = GetSelectedText();
+    SetHighlightGuide(0);
 	if (m_hightlightMatchedBraces) {
 		if ( sel_text.IsEmpty() == false) {
 			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
@@ -543,7 +546,6 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 		            charCurrnt == '>' && charBefore == '-'	) {	//->
 			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 		} else {
-
 			if ((charCurrnt == '{' || charCurrnt == '[' || GetCharAt(pos) == '<' || charCurrnt == '(') && !m_context->IsCommentOrString(pos)) {
 				BraceMatch((long)pos);
 			} else if ((charBefore == '{' || charBefore == '<' || charBefore == '[' || charBefore == '(') && !m_context->IsCommentOrString(PositionBefore(pos))) {
@@ -1138,13 +1140,21 @@ void LEditor::MatchBraceAndSelect(bool selRegion)
 void LEditor::BraceMatch(long pos)
 {
 	// Check if we have a match
+    int indentCol = 0;
 	long endPos = wxScintilla::BraceMatch(pos);
 	if (endPos != wxSCI_INVALID_POSITION) {
-		// Highlight indent guide if exist
 		wxScintilla::BraceHighlight(pos, endPos);
+        if (GetIndentationGuides() != 0 && GetIndent() > 0) {
+            // Highlight indent guide if exist
+            indentCol  = GetLineIndentation(LineFromPosition(pos));
+            indentCol /= GetIndent();
+            indentCol *= GetIndent(); // round down to nearest indentation guide column
+            SetHighlightGuide(GetLineIndentation(LineFromPosition(pos)));
+        }
 	} else {
 		wxScintilla::BraceBadLight(pos);
 	}
+    SetHighlightGuide(indentCol);
 }
 
 void LEditor::BraceMatch(const bool& bSelRegion)

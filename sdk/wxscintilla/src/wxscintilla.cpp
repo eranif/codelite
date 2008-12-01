@@ -1022,13 +1022,13 @@ bool wxScintilla::GetUseHorizontalScrollBar() {
 }
 
 // Show or hide indentation guides.
-void wxScintilla::SetIndentationGuides (bool show) {
+void wxScintilla::SetIndentationGuides (int show) {
     SendMsg (SCI_SETINDENTATIONGUIDES, show, 0);
 }
 
 // Are the indentation guides visible?
-bool wxScintilla::GetIndentationGuides() {
-    return SendMsg (SCI_GETINDENTATIONGUIDES, 0, 0) != 0;
+int wxScintilla::GetIndentationGuides() {
+    return SendMsg (SCI_GETINDENTATIONGUIDES, 0, 0);
 }
 
 // Set the highlighted indentation guide column.

@@ -2387,10 +2387,10 @@ public:
     bool GetUseHorizontalScrollBar();
 
     // Show or hide indentation guides.
-    void SetIndentationGuides (bool show);
+    void SetIndentationGuides (int show);
 
     // Are the indentation guides visible?
-    bool GetIndentationGuides();
+    int GetIndentationGuides();
 
     // Set the highlighted indentation guide column.
     // 0 = no highlighted guide.

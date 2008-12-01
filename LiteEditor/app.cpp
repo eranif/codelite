@@ -510,24 +510,6 @@ void App::OnIdle(wxIdleEvent &e)
 	e.Skip();
 }
 
-bool App::ReadControlFile(wxString &installPath, long &installRev)
-{
-	wxString content;
-	if (!ReadFileWithConversion(wxT("/usr/local/share/codelite/codelite.control"), content)) {
-		return false;
-	}
-
-	wxStringTokenizer tkz(content, wxT("\n"), wxTOKEN_STRTOK);
-	wxString revName = tkz.NextToken();
-	wxString tmprev;
-	if (revName.StartsWith(wxT("Revision:"), &tmprev)) {
-		revName = tmprev;
-	}
-	revName.ToLong( &installRev );
-	installPath = tkz.NextToken();
-	return true;
-}
-
 void App::OnHideSplash(wxCommandEvent &e)
 {
 	m_splash->Close(true);

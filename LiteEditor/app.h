@@ -36,7 +36,6 @@ class App : public wxApp
 	wxSingleInstanceChecker *m_singleInstance;
 
 private:	// Methods
-	bool ReadControlFile(wxString &installPath, long &installRev);
 	bool CopySettings(const wxString &destDir, wxString& installPath);
 	bool CheckRevision(const wxString &fileName);
 	bool CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);

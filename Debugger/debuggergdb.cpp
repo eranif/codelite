@@ -462,7 +462,7 @@ bool DbgGdb::Stop()
 		m_observer->UpdateGotControl(DBG_DBGR_KILLED);
 		EmptyQueue();
 
-		m_bpList.empty();
+		m_bpList.clear();
 	}
 	return true;
 }

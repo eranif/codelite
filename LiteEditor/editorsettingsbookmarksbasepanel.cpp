@@ -1,5 +1,30 @@
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//
+// copyright            : (C) 2008 by Eran Ifrah                            
+// file name            : editorsettingsbookmarksbasepanel.cpp              
+//                                                                          
+// -------------------------------------------------------------------------
+// A                                                                        
+//              _____           _      _     _ _                            
+//             /  __ \         | |    | |   (_) |                           
+//             | /  \/ ___   __| | ___| |    _| |_ ___                      
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
+//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
+//                                                                          
+//                                                  F i l e                 
+//                                                                          
+//    This program is free software; you can redistribute it and/or modify  
+//    it under the terms of the GNU General Public License as published by  
+//    the Free Software Foundation; either version 2 of the License, or     
+//    (at your option) any later version.                                   
+//                                                                          
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 21 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -13,51 +38,52 @@ EditorSettingsBookmarksBasePanel::EditorSettingsBookmarksBasePanel( wxWindow* pa
 {
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
-
+	
 	m_displaySelection = new wxCheckBox( this, wxID_ANY, wxT("Display Selection / Bookmark margin"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_displaySelection->SetValue(true);
-
+	
 	bSizer2->Add( m_displaySelection, 0, wxALL, 5 );
-
+	
 	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Bookmark Shape:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	bSizer2->Add( m_staticText3, 0, wxALL, 5 );
-
+	
 	wxString m_bookMarkShapeChoices[] = { wxT("Small Rectangle"), wxT("Rounded Rectangle"), wxT("Circle"), wxT("Small Arrow") };
 	int m_bookMarkShapeNChoices = sizeof( m_bookMarkShapeChoices ) / sizeof( wxString );
 	m_bookMarkShape = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_bookMarkShapeNChoices, m_bookMarkShapeChoices, 0 );
 	m_bookMarkShape->SetSelection( 0 );
 	bSizer2->Add( m_bookMarkShape, 0, wxALL|wxEXPAND, 5 );
-
+	
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer1->AddGrowableCol( 0 );
 	fgSizer1->AddGrowableCol( 1 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-
+	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Select the bookmark background colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
-	fgSizer1->Add( m_staticText4, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-
+	fgSizer1->Add( m_staticText4, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	
 	m_backgroundColor = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
-	fgSizer1->Add( m_backgroundColor, 0, wxALIGN_RIGHT|wxALL, 5 );
-
+	fgSizer1->Add( m_backgroundColor, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
+	
 	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("Select the bookmark foreground colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
-	fgSizer1->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-
+	fgSizer1->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	
 	m_foregroundColor = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
-	fgSizer1->Add( m_foregroundColor, 0, wxALIGN_RIGHT|wxALL, 5 );
-
+	fgSizer1->Add( m_foregroundColor, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
+	
 	m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Select word highlight colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
-	fgSizer1->Add( m_staticText6, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-
+	fgSizer1->Add( m_staticText6, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	
 	m_highlightColor = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
-	fgSizer1->Add( m_highlightColor, 0, wxALIGN_RIGHT|wxALL, 5 );
-
+	fgSizer1->Add( m_highlightColor, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
+	
 	bSizer2->Add( fgSizer1, 0, wxALL|wxEXPAND, 5 );
-
+	
 	this->SetSizer( bSizer2 );
 	this->Layout();
 }

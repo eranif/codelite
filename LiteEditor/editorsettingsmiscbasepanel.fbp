@@ -612,7 +612,7 @@
                                 <event name="OnRightUp"></event>
                                 <event name="OnSetFocus"></event>
                                 <event name="OnSize"></event>
-                                <event name="OnUpdateUI"></event>
+                                <event name="OnUpdateUI">OnClearUI</event>
                             </object>
                         </object>
                         <object class="sizeritem" expanded="1">

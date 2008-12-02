@@ -226,7 +226,7 @@
                     <object class="wxFlexGridSizer" expanded="1">
                         <property name="cols">2</property>
                         <property name="flexible_direction">wxBOTH</property>
-                        <property name="growablecols">1</property>
+                        <property name="growablecols">0,1</property>
                         <property name="growablerows"></property>
                         <property name="hgap">0</property>
                         <property name="minimum_size"></property>
@@ -237,8 +237,8 @@
                         <property name="vgap">0</property>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
-                            <property name="proportion">1</property>
+                            <property name="flag">wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL</property>
+                            <property name="proportion">0</property>
                             <object class="wxStaticText" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
@@ -288,7 +288,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALIGN_RIGHT|wxALL</property>
+                            <property name="flag">wxALIGN_RIGHT|wxALL|wxEXPAND</property>
                             <property name="proportion">0</property>
                             <object class="wxColourPickerCtrl" expanded="1">
                                 <property name="bg"></property>
@@ -339,7 +339,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
+                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</property>
                             <property name="proportion">0</property>
                             <object class="wxStaticText" expanded="1">
                                 <property name="bg"></property>
@@ -390,7 +390,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALIGN_RIGHT|wxALL</property>
+                            <property name="flag">wxALIGN_RIGHT|wxALL|wxEXPAND</property>
                             <property name="proportion">0</property>
                             <object class="wxColourPickerCtrl" expanded="1">
                                 <property name="bg"></property>
@@ -441,7 +441,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
+                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</property>
                             <property name="proportion">0</property>
                             <object class="wxStaticText" expanded="1">
                                 <property name="bg"></property>
@@ -492,7 +492,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALIGN_RIGHT|wxALL</property>
+                            <property name="flag">wxALIGN_RIGHT|wxALL|wxEXPAND</property>
                             <property name="proportion">0</property>
                             <object class="wxColourPickerCtrl" expanded="1">
                                 <property name="bg"></property>

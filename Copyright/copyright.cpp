@@ -417,13 +417,11 @@ void Copyright::MassUpdate(const std::vector<wxFileName> &filtered_files, const 
 			wxString ignoreString = data.GetIgnoreString();
 			ignoreString = ignoreString.Trim().Trim(false);
 
-			if (ignoreString.IsEmpty() == false) {
-				if (file_content.Find(data.GetIgnoreString()) != wxNOT_FOUND) {
-					msg << wxT("File contains ignore string, skipping it: ") << fn.GetFullName();
-					if (!prgDlg->Update(i, msg)) {
-						prgDlg->Destroy();
-						return;
-					}
+			if (ignoreString.IsEmpty() == false && file_content.Find(data.GetIgnoreString()) != wxNOT_FOUND) {
+				msg << wxT("File contains ignore string, skipping it: ") << fn.GetFullName();
+				if (!prgDlg->Update(i, msg)) {
+					prgDlg->Destroy();
+					return;
 				}
 			} else {
 

@@ -22,6 +22,7 @@ OptionsDlg2::OptionsDlg2( wxWindow* parent )
 , m_firstActivate(false)
 {
 	GetSizer()->Fit(this);
+	GetSizer()->Layout();
 }
 
 OptionsDlg2::~OptionsDlg2()
@@ -84,11 +85,12 @@ void OptionsDlg2::OnInitDialog( wxInitDialogEvent & event )
 	AddSubPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), wxT("Indentation"));
 	AddSubPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), wxT("Right Margin Indicator"));
 	AddSubPage(new EditorOptionsGeneralSavePanel(m_treeBook), 		 wxT("Save Options"));
-	AddSubPage(new EditorOptionsGeneralCodeNavPanel(m_treeBook), 	 wxT("Quick Code Navigation"));
 
-	m_treeBook->AddPage(0, wxT("C++ Comments"));
-	AddSubPage(new EditorSettingsComments(m_treeBook), wxT("General"));
+	m_treeBook->AddPage(0, wxT("C++"));
+	AddSubPage(new EditorSettingsComments(m_treeBook), wxT("Comments"));
 	AddSubPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), wxT("Doxygen"));
+	AddSubPage(new EditorOptionsGeneralCodeNavPanel(m_treeBook), wxT("Quick Code Navigation"));
+
 	AddPage(new EditorSettingsFolding(m_treeBook), wxT("Folding"));
 	AddPage(new EditorSettingsBookmarksPanel(m_treeBook), wxT("Bookmarks"));
 	AddPage(new EditorSettingsDialogs(m_treeBook), wxT("Dialogs"));

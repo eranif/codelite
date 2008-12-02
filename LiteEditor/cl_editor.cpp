@@ -308,8 +308,10 @@ void LEditor::SetProperties()
 		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 
 	} else if ( options->GetFoldStyle() == wxT("Arrows with Background Colour") ) {
+//		wxColour tmp_bgcol(204, 152, 102);
 		wxColour tmp_bgcol(wxT("LIGHT BLUE"));
-		wxColour bgcol = DrawingUtils::LightColour(tmp_bgcol, 20);
+		wxColour bgcol = DrawingUtils::LightColour(tmp_bgcol, 90);
+		
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_ARROWDOWN_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
 		DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_ARROW_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
 		DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_FULLRECT, wxColor(0xff, 0xff, 0xff), bgcol);

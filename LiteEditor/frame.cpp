@@ -2600,9 +2600,8 @@ void Frame::OnAppActivated(wxActivateEvent &e)
 {
 	if (m_theFrame && e.GetActive()) {
 		m_theFrame->GetMainBook()->ReloadExternallyModified();
-    } else {
-	    e.Skip();
     }
+	e.Skip();
 }
 
 void Frame::UpgradeExternalDbExt()

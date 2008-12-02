@@ -52,7 +52,7 @@ public:
 	void RefreshColourPalette(Palette &pal, bool want);
 	void SetXPM(const char *textForm);
 	void SetXPM(const char * const *linesForm);
-	void Draw(Surface *surface, PRectangle &rc, Font &fontForCharacter);
+	void Draw(Surface *surface, PRectangle &rc, Font &fontForCharacter, int foldLevel = 1);
 };
 
 #ifdef SCI_NAMESPACE

@@ -17,6 +17,26 @@
 using namespace Scintilla;
 #endif
 
+long darkColour(long color, int percent)
+{
+	percent = percent * 10;
+	int rd, gd, bd, high = 0;
+	static ColourDesired end_color(0, 0, 0); // black
+	ColourDesired col(color);
+	
+	rd = end_color.GetRed() - col.GetRed();
+	gd = end_color.GetGreen() - col.GetGreen();
+	bd = end_color.GetBlue() - col.GetBlue();
+	high = 100;
+
+	// We take the percent way of the color from color --> black
+	int i = percent;
+	int r = col.GetRed() +  ((i*rd*100)/high)/100;
+	int g = col.GetGreen() + ((i*gd*100)/high)/100;
+	int b = col.GetBlue() + ((i*bd*100)/high)/100;
+	return ColourDesired(r, g, b).AsLong();
+}
+
 void LineMarker::RefreshColourPalette(Palette &pal, bool want) {
 	pal.WantFind(fore, want);
 	pal.WantFind(back, want);
@@ -67,7 +87,7 @@ static void DrawMinus(Surface *surface, int centreX, int centreY, int armSize, C
 	surface->FillRectangle(rcH, fore);
 }
 
-void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharacter) {
+void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharacter, int foldLevel) {
 	if ((markType == SC_MARK_PIXMAP) && (pxpm)) {
 		pxpm->Draw(surface, rcWhole);
 		return;
@@ -115,7 +135,7 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
     		Point(centreX - dimOn4, centreY + dimOn2),
     		Point(centreX + dimOn2 - dimOn4, centreY),
 		};
-		surface->FillRectangle(rcWhole, back.allocated);
+		surface->FillRectangle(rcWhole, darkColour(back.allocated.AsLong(), foldLevel));
 		
 		ColourDesired des;
 		des.Set(0, 0, 0);
@@ -139,8 +159,8 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
     		Point(centreX + dimOn2, centreY - dimOn4),
     		Point(centreX, centreY + dimOn2 - dimOn4),
 		};
-	
-		surface->FillRectangle(rcWhole, back.allocated);
+		
+		surface->FillRectangle(rcWhole, darkColour(back.allocated.AsLong(), foldLevel+1));
 		
 		ColourDesired des;
 		des.Set(0, 0, 0);
@@ -334,6 +354,6 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
 		rcLeft.right = rcLeft.left + 4;
 		surface->FillRectangle(rcLeft, back.allocated);
 	} else { // SC_MARK_FULLRECT
-		surface->FillRectangle(rcWhole, back.allocated);
+		surface->FillRectangle(rcWhole, darkColour(back.allocated.AsLong(), foldLevel));
 	}
 }

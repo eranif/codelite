@@ -16,14 +16,13 @@ private:
 	// We do not need to clean up those pointers because they are
 	// deleted by the wxTreeBook!
 	std::list<TreeBookNodeBase*> m_contentObjects;
-	bool m_firstActivate;
 protected:
 	// Handlers for OptionsBaseDlg2 events.
 	void OnButtonOK( wxCommandEvent& event );
 	void OnButtonCancel( wxCommandEvent& event );
 	void OnButtonApply( wxCommandEvent& event );
-	void OnActivate( wxActivateEvent & event );
-	virtual void OnInitDialog( wxInitDialogEvent& event );
+	void Initialize();
+	
 	void DoSave();
 	template<typename T>
 	void AddSubPage(T * ptr, wxString const & caption, bool selected = false){

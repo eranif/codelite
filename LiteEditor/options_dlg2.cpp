@@ -19,24 +19,15 @@
 OptionsDlg2::OptionsDlg2( wxWindow* parent )
 : OptionsBaseDlg2( parent )
 , m_contentObjects()
-, m_firstActivate(false)
 {
-	GetSizer()->Fit(this);
+	Initialize();
+	WindowAttrManager::Load(this, wxT("OptionsDlgAttr"), NULL);
 	GetSizer()->Layout();
 }
 
 OptionsDlg2::~OptionsDlg2()
 {
 	WindowAttrManager::Save(this, wxT("OptionsDlgAttr"), NULL);
-}
-
-void OptionsDlg2::OnActivate( wxActivateEvent & event )
-{
-	if(!m_firstActivate)
-	{
-		m_firstActivate = true;
-		 WindowAttrManager::Load(this, wxT("OptionsDlgAttr"), NULL);
-	}
 }
 
 void OptionsDlg2::OnButtonOK( wxCommandEvent&)
@@ -78,7 +69,7 @@ void OptionsDlg2::DoSave()
 	Frame::Get()->GetMainBook()->ApplySettingsChanges();
 }
 
-void OptionsDlg2::OnInitDialog( wxInitDialogEvent & event )
+void OptionsDlg2::Initialize()
 {
 	m_treeBook->AddPage(0, wxT("General"));
 	AddSubPage(new EditorOptionsGeneralGuidesPanel(m_treeBook), 	 wxT("Guides"), true);

@@ -199,11 +199,6 @@ public:
 	virtual bool AllowToolbar() = 0;
 	
 	/**
-	 * @brief return a pointer to the main notebook (the editor' book)
-	 * @return pointer to the main notebook
-	 */
-	virtual Notebook *GetMainNotebook() = 0;
-	/**
 	 * @brief return a pointer to the docking manager (wxAUI)
 	 */
 	virtual wxAuiManager* GetDockingManager() = 0;
@@ -322,6 +317,16 @@ public:
 	
     void SetStatusMessage(const wxString &msg, int id)
         { SetStatusMessage(msg, 0, id); }
+    
+    /**
+     * @brief close the named page in the mainbook
+     */ 
+    virtual bool ClosePage(const wxString &text) = 0;
+
+    /**
+     * @brief add a page to the mainbook
+     */ 
+    virtual bool AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false) = 0;
 };
 
 

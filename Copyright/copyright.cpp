@@ -279,14 +279,8 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
 		return;
 	}
 
-	Notebook *book = m_mgr->GetMainNotebook();
-	for (size_t i=0; i<book->GetPageCount(); i++) {
-		IEditor *editor = dynamic_cast<IEditor*>(book->GetPage(i));
-		if (editor && editor->IsModified()) {
-			wxMessageBox(_("Please save all un-saved documents before continuing"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
-			return;
-		}
-	}
+    if (!m_mgr->SaveAll())
+        return;
 
 	// read configuration
 	CopyrightsConfigData data;
@@ -345,14 +339,8 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
 		return;
 	}
 
-	Notebook *book = m_mgr->GetMainNotebook();
-	for (size_t i=0; i<book->GetPageCount(); i++) {
-		IEditor *editor = dynamic_cast<IEditor*>(book->GetPage(i));
-		if (editor && editor->IsModified()) {
-			wxMessageBox(_("Please save all un-saved documents before continuing"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
-			return;
-		}
-	}
+    if (!m_mgr->SaveAll())
+        return;
 
 	// read configuration
 	CopyrightsConfigData data;

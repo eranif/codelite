@@ -804,23 +804,10 @@ static int compare_files(const wxString &first, const wxString &second)
 
 void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &origin, const wxString &basePath, bool inclOutOfDate)
 {
-	Notebook *book =  m_mgr->GetMainNotebook();
-
-	book->Freeze();
-	for ( size_t i=0; i< book->GetPageCount(); i++) {
-		wxHtmlWindow *win = dynamic_cast<wxHtmlWindow *>(book->GetPage(i));
-		if (win && book->GetPageText(i) == wxT("SVN Status")) {
-			//we found a SVN status page, close it
-			book->DeletePage(i);
-			break;
-		}
-	}
-
 	wxString path = m_mgr->GetStartupDirectory();
 	wxString name = wxT("svnreport.html");
 
 	wxFileName fn(path, name);
-	wxHtmlWindow *reportPage = new wxHtmlWindow(m_mgr->GetMainNotebook(), wxID_ANY, wxDefaultPosition, wxSize(1, 1));
 
 	//read the file content
 	wxString content;
@@ -865,11 +852,11 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &o
 	content.Replace(wxT("$(BasePath)"), basePath);
 	content.Replace(wxT("$(DateTime)"), wxDateTime::Now().Format());
 
-	reportPage->SetPage(content);
-
 	//create new report
-	m_mgr->GetMainNotebook()->AddPage(reportPage, wxT("SVN Status"), wxNullBitmap, true);
-	book->Thaw();
+    m_mgr->ClosePage(wxT("SVN Status"));
+	wxHtmlWindow *reportPage = new wxHtmlWindow(m_mgr->GetDockingManager()->GetManagedWindow(), wxID_ANY, wxDefaultPosition, wxSize(1, 1));
+	reportPage->SetPage(content);
+    m_mgr->AddPage(reportPage, wxT("SVN Status"), wxNullBitmap, true);
 }
 
 void SubversionPlugin::DoGetPrjSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate)

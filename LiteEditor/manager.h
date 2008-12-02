@@ -121,12 +121,6 @@ public:
 	 */
 	void AddFilesToProject(const wxArrayString &files, const wxString &vdFullPath, wxArrayString &actualAdded);
 
-	/*!
-	 * \brief
-	 * Save all open documents
-	 */
-	bool SaveAll(bool askUser = true, bool includeUntitled = false);
-
 	void SetWorkspaceClosing(const bool& inShutdown) {
 		this->m_workspceClosing = inShutdown;
 	}
@@ -292,11 +286,6 @@ public:
 	 * Hide pane
 	 */
 	void HidePane(const wxString &paneName, bool commit = true);
-
-	/**
-	 * Reload configuration changes and apply them on open documents
-	 */
-	void ApplySettingsChanges();
 
 	/**
 	 * Return project settings by name
@@ -649,15 +638,6 @@ public:
 	 * \return project execution command or wxEmptyString if the project does not exist
 	 */
 	wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd, bool considerPauseWhenExecuting = true);
-
-	/**
-	 * \brief find pattern in editor. If match succeeded, try to find 'name' inside the pattern
-	 * and highlight it
-	 * \param editor editor to search in
-	 * \param pattern pattern to search in the editor
-	 * \param name name to search in pattern
-	 */
-	void FindAndSelect(LEditor* editor, wxString& pattern, const wxString& name);
 
 	/**
 	 * \brief add build job to the internal queue

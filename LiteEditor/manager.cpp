@@ -120,16 +120,6 @@ static bool HideDebuggerPane = true;
 //--------------------------------------------------------------
 // Helper methods
 //--------------------------------------------------------------
-std::string GetCurrentFileName()
-{
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
-	if ( editor ) {
-		const wxCharBuffer fileName = _C ( editor->GetFileName().GetFullPath() );
-		return fileName.data();
-	}
-	return "";
-}
-
 /**
  * \brief strip accelerators and mnemonics from given text
  * \param text
@@ -218,11 +208,6 @@ bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName,
 	}
     
     return res;
-}
-
-bool Manager::SaveAll(bool askUser, bool includeUntitled)
-{
-    return Frame::Get()->GetMainBook()->SaveAll(askUser, includeUntitled);
 }
 
 void Manager::UnInitialize()
@@ -710,11 +695,6 @@ void Manager::ShowWorkspacePane ( wxString focusWin, bool commit )
 	}
 }
 
-void Manager::ApplySettingsChanges()
-{
-    Frame::Get()->GetMainBook()->ApplySettingsChanges();
-}
-
 ProjectSettingsPtr Manager::GetProjectSettings ( const wxString &projectName ) const
 {
 	wxString errMsg;
@@ -952,7 +932,7 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 	}
 
 	//save all files before compiling, but dont saved new documents
-	if (!SaveAll(false))
+	if (!Frame::Get()->GetMainBook()->SaveAll(false, false))
 		return;
 
 	//If a debug session is running, stop it.
@@ -1081,8 +1061,8 @@ void Manager::OnProcessEnd ( wxProcessEvent &event )
 	EnvironmentConfig::Instance()->UnApplyEnv();
 
 	//return the focus back to the editor
-	if ( GetActiveEditor() ) {
-		GetActiveEditor()->SetActive();
+	if ( Frame::Get()->GetMainBook()->GetActiveEditor() ) {
+		Frame::Get()->GetMainBook()->GetActiveEditor()->SetActive();
 	}
 }
 
@@ -1414,7 +1394,7 @@ wxString Manager::ExpandVariables ( const wxString &expression, ProjectPtr proj 
 {
 	wxString project_name ( proj->GetName() );
 	wxString fileName;
-	LEditor *editor = GetActiveEditor();
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	if ( editor ) {
 		fileName = editor->GetFileName().GetFullPath();
 	}
@@ -1588,7 +1568,7 @@ void Manager::DbgStart ( long pid )
 	}
 
 	// let the active editor get the focus
-	LEditor *editor = dynamic_cast<LEditor*> ( GetActiveEditor() );
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	if ( editor ) {
 		editor->SetActive();
 	}
@@ -1679,14 +1659,13 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 
 	//try to open the file
 	wxFileName fn ( fileName );
-	LEditor *editor = GetActiveEditor();
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	if ( editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() ) {
 		editor->HighlightLine ( lineno );
 		editor->GotoLine ( lineno-1 );
 		editor->EnsureVisible ( lineno-1 );
-	} else {
-		OpenFile ( fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND );
-		editor = GetActiveEditor();
+	} else if (OpenFile ( fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND)) {
+		editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 		if ( editor ) {
 			editor->HighlightLine ( lineno );
 		}
@@ -2114,7 +2093,7 @@ bool Manager::OpenFileAndAppend ( const wxString &fileName, const wxString &text
 {
 	bool ret ( false );
 	if ( OpenFile ( fileName, wxEmptyString ) ) {
-		LEditor* editor = GetActiveEditor();
+		LEditor* editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 		if ( editor ) {
 			//get the current line number
 			int lineNum = editor->GetLineCount();
@@ -2418,7 +2397,7 @@ void Manager::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li )
 		if ( OpenFile ( token.getFilename(), wxEmptyString ) ) {
 			//do the actual replacement here
 			wxFileName fn ( token.getFilename() );
-			LEditor *editor = GetActiveEditor();
+			LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 
 			// did we managed to open the file correctly?
 			if ( editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() ) {
@@ -2538,11 +2517,6 @@ void Manager::GetDefaultAcceleratorMap ( MenuItemDataMap& accelMap )
 	// resources table
 	wxDir::GetAllFiles ( GetInstallDir() + wxT ( "/plugins/resources/" ), &files, wxT ( "*.accelerators" ), wxDIR_FILES );
 	LoadAcceleratorTable ( files, accelMap );
-}
-
-void Manager::FindAndSelect ( LEditor* editor, wxString& pattern, const wxString& name )
-{
-    editor->FindAndSelect(pattern, name);
 }
 
 void Manager::ReloadWorkspace()
@@ -2671,7 +2645,7 @@ void Manager::DoBuildProject ( const QueueCommand& buildInfo )
 	}
 
 	//save all files before compiling, but dont saved new documents
-	if (!SaveAll(false))
+	if (!Frame::Get()->GetMainBook()->SaveAll(false, false))
 		return;
 
 	//If a debug session is running, stop it.
@@ -2810,7 +2784,7 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 	}
 
 	//save all files before compiling, but dont saved new documents
-	if (!SaveAll(false)) 
+	if (!Frame::Get()->GetMainBook()->SaveAll(false, false)) 
 		return;
 
 	//If a debug session is running, stop it.

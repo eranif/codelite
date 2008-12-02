@@ -348,11 +348,6 @@ int PluginManager::GetToolbarIconSize()
 	return 24;
 }
 
-Notebook* PluginManager::GetMainNotebook()
-{
-	return Frame::Get()->GetMainBook()->GetNotebook();
-}
-
 wxAuiManager* PluginManager::GetDockingManager()
 {
 	return &Frame::Get()->GetDockingManager();
@@ -398,7 +393,7 @@ void PluginManager::AppendOutputMsg(const wxString& msg)
 
 bool PluginManager::SaveAll()
 {
-	return ManagerST::Get()->SaveAll();
+	return Frame::Get()->GetMainBook()->SaveAll(true, false);
 }
 
 wxString PluginManager::GetInstallDirectory() const
@@ -425,7 +420,7 @@ void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name)
 {
 	LEditor *editor = ManagerST::Get()->GetActiveEditor();
 	if (editor) {
-		ManagerST::Get()->FindAndSelect(editor, const_cast<wxString&>(pattern), name);
+		editor->FindAndSelect(pattern, name);
 		editor->SetActive();
 	}
 }
@@ -511,3 +506,12 @@ void PluginManager::ShowErrorTabIfNeeded()
 	}
 }
 
+bool PluginManager::ClosePage(const wxString &text)
+{
+    return Frame::Get()->GetMainBook()->ClosePage(text);
+}
+
+bool PluginManager::AddPage(wxWindowGTK *win, const wxString &text, const wxBitmap &bmp, bool selected)
+{
+    return Frame::Get()->GetMainBook()->AddPage(win, text, bmp, selected);
+}

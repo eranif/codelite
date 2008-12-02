@@ -199,8 +199,7 @@ void ContextCpp::OnDwellStart(wxScintillaEvent &event)
 	VALIDATE_PROJECT(rCtrl);
 
 	//before we start, make sure we are the visible window
-	Manager *mgr = ManagerST::Get();
-	if (mgr->GetActiveEditor() != &rCtrl) {
+	if (Frame::Get()->GetMainBook()->GetActiveEditor() != &rCtrl) {
 		event.Skip();
 		return;
 	}
@@ -912,9 +911,9 @@ void ContextCpp::DoGotoSymbol(const std::vector<TagEntryPtr> &tags)
 		wxString name = t->GetName();
 
 		if (ManagerST::Get()->OpenFile(	t->GetFile(), wxEmptyString)) {
-			LEditor *editor = ManagerST::Get()->GetActiveEditor();
+			LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 			if (editor) {
-				ManagerST::Get()->FindAndSelect(editor, pattern, name);
+				editor->FindAndSelect(pattern, name);
 			}
 		}
 	} else if (tags.size() > 1) {
@@ -925,9 +924,9 @@ void ContextCpp::DoGotoSymbol(const std::vector<TagEntryPtr> &tags)
 		if (dlg->ShowModal() == wxID_OK) {
 			if (ManagerST::Get()->OpenFile(dlg->GetFile(), wxEmptyString)) {
 				wxString pattern = dlg->GetPattern();
-				LEditor *editor = ManagerST::Get()->GetActiveEditor();
+				LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 				if (editor) {
-					ManagerST::Get()->FindAndSelect(editor, pattern, t->GetName());
+					editor->FindAndSelect(pattern, t->GetName());
 				}
 			}
 		}

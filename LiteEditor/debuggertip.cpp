@@ -77,8 +77,7 @@ void DebuggerTip::Initialize(const wxString &expression, TreeNode<wxString, Node
 	topSizer->Fit(this);
 	
 	//set the tip window at the caret place
-	Manager *mgr = ManagerST::Get();
-	LEditor *editor = mgr->GetActiveEditor();
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	if(editor){
 		wxPoint pt = editor->PointFromPosition(pos);
 		//pt is in wxScintilla coordinates, need to convert them into

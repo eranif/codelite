@@ -135,7 +135,7 @@ void NavBar::OnFunction(wxCommandEvent& e)
         
     wxString pattern = m_tags[sel]->GetPattern();
     wxString name = m_tags[sel]->GetName();
-    ManagerST::Get()->FindAndSelect(editor, pattern, name);
+    editor->FindAndSelect(pattern, name);
     editor->SetActive();
 }
 

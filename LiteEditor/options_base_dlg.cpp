@@ -132,7 +132,7 @@ void OptionsDlg::OnButtonOK(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	SaveChanges();
-	ManagerST::Get()->ApplySettingsChanges();
+	Frame::Get()->GetMainBook()->ApplySettingsChanges();
 	// and close the dialog
 	EndModal(wxID_OK);
 }
@@ -140,7 +140,7 @@ void OptionsDlg::OnButtonOK(wxCommandEvent &event)
 void OptionsDlg::OnButtonApply(wxCommandEvent &event)
 {
 	SaveChanges();
-	ManagerST::Get()->ApplySettingsChanges();
+	Frame::Get()->GetMainBook()->ApplySettingsChanges();
 	wxUnusedVar(event);
 }
 
@@ -229,7 +229,7 @@ void OptionsDlg::SaveChanges()
 	// save the modifications to the disk
 	EditorConfigST::Get()->Save();
 	
-	ManagerST::Get()->ApplySettingsChanges();
+	Frame::Get()->GetMainBook()->ApplySettingsChanges();
 }
 
 wxPanel* OptionsDlg::CreateBookmarksPage()

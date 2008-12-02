@@ -382,8 +382,8 @@ void UnitTestPP::OnProcessTerminated(wxProcessEvent& e)
 		return;
 	}
 
-	UnitTestsPage *page = new UnitTestsPage(m_mgr->GetMainNotebook(), summary, m_mgr);
-	m_mgr->GetMainNotebook()->AddPage(page, wxString::Format(wxT("UnitTest++ Report <%d>"), counter), wxNullBitmap, true);
+	UnitTestsPage *page = new UnitTestsPage(m_mgr->GetDockingManager()->GetManagedWindow(), summary, m_mgr);
+	m_mgr->AddPage(page, wxString::Format(wxT("UnitTest++ Report <%d>"), counter), wxNullBitmap, true);
 	counter++;
 
 	wxString msg;

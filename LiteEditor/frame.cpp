@@ -2923,7 +2923,7 @@ void Frame::OnParsingThreadDone(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	SetStatusMessage(wxEmptyString, 0, XRCID("retag_file"));
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {
 		editor->UpdateColours();
 	}
@@ -3121,7 +3121,7 @@ void Frame::SetFrameTitle(LEditor* editor)
 		title << wxT("*");
 	}
 
-	LEditor *activeEditor = ManagerST::Get()->GetActiveEditor();
+	LEditor *activeEditor = GetMainBook()->GetActiveEditor();
 	if (editor && activeEditor == editor) {
 		title << editor->GetFileName().GetFullName() << wxT(" ");
 		// by default display the full path as well

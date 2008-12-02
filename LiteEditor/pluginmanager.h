@@ -76,7 +76,7 @@ public:
 	virtual TreeItemInfo GetSelectedTreeItemInfo(TreeType type);
 	virtual wxTreeCtrl *GetTree(TreeType type);
 	virtual Notebook *GetOutputPaneNotebook();
-        virtual Notebook *GetWorkspacePaneNotebook();
+    virtual Notebook *GetWorkspacePaneNotebook();
 	virtual bool OpenFile(const wxString &fileName, const wxString &projectName = wxEmptyString, int lineno = wxNOT_FOUND);
 	virtual wxString GetStartupDirectory() const;
 	virtual void AddProject(const wxString & path);
@@ -86,7 +86,6 @@ public:
 	virtual bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths);
 	virtual bool AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths);
 	virtual int GetToolbarIconSize();
-	virtual Notebook *GetMainNotebook();
 	virtual wxAuiManager* GetDockingManager();
 	virtual EnvironmentConfig* GetEnv();
 	virtual JobQueue *GetJobQueue();
@@ -111,7 +110,9 @@ public:
 	virtual BuildSettingsConfig *GetBuildSettingsConfigManager();
 	virtual void AppendErrorTabMsg(const wxString &msg, bool clean);
 	virtual void ShowErrorTabIfNeeded();
-	
+    virtual bool ClosePage(const wxString &text);
+    virtual bool AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
+
 	//------------------------------------
 	//End of IManager interface
 	//------------------------------------

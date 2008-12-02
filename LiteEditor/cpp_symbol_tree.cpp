@@ -29,6 +29,7 @@
 
 #include "cpp_symbol_tree.h"
 #include "manager.h"
+#include "frame.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/imaglist.h>
 
@@ -153,7 +154,7 @@ bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent &event, bool noti
 	// Open the file and set the cursor to line number
 	if(ManagerST::Get()->OpenFile(filename, project, wxNOT_FOUND)) {
 		// get the editor, and search for the pattern in the file
-		LEditor *editor = ManagerST::Get()->GetActiveEditor();
+		LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 		if (editor) {
 			FindAndSelect(editor, pattern, GetItemText(item));
 		}
@@ -225,5 +226,5 @@ wxTreeItemId CppSymbolTree::TryGetPrevItem(wxTreeItemId item)
 
 void CppSymbolTree::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& name)
 {
-	ManagerST::Get()->FindAndSelect(editor, pattern, name);
+	editor->FindAndSelect(pattern, name);
 }

@@ -57,8 +57,6 @@ public:
 	MainBook(wxWindow *parent);
 	~MainBook();
     
-	Notebook *GetNotebook() {return m_book;}
-	
 	void ShowQuickBar (bool s = true)       { m_quickFindBar->DoShow(s); }
 	void ShowNavBar   (bool s = true);
 	void UpdateNavBar (LEditor *editor);

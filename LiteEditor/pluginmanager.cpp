@@ -511,7 +511,7 @@ bool PluginManager::ClosePage(const wxString &text)
     return Frame::Get()->GetMainBook()->ClosePage(text);
 }
 
-bool PluginManager::AddPage(wxWindowGTK *win, const wxString &text, const wxBitmap &bmp, bool selected)
+bool PluginManager::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp, bool selected)
 {
     return Frame::Get()->GetMainBook()->AddPage(win, text, bmp, selected);
 }

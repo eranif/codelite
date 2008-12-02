@@ -20,5 +20,6 @@
     <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#408080" BgColour="#000000" Size="9"/>
     <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="#000000" Size="9"/>
     <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="#000000" Size="9"/>
+    <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
   </Properties>
 </Lexer>

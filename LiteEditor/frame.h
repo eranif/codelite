@@ -113,11 +113,11 @@ public:
 
 	/**
 	 * @brief set the 'hide output pane' flag. If set to true, upon shell command termination,
-	 * codelite will auto-hide the output pane 
-	 * @param hideOutputPane 
+	 * codelite will auto-hide the output pane
+	 * @param hideOutputPane
 	 */
 	void SetHideOutputPane(const bool& hideOutputPane) {this->m_hideOutputPane = hideOutputPane;}
-	
+
 	/**
 	 * @brief return true if the word under the caret should be highlighted
 	 * @return
@@ -244,9 +244,9 @@ public:
 
     /**
      * @brief set a status message
-     */ 
+     */
     void SetStatusMessage(const wxString &msg, int col, int id = wxID_ANY);
-    
+
 private:
 	// make our frame's constructor private
 	Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLIP_CHILDREN);
@@ -434,7 +434,7 @@ protected:
 	void OnShowWhitespace(wxCommandEvent &e);
 	void OnShowFullScreen(wxCommandEvent &e);
 	void OnSetStatusMessage(wxCommandEvent &e);
-	
+
 public:
 	void AddCppMenu();
 	void RemoveCppMenu();

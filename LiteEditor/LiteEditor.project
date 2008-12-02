@@ -78,8 +78,6 @@
       <File Name="envvar_dlg.h"/>
       <File Name="envvar_table.cpp"/>
       <File Name="envvar_table.h"/>
-      <File Name="options_base_dlg.cpp"/>
-      <File Name="options_base_dlg.h"/>
       <File Name="findreplacedlg.h"/>
       <File Name="findreplacedlg.cpp"/>
       <File Name="findinfilesdlg.h"/>
@@ -100,6 +98,80 @@
       <File Name="editorsettingsgeneralpagebase.h"/>
       <File Name="editorsettingsgeneralpage.h"/>
       <File Name="editorsettingsgeneralpage.cpp"/>
+      <VirtualDirectory Name="EditorOptionsDlg">
+        <File Name="options_base_dlg2.cpp"/>
+        <File Name="options_base_dlg2.h"/>
+        <File Name="options_dlg2.cpp"/>
+        <File Name="options_dlg2.h"/>
+        <File Name="treebooknodebase.cpp"/>
+        <File Name="treebooknodebase.h"/>
+        <VirtualDirectory Name="General">
+          <VirtualDirectory Name="Guides">
+            <File Name="editor_options_general_guides_panel.cpp"/>
+            <File Name="editor_options_general_guides_panel.h"/>
+            <File Name="editoroptionsgeneralguidespanelbase.cpp"/>
+            <File Name="editoroptionsgeneralguidespanelbase.h"/>
+          </VirtualDirectory>
+          <VirtualDirectory Name="Indentation">
+            <File Name="editoroptionsgeneralindentationpanel.cpp"/>
+            <File Name="editoroptionsgeneralindentationpanel.h"/>
+            <File Name="editoroptionsgeneralindetationpanelbase.cpp"/>
+            <File Name="editoroptionsgeneralindetationpanelbase.h"/>
+          </VirtualDirectory>
+          <VirtualDirectory Name="Right Margin">
+            <File Name="editoroptionsgeneralrightmarginpanel.cpp"/>
+            <File Name="editoroptionsgeneralrightmarginpanel.h"/>
+            <File Name="editoroptionsgeneralrightmarginpanelbase.cpp"/>
+            <File Name="editoroptionsgeneralrightmarginpanelbase.h"/>
+          </VirtualDirectory>
+          <VirtualDirectory Name="Save Options">
+            <File Name="editoroptionsgeneralsavepanel.cpp"/>
+            <File Name="editoroptionsgeneralsavepanel.h"/>
+            <File Name="editoroptionsgeneralsavepanelbase.cpp"/>
+            <File Name="editoroptionsgeneralsavepanelbase.h"/>
+          </VirtualDirectory>
+          <VirtualDirectory Name="Code Navigation">
+            <File Name="editoroptionsgeneralcodenavpanelbase.cpp"/>
+            <File Name="editoroptionsgeneralcodenavpanelbase.h"/>
+            <File Name="editoroptionsgeneralcodenavpanel.cpp"/>
+            <File Name="editoroptionsgeneralcodenavpanel.h"/>
+          </VirtualDirectory>
+        </VirtualDirectory>
+        <VirtualDirectory Name="Comments">
+          <File Name="editorsettingscomments.cpp"/>
+          <File Name="editorsettingscomments.h"/>
+          <File Name="editorsettingscommentsbase.cpp"/>
+          <File Name="editorsettingscommentsbase.h"/>
+          <File Name="editorsettingscommentsdoxygenpanel.cpp"/>
+          <File Name="editorsettingscommentsdoxygenpanel.h"/>
+          <File Name="editorsettingscommentsdoxygenpanelbase.cpp"/>
+          <File Name="editorsettingscommentsdoxygenpanelbase.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="Bookmarks">
+          <File Name="editorsettingsbookmarksbasepanel.cpp"/>
+          <File Name="editorsettingsbookmarksbasepanel.h"/>
+          <File Name="editorsettingsbookmarkspanel.h"/>
+          <File Name="editorsettingsbookmarkspanel.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="Folding">
+          <File Name="editorsettingsfolding.cpp"/>
+          <File Name="editorsettingsfolding.h"/>
+          <File Name="editorsettingsfoldingbase.cpp"/>
+          <File Name="editorsettingsfoldingbase.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="Dialogs">
+          <File Name="editorsettingsdialogs.cpp"/>
+          <File Name="editorsettingsdialogs.h"/>
+          <File Name="editorsettingsdialogsbase.cpp"/>
+          <File Name="editorsettingsdialogsbase.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="Misc">
+          <File Name="editorsettingsmiscbasepanel.cpp"/>
+          <File Name="editorsettingsmiscbasepanel.h"/>
+          <File Name="editorsettingsmiscpanel.cpp"/>
+          <File Name="editorsettingsmiscpanel.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>
@@ -399,9 +471,61 @@
   <VirtualDirectory Name="formbuilder">
     <File Name="quickfindbarbase.fbp"/>
     <File Name="newversionbasedlg.fbp"/>
-    <File Name="editorsettingsgeneralpagebase.fbp"/>
     <File Name="tagsmanagementbasedlg.fbp"/>
+    <File Name="optionsdialogbase2.fbp"/>
+    <File Name="editoroptionsgeneralguidespanelbase.fbp"/>
+    <File Name="editoroptionsgeneralindetationpanelbase.fbp"/>
+    <File Name="editoroptionsgeneralrightmarginpanelbase.fbp"/>
+    <File Name="editoroptionsgeneralsavepanelbase.fbp"/>
+    <File Name="editoroptionsgeneralcodenavpanelbase.fbp"/>
+    <File Name="editorsettingsfolding.fbp"/>
+    <File Name="editorsettingscomments.fbp"/>
+    <File Name="editorsettingscommentsdoxygenbase.fbp"/>
+    <File Name="editorsettingsfoldingbase.fbp"/>
+    <File Name="editorsettingsbookmarks.fbp"/>
+    <File Name="editorsettingsdialogsbase.fbp"/>
+    <File Name="editorsettingsgeneralpagebase.fbp"/>
+    <File Name="editorsettingsmiscbasepanel.fbp"/>
   </VirtualDirectory>
+  <Dependencies Name="UnixCodeLite">
+    <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Subversion"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="SymbolView"/>
+    <Project Name="abbreviation"/>
+    <Project Name="snipwiz"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="ContinuousBuild"/>
+  </Dependencies>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Subversion"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="SymbolView"/>
+    <Project Name="ContinuousBuild"/>
+  </Dependencies>
   <Settings Type="Executable">
     <Configuration Name="Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="../Runtime/CodeLiteUR" IntermediateDirectory="./ReleaseUnicode" Command="./CodeLiteUR" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
@@ -581,45 +705,6 @@ resources.cpp: resources.xrc
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="UnixCodeLite">
-    <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="Subversion"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="SymbolView"/>
-    <Project Name="abbreviation"/>
-    <Project Name="snipwiz"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="ContinuousBuild"/>
-  </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="CodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="Subversion"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="SymbolView"/>
-    <Project Name="ContinuousBuild"/>
-  </Dependencies>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
     <Project Name="wxscintilla"/>

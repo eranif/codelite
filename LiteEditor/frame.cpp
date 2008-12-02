@@ -76,7 +76,6 @@
 #include "project.h"
 #include "fileview.h"
 #include "wx/aui/framemanager.h"
-#include "options_base_dlg.h"
 #include "configuration_manager_dlg.h"
 #include "filedroptarget.h"
 #include "advanced_settings.h"
@@ -110,6 +109,7 @@
 #include "workspacetab.h"
 #include "fileexplorer.h"
 #include "custom_notebook.h"
+#include "options_dlg2.h"
 
 #ifdef __WXGTK20__
 #include <gtk-2.0/gtk/gtk.h>
@@ -695,7 +695,7 @@ void Frame::CreateGUIControls(void)
 	} else {
 		CreateToolbars24();
 	}
-	
+
 	//load the tab right click menu
 	GetWorkspacePane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("workspace_view_right_click_menu")));
 	GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("debugger_view_right_click_menu")));
@@ -860,7 +860,7 @@ void Frame::CreateToolbars24()
 		tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
-	
+
 	tb->AddTool(XRCID("start_debugger"), wxT("Start / Continue debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_start24")), wxT("Start / Continue debugger"));
 	tb->AddTool(XRCID("stop_debugger"), wxT("Stop debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stop24")), wxT("Stop debugger"));
 	tb->AddTool(XRCID("pause_debugger"), wxT("Pause debugger"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_pause24")), wxT("Pause debugger"));
@@ -872,7 +872,7 @@ void Frame::CreateToolbars24()
 	tb->AddTool(XRCID("dbg_next"), wxT("Next"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_next24")), wxT("Next"));
 	tb->AddTool(XRCID("dbg_stepout"), wxT("Step Out"), wxXmlResource::Get()->LoadBitmap(wxT("debugger_stepout24")), wxT("Step Out"));
 	tb->Realize();
-	
+
 	if (PluginManager::Get()->AllowToolbar()) {
 		info = wxAuiPaneInfo();
 		m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(wxT("Debug")).ToolbarPane().Top().Row(1));
@@ -1008,7 +1008,7 @@ void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
 void Frame::DispatchCommandEvent(wxCommandEvent &event)
 {
 	LEditor* editor = GetMainBook()->GetActiveEditor();
-	if ( !editor ) 
+	if ( !editor )
 		return;
 
 	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
@@ -1023,7 +1023,7 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 {
 	LEditor* editor = GetMainBook()->GetActiveEditor();
-	if ( !editor ) 
+	if ( !editor )
 		return;
 
 	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
@@ -1096,7 +1096,7 @@ void Frame::OnClose(wxCloseEvent& event)
     GetMainBook()->SaveSession(session);
     SessionManager::Get().Save(sessionName, session);
     SessionManager::Get().SetLastWorkspaceName(sessionName);
-   
+
 	// make sure there are no 'unsaved documents'
 	GetMainBook()->CloseAll();
 
@@ -1423,7 +1423,7 @@ void Frame::OnFindInFiles(wxCommandEvent &event)
 			m_findInFilesDlg->GetData().SetFindString(selText);
  		}
     }
-    
+
 	m_findInFilesDlg->Show();
 }
 
@@ -1592,7 +1592,7 @@ void Frame::ViewPaneUI(const wxString &paneName, wxUpdateUIEvent &event)
 
 void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 {
-	OptionsDlg *dlg = new OptionsDlg(this);
+	OptionsDlg2 *dlg = new OptionsDlg2(this);
 	dlg->ShowModal();
 	dlg->Destroy();
 }
@@ -2012,10 +2012,10 @@ void Frame::OnTimer(wxTimerEvent &event)
 				}
 			}
 		}
-		
+
 		// enable/disable plugins toolbar functionality
 		PluginManager::Get()->EnableToolbars();
-		
+
 		//send initialization end event
 		SendCmdEvent(wxEVT_INIT_DONE);
 	}

@@ -1,9 +1,16 @@
 #include "filechecklist.h"
+#include "windowattrmanager.h"
 
 FileCheckList::FileCheckList(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size)
     : FileCheckListBase( parent, id, title, pos, size )
     , m_baseDir(wxGetCwd())
 {
+	WindowAttrManager::Load(this, wxT("FileCheckListAttr"), NULL);
+}
+
+FileCheckList::~FileCheckList()
+{
+	WindowAttrManager::Save(this, wxT("FileCheckListAttr"), NULL);
 }
 
 void FileCheckList::OnCheckAll( wxCommandEvent& event )
@@ -68,4 +75,3 @@ void FileCheckList::SetFiles(const std::vector<std::pair<wxFileName, bool> > &fi
         ShowFilePath(0);
     }
 }
-

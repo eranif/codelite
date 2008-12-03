@@ -29,7 +29,8 @@ public:
 	/** Constructor */
 	FileCheckList( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, 
                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
-    
+    ~FileCheckList();
+	
     void SetCancellable(bool can) { m_cancelButton->Show(can); }
     void SetCaption(const wxString &caption);
     void SetBaseDir(const wxFileName &dir);

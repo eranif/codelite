@@ -392,12 +392,13 @@ bool MainBook::UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, 
 {
     if (files.empty())
         return true;
-    FileCheckList *dlg = new FileCheckList(this, wxID_ANY, title);
-    dlg->SetCaption(caption);
-    dlg->SetFiles(files);
-    dlg->SetCancellable(cancellable);
-    bool res = dlg->ShowModal() == wxID_OK;
-    files = dlg->GetFiles();
+		
+    FileCheckList dlg(this, wxID_ANY, title);
+    dlg.SetCaption(caption);
+    dlg.SetFiles(files);
+    dlg.SetCancellable(cancellable);
+    bool res = dlg.ShowModal() == wxID_OK;
+    files = dlg.GetFiles();
     return res;
 }
 

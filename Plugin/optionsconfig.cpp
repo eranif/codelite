@@ -53,6 +53,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         , m_edgeColour(wxColour(wxT("LIGHT GREY")))
 		, m_highlightMatchedBraces(true)
 		, m_autoAddMatchedBraces(false)
+		, m_foldBgColour(wxColour(240, 206, 167))
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
@@ -83,6 +84,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         m_edgeColour = XmlUtils::ReadString(node, wxT("EdgeColour"), m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
 		m_highlightMatchedBraces = XmlUtils::ReadBool(node, wxT("HighlightMatchedBraces"), m_highlightMatchedBraces);
 		m_autoAddMatchedBraces = XmlUtils::ReadBool(node, wxT("AutoAddMatchedBraces"), m_autoAddMatchedBraces);
+		m_foldBgColour = XmlUtils::ReadString(node, wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
 	}
 }
 
@@ -110,15 +112,16 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("FoldPreprocessor"), BoolToString(m_foldPreprocessor));
 	n->AddProperty(wxT("HighlightMatchedBraces"), BoolToString(m_highlightMatchedBraces));
 	n->AddProperty(wxT("AutoAddMatchedBraces"), BoolToString(m_autoAddMatchedBraces));
+	n->AddProperty(wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
 
 	wxString tmp;
     tmp << m_indentWidth;
     n->AddProperty(wxT("IndentWidth"), tmp);
-    
+
     tmp.clear();
     tmp << m_tabWidth;
     n->AddProperty(wxT("TabWidth"), tmp);
-    
+
     tmp.clear();
 	tmp << m_iconsSize;
 	n->AddProperty(wxT("ToolbarIconSize"), tmp);

@@ -308,10 +308,9 @@ void LEditor::SetProperties()
 		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 
 	} else if ( options->GetFoldStyle() == wxT("Arrows with Background Colour") ) {
-//		wxColour tmp_bgcol(204, 152, 102);
-		wxColour tmp_bgcol(wxT("LIGHT BLUE"));
-		wxColour bgcol = DrawingUtils::LightColour(tmp_bgcol, 90);
-		
+
+		wxColour bgcol = options->GetFoldBgColour();
+
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_ARROWDOWN_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
 		DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_ARROW_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
 		DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_FULLRECT, wxColor(0xff, 0xff, 0xff), bgcol);
@@ -494,7 +493,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		InsertText(pos, matchChar);
 		if (matchChar != '}') {
 			SetIndicatorCurrent(MATCH_INDICATOR);
-			// use grey colour rather than black, otherwise this indicator is invisible when using the 
+			// use grey colour rather than black, otherwise this indicator is invisible when using the
 			// black theme
 			IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
 			IndicatorFillRange(pos, 1);
@@ -567,13 +566,13 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	//update line number
 	wxString message;
 	message << wxT("Ln ") << curLine+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
-	
+
 	// Always update the status bar with event, calling it directly causes performance degredation
 	DoSetStatusMessage(message, 2);
-	
+
 	SetIndicatorCurrent(MATCH_INDICATOR);
 	IndicatorClearRange(0, pos);
-	
+
 	int end = PositionFromLine(curLine+1);
 	if (end >= pos && end < GetTextLength()) {
 		IndicatorClearRange(end, GetTextLength()-end);

@@ -17,25 +17,106 @@
 using namespace Scintilla;
 #endif
 
-long darkColour(long color, int percent)
+//////////////////////////////////////////////////
+// Colour methods to convert HSL <-> RGB
+//////////////////////////////////////////////////
+float __min(float x, float y, float z)
 {
-	percent = percent * 10;
-	int rd, gd, bd, high = 0;
-	static ColourDesired end_color(0, 0, 0); // black
-	ColourDesired col(color);
-	
-	rd = end_color.GetRed() - col.GetRed();
-	gd = end_color.GetGreen() - col.GetGreen();
-	bd = end_color.GetBlue() - col.GetBlue();
-	high = 100;
-
-	// We take the percent way of the color from color --> black
-	int i = percent;
-	int r = col.GetRed() +  ((i*rd*100)/high)/100;
-	int g = col.GetGreen() + ((i*gd*100)/high)/100;
-	int b = col.GetBlue() + ((i*bd*100)/high)/100;
-	return ColourDesired(r, g, b).AsLong();
+	float m = x < y ? x : y;
+	m = m < z ? m : z;
+	return m;
 }
+
+float __max(float x, float y, float z)
+{
+	float m = x > y ? x : y;
+	m = m > z ? m : z;
+	return m;
+}
+
+void RGB_2_HSL(float r, float g, float b, float *h, float *s, float *l)
+{
+	float var_R = ( r / 255.0 );                     //RGB from 0 to 255
+	float var_G = ( g / 255.0 );
+	float var_B = ( b / 255.0 );
+
+	float var_Min = __min( var_R, var_G, var_B );    //Min. value of RGB
+	float var_Max = __max( var_R, var_G, var_B );    //Max. value of RGB
+	float del_Max = var_Max - var_Min;             //Delta RGB value
+
+	*l = ( var_Max + var_Min ) / 2.0;
+
+	if ( del_Max == 0 ) {                   //This is a gray, no chroma...
+		*h = 0;                                //HSL results from 0 to 1
+		*s = 0;
+	} else {                                 //Chromatic data...
+		if ( *l < 0.5 ) *s = del_Max / ( var_Max + var_Min );
+		else *s = del_Max / ( 2.0 - var_Max - var_Min );
+
+		float del_R = ( ( ( var_Max - var_R ) / 6.0 ) + ( del_Max / 2.0 ) ) / del_Max;
+		float del_G = ( ( ( var_Max - var_G ) / 6.0 ) + ( del_Max / 2.0 ) ) / del_Max;
+		float del_B = ( ( ( var_Max - var_B ) / 6.0 ) + ( del_Max / 2.0 ) ) / del_Max;
+
+		if      ( var_R == var_Max ) *h = del_B - del_G;
+		else if ( var_G == var_Max ) *h = ( 1.0 / 3.0 ) + del_R - del_B;
+		else if ( var_B == var_Max ) *h = ( 2.0 / 3.0 ) + del_G - del_R;
+
+		if ( *h < 0 ) *h += 1;
+		if ( *h > 1 ) *h -= 1;
+	}
+}
+
+float Hue_2_RGB( float v1, float v2, float vH )             //Function Hue_2_RGB
+{
+	if ( vH < 0 ) vH += 1;
+	if ( vH > 1 ) vH -= 1;
+	if ( ( 6.0 * vH ) < 1 ) return ( v1 + ( v2 - v1 ) * 6.0 * vH );
+	if ( ( 2.0 * vH ) < 1 ) return ( v2 );
+	if ( ( 3.0 * vH ) < 2 ) return ( v1 + ( v2 - v1 ) * ( ( 2.0 / 3.0 ) - vH ) * 6.0 );
+	return ( v1 );
+}
+
+void HSL_2_RGB(float h, float s, float l, float *r, float *g, float *b)
+{
+	if ( s == 0 ) {                     //HSL from 0 to 1
+		*r = l * 255.0;                      //RGB results from 0 to 255
+		*g = l * 255.0;
+		*b = l * 255.0;
+	} else {
+		float var_2;
+		if ( l < 0.5 ) var_2 = l * ( 1.0 + s );
+		else           var_2 = ( l + s ) - ( s * l );
+
+		float var_1 = 2.0 * l - var_2;
+
+		*r = 255.0 * Hue_2_RGB( var_1, var_2, h + ( 1.0 / 3.0 ) );
+		*g = 255.0 * Hue_2_RGB( var_1, var_2, h );
+		*b = 255.0 * Hue_2_RGB( var_1, var_2, h - ( 1.0 / 3.0 ) );
+	}
+}
+
+long darkColour(long color, float level)
+{
+	float r, g, b;
+	ColourDesired col(color);
+
+	// convert the HSL
+	float h, s, l;
+	RGB_2_HSL((float)col.GetRed(), (float)col.GetGreen(), (float)col.GetBlue(), &h, &s, &l);
+
+	// reduce the Lum value
+	l -= (float)((level * 5.0)/100.0);
+	if (l < 0) l = 0.0;
+
+	// convert back from HSL to RGB
+	HSL_2_RGB(h, s, l, &r, &g, &b);
+
+	return ColourDesired((unsigned int)r, (unsigned int)g, (unsigned int)b).AsLong();
+}
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 
 void LineMarker::RefreshColourPalette(Palette &pal, bool want) {
 	pal.WantFind(fore, want);
@@ -128,7 +209,7 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
 		};
 		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
                  		fore.allocated, back.allocated);
-						
+
 	} else if (markType == SC_MARK_ARROW_IN_BOX) {
 		Point pts[] = {
     		Point(centreX - dimOn4, centreY - dimOn2),
@@ -136,7 +217,7 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
     		Point(centreX + dimOn2 - dimOn4, centreY),
 		};
 		surface->FillRectangle(rcWhole, darkColour(back.allocated.AsLong(), foldLevel));
-		
+
 		ColourDesired des;
 		des.Set(0, 0, 0);
 		ColourAllocated alloc(des.AsLong());
@@ -159,9 +240,9 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
     		Point(centreX + dimOn2, centreY - dimOn4),
     		Point(centreX, centreY + dimOn2 - dimOn4),
 		};
-		
+
 		surface->FillRectangle(rcWhole, darkColour(back.allocated.AsLong(), foldLevel+1));
-		
+
 		ColourDesired des;
 		des.Set(0, 0, 0);
 		ColourAllocated alloc(des.AsLong());

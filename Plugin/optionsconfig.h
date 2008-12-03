@@ -59,6 +59,7 @@ class OptionsConfig : public ConfObject
 	wxColour m_edgeColour;
 	bool m_highlightMatchedBraces;
 	bool m_autoAddMatchedBraces;
+	wxColour m_foldBgColour;
 
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -224,6 +225,13 @@ public:
 	}
 	const bool& GetAutoAddMatchedBraces() const {
 		return m_autoAddMatchedBraces;
+	}
+
+	void SetFoldBgColour(const wxColour& foldBgColour) {
+		this->m_foldBgColour = foldBgColour;
+	}
+	const wxColour& GetFoldBgColour() const {
+		return m_foldBgColour;
 	}
 	/**
 	 * Return an XML representation of this object

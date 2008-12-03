@@ -1,28 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : editorsettingsfoldingbase.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
@@ -71,11 +46,29 @@ EditorSettingsFoldingBase::EditorSettingsFoldingBase( wxWindow* parent, wxWindow
 	m_foldStyle->SetSelection( 1 );
 	mainSizer->Add( m_foldStyle, 0, wxALL|wxEXPAND, 5 );
 	
+	wxGridSizer* gSizer1;
+	gSizer1 = new wxGridSizer( 2, 2, 0, 0 );
+	
+	m_staticText21 = new wxStaticText( this, wxID_ANY, _("Folding background base colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText21->Wrap( -1 );
+	gSizer1->Add( m_staticText21, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_colourPicker = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
+	gSizer1->Add( m_colourPicker, 0, wxALL|wxEXPAND, 5 );
+	
+	mainSizer->Add( gSizer1, 0, wxEXPAND, 5 );
+	
 	this->SetSizer( mainSizer );
 	this->Layout();
-	mainSizer->Fit( this );
+	
+	// Connect Events
+	m_staticText21->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldColourUI ), NULL, this );
+	m_colourPicker->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldColourUI ), NULL, this );
 }
 
 EditorSettingsFoldingBase::~EditorSettingsFoldingBase()
 {
+	// Disconnect Events
+	m_staticText21->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldColourUI ), NULL, this );
+	m_colourPicker->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsFoldingBase::OnFoldColourUI ), NULL, this );
 }

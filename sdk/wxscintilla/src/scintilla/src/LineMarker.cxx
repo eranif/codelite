@@ -216,10 +216,12 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
     		Point(centreX - dimOn4, centreY + dimOn2),
     		Point(centreX + dimOn2 - dimOn4, centreY),
 		};
-		long c = darkColour(back.allocated.AsLong(), foldLevel);
+		
 		if(foldLevel == 0){
+			long c = darkColour(back.allocated.AsLong(), foldLevel+1);
 			surface->RoundedRectangle(rcWhole, c, c);
 		} else {
+			long c = darkColour(back.allocated.AsLong(), foldLevel);
 			surface->FillRectangle(rcWhole, c);
 		}
 

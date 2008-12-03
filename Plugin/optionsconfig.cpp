@@ -53,7 +53,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         , m_edgeColour(wxColour(wxT("LIGHT GREY")))
 		, m_highlightMatchedBraces(true)
 		, m_autoAddMatchedBraces(false)
-		, m_foldBgColour(wxColour(240, 206, 167))
+		, m_foldBgColour(wxColour(240, 240, 240))
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));

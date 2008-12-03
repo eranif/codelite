@@ -339,6 +339,10 @@
     <File Name="quickfindbar.cpp"/>
     <File Name="navbar.h"/>
     <File Name="navbar.cpp"/>
+    <File Name="filechecklist.cpp"/>
+    <File Name="filechecklist.h"/>
+    <File Name="filechecklistbase.cpp"/>
+    <File Name="filechecklistbase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

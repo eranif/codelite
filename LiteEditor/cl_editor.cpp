@@ -69,9 +69,10 @@
 #endif
 
 #define NUMBER_MARGIN_ID 	0
-#define SEP_MARGIN_ID 		1
+#define SEP_MARGIN2_ID 		1
 #define SYMBOLS_MARGIN_ID 	2
-#define FOLD_MARGIN_ID 		3
+#define SEP_MARGIN_ID 		3
+#define FOLD_MARGIN_ID 		4
 
 #define USER_INDICATOR 				3
 #define HYPERLINK_INDICATOR 		4
@@ -248,10 +249,13 @@ void LEditor::SetProperties()
 	// Separators
 	SetMarginType(SEP_MARGIN_ID, wxSCI_MARGIN_FORE);
 	SetMarginMask(SEP_MARGIN_ID, 0);
-
+	
+	SetMarginType(SEP_MARGIN2_ID, wxSCI_MARGIN_FORE);
+	SetMarginMask(SEP_MARGIN2_ID, 0);
+	
 	// Fold margin - allow only folder symbols to display
 	SetMarginMask(FOLD_MARGIN_ID, wxSCI_MASK_FOLDERS);
-
+	
 	// Set margins' width
 	SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? 16 : 0);	// Symbol margin
 	// allow everything except for the folding symbols
@@ -262,6 +266,7 @@ void LEditor::SetProperties()
 	SetMarginWidth(NUMBER_MARGIN_ID, options->GetDisplayLineNumbers() ? pixelWidth : 0);
 
 	SetMarginWidth(SEP_MARGIN_ID, 1);	// Symbol margin which acts as separator
+	SetMarginWidth(SEP_MARGIN2_ID, 1);	// Symbol margin which acts as separator
 
 	int ww = options->GetDisplayFoldMargin() ? 16 : 0;
 	SetMarginWidth(FOLD_MARGIN_ID, ww);	// Fold margin

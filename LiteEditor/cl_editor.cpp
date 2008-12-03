@@ -1147,7 +1147,7 @@ void LEditor::BraceMatch(long pos)
 		wxScintilla::BraceHighlight(pos, endPos);
         if (GetIndentationGuides() != 0 && GetIndent() > 0) {
             // Highlight indent guide if exist
-            indentCol  = GetLineIndentation(LineFromPosition(pos));
+            indentCol  = std::min(GetLineIndentation(LineFromPosition(pos)), GetLineIndentation(LineFromPosition(endPos)));
             indentCol /= GetIndent();
             indentCol *= GetIndent(); // round down to nearest indentation guide column
             SetHighlightGuide(GetLineIndentation(LineFromPosition(pos)));

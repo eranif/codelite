@@ -82,14 +82,17 @@ public:
     bool AddPage   (wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
     bool SelectPage(wxWindow *win);
 
+    bool UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, const wxString &title, const wxString &caption,
+                         bool cancellable = true);
+    
 	bool SaveAll(bool askUser, bool includeUntitled);
     
     void ReloadExternallyModified();
 
     bool ClosePage      (const wxString &text) { return ClosePage(FindPage(text)); }
     bool ClosePage      (wxWindow *win);
-	void CloseAllButThis(wxWindow *win);
-	void CloseAll       ();
+	bool CloseAllButThis(wxWindow *win);
+	bool CloseAll       (bool cancellable);
 
 	wxString GetPageTitle(wxWindow *win);
 	void     SetPageTitle(wxWindow *page, const wxString &name);

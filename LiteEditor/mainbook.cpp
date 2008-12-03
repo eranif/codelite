@@ -28,6 +28,7 @@
 #include "manager.h"
 #include "custom_tabcontainer.h"
 #include "close_all_dlg.h"
+#include "filechecklist.h"
 #include "mainbook.h"
 
 MainBook::MainBook(wxWindow *parent)
@@ -171,7 +172,7 @@ void MainBook::OnPageClosed(NotebookEvent &e)
 void MainBook::OnWorkspaceLoaded(wxCommandEvent &e)
 {
 	e.Skip();
-	CloseAll(); // get ready for session to be restored by clearing out existing pages
+	CloseAll(false); // get ready for session to be restored by clearing out existing pages
 }
 
 void MainBook::OnProjectFileAdded(wxCommandEvent &e)
@@ -208,7 +209,7 @@ void MainBook::OnProjectFileRemoved(wxCommandEvent &e)
 void MainBook::OnWorkspaceClosed(wxCommandEvent &e)
 {
 	e.Skip();
-	CloseAll(); // make sure no unsaved files
+	CloseAll(false); // make sure no unsaved files
 }
 
 void MainBook::UpdateNavBar(LEditor *editor)
@@ -386,51 +387,75 @@ bool MainBook::SelectPage(wxWindow *win)
 	return true;
 }
 
+bool MainBook::UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, const wxString &title, 
+                               const wxString &caption, bool cancellable)
+{
+    if (files.empty())
+        return true;
+    FileCheckList *dlg = new FileCheckList(this, wxID_ANY, title);
+    dlg->SetCaption(caption);
+    dlg->SetFiles(files);
+    dlg->SetCancellable(cancellable);
+    bool res = dlg->ShowModal() == wxID_OK;
+    files = dlg->GetFiles();
+    return res;
+}
+
 bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 {
-	bool res = true;
-	for (size_t i = 0; i < m_book->GetPageCount() && res; i++) {
+    std::vector<std::pair<wxFileName, bool> > files;
+	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
 		LEditor* editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
-		if (!editor)
+		if (!editor || !editor->GetModify())
 			continue;
 		if (!includeUntitled && editor->GetFileName().GetFullPath().StartsWith(wxT("Untitled"))) {
 			continue; //don't save new documents that have not been saved to disk yet
 		}
-		res = askUser ? AskUserToSave(editor) : editor->SaveFile();
+        files.push_back(std::make_pair(editor->GetFileName(), true));
 	}
+	bool res = !askUser || UserSelectFiles(files, wxT("Save Modified Files"),
+                                           wxT("Some files are modified.\nChoose the files you would like to save."));
+    if (res) {
+        for (size_t i = 0; i < files.size(); i++) {
+            if (files[i].second) {
+                LEditor *editor = FindEditor(files[i].first.GetFullPath());
+                editor->SaveFile();               
+            }
+        }
+    }
 	return res;
 }
 
 void MainBook::ReloadExternallyModified()
 {
-	std::vector<wxFileName> filesToRetag;
+    std::vector<std::pair<wxFileName, bool> > files;
 	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
 		if (!editor)
 			continue;
 		time_t diskTime = editor->GetFileLastModifiedTime();
 		time_t editTime = editor->GetEditorLastModifiedTime();
-		if (diskTime <= editTime)
-			continue;
-
-		// update time so that we don't keep bugging the user for this file, unless it changes again
-		editor->SetEditorLastModifiedTime(diskTime);
-
-		wxString msg;
-		msg << wxT("The file '") << editor->GetFileName().GetFullName() << wxT("' was modified\n");
-		msg << wxT("outside of the editor, would you like to reload it?");
-		if (wxMessageBox(msg, wxT("Confirm"), wxYES_NO | wxICON_QUESTION) != wxYES)
-			continue;
-
-		editor->ReloadFile();
-		if (!editor->GetProject().IsEmpty()) {
-			filesToRetag.push_back(editor->GetFileName());
-		}
+		if (diskTime > editTime) {
+            files.push_back(std::make_pair(editor->GetFileName(), !editor->GetModify()));
+            // update editor last mod time so that we don't keep bugging the user over the same file,
+            // unless it gets changed again
+            editor->SetEditorLastModifiedTime(diskTime);
+        }
 	}
-	if (filesToRetag.empty() == false) {
-		TagsManagerST::Get()->RetagFiles(filesToRetag);
-		SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&filesToRetag);
-	}
+    UserSelectFiles(files, wxT("Reload Modified Files"),
+                    wxT("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
+    std::vector<wxFileName> filesToRetag;
+    for (size_t i = 0; i < files.size(); i++) {
+        if (files[i].second) {
+            LEditor *editor = FindEditor(files[i].first.GetFullPath());
+            editor->ReloadFile();
+            filesToRetag.push_back(files[i].first);
+        }
+    }
+    if (!filesToRetag.empty()) {
+        TagsManagerST::Get()->RetagFiles(filesToRetag);
+        SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&filesToRetag);
+    }
 }
 
 bool MainBook::ClosePage(wxWindow *page)
@@ -439,41 +464,43 @@ bool MainBook::ClosePage(wxWindow *page)
 	return pos != Notebook::npos && m_book->DeletePage(pos);
 }
 
-void MainBook::CloseAllButThis(wxWindow *page)
+bool MainBook::CloseAllButThis(wxWindow *page)
 {
-	while (m_book->DeletePage(m_book->GetPage(0) == page ? 1 : 0)) {}
+    wxString text;
+    size_t pos = m_book->GetPageIndex(page);
+    if (pos != Notebook::npos) {
+        text = m_book->GetPageText(pos);
+        m_book->RemovePage(pos, false);
+    }
+    bool res = CloseAll(true);
+    if (pos != Notebook::npos) {
+        m_book->AddPage(page, text, wxNullBitmap, true);
+    }
+    return res;
 }
 
-void MainBook::CloseAll()
+bool MainBook::CloseAll(bool cancellable)
 {
-	// determine if we need to ask user how to deal with unsaved files
-	bool modifyDetected = false;
-	for (size_t i=0; i < m_book->GetPageCount() && !modifyDetected; i++) {
-		LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
-		if (editor) {
-			modifyDetected = editor->GetModify();
-		}
+    std::vector<std::pair<wxFileName, bool> > files;
+	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
+		LEditor* editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
+		if (editor && editor->GetModify()) {
+            files.push_back(std::make_pair(editor->GetFileName(), true));
+        }
 	}
-	int retCode = CLOSEALL_DISCARDALL;
-	if (modifyDetected) {
-		CloseAllDialog *dlg = new CloseAllDialog(Frame::Get());
-		retCode = dlg->ShowModal();
-		dlg->Destroy();
-	}
-	switch ( retCode ) {
-	case CLOSEALL_SAVEALL:
-		SaveAll(false, false);
-		break;
-	case CLOSEALL_DISCARDALL:
-		for (size_t i = 0; i < m_book->GetPageCount(); i++) {
-			LEditor* editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
-			if (editor && editor->GetModify()) {
-				editor->SetSavePoint();
-			}
-		}
-		break;
-	}
+    if (!UserSelectFiles(files, wxT("Save Modified Files"),
+                         wxT("Some files are modified.\nChoose the files you would like to save."), cancellable))
+        return false;
+    for (size_t i = 0; i < files.size(); i++) {
+        LEditor *editor = FindEditor(files[i].first.GetFullPath());
+        if (files[i].second) {
+            editor->SaveFile();
+        } else {
+            editor->SetSavePoint();
+        }
+    }
 	m_book->DeleteAllPages(true);
+    return true;
 }
 
 wxString MainBook::GetPageTitle(wxWindow *page)

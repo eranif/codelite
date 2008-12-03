@@ -1098,7 +1098,7 @@ void Frame::OnClose(wxCloseEvent& event)
     SessionManager::Get().SetLastWorkspaceName(sessionName);
 
 	// make sure there are no 'unsaved documents'
-	GetMainBook()->CloseAll();
+	GetMainBook()->CloseAll(false);
 
 	// keep list of all detached panes
 	wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
@@ -2030,14 +2030,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 void Frame::OnFileCloseAll(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-    GetMainBook()->CloseAll();
-
-	//update the title bar
-	wxString title(wxT("CodeLite - Revision: "));
-	title << SvnRevision;
-	SetTitle(title);
-
-	RemoveCppMenu();
+    GetMainBook()->CloseAll(true);
 }
 
 void Frame::OnQuickOutline(wxCommandEvent &event)
@@ -3132,7 +3125,8 @@ void Frame::SetFrameTitle(LEditor* editor)
 		title << wxT("- ");
 	}
 
-	title << wxT("CodeLite");
+	title << wxT("CodeLite - Revision: ");
+    title << SvnRevision;
 	SetTitle(title);
 }
 

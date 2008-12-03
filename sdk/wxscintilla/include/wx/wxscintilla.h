@@ -27,7 +27,7 @@
 
 #ifdef __APPLE__
 #include "Platform.h"
-#endif 
+#endif
 
 #ifdef WXDLLIMPEXP_SCI
 #undef WXDLLIMPEXP_SCI
@@ -118,6 +118,7 @@
 #define wxSCI_MARK_FULLRECT 26
 #define wxSCI_MARK_ARROW_IN_BOX 100
 #define wxSCI_MARK_ARROWDOWN_IN_BOX 101
+#define wxSCI_MARK_FULLRECT_TAIL 102
 #define wxSCI_MARK_CHARACTER 10000
 
 // Markers used for outlining column.
@@ -415,7 +416,7 @@
 #define wxSCI_LEX_MAGIK 87
 #define wxSCI_LEX_POWERSHELL 88
 
-//ERAN 
+//ERAN
 #define wxSCI_LEX_GCC	150
 #define wxSCI_LEX_GCC_DEFAULT 0
 #define wxSCI_LEX_GCC_ERROR	  1
@@ -3348,7 +3349,7 @@ public:
 
     // Returns the current UseAntiAliasing setting.
     bool GetUseAntiAliasing();
-	
+
 	// ERAN IFRAH
 	// Modern indicators
 	void SetIndicatorCurrent(int indicator);
@@ -3360,7 +3361,7 @@ public:
 	int IndicatorEnd(int indicator, int position);
 	void IndicatorSetUnder(int indicator, bool under);
 	// ERAN IFRAH - END
-	
+
 #if wxCHECK_VERSION(2, 5, 0)
     // The following methods are nearly equivallent to their similarly named
     // cousins above.  The difference is that these methods bypass wxString

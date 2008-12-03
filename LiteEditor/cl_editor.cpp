@@ -314,10 +314,10 @@ void LEditor::SetProperties()
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_ARROWDOWN_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
 		DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_ARROW_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
 		DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_FULLRECT, wxColor(0xff, 0xff, 0xff), bgcol);
-		DefineMarker(wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_FULLRECT, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_FULLRECT_TAIL, wxColor(0xff, 0xff, 0xff), bgcol);
 		DefineMarker(wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_ARROW_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_ARROWDOWN_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
-		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_FULLRECT, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_FULLRECT_TAIL, wxColor(0xff, 0xff, 0xff), bgcol);
 
 	} else if ( options->GetFoldStyle() == wxT("Arrows") ) {
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_ARROWDOWN, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
@@ -406,6 +406,7 @@ void LEditor::SetProperties()
 	IndicatorSetForeground(2, col2);
 	IndicatorSetStyle(HYPERLINK_INDICATOR, wxSCI_INDIC_PLAIN);
 	IndicatorSetStyle(MATCH_INDICATOR, wxSCI_INDIC_BOX);
+	IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
 }
 
 void LEditor::OnSavePoint(wxScintillaEvent &event)
@@ -495,7 +496,6 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			SetIndicatorCurrent(MATCH_INDICATOR);
 			// use grey colour rather than black, otherwise this indicator is invisible when using the
 			// black theme
-			IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
 			IndicatorFillRange(pos, 1);
 		} else {
 			BeginUndoAction();

@@ -216,7 +216,12 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
     		Point(centreX - dimOn4, centreY + dimOn2),
     		Point(centreX + dimOn2 - dimOn4, centreY),
 		};
-		surface->FillRectangle(rcWhole, darkColour(back.allocated.AsLong(), foldLevel));
+		long c = darkColour(back.allocated.AsLong(), foldLevel);
+		if(foldLevel == 0){
+			surface->RoundedRectangle(rcWhole, c, c);
+		} else {
+			surface->FillRectangle(rcWhole, c);
+		}
 
 		ColourDesired des;
 		des.Set(0, 0, 0);
@@ -241,11 +246,21 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
     		Point(centreX, centreY + dimOn2 - dimOn4),
 		};
 
-		surface->FillRectangle(rcWhole, darkColour(back.allocated.AsLong(), foldLevel+1));
-
 		ColourDesired des;
 		des.Set(0, 0, 0);
 		ColourAllocated alloc(des.AsLong());
+
+		if(foldLevel > 0){
+			long prev_c = darkColour(back.allocated.AsLong(), foldLevel);
+			PRectangle filler = rcWhole;
+			filler.bottom = filler.top + 2;
+			surface->FillRectangle(filler, prev_c);
+		}
+
+		long c = darkColour(back.allocated.AsLong(), foldLevel+1);
+		rcWhole.bottom += 2;
+		surface->RoundedRectangle(rcWhole, c, c);
+
 		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
                  		back.allocated, alloc);
 
@@ -434,7 +449,23 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
 		PRectangle rcLeft = rcWhole;
 		rcLeft.right = rcLeft.left + 4;
 		surface->FillRectangle(rcLeft, back.allocated);
-	} else { // SC_MARK_FULLRECT
+
+	} else if(markType == SC_MARK_FULLRECT_TAIL){
+		if(foldLevel > 1){
+			long prev_c = darkColour(back.allocated.AsLong(), foldLevel-1);
+			PRectangle filler = rcWhole;
+			filler.top = filler.bottom - 3;
+			surface->FillRectangle(rcWhole, prev_c);
+		}
+
+		long c = darkColour(back.allocated.AsLong(), foldLevel);
+		surface->RoundedRectangle(rcWhole, c, c);
+
+		PRectangle filler = rcWhole;
+		filler.bottom = filler.top + 2;
+		surface->FillRectangle(filler, c);
+
+	} else {// SC_MARK_FULLRECT
 		surface->FillRectangle(rcWhole, darkColour(back.allocated.AsLong(), foldLevel));
 	}
 }

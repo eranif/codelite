@@ -98,7 +98,7 @@ class LEditor : public wxScintilla, public IEditor
     int m_hyperLinkType;
 	bool m_hightlightMatchedBraces;
 	bool m_autoAddMatchedBrace;
-	
+
 public:
 	static FindReplaceData &GetFindReplaceData() {
 		return m_findReplaceData;
@@ -248,7 +248,7 @@ public:
 	bool FindAndSelect();
 	bool FindAndSelect(const FindReplaceData &data);
     bool FindAndSelect(const wxString &pattern, const wxString &name);
-    
+
 	bool Replace();
 	bool Replace(const FindReplaceData &data);
 
@@ -336,9 +336,9 @@ public:
 
     /**
      * return the last modification time (on disk) of editor's underlying file
-     */ 
+     */
     time_t GetFileLastModifiedTime() const;
-    
+
 	/**
 	 * return/set the last modification time that was made by the editor
 	 */
@@ -476,6 +476,9 @@ public:
 	const bool& GetIsVisible() const {
 		return m_isVisible;
 	}
+
+	wxString GetEolString();
+
 private:
 	void DoSetBreakpoint(const BreakpointInfo &bp);
 	void SetProperties();
@@ -486,7 +489,7 @@ private:
 	void BraceMatch(long pos);
 	void DoHighlightWord();
 	void DoSetStatusMessage(const wxString &msg, int col);
-	
+
 	// Conevert FindReplaceDialog flags to wxSD flags
 	size_t SearchFlags(const FindReplaceData &data);
 
@@ -494,7 +497,7 @@ private:
 	void RemoveDebuggerContextMenu(wxMenu *menu);
 	void DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
 	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
-	wxString GetEolString();
+
 
 	DECLARE_EVENT_TABLE()
     void OnSavePoint(wxScintillaEvent &event);

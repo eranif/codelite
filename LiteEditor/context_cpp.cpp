@@ -739,7 +739,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)
 		int line = dlg->GetLine();
 
 		long pos = rCtrl.PositionFromLine(line);
-		rCtrl.InsertText(pos, lineToAdd + wxT("\n"));
+		rCtrl.InsertText(pos, lineToAdd + rCtrl.GetEolString());
 	}
 	dlg->Destroy();
 }
@@ -1779,7 +1779,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 void ContextCpp::OnFileSaved()
 {
     PERF_FUNCTION();
-    
+
 	VariableList var_list;
 	std::map< std::string, Variable > var_map;
 	std::map< wxString, TagEntryPtr> foo_map;
@@ -1810,21 +1810,21 @@ void ContextCpp::OnFileSaved()
 		//---------------------------------------------------------------------
         PERF_BLOCK("Getting Locals")
         {
-            
+
 		const wxCharBuffer patbuf = _C(rCtrl.GetText());
 
 		// collect list of variables
 		get_variables( patbuf.data(), var_list, ignoreTokens, false);
 
         }
-        
+
 		// list all functions of this file
 		std::vector< TagEntryPtr > tags;
 		TagsManagerST::Get()->GetFunctions(tags, rCtrl.GetFileName().GetFullPath());
 
         PERF_BLOCK("Adding Functions")
         {
-            
+
 		VariableList::iterator viter = var_list.begin();
 		for (; viter != var_list.end(); viter++ ) {
 			Variable vv = *viter;
@@ -1847,13 +1847,13 @@ void ContextCpp::OnFileSaved()
 				}
 			}
 		}
-        
+
         }
 	}
 
     PERF_BLOCK("Setting Keywords")
     {
-        
+
 	size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
 	if (cc_flags & CC_COLOUR_WORKSPACE_TAGS) {
 		wxString flatStr;
@@ -1878,7 +1878,7 @@ void ContextCpp::OnFileSaved()
 	} else {
 		rCtrl.SetKeyWords(3, wxEmptyString);
 	}
-    
+
     }
 }
 

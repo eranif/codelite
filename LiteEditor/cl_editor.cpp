@@ -499,11 +499,11 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			IndicatorFillRange(pos, 1);
 		} else {
 			BeginUndoAction();
-			InsertText(pos, wxT('\n'));
+			InsertText(pos, GetEolString());
 			CharRight();
 			m_context->AutoIndent(wxT('}'));
 			SetCurrentPos(pos);
-			InsertText(pos, wxT('\n'));
+			InsertText(pos, GetEolString());
 			CharRight();
 			m_context->AutoIndent(wxT('\n'));
 			EndUndoAction();

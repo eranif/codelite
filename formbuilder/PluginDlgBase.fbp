@@ -2,15 +2,14 @@
 <wxFormBuilder_Project>
     <FileVersion major="1" minor="9" />
     <object class="Project" expanded="1">
-        <property name="bitmaps"></property>
         <property name="class_decoration"></property>
         <property name="code_generation">C++</property>
+        <property name="disconnect_events">1</property>
         <property name="encoding">UTF-8</property>
         <property name="event_generation">connect</property>
         <property name="file">plugindlgbase</property>
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
-        <property name="icons"></property>
         <property name="internationalize">0</property>
         <property name="name">PluginDlgBase</property>
         <property name="namespace"></property>
@@ -21,7 +20,7 @@
         <property name="use_microsoft_bom">0</property>
         <object class="Dialog" expanded="1">
             <property name="bg"></property>
-            <property name="center"></property>
+            <property name="center">wxBOTH</property>
             <property name="context_help"></property>
             <property name="enabled">1</property>
             <property name="extra_style"></property>
@@ -34,7 +33,7 @@
             <property name="name">PluginMgrDlgBase</property>
             <property name="pos"></property>
             <property name="size">672,425</property>
-            <property name="style">wxDEFAULT_DIALOG_STYLE</property>
+            <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
             <property name="subclass"></property>
             <property name="title">Manage Plugins:</property>
             <property name="tooltip"></property>

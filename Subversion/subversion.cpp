@@ -852,11 +852,13 @@ void SubversionPlugin::DoMakeHTML(const wxArrayString &output, const wxString &o
 	content.Replace(wxT("$(BasePath)"), basePath);
 	content.Replace(wxT("$(DateTime)"), wxDateTime::Now().Format());
 
-	//create new report
-    m_mgr->ClosePage(wxT("SVN Status"));
-	wxHtmlWindow *reportPage = new wxHtmlWindow(m_mgr->GetDockingManager()->GetManagedWindow(), wxID_ANY, wxDefaultPosition, wxSize(1, 1));
+	wxHtmlWindow *reportPage = dynamic_cast<wxHtmlWindow*>(m_mgr->FindPage(wxT("SVN Status")));
+    if (reportPage == NULL) {
+        reportPage = new wxHtmlWindow(m_mgr->GetDockingManager()->GetManagedWindow(), wxID_ANY, wxDefaultPosition, wxSize(1, 1));
+        m_mgr->AddPage(reportPage, wxT("SVN Status"));
+    }
 	reportPage->SetPage(content);
-    m_mgr->AddPage(reportPage, wxT("SVN Status"), wxNullBitmap, true);
+    m_mgr->SelectPage(reportPage);
 }
 
 void SubversionPlugin::DoGetPrjSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate)

@@ -680,7 +680,7 @@ void CustomTab::OnRightDown(wxMouseEvent &e)
 {
 	wxTabContainer *parent = (wxTabContainer*)GetParent();
 	if (!GetSelected()) {
-		parent->SetSelection(this);
+		parent->SetSelection(this, true);
 	}
 
 	if (parent->GetRightClickMenu()) {

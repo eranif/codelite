@@ -547,6 +547,10 @@
 		<object class="wxMenuItem" name="copy_file_path">
             <label>Copy Path to Clipboard</label>
         </object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+		<object class="wxMenuItem" name="detach_tab">
+            <label>Detach Tab</label>
+        </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="open_shell_from_filepath">
             <label>Open Shell at File Path</label>

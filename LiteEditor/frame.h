@@ -355,6 +355,8 @@ protected:
 	void OnHighlightWord(wxCommandEvent &event);
 	void OnShowNavBar(wxCommandEvent &e);
 	void OnShowNavBarUI(wxUpdateUIEvent &e);
+    void OnDetachTab(wxCommandEvent &e);
+    void OnDetachTabUI(wxUpdateUIEvent &e);
 	void OnOpenShellFromFilePath(wxCommandEvent &e);
 	void OnQuickDebug(wxCommandEvent &e);
 	void OnQuickDebugUI(wxUpdateUIEvent &e);
@@ -435,11 +437,7 @@ protected:
 	void OnShowFullScreen(wxCommandEvent &e);
 	void OnSetStatusMessage(wxCommandEvent &e);
 
-public:
-	void AddCppMenu();
-	void RemoveCppMenu();
-
-	// Any class wishing to process wxWindows events must use this macro
+// Any class wishing to process wxWindows events must use this macro
 	DECLARE_EVENT_TABLE()
 };
 

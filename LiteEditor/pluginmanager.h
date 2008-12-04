@@ -111,7 +111,9 @@ public:
 	virtual void AppendErrorTabMsg(const wxString &msg, bool clean);
 	virtual void ShowErrorTabIfNeeded();
     virtual bool ClosePage(const wxString &text);
+    virtual wxWindow *FindPage(const wxString &text);
     virtual bool AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
+    virtual bool SelectPage(wxWindow *win);
 
 	//------------------------------------
 	//End of IManager interface

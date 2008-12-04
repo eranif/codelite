@@ -511,7 +511,17 @@ bool PluginManager::ClosePage(const wxString &text)
     return Frame::Get()->GetMainBook()->ClosePage(text);
 }
 
+wxWindow *PluginManager::FindPage(const wxString &text)
+{
+    return Frame::Get()->GetMainBook()->FindPage(text);
+}
+
 bool PluginManager::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp, bool selected)
 {
     return Frame::Get()->GetMainBook()->AddPage(win, text, bmp, selected);
+}
+
+bool PluginManager::SelectPage(wxWindow *win)
+{
+    return Frame::Get()->GetMainBook()->SelectPage(win);
 }

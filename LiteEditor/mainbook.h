@@ -25,6 +25,7 @@
 #ifndef MAINBOOK_H
 #define MAINBOOK_H
 
+#include <set>
 #include <wx/panel.h>
 #include "sessionmanager.h"
 #include "navbar.h"
@@ -37,19 +38,22 @@ private:
 	NavBar       *m_navBar;
 	Notebook     *m_book;
 	QuickFindBar *m_quickFindBar;
+    wxWindow     *m_currentPage;
+    
+    std::set<wxWindow*> m_detachedTabs;
 	
     void CreateGuiControls();
     void ConnectEvents    ();
 
-    void OnMouseDClick       (wxMouseEvent   &e);
-    void OnPageChanging      (NotebookEvent  &e);
-    void OnPageChanged       (NotebookEvent  &e);
-    void OnPageClosing       (NotebookEvent  &e);
-    void OnPageClosed        (NotebookEvent  &e);
-    void OnProjectFileAdded  (wxCommandEvent &e);
-	void OnProjectFileRemoved(wxCommandEvent &e);
-    void OnWorkspaceLoaded   (wxCommandEvent &e);
-    void OnWorkspaceClosed   (wxCommandEvent &e);
+    void OnMouseDClick       (wxMouseEvent      &e);
+    void OnFocus             (wxFocusEvent      &e);
+    void OnPaneClosed        (wxAuiManagerEvent &e);
+    void OnPageClosing       (NotebookEvent     &e);
+    void OnPageClosed        (NotebookEvent     &e);
+    void OnProjectFileAdded  (wxCommandEvent    &e);
+	void OnProjectFileRemoved(wxCommandEvent    &e);
+    void OnWorkspaceLoaded   (wxCommandEvent    &e);
+    void OnWorkspaceClosed   (wxCommandEvent    &e);
     
 	bool AskUserToSave(LEditor *editor);
 	
@@ -66,10 +70,11 @@ public:
     void RestoreSession(SessionEntry &session);
      
     LEditor *GetActiveEditor();
+    void     GetAllEditors  (std::vector<LEditor*> &editors);
 	LEditor *FindEditor     (const wxString &fileName);
     bool     CloseEditor    (const wxString &fileName) { return ClosePage(FindEditor(fileName)); }
     
-    wxWindow *GetCurrentPage();
+    wxWindow *GetCurrentPage() { return m_currentPage; }
     wxWindow *FindPage      (const wxString &text);
     
     LEditor *NewEditor();
@@ -81,6 +86,10 @@ public:
 
     bool AddPage   (wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
     bool SelectPage(wxWindow *win);
+    
+    bool DetachPage(wxWindow *win);
+    bool DockPage  (wxWindow *win);
+    bool IsDetached(wxWindow *win);
 
     bool UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, const wxString &title, const wxString &caption,
                          bool cancellable = true);

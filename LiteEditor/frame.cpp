@@ -167,6 +167,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
 	EVT_MENU(XRCID("copy_file_path"), Frame::OnCopyFilePathOnly)
+    EVT_MENU(XRCID("detach_tab"), Frame::OnDetachTab)
+    EVT_UPDATE_UI(XRCID("detach_tab"), Frame::OnDetachTabUI)
 	EVT_MENU(XRCID("open_shell_from_filepath"), Frame::OnOpenShellFromFilePath)
 	EVT_UPDATE_UI(XRCID("open_shell_from_filepath"), Frame::OnFileExistUpdateUI)
 
@@ -400,6 +402,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE, Frame::OnNewVersionAvailable)
 	EVT_MENU(XRCID("detach_wv_tab"), Frame::OnDetachWorkspaceViewTab)
 	EVT_MENU(XRCID("detach_dv_tab"), Frame::OnDetachDebuggerViewTab)
+    
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE, Frame::OnNewDetachedPane)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
 
@@ -1278,12 +1281,7 @@ void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 void Frame::OnFileClose(wxCommandEvent &event)
 {
 	wxUnusedVar( event );
-    wxWindow *win = GetMainBook()->GetCurrentPage();
-    if (win != NULL) {
-        RemoveCppMenu();
-        GetMainBook()->ClosePage(win);
-        AddCppMenu();
-    }
+    GetMainBook()->ClosePage(GetMainBook()->GetCurrentPage());
 }
 
 void Frame::OnFileSaveAll(wxCommandEvent &event)
@@ -2848,28 +2846,6 @@ void Frame::DoReplaceAll()
 	m_doingReplaceInFiles = true;
 }
 
-void Frame::AddCppMenu()
-{
-    LEditor *editor = GetMainBook()->GetActiveEditor();
-	if (!editor || editor->GetContext()->GetName() != wxT("C++"))
-		return;
-
-	//load the C++ menu and append one to the menu bar
-	if (GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
-		wxMenu *menu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
-		GetMenuBar()->Append(menu, wxT("&C++"));
-	}
-}
-
-void Frame::RemoveCppMenu()
-{
-	int idx = GetMenuBar()->FindMenu(wxT("C++"));
-	if ( idx != wxNOT_FOUND ) {
-		wxMenu *menu = GetMenuBar()->Remove(idx);
-		delete menu;
-	}
-}
-
 void Frame::OnCppContextMenu(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
@@ -2993,8 +2969,7 @@ void Frame::OnNewDetachedPane(wxCommandEvent &e)
 		wxString text = pane->GetName();
 		m_DPmenuMgr->AddMenu(text);
 
-		wxAuiPaneInfo info;
-		m_mgr.AddPane(pane, info.Name(text).Caption(text));
+		m_mgr.AddPane(pane, wxAuiPaneInfo().Name(text).Caption(text));
 		m_mgr.Update();
 	}
 }
@@ -3178,6 +3153,17 @@ void Frame::OnReBuildWorkspace(wxCommandEvent& e)
 void Frame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
 {
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
+}
+
+void Frame::OnDetachTab(wxCommandEvent &e)
+{
+    wxUnusedVar(e);
+    GetMainBook()->DetachPage(GetMainBook()->GetCurrentPage());
+}
+
+void Frame::OnDetachTabUI(wxUpdateUIEvent &e)
+{
+    e.Enable(!GetMainBook()->IsDetached(GetMainBook()->GetCurrentPage()));
 }
 
 void Frame::OnOpenShellFromFilePath(wxCommandEvent& e)

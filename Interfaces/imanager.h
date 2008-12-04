@@ -324,9 +324,19 @@ public:
     virtual bool ClosePage(const wxString &text) = 0;
 
     /**
+     * @brief return named window in mainbook
+     */ 
+    virtual wxWindow *FindPage(const wxString &text) = 0;
+    
+    /**
      * @brief add a page to the mainbook
      */ 
     virtual bool AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false) = 0;
+    
+    /**
+     * @brief select a window in mainbook
+     */ 
+    virtual bool SelectPage(wxWindow *win) = 0;
 };
 
 

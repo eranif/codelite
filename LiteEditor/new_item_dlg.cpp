@@ -65,7 +65,7 @@ NewItemDlg::NewItemDlg( wxWindow* parent, wxString cwd)
 	m_cwd = cwd;
 	m_fileType->InsertColumn(0, _("File Type"));
 	m_fileType->SetColumnWidth(0, 300);
-	
+
 	// Initialise images map
 	wxImageList *images = new wxImageList(16, 16, true);
 	images->Add(wxXmlResource::Get()->LoadBitmap(_T("page_white_c")));			//0
@@ -74,7 +74,7 @@ NewItemDlg::NewItemDlg( wxWindow* parent, wxString cwd)
 	images->Add(wxXmlResource::Get()->LoadBitmap(_T("page_white_text")));		//3
 
 	m_fileType->AssignImageList( images,  wxIMAGE_LIST_SMALL );
-	
+
 	//-----------------------------------
 	// Populate the list:
 	m_fileTypeValue = FileTypeCpp;
@@ -95,8 +95,9 @@ NewItemDlg::NewItemDlg( wxWindow* parent, wxString cwd)
 	//select the last item
 	m_fileType->SetItemState(row, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 	m_fileType->SetItemState(row, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
-	
-	m_location->SetFocus();
+
+	m_location->SetValue(m_cwd);
+	m_fileName->SetFocus();
 
 	// Attach events
 	ConnectEvents();

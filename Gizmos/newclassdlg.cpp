@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : newclassdlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : newclassdlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "newclassdlg.h"
@@ -49,22 +49,22 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 			m_textCtrlVD->SetValue(path);
 		}
 	}
-	
+
 	//set the class path to be the active project path
 	wxString errMsg;
 	if (m_mgr->GetWorkspace()) {
 		if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
-			
+
 			m_textCtrlGenFilePath->SetValue(item.m_fileName.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-			
+
 		} else {
-			
+
 			wxString projname = m_mgr->GetWorkspace()->GetActiveProjectName();
 			ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projname, errMsg);
 			if (proj) {
 				m_textCtrlGenFilePath->SetValue(proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			}
-			
+
 		}
 	}
 	m_textCtrlFileName->Enable( false );
@@ -101,7 +101,7 @@ void NewClassDlg::OnButtonAdd( wxCommandEvent& event )
 		//add new parent to our class
 		//now set the text to this column
 		long item = AppendListCtrlRow(m_listCtrl1);
-		
+
 		SetColumnText(m_listCtrl1, item, 0, dlg->GetParentName());
 		SetColumnText(m_listCtrl1, item, 1, dlg->GetAccess());
 		m_listCtrl1->Refresh();
@@ -152,7 +152,7 @@ void NewClassDlg::OnButtonOK(wxCommandEvent &e)
 }
 
 /**
- * \brief 
+ * \brief
  */
 bool NewClassDlg::ValidateInput()
 {
@@ -172,12 +172,12 @@ bool NewClassDlg::ValidateInput()
 		wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
 		return false;
 	}
-	
+
 	if(GetClassFile().IsEmpty()){
 		wxMessageBox(_("Empty file name"), wxT("CodeLite"), wxOK|wxICON_WARNING);
 		return false;
 	}
-	
+
 	wxString cpp_file;
 	cpp_file << GetClassPath() << wxFileName::GetPathSeparator() << GetClassFile() << wxT(".cpp");
 	if( wxFileName::FileExists(cpp_file) ) {
@@ -192,7 +192,7 @@ bool NewClassDlg::ValidateInput()
 			return false;
 		}
 	}
-	
+
 	if(GetVirtualDirectoryPath().IsEmpty()){
 		wxMessageBox(_("Please select a virtual directory"), wxT("CodeLite"), wxOK|wxICON_WARNING);
 		return false;
@@ -229,14 +229,15 @@ void NewClassDlg::OnCheckEnterFileNameManually(wxCommandEvent &e)
 {
 	if(e.IsChecked()) {
 		m_textCtrlFileName->Enable(true);
-		m_textCtrlFileName->Clear();
+		m_textCtrlFileName->SetFocus();
+		m_textCtrlFileName->SelectAll();
+
 	} else {
 		wxString file_name( m_textClassName->GetValue() );
 		file_name.MakeLower();
 		m_textCtrlFileName->SetValue( file_name );
 		m_textCtrlFileName->Enable(false);
 	}
-	e.Skip();
 }
 
 void NewClassDlg::OnTextEnter(wxCommandEvent &e)

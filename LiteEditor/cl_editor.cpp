@@ -68,11 +68,11 @@
 #define EVT_SCI_CALLTIP_CLICK(id, fn)          DECLARE_EVENT_TABLE_ENTRY (wxEVT_SCI_CALLTIP_CLICK,          id, wxID_ANY, (wxObjectEventFunction) (wxEventFunction)  wxStaticCastEvent( wxScintillaEventFunction, & fn ), (wxObject *) NULL),
 #endif
 
-#define NUMBER_MARGIN_ID 	0
-#define SEP_MARGIN2_ID 		1
-#define SYMBOLS_MARGIN_ID 	2
-#define SEP_MARGIN_ID 		3
-#define FOLD_MARGIN_ID 		4
+#define NUMBER_MARGIN_ID 		0
+#define NUMBER_MARGIN_SEP_ID 	1
+#define SYMBOLS_MARGIN_ID 		2
+#define SYMBOLS_MARGIN_SEP_ID 	3
+#define FOLD_MARGIN_ID 			4
 
 #define USER_INDICATOR 				3
 #define HYPERLINK_INDICATOR 		4
@@ -247,30 +247,36 @@ void LEditor::SetProperties()
 	SetMarginMask(NUMBER_MARGIN_ID, ~(mt_breakpoints | mt_folds | mt_bookmarks | wxSCI_MASK_FOLDERS));
 
 	// Separators
-	SetMarginType(SEP_MARGIN_ID, wxSCI_MARGIN_FORE);
-	SetMarginMask(SEP_MARGIN_ID, 0);
-	
-	SetMarginType(SEP_MARGIN2_ID, wxSCI_MARGIN_FORE);
-	SetMarginMask(SEP_MARGIN2_ID, 0);
-	
+	SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSCI_MARGIN_FORE);
+	SetMarginMask(SYMBOLS_MARGIN_SEP_ID, 0);
+
+	SetMarginType(NUMBER_MARGIN_SEP_ID, wxSCI_MARGIN_FORE);
+	SetMarginMask(NUMBER_MARGIN_SEP_ID, 0);
+
 	// Fold margin - allow only folder symbols to display
 	SetMarginMask(FOLD_MARGIN_ID, wxSCI_MASK_FOLDERS);
-	
+
 	// Set margins' width
 	SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? 16 : 0);	// Symbol margin
+	// If the symbols margin is hidden, hide its related separator margin
+	// as well
+	SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, options->GetDisplayBookmarkMargin() ? 1 : 0);	// Symbol margin which acts as separator
+
 	// allow everything except for the folding symbols
 	SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSCI_MASK_FOLDERS));
 
 	// Line number margin
 	int pixelWidth = 4 + 5*TextWidth(wxSCI_STYLE_LINENUMBER, wxT("9"));
+
+	// Show number margin according to settings.
 	SetMarginWidth(NUMBER_MARGIN_ID, options->GetDisplayLineNumbers() ? pixelWidth : 0);
 
-	SetMarginWidth(SEP_MARGIN_ID, 1);	// Symbol margin which acts as separator
-	SetMarginWidth(SEP_MARGIN2_ID, 1);	// Symbol margin which acts as separator
+	// If number margin is hidden, hide its related separator margin
+	// as well
+	SetMarginWidth(NUMBER_MARGIN_SEP_ID, options->GetDisplayLineNumbers() ? 1 : 0);	// Symbol margin which acts as separator
 
-	int ww = options->GetDisplayFoldMargin() ? 16 : 0;
-	SetMarginWidth(FOLD_MARGIN_ID, ww);	// Fold margin
-//	StyleSetForeground(wxSCI_STYLE_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+	// Show the fold margin
+	SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? 16 : 0);	// Fold margin
 
 	// Mark fold margin & symbols margins as sensetive
 	SetMarginSensitive(FOLD_MARGIN_ID, true);

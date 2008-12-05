@@ -429,6 +429,7 @@ protected:
 	void OnDetachDebuggerViewTab(wxCommandEvent &e);
 	void OnNewDetachedPane(wxCommandEvent &e);
 	void OnDestroyDetachedPane(wxCommandEvent &e);
+    void OnDockablePaneClosed(wxAuiManagerEvent &e);
 	void OnBatchBuild(wxCommandEvent &e);
 	void OnBatchBuildUI(wxUpdateUIEvent &e);
 	void OnSyntaxHighlight(wxCommandEvent &e);

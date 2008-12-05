@@ -45,36 +45,40 @@ DockablePaneMenuManager::~DockablePaneMenuManager()
 
 void DockablePaneMenuManager::RemoveMenu(const wxString& name)
 {
+    int itemId = wxXmlResource::GetXRCID(name.c_str());
+    std::map<int, wxString>::iterator iter = m_id2nameMap.find(itemId);
+    if (iter != m_id2nameMap.end()) {
+        m_id2nameMap.erase(iter);
+    }
+#if 0
 	int idx = m_mb->FindMenu(wxT("View"));
 	if (idx != wxNOT_FOUND) {
 		wxMenu *menu = m_mb->GetMenu(idx);
-		int itemId = wxXmlResource::GetXRCID(name.c_str());
 		menu->Destroy(itemId);
 
-		std::map<int, wxString>::iterator iter = m_id2nameMap.find(itemId);
-		if (iter != m_id2nameMap.end()) {
-			m_id2nameMap.erase(iter);
-		}
 		wxTheApp->Disconnect(itemId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DockablePaneMenuManager::OnDockpaneMenuItem), NULL, this);
 		wxTheApp->Disconnect(itemId, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DockablePaneMenuManager::OnDockpaneMenuItemUI), NULL, this);
 	}
+#endif
 }
 
 void DockablePaneMenuManager::AddMenu(const wxString& name)
 {
+    int itemId = wxXmlResource::GetXRCID(name.c_str());
+    m_id2nameMap[itemId] = name;
+#if 0
 	int idx = m_mb->FindMenu(wxT("View"));
 	if (idx != wxNOT_FOUND) {
 		wxMenu *menu = m_mb->GetMenu(idx);
 
-		int itemId = wxXmlResource::GetXRCID(name.c_str());
 		wxMenuItem *item = new wxMenuItem(menu, itemId, name, wxEmptyString, wxITEM_CHECK);
 		menu->Append(item);
 		item->Check(true);
-		m_id2nameMap[itemId] = name;
 
 		wxTheApp->Connect(itemId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DockablePaneMenuManager::OnDockpaneMenuItem), NULL, this);
 		wxTheApp->Connect(itemId, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DockablePaneMenuManager::OnDockpaneMenuItemUI), NULL, this);
 	}
+#endif
 }
 
 wxString DockablePaneMenuManager::NameById(int id)

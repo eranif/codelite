@@ -40,7 +40,6 @@ END_EVENT_TABLE()
 
 DockablePane::DockablePane(wxWindow* parent, Notebook* book, wxWindow* child, const wxString& title, const wxBitmap& bmp, wxSize size)
 : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
-, m_tb(NULL)
 , m_child(child)
 , m_book(book)
 , m_text(title)
@@ -49,12 +48,6 @@ DockablePane::DockablePane(wxWindow* parent, Notebook* book, wxWindow* child, co
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	SetSizer(sz);
 	
-    if (book != NULL) {
-        m_tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
-        sz->Add(m_tb, 0, wxEXPAND|wxALL, 2);
-        m_tb->AddTool(XRCID("close_pane"), wxT("Dock at parent notebook"), wxXmlResource::Get()->LoadBitmap(wxT("tab")), wxT("Dock at parent notebook"));
-        m_tb->Realize();
-    }
     Connect(XRCID("close_pane"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( DockablePane::ClosePane ));
     
 	m_child->Reparent(this);

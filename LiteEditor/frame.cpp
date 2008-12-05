@@ -405,6 +405,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
     
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE, Frame::OnNewDetachedPane)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
+    EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
 
 	EVT_MENU(XRCID("batch_build"), Frame::OnBatchBuild)
 	EVT_UPDATE_UI(XRCID("batch_build"), Frame::OnBatchBuildUI)
@@ -749,7 +750,6 @@ void Frame::CreateViewAsSubMenu()
 			submenu->Append(item);
 		}
 		menu->Append(viewAsSubMenuID, wxT("View As"), submenu);
-		menu->AppendSeparator();
 	}
 }
 
@@ -2985,6 +2985,17 @@ void Frame::OnDestroyDetachedPane(wxCommandEvent& e)
 		pane->Destroy();
 		m_mgr.Update();
 	}
+}
+
+void Frame::OnDockablePaneClosed(wxAuiManagerEvent &e)
+{
+    DockablePane *pane = dynamic_cast<DockablePane*>(e.GetPane()->window);
+    if (pane) {
+        wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
+		pane->ProcessEvent(evt);
+    } else {
+        e.Skip();
+    }
 }
 
 void Frame::SetStatusMessage(const wxString &msg, int col, int id)

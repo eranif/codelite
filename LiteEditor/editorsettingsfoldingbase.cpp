@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -40,7 +40,7 @@ EditorSettingsFoldingBase::EditorSettingsFoldingBase( wxWindow* parent, wxWindow
 	m_staticText2->Wrap( -1 );
 	mainSizer->Add( m_staticText2, 0, wxALL, 5 );
 	
-	wxString m_foldStyleChoices[] = { _("Simple"), _("Arrows"), _("Arrows with Background Colour"), _("Flatten Tree Square Headers"), _("Flatten Tree Circular Headers") };
+	wxString m_foldStyleChoices[] = { _("Simple"), _("Arrows"), _("Arrows with Background Colour"), _("Simple with Background Colour"), _("Flatten Tree Square Headers"), _("Flatten Tree Circular Headers") };
 	int m_foldStyleNChoices = sizeof( m_foldStyleChoices ) / sizeof( wxString );
 	m_foldStyle = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_foldStyleNChoices, m_foldStyleChoices, 0 );
 	m_foldStyle->SetSelection( 1 );

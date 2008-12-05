@@ -53,5 +53,5 @@ void EditorSettingsFolding::Save(OptionsConfigPtr options)
 
 void EditorSettingsFolding::OnFoldColourUI(wxUpdateUIEvent& e)
 {
-	e.Enable(m_foldStyle->GetStringSelection() == wxT("Arrows with Background Colour"));
+	e.Enable(m_foldStyle->GetStringSelection() == wxT("Arrows with Background Colour") || m_foldStyle->GetStringSelection() == wxT("Simple with Background Colour"));
 }

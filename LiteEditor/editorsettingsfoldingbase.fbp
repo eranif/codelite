@@ -382,7 +382,7 @@
                     <property name="proportion">0</property>
                     <object class="wxChoice" expanded="1">
                         <property name="bg"></property>
-                        <property name="choices">&quot;Simple&quot; &quot;Arrows&quot; &quot;Arrows with Background Colour&quot; &quot;Flatten Tree Square Headers&quot; &quot;Flatten Tree Circular Headers&quot;</property>
+                        <property name="choices">&quot;Simple&quot; &quot;Arrows&quot; &quot;Arrows with Background Colour&quot; &quot;Simple with Background Colour&quot; &quot;Flatten Tree Square Headers&quot; &quot;Flatten Tree Circular Headers&quot;</property>
                         <property name="context_help"></property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>

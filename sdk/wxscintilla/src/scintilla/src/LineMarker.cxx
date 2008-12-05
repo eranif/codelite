@@ -265,7 +265,66 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
 
 		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
                  		back.allocated, alloc);
+						
+	} else if (markType == SC_MARK_MINUS_IN_BOX) {
+		ColourDesired des;
+		des.Set(0, 0, 0);
+		ColourAllocated alloc(des.AsLong());
 
+		if(foldLevel > 0){
+			long prev_c = darkColour(back.allocated.AsLong(), foldLevel);
+			PRectangle filler = rcWhole;
+			filler.bottom = filler.top + 2;
+			surface->FillRectangle(filler, prev_c);
+		}
+
+		long c = darkColour(back.allocated.AsLong(), foldLevel+1);
+		rcWhole.bottom += 2;
+		surface->RoundedRectangle(rcWhole, c, c);
+
+		Point pts[] = {
+    		Point(centreX - armSize, centreY - 1),
+    		Point(centreX + armSize, centreY -1),
+    		Point(centreX + armSize, centreY +1),
+    		Point(centreX - armSize, centreY + 1),
+		};
+		
+		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
+                 		fore.allocated, alloc);
+	
+	} else if (markType == SC_MARK_PLUS_IN_BOX) {
+		ColourDesired des;
+		des.Set(0, 0, 0);
+		ColourAllocated alloc(des.AsLong());
+
+		if(foldLevel > 0){
+			long prev_c = darkColour(back.allocated.AsLong(), foldLevel);
+			PRectangle filler = rcWhole;
+			filler.bottom = filler.top + 2;
+			surface->FillRectangle(filler, prev_c);
+		}
+
+		long c = darkColour(back.allocated.AsLong(), foldLevel+1);
+		rcWhole.bottom += 2;
+		surface->RoundedRectangle(rcWhole, c, c);
+
+		Point pts[] = {
+    		Point(centreX - armSize, centreY - 1),
+    		Point(centreX - 1, centreY - 1),
+    		Point(centreX - 1, centreY - armSize),
+    		Point(centreX + 1, centreY - armSize),
+    		Point(centreX + 1, centreY - 1),
+    		Point(centreX + armSize, centreY -1),
+    		Point(centreX + armSize, centreY +1),
+    		Point(centreX + 1, centreY + 1),
+    		Point(centreX + 1, centreY + armSize),
+    		Point(centreX - 1, centreY + armSize),
+    		Point(centreX - 1, centreY + 1),
+    		Point(centreX - armSize, centreY + 1),
+		};
+		surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
+                 		fore.allocated, alloc);
+	
 	} else if (markType == SC_MARK_PLUS) {
 		Point pts[] = {
     		Point(centreX - armSize, centreY - 1),

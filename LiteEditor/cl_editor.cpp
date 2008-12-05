@@ -330,6 +330,18 @@ void LEditor::SetProperties()
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_ARROWDOWN_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
 		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_FULLRECT_TAIL, wxColor(0xff, 0xff, 0xff), bgcol);
 
+	} else if ( options->GetFoldStyle() == wxT("Simple with Background Colour") ) {
+
+		wxColour bgcol = options->GetFoldBgColour();
+
+		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_MINUS_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_PLUS_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_FULLRECT, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_FULLRECT_TAIL, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_PLUS_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_MINUS_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
+		DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_FULLRECT_TAIL, wxColor(0xff, 0xff, 0xff), bgcol);
+
 	} else if ( options->GetFoldStyle() == wxT("Arrows") ) {
 		DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_ARROWDOWN, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 		DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_ARROW, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));

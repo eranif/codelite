@@ -148,6 +148,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_IDLE(Frame::OnIdle)
 	EVT_ACTIVATE(Frame::OnAppActivated)
 	EVT_MENU(XRCID("full_screen"), Frame::OnShowFullScreen)
+	EVT_AUI_RENDER(Frame::OnAuiManagerRender)
+	
 	EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY, Frame::OnAddSymbols)
 	EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
@@ -2985,6 +2987,22 @@ void Frame::OnDestroyDetachedPane(wxCommandEvent& e)
 		pane->Destroy();
 		m_mgr.Update();
 	}
+}
+
+void Frame::OnAuiManagerRender(wxAuiManagerEvent &e)
+{
+	wxAuiManager *mgr = e.GetManager();
+	wxAuiPaneInfoArray &panes = mgr->GetAllPanes();
+	
+	wxAcceleratorTable *accelTable = GetAcceleratorTable();
+	if (accelTable != NULL) {
+		for (size_t i = 0; i < panes.GetCount(); i++) {
+			if (panes[i].frame != NULL) {
+				panes[i].frame->SetAcceleratorTable(*accelTable);
+			}
+		}
+	}
+	e.Skip();
 }
 
 void Frame::OnDockablePaneClosed(wxAuiManagerEvent &e)

@@ -415,8 +415,14 @@ protected:
 	void OnViewDisplayEOL_UI(wxUpdateUIEvent &e);
 
 	//Docking windows events
+	void OnAuiManagerRender(wxAuiManagerEvent &e);
+    void OnDockablePaneClosed(wxAuiManagerEvent &e);
 	void OnViewPane(wxCommandEvent &event);
 	void OnViewPaneUI(wxUpdateUIEvent &event);
+	void OnDetachWorkspaceViewTab(wxCommandEvent &e);
+	void OnDetachDebuggerViewTab(wxCommandEvent &e);
+	void OnNewDetachedPane(wxCommandEvent &e);
+	void OnDestroyDetachedPane(wxCommandEvent &e);
 
 	void OnManagePlugins(wxCommandEvent &e);
 	void OnManageTags(wxCommandEvent &e);
@@ -425,11 +431,6 @@ protected:
 	void OnConfigureAccelerators(wxCommandEvent &e);
 	void OnStartPageEvent(wxCommandEvent &e);
 	void OnNewVersionAvailable(wxCommandEvent &e);
-	void OnDetachWorkspaceViewTab(wxCommandEvent &e);
-	void OnDetachDebuggerViewTab(wxCommandEvent &e);
-	void OnNewDetachedPane(wxCommandEvent &e);
-	void OnDestroyDetachedPane(wxCommandEvent &e);
-    void OnDockablePaneClosed(wxAuiManagerEvent &e);
 	void OnBatchBuild(wxCommandEvent &e);
 	void OnBatchBuildUI(wxUpdateUIEvent &e);
 	void OnSyntaxHighlight(wxCommandEvent &e);

@@ -54,7 +54,6 @@ private:
 	void OnProjectFileRemoved(wxCommandEvent    &e);
     void OnWorkspaceLoaded   (wxCommandEvent    &e);
     void OnWorkspaceClosed   (wxCommandEvent    &e);
-    void OnRender			 (wxAuiManagerEvent &e);
 	
 	bool AskUserToSave(LEditor *editor);
 	

@@ -76,7 +76,6 @@ void MainBook::ConnectEvents()
 	wxTheApp->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
 	wxTheApp->Connect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
 	
-	wxTheApp->Connect(wxEVT_AUI_RENDER, wxAuiManagerEventHandler(MainBook::OnRender), NULL, this);
 }
 
 MainBook::~MainBook()
@@ -715,23 +714,4 @@ void MainBook::UpdateBreakpoints()
 	for (size_t i = 0; i < editors.size(); i++) {
 		editors[i]->UpdateBreakpoints();
 	}
-}
-
-void MainBook::OnRender(wxAuiManagerEvent& e)
-{
-	// go over the floating panes and set the accelerator table to them
-	std::set<wxWindow*>::iterator i = m_detachedTabs.begin();
-	for (; i != m_detachedTabs.end(); i++) {
-		wxWindow *win = *i;
-		wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane(win);
-		if (info.IsOk() && info.IsFloating()) {
-			// set the accelerator table
-			wxAuiFloatingFrame *frm = dynamic_cast<wxAuiFloatingFrame*>(win->GetParent());
-			if (frm) {
-				wxAcceleratorTable *acclTable = Frame::Get()->GetAcceleratorTable();
-				((wxFrame*)frm)->SetAcceleratorTable(*acclTable);
-			}
-		}
-	}
-	e.Skip();
 }

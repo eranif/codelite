@@ -149,7 +149,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_ACTIVATE(Frame::OnAppActivated)
 	EVT_MENU(XRCID("full_screen"), Frame::OnShowFullScreen)
 	EVT_AUI_RENDER(Frame::OnAuiManagerRender)
-	
+
 	EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY, Frame::OnAddSymbols)
 	EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
@@ -404,7 +404,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE, Frame::OnNewVersionAvailable)
 	EVT_MENU(XRCID("detach_wv_tab"), Frame::OnDetachWorkspaceViewTab)
 	EVT_MENU(XRCID("detach_dv_tab"), Frame::OnDetachDebuggerViewTab)
-    
+
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE, Frame::OnNewDetachedPane)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
     EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
@@ -2367,9 +2367,18 @@ void Frame::OnDebug(wxCommandEvent &e)
 
 		}
 
-		// if build first is required, palce a build command on the queue
+		// if build first is required, place a build command on the queue
 		if (build_first == wxID_OK) {
 			QueueCommand bldCmd(WorkspaceST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::Build);
+
+			// handle custom builds
+			BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(WorkspaceST::Get()->GetActiveProjectName(), wxEmptyString);
+			if (bldConf->IsCustomBuild())
+			{
+				bldCmd.SetKind(QueueCommand::CustomBuild);
+				bldCmd.SetCustomBuildTarget(wxT("Build"));
+			}
+
 			ManagerST::Get()->PushQueueCommand(bldCmd);
 		}
 
@@ -2993,7 +3002,7 @@ void Frame::OnAuiManagerRender(wxAuiManagerEvent &e)
 {
 	wxAuiManager *mgr = e.GetManager();
 	wxAuiPaneInfoArray &panes = mgr->GetAllPanes();
-	
+
 	wxAcceleratorTable *accelTable = GetAcceleratorTable();
 	if (accelTable != NULL) {
 		for (size_t i = 0; i < panes.GetCount(); i++) {

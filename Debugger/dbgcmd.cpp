@@ -356,27 +356,27 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 	TreeNode<wxString, NodeData> *tree = new TreeNode<wxString, NodeData>(data.name, data);
 
 	if (m_evaluateExpression == Locals) {
-#ifdef __WXMAC__		
+#ifdef __WXMAC__
 		strline.Replace(wxT(" \\n "), wxT(""));
 		strline.Replace(wxT("{\\n "), wxT("{"));
 		strline.Replace(wxT("\\n}"), wxT("}"));
-		
+
 		strline = strline.AfterFirst(wxT('{'));
 		strline = strline.BeforeLast(wxT('}'));
 		if (strline.EndsWith(wxT("}"))) {
-#else			
+#else
 		strline = strline.AfterFirst(wxT('['));
 		strline = strline.BeforeLast(wxT(']'));
 		if (strline.EndsWith(wxT("]"))) {
-#endif			
+#endif
 			strline = strline.RemoveLast();
 		}
 	} else if (m_evaluateExpression == FunctionArguments) {
 #ifdef __WXMAC__
 		if (strline.StartsWith(wxT("^done,stack-args={frame={level=\"0\",args={"), &tmpline)) {
-#else			
+#else
 		if (strline.StartsWith(wxT("^done,stack-args=[frame={level=\"0\",args=["), &tmpline)) {
-#endif			
+#endif
 			strline = tmpline;
 		}
 
@@ -512,7 +512,7 @@ void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent)
 			}
 			// restore the previous buffer
 			gdb_result_pop_buffer();
-			
+
 			if(displayLine.IsEmpty() == false){
 				NodeData data;
 				data.name = displayLine;
@@ -683,8 +683,8 @@ void DbgCmdHandlerLocals::MakeTreeFromFrame(wxString &strline, TreeNode<wxString
 bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line)
 {
 	// We use this handler as a callback to indicate that gdb has connected to the debugger
-	m_observer->UpdateAddLine(line);
-	
+	m_observer->UpdateRemoteTargetConnected(line);
+
 	// continue execution
 	return m_debugger->Continue();
 }

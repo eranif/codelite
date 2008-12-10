@@ -190,24 +190,24 @@ void Manager::OpenFile ( const BrowseRecord &rec )
 
 bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName, int lineno, long position )
 {
-     // TODO: somebody else should deal with this
+	// TODO: somebody else should deal with this
 	wxWindow *returnFocusWin = NULL;
 	wxWindow *focusWin = wxWindow::FindFocus();
 	if ( focusWin == Frame::Get()->GetOutputPane()->GetDebugWindow()->GetInWin() ) {
 		returnFocusWin = focusWin;
 	}
-	
+
 	bool res(false);
-    LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(file_name, projectName, lineno, position);
-	if(editor){
+	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(file_name, projectName, lineno, position);
+	if (editor) {
 		res = true;
 	}
-	
-   	if (returnFocusWin) {
+
+	if (returnFocusWin) {
 		returnFocusWin->SetFocus();
 	}
-    
-    return res;
+
+	return res;
 }
 
 void Manager::UnInitialize()
@@ -216,11 +216,11 @@ void Manager::UnInitialize()
 	DbgStop();
 	JobQueueSingleton::Instance()->Stop();
 	ParseThreadST::Get()->Stop();
- 	SearchThreadST::Get()->Stop();
-   
-    //free all plugins
+	SearchThreadST::Get()->Stop();
+
+	//free all plugins
 	PluginManager::Get()->UnLoad();
-    
+
 	// release singleton objects
 	DebuggerMgr::Free();
 	JobQueueSingleton::Release();
@@ -296,10 +296,10 @@ void Manager::CreateProject ( ProjectData &data )
 			wxCopyFile ( f.GetFullPath(), f.GetFullName() );
 		}
 	}
-    
-    wxString projectName = proj->GetName();
-    RetagProject ( projectName );
-    SendCmdEvent ( wxEVT_PROJ_ADDED, ( void* ) &projectName );
+
+	wxString projectName = proj->GetName();
+	RetagProject ( projectName );
+	SendCmdEvent ( wxEVT_PROJ_ADDED, ( void* ) &projectName );
 }
 
 void Manager::CloseWorkspace()
@@ -312,7 +312,7 @@ void Manager::CloseWorkspace()
 	//save the current session before closing
 	SessionEntry session;
 	session.SetWorkspaceName ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
-    Frame::Get()->GetMainBook()->SaveSession(session);
+	Frame::Get()->GetMainBook()->SaveSession(session);
 	SessionManager::Get().Save ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session );
 
 	// since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
@@ -320,10 +320,10 @@ void Manager::CloseWorkspace()
 	SessionManager::Get().SetLastWorkspaceName ( wxT ( "Default" ) );
 
 	WorkspaceST::Get()->CloseWorkspace();
-    
+
 	//clear the 'build' tab
 	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
-	
+
 	//clear the 'errors' tab
 	Frame::Get()->GetOutputPane()->GetErrorsTab()->Clear();
 
@@ -562,15 +562,15 @@ bool Manager::RemoveFile ( const wxString &fileName, const wxString &vdFullPath 
 	wxFileName absPath ( fileName );
 	absPath.MakeAbsolute ( GetProjectCwd ( project ) );
 
-    Frame::Get()->GetMainBook()->ClosePage(absPath.GetFullPath());
+	Frame::Get()->GetMainBook()->ClosePage(absPath.GetFullPath());
 
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->RemoveFile ( vdFullPath, fileName, errMsg );
 	CHECK_MSGBOX_BOOL ( res );
 
 	RemoveFileFromSymbolTree ( absPath, project );
-    wxArrayString files(1, &fileName);
-    SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&files);
+	wxArrayString files(1, &fileName);
+	SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&files);
 
 	return true;
 }
@@ -688,7 +688,7 @@ void Manager::ShowWorkspacePane ( wxString focusWin, bool commit )
 	}
 
 	// set the selection to focus win
-    Notebook *book = Frame::Get()->GetWorkspacePane()->GetNotebook();
+	Notebook *book = Frame::Get()->GetWorkspacePane()->GetNotebook();
 	int index = book->GetPageIndex ( focusWin );
 	if ( index != wxNOT_FOUND && ( size_t ) index != book->GetSelection() ) {
 		book->SetSelection ( ( size_t ) index );
@@ -727,7 +727,7 @@ BuildMatrixPtr Manager::GetWorkspaceBuildMatrix() const
 void Manager::SetWorkspaceBuildMatrix ( BuildMatrixPtr matrix )
 {
 	WorkspaceST::Get()->SetBuildMatrix ( matrix );
-    SendCmdEvent(wxEVT_WORKSPACE_CONFIG_CHANGED);
+	SendCmdEvent(wxEVT_WORKSPACE_CONFIG_CHANGED);
 }
 
 void Manager::TogglePanes()
@@ -951,10 +951,10 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 	if ( bldConf ) {
 		conf = bldConf->GetName();
 	}
-	
+
 	// display the output pane
 	Frame::Get()->SetHideOutputPane( ShowOutputPane(OutputPane::BUILD_WIN ) );
-	
+
 	QueueCommand info ( projectName, conf, false, QueueCommand::Build );
 	if ( bldConf && bldConf->IsCustomBuild() ) {
 		info.SetCustomBuildTarget ( wxT ( "Compile Single File" ) );
@@ -1269,7 +1269,7 @@ void Manager::ImportFromMakefile(const wxString &path)
 
 LEditor *Manager::GetActiveEditor() const
 {
-    return Frame::Get()->GetMainBook()->GetActiveEditor();
+	return Frame::Get()->GetMainBook()->GetActiveEditor();
 }
 
 void Manager::AddToRecentlyOpenedFiles ( const wxString &fileName )
@@ -1328,21 +1328,21 @@ bool Manager::MoveFileToVD ( const wxString &fileName, const wxString &srcVD, co
 
 	//set a dir saver point
 	wxFileName fn ( fileName );
-    wxArrayString files(1, fn.GetFullPath());
-    
+	wxArrayString files(1, fn.GetFullPath());
+
 	//remove the file from the source project
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->RemoveFile ( srcVD, fileName, errMsg );
 	CHECK_MSGBOX_BOOL ( res );
-    SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*) &files);
-    
+	SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*) &files);
+
 	// Add the file to the project
 	res = WorkspaceST::Get()->AddNewFile ( targetVD, fn.GetFullPath(), errMsg );
 	if ( !res ) {
 		//file or virtual dir does not exist
 		return false;
 	}
-    SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*) &files);
+	SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*) &files);
 	return true;
 }
 
@@ -1538,7 +1538,7 @@ void Manager::DbgStart ( long pid )
 	// actually add the breakpoint before Run() is called - this can
 	// be a problem when adding breakpoint to dll files.
 	if ( wxNOT_FOUND == pid ) {
-        Frame::Get()->GetMainBook()->UpdateBreakpoints();
+		Frame::Get()->GetMainBook()->UpdateBreakpoints();
 	}
 
 	//We can now get all the gathered breakpoints from the manager
@@ -1675,7 +1675,7 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 void Manager::DbgUnMarkDebuggerLine()
 {
 	//remove all debugger markers from all editors
-    Frame::Get()->GetMainBook()->UnHighlightAll();
+	Frame::Get()->GetMainBook()->UnHighlightAll();
 }
 
 void Manager::OnOutputWindow ( wxCommandEvent &e )
@@ -1718,7 +1718,7 @@ void Manager::DbgDeleteAllBreakpoints()
 
 	DebuggerMgr::Get().DelAllBreakpoints();
 	//update the editor
-    Frame::Get()->GetMainBook()->DelAllBreakpointMarkers();
+	Frame::Get()->GetMainBook()->DelAllBreakpointMarkers();
 }
 
 void Manager::DbgDoSimpleCommand ( int cmd )
@@ -2426,7 +2426,7 @@ void Manager::RetagFile ( const wxString& filename )
 
 		// re-tag the file
 		ParseRequest *req = new ParseRequest();
-        
+
 		// Put a request on the parsing thread to update the GUI tree for this file
 		wxFileName fn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
 		req->setDbFile ( fn.GetFullPath().c_str() );
@@ -2435,10 +2435,10 @@ void Manager::RetagFile ( const wxString& filename )
 		wxFileName absFile ( filename );
 		absFile.MakeAbsolute();
 		req->setFile ( absFile.GetFullPath().c_str() );
-        
-        wxString msg = wxString::Format(wxT( "Re-tagging file %s..." ), absFile.GetFullName().c_str());
-        Frame::Get()->SetStatusMessage(msg, XRCID("retag_file"));
-        
+
+		wxString msg = wxString::Format(wxT( "Re-tagging file %s..." ), absFile.GetFullName().c_str());
+		Frame::Get()->SetStatusMessage(msg, XRCID("retag_file"));
+
 		ParseThreadST::Get()->Add ( req );
 	} else {
 		wxLogMessage ( wxString::Format ( wxT ( "Workspace in being closed, skipping re-tag for file %s" ), filename.c_str() ) );
@@ -2564,7 +2564,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 			SessionManager::Get().SetLastWorkspaceName ( path );
 
 			//restore notebook tabs
-            Frame::Get()->GetMainBook()->RestoreSession(session);
+			Frame::Get()->GetMainBook()->RestoreSession(session);
 		}
 	}
 }
@@ -2784,7 +2784,7 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 	}
 
 	//save all files before compiling, but dont saved new documents
-	if (!Frame::Get()->GetMainBook()->SaveAll(false, false)) 
+	if (!Frame::Get()->GetMainBook()->SaveAll(false, false))
 		return;
 
 	//If a debug session is running, stop it.
@@ -2798,4 +2798,23 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 	}
 	m_shellProcess = new CustomBuildRequest ( GetMainFrame(), buildInfo, wxEmptyString );
 	m_shellProcess->Process();
+}
+
+void Manager::UpdateRemoteTargetConnected(const wxString& line)
+{
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if (dbgr && dbgr->IsRunning() && IsWorkspaceOpen()) {
+		// we currently do not support this feature when debugging using 'Quick debug'
+		wxString errMsg;
+		ProjectPtr proj = WorkspaceST::Get()->FindProjectByName ( GetActiveProjectName(), errMsg );
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf ( proj->GetName(), wxEmptyString );
+		if ( bldConf ) {
+			wxArrayString dbg_cmds = wxStringTokenize ( bldConf->GetDebuggerPostRemoteConnectCmds(), wxT ( "\n" ), wxTOKEN_STRTOK );
+			for(size_t i=0; i<dbg_cmds.GetCount(); i++){
+				dbgr->ExecuteCmd(dbg_cmds.Item(i));
+			}
+		}
+	}
+	// log the line
+	UpdateAddLine(line);
 }

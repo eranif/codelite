@@ -88,9 +88,9 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 	//SetSizeHints(780, -1);
 	GetSizer()->Fit(this);
 	Centre();
-	
+
 	WindowAttrManager::Load(this, wxT("ProjectSettingsDlg"), NULL);
-	
+
 }
 
 ProjectSettingsDlg::~ProjectSettingsDlg()
@@ -127,7 +127,7 @@ void ProjectSettingsDlg::InitDialog(const wxString &configName, const wxString &
 		// save old values before replacing them
 		SaveValues(oldConfig);
 	}
-	
+
 	ClearValues();
 	CopyValues(m_choiceConfigurationType->GetStringSelection());
 	DoUpdatePages(m_checkEnableCustomBuild->IsChecked());
@@ -202,11 +202,11 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	long item = AppendListCtrlRow(m_listCtrlTargets);
 	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_BUILD);
 	SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetCustomBuildCmd());
-	
+
 	item = AppendListCtrlRow(m_listCtrlTargets);
 	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_CLEAN);
 	SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetCustomCleanCmd());
-	
+
 	item = AppendListCtrlRow(m_listCtrlTargets);
 	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_COMPILE_SINGLE_FILE);
 	SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetSingleFileBuildCommand());
@@ -215,11 +215,11 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	std::map<wxString, wxString> targets = buildConf->GetCustomTargets();
 	std::map<wxString, wxString>::iterator titer = targets.begin();
 	for (; titer != targets.end(); titer++) {
-		
+
 		if(titer->first == CUSTOM_TARGET_BUILD || titer->first == CUSTOM_TARGET_CLEAN || titer->first == CUSTOM_TARGET_COMPILE_SINGLE_FILE){
 			continue;
 		}
-		
+
 		item = AppendListCtrlRow(m_listCtrlTargets);
 		SetColumnText(m_listCtrlTargets, item, 0, titer->first);
 		SetColumnText(m_listCtrlTargets, item, 1, titer->second);
@@ -239,12 +239,13 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	m_textCtrlMakefileGenerationCmd->SetValue(buildConf->GetMakeGenerationCommand());
 
 	m_textCtrlDbgCmds->SetValue(buildConf->GetDebuggerStartupCmds());
+	m_textCtrlDbgPostConnectCmds->SetValue(buildConf->GetDebuggerPostRemoteConnectCmds());
 	m_checkBoxDbgRemote->SetValue(buildConf->GetIsDbgRemoteTarget());
 	m_textCtrl1DbgHost->SetValue(buildConf->GetDbgHostName());
 	m_textCtrlDbgPort->SetValue(buildConf->GetDbgHostPort());
-	
+
 	m_textCtrlDebuggerPath->SetValue(buildConf->GetDebuggerPath());
-	
+
 	//set the custom pre-prebuild step
 	wxString customPreBuild = buildConf->GetPreBuildCustom();
 
@@ -356,11 +357,11 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetCompilerType(m_choiceCompilerType->GetStringSelection());
 	buildConf->SetDebuggerType(m_choiceDebugger->GetStringSelection());
 	buildConf->SetPreprocessor(m_textPreprocessor->GetValue());
-	
+
 	buildConf->SetCustomBuildCmd(GetTargetCommand(CUSTOM_TARGET_BUILD));
 	buildConf->SetCustomCleanCmd(GetTargetCommand(CUSTOM_TARGET_CLEAN));
 	buildConf->SetSingleFileBuildCommand(GetTargetCommand(CUSTOM_TARGET_COMPILE_SINGLE_FILE));
-	
+
 	buildConf->EnableCustomBuild(m_checkEnableCustomBuild->IsChecked());
 	buildConf->SetMakeGenerationCommand(m_textCtrlMakefileGenerationCmd->GetValue());
 	buildConf->SetToolName(m_thirdPartyTool->GetStringSelection());
@@ -371,11 +372,12 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetPauseWhenExecEnds(m_checkBoxPauseWhenExecEnds->IsChecked());
 	buildConf->SetProjectType(m_choiceProjectTypes->GetStringSelection());
 	buildConf->SetDebuggerStartupCmds(m_textCtrlDbgCmds->GetValue());
+	buildConf->SetDebuggerPostRemoteConnectCmds(m_textCtrlDbgPostConnectCmds->GetValue());
 	buildConf->SetIsDbgRemoteTarget(m_checkBoxDbgRemote->IsChecked());
 	buildConf->SetDbgHostName(m_textCtrl1DbgHost->GetValue());
 	buildConf->SetDbgHostPort(m_textCtrlDbgPort->GetValue());
 	buildConf->SetDebuggerPath(m_textCtrlDebuggerPath->GetValue());
-	
+
 	//set the pre-build step
 	wxString rules = m_textPreBuildRule->GetValue();
 	wxString deps = m_textDeps->GetValue();
@@ -480,7 +482,7 @@ void ProjectSettingsDlg::DisableCustomBuildPage(bool disable)
 	m_buttonNewCustomTarget->Enable(!disable);
 	m_buttonEditCustomTarget->Enable(!disable);
 	m_buttonDeleteCustomTarget->Enable(!disable);
-	
+
 	if (!disable) {
 		if (m_thirdPartyTool->GetStringSelection() == wxT("None")) {
 			m_textCtrlMakefileGenerationCmd->Enable(false);
@@ -620,11 +622,11 @@ void ProjectSettingsDlg::OnEditCommand(wxCheckListBox *list)
 	if (sel == wxNOT_FOUND) {
 		return;
 	}
-	
+
 	// on GTK it looks like that the state of the item in the list
 	// is changed after calling 'SetString'
 	bool selectIt = list->IsChecked((unsigned int) sel);
-	
+
 	FreeTextDialog dlg(this, selectedString);
 	if (dlg.ShowModal() == wxID_OK) {
 		wxString value = dlg.GetValue();
@@ -784,7 +786,7 @@ void ProjectSettingsDlg::OnDeleteTarget(wxCommandEvent& e)
 	if (m_selecteCustomTaregt != wxNOT_FOUND) {
 		m_listCtrlTargets->DeleteItem(m_selecteCustomTaregt);
 		m_selecteCustomTaregt = wxNOT_FOUND;
-		
+
 		m_buttonApply->Enable(true);
 	}
 }
@@ -853,12 +855,12 @@ void ProjectSettingsDlg::DoEditItem(long item)
 		dlg.SetStaticText2(wxT("Command:"));
 		dlg.SetName(target);
 		dlg.SetValue(cmd);
-		
+
 		// dont allow user to modify the common targets
 		if(target == CUSTOM_TARGET_BUILD || target == CUSTOM_TARGET_CLEAN || target == CUSTOM_TARGET_COMPILE_SINGLE_FILE){
 			dlg.DisableName();
 		}
-		
+
 		if (dlg.ShowModal() == wxID_OK) {
 			DoUpdateItem(item, dlg.GetName(), dlg.GetValue());
 			m_buttonApply->Enable(true);
@@ -888,22 +890,22 @@ wxString ProjectSettingsDlg::GetTargetCommand(const wxString& target)
 void ProjectSettingsDlg::OnBrowseCustomBuildWD(wxCommandEvent& e)
 {
 	DirSaver ds;
-	
-	// Since all paths are relative to the project, set the working directory to the 
+
+	// Since all paths are relative to the project, set the working directory to the
 	// current project path
 	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
 	if(p){
 		wxSetWorkingDirectory(p->GetFileName().GetPath());
 	}
-	
+
 	wxFileName fn(m_textCtrlCustomBuildWD->GetValue());
 	wxString initPath(wxEmptyString);
-	
+
 	if(fn.DirExists()) {
 		fn.MakeAbsolute();
 		initPath = fn.GetFullPath();
 	}
-	
+
 	wxString new_path = wxDirSelector(wxT("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if(new_path.IsEmpty() == false){
 		m_textCtrlCustomBuildWD->SetValue(new_path);
@@ -913,21 +915,21 @@ void ProjectSettingsDlg::OnBrowseCustomBuildWD(wxCommandEvent& e)
 void ProjectSettingsDlg::OnBrowseCommandWD(wxCommandEvent& e)
 {
 	DirSaver ds;
-	
-	// Since all paths are relative to the project, set the working directory to the 
+
+	// Since all paths are relative to the project, set the working directory to the
 	// current project path
 	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
 	if(p){
 		wxSetWorkingDirectory(p->GetFileName().GetPath());
 	}
-	
+
 	wxFileName fn(m_textCtrlCommandWD->GetValue());
 	wxString initPath(wxEmptyString);
 	if(fn.DirExists()) {
 		fn.MakeAbsolute();
 		initPath = fn.GetFullPath();
 	}
-	
+
 	wxString new_path = wxDirSelector(wxT("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if(new_path.IsEmpty() == false){
 		m_textCtrlCommandWD->SetValue(new_path);
@@ -937,8 +939,8 @@ void ProjectSettingsDlg::OnBrowseCommandWD(wxCommandEvent& e)
 void ProjectSettingsDlg::OnBrowseIntermediateDir(wxCommandEvent& e)
 {
 	DirSaver ds;
-	
-	// Since all paths are relative to the project, set the working directory to the 
+
+	// Since all paths are relative to the project, set the working directory to the
 	// current project path
 	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
 	if(p){
@@ -947,7 +949,7 @@ void ProjectSettingsDlg::OnBrowseIntermediateDir(wxCommandEvent& e)
 
 	wxFileName fn(m_textCtrlItermediateDir->GetValue());
 	wxString initPath(wxEmptyString);
-	
+
 	if(fn.DirExists()) {
 		fn.MakeAbsolute();
 		initPath = fn.GetFullPath();

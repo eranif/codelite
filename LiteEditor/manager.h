@@ -72,7 +72,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	std::list<QueueCommand> m_buildQueue;
 	bool m_workspceClosing;
 	bool m_isShutdown;
-	
+
 public:
 	/*!
 	 * \brief
@@ -124,19 +124,19 @@ public:
 	void SetWorkspaceClosing(const bool& inShutdown) {
 		this->m_workspceClosing = inShutdown;
 	}
-	
+
 	const bool& IsWorkspaceClosing() const {
 		return m_workspceClosing;
 	}
-	
+
 	bool IsShutdownInProgress() const {
 		return m_isShutdown;
 	}
-	
+
 	void SetShutdownInProgress(bool b) {
 		m_isShutdown = b;
 	}
-	
+
 	/*!
 	 * \brief
 	 * Free all singleton objects initialised in CodeLite
@@ -677,13 +677,14 @@ public:
 	 * \return true on success (exist in the AUI manager and visible), false otherwise
 	 */
 	bool IsPaneVisible(const wxString &pane_name);
-	
+
 	//--------------------------------------------------------------------
 	//IDebuggerObserver implementation. These set of functions are called
 	//from the debugger whenever event occurs there
 	//--------------------------------------------------------------------
 	void UpdateStopped();
 	void UpdateAddLine(const wxString &line);
+	void UpdateRemoteTargetConnected(const wxString &line);
 	void UpdateBpAdded();
 	void UpdateFileLine(const wxString &file, int lineno);
 	void UpdateGotControl(DebuggerReasons reason);

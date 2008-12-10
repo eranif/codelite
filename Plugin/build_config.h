@@ -110,6 +110,7 @@ class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject
 	wxString m_makeGenerationCommand;
 	wxString m_singleFileBuildCommand;
 	wxString m_debuggerStartupCmds;
+	wxString m_debuggerPostRemoteConnectCmds;
 	bool m_isDbgRemoteTarget;
 	wxString m_dbgHostName;
 	wxString m_dbgHostPort;
@@ -140,7 +141,7 @@ public:
 	const wxString &GetCompilerType() const {
 		return m_compilerType;
 	}
-	
+
 	void SetCompilerType(const wxString &cmpType) {
 		m_compilerType = cmpType;
 	}
@@ -377,6 +378,14 @@ public:
 	}
 	const wxString& GetDebuggerPath() const {
 		return m_debuggerPath;
+	}
+
+
+	void SetDebuggerPostRemoteConnectCmds(const wxString& debuggerPostRemoteConnectCmds) {
+		this->m_debuggerPostRemoteConnectCmds = debuggerPostRemoteConnectCmds;
+	}
+	const wxString& GetDebuggerPostRemoteConnectCmds() const {
+		return m_debuggerPostRemoteConnectCmds;
 	}
 };
 

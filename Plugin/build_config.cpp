@@ -74,13 +74,22 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		// read the postbuild commands
 		wxXmlNode *debugger = XmlUtils::FindFirstByTagName(node, wxT("Debugger"));
 		m_isDbgRemoteTarget = false;
-		
+
 		if (debugger) {
 			m_isDbgRemoteTarget = XmlUtils::ReadBool(debugger, wxT("IsRemote"));
 			m_dbgHostName = XmlUtils::ReadString(debugger, wxT("RemoteHostName"));
 			m_dbgHostPort = XmlUtils::ReadString(debugger, wxT("RemoteHostPort"));
 			m_debuggerPath = XmlUtils::ReadString(debugger, wxT("DebuggerPath"));
-			m_debuggerStartupCmds = debugger->GetNodeContent();
+
+			wxXmlNode *child = debugger->GetChildren();
+			while (child) {
+				if (child->GetName() == wxT("StartupCommands")) {
+					m_debuggerStartupCmds = child->GetNodeContent();
+				} else if (child->GetName() == wxT("PostConnectCommands")) {
+					m_debuggerPostRemoteConnectCmds = child->GetNodeContent();
+				}
+				child = child->GetNext();
+			}
 		}
 
 		// read the resource compile options
@@ -203,6 +212,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_toolName = wxEmptyString;
 		m_singleFileBuildCommand = wxEmptyString;
 		m_debuggerStartupCmds = wxEmptyString;
+		m_debuggerPostRemoteConnectCmds = wxEmptyString;
 		m_isDbgRemoteTarget = false;
 
 		BuildSettingsConfigCookie cookie;
@@ -295,8 +305,13 @@ wxXmlNode *BuildConfig::ToXml() const
 	debugger->AddProperty(wxT("RemoteHostName"), m_dbgHostName);
 	debugger->AddProperty(wxT("RemoteHostPort"), m_dbgHostPort);
 	debugger->AddProperty(wxT("DebuggerPath"), m_debuggerPath);
-	
-	XmlUtils::SetNodeContent(debugger, m_debuggerStartupCmds);
+
+	wxXmlNode *dbgStartupCommands = new wxXmlNode(debugger, wxXML_ELEMENT_NODE, wxT("StartupCommands"));
+	XmlUtils::SetNodeContent(dbgStartupCommands, m_debuggerStartupCmds);
+
+	wxXmlNode *dbgPostConnectCommands = new wxXmlNode(debugger, wxXML_ELEMENT_NODE, wxT("PostConnectCommands"));
+	XmlUtils::SetNodeContent(dbgPostConnectCommands, m_debuggerPostRemoteConnectCmds);
+
 	node->AddChild(debugger);
 
 	//add the resource compiler node
@@ -362,18 +377,18 @@ wxXmlNode *BuildConfig::ToXml() const
 
 	wxXmlNode *clnCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("CleanCommand"));
 	XmlUtils::SetNodeContent(clnCmd, m_customCleanCmd);
-	
+
 	// add all 'Targets'
 	std::map<wxString, wxString>::const_iterator ir = m_customTargets.begin();
 	for(; ir != m_customTargets.end(); ir++) {
 		wxString target_name = ir->first;
 		wxString target_cmd = ir->second;
-		
+
 		wxXmlNode *customTarget = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("Target"));
 		customTarget->AddProperty(wxT("Name"), target_name);
 		XmlUtils::SetNodeContent(customTarget, target_cmd);
 	}
-	
+
 	//add the additional rules
 	wxXmlNode *additionalCmds = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("AdditionalRules"));
 	node->AddChild(additionalCmds);

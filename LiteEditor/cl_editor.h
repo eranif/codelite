@@ -516,6 +516,7 @@ private:
 	void OnMiddleUp(wxMouseEvent &event);
 	void OnLeftUp(wxMouseEvent &event);
 	void OnLeaveWindow(wxMouseEvent &event);
+    void OnFocusLost(wxFocusEvent &event);
 	void OnLeftDClick(wxScintillaEvent &event);
 	void OnPopupMenuUpdateUI(wxUpdateUIEvent &event);
 	void OnDbgQuickWatch(wxCommandEvent &event);

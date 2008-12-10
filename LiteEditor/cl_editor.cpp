@@ -105,6 +105,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_MIDDLE_UP(LEditor::OnMiddleUp)
 	EVT_LEFT_UP(LEditor::OnLeftUp)
 	EVT_LEAVE_WINDOW(LEditor::OnLeaveWindow)
+    EVT_KILL_FOCUS(LEditor::OnFocusLost)
 	EVT_SCI_DOUBLECLICK(wxID_ANY, LEditor::OnLeftDClick)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_FIND_NEXT, LEditor::OnFindDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_REPLACE, LEditor::OnFindDialog)
@@ -498,7 +499,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		}
 		break;
 	case ')':
-		m_context->CallTipCancel();
+		CallTipCancel();
 		ShowFunctionTipFromCurrentPos();
 		break;
 	case '}':
@@ -1808,12 +1809,15 @@ bool LEditor::MarkAll()
 void LEditor::ReloadFile()
 {
 	HideCompletionBox();
+    CallTipCancel();
 
 	if (m_fileName.GetFullPath().IsEmpty() == true || m_fileName.GetFullPath().StartsWith(wxT("Untitled"))) {
 		SetEOLMode(GetEOLByOS());
 		return;
 	}
 
+    Frame::Get()->SetStatusMessage(wxT("Loading file..."), 0, XRCID("editor"));
+    
 	wxString text;
 	ReadFileWithConversion(m_fileName.GetFullPath(), text);
 	SetText( text );
@@ -1832,6 +1836,8 @@ void LEditor::ReloadFile()
 		eol = GetEOLByOS();
 	}
 	SetEOLMode(eol);
+    
+    Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));
 }
 
 void LEditor::SetEditorText(const wxString &text)
@@ -2019,13 +2025,22 @@ void LEditor::OnLeftUp(wxMouseEvent& event)
 
 void LEditor::OnLeaveWindow(wxMouseEvent& event)
 {
+    CallTipCancel();
+    
 	m_hyperLinkIndicatroStart = wxNOT_FOUND;
 	m_hyperLinkIndicatroEnd = wxNOT_FOUND;
 	m_hyperLinkType = wxID_NONE;
 
 	SetIndicatorCurrent(HYPERLINK_INDICATOR);
 	IndicatorClearRange(0, GetLength());
+    
 	event.Skip();
+}
+
+void LEditor::OnFocusLost(wxFocusEvent &event)
+{
+    CallTipCancel();
+    event.Skip();
 }
 
 void LEditor::OnMiddleUp(wxMouseEvent& event)

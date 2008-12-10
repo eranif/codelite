@@ -382,6 +382,10 @@ void ContextCpp::CallTipCancel()
 void ContextCpp::OnCallTipClick(wxScintillaEvent &event)
 {
 	LEditor &rCtrl = GetCtrl();
+    if (wxWindow::FindFocus() != &rCtrl) {
+        rCtrl.CallTipCancel();
+        return;
+    }
 	switch ( event.GetPosition() ) {
 	case ArrowUp:
 		rCtrl.CallTipCancel();

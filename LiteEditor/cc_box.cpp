@@ -229,6 +229,10 @@ void CCBox::SelectItem(long item)
 {
 	m_listCtrl->Select(item);
 	m_listCtrl->EnsureVisible(item);
+    LEditor *editor = dynamic_cast<LEditor*>(GetParent());
+    if (editor) {
+        editor->CallTipCancel();
+    }
 }
 
 void CCBox::Show(const wxString& word)

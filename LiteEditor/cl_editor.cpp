@@ -695,10 +695,14 @@ bool LEditor::SaveFile()
 
 		// clear cached file, this function does nothing if the file is not cached
 		TagsManagerST::Get()->ClearCachedFile(GetFileName().GetFullPath());
-
+		
 		// clear all the queries which holds reference to this file
 		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(GetFileName().GetFullPath());
-
+		
+		if(ManagerST::Get()->IsShutdownInProgress() || ManagerST::Get()->IsWorkspaceClosing()){
+			return true;
+		}
+		
 		if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISABLE_AUTO_PARSING) {
 			return true;
 		}

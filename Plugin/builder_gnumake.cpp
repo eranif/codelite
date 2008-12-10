@@ -474,14 +474,8 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 	wxString cmpType = bldConf->GetCompilerType();
 	//get the compiler settings
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
-	bool isGnu(false);
-	if (	cmp->GetTool(wxT("CompilerName")).Contains(wxT("gcc")) ||
-	        cmp->GetTool(wxT("CompilerName")).Contains(wxT("g++"))) {
-		//for g++/gcc compilers, we use a special feature that allows automatic generation of the
-		//objects along with their dependenices
-		isGnu = true;
-	}
-
+	bool generateDependeciesFiles(cmp->GetGenerateDependeciesFile());
+	
 	std::vector<wxFileName> abs_files, rel_paths;
 
 	// support for full path
@@ -523,7 +517,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				wxString dependFile;
 
 				objectName << wxT("$(IntermediateDirectory)/") << filenameOnly << wxT("$(ObjectSuffix)");
-				if (isGnu) {
+				if (generateDependeciesFiles) {
 					dependFile << wxT("$(IntermediateDirectory)/") << filenameOnly << wxT("$(ObjectSuffix)") << wxT(".d");
 				}
 
@@ -532,7 +526,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 				text << wxT("\t") << GetMakeDirCmd(bldConf) << wxT("\n");
 				text << wxT("\t") << compilationLine << wxT("\n");
 
-				if (isGnu) {
+				if (generateDependeciesFiles) {
 					//add the dependencie rule
 					text << dependFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
 					text << wxT("\t") << GetMakeDirCmd(bldConf) << wxT("\n");
@@ -608,7 +602,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 		text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)\n");
 	}
 
-	if (isGnu) {
+	if (generateDependeciesFiles) {
 		text << wxT("\n-include $(IntermediateDirectory)/*.d\n");
 	}
 	text << wxT("\n\n");

@@ -1,90 +1,99 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : compiler.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : compiler.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "compiler.h"
+#include "compiler.h"
 #include "xmlutils.h"
+#include "macros.h"
 
 Compiler::Compiler(wxXmlNode *node)
 {
 	m_fileTypes.clear();
-	if(node){
+	if (node) {
 		m_name = XmlUtils::ReadString(node, wxT("Name"));
+		if (!node->HasProp(wxT("GenerateDependenciesFiles"))) {
+			if (m_name == wxT("gnu g++") || m_name == wxT("gnu gcc"))
+				m_generateDependeciesFile = true;
+			else 
+				m_generateDependeciesFile = false;
+		} else {
+			m_generateDependeciesFile = XmlUtils::ReadBool(node, wxT("GenerateDependenciesFiles"));
+		}
+		
 		wxXmlNode *child = node->GetChildren();
-		while(child){
-			if(child->GetName() == wxT("Switch")){
+		while (child) {
+			if (child->GetName() == wxT("Switch")) {
 				m_switches[XmlUtils::ReadString(child, wxT("Name"))] = XmlUtils::ReadString(child, wxT("Value"));
 			}
 
-			else if(child->GetName() == wxT("Tool")){
+			else if (child->GetName() == wxT("Tool")) {
 				m_tools[XmlUtils::ReadString(child, wxT("Name"))] = XmlUtils::ReadString(child, wxT("Value"));
 			}
 
-			else if(child->GetName() == wxT("Option")){
-				if(XmlUtils::ReadString(child, wxT("Name")) == wxT("ObjectSuffix")){
+			else if (child->GetName() == wxT("Option")) {
+				if (XmlUtils::ReadString(child, wxT("Name")) == wxT("ObjectSuffix")) {
 					m_objectSuffix = XmlUtils::ReadString(child, wxT("Value"));
 				}
-			}
-			else if(child->GetName() == wxT("File")){
+			} else if (child->GetName() == wxT("File")) {
 				Compiler::CmpFileTypeInfo ft;
 				ft.compilation_line = XmlUtils::ReadString(child, wxT("CompilationLine"));
 				ft.extension = XmlUtils::ReadString(child, wxT("Extension")).Lower();
-				
+
 				long kind = (long)CmpFileKindSource;
-				if(XmlUtils::ReadLong(child, wxT("Kind"), kind) == CmpFileKindSource){
+				if (XmlUtils::ReadLong(child, wxT("Kind"), kind) == CmpFileKindSource) {
 					ft.kind = CmpFileKindSource;
-				}else{
+				} else {
 					ft.kind = CmpFileKindResource;
 				}
 				m_fileTypes[ft.extension] = ft;
 			}
-			
-			else if(child->GetName() == wxT("Pattern")){
-				if(XmlUtils::ReadString(child, wxT("Name")) == wxT("Error")){
+
+			else if (child->GetName() == wxT("Pattern")) {
+				if (XmlUtils::ReadString(child, wxT("Name")) == wxT("Error")) {
 					//found the error description
 					m_errorFileNameIndex = XmlUtils::ReadString(child, wxT("FileNameIndex"));
 					m_errorLineNubmerIndex = XmlUtils::ReadString(child, wxT("LineNumberIndex"));
 					m_errorPattern = child->GetNodeContent();
-				}else if(XmlUtils::ReadString(child, wxT("Name")) == wxT("Warning")){
+				} else if (XmlUtils::ReadString(child, wxT("Name")) == wxT("Warning")) {
 					//found the warning description
 					m_warningFileNameIndex = XmlUtils::ReadString(child, wxT("FileNameIndex"));
 					m_warningLineNubmerIndex = XmlUtils::ReadString(child, wxT("LineNumberIndex"));
 					m_warningPattern = child->GetNodeContent();
 				}
 			}
-			
-			else if(child->GetName() == wxT("GlobalIncludePath")){
+
+			else if (child->GetName() == wxT("GlobalIncludePath")) {
 				m_globalIncludePath = child->GetNodeContent();
 			}
-			
-			else if(child->GetName() == wxT("GlobalLibPath")){
+
+			else if (child->GetName() == wxT("GlobalLibPath")) {
 				m_globalLibPath = child->GetNodeContent();
 			}
-			
-			else if(child->GetName() == wxT("PathVariable")){
+
+			else if (child->GetName() == wxT("PathVariable")) {
 				m_pathVariable = child->GetNodeContent();
 			}
-			
+
 			child = child->GetNext();
 		}
 	} else {
@@ -114,9 +123,10 @@ Compiler::Compiler(wxXmlNode *node)
 		m_globalIncludePath = wxEmptyString;
 		m_globalLibPath = wxEmptyString;
 		m_pathVariable = wxEmptyString;
+		m_generateDependeciesFile = false;
 	}
-	
-	if(m_fileTypes.empty()){
+
+	if (m_fileTypes.empty()) {
 		AddCmpFileType(wxT("cpp"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
 		AddCmpFileType(wxT("cxx"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
 		AddCmpFileType(wxT("c++"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
@@ -136,9 +146,10 @@ wxXmlNode *Compiler::ToXml() const
 {
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));
 	node->AddProperty(wxT("Name"), m_name);
+	node->AddProperty(wxT("GenerateDependenciesFiles"), BoolToString(m_generateDependeciesFile));
 	
 	std::map<wxString, wxString>::const_iterator iter = m_switches.begin();
-	for(; iter != m_switches.end(); iter++){
+	for (; iter != m_switches.end(); iter++) {
 		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Switch"));
 		child->AddProperty(wxT("Name"), iter->first);
 		child->AddProperty(wxT("Value"), iter->second);
@@ -146,27 +157,27 @@ wxXmlNode *Compiler::ToXml() const
 	}
 
 	iter = m_tools.begin();
-	for(; iter != m_tools.end(); iter++){
+	for (; iter != m_tools.end(); iter++) {
 		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Tool"));
 		child->AddProperty(wxT("Name"), iter->first);
 		child->AddProperty(wxT("Value"), iter->second);
 		node->AddChild(child);
 	}
-	
+
 	std::map<wxString, Compiler::CmpFileTypeInfo>::const_iterator it = m_fileTypes.begin();
-	for(; it != m_fileTypes.end(); it++){
+	for (; it != m_fileTypes.end(); it++) {
 		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
 		Compiler::CmpFileTypeInfo ft = it->second;
 		child->AddProperty(wxT("Extension"), ft.extension);
 		child->AddProperty(wxT("CompilationLine"), ft.compilation_line);
-		
+
 		wxString strKind;
 		strKind << (long)ft.kind;
 		child->AddProperty(wxT("Kind"), strKind);
-		
+
 		node->AddChild(child);
 	}
-	
+
 	wxXmlNode *options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
 	options->AddProperty(wxT("Name"), wxT("ObjectSuffix"));
 	options->AddProperty(wxT("Value"), m_objectSuffix);
@@ -186,26 +197,26 @@ wxXmlNode *Compiler::ToXml() const
 	warning->AddProperty(wxT("LineNumberIndex"), m_warningLineNubmerIndex);
 	XmlUtils::SetNodeContent(warning, m_warningPattern);
 	node->AddChild(warning);
-	
+
 	wxXmlNode *globalIncludePath = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("GlobalIncludePath"));
 	XmlUtils::SetNodeContent(globalIncludePath, m_globalIncludePath);
 	node->AddChild(globalIncludePath);
-	
+
 	wxXmlNode *globalLibPath = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("GlobalLibPath"));
 	XmlUtils::SetNodeContent(globalLibPath, m_globalLibPath);
 	node->AddChild(globalLibPath);
-	
+
 	wxXmlNode *pathVariable = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("PathVariable"));
 	XmlUtils::SetNodeContent(pathVariable, m_pathVariable);
 	node->AddChild(pathVariable);
-	
+
 	return node;
 }
 
 wxString Compiler::GetSwitch(const wxString &name) const
 {
 	std::map<wxString, wxString>::const_iterator iter = m_switches.find(name);
-	if(iter == m_switches.end()){
+	if (iter == m_switches.end()) {
 		return wxEmptyString;
 	}
 	return iter->second;
@@ -214,7 +225,7 @@ wxString Compiler::GetSwitch(const wxString &name) const
 wxString Compiler::GetTool(const wxString &name) const
 {
 	std::map<wxString, wxString>::const_iterator iter = m_tools.find(name);
-	if(iter == m_tools.end()){
+	if (iter == m_tools.end()) {
 		return wxEmptyString;
 	}
 	return iter->second;
@@ -223,7 +234,7 @@ wxString Compiler::GetTool(const wxString &name) const
 bool Compiler::GetCmpFileType(const wxString& extension, Compiler::CmpFileTypeInfo &ft)
 {
 	std::map<wxString, Compiler::CmpFileTypeInfo>::iterator iter = m_fileTypes.find(extension.Lower());
-	if(iter == m_fileTypes.end()){
+	if (iter == m_fileTypes.end()) {
 		return false;
 	}
 	ft = iter->second;

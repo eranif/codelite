@@ -61,10 +61,10 @@ public:
 		wxString compilation_line;
 		CmpFileKind kind;
 	};
-	
+
 private:
 	void AddCmpFileType(const wxString &extension, CmpFileKind type, const wxString &compile_line);
-	
+
 protected:
 	wxString m_name;
 	std::map<wxString, wxString> m_switches;
@@ -83,6 +83,7 @@ protected:
 	wxString m_globalIncludePath;
 	wxString m_globalLibPath;
 	wxString m_pathVariable;
+	bool m_generateDependeciesFile;
 
 public:
 	typedef std::map<wxString, wxString>::const_iterator ConstIterator;
@@ -186,11 +187,17 @@ public:
 		m_fileTypes.clear();
 		this->m_fileTypes = fileTypes;
 	}
-	
+
 	const std::map<wxString, Compiler::CmpFileTypeInfo>& GetFileTypes() const {
 		return m_fileTypes;
 	}
-	
+
+	void SetGenerateDependeciesFile(const bool& generateDependeciesFile) {
+		this->m_generateDependeciesFile = generateDependeciesFile;
+	}
+	const bool& GetGenerateDependeciesFile() const {
+		return m_generateDependeciesFile;
+	}
 	bool GetCmpFileType(const wxString &extension, Compiler::CmpFileTypeInfo &ft);
 };
 

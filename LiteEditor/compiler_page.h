@@ -61,6 +61,8 @@ class CompilerPage : public wxScrolledWindow
 protected:
 	wxNotebook* m_notebook1;
 	wxPanel* m_panel1;
+	wxStaticLine* m_staticline31;
+	wxCheckBox* m_checkBoxGenerateDependenciesFiles;
 	wxStaticText* m_staticText161;
 	wxStaticText* m_staticText5;
 	wxTextCtrl* m_textErrorPattern;

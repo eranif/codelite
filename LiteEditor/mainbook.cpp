@@ -608,7 +608,7 @@ bool MainBook::CloseAll(bool cancellable)
 	while (!m_detachedTabs.empty()) {
 		DockPage(*m_detachedTabs.begin());
 	}
-	m_book->DeleteAllPages(ManagerST::Get()->IsShutdownInProgress() ? false : true);
+	m_book->DeleteAllPages(true);
 	return true;
 }
 

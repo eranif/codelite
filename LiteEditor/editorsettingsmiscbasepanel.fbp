@@ -71,7 +71,7 @@
                     <property name="proportion">0</property>
                     <object class="wxChoice" expanded="1">
                         <property name="bg"></property>
-                        <property name="choices">&quot;Toolbar uses large icons (24x24)&quot; &quot;Toolbar uses small icons (16x16)&quot;</property>
+                        <property name="choices">&quot;Toolbar uses small icons (16x16)&quot; &quot;Toolbar uses large icons (24x24)&quot;</property>
                         <property name="context_help"></property>
                         <property name="enabled">1</property>
                         <property name="fg"></property>
@@ -83,7 +83,7 @@
                         <property name="name">m_toolbarIconSize</property>
                         <property name="permission">protected</property>
                         <property name="pos"></property>
-                        <property name="selection">0</property>
+                        <property name="selection">1</property>
                         <property name="size"></property>
                         <property name="subclass"></property>
                         <property name="tooltip"></property>

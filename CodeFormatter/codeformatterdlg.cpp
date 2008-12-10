@@ -33,7 +33,7 @@ CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, size_t 
 {
 	// center the dialog
 	Centre();
-	
+
 	m_options.SetOption(flags);
 	m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterDlg::OnOK), NULL, this);
 	m_buttonHelp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterDlg::OnHelp), NULL, this);
@@ -46,7 +46,7 @@ CodeFormatterDlg::CodeFormatterDlg( wxWindow* parent, CodeFormatter *cf, size_t 
 	UpdatePreview();
 
 	m_radioBoxPredefinedStyle->SetFocus();
-	
+
 	WindowAttrManager::Load(this, wxT("CodeFormatterDlgAttr"), m_cf->GetManager()->GetConfigTool());
 }
 
@@ -76,7 +76,7 @@ void CodeFormatterDlg::InitDialog()
 	UpdateCheckBox(m_checkBoxIndentPreprocessors,AS_INDENT_PREPROCESSORS);
 	UpdateCheckBox(m_checkBoxIndetBlocks,AS_INDENT_BLOCKS);
 	UpdateCheckBox(m_checkBoxIndetCase,AS_INDENT_CASE);
-	UpdateCheckBox(m_checkBoxIndetClass,AS_INDENT_CASE);
+	UpdateCheckBox(m_checkBoxIndetClass,AS_INDENT_CLASS);
 	UpdateCheckBox(m_checkBoxIndetSwitch,AS_INDENT_SWITCHES);
 
 	//update the two radio box controls
@@ -218,7 +218,7 @@ void CodeFormatterDlg::OnCheckBox( wxCommandEvent& event )
 	} else if (obj == m_checkBoxIndetCase) {
 		flag = AS_INDENT_CASE;
 	} else if (obj == m_checkBoxIndetClass) {
-		flag = AS_INDENT_CASE;
+		flag = AS_INDENT_CLASS;
 	} else if (obj == m_checkBoxIndetSwitch) {
 		flag = AS_INDENT_SWITCHES;
 	}
@@ -257,7 +257,7 @@ void CodeFormatterDlg::UpdatePreview()
 	wxString output;
 	m_cf->AstyleFormat(m_sampleCode, m_options.ToString(), output);
 	m_textCtrlPreview->SetValue(output);
-	
+
 	UpdatePredefinedHelpText();
 }
 

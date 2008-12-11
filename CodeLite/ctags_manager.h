@@ -360,6 +360,14 @@ public:
 	void DeleteFilesTags(const std::vector<wxFileName> &files);
 
 	/**
+	 * @brief delete all entries from tags database which starts with. If the dbFileName is also an active one,
+	 * clear any cache entries as well
+	 * @param dbfileName database file path
+	 * @param filePrefix tag file's prefix
+	 */
+	void DeleteTagsByFilePrefix(const wxString &dbfileName, const wxString &filePrefix);
+
+	/**
 	 * Build a secondary database that will be used for searching (e.g. database containing C/C++ header files)
 	 * if dbName is already existed, it will be updated, else it will be created.
 	 * @param rootDir root directory to start processing files
@@ -705,17 +713,17 @@ public:
 	 * @param protos map of methods prototypes
 	 */
 	void GetUnImplementedFunctions(const wxString &scopeName, std::map<wxString, TagEntryPtr> &protos);
-	
+
 	/**
 	 * @brief send event to the file tree to mark tags file as bold
-	 * @param bold 
+	 * @param bold
 	 */
 	void NotifyFileTree(bool bold);
-	
+
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
 	std::map<wxString, bool> m_typeScopeContainerCache;
-	
+
 	/**
 	 * Handler ctags process termination
 	 */
@@ -758,11 +766,11 @@ private:
 	 * @return
 	 */
 	bool GetDerivationList(const wxString &path, std::vector<wxString> &derivationList);
-	
+
 protected:
 	// provide a default handler for the wxEVT_UPDATE_FILETREE_EVENT event
 	void OnUpdateFileTreeEvent(wxCommandEvent &e);
-	
+
 protected:
 	void DoFindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags);
 	void DoExecuteQueury(const wxString &sql, bool queryBothDB, std::vector<TagEntryPtr> &tags, bool onlyWorkspace = false);

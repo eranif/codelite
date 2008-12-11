@@ -67,7 +67,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	wxString tags;
 	wxString file_name(req->getFile());
 	tagmgr->SourceToTags2(file_name, tags);
-	
+
 	req->setTags(tags);
 
 	//----------------------------------------------
@@ -161,11 +161,11 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	// results, then nothing more to be done
 	if (m_notifiedWindow == NULL)
 		return;
-	
+
 	// send "end" event
 	wxCommandEvent e(wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS);
 	wxPostEvent(m_notifiedWindow, e);
-	
+
 	// Send an event for each operation type
 	if ( !deletedItems.empty() )
 		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM, req->getFile(), deletedItems);
@@ -249,7 +249,7 @@ ParseRequest::~ParseRequest()
 //			wxString tmp;
 //			proc->ReadAll(tmp);
 //			tags << tmp;
-//			
+//
 //			if (tmp.Trim().Trim(false).EndsWith(wxT("<<EOF>>"))) {
 //				count =  0;
 //				break;

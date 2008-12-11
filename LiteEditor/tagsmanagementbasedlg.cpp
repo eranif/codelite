@@ -1,28 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : tagsmanagementbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
@@ -45,7 +20,7 @@ TagsManagementBaseDlg::TagsManagementBaseDlg( wxWindow* parent, wxWindowID id, c
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_listCtrlDatabases = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_SINGLE_SEL );
-	bSizer3->Add( m_listCtrlDatabases, 2, wxALL|wxEXPAND, 5 );
+	bSizer3->Add( m_listCtrlDatabases, 1, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -93,7 +68,7 @@ TagsManagementBaseDlg::TagsManagementBaseDlg( wxWindow* parent, wxWindowID id, c
 	
 	bSizer5->Add( m_listCtrlPaths, 1, wxALL|wxEXPAND, 5 );
 	
-	mainSizer->Add( bSizer5, 1, wxEXPAND, 5 );
+	mainSizer->Add( bSizer5, 0, wxEXPAND, 5 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	mainSizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
@@ -127,6 +102,7 @@ TagsManagementBaseDlg::TagsManagementBaseDlg( wxWindow* parent, wxWindowID id, c
 	m_buttonSetActive->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsManagementBaseDlg::OnRemoveDatabaseUI ), NULL, this );
 	m_buttonFixPaths->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsManagementBaseDlg::OnFixPaths ), NULL, this );
 	m_buttonFixPaths->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsManagementBaseDlg::OnRemoveDatabaseUI ), NULL, this );
+	m_listCtrlPaths->Connect( wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK, wxListEventHandler( TagsManagementBaseDlg::OnItemRightClick ), NULL, this );
 	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsManagementBaseDlg::OnOk ), NULL, this );
 }
 
@@ -143,5 +119,6 @@ TagsManagementBaseDlg::~TagsManagementBaseDlg()
 	m_buttonSetActive->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsManagementBaseDlg::OnRemoveDatabaseUI ), NULL, this );
 	m_buttonFixPaths->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsManagementBaseDlg::OnFixPaths ), NULL, this );
 	m_buttonFixPaths->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsManagementBaseDlg::OnRemoveDatabaseUI ), NULL, this );
+	m_listCtrlPaths->Disconnect( wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK, wxListEventHandler( TagsManagementBaseDlg::OnItemRightClick ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsManagementBaseDlg::OnOk ), NULL, this );
 }

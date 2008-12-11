@@ -288,24 +288,24 @@ void TagsManager::TagFromLine(const wxString& line, TagEntry& tag)
 	name = name.Trim();
 	fileName = fileName.Trim();
 	pattern = pattern.Trim();
-        
-        if (kind == wxT("enumerator")) {
-            // enums are specials, they are not really a scope so they should appear when I type:
-            // enumName::
-            // they should be member of their parent (which can be <global>, or class)
-            // but we want to know the "enum" type they belong to, so save that in typeref,
-            // then patch the enum field to lift the enumerator into the enclosing scope.
-            // watch out for anonymous enums -- leave their typeref field blank.
-            std::map<wxString,wxString>::iterator e = extFields.find(wxT("enum"));
-            if (e != extFields.end()) {
-                wxString typeref = e->second;
-                e->second = e->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
-                if (!typeref.AfterLast(wxT(':')).StartsWith(wxT("__anon"))) {
-                    extFields[wxT("typeref")] = typeref;
-                }
-            }
-        }
-        
+
+	if (kind == wxT("enumerator")) {
+		// enums are specials, they are not really a scope so they should appear when I type:
+		// enumName::
+		// they should be member of their parent (which can be <global>, or class)
+		// but we want to know the "enum" type they belong to, so save that in typeref,
+		// then patch the enum field to lift the enumerator into the enclosing scope.
+		// watch out for anonymous enums -- leave their typeref field blank.
+		std::map<wxString,wxString>::iterator e = extFields.find(wxT("enum"));
+		if (e != extFields.end()) {
+			wxString typeref = e->second;
+			e->second = e->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
+			if (!typeref.AfterLast(wxT(':')).StartsWith(wxT("__anon"))) {
+				extFields[wxT("typeref")] = typeref;
+			}
+		}
+	}
+
 	tag.Create(fileName, name, lineNumber, pattern, kind, extFields);
 }
 
@@ -751,11 +751,11 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 	PERF_END();
 	return true;
 }
- 
+
 bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno, const wxString& expr, const wxString& text, std::vector<TagEntryPtr>& candidates)
-{ 
+{
 	PERF_START("AutoCompleteCandidates");
- 
+
 	candidates.clear();
 	wxString path;
 	wxString typeName, typeScope;
@@ -767,7 +767,7 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 	expression.erase(expression.find_last_not_of(trimRightString)+1);
 	wxString oper;
 
-	PERF_BLOCK("ProcessExpression"){
+	PERF_BLOCK("ProcessExpression") {
 		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
 		if (!res) {
 			PERF_END();
@@ -798,9 +798,9 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		filter.Add(wxT("class"));
 		filter.Add(wxT("struct"));
 		filter.Add(wxT("namespace"));
-		
-		PERF_BLOCK("TagsByScope"){
-			TagsByScope(scope, filter, candidates, true);	
+
+		PERF_BLOCK("TagsByScope") {
+			TagsByScope(scope, filter, candidates, true);
 		}
 
 	} else {
@@ -808,7 +808,7 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 		filter.Add(wxT("function"));
 		filter.Add(wxT("member"));
 		filter.Add(wxT("prototype"));
-		PERF_BLOCK("TagsByScope"){
+		PERF_BLOCK("TagsByScope") {
 			TagsByScope(scope, filter, candidates, true);
 		}
 	}
@@ -1705,7 +1705,7 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 		tip.erase(0, tip.find_first_not_of(trimString));
 		tip.erase(tip.find_last_not_of(trimString)+1);
 		tip.Replace(wxT("\t"), wxT(" "));
-        while (tip.Replace(wxT("  "), wxT(" "))) {}
+		while (tip.Replace(wxT("  "), wxT(" "))) {}
 
 		tip.Prepend(comment);
 		tips.push_back(tip);
@@ -1996,14 +1996,14 @@ void TagsManager::GetScopesFromFile(const wxFileName &fileName, std::vector< wxS
 	wxString sql;
 	sql << wxT("select distinct scope from tags where file = '")
 	<< fileName.GetFullPath() << wxT("' ")
-    << wxT(" and kind in('prototype', 'function', 'enum')")
+	<< wxT(" and kind in('prototype', 'function', 'enum')")
 	<< wxT(" order by scope ASC");
 
 	//we take the first entry
 	try {
 		wxSQLite3ResultSet rs = m_workspaceDatabase->Query(sql);
 		while ( rs.NextRow() ) {
-            scopes.push_back(rs.GetString(0));
+			scopes.push_back(rs.GetString(0));
 		}
 		rs.Finalize();
 	} catch ( wxSQLite3Exception& e) {
@@ -2021,7 +2021,7 @@ void TagsManager::TagsFromFileAndScope(const wxFileName& fileName, const wxStrin
 	sql << wxT("select * from tags where file = '")
 	<< fileName.GetFullPath() << wxT("' ")
 	<< wxT(" and scope='") << scopeName << wxT("' ")
-    << wxT(" and kind in('prototype', 'function', 'enum')");
+	<< wxT(" and kind in('prototype', 'function', 'enum')");
 
 	//we take the first entry
 	try {
@@ -2266,26 +2266,52 @@ void TagsManager::GetAllTagsNames(wxArrayString &tagsList)
 	size_t kind = GetCtagsOptions().GetCcColourFlags();
 	wxArrayString kindArr;
 
-	if( kind & CC_COLOUR_CLASS) {kindArr.Add(wxT("class"));}
-	if( kind & CC_COLOUR_ENUM) {kindArr.Add(wxT("enum"));}
-	if( kind & CC_COLOUR_FUNCTION) {kindArr.Add(wxT("function"));}
-	if( kind & CC_COLOUR_MACRO) {kindArr.Add(wxT("macro"));}
-	if( kind & CC_COLOUR_NAMESPACE) {kindArr.Add(wxT("namespace"));}
-	if( kind & CC_COLOUR_PROTOTYPE) {kindArr.Add(wxT("prototype"));}
-	if( kind & CC_COLOUR_STRUCT) {kindArr.Add(wxT("struct"));}
-	if( kind & CC_COLOUR_TYPEDEF) {kindArr.Add(wxT("typedef"));}
-	if( kind & CC_COLOUR_UNION) {kindArr.Add(wxT("union"));}
-	if( kind & CC_COLOUR_ENUMERATOR) {kindArr.Add(wxT("enumerator"));}
-	if( kind & CC_COLOUR_VARIABLE) {kindArr.Add(wxT("variable"));}
-	if( kind & CC_COLOUR_MEMBER) {kindArr.Add(wxT("member"));}
+	if ( kind & CC_COLOUR_CLASS) {
+		kindArr.Add(wxT("class"));
+	}
+	if ( kind & CC_COLOUR_ENUM) {
+		kindArr.Add(wxT("enum"));
+	}
+	if ( kind & CC_COLOUR_FUNCTION) {
+		kindArr.Add(wxT("function"));
+	}
+	if ( kind & CC_COLOUR_MACRO) {
+		kindArr.Add(wxT("macro"));
+	}
+	if ( kind & CC_COLOUR_NAMESPACE) {
+		kindArr.Add(wxT("namespace"));
+	}
+	if ( kind & CC_COLOUR_PROTOTYPE) {
+		kindArr.Add(wxT("prototype"));
+	}
+	if ( kind & CC_COLOUR_STRUCT) {
+		kindArr.Add(wxT("struct"));
+	}
+	if ( kind & CC_COLOUR_TYPEDEF) {
+		kindArr.Add(wxT("typedef"));
+	}
+	if ( kind & CC_COLOUR_UNION) {
+		kindArr.Add(wxT("union"));
+	}
+	if ( kind & CC_COLOUR_ENUMERATOR) {
+		kindArr.Add(wxT("enumerator"));
+	}
+	if ( kind & CC_COLOUR_VARIABLE) {
+		kindArr.Add(wxT("variable"));
+	}
+	if ( kind & CC_COLOUR_MEMBER) {
+		kindArr.Add(wxT("member"));
+	}
 
-	if( kindArr.IsEmpty() ) {return;}
+	if ( kindArr.IsEmpty() ) {
+		return;
+	}
 
 	try {
 
 		wxString whereClause;
 		whereClause << wxT(" kind IN (");
-		for(size_t i=0; i<kindArr.GetCount(); i++){
+		for (size_t i=0; i<kindArr.GetCount(); i++) {
 			whereClause << wxT("'") << kindArr.Item(i) << wxT("',");
 		}
 
@@ -2538,7 +2564,7 @@ wxString TagsManager::DoReplaceMacros(wxString name)
 // wrapper function to update the file tree given a list of files.
 void TagsManager::UpdateFileTree(const std::vector<wxFileName> &files, bool bold)
 {
-	if(GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD) {
+	if (GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD) {
 		wxCommandEvent e(wxEVT_UPDATE_FILETREE_EVENT);
 		e.SetClientData((void*)&files);
 		e.SetInt((int)bold);
@@ -2548,7 +2574,7 @@ void TagsManager::UpdateFileTree(const std::vector<wxFileName> &files, bool bold
 
 void TagsManager::UpdateFileTree(TagsDatabase *td, bool bold)
 {
-	if(GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD) {
+	if (GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD) {
 		std::vector<wxFileName> files;
 		td->GetFiles(wxEmptyString, files);
 		UpdateFileTree(files, bold);
@@ -2567,14 +2593,41 @@ void TagsManager::NotifyFileTree(bool bold)
 	// we temporarly set the flag CC_MARK_TAGS_FILES_IN_BOLD
 	m_tagsOptions.SetFlags(origFlags | CC_MARK_TAGS_FILES_IN_BOLD);
 
-	if(m_workspaceDatabase && m_workspaceDatabase->IsOpen()){
+	if (m_workspaceDatabase && m_workspaceDatabase->IsOpen()) {
 		UpdateFileTree(m_workspaceDatabase, bold);
 	}
 
-	if(m_externalDatabase && m_externalDatabase->IsOpen()){
+	if (m_externalDatabase && m_externalDatabase->IsOpen()) {
 		UpdateFileTree(m_externalDatabase, bold);
 	}
 
 	// restore original flags
 	m_tagsOptions.SetFlags(origFlags);
+}
+
+void TagsManager::DeleteTagsByFilePrefix(const wxString& dbfileName, const wxString& filePrefix)
+{
+	TagsDatabase db;
+	try {
+
+		db.OpenDatabase(wxFileName(dbfileName));
+		db.Begin();
+		db.DeleteByFilePrefix(db.GetDatabaseFileName(), filePrefix);
+
+		VariableEntry ve(filePrefix, wxEmptyString);
+		wxString delStr = ve.GetDeleteOneStatement();
+		wxSQLite3Statement delStatement = db.PrepareStatement(delStr);
+		ve.Delete(delStatement);
+
+		db.Commit();
+
+	} catch (wxSQLite3Exception &e) {
+		wxUnusedVar(e);
+	}
+
+
+	// clear cache if present
+	if (m_extDbCache) {
+		m_extDbCache->Clear();
+	}
 }

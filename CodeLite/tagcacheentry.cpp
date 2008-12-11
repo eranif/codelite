@@ -39,7 +39,7 @@ wxString TagCacheEntry::NormalizeFileName(const wxString& fileName)
 	return file_name;
 }
 
-void TagCacheEntry::IsFileStartsWith(const wxString& fileNamePrefix)
+bool TagCacheEntry::IsFileStartsWith(const wxString& fileNamePrefix)
 {
 	wxString prefix = NormalizeFileName(fileNamePrefix);
 	for(size_t i=0; i<m_files.GetCount(); i++){

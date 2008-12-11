@@ -37,7 +37,7 @@ public:
 
 	bool IsFileRelated(const wxString &fileName);
 
-	void IsFileStartsWith(const wxString &fileNamePrefix);
+	bool IsFileStartsWith(const wxString &fileNamePrefix);
 };
 
 typedef SmartPtr<TagCacheEntry> TagCacheEntryPtr;

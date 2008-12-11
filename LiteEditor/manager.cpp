@@ -2095,9 +2095,21 @@ bool Manager::OpenFileAndAppend ( const wxString &fileName, const wxString &text
 	if ( OpenFile ( fileName, wxEmptyString ) ) {
 		LEditor* editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 		if ( editor ) {
+
+			// if needed, append EOL
+			// in an ideal world, we would like that the file will be terminated with 2xEOL
+			if(editor->GetText().EndsWith(editor->GetEolString()) == false) {
+				editor->AppendText(editor->GetEolString());
+			}
+
+			if(editor->GetText().EndsWith(editor->GetEolString() + editor->GetEolString()) == false){
+				editor->AppendText(editor->GetEolString());
+			}
+
 			//get the current line number
 			int lineNum = editor->GetLineCount();
 			editor->GotoLine ( lineNum-1 );
+
 			editor->AppendText ( text );
 			ret = true;
 		}

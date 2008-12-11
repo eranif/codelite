@@ -32,7 +32,7 @@ CallTip::CallTip() {
 	startHighlight = 0;
 	endHighlight = 0;
 	tabSize = 0;
-	useStyleCallTip = false;    // for backwards compatibility
+	useStyleCallTip = true;    // for backwards compatibility
 
 #ifdef __APPLE__
 	// proper apple colours for the default

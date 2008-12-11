@@ -74,14 +74,14 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 	rCtrl.SetStyleBits(rCtrl.GetStyleBitsNeeded());
 
 	// by default indicators are set to be opaque rounded box
-#ifdef __WXMAC__	
+#ifdef __WXMAC__
 	rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_BOX);
 	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_BOX);
 #else
 	rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
 #endif
-	
+
 	std::list<StyleProperty> styles = lexPtr->GetProperties();
 	std::list<StyleProperty>::iterator iter = styles.begin();
 	for (; iter != styles.end(); iter++) {
@@ -91,7 +91,7 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 		bool bold = sp.IsBold();
 		bool italic = sp.GetItalic();
 		bool underline = sp.GetUnderlined();
-		
+
 		// handle special cases
 		if ( sp.GetId() == -1 ) {
 			// fold margin foreground colour
@@ -105,13 +105,7 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 			// caret colour
 			rCtrl.SetCaretForeground(sp.GetFgColour());
 		} else {
-			wxFont font;
-			if (sp.GetId() == wxSCI_STYLE_CALLTIP) {
-				font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-			} else {
-				font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
-			}
-
+			wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
 			if (sp.GetId() == 0) { //default
 				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
 				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, (*iter).GetFontSize());
@@ -136,6 +130,10 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 			rCtrl.StyleSetBackground(sp.GetId(), (*iter).GetBgColour());
 		}
 	}
+
+	// set the calltip font
+	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	rCtrl.StyleSetFont(wxSCI_STYLE_CALLTIP, font);
 }
 
 int ContextBase::GetHyperlinkRange(int pos, int &start, int &end)

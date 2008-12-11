@@ -13,7 +13,7 @@
 // Copyright:   (c) 2000 by Total Control Software
 // Licence:     wxWindows license
 /////////////////////////////////////////////////////////////////////////////
- 
+
 #include "ScintillaWX.h"
 //?#include "ExternalLexer.h"
 #include "PlatWX.h"
@@ -286,7 +286,7 @@ void ScintillaWX::StartDrag() {
 	DoStartDrag();
 #else
      startDragTimer->Start (200, true);
-#endif // wxVERSION_NUMBER >= 2701 && defined(__WXGTK20__) 
+#endif // wxVERSION_NUMBER >= 2701 && defined(__WXGTK20__)
 #endif
 }
 
@@ -524,7 +524,7 @@ void ScintillaWX::Paste() {
 
 #if wxUSE_UNICODE
         // free up the old character buffer in case the text is real big
-        data.SetText(wxEmptyString); 
+        data.SetText(wxEmptyString);
         text = wxEmptyString;
 #endif
         int len = strlen(buf);
@@ -717,12 +717,14 @@ long ScintillaWX::WndProc(unsigned int iMessage, unsigned long wParam, long lPar
           char* defn = reinterpret_cast<char *>(lParam);
           AutoCompleteCancel();
           pt.y += vs.lineHeight;
+
+		  int ctStyle = ct.UseStyleCallTip() ? STYLE_CALLTIP : STYLE_DEFAULT;
           PRectangle rc = ct.CallTipStart(currentPos, pt,
                                           defn,
-                                          vs.styles[STYLE_DEFAULT].fontName,
-                                          vs.styles[STYLE_DEFAULT].sizeZoomed,
+                                          vs.styles[ctStyle].fontName,
+                                          vs.styles[ctStyle].sizeZoomed,
                                           CodePage(),
-                                          vs.styles[STYLE_DEFAULT].characterSet,
+                                          vs.styles[ctStyle].characterSet,
                                           wMain);
           // If the call-tip window would be out of the client
           // space, adjust so it displays above the text.
@@ -992,7 +994,7 @@ int  ScintillaWX::DoKeyDown(const wxKeyEvent& evt, bool* consumed)
 	case WXK_NUMPAD_DELETE: //fall through
 	//Eran - END
     case WXK_DELETE:            key = SCK_DELETE;   break;
-	
+
 	//Eran - BEGIN
 	case WXK_NUMPAD_INSERT://fall through
 	//Eran - END

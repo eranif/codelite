@@ -31,7 +31,7 @@
 OptionsConfig::OptionsConfig(wxXmlNode *node)
 		: m_displayFoldMargin(true)
 		, m_underlineFoldLine(false)
-		, m_foldStyle(wxT("Arrows"))
+		, m_foldStyle(wxT("Arrows with Background Colour"))
 		, m_displayBookmarkMargin(true)
 		, m_bookmarkShape(wxT("Small Arrow"))
 		, m_bookmarkBgColour(wxColour(12, 133, 222))
@@ -52,7 +52,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         , m_edgeColumn(80)
         , m_edgeColour(wxColour(wxT("LIGHT GREY")))
 		, m_highlightMatchedBraces(true)
-		, m_autoAddMatchedBraces(false)
+		, m_autoAddMatchedBraces(true)
 		, m_foldBgColour(wxColour(240, 240, 240))
 {
 	//set the default font name to be UTF8

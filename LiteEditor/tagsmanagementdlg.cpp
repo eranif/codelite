@@ -250,7 +250,10 @@ void TagsManagementDlg::OnItemRightClick(wxListEvent& e)
 	wxMenu menu;
 	menu.Append(XRCID("delete_tags_from_path"), _("Remove tags generated from this path"), wxEmptyString, false);
 	menu.Connect(XRCID("delete_tags_from_path"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TagsManagementDlg::OnRemoveTagsGeneratedFromPath), NULL, this);
+
 	PopupMenu( &menu );
+
+	menu.Disconnect(XRCID("delete_tags_from_path"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(TagsManagementDlg::OnRemoveTagsGeneratedFromPath), NULL, this);
 
 	// reset the item
 	m_itemPath = wxNOT_FOUND;
@@ -261,12 +264,13 @@ void TagsManagementDlg::OnRemoveTagsGeneratedFromPath(wxCommandEvent& e)
 	if (m_itemPath != wxNOT_FOUND && m_itemDb != wxNOT_FOUND) {
 
 		wxString path = GetColumnText(m_listCtrlPaths, m_itemPath, 0);
-
 		// delete all entries using path as prefix
 		wxFileName *fn = (wxFileName *)m_listCtrlDatabases->GetItemData(m_itemDb);
-		TagsManagerST::Get()->DeleteTagsByFilePrefix(fn->GetFullPath(), path);
 
-		// refresh the paths table
-		DoLoadPathsTable(*fn);
+		if (wxMessageBox(wxString::Format(_("Are you sure you want to delete tags generated from '%s'"), path.c_str()), wxT("Codelite"), wxYES_NO|wxCENTER|wxICON_QUESTION) == wxYES) {
+			TagsManagerST::Get()->DeleteTagsByFilePrefix(fn->GetFullPath(), path);
+			// refresh the paths table
+			DoLoadPathsTable(*fn);
+		}
 	}
 }

@@ -267,7 +267,7 @@ void TagsManagementDlg::OnRemoveTagsGeneratedFromPath(wxCommandEvent& e)
 		// delete all entries using path as prefix
 		wxFileName *fn = (wxFileName *)m_listCtrlDatabases->GetItemData(m_itemDb);
 
-		if (wxMessageBox(wxString::Format(_("Are you sure you want to delete tags generated from '%s'"), path.c_str()), wxT("Codelite"), wxYES_NO|wxCENTER|wxICON_QUESTION) == wxYES) {
+		if (wxMessageBox(wxString::Format(_("Are you sure you want to delete tags generated from '%s'?"), path.c_str()), wxT("Codelite"), wxYES_NO|wxCENTER|wxICON_QUESTION) == wxYES) {
 			TagsManagerST::Get()->DeleteTagsByFilePrefix(fn->GetFullPath(), path);
 			// refresh the paths table
 			DoLoadPathsTable(*fn);

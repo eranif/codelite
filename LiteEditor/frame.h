@@ -92,7 +92,6 @@ class Frame : public wxFrame
 	bool m_doingReplaceInFiles;
 	wxMenu *m_cppMenu;
 	bool m_highlightWord;
-	bool m_hideOutputPane;
 	DockablePaneMenuManager *m_DPmenuMgr;
 
 public:
@@ -110,13 +109,6 @@ public:
 	 * @param flag
 	 */
 	void SetFrameFlag(bool set, int flag);
-
-	/**
-	 * @brief set the 'hide output pane' flag. If set to true, upon shell command termination,
-	 * codelite will auto-hide the output pane
-	 * @param hideOutputPane
-	 */
-	void SetHideOutputPane(const bool& hideOutputPane) {this->m_hideOutputPane = hideOutputPane;}
 
 	/**
 	 * @brief return true if the word under the caret should be highlighted
@@ -285,7 +277,7 @@ protected:
 	//----------------------------------------------------
 	void OnIdle(wxIdleEvent &e);
 	void OnSearchThread(wxCommandEvent &event);
-	void OnShellCommandEvent(wxCommandEvent &event);
+    void OnBuildEnded(wxCommandEvent &event);
 	void OnQuit(wxCommandEvent& WXUNUSED(event));
 	void OnClose(wxCloseEvent &event);
 	void OnAddSourceFile(wxCommandEvent& event);
@@ -347,8 +339,6 @@ protected:
 	void OnFindType(wxCommandEvent &event);
 	void OnQuickOutline(wxCommandEvent &event);
 	void OnImportMSVS(wxCommandEvent &e);
-	void OnNextBuildError(wxCommandEvent &event);
-	void OnNextBuildErrorUI(wxUpdateUIEvent &event);
 	void OnDebugAttach(wxCommandEvent &event);
 	void OnCopyFilePath(wxCommandEvent &event);
 	void OnCopyFilePathOnly(wxCommandEvent &event);

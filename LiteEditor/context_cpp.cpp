@@ -305,57 +305,38 @@ wxString ContextCpp::GetImageString(const TagEntry &entry)
 void ContextCpp::AutoIndent(const wxChar &nChar)
 {
 	LEditor &rCtrl = GetCtrl();
-	int indentSize = rCtrl.GetIndent();
-	int pos = wxNOT_FOUND;
-	long matchPos = wxNOT_FOUND;
+    
 	int curpos = rCtrl.GetCurrentPos();
 	if (IsComment(curpos) && nChar == wxT('\n')) {
-
-		//enter was hit in comment section
 		AutoAddComment();
 		return;
-
-	} else if (IsCommentOrString(rCtrl.GetCurrentPos())) {
-
+	}
+    if (IsCommentOrString(curpos)) {
 		ContextBase::AutoIndent(nChar);
 		return;
-
 	}
-
-	// enter was pressed
-	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
+	int line = rCtrl.LineFromPosition(curpos);
 	if (nChar == wxT('\n')) {
-		wxChar ch = rCtrl.PreviousChar(rCtrl.GetCurrentPos(), pos);
-		if (pos != wxNOT_FOUND && ch == wxT('{')) {
-			if (IsCommentOrString(pos)) {
-				return;
-			}
-
-			//open brace?
-			//increase indent size
-			int prevLine = rCtrl.LineFromPosition(pos);
-
-			int prevLineIndet = rCtrl.GetLineIndentation(prevLine);
-			rCtrl.SetLineIndentation(line, indentSize + prevLineIndet);
-		} else {
-			//just copy the previous line indentation
+        int prevpos = wxNOT_FOUND;
+		wxChar ch = rCtrl.PreviousChar(curpos, prevpos);
+		if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
 			ContextBase::AutoIndent(nChar);
 			return;
-		}
-
-		int dummy = rCtrl.GetLineIndentation(line);
-		if (rCtrl.GetUseTabs()) {
-			dummy = dummy / indentSize;
-		}
-		rCtrl.SetCaretAt(rCtrl.GetCurrentPos() + dummy);
-	} else if (nChar == wxT('}') && rCtrl.MatchBraceBack(wxT('}'), rCtrl.GetCurrentPos()-1, matchPos)) {
+        }
+        //open brace? increase indent size
+        int prevLine = rCtrl.LineFromPosition(prevpos);
+        rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
+		rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+	} else if (nChar == wxT('}')) {
+        long matchPos = wxNOT_FOUND;
+        if (!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
+            return;
 		int secondLine = rCtrl.LineFromPosition(matchPos);
-		if (secondLine == line) {
+		if (secondLine == line) 
 			return;
-		}
-		int secondLineIndent = rCtrl.GetLineIndentation(secondLine);
-		rCtrl.SetLineIndentation(line, secondLineIndent);
+		rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(secondLine));
 	}
+    rCtrl.ChooseCaretX(); // set new column as "current" column
 }
 
 bool ContextCpp::IsCommentOrString(long pos)
@@ -371,12 +352,6 @@ bool ContextCpp::IsCommentOrString(long pos)
 	        style == wxSCI_C_STRING					||
 	        style == wxSCI_C_STRINGEOL				||
 	        style == wxSCI_C_CHARACTER);
-}
-
-void ContextCpp::CallTipCancel()
-{
-	LEditor &rCtrl = GetCtrl();
-	rCtrl.CallTipCancel();
 }
 
 void ContextCpp::OnCallTipClick(wxScintillaEvent &event)
@@ -1100,25 +1075,26 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent &event)
 void ContextCpp::OnCommentSelection(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
+    
 	LEditor &editor = GetCtrl();
 	int start = editor.GetSelectionStart();
 	int end   = editor.GetSelectionEnd();
-
+    if (editor.LineFromPosition(editor.PositionBefore(end)) != editor.LineFromPosition(end)) {
+        end = editor.PositionBefore(end);
+    }
 	if (start == end)
 		return;
 
-	//createa C block comment
+    editor.SetCurrentPos(end);
+    
 	editor.BeginUndoAction();
+    editor.InsertText(end, wxT("*/"));
 	editor.InsertText(start, wxT("/*"));
-
-	//advance the end selection by 2
-	end = editor.PositionAfter(editor.PositionAfter(end));
-	editor.InsertText(end, wxT("*/"));
-
-	end = editor.PositionAfter(editor.PositionAfter(end));
-	editor.SetCaretAt(end);
-
 	editor.EndUndoAction();
+    
+    editor.CharRight();
+    editor.CharRight();
+    editor.ChooseCaretX();
 }
 
 void ContextCpp::OnCommentLine(wxCommandEvent &event)
@@ -1126,47 +1102,32 @@ void ContextCpp::OnCommentLine(wxCommandEvent &event)
 	wxUnusedVar(event);
 	LEditor &editor = GetCtrl();
 
-	int line_start = editor.LineFromPosition(editor.GetCurrentPos());
-	int line_end(line_start);
-
-	if (editor.GetSelectedText().IsEmpty() == false) {
-		//we have a selection
-		//calculate the line number and start point using the selection
-		line_start = editor.LineFromPosition(editor.GetSelectionStart());
-		line_end   = editor.LineFromPosition(editor.GetSelectionEnd());
-	}
+	int start = editor.GetSelectionStart();
+	int end   = editor.GetSelectionEnd();
+    if (editor.LineFromPosition(editor.PositionBefore(end)) != editor.LineFromPosition(end)) {
+        end = std::max(start, editor.PositionBefore(end));
+    }
+    
+	bool doingComment = editor.GetStyleAt(start) != wxSCI_C_COMMENTLINE;
+    
+	int line_start = editor.LineFromPosition(start);
+	int line_end   = editor.LineFromPosition(end);
 
 	editor.BeginUndoAction();
-
-	bool doingComment(true);
-	// if the starting line is already commented,
-	// perform the 'uncomment' operation
-	int first_post = editor.PositionFromLine(line_start);
-	if (editor.GetStyleAt(first_post) == wxSCI_C_COMMENTLINE) {
-		// this line is C++ comment line
-		doingComment = false;
-	}
-
-	//comment all the lines
-	int i(line_start);
-	for (i=line_start; i<= line_end; i++) {
-		int start = editor.PositionFromLine(i);
-		if ( ! doingComment ) {
-			if (editor.GetStyleAt(start) == wxSCI_C_COMMENTLINE) {
-				editor.SetCaretAt(start + 2);
-				editor.DeleteBack();
-				editor.DeleteBack();
-			}
-		} else {
-			editor.InsertText(start, wxT("//"));
-		}
-	}
-
-	//place the caret at the end of the commented line
-	int endPos = editor.PositionFromLine(line_end) + editor.LineLength(line_end);
-	editor.SetCaretAt(endPos);
-
+    for (; line_start <= line_end; line_start++) {
+        start = editor.PositionFromLine(line_start);
+        if (doingComment) {
+            editor.InsertText(start, wxT("//"));
+        } else if (editor.GetStyleAt(start) == wxSCI_C_COMMENTLINE) {
+            editor.SetAnchor(start);
+            editor.SetCurrentPos(editor.PositionAfter(editor.PositionAfter(start)));
+            editor.DeleteBackNotLine();
+        }
+    }
 	editor.EndUndoAction();
+
+    editor.SetCaretAt(editor.PositionFromLine(line_end+1));
+    editor.ChooseCaretX();
 }
 
 void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
@@ -1976,75 +1937,51 @@ void ContextCpp::Initialize()
 
 void ContextCpp::AutoAddComment()
 {
-	int cur_style;
-	int next_style;
-	int prepre_style;
-
 	LEditor &rCtrl = GetCtrl();
-	int curpos = rCtrl.GetCurrentPos();
-	int prevpos = rCtrl.PositionBefore(curpos);
-
-	//get the style for the previous line we where
-	cur_style = rCtrl.GetStyleAt(curpos);
-	next_style = rCtrl.GetStyleAt(rCtrl.PositionAfter(curpos));
-	prepre_style = rCtrl.GetStyleAt(rCtrl.PositionBefore(prevpos));
-
+    
 	CommentConfigData data;
 	EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
 
-	if (cur_style == wxSCI_C_COMMENTLINE) {
-
-		//C++ comment style was in the previous line
-		//just copy the previous line indentation
-
-		int indentSize = rCtrl.GetIndent();
-		int line = rCtrl.LineFromPosition(curpos);
-		int prevLine = line - 1;
-
-		if (rCtrl.GetLine(prevLine).Trim().Trim(false) == wxT("//") || data.GetContinueCppComment() == false) {
-			//dont add new comment
-			ContextBase::AutoIndent(wxT('\n'));
-			return;
-		}
-
-		//take the previous line indentation size
-		int prevLineIndet = rCtrl.GetLineIndentation(prevLine);
-		rCtrl.SetLineIndentation(line, prevLineIndet);
-		//place the caret at the end of the line
-		int dummy = rCtrl.GetLineIndentation(line);
-		if (rCtrl.GetUseTabs()) {
-			dummy = dummy / indentSize;
-		}
-
-		if (next_style != wxSCI_C_COMMENTLINE) {
-			rCtrl.InsertText(curpos + dummy, wxT("//"));
-			rCtrl.SetCaretAt(curpos + dummy + 2);
-		}
-
-	} else if (cur_style == wxSCI_C_COMMENT || cur_style == wxSCI_C_COMMENTDOC) {
-
-		if (data.GetAddStarOnCComment() == false) {
-			ContextBase::AutoIndent(wxT('\n'));
-			return;
-		}
-
-		// we are in C style comment
-		int indentSize = rCtrl.GetIndent();
-		int line = rCtrl.LineFromPosition(curpos);
-		int prevLine = line - 1;
-
-		//take the previous line indentation size
-		int prevLineIndet = rCtrl.GetLineIndentation(prevLine);
-		rCtrl.SetLineIndentation(line, prevLineIndet);
-		//place the caret at the end of the line
-		int dummy = rCtrl.GetLineIndentation(line);
-		dummy = dummy / indentSize;
-
-		if (prepre_style == wxSCI_C_COMMENT || prepre_style == wxSCI_C_COMMENTDOC) {
-			rCtrl.InsertText(curpos + dummy, wxT(" *"));
-			rCtrl.SetCaretAt(curpos + dummy + 2);
-		}
-	}
+	int curpos = rCtrl.GetCurrentPos();
+    int line = rCtrl.LineFromPosition(curpos);
+	int cur_style = rCtrl.GetStyleAt(curpos);
+    
+    bool dontadd = false;
+    switch (cur_style) {
+        case wxSCI_C_COMMENTLINE:
+            dontadd = rCtrl.GetLine(line-1).Trim().Trim(false) == wxT("//") || !data.GetContinueCppComment();
+            break;
+        case wxSCI_C_COMMENT:
+        case wxSCI_C_COMMENTDOC:
+            dontadd = !data.GetAddStarOnCComment();
+            break;
+        default:
+            dontadd = true;
+            break;
+    }
+    if (dontadd) {
+        ContextBase::AutoIndent(wxT('\n'));
+        return;
+    }
+    
+    wxString toInsert;
+    switch (cur_style) {
+        case wxSCI_C_COMMENTLINE:
+            if (rCtrl.GetStyleAt(rCtrl.PositionAfter(curpos)) != wxSCI_C_COMMENTLINE) {
+                toInsert = wxT("// ");
+            }
+            break;
+        case wxSCI_C_COMMENT:
+        case wxSCI_C_COMMENTDOC: 
+            if (rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
+                toInsert = rCtrl.GetCharAt(rCtrl.GetLineIndentPosition(line-1)) == wxT('*') ? wxT("*") : wxT(" *");
+            }
+            break;
+    }
+    rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-1));
+    rCtrl.InsertText(rCtrl.GetLineIndentPosition(line), toInsert);
+    rCtrl.SetCaretAt(rCtrl.GetLineEndPosition(line));
+    rCtrl.ChooseCaretX(); // set new column as "current" column
 }
 
 bool ContextCpp::IsComment(long pos)

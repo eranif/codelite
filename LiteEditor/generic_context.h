@@ -22,12 +22,9 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CONTEXT_GENERIC_H
+#ifndef CONTEXT_GENERIC_H
 #define CONTEXT_GENERIC_H
 
-#include "wx/string.h"
-#include "wx/wxscintilla.h"
-#include "smart_ptr.h"
 #include "context_base.h"
 
 class LEditor;
@@ -45,7 +42,8 @@ class LEditor;
  *
  *
  */
-class ContextGeneric : public ContextBase {
+class ContextGeneric : public ContextBase 
+{
 public:
 	//---------------------------------------
 	// ctors-dtor
@@ -55,26 +53,12 @@ public:
 	ContextGeneric(const wxString &name) : ContextBase(name) {};
 
 	virtual ~ContextGeneric();
-	LEditor &GetCtrl() { return *m_container; }
 	virtual ContextBase *NewInstance(LEditor *container);
 
 	//---------------------------------------
 	// Operations
 	//---------------------------------------
-	virtual void CompleteWord();
-	virtual void CodeComplete(long pos = wxNOT_FOUND);
-	virtual void GotoDefinition();
-	virtual void GotoPreviousDefintion();
-	virtual void AutoIndent(const wxChar&);
-	virtual void CallTipCancel(){};
 	virtual void ApplySettings();
-	virtual void OnFileSaved(); 
-	virtual bool IsCommentOrString(long WXUNUSED(pos)){ return false; }
-
-	// event handlers
-	virtual void OnDwellEnd(wxScintillaEvent & WXUNUSED(event)) {};
-	virtual void OnCallTipClick(wxScintillaEvent& WXUNUSED(event)) {};
-	virtual void OnDwellStart(wxScintillaEvent & WXUNUSED(event)) {};
 };
 #endif // CONTEXT_GENERIC_H
 

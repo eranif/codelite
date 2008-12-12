@@ -82,6 +82,9 @@ enum {
 	//clientData is NULL
 	wxEVT_INIT_DONE = 3450,
     
+    //clientData is editor config node name (wxString*)
+    wxEVT_EDITOR_CONFIG_CHANGED,
+    
 	//clientData is NULL
 	wxEVT_WORKSPACE_LOADED,
     //clientData is NULL

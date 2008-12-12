@@ -115,12 +115,9 @@
 #include <gtk-2.0/gtk/gtk.h>
 #endif
 
-typedef int (*_GCC_COLOUR_FUNC_PTR)(int, const char*, size_t&, size_t&);
-
 extern const wxChar *SvnRevision;
 extern char *cubes_xpm[];
 extern unsigned char cubes_alpha[];
-extern void SetGccColourFunction(_GCC_COLOUR_FUNC_PTR func);
 static int FrameTimerId = wxNewId();
 
 const wxEventType wxEVT_UPDATE_STATUS_BAR = XRCID("update_status_bar");
@@ -159,13 +156,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED, Frame::OnSearchThread)
-
-	//build/debugger events
-	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_ADDLINE, Frame::OnShellCommandEvent)
-	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_STARTED, Frame::OnShellCommandEvent)
-	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnShellCommandEvent)
-	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, Frame::OnShellCommandEvent)
-
+    
+	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnBuildEnded)
+    
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
 	EVT_MENU(XRCID("copy_file_path"), Frame::OnCopyFilePathOnly)
@@ -276,7 +269,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("stop_executed_program"), Frame::OnStopExecutedProgramUI)
 	EVT_UPDATE_UI(XRCID("clean_active_project"), Frame::OnCleanProjectUI)
 	EVT_MENU(XRCID("execute_no_debug"), Frame::OnExecuteNoDebug)
-	EVT_MENU(XRCID("next_error"), Frame::OnNextBuildError)
 	EVT_MENU(XRCID("create_ext_database"), Frame::OnBuildExternalDatabase)
 	EVT_MENU(XRCID("open_ext_database"), Frame::OnUseExternalDatabase)
 	EVT_MENU(XRCID("close_ext_database"), Frame::OnCloseExternalDatabase)
@@ -385,7 +377,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("find_resource"), Frame::OnWorkspaceOpen)
 	EVT_UPDATE_UI(XRCID("insert_breakpoint"), Frame::OnDebugManageBreakpointsUI)
 	EVT_UPDATE_UI(XRCID("delete_breakpoint"), Frame::OnDebugManageBreakpointsUI)
-	EVT_UPDATE_UI(XRCID("next_error"), Frame::OnNextBuildErrorUI)
 	EVT_UPDATE_UI(XRCID("close_file"), Frame::OnFileCloseUI)
 	EVT_MENU(XRCID("link_action"), Frame::OnStartPageEvent)
 
@@ -434,7 +425,6 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 		, m_doingReplaceInFiles(false)
 		, m_cppMenu(NULL)
 		, m_highlightWord(false)
-		, m_hideOutputPane(false)
 {
 #if  defined(__WXGTK20__)
 	// A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -552,7 +542,6 @@ void Frame::Initialize(bool loadLastSession)
 	}
 
 	m_theFrame->SendSizeEvent();
-	SetGccColourFunction( BuildTab::ColourGccLine );
 }
 
 Frame* Frame::Get()
@@ -1649,102 +1638,26 @@ void Frame::OnAdvanceSettings(wxCommandEvent &event)
 	dlg->Destroy();
 }
 
-void Frame::OnShellCommandEvent(wxCommandEvent &event)
+void Frame::OnBuildEnded(wxCommandEvent &event)
 {
-	static wxStopWatch sw;
-
-	// make sure that the output pane is visible and selection
-	// is set to the 'Find In Files' tab
-	m_outputPane->GetBuildTab()->CanFocus(true);
-	if (event.GetEventType() == wxEVT_SHELL_COMMAND_STARTED || event.GetEventType() == wxEVT_SHELL_COMMAND_STARTED_NOCLEAN) {
-		sw.Start();
-
-		// do we need to clear the build log?
-		if ( event.GetEventType() != wxEVT_SHELL_COMMAND_STARTED_NOCLEAN) {
-			m_outputPane->GetBuildTab()->Clear();
-			m_outputPane->GetErrorsTab()->Clear();
-		}
-
-		//read settings for the build output tab
-		m_outputPane->GetBuildTab()->ReloadSettings();
-		m_outputPane->GetBuildTab()->AppendText(wxT("Building: \n"));
-
-		SetStatusMessage(event.GetString(), 4, XRCID("build"));
-	} else if (event.GetEventType() == wxEVT_SHELL_COMMAND_ADDLINE) {
-		m_outputPane->GetBuildTab()->AppendText(event.GetString());
-		m_outputPane->GetErrorsTab()->AppendText(event.GetString());
-	} else if (event.GetEventType() == wxEVT_SHELL_COMMAND_PROCESS_ENDED) {
-		// take the elapsed time from the stopwatch
-		long elapsed = sw.Time();
-
-		// format it into human-readable
-		long sec(0);
-		long hours(0);
-		long minutes(0);
-
-		// convert to seconds
-		elapsed = elapsed / 1000;
-		hours = elapsed / 3600;
-
-		elapsed = elapsed % 3600;
-		minutes = elapsed / 60;
-		sec = elapsed % 60;
-
-		m_outputPane->GetBuildTab()->AppendText(
-		    wxString::Format(wxT("%d errors, %d warnings, total time: %s seconds\n"),
-		                     GetOutputPane()->GetBuildTab()->GetErrorCount(),
-		                     GetOutputPane()->GetBuildTab()->GetWarningCount(),
-		                     wxString::Format(wxT("%02d:%02d:%02d"), hours, minutes, sec).c_str()));
-
-		m_outputPane->GetBuildTab()->AppendText(BUILD_END_MSG);
-
-		SetStatusMessage(wxEmptyString, 4, XRCID("build"));
-
-		// get the build settings
-		BuildTabSettingsData buildSettings;
-		EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &buildSettings);
-
-		if (buildSettings.GetAutoHide()) {
-			// implement the auto-hide feature:
-			// incase the build ended with no error nor warnings, and the pane was shown due to the build
-			// process, hide it.
-			if (GetOutputPane()->GetBuildTab()->GetErrorCount() == 0 && GetOutputPane()->GetBuildTab()->GetWarningCount() == 0 && m_hideOutputPane) {
-				ManagerST::Get()->HidePane(wxT("Output View"), true);
-			}
-		}
-		m_hideOutputPane = false;
-
-		//If the build process was part of a 'Build and Run' command, check whether an erros
-		//occured during build process, if non, launch the output
-		if (m_buildAndRun) {
-			m_buildAndRun = false;
-			if (!ManagerST::Get()->IsBuildEndedSuccessfully()) {
-				//build ended with errors
-				if (wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES) {
-					ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
-				}
-			} else {
-				//no errors, execute!
-				ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
-			}
-		}
-
-		// process next request from the queue
-		ManagerST::Get()->ProcessCommandQueue();
-
-		//give back the focus to the editor
-		LEditor *editor = GetMainBook()->GetActiveEditor();
-		if (editor) {
-			editor->SetActive();
-		}
-	}
+    event.Skip();
+    if (m_buildAndRun) {
+        //If the build process was part of a 'Build and Run' command, check whether an erros
+        //occured during build process, if non, launch the output
+        m_buildAndRun = false;
+        if (ManagerST::Get()->IsBuildEndedSuccessfully() || 
+                wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES) {
+            ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
+        }
+    }
+    ManagerST::Get()->ProcessCommandQueue();
 }
 
 void Frame::OnOutputWindowEvent(wxCommandEvent &event)
 {
 	// make sure that the output pane is visible and selection
 	// is set to the 'Find In Files' tab
-	SetHideOutputPane(ManagerST::Get()->ShowOutputPane(OutputPane::OUTPUT_WIN));
+	ManagerST::Get()->ShowOutputPane(OutputPane::OUTPUT_WIN);
 
 	if (event.GetEventType() == wxEVT_ASYNC_PROC_STARTED) {
 		m_outputPane->GetOutputWindow()->Clear();
@@ -2409,7 +2322,8 @@ void Frame::OnDebugRestart(wxCommandEvent &e)
 
 void Frame::OnDebugRestartUI(wxUpdateUIEvent &e)
 {
-	e.Enable(DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning());
+    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	e.Enable(dbgr && dbgr->IsRunning());
 }
 
 void Frame::OnDebugStop(wxCommandEvent &e)
@@ -2420,7 +2334,8 @@ void Frame::OnDebugStop(wxCommandEvent &e)
 
 void Frame::OnDebugStopUI(wxUpdateUIEvent &e)
 {
-	e.Enable(DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning());
+    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	e.Enable(dbgr && dbgr->IsRunning());
 }
 
 void Frame::OnDebugManageBreakpointsUI(wxUpdateUIEvent &e)
@@ -2455,7 +2370,8 @@ void Frame::OnDebugCmdUI(wxUpdateUIEvent &e)
 	        e.GetId() == XRCID("dbg_stepout") ||
 	        e.GetId() == XRCID("dbg_next") ||
 	        e.GetId() == XRCID("show_cursor")) {
-		e.Enable(DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning());
+        IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+        e.Enable(dbgr && dbgr->IsRunning());
 	}
 }
 
@@ -2473,22 +2389,6 @@ void Frame::OnIdle(wxIdleEvent &e)
 	if (dbgr && dbgr->IsRunning()) {
 		dbgr->Poke();
 	}
-}
-
-void Frame::OnNextBuildError(wxCommandEvent &event)
-{
-	GetOutputPane()->GetBuildTab()->ProcessEvent(event);
-//	GetOutputPane()->GetErrorsTab()->ProcessEvent(event);
-}
-
-void Frame::OnNextBuildErrorUI(wxUpdateUIEvent &event)
-{
-	bool isShown(false);
-	wxAuiPaneInfo &info = m_mgr.GetPane(wxT("Output View"));
-	if (info.IsOk()) {
-		isShown = info.IsShown();
-	}
-	event.Enable(ManagerST::Get()->IsWorkspaceOpen() && isShown);
 }
 
 void Frame::OnLinkClicked(wxHtmlLinkEvent &e)

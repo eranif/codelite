@@ -108,8 +108,6 @@ public:
 	virtual wxString GetProjectNameByFile( const wxString &fullPathFileName );
 	virtual BuildManager *GetBuildManager();
 	virtual BuildSettingsConfig *GetBuildSettingsConfigManager();
-	virtual void AppendErrorTabMsg(const wxString &msg, bool clean);
-	virtual void ShowErrorTabIfNeeded();
     virtual bool ClosePage(const wxString &text);
     virtual wxWindow *FindPage(const wxString &text);
     virtual bool AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);

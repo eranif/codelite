@@ -84,7 +84,6 @@ public:
 	virtual void GotoDefinition();
 	virtual void GotoPreviousDefintion();
 	virtual void AutoIndent(const wxChar&);
-	virtual void CallTipCancel();
 	virtual	bool IsCommentOrString(long pos);
 	virtual	bool IsComment(long pos);
 	virtual void AddMenuDynamicContent(wxMenu *menu);

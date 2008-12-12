@@ -37,7 +37,7 @@ BEGIN_EVENT_TABLE(ContinuousBuild, IPlugin)
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_ADDLINE, ContinuousBuild::OnShellAddLine)
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_STARTED, ContinuousBuild::OnShellBuildStarted)
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, ContinuousBuild::OnShellProcessEnded)
-	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, ContinuousBuild::OnShellBuildStartedNoClean)
+	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, ContinuousBuild::OnShellBuildStarted)
 END_EVENT_TABLE()
 
 ContinuousBuild::ContinuousBuild(IManager *manager)
@@ -107,7 +107,7 @@ void ContinuousBuild::OnFileSaved(wxCommandEvent& e)
 
 	if (conf.GetEnabled()) {
 		wxString *fileName = (wxString*) e.GetClientData();
-		if (fileName) {
+		if (fileName) { 
 			DoBuild(*fileName);
 		}
 	}
@@ -133,8 +133,6 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 		delete m_shellProcess;
 		m_shellProcess = NULL;
 	}
-
-	wxString conf;
 	
 	// get the file's project name
 	wxString projectName = m_mgr->GetProjectNameByFile(fileName);
@@ -147,10 +145,12 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 	if ( !bldConf ) {
 		return;
 	}
+	wxString conf = bldConf->GetName();
 
 	m_currentBuildInfo.project = projectName;
+    m_currentBuildInfo.config = conf;
 	m_currentBuildInfo.file = fileName;
-	
+
 	if( !IsCompilable(fileName) ) {
 		return;
 	}
@@ -184,12 +184,9 @@ void ContinuousBuild::OnShellAddLine(wxCommandEvent& e)
 void ContinuousBuild::OnShellBuildStarted(wxCommandEvent& e)
 {
 	m_view->SetStatusMessage(_("Compiling file: ") + m_currentBuildInfo.file);
-}
-
-void ContinuousBuild::OnShellBuildStartedNoClean(wxCommandEvent& e)
-{
-	m_view->SetStatusMessage(_("Compiling file: ") + m_currentBuildInfo.file);
-}
+    m_mgr->SetStatusMessage(wxString::Format(wxT("Compiling %s..."), 
+                            wxFileName(m_currentBuildInfo.file).GetFullName().c_str()), 4, XRCID("continuous"));
+} 
 
 void ContinuousBuild::OnShellProcessEnded(wxCommandEvent& e)
 {
@@ -197,6 +194,8 @@ void ContinuousBuild::OnShellProcessEnded(wxCommandEvent& e)
 	m_view->RemoveFile(m_currentBuildInfo.file);
 	m_view->SetStatusMessage(wxEmptyString);
 
+    m_mgr->SetStatusMessage(wxEmptyString, 4, XRCID("continuous"));
+    
 	DoReportErrors();
 	m_currentBuildInfo.Clear();
 
@@ -222,10 +221,17 @@ void ContinuousBuild::StopAll()
 
 void ContinuousBuild::DoReportErrors()
 {
-	for(size_t i=0; i<m_currentBuildInfo.output.GetCount(); i++){
-		m_mgr->AppendErrorTabMsg(m_currentBuildInfo.output.Item(i), i==0);
+    wxCommandEvent start(wxEVT_SHELL_COMMAND_STARTED);
+    m_mgr->GetTheApp()->ProcessEvent(start);
+    
+	for (size_t i=0; i<m_currentBuildInfo.output.GetCount(); i++){
+        wxCommandEvent line(wxEVT_SHELL_COMMAND_ADDLINE);
+        line.SetString(m_currentBuildInfo.output.Item(i));
+        m_mgr->GetTheApp()->ProcessEvent(line);
 	}
-	m_mgr->ShowErrorTabIfNeeded();
+    
+    wxCommandEvent stop(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+    m_mgr->GetTheApp()->ProcessEvent(stop);
 }
 
 bool ContinuousBuild::IsCompilable(const wxString& fileName)
@@ -246,10 +252,7 @@ CompilerPtr ContinuousBuild::DoGetCompiler()
 	if(proj) {
 		ProjectSettingsPtr settings = proj->GetSettings();
 		if(settings) {
-			// get the selected workspace configuration
-			BuildMatrixPtr matrix = m_mgr->GetWorkspace()->GetBuildMatrix();
-			wxString projConf = matrix->GetProjectSelectedConf ( matrix->GetSelectedConfigurationName(), m_currentBuildInfo.project );
-			BuildConfigPtr bldConf = settings->GetBuildConfiguration(projConf);
+			BuildConfigPtr bldConf = settings->GetBuildConfiguration(m_currentBuildInfo.config);
 			if(bldConf){
 				wxString type = bldConf->GetCompilerType();
 //				wxLogMessage(wxString::Format(wxT("Compiler type=%s, for configuration=%s"), type.c_str(), projConf.c_str()));

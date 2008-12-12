@@ -22,7 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CONTEXT_BASE_H
+#ifndef CONTEXT_BASE_H
 #define CONTEXT_BASE_H
 
 #include "wx/string.h"
@@ -47,13 +47,14 @@ class LEditor;
  */
 class ContextBase : public wxEvtHandler
 {
-protected:
+private:
 	LEditor *m_container;
 	wxString m_name;
 
 protected:
 	void SetName(const wxString &name){m_name = name;}
 	void DoApplySettings(LexerConfPtr lexPtr);
+
 public:
 
 	// ctor-dtor
@@ -71,34 +72,32 @@ public:
 	 */
 	const wxString &GetName() const { return m_name; }
 
-	virtual void AutoIndent(const wxChar&);
-	
 	// every Context derived class must implement the following methods
 	virtual ContextBase *NewInstance(LEditor *container) = 0;
-	virtual void CompleteWord() = 0;
-	virtual void CodeComplete(long pos = wxNOT_FOUND) = 0;
-	virtual void GotoDefinition() = 0;
-	virtual void GotoPreviousDefintion() = 0;
-	virtual void CallTipCancel() = 0;
-	virtual bool IsCommentOrString(long pos) = 0;
-	virtual void OnCallTipClick(wxScintillaEvent& WXUNUSED(event)) = 0;
 	virtual void ApplySettings() = 0;
 	
-	//a functions with default implementation:
+	// functions with default implementation:
+	virtual void OnCallTipClick(wxScintillaEvent& event){event.Skip();}
 	virtual void OnDwellEnd(wxScintillaEvent & event){event.Skip();}
 	virtual void OnDbgDwellEnd(wxScintillaEvent & event){event.Skip();}
 	virtual void OnDwellStart(wxScintillaEvent & event){event.Skip();}
 	virtual void OnDbgDwellStart(wxScintillaEvent & event){event.Skip();}
 	virtual void OnKeyDown(wxKeyEvent &event) {event.Skip();}
-	virtual void AddMenuDynamicContent(wxMenu *WXUNUSED(menu)) {};
-	virtual void RemoveMenuDynamicContent(wxMenu *WXUNUSED(menu)) {};
+	virtual void AddMenuDynamicContent(wxMenu *WXUNUSED(menu)) {}
+	virtual void RemoveMenuDynamicContent(wxMenu *WXUNUSED(menu)) {}
 	virtual void OnSciUpdateUI(wxScintillaEvent& WXUNUSED(event)){}
-	virtual void OnFileSaved(){};
-	virtual void OnEnterHit(){};
+	virtual void OnFileSaved(){}
+	virtual void OnEnterHit(){}
 	virtual void RetagFile(){}
-	virtual void OnUserTypedXChars(const wxString &word) { wxUnusedVar(word); }
+	virtual void OnUserTypedXChars(const wxString &WXUNUSED(word)){}
 	virtual wxString CallTipContent(){return wxEmptyString;}
     virtual void SetActive(){}
+	virtual bool IsCommentOrString(long WXUNUSED(pos)) { return false; } 
+	virtual void AutoIndent(const wxChar&);
+	virtual void CompleteWord(){}
+	virtual void CodeComplete(long pos = wxNOT_FOUND) {wxUnusedVar(pos);}
+	virtual void GotoDefinition(){}
+	virtual void GotoPreviousDefintion(){}
     
     // ctrl-click style navigation support
 	virtual int  GetHyperlinkRange(int pos, int &start, int &end);

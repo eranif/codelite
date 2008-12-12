@@ -84,7 +84,7 @@ const wxString clCMD_EDIT = wxT("<Edit...>");
 const wxString clCMD_DELETE = wxT("<Delete...>");
 
 // constant message
-const wxString BUILD_START_MSG     = wxT("Build Started...\n");
+const wxString BUILD_START_MSG     = wxT("Building: \n");
 const wxString BUILD_END_MSG       = wxT("----------Build Ended----------\n");
 const wxString SEARCH_IN_WORKSPACE = wxT("Entire Workspace");
 const wxString SEARCH_IN_PROJECT   = wxT("Active Project");

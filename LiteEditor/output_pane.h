@@ -35,7 +35,6 @@ class OutputPane;
 class ShellWindow;
 class BuildTab;
 class ErrorsTab;
-class ErrorsContainer;
 class FindResultsTab;
 class FindResultsContainer;
 class ReplaceInFilesPanel;
@@ -81,8 +80,7 @@ public:
 	wxLog *m_logTargetOld;
 	ShellTab *m_outputDebug;
 	BuildTab *m_buildWin;
-	//ErrorsTab *m_errorsWin;
-	ErrorsContainer *m_errorsWin;
+	ErrorsTab *m_errorsWin;
 	FindResultsContainer *m_findResultsTab;
 	ReplaceInFilesPanel *m_replaceResultsTab;
 	TaskBasePanel *m_taskPanel;
@@ -120,8 +118,7 @@ public:
 	ShellWindow *GetOutputWindow() {return m_outputWind->GetShell();}
 	ShellWindow *GetDebugWindow() {return m_outputDebug->GetShell();}
 	BuildTab *GetBuildTab() {return m_buildWin;}
-	//ErrorsTab *GetErrorsTab() {return m_errorsWin;}
-	ErrorsTab *GetErrorsTab();// {return m_errorsWin->GetErrorsTab();}
+	ErrorsTab *GetErrorsTab() {return m_errorsWin;}
 	FindResultsTab *GetFindResultsTab();
 	ReplaceInFilesPanel *GetReplaceResultsTab(){return m_replaceResultsTab;}
 	void SetFindResultsTab(int which);

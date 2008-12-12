@@ -22,15 +22,14 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "frame.h"
+#include "frame.h"
 #include "buidltab.h"
 #include "buildsettingstab.h"
 #include "buildtabsettingsdata.h"
 #include "editor_config.h"
 
 BuildTabSetting::BuildTabSetting( wxWindow* parent )
-:
-BuildTabSettingsBase( parent )
+    : BuildTabSettingsBase( parent )
 { 
 	BuildTabSettingsData options;
 	EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
@@ -41,6 +40,7 @@ BuildTabSettingsBase( parent )
 	m_colourPickerWarningsFg->SetColour(options.GetWarnColour());
 	m_checkBoxBoldErrFont->SetValue(options.GetBoldErrFont());
 	m_checkBoxBoldWarnFont->SetValue(options.GetBoldWarnFont());
+    m_radioBoxShowBuildTab->Select(options.GetShowBuildPane());
 	m_checkBoxAutoHide->SetValue(options.GetAutoHide());
 }
 
@@ -54,9 +54,7 @@ void BuildTabSetting::Save()
 	options.SetSkipWarnings(m_checkBoxSkipeWarnings->IsChecked());
 	options.SetBoldErrFont(m_checkBoxBoldErrFont->IsChecked());
 	options.SetBoldWarnFont(m_checkBoxBoldWarnFont->IsChecked());
+    options.SetShowBuildPane(m_radioBoxShowBuildTab->GetSelection());
 	options.SetAutoHide(m_checkBoxAutoHide->IsChecked());
-	
 	EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);
-	//reload the settings
-	Frame::Get()->GetOutputPane()->GetBuildTab()->ReloadSettings();
 }

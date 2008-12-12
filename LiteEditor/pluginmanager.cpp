@@ -457,7 +457,7 @@ void PluginManager::EnableToolbars()
 
 void PluginManager::SetStatusMessage(const wxString &msg, int col, int id)
 {
-    Frame::Get()->SetStatusMessage(msg, 0, id);
+    Frame::Get()->SetStatusMessage(msg, col, id);
 }
 
 void PluginManager::ProcessCommandQueue()
@@ -488,22 +488,6 @@ BuildManager* PluginManager::GetBuildManager()
 BuildSettingsConfig* PluginManager::GetBuildSettingsConfigManager()
 {
 	return BuildSettingsConfigST::Get();
-}
-
-void PluginManager::AppendErrorTabMsg(const wxString& msg, bool clean)
-{
-	if(clean) {
-		Frame::Get()->GetOutputPane()->GetErrorsTab()->Clear();
-	}
-	Frame::Get()->GetOutputPane()->GetErrorsTab()->AppendText(msg);
-}
-
-void PluginManager::ShowErrorTabIfNeeded()
-{
-	wxScintilla *sci = (wxScintilla*)Frame::Get()->GetOutputPane()->GetErrorsTab()->GetInternalWindow();
-	if(sci->GetText().Trim().IsEmpty() == false){
-		ManagerST::Get()->ShowOutputPane(OutputPane::ERRORS_WIN);
-	}
 }
 
 bool PluginManager::ClosePage(const wxString &text)

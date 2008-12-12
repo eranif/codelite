@@ -101,13 +101,21 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	
 	bSizer1->Add( fgSizer1, 0, wxALL|wxEXPAND, 5 );
 	
-	m_checkBoxSkipeWarnings = new wxCheckBox( this, wxID_ANY, wxT("When using the menu to jump to errors, skip warnings"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	bSizer1->Add( m_checkBoxSkipeWarnings, 0, wxALL, 5 );
-	
+    wxArrayString choices;
+    choices.Add(wxT("When build starts"));
+    choices.Add(wxT("When build ends"));
+    choices.Add(wxT("Don't automatically show"));
+    m_radioBoxShowBuildTab = new wxRadioBox(this, wxID_ANY, wxT("Show Build Pane"), wxDefaultPosition, wxDefaultSize,
+                                            choices, 1);
+    bSizer1->Add( m_radioBoxShowBuildTab, 0, wxALL|wxEXPAND, 5 );
+    
 	m_checkBoxAutoHide = new wxCheckBox( this, wxID_ANY, wxT("Automatically hide the build pane when there are no errors nor warnings"), wxDefaultPosition, wxDefaultSize, 0 );
 	
 	bSizer1->Add( m_checkBoxAutoHide, 0, wxALL, 5 );
+	
+	m_checkBoxSkipeWarnings = new wxCheckBox( this, wxID_ANY, wxT("When using the menu to jump to errors, skip warnings"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	bSizer1->Add( m_checkBoxSkipeWarnings, 0, wxALL, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();

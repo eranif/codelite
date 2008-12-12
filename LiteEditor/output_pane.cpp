@@ -36,7 +36,6 @@
 #include "shell_window.h"
 #include "buidltab.h"
 #include "errorstab.h"
-#include "errorscontainer.h"
 #include "custom_notebook.h"
 #include "wx/dcbuffer.h"
 
@@ -96,8 +95,7 @@ void OutputPane::CreateGUIControls()
 	m_findResultsTab = new FindResultsContainer(m_book, wxID_ANY);
 	m_replaceResultsTab = new ReplaceInFilesPanel(m_book);
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
-	//m_errorsWin = new ErrorsTab(m_book, wxID_ANY, ERRORS_WIN);
-	m_errorsWin = new ErrorsContainer(m_book, wxID_ANY);
+	m_errorsWin = new ErrorsTab(m_buildWin, m_book, wxID_ANY, ERRORS_WIN);
 	m_outputDebug = new ShellTab(m_book, wxID_ANY, OUTPUT_DEBUG);
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
 	m_taskPanel = new TaskPanel(m_book);
@@ -172,9 +170,4 @@ void OutputPane::OnSize(wxSizeEvent &e)
 {
 	Refresh();
 	e.Skip();
-}
-
-ErrorsTab *OutputPane::GetErrorsTab()
-{
-	return m_errorsWin->GetErrorsTab();
 }

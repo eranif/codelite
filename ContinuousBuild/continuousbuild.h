@@ -11,12 +11,14 @@ class ShellCommand;
 struct CurrentBuildFile {
 	wxString file;
 	wxString project;
+    wxString config;
 	wxArrayString output;
 
 	void Clear() {
 		output.Clear();
 		file.Clear();
 		project.Clear();
+        config.Clear();
 	}
 };
 
@@ -56,7 +58,6 @@ public:
 	void OnShellAddLine(wxCommandEvent &e);
 	void OnShellBuildStarted(wxCommandEvent &e);
 	void OnShellProcessEnded(wxCommandEvent &e);
-	void OnShellBuildStartedNoClean(wxCommandEvent &e);
 };
 
 #endif //ContinuousBuild

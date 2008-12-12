@@ -321,12 +321,6 @@ void Manager::CloseWorkspace()
 
 	WorkspaceST::Get()->CloseWorkspace();
 
-	//clear the 'build' tab
-	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
-
-	//clear the 'errors' tab
-	Frame::Get()->GetOutputPane()->GetErrorsTab()->Clear();
-
 	if ( !IsShutdownInProgress() ) {
 		SendCmdEvent ( wxEVT_WORKSPACE_CLOSED );
 	}
@@ -614,7 +608,11 @@ bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 	OutputPane *pane = Frame::Get()->GetOutputPane();
 	int index = pane->CaptionToIndex ( focusWin );
 	if ( index != wxNOT_FOUND && ( size_t ) index != pane->GetNotebook()->GetSelection() ) {
+        wxWindow *focus = wxWindow::FindFocus();
 		pane->GetNotebook()->SetSelection ( ( size_t ) index );
+        if (focus) {
+            focus->SetFocus();
+        }
 	}
 	return showedIt;
 }
@@ -951,9 +949,6 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 	if ( bldConf ) {
 		conf = bldConf->GetName();
 	}
-
-	// display the output pane
-	Frame::Get()->SetHideOutputPane( ShowOutputPane(OutputPane::BUILD_WIN ) );
 
 	QueueCommand info ( projectName, conf, false, QueueCommand::Build );
 	if ( bldConf && bldConf->IsCustomBuild() ) {
@@ -2543,12 +2538,6 @@ void Manager::ReloadWorkspace()
 
 	WorkspaceST::Get()->ReloadWorkspace();
 
-	//clear the 'build' tab
-	Frame::Get()->GetOutputPane()->GetBuildTab()->Clear();
-
-	//clear the 'errors' tab
-	Frame::Get()->GetOutputPane()->GetErrorsTab()->Clear();
-
 	DoSetupWorkspace ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
 }
 
@@ -2628,15 +2617,12 @@ void Manager::ProcessCommandQueue()
 
 	switch ( qcmd.GetKind() ) {
 	case QueueCommand::CustomBuild:
-		Frame::Get()->SetHideOutputPane(ShowOutputPane(OutputPane::BUILD_WIN));
 		DoCustomBuild ( qcmd );
 		break;
 	case QueueCommand::Clean:
-		Frame::Get()->SetHideOutputPane(ShowOutputPane(OutputPane::BUILD_WIN));
 		DoCleanProject ( qcmd );
 		break;
 	case QueueCommand::Build:
-		Frame::Get()->SetHideOutputPane(ShowOutputPane(OutputPane::BUILD_WIN));
 		DoBuildProject ( qcmd );
 		break;
 	case QueueCommand::Debug:

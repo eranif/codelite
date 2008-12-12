@@ -22,57 +22,85 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __buidltab__
+#ifndef __buidltab__
 #define __buidltab__
 
-#include "wx/string.h"
-#include "map"
+#include <map>
+#include <wx/filename.h>
+#include <wx/stopwatch.h>
+
 #include "outputtabwindow.h"
 #include "compiler.h"
+#include "buildtabsettingsdata.h"
 
-struct LineInfo {
-	wxString project;
-	wxString configuration;
-};
 
-class BuildTab : public OutputTabWindow {
+class BuildTab : protected OutputTabWindow 
+{
+    friend class ErrorsTab;
+    
+private:
+    /**
+     * Tracks an "important" line in the build log (error, warning, etc)
+     */ 
+    struct LineInfo {
+        LineInfo() 
+            : linenum(0), linecolor(0), filestart(0), filelen(0) 
+            { }
+        wxString project;
+        wxString configuration;
+        wxString filename;
+        wxString linetext;
+        long     linenum;
+        int      linecolor;
+        size_t   filestart; 
+        size_t   filelen;
+    };
+
 	std::map<int, LineInfo> m_lineInfo;
-	// holds the index of the last line in the build window
-	// that was reached, using F4 (last build error)
-	int m_nextBuildError_lastLine;
+    std::map<wxString, int> m_lineMap;
+    
+    int  m_showMe;
+    bool m_autoHide;
 	bool m_skipWarnings;
+    int  m_errorCount;
+    int  m_warnCount;
+    
+    CompilerPtr m_cmp; // compiler in use during currently building project
+    wxStopWatch m_sw;  // times the entire build
 	
+    static BuildTab *s_bt; // self reference for ColorLine to access the m_line* maps
+    
+    static int        ColorLine(int, const char *text, size_t &start, size_t &len);
+    static void       SetStyles(wxScintilla *sci, const BuildTabSettingsData &options);
+    static bool       OpenFile (const LineInfo &info);
+    static wxFileName FindFile (const wxArrayString& files, const wxString &fileName);
+    
+	void Initialize       ();
+	void DoMarkAndOpenFile(std::map<int,LineInfo>::iterator i, bool clearsel);
+    bool ExtractLineInfo  (LineInfo &info, const wxString &text, const wxString &pattern, 
+                           const wxString &fileidx, const wxString &lineidx);
+    std::map<int,LineInfo>::iterator GetNextBadLine();
+
+    // Event handlers
+    void OnBuildStarted     (wxCommandEvent   &e);
+    void OnBuildAddLine     (wxCommandEvent   &e);
+    void OnBuildEnded       (wxCommandEvent   &e);
+    void OnWorkspaceLoaded  (wxCommandEvent   &e);
+    void OnWorkspaceClosed  (wxCommandEvent   &e);
+    void OnConfigChanged    (wxCommandEvent   &e);
+	void OnCompilerColours  (wxCommandEvent   &e);
+	void OnNextBuildError   (wxCommandEvent   &e);
+    void OnNextBuildErrorUI (wxUpdateUIEvent  &e);
+	void OnHotspotClicked   (wxScintillaEvent &e);
+	void OnMouseDClick      (wxScintillaEvent &e);
+    
 protected:
-	bool OnBuildWindowDClick(const wxString &line, int lineClicked);
-	void OnNextBuildError(wxCommandEvent &event);
-	void OnMouseDClick(wxScintillaEvent &event);
-	void OnHotspotClicked(wxScintillaEvent &event);
-	void OnCompilerColours(wxCommandEvent &e);
-	void Initialize();
-	
-	wxString ProjectFromLine(int line);
-	bool DoTryOpenFile(const wxArrayString& files, const wxFileName &fn, int lineNumber, int lineClicked);
-	bool DoOpenFile(const wxFileName &fn, int lineNumber, int lineClicked);
-	
-	
+	void Clear();
+	void AppendText(const wxString &text);
+    
 public:
 	BuildTab(wxWindow *parent, wxWindowID id, const wxString &name);
 	~BuildTab();
-
-	virtual void AppendText(const wxString &text);
-	virtual void Clear();
-	
-	void OnBuildEnded();
-	void ReloadSettings();
-	CompilerPtr GetCompilerByLine(int lineClicked);
-	int LineFromPosition(int pos);
-	
-	int GetErrorCount();
-	int GetWarningCount();
-	
-	static int ColourGccLine(int startLine, const char *line, size_t &fileNameStart, size_t &fileNameLen);
-	
-	DECLARE_EVENT_TABLE()
 };
 #endif // __buidltab__
 

@@ -23,29 +23,30 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/tokenzr.h>
- #include "context_manager.h"
+#include "context_manager.h"
 #include "context_cpp.h"
-#include "context_text.h"
 #include "context_base.h"
 #include "generic_context.h"
 #include "editor_config.h"
  
 ContextManager::ContextManager()
 {
-	// register available context
-	m_contextPool[wxT("C++")] = ContextBasePtr( new ContextCpp() );
-	m_contextPool[wxT("Text")] = ContextBasePtr( new ContextText() );
+	// register available contexts
+	m_contextPool[wxT("C++")] = new ContextCpp();
 
 	// load generic lexers
 	EditorConfig::ConstIterator iter = EditorConfigST::Get()->LexerBegin();
-	 for(; iter != EditorConfigST::Get()->LexerEnd(); iter++){
+    for(; iter != EditorConfigST::Get()->LexerEnd(); iter++){
 		LexerConfPtr lex = iter->second;
-		//skip hardcoded lexers
-		if(lex->GetName() != wxT("C++") && lex->GetName() != wxT("Text")){
-			std::pair<wxString, ContextBasePtr> entry(lex->GetName(), new ContextGeneric(lex->GetName()));
-			m_contextPool.insert(entry);
+        if (m_contextPool.find(lex->GetName()) == m_contextPool.end()) {
+            m_contextPool[lex->GetName()] = new ContextGeneric(lex->GetName());
 		}
 	}
+    
+    // make sure there is a "fallback" lexer for unrecognized file types
+    if (m_contextPool.find(wxT("Text")) == m_contextPool.end()) {
+        m_contextPool[wxT("Text")] = new ContextGeneric(wxT("Text"));
+    }
 }
 
 ContextManager::~ContextManager()

@@ -43,6 +43,8 @@
 #include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
+#include <wx/radiobut.h>
+#include <wx/radiobox.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -67,8 +69,9 @@ class BuildTabSettingsBase : public wxPanel
 		wxColourPickerCtrl* m_colourPickerWarnings;
 		wxColourPickerCtrl* m_colourPickerWarningsFg;
 		wxCheckBox* m_checkBoxBoldWarnFont;
-		wxCheckBox* m_checkBoxSkipeWarnings;
+        wxRadioBox* m_radioBoxShowBuildTab;
 		wxCheckBox* m_checkBoxAutoHide;
+		wxCheckBox* m_checkBoxSkipeWarnings;
 	
 	public:
 		BuildTabSettingsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 549,300 ), long style = wxTAB_TRAVERSAL );

@@ -32,6 +32,7 @@ class OutputTabWindow : public wxPanel
 {
 protected:
 	wxString m_name;
+    wxToolBar *m_tb;
 	wxScintilla *m_sci;
 	bool m_canFocus;
     bool m_outputScrolls;

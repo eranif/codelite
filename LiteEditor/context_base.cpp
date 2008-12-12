@@ -51,18 +51,11 @@ void ContextBase::AutoIndent(const wxChar &ch)
 	if (ch == wxT('\n')) {
 		//just copy the previous line indentation
 		LEditor &rCtrl = GetCtrl();
-		int indentSize = rCtrl.GetIndent();
 		int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
-		int prevLine = line - 1;
-		//take the previous line indentation size
-		int prevLineIndet = rCtrl.GetLineIndentation(prevLine);
-		rCtrl.SetLineIndentation(line, prevLineIndet);
+		rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-1));
 		//place the caret at the end of the line
-		int dummy = rCtrl.GetLineIndentation(line);
-		if (rCtrl.GetUseTabs()) {
-			dummy = dummy / indentSize;
-		}
-		rCtrl.SetCaretAt(rCtrl.GetCurrentPos() + dummy);
+        rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+        rCtrl.ChooseCaretX();
 	}
 }
 
@@ -82,7 +75,10 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
 #endif
 
-	std::list<StyleProperty> styles = lexPtr->GetProperties();
+	std::list<StyleProperty> styles;
+    if (lexPtr) {
+        styles = lexPtr->GetProperties();
+    }
 	std::list<StyleProperty>::iterator iter = styles.begin();
 	for (; iter != styles.end(); iter++) {
 		StyleProperty sp = (*iter);

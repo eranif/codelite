@@ -35,6 +35,7 @@ class BuildTabSettingsData : public SerializedObject {
 	wxString m_errorColourBg;
 	bool m_boldErrFont;
 	bool m_boldWarnFont;
+    bool m_showBuildPane;
 	bool m_autoHide;
 	
 private:
@@ -42,6 +43,12 @@ private:
 	BuildTabSettingsData& operator=(const BuildTabSettingsData& rhs);
 
 public:
+    enum ShowBuildPane {
+        ShowOnStart,
+        ShowOnEnd,
+        DontShow,
+    };
+
 	BuildTabSettingsData();
 	~BuildTabSettingsData();
 
@@ -54,6 +61,7 @@ public:
 	void SetBoldWarnFont(const bool& boldWarnFont) {this->m_boldWarnFont = boldWarnFont;}
 	void SetErrorColour(const wxString& errorColour) {this->m_errorColour = errorColour;}
 	void SetErrorColourBg(const wxString& errorColourBg) {this->m_errorColourBg = errorColourBg;}
+    void SetShowBuildPane(int showBuildPane) {this->m_showBuildPane = showBuildPane;}
 	void SetSkipWarnings(const bool& skipWarnings) {this->m_skipWarnings = skipWarnings;}
 	void SetWarnColour(const wxString& warnColour) {this->m_warnColour = warnColour;}
 	void SetWarnColourBg(const wxString& warnColourBg) {this->m_warnColourBg = warnColourBg;}
@@ -62,6 +70,7 @@ public:
 	const bool& GetBoldWarnFont() const {return m_boldWarnFont;}
 	const wxString& GetErrorColour() const {return m_errorColour;}
 	const wxString& GetErrorColourBg() const {return m_errorColourBg;}
+    int GetShowBuildPane() const {return m_showBuildPane;}
 	const bool& GetSkipWarnings() const {return m_skipWarnings;}
 	const wxString& GetWarnColour() const {return m_warnColour;}
 	const wxString& GetWarnColourBg() const {return m_warnColourBg;}

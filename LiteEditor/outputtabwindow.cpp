@@ -38,6 +38,7 @@
 OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString &name)
 		: wxPanel(parent, id)
 		, m_name(name)
+        , m_tb(NULL)
 		, m_canFocus(true)
         , m_outputScrolls(true)
 {
@@ -53,48 +54,31 @@ void OutputTabWindow::CreateGUIControl()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer(mainSizer);
 	//Create the toolbar
-	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxTB_NODIVIDER);
+	m_tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxTB_NODIVIDER);
 
-	int id;
-    
-    id = wxNewId();
-    tb->AddTool(id,
+    m_tb->AddTool(XRCID("scroll_on_output"),
                 wxT("Scroll on Output"),
                 wxXmlResource::Get()->LoadBitmap(wxT("link_editor")),
                 wxT("Scroll on Output"),
                 wxITEM_CHECK);
-    tb->ToggleTool(id, m_outputScrolls);
-    Connect(id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnOutputScrolls ));
+    m_tb->ToggleTool(XRCID("scroll_on_output"), m_outputScrolls);
+    Connect(XRCID("scroll_on_output"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnOutputScrolls ));
     
-	// dont allow 'clear all' button for the build window
-	if (m_name != OutputPane::BUILD_WIN) {
-		id = wxNewId();
-		tb->AddTool(id,
-		            wxT("Clear All"),
-		            wxXmlResource::Get()->LoadBitmap(wxT("document_delete")),
-		            wxT("Clear All"));
-		Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnClearAll ));
-	}
-	
-	id = wxNewId();
-	tb->AddTool(id,
+    m_tb->AddTool(XRCID("clear_all_output"),
+                wxT("Clear All"),
+                wxXmlResource::Get()->LoadBitmap(wxT("document_delete")),
+                wxT("Clear All"));
+    Connect( XRCID("clear_all_output"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnClearAll ));
+
+	m_tb->AddTool(XRCID("word_wrap_output"),
 	            wxT("Word Wrap"),
 	            wxXmlResource::Get()->LoadBitmap(wxT("word_wrap")),
 	            wxT("Word Wrap"),
 	            wxITEM_CHECK);
-	Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnWordWrap ));
+	Connect( XRCID("word_wrap_output"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnWordWrap ));
 
-	if (m_name == OutputPane::BUILD_WIN) {
-		id = wxNewId();
-		tb->AddTool(id,
-		            wxT("Set compiler colours..."),
-		            wxXmlResource::Get()->LoadBitmap(wxT("colourise")),
-		            wxT("Set compiler colours..."));
-		Connect( id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( OutputTabWindow::OnCompilerColours ));
-	}
-
-	tb->Realize();
-	mainSizer->Add(tb, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
+	m_tb->Realize();
+	mainSizer->Add(m_tb, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
 
 	m_sci = new wxScintilla(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 

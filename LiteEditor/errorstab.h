@@ -25,64 +25,30 @@
 #ifndef __errorstab__
 #define __errorstab__
 
-#include <wx/string.h>
-#include <wx/filename.h>
-#include "map"
-#include "outputtabwindow.h"
-#include "compiler.h"
+#include <vector>
+#include "buidltab.h"
 
-// Show build errors and warnings
-class ErrorsTab : public OutputTabWindow {
-public:
-	enum _TYPE {
-		TYPE_ERROR   = 1,
-		TYPE_WARNING = 2
-	};
-	
+
+class ErrorsTab : protected OutputTabWindow 
+{
+    friend class BuildTab;
+    
 private:
-	int m_nextBuildError_lastLine;
-	int m_errorCount;
-	int m_warningCount;
-	int m_IncludeResults;
-	
-	struct LineInfo {
-		wxString project;
-		wxString configuration;
-		wxString compilerOutput;
-		wxString fileName;
-		wxString lineNo;
-		_TYPE     type;
-	};
-	std::map<int, LineInfo> m_lineInfo;	
+    BuildTab *m_bt;
+    std::map<int,int> m_lineMap;
 
-private:
-	CompilerPtr GetCompilerByLine(int lineClicked);
+    void ClearLines();
+    bool IsShowing(int line);
+    void AppendLine(int line);
+    void MarkLine(int line);
 
-	bool DoTryOpenFile(const wxArrayString& files, const wxFileName &fn, int lineNumber, int lineClicked);
-	bool DoOpenFile(const wxFileName &fn, int lineNumber, int lineClicked);
-	
-	void Initialize();
-	
-protected:
-	bool OnBuildWindowDClick(int lineClicked);
-//	void OnNextBuildError(wxCommandEvent &event);
-	void OnMouseDClick(wxScintillaEvent &event);
-	void OnHotspotClicked(wxScintillaEvent &event);
-	
+    void OnRedisplayLines(wxCommandEvent   &e);
+	void OnMouseDClick   (wxScintillaEvent &e);
+	void OnHotspotClicked(wxScintillaEvent &e);
+
 public:
-	ErrorsTab(wxWindow *parent, wxWindowID id, const wxString &name);
-	virtual ~ErrorsTab();
-	
-	virtual void AppendText(const wxString &text);
-	virtual void Clear();
-	
-	int GetViewType();
-	// Which results to show (see TYPE enum)
-	void SetViewType(int type);
-	
-	void UpdateView();
-
-	DECLARE_EVENT_TABLE()
+	ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxString &name);
+	~ErrorsTab();
 };
 
 #endif // __errorstab__

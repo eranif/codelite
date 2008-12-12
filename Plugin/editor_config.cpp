@@ -29,6 +29,7 @@
 #include "xmlutils.h"
 #include "dirtraverser.h"
 #include <wx/ffile.h>
+#include "globals.h"
 
 //-------------------------------------------------------------------------------------------
 SimpleLongValue::SimpleLongValue()
@@ -130,6 +131,8 @@ void EditorConfig::SaveLexers()
 	for (; iter != m_lexers.end(); iter++) {
 		iter->second->Save();
 	}
+    wxString nodeName = wxT("Lexers");
+    SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &nodeName);
 }
 
 wxXmlNode* EditorConfig::GetLexerNode(const wxString& lexerName)
@@ -263,28 +266,33 @@ void EditorConfig::SetOptions(OptionsConfigPtr opts)
 	}
 
 	// locate the current node
-	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Options"));
+    wxString nodeName = wxT("Options");
+	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
 	if ( node ) {
 		m_doc->GetRoot()->RemoveChild(node);
 		delete node;
 	}
-
 	m_doc->GetRoot()->AddChild(opts->ToXml());
+    
 	DoSave();
+    SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &nodeName);
 }
 
 void EditorConfig::SetTagsDatabase(const wxString &dbName)
 {
-	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("TagsDatabase"));
+    wxString nodeName = wxT("TagsDatabase");
+	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
 	if ( node ) {
 		XmlUtils::UpdateProperty(node, wxT("Path"), dbName);
 	} else {
 		//create new node
-		node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TagsDatabase"));
+		node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, nodeName);
 		node->AddProperty(wxT("Path"), dbName);
 		m_doc->GetRoot()->AddChild(node);
 	}
+    
 	DoSave();
+    SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &nodeName);
 }
 
 wxString EditorConfig::GetTagsDatabase() const
@@ -316,25 +324,25 @@ void EditorConfig::GetRecentlyOpenedFies(wxArrayString &files)
 
 void EditorConfig::SetRecentlyOpenedFies(const wxArrayString &files)
 {
-	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("RecentFiles"));
+    wxString nodeName = wxT("RecentFiles");
+	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
 	if (node) {
 		wxXmlNode *root = m_doc->GetRoot();
 		root->RemoveChild(node);
 		delete node;
 	}
-
 	//create new entry in the configuration file
-	node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("RecentFiles"));
+	node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, nodeName);
 	m_doc->GetRoot()->AddChild(node);
-
 	for (size_t i=0; i<files.GetCount(); i++) {
 		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
 		child->AddProperty(wxT("Name"), files.Item(i));
 		node->AddChild(child);
 	}
-
+    
 	//save the data to disk
 	DoSave();
+    SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &nodeName);
 }
 
 
@@ -357,24 +365,24 @@ void EditorConfig::GetRecentlyOpenedWorkspaces(wxArrayString &files)
 
 void EditorConfig::SetRecentlyOpenedWorkspaces(const wxArrayString &files)
 {
-	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("RecentWorkspaces"));
+    wxString nodeName = wxT("RecentWorkspaces");
+	wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
 	if (node) {
 		wxXmlNode *root = m_doc->GetRoot();
 		root->RemoveChild(node);
 		delete node;
 	}
-
-	node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("RecentWorkspaces"));
+	node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, nodeName);
 	m_doc->GetRoot()->AddChild(node);
-
 	for (size_t i=0; i<files.GetCount(); i++) {
 		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
 		child->AddProperty(wxT("Name"), files.Item(i));
 		node->AddChild(child);
 	}
-
+    
 	//save the data to disk
 	DoSave();
+    SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &nodeName);
 }
 
 bool EditorConfig::WriteObject(const wxString &name, SerializedObject *obj)
@@ -396,8 +404,11 @@ bool EditorConfig::WriteObject(const wxString &name, SerializedObject *obj)
 	arch.SetXmlNode(child);
 	//serialize the object into the archive
 	obj->Serialize(arch);
+    
 	//save the archive
-	return DoSave();
+	bool res = DoSave();
+    SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &name);
+    return res;
 }
 
 bool EditorConfig::ReadObject(const wxString &name, SerializedObject *obj)

@@ -1,7 +1,9 @@
 #!/bin/sh
 echo "Running postinst step..."
 \rm -rf ${HOME}/.codelite/config/liteeditor.xml
-echo "Creating desktop shortcut for CodeLite..."
-cp /usr/share/applications/codelite.desktop ~/Desktop/
+## Menu updating
+if [ "$1" = "configure" ] && [ -x "`which update-menus 2>/dev/null`" ]; then
+	update-menus
+fi
 echo "Done"
 

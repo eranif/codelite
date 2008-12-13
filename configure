@@ -18,8 +18,8 @@ createVariables()
 	## set the compiler name
 	compiler_name="g++ "
 	c_compiler_name="gcc "
-	exe_name="Runtime/CodeLite"
-	exe_name1="CodeLite"
+	exe_name="Runtime/codelite"
+	exe_name1="codelite"
 	is_plugin=$1
 	if [ "$arch" = "x86_64" ]; then
 		compiler_name=${compiler_name}" -fPIC -DON_64_BIT "
@@ -28,8 +28,6 @@ createVariables()
 
 	## set the executable name
 	if [ "$enable_debug" = "yes" ]; then
-		exe_name=${exe_name}"UD"
-		exe_name1=${exe_name1}"UD"
 		objects_dir="Debug_gcc_unicode"
 		configuration="Debug_gcc_unicode"
 		debug_flag=" -g "
@@ -37,8 +35,6 @@ createVariables()
 		optimization=" -DREGEXP_UNICODE "
 		wxcfg="--unicode=yes --debug=yes"
 	else
-		exe_name=${exe_name}"UR"
-		exe_name1=${exe_name1}"UR"
 		objects_dir="Release_gcc_unicode"
 		configuration="Release_gcc_unicode"
 		ext=u
@@ -443,6 +439,7 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/ctags-le" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUR" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUD" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/include/UnitTest++/" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/lib/libUnitTest++.a" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/share/codelite" >> Makefile
@@ -478,32 +475,6 @@ checkCURL()
 	fi
 }
 
-generateControlFile()
-{
-	Arc="i386"
-	if [ "$arch" = "x86_64" ]; then
-		Arc="amd64"
-    fi
-
-	build_version="0"
-	if test -d ".svn"; then
-		build_version=`svn info | grep Revision | awk '{print $2;}'`
-	fi
-	rm -fr fakeroot/DEBIAN/control
-	echo "Package: CodeLite" >> fakeroot/DEBIAN/control
-	echo "Version: 1.0.${build_version}" >> fakeroot/DEBIAN/control
-	echo "Section: Development " >> fakeroot/DEBIAN/control
-	echo "Architecture: ${Arc} " >> fakeroot/DEBIAN/control
-	echo "Essential: no" >> fakeroot/DEBIAN/control
-	echo "Depends: libwxgtk2.8-0, libgtk2.0-0" >> fakeroot/DEBIAN/control
-	echo "Maintainer: Eran Ifrah [eran.ifrah@gmail.com]" >> fakeroot/DEBIAN/control
-	echo "Description: CodeLite is a powerful open-source, cross platform code editor for the C/C++ programming languages (regularly tested on Windows XP sp2, Ubuntu 8.04 Hardy Heron, Fedora Core 9 and Debian lenny/sid). " >> fakeroot/DEBIAN/control
-	echo "		 CodeLite is distributed under the terms of the GPL license." >> fakeroot/DEBIAN/control
-	echo "		 CodeLite uses a sophisticated, yet intuitive interface which allows user easily to " >> fakeroot/DEBIAN/control
-	echo "		 create and build complex projects. " >> fakeroot/DEBIAN/control
-	echo ""  >> fakeroot/DEBIAN/control
-}
-
 Show_Help_and_Exit()
 {
 	echo "This is the CodeLite configure script"
@@ -522,7 +493,6 @@ Show_Help_and_Exit()
 ## Create variables needed by the makefile
 enable_debug="no"
 prefix="/usr/local"
-for_debian="yes"
 add_desktop_icon="yes"
 make_symlink="yes"
 os_name=`uname -s`
@@ -535,9 +505,7 @@ do
 if [ "$1" = "--enable-debug" ]; then
 	enable_debug="yes"
 
-   # The next 3 aren't in the Usage, but will prevent undesirable things from happening when e.g. making rpms
-  elif [ "$1" = "--disable-debian" ]; then
-    for_debian="no"
+   # The next 2 aren't in the Usage, but will prevent undesirable things from happening when e.g. making rpms
   elif [ "$1" = "--disable-desktop_icon" ]; then
     add_desktop_icon="no"
   elif [ "$1" = "--disable-make_symlink" ]; then
@@ -591,9 +559,6 @@ createRules_archive "Plugin/*.cpp " "SDKObjects" "SDK" "plugin"
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createInstallTarget
 createUnInstallTarget
-if [ "$for_debian" = "yes" ] ; then
-generateControlFile
-fi
 
 echo "-include \$(OBJ_DIR)/*.d" >> Makefile
 echo "" >> Makefile

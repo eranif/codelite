@@ -172,7 +172,7 @@ void FindResultsTab::AppendText(const wxString& line)
 				fifMatchInfo info(fileName);
 				m_matchInfo.push_back(info);
 
-				OutputTabWindow::AppendText(fileName + wxT(":\n"));
+				OutputTabWindow::AppendText(fileName + wxT("\n"));
 			}
 
 			wxString locationInfoStr = singleLine.AfterFirst(wxT('('));

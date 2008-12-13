@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "findresultstab.h"
+#include <wx/xrc/xmlres.h>
 #include <wx/tokenzr.h>
 #include "wx/string.h"
 #include "manager.h"
@@ -87,7 +88,7 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 	m_sci->StyleSetHotSpot(wxSCI_LEX_FIF_FILE, true);
 
 	m_sci->SetHotspotActiveUnderline(false);
-	m_sci->SetHotspotActiveBackground(true, lightColour(wxT("GREEN"), 8.0));
+	m_sci->SetHotspotActiveBackground(true, lightColour(wxT("BLUE"), 8.0));
 
 	// enable folding
 	m_sci->SetMarginMask(4, wxSCI_MASK_FOLDERS);
@@ -111,6 +112,14 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 
 	// handle folding
 	m_sci->Connect(wxEVT_SCI_MARGINCLICK, wxScintillaEventHandler(FindResultsTab::OnMarginClick), NULL, this);
+
+	// add 'FoldAll' button to the toolbar
+	m_tb->AddTool(XRCID("collapse_all"),
+	              _("Fold All Results"),
+	              wxXmlResource::Get()->LoadBitmap(wxT("fold_airplane")),
+	              _("Fold All Results"));
+	Connect( XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FindResultsTab::OnCollapseAll ), NULL, this);
+	m_tb->Realize();
 
 }
 
@@ -192,51 +201,6 @@ void FindResultsTab::Clear()
 	OutputTabWindow::Clear();
 }
 
-//---------------------------------------------------------------------------------------------
-
-void fifMatchInfo::FromString(const wxString& line, const wxString &fileName)
-{
-	wxString strLen = line.AfterFirst(wxT(',')).AfterFirst(wxT(',')).BeforeFirst(wxT(')'));
-	wxString strCol = line.AfterFirst(wxT(',')).BeforeFirst(wxT(','));
-
-	wxString strLineNumber = line.BeforeFirst(wxT(','));
-	strLineNumber = strLineNumber.Trim();
-
-	line_number = wxNOT_FOUND;
-	match_len = wxNOT_FOUND;
-	col = wxNOT_FOUND;
-	file_name = fileName;
-
-	strLineNumber.ToLong(&line_number);
-
-	strLen = strLen.Trim().Trim(false);
-	strLen.ToLong( &match_len );
-
-	strCol = strCol.Trim().Trim(false);
-	strCol.ToLong( &col );
-}
-
-fifMatchInfo::fifMatchInfo()
-		: line_number(wxNOT_FOUND)
-		, match_len(wxNOT_FOUND)
-		, col(wxNOT_FOUND)
-{
-}
-
-fifMatchInfo::fifMatchInfo(const wxString &locationInfoStr, const wxString &fileName)
-{
-	FromString(locationInfoStr, fileName);
-}
-
-
-fifMatchInfo::fifMatchInfo(const wxString& fileName)
-		: file_name(fileName)
-		, line_number(wxNOT_FOUND)
-		, match_len(wxNOT_FOUND)
-		, col(wxNOT_FOUND)
-{
-}
-
 void FindResultsTab::DefineMarker(int marker, int markerType, wxColor fore, wxColor back)
 {
 	m_sci->MarkerDefine(marker, markerType);
@@ -293,4 +257,63 @@ void FindResultsTab::DoMatchClicked(long pos)
 			}
 		}
 	}
+}
+
+void FindResultsTab::OnCollapseAll(wxCommandEvent& e)
+{
+	// go through the whole document, toggling folds that are expanded
+	int maxLine = m_sci->GetLineCount();
+	for (int line = 0; line < maxLine; line++) {  // For every line
+		int level = m_sci->GetFoldLevel(line);
+		// The next statement means: If this level is a Fold start
+		if (level & wxSCI_FOLDLEVELHEADERFLAG) {
+			if ( m_sci->GetFoldExpanded(line) == true ) m_sci->ToggleFold( line );
+		}
+	}
+}
+
+
+//---------------------------------------------------------------------------------------------
+
+void fifMatchInfo::FromString(const wxString& line, const wxString &fileName)
+{
+	wxString strLen = line.AfterFirst(wxT(',')).AfterFirst(wxT(',')).BeforeFirst(wxT(')'));
+	wxString strCol = line.AfterFirst(wxT(',')).BeforeFirst(wxT(','));
+
+	wxString strLineNumber = line.BeforeFirst(wxT(','));
+	strLineNumber = strLineNumber.Trim();
+
+	line_number = wxNOT_FOUND;
+	match_len = wxNOT_FOUND;
+	col = wxNOT_FOUND;
+	file_name = fileName;
+
+	strLineNumber.ToLong(&line_number);
+
+	strLen = strLen.Trim().Trim(false);
+	strLen.ToLong( &match_len );
+
+	strCol = strCol.Trim().Trim(false);
+	strCol.ToLong( &col );
+}
+
+fifMatchInfo::fifMatchInfo()
+		: line_number(wxNOT_FOUND)
+		, match_len(wxNOT_FOUND)
+		, col(wxNOT_FOUND)
+{
+}
+
+fifMatchInfo::fifMatchInfo(const wxString &locationInfoStr, const wxString &fileName)
+{
+	FromString(locationInfoStr, fileName);
+}
+
+
+fifMatchInfo::fifMatchInfo(const wxString& fileName)
+		: file_name(fileName)
+		, line_number(wxNOT_FOUND)
+		, match_len(wxNOT_FOUND)
+		, col(wxNOT_FOUND)
+{
 }

@@ -58,6 +58,7 @@ public:
 
 	virtual void OnMouseDClick(wxScintillaEvent &event);
 	virtual void OnHotspotClicked(wxScintillaEvent &event);
+	virtual void OnCollapseAll(wxCommandEvent &e);
 	virtual void AppendText(const wxString &line);
 	virtual void Clear();
 };

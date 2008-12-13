@@ -89,6 +89,8 @@ static void FoldFifDoc(unsigned int startPos, int length, int, WordList*[], Acce
 		int lineType = styler.StyleAt(curLineStart);
 		if (lineType == SCLEX_FIF_FILE){
 			nextLevel = (SC_FOLDLEVELBASE + 1) | SC_FOLDLEVELHEADERFLAG;
+		} else if(lineType == SCLEX_FIF_DEFAULT){
+			nextLevel = SC_FOLDLEVELBASE;
 		}
 
 		if ((nextLevel & SC_FOLDLEVELHEADERFLAG) && (nextLevel == prevLevel))

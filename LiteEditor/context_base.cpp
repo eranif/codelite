@@ -75,6 +75,8 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
 #endif
 
+	bool tooltip(false);
+
 	std::list<StyleProperty> styles;
     if (lexPtr) {
         styles = lexPtr->GetProperties();
@@ -101,6 +103,8 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 			// caret colour
 			rCtrl.SetCaretForeground(sp.GetFgColour());
 		} else {
+			int fontSize( sp.GetFontSize() );
+
 			wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
 			if (sp.GetId() == 0) { //default
 				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
@@ -118,18 +122,26 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 					rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_BOX);
 					rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_BOX);
 				}
+			} else if(sp.GetId() == wxSCI_STYLE_CALLTIP){
+				tooltip = true;
+				if(sp.GetFaceName().IsEmpty()){
+					font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+					fontSize = font.GetPointSize();
+				}
 			}
 
 			rCtrl.StyleSetFont(sp.GetId(), font);
-			rCtrl.StyleSetSize(sp.GetId(), (*iter).GetFontSize());
-			rCtrl.StyleSetForeground(sp.GetId(), (*iter).GetFgColour());
-			rCtrl.StyleSetBackground(sp.GetId(), (*iter).GetBgColour());
+			rCtrl.StyleSetSize(sp.GetId(), fontSize);
+			rCtrl.StyleSetForeground(sp.GetId(), sp.GetFgColour());
+			rCtrl.StyleSetBackground(sp.GetId(), sp.GetBgColour());
 		}
 	}
 
 	// set the calltip font
-	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	rCtrl.StyleSetFont(wxSCI_STYLE_CALLTIP, font);
+	if( !tooltip ) {
+		wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+		rCtrl.StyleSetFont(wxSCI_STYLE_CALLTIP, font);
+	}
 }
 
 int ContextBase::GetHyperlinkRange(int pos, int &start, int &end)

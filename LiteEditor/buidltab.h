@@ -33,6 +33,7 @@
 #include "compiler.h"
 #include "buildtabsettingsdata.h"
 
+class LEditor;
 
 class BuildTab : protected OutputTabWindow 
 {
@@ -73,26 +74,30 @@ private:
     static int        ColorLine(int, const char *text, size_t &start, size_t &len);
     static void       SetStyles(wxScintilla *sci, const BuildTabSettingsData &options);
     static bool       OpenFile (const LineInfo &info);
+    static wxFileName FindFile (const wxString &fileName, const wxString &project);
     static wxFileName FindFile (const wxArrayString& files, const wxString &fileName);
     
 	void Initialize       ();
 	void DoMarkAndOpenFile(std::map<int,LineInfo>::iterator i, bool clearsel);
     bool ExtractLineInfo  (LineInfo &info, const wxString &text, const wxString &pattern, 
                            const wxString &fileidx, const wxString &lineidx);
+    void MarkEditor       (LEditor *editor);
     std::map<int,LineInfo>::iterator GetNextBadLine();
 
     // Event handlers
-    void OnBuildStarted     (wxCommandEvent   &e);
-    void OnBuildAddLine     (wxCommandEvent   &e);
-    void OnBuildEnded       (wxCommandEvent   &e);
-    void OnWorkspaceLoaded  (wxCommandEvent   &e);
-    void OnWorkspaceClosed  (wxCommandEvent   &e);
-    void OnConfigChanged    (wxCommandEvent   &e);
-	void OnCompilerColours  (wxCommandEvent   &e);
-	void OnNextBuildError   (wxCommandEvent   &e);
-    void OnNextBuildErrorUI (wxUpdateUIEvent  &e);
-	void OnHotspotClicked   (wxScintillaEvent &e);
-	void OnMouseDClick      (wxScintillaEvent &e);
+    void OnClearAll           (wxCommandEvent   &e);
+    void OnBuildStarted       (wxCommandEvent   &e);
+    void OnBuildAddLine       (wxCommandEvent   &e);
+    void OnBuildEnded         (wxCommandEvent   &e);
+    void OnWorkspaceLoaded    (wxCommandEvent   &e);
+    void OnWorkspaceClosed    (wxCommandEvent   &e);
+    void OnConfigChanged      (wxCommandEvent   &e);
+	void OnCompilerColours    (wxCommandEvent   &e);
+	void OnNextBuildError     (wxCommandEvent   &e);
+    void OnNextBuildErrorUI   (wxUpdateUIEvent  &e);
+    void OnActiveEditorChanged(wxCommandEvent   &e);
+	void OnHotspotClicked     (wxScintillaEvent &e);
+	void OnMouseDClick        (wxScintillaEvent &e);
     
 protected:
 	void Clear();

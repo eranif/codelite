@@ -32,6 +32,8 @@
 #include "buildtabsettingsdata.h"
 #include "regex_processor.h"
 #include "build_settings_config.h"
+#include "mainbook.h"
+#include "cl_editor.h"
 #include "manager.h"
 #include "project.h"
 #include "buidltab.h"
@@ -50,7 +52,6 @@ BuildTab::BuildTab(wxWindow *parent, wxWindowID id, const wxString &name)
     , m_errorCount(0)
     , m_warnCount(0)
 {
-    m_tb->DeleteTool(XRCID("clear_all_output"));
     m_tb->AddTool(XRCID("advance_settings"), wxT("Set compiler colours..."), 
                   wxXmlResource::Get()->LoadBitmap(wxT("colourise")), wxT("Set compiler colours..."));
     m_tb->Connect(XRCID("advance_settings"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(BuildTab::OnCompilerColours), NULL, this);
@@ -65,6 +66,8 @@ BuildTab::BuildTab(wxWindow *parent, wxWindowID id, const wxString &name)
     
     wxTheApp->Connect(XRCID("next_error"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (BuildTab::OnNextBuildError),   NULL, this);
     wxTheApp->Connect(XRCID("next_error"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(BuildTab::OnNextBuildErrorUI), NULL, this);
+    
+    wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(BuildTab::OnActiveEditorChanged), NULL, this);
     
     s_bt = this;
     SetGccColourFunction(ColorLine);
@@ -151,6 +154,10 @@ void BuildTab::Clear()
     m_warnCount = 0;
     m_cmp.Reset(NULL);
     Frame::Get()->GetOutputPane()->GetErrorsTab()->ClearLines();
+    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+    if (editor) {
+        editor->DelAllCompilerMarkers();
+    }
 }
 
 void BuildTab::AppendText(const wxString &text)
@@ -274,18 +281,22 @@ bool BuildTab::OpenFile(const LineInfo &info)
 {
     if (info.linecolor != wxSCI_LEX_GCC_ERROR && info.linecolor != wxSCI_LEX_GCC_WARNING)
         return false;
-    
-    wxString filename = info.linetext.Mid(info.filestart, info.filelen);
+    wxFileName fn = FindFile(info.linetext.Mid(info.filestart, info.filelen), info.project);
+    return fn.IsOk() && Frame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, info.linenum) != NULL;
+}
+
+wxFileName BuildTab::FindFile(const wxString &filename, const wxString &project)
+{
     wxFileName fn(filename);
     
     if (!fn.FileExists()) {
         // try to open the file as is
         fn.Clear();
     }
-    if (!fn.IsOk() && !info.project.IsEmpty()) {
+    if (!fn.IsOk() && !project.IsEmpty()) {
         // try to open the file in context of its project
         wxArrayString project_files;
-        ManagerST::Get()->GetProjectFiles(info.project, project_files);
+        ManagerST::Get()->GetProjectFiles(project, project_files);
         fn = FindFile(project_files, filename);
     }
     if (!fn.IsOk()) {
@@ -294,8 +305,7 @@ bool BuildTab::OpenFile(const LineInfo &info)
         ManagerST::Get()->GetWorkspaceFiles(workspace_files);
         fn = FindFile(workspace_files, filename);
     }
-    
-    return fn.IsOk() && Frame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, info.linenum) != NULL;
+    return fn;
 }
 
 wxFileName BuildTab::FindFile(const wxArrayString& files, const wxString &fileName)
@@ -316,9 +326,34 @@ wxFileName BuildTab::FindFile(const wxArrayString& files, const wxString &fileNa
     return !matches.empty() ? matches[best] : wxFileName();
 }
 
+void BuildTab::MarkEditor(LEditor *editor)
+{
+    if (!editor)
+        return;
+    editor->DelAllCompilerMarkers();
+    for (std::map<int,LineInfo>::iterator i = m_lineInfo.begin(); i != m_lineInfo.end(); i++) {
+        if (i->second.filelen == 0 || i->second.project != editor->GetProject())
+            continue;
+        wxFileName fn = FindFile(i->second.linetext.Mid(i->second.filestart, i->second.filelen), i->second.project);
+        if (fn != editor->GetFileName())
+            continue;
+        if (i->second.linecolor == wxSCI_LEX_GCC_ERROR) {
+            editor->SetErrorMarker(i->second.linenum);
+        } else if (i->second.linecolor == wxSCI_LEX_GCC_WARNING) {
+            editor->SetWarningMarker(i->second.linenum);
+        }
+    }
+}
+
+void BuildTab::OnClearAll(wxCommandEvent &e)
+{
+    Clear();
+}
+
 void BuildTab::OnBuildStarted(wxCommandEvent &e)
 {
     e.Skip();
+    m_tb->EnableTool(XRCID("clear_all_output"), false);
     if (e.GetEventType() != wxEVT_SHELL_COMMAND_STARTED_NOCLEAN) {
         Clear();
     }
@@ -381,6 +416,9 @@ void BuildTab::OnBuildEnded(wxCommandEvent &e)
     } else if (m_showMe == BuildTabSettingsData::ShowOnEnd && !m_autoHide) {
         ManagerST::Get()->ShowOutputPane(m_name);
     }
+    
+    m_tb->EnableTool(XRCID("clear_all_output"), true);
+    MarkEditor(Frame::Get()->GetMainBook()->GetActiveEditor());
 }
 
 void BuildTab::OnWorkspaceLoaded(wxCommandEvent &e)
@@ -429,9 +467,15 @@ void BuildTab::OnNextBuildError(wxCommandEvent &e)
     }
 }
 
-void BuildTab::OnNextBuildErrorUI(wxUpdateUIEvent &e)
+voi BuildTab::OnNextBuildErrorUI(wxUpdateUIEvent &e)
 {
 	e.Enable(m_errorCount > 0 || !m_skipWarnings && m_warnCount > 0);
+}
+
+void BuildTab::OnActiveEditorChanged(wxCommandEvent &e)
+{
+    e.Skip();
+    MarkEditor(Frame::Get()->GetMainBook()->GetActiveEditor());
 }
 
 void BuildTab::OnHotspotClicked(wxScintillaEvent &e)

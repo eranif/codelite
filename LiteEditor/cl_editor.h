@@ -74,7 +74,7 @@ struct LEditorState
  */
 class LEditor : public wxScintilla, public IEditor
 {
-	enum marker_type { mt_bookmarks=128, mt_breakpoints=256, mt_folds=512 };
+	enum marker_type { mt_bookmarks=128, mt_breakpoints=256, mt_folds=512, mt_compiler=3072 };
 
 	wxFileName m_fileName;
 	wxString m_project;
@@ -330,6 +330,11 @@ public:
 	virtual void HighlightLine(int lineno);
 	virtual void UnHighlightAll();
 
+    // compiler warnings and errors
+    void SetWarningMarker(int lineno);
+    void SetErrorMarker(int lineno);
+    void DelAllCompilerMarkers();
+    
 	//----------------------------------
 	//File modifications
 	//----------------------------------

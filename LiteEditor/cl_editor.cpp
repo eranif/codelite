@@ -245,7 +245,7 @@ void LEditor::SetProperties()
 	SetMarginType(NUMBER_MARGIN_ID, wxSCI_MARGIN_NUMBER);
 
 	// line number margin displays every thing but folding, bookmarks and breakpoint
-	SetMarginMask(NUMBER_MARGIN_ID, ~(mt_breakpoints | mt_folds | mt_bookmarks | wxSCI_MASK_FOLDERS));
+	SetMarginMask(NUMBER_MARGIN_ID, ~(mt_breakpoints | mt_folds | mt_bookmarks | mt_compiler | wxSCI_MASK_FOLDERS));
 
 	// Separators
 	SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSCI_MARGIN_FORE);
@@ -376,6 +376,14 @@ void LEditor::SetProperties()
 	MarkerSetBackground(0x9, wxT("LIME GREEN"));
 	MarkerSetForeground(0x9, wxT("BLACK"));
 
+    // warning and error markers
+    MarkerDefine(0xa, wxSCI_MARK_SHORTARROW);
+    MarkerSetForeground(0xb, wxT("BLACK"));
+    MarkerSetBackground(0xa, wxColor(255, 215, 0));
+    MarkerDefine(0xb, wxSCI_MARK_SHORTARROW);
+    MarkerSetForeground(0xb, wxT("BLACK"));
+    MarkerSetBackground(0xb, wxT("RED"));
+    
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 
@@ -2125,6 +2133,22 @@ void LEditor::DelBreakpoint()
 	bp.file = GetFileName().GetFullPath();
 	bp.lineno = LineFromPosition(GetCurrentPos())+1;
 	DelBreakpoint(bp);
+}
+
+void LEditor::SetWarningMarker(int lineno)
+{
+    MarkerAdd(lineno, 0xa);
+}
+
+void LEditor::SetErrorMarker(int lineno)
+{
+    MarkerAdd(lineno, 0xb);
+}
+
+void LEditor::DelAllCompilerMarkers()
+{
+    MarkerDeleteAll(0xa);
+    MarkerDeleteAll(0xb);
 }
 
 void LEditor::SetBreakpointMarker(int lineno)

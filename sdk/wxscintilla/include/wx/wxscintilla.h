@@ -429,6 +429,8 @@
 #define wxSCI_LEX_FIF 151
 #define wxSCI_LEX_FIF_DEFAULT 0
 #define wxSCI_LEX_FIF_FILE	  1
+#define wxSCI_LEX_FIF_MATCH	  2
+#define wxSCI_LEX_FIF_FILE_SHORT	3
 
 #define wxSCI_LEX_SVN 152
 #define wxSCI_LEX_SVN_DEFAULT 	0

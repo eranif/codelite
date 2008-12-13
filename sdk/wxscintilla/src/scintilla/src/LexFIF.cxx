@@ -38,14 +38,14 @@ static void ColouriseFifDoc(
     Accessor &styler)
 {
 	char lineBuffer[2048];
-	
+
 	styler.StartAt(startPos);
 	styler.StartSegment(startPos);
-	
+
 	unsigned int linePos = 0;
 	unsigned int startLine = startPos;
 	int offset(0);
-	
+
 	for (unsigned int i = startPos; i < startPos + length; i++) {
 		lineBuffer[linePos++] = styler[i];
 		if (AtEOL(styler, i) || (linePos >= sizeof(lineBuffer) - 1)) {
@@ -53,21 +53,52 @@ static void ColouriseFifDoc(
 			// End of line (or of line buffer) met, colourise it
 			lineBuffer[linePos] = '\0';
 			std::string str(lineBuffer);
-			
-			if(str.at(0) == '='){
+
+			if(str.at(0) == ' '){
+				size_t pos = str.find(":");
+				if(pos != std::string::npos) {
+					styler.ColourTo(startLine + pos, SCLEX_FIF_FILE_SHORT);
+					styler.ColourTo(startLine + str.length() - 1, SCLEX_FIF_MATCH);
+				} else {
+					styler.ColourTo(i, SCLEX_FIF_MATCH);
+				}
+			} else if(str.at(0) == '='){
 				styler.ColourTo(i, SCLEX_FIF_DEFAULT);
 			} else {
-				size_t pos = str.find("(");
-				if(pos != std::string::npos) {
-					styler.ColourTo(startLine + pos - 1, SCLEX_FIF_FILE);
-					styler.ColourTo(startLine + str.length() - 1, SCLEX_FIF_DEFAULT);
-				}
+				styler.ColourTo(i, SCLEX_FIF_FILE);
 			}
-			
+
 			linePos = 0;
 			startLine = i + 1;
 		}
 	}
+}
+
+static void FoldFifDoc(unsigned int startPos, int length, int, WordList*[], Accessor &styler) {
+	int curLine = styler.GetLine(startPos);
+	int prevLevel = SC_FOLDLEVELBASE;
+	if (curLine > 0)
+		prevLevel = styler.LevelAt(curLine-1);
+
+	int curLineStart = styler.LineStart(curLine);
+	do {
+		int nextLevel = prevLevel;
+		if (prevLevel & SC_FOLDLEVELHEADERFLAG)
+			nextLevel = (prevLevel & SC_FOLDLEVELNUMBERMASK) + 1;
+
+		int lineType = styler.StyleAt(curLineStart);
+		if (lineType == SCLEX_FIF_FILE){
+			nextLevel = (SC_FOLDLEVELBASE + 1) | SC_FOLDLEVELHEADERFLAG;
+		}
+
+		if ((nextLevel & SC_FOLDLEVELHEADERFLAG) && (nextLevel == prevLevel))
+			styler.SetLevel(curLine-1, prevLevel & ~SC_FOLDLEVELHEADERFLAG);
+
+		styler.SetLevel(curLine, nextLevel);
+		prevLevel = nextLevel;
+
+		curLineStart = styler.LineStart(++curLine);
+	} while (static_cast<int>(startPos) + length > curLineStart);
 }
 
 static const char * const fifWordListDesc[] = {
@@ -80,4 +111,4 @@ static const char * const emptyWordListDesc[] = {
 	0
 };
 
-LexerModule lmFif(SCLEX_FIF, ColouriseFifDoc, "fif", 0, fifWordListDesc);
+LexerModule lmFif(SCLEX_FIF, ColouriseFifDoc, "fif", FoldFifDoc, fifWordListDesc);

@@ -71,7 +71,7 @@ BuildTab::BuildTab(wxWindow *parent, wxWindowID id, const wxString &name)
 
     s_bt = this;
     SetGccColourFunction(ColorLine);
-
+	m_tb->Realize();
     Initialize();
 }
 

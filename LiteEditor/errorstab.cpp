@@ -33,18 +33,19 @@ ErrorsTab::ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxStri
 {
     m_tb->DeleteTool(XRCID("clear_all_output"));
     m_tb->AddSeparator();
-    
+
     m_tb->AddCheckTool(XRCID("show_errors"), wxT("Errors"), wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")), wxNullBitmap, wxT("Show build errors"));
     m_tb->ToggleTool(XRCID("show_errors"), true);
     m_tb->Connect(XRCID("show_errors"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ErrorsTab::OnRedisplayLines), NULL, this);
-    
+
     m_tb->AddCheckTool(XRCID("show_warnings"), wxT("Warnings"), wxXmlResource::Get()->LoadBitmap(wxT("help_icon")), wxNullBitmap, wxT("Show build warnings"));
     m_tb->ToggleTool(XRCID("show_warnings"), true);
     m_tb->Connect(XRCID("show_warnings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ErrorsTab::OnRedisplayLines), NULL, this);
-    
+
     m_tb->AddCheckTool(XRCID("show_build_lines"), wxT("Build"), wxXmlResource::Get()->LoadBitmap(wxT("todo")), wxNullBitmap, wxT("Show build status lines"));
     m_tb->ToggleTool(XRCID("show_build_lines"), false);
-    m_tb->Connect(XRCID("show_build_lines"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ErrorsTab::OnRedisplayLines), NULL, this);    
+    m_tb->Connect(XRCID("show_build_lines"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ErrorsTab::OnRedisplayLines), NULL, this);
+	m_tb->Realize();
 }
 
 ErrorsTab::~ErrorsTab()
@@ -63,12 +64,12 @@ void ErrorsTab::ClearLines()
 bool ErrorsTab::IsShowing(int linecolor)
 {
     switch (linecolor) {
-        case wxSCI_LEX_GCC_BUILDING: 
-            return m_tb->GetToolState(XRCID("show_build_lines")); 
-        case wxSCI_LEX_GCC_ERROR:   
+        case wxSCI_LEX_GCC_BUILDING:
+            return m_tb->GetToolState(XRCID("show_build_lines"));
+        case wxSCI_LEX_GCC_ERROR:
             return m_tb->GetToolState(XRCID("show_errors"));
-        case wxSCI_LEX_GCC_WARNING:  
-            return m_tb->GetToolState(XRCID("show_warnings"));  
+        case wxSCI_LEX_GCC_WARNING:
+            return m_tb->GetToolState(XRCID("show_warnings"));
     }
     return false;
 }
@@ -101,7 +102,7 @@ void ErrorsTab::MarkLine(int line)
 void ErrorsTab::OnRedisplayLines(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    
+
     int marked = -1;
     ClearLines();
     for (int i = 0; i < m_bt->m_sci->GetLineCount(); i++) {

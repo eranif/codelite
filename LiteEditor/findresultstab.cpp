@@ -154,6 +154,7 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 	              wxXmlResource::Get()->LoadBitmap(wxT("fold_airplane")),
 	              _("Fold All Results"));
 	Connect( XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FindResultsTab::OnCollapseAll ), NULL, this);
+    m_tb->Realize();
     
     m_matchInfo.resize(5);
     

@@ -152,14 +152,14 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone)
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
-    
+
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED, Frame::OnSearchThread)
-    
+
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnBuildEnded)
-    
+
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
 	EVT_MENU(XRCID("copy_file_path"), Frame::OnCopyFilePathOnly)
@@ -1602,7 +1602,7 @@ void Frame::OnBuildEnded(wxCommandEvent &event)
         //If the build process was part of a 'Build and Run' command, check whether an erros
         //occured during build process, if non, launch the output
         m_buildAndRun = false;
-        if (ManagerST::Get()->IsBuildEndedSuccessfully() || 
+        if (ManagerST::Get()->IsBuildEndedSuccessfully() ||
                 wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES) {
             ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
         }
@@ -2604,20 +2604,6 @@ void Frame::OnConvertEol(wxCommandEvent &e)
 		}
 		editor->ConvertEOLs(eol);
 		editor->SetEOLMode(eol);
-#if 0
-		// update status message
-		switch ( eol ) {
-		case wxSCI_EOL_CR:
-			SetStatusMessage(wxT("EOL Mode: Mac"), 3);
-			break;
-		case wxSCI_EOL_CRLF:
-			SetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
-			break;
-		default:
-			SetStatusMessage(wxT("EOL Mode: Unix"), 3);
-			break;
-		}
-#endif
 	}
 }
 

@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : context_cpp.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : context_cpp.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef CONTEXT_CPP_H
@@ -73,7 +73,7 @@ private:
 	bool DoGetFunctionBody(long curPos, long &blockStartPos, long &blockEndPos, wxString &content);
 	void Initialize();
 	void DoCodeComplete(long pos);
-	
+	void DoCreateFile(const wxFileName &fn);
 public:
 	ContextCpp(LEditor *container);
 	virtual ~ContextCpp();
@@ -92,11 +92,11 @@ public:
 	virtual void RetagFile();
 	virtual wxString CallTipContent();
     virtual void SetActive();
-    
+
     // ctrl-click style navigation support
 	virtual int GetHyperlinkRange(int pos, int &start, int &end);
     virtual void GoHyperlink(int start, int end, int type, bool alt);
-    
+
 	//override swapfiles features
 	virtual void SwapFiles(const wxFileName &fileName);
 
@@ -109,7 +109,7 @@ public:
 	virtual void OnSciUpdateUI(wxScintillaEvent &event);
 	virtual void OnFileSaved();
 	virtual void AutoAddComment();
-	
+
 	//Capture menu events
 	//return this context specific right click menu
 	virtual wxMenu *GetMenu(){return m_rclickMenu;}
@@ -130,7 +130,7 @@ public:
 	virtual void OnRenameFunction(wxCommandEvent &e);
 	virtual void OnRetagFile(wxCommandEvent &e);
 	virtual void OnUserTypedXChars(const wxString &word);
-	
+
 	DECLARE_EVENT_TABLE();
 private:
 	wxString GetWordUnderCaret();
@@ -146,7 +146,7 @@ private:
 	int FindLineToAddInclude();
 	void MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
 	void DoOpenWorkspaceFile();
-	
+
 	/**
 	 * \brief try to find a swapped file for this rhs. The logic is based on the C++ coding conventions
 	 * a swapped file for a.cpp will be a.h or a.hpp
@@ -155,14 +155,14 @@ private:
 	 * \return true if such sibling file exist, false otherwise
 	 */
 	bool FindSwappedFile(const wxFileName &rhs, wxString &lhs);
-	
+
 	/**
-	 * \brief 
+	 * \brief
 	 * \param ctrl
 	 * \param pos
 	 * \param word
 	 * \param rs
-	 * \return 
+	 * \return
 	 */
 	bool ResolveWord(LEditor *ctrl, int pos, const wxString &word, RefactorSource *rs);
 };

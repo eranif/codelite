@@ -25,6 +25,8 @@
 
 
 #include "pluginmanager.h"
+#include <wx/file.h>
+#include "threebuttondlg.h"
 #include "precompiled_header.h"
 #include "debuggerconfigtool.h"
 #include "debuggersettings.h"
@@ -305,38 +307,38 @@ wxString ContextCpp::GetImageString(const TagEntry &entry)
 void ContextCpp::AutoIndent(const wxChar &nChar)
 {
 	LEditor &rCtrl = GetCtrl();
-    
+
 	int curpos = rCtrl.GetCurrentPos();
 	if (IsComment(curpos) && nChar == wxT('\n')) {
 		AutoAddComment();
 		return;
 	}
-    if (IsCommentOrString(curpos)) {
+	if (IsCommentOrString(curpos)) {
 		ContextBase::AutoIndent(nChar);
 		return;
 	}
 	int line = rCtrl.LineFromPosition(curpos);
 	if (nChar == wxT('\n')) {
-        int prevpos = wxNOT_FOUND;
+		int prevpos = wxNOT_FOUND;
 		wxChar ch = rCtrl.PreviousChar(curpos, prevpos);
 		if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
 			ContextBase::AutoIndent(nChar);
 			return;
-        }
-        //open brace? increase indent size
-        int prevLine = rCtrl.LineFromPosition(prevpos);
-        rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
+		}
+		//open brace? increase indent size
+		int prevLine = rCtrl.LineFromPosition(prevpos);
+		rCtrl.SetLineIndentation(line, rCtrl.GetIndent() + rCtrl.GetLineIndentation(prevLine));
 		rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
 	} else if (nChar == wxT('}')) {
-        long matchPos = wxNOT_FOUND;
-        if (!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
-            return;
+		long matchPos = wxNOT_FOUND;
+		if (!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
+			return;
 		int secondLine = rCtrl.LineFromPosition(matchPos);
-		if (secondLine == line) 
+		if (secondLine == line)
 			return;
 		rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(secondLine));
 	}
-    rCtrl.ChooseCaretX(); // set new column as "current" column
+	rCtrl.ChooseCaretX(); // set new column as "current" column
 }
 
 bool ContextCpp::IsCommentOrString(long pos)
@@ -357,10 +359,10 @@ bool ContextCpp::IsCommentOrString(long pos)
 void ContextCpp::OnCallTipClick(wxScintillaEvent &event)
 {
 	LEditor &rCtrl = GetCtrl();
-    if (wxWindow::FindFocus() != &rCtrl) {
-        rCtrl.CallTipCancel();
-        return;
-    }
+	if (wxWindow::FindFocus() != &rCtrl) {
+		rCtrl.CallTipCancel();
+		return;
+	}
 	switch ( event.GetPosition() ) {
 	case ArrowUp:
 		rCtrl.CallTipCancel();
@@ -925,10 +927,13 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
 		exts.Add(wxT("h"));
 		exts.Add(wxT("hpp"));
 		exts.Add(wxT("hxx"));
+		exts.Add(wxT("hh"));
+		exts.Add(wxT("h++"));
 	} else {
 		//try to find a implementation file
 		exts.Add(wxT("cpp"));
 		exts.Add(wxT("cxx"));
+		exts.Add(wxT("c++"));
 		exts.Add(wxT("cc"));
 		exts.Add(wxT("c"));
 	}
@@ -940,6 +945,32 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
 			NavMgr::Get()->Push(GetCtrl().CreateBrowseRecord());
 			return;
 		}
+	}
+
+	long res(wxNOT_FOUND);
+
+	// we failed to locate matched file, offer the user to create one
+	// check to see if user already provided an answer
+	otherFile.SetExt(exts.Item(0));
+
+	bool userAnsweredBefore = EditorConfigST::Get()->GetLongValue(wxT("CreateSwappedFile"), res);
+	if (!userAnsweredBefore) {
+		// prompt the user with an "annoying" dialog
+		ThreeButtonDlg dlg(Frame::Get(), _("No matched file was found, would you like to create one?"), wxT("CodeLite"));
+		res = dlg.ShowModal();
+		if (dlg.GetDontAskMeAgain() && res != wxID_CANCEL) {
+			// the user is not interested of creating file, so dont bot
+			EditorConfigST::Get()->SaveLongValue(wxT("CreateSwappedFile"), res);
+		}
+	}
+
+	switch (res) {
+	case wxID_NO:
+		return;
+	case wxID_OK:
+	default:
+		DoCreateFile(otherFile);
+		break;
 	}
 }
 
@@ -1075,26 +1106,26 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent &event)
 void ContextCpp::OnCommentSelection(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-    
+
 	LEditor &editor = GetCtrl();
 	int start = editor.GetSelectionStart();
 	int end   = editor.GetSelectionEnd();
-    if (editor.LineFromPosition(editor.PositionBefore(end)) != editor.LineFromPosition(end)) {
-        end = editor.PositionBefore(end);
-    }
+	if (editor.LineFromPosition(editor.PositionBefore(end)) != editor.LineFromPosition(end)) {
+		end = editor.PositionBefore(end);
+	}
 	if (start == end)
 		return;
 
-    editor.SetCurrentPos(end);
-    
+	editor.SetCurrentPos(end);
+
 	editor.BeginUndoAction();
-    editor.InsertText(end, wxT("*/"));
+	editor.InsertText(end, wxT("*/"));
 	editor.InsertText(start, wxT("/*"));
 	editor.EndUndoAction();
-    
-    editor.CharRight();
-    editor.CharRight();
-    editor.ChooseCaretX();
+
+	editor.CharRight();
+	editor.CharRight();
+	editor.ChooseCaretX();
 }
 
 void ContextCpp::OnCommentLine(wxCommandEvent &event)
@@ -1104,30 +1135,30 @@ void ContextCpp::OnCommentLine(wxCommandEvent &event)
 
 	int start = editor.GetSelectionStart();
 	int end   = editor.GetSelectionEnd();
-    if (editor.LineFromPosition(editor.PositionBefore(end)) != editor.LineFromPosition(end)) {
-        end = std::max(start, editor.PositionBefore(end));
-    }
-    
+	if (editor.LineFromPosition(editor.PositionBefore(end)) != editor.LineFromPosition(end)) {
+		end = std::max(start, editor.PositionBefore(end));
+	}
+
 	bool doingComment = editor.GetStyleAt(start) != wxSCI_C_COMMENTLINE;
-    
+
 	int line_start = editor.LineFromPosition(start);
 	int line_end   = editor.LineFromPosition(end);
 
 	editor.BeginUndoAction();
-    for (; line_start <= line_end; line_start++) {
-        start = editor.PositionFromLine(line_start);
-        if (doingComment) {
-            editor.InsertText(start, wxT("//"));
-        } else if (editor.GetStyleAt(start) == wxSCI_C_COMMENTLINE) {
-            editor.SetAnchor(start);
-            editor.SetCurrentPos(editor.PositionAfter(editor.PositionAfter(start)));
-            editor.DeleteBackNotLine();
-        }
-    }
+	for (; line_start <= line_end; line_start++) {
+		start = editor.PositionFromLine(line_start);
+		if (doingComment) {
+			editor.InsertText(start, wxT("//"));
+		} else if (editor.GetStyleAt(start) == wxSCI_C_COMMENTLINE) {
+			editor.SetAnchor(start);
+			editor.SetCurrentPos(editor.PositionAfter(editor.PositionAfter(start)));
+			editor.DeleteBackNotLine();
+		}
+	}
 	editor.EndUndoAction();
 
-    editor.SetCaretAt(editor.PositionFromLine(line_end+1));
-    editor.ChooseCaretX();
+	editor.SetCaretAt(editor.PositionFromLine(line_end+1));
+	editor.ChooseCaretX();
 }
 
 void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
@@ -1743,7 +1774,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 
 void ContextCpp::OnFileSaved()
 {
-    PERF_FUNCTION();
+	PERF_FUNCTION();
 
 	VariableList var_list;
 	std::map< std::string, Variable > var_map;
@@ -1773,78 +1804,74 @@ void ContextCpp::OnFileSaved()
 		//---------------------------------------------------------------------
 		// Colour local variables
 		//---------------------------------------------------------------------
-        PERF_BLOCK("Getting Locals")
-        {
+		PERF_BLOCK("Getting Locals") {
 
-		const wxCharBuffer patbuf = _C(rCtrl.GetText());
+			const wxCharBuffer patbuf = _C(rCtrl.GetText());
 
-		// collect list of variables
-		get_variables( patbuf.data(), var_list, ignoreTokens, false);
+			// collect list of variables
+			get_variables( patbuf.data(), var_list, ignoreTokens, false);
 
-        }
+		}
 
 		// list all functions of this file
 		std::vector< TagEntryPtr > tags;
 		TagsManagerST::Get()->GetFunctions(tags, rCtrl.GetFileName().GetFullPath());
 
-        PERF_BLOCK("Adding Functions")
-        {
+		PERF_BLOCK("Adding Functions") {
 
-		VariableList::iterator viter = var_list.begin();
-		for (; viter != var_list.end(); viter++ ) {
-			Variable vv = *viter;
-			varList.Add(_U(vv.m_name.c_str()));
-		}
+			VariableList::iterator viter = var_list.begin();
+			for (; viter != var_list.end(); viter++ ) {
+				Variable vv = *viter;
+				varList.Add(_U(vv.m_name.c_str()));
+			}
 
-		// parse all function's arguments and add them as well
-		for (size_t i=0; i<tags.size(); i++) {
-			wxString sig = tags.at(i)->GetSignature();
-			const wxCharBuffer cb = _C(sig);
-			VariableList vars_list;
-			get_variables(cb.data(), vars_list, ignoreTokens, true);
-			VariableList::iterator it = vars_list.begin();
-			for (; it != vars_list.end(); it++ ) {
-				Variable var = *it;
-				wxString name = _U(var.m_name.c_str());
-				if (varList.Index(name) == wxNOT_FOUND) {
-					// add it
-					varList.Add(name);
+			// parse all function's arguments and add them as well
+			for (size_t i=0; i<tags.size(); i++) {
+				wxString sig = tags.at(i)->GetSignature();
+				const wxCharBuffer cb = _C(sig);
+				VariableList vars_list;
+				get_variables(cb.data(), vars_list, ignoreTokens, true);
+				VariableList::iterator it = vars_list.begin();
+				for (; it != vars_list.end(); it++ ) {
+					Variable var = *it;
+					wxString name = _U(var.m_name.c_str());
+					if (varList.Index(name) == wxNOT_FOUND) {
+						// add it
+						varList.Add(name);
+					}
 				}
 			}
-		}
 
-        }
+		}
 	}
 
-    PERF_BLOCK("Setting Keywords")
-    {
+	PERF_BLOCK("Setting Keywords") {
 
-	size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
-	if (cc_flags & CC_COLOUR_WORKSPACE_TAGS) {
-		wxString flatStr;
-		for (size_t i=0; i< projectTags.GetCount(); i++) {
-			// add only entries that does not appear in the variable list
-			//if (varList.Index(projectTags.Item(i)) == wxNOT_FOUND) {
+		size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
+		if (cc_flags & CC_COLOUR_WORKSPACE_TAGS) {
+			wxString flatStr;
+			for (size_t i=0; i< projectTags.GetCount(); i++) {
+				// add only entries that does not appear in the variable list
+				//if (varList.Index(projectTags.Item(i)) == wxNOT_FOUND) {
 				flatStr << projectTags.Item(i) << wxT(" ");
-			//}
+			}
+			rCtrl.SetKeyWords(1, flatStr);
+		} else {
+			rCtrl.SetKeyWords(1, wxEmptyString);
 		}
-		rCtrl.SetKeyWords(1, flatStr);
-	} else {
-		rCtrl.SetKeyWords(1, wxEmptyString);
-	}
 
-	if (cc_flags & CC_COLOUR_VARS) {
-		// convert it to space delimited string
-		wxString varFlatStr;
-		for (size_t i=0; i< varList.GetCount(); i++) {
-			varFlatStr << varList.Item(i) << wxT(" ");
+		if (cc_flags & CC_COLOUR_VARS) {
+			// convert it to space delimited string
+			wxString varFlatStr;
+			for (size_t i=0; i< varList.GetCount(); i++) {
+				varFlatStr << varList.Item(i) << wxT(" ");
+			}
+			rCtrl.SetKeyWords(3, varFlatStr);
+		} else {
+			rCtrl.SetKeyWords(3, wxEmptyString);
 		}
-		rCtrl.SetKeyWords(3, varFlatStr);
-	} else {
-		rCtrl.SetKeyWords(3, wxEmptyString);
-	}
 
-    }
+	}
 }
 
 void ContextCpp::ApplySettings()
@@ -1938,50 +1965,50 @@ void ContextCpp::Initialize()
 void ContextCpp::AutoAddComment()
 {
 	LEditor &rCtrl = GetCtrl();
-    
+
 	CommentConfigData data;
 	EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
 
 	int curpos = rCtrl.GetCurrentPos();
-    int line = rCtrl.LineFromPosition(curpos);
+	int line = rCtrl.LineFromPosition(curpos);
 	int cur_style = rCtrl.GetStyleAt(curpos);
-    
-    bool dontadd = false;
-    switch (cur_style) {
-        case wxSCI_C_COMMENTLINE:
-            dontadd = rCtrl.GetLine(line-1).Trim().Trim(false) == wxT("//") || !data.GetContinueCppComment();
-            break;
-        case wxSCI_C_COMMENT:
-        case wxSCI_C_COMMENTDOC:
-            dontadd = !data.GetAddStarOnCComment();
-            break;
-        default:
-            dontadd = true;
-            break;
-    }
-    if (dontadd) {
-        ContextBase::AutoIndent(wxT('\n'));
-        return;
-    }
-    
-    wxString toInsert;
-    switch (cur_style) {
-        case wxSCI_C_COMMENTLINE:
-            if (rCtrl.GetStyleAt(rCtrl.PositionAfter(curpos)) != wxSCI_C_COMMENTLINE) {
-                toInsert = wxT("// ");
-            }
-            break;
-        case wxSCI_C_COMMENT:
-        case wxSCI_C_COMMENTDOC: 
-            if (rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
-                toInsert = rCtrl.GetCharAt(rCtrl.GetLineIndentPosition(line-1)) == wxT('*') ? wxT("*") : wxT(" *");
-            }
-            break;
-    }
-    rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-1));
-    rCtrl.InsertText(rCtrl.GetLineIndentPosition(line), toInsert);
-    rCtrl.SetCaretAt(rCtrl.GetLineEndPosition(line));
-    rCtrl.ChooseCaretX(); // set new column as "current" column
+
+	bool dontadd = false;
+	switch (cur_style) {
+	case wxSCI_C_COMMENTLINE:
+		dontadd = rCtrl.GetLine(line-1).Trim().Trim(false) == wxT("//") || !data.GetContinueCppComment();
+		break;
+	case wxSCI_C_COMMENT:
+	case wxSCI_C_COMMENTDOC:
+		dontadd = !data.GetAddStarOnCComment();
+		break;
+	default:
+		dontadd = true;
+		break;
+	}
+	if (dontadd) {
+		ContextBase::AutoIndent(wxT('\n'));
+		return;
+	}
+
+	wxString toInsert;
+	switch (cur_style) {
+	case wxSCI_C_COMMENTLINE:
+		if (rCtrl.GetStyleAt(rCtrl.PositionAfter(curpos)) != wxSCI_C_COMMENTLINE) {
+			toInsert = wxT("// ");
+		}
+		break;
+	case wxSCI_C_COMMENT:
+	case wxSCI_C_COMMENTDOC:
+		if (rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
+			toInsert = rCtrl.GetCharAt(rCtrl.GetLineIndentPosition(line-1)) == wxT('*') ? wxT("*") : wxT(" *");
+		}
+		break;
+	}
+	rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-1));
+	rCtrl.InsertText(rCtrl.GetLineIndentPosition(line), toInsert);
+	rCtrl.SetCaretAt(rCtrl.GetLineEndPosition(line));
+	rCtrl.ChooseCaretX(); // set new column as "current" column
 }
 
 bool ContextCpp::IsComment(long pos)
@@ -2042,7 +2069,7 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 
 	// create an empty hidden instance of LEditor
 	LEditor *editor = new LEditor(rCtrl.GetParent());
-    editor->Show(false);
+	editor->Show(false);
 	editor->SetIsVisible(false);
 
 	// Get expressions for the CC to work with:
@@ -2488,3 +2515,30 @@ void ContextCpp::DoOpenWorkspaceFile()
 		NavMgr::Get()->Push(rCtrl.CreateBrowseRecord());
 	}
 }
+
+void ContextCpp::DoCreateFile(const wxFileName& fn)
+{
+	// get the file name from the user
+	wxString new_file = wxGetTextFromUser(_("New File Name:"), _("Create File"), fn.GetFullPath(), Frame::Get());
+	if(new_file.IsEmpty()){
+		// user clicked cancel
+		return;
+	}
+
+	wxFile file;
+	if ( !file.Create ( new_file.c_str(), true ) ){
+		return;
+	}
+
+	if(file.IsOpened()){
+		file.Close();
+	}
+
+	// Open the file in the editor
+	if (TryOpenFile(wxFileName(new_file))) {
+		// keep the current location, and return
+		NavMgr::Get()->Push(GetCtrl().CreateBrowseRecord());
+		return;
+	}
+}
+

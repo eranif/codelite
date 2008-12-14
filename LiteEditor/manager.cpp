@@ -2427,7 +2427,7 @@ void Manager::RetagFile ( const wxString& filename )
 	if ( !IsWorkspaceClosing() ) {
 
 		if ( !TagsManagerST::Get()->IsValidCtagsFile ( wxFileName ( filename ) ) ) {
-			wxLogMessage ( wxT ( "Not valid C tags file type: %s. Skipping." ), filename.c_str() );
+			wxLogMessage ( wxT ( "Not a valid C tags file type: %s. Skipping." ), filename.c_str() );
 			return;
 		}
 
@@ -2444,7 +2444,7 @@ void Manager::RetagFile ( const wxString& filename )
 		req->setFile ( absFile.GetFullPath().c_str() );
 
 		wxString msg = wxString::Format(wxT( "Re-tagging file %s..." ), absFile.GetFullName().c_str());
-		Frame::Get()->SetStatusMessage(msg, XRCID("retag_file"));
+		Frame::Get()->SetStatusMessage(msg, 0, XRCID("retag_file"));
 
 		ParseThreadST::Get()->Add ( req );
 	} else {

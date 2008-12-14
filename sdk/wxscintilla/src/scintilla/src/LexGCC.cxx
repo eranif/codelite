@@ -11,7 +11,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdarg.h>
-
+#include <string>
 #include <wx/string.h>
 
 #include "Platform.h"

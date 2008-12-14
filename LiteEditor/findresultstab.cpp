@@ -45,7 +45,7 @@ static wxColour lightColour(wxColour color, float level)
 	float h, s, l, r, g, b;
 	RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
 	HSL_2_RGB(h, s, l + std::max(level/20.0, 0.0), &r, &g, &b);
-	return wxColour(r, g, b);
+	return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);
 }
 
 static void DefineMarker(wxScintilla *sci, int marker, int markerType, wxColor fore, wxColor back)
@@ -114,7 +114,7 @@ static void SetStyles(wxScintilla *sci)
 
     wxColor fore(0xff, 0xff, 0xff);
     wxColor back(0x80, 0x80, 0x80);
-    
+
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDEROPEN,    wxSCI_MARK_ARROWDOWN,  fore, back);
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDER,        wxSCI_MARK_ARROW,      fore, back);
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDERSUB,     wxSCI_MARK_BACKGROUND, fore, back);
@@ -122,7 +122,7 @@ static void SetStyles(wxScintilla *sci)
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDEREND,     wxSCI_MARK_ARROW,      fore, back);
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_ARROWDOWN,  fore, back);
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, fore, back);
-    
+
     sci->SetReadOnly(true);
 }
 
@@ -155,9 +155,9 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 	              _("Fold All Results"));
 	Connect( XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FindResultsTab::OnCollapseAll ), NULL, this);
     m_tb->Realize();
-    
+
     m_matchInfo.resize(5);
-    
+
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_BOTTOM|wxVB_NODND);
     for (size_t i = 0; i < m_matchInfo.size(); i++) {
         wxScintilla *sci = new wxScintilla(m_book);
@@ -167,19 +167,19 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
     }
     m_book->SetSelection(size_t(0));
     m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(FindResultsTab::OnPageChanged), NULL, this);
-    
+
     // get rid of base class scintilla component
     wxSizer *sz = GetSizer();
     sz->Detach(m_sci);
     m_sci->Destroy();
-    
+
     // use base class scintilla ptr as ref to currently selected Find Results tab
     // so that base class functions (eg AppendText) go to the correct tab
     m_sci = m_recv = dynamic_cast<wxScintilla*>(m_book->GetCurrentPage());
-    
+
     sz->Add(m_book, 1, wxALL|wxEXPAND);
 	sz->Layout();
-    
+
     Connect(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED,  wxCommandEventHandler(FindResultsTab::OnSearchStart),  NULL, this);
     Connect(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND,     wxCommandEventHandler(FindResultsTab::OnSearchMatch),  NULL, this);
     Connect(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND,      wxCommandEventHandler(FindResultsTab::OnSearchEnded),  NULL, this);
@@ -194,16 +194,16 @@ void FindResultsTab::AppendText(const wxString& line)
 {
     if (!m_recv)
         return;
-        
+
     m_sci = m_recv; // so OutputTabWindow::AppendText() writes to the correct page
-    
+
     if (line.StartsWith(wxT("="))) {
         OutputTabWindow::AppendText(line + wxT("\n"));
     } else {
         wxString fileName = line.BeforeFirst(wxT('(')).Trim().Trim(false);
         wxString location = line.AfterFirst (wxT('(')).BeforeFirst(wxT(')'));
         wxString text     = line.AfterFirst (wxT(')')).AfterFirst (wxT(':')).Trim().Trim(false);
-        
+
         int m = m_book->GetPageIndex(m_sci);
         if (m_matchInfo[m].empty() || m_matchInfo[m].rbegin()->second.file_name != fileName) {
             // new file started
@@ -213,7 +213,7 @@ void FindResultsTab::AppendText(const wxString& line)
         m_matchInfo[m].insert(std::make_pair(m_sci->GetLineCount()-1, info));
         OutputTabWindow::AppendText(wxString::Format(wxT(" %4u: %s\n"), info.line_number+1, text.c_str()));
     }
-    
+
     m_sci = dynamic_cast<wxScintilla*>(m_book->GetCurrentPage());
 }
 
@@ -225,7 +225,7 @@ void FindResultsTab::Clear()
 
 void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 {
-    ManagerST::Get()->ShowOutputPane(Frame::Get()->GetOutputPane()->GetCaption());
+    ManagerST::Get()->ShowOutputPane(OutputPane::FIND_IN_FILES_WIN);
     m_book->SetSelection(e.GetInt());
     Clear();
     m_recv = m_sci;
@@ -281,7 +281,7 @@ void FindResultsTab::OnMouseDClick(wxScintillaEvent &event)
 	long pos = event.GetPosition();
     int line = m_sci->LineFromPosition(pos);
     int style = m_sci->GetStyleAt(pos);
-    
+
 	if (style == wxSCI_LEX_FIF_FILE || style == wxSCI_LEX_FIF_PROJECT) {
 		m_sci->ToggleFold(line);
 	} else {
@@ -295,7 +295,7 @@ void FindResultsTab::OnMouseDClick(wxScintillaEvent &event)
             }
         }
 	}
-    
+
     m_sci->SetCurrentPos(pos);
     m_sci->SetSelectionStart(pos);
     m_sci->SetSelectionEnd(pos);

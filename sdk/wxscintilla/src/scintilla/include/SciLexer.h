@@ -115,6 +115,7 @@
 #define SCLEX_FIF_FILE	  1
 #define SCLEX_FIF_MATCH	  2
 #define SCLEX_FIF_FILE_SHORT  3
+#define SCLEX_FIF_PROJECT 4
 
 #define SCLEX_SVN 152
 #define SCLEX_SVN_DEFAULT 	0

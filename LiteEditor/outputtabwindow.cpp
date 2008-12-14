@@ -80,7 +80,7 @@ void OutputTabWindow::CreateGUIControl()
 	m_tb->Realize();
 	mainSizer->Add(m_tb, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
 
-	m_sci = new wxScintilla(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	m_sci = new wxScintilla(this);
 
 	// Hide margins
 	m_sci->SetLexer(wxSCI_LEX_CONTAINER);

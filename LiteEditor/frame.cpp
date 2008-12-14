@@ -152,6 +152,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone)
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
+    
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, Frame::OnSearchThread)
 	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, Frame::OnSearchThread)
@@ -1335,50 +1336,6 @@ void Frame::OnSearchThread(wxCommandEvent &event)
 			ManagerST::Get()->ShowOutputPane(OutputPane::REPLACE_IN_FILES);
 			GetOutputPane()->GetReplaceResultsTab()->Clear();
 		}
-	} else {
-
-		m_outputPane->GetFindResultsTab()->CanFocus(false);
-		if ( event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
-			SearchResultList *res = (SearchResultList*)event.GetClientData();
-			SearchResultList::iterator iter = res->begin();
-
-			wxString msg;
-			for (; iter != res->end(); iter++) {
-				msg.Append((*iter).GetMessage() + wxT("\n"));
-			}
-			m_outputPane->GetFindResultsTab()->AppendText(msg);
-			delete res;
-		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
-
-			wxString *str = (wxString*)event.GetClientData();
-			if (str) {
-				m_outputPane->GetFindResultsTab()->AppendText(*str + wxT("\n"));
-				delete str;
-			}
-
-		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
-			// make sure that the output pane is visible and selection
-			// is set to the 'Find In Files' tab
-			ManagerST::Get()->ShowOutputPane(OutputPane::FIND_IN_FILES_WIN);
-
-			//set the request find results tab to use
-			GetOutputPane()->SetFindResultsTab(event.GetInt());
-
-			m_outputPane->GetFindResultsTab()->Clear();
-			wxString *str = (wxString*)event.GetClientData();
-			if (str) {
-				m_outputPane->GetFindResultsTab()->AppendText(*str + wxT("\n"));
-				delete str;
-			}
-
-		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
-
-			SearchSummary *summary = (SearchSummary*)event.GetClientData();
-			m_outputPane->GetFindResultsTab()->AppendText(summary->GetMessage() + wxT("\n"));
-			delete summary;
-
-		}
-		m_outputPane->GetFindResultsTab()->CanFocus(true);
 	}
 }
 

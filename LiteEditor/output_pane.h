@@ -22,24 +22,19 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef OUTPUT_PANE_H
+#ifndef OUTPUT_PANE_H
 #define OUTPUT_PANE_H
 
+#include <wx/panel.h>
 
-#include "wx/panel.h"
-#include "wx/wxscintilla.h"
 #include "shelltab.h"
-#include "map"
 
-class OutputPane;
-class ShellWindow;
+class Notebook;
+class FindResultsTab;
 class BuildTab;
 class ErrorsTab;
-class FindResultsTab;
-class FindResultsContainer;
 class ReplaceInFilesPanel;
-class Notebook;
-class TaskPanel;
+class ShellWindow;
 class TaskBasePanel;
 
 /**
@@ -57,10 +52,6 @@ class TaskBasePanel;
  * or makes your car start emitting strange noises when you start it up.
  * This code has no bugs, just undocumented features!
  * 
- * \todo 
- *
- * \bug 
- *
  */
 class OutputPane : public wxPanel 
 {
@@ -74,29 +65,30 @@ public:
 	static const wxString TASKS;
 	static const wxString TRACE_TAB;
 
-	Notebook *m_book;
-	wxString m_caption;
-	ShellTab *m_outputWind;
-	wxLog *m_logTargetOld;
-	ShellTab *m_outputDebug;
-	BuildTab *m_buildWin;
-	ErrorsTab *m_errorsWin;
-	FindResultsContainer *m_findResultsTab;
-	ReplaceInFilesPanel *m_replaceResultsTab;
-	TaskBasePanel *m_taskPanel;
-	int m_fifTabToUse;
-	
 private:
+	wxString m_caption;
+	wxLog   *m_logTargetOld;
+    
+	Notebook            *m_book;
+	FindResultsTab      *m_findResultsTab;
+	ReplaceInFilesPanel *m_replaceResultsTab;
+	BuildTab            *m_buildWin;
+	ErrorsTab           *m_errorsWin;
+	ShellTab            *m_outputWind;
+	ShellTab            *m_outputDebug;
+	TaskBasePanel       *m_taskPanel;
+	
 	void CreateGUIControls();
+	
+	void OnPaint(wxPaintEvent &e);
+	void OnEraseBg(wxEraseEvent &e);
+	void OnSize(wxSizeEvent &e);
+    
+	DECLARE_EVENT_TABLE()
 	
 public:
 	/**
-	 * Return the index of a given window by its caption
-	 */
-	int CaptionToIndex(const wxString &caption);
-
-	/**
-	 * Destructor
+	 * Constructor
 	 * \param parent parent window for this pane
 	 * \param caption the caption
 	 */
@@ -107,26 +99,15 @@ public:
 	 */
 	virtual ~OutputPane();
 
-	//-----------------------------------------------
-	// Setters/Getters
-	//-----------------------------------------------
-	Notebook *GetNotebook() { return m_book; }
-	const wxString &GetCaption() const { return m_caption; }
-	void SelectTab(const wxString &tabName);
+	Notebook       *GetNotebook()       { return m_book;    }
+	const wxString &GetCaption () const { return m_caption; }
 	
-	//return the underlying windows holded under this pane
-	ShellWindow *GetOutputWindow() {return m_outputWind->GetShell();}
-	ShellWindow *GetDebugWindow() {return m_outputDebug->GetShell();}
-	BuildTab *GetBuildTab() {return m_buildWin;}
-	ErrorsTab *GetErrorsTab() {return m_errorsWin;}
-	FindResultsTab *GetFindResultsTab();
-	ReplaceInFilesPanel *GetReplaceResultsTab(){return m_replaceResultsTab;}
-	void SetFindResultsTab(int which);
-	
-	DECLARE_EVENT_TABLE()
-	virtual void OnPaint(wxPaintEvent &e);
-	virtual void OnEraseBg(wxEraseEvent &e);
-	virtual void OnSize(wxSizeEvent &e);
+	FindResultsTab      *GetFindResultsTab   () { return m_findResultsTab;          }
+	ReplaceInFilesPanel *GetReplaceResultsTab() { return m_replaceResultsTab;       }
+	BuildTab            *GetBuildTab         () { return m_buildWin;                }
+	ErrorsTab           *GetErrorsTab        () { return m_errorsWin;               }
+	ShellWindow         *GetOutputWindow     () { return m_outputWind->GetShell();  }
+	ShellWindow         *GetDebugWindow      () { return m_outputDebug->GetShell(); }
 };
 
 #endif // OUTPUT_PANE_H

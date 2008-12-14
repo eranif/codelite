@@ -22,44 +22,49 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __findresultstab__
+#ifndef __findresultstab__
 #define __findresultstab__
 
-#include "outputtabwindow.h"
+#include <map>
 #include <vector>
+#include "wx/wxscintilla.h"
 
-class fifMatchInfo {
-public:
-	wxString file_name;
-	long line_number;
-	long match_len;
-	long col;
+#include "custom_notebook.h"
+#include "outputtabwindow.h"
 
-public:
-	void FromString(const wxString &locationInfoStr, const wxString &fileName);
-	fifMatchInfo();
-	fifMatchInfo(const wxString &locationInfoStr, const wxString &fileName);
-	fifMatchInfo(const wxString &fileName);
-};
 
 class FindResultsTab : public OutputTabWindow
 {
-	std::vector<fifMatchInfo> m_matchInfo;
-
 private:
-	FindResultsTab(const FindResultsTab& rhs);
-	FindResultsTab& operator=(const FindResultsTab& rhs);
-	void DefineMarker(int marker, int markerType, wxColor fore, wxColor back);
-	void OnMarginClick(wxScintillaEvent& event);
-	void DoMatchClicked(long pos);
+    struct fifMatchInfo {
+        fifMatchInfo(const wxString &locationInfoStr, const wxString &fileName);
+        
+        wxString file_name;
+        long     line_number;
+        long     match_len;
+        long     col;
+    };
+
+    Notebook    *m_book; // for multiple Find Results pages
+    wxScintilla *m_recv; // the page that is receiving results of a search
+    
+	std::vector<std::map<int, fifMatchInfo> > m_matchInfo;
+
+	void AppendText(const wxString &line);
+	void Clear();
+
+    void OnSearchStart   (wxCommandEvent   &e);
+    void OnSearchMatch   (wxCommandEvent   &e);
+    void OnSearchEnded   (wxCommandEvent   &e);
+    void OnSearchCancel  (wxCommandEvent   &e);
+    void OnPageChanged   (NotebookEvent    &e);
+	void OnMouseDClick   (wxScintillaEvent &e);
+	void OnHotspotClicked(wxScintillaEvent &e);
+	void OnMarginClick   (wxScintillaEvent &e);
+	void OnCollapseAll   (wxCommandEvent   &e);
+
 public:
 	FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name);
-	virtual ~FindResultsTab();
-
-	virtual void OnMouseDClick(wxScintillaEvent &event);
-	virtual void OnHotspotClicked(wxScintillaEvent &event);
-	virtual void OnCollapseAll(wxCommandEvent &e);
-	virtual void AppendText(const wxString &line);
-	virtual void Clear();
+	~FindResultsTab();
 };
 #endif // __findresultstab__

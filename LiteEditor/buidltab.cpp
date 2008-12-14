@@ -237,6 +237,11 @@ bool BuildTab::ExtractLineInfo(LineInfo &info, const wxString &text, const wxStr
     size_t start;
     size_t len;
     if (re.GetMatch(&start, &len, fidx)) {
+        // sometimes we get leading spaces in the filename match
+        while (len > 0 && text[start] == wxT(' ')) {
+            start++;
+            len--;
+        }
         info.filestart = start;
         info.filelen = len;
     }

@@ -37,6 +37,7 @@
 #include "macros.h"
 #include "manager.h"
 #include "frame.h"
+#include "findresultstab.h"
 
 BEGIN_EVENT_TABLE(FindInFilesDialog, wxDialog)
 EVT_CLOSE(FindInFilesDialog::OnClose)
@@ -200,12 +201,15 @@ void FindInFilesDialog::DoSearchReplace()
 {
 	//send event to the main frame
 	Frame::Get()->DoReplaceAll();
-	DoSearch();
+	SearchData data = DoGetSearchData();
+	SearchThreadST::Get()->PerformSearch(data);
+	Hide();
 }
 
 void FindInFilesDialog::DoSearch()
 {
 	SearchData data = DoGetSearchData();
+    data.SetOwner(Frame::Get()->GetOutputPane()->GetFindResultsTab());
 	SearchThreadST::Get()->PerformSearch(data);
 	Hide();
 }

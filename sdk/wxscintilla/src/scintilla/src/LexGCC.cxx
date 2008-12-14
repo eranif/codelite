@@ -51,40 +51,32 @@ static inline bool AtEOL(Accessor &styler, unsigned int i)
 }
 
 static void ColouriseGccDoc(
-    unsigned int startPos,
+    unsigned int pos,
     int length,
-    int initStyle,
-    WordList *keywordlists[],  
+    int /*initStyle*/,
+    WordList * /*keywordlists*/[],  
     Accessor &styler)
 {
-	char lineBuffer[2048];
+    std::string line;
+    line.reserve(2048);
 
-	styler.StartAt(startPos);
-	styler.StartSegment(startPos);
-	unsigned int linePos = 0;
-	unsigned int startLine = startPos;
+	styler.StartAt(pos);
+	styler.StartSegment(pos);
 	
-	for (unsigned int i = startPos; i < startPos + length; i++) {
-		lineBuffer[linePos++] = styler[i];
-		if (AtEOL(styler, i) || (linePos >= sizeof(lineBuffer) - 1)) {
-			// lineBuffer contains our line
-			// End of line (or of line buffer) met, colourise it
-			lineBuffer[linePos] = '\0';
+	for (; length > 0; pos++, length--) {
+        line += styler[pos];
+		if (AtEOL(styler, pos)) {
+			// End of line met, colourise it
 			size_t start(0);
 			size_t len(0);
-			
-			int style = ColourGccLine(startLine, lineBuffer, start, len);
-			
+            int startLine = pos-line.size()+1;
+			int style = ColourGccLine(startLine, line.c_str(), start, len);
 			if(len != 0) {
 				styler.ColourTo(startLine + start - 1, style);
 				styler.ColourTo(startLine + start + len - 1, SCLEX_GCC_FILE_LINK);
-				styler.ColourTo(i, style);
-			} else {
-				styler.ColourTo(i, style);
 			}
-			
-			linePos = 0;
-			startLine = i + 1;
+            styler.ColourTo(pos, style);
+            line.clear();
 		}
 	}
 }

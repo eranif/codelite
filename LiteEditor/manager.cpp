@@ -606,7 +606,7 @@ bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 
 	// set the selection to focus win
 	OutputPane *pane = Frame::Get()->GetOutputPane();
-	int index = pane->CaptionToIndex ( focusWin );
+	int index = pane->GetNotebook()->GetPageIndex( focusWin );
 	if ( index != wxNOT_FOUND && ( size_t ) index != pane->GetNotebook()->GetSelection() ) {
         wxWindow *focus = wxWindow::FindFocus();
 		pane->GetNotebook()->SetSelection ( ( size_t ) index );

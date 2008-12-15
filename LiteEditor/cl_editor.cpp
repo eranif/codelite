@@ -245,7 +245,7 @@ void LEditor::SetProperties()
 	SetMarginType(NUMBER_MARGIN_ID, wxSCI_MARGIN_NUMBER);
 
 	// line number margin displays every thing but folding, bookmarks and breakpoint
-	SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_all_breakpoints));
+	SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
 
 	// Separators
 	SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSCI_MARGIN_FORE);
@@ -383,7 +383,7 @@ void LEditor::SetProperties()
     MarkerDefine(smt_error, wxSCI_MARK_SHORTARROW);
     MarkerSetForeground(smt_error, wxT("BLACK"));
     MarkerSetBackground(smt_error, wxT("RED"));
-    
+
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 
@@ -703,14 +703,14 @@ bool LEditor::SaveFile()
 
 		// clear cached file, this function does nothing if the file is not cached
 		TagsManagerST::Get()->ClearCachedFile(GetFileName().GetFullPath());
-		
+
 		// clear all the queries which holds reference to this file
 		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(GetFileName().GetFullPath());
-		
+
 		if(ManagerST::Get()->IsShutdownInProgress() || ManagerST::Get()->IsWorkspaceClosing()){
 			return true;
 		}
-		
+
 		if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISABLE_AUTO_PARSING) {
 			return true;
 		}
@@ -1829,7 +1829,7 @@ void LEditor::ReloadFile()
 	}
 
     Frame::Get()->SetStatusMessage(wxT("Loading file..."), 0, XRCID("editor"));
-    
+
 	wxString text;
 	ReadFileWithConversion(m_fileName.GetFullPath(), text);
 	SetText( text );
@@ -1848,7 +1848,7 @@ void LEditor::ReloadFile()
 		eol = GetEOLByOS();
 	}
 	SetEOLMode(eol);
-    
+
     Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));
 }
 
@@ -2038,14 +2038,14 @@ void LEditor::OnLeftUp(wxMouseEvent& event)
 void LEditor::OnLeaveWindow(wxMouseEvent& event)
 {
     CallTipCancel();
-    
+
 	m_hyperLinkIndicatroStart = wxNOT_FOUND;
 	m_hyperLinkIndicatroEnd = wxNOT_FOUND;
 	m_hyperLinkType = wxID_NONE;
 
 	SetIndicatorCurrent(HYPERLINK_INDICATOR);
 	IndicatorClearRange(0, GetLength());
-    
+
 	event.Skip();
 }
 

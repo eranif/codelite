@@ -546,7 +546,7 @@ bool FileViewTree::AddFilesToVirtualFodler(const wxString& vdFullPath, wxArraySt
 
 		SortItem(item);
 		Expand( item );
-        SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+		SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 		return true;
 	}
 	return false;
@@ -590,7 +590,7 @@ bool FileViewTree::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &pa
 
 	SortItem(item);
 	Expand( item );
-    SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+	SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 	return true;
 }
 
@@ -644,30 +644,11 @@ void FileViewTree::OnNewItem( wxCommandEvent & WXUNUSED( event ) )
 	wxString projName = path.BeforeFirst( wxT( ':' ) );
 	wxString projCwd = ManagerST::Get()->GetProjectCwd( projName );
 
-	NewItemDlg *dlg = new NewItemDlg( Frame::Get(), projCwd);
-	dlg->SetTitle(_("New Item"));
-	if ( dlg->ShowModal() == wxID_OK ) {
-		wxString filename = dlg->GetFileName().GetFullPath();
-		ManagerST::Get()->AddNewFileToProject( filename, path );
-
-		// Add the tree node
-		wxFileName fnFileName( filename );
-		path += wxT( ":" );
-		path += fnFileName.GetFullName();
-		ProjectItem projItem( path, fnFileName.GetFullName(), fnFileName.GetFullPath(), ProjectItem::TypeFile );
-
-		wxTreeItemId hti = AppendItem(	item,						// parent
-		                               projItem.GetDisplayName(),	// display name
-		                               GetIconIndex( projItem ),		// item image index
-		                               GetIconIndex( projItem ),		// selected item image
-		                               new FilewViewTreeItemData( projItem ) );
-		wxUnusedVar( hti );
-		SortItem(item);
-		Expand( item );
-        SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+	NewItemDlg dlg(Frame::Get(), projCwd);
+	dlg.SetTitle(_("New Item"));
+	if ( dlg.ShowModal() == wxID_OK ) {
+		DoAddNewItem(item, dlg.GetFileName().GetFullPath(), path);
 	}
-
-	dlg->Destroy();
 }
 
 void FileViewTree::OnSetActive( wxCommandEvent & WXUNUSED( event ) )
@@ -731,7 +712,7 @@ void FileViewTree::DoRemoveItem( wxTreeItemId &item )
 
 				wxString file_name(data->GetData().GetFile());
 				Delete( item );
-                SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+				SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 			}
 		}
 	}
@@ -756,10 +737,10 @@ void FileViewTree::DoRemoveVirtualFolder( wxTreeItemId &item )
 	if ( wxMessageBox( message, wxT( "CodeLite" ), wxYES_NO|wxICON_WARNING ) == wxYES ) {
 		wxString path = GetItemPath( item );
 		ManagerST::Get()->RemoveVirtualDirectory( path );
-        
+
 		DeleteChildren( item );
 		Delete( item );
-        SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+		SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 	}
 }
 
@@ -792,7 +773,7 @@ void FileViewTree::DoAddVirtualFolder( wxTreeItemId &parent, const wxString &tex
 
 	SortItem( parent );
 	Expand( parent );
-    SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+	SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 }
 
 wxString FileViewTree::GetItemPath( wxTreeItemId &item )
@@ -858,7 +839,7 @@ void FileViewTree::DoRemoveProject( const wxString &name )
 	message << wxT( " from the workspace, click 'Yes' to proceed or 'No' to abort." );
 	if ( wxMessageBox ( message, wxT( "Confirm" ), wxYES_NO ) == wxYES ) {
 		ManagerST::Get()->RemoveProject( name );
-        // SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED); -- sent by WorkspaceTab
+		// SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED); -- sent by WorkspaceTab
 	}
 }
 
@@ -1100,7 +1081,7 @@ void FileViewTree::OnItemEndDrag( wxTreeEvent &event )
 				            new FilewViewTreeItemData( itemData ) );
 				Delete( itemSrc );
 				Expand( target );
-                SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+				SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 			}
 		}
 	}
@@ -1157,12 +1138,12 @@ void FileViewTree::OnCleanProjectOnly( wxCommandEvent &event )
 
 void FileViewTree::ExpandToPath(const wxString &project, const wxFileName &fileName)
 {
-    wxTreeItemId root = GetRootItem();
-    if (!root.IsOk())
-        return;
-        
+	wxTreeItemId root = GetRootItem();
+	if (!root.IsOk())
+		return;
+
 	wxTreeItemIdValue cookie;
-    for (wxTreeItemId child = GetFirstChild(root, cookie); child.IsOk(); child = GetNextChild(root, cookie)) {
+	for (wxTreeItemId child = GetFirstChild(root, cookie); child.IsOk(); child = GetNextChild(root, cookie)) {
 		FilewViewTreeItemData *childData = static_cast<FilewViewTreeItemData*>( GetItemData( child ) );
 		if (childData->GetData().GetDisplayName() == project) {
 			wxTreeItemId fileItem = fileName.GetName().IsEmpty() ? child : FindItemByPath(child, ManagerST::Get()->GetProjectCwd( project ), fileName.GetFullPath());
@@ -1176,7 +1157,7 @@ void FileViewTree::ExpandToPath(const wxString &project, const wxFileName &fileN
 			break;
 		}
 	}
-    
+
 }
 
 wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId &parent, const wxString &projectPath, const wxString &fileName)
@@ -1336,7 +1317,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	//reload the project
 	ManagerST::Get()->RemoveProject( proj->GetName() );
 	ManagerST::Get()->AddProject(proj->GetFileName().GetFullPath());
-    // SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED); -- sent by WorkspaceTab
+	// SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED); -- sent by WorkspaceTab
 }
 
 void FileViewTree::DoAddItem(ProjectPtr proj, const FileViewItem &item)
@@ -1414,7 +1395,7 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
 							SetItemText(item, new_item.displayName);
 
 							ManagerST::Get()->RetagFile(new_item.fullpath);
-                            SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+							SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 						}
 					}
 				} // p
@@ -1451,7 +1432,7 @@ void FileViewTree::OnRenameVirtualFolder(wxCommandEvent& e)
 			return;
 		}
 		SetItemText(item, newName);
-        SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+		SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 	}
 }
 
@@ -1515,4 +1496,38 @@ void FileViewTree::MarkActive(const wxString& projectName)
 		}
 		child = GetNextChild( GetRootItem(), cookie );
 	}
+}
+
+bool FileViewTree::CreateAndAddFile(const wxString& filename, const wxString& vdFullPath)
+{
+	wxTreeItemId item = ItemByFullPath(vdFullPath);
+	return DoAddNewItem(item, filename, vdFullPath);
+}
+
+bool FileViewTree::DoAddNewItem(wxTreeItemId& item, const wxString& filename, const wxString& vdFullpath)
+{
+	if(item.IsOk() == false){
+		return false;
+	}
+
+	ManagerST::Get()->AddNewFileToProject( filename, vdFullpath );
+
+	// Add the tree node
+	wxFileName fnFileName( filename );
+	wxString path (vdFullpath);
+
+	path += wxT( ":" );
+	path += fnFileName.GetFullName();
+	ProjectItem projItem( path, fnFileName.GetFullName(), fnFileName.GetFullPath(), ProjectItem::TypeFile );
+
+	wxTreeItemId hti = AppendItem(	item,						// parent
+	                               projItem.GetDisplayName(),	// display name
+	                               GetIconIndex( projItem ),		// item image index
+	                               GetIconIndex( projItem ),		// selected item image
+	                               new FilewViewTreeItemData( projItem ) );
+	wxUnusedVar( hti );
+	SortItem(item);
+	Expand( item );
+	SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+	return true;
 }

@@ -60,6 +60,8 @@
 #include "addincludefiledlg.h"
 #include "variable.h"
 #include "function.h"
+#include "workspacetab.h"
+#include "fileview.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -2521,25 +2523,37 @@ void ContextCpp::DoCreateFile(const wxFileName& fn)
 {
 	// get the file name from the user
 	wxString new_file = wxGetTextFromUser(_("New File Name:"), _("Create File"), fn.GetFullPath(), Frame::Get());
-	if(new_file.IsEmpty()){
+	if (new_file.IsEmpty()) {
 		// user clicked cancel
 		return;
 	}
 
-	wxFile file;
-	if ( !file.Create ( new_file.c_str(), true ) ){
-		return;
-	}
+	// if the project is part of a project, add this file to the same project
+	// (under the same virtual folder as well)
+	if (GetCtrl().GetProject().IsEmpty() == false) {
+		ProjectPtr p = ManagerST::Get()->GetProject(GetCtrl().GetProject());
+		if (p) {
+			wxString vd = p->GetVDByFileName(GetCtrl().GetFileName().GetFullPath());
+			vd.Prepend(p->GetName() + wxT(":"));
 
-	if(file.IsOpened()){
-		file.Close();
+			if (vd.IsEmpty() == false) {
+				Frame::Get()->GetWorkspaceTab()->GetFileView()->CreateAndAddFile(new_file, vd);
+			}
+		}
+	} else {
+		// just a plain file
+		wxFile file;
+		if ( !file.Create ( new_file.GetData(), true ) )
+			return;
+
+		if ( file.IsOpened() ) {
+			file.Close();
+		}
 	}
 
 	// Open the file in the editor
 	if (TryOpenFile(wxFileName(new_file))) {
 		// keep the current location, and return
 		NavMgr::Get()->Push(GetCtrl().CreateBrowseRecord());
-		return;
 	}
 }
-

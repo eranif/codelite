@@ -75,7 +75,7 @@ void MainBook::ConnectEvents()
 	wxTheApp->Connect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
 	wxTheApp->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
 	wxTheApp->Connect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
-	
+
 }
 
 MainBook::~MainBook()
@@ -335,6 +335,7 @@ LEditor *MainBook::NewEditor()
 	LEditor *editor = new LEditor(m_book);
 	editor->SetFileName(fileName);
 	AddPage(editor, fileName.GetFullName(), wxNullBitmap, true);
+	editor->SetActive();
 	return editor;
 }
 
@@ -447,7 +448,7 @@ bool MainBook::DetachPage(wxWindow* win)
 	Frame::Get()->GetDockingManager().AddPane(win, info);
 	m_detachedTabs.insert(win);
 	Frame::Get()->GetDockingManager().Update();
-	
+
 //	wxAuiFloatingFrame *frm = dynamic_cast<wxAuiFloatingFrame*>(win->GetParent());
 //	if (frm) {
 //		wxAcceleratorTable *acclTable = Frame::Get()->GetAcceleratorTable();

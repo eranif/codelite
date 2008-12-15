@@ -966,6 +966,7 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
 
 	switch (res) {
 	case wxID_NO:
+	case wxID_CANCEL:
 		return;
 	case wxID_OK:
 	default:

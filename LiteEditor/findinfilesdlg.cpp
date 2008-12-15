@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : findinfilesdlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : findinfilesdlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "wx/choice.h"
@@ -44,29 +44,29 @@ EVT_CLOSE(FindInFilesDialog::OnClose)
 EVT_CHAR_HOOK(FindInFilesDialog::OnCharEvent)
 END_EVENT_TABLE()
 
-FindInFilesDialog::FindInFilesDialog() 
+FindInFilesDialog::FindInFilesDialog()
 : wxDialog()
 , m_owner(NULL)
 {
 }
 
-FindInFilesDialog::FindInFilesDialog(wxWindow* parent, 
-									 const FindReplaceData& data, 
-									 wxWindowID id, 
-									 const wxString& caption, 
-									 const wxPoint& pos, 
-									 const wxSize& size, 
+FindInFilesDialog::FindInFilesDialog(wxWindow* parent,
+									 const FindReplaceData& data,
+									 wxWindowID id,
+									 const wxString& caption,
+									 const wxPoint& pos,
+									 const wxSize& size,
 									 long style)
 {
 	Create(parent, data, id, caption, pos, size, style);
 }
 
-bool FindInFilesDialog::Create(wxWindow* parent, 
-							   const FindReplaceData& data, 
-							   wxWindowID id, 
-							   const wxString& caption, 
-							   const wxPoint& pos, 
-							   const wxSize& size, 
+bool FindInFilesDialog::Create(wxWindow* parent,
+							   const FindReplaceData& data,
+							   wxWindowID id,
+							   const wxString& caption,
+							   const wxPoint& pos,
+							   const wxSize& size,
 							   long style)
 {
 	if( !wxDialog::Create(parent, id, caption, pos, size, style) )
@@ -108,7 +108,7 @@ void FindInFilesDialog::CreateGUIControls()
 
 	m_dirPicker = new DirPicker(this, wxID_ANY, wxT("..."), wxEmptyString, wxT("Select a folder:"), wxDefaultPosition, wxDefaultSize, wxDP_USE_COMBOBOX);
 	mainSizer->Add(m_dirPicker, 0, wxEXPAND | wxALL, 5);
-	
+
 	wxArrayString choices;
 	choices.Add(SEARCH_IN_PROJECT);
 	choices.Add(SEARCH_IN_WORKSPACE);
@@ -130,51 +130,54 @@ void FindInFilesDialog::CreateGUIControls()
 
 	m_fontEncoding = new wxCheckBox(this, wxID_ANY, wxT("Use the editor's font encoding (when left unchecked encoding is set to UTF8)"));
 	sz->Add(m_fontEncoding, 1, wxALL | wxEXPAND, 5 );
-	
+
+	m_printScope = new wxCheckBox(this, wxID_ANY, wxT("Display C++ scope (class/function) in result match"));
+	sz->Add(m_printScope, 1, wxALL | wxEXPAND, 5 );
+
 	itemStaticText = new wxStaticText( this, wxID_STATIC, wxT("Look at these file &types:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	sz->Add(itemStaticText, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5 );
 
 	wxString options [] = {
-			wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"), 
+			wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"),
 			wxT("*.*") };
 
-	m_fileTypes = new wxComboBox(this, 
-								wxID_ANY, 
-								wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"), 
+	m_fileTypes = new wxComboBox(this,
+								wxID_ANY,
+								wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"),
 								wxDefaultPosition, wxDefaultSize,
 								2, options, wxCB_DROPDOWN);
 	sz->Add(m_fileTypes, 0, wxEXPAND | wxALL, 5);
 
 	itemStaticText = new wxStaticText( this, wxID_STATIC, wxT("Display search results in tab:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	sz->Add(itemStaticText, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5 );
-	
+
 	wxArrayString tabs;
 	tabs.Add(wxT("Find Results 1"));
 	tabs.Add(wxT("Find Results 2"));
 	tabs.Add(wxT("Find Results 3"));
 	tabs.Add(wxT("Find Results 4"));
 	tabs.Add(wxT("Find Results 5"));
-	
+
 	m_searchResultsTab = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tabs);
 	sz->Add(m_searchResultsTab, 0, wxEXPAND | wxALL, 5 );
 	m_searchResultsTab->SetStringSelection(wxT("Find Results 1"));
-	
+
 	// Add the buttons
 	m_find = new wxButton(this, wxID_ANY, wxT("&Find"));
-	btnSizer->Add(m_find, 1, wxALL | wxEXPAND, 5 ); 
+	btnSizer->Add(m_find, 1, wxALL | wxEXPAND, 5 );
 
 	m_replaceAll = new wxButton(this, wxID_ANY, wxT("Find &Replace Candidates"));
-	btnSizer->Add(m_replaceAll, 1, wxALL | wxEXPAND, 5 ); 
+	btnSizer->Add(m_replaceAll, 1, wxALL | wxEXPAND, 5 );
 
 	m_stop = new wxButton(this, wxID_ANY, wxT("&Stop Search"));
-	btnSizer->Add(m_stop, 1, wxALL | wxEXPAND, 5 ); 
+	btnSizer->Add(m_stop, 1, wxALL | wxEXPAND, 5 );
 
 	m_cancel = new wxButton(this, wxID_ANY, wxT("Close"));
-	btnSizer->Add(m_cancel, 1, wxALL | wxEXPAND, 5 ); 
+	btnSizer->Add(m_cancel, 1, wxALL | wxEXPAND, 5 );
 
 	mainSizer->Add(new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL), 0, wxEXPAND );
 	mainSizer->Add(btnSizer, 0, wxEXPAND|wxALL, 5);
-	
+
 	SetData(m_data);
 	m_findString->SetSelection(-1, -1); // select all
 	m_findString->SetFocus();
@@ -190,6 +193,7 @@ void FindInFilesDialog::SetData(FindReplaceData &data)
 	m_matchWholeWord->SetValue(data.GetFlags() & wxFRD_MATCHWHOLEWORD ? true : false);
 	m_regualrExpression->SetValue(data.GetFlags() & wxFRD_REGULAREXPRESSION ? true : false);
 	m_fontEncoding->SetValue(data.GetFlags() & wxFRD_USEFONTENCODING ? true : false);
+	m_printScope->SetValue(data.GetFlags() & wxFRD_DISPLAYSCOPE ? true : false);
 }
 
 void FindInFilesDialog::SetRootDir(const wxString &rootDir)
@@ -223,7 +227,7 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 	if(btnClicked == m_stop){
 		SearchThreadST::Get()->StopSearch();
 	} else if(btnClicked == m_find){
-		DoSearch();		
+		DoSearch();
 	} else if(btnClicked == m_replaceAll){
 		DoSearchReplace();
 	} else if(btnClicked == m_cancel){
@@ -253,6 +257,12 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 		} else {
 			flags &= ~(wxFRD_USEFONTENCODING);
 		}
+	} else if(btnClicked == m_printScope){
+		if(m_printScope->IsChecked()) {
+			flags |= wxFRD_DISPLAYSCOPE;
+		} else {
+			flags &= ~(wxFRD_DISPLAYSCOPE);
+		}
 	}
 
 	// Set the updated flags
@@ -281,6 +291,7 @@ void FindInFilesDialog::ConnectEvents()
 	m_matchWholeWord->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
 	m_regualrExpression->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
 	m_fontEncoding->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
+	m_printScope->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
 }
 
 void FindInFilesDialog::OnCharEvent(wxKeyEvent &event)
@@ -288,7 +299,7 @@ void FindInFilesDialog::OnCharEvent(wxKeyEvent &event)
 	if(event.GetKeyCode() == WXK_ESCAPE){
 		Hide();
 		return;
-	} 
+	}
 	else if(event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER){
 		m_data.SetFindString( m_findString->GetValue() );
 		DoSearch();
@@ -335,33 +346,35 @@ SearchData FindInFilesDialog::DoGetSearchData()
 	data.SetRegularExpression((m_data.GetFlags() & wxFRD_REGULAREXPRESSION) != 0);
 	data.SetRootDir(m_dirPicker->GetPath());
 	data.SetUseEditorFontConfig((m_data.GetFlags() & wxFRD_USEFONTENCODING) != 0);
+	data.SetDisplayScope((m_data.GetFlags() & wxFRD_DISPLAYSCOPE) != 0);
+
 	if(m_dirPicker->GetPath() == SEARCH_IN_WORKSPACE){
 
 		wxArrayString files;
 		ManagerST::Get()->GetWorkspaceFiles(files);
 		data.SetFiles(files);
-		
+
 	}else if(m_dirPicker->GetPath() == SEARCH_IN_PROJECT){
-		
+
 		wxArrayString files;
 		ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
 		data.SetFiles(files);
-		
+
 	}else if(m_dirPicker->GetPath() == SEARCH_IN_CURR_FILE_PROJECT){
-		
+
 		wxArrayString files;
 		wxString project = ManagerST::Get()->GetActiveProjectName();
-		
+
 		if(ManagerST::Get()->GetActiveEditor()){
 			// use the active file's project
 			wxFileName activeFile = ManagerST::Get()->GetActiveEditor()->GetFileName();
 			project = ManagerST::Get()->GetProjectNameByFile(activeFile.GetFullPath());
 		}
-		
+
 		ManagerST::Get()->GetProjectFiles(project, files);
 		data.SetFiles(files);
 	}
-	
+
 	data.SetOutputTab( m_searchResultsTab->GetSelection() );
 	data.SetExtensions(m_fileTypes->GetValue());
 	return data;

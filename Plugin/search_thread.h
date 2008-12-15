@@ -90,12 +90,12 @@ public:
 		m_flags = rhs.m_flags;
 		m_validExt = rhs.m_validExt.c_str();
 		m_rootDir = rhs.m_rootDir.c_str();
-		
+
 		m_files.clear();
 		for(size_t i=0; i<rhs.m_files.GetCount(); i++){
 			m_files.Add(rhs.m_files.Item(i).c_str());
 		}
-		
+
 		m_outputTab = rhs.m_outputTab;
 		m_owner = rhs.m_owner;
 		return *this;
@@ -173,6 +173,14 @@ public:
 
 	void SetUseEditorFontConfig(bool use) {
 		SetOption(wxSD_USE_EDITOR_ENCODING, use);
+	}
+
+	bool GetDisplayScope() const {
+		return m_flags & wxSD_PRINT_SCOPE ? true : false;
+	}
+
+	void SetDisplayScope(bool d) {
+		SetOption(wxSD_PRINT_SCOPE, d);
 	}
 
 	void SetOwner(wxEvtHandler* owner) {

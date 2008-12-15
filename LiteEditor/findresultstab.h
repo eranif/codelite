@@ -38,7 +38,7 @@ class FindResultsTab : public OutputTabWindow
 private:
     struct fifMatchInfo {
         fifMatchInfo(const wxString &locationInfoStr, const wxString &fileName);
-        
+
         wxString file_name;
         long     line_number;
         long     match_len;
@@ -47,10 +47,10 @@ private:
 
     Notebook    *m_book; // for multiple Find Results pages
     wxScintilla *m_recv; // the page that is receiving results of a search
-    
+
 	std::vector<std::map<int, fifMatchInfo> > m_matchInfo;
 
-	void AppendText(const wxString &line);
+	void AppendText(const wxString &line, bool displayScope);
 	void Clear();
 
     void OnSearchStart   (wxCommandEvent   &e);

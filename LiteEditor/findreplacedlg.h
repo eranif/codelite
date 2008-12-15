@@ -40,6 +40,7 @@ class wxStaticText;
 #define wxFRD_WRAPSEARCH					0x00000010
 #define wxFRD_SELECTIONONLY					0x00000020
 #define wxFRD_USEFONTENCODING				0x00000040
+#define wxFRD_DISPLAYSCOPE					0x00000080
 
 #define FIND_DLG 0
 #define REPLACE_DLG 1
@@ -68,7 +69,7 @@ class FindReplaceData : public SerializedObject
 	size_t	m_flags;
 private:
 	void TruncateArray(wxArrayString &arr, size_t maxSize);
-	
+
 public:
 	FindReplaceData()
 			: m_flags(0) {}
@@ -227,7 +228,7 @@ protected:
 	void ConnectEvents();
 	void OnClick(wxCommandEvent &event);
 	void SendEvent(wxEventType type);
-	
+
 	void OnKeyDown(wxKeyEvent &event);
 	DECLARE_EVENT_TABLE()
 	void OnClose(wxCloseEvent &event);

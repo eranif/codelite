@@ -83,11 +83,15 @@ static void SetStyles(wxScintilla *sci)
 	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
+	sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("PURPLE"));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_SCOPE, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+
 	sci->StyleSetFont(wxSCI_LEX_FIF_FILE,       font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_DEFAULT,    bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_PROJECT,    bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_MATCH,      font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_FILE_SHORT, font);
+	sci->StyleSetFont(wxSCI_LEX_FIF_SCOPE, 		font);
 
 	sci->StyleSetHotSpot(wxSCI_LEX_FIF_MATCH, true);
 	sci->StyleSetHotSpot(wxSCI_LEX_FIF_FILE,  true);
@@ -190,7 +194,7 @@ FindResultsTab::~FindResultsTab()
 {
 }
 
-void FindResultsTab::AppendText(const wxString& line)
+void FindResultsTab::AppendText(const wxString& line, bool displayScope)
 {
     if (!m_recv)
         return;
@@ -211,7 +215,17 @@ void FindResultsTab::AppendText(const wxString& line)
         }
         fifMatchInfo info(location, fileName);
         m_matchInfo[m].insert(std::make_pair(m_sci->GetLineCount()-1, info));
-        OutputTabWindow::AppendText(wxString::Format(wxT(" %4u: %s\n"), info.line_number+1, text.c_str()));
+
+		TagEntryPtr tag(NULL);
+		wxString scope;
+
+		if(displayScope){
+			tag = TagsManagerST::Get()->FunctionFromFileLine(fileName, info.line_number);
+			if(tag){
+				scope << wxT("[") << tag->GetPath() << wxT("]");
+			}
+		}
+		OutputTabWindow::AppendText(wxString::Format(wxT(" %4u: %s %s\n"), info.line_number+1, scope.c_str(), text.c_str()));
     }
 
     m_sci = dynamic_cast<wxScintilla*>(m_book->GetCurrentPage());
@@ -231,7 +245,7 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
     m_recv = m_sci;
     wxString *str = (wxString*) e.GetClientData();
     if (str) {
-        AppendText(*str);
+        AppendText(*str, false);
         delete str;
     }
 }
@@ -241,7 +255,7 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
     SearchResultList *res = (SearchResultList*) e.GetClientData();
     if (res) {
         for (SearchResultList::iterator iter = res->begin(); iter != res->end(); iter++) {
-            AppendText(iter->GetMessage());
+			AppendText(iter->GetMessage(), iter->GetFlags() & wxSD_PRINT_SCOPE ? true : false);
         }
         delete res;
     }
@@ -251,7 +265,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
 {
     SearchSummary *summary = (SearchSummary*) e.GetClientData();
     if (summary) {
-        AppendText(summary->GetMessage());
+        AppendText(summary->GetMessage(), false);
         delete summary;
     }
 }
@@ -260,7 +274,7 @@ void FindResultsTab::OnSearchCancel(wxCommandEvent &e)
 {
     wxString *str = (wxString*) e.GetClientData();
     if (str) {
-        AppendText(*str + wxT("\n"));
+        AppendText(*str + wxT("\n"), false);
         delete str;
     }
 }

@@ -47,7 +47,9 @@ static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
             }
             styler.ColourTo(pos, SCLEX_FIF_FILE_SHORT);
             firstchar = ':'; // first colon only
-        } else if (AtEOL(styler, pos)) {
+		} else if (styler[pos] == ']' && firstchar == ':'){
+			styler.ColourTo(pos, SCLEX_FIF_SCOPE);
+		} else if (AtEOL(styler, pos)) {
             switch (firstchar) {
                 case ' ':
                 case ':':
@@ -68,15 +70,15 @@ static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
 	}
 }
 
-static void FoldFifDoc(unsigned int pos, int length, int, 
-                       WordList*[], Accessor &styler) 
+static void FoldFifDoc(unsigned int pos, int length, int,
+                       WordList*[], Accessor &styler)
 {
 	int curLine = styler.GetLine(pos);
 	int prevLevel = curLine > 0 ? styler.LevelAt(curLine-1) : SC_FOLDLEVELBASE;
-    
+
     unsigned int end = pos+length;
     pos = styler.LineStart(curLine);
-    
+
 	do {
         int nextLevel;
         switch (styler.StyleAt(pos)) {
@@ -97,7 +99,7 @@ static void FoldFifDoc(unsigned int pos, int length, int,
 			styler.SetLevel(curLine-1, prevLevel & ~SC_FOLDLEVELHEADERFLAG);
         }
 		styler.SetLevel(curLine, nextLevel);
-        
+
         curLine++;
 		prevLevel = nextLevel;
 		pos = styler.LineStart(curLine);

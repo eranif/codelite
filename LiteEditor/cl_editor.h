@@ -42,6 +42,24 @@
 class wxFindReplaceDialog;
 class CCBox;
 
+	// NB The following are sci markers, which are zero based. So smt_bookmark is actually the eighth of them (important when masking it!)
+	// If you add another type here, watch out for smt_LAST_BP_TYPE; and you need also to add to the enum 'marker_mask_type' below
+	// The higher the value, the nearer the top of the pecking order displaywise. So keep the most important breakpoint at the top i.e. smt_breakpoint,
+	// but have smt_breakpointsmt_indicator above it, so you can see the indicator when there's a breakpt too
+	enum sci_marker_types 
+		{ smt_bookmark=7, smt_FIRST_BP_TYPE=8, smt_cond_bp_disabled = smt_FIRST_BP_TYPE, smt_bp_cmdlist_disabled, smt_bp_disabled,
+			smt_bp_ignored, smt_cond_bp, smt_bp_cmdlist, smt_breakpoint, smt_LAST_BP_TYPE = smt_breakpoint, smt_indicator, smt_warning, smt_error
+		};
+
+	// These are bitmap masks of the various margin markers.
+	// So 256 == 0x100 == 100000000, 2^9, and masks the ninth marker, smt_cond_bp_disabled==8 (as the markers are zero-based)
+	// 0x7f00 is binary 111111100000000 and masks all the 7 current breakpoint types. If you add others, change it
+	enum marker_mask_type
+		{ mmt_folds=wxSCI_MASK_FOLDERS, mmt_bookmarks=128, mmt_FIRST_BP_TYPE=0x100, mmt_cond_bp_disabled=mmt_FIRST_BP_TYPE, mmt_bp_cmdlist_disabled=0x200, mmt_bp_disabled=0x400,
+			mmt_bp_ignored=0x800,  mmt_cond_bp=0x1000,mmt_bp_cmdlist=0x2000, mmt_breakpoint=0x4000, mmt_LAST_BP_TYPE=mmt_breakpoint,  mmt_all_breakpoints=0x7f00,   mmt_indicator=0x8000,
+			mmt_compiler=0x30000 /* masks compiler errors/warnings */
+		};
+
 /**
  * @class LEditorState
  * a container for the editor state (breakpoints, bookmarks and current position)
@@ -74,8 +92,6 @@ struct LEditorState
  */
 class LEditor : public wxScintilla, public IEditor
 {
-	enum marker_type { mt_bookmarks=128, mt_breakpoints=256, mt_folds=512, mt_compiler=3072 };
-
 	wxFileName m_fileName;
 	wxString m_project;
 	wxStopWatch m_watch;
@@ -218,7 +234,7 @@ public:
 	//-----------------------------------------
 
 	// Is there currently a marker at the current line?
-	bool LineIsMarked(enum marker_type markertype);
+	bool LineIsMarked(enum marker_mask_type markertype);
 	// Toggle marker at the current line
 	void ToggleMarker();
 	// Delete all markers from the current document

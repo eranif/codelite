@@ -245,7 +245,7 @@ void LEditor::SetProperties()
 	SetMarginType(NUMBER_MARGIN_ID, wxSCI_MARGIN_NUMBER);
 
 	// line number margin displays every thing but folding, bookmarks and breakpoint
-	SetMarginMask(NUMBER_MARGIN_ID, ~(mt_breakpoints | mt_folds | mt_bookmarks | mt_compiler | wxSCI_MASK_FOLDERS));
+	SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_all_breakpoints));
 
 	// Separators
 	SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSCI_MARGIN_FORE);
@@ -361,9 +361,9 @@ void LEditor::SetProperties()
 		marker = iter->second;
 	}
 
-	MarkerDefine(0x7, marker);
-	MarkerSetBackground(0x7, options->GetBookmarkBgColour());
-	MarkerSetForeground(0x7, options->GetBookmarkFgColour());
+	MarkerDefine(smt_bookmark, marker);
+	MarkerSetBackground(smt_bookmark, options->GetBookmarkBgColour());
+	MarkerSetForeground(smt_bookmark, options->GetBookmarkFgColour());
 
 	wxImage imgbp(stop_xpm);
 	wxBitmap bmpbp(imgbp);
@@ -372,17 +372,17 @@ void LEditor::SetProperties()
 	//debugger line marker
 	wxImage img(arrow_right_green_xpm);
 	wxBitmap bmp(img);
-	MarkerDefineBitmap(0x9, bmp);
-	MarkerSetBackground(0x9, wxT("LIME GREEN"));
-	MarkerSetForeground(0x9, wxT("BLACK"));
+	MarkerDefineBitmap(smt_indicator, bmp);
+	MarkerSetBackground(smt_indicator, wxT("LIME GREEN"));
+	MarkerSetForeground(smt_indicator, wxT("BLACK"));
 
     // warning and error markers
-    MarkerDefine(0xa, wxSCI_MARK_SHORTARROW);
-    MarkerSetForeground(0xb, wxT("BLACK"));
-    MarkerSetBackground(0xa, wxColor(255, 215, 0));
-    MarkerDefine(0xb, wxSCI_MARK_SHORTARROW);
-    MarkerSetForeground(0xb, wxT("BLACK"));
-    MarkerSetBackground(0xb, wxT("RED"));
+    MarkerDefine(smt_warning, wxSCI_MARK_SHORTARROW);
+    MarkerSetForeground(smt_error, wxT("BLACK"));
+    MarkerSetBackground(smt_warning, wxColor(255, 215, 0));
+    MarkerDefine(smt_error, wxSCI_MARK_SHORTARROW);
+    MarkerSetForeground(smt_error, wxT("BLACK"));
+    MarkerSetBackground(smt_error, wxT("RED"));
     
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
@@ -860,7 +860,7 @@ void LEditor::UpdateBreakpoints()
 
 	//collect the actual breakpoint according to the markers set
 	int mask(0);
-	mask |= mt_breakpoints;
+	mask |= mmt_all_breakpoints;
 	int lineno = MarkerNext(0, mask);
 	while (lineno >= 0) {
 		BreakpointInfo bp;
@@ -1635,26 +1635,26 @@ void LEditor::AddMarker()
 {
 	int nPos = GetCurrentPos();
 	int nLine = LineFromPosition(nPos);
-	MarkerAdd(nLine, 0x7);
+	MarkerAdd(nLine, smt_bookmark);
 }
 
 void LEditor::DelMarker()
 {
 	int nPos = GetCurrentPos();
 	int nLine = LineFromPosition(nPos);
-	MarkerDelete(nLine, 0x7);
+	MarkerDelete(nLine, smt_bookmark);
 }
 
 void LEditor::ToggleMarker()
 {
 	// Add/Remove marker
-	if ( !LineIsMarked(mt_bookmarks) )
+	if ( !LineIsMarked(mmt_bookmarks) )
 		AddMarker();
 	else
 		DelMarker();
 }
 
-bool LEditor::LineIsMarked(enum marker_type markertype)
+bool LEditor::LineIsMarked(enum marker_mask_type markertype)
 {
 	int nPos = GetCurrentPos();
 	int nLine = LineFromPosition(nPos);
@@ -1665,7 +1665,7 @@ bool LEditor::LineIsMarked(enum marker_type markertype)
 void LEditor::DelAllMarkers()
 {
 	// Delete all markers from the view
-	MarkerDeleteAll(0x7);
+	MarkerDeleteAll(smt_bookmark);
 
 	// delete all markers as well
 	SetIndicatorCurrent(1);
@@ -1682,7 +1682,7 @@ void LEditor::FindNextMarker()
 {
 	int nPos = GetCurrentPos();
 	int nLine = LineFromPosition(nPos);
-	int mask = mt_bookmarks;
+	int mask = mmt_bookmarks;
 	int nFoundLine = MarkerNext(nLine + 1, mask);
 	if (nFoundLine >= 0) {
 		// mark this place before jumping to next marker
@@ -1702,7 +1702,7 @@ void LEditor::FindPrevMarker()
 {
 	int nPos = GetCurrentPos();
 	int nLine = LineFromPosition(nPos);
-	int mask = mt_bookmarks;
+	int mask = mmt_bookmarks;
 	int nFoundLine = MarkerPrevious(nLine - 1, mask);
 	if (nFoundLine >= 0) {
 		GotoLine(nFoundLine);
@@ -1805,7 +1805,7 @@ bool LEditor::MarkAll()
 	SetIndicatorCurrent(1);
 
 	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
-		MarkerAdd(LineFromPosition(fixed_offset + pos), 0x7);
+		MarkerAdd(LineFromPosition(fixed_offset + pos), smt_bookmark);
 
 		// add indicator as well
 		IndicatorFillRange(fixed_offset + pos, match_len);
@@ -2137,18 +2137,18 @@ void LEditor::DelBreakpoint()
 
 void LEditor::SetWarningMarker(int lineno)
 {
-    MarkerAdd(lineno, 0xa);
+    MarkerAdd(lineno, smt_warning);
 }
 
 void LEditor::SetErrorMarker(int lineno)
 {
-    MarkerAdd(lineno, 0xb);
+    MarkerAdd(lineno, smt_error);
 }
 
 void LEditor::DelAllCompilerMarkers()
 {
-    MarkerDeleteAll(0xa);
-    MarkerDeleteAll(0xb);
+    MarkerDeleteAll(smt_warning);
+    MarkerDeleteAll(smt_error);
 }
 
 void LEditor::SetBreakpointMarker(int lineno)
@@ -2166,7 +2166,7 @@ void LEditor::DelBreakpointMarker(int lineno)
 void LEditor::DelAllBreakpointMarkers()
 {
 	int mask(0);
-	mask |= mt_breakpoints;
+	mask |= mmt_all_breakpoints;
 	int lineno = MarkerNext(0, mask);
 	while (lineno >= 0) {
 		MarkerDelete(lineno, 0x8);
@@ -2183,12 +2183,12 @@ void LEditor::HighlightLine(int lineno)
 	if (GetLineCount() < sci_line -1) {
 		sci_line = GetLineCount() - 1;
 	}
-	MarkerAdd(sci_line, 0x9);
+	MarkerAdd(sci_line, smt_indicator);
 }
 
 void LEditor::UnHighlightAll()
 {
-	MarkerDeleteAll(0x9);
+	MarkerDeleteAll(smt_indicator);
 }
 
 void LEditor::ToggleBreakpoint()
@@ -2213,7 +2213,7 @@ void LEditor::ToggleBreakpoint(const BreakpointInfo &bp)
 	//we are assuming that this call is made from a caller,
 	//so the line numbers needs to be adjusted (reduce by 1)
 	int mask = MarkerGet(bp.lineno-1);
-	if (mask & mt_breakpoints) {
+	if (mask & mmt_all_breakpoints) {
 		//we have breakpoint
 		DelBreakpoint(bp);
 	} else {
@@ -2807,7 +2807,7 @@ wxString LEditor::GetEolString()
 void LEditor::GetEditorState(LEditorState& s)
 {
 	int mask(0);
-	mask |= mt_breakpoints;
+	mask |= mmt_all_breakpoints;
 
 	// collect breakpoints
 	int lineno = MarkerNext(0, mask);
@@ -2817,7 +2817,7 @@ void LEditor::GetEditorState(LEditorState& s)
 	}
 
 	// collect all bookmarks
-	mask = mt_bookmarks;
+	mask = mmt_bookmarks;
 	lineno = MarkerNext(0, mask);
 	while (lineno >= 0) {
 		s.markers.push_back(lineno);
@@ -2831,7 +2831,7 @@ void LEditor::SetEditorState(const LEditorState& s)
 {
 	for (size_t i=0; i<s.markers.size(); i++) {
 		int line_number = s.markers.at(i);
-		MarkerAdd(line_number, 0x7);
+		MarkerAdd(line_number, smt_bookmark);
 	}
 
 	for (size_t i=0; i<s.breakpoints.size(); i++) {

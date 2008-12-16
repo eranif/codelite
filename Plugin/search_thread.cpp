@@ -165,11 +165,10 @@ void SearchThread::DoSearchFiles(ThreadRequest *req)
 		event.SetInt(data->GetOutputTab());
 		if (data->GetOwner()) {
 			::wxPostEvent(data->GetOwner(), event);
-		} else if (m_notifiedWindow) {
-			::wxPostEvent(m_notifiedWindow, event);
 		} else {
-            delete event.GetClientData();
-        }
+			// since we are in if ( m_notifiedWindow || data->GetOwner() ) block...
+			::wxPostEvent(m_notifiedWindow, event);
+		}
 	}
 
 	for (size_t i=0; i<fileList.Count(); i++) {
@@ -407,14 +406,14 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 	for(size_t i=0; i<files.GetCount(); i++){
 		uniqueFileList.insert(files.Item(i));
 	}
-	
+
 	files.Clear();
 	// remove duplicate files from the file array
 	std::set<wxString>::iterator iter = uniqueFileList.begin();
 	for(; iter != uniqueFileList.end(); iter++){
 		files.Add(*iter);
 	}
-	
+
 	// if there is no spec, we are done here
 	if (spec.empty()) {
 		return;
@@ -423,7 +422,7 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 	// loop over the files and compare against the list of spec
 	wxArrayString f = files;
 	files.Clear();
-	
+
 	// filter files by extension
 	for (size_t i=0; i<f.GetCount(); i++) {
 		wxString ext = f.Item(i).AfterLast(wxT('.'));

@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : taskpanel.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : taskpanel.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -39,13 +39,13 @@ TaskPanel::TaskPanel( wxWindow* parent )
 	m_listCtrlTasks->InsertColumn(1, wxT("Comment"));
 	m_listCtrlTasks->InsertColumn(2, wxT("Line"));
 	m_listCtrlTasks->InsertColumn(3, wxT("File"));
-	
+
 	// set initial size
 	m_listCtrlTasks->SetColumnWidth(0, 100);
 	m_listCtrlTasks->SetColumnWidth(1, 100);
 	m_listCtrlTasks->SetColumnWidth(2, 100);
 	m_listCtrlTasks->SetColumnWidth(3, 100);
-	
+
 	m_buttonStop->Disable();
 	Connect(wxEVT_SEARCH_THREAD_MATCHFOUND, wxCommandEventHandler(TaskPanel::OnSearchThread));
 	Connect(wxEVT_SEARCH_THREAD_SEARCHCANCELED, wxCommandEventHandler(TaskPanel::OnSearchThread));
@@ -86,7 +86,7 @@ void TaskPanel::OnSearch( wxCommandEvent& event )
 	data.SetFindString(wxT("//( *)((TODO)|(ATTN)|(FIXME)|(BUG))"));
 	data.SetOwner(this);
 	SearchThreadST::Get()->PerformSearch(data);
-	
+
 	// disable the search button
 	m_buttonSearch->Disable();
 	m_buttonStop->Enable();
@@ -97,9 +97,9 @@ void TaskPanel::OnItemActivated( wxListEvent& event )
 	// open the selected item in the editor
 	// type, comment, line, file
 	long line(wxNOT_FOUND);
-	wxString fileName = GetColumnText(m_listCtrlTasks, event.m_itemIndex, 3); 
-	wxString strLine = GetColumnText(m_listCtrlTasks, event.m_itemIndex, 2); 
-	
+	wxString fileName = GetColumnText(m_listCtrlTasks, event.m_itemIndex, 3);
+	wxString strLine = GetColumnText(m_listCtrlTasks, event.m_itemIndex, 2);
+
 	strLine.ToLong(&line);
 	ManagerST::Get()->OpenFile(fileName, wxEmptyString, line - 1);
 }
@@ -110,24 +110,24 @@ void TaskPanel::OnSearchThread(wxCommandEvent& e)
 		// always free the allocated message string
 		wxString *str = (wxString*)e.GetClientData();
 		if(str){delete str;}
-		
+
 		// re-enable the search button
 		m_buttonSearch->Enable();
 		m_buttonStop->Disable();
-		
+
 		DoDisplayResults();
 	}else if (e.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND){
 		// always free the allocated message string
 		SearchSummary *summary = (SearchSummary*)e.GetClientData();
 		if(summary){delete summary;}
-		
+
 		// re-enable the search button
 		m_buttonSearch->Enable();
 		m_buttonStop->Disable();
-		
+
 		DoDisplayResults();
 	} else if (e.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
-		
+
 		//add an entry to the replace panel
 		SearchResultList *res = (SearchResultList*)e.GetClientData();
 		SearchResultList::iterator iter = res->begin();
@@ -135,10 +135,10 @@ void TaskPanel::OnSearchThread(wxCommandEvent& e)
 			m_results.push_back(*iter);
 		}
 		delete res;
-		
+
 	} else if (e.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
 		// always free the allocated message data
-		delete e.GetClientData();
+		delete (SearchData*)e.GetClientData();
 		DoClearResults();
 	}
 }
@@ -147,7 +147,7 @@ void TaskPanel::DoClearResults()
 {
 	m_results.clear();
 	m_listCtrlTasks->DeleteAllItems();
-	
+
 	// set initial size
 	m_listCtrlTasks->SetColumnWidth(0, 100);
 	m_listCtrlTasks->SetColumnWidth(1, 100);
@@ -162,19 +162,19 @@ void TaskPanel::DoDisplayResults()
 	SearchResultList::iterator iter = m_results.begin();
 	for(; iter != m_results.end(); iter++){
 		SearchResult res = *iter;
-		
+
 		// extract the 'Kind'
 		int where2(wxNOT_FOUND);
-		
+
 		wxArrayString keywords;
 		keywords.Add(wxT("FIXME"));
 		keywords.Add(wxT("BUG"));
 		keywords.Add(wxT("TODO"));
 		keywords.Add(wxT("ATTN"));
-		
+
 		wxString pattern;
 		wxString type;
-		
+
 		static wxString trimLeftString(wxT(":-\t "));
 		for(size_t i=0; i<keywords.GetCount(); i++) {
 			wxString lowPattern(res.GetPattern());
@@ -188,33 +188,33 @@ void TaskPanel::DoDisplayResults()
 				break;
 			}
 		}
-		
+
 		// Filter out non matching entries
 		if(m_choiceFilter->GetStringSelection() != wxT("All") && type.CmpNoCase(m_choiceFilter->GetStringSelection()) != 0){
 			continue;
 		}
-		
+
 		// append new line to the list control
-		long index = AppendListCtrlRow(m_listCtrlTasks);		
-		
+		long index = AppendListCtrlRow(m_listCtrlTasks);
+
 		// set the line number
 		wxString strLine;
 		strLine << res.GetLineNumber();
 		wxFileName fn(res.GetFileName());
-		
+
 		// type, comment, line, file
 		SetColumnText(m_listCtrlTasks, index, 0, type);
 		SetColumnText(m_listCtrlTasks, index, 1, pattern);
 		SetColumnText(m_listCtrlTasks, index, 2, strLine);
 		SetColumnText(m_listCtrlTasks, index, 3, fn.GetFullPath());
 	}
-	
+
 	// adjust the columns width
 	m_listCtrlTasks->SetColumnWidth(0, 100);
 	m_listCtrlTasks->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	m_listCtrlTasks->SetColumnWidth(2, 50);
 	m_listCtrlTasks->SetColumnWidth(3, wxLIST_AUTOSIZE);
-	
+
 	m_listCtrlTasks->Thaw();
 }
 

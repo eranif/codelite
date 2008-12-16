@@ -101,6 +101,7 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
     Connect(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND,     wxCommandEventHandler(FindResultsTab::OnSearchMatch),  NULL, this);
     Connect(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND,      wxCommandEventHandler(FindResultsTab::OnSearchEnded),  NULL, this);
     Connect(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, wxCommandEventHandler(FindResultsTab::OnSearchCancel), NULL, this);
+	wxTheApp->Connect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
 }
 
 FindResultsTab::~FindResultsTab()
@@ -110,15 +111,13 @@ FindResultsTab::~FindResultsTab()
     }
 }
 
-void FindResultsTab::LoadFindInFilesData() 
+void FindResultsTab::LoadFindInFilesData()
 {
     if (m_find != NULL)
         return;
     FindReplaceData data;
     EditorConfigST::Get()->ReadObject(wxT("FindInFilesData"), &data);
-    m_find = new FindInFilesDialog(NULL, wxID_ANY, data, m_book ? m_book->GetPageCount() : 1);
-    m_find->Hide();
-    wxTheApp->Connect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
+    m_find = new FindInFilesDialog(Frame::Get(), wxID_ANY, data, m_book ? m_book->GetPageCount() : 1);
 }
 
 void FindResultsTab::SaveFindInFilesData()
@@ -236,6 +235,8 @@ void FindResultsTab::Clear()
 
 void FindResultsTab::OnFindInFiles(wxCommandEvent &e)
 {
+	LoadFindInFilesData();
+
 	if (m_recv) {
 		wxMessageBox(_("The search thread is currently busy"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 		return;
@@ -244,7 +245,8 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent &e)
 	if (!rootDir.IsEmpty()) {
 		m_find->SetRootDir(rootDir);
     }
-	m_find->Show();
+
+	if(m_find->IsShown() == false) m_find->Show();
 }
 
 void FindResultsTab::OnRepeatSearch(wxCommandEvent &e)
@@ -262,11 +264,11 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
     m_recv = m_sci;
     Clear();
     m_tb->EnableTool(XRCID("clear_all_output"), false);
-    
+
     SearchData *data = (SearchData*) e.GetClientData();
     m_data = data ? *data : SearchData();
     delete data;
-    
+
     wxString message;
     message << wxT("====== Searching for: '") <<  m_data.GetFindString()
             << wxT("'; Match case: ")         << (m_data.IsMatchCase()         ? wxT("true") : wxT("false"))

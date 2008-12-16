@@ -151,9 +151,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone)
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
-    
+
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnBuildEnded)
-    
+
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
 	EVT_MENU(XRCID("copy_file_path"), Frame::OnCopyFilePathOnly)
@@ -628,7 +628,7 @@ void Frame::CreateGUIControls(void)
 	BuildSettingsConfigST::Get()->Load();
 
 	//load dialog properties
-    GetOutputPane()->GetFindResultsTab()->LoadFindInFilesData();
+//    GetOutputPane()->GetFindResultsTab()->LoadFindInFilesData();
 	EditorConfigST::Get()->ReadObject(wxT("FindAndReplaceData"), &LEditor::GetFindReplaceData());
 	EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
@@ -1507,7 +1507,7 @@ void Frame::OnBuildEnded(wxCommandEvent &event)
         //If the build process was part of a 'Build and Run' command, check whether an erros
         //occured during build process, if non, launch the output
         m_buildAndRun = false;
-        if (ManagerST::Get()->IsBuildEndedSuccessfully() || 
+        if (ManagerST::Get()->IsBuildEndedSuccessfully() ||
                 wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES) {
             ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
         }

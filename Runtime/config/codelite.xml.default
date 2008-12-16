@@ -24,6 +24,7 @@
       <wxString Value="wxT"/>
       <wxString Value="wxTopLevelWindowNative=wxTopLevelWindowMSW"/>
       <wxString Value="wxWindow=wxWindowMSW"/>
+      <wxString Value="wxStatusBar=wxStatusBarBase"/>
       <wxString Value="WXUNUSED"/>
       <wxString Value="wxDEPRECATED"/>
       <wxString Value="_T"/>

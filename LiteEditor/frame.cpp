@@ -452,13 +452,6 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	// the single instance job is a presisstent job, so the pool will contain only 4 available threads
 	JobQueueSingleton::Instance()->PushJob(new SingleInstanceThreadJob(this, ManagerST::Get()->GetStarupDirectory()));
 
-	// add new version notification updater
-	long check(1);
-	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
-
-	if ( check ) {
-		JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
-	}
 	//start the editor creator thread
 	m_timer = new wxTimer(this, FrameTimerId);
 	m_timer->Start(1000);
@@ -1727,7 +1720,17 @@ void Frame::OnTimer(wxTimerEvent &event)
 	//Attach external database symbol
 	if (first) {
 		first = false;
+		
+		// since there is a bug in wxURL, which it can not be used while constucting a wxFrame,
+		// it must be called *after* the frame constuction
+		// add new version notification updater
+		long check(1);
+		EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
 
+		if ( check ) {
+			JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
+		}
+		
 		if (m_tagsOptionsData.GetFlags() & CC_LOAD_EXT_DB) {
 			//load the recently opened external database
 			wxString tagDb = EditorConfigST::Get()->GetTagsDatabase();

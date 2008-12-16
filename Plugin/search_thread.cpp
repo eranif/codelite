@@ -382,7 +382,7 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler *owner)
 	} else if (m_notifiedWindow ) {
 		wxPostEvent(m_notifiedWindow, event);
 	}
-	wxThread::Sleep(5);
+	wxThread::Sleep(10);
 }
 
 void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)

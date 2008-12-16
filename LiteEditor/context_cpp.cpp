@@ -2564,8 +2564,7 @@ void ContextCpp::DoCreateFile(const wxFileName& fn)
 
 void ContextCpp::OnGotoFunctionStart(wxCommandEvent& event)
 {
-	int line_number(wxNOT_FOUND);
-	line_number = GetCtrl().LineFromPosition(GetCtrl().GetCurrentPos());
+	int line_number = GetCtrl().LineFromPosition(GetCtrl().GetCurrentPos());
 	TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), line_number);
 	if(tag){
 		GetCtrl().AddBrowseRecord(NULL);

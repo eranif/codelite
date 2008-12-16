@@ -313,22 +313,90 @@ wxFileName BuildTab::FindFile(const wxString &filename, const wxString &project)
     return fn;
 }
 
-wxFileName BuildTab::FindFile(const wxArrayString& files, const wxString &fileName)
+// Please do not change this code!
+wxFileName BuildTab::FindFile(const wxArrayString& files, const wxFileName &fn)
 {
-    wxFileName fn(fileName);
-	std::vector<wxFileName> matches;
-    size_t best = 0;
-	for (size_t i=0; i< files.GetCount(); i++) {
-		wxFileName tmpFileName = files.Item(i);
-		if (tmpFileName.GetFullName() != fn.GetFullName() || !tmpFileName.FileExists())
-            continue;
-        matches.push_back(tmpFileName);
-        if (best == 0 && tmpFileName.GetDirCount() > 0 && fn.GetDirCount() > 0 &&
-                tmpFileName.GetDirs().Last() == fn.GetDirs().Last()) {
-            best = matches.size()-1;
-        }
+	// Iterate over the files twice:
+	// first, try to full path
+	// if the first iteration failes, iterate the files again
+	// and compare full name only
+	if (fn.IsAbsolute() && !fn.GetFullPath().Contains(wxT(".."))) {
+		return fn;
 	}
-    return !matches.empty() ? matches[best] : wxFileName();
+
+	// try to convert it to absolute path
+	wxFileName f1(fn);
+	if (f1.MakeAbsolute() && !f1.GetFullPath().Contains(wxT(".."))) {
+		return f1;
+	}
+
+	for (size_t i=0; i< files.GetCount(); i++) {
+		wxFileName tmpFileName( files.Item(i) );
+		if (tmpFileName.GetFullPath() == fn.GetFullPath()) {
+			wxFileName tt(tmpFileName);
+			if (tt.MakeAbsolute()) {
+				return tt;
+			} else {
+				return tmpFileName;
+			}
+		}
+	}
+
+	std::vector<wxFileName> matches;
+
+	for (size_t i=0; i< files.GetCount(); i++) {
+		wxFileName tmpFileName( files.Item(i) );
+		if (tmpFileName.GetFullName() == fn.GetFullName()) {
+			matches.push_back(tmpFileName);
+		}
+	}
+
+	wxString lastDir;
+	wxArrayString dirs = fn.GetDirs();
+	if (dirs.GetCount() > 0) {
+		lastDir = dirs.Last();
+	}
+
+	if (matches.size() == 1) {
+		wxFileName tt(matches.at(0));
+		if (tt.MakeAbsolute()) {
+			return tt;
+		} else {
+			return matches.at(0);
+		}
+
+	} else if (matches.size() > 1) {
+		// take the best match
+		std::vector<wxFileName> betterMatches;
+		for (size_t i=0; i<matches.size(); i++) {
+
+			wxFileName filename(matches.at(i));
+			wxArrayString tmpdirs = filename.GetDirs();
+			if (tmpdirs.GetCount() > 0) {
+				if (tmpdirs.Last() == lastDir) {
+					betterMatches.push_back(filename);
+				}
+			}
+		}
+
+		if (betterMatches.size() == 1) {
+			wxFileName tt(betterMatches.at(0));
+			if (tt.MakeAbsolute()) {
+				return tt;
+			} else {
+				return betterMatches.at(0);
+			}
+		} else {
+			// open the first match
+			wxFileName tt(matches.at(0));
+			if (tt.MakeAbsolute()) {
+				return tt;
+			} else {
+				return matches.at(0);
+			}
+		}
+	}
+	return wxFileName();
 }
 
 void BuildTab::MarkEditor(LEditor *editor)
@@ -491,5 +559,5 @@ void BuildTab::OnHotspotClicked(wxScintillaEvent &e)
 void BuildTab::OnMouseDClick(wxScintillaEvent &e)
 {
     wxUnusedVar(e);
-    DoMarkAndOpenFile(m_lineInfo.find(m_sci->LineFromPosition(e.GetPosition())), false);
+    DoMarkAndOpenFile(m_lineInfo.find(m_sci->LineFromPosition(e.GetPosition())), true);
 }

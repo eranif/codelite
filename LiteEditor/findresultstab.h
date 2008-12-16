@@ -38,13 +38,13 @@
 class FindResultsTab : public OutputTabWindow
 {
 private:
-    FindInFilesDialog *m_find;
+    static FindInFilesDialog *m_find;
 
 protected:
     Notebook    *m_book; // for multiple Find Results pages
     wxScintilla *m_recv; // the page that is receiving results of a search
     SearchData   m_data;
-    
+
 	std::vector<std::map<int, SearchResult> > m_matchInfo;
 
 	void AppendText(const wxString &line);
@@ -65,10 +65,11 @@ protected:
 public:
 	FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name, size_t numpage = 5);
 	~FindResultsTab();
-    
+
     void LoadFindInFilesData();
     void SaveFindInFilesData();
-    
+
     static void SetStyles(wxScintilla *sci);
+	size_t GetPageCount() const ;
 };
 #endif // __findresultstab__

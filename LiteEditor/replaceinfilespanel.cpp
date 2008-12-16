@@ -45,10 +45,10 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 	wxBoxSizer *horzSizer = new wxBoxSizer(wxHORIZONTAL);
 
 	wxButton *unmark = new wxButton(this, XRCID("unmark_all"), wxT("&Unmark All"));
-	horzSizer->Add(unmark, 0, wxRIGHT|wxLEFT, 5);
+	horzSizer->Add(unmark, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
 	wxButton *mark = new wxButton(this, XRCID("mark_all"), wxT("Mark &All"));
-	horzSizer->Add(mark, 0, wxRIGHT|wxLEFT, 5);
+	horzSizer->Add(mark, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
 	wxStaticText *text = new wxStaticText( this, wxID_ANY, wxT("Replace With:"));
 	horzSizer->Add(text, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5);
@@ -57,12 +57,12 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 	horzSizer->Add(m_replaceWith, 2, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5);
 
 	wxButton *repl = new wxButton(this, XRCID("replace"), wxT("&Replace Marked"));
-	horzSizer->Add(repl, 0, wxRIGHT|wxLEFT, 5);
+	horzSizer->Add(repl, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
 	m_progress = new wxGauge(this, wxID_ANY, 1);
-	horzSizer->Add(m_progress, 1, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5);
+	horzSizer->Add(m_progress, 1, wxALIGN_CENTER_VERTICAL|wxALL|wxGA_SMOOTH, 5);
 
-	vertSizer->Add(horzSizer, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	vertSizer->Add(horzSizer, 0, wxEXPAND|wxTOP|wxBOTTOM);
 
 	// grab the base class scintilla and put our sizer in its place
 	mainSizer->Detach(m_sci);
@@ -83,6 +83,11 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 	Connect(XRCID("unmark_all"), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReplaceInFilesPanel::OnUnmarkAll), NULL, this);
 	Connect(XRCID("mark_all"),   wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReplaceInFilesPanel::OnMarkAll),   NULL, this);
 	Connect(XRCID("replace"),    wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReplaceInFilesPanel::OnReplace),   NULL, this);
+
+	Connect(XRCID("unmark_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReplaceInFilesPanel::OnUnmarkAllUI), NULL, this);
+	Connect(XRCID("mark_all"),   wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReplaceInFilesPanel::OnMarkAllUI),   NULL, this);
+	Connect(XRCID("replace"),    wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReplaceInFilesPanel::OnReplaceUI),   NULL, this);
+
 }
 
 void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent &e)
@@ -326,4 +331,19 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 			}
 		}
 	}
+}
+
+void ReplaceInFilesPanel::OnMarkAllUI(wxUpdateUIEvent& e)
+{
+	e.Enable(m_sci && m_sci->GetLength() > 0);
+}
+
+void ReplaceInFilesPanel::OnReplaceUI(wxUpdateUIEvent& e)
+{
+	e.Enable(m_sci && m_sci->GetLength() > 0);
+}
+
+void ReplaceInFilesPanel::OnUnmarkAllUI(wxUpdateUIEvent& e)
+{
+	e.Enable(m_sci && m_sci->GetLength() > 0);
 }

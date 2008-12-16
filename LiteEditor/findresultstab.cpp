@@ -108,7 +108,7 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 FindResultsTab::~FindResultsTab()
 {
 	if (m_find) {
-		m_find->Destroy();
+		delete m_find;
 		m_find = NULL;
 	}
 }
@@ -120,7 +120,7 @@ void FindResultsTab::LoadFindInFilesData()
 
 	FindReplaceData data;
 	EditorConfigST::Get()->ReadObject(wxT("FindInFilesData"), &data);
-	m_find = new FindInFilesDialog(Frame::Get(), wxID_ANY, data, Frame::Get()->GetOutputPane()->GetFindResultsTab()->GetPageCount());
+	m_find = new FindInFilesDialog(NULL, wxID_ANY, data, Frame::Get()->GetOutputPane()->GetFindResultsTab()->GetPageCount());
 }
 
 void FindResultsTab::SaveFindInFilesData()

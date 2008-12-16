@@ -41,8 +41,7 @@ extern void HSL_2_RGB(float h, float s, float l, float *r, float *g, float *b);
 extern void RGB_2_HSL(float r, float g, float b, float *h, float *s, float *l);
 
 // TODO: move this somewhere more appropriate
-static wxColour lightColour(wxColour color, float level)
-{
+static wxColour lightColour(wxColour color, float level) {
 	float h, s, l, r, g, b;
 	RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
 	HSL_2_RGB(h, s, l + std::max(level/20.0, 0.0), &r, &g, &b);
@@ -51,94 +50,88 @@ static wxColour lightColour(wxColour color, float level)
 
 
 FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name, size_t numpages)
-    : OutputTabWindow(parent, id, name)
-    , m_find(NULL)
-    , m_book(NULL)
-    , m_recv(NULL)
-{
+		: OutputTabWindow(parent, id, name)
+		, m_find(NULL)
+		, m_book(NULL)
+		, m_recv(NULL) {
 	m_tb->AddTool(XRCID("collapse_all"), _("Fold All Results"),
 	              wxXmlResource::Get()->LoadBitmap(wxT("fold_airplane")),
 	              _("Fold All Results"));
 	Connect( XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FindResultsTab::OnCollapseAll ), NULL, this);
-    m_tb->AddTool(XRCID("repeat_search"), _("Repeat Search"),
-                  wxXmlResource::Get()->LoadBitmap(wxT("find_refresh")),
-                  _("Repeat Search"));
-    Connect(XRCID("repeat_search"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FindResultsTab::OnRepeatSearch), NULL, this);
-    m_tb->Realize();
-    m_tb->EnableTool(XRCID("repeat_search"), false);
+	m_tb->AddTool(XRCID("repeat_search"), _("Repeat Search"),
+	              wxXmlResource::Get()->LoadBitmap(wxT("find_refresh")),
+	              _("Repeat Search"));
+	Connect(XRCID("repeat_search"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FindResultsTab::OnRepeatSearch), NULL, this);
+	m_tb->Realize();
+	m_tb->EnableTool(XRCID("repeat_search"), false);
 
-    m_matchInfo.resize(numpages);
-    if (numpages > 1) {
-        m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_BOTTOM|wxVB_NODND);
-        for (size_t i = 1; i <= numpages; i++) {
-            wxScintilla *sci = new wxScintilla(m_book);
-            SetStyles(sci);
-            sci->Connect(wxEVT_SCI_MARGINCLICK, wxScintillaEventHandler(FindResultsTab::OnMarginClick), NULL, this);
-            m_book->AddPage(sci, wxString::Format(wxT("Find Results %u"), i));
-        }
-        m_book->SetSelection(size_t(0));
-        m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(FindResultsTab::OnPageChanged), NULL, this);
+	m_matchInfo.resize(numpages);
+	if (numpages > 1) {
+		m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_BOTTOM|wxVB_NODND);
+		for (size_t i = 1; i <= numpages; i++) {
+			wxScintilla *sci = new wxScintilla(m_book);
+			SetStyles(sci);
+			sci->Connect(wxEVT_SCI_MARGINCLICK, wxScintillaEventHandler(FindResultsTab::OnMarginClick), NULL, this);
+			m_book->AddPage(sci, wxString::Format(wxT("Find Results %u"), i));
+		}
+		m_book->SetSelection(size_t(0));
+		m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(FindResultsTab::OnPageChanged), NULL, this);
 
-        // get rid of base class scintilla component
-        wxSizer *sz = GetSizer();
-        sz->Detach(m_sci);
-        m_sci->Destroy();
+		// get rid of base class scintilla component
+		wxSizer *sz = GetSizer();
+		sz->Detach(m_sci);
+		m_sci->Destroy();
 
-        // use base class scintilla ptr as ref to currently selected Find Results tab
-        // so that base class functions (eg AppendText) go to the correct tab
-        m_sci = dynamic_cast<wxScintilla*>(m_book->GetCurrentPage());
+		// use base class scintilla ptr as ref to currently selected Find Results tab
+		// so that base class functions (eg AppendText) go to the correct tab
+		m_sci = dynamic_cast<wxScintilla*>(m_book->GetCurrentPage());
 
-        sz->Add(m_book, 1, wxALL|wxEXPAND);
-        sz->Layout();
-    } else {
-        // keep existing scintilla
-        SetStyles(m_sci);
-    }
+		sz->Add(m_book, 1, wxALL|wxEXPAND);
+		sz->Layout();
+	} else {
+		// keep existing scintilla
+		SetStyles(m_sci);
+	}
 
-    Connect(wxEVT_SCI_MARGINCLICK, wxScintillaEventHandler(FindResultsTab::OnMarginClick), NULL, this);
+	Connect(wxEVT_SCI_MARGINCLICK, wxScintillaEventHandler(FindResultsTab::OnMarginClick), NULL, this);
 
-    Connect(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED,  wxCommandEventHandler(FindResultsTab::OnSearchStart),  NULL, this);
-    Connect(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND,     wxCommandEventHandler(FindResultsTab::OnSearchMatch),  NULL, this);
-    Connect(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND,      wxCommandEventHandler(FindResultsTab::OnSearchEnded),  NULL, this);
-    Connect(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, wxCommandEventHandler(FindResultsTab::OnSearchCancel), NULL, this);
+	Connect(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED,  wxCommandEventHandler(FindResultsTab::OnSearchStart),  NULL, this);
+	Connect(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND,     wxCommandEventHandler(FindResultsTab::OnSearchMatch),  NULL, this);
+	Connect(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND,      wxCommandEventHandler(FindResultsTab::OnSearchEnded),  NULL, this);
+	Connect(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, wxCommandEventHandler(FindResultsTab::OnSearchCancel), NULL, this);
 	wxTheApp->Connect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
 }
 
-FindResultsTab::~FindResultsTab()
-{
-    if (m_find) {
-        m_find->Destroy();
-    }
+FindResultsTab::~FindResultsTab() {
+	if (m_find) {
+		m_find->Destroy();
+	}
 }
 
-void FindResultsTab::LoadFindInFilesData()
-{
-    if (m_find != NULL)
-        return;
-    FindReplaceData data;
-    EditorConfigST::Get()->ReadObject(wxT("FindInFilesData"), &data);
-    m_find = new FindInFilesDialog(Frame::Get(), wxID_ANY, data, m_book ? m_book->GetPageCount() : 1);
+void FindResultsTab::LoadFindInFilesData() {
+	if (m_find != NULL)
+		return;
+	FindReplaceData data;
+	EditorConfigST::Get()->ReadObject(wxT("FindInFilesData"), &data);
+	m_find = new FindInFilesDialog(Frame::Get(), wxID_ANY, data, m_book ? m_book->GetPageCount() : 1);
 }
 
-void FindResultsTab::SaveFindInFilesData()
-{
-    if (m_find) {
-        EditorConfigST::Get()->WriteObject(wxT("FindInFilesData"), &m_find->GetData());
-    }
+void FindResultsTab::SaveFindInFilesData() {
+	if (m_find) {
+		EditorConfigST::Get()->WriteObject(wxT("FindInFilesData"), &m_find->GetData());
+	}
 }
 
-static void DefineMarker(wxScintilla *sci, int marker, int markerType, wxColor fore, wxColor back)
-{
+static void DefineMarker(wxScintilla *sci, int marker, int markerType, wxColor fore, wxColor back) {
 	sci->MarkerDefine(marker, markerType);
 	sci->MarkerSetForeground(marker, fore);
 	sci->MarkerSetBackground(marker, back);
 }
 
-void FindResultsTab::SetStyles(wxScintilla *sci)
-{
+void FindResultsTab::SetStyles(wxScintilla *sci) {
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
-    wxFont bold(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxFONTWEIGHT_BOLD);
+	wxFont bold(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxFONTWEIGHT_BOLD);
 
 	sci->SetLexer(wxSCI_LEX_FIF);  // use custom FIF (Find In File) lexer
 	sci->StyleClearAll();
@@ -162,15 +155,15 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetForeground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_MATCH, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
-    sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("PURPLE"));
-    sci->StyleSetBackground(wxSCI_LEX_FIF_SCOPE, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	sci->StyleSetForeground(wxSCI_LEX_FIF_SCOPE, wxT("PURPLE"));
+	sci->StyleSetBackground(wxSCI_LEX_FIF_SCOPE, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
 	sci->StyleSetFont(wxSCI_LEX_FIF_FILE,       font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_DEFAULT,    bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_PROJECT,    bold);
 	sci->StyleSetFont(wxSCI_LEX_FIF_MATCH,      font);
 	sci->StyleSetFont(wxSCI_LEX_FIF_FILE_SHORT, font);
-    sci->StyleSetFont(wxSCI_LEX_FIF_SCOPE,      font);
+	sci->StyleSetFont(wxSCI_LEX_FIF_SCOPE,      font);
 
 	sci->StyleSetHotSpot(wxSCI_LEX_FIF_MATCH, true);
 	sci->StyleSetHotSpot(wxSCI_LEX_FIF_FILE,  true);
@@ -178,8 +171,8 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->SetHotspotActiveUnderline (false);
 	sci->SetHotspotActiveBackground(true, lightColour(wxT("BLUE"), 8.0));
 
-    sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
-    sci->IndicatorSetForeground(1, wxT("GOLD"));
+	sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
+	sci->IndicatorSetForeground(1, wxT("GOLD"));
 
 	sci->SetMarginType(1, wxSCI_MARGIN_SYMBOL);
 	sci->SetMarginWidth(2, 0);
@@ -198,8 +191,8 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	// make the fold lines grey
 	sci->StyleSetForeground(wxSCI_STYLE_DEFAULT, wxT("GREY"));
 
-    wxColor fore(0xff, 0xff, 0xff);
-    wxColor back(0x80, 0x80, 0x80);
+	wxColor fore(0xff, 0xff, 0xff);
+	wxColor back(0x80, 0x80, 0x80);
 
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDEROPEN,    wxSCI_MARK_ARROWDOWN,  fore, back);
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDER,        wxSCI_MARK_ARROW,      fore, back);
@@ -209,32 +202,29 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_ARROWDOWN,  fore, back);
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, fore, back);
 
-    sci->SetReadOnly(true);
+	sci->SetReadOnly(true);
 }
 
-void FindResultsTab::AppendText(const wxString& line)
-{
-    wxScintilla *save = NULL;
-    if (m_recv) {
-        // so OutputTabWindow::AppendText() writes to the correct page
-        save  = m_sci;
-        m_sci = m_recv;
-    }
-    OutputTabWindow::AppendText(line);
-    if (save) {
-        m_sci = save;
-    }
+void FindResultsTab::AppendText(const wxString& line) {
+	wxScintilla *save = NULL;
+	if (m_recv) {
+		// so OutputTabWindow::AppendText() writes to the correct page
+		save  = m_sci;
+		m_sci = m_recv;
+	}
+	OutputTabWindow::AppendText(line);
+	if (save) {
+		m_sci = save;
+	}
 }
 
-void FindResultsTab::Clear()
-{
-    m_tb->EnableTool(XRCID("repeat_search"), false);
+void FindResultsTab::Clear() {
+	m_tb->EnableTool(XRCID("repeat_search"), false);
 	m_matchInfo[m_book ? m_book->GetSelection() : 0].clear();
 	OutputTabWindow::Clear();
 }
 
-void FindResultsTab::OnFindInFiles(wxCommandEvent &e)
-{
+void FindResultsTab::OnFindInFiles(wxCommandEvent &e) {
 	LoadFindInFilesData();
 
 	if (m_recv) {
@@ -244,151 +234,150 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent &e)
 	wxString rootDir = e.GetString();
 	if (!rootDir.IsEmpty()) {
 		m_find->SetRootDir(rootDir);
-    }
+	}
 
-	if(m_find->IsShown() == false) m_find->Show();
+	if (m_find->IsShown() == false) m_find->Show();
 }
 
-void FindResultsTab::OnRepeatSearch(wxCommandEvent &e)
-{
-    wxUnusedVar(e);
-    SearchThreadST::Get()->PerformSearch(m_data);
+void FindResultsTab::OnRepeatSearch(wxCommandEvent &e) {
+	wxUnusedVar(e);
+	SearchThreadST::Get()->PerformSearch(m_data);
 }
 
-void FindResultsTab::OnSearchStart(wxCommandEvent& e)
-{
-    ManagerST::Get()->ShowOutputPane(m_name); // derived classes may change name
-    if (m_book) {
-        m_book->SetSelection(e.GetInt());
-    }
-    m_recv = m_sci;
-    Clear();
-    m_tb->EnableTool(XRCID("clear_all_output"), false);
+void FindResultsTab::OnSearchStart(wxCommandEvent& e) {
+	ManagerST::Get()->ShowOutputPane(m_name); // derived classes may change name
+	if (m_book) {
+		m_book->SetSelection(e.GetInt());
+	}
+	m_recv = m_sci;
+	Clear();
+	m_tb->EnableTool(XRCID("clear_all_output"), false);
 
-    SearchData *data = (SearchData*) e.GetClientData();
-    m_data = data ? *data : SearchData();
-    delete data;
+	SearchData *data = (SearchData*) e.GetClientData();
+	m_data = data ? *data : SearchData();
+	delete data;
 
-    wxString message;
-    message << wxT("====== Searching for: '") <<  m_data.GetFindString()
-            << wxT("'; Match case: ")         << (m_data.IsMatchCase()         ? wxT("true") : wxT("false"))
-            << wxT(" ; Match whole word: ")   << (m_data.IsMatchWholeWord()    ? wxT("true") : wxT("false"))
-            << wxT(" ; Regular expression: ") << (m_data.IsRegularExpression() ? wxT("true") : wxT("false"))
-            << wxT(" ======\n");
-    AppendText(message);
+	wxString message;
+	message << wxT("====== Searching for: '") <<  m_data.GetFindString()
+	<< wxT("'; Match case: ")         << (m_data.IsMatchCase()         ? wxT("true") : wxT("false"))
+	<< wxT(" ; Match whole word: ")   << (m_data.IsMatchWholeWord()    ? wxT("true") : wxT("false"))
+	<< wxT(" ; Regular expression: ") << (m_data.IsRegularExpression() ? wxT("true") : wxT("false"))
+	<< wxT(" ======\n");
+	AppendText(message);
 }
 
-void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
-{
-    SearchResultList *res = (SearchResultList*) e.GetClientData();
-    if (!res)
-        return;
-    int m = m_book ? m_book->GetPageIndex(m_recv) : 0;
-    for (SearchResultList::iterator iter = res->begin(); iter != res->end(); iter++) {
-        if (m_matchInfo[m].empty() || m_matchInfo[m].rbegin()->second.GetFileName() != iter->GetFileName()) {
-            AppendText(iter->GetFileName() + wxT("\n"));
-        }
-        int lineno = m_recv->GetLineCount()-1;
-        m_matchInfo[m].insert(std::make_pair(lineno, *iter));
-        wxString text = iter->GetPattern();
-        int delta = -text.Length();
-        text.Trim(false);
-        delta += text.Length();
-        text.Trim();
-        wxString linenum = wxString::Format(wxT(" %4u: "), iter->GetLineNumber());
-        if (m_data.GetDisplayScope()) {
-            TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(iter->GetFileName(), iter->GetLineNumber());
-            if (tag) {
-                linenum << wxT("[") << tag->GetPath() << wxT("] ");
-            }
-        }
-        delta += linenum.Length();
-        AppendText(linenum + text + wxT("\n"));
-        m_recv->SetIndicatorCurrent(1);
-        m_recv->IndicatorFillRange(m_sci->PositionFromLine(lineno)+iter->GetColumn()+delta, iter->GetLen());
-    }
-    delete res;
+void FindResultsTab::OnSearchMatch(wxCommandEvent& e) {
+	SearchResultList *res = (SearchResultList*) e.GetClientData();
+	if (!res)
+		return;
+	int m = m_book ? m_book->GetPageIndex(m_recv) : 0;
+	for (SearchResultList::iterator iter = res->begin(); iter != res->end(); iter++) {
+		if (m_matchInfo[m].empty() || m_matchInfo[m].rbegin()->second.GetFileName() != iter->GetFileName()) {
+			AppendText(iter->GetFileName() + wxT("\n"));
+		}
+		int lineno = m_recv->GetLineCount()-1;
+		m_matchInfo[m].insert(std::make_pair(lineno, *iter));
+		wxString text = iter->GetPattern();
+		int delta = -text.Length();
+		text.Trim(false);
+		delta += text.Length();
+		text.Trim();
+		wxString linenum = wxString::Format(wxT(" %4u: "), iter->GetLineNumber());
+		if (m_data.GetDisplayScope()) {
+			TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(iter->GetFileName(), iter->GetLineNumber());
+			if (tag) {
+				linenum << wxT("[") << tag->GetPath() << wxT("] ");
+			}
+		}
+		delta += linenum.Length();
+		AppendText(linenum + text + wxT("\n"));
+		m_recv->SetIndicatorCurrent(1);
+		
+		// Different settings for Mac
+#ifdef __WXMAC__
+		m_recv->IndicatorSetUnder(1, false);
+		m_recv->IndicatorSetStyle(1, wxSCI_INDIC_BOX);
+#else
+		m_recv->IndicatorSetUnder(1, true);
+		m_recv->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
+#endif
+		m_recv->IndicatorFillRange(m_sci->PositionFromLine(lineno)+iter->GetColumn()+delta, iter->GetLen());
+	}
+	delete res;
 }
 
-void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
-{
-    SearchSummary *summary = (SearchSummary*) e.GetClientData();
-    if (!summary)
-        return;
-    AppendText(summary->GetMessage());
-    delete summary;
-    m_recv = NULL;
-    if (m_tb->GetToolState(XRCID("scroll_on_output"))) {
-        m_sci->GotoLine(0);
-    }
-    m_tb->EnableTool(XRCID("repeat_search"), true);
-    m_tb->EnableTool(XRCID("clear_all_output"), true);
+void FindResultsTab::OnSearchEnded(wxCommandEvent& e) {
+	SearchSummary *summary = (SearchSummary*) e.GetClientData();
+	if (!summary)
+		return;
+	AppendText(summary->GetMessage());
+	delete summary;
+	m_recv = NULL;
+	if (m_tb->GetToolState(XRCID("scroll_on_output"))) {
+		m_sci->GotoLine(0);
+	}
+	m_tb->EnableTool(XRCID("repeat_search"), true);
+	m_tb->EnableTool(XRCID("clear_all_output"), true);
 }
 
-void FindResultsTab::OnSearchCancel(wxCommandEvent &e)
-{
-    wxString *str = (wxString*) e.GetClientData();
-    if (!str)
-        return;
-    AppendText(*str + wxT("\n"));
-    delete str;
-    m_recv = NULL;
-    m_tb->EnableTool(XRCID("clear_all_output"), true);
+void FindResultsTab::OnSearchCancel(wxCommandEvent &e) {
+	wxString *str = (wxString*) e.GetClientData();
+	if (!str)
+		return;
+	AppendText(*str + wxT("\n"));
+	delete str;
+	m_recv = NULL;
+	m_tb->EnableTool(XRCID("clear_all_output"), true);
 }
 
-void FindResultsTab::OnPageChanged(NotebookEvent& e)
-{
-    // this function can't be called unless m_book != NULL
-    m_sci = dynamic_cast<wxScintilla*>(m_book->GetCurrentPage());
-    m_tb->ToggleTool(XRCID("word_wrap_output"), m_sci->GetWrapMode() == wxSCI_WRAP_WORD);
+void FindResultsTab::OnPageChanged(NotebookEvent& e) {
+	// this function can't be called unless m_book != NULL
+	m_sci = dynamic_cast<wxScintilla*>(m_book->GetCurrentPage());
+	m_tb->ToggleTool(XRCID("word_wrap_output"), m_sci->GetWrapMode() == wxSCI_WRAP_WORD);
 }
 
-void FindResultsTab::OnHotspotClicked(wxScintillaEvent &e)
-{
-    OnMouseDClick(e);
+void FindResultsTab::OnHotspotClicked(wxScintillaEvent &e) {
+	OnMouseDClick(e);
 }
 
-void FindResultsTab::OnMouseDClick(wxScintillaEvent &e)
-{
+void FindResultsTab::OnMouseDClick(wxScintillaEvent &e) {
 	long pos = e.GetPosition();
-    int line = m_sci->LineFromPosition(pos);
-    int style = m_sci->GetStyleAt(pos);
+	int line = m_sci->LineFromPosition(pos);
+	int style = m_sci->GetStyleAt(pos);
 
 	if (style == wxSCI_LEX_FIF_FILE || style == wxSCI_LEX_FIF_PROJECT) {
 		m_sci->ToggleFold(line);
 	} else {
 		LEditor *currentEditor = ManagerST::Get()->GetActiveEditor();
-        int n = m_book ? m_book->GetSelection() : 0;
-        std::map<int,SearchResult>::iterator m = m_matchInfo[n].find(line);
-        if (m != m_matchInfo[n].end() && !m->second.GetFileName().IsEmpty()) {
-            LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(m->second.GetFileName(), wxEmptyString, m->second.GetLineNumber()-1);
-            if (editor && m->second.GetColumn() >= 0 && m->second.GetLen() >= 0) {
+		int n = m_book ? m_book->GetSelection() : 0;
+		std::map<int,SearchResult>::iterator m = m_matchInfo[n].find(line);
+		if (m != m_matchInfo[n].end() && !m->second.GetFileName().IsEmpty()) {
+			LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(m->second.GetFileName(), wxEmptyString, m->second.GetLineNumber()-1);
+			if (editor && m->second.GetColumn() >= 0 && m->second.GetLen() >= 0) {
 
-                int offset = editor->PositionFromLine(m->second.GetLineNumber()-1) + m->second.GetColumn();
-                editor->SetSelection(offset, offset + m->second.GetLen());
+				int offset = editor->PositionFromLine(m->second.GetLineNumber()-1) + m->second.GetColumn();
+				editor->SetSelection(offset, offset + m->second.GetLen());
 
-				if(currentEditor) {
+				if (currentEditor) {
 					// create a browsing record
 					currentEditor->AddBrowseRecord(NULL);
 				}
-            }
-        }
+			}
+		}
 	}
 
-    m_sci->SetCurrentPos(pos);
-    m_sci->SetSelectionStart(pos);
-    m_sci->SetSelectionEnd(pos);
+	m_sci->SetCurrentPos(pos);
+	m_sci->SetSelectionStart(pos);
+	m_sci->SetSelectionEnd(pos);
 }
 
-void FindResultsTab::OnMarginClick(wxScintillaEvent& e)
-{
+void FindResultsTab::OnMarginClick(wxScintillaEvent& e) {
 	if (e.GetMargin() == 4) {
-        m_sci->ToggleFold(m_sci->LineFromPosition(e.GetPosition()));
+		m_sci->ToggleFold(m_sci->LineFromPosition(e.GetPosition()));
 	}
 }
 
-void FindResultsTab::OnCollapseAll(wxCommandEvent& e)
-{
+void FindResultsTab::OnCollapseAll(wxCommandEvent& e) {
 	// go through the whole document, toggling folds that are expanded
 	int maxLine = m_sci->GetLineCount();
 	for (int line = 0; line < maxLine; line++) {  // For every line
@@ -399,4 +388,3 @@ void FindResultsTab::OnCollapseAll(wxCommandEvent& e)
 		}
 	}
 }
-

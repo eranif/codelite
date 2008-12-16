@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2008 by Eran Ifrah
-// file name            : plugin_version.h
+// file name            : browse_record.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -22,11 +22,22 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#ifndef BROWSE_HISTORY_H
+#define BROWSE_HISTORY_H
 
-#ifndef PLUGIN_VERSION_H
-#define PLUGIN_VERSION_H
+#include "wx/string.h"
 
-// Increment this number whenever any of the files in the interface project is modified
-#define PLUGIN_INTERFACE_VERSION 129
+class BrowseRecord
+{
+public:
+	wxString filename;
+	wxString project;
+	int lineno;
+	int position;
+public:
+	BrowseRecord() : filename(wxEmptyString), project(wxEmptyString), lineno(wxNOT_FOUND), position(wxNOT_FOUND) {}
 
-#endif // PLUGIN_VERSION_H
+	~BrowseRecord() {}
+};
+
+#endif //BROWSE_HISTORY_H

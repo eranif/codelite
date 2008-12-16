@@ -124,7 +124,7 @@ copyrights_options|Plugins::Copyright|Insert Copyright Block|
 insert_copyrights|Plugins::Copyright|Batch Insert of Copyright Block|
 batch_insert_copyrights|Plugins::Copyright|Settings...|
 options|Settings|Editor...|Alt-O
-synatx_highlight|Settings|Syntax Highlight...|
+synatx_highlight|Settings|Syntax Highlight & Fonts...|
 configure_accelerators|Settings|Configure accelerators...|
 add_envvar|Settings|Environment Variables...|Ctrl-Shift-V
 advance_settings|Settings|Build Settings...|
@@ -134,6 +134,7 @@ about|Help|About...|
 swap_files|C++|Swap Header/Implementation file|F12
 find_decl|C++|Goto Declaration|
 find_impl|C++|Goto Implementation|
+go_to_function_start|C++|Goto Begining of Current Function|
 insert_doxy_comment|C++::Code Generation / Refactoring|Insert Doxygen Comment|Ctrl-Shift-D
 setters_getters|C++::Code Generation / Refactoring|Generate Setters/Getters...|
 move_impl|C++::Code Generation / Refactoring|Move Function Implementation to...|

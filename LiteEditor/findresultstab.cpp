@@ -357,13 +357,20 @@ void FindResultsTab::OnMouseDClick(wxScintillaEvent &e)
 	if (style == wxSCI_LEX_FIF_FILE || style == wxSCI_LEX_FIF_PROJECT) {
 		m_sci->ToggleFold(line);
 	} else {
+		LEditor *currentEditor = ManagerST::Get()->GetActiveEditor();
         int n = m_book ? m_book->GetSelection() : 0;
         std::map<int,SearchResult>::iterator m = m_matchInfo[n].find(line);
         if (m != m_matchInfo[n].end() && !m->second.GetFileName().IsEmpty()) {
             LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(m->second.GetFileName(), wxEmptyString, m->second.GetLineNumber()-1);
             if (editor && m->second.GetColumn() >= 0 && m->second.GetLen() >= 0) {
+
                 int offset = editor->PositionFromLine(m->second.GetLineNumber()-1) + m->second.GetColumn();
                 editor->SetSelection(offset, offset + m->second.GetLen());
+
+				if(currentEditor) {
+					// create a browsing record
+					currentEditor->AddBrowseRecord(NULL);
+				}
             }
         }
 	}

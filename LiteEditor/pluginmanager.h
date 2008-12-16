@@ -47,7 +47,7 @@ class PluginManager : public IManager
 	std::list< clDynamicLibrary* > m_dl;
 	std::map<wxString, PluginInfo> m_pluginsInfo;
 	KeyboardManager m_keyboardMgr;
-	
+
 private:
 	PluginManager() {}
 	virtual ~PluginManager();
@@ -59,7 +59,7 @@ public:
 	virtual void Load();
 	virtual void UnLoad();
 	virtual void EnableToolbars();
-	
+
 	/**
 	 * \brief return a map of all loaded plugins
 	 */
@@ -78,6 +78,7 @@ public:
 	virtual Notebook *GetOutputPaneNotebook();
     virtual Notebook *GetWorkspacePaneNotebook();
 	virtual bool OpenFile(const wxString &fileName, const wxString &projectName = wxEmptyString, int lineno = wxNOT_FOUND);
+	virtual bool OpenFile(const BrowseRecord &rec);
 	virtual wxString GetStartupDirectory() const;
 	virtual void AddProject(const wxString & path);
 	virtual bool IsWorkspaceOpen() const;
@@ -112,6 +113,7 @@ public:
     virtual wxWindow *FindPage(const wxString &text);
     virtual bool AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
     virtual bool SelectPage(wxWindow *win);
+	virtual NavMgr *GetNavigationMgr();
 
 	//------------------------------------
 	//End of IManager interface

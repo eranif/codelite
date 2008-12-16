@@ -97,7 +97,7 @@ public:
 	              int lineno = wxNOT_FOUND,
 	              long position = wxNOT_FOUND);
 
-	void OpenFile(const BrowseRecord &rec);
+	bool OpenFile(const BrowseRecord &rec);
 
 	/**
 	 * Create new file on the disk and open it in the main editor

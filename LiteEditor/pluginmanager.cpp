@@ -431,7 +431,7 @@ bool PluginManager::AllowToolbar()
 	if(EditorConfigST::Get()->GetLongValue(wxT("UseSingleToolbar"), v)){
 		return v ? false : true;
 	} else {
-		// entry does not exist 
+		// entry does not exist
 #ifdef __WXMAC__
 		return false;
 #else
@@ -508,4 +508,14 @@ bool PluginManager::AddPage(wxWindow *win, const wxString &text, const wxBitmap 
 bool PluginManager::SelectPage(wxWindow *win)
 {
     return Frame::Get()->GetMainBook()->SelectPage(win);
+}
+
+bool PluginManager::OpenFile(const BrowseRecord& rec)
+{
+	return ManagerST::Get()->OpenFile(rec);
+}
+
+NavMgr* PluginManager::GetNavigationMgr()
+{
+	return NavMgr::Get();
 }

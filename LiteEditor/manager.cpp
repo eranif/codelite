@@ -183,9 +183,9 @@ bool Manager::IsWorkspaceOpen() const
 	return WorkspaceST::Get()->GetName().IsEmpty() == false;
 }
 
-void Manager::OpenFile ( const BrowseRecord &rec )
+bool Manager::OpenFile ( const BrowseRecord &rec )
 {
-	OpenFile ( rec.filename, rec.project, rec.lineno, rec.position );
+	return OpenFile ( rec.filename, rec.project, rec.lineno, rec.position );
 }
 
 bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName, int lineno, long position )

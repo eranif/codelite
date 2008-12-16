@@ -2100,7 +2100,8 @@ void LEditor::OnPopupMenuUpdateUI(wxUpdateUIEvent &event)
 	m_context->ProcessEvent(event);
 }
 
-BrowseRecord LEditor::CreateBrowseRecord()
+
+BrowseRecord LEditor::DoCreateBrowseRecord(NavMgr *navmgr)
 {
 	// Remember this position before skipping to the next one
 	BrowseRecord record;
@@ -2112,6 +2113,21 @@ BrowseRecord LEditor::CreateBrowseRecord()
 	//else, open it with empty project
 	record.position = GetCurrentPos();
 	return record;
+}
+
+BrowseRecord LEditor::CreateBrowseRecord()
+{
+	return DoCreateBrowseRecord(NavMgr::Get());
+}
+
+void LEditor::AddBrowseRecord(NavMgr *navmgr)
+{
+	if(!navmgr){
+		navmgr = NavMgr::Get();
+	}
+
+	BrowseRecord record = DoCreateBrowseRecord(navmgr);
+	navmgr->Push(record);
 }
 
 void LEditor::DelBreakpoint(const BreakpointInfo &bp)

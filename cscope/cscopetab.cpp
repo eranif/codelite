@@ -141,7 +141,10 @@ void CscopeTab::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 					wxLogMessage(wxT("failed to convert file to absolute path"));
 				}
 
-				m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine()-1);
+				IEditor *currentEditor = m_mgr->GetActiveEditor();
+				if(m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine()-1) && currentEditor){
+					currentEditor->AddBrowseRecord(m_mgr->GetNavigationMgr());
+				}
 				return;
 			} else if (data->GetEntry().GetKind() == KindFileNode) {
 				event.Skip();

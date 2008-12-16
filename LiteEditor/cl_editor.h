@@ -46,7 +46,7 @@ class CCBox;
 	// If you add another type here, watch out for smt_LAST_BP_TYPE; and you need also to add to the enum 'marker_mask_type' below
 	// The higher the value, the nearer the top of the pecking order displaywise. So keep the most important breakpoint at the top i.e. smt_breakpoint,
 	// but have smt_breakpointsmt_indicator above it, so you can see the indicator when there's a breakpt too
-	enum sci_marker_types 
+	enum sci_marker_types
 		{ smt_bookmark=7, smt_FIRST_BP_TYPE=8, smt_cond_bp_disabled = smt_FIRST_BP_TYPE, smt_bp_cmdlist_disabled, smt_bp_disabled,
 			smt_bp_ignored, smt_cond_bp, smt_bp_cmdlist, smt_breakpoint, smt_LAST_BP_TYPE = smt_breakpoint, smt_indicator, smt_warning, smt_error
 		};
@@ -302,10 +302,13 @@ public:
 	void InsertTextWithIndentation(const wxString &text, int pos);
 
 	/**
-	 * \brief create browsing crecord from the editor's current position
-	 * \return browsing record
+	 * @brief creating a browsing record that can be stored in the navigation manager
+	 * @param navmgr navigation manager to use. If NULL is provided, use the singleton NavMgr::Get() instance
 	 */
-	BrowseRecord CreateBrowseRecord();
+	virtual void AddBrowseRecord(NavMgr *navmgr);
+
+	virtual BrowseRecord CreateBrowseRecord();
+
 	bool IsContextMenuOn() const {
 		return m_popupIsOn;
 	}
@@ -350,7 +353,7 @@ public:
     void SetWarningMarker(int lineno);
     void SetErrorMarker(int lineno);
     void DelAllCompilerMarkers();
-    
+
 	//----------------------------------
 	//File modifications
 	//----------------------------------
@@ -510,6 +513,7 @@ private:
 	void BraceMatch(long pos);
 	void DoHighlightWord();
 	void DoSetStatusMessage(const wxString &msg, int col);
+	BrowseRecord DoCreateBrowseRecord(NavMgr *navmgr);
 
 	// Conevert FindReplaceDialog flags to wxSD flags
 	size_t SearchFlags(const FindReplaceData &data);

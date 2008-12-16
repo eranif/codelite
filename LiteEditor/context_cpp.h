@@ -120,6 +120,7 @@ public:
 	virtual void OnGenerateSettersGetters(wxCommandEvent &event);
 	virtual void OnFindImpl(wxCommandEvent &event);
 	virtual void OnFindDecl(wxCommandEvent &event);
+	virtual void OnGotoFunctionStart(wxCommandEvent &event);
 	virtual void OnKeyDown(wxKeyEvent &event);
 	virtual void OnUpdateUI(wxUpdateUIEvent &event);
 	virtual void OnContextOpenDocument(wxCommandEvent &event);

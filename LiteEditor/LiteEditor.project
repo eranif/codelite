@@ -368,9 +368,6 @@
   <VirtualDirectory Name="Manager">
     <File Name="manager.h"/>
     <File Name="manager.cpp"/>
-    <File Name="navigationmanager.h"/>
-    <File Name="navigationmanager.cpp"/>
-    <File Name="browse_record.h"/>
     <File Name="importfilessettings.cpp"/>
     <File Name="importfilessettings.h"/>
     <File Name="buildtabsettingsdata.cpp"/>

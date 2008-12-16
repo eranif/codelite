@@ -57,7 +57,7 @@ CppWordScanner::CppWordScanner(const wxString &file_name)
 	wxString fileData;
 	fileData.Alloc(size);
 	thefile.ReadAll( &m_text );
-#else 
+#else
 	ReadFileWithConversion(file_name, m_text);
 #endif
 }
@@ -189,6 +189,8 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l)
 		case STATE_DQ_STRING:
 			if (accessor.match("\\\"", i)) {
 				//escaped string
+				i++;
+			} else if(accessor.match("\\", i)){
 				i++;
 			} else if (accessor.match("\"", i)) {
 				state = STATE_NORMAL;

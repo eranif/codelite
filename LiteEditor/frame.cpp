@@ -335,6 +335,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("comment_line"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("find_decl"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("find_impl"), Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("go_to_function_start"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("insert_doxy_comment"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("move_impl"), Frame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_impl"), Frame::OnCppContextMenu)
@@ -2040,7 +2041,7 @@ void Frame::OnBackwardForward(wxCommandEvent &event)
 	}
 	break;
 	case wxID_BACKWARD:
-		NavMgr::Get()->NavigateBackward();
+		NavMgr::Get()->NavigateBackward(ManagerST::Get()->GetActiveEditor(), PluginManager::Get());
 		break;
 	default:
 		break;

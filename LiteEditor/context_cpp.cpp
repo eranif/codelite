@@ -142,6 +142,7 @@ wxBitmap ContextCpp::m_otherFileBmp = wxNullBitmap;
 BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 	EVT_UPDATE_UI(XRCID("find_decl"), ContextCpp::OnUpdateUI)
 	EVT_UPDATE_UI(XRCID("find_impl"), ContextCpp::OnUpdateUI)
+	EVT_UPDATE_UI(XRCID("go_to_function_start"), ContextCpp::OnUpdateUI)
 	EVT_UPDATE_UI(XRCID("insert_doxy_comment"), ContextCpp::OnUpdateUI)
 	EVT_UPDATE_UI(XRCID("setters_getters"), ContextCpp::OnUpdateUI)
 	EVT_UPDATE_UI(XRCID("move_impl"), ContextCpp::OnUpdateUI)
@@ -151,6 +152,7 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 	EVT_MENU(XRCID("comment_line"), ContextCpp::OnCommentLine)
 	EVT_MENU(XRCID("find_decl"), ContextCpp::OnFindDecl)
 	EVT_MENU(XRCID("find_impl"), ContextCpp::OnFindImpl)
+	EVT_MENU(XRCID("go_to_function_start"), ContextCpp::OnGotoFunctionStart)
 	EVT_MENU(XRCID("insert_doxy_comment"), ContextCpp::OnInsertDoxyComment)
 	EVT_MENU(XRCID("move_impl"), ContextCpp::OnMoveImpl)
 	EVT_MENU(XRCID("add_impl"), ContextCpp::OnAddImpl)
@@ -844,7 +846,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 
 void ContextCpp::GotoPreviousDefintion()
 {
-	NavMgr::Get()->NavigateBackward();
+	NavMgr::Get()->NavigateBackward(&GetCtrl(), PluginManager::Get());
 }
 
 void ContextCpp::GotoDefinition()
@@ -884,8 +886,9 @@ void ContextCpp::GotoDefinition()
 void ContextCpp::DoGotoSymbol(const std::vector<TagEntryPtr> &tags)
 {
 	LEditor &rCtrl = GetCtrl();
+
 	// Keep the current position as well
-	NavMgr::Get()->Push(rCtrl.CreateBrowseRecord());
+	rCtrl.AddBrowseRecord(NULL);
 
 	// Did we get a single match?
 	if (tags.size() == 1) {
@@ -944,7 +947,7 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
 		otherFile.SetExt(exts.Item(i));
 		if (TryOpenFile(otherFile)) {
 			//keep the current location, and return
-			NavMgr::Get()->Push(GetCtrl().CreateBrowseRecord());
+			GetCtrl().AddBrowseRecord(NULL);
 			return;
 		}
 	}
@@ -1309,6 +1312,8 @@ void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)
 		event.Enable(projectAvailable);
 	} else if (event.GetId() == XRCID("setters_getters")) {
 		event.Enable(projectAvailable);
+	} else if (event.GetId() == XRCID("go_to_function_start")) {
+		event.Enable(workspaceOpen);
 	} else if (event.GetId() == XRCID("find_decl")) {
 		event.Enable(workspaceOpen);
 	} else if (event.GetId() == XRCID("find_impl")) {
@@ -1801,7 +1806,6 @@ void ContextCpp::OnFileSaved()
 		// get list of all tags from the workspace
 		TagsManagerST::Get()->GetAllTagsNames(projectTags);
 	}
-
 	// wxSCI_C_GLOBALCLASS
 	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS) {
 		//---------------------------------------------------------------------
@@ -1847,7 +1851,6 @@ void ContextCpp::OnFileSaved()
 
 		}
 	}
-
 	PERF_BLOCK("Setting Keywords") {
 
 		size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
@@ -1873,7 +1876,6 @@ void ContextCpp::OnFileSaved()
 		} else {
 			rCtrl.SetKeyWords(3, wxEmptyString);
 		}
-
 	}
 }
 
@@ -2446,6 +2448,7 @@ void ContextCpp::DoCodeComplete(long pos)
 			DisplayCompletionBox(candidates, wxEmptyString, showFullDecl);
 		}
 	}
+
 }
 
 int ContextCpp::GetHyperlinkRange(int pos, int &start, int &end)
@@ -2480,6 +2483,7 @@ void ContextCpp::DoOpenWorkspaceFile()
 {
 	wxFileName fileName(m_selectedWord);
 	wxString tmpName(m_selectedWord);
+
 	tmpName.Replace(wxT("\\"), wxT("/"));
 
 	std::vector<wxFileName> files, files2;
@@ -2515,7 +2519,7 @@ void ContextCpp::DoOpenWorkspaceFile()
 		ManagerST::Get()->OpenFile(fileToOpen, wxEmptyString);
 
 		// Keep the current position as well
-		NavMgr::Get()->Push(rCtrl.CreateBrowseRecord());
+		rCtrl.AddBrowseRecord(NULL);
 	}
 }
 
@@ -2554,6 +2558,17 @@ void ContextCpp::DoCreateFile(const wxFileName& fn)
 	// Open the file in the editor
 	if (TryOpenFile(wxFileName(new_file))) {
 		// keep the current location, and return
-		NavMgr::Get()->Push(GetCtrl().CreateBrowseRecord());
+		GetCtrl().AddBrowseRecord(NULL);
+	}
+}
+
+void ContextCpp::OnGotoFunctionStart(wxCommandEvent& event)
+{
+	int line_number(wxNOT_FOUND);
+	line_number = GetCtrl().LineFromPosition(GetCtrl().GetCurrentPos());
+	TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), line_number);
+	if(tag){
+		GetCtrl().AddBrowseRecord(NULL);
+		GetCtrl().SetCaretAt(GetCtrl().PositionFromLine(tag->GetLine()-1));
 	}
 }

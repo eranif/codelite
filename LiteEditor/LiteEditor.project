@@ -692,9 +692,9 @@ resources.cpp: resources.xrc
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="wxscintilla"/>
+  <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
+    <Project Name="wxscintilla"/>
     <Project Name="wxsqlite3"/>
     <Project Name="CodeLite"/>
     <Project Name="plugin_sdk"/>
@@ -712,9 +712,9 @@ resources.cpp: resources.xrc
     <Project Name="SymbolView"/>
     <Project Name="ContinuousBuild"/>
   </Dependencies>
-  <Dependencies Name="WinReleaseUnicode">
-    <Project Name="sqlite3"/>
+  <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="CodeLite"/>
     <Project Name="plugin_sdk"/>

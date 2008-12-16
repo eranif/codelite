@@ -86,7 +86,7 @@ wxString Language::GetScope(const wxString& srcString)
 	wxString wxcurrScope;
 	std::vector<std::string> scope_stack;
 	std::string currScope;
-	
+
 	int type;
 
 	// Initialize the scanner with the string to search
@@ -238,7 +238,7 @@ bool Language::ProcessExpression(const wxString& stmt,
                                  wxString &oper)		//output
 {
 	PERF_START("Language::ProcessExpression");
-	
+
 	ExpressionResult result;
 	wxString statement( stmt );
 	bool evaluationSucceeded = true;
@@ -263,7 +263,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 	PERF_BLOCK("GetScope"){
 		visibleScope = GetScope(text);
 	}
-	
+
 	std::vector<wxString> additionalScopes;
 	PERF_BLOCK("GetScopeName"){
 		scopeName = GetScopeName(text, &additionalScopes);
@@ -275,7 +275,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 			lastFuncSig = tag->GetSignature();
 		}
 	}
-	
+
 	//get next token using the tokenscanner object
 	m_tokenScanner->SetText(_C(statement));
 	Variable parent;
@@ -284,7 +284,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 		m_parentVar.Reset();
 		wxString templateInitList;
 		result = ParseExpression(word);
-		
+
 
 		//parsing failed?
 		if (result.m_name.empty()) {
@@ -292,7 +292,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 			evaluationSucceeded = false;
 			break;
 		}
-		
+
 		word.clear();
 		//no tokens before this, what we need to do now, is find the TagEntry
 		//that corrseponds to the result
@@ -316,7 +316,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 			}
 			if (op == wxT("::")) {
 				wxLogMessage(wxString::Format(wxT("'this' can not be used with operator ::")));
-			
+
 				evaluationSucceeded = false;
 				break;
 			} // if(oper == wxT("::"))
@@ -384,12 +384,12 @@ bool Language::ProcessExpression(const wxString& stmt,
 									typeName,	//output
 									typeScope);	//output
 			}
-			
+
 			if (!res) {
 				evaluationSucceeded = false;
 				break;
-			}	
-			
+			}
+
 			//do typedef subsitute
 			wxString tmp_name(typeName);
 			while (OnTypedef(typeName, typeScope, templateInitList, scopeName)) {
@@ -414,7 +414,12 @@ bool Language::ProcessExpression(const wxString& stmt,
 			}
 
 			// try match any overloading operator to the typeName
-			wxString tmpTypeName(typeName);
+			wxString origTypeName(typeName);
+
+			// keep the typeScope in variable origTypeScope since it might be modified by
+			// the OnArrowOperatorOverloading() method, but we might need it again in case
+			// -> operator overloading is found
+			wxString origTypeScope(typeScope);
 			if ( op == wxT("->") && OnArrowOperatorOverloading(typeName, typeScope) ) {
 
 				// there is an operator overloading for ->
@@ -434,8 +439,8 @@ bool Language::ProcessExpression(const wxString& stmt,
 				if (templateInitList.IsEmpty() == false) {
 					m_parentVar.m_isTemplate = true;
 					m_parentVar.m_templateDecl = _C(templateInitList);
-					m_parentVar.m_type = _C(tmpTypeName);
-					m_parentVar.m_typeScope = _C(typeScope);
+					m_parentVar.m_type = _C(origTypeName);
+					m_parentVar.m_typeScope = _C(origTypeScope); // we use the original type scope
 				}
 
 				// do template subsitute
@@ -539,14 +544,17 @@ bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &pa
 				for (size_t i=0; i< templateDecl.GetCount(); i++) {
 					if (templateDecl.Item(i) == typeName) {
 						if (templateImpl.GetCount() > i) {
-							std::vector<TagEntryPtr> tags_vec;
-							tagsManager->FindByPath(templateImpl.Item(i), tags_vec);
-							//replace template arguments with actual values
-							if (tags_vec.size() == 1) {
-								TagEntryPtr t = tags_vec.at(0);
-								typeName = t->GetName();
-								typeScope = t->GetScope();
-								res = true;
+							for(size_t j=0; j<2; j++){
+								std::vector<TagEntryPtr> tags_vec;
+								wxString tagpath = j == 0 ? templateImpl.Item(i) : wxString::Format(wxT("%s::%s"), parent_scope.c_str(), templateImpl.Item(i).c_str());
+								tagsManager->FindByPath(tagpath, tags_vec);
+								//replace template arguments with actual values
+								if (tags_vec.size() == 1) {
+									TagEntryPtr t = tags_vec.at(0);
+									typeName = t->GetName();
+									typeScope = t->GetScope();
+									res = true;
+								}
 							}
 							break;
 						}
@@ -585,8 +593,8 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 			tagsManager->FindByPath(path, tags);
 		}
 	}
-	
-	
+
+
 	// try to remove all tags that are Macros from this list
 	for(size_t i=0; i<tags.size(); i++){
 		TagEntryPtr t = tags.at(i);
@@ -594,7 +602,7 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 			filtered_tags.push_back(t);
 		}
 	}
-	
+
 	if (filtered_tags.size() == 1) {
 		//we have a single match, test to see if it a typedef
 		TagEntryPtr tag = filtered_tags.at(0);
@@ -750,14 +758,14 @@ void Language::ParseComments(const wxFileName &fileName, std::vector<DbRecordPtr
 				m_scanner->ClearComment();
 				continue;
 			}
-			
+
 			// save the previous comment buffer
 			if ( comment.IsEmpty() == false ) {
 				comments->push_back( static_cast<DbRecord*>( new Comment( comment, fileName.GetFullPath(), line - 1)) );
 				comment.Empty();
 				line = -1;
 			}
-			
+
 			// first time or no comment is buffer
 			if ( comment.IsEmpty() ) {
 				comment = m_scanner->GetComment();
@@ -770,7 +778,7 @@ void Language::ParseComments(const wxFileName &fileName, std::vector<DbRecordPtr
 			comment.Empty();
 			line = -1;
 			m_scanner->ClearComment();
-			
+
 		} else if ( type == CComment ) {
 			comments->push_back( static_cast<DbRecord*>( new Comment( m_scanner->GetComment(), fileName.GetFullPath(), m_scanner->lineno()) ) );
 			m_scanner->ClearComment();
@@ -796,7 +804,7 @@ wxString Language::GetScopeName(const wxString &in, std::vector<wxString> *addit
 
 	TagsManager *mgr = GetTagsManager();
 	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
-	
+
 	std::string scope_name = get_scope_name(buf.data(), moreNS, ignoreTokens);
 	wxString scope = _U(scope_name.c_str());
 	if (scope.IsEmpty()) {
@@ -835,7 +843,7 @@ bool Language::TypeFromName(const wxString &name,
 
 	TagsManager *mgr = GetTagsManager();
 	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
-	
+
 	if (!DoSearchByNameAndScope(name, scopeName, tags, type, typeScope)) {
 		if (firstToken) {
 			//can we test visible scope?
@@ -934,7 +942,7 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 		// try the global scope maybe?
 		GetTagsManager()->FindByNameAndScope(name, wxT("<global>"), tmp_tags);
 	}
-	
+
 	// filter macros from the result
 	for(size_t i=0; i<tmp_tags.size(); i++){
 		TagEntryPtr t = tmp_tags.at(i);
@@ -942,7 +950,7 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 			tags.push_back(t);
 		}
 	}
-	
+
 	if (tags.size() == 1) {
 		TagEntryPtr tag(tags.at(0));
 		//we have a single match!
@@ -1014,7 +1022,7 @@ bool Language::VariableFromPattern(const wxString &in, const wxString &name, Var
 
 	TagsManager *mgr = GetTagsManager();
 	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
-	
+
 	get_variables(patbuf.data(), li, ignoreTokens, false);
 	VariableList::iterator iter = li.begin();
 	for(; iter != li.end(); iter++){
@@ -1051,7 +1059,7 @@ bool Language::FunctionFromPattern(const wxString &in, clFunction &foo)
 
 	TagsManager *mgr = GetTagsManager();
 	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
-	
+
 	const wxCharBuffer patbuf = _C(pattern);
 	get_functions(patbuf.data(), fooList, ignoreTokens);
 	if (fooList.size() == 1) {
@@ -1113,30 +1121,30 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 	VariableList li;
 	Variable var;
 	wxString pattern(in);
-	
+
 	pattern = pattern.Trim().Trim(false);
 	const wxCharBuffer patbuf = _C(pattern);
 	li.clear();
 
 	TagsManager *mgr = GetTagsManager();
 	std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetPreprocessorAsMap();
-	
-	// incase the 'in' string starts with '(' it is most likely that the input string is the 
+
+	// incase the 'in' string starts with '(' it is most likely that the input string is the
 	// function signature in that case we pass 'true' as the fourth parameter to get_variables(..)
 	get_variables(patbuf.data(), li, ignoreTokens, pattern.StartsWith(wxT("(")));
-	
+
 	VariableList::iterator iter = li.begin();
 	for (; iter != li.end(); iter++) {
 		var = (*iter);
 		if(var.m_name.empty()){
 			continue;
 		}
-		
+
 		wxString tagName = _U(var.m_name.c_str());
 
 		//if we have name, collect only tags that matches name
 		if (name.IsEmpty() == false){
-		
+
 			// incase CaseSensitive is not required, make both string lower case
 			wxString tmpName(name);
 			wxString tmpTagName(tagName);
@@ -1144,14 +1152,14 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 				tmpName.MakeLower();
 				tmpTagName.MakeLower();
 			}
-			
+
 			if (flags & PartialMatch && !tmpTagName.StartsWith(tmpName))
 				continue;
-				
+
 			if (flags & ExactMatch && tmpTagName != tmpName)
 				continue;
 		} // else no name is specified, collect all tags
-		
+
 		TagEntryPtr tag(new TagEntry());
 		tag->SetName(tagName);
 		tag->SetKind(wxT("variable"));

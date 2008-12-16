@@ -202,6 +202,16 @@ void FindResultsTab::SetStyles(wxScintilla *sci) {
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_ARROWDOWN,  fore, back);
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, fore, back);
 
+	sci->SetIndicatorCurrent(1);
+
+	// Different settings for Mac
+#ifdef __WXMAC__
+	sci->IndicatorSetUnder(1, false);
+	sci->IndicatorSetStyle(1, wxSCI_INDIC_BOX);
+#else
+	sci->IndicatorSetUnder(1, true);
+	sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
+#endif
 	sci->SetReadOnly(true);
 }
 
@@ -291,16 +301,6 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e) {
 		}
 		delta += linenum.Length();
 		AppendText(linenum + text + wxT("\n"));
-		m_recv->SetIndicatorCurrent(1);
-		
-		// Different settings for Mac
-#ifdef __WXMAC__
-		m_recv->IndicatorSetUnder(1, false);
-		m_recv->IndicatorSetStyle(1, wxSCI_INDIC_BOX);
-#else
-		m_recv->IndicatorSetUnder(1, true);
-		m_recv->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
-#endif
 		m_recv->IndicatorFillRange(m_sci->PositionFromLine(lineno)+iter->GetColumn()+delta, iter->GetLen());
 	}
 	delete res;

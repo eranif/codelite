@@ -104,12 +104,9 @@ void OutputTabWindow::CreateGUIControl()
 	mainSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
 	mainSizer->Layout();
 
-	//Connect events
-	//------------------------
-
-	Connect(wxEVT_SCI_DOUBLECLICK, wxScintillaEventHandler(OutputTabWindow::OnMouseDClick), NULL, this);
+	Connect(wxEVT_SCI_DOUBLECLICK,   wxScintillaEventHandler(OutputTabWindow::OnMouseDClick),    NULL, this);
 	Connect(wxEVT_SCI_HOTSPOT_CLICK, wxScintillaEventHandler(OutputTabWindow::OnHotspotClicked), NULL, this);
-	Connect(wxEVT_SCI_UPDATEUI, wxScintillaEventHandler(OutputTabWindow::OnSciUpdateUI), NULL, this);
+	Connect(wxEVT_SCI_UPDATEUI,      wxScintillaEventHandler(OutputTabWindow::OnSciUpdateUI),    NULL, this);
 }
 
 void OutputTabWindow::OnOutputScrolls(wxCommandEvent &e)

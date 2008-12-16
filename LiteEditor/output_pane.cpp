@@ -76,7 +76,7 @@ void OutputPane::CreateGUIControls()
 	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN);
 	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
     
-	m_replaceResultsTab = new ReplaceInFilesPanel(m_book);
+	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
 	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
     
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);

@@ -71,7 +71,6 @@
 #include "manager.h"
 #include "menumanager.h"
 #include <wx/aboutdlg.h>
-#include "findinfilesdlg.h"
 #include "search_thread.h"
 #include "project.h"
 #include "fileview.h"
@@ -152,14 +151,9 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone)
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
-
-	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND, Frame::OnSearchThread)
-	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, Frame::OnSearchThread)
-	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, Frame::OnSearchThread)
-	EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED, Frame::OnSearchThread)
-
+    
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnBuildEnded)
-
+    
 	EVT_MENU(XRCID("close_other_tabs"), Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"), Frame::OnCopyFilePath)
 	EVT_MENU(XRCID("copy_file_path"), Frame::OnCopyFilePathOnly)
@@ -205,7 +199,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("removeall_bookmarks"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("goto_definition"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("goto_previous_definition"), Frame::DispatchCommandEvent)
-	EVT_MENU(XRCID("find_in_files"), Frame::OnFindInFiles)
 	EVT_MENU(XRCID("new_workspace"), Frame::OnProjectNewWorkspace)
 	EVT_MENU(XRCID("new_project"), Frame::OnProjectNewProject)
 	EVT_MENU(XRCID("switch_to_workspace"), Frame::OnSwitchWorkspace)
@@ -421,9 +414,7 @@ Frame* Frame::m_theFrame = NULL;
 
 Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
 		: wxFrame(pParent, id, title, pos, size, style)
-		, m_findInFilesDlg(NULL)
 		, m_buildAndRun(false)
-		, m_doingReplaceInFiles(false)
 		, m_cppMenu(NULL)
 		, m_highlightWord(false)
 {
@@ -637,7 +628,7 @@ void Frame::CreateGUIControls(void)
 	BuildSettingsConfigST::Get()->Load();
 
 	//load dialog properties
-	EditorConfigST::Get()->ReadObject(wxT("FindInFilesData"), &m_data);
+    GetOutputPane()->GetFindResultsTab()->LoadFindInFilesData();
 	EditorConfigST::Get()->ReadObject(wxT("FindAndReplaceData"), &LEditor::GetFindReplaceData());
 	EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
@@ -1076,9 +1067,7 @@ void Frame::OnClose(wxCloseEvent& event)
 	EditorConfigST::Get()->SaveLongValue(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
 
 	//save the 'find and replace' information
-	if (m_findInFilesDlg) {
-		EditorConfigST::Get()->WriteObject(wxT("FindInFilesData"), &(m_findInFilesDlg->GetData()));
-	}
+    GetOutputPane()->GetFindResultsTab()->SaveFindInFilesData();
 	if (LEditor::GetFindReplaceDialog()) {
 		EditorConfigST::Get()->WriteObject(wxT("FindAndReplaceData"), &(LEditor::GetFindReplaceDialog()->GetData()));
 	}
@@ -1287,90 +1276,6 @@ void Frame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 	LEditor* editor = GetMainBook()->GetActiveEditor();
 	// This menu item is enabled only if the current editor belongs to a project
 	event.Enable(editor && ManagerST::Get()->IsWorkspaceOpen());
-}
-
-void Frame::OnSearchThread(wxCommandEvent &event)
-{
-	if (m_doingReplaceInFiles) {
-		//Incase this flag is on, it means that the find in files dialog
-		//was invoked with 'find replace candidates
-		//which requires different handling code
-
-		//the only event that reallty interesting us, is the match find
-		if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED) {
-
-			// always free the allocated message string
-			wxString *str = (wxString*)event.GetClientData();
-			if (str) {
-				delete str;
-			}
-
-			m_doingReplaceInFiles = false;
-			GetOutputPane()->GetReplaceResultsTab()->ShowResults();
-
-		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND) {
-
-			// always free the allocated message string
-			SearchSummary *summary = (SearchSummary*)event.GetClientData();
-			if (summary) {
-				delete summary;
-			}
-
-			m_doingReplaceInFiles = false;
-			GetOutputPane()->GetReplaceResultsTab()->ShowResults();
-
-		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
-			//add an entry to the replace panel
-			SearchResultList *res = (SearchResultList*)event.GetClientData();
-
-			//res will be deleted by AddResult
-			GetOutputPane()->GetReplaceResultsTab()->AddResults(res);
-
-		} else if (event.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
-			// always free the allocated message string
-			wxString *str = (wxString*)event.GetClientData();
-			if (str) {
-				delete str;
-			}
-
-			ManagerST::Get()->ShowOutputPane(OutputPane::REPLACE_IN_FILES);
-			GetOutputPane()->GetReplaceResultsTab()->Clear();
-		}
-	}
-}
-
-void Frame::OnFindInFiles(wxCommandEvent &event)
-{
-	if ( m_findInFilesDlg == NULL ) {
-		m_findInFilesDlg = new FindInFilesDialog(this, m_data);
-	}
-
-	if (m_doingReplaceInFiles) {
-		wxMessageBox(_("The search thread is currently busy in 'replace in files' operations"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
-		return;
-	}
-
-	wxString rootDir = event.GetString();
-	if (!rootDir.IsEmpty())
-		m_findInFilesDlg->SetRootDir(rootDir);
-
-	m_findInFilesDlg->SetEventOwner(GetEventHandler());
-	if ( m_findInFilesDlg->IsShown() ) {
-		// make sure that dialog has focus and that this instace
-		m_findInFilesDlg->SetFocus();
-		return;
-	}
-
-	//if we have an open editor, and a selected text, make this text the search string
-    LEditor *editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        wxString selText = editor->GetSelectedText();
-        if (selText.IsEmpty() == false) {
-			m_findInFilesDlg->GetData().SetFindString(selText);
- 		}
-    }
-
-	m_findInFilesDlg->Show();
 }
 
 void Frame::OnWorkspaceOpen(wxUpdateUIEvent &event)
@@ -1602,7 +1507,7 @@ void Frame::OnBuildEnded(wxCommandEvent &event)
         //If the build process was part of a 'Build and Run' command, check whether an erros
         //occured during build process, if non, launch the output
         m_buildAndRun = false;
-        if (ManagerST::Get()->IsBuildEndedSuccessfully() ||
+        if (ManagerST::Get()->IsBuildEndedSuccessfully() || 
                 wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES) {
             ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
         }
@@ -2693,11 +2598,6 @@ void Frame::OnManagePlugins(wxCommandEvent &e)
 		wxMessageBox(_("Changes will take place after restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
 	}
 	dlg->Destroy();
-}
-
-void Frame::DoReplaceAll()
-{
-	m_doingReplaceInFiles = true;
 }
 
 void Frame::OnCppContextMenu(wxCommandEvent &e)

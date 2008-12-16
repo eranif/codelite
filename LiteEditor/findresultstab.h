@@ -31,40 +31,44 @@
 
 #include "custom_notebook.h"
 #include "outputtabwindow.h"
+#include "search_thread.h"
+#include "findinfilesdlg.h"
 
 
 class FindResultsTab : public OutputTabWindow
 {
 private:
-    struct fifMatchInfo {
-        fifMatchInfo(const wxString &locationInfoStr, const wxString &fileName);
+    FindInFilesDialog *m_find;
 
-        wxString file_name;
-        long     line_number;
-        long     match_len;
-        long     col;
-    };
-
+protected:
     Notebook    *m_book; // for multiple Find Results pages
     wxScintilla *m_recv; // the page that is receiving results of a search
+    SearchData   m_data;
+    
+	std::vector<std::map<int, SearchResult> > m_matchInfo;
 
-	std::vector<std::map<int, fifMatchInfo> > m_matchInfo;
-
-	void AppendText(const wxString &line, bool displayScope);
+	void AppendText(const wxString &line);
 	void Clear();
 
-    void OnSearchStart   (wxCommandEvent   &e);
-    void OnSearchMatch   (wxCommandEvent   &e);
-    void OnSearchEnded   (wxCommandEvent   &e);
-    void OnSearchCancel  (wxCommandEvent   &e);
-    void OnPageChanged   (NotebookEvent    &e);
-	void OnMouseDClick   (wxScintillaEvent &e);
-	void OnHotspotClicked(wxScintillaEvent &e);
-	void OnMarginClick   (wxScintillaEvent &e);
-	void OnCollapseAll   (wxCommandEvent   &e);
+    virtual void OnFindInFiles   (wxCommandEvent   &e);
+    virtual void OnRepeatSearch  (wxCommandEvent   &e);
+    virtual void OnSearchStart   (wxCommandEvent   &e);
+    virtual void OnSearchMatch   (wxCommandEvent   &e);
+    virtual void OnSearchEnded   (wxCommandEvent   &e);
+    virtual void OnSearchCancel  (wxCommandEvent   &e);
+    virtual void OnPageChanged   (NotebookEvent    &e);
+	virtual void OnMouseDClick   (wxScintillaEvent &e);
+	virtual void OnHotspotClicked(wxScintillaEvent &e);
+	virtual void OnMarginClick   (wxScintillaEvent &e);
+	virtual void OnCollapseAll   (wxCommandEvent   &e);
 
 public:
-	FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name);
+	FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name, size_t numpage = 5);
 	~FindResultsTab();
+    
+    void LoadFindInFilesData();
+    void SaveFindInFilesData();
+    
+    static void SetStyles(wxScintilla *sci);
 };
 #endif // __findresultstab__

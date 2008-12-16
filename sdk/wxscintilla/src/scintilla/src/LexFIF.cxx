@@ -47,12 +47,23 @@ static void ColouriseFifDoc(unsigned int pos, int length, int /*initStyle*/,
             }
             styler.ColourTo(pos, SCLEX_FIF_FILE_SHORT);
             firstchar = ':'; // first colon only
-		} else if (styler[pos] == ']' && firstchar == ':'){
+            if (length > 1 && styler[pos+1] == '[') {
+                firstchar = '[';
+            }
+		} else if (styler[pos] == ']' && firstchar == '['){
+            if (length > 1 && styler[pos+1] == ' ') {
+                // include the following space
+                pos++;
+                length--;
+            }
 			styler.ColourTo(pos, SCLEX_FIF_SCOPE);
+            firstchar = ']'; // first ']' only
 		} else if (AtEOL(styler, pos)) {
             switch (firstchar) {
                 case ' ':
                 case ':':
+                case '[':
+                case ']':
                     styler.ColourTo(pos, SCLEX_FIF_MATCH);
                     break;
                 case '=':

@@ -83,8 +83,6 @@
       <File Name="findinfilesdlg.h"/>
       <File Name="findinfilesdlg.cpp"/>
       <File Name="replaceinfilespanel.h"/>
-      <File Name="replaceinfilesbasepanel.cpp"/>
-      <File Name="replaceinfilesbasepanel.h"/>
       <File Name="replaceinfilespanel.cpp"/>
       <File Name="dialogspagebase.h"/>
       <File Name="dialogspage.cpp"/>

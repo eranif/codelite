@@ -159,39 +159,17 @@ void SearchThread::DoSearchFiles(ThreadRequest *req)
 
 	// Send startup message to main thread
 	if ( m_notifiedWindow || data->GetOwner() ) {
-		wxString message;
 		wxCommandEvent event(wxEVT_SEARCH_THREAD_SEARCHSTARTED, GetId());
-		message << wxT("====== Searching for: '") << data->GetFindString();
-		message << wxT("';\tMatch case: ");
-		if ( data->IsMatchCase() ) {
-			message << wxT("true ");
-		} else {
-			message << wxT("false ");
-		}
-
-		message << wxT(";\tMatch whole word: ");
-		if ( data->IsMatchWholeWord() ) {
-			message << wxT("true ");
-		} else {
-			message << wxT("false ");
-		}
-
-		message << wxT(";\tRegular expression: ");
-		if ( data->IsRegularExpression() ) {
-			message << wxT("true;");
-		} else {
-			message << wxT("false; ======");
-		}
-		event.SetClientData(new wxString(message.c_str()));
-
-		//set the rquested output tab
+        event.SetClientData(new SearchData(*data));
+        //set the rquested output tab
 		event.SetInt(data->GetOutputTab());
-
 		if (data->GetOwner()) {
 			::wxPostEvent(data->GetOwner(), event);
 		} else if (m_notifiedWindow) {
 			::wxPostEvent(m_notifiedWindow, event);
-		}
+		} else {
+            delete event.GetClientData();
+        }
 	}
 
 	for (size_t i=0; i<fileList.Count(); i++) {

@@ -31,10 +31,8 @@
 #include <wx/process.h>
 #include "wx/aui/aui.h"
 #include "wx/frame.h"
-#include "findinfilesdlg.h"
 #include "cl_editor.h"
 #include "output_pane.h"
-#include "findinfilesdlg.h"
 #include "cl_process.h"
 #include "envvar_table.h"
 #include "wx/choice.h"
@@ -74,8 +72,6 @@ class Frame : public wxFrame
 	static Frame* m_theFrame;
 	wxAuiManager m_mgr;
 	OutputPane *m_outputPane;
-	FindInFilesDialog *m_findInFilesDlg;
-	FindReplaceData m_data;
 	WorkspacePane *m_workspacePane;
 	wxArrayString m_files;
 	wxTimer *m_timer;
@@ -89,7 +85,6 @@ class Frame : public wxFrame
 	std::map<int, wxString> m_toolbars;
 	std::map<int, wxString> m_panes;
     std::vector<std::map<int, wxString> > m_status;
-	bool m_doingReplaceInFiles;
 	wxMenu *m_cppMenu;
 	bool m_highlightWord;
 	DockablePaneMenuManager *m_DPmenuMgr;
@@ -180,13 +175,6 @@ public:
 	}
 
 	/**
-	 * return the find in files dialog pointer
-	 */
-	FindInFilesDialog *GetFindInFilesDlg() {
-		return m_findInFilesDlg;
-	}
-
-	/**
 	 * Return the debugger toolbar
 	 */
 	wxToolBar *GetDebuggerToolbar() {
@@ -209,11 +197,6 @@ public:
 	const GeneralInfo& GetFrameGeneralInfo() const {
 		return m_frameGeneralInfo;
 	}
-
-	/**
-	 * @brief start replace all
-	 */
-	void DoReplaceAll();
 
 	void OnSingleInstanceOpenFiles(wxCommandEvent &e);
 	void OnSingleInstanceRaise(wxCommandEvent &e);
@@ -276,7 +259,6 @@ protected:
 	// event handlers
 	//----------------------------------------------------
 	void OnIdle(wxIdleEvent &e);
-	void OnSearchThread(wxCommandEvent &event);
     void OnBuildEnded(wxCommandEvent &event);
 	void OnQuit(wxCommandEvent& WXUNUSED(event));
 	void OnClose(wxCloseEvent &event);
@@ -301,7 +283,6 @@ protected:
 	void OnFileExistUpdateUI(wxUpdateUIEvent &event);
 	void OnCompleteWordUpdateUI(wxUpdateUIEvent &event);
 	void OnFunctionCalltipUI(wxUpdateUIEvent &event);
-	void OnFindInFiles(wxCommandEvent &event);
 	void OnIncrementalSearch(wxCommandEvent &event);
 	void OnViewToolbar(wxCommandEvent &event);
 	void OnViewToolbarUI(wxUpdateUIEvent &event);

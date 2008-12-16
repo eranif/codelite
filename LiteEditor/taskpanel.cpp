@@ -137,10 +137,8 @@ void TaskPanel::OnSearchThread(wxCommandEvent& e)
 		delete res;
 		
 	} else if (e.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
-		// always free the allocated message string
-		wxString *str = (wxString*)e.GetClientData();
-		if(str){delete str;}
-		
+		// always free the allocated message data
+		delete e.GetClientData();
 		DoClearResults();
 	}
 }

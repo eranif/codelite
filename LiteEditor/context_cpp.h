@@ -35,16 +35,6 @@ class RefactorSource;
 class ContextCpp : public ContextBase {
 	clCallTipPtr m_ct;
 	std::map<wxString, int> m_propertyInt;
-	std::vector<wxMenuItem*> m_dynItems;
-	wxString m_selectedWord;
-
-	enum CalltipClickPos
-	{
-		Elsewhere = 0,
-		ArrowUp ,
-		ArrowDown
-	};
-
 	wxMenu *m_rclickMenu;
 
 	//images used by the C++ context
@@ -105,7 +95,6 @@ public:
 	virtual void OnDwellStart(wxScintillaEvent &event);
 	virtual void OnDbgDwellEnd(wxScintillaEvent &event);
 	virtual void OnDbgDwellStart(wxScintillaEvent &event);
-	virtual void OnCallTipClick(wxScintillaEvent &event);
 	virtual void OnSciUpdateUI(wxScintillaEvent &event);
 	virtual void OnFileSaved();
 	virtual void AutoAddComment();
@@ -141,9 +130,6 @@ private:
 	void DoGotoSymbol(const std::vector<TagEntryPtr> &tags);
 	bool IsIncludeStatement(const wxString &line, wxString *fileName = NULL);
 	void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
-	void PrependMenuItem(wxMenu* menu, const wxString &text, wxObjectEventFunction func);
-	void PrependMenuItem(wxMenu* menu, const wxString &text, int id);
-	void PrependMenuItemSeparator(wxMenu* menu);
 	int FindLineToAddInclude();
 	void MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
 	void DoOpenWorkspaceFile();

@@ -170,3 +170,30 @@ wxMenu* ContextBase::GetMenu()
 {
 	return wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
 }
+
+void ContextBase::PrependMenuItem(wxMenu *menu, const wxString &text, wxObjectEventFunction func)
+{
+	wxMenuItem *item;
+	wxString menuItemText;
+	item = new wxMenuItem(menu, wxNewId(), text);
+	menu->Prepend(item);
+	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, func, NULL, this);
+	m_dynItems.push_back(item);
+}
+
+void ContextBase::PrependMenuItem(wxMenu *menu, const wxString &text, int id)
+{
+	wxMenuItem *item;
+	wxString menuItemText;
+	item = new wxMenuItem(menu, id, text);
+	menu->Prepend(item);
+	m_dynItems.push_back(item);
+}
+
+void ContextBase::PrependMenuItemSeparator(wxMenu *menu)
+{
+	wxMenuItem *item;
+	item = new wxMenuItem(menu, wxID_SEPARATOR);
+	menu->Prepend(item);
+	m_dynItems.push_back(item);
+}

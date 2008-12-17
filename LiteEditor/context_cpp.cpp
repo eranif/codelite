@@ -360,27 +360,6 @@ bool ContextCpp::IsCommentOrString(long pos)
 	        style == wxSCI_C_CHARACTER);
 }
 
-void ContextCpp::OnCallTipClick(wxScintillaEvent &event)
-{
-	LEditor &rCtrl = GetCtrl();
-	if (wxWindow::FindFocus() != &rCtrl) {
-		rCtrl.CallTipCancel();
-		return;
-	}
-	switch ( event.GetPosition() ) {
-	case ArrowUp:
-		rCtrl.CallTipCancel();
-		rCtrl.CallTipShow(rCtrl.GetCurrentPos(), m_ct->Prev());
-		break;
-	case ArrowDown:
-		rCtrl.CallTipCancel();
-		rCtrl.CallTipShow(rCtrl.GetCurrentPos(), m_ct->Next());
-		break;
-	case Elsewhere:
-		break;
-	}
-}
-
 //=============================================================================
 // >>>>>>>>>>>>>>>>>>>>>>>> CodeCompletion API - START
 //=============================================================================
@@ -626,33 +605,6 @@ void ContextCpp::AddMenuDynamicContent(wxMenu *menu)
 			m_selectedWord = word;
 		}
 	}
-}
-
-void ContextCpp::PrependMenuItem(wxMenu *menu, const wxString &text, wxObjectEventFunction func)
-{
-	wxMenuItem *item;
-	wxString menuItemText;
-	item = new wxMenuItem(menu, wxNewId(), text);
-	menu->Prepend(item);
-	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, func, NULL, this);
-	m_dynItems.push_back(item);
-}
-
-void ContextCpp::PrependMenuItem(wxMenu *menu, const wxString &text, int id)
-{
-	wxMenuItem *item;
-	wxString menuItemText;
-	item = new wxMenuItem(menu, id, text);
-	menu->Prepend(item);
-	m_dynItems.push_back(item);
-}
-
-void ContextCpp::PrependMenuItemSeparator(wxMenu *menu)
-{
-	wxMenuItem *item;
-	item = new wxMenuItem(menu, wxID_SEPARATOR);
-	menu->Prepend(item);
-	m_dynItems.push_back(item);
 }
 
 void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)

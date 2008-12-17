@@ -104,7 +104,7 @@ generateMenuFile()
 ## Parse command line options
 parseCommandLine $1
 
-EXE_NAME=CodeLiteUR
+EXE_NAME=codelite
 mkdir -p fakeroot/${PREFIX}/bin/
 cp ./Runtime/${EXE_NAME} fakeroot/${PREFIX}/bin/codelite
 cp Runtime/le_dos2unix.sh fakeroot/${PREFIX}/bin/

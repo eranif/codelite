@@ -26,15 +26,19 @@
 //const std::vector<int> &Class::get_vector() const {
 //(std::vector<int>&, int name)
 //(SOCKET,char*,int,int);
+//
+//void SymbolViewPlugin::SetNodeData(wxTreeCtrl *tree, wxTreeItemId id, const TagEntry &tag)
+//{
+//	wxString key = treetag ? treetag->Key() : tree->GetItemText(id);
+//}
+//
+//void SymbolViewPlugin::SortChildren()
+//{
+//}
+//
+//int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxString, wxString> &filePaths)
+// {
 
-void SymbolViewPlugin::SetNodeData(wxTreeCtrl *tree, wxTreeItemId id, const TagEntry &tag)
-{
-	wxString key = treetag ? treetag->Key() : tree->GetItemText(id);
-}
+MyClass::MyClass()
+: m_st{
 
-void SymbolViewPlugin::SortChildren()
-{
-}
-
-int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxString, wxString> &filePaths)
-{

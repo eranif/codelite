@@ -32,9 +32,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #define yyname cl_func_name
 #define yyrule cl_func_rule
 #define YYPREFIX "cl_func_"
- 
 /* Copyright Eran Ifrah(c)*/
- 
 /*************** Includes and Defines *****************************/
 #include "string"
 #include "vector"
@@ -42,14 +40,14 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include "map"
 #include "function.h"
 
-#define YYDEBUG_LEXER_TEXT (cl_func_lval) 
+#define YYDEBUG_LEXER_TEXT (cl_func_lval)
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/
 
-#ifdef yylex 
+#ifdef yylex
 #undef yylex
 #define yylex cl_scope_lex
-#endif 
+#endif
 
 int cl_func_parse();
 void cl_func_error(char *string);
@@ -481,7 +479,7 @@ void yyerror(char *s) {}
 void func_consumeFuncArgList()
 {
 	curr_func.m_signature = "(";
-	
+
 	int depth = 1;
 	while(depth > 0)
 	{
@@ -490,7 +488,7 @@ void func_consumeFuncArgList()
 		{
 			break;
 		}
-		
+
 		curr_func.m_signature += cl_func_lval;
 		curr_func.m_signature += " ";
 		if(ch == ')')
@@ -532,7 +530,7 @@ void func_consumeDecl()
 			continue;
 		}
 	}
-	
+
 }
 
 void func_consumeTemplateDecl()
@@ -546,7 +544,7 @@ void func_consumeTemplateDecl()
 		if(ch ==0){
 			break;
 		}
-		
+
 		if(ch == '>')
 		{
 			depth--;
@@ -567,13 +565,13 @@ void get_functions(const std::string &in, FunctionList &li, const std::map<std::
 	{
 		return;
 	}
-	
+
 	g_funcs = &li;
-	
+
 	//call tghe main parsing routine
 	cl_func_parse();
 	g_funcs = NULL;
-	
+
 	//do the lexer cleanup
 	cl_scope_lex_clean();
 }
@@ -763,7 +761,7 @@ case 17:
 {curr_func.Reset();}
 break;
 case 19:
-{ 
+{
 							/*printf("CodeLite: syntax error, unexpected token '%s' found\n", cl_func_lval.c_str());*/
 						}
 break;
@@ -909,7 +907,7 @@ case 93:
 {
 								yyvsp[-2].erase(yyvsp[-2].find_last_not_of(":")+1);
 								curr_func.m_returnValue.m_type = yyvsp[-1];
-								curr_func.m_returnValue.m_typeScope = yyvsp[-2]; 
+								curr_func.m_returnValue.m_typeScope = yyvsp[-2];
 								curr_func.m_returnValue.m_starAmp = yyvsp[0];
 								curr_func.m_returnValue.m_isPtr = (yyvsp[0].find("*") != (size_t)-1);
 								yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0];

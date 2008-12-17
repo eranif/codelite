@@ -37,7 +37,10 @@
         <LibraryPath Value="."/>
         <LibraryPath Value="./Release"/>
       </Linker>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath=""></Debugger>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
+      </Debugger>
       <ResourceCompiler Required="yes" Options=""/>
       <PreBuild/>
       <PostBuild>

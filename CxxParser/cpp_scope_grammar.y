@@ -1,15 +1,15 @@
  %{
-// Copyright Eran Ifrah(c)   
-%} 
-  
+// Copyright Eran Ifrah(c)
+%}
+
 %{
 /*************** Includes and Defines *****************************/
 #include "string"
 #include "vector"
 #include "stdio.h"
 #include "map"
-	
-#define YYDEBUG_LEXER_TEXT (cl_scope_lval) 
+
+#define YYDEBUG_LEXER_TEXT (cl_scope_lval)
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/
 
@@ -50,7 +50,7 @@ extern void cl_scope_less(int count);
 
 /* The following are used in C++ only.  ANSI C would call these IDENTIFIERs */
 %token  LE_NEW             LE_DELETE
-%token  LE_THIS			
+%token  LE_THIS
 %token  LE_OPERATOR
 %token  LE_CLASS
 %token  LE_PUBLIC          LE_PROTECTED       LE_PRIVATE
@@ -83,7 +83,7 @@ extern void cl_scope_less(int count);
 %token  LE_PLUSassign  LE_MINUSassign              		/*   +=      -=              */
 %token  LE_LSassign    LE_RSassign                 		/*   <<=     >>=             */
 %token  LE_ANDassign   LE_ERassign     LE_ORassign    	/*   &=      ^=      |=      */
-%token  LE_MACRO 
+%token  LE_MACRO
 %token  LE_DYNAMIC_CAST
 %token  LE_STATIC_CAST
 %token  LE_CONST_CAST
@@ -104,7 +104,7 @@ basic_type_name:
         | LE_UNSIGNED	{ $$ = $1; }
         | LE_VOID		{ $$ = $1; }
         ;
-	
+
 
 /* ========================================================================*/
 /* find declarations																   */
@@ -113,8 +113,8 @@ basic_type_name:
 translation_unit	:		/*empty*/
 						| translation_unit external_decl
 						;
-						
-external_decl			:	class_decl	
+
+external_decl			:	class_decl
 						|	enum_decl
 						|	union_decl
 						| 	function_decl
@@ -123,18 +123,18 @@ external_decl			:	class_decl
 						| 	scope_reducer
 						| 	scope_increaer
 						|  	question_expression
-						| 	error { 
+						| 	error {
 //								printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_scope_text, cl_scope_lineno);
 //								syncParser();
 							}
 						;
 
-						
+
 /*templates*/
 template_arg		:	/* empty */	{ $$ = "";}
 						| template_specifiter LE_IDENTIFIER {$$ = $1 + " " + $2;}
 						;
-						
+
 template_arg_list	:	template_arg	{ $$ = $1; }
 						| 	template_arg_list ',' template_arg	{ $$ = $1 + " " + $2 + " " + $3; }
 						;
@@ -154,17 +154,17 @@ derivation_list			:	/*empty*/ {$$ = "";}
 
 parent_class				: 	access_specifier LE_IDENTIFIER	opt_template_specifier {$$ = $1 + " " + $2 + $3;}
 							;
-							
+
 opt_template_specifier	: /*empty*/	{$$ = "";}
 							| '<' template_parameter_list '>' {$$ = $1 + $2 + $3;}
 							;
-							
+
 access_specifier			:	/*empty*/	{$$ = "";}
 							|	LE_PUBLIC {$$ = $1;}
 							| 	LE_PRIVATE {$$ = $1;}
 							| 	LE_PROTECTED {$$ = $1;}
 							;
-							
+
 /* the following rules are for template parameters no declarations! */
 template_parameter_list	: /* empty */		{$$ = "";}
 							| template_parameter	{$$ = $1;}
@@ -173,11 +173,11 @@ template_parameter_list	: /* empty */		{$$ = "";}
 
 /*template_parameter		:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp {$$ = $1 + $2 + $3 +$4;}
 							;*/
-template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp 
+template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp
 						{
 							$$ = $1 +  $2 + $3 +$4;
 						}
-					|  	const_spec nested_scope_specifier basic_type_name special_star_amp 
+					|  	const_spec nested_scope_specifier basic_type_name special_star_amp
 						{
 							$$ = $1 +  $2 + $3 +$4;
 						}
@@ -186,21 +186,21 @@ template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_sta
 							$$ = $1 + $2 + $3 +$4 + $5 + $6 + $7 + " " ;
 						}
 						;
-						
+
 using_namespace:	LE_USING LE_NAMESPACE LE_IDENTIFIER ';'
-					{ 	
+					{
 						//printf("Found using namespace %s\n", $3.c_str());
 						gs_additionlNS.push_back($3);
 					}
 				;
-				
+
 /* namespace */
-namespace_decl	:	stmnt_starter LE_NAMESPACE LE_IDENTIFIER '{'		
+namespace_decl	:	stmnt_starter LE_NAMESPACE LE_IDENTIFIER '{'
 						{
 							currentScope.push_back($3);
 							printScopeName();
 						}
-					|	stmnt_starter LE_NAMESPACE '{'		
+					|	stmnt_starter LE_NAMESPACE '{'
 						{
 							//anonymouse namespace
 							increaseScope();
@@ -210,16 +210,16 @@ namespace_decl	:	stmnt_starter LE_NAMESPACE LE_IDENTIFIER '{'
 opt_class_qualifier 	: /*empty*/{$$ = "";}
 							| LE_MACRO {$$ = $1;}
 							;
-							
+
 /* the class rule itself */
-class_decl	:	stmnt_starter opt_template_qualifier class_keyword opt_class_qualifier LE_IDENTIFIER '{' 
+class_decl	:	stmnt_starter opt_template_qualifier class_keyword opt_class_qualifier LE_IDENTIFIER '{'
 				{
 					//increase the scope level
 					currentScope.push_back($5);
 					printScopeName();
 				}
-				
-				| 	stmnt_starter opt_template_qualifier class_keyword opt_class_qualifier LE_IDENTIFIER ':' derivation_list '{' 
+
+				| 	stmnt_starter opt_template_qualifier class_keyword opt_class_qualifier LE_IDENTIFIER ':' derivation_list '{'
 				{
 					//increase the scope level
 					currentScope.push_back($5);
@@ -246,11 +246,11 @@ scope_increaer	:	'{' {
 								printScopeName();
 							 }
 
-question_expression : '?' 
+question_expression : '?'
 						{
 							consumeNotIncluding(';');
 						}
-						
+
 class_keyword: 	LE_CLASS		{$$ = $1;}
 					|	LE_STRUCT	{$$ = $1;}
 					;
@@ -291,27 +291,27 @@ any_operator:
         | LE_NEW
         | LE_DELETE
         | ','
-		| LE_MULTassign  
-		| LE_DIVassign    
+		| LE_MULTassign
+		| LE_DIVassign
 		| LE_MODassign
-		| LE_PLUSassign  
-		| LE_MINUSassign              
-		| LE_LSassign    
-		| LE_RSassign                 
-		| LE_ANDassign   
-		| LE_ERassign     
-		| LE_ORassign 
+		| LE_PLUSassign
+		| LE_MINUSassign
+		| LE_LSassign
+		| LE_RSassign
+		| LE_ANDassign
+		| LE_ERassign
+		| LE_ORassign
         ;
 
-optional_initialization_list: /* empty */ 
-		| ':' {consumeInitializationList();}
+optional_initialization_list: '{' {$$ = '{';}/* empty */
+		| ':' {consumeInitializationList() /*eat everything including the open brace*/;}
 		;
 
 declare_throw: 	/*empty*/ {$$ = "";}
 			|	LE_THROW '(' template_parameter_list ')' {$$ = $3;}
 			;
-			
-/* functions */ 
+
+/* functions */
 function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl nested_scope_specifier func_name '(' {consumeFuncArgList();} const_spec declare_throw '{'
 					{
 						//trim down trailing '::' from scope name
@@ -321,9 +321,9 @@ function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec va
 						currentScope.push_back($6);
 						printScopeName();
 					}
-				|	stmnt_starter opt_template_qualifier virtual_spec const_spec nested_scope_specifier func_name '(' {consumeFuncArgList();}  optional_initialization_list '{'
+				|	stmnt_starter opt_template_qualifier virtual_spec const_spec nested_scope_specifier func_name '(' {consumeFuncArgList();}  optional_initialization_list
 					{
-						
+
 						//trim down trailing '::' from scope name
 						if($5.find_last_not_of(":") != std::string::npos){
 							$5.erase($5.find_last_not_of(":")+1);
@@ -333,7 +333,7 @@ function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec va
 					}
 				|	stmnt_starter opt_template_qualifier virtual_spec const_spec nested_scope_specifier '~' func_name '(' {consumeFuncArgList();} const_spec  '{'
 					{
-						
+
 						//trim down trailing '::' from scope name
 						if($5.find_last_not_of(":") != std::string::npos){
 							$5.erase($5.find_last_not_of(":")+1);
@@ -343,7 +343,7 @@ function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec va
 					}
 				;
 
-/* 
+/*
 applicable for C++, for cases where a function is declared as
 void scope::foo(){ ... }
 */
@@ -358,15 +358,15 @@ scope_specifier		:	LE_IDENTIFIER LE_CLCL {$$ = $1+ $2;}
 virtual_spec		:	/* empty */	{$$ = ""; }
 						| 	LE_VIRTUAL 	{ $$ = $1; }
 						;
-						
+
 const_spec			:	/* empty */	{$$ = ""; }
 						| 	LE_CONST 	{ $$ = $1; }
 						;
-						
+
 amp_item				:	/*empty*/	{$$ = ""; }
 						|   '&' 			{ $$ = $1; }
 						;
-						
+
 star_list			: 	/*empty*/		{$$ = ""; }
 						|	star_list '*'	{$$ = $1 + $2;}
 						;
@@ -378,18 +378,18 @@ stmnt_starter		:	/*empty*/ {$$ = "";}
 						| ';' { $$ = ";";}
 						| ':' { $$ = ":";}	//e.g. private: std::string m_name;
 						;
-						
+
 /** Variables **/
-variable_decl			:	nested_scope_specifier basic_type_name special_star_amp  
+variable_decl			:	nested_scope_specifier basic_type_name special_star_amp
 							{$$ = $1 + $2 + $3  ;}
 						|	nested_scope_specifier LE_IDENTIFIER special_star_amp
 							{$$ = $1 + $2 + $3  ;}
-						| 	nested_scope_specifier LE_IDENTIFIER '<' template_parameter_list '>' special_star_amp 
+						| 	nested_scope_specifier LE_IDENTIFIER '<' template_parameter_list '>' special_star_amp
 							{$$ = $1 + $2 + $3  + $4 + $5 + $6 ;}
 						;
-						
-enum_decl				:	stmnt_starter LE_ENUM LE_IDENTIFIER '{' {currentScope.push_back($3); printScopeName();} enum_arg_list '}' 
-						{	
+
+enum_decl				:	stmnt_starter LE_ENUM LE_IDENTIFIER '{' {currentScope.push_back($3); printScopeName();} enum_arg_list '}'
+						{
 							currentScope.pop_back();//reduce the scope
 							printScopeName();
 							//printf("found enum: %s, args are: %s\n", $2.c_str(), $5.c_str());
@@ -401,7 +401,7 @@ enum_optional_assign	:	/*empty*/ {$$ = "";}
 						|	'='	 LE_OCTALconstant {$$ = $1 + $2;}
 						|	'='	 LE_INTEGERconstant {$$ = $1 + $2;}
 						;
-						
+
 enum_argument			:	LE_IDENTIFIER	enum_optional_assign {$$ = $1 + $2;}
 						;
 enum_arg_list			:	/*empty*/ {$$ = "";}
@@ -409,8 +409,8 @@ enum_arg_list			:	/*empty*/ {$$ = "";}
 						|	enum_arg_list ',' enum_argument {$$ = $1 + $2 + $3;}
 						;
 
-union_decl			:	stmnt_starter LE_UNION LE_IDENTIFIER '{' 
-							{	
+union_decl			:	stmnt_starter LE_UNION LE_IDENTIFIER '{'
+							{
 								currentScope.push_back($3);
 								printScopeName();
 								consumeDecl();
@@ -432,10 +432,8 @@ void consumeInitializationList(){
 		if(ch == 0){
 			break;
 		}
-		
-		//keep the function signature
+
 		if(ch == '{'){
-			cl_scope_less(0);
 			break;
 		}
 	}
@@ -450,10 +448,10 @@ void consumeBody (){
 		if(ch == 0){
 			break;
 		}
-		
+
 		cs += cl_scope_text;
 		cs += " ";
-		
+
 		if(ch == '{'){
 			depth++;
 		}else if(ch == '}'){
@@ -474,7 +472,7 @@ void consumeFuncArgList(){
 		if(ch == 0){
 			break;
 		}
-		
+
 		if(ch == ')'){
 			depth--;
 			continue;
@@ -511,7 +509,7 @@ void consumeDecl()
 			continue;
 		}
 	}
-	
+
 }
 
 void consumeTemplateDecl()
@@ -525,7 +523,7 @@ void consumeTemplateDecl()
 		if(ch ==0){
 			break;
 		}
-		
+
 		if(ch == '>')
 		{
 			depth--;
@@ -546,7 +544,7 @@ void consumeNotIncluding(int ch){
 		if(c == 0){ // EOF?
 			break;
 		}
-		
+
 		//keep the function signature
 		if(c == ch){
 			cl_scope_less(0);
@@ -556,20 +554,20 @@ void consumeNotIncluding(int ch){
 }
 
 // return the scope name at the end of the input string
-std::string get_scope_name(	const std::string &in, 
+std::string get_scope_name(	const std::string &in,
 							std::vector<std::string> &additionalNS,
 							const std::map<std::string, std::string> &ignoreTokens)
 {
 	if( !setLexerInput(in, ignoreTokens) ){
 		return "";
 	}
-	
+
 	//call tghe main parsing routine
 	cl_scope_parse();
 	std::string scope = getCurrentScope();
 	//do the lexer cleanup
 	cl_scope_lex_clean();
-	
+
 	for(size_t i=0; i<gs_additionlNS.size(); i++){
 		additionalNS.push_back(gs_additionlNS.at(i));
 	}

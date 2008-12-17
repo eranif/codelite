@@ -1,8 +1,8 @@
-%{ 
+%{
 // Copyright Eran Ifrah(c)
-%} 
+%}
 
-%{ 
+%{
 /*************** Includes and Defines *****************************/
 #include "string"
 #include "vector"
@@ -10,14 +10,14 @@
 #include "map"
 #include "function.h"
 
-#define YYDEBUG_LEXER_TEXT (cl_func_lval) 
+#define YYDEBUG_LEXER_TEXT (cl_func_lval)
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/
 
-#ifdef yylex 
+#ifdef yylex
 #undef yylex
 #define yylex cl_scope_lex
-#endif 
+#endif
 
 int cl_func_parse();
 void cl_func_error(char *string);
@@ -86,7 +86,7 @@ extern void cl_scope_lex_clean();
 %token  LE_PLUSassign  LE_MINUSassign              		/*   +=      -=              */
 %token  LE_LSassign    LE_RSassign                 		/*   <<=     >>=             */
 %token  LE_ANDassign   LE_ERassign     LE_ORassign    	/*   &=      ^=      |=      */
-%token  LE_MACRO 
+%token  LE_MACRO
 %token  LE_DYNAMIC_CAST
 %token  LE_STATIC_CAST
 %token  LE_CONST_CAST
@@ -106,14 +106,14 @@ basic_type_name_inter:    LE_INT			{ $$ = $1; }
 				| 	LE_UNSIGNED		{ $$ = $1; }
 				| 	LE_VOID			{ $$ = $1; }
 				;
-	
+
 basic_type_name:	LE_UNSIGNED basic_type_name_inter 	{ $$ = $1 + " " + $2; }
 				|	LE_SIGNED basic_type_name_inter 	{ $$ = $1 + " " + $2; }
 				|	LE_LONG LE_LONG 					{ $$ = $1 + " " + $2; }
 				|	LE_LONG LE_INT 						{ $$ = $1 + " " + $2; }
 				|	basic_type_name_inter 			  	{ $$ = $1; }
 				;
-	
+
 
 /* ========================================================================*/
 /* find declarations																   */
@@ -122,18 +122,18 @@ basic_type_name:	LE_UNSIGNED basic_type_name_inter 	{ $$ = $1 + " " + $2; }
 translation_unit	:		/*empty*/
 						| translation_unit external_decl
 						;
-						
+
 external_decl	:	 	{curr_func.Reset();} function_decl
-					| 	error { 
+					| 	error {
 							//printf("CodeLite: syntax error, unexpected token '%s' found\n", cl_func_lval.c_str());
 						}
 					;
-						
+
 /*templates*/
 template_arg		:	/* empty */	{ $$ = "";}
 						| template_specifiter LE_IDENTIFIER {$$ = $1 + " " + $2;}
 						;
-						
+
 template_arg_list	:	template_arg	{ $$ = $1; }
 						| 	template_arg_list ',' template_arg	{ $$ = $1 + " " + $2 + " " + $3; }
 						;
@@ -152,11 +152,11 @@ template_parameter_list	: /* empty */		{$$ = "";}
 							| template_parameter_list ',' template_parameter {$$ = $1 + $2 + $3;}
 							;
 
-template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp 
+template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp
 						{
 							$$ = $1 +  $2 + $3 +$4;
 						}
-					|  	const_spec nested_scope_specifier basic_type_name special_star_amp 
+					|  	const_spec nested_scope_specifier basic_type_name special_star_amp
 						{
 							$$ = $1 +  $2 + $3 +$4;
 						}
@@ -165,7 +165,7 @@ template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_sta
 							$$ = $1 + $2 + $3 +$4 + $5 + $6 + $7 + " " ;
 						}
 						;
-							
+
 func_name: LE_IDENTIFIER {$$ = $1;}
 		 | '~' LE_IDENTIFIER {$$ = $1 + $2;}
 		 | LE_OPERATOR any_operator {$$ = $1 + $2;}
@@ -201,12 +201,12 @@ any_operator:
         | '(' ')'
         | '[' ']'
         | LE_NEW
-        | LE_DELETE 
+        | LE_DELETE
         | ','
         ;
-				
+
 /* functions */
-function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl nested_scope_specifier func_name '(' {func_consumeFuncArgList();} const_spec declare_throw opt_pure_virtual func_postfix  					 
+function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl nested_scope_specifier func_name '(' {func_consumeFuncArgList();} const_spec declare_throw opt_pure_virtual func_postfix
 					{
 						//trim down trailing '::' from scope name
 						$6.erase($6.find_last_not_of(":")+1);
@@ -224,7 +224,7 @@ function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec va
 						curr_func.Reset();
 					}
 					;
-					
+
 declare_throw: 	/*empty*/ {$$ = "";}
 			|	LE_THROW '(' template_parameter_list ')' {$$ = $3;}
 			;
@@ -232,15 +232,15 @@ declare_throw: 	/*empty*/ {$$ = "";}
 func_postfix: '{'
 				| ';'
 				;
-				
+
 nested_scope_specifier		: /*empty*/ {$$ = "";}
 							| nested_scope_specifier scope_specifier {	$$ = $1 + $2;}
 							;
-							
+
 opt_pure_virtual 	: /*empty*/ {$$ = "";}
 						| '=' LE_OCTALconstant {$$ = $1 + $2;}
 						;
-						
+
 scope_specifier	:	LE_IDENTIFIER LE_CLCL {$$ = $1+ $2;}
 						|	LE_IDENTIFIER  '<' {func_consumeTemplateDecl();} LE_CLCL {$$ = $1 + $4;}
 						;
@@ -248,15 +248,15 @@ scope_specifier	:	LE_IDENTIFIER LE_CLCL {$$ = $1+ $2;}
 virtual_spec		:	/* empty */	{$$ = ""; }
 						| 	LE_VIRTUAL 	{ $$ = $1; }
 						;
-						
+
 const_spec			:	/* empty */	{$$ = ""; }
 						| 	LE_CONST 	{ $$ = $1; }
 						;
-						 
+
 amp_item				:	/*empty*/	{$$ = ""; }
 						|   '&' 			{ $$ = $1; }
 						;
-						
+
 star_list			: 	/*empty*/		{$$ = ""; }
 						|	star_list '*'	{$$ = $1 + $2;}
 						;
@@ -268,13 +268,13 @@ stmnt_starter		:	/*empty*/ {$$ = "";}
 						| ';' { $$ = ";";}
 						| ':' { $$ = ":";}	//e.g. private: std::string m_name;
 						;
-						
+
 /** Variables **/
-variable_decl		:	nested_scope_specifier basic_type_name special_star_amp  
+variable_decl		:	nested_scope_specifier basic_type_name special_star_amp
 							{
 								$1.erase($1.find_last_not_of(":")+1);
 								curr_func.m_returnValue.m_type = $2;
-								curr_func.m_returnValue.m_typeScope = $1; 
+								curr_func.m_returnValue.m_typeScope = $1;
 								curr_func.m_returnValue.m_starAmp = $3;
 								curr_func.m_returnValue.m_isPtr = ($3.find("*") != (size_t)-1);
 								$$ = $1 + $2 + $3;
@@ -288,7 +288,7 @@ variable_decl		:	nested_scope_specifier basic_type_name special_star_amp
 								curr_func.m_returnValue.m_isPtr = ($3.find("*") != (size_t)-1);
 								$$ = $1 + $2 + $3  ;
 							}
-						| 	nested_scope_specifier LE_IDENTIFIER '<' template_parameter_list '>' special_star_amp 
+						| 	nested_scope_specifier LE_IDENTIFIER '<' template_parameter_list '>' special_star_amp
 							{
 								$1.erase($1.find_last_not_of(":")+1);
 								curr_func.m_returnValue.m_type = $2;
@@ -306,7 +306,7 @@ void yyerror(char *s) {}
 void func_consumeFuncArgList()
 {
 	curr_func.m_signature = "(";
-	
+
 	int depth = 1;
 	while(depth > 0)
 	{
@@ -315,7 +315,7 @@ void func_consumeFuncArgList()
 		{
 			break;
 		}
-		
+
 		curr_func.m_signature += cl_func_lval;
 		curr_func.m_signature += " ";
 		if(ch == ')')
@@ -357,7 +357,7 @@ void func_consumeDecl()
 			continue;
 		}
 	}
-	
+
 }
 
 void func_consumeTemplateDecl()
@@ -371,7 +371,7 @@ void func_consumeTemplateDecl()
 		if(ch ==0){
 			break;
 		}
-		
+
 		if(ch == '>')
 		{
 			depth--;
@@ -392,13 +392,13 @@ void get_functions(const std::string &in, FunctionList &li, const std::map<std::
 	{
 		return;
 	}
-	
+
 	g_funcs = &li;
-	
+
 	//call tghe main parsing routine
 	cl_func_parse();
 	g_funcs = NULL;
-	
+
 	//do the lexer cleanup
 	cl_scope_lex_clean();
 }

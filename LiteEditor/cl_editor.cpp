@@ -378,11 +378,11 @@ void LEditor::SetProperties()
 
     // warning and error markers
     MarkerDefine(smt_warning, wxSCI_MARK_SHORTARROW);
-    MarkerSetForeground(smt_error, wxT("BLACK"));
+    MarkerSetForeground(smt_error, wxColor(128, 128, 0));
     MarkerSetBackground(smt_warning, wxColor(255, 215, 0));
     MarkerDefine(smt_error, wxSCI_MARK_SHORTARROW);
-    MarkerSetForeground(smt_error, wxT("BLACK"));
-    MarkerSetBackground(smt_error, wxT("RED"));
+    MarkerSetForeground(smt_error, wxColor(128, 0, 0));
+    MarkerSetBackground(smt_error, wxColor(255, 0, 0));
 
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));

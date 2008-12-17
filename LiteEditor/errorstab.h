@@ -45,6 +45,7 @@ private:
     void OnRedisplayLines(wxCommandEvent   &e);
 	void OnMouseDClick   (wxScintillaEvent &e);
 	void OnHotspotClicked(wxScintillaEvent &e);
+	void OnMarginClick   (wxScintillaEvent &e);
 
 public:
 	ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxString &name);

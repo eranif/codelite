@@ -24,7 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
 #include "errorstab.h"
-#include "editor_config.h"
+#include "findresultstab.h"
+
+
+#ifndef wxScintillaEventHandler
+#define wxScintillaEventHandler(func) \
+	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
+#endif
 
 
 ErrorsTab::ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxString &name)
@@ -46,6 +52,29 @@ ErrorsTab::ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxStri
     m_tb->ToggleTool(XRCID("show_build_lines"), false);
     m_tb->Connect(XRCID("show_build_lines"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ErrorsTab::OnRedisplayLines), NULL, this);
 	m_tb->Realize();
+    
+    FindResultsTab::SetStyles(m_sci);
+    
+ 	m_sci->IndicatorSetForeground(1, wxT("GOLD"));
+ 	m_sci->IndicatorSetForeground(2, wxT("RED"));
+	m_sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
+	m_sci->IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
+#ifdef __WXMAC__
+	// Different settings for Mac
+	m_sci->IndicatorSetUnder(1, false);
+	m_sci->IndicatorSetUnder(2, false);
+#else
+	m_sci->IndicatorSetUnder(1, true);
+	m_sci->IndicatorSetUnder(2, true);
+#endif
+   
+    // current line marker
+	m_sci->SetMarginWidth(1, 0);
+   	m_sci->MarkerDefine(0x7, wxSCI_MARK_ARROW);
+	m_sci->MarkerSetBackground(0x7, wxT("PINK"));
+	m_sci->MarkerSetForeground(0x7, wxT("BLACK"));
+    
+	Connect(wxEVT_SCI_MARGINCLICK, wxScintillaEventHandler(ErrorsTab::OnMarginClick), NULL, this);
 }
 
 ErrorsTab::~ErrorsTab()
@@ -56,9 +85,6 @@ void ErrorsTab::ClearLines()
 {
     Clear();
     m_lineMap.clear();
-	BuildTabSettingsData options;
-	EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
-    BuildTab::SetStyles(m_sci, options);
 }
 
 bool ErrorsTab::IsShowing(int linecolor)
@@ -77,10 +103,45 @@ bool ErrorsTab::IsShowing(int linecolor)
 void ErrorsTab::AppendLine(int line)
 {
     std::map<int,BuildTab::LineInfo>::iterator i = m_bt->m_lineInfo.find(line);
-    if (i != m_bt->m_lineInfo.end() && IsShowing(i->second.linecolor)) {
-        m_lineMap[m_sci->GetLineCount()-1] = line;
-        AppendText(i->second.linetext);
+    if (i == m_bt->m_lineInfo.end() || !IsShowing(i->second.linecolor))
+        return;
+    if (i->second.linecolor == wxSCI_LEX_GCC_BUILDING) {
+        if (i->second.linetext[0] == wxT('-')) {
+            m_lineMap[m_sci->GetLineCount()-1] = line;
+            AppendText(i->second.linetext);
+        }
+        return;
     }
+    
+    wxString filename = i->second.linetext.Mid(i->second.filestart, i->second.filelen);
+    wxString prevfile;
+    if (!m_lineMap.empty()) {
+        std::map<int,BuildTab::LineInfo>::iterator p = m_bt->m_lineInfo.find(m_lineMap.rbegin()->second);
+        prevfile = p->second.linetext.Mid(p->second.filestart, p->second.filelen);
+    }
+    if (prevfile != filename) {
+        // new file -- put file name on its own line
+        AppendText(filename + wxT("\n"));
+    }
+    
+    int lineno = m_sci->GetLineCount()-1;
+    m_lineMap[lineno] = line;
+    
+    // remove "...filename:" from line text
+    wxString text = i->second.linetext.Mid(i->second.filestart + i->second.filelen);
+    if (!text.IsEmpty() && text[0] == wxT(':')) {
+        text = text.Mid(1);
+    }
+    // pad (possible) line number to 5 spaces
+    int pos = text.Find(wxT(':'));
+    if (pos < 0 || pos > 4) {
+        pos = 0;
+    }
+    text.Pad(5-pos, wxT(' '), false);
+    
+    AppendText(text);
+    m_sci->SetIndicatorCurrent(i->second.linecolor == wxSCI_LEX_GCC_ERROR ? 2 : 1);
+    m_sci->IndicatorFillRange(m_sci->PositionFromLine(lineno), 5);
 }
 
 void ErrorsTab::MarkLine(int line)
@@ -126,7 +187,18 @@ void ErrorsTab::OnMouseDClick(wxScintillaEvent &e)
     m_sci->SetSelection(-1, m_sci->GetCurrentPos());
     std::map<int,int>::iterator i = m_lineMap.find(m_sci->LineFromPosition(e.GetPosition()));
     if (i != m_lineMap.end()) {
-        m_bt->DoMarkAndOpenFile(m_bt->m_lineInfo.find(i->second), true);
+        std::map<int,BuildTab::LineInfo>::iterator m = m_bt->m_lineInfo.find(i->second);
+        if (m != m_bt->m_lineInfo.end() || m->second.linecolor != wxSCI_LEX_GCC_BUILDING) {
+            m_bt->DoMarkAndOpenFile(m, true);
+            return;
+        }
     }
+    m_sci->ToggleFold(m_sci->LineFromPosition(e.GetPosition()));
 }
 
+void ErrorsTab::OnMarginClick(wxScintillaEvent& e)
+{
+	if (e.GetMargin() == 4) {
+		m_sci->ToggleFold(m_sci->LineFromPosition(e.GetPosition()));
+	}
+}

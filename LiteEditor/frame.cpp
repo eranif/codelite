@@ -2332,12 +2332,23 @@ void Frame::OnLinkClicked(wxHtmlLinkEvent &e)
 		wxLaunchDefaultBrowser(e.GetLinkInfo().GetHref());
         return;
     }
+    wxString command = action.BeforeFirst(wxT(':'));
+    wxString filename = action.AfterFirst(wxT(':'));
+    if (command != wxT("switch-workspace") && 
+        command != wxT("open-file") && 
+        command != wxT("create-workspace") && 
+        command != wxT("import-msvs-solution") &&
+        command != wxT("open-workspace")) {
+        e.Skip();
+        return;
+    }
+    
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("link_action"));
 	event.SetEventObject(this);
 	StartPageData *data = new StartPageData;
-	data->action = action.BeforeFirst(wxT(':'));
-	data->file_path = action.AfterFirst(wxT(':'));
-    if (wxFileName(data->file_path).GetExt() == wxT("workspace")) {
+	data->action = command;
+	data->file_path = filename;
+    if (wxFileName(filename).GetExt() == wxT("workspace")) {
         data->action = wxT("switch-workspace");
     }
     event.SetClientData(data);

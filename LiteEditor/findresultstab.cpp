@@ -181,9 +181,6 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->SetHotspotActiveUnderline (false);
 	sci->SetHotspotActiveBackground(true, lightColour(wxT("BLUE"), 8.0));
 
-	sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
-	sci->IndicatorSetForeground(1, wxT("GOLD"));
-
 	sci->SetMarginType(1, wxSCI_MARGIN_SYMBOL);
 	sci->SetMarginWidth(2, 0);
 	sci->SetMarginWidth(1, 0);
@@ -213,15 +210,16 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, fore, back);
 
 	sci->SetIndicatorCurrent(1);
-
-	// Different settings for Mac
+	sci->IndicatorSetForeground(1, wxT("GOLD"));
 #ifdef __WXMAC__
+	// Different settings for Mac
 	sci->IndicatorSetUnder(1, false);
 	sci->IndicatorSetStyle(1, wxSCI_INDIC_BOX);
 #else
 	sci->IndicatorSetUnder(1, true);
 	sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 #endif
+
 	sci->SetReadOnly(true);
 }
 

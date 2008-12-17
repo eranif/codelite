@@ -49,7 +49,6 @@ private:
             { }
         wxString project;
         wxString configuration;
-        wxString filename;
         wxString linetext;
         long     linenum;
         int      linecolor;

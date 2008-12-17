@@ -326,7 +326,7 @@ wxFileName BuildTab::FindFile(const wxArrayString& files, const wxFileName &fn)
 
 	// try to convert it to absolute path
 	wxFileName f1(fn);
-	if (f1.MakeAbsolute() && !f1.GetFullPath().Contains(wxT(".."))) {
+	if (f1.MakeAbsolute() && f1.FileExists() && !f1.GetFullPath().Contains(wxT(".."))) {
 		return f1;
 	}
 

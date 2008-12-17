@@ -52,22 +52,28 @@ ErrorsTab::ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxStri
     m_tb->ToggleTool(XRCID("show_build_lines"), false);
     m_tb->Connect(XRCID("show_build_lines"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ErrorsTab::OnRedisplayLines), NULL, this);
 	m_tb->Realize();
-    
+
     FindResultsTab::SetStyles(m_sci);
-    
- 	m_sci->IndicatorSetForeground(1, MakeColourLighter(wxT("GOLD"), 5));
+
+#ifdef __WXMSW__
+	int facttor = 2;
+#else
+	int facttor = 5;
+#endif
+
+ 	m_sci->IndicatorSetForeground(1, MakeColourLighter(wxT("GOLD"), facttor));
  	m_sci->IndicatorSetForeground(2, MakeColourLighter(wxT("RED"), 4));
 	m_sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 	m_sci->IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
 	m_sci->IndicatorSetUnder(1, true);
 	m_sci->IndicatorSetUnder(2, true);
-   
+
     // current line marker
 	m_sci->SetMarginWidth(1, 0);
    	m_sci->MarkerDefine(0x7, wxSCI_MARK_ARROW);
 	m_sci->MarkerSetBackground(0x7, wxT("PINK"));
 	m_sci->MarkerSetForeground(0x7, wxT("BLACK"));
-    
+
 	Connect(wxEVT_SCI_MARGINCLICK, wxScintillaEventHandler(ErrorsTab::OnMarginClick), NULL, this);
 }
 
@@ -106,7 +112,7 @@ void ErrorsTab::AppendLine(int line)
         }
         return;
     }
-    
+
     wxString filename = i->second.linetext.Mid(i->second.filestart, i->second.filelen);
     wxString prevfile;
     if (!m_lineMap.empty()) {
@@ -117,10 +123,10 @@ void ErrorsTab::AppendLine(int line)
         // new file -- put file name on its own line
         AppendText(filename + wxT("\n"));
     }
-    
+
     int lineno = m_sci->GetLineCount()-1;
     m_lineMap[lineno] = line;
-    
+
     // remove "...filename:" from line text
     wxString text = i->second.linetext.Mid(i->second.filestart + i->second.filelen);
     if (!text.IsEmpty() && text[0] == wxT(':')) {
@@ -132,7 +138,7 @@ void ErrorsTab::AppendLine(int line)
         pos = 0;
     }
     text.Pad(5-pos, wxT(' '), false);
-    
+
     AppendText(text);
     m_sci->SetIndicatorCurrent(i->second.linecolor == wxSCI_LEX_GCC_ERROR ? 2 : 1);
     m_sci->IndicatorFillRange(m_sci->PositionFromLine(lineno), 5);

@@ -199,8 +199,14 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_ARROWDOWN,  fore, back);
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, fore, back);
 
+#ifdef __WXMSW__
+	int facttor = 2;
+#else
+	int facttor = 5;
+#endif
+
 	sci->SetIndicatorCurrent(1);
-	sci->IndicatorSetForeground(1, MakeColourLighter(wxT("GOLD"), 5));
+	sci->IndicatorSetForeground(1, MakeColourLighter(wxT("GOLD"), facttor));
 	sci->IndicatorSetUnder(1, true);
 	sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 	sci->SetReadOnly(true);

@@ -31,6 +31,7 @@
 #include "cl_editor.h"
 #include "manager.h"
 #include "replaceinfilespanel.h"
+#include <vector>
 
 // from sdk/wxscintilla/src/scintilla/src/UniConversion.h
 extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
@@ -276,7 +277,8 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 	m_sci->MarkerDeleteAll(0x7);
 	m_sci->SetReadOnly(false);
 
-	for (std::map<int,SearchResult>::iterator i = m_matchInfo[0].begin();i != m_matchInfo[0].end(); i++) {
+	std::vector<int> itemsToRemove;
+	for (std::map<int, SearchResult>::iterator i = m_matchInfo[0].begin();i != m_matchInfo[0].end(); i++) {
 		int line = i->first + delta;
 		if (i->second.GetFileName() != lastFile) {
 			if (lastLine == line-2) {
@@ -290,6 +292,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 			}
 			lastFile = i->second.GetFileName();
 		}
+
 		if (m_sci->MarkerGet(line) & 1<<0x9) {
 			LEditor *editor = Frame::Get()->GetMainBook()->FindEditor(lastFile);
 			if (editor && editor->GetModify()) {
@@ -299,14 +302,23 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 			m_sci->MarkerDelete(line, 0x9);
 			m_sci->SetCurrentPos(m_sci->PositionFromLine(line));
 			m_sci->LineDelete();
-			m_matchInfo[0].erase(i);
+			itemsToRemove.push_back(i->first);
 			delta--;
 		} else if (line != i->first) {
 			// need to adjust line number
 			m_matchInfo[0][line] = i->second;
-			m_matchInfo[0].erase(i);
+			itemsToRemove.push_back(i->first);
 		}
 	}
+
+	// update the match info map
+	for(std::vector<int>::size_type i=0; i<itemsToRemove.size(); i++){
+		std::map<int, SearchResult>::iterator iter = m_matchInfo.at(0).find(itemsToRemove.at(i));
+		if(iter != m_matchInfo[0].end()){
+			m_matchInfo.at(0).erase(iter);
+		}
+	}
+
 	m_sci->SetReadOnly(true);
 	m_sci->GotoLine(0);
 	if (m_matchInfo[0].empty()) {

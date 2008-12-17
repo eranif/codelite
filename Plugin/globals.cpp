@@ -38,6 +38,10 @@
 
 static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &confToBuild, const wxString &fileName);
 
+// define in LineMarker.cxx
+extern void HSL_2_RGB(float h, float s, float l, float *r, float *g, float *b);
+extern void RGB_2_HSL(float r, float g, float b, float *h, float *s, float *l);
+
 #ifdef __WXMAC__
 #include <mach-o/dyld.h>
 
@@ -418,4 +422,12 @@ bool CopyToClipboard(const wxString& text)
 	ret = false;
 #endif
 	return ret;
+}
+
+wxColour MakeColourLighter(wxColour color, float level)
+{
+	float h, s, l, r, g, b;
+	RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
+	HSL_2_RGB(h, s, l + std::max(level/20.0, 0.0), &r, &g, &b);
+	return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);
 }

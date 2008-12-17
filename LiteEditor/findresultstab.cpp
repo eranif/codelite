@@ -22,32 +22,22 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "globals.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/tokenzr.h>
+#include "globals.h"
 
 #include "manager.h"
 #include "frame.h"
 #include "cl_editor.h"
 #include "editor_config.h"
 #include "findresultstab.h"
-
+#include "globals.h"
 
 #ifndef wxScintillaEventHandler
 #define wxScintillaEventHandler(func) \
 	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
 #endif
-
-extern void HSL_2_RGB(float h, float s, float l, float *r, float *g, float *b);
-extern void RGB_2_HSL(float r, float g, float b, float *h, float *s, float *l);
-
-// TODO: move this somewhere more appropriate
-static wxColour lightColour(wxColour color, float level)
-{
-	float h, s, l, r, g, b;
-	RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
-	HSL_2_RGB(h, s, l + std::max(level/20.0, 0.0), &r, &g, &b);
-	return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);
-}
 
 FindInFilesDialog* FindResultsTab::m_find = NULL;
 
@@ -179,7 +169,7 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	sci->StyleSetHotSpot(wxSCI_LEX_FIF_FILE,  true);
 
 	sci->SetHotspotActiveUnderline (false);
-	sci->SetHotspotActiveBackground(true, lightColour(wxT("BLUE"), 8.0));
+	sci->SetHotspotActiveBackground(true, MakeColourLighter(wxT("BLUE"), 8.0));
 
 	sci->SetMarginType(1, wxSCI_MARGIN_SYMBOL);
 	sci->SetMarginWidth(2, 0);
@@ -210,16 +200,9 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, fore, back);
 
 	sci->SetIndicatorCurrent(1);
-	sci->IndicatorSetForeground(1, wxT("GOLD"));
-#ifdef __WXMAC__
-	// Different settings for Mac
-	sci->IndicatorSetUnder(1, false);
-	sci->IndicatorSetStyle(1, wxSCI_INDIC_BOX);
-#else
+	sci->IndicatorSetForeground(1, MakeColourLighter(wxT("GOLD"), 5));
 	sci->IndicatorSetUnder(1, true);
 	sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
-#endif
-
 	sci->SetReadOnly(true);
 }
 

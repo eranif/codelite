@@ -26,6 +26,7 @@
 #define GLOBALS_H
 
 #include "wx/string.h"
+#include <wx/colour.h>
 #include "wx/arrstr.h"
 class wxListCtrl;
 class Workspace;
@@ -140,6 +141,14 @@ bool WriteFileWithBackup(const wxString &file_name, const wxString &content, boo
  * \return true on success false otherwise
  */
 bool CopyToClipboard(const wxString &text);
+
+/**
+ * \brief make colour lighter
+ * \param color
+ * \param level
+ * \return modified colour
+ */
+wxColour MakeColourLighter(wxColour color, float level);
 
 #endif //GLOBALS_H
 

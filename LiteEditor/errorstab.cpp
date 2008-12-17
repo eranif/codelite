@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "globals.h"
 #include <wx/xrc/xmlres.h>
 #include "errorstab.h"
 #include "findresultstab.h"
@@ -31,7 +32,6 @@
 #define wxScintillaEventHandler(func) \
 	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
 #endif
-
 
 ErrorsTab::ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxString &name)
     : OutputTabWindow(parent, id, name)
@@ -55,18 +55,12 @@ ErrorsTab::ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxStri
     
     FindResultsTab::SetStyles(m_sci);
     
- 	m_sci->IndicatorSetForeground(1, wxT("GOLD"));
- 	m_sci->IndicatorSetForeground(2, wxT("RED"));
+ 	m_sci->IndicatorSetForeground(1, MakeColourLighter(wxT("GOLD"), 5));
+ 	m_sci->IndicatorSetForeground(2, MakeColourLighter(wxT("RED"), 4));
 	m_sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 	m_sci->IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
-#ifdef __WXMAC__
-	// Different settings for Mac
-	m_sci->IndicatorSetUnder(1, false);
-	m_sci->IndicatorSetUnder(2, false);
-#else
 	m_sci->IndicatorSetUnder(1, true);
 	m_sci->IndicatorSetUnder(2, true);
-#endif
    
     // current line marker
 	m_sci->SetMarginWidth(1, 0);

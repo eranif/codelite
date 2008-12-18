@@ -100,7 +100,6 @@ private:
     void OnRepeatOutputUI     (wxUpdateUIEvent  &e);
     void OnNextBuildErrorUI   (wxUpdateUIEvent  &e);
 	void OnMouseDClick        (wxScintillaEvent &e);
-	void OnHotspotClicked	  (wxScintillaEvent &e);
 protected:
 	void Clear();
 	void AppendText(const wxString &text);

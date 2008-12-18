@@ -48,7 +48,6 @@ private:
 	void OnClearAllUI    (wxUpdateUIEvent  &e);
 	void OnRepeatOutputUI(wxUpdateUIEvent  &e);
 	void OnMouseDClick   (wxScintillaEvent &e);
-	void OnHotspotClicked(wxScintillaEvent &e);
 	DECLARE_EVENT_TABLE()
 
 public:

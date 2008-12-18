@@ -36,14 +36,14 @@ BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
     EVT_MENU(XRCID("collapse_all"),          OutputTabWindow::OnCollapseAll)
     EVT_MENU(XRCID("repeat_output"),         OutputTabWindow::OnRepeatOutput)
     EVT_MENU(wxID_COPY,                      OutputTabWindow::OnCopy)
-    
+
     EVT_UPDATE_UI(XRCID("scroll_on_output"), OutputTabWindow::OnOutputScrollsUI)
     EVT_UPDATE_UI(XRCID("clear_all_output"), OutputTabWindow::OnClearAllUI)
     EVT_UPDATE_UI(XRCID("word_wrap_output"), OutputTabWindow::OnWordWrapUI)
     EVT_UPDATE_UI(XRCID("collapse_all"),     OutputTabWindow::OnCollapseAllUI)
     EVT_UPDATE_UI(XRCID("repeat_output"),    OutputTabWindow::OnRepeatOutputUI)
     EVT_UPDATE_UI(wxID_COPY,                 OutputTabWindow::OnCopyUI)
-    
+
     EVT_SCI_DOUBLECLICK(wxID_ANY,            OutputTabWindow::OnMouseDClick)
     EVT_SCI_HOTSPOT_CLICK(wxID_ANY,          OutputTabWindow::OnHotspotClicked)
     EVT_SCI_MARGINCLICK(wxID_ANY,            OutputTabWindow::OnMarginClick)
@@ -78,7 +78,7 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 
 	sci->StyleSetBackground(0, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	sci->StyleSetBackground(wxSCI_STYLE_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-    
+
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 	sci->StyleSetFont(0, font);
@@ -95,18 +95,18 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 	sci->IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
 	sci->IndicatorSetUnder(1, true);
 	sci->IndicatorSetUnder(2, true);
-    
+
 	sci->SetHotspotActiveUnderline (false);
 	sci->SetHotspotActiveBackground(true, MakeColourLighter(wxT("BLUE"), 8.0));
 
 	sci->SetMarginType(1, wxSCI_MARGIN_SYMBOL);
 	sci->SetMarginMask(4, wxSCI_MASK_FOLDERS);
-    
+
 	sci->SetMarginWidth(0, 0);
 	sci->SetMarginWidth(1, 0);
 	sci->SetMarginWidth(2, 0);
 
-	sci->SetFoldFlags(16); // mark folded lines with line below 
+	sci->SetFoldFlags(16); // mark folded lines with line below
 
     if (folding) {
         sci->SetMarginWidth(4, 16);
@@ -114,7 +114,7 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
         sci->SetMarginSensitive(4, true);
         sci->StyleSetForeground(wxSCI_STYLE_DEFAULT, wxT("GREY"));
     }
-    
+
     // current line marker
     DefineMarker(sci, 0x7, wxSCI_MARK_ARROW, wxColor(0x00, 0x00, 0x00), wxColor(0xff, 0xc8, 0xc8));
 
@@ -130,9 +130,9 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 
     sci->SetWrapStartIndent(4);
     sci->SetWrapVisualFlags(2);
-    
+
     sci->SetScrollWidthTracking(true);
-    
+
 	sci->SetReadOnly(true);
 }
 
@@ -140,7 +140,7 @@ void OutputTabWindow::CreateGUIControls()
 {
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer(mainSizer);
-    
+
 	//Create the toolbar
 	m_tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_VERTICAL|wxTB_NODIVIDER);
 
@@ -150,7 +150,7 @@ void OutputTabWindow::CreateGUIControls()
                 wxT("Scroll on Output"),
                 wxITEM_CHECK);
     m_tb->ToggleTool(XRCID("scroll_on_output"), m_outputScrolls);
-    
+
 	m_tb->AddTool(XRCID("word_wrap_output"),
 	            wxT("Word Wrap"),
 	            wxXmlResource::Get()->LoadBitmap(wxT("word_wrap")),
@@ -165,18 +165,18 @@ void OutputTabWindow::CreateGUIControls()
 	m_tb->AddTool(XRCID("collapse_all"), _("Fold All Results"),
 	              wxXmlResource::Get()->LoadBitmap(wxT("fold_airplane")),
 	              _("Fold All Results"));
-    
+
 	m_tb->AddTool(XRCID("repeat_output"), _("Repeat"),
 	              wxXmlResource::Get()->LoadBitmap(wxT("find_refresh")),
 	              _("Repeat"));
-    
+
 	m_tb->Realize();
 	mainSizer->Add(m_tb, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
 
 	m_sci = new wxScintilla(this);
     InitStyle(m_sci, wxSCI_LEX_CONTAINER, false);
 	mainSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
-    
+
 	mainSizer->Layout();
 }
 
@@ -202,7 +202,7 @@ void OutputTabWindow::AppendText(const wxString &text)
         m_sci->SetCurrentPos(m_sci->GetLength());
         m_sci->EnsureCaretVisible();
     }
-    
+
 	// add the text
 	m_sci->InsertText(m_sci->GetLength(), text );
 
@@ -214,7 +214,7 @@ void OutputTabWindow::AppendText(const wxString &text)
         m_sci->SetCurrentPos(m_sci->GetLength());
         m_sci->EnsureCaretVisible();
     }
-    
+
 	// enable readonly mode
 	m_sci->SetReadOnly(true);
 }
@@ -257,8 +257,8 @@ void OutputTabWindow::OnCollapseAll(wxCommandEvent& e)
     bool done = false;
     for (int pass = 0; pass < 2 && !done; pass++) {
         for (int line = 0; line < maxLine; line++) {
-            if ((m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELHEADERFLAG) && 
-                    m_sci->GetFoldExpanded(line) == !pass) { 
+            if ((m_sci->GetFoldLevel(line) & wxSCI_FOLDLEVELHEADERFLAG) &&
+                    m_sci->GetFoldExpanded(line) == !pass) {
                 m_sci->ToggleFold(line);
                 done = true;
             }
@@ -293,7 +293,6 @@ void OutputTabWindow::OnCopyUI(wxUpdateUIEvent& e)
 
 void OutputTabWindow::OnMouseDClick(wxScintillaEvent& e)
 {
-    e.Skip();
 }
 
 void OutputTabWindow::OnHotspotClicked(wxScintillaEvent& e)

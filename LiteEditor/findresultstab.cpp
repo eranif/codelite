@@ -106,7 +106,7 @@ void FindResultsTab::SaveFindInFilesData()
 void FindResultsTab::SetStyles(wxScintilla *sci)
 {
     InitStyle(sci, wxSCI_LEX_FIF, true);
-    
+
 	sci->StyleSetForeground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	sci->StyleSetBackground(wxSCI_LEX_FIF_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
@@ -313,8 +313,6 @@ void FindResultsTab::OnMouseDClick(wxScintillaEvent &e)
 		}
 	}
 
-	m_sci->SetCurrentPos(pos);
-	m_sci->SetSelectionStart(pos);
-	m_sci->SetSelectionEnd(pos);
+	m_sci->SetSelection(wxNOT_FOUND, pos);
 }
 

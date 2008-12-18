@@ -50,18 +50,21 @@ protected:
 	void AppendText(const wxString &line);
 	void Clear();
 
+    virtual void OnPageChanged   (NotebookEvent    &e);
     virtual void OnFindInFiles   (wxCommandEvent   &e);
-    virtual void OnRepeatSearch  (wxCommandEvent   &e);
     virtual void OnSearchStart   (wxCommandEvent   &e);
     virtual void OnSearchMatch   (wxCommandEvent   &e);
     virtual void OnSearchEnded   (wxCommandEvent   &e);
     virtual void OnSearchCancel  (wxCommandEvent   &e);
-    virtual void OnPageChanged   (NotebookEvent    &e);
+    virtual void OnClearAll      (wxCommandEvent   &e);
+    virtual void OnRepeatOutput  (wxCommandEvent   &e);
+    
+    virtual void OnClearAllUI    (wxUpdateUIEvent  &e);
+    virtual void OnRepeatOutputUI(wxUpdateUIEvent  &e);
 	virtual void OnMouseDClick   (wxScintillaEvent &e);
-	virtual void OnHotspotClicked(wxScintillaEvent &e);
-	virtual void OnMarginClick   (wxScintillaEvent &e);
-	virtual void OnCollapseAll   (wxCommandEvent   &e);
 
+    DECLARE_EVENT_TABLE()
+    
 public:
 	FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name, size_t numpage = 5);
 	~FindResultsTab();

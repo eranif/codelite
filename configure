@@ -96,7 +96,7 @@ createMainTargets()
 	echo "" >> Makefile
 
 	echo "ctags: sdk/ctags/Makefile" >> Makefile
-	echo "	cd sdk/ctags/ && \$(MAKE)" >> Makefile
+	echo "	@cd sdk/ctags/ && \$(MAKE)" >> Makefile
 	echo "	cp -fr sdk/ctags/ctags-le Runtime/." >> Makefile
 	echo "" >> Makefile
 
@@ -107,8 +107,8 @@ createMainTargets()
 
 	echo "pre_build:" >> Makefile
 	echo "	./le_makerevision.sh" >> Makefile
-	echo "	test -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
-	echo "	test -d  \$(OUTPUT_DIR) || mkdir \$(OUTPUT_DIR)" >> Makefile
+	echo "	@test -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
+	echo "	@test -d  \$(OUTPUT_DIR) || mkdir \$(OUTPUT_DIR)" >> Makefile
 	echo "" >> Makefile
 
 	echo "clean: clean_plugins" >> Makefile
@@ -316,11 +316,11 @@ createPluginMakefile()
 
 	echo ".PHONY: ${plugin_name} ${plugin_name}_clean ${plugin_name}_install" >> Makefile
 	echo "${plugin_name}:" >> Makefile
-	echo "	cd ${plugin_path} && \$(MAKE) -f Makefile" >> Makefile
+	echo "	@\$(MAKE) -C ${plugin_path} -f Makefile" >> Makefile
 	echo "" >> Makefile
 
 	echo "${plugin_name}_clean:" >> Makefile
-	echo "	cd ${plugin_path} && \$(MAKE) -f Makefile clean" >> Makefile
+	echo "	@\$(MAKE) -C ${plugin_path} -f Makefile clean" >> Makefile
 	echo "" >> Makefile
 
 	echo "${plugin_name}_install:" >> Makefile
@@ -337,11 +337,11 @@ createPluginTargets()
 	echo "all :  pre_build ${plugin_name} post_build" >> Makefile
 	echo "" >> Makefile
 	echo "pre_build:" >> Makefile
-	echo "	@echo =================================================" >> Makefile
-	echo "	@echo Building target ${plugin_name}" >> Makefile
-	echo "	@echo =================================================" >> Makefile
-	echo "	test -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
-	echo "	test -d  ${base_dir}/\$(OUTPUT_DIR) || mkdir ${base_dir}/\$(OUTPUT_DIR)" >> Makefile
+    echo "	@echo" >> Makefile
+	echo "	@echo \"----------Building project:[ ${plugin_name} - ${configuration} ]----------\"" >> Makefile
+	echo "	@echo" >> Makefile
+	echo "	@test -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
+	echo "	@test -d  ${base_dir}/\$(OUTPUT_DIR) || mkdir ${base_dir}/\$(OUTPUT_DIR)" >> Makefile
 	echo "" >> Makefile
 	echo "clean:" >> Makefile
 	echo "	\$(RM) ${base_dir}/\$(OUTPUT_DIR)/${plugin_name}.so" >> Makefile

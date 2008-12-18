@@ -45,7 +45,7 @@ private:
      */
     struct LineInfo {
         LineInfo()
-            : linenum(0), linecolor(0), filestart(0), filelen(0)
+            : linenum(0), linecolor(wxSCI_LEX_GCC_OUTPUT), filestart(0), filelen(0)
             { }
         wxString project;
         wxString configuration;
@@ -62,6 +62,7 @@ private:
     int  m_showMe;
     bool m_autoHide;
 	bool m_skipWarnings;
+    bool m_building;
     int  m_errorCount;
     int  m_warnCount;
 
@@ -84,7 +85,7 @@ private:
     std::map<int,LineInfo>::iterator GetNextBadLine();
 
     // Event handlers
-    void OnClearAll           (wxCommandEvent   &e);
+    void OnActiveEditorChanged(wxCommandEvent   &e);
     void OnBuildStarted       (wxCommandEvent   &e);
     void OnBuildAddLine       (wxCommandEvent   &e);
     void OnBuildEnded         (wxCommandEvent   &e);
@@ -92,10 +93,12 @@ private:
     void OnWorkspaceClosed    (wxCommandEvent   &e);
     void OnConfigChanged      (wxCommandEvent   &e);
 	void OnCompilerColours    (wxCommandEvent   &e);
+    void OnClearAll           (wxCommandEvent   &e);
+    void OnRepeatOutput       (wxCommandEvent   &e);
 	void OnNextBuildError     (wxCommandEvent   &e);
+    void OnClearAllUI         (wxUpdateUIEvent  &e);
+    void OnRepeatOutputUI     (wxUpdateUIEvent  &e);
     void OnNextBuildErrorUI   (wxUpdateUIEvent  &e);
-    void OnActiveEditorChanged(wxCommandEvent   &e);
-	void OnHotspotClicked     (wxScintillaEvent &e);
 	void OnMouseDClick        (wxScintillaEvent &e);
 
 protected:

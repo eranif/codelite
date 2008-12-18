@@ -43,10 +43,14 @@ private:
     void MarkLine(int line);
 
     void OnRedisplayLines(wxCommandEvent   &e);
+    void OnClearAll      (wxCommandEvent   &e);
+    void OnRepeatOutput  (wxCommandEvent   &e);
+    void OnClearAllUI    (wxUpdateUIEvent  &e);
+    void OnRepeatOutputUI(wxUpdateUIEvent  &e);
 	void OnMouseDClick   (wxScintillaEvent &e);
-	void OnHotspotClicked(wxScintillaEvent &e);
-	void OnMarginClick   (wxScintillaEvent &e);
 
+    DECLARE_EVENT_TABLE()
+    
 public:
 	ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxString &name);
 	~ErrorsTab();

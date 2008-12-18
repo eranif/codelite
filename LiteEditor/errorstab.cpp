@@ -22,59 +22,34 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "globals.h"
 #include <wx/xrc/xmlres.h>
+#include "globals.h"
 #include "errorstab.h"
 #include "findresultstab.h"
 
 
-#ifndef wxScintillaEventHandler
-#define wxScintillaEventHandler(func) \
-	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
-#endif
+BEGIN_EVENT_TABLE(ErrorsTab, OutputTabWindow)
+    EVT_MENU(XRCID("show_errors"),      ErrorsTab::OnRedisplayLines)
+    EVT_MENU(XRCID("show_warnings"),    ErrorsTab::OnRedisplayLines)
+    EVT_MENU(XRCID("show_build_lines"), ErrorsTab::OnRedisplayLines)
+END_EVENT_TABLE()
+
 
 ErrorsTab::ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxString &name)
     : OutputTabWindow(parent, id, name)
     , m_bt(bt)
 {
-    m_tb->DeleteTool(XRCID("clear_all_output"));
-    m_tb->AddSeparator();
-
     m_tb->AddCheckTool(XRCID("show_errors"), wxT("Errors"), wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")), wxNullBitmap, wxT("Show build errors"));
     m_tb->ToggleTool(XRCID("show_errors"), true);
-    m_tb->Connect(XRCID("show_errors"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ErrorsTab::OnRedisplayLines), NULL, this);
 
     m_tb->AddCheckTool(XRCID("show_warnings"), wxT("Warnings"), wxXmlResource::Get()->LoadBitmap(wxT("help_icon")), wxNullBitmap, wxT("Show build warnings"));
     m_tb->ToggleTool(XRCID("show_warnings"), true);
-    m_tb->Connect(XRCID("show_warnings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ErrorsTab::OnRedisplayLines), NULL, this);
 
     m_tb->AddCheckTool(XRCID("show_build_lines"), wxT("Build"), wxXmlResource::Get()->LoadBitmap(wxT("todo")), wxNullBitmap, wxT("Show build status lines"));
-    m_tb->ToggleTool(XRCID("show_build_lines"), false);
-    m_tb->Connect(XRCID("show_build_lines"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ErrorsTab::OnRedisplayLines), NULL, this);
+    m_tb->ToggleTool(XRCID("show_build_lines"), true);
 	m_tb->Realize();
 
     FindResultsTab::SetStyles(m_sci);
-
-#ifdef __WXMSW__
-	int facttor = 2;
-#else
-	int facttor = 5;
-#endif
-
- 	m_sci->IndicatorSetForeground(1, MakeColourLighter(wxT("GOLD"), facttor));
- 	m_sci->IndicatorSetForeground(2, MakeColourLighter(wxT("RED"), 4));
-	m_sci->IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
-	m_sci->IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
-	m_sci->IndicatorSetUnder(1, true);
-	m_sci->IndicatorSetUnder(2, true);
-
-    // current line marker
-	m_sci->SetMarginWidth(1, 0);
-   	m_sci->MarkerDefine(0x7, wxSCI_MARK_ARROW);
-	m_sci->MarkerSetBackground(0x7, wxT("PINK"));
-	m_sci->MarkerSetForeground(0x7, wxT("BLACK"));
-
-	Connect(wxEVT_SCI_MARGINCLICK, wxScintillaEventHandler(ErrorsTab::OnMarginClick), NULL, this);
 }
 
 ErrorsTab::~ErrorsTab()
@@ -153,9 +128,10 @@ void ErrorsTab::MarkLine(int line)
         if (j->second == line) {
             m_sci->MarkerDeleteAll(0x7);
             m_sci->MarkerAdd(j->first, 0x7);
+            m_sci->EnsureVisible(j->first);
+            m_sci->EnsureCaretVisible();
             m_sci->SetCurrentPos(m_sci->PositionFromLine(j->first));
             m_sci->SetSelection(-1, m_sci->GetCurrentPos());
-            m_sci->EnsureCaretVisible();
         }
     }
 }
@@ -177,11 +153,6 @@ void ErrorsTab::OnRedisplayLines(wxCommandEvent& e)
     }
 }
 
-void ErrorsTab::OnHotspotClicked(wxScintillaEvent &e)
-{
-	OnMouseDClick(e);
-}
-
 void ErrorsTab::OnMouseDClick(wxScintillaEvent &e)
 {
     m_sci->SetSelection(-1, m_sci->GetCurrentPos());
@@ -193,12 +164,26 @@ void ErrorsTab::OnMouseDClick(wxScintillaEvent &e)
             return;
         }
     }
-    m_sci->ToggleFold(m_sci->LineFromPosition(e.GetPosition()));
+    OutputTabWindow::OnMouseDClick(e);
 }
 
-void ErrorsTab::OnMarginClick(wxScintillaEvent& e)
+void ErrorsTab::OnClearAll(wxCommandEvent& e)
 {
-	if (e.GetMargin() == 4) {
-		m_sci->ToggleFold(m_sci->LineFromPosition(e.GetPosition()));
-	}
+    m_bt->OnClearAll(e);
 }
+
+void ErrorsTab::OnClearAllUI(wxUpdateUIEvent& e)
+{
+    m_bt->OnClearAllUI(e);
+}
+
+void ErrorsTab::OnRepeatOutput(wxCommandEvent& e)
+{
+    m_bt->OnRepeatOutput(e);
+}
+
+void ErrorsTab::OnRepeatOutputUI(wxUpdateUIEvent& e)
+{
+    m_bt->OnRepeatOutputUI(e);
+}
+

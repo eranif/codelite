@@ -43,13 +43,17 @@ class ReplaceInFilesPanel : public FindResultsTab
     virtual void OnSearchMatch(wxCommandEvent   &e);
     virtual void OnSearchEnded(wxCommandEvent   &e);
 	virtual void OnMarginClick(wxScintillaEvent &e);
+    
 	virtual void OnMarkAll    (wxCommandEvent   &e);
 	virtual void OnUnmarkAll  (wxCommandEvent   &e);
 	virtual void OnReplace    (wxCommandEvent   &e);
+
 	virtual void OnMarkAllUI  (wxUpdateUIEvent  &e);
 	virtual void OnUnmarkAllUI(wxUpdateUIEvent  &e);
 	virtual void OnReplaceUI  (wxUpdateUIEvent  &e);
-
+    
+    DECLARE_EVENT_TABLE()
+    
 public:
 	ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString &name);
 };

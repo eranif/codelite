@@ -22,48 +22,62 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __outputtabwindow__
+#ifndef __outputtabwindow__
 #define __outputtabwindow__
 
-#include "wx/panel.h"
-#include "wx/wxscintilla.h"
+#include <wx/panel.h>
+#include <wx/wxscintilla.h>
+
+#ifndef wxScintillaEventHandler
+#define wxScintillaEventHandler(func) \
+	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
+#endif
+
 
 class OutputTabWindow : public wxPanel 
 {
 protected:
-	wxString m_name;
-    wxToolBar *m_tb;
+	wxString     m_name;
+    wxToolBar   *m_tb;
 	wxScintilla *m_sci;
-	bool m_canFocus;
-    bool m_outputScrolls;
+    bool         m_outputScrolls;
 	
-protected:
-	virtual void CreateGUIControl();
+    static void DefineMarker(wxScintilla *sci, int marker, int markerType, wxColor fore, wxColor back);
+    static void InitStyle   (wxScintilla *sci, int lexer, bool folding);
+	
+	void CreateGUIControls();
+    
 	//Event handlers
-    virtual void OnOutputScrolls(wxCommandEvent &e);
-	virtual void OnSciUpdateUI(wxScintillaEvent &event);
-	virtual void OnClearAll(wxCommandEvent &e);
-	virtual void OnWordWrap(wxCommandEvent &e);
-	virtual void OnMouseDClick(wxScintillaEvent &event){event.Skip();}
-	virtual void OnHotspotClicked(wxScintillaEvent &event){event.Skip();}
-	virtual void OnStyleNeeded(wxScintillaEvent &event){event.Skip();}
-	virtual void OnCompilerColours(wxCommandEvent &event){event.Skip();};
-	virtual bool AcceptsFocus() const {return m_canFocus;}
-	void RecalcHorizontalScrollbar();
-	
+    virtual void OnOutputScrolls  (wxCommandEvent   &e);
+	virtual void OnClearAll       (wxCommandEvent   &e);
+	virtual void OnWordWrap       (wxCommandEvent   &e);
+	virtual void OnCollapseAll    (wxCommandEvent   &e);
+    virtual void OnRepeatOutput   (wxCommandEvent   &e);
+	virtual void OnCopy           (wxCommandEvent   &e);
+    
+    virtual void OnOutputScrollsUI(wxUpdateUIEvent  &e);
+	virtual void OnClearAllUI     (wxUpdateUIEvent  &e);
+	virtual void OnWordWrapUI     (wxUpdateUIEvent  &e);
+	virtual void OnCollapseAllUI  (wxUpdateUIEvent  &e);
+    virtual void OnRepeatOutputUI (wxUpdateUIEvent  &e);
+	virtual void OnCopyUI         (wxUpdateUIEvent  &e);
+    
+	virtual void OnSciUpdateUI    (wxScintillaEvent &e);
+	virtual void OnMouseDClick    (wxScintillaEvent &e);
+	virtual void OnHotspotClicked (wxScintillaEvent &e);
+	virtual void OnStyleNeeded    (wxScintillaEvent &e);
+	virtual void OnMarginClick    (wxScintillaEvent &e);
+    
+    DECLARE_EVENT_TABLE()
+    
 public:
 	OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString &name);
-	virtual ~OutputTabWindow();
+	~OutputTabWindow();
 	
-	void CanFocus(bool can) { m_canFocus = can; }
-	wxWindow *GetInternalWindow() {return m_sci;}
-	
-	virtual const wxString &GetCaption() const {return m_name;}
+	const wxString &GetCaption() const {return m_name;}
+    
 	virtual void AppendText(const wxString &text);
 	virtual void Clear();
-	
-	virtual void OnCommand(wxCommandEvent &e);
-	virtual void OnUpdateUI(wxUpdateUIEvent &e);
 };
 #endif // __outputtabwindow__
 

@@ -22,23 +22,30 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include <vector>
 #include <wx/xrc/xmlres.h>
 #include <wx/progdlg.h>
 
 #include "globals.h"
-#include "stringsearcher.h"
 #include "frame.h"
 #include "cl_editor.h"
 #include "manager.h"
 #include "replaceinfilespanel.h"
-#include <vector>
 
-// from sdk/wxscintilla/src/scintilla/src/UniConversion.h
-extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
+
+BEGIN_EVENT_TABLE(ReplaceInFilesPanel, FindResultsTab)
+	EVT_BUTTON(XRCID("unmark_all"),    ReplaceInFilesPanel::OnUnmarkAll)
+	EVT_BUTTON(XRCID("mark_all"),      ReplaceInFilesPanel::OnMarkAll)
+	EVT_BUTTON(XRCID("replace"),       ReplaceInFilesPanel::OnReplace)
+
+	EVT_UPDATE_UI(XRCID("unmark_all"), ReplaceInFilesPanel::OnUnmarkAllUI)
+	EVT_UPDATE_UI(XRCID("mark_all"),   ReplaceInFilesPanel::OnMarkAllUI)
+	EVT_UPDATE_UI(XRCID("replace"),    ReplaceInFilesPanel::OnReplaceUI)
+END_EVENT_TABLE()
 
 
 ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxString &name)
-		: FindResultsTab(parent, id, name, 1)
+    : FindResultsTab(parent, id, name, 1)
 {
 	wxSizer *mainSizer = GetSizer();
 
@@ -73,22 +80,9 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 	mainSizer->Layout();
 
 	m_sci->SetMarginMask(4, 7<<0x7 | wxSCI_MASK_FOLDERS);
-	m_sci->MarkerDefine(0x7, wxSCI_MARK_SMALLRECT); // user selection
-	m_sci->MarkerSetForeground(0x7, wxColor(0x00, 0x80, 0x00));
-	m_sci->MarkerSetBackground(0x7, wxColor(0x00, 0xc0, 0x00));
-	m_sci->MarkerDefine(0x8, wxSCI_MARK_CIRCLE); // error occurred
-	m_sci->MarkerSetForeground(0x8, wxColor(0x80, 0x00, 0x00));
-	m_sci->MarkerSetBackground(0x8, wxColor(0xff, 0x00, 0x00));
-	m_sci->MarkerDefine(0x9, wxSCI_MARK_EMPTY); // replacement successful
-
-	Connect(XRCID("unmark_all"), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReplaceInFilesPanel::OnUnmarkAll), NULL, this);
-	Connect(XRCID("mark_all"),   wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReplaceInFilesPanel::OnMarkAll),   NULL, this);
-	Connect(XRCID("replace"),    wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReplaceInFilesPanel::OnReplace),   NULL, this);
-
-	Connect(XRCID("unmark_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReplaceInFilesPanel::OnUnmarkAllUI), NULL, this);
-	Connect(XRCID("mark_all"),   wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReplaceInFilesPanel::OnMarkAllUI),   NULL, this);
-	Connect(XRCID("replace"),    wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReplaceInFilesPanel::OnReplaceUI),   NULL, this);
-
+    DefineMarker(m_sci, 0x7, wxSCI_MARK_SMALLRECT, wxColor(0x00, 0x80, 0x00), wxColor(0x00, 0xc0, 0x00)); // user selection
+    DefineMarker(m_sci, 0x8, wxSCI_MARK_CIRCLE,    wxColor(0x80, 0x00, 0x00), wxColor(0xff, 0x00, 0x00)); // error occurred
+    DefineMarker(m_sci, 0x9, wxSCI_MARK_EMPTY,     wxColor(0x00, 0x00, 0x00), wxColor(0x00, 0x00, 0x00)); // replacement successful
 }
 
 void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent &e)
@@ -125,11 +119,6 @@ void ReplaceInFilesPanel::OnMarginClick(wxScintillaEvent& e)
 	}
 }
 
-void ReplaceInFilesPanel::OnUnmarkAll(wxCommandEvent& e)
-{
-	m_sci->MarkerDeleteAll(0x7);
-}
-
 void ReplaceInFilesPanel::OnMarkAll(wxCommandEvent& e)
 {
 	for (std::map<int,SearchResult>::iterator i = m_matchInfo[0].begin(); i != m_matchInfo[0].end(); i++) {
@@ -137,6 +126,21 @@ void ReplaceInFilesPanel::OnMarkAll(wxCommandEvent& e)
 			continue;
 		m_sci->MarkerAdd(i->first, 0x7);
 	}
+}
+
+void ReplaceInFilesPanel::OnMarkAllUI(wxUpdateUIEvent& e)
+{
+    e.Enable(m_sci->GetLength() > 0);
+}
+
+void ReplaceInFilesPanel::OnUnmarkAll(wxCommandEvent& e)
+{
+	m_sci->MarkerDeleteAll(0x7);
+}
+
+void ReplaceInFilesPanel::OnUnmarkAllUI(wxUpdateUIEvent& e)
+{
+    e.Enable(m_sci->GetLength() > 0);
 }
 
 void ReplaceInFilesPanel::DoSaveResults(wxScintilla *sci,
@@ -345,17 +349,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 	}
 }
 
-void ReplaceInFilesPanel::OnMarkAllUI(wxUpdateUIEvent& e)
-{
-	e.Enable(m_sci && m_sci->GetLength() > 0);
-}
-
 void ReplaceInFilesPanel::OnReplaceUI(wxUpdateUIEvent& e)
 {
-	e.Enable(m_sci && m_sci->GetLength() > 0);
-}
-
-void ReplaceInFilesPanel::OnUnmarkAllUI(wxUpdateUIEvent& e)
-{
-	e.Enable(m_sci && m_sci->GetLength() > 0);
+    e.Enable(m_sci->GetLength() > 0);
 }

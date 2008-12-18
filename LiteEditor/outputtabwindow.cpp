@@ -130,6 +130,9 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_ARROWDOWN,  fore, back);
 	DefineMarker(sci, wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, fore, back);
 
+    sci->SetWrapStartIndent(4);
+    sci->SetWrapVisualFlags(2);
+    
 	sci->SetReadOnly(true);
 }
 

@@ -37,10 +37,9 @@
 
 class FindResultsTab : public OutputTabWindow
 {
-private:
+protected:
     static FindInFilesDialog *m_find;
 
-protected:
     Notebook    *m_book; // for multiple Find Results pages
     wxScintilla *m_recv; // the page that is receiving results of a search
     SearchData   m_data;

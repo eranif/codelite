@@ -22,222 +22,173 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
-#include "taskpanel.h"
-#include "globals.h"
-#include "macros.h"
+#include <wx/xrc/xmlres.h>
+#include <wx/tglbtn.h>
+#include "frame.h"
 #include "manager.h"
-#include "search_thread.h"
-#include "wx/log.h"
+#include "macros.h"
+#include "taskpanel.h"
 
-TaskPanel::TaskPanel( wxWindow* parent )
-		:
-		TaskBasePanel( parent )
+
+BEGIN_EVENT_TABLE(TaskPanel, FindResultsTab)
+    EVT_TOGGLEBUTTON(wxID_ANY,        TaskPanel::OnToggle)
+    
+    EVT_BUTTON(XRCID("search"),       TaskPanel::OnSearch)
+    EVT_BUTTON(XRCID("customize"),    TaskPanel::OnCustomize)
+    
+    EVT_UPDATE_UI(XRCID("search"),    TaskPanel::OnSearchUI)
+    EVT_UPDATE_UI(XRCID("customize"), TaskPanel::OnCustomizeUI)
+END_EVENT_TABLE()
+
+TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
+    : FindResultsTab(parent, id, name, 1)
+    , m_scope(NULL)
+    , m_filter(NULL)
 {
-	// Initialize the list headers
-	m_listCtrlTasks->InsertColumn(0, wxT("Type"));
-	m_listCtrlTasks->InsertColumn(1, wxT("Comment"));
-	m_listCtrlTasks->InsertColumn(2, wxT("Line"));
-	m_listCtrlTasks->InsertColumn(3, wxT("File"));
+    // TODO: could load some of the following data (tasks, scopes, filters) from EditorConfig:
+    
+    wxArrayString tasks;
+    tasks.Add(wxT("TODO"));
+    tasks.Add(wxT("FIXME"));
+    tasks.Add(wxT("BUG"));
+    tasks.Add(wxT("ATTN"));
+    
+    wxArrayString scopes;
+    scopes.Add(SEARCH_IN_PROJECT);
+    scopes.Add(SEARCH_IN_WORKSPACE);
+    scopes.Add(SEARCH_IN_CURR_FILE_PROJECT);
+    
+    wxArrayString filters;
+    filters.Add(wxT("C/C++ Sources"));
+    m_extensions.Add(wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
+    filters.Add(wxT("All Files"));
+    m_extensions.Add(wxT("*.*"));
+    
+    wxBoxSizer *horzSizer = new wxBoxSizer(wxHORIZONTAL);
+    
+    wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Find:"));
+    horzSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    for (size_t i = 0; i < sizeof(tasks)/sizeof(tasks[0]); i++) {
+        wxToggleButton *btn = new wxToggleButton(this, wxID_ANY, tasks[i], wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        btn->SetValue(true);
+        btn->SetBackgroundColour(wxColor(wxT("GOLD")));
+        m_task.push_back(btn);
+        horzSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
+    }
+    
+    text = new wxStaticText(this, wxID_ANY, wxT("In:"));
+    horzSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_scope = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, scopes);
+    m_scope->SetSelection(0);
+    horzSizer->Add(m_scope, 1, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
+    
+    m_filter = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, filters);
+    m_filter->SetSelection(0);
+    horzSizer->Add(m_filter, 1, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
+    
+    wxButton *btn = new wxButton(this, XRCID("search"), wxT("&Search"));
+    horzSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    btn = new wxButton(this, XRCID("customize"), wxT("&Customize"));
+    horzSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
+    
+	wxBoxSizer *vertSizer = new wxBoxSizer(wxVERTICAL);
+	vertSizer->Add(horzSizer, 0, wxEXPAND|wxTOP|wxBOTTOM);
 
-	// set initial size
-	m_listCtrlTasks->SetColumnWidth(0, 100);
-	m_listCtrlTasks->SetColumnWidth(1, 100);
-	m_listCtrlTasks->SetColumnWidth(2, 100);
-	m_listCtrlTasks->SetColumnWidth(3, 100);
+	// grab the base class scintilla and put our sizer in its place
+	wxSizer *mainSizer = GetSizer();
+	mainSizer->Detach(m_sci);
+	vertSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
 
-	m_buttonStop->Disable();
-	Connect(wxEVT_SEARCH_THREAD_MATCHFOUND, wxCommandEventHandler(TaskPanel::OnSearchThread));
-	Connect(wxEVT_SEARCH_THREAD_SEARCHCANCELED, wxCommandEventHandler(TaskPanel::OnSearchThread));
-	Connect(wxEVT_SEARCH_THREAD_SEARCHEND, wxCommandEventHandler(TaskPanel::OnSearchThread));
-	Connect(wxEVT_SEARCH_THREAD_SEARCHSTARTED, wxCommandEventHandler(TaskPanel::OnSearchThread));
+	mainSizer->Add(vertSizer, 1, wxEXPAND | wxALL, 1);
+	mainSizer->Layout();
 }
 
-void TaskPanel::OnSearch( wxCommandEvent& event )
+TaskPanel::~TaskPanel()
 {
-	wxUnusedVar(event);
+}
 
-	/* Use the following regex:
-	//( *)((TODO)|(ATTN)|(FIXME)|(BUG)):
-	*/
-	SearchData data;
-	data.SetExtensions(wxT("*.*")); // use all files
-	data.SetRootDir(m_choiceScope->GetStringSelection());
-	data.SetRegularExpression(true);
-	data.SetMatchCase(false);
-	data.SetMatchWholeWord(false);
-	data.SetUseEditorFontConfig(true);
-
-	// prepare a list of files to search
-	if (m_choiceScope->GetStringSelection() == SEARCH_IN_WORKSPACE) {
-
-		wxArrayString files;
+void TaskPanel::DoSetSearchData()
+{
+    m_data.SetDisplayScope(true);
+    m_data.SetRegularExpression(true);
+    m_data.SetMatchCase(false);
+    m_data.SetMatchWholeWord(false);
+    m_data.SetUseEditorFontConfig(true);
+    m_data.SetOutputTab(0);
+    m_data.SetOwner(this);
+    
+    wxString find = wxT("/[/*]\\s*(?:");
+    for (size_t i = 0; i < m_task.size(); i++) {
+        if (m_task[i]->GetValue()) {
+            find << m_task[i]->GetLabelText() << wxT('|');
+        }
+    }
+    if (find.Last() == wxT('(')) {
+        // fallback
+        find << wxT("TODO|ATTN|FIXME|BUG|");
+    }
+    find.Last() = wxT(')');
+    find << wxT("(?=:)");
+    m_data.SetFindString(find);
+    
+    m_data.SetRootDir(m_scope->GetStringSelection());
+    wxArrayString files;
+	if (m_scope->GetStringSelection() == SEARCH_IN_WORKSPACE) {
 		ManagerST::Get()->GetWorkspaceFiles(files);
-		data.SetFiles(files);
-
-	} else if (m_choiceScope->GetStringSelection() == SEARCH_IN_PROJECT) {
-
-		wxArrayString files;
+	}else if (m_scope->GetStringSelection() == SEARCH_IN_PROJECT) {
 		ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
-		data.SetFiles(files);
-	}
-
-	// always scan for all, the filter be done in the display part
-	data.SetFindString(wxT("//( *)((TODO)|(ATTN)|(FIXME)|(BUG))"));
-	data.SetOwner(this);
-	SearchThreadST::Get()->PerformSearch(data);
-
-	// disable the search button
-	m_buttonSearch->Disable();
-	m_buttonStop->Enable();
-}
-
-void TaskPanel::OnItemActivated( wxListEvent& event )
-{
-	// open the selected item in the editor
-	// type, comment, line, file
-	long line(wxNOT_FOUND);
-	wxString fileName = GetColumnText(m_listCtrlTasks, event.m_itemIndex, 3);
-	wxString strLine = GetColumnText(m_listCtrlTasks, event.m_itemIndex, 2);
-
-	strLine.ToLong(&line);
-	ManagerST::Get()->OpenFile(fileName, wxEmptyString, line - 1);
-}
-
-void TaskPanel::OnSearchThread(wxCommandEvent& e)
-{
-	if (e.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHCANCELED){
-		// always free the allocated message string
-		wxString *str = (wxString*)e.GetClientData();
-		if(str){delete str;}
-
-		// re-enable the search button
-		m_buttonSearch->Enable();
-		m_buttonStop->Disable();
-
-		DoDisplayResults();
-	}else if (e.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHEND){
-		// always free the allocated message string
-		SearchSummary *summary = (SearchSummary*)e.GetClientData();
-		if(summary){delete summary;}
-
-		// re-enable the search button
-		m_buttonSearch->Enable();
-		m_buttonStop->Disable();
-
-		DoDisplayResults();
-	} else if (e.GetEventType() == wxEVT_SEARCH_THREAD_MATCHFOUND) {
-
-		//add an entry to the replace panel
-		SearchResultList *res = (SearchResultList*)e.GetClientData();
-		SearchResultList::iterator iter = res->begin();
-		for(; iter != res->end(); iter++){
-			m_results.push_back(*iter);
+	}else if (m_scope->GetStringSelection() == SEARCH_IN_CURR_FILE_PROJECT) {
+		wxString project = ManagerST::Get()->GetActiveProjectName();
+		if (Frame::Get()->GetMainBook()->GetActiveEditor()) {
+			wxFileName activeFile = Frame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
+			project = ManagerST::Get()->GetProjectNameByFile(activeFile.GetFullPath());
 		}
-		delete res;
-
-	} else if (e.GetEventType() == wxEVT_SEARCH_THREAD_SEARCHSTARTED) {
-		// always free the allocated message data
-		delete (SearchData*)e.GetClientData();
-		DoClearResults();
+		ManagerST::Get()->GetProjectFiles(project, files);
 	}
+    m_data.SetFiles(files);
+    
+    m_data.SetExtensions(m_extensions[m_filter->GetSelection()]);
 }
 
-void TaskPanel::DoClearResults()
+void TaskPanel::OnToggle(wxCommandEvent &e)
 {
-	m_results.clear();
-	m_listCtrlTasks->DeleteAllItems();
-
-	// set initial size
-	m_listCtrlTasks->SetColumnWidth(0, 100);
-	m_listCtrlTasks->SetColumnWidth(1, 100);
-	m_listCtrlTasks->SetColumnWidth(2, 100);
-	m_listCtrlTasks->SetColumnWidth(3, 100);
+    wxToggleButton *btn = (wxToggleButton*) e.GetEventObject();
+    btn->SetBackgroundColour(e.IsChecked() ? wxColor(wxT("GOLD")) : wxNullColour);
+    btn->Refresh();
 }
 
-void TaskPanel::DoDisplayResults()
+void TaskPanel::OnSearch(wxCommandEvent& e)
 {
-	m_listCtrlTasks->Freeze();
-	m_listCtrlTasks->DeleteAllItems();
-	SearchResultList::iterator iter = m_results.begin();
-	for(; iter != m_results.end(); iter++){
-		SearchResult res = *iter;
-
-		// extract the 'Kind'
-		int where2(wxNOT_FOUND);
-
-		wxArrayString keywords;
-		keywords.Add(wxT("FIXME"));
-		keywords.Add(wxT("BUG"));
-		keywords.Add(wxT("TODO"));
-		keywords.Add(wxT("ATTN"));
-
-		wxString pattern;
-		wxString type;
-
-		static wxString trimLeftString(wxT(":-\t "));
-		for(size_t i=0; i<keywords.GetCount(); i++) {
-			wxString lowPattern(res.GetPattern());
-			lowPattern.MakeLower();
-			where2 = lowPattern.Find(keywords.Item(i).Lower());
-			if(where2 != wxNOT_FOUND){
-				pattern = res.GetPattern().Mid(where2 + keywords.Item(i).Length());
-				pattern.erase(0, pattern.find_first_not_of(trimLeftString));
-				pattern.Trim().Trim(false);
-				type = keywords.Item(i);
-				break;
-			}
-		}
-
-		// Filter out non matching entries
-		if(m_choiceFilter->GetStringSelection() != wxT("All") && type.CmpNoCase(m_choiceFilter->GetStringSelection()) != 0){
-			continue;
-		}
-
-		// append new line to the list control
-		long index = AppendListCtrlRow(m_listCtrlTasks);
-
-		// set the line number
-		wxString strLine;
-		strLine << res.GetLineNumber();
-		wxFileName fn(res.GetFileName());
-
-		// type, comment, line, file
-		SetColumnText(m_listCtrlTasks, index, 0, type);
-		SetColumnText(m_listCtrlTasks, index, 1, pattern);
-		SetColumnText(m_listCtrlTasks, index, 2, strLine);
-		SetColumnText(m_listCtrlTasks, index, 3, fn.GetFullPath());
-	}
-
-	// adjust the columns width
-	m_listCtrlTasks->SetColumnWidth(0, 100);
-	m_listCtrlTasks->SetColumnWidth(1, wxLIST_AUTOSIZE);
-	m_listCtrlTasks->SetColumnWidth(2, 50);
-	m_listCtrlTasks->SetColumnWidth(3, wxLIST_AUTOSIZE);
-
-	m_listCtrlTasks->Thaw();
+    DoSetSearchData();
+    OnRepeatOutput(e);
 }
 
-void TaskPanel::OnStop(wxCommandEvent& e)
+void TaskPanel::OnSearchUI(wxUpdateUIEvent& e)
 {
-	wxUnusedVar(e);
-	SearchThreadST::Get()->StopSearch();
+    bool any = false;
+    for (size_t i = 0; i < m_task.size() && !any; i++) {
+        any = m_task[i]->GetValue();
+    }
+    e.Enable(m_recv == NULL && any);
 }
 
-void TaskPanel::OnFilter(wxCommandEvent& e)
+void TaskPanel::OnCustomize(wxCommandEvent& e)
 {
-	// refresh the view
-	wxUnusedVar(e);
-	DoDisplayResults();
+    LoadFindInFilesData();
+    DoSetSearchData();
+    m_find->SetSearchData(m_data);
+    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+    if (editor) {
+        // remove selection so it doesn't clobber the find-string in the dialog
+        editor->SetSelection(-1,-1);
+    }
+    OnFindInFiles(e);
 }
 
-void TaskPanel::OnClear(wxCommandEvent& e)
+void TaskPanel::OnCustomizeUI(wxUpdateUIEvent& e)
 {
-	wxUnusedVar(e);
-	DoClearResults();
-}
-
-void TaskPanel::OnClearUI(wxUpdateUIEvent& e)
-{
-	e.Enable(m_listCtrlTasks->GetItemCount() > 0);
+    OnSearchUI(e);
 }

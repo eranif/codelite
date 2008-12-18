@@ -35,7 +35,7 @@ class BuildTab;
 class ErrorsTab;
 class ReplaceInFilesPanel;
 class ShellWindow;
-class TaskBasePanel;
+class TaskPanel;
 
 /**
  * \ingroup LiteEditor
@@ -76,7 +76,7 @@ private:
 	ErrorsTab           *m_errorsWin;
 	ShellTab            *m_outputWind;
 	ShellTab            *m_outputDebug;
-	TaskBasePanel       *m_taskPanel;
+	TaskPanel           *m_taskPanel;
 	
 	void CreateGUIControls();
 	

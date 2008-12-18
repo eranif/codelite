@@ -95,7 +95,7 @@ void OutputPane::CreateGUIControls()
 	m_book->AddPage(text, TRACE_TAB, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
     
-	m_taskPanel = new TaskPanel(m_book);
+	m_taskPanel = new TaskPanel(m_book, wxID_ANY, TASKS);
 	m_book->AddPage(m_taskPanel, TASKS, wxXmlResource::Get()->LoadBitmap(wxT("todo")));
 
 	mainSizer->Layout();

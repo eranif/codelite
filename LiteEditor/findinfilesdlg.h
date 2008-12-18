@@ -68,7 +68,8 @@ public:
 	FindInFilesDialog(wxWindow* parent, wxWindowID id, const FindReplaceData& data, size_t numpages = 5);
 	virtual ~FindInFilesDialog();
 
-    void SetRootDir(const wxString &rootDir);
+    void SetSearchData(const SearchData &data);
+    void SetRootDir   (const wxString &rootDir);
     
 	FindReplaceData& GetData() { return m_data; }
 

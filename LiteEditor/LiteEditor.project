@@ -425,8 +425,6 @@
     <File Name="memoryview.h"/>
     <File Name="memoryviewbase.cpp"/>
     <File Name="taskpanel.h"/>
-    <File Name="taskbasepanel.cpp"/>
-    <File Name="taskbasepanel.h"/>
     <File Name="taskpanel.cpp"/>
     <File Name="errorstab.h"/>
     <File Name="errorstab.cpp"/>
@@ -500,7 +498,7 @@
   </Dependencies>
   <Settings Type="Executable">
     <Configuration Name="Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="../Runtime/CodeLiteUR" IntermediateDirectory="./ReleaseUnicode" Command="./CodeLiteUD" CommandArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/codelite" IntermediateDirectory="./ReleaseUnicode" Command="./codelite" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;$(shell pkg-config --cflags gtk+-2.0);-Wall;-fno-strict-aliasing">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>

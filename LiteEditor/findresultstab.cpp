@@ -267,12 +267,15 @@ void FindResultsTab::OnSearchCancel(wxCommandEvent &e)
 void FindResultsTab::OnClearAll(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
+    if (m_recv != NULL) {
+        SearchThreadST::Get()->StopSearch();
+    }
     Clear();
 }
 
 void FindResultsTab::OnClearAllUI(wxUpdateUIEvent& e)
 {
-    e.Enable(m_sci != m_recv && m_sci->GetLength() > 0);
+    e.Enable(m_recv != NULL || m_sci->GetLength() > 0);
 }
 
 void FindResultsTab::OnRepeatOutput(wxCommandEvent &e)

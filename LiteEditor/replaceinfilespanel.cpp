@@ -47,9 +47,7 @@ END_EVENT_TABLE()
 ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxString &name)
     : FindResultsTab(parent, id, name, 1)
 {
-	wxSizer *mainSizer = GetSizer();
 
-	wxBoxSizer *vertSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *horzSizer = new wxBoxSizer(wxHORIZONTAL);
 
 	wxButton *unmark = new wxButton(this, XRCID("unmark_all"), wxT("&Unmark All"));
@@ -70,9 +68,11 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 	m_progress = new wxGauge(this, wxID_ANY, 1);
 	horzSizer->Add(m_progress, 1, wxALIGN_CENTER_VERTICAL|wxALL|wxGA_SMOOTH, 5);
 
+	wxBoxSizer *vertSizer = new wxBoxSizer(wxVERTICAL);
 	vertSizer->Add(horzSizer, 0, wxEXPAND|wxTOP|wxBOTTOM);
 
 	// grab the base class scintilla and put our sizer in its place
+	wxSizer *mainSizer = GetSizer();
 	mainSizer->Detach(m_sci);
 	vertSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
 

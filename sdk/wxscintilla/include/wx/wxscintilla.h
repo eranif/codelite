@@ -3358,6 +3358,9 @@ public:
     bool GetUseAntiAliasing();
 
 	// ERAN IFRAH
+    void SetScrollWidthTracking(bool tracking);
+    bool GetScrollWidthTracking();
+    
 	// Modern indicators
 	void SetIndicatorCurrent(int indicator);
 	int  GetIndicatorCurrent();

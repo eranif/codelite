@@ -44,10 +44,8 @@ BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
     EVT_UPDATE_UI(XRCID("repeat_output"),    OutputTabWindow::OnRepeatOutputUI)
     EVT_UPDATE_UI(wxID_COPY,                 OutputTabWindow::OnCopyUI)
     
-    EVT_SCI_UPDATEUI(wxID_ANY,               OutputTabWindow::OnSciUpdateUI)
     EVT_SCI_DOUBLECLICK(wxID_ANY,            OutputTabWindow::OnMouseDClick)
     EVT_SCI_HOTSPOT_CLICK(wxID_ANY,          OutputTabWindow::OnHotspotClicked)
-    EVT_SCI_STYLENEEDED(wxID_ANY,            OutputTabWindow::OnStyleNeeded)
     EVT_SCI_MARGINCLICK(wxID_ANY,            OutputTabWindow::OnMarginClick)
 END_EVENT_TABLE()
 
@@ -133,6 +131,8 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
     sci->SetWrapStartIndent(4);
     sci->SetWrapVisualFlags(2);
     
+    sci->SetScrollWidthTracking(true);
+    
 	sci->SetReadOnly(true);
 }
 
@@ -184,6 +184,7 @@ void OutputTabWindow::Clear()
 {
 	m_sci->SetReadOnly(false);
 	m_sci->ClearAll();
+    m_sci->SetScrollWidth(1);
 	m_sci->SetReadOnly(true);
 }
 
@@ -290,39 +291,6 @@ void OutputTabWindow::OnCopyUI(wxUpdateUIEvent& e)
     e.Enable( m_sci->GetSelectionStart() - m_sci->GetSelectionEnd() != 0 );
 }
 
-void OutputTabWindow::OnSciUpdateUI(wxScintillaEvent& event)
-{
-	// recalculate and set the length of horizontal scrollbar
-	int maxPixel = 0;
-	int startLine = m_sci->GetFirstVisibleLine();
-	int endLine =  startLine + m_sci->LinesOnScreen();
-	if (endLine >= (m_sci->GetLineCount() - 1))
-		endLine--;
-
-	for (int i = startLine; i <= endLine; i++) {
-		int visibleLine = (int) m_sci->DocLineFromVisible(i);         //get actual visible line, folding may offset lines
-		int endPosition = m_sci->GetLineEndPosition(visibleLine);      //get character position from begin
-		int beginPosition = m_sci->PositionFromLine(visibleLine);      //and end of line
-
-		wxPoint beginPos = m_sci->PointFromPosition(beginPosition);
-		wxPoint endPos = m_sci->PointFromPosition(endPosition);
-
-		int curLen = endPos.x - beginPos.x;
-
-		if (maxPixel < curLen) //If its the largest line yet
-			maxPixel = curLen;
-	}
-
-	if (maxPixel == 0)
-		maxPixel++;                                 //make sure maxPixel is valid
-
-	int currentLength = m_sci->GetScrollWidth();               //Get current scrollbar size
-	if (currentLength != maxPixel) {
-		//And if it is not the same, update it
-		m_sci->SetScrollWidth(maxPixel);
-	}
-}
-
 void OutputTabWindow::OnMouseDClick(wxScintillaEvent& e)
 {
     e.Skip();
@@ -331,11 +299,6 @@ void OutputTabWindow::OnMouseDClick(wxScintillaEvent& e)
 void OutputTabWindow::OnHotspotClicked(wxScintillaEvent& e)
 {
     OnMouseDClick(e);
-}
-
-void OutputTabWindow::OnStyleNeeded(wxScintillaEvent& e)
-{
-    e.Skip();
 }
 
 void OutputTabWindow::OnMarginClick(wxScintillaEvent& e)

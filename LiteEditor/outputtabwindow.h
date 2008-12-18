@@ -47,6 +47,9 @@ protected:
 	
 	void CreateGUIControls();
     
+	virtual void AppendText(const wxString &text);
+	virtual void Clear();
+    
 	//Event handlers
     virtual void OnOutputScrolls  (wxCommandEvent   &e);
 	virtual void OnClearAll       (wxCommandEvent   &e);
@@ -62,10 +65,8 @@ protected:
     virtual void OnRepeatOutputUI (wxUpdateUIEvent  &e);
 	virtual void OnCopyUI         (wxUpdateUIEvent  &e);
     
-	virtual void OnSciUpdateUI    (wxScintillaEvent &e);
 	virtual void OnMouseDClick    (wxScintillaEvent &e);
 	virtual void OnHotspotClicked (wxScintillaEvent &e);
-	virtual void OnStyleNeeded    (wxScintillaEvent &e);
 	virtual void OnMarginClick    (wxScintillaEvent &e);
     
     DECLARE_EVENT_TABLE()
@@ -75,9 +76,6 @@ public:
 	~OutputTabWindow();
 	
 	const wxString &GetCaption() const {return m_name;}
-    
-	virtual void AppendText(const wxString &text);
-	virtual void Clear();
 };
 #endif // __outputtabwindow__
 

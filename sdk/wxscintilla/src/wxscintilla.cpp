@@ -2591,6 +2591,16 @@ void wxScintilla::SetLexerLanguage (const wxString& language) {
 
 // END of generated section
 //----------------------------------------------------------------------
+void wxScintilla::SetScrollWidthTracking(bool tracking)
+{
+    SendMsg(SCI_SETSCROLLWIDTHTRACKING, tracking);
+}
+
+bool wxScintilla::GetScrollWidthTracking()
+{
+    return SendMsg(SCI_GETSCROLLWIDTHTRACKING, 0, 0);
+}
+
 void wxScintilla::SetIndicatorCurrent(int indicator)
 {
 	SendMsg(SCI_SETINDICATORCURRENT, indicator, 0);

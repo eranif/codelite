@@ -72,7 +72,7 @@ private:
     static BuildTab *s_bt; // self reference for ColorLine to access the m_line* maps
 
     static int        ColorLine(int, const char *text, size_t &start, size_t &len);
-    static void       SetStyles(wxScintilla *sci, const BuildTabSettingsData &options);
+    static void       SetStyles(wxScintilla *sci);
     static bool       OpenFile (const LineInfo &info);
     static wxFileName FindFile (const wxString &fileName, const wxString &project);
     static wxFileName FindFile (const wxArrayString& files, const wxFileName &fileName);
@@ -100,7 +100,7 @@ private:
     void OnRepeatOutputUI     (wxUpdateUIEvent  &e);
     void OnNextBuildErrorUI   (wxUpdateUIEvent  &e);
 	void OnMouseDClick        (wxScintillaEvent &e);
-
+	void OnHotspotClicked	  (wxScintillaEvent &e);
 protected:
 	void Clear();
 	void AppendText(const wxString &text);

@@ -54,11 +54,13 @@ BuildTab::BuildTab(wxWindow *parent, wxWindowID id, const wxString &name)
     , m_errorCount(0)
     , m_warnCount(0)
 {
+	m_tb->RemoveTool(XRCID("repeat_output"));
+
     m_tb->AddTool(XRCID("advance_settings"), wxT("Set compiler colours..."),
                   wxXmlResource::Get()->LoadBitmap(wxT("colourise")), wxT("Set compiler colours..."));
     Connect(XRCID("advance_settings"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(BuildTab::OnCompilerColours), NULL, this);
 	m_tb->Realize();
-    
+
     wxTheApp->Connect(wxEVT_SHELL_COMMAND_STARTED,         wxCommandEventHandler(BuildTab::OnBuildStarted),    NULL, this);
     wxTheApp->Connect(wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, wxCommandEventHandler(BuildTab::OnBuildStarted),    NULL, this);
     wxTheApp->Connect(wxEVT_SHELL_COMMAND_ADDLINE,         wxCommandEventHandler(BuildTab::OnBuildAddLine),    NULL, this);
@@ -105,11 +107,14 @@ void BuildTab::Initialize()
     m_autoHide     = options.GetAutoHide();
 	m_skipWarnings = options.GetSkipWarnings();
 
-    SetStyles(m_sci, options);
+    SetStyles(m_sci);
 }
 
-void BuildTab::SetStyles(wxScintilla *sci, const BuildTabSettingsData &options)
+void BuildTab::SetStyles(wxScintilla *sci)
 {
+	BuildTabSettingsData options;
+	EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
+
     InitStyle(sci, wxSCI_LEX_GCC, true);
 
 	sci->StyleSetForeground(wxSCI_LEX_GCC_OUTPUT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
@@ -125,9 +130,10 @@ void BuildTab::SetStyles(wxScintilla *sci, const BuildTabSettingsData &options)
 	sci->StyleSetBackground(wxSCI_LEX_GCC_ERROR, options.GetErrorColourBg());
 
 	sci->StyleSetForeground(wxSCI_LEX_GCC_FILE_LINK, wxT("BLUE"));
-    
+
 	sci->StyleSetHotSpot(wxSCI_LEX_GCC_FILE_LINK, true);
-    
+	sci->StyleSetHotSpot(wxSCI_LEX_GCC_BUILDING, true);
+
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 	wxFont bold(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxFONTWEIGHT_BOLD);
@@ -275,7 +281,7 @@ void BuildTab::DoMarkAndOpenFile(std::map<int,LineInfo>::iterator i, bool clears
         m_sci->EnsureCaretVisible();
         m_sci->SetCurrentPos(m_sci->PositionFromLine(i->first));
         if (clearsel) {
-            m_sci->SetSelection(-1, m_sci->GetCurrentPos());
+            m_sci->SetSelection(-1, -1);
         }
         Frame::Get()->GetOutputPane()->GetErrorsTab()->MarkLine(i->first);
     }
@@ -440,9 +446,9 @@ void BuildTab::OnRepeatOutputUI(wxUpdateUIEvent& e)
 void BuildTab::OnBuildStarted(wxCommandEvent &e)
 {
     e.Skip();
-    
+
     m_building = true;
-    
+
     if (e.GetEventType() != wxEVT_SHELL_COMMAND_STARTED_NOCLEAN) {
         Clear();
     }
@@ -474,7 +480,7 @@ void BuildTab::OnBuildEnded(wxCommandEvent &e)
 
     m_building = false;
     AppendText(BUILD_END_MSG);
-    
+
     wxString term = wxString::Format(wxT("%d errors, %d warnings"), m_errorCount, m_warnCount);
     long elapsed = m_sw.Time() / 1000;
     if (elapsed > 10) {
@@ -574,3 +580,15 @@ void BuildTab::OnMouseDClick(wxScintillaEvent &e)
     DoMarkAndOpenFile(m_lineInfo.find(m_sci->LineFromPosition(e.GetPosition())), true);
 }
 
+void BuildTab::OnHotspotClicked(wxScintillaEvent& e)
+{
+	long pos = e.GetPosition();
+	int line = m_sci->LineFromPosition(pos);
+	int style = m_sci->GetStyleAt(pos);
+
+	if (style == wxSCI_LEX_GCC_BUILDING) {
+		m_sci->ToggleFold(line);
+	} else {
+		OnMouseDClick(e);
+	}
+}

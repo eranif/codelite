@@ -39,6 +39,8 @@ ErrorsTab::ErrorsTab(BuildTab *bt, wxWindow *parent, wxWindowID id, const wxStri
     : OutputTabWindow(parent, id, name)
     , m_bt(bt)
 {
+	m_tb->RemoveTool(XRCID("repeat_output"));
+	m_tb->AddSeparator();
     m_tb->AddCheckTool(XRCID("show_errors"), wxT("Errors"), wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")), wxNullBitmap, wxT("Show build errors"));
     m_tb->ToggleTool(XRCID("show_errors"), true);
 
@@ -155,7 +157,8 @@ void ErrorsTab::OnRedisplayLines(wxCommandEvent& e)
 
 void ErrorsTab::OnMouseDClick(wxScintillaEvent &e)
 {
-    m_sci->SetSelection(-1, m_sci->GetCurrentPos());
+	// remove any selection
+    m_sci->SetSelection(-1, -1);
     std::map<int,int>::iterator i = m_lineMap.find(m_sci->LineFromPosition(e.GetPosition()));
     if (i != m_lineMap.end()) {
         std::map<int,BuildTab::LineInfo>::iterator m = m_bt->m_lineInfo.find(i->second);
@@ -187,3 +190,15 @@ void ErrorsTab::OnRepeatOutputUI(wxUpdateUIEvent& e)
     m_bt->OnRepeatOutputUI(e);
 }
 
+void ErrorsTab::OnHotspotClicked(wxScintillaEvent& e)
+{
+	long pos = e.GetPosition();
+	int line = m_sci->LineFromPosition(pos);
+	int style = m_sci->GetStyleAt(pos);
+	wxLogMessage(wxString::Format(wxT("ErrorsTab::OnHotspotClicked, style=%d"), style));
+	if (style == wxSCI_LEX_FIF_FILE) {
+		m_sci->ToggleFold(line);
+	} else {
+		OnMouseDClick(e);
+	}
+}

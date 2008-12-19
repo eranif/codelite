@@ -36,16 +36,19 @@ void BreakptPropertiesDlg::EnterBPData( const BreakpointInfo &bp )
 			m_checkBreakMemory->SetValue(true);
 			m_textBreakMemory->Clear();
 			*m_textBreakMemory << bp.memory_address;
+			whichBreakcheck = wbc_memory;
 		} else {
 			m_textFilename->SetValue(bp.file);
 			if (bp.lineno != -1) {
 				m_checkLineno->SetValue(true);
 				m_textLineno->Clear();
 				*m_textLineno << bp.lineno;
+				whichBreakcheck = wbc_line;
 			} else if (!bp.function_name.IsEmpty()) {
 				m_checkBreakFunction->SetValue(true);
 				m_textFunctionname->SetValue(bp.function_name);
 				m_checkRegex->SetValue(bp.regex == true);
+				whichBreakcheck = wbc_function;
 			}
 		}
 	}
@@ -98,6 +101,9 @@ void BreakptPropertiesDlg::EndModal( int retCode )
 			}
 			b.regex = m_checkRegex->IsChecked();
 			b.file = m_textFilename->GetValue();
+			// Reset other data, so that it'll be recognised as a function bp
+			b.lineno = -1;
+			b.memory_address = -1;
 			break;
 
 		case wbc_memory:

@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "globals.h"
+#include "plugin.h"
 #include <wx/regex.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/wxscintilla.h>
@@ -468,6 +470,9 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 		}
 	}
 	m_sw.Start();
+
+	// notify the plugins that the build had started
+	PostCmdEvent(wxEVT_BUILD_STARTED);
 }
 
 void BuildTab::OnBuildAddLine ( wxCommandEvent &e )
@@ -517,6 +522,9 @@ void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 	}
 
 	MarkEditor ( Frame::Get()->GetMainBook()->GetActiveEditor() );
+
+	// notify the plugins that the build had started
+	PostCmdEvent(wxEVT_BUILD_ENDED);
 }
 
 void BuildTab::OnWorkspaceLoaded ( wxCommandEvent &e )

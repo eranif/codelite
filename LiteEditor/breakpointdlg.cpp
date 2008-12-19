@@ -121,6 +121,7 @@ void BreakpointDlg::OnItemActivated(wxListEvent &e)
 
 void BreakpointDlg::OnItemRightClick(wxListEvent& e)
 {
+	m_selectedItem = e.m_itemIndex;
 	wxCommandEvent c;
 	m_selectedItem = e.m_itemIndex;
 	OnEdit(c);
@@ -133,7 +134,15 @@ void BreakpointDlg::OnEdit(wxCommandEvent& e)
 		return;
 	}
 
-	ManagerST::Get()->GetBreakpointsMgr()->EditBreakpoint(m_selectedItem);
+	bool bpExist;
+	ManagerST::Get()->GetBreakpointsMgr()->EditBreakpoint(m_selectedItem, bpExist);
+
+	if(!bpExist){
+		// the breakpoint does not exist! remove it from the UI as well
+		m_listCtrlBreakpoints->DeleteItem(m_selectedItem);
+		m_selectedItem = wxNOT_FOUND;
+	}
+
 	Initialize();	// Make any changes visible
 }
 

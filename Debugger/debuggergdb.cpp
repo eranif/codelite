@@ -297,7 +297,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 		//keep the list of breakpoints to be added
 		m_bpList = bpList;
 		SetBreakpoints();
-	
+
 		if (m_info.breakAtWinMain) {
 			//try also to set breakpoint at WinMain
 			WriteCommand(wxT("-break-insert main"), NULL);
@@ -505,7 +505,7 @@ bool DbgGdb::Break(BreakpointInfo& bp)
 														command << bp.watchpt_data; break;
 
 		case BP_type_tempbreak:	command = wxT("tbreak "); break;
-		
+
 		case BP_type_condbreak:	// This starts like a normal break. Any condition is added below
 		case BP_type_break:
 		  default: 							// Should be standard breakpts. But if someone tries to make an ignored temp bp
@@ -516,24 +516,28 @@ bool DbgGdb::Break(BreakpointInfo& bp)
 	if (bp.memory_address != -1) {
 			// Memory is easy: just prepend *. gdb copes happily with (at least) hex or decimal
 		command << wxT('*') << bp.memory_address;
-		
+
 	} else if (bp.bp_type != BP_type_watchpt) {
 			// Function and Lineno locations can/should be prepended by a filename (but see later)
 			command << wxT("\"");
 			if (! tmpfileName.IsEmpty()) {
 				tmpfileName.Append(wxT(":"));
 			}
-			
+
 			if (bp.lineno != -1) {
 				// Common-or-garden way using a line-number
 				command << tmpfileName << bp.lineno;
-				
+
 			} else if (! bp.function_name.IsEmpty()) {
 				// There are 2 ways to set breakpoints on a function name:
 				if (bp.regex) {
-				// If the name is a regex, make an unconditional, non-temp rbreak, even if bp.bp_type said otherwise
+					// If the name is a regex, make an unconditional, non-temp rbreak, even if bp.bp_type said otherwise
 					command = wxT("rbreak ");
-				} 
+#ifdef __WXGTK__
+					command << wxT("\"");
+#endif
+				}
+#ifdef __WXGTK__
 				// afaict, gdb can't cope with filepath:MyClass::SomeMethod
 				// It's happy with MyClass::SomeMethod or Function or filepath:Function
 				// Perhaps it's because some idiot might have different functions called Foo() in different files,
@@ -541,19 +545,28 @@ bool DbgGdb::Break(BreakpointInfo& bp)
 				if (bp.function_name.Find(wxT("::")) == wxNOT_FOUND) {
 					command << tmpfileName;
 				}
+#endif
 				command << bp.function_name;
 			}
 	}
-	
+
 	if (!bp.conditions.IsEmpty()) {
 		command << wxT(" if ") << bp.conditions;
 	}
-	
+
 	if ((bp.bp_type != BP_type_watchpt) && (bp.memory_address == -1)) {
+
 		// gdb can't cope with quotes round memory addresses, so we didn't open one for it earlier
-		command << wxT("\"");
+		if(bp.regex){
+#ifdef __WXGTK__
+			// add closing quotations only on GTK
+			command << wxT("\"");
+#endif
+		} else {
+			command << wxT("\"");
+		}
 	}
-	
+
 	if (m_info.enableDebugLog) {
 		m_observer->UpdateAddLine(command);
 	}
@@ -569,7 +582,7 @@ bool DbgGdb::SetIgnoreLevel(const int bid, const int ignorecount)
 
 	wxString command(wxT("ignore "));
 	command << bid << wxT(" ") << ignorecount;
-	
+
 	if (m_info.enableDebugLog) {
 		m_observer->UpdateAddLine(command);
 	}
@@ -588,7 +601,7 @@ bool DbgGdb::SetEnabledState(const int bid, const bool enable)
 		command = wxT("enable ");
 	}
 	command << bid;
-	
+
 	if (m_info.enableDebugLog) {
 		m_observer->UpdateAddLine(command);
 	}
@@ -604,7 +617,7 @@ bool DbgGdb::SetCondition(const BreakpointInfo& bp)
 
 	wxString command(wxT("condition "));
 	command << bp.debugger_id << wxT(" ") << bp.conditions;
-	
+
 	if (m_info.enableDebugLog) {
 		m_observer->UpdateAddLine(command);
 	}
@@ -620,7 +633,7 @@ bool DbgGdb::SetCommands(const BreakpointInfo& bp)
 
 	wxString command(wxT("commands "));
 	command << bp.debugger_id << wxT('\n') << bp.commandlist << wxT("\nend");
-	
+
 	if (m_info.enableDebugLog) {
 		m_observer->UpdateAddLine(command);
 	}
@@ -913,7 +926,7 @@ void DbgGdb::Poke()
 				continue;
 			}
 			m_observer->UpdateAddLine(line);
-			
+
 			// Let's see if we've caught a just-set breakpoint
 			// That would be a "Breakpoint 6 at 0x123456: file ./MyFoo.cpp, line 123" message
 			// or a just-set watchpoint

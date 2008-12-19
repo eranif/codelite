@@ -131,7 +131,7 @@ bool BreakptMgr::GetMatchingBreakpoints(std::vector<BreakpointInfo>& li, const w
 }
 
 	// Delete all line-type breakpoint markers in all editors
-	// Done before refreshing after a delete, lest it was the last bp in a file
+	// Done before refreshing after a delete or edit, lest it was the last bp in a file
 void BreakptMgr::DeleteAllBreakpointMarkers()
 {
 	std::set<wxString> filenames = GetFilesWithBreakpointMarkers();
@@ -292,6 +292,12 @@ bool BreakptMgr::ToggleEnabledStateByLineno(const wxString& file, const int line
 	}
 
 	int index = FindBreakpointById(bid);
+
+	// sanity
+	if(index < 0 || index >= (int)m_bps.size()){
+		return false;
+	}
+
 	if (! SetBPEnabledState(bid, !m_bps.at(index).is_enabled)) {
 		return false;
 	}
@@ -317,8 +323,13 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
 				} else {
 					msg = _("Breakpoint creation unsuccessful");
 				}
-				Frame::Get()->SetStatusMessage(msg, 0);
+
+				// add message to the debugger tab
+				ManagerST::Get()->UpdateAddLine(msg);
 				m_bps.erase(iter);
+
+				// update the UI as well
+				Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 				return;
 			}
 			// Otherwise store the valid debugger_id
@@ -341,7 +352,9 @@ bool BreakptMgr::IgnoreByLineno(const wxString& file, const int lineno)
 	}
 
 	int index = FindBreakpointById(bid);
-	if (index == wxNOT_FOUND) {
+
+	// sanity
+	if(index < 0 || index >= (int)m_bps.size()){
 		return false;
 	}
 
@@ -378,11 +391,19 @@ void BreakptMgr::EditBreakpointByLineno(const wxString& file, const int lineno)
 		return;
 	}
 
-	EditBreakpoint(index);
+	bool dummy;
+	EditBreakpoint(index, dummy);
 }
 
-void BreakptMgr::EditBreakpoint(int index)
+void BreakptMgr::EditBreakpoint(int index, bool &bpExist)
 {
+	// sanity
+	bpExist = true;
+	if(index < 0 || index >= (int)m_bps.size()){
+		bpExist = false;
+		return;
+	}
+
 	BreakpointInfo bp = m_bps.at(index);
 	BreakptPropertiesDlg dlg(NULL);
 	wxString title;
@@ -400,11 +421,12 @@ void BreakptMgr::EditBreakpoint(int index)
 
 	dlg.EnterBPData(bp);
 	if (dlg.ShowModal() != wxID_OK) {
-		return;
+		return ;
 	}
+
 	SetBestBPType(dlg.b);	// The edited data's available. Use it to determine the best bp_type
 	if (bp == dlg.b) {
-		return;
+		return ;
 	}
 
 	// We've got our altered dlg.b If the debugger's running, we can update it now
@@ -419,17 +441,17 @@ void BreakptMgr::EditBreakpoint(int index)
 			}
 		if (dlg.b.is_enabled != bp.is_enabled) {
 				if (! SetBPEnabledState(dlg.b.debugger_id, dlg.b.is_enabled)) {
-					return;
+					return ;
 				}
 			}
 		if (dlg.b.conditions != bp.conditions) {
 				if (! SetBPConditon(dlg.b)) {
-					return;
+					return ;
 				}
 			}
 		if (dlg.b.commandlist != bp.commandlist) {
 				if (! SetBPCommands(dlg.b)) {
-					return;
+					return ;
 				}
 			}
 		} else {
@@ -448,6 +470,7 @@ void BreakptMgr::EditBreakpoint(int index)
 
 	// Replace the old data with the new, in m_bps
 	m_bps.at(index) = dlg.b;
+	DeleteAllBreakpointMarkers();
 	RefreshBreakpointMarkers();
 }
 
@@ -523,13 +546,13 @@ int BreakptMgr::GetDesiredBreakpointIfMultiple(const wxString &fileName, const i
 	// Construct set of files containing bps
 std::set<wxString> BreakptMgr::GetFilesWithBreakpointMarkers()
 {
-	// Make a set of all filenames. Then iterate through them, deleting/reinserting the markers
+	// Make a set of all filenames containing a file-relevant variety of breakpoint
 	std::set<wxString> filenames;
 	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
 	for(; iter != m_bps.end(); ++iter) {
-		// If this bp is a lineno type, add its file to the set
+		// If this bp is a lineno or function type, add its file to the set
 		wxString fileName = iter->file;
-		if ((!fileName.IsEmpty()) && (iter->lineno != -1)) {
+		if ((!fileName.IsEmpty()) && (iter->memory_address == -1)) {
 			filenames.insert(fileName);
 		}
 	}

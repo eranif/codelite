@@ -81,17 +81,17 @@ enum MenuType {
 enum {
 	//clientData is NULL
 	wxEVT_INIT_DONE = 3450,
-    
+
     //clientData is editor config node name (wxString*)
     wxEVT_EDITOR_CONFIG_CHANGED,
-    
+
 	//clientData is NULL
 	wxEVT_WORKSPACE_LOADED,
     //clientData is NULL
 	wxEVT_WORKSPACE_CONFIG_CHANGED,
 	//clientData is NULL
     wxEVT_WORKSPACE_CLOSED,
-    
+
     //clientData is NULL
 	wxEVT_FILE_VIEW_INIT_DONE,
 	//clientData is NULL
@@ -100,7 +100,7 @@ enum {
 	wxEVT_FILE_EXP_INIT_DONE,
 	//clientData is NULL
 	wxEVT_FILE_EXP_REFRESHED,
-    
+
 	//clientData is list of files added to project (wxArrayString*)
 	wxEVT_PROJ_FILE_ADDED,
 	//clientData is list of files which have been removed (wxArrayString*)
@@ -109,10 +109,10 @@ enum {
 	wxEVT_PROJ_REMOVED,
 	//clientData is the project name (wxString*)
 	wxEVT_PROJ_ADDED,
-    
+
 	//clientData is the selected word (wxString*)
 	wxEVT_CCBOX_SELECTION_MADE,
-    
+
 	//clientData is fileName (wxString*)
 	wxEVT_FILE_SAVED,
     //clientData is list of files which have been retagged (std::vector<wxFileName>*)
@@ -123,13 +123,17 @@ enum {
 	wxEVT_SYNBOL_TREE_DELETE_ITEM,
 	//clientData is ParseThreadEventData*
 	wxEVT_SYNBOL_TREE_ADD_ITEM,
-    
+
     //clientData is active editor (IEditor*)
     wxEVT_ACTIVE_EDITOR_CHANGED,
     //clientData is closing editor (IEditor*)
     wxEVT_EDITOR_CLOSING,
     //clientData is NULL
     wxEVT_ALL_EDITORS_CLOSED,
+	//clientData is NULL
+	wxEVT_BUILD_STARTED,
+	//clientData is NULL
+	wxEVT_BUILD_ENDED
 };
 
 //------------------------------------------------------------------
@@ -215,7 +219,7 @@ public:
 		wxUnusedVar(type);
 		wxUnusedVar(menu);
 	};
-	
+
 	/**
 	 * @brief load image file from /path/to/install/plugins/resources/
 	 * @param name file name (name+extension)
@@ -224,7 +228,7 @@ public:
 	virtual wxBitmap LoadBitmapFile(const wxString &name, wxBitmapType type = wxBITMAP_TYPE_PNG) {
 		wxBitmap bmp;
 		wxString basePath(m_mgr->GetInstallDirectory() + wxT("/plugins/resources/"));
-	
+
 		bmp.LoadFile(basePath + name, type);
 		if(bmp.IsOk()) {
 			return bmp;

@@ -533,16 +533,13 @@ bool DbgGdb::Break(BreakpointInfo& bp)
 				if (bp.regex) {
 					// If the name is a regex, make an unconditional, non-temp rbreak, even if bp.bp_type said otherwise
 					command = wxT("rbreak ");
-#ifdef __WXGTK__
-					command << wxT("\"");
-#endif
 				}
 #ifdef __WXGTK__
 				// afaict, gdb can't cope with filepath:MyClass::SomeMethod
 				// It's happy with MyClass::SomeMethod or Function or filepath:Function
 				// Perhaps it's because some idiot might have different functions called Foo() in different files,
 				// but not different MyClass::Foo.s. Anyway, don't use the filepath if there's a :: in function_name
-				if (bp.function_name.Find(wxT("::")) == wxNOT_FOUND) {
+				if (bp.function_name.Find(wxT("::")) == wxNOT_FOUND && !bp.regex) {
 					command << tmpfileName;
 				}
 #endif
@@ -557,12 +554,7 @@ bool DbgGdb::Break(BreakpointInfo& bp)
 	if ((bp.bp_type != BP_type_watchpt) && (bp.memory_address == -1)) {
 
 		// gdb can't cope with quotes round memory addresses, so we didn't open one for it earlier
-		if(bp.regex){
-#ifdef __WXGTK__
-			// add closing quotations only on GTK
-			command << wxT("\"");
-#endif
-		} else {
+		if(!bp.regex){
 			command << wxT("\"");
 		}
 	}

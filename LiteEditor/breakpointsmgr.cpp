@@ -330,10 +330,15 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
 
 				// update the UI as well
 				Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+
 				return;
 			}
 			// Otherwise store the valid debugger_id
 			iter->debugger_id = debugger_id;
+
+			// update the UI as well
+			Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+
 			// Now the bp has the correct debugger_id, tell gdb about any extras e.g. ignore-count
 			//DoBreakpointExtras(*iter);
 			return;

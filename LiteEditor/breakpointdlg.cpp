@@ -122,6 +122,7 @@ void BreakpointDlg::OnItemActivated(wxListEvent &e)
 void BreakpointDlg::OnItemRightClick(wxListEvent& e)
 {
 	wxCommandEvent c;
+	m_selectedItem = e.m_itemIndex;
 	OnEdit(c);
 }
 

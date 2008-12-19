@@ -71,7 +71,7 @@ void BreakptPropertiesDlg::EndModal( int retCode )
 
 	long l;
 	wxString contents;
-	int selectedPage(wxNOT_FOUND);
+	int selectedPage = m_choicebook->GetSelection();
 	if (m_choicebook->GetPageText((size_t)selectedPage) == _("Watchpoint")) {
 		b.bp_type = BP_type_watchpt;
 		b.watchpoint_type = (WP_type)m_radioWatchtype->GetSelection();

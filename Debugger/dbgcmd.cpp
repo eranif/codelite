@@ -288,7 +288,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 			m_observer->UpdateGotControl(DBG_RECV_SIGNAL);
 		}
 	} else if (reason == wxT("exited-normally")) {
-		m_observer->UpdateAddLine(wxT("Program exited normally."));
+		m_observer->UpdateAddLine(_("Program exited normally."));
 
 		//debugee program exit normally
 		m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
@@ -299,7 +299,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 			message = line.Mid(where+12);
 			message = message.AfterFirst(wxT('"'));
 			message = message.BeforeFirst(wxT('"'));
-			message.Prepend(wxT("Function returned with value: "));
+			message.Prepend(_("Function returned with value: "));
 			m_observer->UpdateAddLine(message);
 		}
 
@@ -312,24 +312,77 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 	return true;
 }
 
+int DbgCmdHandlerBp::m_debuggerID = wxNOT_FOUND;
+
 bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 {
-	//parse the line, incase we got error, keep this breakpoint in the queue
+	//parse the line, in case we have an error, keep this breakpoint in the queue
 	if (line.StartsWith(wxT("^done"))) {
 		//remove this breakpoint from the breakpoint list
 		for (size_t i=0; i< m_bplist->size(); i++) {
-			BreakpointInfo bp = m_bplist->at(i);
-			if (bp.file == m_bp.file && bp.lineno == m_bp.lineno) {
+			BreakpointInfo b = m_bplist->at(i);
+			if (b == m_bp) {
 				m_bplist->erase(m_bplist->begin()+i);
 				break;
 			}
 		}
 	}
+	
+	// DbgGdb::Poke should have caught the id that gdb assigned to this breakpoint
+	// and stored it in m_debuggerID. Retrieve it, or wxNOT_FOUND if not available
+	int debugger_id = RetrieveDebuggerID();
+	m_observer->UpdateBpAdded(m_bp.internal_id, debugger_id);
+	if (debugger_id == -1) {
+		return true;	// If the bp wasn't matched, the most likely reason is that bp creation failed. So don't say it worked
+	}
+	
 	wxString msg;
-	msg << wxT("Successfully set breakpoint at: ") << m_bp.file << wxT(":") << m_bp.lineno;
+	switch(m_bpType) {
+		case BP_type_break:				msg = wxString::Format(_("Successfully set breakpoint %d at: "), debugger_id); break;
+		case BP_type_condbreak:		msg = wxString::Format(_("Successfully set conditional breakpoint %d at: "), debugger_id); break;
+		case BP_type_tempbreak:		msg = wxString::Format(_("Successfully set temporary breakpoint %d at: "), debugger_id); break;
+		case BP_type_watchpt:			switch(m_bp.watchpoint_type) {
+																case WP_watch:	msg = wxString::Format(_("Successfully set watchpoint %d watching: "), debugger_id); break;
+																case WP_rwatch:	msg = wxString::Format(_("Successfully set read watchpoint %d watching: "), debugger_id); break;
+																case WP_awatch:	msg = wxString::Format(_("Successfully set read/write watchpoint %d watching: "), debugger_id); break;
+															}
+	}
+	
+	if (m_bpType == BP_type_watchpt) {
+		msg <<  m_bp.watchpt_data;
+	} else if (m_bp.memory_address != -1) {
+		msg <<  wxT("address ") << m_bp.memory_address;
+	} else {
+		if (! m_bp.file.IsEmpty()) {
+			msg << m_bp.file << wxT(':');
+		}
+		if (! m_bp.function_name.IsEmpty()) {
+			msg << m_bp.function_name;
+		} else if (m_bp.lineno != -1) {
+			msg << m_bp.lineno;
+		}
+	}
+
 	m_observer->UpdateAddLine(msg);
-	m_observer->UpdateBpAdded();
 	return true;
+}
+
+//static 	
+void DbgCmdHandlerBp::StoreDebuggerID(const int debugger_id)
+{	// Store the value that will become BreakpointInfo::debugger_id
+	m_debuggerID = debugger_id;
+}
+
+//static 
+int DbgCmdHandlerBp::RetrieveDebuggerID()
+{
+	int id = wxNOT_FOUND;
+	if (m_debuggerID > 0) {
+		id = m_debuggerID;
+	}
+
+	m_debuggerID = wxNOT_FOUND; // 'Zero' m_debuggerID, so we won't find it again 
+	return id;
 }
 
 bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
@@ -687,4 +740,12 @@ bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line)
 
 	// continue execution
 	return m_debugger->Continue();
+}
+
+bool DbgCmdDisplayOutput::ProcessOutput(const wxString& line)
+{
+	// Hopefully, display whatever output gdb has generated, without pruning
+	m_observer->UpdateAddLine(line);
+
+	return true;
 }

@@ -294,10 +294,10 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 			ExecuteCmd(cmds.Item(i));
 		}
 
-		//keep the list of breakpoints
+		//keep the list of breakpoints to be added
 		m_bpList = bpList;
 		SetBreakpoints();
-
+	
 		if (m_info.breakAtWinMain) {
 			//try also to set breakpoint at WinMain
 			WriteCommand(wxT("-break-insert main"), NULL);
@@ -414,10 +414,7 @@ bool DbgGdb::WriteCommand(const wxString &command, DbgCmdHandler *handler)
 	wxString id = MakeId( );
 	cmd << id << command;
 
-	if(m_info.enableDebugLog) {
-		m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), cmd.c_str()));
-	}
-	if (!Write(cmd)) {
+	if (!ExecuteCmd(cmd)) {
 		return false;
 	}
 	RegisterHandler(id, handler);
@@ -475,33 +472,160 @@ bool DbgGdb::Next()
 void DbgGdb::SetBreakpoints()
 {
 	for (size_t i=0; i< m_bpList.size(); i++) {
-		BreakpointInfo bpinfo = m_bpList.at(i);
-		Break(bpinfo.file, bpinfo.lineno, false);
+	// Without the 'unnecessary' cast in the next line, bpinfo.bp_type is seen as (e.g.) 4 instead of BP_type_tempbreak, ruining switch statments :/
+		BreakpointInfo bpinfo = (BreakpointInfo)m_bpList.at(i);
+		if (Break(bpinfo)) {
+			if (bpinfo.ignore_number) {
+				SetIgnoreLevel(bpinfo.debugger_id, bpinfo.ignore_number);
+			}
+			if (! bpinfo.commandlist.IsEmpty()) {
+				SetCommands(bpinfo);
+			}
+			if (! bpinfo.is_enabled) {
+				SetEnabledState(bpinfo.debugger_id, false);
+			}
+			m_bpList.at(i).debugger_id = bpinfo.debugger_id;
+		}
 	}
 }
 
-bool DbgGdb::Break(const wxString &fileName, long lineno, bool temporary)
+bool DbgGdb::Break(BreakpointInfo& bp)
 {
-	wxFileName fn(fileName);
-	BreakpointInfo bp;
-	bp.file = fileName;
-	bp.lineno = lineno;
-
+	wxFileName fn(bp.file);
 	wxString tmpfileName(fn.GetFullPath());
 	tmpfileName.Replace(wxT("\\"), wxT("/"));
 
-	wxString command(wxT("break "));
-	if(temporary) {
-		command = wxT("tbreak ");
+	wxString command;
+	switch(bp.bp_type) {
+		case BP_type_watchpt:		switch(bp.watchpoint_type) {
+																	case WP_watch:		command = wxT("watch "); break;
+																	case WP_rwatch:		command = wxT("rwatch "); break;
+																	case WP_awatch:		command = wxT("awatch "); break;
+														}
+														command << bp.watchpt_data; break;
+
+		case BP_type_tempbreak:	command = wxT("tbreak "); break;
+		
+		case BP_type_condbreak:	// This starts like a normal break. Any condition is added below
+		case BP_type_break:
+		  default: 							// Should be standard breakpts. But if someone tries to make an ignored temp bp
+														// it won't have the BP_type_tempbreak type, so check again here
+														command =  (bp.is_temp ? wxT("tbreak ") : wxT("break ")); break;
 	}
 
-	tmpfileName.Prepend(wxT("\""));
-	command << tmpfileName << wxT(":") << lineno << wxT("\"");
+	if (bp.memory_address != -1) {
+			// Memory is easy: just prepend *. gdb copes happily with (at least) hex or decimal
+		command << wxT('*') << bp.memory_address;
+		
+	} else if (bp.bp_type != BP_type_watchpt) {
+			// Function and Lineno locations can/should be prepended by a filename (but see later)
+			command << wxT("\"");
+			if (! tmpfileName.IsEmpty()) {
+				tmpfileName.Append(wxT(":"));
+			}
+			
+			if (bp.lineno != -1) {
+				// Common-or-garden way using a line-number
+				command << tmpfileName << bp.lineno;
+				
+			} else if (! bp.function_name.IsEmpty()) {
+				// There are 2 ways to set breakpoints on a function name:
+				if (bp.regex) {
+				// If the name is a regex, make an unconditional, non-temp rbreak, even if bp.bp_type said otherwise
+					command = wxT("rbreak ");
+				} 
+				// afaict, gdb can't cope with filepath:MyClass::SomeMethod
+				// It's happy with MyClass::SomeMethod or Function or filepath:Function
+				// Perhaps it's because some idiot might have different functions called Foo() in different files,
+				// but not different MyClass::Foo.s. Anyway, don't use the filepath if there's a :: in function_name
+				if (bp.function_name.Find(wxT("::")) == wxNOT_FOUND) {
+					command << tmpfileName;
+				}
+				command << bp.function_name;
+			}
+	}
+	
+	if (!bp.conditions.IsEmpty()) {
+		command << wxT(" if ") << bp.conditions;
+	}
+	
+	if ((bp.bp_type != BP_type_watchpt) && (bp.memory_address == -1)) {
+		// gdb can't cope with quotes round memory addresses, so we didn't open one for it earlier
+		command << wxT("\"");
+	}
+	
 	if (m_info.enableDebugLog) {
 		m_observer->UpdateAddLine(command);
 	}
 
-	return WriteCommand(command, new DbgCmdHandlerBp(m_observer, bp, &m_bpList));
+	return WriteCommand(command, new DbgCmdHandlerBp(m_observer, bp, &m_bpList, bp.bp_type));
+}
+
+bool DbgGdb::SetIgnoreLevel(const int bid, const int ignorecount)
+{
+	if (bid == -1) {	// Sanity check
+		return false;
+	}
+
+	wxString command(wxT("ignore "));
+	command << bid << wxT(" ") << ignorecount;
+	
+	if (m_info.enableDebugLog) {
+		m_observer->UpdateAddLine(command);
+	}
+
+	return WriteCommand(command, NULL);
+}
+
+bool DbgGdb::SetEnabledState(const int bid, const bool enable)
+{
+	if (bid == -1) {	// Sanity check
+		return false;
+	}
+
+	wxString command(wxT("disable "));
+	if (enable) {
+		command = wxT("enable ");
+	}
+	command << bid;
+	
+	if (m_info.enableDebugLog) {
+		m_observer->UpdateAddLine(command);
+	}
+
+	return WriteCommand(command, NULL);
+}
+
+bool DbgGdb::SetCondition(const BreakpointInfo& bp)
+{
+	if (bp.debugger_id == -1) {	// Sanity check
+		return false;
+	}
+
+	wxString command(wxT("condition "));
+	command << bp.debugger_id << wxT(" ") << bp.conditions;
+	
+	if (m_info.enableDebugLog) {
+		m_observer->UpdateAddLine(command);
+	}
+
+	return WriteCommand(command, NULL);
+}
+
+bool DbgGdb::SetCommands(const BreakpointInfo& bp)
+{
+	if (bp.debugger_id == -1) {	// Sanity check
+		return false;
+	}
+
+	wxString command(wxT("commands "));
+	command << bp.debugger_id << wxT('\n') << bp.commandlist << wxT("\nend");
+	
+	if (m_info.enableDebugLog) {
+		m_observer->UpdateAddLine(command);
+	}
+
+	return WriteCommand(command, NULL);
 }
 
 bool DbgGdb::Continue()
@@ -586,12 +710,10 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 	wxString id = MakeId( );
 	cmd << id << command;
 	//send the command to gdb
-	if(m_info.enableDebugLog) {
-		m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), cmd.c_str()));
-	}
-	if (!Write(cmd)) {
+	if (!ExecuteCmd(cmd)) {
 		return false;
 	}
+
 	bool miCommand(false);
 	wxString trimmedCommand(command);
 
@@ -791,6 +913,29 @@ void DbgGdb::Poke()
 				continue;
 			}
 			m_observer->UpdateAddLine(line);
+			
+			// Let's see if we've caught a just-set breakpoint
+			// That would be a "Breakpoint 6 at 0x123456: file ./MyFoo.cpp, line 123" message
+			// or a just-set watchpoint
+			// which might be a "Hardware watchpoint 7: myint" message
+			// or, if hardware ones aren't available: "Watchpoint 8: myint"
+			static wxRegEx reBreak(wxT("^Breakpoint ([0-9]+)"));
+			static wxRegEx reWatch(wxT("[Ww]atchpoint ([0-9]+)"));
+			static wxRegEx reGetBreakNo(wxT("[0-9]+"));
+			wxString matchedpart;
+			if (reBreak.Matches(line)) {
+				matchedpart = reBreak.GetMatch(line);
+			} else if (reWatch.Matches(line)) {
+				matchedpart = reWatch.GetMatch(line);
+			}
+			if (! matchedpart.IsEmpty()) {
+				if (reGetBreakNo.Matches(matchedpart)) {
+					wxString number = reGetBreakNo.GetMatch(matchedpart);
+					long id; if (number.ToLong(&id)) {
+						DbgCmdHandlerBp::StoreDebuggerID(id);
+					}
+				}
+			}
 
 		} else if (reCommand.Matches(line)) {
 
@@ -1162,7 +1307,7 @@ bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output
 					// convert the hex string into real value
 					if(currentToken.ToLong(&v, 16)) {
 
-						char ch = (char)v;
+					//	char ch = (char)v;
 						if(wxIsprint((wxChar)v) || (wxChar)v == ' ') {
 							if(v == 9){ //TAB
 								v = 32; //SPACE
@@ -1217,3 +1362,4 @@ bool DbgGdb::SetMemory(const wxString& address, size_t count, const wxString& he
 
 	return ExecuteCmd(cmd);
 }
+

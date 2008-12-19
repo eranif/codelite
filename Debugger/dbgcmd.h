@@ -84,16 +84,21 @@ public:
 };
 
 class DbgCmdHandlerBp : public DbgCmdHandler {
-	BreakpointInfo m_bp;
+	const BreakpointInfo m_bp;
 	std::vector< BreakpointInfo > *m_bplist;
+	int m_bpType; // BP_type_break by default
+	static int m_debuggerID;
 	
 public:
-	DbgCmdHandlerBp(IDebuggerObserver *observer, BreakpointInfo bp, std::vector< BreakpointInfo > *bplist) 
+	DbgCmdHandlerBp(IDebuggerObserver *observer, BreakpointInfo bp, std::vector< BreakpointInfo > *bplist, int bptype = BP_type_break) 
 	: DbgCmdHandler(observer)
 	, m_bp(bp) 
 	, m_bplist(bplist)
+	, m_bpType(bptype)
 	{}
 	
+	static void StoreDebuggerID(const int debugger_id);	// Store the int that will become BreakpointInfo::debugger_id 
+	static int RetrieveDebuggerID();
 	virtual ~DbgCmdHandlerBp(){}
 	virtual bool ProcessOutput(const wxString &line);
 };
@@ -160,6 +165,14 @@ class DbgCmdSelectFrame : public DbgCmdHandler {
 public:
 	DbgCmdSelectFrame(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
 	virtual ~DbgCmdSelectFrame(){}
+	virtual bool ProcessOutput(const wxString & line);
+};
+
+// Used for Ignore etc
+class DbgCmdDisplayOutput : public DbgCmdHandler {
+public:
+	DbgCmdDisplayOutput(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
+	virtual ~DbgCmdDisplayOutput(){}
 	virtual bool ProcessOutput(const wxString & line);
 };
 #endif //DBGCMD_H

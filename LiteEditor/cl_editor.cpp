@@ -83,9 +83,15 @@
 	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
 #endif
 
-//debugger line marker xpm
-extern char *arrow_right_green_xpm[];
-extern char *stop_xpm[];
+//debugger line marker xpms
+extern const char *arrow_right_green_xpm[];
+extern const char *stop_xpm[];		// Breakpoint
+extern const char *BreakptDisabled[];
+extern const char *BreakptCommandList[];
+extern const char *BreakptCommandListDisabled[];
+extern const char *BreakptIgnore[];
+extern const char *ConditionalBreakpt[];
+extern const char *ConditionalBreakptDisabled[];
 
 extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
@@ -152,6 +158,9 @@ LEditor::LEditor(wxWindow* parent)
 	SetSyntaxHighlight();
 	CmdKeyClear(wxT('D'), wxSCI_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
 	Connect(wxEVT_SCI_DWELLSTART, wxScintillaEventHandler(LEditor::OnDwellStart), NULL, this);
+
+	// Initialise the breakpt-marker array
+	FillBPtoMarkerArray();
 }
 
 LEditor::~LEditor()
@@ -170,6 +179,41 @@ void LEditor::SetSyntaxHighlight()
 	SetProperties();
 	UpdateColours();
 	m_context->SetActive();
+}
+ 
+// Fills the struct array that marries breakpoint type to marker and mask
+void LEditor::FillBPtoMarkerArray()
+{
+	BPtoMarker bpm; bpm.bp_type = BP_type_break;
+	bpm.marker = smt_breakpoint; bpm.mask = mmt_breakpoint; bpm.marker_disabled = smt_bp_disabled; bpm.mask_disabled = mmt_bp_disabled; 
+	m_BPstoMarkers.push_back(bpm);
+
+	BPtoMarker bpcmdm; bpcmdm.bp_type = BP_type_cmdlistbreak;
+	bpcmdm.marker = smt_bp_cmdlist; bpcmdm.mask = mmt_bp_cmdlist; bpcmdm.marker_disabled = smt_bp_cmdlist_disabled; bpcmdm.mask_disabled = mmt_bp_cmdlist_disabled; 
+	m_BPstoMarkers.push_back(bpcmdm);
+
+	BPtoMarker bpcondm; bpcondm.bp_type = BP_type_condbreak;
+	bpcondm.marker = smt_cond_bp; bpcondm.mask = mmt_cond_bp; bpcondm.marker_disabled = smt_cond_bp_disabled; bpcondm.mask_disabled = mmt_cond_bp_disabled; 
+	m_BPstoMarkers.push_back(bpcondm);
+
+	BPtoMarker bpignm; bpignm.bp_type = BP_type_ignoredbreak;
+	bpignm.marker = bpignm.marker_disabled = smt_bp_ignored; bpignm.mask = bpignm.mask_disabled = mmt_bp_ignored; // Enabled/disabled are the same
+	m_BPstoMarkers.push_back(bpignm);
+
+	bpm.bp_type = BP_type_tempbreak; m_BPstoMarkers.push_back(bpm);	// Temp is the same as non-temp
+}
+
+	// Looks for a struct for this breakpoint-type
+struct BPtoMarker LEditor::GetMarkerForBreakpt(enum BP_type bp_type)
+{
+	std::vector<BPtoMarker>::iterator iter = m_BPstoMarkers.begin();
+	for(; iter != m_BPstoMarkers.end(); ++iter){
+		if ((*iter).bp_type == bp_type) {
+			return *iter;
+		}
+	}
+	wxLogMessage(wxT("Breakpoint type not in vector!?"));
+	return *iter;
 }
 
 void LEditor::SetCaretAt(long pos)
@@ -365,9 +409,13 @@ void LEditor::SetProperties()
 	MarkerSetBackground(smt_bookmark, options->GetBookmarkBgColour());
 	MarkerSetForeground(smt_bookmark, options->GetBookmarkFgColour());
 
-	wxImage imgbp(stop_xpm);
-	wxBitmap bmpbp(imgbp);
-	MarkerDefineBitmap(0x8, bmpbp);
+	MarkerDefineBitmap(smt_breakpoint, wxBitmap(wxImage(stop_xpm)));
+	MarkerDefineBitmap(smt_bp_disabled, wxBitmap(wxImage(BreakptDisabled)));
+	MarkerDefineBitmap(smt_bp_cmdlist, wxBitmap(wxImage(BreakptCommandList)));
+	MarkerDefineBitmap(smt_bp_cmdlist_disabled, wxBitmap(wxImage(BreakptCommandListDisabled)));
+	MarkerDefineBitmap(smt_bp_ignored, wxBitmap(wxImage(BreakptIgnore)));
+	MarkerDefineBitmap(smt_cond_bp, wxBitmap(wxImage(ConditionalBreakpt)));
+	MarkerDefineBitmap(smt_cond_bp_disabled, wxBitmap(wxImage(ConditionalBreakptDisabled)));
 
 	//debugger line marker
 	wxImage img(arrow_right_green_xpm);
@@ -641,21 +689,17 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 
 void LEditor::OnMarginClick(wxScintillaEvent& event)
 {
+	int nLine = LineFromPosition(event.GetPosition());
 	switch (event.GetMargin()) {
 	case SYMBOLS_MARGIN_ID:
 		//symbols / breakpoints margin
 		{
-			int lineno = LineFromPosition(event.GetPosition());
-			BreakpointInfo bp;
-			bp.file = GetFileName().GetFullPath();
-			bp.lineno = lineno+1;
-			ToggleBreakpoint(bp);
+			ToggleBreakpoint(nLine+1);
 		}
 		break;
 	case FOLD_MARGIN_ID:
 		//fold margin
 		{
-			int nLine = LineFromPosition(event.GetPosition());
 			ToggleFold(nLine);
 
 			int caret_pos = GetCurrentPos();
@@ -855,8 +899,8 @@ void LEditor::OpenFile(const wxString &fileName, const wxString &project)
 //this function is called before the debugger startup
 void LEditor::UpdateBreakpoints()
 {
-	//remove all break points associated with this file
-	DebuggerMgr::Get().DelBreakpoints(GetFileName().GetFullPath());
+/*	//remove all break points associated with this file
+	ManagerST::Get()->GetBreakpointsMgr()->DelBreakpoints(GetFileName().GetFullPath());
 
 	//collect the actual breakpoint according to the markers set
 	int mask(0);
@@ -866,24 +910,11 @@ void LEditor::UpdateBreakpoints()
 		BreakpointInfo bp;
 		bp.file = GetFileName().GetFullPath();
 		bp.lineno = lineno + 1;
-		DebuggerMgr::Get().AddBreakpoint(bp);
+		ManagerST::Get()->GetBreakpointsMgr()->AddBreakpoint(bp);
 
 		lineno = MarkerNext(lineno+1, mask);
 	}
-	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-}
-
-void LEditor::DoSetBreakpoint(const BreakpointInfo &bp)
-{
-	if (!DebuggerMgr::Get().AddBreakpoint(bp)) {
-		wxMessageBox(_("Failed to insert breakpoint"));
-		return;
-	}
-	if (bp.lineno-1 < 0) {
-		return;
-	}
-	SetBreakpointMarker(bp.lineno-1);
-	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();*/
 }
 
 wxString LEditor::GetWordAtCaret()
@@ -1654,12 +1685,13 @@ void LEditor::ToggleMarker()
 		DelMarker();
 }
 
-bool LEditor::LineIsMarked(enum marker_mask_type markertype)
+bool LEditor::LineIsMarked(enum marker_mask_type mask)
 {
 	int nPos = GetCurrentPos();
 	int nLine = LineFromPosition(nPos);
 	int nBits = MarkerGet(nLine);
-	return (nBits & markertype ? true : false);
+	// 'mask' is a bitmap representing a bookmark, or a type of breakpt, or...
+	return (nBits & mask ? true : false);
 }
 
 void LEditor::DelAllMarkers()
@@ -1919,6 +1951,17 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 		wxString selectText = GetSelectedText();
 		wxPoint pt = event.GetPosition();
 		wxPoint clientPt = ScreenToClient(pt);
+		
+		// If the right-click is in the margin, provide a different context menu: bookmarks/breakpts
+    int margin = 0;
+    for (int n=0; n < FOLD_MARGIN_ID; ++n) {  // Assume a click anywhere to the left of the fold margin is for markers
+        margin += GetMarginWidth(n);
+    }
+    if ( clientPt.x < margin ) {
+			GotoPos( PositionFromPoint(clientPt) );
+			return DoBreakptContextMenu(clientPt);
+		}
+		
 		int closePos = PositionFromPointClose(clientPt.x, clientPt.y);
 		if (closePos != wxNOT_FOUND) {
 			if (!selectText.IsEmpty()) {
@@ -2130,25 +2173,134 @@ void LEditor::AddBrowseRecord(NavMgr *navmgr)
 	navmgr->Push(record);
 }
 
-void LEditor::DelBreakpoint(const BreakpointInfo &bp)
+void LEditor::DoBreakptContextMenu(wxPoint pt)
 {
-	if (DebuggerMgr::Get().DelBreakpoint(bp)) {
-		DelBreakpointMarker(bp.lineno-1);
+	int ToHereId = 0;
+	wxMenu menu;
+
+	// First, add/del bookmark
+	menu.Append(XRCID("toggle_bookmark"), LineIsMarked(mmt_bookmarks) ? wxString(_("Remove Bookmark")) : wxString(_("Add Bookmark")) );
+	menu.AppendSeparator();
+	
+  menu.Append(XRCID("insert_breakpoint"), wxString(_("Add Breakpoint")));
+  menu.Append(XRCID("insert_temp_breakpoint"), wxString(_("Add a Temporary Breakpoint")));
+	menu.Append(XRCID("insert_cond_breakpoint"), wxString(_("Add a Conditional Breakpoint..")));
+
+	std::vector<BreakpointInfo> lineBPs;
+	ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(lineBPs, GetFileName().GetFullPath(), GetCurrentLine()+1);
+	size_t count = lineBPs.size();
+	// What we show depends on whether there's already a bp here (or several)
+	if (count > 0) {
+		menu.AppendSeparator();
+		if (count == 1) {
+		menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
+		menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
+		menu.Append(XRCID("toggle_breakpoint_enabled_status"), 
+							lineBPs[0].is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
+		menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
+		} else if (count > 1) {
+			menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove a Breakpoint")));
+			menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore a Breakpoint")));
+			menu.Append(XRCID("toggle_breakpoint_enabled_status"), wxString(_("Toggle a breakpoint's enabled state")));
+			menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit a Breakpoint")));
+		}
 	}
+
+	if (ManagerST::Get()->DbgCanInteract()) {
+			menu.AppendSeparator();
+      ToHereId = wxNewId();	menu.Append(ToHereId, _("Run to here"));
+      menu.Connect(ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
+	}
+
+	PopupMenu(&menu, pt.x, pt.y);
+
+	if (ToHereId) menu.Disconnect(ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
+}
+
+void LEditor::AddOtherBreakpointType(wxCommandEvent &event)
+{
+	bool is_temp = (event.GetId() == XRCID("insert_temp_breakpoint"));
+	
+	wxString conditions;
+	if (event.GetId() == XRCID("insert_cond_breakpoint")) {
+		conditions = wxGetTextFromUser(wxT("Enter the condition statement"), wxT("Create Conditional Breakpoint"));
+	}
+
+	AddBreakpoint(-1, conditions, is_temp);
+}
+
+void LEditor::OnIgnoreBreakpoint()
+{
+	if (ManagerST::Get()->GetBreakpointsMgr()->IgnoreByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1)) {
+		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	}
+}
+
+void LEditor::OnEditBreakpoint()
+{
+	ManagerST::Get()->GetBreakpointsMgr()->EditBreakpointByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1);
 	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
 
-void LEditor::DelBreakpoint()
+void LEditor::ToggleBreakpointEnablement()
 {
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr && dbgr->IsRunning() && !ManagerST::Get()->DbgCanInteract()) {
-		return;
+	if (ManagerST::Get()->GetBreakpointsMgr()->ToggleEnabledStateByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1)) {
+		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	}
+}
+
+void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT("")*/, const bool is_temp/*=false*/)
+{
+	if (lineno == -1) {
+		lineno = GetCurrentLine()+1;
 	}
 
-	BreakpointInfo bp;
-	bp.file = GetFileName().GetFullPath();
-	bp.lineno = LineFromPosition(GetCurrentPos())+1;
-	DelBreakpoint(bp);
+	if (!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp)) {
+		wxMessageBox(_("Failed to insert breakpoint"));
+	} else {
+		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+		wxString message( _("Breakpoint successfully added") ), prefix;
+		if (is_temp) {
+			prefix = _("Temporary ");
+		} else if (!conditions.IsEmpty()) {
+			prefix = _("Conditional ");
+		} 
+		DoSetStatusMessage(prefix + message, 0);
+	}
+}
+
+void LEditor::DelBreakpoint(int lineno /*= -1*/)
+{
+	if (lineno == -1) {
+		lineno = GetCurrentLine()+1;
+	}
+	wxString message;
+	int result = ManagerST::Get()->GetBreakpointsMgr()->DelBreakpointByLineno(GetFileName().GetFullPath(), lineno);
+	switch(result) {
+		case true:				Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+											DoSetStatusMessage(_("Breakpoint successfully deleted"), 0);
+											return;
+		case wxID_CANCEL: return;
+		case false:				message = _("No breakpoint found on this line"); break;
+		 default:					message = _("Breakpoint deletion failed");
+	}
+
+	wxMessageBox(message, _("Breakpoint not deleted"), wxICON_ERROR);
+}
+
+void LEditor::ToggleBreakpoint(int lineno)
+{
+// Coming from OnMarginClick() means that lineno comes from the mouse position, not necessarily the current line
+	if (lineno == -1) {
+		lineno = GetCurrentLine()+1;
+	}
+	std::vector<BreakpointInfo> lineBPs;
+	if (ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(lineBPs, GetFileName().GetFullPath(), lineno) == 0) {
+		// This will (always?) be from a margin mouse-click, so assume it's a standard breakpt that's wanted
+		AddBreakpoint(lineno);
+	} else {
+		DelBreakpoint(lineno);
+	}
 }
 
 void LEditor::SetWarningMarker(int lineno)
@@ -2167,15 +2319,16 @@ void LEditor::DelAllCompilerMarkers()
     MarkerDeleteAll(smt_error);
 }
 
-void LEditor::SetBreakpointMarker(int lineno)
+void LEditor::SetBreakpointMarker(int lineno, BP_type bptype, bool is_disabled, bool has_multiple) // Maybe one day we'll display multiple bps differently
 {
-	MarkerAdd(lineno, 0x8);
-	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	struct BPtoMarker bpm = GetMarkerForBreakpt(bptype);
+	sci_marker_types markertype = is_disabled ? bpm.marker_disabled : bpm.marker;
+	MarkerAdd(lineno-1, markertype);
 }
 
-void LEditor::DelBreakpointMarker(int lineno)
+void LEditor::DelBreakpointMarker(int lineno, enum sci_marker_types markertype /*=smt_breakpoint*/)
 {
-	MarkerDelete(lineno, 0x8);
+	MarkerDelete(lineno, markertype);
 	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
 
@@ -2185,7 +2338,17 @@ void LEditor::DelAllBreakpointMarkers()
 	mask |= mmt_all_breakpoints;
 	int lineno = MarkerNext(0, mask);
 	while (lineno >= 0) {
-		MarkerDelete(lineno, 0x8);
+		// There may be >1 breakpoint-type on a line, and >1 instances of any type
+		// So loop thru each possible type, and delete each type in a 'while'
+		for (int bp_type = BP_FIRST_ITEM; bp_type <= BP_LAST_MARKED_ITEM; ++bp_type) {
+			struct BPtoMarker bpm = GetMarkerForBreakpt((BP_type)bp_type);
+			while (MarkerGet(lineno) & bpm.mask) {
+				MarkerDelete(lineno, bpm.marker);
+			}			
+			while (MarkerGet(lineno) & bpm.mask_disabled) {
+				MarkerDelete(lineno, bpm.marker_disabled);
+			}
+		}
 		long startPos = PositionFromLine(lineno);
 		long endPos   = GetLineEndPosition(lineno);
 		Colourise(startPos, endPos);
@@ -2205,42 +2368,6 @@ void LEditor::HighlightLine(int lineno)
 void LEditor::UnHighlightAll()
 {
 	MarkerDeleteAll(smt_indicator);
-}
-
-void LEditor::ToggleBreakpoint()
-{
-	BreakpointInfo bp;
-	bp.file = GetFileName().GetFullPath();
-	bp.lineno = LineFromPosition(GetCurrentPos())+1;
-	ToggleBreakpoint(bp);
-}
-
-void LEditor::ToggleBreakpoint(const BreakpointInfo &bp)
-{
-	bool contIsNeeded(false);
-
-	Manager *mgr = ManagerST::Get();
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr && dbgr->IsRunning() && !mgr->DbgCanInteract()) {
-		mgr->DbgDoSimpleCommand(DBG_PAUSE);
-		contIsNeeded = true;
-	}
-
-	//we are assuming that this call is made from a caller,
-	//so the line numbers needs to be adjusted (reduce by 1)
-	int mask = MarkerGet(bp.lineno-1);
-	if (mask & mmt_all_breakpoints) {
-		//we have breakpoint
-		DelBreakpoint(bp);
-	} else {
-		//no breakpoint at this line, add one
-		DoSetBreakpoint(bp);
-	}
-
-	if (contIsNeeded) {
-		//resume execution of the debugger
-		mgr->DbgStart();
-	}
 }
 
 void LEditor::AddDebuggerContextMenu(wxMenu *menu)
@@ -2828,7 +2955,7 @@ void LEditor::GetEditorState(LEditorState& s)
 	// collect breakpoints
 	int lineno = MarkerNext(0, mask);
 	while (lineno >= 0) {
-		s.breakpoints.push_back(lineno);
+		s.breakpoints.push_back(lineno);//*******************TODO: needs to save the type, and ?data
 		lineno = MarkerNext(lineno+1, mask);
 	}
 
@@ -2852,7 +2979,7 @@ void LEditor::SetEditorState(const LEditorState& s)
 
 	for (size_t i=0; i<s.breakpoints.size(); i++) {
 		int line_number = s.breakpoints.at(i);
-		MarkerAdd(line_number, 0x8);
+		MarkerAdd(line_number, smt_breakpoint);//*******************TODO: needs to use the correct type, and ?data
 	}
 	SetCaretAt(s.caretPosition);
 }
@@ -2862,7 +2989,9 @@ void LEditor::OnDbgRunToCursor(wxCommandEvent& event)
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 
 	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-		dbgr->Break(GetFileName().GetFullPath(), GetCurrentLine()+1, true);
+		BreakpointInfo bp; bp.Create(GetFileName().GetFullPath(), GetCurrentLine()+1, ManagerST::Get()->GetBreakpointsMgr()->GetNextID());
+		bp.bp_type = BP_type_tempbreak;
+		dbgr->Break(bp);
 		dbgr->Continue();
 	}
 }

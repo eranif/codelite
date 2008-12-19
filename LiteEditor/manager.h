@@ -43,6 +43,7 @@
 #include "filehistory.h"
 #include "browse_record.h"
 #include "wx/timer.h"
+#include "breakpointsmgr.h"
 #include "debuggermanager.h"
 #include "debuggerobserver.h"
 
@@ -62,8 +63,9 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 	AsyncExeCmd *m_asyncExeCmd;
 	FileHistory m_recentFiles;
 	FileHistory m_recentWorkspaces;
+	BreakptMgr* m_breakptsmgr;
 	bool m_dbgCanInteract;
-	bool m_dbgWaitingFirstBp;
+	bool m_dbgWaitingFirstBp;	// TODO: This doesn't seem to be used for anything :/
 	QuickWatchDlg *m_quickWatchDlg;
 	int m_frameLineno;
 	bool m_useTipWin;
@@ -142,6 +144,12 @@ public:
 	 * Free all singleton objects initialised in CodeLite
 	 */
 	void UnInitialize();
+
+	/*!
+	 * \brief
+	 * Return a pointer to the breakpoints manager
+	 */
+	BreakptMgr* GetBreakpointsMgr();
 
 	/*!
 	 * \brief
@@ -685,7 +693,7 @@ public:
 	void UpdateStopped();
 	void UpdateAddLine(const wxString &line);
 	void UpdateRemoteTargetConnected(const wxString &line);
-	void UpdateBpAdded();
+	void UpdateBpAdded(const int internal_id, const int debugger_id);
 	void UpdateFileLine(const wxString &file, int lineno);
 	void UpdateGotControl(DebuggerReasons reason);
 	void UpdateLostControl();
@@ -699,8 +707,6 @@ public:
 	//----------------------------------------------------------
 	void DbgStart(long pid = wxNOT_FOUND);
 	void DbgStop();
-	void DbgDeleteBreakpoint(const BreakpointInfo &bp);
-	void DbgDeleteAllBreakpoints();
 	void DbgDoSimpleCommand(int cmd);
 	void DbgMarkDebuggerLine(const wxString &fileName, int lineno);
 	void DbgUnMarkDebuggerLine();

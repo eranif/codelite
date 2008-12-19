@@ -35,6 +35,7 @@
 #include "dynamiclibrary.h"
 
 class EnvironmentConfig;
+class BreakptMgr;
 
 class DebuggersData : public SerializedObject
 {
@@ -58,8 +59,7 @@ class DebuggerMgr
 	wxString m_baseDir;
 	std::vector< clDynamicLibrary* > m_dl;
 	wxString m_activeDebuggerName;
-	wxEvtHandler *m_parent;
-	std::vector<BreakpointInfo> m_bps;
+//	wxEvtHandler *m_parent;  This doesn't seem to be used
 	DebuggersData m_debuggersData;
 	EnvironmentConfig *m_env;
 	
@@ -77,7 +77,7 @@ public:
 	void Initialize(wxEvtHandler *parent, EnvironmentConfig *env, const wxString &dir) 
 	{ 
 		m_baseDir = dir; 
-		m_parent = parent;
+//		m_parent = parent;  This doesn't seem to be used
 		m_env = env;
 	}
 
@@ -107,37 +107,10 @@ public:
 	 */
 	IDebugger *GetActiveDebugger();
 	
-	/**
-	 * Add a break point to the current debugger
-	 * all breakpoints will be pass to the debugger
-	 * once started
-	 */
-	bool AddBreakpoint(const BreakpointInfo &bp);
-
-	/**
-	 * Delete break point by file and line
-	 */
-	bool DelBreakpoint(const BreakpointInfo &bp);
-	
-	/**
-	 * return list of breakpoints
-	 */
-	void GetBreakpoints(std::vector<BreakpointInfo> &li);
-
-	// delete all breakpoint of fileName
-	void DelBreakpoints(const wxString &fileName);
-
-	void GetBreakpointsByFileName(const wxString &fileName, std::vector<BreakpointInfo> &li);
-	
-	/** 
-	 * remove all breakpoints
-	 */
-	void DelAllBreakpoints();
-
 	//get/set debugger information
 	void SetDebuggerInformation(const wxString &name, const DebuggerInformation &info);
 	bool GetDebuggerInformation(const wxString &name, DebuggerInformation &info);
-	
+
 	static DebuggerMgr& Get();
 	static void Free();
 };

@@ -162,6 +162,7 @@ Manager::Manager ( void )
 		, m_workspceClosing ( false )
 		, m_isShutdown ( false )
 {
+	m_breakptsmgr = new BreakptMgr;
 }
 
 Manager::~Manager ( void )
@@ -171,11 +172,17 @@ Manager::~Manager ( void )
 		delete m_shellProcess;
 		m_shellProcess = NULL;
 	}
+	delete m_breakptsmgr;
 }
 
 wxFrame *Manager::GetMainFrame()
 {
 	return Frame::Get();
+}
+
+BreakptMgr* Manager::GetBreakpointsMgr()
+{
+	return m_breakptsmgr;
 }
 
 bool Manager::IsWorkspaceOpen() const
@@ -1521,6 +1528,7 @@ void Manager::DbgStart ( long pid )
 	//set ourselves as the observer for the debugger class
 	dbgr->SetObserver ( this );
 
+/* TODO: Reimplement this when UpdateBreakpoints() updates only alterations, rather than delete/re-enter
 	//remove any breakpoints from previous runs
 	//and collect the breakpoints from the user
 	DebuggerMgr::Get().DelAllBreakpoints();
@@ -1535,10 +1543,10 @@ void Manager::DbgStart ( long pid )
 	if ( wxNOT_FOUND == pid ) {
 		Frame::Get()->GetMainBook()->UpdateBreakpoints();
 	}
-
+*/
 	//We can now get all the gathered breakpoints from the manager
 	std::vector<BreakpointInfo> bps;
-	DebuggerMgr::Get().GetBreakpoints ( bps );
+	GetBreakpointsMgr()->GetBreakpoints ( bps );
 
 	// read
 	wxArrayString dbg_cmds;
@@ -1561,6 +1569,10 @@ void Manager::DbgStart ( long pid )
 			return;
 		}
 	}
+
+	// Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
+	// so that it uses debugger_ids instead of internal_ids
+	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 	// let the active editor get the focus
 	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
@@ -1632,6 +1644,11 @@ void Manager::DbgStop()
 
 	DebugMessage ( _ ( "Debug session ended\n" ) );
 
+	// The list of breakpoints is still there, but their debugger_ids are now invalid
+	// So remove them. Then reInitialise the breakpt view, to use internal_ids
+	GetBreakpointsMgr()->ClearBP_debugger_ids();
+	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+
 	// update toolbar state
 	UpdateStopped();
 
@@ -1687,33 +1704,16 @@ void Manager::OnDebuggerWindow ( wxCommandEvent &e )
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( dbgr && dbgr->IsRunning() ) {
 		if ( e.GetEventType() == wxEVT_SHELLWIN_LINE_ENTERED ) {
+			bool contIsNeeded = GetBreakpointsMgr()->PauseDebuggerIfNeeded();
 			wxString cmd ( e.GetString() );
 			dbgr->ExecuteCmd ( cmd );
+			if (contIsNeeded) {
+				ManagerST::Get()->DbgStart();
+			}
 		} else if ( e.GetEventType() == wxEVT_SHELLWIN_CTRLC ) {
 			DbgDoSimpleCommand ( DBG_PAUSE );
 		}
 	}
-}
-
-void Manager::DbgDeleteBreakpoint ( const BreakpointInfo &bp )
-{
-	DebuggerMgr::Get().DelBreakpoint ( bp );
-	//update the editor
-	LEditor *editor = Frame::Get()->GetMainBook()->FindEditor ( bp.file );
-	if ( editor ) {
-		editor->DelBreakpointMarker ( bp.lineno-1 );
-	}
-}
-
-void Manager::DbgDeleteAllBreakpoints()
-{
-	if ( !DbgCanInteract() ) {
-		return;
-	}
-
-	DebuggerMgr::Get().DelAllBreakpoints();
-	//update the editor
-	Frame::Get()->GetMainBook()->DelAllBreakpointMarkers();
 }
 
 void Manager::DbgDoSimpleCommand ( int cmd )
@@ -1951,9 +1951,9 @@ void Manager::UpdateLostControl()
 	DebugMessage ( _ ( "Continuing...\n" ) );
 }
 
-void Manager::UpdateBpAdded()
+void Manager::UpdateBpAdded(const int internal_id, const int debugger_id)
 {
-
+	GetBreakpointsMgr()->SetBreakpointDebuggerID(internal_id, debugger_id);
 }
 
 void Manager::UpdateExpression ( const wxString &expression, const wxString &evaluated )

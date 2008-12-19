@@ -396,7 +396,24 @@ void DebuggerMenuHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &e
 	}
 
 	if (event.GetId() == XRCID("insert_breakpoint")) {
-		editor->ToggleBreakpoint();
+		editor->AddBreakpoint();
+	}
+	if ((event.GetId() == XRCID("insert_temp_breakpoint")) 
+			|| (event.GetId() == XRCID("insert_cond_breakpoint"))) {
+		editor->AddOtherBreakpointType(event);
+	}
+	if (event.GetId() == XRCID("delete_breakpoint")) {
+		editor->DelBreakpoint();
+	}
+	
+	if (event.GetId() == XRCID("toggle_breakpoint_enabled_status")) {
+		editor->ToggleBreakpointEnablement();
+	}	
+	if (event.GetId() == XRCID("ignore_breakpoint")) {
+		editor->OnIgnoreBreakpoint();
+	}	
+	if (event.GetId() == XRCID("edit_breakpoint")) {
+		editor->OnEditBreakpoint();
 	}
 }
 

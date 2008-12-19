@@ -343,6 +343,14 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
     EVT_MENU(XRCID("dbg_next"),                 Frame::OnDebugCmd)
     EVT_MENU(XRCID("show_cursor"),              Frame::OnDebugCmd)
     EVT_MENU(XRCID("insert_breakpoint"),        Frame::DispatchCommandEvent)
+		EVT_MENU(XRCID("insert_temp_breakpoint"),   Frame::DispatchCommandEvent)
+    EVT_MENU(XRCID("insert_cond_breakpoint"),   Frame::DispatchCommandEvent)
+    EVT_MENU(XRCID("edit_breakpoint"),          Frame::DispatchCommandEvent)
+    EVT_MENU(XRCID("show_breakpoint_dlg"),      Frame::DispatchCommandEvent)
+    EVT_MENU(XRCID("insert_watchpoint"),        Frame::DispatchCommandEvent)
+    EVT_MENU(XRCID("toggle_breakpoint_enabled_status"),  Frame::DispatchCommandEvent)
+    EVT_MENU(XRCID("ignore_breakpoint"),        Frame::DispatchCommandEvent)
+    EVT_MENU(XRCID("delete_breakpoint"),        Frame::DispatchCommandEvent)
     EVT_MENU(XRCID("quick_debug"),              Frame::OnQuickDebug)
 
     EVT_UPDATE_UI(XRCID("start_debugger"),      Frame::OnDebugUI)
@@ -3067,7 +3075,7 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 			DebuggerInformation dinfo;
 			DebuggerMgr::Get().GetDebuggerInformation(dlg->GetDebuggerName(), dinfo);
 			dinfo.breakAtWinMain = true;
-			DebuggerMgr::Get().DelAllBreakpoints();
+			//	ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints(); TODO: Reimplement this when UpdateBreakpoints() updates only alterations, rather than delete/re-enter
 
 			wxString dbgname = dinfo.path;
 			dbgname = EnvironmentConfig::Instance()->ExpandVariables(dbgname);
@@ -3076,13 +3084,18 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 			dbgr->SetObserver(ManagerST::Get());
 			dbgr->SetDebuggerInformation(dinfo);
 
-			GetMainBook()->UpdateBreakpoints();
+			//TODO: Reimplement this when UpdateBreakpoints() updates only alterations, rather than delete/re-enter
+			//GetMainBook()->UpdateBreakpoints();
 
 			// get an updated list of breakpoints
-			DebuggerMgr::Get().GetBreakpoints(bpList);
+			ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bpList);
 
 			dbgr->Start(dbgname, exepath, wd, bpList, cmds);
 			dbgr->Run(dlg->GetArguments(), wxEmptyString);
+			
+			// Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
+			// so that it uses debugger_ids instead of internal_ids
+			Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 			// and finally make sure that the debugger pane is visiable
 			ManagerST::Get()->ShowDebuggerPane();

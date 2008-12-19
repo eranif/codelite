@@ -37,6 +37,7 @@
 #include "browse_record.h"
 #include "navigationmanager.h"
 #include "debuggermanager.h"
+#include "breakpointsmgr.h"
 #include "plugin.h"
 
 class wxFindReplaceDialog;
@@ -59,6 +60,16 @@ class CCBox;
 			mmt_bp_ignored=0x800,  mmt_cond_bp=0x1000,mmt_bp_cmdlist=0x2000, mmt_breakpoint=0x4000, mmt_LAST_BP_TYPE=mmt_breakpoint,  mmt_all_breakpoints=0x7f00,   mmt_indicator=0x8000,
 			mmt_compiler=0x30000 /* masks compiler errors/warnings */
 		};
+		
+ /**
+ * @class BPtoMarker
+ * Holds which marker and mask are associated with each breakpoint type
+ */
+struct BPtoMarker {
+	enum BP_type bp_type;	// An enum of possible break/watchpoint types. In debugger.h
+	sci_marker_types marker;	marker_mask_type mask;
+	sci_marker_types marker_disabled;	marker_mask_type mask_disabled;
+};
 
 /**
  * @class LEditorState
@@ -98,6 +109,7 @@ class LEditor : public wxScintilla, public IEditor
 	ContextBasePtr m_context;
 	wxMenu *m_rightClickMenu;
 	std::vector<wxMenuItem*> m_dynItems;
+	std::vector<BPtoMarker> m_BPstoMarkers;
 
 	// static cache among editors to keep track of jumping between editors
 	static FindReplaceDialog *m_findReplaceDlg;
@@ -234,7 +246,7 @@ public:
 	//-----------------------------------------
 
 	// Is there currently a marker at the current line?
-	bool LineIsMarked(enum marker_mask_type markertype);
+	bool LineIsMarked(enum marker_mask_type mask);
 	// Toggle marker at the current line
 	void ToggleMarker();
 	// Delete all markers from the current document
@@ -321,29 +333,47 @@ public:
 
 	/**
 	 * toggle break point at the current line & file
-	 * the second version is using BreakpointInfo
 	 */
-	void ToggleBreakpoint();
-	void ToggleBreakpoint(const BreakpointInfo &bp);
+	void ToggleBreakpoint(int lineno = -1);
 
 	/**
-	 * remove breakpoint from current file and
-	 * from the carte line number
+	 * add a temporary or conditional break point at the current line & file
 	 */
-	void DelBreakpoint();
+	void AddOtherBreakpointType(wxCommandEvent &event);
 
 	/**
-	 * remove breakpoint from current file and
-	 * from the carte line number
+	 * toggle whether the break point at the current line & file is enabled
 	 */
-	virtual void DelBreakpoint(const BreakpointInfo &bp);
+	void ToggleBreakpointEnablement();
+	
+	/**
+	 * Ignore the break point at the current line & file
+	 */
+	void OnIgnoreBreakpoint();
+
+	/**
+	 * Edit a breakpoint in the BreakptProperties dialog
+	 */
+	void OnEditBreakpoint();
+
+	/**
+	 * Add a breakpoint at the current line & file
+	 * Optionally make it temporary or conditional
+	 */
+	void AddBreakpoint(int lineno = -1, const wxString& conditions = wxT(""), const bool is_temp = false);
+
+	/**
+	 * Delete the breakpoint at the current line & file, or lineno if from ToggleBreakpoint()
+	 */
+	void DelBreakpoint(int lineno = -1);
+	
 	virtual void UpdateBreakpoints();
 
 	//--------------------------------
 	// breakpoint visualisation
 	//--------------------------------
-	void SetBreakpointMarker(int lineno);
-	virtual void DelBreakpointMarker(int lineno);
+	void SetBreakpointMarker(int lineno, BP_type bptype, bool is_disabled, bool has_multiple);
+	virtual void DelBreakpointMarker(int linenoenum, sci_marker_types markertype = smt_breakpoint);
 	virtual void DelAllBreakpointMarkers();
 
 	virtual void HighlightLine(int lineno);
@@ -504,7 +534,8 @@ public:
 	wxString GetEolString();
 
 private:
-	void DoSetBreakpoint(const BreakpointInfo &bp);
+	void FillBPtoMarkerArray();
+	struct BPtoMarker GetMarkerForBreakpt(enum BP_type bp_type);
 	void SetProperties();
 	void DefineMarker(int marker, int markerType, wxColor fore, wxColor back);
 	void SetLineNumberWidth();
@@ -520,6 +551,7 @@ private:
 
 	void AddDebuggerContextMenu(wxMenu *menu);
 	void RemoveDebuggerContextMenu(wxMenu *menu);
+	void DoBreakptContextMenu(wxPoint clientPt);
 	void DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
 	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
 

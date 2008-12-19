@@ -707,6 +707,12 @@ resources.cpp: resources.xrc
     <Project Name="SymbolView"/>
     <Project Name="ContinuousBuild"/>
   </Dependencies>
+  <VirtualDirectory Name="Debugger">
+    <File Name="breakpointsmgr.h"/>
+    <File Name="breakpointpropertiesdlg.cpp"/>
+    <File Name="breakpointpropertiesdlg.h"/>
+    <File Name="breakpointsmgr.cpp"/>
+  </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
     <Project Name="wxscintilla"/>

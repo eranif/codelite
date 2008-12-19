@@ -64,7 +64,14 @@ MenuManager::MenuManager(void)
 	PushHandler(new FoldHandler(XRCID("toggle_fold")));
 	PushHandler(new FoldHandler(XRCID("fold_all")));
 	PushHandler(new DebuggerMenuHandler(XRCID("insert_breakpoint")));
+	PushHandler(new DebuggerMenuHandler(XRCID("insert_temp_breakpoint")));
+	PushHandler(new DebuggerMenuHandler(XRCID("insert_cond_breakpoint")));
+	PushHandler(new DebuggerMenuHandler(XRCID("insert_watchpoint")));
+	PushHandler(new DebuggerMenuHandler(XRCID("toggle_breakpoint_enabled_status")));
+	PushHandler(new DebuggerMenuHandler(XRCID("ignore_breakpoint")));
+	PushHandler(new DebuggerMenuHandler(XRCID("edit_breakpoint")));
 	PushHandler(new DebuggerMenuHandler(XRCID("delete_breakpoint")));
+	PushHandler(new DebuggerMenuHandler(XRCID("show_breakpoint_dlg")));
 }
 
 MenuManager::~MenuManager(void)

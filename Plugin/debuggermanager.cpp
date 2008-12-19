@@ -22,7 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "debuggermanager.h"
+#include "debuggermanager.h"
 #include "wx/filename.h"
 #include <wx/dir.h>
 #include <wx/log.h>
@@ -228,79 +228,7 @@ void DebuggerMgr::SetActiveDebugger(const wxString &name)
 	m_activeDebuggerName = name;
 }
 
-bool DebuggerMgr::AddBreakpoint(const BreakpointInfo &bp)
-{
-	IDebugger *dbgr = GetActiveDebugger();
-	if(dbgr && dbgr->IsRunning()){
-		dbgr->Break(bp.file, bp.lineno, false);
-	}
-	//if a breakpoint with this file and line already exist
-	//dont add it
-	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for(; iter != m_bps.end(); iter++){
-		BreakpointInfo b = *iter;
-		if(b.file == bp.file && b.lineno == bp.lineno){
-			return true;
-		}
-	}
-	m_bps.push_back(bp);
 
-	return true;
-}
-
-bool DebuggerMgr::DelBreakpoint(const BreakpointInfo &bp)
-{
-	//remove it from the debugger as well
-	IDebugger *dbgr = GetActiveDebugger();
-	if(dbgr && dbgr->IsRunning()){
-		dbgr->RemoveBreak(bp.file, bp.lineno);
-	}
-
-	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for(; iter != m_bps.end(); iter++){
-		BreakpointInfo b = *iter;
-		if(b.file == bp.file && b.lineno == bp.lineno){
-			m_bps.erase(iter);
-			break;
-		}
-	}
-	return true;
-}
-
-void DebuggerMgr::GetBreakpoints(std::vector<BreakpointInfo> &li)
-{
-	li = m_bps;
-}
-
-void DebuggerMgr::DelAllBreakpoints()
-{
-	IDebugger *dbgr = GetActiveDebugger();
-	if(dbgr){
-		dbgr->RemoveAllBreaks();
-	}
-	m_bps.clear();
-}
-
-void DebuggerMgr::DelBreakpoints(const wxString &fileName)
-{
-	int size = (int)m_bps.size();
-	for(int i = size-1; i >= 0; i--){
-		if(m_bps.at(i).file == fileName){
-			m_bps.erase(m_bps.begin()+i);
-		}
-	}
-}
-
-void DebuggerMgr::GetBreakpointsByFileName(const wxString &fileName, std::vector<BreakpointInfo> &li)
-{
-	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for(; iter != m_bps.end(); iter++){
-		BreakpointInfo b = *iter;
-		if(b.file == fileName){
-			li.push_back(b);
-		}
-	}
-}
 void DebuggerMgr::SetDebuggerInformation(const wxString &name, const DebuggerInformation &info)
 {
 	m_debuggersData.SetDebuggerInformation(name, info);
@@ -310,6 +238,3 @@ bool DebuggerMgr::GetDebuggerInformation(const wxString &name, DebuggerInformati
 {
 	return m_debuggersData.GetDebuggerInformation(name, info);
 }
-
-
-

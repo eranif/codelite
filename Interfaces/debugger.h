@@ -38,6 +38,14 @@ enum DebuggerCommands {
 	DBG_SHOW_CURSOR
 };
 
+	// Breakpoint types. If you add more, LEditor::FillBPtoMarkerArray will also need altering
+enum BP_type { /*Convenient return-codes*/ BP_type_invalid = -1, BP_type_none = 0, /*Real breakpoint-types*/ BP_FIRST_ITEM, BP_type_break = BP_FIRST_ITEM,
+							  BP_type_cmdlistbreak, BP_type_condbreak, BP_type_ignoredbreak, BP_type_tempbreak, BP_LAST_MARKED_ITEM = BP_type_tempbreak,
+								BP_type_watchpt, BP_LAST_ITEM = BP_type_watchpt 
+						 };
+	// Watchpoint subtypes: write,read and both
+enum WP_type { WP_watch, WP_rwatch, WP_awatch };
+
 //-------------------------------------------------------
 // Data structures used by the debugger
 //-------------------------------------------------------
@@ -56,7 +64,7 @@ struct StackEntry {
 	wxString line;
 };
 
-struct ThreadEntry {
+struct ThreadEntry{
 	bool 	 	active;
 	long 		dbgid;
 	wxString	more;
@@ -65,9 +73,53 @@ struct ThreadEntry {
 typedef std::vector<StackEntry> StackEntryArray;
 typedef std::vector<ThreadEntry> ThreadEntryArray;
 
-struct BreakpointInfo {
+class BreakpointInfo
+{
+public:
+	// Where the bp is: file/lineno, function name (e.g. main()) or the memory location
 	wxString file;
 	int lineno;
+	wxString watchpt_data;
+	wxString function_name;
+	bool regex;							// Is the function_name a regex?
+	int memory_address;
+	
+	// How to identify the bp. Because the debugger won't always be running, we need an internal id as well as the debugger's one
+	int internal_id;
+	int debugger_id;	// -1 signifies not set
+	
+	
+	enum BP_type bp_type;  // Is it a plain vanilla breakpoint, or a temporary one, or a watchpoint, or...
+	unsigned int ignore_number; // 0 means 'not ignored'. >0 is the number of times the bp must be hit before it becomes enabled
+	bool is_enabled;
+	bool is_temp;
+	enum WP_type watchpoint_type;	// If this is a watchpoint, holds which sort it is
+	wxString commandlist;
+	wxString conditions;
+
+	BreakpointInfo() : lineno(-1), regex(false), memory_address(-1), debugger_id(-1), bp_type(BP_type_break),
+											ignore_number(0), is_enabled(true), is_temp(false), watchpoint_type(WP_watch)	{}
+	BreakpointInfo(const BreakpointInfo& BI ){ *this = BI; }
+
+	bool IsConditional(){ return ! conditions.IsEmpty(); }
+	
+	void Create(wxString filename, int line, int int_id, int ext_id = -1) {
+		bp_type = BP_type_break; lineno = line; file = filename; internal_id = int_id; debugger_id = ext_id;
+	}	
+
+	BreakpointInfo& operator=(const BreakpointInfo& BI) {
+		file = BI.file; lineno = BI.lineno; function_name = BI.function_name; memory_address = BI.memory_address; bp_type = BI.bp_type;
+		watchpoint_type = BI.watchpoint_type; watchpt_data = BI.watchpt_data; commandlist = BI.commandlist; regex = BI.regex; is_temp = BI.is_temp;
+		internal_id = BI.internal_id; debugger_id = BI.debugger_id; is_enabled = BI.is_enabled; ignore_number = BI.ignore_number;conditions = BI.conditions;
+		return *this;
+	}
+
+	bool operator==(const BreakpointInfo& BI) {
+		return ((file == BI.file) && (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address)
+		&& (bp_type == BI.bp_type) &&  (watchpt_data == BI.watchpt_data)&& (is_enabled == BI.is_enabled)
+		&& (ignore_number == BI.ignore_number) && (conditions == BI.conditions) && (commandlist == BI.commandlist) && (is_temp == BI.is_temp)
+		&& (bp_type==BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) && (!function_name.IsEmpty() ? (regex == BI.regex) : true));
+	}
 };
 
 class DebuggerInformation
@@ -216,9 +268,9 @@ public:
 	 */
 	virtual bool StepOut() = 0;
 	/**
-	 * \brief set break point at given file and line. If the breakpoint was placed successfully, observer->UpdateBpAdded() will be invoked
+	 * \brief set break point at given file and line, or function
 	 */
-	virtual bool Break(const wxString &file, long lineno, bool temporary) = 0;
+	virtual bool Break(BreakpointInfo& bp) = 0;
 	/**
 	 * \brief remove breakpoint from given file and line
 	 */
@@ -231,6 +283,22 @@ public:
 	 * \brief clear all breakpoints set (gdb's 'clear' command)
 	 */
 	virtual bool RemoveAllBreaks() = 0;
+	/**
+	 * \brief Enable or Disable a breakpoint
+	 */
+	virtual bool SetEnabledState(const int bid, const bool enable) = 0;
+	/**
+	 * \brief Set this breakpoint's Ignore count
+	 */
+	 virtual bool SetIgnoreLevel(const int bid, const int ignorecount) = 0;
+	/**
+	 * \brief Set this breakpoint's condition
+	 */
+	 virtual bool SetCondition(const BreakpointInfo& bp) = 0;
+	/**
+	 * \brief Set a command-list for this breakpoint
+	 */
+	 virtual bool SetCommands(const BreakpointInfo& bp) = 0;
 	/**
 	 * \brief ask the debugger to query about its file & line. Once the result arrives, the observer's UpdateFileLine() will be invoked 
 	 */

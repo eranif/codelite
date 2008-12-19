@@ -199,7 +199,7 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	m_panel2->Layout();
 	bSizer13->Fit( m_panel2 );
 	m_choicebook->AddPage( m_panel2, wxT("Watchpoint"), false );
-	bSizer3->Add( m_choicebook, 1, wxEXPAND | wxALL, 5 );
+	bSizer3->Add( m_choicebook, 0, wxEXPAND | wxALL, 5 );
 	
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
@@ -254,18 +254,22 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	
 	bSizer5->Add( fgSizer1, 0, wxEXPAND, 5 );
 	
-	bSizer3->Add( bSizer5, 0, wxALL|wxEXPAND, 5 );
+	bSizer3->Add( bSizer5, 1, wxALL|wxEXPAND, 5 );
 	
 	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer3->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
 	
-	m_sdbSizer1 = new wxStdDialogButtonSizer();
-	m_sdbSizer1OK = new wxButton( this, wxID_OK );
-	m_sdbSizer1->AddButton( m_sdbSizer1OK );
-	m_sdbSizer1Cancel = new wxButton( this, wxID_CANCEL );
-	m_sdbSizer1->AddButton( m_sdbSizer1Cancel );
-	m_sdbSizer1->Realize();
-	bSizer3->Add( m_sdbSizer1, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	wxBoxSizer* bSizer9;
+	bSizer9 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_button6 = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button6->SetDefault(); 
+	bSizer9->Add( m_button6, 0, wxALL, 5 );
+	
+	m_button7 = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer9->Add( m_button7, 0, wxALL, 5 );
+	
+	bSizer3->Add( bSizer9, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	this->SetSizer( bSizer3 );
 	this->Layout();

@@ -99,9 +99,8 @@ class BreakpointPropertiesDlg : public wxDialog
 		wxStaticText* m_staticText7;
 		wxSpinCtrl* m_spinIgnore;
 		wxStaticLine* m_staticline4;
-		wxStdDialogButtonSizer* m_sdbSizer1;
-		wxButton* m_sdbSizer1OK;
-		wxButton* m_sdbSizer1Cancel;
+		wxButton* m_button6;
+		wxButton* m_button7;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnPageChanged( wxChoicebookEvent& event ){ event.Skip(); }

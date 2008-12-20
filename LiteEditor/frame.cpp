@@ -146,7 +146,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
     EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
 
     //---------------------------------------------------
-    // File menu 
+    // File menu
     //---------------------------------------------------
     EVT_MENU(XRCID("new_file"),                 Frame::OnFileNew)
     EVT_MENU(XRCID("open_file"),                Frame::OnFileOpen)
@@ -1079,8 +1079,10 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 {
 	LEditor* editor = GetMainBook()->GetActiveEditor();
-	if ( !editor )
+	if ( !editor ) {
+		event.Enable(false);
 		return;
+	}
 
 	if (event.GetId() >= viewAsMenuItemID && event.GetId() <= viewAsMenuItemMaxID) {
 		//keep the old id as int and override the value set in the event object
@@ -1796,7 +1798,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 	//Attach external database symbol
 	if (first) {
 		first = false;
-		
+
 		// since there is a bug in wxURL, which it can not be used while constucting a wxFrame,
 		// it must be called *after* the frame constuction
 		// add new version notification updater
@@ -1806,7 +1808,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 		if ( check ) {
 			JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
 		}
-		
+
 		if (m_tagsOptionsData.GetFlags() & CC_LOAD_EXT_DB) {
 			//load the recently opened external database
 			wxString tagDb = EditorConfigST::Get()->GetTagsDatabase();
@@ -2342,15 +2344,15 @@ void Frame::OnLinkClicked(wxHtmlLinkEvent &e)
     }
     wxString command = action.BeforeFirst(wxT(':'));
     wxString filename = action.AfterFirst(wxT(':'));
-    if (command != wxT("switch-workspace") && 
-        command != wxT("open-file") && 
-        command != wxT("create-workspace") && 
+    if (command != wxT("switch-workspace") &&
+        command != wxT("open-file") &&
+        command != wxT("create-workspace") &&
         command != wxT("import-msvs-solution") &&
         command != wxT("open-workspace")) {
         e.Skip();
         return;
     }
-    
+
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("link_action"));
 	event.SetEventObject(this);
 	StartPageData *data = new StartPageData;
@@ -3092,7 +3094,7 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 
 			dbgr->Start(dbgname, exepath, wd, bpList, cmds);
 			dbgr->Run(dlg->GetArguments(), wxEmptyString);
-			
+
 			// Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
 			// so that it uses debugger_ids instead of internal_ids
 			Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();

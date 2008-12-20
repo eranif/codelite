@@ -1,5 +1,5 @@
-%{ 
-// Copyright Eran Ifrah(c) 
+%{
+// Copyright Eran Ifrah(c)
 %}
 
 %{
@@ -13,7 +13,7 @@
 #ifdef yylex
 #undef yylex
 #define yylex cl_scope_lex
-#endif 
+#endif
 
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/
@@ -27,7 +27,6 @@ static VariableList *gs_vars = NULL;
 static std::vector<std::string> gs_names;
 static bool g_isUsedWithinFunc = false;
 Variable curr_var;
-std::string temdecl;
 
 //---------------------------------------------
 // externs defined in the lexer
@@ -92,7 +91,7 @@ extern void cl_scope_lex_clean();
 %token  LE_PLUSassign  LE_MINUSassign              		/*   +=      -=              */
 %token  LE_LSassign    LE_RSassign                 		/*   <<=     >>=             */
 %token  LE_ANDassign   LE_ERassign     LE_ORassign    	/*   &=      ^=      |=      */
-%token  LE_MACRO 
+%token  LE_MACRO
 %token  LE_DYNAMIC_CAST
 %token  LE_STATIC_CAST
 %token  LE_CONST_CAST
@@ -112,14 +111,14 @@ basic_type_name_inter:    LE_INT			{ $$ = $1; }
 				| 	LE_UNSIGNED		{ $$ = $1; }
 				| 	LE_VOID			{ $$ = $1; }
 				;
-	
+
 basic_type_name:	LE_UNSIGNED basic_type_name_inter 	{ $$ = $1 + " " + $2; }
 				|	LE_SIGNED basic_type_name_inter 	{ $$ = $1 + " " + $2; }
 				|	LE_LONG LE_LONG 					{ $$ = $1 + " " + $2; }
 				|	LE_LONG LE_INT 						{ $$ = $1 + " " + $2; }
 				|	basic_type_name_inter 			  	{ $$ = $1; }
 				;
-				
+
 /* ========================================================================*/
 /* find declarations													   */
 /* ========================================================================*/
@@ -127,27 +126,27 @@ basic_type_name:	LE_UNSIGNED basic_type_name_inter 	{ $$ = $1 + " " + $2; }
 translation_unit	:		/*empty*/
 						| translation_unit external_decl
 						;
-						
-external_decl		:	{curr_var.Reset(); gs_names.clear();} variables	
-						| 	error { 
+
+external_decl		:	{curr_var.Reset(); gs_names.clear();} variables
+						| 	error {
 								yyclearin;	//clear lookahead token
 								yyerrok;
 								//printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_var_lval.c_str(), cl_scope_lineno);
 								var_syncParser();
 							}
 						;
-						
+
 /* the following rules are for template parameters no declarations! */
 parameter_list	: /* empty */		{$$ = "";}
 							| template_parameter	{$$ = $1;}
 							| parameter_list ',' template_parameter {$$ = $1 + $2 + " " + $3;}
 							;
 
-template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp 
+template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_star_amp
 						{
 							$$ = $1 +  $2 + $3 +$4;
 						}
-					|  	const_spec nested_scope_specifier basic_type_name special_star_amp 
+					|  	const_spec nested_scope_specifier basic_type_name special_star_amp
 						{
 							$$ = $1 +  $2 + $3 +$4;
 						}
@@ -158,9 +157,9 @@ template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_sta
 						;
 
 //the main rule for finding variables
-//in the code. if this rule succeeded, the variables 
+//in the code. if this rule succeeded, the variables
 //is added to the gs_vars vriable
-variables			: stmnt_starter variable_decl special_star_amp variable_name_list postfix 
+variables			: stmnt_starter variable_decl special_star_amp variable_name_list postfix
 						{
 							if(gs_vars)
 							{
@@ -175,15 +174,15 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 									var = curr_var;
 									var.m_pattern = "/^" + $1 + " " + $2 + " " + $3 + gs_names.at(i) + " $/";
 									var.m_name = gs_names.at(i);
-									gs_vars->push_back(var); 
+									gs_vars->push_back(var);
 								}
 								curr_var.Reset();
 								gs_names.clear();
 							}
-						} 
+						}
 						//
 						// Functions arguments:
-						// 
+						//
 						| '(' variable_decl special_star_amp LE_IDENTIFIER postfix2
 						{
 							if(gs_vars)
@@ -198,7 +197,7 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								//create new variable for every variable name found
 								var = curr_var;
 								var.m_name = $4;;
-								gs_vars->push_back(var); 
+								gs_vars->push_back(var);
 								curr_var.Reset();
 								gs_names.clear();
 							}
@@ -206,7 +205,7 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 						| ',' variable_decl special_star_amp LE_IDENTIFIER postfix2
 						{
 							if(gs_vars && g_isUsedWithinFunc)
-							{ 
+							{
 								Variable var;
 								std::string pattern;
 								curr_var.m_pattern = "/^";
@@ -214,12 +213,12 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
 								curr_var.m_starAmp = $3;
 								curr_var.m_lineno = cl_scope_lineno;
-								
+
 								//create new variable for every variable name found
 								var = curr_var;
 								var.m_name = $4;
-								gs_vars->push_back(var); 
-								
+								gs_vars->push_back(var);
+
 								curr_var.Reset();
 								gs_names.clear();
 							}
@@ -227,7 +226,7 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 						| '(' variable_decl special_star_amp postfix3
 						{
 							if(gs_vars && g_isUsedWithinFunc)
-							{ 
+							{
 								Variable var;
 								std::string pattern;
 								curr_var.m_pattern = "/^";
@@ -235,12 +234,12 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
 								curr_var.m_starAmp = $3;
 								curr_var.m_lineno = cl_scope_lineno;
-								
+
 								//create new variable for every variable name found
 								var = curr_var;
 								var.m_name = "";
-								gs_vars->push_back(var); 
-								
+								gs_vars->push_back(var);
+
 								curr_var.Reset();
 								gs_names.clear();
 							}
@@ -251,7 +250,7 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 						| ',' variable_decl special_star_amp postfix3
 						{
 							if(gs_vars && g_isUsedWithinFunc)
-							{ 
+							{
 								Variable var;
 								std::string pattern;
 								curr_var.m_pattern = "/^";
@@ -259,12 +258,12 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
 								curr_var.m_starAmp = $3;
 								curr_var.m_lineno = cl_scope_lineno;
-								
+
 								//create new variable for every variable name found
 								var = curr_var;
 								var.m_name = "";
-								gs_vars->push_back(var); 
-								
+								gs_vars->push_back(var);
+
 								curr_var.Reset();
 								gs_names.clear();
 							}
@@ -272,37 +271,37 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								cl_scope_less(0);
 							}
 						};
-						
-						
-variable_name_list: 	LE_IDENTIFIER 
+
+
+variable_name_list: 	LE_IDENTIFIER
 						{
 							gs_names.push_back($1);
 							$$ = $1;
 						}
-						| variable_name_list ','  special_star_amp LE_IDENTIFIER  
-						{ 
+						| variable_name_list ','  special_star_amp LE_IDENTIFIER
+						{
 							//collect all the names
 							gs_names.push_back($4);
 							$$ = $1 + $2 + " " + $3 + $4;
 						}
 						;
 
-postfix3: ',' 
+postfix3: ','
 		| ')'
 		;
-		
+
 postfix2: /*empty*/
 		| '=' {var_consumeUntil(',', ')');}
 		| ')'
 		;
-		
+
 postfix: ';'
 		| '='
 		| ')'
 		| '(' { $$ = $1 + var_consumBracketsContent('(');}
 		| '[' { $$ = $1 + var_consumBracketsContent('[');}
-		; 
-/* 
+		;
+/*
 applicable for C++, for cases where a function is declared as
 void scope::foo(){ ... }
 */
@@ -317,11 +316,11 @@ nested_scope_specifier: /*empty*/ {$$ = "";}
 const_spec			:	/* empty */	{$$ = ""; }
 					| 	LE_CONST 	{ $$ = $1; }
 					;
-						
+
 amp_item			:	/*empty*/	{$$ = ""; }
 					|   '&'			{ $$ = $1; }
 					;
-						
+
 star_list			: 	/*empty*/		{$$ = ""; }
 						|	star_list '*'	{$$ = $1 + $2;}
 						;
@@ -337,16 +336,16 @@ stmnt_starter		:	/*empty*/ {$$ = "";}
 						| ':' { $$ = ":";}	//e.g. private: std::string m_name;
 //						| '=' { $$ = "=";}
 						;
-						
+
 /** Variables **/
-variable_decl		:	const_spec basic_type_name   
+variable_decl		:	const_spec basic_type_name
 						{
 							$$ = $1 + " " + $2;
 							$2.erase($2.find_last_not_of(":")+1);
 							curr_var.m_type = $2;
 							curr_var.m_isConst = !$1.empty();
 						}
-						|	const_spec nested_scope_specifier LE_IDENTIFIER 
+						|	const_spec nested_scope_specifier LE_IDENTIFIER
 						{
 							$$ = $1 + " " + $2 + $3;
 							$2.erase($2.find_last_not_of(":")+1);
@@ -365,7 +364,7 @@ variable_decl		:	const_spec basic_type_name
 							curr_var.m_isConst = !$1.empty();
 						}
 						;
-						
+
 %%
 void yyerror(char *s) {}
 
@@ -373,7 +372,7 @@ void yyerror(char *s) {}
 std::string var_consumBracketsContent(char openBrace)
 {
 	char closeBrace;
-	
+
 	switch(openBrace) {
 	case '(': closeBrace = ')'; break;
 	case '[': closeBrace = ']'; break;
@@ -384,7 +383,7 @@ std::string var_consumBracketsContent(char openBrace)
 		closeBrace = ')';
 		break;
 	}
-	
+
 	std::string consumedData;
 	int depth = 1;
 	while(depth > 0)
@@ -395,7 +394,7 @@ std::string var_consumBracketsContent(char openBrace)
 		if(ch == 0){
 			break;
 		}
-		
+
 		consumedData += cl_scope_text;
 		consumedData += " ";
 		if(ch == closeBrace)
@@ -416,20 +415,20 @@ void var_consumeUntil(char c1, char c2)
 {
 	int depth = 0;
 	bool cont(true);
-	
+
 	while (depth >= 0) {
 		int ch = cl_scope_lex();
 		if(ch == 0)					{ break;}
-		if(ch == c1 && depth == 0) { 
+		if(ch == c1 && depth == 0) {
 			cl_scope_less(0);
 			break;
 		}
-		
-		if(ch == c2 && depth == 0) { 
+
+		if(ch == c2 && depth == 0) {
 			cl_scope_less(0);
 			break;
 		}
-		
+
 		if(ch == ')'){
 			depth--;
 			continue;
@@ -444,14 +443,14 @@ void var_consumeUntil(char c1, char c2)
 void var_syncParser(){
 //	int depth = 1;
 //	bool cont(true);
-//	
+//
 //	while (depth > 0 && cont) {
 //		int ch = cl_scope_lex();
 //		if(ch == 0)					{ break;}
 //		if(ch == ',' && depth == 0) { break;}
 //		if(ch == ';' && depth == 0) { break;}
 //		if(ch == ')' && depth == 0) { break;}
-//		
+//
 //		if(ch == ')'){
 //			depth--;
 //			continue;
@@ -464,7 +463,7 @@ void var_syncParser(){
 //	}
 //	printf("\n");
 }
- 
+
 // return the scope name at the end of the input string
 void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc)
 {
@@ -472,23 +471,23 @@ void get_variables(const std::string &in, VariableList &li, const std::map<std::
 	if( !setLexerInput(in, ignoreMap) ){
 		return;
 	}
-	
-	//set the parser local output to our variable list 
+
+	//set the parser local output to our variable list
 	gs_vars = &li;
 	setUseIgnoreMacros(false);
-	
+
 	// the 'g_isUsedWithinFunc' allows us to parse variabels without name
 	// this is typical when used as function declaration (e.g. void setValue(bool);)
 	g_isUsedWithinFunc = isUsedWithinFunc;
-	
+
 	//call tghe main parsing routine
 	cl_var_parse();
 	gs_vars = NULL;
-	
-	// restore settings 
+
+	// restore settings
 	setUseIgnoreMacros(true);
 	g_isUsedWithinFunc = false;
-	
+
 	//do the lexer cleanup
 	cl_scope_lex_clean();
 }

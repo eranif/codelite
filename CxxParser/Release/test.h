@@ -39,6 +39,7 @@
 //int SymbolViewPlugin::AddSymbol(const TagEntry &tag, const std::multimap<wxString, wxString> &filePaths)
 // {
 
-MyClass::MyClass()
-: m_st{
+//MyClass::MyClass()
+//: m_st{
 
+std::auto_ptr<std::string>::element_type str;

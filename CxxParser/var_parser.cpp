@@ -32,8 +32,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #define yyname cl_var_name
 #define yyrule cl_var_rule
 #define YYPREFIX "cl_var_"
- 
-/* Copyright Eran Ifrah(c) */
+/* Copyright Eran Ifrah(c)*/
 /*************** Includes and Defines *****************************/
 #include "string"
 #include "vector"
@@ -44,7 +43,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #ifdef yylex
 #undef yylex
 #define yylex cl_scope_lex
-#endif 
+#endif
 
 #define YYSTYPE std::string
 #define YYDEBUG 0        /* get the pretty debugging code to compile*/
@@ -58,7 +57,6 @@ static VariableList *gs_vars = NULL;
 static std::vector<std::string> gs_names;
 static bool g_isUsedWithinFunc = false;
 Variable curr_var;
-std::string temdecl;
 
 /*---------------------------------------------*/
 /* externs defined in the lexer*/
@@ -426,7 +424,7 @@ void yyerror(char *s) {}
 std::string var_consumBracketsContent(char openBrace)
 {
 	char closeBrace;
-	
+
 	switch(openBrace) {
 	case '(': closeBrace = ')'; break;
 	case '[': closeBrace = ']'; break;
@@ -437,7 +435,7 @@ std::string var_consumBracketsContent(char openBrace)
 		closeBrace = ')';
 		break;
 	}
-	
+
 	std::string consumedData;
 	int depth = 1;
 	while(depth > 0)
@@ -448,7 +446,7 @@ std::string var_consumBracketsContent(char openBrace)
 		if(ch == 0){
 			break;
 		}
-		
+
 		consumedData += cl_scope_text;
 		consumedData += " ";
 		if(ch == closeBrace)
@@ -469,20 +467,20 @@ void var_consumeUntil(char c1, char c2)
 {
 	int depth = 0;
 	bool cont(true);
-	
+
 	while (depth >= 0) {
 		int ch = cl_scope_lex();
 		if(ch == 0)					{ break;}
-		if(ch == c1 && depth == 0) { 
+		if(ch == c1 && depth == 0) {
 			cl_scope_less(0);
 			break;
 		}
-		
-		if(ch == c2 && depth == 0) { 
+
+		if(ch == c2 && depth == 0) {
 			cl_scope_less(0);
 			break;
 		}
-		
+
 		if(ch == ')'){
 			depth--;
 			continue;
@@ -497,14 +495,14 @@ void var_consumeUntil(char c1, char c2)
 void var_syncParser(){
 //	int depth = 1;
 //	bool cont(true);
-//	
+//
 //	while (depth > 0 && cont) {
 //		int ch = cl_scope_lex();
 //		if(ch == 0)					{ break;}
 //		if(ch == ',' && depth == 0) { break;}
 //		if(ch == ';' && depth == 0) { break;}
 //		if(ch == ')' && depth == 0) { break;}
-//		
+//
 //		if(ch == ')'){
 //			depth--;
 //			continue;
@@ -517,7 +515,7 @@ void var_syncParser(){
 //	}
 //	printf("\n");
 }
- 
+
 // return the scope name at the end of the input string
 void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc)
 {
@@ -525,23 +523,23 @@ void get_variables(const std::string &in, VariableList &li, const std::map<std::
 	if( !setLexerInput(in, ignoreMap) ){
 		return;
 	}
-	
-	//set the parser local output to our variable list 
+
+	//set the parser local output to our variable list
 	gs_vars = &li;
 	setUseIgnoreMacros(false);
-	
+
 	// the 'g_isUsedWithinFunc' allows us to parse variabels without name
 	// this is typical when used as function declaration (e.g. void setValue(bool);)
 	g_isUsedWithinFunc = isUsedWithinFunc;
-	
+
 	//call tghe main parsing routine
 	cl_var_parse();
 	gs_vars = NULL;
-	
-	// restore settings 
+
+	// restore settings
 	setUseIgnoreMacros(true);
 	g_isUsedWithinFunc = false;
-	
+
 	//do the lexer cleanup
 	cl_scope_lex_clean();
 }
@@ -732,7 +730,7 @@ case 17:
 {curr_var.Reset(); gs_names.clear();}
 break;
 case 19:
-{ 
+{
 								yyclearin;	/*clear lookahead token*/
 								yyerrok;
 								/*printf("CodeLite: syntax error, unexpected token '%s' found at line %d \n", cl_var_lval.c_str(), cl_scope_lineno);*/
@@ -778,7 +776,7 @@ case 26:
 									var = curr_var;
 									var.m_pattern = "/^" + yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + gs_names.at(i) + " $/";
 									var.m_name = gs_names.at(i);
-									gs_vars->push_back(var); 
+									gs_vars->push_back(var);
 								}
 								curr_var.Reset();
 								gs_names.clear();
@@ -799,7 +797,7 @@ case 27:
 								/*create new variable for every variable name found*/
 								var = curr_var;
 								var.m_name = yyvsp[-1];;
-								gs_vars->push_back(var); 
+								gs_vars->push_back(var);
 								curr_var.Reset();
 								gs_names.clear();
 							}
@@ -808,7 +806,7 @@ break;
 case 28:
 {
 							if(gs_vars && g_isUsedWithinFunc)
-							{ 
+							{
 								Variable var;
 								std::string pattern;
 								curr_var.m_pattern = "/^";
@@ -816,12 +814,12 @@ case 28:
 								curr_var.m_isPtr = (yyvsp[-2].find("*") != (size_t)-1);
 								curr_var.m_starAmp = yyvsp[-2];
 								curr_var.m_lineno = cl_scope_lineno;
-								
+
 								/*create new variable for every variable name found*/
 								var = curr_var;
 								var.m_name = yyvsp[-1];
-								gs_vars->push_back(var); 
-								
+								gs_vars->push_back(var);
+
 								curr_var.Reset();
 								gs_names.clear();
 							}
@@ -830,7 +828,7 @@ break;
 case 29:
 {
 							if(gs_vars && g_isUsedWithinFunc)
-							{ 
+							{
 								Variable var;
 								std::string pattern;
 								curr_var.m_pattern = "/^";
@@ -838,12 +836,12 @@ case 29:
 								curr_var.m_isPtr = (yyvsp[-1].find("*") != (size_t)-1);
 								curr_var.m_starAmp = yyvsp[-1];
 								curr_var.m_lineno = cl_scope_lineno;
-								
+
 								/*create new variable for every variable name found*/
 								var = curr_var;
 								var.m_name = "";
-								gs_vars->push_back(var); 
-								
+								gs_vars->push_back(var);
+
 								curr_var.Reset();
 								gs_names.clear();
 							}
@@ -855,7 +853,7 @@ break;
 case 30:
 {
 							if(gs_vars && g_isUsedWithinFunc)
-							{ 
+							{
 								Variable var;
 								std::string pattern;
 								curr_var.m_pattern = "/^";
@@ -863,12 +861,12 @@ case 30:
 								curr_var.m_isPtr = (yyvsp[-1].find("*") != (size_t)-1);
 								curr_var.m_starAmp = yyvsp[-1];
 								curr_var.m_lineno = cl_scope_lineno;
-								
+
 								/*create new variable for every variable name found*/
 								var = curr_var;
 								var.m_name = "";
-								gs_vars->push_back(var); 
-								
+								gs_vars->push_back(var);
+
 								curr_var.Reset();
 								gs_names.clear();
 							}
@@ -884,7 +882,7 @@ case 31:
 						}
 break;
 case 32:
-{ 
+{
 							/*collect all the names*/
 							gs_names.push_back(yyvsp[0]);
 							yyval = yyvsp[-3] + yyvsp[-2] + " " + yyvsp[-1] + yyvsp[0];

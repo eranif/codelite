@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include <wx/tokenzr.h>
 
 #include "language.h"
 #include "variable.h"
@@ -124,18 +125,18 @@ wxString Language::GetScope(const wxString& srcString)
 		curline = m_scanner->lineno();
 		switch (type) {
 		case (int)'(':
-			currScope += "\n";
+						currScope += "\n";
 			scope_stack.push_back(currScope);
 			currScope = "(\n";
 			break;
 		case (int)'{':
-			currScope += "\n";
+						currScope += "\n";
 			scope_stack.push_back(currScope);
 			currScope = "{\n";
 			break;
 		case (int)')':
-				// Discard the current scope since it is completed
-				if ( !scope_stack.empty() ) {
+						// Discard the current scope since it is completed
+						if ( !scope_stack.empty() ) {
 					currScope = scope_stack.back();
 					scope_stack.pop_back();
 					currScope += "()";
@@ -144,7 +145,7 @@ wxString Language::GetScope(const wxString& srcString)
 			break;
 		case (int)'}':
 						// Discard the current scope since it is completed
-				if ( !scope_stack.empty() ) {
+						if ( !scope_stack.empty() ) {
 					currScope = scope_stack.back();
 					scope_stack.pop_back();
 					currScope += "\n{}\n";
@@ -153,7 +154,7 @@ wxString Language::GetScope(const wxString& srcString)
 				}
 			break;
 		case (int)'#':
-				if (changedLine) {
+						if (changedLine) {
 					// We are at the start of a new line
 					// consume everything until new line is found or end of text
 					currScope += " ";
@@ -233,9 +234,10 @@ void Language::SetAutoCompDeliemters(const std::vector<wxString> &delimArr)
 bool Language::ProcessExpression(const wxString& stmt,
                                  const wxString& text,
                                  const wxFileName &fn, int lineno,
-                                 wxString &typeName, 	//output
-                                 wxString &typeScope,	//output
-                                 wxString &oper)		//output
+                                 wxString &typeName, 				//output
+                                 wxString &typeScope,				//output
+                                 wxString &oper,					//output
+                                 wxString &scopeTemplateInitList)	//output
 {
 	PERF_START("Language::ProcessExpression");
 
@@ -260,16 +262,16 @@ bool Language::ProcessExpression(const wxString& stmt,
 	wxString parentTypeName, parentTypeScope;
 	wxString grandParentTypeName, grandParentTypeScope;
 
-	PERF_BLOCK("GetScope"){
+	PERF_BLOCK("GetScope") {
 		visibleScope = GetScope(text);
 	}
 
 	std::vector<wxString> additionalScopes;
-	PERF_BLOCK("GetScopeName"){
+	PERF_BLOCK("GetScopeName") {
 		scopeName = GetScopeName(text, &additionalScopes);
 	}
 
-	PERF_BLOCK("FunctionFromFileLine"){
+	PERF_BLOCK("FunctionFromFileLine") {
 		TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
 		if (tag) {
 			lastFuncSig = tag->GetSignature();
@@ -293,6 +295,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 			break;
 		}
 
+		scopeTemplateInitList.Clear();
 		word.clear();
 		//no tokens before this, what we need to do now, is find the TagEntry
 		//that corrseponds to the result
@@ -347,7 +350,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 			//keep the scope that we searched so far. The accumumlated scope
 			//are used for types, for scenarios like:
 			//void Box::GetWidth()
-			//{
+			// {
 			//	Rectangle::
 			//
 			//trying to process the above code, will yield searching Rectangle inside Box scope, since we are
@@ -374,15 +377,15 @@ bool Language::ProcessExpression(const wxString& stmt,
 			//get the derivation list of the typename
 			bool res(false);
 			wxString _name(_U(result.m_name.c_str()));
-			PERF_BLOCK("TypeFromName"){
+			PERF_BLOCK("TypeFromName") {
 				res = TypeFromName(	_name,
-									visibleScope,
-									lastFuncSig,
-									scopeToSearch,
-									additionalScopes,
-									parentTypeName.IsEmpty(),
-									typeName,	//output
-									typeScope);	//output
+				                    visibleScope,
+				                    lastFuncSig,
+				                    scopeToSearch,
+				                    additionalScopes,
+				                    parentTypeName.IsEmpty(),
+				                    typeName,	//output
+				                    typeScope);	//output
 			}
 
 			if (!res) {
@@ -390,9 +393,9 @@ bool Language::ProcessExpression(const wxString& stmt,
 				break;
 			}
 
-			//do typedef subsitute
+			// do typedef subsitute
 			wxString tmp_name(typeName);
-			while (OnTypedef(typeName, typeScope, templateInitList, scopeName)) {
+			while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
 				if (tmp_name == typeName) {
 					//same type? break
 					break;
@@ -404,7 +407,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 			if (OnTemplates(typeName, typeScope, parent)) {
 				//do typedef subsitute
 				wxString tmp_name(typeName);
-				while (OnTypedef(typeName, typeScope, templateInitList, scopeName)) {
+				while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
 					if (tmp_name == typeName) {
 						//same type? break
 						break;
@@ -425,7 +428,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 				// there is an operator overloading for ->
 				// do the whole typedef/template subsitute again
 				wxString tmp_name(typeName);
-				while (OnTypedef(typeName, typeScope, templateInitList, scopeName)) {
+				while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
 					if (tmp_name == typeName) {
 						//same type? break
 						break;
@@ -447,7 +450,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 				if (OnTemplates(typeName, typeScope, m_parentVar)) {
 					//do typedef subsitute
 					wxString tmp_name(typeName);
-					while (OnTypedef(typeName, typeScope, templateInitList, scopeName)) {
+					while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
 						if (tmp_name == typeName) {
 							//same type? break
 							break;
@@ -544,7 +547,7 @@ bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &pa
 				for (size_t i=0; i< templateDecl.GetCount(); i++) {
 					if (templateDecl.Item(i) == typeName) {
 						if (templateImpl.GetCount() > i) {
-							for(size_t j=0; j<2; j++){
+							for (size_t j=0; j<2; j++) {
 								std::vector<TagEntryPtr> tags_vec;
 								wxString tagpath = j == 0 ? templateImpl.Item(i) : wxString::Format(wxT("%s::%s"), parent_scope.c_str(), templateImpl.Item(i).c_str());
 								tagsManager->FindByPath(tagpath, tags_vec);
@@ -566,7 +569,7 @@ bool Language::OnTemplates(wxString &typeName, wxString &typeScope, Variable &pa
 	return res;
 }
 
-bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &templateInitList, const wxString &optionalScope)
+bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &templateInitList, const wxString &optionalScope, wxString &scopeTempalteInitList)
 {
 	//if the match is typedef, try to replace it with the actual
 	//typename
@@ -582,23 +585,37 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 
 	tagsManager->FindByPath(path, tags);
 	if (tags.empty()) {
-		//try again using the additional scope
-		if (optionalScope.IsEmpty() == false) {
+		// try to remove any template initialization from the scope
+		// e.g. scope in form of: std::auto_ptr<std::string>
+		// will not be found in the database, however:
+		// std::auto_ptr do exist
+		if (typeScope != wxT("<global>")) {
+			wxString strippedTypeScope(typeScope);
+			DoRemoveTempalteInitialization(strippedTypeScope, scopeTempalteInitList);
 			path.Clear();
-			if (optionalScope == wxT("<global>")) {
-				path << typeName;
-			} else {
-				path << optionalScope << wxT("::") << typeName;
-			}
+			path << strippedTypeScope << wxT("::") << typeName;
 			tagsManager->FindByPath(path, tags);
+		}
+
+		if (tags.empty()) {
+			//try again using the additional scope
+			if (optionalScope.IsEmpty() == false) {
+				path.Clear();
+				if (optionalScope == wxT("<global>")) {
+					path << typeName;
+				} else {
+					path << optionalScope << wxT("::") << typeName;
+				}
+				tagsManager->FindByPath(path, tags);
+			}
 		}
 	}
 
 
 	// try to remove all tags that are Macros from this list
-	for(size_t i=0; i<tags.size(); i++){
+	for (size_t i=0; i<tags.size(); i++) {
 		TagEntryPtr t = tags.at(i);
-		if(t->GetKind() != wxT("macro")) {
+		if (t->GetKind() != wxT("macro")) {
 			filtered_tags.push_back(t);
 		}
 	}
@@ -938,15 +955,15 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
 {
 	std::vector<TagEntryPtr> tmp_tags;
 	GetTagsManager()->FindByNameAndScope(name, scopeName, tmp_tags);
-	if( tmp_tags.empty() ){
+	if ( tmp_tags.empty() ) {
 		// try the global scope maybe?
 		GetTagsManager()->FindByNameAndScope(name, wxT("<global>"), tmp_tags);
 	}
 
 	// filter macros from the result
-	for(size_t i=0; i<tmp_tags.size(); i++){
+	for (size_t i=0; i<tmp_tags.size(); i++) {
 		TagEntryPtr t = tmp_tags.at(i);
-		if(t->GetKind() != wxT("macro")){
+		if (t->GetKind() != wxT("macro")) {
 			tags.push_back(t);
 		}
 	}
@@ -1025,9 +1042,9 @@ bool Language::VariableFromPattern(const wxString &in, const wxString &name, Var
 
 	get_variables(patbuf.data(), li, ignoreTokens, false);
 	VariableList::iterator iter = li.begin();
-	for(; iter != li.end(); iter++){
+	for (; iter != li.end(); iter++) {
 		Variable v = *iter;
-		if(name == _U(v.m_name.c_str())) {
+		if (name == _U(v.m_name.c_str())) {
 			var = (*iter);
 			return true;
 		}
@@ -1136,19 +1153,19 @@ void Language::GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &t
 	VariableList::iterator iter = li.begin();
 	for (; iter != li.end(); iter++) {
 		var = (*iter);
-		if(var.m_name.empty()){
+		if (var.m_name.empty()) {
 			continue;
 		}
 
 		wxString tagName = _U(var.m_name.c_str());
 
 		//if we have name, collect only tags that matches name
-		if (name.IsEmpty() == false){
+		if (name.IsEmpty() == false) {
 
 			// incase CaseSensitive is not required, make both string lower case
 			wxString tmpName(name);
 			wxString tmpTagName(tagName);
-			if(flags & IgnoreCaseSensitive) {
+			if (flags & IgnoreCaseSensitive) {
 				tmpName.MakeLower();
 				tmpTagName.MakeLower();
 			}
@@ -1222,4 +1239,75 @@ TagsManager* Language::GetTagsManager()
 	} else {
 		return m_tm;
 	}
+}
+
+void Language::DoRemoveTempalteInitialization(wxString& str, wxString &tmplInitList)
+{
+	CppScanner sc;
+	sc.SetText( _C(str) );
+
+	int type(0);
+	int depth(0);
+
+	wxString token;
+	str.Clear();
+
+	while ((type = sc.yylex()) != 0) {
+		if (type == 0)
+			return;
+
+		token = _U(sc.YYText());
+		switch (type) {
+		case wxT('<'):
+						if (depth ==0) tmplInitList.Clear();
+			tmplInitList << token;
+			depth++;
+			break;
+
+		case wxT('>'):
+						tmplInitList << token;
+			depth--;
+			break;
+
+		default:
+			if (depth > 0) tmplInitList << token;
+			else str << token;
+			break;
+		}
+	}
+}
+
+bool Language::ResolveTempalte(wxString& typeName, wxString& typeScope, const wxString& parentPath, const wxString& parenttempalteInitList)
+{
+	Variable v;
+	v.m_isTemplate = true;
+
+	if (parentPath.IsEmpty()) {
+		return false;
+	}
+
+	wxArrayString tokens = wxStringTokenize(parentPath, wxT(":"), wxTOKEN_STRTOK);
+
+	wxString type, scope;
+	type = tokens.Last();
+	for (size_t i=0; i<tokens.GetCount()-1; i++) {
+		scope << tokens.Item(i);
+		if (i < tokens.GetCount()-2) scope << wxT("::");
+	}
+	v.m_type = _C(type);
+	v.m_typeScope = _C(scope);
+	v.m_templateDecl = _C(parenttempalteInitList);
+	while ( OnTemplates(typeName, typeScope, v)) {
+		// Do typedef subsitute
+		wxString tmp_name(typeName);
+		wxString dummy, templateInitList;
+		while (OnTypedef(typeName, typeScope, templateInitList, wxEmptyString, dummy)) {
+			if (tmp_name == typeName) {
+				//same type? break
+				break;
+			}
+			tmp_name = typeName;
+		}
+	}
+	return true;
 }

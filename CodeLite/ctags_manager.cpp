@@ -729,8 +729,8 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 		}
 		RemoveDuplicates(tmpCandidates, candidates);
 	} else {
-		wxString typeName, typeScope;
-		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
+		wxString typeName, typeScope, dummy;
+		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
 		if (!res) {
 			PERF_END();
 			return false;
@@ -766,9 +766,10 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
 	expression.erase(0, expression.find_first_not_of(trimLeftString));
 	expression.erase(expression.find_last_not_of(trimRightString)+1);
 	wxString oper;
+	wxString scopeTeamplateInitList;
 
 	PERF_BLOCK("ProcessExpression") {
-		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
+		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, scopeTeamplateInitList);
 		if (!res) {
 			PERF_END();
 			wxLogMessage(wxString::Format(wxT("Failed to resolve %s"), expression.c_str()));
@@ -904,8 +905,8 @@ void TagsManager::GetHoverTip(const wxFileName &fileName, int lineno, const wxSt
 		TipsFromTags(candidates, word, tips);
 	} else {
 		wxString typeName, typeScope;
-		wxString oper;
-		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
+		wxString oper, dummy;
+		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
 		if (!res) {
 			return;
 		}
@@ -972,8 +973,8 @@ void TagsManager::FindImplDecl(const wxFileName &fileName, int lineno, const wxS
 	} else {
 
 		wxString typeName, typeScope;
-		wxString oper;
-		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
+		wxString oper, dummy;
+		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
 		if (!res) {
 			return;
 		}
@@ -1071,8 +1072,8 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
 		}
 		GetFunctionTipFromTags(candidates, word, tips);
 	} else {
-		wxString oper;
-		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper);
+		wxString oper, dummy;
+		bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
 		if (!res) {
 			return false;
 		}
@@ -1895,9 +1896,14 @@ wxString TagsManager::GetScopeName(const wxString &scope)
 	return lang->GetScopeName(scope, NULL);
 }
 
-bool TagsManager::ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper)
+bool TagsManager::ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper, wxString &scopeTempalteInitiList)
 {
-	return GetLanguage()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope, oper);
+	bool res = GetLanguage()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope, oper, scopeTempalteInitiList);
+	if(res && IsTypeAndScopeExists(typeName, typeScope) == false && scopeTempalteInitiList.empty() == false){
+		// try to resolve it again
+		res = GetLanguage()->ResolveTempalte(typeName, typeScope, typeScope, scopeTempalteInitiList);
+	}
+	return res;
 }
 
 bool TagsManager::GetMemberType(const wxString &scope, const wxString &name, wxString &type, wxString &typeScope)
@@ -1905,7 +1911,7 @@ bool TagsManager::GetMemberType(const wxString &scope, const wxString &name, wxS
 	wxString expression(scope);
 	expression << wxT("::") << name << wxT(".");
 	wxString dummy;
-	return GetLanguage()->ProcessExpression(expression, wxEmptyString, wxFileName(), wxNOT_FOUND, type, typeScope, dummy);
+	return GetLanguage()->ProcessExpression(expression, wxEmptyString, wxFileName(), wxNOT_FOUND, type, typeScope, dummy, dummy);
 }
 
 int TagsManager::UpdatePathVariable(const wxString &name, const wxString &value)
@@ -2198,8 +2204,8 @@ Language* TagsManager::GetLanguage()
 
 bool TagsManager::ProcessExpression(const wxString &expression, wxString &type, wxString &typeScope)
 {
-	wxString oper;
-	return ProcessExpression(wxFileName(), wxNOT_FOUND, expression, wxEmptyString, type, typeScope, oper);
+	wxString oper, dummy;
+	return ProcessExpression(wxFileName(), wxNOT_FOUND, expression, wxEmptyString, type, typeScope, oper, dummy);
 }
 
 void TagsManager::GetClasses(std::vector< TagEntryPtr > &tags, bool onlyWorkspace)

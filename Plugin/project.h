@@ -32,6 +32,7 @@
 #include <tree.h>
 #include "smart_ptr.h"
 #include <list>
+#include "serialized_object.h"
 #include "project_settings.h"
 
 //incase we are using DLL build of wxWdigets, we need to make this class to export its
@@ -179,7 +180,7 @@ private:
 	bool m_tranActive;
 	bool m_isModified;
 	std::map<wxString, wxXmlNode*> m_vdCache;
-	
+
 public:
 	const wxFileName &GetFileName() const {
 		return m_fileName;
@@ -249,14 +250,14 @@ public:
 	bool AddFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
 
 	/**
-	 * Add file to the project - dont check for file duplication, this 
+	 * Add file to the project - dont check for file duplication, this
 	 * \param fileName file full name and path
 	 * \param virtualDir owner virtual directory, if the virtual directory does not exist, a new one will be created
 	 *        and the file will be placed under it
 	 * \return true on success, false otherwise
 	 */
 	bool FastAddFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
-	
+
 	/**
 	 * Remove file from the project
 	 * \param fileName file full path
@@ -272,7 +273,7 @@ public:
 	 * \return true on success, false otherwise
 	 */
 	bool RenameFile(const wxString &oldName, const wxString &virtualDir, const wxString &newName);
-	
+
 	/**
 	 * \brief change the name of a virtual folder
 	 * \param oldVdPath full path of the virtual folder
@@ -280,7 +281,7 @@ public:
 	 * \return true on success, false otherwise
 	 */
 	bool RenameVirtualDirectory(const wxString &oldVdPath, const wxString &newName);
-	
+
 	/**
 	 * Create new virtual directory
 	 * \param vdFullPath VD path to add
@@ -341,14 +342,14 @@ public:
 	 * \param configuration
 	 */
 	wxArrayString GetDependencies(const wxString &configuration) const;
-	
+
 	/**
 	 * \brief set the dependencies for this project for a given configuration
 	 * \param deps
 	 * \param configuration
 	 */
 	void SetDependencies(wxArrayString &deps, const wxString &configuration);
-	
+
 	/**
 	 * Return true if a file already exist under the project
 	 */
@@ -374,19 +375,35 @@ public:
 	bool InTransaction() const {
 		return m_tranActive;
 	}
-	
+
 	wxString GetVDByFileName(const wxString &file);
-	
+
 	/**
 	 * \brief return Tree representation of all virtual folders of this project
 	 * \return tree node. return NULL if no virtual folders exist
 	 */
 	TreeNode<wxString, VisualWorkspaceNode>* GetVirtualDirectories(TreeNode<wxString, VisualWorkspaceNode>* workspace);
-	
+
+	/**
+	 * @brief return the user saved information for custom data
+	 * @param name the object key
+	 * @param obj [output] container for the output
+	 * @return true on success.
+	 */
+	bool GetUserData(const wxString &name, SerializedObject *obj);
+
+	/**
+	 * @brief save user data in the project settings
+	 * @param name the name under which the data is to be saved
+	 * @param obj the data
+	 * @return true on success.
+	 */
+	bool SetUserData(const wxString &name, SerializedObject *obj);
+
 private:
 	void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);
 	wxXmlNode *FindFile(wxXmlNode* parent, const wxString &file);
-	
+
 	// Recursive helper function
 	void RecursiveAdd(wxXmlNode *xmlNode, ProjectTreePtr &ptp, ProjectTreeNode *nodeParent);
 
@@ -402,7 +419,7 @@ private:
 	/**
 	 * Return list of projects that this projects depends on
 	 */
-	wxArrayString GetDependencies() const; 
+	wxArrayString GetDependencies() const;
 };
 
 class ProjectData
@@ -433,11 +450,11 @@ public:
 	const ProjectItem &GetData() const {
 		return m_item;
 	}
-	
+
 	void SetDisplayName(const wxString &displayName) {
 		m_item.SetDisplayName(displayName);
 	}
-	
+
 	void SetFile(const wxString &file) {
 		m_item.SetFile(file);
 	}

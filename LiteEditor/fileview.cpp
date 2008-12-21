@@ -42,6 +42,7 @@
 #include "dirtraverser.h"
 #include "ctags_manager.h"
 #include <wx/progdlg.h>
+#include "editor_config.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 

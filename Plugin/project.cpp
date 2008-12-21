@@ -46,7 +46,7 @@ Project::~Project()
 bool Project::Create(const wxString &name, const wxString &description, const wxString &path, const wxString &projType)
 {
 	m_vdCache.clear();
-	
+
 	m_fileName = path + wxFileName::GetPathSeparator() + name + wxT(".project");
 	m_fileName.MakeAbsolute();
 
@@ -88,9 +88,9 @@ bool Project::Load(const wxString &path)
 	if ( !m_doc.Load(path) ) {
 		return false;
 	}
-	
+
 	m_vdCache.clear();
-	
+
 	m_fileName = path;
 	m_fileName.MakeAbsolute();
 	SetModified(true);
@@ -100,13 +100,13 @@ bool Project::Load(const wxString &path)
 wxXmlNode *Project::GetVirtualDir(const wxString &vdFullPath)
 {
 	wxStringTokenizer tkz(vdFullPath, wxT(":"));
-	
+
 	// test the cache
 	std::map<wxString, wxXmlNode*>::iterator iter = m_vdCache.find(vdFullPath);
 	if(iter != m_vdCache.end()){
 		return iter->second;
 	}
-	
+
 	wxXmlNode *parent = m_doc.GetRoot();
 	while ( tkz.HasMoreTokens() ) {
 		parent = XmlUtils::FindNodeByName(parent, wxT("VirtualDirectory"), tkz.GetNextToken());
@@ -158,7 +158,7 @@ wxXmlNode *Project::CreateVD(const wxString &vdFullPath, bool mkpath)
 	if (!InTransaction()) {
 		m_doc.Save(m_fileName.GetFullPath());
 	}
-	
+
 	// cache the result
 	m_vdCache[vdFullPath] = node;
 
@@ -230,13 +230,13 @@ bool Project::DeleteVirtualDir(const wxString &vdFullPath)
 		if ( parent ) {
 			parent->RemoveChild( vd );
 		}
-		
+
 		// remove the entry from the cache
 		std::map<wxString, wxXmlNode*>::iterator iter = m_vdCache.find(vdFullPath);
 		if(iter != m_vdCache.end()){
 			m_vdCache.erase(iter);
 		}
-		
+
 		delete vd;
 		SetModified(true);
 		return m_doc.Save(m_fileName.GetFullPath());
@@ -484,16 +484,16 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
 		if(deps->GetName() == wxT("Dependencies")) {
 			doc.GetRoot()->RemoveChild(deps);
 			delete deps;
-			
+
 			// restart the search from the begining
 			deps = doc.GetRoot()->GetChildren();
-			
+
 		} else {
 			// try next child
-			deps = deps->GetNext();	
+			deps = deps->GetNext();
 		}
 	}
-	
+
 //	wxXmlNode *deps = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("Dependencies"));
 //	if (deps) {
 //		doc.GetRoot()->RemoveChild(deps);
@@ -694,7 +694,7 @@ wxArrayString Project::GetDependencies(const wxString& configuration) const
 		}
 		node = node->GetNext();
 	}
-	
+
 	// if we are here, it means no match for the given configuration
 	// return the default dependencies
 	return GetDependencies();
@@ -713,12 +713,12 @@ void Project::SetDependencies(wxArrayString& deps, const wxString& configuration
 		}
 		node = node->GetNext();
 	}
-	
+
 	// create new dependencies node
 	node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Dependencies"));
 	node->AddProperty(wxT("Name"), configuration);
 	m_doc.GetRoot()->AddChild(node);
-	
+
 	//create a node for each dependency in the array
 	for (size_t i=0; i<deps.GetCount(); i++) {
 		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
@@ -728,7 +728,7 @@ void Project::SetDependencies(wxArrayString& deps, const wxString& configuration
 
 	//save changes
 	m_doc.Save(m_fileName.GetFullPath());
-	SetModified(true);	
+	SetModified(true);
 }
 
 void Project::GetFiles(std::vector<wxFileName>& files, std::vector<wxFileName>& absFiles)
@@ -749,14 +749,14 @@ void Project::GetFiles(wxXmlNode *parent, std::vector<wxFileName>& files, std::v
 		if (child->GetName() == wxT("File")) {
 			wxString fileName = child->GetPropVal(wxT("Name"), wxEmptyString);
 			wxFileName tmp(fileName);
-			
+
 			// append the file as it appears
 			files.push_back(tmp);
-			
+
 			// convert to absolute path
 			tmp.MakeAbsolute();
 			absFiles.push_back(tmp);
-			
+
 		} else if (child->GetChildren()) {// we could also add a check for VirtualDirectory only
 			GetFiles(child, files, absFiles);
 		}
@@ -794,14 +794,14 @@ void Project::DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, Visu
 	wxXmlNode *child = parent->GetChildren();
 	while(child){
 		if(child->GetName() == wxT("VirtualDirectory")){
-			
+
 			VisualWorkspaceNode data;
 			data.name = XmlUtils::ReadString(child, wxT("Name"));
 			data.type = ProjectItem::TypeVirtualDirectory;
-			
+
 			TreeNode<wxString, VisualWorkspaceNode>* node = new TreeNode<wxString, VisualWorkspaceNode>(data.name, data, tree);
 			tree->AddChild(node);
-			
+
 			// test to see if it has children
 			if(child->GetChildren()){
 				DoGetVirtualDirectories(child, node);
@@ -816,9 +816,60 @@ TreeNode<wxString, VisualWorkspaceNode>* Project::GetVirtualDirectories(TreeNode
 	VisualWorkspaceNode data;
 	data.name = GetName();
 	data.type = ProjectItem::TypeProject;
-	
+
 	TreeNode<wxString, VisualWorkspaceNode> *parent = new TreeNode<wxString, VisualWorkspaceNode>(GetName(), data, workspace);
 	DoGetVirtualDirectories(m_doc.GetRoot(), parent);
 	workspace->AddChild(parent);
 	return parent;
+}
+
+bool Project::GetUserData(const wxString& name, SerializedObject* obj)
+{
+	if(!m_doc.IsOk()){
+		return false;
+	}
+
+	Archive arch;
+	wxXmlNode *userData = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("UserData"));
+	if(userData){
+		wxXmlNode *dataNode = XmlUtils::FindNodeByName(userData, wxT("Data"), name);
+		if(dataNode){
+			arch.SetXmlNode(dataNode);
+			obj->DeSerialize(arch);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Project::SetUserData(const wxString& name, SerializedObject* obj)
+{
+	if(!m_doc.IsOk()){
+		return false;
+	}
+
+	Archive arch;
+
+	// locate the 'UserData' node
+	wxXmlNode *userData = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("UserData"));
+	if( !userData ) {
+		userData = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("UserData"));
+	}
+
+	// try to find a previous data stored under the same name, if we succeed - remove it
+	wxXmlNode *dataNode = XmlUtils::FindNodeByName(userData, wxT("Data"), name);
+	if(dataNode){
+		// remove old node
+		userData->RemoveChild(dataNode);
+		delete dataNode;
+	}
+
+	// create a new node and set the userData node as the parent
+	dataNode = new wxXmlNode(userData, wxXML_ELEMENT_NODE, wxT("Data"));
+	dataNode->AddProperty(wxT("Name"), name);
+
+	// serialize the data
+	arch.SetXmlNode(dataNode);
+	obj->Serialize(arch);
+	return m_doc.Save(m_fileName.GetFullPath());
 }

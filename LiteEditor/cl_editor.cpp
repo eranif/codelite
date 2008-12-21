@@ -180,20 +180,20 @@ void LEditor::SetSyntaxHighlight()
 	UpdateColours();
 	m_context->SetActive();
 }
- 
+
 // Fills the struct array that marries breakpoint type to marker and mask
 void LEditor::FillBPtoMarkerArray()
 {
 	BPtoMarker bpm; bpm.bp_type = BP_type_break;
-	bpm.marker = smt_breakpoint; bpm.mask = mmt_breakpoint; bpm.marker_disabled = smt_bp_disabled; bpm.mask_disabled = mmt_bp_disabled; 
+	bpm.marker = smt_breakpoint; bpm.mask = mmt_breakpoint; bpm.marker_disabled = smt_bp_disabled; bpm.mask_disabled = mmt_bp_disabled;
 	m_BPstoMarkers.push_back(bpm);
 
 	BPtoMarker bpcmdm; bpcmdm.bp_type = BP_type_cmdlistbreak;
-	bpcmdm.marker = smt_bp_cmdlist; bpcmdm.mask = mmt_bp_cmdlist; bpcmdm.marker_disabled = smt_bp_cmdlist_disabled; bpcmdm.mask_disabled = mmt_bp_cmdlist_disabled; 
+	bpcmdm.marker = smt_bp_cmdlist; bpcmdm.mask = mmt_bp_cmdlist; bpcmdm.marker_disabled = smt_bp_cmdlist_disabled; bpcmdm.mask_disabled = mmt_bp_cmdlist_disabled;
 	m_BPstoMarkers.push_back(bpcmdm);
 
 	BPtoMarker bpcondm; bpcondm.bp_type = BP_type_condbreak;
-	bpcondm.marker = smt_cond_bp; bpcondm.mask = mmt_cond_bp; bpcondm.marker_disabled = smt_cond_bp_disabled; bpcondm.mask_disabled = mmt_cond_bp_disabled; 
+	bpcondm.marker = smt_cond_bp; bpcondm.mask = mmt_cond_bp; bpcondm.marker_disabled = smt_cond_bp_disabled; bpcondm.mask_disabled = mmt_cond_bp_disabled;
 	m_BPstoMarkers.push_back(bpcondm);
 
 	BPtoMarker bpignm; bpignm.bp_type = BP_type_ignoredbreak;
@@ -1951,7 +1951,7 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 		wxString selectText = GetSelectedText();
 		wxPoint pt = event.GetPosition();
 		wxPoint clientPt = ScreenToClient(pt);
-		
+
 		// If the right-click is in the margin, provide a different context menu: bookmarks/breakpts
     int margin = 0;
     for (int n=0; n < FOLD_MARGIN_ID; ++n) {  // Assume a click anywhere to the left of the fold margin is for markers
@@ -1961,7 +1961,7 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 			GotoPos( PositionFromPoint(clientPt) );
 			return DoBreakptContextMenu(clientPt);
 		}
-		
+
 		int closePos = PositionFromPointClose(clientPt.x, clientPt.y);
 		if (closePos != wxNOT_FOUND) {
 			if (!selectText.IsEmpty()) {
@@ -2094,7 +2094,7 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
 
 void LEditor::OnFocusLost(wxFocusEvent &event)
 {
-    CallTipCancel();
+//    CallTipCancel();
     event.Skip();
 }
 
@@ -2181,7 +2181,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 	// First, add/del bookmark
 	menu.Append(XRCID("toggle_bookmark"), LineIsMarked(mmt_bookmarks) ? wxString(_("Remove Bookmark")) : wxString(_("Add Bookmark")) );
 	menu.AppendSeparator();
-	
+
   menu.Append(XRCID("insert_breakpoint"), wxString(_("Add Breakpoint")));
   menu.Append(XRCID("insert_temp_breakpoint"), wxString(_("Add a Temporary Breakpoint")));
 	menu.Append(XRCID("insert_cond_breakpoint"), wxString(_("Add a Conditional Breakpoint..")));
@@ -2195,7 +2195,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 		if (count == 1) {
 		menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
 		menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
-		menu.Append(XRCID("toggle_breakpoint_enabled_status"), 
+		menu.Append(XRCID("toggle_breakpoint_enabled_status"),
 							lineBPs[0].is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
 		menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
 		} else if (count > 1) {
@@ -2220,7 +2220,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 void LEditor::AddOtherBreakpointType(wxCommandEvent &event)
 {
 	bool is_temp = (event.GetId() == XRCID("insert_temp_breakpoint"));
-	
+
 	wxString conditions;
 	if (event.GetId() == XRCID("insert_cond_breakpoint")) {
 		conditions = wxGetTextFromUser(wxT("Enter the condition statement"), wxT("Create Conditional Breakpoint"));
@@ -2264,7 +2264,7 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT
 			prefix = _("Temporary ");
 		} else if (!conditions.IsEmpty()) {
 			prefix = _("Conditional ");
-		} 
+		}
 		DoSetStatusMessage(prefix + message, 0);
 	}
 }
@@ -2344,7 +2344,7 @@ void LEditor::DelAllBreakpointMarkers()
 			struct BPtoMarker bpm = GetMarkerForBreakpt((BP_type)bp_type);
 			while (MarkerGet(lineno) & bpm.mask) {
 				MarkerDelete(lineno, bpm.marker);
-			}			
+			}
 			while (MarkerGet(lineno) & bpm.mask_disabled) {
 				MarkerDelete(lineno, bpm.marker_disabled);
 			}

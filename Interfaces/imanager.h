@@ -175,7 +175,7 @@ public:
 	 * @param paths an array of files to add
 	 * @return true on sucesss, false otherwise
 	 */
-	virtual bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths) = 0;
+	virtual bool AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths) = 0;
 
 	/**
 	 * @brief add files to a virtual folder in the project
@@ -183,7 +183,7 @@ public:
 	 * @param paths an array of files to add
 	 * @return true on sucesss, false otherwise
 	 */
-	virtual bool AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths) = 0;
+	virtual bool AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths) = 0;
 
 	/**
 	 * @brief create virtual folder to parentPath

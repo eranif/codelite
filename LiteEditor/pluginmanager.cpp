@@ -328,14 +328,14 @@ Workspace *PluginManager::GetWorkspace()
 	return WorkspaceST::Get();
 }
 
-bool PluginManager::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths)
+bool PluginManager::AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths)
 {
-	return Frame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFodler(item, paths);
+	return Frame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolder(item, paths);
 }
 
-bool PluginManager::AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths)
+bool PluginManager::AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths)
 {
-	return Frame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFodler(vdFullPath, paths);
+	return Frame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolder(vdFullPath, paths);
 }
 
 int PluginManager::GetToolbarIconSize()

@@ -302,7 +302,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
 		// add the file to the project
 		wxArrayString paths;
 		paths.Add(fbpFile.GetFullPath());
-		m_mgr->AddFilesToVirtualFodler(project + wxT(":formbuilder"), paths);
+		m_mgr->AddFilesToVirtualFolder(project + wxT(":formbuilder"), paths);
 
 		// // first we launch wxFB with the -g flag set
 		wxString genFileCmd;
@@ -326,7 +326,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
 
 		if (filesToAdd.GetCount())
 		{
-			m_mgr->AddFilesToVirtualFodler(data.virtualFolder, filesToAdd);
+			m_mgr->AddFilesToVirtualFolder(data.virtualFolder, filesToAdd);
 		}
 
 		DoLaunchWxFB(fbpFile.GetFullPath());

@@ -520,7 +520,7 @@ void FileViewTree::OnSortItem( wxCommandEvent &WXUNUSED( event ) )
 	SortItem(item);
 }
 
-bool FileViewTree::AddFilesToVirtualFodler(const wxString& vdFullPath, wxArrayString& paths)
+bool FileViewTree::AddFilesToVirtualFolder(const wxString& vdFullPath, wxArrayString& paths)
 {
 	wxArrayString actualAdded;
 	ManagerST::Get()->AddFilesToProject( paths, vdFullPath, actualAdded );
@@ -553,7 +553,7 @@ bool FileViewTree::AddFilesToVirtualFodler(const wxString& vdFullPath, wxArraySt
 	return false;
 }
 
-bool FileViewTree::AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths)
+bool FileViewTree::AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths)
 {
 	if (item.IsOk() == false)
 		return false;
@@ -625,10 +625,10 @@ void FileViewTree::OnAddExistingItem( wxCommandEvent & WXUNUSED( event ) )
 			wxFileName fn(paths.Item(0));
 			start_path = fn.GetPath();
 		}
-		AddFilesToVirtualFodler(item, paths);
+		AddFilesToVirtualFolder(item, paths);
 	}
 	dlg->Destroy();
-	// this event is already sent by AddFilesToVirtualFodler() -> AddFilesToProject()
+	// this event is already sent by AddFilesToVirtualFolder() -> AddFilesToProject()
 	//SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&paths);
 }
 

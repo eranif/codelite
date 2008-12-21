@@ -230,7 +230,7 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 				wxTreeItemId parentItem = m_mgr->GetTree(TreeFileView)->GetItemParent(item.m_item);
 				wxArrayString paths;
 				paths.Add(fn.GetFullPath());
-				if (m_mgr->AddFilesToVirtualFodler(parentItem, paths) == false) {
+				if (m_mgr->AddFilesToVirtualFolder(parentItem, paths) == false) {
 					//probably not a virtual folder
 					wxString msg;
 					msg << wxT("CodeLite created the test file successfully, but was unable to add the generated file to any virtual folder\n");

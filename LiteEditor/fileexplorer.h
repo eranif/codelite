@@ -50,12 +50,14 @@ private:
 	void OnRootChanged(wxCommandEvent &e);
 
 #ifdef __WXMSW__
+#if wxUSE_FSVOLUME
 	wxChoice *m_volumes;
 	VolumeLocatorThread m_thread;
 
 	void OnVolumeChanged(wxCommandEvent &e);
 	void OnVolumes(wxCommandEvent &e);
-#endif
+#endif // wxUSE_FSVOLUME
+#endif // __WXMSW__
 
 public:
 	FileExplorer(wxWindow *parent, const wxString &caption);

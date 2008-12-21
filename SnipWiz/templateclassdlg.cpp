@@ -153,7 +153,7 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 	SaveBufferToFile( files.Item(1), buffer );
 
 	if ( !m_textCtrlVD->GetValue().IsEmpty() ) {
-		m_pManager->AddFilesToVirtualFodler( m_textCtrlVD->GetValue(), files );
+		m_pManager->AddFilesToVirtualFolder( m_textCtrlVD->GetValue(), files );
 	}
 
 	wxString msg;

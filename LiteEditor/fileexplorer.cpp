@@ -41,7 +41,9 @@ FileExplorer::FileExplorer(wxWindow *parent, const wxString &caption)
 , m_caption(caption)
 , m_isLinkedToEditor(false)
 #ifdef __WXMSW__
+#if wxUSE_FSVOLUME
 , m_thread(this)
+#endif
 #endif
 {
 	long link(1);
@@ -64,6 +66,7 @@ void FileExplorer::CreateGUIControls()
 	mainSizer->Add(tb, 0, wxEXPAND);
 	
 #ifdef __WXMSW__
+#if wxUSE_FSVOLUME
 	wxArrayString volumes;
 	Connect(wxEVT_THREAD_VOLUME_COMPLETED, wxCommandEventHandler(FileExplorer::OnVolumes), NULL, this);
 	
@@ -73,6 +76,7 @@ void FileExplorer::CreateGUIControls()
 	m_volumes = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, volumes, 0 );
 	mainSizer->Add(m_volumes, 0, wxEXPAND|wxALL, 1);
 	ConnectChoice(m_volumes, FileExplorer::OnVolumeChanged);
+#endif
 #endif
 
 	m_fileTree = new FileExplorerTree(this, wxID_ANY);
@@ -168,10 +172,12 @@ void FileExplorer::OnRootChanged(wxCommandEvent &e)
 	if(root.IsOk()){
 		wxString vol = m_fileTree->GetItemText(root);
 #ifdef __WXMSW__
+#if wxUSE_FSVOLUME
         if(m_volumes->FindString(vol) == wxNOT_FOUND) {
             m_volumes->AppendString(vol);
         }
 		m_volumes->SetStringSelection(vol);
+#endif
 #endif
         SendCmdEvent(wxEVT_FILE_EXP_INIT_DONE); //TODO: pass &vol?
 	}
@@ -179,6 +185,7 @@ void FileExplorer::OnRootChanged(wxCommandEvent &e)
 }
 
 #ifdef __WXMSW__
+#if wxUSE_FSVOLUME
 void FileExplorer::OnVolumeChanged(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
@@ -195,4 +202,5 @@ void FileExplorer::OnVolumes(wxCommandEvent &e)
 	}
 	m_volumes->Append(volumes);
 }
+#endif
 #endif

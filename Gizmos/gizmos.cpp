@@ -480,7 +480,7 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 	paths.Add(hdrFile);
 
 	wxString err_msg;
-	m_mgr->AddFilesToVirtualFodler(info.virtualDirectory, paths);
+	m_mgr->AddFilesToVirtualFolder(info.virtualDirectory, paths);
 }
 
 void GizmosPlugin::OnNewWxProject(wxCommandEvent &e)

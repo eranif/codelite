@@ -109,8 +109,8 @@ public:
 	 */
 	bool CreateAndAddFile(const wxString &filename, const wxString &vdFullPath);
 
-	bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths);
-	bool AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths);
+	bool AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths);
+	bool AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths);
 	bool CreateVirtualDirectory(const wxString &parentPath, const wxString &vdName);
 
 protected:

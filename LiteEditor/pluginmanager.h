@@ -84,8 +84,8 @@ public:
 	virtual bool IsWorkspaceOpen() const;
 	virtual TagsManager *GetTagsManager();
 	virtual Workspace *GetWorkspace();
-	virtual bool AddFilesToVirtualFodler(wxTreeItemId &item, wxArrayString &paths);
-	virtual bool AddFilesToVirtualFodler(const wxString &vdFullPath, wxArrayString &paths);
+	virtual bool AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths);
+	virtual bool AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths);
 	virtual int GetToolbarIconSize();
 	virtual wxAuiManager* GetDockingManager();
 	virtual EnvironmentConfig* GetEnv();

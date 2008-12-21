@@ -18,8 +18,10 @@
 #include <wx/string.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
+#include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/statbox.h>
+#include <wx/splitter.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
 
@@ -34,14 +36,17 @@ class TagsManagementBaseDlg : public wxDialog
 	private:
 	
 	protected:
+		wxSplitterWindow* m_splitter1;
+		wxPanel* m_panel1;
 		wxListCtrl* m_listCtrlDatabases;
 		wxButton* m_buttonAdd;
 		wxButton* m_buttonRemove;
 		wxButton* m_buttonSetActive;
 		wxButton* m_buttonFixPaths;
-		wxStaticText* m_staticTextFullPath;
+		wxPanel* m_panel2;
 		wxStaticText* m_staticText1;
 		wxListCtrl* m_listCtrlPaths;
+		wxStaticText* m_staticTextFullPath;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
@@ -62,6 +67,12 @@ class TagsManagementBaseDlg : public wxDialog
 	public:
 		TagsManagementBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Tags Databases"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~TagsManagementBaseDlg();
+		void m_splitter1OnIdle( wxIdleEvent& )
+		{
+		m_splitter1->SetSashPosition( 0 );
+		m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( TagsManagementBaseDlg::m_splitter1OnIdle ), NULL, this );
+		}
+		
 	
 };
 

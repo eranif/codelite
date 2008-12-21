@@ -474,18 +474,7 @@ void DbgGdb::SetBreakpoints()
 	for (size_t i=0; i< m_bpList.size(); i++) {
 	// Without the 'unnecessary' cast in the next line, bpinfo.bp_type is seen as (e.g.) 4 instead of BP_type_tempbreak, ruining switch statments :/
 		BreakpointInfo bpinfo = (BreakpointInfo)m_bpList.at(i);
-		if (Break(bpinfo)) {
-			if (bpinfo.ignore_number) {
-				SetIgnoreLevel(bpinfo.debugger_id, bpinfo.ignore_number);
-			}
-			if (! bpinfo.commandlist.IsEmpty()) {
-				SetCommands(bpinfo);
-			}
-			if (! bpinfo.is_enabled) {
-				SetEnabledState(bpinfo.debugger_id, false);
-			}
-			m_bpList.at(i).debugger_id = bpinfo.debugger_id;
-		}
+		Break(bpinfo);
 	}
 }
 

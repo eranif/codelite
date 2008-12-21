@@ -340,7 +340,14 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
 			Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 			// Now the bp has the correct debugger_id, tell gdb about any extras e.g. ignore-count
-			//DoBreakpointExtras(*iter);
+			// This can be done immediately if we have control back from the debugger.
+			// Otherwise add the id to a 'pending' list, which gets processed later
+			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+			if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
+				DoBreakpointExtras(*iter);
+			} else {
+				m_needs_extrasList.push_back(debugger_id);
+			}
 			return;
 		}
 	}
@@ -484,10 +491,6 @@ void BreakptMgr::EditBreakpoint(int index, bool &bpExist)
 	// Tell the debugger about the ignore count, conditions etc
 void BreakptMgr::DoBreakpointExtras(BreakpointInfo &bp)
 {
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	// No need to check if the debugger exists/is running: we can't arrive here otherwise
-
-	bool contIsNeeded = PauseDebuggerIfNeeded();
 	if (bp.ignore_number) {
 		SetBPIgnoreCount(bp.debugger_id, bp.ignore_number);
 	}
@@ -499,10 +502,6 @@ void BreakptMgr::DoBreakpointExtras(BreakpointInfo &bp)
 	}
 	if (! bp.commandlist.IsEmpty()) {
 		SetBPCommands(bp);
-	}
-
-	if (contIsNeeded) {
-		dbgr->Continue();
 	}
 }
 
@@ -692,3 +691,33 @@ bool BreakptMgr::PauseDebuggerIfNeeded()
 	return false;
 }
 
+void BreakptMgr::InitialiseExtrasList()
+{
+	m_needs_extrasList.clear();
+	
+	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
+	for (; iter != m_bps.end(); ++iter) {
+		int id = iter->debugger_id;
+		if (id == -1) { // which it almost certainly will be, as the debugger has only just started
+			id = iter->internal_id;
+		} 
+		m_needs_extrasList.push_back(id);			
+	}
+}
+	// Go through
+void BreakptMgr::SetBreakpointExtrasIfNeeded()
+{
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if ( ! ( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) ) {
+		return;
+	}
+
+	std::vector<int>::iterator iter = m_needs_extrasList.begin();
+	for (; iter != m_needs_extrasList.end();) {
+		int index = FindBreakpointById(*iter);
+		if (index != wxNOT_FOUND) {
+			DoBreakpointExtras(m_bps.at(index));
+		} 
+		iter = m_needs_extrasList.erase(iter);			
+	}
+}

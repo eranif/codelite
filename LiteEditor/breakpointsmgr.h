@@ -38,6 +38,8 @@
 class BreakptMgr
 {
 	std::vector<BreakpointInfo> m_bps;
+	std::vector<int> m_needs_extrasList; // Holds ids of those newly-added (or edited?) bps which still need extra work done
+	
 	int NextInternalID;		// Used to give each bp a unique internal ID. Start at 10k to avoid confusion with gdb's IDs
 	// Delete all breakpoint markers for this file, then re-mark with the currently-correct marker
 	void DoRefreshFileBreakpoints(LEditor* editor, const wxString fileName);
@@ -198,6 +200,17 @@ public:
 	 * Return true if a pause was done, to flag that a restart is needed
 	 */
 	bool PauseDebuggerIfNeeded();
+
+	/**
+	 * Add all of m_bps to the list of bps that may need extras passed to gdb e.g. ignore-count
+	 * Called by Manager::DbgStart
+	 */	
+	void InitialiseExtrasList();
+
+	/**
+	 * See if we've just set a breakpoint, that may need extras passed to gdb e.g. ignore-count
+	 */	
+	void SetBreakpointExtrasIfNeeded();
 
 	/**
 	 * Get a unique id for a breakpoint, to use when the debugger isn't running

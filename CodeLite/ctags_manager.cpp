@@ -1418,7 +1418,7 @@ bool TagsManager::IsTypeAndScopeContainer(const wxString& typeName, wxString& sc
 	wxString _scope = DoReplaceMacros(scope);
 
 	wxString sql;
-	sql << wxT("select ID from tags where name='") << _typeName << wxT("' and scope='") << _scope << wxT("' and KIND IN('struct', 'class') (LIMIT 1");
+	sql << wxT("select ID from tags where name='") << _typeName << wxT("' and scope='") << _scope << wxT("' and KIND IN('struct', 'class') LIMIT 1");
 
 	for (size_t i=0; i<2; i++) {
 
@@ -1432,7 +1432,7 @@ bool TagsManager::IsTypeAndScopeContainer(const wxString& typeName, wxString& sc
 		try {
 			if (rs.NextRow()) {
 				if (i == 1) {
-					_scope = wxT("<global>");
+					scope = wxT("<global>");
 				}
 				return true;
 
@@ -1444,7 +1444,7 @@ bool TagsManager::IsTypeAndScopeContainer(const wxString& typeName, wxString& sc
 				ex_rs = m_externalDatabase->Query(sql);
 				if ( ex_rs.NextRow() ) {
 					if (i == 1) {
-						_scope = wxT("<global>");
+						scope = wxT("<global>");
 						return true;
 					}
 					m_typeScopeContainerCache[cacheKey] = true;
@@ -1501,7 +1501,7 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 		try {
 			if (rs.NextRow()) {
 				if (i == 1) {
-					_scope = wxT("<global>");
+					scope = wxT("<global>");
 				}
 				return true;
 
@@ -1513,7 +1513,7 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 				ex_rs = m_externalDatabase->Query(sql);
 				if ( ex_rs.NextRow() ) {
 					if (i == 1) {
-						_scope = wxT("<global>");
+						scope = wxT("<global>");
 						return true;
 					}
 					m_typeScopeCache[cacheKey] = true;

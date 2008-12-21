@@ -629,10 +629,14 @@ bool Language::OnTypedef(wxString &typeName, wxString &typeScope, wxString &temp
 			typeScope = tag->GetScope();
 
 			//incase the realName already includes the scope, remove it from the typename
-			if (!typeScope.IsEmpty() && typeName.StartsWith(typeScope, &typeName)) {
-				//remove any :: prefix
-				typeName.StartsWith(wxT("::"), &typeName);
+			if (!typeScope.IsEmpty() && typeName.StartsWith(typeScope + wxT("::"))) {
+				typeName.StartsWith(typeScope + wxT("::"), &typeName);
 			}
+
+			// if the resolved type does not exist, try again against the
+			// global namespace. IsTypeAndScopeContainer() will check
+			// this and will update the typeScope to 'global' if needed
+			tagsManager->IsTypeAndScopeContainer(typeName, typeScope);
 			res = true;
 		}
 	}

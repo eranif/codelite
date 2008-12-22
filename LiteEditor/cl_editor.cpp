@@ -2182,7 +2182,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 	menu.Append(XRCID("toggle_bookmark"), LineIsMarked(mmt_bookmarks) ? wxString(_("Remove Bookmark")) : wxString(_("Add Bookmark")) );
 	menu.AppendSeparator();
 
-  menu.Append(XRCID("insert_breakpoint"), wxString(_("Add Breakpoint")));
+  menu.Append(XRCID("add_breakpoint"), wxString(_("Add Breakpoint")));
   menu.Append(XRCID("insert_temp_breakpoint"), wxString(_("Add a Temporary Breakpoint")));
 	menu.Append(XRCID("insert_cond_breakpoint"), wxString(_("Add a Conditional Breakpoint..")));
 

@@ -44,13 +44,13 @@ static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
 
 #if PERFORMANCE
 # define TIMER_START(){\
-	g_sw.Start();\
-}
+		g_sw.Start();\
+	}
 
 # define PRINT_TIMESTAMP(msg) {\
-	wxString log_msg(msg);\
-	wxPrintf(wxT("%08d: %s"), g_sw.Time(), log_msg.c_str());\
-}
+		wxString log_msg(msg);\
+		wxPrintf(wxT("%08d: %s"), g_sw.Time(), log_msg.c_str());\
+	}
 #else
 # define TIMER_START()
 # define PRINT_TIMESTAMP(msg)
@@ -86,7 +86,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 		return false;
 	}
 	PRINT_TIMESTAMP(wxT("Exporting makefile...done\n"));
-	
+
 	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project, errMsg);
 	if (!proj) {
 		errMsg << wxT("Cant open project '") << project << wxT("'");
@@ -108,7 +108,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 	PRINT_TIMESTAMP(wxT("Reading project dependencies...\n"));
 	wxArrayString depsArr = proj->GetDependencies(bld_conf_name);
 	PRINT_TIMESTAMP(wxT("Reading project dependencies...done\n"));
-	
+
 	wxArrayString removeList;
 	if (!isProjectOnly) {
 		//this function assumes that the working directory is located at the workspace path
@@ -153,7 +153,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 	wxString text;
 
 	wxFileName wspfile(WorkspaceST::Get()->GetWorkspaceFileName());
-	
+
 	PRINT_TIMESTAMP(wxT("Generating makefile...\n"));
 	text << wxT(".PHONY: clean All\n\n");
 	text << wxT("All:\n");
@@ -193,11 +193,11 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 			// we handle custom builds and non-custom build separatly:
 			if ( isCustom ) {
-				
+
 				CreateCustomPreBuildEvents(dependProjbldConf, text);
 				text << wxT("\t") << GetCdCmd(wspfile, fn) << dependProjbldConf->GetCustomBuildCmd() << wxT("\n");
 				CreateCustomPostBuildEvents(dependProjbldConf, text);
-				
+
 			} else {
 				PRINT_TIMESTAMP(wxString::Format(wxT("Generating makefile for project %s...\n"), dependProj->GetName().c_str()));
 				// generate the dependency project makefile
@@ -279,14 +279,14 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 	//make the paths relative
 	text << wxT("\t") << GetCdCmd(wspfile, projectPath) << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" clean\n") ;
 	PRINT_TIMESTAMP(wxT("Generating makefile...done\n"));
-	
+
 	//dump the content to file
 	PRINT_TIMESTAMP(wxT("Writing makefile...\n"));
 	wxFileOutputStream output(fn);
 	wxStringInputStream content(text);
 	output << content;
 	PRINT_TIMESTAMP(wxT("Writing makefile...done\n"));
-	
+
 	return true;
 }
 
@@ -475,14 +475,14 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 	//get the compiler settings
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 	bool generateDependeciesFiles(cmp->GetGenerateDependeciesFile());
-	
+
 	std::vector<wxFileName> abs_files, rel_paths;
 
 	// support for full path
 	PRINT_TIMESTAMP(wxT("Loading file list...\n"));
 	proj->GetFiles(rel_paths, abs_files);
 	PRINT_TIMESTAMP(wxT("Loading file list...done\n"));
-	
+
 	text << wxT("\n\n");
 	// create rule per object
 	text << wxT("##\n");
@@ -496,11 +496,11 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 		if (cmp->GetCmpFileType(abs_files.at(i).GetExt().Lower(), ft) ) {
 			wxString absFileName;
 			wxFileName fn( abs_files.at(i) );
-			
+
 			wxString filenameOnly = fn.GetName();
 			wxString fullpathOnly = fn.GetFullPath();
 			wxString fullnameOnly = fn.GetFullName();
-			
+
 			wxString compilationLine = ft.compilation_line;
 
 			compilationLine.Replace(wxT("$(FileName)"), filenameOnly);
@@ -547,7 +547,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 		}
 	}
 	PRINT_TIMESTAMP(wxT("Looping over the file list...done\n"));
-	
+
 	//add clean target
 	text << wxT("##\n");
 	text << wxT("## Clean\n");
@@ -990,7 +990,7 @@ void BuilderGnuMake::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxStrin
 {
 	BuildCommandList cmds;
 	BuildCommandList::iterator iter;
-	
+
 	cmds.clear();
 	bldConf->GetPostBuildCommands(cmds);
 	bool first(true);
@@ -1015,7 +1015,7 @@ void BuilderGnuMake::CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString
 {
 	BuildCommandList cmds;
 	BuildCommandList::iterator iter;
-	
+
 	cmds.clear();
 	bldConf->GetPreBuildCommands(cmds);
 	bool first(true);

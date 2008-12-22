@@ -27,6 +27,7 @@
 
 #include <wx/wxscintilla.h>
 #include <stack>
+#include <vector>
 #include <map>
 #include "entry.h"
 #include "cl_calltip.h"
@@ -60,16 +61,18 @@ class CCBox;
 			mmt_bp_ignored=0x800,  mmt_cond_bp=0x1000,mmt_bp_cmdlist=0x2000, mmt_breakpoint=0x4000, mmt_LAST_BP_TYPE=mmt_breakpoint,  mmt_all_breakpoints=0x7f00,   mmt_indicator=0x8000,
 			mmt_compiler=0x30000 /* masks compiler errors/warnings */
 		};
-		
+
  /**
  * @class BPtoMarker
  * Holds which marker and mask are associated with each breakpoint type
  */
-struct BPtoMarker {
+typedef struct _BPtoMarker {
 	enum BP_type bp_type;	// An enum of possible break/watchpoint types. In debugger.h
-	sci_marker_types marker;	marker_mask_type mask;
-	sci_marker_types marker_disabled;	marker_mask_type mask_disabled;
-};
+	sci_marker_types marker;
+	marker_mask_type mask;
+	sci_marker_types marker_disabled;
+	marker_mask_type mask_disabled;
+} BPtoMarker;
 
 /**
  * @class LEditorState
@@ -126,6 +129,7 @@ class LEditor : public wxScintilla, public IEditor
     int m_hyperLinkType;
 	bool m_hightlightMatchedBraces;
 	bool m_autoAddMatchedBrace;
+	std::map<int, std::vector<BreakpointInfo> > m_breakpointsInfo;
 
 public:
 	static FindReplaceData &GetFindReplaceData() {
@@ -345,7 +349,7 @@ public:
 	 * toggle whether the break point at the current line & file is enabled
 	 */
 	void ToggleBreakpointEnablement();
-	
+
 	/**
 	 * Ignore the break point at the current line & file
 	 */
@@ -366,14 +370,13 @@ public:
 	 * Delete the breakpoint at the current line & file, or lineno if from ToggleBreakpoint()
 	 */
 	void DelBreakpoint(int lineno = -1);
-	
+
 	virtual void UpdateBreakpoints();
 
 	//--------------------------------
 	// breakpoint visualisation
 	//--------------------------------
-	void SetBreakpointMarker(int lineno, BP_type bptype, bool is_disabled, bool has_multiple);
-	virtual void DelBreakpointMarker(int linenoenum, sci_marker_types markertype = smt_breakpoint);
+	virtual void SetBreakpointMarker(int lineno, BP_type bptype, bool is_disabled, const std::vector<BreakpointInfo>& li);
 	virtual void DelAllBreakpointMarkers();
 
 	virtual void HighlightLine(int lineno);
@@ -535,7 +538,7 @@ public:
 
 private:
 	void FillBPtoMarkerArray();
-	struct BPtoMarker GetMarkerForBreakpt(enum BP_type bp_type);
+	BPtoMarker GetMarkerForBreakpt(enum BP_type bp_type);
 	void SetProperties();
 	void DefineMarker(int marker, int markerType, wxColor fore, wxColor back);
 	void SetLineNumberWidth();

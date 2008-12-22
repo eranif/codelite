@@ -39,17 +39,16 @@ class BreakptMgr
 {
 	std::vector<BreakpointInfo> m_bps;
 	std::vector<int> m_needs_extrasList; // Holds ids of those newly-added (or edited?) bps which still need extra work done
-	
+
 	int NextInternalID;		// Used to give each bp a unique internal ID. Start at 10k to avoid confusion with gdb's IDs
 	// Delete all breakpoint markers for this file, then re-mark with the currently-correct marker
-	void DoRefreshFileBreakpoints(LEditor* editor, const wxString fileName);
-	void DoProvideBestBP_Type(LEditor* editor, std::vector<BreakpointInfo>& li);	// Tells the editor which is the most appropriate bp marker to show
+	void DoRefreshFileBreakpoints(LEditor* editor);
+	void DoProvideBestBP_Type(LEditor* editor, const std::vector<BreakpointInfo>& li);	// Tells the editor which is the most appropriate bp marker to show
 	// Delete all line-type breakpoint markers in all editors
 	// Done before refreshing after a delete, lest it was the last bp in a file
 	void DeleteAllBreakpointMarkers();
 	std::set<wxString> GetFilesWithBreakpointMarkers();
 	int FindBreakpointById(const int id);
-
 	/**
 	 * Can gdb accept this alteration, or will be bp have to be replaced?
 	 */
@@ -64,11 +63,6 @@ class BreakptMgr
 	 * Get id of the breakpoint on this line. If multiple bps, ask the user to select
 	 */
 	int GetDesiredBreakpointIfMultiple(const wxString &fileName, const int lineno, const wxString msg = wxT(""));
-
-	/**
-	 * Refresh all line-type breakpoint markers in all editors
-	*/
-	void RefreshBreakpointMarkers();
 
 	/**
 	 * Sets bp.bp_type to the value most appropriate to its contents
@@ -111,6 +105,25 @@ public:
 	~BreakptMgr() {
 		Clear();
 	}
+
+
+	/**
+	 * Refresh all line-type breakpoint markers in all editors
+	*/
+	void RefreshBreakpointMarkers();
+
+	/**
+	 * @brief add list of breakpoints to the stored breakpoints list
+	 * @param bps
+	 */
+	void SetBreakpoints(const std::vector<BreakpointInfo>& bps);
+
+	/**
+	 * @brief delete all stored breakpoints related to file. this method should does not update the
+	 * debugger, so it must be called *before* starting the debugger
+	 * @param fileName
+	 */
+	void DeleteAllBreakpointsByFileName(const wxString &fileName);
 
 	/**
 	 * Add a breakpoint to the current debugger at the given line-number/file
@@ -204,12 +217,12 @@ public:
 	/**
 	 * Add all of m_bps to the list of bps that may need extras passed to gdb e.g. ignore-count
 	 * Called by Manager::DbgStart
-	 */	
+	 */
 	void InitialiseExtrasList();
 
 	/**
 	 * See if we've just set a breakpoint, that may need extras passed to gdb e.g. ignore-count
-	 */	
+	 */
 	void SetBreakpointExtrasIfNeeded();
 
 	/**

@@ -37,7 +37,8 @@ bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, c
 	BreakpointInfo bp;
 	bp.Create(file, lineno, GetNextID());
 	if (is_temp) {
-		bp.bp_type = BP_type_tempbreak; bp.is_temp = true;
+		bp.bp_type = BP_type_tempbreak;
+		bp.is_temp = true;
 	}
 	bp.conditions = conditions;
 
@@ -47,14 +48,14 @@ bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, c
 bool BreakptMgr::AddBreakpoint(BreakpointInfo &bp)
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if(dbgr && dbgr->IsRunning()){
-	// If the debugger is already running, tell it we want a new bp
-	// If not, they'll all be added together when the debugger does start
+	if (dbgr && dbgr->IsRunning()) {
+		// If the debugger is already running, tell it we want a new bp
+		// If not, they'll all be added together when the debugger does start
 		bool contIsNeeded = PauseDebuggerIfNeeded();
 		dbgr->Break(bp);
-	// dbgr->Break(bp) doesn't set the ignore/disabled/etc states
-	// but we can't do it now, as we don't yet know the debugger_id
-	// However it will happen later, in SetBreakpointDebuggerID
+		// dbgr->Break(bp) doesn't set the ignore/disabled/etc states
+		// but we can't do it now, as we don't yet know the debugger_id
+		// However it will happen later, in SetBreakpointDebuggerID
 		if (contIsNeeded) {
 			dbgr->Continue();
 		}
@@ -73,7 +74,8 @@ void BreakptMgr::AddBreakpoint()
 	BreakptPropertiesDlg dlg(NULL);
 	dlg.SetTitle(_("Create a breakpoint or watchpoint"));
 
-	BreakpointInfo bp; bp.Create(ManagerST::Get()->GetActiveEditor()->GetFileName().GetFullPath(), -1, GetNextID());
+	BreakpointInfo bp;
+	bp.Create(ManagerST::Get()->GetActiveEditor()->GetFileName().GetFullPath(), -1, GetNextID());
 	dlg.EnterBPData(bp);
 
 	if (dlg.ShowModal() != wxID_OK) {
@@ -101,7 +103,7 @@ unsigned int BreakptMgr::GetBreakpoints(std::vector<BreakpointInfo>& li, const w
 {
 	li.clear();
 	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for(; iter != m_bps.end(); iter++) {
+	for (; iter != m_bps.end(); iter++) {
 		BreakpointInfo b = *iter;
 		if ( (b.lineno == lineno) && (b.file == fileName) ) {
 			li.push_back(b);
@@ -121,7 +123,7 @@ bool BreakptMgr::GetMatchingBreakpoints(std::vector<BreakpointInfo>& li, const w
 
 	li.clear();
 	std::vector<BreakpointInfo>::iterator iter = allonline.begin();
-	for(; iter != allonline.end(); ++iter) {	// Now add the matching ones to li
+	for (; iter != allonline.end(); ++iter) {	// Now add the matching ones to li
 		BreakpointInfo b = *iter;
 		if (b.bp_type == bp_type) {
 			li.push_back(b);
@@ -130,66 +132,64 @@ bool BreakptMgr::GetMatchingBreakpoints(std::vector<BreakpointInfo>& li, const w
 	return ! li.empty();
 }
 
-	// Delete all line-type breakpoint markers in all editors
-	// Done before refreshing after a delete or edit, lest it was the last bp in a file
+// Delete all line-type breakpoint markers in all editors
+// Done before refreshing after a delete or edit, lest it was the last bp in a file
 void BreakptMgr::DeleteAllBreakpointMarkers()
 {
 	std::set<wxString> filenames = GetFilesWithBreakpointMarkers();
 	std::set<wxString>::iterator filenames_iter = filenames.begin();
-	for(; filenames_iter != filenames.end(); ++filenames_iter) {
+	for (; filenames_iter != filenames.end(); ++filenames_iter) {
 		LEditor* editor = Frame::Get()->GetMainBook()->FindEditor(*filenames_iter);
 		if (editor) {
 			editor->DelAllBreakpointMarkers();
 		}
 	}
 }
-	// Refresh all line-type breakpoint markers in all editors
+// Refresh all line-type breakpoint markers in all editors
 void BreakptMgr::RefreshBreakpointMarkers()
 {
 	std::set<wxString> filenames = GetFilesWithBreakpointMarkers();
 	std::set<wxString>::iterator filenames_iter = filenames.begin();
-	for(; filenames_iter != filenames.end(); ++filenames_iter) {
+	for (; filenames_iter != filenames.end(); ++filenames_iter) {
 		LEditor* editor = Frame::Get()->GetMainBook()->FindEditor(*filenames_iter);
 		if (editor) {
-			DoRefreshFileBreakpoints(editor, *filenames_iter);
+			DoRefreshFileBreakpoints(editor);
 		}
 	}
 }
 
 // Delete all breakpoint markers for this file, then re-mark with the currently-correct marker
-void BreakptMgr::DoRefreshFileBreakpoints(LEditor* editor, const wxString fileName)
+void BreakptMgr::DoRefreshFileBreakpoints(LEditor* editor)
 {
 	// Load the file's line-type bps into fi, and make a set of their line-numbers
-	std::vector<BreakpointInfo> fi;
-	std::set<int> lines;
+	std::multimap<int, BreakpointInfo> bps;
 	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for(; iter != m_bps.end(); ++iter) {
+	for (; iter != m_bps.end(); ++iter) {
 		BreakpointInfo b = *iter;
-		if ((b.file == fileName) && (b.lineno != -1)) {
-			fi.push_back(b);
-			lines.insert(b.lineno);
+		if ((b.file == editor->GetFileName().GetFullPath()) && (b.lineno != -1)) {
+			bps.insert(std::pair<int, BreakpointInfo>(b.lineno, b));
 		}
 	}
 
 	editor->DelAllBreakpointMarkers();
-	// Collect the bps for each lineno
-	std::set<int>::iterator lines_iter = lines.begin();
-	for(; lines_iter != lines.end(); ++lines_iter) {
-		std::vector<BreakpointInfo> bps_on_this_line;
-		iter = fi.begin();
-		for(; iter != fi.end(); ++iter) {
-			BreakpointInfo b = *iter;
-			if (b.lineno == *lines_iter) {
-				bps_on_this_line.push_back(b);
-			}
+
+	// the multimap now holds a table of
+	// line numbers and breakpointsInfo, collect all line numbers's breakpoint info into vector
+	// and place markers
+	for(std::multimap<int, BreakpointInfo>::iterator i=bps.begin(); i != bps.end(); i++){
+		std::pair<std::multimap<int, BreakpointInfo>::iterator, std::multimap<int, BreakpointInfo>::iterator> range = bps.equal_range(i->first);
+		std::vector<BreakpointInfo> v;
+		for(std::multimap<int, BreakpointInfo>::iterator it = range.first; it != range.second; it++){
+			v.push_back(it->second);
+
+			// Now work out which is the most significant (in marker terms) and tell the editor
+			DoProvideBestBP_Type(editor, v);
 		}
-		// Now work out which is the most significant (in marker terms) and tell the editor
-		DoProvideBestBP_Type(editor, bps_on_this_line);
 	}
 }
 
-	// Given a list of bps, tell the editor which is the most significant (in marker terms)
-void BreakptMgr::DoProvideBestBP_Type(LEditor* editor, std::vector<BreakpointInfo>& li)
+// Given a list of bps, tell the editor which is the most significant (in marker terms)
+void BreakptMgr::DoProvideBestBP_Type(LEditor* editor, const std::vector<BreakpointInfo>& li)
 {
 	if ((editor == NULL) || (li.size() == 0)) {
 		return;
@@ -197,32 +197,47 @@ void BreakptMgr::DoProvideBestBP_Type(LEditor* editor, std::vector<BreakpointInf
 	// If there's an enabled bp of any sort, it beats all disabled ones
 	// Otherwise, BP_type_break > BP_type_tempbreak > BP_type_cmdlistbreak > BP_type_condbreak > BP_type_ignoredbreak
 	int values[BP_LAST_MARKED_ITEM+2]; // Allow for BP_type_invalid = -1 & BP_type_none = 0
-	values[BP_type_break] = 100; values[BP_type_tempbreak] = 90; values[BP_type_cmdlistbreak] = 80;
-	values[BP_type_condbreak] = 70; values[BP_type_ignoredbreak] = 60; values[BP_type_none] = 0; values[BP_type_invalid] = -1;
+	values[BP_type_break] = 100;
+	values[BP_type_tempbreak] = 90;
+	values[BP_type_cmdlistbreak] = 80;
+	values[BP_type_condbreak] = 70;
+	values[BP_type_ignoredbreak] = 60;
+	values[BP_type_none] = 0;
+	values[BP_type_invalid] = -1;
 
-	BP_type best = BP_type_none; int best_value = 0; bool is_disabled = false;
-	std::vector<BreakpointInfo>::iterator iter = li.begin();
-	for(; iter != li.end(); ++iter) {
+	BP_type best = BP_type_none;
+	int best_value = 0;
+	bool is_disabled = false;
+	std::vector<BreakpointInfo>::const_iterator iter = li.begin();
+	for (; iter != li.end(); ++iter) {
 		BP_type bpt = iter->bp_type;
 		int val = values[bpt];
 		if (!iter->is_enabled) {
 			val /= 2;	// Halving the value for disability means that abled always outranks disabled, without otherwise interfering with the order
 		}
 		if (val > best_value) {
-			best = bpt; best_value = val; is_disabled = ! iter->is_enabled;	// If the new item wins, store its data
+			best = bpt;
+			best_value = val;
+			is_disabled = ! iter->is_enabled;	// If the new item wins, store its data
 		}
 	}
 
+
 	if (best > 0) {
-		editor->SetBreakpointMarker(li[0].lineno, best, is_disabled, li.size() > 1);
+		// ATTN: this wierd allocation is due to bug in optimization of g++
+		// which seems to crash (removing optimization fixes this problem,
+		// but we prefer to stick with optimization level 2)
+		std::vector<BreakpointInfo> *v = new std::vector<BreakpointInfo>(li);
+		editor->SetBreakpointMarker(li.at(0).lineno, best, is_disabled, *v);
+		delete v;
 	}
 }
 
-	// Invalidates each debugger_id
+// Invalidates each debugger_id
 void BreakptMgr::ClearBP_debugger_ids()
 {
 	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for(; iter != m_bps.end(); iter++) {
+	for (; iter != m_bps.end(); iter++) {
 		BreakpointInfo bp = *iter;
 		bp.debugger_id = -1;
 	}
@@ -237,7 +252,7 @@ bool BreakptMgr::DelBreakpoint(const int id)
 
 	//remove it from the debugger if it's running
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if(dbgr && dbgr->IsRunning()) {
+	if (dbgr && dbgr->IsRunning()) {
 		if (id > FIRST_INTERNAL_ID) {
 			// This shouldn't happen while the debugger is running (debugger_id should be valid)
 			// But if it does, assume it was a bp that gdb couldn't create, and just remove from the bp list
@@ -282,7 +297,7 @@ void BreakptMgr::DelAllBreakpoints()
 	m_bps.clear();
 }
 
-	// Toggle a breakpoint's enabled state
+// Toggle a breakpoint's enabled state
 bool BreakptMgr::ToggleEnabledStateByLineno(const wxString& file, const int lineno)
 {
 	wxString msg(_("Select the breakpoint that you want to alter"));
@@ -294,7 +309,7 @@ bool BreakptMgr::ToggleEnabledStateByLineno(const wxString& file, const int line
 	int index = FindBreakpointById(bid);
 
 	// sanity
-	if(index < 0 || index >= (int)m_bps.size()){
+	if (index < 0 || index >= (int)m_bps.size()) {
 		return false;
 	}
 
@@ -307,13 +322,13 @@ bool BreakptMgr::ToggleEnabledStateByLineno(const wxString& file, const int line
 	return true;
 }
 
-	// The debugger labels each breakpoint with an id. DbgGdb::Poke grabs this
-	// and passes it here via DbgCmdHandlerBp::ProcessOutput and Manager::UpdateBpAdded.
-	// By storing it as BreakpointInfo::debugger_id, we can be certain that this bp refers to the gdb breakpoint
+// The debugger labels each breakpoint with an id. DbgGdb::Poke grabs this
+// and passes it here via DbgCmdHandlerBp::ProcessOutput and Manager::UpdateBpAdded.
+// By storing it as BreakpointInfo::debugger_id, we can be certain that this bp refers to the gdb breakpoint
 void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugger_id)
 {
 	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for(; iter != m_bps.end(); ++iter) {
+	for (; iter != m_bps.end(); ++iter) {
 		if (iter->internal_id == internal_id) {
 			// We've found the match. However, if breakpoint creation had failed, confess, then delete
 			if (debugger_id == -1) {
@@ -354,7 +369,7 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
 	wxLogMessage(wxT("SetBreakpointDebuggerID(): Failed to match internal_id to debugger_id"));
 }
 
-	// Set a breakpoint's ignore count
+// Set a breakpoint's ignore count
 bool BreakptMgr::IgnoreByLineno(const wxString& file, const int lineno)
 {
 	wxString msg(_("Select the breakpoint to have its ignore-count changed"));
@@ -366,7 +381,7 @@ bool BreakptMgr::IgnoreByLineno(const wxString& file, const int lineno)
 	int index = FindBreakpointById(bid);
 
 	// sanity
-	if(index < 0 || index >= (int)m_bps.size()){
+	if (index < 0 || index >= (int)m_bps.size()) {
 		return false;
 	}
 
@@ -411,7 +426,7 @@ void BreakptMgr::EditBreakpoint(int index, bool &bpExist)
 {
 	// sanity
 	bpExist = true;
-	if(index < 0 || index >= (int)m_bps.size()){
+	if (index < 0 || index >= (int)m_bps.size()) {
 		bpExist = false;
 		return;
 	}
@@ -444,24 +459,24 @@ void BreakptMgr::EditBreakpoint(int index, bool &bpExist)
 	// We've got our altered dlg.b If the debugger's running, we can update it now
 	// Otherwise, it'll be automatically inserted correctly when the debugger starts
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if(dbgr && dbgr->IsRunning()){
+	if (dbgr && dbgr->IsRunning()) {
 		if (CanThisBreakpointBeUpdated(dlg.b, bp)) {
 			if (dlg.b.ignore_number != bp.ignore_number) {
 				if (! SetBPIgnoreCount(dlg.b.debugger_id, dlg.b.ignore_number)) {
 					return;	// Harsh, but what else can one do?
 				}
 			}
-		if (dlg.b.is_enabled != bp.is_enabled) {
+			if (dlg.b.is_enabled != bp.is_enabled) {
 				if (! SetBPEnabledState(dlg.b.debugger_id, dlg.b.is_enabled)) {
 					return ;
 				}
 			}
-		if (dlg.b.conditions != bp.conditions) {
+			if (dlg.b.conditions != bp.conditions) {
 				if (! SetBPConditon(dlg.b)) {
 					return ;
 				}
 			}
-		if (dlg.b.commandlist != bp.commandlist) {
+			if (dlg.b.commandlist != bp.commandlist) {
 				if (! SetBPCommands(dlg.b)) {
 					return ;
 				}
@@ -486,9 +501,9 @@ void BreakptMgr::EditBreakpoint(int index, bool &bpExist)
 	RefreshBreakpointMarkers();
 }
 
-  /*------------------------------- Implementation -------------------------------*/
+/*------------------------------- Implementation -------------------------------*/
 
-	// Tell the debugger about the ignore count, conditions etc
+// Tell the debugger about the ignore count, conditions etc
 void BreakptMgr::DoBreakpointExtras(BreakpointInfo &bp)
 {
 	if (bp.ignore_number) {
@@ -547,13 +562,13 @@ int BreakptMgr::GetDesiredBreakpointIfMultiple(const wxString &fileName, const i
 	return (bp.debugger_id == -1 ? bp.internal_id : bp.debugger_id );
 }
 
-	// Construct set of files containing bps
+// Construct set of files containing bps
 std::set<wxString> BreakptMgr::GetFilesWithBreakpointMarkers()
 {
 	// Make a set of all filenames containing a file-relevant variety of breakpoint
 	std::set<wxString> filenames;
 	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for(; iter != m_bps.end(); ++iter) {
+	for (; iter != m_bps.end(); ++iter) {
 		// If this bp is a lineno or function type, add its file to the set
 		wxString fileName = iter->file;
 		if ((!fileName.IsEmpty()) && (iter->memory_address == -1)) {
@@ -571,7 +586,7 @@ int BreakptMgr::FindBreakpointById(const int id)
 		BreakpointInfo b = *iter;
 		// If we were passed an id > 10000, it must be internal
 		int this_id = (id > FIRST_INTERNAL_ID ? b.internal_id : b.debugger_id);
-		if(id == this_id) {
+		if (id == this_id) {
 			return (int)(iter - m_bps.begin());
 		}
 	}
@@ -584,17 +599,20 @@ bool BreakptMgr::CanThisBreakpointBeUpdated(const BreakpointInfo &a, const Break
 	// Since, afaik, the only things that *can* be updated are: conditions/commands/ignores/enables,
 	// return true if all but these are == (except for bp_type, which will have changed as a consequence of those)
 	BreakpointInfo temp = a;
-	temp.ignore_number = b.ignore_number; temp.is_enabled = b.is_enabled;
-	temp.conditions = b.conditions; temp.commandlist = b.commandlist; temp.bp_type = b.bp_type;
+	temp.ignore_number = b.ignore_number;
+	temp.is_enabled = b.is_enabled;
+	temp.conditions = b.conditions;
+	temp.commandlist = b.commandlist;
+	temp.bp_type = b.bp_type;
 	return (temp == b);
 }
 
 bool BreakptMgr::SetBPIgnoreCount(const int bid, const int ignorecount)
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if(dbgr && dbgr->IsRunning()){
-	// If the debugger is already running, tell it about the new ignore level
-	// If not, it'll happen automatically when the debugger does start
+	if (dbgr && dbgr->IsRunning()) {
+		// If the debugger is already running, tell it about the new ignore level
+		// If not, it'll happen automatically when the debugger does start
 		bool contIsNeeded = PauseDebuggerIfNeeded();
 		bool result = dbgr->SetIgnoreLevel(bid, ignorecount);
 		if (contIsNeeded) {
@@ -608,9 +626,9 @@ bool BreakptMgr::SetBPIgnoreCount(const int bid, const int ignorecount)
 bool BreakptMgr::SetBPCommands(const BreakpointInfo& bp)
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if(dbgr && dbgr->IsRunning()){
-	// If the debugger is already running, tell it about the commands
-	// If not, it'll happen automatically when the debugger does start
+	if (dbgr && dbgr->IsRunning()) {
+		// If the debugger is already running, tell it about the commands
+		// If not, it'll happen automatically when the debugger does start
 		bool contIsNeeded = PauseDebuggerIfNeeded();
 		bool result = dbgr->SetCommands(bp);
 		if (contIsNeeded) {
@@ -625,9 +643,9 @@ bool BreakptMgr::SetBPCommands(const BreakpointInfo& bp)
 bool BreakptMgr::SetBPConditon(const BreakpointInfo& bp)
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if(dbgr && dbgr->IsRunning()){
-	// If the debugger is already running, tell it about the condition
-	// If not, it'll happen automatically when the debugger does start
+	if (dbgr && dbgr->IsRunning()) {
+		// If the debugger is already running, tell it about the condition
+		// If not, it'll happen automatically when the debugger does start
 		bool contIsNeeded = PauseDebuggerIfNeeded();
 		bool result = dbgr->SetCondition(bp);
 		if (contIsNeeded) {
@@ -642,9 +660,9 @@ bool BreakptMgr::SetBPConditon(const BreakpointInfo& bp)
 bool BreakptMgr::SetBPEnabledState(const int bid, const bool enable)
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if(dbgr && dbgr->IsRunning()){
-	// If the debugger is already running, tell it about the new ignore level
-	// If not, it'll happen automatically when the debugger does start
+	if (dbgr && dbgr->IsRunning()) {
+		// If the debugger is already running, tell it about the new ignore level
+		// If not, it'll happen automatically when the debugger does start
 		bool contIsNeeded = PauseDebuggerIfNeeded();
 		bool result = dbgr->SetEnabledState(bid, enable);
 		if (contIsNeeded) {
@@ -662,25 +680,29 @@ void BreakptMgr::SetBestBPType(BreakpointInfo& bp)
 	}
 
 	if (bp.ignore_number > 0) {
-		bp.bp_type = BP_type_ignoredbreak; return;
+		bp.bp_type = BP_type_ignoredbreak;
+		return;
 	}
 
 	if (bp.IsConditional()) {
-		bp.bp_type = BP_type_condbreak; return;
+		bp.bp_type = BP_type_condbreak;
+		return;
 	}
 
 	if (!bp.commandlist.IsEmpty()) {
-		bp.bp_type = BP_type_cmdlistbreak; return;
+		bp.bp_type = BP_type_cmdlistbreak;
+		return;
 	}
 
 	if (bp.is_temp) {
-		bp.bp_type = BP_type_tempbreak; return;
+		bp.bp_type = BP_type_tempbreak;
+		return;
 	}
 
 	bp.bp_type = BP_type_break;	// Default option
 }
 
-	// If the debugger is running but can't interact, pause it and return true (to flag needs restart)
+// If the debugger is running but can't interact, pause it and return true (to flag needs restart)
 bool BreakptMgr::PauseDebuggerIfNeeded()
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -694,17 +716,17 @@ bool BreakptMgr::PauseDebuggerIfNeeded()
 void BreakptMgr::InitialiseExtrasList()
 {
 	m_needs_extrasList.clear();
-	
+
 	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
 	for (; iter != m_bps.end(); ++iter) {
 		int id = iter->debugger_id;
 		if (id == -1) { // which it almost certainly will be, as the debugger has only just started
 			id = iter->internal_id;
-		} 
-		m_needs_extrasList.push_back(id);			
+		}
+		m_needs_extrasList.push_back(id);
 	}
 }
-	// Go through
+// Go through
 void BreakptMgr::SetBreakpointExtrasIfNeeded()
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -717,7 +739,25 @@ void BreakptMgr::SetBreakpointExtrasIfNeeded()
 		int index = FindBreakpointById(*iter);
 		if (index != wxNOT_FOUND) {
 			DoBreakpointExtras(m_bps.at(index));
-		} 
-		iter = m_needs_extrasList.erase(iter);			
+		}
+		iter = m_needs_extrasList.erase(iter);
 	}
+}
+
+void BreakptMgr::DeleteAllBreakpointsByFileName(const wxString& fileName)
+{
+	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
+	while (iter != m_bps.end()) {
+		if (fileName == iter->file) {
+			iter = m_bps.erase(iter);
+		} else {
+			++iter;
+		}
+	}
+}
+
+void BreakptMgr::SetBreakpoints(const std::vector<BreakpointInfo>& bps)
+{
+	// append the breakpoint list
+	m_bps.insert(m_bps.end(), bps.begin(), bps.end());
 }

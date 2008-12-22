@@ -184,27 +184,44 @@ void LEditor::SetSyntaxHighlight()
 // Fills the struct array that marries breakpoint type to marker and mask
 void LEditor::FillBPtoMarkerArray()
 {
-	BPtoMarker bpm; bpm.bp_type = BP_type_break;
-	bpm.marker = smt_breakpoint; bpm.mask = mmt_breakpoint; bpm.marker_disabled = smt_bp_disabled; bpm.mask_disabled = mmt_bp_disabled;
+	BPtoMarker bpm;
+	bpm.bp_type = BP_type_break;
+	bpm.marker = smt_breakpoint;
+	bpm.mask = mmt_breakpoint;
+	bpm.marker_disabled = smt_bp_disabled;
+	bpm.mask_disabled = mmt_bp_disabled;
 	m_BPstoMarkers.push_back(bpm);
 
-	BPtoMarker bpcmdm; bpcmdm.bp_type = BP_type_cmdlistbreak;
-	bpcmdm.marker = smt_bp_cmdlist; bpcmdm.mask = mmt_bp_cmdlist; bpcmdm.marker_disabled = smt_bp_cmdlist_disabled; bpcmdm.mask_disabled = mmt_bp_cmdlist_disabled;
+	BPtoMarker bpcmdm;
+	bpcmdm.bp_type = BP_type_cmdlistbreak;
+	bpcmdm.marker = smt_bp_cmdlist;
+	bpcmdm.mask = mmt_bp_cmdlist;
+	bpcmdm.marker_disabled = smt_bp_cmdlist_disabled;
+	bpcmdm.mask_disabled = mmt_bp_cmdlist_disabled;
 	m_BPstoMarkers.push_back(bpcmdm);
 
-	BPtoMarker bpcondm; bpcondm.bp_type = BP_type_condbreak;
-	bpcondm.marker = smt_cond_bp; bpcondm.mask = mmt_cond_bp; bpcondm.marker_disabled = smt_cond_bp_disabled; bpcondm.mask_disabled = mmt_cond_bp_disabled;
+	BPtoMarker bpcondm;
+	bpcondm.bp_type = BP_type_condbreak;
+	bpcondm.marker = smt_cond_bp;
+	bpcondm.mask = mmt_cond_bp;
+	bpcondm.marker_disabled = smt_cond_bp_disabled;
+	bpcondm.mask_disabled = mmt_cond_bp_disabled;
 	m_BPstoMarkers.push_back(bpcondm);
 
-	BPtoMarker bpignm; bpignm.bp_type = BP_type_ignoredbreak;
-	bpignm.marker = bpignm.marker_disabled = smt_bp_ignored; bpignm.mask = bpignm.mask_disabled = mmt_bp_ignored; // Enabled/disabled are the same
+	BPtoMarker bpignm;
+	bpignm.bp_type = BP_type_ignoredbreak;
+	bpignm.marker =
+	bpignm.marker_disabled = smt_bp_ignored;
+	bpignm.mask =
+	bpignm.mask_disabled = mmt_bp_ignored; // Enabled/disabled are the same
 	m_BPstoMarkers.push_back(bpignm);
 
-	bpm.bp_type = BP_type_tempbreak; m_BPstoMarkers.push_back(bpm);	// Temp is the same as non-temp
+	bpm.bp_type = BP_type_tempbreak;
+	m_BPstoMarkers.push_back(bpm);	// Temp is the same as non-temp
 }
 
 	// Looks for a struct for this breakpoint-type
-struct BPtoMarker LEditor::GetMarkerForBreakpt(enum BP_type bp_type)
+BPtoMarker LEditor::GetMarkerForBreakpt(enum BP_type bp_type)
 {
 	std::vector<BPtoMarker>::iterator iter = m_BPstoMarkers.begin();
 	for(; iter != m_BPstoMarkers.end(); ++iter){
@@ -889,8 +906,7 @@ void LEditor::OpenFile(const wxString &fileName, const wxString &project)
 	m_fileName = fileName;
 	m_project = project;
 
-	//update breakpoints
-	UpdateBreakpoints();
+	DelAllBreakpointMarkers();
 	SetCaretAt(0);
 
 	UpdateColours();
@@ -899,22 +915,21 @@ void LEditor::OpenFile(const wxString &fileName, const wxString &project)
 //this function is called before the debugger startup
 void LEditor::UpdateBreakpoints()
 {
-/*	//remove all break points associated with this file
-	ManagerST::Get()->GetBreakpointsMgr()->DelBreakpoints(GetFileName().GetFullPath());
+	ManagerST::Get()->GetBreakpointsMgr()->DeleteAllBreakpointsByFileName(GetFileName().GetFullPath());
 
-	//collect the actual breakpoint according to the markers set
-	int mask(0);
-	mask |= mmt_all_breakpoints;
-	int lineno = MarkerNext(0, mask);
-	while (lineno >= 0) {
-		BreakpointInfo bp;
-		bp.file = GetFileName().GetFullPath();
-		bp.lineno = lineno + 1;
-		ManagerST::Get()->GetBreakpointsMgr()->AddBreakpoint(bp);
+	// iterate over the array and update the breakpoint manager with updated line numbers for each breakpoint
+	std::map<int, std::vector<BreakpointInfo> >::iterator iter = m_breakpointsInfo.begin();
+	for(; iter != m_breakpointsInfo.end(); iter++){
+		int handle = iter->first;
+		int line = MarkerLineFromHandle(handle);
+		if(line >= 0){
+			for(size_t i=0; i<iter->second.size(); i++){
+				iter->second.at(i).lineno = line + 1;
+			}
+		}
 
-		lineno = MarkerNext(lineno+1, mask);
+		ManagerST::Get()->GetBreakpointsMgr()->SetBreakpoints(iter->second);
 	}
-	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();*/
 }
 
 wxString LEditor::GetWordAtCaret()
@@ -1870,8 +1885,9 @@ void LEditor::ReloadFile()
 	SetSavePoint();
 	EmptyUndoBuffer();
 
-	//update breakpoints
-	UpdateBreakpoints();
+	// remove breakpoints belongs to this file
+	DelAllBreakpointMarkers();
+
 	UpdateColours();
 
 	// set the EOL mode
@@ -1888,7 +1904,9 @@ void LEditor::SetEditorText(const wxString &text)
 {
 	HideCompletionBox();
 	SetText(text);
-	UpdateBreakpoints();
+
+	// remove breakpoints belongs to this file
+	DelAllBreakpointMarkers();
 }
 
 void LEditor::Create(const wxString &project, const wxFileName &fileName)
@@ -2277,12 +2295,17 @@ void LEditor::DelBreakpoint(int lineno /*= -1*/)
 	wxString message;
 	int result = ManagerST::Get()->GetBreakpointsMgr()->DelBreakpointByLineno(GetFileName().GetFullPath(), lineno);
 	switch(result) {
-		case true:				Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-											DoSetStatusMessage(_("Breakpoint successfully deleted"), 0);
-											return;
-		case wxID_CANCEL: return;
-		case false:				message = _("No breakpoint found on this line"); break;
-		 default:					message = _("Breakpoint deletion failed");
+		case true:
+			Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+			DoSetStatusMessage(_("Breakpoint successfully deleted"), 0);
+			return;
+		case wxID_CANCEL:
+			return;
+		case false:
+			message = _("No breakpoint found on this line");
+			break;
+		 default:
+			message = _("Breakpoint deletion failed");
 	}
 
 	wxMessageBox(message, _("Breakpoint not deleted"), wxICON_ERROR);
@@ -2319,40 +2342,26 @@ void LEditor::DelAllCompilerMarkers()
     MarkerDeleteAll(smt_error);
 }
 
-void LEditor::SetBreakpointMarker(int lineno, BP_type bptype, bool is_disabled, bool has_multiple) // Maybe one day we'll display multiple bps differently
+// Maybe one day we'll display multiple bps differently
+void LEditor::SetBreakpointMarker(int lineno, BP_type bptype, bool is_disabled, const std::vector<BreakpointInfo>& bps)
 {
-	struct BPtoMarker bpm = GetMarkerForBreakpt(bptype);
+	BPtoMarker bpm = GetMarkerForBreakpt(bptype);
 	sci_marker_types markertype = is_disabled ? bpm.marker_disabled : bpm.marker;
-	MarkerAdd(lineno-1, markertype);
-}
+	int markerHandle = MarkerAdd(lineno-1, markertype);
 
-void LEditor::DelBreakpointMarker(int lineno, enum sci_marker_types markertype /*=smt_breakpoint*/)
-{
-	MarkerDelete(lineno, markertype);
-	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	// keep the breakpoint info vector for this marker
+	m_breakpointsInfo.insert(std::make_pair<int, std::vector<BreakpointInfo> >(markerHandle, bps));
 }
 
 void LEditor::DelAllBreakpointMarkers()
 {
-	int mask(0);
-	mask |= mmt_all_breakpoints;
-	int lineno = MarkerNext(0, mask);
-	while (lineno >= 0) {
-		// There may be >1 breakpoint-type on a line, and >1 instances of any type
-		// So loop thru each possible type, and delete each type in a 'while'
-		for (int bp_type = BP_FIRST_ITEM; bp_type <= BP_LAST_MARKED_ITEM; ++bp_type) {
-			struct BPtoMarker bpm = GetMarkerForBreakpt((BP_type)bp_type);
-			while (MarkerGet(lineno) & bpm.mask) {
-				MarkerDelete(lineno, bpm.marker);
-			}
-			while (MarkerGet(lineno) & bpm.mask_disabled) {
-				MarkerDelete(lineno, bpm.marker_disabled);
-			}
-		}
-		long startPos = PositionFromLine(lineno);
-		long endPos   = GetLineEndPosition(lineno);
-		Colourise(startPos, endPos);
-		lineno = MarkerNext(0, mask);
+	// remove the stored information
+	m_breakpointsInfo.clear();
+
+	for (int bp_type = BP_FIRST_ITEM; bp_type <= BP_LAST_MARKED_ITEM; ++bp_type) {
+		BPtoMarker bpm = GetMarkerForBreakpt((BP_type)bp_type);
+		MarkerDeleteAll(bpm.marker);
+		MarkerDeleteAll(bpm.marker_disabled);
 	}
 }
 

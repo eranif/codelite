@@ -715,4 +715,5 @@ void MainBook::UpdateBreakpoints()
 	for (size_t i = 0; i < editors.size(); i++) {
 		editors[i]->UpdateBreakpoints();
 	}
+	ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointMarkers();
 }

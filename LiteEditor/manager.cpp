@@ -1528,11 +1528,6 @@ void Manager::DbgStart ( long pid )
 	//set ourselves as the observer for the debugger class
 	dbgr->SetObserver ( this );
 
-/* TODO: Reimplement this when UpdateBreakpoints() updates only alterations, rather than delete/re-enter
-	//remove any breakpoints from previous runs
-	//and collect the breakpoints from the user
-	DebuggerMgr::Get().DelAllBreakpoints();
-
 	// Loop through the open editors and let each editor
 	// a chance to update the debugger manager with any line
 	// changes (i.e. file was edited and breakpoints were moved)
@@ -1543,9 +1538,12 @@ void Manager::DbgStart ( long pid )
 	if ( wxNOT_FOUND == pid ) {
 		Frame::Get()->GetMainBook()->UpdateBreakpoints();
 	}
-*/
+
 	//We can now get all the gathered breakpoints from the manager
 	std::vector<BreakpointInfo> bps;
+
+	// since files may have been updated and the breakpoints may have been moved,
+	// delete all the information
 	GetBreakpointsMgr()->GetBreakpoints ( bps );
 
 	// read

@@ -99,7 +99,7 @@ wxRegEx& SearchThread::GetRegex(const wxString &expr, bool matchCase)
 		m_reExpr = expr;
 		m_matchCase = matchCase;
 
-		int flags = wxRE_ADVANCED;
+		int flags = wxRE_DEFAULT;
 		if ( !matchCase ) flags |= wxRE_ICASE;
 		m_regex.Compile(m_reExpr, flags);
 	}

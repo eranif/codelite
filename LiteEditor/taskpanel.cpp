@@ -32,10 +32,10 @@
 
 BEGIN_EVENT_TABLE(TaskPanel, FindResultsTab)
     EVT_TOGGLEBUTTON(wxID_ANY,        TaskPanel::OnToggle)
-    
+
     EVT_BUTTON(XRCID("search"),       TaskPanel::OnSearch)
     EVT_BUTTON(XRCID("customize"),    TaskPanel::OnCustomize)
-    
+
     EVT_UPDATE_UI(XRCID("search"),    TaskPanel::OnSearchUI)
     EVT_UPDATE_UI(XRCID("customize"), TaskPanel::OnCustomizeUI)
 END_EVENT_TABLE()
@@ -46,29 +46,29 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
     , m_filter(NULL)
 {
     // TODO: could load some of the following data (tasks, scopes, filters) from EditorConfig:
-    
+
     wxArrayString tasks;
     tasks.Add(wxT("TODO"));
     tasks.Add(wxT("FIXME"));
     tasks.Add(wxT("BUG"));
     tasks.Add(wxT("ATTN"));
-    
+
     wxArrayString scopes;
     scopes.Add(SEARCH_IN_PROJECT);
     scopes.Add(SEARCH_IN_WORKSPACE);
     scopes.Add(SEARCH_IN_CURR_FILE_PROJECT);
-    
+
     wxArrayString filters;
     filters.Add(wxT("C/C++ Sources"));
     m_extensions.Add(wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"));
     filters.Add(wxT("All Files"));
     m_extensions.Add(wxT("*.*"));
-    
+
     wxBoxSizer *horzSizer = new wxBoxSizer(wxHORIZONTAL);
-    
+
     wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Find:"));
     horzSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
-    
+
     for (size_t i = 0; i < sizeof(tasks)/sizeof(tasks[0]); i++) {
         wxToggleButton *btn = new wxToggleButton(this, wxID_ANY, tasks[i], wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
         btn->SetValue(true);
@@ -76,24 +76,24 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
         m_task.push_back(btn);
         horzSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
     }
-    
+
     text = new wxStaticText(this, wxID_ANY, wxT("In:"));
     horzSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
-    
+
     m_scope = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, scopes);
     m_scope->SetSelection(0);
     horzSizer->Add(m_scope, 1, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
-    
+
     m_filter = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, filters);
     m_filter->SetSelection(0);
     horzSizer->Add(m_filter, 1, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
-    
+
     wxButton *btn = new wxButton(this, XRCID("search"), wxT("&Search"));
     horzSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
-    
+
     btn = new wxButton(this, XRCID("customize"), wxT("&Customize"));
     horzSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
-    
+
 	wxBoxSizer *vertSizer = new wxBoxSizer(wxVERTICAL);
 	vertSizer->Add(horzSizer, 0, wxEXPAND|wxTOP|wxBOTTOM);
 
@@ -119,21 +119,25 @@ void TaskPanel::DoSetSearchData()
     m_data.SetUseEditorFontConfig(true);
     m_data.SetOutputTab(0);
     m_data.SetOwner(this);
-    
-    wxString find = wxT("/[/*]\\s*(?:");
+
+	// /[/*] *(TODO|ATTN|BUG|FIXME) *:*
+    wxString sfind = wxT("/[/*] *(");
+
     for (size_t i = 0; i < m_task.size(); i++) {
         if (m_task[i]->GetValue()) {
-            find << m_task[i]->GetLabelText() << wxT('|');
+            sfind << m_task[i]->GetLabelText() << wxT('|');
         }
     }
-    if (find.Last() == wxT('(')) {
+
+	if (sfind.Last() == wxT('(')) {
         // fallback
-        find << wxT("TODO|ATTN|FIXME|BUG|");
+        sfind << wxT("TODO|ATTN|FIXME|BUG");
     }
-    find.Last() = wxT(')');
-    find << wxT("(?=:)");
-    m_data.SetFindString(find);
-    
+
+    sfind.Last() = wxT(')');
+    sfind << wxT(" *:*");
+    m_data.SetFindString(sfind);
+
     m_data.SetRootDir(m_scope->GetStringSelection());
     wxArrayString files;
 	if (m_scope->GetStringSelection() == SEARCH_IN_WORKSPACE) {
@@ -149,7 +153,7 @@ void TaskPanel::DoSetSearchData()
 		ManagerST::Get()->GetProjectFiles(project, files);
 	}
     m_data.SetFiles(files);
-    
+
     m_data.SetExtensions(m_extensions[m_filter->GetSelection()]);
 }
 

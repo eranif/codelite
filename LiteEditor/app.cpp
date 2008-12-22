@@ -151,15 +151,15 @@ App::~App(void)
 bool App::OnInit()
 {
 #if defined(__WXGTK__) || defined(__WXMAC__)
-	// install signal handlers
-/*	sigset_t mask_set;
-	sigfillset( &mask_set );
+//	block signal pipe
+	sigset_t mask_set;
+	sigemptyset( &mask_set );
+	sigaddset(&mask_set, SIGPIPE);
 	sigprocmask(SIG_SETMASK, &mask_set, NULL);
-*/
 #endif
-	
+
 	wxSocketBase::Initialize();
-	
+
 #if wxUSE_STACKWALKER
 	//trun on fatal exceptions handler
 	wxHandleFatalExceptions(true);
@@ -190,13 +190,13 @@ bool App::OnInit()
 	if (parser.Parse() != 0) {
 		return false;
 	}
-	
+
 	if(parser.Found(wxT("h"))){
 		// print usage
 		parser.Usage();
 		return false;
 	}
-	
+
 	wxString newBaseDir(wxEmptyString);
 	if (parser.Found(wxT("b"), &newBaseDir)) {
 		homeDir = newBaseDir;
@@ -251,7 +251,7 @@ bool App::OnInit()
 		homeDir = ::wxGetCwd();
 	}
 	wxFileName fnHomdDir(homeDir + wxT("/"));
-	
+
 	// try to locate the menu/rc.xrc file
 	wxFileName fn(homeDir + wxT("/rc"), wxT("menu.xrc"));
 	if(!fn.FileExists()){
@@ -259,16 +259,16 @@ bool App::OnInit()
 		wxFileName appFn( wxAppBase::argv[0] );
 		homeDir = appFn.GetPath();
 	}
-	
+
 	if(fnHomdDir.IsRelative()){
 		fnHomdDir.MakeAbsolute();
 		homeDir = fnHomdDir.GetPath();
 	}
-	
+
 	ManagerST::Get()->SetInstallDir( homeDir );
 	EditorConfig::Init( SvnRevision );
 #endif
-		
+
 	wxString curdir = wxGetCwd();
 	::wxSetWorkingDirectory(homeDir);
 	// Load all of the XRC files that will be used. You can put everything
@@ -280,18 +280,18 @@ bool App::OnInit()
 
 	// keep the startup directory
 	ManagerST::Get()->SetStarupDirectory(::wxGetCwd());
-	
+
 	// set the performance output file name
 	PERF_OUTPUT(wxString::Format(wxT("%s/codelite.perf"), wxGetCwd().c_str()).mb_str(wxConvUTF8));
-	
+
 	// Initialize the configuration file locater
 	ConfFileLocator::Instance()->Initialize(ManagerST::Get()->GetInstallDir(), ManagerST::Get()->GetStarupDirectory());
-	
+
 	Manager *mgr = ManagerST::Get();
-	
+
 	// set the CTAGS_REPLACEMENT environment variable
 	wxSetEnv(wxT("CTAGS_REPLACEMENTS"), ManagerST::Get()->GetStarupDirectory() + wxT("/ctags.replacements"));
-	
+
 	//show splashscreen here
 	long style = wxSIMPLE_BORDER;
 #if defined (__WXMSW__) || defined (__WXGTK__)
@@ -319,7 +319,7 @@ bool App::OnInit()
 		wxLogMessage(_("WARNING: Failed to load environment variable PATH!"));
 	} else {
 		pathEnv << wxT(";") << homeDir << wxT(";");
-		
+
 		// read the installation path of MinGW & WX
 		wxRegKey rk(wxT("HKEY_CURRENT_USER\\Software\\CodeLite"));
 		if(rk.Exists()) {
@@ -327,35 +327,35 @@ bool App::OnInit()
 			if(rk.HasValue(wxT("wx"))){
 				rk.QueryValue(wxT("wx"), strWx);
 			}
-			
+
 			if(rk.HasValue(wxT("mingw"))){
 				rk.QueryValue(wxT("mingw"), strMingw);
 			}
-			
+
 			long up;
 			if( !cfg->GetLongValue(wxT("UpdateWxPaths"), up) ){
 				if(strWx.IsEmpty() == false) {
 					// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
 					EvnVarList vars;
 					EnvironmentConfig::Instance()->Load();
-					
+
 					EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
 					StringMap varMap = vars.GetVariables();
 					varMap[wxT("WXWIN")] = strWx;
 					varMap[wxT("WXCFG")] = wxT("gcc_dll\\mswu");
-					
+
 					vars.SetVariables(varMap);
-					
+
 					EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
 					cfg->SaveLongValue(wxT("UpdateWxPaths"), 1);
 				}
 			}
-			
+
 			if(strMingw.IsEmpty() == false) {
 				pathEnv << wxT(";") << strMingw << wxT("\\bin");
 			}
 		}
-		
+
 		if(wxSetEnv(wxT("PATH"), pathEnv) == false){
 			wxLogMessage(_("WARNING: Failed to update environment variable PATH"));
 		}
@@ -368,7 +368,7 @@ bool App::OnInit()
 	bool showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
 	if (showSplash) {
 		wxBitmap bitmap;
-		wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png")); 
+		wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png"));
 		if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
 			wxString mainTitle;
 			mainTitle << wxT("v1.0.") << SvnRevision;
@@ -379,7 +379,7 @@ bool App::OnInit()
 			wxTheApp->Yield();
 		}
 	}
-	
+
 	// Create the main application window (a dialog in this case)
 	// NOTE: Vertical dimension comprises the caption bar.
 	//       Horizontal dimension has to take into account the thin
@@ -406,7 +406,7 @@ bool App::OnInit()
 	}else{
 		lineNumber = 0;
 	}
-	
+
 	for (size_t i=0; i< parser.GetParamCount(); i++) {
 		wxString argument = parser.GetParam(i);
 
@@ -420,7 +420,7 @@ bool App::OnInit()
 			ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNumber);
 		}
 	}
-	
+
 	wxLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
 	wxLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStarupDirectory().c_str()));
 	return TRUE;
@@ -438,7 +438,7 @@ bool App::CopySettings(const wxString &destDir, wxString& installPath)
 	// By default everything's been installed to /usr/local/*
 	// However check, as --prefix= might have put things elsewhere
 	if ( ! LocateConfPath( installPath ) ) {
-		wxLogMessage( wxT("Help, I couldn't find CodeLite's resource files!\nPlease check your installation") ); 
+		wxLogMessage( wxT("Help, I couldn't find CodeLite's resource files!\nPlease check your installation") );
 		return false;
 	}
 #endif
@@ -557,15 +557,15 @@ bool App::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir
 
 			if (files.IsEmpty() == false) {
 				Mkdir(ManagerST::Get()->GetStarupDirectory() + wxT("/ipc"));
-				
+
 				wxString file_name, tmp_file;
 				tmp_file 	<< ManagerST::Get()->GetStarupDirectory()
 							<< wxT("/ipc/command.msg.tmp");
-							
+
 				file_name 	<< ManagerST::Get()->GetStarupDirectory()
 							<< wxT("/ipc/command.msg");
-				
-				// write the content to a temporary file, once completed, 
+
+				// write the content to a temporary file, once completed,
 				// rename the file to the actual file name
 				WriteFileUTF8(tmp_file, files);
 				wxRenameFile(tmp_file, file_name);

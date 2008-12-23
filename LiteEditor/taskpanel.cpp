@@ -116,7 +116,7 @@ void TaskPanel::DoSetSearchData()
     m_data.SetRegularExpression(true);
     m_data.SetMatchCase(false);
     m_data.SetMatchWholeWord(false);
-    m_data.SetUseEditorFontConfig(true);
+    m_data.SetUseEditorFontConfig(false);
     m_data.SetOutputTab(0);
     m_data.SetOwner(this);
 

@@ -2098,7 +2098,7 @@ void LEditor::OnLeftUp(wxMouseEvent& event)
 
 void LEditor::OnLeaveWindow(wxMouseEvent& event)
 {
-    CallTipCancel();
+//    CallTipCancel();
 
 	m_hyperLinkIndicatroStart = wxNOT_FOUND;
 	m_hyperLinkIndicatroEnd = wxNOT_FOUND;

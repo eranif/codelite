@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : custom_tabcontainer.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : custom_tabcontainer.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef __wxtabcontainer__
@@ -27,6 +27,7 @@
 
 #include "wx/panel.h"
 #include <wx/dynarray.h>
+#include "dropbutton.h"
 
 class CustomTab;
 class wxMenu;
@@ -38,9 +39,9 @@ class wxTabContainer : public wxPanel
 	CustomTab *m_draggedTab;
 	wxArrayPtrVoid m_history;
 	wxMenu *m_rightClickMenu;
-	
+
 	friend class CustomTab;
-	
+
 protected:
 	void Initialize();
 
@@ -51,28 +52,28 @@ protected:
 	//after the page removal, all items in the history
 	//are updated if needed
 	void PopPageHistory(CustomTab *page);
-	
+
 	bool DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notify = false);
-	
+
 	void EnsureVisible(CustomTab *tab);
-	
+
 	bool IsVisible(CustomTab *tab, bool fullShown = true);
-	
+
 	/**
 	 * @brief return the index of the first visible tab
 	 */
 	size_t GetFirstVisibleTab();
-	
+
 	/**
 	 * @brief return the index of the last visible tab
 	 */
 	size_t GetLastVisibleTab();
-	
+
 	/**
 	 * @brief show maximum tabs as possible.
 	 */
 	void DoShowMaxTabs();
-	
+
 public:
 	wxTabContainer(wxWindow *win, wxWindowID id = wxID_ANY, int orientation = wxLEFT, long style = 0);
 	virtual ~wxTabContainer();
@@ -84,34 +85,34 @@ public:
 	CustomTab *IndexToTab(size_t page);
 	size_t TabToIndex(CustomTab *tab);
 	size_t GetTabsCount();
-	
+
 	void SetRightClickMenu(wxMenu* rightClickMenu) {this->m_rightClickMenu = rightClickMenu;}
 	wxMenu* GetRightClickMenu() {return m_rightClickMenu;}
-	
+
 	void Resize();
-	
+
 	/**
 	 * @brief delete tab from the tab container (also destroying it)
 	 * @param deleteTab tab to delete
 	 * @param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
-     * @return true if notification sent but vetoed by user, else false   
+     * @return true if notification sent but vetoed by user, else false
 	 */
 	bool DeletePage(CustomTab *deleteTab, bool notify);
-	
+
 	/**
 	 * @brief remove tab from the tab container (the tab will *not* be destroyed)
 	 * @param removePage tab to remove
 	 * @param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
-     * @return true if notification sent but vetoed by user, else false   
+     * @return true if notification sent but vetoed by user, else false
 	 */
 	bool RemovePage(CustomTab *removePage, bool notify);
-	
+
 	/**
 	 * @brief return previous selection
 	 * @return previous selection, or NULL if history list is empty
 	 */
 	CustomTab* GetPreviousSelection();
-	
+
 	/**
 	 * @brief set tab as being dragged
 	 * @param tab
@@ -133,13 +134,13 @@ public:
 	//Setters
 	void SetOrientation(const int& orientation) ;
 	const int& GetOrientation() const {return m_orientation;}
-	
+
 	void ShowPopupMenu();
-	
+
 	//Setters
 	void SetHistory(const wxArrayPtrVoid& history) {this->m_history = history;}
 	const wxArrayPtrVoid& GetHistory() const {return m_history;}
-	
+
 	DECLARE_EVENT_TABLE()
 	virtual void OnPaint(wxPaintEvent &e);
 	virtual void OnEraseBg(wxEraseEvent &e);
@@ -151,4 +152,28 @@ public:
 
 
 };
+
+//--------------------------------------------------------------------
+// Dropbutton class used for the notebook
+//--------------------------------------------------------------------
+
+class DropButton : public DropButtonBase
+{
+private:
+    wxTabContainer *m_tabContainer;
+
+protected:
+    size_t GetItemCount();
+    wxString GetItem(size_t n);
+    bool IsItemSelected(size_t n);
+
+public:
+    DropButton(wxWindow *parent, wxTabContainer *tabContainer);
+    ~DropButton();
+
+    void OnMenuSelection(wxCommandEvent &e);
+	virtual void OnPaint(wxPaintEvent &e);
+};
+
+
 #endif // __wxtabcontainer__

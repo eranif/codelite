@@ -66,18 +66,18 @@ void WorkspacePane::CreateGUIControls()
 	SetSizer(mainSizer);
 
     // selected configuration:
-    
+
 	mainSizer->Add(new wxStaticText(this, wxID_ANY, wxT("Selected Configuration:")), 0, wxEXPAND| wxTOP|wxLEFT|wxRIGHT, 5);
-    
+
 	wxBoxSizer *hsz = new wxBoxSizer(wxHORIZONTAL);
 	mainSizer->Add(hsz, 0, wxEXPAND|wxALL, 5);
-    
+
 	wxArrayString choices;
 	m_workspaceConfig = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY|wxALIGN_CENTER_VERTICAL);
 	m_workspaceConfig->Enable(false);
 	ConnectCombo(m_workspaceConfig, WorkspacePane::OnConfigurationManagerChoice);
 	hsz->Add(m_workspaceConfig, 1, wxEXPAND);
-    
+
 	wxButton *btn = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	ConnectButton(btn, WorkspacePane::OnConfigurationManager);
 	btn->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
@@ -88,7 +88,7 @@ void WorkspacePane::CreateGUIControls()
 	mainSizer->Add(line, 0, wxEXPAND);
 
     // add notebook for tabs
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_TAB_DECORATION);
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_TAB_DECORATION|wxVB_BG_GRADIENT);
     m_book->SetAuiManager(m_mgr, m_caption);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 
@@ -112,7 +112,7 @@ void WorkspacePane::CreateGUIControls()
 	if (m_book->GetPageCount() > 0) {
 		m_book->SetSelection((size_t)0);
 	}
-    
+
 	m_mgr->Update();
 }
 
@@ -130,9 +130,9 @@ void WorkspacePane::Connect()
 	wxTheApp->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,    wxCommandEventHandler(WorkspacePane::OnActiveEditorChanged), NULL, this);
 	wxTheApp->Connect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspacePane::OnEditorClosing),       NULL, this);
 	wxTheApp->Connect(wxEVT_ALL_EDITORS_CLOSED,       wxCommandEventHandler(WorkspacePane::OnAllEditorsClosed),    NULL, this);
-    
+
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspacePane::OnConfigurationManager),   NULL, this);
-    wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);      
+    wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspacePane::OnConfigurationManagerUI), NULL, this);
 }
 
 
@@ -158,7 +158,7 @@ void WorkspacePane::ShowCurrentOutline()
         m_winStack->Thaw();
     }
 }
- 
+
 void WorkspacePane::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
@@ -252,10 +252,10 @@ void WorkspacePane::OnSymbolsUpdated(wxCommandEvent& e)
 void WorkspacePane::OnWorkspaceConfig(wxCommandEvent& e)
 {
     e.Skip();
-    
+
     BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	std::list<WorkspaceConfigurationPtr> confs = matrix->GetConfigurations();
-    
+
 	m_workspaceConfig->Freeze();
     m_workspaceConfig->Enable(true);
 	m_workspaceConfig->Clear();
@@ -275,7 +275,7 @@ void WorkspacePane::OnWorkspaceClosed(wxCommandEvent& e)
     m_workspaceConfig->Enable(false);
     m_winStack->Clear();
 }
- 
+
 void WorkspacePane::OnConfigurationManager(wxCommandEvent& e)
 {
 	ConfigurationManagerDlg *dlg = new ConfigurationManagerDlg(this);

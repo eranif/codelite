@@ -50,7 +50,7 @@ void MainBook::CreateGuiControls()
 	m_navBar = new NavBar(this);
 	sz->Add(m_navBar, 0, wxEXPAND);
 
-	long style = wxVB_TOP|wxVB_HAS_X|wxVB_BORDER|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
+	long style = wxVB_TOP|wxVB_HAS_X|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_BG_GRADIENT;
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	m_book->GetTabContainer()->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainBook::OnMouseDClick), NULL, this);
 	m_book->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click")));

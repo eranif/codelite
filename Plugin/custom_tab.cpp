@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : custom_tab.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : custom_tab.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
@@ -154,7 +154,7 @@ void CustomTab::OnLeftDown(wxMouseEvent &e)
 		Refresh();
 		return;
 	}
-	
+
 	//notify the parent that this tab has been selected
 	if (GetSelected()) {
 		//we are already the selected tab nothing to be done here
@@ -173,7 +173,7 @@ void CustomTab::OnMouseEnterWindow(wxMouseEvent &e)
 	if (e.LeftIsDown()) {
 		wxTabContainer *parent = (wxTabContainer*)GetParent();
 		if (parent) {
-			if(!(m_style & wxVB_NODND)){
+			if (!(m_style & wxVB_NODND)) {
 				parent->SwapTabs(this);
 			}
 		}
@@ -203,7 +203,8 @@ bool CustomTab::AvoidRepeatSwaps(wxWindow* win, const wxPoint& pt) const
 	wxTabContainer* parent = (wxTabContainer*)GetParent();
 	if (parent->GetOrientation() == wxLEFT || parent->GetOrientation() == wxRIGHT) {
 		UpOrRight = pt.y > lastposition;
-		lastposition = pt.y; } else {
+		lastposition = pt.y;
+	} else {
 		UpOrRight = pt.x > lastposition;
 		lastposition = pt.x;
 	}
@@ -217,23 +218,25 @@ bool CustomTab::AvoidRepeatSwaps(wxWindow* win, const wxPoint& pt) const
 		// Permit this, and store win and direction
 		lastwin = win;
 		lastdirection = UpOrRight;
-		return true; } else {
+		return true;
+	} else {
 		// Same window. If we're still travelling in the original direction, don't swap back!
 		return !SameDirection;
-  }
+	}
 }
 #endif //defined (__WXGTK__)
 
 
 void CustomTab::OnMouseMove(wxMouseEvent &e)
 {
-	
+
 #if defined (__WXGTK__)
 	// wxGTK doesn't recognise changes of event-window while dragging, so tab DnD fails
 	// Work around this using wxFindWindowAtPointer
 	if (m_leftDown && !(m_style & wxVB_NODND)) {
 		wxTabContainer* parent = (wxTabContainer*)GetParent();
-		wxPoint pt; wxWindow* win = wxFindWindowAtPointer(pt);
+		wxPoint pt;
+		wxWindow* win = wxFindWindowAtPointer(pt);
 		if (win != parent->GetDraggedTab()) {
 			CustomTab* tab = static_cast<CustomTab *>(win);
 			if (tab && AvoidRepeatSwaps(tab, pt)) {
@@ -410,7 +413,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 	//set pen & brush
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
-	wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+	wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
 	wxPen pen(borderColour);
 	dc.SetPen(pen);
 
@@ -424,10 +427,22 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		tmpRect.width  -= 3;
 		dc.DrawLine(0, 0, 0, tmpRect.y + tmpRect.height);
 	}
-	
+
 	int radius(0);
-	if(GetSelected()) {radius = 2;}
-	
+	if (GetSelected()) {
+		radius = 2;
+	}
+
+	if (GetTabContainer()) {
+		size_t tabIdx = GetTabContainer()->TabToIndex(this);
+		bool drawBottomBorder = (tabIdx == 0 || GetSelected());
+
+		if (!drawBottomBorder) {
+			tmpRect.y -= 1;
+			tmpRect.height += 1;
+		}
+	}
+
 	dc.DrawRoundedRectangle(tmpRect, radius);
 
 	if (left && GetSelected()) {
@@ -437,15 +452,15 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		if (m_style & wxVB_TAB_DECORATION) {
 			//draw a single caption colour on top of the active tab
 			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-			#ifdef __WXMAC__
+#ifdef __WXMAC__
 			col = *wxBLACK;
-			#endif
+#endif
 			wxPen p(col, 1, wxSOLID);
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+1, 1, rr.x+1, rr.y+rr.height+1);
 			dc.DrawLine(rr.x+2, 1, rr.x+2, rr.y+rr.height+1);
 			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(col, 40), 1, wxSOLID);
+			p = wxPen( DrawingUtils::LightColour(col, 6.0), 1, wxSOLID);
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+2, 2, rr.x+2, rr.y+rr.height);
 		}
@@ -457,9 +472,9 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		if (m_style & wxVB_TAB_DECORATION) {
 			//draw a single caption colour on top of the active tab
 			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-			#ifdef __WXMAC__
+#ifdef __WXMAC__
 			col = *wxBLACK;
-			#endif
+#endif
 
 			wxPen p(col, 1, wxSOLID);
 			dc.SetPen(p);
@@ -467,7 +482,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 			dc.DrawLine(rr.x+rr.width-2, 0, rr.x+rr.width-2, rr.y+rr.height);
 			dc.DrawLine(rr.x+rr.width-3, 0, rr.x+rr.width-3, rr.y+rr.height);
 			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(col, 40) );
+			p = wxPen( DrawingUtils::LightColour(col, 6.0) );
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+rr.width-3, 1, rr.x+rr.width-3, rr.y+rr.height-1);
 		}
@@ -520,13 +535,13 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	int text_yoffset(1);
 	int x_yoffset(1);
 	int bmp_yoffset(1);
-	
+
 	if ( !top ) {
 		text_yoffset = -3;
 		x_yoffset = -1;
 		bmp_yoffset = -1;
 	}
-	
+
 	int posx(GetPadding());
 	if ( GetBmp().IsOk() ) {
 
@@ -589,7 +604,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	//set pen & brush
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
-	wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+	wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
 	wxPen pen(borderColour);
 	dc.SetPen(pen);
 
@@ -605,7 +620,19 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	}
 
 	int radius(0);
-	if(GetSelected()) {radius = 2;}
+	if (GetSelected()) {
+		radius = 2;
+	}
+
+	if (GetTabContainer()) {
+		size_t tabIdx = GetTabContainer()->TabToIndex(this);
+		bool drawLeftBorder = (tabIdx == 0 || GetSelected());
+
+		if (!drawLeftBorder) {
+			tmpRect.x -= 1;
+			tmpRect.width += 1;
+		}
+	}
 
 	dc.DrawRoundedRectangle(tmpRect, radius);
 
@@ -616,9 +643,9 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 		if (m_style & wxVB_TAB_DECORATION) {
 			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-			#ifdef __WXMAC__
+#ifdef __WXMAC__
 			col = *wxBLACK;
-			#endif
+#endif
 
 			wxPen p(col, 1, wxSOLID);
 			dc.SetPen(p);
@@ -627,27 +654,27 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 			dc.DrawLine(rr.x+1, rr.y+2, rr.x+rr.width-1, rr.y+2);
 
 			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(col, 40), 1, wxSOLID);
+			p = wxPen( DrawingUtils::LightColour(col, 6.0), 1, wxSOLID);
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+2, rr.y+2, rr.x+rr.width-2, rr.y+2);
 		}
 	} else if (!top && GetSelected()) {
 		//draw a line
-		
+
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(0, 0, rr.GetWidth(), 0);
 
 		if (m_style & wxVB_TAB_DECORATION) {
 			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-			#ifdef __WXMAC__
+#ifdef __WXMAC__
 			col = *wxBLACK;
-			#endif
+#endif
 			wxPen p(col, 1, wxSOLID);
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+1, rr.y+rr.height-2, rr.x+rr.width-1, rr.y+rr.height-2);
 			dc.DrawLine(rr.x+1, rr.y+rr.height-3, rr.x+rr.width-1, rr.y+rr.height-3);
 			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(col, 40), 1, wxSOLID);
+			p = wxPen( DrawingUtils::LightColour(col, 6.0), 1, wxSOLID);
 			dc.SetPen(p);
 			dc.DrawLine(rr.x+2, rr.y+rr.height-3, rr.x+rr.width-2, rr.y+rr.height-3);
 		}
@@ -710,4 +737,9 @@ void CustomTab::Initialize()
 
 	m_xButtonPressedBmp = wxBitmap(_tab_x_button_pressed_xpm);
 	m_xButtonPressedBmp.SetMask(new wxMask(m_xButtonPressedBmp, clMASK_COLOR));
+}
+
+wxTabContainer* CustomTab::GetTabContainer()
+{
+	return dynamic_cast<wxTabContainer*>( GetParent() );
 }

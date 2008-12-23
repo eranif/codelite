@@ -1990,7 +1990,7 @@ wxString Frame::CreateWorkspaceTable()
 	mgr->GetRecentlyOpenedWorkspaces(files);
 
 	wxColour bgclr = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-	bgclr = DrawingUtils::LightColour(bgclr, 70);
+	bgclr = DrawingUtils::LightColour(bgclr, 7);
 
 	html << wxT("<table width=100% border=0 bgcolor=\"") << bgclr.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">");
 	if (files.GetCount() == 0) {
@@ -2014,7 +2014,7 @@ wxString Frame::CreateFilesTable()
 	mgr->GetRecentlyOpenedFiles(files);
 
 	wxColour bgclr = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-	bgclr = DrawingUtils::LightColour(bgclr, 70);
+	bgclr = DrawingUtils::LightColour(bgclr, 10.0);
 	html << wxT("<table width=100% border=0 bgcolor=\"") << bgclr.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">");
 	if (files.GetCount() == 0) {
 		html << wxT("<tr><td><font size=2 face=\"Verdana\">");
@@ -2170,7 +2170,7 @@ void Frame::CreateWelcomePage()
 	wxColour active_caption 	= wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
 	wxColour active_caption_txt = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 
-	active_caption = DrawingUtils::LightColour(active_caption, 50);
+	active_caption = DrawingUtils::LightColour(active_caption, 11.0);
 
 	content.Replace(wxT("$(ACTIVE_CAPTION)"), active_caption.GetAsString());
 	content.Replace(wxT("$(ACTIVE_CAPTION_TEXT)"), active_caption_txt.GetAsString());

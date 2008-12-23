@@ -22,7 +22,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "dropbutton.h"
 #include "custom_tabcontainer.h"
 #include "drawingutils.h"
 #include "wx/settings.h"
@@ -43,6 +42,85 @@ BEGIN_EVENT_TABLE(wxTabContainer, wxPanel)
 
 END_EVENT_TABLE()
 
+//-------------------------------------------------------
+// Helper methods
+//-------------------------------------------------------
+
+static void DoDrawBackground(wxDC &dc, bool gradient, int orientation, const wxRect &rr)
+{
+
+	// set the gradient colours, by default we use the same colours
+	wxColour col1 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+	wxColour col2 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+
+	if (gradient) {
+		col1 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+		col2 = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 3.0);
+
+		//paint gradient background
+		switch (orientation) {
+		case wxLEFT:
+			DrawingUtils::PaintStraightGradientBox(dc, rr, col1, col2, false);
+			break;
+		case wxRIGHT:
+			DrawingUtils::PaintStraightGradientBox(dc, rr, col2, col1, false);
+			break;
+		case wxBOTTOM:
+			DrawingUtils::PaintStraightGradientBox(dc, rr, col2, col1, true);
+			break;
+		case wxTOP:
+		default:
+			DrawingUtils::PaintStraightGradientBox(dc, rr, col1, col2, true);
+			break;
+		}
+	} else {
+		dc.SetPen(col1);
+		dc.SetBrush(col1);
+		dc.DrawRectangle(rr);
+	}
+}
+
+static void DoDrawMargin(wxDC &dc, int orientation, const wxRect &rr)
+{
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	for (int i=0; i<3; i++) {
+		switch (orientation) {
+		case wxRIGHT:
+			dc.DrawLine(rr.x+i, rr.y, rr.x+i, rr.y+rr.height);
+			break;
+		case wxTOP:
+			dc.DrawLine(rr.x, rr.height-i-1, rr.x+rr.width, rr.height-i-1);
+			break;
+		case wxLEFT:
+			dc.DrawLine(rr.x+rr.width-i, rr.y, rr.x+rr.width-i, rr.y+rr.height);
+			break;
+		default:
+			dc.DrawLine(rr.x, rr.y+i, rr.x + rr.width, rr.y+i);
+			break;
+		}
+	}
+
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+	switch (orientation) {
+	case wxRIGHT:
+		dc.DrawLine(rr.x+3, rr.y, rr.x+3, rr.y+rr.height);
+		break;
+	case wxTOP:
+		dc.DrawLine(rr.x, rr.height-4, rr.x+rr.width, rr.height-4);
+		break;
+	case wxLEFT:
+		dc.DrawLine(rr.x+rr.width-4, rr.y, rr.x+rr.width-4, rr.y+rr.height);
+		break;
+	default:
+		dc.DrawLine(rr.x, rr.y+3, rr.x + rr.width, rr.y+3);
+		break;
+	}
+}
+
+//-------------------------------------------------------
+//-------------------------------------------------------
+//-------------------------------------------------------
+//-------------------------------------------------------
 wxTabContainer::wxTabContainer(wxWindow *win, wxWindowID id, int orientation, long style)
 		: wxPanel(win, id)
 		, m_orientation(orientation)
@@ -72,15 +150,16 @@ void wxTabContainer::Initialize()
 
 	m_tabsSizer = new wxBoxSizer(sizerOri);
 
-	DropButton *btn = new DropButton(this, this);
-
-	int flag(wxALIGN_CENTER_VERTICAL);
-
-	if (sizerOri == wxVERTICAL) {
-		flag = wxALIGN_CENTER_HORIZONTAL;
+	Notebook *book = (Notebook*) GetParent();
+	if (!(book->GetBookStyle() & wxVB_NO_DROPBUTTON)) {
+		DropButton *btn = new DropButton(this, this);
+		int flag(wxALIGN_CENTER_VERTICAL);
+		if (sizerOri == wxVERTICAL) {
+			flag = wxALIGN_CENTER_HORIZONTAL;
+		}
+		sz->Add(btn, 0, flag|wxEXPAND);
 	}
 
-	sz->Add(btn, 0, flag|wxALL, 2);
 	sz->Add(m_tabsSizer, 1, wxEXPAND);
 	sz->Layout();
 }
@@ -261,70 +340,14 @@ void wxTabContainer::OnPaint(wxPaintEvent &e)
 		return;
 	}
 
-	wxColour col1 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-	wxColour col2 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-
-	if ( book->m_style & wxVB_BG_GRADIENT ) {
-		col1 = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-		col2 = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 30);
-	}
-
-	//paint gradient background
-	switch (m_orientation) {
-	case wxLEFT:
-		DrawingUtils::PaintStraightGradientBox(dc, rr, col1, col2, false);
-		break;
-	case wxRIGHT:
-		DrawingUtils::PaintStraightGradientBox(dc, rr, col2, col1, false);
-		break;
-	case wxBOTTOM:
-		DrawingUtils::PaintStraightGradientBox(dc, rr, col2, col1, true);
-		break;
-	case wxTOP:
-	default:
-		DrawingUtils::PaintStraightGradientBox(dc, rr, col1, col2, true);
-		break;
-	}
+	DoDrawBackground(dc, book->GetBookStyle() & wxVB_BG_GRADIENT, m_orientation, rr);
+	DoDrawMargin(dc, m_orientation, rr);
 
 	//draw border around the tab area
 	if (book->m_style & wxVB_BORDER) {
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.DrawRectangle(rr);
-	}
-
-	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-	for (int i=0; i<3; i++) {
-		switch (m_orientation) {
-		case wxRIGHT:
-			dc.DrawLine(rr.x+i, rr.y, rr.x+i, rr.y+rr.height);
-			break;
-		case wxTOP:
-			dc.DrawLine(rr.x, rr.height-i-1, rr.x+rr.width, rr.height-i-1);
-			break;
-		case wxLEFT:
-			dc.DrawLine(rr.x+rr.width-i, rr.y, rr.x+rr.width-i, rr.y+rr.height);
-			break;
-		default:
-			dc.DrawLine(rr.x, rr.y+i, rr.x + rr.width, rr.y+i);
-			break;
-		}
-	}
-
-	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-	switch (m_orientation) {
-	case wxRIGHT:
-		dc.DrawLine(rr.x+3, rr.y, rr.x+3, rr.y+rr.height);
-		break;
-	case wxTOP:
-		dc.DrawLine(rr.x, rr.height-4, rr.x+rr.width, rr.height-4);
-		break;
-	case wxLEFT:
-		dc.DrawLine(rr.x+rr.width-4, rr.y, rr.x+rr.width-4, rr.y+rr.height);
-		break;
-	default:
-		dc.DrawLine(rr.x, rr.y+3, rr.x + rr.width, rr.y+3);
-		break;
 	}
 }
 
@@ -528,8 +551,8 @@ bool wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notif
 		event.SetEventObject( GetParent() );
 		GetParent()->ProcessEvent(event);
 	}
-    
-    return true;
+
+	return true;
 }
 
 void wxTabContainer::EnsureVisible(CustomTab *tab)
@@ -651,19 +674,19 @@ void wxTabContainer::DoShowMaxTabs()
 	}
 
 	Freeze();
-	
+
 	size_t first = GetFirstVisibleTab();
 	size_t last  = GetLastVisibleTab();
-	
+
 	CustomTab *t2 = IndexToTab(last);
-	
+
 	if (first != Notebook::npos && last != Notebook::npos && last != first) {
 		int i = (int) first;
 		for (; i>=0; i--) {
 			m_tabsSizer->Show((size_t)i);
 			m_tabsSizer->Layout();
 			CustomTab *t1 = IndexToTab((size_t)i);
-	
+
 			if (t1 && IsVisible(t1) && t2 && IsVisible(t2)) {
 				// continue;
 				continue;
@@ -677,4 +700,69 @@ void wxTabContainer::DoShowMaxTabs()
 	}
 	Thaw();
 	Refresh();
+}
+
+//--------------------------------------------------------------------
+// Dropbutton class used for the notebook
+//--------------------------------------------------------------------
+
+DropButton::DropButton(wxWindow* parent, wxTabContainer* tabContainer)
+		: DropButtonBase(parent)
+		, m_tabContainer(tabContainer)
+{
+}
+
+DropButton::~DropButton()
+{
+}
+
+size_t DropButton::GetItemCount()
+{
+	return m_tabContainer ? m_tabContainer->GetTabsCount() : 0;
+}
+
+wxString DropButton::GetItem(size_t n)
+{
+	return m_tabContainer->IndexToTab(n)->GetText();
+}
+
+bool DropButton::IsItemSelected(size_t n)
+{
+	return m_tabContainer->GetSelection() == m_tabContainer->IndexToTab(n);
+}
+
+void DropButton::OnMenuSelection(wxCommandEvent &e)
+{
+	size_t item = (size_t)e.GetId();
+
+	CustomTab *tab = m_tabContainer->IndexToTab(item);
+	m_tabContainer->SetSelection(tab, true);
+}
+
+void DropButton::OnPaint(wxPaintEvent& e)
+{
+	e.Skip(false);
+	wxRect rr = GetSize();
+	wxPaintDC dc(this);
+
+	if (GetItemCount() == 0) {
+		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		dc.DrawRectangle(rr);
+		return;
+	}
+
+	Notebook *book = (Notebook *)m_tabContainer->GetParent();
+	DoDrawBackground(dc, book->GetBookStyle() & wxVB_BG_GRADIENT, m_tabContainer->GetOrientation(), rr);
+
+	if (IsEnabled() && GetItemCount() > 0) {
+		// drow the drop down arrow
+		int bmpWidth = m_arrowDownBmp.GetWidth();
+		int bmpHeight = m_arrowDownBmp.GetHeight();
+
+		int bmpX = (rr.width - bmpWidth) / 2;
+		int bmpY = (rr.height - bmpHeight) / 2;
+		dc.DrawBitmap(m_arrowDownBmp, bmpX, bmpY, true);
+	}
+	DoDrawMargin(dc, m_tabContainer->GetOrientation(), rr);
 }

@@ -50,7 +50,7 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 {
 	m_matchInfo.resize(numpages);
 	if (numpages > 1) {
-		m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_BOTTOM|wxVB_NODND);
+		m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_BOTTOM|wxVB_NODND|wxVB_BG_GRADIENT|wxVB_TAB_DECORATION);
 		for (size_t i = 1; i <= numpages; i++) {
 			wxScintilla *sci = new wxScintilla(m_book);
 			SetStyles(sci);

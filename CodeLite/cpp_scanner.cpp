@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : cpp_scanner.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : cpp_scanner.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "precompiled_header.h"
@@ -29,7 +29,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-#endif 
+#endif
 
 CppScanner::CppScanner()
 : m_curr(0)
@@ -40,17 +40,17 @@ CppScanner::CppScanner()
 	m_returnWhite = 0;
 	m_comment = wxEmptyString;
 }
-       
+
 CppScanner::~CppScanner(void)
 {
-	delete [] m_data;
+	delete m_data;
 }
 
 int CppScanner::LexerInput(char *buf, int max_size)
 {
 	if( !m_data )
 		return 0;
-	
+
 	memset(buf, 0, max_size);
 	char *pendData = m_data + strlen(m_data);
 	int n = (max_size < (pendData - m_pcurr)) ? max_size : (pendData - m_pcurr);

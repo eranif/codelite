@@ -158,7 +158,7 @@ void wxTabContainer::Initialize()
 		if (sizerOri == wxVERTICAL) {
 			flag = wxALIGN_CENTER_HORIZONTAL;
 		}
-		sz->Add(btn, 0, flag|wxEXPAND|wxALL, 1);
+		sz->Add(btn, 0, flag|wxEXPAND|wxALL, 0);
 	}
 
 	sz->Add(m_tabsSizer, 1, wxEXPAND);
@@ -342,15 +342,16 @@ void wxTabContainer::OnPaint(wxPaintEvent &e)
 	}
 
 	DoDrawBackground(dc, book->GetBookStyle() & wxVB_BG_GRADIENT, m_orientation, rr);
-	DoDrawMargin(dc, m_orientation, rr);
 
 	//draw border around the tab area
 	if (book->m_style & wxVB_BORDER) {
-		wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), DrawingUtils::GetDdkShadowLightFactor());
+		wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), DrawingUtils::GetDdkShadowLightFactor2());
 		dc.SetPen(borderColour);
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.DrawRectangle(rr);
 	}
+
+	DoDrawMargin(dc, m_orientation, rr);
 }
 
 void wxTabContainer::OnEraseBg(wxEraseEvent &)
@@ -765,6 +766,20 @@ void DropButton::OnPaint(wxPaintEvent& e)
 		int bmpY = (rr.height - bmpHeight) / 2;
 		dc.DrawBitmap(m_arrowDownBmp, bmpX, bmpY, true);
 	}
+
+	if(book->GetBookStyle() & wxVB_BORDER){
+
+		wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), DrawingUtils::GetDdkShadowLightFactor2());
+		dc.SetPen(borderColour);
+
+		// top
+		dc.DrawLine(rr.x, rr.y, rr.x+rr.width, rr.y);
+		// bottom
+		dc.DrawLine(rr.x, rr.y+rr.height, rr.x+rr.width, rr.y+rr.height);
+		// left
+		dc.DrawLine(rr.x, rr.y, rr.x, rr.y+rr.height);
+	}
+
 	wxTabContainer::DoDrawMargin(dc, m_tabContainer->GetOrientation(), rr);
 }
 

@@ -438,7 +438,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 	int radius(TAB_RADIUS);
 	if (GetTabContainer()) {
 		size_t tabIdx = GetTabContainer()->TabToIndex(this);
-		bool drawBottomBorder = (tabIdx == 0 || GetSelected());
+		bool drawBottomBorder = (tabIdx == GetTabContainer()->GetFirstVisibleTab() || GetSelected());
 
 		if (!drawBottomBorder) {
 			tmpRect.y -= 1;
@@ -637,7 +637,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	int radius(TAB_RADIUS);
 	if (GetTabContainer()) {
 		size_t tabIdx = GetTabContainer()->TabToIndex(this);
-		bool drawLeftBorder = (tabIdx == 0 || GetSelected());
+		bool drawLeftBorder = (tabIdx == GetTabContainer()->GetFirstVisibleTab() || GetSelected());
 
 		if (!drawLeftBorder) {
 			tmpRect.x -= 1;

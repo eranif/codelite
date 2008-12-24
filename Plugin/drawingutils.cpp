@@ -309,10 +309,10 @@ float DrawingUtils::GetDdkShadowLightFactor2()
 
 wxColour DrawingUtils::GetGradient()
 {
-#if defined (__WXGTK__)
+//#if defined (__WXGTK__)
 	return  LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 4.0);
 //	return  wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-#else
-	return LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), GetDdkShadowLightFactor());
-#endif
+//#else
+//	return LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), GetDdkShadowLightFactor());
+//#endif
 }

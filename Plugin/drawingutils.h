@@ -37,6 +37,8 @@ public:
 	static void DrawVerticalButton(wxDC& dc, const wxRect& rect, const bool &focus, const bool &upperTabs, bool vertical, bool hover = false);
 	static void DrawHorizontalButton(wxDC& dc, const wxRect& rect, const bool &focus, const bool &upperTabs, bool vertical, bool hover = false);
 	static bool IsDark(const wxColour &col);
+	static float GetDdkShadowLightFactor();
+	static float GetDdkShadowLightFactor2();
 };
 
 #endif //DRAWINGUTILS_H

@@ -92,20 +92,15 @@ static void DoDrawMargin(wxDC &dc, int orientation, const wxRect &rr)
 			dc.DrawLine(rr.x, rr.height-i-1, rr.x+rr.width, rr.height-i-1);
 			break;
 		case wxLEFT:
-			dc.DrawLine(rr.x+rr.width-i, rr.y, rr.x+rr.width-i, rr.y+rr.height);
+			dc.DrawLine(rr.x+rr.width-i-1, rr.y, rr.x+rr.width-i-1, rr.y+rr.height);
 			break;
 		default:
 			dc.DrawLine(rr.x, rr.y+i, rr.x + rr.width, rr.y+i);
 			break;
 		}
 	}
-	
-#if defined (__WXGTK__)
-	wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 10.0);
-#else
-	wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-#endif
 
+	wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), DrawingUtils::GetDdkShadowLightFactor2());
 	dc.SetPen(borderColour);
 	switch (orientation) {
 	case wxRIGHT:
@@ -351,11 +346,7 @@ void wxTabContainer::OnPaint(wxPaintEvent &e)
 
 	//draw border around the tab area
 	if (book->m_style & wxVB_BORDER) {
-#if defined (__WXGTK__)
-static wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 5.0);
-#else
-static wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-#endif
+		wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), DrawingUtils::GetDdkShadowLightFactor());
 		dc.SetPen(borderColour);
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.DrawRectangle(rr);

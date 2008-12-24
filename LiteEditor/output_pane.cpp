@@ -70,20 +70,20 @@ void OutputPane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_TAB_DECORATION|wxVB_BG_GRADIENT);
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_TAB_DECORATION);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
-
-	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN);
-	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
-
-	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
-	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
 
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
 	m_book->AddPage(m_buildWin, BUILD_WIN, wxXmlResource::Get()->LoadBitmap(wxT("build")));
 
 	m_errorsWin = new ErrorsTab(m_buildWin, m_book, wxID_ANY, ERRORS_WIN);
 	m_book->AddPage(m_errorsWin, ERRORS_WIN, wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")));
+
+	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN);
+	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
+
+	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
+	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
 
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
 	m_book->AddPage(m_outputWind, OUTPUT_WIN, wxXmlResource::Get()->LoadBitmap(wxT("output_win")));

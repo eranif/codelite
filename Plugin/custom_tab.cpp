@@ -414,12 +414,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 	//set pen & brush
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
-#if defined (__WXGTK__)
-	wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 10);
-#else
-	wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-#endif
-
+	wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), DrawingUtils::GetDdkShadowLightFactor2());
 	wxPen pen(borderColour);
 	dc.SetPen(pen);
 
@@ -610,13 +605,9 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	//set pen & brush
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
-#if defined (__WXGTK__)
-	wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 10);
-#else
-	wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-#endif
-
+	wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), DrawingUtils::GetDdkShadowLightFactor2());
 	wxPen pen(borderColour);
+
 	dc.SetPen(pen);
 
 	wxRect tmpRect(rr);

@@ -34,7 +34,7 @@
 #include "custom_notebook.h"
 
 #define clMASK_COLOR wxColor(0, 128, 128)
-
+#define TAB_RADIUS 3
 
 BEGIN_EVENT_TABLE(CustomTab, wxPanel)
 	EVT_PAINT(CustomTab::OnPaint)
@@ -429,11 +429,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		dc.DrawLine(0, 0, 0, tmpRect.y + tmpRect.height);
 	}
 
-	int radius(0);
-	if (GetSelected()) {
-		radius = 2;
-	}
-
+	int radius(TAB_RADIUS);
 	if (GetTabContainer()) {
 		size_t tabIdx = GetTabContainer()->TabToIndex(this);
 		bool drawBottomBorder = (tabIdx == 0 || GetSelected());
@@ -443,6 +439,11 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 			tmpRect.height += 1;
 		}
 	}
+
+	// since we want to draw a full rounded rectangle, but we only want one edge roudned,
+	// we adjust the rectangle height and y offset
+	tmpRect.width += radius;
+	left ? tmpRect.x : tmpRect.x -= radius;
 
 	dc.DrawRoundedRectangle(tmpRect, radius);
 
@@ -621,11 +622,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		dc.DrawLine(0, 0, tmpRect.x+tmpRect.width, 0);
 	}
 
-	int radius(0);
-	if (GetSelected()) {
-		radius = 2;
-	}
-
+	int radius(TAB_RADIUS);
 	if (GetTabContainer()) {
 		size_t tabIdx = GetTabContainer()->TabToIndex(this);
 		bool drawLeftBorder = (tabIdx == 0 || GetSelected());
@@ -635,6 +632,11 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 			tmpRect.width += 1;
 		}
 	}
+
+	// since we want to draw a full rounded rectangle, but we only want one edge roudned,
+	// we adjust the rectangle height and y offset
+	tmpRect.height += radius;
+	top ? tmpRect.y : tmpRect.y -= radius;
 
 	dc.DrawRoundedRectangle(tmpRect, radius);
 

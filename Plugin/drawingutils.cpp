@@ -287,7 +287,7 @@ bool DrawingUtils::IsDark(const wxColour& color)
 float DrawingUtils::GetDdkShadowLightFactor()
 {
 #if defined (__WXGTK__)
-	return 10.0;
+	return 12.0;
 #else
 	return 8.0;
 #endif
@@ -296,7 +296,7 @@ float DrawingUtils::GetDdkShadowLightFactor()
 float DrawingUtils::GetDdkShadowLightFactor2()
 {
 #if defined (__WXGTK__)
-	return 5.0;
+	return 9.0;
 #else
 	return 3.0;
 #endif

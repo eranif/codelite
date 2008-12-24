@@ -110,6 +110,10 @@ static void HSL_2_RGB(float h, float s, float l, float *r, float *g, float *b)
 
 wxColor DrawingUtils::LightColour(const wxColour& color, float percent)
 {
+	if(percent == 0){
+		return color;
+	}
+
 	float h, s, l, r, g, b;
 	RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
 
@@ -306,7 +310,8 @@ float DrawingUtils::GetDdkShadowLightFactor2()
 wxColour DrawingUtils::GetGradient()
 {
 #if defined (__WXGTK__)
-	return  LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 3.0);
+	return  LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 4.0);
+//	return  wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #else
 	return LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), GetDdkShadowLightFactor());
 #endif

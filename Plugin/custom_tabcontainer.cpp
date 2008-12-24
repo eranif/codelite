@@ -158,7 +158,7 @@ void wxTabContainer::Initialize()
 		if (sizerOri == wxVERTICAL) {
 			flag = wxALIGN_CENTER_HORIZONTAL;
 		}
-		sz->Add(btn, 0, flag|wxEXPAND);
+		sz->Add(btn, 0, flag|wxEXPAND|wxALL, 1);
 	}
 
 	sz->Add(m_tabsSizer, 1, wxEXPAND);

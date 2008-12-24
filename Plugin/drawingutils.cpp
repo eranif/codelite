@@ -202,7 +202,7 @@ void DrawingUtils::DrawVerticalButton(wxDC& dc,
                                       bool vertical,
                                       bool hover  )
 {
-	wxColour lightGray = LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), GetDdkShadowLightFactor());
+	wxColour lightGray = GetGradient();
 
 	// Define the rounded rectangle base on the given rect
 	// we need an array of 9 points for it
@@ -239,7 +239,7 @@ void DrawingUtils::DrawVerticalButton(wxDC& dc,
 
 void DrawingUtils::DrawHorizontalButton(wxDC& dc, const wxRect& rect, const bool &focus, const bool &upperTabs, bool vertical, bool hover)
 {
-	wxColour lightGray = LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), GetDdkShadowLightFactor());
+	wxColour lightGray = GetGradient();
 	wxColour topStartColor(wxT("WHITE"));
 	wxColour topEndColor(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 
@@ -299,5 +299,15 @@ float DrawingUtils::GetDdkShadowLightFactor2()
 	return 9.0;
 #else
 	return 3.0;
+#endif
+}
+
+
+wxColour DrawingUtils::GetGradient()
+{
+#if defined (__WXGTK__)
+	return  LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 3.0);
+#else
+	return LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), GetDdkShadowLightFactor());
 #endif
 }

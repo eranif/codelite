@@ -743,9 +743,8 @@ void DropButton::OnMenuSelection(wxCommandEvent &e)
 
 void DropButton::OnPaint(wxPaintEvent& e)
 {
-	e.Skip(false);
 	wxRect rr = GetSize();
-	wxPaintDC dc(this);
+	wxBufferedPaintDC dc(this);
 
 	if (GetItemCount() == 0) {
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
@@ -755,7 +754,7 @@ void DropButton::OnPaint(wxPaintEvent& e)
 	}
 
 	Notebook *book = (Notebook *)m_tabContainer->GetParent();
-	wxTabContainer::DoDrawBackground(dc, book->GetBookStyle() & wxVB_BG_GRADIENT, m_tabContainer->GetOrientation(), rr);
+	wxTabContainer::DoDrawBackground(dc, false, m_tabContainer->GetOrientation(), rr);
 
 	if (IsEnabled() && GetItemCount() > 0) {
 		// drow the drop down arrow

@@ -39,6 +39,7 @@ public:
 	static bool IsDark(const wxColour &col);
 	static float GetDdkShadowLightFactor();
 	static float GetDdkShadowLightFactor2();
+	static wxColour GetGradient();
 };
 
 #endif //DRAWINGUTILS_H

@@ -35,6 +35,7 @@
 
 #define clMASK_COLOR wxColor(0, 128, 128)
 
+
 BEGIN_EVENT_TABLE(CustomTab, wxPanel)
 	EVT_PAINT(CustomTab::OnPaint)
 	EVT_ERASE_BACKGROUND(CustomTab::OnErase)
@@ -413,7 +414,12 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 	//set pen & brush
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
+#if defined (__WXGTK__)
+	wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 10);
+#else
 	wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+#endif
+
 	wxPen pen(borderColour);
 	dc.SetPen(pen);
 
@@ -604,7 +610,12 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	//set pen & brush
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
+#if defined (__WXGTK__)
+	wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 10);
+#else
 	wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+#endif
+
 	wxPen pen(borderColour);
 	dc.SetPen(pen);
 
@@ -741,5 +752,5 @@ void CustomTab::Initialize()
 
 wxTabContainer* CustomTab::GetTabContainer()
 {
-	return dynamic_cast<wxTabContainer*>( GetParent() );
+	return (wxTabContainer*)GetParent();
 }

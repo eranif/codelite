@@ -22,28 +22,32 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "wx/settings.h"
+#include "wx/settings.h"
 #include "drawingutils.h"
 #include "wx/dc.h"
+
+#if defined (__WXGTK__)
+#define LIGHT_FACTOR 10.0
+#else
+#define LIGHT_FACTOR 6.0
+#endif 
+
 //////////////////////////////////////////////////
 // Colour methods to convert HSL <-> RGB
 //////////////////////////////////////////////////
-static float __min(float x, float y, float z)
-{
+static float __min(float x, float y, float z) {
 	float m = x < y ? x : y;
 	m = m < z ? m : z;
 	return m;
 }
 
-static float __max(float x, float y, float z)
-{
+static float __max(float x, float y, float z) {
 	float m = x > y ? x : y;
 	m = m > z ? m : z;
 	return m;
 }
 
-static void RGB_2_HSL(float r, float g, float b, float *h, float *s, float *l)
-{
+static void RGB_2_HSL(float r, float g, float b, float *h, float *s, float *l) {
 	float var_R = ( r / 255.0 );                     //RGB from 0 to 255
 	float var_G = ( g / 255.0 );
 	float var_B = ( b / 255.0 );
@@ -74,8 +78,7 @@ static void RGB_2_HSL(float r, float g, float b, float *h, float *s, float *l)
 	}
 }
 
-static float Hue_2_RGB( float v1, float v2, float vH )             //Function Hue_2_RGB
-{
+static float Hue_2_RGB( float v1, float v2, float vH ) {           //Function Hue_2_RGB
 	if ( vH < 0 ) vH += 1;
 	if ( vH > 1 ) vH -= 1;
 	if ( ( 6.0 * vH ) < 1 ) return ( v1 + ( v2 - v1 ) * 6.0 * vH );
@@ -84,8 +87,7 @@ static float Hue_2_RGB( float v1, float v2, float vH )             //Function Hu
 	return ( v1 );
 }
 
-static void HSL_2_RGB(float h, float s, float l, float *r, float *g, float *b)
-{
+static void HSL_2_RGB(float h, float s, float l, float *r, float *g, float *b) {
 	if ( s == 0 ) {                     //HSL from 0 to 1
 		*r = l * 255.0;                      //RGB results from 0 to 255
 		*g = l * 255.0;
@@ -107,8 +109,7 @@ static void HSL_2_RGB(float h, float s, float l, float *r, float *g, float *b)
 // helper functions
 //-------------------------------------------------------------------------------------------------
 
-wxColor DrawingUtils::LightColour(const wxColour& color, float percent)
-{
+wxColor DrawingUtils::LightColour(const wxColour& color, float percent) {
 	float h, s, l, r, g, b;
 	RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
 
@@ -120,8 +121,7 @@ wxColor DrawingUtils::LightColour(const wxColour& color, float percent)
 	return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);
 }
 
-void DrawingUtils::TruncateText(wxDC& dc, const wxString& text, const int &maxWidth, wxString& fixedText)
-{
+void DrawingUtils::TruncateText(wxDC& dc, const wxString& text, const int &maxWidth, wxString& fixedText) {
 	int textH, textW;
 	int rectSize = maxWidth + 4; //error size
 	int textLen = (int)text.Length();
@@ -156,8 +156,7 @@ void DrawingUtils::PaintStraightGradientBox(wxDC& dc,
         const wxRect& rect,
         const wxColour& startColor,
         const wxColour& endColor,
-        bool  vertical)
-{
+        bool  vertical) {
 	int rd, gd, bd, high = 0;
 	rd = endColor.Red() - startColor.Red();
 	gd = endColor.Green() - startColor.Green();
@@ -199,9 +198,8 @@ void DrawingUtils::DrawVerticalButton(wxDC& dc,
                                       const bool &focus,
                                       const bool &leftTabs,
                                       bool vertical,
-                                      bool hover  )
-{
-	wxColour lightGray = LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 6.0);
+                                      bool hover  ) {
+	wxColour lightGray = LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), LIGHT_FACTOR);
 
 	// Define the rounded rectangle base on the given rect
 	// we need an array of 9 points for it
@@ -212,18 +210,11 @@ void DrawingUtils::DrawVerticalButton(wxDC& dc,
 	if ( focus ) {
 		PaintStraightGradientBox(dc, rect, topStartColor, topEndColor, vertical);
 	} else {
-
-		if ( hover ) {
-			topStartColor =  wxT("WHITE");
-			topEndColor = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-		} else {
-			topStartColor = topEndColor;
-			topEndColor = lightGray;
-		}
-
-		wxRect r1(rect.x, rect.y, rect.width, rect.height/2);
-		wxRect r2(rect.x, rect.y+rect.height/2, rect.width, rect.height/2);;
-
+		topStartColor = topEndColor;
+		topEndColor = lightGray;
+	
+		wxRect r1(rect.x, rect.y, rect.width, (rect.height*2)/3);
+		wxRect r2(rect.x, rect.y+(rect.height*2)/3, rect.width, rect.height/3);;
 
 		PaintStraightGradientBox(dc, r1, topStartColor, topStartColor, vertical);
 		PaintStraightGradientBox(dc, r2, topStartColor, topEndColor, vertical);
@@ -233,9 +224,8 @@ void DrawingUtils::DrawVerticalButton(wxDC& dc,
 	dc.SetBrush( *wxTRANSPARENT_BRUSH );
 }
 
-void DrawingUtils::DrawHorizontalButton(wxDC& dc, const wxRect& rect, const bool &focus, const bool &upperTabs, bool vertical, bool hover)
-{
-	wxColour lightGray = LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 6.0);
+void DrawingUtils::DrawHorizontalButton(wxDC& dc, const wxRect& rect, const bool &focus, const bool &upperTabs, bool vertical, bool hover) {
+	wxColour lightGray = LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), LIGHT_FACTOR);
 	wxColour topStartColor(wxT("WHITE"));
 	wxColour topEndColor(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 
@@ -247,17 +237,12 @@ void DrawingUtils::DrawHorizontalButton(wxDC& dc, const wxRect& rect, const bool
 			PaintStraightGradientBox(dc, rect, topEndColor, topStartColor, vertical);
 		}
 	} else {
-
-		if ( hover ) {
-			topStartColor =  wxT("WHITE");
-			topEndColor = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-		} else {
-			topStartColor = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-			topEndColor = lightGray;
-		}
-
-		wxRect r1(rect.x, rect.y, rect.width, rect.height/2);
-		wxRect r2(rect.x, rect.y+rect.height/2, rect.width, rect.height/2);;
+		
+		topStartColor = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+		topEndColor = lightGray;
+	
+		wxRect r1(rect.x, rect.y, rect.width, (rect.height*2)/3);
+		wxRect r2(rect.x, rect.y+(rect.height*2)/3, rect.width, rect.height/3);;
 
 		PaintStraightGradientBox(dc, r1, topStartColor, topStartColor, vertical);
 		PaintStraightGradientBox(dc, r2, topStartColor, topEndColor, vertical);
@@ -267,10 +252,9 @@ void DrawingUtils::DrawHorizontalButton(wxDC& dc, const wxRect& rect, const bool
 	dc.SetBrush( *wxTRANSPARENT_BRUSH );
 }
 
-bool DrawingUtils::IsDark(const wxColour& color)
-{
+bool DrawingUtils::IsDark(const wxColour& color) {
 	int evg = (color.Red() + color.Green() + color.Blue())/3;
-	if(evg < 127)
+	if (evg < 127)
 		return true;
 
 	return false;

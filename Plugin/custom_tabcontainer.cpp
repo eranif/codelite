@@ -99,8 +99,14 @@ static void DoDrawMargin(wxDC &dc, int orientation, const wxRect &rr)
 			break;
 		}
 	}
+	
+#if defined (__WXGTK__)
+	wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 10.0);
+#else
+	wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+#endif
 
-	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+	dc.SetPen(borderColour);
 	switch (orientation) {
 	case wxRIGHT:
 		dc.DrawLine(rr.x+3, rr.y, rr.x+3, rr.y+rr.height);
@@ -345,7 +351,12 @@ void wxTabContainer::OnPaint(wxPaintEvent &e)
 
 	//draw border around the tab area
 	if (book->m_style & wxVB_BORDER) {
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+#if defined (__WXGTK__)
+static wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 5.0);
+#else
+static wxColour borderColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+#endif
+		dc.SetPen(borderColour);
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.DrawRectangle(rr);
 	}

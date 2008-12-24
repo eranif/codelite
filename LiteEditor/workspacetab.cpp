@@ -44,7 +44,7 @@ WorkspaceTab::WorkspaceTab(wxWindow *parent, const wxString &caption)
 	long link(1);
 	EditorConfigST::Get()->GetLongValue(wxT("LinkWorkspaceViewToEditor"), link);
 	m_isLinkedToEditor = link ? true : false;
-    
+
 	CreateGUIControls();
     ConnectEvents();
 }
@@ -60,10 +60,10 @@ WorkspaceTab::~WorkspaceTab()
 	Disconnect( XRCID("project_properties"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnProjectSettings));
 	Disconnect( XRCID("set_project_active"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnShowProjectListPopup));
 	Disconnect( XRCID("set_project_active"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspaceTab::OnProjectSettingsUI));
-	
+
     wxTheApp->Disconnect(XRCID("show_in_workspace"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnShowFile),   NULL, this);
     wxTheApp->Disconnect(XRCID("show_in_workspace"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspaceTab::OnShowFileUI), NULL, this);
-    
+
     wxTheApp->Disconnect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(WorkspaceTab::OnWorkspaceLoaded),     NULL, this);
     wxTheApp->Disconnect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(WorkspaceTab::OnWorkspaceClosed),     NULL, this);
     wxTheApp->Disconnect(wxEVT_PROJ_ADDED,            wxCommandEventHandler(WorkspaceTab::OnProjectAdded),        NULL, this);
@@ -104,10 +104,10 @@ void WorkspaceTab::ConnectEvents()
 	Connect( XRCID("project_properties"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnProjectSettings));
 	Connect( XRCID("set_project_active"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnShowProjectListPopup));
 	Connect( XRCID("set_project_active"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspaceTab::OnProjectSettingsUI));
-	
+
     wxTheApp->Connect(XRCID("show_in_workspace"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnShowFile),   NULL, this);
     wxTheApp->Connect(XRCID("show_in_workspace"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspaceTab::OnShowFileUI), NULL, this);
-    
+
     wxTheApp->Connect(wxEVT_WORKSPACE_LOADED,      wxCommandEventHandler(WorkspaceTab::OnWorkspaceLoaded),     NULL, this);
     wxTheApp->Connect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(WorkspaceTab::OnWorkspaceClosed),     NULL, this);
     wxTheApp->Connect(wxEVT_PROJ_ADDED,            wxCommandEventHandler(WorkspaceTab::OnProjectAdded),        NULL, this);
@@ -145,12 +145,12 @@ void WorkspaceTab::OnCollapseAllUI(wxUpdateUIEvent &e)
 {
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen());
 }
- 
+
 void WorkspaceTab::OnGoHome(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
 	wxString activeProject = ManagerST::Get()->GetActiveProjectName();
-	if (activeProject.IsEmpty()) 
+	if (activeProject.IsEmpty())
 		return;
 	m_fileView->ExpandToPath(activeProject, wxFileName());
 	wxTreeItemId sel = m_fileView->GetSelection();
@@ -189,7 +189,7 @@ void WorkspaceTab::OnProjectSettingsUI(wxUpdateUIEvent& e)
 	e.Enable(!ManagerST::Get()->GetActiveProjectName().IsEmpty());
 }
 
-static int wxStringCmpFunc(const wxString& item1, const wxString& item2) 
+static int wxStringCmpFunc(const wxString& item1, const wxString& item2)
 {
 	return item1.CmpNoCase(item2);
 }
@@ -199,12 +199,11 @@ void WorkspaceTab::OnShowProjectListPopup(wxCommandEvent& e)
 	wxUnusedVar(e);
 
 #ifdef __WXMSW__
-	wxFont boldFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    boldFont.SetWeight(wxBOLD);
+	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 #endif
-	
+
 	wxMenu popupMenu;
-    
+
 	wxArrayString projects;
 	ManagerST::Get()->GetProjectList(projects);
 	projects.Sort(wxStringCmpFunc);
@@ -212,15 +211,23 @@ void WorkspaceTab::OnShowProjectListPopup(wxCommandEvent& e)
 		wxString text = projects.Item(i);
 		bool selected = ManagerST::Get()->GetActiveProjectName() == text;
 		wxMenuItem *item = new wxMenuItem(&popupMenu, i, text, text, wxITEM_CHECK);
-		popupMenu.Append(item);
-		item->Check(selected);
+
+		//set the font
 #ifdef __WXMSW__
 		if (selected) {
-			item->SetFont(boldFont);
+			font.SetWeight(wxBOLD);
 		}
+		item->SetFont(font);
+#endif
+		popupMenu.Append(item);
+		item->Check(selected);
+
+		//restore font
+#ifdef __WXMSW__
+		font.SetWeight(wxNORMAL);
 #endif
 	}
-    
+
     popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WorkspaceTab::OnMenuSelection), NULL, this);
 	PopupMenu(&popupMenu);
 }
@@ -230,7 +237,7 @@ void WorkspaceTab::OnMenuSelection(wxCommandEvent& e)
 	wxArrayString projects;
 	ManagerST::Get()->GetProjectList(projects);
 	projects.Sort(wxStringCmpFunc);
-    
+
 	size_t sel = (size_t)e.GetId();
 	if(sel < projects.GetCount()) {
 		m_fileView->MarkActive(projects.Item(sel));

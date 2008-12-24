@@ -46,7 +46,7 @@ END_EVENT_TABLE()
 // Helper methods
 //-------------------------------------------------------
 
-static void DoDrawBackground(wxDC &dc, bool gradient, int orientation, const wxRect &rr)
+void wxTabContainer::DoDrawBackground(wxDC &dc, bool gradient, int orientation, const wxRect &rr)
 {
 
 	// set the gradient colours, by default we use the same colours
@@ -80,7 +80,7 @@ static void DoDrawBackground(wxDC &dc, bool gradient, int orientation, const wxR
 	}
 }
 
-static void DoDrawMargin(wxDC &dc, int orientation, const wxRect &rr)
+void wxTabContainer::DoDrawMargin(wxDC &dc, int orientation, const wxRect &rr)
 {
 	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 	for (int i=0; i<3; i++) {
@@ -755,7 +755,7 @@ void DropButton::OnPaint(wxPaintEvent& e)
 	}
 
 	Notebook *book = (Notebook *)m_tabContainer->GetParent();
-	DoDrawBackground(dc, book->GetBookStyle() & wxVB_BG_GRADIENT, m_tabContainer->GetOrientation(), rr);
+	wxTabContainer::DoDrawBackground(dc, book->GetBookStyle() & wxVB_BG_GRADIENT, m_tabContainer->GetOrientation(), rr);
 
 	if (IsEnabled() && GetItemCount() > 0) {
 		// drow the drop down arrow
@@ -766,5 +766,11 @@ void DropButton::OnPaint(wxPaintEvent& e)
 		int bmpY = (rr.height - bmpHeight) / 2;
 		dc.DrawBitmap(m_arrowDownBmp, bmpX, bmpY, true);
 	}
-	DoDrawMargin(dc, m_tabContainer->GetOrientation(), rr);
+	wxTabContainer::DoDrawMargin(dc, m_tabContainer->GetOrientation(), rr);
+}
+
+int wxTabContainer::GetBookStyle()
+{
+	Notebook *book = (Notebook *)GetParent();
+	return book->GetBookStyle();
 }

@@ -131,6 +131,8 @@ public:
 	 */
 	const CustomTab* GetDraggedTab() const { return m_draggedTab; }
 
+	int GetBookStyle();
+
 	//Setters
 	void SetOrientation(const int& orientation) ;
 	const int& GetOrientation() const {return m_orientation;}
@@ -140,6 +142,9 @@ public:
 	//Setters
 	void SetHistory(const wxArrayPtrVoid& history) {this->m_history = history;}
 	const wxArrayPtrVoid& GetHistory() const {return m_history;}
+
+	static void DoDrawBackground(wxDC &dc, bool gradient, int orientation, const wxRect &rr);
+	static void DoDrawMargin(wxDC &dc, int orientation, const wxRect &rr);
 
 	DECLARE_EVENT_TABLE()
 	virtual void OnPaint(wxPaintEvent &e);

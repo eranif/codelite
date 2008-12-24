@@ -330,6 +330,12 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 			rt.y += 3;
 		}
 
+		// we want the gradient NOT to be painted on the border,
+		// so we reduce the width of the fillRect by 2 pixles
+		// also, we need to adjust the x & y coordinates by 1 pixel
+		rt.width -= 2;
+		rt.x += 1;
+		rt.height -= 1;
 		DrawingUtils::DrawVerticalButton(memDc, rt, GetSelected(), left, true, hovered);
 
 	} else {
@@ -506,7 +512,6 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	memDc.SetFont(font);
 
 	wxRect bmpRect(0, 0, bmp.GetWidth(), bmp.GetHeight());
-
 	memDc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 	memDc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 	memDc.DrawRectangle(bmpRect);
@@ -523,6 +528,13 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		} else {
 			fillRect.y += 3;
 		}
+
+		// we want the gradient NOT to be painted on the border,
+		// so we reduce the width of the fillRect by 2 pixles
+		// also, we need to adjust the x & y coordinates by 1 pixel
+		fillRect.width -= 2;
+		fillRect.x += 1;
+		fillRect.height -= 1;
 		DrawingUtils::DrawHorizontalButton(memDc, fillRect, GetSelected(), top, true, hovered);
 	} else {
 		wxRect fillRect(bmpRect);

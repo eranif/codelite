@@ -1477,9 +1477,6 @@ void Manager::DbgStart ( long pid )
 	wxString dbgname = dbginfo.path;
 	dbgname = EnvironmentConfig::Instance()->ExpandVariables ( dbgname );
 
-	//set focus to the output debug pane
-	ShowOutputPane ( OutputPane::OUTPUT_DEBUG );
-
 	//set ourselves as the observer for the debugger class
 	dbgr->SetObserver ( this );
 

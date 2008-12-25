@@ -51,7 +51,10 @@ void MainBook::CreateGuiControls()
 	sz->Add(m_navBar, 0, wxEXPAND);
 
 	long style = wxVB_TOP|wxVB_HAS_X|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_BG_GRADIENT;
+
+#ifdef __WXGTK__
 	style |= wxVB_BORDER;
+#endif
 
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 	m_book->GetTabContainer()->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainBook::OnMouseDClick), NULL, this);
@@ -121,7 +124,7 @@ void MainBook::OnPageClosed(NotebookEvent &e)
 {
 	SelectPage(m_book->GetCurrentPage());
     m_quickFindBar->SetEditor(GetActiveEditor());
-    
+
 	// any editors left open?
 	LEditor *editor = NULL;
 	for (size_t i = 0; i < m_book->GetPageCount() && editor == NULL; i++) {

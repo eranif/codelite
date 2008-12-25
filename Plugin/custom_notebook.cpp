@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : custom_notebook.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : custom_notebook.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
@@ -58,10 +58,10 @@ void Notebook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 	CustomTab *tab = new CustomTab(m_tabs, wxID_ANY, text, bmp, selected, m_tabs->GetOrientation(), m_style);
 	win->Reparent(this);
 	tab->SetWindow(win);
-	
+
 	AddPage(tab);
 	GetSizer()->Layout();
-	
+
 	Thaw();
 }
 
@@ -95,7 +95,7 @@ void Notebook::SetSelection(size_t page)
 {
 	CustomTab *tab = m_tabs->IndexToTab(page);
 	CustomTab *old_tab = m_tabs->GetSelection();
-	
+
 	if (old_tab == tab) {
 		//same tab, nothing to be done
 		return;
@@ -103,7 +103,7 @@ void Notebook::SetSelection(size_t page)
 
 	if (tab) {
 		tab->GetWindow()->SetFocus();
-		
+
 		//the next call will also trigger a call to Notebook::SetSelection(CustomTab *tab)
 		m_tabs->SetSelection(tab, true);
 	}
@@ -133,14 +133,21 @@ void Notebook::SetSelection(CustomTab *tab)
 	} else {
 		sz->Insert(0, win, 1, wxEXPAND);
 	}
-	win->Show();
-	
+
+	wxSize oldSize(-1, -1);
 	if (oldWindow && sz->GetItem(oldWindow)) {
 		//the item indeed exist in the sizer, remove it
 		sz->Detach(oldWindow);
+
+		oldSize = oldWindow->GetSize();
 		oldWindow->Hide();
 	}
-	
+
+	if(oldSize.x != -1 && oldSize.y != -1){
+		win->SetSize(oldSize);
+	}
+	win->Show();
+
 	sz->Layout();
 	Thaw();
 }
@@ -228,9 +235,9 @@ void Notebook::SetOrientation(int orientation)
 		} else {
 			sz->Add(m_tabs, 0, wxEXPAND);
 		}
-		
+
 	}
-	
+
 	m_tabs->Resize();
 	sz->Layout();
 }
@@ -277,14 +284,14 @@ void Notebook::OnNavigationKey(wxNavigationKeyEvent &e)
 				size_t idx = m_tabs->TabToIndex(tab);
 				SetSelection(idx);
 			}
-			
+
 			m_popupWin->Destroy();
 			m_popupWin = NULL;
-			
+
 			if(tab) {
 				tab->GetWindow()->SetFocus();
 			}
-			
+
 		} else if ( m_popupWin ) {
 			// a dialog is already opened
 			m_popupWin->OnNavigationKey( e );
@@ -318,8 +325,8 @@ void Notebook::AddPage(CustomTab *tab)
 	//add the actual window to the book sizer
 	wxSizer *sz = GetSizer();
 	wxWindow *win = tab->GetWindow();
-	
-	
+
+
 	if (tab->GetSelected()) {
 		//inert the new item
 		if (m_style & wxVB_LEFT || m_style & wxVB_TOP) {
@@ -380,7 +387,7 @@ void Notebook::SetPageText(size_t index, const wxString &text)
 	if(tab) {
 		tab->SetText(text);
 		tab->Refresh();
-		
+
 		//this requires re-calculating the tabs are
 		m_tabs->Resize();
 	}
@@ -390,12 +397,12 @@ bool Notebook::DeleteAllPages(bool notify)
 {
     bool res = true;
 	Freeze();
-	
+
 	size_t count = m_tabs->GetTabsCount();
 	for(size_t i=0; i<count && res; i++){
 		res = DeletePage(0, notify);
 	}
-	
+
 	Thaw();
     return res;
 }

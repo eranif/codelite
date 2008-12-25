@@ -1624,6 +1624,8 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 		return;
 	}
 
+    wxWindow *focusWin = wxWindow::FindFocus();
+    
 	//try to open the file
 	wxFileName fn ( fileName );
 	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
@@ -1637,6 +1639,10 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 			editor->HighlightLine ( lineno );
 		}
 	}
+    
+    if (focusWin) {
+        focusWin->SetFocus();
+    }
 }
 
 void Manager::DbgUnMarkDebuggerLine()

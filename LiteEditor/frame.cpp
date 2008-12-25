@@ -68,7 +68,6 @@
 #include "replaceinfilespanel.h"
 #include "pluginmgrdlg.h"
 #include "environmentconfig.h"
-#include "shell_window.h"
 #include "findresultstab.h"
 #include "buidltab.h"
 #include "errorstab.h"
@@ -466,11 +465,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
     EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
 
     EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnBuildEnded)
-
-    EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE,    Frame::OnOutputWindowEvent)
-    EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDERRLINE, Frame::OnOutputWindowEvent)
-    EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED,    Frame::OnOutputWindowEvent)
-    EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED,      Frame::OnOutputWindowEvent)
 
     EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY,    Frame::OnAddSymbols)
     EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
@@ -1586,25 +1580,6 @@ void Frame::OnBuildEnded(wxCommandEvent &event)
         }
     }
     ManagerST::Get()->ProcessCommandQueue();
-}
-
-void Frame::OnOutputWindowEvent(wxCommandEvent &event)
-{
-	// make sure that the output pane is visible and selection
-	// is set to the 'Find In Files' tab
-	ManagerST::Get()->ShowOutputPane(OutputPane::OUTPUT_WIN);
-
-	if (event.GetEventType() == wxEVT_ASYNC_PROC_STARTED) {
-		m_outputPane->GetOutputWindow()->Clear();
-		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());
-	} else if (event.GetEventType() == wxEVT_ASYNC_PROC_ADDLINE) {
-		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());
-	} else if (event.GetEventType() == wxEVT_ASYNC_PROC_ADDERRLINE) {
-		// might want to highlight this line (eg bold or different bg color?
-		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());
-	} else if (event.GetEventType() == wxEVT_ASYNC_PROC_ENDED) {
-		m_outputPane->GetOutputWindow()->AppendLine(event.GetString());
-	}
 }
 
 // Build operations

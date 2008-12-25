@@ -108,6 +108,8 @@ void BuildTab::Initialize()
 	m_showMe       = options.GetShowBuildPane();
 	m_autoHide     = options.GetAutoHide();
 	m_skipWarnings = options.GetSkipWarnings();
+    
+    m_autoAppear   = (m_showMe == BuildTabSettingsData::ShowOnStart);
 
 	SetStyles ( m_sci );
 }
@@ -458,17 +460,15 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 	}
 	AppendText ( BUILD_START_MSG );
 	Frame::Get()->SetStatusMessage ( e.GetString(), 4, XRCID ( "build" ) );
-	if ( m_showMe == BuildTabSettingsData::ShowOnStart ) {
-		ManagerST::Get()->ShowOutputPane ( m_name );
-	} else if ( m_showMe == BuildTabSettingsData::ShowOnEnd ) {
-		bool viewing = ManagerST::Get()->IsPaneVisible ( Frame::Get()->GetOutputPane()->GetCaption() ) &&
-		               ( Frame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() == this ||
-		                 Frame::Get()->GetOutputPane()->GetNotebook()->GetCurrentPage() ==
-		                 Frame::Get()->GetOutputPane()->GetErrorsTab() );
-		if ( m_autoHide && viewing ) {
-			ManagerST::Get()->HidePane ( Frame::Get()->GetOutputPane()->GetName() );
-		}
-	}
+    OutputPane *opane = Frame::Get()->GetOutputPane();
+	if (m_showMe == BuildTabSettingsData::ShowOnEnd && 
+            m_autoHide && 
+            ManagerST::Get()->IsPaneVisible(opane->GetCaption()) &&
+            (opane->GetNotebook()->GetCurrentPage() == this || 
+                opane->GetNotebook()->GetCurrentPage() == opane->GetErrorsTab())) {
+        // user prefers to see build/errors tabs only at end of unsuccessful build
+        ManagerST::Get()->HidePane(opane->GetName());	
+    }
 	m_sw.Start();
 
 	// notify the plugins that the build had started

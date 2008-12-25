@@ -190,7 +190,6 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent &e)
 
 void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 {
-	ManagerST::Get()->ShowOutputPane(m_name); // derived classes may change name
 	if (m_book) {
 		m_book->SetSelection(e.GetInt());
 	}

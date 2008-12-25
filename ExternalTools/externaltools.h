@@ -37,7 +37,6 @@ class ExternalToolsPlugin : public IPlugin
 	wxToolBar *m_tb;
 	wxEvtHandler *topWin;
 	AsyncExeCmd *m_pipedProcess;
-	DECLARE_EVENT_TABLE()
 	
 protected:	
 	void OnSettings(wxCommandEvent &e);
@@ -49,8 +48,6 @@ protected:
 	void DoRecreateToolbar();
 	bool IsRedirectedToolRunning();
 	void OnProcessEnd(wxProcessEvent &event);
-	void OnToolProcess(wxCommandEvent &event);
-	void SelectOutputTab();
 	
 public:
 	ExternalToolsPlugin(IManager *manager);

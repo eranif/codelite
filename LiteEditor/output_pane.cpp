@@ -32,7 +32,7 @@
 #include "replaceinfilespanel.h"
 #include "buidltab.h"
 #include "errorstab.h"
-#include "shell_window.h"
+#include "shelltab.h"
 #include "taskpanel.h"
 
 
@@ -88,7 +88,7 @@ void OutputPane::CreateGUIControls()
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
 	m_book->AddPage(m_outputWind, OUTPUT_WIN, wxXmlResource::Get()->LoadBitmap(wxT("output_win")));
 
-	m_outputDebug = new ShellTab(m_book, wxID_ANY, OUTPUT_DEBUG);
+	m_outputDebug = new DebugTab(m_book, wxID_ANY, OUTPUT_DEBUG);
 	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
 
 	wxTextCtrl *text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);

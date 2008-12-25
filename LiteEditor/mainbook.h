@@ -61,7 +61,7 @@ public:
 	MainBook(wxWindow *parent);
 	~MainBook();
     
-	void ShowQuickBar (bool s = true)       { m_quickFindBar->DoShow(s); }
+	void ShowQuickBar (bool s = true)       { m_quickFindBar->Show(s); }
 	void ShowNavBar   (bool s = true);
 	void UpdateNavBar (LEditor *editor);
 	bool IsNavBarShown()                    { return m_navBar->IsShown(); }

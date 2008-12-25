@@ -71,13 +71,6 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 	return PLUGIN_INTERFACE_VERSION;
 }
 
-BEGIN_EVENT_TABLE(ExternalToolsPlugin, IPlugin)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDLINE,    ExternalToolsPlugin::OnToolProcess)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ADDERRLINE, ExternalToolsPlugin::OnToolProcess)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_STARTED,    ExternalToolsPlugin::OnToolProcess)
-	EVT_COMMAND(wxID_ANY, wxEVT_ASYNC_PROC_ENDED, 	   ExternalToolsPlugin::OnToolProcess)
-END_EVENT_TABLE()
-
 ExternalToolsPlugin::ExternalToolsPlugin(IManager *manager)
 		: IPlugin(manager)
 		, topWin(NULL)
@@ -268,7 +261,7 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 			return;
 		}
 
-		m_pipedProcess = new AsyncExeCmd(this);
+		m_pipedProcess = new AsyncExeCmd(m_mgr->GetOutputWindow());
 		m_mgr->GetEnv()->ApplyEnv(NULL);
 
 		DirSaver ds;
@@ -278,10 +271,6 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 		// redirect output
 		m_pipedProcess->Execute(command, true, true);
 		if (m_pipedProcess->GetProcess()) {
-			// select the 'Output' tab
-			SelectOutputTab();
-
-			// success
 			m_pipedProcess->GetProcess()->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(ExternalToolsPlugin::OnProcessEnd), NULL, this);
 		}
 		m_mgr->GetEnv()->UnApplyEnv();
@@ -319,45 +308,12 @@ void ExternalToolsPlugin::DoRecreateToolbar()
 
 bool ExternalToolsPlugin::IsRedirectedToolRunning()
 {
-	if (m_pipedProcess == NULL)
-		return false;
-
 	return (m_pipedProcess && m_pipedProcess->IsBusy());
-}
-
-void ExternalToolsPlugin::OnToolProcess(wxCommandEvent& event)
-{
-	wxString msg(event.GetString());
-	msg = msg.Trim().Trim(false);
-	m_mgr->AppendOutputMsg(msg + wxT("\n"));
 }
 
 void ExternalToolsPlugin::OnLaunchExternalToolUI(wxUpdateUIEvent& e)
 {
 	e.Enable(!IsRedirectedToolRunning());
-}
-
-void ExternalToolsPlugin::SelectOutputTab()
-{
-	// make sure the Ouput view is visible
-	wxAuiPaneInfo &info = m_mgr->GetDockingManager()->GetPane(wxT("Output View"));
-	if (info.IsOk() && !info.IsShown()) {
-		info.Show();
-		m_mgr->GetDockingManager()->Update();
-	}
-
-	Notebook *book = m_mgr->GetOutputPaneNotebook();
-	wxString curSel = book->GetPageText((size_t)book->GetSelection());
-	if (curSel == wxT("Output")) {
-		return;
-	}
-
-	for (size_t i=0; i<(size_t)book->GetPageCount(); i++) {
-		if (book->GetPageText(i) == wxT("Output")) {
-			book->SetSelection(i);
-			break;
-		}
-	}
 }
 
 void ExternalToolsPlugin::OnStopExternalTool(wxCommandEvent& e)

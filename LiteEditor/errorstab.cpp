@@ -39,6 +39,8 @@ ErrorsTab::ErrorsTab ( BuildTab *bt, wxWindow *parent, wxWindowID id, const wxSt
 		: OutputTabWindow ( parent, id, name )
 		, m_bt ( bt )
 {
+    m_autoAppear = false; // BuildTab controls this tab's auto-appearance
+    
 	m_tb->RemoveTool ( XRCID ( "repeat_output" ) );
 	m_tb->AddSeparator();
 	m_tb->AddCheckTool ( XRCID ( "show_errors" ), wxT ( "Errors" ), wxXmlResource::Get()->LoadBitmap ( wxT ( "project_conflict" ) ), wxNullBitmap, wxT ( "Show build errors" ) );

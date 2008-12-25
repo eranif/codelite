@@ -22,13 +22,16 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "async_executable_cmd.h"
-#include "wx/tokenzr.h"
+#include <wx/xrc/xmlres.h>
+#include <wx/tokenzr.h>
 
-DEFINE_EVENT_TYPE(wxEVT_ASYNC_PROC_ADDLINE)
-DEFINE_EVENT_TYPE(wxEVT_ASYNC_PROC_ADDERRLINE)
-DEFINE_EVENT_TYPE(wxEVT_ASYNC_PROC_STARTED)
-DEFINE_EVENT_TYPE(wxEVT_ASYNC_PROC_ENDED)
+#include "async_executable_cmd.h"
+
+
+const wxEventType wxEVT_ASYNC_PROC_ADDLINE    = XRCID("async_proc_addline");
+const wxEventType wxEVT_ASYNC_PROC_ADDERRLINE = XRCID("async_proc_adderrline");
+const wxEventType wxEVT_ASYNC_PROC_STARTED    = XRCID("async_proc_started");
+const wxEventType wxEVT_ASYNC_PROC_ENDED      = XRCID("async_proc_ended");
 
 static int AsyncExeTimerID = wxNewId();
 

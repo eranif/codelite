@@ -248,10 +248,9 @@ public:
 	virtual IPlugin *GetPlugin(const wxString &pluginName) = 0;
 
 	/**
-	 * @brief print message into the 'output' tab of the 'Output View' pane
-	 * @param msg message to append
+	 * @brief output window for receiving async cmd events
 	 */
-	virtual void AppendOutputMsg(const wxString &msg) = 0;
+	virtual wxEvtHandler *GetOutputWindow() = 0;
 
 	/**
 	 * @brief save all modified files

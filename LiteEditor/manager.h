@@ -418,12 +418,6 @@ public:
 	void KillProgram();
 
 	/**
-	 * Write line to child program
-	 * \param line
-	 */
-	void WriteProgram(const wxString &line);
-
-	/**
 	 * Execute the project with no debugger
 	 */
 	void ExecuteNoDebug(const wxString &projectName);
@@ -580,9 +574,6 @@ public:
 	 * return true if the last buid ended successfully
 	 */
 	bool IsBuildEndedSuccessfully() const;
-
-	void OnOutputWindow(wxCommandEvent &e);
-	void OnDebuggerWindow(wxCommandEvent &e);
 
 	/**
 	 * \brief update the path & name of the build tool

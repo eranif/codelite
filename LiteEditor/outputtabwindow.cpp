@@ -25,6 +25,7 @@
 #include <wx/xrc/xmlres.h>
 #include "macros.h"
 #include "globals.h"
+#include "manager.h"
 #include "outputtabwindow.h"
 #include "output_pane.h"
 
@@ -56,6 +57,7 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
     , m_tb(NULL)
     , m_sci(NULL)
     , m_outputScrolls(true)
+    , m_autoAppear(true)
 {
 	CreateGUIControls();
 }
@@ -190,6 +192,10 @@ void OutputTabWindow::Clear()
 
 void OutputTabWindow::AppendText(const wxString &text)
 {
+    if (m_autoAppear && m_sci->GetLength() == 0) {
+        ManagerST::Get()->ShowOutputPane(m_name);
+    }
+    
 	//----------------------------------------------
 	// enable writing
 	m_sci->SetReadOnly(false);

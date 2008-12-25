@@ -34,7 +34,8 @@ class FindResultsTab;
 class BuildTab;
 class ErrorsTab;
 class ReplaceInFilesPanel;
-class ShellWindow;
+class ShellTab;
+class DebugTab;
 class TaskPanel;
 
 /**
@@ -75,7 +76,7 @@ private:
 	BuildTab            *m_buildWin;
 	ErrorsTab           *m_errorsWin;
 	ShellTab            *m_outputWind;
-	ShellTab            *m_outputDebug;
+	DebugTab            *m_outputDebug;
 	TaskPanel           *m_taskPanel;
 	
 	void CreateGUIControls();
@@ -102,12 +103,12 @@ public:
 	Notebook       *GetNotebook()       { return m_book;    }
 	const wxString &GetCaption () const { return m_caption; }
 	
-	FindResultsTab      *GetFindResultsTab   () { return m_findResultsTab;          }
-	ReplaceInFilesPanel *GetReplaceResultsTab() { return m_replaceResultsTab;       }
-	BuildTab            *GetBuildTab         () { return m_buildWin;                }
-	ErrorsTab           *GetErrorsTab        () { return m_errorsWin;               }
-	ShellWindow         *GetOutputWindow     () { return m_outputWind->GetShell();  }
-	ShellWindow         *GetDebugWindow      () { return m_outputDebug->GetShell(); }
+	FindResultsTab      *GetFindResultsTab   () { return m_findResultsTab;    }
+	ReplaceInFilesPanel *GetReplaceResultsTab() { return m_replaceResultsTab; }
+	BuildTab            *GetBuildTab         () { return m_buildWin;          }
+	ErrorsTab           *GetErrorsTab        () { return m_errorsWin;         }
+	ShellTab            *GetOutputWindow     () { return m_outputWind;        }
+	DebugTab            *GetDebugWindow      () { return m_outputDebug;       }
 };
 
 #endif // OUTPUT_PANE_H

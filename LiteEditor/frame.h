@@ -314,7 +314,6 @@ protected:
 	void OnExecuteNoDebug(wxCommandEvent &event);
 	void OnExecuteNoDebugUI(wxUpdateUIEvent &event);
 	void OnTimer(wxTimerEvent &event);
-	void OnOutputWindowEvent(wxCommandEvent &event);
 	void OnFileCloseAll(wxCommandEvent &event);
 	void OnFindResource(wxCommandEvent &event);
 	void OnFindType(wxCommandEvent &event);

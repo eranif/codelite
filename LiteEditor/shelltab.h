@@ -22,33 +22,59 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef SHELLTAB_H
+#ifndef SHELLTAB_H
 #define SHELLTAB_H
 
-#include "wx/wxscintilla.h"
-#include "wx/panel.h"
+#include "outputtabwindow.h"
 
-class ShellWindow;
+class AsyncExeCmd;
+class QuickFindBar;
 
-class ShellTab : public wxPanel
+
+class ShellTab : public OutputTabWindow
 {
-	wxString m_name;
-	ShellWindow *m_window;
-
 protected:
-	void CreateGUIControl();
-    void OnOutputScrolls(wxCommandEvent &e);
-	void OnClearAll(wxCommandEvent &e);
-	void OnWordWrap(wxCommandEvent &e);
-
+    wxSizer      *m_inputSizer;
+    wxComboBox   *m_input;
+    QuickFindBar *m_findBar;
+    AsyncExeCmd  *m_cmd;
+    
+    static  void InitStyle    (wxScintilla *sci);
+    
+    virtual bool DoSendInput  (const wxString &line);
+    
+    virtual void OnProcStarted(wxCommandEvent  &e);
+    virtual void OnProcOutput (wxCommandEvent  &e);
+    virtual void OnProcError  (wxCommandEvent  &e);
+    virtual void OnProcEnded  (wxCommandEvent  &e);
+    
+    virtual void OnShowInput  (wxCommandEvent  &e);
+    virtual void OnShowSearch (wxCommandEvent  &e);
+    virtual void OnSendInput  (wxCommandEvent  &e);
+    virtual void OnStopProc   (wxCommandEvent  &e);
+    virtual void OnKeyDown    (wxKeyEvent      &e);
+    virtual void OnUpdateUI   (wxUpdateUIEvent &e);
+    
+    DECLARE_EVENT_TABLE()
+    
 public:
 	ShellTab(wxWindow *parent, wxWindowID id, const wxString &name);
-	virtual ~ShellTab();
+	~ShellTab();
+};
+ 
 
-	const wxString &GetCaption() const {return m_name;}
-	void Clear();
-	void AppendText(const wxString &text);
-	ShellWindow *GetShell() {return m_window;}
+class DebugTab : public ShellTab
+{
+protected:
+    bool DoSendInput(const wxString  &line);
+    void OnStopProc (wxCommandEvent  &e);
+    void OnUpdateUI (wxUpdateUIEvent &e);
+
+public:
+	DebugTab(wxWindow *parent, wxWindowID id, const wxString &name);
+	~DebugTab();
+
+    void AppendLine(const wxString &line);
 };
 
 #endif //SHELLTAB_H

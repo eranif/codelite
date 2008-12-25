@@ -67,7 +67,6 @@
 #include "close_all_dlg.h"
 #include "vcimporter.h"
 #include "debuggermanager.h"
-#include "shell_window.h"
 #include "output_pane.h"
 #include "localvarstree.h"
 #include "wx/regex.h"
@@ -197,24 +196,7 @@ bool Manager::OpenFile ( const BrowseRecord &rec )
 
 bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName, int lineno, long position )
 {
-	// TODO: somebody else should deal with this
-	wxWindow *returnFocusWin = NULL;
-	wxWindow *focusWin = wxWindow::FindFocus();
-	if ( focusWin == Frame::Get()->GetOutputPane()->GetDebugWindow()->GetInWin() ) {
-		returnFocusWin = focusWin;
-	}
-
-	bool res(false);
-	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(file_name, projectName, lineno, position);
-	if (editor) {
-		res = true;
-	}
-
-	if (returnFocusWin) {
-		returnFocusWin->SetFocus();
-	}
-
-	return res;
+	return Frame::Get()->GetMainBook()->OpenFile(file_name, projectName, lineno, position) != NULL;
 }
 
 void Manager::UnInitialize()
@@ -995,20 +977,12 @@ bool Manager::IsBuildInProgress() const
 
 bool Manager::IsProgramRunning() const
 {
-	if ( m_asyncExeCmd == NULL )
-		return false;
-
 	return ( m_asyncExeCmd && m_asyncExeCmd->IsBusy() );
 }
 
 void Manager::DebugMessage ( wxString msg )
 {
-	static wxString lastMessage ( wxEmptyString );
-	msg = msg.Trim ( false );
-	if ( lastMessage != msg ) {
-		Frame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine ( msg );
-		lastMessage = msg;
-	}
+	Frame::Get()->GetOutputPane()->GetDebugWindow()->AppendLine(msg);
 }
 
 void Manager::ExecuteNoDebug ( const wxString &projectName )
@@ -1034,7 +1008,7 @@ void Manager::ExecuteNoDebug ( const wxString &projectName )
 
 	//execute the command line
 	//the a sync command is a one time executable object,
-	m_asyncExeCmd = new AsyncExeCmd ( GetMainFrame() );
+	m_asyncExeCmd = new AsyncExeCmd (Frame::Get()->GetOutputPane()->GetOutputWindow());
 
 	//execute the program:
 	//- no hiding the console
@@ -1157,25 +1131,6 @@ void Manager::RetagWorkspace()
 	//call tags manager for re-tagging
 	TagsManagerST::Get()->RetagFiles ( projectFiles );
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
-}
-
-void Manager::WriteProgram ( const wxString &line )
-{
-	if ( !IsProgramRunning() )
-		return;
-
-	if ( m_asyncExeCmd->GetProcess()->GetRedirect() == false ) {
-		return;
-	}
-
-	wxOutputStream *out = m_asyncExeCmd->GetOutputStream();
-	if ( out ) {
-		wxString cmd ( line );
-		cmd += wxT ( "\n" );
-
-		const wxCharBuffer pWriteData = _C ( cmd );
-		out->Write ( pWriteData.data(), cmd.Length() );
-	}
 }
 
 void Manager::KillProgram()
@@ -1690,32 +1645,6 @@ void Manager::DbgUnMarkDebuggerLine()
 	Frame::Get()->GetMainBook()->UnHighlightAll();
 }
 
-void Manager::OnOutputWindow ( wxCommandEvent &e )
-{
-	if ( e.GetEventType() == wxEVT_SHELLWIN_LINE_ENTERED ) {
-		WriteProgram ( e.GetString() );
-	} else if ( e.GetEventType() == wxEVT_SHELLWIN_CTRLC ) {
-		m_asyncExeCmd->Terminate();
-	}
-}
-
-void Manager::OnDebuggerWindow ( wxCommandEvent &e )
-{
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if ( dbgr && dbgr->IsRunning() ) {
-		if ( e.GetEventType() == wxEVT_SHELLWIN_LINE_ENTERED ) {
-			bool contIsNeeded = GetBreakpointsMgr()->PauseDebuggerIfNeeded();
-			wxString cmd ( e.GetString() );
-			dbgr->ExecuteCmd ( cmd );
-			if (contIsNeeded) {
-				ManagerST::Get()->DbgStart();
-			}
-		} else if ( e.GetEventType() == wxEVT_SHELLWIN_CTRLC ) {
-			DbgDoSimpleCommand ( DBG_PAUSE );
-		}
-	}
-}
-
 void Manager::DbgDoSimpleCommand ( int cmd )
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -2113,12 +2042,6 @@ bool Manager::OpenFileAndAppend ( const wxString &fileName, const wxString &text
 		}
 	}
 	return ret;
-}
-
-void Manager::OutputMessage ( wxString msg )
-{
-	msg = msg.Trim ( false );
-	Frame::Get()->GetOutputPane()->GetOutputWindow()->AppendLine ( msg );
 }
 
 void Manager::RunCustomPreMakeCommand ( const wxString &project )

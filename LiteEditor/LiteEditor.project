@@ -5,7 +5,6 @@
     <File Name="filedroptarget.cpp"/>
     <File Name="fileview.cpp"/>
     <File Name="resources.cpp"/>
-    <File Name="shell_window.cpp"/>
     <File Name="filehistory.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
@@ -14,7 +13,6 @@
     <File Name="fileview.h"/>
     <File Name="menumanager.h"/>
     <File Name="resource.h"/>
-    <File Name="shell_window.h"/>
     <File Name="stdwx.h"/>
     <File Name="filehistory.h"/>
   </VirtualDirectory>
@@ -331,8 +329,6 @@
     <File Name="cc_boxbase.cpp"/>
     <File Name="ccvirtuallistctrl.cpp"/>
     <File Name="ccvirtuallistctrl.h"/>
-    <File Name="quickfindbarbase.cpp"/>
-    <File Name="quickfindbarbase.h"/>
     <File Name="quickfindbar.h"/>
     <File Name="quickfindbar.cpp"/>
     <File Name="navbar.h"/>
@@ -460,7 +456,6 @@
     <File Name="../make_repo.sh"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
-    <File Name="quickfindbarbase.fbp"/>
     <File Name="newversionbasedlg.fbp"/>
     <File Name="tagsmanagementbasedlg.fbp"/>
     <File Name="optionsdialogbase2.fbp"/>

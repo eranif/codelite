@@ -59,7 +59,7 @@ void MainBook::CreateGuiControls()
 	sz->Add(m_book, 1, wxEXPAND);
 
 	m_quickFindBar = new QuickFindBar(this);
-	sz->Add(m_quickFindBar, 0, wxEXPAND);
+	sz->Add(m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
 
 	sz->Layout();
 }
@@ -95,6 +95,7 @@ void MainBook::OnFocus(wxFocusEvent &e)
 	if (!SelectPage(dynamic_cast<wxWindow*>(e.GetEventObject()))) {
 		e.Skip();
 	}
+    m_quickFindBar->SetEditor(GetActiveEditor());
 }
 
 void MainBook::OnPaneClosed(wxAuiManagerEvent &e)
@@ -119,7 +120,8 @@ void MainBook::OnPageClosing(NotebookEvent &e)
 void MainBook::OnPageClosed(NotebookEvent &e)
 {
 	SelectPage(m_book->GetCurrentPage());
-
+    m_quickFindBar->SetEditor(GetActiveEditor());
+    
 	// any editors left open?
 	LEditor *editor = NULL;
 	for (size_t i = 0; i < m_book->GetPageCount() && editor == NULL; i++) {

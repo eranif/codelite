@@ -386,9 +386,9 @@ IPlugin* PluginManager::GetPlugin(const wxString& pluginName)
 	return NULL;
 }
 
-void PluginManager::AppendOutputMsg(const wxString& msg)
+wxEvtHandler *PluginManager::GetOutputWindow()
 {
-	ManagerST::Get()->OutputMessage(msg);
+	return Frame::Get()->GetOutputPane()->GetOutputWindow();
 }
 
 bool PluginManager::SaveAll()

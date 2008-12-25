@@ -94,7 +94,7 @@ public:
 	virtual wxApp *GetTheApp();
 	virtual void ReloadWorkspace();
 	virtual IPlugin* GetPlugin(const wxString &pluginName);
-	virtual void AppendOutputMsg(const wxString &msg);
+	virtual wxEvtHandler *GetOutputWindow();
 	virtual bool SaveAll();
 	virtual wxString GetInstallDirectory() const;
 	virtual IKeyboard *GetKeyboardManager();

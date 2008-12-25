@@ -41,6 +41,7 @@ protected:
     wxToolBar   *m_tb;
 	wxScintilla *m_sci;
     bool         m_outputScrolls;
+    bool         m_autoAppear;
 	
     static void DefineMarker(wxScintilla *sci, int marker, int markerType, wxColor fore, wxColor back);
     static void InitStyle   (wxScintilla *sci, int lexer, bool folding);

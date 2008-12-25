@@ -1536,6 +1536,9 @@ void Manager::DbgStart ( long pid )
 	DebugMessage ( output );
 	DebugMessage ( _ ( "Debug session started successfully!\n" ) );
 
+	// set the debug tab as active
+	ShowOutputPane(OutputPane::OUTPUT_DEBUG);
+
 	if ( bldConf && bldConf->GetIsDbgRemoteTarget() && pid == wxNOT_FOUND ) {
 
 		// debugging remote target
@@ -1621,8 +1624,8 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 		return;
 	}
 
-    wxWindow *focusWin = wxWindow::FindFocus();
-    
+//    wxWindow *focusWin = wxWindow::FindFocus();
+
 	//try to open the file
 	wxFileName fn ( fileName );
 	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
@@ -1636,10 +1639,10 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 			editor->HighlightLine ( lineno );
 		}
 	}
-    
-    if (focusWin) {
-        focusWin->SetFocus();
-    }
+
+//    if (focusWin) {
+//        focusWin->SetFocus();
+//    }
 }
 
 void Manager::DbgUnMarkDebuggerLine()

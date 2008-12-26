@@ -60,6 +60,7 @@ class OptionsConfig : public ConfObject
 	bool m_highlightMatchedBraces;
 	bool m_autoAddMatchedBraces;
 	wxColour m_foldBgColour;
+	bool m_autoAdjustHScrollBarWidth;
 
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -232,6 +233,12 @@ public:
 	}
 	const wxColour& GetFoldBgColour() const {
 		return m_foldBgColour;
+	}
+	void SetAutoAdjustHScrollBarWidth(const bool& autoAdjustHScrollBarWidth) {
+		this->m_autoAdjustHScrollBarWidth = autoAdjustHScrollBarWidth;
+	}
+	const bool& GetAutoAdjustHScrollBarWidth() const {
+		return m_autoAdjustHScrollBarWidth;
 	}
 	/**
 	 * Return an XML representation of this object

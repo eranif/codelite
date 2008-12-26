@@ -111,7 +111,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_MIDDLE_UP(LEditor::OnMiddleUp)
 	EVT_LEFT_UP(LEditor::OnLeftUp)
 	EVT_LEAVE_WINDOW(LEditor::OnLeaveWindow)
-    EVT_KILL_FOCUS(LEditor::OnFocusLost)
+	EVT_KILL_FOCUS(LEditor::OnFocusLost)
 	EVT_SCI_DOUBLECLICK(wxID_ANY, LEditor::OnLeftDClick)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_FIND_NEXT, LEditor::OnFindDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_FRD_REPLACE, LEditor::OnFindDialog)
@@ -138,17 +138,18 @@ time_t GetFileModificationTime(const wxString &filename)
 }
 
 LEditor::LEditor(wxWindow* parent)
-		: wxScintilla              	(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1))
-		, m_rightClickMenu         	(NULL)
-		, m_popupIsOn              	(false)
-		, m_modifyTime             	(0)
-		, m_ccBox                  	(NULL)
-		, m_isVisible              	(true)
-		, m_hyperLinkIndicatroStart	(wxNOT_FOUND)
-		, m_hyperLinkIndicatroEnd  	(wxNOT_FOUND)
-		, m_hyperLinkType          	(wxID_NONE)
-		, m_hightlightMatchedBraces	(true)
-		, m_autoAddMatchedBrace		(false)
+		: wxScintilla              	 (parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1))
+		, m_rightClickMenu         	 (NULL)
+		, m_popupIsOn              	 (false)
+		, m_modifyTime             	 (0)
+		, m_ccBox                  	 (NULL)
+		, m_isVisible              	 (true)
+		, m_hyperLinkIndicatroStart	 (wxNOT_FOUND)
+		, m_hyperLinkIndicatroEnd  	 (wxNOT_FOUND)
+		, m_hyperLinkType          	 (wxID_NONE)
+		, m_hightlightMatchedBraces	 (true)
+		, m_autoAddMatchedBrace		 (false)
+		, m_autoAdjustHScrollbarWidth(true)
 {
 	ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSCI_MARK_SMALLRECT;
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
@@ -211,20 +212,20 @@ void LEditor::FillBPtoMarkerArray()
 	BPtoMarker bpignm;
 	bpignm.bp_type = BP_type_ignoredbreak;
 	bpignm.marker =
-	bpignm.marker_disabled = smt_bp_ignored;
+	    bpignm.marker_disabled = smt_bp_ignored;
 	bpignm.mask =
-	bpignm.mask_disabled = mmt_bp_ignored; // Enabled/disabled are the same
+	    bpignm.mask_disabled = mmt_bp_ignored; // Enabled/disabled are the same
 	m_BPstoMarkers.push_back(bpignm);
 
 	bpm.bp_type = BP_type_tempbreak;
 	m_BPstoMarkers.push_back(bpm);	// Temp is the same as non-temp
 }
 
-	// Looks for a struct for this breakpoint-type
+// Looks for a struct for this breakpoint-type
 BPtoMarker LEditor::GetMarkerForBreakpt(enum BP_type bp_type)
 {
 	std::vector<BPtoMarker>::iterator iter = m_BPstoMarkers.begin();
-	for(; iter != m_BPstoMarkers.end(); ++iter){
+	for (; iter != m_BPstoMarkers.end(); ++iter) {
 		if ((*iter).bp_type == bp_type) {
 			return *iter;
 		}
@@ -248,11 +249,12 @@ void LEditor::SetProperties()
 
 	m_hightlightMatchedBraces = options->GetHighlightMatchedBraces();
 	m_autoAddMatchedBrace = options->GetAutoAddMatchedBraces();
+	m_autoAdjustHScrollbarWidth = options->GetAutoAdjustHScrollBarWidth();
 
 	if (!m_hightlightMatchedBraces) {
 		wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
-        SetHighlightGuide(0);
-    }
+		SetHighlightGuide(0);
+	}
 
 	SetViewWhiteSpace(options->GetShowWhitspaces());
 	SetMouseDwellTime(250);
@@ -441,13 +443,13 @@ void LEditor::SetProperties()
 	MarkerSetBackground(smt_indicator, wxT("LIME GREEN"));
 	MarkerSetForeground(smt_indicator, wxT("BLACK"));
 
-    // warning and error markers
-    MarkerDefine(smt_warning, wxSCI_MARK_SHORTARROW);
-    MarkerSetForeground(smt_error, wxColor(128, 128, 0));
-    MarkerSetBackground(smt_warning, wxColor(255, 215, 0));
-    MarkerDefine(smt_error, wxSCI_MARK_SHORTARROW);
-    MarkerSetForeground(smt_error, wxColor(128, 0, 0));
-    MarkerSetBackground(smt_error, wxColor(255, 0, 0));
+	// warning and error markers
+	MarkerDefine(smt_warning, wxSCI_MARK_SHORTARROW);
+	MarkerSetForeground(smt_error, wxColor(128, 128, 0));
+	MarkerSetBackground(smt_warning, wxColor(255, 215, 0));
+	MarkerDefine(smt_error, wxSCI_MARK_SHORTARROW);
+	MarkerSetForeground(smt_error, wxColor(128, 0, 0));
+	MarkerSetBackground(smt_error, wxColor(255, 0, 0));
 
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
@@ -630,7 +632,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	int charCurrnt = SafeGetChar(pos);
 
 	wxString sel_text = GetSelectedText();
-    SetHighlightGuide(0);
+	SetHighlightGuide(0);
 	if (m_hightlightMatchedBraces) {
 		if ( sel_text.IsEmpty() == false) {
 			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
@@ -768,7 +770,7 @@ bool LEditor::SaveFile()
 		// clear all the queries which holds reference to this file
 		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(GetFileName().GetFullPath());
 
-		if(ManagerST::Get()->IsShutdownInProgress() || ManagerST::Get()->IsWorkspaceClosing()){
+		if (ManagerST::Get()->IsShutdownInProgress() || ManagerST::Get()->IsWorkspaceClosing()) {
 			return true;
 		}
 
@@ -919,11 +921,11 @@ void LEditor::UpdateBreakpoints()
 
 	// iterate over the array and update the breakpoint manager with updated line numbers for each breakpoint
 	std::map<int, std::vector<BreakpointInfo> >::iterator iter = m_breakpointsInfo.begin();
-	for(; iter != m_breakpointsInfo.end(); iter++){
+	for (; iter != m_breakpointsInfo.end(); iter++) {
 		int handle = iter->first;
 		int line = MarkerLineFromHandle(handle);
-		if(line >= 0){
-			for(size_t i=0; i<iter->second.size(); i++){
+		if (line >= 0) {
+			for (size_t i=0; i<iter->second.size(); i++) {
 				iter->second.at(i).lineno = line + 1;
 			}
 		}
@@ -1158,34 +1160,37 @@ bool LEditor::MatchBraceBack(const wxChar& chCloseBrace, const long &pos, long &
 
 void LEditor::RecalcHorizontalScrollbar()
 {
-	// recalculate and set the length of horizontal scrollbar
-	int maxPixel = 0;
-	int startLine = GetFirstVisibleLine();
-	int endLine =  startLine + LinesOnScreen();
-	if (endLine >= (GetLineCount() - 1))
-		endLine--;
+	if (m_autoAdjustHScrollbarWidth) {
 
-	for (int i = startLine; i <= endLine; i++) {
-		int visibleLine = (int) DocLineFromVisible(i);         //get actual visible line, folding may offset lines
-		int endPosition = GetLineEndPosition(visibleLine);      //get character position from begin
-		int beginPosition = PositionFromLine(visibleLine);      //and end of line
+		// recalculate and set the length of horizontal scrollbar
+		int maxPixel = 0;
+		int startLine = GetFirstVisibleLine();
+		int endLine =  startLine + LinesOnScreen();
+		if (endLine >= (GetLineCount() - 1))
+			endLine--;
 
-		wxPoint beginPos = PointFromPosition(beginPosition);
-		wxPoint endPos = PointFromPosition(endPosition);
+		for (int i = startLine; i <= endLine; i++) {
+			int visibleLine = (int) DocLineFromVisible(i);         //get actual visible line, folding may offset lines
+			int endPosition = GetLineEndPosition(visibleLine);      //get character position from begin
+			int beginPosition = PositionFromLine(visibleLine);      //and end of line
 
-		int curLen = endPos.x - beginPos.x;
+			wxPoint beginPos = PointFromPosition(beginPosition);
+			wxPoint endPos = PointFromPosition(endPosition);
 
-		if (maxPixel < curLen) //If its the largest line yet
-			maxPixel = curLen;
-	}
+			int curLen = endPos.x - beginPos.x;
 
-	if (maxPixel == 0)
-		maxPixel++;                                 //make sure maxPixel is valid
+			if (maxPixel < curLen) //If its the largest line yet
+				maxPixel = curLen;
+		}
 
-	int currentLength = GetScrollWidth();               //Get current scrollbar size
-	if (currentLength != maxPixel) {
-		//And if it is not the same, update it
-		SetScrollWidth(maxPixel);
+		if (maxPixel == 0)
+			maxPixel++;                                 //make sure maxPixel is valid
+
+		int currentLength = GetScrollWidth();               //Get current scrollbar size
+		if (currentLength != maxPixel) {
+			//And if it is not the same, update it
+			SetScrollWidth(maxPixel);
+		}
 	}
 }
 
@@ -1223,21 +1228,21 @@ void LEditor::MatchBraceAndSelect(bool selRegion)
 void LEditor::BraceMatch(long pos)
 {
 	// Check if we have a match
-    int indentCol = 0;
+	int indentCol = 0;
 	long endPos = wxScintilla::BraceMatch(pos);
 	if (endPos != wxSCI_INVALID_POSITION) {
 		wxScintilla::BraceHighlight(pos, endPos);
-        if (GetIndentationGuides() != 0 && GetIndent() > 0) {
-            // Highlight indent guide if exist
-            indentCol  = std::min(GetLineIndentation(LineFromPosition(pos)), GetLineIndentation(LineFromPosition(endPos)));
-            indentCol /= GetIndent();
-            indentCol *= GetIndent(); // round down to nearest indentation guide column
-            SetHighlightGuide(GetLineIndentation(LineFromPosition(pos)));
-        }
+		if (GetIndentationGuides() != 0 && GetIndent() > 0) {
+			// Highlight indent guide if exist
+			indentCol  = std::min(GetLineIndentation(LineFromPosition(pos)), GetLineIndentation(LineFromPosition(endPos)));
+			indentCol /= GetIndent();
+			indentCol *= GetIndent(); // round down to nearest indentation guide column
+			SetHighlightGuide(GetLineIndentation(LineFromPosition(pos)));
+		}
 	} else {
 		wxScintilla::BraceBadLight(pos);
 	}
-    SetHighlightGuide(indentCol);
+	SetHighlightGuide(indentCol);
 }
 
 void LEditor::BraceMatch(const bool& bSelRegion)
@@ -1868,14 +1873,14 @@ bool LEditor::MarkAll()
 void LEditor::ReloadFile()
 {
 	HideCompletionBox();
-    CallTipCancel();
+	CallTipCancel();
 
 	if (m_fileName.GetFullPath().IsEmpty() == true || m_fileName.GetFullPath().StartsWith(wxT("Untitled"))) {
 		SetEOLMode(GetEOLByOS());
 		return;
 	}
 
-    Frame::Get()->SetStatusMessage(wxT("Loading file..."), 0, XRCID("editor"));
+	Frame::Get()->SetStatusMessage(wxT("Loading file..."), 0, XRCID("editor"));
 
 	wxString text;
 	ReadFileWithConversion(m_fileName.GetFullPath(), text);
@@ -1897,7 +1902,7 @@ void LEditor::ReloadFile()
 	}
 	SetEOLMode(eol);
 
-    Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));
+	Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));
 }
 
 void LEditor::SetEditorText(const wxString &text)
@@ -1971,11 +1976,11 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 		wxPoint clientPt = ScreenToClient(pt);
 
 		// If the right-click is in the margin, provide a different context menu: bookmarks/breakpts
-    int margin = 0;
-    for (int n=0; n < FOLD_MARGIN_ID; ++n) {  // Assume a click anywhere to the left of the fold margin is for markers
-        margin += GetMarginWidth(n);
-    }
-    if ( clientPt.x < margin ) {
+		int margin = 0;
+		for (int n=0; n < FOLD_MARGIN_ID; ++n) {  // Assume a click anywhere to the left of the fold margin is for markers
+			margin += GetMarginWidth(n);
+		}
+		if ( clientPt.x < margin ) {
 			GotoPos( PositionFromPoint(clientPt) );
 			return DoBreakptContextMenu(clientPt);
 		}
@@ -2113,7 +2118,7 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
 void LEditor::OnFocusLost(wxFocusEvent &event)
 {
 //    CallTipCancel();
-    event.Skip();
+	event.Skip();
 }
 
 void LEditor::OnMiddleUp(wxMouseEvent& event)
@@ -2183,7 +2188,7 @@ BrowseRecord LEditor::CreateBrowseRecord()
 
 void LEditor::AddBrowseRecord(NavMgr *navmgr)
 {
-	if(!navmgr){
+	if (!navmgr) {
 		navmgr = NavMgr::Get();
 	}
 
@@ -2200,8 +2205,8 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 	menu.Append(XRCID("toggle_bookmark"), LineIsMarked(mmt_bookmarks) ? wxString(_("Remove Bookmark")) : wxString(_("Add Bookmark")) );
 	menu.AppendSeparator();
 
-  menu.Append(XRCID("add_breakpoint"), wxString(_("Add Breakpoint")));
-  menu.Append(XRCID("insert_temp_breakpoint"), wxString(_("Add a Temporary Breakpoint")));
+	menu.Append(XRCID("add_breakpoint"), wxString(_("Add Breakpoint")));
+	menu.Append(XRCID("insert_temp_breakpoint"), wxString(_("Add a Temporary Breakpoint")));
 	menu.Append(XRCID("insert_cond_breakpoint"), wxString(_("Add a Conditional Breakpoint..")));
 
 	std::vector<BreakpointInfo> lineBPs;
@@ -2211,11 +2216,11 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 	if (count > 0) {
 		menu.AppendSeparator();
 		if (count == 1) {
-		menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
-		menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
-		menu.Append(XRCID("toggle_breakpoint_enabled_status"),
-							lineBPs[0].is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
-		menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
+			menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
+			menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
+			menu.Append(XRCID("toggle_breakpoint_enabled_status"),
+			            lineBPs[0].is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
+			menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
 		} else if (count > 1) {
 			menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove a Breakpoint")));
 			menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore a Breakpoint")));
@@ -2225,9 +2230,10 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 	}
 
 	if (ManagerST::Get()->DbgCanInteract()) {
-			menu.AppendSeparator();
-      ToHereId = wxNewId();	menu.Append(ToHereId, _("Run to here"));
-      menu.Connect(ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
+		menu.AppendSeparator();
+		ToHereId = wxNewId();
+		menu.Append(ToHereId, _("Run to here"));
+		menu.Connect(ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
 	}
 
 	PopupMenu(&menu, pt.x, pt.y);
@@ -2294,18 +2300,18 @@ void LEditor::DelBreakpoint(int lineno /*= -1*/)
 	}
 	wxString message;
 	int result = ManagerST::Get()->GetBreakpointsMgr()->DelBreakpointByLineno(GetFileName().GetFullPath(), lineno);
-	switch(result) {
-		case true:
-			Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-			DoSetStatusMessage(_("Breakpoint successfully deleted"), 0);
-			return;
-		case wxID_CANCEL:
-			return;
-		case false:
-			message = _("No breakpoint found on this line");
-			break;
-		 default:
-			message = _("Breakpoint deletion failed");
+	switch (result) {
+	case true:
+		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+		DoSetStatusMessage(_("Breakpoint successfully deleted"), 0);
+		return;
+	case wxID_CANCEL:
+		return;
+	case false:
+		message = _("No breakpoint found on this line");
+		break;
+	default:
+		message = _("Breakpoint deletion failed");
 	}
 
 	wxMessageBox(message, _("Breakpoint not deleted"), wxICON_ERROR);
@@ -2328,18 +2334,18 @@ void LEditor::ToggleBreakpoint(int lineno)
 
 void LEditor::SetWarningMarker(int lineno)
 {
-    MarkerAdd(lineno, smt_warning);
+	MarkerAdd(lineno, smt_warning);
 }
 
 void LEditor::SetErrorMarker(int lineno)
 {
-    MarkerAdd(lineno, smt_error);
+	MarkerAdd(lineno, smt_error);
 }
 
 void LEditor::DelAllCompilerMarkers()
 {
-    MarkerDeleteAll(smt_warning);
-    MarkerDeleteAll(smt_error);
+	MarkerDeleteAll(smt_warning);
+	MarkerDeleteAll(smt_error);
 }
 
 // Maybe one day we'll display multiple bps differently
@@ -2910,6 +2916,9 @@ void LEditor::TrimText()
 		return;
 	}
 
+	// wrap the entire operation in a single undo action
+	BeginUndoAction();
+
 	if (trim) {
 		int maxLines = GetLineCount();
 		for (int line = 0; line < maxLines; line++) {
@@ -2937,6 +2946,8 @@ void LEditor::TrimText()
 			InsertText(enddoc,GetEolString());
 
 	}
+
+	EndUndoAction();
 }
 
 wxString LEditor::GetEolString()
@@ -2998,7 +3009,8 @@ void LEditor::OnDbgRunToCursor(wxCommandEvent& event)
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 
 	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-		BreakpointInfo bp; bp.Create(GetFileName().GetFullPath(), GetCurrentLine()+1, ManagerST::Get()->GetBreakpointsMgr()->GetNextID());
+		BreakpointInfo bp;
+		bp.Create(GetFileName().GetFullPath(), GetCurrentLine()+1, ManagerST::Get()->GetBreakpointsMgr()->GetNextID());
 		bp.bp_type = BP_type_tempbreak;
 		dbgr->Break(bp);
 		dbgr->Continue();

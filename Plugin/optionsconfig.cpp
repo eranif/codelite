@@ -54,6 +54,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_highlightMatchedBraces(true)
 		, m_autoAddMatchedBraces(true)
 		, m_foldBgColour(wxColour(240, 240, 240))
+		, m_autoAdjustHScrollBarWidth(true)
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
@@ -85,6 +86,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_highlightMatchedBraces = XmlUtils::ReadBool(node, wxT("HighlightMatchedBraces"), m_highlightMatchedBraces);
 		m_autoAddMatchedBraces = XmlUtils::ReadBool(node, wxT("AutoAddMatchedBraces"), m_autoAddMatchedBraces);
 		m_foldBgColour = XmlUtils::ReadString(node, wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
+		m_autoAdjustHScrollBarWidth = XmlUtils::ReadBool(node, wxT("AutoAdjustHScrollBarWidth"), m_autoAdjustHScrollBarWidth);
 	}
 }
 
@@ -113,6 +115,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("HighlightMatchedBraces"), BoolToString(m_highlightMatchedBraces));
 	n->AddProperty(wxT("AutoAddMatchedBraces"), BoolToString(m_autoAddMatchedBraces));
 	n->AddProperty(wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
+	n->AddProperty(wxT("AutoAdjustHScrollBarWidth"), BoolToString(m_autoAdjustHScrollBarWidth));
 
 	wxString tmp;
     tmp << m_indentWidth;

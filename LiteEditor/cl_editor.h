@@ -130,6 +130,7 @@ class LEditor : public wxScintilla, public IEditor
 	bool m_hightlightMatchedBraces;
 	bool m_autoAddMatchedBrace;
 	std::map<int, std::vector<BreakpointInfo> > m_breakpointsInfo;
+	bool m_autoAdjustHScrollbarWidth;
 
 public:
 	static FindReplaceData &GetFindReplaceData() {

@@ -1880,6 +1880,9 @@ void LEditor::ReloadFile()
 		return;
 	}
 
+	// get the pattern of the current file
+	int lineNumber = GetCurrentLine();
+
 	Frame::Get()->SetStatusMessage(wxT("Loading file..."), 0, XRCID("editor"));
 
 	wxString text;
@@ -1902,6 +1905,14 @@ void LEditor::ReloadFile()
 	}
 	SetEOLMode(eol);
 
+	int doclen = GetLength();
+	int lastLine = LineFromPosition(doclen);
+	lineNumber > lastLine ? lineNumber = lastLine : lineNumber;
+
+	GotoLine(lineNumber);
+	EnsureVisible(lineNumber);
+
+	// try to locate the pattern on which the caret was prior to reloading the file
 	Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));
 }
 

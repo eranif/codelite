@@ -611,7 +611,9 @@ void wxTabContainer::OnDeleteTab(wxCommandEvent &e)
 {
 	CustomTab *tab = (CustomTab*)e.GetEventObject();
 	if (tab) {
+		GetParent()->Freeze();
 		DeletePage(tab, true);
+		GetParent()->Thaw();
 	}
 }
 

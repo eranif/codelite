@@ -131,353 +131,353 @@ const wxEventType wxEVT_UPDATE_STATUS_BAR = XRCID("update_status_bar");
 // Our main frame
 //----------------------------------------------------------------
 BEGIN_EVENT_TABLE(Frame, wxFrame)
-    // ATTN: Any item that appears in more than one menu is
-    //       only listed once here, the first time it occurs
+	// ATTN: Any item that appears in more than one menu is
+	//       only listed once here, the first time it occurs
 
-    //---------------------------------------------------
-    // System events
-    //---------------------------------------------------
-    EVT_IDLE(Frame::OnIdle)
-    EVT_ACTIVATE(Frame::OnAppActivated)
-    EVT_CLOSE(Frame::OnClose)
-    EVT_TIMER(FrameTimerId, Frame::OnTimer)
-    EVT_AUI_RENDER(Frame::OnAuiManagerRender)
-    EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
+	//---------------------------------------------------
+	// System events
+	//---------------------------------------------------
+	EVT_IDLE(Frame::OnIdle)
+	EVT_ACTIVATE(Frame::OnAppActivated)
+	EVT_CLOSE(Frame::OnClose)
+	EVT_TIMER(FrameTimerId, Frame::OnTimer)
+	EVT_AUI_RENDER(Frame::OnAuiManagerRender)
+	EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
 
-    //---------------------------------------------------
-    // File menu
-    //---------------------------------------------------
-    EVT_MENU(XRCID("new_file"),                 Frame::OnFileNew)
-    EVT_MENU(XRCID("open_file"),                Frame::OnFileOpen)
-    EVT_MENU(XRCID("refresh_file"),             Frame::OnFileReload)
-    EVT_MENU(XRCID("save_file"),                Frame::OnSave)
-    EVT_MENU(XRCID("save_file_as"),             Frame::OnSaveAs)
-    EVT_MENU(XRCID("save_all"),                 Frame::OnFileSaveAll)
-    EVT_MENU(XRCID("close_file"),               Frame::OnFileClose)
-    EVT_MENU(wxID_CLOSE_ALL,                    Frame::OnFileCloseAll)
-    EVT_MENU_RANGE(RecentFilesSubMenuID, RecentFilesSubMenuID + 10, Frame::OnRecentFile)
-    EVT_MENU_RANGE(RecentWorkspaceSubMenuID, RecentWorkspaceSubMenuID + 10, Frame::OnRecentWorkspace)
-    EVT_MENU(XRCID("load_last_session"),        Frame::OnLoadLastSession)
-    EVT_MENU(XRCID("exit_app"),                 Frame::OnQuit)
+	//---------------------------------------------------
+	// File menu
+	//---------------------------------------------------
+	EVT_MENU(XRCID("new_file"),                 Frame::OnFileNew)
+	EVT_MENU(XRCID("open_file"),                Frame::OnFileOpen)
+	EVT_MENU(XRCID("refresh_file"),             Frame::OnFileReload)
+	EVT_MENU(XRCID("save_file"),                Frame::OnSave)
+	EVT_MENU(XRCID("save_file_as"),             Frame::OnSaveAs)
+	EVT_MENU(XRCID("save_all"),                 Frame::OnFileSaveAll)
+	EVT_MENU(XRCID("close_file"),               Frame::OnFileClose)
+	EVT_MENU(wxID_CLOSE_ALL,                    Frame::OnFileCloseAll)
+	EVT_MENU_RANGE(RecentFilesSubMenuID, RecentFilesSubMenuID + 10, Frame::OnRecentFile)
+	EVT_MENU_RANGE(RecentWorkspaceSubMenuID, RecentWorkspaceSubMenuID + 10, Frame::OnRecentWorkspace)
+	EVT_MENU(XRCID("load_last_session"),        Frame::OnLoadLastSession)
+	EVT_MENU(XRCID("exit_app"),                 Frame::OnQuit)
 
-    EVT_UPDATE_UI(XRCID("refresh_file"),        Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("save_file"),           Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("save_file_as"),        Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("save_all"),            Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("close_file"),          Frame::OnFileCloseUI)
-    EVT_UPDATE_UI(XRCID("load_last_session"),   Frame::OnLoadLastSessionUI)
+	EVT_UPDATE_UI(XRCID("refresh_file"),        Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("save_file"),           Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("save_file_as"),        Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("save_all"),            Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("close_file"),          Frame::OnFileCloseUI)
+	EVT_UPDATE_UI(XRCID("load_last_session"),   Frame::OnLoadLastSessionUI)
 
-    //--------------------------------------------------
-    // Edit menu
-    //--------------------------------------------------
-    EVT_MENU(wxID_UNDO,                         Frame::DispatchCommandEvent)
-    EVT_MENU(wxID_REDO,                         Frame::DispatchCommandEvent)
-    EVT_MENU(wxID_CUT,                          Frame::DispatchCommandEvent)
-    EVT_MENU(wxID_COPY,                         Frame::DispatchCommandEvent)
-    EVT_MENU(wxID_PASTE,                        Frame::DispatchCommandEvent)
-    EVT_MENU(wxID_DUPLICATE,                    Frame::DispatchCommandEvent)
-    EVT_MENU(wxID_SELECTALL,                    Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("delete_line"),              Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("delete_line_end"),          Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("delete_line_start"),        Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("transpose_lines"),          Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("to_upper"),                 Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("to_lower"),                 Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("match_brace"),              Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("select_to_brace"),          Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("complete_word"),            Frame::OnCompleteWord)
-    EVT_MENU(XRCID("function_call_tip"),        Frame::OnFunctionCalltip)
-    EVT_MENU(XRCID("convert_eol_win"),          Frame::OnConvertEol)
-    EVT_MENU(XRCID("convert_eol_unix"),         Frame::OnConvertEol)
-    EVT_MENU(XRCID("convert_eol_mac"),          Frame::OnConvertEol)
+	//--------------------------------------------------
+	// Edit menu
+	//--------------------------------------------------
+	EVT_MENU(wxID_UNDO,                         Frame::DispatchCommandEvent)
+	EVT_MENU(wxID_REDO,                         Frame::DispatchCommandEvent)
+	EVT_MENU(wxID_CUT,                          Frame::DispatchCommandEvent)
+	EVT_MENU(wxID_COPY,                         Frame::DispatchCommandEvent)
+	EVT_MENU(wxID_PASTE,                        Frame::DispatchCommandEvent)
+	EVT_MENU(wxID_DUPLICATE,                    Frame::DispatchCommandEvent)
+	EVT_MENU(wxID_SELECTALL,                    Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("delete_line"),              Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("delete_line_end"),          Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("delete_line_start"),        Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("transpose_lines"),          Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("to_upper"),                 Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("to_lower"),                 Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("match_brace"),              Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("select_to_brace"),          Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("complete_word"),            Frame::OnCompleteWord)
+	EVT_MENU(XRCID("function_call_tip"),        Frame::OnFunctionCalltip)
+	EVT_MENU(XRCID("convert_eol_win"),          Frame::OnConvertEol)
+	EVT_MENU(XRCID("convert_eol_unix"),         Frame::OnConvertEol)
+	EVT_MENU(XRCID("convert_eol_mac"),          Frame::OnConvertEol)
 
-    EVT_UPDATE_UI(wxID_UNDO,                    Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(wxID_REDO,                    Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(wxID_CUT,                     Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(wxID_COPY,                    Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(wxID_PASTE,                   Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(wxID_DUPLICATE,               Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(wxID_SELECTALL,               Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(XRCID("delete_line"),         Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("delete_line_end"),     Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("delete_line_start"),   Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("transpose_lines"),     Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("to_upper"),            Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(XRCID("to_lower"),            Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(XRCID("match_brace"),         Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(XRCID("select_to_brace"),     Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(XRCID("complete_word"),       Frame::OnCompleteWordUpdateUI)
-    EVT_UPDATE_UI(XRCID("function_call_tip"),   Frame::OnFunctionCalltipUI)
-    EVT_UPDATE_UI(XRCID("convert_eol_win"),     Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("convert_eol_unix"),    Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("convert_eol_mac"),     Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(wxID_UNDO,                    Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(wxID_REDO,                    Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(wxID_CUT,                     Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(wxID_COPY,                    Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(wxID_PASTE,                   Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(wxID_DUPLICATE,               Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(wxID_SELECTALL,               Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(XRCID("delete_line"),         Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("delete_line_end"),     Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("delete_line_start"),   Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("transpose_lines"),     Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("to_upper"),            Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(XRCID("to_lower"),            Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(XRCID("match_brace"),         Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(XRCID("select_to_brace"),     Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(XRCID("complete_word"),       Frame::OnCompleteWordUpdateUI)
+	EVT_UPDATE_UI(XRCID("function_call_tip"),   Frame::OnFunctionCalltipUI)
+	EVT_UPDATE_UI(XRCID("convert_eol_win"),     Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("convert_eol_unix"),    Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("convert_eol_mac"),     Frame::OnFileExistUpdateUI)
 
-    //-------------------------------------------------------
-    // View menu
-    //-------------------------------------------------------
-    EVT_MENU(XRCID("word_wrap"),                Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("toggle_fold"),              Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("fold_all"),                 Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("display_eol"),              Frame::OnViewDisplayEOL)
-    EVT_MENU(XRCID("whitepsace_invisible"),     Frame::OnShowWhitespace)
-    EVT_MENU(XRCID("whitepsace_always"),        Frame::OnShowWhitespace)
-    EVT_MENU(XRCID("whitespace_visiable_after_indent"), Frame::OnShowWhitespace)
-    EVT_MENU(XRCID("whitespace_indent_only"),   Frame::OnShowWhitespace)
-    EVT_MENU(XRCID("full_screen"),              Frame::OnShowFullScreen)
-    EVT_MENU(XRCID("view_welcome_page"),        Frame::OnShowWelcomePage)
-    EVT_MENU(XRCID("view_welcome_page_at_startup"), Frame::OnLoadWelcomePage)
-    EVT_MENU(XRCID("show_nav_toolbar"),         Frame::OnShowNavBar)
-    EVT_MENU(XRCID("toggle_panes"),             Frame::OnTogglePanes)
-    EVT_MENU_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, Frame::DispatchCommandEvent)
+	//-------------------------------------------------------
+	// View menu
+	//-------------------------------------------------------
+	EVT_MENU(XRCID("word_wrap"),                Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("toggle_fold"),              Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("fold_all"),                 Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("display_eol"),              Frame::OnViewDisplayEOL)
+	EVT_MENU(XRCID("whitepsace_invisible"),     Frame::OnShowWhitespace)
+	EVT_MENU(XRCID("whitepsace_always"),        Frame::OnShowWhitespace)
+	EVT_MENU(XRCID("whitespace_visiable_after_indent"), Frame::OnShowWhitespace)
+	EVT_MENU(XRCID("whitespace_indent_only"),   Frame::OnShowWhitespace)
+	EVT_MENU(XRCID("full_screen"),              Frame::OnShowFullScreen)
+	EVT_MENU(XRCID("view_welcome_page"),        Frame::OnShowWelcomePage)
+	EVT_MENU(XRCID("view_welcome_page_at_startup"), Frame::OnLoadWelcomePage)
+	EVT_MENU(XRCID("show_nav_toolbar"),         Frame::OnShowNavBar)
+	EVT_MENU(XRCID("toggle_panes"),             Frame::OnTogglePanes)
+	EVT_MENU_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, Frame::DispatchCommandEvent)
 
-    EVT_UPDATE_UI(XRCID("word_wrap"),           Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(XRCID("toggle_fold"),         Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("fold_all"),            Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("display_eol"),         Frame::OnViewDisplayEOL_UI)
-    EVT_UPDATE_UI(XRCID("whitepsace_invisible"),    Frame::OnShowWhitespaceUI)
-    EVT_UPDATE_UI(XRCID("whitepsace_always"),   Frame::OnShowWhitespaceUI)
-    EVT_UPDATE_UI(XRCID("whitespace_visiable_after_indent"),    Frame::OnShowWhitespaceUI)
-    EVT_UPDATE_UI(XRCID("whitespace_indent_only"), Frame::OnShowWhitespaceUI)
-    EVT_UPDATE_UI(XRCID("view_welcome_page"),   Frame::OnShowWelcomePageUI)
-    EVT_UPDATE_UI(XRCID("view_welcome_page_at_startup"),    Frame::OnLoadWelcomePageUI)
-    EVT_UPDATE_UI(XRCID("show_nav_toolbar"),    Frame::OnShowNavBarUI)
-    EVT_UPDATE_UI(viewAsSubMenuID,              Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(XRCID("word_wrap"),           Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(XRCID("toggle_fold"),         Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("fold_all"),            Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("display_eol"),         Frame::OnViewDisplayEOL_UI)
+	EVT_UPDATE_UI(XRCID("whitepsace_invisible"),    Frame::OnShowWhitespaceUI)
+	EVT_UPDATE_UI(XRCID("whitepsace_always"),   Frame::OnShowWhitespaceUI)
+	EVT_UPDATE_UI(XRCID("whitespace_visiable_after_indent"),    Frame::OnShowWhitespaceUI)
+	EVT_UPDATE_UI(XRCID("whitespace_indent_only"), Frame::OnShowWhitespaceUI)
+	EVT_UPDATE_UI(XRCID("view_welcome_page"),   Frame::OnShowWelcomePageUI)
+	EVT_UPDATE_UI(XRCID("view_welcome_page_at_startup"),    Frame::OnLoadWelcomePageUI)
+	EVT_UPDATE_UI(XRCID("show_nav_toolbar"),    Frame::OnShowNavBarUI)
+	EVT_UPDATE_UI(viewAsSubMenuID,              Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, Frame::DispatchUpdateUIEvent)
 
-    //-------------------------------------------------------
-    // Search menu
-    //-------------------------------------------------------
-    EVT_MENU(wxID_FIND,                         Frame::DispatchCommandEvent)
-    EVT_MENU(wxID_REPLACE,                      Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("find_next"),                Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("find_previous"),            Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("find_next_at_caret"),       Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("find_previous_at_caret"),   Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("incremental_search"),       Frame::OnIncrementalSearch)
-    EVT_MENU(XRCID("find_resource"),            Frame::OnFindResource)
-    EVT_MENU(XRCID("find_type"),                Frame::OnFindType)
-    EVT_MENU(XRCID("find_symbol"),              Frame::OnQuickOutline)
-    EVT_MENU(XRCID("goto_definition"),          Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("goto_previous_definition"), Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("goto_linenumber"),          Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("toggle_bookmark"),          Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("next_bookmark"),            Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("previous_bookmark"),        Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("removeall_bookmarks"),      Frame::DispatchCommandEvent)
+	//-------------------------------------------------------
+	// Search menu
+	//-------------------------------------------------------
+	EVT_MENU(wxID_FIND,                         Frame::DispatchCommandEvent)
+	EVT_MENU(wxID_REPLACE,                      Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("find_next"),                Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("find_previous"),            Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("find_next_at_caret"),       Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("find_previous_at_caret"),   Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("incremental_search"),       Frame::OnIncrementalSearch)
+	EVT_MENU(XRCID("find_resource"),            Frame::OnFindResource)
+	EVT_MENU(XRCID("find_type"),                Frame::OnFindType)
+	EVT_MENU(XRCID("find_symbol"),              Frame::OnQuickOutline)
+	EVT_MENU(XRCID("goto_definition"),          Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("goto_previous_definition"), Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("goto_linenumber"),          Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("toggle_bookmark"),          Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("next_bookmark"),            Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("previous_bookmark"),        Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("removeall_bookmarks"),      Frame::DispatchCommandEvent)
 
-    EVT_UPDATE_UI(wxID_FIND,                    Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(wxID_REPLACE,                 Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("find_next"),           Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("find_previous"),       Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("find_next_at_caret"),  Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("find_previous_at_caret"),  Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("incremental_search"),  Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("find_resource"),       Frame::OnWorkspaceOpen)
-    EVT_UPDATE_UI(XRCID("find_type"),           Frame::OnWorkspaceOpen)
-    EVT_UPDATE_UI(XRCID("find_symbol"),         Frame::OnCompleteWordUpdateUI)
-    EVT_UPDATE_UI(XRCID("goto_definition"),     Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(XRCID("goto_previous_definition"),    Frame::DispatchUpdateUIEvent)
-    EVT_UPDATE_UI(XRCID("goto_linenumber"),     Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("toggle_bookmark"),     Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("next_bookmark"),       Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("previous_bookmark"),   Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("removeall_bookmarks"), Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(wxID_FIND,                    Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(wxID_REPLACE,                 Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("find_next"),           Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("find_previous"),       Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("find_next_at_caret"),  Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("find_previous_at_caret"),  Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("incremental_search"),  Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("find_resource"),       Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("find_type"),           Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("find_symbol"),         Frame::OnCompleteWordUpdateUI)
+	EVT_UPDATE_UI(XRCID("goto_definition"),     Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(XRCID("goto_previous_definition"),    Frame::DispatchUpdateUIEvent)
+	EVT_UPDATE_UI(XRCID("goto_linenumber"),     Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("toggle_bookmark"),     Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("next_bookmark"),       Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("previous_bookmark"),   Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("removeall_bookmarks"), Frame::OnFileExistUpdateUI)
 
-    //-------------------------------------------------------
-    // Project menu
-    //-------------------------------------------------------
-    EVT_MENU(XRCID("new_workspace"),            Frame::OnProjectNewWorkspace)
-    EVT_MENU(XRCID("switch_to_workspace"),      Frame::OnSwitchWorkspace)
-    EVT_MENU(XRCID("close_workspace"),          Frame::OnCloseWorkspace)
-    EVT_MENU(XRCID("reload_workspace"),         Frame::OnReloadWorkspace)
-    EVT_MENU(XRCID("import_from_msvs"),         Frame::OnImportMSVS)
-    EVT_MENU(XRCID("new_project"),              Frame::OnProjectNewProject)
-    EVT_MENU(XRCID("add_project"),              Frame::OnProjectAddProject)
-    EVT_MENU(XRCID("retag_workspace"),          Frame::OnRetagWorkspace)
+	//-------------------------------------------------------
+	// Project menu
+	//-------------------------------------------------------
+	EVT_MENU(XRCID("new_workspace"),            Frame::OnProjectNewWorkspace)
+	EVT_MENU(XRCID("switch_to_workspace"),      Frame::OnSwitchWorkspace)
+	EVT_MENU(XRCID("close_workspace"),          Frame::OnCloseWorkspace)
+	EVT_MENU(XRCID("reload_workspace"),         Frame::OnReloadWorkspace)
+	EVT_MENU(XRCID("import_from_msvs"),         Frame::OnImportMSVS)
+	EVT_MENU(XRCID("new_project"),              Frame::OnProjectNewProject)
+	EVT_MENU(XRCID("add_project"),              Frame::OnProjectAddProject)
+	EVT_MENU(XRCID("retag_workspace"),          Frame::OnRetagWorkspace)
 
-    EVT_UPDATE_UI(XRCID("close_workspace"),     Frame::OnWorkspaceOpen)
-    EVT_UPDATE_UI(XRCID("reload_workspace"),    Frame::OnReloadWorkspaceUI)
-    EVT_UPDATE_UI(XRCID("add_project"),         Frame::OnWorkspaceMenuUI)
-    EVT_UPDATE_UI(XRCID("retag_workspace"),     Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("close_workspace"),     Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("reload_workspace"),    Frame::OnReloadWorkspaceUI)
+	EVT_UPDATE_UI(XRCID("add_project"),         Frame::OnWorkspaceMenuUI)
+	EVT_UPDATE_UI(XRCID("retag_workspace"),     Frame::OnWorkspaceOpen)
 
-    //-------------------------------------------------------
-    // Build menu
-    //-------------------------------------------------------
-    EVT_MENU(XRCID("execute_no_debug"),         Frame::OnExecuteNoDebug)
-    EVT_MENU(XRCID("stop_executed_program"),    Frame::OnStopExecutedProgram)
-    EVT_MENU(XRCID("build_active_project"),     Frame::OnBuildProject)
-    EVT_MENU(XRCID("compile_active_file"),      Frame::OnCompileFile)
-    EVT_MENU(XRCID("clean_active_project"),     Frame::OnCleanProject)
-    EVT_MENU(XRCID("stop_active_project_build"),    Frame::OnStopBuild)
-    EVT_MENU(XRCID("rebuild_active_project"),   Frame::OnRebuildProject)
-    EVT_MENU(XRCID("build_n_run_active_project"),   Frame::OnBuildAndRunProject)
-    EVT_MENU(XRCID("build_workspace"),          Frame::OnBuildWorkspace)
-    EVT_MENU(XRCID("clean_workspace"),          Frame::OnCleanWorkspace)
-    EVT_MENU(XRCID("rebuild_workspace"),        Frame::OnReBuildWorkspace)
-    EVT_MENU(XRCID("batch_build"),              Frame::OnBatchBuild)
+	//-------------------------------------------------------
+	// Build menu
+	//-------------------------------------------------------
+	EVT_MENU(XRCID("execute_no_debug"),         Frame::OnExecuteNoDebug)
+	EVT_MENU(XRCID("stop_executed_program"),    Frame::OnStopExecutedProgram)
+	EVT_MENU(XRCID("build_active_project"),     Frame::OnBuildProject)
+	EVT_MENU(XRCID("compile_active_file"),      Frame::OnCompileFile)
+	EVT_MENU(XRCID("clean_active_project"),     Frame::OnCleanProject)
+	EVT_MENU(XRCID("stop_active_project_build"),    Frame::OnStopBuild)
+	EVT_MENU(XRCID("rebuild_active_project"),   Frame::OnRebuildProject)
+	EVT_MENU(XRCID("build_n_run_active_project"),   Frame::OnBuildAndRunProject)
+	EVT_MENU(XRCID("build_workspace"),          Frame::OnBuildWorkspace)
+	EVT_MENU(XRCID("clean_workspace"),          Frame::OnCleanWorkspace)
+	EVT_MENU(XRCID("rebuild_workspace"),        Frame::OnReBuildWorkspace)
+	EVT_MENU(XRCID("batch_build"),              Frame::OnBatchBuild)
 
-    EVT_UPDATE_UI(XRCID("execute_no_debug"),        Frame::OnExecuteNoDebugUI)
-    EVT_UPDATE_UI(XRCID("stop_executed_program"),   Frame::OnStopExecutedProgramUI)
-    EVT_UPDATE_UI(XRCID("build_active_project"),    Frame::OnBuildProjectUI)
-    EVT_UPDATE_UI(XRCID("compile_active_file"),     Frame::OnCompileFileUI)
-    EVT_UPDATE_UI(XRCID("clean_active_project"),    Frame::OnCleanProjectUI)
-    EVT_UPDATE_UI(XRCID("stop_active_project_build"),   Frame::OnStopBuildUI)
-    EVT_UPDATE_UI(XRCID("rebuild_active_project"),  Frame::OnBuildProjectUI)
-    EVT_UPDATE_UI(XRCID("build_n_run_active_project"),  Frame::OnBuildProjectUI)
-    EVT_UPDATE_UI(XRCID("build_workspace"),         Frame::OnBuildWorkspaceUI)
-    EVT_UPDATE_UI(XRCID("clean_workspace"),         Frame::OnCleanWorkspaceUI)
-    EVT_UPDATE_UI(XRCID("rebuild_workspace"),       Frame::OnReBuildWorkspaceUI)
-    EVT_UPDATE_UI(XRCID("batch_build"),             Frame::OnBatchBuildUI)
+	EVT_UPDATE_UI(XRCID("execute_no_debug"),        Frame::OnExecuteNoDebugUI)
+	EVT_UPDATE_UI(XRCID("stop_executed_program"),   Frame::OnStopExecutedProgramUI)
+	EVT_UPDATE_UI(XRCID("build_active_project"),    Frame::OnBuildProjectUI)
+	EVT_UPDATE_UI(XRCID("compile_active_file"),     Frame::OnCompileFileUI)
+	EVT_UPDATE_UI(XRCID("clean_active_project"),    Frame::OnCleanProjectUI)
+	EVT_UPDATE_UI(XRCID("stop_active_project_build"),   Frame::OnStopBuildUI)
+	EVT_UPDATE_UI(XRCID("rebuild_active_project"),  Frame::OnBuildProjectUI)
+	EVT_UPDATE_UI(XRCID("build_n_run_active_project"),  Frame::OnBuildProjectUI)
+	EVT_UPDATE_UI(XRCID("build_workspace"),         Frame::OnBuildWorkspaceUI)
+	EVT_UPDATE_UI(XRCID("clean_workspace"),         Frame::OnCleanWorkspaceUI)
+	EVT_UPDATE_UI(XRCID("rebuild_workspace"),       Frame::OnReBuildWorkspaceUI)
+	EVT_UPDATE_UI(XRCID("batch_build"),             Frame::OnBatchBuildUI)
 
-    //-------------------------------------------------------
-    // Debug menu
-    //-------------------------------------------------------
-    EVT_MENU(XRCID("start_debugger"),           Frame::OnDebug)
-    EVT_MENU(XRCID("restart_debugger"),         Frame::OnDebugRestart)
-    EVT_MENU(XRCID("attach_debugger"),          Frame::OnDebugAttach)
-    EVT_MENU(XRCID("pause_debugger"),           Frame::OnDebugCmd)
-    EVT_MENU(XRCID("stop_debugger"),            Frame::OnDebugStop)
-    EVT_MENU(XRCID("dbg_stepin"),               Frame::OnDebugCmd)
-    EVT_MENU(XRCID("dbg_stepout"),              Frame::OnDebugCmd)
-    EVT_MENU(XRCID("dbg_next"),                 Frame::OnDebugCmd)
-    EVT_MENU(XRCID("show_cursor"),              Frame::OnDebugCmd)
-    EVT_MENU(XRCID("add_breakpoint"),						Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("insert_breakpoint"),        Frame::DispatchCommandEvent) // Toggles
-		EVT_MENU(XRCID("insert_temp_breakpoint"),   Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("insert_cond_breakpoint"),   Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("edit_breakpoint"),          Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("show_breakpoint_dlg"),      Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("insert_watchpoint"),        Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("toggle_breakpoint_enabled_status"),  Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("ignore_breakpoint"),        Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("delete_breakpoint"),        Frame::DispatchCommandEvent)
-    EVT_MENU(XRCID("quick_debug"),              Frame::OnQuickDebug)
+	//-------------------------------------------------------
+	// Debug menu
+	//-------------------------------------------------------
+	EVT_MENU(XRCID("start_debugger"),           Frame::OnDebug)
+	EVT_MENU(XRCID("restart_debugger"),         Frame::OnDebugRestart)
+	EVT_MENU(XRCID("attach_debugger"),          Frame::OnDebugAttach)
+	EVT_MENU(XRCID("pause_debugger"),           Frame::OnDebugCmd)
+	EVT_MENU(XRCID("stop_debugger"),            Frame::OnDebugStop)
+	EVT_MENU(XRCID("dbg_stepin"),               Frame::OnDebugCmd)
+	EVT_MENU(XRCID("dbg_stepout"),              Frame::OnDebugCmd)
+	EVT_MENU(XRCID("dbg_next"),                 Frame::OnDebugCmd)
+	EVT_MENU(XRCID("show_cursor"),              Frame::OnDebugCmd)
+	EVT_MENU(XRCID("add_breakpoint"),						Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("insert_breakpoint"),        Frame::DispatchCommandEvent) // Toggles
+	EVT_MENU(XRCID("insert_temp_breakpoint"),   Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("insert_cond_breakpoint"),   Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("edit_breakpoint"),          Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("show_breakpoint_dlg"),      Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("insert_watchpoint"),        Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("toggle_breakpoint_enabled_status"),  Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("ignore_breakpoint"),        Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("delete_breakpoint"),        Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("quick_debug"),              Frame::OnQuickDebug)
 
-    EVT_UPDATE_UI(XRCID("start_debugger"),      Frame::OnDebugUI)
-    EVT_UPDATE_UI(XRCID("restart_debugger"),    Frame::OnDebugRestartUI)
-    EVT_UPDATE_UI(XRCID("pause_debugger"),      Frame::OnDebugCmdUI)
-    EVT_UPDATE_UI(XRCID("stop_debugger"),       Frame::OnDebugStopUI)
-    EVT_UPDATE_UI(XRCID("dbg_stepin"),          Frame::OnDebugCmdUI)
-    EVT_UPDATE_UI(XRCID("dbg_stepout"),         Frame::OnDebugCmdUI)
-    EVT_UPDATE_UI(XRCID("dbg_next"),            Frame::OnDebugCmdUI)
-    EVT_UPDATE_UI(XRCID("show_cursor"),         Frame::OnDebugCmdUI)
-    EVT_UPDATE_UI(XRCID("insert_breakpoint"),   Frame::OnDebugManageBreakpointsUI)
-    EVT_UPDATE_UI(XRCID("quick_debug"),         Frame::OnQuickDebugUI)
+	EVT_UPDATE_UI(XRCID("start_debugger"),      Frame::OnDebugUI)
+	EVT_UPDATE_UI(XRCID("restart_debugger"),    Frame::OnDebugRestartUI)
+	EVT_UPDATE_UI(XRCID("pause_debugger"),      Frame::OnDebugCmdUI)
+	EVT_UPDATE_UI(XRCID("stop_debugger"),       Frame::OnDebugStopUI)
+	EVT_UPDATE_UI(XRCID("dbg_stepin"),          Frame::OnDebugCmdUI)
+	EVT_UPDATE_UI(XRCID("dbg_stepout"),         Frame::OnDebugCmdUI)
+	EVT_UPDATE_UI(XRCID("dbg_next"),            Frame::OnDebugCmdUI)
+	EVT_UPDATE_UI(XRCID("show_cursor"),         Frame::OnDebugCmdUI)
+	EVT_UPDATE_UI(XRCID("insert_breakpoint"),   Frame::OnDebugManageBreakpointsUI)
+	EVT_UPDATE_UI(XRCID("quick_debug"),         Frame::OnQuickDebugUI)
 
-    //-------------------------------------------------------
-    // Tags menu
-    //-------------------------------------------------------
-    EVT_MENU(XRCID("create_ext_database"),      Frame::OnBuildExternalDatabase)
-    EVT_MENU(XRCID("open_ext_database"),        Frame::OnUseExternalDatabase)
-    EVT_MENU(XRCID("close_ext_database"),       Frame::OnCloseExternalDatabase)
-    EVT_MENU(XRCID("manage_tags"),              Frame::OnManageTags)
+	//-------------------------------------------------------
+	// Tags menu
+	//-------------------------------------------------------
+	EVT_MENU(XRCID("create_ext_database"),      Frame::OnBuildExternalDatabase)
+	EVT_MENU(XRCID("open_ext_database"),        Frame::OnUseExternalDatabase)
+	EVT_MENU(XRCID("close_ext_database"),       Frame::OnCloseExternalDatabase)
+	EVT_MENU(XRCID("manage_tags"),              Frame::OnManageTags)
 
-    //-------------------------------------------------------
-    // Plugins menu
-    //-------------------------------------------------------
-    EVT_MENU(XRCID("manage_plugins"),           Frame::OnManagePlugins)
+	//-------------------------------------------------------
+	// Plugins menu
+	//-------------------------------------------------------
+	EVT_MENU(XRCID("manage_plugins"),           Frame::OnManagePlugins)
 
-    //-------------------------------------------------------
-    // Settings menu
-    //-------------------------------------------------------
-    EVT_MENU(XRCID("options"),                  Frame::OnViewOptions)
-    EVT_MENU(XRCID("syntax_highlight"),         Frame::OnSyntaxHighlight)
-    EVT_MENU(XRCID("configure_accelerators"),   Frame::OnConfigureAccelerators)
-    EVT_MENU(XRCID("add_envvar"),               Frame::OnAddEnvironmentVariable)
-    EVT_MENU(XRCID("advance_settings"),         Frame::OnAdvanceSettings)
-    EVT_MENU(XRCID("debuger_settings"),         Frame::OnDebuggerSettings)
-    EVT_MENU(XRCID("tags_options"),             Frame::OnCtagsOptions)
+	//-------------------------------------------------------
+	// Settings menu
+	//-------------------------------------------------------
+	EVT_MENU(XRCID("options"),                  Frame::OnViewOptions)
+	EVT_MENU(XRCID("syntax_highlight"),         Frame::OnSyntaxHighlight)
+	EVT_MENU(XRCID("configure_accelerators"),   Frame::OnConfigureAccelerators)
+	EVT_MENU(XRCID("add_envvar"),               Frame::OnAddEnvironmentVariable)
+	EVT_MENU(XRCID("advance_settings"),         Frame::OnAdvanceSettings)
+	EVT_MENU(XRCID("debuger_settings"),         Frame::OnDebuggerSettings)
+	EVT_MENU(XRCID("tags_options"),             Frame::OnCtagsOptions)
 
-    //-------------------------------------------------------
-    // Help menu
-    //-------------------------------------------------------
-    EVT_MENU(wxID_ABOUT,                        Frame::OnAbout)
+	//-------------------------------------------------------
+	// Help menu
+	//-------------------------------------------------------
+	EVT_MENU(wxID_ABOUT,                        Frame::OnAbout)
 
-    //-----------------------------------------------------------------
-    // Toolbar
-    //-----------------------------------------------------------------
-    EVT_MENU(wxID_FORWARD,                      Frame::OnBackwardForward)
-    EVT_MENU(wxID_BACKWARD,                     Frame::OnBackwardForward)
-    EVT_MENU(XRCID("highlight_word"),           Frame::OnHighlightWord)
+	//-----------------------------------------------------------------
+	// Toolbar
+	//-----------------------------------------------------------------
+	EVT_MENU(wxID_FORWARD,                      Frame::OnBackwardForward)
+	EVT_MENU(wxID_BACKWARD,                     Frame::OnBackwardForward)
+	EVT_MENU(XRCID("highlight_word"),           Frame::OnHighlightWord)
 
-    EVT_UPDATE_UI(wxID_FORWARD,                 Frame::OnBackwardForwardUI)
-    EVT_UPDATE_UI(wxID_BACKWARD,                Frame::OnBackwardForwardUI)
+	EVT_UPDATE_UI(wxID_FORWARD,                 Frame::OnBackwardForwardUI)
+	EVT_UPDATE_UI(wxID_BACKWARD,                Frame::OnBackwardForwardUI)
 
-    //-------------------------------------------------------
-    // Workspace Pane tab context menu
-    //-------------------------------------------------------
-    EVT_MENU(XRCID("detach_wv_tab"),            Frame::OnDetachWorkspaceViewTab)
+	//-------------------------------------------------------
+	// Workspace Pane tab context menu
+	//-------------------------------------------------------
+	EVT_MENU(XRCID("detach_wv_tab"),            Frame::OnDetachWorkspaceViewTab)
 
-    //-------------------------------------------------------
-    // Debugger Pane tab context menu
-    //-------------------------------------------------------
-    EVT_MENU(XRCID("detach_dv_tab"),            Frame::OnDetachDebuggerViewTab)
+	//-------------------------------------------------------
+	// Debugger Pane tab context menu
+	//-------------------------------------------------------
+	EVT_MENU(XRCID("detach_dv_tab"),            Frame::OnDetachDebuggerViewTab)
 
-    //-------------------------------------------------------
-    // Editor tab context menu
-    //-------------------------------------------------------
-    EVT_MENU(XRCID("close_other_tabs"),         Frame::OnCloseAllButThis)
-    EVT_MENU(XRCID("copy_file_name"),           Frame::OnCopyFilePath)
-    EVT_MENU(XRCID("copy_file_path"),           Frame::OnCopyFilePathOnly)
-    EVT_MENU(XRCID("detach_tab"),               Frame::OnDetachTab)
-    EVT_MENU(XRCID("open_shell_from_filepath"), Frame::OnOpenShellFromFilePath)
+	//-------------------------------------------------------
+	// Editor tab context menu
+	//-------------------------------------------------------
+	EVT_MENU(XRCID("close_other_tabs"),         Frame::OnCloseAllButThis)
+	EVT_MENU(XRCID("copy_file_name"),           Frame::OnCopyFilePath)
+	EVT_MENU(XRCID("copy_file_path"),           Frame::OnCopyFilePathOnly)
+	EVT_MENU(XRCID("detach_tab"),               Frame::OnDetachTab)
+	EVT_MENU(XRCID("open_shell_from_filepath"), Frame::OnOpenShellFromFilePath)
 
-    EVT_UPDATE_UI(XRCID("copy_file_name"),      Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("copy_file_path"),      Frame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("detach_tab"),          Frame::OnDetachTabUI)
-    EVT_UPDATE_UI(XRCID("open_shell_from_filepath"),    Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("copy_file_name"),      Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("copy_file_path"),      Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("detach_tab"),          Frame::OnDetachTabUI)
+	EVT_UPDATE_UI(XRCID("open_shell_from_filepath"),    Frame::OnFileExistUpdateUI)
 
-    //-----------------------------------------------------------------
-    // Default editor context menu
-    //-----------------------------------------------------------------
-    EVT_MENU(wxID_DELETE,                       Frame::DispatchCommandEvent)
-    EVT_UPDATE_UI(wxID_DELETE,                  Frame::DispatchUpdateUIEvent)
+	//-----------------------------------------------------------------
+	// Default editor context menu
+	//-----------------------------------------------------------------
+	EVT_MENU(wxID_DELETE,                       Frame::DispatchCommandEvent)
+	EVT_UPDATE_UI(wxID_DELETE,                  Frame::DispatchUpdateUIEvent)
 
-    //-----------------------------------------------------------------
-    // C++ editor context menu
-    //-----------------------------------------------------------------
-    EVT_MENU(XRCID("add_include_file"),         Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("swap_files"),               Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("find_decl"),                Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("find_impl"),                Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("go_to_function_start"),     Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("insert_doxy_comment"),      Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("setters_getters"),          Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("move_impl"),                Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("add_impl"),                 Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("add_multi_impl"),           Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("rename_function"),          Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("comment_selection"),        Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("comment_line"),             Frame::OnCppContextMenu)
-    EVT_MENU(XRCID("retag_file"),               Frame::OnCppContextMenu)
+	//-----------------------------------------------------------------
+	// C++ editor context menu
+	//-----------------------------------------------------------------
+	EVT_MENU(XRCID("add_include_file"),         Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("swap_files"),               Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("find_decl"),                Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("find_impl"),                Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("go_to_function_start"),     Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("insert_doxy_comment"),      Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("setters_getters"),          Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("move_impl"),                Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("add_impl"),                 Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("add_multi_impl"),           Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("rename_function"),          Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("comment_selection"),        Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("comment_line"),             Frame::OnCppContextMenu)
+	EVT_MENU(XRCID("retag_file"),               Frame::OnCppContextMenu)
 
-    //-----------------------------------------------------------------
-    // Hyperlinks
-    //-----------------------------------------------------------------
-    EVT_HTML_LINK_CLICKED(wxID_ANY,             Frame::OnLinkClicked)
-    EVT_MENU(XRCID("link_action"),              Frame::OnStartPageEvent)
+	//-----------------------------------------------------------------
+	// Hyperlinks
+	//-----------------------------------------------------------------
+	EVT_HTML_LINK_CLICKED(wxID_ANY,             Frame::OnLinkClicked)
+	EVT_MENU(XRCID("link_action"),              Frame::OnStartPageEvent)
 
-    //-----------------------------------------------------------------
-    // CodeLite-specific events
-    //-----------------------------------------------------------------
-    EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone)
+	//-----------------------------------------------------------------
+	// CodeLite-specific events
+	//-----------------------------------------------------------------
+	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone)
 
-    EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
+	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
 
-    EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnBuildEnded)
+	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnBuildEnded)
 
-    EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY,    Frame::OnAddSymbols)
-    EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
-    EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
+	EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY,    Frame::OnAddSymbols)
+	EVT_SYMBOLTREE_DELETE_ITEM(wxID_ANY, Frame::OnDeleteSymbols)
+	EVT_SYMBOLTREE_UPDATE_ITEM(wxID_ANY, Frame::OnUpdateSymbols)
 
-    EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, Frame::OnSingleInstanceOpenFiles)
-    EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP,  Frame::OnSingleInstanceRaise)
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, Frame::OnSingleInstanceOpenFiles)
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP,  Frame::OnSingleInstanceRaise)
 
-    EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, Frame::OnNewVersionAvailable)
-    EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE,      Frame::OnNewVersionAvailable)
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_VERSION_AVAILABLE, Frame::OnNewVersionAvailable)
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_VERSION_UPTODATE,      Frame::OnNewVersionAvailable)
 
-    EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE,    Frame::OnNewDetachedPane)
-    EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE,    Frame::OnNewDetachedPane)
+	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
 
 END_EVENT_TABLE()
 
@@ -590,8 +590,8 @@ void Frame::Initialize(bool loadLastSession)
 	m_theFrame->LoadPlugins();
 
 	//time to create the file explorer
-    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("go_home"));
-    m_theFrame->GetFileExplorer()->ProcessEvent(e);
+	wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("go_home"));
+	m_theFrame->GetFileExplorer()->ProcessEvent(e);
 
 	//load last session?
 	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && loadLastSession) {
@@ -728,10 +728,10 @@ void Frame::CreateGUIControls(void)
 	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
 //	wxStatusBar* statusBar = new CustomStatusBar(this, wxID_ANY);
 	SetStatusBar(statusBar);
-    m_status.resize(5);
+	m_status.resize(5);
 	GetStatusBar()->SetFieldsCount(m_status.size());
-    SetStatusMessage(wxT("Ready"), 0);
-    SetStatusMessage(wxT("Done"), m_status.size()-1);
+	SetStatusMessage(wxT("Ready"), 0);
+	SetStatusMessage(wxT("Done"), m_status.size()-1);
 
 	//update ctags options
 	TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
@@ -1134,19 +1134,19 @@ void Frame::OnClose(wxCloseEvent& event)
 	EditorConfigST::Get()->SaveLongValue(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
 
 	//save the 'find and replace' information
-    GetOutputPane()->GetFindResultsTab()->SaveFindInFilesData();
+	GetOutputPane()->GetFindResultsTab()->SaveFindInFilesData();
 	if (LEditor::GetFindReplaceDialog()) {
 		EditorConfigST::Get()->WriteObject(wxT("FindAndReplaceData"), &(LEditor::GetFindReplaceDialog()->GetData()));
 	}
 
 	//save the current session before closing
-    wxString sessionName = ManagerST::Get()->IsWorkspaceOpen() ? WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath()
-                                                               : wxString(wxT("Default"));
- 	SessionEntry session;
-    session.SetWorkspaceName(sessionName);
-    GetMainBook()->SaveSession(session);
-    SessionManager::Get().Save(sessionName, session);
-    SessionManager::Get().SetLastWorkspaceName(sessionName);
+	wxString sessionName = ManagerST::Get()->IsWorkspaceOpen() ? WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath()
+	                       : wxString(wxT("Default"));
+	SessionEntry session;
+	session.SetWorkspaceName(sessionName);
+	GetMainBook()->SaveSession(session);
+	SessionManager::Get().Save(sessionName, session);
+	SessionManager::Get().SetLastWorkspaceName(sessionName);
 
 	// make sure there are no 'unsaved documents'
 	GetMainBook()->CloseAll(false);
@@ -1163,48 +1163,48 @@ void Frame::LoadSession(const wxString &sessionName)
 {
 	SessionEntry session;
 	if (SessionManager::Get().FindSession(sessionName, session)) {
-        wxString wspFile = session.GetWorkspaceName();
-        if (wspFile.IsEmpty() == false && wspFile != wxT("Default")) {
-            ManagerST::Get()->OpenWorkspace(wspFile);
-        } else {
-            // no workspace to open, so just restore any previously open editors
-            GetMainBook()->RestoreSession(session);
-        }
-    }
+		wxString wspFile = session.GetWorkspaceName();
+		if (wspFile.IsEmpty() == false && wspFile != wxT("Default")) {
+			ManagerST::Get()->OpenWorkspace(wspFile);
+		} else {
+			// no workspace to open, so just restore any previously open editors
+			GetMainBook()->RestoreSession(session);
+		}
+	}
 }
 
 void Frame::OnSave(wxCommandEvent& WXUNUSED(event))
 {
-    LEditor *editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        editor->SaveFile();
-    }
+	LEditor *editor = GetMainBook()->GetActiveEditor();
+	if (editor) {
+		editor->SaveFile();
+	}
 }
 
 void Frame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
 {
-    LEditor *editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        editor->SaveFileAs();
-    }
+	LEditor *editor = GetMainBook()->GetActiveEditor();
+	if (editor) {
+		editor->SaveFileAs();
+	}
 }
 
 void Frame::OnFileReload(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-    LEditor *editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        if ( editor->GetModify() ) {
-            // Ask user if he really wants to lose all changes
-            wxString msg;
-            msg << wxT("The file '") << editor->GetFileName().GetFullName() << wxT("' has been altered.\n");
-            msg << wxT("Are you sure you want to lose all changes?");
-            if ( wxMessageBox(msg, wxT("Confirm"),wxYES_NO) != wxYES ) {
-                return;
-            }
-        }
-        editor->ReloadFile();
-    }
+	LEditor *editor = GetMainBook()->GetActiveEditor();
+	if (editor) {
+		if ( editor->GetModify() ) {
+			// Ask user if he really wants to lose all changes
+			wxString msg;
+			msg << wxT("The file '") << editor->GetFileName().GetFullName() << wxT("' has been altered.\n");
+			msg << wxT("Are you sure you want to lose all changes?");
+			if ( wxMessageBox(msg, wxT("Confirm"),wxYES_NO) != wxYES ) {
+				return;
+			}
+		}
+		editor->ReloadFile();
+	}
 }
 
 void Frame::OnCloseWorkspace(wxCommandEvent &event)
@@ -1233,19 +1233,19 @@ void Frame::OnSwitchWorkspace(wxCommandEvent &event)
 void Frame::OnCompleteWord(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
-    LEditor *editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        editor->CompleteWord();
-    }
+	LEditor *editor = GetMainBook()->GetActiveEditor();
+	if (editor) {
+		editor->CompleteWord();
+	}
 }
 
 void Frame::OnFunctionCalltip(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
-    LEditor *editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        editor->ShowFunctionTipFromCurrentPos();
-    }
+	LEditor *editor = GetMainBook()->GetActiveEditor();
+	if (editor) {
+		editor->ShowFunctionTipFromCurrentPos();
+	}
 }
 
 void Frame::OnBuildExternalDatabase(wxCommandEvent& event)
@@ -1302,7 +1302,7 @@ void Frame::OnUseExternalDatabase(wxCommandEvent& WXUNUSED(event))
 void Frame::OnFileNew(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-    GetMainBook()->NewEditor();
+	GetMainBook()->NewEditor();
 }
 
 void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
@@ -1329,7 +1329,7 @@ void Frame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 void Frame::OnFileClose(wxCommandEvent &event)
 {
 	wxUnusedVar( event );
-    GetMainBook()->ClosePage(GetMainBook()->GetCurrentPage());
+	GetMainBook()->ClosePage(GetMainBook()->GetCurrentPage());
 }
 
 void Frame::OnFileSaveAll(wxCommandEvent &event)
@@ -1569,17 +1569,17 @@ void Frame::OnAdvanceSettings(wxCommandEvent &event)
 
 void Frame::OnBuildEnded(wxCommandEvent &event)
 {
-    event.Skip();
-    if (m_buildAndRun) {
-        //If the build process was part of a 'Build and Run' command, check whether an erros
-        //occured during build process, if non, launch the output
-        m_buildAndRun = false;
-        if (ManagerST::Get()->IsBuildEndedSuccessfully() ||
-                wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES) {
-            ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
-        }
-    }
-    ManagerST::Get()->ProcessCommandQueue();
+	event.Skip();
+	if (m_buildAndRun) {
+		//If the build process was part of a 'Build and Run' command, check whether an erros
+		//occured during build process, if non, launch the output
+		m_buildAndRun = false;
+		if (ManagerST::Get()->IsBuildEndedSuccessfully() ||
+		        wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES) {
+			ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
+		}
+	}
+	ManagerST::Get()->ProcessCommandQueue();
 }
 
 // Build operations
@@ -1863,7 +1863,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 void Frame::OnFileCloseAll(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-    GetMainBook()->CloseAll(true);
+	GetMainBook()->CloseAll(true);
 }
 
 void Frame::OnQuickOutline(wxCommandEvent &event)
@@ -1900,10 +1900,10 @@ void Frame::OnFindType(wxCommandEvent &event)
 	if (dlg->ShowModal() == wxID_OK) {
 		TagEntryPtr tag = dlg->GetSelectedTag();
 		if (tag && tag->IsOk()) {
-            LEditor *editor = GetMainBook()->OpenFile(tag->GetFile());
-            if (editor) {
-                editor->FindAndSelect(tag->GetPattern(), tag->GetName());
-            }
+			LEditor *editor = GetMainBook()->OpenFile(tag->GetFile());
+			if (editor) {
+				editor->FindAndSelect(tag->GetPattern(), tag->GetName());
+			}
 		}
 	}
 	dlg->Destroy();
@@ -2206,8 +2206,7 @@ void Frame::OnDebug(wxCommandEvent &e)
 
 			// handle custom builds
 			BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(WorkspaceST::Get()->GetActiveProjectName(), wxEmptyString);
-			if (bldConf->IsCustomBuild())
-			{
+			if (bldConf->IsCustomBuild()) {
 				bldCmd.SetKind(QueueCommand::CustomBuild);
 				bldCmd.SetCustomBuildTarget(wxT("Build"));
 			}
@@ -2242,7 +2241,7 @@ void Frame::OnDebugRestart(wxCommandEvent &e)
 
 void Frame::OnDebugRestartUI(wxUpdateUIEvent &e)
 {
-    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	e.Enable(dbgr && dbgr->IsRunning());
 }
 
@@ -2254,7 +2253,7 @@ void Frame::OnDebugStop(wxCommandEvent &e)
 
 void Frame::OnDebugStopUI(wxUpdateUIEvent &e)
 {
-    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	e.Enable(dbgr && dbgr->IsRunning());
 }
 
@@ -2290,8 +2289,8 @@ void Frame::OnDebugCmdUI(wxUpdateUIEvent &e)
 	        e.GetId() == XRCID("dbg_stepout") ||
 	        e.GetId() == XRCID("dbg_next") ||
 	        e.GetId() == XRCID("show_cursor")) {
-        IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-        e.Enable(dbgr && dbgr->IsRunning());
+		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+		e.Enable(dbgr && dbgr->IsRunning());
 	}
 }
 
@@ -2314,31 +2313,31 @@ void Frame::OnIdle(wxIdleEvent &e)
 void Frame::OnLinkClicked(wxHtmlLinkEvent &e)
 {
 	wxString action = e.GetLinkInfo().GetHref();
-    if (!action.StartsWith(wxT("action:"), &action)) {
+	if (!action.StartsWith(wxT("action:"), &action)) {
 		wxLaunchDefaultBrowser(e.GetLinkInfo().GetHref());
-        return;
-    }
-    wxString command = action.BeforeFirst(wxT(':'));
-    wxString filename = action.AfterFirst(wxT(':'));
-    if (command != wxT("switch-workspace") &&
-        command != wxT("open-file") &&
-        command != wxT("create-workspace") &&
-        command != wxT("import-msvs-solution") &&
-        command != wxT("open-workspace")) {
-        e.Skip();
-        return;
-    }
+		return;
+	}
+	wxString command = action.BeforeFirst(wxT(':'));
+	wxString filename = action.AfterFirst(wxT(':'));
+	if (command != wxT("switch-workspace") &&
+	        command != wxT("open-file") &&
+	        command != wxT("create-workspace") &&
+	        command != wxT("import-msvs-solution") &&
+	        command != wxT("open-workspace")) {
+		e.Skip();
+		return;
+	}
 
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("link_action"));
 	event.SetEventObject(this);
 	StartPageData *data = new StartPageData;
 	data->action = command;
 	data->file_path = filename;
-    if (wxFileName(filename).GetExt() == wxT("workspace")) {
-        data->action = wxT("switch-workspace");
-    }
-    event.SetClientData(data);
-    wxPostEvent(this, event);
+	if (wxFileName(filename).GetExt() == wxT("workspace")) {
+		data->action = wxT("switch-workspace");
+	}
+	event.SetClientData(data);
+	wxPostEvent(this, event);
 }
 
 void Frame::OnStartPageEvent(wxCommandEvent& e)
@@ -2419,7 +2418,7 @@ void Frame::OnAppActivated(wxActivateEvent &e)
 {
 	if (m_theFrame && e.GetActive()) {
 		m_theFrame->GetMainBook()->ReloadExternallyModified();
-    }
+	}
 	e.Skip();
 }
 
@@ -2491,10 +2490,10 @@ void Frame::OnCompileFile(wxCommandEvent &e)
 	wxUnusedVar(e);
 	Manager *mgr = ManagerST::Get();
 	if (mgr->IsWorkspaceOpen() && !mgr->IsBuildInProgress()) {
-        LEditor *editor = GetMainBook()->GetActiveEditor();
-        if (editor && !editor->GetProject().IsEmpty()) {
-            mgr->CompileFile(editor->GetProject(), editor->GetFileName().GetFullPath());
-        }
+		LEditor *editor = GetMainBook()->GetActiveEditor();
+		if (editor && !editor->GetProject().IsEmpty()) {
+			mgr->CompileFile(editor->GetProject(), editor->GetFileName().GetFullPath());
+		}
 	}
 }
 
@@ -2503,10 +2502,10 @@ void Frame::OnCompileFileUI(wxUpdateUIEvent &e)
 	e.Enable(false);
 	Manager *mgr = ManagerST::Get();
 	if (mgr->IsWorkspaceOpen() && !mgr->IsBuildInProgress()) {
-        LEditor *editor = GetMainBook()->GetActiveEditor();
-        if (editor && !editor->GetProject().IsEmpty()) {
-            e.Enable(true);
-        }
+		LEditor *editor = GetMainBook()->GetActiveEditor();
+		if (editor && !editor->GetProject().IsEmpty()) {
+			e.Enable(true);
+		}
 	}
 }
 
@@ -2521,10 +2520,10 @@ void Frame::OnDebugAttach(wxCommandEvent &event)
 void Frame::OnCloseAllButThis(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-    wxWindow *win = GetMainBook()->GetCurrentPage();
-    if (win != NULL) {
-        GetMainBook()->CloseAllButThis(win);
-    }
+	wxWindow *win = GetMainBook()->GetCurrentPage();
+	if (win != NULL) {
+		GetMainBook()->CloseAllButThis(win);
+	}
 }
 
 WorkspaceTab *Frame::GetWorkspaceTab()
@@ -2658,10 +2657,10 @@ void Frame::OnManagePlugins(wxCommandEvent &e)
 void Frame::OnCppContextMenu(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-    LEditor *editor = GetMainBook()->GetActiveEditor();
+	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {
-        editor->GetContext()->ProcessEvent(e);
-    }
+		editor->GetContext()->ProcessEvent(e);
+	}
 }
 
 void Frame::OnConfigureAccelerators(wxCommandEvent &e)
@@ -2814,29 +2813,29 @@ void Frame::OnAuiManagerRender(wxAuiManagerEvent &e)
 
 void Frame::OnDockablePaneClosed(wxAuiManagerEvent &e)
 {
-    DockablePane *pane = dynamic_cast<DockablePane*>(e.GetPane()->window);
-    if (pane) {
-        wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
+	DockablePane *pane = dynamic_cast<DockablePane*>(e.GetPane()->window);
+	if (pane) {
+		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_pane"));
 		pane->ProcessEvent(evt);
-    } else {
-        e.Skip();
-    }
+	} else {
+		e.Skip();
+	}
 }
 
 void Frame::SetStatusMessage(const wxString &msg, int col, int id)
 {
-    if (col < 0 || col >= (int)m_status.size())
-        return;
-    wxString text = msg;
-    if (!msg.IsEmpty()) {
-        m_status[col][id] = msg;
-    } else {
-        m_status[col].erase(id);
-        if (!m_status[col].empty()) {
-            text = m_status[col].begin()->second;
-        }
-    }
-    SetStatusText(text, col);
+	if (col < 0 || col >= (int)m_status.size())
+		return;
+	wxString text = msg;
+	if (!msg.IsEmpty()) {
+		m_status[col][id] = msg;
+	} else {
+		m_status[col].erase(id);
+		if (!m_status[col].empty()) {
+			text = m_status[col].begin()->second;
+		}
+	}
+	SetStatusText(text, col);
 }
 
 void Frame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
@@ -2937,7 +2936,7 @@ void Frame::SetFrameTitle(LEditor* editor)
 	}
 
 	title << wxT("CodeLite - Revision: ");
-    title << SvnRevision;
+	title << SvnRevision;
 	SetTitle(title);
 }
 
@@ -2993,13 +2992,13 @@ void Frame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
 
 void Frame::OnDetachTab(wxCommandEvent &e)
 {
-    wxUnusedVar(e);
-    GetMainBook()->DetachPage(GetMainBook()->GetCurrentPage());
+	wxUnusedVar(e);
+	GetMainBook()->DetachPage(GetMainBook()->GetCurrentPage());
 }
 
 void Frame::OnDetachTabUI(wxUpdateUIEvent &e)
 {
-    e.Enable(!GetMainBook()->IsDetached(GetMainBook()->GetCurrentPage()));
+	e.Enable(!GetMainBook()->IsDetached(GetMainBook()->GetCurrentPage()));
 }
 
 void Frame::OnOpenShellFromFilePath(wxCommandEvent& e)
@@ -3018,12 +3017,12 @@ void Frame::OnOpenShellFromFilePath(wxCommandEvent& e)
 
 void Frame::ShowWelcomePage()
 {
-    wxWindow *win = GetMainBook()->FindPage(wxT("Welcome!"));
-    if (win) {
-        GetMainBook()->SelectPage(win);
-    } else {
-        CreateWelcomePage();
-    }
+	wxWindow *win = GetMainBook()->FindPage(wxT("Welcome!"));
+	if (win) {
+		GetMainBook()->SelectPage(win);
+	} else {
+		CreateWelcomePage();
+	}
 }
 
 void Frame::OnSyntaxHighlight(wxCommandEvent& e)

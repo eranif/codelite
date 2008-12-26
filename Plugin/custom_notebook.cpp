@@ -133,20 +133,13 @@ void Notebook::SetSelection(CustomTab *tab)
 	} else {
 		sz->Insert(0, win, 1, wxEXPAND);
 	}
+	win->Show();
 
-	wxSize oldSize(-1, -1);
 	if (oldWindow && sz->GetItem(oldWindow)) {
 		//the item indeed exist in the sizer, remove it
 		sz->Detach(oldWindow);
-
-		oldSize = oldWindow->GetSize();
 		oldWindow->Hide();
 	}
-
-	if(oldSize.x != -1 && oldSize.y != -1){
-		win->SetSize(oldSize);
-	}
-	win->Show();
 
 	sz->Layout();
 	Thaw();

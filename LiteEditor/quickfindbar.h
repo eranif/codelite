@@ -36,7 +36,7 @@ class QuickFindBar : public wxPanel
 protected:
     wxTextCtrl  *m_findWhat;
     wxScintilla *m_sci;
-    int          m_flags;
+    size_t       m_flags;
 	wxButton	*m_closeButton;
 
     void DoSearch(bool fwd, bool incr);

@@ -25,6 +25,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/textctrl.h>
 #include <wx/wxscintilla.h>
+#include "stringsearcher.h"
 #include "quickfindbar.h"
 
 
@@ -117,28 +118,26 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 	if (!m_sci || m_sci->GetLength() == 0 || m_findWhat->GetValue().IsEmpty())
 		return;
 
-    m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-
+    wxString find = m_findWhat->GetValue();
+    wxString text = m_sci->GetText();
+    
     int start = -1, stop = -1;
     m_sci->GetSelection(&start, &stop);
-    if (start != stop) {
-        m_sci->SetSelection(-1, !fwd || incr ? start : stop);
-    }
-    m_sci->SearchAnchor();
-    long pos = fwd ? m_sci->SearchNext(m_flags, m_findWhat->GetValue())
-                   : m_sci->SearchPrev(m_flags, m_findWhat->GetValue());
-    if (pos < 0) {
+    
+    int offset = !fwd || incr ? start : stop;
+    int flags = m_flags | (fwd ? 0 : wxSD_SEARCH_BACKWARD);
+    int pos = 0, len = 0;
+    
+    if (!StringFindReplacer::Search(text, offset, find, flags, pos, len)) {
         // wrap around and try again
-        m_sci->SetSelection(-1, fwd ? 0 : -1);
-        m_sci->SearchAnchor();
-        pos = fwd ? m_sci->SearchNext(m_flags, m_findWhat->GetValue())
-                  : m_sci->SearchPrev(m_flags, m_findWhat->GetValue());
-        if (pos < 0) {
-            m_sci->SetSelection(start, stop);
+        offset = fwd ? 0 : text.Len()-1;
+        if (!StringFindReplacer::Search(text, offset, find, flags, pos, len)) {
             m_findWhat->SetBackgroundColour(wxT("PINK"));
+            return;
         }
     }
-    m_sci->EnsureCaretVisible();
+    m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    m_sci->SetSelection(pos, pos+len);
 }
 
 void QuickFindBar::OnHide(wxCommandEvent &e)
@@ -180,13 +179,13 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 
 void QuickFindBar::OnCheckBox(wxCommandEvent &e)
 {
-    int flag = 0;
+    size_t flag = 0;
     if (e.GetId() == XRCID("match_case_quick")) {
-        flag = wxSCI_FIND_MATCHCASE;
+        flag = wxSD_MATCHCASE;
     } else if (e.GetId() == XRCID("match_word_quick")) {
-        flag = wxSCI_FIND_WHOLEWORD;
+        flag = wxSD_MATCHWHOLEWORD;
     } else if (e.GetId() == XRCID("match_regexp_quick")) {
-        flag = wxSCI_FIND_REGEXP; // wxSCI_FIND_POSIX ??
+        flag = wxSD_REGULAREXPRESSION;
     }
     if (e.IsChecked()) {
         m_flags |= flag;

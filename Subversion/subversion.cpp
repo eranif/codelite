@@ -147,7 +147,7 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		topWin->Connect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SubversionPlugin::OnProjectFileAdded), NULL, this);
 		topWin->Connect(wxEVT_FILE_VIEW_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatus), NULL, this);
         topWin->Connect(wxEVT_FILE_VIEW_REFRESHED, wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond), NULL, this);
-        
+
 		topWin->Connect(wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler(SubversionPlugin::OnLinkClicked), NULL, this);
 
 		topWin->Connect(XRCID("svn_update"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnUpdate), NULL, (wxEvtHandler*)this);
@@ -313,7 +313,7 @@ void SubversionPlugin::OnSvnAbort(wxCommandEvent &event)
 {
 	VALIDATE_SVNPATH();
 	wxUnusedVar(event);
-    
+
 	m_svn->PrintMessage(wxT("----\nAborting ...\n"));
 	m_svn->Abort();
 }
@@ -602,7 +602,7 @@ void SubversionPlugin::OnFileSaved(wxCommandEvent &e)
 void SubversionPlugin::OnOptions(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	SvnOptionsDlg *dlg = new SvnOptionsDlg(NULL, m_options);
+	SvnOptionsDlg *dlg = new SvnOptionsDlg(NULL, m_options, m_mgr);
 	if (dlg->ShowModal() == wxID_OK) {
 		m_options = dlg->GetOptions();
 		m_mgr->GetConfigTool()->WriteObject(wxT("SubversionOptions"), &m_options);
@@ -616,7 +616,7 @@ void SubversionPlugin::UnPlug()
     topWin->Disconnect(wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(SubversionPlugin::OnProjectFileAdded), NULL, this);
     topWin->Disconnect(wxEVT_FILE_VIEW_INIT_DONE, wxCommandEventHandler(SubversionPlugin::OnRefrshIconsStatus), NULL, this);
     topWin->Disconnect(wxEVT_FILE_VIEW_REFRESHED, wxCommandEventHandler(SubversionPlugin::OnRefreshIconsCond), NULL, this);
-    
+
     topWin->Disconnect(wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler(SubversionPlugin::OnLinkClicked), NULL, this);
 
 	topWin->Disconnect(XRCID("svn_commit_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommitFile), NULL, (wxEvtHandler*)this);
@@ -693,7 +693,7 @@ void SubversionPlugin::DoGetWspSvnStatus(const wxString &basePath, wxArrayString
     if (inclOutOfDate) {
         wait_msg.Reset(new PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion")));
     }
-    
+
 	//get list of paths to check
 	std::map<wxString, bool> workspaceFolders;
 
@@ -760,7 +760,7 @@ void SubversionPlugin::DoGetSvnStatus(const wxString &basePath, wxArrayString &o
     if (inclOutOfDate) {
         wait_msg.Reset(new PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion")));
     }
-    
+
 	wxString command;
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT("status --xml --non-interactive -q --no-ignore ");
@@ -867,7 +867,7 @@ void SubversionPlugin::DoGetPrjSvnStatus(const wxString &basePath, wxArrayString
     if (inclOutOfDate) {
         wait_msg.Reset(new PluginBusyMessage(m_mgr, wxT("Contacting SVN server..."), XRCID("subversion")));
     }
-    
+
 	//get the selected project name
 	wxString command;
 	command << wxT("\"") << this->GetOptions().GetExePath() << wxT("\" ");
@@ -1252,10 +1252,10 @@ void SubversionPlugin::DoRefreshIcons()
 {
     if (!m_mgr->IsWorkspaceOpen())
         return;
-    
-	wxWindowDisabler disabler;   
+
+	wxWindowDisabler disabler;
     PluginBusyMessage wait_msg(m_mgr, wxT("Updating SVN Icons..."), XRCID("subversion"));
-    
+
     SvnIconRefreshHandler handler(m_mgr, this);
     handler.DoCommand();
 }

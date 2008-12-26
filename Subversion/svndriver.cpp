@@ -393,7 +393,7 @@ void SvnDriver::DiffFile(const wxFileName &fileName)
 	}
 
 	const wxString& diffCmd = m_plugin->GetOptions().GetDiffCmd();
-	bool hasExternalDiffCmd = !diffCmd.empty();
+	bool hasExternalDiffCmd = m_plugin->GetOptions().GetFlags() & SvnUseExternalDiff ? true : false;
 	if ( !hasExternalDiffCmd ) {
 #ifdef __WXMSW__
 		file_name.Prepend(wxT("\""));
@@ -774,7 +774,7 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 {
 	// pass the SVN guard
 	ENTER_SVN_AND_SELECT()
-	
+
 	wxString command;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
 
@@ -797,7 +797,7 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 			// try to load and convert the file into the platform line ending
 			wxString fileContent;
 			wxString eol(wxT("\n"));
-			
+
 #if defined(__WXMSW__)
 			eol = wxT("\r\n");
 #endif
@@ -805,21 +805,21 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 				PrintMessage(wxString::Format(wxT("Failed to read patch file '%s'"), fdlg.GetPath().c_str()));
 				return;
 			}
-			
+
 			fileContent.Replace(wxT("\r\n"), wxT("\n"));
 			fileContent.Replace(wxT("\n"), eol);
-			
+
 			wxString tmpFileName(fdlg.GetPath()+wxT(".tmp"));
 			if(!WriteFileWithBackup(tmpFileName, fileContent, false)){
 				// failed to write the temporary file
 				PrintMessage(wxString::Format(wxT("Failed to convert patch file EOL mode '%s'"), tmpFileName.c_str()));
 				return;
 			}
-			
+
 			// execute the command
 			command << wxT("patch -p0 -i \"") << tmpFileName << wxT("\"");
 			m_curHandler = new SvnDefaultCmdHandler(this, command);
-			
+
 			if(handler) {
 				// set the temporary file name
 				handler->SetFile(tmpFileName);

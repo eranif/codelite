@@ -1957,13 +1957,14 @@ void ContextCpp::AutoAddComment()
 	case wxSCI_C_COMMENT:
 	case wxSCI_C_COMMENTDOC:
 		if (rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
-			toInsert = rCtrl.GetCharAt(rCtrl.GetLineIndentPosition(line-1)) == wxT('*') ? wxT("*") : wxT(" *");
+			toInsert = rCtrl.GetCharAt(rCtrl.GetLineIndentPosition(line-1)) == wxT('*') ? wxT("* ") : wxT(" * ");
 		}
 		break;
 	}
 	rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-1));
-	rCtrl.InsertText(rCtrl.GetLineIndentPosition(line), toInsert);
-	rCtrl.SetCaretAt(rCtrl.GetLineEndPosition(line));
+	int insertPos = rCtrl.GetLineIndentPosition(line);
+	rCtrl.InsertText(insertPos, toInsert);
+	rCtrl.SetCaretAt(insertPos + toInsert.Length());
 	rCtrl.ChooseCaretX(); // set new column as "current" column
 }
 

@@ -42,4 +42,9 @@
 //MyClass::MyClass()
 //: m_st{
 
-std::auto_ptr<std::string>::element_type str;
+//std::auto_ptr<std::string>::element_type str;
+//struct HiddenStruct yy;
+
+struct MyOtherStruct {
+	int val;
+} bb, cc;

@@ -120,14 +120,14 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 
     wxString find = m_findWhat->GetValue();
     wxString text = m_sci->GetText();
-    
+
     int start = -1, stop = -1;
     m_sci->GetSelection(&start, &stop);
-    
+
     int offset = !fwd || incr ? start : stop;
     int flags = m_flags | (fwd ? 0 : wxSD_SEARCH_BACKWARD);
     int pos = 0, len = 0;
-    
+
     if (!StringFindReplacer::Search(text, offset, find, flags, pos, len)) {
         // wrap around and try again
         offset = fwd ? 0 : text.Len()-1;
@@ -173,8 +173,9 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 			GetEventHandler()->AddPendingEvent(cmd);
             break;
 		}
+		default:
+			e.Skip();
     }
-    e.Skip();
 }
 
 void QuickFindBar::OnCheckBox(wxCommandEvent &e)

@@ -27,6 +27,7 @@ static VariableList *gs_vars = NULL;
 static std::vector<std::string> gs_names;
 static bool g_isUsedWithinFunc = false;
 Variable curr_var;
+static std::string s_tmpString;
 
 //---------------------------------------------
 // externs defined in the lexer
@@ -127,7 +128,7 @@ translation_unit	:		/*empty*/
 						| translation_unit external_decl
 						;
 
-external_decl		:	{curr_var.Reset(); gs_names.clear();} variables
+external_decl		:	{curr_var.Reset(); gs_names.clear(); s_tmpString.clear();} variables
 						| 	error {
 								yyclearin;	//clear lookahead token
 								yyerrok;
@@ -352,6 +353,7 @@ variable_decl		:	const_spec basic_type_name
 							curr_var.m_typeScope = $2;
 							curr_var.m_type = $3;
 							curr_var.m_isConst = !$1.empty();
+							s_tmpString.clear();
 						}
 						| 	const_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>'
 						{
@@ -362,6 +364,27 @@ variable_decl		:	const_spec basic_type_name
 							curr_var.m_isTemplate = true;
 							curr_var.m_templateDecl = $4 +$5 +$6;
 							curr_var.m_isConst = !$1.empty();
+							s_tmpString.clear();
+						}
+						| const_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER '{' {s_tmpString = var_consumBracketsContent('{');}
+						{
+							$$ = $1 + " " + $2 + " " + $3 + " " + $4 + $5 + $6 + s_tmpString;
+							$3.erase($3.find_last_not_of(":")+1);
+							curr_var.m_typeScope = $3;
+							curr_var.m_type = $4;
+							curr_var.m_isTemplate = false;
+							curr_var.m_isConst = !$1.empty();
+							s_tmpString.clear();
+						}
+						| const_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER
+						{
+							$$ = $0;
+							$3.erase($3.find_last_not_of(":")+1);
+							curr_var.m_typeScope = $3;
+							curr_var.m_type = $4;
+							curr_var.m_isTemplate = false;
+							curr_var.m_isConst = !$1.empty();
+							s_tmpString.clear();
 						}
 						;
 

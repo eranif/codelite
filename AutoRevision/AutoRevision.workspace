@@ -6,10 +6,10 @@
     <Variable Name="WorkspacePath" Value="/Development/C++/LiteEditor/AutoRevision"/>
   </Environment>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="autorev" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
+    <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="autorev" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

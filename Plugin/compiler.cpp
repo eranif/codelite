@@ -28,13 +28,32 @@
 
 Compiler::Compiler(wxXmlNode *node)
 {
+    // ensure all relevant entries exist in switches map (makes sure they show up in build settings dlg)
+    m_switches[wxT("Include")] = wxEmptyString;
+    m_switches[wxT("Debug")] = wxEmptyString;
+    m_switches[wxT("Preprocessor")] = wxEmptyString;
+    m_switches[wxT("Library")] = wxEmptyString;
+    m_switches[wxT("LibraryPath")] = wxEmptyString;
+    m_switches[wxT("Source")] = wxEmptyString;
+    m_switches[wxT("Output")] = wxEmptyString;
+    m_switches[wxT("Object")] = wxEmptyString;
+    m_switches[wxT("ArchiveOutput")] = wxEmptyString;
+    m_switches[wxT("PreprocessOnly")] = wxEmptyString;
+    
+    // ensure all relevant entries exist in tools map (makes sure they show up in build settings dlg)
+    m_tools[wxT("LinkerName")] = wxEmptyString;
+    m_tools[wxT("SharedObjectLinkerName")] = wxEmptyString;
+    m_tools[wxT("CompilerName")] = wxEmptyString;
+    m_tools[wxT("ArchiveTool")] = wxEmptyString;
+    m_tools[wxT("ResourceCompiler")] = wxEmptyString;
+    
 	m_fileTypes.clear();
 	if (node) {
 		m_name = XmlUtils::ReadString(node, wxT("Name"));
 		if (!node->HasProp(wxT("GenerateDependenciesFiles"))) {
-			if (m_name == wxT("gnu g++") || m_name == wxT("gnu gcc"))
+			if (m_name == wxT("gnu g++") || m_name == wxT("gnu gcc")) {
 				m_generateDependeciesFile = true;
-			else 
+            } else 
 				m_generateDependeciesFile = false;
 		} else {
 			m_generateDependeciesFile = XmlUtils::ReadBool(node, wxT("GenerateDependenciesFiles"));
@@ -51,8 +70,13 @@ Compiler::Compiler(wxXmlNode *node)
 			}
 
 			else if (child->GetName() == wxT("Option")) {
-				if (XmlUtils::ReadString(child, wxT("Name")) == wxT("ObjectSuffix")) {
+                wxString name = XmlUtils::ReadString(child, wxT("Name"));
+				if (name == wxT("ObjectSuffix")) {
 					m_objectSuffix = XmlUtils::ReadString(child, wxT("Value"));
+				} else if (name == wxT("DependSuffix")) {
+					m_dependSuffix = XmlUtils::ReadString(child, wxT("Value"));
+				} else if (name == wxT("PreprocessSuffix")) {
+					m_preprocessSuffix = XmlUtils::ReadString(child, wxT("Value"));
 				}
 			} else if (child->GetName() == wxT("File")) {
 				Compiler::CmpFileTypeInfo ft;
@@ -108,6 +132,7 @@ Compiler::Compiler(wxXmlNode *node)
 		m_switches[wxT("Output")] = wxT("-o ");
 		m_switches[wxT("Object")] = wxT("-o ");
 		m_switches[wxT("ArchiveOutput")] = wxT(" ");
+        m_switches[wxT("PreprocessOnly")] = wxT("-E");
 		m_objectSuffix = wxT(".o");
 		m_errorPattern =   	wxT("(^[a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+)(:)([0-9]+)(:)( *[eor]+:?)");
 		m_errorFileNameIndex = wxT("1");
@@ -125,6 +150,12 @@ Compiler::Compiler(wxXmlNode *node)
 		m_pathVariable = wxEmptyString;
 		m_generateDependeciesFile = false;
 	}
+    if (m_generateDependeciesFile && m_dependSuffix.IsEmpty()) {
+        m_dependSuffix = m_objectSuffix + wxT(".d");
+    }
+    if (!m_switches[wxT("PreprocessOnly")].IsEmpty() && m_preprocessSuffix.IsEmpty()) {
+        m_preprocessSuffix = m_objectSuffix + wxT(".i");
+    }
 
 	if (m_fileTypes.empty()) {
 		AddCmpFileType(wxT("cpp"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(FileName)$(ObjectSuffix) $(IncludePath)"));
@@ -179,8 +210,18 @@ wxXmlNode *Compiler::ToXml() const
 	}
 
 	wxXmlNode *options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
-	options->AddProperty(wxT("Name"), wxT("ObjectSuffix"));
+	options->AddProperty(wxT("Name"),  wxT("ObjectSuffix"));
 	options->AddProperty(wxT("Value"), m_objectSuffix);
+	node->AddChild(options);
+    
+    options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
+    options->AddProperty(wxT("Name"),  wxT("DependSuffix"));
+    options->AddProperty(wxT("Value"), m_dependSuffix);
+	node->AddChild(options);
+    
+    options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
+    options->AddProperty(wxT("Name"),  wxT("PreprocessSuffix"));
+    options->AddProperty(wxT("Value"), m_preprocessSuffix);
 	node->AddChild(options);
 
 	//add patterns

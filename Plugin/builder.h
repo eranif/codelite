@@ -134,6 +134,15 @@ public:
 	 * \return the command
 	 */
 	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg) = 0;
+	
+	/**
+	 * \brief create a command to execute for preprocessing single source file
+	 * \param project
+	 * \param fileName
+	 * \param errMsg [output]
+	 * \return the command
+	 */
+	virtual wxString GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg) = 0;
 };
 
 typedef SmartPtr<Builder> BuilderPtr;

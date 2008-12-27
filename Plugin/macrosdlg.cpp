@@ -90,7 +90,8 @@ void MacrosDlg::Initialize()
 		AddMacro(wxT("$(ArchiveTool)"), wxT("Expands to the archive tool (e.g. ar) name as set in the Tools tab"));
 		AddMacro(wxT("$(SharedObjectLinkerName)"), wxT("Expands to the shared object linker name as set in the Tools tab"));
 		AddMacro(wxT("$(ObjectSuffix)"), wxT("Objects suffix (usually set to .o)"));
-		AddMacro(wxT("$(ObjectSuffix)"), wxT("Objects suffix (usually set to .o)"));
+		AddMacro(wxT("$(DependSuffix)"), wxT("Objects suffix (usually set to .o.d)"));
+		AddMacro(wxT("$(PreprocessSuffix)"), wxT("Objects suffix (usually set to .o.i)"));
 		AddMacro(wxT("$(IncludeSwitch)"), wxT("The compiler include switch"));
 		AddMacro(wxT("$(LibrarySwitch)"), wxT("The library switch (e.g. -l)"));
 		AddMacro(wxT("$(OutputSwitch)"), wxT("The output switch (e.g. -o)"));
@@ -98,6 +99,7 @@ void MacrosDlg::Initialize()
 		AddMacro(wxT("$(PreprocessorSwitch)"), wxT("Preprocessor switch (e.g. -D)"));
 		AddMacro(wxT("$(Preprocessors)"), wxT("Expands to all preprocessors set in the project setting where each entry is prefixed with $(PreprocessorSwitch)"));
 		AddMacro(wxT("$(ArchiveOutputSwitch)"), wxT("Archive switch, usually not needed (VC compiler sets it to /OUT:"));
+        AddMacro(wxT("$(PreprocessOnlySwitch)"), wxT("The compiler preprocess-only switch (e.g. -E)"));
 		AddMacro(wxT("$(LinkOptions)"), wxT("The linker options as set in the project settings"));
 		AddMacro(wxT("$(IncludePath)"), wxT("All include paths prefixed with $(IncludeSwitch)"));
 		AddMacro(wxT("$(RcIncludePath)"), wxT("Resource compiler include path as set in the project settings"));

@@ -64,7 +64,7 @@ wxBoxSizer* mainSizer;
 	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 	
-	m_checkBoxGenerateDependenciesFiles = new wxCheckBox( m_panel1, wxID_ANY, _("Use compiler -MT switch to generate source dependencies files (*.o.d)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxGenerateDependenciesFiles = new wxCheckBox( m_panel1, wxID_ANY, _("Use compiler -MT switch to generate source dependencies files"), wxDefaultPosition, wxDefaultSize, 0 );
 	
 	bSizer11->Add( m_checkBoxGenerateDependenciesFiles, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -203,16 +203,30 @@ wxBoxSizer* mainSizer;
 	bSizer8->Add( m_staticText19, 0, wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer2 = new wxFlexGridSizer( 4, 2, 0, 0 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Objects extesion:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Objects extension:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textObjectExtension = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textObjectExtension, 1, wxALL|wxEXPAND, 5 );
+	
+	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Depends extension:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textDependExtension = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_textDependExtension, 1, wxALL|wxEXPAND, 5 );
+	
+	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Preprocessed extension:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textPreprocessExtension = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_textPreprocessExtension, 1, wxALL|wxEXPAND, 5 );
 	
 	bSizer8->Add( fgSizer2, 0, wxALL|wxEXPAND, 0 );
 	
@@ -357,6 +371,8 @@ void CompilerPage::CustomInitialize()
 	//load the compiler from the configuration file
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(m_cmpname);
 	m_textObjectExtension->SetValue(cmp->GetObjectSuffix());
+    m_textDependExtension->SetValue(cmp->GetDependSuffix());
+    m_textPreprocessExtension->SetValue(cmp->GetPreprocessSuffix());
 	m_textErrorPattern->SetValue(cmp->GetErrPattern());
 	m_textErrorFileIndex->SetValue(cmp->GetErrFileNameIndex());
 	m_textErrorLineNumber->SetValue(cmp->GetErrLineNumberIndex());
@@ -388,6 +404,8 @@ void CompilerPage::Save()
 	cmp->SetWarnFileNameIndex(m_textWarnFileIndex->GetValue());
 	cmp->SetWarnLineNumberIndex(m_textWarnLineNumber->GetValue());
 	cmp->SetObjectSuffix(m_textObjectExtension->GetValue());
+    cmp->SetDependSuffix(m_textDependExtension->GetValue());
+    cmp->SetPreprocessSuffix(m_textPreprocessExtension->GetValue());
 	cmp->SetTool(wxT("ArchiveTool"), m_textArchiveTool->GetValue());
 	cmp->SetTool(wxT("CompilerName"), m_textCompilerName->GetValue());
 	cmp->SetTool(wxT("LinkerName"), m_textLinkerName->GetValue());

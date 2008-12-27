@@ -38,6 +38,7 @@
 class WXDLLIMPEXP_LE_SDK CompileRequest : public ShellCommand {
 	wxString m_fileName;
 	bool m_premakeOnly;
+    bool m_preprocessOnly;
 public:
 	/**
 	 * Construct a compilation request. The compiler thread will build the selected project and all
@@ -47,7 +48,8 @@ public:
 	 */
 	CompileRequest(	wxEvtHandler *owner, const QueueCommand &buildInfo,
 					const wxString &fileName = wxEmptyString,
-					bool runPremakeOnly = false
+					bool runPremakeOnly = false,
+                    bool preprocessOnly = false
 					);
 
 	///dtor

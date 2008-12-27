@@ -91,7 +91,9 @@ void CustomBuildRequest::Process(IManager *manager)
 		isClean = true;
 	} else if (m_info.GetCustomBuildTarget() == wxT("Compile Single File")) {
 		cmd = bldConf->GetSingleFileBuildCommand();
-	}
+	} else if (m_info.GetCustomBuildTarget() == wxT("Preprocess File")) {
+        cmd = bldConf->GetPreprocessFileCommand();
+    }
 
 	// if still no luck, try with the other custom targets
 	if (cmd.IsEmpty()) {

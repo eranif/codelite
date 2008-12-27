@@ -81,6 +81,7 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "clean_project_only" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnCleanProjectOnly ), NULL, this );
 	Connect( XRCID( "import_directory" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnImportDirectory ), NULL, this );
 	Connect( XRCID( "compile_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnCompileItem ), NULL, this );
+	Connect( XRCID( "preprocess_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnPreprocessItem ), NULL, this );
 	Connect( XRCID( "rename_item" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRenameItem ), NULL, this );
 	Connect( XRCID( "rename_virtual_folder" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileViewTree::OnRenameVirtualFolder ), NULL, this );
 
@@ -105,6 +106,7 @@ void FileViewTree::ConnectEvents()
 	Connect( XRCID( "clean_project_only" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "import_directory" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "compile_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
+	Connect( XRCID( "preprocess_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "rename_item" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 	Connect( XRCID( "generate_makefile" ), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( FileViewTree::OnBuildInProgress ), NULL, this );
 }
@@ -966,6 +968,26 @@ void FileViewTree::OnCompileItem(wxCommandEvent &e)
 				wxString proj = path.BeforeFirst(wxT(':'));
 				logmsg << wxT("Compiling file: ") << data->GetData().GetFile() << wxT(" of project ") << proj << wxT("\n");
 				mgr->CompileFile(proj, data->GetData().GetFile());
+			}
+		}
+	}
+}
+
+void FileViewTree::OnPreprocessItem(wxCommandEvent &e)
+{
+	wxUnusedVar( e );
+	wxTreeItemId item = GetSingleSelection();
+	if ( item.IsOk() ) {
+		FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
+		if (data->GetData().GetKind() == ProjectItem::TypeFile) {
+			Manager *mgr = ManagerST::Get();
+			wxTreeItemId parent = GetItemParent( item );
+			if ( parent.IsOk() ) {
+				wxString logmsg;
+				wxString path = GetItemPath( parent );
+				wxString proj = path.BeforeFirst(wxT(':'));
+				logmsg << wxT("Preprocessing file: ") << data->GetData().GetFile() << wxT(" of project ") << proj << wxT("\n");
+				mgr->CompileFile(proj, data->GetData().GetFile(), true);
 			}
 		}
 	}

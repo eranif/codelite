@@ -70,7 +70,9 @@ protected:
 	std::map<wxString, wxString> m_switches;
 	std::map<wxString, Compiler::CmpFileTypeInfo> m_fileTypes;
 	wxString m_objectSuffix;
-
+    wxString m_dependSuffix;
+    wxString m_preprocessSuffix;
+    
 	wxString m_errorPattern;
 	wxString m_errorLineNubmerIndex;
 	wxString m_errorFileNameIndex;
@@ -119,6 +121,19 @@ public:
 	void SetObjectSuffix(const wxString &suffix) {
 		m_objectSuffix = suffix;
 	}
+  	const wxString &GetDependSuffix() const {
+		return m_dependSuffix;
+	}
+	void SetDependSuffix(const wxString &suffix) {
+		m_dependSuffix = suffix;
+	}
+	const wxString &GetPreprocessSuffix() const {
+		return m_preprocessSuffix;
+	}
+	void SetPreprocessSuffix(const wxString &suffix) {
+		m_preprocessSuffix = suffix;
+	}
+    
 	void SetName(const wxString &name) {
 		m_name = name;
 	}

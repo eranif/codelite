@@ -422,7 +422,19 @@ static void FoldCppDoc(unsigned int startPos, int length, int initStyle,
 					levelNext++;
 				} else if (styler.Match(j, "end")) {
 					levelNext--;
-				}
+				} else if (j < endPos && isdigit(styler.SafeGetCharAt(j))) {
+                    // e.g.: # 34 "file.h" 1 3 4
+                    // a '1' after the file name indicates start of include, a '2' end of include
+                    char pch, nch = ch;
+                    do pch = nch, nch = styler.SafeGetCharAt(++j); 
+                        while (j < endPos && nch != '\r' && nch != '\n' && 
+                                !((nch == '1' || nch == '2') && IsASpaceOrTab(pch)));
+                    if (nch == '1') {
+                        levelNext++;
+                    } else if (nch == '2') {
+                        levelNext--;
+                    }
+                }
 			}
 		}
 		if (style == SCE_C_OPERATOR) {

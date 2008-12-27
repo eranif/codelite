@@ -907,7 +907,7 @@ bool Manager::IsBuildEndedSuccessfully() const
 	return true;
 }
 
-void Manager::CompileFile ( const wxString &projectName, const wxString &fileName )
+void Manager::CompileFile ( const wxString &projectName, const wxString &fileName, bool preprocessOnly )
 {
 	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		return;
@@ -941,17 +941,17 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 
 	QueueCommand info ( projectName, conf, false, QueueCommand::Build );
 	if ( bldConf && bldConf->IsCustomBuild() ) {
-		info.SetCustomBuildTarget ( wxT ( "Compile Single File" ) );
+		info.SetCustomBuildTarget ( preprocessOnly ? wxT("Preprocess File") : wxT ( "Compile Single File" ) );
 		info.SetKind ( QueueCommand::CustomBuild );
 	}
 
 	switch ( info.GetKind() ) {
-	case QueueCommand::Build:
-		m_shellProcess = new CompileRequest ( GetMainFrame(), info, fileName, false );
-		break;
-	case  QueueCommand::CustomBuild:
-		m_shellProcess = new CustomBuildRequest ( GetMainFrame(), info, fileName );
-		break;
+        case QueueCommand::Build:
+            m_shellProcess = new CompileRequest ( GetMainFrame(), info, fileName, false, preprocessOnly );
+            break;
+        case  QueueCommand::CustomBuild:
+            m_shellProcess = new CustomBuildRequest ( GetMainFrame(), info, fileName );
+            break;
 	}
 	m_shellProcess->Process();
 }

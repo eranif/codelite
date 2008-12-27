@@ -88,6 +88,8 @@ protected:
 	wxStaticText* m_staticText19;
 	wxStaticText* m_staticText3;
 	wxTextCtrl* m_textObjectExtension;
+    wxTextCtrl* m_textDependExtension;
+    wxTextCtrl* m_textPreprocessExtension;
 	wxPanel* m_panel2;
 	wxStaticText* m_staticText9;
 	wxTextCtrl* m_textCompilerName;

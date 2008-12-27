@@ -49,6 +49,7 @@ public:
 	virtual wxString GetPOBuildCommand(const wxString &project, const wxString &confToBuild);
 	virtual wxString GetPOCleanCommand(const wxString &project, const wxString &confToBuild);
 	virtual wxString GetSingleFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg);
+	virtual wxString GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg);
 
 private:
 	void GenerateMakefile(ProjectPtr proj, const wxString &confToBuild, bool force);

@@ -35,10 +35,11 @@
 #include "workspace.h"
 #include "dirsaver.h"
 
-CompileRequest::CompileRequest(wxEvtHandler *owner, const QueueCommand &buildInfo, const wxString &fileName, bool runPremakeOnly)
+CompileRequest::CompileRequest(wxEvtHandler *owner, const QueueCommand &buildInfo, const wxString &fileName, bool runPremakeOnly, bool preprocessOnly)
 		: ShellCommand(owner, buildInfo)
 		, m_fileName(fileName)
 		, m_premakeOnly(runPremakeOnly)
+        , m_preprocessOnly(preprocessOnly)
 {
 }
 
@@ -71,7 +72,8 @@ void CompileRequest::Process(IManager *manager)
 	BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_fileName.IsEmpty() == false) {
 		//we got a complie request of a single file
-		cmd = builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg);
+		cmd = m_preprocessOnly ? builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg)
+                               : builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg);
 	} else if (m_info.GetProjectOnly()) {
 		cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
 	} else {
@@ -142,10 +144,12 @@ void CompileRequest::Process(IManager *manager)
 			//and what configuration
 			wxString text;
 			text << BUILD_PROJECT_PREFIX << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
-			if (m_fileName.IsEmpty() == false) {
-				text << wxT(" (Single File Build)----------\n");
-			} else {
+			if (m_fileName.IsEmpty()) {
 				text << wxT("----------\n");
+			} else if (m_preprocessOnly) {
+				text << wxT(" (Preprocess Single File)----------\n");
+            } else {
+				text << wxT(" (Single File Build)----------\n");
 			}
 			AppendLine(text);
 		}

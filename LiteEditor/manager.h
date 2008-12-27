@@ -395,7 +395,7 @@ public:
 	 * compile single file from a given
 	 * given project
 	 */
-	void CompileFile(const wxString &project, const wxString &fileName);
+	void CompileFile(const wxString &project, const wxString &fileName, bool preprocessOnly = false);
 
 	/**
 	 * Stop current build process

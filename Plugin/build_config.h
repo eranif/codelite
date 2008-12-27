@@ -109,6 +109,7 @@ class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject
 	wxString m_toolName;
 	wxString m_makeGenerationCommand;
 	wxString m_singleFileBuildCommand;
+    wxString m_preprocessFileCommand;
 	wxString m_debuggerStartupCmds;
 	wxString m_debuggerPostRemoteConnectCmds;
 	bool m_isDbgRemoteTarget;
@@ -331,6 +332,13 @@ public:
 	const wxString& GetSingleFileBuildCommand() const {
 		return m_singleFileBuildCommand;
 	}
+    
+    void SetPreprocessFileCommand(const wxString &preprocessFileCommand) {
+        this->m_preprocessFileCommand = preprocessFileCommand;
+    }
+    const wxString &GetPreprocessFileCommand() const {
+        return m_preprocessFileCommand;
+    }
 
 	const wxString &GetProjectType() const {
 		return m_projectType;

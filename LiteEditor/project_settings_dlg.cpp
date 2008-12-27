@@ -43,6 +43,7 @@
 static const wxString CUSTOM_TARGET_BUILD = wxT("Build");
 static const wxString CUSTOM_TARGET_CLEAN = wxT("Clean");
 static const wxString CUSTOM_TARGET_COMPILE_SINGLE_FILE = wxT("Compile Single File");
+static const wxString CUSTOM_TARGET_PREPROCESS_FILE = wxT("Preprocess File");
 
 ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &configName, const wxString &projectName, const wxString &title )
 		: ProjectSettingsBaseDlg( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 782,502 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
@@ -211,12 +212,16 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_COMPILE_SINGLE_FILE);
 	SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetSingleFileBuildCommand());
 
+	item = AppendListCtrlRow(m_listCtrlTargets);
+	SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_PREPROCESS_FILE);
+	SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetPreprocessFileCommand());
+
 	// Initialize the custom build targets
 	std::map<wxString, wxString> targets = buildConf->GetCustomTargets();
 	std::map<wxString, wxString>::iterator titer = targets.begin();
 	for (; titer != targets.end(); titer++) {
 
-		if(titer->first == CUSTOM_TARGET_BUILD || titer->first == CUSTOM_TARGET_CLEAN || titer->first == CUSTOM_TARGET_COMPILE_SINGLE_FILE){
+		if(titer->first == CUSTOM_TARGET_BUILD || titer->first == CUSTOM_TARGET_CLEAN || titer->first == CUSTOM_TARGET_COMPILE_SINGLE_FILE || titer->first == CUSTOM_TARGET_PREPROCESS_FILE){
 			continue;
 		}
 
@@ -335,7 +340,8 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	// loop over the list and create the targets map
 	std::map<wxString, wxString> targets;
 	for (int i=0; i<(int)m_listCtrlTargets->GetItemCount(); i++) {
-		if(GetColumnText(m_listCtrlTargets, i, 0) == CUSTOM_TARGET_BUILD || GetColumnText(m_listCtrlTargets, i, 0) == CUSTOM_TARGET_CLEAN || GetColumnText(m_listCtrlTargets, i, 0) == CUSTOM_TARGET_COMPILE_SINGLE_FILE){
+        wxString colText = GetColumnText(m_listCtrlTargets, i, 0);
+		if(colText == CUSTOM_TARGET_BUILD || colText == CUSTOM_TARGET_CLEAN || colText == CUSTOM_TARGET_COMPILE_SINGLE_FILE || colText == CUSTOM_TARGET_PREPROCESS_FILE){
 			continue;
 		}
 		targets[GetColumnText(m_listCtrlTargets, i, 0)] = GetColumnText(m_listCtrlTargets, i, 1);
@@ -361,6 +367,7 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetCustomBuildCmd(GetTargetCommand(CUSTOM_TARGET_BUILD));
 	buildConf->SetCustomCleanCmd(GetTargetCommand(CUSTOM_TARGET_CLEAN));
 	buildConf->SetSingleFileBuildCommand(GetTargetCommand(CUSTOM_TARGET_COMPILE_SINGLE_FILE));
+    buildConf->SetPreprocessFileCommand(GetTargetCommand(CUSTOM_TARGET_PREPROCESS_FILE));
 
 	buildConf->EnableCustomBuild(m_checkEnableCustomBuild->IsChecked());
 	buildConf->SetMakeGenerationCommand(m_textCtrlMakefileGenerationCmd->GetValue());

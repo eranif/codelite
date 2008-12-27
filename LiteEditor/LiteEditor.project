@@ -530,7 +530,8 @@
         <Target Name="configure">./configure</Target>
         <CleanCommand>make clean</CleanCommand>
         <BuildCommand>make </BuildCommand>
-        <SingleFileCommand>make $(CurrentFile).o</SingleFileCommand>
+        <SingleFileCommand>make Debug_gcc_unicode/$(CurrentFileName).o</SingleFileCommand>
+        <PreprocessFileCommand>make Debug_gcc_unicode/$(CurrentFileName).o.i</PreprocessFileCommand>
         <MakefileGenerationCommand>./configure</MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
         <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>

@@ -144,6 +144,7 @@ protected:
 	virtual void OnImportDirectory(wxCommandEvent &e);
 	virtual void OnRenameItem(wxCommandEvent &e);
 	virtual void OnCompileItem(wxCommandEvent &e);
+    virtual void OnPreprocessItem(wxCommandEvent &e);
 	virtual void SortTree();
 	virtual void SortItem(wxTreeItemId &item);
 	virtual void OnRenameVirtualFolder(wxCommandEvent &e);

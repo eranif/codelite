@@ -145,6 +145,8 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 					m_customCleanCmd = child->GetNodeContent();
 				} else if (child->GetName() == wxT("SingleFileCommand")) {
 					m_singleFileBuildCommand = child->GetNodeContent();
+				} else if (child->GetName() == wxT("PreprocessFileCommand")) {
+					m_preprocessFileCommand = child->GetNodeContent();
 				} else if (child->GetName() == wxT("WorkingDirectory")) {
 					m_customBuildWorkingDir = child->GetNodeContent();
 				} else if (child->GetName() == wxT("ThirdPartyToolName")) {
@@ -211,6 +213,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_makeGenerationCommand = wxEmptyString;
 		m_toolName = wxEmptyString;
 		m_singleFileBuildCommand = wxEmptyString;
+        m_preprocessFileCommand = wxEmptyString;
 		m_debuggerStartupCmds = wxEmptyString;
 		m_debuggerPostRemoteConnectCmds = wxEmptyString;
 		m_isDbgRemoteTarget = false;
@@ -370,6 +373,10 @@ wxXmlNode *BuildConfig::ToXml() const
 	//add the makefile generation command
 	wxXmlNode *singleFileCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("SingleFileCommand"));
 	XmlUtils::SetNodeContent(singleFileCmd, m_singleFileBuildCommand);
+
+	//add the makefile generation command
+	wxXmlNode *preprocessFileCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("PreprocessFileCommand"));
+	XmlUtils::SetNodeContent(preprocessFileCmd, m_preprocessFileCommand);
 
 	//add build and clean commands
 	wxXmlNode *bldCmd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, wxT("BuildCommand"));

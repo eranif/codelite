@@ -162,11 +162,15 @@ createRules_archive ()
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		fi
 	done
 	echo >> Makefile
@@ -197,11 +201,15 @@ createRules_sharedObject_no_link_flags ()
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		fi
 	done
 	echo >> Makefile
@@ -236,11 +244,15 @@ createRules_sharedObject ()
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		fi
 	done
 	echo >> Makefile
@@ -275,11 +287,15 @@ createRules_exe ()
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		fi
 	done
 	echo >> Makefile

@@ -55,185 +55,185 @@ CompilerPage::CompilerPage( wxWindow* parent, wxString name, int id, wxPoint pos
 {
 wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
-	
+
 	m_notebook1 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	m_panel1 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
-	
+
 	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
-	
+
 	m_checkBoxGenerateDependenciesFiles = new wxCheckBox( m_panel1, wxID_ANY, _("Use compiler -MT switch to generate source dependencies files"), wxDefaultPosition, wxDefaultSize, 0 );
-	
+
 	bSizer11->Add( m_checkBoxGenerateDependenciesFiles, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_staticline3 = new wxStaticLine( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer11->Add( m_staticline3, 0, wxEXPAND | wxALL, 5 );
-	
+
 	wxBoxSizer* bSizerError;
 	bSizerError = new wxBoxSizer( wxVERTICAL );
-	
+
 	m_staticText161 = new wxStaticText( m_panel1, wxID_ANY, _("Compiler Errors Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText161->Wrap( -1 );
 	m_staticText161->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-	
+
 	bSizerError->Add( m_staticText161, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer41;
 	fgSizer41 = new wxFlexGridSizer( 2, 2, 0, 0 );
 	fgSizer41->AddGrowableCol( 1 );
 	fgSizer41->SetFlexibleDirection( wxBOTH );
 	fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_staticText5 = new wxStaticText( m_panel1, wxID_ANY, _("Regex Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
 	fgSizer41->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
+
 	m_textErrorPattern = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer41->Add( m_textErrorPattern, 0, wxEXPAND|wxALL, 5 );
-	
+
 	m_staticText6 = new wxStaticText( m_panel1, wxID_ANY, _("File Index in Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	fgSizer41->Add( m_staticText6, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
+
 	m_textErrorFileIndex = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer41->Add( m_textErrorFileIndex, 0, wxEXPAND|wxALL, 5 );
-	
+
 	m_staticText7 = new wxStaticText( m_panel1, wxID_ANY, _("Line Number in Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText7->Wrap( -1 );
 	fgSizer41->Add( m_staticText7, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
+
 	m_textErrorLineNumber = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer41->Add( m_textErrorLineNumber, 0, wxEXPAND|wxALL, 5 );
-	
+
 	bSizerError->Add( fgSizer41, 0, wxEXPAND, 5 );
-	
+
 	m_staticline1 = new wxStaticLine( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizerError->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
-	
+
 	bSizer11->Add( bSizerError, 0, wxEXPAND, 5 );
-	
+
 	wxBoxSizer* bSizerWarnings;
 	bSizerWarnings = new wxBoxSizer( wxVERTICAL );
-	
+
 	m_staticText17 = new wxStaticText( m_panel1, wxID_ANY, _("Compiler Warnings Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText17->Wrap( -1 );
 	m_staticText17->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-	
+
 	bSizerWarnings->Add( m_staticText17, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer5;
 	fgSizer5 = new wxFlexGridSizer( 2, 2, 0, 0 );
 	fgSizer5->AddGrowableCol( 1 );
 	fgSizer5->SetFlexibleDirection( wxBOTH );
 	fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_staticText51 = new wxStaticText( m_panel1, wxID_ANY, _("Regex Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText51->Wrap( -1 );
 	fgSizer5->Add( m_staticText51, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
+
 	m_textWarnPattern = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer5->Add( m_textWarnPattern, 0, wxEXPAND|wxALL, 5 );
-	
+
 	m_staticText61 = new wxStaticText( m_panel1, wxID_ANY, _("File Index in Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText61->Wrap( -1 );
 	fgSizer5->Add( m_staticText61, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
+
 	m_textWarnFileIndex = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer5->Add( m_textWarnFileIndex, 0, wxEXPAND|wxALL, 5 );
-	
+
 	m_staticText71 = new wxStaticText( m_panel1, wxID_ANY, _("Line Number in Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText71->Wrap( -1 );
 	fgSizer5->Add( m_staticText71, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
-	
+
 	m_textWarnLineNumber = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer5->Add( m_textWarnLineNumber, 0, wxEXPAND|wxALL, 5 );
-	
+
 	bSizerWarnings->Add( fgSizer5, 1, wxEXPAND, 5 );
-	
+
 	bSizer11->Add( bSizerWarnings, 0, wxEXPAND, 5 );
-	
+
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
-	
+
 	m_staticline2 = new wxStaticLine( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer7->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
-	
+
 	m_staticText18 = new wxStaticText( m_panel1, wxID_ANY, _("Global Paths:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText18->Wrap( -1 );
 	m_staticText18->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-	
+
 	bSizer7->Add( m_staticText18, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer3;
 	fgSizer3 = new wxFlexGridSizer( 2, 2, 0, 0 );
 	fgSizer3->AddGrowableCol( 1 );
 	fgSizer3->SetFlexibleDirection( wxBOTH );
 	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_staticText141 = new wxStaticText( m_panel1, wxID_ANY, _("Include Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText141->Wrap( -1 );
 	fgSizer3->Add( m_staticText141, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_textCtrlGlobalIncludePath = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer3->Add( m_textCtrlGlobalIncludePath, 0, wxALL|wxEXPAND, 5 );
-	
+
 	m_staticText16 = new wxStaticText( m_panel1, wxID_ANY, _("Libraries Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText16->Wrap( -1 );
 	fgSizer3->Add( m_staticText16, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_textCtrlGlobalLibPath = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer3->Add( m_textCtrlGlobalLibPath, 0, wxALL|wxEXPAND, 5 );
-	
+
 	bSizer7->Add( fgSizer3, 1, wxEXPAND, 5 );
-	
+
 	bSizer11->Add( bSizer7, 0, wxEXPAND, 5 );
-	
+
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
-	
+
 	m_staticline31 = new wxStaticLine( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer8->Add( m_staticline31, 0, wxEXPAND | wxALL, 5 );
-	
+
 	m_staticText19 = new wxStaticText( m_panel1, wxID_ANY, _("Misc:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText19->Wrap( -1 );
 	m_staticText19->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-	
+
 	bSizer8->Add( m_staticText19, 0, wxALL, 5 );
-	
+
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 4, 2, 0, 0 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Objects extension:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_textObjectExtension = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textObjectExtension, 1, wxALL|wxEXPAND, 5 );
-	
+
 	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Depends extension:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_textDependExtension = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textDependExtension, 1, wxALL|wxEXPAND, 5 );
-	
+
 	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Preprocessed extension:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_textPreprocessExtension = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_textPreprocessExtension, 1, wxALL|wxEXPAND, 5 );
-	
+
 	bSizer8->Add( fgSizer2, 0, wxALL|wxEXPAND, 0 );
-	
+
 	bSizer11->Add( bSizer8, 0, wxEXPAND, 5 );
-	
+
 	bSizer4->Add( bSizer11, 0, wxALL|wxEXPAND, 0 );
-	
+
 	m_panel1->SetSizer( bSizer4 );
 	m_panel1->Layout();
 	bSizer4->Fit( m_panel1 );
@@ -241,62 +241,62 @@ wxBoxSizer* mainSizer;
 	m_panel2 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
-	
+
 	wxFlexGridSizer* fgSizer4;
 	fgSizer4 = new wxFlexGridSizer( 3, 2, 0, 0 );
 	fgSizer4->AddGrowableCol( 1 );
 	fgSizer4->AddGrowableCol( 3 );
 	fgSizer4->SetFlexibleDirection( wxBOTH );
 	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
+
 	m_staticText9 = new wxStaticText( m_panel2, wxID_ANY, _("Compiler Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText9->Wrap( -1 );
 	fgSizer4->Add( m_staticText9, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_textCompilerName = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer4->Add( m_textCompilerName, 0, wxALL|wxEXPAND, 5 );
-	
+
 	m_staticText11 = new wxStaticText( m_panel2, wxID_ANY, _("Linker Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText11->Wrap( -1 );
 	fgSizer4->Add( m_staticText11, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_textLinkerName = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer4->Add( m_textLinkerName, 0, wxALL|wxEXPAND, 5 );
-	
+
 	m_staticText12 = new wxStaticText( m_panel2, wxID_ANY, _("Shared Object Linker:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText12->Wrap( -1 );
 	fgSizer4->Add( m_staticText12, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_textSOLinker = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer4->Add( m_textSOLinker, 0, wxALL|wxEXPAND, 5 );
-	
+
 	m_staticText10 = new wxStaticText( m_panel2, wxID_ANY, _("Archive Tool:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText10->Wrap( -1 );
 	fgSizer4->Add( m_staticText10, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_textArchiveTool = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer4->Add( m_textArchiveTool, 0, wxALL|wxEXPAND, 5 );
-	
+
 	m_staticText14 = new wxStaticText( m_panel2, wxID_ANY, _("Resource Compiler:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText14->Wrap( -1 );
 	fgSizer4->Add( m_staticText14, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_textResourceCmp = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer4->Add( m_textResourceCmp, 0, wxALL|wxEXPAND, 5 );
-	
+
 	m_staticText20 = new wxStaticText( m_panel2, wxID_ANY, _("PATH environment variable:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText20->Wrap( -1 );
 	m_staticText20->SetToolTip( _("You can set here the PATH environment variable that will be used for this toolset only. The value sets here will override the value set in 'Environement Variables' table. To concatenate a value to the current PATH, use the following format: $(PATH);C:\newpath (Windows) OR $(PATH):/home/eran/bin (*nix)") );
-	
+
 	fgSizer4->Add( m_staticText20, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+
 	m_textCtrlPathVariable = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_textCtrlPathVariable->SetToolTip( _("You can set here the PATH environment variable that will be used for this toolset only. The value sets here will override the value set in 'Environement Variables' table. To concatenate a value to the current PATH, use the following format: $(PATH);C:\newpath (Windows) OR $(PATH):/home/eran/bin (*nix)") );
-	
+
 	fgSizer4->Add( m_textCtrlPathVariable, 1, wxALL|wxEXPAND, 5 );
-	
+
 	bSizer9->Add( fgSizer4, 1, wxEXPAND, 5 );
-	
+
 	m_panel2->SetSizer( bSizer9 );
 	m_panel2->Layout();
 	bSizer9->Fit( m_panel2 );
@@ -304,14 +304,14 @@ wxBoxSizer* mainSizer;
 	m_panel3 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
-	
+
 	m_staticText8 = new wxStaticText( m_panel3, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText8->Wrap( -1 );
 	bSizer3->Add( m_staticText8, 0, wxALL, 5 );
-	
+
 	m_listSwitches = new wxListCtrl( m_panel3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
 	bSizer3->Add( m_listSwitches, 1, wxEXPAND|wxALL, 5 );
-	
+
 	m_panel3->SetSizer( bSizer3 );
 	m_panel3->Layout();
 	bSizer3->Fit( m_panel3 );
@@ -319,41 +319,41 @@ wxBoxSizer* mainSizer;
 	m_panel4 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer10;
 	bSizer10 = new wxBoxSizer( wxVERTICAL );
-	
+
 	m_staticText23 = new wxStaticText( m_panel4, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText23->Wrap( -1 );
 	bSizer10->Add( m_staticText23, 0, wxALL|wxEXPAND, 5 );
-	
+
 	wxBoxSizer* bSizer12;
 	bSizer12 = new wxBoxSizer( wxHORIZONTAL );
-	
+
 	m_listCtrlFileTypes = new wxListCtrl( m_panel4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
 	bSizer12->Add( m_listCtrlFileTypes, 1, wxALL|wxEXPAND, 5 );
-	
+
 	wxBoxSizer* bSizer111;
 	bSizer111 = new wxBoxSizer( wxVERTICAL );
-	
+
 	m_buttonNewFileType = new wxButton( m_panel4, wxID_ANY, _("New..."), wxDefaultPosition, wxDefaultSize, 0 );
-	m_buttonNewFileType->SetDefault(); 
+	m_buttonNewFileType->SetDefault();
 	bSizer111->Add( m_buttonNewFileType, 0, wxALL, 5 );
-	
+
 	m_buttonDeleteFileType = new wxButton( m_panel4, wxID_ANY, _("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer111->Add( m_buttonDeleteFileType, 0, wxALL, 5 );
-	
+
 	bSizer12->Add( bSizer111, 0, 0, 5 );
-	
+
 	bSizer10->Add( bSizer12, 1, wxEXPAND, 5 );
-	
+
 	m_panel4->SetSizer( bSizer10 );
 	m_panel4->Layout();
 	bSizer10->Fit( m_panel4 );
 	m_notebook1->AddPage( m_panel4, _("File Types"), false );
-	
+
 	mainSizer->Add( m_notebook1, 1, wxEXPAND | wxALL, 5 );
-	
+
 	this->SetSizer( mainSizer );
 	this->Layout();
-	
+
 	// Connect Events
 	m_listSwitches->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerPage::OnItemActivated ), NULL, this );
 	m_listSwitches->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerPage::OnItemSelected ), NULL, this );
@@ -370,9 +370,6 @@ void CompilerPage::CustomInitialize()
 {
 	//load the compiler from the configuration file
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(m_cmpname);
-	m_textObjectExtension->SetValue(cmp->GetObjectSuffix());
-    m_textDependExtension->SetValue(cmp->GetDependSuffix());
-    m_textPreprocessExtension->SetValue(cmp->GetPreprocessSuffix());
 	m_textErrorPattern->SetValue(cmp->GetErrPattern());
 	m_textErrorFileIndex->SetValue(cmp->GetErrFileNameIndex());
 	m_textErrorLineNumber->SetValue(cmp->GetErrLineNumberIndex());
@@ -384,10 +381,8 @@ void CompilerPage::CustomInitialize()
 	m_textLinkerName->SetValue(cmp->GetTool(wxT("LinkerName")));
 	m_textSOLinker->SetValue(cmp->GetTool(wxT("SharedObjectLinkerName")));
 	m_textResourceCmp->SetValue(cmp->GetTool(wxT("ResourceCompiler")));
-	m_textCtrlGlobalIncludePath->SetValue(cmp->GetGlobalIncludePath());
-	m_textCtrlGlobalLibPath->SetValue(cmp->GetGlobalLibPath());
 	m_textCtrlPathVariable->SetValue(cmp->GetPathVariable());
-	m_checkBoxGenerateDependenciesFiles->SetValue(cmp->GetGenerateDependeciesFile());
+
 	InitSwitches();
 	InitFileTypes();
 	ConnectEvents();
@@ -415,7 +410,7 @@ void CompilerPage::Save()
 	cmp->SetGlobalLibPath(m_textCtrlGlobalLibPath->GetValue());
 	cmp->SetPathVariable(m_textCtrlPathVariable->GetValue());
 	cmp->SetGenerateDependeciesFile(m_checkBoxGenerateDependenciesFiles->IsChecked());
-	
+
 	std::map<wxString, Compiler::CmpFileTypeInfo> fileTypes;
 	int count = m_listCtrlFileTypes->GetItemCount();
 	for (int i=0; i<count; i++) {
@@ -538,9 +533,9 @@ void CompilerPage::OnFileTypeActivated(wxListEvent& event)
 
 void CompilerPage::OnFileTypeDeSelected(wxListEvent& event)
 {
-#ifndef __WXMAC__	
+#ifndef __WXMAC__
 	m_selectedFileType = wxNOT_FOUND;
-#endif	
+#endif
 	event.Skip();
 }
 

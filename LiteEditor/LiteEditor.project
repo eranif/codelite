@@ -202,6 +202,18 @@
       <File Name="editcmpfileinfobase.cpp"/>
       <File Name="editcmpfileinfobase.h"/>
       <File Name="editcmpfileinfodlg.cpp"/>
+      <File Name="compilertoolspage.h"/>
+      <File Name="compiler_pages.cpp"/>
+      <File Name="compiler_pages.h"/>
+      <File Name="compileradvancepage.cpp"/>
+      <File Name="compileradvancepage.h"/>
+      <File Name="compilerfiletypespage.cpp"/>
+      <File Name="compilerfiletypespage.h"/>
+      <File Name="compilerpatternspage.cpp"/>
+      <File Name="compilerpatternspage.h"/>
+      <File Name="compilerswitchespage.cpp"/>
+      <File Name="compilerswitchespage.h"/>
+      <File Name="compilertoolspage.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Build">
       <File Name="configuration_manager_base_dlg.cpp"/>

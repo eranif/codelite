@@ -399,7 +399,7 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 
 bool MainBook::SelectPage(wxWindow *win)
 {
-    LEditor *oldeditor = GetActiveEditor();
+//    LEditor *oldeditor = GetActiveEditor();
 
 	size_t index = m_book->GetPageIndex(win);
 	std::set<wxWindow*>::iterator i = m_detachedTabs.find(win);
@@ -432,9 +432,9 @@ bool MainBook::SelectPage(wxWindow *win)
 		Frame::Get()->SetStatusMessage(wxEmptyString, 3); // clear end-of-line mode indicator
 		UpdateNavBar(NULL);
 	} else {
-        if (oldeditor && oldeditor != editor) {
-            oldeditor->AddBrowseRecord(NULL);
-        }
+//        if (oldeditor && oldeditor != editor) {
+//            oldeditor->AddBrowseRecord(NULL);
+//        }
 		editor->SetActive();
 		if (editor->GetContext()->GetName() == wxT("C++")) {
 			if (Frame::Get()->GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {

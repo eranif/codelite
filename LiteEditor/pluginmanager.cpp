@@ -418,11 +418,19 @@ OptionsConfigPtr PluginManager::GetEditorSettings()
 
 void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name)
 {
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	if (editor) {
 		editor->FindAndSelect(pattern, name);
 		editor->SetActive();
 	}
+}
+
+TagEntryPtr PluginManager::GetTagAtCaret(bool scoped, bool impl) 
+{
+    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+    if (!editor)
+        return NULL;
+    return editor->GetContext()->GetTagAtCaret(scoped, impl);
 }
 
 bool PluginManager::AllowToolbar()

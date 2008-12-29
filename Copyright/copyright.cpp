@@ -72,7 +72,6 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 Copyright::Copyright(IManager *manager)
 		: IPlugin(manager)
 		, m_topWin(NULL)
-		, m_sepItem(NULL)
 		, m_projectSepItem(NULL)
 		, m_workspaceSepItem(NULL)
 {
@@ -123,10 +122,6 @@ void Copyright::HookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeEditor) {
 
-		if ( !m_sepItem ) {
-			m_sepItem = menu->AppendSeparator();
-		}
-
 		if (!menu->FindItem(XRCID("insert_copyrights"))) {
 			menu->Append(XRCID("insert_copyrights"), wxT("Insert Copyright Block"), wxEmptyString);
 		}
@@ -166,12 +161,6 @@ void Copyright::UnHookPopupMenu(wxMenu *menu, MenuType type)
 		if (item) {
 			menu->Destroy( item );
 		}
-
-		if (m_sepItem) {
-			menu->Destroy( m_sepItem );
-			m_sepItem = NULL;
-		}
-
 	} else if (type == MenuTypeFileExplorer) {
 		//TODO::Unhook  items for the file explorer context menu
 	} else if (type == MenuTypeFileView_Workspace) {

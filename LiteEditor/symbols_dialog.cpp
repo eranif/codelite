@@ -50,30 +50,22 @@ SymbolsDialog::SymbolsDialog( wxWindow* parent )
 
 void SymbolsDialog::AddSymbol(const TagEntryPtr &tag, bool sel)
 {
-	wxString displayName;
-
 	//-------------------------------------------------------
 	// Populate the columns
 	//-------------------------------------------------------
-
-	// Set the item display name
-	wxString tmp(tag->GetFullDisplayName())/*, name*/;
-	displayName = tmp;
-//	if (tmp.EndsWith(wxT(": [prototype]"), &name)) {
-//		displayName = name;
-//	} else {
-//		displayName = tmp;
-//	}
 
 	wxString line;
 	line << tag->GetLine();
 	
 	long index = AppendListCtrlRow(m_results);
-	SetColumnText(m_results, index, 0, displayName);
+	SetColumnText(m_results, index, 0, tag->GetFullDisplayName());
 	SetColumnText(m_results, index, 1, tag->GetKind());
 	SetColumnText(m_results, index, 2, tag->GetFile());
 	SetColumnText(m_results, index, 3, line);
 	SetColumnText(m_results, index, 4, tag->GetPattern());
+
+    // list ctrl can reorder items, so use returned index to insert tag
+    m_tags.insert(m_tags.begin()+index, tag);
 }
 
 void SymbolsDialog::AddSymbols(const std::vector<TagEntryPtr> &tags, size_t sel)
@@ -92,7 +84,7 @@ void SymbolsDialog::AddSymbols(const std::vector<TagEntryPtr> &tags, size_t sel)
 	if (tags.empty() == false) {
 		m_results->SetItemState(0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 		m_results->SetItemState(0, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
-		m_selectedItem = 0;
+		m_tag = m_tags[m_selectedItem = 0];
 	}
 }
 
@@ -109,7 +101,7 @@ void SymbolsDialog::UpdateFileAndLine(wxListEvent &event)
 void SymbolsDialog::OnItemSelected(wxListEvent &event)
 {
 	UpdateFileAndLine(event);
-	m_selectedItem = event.m_itemIndex;
+	m_tag = m_tags[m_selectedItem = event.m_itemIndex];
 }
 
 void SymbolsDialog::OnItemActivated(wxListEvent &event)
@@ -135,6 +127,7 @@ void SymbolsDialog::OnItemDeselected(wxListEvent &event)
 {
 	wxUnusedVar(event);
 	m_selectedItem = wxNOT_FOUND;
+    m_tag = NULL;
 }
 
 void SymbolsDialog::OnCharHook(wxKeyEvent &event)
@@ -142,7 +135,7 @@ void SymbolsDialog::OnCharHook(wxKeyEvent &event)
 	if (event.GetKeyCode() == WXK_DOWN) {
 
 		if (m_selectedItem == wxNOT_FOUND && m_results->GetItemCount() > 0) {
-			m_selectedItem = 0;
+			m_tag = m_tags[m_selectedItem = 0];
 		}
 
 		if (m_selectedItem == wxNOT_FOUND)
@@ -150,15 +143,15 @@ void SymbolsDialog::OnCharHook(wxKeyEvent &event)
 
 		if (m_results->GetItemCount() > m_selectedItem + 1) {
 			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_DROPHILITED);
-			m_selectedItem ++;
-			
+			m_tag = m_tags[++m_selectedItem];
+            
 			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 			m_results->EnsureVisible(m_selectedItem);
 			return;
 		}
 	} else if ( event.GetKeyCode() == WXK_UP) {
 		if (m_selectedItem == wxNOT_FOUND && m_results->GetItemCount() > 0) {
-			m_selectedItem = 0;
+			m_tag = m_tags[m_selectedItem = 0];
 		}
 
 		if (m_selectedItem == wxNOT_FOUND)
@@ -168,7 +161,7 @@ void SymbolsDialog::OnCharHook(wxKeyEvent &event)
 		if ((m_selectedItem - 1) >= 0) {
 			//we can select the next one
 			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_DROPHILITED);
-			m_selectedItem --;
+			m_tag = m_tags[--m_selectedItem];
 			
 			m_results->SetItemState(m_selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 			m_results->EnsureVisible(m_selectedItem);

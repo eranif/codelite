@@ -118,7 +118,6 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		, m_svn(NULL)
 		, topWin(NULL)
 		, m_explorerSepItem(NULL)
-		, m_editorSepItem(NULL)
 		, m_workspaceSepItem(NULL)
 		, m_projectSepItem(NULL)
 {
@@ -520,7 +519,6 @@ void SubversionPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 	} else if (type == MenuTypeEditor) {
 
 		if (!menu->FindItem(XRCID("SVN_EDITOR_POPUP"))) {
-			m_editorSepItem = menu->AppendSeparator();
 			menu->Append(XRCID("SVN_EDITOR_POPUP"), wxT("Svn"), CreateEditorPopMenu());
 		}
 	} else if (type == MenuTypeFileView_Workspace) {
@@ -562,8 +560,6 @@ void SubversionPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 		wxMenuItem *item = menu->FindItem(XRCID("SVN_EDITOR_POPUP"));
 		if (item) {
 			menu->Destroy(item);
-			menu->Destroy(m_editorSepItem);
-			m_editorSepItem = NULL;
 		}
 	} else if (type == MenuTypeFileView_Workspace) {
 		wxMenuItem *item = menu->FindItem(XRCID("SVN_WORKSPACE_POPUP"));

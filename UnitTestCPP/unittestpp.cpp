@@ -71,7 +71,6 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 
 UnitTestPP::UnitTestPP(IManager *manager)
 		: IPlugin(manager)
-		, m_sepItem(NULL)
 		, m_proc(NULL)
 {
 	m_longName = wxT("A Unit test plugin based on the UnitTest++ framework");
@@ -137,7 +136,6 @@ void UnitTestPP::CreatePluginMenu(wxMenu *pluginsMenu)
 void UnitTestPP::HookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeEditor) {
-		m_sepItem = menu->AppendSeparator();
 		menu->Append(XRCID("UNITTESTPP_EDITOR_POPUP"), wxT("UnitTest++"), CreateEditorPopMenu());
 	}
 }
@@ -148,13 +146,6 @@ void UnitTestPP::UnHookPopupMenu(wxMenu *menu, MenuType type)
 		wxMenuItem *item = menu->FindItem(XRCID("UNITTESTPP_EDITOR_POPUP"));
 		if (item) {
 			menu->Destroy(item);
-//			m_topWindow->Disconnect(XRCID("unittestpp_new_simple_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewSimpleTest), NULL, (wxEvtHandler*)this);
-//			m_topWindow->Disconnect(XRCID("unittestpp_new_class_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewClassTest), NULL, (wxEvtHandler*)this);
-		}
-
-		if (m_sepItem) {
-			menu->Destroy(m_sepItem);
-			m_sepItem = NULL;
 		}
 	}
 }

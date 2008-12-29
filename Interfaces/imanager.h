@@ -273,6 +273,14 @@ public:
     virtual void FindAndSelect(const wxString& pattern, const wxString& name) = 0;
 
     /**
+     * @brief return tag at caret in active editor (if ambiguous, user will get a selection dialog)
+     * @param scoped whether to do scope-aware lookup
+     * @param impl whether to return declaration (false) or definition (true)
+     * @return the found tag or NULL
+     */
+    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl) = 0;
+    
+    /**
      * @brief show a (short) message in the status bar
      */
     virtual void SetStatusMessage(const wxString &msg, int col, int id) = 0;

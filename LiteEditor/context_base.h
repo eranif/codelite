@@ -31,6 +31,7 @@
 #include "wx/filename.h"
 #include "lexer_configuration.h"
 #include <vector>
+#include "entry.h"
 
 class LEditor;
 
@@ -104,6 +105,7 @@ public:
 	virtual void CodeComplete(long pos = wxNOT_FOUND) {wxUnusedVar(pos);}
 	virtual void GotoDefinition(){}
 	virtual void GotoPreviousDefintion(){}
+    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl){return NULL;} 
 
     // ctrl-click style navigation support
 	virtual int  GetHyperlinkRange(int pos, int &start, int &end);

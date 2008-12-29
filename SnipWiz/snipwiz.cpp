@@ -107,7 +107,6 @@ SnipWiz::SnipWiz( IManager *manager )
 	m_topWin = NULL;
 	m_longName = wxT( "Snippet wizard" );
 	m_shortName = plugName;
-	m_sepItem = NULL;
 	m_topWin = wxTheApp;
 	// get plugin path
 	m_pluginPath = m_mgr->GetStartupDirectory();
@@ -177,10 +176,6 @@ void SnipWiz::CreatePluginMenu( wxMenu *pluginsMenu )
 void SnipWiz::HookPopupMenu( wxMenu *menu, MenuType type )
 {
 	if ( type == MenuTypeEditor ) {
-		if ( !m_sepItem ) {
-			m_sepItem = menu->AppendSeparator();
-		}
-
 		if ( !menu->FindItem( IDM_BASE ) ) {
 			wxMenu *newMenu = CreateSubMenu();
 			menu->Append( IDM_BASE, plugName, newMenu );
@@ -207,11 +202,6 @@ void SnipWiz::UnHookPopupMenu( wxMenu *menu, MenuType type )
 		wxMenuItem *item = menu->FindItem( IDM_BASE );
 		if ( item ) {
 			menu->Destroy( item );
-		}
-
-		if ( m_sepItem ) {
-			menu->Destroy( m_sepItem );
-			m_sepItem = NULL;
 		}
 	} else if (type == MenuTypeFileView_Folder) {
 		std::vector<wxMenuItem*>::iterator iter = m_vdDynItems.begin();

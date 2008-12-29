@@ -128,7 +128,6 @@ public:
     //--------------------------------------------
     //Public properties
     //--------------------------------------------
-    bool GetIsLinkedToEditor() const { return m_isLinkedToEditor; }
     ViewMode GetViewMode() const;
 
 private:
@@ -136,11 +135,11 @@ private:
     //Members
     //--------------------------------------------
     wxPanel *m_symView;         ///< Container of symbol browser GUI elements
+    wxToolBar *m_tb;            ///< The toolbar
     StackButton *m_stackChoice; ///< Allows user to select a tree in the current view mode
     wxChoice *m_viewChoice;     ///< User can select a view mode
     WindowStack *m_viewStack;   ///< Shows current symbols for selected view mode
 	wxBoxSizer* m_choiceSizer;	///< Sizer for the drop button & the view mode
-    bool m_isLinkedToEditor;    ///< Controls whether visible symbol tree changes when active editor changes
 
     wxArrayString m_viewModeNames;      ///< User-visible names for view modes
     wxImageList *m_imagesList;          ///< For symbol-related icons
@@ -188,6 +187,7 @@ private:
     //--------------------------------------------
     //Helper methods
     //--------------------------------------------
+    wxString GetSymbolsPath(const wxString &fileName, const wxString &projectName = wxEmptyString);
     wxString GetSymbolsPath(IEditor *editor);
     void GetFiles(const wxFileName &path, std::multimap<wxString,wxString> &files);
     void GetPaths(const wxArrayString &files, std::multimap<wxString,wxString> &filePaths);
@@ -208,7 +208,7 @@ private:
     void AddDeferredSymbols(const std::multimap<wxString,wxString> &filePaths);
     void UpdateTrees(const wxArrayString &files, bool removeOld);
     void CreateSymbolTree(const wxString &path, WindowStack *parent);
-    void ShowSymbolTree();
+    void ShowSymbolTree(const wxString &symtreepath = wxEmptyString);
 	bool DoActivateSelection(wxTreeCtrl *tree);
 
     //--------------------------------------------
@@ -246,6 +246,8 @@ private:
     void OnActiveEditorChanged(wxCommandEvent &e);
     void OnEditorClosed(wxCommandEvent &e);
     void OnAllEditorsClosed(wxCommandEvent &e);
+    
+    void OnShowTagInSymView(wxCommandEvent &e);
 };
 
 

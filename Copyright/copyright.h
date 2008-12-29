@@ -30,7 +30,6 @@ class wxMenuItem;
 class Copyright : public IPlugin
 {
 	wxEvtHandler *m_topWin;
-	wxMenuItem* m_sepItem;
 	wxMenuItem* m_projectSepItem;
 	wxMenuItem* m_workspaceSepItem;
 	

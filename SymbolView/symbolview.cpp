@@ -26,6 +26,7 @@
 #include <set>
 #include <wx/app.h>
 #include <wx/log.h>
+#include <wx/tokenzr.h>
 #include "macros.h"
 #include "detachedpanesinfo.h"
 #include "workspace.h"
@@ -77,9 +78,9 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 		: IPlugin(manager)
 		, m_symView(NULL)
+        , m_tb(NULL)
 		, m_viewChoice(NULL)
 		, m_viewStack(NULL)
-		, m_isLinkedToEditor(true)
 		, m_imagesList(NULL)
 {
 	m_longName = wxT("Symbols View Plugin");
@@ -89,19 +90,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 	CreateGUIControls();
 	Connect();
 
-//	// add our tab. If the tab is detached make it detached as well
-//	// otherwise, add it to the workspace view
-//	wxArrayString detachedPanes;
-//	DetachedPanesInfo dpi;
-//	m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
-//	detachedPanes = dpi.GetPanes();
-//
-//	if (detachedPanes.Index(wxT("Symbols")) != wxNOT_FOUND) {
-//	new DockablePane(	m_mgr->GetDockingManager()->GetManagedWindow(),
-//	                  m_mgr->GetWorkspacePaneNotebook(), m_symView, wxT("Symbols"), wxNullBitmap, wxSize(200, 200));
-//	} else {
 	m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"));
-//	}
 }
 
 SymbolViewPlugin::~SymbolViewPlugin()
@@ -213,13 +202,13 @@ void SymbolViewPlugin::CreateGUIControls()
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	m_symView->SetSizer(sz);
 
-	wxToolBar *tb = new wxToolBar(m_symView, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
-	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
-	tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
-	tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
-	tb->AddTool(XRCID("gohome"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Go to Active Editor Symbolss"), wxITEM_NORMAL);
-	tb->Realize();
-	sz->Add(tb, 0, wxEXPAND);
+	m_tb = new wxToolBar(m_symView, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
+	m_tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
+	m_tb->ToggleTool(XRCID("link_editor"), true);
+	m_tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
+	m_tb->AddTool(XRCID("gohome"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Go to Active Editor Symbolss"), wxITEM_NORMAL);
+	m_tb->Realize();
+	sz->Add(m_tb, 0, wxEXPAND);
 
 	// sizer for the drop button and view-mode choice box
 	m_choiceSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -272,6 +261,7 @@ void SymbolViewPlugin::Connect()
 	topwin->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewPlugin::OnEditorClosed), NULL, this);
 	topwin->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(SymbolViewPlugin::OnAllEditorsClosed), NULL, this);
 	topwin->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SymbolViewPlugin::OnWorkspaceClosed), NULL, this);
+    topwin->Connect(XRCID("show_tag_in_symview"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnShowTagInSymView), NULL, this);
 }
 
 
@@ -302,7 +292,10 @@ void SymbolViewPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 void SymbolViewPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeEditor) {
-		//TODO::Append items for the editor context menu
+        size_t pos = size_t(-1);
+        if (menu->FindChildItem(XRCID("find_decl"), &pos) != NULL) {
+            menu->Insert(pos, XRCID("show_tag_in_symview"), wxT("Show in Symbol View"));
+        }
 	} else if (type == MenuTypeFileExplorer) {
 	} else if (type == MenuTypeFileView_Workspace) {
 	} else if (type == MenuTypeFileView_Project) {
@@ -314,7 +307,10 @@ void SymbolViewPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 void SymbolViewPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeEditor) {
-		//TODO::Unhook items for the editor context menu
+        wxMenuItem *item = menu->FindItem(XRCID("show_tag_in_symview"));
+        if (item) {
+            menu->Destroy(item);
+        }
 	} else if (type == MenuTypeFileExplorer) {
 	} else if (type == MenuTypeFileView_Workspace) {
 	} else if (type == MenuTypeFileView_Project) {
@@ -341,6 +337,7 @@ void SymbolViewPlugin::UnPlug()
 	topwin->Disconnect(wxEVT_FILE_RETAGGED, wxCommandEventHandler(SymbolViewPlugin::OnFileRetagged), NULL, this);
 	topwin->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewPlugin::OnActiveEditorChanged), NULL, this);
 	topwin->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewPlugin::OnEditorClosed), NULL, this);
+    topwin->Disconnect(XRCID("show_tag_in_symview"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnShowTagInSymView), NULL, this);
 
 	Notebook *notebook = m_mgr->GetWorkspacePaneNotebook();
 	size_t notepos = notebook->GetPageIndex(m_symView);
@@ -360,21 +357,25 @@ void SymbolViewPlugin::UnPlug()
 //--------------------------------------------
 
 /**
- * Determine a symbol tree path from the current editor, using the current view mode.
+ * Determine a symbol tree path from a source file name and project, using the current view mode.
  */
-wxString SymbolViewPlugin::GetSymbolsPath(IEditor* editor)
+wxString SymbolViewPlugin::GetSymbolsPath(const wxString &fileName, const wxString &projname)
 {
+    wxString projectName = projname;
+    if (projectName.IsEmpty()) {
+        projectName = m_mgr->GetProjectNameByFile(fileName);
+    }
 	switch (GetViewMode()) {
 	case vmCurrentWorkspace:
-		if (m_mgr->IsWorkspaceOpen()) {
+		if (m_mgr->IsWorkspaceOpen()) { // ignore input, return workspace file path
 			return m_mgr->GetWorkspace()->GetWorkspaceFileName().GetFullPath();
 		}
 		break;
 	case vmCurrentProject: {
+        if (projectName.IsEmpty()) {
+            projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
+        }
 		wxString dummy;
-		wxString projectName =
-		    editor && !editor->GetProjectName().IsEmpty() ? editor->GetProjectName()
-		    : m_mgr->GetWorkspace()->GetActiveProjectName();
 		ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(projectName, dummy);
 		if (project) {
 			return project->GetFileName().GetFullPath();
@@ -382,12 +383,27 @@ wxString SymbolViewPlugin::GetSymbolsPath(IEditor* editor)
 		break;
 	}
 	default:
-		if (editor && !editor->GetProjectName().IsEmpty()) {
-			return editor->GetFileName().GetFullPath();
+		if (!projectName.IsEmpty()) { // file must be part of a project
+			return fileName;
 		}
 		break;
 	}
 	return wxEmptyString;
+    
+}
+
+/**
+ * Determine a symbol tree path from the current editor, using the current view mode.
+ */
+wxString SymbolViewPlugin::GetSymbolsPath(IEditor* editor)
+{
+    wxString fname;
+    wxString project;
+    if (editor) {
+        fname = editor->GetFileName().GetFullPath();
+        project = editor->GetProjectName();
+    }
+    return GetSymbolsPath(fname, project);
 }
 
 /**
@@ -963,20 +979,26 @@ void SymbolViewPlugin::CreateSymbolTree(const wxString &path, WindowStack *paren
 /**
  * Select the symbol tree in the specified viewStack (use current if NULL).  Create it if necessary.
  */
-void SymbolViewPlugin::ShowSymbolTree()
+void SymbolViewPlugin::ShowSymbolTree(const wxString &symtreepath)
 {
-	wxString path = GetSymbolsPath(m_mgr->GetActiveEditor());
-	if (!path.IsEmpty()) {
-		WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
-		if (viewStack->GetSelectedKey() != path) {
-			m_viewStack->Freeze();
-			if (!viewStack->Find(path)) {
-				CreateSymbolTree(path, viewStack);
-			}
-			viewStack->Select(path);
-			m_viewStack->Thaw();
-		}
-	}
+	wxString path = !symtreepath.IsEmpty() ? symtreepath : GetSymbolsPath(m_mgr->GetActiveEditor());
+	if (path.IsEmpty())
+        return;
+    WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
+    if (viewStack->GetSelectedKey() != path) {
+        m_viewStack->Freeze();
+        if (!viewStack->Find(path)) {
+            CreateSymbolTree(path, viewStack);
+        }
+        viewStack->Select(path);
+        m_viewStack->Thaw();
+    }
+    if (m_tb->GetToolState(XRCID("link_editor")) && viewStack->GetSelectedKey() != GetSymbolsPath(m_mgr->GetActiveEditor())) {
+        // turn off link-editor, or the view will switch back as soon as the editor regains focus
+        m_tb->ToggleTool(XRCID("link_editor"), false);
+        wxCommandEvent dummy;
+        OnLinkEditor(dummy);
+    }
 }
 
 bool SymbolViewPlugin::DoActivateSelection(wxTreeCtrl* tree)
@@ -1027,7 +1049,7 @@ void SymbolViewPlugin::OnViewTypeChanged(wxCommandEvent& e)
 	m_viewStack->Select(e.GetString());
 	WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
 	m_stackChoice->SetWindowStack(viewStack);
-	if (viewStack->GetSelected() == NULL || m_isLinkedToEditor) {
+	if (viewStack->GetSelected() == NULL || m_tb->GetToolState(XRCID("link_editor"))) {
 		ShowSymbolTree();
 	}
 	e.Skip();
@@ -1036,7 +1058,7 @@ void SymbolViewPlugin::OnViewTypeChanged(wxCommandEvent& e)
 void SymbolViewPlugin::OnStackChoiceUI(wxUpdateUIEvent& e)
 {
 	WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
-	e.Enable(!m_isLinkedToEditor && viewStack->GetSelected() != NULL);
+	e.Enable(!m_tb->GetToolState(XRCID("link_editor")) && viewStack->GetSelected() != NULL);
 }
 
 /**
@@ -1073,7 +1095,7 @@ void SymbolViewPlugin::OnGoHome(wxCommandEvent& e)
 void SymbolViewPlugin::OnGoHomeUI(wxUpdateUIEvent& e)
 {
 	WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
-	e.Enable(!m_isLinkedToEditor && viewStack->GetSelected() != NULL);
+	e.Enable(!m_tb->GetToolState(XRCID("link_editor")) && viewStack->GetSelected() != NULL);
 }
 
 /**
@@ -1081,8 +1103,7 @@ void SymbolViewPlugin::OnGoHomeUI(wxUpdateUIEvent& e)
  */
 void SymbolViewPlugin::OnLinkEditor(wxCommandEvent& e)
 {
-	m_isLinkedToEditor = !m_isLinkedToEditor;
-	if (m_isLinkedToEditor) {
+	if (m_tb->GetToolState(XRCID("link_editor"))) {
 		// hide the dropbutton
 		m_choiceSizer->Hide(m_stackChoice);
 		m_choiceSizer->Layout();
@@ -1329,7 +1350,7 @@ void SymbolViewPlugin::OnActiveEditorChanged(wxCommandEvent& e)
 {
 	if (m_mgr->IsWorkspaceOpen()) {
 		WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
-		if (viewStack->GetSelected() == NULL || m_isLinkedToEditor) {
+		if (viewStack->GetSelected() == NULL || m_tb->GetToolState(XRCID("link_editor"))) {
 			ShowSymbolTree();
 		}
 	}
@@ -1342,7 +1363,7 @@ void SymbolViewPlugin::OnActiveEditorChanged(wxCommandEvent& e)
 void SymbolViewPlugin::OnEditorClosed(wxCommandEvent& e)
 {
 	IEditor *editor = (IEditor*) e.GetClientData();
-	if (editor && !editor->GetProjectName().IsEmpty() && m_isLinkedToEditor && m_mgr->IsWorkspaceOpen()) {
+	if (editor && !editor->GetProjectName().IsEmpty() && m_tb->GetToolState(XRCID("link_editor")) && m_mgr->IsWorkspaceOpen()) {
 		// delete file's symbol tree
 		WindowStack *viewStack = (WindowStack*) m_viewStack->Find(m_viewModeNames[vmCurrentFile]);
 		viewStack->Delete(editor->GetFileName().GetFullPath());
@@ -1382,7 +1403,7 @@ void SymbolViewPlugin::OnEditorClosed(wxCommandEvent& e)
  */
 void SymbolViewPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 {
-	if (m_isLinkedToEditor && m_mgr->IsWorkspaceOpen()) {
+	if (m_tb->GetToolState(XRCID("link_editor")) && m_mgr->IsWorkspaceOpen()) {
 
 		// remove all the file trees
 		WindowStack *viewStack = (WindowStack*) m_viewStack->Find(m_viewModeNames[vmCurrentFile]);
@@ -1407,3 +1428,85 @@ void SymbolViewPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 	}
 	e.Skip();
 }
+
+/**
+ * Find the tag under the caret in active editor, show the tree that tag belongs in, and highlight the tag.
+ * Some trickery is required to make sure the tag is loaded in the tree since trees are normally built on
+ * demand (when the user expands each node).
+ */
+void SymbolViewPlugin::OnShowTagInSymView(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    
+    int pos = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_symView);
+    if (pos != wxNOT_FOUND) {
+        m_mgr->GetWorkspacePaneNotebook()->SetSelection(pos);
+    }
+    
+    // first get the right symbol tree to show
+    TagEntryPtr tag = m_mgr->GetTagAtCaret(true, false);
+    if (!tag)
+        return;
+    wxString path = GetSymbolsPath(tag->GetFile());
+    if (path.IsEmpty()) 
+        return;    
+    ShowSymbolTree(path);
+    
+    // now expand the path to the tag in the tree
+    SymTree *tree = FindSymbolTree(path);
+	wxString tagScope = tag->GetScope();
+	if (tag->GetKind() == wxT("enumerator") && !tag->GetTyperef().IsEmpty()) {
+		tagScope = tag->GetTyperef();
+	}
+	if (tagScope != wxT("<global>")) {
+        // filePaths will be used to make sure we expand the correct scope tags
+		wxArrayString files;
+		std::multimap<wxString, wxString> filePaths;
+		files.Add(tag->GetFile());
+		GetPaths(files, filePaths);
+        // we don't know much about the scope other than the name and file it should be in, so we have
+        // to brute-force this a little: expand any node that *could* be a parent of our tag. chances
+        // are pretty good there won't be much redundancy
+        wxArrayString scopes = wxStringTokenize(tagScope, wxT(":"), wxTOKEN_STRTOK);
+        wxString curScope;
+        for (size_t i = 0; i < scopes.Count(); i++) {
+            curScope << (i > 0 ? wxT("::") : wxT("")) << scopes[i];
+            for (Path2TagRange range = m_pathTags.equal_range(curScope); range.first != range.second; range.first++) {
+                if (tree != range.first->second.first)
+                    continue;
+                wxTreeItemId id = range.first->second.second;
+                TagTreeData *treetag = (TagTreeData*) tree->GetItemData(id);
+                // make sure the alleged parent is from the correct file
+                std::pair<std::multimap<wxString,wxString>::const_iterator,
+                          std::multimap<wxString,wxString>::const_iterator> files = filePaths.equal_range(treetag->GetFile());
+                while (files.first != files.second && files.first->second != tag->GetFile()) {
+                    files.first++;
+                }
+                if (files.first == files.second) 
+                    continue;
+                if (tree->ItemHasChildren(id) && tree->GetChildrenCount(id) == 0) {
+                    LoadChildren(tree, id);
+                    range.second = m_pathTags.upper_bound(curScope); // recalculate invalidated upper bound
+                }
+            }
+        }
+    }
+    // all parents loaded and expanded, so find the tag itself
+    for (Path2TagRange range = m_pathTags.equal_range(tag->Key()); range.first != range.second; range.first++) {
+        if (range.first->second.first != tree) 
+            continue;
+        TagTreeData *treetag = (TagTreeData*) tree->GetItemData(range.first->second.second);
+        if (!treetag)
+            continue;
+        if (*treetag == *tag || treetag->GetDifferOnByLineNumber()) {
+            wxTreeItemId id = range.first->second.second;
+            tree->SelectItem(id);
+            tree->EnsureVisible(id);
+            if (tree->ItemHasChildren(id)) {
+                tree->Expand(id);
+            }
+            break;
+        }
+    }
+}
+

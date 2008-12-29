@@ -33,7 +33,6 @@ class wxMenuItem;
 class UnitTestPP : public IPlugin
 {
 	wxEvtHandler *m_topWindow;
-	wxMenuItem *m_sepItem;
 	PipedProcess *m_proc;
 public:
 	UnitTestPP(IManager *manager);

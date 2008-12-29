@@ -73,6 +73,7 @@ public:
 	virtual void CodeComplete(long pos = wxNOT_FOUND);
 	virtual void GotoDefinition();
 	virtual void GotoPreviousDefintion();
+    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
 	virtual void AutoIndent(const wxChar&);
 	virtual	bool IsCommentOrString(long pos);
 	virtual	bool IsComment(long pos);
@@ -127,7 +128,7 @@ private:
 	wxString GetFileImageString(const wxString &ext);
 	wxString GetImageString(const TagEntry &entry);
 	wxString GetExpression(long pos, bool onlyWord, LEditor *editor = NULL);
-	void DoGotoSymbol(const std::vector<TagEntryPtr> &tags);
+	void DoGotoSymbol(TagEntryPtr tag);
 	bool IsIncludeStatement(const wxString &line, wxString *fileName = NULL);
 	void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
 	int FindLineToAddInclude();

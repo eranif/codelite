@@ -101,6 +101,7 @@ public:
 	virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName);
 	virtual OptionsConfigPtr GetEditorSettings();
     virtual void FindAndSelect(const wxString& pattern, const wxString& name);
+    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
 	virtual bool AllowToolbar();
 	virtual void SetStatusMessage(const wxString &msg, int col, int id);
 	virtual void PushQueueCommand(const QueueCommand &cmd);

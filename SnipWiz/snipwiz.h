@@ -69,7 +69,6 @@ public:
 	void OnClassWizard( wxCommandEvent &e );
 
 
-	wxMenuItem* m_sepItem;
 	wxEvtHandler *m_topWin;
 	enum
 	{

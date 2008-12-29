@@ -177,6 +177,8 @@ void LEditor::SetSyntaxHighlight()
 {
 	ClearDocumentStyle();
 	m_context = ContextManager::Get()->NewContextByFileName(this, m_fileName);
+	m_rightClickMenu = m_context->GetMenu();
+    m_rightClickMenu->AppendSeparator(); // separates plugins
 	SetProperties();
 	UpdateColours();
 	m_context->SetActive();
@@ -243,7 +245,6 @@ void LEditor::SetCaretAt(long pos)
 /// Setup some scintilla properties
 void LEditor::SetProperties()
 {
-	m_rightClickMenu = m_context->GetMenu();
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	CallTipUseStyle(1);
 
@@ -884,6 +885,8 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 {
 	ClearDocumentStyle();
 	m_context = ContextManager::Get()->NewContext(this, lexerName);
+	m_rightClickMenu = m_context->GetMenu();
+    m_rightClickMenu->AppendSeparator(); // separates plugins
 	SetProperties();
 	UpdateColours();
 	m_context->SetActive();
@@ -1499,6 +1502,8 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 
 bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 {
+    BrowseRecord browse = CreateBrowseRecord();
+    
 	wxString pattern ( _pattern );
 	pattern.StartsWith ( wxT ( "/^" ), &pattern );
 
@@ -1579,6 +1584,9 @@ bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 			SetSelectionEnd ( curr_pos );
 		}
 	} while ( again );
+    if (res && browse.lineno > 1) { // ATTN: lineno==1 implies newly-opened file, so don't need a browse record
+        NavMgr::Get()->Push(browse); 
+    }
 	return res;
 }
 

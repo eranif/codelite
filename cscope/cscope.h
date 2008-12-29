@@ -35,7 +35,6 @@ class CscopeTab;
 class Cscope : public IPlugin
 {
 	wxEvtHandler *m_topWindow;
-	wxMenuItem *m_sepItem;
 	CscopeTab *m_cscopeWin;
 public:
 	Cscope(IManager *manager);

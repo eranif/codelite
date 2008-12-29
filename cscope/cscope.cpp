@@ -138,7 +138,6 @@ void Cscope::HookPopupMenu(wxMenu *menu, MenuType type)
 {
 	//at first, we hook cscope into the editor's context menu
 	if (type == MenuTypeEditor) {
-		m_sepItem = menu->AppendSeparator();
 		menu->Append(XRCID("CSCOPE_EDITOR_POPUP"), wxT("cscope"), CreateEditorPopMenu());
 	}
 }
@@ -153,11 +152,6 @@ void Cscope::UnHookPopupMenu(wxMenu *menu, MenuType type)
 			m_topWindow->Disconnect(XRCID("cscope_find_global_definition"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this);
 			m_topWindow->Disconnect(XRCID("cscope_functions_called_by_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFuncion), NULL, (wxEvtHandler*)this);
 			m_topWindow->Disconnect(XRCID("cscope_functions_calling_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction), NULL, (wxEvtHandler*)this);
-		}
-
-		if (m_sepItem) {
-			menu->Destroy(m_sepItem);
-			m_sepItem = NULL;
 		}
 	}
 }

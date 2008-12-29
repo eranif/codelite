@@ -801,75 +801,70 @@ void ContextCpp::GotoPreviousDefintion()
 	NavMgr::Get()->NavigateBackward(&GetCtrl(), PluginManager::Get());
 }
 
-void ContextCpp::GotoDefinition()
+TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl) 
 {
+	if (!ManagerST::Get()->IsWorkspaceOpen())
+        return NULL;
+
 	LEditor &rCtrl = GetCtrl();
-
-	VALIDATE_WORKSPACE();
-
-	std::vector<TagEntryPtr> tags;
 
 	//	Make sure we are not on a comment section
 	if (IsCommentOrString(rCtrl.GetCurrentPos()))
-		return;
+		return NULL;
 
 	// Get the word under the cursor OR the selected word
-	wxString word = rCtrl.GetSelectedText();
-	if (word.IsEmpty()) {
-		// No selection, try to find the word under the cursor
-		long pos = rCtrl.GetCurrentPos();
-		long end = rCtrl.WordEndPosition(pos, true);
-		long start = rCtrl.WordStartPosition(pos, true);
-
-		// Get the word
-		word = rCtrl.GetTextRange(start, end);
-		if (word.IsEmpty())
-			return;
-	}
-
-	// get all tags that matches the name (we use exact match)
-	TagsManagerST::Get()->FindSymbol(word, tags);
+    int word_start = -1, word_end = -1;
+    rCtrl.wxScintilla::GetSelection(&word_start, &word_end);
+    if (word_start == word_end) {
+        word_start = rCtrl.WordStartPos(word_start, true);
+        word_end = rCtrl.WordEndPos(word_end, true);
+    }
+	wxString word = rCtrl.GetTextRange(word_start, word_end);
+    if (word.IsEmpty())
+        return NULL;
+    
+	std::vector<TagEntryPtr> tags;
+    if (scoped) {
+        // get tags that make sense in current scope and expression
+        wxFileName fname = rCtrl.GetFileName();
+        wxString expr = GetExpression(word_end, false);
+        wxString text = rCtrl.GetTextRange(0, word_end);
+        int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1; 
+        TagsManagerST::Get()->FindImplDecl(fname, line, expr, word, text, tags, impl);
+        if (!impl && tags.empty()) {
+            // try again, this time allow impls
+            // this will find inline definitions, which have no separate declaration
+            TagsManagerST::Get()->FindImplDecl(fname, line, expr, word, text, tags, true);
+        }
+    } else {
+        // get all tags that match the name (ignore scope)
+        TagsManagerST::Get()->FindSymbol(word, tags);
+    }
 	if (tags.empty())
-		return;
+		return NULL;
 
-	DoGotoSymbol(tags);
+    if (tags.size() == 1) // only one tag found
+        return tags[0];
+        
+    // popup a dialog offering the results to the user
+    SymbolsDialog dlg(&rCtrl);
+    dlg.AddSymbols(tags, 0);
+    return dlg.ShowModal() == wxID_OK ? dlg.GetTag() : TagEntryPtr(NULL);
 }
 
-void ContextCpp::DoGotoSymbol(const std::vector<TagEntryPtr> &tags)
+void ContextCpp::DoGotoSymbol(TagEntryPtr tag) 
 {
-	LEditor &rCtrl = GetCtrl();
+    if (tag) {
+        LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(tag->GetFile());
+        if (editor) {
+            editor->FindAndSelect(tag->GetPattern(), tag->GetName());
+        }
+    }
+}
 
-	// Keep the current position as well
-	rCtrl.AddBrowseRecord(NULL);
-
-	// Did we get a single match?
-	if (tags.size() == 1) {
-		TagEntryPtr t = tags.at(0);
-		wxString pattern = t->GetPattern();
-		wxString name = t->GetName();
-
-		if (ManagerST::Get()->OpenFile(	t->GetFile(), wxEmptyString)) {
-			LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
-			if (editor) {
-				editor->FindAndSelect(pattern, name);
-			}
-		}
-	} else if (tags.size() > 1) {
-		// popup a dialog offering the results to the user
-		TagEntryPtr t = tags.at(0);
-		SymbolsDialog *dlg = new SymbolsDialog( &GetCtrl() );
-		dlg->AddSymbols( tags, 0 );
-		if (dlg->ShowModal() == wxID_OK) {
-			if (ManagerST::Get()->OpenFile(dlg->GetFile(), wxEmptyString)) {
-				wxString pattern = dlg->GetPattern();
-				LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
-				if (editor) {
-					editor->FindAndSelect(pattern, t->GetName());
-				}
-			}
-		}
-		dlg->Destroy();
-	}
+void ContextCpp::GotoDefinition()
+{
+    DoGotoSymbol(GetTagAtCaret(false, false));
 }
 
 void ContextCpp::SwapFiles(const wxFileName &fileName)
@@ -1191,67 +1186,12 @@ void ContextCpp::OnKeyDown(wxKeyEvent &event)
 
 void ContextCpp::OnFindImpl(wxCommandEvent &event)
 {
-	wxUnusedVar(event);
-	LEditor &rCtrl = GetCtrl();
-	VALIDATE_WORKSPACE();
-
-	//get expression
-	int pos = rCtrl.GetCurrentPos();
-	int word_end = rCtrl.WordEndPosition(pos, true);
-	int word_start = rCtrl.WordStartPosition(pos, true);
-	wxString expr = GetExpression(word_end, false);
-
-	// get the scope
-	wxString text = rCtrl.GetTextRange(0, word_end);
-
-	//the word
-
-	wxString word = rCtrl.GetTextRange(word_start, word_end);
-
-	if (word.IsEmpty())
-		return;
-
-	std::vector<TagEntryPtr> tags;
-	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
-	TagsManagerST::Get()->FindImplDecl(rCtrl.GetFileName(), line, expr, word, text, tags, true);
-	if (tags.empty())
-		return;
-
-	DoGotoSymbol(tags);
-
+    DoGotoSymbol(GetTagAtCaret(true, true));
 }
 
 void ContextCpp::OnFindDecl(wxCommandEvent &event)
 {
-
-	wxUnusedVar(event);
-	LEditor &rCtrl = GetCtrl();
-
-	VALIDATE_WORKSPACE();
-
-	//get expression
-	//get expression
-	int pos = rCtrl.GetCurrentPos();
-	int word_end = rCtrl.WordEndPosition(pos, true);
-	int word_start = rCtrl.WordStartPosition(pos, true);
-	wxString expr = GetExpression(word_end, false);
-
-	// get the scope
-	wxString text = rCtrl.GetTextRange(0, word_end);
-
-	//the word
-	wxString word = rCtrl.GetTextRange(word_start, word_end);
-
-	if (word.IsEmpty())
-		return;
-
-	std::vector<TagEntryPtr> tags;
-	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
-	TagsManagerST::Get()->FindImplDecl(rCtrl.GetFileName(), line, expr, word, text, tags, false);
-	if (tags.empty())
-		return;
-
-	DoGotoSymbol(tags);
+    DoGotoSymbol(GetTagAtCaret(true, false));
 }
 
 void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)

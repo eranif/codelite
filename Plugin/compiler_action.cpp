@@ -51,6 +51,7 @@ void ShellCommand::AppendLine(const wxString &line)
 
 	wxCommandEvent event(wxEVT_SHELL_COMMAND_ADDLINE);
 	event.SetString(line);
+    event.SetInt(m_info.GetKind());
 	m_owner->AddPendingEvent(event);
 
 	m_lines.Add(line);

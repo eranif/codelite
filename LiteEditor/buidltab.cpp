@@ -479,6 +479,12 @@ void BuildTab::OnBuildAddLine ( wxCommandEvent &e )
 {
 	e.Skip();
 	AppendText ( e.GetString() );
+    if (e.GetInt() == QueueCommand::CustomBuild && e.GetString().Contains(BUILD_PROJECT_PREFIX) && !m_lineInfo.empty()) {
+        // try to show more specific progress in custom builds
+        LineInfo &info = m_lineInfo.rbegin()->second;
+        Frame::Get()->SetStatusMessage(wxString::Format(wxT("Building %s (%s)"), 
+                                       info.project.c_str(), info.configuration.c_str()), 4, XRCID("build"));
+    }
 }
 
 void BuildTab::OnBuildEnded ( wxCommandEvent &e )

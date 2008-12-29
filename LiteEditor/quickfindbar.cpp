@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "manager.h"
 #include <wx/textctrl.h>
 #include <wx/wxscintilla.h>
 #include "stringsearcher.h"
@@ -197,7 +198,7 @@ void QuickFindBar::OnCheckBox(wxCommandEvent &e)
 
 void QuickFindBar::OnUpdateUI(wxUpdateUIEvent &e)
 {
-    e.Enable(m_sci != NULL && m_sci->GetLength() > 0 && !m_findWhat->GetValue().IsEmpty());
+    e.Enable(ManagerST::Get()->IsShutdownInProgress() == false && m_sci && m_sci->GetLength() > 0 && !m_findWhat->GetValue().IsEmpty());
 }
 
 void QuickFindBar::OnEnter(wxCommandEvent& e)

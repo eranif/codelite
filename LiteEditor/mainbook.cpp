@@ -400,7 +400,7 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 bool MainBook::SelectPage(wxWindow *win)
 {
     LEditor *oldeditor = GetActiveEditor();
-    
+
 	size_t index = m_book->GetPageIndex(win);
 	std::set<wxWindow*>::iterator i = m_detachedTabs.find(win);
 
@@ -621,7 +621,7 @@ bool MainBook::CloseAll(bool cancellable)
 	while (!m_detachedTabs.empty()) {
 		DockPage(*m_detachedTabs.begin());
 	}
-	m_book->DeleteAllPages(true);
+	m_book->DeleteAllPages(ManagerST::Get()->IsShutdownInProgress() ? false : true);
 	return true;
 }
 

@@ -801,7 +801,7 @@ void ContextCpp::GotoPreviousDefintion()
 	NavMgr::Get()->NavigateBackward(&GetCtrl(), PluginManager::Get());
 }
 
-TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl) 
+TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 {
 	if (!ManagerST::Get()->IsWorkspaceOpen())
         return NULL;
@@ -822,14 +822,14 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 	wxString word = rCtrl.GetTextRange(word_start, word_end);
     if (word.IsEmpty())
         return NULL;
-    
+
 	std::vector<TagEntryPtr> tags;
     if (scoped) {
         // get tags that make sense in current scope and expression
         wxFileName fname = rCtrl.GetFileName();
         wxString expr = GetExpression(word_end, false);
         wxString text = rCtrl.GetTextRange(0, word_end);
-        int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1; 
+        int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
         TagsManagerST::Get()->FindImplDecl(fname, line, expr, word, text, tags, impl);
         if (!impl && tags.empty()) {
             // try again, this time allow impls
@@ -845,19 +845,21 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 
     if (tags.size() == 1) // only one tag found
         return tags[0];
-        
+
     // popup a dialog offering the results to the user
     SymbolsDialog dlg(&rCtrl);
     dlg.AddSymbols(tags, 0);
     return dlg.ShowModal() == wxID_OK ? dlg.GetTag() : TagEntryPtr(NULL);
 }
 
-void ContextCpp::DoGotoSymbol(TagEntryPtr tag) 
+void ContextCpp::DoGotoSymbol(TagEntryPtr tag)
 {
     if (tag) {
-        LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(tag->GetFile());
+		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(tag->GetFile());
         if (editor) {
-            editor->FindAndSelect(tag->GetPattern(), tag->GetName());
+			// save this place
+			GetCtrl().AddBrowseRecord(NULL);
+			editor->FindAndSelect(tag->GetPattern(), tag->GetName());
         }
     }
 }

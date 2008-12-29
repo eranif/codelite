@@ -14,3 +14,13 @@ CompilerAdvancePage::CompilerAdvancePage( wxWindow* parent, const wxString &cmpn
 	m_textCtrlGlobalIncludePath->SetValue(cmp->GetGlobalIncludePath());
 	m_textCtrlGlobalLibPath->SetValue(cmp->GetGlobalLibPath());
 }
+
+void CompilerAdvancePage::Save(CompilerPtr cmp)
+{
+	cmp->SetGenerateDependeciesFile(m_checkBoxGenerateDependenciesFiles->IsChecked());
+	cmp->SetGlobalIncludePath(m_textCtrlGlobalIncludePath->GetValue());
+	cmp->SetGlobalLibPath(m_textCtrlGlobalLibPath->GetValue());
+	cmp->SetObjectSuffix(m_textObjectExtension->GetValue());
+    cmp->SetDependSuffix(m_textDependExtension->GetValue());
+    cmp->SetPreprocessSuffix(m_textPreprocessExtension->GetValue());
+}

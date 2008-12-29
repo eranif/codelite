@@ -194,8 +194,6 @@
       <File Name="tags_options_base_dlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
-      <File Name="compiler_page.cpp"/>
-      <File Name="compiler_page.h"/>
       <File Name="advanced_settings.h"/>
       <File Name="advanced_settings.cpp"/>
       <File Name="editcmpfileinfodlg.h"/>

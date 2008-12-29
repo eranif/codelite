@@ -14,3 +14,13 @@ CompilerPatternsPage::CompilerPatternsPage( wxWindow* parent, const wxString &cm
 	m_textWarnFileIndex->SetValue(cmp->GetWarnFileNameIndex());
 	m_textWarnLineNumber->SetValue(cmp->GetWarnLineNumberIndex());
 }
+
+void CompilerPatternsPage::Save(CompilerPtr cmp)
+{
+	cmp->SetErrPattern(m_textErrorPattern->GetValue());
+	cmp->SetErrFileNameIndex(m_textErrorFileIndex->GetValue());
+	cmp->SetErrLineNumberIndex(m_textErrorLineNumber->GetValue());
+	cmp->SetWarnPattern(m_textWarnPattern->GetValue());
+	cmp->SetWarnFileNameIndex(m_textWarnFileIndex->GetValue());
+	cmp->SetWarnLineNumberIndex(m_textWarnLineNumber->GetValue());
+}

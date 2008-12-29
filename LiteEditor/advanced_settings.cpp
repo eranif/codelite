@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : advanced_settings.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : advanced_settings.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////////////////////////////////////////////////
@@ -29,28 +29,20 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifdef WX_PRECOMP
-
-#include "wx/wxprec.h"
-
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif //__BORLANDC__
-
-#else
-#include <wx/wx.h>
-#endif //WX_PRECOMP
 #include "windowattrmanager.h"
 #include "macros.h"
 #include "buildsettingstab.h"
 #include "advanced_settings.h"
 #include "manager.h"
-#include "compiler_page.h"
 #include "editor_config.h"
 #include <wx/xrc/xmlres.h>
 #include "build_settings_config.h"
 #include "build_page.h"
+#include "compilerswitchespage.h"
+#include "compilertoolspage.h"
+#include "compilerpatternspage.h"
+#include "compileradvancepage.h"
+#include "compilerfiletypespage.h"
 
 BEGIN_EVENT_TABLE(AdvancedDlg, wxDialog)
 	EVT_MENU(XRCID("delete_compiler"), AdvancedDlg::OnDeleteCompiler)
@@ -69,7 +61,7 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 
 	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	m_compilersPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	
+
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
 
@@ -87,12 +79,8 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	m_staticline2 = new wxStaticLine( m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer5->Add( m_staticline2, 0, wxEXPAND | wxRIGHT | wxLEFT, 5 );
 
-	m_compilersNotebook = new wxNotebook(m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBK_DEFAULT );
-//	m_compilersNotebook->AssignImageList(new wxImageList(16, 16));
-//	long bkStyle = m_compilersNotebook->GetToolBar()->GetWindowStyleFlag();
-//	m_compilersNotebook->GetToolBar()->SetWindowStyleFlag(wxTB_FLAT | wxTB_NOICONS | wxTB_TEXT | wxTB_HORIZONTAL);
-
-	bSizer5->Add( m_compilersNotebook, 1, wxEXPAND | wxALL, 5 );
+	m_compilersNotebook = new wxTreebook(m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBK_DEFAULT );
+	bSizer5->Add( m_compilersNotebook, 1, wxALL|wxEXPAND, 5 );
 
 	m_compilersPage->SetSizer( bSizer5 );
 	m_compilersPage->Layout();
@@ -124,24 +112,33 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 	this->SetSizer( mainSizer );
 	this->Layout();
 
-	m_compilersNotebook->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(AdvancedDlg::OnMouseRightUp), NULL, this);
+	m_compilersNotebook->GetTreeCtrl()->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(AdvancedDlg::OnContextMenu), NULL, this);
 	m_rightclickMenu = wxXmlResource::Get()->LoadMenu(wxT("delete_compiler_menu"));
 
 	LoadCompilers();
+
+	if(m_compilersNotebook->GetPageCount()){
+		m_compilersNotebook->ExpandNode(0);
+		m_compilersNotebook->SetSelection(1);
+	}
+
 	ConnectButton(m_buttonNewCompiler, AdvancedDlg::OnButtonNewClicked);
 	ConnectButton(m_buttonOK, AdvancedDlg::OnButtonOKClicked);
 
 	m_notebook->SetSelection( selected_page );
-	
+
 	// center the dialog
 	Centre();
+	this->Layout();
 	GetSizer()->Fit(this);
-	
+
+	m_compilersNotebook->SetFocus();
 	WindowAttrManager::Load(this, wxT("BuildSettingsDlg"), NULL);
 }
 
 void AdvancedDlg::LoadCompilers()
 {
+	m_compilerPagesMap.clear();
 	m_compilersNotebook->Freeze();
 	m_compilersNotebook->DeleteAllPages();
 
@@ -149,11 +146,11 @@ void AdvancedDlg::LoadCompilers()
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
 	bool first (true);
 	while (cmp) {
-		m_compilersNotebook->AddPage(new CompilerPage(m_compilersNotebook, cmp->GetName()), cmp->GetName(), first);
+		AddCompiler(cmp, first);
 		cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
 		first = false;
 	}
-	
+
 	m_compilersNotebook->Thaw();
 }
 
@@ -173,6 +170,13 @@ void AdvancedDlg::OnButtonNewClicked(wxCommandEvent &event)
 		if (name.IsEmpty() == false) {
 			ManagerST::Get()->CreateDefaultNewCompiler(name);
 			LoadCompilers();
+
+			if(m_compilersNotebook->GetPageCount() > ((m_compilerPagesMap.size() *6)-1) ) {
+				int start_pos = (m_compilerPagesMap.size()-1)*6;
+				m_compilersNotebook->ExpandNode(start_pos);
+				m_compilersNotebook->SetSelection(start_pos + 1);
+			}
+			SetSizerAndFit(GetSizer());
 		}
 	}
 	dlg->Destroy();
@@ -182,13 +186,8 @@ void AdvancedDlg::OnButtonOKClicked(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 	//save all compiler pages
-	int count = m_compilersNotebook->GetPageCount();
-	for (int i=0; i<count; i++) {
-		CompilerPage *page = dynamic_cast<CompilerPage*>( m_compilersNotebook->GetPage((size_t)i));
-		if (page) {
-			page->Save();
-		}
-	}
+	SaveCompilers();
+
 	//save the build page
 	m_buildPage->Save();
 	m_buildSettings->Save();
@@ -214,23 +213,75 @@ void AdvancedDlg::OnDeleteCompiler(wxCommandEvent & event)
 		wxString name = m_compilersNotebook->GetPageText((size_t)sel);
 		if (ManagerST::Get()->DeleteCompiler(name)) {
 			m_compilersNotebook->DeletePage((size_t)sel);
+
+			std::map<wxString, std::vector<ICompilerSubPage*> >::iterator iter = m_compilerPagesMap.find(name);
+			if(iter != m_compilerPagesMap.end()){
+				m_compilerPagesMap.erase(iter);
+			}
+
+			if(m_compilersNotebook->GetPageCount()){
+				m_compilersNotebook->ExpandNode(0);
+				m_compilersNotebook->SetSelection(1);
+			}
+			SetSizerAndFit(GetSizer());
 		}
 	}
 }
 
-void AdvancedDlg::OnMouseRightUp(wxMouseEvent &e)
+void AdvancedDlg::SaveCompilers()
 {
-	wxPoint pt = e.GetPosition();
-	long flags = wxBK_HITTEST_ONLABEL;
-	int tab = m_compilersNotebook->HitTest(pt, &flags);
-
-	if (tab != wxNOT_FOUND) {
-		switch (flags) {
-		case wxBK_HITTEST_ONLABEL:
-			PopupMenu(m_rightclickMenu);
-			break;
-		default:
-			break;
+	std::map<wxString, std::vector<ICompilerSubPage*> >::iterator iter = m_compilerPagesMap.begin();
+	for(; iter != m_compilerPagesMap.end(); iter ++){
+		std::vector<ICompilerSubPage*> items = iter->second;
+		wxString cmpname = iter->first;
+		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpname);
+		if(cmp){
+			for(size_t i=0; i<items.size(); i++){
+				ICompilerSubPage* p = items.at(i);
+				p->Save(cmp);
+			}
+			BuildSettingsConfigST::Get()->SetCompiler(cmp);//save changes
 		}
+	}
+}
+
+void AdvancedDlg::AddCompiler(CompilerPtr cmp, bool selected)
+{
+	std::vector<ICompilerSubPage*> pages;
+
+	// add the root node
+	m_compilersNotebook->AddPage(0, cmp->GetName(), selected);
+
+	CompilerPatternsPage *p2 = new CompilerPatternsPage(m_compilersNotebook, cmp->GetName());
+	pages.push_back(p2);
+	m_compilersNotebook->AddSubPage(p2, _("Patterns"), false);
+
+	CompilerToolsPage *p3 = new CompilerToolsPage(m_compilersNotebook, cmp->GetName());
+	pages.push_back(p3);
+	m_compilersNotebook->AddSubPage(p3, _("Tools"), false);
+
+	CompilerSwitchesPage *p4 = new CompilerSwitchesPage(m_compilersNotebook, cmp->GetName());
+	pages.push_back(p4);
+	m_compilersNotebook->AddSubPage(p4, _("Switches"), false);
+
+	CompilerFileTypePage *p5 = new CompilerFileTypePage(m_compilersNotebook, cmp->GetName());
+	pages.push_back(p5);
+	m_compilersNotebook->AddSubPage(p5, _("File Types"), false);
+
+	CompilerAdvancePage *p6 = new CompilerAdvancePage(m_compilersNotebook, cmp->GetName());
+	pages.push_back(p6);
+	m_compilersNotebook->AddSubPage(p6, _("Advanced"), false);
+
+	m_compilerPagesMap[cmp->GetName()] = pages;
+}
+
+void AdvancedDlg::OnContextMenu(wxContextMenuEvent& e)
+{
+	wxTreeCtrl *tree = m_compilersNotebook->GetTreeCtrl();
+	wxTreeItemId item = tree->GetSelection();
+
+	// only compilers have children
+	if(item.IsOk() && tree->HasChildren(item)){
+		PopupMenu(m_rightclickMenu);
 	}
 }

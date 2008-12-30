@@ -74,8 +74,6 @@ private:
     static int        ColorLine(int, const char *text, size_t &start, size_t &len);
     static void       SetStyles(wxScintilla *sci);
     static bool       OpenFile (const LineInfo &info);
-    static wxFileName FindFile (const wxString &fileName, const wxString &project);
-    static wxFileName FindFile (const wxArrayString& files, const wxFileName &fileName);
 
 	void Initialize       ();
 	void DoMarkAndOpenFile(std::map<int,LineInfo>::iterator i, bool clearsel);

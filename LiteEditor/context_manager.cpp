@@ -25,6 +25,7 @@
 #include <wx/tokenzr.h>
 #include "context_manager.h"
 #include "context_cpp.h"
+#include "context_diff.h"
 #include "context_base.h"
 #include "generic_context.h"
 #include "editor_config.h"
@@ -33,6 +34,7 @@ ContextManager::ContextManager()
 {
 	// register available contexts
 	m_contextPool[wxT("C++")] = new ContextCpp();
+    m_contextPool[wxT("Diff")] = new ContextDiff();
 
 	// load generic lexers
 	EditorConfig::ConstIterator iter = EditorConfigST::Get()->LexerBegin();

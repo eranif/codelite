@@ -370,6 +370,8 @@
     <File Name="stringhighlighterjob.h"/>
     <File Name="scopejob.cpp"/>
     <File Name="scopejob.h"/>
+    <File Name="context_diff.cpp"/>
+    <File Name="context_diff.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Manager">
     <File Name="manager.h"/>

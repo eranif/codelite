@@ -2746,3 +2746,113 @@ void Manager::UpdateRemoteTargetConnected(const wxString& line)
 	// log the line
 	UpdateAddLine(line);
 }
+
+wxFileName Manager::FindFile ( const wxString &filename, const wxString &project )
+{
+	wxFileName fn ( filename );
+
+	if ( !fn.FileExists() ) {
+		// try to open the file as is
+		fn.Clear();
+	}
+	if ( !fn.IsOk() && !project.IsEmpty() ) {
+		// try to open the file in context of its project
+		wxArrayString project_files;
+		GetProjectFiles ( project, project_files );
+		fn = FindFile ( project_files, filename );
+	}
+	if ( !fn.IsOk() ) {
+		// no luck there.  try the whole workspace
+		wxArrayString workspace_files;
+		GetWorkspaceFiles ( workspace_files );
+		fn = FindFile ( workspace_files, filename );
+	}
+	return fn;
+}
+
+// Please do not change this code!
+wxFileName Manager::FindFile ( const wxArrayString& files, const wxFileName &fn )
+{
+	// Iterate over the files twice:
+	// first, try to full path
+	// if the first iteration failes, iterate the files again
+	// and compare full name only
+	if ( fn.IsAbsolute() && !fn.GetFullPath().Contains ( wxT ( ".." ) ) ) {
+		return fn;
+	}
+
+	// try to convert it to absolute path
+	wxFileName f1 ( fn );
+	if ( f1.MakeAbsolute() && f1.FileExists() && !f1.GetFullPath().Contains ( wxT ( ".." ) ) ) {
+		return f1;
+	}
+
+	for ( size_t i=0; i< files.GetCount(); i++ ) {
+		wxFileName tmpFileName ( files.Item ( i ) );
+		if ( tmpFileName.GetFullPath() == fn.GetFullPath() ) {
+			wxFileName tt ( tmpFileName );
+			if ( tt.MakeAbsolute() ) {
+				return tt;
+			} else {
+				return tmpFileName;
+			}
+		}
+	}
+
+	std::vector<wxFileName> matches;
+
+	for ( size_t i=0; i< files.GetCount(); i++ ) {
+		wxFileName tmpFileName ( files.Item ( i ) );
+		if ( tmpFileName.GetFullName() == fn.GetFullName() ) {
+			matches.push_back ( tmpFileName );
+		}
+	}
+
+	wxString lastDir;
+	wxArrayString dirs = fn.GetDirs();
+	if ( dirs.GetCount() > 0 ) {
+		lastDir = dirs.Last();
+	}
+
+	if ( matches.size() == 1 ) {
+		wxFileName tt ( matches.at ( 0 ) );
+		if ( tt.MakeAbsolute() ) {
+			return tt;
+		} else {
+			return matches.at ( 0 );
+		}
+
+	} else if ( matches.size() > 1 ) {
+		// take the best match
+		std::vector<wxFileName> betterMatches;
+		for ( size_t i=0; i<matches.size(); i++ ) {
+
+			wxFileName filename ( matches.at ( i ) );
+			wxArrayString tmpdirs = filename.GetDirs();
+			if ( tmpdirs.GetCount() > 0 ) {
+				if ( tmpdirs.Last() == lastDir ) {
+					betterMatches.push_back ( filename );
+				}
+			}
+		}
+
+		if ( betterMatches.size() == 1 ) {
+			wxFileName tt ( betterMatches.at ( 0 ) );
+			if ( tt.MakeAbsolute() ) {
+				return tt;
+			} else {
+				return betterMatches.at ( 0 );
+			}
+		} else {
+			// open the first match
+			wxFileName tt ( matches.at ( 0 ) );
+			if ( tt.MakeAbsolute() ) {
+				return tt;
+			} else {
+				return matches.at ( 0 );
+			}
+		}
+	}
+	return wxFileName();
+}
+

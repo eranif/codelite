@@ -450,6 +450,11 @@ public:
 	 */
 	bool IsFileInWorkspace(const wxString &fileName);
 
+    /**
+     * Search for (non-absolute) file in the workspace
+     */
+    wxFileName FindFile(const wxString &fileName, const wxString &project = wxEmptyString);
+	
 	/**
 	 * Rebuild the database by removing all entries from the database
 	 * that belongs to a given project, and then re-index all files
@@ -735,6 +740,8 @@ private:
 	void RemoveFileFromSymbolTree(const wxFileName &fileName, const wxString &project);
 
 	void DumpMenu( wxMenu *menu, const wxString &label, wxString &content );
+    
+    wxFileName FindFile ( const wxArrayString& files, const wxFileName &fn );
 };
 
 typedef Singleton<Manager> ManagerST;

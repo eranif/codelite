@@ -798,7 +798,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 
 void ContextCpp::GotoPreviousDefintion()
 {
-	NavMgr::Get()->NavigateBackward(&GetCtrl(), PluginManager::Get());
+    NavMgr::Get()->NavigateBackward(PluginManager::Get());
 }
 
 TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
@@ -857,8 +857,6 @@ void ContextCpp::DoGotoSymbol(TagEntryPtr tag)
     if (tag) {
 		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(tag->GetFile());
         if (editor) {
-			// save this place
-			GetCtrl().AddBrowseRecord(NULL);
 			editor->FindAndSelect(tag->GetPattern(), tag->GetName());
         }
     }
@@ -894,11 +892,8 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
 
 	for (size_t i=0; i<exts.GetCount(); i++) {
 		otherFile.SetExt(exts.Item(i));
-		if (TryOpenFile(otherFile)) {
-			//keep the current location, and return
-			GetCtrl().AddBrowseRecord(NULL);
+		if (TryOpenFile(otherFile)) 
 			return;
-		}
 	}
 
 	long res(wxNOT_FOUND);
@@ -2405,15 +2400,7 @@ void ContextCpp::DoOpenWorkspaceFile()
 
 
 	if (fileToOpen.IsEmpty() == false) {
-		//we got a match
-		LEditor &rCtrl = GetCtrl();
-
-		//only provide the file name to the manager and let him
-		//decide what is the correct project name
-		ManagerST::Get()->OpenFile(fileToOpen, wxEmptyString);
-
-		// Keep the current position as well
-		rCtrl.AddBrowseRecord(NULL);
+		Frame::Get()->GetMainBook()->OpenFile(fileToOpen);
 	}
 }
 
@@ -2449,11 +2436,7 @@ void ContextCpp::DoCreateFile(const wxFileName& fn)
 		}
 	}
 
-	// Open the file in the editor
-	if (TryOpenFile(wxFileName(new_file))) {
-		// keep the current location, and return
-		GetCtrl().AddBrowseRecord(NULL);
-	}
+	TryOpenFile(wxFileName(new_file));
 }
 
 void ContextCpp::OnGotoFunctionStart(wxCommandEvent& event)
@@ -2461,7 +2444,6 @@ void ContextCpp::OnGotoFunctionStart(wxCommandEvent& event)
 	int line_number = GetCtrl().LineFromPosition(GetCtrl().GetCurrentPos());
 	TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), line_number);
 	if(tag){
-		GetCtrl().AddBrowseRecord(NULL);
 		GetCtrl().SetCaretAt(GetCtrl().PositionFromLine(tag->GetLine()-1));
 	}
 }

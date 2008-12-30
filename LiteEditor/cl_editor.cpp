@@ -1502,7 +1502,7 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 
 bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 {
-    BrowseRecord browse = CreateBrowseRecord();
+    BrowseRecord jumpfrom = CreateBrowseRecord();
     
 	wxString pattern ( _pattern );
 	pattern.StartsWith ( wxT ( "/^" ), &pattern );
@@ -1584,8 +1584,8 @@ bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 			SetSelectionEnd ( curr_pos );
 		}
 	} while ( again );
-    if (res && browse.lineno > 1) { // ATTN: lineno==1 implies newly-opened file, so don't need a browse record
-        NavMgr::Get()->Push(browse); 
+    if (res) {
+        NavMgr::Get()->AddJump(jumpfrom, CreateBrowseRecord()); 
     }
 	return res;
 }
@@ -2186,7 +2186,7 @@ void LEditor::OnPopupMenuUpdateUI(wxUpdateUIEvent &event)
 }
 
 
-BrowseRecord LEditor::DoCreateBrowseRecord(NavMgr *navmgr)
+BrowseRecord LEditor::CreateBrowseRecord()
 {
 	// Remember this position before skipping to the next one
 	BrowseRecord record;
@@ -2198,21 +2198,6 @@ BrowseRecord LEditor::DoCreateBrowseRecord(NavMgr *navmgr)
 	//else, open it with empty project
 	record.position = GetCurrentPos();
 	return record;
-}
-
-BrowseRecord LEditor::CreateBrowseRecord()
-{
-	return DoCreateBrowseRecord(NavMgr::Get());
-}
-
-void LEditor::AddBrowseRecord(NavMgr *navmgr)
-{
-	if (!navmgr) {
-		navmgr = NavMgr::Get();
-	}
-
-	BrowseRecord record = DoCreateBrowseRecord(navmgr);
-	navmgr->Push(record);
 }
 
 void LEditor::DoBreakptContextMenu(wxPoint pt)

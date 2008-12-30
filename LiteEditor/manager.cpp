@@ -191,7 +191,7 @@ bool Manager::IsWorkspaceOpen() const
 
 bool Manager::OpenFile ( const BrowseRecord &rec )
 {
-	return OpenFile ( rec.filename, rec.project, rec.lineno, rec.position );
+	return Frame::Get()->GetMainBook()->OpenFile(rec) != NULL;
 }
 
 bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName, int lineno, long position )

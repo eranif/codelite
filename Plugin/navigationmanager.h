@@ -38,34 +38,39 @@
  */
 class NavMgr
 {
-	std::vector<BrowseRecord> m_records;
-	int m_cur;
+	std::vector<BrowseRecord> m_jumps;
+	size_t m_cur;
 
 private:
 	NavMgr();
 	virtual ~NavMgr();
-
+    
 public:
 	static NavMgr *Get();
 
-	/**
-	 * @brief add new record to the manager, this new record will be added in top of our
-	 * list
-	 * @param rec
-	 */
-	void Push(const BrowseRecord &rec);
+    /**
+     * @brief check if a browse record is actually a valid jump location (source or target)
+     */
+    bool ValidLocation(const BrowseRecord &rec) const;
 
 	/**
-	 * @brief return the next place to visit
+	 * @brief add new jump record to the manager, this new record become the new top of the list
+	 * @param from the starting point of the jump
+     * @param to the ending point of the jump
+	 */
+	void AddJump(const BrowseRecord &from, const BrowseRecord &to);
+
+	/**
+	 * @brief return the next place to visit (destination)
 	 * @return next browsing record
 	 */
-	BrowseRecord GetNextRecord();
+	BrowseRecord GetNext();
 
 	/**
-	 * @brief return the previous place we visited at
+	 * @brief return the previous place we visited (source)
 	 * @return previous browsing record
 	 */
-	BrowseRecord GetPrevRecord();
+	BrowseRecord GetPrev();
 
 	/**
 	 * @brief return true if manager has more next items
@@ -79,7 +84,8 @@ public:
 	 */
 	bool CanPrev() const;
 
-	void NavigateBackward(IEditor *editor, IManager *mgr);
+    bool NavigateBackward(IManager *mgr);
+    bool NavigateForward(IManager *mgr);
 	void Clear();
 };
 #endif //NAVIGATIONMANAGER_H

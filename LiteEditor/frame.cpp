@@ -2092,16 +2092,12 @@ void Frame::OnRecentWorkspace(wxCommandEvent &event)
 void Frame::OnBackwardForward(wxCommandEvent &event)
 {
 	switch (event.GetId()) {
-	case wxID_FORWARD: {
-		BrowseRecord rec = NavMgr::Get()->GetNextRecord();
-		ManagerST::Get()->OpenFile(rec);
-	}
-	break;
-	case wxID_BACKWARD:
-		NavMgr::Get()->NavigateBackward(ManagerST::Get()->GetActiveEditor(), PluginManager::Get());
-		break;
-	default:
-		break;
+        case wxID_FORWARD: 
+            NavMgr::Get()->NavigateForward(PluginManager::Get());
+            break;
+        case wxID_BACKWARD:
+            NavMgr::Get()->NavigateBackward(PluginManager::Get());
+            break;
 	}
 }
 

@@ -80,9 +80,9 @@ public:
     LEditor *NewEditor();
     
 	LEditor *OpenFile(const wxString &file_name, const wxString &projectName = wxEmptyString,
-	                  int lineno = wxNOT_FOUND, long position = wxNOT_FOUND);
+	                  int lineno = wxNOT_FOUND, long position = wxNOT_FOUND, bool addjump = true);
 	LEditor *OpenFile(const BrowseRecord &rec)
-        { return OpenFile(rec.filename, rec.project, rec.lineno, rec.position); }
+        { return OpenFile(rec.filename, rec.project, rec.lineno, rec.position, false); }
 
     bool AddPage   (wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
     bool SelectPage(wxWindow *win);

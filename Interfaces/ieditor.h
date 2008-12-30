@@ -248,12 +248,6 @@ public:
 	virtual wxString FormatTextKeepIndent(const wxString &text, int pos) = 0;
 
 	/**
-	 * @brief create and add a browsing record to the navigation manager
-	 * @param navmgr navigation manager to use
-	 */
-	virtual void AddBrowseRecord(NavMgr *navmgr) = 0;
-
-	/**
 	 * @brief creating a browsing record that can be stored in the navigation manager
 	 * @return browsing record
 	 */

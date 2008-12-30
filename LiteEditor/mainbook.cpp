@@ -346,7 +346,7 @@ LEditor *MainBook::NewEditor()
 	return editor;
 }
 
-LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position)
+LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position, bool addjump)
 {
 	wxFileName fileName(file_name);
 	fileName.MakeAbsolute();
@@ -357,7 +357,10 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		projName = ManagerST::Get()->GetProjectNameByFile(fileName.GetFullPath());
 	}
 
-	LEditor* editor = FindEditor(fileName.GetFullPath());
+	LEditor* editor = GetActiveEditor();
+    BrowseRecord jumpfrom = editor ? editor->CreateBrowseRecord() : BrowseRecord();
+    
+    editor = FindEditor(fileName.GetFullPath());
 	if (editor) {
 		editor->SetProject(projName);
 	} else if (fileName.IsOk() == false) {
@@ -384,6 +387,11 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		}
 		ManagerST::Get()->AddToRecentlyOpenedFiles(fileName.GetFullPath());
 	}
+    
+    if (addjump) {
+        BrowseRecord jumpto = editor ? editor->CreateBrowseRecord() : BrowseRecord();
+        NavMgr::Get()->AddJump(jumpfrom, jumpto);
+    }
 
 	return editor;
 }
@@ -399,8 +407,6 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 
 bool MainBook::SelectPage(wxWindow *win)
 {
-//    LEditor *oldeditor = GetActiveEditor();
-
 	size_t index = m_book->GetPageIndex(win);
 	std::set<wxWindow*>::iterator i = m_detachedTabs.find(win);
 
@@ -432,9 +438,6 @@ bool MainBook::SelectPage(wxWindow *win)
 		Frame::Get()->SetStatusMessage(wxEmptyString, 3); // clear end-of-line mode indicator
 		UpdateNavBar(NULL);
 	} else {
-//        if (oldeditor && oldeditor != editor) {
-//            oldeditor->AddBrowseRecord(NULL);
-//        }
 		editor->SetActive();
 		if (editor->GetContext()->GetName() == wxT("C++")) {
 			if (Frame::Get()->GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {

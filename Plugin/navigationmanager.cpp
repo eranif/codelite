@@ -25,7 +25,7 @@
 #include "navigationmanager.h"
 
 NavMgr::NavMgr()
-		: m_cur(wxNOT_FOUND)
+    : m_cur(0)
 {
 }
 
@@ -42,69 +42,64 @@ NavMgr *NavMgr::Get()
 
 void NavMgr::Clear()
 {
-	m_cur = wxNOT_FOUND;
-	m_records.clear();
+	m_cur = 0;
+	m_jumps.clear();
+}
+
+bool NavMgr::ValidLocation(const BrowseRecord& rec) const
+{
+    // ATTN: lineno == 1 implies a file was just opened, but before the find-and-select has happened
+    // TODO: don't allow records for non-source files (*.diff, *.i, etc)
+    return !rec.filename.IsEmpty() && rec.lineno > 1;
 }
 
 bool NavMgr::CanNext() const
 {
-	int cur = m_cur;
-	cur++;
-	return (cur < (int)m_records.size());
+    return m_cur+1 < m_jumps.size();
 }
 
 bool NavMgr::CanPrev() const
 {
-	int cur = m_cur;
-	cur--;
-	return (cur >= 0);
+    return m_cur > 0;
 }
 
-BrowseRecord NavMgr::GetNextRecord()
+BrowseRecord NavMgr::GetNext()
 {
-	if (!CanNext()) {
-		return BrowseRecord();
-	}
-
-	m_cur++;
-	return m_records.at(m_cur);
+    return CanNext() ? m_jumps[++m_cur] : BrowseRecord();
 }
 
-BrowseRecord NavMgr::GetPrevRecord()
+BrowseRecord NavMgr::GetPrev()
 {
-	if (!CanPrev()) {
-		return BrowseRecord();
-	}
-	m_cur--;
-	return m_records.at(m_cur);
+    return CanPrev() ? m_jumps[--m_cur] : BrowseRecord();
 }
 
-void NavMgr::Push(const BrowseRecord &rec)
+void NavMgr::AddJump(const BrowseRecord &from, const BrowseRecord &to)
 {
-	m_records.insert(m_records.end(), rec);
-	m_cur = (int)m_records.size();
+    if (ValidLocation(from)) {
+        // keep previous location only if it's not at position 0, and it is not equal to from
+        if (m_cur > 0 && !(m_jumps[m_cur].filename == from.filename && m_jumps[m_cur].lineno == from.lineno)) {
+            m_cur++;
+        }
+        m_jumps.resize(m_cur);
+        m_jumps.push_back(from);
+    }
+    if (ValidLocation(to)) {
+        // only add if there's an actual jump
+        if (!m_jumps.empty() && !(m_jumps[m_cur].filename == to.filename && m_jumps[m_cur].lineno == to.lineno)) {
+            m_cur++;
+            m_jumps.resize(m_cur);
+            m_jumps.push_back(to);
+        }
+    }
 }
 
-void NavMgr::NavigateBackward(IEditor *editor, IManager *mgr)
+bool NavMgr::NavigateBackward(IManager *mgr)
 {
-	if (!CanPrev())
-		return;
-
-	// before jumping, save the current position
-	if ( CanNext() == false ) {
-		if (editor) {
-			//keep this location as well, but make sure we dont add this twice
-			BrowseRecord record = editor->CreateBrowseRecord();
-			BrowseRecord last = m_records.back();
-			if (!(last.filename == record.filename && last.lineno == record.lineno && last.position == record.position)) {
-				//different item, we can add it
-				Push(record);
-				//so we dont get this location again
-				GetPrevRecord();
-			}
-		}
-	}
-
-	BrowseRecord rec = GetPrevRecord();
-	mgr->OpenFile( rec );
+    return CanPrev() && mgr->OpenFile(GetPrev());
 }
+
+bool NavMgr::NavigateForward(IManager *mgr)
+{
+    return CanNext() && mgr->OpenFile(GetNext());
+}
+

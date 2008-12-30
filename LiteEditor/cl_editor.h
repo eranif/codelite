@@ -318,12 +318,6 @@ public:
 	 */
 	void InsertTextWithIndentation(const wxString &text, int pos);
 
-	/**
-	 * @brief creating a browsing record that can be stored in the navigation manager
-	 * @param navmgr navigation manager to use. If NULL is provided, use the singleton NavMgr::Get() instance
-	 */
-	virtual void AddBrowseRecord(NavMgr *navmgr);
-
 	virtual BrowseRecord CreateBrowseRecord();
 
 	bool IsContextMenuOn() const {
@@ -548,7 +542,6 @@ private:
 	void BraceMatch(long pos);
 	void DoHighlightWord();
 	void DoSetStatusMessage(const wxString &msg, int col);
-	BrowseRecord DoCreateBrowseRecord(NavMgr *navmgr);
 
 	// Conevert FindReplaceDialog flags to wxSD flags
 	size_t SearchFlags(const FindReplaceData &data);

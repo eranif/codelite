@@ -166,7 +166,7 @@ void SvnDriver::OnSvnProcessTerminated(wxProcessEvent &event)
 
 void SvnDriver::DisplayDiffFile(const wxString &fileName, const wxString &content)
 {
-	bool hasExternalDiff = !m_plugin->GetOptions().GetDiffCmd().empty();
+	bool hasExternalDiff = m_plugin->GetOptions().GetFlags() & SvnUseExternalDiff ? true : false;
 	if ( !hasExternalDiff || ( hasExternalDiff && ((m_plugin->GetOptions().GetFlags() & SvnCaptureDiffOutput) != 0) ) ) {
 		//Load the output file into the editor
 		wxString tmpFile = wxFileName::GetTempDir();
@@ -206,6 +206,8 @@ void SvnDriver::DisplayLog(const wxString &outputFile, const wxString &content)
 
 void SvnDriver::ExecCommand(const wxString &cmd, bool hide)
 {
+	PrintMessage(wxString::Format(wxT("Executing: %s\n"), cmd.c_str()));
+
 	//execute the command line
 	//the async command is a one time executable object,
 	m_cmd = new AsyncExeCmd(this);
@@ -383,6 +385,8 @@ void SvnDriver::DiffFile(const wxFileName &fileName)
 
 	DirSaver ds;
 	wxString file_name;
+
+	PrintMessage(wxString::Format(wxT("Diff: cd %s\n"), fileName.GetPath().c_str()));
 	wxSetWorkingDirectory(fileName.GetPath());
 
 	//did we get a directory?

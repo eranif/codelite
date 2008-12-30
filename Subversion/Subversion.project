@@ -54,7 +54,6 @@
   <VirtualDirectory Name="HTML">
     <File Name="../Runtime/svnreport.html"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
@@ -226,4 +225,5 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

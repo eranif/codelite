@@ -1578,26 +1578,14 @@ void Manager::DbgStop()
 		m_quickWatchDlg = NULL;
 	}
 
-	//remove all debugger markers
+	// remove all debugger markers
 	DbgUnMarkDebuggerLine();
+
+	// Mark the debugger as non interactive
 	m_dbgCanInteract = false;
-
-	IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
-	if ( !dbgr ) {
-		return;
-	}
-
-	if ( !dbgr->IsRunning() ) {
-		return;
-	}
 
 	//clear the debugger pane
 	Frame::Get()->GetDebuggerPane()->Clear();
-
-	dbgr->Stop();
-	DebuggerMgr::Get().SetActiveDebugger ( wxEmptyString );
-
-	DebugMessage ( _ ( "Debug session ended\n" ) );
 
 	// The list of breakpoints is still there, but their debugger_ids are now invalid
 	// So remove them. Then reInitialise the breakpt view, to use internal_ids
@@ -1613,8 +1601,18 @@ void Manager::DbgStop()
 		ShowDebuggerPane ( false );
 	}
 
-	//mark the debugger as non interactive
-	m_dbgCanInteract = false;
+	IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
+	if ( !dbgr ) {
+		return;
+	}
+
+	if ( !dbgr->IsRunning() ) {
+		return;
+	}
+
+	dbgr->Stop();
+	DebuggerMgr::Get().SetActiveDebugger ( wxEmptyString );
+	DebugMessage ( _ ( "Debug session ended\n" ) );
 }
 
 void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )

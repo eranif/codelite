@@ -372,7 +372,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 		}
 
 		Connect(wxEVT_TIMER, wxTimerEventHandler(DbgGdb::OnTimer), NULL, this);
-		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(DbgGdb::OnProcessEnd), NULL, this);
+		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(DbgGdb::OnProcessEndEx), NULL, this);
 		m_canUse = true;
 		m_timer->Start(10);
 		wxWakeUpIdle();
@@ -447,7 +447,7 @@ bool DbgGdb::Stop()
 {
 	if (IsBusy()) {
 		Disconnect(wxEVT_TIMER, wxTimerEventHandler(DbgGdb::OnTimer), NULL, this);
-		m_proc->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(DbgGdb::OnProcessEnd), NULL, this);
+		m_proc->Disconnect(wxEVT_END_PROCESS, wxProcessEventHandler(DbgGdb::OnProcessEndEx), NULL, this);
 
 		InteractiveProcess::StopProcess();
 		SetBusy(false);
@@ -1125,6 +1125,7 @@ bool DbgGdb::SelectThread(long threadId)
 void DbgGdb::OnProcessEndEx(wxProcessEvent &e)
 {
 	InteractiveProcess::OnProcessEnd(e);
+	m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
 	m_env->UnApplyEnv();
 }
 

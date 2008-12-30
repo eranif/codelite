@@ -172,7 +172,12 @@ void SvnDriver::DisplayDiffFile(const wxString &fileName, const wxString &conten
 		wxString tmpFile = wxFileName::GetTempDir();
 
 		wxFileName fn(fileName);
-		tmpFile << wxT("/") << fn.GetFullName() << wxT(".diff");
+		if(fn.IsDir()){
+			tmpFile << wxT("/") << fn.GetDirs().Last()<< wxT(".diff");
+		} else {
+			tmpFile << wxT("/") << fn.GetFullName() << wxT(".diff");
+		}
+
 
 		wxFFile file(tmpFile, wxT("wb+"));
 		if (file.IsOpened()) {
@@ -451,7 +456,7 @@ void SvnDriver::Diff()
 	wxString command, comment;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
 
-	DiffFile( item.m_text );
+	DiffFile( item.m_fileName );
 }
 
 void SvnDriver::Delete()

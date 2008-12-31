@@ -303,6 +303,7 @@ void FindResultsTab::OnMouseDClick(wxScintillaEvent &e)
 			LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(m->second.GetFileName(), wxEmptyString, m->second.GetLineNumber()-1);
 			if (editor && m->second.GetColumn() >= 0 && m->second.GetLen() >= 0) {
 				int offset = editor->PositionFromLine(m->second.GetLineNumber()-1) + m->second.GetColumn();
+				editor->EnsureVisible(m->second.GetLineNumber()-1);
 				editor->SetSelection(offset, offset + m->second.GetLen());
 			}
 		}

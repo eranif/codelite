@@ -27,6 +27,7 @@
 #include "debuggergdb.h"
 #include "precompiled_header.h"
 #include "gdb_result_parser.h"
+#include <wx/regex.h>
 
 extern int gdb_result_lex();
 extern bool setGdbLexerInput(const std::string &in);
@@ -327,7 +328,33 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 			}
 		}
 	}
-	
+
+#ifdef __WXMAC__
+
+	// On Mac we use -break-insert
+	// so the breakpoint ID will come in form of 
+	// ^done,bkpt={number="2"....
+	static wxRegEx reBreak(wxT("done,bkpt={number=\"([0-9]+)\""));
+	static wxRegEx reWatch(wxT("[Ww]atchpoint ([0-9]+)"));
+
+	wxString number;
+	if (reBreak.Matches(line)) {
+		m_observer->UpdateAddLine(wxString::Format(wxT("Found the breakpoint ID!")));
+		number = reBreak.GetMatch(line, 1);
+	} else if (reWatch.Matches(line)) {
+		number = reWatch.GetMatch(line, 1);
+	}
+
+	if (number.IsEmpty() == false) {
+		long id;
+		if (number.ToLong(&id)) {
+			StoreDebuggerID(id);
+			m_observer->UpdateAddLine(wxString::Format(wxT("Storing debugger breakpoint Id=%d"), id));
+		}
+	}
+
+#endif
+
 	// DbgGdb::Poke should have caught the id that gdb assigned to this breakpoint
 	// and stored it in m_debuggerID. Retrieve it, or wxNOT_FOUND if not available
 	int debugger_id = RetrieveDebuggerID();
@@ -335,19 +362,32 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 	if (debugger_id == -1) {
 		return true;	// If the bp wasn't matched, the most likely reason is that bp creation failed. So don't say it worked
 	}
-	
+
 	wxString msg;
-	switch(m_bpType) {
-		case BP_type_break:				msg = wxString::Format(_("Successfully set breakpoint %d at: "), debugger_id); break;
-		case BP_type_condbreak:		msg = wxString::Format(_("Successfully set conditional breakpoint %d at: "), debugger_id); break;
-		case BP_type_tempbreak:		msg = wxString::Format(_("Successfully set temporary breakpoint %d at: "), debugger_id); break;
-		case BP_type_watchpt:			switch(m_bp.watchpoint_type) {
-																case WP_watch:	msg = wxString::Format(_("Successfully set watchpoint %d watching: "), debugger_id); break;
-																case WP_rwatch:	msg = wxString::Format(_("Successfully set read watchpoint %d watching: "), debugger_id); break;
-																case WP_awatch:	msg = wxString::Format(_("Successfully set read/write watchpoint %d watching: "), debugger_id); break;
-															}
+	switch (m_bpType) {
+	case BP_type_break:
+		msg = wxString::Format(_("Successfully set breakpoint %d at: "), debugger_id);
+		break;
+	case BP_type_condbreak:
+		msg = wxString::Format(_("Successfully set conditional breakpoint %d at: "), debugger_id);
+		break;
+	case BP_type_tempbreak:
+		msg = wxString::Format(_("Successfully set temporary breakpoint %d at: "), debugger_id);
+		break;
+	case BP_type_watchpt:
+		switch (m_bp.watchpoint_type) {
+		case WP_watch:
+			msg = wxString::Format(_("Successfully set watchpoint %d watching: "), debugger_id);
+			break;
+		case WP_rwatch:
+			msg = wxString::Format(_("Successfully set read watchpoint %d watching: "), debugger_id);
+			break;
+		case WP_awatch:
+			msg = wxString::Format(_("Successfully set read/write watchpoint %d watching: "), debugger_id);
+			break;
+		}
 	}
-	
+
 	if (m_bpType == BP_type_watchpt) {
 		msg <<  m_bp.watchpt_data;
 	} else if (m_bp.memory_address != -1) {
@@ -367,13 +407,14 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 	return true;
 }
 
-//static 	
+//static
 void DbgCmdHandlerBp::StoreDebuggerID(const int debugger_id)
-{	// Store the value that will become BreakpointInfo::debugger_id
+{
+	// Store the value that will become BreakpointInfo::debugger_id
 	m_debuggerID = debugger_id;
 }
 
-//static 
+//static
 int DbgCmdHandlerBp::RetrieveDebuggerID()
 {
 	int id = wxNOT_FOUND;
@@ -381,7 +422,7 @@ int DbgCmdHandlerBp::RetrieveDebuggerID()
 		id = m_debuggerID;
 	}
 
-	m_debuggerID = wxNOT_FOUND; // 'Zero' m_debuggerID, so we won't find it again 
+	m_debuggerID = wxNOT_FOUND; // 'Zero' m_debuggerID, so we won't find it again
 	return id;
 }
 
@@ -465,8 +506,7 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 	return true;
 }
 
-void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent)
-{
+void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent) {
 	wxString displayLine;
 	std::string currentToken;
 	int type(0);
@@ -566,7 +606,7 @@ void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent)
 			// restore the previous buffer
 			gdb_result_pop_buffer();
 
-			if(displayLine.IsEmpty() == false){
+			if (displayLine.IsEmpty() == false) {
 				NodeData data;
 				data.name = displayLine;
 				parent->AddChild(data.name, data);
@@ -578,8 +618,7 @@ void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent)
 	}
 }
 
-void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent)
-{
+void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent) {
 	//the pattern here should be
 	//key = value, ....
 	//where value can be a complex value:
@@ -646,14 +685,12 @@ void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent)
 	}
 }
 
-bool DbgCmdHandlerVarCreator::ProcessOutput(const wxString &line)
-{
+bool DbgCmdHandlerVarCreator::ProcessOutput(const wxString &line) {
 	wxUnusedVar(line);
 	return true;
 }
 
-bool DbgCmdHandlerEvalExpr::ProcessOutput(const wxString &line)
-{
+bool DbgCmdHandlerEvalExpr::ProcessOutput(const wxString &line) {
 	//remove the ^done
 	wxString tmpLine(line);
 	line.StartsWith(wxT("^done,value=\""), &tmpLine);
@@ -663,8 +700,7 @@ bool DbgCmdHandlerEvalExpr::ProcessOutput(const wxString &line)
 	return true;
 }
 
-bool DbgCmdStackList::ProcessOutput(const wxString &line)
-{
+bool DbgCmdStackList::ProcessOutput(const wxString &line) {
 	wxString tmpLine(line);
 	line.StartsWith(wxT("^done,stack=["), &tmpLine);
 
@@ -697,15 +733,13 @@ bool DbgCmdStackList::ProcessOutput(const wxString &line)
 	return true;
 }
 
-bool DbgCmdSelectFrame::ProcessOutput(const wxString &line)
-{
+bool DbgCmdSelectFrame::ProcessOutput(const wxString &line) {
 	wxUnusedVar(line);
 	m_observer->UpdateGotControl(DBG_END_STEPPING);
 	return true;
 }
 
-void DbgCmdHandlerLocals::MakeTreeFromFrame(wxString &strline, TreeNode<wxString, NodeData>* parent)
-{
+void DbgCmdHandlerLocals::MakeTreeFromFrame(wxString &strline, TreeNode<wxString, NodeData>* parent) {
 	wxString displayLine;
 	wxString name, val;
 
@@ -733,8 +767,7 @@ void DbgCmdHandlerLocals::MakeTreeFromFrame(wxString &strline, TreeNode<wxString
 	}
 }
 
-bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line)
-{
+bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line) {
 	// We use this handler as a callback to indicate that gdb has connected to the debugger
 	m_observer->UpdateRemoteTargetConnected(line);
 
@@ -742,8 +775,7 @@ bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line)
 	return m_debugger->Continue();
 }
 
-bool DbgCmdDisplayOutput::ProcessOutput(const wxString& line)
-{
+bool DbgCmdDisplayOutput::ProcessOutput(const wxString& line) {
 	// Hopefully, display whatever output gdb has generated, without pruning
 	m_observer->UpdateAddLine(line);
 

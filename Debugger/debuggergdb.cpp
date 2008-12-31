@@ -108,9 +108,9 @@ static wxRegEx reInfoProgram2(wxT("child process ([0-9]+)"));
 static wxRegEx reInfoProgram3(wxT("Using the running image of child thread ([0-9]+)"));
 
 #ifdef __WXMSW__
- static wxRegEx reConnectionRefused(wxT("[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: No connection could be made because the target machine actively refused it."));
+static wxRegEx reConnectionRefused(wxT("[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: No connection could be made because the target machine actively refused it."));
 #else
- static wxRegEx reConnectionRefused(wxT("[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: Connection refused."));
+static wxRegEx reConnectionRefused(wxT("[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: Connection refused."));
 #endif
 DebuggerInfo GetDebuggerInfo()
 {
@@ -224,9 +224,9 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 	}
 
 	wxString actualPath;
-	if(ExeLocator::Locate(dbgExeName, actualPath) == false){
+	if (ExeLocator::Locate(dbgExeName, actualPath) == false) {
 		wxMessageBox(wxString::Format(wxT("Failed to locate gdb! at '%s'"), dbgExeName.c_str()),
-					 wxT("CodeLite"));
+		             wxT("CodeLite"));
 		SetBusy(false);
 		return false;
 	}
@@ -325,9 +325,9 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 	}
 
 	wxString actualPath;
-	if(ExeLocator::Locate(dbgExeName, actualPath) == false){
+	if (ExeLocator::Locate(dbgExeName, actualPath) == false) {
 		wxMessageBox(wxString::Format(wxT("Failed to locate gdb! at '%s'"), dbgExeName.c_str()),
-					 wxT("CodeLite"));
+		             wxT("CodeLite"));
 		SetBusy(false);
 		return false;
 	}
@@ -472,7 +472,7 @@ bool DbgGdb::Next()
 void DbgGdb::SetBreakpoints()
 {
 	for (size_t i=0; i< m_bpList.size(); i++) {
-	// Without the 'unnecessary' cast in the next line, bpinfo.bp_type is seen as (e.g.) 4 instead of BP_type_tempbreak, ruining switch statments :/
+		// Without the 'unnecessary' cast in the next line, bpinfo.bp_type is seen as (e.g.) 4 instead of BP_type_tempbreak, ruining switch statments :/
 		BreakpointInfo bpinfo = (BreakpointInfo)m_bpList.at(i);
 		Break(bpinfo);
 	}
@@ -485,55 +485,66 @@ bool DbgGdb::Break(BreakpointInfo& bp)
 	tmpfileName.Replace(wxT("\\"), wxT("/"));
 
 	wxString command;
-	switch(bp.bp_type) {
-		case BP_type_watchpt:		switch(bp.watchpoint_type) {
-																	case WP_watch:		command = wxT("watch "); break;
-																	case WP_rwatch:		command = wxT("rwatch "); break;
-																	case WP_awatch:		command = wxT("awatch "); break;
-														}
-														command << bp.watchpt_data; break;
+	switch (bp.bp_type) {
+	case BP_type_watchpt:
+		switch (bp.watchpoint_type) {
+		case WP_watch:
+			command = wxT("watch ");
+			break;
+		case WP_rwatch:
+			command = wxT("rwatch ");
+			break;
+		case WP_awatch:
+			command = wxT("awatch ");
+			break;
+		}
+		command << bp.watchpt_data;
+		break;
 
-		case BP_type_tempbreak:	command = wxT("tbreak "); break;
+	case BP_type_tempbreak:
+		command = wxT("tbreak ");
+		break;
 
-		case BP_type_condbreak:	// This starts like a normal break. Any condition is added below
-		case BP_type_break:
-		  default: 							// Should be standard breakpts. But if someone tries to make an ignored temp bp
-														// it won't have the BP_type_tempbreak type, so check again here
-														command =  (bp.is_temp ? wxT("tbreak ") : wxT("break ")); break;
+	case BP_type_condbreak:	// This starts like a normal break. Any condition is added below
+	case BP_type_break:
+	default: 							// Should be standard breakpts. But if someone tries to make an ignored temp bp
+		// it won't have the BP_type_tempbreak type, so check again here
+		command =  (bp.is_temp ? wxT("tbreak ") : wxT("-break-insert "));
+		break;
 	}
 
 	if (bp.memory_address != -1) {
-			// Memory is easy: just prepend *. gdb copes happily with (at least) hex or decimal
+		// Memory is easy: just prepend *. gdb copes happily with (at least) hex or decimal
 		command << wxT('*') << bp.memory_address;
 
 	} else if (bp.bp_type != BP_type_watchpt) {
-			// Function and Lineno locations can/should be prepended by a filename (but see later)
-			command << wxT("\"");
-			if (! tmpfileName.IsEmpty()) {
-				tmpfileName.Append(wxT(":"));
+		// Function and Lineno locations can/should be prepended by a filename (but see later)
+		command << wxT("\"");
+		if (! tmpfileName.IsEmpty()) {
+			tmpfileName.Append(wxT(":"));
+		}
+
+		if (bp.lineno != -1) {
+			// Common-or-garden way using a line-number
+			command << tmpfileName << bp.lineno;
+
+		} else if (! bp.function_name.IsEmpty()) {
+			// There are 2 ways to set breakpoints on a function name:
+			if (bp.regex) {
+				// If the name is a regex, make an unconditional, non-temp rbreak, even if bp.bp_type said otherwise
+				command = wxT("rbreak ");
 			}
-
-			if (bp.lineno != -1) {
-				// Common-or-garden way using a line-number
-				command << tmpfileName << bp.lineno;
-
-			} else if (! bp.function_name.IsEmpty()) {
-				// There are 2 ways to set breakpoints on a function name:
-				if (bp.regex) {
-					// If the name is a regex, make an unconditional, non-temp rbreak, even if bp.bp_type said otherwise
-					command = wxT("rbreak ");
-				}
 #ifdef __WXGTK__
-				// afaict, gdb can't cope with filepath:MyClass::SomeMethod
-				// It's happy with MyClass::SomeMethod or Function or filepath:Function
-				// Perhaps it's because some idiot might have different functions called Foo() in different files,
-				// but not different MyClass::Foo.s. Anyway, don't use the filepath if there's a :: in function_name
-				if (bp.function_name.Find(wxT("::")) == wxNOT_FOUND && !bp.regex) {
-					command << tmpfileName;
-				}
-#endif
-				command << bp.function_name;
+			// afaict, gdb can't cope with filepath:MyClass::SomeMethod
+			// It's happy with MyClass::SomeMethod or Function or filepath:Function
+			// Perhaps it's because some idiot might have different functions called Foo() in different files,
+			// but not different MyClass::Foo.s. Anyway, don't use the filepath if there's a :: in function_name
+			if (bp.function_name.Find(wxT("::")) == wxNOT_FOUND && !bp.regex) {
+				command << tmpfileName;
 			}
+#endif
+			command << bp.function_name;
+		}
 	}
 
 	if (!bp.conditions.IsEmpty()) {
@@ -543,7 +554,7 @@ bool DbgGdb::Break(BreakpointInfo& bp)
 	if ((bp.bp_type != BP_type_watchpt) && (bp.memory_address == -1)) {
 
 		// gdb can't cope with quotes round memory addresses, so we didn't open one for it earlier
-		if(!bp.regex){
+		if (!bp.regex) {
 			command << wxT("\"");
 		}
 	}
@@ -692,7 +703,7 @@ bool DbgGdb::QueryLocals()
 
 bool DbgGdb::ExecuteCmd(const wxString &cmd)
 {
-	if(m_info.enableDebugLog) {
+	if (m_info.enableDebugLog) {
 		m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), cmd.c_str()));
 	}
 	return Write(cmd);
@@ -735,7 +746,7 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 			}
 		}
 
-		if(m_info.enableDebugLog) {
+		if (m_info.enableDebugLog) {
 			m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), line.c_str()));
 		}
 
@@ -754,7 +765,7 @@ bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
 				line = line.Mid(8);
 				DoProcessAsyncCommand(line, cmd_id);
 
-				if(recvId > expcId) {
+				if (recvId > expcId) {
 					// if we are here, it means that the received ID is greater than ours...
 					// so we probably will never get it ..
 					return false;
@@ -833,7 +844,7 @@ void DbgGdb::Poke()
 
 	//poll the debugger output
 	wxString line;
-	if( !m_proc ) {
+	if ( !m_proc ) {
 		return;
 	}
 
@@ -881,7 +892,7 @@ void DbgGdb::Poke()
 			}
 		}
 
-		if(reConnectionRefused.Matches(line)){
+		if (reConnectionRefused.Matches(line)) {
 			StripString(line);
 #ifdef __WXGTK__
 			m_consoleFinder.FreeConsole();
@@ -908,6 +919,8 @@ void DbgGdb::Poke()
 			}
 			m_observer->UpdateAddLine(line);
 
+		
+#ifndef __WXMAC__			
 			// Let's see if we've caught a just-set breakpoint
 			// That would be a "Breakpoint 6 at 0x123456: file ./MyFoo.cpp, line 123" message
 			// or a just-set watchpoint
@@ -915,21 +928,21 @@ void DbgGdb::Poke()
 			// or, if hardware ones aren't available: "Watchpoint 8: myint"
 			static wxRegEx reBreak(wxT("^Breakpoint ([0-9]+)"));
 			static wxRegEx reWatch(wxT("[Ww]atchpoint ([0-9]+)"));
-			static wxRegEx reGetBreakNo(wxT("[0-9]+"));
-			wxString matchedpart;
+
+			wxString number;
 			if (reBreak.Matches(line)) {
-				matchedpart = reBreak.GetMatch(line);
+				number = reBreak.GetMatch(line, 1);
 			} else if (reWatch.Matches(line)) {
-				matchedpart = reWatch.GetMatch(line);
+				number = reWatch.GetMatch(line, 1);
 			}
-			if (! matchedpart.IsEmpty()) {
-				if (reGetBreakNo.Matches(matchedpart)) {
-					wxString number = reGetBreakNo.GetMatch(matchedpart);
-					long id; if (number.ToLong(&id)) {
-						DbgCmdHandlerBp::StoreDebuggerID(id);
-					}
+			
+			if (number.IsEmpty() == false) {
+				long id;
+				if (number.ToLong(&id)) {
+					DbgCmdHandlerBp::StoreDebuggerID(id);
 				}
 			}
+#endif
 
 		} else if (reCommand.Matches(line)) {
 
@@ -1300,11 +1313,11 @@ bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output
 					GDB_NEXT_TOKEN();	//"0x65"
 					GDB_STRIP_QUOATES(currentToken);
 					// convert the hex string into real value
-					if(currentToken.ToLong(&v, 16)) {
+					if (currentToken.ToLong(&v, 16)) {
 
-					//	char ch = (char)v;
-						if(wxIsprint((wxChar)v) || (wxChar)v == ' ') {
-							if(v == 9){ //TAB
+						//	char ch = (char)v;
+						if (wxIsprint((wxChar)v) || (wxChar)v == ' ') {
+							if (v == 9) { //TAB
 								v = 32; //SPACE
 							}
 
@@ -1348,7 +1361,7 @@ bool DbgGdb::SetMemory(const wxString& address, size_t count, const wxString& he
 	wxString hexCommaDlimArr;
 	wxArrayString hexArr = wxStringTokenize(hex_value, wxT(" "), wxTOKEN_STRTOK);
 
-	for(size_t i=0; i<hexArr.GetCount(); i++){
+	for (size_t i=0; i<hexArr.GetCount(); i++) {
 		hexCommaDlimArr << hexArr.Item(i) << wxT(",");
 	}
 
@@ -1357,4 +1370,3 @@ bool DbgGdb::SetMemory(const wxString& address, size_t count, const wxString& he
 
 	return ExecuteCmd(cmd);
 }
-

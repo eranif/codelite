@@ -61,9 +61,11 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
     wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Send:"));
     m_inputSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
-    m_input = new wxComboBox(this, wxID_ANY);
+    m_input = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxTE_PROCESS_ENTER);
     m_input->SetMinSize(wxSize(200,-1));
-    ConnectKeyDown(m_input, ShellTab::OnKeyDown);
+	m_input->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(ShellTab::OnEnter), NULL, this);
+	m_input->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ShellTab::OnKeyDown), NULL, this);
+
     m_inputSizer->Add(m_input, 1, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
 
     btn = new wxButton(this, XRCID("send_input"), wxT("Send"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
@@ -215,10 +217,6 @@ void ShellTab::OnKeyDown(wxKeyEvent& e)
 {
     wxCommandEvent dummy;
     switch (e.GetKeyCode()) {
-        case WXK_RETURN:
-        case WXK_NUMPAD_ENTER:
-            OnSendInput(dummy);
-            break;
         case wxT('c'):
         case wxT('C'):
             if (e.GetModifiers() == wxMOD_CONTROL) {
@@ -233,6 +231,13 @@ void ShellTab::OnKeyDown(wxKeyEvent& e)
     }
 }
 
+
+void ShellTab::OnEnter(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	wxCommandEvent dummy;
+    OnSendInput(dummy);
+}
 
 
 DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
@@ -279,4 +284,3 @@ void DebugTab::OnUpdateUI(wxUpdateUIEvent& e)
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     e.Enable(dbgr && dbgr->IsRunning());
 }
-

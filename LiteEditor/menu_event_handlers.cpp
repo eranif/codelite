@@ -155,12 +155,12 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &ev
 		// if we have a selected text, use that text instead of one
 		// from the dialog
 		if (editor->GetSelectedText().IsEmpty() == false || selWord.IsEmpty() == false) {
-			
+
 			if(selWord.IsEmpty()) {
 				data->SetFindString(editor->GetSelectedText());
 			}else{
 				// set the word to search from the word under the caret
-				// also set the current search position accordingly 
+				// also set the current search position accordingly
 				if(event.GetId() == XRCID("find_next_at_caret")){
 					// search is going forward, so place the current position at the start of the word
 					editor->SetCurrentPos(editor->WordStartPosition(editor->GetCurrentPos(), true));
@@ -401,20 +401,14 @@ void DebuggerMenuHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &e
 	if (event.GetId() == XRCID("insert_breakpoint")) {
 		editor->ToggleBreakpoint();
 	}
-	if ((event.GetId() == XRCID("insert_temp_breakpoint")) 
+	if ((event.GetId() == XRCID("insert_temp_breakpoint"))
 			|| (event.GetId() == XRCID("insert_cond_breakpoint"))) {
 		editor->AddOtherBreakpointType(event);
 	}
 	if (event.GetId() == XRCID("delete_breakpoint")) {
 		editor->DelBreakpoint();
 	}
-	
-	if (event.GetId() == XRCID("toggle_breakpoint_enabled_status")) {
-		editor->ToggleBreakpointEnablement();
-	}	
-	if (event.GetId() == XRCID("ignore_breakpoint")) {
-		editor->OnIgnoreBreakpoint();
-	}	
+
 	if (event.GetId() == XRCID("edit_breakpoint")) {
 		editor->OnEditBreakpoint();
 	}

@@ -1503,7 +1503,7 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 {
     BrowseRecord jumpfrom = CreateBrowseRecord();
-    
+
 	wxString pattern ( _pattern );
 	pattern.StartsWith ( wxT ( "/^" ), &pattern );
 
@@ -1585,7 +1585,7 @@ bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 		}
 	} while ( again );
     if (res) {
-        NavMgr::Get()->AddJump(jumpfrom, CreateBrowseRecord()); 
+        NavMgr::Get()->AddJump(jumpfrom, CreateBrowseRecord());
     }
 	return res;
 }
@@ -2216,21 +2216,12 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 	std::vector<BreakpointInfo> lineBPs;
 	ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(lineBPs, GetFileName().GetFullPath(), GetCurrentLine()+1);
 	size_t count = lineBPs.size();
+
 	// What we show depends on whether there's already a bp here (or several)
 	if (count > 0) {
 		menu.AppendSeparator();
-		if (count == 1) {
-			menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
-			menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
-			menu.Append(XRCID("toggle_breakpoint_enabled_status"),
-			            lineBPs[0].is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
-			menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
-		} else if (count > 1) {
-			menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove a Breakpoint")));
-			menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore a Breakpoint")));
-			menu.Append(XRCID("toggle_breakpoint_enabled_status"), wxString(_("Toggle a breakpoint's enabled state")));
-			menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit a Breakpoint")));
-		}
+		menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
+		menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
 	}
 
 	if (ManagerST::Get()->DbgCanInteract()) {
@@ -2257,24 +2248,10 @@ void LEditor::AddOtherBreakpointType(wxCommandEvent &event)
 	AddBreakpoint(-1, conditions, is_temp);
 }
 
-void LEditor::OnIgnoreBreakpoint()
-{
-	if (ManagerST::Get()->GetBreakpointsMgr()->IgnoreByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1)) {
-		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-	}
-}
-
 void LEditor::OnEditBreakpoint()
 {
 	ManagerST::Get()->GetBreakpointsMgr()->EditBreakpointByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1);
 	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-}
-
-void LEditor::ToggleBreakpointEnablement()
-{
-	if (ManagerST::Get()->GetBreakpointsMgr()->ToggleEnabledStateByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1)) {
-		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-	}
 }
 
 void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT("")*/, const bool is_temp/*=false*/)

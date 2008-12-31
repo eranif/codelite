@@ -38,16 +38,17 @@
 class BreakptMgr
 {
 	std::vector<BreakpointInfo> m_bps;
-	std::vector<int> m_needs_extrasList; // Holds ids of those newly-added (or edited?) bps which still need extra work done
-
 	int NextInternalID;		// Used to give each bp a unique internal ID. Start at 10k to avoid confusion with gdb's IDs
+
 	// Delete all breakpoint markers for this file, then re-mark with the currently-correct marker
 	void DoRefreshFileBreakpoints(LEditor* editor);
 	void DoProvideBestBP_Type(LEditor* editor, const std::vector<BreakpointInfo>& li);	// Tells the editor which is the most appropriate bp marker to show
+
 	// Delete all line-type breakpoint markers in all editors
 	// Done before refreshing after a delete, lest it was the last bp in a file
 	void DeleteAllBreakpointMarkers();
 	std::set<wxString> GetFilesWithBreakpointMarkers();
+
 	int FindBreakpointById(const int id);
 	/**
 	 * Can gdb accept this alteration, or will be bp have to be replaced?
@@ -68,26 +69,6 @@ class BreakptMgr
 	 * Sets bp.bp_type to the value most appropriate to its contents
 	 */
 	void SetBestBPType(BreakpointInfo& bp);
-
-	/**
-	 * Ignore this bp
-	 */
-	bool SetBPIgnoreCount(const int bid, const int ignorecount);
-
-	/**
-	 * Enable or Disable this breakpoint
-	 */
-	bool SetBPEnabledState(const int bid, const bool enable);
-
-	/**
-	 * Set this breakpoint's condition to that in bp.condition
-	 */
-	bool SetBPConditon(const BreakpointInfo &bp);
-
-	/**
-	 * Set this breakpoint's command-list to that in bp.commandlist
-	 */
-	bool SetBPCommands(const BreakpointInfo &bp);
 
 	/**
 	 * Clear the list of breakpoints
@@ -155,19 +136,9 @@ public:
 	int DelBreakpointByLineno(const wxString& file, const int lineno);
 
 	/**
-	 * Toggle a breakpoint's enabled state
-	 */
-	bool ToggleEnabledStateByLineno(const wxString& file, const int lineno);
-
-	/**
 	 * Summon the BreakptProperties dialog for a bp
 	 */
 	void EditBreakpointByLineno(const wxString& file, const int lineno);
-
-	/**
-	 * Set a breakpoint's ignore count
-	 */
-	bool IgnoreByLineno(const wxString& file, const int lineno);
 
 	/**
 	 * return list of breakpoints
@@ -213,17 +184,6 @@ public:
 	 * Return true if a pause was done, to flag that a restart is needed
 	 */
 	bool PauseDebuggerIfNeeded();
-
-	/**
-	 * Add all of m_bps to the list of bps that may need extras passed to gdb e.g. ignore-count
-	 * Called by Manager::DbgStart
-	 */
-	void InitialiseExtrasList();
-
-	/**
-	 * See if we've just set a breakpoint, that may need extras passed to gdb e.g. ignore-count
-	 */
-	void SetBreakpointExtrasIfNeeded();
 
 	/**
 	 * Get a unique id for a breakpoint, to use when the debugger isn't running

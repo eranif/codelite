@@ -297,31 +297,6 @@ void BreakptMgr::DelAllBreakpoints()
 	m_bps.clear();
 }
 
-// Toggle a breakpoint's enabled state
-bool BreakptMgr::ToggleEnabledStateByLineno(const wxString& file, const int lineno)
-{
-	wxString msg(_("Select the breakpoint that you want to alter"));
-	int bid = GetDesiredBreakpointIfMultiple(file, lineno, msg);
-	if (bid == wxID_CANCEL || bid == BP_type_none) {
-		return false;
-	}
-
-	int index = FindBreakpointById(bid);
-
-	// sanity
-	if (index < 0 || index >= (int)m_bps.size()) {
-		return false;
-	}
-
-	if (! SetBPEnabledState(bid, !m_bps.at(index).is_enabled)) {
-		return false;
-	}
-
-	m_bps.at(index).is_enabled = ! m_bps.at(index).is_enabled;
-	RefreshBreakpointMarkers();
-	return true;
-}
-
 // The debugger labels each breakpoint with an id. DbgGdb::Poke grabs this
 // and passes it here via DbgCmdHandlerBp::ProcessOutput and Manager::UpdateBpAdded.
 // By storing it as BreakpointInfo::debugger_id, we can be certain that this bp refers to the gdb breakpoint
@@ -353,56 +328,10 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
 
 			// update the UI as well
 			Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-
-			// Now the bp has the correct debugger_id, tell gdb about any extras e.g. ignore-count
-			// This can be done immediately if we have control back from the debugger.
-			// Otherwise add the id to a 'pending' list, which gets processed later
-			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-			if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-				DoBreakpointExtras(*iter);
-			} else {
-				m_needs_extrasList.push_back(debugger_id);
-			}
 			return;
 		}
 	}
 	wxLogMessage(wxT("SetBreakpointDebuggerID(): Failed to match internal_id to debugger_id"));
-}
-
-// Set a breakpoint's ignore count
-bool BreakptMgr::IgnoreByLineno(const wxString& file, const int lineno)
-{
-	wxString msg(_("Select the breakpoint to have its ignore-count changed"));
-	int bid = GetDesiredBreakpointIfMultiple(file, lineno, msg);
-	if (bid == wxID_CANCEL || bid == BP_type_none) {
-		return false;
-	}
-
-	int index = FindBreakpointById(bid);
-
-	// sanity
-	if (index < 0 || index >= (int)m_bps.size()) {
-		return false;
-	}
-
-	BreakpointInfo bp = m_bps.at(index);
-	if (bp.bp_type == BP_type_invalid) {
-		return false;
-	}
-
-	long newvalue = wxGetNumberFromUser( _("Please enter the new ignore-count"), wxT(""), wxT("Set ignore-count"), bp.ignore_number, 0, 1000000);
-	if ((newvalue == -1) || (newvalue == (long)bp.ignore_number)) {
-		return false;
-	}
-
-	if (! SetBPIgnoreCount(bid, newvalue)) {
-		return false;
-	}
-
-	m_bps.at(index).ignore_number = newvalue;
-	m_bps.at(index).bp_type = BP_type_ignoredbreak;
-	RefreshBreakpointMarkers();
-	return true;
 }
 
 void BreakptMgr::EditBreakpointByLineno(const wxString& file, const int lineno)
@@ -446,52 +375,29 @@ void BreakptMgr::EditBreakpoint(int index, bool &bpExist)
 	title << id;
 	dlg.SetTitle(title);
 
-	dlg.EnterBPData(bp);
-	if (dlg.ShowModal() != wxID_OK) {
-		return ;
-	}
-
-	SetBestBPType(dlg.b);	// The edited data's available. Use it to determine the best bp_type
-	if (bp == dlg.b) {
-		return ;
-	}
-
-	// We've got our altered dlg.b If the debugger's running, we can update it now
-	// Otherwise, it'll be automatically inserted correctly when the debugger starts
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
-		if (CanThisBreakpointBeUpdated(dlg.b, bp)) {
-			if (dlg.b.ignore_number != bp.ignore_number) {
-				if (! SetBPIgnoreCount(dlg.b.debugger_id, dlg.b.ignore_number)) {
-					return;	// Harsh, but what else can one do?
-				}
-			}
-			if (dlg.b.is_enabled != bp.is_enabled) {
-				if (! SetBPEnabledState(dlg.b.debugger_id, dlg.b.is_enabled)) {
-					return ;
-				}
-			}
-			if (dlg.b.conditions != bp.conditions) {
-				if (! SetBPConditon(dlg.b)) {
-					return ;
-				}
-			}
-			if (dlg.b.commandlist != bp.commandlist) {
-				if (! SetBPCommands(dlg.b)) {
-					return ;
-				}
-			}
-		} else {
-			// If it can't be updated (because gdb wouldn't be able to cope with the change), replace
-			bool contIsNeeded = PauseDebuggerIfNeeded();
-			dbgr->RemoveBreak(bp.debugger_id);
-			dbgr->Break(dlg.b);
-			// dbgr->Break(bp) doesn't set the ignore/disabled/etc states
-			// but we can't do it now, as we don't yet know the debugger_id
-			// However it will happen later, in SetBreakpointDebuggerID
-			if (contIsNeeded) {
-				dbgr->Continue();
-			}
+
+		dlg.EnterBPData(bp);
+		if (dlg.ShowModal() != wxID_OK) {
+			return ;
+		}
+
+		SetBestBPType(dlg.b);	// The edited data's available. Use it to determine the best bp_type
+		if (bp == dlg.b) {
+			return ;
+		}
+
+		// If it can't be updated (because gdb wouldn't be able to cope with the change), replace
+		bool contIsNeeded = PauseDebuggerIfNeeded();
+		dbgr->RemoveBreak(bp.debugger_id);
+		dbgr->Break(dlg.b);
+
+		// dbgr->Break(bp) doesn't set the ignore/disabled/etc states
+		// but we can't do it now, as we don't yet know the debugger_id
+		// However it will happen later, in SetBreakpointDebuggerID
+		if (contIsNeeded) {
+			dbgr->Continue();
 		}
 	}
 
@@ -506,18 +412,18 @@ void BreakptMgr::EditBreakpoint(int index, bool &bpExist)
 // Tell the debugger about the ignore count, conditions etc
 void BreakptMgr::DoBreakpointExtras(BreakpointInfo &bp)
 {
-	if (bp.ignore_number) {
-		SetBPIgnoreCount(bp.debugger_id, bp.ignore_number);
-	}
-	if (! bp.is_enabled) {
-		SetBPEnabledState(bp.debugger_id, bp.is_enabled);
-	}
-	if (! bp.conditions.IsEmpty()) {
-		SetBPConditon(bp);
-	}
-	if (! bp.commandlist.IsEmpty()) {
-		SetBPCommands(bp);
-	}
+//	if (bp.ignore_number) {
+//		SetBPIgnoreCount(bp.debugger_id, bp.ignore_number);
+//	}
+//	if (! bp.is_enabled) {
+//		SetBPEnabledState(bp.debugger_id, bp.is_enabled);
+//	}
+//	if (! bp.conditions.IsEmpty()) {
+//		SetBPConditon(bp);
+//	}
+//	if (! bp.commandlist.IsEmpty()) {
+//		SetBPCommands(bp);
+//	}
 }
 
 // Get a breakpoint on this line. If multiple bps, ask the user to select
@@ -607,72 +513,6 @@ bool BreakptMgr::CanThisBreakpointBeUpdated(const BreakpointInfo &a, const Break
 	return (temp == b);
 }
 
-bool BreakptMgr::SetBPIgnoreCount(const int bid, const int ignorecount)
-{
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr && dbgr->IsRunning()) {
-		// If the debugger is already running, tell it about the new ignore level
-		// If not, it'll happen automatically when the debugger does start
-		bool contIsNeeded = PauseDebuggerIfNeeded();
-		bool result = dbgr->SetIgnoreLevel(bid, ignorecount);
-		if (contIsNeeded) {
-			dbgr->Continue();
-		}
-		return result;
-	}
-	return true;
-}
-
-bool BreakptMgr::SetBPCommands(const BreakpointInfo& bp)
-{
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr && dbgr->IsRunning()) {
-		// If the debugger is already running, tell it about the commands
-		// If not, it'll happen automatically when the debugger does start
-		bool contIsNeeded = PauseDebuggerIfNeeded();
-		bool result = dbgr->SetCommands(bp);
-		if (contIsNeeded) {
-			dbgr->Continue();
-		}
-		return result;
-	}
-	return false;
-}
-
-
-bool BreakptMgr::SetBPConditon(const BreakpointInfo& bp)
-{
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr && dbgr->IsRunning()) {
-		// If the debugger is already running, tell it about the condition
-		// If not, it'll happen automatically when the debugger does start
-		bool contIsNeeded = PauseDebuggerIfNeeded();
-		bool result = dbgr->SetCondition(bp);
-		if (contIsNeeded) {
-			dbgr->Continue();
-		}
-		return result;
-	}
-	return false;
-}
-
-
-bool BreakptMgr::SetBPEnabledState(const int bid, const bool enable)
-{
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr && dbgr->IsRunning()) {
-		// If the debugger is already running, tell it about the new ignore level
-		// If not, it'll happen automatically when the debugger does start
-		bool contIsNeeded = PauseDebuggerIfNeeded();
-		bool result = dbgr->SetEnabledState(bid, enable);
-		if (contIsNeeded) {
-			dbgr->Continue();
-		}
-		return result;
-	}
-	return true;
-}
-
 void BreakptMgr::SetBestBPType(BreakpointInfo& bp)
 {
 	if (bp.bp_type == BP_type_watchpt) {
@@ -711,37 +551,6 @@ bool BreakptMgr::PauseDebuggerIfNeeded()
 		return true;
 	}
 	return false;
-}
-
-void BreakptMgr::InitialiseExtrasList()
-{
-	m_needs_extrasList.clear();
-
-	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for (; iter != m_bps.end(); ++iter) {
-		int id = iter->debugger_id;
-		if (id == -1) { // which it almost certainly will be, as the debugger has only just started
-			id = iter->internal_id;
-		}
-		m_needs_extrasList.push_back(id);
-	}
-}
-// Go through
-void BreakptMgr::SetBreakpointExtrasIfNeeded()
-{
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if ( ! ( dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) ) {
-		return;
-	}
-
-	std::vector<int>::iterator iter = m_needs_extrasList.begin();
-	for (; iter != m_needs_extrasList.end();) {
-		int index = FindBreakpointById(*iter);
-		if (index != wxNOT_FOUND) {
-			DoBreakpointExtras(m_bps.at(index));
-		}
-		iter = m_needs_extrasList.erase(iter);
-	}
 }
 
 void BreakptMgr::DeleteAllBreakpointsByFileName(const wxString& fileName)

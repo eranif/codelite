@@ -1523,8 +1523,6 @@ void Manager::DbgStart ( long pid )
 	// Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
 	// so that it uses debugger_ids instead of internal_ids
 	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-	// and add the breakpoints to the NeedsExtras list, in case any need to have ignore-counts etc set
-	GetBreakpointsMgr()->InitialiseExtrasList();
 
 	// let the active editor get the focus
 	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
@@ -1866,6 +1864,9 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		}
 	}
 	break;
+	case DBG_DBGR_KILLED:
+		m_dbgCanInteract = false;
+		break;
 	case DBG_EXITED_NORMALLY:
 		//debugging finished, stop the debugger process
 		DbgStop();
@@ -1873,9 +1874,6 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	default:
 		break;
 	}
-
-	// If we've just added a breakpoint, this is where any extras get done e.g. ignore-count
-	GetBreakpointsMgr()->SetBreakpointExtrasIfNeeded();
 }
 
 void Manager::UpdateLostControl()

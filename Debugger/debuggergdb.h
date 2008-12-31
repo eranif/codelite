@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : debuggergdb.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : debuggergdb.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef DBGINTERFACE_H
@@ -45,7 +45,7 @@ extern "C" IDebugger *CreateDebuggerGDB();
 //declare the function that will be called by host application
 //to retrieve the debugger initialization function
 extern "C" DebuggerInfo GetDebuggerInfo();
-#endif 
+#endif
 
 class DbgCmdHandler;
 WX_DECLARE_STRING_HASH_MAP(DbgCmdHandler*, HandlersMap);
@@ -57,7 +57,7 @@ class DbgGdb : public InteractiveProcess, public IDebugger
 	ConsoleFinder m_consoleFinder;
 	std::vector<BreakpointInfo> m_bpList;
 	bool m_isRemote;
-	
+
 protected:
 	void RegisterHandler(const wxString &id, DbgCmdHandler *cmd);
 	DbgCmdHandler *PopHandler(const wxString &id);
@@ -66,11 +66,10 @@ protected:
 
 	//wrapper for convinience
 	bool WriteCommand(const wxString &command, DbgCmdHandler *cmd);
-//	int StartConsole();	This was declared here but never defined. Yet the compiler didn't notice :/
 	void DoProcessAsyncCommand(wxString &line, wxString &id);
 	void SetBreakpoints();
 	void OnProcessEndEx(wxProcessEvent &e);
-	
+
 public:
 	DbgGdb();
 	virtual ~DbgGdb();
@@ -82,10 +81,6 @@ public:
 	virtual bool Run(const wxString &args, const wxString &comm);
 	virtual bool Stop();
 	virtual bool Break(BreakpointInfo& bp);
-	virtual bool SetEnabledState(const int bid, const bool enable);
-	virtual bool SetIgnoreLevel(const int bid, const int ignorecount);
-	virtual bool SetCondition(const BreakpointInfo& bp);
-	virtual bool SetCommands(const BreakpointInfo& bp);
 	virtual bool RemoveBreak(int bid);
 	virtual bool RemoveBreak(const wxString &fileName, long lineno);
 	virtual bool RemoveAllBreaks();

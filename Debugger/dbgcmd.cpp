@@ -313,8 +313,6 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 	return true;
 }
 
-int DbgCmdHandlerBp::m_debuggerID = wxNOT_FOUND;
-
 bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 {
 	//parse the line, in case we have an error, keep this breakpoint in the queue
@@ -329,15 +327,15 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 		}
 	}
 
-#ifdef __WXMAC__
-
-	// On Mac we use -break-insert
-	// so the breakpoint ID will come in form of 
+	// so the breakpoint ID will come in form of
 	// ^done,bkpt={number="2"....
+	// ^done,wpt={number="2"
 	static wxRegEx reBreak(wxT("done,bkpt={number=\"([0-9]+)\""));
-	static wxRegEx reWatch(wxT("[Ww]atchpoint ([0-9]+)"));
+	static wxRegEx reWatch(wxT("done,wpt={number=\"([0-9]+)\""));
 
 	wxString number;
+	long breakpointId(wxNOT_FOUND);
+
 	if (reBreak.Matches(line)) {
 		m_observer->UpdateAddLine(wxString::Format(wxT("Found the breakpoint ID!")));
 		number = reBreak.GetMatch(line, 1);
@@ -346,44 +344,38 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 	}
 
 	if (number.IsEmpty() == false) {
-		long id;
-		if (number.ToLong(&id)) {
-			StoreDebuggerID(id);
-			m_observer->UpdateAddLine(wxString::Format(wxT("Storing debugger breakpoint Id=%d"), id));
+		if (number.ToLong(&breakpointId)) {
+			// for debugging purpose
+			m_observer->UpdateAddLine(wxString::Format(wxT("Storing debugger breakpoint Id=%d"), breakpointId));
 		}
 	}
 
-#endif
-
-	// DbgGdb::Poke should have caught the id that gdb assigned to this breakpoint
-	// and stored it in m_debuggerID. Retrieve it, or wxNOT_FOUND if not available
-	int debugger_id = RetrieveDebuggerID();
-	m_observer->UpdateBpAdded(m_bp.internal_id, debugger_id);
-	if (debugger_id == -1) {
+	m_observer->UpdateBpAdded(m_bp.internal_id, breakpointId);
+	if (breakpointId == wxNOT_FOUND) {
 		return true;	// If the bp wasn't matched, the most likely reason is that bp creation failed. So don't say it worked
 	}
 
 	wxString msg;
 	switch (m_bpType) {
 	case BP_type_break:
-		msg = wxString::Format(_("Successfully set breakpoint %d at: "), debugger_id);
+		msg = wxString::Format(_("Successfully set breakpoint %d at: "), breakpointId);
 		break;
 	case BP_type_condbreak:
-		msg = wxString::Format(_("Successfully set conditional breakpoint %d at: "), debugger_id);
+		msg = wxString::Format(_("Successfully set conditional breakpoint %d at: "), breakpointId);
 		break;
 	case BP_type_tempbreak:
-		msg = wxString::Format(_("Successfully set temporary breakpoint %d at: "), debugger_id);
+		msg = wxString::Format(_("Successfully set temporary breakpoint %d at: "), breakpointId);
 		break;
 	case BP_type_watchpt:
 		switch (m_bp.watchpoint_type) {
 		case WP_watch:
-			msg = wxString::Format(_("Successfully set watchpoint %d watching: "), debugger_id);
+			msg = wxString::Format(_("Successfully set watchpoint %d watching: "), breakpointId);
 			break;
 		case WP_rwatch:
-			msg = wxString::Format(_("Successfully set read watchpoint %d watching: "), debugger_id);
+			msg = wxString::Format(_("Successfully set read watchpoint %d watching: "), breakpointId);
 			break;
 		case WP_awatch:
-			msg = wxString::Format(_("Successfully set read/write watchpoint %d watching: "), debugger_id);
+			msg = wxString::Format(_("Successfully set read/write watchpoint %d watching: "), breakpointId);
 			break;
 		}
 	}
@@ -405,25 +397,6 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 
 	m_observer->UpdateAddLine(msg);
 	return true;
-}
-
-//static
-void DbgCmdHandlerBp::StoreDebuggerID(const int debugger_id)
-{
-	// Store the value that will become BreakpointInfo::debugger_id
-	m_debuggerID = debugger_id;
-}
-
-//static
-int DbgCmdHandlerBp::RetrieveDebuggerID()
-{
-	int id = wxNOT_FOUND;
-	if (m_debuggerID > 0) {
-		id = m_debuggerID;
-	}
-
-	m_debuggerID = wxNOT_FOUND; // 'Zero' m_debuggerID, so we won't find it again
-	return id;
 }
 
 bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)

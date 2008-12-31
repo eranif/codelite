@@ -41,7 +41,7 @@ enum DebuggerCommands {
 	// Breakpoint types. If you add more, LEditor::FillBPtoMarkerArray will also need altering
 enum BP_type { /*Convenient return-codes*/ BP_type_invalid = -1, BP_type_none = 0, /*Real breakpoint-types*/ BP_FIRST_ITEM, BP_type_break = BP_FIRST_ITEM,
 							  BP_type_cmdlistbreak, BP_type_condbreak, BP_type_ignoredbreak, BP_type_tempbreak, BP_LAST_MARKED_ITEM = BP_type_tempbreak,
-								BP_type_watchpt, BP_LAST_ITEM = BP_type_watchpt 
+								BP_type_watchpt, BP_LAST_ITEM = BP_type_watchpt
 						 };
 	// Watchpoint subtypes: write,read and both
 enum WP_type { WP_watch, WP_rwatch, WP_awatch };
@@ -83,12 +83,12 @@ public:
 	wxString function_name;
 	bool regex;							// Is the function_name a regex?
 	int memory_address;
-	
+
 	// How to identify the bp. Because the debugger won't always be running, we need an internal id as well as the debugger's one
 	int internal_id;
 	int debugger_id;	// -1 signifies not set
-	
-	
+
+
 	enum BP_type bp_type;  // Is it a plain vanilla breakpoint, or a temporary one, or a watchpoint, or...
 	unsigned int ignore_number; // 0 means 'not ignored'. >0 is the number of times the bp must be hit before it becomes enabled
 	bool is_enabled;
@@ -102,10 +102,10 @@ public:
 	BreakpointInfo(const BreakpointInfo& BI ){ *this = BI; }
 
 	bool IsConditional(){ return ! conditions.IsEmpty(); }
-	
+
 	void Create(wxString filename, int line, int int_id, int ext_id = -1) {
 		bp_type = BP_type_break; lineno = line; file = filename; internal_id = int_id; debugger_id = ext_id;
-	}	
+	}
 
 	BreakpointInfo& operator=(const BreakpointInfo& BI) {
 		file = BI.file; lineno = BI.lineno; function_name = BI.function_name; memory_address = BI.memory_address; bp_type = BI.bp_type;
@@ -132,7 +132,7 @@ public:
 	bool breakAtWinMain;
 	bool resolveThis;
 	bool showTerminal;
-	
+
 public:
 	DebuggerInformation()
 			: name(wxEmptyString)
@@ -189,28 +189,28 @@ public:
 	//-------------------------------------------------------------
 	// Debugger operations
 	//-------------------------------------------------------------
-	
+
 	/**
-	 * \brief start the debugger 
+	 * \brief start the debugger
 	 * \param debuggerPath path to the debugger executable
 	 * \param exeName executable to debug
 	 * \param cwd working directory to set
 	 * \param bpList list of breakpoints to place before running the program
-	 * \param cmds list of commands that will be passed to the debugger at startup 
+	 * \param cmds list of commands that will be passed to the debugger at startup
 	 * \return true on success, false otherwise
 	 */
 	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds) = 0;
-	
+
 	/**
 	 * \brief start the debugger. this method is for convinience and uses the default debugger path
 	 * \param exeName executable to debug
 	 * \param cwd working directory to set
 	 * \param bpList list of breakpoints to place before running the program
-	 * \param cmds list of commands that will be passed to the debugger at startup 
+	 * \param cmds list of commands that will be passed to the debugger at startup
 	 * \return true on success, false otherwise
 	 */
 	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds) = 0;
-	
+
 	/**
 	 * \brief use this method when attempting to attach a running process
 	 * \param debuggerPath debugger path
@@ -218,20 +218,20 @@ public:
  	 * \param pid the running instance process ID
 	 * \param bpList list of breakpoints to set
 	 * \param cmds list of commands that will be passed to the debugger at startup
-	 * \return 
+	 * \return
 	 */
 	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds) = 0;
-	
+
 	/**
 	 * \brief Run the program under the debugger. This method must be called *after* Start() has been called
 	 * \param args arguments to pass to the debuggee process
-	 * \param comm the preferemd communication string, if this string is not empty, the debugger assumes remote debugging is on 
-	 * and will execute a different set of commands for connecting to the debuggee.  
-	 * comm is in the format of HOST:PORT or tty for serial debugging - this feature is currently enabled in GDB only 
+	 * \param comm the preferemd communication string, if this string is not empty, the debugger assumes remote debugging is on
+	 * and will execute a different set of commands for connecting to the debuggee.
+	 * comm is in the format of HOST:PORT or tty for serial debugging - this feature is currently enabled in GDB only
 	 * \return true on success, false otherwise
 	 */
 	virtual bool Run(const wxString &args, const wxString &comm) = 0;
-	
+
 	/**
 	 * \brief Stop the debugger
 	 * \return true on success, false otherwise
@@ -284,23 +284,7 @@ public:
 	 */
 	virtual bool RemoveAllBreaks() = 0;
 	/**
-	 * \brief Enable or Disable a breakpoint
-	 */
-	virtual bool SetEnabledState(const int bid, const bool enable) = 0;
-	/**
-	 * \brief Set this breakpoint's Ignore count
-	 */
-	 virtual bool SetIgnoreLevel(const int bid, const int ignorecount) = 0;
-	/**
-	 * \brief Set this breakpoint's condition
-	 */
-	 virtual bool SetCondition(const BreakpointInfo& bp) = 0;
-	/**
-	 * \brief Set a command-list for this breakpoint
-	 */
-	 virtual bool SetCommands(const BreakpointInfo& bp) = 0;
-	/**
-	 * \brief ask the debugger to query about its file & line. Once the result arrives, the observer's UpdateFileLine() will be invoked 
+	 * \brief ask the debugger to query about its file & line. Once the result arrives, the observer's UpdateFileLine() will be invoked
 	 */
 	virtual bool QueryFileLine() = 0;
 	/**
@@ -323,7 +307,7 @@ public:
 	 * \return true on success, false otherwise
 	 */
 	virtual bool ListFrames() = 0;
-	
+
 	/**
 	 * \brief set the frame to be the active frame
 	 * \param frame frame to set active
@@ -331,7 +315,7 @@ public:
 	 */
 	virtual bool SetFrame(int frame) = 0;
 	/**
-	 * \brief return list of threads. 
+	 * \brief return list of threads.
 	 * \param threads [output]
 	 * \return true on success, false otherwise
 	 */
@@ -350,10 +334,10 @@ public:
 	 * \brief return tip for a give expression
 	 * \param expression expression to evaluate
 	 * \param evaluated evaluated value from the debugger
-	 * \return 
+	 * \return
 	 */
 	virtual bool GetTip(const wxString &expression, wxString &evaluated) = 0;
-	
+
 	/**
 	 * \brief resolve expression and return its actual type
 	 * \param expression expression to evaluate
@@ -361,13 +345,13 @@ public:
 	 * \return true on success, false otherwise
 	 */
 	virtual bool ResolveType(const wxString &expression, wxString &type) = 0;
-	
+
 	//We provide two ways of evulating an expressions:
 	//The short one, which returns a string, and long one
 	//which returns a tree of the result
 	virtual bool EvaluateExpressionToString(const wxString &expression, const wxString &format) = 0;
 	virtual bool EvaluateExpressionToTree(const wxString &expression) = 0;
-	
+
 	/**
 	 * \brief a request to display memory from address -> address + count. This is a synchronous call
 	 * \param address starting address
@@ -376,9 +360,9 @@ public:
 	 * \return true on success, false otherwise
 	 */
 	virtual bool WatchMemory(const wxString &address, size_t count, wxString &output) = 0;
-	
+
 	/**
-	 * \brief set memory at given address and of size count. the value to set must be a space delimited 
+	 * \brief set memory at given address and of size count. the value to set must be a space delimited
 	 * hex values (e.g. '0x01 0x02 0x03')
 	 */
 	virtual bool SetMemory(const wxString &address, size_t count, const wxString &hex_value) = 0;

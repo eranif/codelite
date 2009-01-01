@@ -64,6 +64,7 @@ bool BreakptMgr::AddBreakpoint(BreakpointInfo &bp)
 	SetBestBPType(bp);
 	m_bps.push_back(bp);
 
+	DeleteAllBreakpointMarkers();
 	RefreshBreakpointMarkers();
 	return true;
 }
@@ -179,12 +180,17 @@ void BreakptMgr::DoRefreshFileBreakpoints(LEditor* editor)
 	for(std::multimap<int, BreakpointInfo>::iterator i=bps.begin(); i != bps.end(); i++){
 		std::pair<std::multimap<int, BreakpointInfo>::iterator, std::multimap<int, BreakpointInfo>::iterator> range = bps.equal_range(i->first);
 		std::vector<BreakpointInfo> v;
+		int count=0;
 		for(std::multimap<int, BreakpointInfo>::iterator it = range.first; it != range.second; it++){
 			v.push_back(it->second);
-
-			// Now work out which is the most significant (in marker terms) and tell the editor
-			DoProvideBestBP_Type(editor, v);
+			++count;
 		}
+		// Inc over the rest of the range, otherwise there'll be duplication when there's >1 bp on a line
+		while (--count > 0) {
+			++i;
+		}
+		// Now work out which is the most significant (in marker terms) and tell the editor
+		DoProvideBestBP_Type(editor, v);
 	}
 }
 
@@ -356,6 +362,7 @@ void BreakptMgr::EditBreakpoint(int index, bool &bpExist)
 	// sanity
 	bpExist = true;
 	if (index < 0 || index >= (int)m_bps.size()) {
+		wxLogMessage(wxT("BreakptMgr::EditBreakpoint: Insane index"));
 		bpExist = false;
 		return;
 	}
@@ -557,7 +564,7 @@ void BreakptMgr::DeleteAllBreakpointsByFileName(const wxString& fileName)
 {
 	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
 	while (iter != m_bps.end()) {
-		if (fileName == iter->file) {
+		if ((fileName == iter->file) && (iter->lineno != -1)) {
 			iter = m_bps.erase(iter);
 		} else {
 			++iter;

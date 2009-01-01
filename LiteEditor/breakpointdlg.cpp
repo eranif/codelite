@@ -111,8 +111,8 @@ void BreakpointDlg::OnItemDeselected(wxListEvent &e)
 
 void BreakpointDlg::OnItemActivated(wxListEvent &e)
 {
-	wxString file = GetColumnText(m_listCtrlBreakpoints, e.m_itemIndex, 0);
-	wxString line = GetColumnText(m_listCtrlBreakpoints, e.m_itemIndex, 1);
+	wxString file = GetColumnText(m_listCtrlBreakpoints, e.m_itemIndex, m_listCtrlBreakpoints->GetFileColumn());
+	wxString line = GetColumnText(m_listCtrlBreakpoints, e.m_itemIndex, m_listCtrlBreakpoints->GetLinenoColumn());
 	long line_number;
 	line.ToLong(&line_number);
 
@@ -178,7 +178,11 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 		struct bpd_IDs IDs(*iter);
 		SetColumnText(this, item, col_id, IDs.GetIdAsString(), wxNOT_FOUND);
 
-		wxString type; type = (iter->bp_type==BP_type_watchpt) ? wxT("Watchpoint") : wxT("Breakpoint");
+		wxString type;
+		if (iter->is_temp) {
+			type = wxT("Temp. ");
+		}
+		type += ((iter->bp_type==BP_type_watchpt) ? wxT("Watchpoint") : wxT("Breakpoint"));
 		SetColumnText(this, item, col_type, type, wxNOT_FOUND);
 
 		wxString disabled;

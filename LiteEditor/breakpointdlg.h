@@ -56,6 +56,12 @@ public:
 		: wxListCtrl(parent, id, pos, size, style) {}
 	void Initialise(std::vector<BreakpointInfo>& bps);
 	int GetSelection();
+	int GetLinenoColumn() {
+		return col_lineno;
+	}
+	int GetFileColumn() {
+		return col_file;
+	}
 };
 
 /** Implementing BreakpointDlgBase */

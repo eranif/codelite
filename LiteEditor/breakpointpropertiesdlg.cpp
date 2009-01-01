@@ -61,6 +61,7 @@ void BreakptPropertiesDlg::EnterBPData( const BreakpointInfo &bp )
 
 	m_checkDisable->SetValue(!bp.is_enabled);
 	m_checkTemp->SetValue(bp.is_temp);
+	m_checkTemp->Show(its_a_breakpt); // Watchpoints can't be temporary
 	m_spinIgnore->SetValue(bp.ignore_number);
 	m_textCond->SetValue(bp.conditions);
 	m_textCommands->SetValue(bp.commandlist);
@@ -186,4 +187,6 @@ void BreakptPropertiesDlg::OnCheckBreakMemoryUI( wxUpdateUIEvent& event )
 void BreakptPropertiesDlg::OnPageChanged(wxChoicebookEvent& event)
 {
 	its_a_breakpt = m_choicebook->GetPageText(m_choicebook->GetSelection()) == _("Breakpoint");
+	m_checkTemp->Show(its_a_breakpt); // Watchpoints can't be temporary
+	m_checkTemp->GetContainingSizer()->Layout();
 }

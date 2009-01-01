@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : svndriver.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : svndriver.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef SVNDRIVER_H
@@ -38,7 +38,7 @@ class SvnCmdHandler;
 class SubversionPlugin;
 class SvnPostCmdAction;
 
-class SvnDriver : public wxEvtHandler 
+class SvnDriver : public wxEvtHandler
 {
 	AsyncExeCmd *m_cmd;
 	IManager *m_manager;
@@ -47,7 +47,7 @@ class SvnDriver : public wxEvtHandler
 	SubversionPlugin *m_plugin;
 	bool m_commitWithPass;
 	wxArrayString m_modifiedFiles;
-	
+
 protected:
 	void OnSvnProcessTerminated(wxProcessEvent &event);
 	void OnSvnProcess(wxCommandEvent &event);
@@ -55,7 +55,7 @@ protected:
 	bool GetFilesList(const wxArrayString& output, wxArrayString &files);
 	void SelectSvnTab();
 	void CommitWithAuth(const wxString &cmd, const TreeItemInfo &item);
-
+	void DoDiff(const wxFileName &fileName, bool promptForRevision);
 public:
 	SvnDriver(SubversionPlugin *plugin, IManager *mgr);
 	virtual ~SvnDriver();
@@ -74,7 +74,7 @@ public:
 	//Operations:
 	///////////////////////////////
 
-	//operations on a single file 
+	//operations on a single file
 	void UpdateFile(const wxString &fileName, SvnPostCmdAction *handler = NULL);
 	void CommitFile(const wxString &fileName, SvnPostCmdAction *handler = NULL);
 	void DiffFile(const wxFileName &fileName);

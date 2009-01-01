@@ -172,7 +172,7 @@ void SvnDriver::DisplayDiffFile(const wxString &fileName, const wxString &conten
 		wxString tmpFile = wxFileName::GetTempDir();
 
 		wxFileName fn(fileName);
-		if(fn.IsDir()){
+		if (fn.IsDir()) {
 			tmpFile << wxT("/") << fn.GetDirs().Last()<< wxT(".diff");
 		} else {
 			tmpFile << wxT("/") << fn.GetFullName() << wxT(".diff");
@@ -385,69 +385,7 @@ void SvnDriver::UpdateFile(const wxString &fileName, SvnPostCmdAction *handler)
 
 void SvnDriver::DiffFile(const wxFileName &fileName)
 {
-	ENTER_SVN_AND_SELECT()
-	wxString command, comment;
-
-	DirSaver ds;
-	wxString file_name;
-
-	PrintMessage(wxString::Format(wxT("Diff: cd %s\n"), fileName.GetPath().c_str()));
-	wxSetWorkingDirectory(fileName.GetPath());
-
-	//did we get a directory?
-	if (fileName.IsDir()) {
-		file_name = wxT(".");
-	} else {
-		file_name = fileName.GetFullName();
-	}
-
-	const wxString& diffCmd = m_plugin->GetOptions().GetDiffCmd();
-	bool hasExternalDiffCmd = m_plugin->GetOptions().GetFlags() & SvnUseExternalDiff ? true : false;
-	if ( !hasExternalDiffCmd ) {
-#ifdef __WXMSW__
-		file_name.Prepend(wxT("\""));
-		file_name.Append(wxT("\""));
-#endif
-
-		command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
-		command << wxT("diff ") << file_name;
-	} else {
-		if ( !::wxFileExists( diffCmd ) ) {
-			PrintMessage( wxString::Format( wxT("'%s' is not a valid command.\n%s"), diffCmd.c_str(), commandSeparator ) );
-			return;
-		}
-
-		// export BASE revision of file to tmp file
-		const wxString& base = wxFileName::CreateTempFileName( wxT("svnExport"), (wxFile*)NULL );
-		::wxRemoveFile( base ); // just want the name, not the file.
-		wxString exportCmd;
-		exportCmd << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
-		exportCmd << wxT("export -r BASE \"") << file_name << wxT("\" ") << base;
-		wxArrayString output;
-		ProcUtils::ExecuteCommand(exportCmd, output);
-
-		// get number of Base Revision
-		wxString info;
-		ExecInfoCommand( fileName, info );
-		wxString baseRev = SvnXmlParser::GetRevision( info );
-		if ( baseRev.empty() ) {
-			baseRev = wxT("base");
-		} else {
-			baseRev.Prepend(wxT("revision "));
-		}
-
-		// Build external diff command
-		wxString args = m_plugin->GetOptions().GetDiffArgs();
-		args.Replace( wxT("%base"), base );
-		args.Replace( wxT("%bname"), wxString::Format( wxT("\"%s (%s)\""), file_name.c_str(), baseRev.c_str() ) );
-		args.Replace( wxT("%mine"), wxString::Format( wxT("\"%s\""), file_name.c_str() ) );
-		args.Replace( wxT("%mname"), wxString::Format( wxT("\"%s (working copy)\""), file_name.c_str() ) );
-		command << wxT("\"") << diffCmd << wxT("\" ");
-		command << args;
-	}
-
-	m_curHandler = new SvnDiffCmdHandler(this, command, fileName.GetFullPath());
-	ExecCommand(command, !hasExternalDiffCmd);
+	DoDiff(fileName, true);
 }
 
 void SvnDriver::Diff()
@@ -793,16 +731,16 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 
 		// open a file selector to select the patch file
 		const wxString ALL(	wxT("Patch files (*.patch;*.diff)|*.patch;*.diff|")
-							wxT("All Files (*)|*"));
+		                    wxT("All Files (*)|*"));
 
 		wxFileDialog fdlg(m_manager->GetTheApp()->GetTopWindow(),
-		                                      wxT("Select a patch file"),
-		                                      item.m_fileName.GetPath(),
-		                                      wxEmptyString,
-		                                      ALL,
-		                                      wxFD_OPEN | wxFD_FILE_MUST_EXIST,
-		                                      wxDefaultPosition);
-		if(fdlg.ShowModal() == wxID_OK){
+		                  wxT("Select a patch file"),
+		                  item.m_fileName.GetPath(),
+		                  wxEmptyString,
+		                  ALL,
+		                  wxFD_OPEN | wxFD_FILE_MUST_EXIST,
+		                  wxDefaultPosition);
+		if (fdlg.ShowModal() == wxID_OK) {
 			// try to load and convert the file into the platform line ending
 			wxString fileContent;
 			wxString eol(wxT("\n"));
@@ -810,7 +748,7 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 #if defined(__WXMSW__)
 			eol = wxT("\r\n");
 #endif
-			if(!ReadFileWithConversion(fdlg.GetPath(), fileContent)){
+			if (!ReadFileWithConversion(fdlg.GetPath(), fileContent)) {
 				PrintMessage(wxString::Format(wxT("Failed to read patch file '%s'"), fdlg.GetPath().c_str()));
 				return;
 			}
@@ -819,7 +757,7 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 			fileContent.Replace(wxT("\n"), eol);
 
 			wxString tmpFileName(fdlg.GetPath()+wxT(".tmp"));
-			if(!WriteFileWithBackup(tmpFileName, fileContent, false)){
+			if (!WriteFileWithBackup(tmpFileName, fileContent, false)) {
 				// failed to write the temporary file
 				PrintMessage(wxString::Format(wxT("Failed to convert patch file EOL mode '%s'"), tmpFileName.c_str()));
 				return;
@@ -829,7 +767,7 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 			command << wxT("patch -p0 -i \"") << tmpFileName << wxT("\"");
 			m_curHandler = new SvnDefaultCmdHandler(this, command);
 
-			if(handler) {
+			if (handler) {
 				// set the temporary file name
 				handler->SetFile(tmpFileName);
 			}
@@ -837,4 +775,75 @@ void SvnDriver::ApplyPatch(SvnPostCmdAction *handler)
 			ExecCommand(command);
 		}
 	}
+}
+
+void SvnDriver::DoDiff(const wxFileName& fileName, bool promptForRevision)
+{
+	ENTER_SVN_AND_SELECT()
+	wxString command, comment;
+
+	wxString diffAgainst(wxT("BASE"));
+	if(promptForRevision){
+		diffAgainst = wxGetTextFromUser(wxT("Insert base revision"), wxT("Diff with..."), wxT("BASE"));
+		if(diffAgainst.empty()){
+			// user clickec 'Cancel'
+			diffAgainst = wxT("BASE");
+		}
+	}
+
+	DirSaver ds;
+	wxString file_name;
+
+	PrintMessage(wxString::Format(wxT("Diff: cd %s\n"), fileName.GetPath().c_str()));
+	wxSetWorkingDirectory(fileName.GetPath());
+
+	//did we get a directory?
+	if (fileName.IsDir()) {
+		file_name = wxT(".");
+	} else {
+		file_name = fileName.GetFullName();
+	}
+
+	const wxString& diffCmd = m_plugin->GetOptions().GetDiffCmd();
+	bool hasExternalDiffCmd = m_plugin->GetOptions().GetFlags() & SvnUseExternalDiff ? true : false;
+	if ( !hasExternalDiffCmd ) {
+#ifdef __WXMSW__
+		file_name.Prepend(wxT("\""));
+		file_name.Append(wxT("\""));
+#endif
+
+		command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
+		command << wxT("diff -r ") << diffAgainst << wxT(" ") << file_name;
+	} else {
+		if ( !::wxFileExists( diffCmd ) ) {
+			PrintMessage( wxString::Format( wxT("'%s' is not a valid command.\n%s"), diffCmd.c_str(), commandSeparator ) );
+			return;
+		}
+
+		// export BASE revision of file to tmp file
+		const wxString& base = wxFileName::CreateTempFileName( wxT("svnExport"), (wxFile*)NULL );
+		::wxRemoveFile( base ); // just want the name, not the file.
+		wxString exportCmd;
+		exportCmd << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
+		exportCmd << wxT("export -r ") << diffAgainst << wxT(" \"") << file_name << wxT("\" ") << base;
+		wxArrayString output;
+
+		PrintMessage(wxString::Format(wxT("Executing: %s\n"), exportCmd.c_str()));
+		ProcUtils::ExecuteCommand(exportCmd, output);
+
+		// get number of Base Revision
+		wxString baseRev = diffAgainst;
+
+		// Build external diff command
+		wxString args = m_plugin->GetOptions().GetDiffArgs();
+		args.Replace( wxT("%base"), base );
+		args.Replace( wxT("%bname"), wxString::Format( wxT("\"%s (%s)\""), file_name.c_str(), baseRev.c_str() ) );
+		args.Replace( wxT("%mine"), wxString::Format( wxT("\"%s\""), file_name.c_str() ) );
+		args.Replace( wxT("%mname"), wxString::Format( wxT("\"%s (working copy)\""), file_name.c_str() ) );
+		command << wxT("\"") << diffCmd << wxT("\" ");
+		command << args;
+	}
+
+	m_curHandler = new SvnDiffCmdHandler(this, command, fileName.GetFullPath());
+	ExecCommand(command, !hasExternalDiffCmd);
 }

@@ -54,8 +54,6 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 		: wxDialog( parent, id, title, pos, size, style | wxRESIZE_BORDER )
 		, m_rightclickMenu(NULL)
 {
-	this->SetSizeHints( 800, -1 );
-
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 

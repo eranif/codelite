@@ -784,7 +784,7 @@ void SvnDriver::DoDiff(const wxFileName& fileName, bool promptForRevision)
 
 	wxString diffAgainst(wxT("BASE"));
 	if(promptForRevision){
-		diffAgainst = wxGetTextFromUser(wxT("Insert base revision"), wxT("Diff with..."), wxT("BASE"));
+		diffAgainst = wxGetTextFromUser(wxT("Insert base revision to diff with:"), wxT("Diff with..."), wxT("BASE"));
 		if(diffAgainst.empty()){
 			// user clickec 'Cancel'
 			diffAgainst = wxT("BASE");

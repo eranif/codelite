@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -55,7 +55,7 @@ CompilerPatternsBase::CompilerPatternsBase( wxWindow* parent, wxWindowID id, con
 	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizerError->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
 	
-	bSizer14->Add( bSizerError, 1, wxEXPAND, 5 );
+	bSizer14->Add( bSizerError, 0, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizerWarnings;
 	bSizerWarnings = new wxBoxSizer( wxVERTICAL );
@@ -95,7 +95,7 @@ CompilerPatternsBase::CompilerPatternsBase( wxWindow* parent, wxWindowID id, con
 	
 	bSizerWarnings->Add( fgSizer5, 1, wxEXPAND, 5 );
 	
-	bSizer14->Add( bSizerWarnings, 1, wxEXPAND, 5 );
+	bSizer14->Add( bSizerWarnings, 0, wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer14 );
 	this->Layout();
@@ -167,7 +167,7 @@ CompilerToolsBase::CompilerToolsBase( wxWindow* parent, wxWindowID id, const wxP
 	
 	fgSizer4->Add( m_textCtrlPathVariable, 1, wxALL|wxEXPAND, 5 );
 	
-	bSizer9->Add( fgSizer4, 1, wxEXPAND, 5 );
+	bSizer9->Add( fgSizer4, 0, wxEXPAND, 5 );
 	
 	m_panel2->SetSizer( bSizer9 );
 	m_panel2->Layout();
@@ -248,7 +248,7 @@ CompilerFileTypesBase::CompilerFileTypesBase( wxWindow* parent, wxWindowID id, c
 	m_buttonDeleteFileType = new wxButton( m_panel4, wxID_ANY, _("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer111->Add( m_buttonDeleteFileType, 0, wxALL, 5 );
 	
-	bSizer12->Add( bSizer111, 0, 0, 5 );
+	bSizer12->Add( bSizer111, 0, wxEXPAND, 5 );
 	
 	bSizer10->Add( bSizer12, 1, wxEXPAND, 5 );
 	
@@ -326,7 +326,7 @@ CompilerAdvanceBase::CompilerAdvanceBase( wxWindow* parent, wxWindowID id, const
 	m_textCtrlGlobalLibPath = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer3->Add( m_textCtrlGlobalLibPath, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer7->Add( fgSizer3, 1, wxEXPAND, 5 );
+	bSizer7->Add( fgSizer3, 0, wxEXPAND, 5 );
 	
 	bSizer11->Add( bSizer7, 0, wxEXPAND, 5 );
 	

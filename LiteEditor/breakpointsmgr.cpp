@@ -264,7 +264,11 @@ bool BreakptMgr::DelBreakpoint(const int id)
 			// But if it does, assume it was a bp that gdb couldn't create, and just remove from the bp list
 		} else {
 			bool contIsNeeded = PauseDebuggerIfNeeded();
-			dbgr->RemoveBreak(id);
+			if (dbgr->RemoveBreak(id)) {
+				// Strangely, -break-delete doesn't output any confirmation except for ^done. So do it here
+				wxString msg = ((m_bps.at(index).bp_type == BP_type_watchpt) ? wxT("Watchpoint ") : wxT("Breakpoint "));
+				ManagerST::Get()->UpdateAddLine(msg + wxString::Format(_("%u deleted"), id));
+			}
 			if (contIsNeeded) {
 				dbgr->Continue();
 			}

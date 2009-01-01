@@ -39,26 +39,26 @@ Compiler::Compiler(wxXmlNode *node)
     m_switches[wxT("Object")] = wxEmptyString;
     m_switches[wxT("ArchiveOutput")] = wxEmptyString;
     m_switches[wxT("PreprocessOnly")] = wxEmptyString;
-    
+
     // ensure all relevant entries exist in tools map (makes sure they show up in build settings dlg)
     m_tools[wxT("LinkerName")] = wxEmptyString;
     m_tools[wxT("SharedObjectLinkerName")] = wxEmptyString;
     m_tools[wxT("CompilerName")] = wxEmptyString;
     m_tools[wxT("ArchiveTool")] = wxEmptyString;
     m_tools[wxT("ResourceCompiler")] = wxEmptyString;
-    
+
 	m_fileTypes.clear();
 	if (node) {
 		m_name = XmlUtils::ReadString(node, wxT("Name"));
 		if (!node->HasProp(wxT("GenerateDependenciesFiles"))) {
 			if (m_name == wxT("gnu g++") || m_name == wxT("gnu gcc")) {
 				m_generateDependeciesFile = true;
-            } else 
+            } else
 				m_generateDependeciesFile = false;
 		} else {
 			m_generateDependeciesFile = XmlUtils::ReadBool(node, wxT("GenerateDependenciesFiles"));
 		}
-		
+
 		wxXmlNode *child = node->GetChildren();
 		while (child) {
 			if (child->GetName() == wxT("Switch")) {
@@ -134,10 +134,10 @@ Compiler::Compiler(wxXmlNode *node)
 		m_switches[wxT("ArchiveOutput")] = wxT(" ");
         m_switches[wxT("PreprocessOnly")] = wxT("-E");
 		m_objectSuffix = wxT(".o");
-		m_errorPattern =   	wxT("(^[a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+)(:)([0-9]+)(:)( *[eor]+:?)");
+		m_errorPattern =   	wxT("(^[a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+)(:)([0-9]+)(:)( *[eor]+)");
 		m_errorFileNameIndex = wxT("1");
 		m_errorLineNubmerIndex = wxT("3");
-		m_warningPattern = 	wxT("(^[a-zA-Z]{0,2}:?[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning:)");
+		m_warningPattern = 	wxT("(^[a-zA-Z]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning:)");
 		m_warningFileNameIndex = wxT("1");
 		m_warningLineNubmerIndex = wxT("3");
 		m_tools[wxT("LinkerName")] = wxT("g++");
@@ -178,7 +178,7 @@ wxXmlNode *Compiler::ToXml() const
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));
 	node->AddProperty(wxT("Name"), m_name);
 	node->AddProperty(wxT("GenerateDependenciesFiles"), BoolToString(m_generateDependeciesFile));
-	
+
 	std::map<wxString, wxString>::const_iterator iter = m_switches.begin();
 	for (; iter != m_switches.end(); iter++) {
 		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Switch"));
@@ -213,12 +213,12 @@ wxXmlNode *Compiler::ToXml() const
 	options->AddProperty(wxT("Name"),  wxT("ObjectSuffix"));
 	options->AddProperty(wxT("Value"), m_objectSuffix);
 	node->AddChild(options);
-    
+
     options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
     options->AddProperty(wxT("Name"),  wxT("DependSuffix"));
     options->AddProperty(wxT("Value"), m_dependSuffix);
 	node->AddChild(options);
-    
+
     options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
     options->AddProperty(wxT("Name"),  wxT("PreprocessSuffix"));
     options->AddProperty(wxT("Value"), m_preprocessSuffix);

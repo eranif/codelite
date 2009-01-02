@@ -24,20 +24,20 @@ void CLAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
 {
 	switch(button){
 	case wxAUI_BUTTON_CLOSE: {
-
+		wxBitmap bmp;
 		switch(button_state){
 		case wxAUI_BUTTON_STATE_PRESSED:
-			dc.DrawBitmap(m_bmp_close_active, rect.x, rect.y, true);
+			bmp = m_bmp_close_active;
 			break;
 		case wxAUI_BUTTON_STATE_HIDDEN:
 			break;
 		case wxAUI_BUTTON_STATE_HOVER:
 		case wxAUI_BUTTON_STATE_NORMAL:
 		default:
-			dc.DrawBitmap(m_bmp_close, rect.x, rect.y, true);
+			bmp = m_bmp_close;
 			break;
 		}
-
+		dc.DrawBitmap(bmp, rect.x, rect.y+1, true);
 		break;
 	}
 	default:

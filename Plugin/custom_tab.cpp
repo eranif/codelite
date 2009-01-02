@@ -601,6 +601,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		//draw the x button, only if we are the active tab
 		if (GetSelected()) {
 			x_yoffset = (bmp.GetHeight() - GetXBmp().GetHeight())/2;
+			top ? x_yoffset += 2 : x_yoffset;
 			memDc.DrawBitmap(GetXBmp(), posx, x_yoffset, true);
 		}
 		int xWidth = GetXBmp().GetWidth();

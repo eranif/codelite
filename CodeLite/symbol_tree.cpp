@@ -234,7 +234,7 @@ void SymbolTree::AddItem(TagNode* node)
 		                 displayName,			// display name
 		                 iconIndex,				// item image index
 		                 iconIndex,				// selected item image
-		                 new MyTreeItemData(node->GetData().GetFile(), node->GetData().GetPattern()));
+                         new MyTreeItemData(node->GetData().GetFile(), node->GetData().GetPattern(), node->GetData().GetLine()));
                 SetItemFont(hti, font);
 		node->GetData().SetTreeItemId( hti );
 		m_sortItems[parentHti.m_pItem] = true;

@@ -2021,7 +2021,7 @@ void Manager::UpdateBuildTools()
 bool Manager::OpenFileAndAppend ( const wxString &fileName, const wxString &text )
 {
 	bool ret ( false );
-	if ( OpenFile ( fileName, wxEmptyString ) ) {
+	if ( OpenFile ( fileName, wxEmptyString, 0 ) ) {
 		LEditor* editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 		if ( editor ) {
 
@@ -2329,7 +2329,7 @@ void Manager::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li )
 		}
 
 		//open this file
-		if ( OpenFile ( token.getFilename(), wxEmptyString ) ) {
+		if ( OpenFile ( token.getFilename(), wxEmptyString, 0 ) ) {
 			//do the actual replacement here
 			wxFileName fn ( token.getFilename() );
 			LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();

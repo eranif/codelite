@@ -855,7 +855,7 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 void ContextCpp::DoGotoSymbol(TagEntryPtr tag)
 {
     if (tag) {
-		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(tag->GetFile());
+		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
         if (editor) {
 			editor->FindAndSelect(tag->GetPattern(), tag->GetName());
         }

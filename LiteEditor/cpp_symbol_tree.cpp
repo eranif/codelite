@@ -150,9 +150,10 @@ bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent &event, bool noti
 	wxString filename = itemData->GetFileName();
 	wxString project = ManagerST::Get()->GetProjectNameByFile(filename);
 	wxString pattern = itemData->GetPattern();
+    int      lineno  = itemData->GetLine();
 
 	// Open the file and set the cursor to line number
-	if(ManagerST::Get()->OpenFile(filename, project, wxNOT_FOUND)) {
+	if(ManagerST::Get()->OpenFile(filename, project, lineno-1)) {
 		// get the editor, and search for the pattern in the file
 		LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 		if (editor) {

@@ -1014,7 +1014,7 @@ bool SymbolViewPlugin::DoActivateSelection(wxTreeCtrl* tree)
 	if (!tag)
 		return false;
 
-	if (tag->GetFile().IsEmpty() || !m_mgr->OpenFile(tag->GetFile()))
+	if (tag->GetFile().IsEmpty() || !m_mgr->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1))
 		return false;
 
 	m_mgr->FindAndSelect(tag->GetPattern(), tag->GetName());

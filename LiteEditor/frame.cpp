@@ -1904,7 +1904,7 @@ void Frame::OnFindType(wxCommandEvent &event)
 	if (dlg->ShowModal() == wxID_OK) {
 		TagEntryPtr tag = dlg->GetSelectedTag();
 		if (tag && tag->IsOk()) {
-			LEditor *editor = GetMainBook()->OpenFile(tag->GetFile());
+			LEditor *editor = GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine());
 			if (editor) {
 				editor->FindAndSelect(tag->GetPattern(), tag->GetName());
 			}

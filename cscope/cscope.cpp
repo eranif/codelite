@@ -69,7 +69,7 @@ Cscope::Cscope(IManager *manager)
 	m_topWindow = m_mgr->GetTheApp();
 
 	m_cscopeWin = new CscopeTab(m_mgr->GetOutputPaneNotebook(), m_mgr);
-	m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, wxT("cscope"), wxXmlResource::Get()->LoadBitmap(wxT("cscope")), false);
+	m_mgr->GetOutputPaneNotebook()->AddPage(m_cscopeWin, wxT("cscope"), wxT("cscope"), wxXmlResource::Get()->LoadBitmap(wxT("cscope")), false);
 
 	Connect(wxEVT_CSCOPE_THREAD_DONE, wxCommandEventHandler(Cscope::OnCScopeThreadEnded), NULL, this);
 	Connect(wxEVT_CSCOPE_THREAD_UPDATE_STATUS, wxCommandEventHandler(Cscope::OnCScopeThreadUpdateStatus), NULL, this);

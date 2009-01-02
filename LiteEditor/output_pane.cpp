@@ -74,29 +74,29 @@ void OutputPane::CreateGUIControls()
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
 
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
-	m_book->AddPage(m_buildWin, BUILD_WIN, wxXmlResource::Get()->LoadBitmap(wxT("build")));
+	m_book->AddPage(m_buildWin, BUILD_WIN, BUILD_WIN, wxXmlResource::Get()->LoadBitmap(wxT("build")));
 
 	m_errorsWin = new ErrorsTab(m_buildWin, m_book, wxID_ANY, ERRORS_WIN);
-	m_book->AddPage(m_errorsWin, ERRORS_WIN, wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")));
+	m_book->AddPage(m_errorsWin, ERRORS_WIN, ERRORS_WIN, wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")));
 
 	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN);
-	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
+	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, FIND_IN_FILES_WIN, wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
 
 	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
-	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
+	m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, REPLACE_IN_FILES, wxXmlResource::Get()->LoadBitmap(wxT("refresh16")));
 
 	m_outputWind = new ShellTab(m_book, wxID_ANY, OUTPUT_WIN);
-	m_book->AddPage(m_outputWind, OUTPUT_WIN, wxXmlResource::Get()->LoadBitmap(wxT("output_win")));
+	m_book->AddPage(m_outputWind, OUTPUT_WIN, OUTPUT_WIN, wxXmlResource::Get()->LoadBitmap(wxT("output_win")));
 
 	m_outputDebug = new DebugTab(m_book, wxID_ANY, OUTPUT_DEBUG);
-	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
+	m_book->AddPage(m_outputDebug, OUTPUT_DEBUG, OUTPUT_DEBUG, wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab")));
 
 	wxTextCtrl *text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
-	m_book->AddPage(text, TRACE_TAB, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
+	m_book->AddPage(text, TRACE_TAB, TRACE_TAB, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
 	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
 
 	m_taskPanel = new TaskPanel(m_book, wxID_ANY, TASKS);
-	m_book->AddPage(m_taskPanel, TASKS, wxXmlResource::Get()->LoadBitmap(wxT("todo")));
+	m_book->AddPage(m_taskPanel, TASKS, TASKS, wxXmlResource::Get()->LoadBitmap(wxT("todo")));
 
 	mainSizer->Layout();
 }

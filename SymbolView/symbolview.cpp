@@ -90,7 +90,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 	CreateGUIControls();
 	Connect();
 
-	m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"));
+	m_mgr->GetWorkspacePaneNotebook()->AddPage(m_symView, wxT("Symbols"), wxT("Symbols"));
 }
 
 SymbolViewPlugin::~SymbolViewPlugin()
@@ -389,7 +389,7 @@ wxString SymbolViewPlugin::GetSymbolsPath(const wxString &fileName, const wxStri
 		break;
 	}
 	return wxEmptyString;
-    
+
 }
 
 /**
@@ -1437,21 +1437,21 @@ void SymbolViewPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 void SymbolViewPlugin::OnShowTagInSymView(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    
+
     int pos = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_symView);
     if (pos != wxNOT_FOUND) {
         m_mgr->GetWorkspacePaneNotebook()->SetSelection(pos);
     }
-    
+
     // first get the right symbol tree to show
     TagEntryPtr tag = m_mgr->GetTagAtCaret(true, false);
     if (!tag)
         return;
     wxString path = GetSymbolsPath(tag->GetFile());
-    if (path.IsEmpty()) 
-        return;    
+    if (path.IsEmpty())
+        return;
     ShowSymbolTree(path);
-    
+
     // now expand the path to the tag in the tree
     SymTree *tree = FindSymbolTree(path);
 	wxString tagScope = tag->GetScope();
@@ -1482,7 +1482,7 @@ void SymbolViewPlugin::OnShowTagInSymView(wxCommandEvent& e)
                 while (files.first != files.second && files.first->second != tag->GetFile()) {
                     files.first++;
                 }
-                if (files.first == files.second) 
+                if (files.first == files.second)
                     continue;
                 if (tree->ItemHasChildren(id) && tree->GetChildrenCount(id) == 0) {
                     LoadChildren(tree, id);
@@ -1493,7 +1493,7 @@ void SymbolViewPlugin::OnShowTagInSymView(wxCommandEvent& e)
     }
     // all parents loaded and expanded, so find the tag itself
     for (Path2TagRange range = m_pathTags.equal_range(tag->Key()); range.first != range.second; range.first++) {
-        if (range.first->second.first != tree) 
+        if (range.first->second.first != tree)
             continue;
         TagTreeData *treetag = (TagTreeData*) tree->GetItemData(range.first->second.second);
         if (!treetag)

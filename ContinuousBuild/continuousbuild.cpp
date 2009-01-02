@@ -49,7 +49,7 @@ ContinuousBuild::ContinuousBuild(IManager *manager)
 	m_view = new ContinousBuildPane(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
 
 	// add our page to the output pane notebook
-	m_mgr->GetOutputPaneNotebook()->AddPage(m_view, wxT("Continuous Build"), LoadBitmapFile(wxT("compfile.png")), false);
+	m_mgr->GetOutputPaneNotebook()->AddPage(m_view, wxT("Continuous Build"), wxT("Continuous Build"), LoadBitmapFile(wxT("compfile.png")), false);
 
 	m_topWin = m_mgr->GetTheApp();
 	m_topWin->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
@@ -107,7 +107,7 @@ void ContinuousBuild::OnFileSaved(wxCommandEvent& e)
 
 	if (conf.GetEnabled()) {
 		wxString *fileName = (wxString*) e.GetClientData();
-		if (fileName) { 
+		if (fileName) {
 			DoBuild(*fileName);
 		}
 	}
@@ -118,7 +118,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 	if(m_mgr->IsWorkspaceOpen() == false) {
 		return;
 	}
-	
+
 	if ( m_shellProcess && m_shellProcess->IsBusy() ) {
 		// add the build to the queue
 		if (m_files.Index(fileName) == wxNOT_FOUND) {
@@ -133,7 +133,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 		delete m_shellProcess;
 		m_shellProcess = NULL;
 	}
-	
+
 	// get the file's project name
 	wxString projectName = m_mgr->GetProjectNameByFile(fileName);
 	if (projectName.IsEmpty()) {
@@ -154,7 +154,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 	if( !IsCompilable(fileName) ) {
 		return;
 	}
-	
+
 	m_view->AddFile(fileName);
 
 	// construct a build command
@@ -184,9 +184,9 @@ void ContinuousBuild::OnShellAddLine(wxCommandEvent& e)
 void ContinuousBuild::OnShellBuildStarted(wxCommandEvent& e)
 {
 	m_view->SetStatusMessage(_("Compiling file: ") + m_currentBuildInfo.file);
-    m_mgr->SetStatusMessage(wxString::Format(wxT("Compiling %s..."), 
+    m_mgr->SetStatusMessage(wxString::Format(wxT("Compiling %s..."),
                             wxFileName(m_currentBuildInfo.file).GetFullName().c_str()), 4, XRCID("continuous"));
-} 
+}
 
 void ContinuousBuild::OnShellProcessEnded(wxCommandEvent& e)
 {
@@ -195,7 +195,7 @@ void ContinuousBuild::OnShellProcessEnded(wxCommandEvent& e)
 	m_view->SetStatusMessage(wxEmptyString);
 
     m_mgr->SetStatusMessage(wxEmptyString, 4, XRCID("continuous"));
-    
+
 	DoReportErrors();
 	m_currentBuildInfo.Clear();
 
@@ -223,13 +223,13 @@ void ContinuousBuild::DoReportErrors()
 {
     wxCommandEvent start(wxEVT_SHELL_COMMAND_STARTED);
     m_mgr->GetTheApp()->ProcessEvent(start);
-    
+
 	for (size_t i=0; i<m_currentBuildInfo.output.GetCount(); i++){
         wxCommandEvent line(wxEVT_SHELL_COMMAND_ADDLINE);
         line.SetString(m_currentBuildInfo.output.Item(i));
         m_mgr->GetTheApp()->ProcessEvent(line);
 	}
-    
+
     wxCommandEvent stop(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
     m_mgr->GetTheApp()->ProcessEvent(stop);
 }

@@ -52,10 +52,10 @@ Notebook::~Notebook()
 {
 }
 
-void Notebook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp, bool selected)
+void Notebook::AddPage(wxWindow *win, const wxString &text, const wxString &tooltip, const wxBitmap &bmp, bool selected)
 {
 	Freeze();
-	CustomTab *tab = new CustomTab(m_tabs, wxID_ANY, text, bmp, selected, m_tabs->GetOrientation(), m_style);
+	CustomTab *tab = new CustomTab(m_tabs, wxID_ANY, text, tooltip, bmp, selected, m_tabs->GetOrientation(), m_style);
 	win->Reparent(this);
 	tab->SetWindow(win);
 

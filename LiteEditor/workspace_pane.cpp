@@ -57,7 +57,7 @@ WorkspacePane::~WorkspacePane()
 	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
 		new DockablePane(GetParent(), m_book, win, name, wxNullBitmap, wxSize(200, 200));\
 	} else {\
-		m_book->AddPage(win, name, wxNullBitmap, true);\
+		m_book->AddPage(win, name, name, wxNullBitmap, true);\
 	}
 
 void WorkspacePane::CreateGUIControls()

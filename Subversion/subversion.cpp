@@ -134,7 +134,7 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 
 	wxBitmap bmp = wxXmlResource::Get()->LoadBitmap(wxT("svn_repo"));
 	wxString caption( wxT("Subversion") );
-	book->AddPage(svnwin, caption, bmp);
+	book->AddPage(svnwin, caption, wxT("Subversion"), bmp);
 
 	//Connect items
 	if (!topWin) {

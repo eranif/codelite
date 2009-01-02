@@ -401,7 +401,10 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 	if (m_book->GetPageIndex(win) != Notebook::npos || m_detachedTabs.find(win) != m_detachedTabs.end())
 		return false;
 	win->Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(MainBook::OnFocus), NULL, this);
-	m_book->AddPage(win, text, bmp, selected);
+
+	LEditor *editor = dynamic_cast<LEditor*>(win);
+
+	m_book->AddPage(win, text, editor ? editor->GetFileName().GetFullPath() : text, bmp, selected);
 	return true;
 }
 
@@ -463,12 +466,6 @@ bool MainBook::DetachPage(wxWindow* win)
 	Frame::Get()->GetDockingManager().AddPane(win, info);
 	m_detachedTabs.insert(win);
 	Frame::Get()->GetDockingManager().Update();
-
-//	wxAuiFloatingFrame *frm = dynamic_cast<wxAuiFloatingFrame*>(win->GetParent());
-//	if (frm) {
-//		wxAcceleratorTable *acclTable = Frame::Get()->GetAcceleratorTable();
-//		((wxFrame*)frm)->SetAcceleratorTable(*acclTable);
-//	}
 	return true;
 }
 
@@ -481,7 +478,9 @@ bool MainBook::DockPage(wxWindow* win)
 	wxAuiPaneInfo info = Frame::Get()->GetDockingManager().GetPane(win);
 	Frame::Get()->GetDockingManager().DetachPane(win);
 	Frame::Get()->GetDockingManager().Update();
-	m_book->AddPage(win, info.caption);
+
+	LEditor *editor = dynamic_cast<LEditor*>(win);
+	m_book->AddPage(win, info.caption, editor ? editor->GetFileName().GetFullPath() : info.caption);
 	return true;
 }
 
@@ -588,7 +587,8 @@ bool MainBook::CloseAllButThis(wxWindow *page)
 	}
 	bool res = CloseAll(true);
 	if (pos != Notebook::npos) {
-		m_book->AddPage(page, text, wxNullBitmap, true);
+		LEditor *editor = dynamic_cast<LEditor*>(page);
+		m_book->AddPage(page, text, editor ? editor->GetFileName().GetFullPath() : text, wxNullBitmap, true);
 	}
 	return res;
 }

@@ -51,9 +51,10 @@ END_EVENT_TABLE()
 
 const wxEventType wxEVT_CMD_DELETE_TAB = XRCID("custom_tab_delete");
 
-CustomTab::CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const wxBitmap &bmp, bool selected, int orientation, long style)
+CustomTab::CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const wxString &tooltip, const wxBitmap &bmp, bool selected, int orientation, long style)
 		: wxPanel(win, id)
 		, m_text(text)
+		, m_tooltip(tooltip)
 		, m_bmp(bmp)
 		, m_selected(selected)
 		, m_padding(6)
@@ -761,11 +762,7 @@ void CustomTab::Initialize()
 	img2.SetAlpha(closetab_active_alpha, true);
 	m_xButtonPressedBmp = wxBitmap(img2);
 
-//	m_xButtonNormalBmp = wxBitmap(_tab_x_button_xpm);
-//	m_xButtonNormalBmp.SetMask(new wxMask(m_xButtonNormalBmp, clMASK_COLOR));
-//
-//	m_xButtonPressedBmp = wxBitmap(_tab_x_button_pressed_xpm);
-//	m_xButtonPressedBmp.SetMask(new wxMask(m_xButtonPressedBmp, clMASK_COLOR));
+	SetToolTip( m_tooltip );
 }
 
 wxTabContainer* CustomTab::GetTabContainer()

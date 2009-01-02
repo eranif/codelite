@@ -57,7 +57,7 @@ const wxString DebuggerPane::MEMORY = wxT("Memory");
 	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
 		new DockablePane(GetParent(), m_book, win, name, bmp, wxSize(200, 200));\
 	} else {\
-		m_book->AddPage(win, name, bmp, false);\
+		m_book->AddPage(win, name, name, bmp, false);\
 	}
 
 BEGIN_EVENT_TABLE(DebuggerPane, wxPanel)

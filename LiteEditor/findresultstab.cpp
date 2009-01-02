@@ -54,7 +54,7 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 		for (size_t i = 1; i <= numpages; i++) {
 			wxScintilla *sci = new wxScintilla(m_book);
 			SetStyles(sci);
-			m_book->AddPage(sci, wxString::Format(wxT("Find Results %u"), i));
+			m_book->AddPage(sci, wxString::Format(wxT("Find Results %u"), i), wxEmptyString);
 		}
 		m_book->SetSelection(size_t(0));
 		m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(FindResultsTab::OnPageChanged), NULL, this);

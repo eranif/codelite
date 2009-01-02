@@ -2748,7 +2748,6 @@ void Manager::UpdateRemoteTargetConnected(const wxString& line)
 wxFileName Manager::FindFile ( const wxString &filename, const wxString &project )
 {
 	wxFileName fn ( filename );
-
 	if ( !fn.FileExists() ) {
 		// try to open the file as is
 		fn.Clear();

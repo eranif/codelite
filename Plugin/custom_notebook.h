@@ -93,7 +93,7 @@ public:
 	 * \param bmp image
 	 * \param selected set the page as the selected page
 	 */
-	void AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
+	void AddPage(wxWindow *win, const wxString &text, const wxString &tooltip, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
 
 	/**
 	 * \brief add page to the book

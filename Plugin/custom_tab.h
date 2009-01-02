@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef __wxverticaltab__
+#ifndef __CustomTab__
 #define __CustomTab__
 
 #include "wx/dc.h"
@@ -43,6 +43,7 @@ class CustomTab : public wxPanel
 {
 
 	wxString m_text;
+	wxString m_tooltip;
 	wxBitmap m_bmp;
 	bool m_selected;
 	int m_padding;
@@ -70,7 +71,7 @@ protected:
 	wxTabContainer *GetTabContainer();
 
 public:
-	CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false, int orientation = wxLEFT, long style=0);
+	CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const wxString &tooltip, const wxBitmap &bmp = wxNullBitmap, bool selected = false, int orientation = wxLEFT, long style=0);
 	virtual ~CustomTab();
 
 	//Getters

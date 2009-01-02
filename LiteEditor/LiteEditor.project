@@ -347,6 +347,8 @@
     <File Name="filechecklist.h"/>
     <File Name="filechecklistbase.cpp"/>
     <File Name="filechecklistbase.h"/>
+    <File Name="clauidockart.cpp"/>
+    <File Name="clauidockart.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

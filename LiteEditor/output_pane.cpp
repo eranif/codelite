@@ -70,7 +70,7 @@ void OutputPane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP|wxVB_TAB_DECORATION);
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
 
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);

@@ -24,14 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
 #include "custom_tab.h"
-#include "tab_x_pressed.xpm"
-#include "tab_x.xpm"
 #include "wx/dcbuffer.h"
 #include "wx/settings.h"
 #include "wx/image.h"
 #include "drawingutils.h"
 #include "custom_tabcontainer.h"
 #include "custom_notebook.h"
+
+// Images
+#include "tabicons.h"
 
 #define clMASK_COLOR wxColor(0, 128, 128)
 #define TAB_RADIUS 3
@@ -499,7 +500,6 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 {
-	//draw a grey border around the tab
 	wxRect rr = GetClientSize();
 
 	//create temporary memory dc and draw the image on top of it
@@ -559,7 +559,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	int posx(GetPadding());
 	if ( GetBmp().IsOk() ) {
 
-		wxCoord imgYCoord = (bmp.GetHeight() - GetBmp().GetHeight())/2;
+		wxCoord imgYCoord = (bmp.GetHeight() - GetBmp().GetHeight())/2 - 3;
 		memDc.DrawBitmap(GetBmp(), posx, imgYCoord + bmp_yoffset, true);
 		posx += GetBmp().GetWidth() + GetPadding();
 
@@ -650,7 +650,16 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	tmpRect.height += radius;
 	top ? tmpRect.y : tmpRect.y -= radius;
 
+	// draw the outer dark border
+	dc.SetPen(pen);
 	dc.DrawRoundedRectangle(tmpRect, radius);
+
+	if(GetSelected()){
+		// draw the inner white border
+		dc.SetPen(wxPen(wxT("WHITE")));
+		tmpRect.Deflate(1);
+		dc.DrawRoundedRectangle(tmpRect, radius);
+	}
 
 	if (top && GetSelected()) {
 		//draw a line
@@ -748,11 +757,19 @@ void CustomTab::Initialize()
 	}
 
 	//create a drop down arrow image
-	m_xButtonNormalBmp = wxBitmap(_tab_x_button_xpm);
-	m_xButtonNormalBmp.SetMask(new wxMask(m_xButtonNormalBmp, clMASK_COLOR));
+	wxImage img(closetab_xpm);
+	img.SetAlpha(closetab_alpha, true);
+	m_xButtonNormalBmp = wxBitmap(img);
 
-	m_xButtonPressedBmp = wxBitmap(_tab_x_button_pressed_xpm);
-	m_xButtonPressedBmp.SetMask(new wxMask(m_xButtonPressedBmp, clMASK_COLOR));
+	wxImage img2(closetab_active_xpm);
+	img2.SetAlpha(closetab_active_alpha, true);
+	m_xButtonPressedBmp = wxBitmap(img2);
+
+//	m_xButtonNormalBmp = wxBitmap(_tab_x_button_xpm);
+//	m_xButtonNormalBmp.SetMask(new wxMask(m_xButtonNormalBmp, clMASK_COLOR));
+//
+//	m_xButtonPressedBmp = wxBitmap(_tab_x_button_pressed_xpm);
+//	m_xButtonPressedBmp.SetMask(new wxMask(m_xButtonPressedBmp, clMASK_COLOR));
 }
 
 wxTabContainer* CustomTab::GetTabContainer()

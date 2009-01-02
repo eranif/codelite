@@ -88,7 +88,7 @@ void WorkspacePane::CreateGUIControls()
 	mainSizer->Add(line, 0, wxEXPAND);
 
     // add notebook for tabs
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_TAB_DECORATION|wxVB_BG_GRADIENT);
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_BG_GRADIENT);
     m_book->SetAuiManager(m_mgr, m_caption);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 

@@ -50,7 +50,7 @@ void MainBook::CreateGuiControls()
 	m_navBar = new NavBar(this);
 	sz->Add(m_navBar, 0, wxEXPAND);
 
-	long style = wxVB_TOP|wxVB_HAS_X|wxVB_TAB_DECORATION|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_BG_GRADIENT;
+	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB|wxVB_BG_GRADIENT;
 
 #ifdef __WXGTK__
 	style |= wxVB_BORDER;
@@ -359,7 +359,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
 	LEditor* editor = GetActiveEditor();
     BrowseRecord jumpfrom = editor ? editor->CreateBrowseRecord() : BrowseRecord();
-    
+
     editor = FindEditor(fileName.GetFullPath());
 	if (editor) {
 		editor->SetProject(projName);
@@ -387,7 +387,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		}
 		ManagerST::Get()->AddToRecentlyOpenedFiles(fileName.GetFullPath());
 	}
-    
+
     if (addjump) {
         BrowseRecord jumpto = editor ? editor->CreateBrowseRecord() : BrowseRecord();
         NavMgr::Get()->AddJump(jumpfrom, jumpto);

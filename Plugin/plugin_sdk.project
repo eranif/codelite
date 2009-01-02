@@ -173,6 +173,12 @@
       <File Name="dockablepane.h"/>
       <File Name="detachedpanesinfo.cpp"/>
       <File Name="detachedpanesinfo.h"/>
+      <File Name="closetab-active.xpm.alpha"/>
+      <File Name="closetab.xpm"/>
+      <File Name="closetab.xpm.alpha"/>
+      <File Name="closetab-active.xpm"/>
+      <File Name="tabicons.h"/>
+      <File Name="tabicons.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="TokenScanner">

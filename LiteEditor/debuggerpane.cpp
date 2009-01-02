@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : debuggerpane.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : debuggerpane.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/aui/framemanager.h>
@@ -96,22 +96,22 @@ void DebuggerPane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TAB_DECORATION|wxVB_TOP);
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP);
 	mainSizer->Add(m_book, 1, wxEXPAND|wxALL, 1);
-	
+
 	// load list of detached panes
 	wxArrayString detachedPanes;
 	DetachedPanesInfo dpi;
 	EditorConfigST::Get()->ReadObject(wxT("DetachedPanesList"), &dpi);
 	detachedPanes = dpi.GetPanes();
-	
+
 	m_localsTree = new LocalVarsTree(m_book, wxID_ANY);
 	ADD_DEBUGGER_PAGE(m_localsTree, LOCALS, wxXmlResource::Get()->LoadBitmap(wxT("locals_view")));
 
 	//add the watches view
 	m_watchesTable = new SimpleTable(m_book);
 	ADD_DEBUGGER_PAGE(m_watchesTable, WATCHES, wxXmlResource::Get()->LoadBitmap(wxT("watches")));
-	
+
 	m_frameList = new ListCtrlPanel(m_book);
 	ADD_DEBUGGER_PAGE(m_frameList, FRAMES, wxXmlResource::Get()->LoadBitmap(wxT("frames")));
 
@@ -123,7 +123,7 @@ void DebuggerPane::CreateGUIControls()
 
 	m_memory = new MemoryView(m_book);
 	ADD_DEBUGGER_PAGE(m_memory, MEMORY, wxXmlResource::Get()->LoadBitmap(wxT("memory_view")));
-	
+
 	m_initDone = true;
 }
 

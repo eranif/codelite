@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "clauidockart.h"
 
 #include <set>
 #include <list>
@@ -619,6 +620,8 @@ void Frame::CreateGUIControls(void)
 
 	// tell wxAuiManager to manage this frame
 	m_mgr.SetManagedWindow(this);
+	m_mgr.SetArtProvider(new CLAuiDockArt());
+
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
 
 #if defined (__WXGTK__) || defined (__WXMAC__)

@@ -371,6 +371,25 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		editor = new LEditor(m_book);
 		editor->Create(projName, fileName);
 		AddPage(editor, fileName.GetFullName());
+        if (position == wxNOT_FOUND && lineno == wxNOT_FOUND && editor->GetContext()->GetName() == wxT("C++")) {
+            // try to find something interesting in the file to put the caret at
+            // for now, just skip past initial blank lines and comments
+            for (lineno = 0; lineno < editor->GetLineCount(); lineno++) {
+                switch (editor->GetStyleAt(editor->PositionFromLine(lineno))) {
+                    case wxSCI_C_DEFAULT:
+                    case wxSCI_C_COMMENT:
+                    case wxSCI_C_COMMENTDOC:
+                    case wxSCI_C_COMMENTLINE:
+                    case wxSCI_C_COMMENTLINEDOC:
+                        continue;
+                }
+                // if we got here, it's a line to stop on
+                break;
+            }
+            if (lineno == editor->GetLineCount()) {
+                lineno = 1; // makes sure a navigation record gets saved
+            }
+        }
 	}
 
 	if (editor) {

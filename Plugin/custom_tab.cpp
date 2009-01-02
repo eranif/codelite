@@ -547,19 +547,18 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	}
 
 	int text_yoffset(1);
-	int x_yoffset(1);
+	int x_yoffset(0);
 	int bmp_yoffset(1);
 
 	if ( !top ) {
 		text_yoffset = -3;
-		x_yoffset = -1;
 		bmp_yoffset = -1;
 	}
 
 	int posx(GetPadding());
 	if ( GetBmp().IsOk() ) {
 
-		wxCoord imgYCoord = (bmp.GetHeight() - GetBmp().GetHeight())/2 - 3;
+		wxCoord imgYCoord = (bmp.GetHeight() - GetBmp().GetHeight())/2;
 		memDc.DrawBitmap(GetBmp(), posx, imgYCoord + bmp_yoffset, true);
 		posx += GetBmp().GetWidth() + GetPadding();
 
@@ -598,17 +597,14 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 	//draw x button if needed
 	if (m_style & wxVB_HAS_X) {
-		wxCoord xBtnYCoord = (rr.height - 16)/2;
-		if ( m_orientation == wxTOP ) {
-			xBtnYCoord += 2;
-		}
-
 		//draw the x button, only if we are the active tab
 		if (GetSelected()) {
-			memDc.DrawBitmap(GetXBmp(), posx, xBtnYCoord + x_yoffset, true);
+			x_yoffset = (bmp.GetHeight() - GetXBmp().GetHeight())/2;
+			memDc.DrawBitmap(GetXBmp(), posx, x_yoffset, true);
 		}
-		m_xButtonRect = wxRect(posx, xBtnYCoord, 16, 16);
-		posx += 16 + GetPadding();
+		int xWidth = GetXBmp().GetWidth();
+		m_xButtonRect = wxRect(posx, x_yoffset, xWidth, GetXBmp().GetHeight());
+		posx += xWidth + GetPadding();
 	}
 
 	//apply changes

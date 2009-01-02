@@ -82,36 +82,46 @@ void wxTabContainer::DoDrawBackground(wxDC &dc, bool gradient, int orientation, 
 
 void wxTabContainer::DoDrawMargin(wxDC &dc, int orientation, const wxRect &rr)
 {
-	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	wxPen _3dFace(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	wxPen borderPen(DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), DrawingUtils::GetDdkShadowLightFactor2()));
+
 	for (int i=0; i<3; i++) {
+
+		dc.SetPen(_3dFace);
 		switch (orientation) {
+
 		case wxRIGHT:
 			dc.DrawLine(rr.x+i, rr.y, rr.x+i, rr.y+rr.height);
 			break;
+
 		case wxTOP:
 			dc.DrawLine(rr.x, rr.height-i-1, rr.x+rr.width, rr.height-i-1);
 			break;
+
 		case wxLEFT:
-			dc.DrawLine(rr.x+rr.width-i-1, rr.y, rr.x+rr.width-i-1, rr.y+rr.height);
+			dc.DrawLine(rr.x+rr.width-i-1, rr.y, rr.x+rr.width-i-2, rr.y+rr.height);
 			break;
+
 		default:
 			dc.DrawLine(rr.x, rr.y+i, rr.x + rr.width, rr.y+i);
 			break;
 		}
 	}
 
-	wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), DrawingUtils::GetDdkShadowLightFactor2());
-	dc.SetPen(borderColour);
+	dc.SetPen(borderPen);
 	switch (orientation) {
 	case wxRIGHT:
 		dc.DrawLine(rr.x+3, rr.y, rr.x+3, rr.y+rr.height);
 		break;
+
 	case wxTOP:
 		dc.DrawLine(rr.x, rr.height-4, rr.x+rr.width, rr.height-4);
 		break;
+
 	case wxLEFT:
 		dc.DrawLine(rr.x+rr.width-4, rr.y, rr.x+rr.width-4, rr.y+rr.height);
 		break;
+
 	default:
 		dc.DrawLine(rr.x, rr.y+3, rr.x + rr.width, rr.y+3);
 		break;

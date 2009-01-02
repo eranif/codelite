@@ -987,18 +987,35 @@ void LEditor::GotoPreviousDefintion()
 
 void LEditor::OnDwellStart(wxScintillaEvent & event)
 {
+	if (IsContextMenuOn()) {
+		// Don't cover the context menu with a tooltip!
+		return;
+	}
+	
+	// First see if we're hovering over a breakpoint
+	// Assume anywhere to the left of the fold margin qualifies
+	int margin = 0;
+	for (int n=0; n < FOLD_MARGIN_ID; ++n) {
+		margin += GetMarginWidth(n);
+	}
+	if ( event.GetX() < margin ) {
+		// We can't use event.GetPosition() here, as in the margin it returns -1
+		int position = PositionFromPoint(wxPoint(event.GetX(),event.GetY()));
+		int line = LineFromPosition(position);
+		wxString tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(GetFileName().GetFullPath(), line+1);
+		if (! tooltip.IsEmpty()) {
+			CallTipShow(position, tooltip);
+		}
+		return;
+	}
+	
 	Manager *mgr = ManagerST::Get();
 	if (mgr->DbgCanInteract()) {
 		//debugger is running and responsive, query it about the current token
-		if (!IsContextMenuOn()) {
-			m_context->OnDbgDwellStart(event);
-		}
+		m_context->OnDbgDwellStart(event);
 	} else {
 		if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_TYPE_INFO) {
-			//if context menu is on, dont allow it
-			if (!IsContextMenuOn()) {
-				m_context->OnDwellStart(event);
-			}
+			m_context->OnDwellStart(event);
 		}
 	}
 }
@@ -2202,6 +2219,10 @@ BrowseRecord LEditor::CreateBrowseRecord()
 
 void LEditor::DoBreakptContextMenu(wxPoint pt)
 {
+	//turn the popupIsOn value to avoid annoying
+	//calltips from firing while our menu is popped
+	m_popupIsOn = true;
+	
 	int ToHereId = 0;
 	wxMenu menu;
 
@@ -2232,6 +2253,8 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 	}
 
 	PopupMenu(&menu, pt.x, pt.y);
+	
+	m_popupIsOn = false;
 
 	if (ToHereId) menu.Disconnect(ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
 }

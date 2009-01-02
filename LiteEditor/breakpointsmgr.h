@@ -164,6 +164,11 @@ public:
 	bool GetMatchingBreakpoints(std::vector<BreakpointInfo>& li, const wxString &fileName, const int lineno, enum BP_type bp_type);
 
 	/**
+	 * Returns a string containing details of any breakpoints on this line
+	 */
+	wxString GetTooltip(const wxString& fileName, const int lineno);
+
+	/**
 	 * Clears the debugger_ids of all breakpoints.
 	 * Called when the debugger has stopped, so they're  no longer valid
 	 */

@@ -133,6 +133,45 @@ bool BreakptMgr::GetMatchingBreakpoints(std::vector<BreakpointInfo>& li, const w
 	return ! li.empty();
 }
 
+wxString BreakptMgr::GetTooltip(const wxString& fileName, const int lineno)
+{
+	if (fileName.IsEmpty() || lineno < 0) {
+		return wxEmptyString;
+	}
+	
+	std::vector<BreakpointInfo> li;
+	GetBreakpoints(li, fileName, lineno);
+
+	wxString tooltip;
+	std::vector<BreakpointInfo>::iterator iter = li.begin();
+	for (; iter != li.end(); ++iter) {
+		if (! tooltip.IsEmpty()) {
+			tooltip << wxT("\n");
+		}
+		if (iter->is_temp) {
+			tooltip << _("Temporary ");
+		}		
+		int id = (iter->debugger_id > 0 ? iter->debugger_id : iter->internal_id - FIRST_INTERNAL_ID);
+		tooltip << wxString::Format(_("Breakpoint %d"), id);
+		if (! iter->is_enabled) {
+			tooltip << _(" (disabled)");
+		}
+		if (iter->ignore_number > 0) {
+			tooltip << wxString::Format(_(", ignore-count = %u"), iter->ignore_number);
+		}
+	
+		if (! iter->conditions.IsEmpty()) {
+			tooltip << wxString::Format(_(". Condition: %s"), iter->conditions.c_str());
+		}
+	
+		if (! iter->commandlist.IsEmpty()) {
+			tooltip << wxString::Format(_(". Commands: %s"), iter->commandlist.c_str());
+		}
+	}
+
+	return tooltip;
+}
+
 // Delete all line-type breakpoint markers in all editors
 // Done before refreshing after a delete or edit, lest it was the last bp in a file
 void BreakptMgr::DeleteAllBreakpointMarkers()
@@ -386,27 +425,24 @@ void BreakptMgr::EditBreakpoint(int index, bool &bpExist)
 	title << id;
 	dlg.SetTitle(title);
 
+	dlg.EnterBPData(bp);
+	if (dlg.ShowModal() != wxID_OK) {
+		return ;
+	}
+
+	SetBestBPType(dlg.b);	// The edited data's available. Use it to determine the best bp_type
+	if (bp == dlg.b) {
+		// Nothing was altered
+		return ;
+	}
+	
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
-
-		dlg.EnterBPData(bp);
-		if (dlg.ShowModal() != wxID_OK) {
-			return ;
-		}
-
-		SetBestBPType(dlg.b);	// The edited data's available. Use it to determine the best bp_type
-		if (bp == dlg.b) {
-			return ;
-		}
-
-		// If it can't be updated (because gdb wouldn't be able to cope with the change), replace
+		// Update the bp by deleting/replacing
 		bool contIsNeeded = PauseDebuggerIfNeeded();
 		dbgr->RemoveBreak(bp.debugger_id);
 		dbgr->Break(dlg.b);
 
-		// dbgr->Break(bp) doesn't set the ignore/disabled/etc states
-		// but we can't do it now, as we don't yet know the debugger_id
-		// However it will happen later, in SetBreakpointDebuggerID
 		if (contIsNeeded) {
 			dbgr->Continue();
 		}

@@ -161,6 +161,7 @@ void BuildTab::Clear()
 	Initialize();
 	m_lineInfo.clear();
 	m_lineMap.clear();
+    m_fileMap.clear();
 	m_errorCount = 0;
 	m_warnCount = 0;
 	m_cmp.Reset ( NULL );
@@ -176,6 +177,7 @@ void BuildTab::AppendText ( const wxString &text )
 	LineInfo info;
 	int lineno = m_sci->GetLineCount()-1; // get line number before appending new text
 
+    info.linetext = text;
 	OutputTabWindow::AppendText ( text );
 
 	if ( text.Contains ( BUILD_PROJECT_PREFIX ) ) {
@@ -226,9 +228,11 @@ void BuildTab::AppendText ( const wxString &text )
 	}
 
 	if ( info.linecolor != wxSCI_LEX_GCC_OUTPUT ) {
-		info.linetext = text;
 		m_lineInfo[lineno] = info;
 		m_lineMap[text] = lineno;
+        if (!info.filename.IsEmpty()) {
+            m_fileMap.insert(std::make_pair(info.filename, lineno));
+        }
 		Frame::Get()->GetOutputPane()->GetErrorsTab()->AppendLine ( lineno );
 	}
 }
@@ -254,6 +258,11 @@ bool BuildTab::ExtractLineInfo ( LineInfo &info, const wxString &text, const wxS
 		}
 		info.filestart = start;
 		info.filelen = len;
+        // find the actual workspace file (if possible)
+        wxFileName fn = ManagerST::Get()->FindFile(text.Mid( info.filestart, info.filelen ), info.project);
+        if (fn.IsOk()) {
+            info.filename = fn.GetFullPath();
+        }
 	}
 	if ( re.GetMatch ( &start, &len, lidx ) ) {
 		text.Mid ( start, len ).ToLong ( &info.linenum );
@@ -281,58 +290,42 @@ std::map<int,BuildTab::LineInfo>::iterator BuildTab::GetNextBadLine()
 
 void BuildTab::DoMarkAndOpenFile ( std::map<int,LineInfo>::iterator i, bool clearsel )
 {
-	if ( i != m_lineInfo.end() && OpenFile ( i->second ) ) {
-		m_sci->MarkerDeleteAll ( 0x7 );
-		m_sci->MarkerAdd ( i->first, 0x7 );
-		m_sci->EnsureVisible ( i->first );
-		m_sci->EnsureCaretVisible();
-
-		int pos = m_sci->PositionFromLine ( i->first );
-		if ( clearsel ) {
-			m_sci->SetSelection ( wxNOT_FOUND, pos );
-		}
-		Frame::Get()->GetOutputPane()->GetErrorsTab()->MarkLine ( i->first );
-	}
-}
-
-bool BuildTab::OpenFile ( const LineInfo &info )
-{
-	if ( info.linecolor != wxSCI_LEX_GCC_ERROR && info.linecolor != wxSCI_LEX_GCC_WARNING )
-		return false;
-
-	wxFileName fn = ManagerST::Get()->FindFile ( info.linetext.Mid ( info.filestart, info.filelen ), info.project );
-	if(fn.IsOk() == false){
-		return false;
-	}
-
-	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile ( fn.GetFullPath(), wxEmptyString, info.linenum );
-	if(!editor){
-		return false;
-	}
-
-	editor->DelAllCompilerMarkers();
-	info.linecolor ==  wxSCI_LEX_GCC_ERROR ? editor->SetErrorMarker(info.linenum) : editor->SetWarningMarker(info.linenum);
-	return true;
+	if ( i == m_lineInfo.end() )
+        return;
+    const LineInfo &info = i->second;
+    if (info.linecolor != wxSCI_LEX_GCC_ERROR && info.linecolor != wxSCI_LEX_GCC_WARNING)
+        return;
+    if (Frame::Get()->GetMainBook()->OpenFile ( info.filename, info.project, info.linenum ) == NULL)
+        return;
+    // mark the current error/warning line in the output tab
+    m_sci->MarkerDeleteAll ( 0x7 );
+    m_sci->MarkerAdd ( i->first, 0x7 );
+    m_sci->EnsureVisible ( i->first );
+    m_sci->EnsureCaretVisible();
+    if ( clearsel ) {
+        m_sci->SetSelection ( wxNOT_FOUND, m_sci->PositionFromLine ( i->first ) );
+    }
+    // mark it in the errors tab too
+    Frame::Get()->GetOutputPane()->GetErrorsTab()->MarkLine ( i->first );
 }
 
 void BuildTab::MarkEditor ( LEditor *editor )
 {
-	wxUnusedVar(editor);
-//	if ( !editor )
-//		return;
-//	editor->DelAllCompilerMarkers();
-//	for ( std::map<int,LineInfo>::iterator i = m_lineInfo.begin(); i != m_lineInfo.end(); i++ ) {
-//		if ( i->second.filelen == 0 || i->second.project != editor->GetProject() )
-//			continue;
-//		wxFileName fn = ManagerST::Get()->FindFile ( i->second.linetext.Mid ( i->second.filestart, i->second.filelen ), i->second.project );
-//		if ( fn != editor->GetFileName() )
-//			continue;
-//		if ( i->second.linecolor == wxSCI_LEX_GCC_ERROR ) {
-//			editor->SetErrorMarker ( i->second.linenum );
-//		} else if ( i->second.linecolor == wxSCI_LEX_GCC_WARNING ) {
-//			editor->SetWarningMarker ( i->second.linenum );
-//		}
-//	}
+	if ( !editor )
+		return;
+	editor->DelAllCompilerMarkers();
+    wxString filename = editor->GetFileName().GetFullPath();
+    for ( std::multimap<wxString,int>::iterator b = m_fileMap.lower_bound(filename), 
+                                                e = m_fileMap.upper_bound(filename); b != e; b++ ) {
+        std::map<int,LineInfo>::iterator i = m_lineInfo.find ( b->second ) ;
+        if ( i == m_lineInfo.end() )
+            continue; // safety check -- should not normally happen
+		if ( i->second.linecolor == wxSCI_LEX_GCC_ERROR ) {
+			editor->SetErrorMarker ( i->second.linenum );
+		} else if ( i->second.linecolor == wxSCI_LEX_GCC_WARNING ) {
+			editor->SetWarningMarker ( i->second.linenum );
+		}        
+    }
 }
 
 void BuildTab::OnClearAll ( wxCommandEvent &e )
@@ -514,4 +507,20 @@ void BuildTab::OnMouseDClick ( wxScintillaEvent &e )
 		}
 	}
 	PERF_END();
+}
+
+wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno)
+{
+    for ( std::multimap<wxString,int>::iterator b = m_fileMap.find(fileName), 
+                                                e = m_fileMap.upper_bound(fileName); b != e; b++ ) {
+        std::map<int,LineInfo>::iterator i = m_lineInfo.find ( b->second ) ;
+        if ( i != m_lineInfo.end() && i->second.linenum == lineno ) {
+            wxString text = i->second.linetext.Mid(i->second.filestart+i->second.filelen);
+            if (!text.IsEmpty() && text[0] == wxT(':')) {
+                text.erase(0,1);
+            }
+            return text.Trim(false).Trim();
+        }
+    }
+    return wxEmptyString;
 }

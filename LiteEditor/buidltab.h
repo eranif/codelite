@@ -50,14 +50,16 @@ private:
         wxString project;
         wxString configuration;
         wxString linetext;
+        wxString filename;
         long     linenum;
         int      linecolor;
         size_t   filestart;
         size_t   filelen;
     };
 
-	std::map<int, LineInfo> m_lineInfo;
-    std::map<wxString, int> m_lineMap;
+	std::map<int, LineInfo>     m_lineInfo;
+    std::map<wxString, int>     m_lineMap;
+    std::multimap<wxString,int> m_fileMap;
 
     int  m_showMe;
     bool m_autoHide;
@@ -71,9 +73,8 @@ private:
 
     static BuildTab *s_bt; // self reference for ColorLine to access the m_line* maps
 
-    static int        ColorLine(int, const char *text, size_t &start, size_t &len);
-    static void       SetStyles(wxScintilla *sci);
-    static bool       OpenFile (const LineInfo &info);
+    static int  ColorLine(int, const char *text, size_t &start, size_t &len);
+    static void SetStyles(wxScintilla *sci);
 
 	void Initialize       ();
 	void DoMarkAndOpenFile(std::map<int,LineInfo>::iterator i, bool clearsel);
@@ -105,6 +106,8 @@ protected:
 public:
 	BuildTab(wxWindow *parent, wxWindowID id, const wxString &name);
 	~BuildTab();
+    
+    wxString GetBuildToolTip(const wxString &fileName, int lineno);
 };
 #endif // __buidltab__
 

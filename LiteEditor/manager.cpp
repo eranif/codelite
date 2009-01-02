@@ -2764,6 +2764,9 @@ wxFileName Manager::FindFile ( const wxString &filename, const wxString &project
 		GetWorkspaceFiles ( workspace_files );
 		fn = FindFile ( workspace_files, filename );
 	}
+    if (!fn.IsAbsolute()) {
+        fn.MakeAbsolute();
+    }
 	return fn;
 }
 

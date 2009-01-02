@@ -61,6 +61,7 @@
 #include "debuggerconfigtool.h"
 #include "addincludefiledlg.h"
 #include "quickfindbar.h"
+#include "buidltab.h"
 
 // fix bug in wxscintilla.h
 #ifdef EVT_SCI_CALLTIP_CLICK
@@ -987,36 +988,32 @@ void LEditor::GotoPreviousDefintion()
 
 void LEditor::OnDwellStart(wxScintillaEvent & event)
 {
-	if (IsContextMenuOn()) {
-		// Don't cover the context menu with a tooltip!
-		return;
-	}
-	
-	// First see if we're hovering over a breakpoint
+	// First see if we're hovering over a breakpoint or build marker
 	// Assume anywhere to the left of the fold margin qualifies
 	int margin = 0;
 	for (int n=0; n < FOLD_MARGIN_ID; ++n) {
 		margin += GetMarginWidth(n);
 	}
-	if ( event.GetX() < margin ) {
+    
+    if (IsContextMenuOn()) {
+		// Don't cover the context menu with a tooltip!
+    } else if ( event.GetX() < margin ) {
 		// We can't use event.GetPosition() here, as in the margin it returns -1
 		int position = PositionFromPoint(wxPoint(event.GetX(),event.GetY()));
 		int line = LineFromPosition(position);
-		wxString tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(GetFileName().GetFullPath(), line+1);
+        wxString fname = GetFileName().GetFullPath();
+		wxString tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
+        if (tooltip.IsEmpty()) {
+            tooltip = Frame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line);
+        }
 		if (! tooltip.IsEmpty()) {
 			CallTipShow(position, tooltip);
 		}
-		return;
-	}
-	
-	Manager *mgr = ManagerST::Get();
-	if (mgr->DbgCanInteract()) {
+	} else if (ManagerST::Get()->DbgCanInteract()) {
 		//debugger is running and responsive, query it about the current token
 		m_context->OnDbgDwellStart(event);
-	} else {
-		if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_TYPE_INFO) {
-			m_context->OnDwellStart(event);
-		}
+	} else if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_TYPE_INFO) {
+        m_context->OnDwellStart(event);
 	}
 }
 

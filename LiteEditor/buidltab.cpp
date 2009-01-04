@@ -315,7 +315,7 @@ void BuildTab::MarkEditor ( LEditor *editor )
 		return;
 	editor->DelAllCompilerMarkers();
     wxString filename = editor->GetFileName().GetFullPath();
-    for ( std::multimap<wxString,int>::iterator b = m_fileMap.lower_bound(filename), 
+    for ( std::multimap<wxString,int>::iterator b = m_fileMap.lower_bound(filename),
                                                 e = m_fileMap.upper_bound(filename); b != e; b++ ) {
         std::map<int,LineInfo>::iterator i = m_lineInfo.find ( b->second ) ;
         if ( i == m_lineInfo.end() )
@@ -324,7 +324,7 @@ void BuildTab::MarkEditor ( LEditor *editor )
 			editor->SetErrorMarker ( i->second.linenum );
 		} else if ( i->second.linecolor == wxSCI_LEX_GCC_WARNING ) {
 			editor->SetWarningMarker ( i->second.linenum );
-		}        
+		}
     }
 }
 
@@ -511,13 +511,21 @@ void BuildTab::OnMouseDClick ( wxScintillaEvent &e )
 
 wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno)
 {
-    for ( std::multimap<wxString,int>::iterator b = m_fileMap.find(fileName), 
-                                                e = m_fileMap.upper_bound(fileName); b != e; b++ ) {
-        std::map<int,LineInfo>::iterator i = m_lineInfo.find ( b->second ) ;
+	std::pair<std::multimap<wxString,int>::iterator, std::multimap<wxString,int>::iterator> iters = m_fileMap.equal_range(fileName);
+
+	std::multimap<wxString,int>::iterator i1 = iters.first;
+	std::multimap<wxString,int>::iterator i2 = iters.second;
+
+	if(i1 == m_fileMap.end() || i2 == m_fileMap.end()) {
+		return wxEmptyString;
+	}
+
+    for ( ; i1 != i2;  i1++ ) {
+        std::map<int,LineInfo>::iterator i = m_lineInfo.find ( i1->second ) ;
         if ( i != m_lineInfo.end() && i->second.linenum == lineno ) {
             wxString text = i->second.linetext.Mid(i->second.filestart+i->second.filelen);
             if (!text.IsEmpty() && text[0] == wxT(':')) {
-                text.erase(0,1);
+                text.erase(0, 1);
             }
             return text.Trim(false).Trim();
         }

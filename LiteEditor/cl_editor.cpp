@@ -994,7 +994,7 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 	for (int n=0; n < FOLD_MARGIN_ID; ++n) {
 		margin += GetMarginWidth(n);
 	}
-    
+
     if (IsContextMenuOn()) {
 		// Don't cover the context menu with a tooltip!
     } else if ( event.GetX() < margin ) {
@@ -1003,7 +1003,9 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 		int line = LineFromPosition(position);
         wxString fname = GetFileName().GetFullPath();
 		wxString tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
-        if (tooltip.IsEmpty()) {
+
+		// test for compiler marker
+        if (tooltip.IsEmpty() && (MarkerGet(line) & mmt_compiler)) {
             tooltip = Frame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line);
         }
 		if (! tooltip.IsEmpty()) {
@@ -2219,7 +2221,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 	//turn the popupIsOn value to avoid annoying
 	//calltips from firing while our menu is popped
 	m_popupIsOn = true;
-	
+
 	int ToHereId = 0;
 	wxMenu menu;
 
@@ -2250,7 +2252,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 	}
 
 	PopupMenu(&menu, pt.x, pt.y);
-	
+
 	m_popupIsOn = false;
 
 	if (ToHereId) menu.Disconnect(ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);

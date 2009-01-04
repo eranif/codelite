@@ -230,7 +230,7 @@ void BuildTab::AppendText ( const wxString &text )
 	if ( info.linecolor != wxSCI_LEX_GCC_OUTPUT ) {
 		m_lineInfo[lineno] = info;
 		m_lineMap[text] = lineno;
-        if (!info.filename.IsEmpty()) {
+        if (!info.filename.IsEmpty() && (info.linecolor == wxSCI_LEX_GCC_ERROR || info.linecolor == wxSCI_LEX_GCC_WARNING)) {
             m_fileMap.insert(std::make_pair(info.filename, lineno));
         }
 		Frame::Get()->GetOutputPane()->GetErrorsTab()->AppendLine ( lineno );
@@ -314,9 +314,13 @@ void BuildTab::MarkEditor ( LEditor *editor )
 	if ( !editor )
 		return;
 	editor->DelAllCompilerMarkers();
-    wxString filename = editor->GetFileName().GetFullPath();
-    for ( std::multimap<wxString,int>::iterator b = m_fileMap.lower_bound(filename),
-                                                e = m_fileMap.upper_bound(filename); b != e; b++ ) {
+    std::pair<std::multimap<wxString,int>::iterator, 
+              std::multimap<wxString,int>::iterator> iters = m_fileMap.equal_range(editor->GetFileName().GetFullPath());
+	std::multimap<wxString,int>::iterator b = iters.first;
+	std::multimap<wxString,int>::iterator e = iters.second;
+    if (b == m_fileMap.end())
+        return;
+    for (; b != e; b++ ) {
         std::map<int,LineInfo>::iterator i = m_lineInfo.find ( b->second ) ;
         if ( i == m_lineInfo.end() )
             continue; // safety check -- should not normally happen
@@ -511,18 +515,19 @@ void BuildTab::OnMouseDClick ( wxScintillaEvent &e )
 
 wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno)
 {
-	std::pair<std::multimap<wxString,int>::iterator, std::multimap<wxString,int>::iterator> iters = m_fileMap.equal_range(fileName);
+	std::pair<std::multimap<wxString,int>::iterator, 
+              std::multimap<wxString,int>::iterator> iters = m_fileMap.equal_range(fileName);
 
 	std::multimap<wxString,int>::iterator i1 = iters.first;
 	std::multimap<wxString,int>::iterator i2 = iters.second;
 
-	if(i1 == m_fileMap.end() || i2 == m_fileMap.end()) {
+	if(i1 == m_fileMap.end()) 
 		return wxEmptyString;
-	}
 
     for ( ; i1 != i2;  i1++ ) {
         std::map<int,LineInfo>::iterator i = m_lineInfo.find ( i1->second ) ;
-        if ( i != m_lineInfo.end() && i->second.linenum == lineno ) {
+        if ( i != m_lineInfo.end() && i->second.linenum == lineno && 
+                (i->second.linecolor == wxSCI_LEX_GCC_ERROR || i->second.linecolor == wxSCI_LEX_GCC_WARNING )) {
             wxString text = i->second.linetext.Mid(i->second.filestart+i->second.filelen);
             if (!text.IsEmpty() && text[0] == wxT(':')) {
                 text.erase(0, 1);

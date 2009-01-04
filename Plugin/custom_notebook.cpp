@@ -374,11 +374,11 @@ size_t Notebook::GetPageIndex(const wxString& text)
 	return Notebook::npos;
 }
 
-void Notebook::SetPageText(size_t index, const wxString &text)
+void Notebook::SetPageText(size_t index, const wxString &text, const wxString &tooltip)
 {
 	CustomTab *tab = m_tabs->IndexToTab(index);
 	if(tab) {
-		tab->SetText(text);
+		tab->SetText(text, tooltip);
 		tab->Refresh();
 
 		//this requires re-calculating the tabs are

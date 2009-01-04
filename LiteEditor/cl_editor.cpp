@@ -800,7 +800,6 @@ bool LEditor::SaveFileAs()
 			wxMessageBox(_("Failed to save file"), wxT("Error"), wxOK | wxICON_ERROR);
 			return false;
 		}
-		m_fileName = name;
 		return true;
 	}
 	return false;
@@ -867,7 +866,10 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
 	SetSavePoint();
 
-	// update the file name (remove the star from the file name)
+	// update the file name
+	m_fileName = fileName;
+
+	// update the tab title (remove the star from the file name)
 	Frame::Get()->GetMainBook()->SetPageTitle(this, fileName.GetFullName());
 
 	if (fileName.GetExt() != m_fileName.GetExt()) {
@@ -878,7 +880,6 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	//fire a wxEVT_FILE_SAVED event
 	wxString file_name = fileName.GetFullPath();
 	SendCmdEvent(wxEVT_FILE_SAVED, (void*)&file_name);
-
 	return true;
 }
 

@@ -85,7 +85,7 @@ public:
 		this->m_window = window;
 	}
 	void SetSelected(bool selected) ;
-	void SetText(const wxString &text);
+	void SetText(const wxString &text, const wxString &tooltip);
 
 	//Getters
 	const wxBitmap& GetBmp() const {

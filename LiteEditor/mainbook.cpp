@@ -663,8 +663,10 @@ void MainBook::SetPageTitle ( wxWindow *page, const wxString &name )
 {
 	size_t selection = m_book->GetPageIndex(page);
 	if (selection != Notebook::npos) {
-		m_book->SetPageText(selection, name);
+		LEditor *editor = dynamic_cast<LEditor*>(page);
+		m_book->SetPageText(selection, name, editor ? editor->GetFileName().GetFullPath() : wxT(""));
 	}
+
 	std::set<wxWindow*>::iterator i = m_detachedTabs.find(page);
 	if (i != m_detachedTabs.end()) {
 		wxAuiManager &mgr = Frame::Get()->GetDockingManager();

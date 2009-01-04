@@ -32,7 +32,7 @@
   <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
   <Project Name="ContinuousBuild" Path="ContinuousBuild/ContinuousBuild.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
@@ -76,7 +76,7 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix_Mac_Custom_Makefile" Selected="yes">
+    <WorkspaceConfiguration Name="Unix_Mac_Custom_Makefile" Selected="no">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>

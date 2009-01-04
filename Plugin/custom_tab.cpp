@@ -738,9 +738,10 @@ void CustomTab::OnRightDown(wxMouseEvent &e)
 	}
 }
 
-void CustomTab::SetText(const wxString &text)
+void CustomTab::SetText(const wxString &text, const wxString &tooltip)
 {
 	m_text = text;
+	m_tooltip = tooltip;
 	Initialize();
 	Refresh();
 }

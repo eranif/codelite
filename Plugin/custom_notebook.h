@@ -195,7 +195,7 @@ public:
 	 * \param index page's index
 	 * \param text new text
 	 */
-	void SetPageText(size_t index, const wxString &text);
+	void SetPageText(size_t index, const wxString &text, const wxString &tooltip);
 
 	DECLARE_EVENT_TABLE()
 	virtual void OnNavigationKey(wxNavigationKeyEvent &e);

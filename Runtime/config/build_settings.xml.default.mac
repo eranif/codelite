@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BuildSettings>
+  <Compilers>
+    <Compiler Name="gnu g++">
+      <Switch Name="ArchiveOutput" Value=" "/>
+      <Switch Name="Debug" Value="-gstab"/>
+      <Switch Name="Include" Value="-I"/>
+      <Switch Name="Library" Value="-l"/>
+      <Switch Name="LibraryPath" Value="-L"/>
+      <Switch Name="Object" Value="-o "/>
+      <Switch Name="Output" Value="-o "/>
+      <Switch Name="Preprocessor" Value="-D"/>
+      <Switch Name="Source" Value="-c "/>
+      <Tool Name="ArchiveTool" Value="ar rcus"/>
+      <Tool Name="CompilerName" Value="g++"/>
+      <Tool Name="LinkerName" Value="g++"/>
+      <Tool Name="ResourceCompiler" Value="windres"/>
+      <Tool Name="SharedObjectLinkerName" Value="g++ -dynamiclib -fPIC"/>
+      <Option Name="ObjectSuffix" Value=".o"/>
+	  <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)([0-9]+ *)(:)([ eor]*)</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning:)</Pattern>
+      <GlobalIncludePath></GlobalIncludePath>
+      <GlobalLibPath></GlobalLibPath>
+      <PathVariable></PathVariable>
+    </Compiler>
+    <Compiler Name="gnu gcc">
+      <Switch Name="ArchiveOutput" Value=" "/>
+      <Switch Name="Debug" Value="-g "/>
+      <Switch Name="Include" Value="-I"/>
+      <Switch Name="Library" Value="-l"/>
+      <Switch Name="LibraryPath" Value="-L"/>
+      <Switch Name="Object" Value="-o "/>
+      <Switch Name="Output" Value="-o "/>
+      <Switch Name="Preprocessor" Value="-D"/>
+      <Switch Name="Source" Value="-c "/>
+      <Tool Name="ArchiveTool" Value="ar rcus"/>
+      <Tool Name="CompilerName" Value="gcc"/>
+      <Tool Name="LinkerName" Value="gcc"/>
+      <Tool Name="ResourceCompiler" Value="windres"/>
+      <Tool Name="SharedObjectLinkerName" Value="gcc -dynamiclib -fPIC"/>
+      <Option Name="ObjectSuffix" Value=".o"/>
+	  <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)([0-9]+ *)(:)([ eor]*)</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z]{0,2}[ a-zA-Z\.0-9_/\+\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning:)</Pattern>
+      <GlobalIncludePath></GlobalIncludePath>
+      <GlobalLibPath></GlobalLibPath>
+      <PathVariable></PathVariable>
+    </Compiler>
+    <Compiler Name="VC++">
+      <Switch Name="ArchiveOutput" Value="/OUT:"/>
+      <Switch Name="Debug" Value="/Zi "/>
+      <Switch Name="Include" Value="/I"/>
+      <Switch Name="Library" Value=" "/>
+      <Switch Name="LibraryPath" Value="/LIBPATH:"/>
+      <Switch Name="Object" Value="/Fo"/>
+      <Switch Name="Output" Value="/OUT:"/>
+      <Switch Name="Preprocessor" Value="/D"/>
+      <Switch Name="Source" Value=""/>
+      <Tool Name="ArchiveTool" Value="lib.exe  /nologo"/>
+      <Tool Name="CompilerName" Value="cl.exe /nologo /c"/>
+      <Tool Name="LinkerName" Value="link.exe  /nologo"/>
+      <Tool Name="ResourceCompiler" Value="windres"/>
+      <Tool Name="SharedObjectLinkerName" Value="link.exe /DLL  /nologo"/>
+      <Option Name="ObjectSuffix" Value=".obj"/>
+      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:\+\-]+ *)(\()([0-9]+)(\))( \: )</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:\+\-]+ *)(\()([0-9]+)(\))( \: )(warning)</Pattern>
+      <GlobalIncludePath>"C:/Program Files/Microsoft Visual Studio 8/VC/include";.</GlobalIncludePath>
+      <GlobalLibPath>"C:/Program Files/Microsoft Visual Studio 8/VC/lib"</GlobalLibPath>
+      <PathVariable></PathVariable>
+    </Compiler>
+  </Compilers>
+  <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="make" Options="-f" Jobs="2"/>
+</BuildSettings>

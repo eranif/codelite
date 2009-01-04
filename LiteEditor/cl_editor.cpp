@@ -800,6 +800,7 @@ bool LEditor::SaveFileAs()
 			wxMessageBox(_("Failed to save file"), wxT("Error"), wxOK | wxICON_ERROR);
 			return false;
 		}
+		m_fileName = name;
 		return true;
 	}
 	return false;
@@ -865,9 +866,6 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	//update the modification time of the file
 	m_modifyTime = GetFileModificationTime(fileName.GetFullPath());
 	SetSavePoint();
-
-	// update the file name
-	m_fileName = fileName;
 
 	// update the tab title (remove the star from the file name)
 	Frame::Get()->GetMainBook()->SetPageTitle(this, fileName.GetFullName());

@@ -801,6 +801,9 @@ bool LEditor::SaveFileAs()
 			return false;
 		}
 		m_fileName = name;
+
+		// update the tab title (again) since we really want to trigger an update to the file tooltip
+		Frame::Get()->GetMainBook()->SetPageTitle(this, m_fileName.GetFullName());
 		return true;
 	}
 	return false;

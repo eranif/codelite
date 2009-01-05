@@ -895,31 +895,6 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 	m_context->SetActive();
 }
 
-void LEditor::OpenFile(const wxString &fileName, const wxString &project)
-{
-	if (fileName.IsEmpty() == true)
-		return;
-
-	wxString text;
-	ReadFileWithConversion(fileName, text);
-	SetText( text );
-
-	//get the modification time of the file
-	m_modifyTime = GetFileModificationTime(fileName);
-
-	// make sure user can not undo this operation
-	EmptyUndoBuffer();
-
-	// Keep the file name and the project
-	m_fileName = fileName;
-	m_project = project;
-
-	DelAllBreakpointMarkers();
-	SetCaretAt(0);
-
-	UpdateColours();
-}
-
 //this function is called before the debugger startup
 void LEditor::UpdateBreakpoints()
 {

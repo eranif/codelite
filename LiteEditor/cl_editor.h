@@ -202,9 +202,6 @@ public:
 		return NavMgr::Get()->CanPrev();
 	}
 
-	// Load a file
-	void OpenFile(const wxString& fileName, const wxString& project);
-
 	// Callback function for UI events
 	void OnUpdateUI(wxUpdateUIEvent &event);
 

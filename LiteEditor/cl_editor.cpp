@@ -179,7 +179,7 @@ void LEditor::SetSyntaxHighlight()
 	ClearDocumentStyle();
 	m_context = ContextManager::Get()->NewContextByFileName(this, m_fileName);
 	m_rightClickMenu = m_context->GetMenu();
-    m_rightClickMenu->AppendSeparator(); // separates plugins
+	m_rightClickMenu->AppendSeparator(); // separates plugins
 	SetProperties();
 	UpdateColours();
 	m_context->SetActive();
@@ -892,7 +892,7 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 	ClearDocumentStyle();
 	m_context = ContextManager::Get()->NewContext(this, lexerName);
 	m_rightClickMenu = m_context->GetMenu();
-    m_rightClickMenu->AppendSeparator(); // separates plugins
+	m_rightClickMenu->AppendSeparator(); // separates plugins
 	SetProperties();
 	UpdateColours();
 	m_context->SetActive();
@@ -975,19 +975,19 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 		margin += GetMarginWidth(n);
 	}
 
-    if (IsContextMenuOn()) {
+	if (IsContextMenuOn()) {
 		// Don't cover the context menu with a tooltip!
-    } else if ( event.GetX() < margin ) {
+	} else if ( event.GetX() < margin ) {
 		// We can't use event.GetPosition() here, as in the margin it returns -1
 		int position = PositionFromPoint(wxPoint(event.GetX(),event.GetY()));
 		int line = LineFromPosition(position);
-        wxString fname = GetFileName().GetFullPath();
+		wxString fname = GetFileName().GetFullPath();
 		wxString tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
 
 		// test for compiler marker
-        if (tooltip.IsEmpty() && (MarkerGet(line) & mmt_compiler)) {
-            tooltip = Frame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line);
-        }
+		if (tooltip.IsEmpty() && (MarkerGet(line) & mmt_compiler)) {
+			tooltip = Frame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line);
+		}
 		if (! tooltip.IsEmpty()) {
 			CallTipShow(position, tooltip);
 		}
@@ -995,7 +995,7 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 		//debugger is running and responsive, query it about the current token
 		m_context->OnDbgDwellStart(event);
 	} else if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_TYPE_INFO) {
-        m_context->OnDwellStart(event);
+		m_context->OnDwellStart(event);
 	}
 }
 
@@ -1498,7 +1498,7 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 
 bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 {
-    BrowseRecord jumpfrom = CreateBrowseRecord();
+	BrowseRecord jumpfrom = CreateBrowseRecord();
 
 	wxString pattern ( _pattern );
 	pattern.StartsWith ( wxT ( "/^" ), &pattern );
@@ -1580,9 +1580,9 @@ bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 			SetSelectionEnd ( curr_pos );
 		}
 	} while ( again );
-    if (res) {
-        NavMgr::Get()->AddJump(jumpfrom, CreateBrowseRecord());
-    }
+	if (res) {
+		NavMgr::Get()->AddJump(jumpfrom, CreateBrowseRecord());
+	}
 	return res;
 }
 

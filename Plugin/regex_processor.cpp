@@ -28,7 +28,11 @@
 
 RegexProcessor::RegexProcessor(const wxString &reStr)
 { 
-	m_re = new wxRegEx(reStr);//, wxRE_ADVANCED);
+#ifndef __WXMAC__
+	m_re = new wxRegEx(reStr);
+#else
+	m_re = new wxRegEx(reStr, wxRE_ADVANCED);
+#endif
 }
 
 RegexProcessor::~RegexProcessor()

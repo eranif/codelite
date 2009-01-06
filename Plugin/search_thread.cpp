@@ -98,8 +98,12 @@ wxRegEx& SearchThread::GetRegex(const wxString &expr, bool matchCase)
 	} else {
 		m_reExpr = expr;
 		m_matchCase = matchCase;
-
+#ifndef __WXMAC__
+		int flags = wxRE_ADVANCED;
+#else
 		int flags = wxRE_DEFAULT;
+#endif
+
 		if ( !matchCase ) flags |= wxRE_ICASE;
 		m_regex.Compile(m_reExpr, flags);
 	}
@@ -129,11 +133,11 @@ void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
 		files = data->GetFiles();
 		// filter files which does not match the criteria
 		FilterFiles(files, data);
-    } else if (wxFile::Exists(data->GetRootDir())) {
-        // search root is actually a file...
-        files.push_back(data->GetRootDir());
+	} else if (wxFile::Exists(data->GetRootDir())) {
+		// search root is actually a file...
+		files.push_back(data->GetRootDir());
 	} else if (wxDir::Exists(data->GetRootDir())) {
-        // make sure it's really a dir (not a fifo, etc.)
+		// make sure it's really a dir (not a fifo, etc.)
 		DirTraverser traverser(data->GetExtensions());
 		wxDir dir(data->GetRootDir());
 		dir.Traverse(traverser);
@@ -160,8 +164,8 @@ void SearchThread::DoSearchFiles(ThreadRequest *req)
 	// Send startup message to main thread
 	if ( m_notifiedWindow || data->GetOwner() ) {
 		wxCommandEvent event(wxEVT_SEARCH_THREAD_SEARCHSTARTED, GetId());
-        event.SetClientData(new SearchData(*data));
-        //set the rquested output tab
+		event.SetClientData(new SearchData(*data));
+		//set the rquested output tab
 		event.SetInt(data->GetOutputTab());
 		if (data->GetOwner()) {
 			::wxPostEvent(data->GetOwner(), event);
@@ -403,14 +407,14 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 	}
 
 	std::set<wxString> uniqueFileList;
-	for(size_t i=0; i<files.GetCount(); i++){
+	for (size_t i=0; i<files.GetCount(); i++) {
 		uniqueFileList.insert(files.Item(i));
 	}
 
 	files.Clear();
 	// remove duplicate files from the file array
 	std::set<wxString>::iterator iter = uniqueFileList.begin();
-	for(; iter != uniqueFileList.end(); iter++){
+	for (; iter != uniqueFileList.end(); iter++) {
 		files.Add(*iter);
 	}
 

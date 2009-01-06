@@ -31,7 +31,7 @@ static wxString Reverse(const wxString &str)
 {
 	// reverse the string content
 	wxString tmp;
-	for(int i=(int)str.length()-1; i>=0; i--){
+	for (int i=(int)str.length()-1; i>=0; i--) {
 		tmp << str.GetChar(i);
 	}
 	return tmp;
@@ -65,7 +65,11 @@ bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, cons
 		return false;
 	}
 
+#ifndef __WXMAC__
+	int re_flags = wxRE_ADVANCED;
+#else
 	int re_flags = wxRE_DEFAULT;
+#endif
 	wxRegEx re;
 	bool matchCase = flags & wxSD_MATCHCASE ? true : false;
 	if ( !matchCase ) re_flags |= wxRE_ICASE;
@@ -195,9 +199,9 @@ bool StringFindReplacer::Search(const wxString& input, int startOffset, const wx
 {
 	// adjust startOffset due to it is in bytes but should be in chars
 	int iSO = startOffset;
-	while(iSO > 0 && (int)UTF8Length(input, iSO) > startOffset) iSO--;
+	while (iSO > 0 && (int)UTF8Length(input, iSO) > startOffset) iSO--;
 	startOffset = iSO;
-	
+
 	bool bResult = false;
 	if (flags & wxSD_REGULAREXPRESSION) {
 		bResult = DoRESearch(input, startOffset, find_what, flags, posInChars, matchLenInChars);

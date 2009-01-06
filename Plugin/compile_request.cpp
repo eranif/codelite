@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : compile_request.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : compile_request.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "compile_request.h"
@@ -34,6 +34,7 @@
 #include "wx/process.h"
 #include "workspace.h"
 #include "dirsaver.h"
+#include "plugin.h"
 
 CompileRequest::CompileRequest(wxEvtHandler *owner, const QueueCommand &buildInfo, const wxString &fileName, bool runPremakeOnly, bool preprocessOnly)
 		: ShellCommand(owner, buildInfo)
@@ -55,12 +56,12 @@ void CompileRequest::Process(IManager *manager)
 	wxString errMsg;
 	SetBusy(true);
 	StringMap om;
-	
+
 	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
 	BuildManager *bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
 	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
 	EnvironmentConfig *env(manager ? manager->GetEnv() : EnvironmentConfig::Instance());
-	
+
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
 		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
@@ -80,8 +81,23 @@ void CompileRequest::Process(IManager *manager)
 		cmd = builder->GetBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
 	}
 
-	SendStartMsg();
+	// Notify plugins that a compile process is going to start
+	wxCommandEvent event(wxEVT_BUILD_STARTING);
 	
+	wxString pname (proj->GetName());
+	event.SetClientData((void*)&pname);
+	
+	// since this code can be called from inside the application OR
+	// from inside a DLL, we use the application pointer from the manager
+	// when available, otherwise, events will not be processed inside
+	// plugins
+	wxApp *app = manager ? manager->GetTheApp() : wxTheApp;
+	app->ProcessEvent(event);
+
+	// Send the EVENT_STARTED : even if this event is sent, next event will
+	// be post, so no way to be sure the the build process has not started
+	SendStartMsg();
+
 	//if we require to run the makefile generation command only, replace the 'cmd' with the
 	//generation command line
 	BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
@@ -90,9 +106,9 @@ void CompileRequest::Process(IManager *manager)
 		if (bldConf) {
 			cmd = bldConf->GetMakeGenerationCommand();
 		}
-		
+
 	}
-	
+
 	if(bldConf) {
 		wxString cmpType = bldConf->GetCompilerType();
 		CompilerPtr cmp = bsc->GetCompiler(cmpType);
@@ -104,7 +120,7 @@ void CompileRequest::Process(IManager *manager)
 			}
 		}
 	}
-	
+
 	if (cmd.IsEmpty()) {
 		//if we got an error string, use it
 		if (errMsg.IsEmpty() == false) {
@@ -124,22 +140,22 @@ void CompileRequest::Process(IManager *manager)
 
 		//expand the variables of the command
 		cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), m_fileName);
-		
+
 		//replace the command line
 		m_proc->SetCommand(cmd);
-		
+
 		//print the build command
 		AppendLine(cmd + wxT("\n"));
 		if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
 			// set working directory
 			DoSetWorkingDirectory(proj, false, m_fileName.IsEmpty() == false);
 		}
-		
-		// print the prefix message of the build start. This is important since the parser relies 
-		// on this message 
+
+		// print the prefix message of the build start. This is important since the parser relies
+		// on this message
 		if(m_info.GetProjectOnly() || m_fileName.IsEmpty() == false){
 			wxString configName(m_info.GetConfiguration());
-			
+
 			//also, send another message to the main frame, indicating which project is being built
 			//and what configuration
 			wxString text;
@@ -153,7 +169,7 @@ void CompileRequest::Process(IManager *manager)
 			}
 			AppendLine(text);
 		}
-	
+
 		env->ApplyEnv( &om );
 		if (m_proc->Start() == 0) {
 			wxString message;
@@ -166,9 +182,9 @@ void CompileRequest::Process(IManager *manager)
 		}
 
 		env->UnApplyEnv();
-			
+
 		m_timer->Start(10);
 		Connect(wxEVT_TIMER, wxTimerEventHandler(CompileRequest::OnTimer), NULL, this);
 		m_proc->Connect(wxEVT_END_PROCESS, wxProcessEventHandler(CompileRequest::OnProcessEnd), NULL, this);
-	} 
+	}
 }

@@ -133,7 +133,9 @@ enum {
 	//clientData is NULL
 	wxEVT_BUILD_STARTED,
 	//clientData is NULL
-	wxEVT_BUILD_ENDED
+	wxEVT_BUILD_ENDED,
+	//clientData is the builded project name (wxString*)
+	wxEVT_BUILD_STARTING
 };
 
 //------------------------------------------------------------------

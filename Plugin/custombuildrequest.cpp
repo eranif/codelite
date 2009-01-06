@@ -34,6 +34,8 @@
 #include "compiler.h"
 #include "custombuildrequest.h"
 #include "workspace.h"
+#include "plugin.h"
+
 CustomBuildRequest::CustomBuildRequest(wxEvtHandler *owner, const QueueCommand &buildInfo, const wxString &fileName)
 		: ShellCommand(owner, buildInfo)
 		, m_fileName(fileName)
@@ -51,8 +53,6 @@ void CustomBuildRequest::Process(IManager *manager)
 	SetBusy(true);
 	StringMap om;
 
-	SendStartMsg();
-	
 	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
 	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
 	EnvironmentConfig *env(manager ? manager->GetEnv() : EnvironmentConfig::Instance());
@@ -63,6 +63,21 @@ void CustomBuildRequest::Process(IManager *manager)
 		SetBusy(false);
 		return;
 	}
+
+	// Notify plugins that a compile process is going to start
+	wxCommandEvent event(wxEVT_BUILD_STARTING);
+	
+	wxString pname (proj->GetName());
+	event.SetClientData((void*)&pname);
+	
+	// since this code can be called from inside the application OR
+	// from inside a DLL, we use the application pointer from the manager
+	// when available, otherwise, events will not be processed inside
+	// plugins
+	wxApp *app = manager ? manager->GetTheApp() : wxTheApp;
+	app->ProcessEvent(event);
+
+	SendStartMsg();
 
 	//TODO:: make the builder name configurable
 	BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());

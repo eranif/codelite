@@ -804,6 +804,9 @@ bool LEditor::SaveFileAs()
 
 		// update the tab title (again) since we really want to trigger an update to the file tooltip
 		Frame::Get()->GetMainBook()->SetPageTitle(this, m_fileName.GetFullName());
+
+		// update syntax highlight
+		SetSyntaxHighlight();
 		return true;
 	}
 	return false;

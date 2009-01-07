@@ -187,10 +187,10 @@ template_parameter	:	const_spec nested_scope_specifier LE_IDENTIFIER special_sta
 						}
 						;
 
-using_namespace:	LE_USING LE_NAMESPACE LE_IDENTIFIER ';'
+using_namespace:	LE_USING LE_NAMESPACE nested_scope_specifier LE_IDENTIFIER ';'
 					{
 						//printf("Found using namespace %s\n", $3.c_str());
-						gs_additionlNS.push_back($3);
+						gs_additionlNS.push_back($3+$4);
 					}
 				;
 

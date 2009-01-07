@@ -44,7 +44,18 @@
 
 //std::auto_ptr<std::string>::element_type str;
 //struct HiddenStruct yy;
+//
+//struct MyOtherStruct {
+//	int val;
+//} bb, cc;
 
-struct MyOtherStruct {
-	int val;
-} bb, cc;
+namespace AA {
+	namespace BB {
+		class MyC {
+			int a;
+			int b;
+		};
+	}
+}
+
+using namespace AA::BB;

@@ -882,12 +882,7 @@ bool Language::TypeFromName(const wxString &name,
 					typeScope = var.m_typeScope.empty() ? wxT("<global>") : _U(var.m_typeScope.c_str());
 
 					m_parentVar = var;
-
-					//support for 'using namespace'
-					if (typeScope == wxT("<global>")) {
-						return CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
-					}
-					return true;
+					return CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
 				}
 			}
 
@@ -896,10 +891,7 @@ bool Language::TypeFromName(const wxString &name,
 			for (size_t i=0; i<moreScopes.size(); i++) {
 				tags.clear();
 				if (DoSearchByNameAndScope(name, moreScopes.at(i), tags, type, typeScope)) {
-					if (typeScope == wxT("<global>")) {
-						return CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
-					}
-					return true;
+					return CorrectUsingNamespace(type, typeScope, moreScopes, scopeName, tags);
 				}
 			}
 		}
@@ -933,7 +925,15 @@ bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const 
 			//try the additional scopes
 			for (size_t i=0; i<moreScopes.size(); i++) {
 				tags.clear();
-				if (DoSearchByNameAndScope(type, moreScopes.at(i), tags, type, typeScope)) {
+				
+				// try the typeScope in any of the "using namespace XXX" declarations 
+				// passed here (i.e. moreScopes variable)
+				wxString newScope(moreScopes.at(i));
+				if(typeScope != wxT("<global>")) {
+					newScope << wxT("::") << typeScope;
+				}
+				
+				if (DoSearchByNameAndScope(type, newScope, tags, type, typeScope)) {
 					return true;
 				}
 			}

@@ -98,8 +98,8 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 	sci->IndicatorSetUnder(1, true);
 	sci->IndicatorSetUnder(2, true);
 
-	sci->SetHotspotActiveUnderline (false);
-	sci->SetHotspotActiveBackground(true, MakeColourLighter(wxT("BLUE"), 8.0));
+	sci->SetHotspotActiveUnderline (true);
+	sci->SetHotspotActiveForeground(true, wxT("BLUE"));
 
 	sci->SetMarginType(1, wxSCI_MARGIN_SYMBOL);
 	sci->SetMarginMask(4, wxSCI_MASK_FOLDERS);
@@ -195,7 +195,7 @@ void OutputTabWindow::AppendText(const wxString &text)
     if (m_autoAppear && m_sci->GetLength() == 0) {
         ManagerST::Get()->ShowOutputPane(m_name);
     }
-    
+
 	//----------------------------------------------
 	// enable writing
 	m_sci->SetReadOnly(false);

@@ -57,6 +57,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     wxButton *btn(NULL);
 	m_closeButton = new wxBitmapButton(this, XRCID("close_quickfind"), wxXmlResource::Get()->LoadBitmap(wxT("page_close16")));
     mainSizer->Add(m_closeButton, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_closeButton->SetToolTip(wxT("Close QuickFind Bar"));
 
     wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Find:"));
     mainSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);

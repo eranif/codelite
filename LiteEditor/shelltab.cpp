@@ -57,6 +57,7 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
 
     wxButton *btn = new wxBitmapButton(this, XRCID("show_find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace16")));
     m_inputSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+	btn->SetToolTip(wxT("Show QuickFind Bar"));
 
     wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Send:"));
     m_inputSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);

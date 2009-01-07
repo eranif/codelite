@@ -127,29 +127,26 @@ wxString GetColumnText(wxListCtrl *list, long index, long column)
 
 bool ReadFileWithConversion(const wxString &fileName, wxString &content)
 {
+    content.Clear();
 	wxFFile file(fileName, wxT("rb"));
-
 	if (file.IsOpened()) {
-
-		// first try the user defined encoding
-		wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
-		file.ReadAll(&content, fontEncConv);
-
+		// first try the user defined encoding (except for UTF8: the UTF8 builtin appears to be faster)
+        wxFontEncoding encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
+        if (encoding != wxFONTENCODING_UTF8) {
+            wxCSConv fontEncConv(encoding);
+            if (fontEncConv.IsOk()) {
+                file.ReadAll(&content, fontEncConv);
+            }
+        }
 		if (content.IsEmpty()) {
-
 			// now try the Utf8
 			file.ReadAll(&content, wxConvUTF8);
 			if (content.IsEmpty()) {
-
 				// try local 8 bit data
 				const wxCharBuffer name = _C(fileName);
 				ReadFile8BitData(name.data(), content);
-
 			} // UTF8
 		} // user encoding
-		return content.IsEmpty() == false;
-	} else {
-		return false;
 	}
 	return !content.IsEmpty();
 }

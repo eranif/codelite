@@ -1158,7 +1158,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 	//get the file name and line where to insert the setters getters
 	static SettersGettersDlg *s_dlg = NULL;
 	if (!s_dlg) {
-		s_dlg = new SettersGettersDlg(ManagerST::Get()->GetMainFrame());
+		s_dlg = new SettersGettersDlg(Frame::Get());
 	}
 
 	s_dlg->Init(tags, tag->GetFile(), lineno);

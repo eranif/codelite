@@ -174,11 +174,6 @@ Manager::~Manager ( void )
 	delete m_breakptsmgr;
 }
 
-wxFrame *Manager::GetMainFrame()
-{
-	return Frame::Get();
-}
-
 BreakptMgr* Manager::GetBreakpointsMgr()
 {
 	return m_breakptsmgr;
@@ -852,7 +847,7 @@ ProjectPtr Manager::GetProject ( const wxString &name ) const
 
 void Manager::PopupProjectDependsDlg ( const wxString &projectName )
 {
-	DependenciesDlg *dlg = new DependenciesDlg ( GetMainFrame(), projectName );
+	DependenciesDlg *dlg = new DependenciesDlg ( Frame::Get(), projectName );
 	dlg->ShowModal();
 	dlg->Destroy();
 }
@@ -937,10 +932,10 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 
 	switch ( info.GetKind() ) {
         case QueueCommand::Build:
-            m_shellProcess = new CompileRequest ( GetMainFrame(), info, fileName, false, preprocessOnly );
+            m_shellProcess = new CompileRequest ( Frame::Get(), info, fileName, false, preprocessOnly );
             break;
         case  QueueCommand::CustomBuild:
-            m_shellProcess = new CustomBuildRequest ( GetMainFrame(), info, fileName );
+            m_shellProcess = new CustomBuildRequest ( Frame::Get(), info, fileName );
             break;
 	}
 	m_shellProcess->Process();
@@ -1889,7 +1884,7 @@ void Manager::UpdateQuickWatch ( const wxString &expression, TreeNode<wxString, 
 		if ( m_debuggerTipWin ) {
 			delete m_debuggerTipWin;
 		}
-		m_debuggerTipWin = new DebuggerTip ( GetMainFrame(), expression, tree, m_tipWinPos );
+		m_debuggerTipWin = new DebuggerTip ( Frame::Get(), expression, tree, m_tipWinPos );
 		m_debuggerTipWin->Popup();
 #endif
 
@@ -1897,7 +1892,7 @@ void Manager::UpdateQuickWatch ( const wxString &expression, TreeNode<wxString, 
 		//Display a dialog with the expression
 		if ( !m_quickWatchDlg ) {
 			//first time?
-			m_quickWatchDlg = new QuickWatchDlg ( GetMainFrame(), expression, tree );
+			m_quickWatchDlg = new QuickWatchDlg ( Frame::Get(), expression, tree );
 			m_quickWatchDlg->ShowModal();
 		} else {
 			//Dialog already created
@@ -2050,7 +2045,7 @@ void Manager::RunCustomPreMakeCommand ( const wxString &project )
 	}
 
 	QueueCommand info ( project, conf, false, QueueCommand::Build );
-	m_shellProcess = new CompileRequest (	GetMainFrame(), //owner window
+	m_shellProcess = new CompileRequest (	Frame::Get(), //owner window
 	                                      info,
 	                                      wxEmptyString, 	//no file name (valid only for build file only)
 	                                      true );			//run premake step only
@@ -2568,7 +2563,7 @@ void Manager::DoBuildProject ( const QueueCommand& buildInfo )
 			DbgStop();
 		}
 	}
-	m_shellProcess = new CompileRequest ( GetMainFrame(), buildInfo );
+	m_shellProcess = new CompileRequest ( Frame::Get(), buildInfo );
 	m_shellProcess->Process();
 }
 
@@ -2583,7 +2578,7 @@ void Manager::DoCleanProject ( const QueueCommand& buildInfo )
 	}
 
 	// TODO :: replace the construction of CleanRequest to include the proper build configuration
-	m_shellProcess = new CleanRequest ( GetMainFrame(), buildInfo );
+	m_shellProcess = new CleanRequest ( Frame::Get(), buildInfo );
 	m_shellProcess->Process();
 }
 
@@ -2707,7 +2702,7 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 			DbgStop();
 		}
 	}
-	m_shellProcess = new CustomBuildRequest ( GetMainFrame(), buildInfo, wxEmptyString );
+	m_shellProcess = new CustomBuildRequest ( Frame::Get(), buildInfo, wxEmptyString );
 	m_shellProcess->Process();
 }
 

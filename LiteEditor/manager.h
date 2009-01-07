@@ -137,12 +137,6 @@ public:
 
 	/*!
 	 * \brief
-	 * Return a pointer to the main frame
-	 */
-	wxFrame *GetMainFrame();
-
-	/*!
-	 * \brief
 	 * Create a workspace with a given name and path
 	 *
 	 * \param name

@@ -26,6 +26,7 @@
 #include "ctags_manager.h"
 #include "cl_editor.h"
 #include "manager.h"
+#include "frame.h"
 #include "macros.h"
 #include "navbar.h"
 
@@ -54,11 +55,10 @@ NavBar::~NavBar()
 
 void NavBar::OnScopeListMouseDown(wxMouseEvent& e)
 {
-	Manager *mgr = ManagerST::Get();
-    if (!mgr->IsWorkspaceOpen())
+    if (!ManagerST::Get()->IsWorkspaceOpen())
         return;
         
-    LEditor *editor = mgr->GetActiveEditor();
+    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
     if (!editor)
         return;
         
@@ -92,11 +92,10 @@ void NavBar::OnScope(wxCommandEvent& e)
 
 void NavBar::OnFuncListMouseDown(wxMouseEvent& e)
 {
-	Manager *mgr = ManagerST::Get();
-    if (!mgr->IsWorkspaceOpen())
+    if (!ManagerST::Get()->IsWorkspaceOpen())
         return;
         
-    LEditor *editor = mgr->GetActiveEditor();
+    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
     if (!editor)
         return;
         
@@ -125,7 +124,7 @@ void NavBar::OnFuncListMouseDown(wxMouseEvent& e)
 
 void NavBar::OnFunction(wxCommandEvent& e)
 {
-    LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
     if (!editor)
         return;
         

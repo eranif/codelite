@@ -22,11 +22,11 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "filedroptarget.h"
-#include "manager.h"
+#include "filedroptarget.h"
+#include "frame.h"
 
 FileDropTarget::FileDropTarget()
-: wxFileDropTarget()
+    : wxFileDropTarget()
 {
 }
 
@@ -39,7 +39,7 @@ bool FileDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &file
 	wxUnusedVar(x);
 	wxUnusedVar(y);
 	for(size_t i=0; i<filenames.GetCount(); i++){
-		ManagerST::Get()->OpenFile(filenames.Item(i), wxEmptyString);
+		Frame::Get()->GetMainBook()->OpenFile(filenames.Item(i));
 	}
 	return true;
 } 

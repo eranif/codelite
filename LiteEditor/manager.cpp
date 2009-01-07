@@ -189,16 +189,6 @@ bool Manager::IsWorkspaceOpen() const
 	return WorkspaceST::Get()->GetName().IsEmpty() == false;
 }
 
-bool Manager::OpenFile ( const BrowseRecord &rec )
-{
-	return Frame::Get()->GetMainBook()->OpenFile(rec) != NULL;
-}
-
-bool Manager::OpenFile ( const wxString &file_name, const wxString &projectName, int lineno, long position )
-{
-	return Frame::Get()->GetMainBook()->OpenFile(file_name, projectName, lineno, position) != NULL;
-}
-
 void Manager::UnInitialize()
 {
 	//stop background processes
@@ -475,7 +465,7 @@ bool Manager::AddFileToProject ( const wxString &fileName, const wxString &vdFul
 	}
 
 	if ( openIt ) {
-		OpenFile ( fileName, project );
+		Frame::Get()->GetMainBook()->OpenFile ( fileName, project );
 	}
 
 	TagTreePtr ttp;
@@ -1224,11 +1214,6 @@ void Manager::ImportFromMakefile(const wxString &path)
 }
 */
 
-LEditor *Manager::GetActiveEditor() const
-{
-	return Frame::Get()->GetMainBook()->GetActiveEditor();
-}
-
 void Manager::AddToRecentlyOpenedFiles ( const wxString &fileName )
 {
 	// Add this file to the history. Don't check for uniqueness:
@@ -1629,7 +1614,7 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 		editor->HighlightLine ( lineno );
 		editor->GotoLine ( lineno-1 );
 		editor->EnsureVisible ( lineno-1 );
-	} else if (OpenFile ( fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND)) {
+	} else if (Frame::Get()->GetMainBook()->OpenFile ( fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND)) {
 		editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 		if ( editor ) {
 			editor->HighlightLine ( lineno );
@@ -2021,7 +2006,7 @@ void Manager::UpdateBuildTools()
 bool Manager::OpenFileAndAppend ( const wxString &fileName, const wxString &text )
 {
 	bool ret ( false );
-	if ( OpenFile ( fileName, wxEmptyString, 0 ) ) {
+	if ( Frame::Get()->GetMainBook()->OpenFile ( fileName, wxEmptyString, 0 ) ) {
 		LEditor* editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 		if ( editor ) {
 
@@ -2329,7 +2314,7 @@ void Manager::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li )
 		}
 
 		//open this file
-		if ( OpenFile ( token.getFilename(), wxEmptyString, 0 ) ) {
+		if ( Frame::Get()->GetMainBook()->OpenFile ( token.getFilename(), wxEmptyString, 0 ) ) {
 			//do the actual replacement here
 			wxFileName fn ( token.getFilename() );
 			LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();

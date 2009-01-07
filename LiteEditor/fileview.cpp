@@ -481,7 +481,7 @@ void FileViewTree::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 		// Convert the file name to be in absolute path
 		wxFileName fn( filename );
 		fn.MakeAbsolute( ManagerST::Get()->GetProjectCwd( project ) );
-		ManagerST::Get()->OpenFile( fn.GetFullPath(), project, -1 );
+		Frame::Get()->GetMainBook()->OpenFile( fn.GetFullPath(), project, -1 );
 		return;
 	} else { // if(itemData->GetData().GetKind() == ProjectItem::TypeVirtualDirectory)
 		event.Skip();

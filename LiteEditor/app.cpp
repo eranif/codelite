@@ -417,7 +417,7 @@ bool App::OnInit()
 		if (fn.GetExt() == wxT("workspace")) {
 			ManagerST::Get()->OpenWorkspace(fn.GetFullPath());
 		} else {
-			ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNumber);
+			Frame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNumber);
 		}
 	}
 

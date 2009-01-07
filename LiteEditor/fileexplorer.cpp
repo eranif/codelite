@@ -132,7 +132,7 @@ void FileExplorer::OnLinkEditor(wxCommandEvent &e)
 
 void FileExplorer::OnShowFile(wxCommandEvent& e)
 {
-    LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
     if (editor && editor->GetFileName().FileExists()) {
         m_fileTree->ExpandToPath(editor->GetFileName());
         ManagerST::Get()->ShowWorkspacePane(m_caption);
@@ -142,7 +142,7 @@ void FileExplorer::OnShowFile(wxCommandEvent& e)
 
 void FileExplorer::OnShowFileUI(wxUpdateUIEvent& e)
 {
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	e.Enable(editor && editor->GetFileName().FileExists());
 }
 
@@ -150,7 +150,7 @@ void FileExplorer::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
     if (m_isLinkedToEditor) {
-        LEditor *editor = ManagerST::Get()->GetActiveEditor();
+        LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
         if (editor && editor->GetFileName().FileExists()) {
             m_fileTree->ExpandToPath(editor->GetFileName());
         }

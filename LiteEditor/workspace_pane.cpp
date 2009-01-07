@@ -28,6 +28,7 @@
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
 #include "manager.h"
+#include "frame.h"
 #include "cl_editor.h"
 #include "custom_notebook.h"
 #include "cpp_symbol_tree.h"
@@ -140,7 +141,7 @@ extern wxImageList* CreateSymbolTreeImages();
 
 void WorkspacePane::ShowCurrentOutline()
 {
-    LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
     if (!editor || editor->GetProjectName().IsEmpty()) {
         m_winStack->SelectNone();
         return;

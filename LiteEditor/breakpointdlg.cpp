@@ -116,7 +116,7 @@ void BreakpointDlg::OnItemActivated(wxListEvent &e)
 	long line_number;
 	line.ToLong(&line_number);
 
-	ManagerST::Get()->OpenFile(file, wxEmptyString, line_number-1);
+	Frame::Get()->GetMainBook()->OpenFile(file, wxEmptyString, line_number-1);
 }
 
 void BreakpointDlg::OnItemRightClick(wxListEvent& e)

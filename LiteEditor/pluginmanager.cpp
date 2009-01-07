@@ -193,7 +193,7 @@ void PluginManager::Load()
 			m_plugins[plugin->GetShortName()] = plugin;
 
 			//load the toolbar
-			wxToolBar *tb = plugin->CreateToolBar( ManagerST::Get()->GetMainFrame() );
+			wxToolBar *tb = plugin->CreateToolBar( Frame::Get() );
 			if ( tb ) {
 				Frame::Get()->GetDockingManager().AddPane( tb, wxAuiPaneInfo().Name( plugin->GetShortName() ).LeftDockable( true ).RightDockable( true ).Caption( plugin->GetShortName() ).ToolbarPane().Top() );
 
@@ -239,7 +239,7 @@ void PluginManager::Load()
 
 IEditor *PluginManager::GetActiveEditor()
 {
-	return( IEditor* )ManagerST::Get()->GetActiveEditor();
+	return (IEditor*) Frame::Get()->GetMainBook()->GetActiveEditor();
 }
 
 IConfigTool* PluginManager::GetConfigTool()
@@ -300,7 +300,7 @@ Notebook *PluginManager::GetWorkspacePaneNotebook()
 
 bool PluginManager::OpenFile(const wxString &fileName, const wxString &projectName, int lineno)
 {
-	return ManagerST::Get()->OpenFile(fileName, projectName, lineno);
+	return Frame::Get()->GetMainBook()->OpenFile(fileName, projectName, lineno);
 }
 
 wxString PluginManager::GetStartupDirectory() const
@@ -520,7 +520,7 @@ bool PluginManager::SelectPage(wxWindow *win)
 
 bool PluginManager::OpenFile(const BrowseRecord& rec)
 {
-	return ManagerST::Get()->OpenFile(rec);
+	return Frame::Get()->GetMainBook()->OpenFile(rec);
 }
 
 NavMgr* PluginManager::GetNavigationMgr()

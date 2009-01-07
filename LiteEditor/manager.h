@@ -85,22 +85,6 @@ public:
 	 */
 	bool IsWorkspaceOpen() const;
 
-	/*!
-	 * \brief
-	 * Open a file using file name and line number
-	 *
-	 * \param fileName full path of the file name
-	 * \param projectName project name, can be wxEmptyString
-	 * \param lineno the cursor will be placed at lineno
-	 * \param position the position of the match starting from begining
-	 */
-	bool OpenFile(const wxString &file_name,
-	              const wxString &projectName,
-	              int lineno = wxNOT_FOUND,
-	              long position = wxNOT_FOUND);
-
-	bool OpenFile(const BrowseRecord &rec);
-
 	/**
 	 * Create new file on the disk and open it in the main editor
 	 * \param fileName file full path (including directories)
@@ -495,11 +479,6 @@ public:
 	* Import a workspace from a makefile
 	*/
 // 	void ImportFromMakefile(const wxString &path);
-
-	/**
-	 * Return the active editor or NULL if none
-	 */
-	LEditor *GetActiveEditor() const;
 
 	/**
 	 * add single file to the recently opened files

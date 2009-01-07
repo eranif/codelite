@@ -64,7 +64,7 @@ int OpenWindowsPanel::EditorItem(LEditor *editor)
 void OpenWindowsPanel::DoOpenSelectedItem(int item)
 {
 	wxStringClientData *data = dynamic_cast<wxStringClientData *>(m_fileList->GetClientObject(item));
-    ManagerST::Get()->OpenFile(data->GetData(), wxEmptyString);
+    Frame::Get()->GetMainBook()->OpenFile(data->GetData(), wxEmptyString);
 }
 
 void OpenWindowsPanel::DoCloseSelectedItem(int item)
@@ -120,7 +120,7 @@ void OpenWindowsPanel::OnChar(wxKeyEvent& event)
 void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
-    LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
     int i = EditorItem(editor);
     if (i != wxNOT_FOUND && i == m_fileList->GetSelection())
         return;

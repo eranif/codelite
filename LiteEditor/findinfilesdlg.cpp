@@ -240,9 +240,9 @@ SearchData FindInFilesDialog::DoGetSearchData()
 		wxArrayString files;
 		wxString project = ManagerST::Get()->GetActiveProjectName();
 
-		if(ManagerST::Get()->GetActiveEditor()){
+		if (Frame::Get()->GetMainBook()->GetActiveEditor()) {
 			// use the active file's project
-			wxFileName activeFile = ManagerST::Get()->GetActiveEditor()->GetFileName();
+			wxFileName activeFile = Frame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
 			project = ManagerST::Get()->GetProjectNameByFile(activeFile.GetFullPath());
 		}
 

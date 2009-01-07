@@ -1297,7 +1297,7 @@ void LEditor::DoFindAndReplace(bool isReplaceDlg)
 {
 	if ( m_findReplaceDlg == NULL ) {
 		// Create the dialog
-		m_findReplaceDlg = new FindReplaceDialog(ManagerST::Get()->GetMainFrame(), m_findReplaceData);
+		m_findReplaceDlg = new FindReplaceDialog(Frame::Get(), m_findReplaceData);
 		m_findReplaceDlg->SetEventOwner(this->GetEventHandler());
 	}
 

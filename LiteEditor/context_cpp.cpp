@@ -971,7 +971,7 @@ bool ContextCpp::TryOpenFile(const wxFileName &fileName)
 	if (fileName.FileExists()) {
 		//we got a match
 		wxString proj = ManagerST::Get()->GetProjectNameByFile(fileName.GetFullPath());
-		return ManagerST::Get()->OpenFile(fileName.GetFullPath(), proj);
+		return Frame::Get()->GetMainBook()->OpenFile(fileName.GetFullPath(), proj);
 	}
 
 	//ok, the file does not exist in the current directory, try to find elsewhere
@@ -982,7 +982,7 @@ bool ContextCpp::TryOpenFile(const wxFileName &fileName)
 	for (size_t i=0; i<files.size(); i++) {
 		if (files.at(i).GetFullName() == fileName.GetFullName()) {
 			wxString proj = ManagerST::Get()->GetProjectNameByFile(files.at(i).GetFullPath());
-			return ManagerST::Get()->OpenFile(files.at(i).GetFullPath(), proj);
+			return Frame::Get()->GetMainBook()->OpenFile(files.at(i).GetFullPath(), proj);
 		}
 	}
 	return false;
@@ -1148,7 +1148,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 
 		if (wxMessageBox(msg, wxT("CodeLite"), wxYES_NO) == wxYES) {
 			wxString projectName = ManagerST::Get()->GetProjectNameByFile(tag->GetFile());
-			ManagerST::Get()->OpenFile(tag->GetFile(), projectName, tag->GetLine());
+			Frame::Get()->GetMainBook()->OpenFile(tag->GetFile(), projectName, tag->GetLine());
 		}
 		return;
 	}

@@ -246,7 +246,7 @@ void WorkspaceTab::OnMenuSelection(wxCommandEvent& e)
 
 void WorkspaceTab::OnShowFile(wxCommandEvent& e)
 {
-    LEditor *editor = ManagerST::Get()->GetActiveEditor();
+    LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
     if (editor && !editor->GetProject().IsEmpty()) {
         m_fileView->ExpandToPath(editor->GetProject(), editor->GetFileName());
         ManagerST::Get()->ShowWorkspacePane(m_caption);
@@ -256,7 +256,7 @@ void WorkspaceTab::OnShowFile(wxCommandEvent& e)
 
 void WorkspaceTab::OnShowFileUI(wxUpdateUIEvent& e)
 {
-	LEditor *editor = ManagerST::Get()->GetActiveEditor();
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	e.Enable(editor && !editor->GetProject().IsEmpty());
 }
 
@@ -264,7 +264,7 @@ void WorkspaceTab::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
     if (m_isLinkedToEditor) {
-        LEditor *editor = ManagerST::Get()->GetActiveEditor();
+        LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
         if (editor && !editor->GetProject().IsEmpty()) {
             m_fileView->ExpandToPath(editor->GetProject(), editor->GetFileName());
         }

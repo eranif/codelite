@@ -1924,7 +1924,7 @@ void Frame::OnFindResource(wxCommandEvent &event)
 		wxString fileName = dlg->GetFileName();
 		if (fileName.IsEmpty() == false) {
 			wxString projectName = ManagerST::Get()->GetProjectNameByFile(fileName);
-			ManagerST::Get()->OpenFile(fileName, projectName);
+			Frame::Get()->GetMainBook()->OpenFile(fileName, projectName);
 		}
 	}
 	dlg->Destroy();
@@ -2075,7 +2075,7 @@ void Frame::OnRecentFile(wxCommandEvent &event)
 
 	if (idx < files.GetCount()) {
 		wxString projectName = mgr->GetProjectNameByFile(files.Item(idx));
-		mgr->OpenFile(files.Item(idx), projectName);
+		Frame::Get()->GetMainBook()->OpenFile(files.Item(idx), projectName);
 	}
 }
 
@@ -2346,7 +2346,7 @@ void Frame::OnStartPageEvent(wxCommandEvent& e)
 	if ( data->action == wxT("switch-workspace" )) {
 		ManagerST::Get()->OpenWorkspace(data->file_path);
 	} else if ( data->action == wxT("open-file" )) {
-		ManagerST::Get()->OpenFile(data->file_path, wxEmptyString);
+		Frame::Get()->GetMainBook()->OpenFile(data->file_path, wxEmptyString);
 	} else if ( data->action == wxT("create-workspace" )) {
 		OnProjectNewWorkspace(e);
 	} else if ( data->action == wxT("import-msvs-solution" )) {
@@ -2721,7 +2721,7 @@ void Frame::OnSingleInstanceOpenFiles(wxCommandEvent& e)
 				}
 				ManagerST::Get()->OpenWorkspace(arr->Item(i));
 			} else {
-				ManagerST::Get()->OpenFile(arr->Item(i), wxEmptyString);
+				Frame::Get()->GetMainBook()->OpenFile(arr->Item(i), wxEmptyString);
 			}
 		}
 		delete arr;

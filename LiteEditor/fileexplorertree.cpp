@@ -168,7 +168,7 @@ void FileExplorerTree::DoOpenItem(const wxTreeItemId &item)
 			//open workspace
 			ManagerST::Get()->OpenWorkspace(fn.GetFullPath());
 		} else {
-			ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString);
+			Frame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString);
 		}
 	}
 }
@@ -177,7 +177,7 @@ void FileExplorerTree::DoOpenItemInTextEditor(const wxTreeItemId &item)
 {
 	if (item.IsOk()) {
 		wxFileName fn = GetFullPath(item);
-		ManagerST::Get()->OpenFile(fn.GetFullPath(), wxEmptyString);
+		Frame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString);
 	}
 }
 

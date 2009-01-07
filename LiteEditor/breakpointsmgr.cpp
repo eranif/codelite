@@ -76,7 +76,7 @@ void BreakptMgr::AddBreakpoint()
 	dlg.SetTitle(_("Create a breakpoint or watchpoint"));
 
 	BreakpointInfo bp;
-	bp.Create(ManagerST::Get()->GetActiveEditor()->GetFileName().GetFullPath(), -1, GetNextID());
+	bp.Create(Frame::Get()->GetMainBook()->GetActiveEditor()->GetFileName().GetFullPath(), -1, GetNextID());
 	dlg.EnterBPData(bp);
 
 	if (dlg.ShowModal() != wxID_OK) {

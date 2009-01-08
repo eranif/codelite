@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : options_base_dlg2.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 21 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -49,40 +24,41 @@
 OptionsBaseDlg2::OptionsBaseDlg2( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-
+	
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
-
+	
 	wxBoxSizer* innerSizer;
 	innerSizer = new wxBoxSizer( wxHORIZONTAL );
-
+	
 	m_treeBook = new wxTreebook(this, wxID_ANY);
 	innerSizer->Add( m_treeBook, 1, wxALL|wxEXPAND, 5 );
-
+	
 	mainSizer->Add( innerSizer, 1, wxEXPAND, 5 );
-
+	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	mainSizer->Add( m_staticline1, 0, wxALL|wxEXPAND, 5 );
-
+	
 	wxBoxSizer* btnSizer;
 	btnSizer = new wxBoxSizer( wxHORIZONTAL );
-
+	
 	m_okButton = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_okButton->SetDefault(); 
 	btnSizer->Add( m_okButton, 0, wxALIGN_RIGHT|wxALL, 5 );
-
+	
 	m_cancelButton = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_cancelButton, 0, wxALIGN_RIGHT|wxALL, 5 );
-
+	
 	m_applyButton = new wxButton( this, wxID_APPLY, wxT("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
 	btnSizer->Add( m_applyButton, 0, wxALIGN_RIGHT|wxALL, 5 );
-
+	
 	mainSizer->Add( btnSizer, 0, wxALIGN_CENTER, 5 );
-
+	
 	this->SetSizer( mainSizer );
 	this->Layout();
-
+	
 	this->Centre( wxBOTH );
-
+	
 	// Connect Events
 	this->Connect( wxEVT_ACTIVATE, wxActivateEventHandler( OptionsBaseDlg2::OnActivate ) );
 	this->Connect( wxEVT_INIT_DIALOG, wxInitDialogEventHandler( OptionsBaseDlg2::OnInitDialog ) );

@@ -167,6 +167,12 @@
           <File Name="editorsettingsmiscpanel.cpp"/>
           <File Name="editorsettingsmiscpanel.h"/>
         </VirtualDirectory>
+        <VirtualDirectory Name="Caret">
+          <File Name="editorsettingscaretbase.cpp"/>
+          <File Name="editorsettingscaretbase.h"/>
+          <File Name="editorsettingscaret.h"/>
+          <File Name="editorsettingscaret.cpp"/>
+        </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
@@ -485,6 +491,7 @@
     <File Name="editorsettingsdialogsbase.fbp"/>
     <File Name="editorsettingsgeneralpagebase.fbp"/>
     <File Name="editorsettingsmiscbasepanel.fbp"/>
+    <File Name="editorsettingscaretbase.fbp"/>
   </VirtualDirectory>
   <Dependencies Name="UnixCodeLite">
     <Project Name="wxscintilla"/>

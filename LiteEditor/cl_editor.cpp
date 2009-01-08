@@ -287,7 +287,10 @@ void LEditor::SetProperties()
 	caretEven = 8;
 	caretJumps = 0;
 	SetYCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
-	SetCaretWidth(1);
+	
+	SetCaretWidth(options->GetCaretWidth());
+	SetCaretPeriod(options->GetCaretBlinkPeriod());
+	
 	SetMarginLeft(1);
 	SetMarginRight(0);
 

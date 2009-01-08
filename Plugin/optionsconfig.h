@@ -61,6 +61,8 @@ class OptionsConfig : public ConfObject
 	bool m_autoAddMatchedBraces;
 	wxColour m_foldBgColour;
 	bool m_autoAdjustHScrollBarWidth;
+	int m_caretWidth;
+	int m_caretBlinkPeriod;
 
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -239,6 +241,18 @@ public:
 	}
 	const bool& GetAutoAdjustHScrollBarWidth() const {
 		return m_autoAdjustHScrollBarWidth;
+	}
+	void SetCaretBlinkPeriod(const int& caretBlinkPeriod) {
+		this->m_caretBlinkPeriod = caretBlinkPeriod;
+	}
+	void SetCaretWidth(const int& caretWidth) {
+		this->m_caretWidth = caretWidth;
+	}
+	const int& GetCaretBlinkPeriod() const {
+		return m_caretBlinkPeriod;
+	}
+	const int& GetCaretWidth() const {
+		return m_caretWidth;
 	}
 	/**
 	 * Return an XML representation of this object

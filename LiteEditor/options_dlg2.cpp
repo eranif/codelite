@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "options_dlg2.h"
+#include "editorsettingscaret.h"
 
 #include "frame.h"
 #include "editor_options_general_guides_panel.h"
@@ -100,8 +101,9 @@ void OptionsDlg2::Initialize()
 	AddSubPage(new EditorOptionsGeneralGuidesPanel(m_treeBook), 	 wxT("Guides"), true);
 	AddSubPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), wxT("Indentation"));
 	AddSubPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), wxT("Right Margin Indicator"));
+	AddSubPage(new EditorSettingsCaret(m_treeBook), 		 		 wxT("Caret"));
 	AddSubPage(new EditorOptionsGeneralSavePanel(m_treeBook), 		 wxT("Save Options"));
-
+	
 	m_treeBook->AddPage(0, wxT("C++"));
 	AddSubPage(new EditorSettingsComments(m_treeBook), wxT("Comments"));
 	AddSubPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), wxT("Doxygen"));

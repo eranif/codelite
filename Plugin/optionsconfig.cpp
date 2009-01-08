@@ -55,6 +55,8 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_autoAddMatchedBraces(true)
 		, m_foldBgColour(wxColour(240, 240, 240))
 		, m_autoAdjustHScrollBarWidth(true)
+		, m_caretWidth(1)
+		, m_caretBlinkPeriod(500)
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
@@ -87,6 +89,8 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_autoAddMatchedBraces = XmlUtils::ReadBool(node, wxT("AutoAddMatchedBraces"), m_autoAddMatchedBraces);
 		m_foldBgColour = XmlUtils::ReadString(node, wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
 		m_autoAdjustHScrollBarWidth = XmlUtils::ReadBool(node, wxT("AutoAdjustHScrollBarWidth"), m_autoAdjustHScrollBarWidth);
+		m_caretBlinkPeriod = XmlUtils::ReadLong(node, wxT("CaretBlinkPeriod"), m_caretBlinkPeriod);
+		m_caretWidth = XmlUtils::ReadLong(node, wxT("CaretWidth"), m_caretWidth);
 	}
 }
 
@@ -116,7 +120,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("AutoAddMatchedBraces"), BoolToString(m_autoAddMatchedBraces));
 	n->AddProperty(wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
 	n->AddProperty(wxT("AutoAdjustHScrollBarWidth"), BoolToString(m_autoAdjustHScrollBarWidth));
-
+	
 	wxString tmp;
     tmp << m_indentWidth;
     n->AddProperty(wxT("IndentWidth"), tmp);
@@ -143,6 +147,14 @@ wxXmlNode *OptionsConfig::ToXml() const
 
     n->AddProperty(wxT("EdgeColour"), m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
 
+	tmp.clear();
+    tmp << m_caretWidth;
+    n->AddProperty(wxT("CaretWidth"), tmp);
+	
+	tmp.clear();
+    tmp << m_caretBlinkPeriod;
+    n->AddProperty(wxT("CaretBlinkPeriod"), tmp);
+	
 	tmp.clear();
 	tmp = wxFontMapper::GetEncodingName(m_fileFontEncoding);
 	n->AddProperty(wxT("FileFontEncoding"), tmp);

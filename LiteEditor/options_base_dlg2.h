@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : options_base_dlg2.h              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 21 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -50,29 +25,29 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class OptionsBaseDlg2
 ///////////////////////////////////////////////////////////////////////////////
-class OptionsBaseDlg2 : public wxDialog
+class OptionsBaseDlg2 : public wxDialog 
 {
 	private:
-
+	
 	protected:
 		wxTreebook * m_treeBook;
 		wxStaticLine* m_staticline1;
 		wxButton* m_okButton;
 		wxButton* m_cancelButton;
 		wxButton* m_applyButton;
-
+		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnActivate( wxActivateEvent& event ){ event.Skip(); }
 		virtual void OnInitDialog( wxInitDialogEvent& event ){ event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonCancel( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonApply( wxCommandEvent& event ){ event.Skip(); }
-
-
+		
+	
 	public:
 		OptionsBaseDlg2( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Editor Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,480 ), long style = wxDEFAULT_DIALOG_STYLE|wxMAXIMIZE_BOX|wxRESIZE_BORDER );
 		~OptionsBaseDlg2();
-
+	
 };
 
 #endif //__options_base_dlg2__

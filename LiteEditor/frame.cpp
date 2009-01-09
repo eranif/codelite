@@ -2228,7 +2228,7 @@ void Frame::OnDebug(wxCommandEvent &e)
 
 void Frame::OnDebugUI(wxUpdateUIEvent &e)
 {
-	e.Enable(true);
+	e.Enable( !ManagerST::Get()->IsBuildInProgress() );
 }
 
 void Frame::OnDebugRestart(wxCommandEvent &e)

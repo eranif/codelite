@@ -25,115 +25,74 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "acceltabledlg.h"
-#include "singleton.h"
-#include "cpptoken.h"
-#include "wx/string.h"
-#include "readtags.h"
-#include "entry.h"
-#include "project.h"
-#include "context_base.h"
-#include "ctags_manager.h"
-#include "workspace.h"
 #include <list>
 #include <map>
-#include "compile_request.h"
-#include "clean_request.h"
-#include "wx/event.h"
-#include "filehistory.h"
-#include "browse_record.h"
-#include "wx/timer.h"
-#include "breakpointsmgr.h"
-#include "debuggermanager.h"
+#include <wx/event.h>
+ 
+#include "singleton.h"
 #include "debuggerobserver.h"
+#include "workspace.h"
+#include "queuecommand.h"
+#include "compiler_action.h"
+#include "async_executable_cmd.h"
+#include "filehistory.h"
+#include "breakpointsmgr.h"
+#include "quickwatchdlg.h"
 
-class wxFrame;
-class LEditor;
-class AsyncExeCmd;
-class QuickWatchDlg;
 
 // ====================================================================
 // The Manager class
 // ====================================================================
+
 class Manager : public wxEvtHandler, public IDebuggerObserver
 {
-	friend class Singleton<Manager>;
-	wxString  m_startupDir;
-	ShellCommand *m_shellProcess;
-	AsyncExeCmd *m_asyncExeCmd;
-	FileHistory m_recentFiles;
-	FileHistory m_recentWorkspaces;
-	BreakptMgr* m_breakptsmgr;
-	bool m_dbgCanInteract;
-	bool m_dbgWaitingFirstBp;	// TODO: This doesn't seem to be used for anything :/
-	QuickWatchDlg *m_quickWatchDlg;
-	int m_frameLineno;
-	bool m_useTipWin;
-	long m_tipWinPos;
-	wxString m_installDir;
+  	friend class Singleton<Manager>;
+
+ 	wxString         m_installDir;
+ 	wxString         m_startupDir;
+ 	FileHistory      m_recentWorkspaces;
+ 	ShellCommand    *m_shellProcess;
+ 	AsyncExeCmd     *m_asyncExeCmd;
+ 	BreakptMgr      *m_breakptsmgr;
+ 	QuickWatchDlg   *m_quickWatchDlg;
+ 	bool             m_isShutdown;
+ 	bool             m_workspceClosing;
+ 	bool             m_dbgCanInteract;
+ 	bool             m_useTipWin;
+ 	long             m_tipWinPos;
+ 	int              m_frameLineno;
+
 	std::list<QueueCommand> m_buildQueue;
-	bool m_workspceClosing;
-	bool m_isShutdown;
 
+protected:
+	Manager(void);
+	virtual ~Manager(void);
+    
+    
+     //--------------------------- Global State -----------------------------
 public:
-	/*!
-	 * \brief
-	 * check if a workspace is open
-	 *
-	 * \returns
-	 * true if a workspace is open
-	 */
-	bool IsWorkspaceOpen() const;
+ 	const wxString &GetStarupDirectory() const { return m_startupDir; }
+ 	void SetStarupDirectory(const wxString &path) { m_startupDir = path; }
+ 
+ 	const wxString &GetInstallDir() const { return m_installDir; }
+ 	void SetInstallDir(const wxString &dir) { m_installDir = dir; }
+ 
+	bool IsShutdownInProgress() const { return m_isShutdown; }
+ 	void SetShutdownInProgress(bool b) { m_isShutdown = b; }
+ 
+ 
+     //--------------------------- Workspace Loading -----------------------------
+public:
+ 	/*!
+ 	 * \brief
+ 	 * check if a workspace is open
+ 	 *
+ 	 * \returns
+ 	 * true if a workspace is open
+ 	 */
+ 	bool IsWorkspaceOpen() const;
 
-	/**
-	 * Create new file on the disk and open it in the main editor
-	 * \param fileName file full path (including directories)
-	 * \param vdFullPath path of the virtual directory
-	 */
-	bool AddNewFileToProject(const wxString &fileName, const wxString &vdFullPath, bool openIt = true);
-
-	/**
-	 * Add an existing file to workspace
-	 * \param fileName file full path (including directories)
-	 * \param vdFullPath path of the virtual directory
-	 */
-	bool AddFileToProject(const wxString &fileName, const wxString &vdFullPath, bool openIt = false);
-	/**
-	 * \brief
-	 * \param files
-	 * \param vdFullPath
-	 * \param actualAdded
-	 * \return
-	 */
-	void AddFilesToProject(const wxArrayString &files, const wxString &vdFullPath, wxArrayString &actualAdded);
-
-	void SetWorkspaceClosing(const bool& inShutdown) {
-		this->m_workspceClosing = inShutdown;
-	}
-
-	const bool& IsWorkspaceClosing() const {
-		return m_workspceClosing;
-	}
-
-	bool IsShutdownInProgress() const {
-		return m_isShutdown;
-	}
-
-	void SetShutdownInProgress(bool b) {
-		m_isShutdown = b;
-	}
-
-	/*!
-	 * \brief
-	 * Free all singleton objects initialised in CodeLite
-	 */
-	void UnInitialize();
-
-	/*!
-	 * \brief
-	 * Return a pointer to the breakpoints manager
-	 */
-	BreakptMgr* GetBreakpointsMgr();
+	const bool& IsWorkspaceClosing() const { return m_workspceClosing; }
 
 	/*!
 	 * \brief
@@ -149,17 +108,14 @@ public:
 	void CreateWorkspace(const wxString &name, const wxString &path);
 
 	/**
-	 * \brief create an empty project
-	 * \param name project name
-	 * \param path project file path
-	 * \param type project type, Project::STATIC_LIBRARY, Project::DYNAMIC_LIBRARY or Project::EXECUTABLE
-	 */
-	void CreateProject(ProjectData &data);
-
-	/**
 	 * Open an existing workspace by path
 	 */
 	void OpenWorkspace(const wxString &path);
+
+	/**
+	 * \brief close the currently opened workspace and reload it without saving any modifications made to it, if no workspace is opened, this functiond does anything
+	 */
+	void ReloadWorkspace();
 
 	/**
 	 * Close the current workspace and save all
@@ -168,14 +124,56 @@ public:
 	void CloseWorkspace();
 
 	/**
-	 * \brief close the currently opened workspace and reload it without saving any modifications made to it, if no workspace is opened, this functiond does anything
+	 * \brief clear the recent workspaces list
 	 */
-	void ReloadWorkspace();
+	void ClearWorkspaceHistory();
 
 	/**
-	 * Return a tree for the file view of a single project
+	 * Return list of recently opened workspaces from the configuration file
+	 * \param files [output]
 	 */
-	ProjectTreePtr GetProjectFileViewTree(const wxString &projectName);
+	void GetRecentlyOpenedWorkspaces(wxArrayString &files);
+
+	/**
+	 * return the FileHistory object that holds the recently opened
+	 * workspace data
+	 */
+	FileHistory &GetRecentlyOpenedWorkspacesClass() { return m_recentWorkspaces; }
+
+protected:
+	void DoSetupWorkspace(const wxString &path);
+	void AddToRecentlyOpenedWorkspaces(const wxString &fileName);
+
+
+    //--------------------------- Workspace Projects Mgmt -----------------------------
+public:
+	/**
+	 * \brief create an empty project
+	 * \param name project name
+	 * \param path project file path
+	 * \param type project type, Project::STATIC_LIBRARY, Project::DYNAMIC_LIBRARY or Project::EXECUTABLE
+	 */
+	void CreateProject(ProjectData &data);
+
+	/**
+	 * Add an existing project to the workspace. If no workspace is open,
+	 * this function does nothing
+	 * \param path project file path name to add
+	 */
+	void AddProject(const wxString &path);
+
+	/**
+	 * Import a MS Solution file and open it in the editor
+	 * \param path path to the .sln file
+	 */
+	void ImportMSVSSolution(const wxString &path);
+
+	/**
+	 * Remove the a project from the workspace
+	 * \param name project name to remove
+	 * \return true on success false otherwise
+	 */
+	bool RemoveProject(const wxString &name) ;
 
 	/**
 	 * Return all project names under this workspace
@@ -186,20 +184,6 @@ public:
 	 * find project by name
 	 */
 	ProjectPtr GetProject(const wxString &name) const;
-
-	/**
-	 * Add an existing project to the workspace. If no workspace is open,
-	 * this function does nothing
-	 * \param path project file path name to add
-	 */
-	void AddProject(const wxString &path);
-
-	/**
-	 * Remove the a project from the workspace
-	 * \param name project name to remove
-	 * \return true on success false otherwise
-	 */
-	bool RemoveProject(const wxString &name) ;
 
 	/**
 	 * \return active project name
@@ -213,81 +197,6 @@ public:
 	void SetActiveProject(const wxString &name);
 
 	/**
-	 * Add new virtual directory to the workspace.
-	 * \param virtualDirFullPath a dot separated string of the new virtual directory full path up to the parent project
-	 *        for example: to add a new VD name VD3 under: Project1->VD1->VD2 path should contain: Project1.VD1.VD2.VD3
-	 */
-	void AddVirtualDirectory(const wxString &virtualDirFullPath);
-
-	/**
-	 * Remove virtual directory from the workspace.
-	 * \param virtualDirFullPath a dot separated string of the virtual directory to be removed
-	 */
-	void RemoveVirtualDirectory(const wxString &virtualDirFullPath);
-
-	/**
-	 * Save workspace
-	 */
-	void SaveWorkspace();
-
-	/**
-	 * remove file from the workspace
-	 * \param fileName the full path of the file to be removed
-	 * \param vdFullPath the files' virtual directory path (including project)
-	 */
-	bool RemoveFile(const wxString &fileName, const wxString &vdFullPath);
-
-	/**
-	 * Return a project working directory
-	 * \param project project name
-	 */
-	wxString GetProjectCwd(const wxString &project) const;
-
-	/**
-	 * Show output pane and set focus to focusWin
-	 * \param focusWin tab name to set the focus
-	 * \return return true if the output pane was hidden and this function forced it to appear. false if the window was already
-	 * shown and nothing needed to be done
-	 */
-	bool ShowOutputPane(wxString focusWin = wxEmptyString, bool commit = true );
-
-	/**
-	 * Show the debugger pane
-	 */
-	void ShowDebuggerPane(bool commit = true);
-
-	/**
-	 * Show the main toolbar
-	 * \param show set to true to show it, false otherwise
-	 */
-	void ShowMainToolbar(bool show = true);
-
-	/**
-	 * Show the workspace pane and set focus to focusWin
-	 * \param focusWin tab name to set the focus
-	 */
-	void ShowWorkspacePane(wxString focusWin = wxEmptyString, bool commit = true );
-
-	/**
-	 * Hide pane
-	 */
-	void HidePane(const wxString &paneName, bool commit = true);
-
-	/**
-	 * Return project settings by name
-	 * \param projectName project name
-	 * \return project settings smart prt
-	 */
-	ProjectSettingsPtr GetProjectSettings(const wxString &projectName) const;
-
-	/**
-	 * Set project settings
-	 * \param projectName project name
-	 * \param settings settings to update
-	 */
-	void SetProjectSettings(const wxString &projectName, ProjectSettingsPtr settings);
-
-	/**
 	 * Return the workspace build matrix
 	 */
 	BuildMatrixPtr GetWorkspaceBuildMatrix() const;
@@ -297,125 +206,13 @@ public:
 	 */
 	void SetWorkspaceBuildMatrix(BuildMatrixPtr matrix);
 
-	/**
-	 * Hide/Show all panes. This function saves the current prespective and
-	 * then hides all panes, when called again, all panes are restored
-	 */
-	void TogglePanes();
 
+    //--------------------------- Workspace Files Mgmt -----------------------------
+public:
 	/**
-	 * create default new compiler
-	 * \return true on success false when a compiler with this name already exist
+	 * return list of files in absolute path of the whole workspace
 	 */
-	bool CreateDefaultNewCompiler(const wxString &name);
-
-	/**
-	 * delete compiler
-	 * \param name compiler to delete
-	 */
-	bool DeleteCompiler(const wxString &name);
-
-	/**
-	 * Return a list of availanle project templates
-	 * \param list output
-	 */
-	void GetProjectTemplateList(std::list<ProjectPtr> &list);
-
-	/**
-	 * Save project as template
-	 * \param proj project to duplicate
-	 * \param name the template name
-	 * \param description project short description
-	 */
-	void SaveProjectTemplate(ProjectPtr proj, const wxString &name, const wxString &description);
-
-	/**
-	 * Set lite editor's startup directory
-	 */
-	void SetStarupDirectory(const wxString &path) {
-		m_startupDir = path;
-	}
-
-	/**
-	 * Get lite editor's startup directory
-	 */
-	const wxString &GetStarupDirectory() const {
-		return m_startupDir;
-	}
-
-	/**
-	 * \brief return the OS specific installation directory
-	 */
-	const wxString &GetInstallDir() const {
-		return m_installDir;
-	}
-
-	/**
-	 * \brief set the installation directory
-	 */
-	void SetInstallDir(const wxString &dir) {
-		m_installDir = dir;
-	}
-
-	/**
-	 * Popup project dependencies dialog
-	 * \param projectName project name
-	 */
-	void PopupProjectDependsDlg(const wxString &projectName);
-
-	/**
-	 * \brief when building using custom build, execute the makefile generation command provided by the user
-	 * \param project project to execute it for
-	 */
-	void RunCustomPreMakeCommand(const wxString &project);
-
-	/**
-	 * compile single file from a given
-	 * given project
-	 */
-	void CompileFile(const wxString &project, const wxString &fileName, bool preprocessOnly = false);
-
-	/**
-	 * Stop current build process
-	 */
-	void StopBuild();
-
-	/**
-	 * return true if a compilation is in process (either clean or build)
-	 */
-	bool IsBuildInProgress() const;
-
-	/**
-	 * return true a child program is running
-	 */
-	bool IsProgramRunning() const;
-
-	/**
-	 * Kill child program which is running
-	 */
-	void KillProgram();
-
-	/**
-	 * Execute the project with no debugger
-	 */
-	void ExecuteNoDebug(const wxString &projectName);
-
-	/**
-	 * Return the active's project build configuration that matches
-	 * the workspace selected configuration
-	 */
-	BuildConfigPtr GetActiveProjectBuildConf();
-
-	/**
-	 * use an external database
-	 */
-	void SetExternalDatabase(const wxFileName &dbname);
-
-	/**
-	 * close the currenlty open extern database
-	 * and free all its resources
-	 */
-	void CloseExternalDatabase();
+	void GetWorkspaceFiles(wxArrayString &files);
 
 	/**
 	 * return list of files that are part of the workspace
@@ -434,13 +231,6 @@ public:
     wxFileName FindFile(const wxString &fileName, const wxString &project = wxEmptyString);
 	
 	/**
-	 * Rebuild the database by removing all entries from the database
-	 * that belongs to a given project, and then re-index all files
-	 * \param projectName project to re-tag
-	 */
-	void RetagProject(const wxString &projectName);
-
-	/**
 	 * retag workspace
 	 */
 	void RetagWorkspace();
@@ -451,78 +241,63 @@ public:
 	 */
 	void RetagFile(const wxString &filename);
 
+protected:
+    wxFileName FindFile ( const wxArrayString& files, const wxFileName &fn );
+
+
+    //--------------------------- Project Files Mgmt -----------------------------
+public:
 	/**
-	 * Add a debug message in the debug output window
-	 * \param msg
+	 * Add new virtual directory to the workspace.
+	 * \param virtualDirFullPath a dot separated string of the new virtual directory full path up to the parent project
+	 *        for example: to add a new VD name VD3 under: Project1->VD1->VD2 path should contain: Project1.VD1.VD2.VD3
 	 */
-	void DebugMessage(wxString msg);
+	void AddVirtualDirectory(const wxString &virtualDirFullPath);
 
 	/**
-	 * Add a message in the output tab window
-	 * \param msg
+	 * Remove virtual directory from the workspace.
+	 * \param virtualDirFullPath a dot separated string of the virtual directory to be removed
 	 */
-	void OutputMessage(wxString msg);
+	void RemoveVirtualDirectory(const wxString &virtualDirFullPath);
 
 	/**
-	 * return the project name that 'fullPathFileName' belogs to. if 2 matches were found, return
-	 * the first one, or empty string if no match was found
+	 * Create new file on the disk and open it in the main editor
+	 * \param fileName file full path (including directories)
+	 * \param vdFullPath path of the virtual directory
 	 */
-	wxString GetProjectNameByFile(const wxString &fullPathFileName);
+	bool AddNewFileToProject(const wxString &fileName, const wxString &vdFullPath, bool openIt = true);
 
 	/**
-	* Import a workspace from a makefile
-	*/
-// 	void ImportFromMakefile(const wxString &path);
+	 * Add an existing file to workspace
+	 * \param fileName file full path (including directories)
+	 * \param vdFullPath path of the virtual directory
+	 */
+	bool AddFileToProject(const wxString &fileName, const wxString &vdFullPath, bool openIt = false);
 
 	/**
-	 * add single file to the recently opened files
+	 * \brief
+	 * \param files
+	 * \param vdFullPath
+	 * \param actualAdded
+	 * \return
 	 */
-	void AddToRecentlyOpenedFiles(const wxString &fileName);
+	void AddFilesToProject(const wxArrayString &files, const wxString &vdFullPath, wxArrayString &actualAdded);
 
 	/**
-	 * return the FileHistory object that holds the recently opened
-	 * files data
+	 * remove file from the workspace
+	 * \param fileName the full path of the file to be removed
+	 * \param vdFullPath the files' virtual directory path (including project)
 	 */
-	FileHistory &GetRecentlyOpenedFilesClass() {
-		return m_recentFiles;
-	}
-
-	/**
-	 * \brief clear the recent workspace / files list
-	 */
-	void ClearFileHistory();
-
-	/**
-	 * \brief return true if the file history is not empty, false otherwise
-	 */
-	bool HasHistory() const;
-
-	/**
-	 * add workspace file to the recently opened workspaces
-	 */
-	void AddToRecentlyOpenedWorkspaces(const wxString &fileName);
-
-	/**
-	 * return the FileHistory object that holds the recently opened
-	 * workspace data
-	 */
-	FileHistory &GetRecentlyOpenedWorkspacesClass() {
-		return m_recentWorkspaces;
-	}
-
-	/**
-	 * Return list of recently opened files from the configuration file
-	 * \param files [output]
-	 */
-	void GetRecentlyOpenedFiles(wxArrayString &files);
-
-	/**
-	 * Return list of recently opened workspaces from the configuration file
-	 * \param files [output]
-	 */
-	void GetRecentlyOpenedWorkspaces(wxArrayString &files);
+	bool RemoveFile(const wxString &fileName, const wxString &vdFullPath);
 
 	bool MoveFileToVD(const wxString &fileName, const wxString &srcVD, const wxString &targetVD);
+
+	/**
+	 * Rebuild the database by removing all entries from the database
+	 * that belongs to a given project, and then re-index all files
+	 * \param projectName project to re-tag
+	 */
+	void RetagProject(const wxString &projectName);
 
 	/**
 	 * return list of files in absolute path of a given project
@@ -531,43 +306,101 @@ public:
 	void GetProjectFiles(const wxString &project, wxArrayString &files);
 
 	/**
-	 * return list of files in absolute path of the whole workspace
+	 * return the project name that 'fullPathFileName' belogs to. if 2 matches were found, return
+	 * the first one, or empty string if no match was found
 	 */
-	void GetWorkspaceFiles(wxArrayString &files);
+	wxString GetProjectNameByFile(const wxString &fullPathFileName);
 
-	/**
-	 * Import a MS Solution file and open it in the editor
-	 * \param path path to the .sln file
-	 */
-	void ImportMSVSSolution(const wxString &path);
 
-	/**
-	 * Expand variables to their real value, if expanding fails
-	 * the return value is same as input. The variable is expanded
-	 * in the project context
-	 */
-	wxString ExpandVariables(const wxString &expression, ProjectPtr proj);
-
-	/**
-	 * return true if the last buid ended successfully
-	 */
-	bool IsBuildEndedSuccessfully() const;
-
-	/**
-	 * \brief update the path & name of the build tool
-	 * on windows, try to locate make, followed by mingw32-make
-	 */
-	void UpdateBuildTools();
-
- 	/**
-	 * \brief open file specified by the 'fileName' parameter and append 'text'
-	 * to its content
-	 * \param fileName file to open. Must be in full path
-	 * \param text string text to append
-	 * \return true on success, false otherwise
-	 */
-	bool OpenFileAndAppend(const wxString &fileName, const wxString &text);
-
+    //--------------------------- Project Settings Mgmt -----------------------------
+public:
+  	/**
+ 	 * Return a project working directory
+ 	 * \param project project name
+  	 */
+ 	wxString GetProjectCwd(const wxString &project) const;
+  
+  	/**
+ 	 * Return project settings by name
+ 	 * \param projectName project name
+ 	 * \return project settings smart prt
+  	 */
+ 	ProjectSettingsPtr GetProjectSettings(const wxString &projectName) const;
+  
+  	/**
+ 	 * Set project settings
+ 	 * \param projectName project name
+ 	 * \param settings settings to update
+  	 */
+ 	void SetProjectSettings(const wxString &projectName, ProjectSettingsPtr settings);
+  
+  	/**
+ 	 * \brief return the project excution command as it appears in the project settings
+ 	 * \param projectName
+ 	 * \param wd the working directory that the command should be running from
+ 	 * \param considerPauseWhenExecuting when set to true (default) CodeLite will take into consideration the value set in the project
+ 	 * settings 'Pause when execution ends'
+ 	 * \return project execution command or wxEmptyString if the project does not exist
+  	 */
+ 	wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd, bool considerPauseWhenExecuting = true);
+  
+  
+     //--------------------------- External Tags DB Management -----------------------------
+public:
+  	/**
+ 	 * use an external database
+  	 */
+ 	void SetExternalDatabase(const wxFileName &dbname);
+  
+  	/**
+ 	 * close the currenlty open extern database
+ 	 * and free all its resources
+  	 */
+ 	void CloseExternalDatabase();
+  
+  
+     //--------------------------- Top Level Pane Management -----------------------------
+public:
+  	/**
+ 	 * \brief test if pane_name is resides in the wxAuiManager and is visible
+ 	 * \param pane_name pane name to search for
+ 	 * \return true on success (exist in the AUI manager and visible), false otherwise
+  	 */
+ 	bool IsPaneVisible(const wxString &pane_name);
+  
+  	/**
+ 	 * Show output pane and set focus to focusWin
+ 	 * \param focusWin tab name to set the focus
+ 	 * \return return true if the output pane was hidden and this function forced it to appear. false if the window was already
+ 	 * shown and nothing needed to be done
+  	 */
+ 	bool ShowOutputPane(wxString focusWin = wxEmptyString, bool commit = true );
+  
+  	/**
+ 	 * Show the debugger pane
+  	 */
+ 	void ShowDebuggerPane(bool commit = true);
+  
+  	/**
+ 	 * Show the workspace pane and set focus to focusWin
+ 	 * \param focusWin tab name to set the focus
+  	 */
+ 	void ShowWorkspacePane(wxString focusWin = wxEmptyString, bool commit = true );
+  
+  	/**
+ 	 * Hide pane
+  	 */
+ 	void HidePane(const wxString &paneName, bool commit = true);
+  
+  	/**
+ 	 * Hide/Show all panes. This function saves the current prespective and
+ 	 * then hides all panes, when called again, all panes are restored
+  	 */
+ 	void TogglePanes();
+  
+  
+    //--------------------------- Menu and Accelerator Mmgt -----------------------------
+public:
 	/**
 	 * \brief update the menu bar accelerators
 	 */
@@ -580,41 +413,89 @@ public:
 	 */
 	void LoadAcceleratorTable(const wxArrayString &files, MenuItemDataMap &map);
 
-	/**
-	 * \brief retrun map of the accelerator table. the StringMap maps between the actions and their accelerators
-	 */
-	void GetAcceleratorMap(MenuItemDataMap& accelMap);
-
+	void UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< wxAcceleratorEntry > &accelVec);
+    
 	/**
 	 * \brief retrun map of the default accelerator table
 	 */
 	void GetDefaultAcceleratorMap(MenuItemDataMap& accelMap);
 
 	/**
-	 * \brief parse list of files and construct a token database that will be used for refactoring
-	 * \param word word to search
-	 * \param files list of files to parse
+	 * \brief retrun map of the accelerator table. the StringMap maps between the actions and their accelerators
 	 */
-	void BuildRefactorDatabase(const wxString& word, CppTokensMap &l);
+	void GetAcceleratorMap(MenuItemDataMap& accelMap);
+
+protected:
+	void DoGetAccelFiles(wxArrayString &files);
+	void DumpMenu( wxMenu *menu, const wxString &label, wxString &content );
+
+
+    //--------------------------- Run Program (No Debug) -----------------------------
+public:
+	/**
+	 * return true a child program is running
+	 */
+	bool IsProgramRunning() const;
 
 	/**
-	 * \brief replace list of toens representd by li with 'word'
-	 * \param li
-	 * \return
+	 * Execute the project with no debugger
 	 */
-	void ReplaceInFiles(const wxString &word, std::list<CppToken> &li);
-
-	void UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< wxAcceleratorEntry > &accelVec);
+	void ExecuteNoDebug(const wxString &projectName);
 
 	/**
-	 * \brief return the project excution command as it appears in the project settings
-	 * \param projectName
-	 * \param wd the working directory that the command should be running from
-	 * \param considerPauseWhenExecuting when set to true (default) CodeLite will take into consideration the value set in the project
-	 * settings 'Pause when execution ends'
-	 * \return project execution command or wxEmptyString if the project does not exist
+	 * Kill child program which is running
 	 */
-	wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd, bool considerPauseWhenExecuting = true);
+	void KillProgram();
+
+protected:
+	void OnProcessEnd(wxProcessEvent &event);
+
+
+    //--------------------------- Debugger Support -----------------------------
+public:
+	BreakptMgr* GetBreakpointsMgr() { return m_breakptsmgr; }
+
+	void UpdateDebuggerPane();
+    
+	void SetMemory(const wxString &address, size_t count, const wxString &hex_value);
+    
+	// Debugging API
+	void DbgStart(long pid = wxNOT_FOUND);
+	void DbgStop();
+	void DbgMarkDebuggerLine(const wxString &fileName, int lineno);
+	void DbgUnMarkDebuggerLine();
+	void DbgDoSimpleCommand(int cmd);
+	void DbgQuickWatch(const wxString &expression, bool useTipWin = false, long pos = wxNOT_FOUND);
+	void DbgCancelQuickWatchTip();
+	void DbgSetFrame(int frame, int lineno);
+	void DbgSetThread(long threadId);
+	bool DbgCanInteract() {	return m_dbgCanInteract; }
+    
+    // IDebuggerObserver event handlers
+	void UpdateAddLine(const wxString &line);
+	void UpdateFileLine(const wxString &file, int lineno);
+	void UpdateLocals(TreeNode<wxString, NodeData> *tree);
+    void UpdateStopped();
+	void UpdateGotControl(DebuggerReasons reason);
+	void UpdateLostControl();
+	void UpdateBpAdded(const int internal_id, const int debugger_id);
+	void UpdateExpression(const wxString &expression, const wxString &evaluated);
+	void UpdateQuickWatch(const wxString &expression, TreeNode<wxString, NodeData> *tree);
+	void UpdateStackList(const StackEntryArray &stackArray);
+	void UpdateRemoteTargetConnected(const wxString &line);
+
+
+    //--------------------------- Build Management -----------------------------
+public:
+	/**
+	 * return true if a compilation is in process (either clean or build)
+	 */
+	bool IsBuildInProgress() const;
+
+	/**
+	 * Stop current build process
+	 */
+	void StopBuild();
 
 	/**
 	 * \brief add build job to the internal queue
@@ -649,72 +530,27 @@ public:
 	void RebuildWorkspace();
 
 	/**
-	 * \brief test if pane_name is resides in the wxAuiManager and is visible
-	 * \param pane_name pane name to search for
-	 * \return true on success (exist in the AUI manager and visible), false otherwise
+	 * \brief when building using custom build, execute the makefile generation command provided by the user
+	 * \param project project to execute it for
 	 */
-	bool IsPaneVisible(const wxString &pane_name);
+	void RunCustomPreMakeCommand(const wxString &project);
 
-	//--------------------------------------------------------------------
-	//IDebuggerObserver implementation. These set of functions are called
-	//from the debugger whenever event occurs there
-	//--------------------------------------------------------------------
-	void UpdateStopped();
-	void UpdateAddLine(const wxString &line);
-	void UpdateRemoteTargetConnected(const wxString &line);
-	void UpdateBpAdded(const int internal_id, const int debugger_id);
-	void UpdateFileLine(const wxString &file, int lineno);
-	void UpdateGotControl(DebuggerReasons reason);
-	void UpdateLostControl();
-	void UpdateLocals(TreeNode<wxString, NodeData> *tree);
-	void UpdateExpression(const wxString &expression, const wxString &evaluated);
-	void UpdateQuickWatch(const wxString &expression, TreeNode<wxString, NodeData> *tree);
-	void UpdateStackList(const StackEntryArray &stackArray);
+	/**
+	 * compile single file from a given
+	 * given project
+	 */
+	void CompileFile(const wxString &project, const wxString &fileName, bool preprocessOnly = false);
 
-	//----------------------------------------------------------
-	// Debugging API
-	//----------------------------------------------------------
-	void DbgStart(long pid = wxNOT_FOUND);
-	void DbgStop();
-	void DbgDoSimpleCommand(int cmd);
-	void DbgMarkDebuggerLine(const wxString &fileName, int lineno);
-	void DbgUnMarkDebuggerLine();
-	void DbgQuickWatch(const wxString &expression, bool useTipWin = false, long pos = wxNOT_FOUND);
-	void DbgCancelQuickWatchTip();
-	void DbgSetFrame(int frame, int lineno);
-	void DbgSetThread(long threadId);
-	bool DbgCanInteract() {
-		return m_dbgCanInteract;
-	}
-	void UpdateDebuggerPane();
-	void SetMemory(const wxString &address, size_t count, const wxString &hex_value);
+	/**
+	 * return true if the last buid ended successfully
+	 */
+	bool IsBuildEndedSuccessfully() const;
 
 protected:
-	Manager(void);
-	virtual ~Manager(void);
-	void OnProcessEnd(wxProcessEvent &event);
-	void DoShowPane(const wxString &pane);
-	void DoSetupWorkspace(const wxString &path);
-	void DoCleanProject(const QueueCommand &buildInfo);
 	void DoBuildProject(const QueueCommand &buildInfo);
-	void DoCustomBuild(const QueueCommand &buildInfo);
+	void DoCleanProject(const QueueCommand &buildInfo);
+	void DoCustomBuild(const QueueCommand &buildInfo);    
 	void DoCmdWorkspace(int cmd);
-	void DoGetAccelFiles(wxArrayString &files);
-
-private:
-	/**
-	 * Update the symbol & file tress
-	 */
-	void RebuildFileView();
-
-	/**
-	 * Remove a file from the gui tree
-	 */
-	void RemoveFileFromSymbolTree(const wxFileName &fileName, const wxString &project);
-
-	void DumpMenu( wxMenu *menu, const wxString &label, wxString &content );
-    
-    wxFileName FindFile ( const wxArrayString& files, const wxFileName &fn );
 };
 
 typedef Singleton<Manager> ManagerST;

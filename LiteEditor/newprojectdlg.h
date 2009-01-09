@@ -47,7 +47,8 @@ protected:
 	void OnButtonCreate(wxCommandEvent &e);
 	void OnItemSelected( wxCommandEvent& event );
 	ProjectPtr FindProject(const wxString &name);
-	
+	void GetProjectTemplateList(std::list<ProjectPtr> &list);
+
 public:
 	/** Constructor */
 	NewProjectDlg( wxWindow* parent );

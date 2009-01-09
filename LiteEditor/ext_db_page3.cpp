@@ -43,6 +43,7 @@
 #include "macros.h"
 #include "ext_db_page3.h"
 #include "manager.h"
+#include "ctags_manager.h"
 #include "wx/dir.h"
 
 ///////////////////////////////////////////////////////////////////////////

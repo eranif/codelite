@@ -659,7 +659,6 @@ void Frame::CreateGUIControls(void)
 
 	// Set up dynamic parts of menu.
 	CreateViewAsSubMenu();
-	CreateRecentlyOpenedFilesMenu();
 	CreateRecentlyOpenedWorkspacesMenu();
 	m_DPmenuMgr = new DockablePaneMenuManager(GetMenuBar(), &m_mgr);
 
@@ -687,6 +686,7 @@ void Frame::CreateGUIControls(void)
 
 	m_mainBook = new MainBook(this);
 	m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(true));
+	CreateRecentlyOpenedFilesMenu();
 
 	long show_nav(1);
 	EditorConfigST::Get()->GetLongValue(wxT("ShowNavBar"), show_nav);
@@ -771,7 +771,7 @@ void Frame::CreateGUIControls(void)
 	long fix(1);
 	EditorConfigST::Get()->GetLongValue(wxT("FixBuildToolOnStartup"), fix);
 	if ( fix ) {
-		ManagerST::Get()->UpdateBuildTools();
+		UpdateBuildTools();
 	}
 
 	Layout();
@@ -1053,6 +1053,68 @@ void Frame::CreateToolbars16()
 	} else {
 		SetToolBar(tb);
 	}
+}
+
+void Frame::UpdateBuildTools()
+{
+	BuilderPtr builder = BuildManagerST::Get()->GetBuilder ( wxT ( "GNU makefile for g++/gcc" ) );
+	wxString tool = builder->GetBuildToolName();
+	wxString origTool ( tool );
+
+	//confirm that it exists...
+	wxString path;
+	bool is_ok ( true );
+
+	EnvironmentConfig::Instance()->ApplyEnv ( NULL );
+
+	if ( tool.Contains ( wxT ( "$" ) ) ) {
+		//expand
+		tool = EnvironmentConfig::Instance()->ExpandVariables ( tool );
+	}
+
+	if ( !ExeLocator::Locate ( tool, path ) ) {
+		is_ok = false;
+		//failed to locate the specified build tool
+		//try some default names which are commonly used on windows
+		if ( !is_ok && ExeLocator::Locate ( wxT ( "mingw32-make" ), path ) ) {
+			tool = path;
+			is_ok = true;
+		}
+
+		if ( !is_ok && ExeLocator::Locate ( wxT ( "make" ), path ) ) {
+			tool = path;
+			is_ok = true;
+		}
+	} else {
+		//we are good, nothing to be done
+		EnvironmentConfig::Instance()->UnApplyEnv();
+		return;
+	}
+	EnvironmentConfig::Instance()->UnApplyEnv();
+
+	wxString message;
+	if ( !is_ok ) {
+		message << wxT ( "Failed to locate make util '" )
+		<< tool << wxT ( "' specified by 'Build Settings'" );
+		wxLogMessage ( message );
+		return;
+	} else {
+		wxLogMessage ( wxT ( "Updating build too to '" ) + tool + wxT ( "' from '" ) + origTool + wxT ( "'" ) );
+	}
+
+	//update the cached builders
+	builder->SetBuildTool ( tool );
+	BuildManagerST::Get()->AddBuilder ( builder );
+
+	//update the configuration files
+	BuildSystemPtr bsptr = BuildSettingsConfigST::Get()->GetBuildSystem ( wxT ( "GNU makefile for g++/gcc" ) );
+	if ( !bsptr ) {
+		bsptr = new BuildSystem ( NULL );
+		bsptr->SetName ( wxT ( "GNU makefile for g++/gcc" ) );
+	}
+
+	bsptr->SetToolPath ( tool );
+	BuildSettingsConfigST::Get()->SetBuildSystem ( bsptr );
 }
 
 void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -1989,8 +2051,7 @@ wxString Frame::CreateFilesTable()
 {
 	wxString html;
 	wxArrayString files;
-	Manager *mgr = ManagerST::Get();
-	mgr->GetRecentlyOpenedFiles(files);
+	GetMainBook()->GetRecentlyOpenedFiles(files);
 
 	wxColour bgclr = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 	bgclr = DrawingUtils::LightColour(bgclr, 10.0);
@@ -2011,9 +2072,8 @@ wxString Frame::CreateFilesTable()
 void Frame::CreateRecentlyOpenedFilesMenu()
 {
 	wxArrayString files;
-	Manager *mgr = ManagerST::Get();
-	FileHistory &hs = mgr->GetRecentlyOpenedFilesClass();
-	mgr->GetRecentlyOpenedFiles(files);
+	FileHistory &hs = GetMainBook()->GetRecentlyOpenedFilesClass();
+	GetMainBook()->GetRecentlyOpenedFiles(files);
 
 	int idx = GetMenuBar()->FindMenu(wxT("File"));
 	if (idx != wxNOT_FOUND) {
@@ -2039,9 +2099,8 @@ void Frame::CreateRecentlyOpenedFilesMenu()
 void Frame::CreateRecentlyOpenedWorkspacesMenu()
 {
 	wxArrayString files;
-	Manager *mgr = ManagerST::Get();
-	FileHistory &hs = mgr->GetRecentlyOpenedWorkspacesClass();
-	mgr->GetRecentlyOpenedWorkspaces(files);
+	FileHistory &hs = ManagerST::Get()->GetRecentlyOpenedWorkspacesClass();
+	ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
 
 	int idx = GetMenuBar()->FindMenu(wxT("File"));
 	if (idx != wxNOT_FOUND) {
@@ -2067,14 +2126,13 @@ void Frame::CreateRecentlyOpenedWorkspacesMenu()
 void Frame::OnRecentFile(wxCommandEvent &event)
 {
 	size_t idx = event.GetId() - (RecentFilesSubMenuID+1);
-	Manager *mgr = ManagerST::Get();
-	FileHistory &fh = mgr->GetRecentlyOpenedFilesClass();
+	FileHistory &fh = GetMainBook()->GetRecentlyOpenedFilesClass();
 
 	wxArrayString files;
 	fh.GetFiles(files);
 
 	if (idx < files.GetCount()) {
-		wxString projectName = mgr->GetProjectNameByFile(files.Item(idx));
+		wxString projectName = ManagerST::Get()->GetProjectNameByFile(files.Item(idx));
 		Frame::Get()->GetMainBook()->OpenFile(files.Item(idx), projectName);
 	}
 }
@@ -2082,14 +2140,13 @@ void Frame::OnRecentFile(wxCommandEvent &event)
 void Frame::OnRecentWorkspace(wxCommandEvent &event)
 {
 	size_t idx = event.GetId() - (RecentWorkspaceSubMenuID+1);
-	Manager *mgr = ManagerST::Get();
-	FileHistory &fh = mgr->GetRecentlyOpenedWorkspacesClass();
+	FileHistory &fh = ManagerST::Get()->GetRecentlyOpenedWorkspacesClass();
 
 	wxArrayString files;
 	fh.GetFiles(files);
 
 	if (idx < files.GetCount()) {
-		mgr->OpenWorkspace(files.Item(idx));
+		ManagerST::Get()->OpenWorkspace(files.Item(idx));
 	}
 }
 

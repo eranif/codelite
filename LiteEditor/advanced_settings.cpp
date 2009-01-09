@@ -166,7 +166,7 @@ void AdvancedDlg::OnButtonNewClicked(wxCommandEvent &event)
 		wxString name = dlg->GetValue();
 		TrimString(name);
 		if (name.IsEmpty() == false) {
-			ManagerST::Get()->CreateDefaultNewCompiler(name);
+			CreateDefaultNewCompiler(name);
 			LoadCompilers();
 
 			if(m_compilersNotebook->GetPageCount() > ((m_compilerPagesMap.size() *6)-1) ) {
@@ -209,7 +209,7 @@ void AdvancedDlg::OnDeleteCompiler(wxCommandEvent & event)
 
 	if (sel != wxNOT_FOUND) {
 		wxString name = m_compilersNotebook->GetPageText((size_t)sel);
-		if (ManagerST::Get()->DeleteCompiler(name)) {
+		if (DeleteCompiler(name)) {
 			m_compilersNotebook->DeletePage((size_t)sel);
 
 			std::map<wxString, std::vector<ICompilerSubPage*> >::iterator iter = m_compilerPagesMap.find(name);
@@ -243,6 +243,19 @@ void AdvancedDlg::SaveCompilers()
 	}
 }
 
+bool AdvancedDlg::CreateDefaultNewCompiler ( const wxString &name )
+{
+	if ( BuildSettingsConfigST::Get()->IsCompilerExist ( name ) ) {
+		wxMessageBox ( _ ( "A compiler with this name already exist" ), wxT ( "Error" ), wxOK | wxICON_HAND );
+		return false;
+	}
+
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler ( name );
+	cmp->SetName ( name );
+	BuildSettingsConfigST::Get()->SetCompiler ( cmp );
+	return true;
+}
+
 void AdvancedDlg::AddCompiler(CompilerPtr cmp, bool selected)
 {
 	std::vector<ICompilerSubPage*> pages;
@@ -271,6 +284,15 @@ void AdvancedDlg::AddCompiler(CompilerPtr cmp, bool selected)
 	m_compilersNotebook->AddSubPage(p6, _("Advanced"), false);
 
 	m_compilerPagesMap[cmp->GetName()] = pages;
+}
+
+bool AdvancedDlg::DeleteCompiler ( const wxString &name )
+{
+	if ( wxMessageBox ( _ ( "Remove Compiler?" ), wxT ( "Confirm" ), wxYES_NO | wxICON_QUESTION ) == wxYES ) {
+		BuildSettingsConfigST::Get()->DeleteCompiler ( name );
+		return true;
+	}
+	return false;
 }
 
 void AdvancedDlg::OnContextMenu(wxContextMenuEvent& e)

@@ -26,6 +26,7 @@
 #define CONTEXT_CPP_H
 
 #include "context_base.h"
+#include "cpptoken.h"
 #include "cl_calltip.h"
 #include <map>
 #include "entry.h"
@@ -146,6 +147,20 @@ private:
 	bool FindSwappedFile(const wxFileName &rhs, wxString &lhs);
 
 	/**
+	 * \brief parse list of files and construct a token database that will be used for refactoring
+	 * \param word word to search
+	 * \param files list of files to parse
+	 */
+	void BuildRefactorDatabase(const wxString& word, CppTokensMap &l);
+
+	/**
+	 * \brief replace list of tokens representd by li with 'word'
+	 * \param li
+	 * \return
+	 */
+	void ReplaceInFiles(const wxString &word, std::list<CppToken> &li);
+
+	/**
 	 * \brief
 	 * \param ctrl
 	 * \param pos
@@ -154,6 +169,15 @@ private:
 	 * \return
 	 */
 	bool ResolveWord(LEditor *ctrl, int pos, const wxString &word, RefactorSource *rs);
+    
+ 	/**
+	 * \brief open file specified by the 'fileName' parameter and append 'text'
+	 * to its content
+	 * \param fileName file to open. Must be in full path
+	 * \param text string text to append
+	 * \return true on success, false otherwise
+	 */
+	bool OpenFileAndAppend(const wxString &fileName, const wxString &text);
 };
 
 #endif // CONTEXT_CPP_H

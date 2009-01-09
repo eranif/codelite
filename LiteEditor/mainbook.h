@@ -31,10 +31,12 @@
 #include "navbar.h"
 #include "quickfindbar.h"
 #include "custom_notebook.h"
+#include "filehistory.h"
 
 class MainBook : public wxPanel
 {
 private:
+    FileHistory   m_recentFiles;
 	NavBar       *m_navBar;
 	Notebook     *m_book;
 	QuickFindBar *m_quickFindBar;
@@ -61,6 +63,10 @@ public:
 	MainBook(wxWindow *parent);
 	~MainBook();
     
+	void ClearFileHistory();
+	void GetRecentlyOpenedFiles(wxArrayString &files);
+	FileHistory &GetRecentlyOpenedFilesClass() { return m_recentFiles; }
+
 	void ShowQuickBar (bool s = true)       { m_quickFindBar->Show(s); }
 	void ShowNavBar   (bool s = true);
 	void UpdateNavBar (LEditor *editor);

@@ -22,14 +22,17 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef GLOBALS_H
+#ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "wx/string.h"
+#include <wx/string.h>
 #include <wx/colour.h>
-#include "wx/arrstr.h"
+#include <wx/arrstr.h>
+
+#include "workspace.h"
+
 class wxListCtrl;
-class Workspace;
+
 
 /**
  * \brief send command event to the application (wxTheApp),
@@ -104,6 +107,13 @@ bool IsValidCppIndetifier(const wxString &id);
  */ 
 bool IsValidCppFile(const wxString &id);
 
+/**
+ * Expand variables to their real value, if expanding fails
+ * the return value is same as input. The variable is expanded
+ * in the project context
+ */
+wxString ExpandVariables(const wxString &expression, ProjectPtr proj);
+    
 /**
  * \brief accepts expression string and expand all known marcos (e.g. $(ProjectName))
  * \param expression expression 

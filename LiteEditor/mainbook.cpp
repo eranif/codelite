@@ -24,11 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
 #include "globals.h"
+#include "ctags_manager.h"
 #include "frame.h"
 #include "manager.h"
 #include "custom_tabcontainer.h"
 #include "close_all_dlg.h"
 #include "filechecklist.h"
+#include "editor_config.h"
 #include "mainbook.h"
 
 MainBook::MainBook(wxWindow *parent)
@@ -209,6 +211,21 @@ bool MainBook::AskUserToSave(LEditor *editor)
 	return true; // to avoid compiler warnings
 }
 
+void MainBook::ClearFileHistory()
+{
+	size_t count = m_recentFiles.GetCount();
+	for ( size_t i=0; i<count; i++ ) {
+		m_recentFiles.RemoveFileFromHistory ( 0 );
+	}
+	wxArrayString files;
+	EditorConfigST::Get()->SetRecentlyOpenedFies ( files );
+}
+
+void MainBook::GetRecentlyOpenedFiles ( wxArrayString &files )
+{
+	EditorConfigST::Get()->GetRecentlyOpenedFies ( files );
+}
+
 void MainBook::UpdateNavBar(LEditor *editor)
 {
 	if (m_navBar->IsShown())  {
@@ -365,8 +382,10 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		editor->SetProject(projName);
 	} else if (fileName.IsOk() == false) {
 		wxLogMessage(wxT("Invalid file name: ") + fileName.GetFullPath());
+        return NULL;
 	} else if (!fileName.FileExists()) {
 		wxLogMessage(wxT("File: ") + fileName.GetFullPath() + wxT(" does not exist!"));
+        return NULL;
 	} else {
 		editor = new LEditor(m_book);
 		editor->Create(projName, fileName);
@@ -392,23 +411,28 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
         }
 	}
 
-	if (editor) {
-		if (position != wxNOT_FOUND) {
-			editor->SetCaretAt(position);
-		} else if (lineno != wxNOT_FOUND) {
-			editor->GotoLine(lineno);
-		}
-		editor->EnsureCaretVisible();
-		if (GetActiveEditor() == editor) {
-			editor->SetActive();
-		} else {
-			SelectPage(editor);
-		}
-		ManagerST::Get()->AddToRecentlyOpenedFiles(fileName.GetFullPath());
-	}
+    if (position != wxNOT_FOUND) {
+        editor->SetCaretAt(position);
+    } else if (lineno != wxNOT_FOUND) {
+        editor->GotoLine(lineno);
+    }
+    editor->EnsureCaretVisible();
+    if (GetActiveEditor() == editor) {
+        editor->SetActive();
+    } else {
+        SelectPage(editor);
+    }
+    
+    // Add this file to the history. Don't check for uniqueness:
+    // if it's already on the list, wxFileHistory will move it to the top
+    // Also, sync between the history object and the configuration file
+    m_recentFiles.AddFileToHistory ( fileName.GetFullPath() );
+    wxArrayString files;
+    m_recentFiles.GetFiles ( files );
+    EditorConfigST::Get()->SetRecentlyOpenedFies ( files );
 
     if (addjump) {
-        BrowseRecord jumpto = editor ? editor->CreateBrowseRecord() : BrowseRecord();
+        BrowseRecord jumpto = editor->CreateBrowseRecord();
         NavMgr::Get()->AddJump(jumpfrom, jumpto);
     }
 

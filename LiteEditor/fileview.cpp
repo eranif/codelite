@@ -36,6 +36,7 @@
 #include <deque>
 #include "new_item_dlg.h"
 #include "project_settings_dlg.h"
+#include "depends_dlg.h"
 #include "buildmanager.h"
 #include "macros.h"
 #include "pluginmanager.h"
@@ -263,7 +264,9 @@ int FileViewTree::GetIconIndex( const ProjectItem &item )
 
 void FileViewTree::BuildProjectNode( const wxString &projectName )
 {
-	ProjectTreePtr tree = ManagerST::Get()->GetProjectFileViewTree( projectName );
+	wxString err_msg;
+	ProjectPtr prj = WorkspaceST::Get()->FindProjectByName ( projectName, err_msg );
+    ProjectTreePtr tree = prj->AsTree();
 	TreeWalker<wxString, ProjectItem> walker( tree->GetRoot() );
 
 	std::map<wxString, wxTreeItemId> items;
@@ -887,7 +890,9 @@ void FileViewTree::OnSaveAsTemplate( wxCommandEvent & WXUNUSED( event ) )
 				desc = desc.Trim().Trim(false);
 
 				if ( newName.IsEmpty() == false ) {
-					ManagerST::Get()->SaveProjectTemplate( proj, newName, desc );
+                    wxString tmplateDir = ManagerST::Get()->GetStarupDirectory() + wxT ( "/templates/projects/" ) + newName + wxT ( "/" );
+                    Mkdir ( tmplateDir );
+                    proj->CopyTo ( tmplateDir, newName, desc );
 				}
 			}
 			dlg->Destroy();
@@ -900,8 +905,8 @@ void FileViewTree::OnBuildOrder( wxCommandEvent &event )
 	wxUnusedVar( event );
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
-		wxString projectName = GetItemText( item );
-		ManagerST::Get()->PopupProjectDependsDlg( projectName );
+        DependenciesDlg dlg ( Frame::Get(), GetItemText( item ) );
+        dlg.ShowModal();
 	}
 }
 

@@ -24,16 +24,18 @@
 //////////////////////////////////////////////////////////////////////////////
  #include "newprojectdlg.h"
 #include "globals.h"
+#include "macros.h"
 #include "workspace.h"
 #include "build_settings_config.h"
 #include "manager.h"
+#include "dirtraverser.h"
 
 NewProjectDlg::NewProjectDlg( wxWindow* parent )
 		:
 		NewProjectBaseDlg( parent )
 {
 	//get list of project templates
-	ManagerST::Get()->GetProjectTemplateList(m_list);
+	GetProjectTemplateList(m_list);
 	std::list<ProjectPtr>::iterator iter = m_list.begin();
 	for (; iter != m_list.end(); iter++) {
 		wxString n = (*iter)->GetName();
@@ -69,6 +71,44 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 	m_textCtrlProjectPath->SetValue( WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
 	m_textCtrlProjName->SetFocus();
 	Centre();
+}
+
+void NewProjectDlg::GetProjectTemplateList ( std::list<ProjectPtr> &list )
+{
+	wxString tmplateDir = ManagerST::Get()->GetStarupDirectory() + PATH_SEP + wxT ( "templates/projects" );
+
+	//read all files under this directory
+	DirTraverser dt ( wxT ( "*.project" ) );
+
+	wxDir dir ( tmplateDir );
+	dir.Traverse ( dt );
+
+	wxArrayString &files = dt.GetFiles();
+
+	if ( files.GetCount() > 0 ) {
+		for ( size_t i=0; i<files.GetCount(); i++ ) {
+			ProjectPtr proj ( new Project() );
+			if ( !proj->Load ( files.Item ( i ) ) ) {
+				//corrupted xml file?
+				wxLogMessage ( wxT ( "Failed to load template project: " ) + files.Item ( i ) + wxT ( " (corrupted XML?)" ) );
+				continue;
+			}
+			list.push_back ( proj );
+		}
+	} else {
+		//if we ended up here, it means the installation got screwed up since
+		//there should be at least 8 project templates !
+		//create 3 default empty projects
+		ProjectPtr exeProj ( new Project() );
+		ProjectPtr libProj ( new Project() );
+		ProjectPtr dllProj ( new Project() );
+		libProj->Create ( wxT ( "Static Library" ), wxEmptyString, tmplateDir, Project::STATIC_LIBRARY );
+		dllProj->Create ( wxT ( "Dynamic Library" ), wxEmptyString, tmplateDir, Project::DYNAMIC_LIBRARY );
+		exeProj->Create ( wxT ( "Executable" ), wxEmptyString, tmplateDir, Project::EXECUTABLE );
+		list.push_back ( libProj );
+		list.push_back ( dllProj );
+		list.push_back ( exeProj );
+	}
 }
 
 void NewProjectDlg::OnProjectPathUpdated( wxCommandEvent& event )

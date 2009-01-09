@@ -62,6 +62,7 @@
 #include "function.h"
 #include "workspacetab.h"
 #include "fileview.h"
+#include "refactorindexbuildjob.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -1461,7 +1462,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 				//get the updated data
 				targetFile = dlg->GetFileName();
 				body = dlg->GetText();
-				if (ManagerST::Get()->OpenFileAndAppend(targetFile, body)) {
+				if (OpenFileAndAppend(targetFile, body)) {
 					//remove the current body and replace it with ';'
 					rCtrl.SetTargetEnd(blockEndPos);
 					rCtrl.SetTargetStart(blockStartPos);
@@ -1593,7 +1594,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 		//get the updated data
 		targetFile = dlg->GetFileName();
 		body = dlg->GetText();
-		ManagerST::Get()->OpenFileAndAppend(targetFile, body);
+		OpenFileAndAppend(targetFile, body);
 	}
 	dlg->Destroy();
 }
@@ -1679,10 +1680,30 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 			//get the updated data
 			targetFile = dlg->GetFileName();
 			body = dlg->GetText();
-			ManagerST::Get()->OpenFileAndAppend(targetFile, body);
+			OpenFileAndAppend(targetFile, body);
 		}
 		dlg->Destroy();
 	}
+}
+
+bool ContextCpp::OpenFileAndAppend ( const wxString &fileName, const wxString &text )
+{
+    LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(fileName, wxEmptyString, 0);
+    if (!editor)
+        return false;
+        
+    // if needed, append EOL
+    // in an ideal world, we would like that the file will be terminated with 2xEOL
+    if(editor->GetText().EndsWith(editor->GetEolString()) == false) {
+        editor->AppendText(editor->GetEolString());
+    }
+    if(editor->GetText().EndsWith(editor->GetEolString() + editor->GetEolString()) == false){
+        editor->AppendText(editor->GetEolString());
+    }
+    int lineNum = editor->GetLineCount();
+    editor->GotoLine ( lineNum-1 );
+    editor->AppendText ( text );
+    return true;
 }
 
 void ContextCpp::OnFileSaved()
@@ -1964,7 +1985,7 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	wxLogMessage(wxT("Refactoring: ") + source.name + wxT(" of scope: ") + source.scope);
 
 	// load all tokens, first we need to parse the workspace files...
-	ManagerST::Get()->BuildRefactorDatabase(word, l);
+	BuildRefactorDatabase(word, l);
 	std::list<CppToken> tokens;
 
 	// incase no tokens were found (possibly cause of user pressing cancel
@@ -2061,10 +2082,52 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 
 		dlg->GetMatches( matches );
 		if (matches.empty() == false) {
-			ManagerST::Get()->ReplaceInFiles(dlg->GetWord(), matches);
+			ReplaceInFiles(dlg->GetWord(), matches);
 		}
 	}
 	dlg->Destroy();
+}
+
+void ContextCpp::BuildRefactorDatabase ( const wxString& word, CppTokensMap &l )
+{
+	wxArrayString projects;
+	ManagerST::Get()->GetProjectList ( projects );
+	std::vector<wxFileName> files;
+
+	for ( size_t i=0; i<projects.GetCount(); i++ ) {
+		ProjectPtr proj = ManagerST::Get()->GetProject ( projects.Item ( i ) );
+		if ( proj ) {
+			proj->GetFiles ( files, true );
+		}
+	}
+	RefactorIndexBuildJob job ( files, word.c_str() );
+	job.Parse ( word, l );
+}
+
+void ContextCpp::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li )
+{
+	int off = 0;
+	wxString file_name ( wxEmptyString );
+    
+	for ( std::list<CppToken>::iterator iter = li.begin(); iter != li.end(); iter++ ) {
+		CppToken &token = *iter;
+        if ( file_name == token.getFilename() ) {
+            // update next token offset in case we are still in the same file
+            token.setOffset ( token.getOffset() + off );
+        } else {
+            // switched file
+            off = 0;
+            file_name = token.getFilename();
+        }
+        LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(token.getFilename(), wxEmptyString, 0);
+		if (editor != NULL && editor->GetFileName().GetFullPath() == wxFileName(token.getFilename()).GetFullPath()) {
+            editor->SetSelection ( token.getOffset(), token.getOffset()+token.getName().Len() );
+            if ( editor->GetSelectionStart() != editor->GetSelectionEnd() ) {
+                editor->ReplaceSelection ( word );
+                off += word.Len() - token.getName().Len();
+            }
+		}
+	}
 }
 
 bool ContextCpp::ResolveWord(LEditor *ctrl, int pos, const wxString &word, RefactorSource *rs)

@@ -79,8 +79,11 @@ protected:
 	void OnButtonOKClicked(wxCommandEvent &);
 	void OnDeleteCompiler(wxCommandEvent &);
 	void OnContextMenu(wxContextMenuEvent &e);
-	void LoadCompilers();
+    
+    void LoadCompilers();
+	bool CreateDefaultNewCompiler(const wxString &name);
 	void AddCompiler(CompilerPtr cmp, bool selected);
+	bool DeleteCompiler(const wxString &name);
 	void SaveCompilers();
 
 public:

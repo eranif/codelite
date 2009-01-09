@@ -27,6 +27,7 @@
 #include "globals.h"
 #include "manager.h"
 #include "frame.h"
+#include "ctags_manager.h"
 #include "cl_editor.h"
 #include "editor_config.h"
 #include "globals.h"

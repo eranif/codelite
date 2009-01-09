@@ -86,7 +86,8 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 
 void EditorSettingsMiscPanel::OnClearButtonClick( wxCommandEvent& )
 {
-	ManagerST::Get()->ClearFileHistory();
+    ManagerST::Get()->ClearWorkspaceHistory();
+	Frame::Get()->GetMainBook()->ClearFileHistory();
 }
 
 void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
@@ -142,7 +143,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
 {
 	wxArrayString a1, a2;
-	ManagerST::Get()->GetRecentlyOpenedFiles(a1);
+	Frame::Get()->GetMainBook()->GetRecentlyOpenedFiles(a1);
 	ManagerST::Get()->GetRecentlyOpenedWorkspaces(a2);
 	e.Enable(!a1.IsEmpty() && !a2.IsEmpty());
 }

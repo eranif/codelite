@@ -194,7 +194,7 @@ ContextBase *ContextCpp::NewInstance(LEditor *container)
 void ContextCpp::OnDwellEnd(wxScintillaEvent &event)
 {
 	LEditor &rCtrl = GetCtrl();
-	rCtrl.CallTipCancel();
+	rCtrl.DoCancelCalltip();
 	event.Skip();
 }
 
@@ -241,8 +241,8 @@ void ContextCpp::OnDwellStart(wxScintillaEvent &event)
 			tooltip << wxT("\n") << tips[i];
 
 		// cancel any old calltip and display the new one
-		rCtrl.CallTipCancel();
-		rCtrl.CallTipShow(event.GetPosition(), tooltip);
+		rCtrl.DoCancelCalltip();
+		rCtrl.DoShowCalltip(event.GetPosition(), tooltip, ct_function_hover);
 	}
 }
 
@@ -798,13 +798,13 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 
 void ContextCpp::GotoPreviousDefintion()
 {
-    NavMgr::Get()->NavigateBackward(PluginManager::Get());
+	NavMgr::Get()->NavigateBackward(PluginManager::Get());
 }
 
 TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 {
 	if (!ManagerST::Get()->IsWorkspaceOpen())
-        return NULL;
+		return NULL;
 
 	LEditor &rCtrl = GetCtrl();
 
@@ -813,58 +813,58 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 		return NULL;
 
 	// Get the word under the cursor OR the selected word
-    int word_start = -1, word_end = -1;
-    rCtrl.wxScintilla::GetSelection(&word_start, &word_end);
-    if (word_start == word_end) {
-        word_start = rCtrl.WordStartPos(word_start, true);
-        word_end = rCtrl.WordEndPos(word_end, true);
-    }
+	int word_start = -1, word_end = -1;
+	rCtrl.wxScintilla::GetSelection(&word_start, &word_end);
+	if (word_start == word_end) {
+		word_start = rCtrl.WordStartPos(word_start, true);
+		word_end = rCtrl.WordEndPos(word_end, true);
+	}
 	wxString word = rCtrl.GetTextRange(word_start, word_end);
-    if (word.IsEmpty())
-        return NULL;
+	if (word.IsEmpty())
+		return NULL;
 
 	std::vector<TagEntryPtr> tags;
-    if (scoped) {
-        // get tags that make sense in current scope and expression
-        wxFileName fname = rCtrl.GetFileName();
-        wxString expr = GetExpression(word_end, false);
-        wxString text = rCtrl.GetTextRange(0, word_end);
-        int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
-        TagsManagerST::Get()->FindImplDecl(fname, line, expr, word, text, tags, impl);
-        if (!impl && tags.empty()) {
-            // try again, this time allow impls
-            // this will find inline definitions, which have no separate declaration
-            TagsManagerST::Get()->FindImplDecl(fname, line, expr, word, text, tags, true);
-        }
-    } else {
-        // get all tags that match the name (ignore scope)
-        TagsManagerST::Get()->FindSymbol(word, tags);
-    }
+	if (scoped) {
+		// get tags that make sense in current scope and expression
+		wxFileName fname = rCtrl.GetFileName();
+		wxString expr = GetExpression(word_end, false);
+		wxString text = rCtrl.GetTextRange(0, word_end);
+		int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
+		TagsManagerST::Get()->FindImplDecl(fname, line, expr, word, text, tags, impl);
+		if (!impl && tags.empty()) {
+			// try again, this time allow impls
+			// this will find inline definitions, which have no separate declaration
+			TagsManagerST::Get()->FindImplDecl(fname, line, expr, word, text, tags, true);
+		}
+	} else {
+		// get all tags that match the name (ignore scope)
+		TagsManagerST::Get()->FindSymbol(word, tags);
+	}
 	if (tags.empty())
 		return NULL;
 
-    if (tags.size() == 1) // only one tag found
-        return tags[0];
+	if (tags.size() == 1) // only one tag found
+		return tags[0];
 
-    // popup a dialog offering the results to the user
-    SymbolsDialog dlg(&rCtrl);
-    dlg.AddSymbols(tags, 0);
-    return dlg.ShowModal() == wxID_OK ? dlg.GetTag() : TagEntryPtr(NULL);
+	// popup a dialog offering the results to the user
+	SymbolsDialog dlg(&rCtrl);
+	dlg.AddSymbols(tags, 0);
+	return dlg.ShowModal() == wxID_OK ? dlg.GetTag() : TagEntryPtr(NULL);
 }
 
 void ContextCpp::DoGotoSymbol(TagEntryPtr tag)
 {
-    if (tag) {
+	if (tag) {
 		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
-        if (editor) {
+		if (editor) {
 			editor->FindAndSelect(tag->GetPattern(), tag->GetName());
-        }
-    }
+		}
+	}
 }
 
 void ContextCpp::GotoDefinition()
 {
-    DoGotoSymbol(GetTagAtCaret(false, false));
+	DoGotoSymbol(GetTagAtCaret(false, false));
 }
 
 void ContextCpp::SwapFiles(const wxFileName &fileName)
@@ -892,7 +892,7 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
 
 	for (size_t i=0; i<exts.GetCount(); i++) {
 		otherFile.SetExt(exts.Item(i));
-		if (TryOpenFile(otherFile)) 
+		if (TryOpenFile(otherFile))
 			return;
 	}
 
@@ -1178,17 +1178,34 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 
 void ContextCpp::OnKeyDown(wxKeyEvent &event)
 {
+	int pos = GetCtrl().GetCurrentPos();
+	if (m_ct && m_ct->Count() && GetCtrl().CallTipActive() && GetCtrl().GetCalltipType() == ct_function_proto) {
+
+		switch (event.GetKeyCode()) {
+
+		case WXK_UP:
+			GetCtrl().DoCancelCalltip();
+			GetCtrl().DoShowCalltip(pos, m_ct->Prev(), ct_function_proto);
+			return;
+
+		case WXK_DOWN:
+			GetCtrl().DoCancelCalltip();
+			GetCtrl().DoShowCalltip(pos, m_ct->Next(), ct_function_proto);
+			return;
+		}
+
+	}
 	event.Skip();
 }
 
 void ContextCpp::OnFindImpl(wxCommandEvent &event)
 {
-    DoGotoSymbol(GetTagAtCaret(true, true));
+	DoGotoSymbol(GetTagAtCaret(true, true));
 }
 
 void ContextCpp::OnFindDecl(wxCommandEvent &event)
 {
-    DoGotoSymbol(GetTagAtCaret(true, false));
+	DoGotoSymbol(GetTagAtCaret(true, false));
 }
 
 void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)
@@ -1344,13 +1361,13 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		wxString output;
 		if (dbgr->GetTip(command, output)) {
 			// cancel any old calltip and display the new one
-			ctrl.CallTipCancel();
+			ctrl.DoCancelCalltip();
 
 			// wxScintilla's tooltip does not present \t characters
 			// so we replace it with 4 spaces
 			output.Replace(wxT("\t"), wxT("    "));
 
-			ctrl.CallTipShow(event.GetPosition(), output);
+			ctrl.DoShowCalltip(event.GetPosition(), output, ct_debugger);
 		}
 	}
 }
@@ -2328,8 +2345,8 @@ void ContextCpp::DoCodeComplete(long pos)
 		wxString word = rCtrl.GetTextRange(word_start, word_end);
 		m_ct = TagsManagerST::Get()->GetFunctionTip(rCtrl.GetFileName(), line, expr, text, word);
 		if (m_ct && m_ct->Count() > 0) {
-			rCtrl.CallTipCancel();
-			rCtrl.CallTipShow(currentPosition, m_ct->All());
+			rCtrl.DoCancelCalltip();
+			rCtrl.DoShowCalltip(currentPosition, m_ct->First(), ct_function_proto);
 		}
 	} else {
 
@@ -2443,7 +2460,34 @@ void ContextCpp::OnGotoFunctionStart(wxCommandEvent& event)
 {
 	int line_number = GetCtrl().LineFromPosition(GetCtrl().GetCurrentPos());
 	TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), line_number);
-	if(tag){
+	if (tag) {
 		GetCtrl().SetCaretAt(GetCtrl().PositionFromLine(tag->GetLine()-1));
 	}
+}
+
+void ContextCpp::OnCallTipClick(wxScintillaEvent& e)
+{
+	int pos = GetCtrl().GetCurrentPos();
+	switch (e.GetPosition()) {
+	case 1: // Up
+		if (m_ct) {
+			GetCtrl().DoCancelCalltip();
+			GetCtrl().DoShowCalltip(pos, m_ct->Next(), ct_function_proto);
+		}
+		break;
+	case 2: // down arrow
+		if (m_ct) {
+			GetCtrl().DoCancelCalltip();
+			GetCtrl().DoShowCalltip(pos, m_ct->Prev(), ct_function_proto);
+		}
+		break;
+	case 0: // elsewhere
+		GetCtrl().DoCancelCalltip();
+		break;
+	}
+}
+
+void ContextCpp::OnCalltipCancel()
+{
+	m_ct = NULL;
 }

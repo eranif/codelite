@@ -85,6 +85,7 @@ public:
 
 	// functions with default implementation:
 	virtual void OnCallTipClick(wxScintillaEvent& event){event.Skip();}
+	virtual void OnCalltipCancel(){};
 	virtual void OnDwellEnd(wxScintillaEvent & event){event.Skip();}
 	virtual void OnDbgDwellEnd(wxScintillaEvent & event){event.Skip();}
 	virtual void OnDwellStart(wxScintillaEvent & event){event.Skip();}
@@ -105,7 +106,7 @@ public:
 	virtual void CodeComplete(long pos = wxNOT_FOUND) {wxUnusedVar(pos);}
 	virtual void GotoDefinition(){}
 	virtual void GotoPreviousDefintion(){}
-    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl){return NULL;} 
+    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl){return NULL;}
 
     // ctrl-click style navigation support
 	virtual int  GetHyperlinkRange(int pos, int &start, int &end);

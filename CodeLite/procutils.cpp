@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : procutils.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : procutils.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "wx/tokenzr.h"
@@ -391,12 +391,12 @@ void ProcUtils::SafeExecuteCommand(const wxString &command, wxArrayString &outpu
 	if (!proc) {
 		return;
 	}
-	
+
 	// wait for the process to terminate
 	wxString tmpbuf;
 	wxString buff;
 	static int maxRetries (1000);
-	
+
 	int retries(0);
 	while (proc->IsAlive() && retries < maxRetries) {
 		proc->Read(tmpbuf);
@@ -404,7 +404,7 @@ void ProcUtils::SafeExecuteCommand(const wxString &command, wxArrayString &outpu
 		wxThread::Sleep(100);
 		retries++;
 	}
-	
+
 	tmpbuf.Empty();
 	proc->Read(tmpbuf);
 	while( tmpbuf.IsEmpty() == false && retries < maxRetries) {
@@ -413,9 +413,26 @@ void ProcUtils::SafeExecuteCommand(const wxString &command, wxArrayString &outpu
 		proc->Read(tmpbuf);
 		retries++;
 	}
-	
-	//convert buff into wxArrayString
-	output = wxStringTokenize(buff, wxT("\n"));
+
+	// Convert buff into wxArrayString
+	buff.Trim().Trim(false);
+	wxString s;
+	int where = buff.Find(wxT("\n"));
+	while( where != wxNOT_FOUND ) {
+		// use c_str() to make sure we create a unique copy
+		s = buff.Mid(0, where).c_str();
+		s.Trim().Trim(false);
+		output.Add(s.c_str());
+		buff.Remove(0, where+1);
+
+		where = buff.Find(wxT("\n"));
+	}
+
+	if(buff.empty() == false){
+		s = buff.Trim().Trim(false);
+		output.Add(s.c_str());
+	}
+
 	proc->Cleanup();
 	delete proc;
 

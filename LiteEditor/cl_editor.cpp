@@ -151,6 +151,7 @@ LEditor::LEditor(wxWindow* parent)
 		, m_hightlightMatchedBraces	 (true)
 		, m_autoAddMatchedBrace		 (false)
 		, m_autoAdjustHScrollbarWidth(true)
+		, m_calltipType				 (ct_none)
 {
 	ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSCI_MARK_SMALLRECT;
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
@@ -287,10 +288,10 @@ void LEditor::SetProperties()
 	caretEven = 8;
 	caretJumps = 0;
 	SetYCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
-	
+
 	SetCaretWidth(options->GetCaretWidth());
 	SetCaretPeriod(options->GetCaretBlinkPeriod());
-	
+
 	SetMarginLeft(1);
 	SetMarginRight(0);
 
@@ -579,7 +580,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		}
 		break;
 	case ')':
-		CallTipCancel();
+		DoCancelCalltip();
 		ShowFunctionTipFromCurrentPos();
 		break;
 	case '}':
@@ -984,16 +985,23 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 		// We can't use event.GetPosition() here, as in the margin it returns -1
 		int position = PositionFromPoint(wxPoint(event.GetX(),event.GetY()));
 		int line = LineFromPosition(position);
+		wxString tooltip;
 		wxString fname = GetFileName().GetFullPath();
-		wxString tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
+		calltip_type type(ct_none);
 
-		// test for compiler marker
-		if (tooltip.IsEmpty() && (MarkerGet(line) & mmt_compiler)) {
+		if(MarkerGet(line) & mmt_all_breakpoints){
+			tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
+			type = ct_breakpoint;
+
+		} else if(MarkerGet(line) & mmt_compiler){
 			tooltip = Frame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line);
+			type = ct_compiler_msg;
 		}
+
 		if (! tooltip.IsEmpty()) {
-			CallTipShow(position, tooltip);
+			DoShowCalltip(position, tooltip, type);
 		}
+
 	} else if (ManagerST::Get()->DbgCanInteract()) {
 		//debugger is running and responsive, query it about the current token
 		m_context->OnDbgDwellStart(event);
@@ -1880,7 +1888,7 @@ bool LEditor::MarkAll()
 void LEditor::ReloadFile()
 {
 	HideCompletionBox();
-	CallTipCancel();
+	DoCancelCalltip();
 
 	if (m_fileName.GetFullPath().IsEmpty() == true || m_fileName.GetFullPath().StartsWith(wxT("Untitled"))) {
 		SetEOLMode(GetEOLByOS());
@@ -2121,7 +2129,7 @@ void LEditor::OnLeftUp(wxMouseEvent& event)
 
 void LEditor::OnLeaveWindow(wxMouseEvent& event)
 {
-//    CallTipCancel();
+//    DoCancelCalltip();
 
 	m_hyperLinkIndicatroStart = wxNOT_FOUND;
 	m_hyperLinkIndicatroEnd = wxNOT_FOUND;
@@ -2135,7 +2143,7 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
 
 void LEditor::OnFocusLost(wxFocusEvent &event)
 {
-//    CallTipCancel();
+//    DoCancelCalltip();
 	event.Skip();
 }
 
@@ -3010,4 +3018,18 @@ void LEditor::DoSetStatusMessage(const wxString& msg, int col)
 	e.SetString(msg);
 	e.SetInt(col);
 	Frame::Get()->AddPendingEvent(e);
+}
+
+void LEditor::DoShowCalltip(int pos, const wxString& tip, calltip_type type)
+{
+	m_calltipType = type;
+	CallTipShow(pos, tip);
+}
+
+void LEditor::DoCancelCalltip()
+{
+	m_calltipType = ct_none;
+	CallTipCancel();
+	// let the context process this as well
+	m_context->OnCalltipCancel();
 }

@@ -44,28 +44,28 @@
 class wxFindReplaceDialog;
 class CCBox;
 
-	// NB The following are sci markers, which are zero based. So smt_bookmark is actually the eighth of them (important when masking it!)
-	// If you add another type here, watch out for smt_LAST_BP_TYPE; and you need also to add to the enum 'marker_mask_type' below
-	// The higher the value, the nearer the top of the pecking order displaywise. So keep the most important breakpoint at the top i.e. smt_breakpoint,
-	// but have smt_breakpointsmt_indicator above it, so you can see the indicator when there's a breakpt too
-	enum sci_marker_types
-		{ smt_bookmark=7, smt_FIRST_BP_TYPE=8, smt_cond_bp_disabled = smt_FIRST_BP_TYPE, smt_bp_cmdlist_disabled, smt_bp_disabled,
-			smt_bp_ignored, smt_cond_bp, smt_bp_cmdlist, smt_breakpoint, smt_LAST_BP_TYPE = smt_breakpoint, smt_indicator, smt_warning, smt_error
-		};
+// NB The following are sci markers, which are zero based. So smt_bookmark is actually the eighth of them (important when masking it!)
+// If you add another type here, watch out for smt_LAST_BP_TYPE; and you need also to add to the enum 'marker_mask_type' below
+// The higher the value, the nearer the top of the pecking order displaywise. So keep the most important breakpoint at the top i.e. smt_breakpoint,
+// but have smt_breakpointsmt_indicator above it, so you can see the indicator when there's a breakpt too
+enum sci_marker_types { smt_bookmark=7, smt_FIRST_BP_TYPE=8, smt_cond_bp_disabled = smt_FIRST_BP_TYPE, smt_bp_cmdlist_disabled, smt_bp_disabled,
+                        smt_bp_ignored, smt_cond_bp, smt_bp_cmdlist, smt_breakpoint, smt_LAST_BP_TYPE = smt_breakpoint, smt_indicator, smt_warning, smt_error
+                      };
 
-	// These are bitmap masks of the various margin markers.
-	// So 256 == 0x100 == 100000000, 2^9, and masks the ninth marker, smt_cond_bp_disabled==8 (as the markers are zero-based)
-	// 0x7f00 is binary 111111100000000 and masks all the 7 current breakpoint types. If you add others, change it
-	enum marker_mask_type
-		{ mmt_folds=wxSCI_MASK_FOLDERS, mmt_bookmarks=128, mmt_FIRST_BP_TYPE=0x100, mmt_cond_bp_disabled=mmt_FIRST_BP_TYPE, mmt_bp_cmdlist_disabled=0x200, mmt_bp_disabled=0x400,
-			mmt_bp_ignored=0x800,  mmt_cond_bp=0x1000,mmt_bp_cmdlist=0x2000, mmt_breakpoint=0x4000, mmt_LAST_BP_TYPE=mmt_breakpoint,  mmt_all_breakpoints=0x7f00,   mmt_indicator=0x8000,
-			mmt_compiler=0x30000 /* masks compiler errors/warnings */
-		};
+// These are bitmap masks of the various margin markers.
+// So 256 == 0x100 == 100000000, 2^9, and masks the ninth marker, smt_cond_bp_disabled==8 (as the markers are zero-based)
+// 0x7f00 is binary 111111100000000 and masks all the 7 current breakpoint types. If you add others, change it
+enum marker_mask_type { mmt_folds=wxSCI_MASK_FOLDERS, mmt_bookmarks=128, mmt_FIRST_BP_TYPE=0x100, mmt_cond_bp_disabled=mmt_FIRST_BP_TYPE, mmt_bp_cmdlist_disabled=0x200, mmt_bp_disabled=0x400,
+                        mmt_bp_ignored=0x800,  mmt_cond_bp=0x1000,mmt_bp_cmdlist=0x2000, mmt_breakpoint=0x4000, mmt_LAST_BP_TYPE=mmt_breakpoint,  mmt_all_breakpoints=0x7f00,   mmt_indicator=0x8000,
+                        mmt_compiler=0x30000 /* masks compiler errors/warnings */
+                      };
 
- /**
- * @class BPtoMarker
- * Holds which marker and mask are associated with each breakpoint type
- */
+enum calltip_type { ct_function_hover, ct_debugger, ct_function_proto, ct_breakpoint, ct_compiler_msg, ct_none};
+
+/**
+* @class BPtoMarker
+* Holds which marker and mask are associated with each breakpoint type
+*/
 typedef struct _BPtoMarker {
 	enum BP_type bp_type;	// An enum of possible break/watchpoint types. In debugger.h
 	sci_marker_types marker;
@@ -78,8 +78,7 @@ typedef struct _BPtoMarker {
  * @class LEditorState
  * a container for the editor state (breakpoints, bookmarks and current position)
  */
-struct LEditorState
-{
+struct LEditorState {
 	std::vector<int> breakpoints;
 	std::vector<int> markers;
 	int caretPosition;
@@ -126,11 +125,12 @@ class LEditor : public wxScintilla, public IEditor
 	bool m_isVisible;
 	int m_hyperLinkIndicatroStart;
 	int m_hyperLinkIndicatroEnd;
-    int m_hyperLinkType;
+	int m_hyperLinkType;
 	bool m_hightlightMatchedBraces;
 	bool m_autoAddMatchedBrace;
 	std::map<int, std::vector<BreakpointInfo> > m_breakpointsInfo;
 	bool m_autoAdjustHScrollbarWidth;
+	calltip_type m_calltipType;
 
 public:
 	static FindReplaceData &GetFindReplaceData() {
@@ -277,7 +277,7 @@ public:
 
 	bool FindAndSelect();
 	bool FindAndSelect(const FindReplaceData &data);
-    bool FindAndSelect(const wxString &pattern, const wxString &name);
+	bool FindAndSelect(const wxString &pattern, const wxString &name);
 
 	bool Replace();
 	bool Replace(const FindReplaceData &data);
@@ -364,19 +364,22 @@ public:
 	virtual void HighlightLine(int lineno);
 	virtual void UnHighlightAll();
 
-    // compiler warnings and errors
-    void SetWarningMarker(int lineno);
-    void SetErrorMarker(int lineno);
-    void DelAllCompilerMarkers();
+	// compiler warnings and errors
+	void SetWarningMarker(int lineno);
+	void SetErrorMarker(int lineno);
+	void DelAllCompilerMarkers();
+	void DoShowCalltip(int pos, const wxString &tip, calltip_type type);
+	void DoCancelCalltip();
+	calltip_type GetCalltipType() const {return m_calltipType;}
 
 	//----------------------------------
 	//File modifications
 	//----------------------------------
 
-    /**
-     * return the last modification time (on disk) of editor's underlying file
-     */
-    time_t GetFileLastModifiedTime() const;
+	/**
+	 * return the last modification time (on disk) of editor's underlying file
+	 */
+	time_t GetFileLastModifiedTime() const;
 
 	/**
 	 * return/set the last modification time that was made by the editor
@@ -497,7 +500,7 @@ public:
 	 * @param pos from position
 	 * @param onlyWordCharacters
 	 */
-    virtual int WordEndPos (int pos, bool onlyWordCharacters);
+	virtual int WordEndPos (int pos, bool onlyWordCharacters);
 
 	/**
 	 * Insert text to the editor and keeping the indentation
@@ -539,9 +542,8 @@ private:
 	void DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
 	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
 
-
 	DECLARE_EVENT_TABLE()
-    void OnSavePoint(wxScintillaEvent &event);
+	void OnSavePoint(wxScintillaEvent &event);
 	void OnCharAdded(wxScintillaEvent& event);
 	void OnMarginClick(wxScintillaEvent& event);
 	void OnChange(wxScintillaEvent& event);
@@ -557,7 +559,7 @@ private:
 	void OnMiddleUp(wxMouseEvent &event);
 	void OnLeftUp(wxMouseEvent &event);
 	void OnLeaveWindow(wxMouseEvent &event);
-    void OnFocusLost(wxFocusEvent &event);
+	void OnFocusLost(wxFocusEvent &event);
 	void OnLeftDClick(wxScintillaEvent &event);
 	void OnPopupMenuUpdateUI(wxUpdateUIEvent &event);
 	void OnDbgQuickWatch(wxCommandEvent &event);

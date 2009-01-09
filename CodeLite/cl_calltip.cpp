@@ -39,9 +39,9 @@ struct tagCallTipInfo {
 };
 
 clCallTip::clCallTip(const std::vector<TagEntryPtr> &tips)
-		: m_tips(tips)
-		, m_curr(0)
+		: m_curr(0)
 {
+	Initialize(tips);
 }
 
 clCallTip::clCallTip(const clCallTip& rhs)
@@ -105,18 +105,27 @@ wxString clCallTip::Prev()
 	return TipAt(m_curr);
 }
 
+wxString clCallTip::All()
+{
+	wxString tip;
+	for(size_t i=0; i<m_tips.size(); i++) {
+		tip << m_tips.at(i) << wxT("\n");
+	}
+	tip.RemoveLast();
+	return tip;
+}
+
 int clCallTip::Count() const
 {
 	return (int)m_tips.size();
 }
 
-wxString clCallTip::All()
+void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 {
-	wxString tip;
 	std::map<wxString, tagCallTipInfo> mymap;
-	for (size_t i=0; i< m_tips.size(); i++) {
+	for (size_t i=0; i< tips.size(); i++) {
 		tagCallTipInfo cti;
-		TagEntryPtr t = m_tips.at(i);
+		TagEntryPtr t = tips.at(i);
 		if (t->GetKind() == wxT("function") || t->GetKind() == wxT("prototype")) {
 
 			wxString raw_sig ( t->GetSignature().Trim().Trim(false) );
@@ -182,12 +191,13 @@ wxString clCallTip::All()
 	}
 
 	std::map<wxString, tagCallTipInfo>::iterator iter = mymap.begin();
-	for ( ; iter != mymap.end(); iter++ ) {
+	m_tips.clear();
+	for (; iter != mymap.end(); iter++) {
+		wxString tip;
 		if( iter->second.retValue.empty() == false ) {
 			tip <<  iter->second.retValue.Trim(false).Trim() << wxT(" : ");
 		}
-		tip << iter->second.sig << wxT("\n");
+		tip << iter->second.sig;
+		m_tips.push_back(tip);
 	}
-	tip = tip.BeforeLast(wxT('\n'));
-	return tip;
 }

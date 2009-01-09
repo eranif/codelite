@@ -121,7 +121,8 @@ public:
 	virtual void OnRenameFunction(wxCommandEvent &e);
 	virtual void OnRetagFile(wxCommandEvent &e);
 	virtual void OnUserTypedXChars(const wxString &word);
-
+	virtual void OnCallTipClick(wxScintillaEvent &e);
+	virtual void OnCalltipCancel();
 	DECLARE_EVENT_TABLE();
 private:
 	wxString GetWordUnderCaret();

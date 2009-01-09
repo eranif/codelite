@@ -229,10 +229,6 @@ void CCBox::SelectItem(long item)
 {
 	m_listCtrl->Select(item);
 	m_listCtrl->EnsureVisible(item);
-//    LEditor *editor = dynamic_cast<LEditor*>(GetParent());
-//    if (editor) {
-//        editor->CallTipCancel();
-//    }
 }
 
 void CCBox::Show(const wxString& word)
@@ -363,7 +359,7 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 					editor->SetCurrentPos(new_pos);
 					editor->SetSelectionStart(new_pos);
 					editor->SetSelectionEnd(new_pos);
-					editor->CallTipCancel();
+					editor->DoCancelCalltip();
 				}
 			}
 		}

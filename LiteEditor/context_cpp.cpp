@@ -1184,12 +1184,12 @@ void ContextCpp::OnKeyDown(wxKeyEvent &event)
 		switch (event.GetKeyCode()) {
 
 		case WXK_UP:
-			GetCtrl().DoCancelCalltip();
+			GetCtrl().CallTipCancel();
 			GetCtrl().DoShowCalltip(pos, m_ct->Prev(), ct_function_proto);
 			return;
 
 		case WXK_DOWN:
-			GetCtrl().DoCancelCalltip();
+			GetCtrl().CallTipCancel();
 			GetCtrl().DoShowCalltip(pos, m_ct->Next(), ct_function_proto);
 			return;
 		}
@@ -2345,7 +2345,7 @@ void ContextCpp::DoCodeComplete(long pos)
 		wxString word = rCtrl.GetTextRange(word_start, word_end);
 		m_ct = TagsManagerST::Get()->GetFunctionTip(rCtrl.GetFileName(), line, expr, text, word);
 		if (m_ct && m_ct->Count() > 0) {
-			rCtrl.DoCancelCalltip();
+			rCtrl.CallTipCancel();
 			rCtrl.DoShowCalltip(currentPosition, m_ct->First(), ct_function_proto);
 		}
 	} else {
@@ -2471,13 +2471,11 @@ void ContextCpp::OnCallTipClick(wxScintillaEvent& e)
 	switch (e.GetPosition()) {
 	case 1: // Up
 		if (m_ct) {
-			GetCtrl().DoCancelCalltip();
 			GetCtrl().DoShowCalltip(pos, m_ct->Next(), ct_function_proto);
 		}
 		break;
 	case 2: // down arrow
 		if (m_ct) {
-			GetCtrl().DoCancelCalltip();
 			GetCtrl().DoShowCalltip(pos, m_ct->Prev(), ct_function_proto);
 		}
 		break;
@@ -2489,5 +2487,4 @@ void ContextCpp::OnCallTipClick(wxScintillaEvent& e)
 
 void ContextCpp::OnCalltipCancel()
 {
-	m_ct = NULL;
 }

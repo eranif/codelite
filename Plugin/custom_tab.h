@@ -66,13 +66,14 @@ protected:
 	void DoDrawVerticalTab(wxDC &dc);
 	void DoDrawHorizontalTab(wxDC &dc);
 	const wxBitmap &GetXBmp();
-	void Initialize();
 
 	wxTabContainer *GetTabContainer();
 
 public:
+
 	CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const wxString &tooltip, const wxBitmap &bmp = wxNullBitmap, bool selected = false, int orientation = wxLEFT, long style=0);
 	virtual ~CustomTab();
+	void Initialize();
 
 	//Getters
 	void SetPadding(const int& padding) {
@@ -86,6 +87,8 @@ public:
 	}
 	void SetSelected(bool selected) ;
 	void SetText(const wxString &text, const wxString &tooltip);
+
+	void SetBmp(const wxBitmap &bmp) ;
 
 	//Getters
 	const wxBitmap& GetBmp() const {

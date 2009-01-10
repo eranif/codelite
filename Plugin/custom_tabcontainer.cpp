@@ -137,6 +137,7 @@ wxTabContainer::wxTabContainer(wxWindow *win, wxWindowID id, int orientation, lo
 		, m_orientation(orientation)
 		, m_draggedTab(NULL)
 		, m_rightClickMenu(NULL)
+		, m_bmpHeight(14)
 {
 	Initialize();
 }
@@ -629,8 +630,6 @@ void wxTabContainer::OnDeleteTab(wxCommandEvent &e)
 
 void wxTabContainer::Resize()
 {
-	m_tabsSizer->Layout();
-	GetSizer()->Layout();
 	//refersh all tabs
 	wxSizer *sz = m_tabsSizer;
 	wxSizerItemList items = sz->GetChildren();
@@ -646,9 +645,15 @@ void wxTabContainer::Resize()
 			if (IsVisible(curtab, false)) {
 				curtab->Refresh();
 			}
+
+			// force re-initialization even for non-visible items
+			curtab->Initialize();
 		}
 	}
 
+	GetSizer()->Layout();
+	m_tabsSizer->Layout();
+	Refresh();
 }
 
 void wxTabContainer::ShowPopupMenu()
@@ -800,3 +805,19 @@ int wxTabContainer::GetBookStyle()
 	Notebook *book = (Notebook *)GetParent();
 	return book->GetBookStyle();
 }
+
+int wxTabContainer::GetBmpHeight() const
+{
+	return m_bmpHeight;
+}
+
+void wxTabContainer::SetBmpHeight(int height)
+{
+	if(height < 0){
+		return;
+	}
+
+	m_bmpHeight = height;
+	Resize();
+}
+

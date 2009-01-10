@@ -160,5 +160,9 @@ bool CopyToClipboard(const wxString &text);
  */
 wxColour MakeColourLighter(wxColour color, float level);
 
+/**
+ * @brief return true if filename is readonly false otherwise
+ */
+bool IsFileReadOnly(const wxFileName &filename);
 #endif //GLOBALS_H
 

@@ -117,10 +117,10 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 					const int halfWidth = widthArrow / 2 - 3;
 					const int centreX = rcClient.left + widthArrow / 2 - 1;
 					const int centreY = (rcClient.top + rcClient.bottom) / 2;
-					surface->FillRectangle(rcClient, colourBG.allocated);
-					PRectangle rcClientInner(rcClient.left + 1, rcClient.top + 1,
-					                         rcClient.right - 2, rcClient.bottom - 1);
-					surface->FillRectangle(rcClientInner, colourUnSel.allocated);
+//					surface->FillRectangle(rcClient, colourBG.allocated);
+//					PRectangle rcClientInner(rcClient.left + 1, rcClient.top + 1,
+//					                         rcClient.right - 2, rcClient.bottom - 1);
+//					surface->FillRectangle(rcClientInner, colourUnSel.allocated);
 
 					if (upArrow) {      // Up arrow
 						Point pts[] = {
@@ -129,7 +129,7 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
     						Point(centreX, centreY - halfWidth + halfWidth / 2),
 						};
 						surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
-                 						colourBG.allocated, colourBG.allocated);
+                 						colourUnSel.allocated, colourUnSel.allocated);
 					} else {            // Down arrow
 						Point pts[] = {
     						Point(centreX - halfWidth, centreY - halfWidth / 2),
@@ -137,7 +137,7 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
     						Point(centreX, centreY + halfWidth - halfWidth / 2),
 						};
 						surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
-                 						colourBG.allocated, colourBG.allocated);
+                 						colourUnSel.allocated, colourUnSel.allocated);
 					}
 				}
 				xEnd = rcClient.right;
@@ -150,13 +150,18 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 			} else if (IsTabCharacter(s[startSeg])) {
 				xEnd = NextTabPos(x);
 			} else {
+				ColourDesired hltBgCol((unsigned int)170, (unsigned int)255, (unsigned int)170);
 				xEnd = x + surface->WidthText(font, s + startSeg, endSeg - startSeg);
 				if (draw) {
 					rcClient.left = x;
 					rcClient.right = xEnd;
-					surface->DrawTextTransparent(rcClient, font, ytext,
-										s+startSeg, endSeg - startSeg,
-					                             highlight ? colourSel.allocated : colourUnSel.allocated);
+
+					PRectangle rr = rcClient;
+					rr.top += 1;
+					surface->DrawTextNoClip(rr, font, ytext,
+											s+startSeg, endSeg - startSeg,
+					                        highlight ? colourSel.allocated : colourUnSel.allocated,
+											highlight ? hltBgCol.AsLong() : colourBG.allocated);
 				}
 			}
 			x = xEnd;

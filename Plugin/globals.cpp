@@ -435,3 +435,21 @@ wxColour MakeColourLighter(wxColour color, float level)
 {
 	return DrawingUtils::LightColour(color, level);
 }
+
+bool IsFileReadOnly(const wxFileName& filename)
+{
+#ifdef __WXMSW__
+	DWORD dwAttrs = GetFileAttributes(filename.GetFullPath().c_str());
+	if (dwAttrs != INVALID_FILE_ATTRIBUTES && (dwAttrs & FILE_ATTRIBUTE_READONLY)) {
+		return true;
+	} else {
+		return false;
+	}
+#else
+	// try to open the file with 'write permission'
+	wxString tmp_file;
+	wxFFile file(filename.GetFullPath().GetData(), wxT("w"));
+	bool readOnly = (file.IsOpened() == false);
+	return readOnly;
+#endif
+}

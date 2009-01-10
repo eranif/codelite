@@ -197,6 +197,18 @@ public:
 	 */
 	void SetPageText(size_t index, const wxString &text, const wxString &tooltip);
 
+	/**
+	 * @brief set the page bitmap at a given index
+	 * @param index page index
+	 * @param bmp bitmap to use
+	 */
+	void SetPageBitmap(size_t index, const wxBitmap &bmp);
+
+	/**
+	 * @brief set the size (x & y) of the bitmap used in the notebook
+	 * @param size the size
+	 */
+	void SetBitmapSize(int size);
 	DECLARE_EVENT_TABLE()
 	virtual void OnNavigationKey(wxNavigationKeyEvent &e);
 };

@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : mainbook.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : mainbook.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #ifndef MAINBOOK_H
@@ -41,9 +41,9 @@ private:
 	Notebook     *m_book;
 	QuickFindBar *m_quickFindBar;
     wxWindow     *m_currentPage;
-    
+
     std::set<wxWindow*> m_detachedTabs;
-	
+
     void CreateGuiControls();
     void ConnectEvents    ();
 
@@ -56,13 +56,13 @@ private:
 	void OnProjectFileRemoved(wxCommandEvent    &e);
     void OnWorkspaceLoaded   (wxCommandEvent    &e);
     void OnWorkspaceClosed   (wxCommandEvent    &e);
-	
+
 	bool AskUserToSave(LEditor *editor);
-	
+
 public:
 	MainBook(wxWindow *parent);
 	~MainBook();
-    
+
 	void ClearFileHistory();
 	void GetRecentlyOpenedFiles(wxArrayString &files);
 	FileHistory &GetRecentlyOpenedFilesClass() { return m_recentFiles; }
@@ -74,17 +74,17 @@ public:
 
     void SaveSession   (SessionEntry &session);
     void RestoreSession(SessionEntry &session);
-     
+
     LEditor *GetActiveEditor();
     void     GetAllEditors  (std::vector<LEditor*> &editors);
 	LEditor *FindEditor     (const wxString &fileName);
     bool     CloseEditor    (const wxString &fileName) { return ClosePage(FindEditor(fileName)); }
-    
+
     wxWindow *GetCurrentPage() { return m_currentPage; }
     wxWindow *FindPage      (const wxString &text);
-    
+
     LEditor *NewEditor();
-    
+
 	LEditor *OpenFile(const wxString &file_name, const wxString &projectName = wxEmptyString,
 	                  int lineno = wxNOT_FOUND, long position = wxNOT_FOUND, bool addjump = true);
 	LEditor *OpenFile(const BrowseRecord &rec)
@@ -92,16 +92,16 @@ public:
 
     bool AddPage   (wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
     bool SelectPage(wxWindow *win);
-    
+
     bool DetachPage(wxWindow *win);
     bool DockPage  (wxWindow *win);
     bool IsDetached(wxWindow *win);
 
     bool UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, const wxString &title, const wxString &caption,
                          bool cancellable = true);
-    
+
 	bool SaveAll(bool askUser, bool includeUntitled);
-    
+
     void ReloadExternallyModified();
 
     bool ClosePage      (const wxString &text) { return ClosePage(FindPage(text)); }
@@ -111,7 +111,7 @@ public:
 
 	wxString GetPageTitle(wxWindow *win);
 	void     SetPageTitle(wxWindow *page, const wxString &name);
-    
+
     // TODO: replace these functions with event handlers
 	void ApplySettingsChanges   ();
     void UnHighlightAll         ();
@@ -121,6 +121,7 @@ public:
     void ShowWhitespace         (int ws);
     void UpdateColours          ();
     void UpdateBreakpoints      ();
+	void MarkEditorReadOnly		(LEditor *editor, bool ro);
 };
 
 #endif //MAINBOOK_H

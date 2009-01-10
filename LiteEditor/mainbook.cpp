@@ -390,6 +390,10 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		editor = new LEditor(m_book);
 		editor->Create(projName, fileName);
 		AddPage(editor, fileName.GetFullName());
+
+		// mark the editor as read only if needed
+		MarkEditorReadOnly(editor, IsFileReadOnly(editor->GetFileName()));
+
         if (position == wxNOT_FOUND && lineno == wxNOT_FOUND && editor->GetContext()->GetName() == wxT("C++")) {
             // try to find something interesting in the file to put the caret at
             // for now, just skip past initial blank lines and comments
@@ -422,7 +426,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
     } else {
         SelectPage(editor);
     }
-    
+
     // Add this file to the history. Don't check for uniqueness:
     // if it's already on the list, wxFileHistory will move it to the top
     // Also, sync between the history object and the configuration file
@@ -435,7 +439,6 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
         BrowseRecord jumpto = editor->CreateBrowseRecord();
         NavMgr::Get()->AddJump(jumpfrom, jumpto);
     }
-
 	return editor;
 }
 
@@ -776,4 +779,18 @@ void MainBook::UpdateBreakpoints()
 		editors[i]->UpdateBreakpoints();
 	}
 	ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointMarkers();
+}
+
+void MainBook::MarkEditorReadOnly(LEditor* editor, bool ro)
+{
+	if(!editor){
+		return;
+	}
+
+	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
+		if(editor == m_book->GetPage(i)){
+			m_book->SetPageBitmap(i, ro ? wxXmlResource::Get()->LoadBitmap(wxT("read_only")) : wxNullBitmap );
+			break;
+		}
+	}
 }

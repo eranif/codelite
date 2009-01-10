@@ -98,7 +98,7 @@ int CustomTab::CalcTabHeight()
 	int tmpTabHeight(0);
 	int tabHeight(GetPadding());
 	if (GetBmp().IsOk()) {
-		tmpTabHeight = GetBmp().GetWidth();
+		tmpTabHeight = GetBmp().GetHeight();
 		tmpTabHeight += GetPadding();
 	}
 
@@ -126,10 +126,9 @@ int CustomTab::CalcTabWidth()
 {
 	int tmpTabWidth(0);
 	int tabWidth(GetHeightPadding()*2);
-	if (GetBmp().IsOk()) {
-		tabWidth = GetHeightPadding()+4;
-		tmpTabWidth = GetBmp().GetHeight();
-	}
+
+	tabWidth = GetHeightPadding()+4;
+	tmpTabWidth = GetTabContainer()->GetBmpHeight();
 
 	if (GetText().IsEmpty() == false) {
 		int xx, yy;
@@ -652,7 +651,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	dc.SetPen(pen);
 	dc.DrawRoundedRectangle(tmpRect, radius);
 
-	if(GetSelected()){
+	if (GetSelected()) {
 		// draw the inner white border
 		dc.SetPen(wxPen(wxT("WHITE")));
 		tmpRect.Deflate(1);
@@ -770,4 +769,11 @@ void CustomTab::Initialize()
 wxTabContainer* CustomTab::GetTabContainer()
 {
 	return (wxTabContainer*)GetParent();
+}
+
+void CustomTab::SetBmp(const wxBitmap& bmp)
+{
+	m_bmp = bmp;
+	Initialize();
+	Refresh();
 }

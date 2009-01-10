@@ -46,6 +46,7 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 		, m_popupWin(NULL)
 {
 	Initialize();
+	SetBitmapSize(16);
 }
 
 Notebook::~Notebook()
@@ -400,3 +401,22 @@ bool Notebook::DeleteAllPages(bool notify)
     return res;
 }
 
+void Notebook::SetPageBitmap(size_t index, const wxBitmap& bmp)
+{
+	CustomTab *tab = m_tabs->IndexToTab(index);
+	if(tab) {
+		tab->SetBmp(bmp);
+		tab->Refresh();
+
+		// this requires re-calculating the tabs are
+		m_tabs->Resize();
+	}
+}
+
+
+void Notebook::SetBitmapSize(int size)
+{
+	m_tabs->SetBmpHeight(size);
+	m_tabs->Resize();
+	Layout();
+}

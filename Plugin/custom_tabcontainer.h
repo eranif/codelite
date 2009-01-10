@@ -39,7 +39,7 @@ class wxTabContainer : public wxPanel
 	CustomTab *m_draggedTab;
 	wxArrayPtrVoid m_history;
 	wxMenu *m_rightClickMenu;
-
+	int m_bmpHeight;
 	friend class CustomTab;
 
 protected:
@@ -132,17 +132,13 @@ public:
 	const CustomTab* GetDraggedTab() const { return m_draggedTab; }
 
 	int GetBookStyle();
-
-	//Setters
 	void SetOrientation(const int& orientation) ;
 	const int& GetOrientation() const {return m_orientation;}
-
 	void ShowPopupMenu();
-
-	//Setters
 	void SetHistory(const wxArrayPtrVoid& history) {this->m_history = history;}
 	const wxArrayPtrVoid& GetHistory() const {return m_history;}
-
+	void SetBmpHeight(int height);
+	int GetBmpHeight() const;
 	static void DoDrawBackground(wxDC &dc, bool gradient, int orientation, const wxRect &rr);
 	static void DoDrawMargin(wxDC &dc, int orientation, const wxRect &rr);
 

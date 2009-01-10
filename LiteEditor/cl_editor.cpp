@@ -458,7 +458,7 @@ void LEditor::SetProperties()
 	MarkerSetBackground(smt_error, wxColor(255, 0, 0));
 
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
 #ifdef __WXMAC__
 	// turning off these two greatly improves performance
@@ -784,6 +784,9 @@ bool LEditor::SaveFile()
 			return true;
 		}
 
+		// if we managed to save the file, remove the 'read only' attribute
+		Frame::Get()->GetMainBook()->MarkEditorReadOnly(this, false);
+
 		m_context->RetagFile();
 	}
 	return true;
@@ -811,6 +814,8 @@ bool LEditor::SaveFileAs()
 
 		// update syntax highlight
 		SetSyntaxHighlight();
+
+		Frame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
 		return true;
 	}
 	return false;
@@ -1926,6 +1931,9 @@ void LEditor::ReloadFile()
 
 	GotoLine(lineNumber);
 	EnsureVisible(lineNumber);
+
+	// mark read only files
+	Frame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
 
 	// try to locate the pattern on which the caret was prior to reloading the file
 	Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));

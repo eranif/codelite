@@ -47,7 +47,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel( wxWindow* pare
 		m_whitespaceStyle->SetStringSelection(wxT("Visible always"));
 		break;
 	case wxSCI_WS_VISIBLEAFTERINDENT:
-		m_whitespaceStyle->SetStringSelection(wxT("Visible after indent"));
+		m_whitespaceStyle->SetStringSelection(wxT("Visible after indentation"));
 		break;
     case wxSCI_WS_INDENTVISIBLE:
         m_whitespaceStyle->SetStringSelection(wxT("Indentation only"));
@@ -74,7 +74,7 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 	int style(wxSCI_WS_INVISIBLE); // inivisble
 	if (m_whitespaceStyle->GetStringSelection() == wxT("Visible always")) {
 		style = wxSCI_WS_VISIBLEALWAYS;
-	} else if (m_whitespaceStyle->GetStringSelection() == wxT("Visible after indent")) {
+	} else if (m_whitespaceStyle->GetStringSelection() == wxT("Visible after indentation")) {
 		style = wxSCI_WS_VISIBLEAFTERINDENT;
 	} else if (m_whitespaceStyle->GetStringSelection() == wxT("Indentation only")) {
         style = wxSCI_WS_INDENTVISIBLE;

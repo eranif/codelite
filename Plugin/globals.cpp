@@ -447,6 +447,6 @@ bool IsFileReadOnly(const wxFileName& filename)
 	}
 #else
 	// try to open the file with 'write permission'
-	return filename.IsFileWritable();
+	return !filename.IsFileWritable();
 #endif
 }

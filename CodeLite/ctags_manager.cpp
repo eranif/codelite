@@ -1201,6 +1201,7 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 	wxString tags;
 	wxProgressDialog* prgDlg = NULL;
 
+	int maxVal = (int)files.GetCount();
 	if (files.IsEmpty())
 		return;
 
@@ -1211,7 +1212,6 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 	prgDlg->Centre();
 
 	prgDlg->Update(0, wxT("Parsing..."));
-	int maxVal = (int)files.GetCount();
 	int i = 0;
 
 	std::list<tagParseResult> trees;
@@ -2151,7 +2151,7 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString 
 	}
 
 	if ( impl ) {
-		body << tag->GetName() << NormalizeFunctionSig( tag->GetSignature(), true );
+		body << tag->GetName() << NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name );
 	} else {
 		body << tag->GetName() << tag->GetSignature();
 	}
@@ -2379,7 +2379,7 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 
 }
 
-wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarNames,std::vector<std::pair<int, int> > *paramLen)
+wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, std::vector<std::pair<int, int> > *paramLen)
 {
 	std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetPreprocessorAsMap();
 
@@ -2389,53 +2389,61 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarN
 	get_variables(patbuf.data(), li, ignoreTokens, true);
 
 	//construct a function signature from the results
-	wxString output;
-	output << wxT("(");
+	wxString str_output;
+	str_output << wxT("(");
+
+	if(paramLen){
+		paramLen->clear();
+	}
 
 	VariableList::iterator iter = li.begin();
 	for ( ; iter != li.end() ; iter++) {
 		Variable v = *iter;
-		int start_offset = output.length();
+		int start_offset = str_output.length();
 
 		//add const qualifier
 		if (v.m_isConst) {
-			output << wxT("const ");
+			str_output << wxT("const ");
 		}
 
 		//add scope
 		if (v.m_typeScope.empty() == false) {
-			output << _U(v.m_typeScope.c_str()) << wxT("::");
+			str_output << _U(v.m_typeScope.c_str()) << wxT("::");
 		}
 
 		if (v.m_type.empty() == false) {
-			output << _U(v.m_type.c_str());
+			str_output << _U(v.m_type.c_str());
 		}
 
 		if (v.m_templateDecl.empty() == false) {
-			output << _U(v.m_templateDecl.c_str());
+			str_output << _U(v.m_templateDecl.c_str());
 		}
 
 		if (v.m_starAmp.empty() == false) {
-			output << _U(v.m_starAmp.c_str());
+			str_output << _U(v.m_starAmp.c_str());
 		}
 
-		if (v.m_name.empty() == false && includeVarNames) {
-			output << wxT(" ") << _U(v.m_name.c_str());
+		if (v.m_name.empty() == false && (flags & Normalize_Func_Name)) {
+			str_output << wxT(" ") << _U(v.m_name.c_str());
+		}
+
+		if (v.m_defaultValue.empty() == false && (flags & Normalize_Func_Default_value)) {
+			str_output << wxT(" = ") << _U(v.m_defaultValue.c_str());
 		}
 
 		// keep the length of this argument
 		if(paramLen){
-			paramLen->push_back(std::pair<int, int>(start_offset, output.length() - start_offset));
+			paramLen->push_back(std::pair<int, int>(start_offset, str_output.length() - start_offset));
 		}
-		output << wxT(", ");
+		str_output << wxT(", ");
 	}
 
 	if (li.empty() == false) {
-		output = output.BeforeLast(wxT(','));
+		str_output = str_output.BeforeLast(wxT(','));
 	}
 
-	output << wxT(")");
-	return output;
+	str_output << wxT(")");
+	return str_output;
 }
 
 void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<wxString, TagEntryPtr>& protos)

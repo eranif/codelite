@@ -51,7 +51,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 void cl_scope_error(char *string);
 int  cl_var_parse();
 void syncParser();
-void var_consumeUntil(char c1, char c2);
+void var_consumeDefaultValue(char c1, char c2);
 
 static VariableList *gs_vars = NULL;
 static std::vector<std::string> gs_names;
@@ -474,14 +474,15 @@ std::string var_consumBracketsContent(char openBrace)
 	return consumedData;
 }
 
-void var_consumeUntil(char c1, char c2)
+void var_consumeDefaultValue(char c1, char c2)
 {
 	int depth = 0;
 	bool cont(true);
 
 	while (depth >= 0) {
 		int ch = cl_scope_lex();
-		if(ch == 0)					{ break;}
+		if(ch == 0) { break;}
+
 		if(ch == c1 && depth == 0) {
 			cl_scope_less(0);
 			break;
@@ -492,11 +493,11 @@ void var_consumeUntil(char c1, char c2)
 			break;
 		}
 
-		if(ch == ')'){
+		curr_var.m_defaultValue += cl_scope_text;
+		if(ch == ')' || ch == '}'){
 			depth--;
 			continue;
-		}
-		else if(ch == '('){
+		} else if(ch == '(' || ch == '{') {
 			depth ++ ;
 			continue;
 		}
@@ -900,7 +901,7 @@ case 32:
 						}
 break;
 case 36:
-{var_consumeUntil(',', ')');}
+{var_consumeDefaultValue(',', ')');}
 break;
 case 41:
 { yyval = yyvsp[0] + var_consumBracketsContent('(');}

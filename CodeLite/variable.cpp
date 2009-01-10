@@ -26,6 +26,7 @@ Variable & Variable::operator =(const Variable &src)
 	m_starAmp = src.m_starAmp;
 	m_lineno = src.m_lineno;
 	m_isConst = src.m_isConst;
+	m_defaultValue = src.m_defaultValue;
 	return *this;
 }
 
@@ -41,19 +42,21 @@ void Variable::Reset()
 	m_starAmp = "";
 	m_lineno = 0;
 	m_isConst = false;
+	m_defaultValue = "";
 }
 
 void Variable::Print()
 {
-	fprintf(	stdout, "{m_name=%s, m_lineno=%d, m_starAmp=%s, m_type=%s, m_isConst=%s, m_typeScope=%s, m_templateDecl=%s, m_isPtr=%s, m_isTemplate=%s }\n", 
-				m_name.c_str(), 
-				m_lineno, 
-				m_starAmp.c_str(), 
-				m_type.c_str(), 
-				m_isConst ? "true" : "false", 
-				m_typeScope.c_str(), 
+	fprintf(	stdout, "{m_name=%s, m_defaultValue=%s, m_lineno=%d, m_starAmp=%s, m_type=%s, m_isConst=%s, m_typeScope=%s, m_templateDecl=%s, m_isPtr=%s, m_isTemplate=%s }\n",
+				m_name.c_str(),
+				m_defaultValue.c_str(),
+				m_lineno,
+				m_starAmp.c_str(),
+				m_type.c_str(),
+				m_isConst ? "true" : "false",
+				m_typeScope.c_str(),
 				m_templateDecl.c_str(),
-				m_isPtr ? "true" : "false", 
+				m_isPtr ? "true" : "false",
 				m_isTemplate ? "true" : "false");
 	fprintf( stdout, "Pattern: %s\n", m_pattern.c_str());
 	fflush(stdout);

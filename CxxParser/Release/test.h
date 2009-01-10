@@ -49,13 +49,14 @@
 //	int val;
 //} bb, cc;
 
-namespace AA {
-	namespace BB {
-		class MyC {
-			int a;
-			int b;
-		};
-	}
-}
-
-using namespace AA::BB;
+//namespace AA {
+//	namespace BB {
+//		class MyC {
+//			int a;
+//			int b;
+//		};
+//	}
+//}
+//
+//using namespace AA::BB;
+(long l, int i = {0,0}, std::string *s = std::string());

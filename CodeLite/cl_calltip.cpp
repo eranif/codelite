@@ -159,14 +159,14 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 			if (hasDefaultValues) {
 				//incase default values exist in this prototype,
 				//make it the tip instead of the existing one
-				cti.sig = raw_sig;
+				cti.sig = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Name|Normalize_Func_Default_value, &cti.paramLen);
 				mymap[normalizedSig] = cti;
 			}
 
 			//make sure we dont add duplicates
 			if ( mymap.find(normalizedSig) == mymap.end() ) {
 				//add it
-				cti.sig = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, true, &cti.paramLen);
+				cti.sig = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Name, &cti.paramLen);
 				mymap[normalizedSig] = cti;
 			}
 

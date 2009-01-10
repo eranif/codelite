@@ -77,6 +77,14 @@ public:
 	}
 };
 
+// By default the NormalizeFunctionSig returns only the variables type
+enum NormalizeFuncFlag {
+	// variable name
+	Normalize_Func_Name 			= 0x00000001,
+	// variable default value
+	Normalize_Func_Default_value	= 0x00000002,
+};
+
 /**
  * This class is the interface to ctags and SQLite database.
  * It contains various APIs that allows the caller to parse source file(s),
@@ -699,7 +707,7 @@ public:
 	 * @param includeVarNames set to true if the stripped signature should include the variables names. By default it is set to false
 	 * @return stripped functions signature
 	 */
-	wxString NormalizeFunctionSig(const wxString &sig, bool includeVarNames = false, std::vector<std::pair<int, int> > *paramLen = NULL);
+	wxString NormalizeFunctionSig(const wxString &sig, size_t flags = Normalize_Func_Name, std::vector<std::pair<int, int> > *paramLen = NULL);
 
 	/**
 	 * @brief fetch a workspace tag by its ID

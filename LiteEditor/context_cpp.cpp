@@ -1597,7 +1597,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 		TagEntryPtr tag = iter->second;
 		//use normalize function signature rather than the default one
 		//this will ensure that default values are removed
-		tag->SetSignature(TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), true ));
+		tag->SetSignature(TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name ));
 		body << TagsManagerST::Get()->FormatFunction(tag, true);
 		body << wxT("\n");
 	}
@@ -1684,7 +1684,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 		//create the functions body
 		//replace the function signature with the normalized one, so default values
 		//will not appear in the function implementation
-		wxString newSig = TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), true );
+		wxString newSig = TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name );
 		tag->SetSignature( newSig );
 		wxString body = TagsManagerST::Get()->FormatFunction(tag, true);
 
@@ -1712,7 +1712,7 @@ bool ContextCpp::OpenFileAndAppend ( const wxString &fileName, const wxString &t
     LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(fileName, wxEmptyString, 0);
     if (!editor)
         return false;
-        
+
     // if needed, append EOL
     // in an ideal world, we would like that the file will be terminated with 2xEOL
     if(editor->GetText().EndsWith(editor->GetEolString()) == false) {
@@ -2129,7 +2129,7 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li 
 {
 	int off = 0;
 	wxString file_name ( wxEmptyString );
-    
+
 	for ( std::list<CppToken>::iterator iter = li.begin(); iter != li.end(); iter++ ) {
 		CppToken &token = *iter;
         if ( file_name == token.getFilename() ) {

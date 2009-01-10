@@ -17,20 +17,21 @@ public:
 	std::string  	m_starAmp;
 	int				m_lineno;
 	bool 			m_isConst;
-	
+	std::string		m_defaultValue;	// used mainly for function arguments with default values foo(int = 0);
+
 public:
 	Variable();
 	virtual ~Variable();
 
 	//copy ctor
 	Variable(const Variable& src);
-	
-	//operator = 
+
+	//operator =
 	Variable& operator=(const Variable& src);
-	
+
 	//clear the class content
 	void Reset();
-	
+
 	//print the variable to stdout
 	void Print();
 };

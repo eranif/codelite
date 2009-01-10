@@ -447,9 +447,6 @@ bool IsFileReadOnly(const wxFileName& filename)
 	}
 #else
 	// try to open the file with 'write permission'
-	wxString tmp_file;
-	wxFFile file(filename.GetFullPath().GetData(), wxT("w"));
-	bool readOnly = (file.IsOpened() == false);
-	return readOnly;
+	return filename.IsFileWritable();
 #endif
 }

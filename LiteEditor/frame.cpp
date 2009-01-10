@@ -534,9 +534,6 @@ Frame::~Frame(void)
 	delete m_DPmenuMgr;
 
 	// uninitialize AUI manager
-#if defined(__WXMAC__)||defined(__WXGTK__)
-//	exit(0);
-#endif
 	m_mgr.UnInit();
 }
 

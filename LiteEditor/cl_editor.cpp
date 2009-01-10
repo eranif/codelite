@@ -766,6 +766,9 @@ bool LEditor::SaveFile()
 		if ( !SaveToFile(m_fileName) )
 			return false;
 
+		// if we managed to save the file, remove the 'read only' attribute
+		Frame::Get()->GetMainBook()->MarkEditorReadOnly(this, false);
+
 		wxString projName = GetProjectName();
 		if ( projName.Trim().Trim(false).IsEmpty() )
 			return true;
@@ -783,10 +786,6 @@ bool LEditor::SaveFile()
 		if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISABLE_AUTO_PARSING) {
 			return true;
 		}
-
-		// if we managed to save the file, remove the 'read only' attribute
-		Frame::Get()->GetMainBook()->MarkEditorReadOnly(this, false);
-
 		m_context->RetagFile();
 	}
 	return true;

@@ -2379,7 +2379,7 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 
 }
 
-wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarNames)
+wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarNames,std::vector<std::pair<int, int> > *paramLen)
 {
 	std::map<std::string, std::string> ignoreTokens = GetCtagsOptions().GetPreprocessorAsMap();
 
@@ -2393,8 +2393,9 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarN
 	output << wxT("(");
 
 	VariableList::iterator iter = li.begin();
-	for ( ; iter != li.end() ; iter++ ) {
+	for ( ; iter != li.end() ; iter++) {
 		Variable v = *iter;
+		int start_offset = output.length();
 
 		//add const qualifier
 		if (v.m_isConst) {
@@ -2421,8 +2422,14 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, bool includeVarN
 		if (v.m_name.empty() == false && includeVarNames) {
 			output << wxT(" ") << _U(v.m_name.c_str());
 		}
+
+		// keep the length of this argument
+		if(paramLen){
+			paramLen->push_back(std::pair<int, int>(start_offset, output.length() - start_offset));
+		}
 		output << wxT(", ");
 	}
+
 	if (li.empty() == false) {
 		output = output.BeforeLast(wxT(','));
 	}

@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : globals.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : globals.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #ifndef GLOBALS_H
@@ -32,7 +32,7 @@
 #include "workspace.h"
 
 class wxListCtrl;
-
+class IEditor;
 
 /**
  * \brief send command event to the application (wxTheApp),
@@ -49,7 +49,7 @@ void SendCmdEvent(int eventId, void *clientData = NULL);
 void PostCmdEvent(int eventId, void *clientData = NULL);
 
 /**
- * \brief set column text 
+ * \brief set column text
  * \param list the list
  * \param indx row ID
  * \param column column ID
@@ -75,7 +75,7 @@ wxString GetColumnText(wxListCtrl *list, long index, long column);
 long AppendListCtrlRow(wxListCtrl *list);
 
 /**
- * \brief read file from disk using appropriate file conversion 
+ * \brief read file from disk using appropriate file conversion
  * \param fileName file name
  * \param content output string
  * \return true on success, false otherwise
@@ -84,7 +84,7 @@ bool ReadFileWithConversion(const wxString &fileName, wxString &content);
 
 /**
  * \brief write file using UTF8 converter
- * \param fileName file path 
+ * \param fileName file path
  * \param content file's conent
  * \return true on success, false otherwise
  */
@@ -103,8 +103,8 @@ bool RemoveDirectory(const wxString &path);
 bool IsValidCppIndetifier(const wxString &id);
 
 /**
- * \brief return true of id is a valid cpp file 
- */ 
+ * \brief return true of id is a valid cpp file
+ */
 bool IsValidCppFile(const wxString &id);
 
 /**
@@ -112,11 +112,11 @@ bool IsValidCppFile(const wxString &id);
  * the return value is same as input. The variable is expanded
  * in the project context
  */
-wxString ExpandVariables(const wxString &expression, ProjectPtr proj);
-    
+wxString ExpandVariables(const wxString &expression, ProjectPtr proj, IEditor *editor);
+
 /**
  * \brief accepts expression string and expand all known marcos (e.g. $(ProjectName))
- * \param expression expression 
+ * \param expression expression
  * \param projectName project name (to be used for $(ProjectName) macro)
  * \param fileName file name, to help expand the $(CurrentFile) macro family
  * \return an expanded string. If a macro is unknown it is replaced by empty string

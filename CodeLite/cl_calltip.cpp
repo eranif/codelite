@@ -36,6 +36,7 @@
 struct tagCallTipInfo {
 	wxString sig;
 	wxString retValue;
+	std::vector<std::pair<int, int> > paramLen;
 };
 
 clCallTip::clCallTip(const std::vector<TagEntryPtr> &tips)
@@ -68,11 +69,11 @@ wxString clCallTip::First()
 wxString clCallTip::TipAt(int at)
 {
 	wxString tip;
-	if ( m_tips.size() > 1 )
-		tip << _T("\n\001 ") << static_cast<int>(m_curr)+1 << _T(" of ") << static_cast<int>(m_tips.size()) << _T(" \002 ")
-		<< m_tips.at(at) << _T("\n");
-	else
-		tip << _T("\n") << m_tips.at( 0 ) << _T("\n");
+	if ( m_tips.size() > 1 ) {
+		tip << _T("\001 ") << static_cast<int>(m_curr)+1 << _T(" of ") << static_cast<int>(m_tips.size()) << _T(" \002 ") << m_tips.at(at).str ;
+	} else {
+		tip << m_tips.at( 0 ).str;
+	}
 	return tip;
 }
 
@@ -109,7 +110,7 @@ wxString clCallTip::All()
 {
 	wxString tip;
 	for(size_t i=0; i<m_tips.size(); i++) {
-		tip << m_tips.at(i) << wxT("\n");
+		tip << m_tips.at(i).str << wxT("\n");
 	}
 	tip.RemoveLast();
 	return tip;
@@ -165,7 +166,7 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 			//make sure we dont add duplicates
 			if ( mymap.find(normalizedSig) == mymap.end() ) {
 				//add it
-				cti.sig = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, true);
+				cti.sig = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, true, &cti.paramLen);
 				mymap[normalizedSig] = cti;
 			}
 
@@ -198,6 +199,32 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 			tip <<  iter->second.retValue.Trim(false).Trim() << wxT(" : ");
 		}
 		tip << iter->second.sig;
-		m_tips.push_back(tip);
+		clTipInfo ti;
+		ti.paramLen = iter->second.paramLen;
+		ti.str = tip;
+		m_tips.push_back(ti);
+	}
+}
+
+void clCallTip::GetHighlightPos(int index, int& start, int& len)
+{
+	start = wxNOT_FOUND;
+	len = wxNOT_FOUND;
+	if(m_curr >= 0 && m_curr < (int)m_tips.size()){
+		clTipInfo ti = m_tips.at(m_curr);
+		int base = ti.str.Find(wxT("("));
+
+		if(m_tips.size() > 1){
+			// multiple tooltips exists, make sure we calculate the up and down arrows
+			wxString arrowsStr;
+			arrowsStr << _T("\001 ") << static_cast<int>(m_curr)+1 << _T(" of ") << static_cast<int>(m_tips.size()) << _T(" \002 ");
+			base += arrowsStr.Length();
+		}
+
+		// sanity
+		if(base != wxNOT_FOUND && index < (int)ti.paramLen.size() && index >= 0){
+			start = ti.paramLen.at(index).first + base;
+			len =  ti.paramLen.at(index).second;
+		}
 	}
 }

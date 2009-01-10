@@ -699,7 +699,7 @@ public:
 	 * @param includeVarNames set to true if the stripped signature should include the variables names. By default it is set to false
 	 * @return stripped functions signature
 	 */
-	wxString NormalizeFunctionSig(const wxString &sig, bool includeVarNames = false);
+	wxString NormalizeFunctionSig(const wxString &sig, bool includeVarNames = false, std::vector<std::pair<int, int> > *paramLen = NULL);
 
 	/**
 	 * @brief fetch a workspace tag by its ID

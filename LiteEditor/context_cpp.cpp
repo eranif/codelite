@@ -1179,22 +1179,39 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 
 void ContextCpp::OnKeyDown(wxKeyEvent &event)
 {
-	int pos = GetCtrl().GetCurrentPos();
-	if (m_ct && m_ct->Count() && GetCtrl().CallTipActive() && GetCtrl().GetCalltipType() == ct_function_proto) {
+	LEditor &ctrl = GetCtrl();
+	int pos = ctrl.GetCurrentPos();
+
+	if (m_ct && m_ct->Count() && ctrl.CallTipActive() && ctrl.GetCalltipType() == ct_function_proto) {
 
 		switch (event.GetKeyCode()) {
 
-		case WXK_UP:
-			GetCtrl().CallTipCancel();
-			GetCtrl().DoShowCalltip(pos, m_ct->Prev(), ct_function_proto);
-			return;
+		case WXK_UP: {
+			int index = DoGetCalltipParamterIndex();
+			int start(wxNOT_FOUND), len(wxNOT_FOUND);
+			wxString tip = m_ct->Prev();
 
-		case WXK_DOWN:
-			GetCtrl().CallTipCancel();
-			GetCtrl().DoShowCalltip(pos, m_ct->Next(), ct_function_proto);
-			return;
+			if (index != wxNOT_FOUND) {
+				m_ct->GetHighlightPos(index, start, len);
+			}
+			ctrl.CallTipCancel();
+			ctrl.DoShowCalltip(pos, tip, ct_function_proto, start, len);
 		}
+		return;
 
+		case WXK_DOWN: {
+			int index = DoGetCalltipParamterIndex();
+			int start(wxNOT_FOUND), len(wxNOT_FOUND);
+			wxString tip = m_ct->Next();
+
+			if (index != wxNOT_FOUND) {
+				m_ct->GetHighlightPos(index, start, len);
+			}
+			ctrl.CallTipCancel();
+			ctrl.DoShowCalltip(pos, tip, ct_function_proto, start, len);
+		}
+		return;
+		}
 	}
 	event.Skip();
 }
@@ -1240,10 +1257,6 @@ void ContextCpp::SetActive()
 void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
 {
 	wxUnusedVar(event);
-	if ( !Frame::Get()->GetMainBook()->IsNavBarShown() ) {
-		return;
-	}
-
 	LEditor &ctrl = GetCtrl();
 
 	static long lastPos(wxNOT_FOUND);
@@ -1253,9 +1266,17 @@ void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
 	long curpos = ctrl.GetCurrentPos();
 	if (curpos != lastPos) {
 		lastPos = curpos;
-		//position has changed, compare line numbers
-		if (ctrl.LineFromPosition(curpos) != lastLine) {
 
+		// update the calltip highlighting if needed
+		DoUpdateCalltipHighlight();
+
+		// update navigation bar, but do this only if it visible
+		if ( !Frame::Get()->GetMainBook()->IsNavBarShown() )
+			return;
+
+		// we know that the position position has changed, make sure that the line
+		// number has changed also
+		if (ctrl.LineFromPosition(curpos) != lastLine) {
 			lastLine = ctrl.LineFromPosition(curpos);
 			Frame::Get()->GetMainBook()->UpdateNavBar(&ctrl);
 
@@ -2409,7 +2430,9 @@ void ContextCpp::DoCodeComplete(long pos)
 		m_ct = TagsManagerST::Get()->GetFunctionTip(rCtrl.GetFileName(), line, expr, text, word);
 		if (m_ct && m_ct->Count() > 0) {
 			rCtrl.CallTipCancel();
-			rCtrl.DoShowCalltip(currentPosition, m_ct->First(), ct_function_proto);
+			int start(wxNOT_FOUND), len(wxNOT_FOUND);
+			m_ct->GetHighlightPos(DoGetCalltipParamterIndex(), start, len);
+			rCtrl.DoShowCalltip(currentPosition, m_ct->First(), ct_function_proto, start, len);
 		}
 	} else {
 
@@ -2534,12 +2557,27 @@ void ContextCpp::OnCallTipClick(wxScintillaEvent& e)
 	switch (e.GetPosition()) {
 	case 1: // Up
 		if (m_ct) {
-			GetCtrl().DoShowCalltip(pos, m_ct->Next(), ct_function_proto);
+			int index = DoGetCalltipParamterIndex();
+			int start(wxNOT_FOUND), len(wxNOT_FOUND);
+			wxString tip = m_ct->Next();
+
+			if (index != wxNOT_FOUND) {
+				m_ct->GetHighlightPos(index, start, len);
+			}
+			GetCtrl().CallTipCancel();
+			GetCtrl().DoShowCalltip(pos, tip, ct_function_proto, start, len);
 		}
 		break;
 	case 2: // down arrow
 		if (m_ct) {
-			GetCtrl().DoShowCalltip(pos, m_ct->Prev(), ct_function_proto);
+			int index = DoGetCalltipParamterIndex();
+			int start(wxNOT_FOUND), len(wxNOT_FOUND);
+			wxString tip = m_ct->Prev();
+			if (index != wxNOT_FOUND) {
+				m_ct->GetHighlightPos(index, start, len);
+			}
+			GetCtrl().CallTipCancel();
+			GetCtrl().DoShowCalltip(pos, tip, ct_function_proto, start, len);
 		}
 		break;
 	case 0: // elsewhere
@@ -2550,4 +2588,65 @@ void ContextCpp::OnCallTipClick(wxScintillaEvent& e)
 
 void ContextCpp::OnCalltipCancel()
 {
+}
+
+int ContextCpp::DoGetCalltipParamterIndex()
+{
+	int index(0);
+	LEditor &ctrl =  GetCtrl();
+	int pos = ctrl.DoGetOpenBracePos();
+	if (pos != wxNOT_FOUND) {
+
+		// loop over the text from pos -> current position and count the number of commas found
+		int depth(0);
+		bool exit_loop(false);
+
+		while ( pos < ctrl.GetCurrentPos() && !exit_loop ) {
+			wxChar ch = ctrl.SafeGetChar(pos);
+			if (IsCommentOrString(pos)) {
+				pos = ctrl.PositionAfter(pos);
+				continue;
+			}
+
+			switch (ch) {
+			case wxT(','):
+							if (depth == 0) index++;
+				break;
+			case wxT('{'):
+						case wxT('}'):
+							case wxT(';'):
+									// error?
+									exit_loop = true;
+				break;
+			case wxT('('):
+						case wxT('<'):
+							case wxT('['):
+									depth++;
+				break;
+			case wxT(')'):
+						case wxT('>'):
+							case wxT(']'):
+									depth--;
+				break;
+			default:
+				break;
+			}
+			pos = ctrl.PositionAfter(pos);
+		}
+	}
+	return index;
+}
+
+void ContextCpp::DoUpdateCalltipHighlight()
+{
+	LEditor &ctrl = GetCtrl();
+	if (ctrl.CallTipActive() && m_ct && m_ct->Count() && ctrl.GetCalltipType() == ct_function_proto) {
+		int index = DoGetCalltipParamterIndex();
+		int start(wxNOT_FOUND), len(wxNOT_FOUND);
+
+		if (index != wxNOT_FOUND) {
+			m_ct->GetHighlightPos(index, start, len);
+			ctrl.CallTipSetHighlight(start, start + len);
+		}
+	}
 }

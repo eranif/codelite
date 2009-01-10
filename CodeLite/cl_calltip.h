@@ -22,12 +22,17 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CODELITE_CALLTIP_H
+#ifndef CODELITE_CALLTIP_H
 #define CODELITE_CALLTIP_H
 
 #include "tokenizer.h"
 #include "smart_ptr.h"
 #include "entry.h"
+
+struct clTipInfo {
+	wxString str;
+	std::vector<std::pair<int, int> > paramLen;
+};
 
 /**
  * A call tip function that wraps a tip strings for function prototypes.
@@ -41,7 +46,8 @@
  */
 class clCallTip
 {
-	std::vector<wxString> m_tips;
+
+	std::vector<clTipInfo> m_tips;
 	int m_curr;
 
 	void Initialize(const std::vector<TagEntryPtr> &tips);
@@ -73,7 +79,7 @@ public:
 	 * Destructor
 	 * \return
 	 */
-	virtual ~clCallTip(){}
+	virtual ~clCallTip() {}
 
 	/**
 	 * Show next tip, if we are at last tip, return the first tip or empty string if no tips exists
@@ -102,6 +108,14 @@ public:
 	 * \brief return all tips as a single string
 	 */
 	wxString All();
+
+	/**
+	 * @brief get the highlight offset & width for the current tip
+	 * @param index paramter index
+	 * @param start [output]
+	 * @param len [output]
+	 */
+	void GetHighlightPos(int index, int &start, int &len);
 
 private:
 	wxString TipAt(int at);

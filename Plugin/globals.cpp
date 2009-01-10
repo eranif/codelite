@@ -36,7 +36,7 @@
 #include "wx/ffile.h"
 #include "procutils.h"
 #include <wx/clipbrd.h>
-#include "pluginmanager.h"
+#include "ieditor.h"
 
 static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &confToBuild, const wxString &fileName);
 
@@ -209,16 +209,15 @@ bool IsValidCppFile(const wxString &id)
 	return true;
 }
 
-wxString ExpandVariables(const wxString &expression, ProjectPtr proj)
+wxString ExpandVariables(const wxString &expression, ProjectPtr proj, IEditor *editor)
 {
 	wxString project_name ( proj->GetName() );
 	wxString fileName;
-	IEditor *editor = PluginManager::Get()->GetActiveEditor();
 	if ( editor ) {
 		fileName = editor->GetFileName().GetFullPath();
 	}
 	return ExpandAllVariables ( expression, WorkspaceST::Get(), project_name, wxEmptyString, fileName );
-    
+
 }
 
 // This functions accepts expression and expand all variables in it

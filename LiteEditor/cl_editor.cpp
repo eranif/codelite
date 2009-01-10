@@ -458,7 +458,7 @@ void LEditor::SetProperties()
 	MarkerSetBackground(smt_error, wxColor(255, 0, 0));
 
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
 
 #ifdef __WXMAC__
 	// turning off these two greatly improves performance
@@ -2740,46 +2740,8 @@ int LEditor::GetEOLByOS()
 
 void LEditor::ShowFunctionTipFromCurrentPos()
 {
-	// determine the closest open brace from the current caret position
-	int pos = PositionBefore( GetCurrentPos() );
-	int depth(0);
-
-	bool exit_loop(false);
-	while ( pos > 0 ) {
-		wxChar ch = SafeGetChar(pos);
-		if (m_context->IsCommentOrString(pos)) {
-			pos = PositionBefore(pos);
-			continue;
-		}
-
-		switch (ch) {
-		case wxT('{'):
-					case wxT('}'):
-						case wxT(';'):
-								exit_loop = true;
-			break;
-		case wxT('('):
-						depth ++;
-			if (depth == 1) {
-				pos = PositionAfter(pos);
-				exit_loop = true;
-			} else {
-				pos = PositionBefore(pos);
-			}
-			break;
-		case wxT(')'):
-						depth--;
-			// fall through
-		default:
-			pos = PositionBefore(pos);
-			break;
-		}
-
-		if (exit_loop)
-			break;
-	}
-
-	if (depth == 1 && pos >= 0) {
+	int pos = DoGetOpenBracePos();
+	if(pos != wxNOT_FOUND){
 		m_context->CodeComplete(pos);
 	}
 }
@@ -3020,10 +2982,13 @@ void LEditor::DoSetStatusMessage(const wxString& msg, int col)
 	Frame::Get()->AddPendingEvent(e);
 }
 
-void LEditor::DoShowCalltip(int pos, const wxString& tip, calltip_type type)
+void LEditor::DoShowCalltip(int pos, const wxString& tip, calltip_type type, int hltPos, int hltLen)
 {
 	m_calltipType = type;
 	CallTipShow(pos, tip);
+	if(hltPos >= 0 && hltLen > 0){
+		CallTipSetHighlight(hltPos, hltLen + hltPos);
+	}
 }
 
 void LEditor::DoCancelCalltip()
@@ -3032,4 +2997,52 @@ void LEditor::DoCancelCalltip()
 	CallTipCancel();
 	// let the context process this as well
 	m_context->OnCalltipCancel();
+}
+
+
+int LEditor::DoGetOpenBracePos()
+{
+	// determine the closest open brace from the current caret position
+	int pos = PositionBefore( GetCurrentPos() );
+	int depth(0);
+
+	bool exit_loop(false);
+	while ( pos > 0 ) {
+		wxChar ch = SafeGetChar(pos);
+		if (m_context->IsCommentOrString(pos)) {
+			pos = PositionBefore(pos);
+			continue;
+		}
+
+		switch (ch) {
+		case wxT('{'):
+					case wxT('}'):
+						case wxT(';'):
+								exit_loop = true;
+			break;
+		case wxT('('):
+						depth ++;
+			if (depth == 1) {
+				pos = PositionAfter(pos);
+				exit_loop = true;
+			} else {
+				pos = PositionBefore(pos);
+			}
+			break;
+		case wxT(')'):
+						depth--;
+			// fall through
+		default:
+			pos = PositionBefore(pos);
+			break;
+		}
+
+		if (exit_loop)
+			break;
+	}
+
+	if (depth == 1 && pos >= 0) {
+		return pos;
+	}
+	return wxNOT_FOUND;
 }

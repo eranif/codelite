@@ -368,8 +368,10 @@ public:
 	void SetWarningMarker(int lineno);
 	void SetErrorMarker(int lineno);
 	void DelAllCompilerMarkers();
-	void DoShowCalltip(int pos, const wxString &tip, calltip_type type);
+	void DoShowCalltip(int pos, const wxString &tip, calltip_type type, int hltPos = wxNOT_FOUND, int hltLen = wxNOT_FOUND);
 	void DoCancelCalltip();
+	int  DoGetOpenBracePos();
+
 	calltip_type GetCalltipType() const {return m_calltipType;}
 
 	//----------------------------------

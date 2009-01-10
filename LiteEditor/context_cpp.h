@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CONTEXT_CPP_H
+#ifndef CONTEXT_CPP_H
 #define CONTEXT_CPP_H
 
 #include "context_base.h"
@@ -33,7 +33,8 @@
 
 class RefactorSource;
 
-class ContextCpp : public ContextBase {
+class ContextCpp : public ContextBase
+{
 	clCallTipPtr m_ct;
 	std::map<wxString, int> m_propertyInt;
 	wxMenu *m_rclickMenu;
@@ -65,6 +66,8 @@ private:
 	void Initialize();
 	void DoCodeComplete(long pos);
 	void DoCreateFile(const wxFileName &fn);
+	int  DoGetCalltipParamterIndex();
+	void DoUpdateCalltipHighlight();
 public:
 	ContextCpp(LEditor *container);
 	virtual ~ContextCpp();
@@ -74,7 +77,7 @@ public:
 	virtual void CodeComplete(long pos = wxNOT_FOUND);
 	virtual void GotoDefinition();
 	virtual void GotoPreviousDefintion();
-    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
+	virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
 	virtual void AutoIndent(const wxChar&);
 	virtual	bool IsCommentOrString(long pos);
 	virtual	bool IsComment(long pos);
@@ -83,11 +86,11 @@ public:
 	virtual void ApplySettings();
 	virtual void RetagFile();
 	virtual wxString CallTipContent();
-    virtual void SetActive();
+	virtual void SetActive();
 
-    // ctrl-click style navigation support
+	// ctrl-click style navigation support
 	virtual int GetHyperlinkRange(int pos, int &start, int &end);
-    virtual void GoHyperlink(int start, int end, int type, bool alt);
+	virtual void GoHyperlink(int start, int end, int type, bool alt);
 
 	//override swapfiles features
 	virtual void SwapFiles(const wxFileName &fileName);
@@ -103,7 +106,9 @@ public:
 
 	//Capture menu events
 	//return this context specific right click menu
-	virtual wxMenu *GetMenu(){return m_rclickMenu;}
+	virtual wxMenu *GetMenu() {
+		return m_rclickMenu;
+	}
 	virtual void OnSwapFiles(wxCommandEvent &event);
 	virtual void OnInsertDoxyComment(wxCommandEvent &event);
 	virtual void OnCommentSelection(wxCommandEvent &event);
@@ -181,5 +186,3 @@ private:
 };
 
 #endif // CONTEXT_CPP_H
-
-

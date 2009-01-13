@@ -1,6 +1,8 @@
 #include "clindexerprotocol.h"
 #include <memory>
 
+#define ACK_MAGIC 1975
+
 clIndexerProtocol::clIndexerProtocol()
 {
 }
@@ -32,7 +34,7 @@ bool clIndexerProtocol::ReadReply(clNamedPipe* conn, clIndexerReply& reply)
 
 	int bytes_left(buff_len);
 	size_t bytes_read(0);
-	while(bytes_left > 0){
+	while (bytes_left > 0) {
 		if ( !conn->read(data+bytes_read, bytes_left, &actual_read, -1) ) {
 			fprintf(stderr, "ERROR: Protocol error: expected %d bytes, got %d\n", buff_len, actual_read);
 			return false;
@@ -42,6 +44,13 @@ bool clIndexerProtocol::ReadReply(clNamedPipe* conn, clIndexerReply& reply)
 	}
 
 	reply.fromBinary(data);
+
+#ifndef __WXMSW__
+	// send confirmation to the to server that we got data
+	// and it can close the connection
+	size_t ack(ACK_MAGIC);
+	conn->write(&ack, sizeof(ack), &actual_read, -1);
+#endif
 	return true;
 }
 
@@ -68,7 +77,7 @@ bool clIndexerProtocol::ReadRequest(clNamedPipe* conn, clIndexerRequest& req)
 
 	int bytes_left(buff_len);
 	size_t bytes_read(0);
-	while(bytes_left > 0){
+	while (bytes_left > 0) {
 		if ( !conn->read(data+bytes_read, bytes_left, &actual_read, -1) ) {
 			fprintf(stderr, "ERROR: Protocol error: expected %d bytes, got %d\n", buff_len, actual_read);
 			return false;
@@ -112,7 +121,20 @@ bool clIndexerProtocol::SendReply(clNamedPipe* conn, clIndexerReply& reply)
 		bytes_left -= actual_written;
 		bytes_written += actual_written;
 	}
+#ifndef __WXMSW__
+	// to make sure that the message has been sent, we wait for the acknoldegment from the client
+	size_t ack(0);
+	conn->read(&ack, sizeof(ack), &actual_written, -1);
+	if (ack == ACK_MAGIC) {
+		// we are OK
+		return true;
+	} else {
+		return false;
+	}
+#else
+	// the above problem does not exist under Windows' NamedPipes
 	return true;
+#endif
 }
 
 bool clIndexerProtocol::SendRequest(clNamedPipe* conn, clIndexerRequest& req)
@@ -124,7 +146,7 @@ bool clIndexerProtocol::SendRequest(clNamedPipe* conn, clIndexerRequest& req)
 	std::auto_ptr<char> sp(data);
 
 	// write request
-	if(!conn->write((void*)&size, sizeof(size), &written, -1)) {
+	if (!conn->write((void*)&size, sizeof(size), &written, -1)) {
 		printf("ERROR: protocol error: rc %d\n", conn->getLastError());
 		return false;
 	}

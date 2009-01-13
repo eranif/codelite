@@ -113,24 +113,24 @@
       </Compiler>
       <Linker Required="yes" Options=""/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands></PostConnectCommands>
-        <StartupCommands></StartupCommands>
+        <PostConnectCommands/>
+        <StartupCommands/>
       </Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <PreprocessFileCommand></PreprocessFileCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Debug_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
@@ -142,26 +142,24 @@
       </Compiler>
       <Linker Required="yes" Options=""/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands></PostConnectCommands>
-        <StartupCommands></StartupCommands>
+        <PostConnectCommands/>
+        <StartupCommands/>
       </Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <PreprocessFileCommand></PreprocessFileCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
@@ -173,24 +171,24 @@
       </Compiler>
       <Linker Required="yes" Options="-O2"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands></PostConnectCommands>
-        <StartupCommands></StartupCommands>
+        <PostConnectCommands/>
+        <StartupCommands/>
       </Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <PreprocessFileCommand></PreprocessFileCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
@@ -202,26 +200,24 @@
       </Compiler>
       <Linker Required="yes" Options="-O2"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands></PostConnectCommands>
-        <StartupCommands></StartupCommands>
+        <PostConnectCommands/>
+        <StartupCommands/>
       </Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <PreprocessFileCommand></PreprocessFileCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
   </Settings>

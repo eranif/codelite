@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="codelite_indexer">
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="src">
+    <File Name="codelite_index_main.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="ctags">
+    <File Name="libctags/yacc.c"/>
+    <File Name="libctags/args.c"/>
+    <File Name="libctags/args.h"/>
+    <File Name="libctags/asm.c"/>
+    <File Name="libctags/asp.c"/>
+    <File Name="libctags/awk.c"/>
+    <File Name="libctags/beta.c"/>
+    <File Name="libctags/c.c"/>
+    <File Name="libctags/clist.c"/>
+    <File Name="libctags/clist.h"/>
+    <File Name="libctags/cobol.c"/>
+    <File Name="libctags/ctags.h"/>
+    <File Name="libctags/debug.c"/>
+    <File Name="libctags/debug.h"/>
+    <File Name="libctags/e_amiga.h"/>
+    <File Name="libctags/e_djgpp.h"/>
+    <File Name="libctags/e_mac.h"/>
+    <File Name="libctags/e_msoft.h"/>
+    <File Name="libctags/e_os2.h"/>
+    <File Name="libctags/e_qdos.h"/>
+    <File Name="libctags/e_riscos.h"/>
+    <File Name="libctags/e_vms.h"/>
+    <File Name="libctags/eiffel.c"/>
+    <File Name="libctags/entry.c"/>
+    <File Name="libctags/entry.h"/>
+    <File Name="libctags/erlang.c"/>
+    <File Name="libctags/fortran.c"/>
+    <File Name="libctags/general.h"/>
+    <File Name="libctags/get.c"/>
+    <File Name="libctags/get.h"/>
+    <File Name="libctags/html.c"/>
+    <File Name="libctags/jscript.c"/>
+    <File Name="libctags/keyword.c"/>
+    <File Name="libctags/keyword.h"/>
+    <File Name="libctags/libctags.h"/>
+    <File Name="libctags/lisp.c"/>
+    <File Name="libctags/lregex.c"/>
+    <File Name="libctags/lua.c"/>
+    <File Name="libctags/main.c"/>
+    <File Name="libctags/main.h"/>
+    <File Name="libctags/make.c"/>
+    <File Name="libctags/options.c"/>
+    <File Name="libctags/options.h"/>
+    <File Name="libctags/parse.c"/>
+    <File Name="libctags/parse.h"/>
+    <File Name="libctags/parsers.h"/>
+    <File Name="libctags/pascal.c"/>
+    <File Name="libctags/perl.c"/>
+    <File Name="libctags/php.c"/>
+    <File Name="libctags/python.c"/>
+    <File Name="libctags/read.c"/>
+    <File Name="libctags/read.h"/>
+    <File Name="libctags/readtags.c"/>
+    <File Name="libctags/readtags.h"/>
+    <File Name="libctags/rexx.c"/>
+    <File Name="libctags/routines.c"/>
+    <File Name="libctags/routines.h"/>
+    <File Name="libctags/ruby.c"/>
+    <File Name="libctags/scheme.c"/>
+    <File Name="libctags/sh.c"/>
+    <File Name="libctags/slang.c"/>
+    <File Name="libctags/sml.c"/>
+    <File Name="libctags/sort.c"/>
+    <File Name="libctags/sort.h"/>
+    <File Name="libctags/sql.c"/>
+    <File Name="libctags/string_util.c"/>
+    <File Name="libctags/string_util.h"/>
+    <File Name="libctags/strlist.c"/>
+    <File Name="libctags/strlist.h"/>
+    <File Name="libctags/tcl.c"/>
+    <File Name="libctags/verilog.c"/>
+    <File Name="libctags/vim.c"/>
+    <File Name="libctags/vstring.c"/>
+    <File Name="libctags/vstring.h"/>
+    <File Name="libctags/config.h"/>
+  </VirtualDirectory>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Debug"/>
+  <VirtualDirectory Name="network">
+    <File Name="network/named_pipe.cpp"/>
+    <File Name="network/named_pipe.h"/>
+    <File Name="network/named_pipe_client.cpp"/>
+    <File Name="network/named_pipe_client.h"/>
+    <File Name="network/named_pipe_server.cpp"/>
+    <File Name="network/named_pipe_server.h"/>
+    <File Name="network/np_connections_server.h"/>
+    <File Name="network/np_connections_server.cpp"/>
+    <File Name="network/cl_indexer_request.h"/>
+    <File Name="network/cl_indexer_reply.cpp"/>
+    <File Name="network/cl_indexer_reply.h"/>
+    <File Name="network/cl_indexer_request.cpp"/>
+    <File Name="network/clindexerprotocol.cpp"/>
+    <File Name="network/clindexerprotocol.h"/>
+  </VirtualDirectory>
+  <Dependencies Name="Debug_Win"/>
+  <Dependencies Name="Release_Win"/>
+  <Dependencies Name="Debug_Unix"/>
+  <Settings Type="Executable">
+    <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Compiler Required="yes" Options="-g">
+        <IncludePath Value="."/>
+        <IncludePath Value="libctags/"/>
+        <Preprocessor Value="HAVE_CONFIG_H"/>
+      </Compiler>
+      <Linker Required="yes" Options=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
+      </Debugger>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Debug_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Compiler Required="yes" Options="-g">
+        <IncludePath Value="."/>
+        <IncludePath Value="libctags/"/>
+        <Preprocessor Value="__WXMSW__"/>
+      </Compiler>
+      <Linker Required="yes" Options=""/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
+      </Debugger>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Release_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Compiler Required="yes" Options="-O2">
+        <IncludePath Value="."/>
+        <IncludePath Value="libctags/"/>
+        <Preprocessor Value="HAVE_CONFIG_H"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
+      </Debugger>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Release_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Compiler Required="yes" Options="">
+        <IncludePath Value="."/>
+        <IncludePath Value="libctags/"/>
+        <Preprocessor Value="__WXMSW__"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
+      </Debugger>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+  <Dependencies Name="Release_Unix"/>
+</CodeLite_Project>

@@ -127,7 +127,7 @@ static void rememberMaxLengths (const size_t nameLength, const size_t lineLength
 		TagFile.max.line = lineLength;
 }
 
-static void writePseudoTag (
+/*static void writePseudoTag (
 		const char *const tagName,
 		const char *const fileName,
 		const char *const pattern)
@@ -137,9 +137,9 @@ static void writePseudoTag (
 			PSEUDO_TAG_PREFIX, tagName, fileName, pattern);
 	++TagFile.numTags.added;
 	rememberMaxLengths (strlen (tagName), (size_t) length);
-}
+}*/
 
-static void addPseudoTags (void)
+/*static void addPseudoTags (void)
 {
 	if (! Option.xref)
 	{
@@ -164,7 +164,7 @@ static void addPseudoTags (void)
 		writePseudoTag ("TAG_PROGRAM_URL",     PROGRAM_URL,  "official site");
 		writePseudoTag ("TAG_PROGRAM_VERSION", PROGRAM_VERSION, "");
 	}
-}
+}*/
 
 static void updateSortedFlag (
 		const char *const line, FILE *const fp, fpos_t startOfLine)
@@ -773,7 +773,6 @@ static int writePatternEntry (const tagEntryInfo *const tag)
 {
 	int i=0;
 	int length = 0;
-	char *line = NULL;
 	const int searchChar = Option.backward ? '?' : '/';
 	boolean newlineTerminated;
 
@@ -781,7 +780,7 @@ static int writePatternEntry (const tagEntryInfo *const tag)
 	if (tag->hasTemplate) {
 		char *const line = (char*)readSourceLines(TagFile.vLine, tag->templatefilePosition, tag->filePosition);
 
-		for(; i<TagFile.vLine->length; i++){
+		for(; i<(int)TagFile.vLine->length; i++){
 			if(TagFile.vLine->buffer[i] == '\n'){
 				TagFile.vLine->buffer[i] = ' ';
 			}

@@ -9,7 +9,11 @@
 #include "network/np_connections_server.h"
 
 #ifdef __WXMSW__
+#ifdef __DEBUG
+#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_dbg"
+#else
 #define PIPE_NAME "\\\\.\\pipe\\codelite_indexer"
+#endif
 #else
 #define PIPE_NAME "/tmp/codelite_indexer.sock"
 #endif
@@ -22,9 +26,9 @@ int main(int argc, char **argv)
 	// build the request
 	req.setCmd(clIndexerRequest::CLI_PARSE);
 	std::vector<std::string> files;
-	
-#ifdef __WXMSW__	
-	files.push_back("C:\\Development\\C++\\codelite\\trunk\\sqlite3\\sqlite3.h");
+
+#ifdef __WXMSW__
+	files.push_back("C:\\Development\\C++\\codelite\\trunk\\sdk\\codelite_indexer\\indexer_client\\Debug\\esocket.h");
 #else
 	char *home = getenv("HOME");
 	std::string file_name;
@@ -49,7 +53,7 @@ int main(int argc, char **argv)
 		if(!clIndexerProtocol::ReadReply(&client, reply)){
 			printf("ERROR: failed to read reply\n");
 		}
-		
+
 		//printf("%s\n", reply.getTags().c_str());
 		// close the connection
 		client.disconnect();

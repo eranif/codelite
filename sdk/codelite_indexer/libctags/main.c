@@ -554,9 +554,7 @@ char *load_file(const char *fileName)
 /** Create tags from argv **/
 extern char *ctags_make_tags (const char *cmd, const char *infile)
 {
-	FILE *f = NULL;
 	char *tags = NULL;
-	long size = 0;
 	char * file_name = NULL;
 
 	ctags_init( cmd, infile );

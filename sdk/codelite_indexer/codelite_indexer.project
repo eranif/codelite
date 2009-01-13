@@ -4,6 +4,16 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <File Name="codelite_index_main.cpp"/>
+    <File Name="equeue_win_impl.h"/>
+    <File Name="equeue.h"/>
+    <File Name="equeue_unix_impl.h"/>
+    <File Name="ethread_win.h"/>
+    <File Name="ethread.h"/>
+    <File Name="ethread_unix.cpp"/>
+    <File Name="ethread_unix.h"/>
+    <File Name="ethread_win.cpp"/>
+    <File Name="workerthread.cpp"/>
+    <File Name="workerthread.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ctags">
     <File Name="libctags/yacc.c"/>
@@ -102,7 +112,6 @@
   </VirtualDirectory>
   <Dependencies Name="Release_Unix"/>
   <Dependencies Name="Debug_Unix"/>
-  <Dependencies Name="Debug_Win"/>
   <Settings Type="Executable">
     <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
@@ -135,10 +144,11 @@
     </Configuration>
     <Configuration Name="Debug_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="-g">
+      <Compiler Required="yes" Options="-g;-Wall">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
         <Preprocessor Value="__WXMSW__"/>
+        <Preprocessor Value="__DEBUG"/>
       </Compiler>
       <Linker Required="yes" Options=""/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -159,7 +169,9 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
@@ -193,7 +205,7 @@
     </Configuration>
     <Configuration Name="Release_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="../../Runtime/codelite_indexer" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="-O2">
+      <Compiler Required="yes" Options="-O2;-Wall">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
         <Preprocessor Value="__WXMSW__"/>
@@ -223,5 +235,6 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug_Win"/>
   <Dependencies Name="Release_Win"/>
 </CodeLite_Project>

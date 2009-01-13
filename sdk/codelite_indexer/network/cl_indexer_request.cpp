@@ -1,3 +1,4 @@
+#include <string.h>
 #include "cl_indexer_request.h"
 
 #define PACK_INT(p, i) {\

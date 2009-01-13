@@ -1,10 +1,10 @@
 #!/bin/sh
 
 ################################################################################
-## This file is part of CodeLite IDE and is released 
-## under the terms of the GNU General Public License as published by  
-##    the Free Software Foundation; either version 2 of the License, or     
-##    (at your option) any later version.                              
+## This file is part of CodeLite IDE and is released
+## under the terms of the GNU General Public License as published by
+##    the Free Software Foundation; either version 2 of the License, or
+##    (at your option) any later version.
 ################################################################################
 
 createRevisionFile()
@@ -179,6 +179,41 @@ createRules_archive ()
 	echo "	ar rcu \$(OUTPUT_DIR)/lib${libname}\$(EXT).a \$(${object_list_name})" >> Makefile
 	echo "	ranlib \$(OUTPUT_DIR)/lib${libname}\$(EXT).a " >> Makefile
 	echo >> Makefile
+}
+
+createCodeLiteIndexerMakefile ()
+{
+	files=$1
+
+	echo "Generating sdk/codelite_indexer/Makefile..."
+	current_wd=`pwd`
+	cd sdk/codelite_indexer/
+
+	## remove old Makefile
+	rm -fr Makefile
+
+	createObjectList "network/*.cpp libctags/*.c *.cpp" "codelite_indexer_objects"
+	for a_file in $files_list
+	do
+		a_file_with_ext=`basename $a_file`
+		a_file_no_ext=`basename $a_file_no_ext .cpp`
+		a_file_no_ext=`basename $a_file_no_ext .c`
+		file_extension=`basename $a_file | cut -d. -f2`
+
+		echo ${configuration}/${a_file_no_ext}.o:  >> Makefile
+		echo "	\$(CMP) -DHAVE_CONFIG_H -I. -I.. -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+
+		## make the link rule
+
+	done
+	echo >> Makefile
+
+	echo "codelite_indexer: \$(codelite_indexer_objects)" >> Makefile
+	echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects)" >> Makefile
+	echo >> Makefile
+
+	## restore the path
+	cd ${current_wd}
 }
 
 createRules_sharedObject_no_link_flags ()
@@ -573,6 +608,7 @@ createRules_archive "CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "codelite"
 createRules_archive "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "wxsqlite3"
 createRules_archive "Plugin/*.cpp " "SDKObjects" "SDK" "plugin"
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
+createCodeLiteIndexerMakefile "sdk/codelite_indexer/*.cpp sdk/codelite_indexer/network/*.cpp sdk/codelite_indexer/libctags/*.c sdk/codelite_indexer/libctags/*.cpp"
 createInstallTarget
 createUnInstallTarget
 

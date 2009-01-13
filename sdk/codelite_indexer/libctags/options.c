@@ -496,9 +496,9 @@ static void parseLongOption (cookedArgs *const args, const char *item)
 	else
 	{
 		const size_t length = equal - item;
-		if(args->item){
-			eFree(args->item);
-		}
+//		if(args->item){
+//			eFree(args->item);
+//		}
 		
 		args->item = xMalloc (length + 1, char);
 		strncpy (args->item, item, length);

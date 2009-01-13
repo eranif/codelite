@@ -20,12 +20,15 @@ bool clIndexerProtocol::ReadReply(clNamedPipe* conn, clIndexerReply& reply)
 	size_t actual_read(0);
 
 	if ( !conn->read((void*)&buff_len, sizeof(buff_len), &actual_read, -1) ) {
-		fprintf(stderr, "ERROR: Failed to read from the pipe, reason: %d\n", conn->getLastError());
+		fprintf(stderr, "ERROR: ReadReply: Failed to read from the pipe, reason: %d\n", conn->getLastError());
 		return false;
 	}
 
 	if (actual_read != sizeof(buff_len)) {
-		fprintf(stderr, "ERROR: Protocol error: expected %d bytes, got %d\n", sizeof(buff_len), actual_read);
+		fprintf(stderr, "ERROR: ReadReply: Protocol error: expected %d bytes, got %d. reason: %d\n", 
+				sizeof(buff_len), 
+				actual_read, 
+				conn->getLastError());
 		return false;
 	}
 
@@ -45,12 +48,12 @@ bool clIndexerProtocol::ReadReply(clNamedPipe* conn, clIndexerReply& reply)
 
 	reply.fromBinary(data);
 
-#ifndef __WXMSW__
-	// send confirmation to the to server that we got data
-	// and it can close the connection
-	size_t ack(ACK_MAGIC);
-	conn->write(&ack, sizeof(ack), &actual_read, -1);
-#endif
+//#ifndef __WXMSW__
+//	// send confirmation to the to server that we got data
+//	// and it can close the connection
+//	size_t ack(ACK_MAGIC);
+//	conn->write(&ack, sizeof(ack), &actual_read, -1);
+//#endif
 	return true;
 }
 
@@ -121,20 +124,21 @@ bool clIndexerProtocol::SendReply(clNamedPipe* conn, clIndexerReply& reply)
 		bytes_left -= actual_written;
 		bytes_written += actual_written;
 	}
-#ifndef __WXMSW__
-	// to make sure that the message has been sent, we wait for the acknoldegment from the client
-	size_t ack(0);
-	conn->read(&ack, sizeof(ack), &actual_written, -1);
-	if (ack == ACK_MAGIC) {
-		// we are OK
-		return true;
-	} else {
-		return false;
-	}
-#else
+//#ifndef __WXMSW__
+//	// to make sure that the message has been sent, we wait for the acknoldegment from the client
+//	size_t ack(0);
+//	size_t rr;
+//	conn->read(&ack, sizeof(ack), &rr, -1);
+//	if (ack == ACK_MAGIC) {
+//		// we are OK
+//		return true;
+//	} else {
+//		return false;
+//	}
+//#else
 	// the above problem does not exist under Windows' NamedPipes
 	return true;
-#endif
+//#endif
 }
 
 bool clIndexerProtocol::SendRequest(clNamedPipe* conn, clIndexerRequest& req)

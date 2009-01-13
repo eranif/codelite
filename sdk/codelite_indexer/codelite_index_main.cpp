@@ -25,6 +25,9 @@ DWORD WINAPI ClientThread(LPVOID lpvParam)
 
 int main(int argc, char **argv)
 {
+	int max_requests(10000);
+	int requests(0);
+
 	// create the connection factory
 	clNamedPipeConnectionsServer server(PIPE_NAME);
 
@@ -86,6 +89,11 @@ int main(int argc, char **argv)
 				break;
 			}
 			delete conn;
+		}
+		requests ++;
+		if(requests == max_requests) {
+			printf("INFO: Max requests reached, going down\n");
+			break;
 		}
 	}
 

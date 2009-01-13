@@ -218,12 +218,13 @@ createCodeLiteIndexerMakefile ()
 		a_file_no_ext=`basename $a_file_no_ext .cpp`
 		a_file_no_ext=`basename $a_file_no_ext .c`
 		file_extension=`basename $a_file | cut -d. -f2`
-
-		echo ${configuration}/${a_file_no_ext}.o:  >> Makefile
+		
+		echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
 		echo "	\$(CMP) -DHAVE_CONFIG_H -I. -Ilibctags -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-
-		## make the link rule
-
+		echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+		echo "	\$(CMP) -DHAVE_CONFIG_H -I. -Ilibctags  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		
+		echo "-include ${configuration}/*.d" >> Makefile
 	done
 	echo >> Makefile
 
@@ -232,11 +233,15 @@ createCodeLiteIndexerMakefile ()
 	echo >> Makefile
 
 	echo "make_dirs:" >> Makefile
+	echo "	@echo" >> Makefile
+	echo "	@echo \"----------Building project:[ codelite_indexer - ${configuration} ]----------\"" >> Makefile
+	echo "	@echo" >> Makefile
 	echo "	test -d ${configuration} || mkdir ${configuration}" >> Makefile
 	echo >> Makefile
 
 	echo "clean: " >> Makefile
 	echo "	\$(RM) -fr ${configuration}/*.o" >> Makefile
+	echo "	\$(RM) -fr ${configuration}/*.o.d" >> Makefile
 	echo "	\$(RM) -fr codelite_indexer" >> Makefile
 	echo "clean: " >> Makefile
 
@@ -327,6 +332,8 @@ createRules_sharedObject ()
 
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
 	echo "	\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
+	echo >> Makefile
+	echo "-include ${configuration}/*.o.d" >> Makefile
 	echo >> Makefile
 }
 

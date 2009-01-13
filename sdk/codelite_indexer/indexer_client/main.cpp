@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	char *home = getenv("HOME");
 	std::string file_name;
 	file_name += home;
-	file_name += "/devl/codelite/trunk/sqlite3/sqlite3.h";
+	file_name += "/devl/codelite/sqlite3/sqlite3.h";
 	files.push_back(file_name);
 #endif
 

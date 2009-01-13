@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Workspace Name="codelite_indexer" Database="./codelite_indexer.tags">
-  <Project Name="codelite_indexer" Path="codelite_indexer.project" Active="No"/>
-  <Project Name="indexer_client" Path="indexer_client/indexer_client.project" Active="Yes"/>
+  <Project Name="codelite_indexer" Path="codelite_indexer.project" Active="Yes"/>
+  <Project Name="indexer_client" Path="indexer_client/indexer_client.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug_Unix" Selected="no">
       <Project Name="indexer_client" ConfigName="Debug_Unix"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release_Unix" Selected="no">
+    <WorkspaceConfiguration Name="Release_Unix" Selected="yes">
       <Project Name="indexer_client" ConfigName="Release_Unix"/>
       <Project Name="codelite_indexer" ConfigName="Release_Unix"/>
     </WorkspaceConfiguration>

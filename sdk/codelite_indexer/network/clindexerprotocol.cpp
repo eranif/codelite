@@ -45,12 +45,12 @@ bool clIndexerProtocol::ReadReply(clNamedPipe* conn, clIndexerReply& reply)
 
 	reply.fromBinary(data);
 
-#ifndef __WXMSW__
-	// send confirmation to the to server that we got data
-	// and it can close the connection
-	size_t ack(ACK_MAGIC);
-	conn->write(&ack, sizeof(ack), &actual_read, -1);
-#endif
+//#ifndef __WXMSW__
+//	// send confirmation to the to server that we got data
+//	// and it can close the connection
+//	size_t ack(ACK_MAGIC);
+//	conn->write(&ack, sizeof(ack), &actual_read, -1);
+//#endif
 	return true;
 }
 
@@ -68,7 +68,7 @@ bool clIndexerProtocol::ReadRequest(clNamedPipe* conn, clIndexerRequest& req)
 	}
 
 	if (actual_read != sizeof(buff_len)) {
-		fprintf(stderr, "ERROR: Protocol error: expected %d bytes, got %d\n", sizeof(buff_len), actual_read);
+		fprintf(stderr, "ERROR: [%s] Protocol error: expected %d bytes, got %d\n", __PRETTY_FUNCTION__, sizeof(buff_len), actual_read);
 		return false;
 	}
 
@@ -79,7 +79,7 @@ bool clIndexerProtocol::ReadRequest(clNamedPipe* conn, clIndexerRequest& req)
 	size_t bytes_read(0);
 	while (bytes_left > 0) {
 		if ( !conn->read(data+bytes_read, bytes_left, &actual_read, -1) ) {
-			fprintf(stderr, "ERROR: Protocol error: expected %d bytes, got %d\n", buff_len, actual_read);
+			fprintf(stderr, "ERROR: [%s] Protocol error: expected %d bytes, got %d\n", __PRETTY_FUNCTION__, buff_len, actual_read);
 			return false;
 		}
 		bytes_left -= actual_read;
@@ -121,20 +121,23 @@ bool clIndexerProtocol::SendReply(clNamedPipe* conn, clIndexerReply& reply)
 		bytes_left -= actual_written;
 		bytes_written += actual_written;
 	}
-#ifndef __WXMSW__
-	// to make sure that the message has been sent, we wait for the acknoldegment from the client
-	size_t ack(0);
-	conn->read(&ack, sizeof(ack), &actual_written, -1);
-	if (ack == ACK_MAGIC) {
-		// we are OK
-		return true;
-	} else {
-		return false;
-	}
-#else
+//#ifndef __WXMSW__
+//	// to make sure that the message has been sent, we wait for the acknoldegment from the client
+//	size_t ack(0);
+//	size_t rr;
+//	conn->read(&ack, sizeof(ack), &rr, -1);
+//	if (ack == ACK_MAGIC) {
+//		// we are OK
+//		printf("INFO: Got ACK!\n");
+//		return true;
+//	} else {
+//		printf("ERROR: Did not got the ack!\n");
+//		return false;
+//	}
+//#else
 	// the above problem does not exist under Windows' NamedPipes
 	return true;
-#endif
+//#endif
 }
 
 bool clIndexerProtocol::SendRequest(clNamedPipe* conn, clIndexerRequest& req)
@@ -147,7 +150,7 @@ bool clIndexerProtocol::SendRequest(clNamedPipe* conn, clIndexerRequest& req)
 
 	// write request
 	if (!conn->write((void*)&size, sizeof(size), &written, -1)) {
-		printf("ERROR: protocol error: rc %d\n", conn->getLastError());
+		printf("ERROR: [%s] protocol error: rc %d\n", __PRETTY_FUNCTION__, conn->getLastError());
 		return false;
 	}
 

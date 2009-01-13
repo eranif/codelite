@@ -183,35 +183,68 @@ createRules_archive ()
 
 createCodeLiteIndexerMakefile ()
 {
-	files=$1
-
+	files_list=$1
 	echo "Generating sdk/codelite_indexer/Makefile..."
 	current_wd=`pwd`
+	
 	cd sdk/codelite_indexer/
 
 	## remove old Makefile
 	rm -fr Makefile
-
+	
+	compiler_name="g++ "
+	if [ "$arch" = "x86_64" ]; then
+		compiler_name=${compiler_name}" -fPIC -DON_64_BIT "
+		c_compiler_name=${c_compiler_name}" -fPIC -DON_64_BIT "
+	fi
+	## set the executable name
+	if [ "$enable_debug" = "yes" ]; then
+		debug_flag=" -g "
+		configuration="Debug"
+		optimization=" -O0 "
+	else
+		configuration="Release"
+		debug_flag=""
+		optimization=" -O2 "
+	fi
+	
+	echo "OPT=${optimization}" >> Makefile
+	echo "DEBUG=${debug_flag}" >> Makefile
+	echo "CMP=${compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "" >> Makefile
+	echo "all: codelite_indexer" >> Makefile
+	
 	createObjectList "network/*.cpp libctags/*.c *.cpp" "codelite_indexer_objects"
+	
 	for a_file in $files_list
 	do
 		a_file_with_ext=`basename $a_file`
+		a_file_no_ext=`basename $a_file .cxx`
 		a_file_no_ext=`basename $a_file_no_ext .cpp`
 		a_file_no_ext=`basename $a_file_no_ext .c`
 		file_extension=`basename $a_file | cut -d. -f2`
-
+		
 		echo ${configuration}/${a_file_no_ext}.o:  >> Makefile
-		echo "	\$(CMP) -DHAVE_CONFIG_H -I. -I.. -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+		echo "	\$(CMP) -DHAVE_CONFIG_H -I. -Ilibctags -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 
 		## make the link rule
 
 	done
 	echo >> Makefile
-
-	echo "codelite_indexer: \$(codelite_indexer_objects)" >> Makefile
+	
+	echo "codelite_indexer: make_dirs \$(codelite_indexer_objects)" >> Makefile
 	echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects)" >> Makefile
 	echo >> Makefile
-
+	
+	echo "make_dirs:" >> Makefile
+	echo "	test -d ${configuration} || mkdir ${configuration}" >> Makefile
+	echo >> Makefile
+	
+	echo "clean: " >> Makefile
+	echo "	\$(RM) -fr ${configuration}/*.o" >> Makefile
+	echo "	\$(RM) -fr codelite_indexer" >> Makefile
+	echo "clean: " >> Makefile
+	
 	## restore the path
 	cd ${current_wd}
 }

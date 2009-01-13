@@ -26,7 +26,11 @@ int main(int argc, char **argv)
 #ifdef __WXMSW__	
 	files.push_back("C:\\Development\\C++\\codelite\\trunk\\sqlite3\\sqlite3.h");
 #else
-	files.push_back("/home/eran/devl/codelite/trunk/sqlite3/sqlite3.h");
+	char *home = getenv("HOME");
+	std::string file_name;
+	file_name += home;
+	file_name += "/devl/codelite/trunk/sqlite3/sqlite3.h";
+	files.push_back(file_name);
 #endif
 
 	req.setFiles(files);

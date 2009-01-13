@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <list>
 #include <errno.h>
+#include <sys/time.h>
 
 template <class T>
 class eQueueImpl

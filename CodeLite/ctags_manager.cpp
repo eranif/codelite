@@ -24,6 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
 #include "ctags_manager.h"
+#include "named_pipe_client.h"
+#include "cl_indexer_request.h"
+#include "clindexerprotocol.h"
+#include "cl_indexer_reply.h"
 #include <wx/txtstrm.h>
 #include <wx/file.h>
 #include <algorithm>
@@ -42,6 +46,12 @@
 
 //#define __PERFORMANCE
 #include "performance.h"
+
+#ifdef __WXMSW__
+#  define PIPE_NAME "\\\\.\\pipe\\codelite_indexer"
+#else
+#  define PIPE_NAME "/tmp/codelite_indexer.sock"
+#endif
 
 const wxEventType wxEVT_UPDATE_FILETREE_EVENT = wxNewEventType();
 
@@ -80,10 +90,8 @@ BEGIN_EVENT_TABLE(TagsManager, wxEvtHandler)
 END_EVENT_TABLE()
 
 TagsManager::TagsManager() : wxEvtHandler()
-		, m_ctagsPath(wxT("ctags-le"))
-#if defined (__WXMSW__) || defined (__WXGTK__)
-		, m_ctags(NULL)
-#endif
+		, m_codeliteIndexerPath(wxT("codelite_indexer"))
+		, m_codeliteIndexerProcess(NULL)
 		, m_canDeleteCtags(true)
 		, m_timer(NULL)
 		, m_lang(NULL)
@@ -96,15 +104,9 @@ TagsManager::TagsManager() : wxEvtHandler()
 
 	m_extDbCache->SetMAxCacheSize(1000);
 	m_workspaceDbCache->SetMAxCacheSize(500);
-
-#if defined (__WXMSW__) || defined (__WXGTK__)
-	m_ctagsCmd = wxT("  --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p --filter=yes  --filter-terminator=\"<<EOF>>\" ");
+	m_ctagsCmd = wxT("  --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
 	m_timer = new wxTimer(this, CtagsMgrTimerId);
 	m_timer->Start(100);
-#else
-	m_ctagsCmd = wxT(" -f- --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
-#endif
-
 }
 
 TagsManager::~TagsManager()
@@ -117,12 +119,11 @@ TagsManager::~TagsManager()
 		delete m_timer;
 	}
 
-#if defined (__WXMSW__) || defined (__WXGTK__)
 	wxCriticalSectionLocker locker(m_cs);
 	if (m_canDeleteCtags) {
-		if (m_ctags)	m_ctags->Disconnect(m_ctags->GetUid(), wxEVT_END_PROCESS, wxProcessEventHandler(TagsManager::OnCtagsEnd), NULL, this);
+		if (m_codeliteIndexerProcess)	m_codeliteIndexerProcess->Disconnect(m_codeliteIndexerProcess->GetUid(), wxEVT_END_PROCESS, wxProcessEventHandler(TagsManager::OnCtagsEnd), NULL, this);
 		// terminate ctags process
-		if (m_ctags) m_ctags->Terminate();
+		if (m_codeliteIndexerProcess) m_codeliteIndexerProcess->Terminate();
 
 		std::list<clProcess*>::iterator it = m_gargabeCollector.begin();
 		for (; it != m_gargabeCollector.end(); it++) {
@@ -133,7 +134,6 @@ TagsManager::~TagsManager()
 		}
 		m_gargabeCollector.clear();
 	}
-#endif
 }
 
 void TagsManager::OnTimer(wxTimerEvent &event)
@@ -313,17 +313,12 @@ TagTreePtr TagsManager::ParseSourceFile(const wxFileName& fp, std::vector<DbReco
 {
 	wxString tags;
 
-#if defined (__WXMSW__) || defined (__WXGTK__)
-	if ( !m_ctags ) {
+	if ( !m_codeliteIndexerProcess ) {
 		return TagTreePtr( NULL );
 	}
-	SourceToTags(fp, tags, m_ctags);
-#else
-	//Mac
-	SourceToTags2(fp, tags);
-#endif
+	SourceToTags(fp, tags);
 
-	//	return ParseTagsFile(tags, project);
+	// return ParseTagsFile(tags, project);
 	TagTreePtr ttp = TagTreePtr( TreeFromTags(tags) );
 
 	if ( comments && GetParseComments() ) {
@@ -397,7 +392,6 @@ void TagsManager::Delete(const wxFileName& path, const wxString& fileName)
 // Process Handling of CTAGS
 //--------------------------------------------------------
 
-#if defined (__WXMSW__) || defined (__WXGTK__)
 clProcess *TagsManager::StartCtagsProcess()
 {
 	// Make this call threadsafe
@@ -409,7 +403,7 @@ clProcess *TagsManager::StartCtagsProcess()
 	ctagsCmd << m_tagsOptions.ToString() << m_ctagsCmd;
 
 	// build the command, we surround ctags name with double quatations
-	cmd << wxT("\"") << m_ctagsPath.GetFullPath() << wxT("\"") << ctagsCmd;
+	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\"") << ctagsCmd;
 	clProcess* process;
 
 	process = new clProcess(wxNewId(), cmd);
@@ -419,20 +413,20 @@ clProcess *TagsManager::StartCtagsProcess()
 	m_processes[process->GetPid()] = process;
 
 	if ( process->GetPid() <= 0 ) {
-		m_ctags = NULL;
+		m_codeliteIndexerProcess = NULL;
 		return NULL;
 	}
 
 	// attach the termination event to the tags manager class
 	process->Connect(process->GetUid(), wxEVT_END_PROCESS, wxProcessEventHandler(TagsManager::OnCtagsEnd), NULL, this);
-	m_ctags = process;
+	m_codeliteIndexerProcess = process;
 	return process;
 }
 
 void TagsManager::RestartCtagsProcess()
 {
 	clProcess *oldProc(NULL);
-	oldProc = m_ctags;
+	oldProc = m_codeliteIndexerProcess;
 
 	if ( !oldProc ) {
 		return ;
@@ -442,17 +436,15 @@ void TagsManager::RestartCtagsProcess()
 	// by the termination handler OnCtagsEnd()
 	oldProc->Terminate();
 }
-#endif
 
-void TagsManager::SetCtagsPath(const wxString& path)
+void TagsManager::SetCodeLiteIndexerPath(const wxString& path)
 {
 	// Make this call threadsafe
 	wxCriticalSectionLocker locker(m_cs);
 
-	m_ctagsPath = wxFileName(path, wxT("ctags-le"));
+	m_codeliteIndexerPath = wxFileName(path, wxT("codelite_indexer"));
 }
 
-#if defined (__WXMSW__) || defined (__WXGTK__)
 void TagsManager::OnCtagsEnd(wxProcessEvent& event)
 {
 	//-----------------------------------------------------------
@@ -492,82 +484,49 @@ void TagsManager::OnCtagsEnd(wxProcessEvent& event)
 		m_processes.erase(iter);
 	}
 }
-#endif
 
 //---------------------------------------------------------------------
 // Parsing
 //---------------------------------------------------------------------
-void TagsManager::SourceToTags(const wxFileName& source, wxString& tags, clProcess *ctags)
+void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 {
-	wxASSERT_MSG(wxThread::IsMain(), wxT("SourceToTags can be called only from the main thread!"));
+	clNamedPipeClient client(PIPE_NAME);
 
-#if defined (__WXMSW__) || defined (__WXGTK__)
-	if (ctags == NULL) {
-		ctags = m_ctags;
-	}
+	// Build a request for the indexer
+	clIndexerRequest req;
+	// set the command
+	req.setCmd(clIndexerRequest::CLI_PARSE);
 
-	wxOutputStream *out = ctags->GetOutputStream();
-	if ( out ) {
-		wxString cmd(source.GetFullPath());
-		cmd += wxT("\n");
+	// prepare list of files to be parsed
+	std::vector<std::string> files;
+	files.push_back(source.GetFullPath().mb_str(wxConvUTF8).data());
+	req.setFiles(files);
 
-		const wxCharBuffer pWriteData = _C(cmd);
-		out->Write(pWriteData.data(), cmd.Length());
-	} else {
+	// set ctags options to be used
+	wxString ctagsCmd;
+	ctagsCmd << wxT(" ") << m_tagsOptions.ToString() << wxT(" --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
+	req.setCtagOptions(ctagsCmd.mb_str(wxConvUTF8).data());
+
+	// connect to the indexer
+	if(!client.connect()){
+		wxPrintf(wxT("Failed to connect to indexer!\n"));
 		return;
 	}
 
-	static int maxPeeks = 1000;
-	int count = 0;
-
-	tags.Empty();
-	while (true) {
-		if (ctags->IsInputAvailable()) {
-			wxTextInputStream in(*ctags->GetInputStream());
-			tags << in.GetChar();
-			if (tags.EndsWith(wxT("<<EOF>>")))
-				break;
-			count =  0;
-		} else {
-			count++;
-			wxMilliSleep(1);
-			if (count >= maxPeeks) {
-				RestartCtagsProcess();
-				tags.Empty();
-				break;
-			}
-		}
-	}
-#else
-	//On mac use the second version of tags processing
-	wxUnusedVar(ctags);
-	SourceToTags2(source, tags);
-	return;
-#endif
-}
-
-void TagsManager::SourceToTags2(const wxFileName &fileName, wxString &tags)
-{
-	//second version of soruce->tags
-	wxString cmd;
-
-	// Get ctags flags from the map
-	wxString ctagsCmd;
-	ctagsCmd << m_tagsOptions.ToString() << wxT(" -f- --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
-
-	// build the command, we surround ctags name with double quatations
-	cmd << wxT("\"") << m_ctagsPath.GetFullPath() << wxT("\"") << ctagsCmd << wxT(" \"") << fileName.GetFullPath() << wxT("\"");
-
-	wxArrayString output;
-	ProcUtils::SafeExecuteCommand(cmd, output);
-
-	tags.Clear();
-	for (size_t i=0; i<output.GetCount(); i++) {
-		tags << output.Item(i) << wxT("\n");
+	// send the request
+	if( !clIndexerProtocol::SendRequest(&client, req) ){
+		wxPrintf(wxT("Failed to send request to indexer!\n"));
+		return;
 	}
 
-	//wxPrintf(wxT("%s\n"), cmd.GetData());
-	//wxPrintf(wxT("SourceToTags2:\n%s\n"), tags.GetData());
+	// read the reply
+	clIndexerReply reply;
+	if(!clIndexerProtocol::ReadReply(&client, reply)){
+		wxPrintf(wxT("ERROR: failed to read reply\n"));
+		return;
+	}
+	// convert the data into wxString
+	tags = wxString::From8BitData(reply.getTags().c_str());
 }
 
 TagTreePtr TagsManager::TreeFromTags(const wxString& tags)
@@ -2547,7 +2506,7 @@ wxString TagsManager::GetCTagsCmd()
 	ctagsCmd << m_tagsOptions.ToString() << m_ctagsCmd;
 
 	// build the command, we surround ctags name with double quatations
-	cmd << wxT("\"") << m_ctagsPath.GetFullPath() << wxT("\"") << ctagsCmd;
+	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\"") << ctagsCmd;
 
 	return cmd;
 }

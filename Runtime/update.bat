@@ -12,7 +12,7 @@ xcopy templates\ "%ProgramFiles%\CodeLite\templates\" /E /I /H /Y /EXCLUDE:exclu
 xcopy templates\formbuilder\* "%ProgramFiles%\CodeLite\templates\formbuilder\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "%ProgramFiles%\CodeLite\" /H /Y /EXCLUDE:excludes
 :: Copy the misc files
-copy ctags-le.exe "%ProgramFiles%\CodeLite\" /Y
+copy codelite_indexer.exe "%ProgramFiles%\CodeLite\" /Y
 copy makedir.exe "%ProgramFiles%\CodeLite\" /Y
 copy le_exec.exe "%ProgramFiles%\CodeLite\" /Y
 copy CodeLite.exe "%ProgramFiles%\CodeLite\" /Y

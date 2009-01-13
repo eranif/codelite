@@ -95,14 +95,9 @@ createMainTargets()
 	echo "${target_all}" >> Makefile
 	echo "" >> Makefile
 
-	echo "ctags: sdk/ctags/Makefile" >> Makefile
-	echo "	@cd sdk/ctags/ && \$(MAKE)" >> Makefile
-	echo "	cp -fr sdk/ctags/ctags-le Runtime/." >> Makefile
-	echo "" >> Makefile
-
-	echo "sdk/ctags/Makefile: sdk/ctags/source.mak" >> Makefile
-	echo "	@chmod +x sdk/ctags/configure" >> Makefile
-	echo "	cd sdk/ctags && ./configure" >> Makefile
+	echo "codelite_indexer:" >> Makefile
+	echo "	@cd sdk/codelite_indexer/ && \$(MAKE)" >> Makefile
+	echo "	cp -fr sdk/codelite_indexer/codelite_indexer Runtime/." >> Makefile
 	echo "" >> Makefile
 
 	echo "pre_build:" >> Makefile
@@ -186,12 +181,12 @@ createCodeLiteIndexerMakefile ()
 	files_list=$1
 	echo "Generating sdk/codelite_indexer/Makefile..."
 	current_wd=`pwd`
-	
+
 	cd sdk/codelite_indexer/
 
 	## remove old Makefile
 	rm -fr Makefile
-	
+
 	compiler_name="g++ "
 	if [ "$arch" = "x86_64" ]; then
 		compiler_name=${compiler_name}" -fPIC -DON_64_BIT "
@@ -207,15 +202,15 @@ createCodeLiteIndexerMakefile ()
 		debug_flag=""
 		optimization=" -O2 "
 	fi
-	
+
 	echo "OPT=${optimization}" >> Makefile
 	echo "DEBUG=${debug_flag}" >> Makefile
 	echo "CMP=${compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
 	echo "" >> Makefile
 	echo "all: codelite_indexer" >> Makefile
-	
+
 	createObjectList "network/*.cpp libctags/*.c *.cpp" "codelite_indexer_objects"
-	
+
 	for a_file in $files_list
 	do
 		a_file_with_ext=`basename $a_file`
@@ -223,7 +218,7 @@ createCodeLiteIndexerMakefile ()
 		a_file_no_ext=`basename $a_file_no_ext .cpp`
 		a_file_no_ext=`basename $a_file_no_ext .c`
 		file_extension=`basename $a_file | cut -d. -f2`
-		
+
 		echo ${configuration}/${a_file_no_ext}.o:  >> Makefile
 		echo "	\$(CMP) -DHAVE_CONFIG_H -I. -Ilibctags -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 
@@ -231,20 +226,20 @@ createCodeLiteIndexerMakefile ()
 
 	done
 	echo >> Makefile
-	
+
 	echo "codelite_indexer: make_dirs \$(codelite_indexer_objects)" >> Makefile
 	echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects)" >> Makefile
 	echo >> Makefile
-	
+
 	echo "make_dirs:" >> Makefile
 	echo "	test -d ${configuration} || mkdir ${configuration}" >> Makefile
 	echo >> Makefile
-	
+
 	echo "clean: " >> Makefile
 	echo "	\$(RM) -fr ${configuration}/*.o" >> Makefile
 	echo "	\$(RM) -fr codelite_indexer" >> Makefile
 	echo "clean: " >> Makefile
-	
+
 	## restore the path
 	cd ${current_wd}
 }
@@ -460,7 +455,7 @@ createInstallTarget()
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
-	echo "	@cp sdk/ctags/ctags-le \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@cp sdk/codelite_indexer/codlelite_indexer \$(DESTDIR)$prefix/bin/" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/applications" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/config" >> Makefile
@@ -520,7 +515,7 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/ctags-le" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codlite_indexer" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUR" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUD" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite" >> Makefile

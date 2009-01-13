@@ -694,23 +694,21 @@ void Frame::CreateGUIControls(void)
 	BuildSettingsConfigST::Get()->Load();
 
 	//load dialog properties
-//    GetOutputPane()->GetFindResultsTab()->LoadFindInFilesData();
 	EditorConfigST::Get()->ReadObject(wxT("FindAndReplaceData"), &LEditor::GetFindReplaceData());
 	EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
 	TagsManager *tagsManager = TagsManagerST::Get();
-#if defined (__WXMSW__)
+
 	//start ctags process
-	tagsManager->StartCtagsProcess();
-#elif defined (__WXMAC__)
-	// On Mac OSX, search the ctags-le in the correct path
-	tagsManager->SetCtagsPath(wxStandardPaths::Get().GetDataDir());
+#if defined (__WXMAC__)
+	// On Mac OSX, search the codelite_indexer in the correct path
+	tagsManager->SetCodeLiteIndexerPath(wxStandardPaths::Get().GetDataDir());
 #else
-	// set the path to ctags - assumes that ctags-le is located under the same path codelite exe
+	// set the path to codelite_indexer
 	wxFileName exePath( wxStandardPaths::Get().GetExecutablePath() );
-	tagsManager->SetCtagsPath(exePath.GetPath());
-	tagsManager->StartCtagsProcess();
+	tagsManager->SetCodeLiteIndexerPath(exePath.GetPath());
 #endif
+	tagsManager->StartCtagsProcess();
 
 	//--------------------------------------------------------------------------------------
 	// Start the parsing thread, the parsing thread and the SymbolTree (or its derived)
@@ -727,7 +725,6 @@ void Frame::CreateGUIControls(void)
 
 	// And finally create a status bar
 	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
-//	wxStatusBar* statusBar = new CustomStatusBar(this, wxID_ANY);
 	SetStatusBar(statusBar);
 	m_status.resize(5);
 	GetStatusBar()->SetFieldsCount(m_status.size());

@@ -103,9 +103,6 @@ private:
 	 * \param request the request to process
 	 */
 	void ProcessRequest(ThreadRequest *request);
-//	
-//	void SourceToTags(const wxString &fileName, IProcess *proc, wxString &tags);
-//	
 	/**
 	 * Send an event to the window with an array of items that where changed.
 	 * \param evtType Event type to send, one of:

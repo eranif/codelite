@@ -29,12 +29,6 @@
 #include "tags_database.h"
 #include <wx/stopwatch.h>
 
-#ifdef __VISUALC__
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-#endif
-
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM)
@@ -66,7 +60,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	//convert the file content into tags
 	wxString tags;
 	wxString file_name(req->getFile());
-	tagmgr->SourceToTags2(file_name, tags);
+	tagmgr->SourceToTags(file_name, tags);
 
 	req->setTags(tags);
 
@@ -231,36 +225,3 @@ void ParseRequest::setFile(const wxString& file)
 ParseRequest::~ParseRequest()
 {
 }
-
-//void ParseThread::SourceToTags(const wxString& fileName, IProcess *proc, wxString &tags)
-//{
-//	wxString cmd(fileName.c_str());
-//	cmd += wxT("\n");
-//	if (proc->IsRunning()) {
-//
-//		proc->Write(cmd);
-//
-//		// wait from reply from ctags process
-//		static int maxPeeks = 1000;
-//		int count = 0;
-//
-//		tags.Empty();
-//		while (true) {
-//			wxString tmp;
-//			proc->ReadAll(tmp);
-//			tags << tmp;
-//
-//			if (tmp.Trim().Trim(false).EndsWith(wxT("<<EOF>>"))) {
-//				count =  0;
-//				break;
-//			} else {
-//				count++;
-//				wxMilliSleep(1);
-//				if (count >= maxPeeks) {
-//					tags.clear();
-//					break;
-//				}
-//			}
-//		}
-//	}
-//}

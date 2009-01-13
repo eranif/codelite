@@ -94,7 +94,6 @@
     <File Name="tagscache.h"/>
   </VirtualDirectory>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Static Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="" Type="">
       <General OutputFile="../lib/gcc_lib/libCodeLiteud.a" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
@@ -220,4 +219,21 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="codelite_indexer_API">
+    <File Name="np_connections_server.h"/>
+    <File Name="cl_indexer_reply.cpp"/>
+    <File Name="cl_indexer_reply.h"/>
+    <File Name="cl_indexer_request.cpp"/>
+    <File Name="cl_indexer_request.h"/>
+    <File Name="clindexerprotocol.cpp"/>
+    <File Name="clindexerprotocol.h"/>
+    <File Name="named_pipe.cpp"/>
+    <File Name="named_pipe.h"/>
+    <File Name="named_pipe_client.cpp"/>
+    <File Name="named_pipe_client.h"/>
+    <File Name="named_pipe_server.cpp"/>
+    <File Name="named_pipe_server.h"/>
+    <File Name="np_connections_server.cpp"/>
+  </VirtualDirectory>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

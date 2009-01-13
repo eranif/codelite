@@ -53,7 +53,7 @@ Source: "C:\Development\C++\codelite\trunk\Runtime\lexers\BlackTheme\*.xml"; Des
 Source: "C:\Development\C++\codelite\trunk\Runtime\debuggers\Debugger.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\plugins\resources\*"; DestDir: "{app}\plugins\resources\"; Flags: ignoreversion ; Components: Editor
-Source: "C:\Development\C++\codelite\trunk\Runtime\ctags-le.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\le_exec.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
@@ -87,7 +87,7 @@ Root: HKCU	; Subkey: "SOFTWARE\CodeLite\"; ValueType: string; ValueName: "wx"; V
 var
   MinGW_Page: TInputDirWizardPage;
   Wx_Page: TInputDirWizardPage;
-  
+
 procedure CreateMinGWPage();
 begin
   MinGW_Page := CreateInputDirPage(wpSelectComponents,
@@ -131,7 +131,7 @@ end;
 procedure InitializeWizard();
 begin
   CreateMinGWPage();
-  CreateWxPage();  
+  CreateWxPage();
 end;
 
 // Uninstall

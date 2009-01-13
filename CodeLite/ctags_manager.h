@@ -122,33 +122,26 @@ class TagsManager : public wxEvtHandler
 	friend class DirTraverser;
 	friend class Language;
 
-	TagsDatabase *m_workspaceDatabase;
-	TagsDatabase *m_externalDatabase;
-
-	wxCriticalSection m_cs;
-
-	wxFileName m_ctagsPath;
-#if defined (__WXMSW__) || defined (__WXGTK__)
-	clProcess* m_ctags;
-#endif
-
-	wxString m_ctagsCmd;
-	wxStopWatch m_watch;
-	TagsOptionsData m_tagsOptions;
-	std::map<int, clProcess*> m_processes;
-	bool m_parseComments;
-	bool m_canDeleteCtags;
-	std::list<clProcess*> m_gargabeCollector;
-	wxTimer *m_timer;
+	TagsDatabase *                m_workspaceDatabase;
+	TagsDatabase *                m_externalDatabase;
+	wxCriticalSection             m_cs;
+	wxFileName                    m_codeliteIndexerPath;
+	clProcess*                    m_codeliteIndexerProcess;
+	wxString                      m_ctagsCmd;
+	wxStopWatch                   m_watch;
+	TagsOptionsData               m_tagsOptions;
+	std::map<int, clProcess*>     m_processes;
+	bool                          m_parseComments;
+	bool                          m_canDeleteCtags;
+	std::list<clProcess*>         m_gargabeCollector;
+	wxTimer*                      m_timer;
 	std::vector<VariableEntryPtr> m_vars;
-	TagsCache *m_extDbCache;
-	TagsCache *m_workspaceDbCache;
-	Language *m_lang;
-	bool m_useExternalDatabase;
-
-	// a very primitive cache to cache all the tags of a given file
-	std::vector<TagEntryPtr> m_cachedFileFunctionsTags;
-	wxString m_cachedFile;
+	TagsCache*                    m_extDbCache;
+	TagsCache*                    m_workspaceDbCache;
+	Language*                     m_lang;
+	bool                          m_useExternalDatabase;
+	std::vector<TagEntryPtr>      m_cachedFileFunctionsTags;
+	wxString                      m_cachedFile;
 
 public:
 
@@ -236,7 +229,7 @@ public:
 	 * with SetCtagsPath(_T("/home/eran/bin"));
 	 * @param path ctags
 	 */
-	void SetCtagsPath(const wxString& path);
+	void SetCodeLiteIndexerPath(const wxString& path);
 
 	/**
 	 * @brief Store tree of tags into db.
@@ -284,7 +277,6 @@ public:
 	 */
 	void Delete(const wxFileName& path, const wxString& fileName);
 
-#if defined (__WXMSW__) || defined (__WXGTK__)
 	/**
 	 * Start a ctags process on a filter mode.
 	 * By default, TagsManager will try to launch the ctags process using the following command line:
@@ -302,7 +294,6 @@ public:
 	 * @return
 	 */
 	void RestartCtagsProcess();
-#endif
 
 	/**
 	 * Test if filename matches the current ctags file spec.
@@ -540,22 +531,11 @@ public:
 	void ReloadExtDbPaths();
 
 	/**
-	 * @brief convert source file to tags using second method wxExecute() instead of using the
-	 * daemon process ctags-le
-	 * @param source Source file name
-	 * @param tags String containing the ctags output
-	 */
-	void SourceToTags2(const wxFileName& source, wxString& tags);
-
-	/**
 	 * Pass a source file to ctags process, wait for it to process it and return the output.
-	 * This function throws a std::exception*.
 	 * @param source Source file name
 	 * @param tags String containing the ctags output
-	 * @param ctags Ctags process to use for the parsing of the source file - ctags manager holds two
-	 * ctags processes, one for parsing local variables and one for global scope
 	 */
-	void SourceToTags(const wxFileName& source, wxString& tags, clProcess *ctags);
+	void SourceToTags(const wxFileName& source, wxString& tags);
 
 	/**
 	 * return list of files from the database(s). The returned list is ordered
@@ -735,9 +715,7 @@ protected:
 	/**
 	 * Handler ctags process termination
 	 */
-#if defined (__WXMSW__) || defined (__WXGTK__)
 	void OnCtagsEnd(wxProcessEvent& event);
-#endif
 	void OnTimer(wxTimerEvent &event);
 	DECLARE_EVENT_TABLE()
 

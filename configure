@@ -80,15 +80,15 @@ createMainTargets()
 	echo "## build targets" >> Makefile
 
 	## default
-	target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins "
+	target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor codelite_indexer Plugins "
 
 	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
-		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins post_build_msg"
+		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor codelite_indexer Plugins post_build_msg"
 	fi
 
 	if [ "$os_name" = "Darwin" ]; then
-		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor ctags Plugins mac_bundle"
+		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor codelite_indexer Plugins mac_bundle"
 	fi
 
 	## add the "all" target to the makefile
@@ -455,7 +455,7 @@ createInstallTarget()
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
-	echo "	@cp sdk/codelite_indexer/codlelite_indexer \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@cp sdk/codelite_indexer/codelite_indexer \$(DESTDIR)$prefix/bin/" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/applications" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/config" >> Makefile

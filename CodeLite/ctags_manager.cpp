@@ -400,10 +400,9 @@ clProcess *TagsManager::StartCtagsProcess()
 	// Run ctags process
 	wxString cmd;
 	wxString ctagsCmd;
-	ctagsCmd << m_tagsOptions.ToString() << m_ctagsCmd;
-
+	
 	// build the command, we surround ctags name with double quatations
-	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\"") << ctagsCmd;
+	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\"");
 	clProcess* process;
 
 	process = new clProcess(wxNewId(), cmd);

@@ -188,6 +188,7 @@ createCodeLiteIndexerMakefile ()
 	rm -fr Makefile
 
 	compiler_name="g++ "
+	c_compiler_name="gcc "
 	if [ "$arch" = "x86_64" ]; then
 		compiler_name=${compiler_name}" -fPIC -DON_64_BIT "
 		c_compiler_name=${c_compiler_name}" -fPIC -DON_64_BIT "
@@ -206,10 +207,11 @@ createCodeLiteIndexerMakefile ()
 	echo "OPT=${optimization}" >> Makefile
 	echo "DEBUG=${debug_flag}" >> Makefile
 	echo "CMP=${compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "GCC=${c_compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
 	echo "" >> Makefile
 	echo "all: codelite_indexer" >> Makefile
 
-	createObjectList "network/*.cpp libctags/*.c *.cpp" "codelite_indexer_objects"
+	createObjectList "network/*.cpp libctags/*.c database/*.c *.cpp" "codelite_indexer_objects"
 
 	for a_file in $files_list
 	do
@@ -218,12 +220,19 @@ createCodeLiteIndexerMakefile ()
 		a_file_no_ext=`basename $a_file_no_ext .cpp`
 		a_file_no_ext=`basename $a_file_no_ext .c`
 		file_extension=`basename $a_file | cut -d. -f2`
-		
-		echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-		echo "	\$(CMP) -DHAVE_CONFIG_H -I. -Ilibctags -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-		echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-		echo "	\$(CMP) -DHAVE_CONFIG_H -I. -Ilibctags  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
-		
+
+		if [ "$file_extension" = "c" ]; then
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "	\$(GCC) -DHAVE_CONFIG_H -I. -Ilibctags -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "	\$(GCC) -DHAVE_CONFIG_H -I. -Ilibctags  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		else
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "	\$(CMP) -DHAVE_CONFIG_H -I. -Ilibctags -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "	\$(CMP) -DHAVE_CONFIG_H -I. -Ilibctags  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		fi
+
 		echo "-include ${configuration}/*.d" >> Makefile
 	done
 	echo >> Makefile

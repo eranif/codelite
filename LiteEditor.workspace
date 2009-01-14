@@ -31,10 +31,12 @@
   <Project Name="abbreviation" Path="abbreviation/abbreviation.project" Active="No"/>
   <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
   <Project Name="ContinuousBuild" Path="ContinuousBuild/ContinuousBuild.project" Active="No"/>
+  <Project Name="wxpropgrid" Path="sdk/wxpropgrid/wxpropgrid.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
+      <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
       <Project Name="SymbolView" ConfigName="WinReleaseUnicode"/>
@@ -57,6 +59,7 @@
     <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
+      <Project Name="wxpropgrid" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
       <Project Name="SymbolView" ConfigName="WinDebugUnicode"/>
@@ -79,6 +82,7 @@
     <WorkspaceConfiguration Name="Unix_Mac_Custom_Makefile" Selected="no">
       <Project Name="wxsqlite3" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="DebugUnicode"/>
+      <Project Name="wxpropgrid" ConfigName="DebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="DebugUnicode"/>
       <Project Name="SymbolView" ConfigName="DebugUnicode"/>
@@ -93,14 +97,15 @@
       <Project Name="DebuggerGDB" ConfigName="DebugUnicode"/>
       <Project Name="Cscope" ConfigName="DebugUnicode"/>
       <Project Name="Copyright" ConfigName="DebugUnicode"/>
+      <Project Name="ContinuousBuild" ConfigName="DebugUnicode"/>
       <Project Name="CodeLite" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
       <Project Name="abbreviation" ConfigName="DebugUnicode"/>
-      <Project Name="ContinuousBuild" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="no">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
+      <Project Name="wxpropgrid" ConfigName="ReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="ReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="ReleaseUnicode"/>
       <Project Name="SymbolView" ConfigName="ReleaseUnicode"/>

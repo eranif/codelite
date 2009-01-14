@@ -57,7 +57,7 @@ createVariables()
 	echo "" >> Makefile
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ " >> Makefile
 	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
-	echo "	-lwxscintilla\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
+	echo "	-lwxscintilla\$(EXT) -lwxpropgrid\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 
 
 	if [ "$is_plugin" = "no" ]; then
@@ -70,7 +70,7 @@ createVariables()
 	else
 		echo "CCFLAGS := \$(CCFLAGS) -D__APPLE__ -DMACOSX" >> Makefile
 	fi
-	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include	 -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite " >> Makefile
+	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include -I${base_dir}/sdk/wxpropgrid/include	 -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite " >> Makefile
 	echo "" >> Makefile
 	echo "" >> Makefile
 }
@@ -80,15 +80,15 @@ createMainTargets()
 	echo "## build targets" >> Makefile
 
 	## default
-	target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor codelite_indexer Plugins "
+	target_all="all :  pre_build CodeLite Scintilla SQLite PropGrid SDK LiteEditor codelite_indexer Plugins "
 
 	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
-		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor codelite_indexer Plugins post_build_msg"
+		target_all="all :  pre_build CodeLite Scintilla SQLite PropGrid SDK LiteEditor codelite_indexer Plugins post_build_msg"
 	fi
 
 	if [ "$os_name" = "Darwin" ]; then
-		target_all="all :  pre_build CodeLite Scintilla SQLite SDK LiteEditor codelite_indexer Plugins mac_bundle"
+		target_all="all :  pre_build CodeLite Scintilla SQLite PropGrid SDK LiteEditor codelite_indexer Plugins mac_bundle"
 	fi
 
 	## add the "all" target to the makefile
@@ -640,6 +640,7 @@ createObjectList "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.
 createObjectList "CodeLite/*.cpp" "CodeLiteObjects"
 createObjectList "LiteEditor/*.cpp" "LiteEditorObjects"
 createObjectList "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects"
+createObjectList "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects"
 createObjectList "Plugin/*.cpp" "SDKObjects"
 
 createMainTargets
@@ -649,6 +650,7 @@ echo >> Makefile
 createRules_archive "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects" "Scintilla" "wxscintilla"
 createRules_archive "CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "codelite"
 createRules_archive "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "wxsqlite3"
+createRules_archive "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects" "PropGrid" "wxpropgrid"
 createRules_archive "Plugin/*.cpp " "SDKObjects" "SDK" "plugin"
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createCodeLiteIndexerMakefile "sdk/codelite_indexer/*.cpp sdk/codelite_indexer/network/*.cpp sdk/codelite_indexer/libctags/*.c sdk/codelite_indexer/libctags/*.cpp"

@@ -9,13 +9,12 @@
 
 #ifdef __WXMSW__
 #ifdef __DEBUG
-#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_dbg"
+#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s_dbg"
 #else
-#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer"
+#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s"
 #endif
 #else
-
-#define PIPE_NAME "/tmp/codelite_indexer.sock"
+#define PIPE_NAME "/tmp/codelite_indexer.%s.sock"
 #endif
 
 static eQueue<clNamedPipe*> g_connectionQueue;
@@ -25,15 +24,25 @@ int main(int argc, char **argv)
 	int max_requests(1500);
 	int requests(0);
 
+	if(argc < 2){
+		printf("Usage: %s <unique string>\n", argv[0]);
+		printf("   <unique string> - a unique string that identifies this indexer from other instances\n");
+		printf("                     this number can contains only [a-zA-Z]\n");
+		return 1;
+	}
+
 	// create the connection factory
-	clNamedPipeConnectionsServer server(PIPE_NAME);
+	char channel_name[1024];
+	sprintf(channel_name, PIPE_NAME, argv[1]);
+
+	clNamedPipeConnectionsServer server(channel_name);
 
 	// start the worker thread
 	WorkerThread worker( &g_connectionQueue );
 	worker.run();
 
 	printf("INFO: codelite_indexer started\n");
-	printf("INFO: listening on %s\n", PIPE_NAME);
+	printf("INFO: listening on %s\n", channel_name);
 
 	while (true) {
 		clNamedPipe *conn = server.waitForNewConnection(-1);

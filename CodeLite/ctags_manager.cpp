@@ -43,14 +43,19 @@
 #include "wx/timer.h"
 #include "variable_entry.h"
 #include "procutils.h"
+#include <sstream>
 
 //#define __PERFORMANCE
 #include "performance.h"
 
 #ifdef __WXMSW__
-#  define PIPE_NAME "\\\\.\\pipe\\codelite_indexer"
+#ifdef __DEBUG
+#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s_dbg"
 #else
-#  define PIPE_NAME "/tmp/codelite_indexer.sock"
+#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s"
+#endif
+#else
+#define PIPE_NAME "/tmp/codelite_indexer.%s.sock"
 #endif
 
 const wxEventType wxEVT_UPDATE_FILETREE_EVENT = wxNewEventType();
@@ -400,9 +405,13 @@ clProcess *TagsManager::StartCtagsProcess()
 	// Run ctags process
 	wxString cmd;
 	wxString ctagsCmd;
-	
+
 	// build the command, we surround ctags name with double quatations
-	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\"");
+	wxString uid;
+	uid << wxGetProcessId();
+
+	// concatenate the PID to identifies this channel to this instance of codelite
+	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\" ") << uid;
 	clProcess* process;
 
 	process = new clProcess(wxNewId(), cmd);
@@ -489,7 +498,13 @@ void TagsManager::OnCtagsEnd(wxProcessEvent& event)
 //---------------------------------------------------------------------
 void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 {
-	clNamedPipeClient client(PIPE_NAME);
+	std::stringstream s;
+	s << wxGetProcessId();
+
+	char channel_name[1024];
+	sprintf(channel_name, PIPE_NAME, s.str().c_str());
+
+	clNamedPipeClient client(channel_name);
 
 	// Build a request for the indexer
 	clIndexerRequest req;
@@ -508,13 +523,13 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 
 	// connect to the indexer
 	if(!client.connect()){
-		wxPrintf(wxT("Failed to connect to indexer!\n"));
+		wxPrintf(wxT("Failed to connect to indexer ID %d!\n"), wxGetProcessId());
 		return;
 	}
 
 	// send the request
 	if( !clIndexerProtocol::SendRequest(&client, req) ){
-		wxPrintf(wxT("Failed to send request to indexer!\n"));
+		wxPrintf(wxT("Failed to send request to indexer ID [%d]\n"), wxGetProcessId());
 		return;
 	}
 
@@ -1807,9 +1822,7 @@ bool TagsManager::GetParseComments()
 void TagsManager::SetCtagsOptions(const TagsOptionsData &options)
 {
 	m_tagsOptions = options;
-#if defined (__WXMSW__) || defined (__WXGTK__)
 	RestartCtagsProcess();
-#endif
 
 	wxCriticalSectionLocker locker(m_cs);
 	m_parseComments = m_tagsOptions.GetFlags() & CC_PARSE_COMMENTS ? true : false;

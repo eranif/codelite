@@ -20,7 +20,6 @@
     <File Name="../network/clindexerprotocol.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
-  <Dependencies Name="Release_Unix"/>
   <Dependencies Name="Debug_Unix"/>
   <Settings Type="Executable">
     <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
@@ -143,4 +142,5 @@
   </Settings>
   <Dependencies Name="Debug_Win"/>
   <Dependencies Name="Release_Win"/>
+  <Dependencies Name="Release_Unix"/>
 </CodeLite_Project>

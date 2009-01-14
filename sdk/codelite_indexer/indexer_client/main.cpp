@@ -10,18 +10,28 @@
 
 #ifdef __WXMSW__
 #ifdef __DEBUG
-#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_dbg"
+#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s_dbg"
 #else
-#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer"
+#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s"
 #endif
 #else
-#define PIPE_NAME "/tmp/codelite_indexer.sock"
+#define PIPE_NAME "/tmp/codelite_indexer.%s.sock"
 #endif
 
 int main(int argc, char **argv)
 {
+	if(argc < 2){
+		printf("Usage: %s <unique string>\n", argv[0]);
+		printf("   <unique string> - a unique string that identifies the indexer which this client should connect\n");
+		printf("                     this number can contains only [a-zA-Z]\n");
+		return 1;
+	}
+
+	char channel_name[1024];
+	sprintf(channel_name, PIPE_NAME, argv[1]);
+
 	clIndexerRequest req;
-	clNamedPipeClient client(PIPE_NAME);
+	clNamedPipeClient client(channel_name);
 
 	// build the request
 	req.setCmd(clIndexerRequest::CLI_PARSE);

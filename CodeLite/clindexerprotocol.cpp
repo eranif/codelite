@@ -81,8 +81,8 @@ bool clIndexerProtocol::ReadRequest(clNamedPipe* conn, clIndexerRequest& req)
 	int bytes_left(buff_len);
 	size_t bytes_read(0);
 	while (bytes_left > 0) {
-		if ( !conn->read(data+bytes_read, bytes_left, &actual_read, 10000) ) {
-			fprintf(stderr, "ERROR: Protocol error: expected %d bytes, got %d\n", buff_len, actual_read);
+		if ( !conn->read(data+bytes_read, bytes_left, &actual_read, -1) ) {
+			fprintf(stderr, "ERROR: [%s] Protocol error: expected %d bytes, got %d\n", __PRETTY_FUNCTION__, buff_len, actual_read);
 			return false;
 		}
 		bytes_left -= actual_read;
@@ -101,7 +101,7 @@ bool clIndexerProtocol::SendReply(clNamedPipe* conn, clIndexerReply& reply)
 
 	// send the reply size
 	size_t written(0);
-	conn->write((void*)&buff_size, sizeof(buff_size), &written, 10000);
+	conn->write((void*)&buff_size, sizeof(buff_size), &written, -1);
 
 
 	int bytes_left(buff_size);
@@ -131,8 +131,10 @@ bool clIndexerProtocol::SendReply(clNamedPipe* conn, clIndexerReply& reply)
 //	conn->read(&ack, sizeof(ack), &rr, -1);
 //	if (ack == ACK_MAGIC) {
 //		// we are OK
+//		printf("INFO: Got ACK!\n");
 //		return true;
 //	} else {
+//		printf("ERROR: Did not got the ack!\n");
 //		return false;
 //	}
 //#else
@@ -151,7 +153,7 @@ bool clIndexerProtocol::SendRequest(clNamedPipe* conn, clIndexerRequest& req)
 
 	// write request
 	if (!conn->write((void*)&size, sizeof(size), &written, -1)) {
-		printf("ERROR: protocol error: rc %d\n", conn->getLastError());
+		printf("ERROR: [%s] protocol error: rc %d\n", __PRETTY_FUNCTION__, conn->getLastError());
 		return false;
 	}
 

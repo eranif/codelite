@@ -141,6 +141,6 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="Release_Win"/>
   <Dependencies Name="Debug_Win"/>
+  <Dependencies Name="Release_Win"/>
 </CodeLite_Project>

@@ -252,7 +252,6 @@ createCodeLiteIndexerMakefile ()
 	echo "	\$(RM) -fr ${configuration}/*.o" >> Makefile
 	echo "	\$(RM) -fr ${configuration}/*.o.d" >> Makefile
 	echo "	\$(RM) -fr codelite_indexer" >> Makefile
-	echo "clean: " >> Makefile
 
 	## restore the path
 	cd ${current_wd}

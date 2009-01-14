@@ -1,6 +1,7 @@
 #ifndef __clindexerreply__
 #define __clindexerreply__
 #include <string>
+
 class clIndexerReply
 {
 	size_t m_completionCode;
@@ -32,6 +33,5 @@ public:
 	const std::string& getTags() const {
 		return m_tags;
 	}
-
 };
 #endif // __clindexerreply__

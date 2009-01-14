@@ -34,6 +34,14 @@ void WorkerThread::start()
 
 			// create fies for the requested files
 			for (size_t i=0; i<req.getFiles().size(); i++) {
+
+#ifdef __DEBUG
+				printf("------------------------------------------------------------------\n");
+				printf("INFO: Source        : %s\n", req.getFiles().at(i).c_str());
+				printf("INFO: Command       : %d\n", req.getCmd());
+				printf("INFO: CTAGS options : %s\n", req.getCtagOptions().c_str());
+				printf("INFO: Database      : %s\n", req.getDatabaseFileName().c_str());
+#endif
 				char *tags = ctags_make_tags(req.getCtagOptions().c_str(), req.getFiles().at(i).c_str());
 
 				clIndexerReply reply;

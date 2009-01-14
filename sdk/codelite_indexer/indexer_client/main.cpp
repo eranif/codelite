@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 	std::vector<std::string> files;
 
 #ifdef __WXMSW__
-	files.push_back("C:\\Development\\C++\\codelite\\trunk\\sdk\\codelite_indexer\\indexer_client\\Debug\\esocket.h");
+	files.push_back("C:\\Development\\C++\\codelite\\trunk\\sdk\\codelite_indexer\\workerthread.h");
 #else
 	char *home = getenv("HOME");
 	std::string file_name;
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 
 	req.setFiles(files);
 	req.setCtagOptions("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p  -IwxT,_T");
-
+	req.setDatabaseFileName("codelite.db");
 	for (size_t i=0; i<100; i++) {
 		// connect to server
 		if(!client.connect()){
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 			printf("ERROR: failed to read reply\n");
 		}
 
-		//printf("%s\n", reply.getTags().c_str());
+		printf("%s\n", reply.getTags().c_str());
 		// close the connection
 		client.disconnect();
 	}

@@ -9,10 +9,11 @@ class clIndexerRequest
 	std::vector<std::string> m_files;
 	std::string m_ctagOptions;
 	size_t m_cmd;
-
+	std::string m_databaseFileName;
 public:
 	enum {
-		CLI_PARSE
+		CLI_PARSE,
+		CLI_PARSE_AND_SAVE
 	};
 
 public:
@@ -39,6 +40,12 @@ public:
 	}
 	const std::string& getCtagOptions() const {
 		return m_ctagOptions;
+	}
+	void setDatabaseFileName(const std::string& databaseFileName) {
+		this->m_databaseFileName = databaseFileName;
+	}
+	const std::string& getDatabaseFileName() const {
+		return m_databaseFileName;
 	}
 };
 #endif // __clindexercommand__

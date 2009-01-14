@@ -238,7 +238,7 @@ createCodeLiteIndexerMakefile ()
 	echo >> Makefile
 
 	echo "codelite_indexer: make_dirs \$(codelite_indexer_objects)" >> Makefile
-	echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) -lpthread" >> Makefile
+	echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) -lpthread -ldl " >> Makefile
 	echo >> Makefile
 
 	echo "make_dirs:" >> Makefile

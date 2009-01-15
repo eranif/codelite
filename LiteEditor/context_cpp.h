@@ -117,6 +117,7 @@ public:
 	virtual void OnFindImpl(wxCommandEvent &event);
 	virtual void OnFindDecl(wxCommandEvent &event);
 	virtual void OnGotoFunctionStart(wxCommandEvent &event);
+	virtual void OnGotoNextFunction(wxCommandEvent& event);
 	virtual void OnKeyDown(wxKeyEvent &event);
 	virtual void OnUpdateUI(wxUpdateUIEvent &event);
 	virtual void OnContextOpenDocument(wxCommandEvent &event);
@@ -174,7 +175,7 @@ private:
 	 * \return
 	 */
 	bool ResolveWord(LEditor *ctrl, int pos, const wxString &word, RefactorSource *rs);
-    
+
  	/**
 	 * \brief open file specified by the 'fileName' parameter and append 'text'
 	 * to its content

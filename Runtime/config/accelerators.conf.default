@@ -135,6 +135,7 @@ swap_files|C++|Swap Header/Implementation file|F12
 find_decl|C++|Goto Declaration|
 find_impl|C++|Goto Implementation|
 go_to_function_start|C++|Goto Begining of Current Function|
+go_to_next_function|C++|Goto Begining of Next Function|
 insert_doxy_comment|C++::Code Generation / Refactoring|Insert Doxygen Comment|Ctrl-Shift-D
 setters_getters|C++::Code Generation / Refactoring|Generate Setters/Getters...|
 move_impl|C++::Code Generation / Refactoring|Move Function Implementation to...|

@@ -522,20 +522,20 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 	req.setCtagOptions(ctagsCmd.mb_str(wxConvUTF8).data());
 
 	// connect to the indexer
-	if(!client.connect()){
+	if (!client.connect()) {
 		wxPrintf(wxT("Failed to connect to indexer ID %d!\n"), wxGetProcessId());
 		return;
 	}
 
 	// send the request
-	if( !clIndexerProtocol::SendRequest(&client, req) ){
+	if ( !clIndexerProtocol::SendRequest(&client, req) ) {
 		wxPrintf(wxT("Failed to send request to indexer ID [%d]\n"), wxGetProcessId());
 		return;
 	}
 
 	// read the reply
 	clIndexerReply reply;
-	if(!clIndexerProtocol::ReadReply(&client, reply)){
+	if (!clIndexerProtocol::ReadReply(&client, reply)) {
 		wxPrintf(wxT("ERROR: failed to read reply\n"));
 		return;
 	}
@@ -1870,7 +1870,7 @@ wxString TagsManager::GetScopeName(const wxString &scope)
 bool TagsManager::ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper, wxString &scopeTempalteInitiList)
 {
 	bool res = GetLanguage()->ProcessExpression(expr, scopeText, filename, lineno, typeName, typeScope, oper, scopeTempalteInitiList);
-	if(res && IsTypeAndScopeExists(typeName, typeScope) == false && scopeTempalteInitiList.empty() == false){
+	if (res && IsTypeAndScopeExists(typeName, typeScope) == false && scopeTempalteInitiList.empty() == false) {
 		// try to resolve it again
 		res = GetLanguage()->ResolveTempalte(typeName, typeScope, typeScope, scopeTempalteInitiList);
 	}
@@ -1923,7 +1923,7 @@ void TagsManager::GetFiles(const wxString &partialName, std::vector<wxFileName> 
 }
 
 
-TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName &fileName, int lineno)
+TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName &fileName, int lineno, bool nextFunction /*false*/)
 {
 	if (!m_workspaceDatabase) {
 		return NULL;
@@ -1933,35 +1933,23 @@ TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName &fileName, int li
 		CacheFile(fileName.GetFullPath());
 	}
 
+	bool match(false);
+	TagEntryPtr foo = NULL;
 	for (size_t i=0; i<m_cachedFileFunctionsTags.size(); i++) {
 		TagEntryPtr t = m_cachedFileFunctionsTags.at(i);
-		if (t->GetLine() <= lineno) {
-			return t;
+
+		if (nextFunction && t->GetLine() > lineno) {
+			// keep the last non matched method
+			foo = t;
+		} else if (t->GetLine() <= lineno) {
+			if (nextFunction ) {
+				return foo;
+			} else {
+				return t;
+			}
 		}
 	}
 	return NULL;
-//
-//	wxString sql;
-//	sql << wxT("select * from tags where file = '")
-//	<< fileName.GetFullPath()
-//	<< wxT("' and line <= ")
-//	<< lineno
-//	<< wxT(" and kind='function' order by line DESC");
-//
-//	//we take the first entry
-//	try {
-//		wxSQLite3ResultSet rs = m_pDb->Query(sql);
-//		if ( rs.NextRow() ) {
-//			// Construct a TagEntry from the rescord set
-//			TagEntryPtr tag(new TagEntry(rs));
-//			rs.Finalize();
-//			return tag;
-//		}
-//		rs.Finalize();
-//	} catch ( wxSQLite3Exception& e) {
-//		wxUnusedVar(e);
-//	}
-//	return NULL;
 }
 
 void TagsManager::GetScopesFromFile(const wxFileName &fileName, std::vector< wxString > &scopes)
@@ -2363,7 +2351,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 	wxString str_output;
 	str_output << wxT("(");
 
-	if(paramLen){
+	if (paramLen) {
 		paramLen->clear();
 	}
 
@@ -2403,7 +2391,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 		}
 
 		// keep the length of this argument
-		if(paramLen){
+		if (paramLen) {
 			paramLen->push_back(std::pair<int, int>(start_offset, str_output.length() - start_offset));
 		}
 		str_output << wxT(", ");

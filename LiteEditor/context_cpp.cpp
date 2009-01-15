@@ -141,26 +141,28 @@ wxBitmap ContextCpp::m_hFileBmp = wxNullBitmap;
 wxBitmap ContextCpp::m_otherFileBmp = wxNullBitmap;
 
 BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
-	EVT_UPDATE_UI(XRCID("find_decl"), ContextCpp::OnUpdateUI)
-	EVT_UPDATE_UI(XRCID("find_impl"), ContextCpp::OnUpdateUI)
-	EVT_UPDATE_UI(XRCID("go_to_function_start"), ContextCpp::OnUpdateUI)
-	EVT_UPDATE_UI(XRCID("insert_doxy_comment"), ContextCpp::OnUpdateUI)
-	EVT_UPDATE_UI(XRCID("setters_getters"), ContextCpp::OnUpdateUI)
-	EVT_UPDATE_UI(XRCID("move_impl"), ContextCpp::OnUpdateUI)
+	EVT_UPDATE_UI(XRCID("find_decl"),               ContextCpp::OnUpdateUI)
+	EVT_UPDATE_UI(XRCID("find_impl"),               ContextCpp::OnUpdateUI)
+	EVT_UPDATE_UI(XRCID("go_to_function_start"),    ContextCpp::OnUpdateUI)
+	EVT_UPDATE_UI(XRCID("go_to_next_function"),     ContextCpp::OnUpdateUI)
+	EVT_UPDATE_UI(XRCID("insert_doxy_comment"),     ContextCpp::OnUpdateUI)
+	EVT_UPDATE_UI(XRCID("setters_getters"),         ContextCpp::OnUpdateUI)
+	EVT_UPDATE_UI(XRCID("move_impl"),               ContextCpp::OnUpdateUI)
 
-	EVT_MENU(XRCID("swap_files"), ContextCpp::OnSwapFiles)
-	EVT_MENU(XRCID("comment_selection"), ContextCpp::OnCommentSelection)
-	EVT_MENU(XRCID("comment_line"), ContextCpp::OnCommentLine)
-	EVT_MENU(XRCID("find_decl"), ContextCpp::OnFindDecl)
-	EVT_MENU(XRCID("find_impl"), ContextCpp::OnFindImpl)
-	EVT_MENU(XRCID("go_to_function_start"), ContextCpp::OnGotoFunctionStart)
-	EVT_MENU(XRCID("insert_doxy_comment"), ContextCpp::OnInsertDoxyComment)
-	EVT_MENU(XRCID("move_impl"), ContextCpp::OnMoveImpl)
-	EVT_MENU(XRCID("add_impl"), ContextCpp::OnAddImpl)
-	EVT_MENU(XRCID("add_multi_impl"), ContextCpp::OnAddMultiImpl)
-	EVT_MENU(XRCID("setters_getters"), ContextCpp::OnGenerateSettersGetters)
-	EVT_MENU(XRCID("add_include_file"), ContextCpp::OnAddIncludeFile)
-	EVT_MENU(XRCID("rename_function"), ContextCpp::OnRenameFunction)
+	EVT_MENU(XRCID("swap_files"),                   ContextCpp::OnSwapFiles)
+	EVT_MENU(XRCID("comment_selection"),            ContextCpp::OnCommentSelection)
+	EVT_MENU(XRCID("comment_line"),                 ContextCpp::OnCommentLine)
+	EVT_MENU(XRCID("find_decl"),                    ContextCpp::OnFindDecl)
+	EVT_MENU(XRCID("find_impl"),                    ContextCpp::OnFindImpl)
+	EVT_MENU(XRCID("go_to_function_start"),         ContextCpp::OnGotoFunctionStart)
+	EVT_MENU(XRCID("go_to_next_function"),          ContextCpp::OnGotoNextFunction)
+	EVT_MENU(XRCID("insert_doxy_comment"),          ContextCpp::OnInsertDoxyComment)
+	EVT_MENU(XRCID("move_impl"),                    ContextCpp::OnMoveImpl)
+	EVT_MENU(XRCID("add_impl"),                     ContextCpp::OnAddImpl)
+	EVT_MENU(XRCID("add_multi_impl"),               ContextCpp::OnAddMultiImpl)
+	EVT_MENU(XRCID("setters_getters"),              ContextCpp::OnGenerateSettersGetters)
+	EVT_MENU(XRCID("add_include_file"),             ContextCpp::OnAddIncludeFile)
+	EVT_MENU(XRCID("rename_function"),              ContextCpp::OnRenameFunction)
 	EVT_MENU(XRCID("retag_file"), ContextCpp::OnRetagFile)
 END_EVENT_TABLE()
 
@@ -1236,6 +1238,8 @@ void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)
 	} else if (event.GetId() == XRCID("setters_getters")) {
 		event.Enable(projectAvailable);
 	} else if (event.GetId() == XRCID("go_to_function_start")) {
+		event.Enable(workspaceOpen);
+	} else if (event.GetId() == XRCID("go_to_next_function")) {
 		event.Enable(workspaceOpen);
 	} else if (event.GetId() == XRCID("find_decl")) {
 		event.Enable(workspaceOpen);
@@ -2547,7 +2551,24 @@ void ContextCpp::OnGotoFunctionStart(wxCommandEvent& event)
 	int line_number = GetCtrl().LineFromPosition(GetCtrl().GetCurrentPos());
 	TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), line_number);
 	if (tag) {
+		// move the caret to the function start
+		BrowseRecord jumpfrom = GetCtrl().CreateBrowseRecord();
 		GetCtrl().SetCaretAt(GetCtrl().PositionFromLine(tag->GetLine()-1));
+		// add an entry to the navigation manager
+		NavMgr::Get()->AddJump(jumpfrom, GetCtrl().CreateBrowseRecord());
+	}
+}
+
+void ContextCpp::OnGotoNextFunction(wxCommandEvent& event)
+{
+	int line_number = GetCtrl().LineFromPosition(GetCtrl().GetCurrentPos());
+	TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), line_number+1, true);
+	if (tag) {
+		// move the caret to the function start
+		BrowseRecord jumpfrom = GetCtrl().CreateBrowseRecord();
+		GetCtrl().SetCaretAt(GetCtrl().PositionFromLine(tag->GetLine()-1));
+		// add an entry to the navigation manager
+		NavMgr::Get()->AddJump(jumpfrom, GetCtrl().CreateBrowseRecord());
 	}
 }
 

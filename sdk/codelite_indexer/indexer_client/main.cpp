@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 	if(argc < 2){
 		printf("Usage: %s <unique string>\n", argv[0]);
 		printf("   <unique string> - a unique string that identifies the indexer which this client should connect\n");
-		printf("                     this number can contains only [a-zA-Z]\n");
+		printf("                     this string may contain only [a-zA-Z]\n");
 		return 1;
 	}
 
@@ -34,11 +34,11 @@ int main(int argc, char **argv)
 	clNamedPipeClient client(channel_name);
 
 	// build the request
-	req.setCmd(clIndexerRequest::CLI_PARSE);
+	req.setCmd(clIndexerRequest::CLI_PARSE_AND_SAVE);
 	std::vector<std::string> files;
 
 #ifdef __WXMSW__
-	files.push_back("C:\\Development\\C++\\codelite\\trunk\\sdk\\codelite_indexer\\workerthread.h");
+	files.push_back("C:\\Development\\C++\\codelite\\trunk\\sdk\\codelite_indexer\\workerthread_test.h");
 #else
 	char *home = getenv("HOME");
 	std::string file_name;
@@ -49,8 +49,8 @@ int main(int argc, char **argv)
 
 	req.setFiles(files);
 	req.setCtagOptions("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p  -IwxT,_T");
-	req.setDatabaseFileName("codelite.db");
-	for (size_t i=0; i<100; i++) {
+	req.setDatabaseFileName("tags.db");
+	for (size_t i=0; i<1; i++) {
 		// connect to server
 		if(!client.connect()){
 			printf("ERROR: failed to connect to server\n");
@@ -63,9 +63,6 @@ int main(int argc, char **argv)
 		if(!clIndexerProtocol::ReadReply(&client, reply)){
 			printf("ERROR: failed to read reply\n");
 		}
-
-		printf("%s\n", reply.getTags().c_str());
-		// close the connection
 		client.disconnect();
 	}
 	return 0;

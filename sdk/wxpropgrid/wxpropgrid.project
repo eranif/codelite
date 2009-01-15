@@ -26,7 +26,6 @@
     <File Name="src/xh_propgrid.cpp"/>
     <File Name="src/propgrid.cpp"/>
     <File Name="src/advprops.cpp"/>
-    <File Name="src/manager.cpp"/>
     <File Name="src/wp_manager.cpp"/>
   </VirtualDirectory>
   <Settings Type="Static Library">
@@ -57,9 +56,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library">
@@ -89,9 +86,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library">
@@ -101,6 +96,7 @@
         <IncludePath Value="./include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXMAKINGLIB_PROPGRID"/>
       </Compiler>
       <Linker Required="yes" Options=""/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -133,6 +129,7 @@
         <IncludePath Value="./include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXMAKINGLIB_PROPGRID"/>
       </Compiler>
       <Linker Required="yes" Options=""/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -159,4 +156,6 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

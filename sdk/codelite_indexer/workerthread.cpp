@@ -6,6 +6,7 @@
 #include "network/np_connections_server.h"
 #include "network/clindexerprotocol.h"
 #include "libctags/libctags.h"
+#include "utils.h"
 
 WorkerThread::WorkerThread(eQueue<clNamedPipe*> *queue)
 : m_queue(queue)
@@ -44,6 +45,9 @@ void WorkerThread::start()
 #endif
 				char *tags = ctags_make_tags(req.getCtagOptions().c_str(), req.getFiles().at(i).c_str());
 
+#ifdef __DEBUG
+				std::vector<std::string> lines = string_tokenize(tags, "\n");
+#endif
 				clIndexerReply reply;
 				reply.setFileName(req.getFiles().at(i));
 				if (tags) {

@@ -14,6 +14,8 @@
     <File Name="ethread_win.cpp"/>
     <File Name="workerthread.cpp"/>
     <File Name="workerthread.h"/>
+    <File Name="utils.cpp"/>
+    <File Name="utils.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ctags">
     <File Name="libctags/yacc.c"/>
@@ -119,9 +121,6 @@
     <File Name="database\tagentry.cpp"/>
     <File Name="database\tagentry.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug_Win">
-    <Project Name="database"/>
-  </Dependencies>
   <Settings Type="Executable">
     <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
@@ -132,24 +131,24 @@
       </Compiler>
       <Linker Required="yes" Options=""/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
       </Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Debug_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
@@ -162,24 +161,24 @@
       </Compiler>
       <Linker Required="yes" Options="./Debug/sqlite3.o"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
       </Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
@@ -193,24 +192,24 @@
         <Library Value="pthread"/>
       </Linker>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
       </Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="Release_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
@@ -222,30 +221,35 @@
       </Compiler>
       <Linker Required="yes" Options="-O2;./Release/sqlite3.o"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
       </Debugger>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy network\*.* ..\..\CodeLite\.</Command>
+        <Command Enabled="no">copy network\*.* ..\..\CodeLite\.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
       </AdditionalRules>
     </Configuration>
   </Settings>
   <Dependencies Name="Release_Win">
+    <Project Name="database"/>
+  </Dependencies>
+  <Dependencies Name="Debug_Win">
     <Project Name="database"/>
   </Dependencies>
 </CodeLite_Project>

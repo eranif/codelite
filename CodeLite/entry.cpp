@@ -1,31 +1,32 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : entry.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : entry.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                    
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "precompiled_header.h"
 #include "tags_database.h"
 
 #include "entry.h"
+#include <wx/tokenzr.h>
 #include "tokenizer.h"
 #include "language.h"
 
@@ -33,7 +34,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-#endif 
+#endif
 
 TagEntry::TagEntry(const tagEntry& entry)
 {
@@ -76,9 +77,9 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
 	m_hti = rhs.m_hti;
 	m_scope = rhs.m_scope.c_str();
 	m_differOnByLineNumber = rhs.m_differOnByLineNumber;
-	
+
 	// loop over the map and copy item by item
-	// we use the c_str() method to force our own copy of the string and to avoid 
+	// we use the c_str() method to force our own copy of the string and to avoid
 	// ref counting which may cause crash when sharing wxString among threads
 	m_extFields.clear();
 	std::map<wxString, wxString>::const_iterator iter = rhs.m_extFields.begin();
@@ -91,7 +92,7 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
 bool TagEntry::operator ==(const TagEntry& rhs)
 {
 	//Note: tree item id is not used in this function!
-	bool res = 	
+	bool res =
 		m_scope == rhs.m_scope &&
 		m_file == rhs.m_file &&
 		m_kind == rhs.m_kind &&
@@ -104,7 +105,7 @@ bool TagEntry::operator ==(const TagEntry& rhs)
 		GetAccess() == rhs.GetAccess() &&
 		GetSignature() == rhs.GetSignature() &&
 		GetTyperef() == rhs.GetTyperef();
-	
+
 	bool res2 = m_scope == rhs.m_scope &&
 		m_file == rhs.m_file &&
 		m_kind == rhs.m_kind &&
@@ -116,7 +117,7 @@ bool TagEntry::operator ==(const TagEntry& rhs)
 		GetAccess() == rhs.GetAccess() &&
 		GetSignature() == rhs.GetSignature() &&
 		GetTyperef() == rhs.GetTyperef();
-		
+
 	if(res2 && !res) {
 		// the entries are differs only in the line numbers
 		m_differOnByLineNumber = true;
@@ -124,11 +125,11 @@ bool TagEntry::operator ==(const TagEntry& rhs)
 	return res;
 }
 
-void TagEntry::Create(const wxString &fileName, 
-					  const wxString &name, 
-					  int lineNumber, 
-					  const wxString &pattern, 
-					  const wxString &kind, 
+void TagEntry::Create(const wxString &fileName,
+					  const wxString &name,
+					  int lineNumber,
+					  const wxString &pattern,
+					  const wxString &kind,
 					  std::map<wxString, wxString>& extFields)
 {
 	SetName( name );
@@ -206,11 +207,11 @@ void TagEntry::Create(const tagEntry& entry)
 		wxString value = _U(entry.fields.list[i].value);
 		m_extFields[key] = value;
 	}
-	Create(	_U(entry.file), 
-		_U(entry.name), 
-		entry.address.lineNumber, 
-		_U(entry.address.pattern), 
-		_U(entry.kind), 
+	Create(	_U(entry.file),
+		_U(entry.name),
+		entry.address.lineNumber,
+		_U(entry.address.pattern),
+		_U(entry.kind),
 		m_extFields);
 }
 
@@ -231,13 +232,13 @@ void TagEntry::Print()
 	std::cout << "======================================" << std::endl;
 }
 
-wxString TagEntry::Key() const 
+wxString TagEntry::Key() const
 {
 	wxString key;
 	if(GetKind() == wxT("prototype") || GetKind() == wxT("macro")) {
 		key << GetKind() << wxT(": ");
 	}
-	
+
 	key << GetPath() << GetSignature();
 	return key;
 }
@@ -254,7 +255,7 @@ wxString TagEntry::GetFullDisplayName() const
 	wxString name;
 
 	if( GetParent() == wxT("<global>") ){
-		name << GetDisplayName(); 
+		name << GetDisplayName();
 	} else {
 		name << GetParent() << wxT("::") << GetName() << GetSignature();
 	}
@@ -307,7 +308,7 @@ int TagEntry::Store(wxSQLite3Statement& insertPerepareStmnt, TagsDatabase *db)
 		insertPerepareStmnt.Bind(12, GetScope());
 		insertPerepareStmnt.ExecuteUpdate();
 		insertPerepareStmnt.Reset();
-		
+
 		// update the ID
 //		SetId( db->LastRowId() );
 
@@ -387,9 +388,9 @@ wxString TagEntry::GetKind() const {
 
 const bool TagEntry::IsContainer() const
 {
-	return	GetKind() == wxT("class")  || 
-		GetKind() == wxT("struct") || 
-		GetKind() == wxT("union")  || 
+	return	GetKind() == wxT("class")  ||
+		GetKind() == wxT("struct") ||
+		GetKind() == wxT("union")  ||
 		GetKind() == wxT("namespace") ||
 		GetKind() == wxT("project");
 }
@@ -411,7 +412,7 @@ wxString TagEntry::TypeFromTyperef() const
 	if( typeref.IsEmpty() == false )
 	{
 		wxString name = typeref.BeforeFirst(wxT(':'));
-		return name;		
+		return name;
 	}
 	return wxEmptyString;
 }
@@ -423,10 +424,10 @@ wxString TagEntry::NameFromTyperef(wxString &templateInitList)
 	if( typeref.IsEmpty() == false )
 	{
 		wxString name = typeref.AfterFirst(wxT(':'));
-		return name;		
+		return name;
 	}
 
-	// incase our entry is a typedef, and it is not marked as typeref, 
+	// incase our entry is a typedef, and it is not marked as typeref,
 	// try to get the real name from the pattern
 	if( GetKind() == wxT("typedef"))
 	{
@@ -478,7 +479,7 @@ bool TagEntry::TypedefFromPattern(const wxString &tagPattern, const wxString &ty
 				templateInit << token;
 			}
 			break;
-			
+
 		case IDENTIFIER:
 			if(depth == 0){
 				name << token;
@@ -486,31 +487,31 @@ bool TagEntry::TypedefFromPattern(const wxString &tagPattern, const wxString &ty
 				templateInit << token;
 			}
 			break;
-			
+
 		case wxT('<'):
 			depth++;
 			if(depth > 0){ templateInit << token; }
 			break;
-			
+
 		case wxT('>'):
 			if(depth > 0){ templateInit << token; }
 			depth--;
 			break;
-			
+
 		case wxT('{'):
 		case wxT('('):
 		case wxT('['):
 			if(depth > 0){ templateInit << token; }
 			depth++;
 			break;
-		
+
 		case wxT('}'):
 		case wxT(')'):
 		case wxT(']'):
 			if(depth > 0){ templateInit << token; }
 			depth--;
 			break;
-			
+
 		default:
 			if(depth > 0){ templateInit << token; }
 			break;
@@ -531,7 +532,7 @@ wxString TagEntry::GetUpdateOneStatement()
 
 wxString TagEntry::GetInsertOneStatement()
 {
-	return wxT("INSERT INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");	
+	return wxT("INSERT INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 }
 
 wxString TagEntry::GetPattern()
@@ -540,4 +541,117 @@ wxString TagEntry::GetPattern()
 	m_pattern.Replace(wxT("\\\\"), wxT("\\"));
 	m_pattern.Replace(wxT("\\/"), wxT("/"));
 	return m_pattern;
+}
+
+void TagEntry::FromLine(const wxString& line)
+{
+	wxString pattern, kind;
+	wxString strLine = line;
+	long lineNumber = wxNOT_FOUND;
+	std::map<wxString, wxString> extFields;
+
+	//get the token name
+	wxString name = strLine.BeforeFirst(wxT('\t'));
+	strLine	= strLine.AfterFirst(wxT('\t'));
+
+	//get the file name
+	wxString fileName = strLine.BeforeFirst(wxT('\t'));
+	strLine	= strLine.AfterFirst(wxT('\t'));
+
+	//here we can get two options:
+	//pattern followed by ;"
+	//or
+	//line number followed by ;"
+	int end = strLine.Find(wxT(";\""));
+	if (end == wxNOT_FOUND) {
+		//invalid pattern found
+		return;
+	}
+
+	if (strLine.StartsWith(wxT("/^"))) {
+		//regular expression pattern found
+		pattern = strLine.Mid(0, end);
+		strLine	= strLine.Right(strLine.Length() - (end + 2));
+	} else {
+		//line number pattern found, this is usually the case when
+		//dealing with macros in C++
+		pattern = strLine.Mid(0, end);
+		strLine	= strLine.Right(strLine.Length() - (end + 2));
+
+		pattern = pattern.Trim();
+		pattern = pattern.Trim(false);
+		pattern.ToLong(&lineNumber);
+	}
+
+	//next is the kind of the token
+	if (strLine.StartsWith(wxT("\t"))) {
+		strLine	= strLine.AfterFirst(wxT('\t'));
+	}
+
+	kind = strLine.BeforeFirst(wxT('\t'));
+	strLine	= strLine.AfterFirst(wxT('\t'));
+
+	if (strLine.IsEmpty() == false) {
+		wxStringTokenizer tkz(strLine, wxT('\t'));
+		while (tkz.HasMoreTokens()) {
+			wxString token = tkz.NextToken();
+			wxString key = token.BeforeFirst(wxT(':'));
+			wxString val = token.AfterFirst(wxT(':'));
+			key = key.Trim();
+			key = key.Trim(false);
+
+			val = val.Trim();
+			val = val.Trim(false);
+			if (key == wxT("line") && !val.IsEmpty()) {
+				val.ToLong(&lineNumber);
+			} else {
+				if (key == wxT("union") || key == wxT("struct")) {
+
+					// remove the anonymous part of the struct / union
+					if (!val.StartsWith(wxT("__anon"))) {
+						// an internal anonymous union / struct
+						// remove all parts of the
+						wxArrayString scopeArr;
+						wxString tmp, new_val;
+
+						scopeArr = wxStringTokenize(val, wxT(":"), wxTOKEN_STRTOK);
+						for (size_t i=0; i<scopeArr.GetCount(); i++) {
+							if (scopeArr.Item(i).StartsWith(wxT("__anon")) == false) {
+								tmp << scopeArr.Item(i) << wxT("::");
+							}
+						}
+
+						tmp.EndsWith(wxT("::"), &new_val);
+						val = new_val;
+					}
+				}
+
+				extFields[key] = val;
+			}
+		}
+	}
+
+	kind = kind.Trim();
+	name = name.Trim();
+	fileName = fileName.Trim();
+	pattern = pattern.Trim();
+
+	if (kind == wxT("enumerator")) {
+		// enums are specials, they are not really a scope so they should appear when I type:
+		// enumName::
+		// they should be member of their parent (which can be <global>, or class)
+		// but we want to know the "enum" type they belong to, so save that in typeref,
+		// then patch the enum field to lift the enumerator into the enclosing scope.
+		// watch out for anonymous enums -- leave their typeref field blank.
+		std::map<wxString,wxString>::iterator e = extFields.find(wxT("enum"));
+		if (e != extFields.end()) {
+			wxString typeref = e->second;
+			e->second = e->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
+			if (!typeref.AfterLast(wxT(':')).StartsWith(wxT("__anon"))) {
+				extFields[wxT("typeref")] = typeref;
+			}
+		}
+	}
+
+	this->Create(fileName, name, lineNumber, pattern, kind, extFields);
 }

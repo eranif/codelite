@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : entry.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : entry.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                    
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef CODELITE_ENTRY_H
@@ -38,21 +38,21 @@
 #    define WXDLLIMPEXP_CL WXIMPORT
 #else /* not making nor using FNB as DLL */
 #    define WXDLLIMPEXP_CL
-#endif // 
+#endif //
 
 class TagsDatabase;
 
 /**
- * TagEntry is a persistent object which is capable of storing and loading itself from 
+ * TagEntry is a persistent object which is capable of storing and loading itself from
  * various inputs:
  * - tagEntry (ctags structure)
  * - wxSQLite3ResultSet - from the database
- * 
+ *
  * It contains all the knowledge of storing and retrieving itself from the database
  *
  * \ingroup CodeLite
  * \version 1.0
- * first version	
+ * first version
  *
  * \date 11-11-2006
  * \author Eran
@@ -64,14 +64,14 @@ class WXDLLIMPEXP_CL TagEntry : public DbRecord
 	int		 m_lineNumber;	///< Line number
 	wxString m_pattern;		///< A pattern that can be used to locate the tag in the file
 	wxString m_kind;		///< Member, function, class, typedef etc.
-	wxString m_parent;		///< Direct parent 
+	wxString m_parent;		///< Direct parent
 	wxTreeItemId m_hti;		///< Handle to tree item, not persistent item
 	wxString m_name;		///< Tag name (short name, excluding any scope names)
 	std::map<wxString, wxString> m_extFields; ///< Additional extension fields
 	long	m_id;
 	wxString m_scope;
 	bool m_differOnByLineNumber;
-	
+
 public:
 	/**
 	 * Construct a TagEntry from tagEntry struct
@@ -82,13 +82,15 @@ public:
 	/**
 	 * Default constructor.
 	 */
-	TagEntry();	
+	TagEntry();
+
+	void FromLine(const wxString &line);
 
 	/**
 	 * Copy constructor.
 	 */
 	TagEntry(const TagEntry& rhs);
-	
+
 	/**
 	 * Construct a tag entry from db record.
 	 * \param rs Result set
@@ -129,16 +131,16 @@ public:
 	 * \param extFields Map of extenstion fields (key:value)
 	 * \param project Project name
 	 */
-	void Create(const wxString &fileName, 
-				const wxString &name, 
-				int lineNumber, 
-				const wxString &pattern, 
-				const wxString &kind, 
+	void Create(const wxString &fileName,
+				const wxString &name,
+				int lineNumber,
+				const wxString &pattern,
+				const wxString &kind,
 				std::map<wxString, wxString>& extFields);
 
 	/**
 	 * Test if this entry has been initialised.
-	 * \return true if this tag entry has been initialised 
+	 * \return true if this tag entry has been initialised
 	 */
 	const bool IsOk() const { return GetKind() != _T("<unknown>"); }
 
@@ -146,12 +148,12 @@ public:
 	 * Test of this tag is a container (class, union, struct or namespace
 	 */
 	const bool IsContainer() const;
-	
+
 	//------------------------------------------
 	// Operations
 	//------------------------------------------
 	bool GetDifferOnByLineNumber() const {return m_differOnByLineNumber;}
-	
+
 	int GetId() const { return m_id; }
 	void SetId(int id) { m_id = id;}
 
@@ -166,7 +168,7 @@ public:
 
 	int GetLine() const { return m_lineNumber;}
 	void SetLine(int line) { m_lineNumber = line; }
-	
+
 	wxString GetPattern();
 	void SetPattern(const wxString& pattern) { m_pattern = pattern; }
 
@@ -184,7 +186,7 @@ public:
 
 	wxString GetSignature() const { return GetExtField(_T("signature")); }
 	void SetSignature(const wxString &sig) { m_extFields[wxT("signature")] = sig; }
-	
+
 	wxString GetInherits() const { return GetExtField(_T("inherits")); }
 	wxString GetTyperef() const { return GetExtField(_T("typeref")); }
 
@@ -200,13 +202,13 @@ public:
 
 	/**
 	 * Generate a Key for this tag based on its attributes
-	 * \return tag key 
+	 * \return tag key
 	 */
 	wxString Key() const;
 
 	/**
 	 * Generate a display name for this tag to be used by the symbol tree
-	 * \return tag display name 
+	 * \return tag display name
 	 */
 	wxString GetDisplayName() const;
 
@@ -231,14 +233,14 @@ public:
 	//------------------------------------------
 	// Extenstion fields
 	//------------------------------------------
-	wxString GetExtField(const wxString& extField) const 
-	{ 
+	wxString GetExtField(const wxString& extField) const
+	{
 		std::map<wxString, wxString>::const_iterator iter = m_extFields.find(extField);
 		if(iter == m_extFields.end())
 			return wxEmptyString;
 		return iter->second;
 	}
-	
+
 	//------------------------------------------
 	// Misc
 	//------------------------------------------
@@ -268,7 +270,7 @@ public:
 	 * \return TagOk, TagError
 	 */
 	virtual int Delete(wxSQLite3Statement& deletePreparedStmnt);
-	
+
 	/**
 	 * \return delete preapred statement
 	 */

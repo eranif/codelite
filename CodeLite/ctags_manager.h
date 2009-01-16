@@ -731,11 +731,10 @@ private:
 	virtual ~TagsManager();
 
 	/**
-	 * Construct a tag object from line.
-	 * @param line Line
-	 * @param tag Tag from the line (output)
+	 * @brief parse array of files and return an array of tags
+	 * @param files
 	 */
-	void TagFromLine(const wxString& line, TagEntry& tag);
+	std::vector<TagEntryPtr> BatchParse(const std::vector<wxFileName> &files);
 
 	/**
 	 * Parse tags from memory and constructs a TagTree.

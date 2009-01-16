@@ -201,119 +201,6 @@ TagTreePtr TagsManager::ParseTagsFile(const wxFileName& fp)
 	return tree;
 }
 
-void TagsManager::TagFromLine(const wxString& line, TagEntry& tag)
-{
-	wxString pattern, kind;
-	wxString strLine = line;
-	long lineNumber = wxNOT_FOUND;
-	std::map<wxString, wxString> extFields;
-
-	//get the token name
-	wxString name = strLine.BeforeFirst(wxT('\t'));
-	strLine	= strLine.AfterFirst(wxT('\t'));
-
-	//get the file name
-	wxString fileName = strLine.BeforeFirst(wxT('\t'));
-	strLine	= strLine.AfterFirst(wxT('\t'));
-
-	//here we can get two options:
-	//pattern followed by ;"
-	//or
-	//line number followed by ;"
-	int end = strLine.Find(wxT(";\""));
-	if (end == wxNOT_FOUND) {
-		//invalid pattern found
-		return;
-	}
-
-	if (strLine.StartsWith(wxT("/^"))) {
-		//regular expression pattern found
-		pattern = strLine.Mid(0, end);
-		strLine	= strLine.Right(strLine.Length() - (end + 2));
-	} else {
-		//line number pattern found, this is usually the case when
-		//dealing with macros in C++
-		pattern = strLine.Mid(0, end);
-		strLine	= strLine.Right(strLine.Length() - (end + 2));
-
-		pattern = pattern.Trim();
-		pattern = pattern.Trim(false);
-		pattern.ToLong(&lineNumber);
-	}
-
-	//next is the kind of the token
-	if (strLine.StartsWith(wxT("\t"))) {
-		strLine	= strLine.AfterFirst(wxT('\t'));
-	}
-
-	kind = strLine.BeforeFirst(wxT('\t'));
-	strLine	= strLine.AfterFirst(wxT('\t'));
-
-	if (strLine.IsEmpty() == false) {
-		wxStringTokenizer tkz(strLine, wxT('\t'));
-		while (tkz.HasMoreTokens()) {
-			wxString token = tkz.NextToken();
-			wxString key = token.BeforeFirst(wxT(':'));
-			wxString val = token.AfterFirst(wxT(':'));
-			key = key.Trim();
-			key = key.Trim(false);
-
-			val = val.Trim();
-			val = val.Trim(false);
-			if (key == wxT("line") && !val.IsEmpty()) {
-				val.ToLong(&lineNumber);
-			} else {
-				if (key == wxT("union") || key == wxT("struct")) {
-
-					// remove the anonymous part of the struct / union
-					if (!val.StartsWith(wxT("__anon"))) {
-						// an internal anonymous union / struct
-						// remove all parts of the
-						wxArrayString scopeArr;
-						wxString tmp, new_val;
-
-						scopeArr = wxStringTokenize(val, wxT(":"), wxTOKEN_STRTOK);
-						for (size_t i=0; i<scopeArr.GetCount(); i++) {
-							if (scopeArr.Item(i).StartsWith(wxT("__anon")) == false) {
-								tmp << scopeArr.Item(i) << wxT("::");
-							}
-						}
-
-						tmp.EndsWith(wxT("::"), &new_val);
-						val = new_val;
-					}
-				}
-
-				extFields[key] = val;
-			}
-		}
-	}
-
-	kind = kind.Trim();
-	name = name.Trim();
-	fileName = fileName.Trim();
-	pattern = pattern.Trim();
-
-	if (kind == wxT("enumerator")) {
-		// enums are specials, they are not really a scope so they should appear when I type:
-		// enumName::
-		// they should be member of their parent (which can be <global>, or class)
-		// but we want to know the "enum" type they belong to, so save that in typeref,
-		// then patch the enum field to lift the enumerator into the enclosing scope.
-		// watch out for anonymous enums -- leave their typeref field blank.
-		std::map<wxString,wxString>::iterator e = extFields.find(wxT("enum"));
-		if (e != extFields.end()) {
-			wxString typeref = e->second;
-			e->second = e->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
-			if (!typeref.AfterLast(wxT(':')).StartsWith(wxT("__anon"))) {
-				extFields[wxT("typeref")] = typeref;
-			}
-		}
-	}
-
-	tag.Create(fileName, name, lineNumber, pattern, kind, extFields);
-}
-
 TagTreePtr TagsManager::ParseSourceFile(const wxFileName& fp, std::vector<DbRecordPtr> *comments)
 {
 	wxString tags;
@@ -562,7 +449,7 @@ TagTreePtr TagsManager::TreeFromTags(const wxString& tags)
 			continue;
 
 		// Construct the tag from the line
-		TagFromLine(line, tag);
+		tag.FromLine(line);
 
 		// Add the tag to the tree, locals are not added to the
 		// tree
@@ -1933,7 +1820,6 @@ TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName &fileName, int li
 		CacheFile(fileName.GetFullPath());
 	}
 
-	bool match(false);
 	TagEntryPtr foo = NULL;
 	for (size_t i=0; i<m_cachedFileFunctionsTags.size(); i++) {
 		TagEntryPtr t = m_cachedFileFunctionsTags.at(i);
@@ -2610,4 +2496,10 @@ void TagsManager::DeleteTagsByFilePrefix(const wxString& dbfileName, const wxStr
 	if (m_extDbCache) {
 		m_extDbCache->Clear();
 	}
+}
+
+std::vector<TagEntryPtr> TagsManager::BatchParse(const std::vector<wxFileName>& files)
+{
+	std::vector<TagEntryPtr> tags;
+	return tags;
 }

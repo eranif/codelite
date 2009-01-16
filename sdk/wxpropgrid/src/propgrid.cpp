@@ -489,7 +489,7 @@ void wxPropertyGridInterface::DeletePropertyChoice( wxPGPropArg id,
 // -----------------------------------------------------------------------
 
 #ifndef wxPG_USE_WXMODULE
-    #define wxPG_USE_WXMODULE 1
+    #define wxPG_USE_WXMODULE 0
 #endif
 
 #if wxPG_USE_WXMODULE

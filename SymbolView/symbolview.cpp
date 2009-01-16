@@ -80,7 +80,10 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 		, m_symView(NULL)
         , m_tb(NULL)
 		, m_viewChoice(NULL)
+        , m_splitter(NULL)
 		, m_viewStack(NULL)
+        , m_properties(NULL)
+        , m_choiceSizer(NULL)
 		, m_imagesList(NULL)
 {
 	m_longName = wxT("Symbols View Plugin");
@@ -206,31 +209,41 @@ void SymbolViewPlugin::CreateGUIControls()
 	m_tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxT("Link Editor"), wxITEM_CHECK);
 	m_tb->ToggleTool(XRCID("link_editor"), true);
 	m_tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxT("Collapse All"), wxITEM_NORMAL);
-	m_tb->AddTool(XRCID("gohome"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Go to Active Editor Symbolss"), wxITEM_NORMAL);
+	m_tb->AddTool(XRCID("gohome"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxT("Go to Active Editor Symbols"), wxITEM_NORMAL);
+    m_tb->AddTool(XRCID("show_properties"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("cscope")), wxT("Show Symbol Properties"), wxITEM_CHECK);
+    m_tb->ToggleTool(XRCID("show_properties"), false);
 	m_tb->Realize();
 	sz->Add(m_tb, 0, wxEXPAND);
 
 	// sizer for the drop button and view-mode choice box
 	m_choiceSizer = new wxBoxSizer(wxHORIZONTAL);
 	sz->Add(m_choiceSizer, 0, wxEXPAND|wxALL, 1);
-
-	m_viewStack = new WindowStack(m_symView);
-	sz->Add(m_viewStack, 1, wxEXPAND|wxALL, 1);
-	for (int i = 0; i < vmMax; i++) {
-		m_viewStack->Add(new WindowStack(m_viewStack), m_viewModeNames[i]);
-	}
-	m_viewStack->Select(m_viewModeNames[vmCurrentFile]);
-
+    
 	m_viewChoice = new wxChoice(m_symView, wxID_ANY);
 	m_viewChoice->AppendString(m_viewModeNames[vmCurrentFile]);
 	m_viewChoice->Select(0);
 	m_choiceSizer->Add(m_viewChoice, 1, wxEXPAND|wxALL, 1);
 
+    m_splitter = new wxSplitterWindow(m_symView, wxID_ANY);
+    m_splitter->SetMinimumPaneSize(20);
+    sz->Add(m_splitter, 1, wxEXPAND|wxALL, 1);
+
+	m_viewStack = new WindowStack(m_splitter);
+	for (int i = 0; i < vmMax; i++) {
+		m_viewStack->Add(new WindowStack(m_viewStack), m_viewModeNames[i]);
+	}
+	m_viewStack->Select(m_viewModeNames[vmCurrentFile]);
+    m_splitter->Initialize(m_viewStack);
+    
 	m_stackChoice = new StackButton(m_symView, (WindowStack*) m_viewStack->GetSelected());
 	m_choiceSizer->Add(m_stackChoice, 0, wxEXPAND|wxALL, 1);
-
 	// by default the drop-down button is hidden
 	m_choiceSizer->Hide(m_stackChoice);
+    
+    m_properties = new wxPropertyGrid(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
+                                      wxPG_STATIC_SPLITTER|wxPG_DEFAULT_STYLE);
+    InitSymbolProperties();
+    
 	sz->Layout();
 }
 
@@ -241,7 +254,8 @@ void SymbolViewPlugin::Connect()
 	m_symView->Connect(XRCID("collapse_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SymbolViewPlugin::OnCollapseAllUI), NULL, this);
 	m_symView->Connect(XRCID("gohome"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnGoHome), NULL, this);
 	m_symView->Connect(XRCID("gohome"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SymbolViewPlugin::OnGoHomeUI), NULL, this);
-
+    m_symView->Connect(XRCID("show_properties"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnShowProperties), NULL, this);
+    
 	m_stackChoice->Connect(wxID_ANY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SymbolViewPlugin::OnGoHomeUI), NULL, this);
 
 	m_viewChoice->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(SymbolViewPlugin::OnViewModeMouseDown), NULL, this);
@@ -538,6 +552,73 @@ wxSQLite3ResultSet SymbolViewPlugin::GetTags(const std::multimap<wxString,wxStri
 		return m_mgr->GetTagsManager()->GetDatabase()->Query(sql);
 	}
 	return wxSQLite3ResultSet();
+}
+
+void SymbolViewPlugin::InitSymbolProperties()
+{
+    m_properties->Append(new wxPropertyCategory(wxT("Main")));
+    m_properties->Append(new wxStringProperty(wxT("Kind")));
+    m_properties->Append(new wxStringProperty(wxT("Name")));
+    m_properties->Append(new wxStringProperty(wxT("Scope")));
+    m_properties->Append(new wxStringProperty(wxT("Display")));
+    
+    m_properties->Append(new wxPropertyCategory(wxT("Location")));
+    m_properties->Append(new wxStringProperty(wxT("Project")));
+    m_properties->Append(new wxStringProperty(wxT("File")));
+    m_properties->Append(new wxIntProperty(wxT("Line")));
+    m_properties->Append(new wxStringProperty(wxT("Pattern")));
+    m_properties->Append(new wxStringProperty(wxT("Path")));
+    
+    m_properties->Append(new wxPropertyCategory(wxT("Extension")));
+    m_properties->Append(new wxStringProperty(wxT("Access")));
+    m_properties->Append(new wxStringProperty(wxT("Signature")));
+    m_properties->Append(new wxStringProperty(wxT("Inherits")));
+    m_properties->Append(new wxStringProperty(wxT("Typeref")));
+    
+    for (wxPropertyGridIterator i = m_properties->GetIterator(); !i.AtEnd(); i++) {
+        m_properties->SetPropertyReadOnly(*i);
+    }
+
+    m_properties->FitColumns();
+}
+
+void SymbolViewPlugin::ShowSymbolProperties()
+{
+    for (wxPropertyGridIterator i = m_properties->GetIterator(); !i.AtEnd(); i++) {
+        m_properties->ClearPropertyValue(*i);
+    }
+    
+    TagTreeData *tag = NULL;
+    
+    WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
+    if (viewStack) {
+        SymTree *tree = (SymTree*) viewStack->GetSelected();
+        if (tree) {
+            wxTreeItemId id = tree->GetSelection();
+            if (id.IsOk()) {
+                tag = (TagTreeData*) tree->GetItemData(id);
+            }
+        }
+    }
+    
+    if (!tag)
+        return;
+    
+    m_properties->SetPropertyValue(wxT("Name"), tag->GetName());
+    m_properties->SetPropertyValue(wxT("Kind"), tag->GetKind());
+    m_properties->SetPropertyValue(wxT("Scope"), tag->GetScope());
+    m_properties->SetPropertyValue(wxT("Display"), tag->GetFullDisplayName());
+    
+    m_properties->SetPropertyValue(wxT("Project"), m_mgr->GetProjectNameByFile(tag->GetFile()));
+    m_properties->SetPropertyValue(wxT("File"), wxFileName(tag->GetFile()).GetFullName());
+    m_properties->SetPropertyValue(wxT("Line"), tag->GetLine());
+    m_properties->SetPropertyValue(wxT("Pattern"), tag->GetPattern());
+    m_properties->SetPropertyValue(wxT("Path"), tag->GetFile());
+    
+    m_properties->SetPropertyValue(wxT("Access"), tag->GetAccess());
+    m_properties->SetPropertyValue(wxT("Signature"), tag->GetSignature());
+    m_properties->SetPropertyValue(wxT("Inherits"), tag->GetInherits());
+    m_properties->SetPropertyValue(wxT("Typeref"), tag->GetTyperef());
 }
 
 //--------------------------------------------
@@ -973,6 +1054,7 @@ void SymbolViewPlugin::CreateSymbolTree(const wxString &path, WindowStack *paren
 	// hook up event handlers
 	tree->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(SymbolViewPlugin::OnNodeExpanding), NULL, this);
 	tree->Connect(wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(SymbolViewPlugin::OnNodeKeyDown), NULL, this);
+    tree->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(SymbolViewPlugin::OnNodeSelected), NULL, this);
 	tree->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(SymbolViewPlugin::OnNodeDClick), NULL, this);
 }
 
@@ -999,6 +1081,7 @@ void SymbolViewPlugin::ShowSymbolTree(const wxString &symtreepath)
         wxCommandEvent dummy;
         OnLinkEditor(dummy);
     }
+    ShowSymbolProperties();
 }
 
 bool SymbolViewPlugin::DoActivateSelection(wxTreeCtrl* tree)
@@ -1099,6 +1182,20 @@ void SymbolViewPlugin::OnGoHomeUI(wxUpdateUIEvent& e)
 }
 
 /**
+ * Show or hide the symbol properties pane
+ */
+void SymbolViewPlugin::OnShowProperties(wxCommandEvent &e)
+{
+	if (m_tb->GetToolState(XRCID("show_properties"))) {
+        m_splitter->SplitHorizontally(m_viewStack, m_properties, -350);
+        m_properties->SetSplitterLeft();
+	} else {
+        m_splitter->Unsplit(m_properties);
+	}
+	e.Skip();
+}
+
+/**
  * Toggle the link-to-editor state.  If now linked, get rid of extraneous symbol trees.
  */
 void SymbolViewPlugin::OnLinkEditor(wxCommandEvent& e)
@@ -1141,6 +1238,12 @@ void SymbolViewPlugin::OnNodeKeyDown(wxTreeEvent& e)
 		break;
 	}
 	e.Skip();
+}
+
+void SymbolViewPlugin::OnNodeSelected(wxTreeEvent &e)
+{
+    ShowSymbolProperties();
+    e.Skip();
 }
 
 /**
@@ -1393,6 +1496,7 @@ void SymbolViewPlugin::OnEditorClosed(wxCommandEvent& e)
 			std::vector<wxString> keys;
 			viewStack->GetKeys(keys);
 			viewStack->Select(keys[0]);
+            ShowSymbolProperties();
 		}
 	}
 	e.Skip();
@@ -1425,6 +1529,7 @@ void SymbolViewPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 		if (GetViewMode() == vmCurrentProject) {
 			ShowSymbolTree();
 		}
+        ShowSymbolProperties();
 	}
 	e.Skip();
 }

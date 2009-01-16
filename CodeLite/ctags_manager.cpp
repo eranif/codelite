@@ -2497,9 +2497,3 @@ void TagsManager::DeleteTagsByFilePrefix(const wxString& dbfileName, const wxStr
 		m_extDbCache->Clear();
 	}
 }
-
-std::vector<TagEntryPtr> TagsManager::BatchParse(const std::vector<wxFileName>& files)
-{
-	std::vector<TagEntryPtr> tags;
-	return tags;
-}

@@ -731,12 +731,6 @@ private:
 	virtual ~TagsManager();
 
 	/**
-	 * @brief parse array of files and return an array of tags
-	 * @param files
-	 */
-	std::vector<TagEntryPtr> BatchParse(const std::vector<wxFileName> &files);
-
-	/**
 	 * Parse tags from memory and constructs a TagTree.
 	 * This function throws a std::exception*.
 	 * @param tags wxString containing the tags to parse

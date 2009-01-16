@@ -39,6 +39,8 @@ int main(int argc, char **argv)
 
 #ifdef __WXMSW__
 	files.push_back("C:\\Development\\C++\\codelite\\trunk\\sdk\\codelite_indexer\\workerthread_test.h");
+	files.push_back("C:\\Development\\C++\\codelite\\trunk\\sdk\\codelite_indexer\\workerthread_test.h");
+	files.push_back("C:\\Development\\C++\\codelite\\trunk\\sdk\\codelite_indexer\\workerthread_test.h");
 #else
 	char *home = getenv("HOME");
 	std::string file_name;
@@ -49,7 +51,6 @@ int main(int argc, char **argv)
 
 	req.setFiles(files);
 	req.setCtagOptions("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p  -IwxT,_T");
-	req.setDatabaseFileName("tags.db");
 	for (size_t i=0; i<1; i++) {
 		// connect to server
 		if(!client.connect()){

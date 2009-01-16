@@ -211,7 +211,7 @@ createCodeLiteIndexerMakefile ()
 	echo "" >> Makefile
 	echo "all: codelite_indexer" >> Makefile
 
-	createObjectList "network/*.cpp libctags/*.c database/*.c *.cpp" "codelite_indexer_objects"
+	createObjectList "network/*.cpp libctags/*.c *.cpp" "codelite_indexer_objects"
 
 	for a_file in $files_list
 	do

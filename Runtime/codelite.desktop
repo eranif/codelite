@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=0.9
-Name=CodeLite
+Name=codelite
 Comment=An Open Source IDE for C/C++
-TryExec=CodeLite
-Exec=CodeLite %f
+TryExec=codelite
+Exec=codelite %f
 Icon=/usr/local/share/codelite/images/cubes.png
 Terminal=false
 X-MultipleArgs=false

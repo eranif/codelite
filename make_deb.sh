@@ -1,8 +1,8 @@
 ################################################################################
-## This file is part of CodeLite IDE and is released 
-## under the terms of the GNU General Public License as published by  
-##    the Free Software Foundation; either version 2 of the License, or     
-##    (at your option) any later version.                              
+## This file is part of CodeLite IDE and is released
+## under the terms of the GNU General Public License as published by
+##    the Free Software Foundation; either version 2 of the License, or
+##    (at your option) any later version.
 ################################################################################
 
 #!/bin/sh
@@ -23,10 +23,10 @@ parseCommandLine()
 {
     case $1 in
         "-d")   PREFIX="/usr";;
-        
+
         "-u")   PREFIX="/usr/local"
                 cur_rev="${cur_rev}-ubuntu0";;
-                
+
         "--help" | "-h")    usage
                             exit 0;;
         *   )   usage
@@ -38,14 +38,14 @@ parseCommandLine()
 usage()
 {
     cat <<EOF
-Usage: 
+Usage:
   `basename $0` [options]
 
 Options:
   -h | --help   this help screen
   -d            make deb-package for Debian
   -u            make deb-package for Ubuntu
-  
+
 EOF
 }
 
@@ -74,7 +74,7 @@ generateDesktopFile()
 {
     rm -fr fakeroot/usr/share/applications/codelite.desktop
     echo "[Desktop Entry] " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "Name=CodeLite " >> fakeroot/usr/share/applications/codelite.desktop
+    echo "Name=codelite " >> fakeroot/usr/share/applications/codelite.desktop
     echo "Comment=An Open Source IDE for C/C++ " >> fakeroot/usr/share/applications/codelite.desktop
     echo "TryExec=codelite " >> fakeroot/usr/share/applications/codelite.desktop
     echo "Exec=codelite %f " >> fakeroot/usr/share/applications/codelite.desktop
@@ -92,7 +92,7 @@ generateMenuFile()
 {
     rm -fr fakeroot/usr/share/menu/codelite
     echo "?package(codelite):needs=\"x11\" section=\"Apps/Programming\" \ " >> fakeroot/usr/share/menu/codelite
-    echo "        title=\"CodeLite\" command=\"${PREFIX}/bin/codelite\" \ " >> fakeroot/usr/share/menu/codelite
+    echo "        title=\"codelite\" command=\"${PREFIX}/bin/codelite\" \ " >> fakeroot/usr/share/menu/codelite
     echo "        icon=\"${PREFIX}/share/codelite/images/cubes.png\" " >> fakeroot/usr/share/menu/codelite
     echo "" >> fakeroot/usr/share/menu/codelite
 }

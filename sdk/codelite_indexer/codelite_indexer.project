@@ -154,7 +154,7 @@
         <Preprocessor Value="__WXMSW__"/>
         <Preprocessor Value="__DEBUG"/>
       </Compiler>
-      <Linker Required="yes" Options="./Debug/sqlite3.o"/>
+      <Linker Required="yes" Options=""/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands></PostConnectCommands>
         <StartupCommands></StartupCommands>
@@ -216,7 +216,7 @@
         <IncludePath Value="libctags/"/>
         <Preprocessor Value="__WXMSW__"/>
       </Compiler>
-      <Linker Required="yes" Options="-O2;./Release/sqlite3.o"/>
+      <Linker Required="yes" Options="-O2;;"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands></PostConnectCommands>
         <StartupCommands></StartupCommands>

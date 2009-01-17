@@ -274,7 +274,7 @@ void SvnDriver::CommitWithAuth(const wxString &cmd, const TreeItemInfo &item)
 void SvnDriver::Commit()
 {
 	ENTER_SVN_AND_SELECT()
-	wxString command, comment;
+	wxString command, comment, text;
 	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
 
 	DirSaver ds;
@@ -294,26 +294,41 @@ void SvnDriver::Commit()
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT(" status -q ") << fileName;
 
-	wxArrayString output;
+	wxArrayString output, files;
 	ProcUtils::ExecuteCommand(command, output);
 
-	wxString text;
+	text << wxT("# Svn status:\n");
+	text << wxT("# lines which starts with '#' are ignored\n");
+
 	for (size_t i=0; i< output.GetCount(); i++) {
 		wxString file_name(output.Item(i));
 		file_name = file_name.Trim().Trim(false);
 		text << wxT("# ") << file_name << wxT("\n");
+
+		wxArrayString tmpArr = wxStringTokenize(file_name, wxT(" "), wxTOKEN_STRTOK);
+		files.Add(tmpArr.Last());
 	}
 
-	//Get Log message from user
-	SvnDlg dlg(NULL);
-	text.Prepend(dlg.GetValue()+wxT("# Svn status:\n"));
-	dlg.SetValue(text);
+	// we are going to add only:
+	// "added" "modified" "merged" "deleted"
+	SvnDlg dlg(m_manager->GetTheApp()->GetTopWindow(), files, m_manager);
+	dlg.SetLogMessage(text);
 
 	if (dlg.ShowModal() == wxID_OK) {
-		comment = dlg.GetValue();
-		command.Clear();
+		wxArrayString filesToCommit = dlg.GetFiles();
+		if (filesToCommit.IsEmpty()) {
+			return;
+		}
+
+		comment = dlg.GetLogMessage();
+		command.clear();
 		command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
-		command << wxT("commit ") << fileName << wxT(" -m \"") << comment << wxT("\"");
+		command << wxT("commit ");
+		for (size_t i=0; i<filesToCommit.GetCount(); i++) {
+			command << wxT("\"") << filesToCommit.Item(i) << wxT("\" ");
+		}
+		command << wxT(" -m \"") << comment << wxT("\"");
+
 		m_curHandler = new SvnCommitCmdHandler(this, command, item);
 		ExecCommand(command);
 	}
@@ -337,37 +352,50 @@ void SvnDriver::ResolveConflictedFile(const wxFileName& filename, SvnPostCmdActi
 void SvnDriver::CommitFile(const wxString &fileName, SvnPostCmdAction *handler)
 {
 	ENTER_SVN_AND_SELECT()
-	wxString command, comment;
+	wxString command, comment, text;
 
 	//get the comment to enter
 	command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
 	command << wxT(" status -q ") << fileName;
 
-	wxArrayString output;
+	wxArrayString output, files;
 	ProcUtils::ExecuteCommand(command, output);
 
-	wxString text;
+	text << wxT("# Svn status:\n");
+	text << wxT("# lines which starts with '#' are ignored\n");
 	for (size_t i=0; i< output.GetCount(); i++) {
 		wxString file_name(output.Item(i));
 		file_name = file_name.Trim().Trim(false);
 		text << wxT("# ") << file_name << wxT("\n");
+
+		wxArrayString tmpArr = wxStringTokenize(file_name, wxT(" "), wxTOKEN_STRTOK);
+		files.Add(tmpArr.Last());
 	}
 
-	//Get Log message from user
-	SvnDlg *dlg = new SvnDlg(NULL);
-	text.Prepend(dlg->GetValue()+wxT("# Svn status:\n"));
-	dlg->SetValue(text);
+	// Get Log message from user
+	SvnDlg dlg(m_manager->GetTheApp()->GetTopWindow(), files, m_manager);
 	TreeItemInfo dummy;
-	if (dlg->ShowModal() == wxID_OK) {
-		comment = dlg->GetValue();
-		command.Clear();
+
+	dlg.SetLogMessage(text);
+	if (dlg.ShowModal() == wxID_OK) {
+		wxArrayString filesToCommit = dlg.GetFiles();
+		if (filesToCommit.IsEmpty()) {
+			return;
+		}
+
+		comment = dlg.GetLogMessage();
+		command.clear();
 		command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
-		command << wxT("commit ") << fileName << wxT(" -m \"") << comment << wxT("\"");
+		command << wxT("commit ");
+		for (size_t i=0; i<filesToCommit.GetCount(); i++) {
+			command << wxT("\"") << filesToCommit.Item(i) << wxT("\" ");
+		}
+		command << wxT(" -m \"") << comment << wxT("\"");
+
 		m_curHandler = new SvnCommitCmdHandler(this, command, dummy);
 		m_curHandler->SetPostCmdAction(handler);
 		ExecCommand(command);
 	}
-	dlg->Destroy();
 }
 
 void SvnDriver::UpdateFile(const wxString &fileName, SvnPostCmdAction *handler)
@@ -783,9 +811,9 @@ void SvnDriver::DoDiff(const wxFileName& fileName, bool promptForRevision)
 	wxString command, comment;
 
 	wxString diffAgainst(wxT("BASE"));
-	if(promptForRevision){
+	if (promptForRevision) {
 		diffAgainst = wxGetTextFromUser(wxT("Insert base revision to diff with:"), wxT("Diff with..."), wxT("BASE"));
-		if(diffAgainst.empty()){
+		if (diffAgainst.empty()) {
 			// user clickec 'Cancel'
 			diffAgainst = wxT("BASE");
 		}

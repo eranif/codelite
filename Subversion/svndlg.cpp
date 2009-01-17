@@ -24,7 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "svndlg.h"
 #include "wx/tokenzr.h"
+#include "windowattrmanager.h"
 #include "svncommitmsgsmgr.h"
+#include "imanager.h"
 
 static void EscapeComment(wxString &comment)
 {
@@ -43,9 +45,10 @@ static void EscapeComment(wxString &comment)
 	comment.Replace(wxT("\""), wxT("\\\""));
 }
 
-SvnDlg::SvnDlg( wxWindow* parent )
-		:
-		SvnBaseDlg( parent )
+SvnDlg::SvnDlg( wxWindow* parent, const wxArrayString &files, IManager *manager )
+		: SvnBaseDlg( parent )
+		, m_files(files)
+		, m_manager(manager)
 {
 	wxArrayString msgs;
 
@@ -56,8 +59,19 @@ SvnDlg::SvnDlg( wxWindow* parent )
 		m_comboBoxLastCommitMsgs->SetSelection( msgs.GetCount()-1 );
 	}
 	m_textCtrl->SetFocus();
-	// center the dialog
-	Centre();
+
+	// populate the check list
+	for (size_t i=0; i<m_files.GetCount(); i++) {
+		m_checkList->Append(m_files.Item(i));
+		m_checkList->Check(i);
+	}
+
+	WindowAttrManager::Load(this, wxT("SvnLog"), m_manager->GetConfigTool());
+}
+
+SvnDlg::~SvnDlg()
+{
+	WindowAttrManager::Save(this, wxT("SvnLog"), m_manager->GetConfigTool());
 }
 
 void SvnDlg::OnLastCommitMsgSelected(wxCommandEvent &e)
@@ -74,15 +88,27 @@ void SvnDlg::OnButtonOK(wxCommandEvent &e)
 
 	EndModal( wxID_OK );
 }
-wxString SvnDlg::GetValue() const
+
+wxString SvnDlg::GetLogMessage() const
 {
 	wxString comment( m_textCtrl->GetValue() );
 	EscapeComment(comment);
 	return comment;
 }
 
-void SvnDlg::SetValue(const wxString& value)
+wxArrayString SvnDlg::GetFiles() const
 {
-	m_textCtrl->SetValue(value);
+	wxArrayString files;
+	for (unsigned int i = 0; i<m_checkList->GetCount(); i++) {
+		if (m_checkList->IsChecked(i)) {
+			files.Add(m_checkList->GetString(i));
+		}
+	}
+	return files;
+}
+
+void SvnDlg::SetLogMessage(const wxString& message)
+{
+	m_textCtrl->SetValue(message);
 	m_textCtrl->SelectAll();
 }

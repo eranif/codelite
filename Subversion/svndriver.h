@@ -56,6 +56,7 @@ protected:
 	void SelectSvnTab();
 	void CommitWithAuth(const wxString &cmd, const TreeItemInfo &item);
 	void DoDiff(const wxFileName &fileName, bool promptForRevision);
+
 public:
 	SvnDriver(SubversionPlugin *plugin, IManager *mgr);
 	virtual ~SvnDriver();

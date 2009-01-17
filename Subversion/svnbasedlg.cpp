@@ -16,15 +16,51 @@ SvnBaseDlg::SvnBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	m_textCtrl = new wxTextCtrl( this, wxID_ANY, _("# Enter commit log here.Lines starting with the pound sign (#), are \n# ignored\n"), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
-	bSizer1->Add( m_textCtrl, 1, wxALL|wxEXPAND, 5 );
+	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH );
+	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( SvnBaseDlg::m_splitter1OnIdle ), NULL, this );
+	m_panel1 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer4;
+	bSizer4 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Enter log here:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	bSizer4->Add( m_staticText3, 0, wxALL, 5 );
+	
+	m_textCtrl = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	bSizer4->Add( m_textCtrl, 1, wxALL|wxEXPAND, 5 );
+	
+	m_panel1->SetSizer( bSizer4 );
+	m_panel1->Layout();
+	bSizer4->Fit( m_panel1 );
+	m_panel2 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer5;
+	bSizer5 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, _("Select files to commit:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2->Wrap( -1 );
+	bSizer5->Add( m_staticText2, 0, wxALL, 5 );
+	
+	wxArrayString m_checkListChoices;
+	m_checkList = new wxCheckListBox( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_checkListChoices, 0 );
+	bSizer5->Add( m_checkList, 1, wxALL|wxEXPAND, 5 );
+	
+	m_panel2->SetSizer( bSizer5 );
+	m_panel2->Layout();
+	bSizer5->Fit( m_panel2 );
+	m_splitter1->SplitVertically( m_panel1, m_panel2, 0 );
+	bSizer1->Add( m_splitter1, 1, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer3;
+	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
 	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Last commit messages:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
-	bSizer1->Add( m_staticText1, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+	bSizer3->Add( m_staticText1, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	
 	m_comboBoxLastCommitMsgs = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY ); 
-	bSizer1->Add( m_comboBoxLastCommitMsgs, 0, wxALL|wxEXPAND, 5 );
+	bSizer3->Add( m_comboBoxLastCommitMsgs, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer1->Add( bSizer3, 0, wxEXPAND, 5 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );

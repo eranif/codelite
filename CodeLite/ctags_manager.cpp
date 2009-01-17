@@ -1042,11 +1042,26 @@ void TagsManager::BuildExternalDatabase(ExtDbData &data)
 	}
 
 	TagsDatabase db;
-
 	db.OpenDatabase(data.dbName);
+
+	// remove all files which do not need re-tagging
+	DoFilterNonNeededFilesForRetaging(files, &db);
+
+	// if no files needs to be updated, print message in the status bar and continue
+	if (files.IsEmpty()) {
+		wxFrame *frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
+		if (frame) {
+			frame->SetStatusText(wxT("All files are up-to-date"), 0);
+		}
+		return;
+	}
+
 	wxFileName dbPath(data.rootPath);
 	wxString path = dbPath.GetFullPath();
 	DoBuildDatabase(files, db, &path);
+
+	// update the last_retagged field in the database for these files
+	UpdateFilesRetagTimestamp(files, &db);
 }
 
 void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
@@ -1062,39 +1077,8 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
 		strFiles.Add(files.at(i).GetFullPath());
 	}
 
-	TagsOptionsData options = TagsManagerST::Get()->GetCtagsOptions();
-	if (!(options.GetFlags() & CC_USE_FULL_RETAGGING)) {
-		// step 2: get list of files from the database
-		//         for each file compare the actual modification
-		//         timestamp vs the last_retagged timestamp from the database
-		//         if the timestamp is newer than the file, dont retag
-		//         the file
-		std::vector<FileEntryPtr> files_entries;
-		m_workspaceDatabase->GetFiles(files_entries);
-
-		for (size_t i=0; i<files_entries.size(); i++) {
-			FileEntryPtr fe = files_entries.at(i);
-
-			// does the file exist in both lists?
-			int where = strFiles.Index(fe->GetFile());
-			if (where != wxNOT_FOUND) {
-
-				// get the actual modifiaction time of the file from the disk
-				struct stat buff;
-				int modified(0);
-
-				const wxCharBuffer cname = _C(strFiles.Item(where));
-				if (stat(cname.data(), &buff) == 0) {
-					modified = (int)buff.st_mtime;
-				}
-
-				// if the timestamp from the database < then the actual timestamp, re-tag the file
-				if (fe->GetLastRetaggedTimestamp() >= modified) {
-					strFiles.RemoveAt(where);
-				}
-			}
-		}
-	}
+	// step 2: remove all files which do not need retag
+	DoFilterNonNeededFilesForRetaging(strFiles, m_workspaceDatabase);
 
 	if (strFiles.IsEmpty()) {
 		wxFrame *frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
@@ -2574,5 +2558,42 @@ void TagsManager::UpdateFilesRetagTimestamp(const wxArrayString& files, TagsData
 
 	} catch (wxSQLite3Exception &e) {
 		wxUnusedVar(e);
+	}
+}
+
+void TagsManager::DoFilterNonNeededFilesForRetaging(wxArrayString& strFiles, TagsDatabase* db)
+{
+	TagsOptionsData options = GetCtagsOptions();
+	if (!(options.GetFlags() & CC_USE_FULL_RETAGGING)) {
+		// step 2: get list of files from the database
+		//         for each file compare the actual modification
+		//         timestamp vs the last_retagged timestamp from the database
+		//         if the timestamp is newer than the file, dont retag
+		//         the file
+		std::vector<FileEntryPtr> files_entries;
+		db->GetFiles(files_entries);
+
+		for (size_t i=0; i<files_entries.size(); i++) {
+			FileEntryPtr fe = files_entries.at(i);
+
+			// does the file exist in both lists?
+			int where = strFiles.Index(fe->GetFile());
+			if (where != wxNOT_FOUND) {
+
+				// get the actual modifiaction time of the file from the disk
+				struct stat buff;
+				int modified(0);
+
+				const wxCharBuffer cname = _C(strFiles.Item(where));
+				if (stat(cname.data(), &buff) == 0) {
+					modified = (int)buff.st_mtime;
+				}
+
+				// if the timestamp from the database < then the actual timestamp, re-tag the file
+				if (fe->GetLastRetaggedTimestamp() >= modified) {
+					strFiles.RemoveAt(where);
+				}
+			}
+		}
 	}
 }

@@ -759,23 +759,24 @@ protected:
 	void OnUpdateFileTreeEvent(wxCommandEvent &e);
 
 protected:
-	void DoFindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags);
-	void DoExecuteQueury(const wxString &sql, bool queryBothDB, std::vector<TagEntryPtr> &tags, bool onlyWorkspace = false);
-	void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
-	void RemoveDuplicatesTips(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
-	void GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);
-	void GetLocalTags(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);
-	void TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips);
-	void GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<TagEntryPtr> &tips);
+	void           DoFindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags);
+	void           DoExecuteQueury(const wxString &sql, bool queryBothDB, std::vector<TagEntryPtr> &tags, bool onlyWorkspace = false);
+	void           RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
+	void           RemoveDuplicatesTips(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
+	void           GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);
+	void           GetLocalTags(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);
+	void           TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips);
+	void           GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<TagEntryPtr> &tips);
 	DoxygenComment DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix);
-	void DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, const wxString *rootPath = NULL);
-	bool ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper, wxString &scopeTempalteInitiList);
-	void FilterImplementation(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
-	void FilterDeclarations(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
-	void ConvertPath(TagEntryPtr& tag);
-	wxString DoReplaceMacros(wxString name);
-	void UpdateFileTree(const std::vector<wxFileName> &files, bool bold);
-	void UpdateFileTree(TagsDatabase *td, bool bold);
+	void           DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, const wxString *rootPath = NULL);
+	bool           ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper, wxString &scopeTempalteInitiList);
+	void           FilterImplementation(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
+	void           FilterDeclarations(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
+	void           ConvertPath(TagEntryPtr& tag);
+	wxString       DoReplaceMacros(wxString name);
+	void           UpdateFileTree(const std::vector<wxFileName> &files, bool bold);
+	void           UpdateFileTree(TagsDatabase *td, bool bold);
+	void           DoFilterNonNeededFilesForRetaging(wxArrayString &strFiles, TagsDatabase *db);
 };
 
 /// create the singleton typedef

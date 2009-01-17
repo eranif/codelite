@@ -82,7 +82,7 @@ Language::~Language()
 }
 
 /// Return the visible scope until pchStopWord is encountered
-wxString Language::GetScope(const wxString& srcString)
+wxString Language::OptimizeScope(const wxString& srcString)
 {
 	wxString wxcurrScope;
 	std::vector<std::string> scope_stack;
@@ -263,7 +263,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 	wxString grandParentTypeName, grandParentTypeScope;
 
 	PERF_BLOCK("GetScope") {
-		visibleScope = GetScope(text);
+		visibleScope = OptimizeScope(text);
 	}
 
 	std::vector<wxString> additionalScopes;
@@ -925,14 +925,14 @@ bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const 
 			//try the additional scopes
 			for (size_t i=0; i<moreScopes.size(); i++) {
 				tags.clear();
-				
-				// try the typeScope in any of the "using namespace XXX" declarations 
+
+				// try the typeScope in any of the "using namespace XXX" declarations
 				// passed here (i.e. moreScopes variable)
 				wxString newScope(moreScopes.at(i));
 				if(typeScope != wxT("<global>")) {
 					newScope << wxT("::") << typeScope;
 				}
-				
+
 				if (DoSearchByNameAndScope(type, newScope, tags, type, typeScope)) {
 					return true;
 				}

@@ -578,7 +578,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
 	if (expression.IsEmpty()) {
 		//collect all the tags from the current scope, and
 		//from the global scope
-		scope = GetLanguage()->GetScope(text);
+		scope = GetLanguage()->OptimizeScope(text);
 		std::vector<TagEntryPtr> tmpCandidates;
 		GetGlobalTags(word, tmpCandidates);
 		GetLocalTags(word, scope, tmpCandidates, PartialMatch | IgnoreCaseSensitive);
@@ -750,7 +750,7 @@ void TagsManager::GetHoverTip(const wxFileName &fileName, int lineno, const wxSt
 	expression.EndsWith(word, &tmp);
 	expression = tmp;
 
-	wxString scope = GetLanguage()->GetScope(text);
+	wxString scope = GetLanguage()->OptimizeScope(text);
 	wxString scopeName = GetLanguage()->GetScopeName(scope, NULL);
 	if (expression.IsEmpty()) {
 		//collect all the tags from the current scope, and

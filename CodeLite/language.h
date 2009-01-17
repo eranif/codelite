@@ -95,7 +95,7 @@ public:
 	 * \param srcString Input string
 	 * \return visible scope
 	 */
-	wxString GetScope(const wxString& srcString);
+	wxString OptimizeScope(const wxString& srcString);
 
 	/**
 	 * Set the language specific auto completion delimeteres, for example: for C++ you should populate

@@ -973,8 +973,21 @@ void TagsManager::FindSymbol(const wxString& name, std::vector<TagEntryPtr> &tag
 	DoExecuteQueury(query, true, tags);
 }
 
+void TagsManager::DeleteFilesTags(const wxArrayString &files)
+{
+	std::vector<wxFileName> files_;
+	for (size_t i=0; i<files.GetCount(); i++) {
+		files_.push_back(files.Item(i));
+	}
+	DeleteFilesTags(files_);
+}
+
 void TagsManager::DeleteFilesTags(const std::vector<wxFileName> &projectFiles)
 {
+	if (projectFiles.empty()) {
+		return;
+	}
+
 	wxString query;
 	wxString filelist;
 	query << wxT("delete from tags where file in (");
@@ -1038,8 +1051,8 @@ void TagsManager::BuildExternalDatabase(ExtDbData &data)
 
 void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
 {
-	DeleteFilesTags(files);
 	wxArrayString strFiles;
+	// step 1: remove all non-tags files
 	for (size_t i=0; i<files.size(); i++) {
 		if (!IsValidCtagsFile(files.at(i).GetFullPath())) {
 			wxLogMessage(wxT("Not valid C tags file type: %s. Skipping."), files.at(i).GetFullPath().c_str());
@@ -1047,12 +1060,66 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
 		}
 
 		strFiles.Add(files.at(i).GetFullPath());
-
-		// clear all the queries which holds reference to this file
-		m_workspaceDbCache->DeleteByFilename(files.at(i).GetFullPath());
-
 	}
+
+	TagsOptionsData options = TagsManagerST::Get()->GetCtagsOptions();
+	if (!(options.GetFlags() & CC_USE_FULL_RETAGGING)) {
+		// step 2: get list of files from the database
+		//         for each file compare the actual modification
+		//         timestamp vs the last_retagged timestamp from the database
+		//         if the timestamp is newer than the file, dont retag
+		//         the file
+		std::vector<FileEntryPtr> files_entries;
+		m_workspaceDatabase->GetFiles(files_entries);
+
+		for (size_t i=0; i<files_entries.size(); i++) {
+			FileEntryPtr fe = files_entries.at(i);
+
+			// does the file exist in both lists?
+			int where = strFiles.Index(fe->GetFile());
+			if (where != wxNOT_FOUND) {
+
+				// get the actual modifiaction time of the file from the disk
+				struct stat buff;
+				int modified(0);
+
+				const wxCharBuffer cname = _C(strFiles.Item(where));
+				if (stat(cname.data(), &buff) == 0) {
+					modified = (int)buff.st_mtime;
+				}
+
+				// if the timestamp from the database < then the actual timestamp, re-tag the file
+				if (fe->GetLastRetaggedTimestamp() >= modified) {
+					strFiles.RemoveAt(where);
+				}
+			}
+		}
+	}
+
+	if (strFiles.IsEmpty()) {
+		wxFrame *frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
+		if (frame) {
+			frame->SetStatusText(wxT("All files are up-to-date"), 0);
+		}
+		return;
+	}
+
+	// loop over the "going to be retagged files" and
+	// clear all the queries which holds reference to this file
+	for (size_t i=0; i<strFiles.GetCount(); i++) {
+		m_workspaceDbCache->DeleteByFilename(strFiles.Item(i));
+	}
+
+	// step 4: Remove tags belonging to these files
+	DeleteFilesTags(strFiles);
+
+	// step 5: build the database
 	DoBuildDatabase(strFiles, *m_workspaceDatabase);
+
+	// step 6: update the last_retagged field in the database for these files
+	UpdateFilesRetagTimestamp(strFiles, m_workspaceDatabase);
+
+	// step 7: update the file tree
 	UpdateFileTree(m_workspaceDatabase, true);
 }
 
@@ -1106,10 +1173,6 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 	}
 
 	unsigned int cur = 0;
-
-	// begin transaction
-//	db.Begin();
-
 	for (std::list<tagParseResult>::iterator iter = trees.begin(); iter != trees.end(); iter++) {
 		wxString msg;
 		msg << wxT("Saving symbols of: ") << (*iter).fileName;
@@ -1129,9 +1192,6 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 		}
 		cur++;
 	}
-
-	// commit transaction
-//	db.Commit();
 
 	// update the variable table
 	if (rootPath) {
@@ -2495,5 +2555,24 @@ void TagsManager::DeleteTagsByFilePrefix(const wxString& dbfileName, const wxStr
 	// clear cache if present
 	if (m_extDbCache) {
 		m_extDbCache->Clear();
+	}
+}
+
+void TagsManager::UpdateFilesRetagTimestamp(const wxArrayString& files, TagsDatabase* db)
+{
+	try {
+
+		std::vector<DbRecordPtr> entries;
+		for (size_t i=0; i<files.GetCount(); i++) {
+			FileEntry *fe = new FileEntry();
+			fe->SetFile(files.Item(i));
+			fe->SetLastRetaggedTimestamp((int)time(NULL));
+			DbRecordPtr fep(fe);
+			entries.push_back(fep);
+		}
+		db->Store(entries, wxFileName());
+
+	} catch (wxSQLite3Exception &e) {
+		wxUnusedVar(e);
 	}
 }

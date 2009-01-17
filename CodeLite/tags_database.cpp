@@ -100,6 +100,13 @@ void TagsDatabase::CreateSchema()
 		sql = wxT("create  table if not exists tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, file string, line integer, kind string, access string, signature string, pattern string, parent string, inherits string, path string, typeref string, scope string);");
 		m_db->ExecuteUpdate(sql);
 
+		sql = wxT("create  table if not exists FILES (ID INTEGER PRIMARY KEY AUTOINCREMENT, file string, last_retagged integer);");
+		m_db->ExecuteUpdate(sql);
+
+		// create unuque index on Files' file column
+		sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS FILES_NAME on FILES(file)");
+		m_db->ExecuteUpdate(sql);
+
 		sql = wxT("create  table if not exists comments (comment string, file string, line number);");
 		m_db->ExecuteUpdate(sql);
 
@@ -158,19 +165,19 @@ void TagsDatabase::CreateSchema()
 void TagsDatabase::RecreateDatabase()
 {
 	try {
-		wxString sql;
 		m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS TAGS"));
 		m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS COMMENTS"));
 		m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS TAGS_VERSION"));
 		m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS VARIABLES"));
+		m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS FILES"));
 
-		//recreate the schema
+		// Recreate the schema
 		CreateSchema();
+
 	} catch (wxSQLite3Exception &e) {
 		wxUnusedVar(e);
 	}
 }
-
 
 wxString TagsDatabase::GetSchemaVersion() const
 {
@@ -564,6 +571,27 @@ void TagsDatabase::DeleteByFilePrefix(const wxFileName& dbpath, const wxString& 
 
 		sql << wxT("delete from tags where file like '") << name << wxT("%%' ESCAPE '^' ");
 		m_db->ExecuteUpdate(sql);
+
+	} catch (wxSQLite3Exception& e) {
+		wxUnusedVar(e);
+	}
+}
+
+void TagsDatabase::GetFiles(std::vector<FileEntryPtr>& files)
+{
+	try {
+		wxString query(wxT("select * from files order by file"));
+		wxSQLite3ResultSet res = m_db->ExecuteQuery(query);
+
+		while (res.NextRow()) {
+
+			FileEntryPtr fe(new FileEntry());
+			fe->SetId(res.GetInt(0));
+			fe->SetFile(res.GetString(1));
+			fe->SetLastRetaggedTimestamp(res.GetInt(2));
+
+			files.push_back( fe );
+		}
 
 	} catch (wxSQLite3Exception& e) {
 		wxUnusedVar(e);

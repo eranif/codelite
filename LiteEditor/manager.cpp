@@ -555,9 +555,12 @@ wxFileName Manager::FindFile ( const wxArrayString& files, const wxFileName &fn 
 
 void Manager::RetagWorkspace()
 {
-	// in the case of re-tagging the entire workspace
+	// in the case of re-tagging the entire workspace and full re-tagging is enabled
 	// it is faster to drop the tables instead of deleting
-	TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
+	TagsOptionsData options = TagsManagerST::Get()->GetCtagsOptions();
+	if(options.GetFlags() & CC_USE_FULL_RETAGGING) {
+		TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
+	}
 
 	wxArrayString projects;
 	GetProjectList ( projects );

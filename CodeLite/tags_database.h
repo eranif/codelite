@@ -22,24 +22,17 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CODELITE_TAGS_DATABASE_H
+#ifndef CODELITE_TAGS_DATABASE_H
 #define CODELITE_TAGS_DATABASE_H
 
 #include "tag_tree.h"
 #include "entry.h"
 #include <wx/filename.h>
 #include "db_record.h"
+#include "fileentry.h"
 #include "variable_entry.h"
 
 const wxString gTagsDatabaseVersion(wxT("CodeLite version 0.5 Alpha"));
-
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_CL
-#endif
 
 /**
 TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.
@@ -53,37 +46,45 @@ Database tables:
 Table Name: TAGS
 
 || Column Name || Type || Description
-|Project	| String | Project name of the entry
-|Name	| String | Tag name is appears in ctags output file
-|File	| String | File that this tag was found in
-|Line	| Number | Line number
-|Kind	| String | Tag kind, can be one of: function, prototype, class, namespace, variable, member, enum, enumerator, macro, project, union, typedef
-|Access	| String | Can be one of public, private protected
-|Signature	| String | For functions, this column holds the function signature
-|Pattern	| String | pattern that can be used to located this tag in the file
-|Parent	| String | tag direct parent, can be its class parent (for members or functions), namespace or the literal "<global>"
-|Inherits	| String | If this class/struct inherits from other class, it will cotain the name of the base class
-|Path	| String | full name including path, (e.g. Project::ClassName::FunctionName
-|Typeref| String | Special type of tag, that points to other Tag (i.e. typedef)
+|id            | Number | ID
+|Name          | String | Tag name is appears in ctags output file
+|File          | String | File that this tag was found in
+|Line          | Number | Line number
+|Kind          | String | Tag kind, can be one of: function, prototype, class, namespace, variable, member, enum, enumerator, macro, project, union, typedef
+|Access        | String | Can be one of public, private protected
+|Signature     | String | For functions, this column holds the function signature
+|Pattern       | String | pattern that can be used to located this tag in the file
+|Parent        | String | tag direct parent, can be its class parent (for members or functions), namespace or the literal "<global>"
+|Inherits      | String | If this class/struct inherits from other class, it will cotain the name of the base class
+|Path          | String | full name including path, (e.g. Project::ClassName::FunctionName
+|Typeref       | String | Special type of tag, that points to other Tag (i.e. typedef)
 
 Table Name: COMMENTS
 
 || Column Name || Type || Description
-|Comment| String | String comment found in code
-|File	| String | File that the comment was found in
-|Line	| Number | Line number of the comment in File
+|Comment       | String | String comment found in code
+|File          | String | File that the comment was found in
+|Line          | Number | Line number of the comment in File
 
 Table Name: TAGS_VERSION
 
 || Column Name || Type || Description
-| Version | String | contains the current database schema
+| Version      | String | contains the current database schema
 
 Table Name: VARIABLES
 
 || Column Name || Type || Description
-| variable | String | contains the variable name
-| value	   | String | the actual path
+| variable     | String | contains the variable name
+| value	       | String | the actual path
 
+Table Name: FILES
+
+|| Column Name || Type || Description
+| id           | Number | ID
+| file         | String | Full path of the file
+| last_retagged| Number | Timestamp for the last time this file was retagged
+
+*
 \date 08-22-2006
 \author Eran
 \ingroup CodeLite
@@ -110,7 +111,9 @@ public:
 	 * Return the currently opened database.
 	 * @return Currently open database
 	 */
-	const wxFileName& GetDatabaseFileName() const { return m_fileName; }
+	const wxFileName& GetDatabaseFileName() const {
+		return m_fileName;
+	}
 
 	/**
 	 * Open sqlite database.
@@ -167,17 +170,31 @@ public:
 	/**
 	 * Begin transaction.
 	 */
-	void Begin() { return m_db->Begin(); }
+	void Begin() {
+		try {
+			m_db->Begin();
+		} catch (wxSQLite3Exception &e) {
+			wxUnusedVar(e);
+		}
+	}
 
 	/**
 	 * Commit transaction.
 	 */
-	void Commit() { return m_db->Commit(); }
+	void Commit() {
+		try {
+			m_db->Commit();
+		} catch (wxSQLite3Exception &e) {
+			wxUnusedVar(e);
+		}
+	}
 
 	/**
 	 * Rollback transaction.
 	 */
-	void Rollback() { return m_db->Begin(); }
+	void Rollback() {
+		return m_db->Begin();
+	}
 
 	/**
 	 * Test whether the database is opened
@@ -198,7 +215,9 @@ public:
 	 * @param sql sql
 	 * @return wxSQLite3ResultSet object
 	 */
-	wxSQLite3Statement PrepareStatement( const wxString & sql ) { return m_db->PrepareStatement( sql ); }
+	wxSQLite3Statement PrepareStatement( const wxString & sql ) {
+		return m_db->PrepareStatement( sql );
+	}
 
 	/**
 	 * Execute query
@@ -210,7 +229,9 @@ public:
 	 * Return the current version of the database library .
 	 * @return current version of the database library
 	 */
-	const wxString& GetVersion() const { return gTagsDatabaseVersion; }
+	const wxString& GetVersion() const {
+		return gTagsDatabaseVersion;
+	}
 
 	/**
 	 * Load the tags table into memory, to improve performance
@@ -273,9 +294,13 @@ public:
 	 */
 	void GetFiles(const wxString &partialName, std::vector<wxFileName> &files);
 
+	/**
+	 * @brief return list of files from the database
+	 * @param files vector of database record
+	 */
+	void GetFiles(std::vector<FileEntryPtr> &files);
+
 	void GetVariables(std::vector<VariableEntryPtr> &vars);
 };
 
 #endif // CODELITE_TAGS_DATABASE_H
-
-

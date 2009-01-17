@@ -112,15 +112,12 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	oldTree->Compare(newTree.Get(), deletedItems, modifiedItems, newItems);
 	// Delete old entries
 	size_t i=0;
+
+
 	m_pDb->Begin();
 
 	// Prepare sql statements
 	TagEntry dummy;
-
-	wxSQLite3Statement insertStmt = m_pDb->PrepareStatement( dummy.GetInsertOneStatement() );
-	wxSQLite3Statement updateStmt = m_pDb->PrepareStatement( dummy.GetUpdateOneStatement() );
-	wxSQLite3Statement deleteStmt = m_pDb->PrepareStatement( dummy.GetDeleteOneStatement() );
-
 	if ( TagsManagerST::Get()->GetParseComments() ) {
 		// drop all old entries from this file
 		try {
@@ -133,23 +130,43 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 		}
 	}
 
-	for (i=0; i<deletedItems.size(); i++)
-		deletedItems[i].second.Delete(deleteStmt);
+	try {
+		wxSQLite3Statement insertStmt = m_pDb->PrepareStatement( dummy.GetInsertOneStatement() );
+		wxSQLite3Statement updateStmt = m_pDb->PrepareStatement( dummy.GetUpdateOneStatement() );
+		wxSQLite3Statement deleteStmt = m_pDb->PrepareStatement( dummy.GetDeleteOneStatement() );
 
-	for (i=0; i<newItems.size(); i++) {
-		if (newItems[i].second.Store(insertStmt, m_pDb.get()) == TagOk) {
-			goodNewItems.push_back(newItems[i]);
+		for (i=0; i<deletedItems.size(); i++)
+			deletedItems[i].second.Delete(deleteStmt);
+
+		for (i=0; i<newItems.size(); i++) {
+			if (newItems[i].second.Store(insertStmt, m_pDb.get()) == TagOk) {
+				goodNewItems.push_back(newItems[i]);
+			}
 		}
-	}
 
-	for (i=0; i<modifiedItems.size(); i++)
-		modifiedItems[i].second.Update(updateStmt);
+		for (i=0; i<modifiedItems.size(); i++)
+			modifiedItems[i].second.Update(updateStmt);
+
+		///////////////////////////////////////////
+		// update the file retag timestamp
+		///////////////////////////////////////////
+
+		std::vector<DbRecordPtr> entries;
+
+		FileEntry *fe = new FileEntry();
+		fe->SetFile(file);
+		fe->SetLastRetaggedTimestamp((int)time(NULL));
+
+		DbRecordPtr fep(fe);
+		entries.push_back(fep);
+		m_pDb->Store(entries, wxFileName(), false);
+
+	} catch (wxSQLite3Exception &e) {
+		wxUnusedVar(e);
+	}
 
 	m_pDb->Commit();
 
-	insertStmt.Finalize();
-	updateStmt.Finalize();
-	deleteStmt.Finalize();
 
 	// If there is no event handler set to handle this comaprison
 	// results, then nothing more to be done
@@ -169,13 +186,13 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 
 	if ( !modifiedItems.empty() ) {
 		std::vector<std::pair<wxString, TagEntry> >  realModifiedItems;
-		for(size_t i=0; i<modifiedItems.size(); i++){
+		for (size_t i=0; i<modifiedItems.size(); i++) {
 			std::pair<wxString, TagEntry> p = modifiedItems.at(i);
-			if(!p.second.GetDifferOnByLineNumber()){
+			if (!p.second.GetDifferOnByLineNumber()) {
 				realModifiedItems.push_back(p);
 			}
 		}
-		if(realModifiedItems.empty() == false){
+		if (realModifiedItems.empty() == false) {
 			SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), realModifiedItems);
 		}
 	}

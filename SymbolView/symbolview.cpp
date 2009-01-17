@@ -218,13 +218,13 @@ void SymbolViewPlugin::CreateGUIControls()
 	// sizer for the drop button and view-mode choice box
 	m_choiceSizer = new wxBoxSizer(wxHORIZONTAL);
 	sz->Add(m_choiceSizer, 0, wxEXPAND|wxALL, 1);
-    
+
 	m_viewChoice = new wxChoice(m_symView, wxID_ANY);
 	m_viewChoice->AppendString(m_viewModeNames[vmCurrentFile]);
 	m_viewChoice->Select(0);
 	m_choiceSizer->Add(m_viewChoice, 1, wxEXPAND|wxALL, 1);
 
-    m_splitter = new wxSplitterWindow(m_symView, wxID_ANY);
+    m_splitter = new wxSplitterWindow(m_symView, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER|wxSP_3DSASH);
     m_splitter->SetMinimumPaneSize(20);
     sz->Add(m_splitter, 1, wxEXPAND|wxALL, 1);
 
@@ -234,16 +234,16 @@ void SymbolViewPlugin::CreateGUIControls()
 	}
 	m_viewStack->Select(m_viewModeNames[vmCurrentFile]);
     m_splitter->Initialize(m_viewStack);
-    
+
 	m_stackChoice = new StackButton(m_symView, (WindowStack*) m_viewStack->GetSelected());
 	m_choiceSizer->Add(m_stackChoice, 0, wxEXPAND|wxALL, 1);
 	// by default the drop-down button is hidden
 	m_choiceSizer->Hide(m_stackChoice);
-    
-    m_properties = new wxPropertyGrid(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
+
+    m_properties = new wxPropertyGrid(m_splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                       wxPG_STATIC_SPLITTER|wxPG_DEFAULT_STYLE);
     InitSymbolProperties();
-    
+
 	sz->Layout();
 }
 
@@ -255,7 +255,7 @@ void SymbolViewPlugin::Connect()
 	m_symView->Connect(XRCID("gohome"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnGoHome), NULL, this);
 	m_symView->Connect(XRCID("gohome"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SymbolViewPlugin::OnGoHomeUI), NULL, this);
     m_symView->Connect(XRCID("show_properties"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewPlugin::OnShowProperties), NULL, this);
-    
+
 	m_stackChoice->Connect(wxID_ANY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SymbolViewPlugin::OnGoHomeUI), NULL, this);
 
 	m_viewChoice->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(SymbolViewPlugin::OnViewModeMouseDown), NULL, this);
@@ -561,25 +561,26 @@ void SymbolViewPlugin::InitSymbolProperties()
     m_properties->Append(new wxStringProperty(wxT("Name")));
     m_properties->Append(new wxStringProperty(wxT("Scope")));
     m_properties->Append(new wxStringProperty(wxT("Display")));
-    
+
     m_properties->Append(new wxPropertyCategory(wxT("Location")));
     m_properties->Append(new wxStringProperty(wxT("Project")));
     m_properties->Append(new wxStringProperty(wxT("File")));
     m_properties->Append(new wxIntProperty(wxT("Line")));
     m_properties->Append(new wxStringProperty(wxT("Pattern")));
     m_properties->Append(new wxStringProperty(wxT("Path")));
-    
+
     m_properties->Append(new wxPropertyCategory(wxT("Extension")));
     m_properties->Append(new wxStringProperty(wxT("Access")));
     m_properties->Append(new wxStringProperty(wxT("Signature")));
     m_properties->Append(new wxStringProperty(wxT("Inherits")));
     m_properties->Append(new wxStringProperty(wxT("Typeref")));
-    
+
     for (wxPropertyGridIterator i = m_properties->GetIterator(); !i.AtEnd(); i++) {
         m_properties->SetPropertyReadOnly(*i);
     }
 
     m_properties->FitColumns();
+	m_properties->Hide();
 }
 
 void SymbolViewPlugin::ShowSymbolProperties()
@@ -587,9 +588,9 @@ void SymbolViewPlugin::ShowSymbolProperties()
     for (wxPropertyGridIterator i = m_properties->GetIterator(); !i.AtEnd(); i++) {
         m_properties->ClearPropertyValue(*i);
     }
-    
+
     TagTreeData *tag = NULL;
-    
+
     WindowStack *viewStack = (WindowStack*) m_viewStack->GetSelected();
     if (viewStack) {
         SymTree *tree = (SymTree*) viewStack->GetSelected();
@@ -600,21 +601,21 @@ void SymbolViewPlugin::ShowSymbolProperties()
             }
         }
     }
-    
+
     if (!tag)
         return;
-    
+
     m_properties->SetPropertyValue(wxT("Name"), tag->GetName());
     m_properties->SetPropertyValue(wxT("Kind"), tag->GetKind());
     m_properties->SetPropertyValue(wxT("Scope"), tag->GetScope());
     m_properties->SetPropertyValue(wxT("Display"), tag->GetFullDisplayName());
-    
+
     m_properties->SetPropertyValue(wxT("Project"), m_mgr->GetProjectNameByFile(tag->GetFile()));
     m_properties->SetPropertyValue(wxT("File"), wxFileName(tag->GetFile()).GetFullName());
     m_properties->SetPropertyValue(wxT("Line"), tag->GetLine());
     m_properties->SetPropertyValue(wxT("Pattern"), tag->GetPattern());
     m_properties->SetPropertyValue(wxT("Path"), tag->GetFile());
-    
+
     m_properties->SetPropertyValue(wxT("Access"), tag->GetAccess());
     m_properties->SetPropertyValue(wxT("Signature"), tag->GetSignature());
     m_properties->SetPropertyValue(wxT("Inherits"), tag->GetInherits());

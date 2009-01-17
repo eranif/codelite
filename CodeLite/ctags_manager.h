@@ -80,9 +80,9 @@ public:
 // By default the NormalizeFunctionSig returns only the variables type
 enum NormalizeFuncFlag {
 	// variable name
-	Normalize_Func_Name 			= 0x00000001,
+	Normalize_Func_Name          = 0x00000001,
 	// variable default value
-	Normalize_Func_Default_value	= 0x00000002,
+	Normalize_Func_Default_value = 0x00000002,
 };
 
 /**
@@ -357,6 +357,7 @@ public:
 	 * @param files list of files, in absolute path
 	 */
 	void DeleteFilesTags(const std::vector<wxFileName> &files);
+	void DeleteFilesTags(const wxArrayString &files);
 
 	/**
 	 * @brief delete all entries from tags database which starts with. If the dbFileName is also an active one,
@@ -707,6 +708,13 @@ public:
 	 * @param bold
 	 */
 	void NotifyFileTree(bool bold);
+
+	/**
+	 * @brief update the 'last_retagged' column in the 'files' table for the current timestamp
+	 * @param files list of files
+	 * @brief db    database to use
+	 */
+	void UpdateFilesRetagTimestamp(const wxArrayString &files, TagsDatabase *db);
 
 protected:
 	std::map<wxString, bool> m_typeScopeCache;

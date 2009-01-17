@@ -109,7 +109,7 @@ wxString clCallTip::Prev()
 wxString clCallTip::All()
 {
 	wxString tip;
-	for(size_t i=0; i<m_tips.size(); i++) {
+	for (size_t i=0; i<m_tips.size(); i++) {
 		tip << m_tips.at(i).str << wxT("\n");
 	}
 	tip.RemoveLast();
@@ -153,21 +153,26 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 			}
 
 			bool hasDefaultValues = (raw_sig.Find(wxT("=")) != wxNOT_FOUND);
-			wxString  normalizedSig = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig);
-			cti.sig = normalizedSig;
+
+			// the key for unique entries is the function prototype without the variables names and
+			// any default values
+			wxString  key           = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, 0);
+
+			// the signature that we want to keep is one with name & default values, so try and get the maximum out of the
+			// function signature
+			wxString  full_signature = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Name | Normalize_Func_Default_value, &cti.paramLen);
+			cti.sig                  = full_signature;
 
 			if (hasDefaultValues) {
-				//incase default values exist in this prototype,
-				//make it the tip instead of the existing one
-				cti.sig = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Name|Normalize_Func_Default_value, &cti.paramLen);
-				mymap[normalizedSig] = cti;
+				// incase default values exist in this prototype,
+				// update/insert this signature
+				mymap[key] = cti;
 			}
 
-			//make sure we dont add duplicates
-			if ( mymap.find(normalizedSig) == mymap.end() ) {
-				//add it
-				cti.sig = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Name, &cti.paramLen);
-				mymap[normalizedSig] = cti;
+			// make sure we dont add duplicates
+			if ( mymap.find(key) == mymap.end() ) {
+				// add it
+				mymap[key] = cti;
 			}
 
 		} else {
@@ -195,7 +200,7 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 	m_tips.clear();
 	for (; iter != mymap.end(); iter++) {
 		wxString tip;
-		if( iter->second.retValue.empty() == false ) {
+		if ( iter->second.retValue.empty() == false ) {
 			tip <<  iter->second.retValue.Trim(false).Trim() << wxT(" : ");
 		}
 		tip << iter->second.sig;
@@ -210,11 +215,11 @@ void clCallTip::GetHighlightPos(int index, int& start, int& len)
 {
 	start = wxNOT_FOUND;
 	len = wxNOT_FOUND;
-	if(m_curr >= 0 && m_curr < (int)m_tips.size()){
+	if (m_curr >= 0 && m_curr < (int)m_tips.size()) {
 		clTipInfo ti = m_tips.at(m_curr);
 		int base = ti.str.Find(wxT("("));
 
-		if(m_tips.size() > 1){
+		if (m_tips.size() > 1) {
 			// multiple tooltips exists, make sure we calculate the up and down arrows
 			wxString arrowsStr;
 			arrowsStr << _T("\001 ") << static_cast<int>(m_curr)+1 << _T(" of ") << static_cast<int>(m_tips.size()) << _T(" \002 ");
@@ -222,7 +227,7 @@ void clCallTip::GetHighlightPos(int index, int& start, int& len)
 		}
 
 		// sanity
-		if(base != wxNOT_FOUND && index < (int)ti.paramLen.size() && index >= 0){
+		if (base != wxNOT_FOUND && index < (int)ti.paramLen.size() && index >= 0) {
 			start = ti.paramLen.at(index).first + base;
 			len =  ti.paramLen.at(index).second;
 		}

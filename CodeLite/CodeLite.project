@@ -84,6 +84,8 @@
     <File Name="tags_database.cpp"/>
     <File Name="variable_entry.cpp"/>
     <File Name="variable_entry.h"/>
+    <File Name="fileentry.cpp"/>
+    <File Name="fileentry.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies/>

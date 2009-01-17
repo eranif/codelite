@@ -55,7 +55,7 @@ TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data)
 {
 	m_colour_flags = m_data.GetCcColourFlags();
 	InitValues();
-	
+
 	m_checkParseComments->SetFocus();
 	WindowAttrManager::Load(this, wxT("TagsOptionsDlgAttr"), NULL);
 }
@@ -68,32 +68,33 @@ TagsOptionsDlg::~TagsOptionsDlg()
 void TagsOptionsDlg::InitValues()
 {
 	//initialize the CodeLite page
-	m_checkParseComments->SetValue(m_data.GetFlags() & CC_PARSE_COMMENTS ? true : false);
-	m_checkDisplayFunctionTip->SetValue(m_data.GetFlags() & CC_DISP_FUNC_CALLTIP ? true : false);
-	m_checkLoadLastDB->SetValue(m_data.GetFlags() & CC_LOAD_EXT_DB ? true : false);
-	m_checkDisplayTypeInfo->SetValue(m_data.GetFlags() & CC_DISP_TYPE_INFO ? true : false);
-	m_checkDisplayComments->SetValue(m_data.GetFlags() & CC_DISP_COMMENTS ? true : false);
-	m_checkLoadToMemory->SetValue(m_data.GetFlags() & CC_LOAD_EXT_DB_TO_MEMORY ? true : false);
-	m_checkFilesWithoutExt->SetValue(m_data.GetFlags() & CC_PARSE_EXT_LESS_FILES ? true : false);
-	m_checkColourLocalVars->SetValue(m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
-	m_checkColourProjTags->SetValue(m_data.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
-	m_checkCppKeywordAssist->SetValue(m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
-	m_checkDisableParseOnSave->SetValue(m_data.GetFlags() & CC_DISABLE_AUTO_PARSING ? true : false);
+	m_checkParseComments->SetValue         (m_data.GetFlags() & CC_PARSE_COMMENTS ? true : false);
+	m_checkDisplayFunctionTip->SetValue    (m_data.GetFlags() & CC_DISP_FUNC_CALLTIP ? true : false);
+	m_checkLoadLastDB->SetValue            (m_data.GetFlags() & CC_LOAD_EXT_DB ? true : false);
+	m_checkDisplayTypeInfo->SetValue       (m_data.GetFlags() & CC_DISP_TYPE_INFO ? true : false);
+	m_checkDisplayComments->SetValue       (m_data.GetFlags() & CC_DISP_COMMENTS ? true : false);
+	m_checkLoadToMemory->SetValue          (m_data.GetFlags() & CC_LOAD_EXT_DB_TO_MEMORY ? true : false);
+	m_checkFilesWithoutExt->SetValue       (m_data.GetFlags() & CC_PARSE_EXT_LESS_FILES ? true : false);
+	m_checkColourLocalVars->SetValue       (m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
+	m_checkColourProjTags->SetValue        (m_data.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
+	m_checkCppKeywordAssist->SetValue      (m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
+	m_checkDisableParseOnSave->SetValue    (m_data.GetFlags() & CC_DISABLE_AUTO_PARSING ? true : false);
 	m_checkBoxMarkTagsFilesInBold->SetValue(m_data.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
-	
-	m_checkBoxClass->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_CLASS);
-	m_checkBoxEnum->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_ENUM);
-	m_checkBoxFunction->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_FUNCTION);
-	m_checkBoxMacro->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_MACRO);
-	m_checkBoxNamespace->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_NAMESPACE);
-	m_checkBoxPrototype->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_PROTOTYPE);
-	m_checkBoxStruct->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_STRUCT);
-	m_checkBoxTypedef->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_TYPEDEF);
-	m_checkBoxUnion->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_UNION);
+	m_checkBoxFullRetagging->SetValue      (m_data.GetFlags() & CC_USE_FULL_RETAGGING ? true : false);
+
+	m_checkBoxClass->SetValue     (m_data.GetCcColourFlags() & CC_COLOUR_CLASS);
+	m_checkBoxEnum->SetValue      (m_data.GetCcColourFlags() & CC_COLOUR_ENUM);
+	m_checkBoxFunction->SetValue  (m_data.GetCcColourFlags() & CC_COLOUR_FUNCTION);
+	m_checkBoxMacro->SetValue     (m_data.GetCcColourFlags() & CC_COLOUR_MACRO);
+	m_checkBoxNamespace->SetValue (m_data.GetCcColourFlags() & CC_COLOUR_NAMESPACE);
+	m_checkBoxPrototype->SetValue (m_data.GetCcColourFlags() & CC_COLOUR_PROTOTYPE);
+	m_checkBoxStruct->SetValue    (m_data.GetCcColourFlags() & CC_COLOUR_STRUCT);
+	m_checkBoxTypedef->SetValue   (m_data.GetCcColourFlags() & CC_COLOUR_TYPEDEF);
+	m_checkBoxUnion->SetValue     (m_data.GetCcColourFlags() & CC_COLOUR_UNION);
 	m_checkBoxEnumerator->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_ENUMERATOR);
-	m_checkBoxMember->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_MEMBER);
-	m_checkBoxVariable->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
-	
+	m_checkBoxMember->SetValue    (m_data.GetCcColourFlags() & CC_COLOUR_MEMBER);
+	m_checkBoxVariable->SetValue  (m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
+
 	//initialize the ctags page
 	wxString prep;
 	for (size_t i=0; i<m_data.GetPreprocessor().GetCount(); i++) {
@@ -129,37 +130,38 @@ void TagsOptionsDlg::OnButtonAdd(wxCommandEvent &event)
 void TagsOptionsDlg::CopyData()
 {
 	//save data to the interal member m_data
-	SetFlag(CC_DISP_COMMENTS, m_checkDisplayComments->IsChecked());
-	SetFlag(CC_DISP_FUNC_CALLTIP, m_checkDisplayFunctionTip->IsChecked());
-	SetFlag(CC_DISP_TYPE_INFO, m_checkDisplayTypeInfo->IsChecked());
-	SetFlag(CC_LOAD_EXT_DB, m_checkLoadLastDB->IsChecked());
-	SetFlag(CC_PARSE_COMMENTS, m_checkParseComments->IsChecked());
-	SetFlag(CC_LOAD_EXT_DB_TO_MEMORY, m_checkLoadToMemory->IsChecked());
-	SetFlag(CC_PARSE_EXT_LESS_FILES, m_checkFilesWithoutExt->IsChecked());
-	SetFlag(CC_COLOUR_VARS, m_checkColourLocalVars->IsChecked());
-	SetFlag(CC_CPP_KEYWORD_ASISST, m_checkCppKeywordAssist->IsChecked());
-	SetFlag(CC_CACHE_WORKSPACE_TAGS, false);
-	SetFlag(CC_DISABLE_AUTO_PARSING, m_checkDisableParseOnSave->IsChecked());
-	SetFlag(CC_COLOUR_WORKSPACE_TAGS, m_checkColourProjTags->IsChecked());
+	SetFlag(CC_DISP_COMMENTS,           m_checkDisplayComments->IsChecked());
+	SetFlag(CC_DISP_FUNC_CALLTIP,       m_checkDisplayFunctionTip->IsChecked());
+	SetFlag(CC_DISP_TYPE_INFO,          m_checkDisplayTypeInfo->IsChecked());
+	SetFlag(CC_LOAD_EXT_DB,             m_checkLoadLastDB->IsChecked());
+	SetFlag(CC_PARSE_COMMENTS,          m_checkParseComments->IsChecked());
+	SetFlag(CC_LOAD_EXT_DB_TO_MEMORY,   m_checkLoadToMemory->IsChecked());
+	SetFlag(CC_PARSE_EXT_LESS_FILES,    m_checkFilesWithoutExt->IsChecked());
+	SetFlag(CC_COLOUR_VARS,             m_checkColourLocalVars->IsChecked());
+	SetFlag(CC_CPP_KEYWORD_ASISST,      m_checkCppKeywordAssist->IsChecked());
+	SetFlag(CC_CACHE_WORKSPACE_TAGS,    false);
+	SetFlag(CC_DISABLE_AUTO_PARSING,    m_checkDisableParseOnSave->IsChecked());
+	SetFlag(CC_COLOUR_WORKSPACE_TAGS,   m_checkColourProjTags->IsChecked());
 	SetFlag(CC_MARK_TAGS_FILES_IN_BOLD, m_checkBoxMarkTagsFilesInBold->IsChecked());
-	
-	SetColouringFlag(CC_COLOUR_CLASS, m_checkBoxClass->IsChecked());
-	SetColouringFlag(CC_COLOUR_ENUM, m_checkBoxEnum->IsChecked());
-	SetColouringFlag(CC_COLOUR_FUNCTION, m_checkBoxFunction->IsChecked());
-	SetColouringFlag(CC_COLOUR_MACRO, m_checkBoxMacro->IsChecked());
-	SetColouringFlag(CC_COLOUR_NAMESPACE, m_checkBoxNamespace->IsChecked());
-	SetColouringFlag(CC_COLOUR_PROTOTYPE, m_checkBoxPrototype->IsChecked());
-	SetColouringFlag(CC_COLOUR_STRUCT, m_checkBoxStruct->IsChecked());
-	SetColouringFlag(CC_COLOUR_TYPEDEF, m_checkBoxTypedef->IsChecked());
-	SetColouringFlag(CC_COLOUR_UNION, m_checkBoxUnion->IsChecked());
+	SetFlag(CC_USE_FULL_RETAGGING,      m_checkBoxFullRetagging->IsChecked());
+
+	SetColouringFlag(CC_COLOUR_CLASS,      m_checkBoxClass->IsChecked());
+	SetColouringFlag(CC_COLOUR_ENUM,       m_checkBoxEnum->IsChecked());
+	SetColouringFlag(CC_COLOUR_FUNCTION,   m_checkBoxFunction->IsChecked());
+	SetColouringFlag(CC_COLOUR_MACRO,      m_checkBoxMacro->IsChecked());
+	SetColouringFlag(CC_COLOUR_NAMESPACE,  m_checkBoxNamespace->IsChecked());
+	SetColouringFlag(CC_COLOUR_PROTOTYPE,  m_checkBoxPrototype->IsChecked());
+	SetColouringFlag(CC_COLOUR_STRUCT,     m_checkBoxStruct->IsChecked());
+	SetColouringFlag(CC_COLOUR_TYPEDEF,    m_checkBoxTypedef->IsChecked());
+	SetColouringFlag(CC_COLOUR_UNION,      m_checkBoxUnion->IsChecked());
 	SetColouringFlag(CC_COLOUR_ENUMERATOR, m_checkBoxEnumerator->IsChecked());
-	SetColouringFlag(CC_COLOUR_VARIABLE, m_checkBoxVariable->IsChecked());
-	SetColouringFlag(CC_COLOUR_MEMBER, m_checkBoxMember->IsChecked());
-	
+	SetColouringFlag(CC_COLOUR_VARIABLE,   m_checkBoxVariable->IsChecked());
+	SetColouringFlag(CC_COLOUR_MEMBER,     m_checkBoxMember->IsChecked());
+
 	m_data.SetFileSpec(m_textFileSpec->GetValue());
 	wxArrayString prep = wxStringTokenize(m_textPrep->GetValue(), wxT(";"), wxTOKEN_STRTOK);
 	m_data.SetPreprocessor(prep);
-	
+
 	m_data.SetLanguages(m_comboBoxLang->GetStrings());
 	m_data.SetLanguageSelection(m_comboBoxLang->GetStringSelection());
 

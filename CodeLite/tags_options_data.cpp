@@ -36,7 +36,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_minWordLen(3)
 {
 	m_languages.Add(wxT("C++"));
-	m_languages.Add(wxT("Java"));
+//	m_languages.Add(wxT("Java"));
 }
 
 TagsOptionsData::~TagsOptionsData()
@@ -65,7 +65,7 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	if( !arch.Read(wxT("m_ccColourFlags"), m_ccColourFlags) ) {
 		m_ccColourFlags = CC_COLOUR_DEFAULT;
 	}
-	
+
 	arch.Read(wxT("m_prep"), m_prep);
 	arch.Read(wxT("m_fileSpec"), m_fileSpec);
 	arch.Read(wxT("m_languages"), m_languages);

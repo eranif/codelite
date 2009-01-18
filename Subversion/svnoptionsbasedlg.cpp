@@ -98,7 +98,7 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_panel2->SetSizer( bSizer111 );
 	m_panel2->Layout();
 	bSizer111->Fit( m_panel2 );
-	m_listbook1->AddPage( m_panel2, _("General"), false );
+	m_listbook1->AddPage( m_panel2, _("General"), true );
 	m_panel3 = new wxPanel( m_listbook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
@@ -192,7 +192,7 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_panel3->SetSizer( bSizer9 );
 	m_panel3->Layout();
 	bSizer9->Fit( m_panel3 );
-	m_listbook1->AddPage( m_panel3, _("External Diff"), true );
+	m_listbook1->AddPage( m_panel3, _("External Diff"), false );
 	m_panel4 = new wxPanel( m_listbook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer131;
 	bSizer131 = new wxBoxSizer( wxVERTICAL );

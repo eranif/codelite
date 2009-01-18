@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -72,6 +72,10 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_checkBoxAutoAddNewFiles->SetValue(true);
 	
 	bSizer8->Add( m_checkBoxAutoAddNewFiles, 0, wxALL, 5 );
+	
+	m_checkBoxKeepTagsUpToDate = new wxCheckBox( m_mainPanel, wxID_ANY, _("Keep workspace tags up-to-date after performing Svn operations (update, apply patch etc.)"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	bSizer8->Add( m_checkBoxKeepTagsUpToDate, 0, wxALL, 5 );
 	
 	panelSizer->Add( bSizer8, 0, wxEXPAND, 5 );
 	

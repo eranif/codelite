@@ -22,26 +22,28 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef SVNOPTIONS_H
+#ifndef SVNOPTIONS_H
 #define SVNOPTIONS_H
 
 #include "serialized_object.h"
 
 enum SvnOptionsFlags {
-	SvnUseIcons 			= 0x00000001,
-	SvnKeepIconsUpdated  	= 0x00000002,
-	SvnAutoAddFiles 		= 0x00000004,
-	SvnUpdateAfterSave 		= 0x00000008,
-	SvnCaptureDiffOutput	= 0x00000010,
-	SvnUseExternalDiff		= 0x00000020
+	SvnUseIcons             = 0x00000001,
+	SvnKeepIconsUpdated     = 0x00000002,
+	SvnAutoAddFiles         = 0x00000004,
+	SvnUpdateAfterSave      = 0x00000008,
+	SvnCaptureDiffOutput    = 0x00000010,
+	SvnUseExternalDiff      = 0x00000020
 };
 
-class SvnOptions : public SerializedObject {
-	size_t m_flags;
+class SvnOptions : public SerializedObject
+{
+	size_t   m_flags;
 	wxString m_exePath;
 	wxString m_pattern;
 	wxString m_diffCmd;
 	wxString m_diffArgs;
+	bool     m_keepTagUpToDate;
 
 public:
 	SvnOptions();
@@ -50,20 +52,46 @@ public:
 	void DeSerialize(Archive &arch);
 	void Serialize(Archive &arch);
 
-	const size_t& GetFlags() const {return m_flags;}
-	void SetFlags(const size_t& flags){m_flags = flags;}
+	const size_t& GetFlags() const {
+		return m_flags;
+	}
+	void SetFlags(const size_t& flags) {
+		m_flags = flags;
+	}
 
-	const wxString &GetExePath() const {return m_exePath;}
-	void SetExePath(const wxString &path) {m_exePath = path;}
+	const wxString &GetExePath() const {
+		return m_exePath;
+	}
+	void SetExePath(const wxString &path) {
+		m_exePath = path;
+	}
 
-	void SetPattern(const wxString& pattern) {this->m_pattern = pattern;}
-	const wxString& GetPattern() const {return m_pattern;}
+	void SetPattern(const wxString& pattern) {
+		this->m_pattern = pattern;
+	}
+	const wxString& GetPattern() const {
+		return m_pattern;
+	}
 
-	void SetDiffCmd(const wxString& diffCmd) {this->m_diffCmd = diffCmd;}
-	const wxString& GetDiffCmd() const {return m_diffCmd;}
+	void SetDiffCmd(const wxString& diffCmd) {
+		this->m_diffCmd = diffCmd;
+	}
+	const wxString& GetDiffCmd() const {
+		return m_diffCmd;
+	}
 
-	void SetDiffArgs(const wxString& diffArgs) {this->m_diffArgs = diffArgs;}
-	const wxString& GetDiffArgs() const {return m_diffArgs;}
+	void SetDiffArgs(const wxString& diffArgs) {
+		this->m_diffArgs = diffArgs;
+	}
+	const wxString& GetDiffArgs() const {
+		return m_diffArgs;
+	}
+	void SetKeepTagUpToDate(const bool& keepTagUpToDate) {
+		this->m_keepTagUpToDate = keepTagUpToDate;
+	}
+	const bool& GetKeepTagUpToDate() const {
+		return m_keepTagUpToDate;
+	}
 };
 
 #endif //SVNOPTIONS_H

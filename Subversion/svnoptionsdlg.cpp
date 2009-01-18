@@ -40,6 +40,7 @@ SvnOptionsDlg::SvnOptionsDlg( wxWindow* parent, const SvnOptions &options, IMana
 	m_checkBoxUseExternalDiff->SetValue(m_options.GetFlags() & SvnUseExternalDiff ? true : false);
 	m_diffExe->SetPath(m_options.GetDiffCmd());
 	m_diffArgs->SetValue(m_options.GetDiffArgs());
+	m_checkBoxKeepTagsUpToDate->SetValue(m_options.GetKeepTagUpToDate());
 
 	m_textCtrl1->SetValue(m_options.GetPattern());
 	if(m_checkBoxUseIconsInWorkspace->IsChecked() == false) {
@@ -59,6 +60,7 @@ void SvnOptionsDlg::OnButtonOk( wxCommandEvent& event )
 	m_options.SetDiffCmd(m_diffExe->GetPath());
 	m_options.SetDiffArgs(m_diffArgs->GetValue());
 	m_options.SetPattern(m_textCtrl1->GetValue());
+	m_options.SetKeepTagUpToDate(m_checkBoxKeepTagsUpToDate->IsChecked());
 	SaveOptions();
 	EndModal(wxID_OK);
 }

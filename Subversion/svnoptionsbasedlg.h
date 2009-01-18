@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -46,6 +46,7 @@ class SvnOptionsBaseDlg : public wxDialog
 		
 		wxCheckBox* m_checkBoxUpdateAfterSave;
 		wxCheckBox* m_checkBoxAutoAddNewFiles;
+		wxCheckBox* m_checkBoxKeepTagsUpToDate;
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textCtrl1;
 		wxStaticLine* m_staticline7;

@@ -16,7 +16,7 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	m_listbook1 = new wxListbook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_TOP );
+	m_listbook1 = new wxListbook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_DEFAULT );
 	wxSize m_listbook1ImageSize = wxSize( 32,32 );
 	int m_listbook1Index = 0;
 	wxImageList* m_listbook1Images = new wxImageList( m_listbook1ImageSize.GetWidth(), m_listbook1ImageSize.GetHeight() );

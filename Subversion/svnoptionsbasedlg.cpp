@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,7 +16,13 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	m_listbook1 = new wxListbook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_DEFAULT );
+	m_listbook1 = new wxListbook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_TOP );
+	wxSize m_listbook1ImageSize = wxSize( 32,32 );
+	int m_listbook1Index = 0;
+	wxImageList* m_listbook1Images = new wxImageList( m_listbook1ImageSize.GetWidth(), m_listbook1ImageSize.GetHeight() );
+	m_listbook1->AssignImageList( m_listbook1Images );
+	wxBitmap m_listbook1Bitmap;
+	wxImage m_listbook1Image;
 	m_panel2 = new wxPanel( m_listbook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer111;
 	bSizer111 = new wxBoxSizer( wxVERTICAL );
@@ -92,7 +98,7 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_panel2->SetSizer( bSizer111 );
 	m_panel2->Layout();
 	bSizer111->Fit( m_panel2 );
-	m_listbook1->AddPage( m_panel2, _("General"), true );
+	m_listbook1->AddPage( m_panel2, _("General"), false );
 	m_panel3 = new wxPanel( m_listbook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
@@ -186,7 +192,7 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_panel3->SetSizer( bSizer9 );
 	m_panel3->Layout();
 	bSizer9->Fit( m_panel3 );
-	m_listbook1->AddPage( m_panel3, _("External Diff Viewer"), false );
+	m_listbook1->AddPage( m_panel3, _("External Diff"), true );
 	m_panel4 = new wxPanel( m_listbook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer131;
 	bSizer131 = new wxBoxSizer( wxVERTICAL );
@@ -220,12 +226,6 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_panel4->Layout();
 	bSizer131->Fit( m_panel4 );
 	m_listbook1->AddPage( m_panel4, _("SSH Client"), false );
-	#ifndef __WXGTK__ // Small icon style not supported in GTK
-	wxListView* m_listbook1ListView = m_listbook1->GetListView();
-	long m_listbook1Flags = m_listbook1ListView->GetWindowStyleFlag();
-	m_listbook1Flags = ( m_listbook1Flags & ~wxLC_ICON ) | wxLC_SMALL_ICON;
-	m_listbook1ListView->SetWindowStyleFlag( m_listbook1Flags );
-	#endif
 	
 	bSizer1->Add( m_listbook1, 1, wxEXPAND | wxALL, 5 );
 	

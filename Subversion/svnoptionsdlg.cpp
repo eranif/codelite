@@ -23,12 +23,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "imanager.h"
- #include "svnoptionsdlg.h"
+#include "svnoptionsdlg.h"
 #include "windowattrmanager.h"
+#include <wx/imaglist.h>
+
+static wxBitmap LoadBmpFile(const wxString &name, IManager *mgr, wxBitmapType type = wxBITMAP_TYPE_PNG)
+{
+	wxBitmap bmp;
+	wxString basePath(mgr->GetInstallDirectory() + wxT("/plugins/resources/"));
+
+	bmp.LoadFile(basePath + name, type);
+	if (bmp.IsOk()) {
+		return bmp;
+	}
+	return wxNullBitmap;
+}
 
 SvnOptionsDlg::SvnOptionsDlg( wxWindow* parent, const SvnOptions &options, IManager *manager)
-: SvnOptionsBaseDlg( parent )
-, m_manager(manager)
+		: SvnOptionsBaseDlg( parent )
+		, m_manager(manager)
 {
 	m_options = options;
 	m_filePicker->SetPath(m_options.GetExePath());
@@ -43,7 +56,7 @@ SvnOptionsDlg::SvnOptionsDlg( wxWindow* parent, const SvnOptions &options, IMana
 	m_checkBoxKeepTagsUpToDate->SetValue(m_options.GetKeepTagUpToDate());
 
 	m_textCtrl1->SetValue(m_options.GetPattern());
-	if(m_checkBoxUseIconsInWorkspace->IsChecked() == false) {
+	if (m_checkBoxUseIconsInWorkspace->IsChecked() == false) {
 		m_checkBoxKeepIconsAutoUpdate->Enable(false);
 		m_checkBoxUpdateAfterSave->Enable(false);
 	}
@@ -51,6 +64,17 @@ SvnOptionsDlg::SvnOptionsDlg( wxWindow* parent, const SvnOptions &options, IMana
 	m_textCtrlSshClientCmd->SetValue(options.GetSshClient());
 	GetSizer()->Fit(this);
 	m_filePicker->SetFocus();
+
+	wxImageList *il = new wxImageList(32, 32);
+
+	il->Add(LoadBmpFile(wxT("svn_settings.png"), m_manager));
+	il->Add(LoadBmpFile(wxT("svn_diff.png"), m_manager));
+	il->Add(LoadBmpFile(wxT("svn_ssh.png"), m_manager));
+
+	m_listbook1->AssignImageList(il);
+	m_listbook1->SetPageImage(0, 0);
+	m_listbook1->SetPageImage(1, 1);
+	m_listbook1->SetPageImage(2, 2);
 
 	WindowAttrManager::Load(this, wxT("SvnOptionsDialogAttr"), m_manager->GetConfigTool());
 }
@@ -70,10 +94,10 @@ void SvnOptionsDlg::OnButtonOk( wxCommandEvent& event )
 
 void SvnOptionsDlg::OnSvnUseIcons(wxCommandEvent &e)
 {
-	if(e.IsChecked()){
+	if (e.IsChecked()) {
 		m_checkBoxKeepIconsAutoUpdate->Enable();
 		m_checkBoxUpdateAfterSave->Enable();
-	}else{
+	} else {
 		m_checkBoxKeepIconsAutoUpdate->Enable(false);
 		m_checkBoxUpdateAfterSave->Enable(false);
 	}
@@ -82,27 +106,27 @@ void SvnOptionsDlg::OnSvnUseIcons(wxCommandEvent &e)
 void SvnOptionsDlg::SaveOptions()
 {
 	size_t options(0);
-	if(m_checkBoxAutoAddNewFiles->IsChecked()) {
+	if (m_checkBoxAutoAddNewFiles->IsChecked()) {
 		options |= SvnAutoAddFiles;
 	}
 
-	if(m_checkBoxKeepIconsAutoUpdate->IsEnabled() && m_checkBoxKeepIconsAutoUpdate->IsChecked()) {
+	if (m_checkBoxKeepIconsAutoUpdate->IsEnabled() && m_checkBoxKeepIconsAutoUpdate->IsChecked()) {
 		options |= SvnKeepIconsUpdated;
 	}
 
-	if(m_checkBoxUpdateAfterSave->IsEnabled() && m_checkBoxUpdateAfterSave->IsChecked()) {
+	if (m_checkBoxUpdateAfterSave->IsEnabled() && m_checkBoxUpdateAfterSave->IsChecked()) {
 		options |= SvnUpdateAfterSave;
 	}
 
-	if(m_checkBoxUseIconsInWorkspace->IsChecked()) {
+	if (m_checkBoxUseIconsInWorkspace->IsChecked()) {
 		options |= SvnUseIcons;
 	}
 
-	if(m_checkBoxCaptureDiffOutput->IsChecked()) {
+	if (m_checkBoxCaptureDiffOutput->IsChecked()) {
 		options |= SvnCaptureDiffOutput;
 	}
 
-	if(m_checkBoxUseExternalDiff->IsChecked()){
+	if (m_checkBoxUseExternalDiff->IsChecked()) {
 		options |= SvnUseExternalDiff;
 	}
 
@@ -123,7 +147,7 @@ SvnOptionsDlg::~SvnOptionsDlg()
 void SvnOptionsDlg::OnButtonBrowseSSHClient(wxCommandEvent& e)
 {
 	wxString new_path = wxFileSelector(wxT("Select a program:"), wxT(""), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
-	if(new_path.empty() == false){
+	if (new_path.empty() == false) {
 		m_textCtrlSshClientCmd->SetValue(new_path);
 	}
 }

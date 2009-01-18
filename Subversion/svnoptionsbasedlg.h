@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -28,6 +28,7 @@
 #include <wx/statbox.h>
 #include <wx/listbook.h>
 #include <wx/listctrl.h>
+#include <wx/imaglist.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
 

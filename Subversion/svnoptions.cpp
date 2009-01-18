@@ -22,15 +22,16 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "svnoptions.h"
+#include "svnoptions.h"
 
 SvnOptions::SvnOptions()
-: m_flags(SvnUseIcons | SvnKeepIconsUpdated | SvnAutoAddFiles)
-, m_exePath(wxT("svn"))
-, m_pattern(wxT("*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;*.bak;*.orig"))
-, m_diffCmd(wxEmptyString)
-, m_diffArgs(wxEmptyString)
-, m_keepTagUpToDate(true)
+		: m_flags(SvnUseIcons | SvnKeepIconsUpdated | SvnAutoAddFiles)
+		, m_exePath(wxT("svn"))
+		, m_pattern(wxT("*.o;*.obj;*.exe;*.lib;*.so;*.dll;*.a;*.dynlib;*.exp;*.ilk;*.pdb;*.d;*.tags;*.suo;*.ncb;*.bak;*.orig"))
+		, m_diffCmd(wxEmptyString)
+		, m_diffArgs(wxEmptyString)
+		, m_keepTagUpToDate(true)
+		, m_sshClient(wxT(""))
 {
 }
 
@@ -46,6 +47,7 @@ void SvnOptions::Serialize(Archive &arch)
 	arch.Write(wxT("m_diffCmd"),         m_diffCmd);
 	arch.Write(wxT("m_diffArgs"),        m_diffArgs);
 	arch.Write(wxT("m_keepTagUpToDate"), m_keepTagUpToDate);
+	arch.Write(wxT("m_sshClient"),       m_sshClient);
 }
 
 void SvnOptions::DeSerialize(Archive &arch)
@@ -56,5 +58,5 @@ void SvnOptions::DeSerialize(Archive &arch)
 	arch.Read(wxT("m_diffCmd"),         m_diffCmd);
 	arch.Read(wxT("m_diffArgs"),        m_diffArgs);
 	arch.Read(wxT("m_keepTagUpToDate"), m_keepTagUpToDate);
+	arch.Read(wxT("m_sshClient"),       m_sshClient);
 }
-

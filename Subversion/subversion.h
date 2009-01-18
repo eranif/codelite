@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : subversion.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : subversion.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef SUBVERSION_H
+#ifndef SUBVERSION_H
 #define SUBVERSION_H
 
 #include "svnxmlparser.h"
@@ -43,24 +43,27 @@ class SubversionPlugin : public IPlugin
 	wxMenu *m_svnMenu;
 	SvnDriver *m_svn;
 	wxEvtHandler *topWin;
-	SvnOptions m_options;	
+	SvnOptions m_options;
 	friend class SvnDriver;
 	bool m_isValid;
 	wxMenuItem *m_explorerSepItem;
 	wxMenuItem *m_workspaceSepItem;
 	wxMenuItem *m_projectSepItem;
-	
-	
+
+
 protected:
 	void SendSvnMenuEvent(int id);
 	bool SanityCheck();
-	
+	void DoSetSshEnv();
+
 public:
 	SubversionPlugin(IManager *manager);
 	virtual ~SubversionPlugin();
-	const SvnOptions& GetOptions() const{return m_options;}
+	const SvnOptions& GetOptions() const {
+		return m_options;
+	}
 	bool IsWorkspaceUnderSvn();
-	
+
 	//--------------------------------------------
 	//Abstract methods
 	//--------------------------------------------
@@ -69,13 +72,13 @@ public:
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnPlug();
-	
+
 protected:
 	wxMenu *CreatePopMenu();
 	wxMenu *CreateEditorPopMenu();
 	wxMenu *CreateWorkspacePopMenu();
 	wxMenu *CreateProjectPopMenu();
-	
+
 	//
 	//Helper functions
 	///////////////////////////////////////////////////////
@@ -83,16 +86,16 @@ protected:
 	void DoMakeHTML(const wxArrayString &outpout, const wxString &origin, const wxString &basePath, bool inclOutOfDate = false);
 	ProjectPtr GetSelectedProject();
 	void DoRefreshIcons();
-	
+
 	void DoGetSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate = false);
 	void DoGenerateReport(const wxString &basePath, bool inclOutOfDate = false);
-	
+
 	void DoGenerateWspReport(bool inclOutOfDate = false);
 	void DoGetWspSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate = false);
-	
+
 	void DoGetPrjSvnStatus(const wxString &basePath, wxArrayString &output, bool inclOutOfDate = false);
 	void DoGeneratePrjReport(bool inclOutOfDate = false);
-	
+
 	// event handlers
 	///////////////////////////////////////////////////////
 	void OnUpdate(wxCommandEvent &event);
@@ -131,4 +134,3 @@ protected:
 };
 
 #endif //SUBVERSION_H
-

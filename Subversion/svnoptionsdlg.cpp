@@ -47,6 +47,8 @@ SvnOptionsDlg::SvnOptionsDlg( wxWindow* parent, const SvnOptions &options, IMana
 		m_checkBoxKeepIconsAutoUpdate->Enable(false);
 		m_checkBoxUpdateAfterSave->Enable(false);
 	}
+
+	m_textCtrlSshClientCmd->SetValue(options.GetSshClient());
 	GetSizer()->Fit(this);
 	m_filePicker->SetFocus();
 
@@ -61,6 +63,7 @@ void SvnOptionsDlg::OnButtonOk( wxCommandEvent& event )
 	m_options.SetDiffArgs(m_diffArgs->GetValue());
 	m_options.SetPattern(m_textCtrl1->GetValue());
 	m_options.SetKeepTagUpToDate(m_checkBoxKeepTagsUpToDate->IsChecked());
+	m_options.SetSshClient(m_textCtrlSshClientCmd->GetValue());
 	SaveOptions();
 	EndModal(wxID_OK);
 }
@@ -115,4 +118,12 @@ void SvnOptionsDlg::OnEnableExternalDiffViewerUI(wxUpdateUIEvent& e)
 SvnOptionsDlg::~SvnOptionsDlg()
 {
 	WindowAttrManager::Save(this, wxT("SvnOptionsDialogAttr"), m_manager->GetConfigTool());
+}
+
+void SvnOptionsDlg::OnButtonBrowseSSHClient(wxCommandEvent& e)
+{
+	wxString new_path = wxFileSelector(wxT("Select a program:"), wxT(""), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
+	if(new_path.empty() == false){
+		m_textCtrlSshClientCmd->SetValue(new_path);
+	}
 }

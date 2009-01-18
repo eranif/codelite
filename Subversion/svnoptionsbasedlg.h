@@ -18,11 +18,17 @@
 #include <wx/settings.h>
 #include <wx/filepicker.h>
 #include <wx/sizer.h>
-#include <wx/statline.h>
 #include <wx/checkbox.h>
 #include <wx/textctrl.h>
 #include <wx/panel.h>
+#include <wx/bitmap.h>
+#include <wx/image.h>
+#include <wx/icon.h>
 #include <wx/button.h>
+#include <wx/statbox.h>
+#include <wx/listbook.h>
+#include <wx/listctrl.h>
+#include <wx/statline.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -36,10 +42,10 @@ class SvnOptionsBaseDlg : public wxDialog
 	private:
 	
 	protected:
-		wxPanel* m_mainPanel;
+		wxListbook* m_listbook1;
+		wxPanel* m_panel2;
 		wxStaticText* m_staticText1;
 		wxFilePickerCtrl* m_filePicker;
-		wxStaticLine* m_staticline;
 		wxCheckBox* m_checkBoxUseIconsInWorkspace;
 		
 		wxCheckBox* m_checkBoxKeepIconsAutoUpdate;
@@ -49,7 +55,7 @@ class SvnOptionsBaseDlg : public wxDialog
 		wxCheckBox* m_checkBoxKeepTagsUpToDate;
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textCtrl1;
-		wxStaticLine* m_staticline7;
+		wxPanel* m_panel3;
 		wxCheckBox* m_checkBoxUseExternalDiff;
 		
 		wxStaticText* m_staticText12;
@@ -66,16 +72,21 @@ class SvnOptionsBaseDlg : public wxDialog
 		wxStaticText* m_staticText10;
 		wxStaticText* m_staticText11;
 		wxCheckBox* m_checkBoxCaptureDiffOutput;
+		wxPanel* m_panel4;
+		wxStaticText* m_staticText131;
+		wxTextCtrl* m_textCtrlSshClientCmd;
+		wxButton* m_button1;
+		wxStaticText* m_staticText14;
 		wxStaticLine* m_staticline2;
-		wxStdDialogButtonSizer* m_buttonSizer;
-		wxButton* m_buttonSizerOK;
-		wxButton* m_buttonSizerCancel;
+		wxButton* m_button2;
+		wxButton* m_button3;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnSvnUseIcons( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAutoAddNewFiles( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnCheckUseExternalDiffViewer( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnEnableExternalDiffViewerUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnButtonBrowseSSHClient( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonOk( wxCommandEvent& event ){ event.Skip(); }
 		
 	

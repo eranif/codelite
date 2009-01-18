@@ -47,6 +47,7 @@ protected:
 	void OnSvnUseIcons(wxCommandEvent &e);
 	void SaveOptions();
 	void OnEnableExternalDiffViewerUI(wxUpdateUIEvent &e);
+	void OnButtonBrowseSSHClient(wxCommandEvent &e);
 public:
 	/** Constructor */
 	SvnOptionsDlg( wxWindow* parent, const SvnOptions& options, IManager *manager );

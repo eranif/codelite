@@ -124,7 +124,9 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 	m_svn = new SvnDriver(this, manager);
 
 	manager->GetConfigTool()->ReadObject(wxT("SubversionOptions"), &m_options);
-	//m_timer->Start((int)m_options.GetRefreshInterval(), true);
+
+	// Set SSH client environment variable
+	DoSetSshEnv();
 
 	m_longName = wxT("Subversion");
 	m_shortName = wxT("SVN");
@@ -598,12 +600,13 @@ void SubversionPlugin::OnFileSaved(wxCommandEvent &e)
 void SubversionPlugin::OnOptions(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	SvnOptionsDlg *dlg = new SvnOptionsDlg(NULL, m_options, m_mgr);
-	if (dlg->ShowModal() == wxID_OK) {
-		m_options = dlg->GetOptions();
+	SvnOptionsDlg dlg(NULL, m_options, m_mgr);
+	if (dlg.ShowModal() == wxID_OK) {
+		m_options = dlg.GetOptions();
 		m_mgr->GetConfigTool()->WriteObject(wxT("SubversionOptions"), &m_options);
+
+		DoSetSshEnv();
 	}
-	dlg->Destroy();
 }
 
 void SubversionPlugin::UnPlug()
@@ -1260,4 +1263,14 @@ void SubversionPlugin::OnRefrshIconsStatusInternal(wxCommandEvent& e)
 {
 	wxUnusedVar(e); // don't skip
 	DoRefreshIcons();
+}
+
+void SubversionPlugin::DoSetSshEnv()
+{
+	wxString ssh_client = m_options.GetSshClient();
+	ssh_client.Trim().Trim(false);
+	if(ssh_client.empty() == false){
+		wxSetEnv(wxT("SVN_SSH"), ssh_client.c_str());
+		wxLogMessage(wxString::Format(wxT("Environment variable SVN_SSH is set to %s"), ssh_client.c_str()));
+	}
 }

@@ -493,6 +493,7 @@
     <File Name="editorsettingsdialogsbase.fbp"/>
     <File Name="editorsettingsmiscbasepanel.fbp"/>
     <File Name="editorsettingscaretbase.fbp"/>
+    <File Name="editorsettingsterminal.fbp"/>
   </VirtualDirectory>
   <Dependencies Name="UnixCodeLite">
     <Project Name="wxscintilla"/>

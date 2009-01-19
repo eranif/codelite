@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "debuggersettingsdlg.h"
+#include "editor_config.h"
 #include "debuggermanager.h"
 #include "macros.h"
 #include "manager.h"
@@ -155,7 +156,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		info.breakAtWinMain = page->m_checkBreakAtWinMain->IsChecked();
 		info.resolveThis = page->m_checkResolveStarThis->IsChecked();
 		info.showTerminal = page->m_checkShowTerminal->IsChecked();
-		
+		info.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
 		DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
 	}
 

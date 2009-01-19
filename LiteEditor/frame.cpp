@@ -3104,7 +3104,11 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 			DebuggerInformation dinfo;
 			DebuggerMgr::Get().GetDebuggerInformation(dlg->GetDebuggerName(), dinfo);
 			dinfo.breakAtWinMain = true;
-			//	ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints(); TODO: Reimplement this when UpdateBreakpoints() updates only alterations, rather than delete/re-enter
+			
+			// read the console command
+			dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
+			
+			// ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints(); TODO: Reimplement this when UpdateBreakpoints() updates only alterations, rather than delete/re-enter
 
 			wxString dbgname = dinfo.path;
 			dbgname = EnvironmentConfig::Instance()->ExpandVariables(dbgname);

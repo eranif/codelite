@@ -1280,3 +1280,9 @@ bool DbgGdb::SetMemory(const wxString& address, size_t count, const wxString& he
 
 	return ExecuteCmd(cmd);
 }
+
+void DbgGdb::SetDebuggerInformation(const DebuggerInformation& info)
+{
+	IDebugger::SetDebuggerInformation(info);
+	m_consoleFinder.SetConsoleCommand(info.consoleCommand);
+}

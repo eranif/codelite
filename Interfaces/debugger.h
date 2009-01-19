@@ -38,12 +38,12 @@ enum DebuggerCommands {
 	DBG_SHOW_CURSOR
 };
 
-	// Breakpoint types. If you add more, LEditor::FillBPtoMarkerArray will also need altering
+// Breakpoint types. If you add more, LEditor::FillBPtoMarkerArray will also need altering
 enum BP_type { /*Convenient return-codes*/ BP_type_invalid = -1, BP_type_none = 0, /*Real breakpoint-types*/ BP_FIRST_ITEM, BP_type_break = BP_FIRST_ITEM,
-							  BP_type_cmdlistbreak, BP_type_condbreak, BP_type_ignoredbreak, BP_type_tempbreak, BP_LAST_MARKED_ITEM = BP_type_tempbreak,
-								BP_type_watchpt, BP_LAST_ITEM = BP_type_watchpt
-						 };
-	// Watchpoint subtypes: write,read and both
+        BP_type_cmdlistbreak, BP_type_condbreak, BP_type_ignoredbreak, BP_type_tempbreak, BP_LAST_MARKED_ITEM = BP_type_tempbreak,
+        BP_type_watchpt, BP_LAST_ITEM = BP_type_watchpt
+             };
+// Watchpoint subtypes: write,read and both
 enum WP_type { WP_watch, WP_rwatch, WP_awatch };
 
 //-------------------------------------------------------
@@ -64,7 +64,7 @@ struct StackEntry {
 	wxString line;
 };
 
-struct ThreadEntry{
+struct ThreadEntry {
 	bool 	 	active;
 	long 		dbgid;
 	wxString	more;
@@ -98,40 +98,61 @@ public:
 	wxString conditions;
 
 	BreakpointInfo() : lineno(-1), regex(false), memory_address(-1), debugger_id(-1), bp_type(BP_type_break),
-											ignore_number(0), is_enabled(true), is_temp(false), watchpoint_type(WP_watch)	{}
-	BreakpointInfo(const BreakpointInfo& BI ){ *this = BI; }
+			ignore_number(0), is_enabled(true), is_temp(false), watchpoint_type(WP_watch)	{}
+	BreakpointInfo(const BreakpointInfo& BI ) {
+		*this = BI;
+	}
 
-	bool IsConditional(){ return ! conditions.IsEmpty(); }
+	bool IsConditional() {
+		return ! conditions.IsEmpty();
+	}
 
 	void Create(wxString filename, int line, int int_id, int ext_id = -1) {
-		bp_type = BP_type_break; lineno = line; file = filename; internal_id = int_id; debugger_id = ext_id;
+		bp_type = BP_type_break;
+		lineno = line;
+		file = filename;
+		internal_id = int_id;
+		debugger_id = ext_id;
 	}
 
 	BreakpointInfo& operator=(const BreakpointInfo& BI) {
-		file = BI.file; lineno = BI.lineno; function_name = BI.function_name; memory_address = BI.memory_address; bp_type = BI.bp_type;
-		watchpoint_type = BI.watchpoint_type; watchpt_data = BI.watchpt_data; commandlist = BI.commandlist; regex = BI.regex; is_temp = BI.is_temp;
-		internal_id = BI.internal_id; debugger_id = BI.debugger_id; is_enabled = BI.is_enabled; ignore_number = BI.ignore_number;conditions = BI.conditions;
+		file = BI.file;
+		lineno = BI.lineno;
+		function_name = BI.function_name;
+		memory_address = BI.memory_address;
+		bp_type = BI.bp_type;
+		watchpoint_type = BI.watchpoint_type;
+		watchpt_data = BI.watchpt_data;
+		commandlist = BI.commandlist;
+		regex = BI.regex;
+		is_temp = BI.is_temp;
+		internal_id = BI.internal_id;
+		debugger_id = BI.debugger_id;
+		is_enabled = BI.is_enabled;
+		ignore_number = BI.ignore_number;
+		conditions = BI.conditions;
 		return *this;
 	}
 
 	bool operator==(const BreakpointInfo& BI) {
 		return ((file == BI.file) && (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address)
-		&& (bp_type == BI.bp_type) &&  (watchpt_data == BI.watchpt_data)&& (is_enabled == BI.is_enabled)
-		&& (ignore_number == BI.ignore_number) && (conditions == BI.conditions) && (commandlist == BI.commandlist) && (is_temp == BI.is_temp)
-		&& (bp_type==BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) && (!function_name.IsEmpty() ? (regex == BI.regex) : true));
+		        && (bp_type == BI.bp_type) &&  (watchpt_data == BI.watchpt_data)&& (is_enabled == BI.is_enabled)
+		        && (ignore_number == BI.ignore_number) && (conditions == BI.conditions) && (commandlist == BI.commandlist) && (is_temp == BI.is_temp)
+		        && (bp_type==BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) && (!function_name.IsEmpty() ? (regex == BI.regex) : true));
 	}
 };
 
 class DebuggerInformation
 {
 public:
-	wxString name;
-	wxString path;
-	bool enableDebugLog;
-	bool enablePendingBreakpoints;
-	bool breakAtWinMain;
-	bool resolveThis;
-	bool showTerminal;
+	wxString  name;
+	wxString  path;
+	bool      enableDebugLog;
+	bool      enablePendingBreakpoints;
+	bool      breakAtWinMain;
+	bool      resolveThis;
+	bool      showTerminal;
+	wxString  consoleCommand;
 
 public:
 	DebuggerInformation()
@@ -142,10 +163,16 @@ public:
 			, breakAtWinMain(false)
 			, resolveThis(false)
 			, showTerminal(false)
+#if defined(__WXGTK__)
+			, consoleCommand(wxT("xterm -title '$(TITLE)' -e '$(CMD)'"))
+#elif defined(__WXMAC__)
+			, consoleCommand(wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"$(CMD)\"' -e 'end tell'"))
+#else
+			, consoleCommand(wxT(""))
+#endif
 	{}
 	~DebuggerInformation() {}
 };
-
 
 class IDebuggerObserver;
 class EnvironmentConfig;
@@ -184,7 +211,9 @@ public:
 	virtual void SetEnvironment(EnvironmentConfig *env) {
 		m_env = env;
 	}
-	virtual void SetDebuggerInformation(const DebuggerInformation& info) {m_info = info;}
+	virtual void SetDebuggerInformation(const DebuggerInformation& info) {
+		m_info = info;
+	}
 
 	//-------------------------------------------------------------
 	// Debugger operations
@@ -215,7 +244,7 @@ public:
 	 * \brief use this method when attempting to attach a running process
 	 * \param debuggerPath debugger path
 	 * \param exeName executable to debug
- 	 * \param pid the running instance process ID
+	  * \param pid the running instance process ID
 	 * \param bpList list of breakpoints to set
 	 * \param cmds list of commands that will be passed to the debugger at startup
 	 * \return

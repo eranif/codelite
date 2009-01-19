@@ -920,8 +920,12 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 #if defined(__WXMAC__)
 
 		execLine = opts->GetProgramConsoleCommand();
-		execLine.Replace(wxT("$(CMD)"), cmd + wxT ( " " ) + cmdArgs);
-		execLine.Replace(wxT("$(TITLE)"), cmd);
+		
+		wxString tmp_cmd;
+		tmp_cmd = wxT("\"cd ") + proj->GetFileName().GetPath() + wxT ( " && cd " ) + wd + wxT ( " && " ) + cmd + wxT ( " " ) + cmdArgs + wxT ( "\"'" );
+		
+		execLine.Replace(wxT("$(CMD)"), tmp_cmd);
+		execLine.Replace(wxT("$(TITLE)"), cmd + wxT ( " " ) + cmdArgs);
 
 #elif defined(__WXGTK__)
 
@@ -931,16 +935,16 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 		term.Replace(wxT("$(TITLE)"), cmd + wxT ( " " ) + cmdArgs);
 
 		// build the command
-		wxString command(execLine);
+		wxString command;
 		if ( bldConf->GetPauseWhenExecEnds() ) {
 			wxString ld_lib_path;
 			wxFileName exePath ( wxStandardPaths::Get().GetExecutablePath() );
 			wxFileName exeWrapper ( exePath.GetPath(), wxT ( "le_exec.sh" ) );
 
 			if ( wxGetEnv ( wxT ( "LD_LIBRARY_PATH" ), &ld_lib_path ) && ld_lib_path.IsEmpty() == false ) {
-				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " );
+				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " ) << execLine;
 			} else {
-				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " );
+				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " ) << execLine;
 			}
 		}
 		term.Replace(wxT("$(CMD)"), command);
@@ -1636,6 +1640,8 @@ void Manager::DbgStart ( long pid )
 			dinfo.path = userDebuggr;
 		}
 	}
+	// read the console command
+	dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
 	dbgr->SetDebuggerInformation ( dinfo );
 
 	if ( pid == wxNOT_FOUND ) {

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -197,7 +197,7 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer131;
 	bSizer131 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText131 = new wxStaticText( m_panel4, wxID_ANY, _("SSH Client:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText131 = new wxStaticText( m_panel4, wxID_ANY, _("SSH Client executable:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText131->Wrap( -1 );
 	bSizer131->Add( m_staticText131, 0, wxALL, 5 );
 	
@@ -212,6 +212,13 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	bSizer14->Add( m_button1, 0, wxALL, 5 );
 	
 	bSizer131->Add( bSizer14, 0, wxEXPAND, 5 );
+	
+	m_staticText15 = new wxStaticText( m_panel4, wxID_ANY, _("SSH Client arguments:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText15->Wrap( -1 );
+	bSizer131->Add( m_staticText15, 0, wxALL|wxEXPAND, 5 );
+	
+	m_textCtrlArguments = new wxTextCtrl( m_panel4, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer131->Add( m_textCtrlArguments, 0, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel4, wxID_ANY, wxEmptyString ), wxVERTICAL );
@@ -246,7 +253,6 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
-	bSizer1->Fit( this );
 	
 	this->Centre( wxBOTH );
 	

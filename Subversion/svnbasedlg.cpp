@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -18,20 +18,6 @@ SvnBaseDlg::SvnBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH );
 	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( SvnBaseDlg::m_splitter1OnIdle ), NULL, this );
-	m_panel1 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer4;
-	bSizer4 = new wxBoxSizer( wxVERTICAL );
-	
-	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Enter log here:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText3->Wrap( -1 );
-	bSizer4->Add( m_staticText3, 0, wxALL, 5 );
-	
-	m_textCtrl = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
-	bSizer4->Add( m_textCtrl, 1, wxALL|wxEXPAND, 5 );
-	
-	m_panel1->SetSizer( bSizer4 );
-	m_panel1->Layout();
-	bSizer4->Fit( m_panel1 );
 	m_panel2 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
@@ -47,7 +33,21 @@ SvnBaseDlg::SvnBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_panel2->SetSizer( bSizer5 );
 	m_panel2->Layout();
 	bSizer5->Fit( m_panel2 );
-	m_splitter1->SplitVertically( m_panel1, m_panel2, 0 );
+	m_panel1 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer4;
+	bSizer4 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText3 = new wxStaticText( m_panel1, wxID_ANY, _("Enter log here:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	bSizer4->Add( m_staticText3, 0, wxALL, 5 );
+	
+	m_textCtrl = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	bSizer4->Add( m_textCtrl, 1, wxALL|wxEXPAND, 5 );
+	
+	m_panel1->SetSizer( bSizer4 );
+	m_panel1->Layout();
+	bSizer4->Fit( m_panel1 );
+	m_splitter1->SplitVertically( m_panel2, m_panel1, 0 );
 	bSizer1->Add( m_splitter1, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer3;

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,10 +16,10 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/textctrl.h>
+#include <wx/checklst.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
-#include <wx/checklst.h>
+#include <wx/textctrl.h>
 #include <wx/splitter.h>
 #include <wx/combobox.h>
 #include <wx/statline.h>
@@ -38,12 +38,12 @@ class SvnBaseDlg : public wxDialog
 	
 	protected:
 		wxSplitterWindow* m_splitter1;
-		wxPanel* m_panel1;
-		wxStaticText* m_staticText3;
-		wxTextCtrl* m_textCtrl;
 		wxPanel* m_panel2;
 		wxStaticText* m_staticText2;
 		wxCheckListBox* m_checkList;
+		wxPanel* m_panel1;
+		wxStaticText* m_staticText3;
+		wxTextCtrl* m_textCtrl;
 		wxStaticText* m_staticText1;
 		wxComboBox* m_comboBoxLastCommitMsgs;
 		wxStaticLine* m_staticline1;

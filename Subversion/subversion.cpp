@@ -1268,9 +1268,18 @@ void SubversionPlugin::OnRefrshIconsStatusInternal(wxCommandEvent& e)
 void SubversionPlugin::DoSetSshEnv()
 {
 	wxString ssh_client = m_options.GetSshClient();
+	wxString ssh_client_args = m_options.GetSshClientArguments();
+
 	ssh_client.Trim().Trim(false);
+	ssh_client_args.Trim().Trim(false);
+
+	// on Windows, SVN demands that the ssh client will not contain any
+	// backward slashes
+	ssh_client.Replace(wxT("\\"), wxT("/"));
+
 	if(ssh_client.empty() == false){
-		wxSetEnv(wxT("SVN_SSH"), ssh_client.c_str());
-		wxLogMessage(wxString::Format(wxT("Environment variable SVN_SSH is set to %s"), ssh_client.c_str()));
+		wxString env_value(ssh_client + wxT(" ") + ssh_client_args);
+		wxSetEnv(wxT("SVN_SSH"), env_value.c_str());
+		wxLogMessage(wxString::Format(wxT("Environment variable SVN_SSH is set to %s"), env_value.c_str()));
 	}
 }

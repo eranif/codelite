@@ -45,6 +45,7 @@ class SvnOptions : public SerializedObject
 	wxString m_diffArgs;
 	bool     m_keepTagUpToDate;
 	wxString m_sshClient;
+	wxString m_sshClientArguments;
 
 public:
 	SvnOptions();
@@ -99,6 +100,12 @@ public:
 	}
 	const wxString& GetSshClient() const {
 		return m_sshClient;
+	}
+	void SetSshClientArguments(const wxString& sshClientArguments) {
+		this->m_sshClientArguments = sshClientArguments;
+	}
+	const wxString& GetSshClientArguments() const {
+		return m_sshClientArguments;
 	}
 };
 

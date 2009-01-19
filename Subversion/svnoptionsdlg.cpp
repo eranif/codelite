@@ -62,6 +62,8 @@ SvnOptionsDlg::SvnOptionsDlg( wxWindow* parent, const SvnOptions &options, IMana
 	}
 
 	m_textCtrlSshClientCmd->SetValue(options.GetSshClient());
+	m_textCtrlArguments->SetValue(options.GetSshClientArguments());
+
 	GetSizer()->Fit(this);
 	m_filePicker->SetFocus();
 
@@ -88,6 +90,7 @@ void SvnOptionsDlg::OnButtonOk( wxCommandEvent& event )
 	m_options.SetPattern(m_textCtrl1->GetValue());
 	m_options.SetKeepTagUpToDate(m_checkBoxKeepTagsUpToDate->IsChecked());
 	m_options.SetSshClient(m_textCtrlSshClientCmd->GetValue());
+	m_options.SetSshClientArguments(m_textCtrlArguments->GetValue());
 	SaveOptions();
 	EndModal(wxID_OK);
 }

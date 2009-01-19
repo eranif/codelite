@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -77,6 +77,8 @@ class SvnOptionsBaseDlg : public wxDialog
 		wxStaticText* m_staticText131;
 		wxTextCtrl* m_textCtrlSshClientCmd;
 		wxButton* m_button1;
+		wxStaticText* m_staticText15;
+		wxTextCtrl* m_textCtrlArguments;
 		wxStaticText* m_staticText14;
 		wxStaticLine* m_staticline2;
 		wxButton* m_button2;
@@ -92,7 +94,7 @@ class SvnOptionsBaseDlg : public wxDialog
 		
 	
 	public:
-		SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Subversion Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Subversion Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 629,312 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~SvnOptionsBaseDlg();
 	
 };

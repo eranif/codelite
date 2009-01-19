@@ -32,6 +32,7 @@ SvnOptions::SvnOptions()
 		, m_diffArgs(wxEmptyString)
 		, m_keepTagUpToDate(true)
 		, m_sshClient(wxT(""))
+		, m_sshClientArguments(wxT(""))
 {
 }
 
@@ -41,22 +42,25 @@ SvnOptions::~SvnOptions()
 
 void SvnOptions::Serialize(Archive &arch)
 {
-	arch.Write(wxT("m_flags"),           m_flags);
-	arch.Write(wxT("m_exePath"),         m_exePath);
-	arch.Write(wxT("m_pattern"),         m_pattern);
-	arch.Write(wxT("m_diffCmd"),         m_diffCmd);
-	arch.Write(wxT("m_diffArgs"),        m_diffArgs);
-	arch.Write(wxT("m_keepTagUpToDate"), m_keepTagUpToDate);
-	arch.Write(wxT("m_sshClient"),       m_sshClient);
+	arch.Write(wxT("m_flags"),              m_flags);
+	arch.Write(wxT("m_exePath"),            m_exePath);
+	arch.Write(wxT("m_pattern"),            m_pattern);
+	arch.Write(wxT("m_diffCmd"),            m_diffCmd);
+	arch.Write(wxT("m_diffArgs"),           m_diffArgs);
+	arch.Write(wxT("m_keepTagUpToDate"),    m_keepTagUpToDate);
+	arch.Write(wxT("m_sshClient"),          m_sshClient);
+	arch.Write(wxT("m_sshClientArguments"), m_sshClientArguments);
 }
 
 void SvnOptions::DeSerialize(Archive &arch)
 {
-	arch.Read(wxT("m_flags"),           m_flags);
-	arch.Read(wxT("m_exePath"),         m_exePath);
-	arch.Read(wxT("m_pattern"),         m_pattern);
-	arch.Read(wxT("m_diffCmd"),         m_diffCmd);
-	arch.Read(wxT("m_diffArgs"),        m_diffArgs);
-	arch.Read(wxT("m_keepTagUpToDate"), m_keepTagUpToDate);
-	arch.Read(wxT("m_sshClient"),       m_sshClient);
+	arch.Read(wxT("m_flags"),              m_flags);
+	arch.Read(wxT("m_exePath"),            m_exePath);
+	arch.Read(wxT("m_pattern"),            m_pattern);
+	arch.Read(wxT("m_diffCmd"),            m_diffCmd);
+	arch.Read(wxT("m_diffArgs"),           m_diffArgs);
+	arch.Read(wxT("m_keepTagUpToDate"),    m_keepTagUpToDate);
+	arch.Read(wxT("m_sshClient"),          m_sshClient);
+	arch.Read(wxT("m_sshClientArguments"), m_sshClientArguments);
 }
+

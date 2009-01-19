@@ -942,11 +942,13 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 			wxFileName exeWrapper ( exePath.GetPath(), wxT ( "le_exec.sh" ) );
 
 			if ( wxGetEnv ( wxT ( "LD_LIBRARY_PATH" ), &ld_lib_path ) && ld_lib_path.IsEmpty() == false ) {
-				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " ) << execLine;
+				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " );
 			} else {
-				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " ) << execLine;
+				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " );
 			}
 		}
+		
+		command << execLine;
 		term.Replace(wxT("$(CMD)"), command);
 		execLine = term;
 

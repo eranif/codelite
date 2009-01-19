@@ -1058,10 +1058,12 @@ void TagsManager::BuildExternalDatabase(ExtDbData &data)
 
 	wxFileName dbPath(data.rootPath);
 	wxString path = dbPath.GetFullPath();
-	DoBuildDatabase(files, db, &path);
 
-	// update the last_retagged field in the database for these files
-	UpdateFilesRetagTimestamp(files, &db);
+	if (DoBuildDatabase(files, db, &path)) {
+		
+		// update the last_retagged field in the database for these files
+		UpdateFilesRetagTimestamp(files, &db);
+	}
 }
 
 void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
@@ -1098,23 +1100,25 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
 	DeleteFilesTags(strFiles);
 
 	// step 5: build the database
-	DoBuildDatabase(strFiles, *m_workspaceDatabase);
 
-	// step 6: update the last_retagged field in the database for these files
-	UpdateFilesRetagTimestamp(strFiles, m_workspaceDatabase);
+	if (DoBuildDatabase(strFiles, *m_workspaceDatabase)) {
+		
+		// update the last_retagged field in the database for these files
+		UpdateFilesRetagTimestamp(strFiles, m_workspaceDatabase);
+	}
 
 	// step 7: update the file tree
 	UpdateFileTree(m_workspaceDatabase, true);
 }
 
-void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, const wxString *rootPath)
+bool TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, const wxString *rootPath)
 {
 	wxString tags;
 	wxProgressDialog* prgDlg = NULL;
 
 	int maxVal = (int)files.GetCount();
 	if (files.IsEmpty())
-		return;
+		return false;
 
 	// Create a progress dialog
 	prgDlg = new wxProgressDialog (wxT("Building tags database ..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)files.GetCount()*2, NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT );
@@ -1141,7 +1145,7 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 		if (!prgDlg->Update(i, msg)) {
 			prgDlg->Destroy();
 			trees.clear();
-			return;
+			return false;
 		}
 
 		tags.Clear();
@@ -1187,6 +1191,7 @@ void TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 		db.Commit();
 	}
 	prgDlg->Destroy();
+	return true;
 }
 
 void TagsManager::OpenExternalDatabase(const wxFileName &dbName)

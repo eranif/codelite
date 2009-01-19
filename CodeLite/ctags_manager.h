@@ -768,7 +768,7 @@ protected:
 	void           TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips);
 	void           GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<TagEntryPtr> &tips);
 	DoxygenComment DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix);
-	void           DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, const wxString *rootPath = NULL);
+	bool           DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, const wxString *rootPath = NULL);
 	bool           ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper, wxString &scopeTempalteInitiList);
 	void           FilterImplementation(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	void           FilterDeclarations(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);

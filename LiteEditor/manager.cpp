@@ -915,34 +915,37 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 	//change directory to the working directory
 	if ( considerPauseWhenExecuting ) {
 		ProjectPtr proj = GetProject ( projectName );
+		OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
 
 #if defined(__WXMAC__)
-		execLine = wxString ( wxT ( "osascript -e 'tell application \"Terminal\"'" ) ) +
-		           wxT ( " -e   'activate'" ) +
-		           wxT ( " -e   'do script with command \"cd " ) + proj->GetFileName().GetPath() + wxT ( " && cd " ) + wd + wxT ( " && " ) + execLine + wxT ( "\"'" ) +
-		           wxT ( " -e  'end tell'" );
+
+		execLine = opts->GetProgramConsoleCommand();
+		execLine.Replace(wxT("$(CMD)"), cmd + wxT ( " " ) + cmdArgs);
+		execLine.Replace(wxT("$(TITLE)"), cmd);
 
 #elif defined(__WXGTK__)
+
 		//set a console to the execute target
 		wxString term;
-		term << wxT ( "xterm -title " );
-		term << wxT ( "'" ) << execLine << wxT ( "'" );
-		term << wxT ( " -e " );
+		term = opts->GetProgramConsoleCommand();
+		term.Replace(wxT("$(TITLE)"), cmd + wxT ( " " ) + cmdArgs);
 
+		// build the command
+		wxString command(execLine);
 		if ( bldConf->GetPauseWhenExecEnds() ) {
 			wxString ld_lib_path;
 			wxFileName exePath ( wxStandardPaths::Get().GetExecutablePath() );
 			wxFileName exeWrapper ( exePath.GetPath(), wxT ( "le_exec.sh" ) );
 
 			if ( wxGetEnv ( wxT ( "LD_LIBRARY_PATH" ), &ld_lib_path ) && ld_lib_path.IsEmpty() == false ) {
-				term << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " );
+				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " );
 			} else {
-				term << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " );
+				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " );
 			}
 		}
-
-		term << execLine;
+		term.Replace(wxT("$(CMD)"), command);
 		execLine = term;
+
 #elif defined (__WXMSW__)
 
 		if ( bldConf->GetPauseWhenExecEnds() ) {

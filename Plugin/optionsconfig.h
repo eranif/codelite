@@ -34,35 +34,36 @@
 
 class OptionsConfig : public ConfObject
 {
-	bool m_displayFoldMargin;
-	bool m_underlineFoldLine;
-	wxString m_foldStyle;
-	bool m_displayBookmarkMargin;
-	wxString m_bookmarkShape;
-	wxColour m_bookmarkBgColour;
-	wxColour m_bookmarkFgColour;
-	bool m_highlightCaretLine;
-	bool m_displayLineNumbers;
-	bool m_showIndentationGuidelines;
-	wxColour m_caretLineColour;
-	bool m_indentUsesTabs;
-	int m_indentWidth;
-	int m_tabWidth;
-	int	m_iconsSize;
+	bool           m_displayFoldMargin;
+	bool           m_underlineFoldLine;
+	wxString       m_foldStyle;
+	bool           m_displayBookmarkMargin;
+	wxString       m_bookmarkShape;
+	wxColour       m_bookmarkBgColour;
+	wxColour       m_bookmarkFgColour;
+	bool           m_highlightCaretLine;
+	bool           m_displayLineNumbers;
+	bool           m_showIndentationGuidelines;
+	wxColour       m_caretLineColour;
+	bool           m_indentUsesTabs;
+	int            m_indentWidth;
+	int            m_tabWidth;
+	int            m_iconsSize;
 	wxFontEncoding m_fileFontEncoding;
-	int m_showWhitspaces;
-	bool m_foldCompact;
-	bool m_foldAtElse;
-	bool m_foldPreprocessor;
-	int m_edgeMode;
-	int m_edgeColumn;
-	wxColour m_edgeColour;
-	bool m_highlightMatchedBraces;
-	bool m_autoAddMatchedBraces;
-	wxColour m_foldBgColour;
-	bool m_autoAdjustHScrollBarWidth;
-	int m_caretWidth;
-	int m_caretBlinkPeriod;
+	int            m_showWhitspaces;
+	bool           m_foldCompact;
+	bool           m_foldAtElse;
+	bool           m_foldPreprocessor;
+	int            m_edgeMode;
+	int            m_edgeColumn;
+	wxColour       m_edgeColour;
+	bool           m_highlightMatchedBraces;
+	bool           m_autoAddMatchedBraces;
+	wxColour       m_foldBgColour;
+	bool           m_autoAdjustHScrollBarWidth;
+	int            m_caretWidth;
+	int            m_caretBlinkPeriod;
+	wxString       m_programConsoleCommand;
 
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -254,6 +255,15 @@ public:
 	const int& GetCaretWidth() const {
 		return m_caretWidth;
 	}
+
+	void SetProgramConsoleCommand(const wxString& programConsoleCommand) {
+		this->m_programConsoleCommand = programConsoleCommand;
+	}
+
+	const wxString& GetProgramConsoleCommand() const {
+		return m_programConsoleCommand;
+	}
+
 	/**
 	 * Return an XML representation of this object
 	 * \return XML node

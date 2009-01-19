@@ -169,6 +169,12 @@
           <File Name="editorsettingscaret.h"/>
           <File Name="editorsettingscaret.cpp"/>
         </VirtualDirectory>
+        <VirtualDirectory Name="Terminal">
+          <File Name="editorsettings_terminal_base.cpp"/>
+          <File Name="editorsettings_terminal_base.h"/>
+          <File Name="editorsettingsterminal.h"/>
+          <File Name="editorsettingsterminal.cpp"/>
+        </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">

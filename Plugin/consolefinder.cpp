@@ -1,33 +1,40 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : consolefinder.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : consolefinder.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "consolefinder.h"
+#include "consolefinder.h"
 #include "procutils.h"
 #include "exelocator.h"
 
 ConsoleFinder::ConsoleFinder()
-: m_nConsolePid(0)
+		: m_nConsolePid(0)
+#if defined(__WXGTK__)
+		, m_consoleCommand(wxT("xterm -title '$(TITLE)' -e '$(CMD)'"))
+#elif defined(__WXMAC__)
+		, m_consoleCommand(wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"$(CMD)\"' -e 'end tell'"))
+#else
+		, m_consoleCommand(wxT(""))
+#endif
 {
 }
 
@@ -35,10 +42,10 @@ ConsoleFinder::~ConsoleFinder()
 {
 	FreeConsole();
 }
- 
+
 void ConsoleFinder::FreeConsole()
 {
-	if(m_nConsolePid){
+	if (m_nConsolePid) {
 		wxKill(m_nConsolePid, wxSIGKILL);
 		m_nConsolePid = 0;
 	}
@@ -52,24 +59,13 @@ int ConsoleFinder::RunConsole(const wxString &title)
 
 #ifndef __WXMSW__
 	wxString cmd;
-	wxString term;
 
-#if defined (__WXGTK__)
+	cmd = GetConsoleCommand();
+	cmd.Replace(wxT("$(TITLE)"), title);
+	cmd.Replace(wxT("$(CMD)"), wxString::Format(wxT("sleep %d"), 80000 + wxGetProcessId()));
 
-	cmd << wxT("xterm -title ");
-	cmd << wxT("'") << title << wxT("'");
-	cmd << wxT(" -e ");
-	cmd << wxT("sleep ");
-	cmd << wxString::Format(wxT("%d"),80000 + ::wxGetProcessId());
-#elif defined (__WXMAC__)
-	cmd << wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"sleep ") 
-		<< wxString::Format(wxT("%d"),80000 + ::wxGetProcessId())
-		<< wxT("\"' -e 'end tell'");
-#endif
-	
-	//start xterm -e sleep {some unique # of seconds}
 	m_nConsolePid = wxExecute(cmd, wxEXEC_ASYNC);
-	if (m_nConsolePid <= 0){
+	if (m_nConsolePid <= 0) {
 		return -1;
 	}
 
@@ -77,12 +73,12 @@ int ConsoleFinder::RunConsole(const wxString &title)
 	// First, wait for the xterm to settle down, else PS won't see the sleep task
 	wxSleep(1);
 	m_ConsoleTty = GetConsoleTty(m_nConsolePid);
-	if(m_ConsoleTty.IsEmpty()){
+	if (m_ConsoleTty.IsEmpty()) {
 		FreeConsole();
 		return -1;
 	}
 	return m_nConsolePid;
-	
+
 #else //__WXMSW__
 	wxUnusedVar(title);
 	return -1;
@@ -151,33 +147,31 @@ bool ConsoleFinder::FindConsole(const wxString &title, wxString &consoleName)
 wxString ConsoleFinder::GetConsoleName()
 {
 	wxString cmd;
-#ifdef __WXMSW__		
+#ifdef __WXMSW__
 	wxChar *shell = wxGetenv(wxT("COMSPEC"));
-    if ( !shell ){
-        shell = wxT("\\COMMAND.COM");
+	if ( !shell ) {
+		shell = wxT("\\COMMAND.COM");
 	}
-	
+
 	// just the shell
-    cmd = shell;
+	cmd = shell;
 #else //non-windows
 	//try to locate the default terminal
 	wxString terminal;
 	wxString where;
-	if(ExeLocator::Locate(wxT("gnome-terminal"), where)){
+	if (ExeLocator::Locate(wxT("gnome-terminal"), where)) {
 		terminal = wxT("gnome-terminal -e ");
-	}
-	else if(ExeLocator::Locate(wxT("konsole"), where)){
+	} else if (ExeLocator::Locate(wxT("konsole"), where)) {
 		terminal = wxT("konsole");
-	}
-	else if(ExeLocator::Locate(wxT("xterm"), where)){
+	} else if (ExeLocator::Locate(wxT("xterm"), where)) {
 		terminal = wxT("xterm -e ");
 	}
-	
-	if(cmd.IsEmpty()){
+
+	if (cmd.IsEmpty()) {
 		cmd = wxT("xterm -e ");
 	}
-	
+
 	cmd = terminal;
 #endif
-    return cmd;
+	return cmd;
 }

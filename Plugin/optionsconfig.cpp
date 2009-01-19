@@ -57,6 +57,13 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_autoAdjustHScrollBarWidth(true)
 		, m_caretWidth(1)
 		, m_caretBlinkPeriod(500)
+#if defined(__WXGTK__)
+		, m_programConsoleCommand(wxT("xterm -title '$(TITLE)' -e '$(CMD)'"))
+#elif defined(__WXMAC__)
+		, m_programConsoleCommand(wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"$(CMD)\"' -e 'end tell'"))
+#else
+		, m_programConsoleCommand(wxT(""))
+#endif
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
@@ -91,6 +98,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_autoAdjustHScrollBarWidth = XmlUtils::ReadBool(node, wxT("AutoAdjustHScrollBarWidth"), m_autoAdjustHScrollBarWidth);
 		m_caretBlinkPeriod = XmlUtils::ReadLong(node, wxT("CaretBlinkPeriod"), m_caretBlinkPeriod);
 		m_caretWidth = XmlUtils::ReadLong(node, wxT("CaretWidth"), m_caretWidth);
+		m_programConsoleCommand = XmlUtils::ReadString(node, wxT("ConsoleCommand"), m_programConsoleCommand);
 	}
 }
 
@@ -120,7 +128,8 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("AutoAddMatchedBraces"), BoolToString(m_autoAddMatchedBraces));
 	n->AddProperty(wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
 	n->AddProperty(wxT("AutoAdjustHScrollBarWidth"), BoolToString(m_autoAdjustHScrollBarWidth));
-	
+	n->AddProperty(wxT("ConsoleCommand"), m_programConsoleCommand);
+
 	wxString tmp;
     tmp << m_indentWidth;
     n->AddProperty(wxT("IndentWidth"), tmp);
@@ -150,11 +159,11 @@ wxXmlNode *OptionsConfig::ToXml() const
 	tmp.clear();
     tmp << m_caretWidth;
     n->AddProperty(wxT("CaretWidth"), tmp);
-	
+
 	tmp.clear();
     tmp << m_caretBlinkPeriod;
     n->AddProperty(wxT("CaretBlinkPeriod"), tmp);
-	
+
 	tmp.clear();
 	tmp = wxFontMapper::GetEncodingName(m_fileFontEncoding);
 	n->AddProperty(wxT("FileFontEncoding"), tmp);

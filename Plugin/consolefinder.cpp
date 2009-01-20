@@ -63,7 +63,9 @@ int ConsoleFinder::RunConsole(const wxString &title)
 	cmd = GetConsoleCommand();
 	cmd.Replace(wxT("$(TITLE)"), title);
 	cmd.Replace(wxT("$(CMD)"), wxString::Format(wxT("sleep %d"), 80000 + wxGetProcessId()));
-
+	
+	wxLogMessage(wxString::Format(wxT("Launching console: %s"), cmd.c_str()));
+	
 	m_nConsolePid = wxExecute(cmd, wxEXEC_ASYNC);
 	if (m_nConsolePid <= 0) {
 		return -1;

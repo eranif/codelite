@@ -231,7 +231,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 		return false;
 	}
 
-#if defined (__WXGTK__)
+#if defined (__WXGTK__) || defined (__WXMAC__)
 	//On GTK and other platforms, open a new terminal and direct all
 	//debugee process into it
 	wxString ptyName;
@@ -241,8 +241,6 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 		return false;
 	}
 	cmd << dbgExeName << wxT(" --tty=") << ptyName << wxT(" --interpreter=mi ");
-#elif defined (__WXMAC__)
-	cmd << dbgExeName << wxT(" --interpreter=mi ");
 #else
 	cmd << dbgExeName << wxT(" --interpreter=mi ");
 	cmd << ProcUtils::GetProcessNameByPid(pid) << wxT(" ");
@@ -332,7 +330,7 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 		return false;
 	}
 
-#if defined (__WXGTK__)
+#if defined (__WXGTK__) || defined (__WXMAC__)
 	//On GTK and other platforms, open a new terminal and direct all
 	//debugee process into it
 	wxString ptyName;
@@ -342,8 +340,6 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 		return false;
 	}
 	cmd << dbgExeName << wxT(" --tty=") << ptyName << wxT(" --interpreter=mi ") << exeName;
-#elif defined(__WXMAC__)
-	cmd << dbgExeName << wxT(" --interpreter=mi ") << exeName;
 #else
 	cmd << dbgExeName << wxT(" --interpreter=mi ") << exeName;
 #endif

@@ -1060,7 +1060,7 @@ void TagsManager::BuildExternalDatabase(ExtDbData &data)
 	wxString path = dbPath.GetFullPath();
 
 	if (DoBuildDatabase(files, db, &path)) {
-		
+
 		// update the last_retagged field in the database for these files
 		UpdateFilesRetagTimestamp(files, &db);
 	}
@@ -1102,7 +1102,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
 	// step 5: build the database
 
 	if (DoBuildDatabase(strFiles, *m_workspaceDatabase)) {
-		
+
 		// update the last_retagged field in the database for these files
 		UpdateFilesRetagTimestamp(strFiles, m_workspaceDatabase);
 	}
@@ -1617,6 +1617,31 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 		tip.Replace(wxT("\t"), wxT(" "));
 		while (tip.Replace(wxT("  "), wxT(" "))) {}
 
+		// create a proper tooltip from the stripped pattern
+		TagEntryPtr t= tags.at(i);
+		if (t->GetKind() == wxT("function") || t->GetKind() == wxT("prototype")) {
+
+			// add return value
+			tip.Clear();
+
+			wxString ret_value = GetFunctionReturnValueFromPattern(t->GetPattern());
+			if(ret_value.IsEmpty() == false){
+				tip << ret_value << wxT(" ");
+			}
+
+			// add the scope
+			if(t->GetScope() != wxT("<global>")){
+				tip << t->GetScope() << wxT("::");
+			}
+
+			// name
+			tip << t->GetName();
+
+			// method signature
+			tip << NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Name | Normalize_Func_Default_value);
+		}
+
+		// prepend any comment if exists
 		tip.Prepend(comment);
 		tips.push_back(tip);
 	}
@@ -2601,4 +2626,30 @@ void TagsManager::DoFilterNonNeededFilesForRetaging(wxArrayString& strFiles, Tag
 			}
 		}
 	}
+}
+
+wxString TagsManager::GetFunctionReturnValueFromPattern(const wxString& pattern)
+{
+	// evaluate the return value of the tag
+	clFunction foo;
+	wxString return_value;
+	if (GetLanguage()->FunctionFromPattern(pattern, foo)) {
+		if (foo.m_retrunValusConst.empty() == false) {
+			return_value << _U(foo.m_retrunValusConst.c_str()) << wxT(" ");
+		}
+
+		if (foo.m_returnValue.m_typeScope.empty() == false) {
+			return_value << _U(foo.m_returnValue.m_typeScope.c_str()) << wxT("::");
+		}
+
+		if (foo.m_returnValue.m_type.empty() == false) {
+			return_value << _U(foo.m_returnValue.m_type.c_str());
+			if (foo.m_returnValue.m_templateDecl.empty() == false) {
+				return_value << wxT("<") << _U(foo.m_returnValue.m_templateDecl.c_str()) << wxT(">");
+			}
+			return_value << _U(foo.m_returnValue.m_starAmp.c_str());
+			return_value << wxT(" ");
+		}
+	}
+	return return_value;
 }

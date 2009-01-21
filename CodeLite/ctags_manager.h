@@ -716,6 +716,14 @@ public:
 	 */
 	void UpdateFilesRetagTimestamp(const wxArrayString &files, TagsDatabase *db);
 
+	/**
+	 * @brief accept as input ctags pattern of a function and tries to evaluate the
+	 * return value of the function
+	 * @param pattern ctags pattern of the method
+	 * @return return value of the method from the pattern of empty string
+	 */
+	wxString GetFunctionReturnValueFromPattern(const wxString &pattern);
+
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
 	std::map<wxString, bool> m_typeScopeContainerCache;

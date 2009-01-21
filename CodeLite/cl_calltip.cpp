@@ -132,25 +132,7 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 			wxString raw_sig ( t->GetSignature().Trim().Trim(false) );
 
 			// evaluate the return value of the tag
-			clFunction foo;
-			if (LanguageST::Get()->FunctionFromPattern(t->GetPattern(), foo)) {
-				if (foo.m_retrunValusConst.empty() == false) {
-					cti.retValue << _U(foo.m_retrunValusConst.c_str()) << wxT(" ");
-				}
-
-				if (foo.m_returnValue.m_typeScope.empty() == false) {
-					cti.retValue << _U(foo.m_returnValue.m_typeScope.c_str()) << wxT("::");
-				}
-
-				if (foo.m_returnValue.m_type.empty() == false) {
-					cti.retValue << _U(foo.m_returnValue.m_type.c_str());
-					if (foo.m_returnValue.m_templateDecl.empty() == false) {
-						cti.retValue << wxT("<") << _U(foo.m_returnValue.m_templateDecl.c_str()) << wxT(">");
-					}
-					cti.retValue << _U(foo.m_returnValue.m_starAmp.c_str());
-					cti.retValue << wxT(" ");
-				}
-			}
+			cti.retValue = TagsManagerST::Get()->GetFunctionReturnValueFromPattern(t->GetPattern());
 
 			bool hasDefaultValues = (raw_sig.Find(wxT("=")) != wxNOT_FOUND);
 

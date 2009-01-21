@@ -238,7 +238,14 @@ createCodeLiteIndexerMakefile ()
 	echo >> Makefile
 
 	echo "codelite_indexer: make_dirs \$(codelite_indexer_objects)" >> Makefile
-	echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) -lpthread -ldl " >> Makefile
+
+	## On FreeBSD, -ldl is part og libc
+	if [ "$os_name" = "FreeBSD" ]; then
+		echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) -lpthread " >> Makefile
+	else
+		echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) -lpthread -ldl " >> Makefile
+	fi
+
 	echo >> Makefile
 
 	echo "make_dirs:" >> Makefile

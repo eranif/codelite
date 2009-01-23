@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Aug  4 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -80,13 +80,13 @@ class ProjectSettingsBaseDlg : public wxDialog
 		wxStaticLine* m_staticline7;
 		wxStaticText* m_staticText6;
 		wxTextCtrl* m_textCompilerOptions;
+		wxButton* m_buttonCompilerOptions;
 		wxStaticText* m_staticText4;
 		wxTextCtrl* m_textAdditionalSearchPath;
 		wxButton* m_buttonAddSearchPath;
 		wxStaticText* m_staticText171;
 		wxTextCtrl* m_textPreprocessor;
 		wxButton* m_buttonAddPreprocessor;
-		wxButton* m_buttonCompilerOptions;
 		wxPanel* m_linkerPage;
 		wxCheckBox* m_checkLinkerNeeded;
 		wxStaticLine* m_staticline8;
@@ -188,6 +188,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 		
 	
 	public:
+		
 		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 734,502 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~ProjectSettingsBaseDlg();
 	

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Aug  4 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -172,7 +172,6 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	bSizer17 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkBoxPauseWhenExecEnds = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Pause when execution ends"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer17->Add( m_checkBoxPauseWhenExecEnds, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer19->Add( bSizer17, 1, wxEXPAND, 5 );
@@ -180,13 +179,12 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_generalPage->SetSizer( bSizer19 );
 	m_generalPage->Layout();
 	bSizer19->Fit( m_generalPage );
-	m_notebook3->AddPage( m_generalPage, wxT("General"), true );
+	m_notebook3->AddPage( m_generalPage, wxT("General"), false );
 	m_compilerPage = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* compilerPageSizer;
 	compilerPageSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkCompilerNeeded = new wxCheckBox( m_compilerPage, wxID_ANY, wxT("Compiler is not required for this project"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	compilerPageSizer->Add( m_checkCompilerNeeded, 0, wxALL, 5 );
 	
 	m_staticline7 = new wxStaticLine( m_compilerPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -204,6 +202,9 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	
 	m_textCompilerOptions = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer1->Add( m_textCompilerOptions, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND|wxALL, 5 );
+	
+	m_buttonCompilerOptions = new wxButton( m_compilerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer1->Add( m_buttonCompilerOptions, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	m_staticText4 = new wxStaticText( m_compilerPage, wxID_ANY, wxT("Additional Search Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
@@ -225,9 +226,6 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_buttonAddPreprocessor = new wxButton( m_compilerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer1->Add( m_buttonAddPreprocessor, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_buttonCompilerOptions = new wxButton( m_compilerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer1->Add( m_buttonCompilerOptions, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
-	
 	compilerPageSizer->Add( gbSizer1, 1, wxEXPAND, 5 );
 	
 	m_compilerPage->SetSizer( compilerPageSizer );
@@ -239,7 +237,6 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	linkerPageSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkLinkerNeeded = new wxCheckBox( m_linkerPage, wxID_ANY, wxT("Linker is not required for this project"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	linkerPageSizer->Add( m_checkLinkerNeeded, 0, wxALL, 5 );
 	
 	m_staticline8 = new wxStaticLine( m_linkerPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -315,7 +312,6 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	bSizer192->Add( m_staticline121, 0, wxEXPAND | wxALL, 5 );
 	
 	m_checkBoxDbgRemote = new wxCheckBox( m_panelDebugger, wxID_ANY, wxT("Debugging remote target"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer192->Add( m_checkBoxDbgRemote, 0, wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizer61;
@@ -360,14 +356,13 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_panelDebugger->SetSizer( bSizer192 );
 	m_panelDebugger->Layout();
 	bSizer192->Fit( m_panelDebugger );
-	m_notebook3->AddPage( m_panelDebugger, wxT("Debugger"), false );
+	m_notebook3->AddPage( m_panelDebugger, wxT("Debugger"), true );
 	m_resourceCmpPage = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer151;
 	bSizer151 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkResourceNeeded = new wxCheckBox( m_resourceCmpPage, wxID_ANY, wxT("Resource Compiler is not needed"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkResourceNeeded->SetValue(true);
-	
+	m_checkResourceNeeded->SetValue(true); 
 	bSizer151->Add( m_checkResourceNeeded, 0, wxALL, 5 );
 	
 	m_staticline9 = new wxStaticLine( m_resourceCmpPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -498,7 +493,6 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	bSizer15 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkEnableCustomBuild = new wxCheckBox( m_customBuildPage, wxID_ANY, wxT("Enable custom build"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer15->Add( m_checkEnableCustomBuild, 0, wxALL, 5 );
 	
 	m_staticline12 = new wxStaticLine( m_customBuildPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );

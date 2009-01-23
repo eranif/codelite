@@ -43,6 +43,8 @@
 #include "compilerpatternspage.h"
 #include "compileradvancepage.h"
 #include "compilerfiletypespage.h"
+#include "compilercompileroptionspage.h"
+#include "compilerlinkeroptionspage.h"
 
 BEGIN_EVENT_TABLE(AdvancedDlg, wxDialog)
 	EVT_MENU(XRCID("delete_compiler"), AdvancedDlg::OnDeleteCompiler)
@@ -278,10 +280,18 @@ void AdvancedDlg::AddCompiler(CompilerPtr cmp, bool selected)
 	CompilerFileTypePage *p5 = new CompilerFileTypePage(m_compilersNotebook, cmp->GetName());
 	pages.push_back(p5);
 	m_compilersNotebook->AddSubPage(p5, _("File Types"), false);
-
-	CompilerAdvancePage *p6 = new CompilerAdvancePage(m_compilersNotebook, cmp->GetName());
+	
+	CompilerCompilerOptionsPage *p6 = new CompilerCompilerOptionsPage(m_compilersNotebook, cmp->GetName());
 	pages.push_back(p6);
-	m_compilersNotebook->AddSubPage(p6, _("Advanced"), false);
+	m_compilersNotebook->AddSubPage(p6, _("Compiler options"), false);
+
+	CompilerLinkerOptionsPage *p7 = new CompilerLinkerOptionsPage(m_compilersNotebook, cmp->GetName());
+	pages.push_back(p7);
+	m_compilersNotebook->AddSubPage(p7, _("Linker options"), false);
+
+	CompilerAdvancePage *p8 = new CompilerAdvancePage(m_compilersNotebook, cmp->GetName());
+	pages.push_back(p8);
+	m_compilersNotebook->AddSubPage(p8, _("Advanced"), false);
 
 	m_compilerPagesMap[cmp->GetName()] = pages;
 }

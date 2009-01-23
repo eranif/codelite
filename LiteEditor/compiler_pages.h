@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Aug  4 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -23,6 +23,8 @@
 #include <wx/listctrl.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
+#include <wx/valtext.h>
+#include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -52,6 +54,7 @@ class CompilerPatternsBase : public wxPanel
 		wxTextCtrl* m_textWarnLineNumber;
 	
 	public:
+		
 		CompilerPatternsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 		~CompilerPatternsBase();
 	
@@ -80,6 +83,7 @@ class CompilerToolsBase : public wxPanel
 		wxTextCtrl* m_textCtrlPathVariable;
 	
 	public:
+		
 		CompilerToolsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~CompilerToolsBase();
 	
@@ -103,7 +107,8 @@ class CompilerSwitchesBase : public wxPanel
 		
 	
 	public:
-		CompilerSwitchesBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 802,596 ), long style = wxTAB_TRAVERSAL );
+		
+		CompilerSwitchesBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 438,428 ), long style = wxTAB_TRAVERSAL );
 		~CompilerSwitchesBase();
 	
 };
@@ -131,6 +136,7 @@ class CompilerFileTypesBase : public wxPanel
 		
 	
 	public:
+		
 		CompilerFileTypesBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 		~CompilerFileTypesBase();
 	
@@ -162,8 +168,90 @@ class CompilerAdvanceBase : public wxPanel
 		wxTextCtrl* m_textPreprocessExtension;
 	
 	public:
+		
 		CompilerAdvanceBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~CompilerAdvanceBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class CompilerCompilerOptionsBase
+///////////////////////////////////////////////////////////////////////////////
+class CompilerCompilerOptionsBase : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText23;
+		wxListCtrl* m_listCompilerOptions;
+		wxButton* m_buttonCompilerOption;
+		wxButton* m_buttonDeleteCompilerOption;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnCompilerOptionActivated( wxListEvent& event ){ event.Skip(); }
+		virtual void OnCompilerOptionDeSelected( wxListEvent& event ){ event.Skip(); }
+		virtual void OnCompilerOptionSelected( wxListEvent& event ){ event.Skip(); }
+		virtual void OnNewCompilerOption( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnDeleteCompilerOption( wxCommandEvent& event ){ event.Skip(); }
+		
+	
+	public:
+		
+		CompilerCompilerOptionsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		~CompilerCompilerOptionsBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class CompilerLinkerOptionsBase
+///////////////////////////////////////////////////////////////////////////////
+class CompilerLinkerOptionsBase : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText23;
+		wxListCtrl* m_listLinkerOptions;
+		wxButton* m_buttonLinkerOption;
+		wxButton* m_buttonDeleteLinkerOption;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnLinkerOptionActivated( wxListEvent& event ){ event.Skip(); }
+		virtual void OnLinkerOptionDeSelected( wxListEvent& event ){ event.Skip(); }
+		virtual void OnLinkerOptionSelected( wxListEvent& event ){ event.Skip(); }
+		virtual void OnNewLinkerOption( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnDeleteLinkerOption( wxCommandEvent& event ){ event.Skip(); }
+		
+	
+	public:
+		
+		CompilerLinkerOptionsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		~CompilerLinkerOptionsBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class CompilerOptionDlgBase
+///////////////////////////////////////////////////////////////////////////////
+class CompilerOptionDlgBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText26;
+		wxTextCtrl* m_textCtrl18;
+		wxStaticText* m_staticText27;
+		wxTextCtrl* m_textCtrl19;
+		wxStaticLine* m_staticline4;
+		wxButton* m_buttonOK;
+		wxButton* m_buttonCancel;
+	
+	public:
+		wxString m_sName; 
+		wxString m_sHelp; 
+		
+		CompilerOptionDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 256,140 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~CompilerOptionDlgBase();
 	
 };
 

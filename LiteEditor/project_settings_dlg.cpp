@@ -39,6 +39,7 @@
 #include "build_settings_config.h"
 #include "debuggermanager.h"
 #include "wx/tokenzr.h"
+#include "addoptioncheckdlg.h"
 
 static const wxString CUSTOM_TARGET_BUILD = wxT("Build");
 static const wxString CUSTOM_TARGET_CLEAN = wxT("Clean");
@@ -585,6 +586,15 @@ void ProjectSettingsDlg::PopupAddOptionDlg(wxTextCtrl *ctrl)
 	dlg->Destroy();
 }
 
+void ProjectSettingsDlg::PopupAddOptionCheckDlg(wxTextCtrl *ctrl, const wxString& title, const Compiler::CmpCmdLineOptions& options)
+{
+	AddOptionCheckDlg *dlg = new AddOptionCheckDlg(NULL, title, options, ctrl->GetValue());
+	if (dlg->ShowModal() == wxID_OK) {
+		ctrl->SetValue(dlg->GetValue());
+	}
+	dlg->Destroy();
+}
+
 void ProjectSettingsDlg::OnAddSearchPath(wxCommandEvent &event)
 {
 	PopupAddOptionDlg(m_textAdditionalSearchPath);
@@ -705,13 +715,17 @@ void ProjectSettingsDlg::OnDeleteCommand(wxCheckListBox *list)
 
 void ProjectSettingsDlg::OnButtonAddCompilerOptions(wxCommandEvent &event)
 {
-	PopupAddOptionDlg(m_textCompilerOptions);
+	wxString cmpName = m_choiceCompilerType->GetStringSelection();
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
+	PopupAddOptionCheckDlg(m_textCompilerOptions, _("Compiler options"), cmp->GetCompilerOptions());
 	event.Skip();
 }
 
 void ProjectSettingsDlg::OnButtonAddLinkerOptions(wxCommandEvent &event)
 {
-	PopupAddOptionDlg(m_textLinkerOptions);
+	wxString cmpName = m_choiceCompilerType->GetStringSelection();
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
+	PopupAddOptionCheckDlg(m_textLinkerOptions, _("Linker options"), cmp->GetLinkerOptions());
 	event.Skip();
 }
 

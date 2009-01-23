@@ -25,6 +25,7 @@
 
 #include "editor_config.h"
 #include "windowattrmanager.h"
+#include <wx/settings.h>
 
 void WindowAttrManager::Load(wxWindow* win, const wxString& name, IConfigTool* conf)
 {
@@ -33,9 +34,13 @@ void WindowAttrManager::Load(wxWindow* win, const wxString& name, IConfigTool* c
 	}
 	
 	SimpleRectValue val;
-	if(conf->ReadObject(name, &val)){
-		win->Move(val.GetRect().GetTopLeft());
-		win->SetSize(val.GetRect().GetSize());
+	if(conf->ReadObject(name, &val)) {
+		int screenX = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
+		int screenY = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
+		if ((val.GetRect().GetLeft() < screenX) && (val.GetRect().GetTop() < screenY)) {
+			win->Move(val.GetRect().GetTopLeft());
+			win->SetSize(val.GetRect().GetSize());
+		}
 	}
 	
 }

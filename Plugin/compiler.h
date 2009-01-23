@@ -61,6 +61,12 @@ public:
 		wxString compilation_line;
 		CmpFileKind kind;
 	};
+	
+	struct CmpCmdLineOption {
+		wxString name;
+		wxString help;
+	};
+	typedef std::map<wxString, CmpCmdLineOption> CmpCmdLineOptions;
 
 private:
 	void AddCmpFileType(const wxString &extension, CmpFileKind type, const wxString &compile_line);
@@ -69,6 +75,8 @@ protected:
 	wxString m_name;
 	std::map<wxString, wxString> m_switches;
 	std::map<wxString, Compiler::CmpFileTypeInfo> m_fileTypes;
+	CmpCmdLineOptions m_compilerOptions;
+	CmpCmdLineOptions m_linkerOptions;
 	wxString m_objectSuffix;
     wxString m_dependSuffix;
     wxString m_preprocessSuffix;
@@ -205,6 +213,22 @@ public:
 
 	const std::map<wxString, Compiler::CmpFileTypeInfo>& GetFileTypes() const {
 		return m_fileTypes;
+	}
+	
+	const CmpCmdLineOptions& GetCompilerOptions() const {
+		return m_compilerOptions;
+	}
+	
+	void SetCompilerOptions(const CmpCmdLineOptions& cmpOptions) {
+		m_compilerOptions = cmpOptions;
+	}
+
+	const CmpCmdLineOptions& GetLinkerOptions() const {
+		return m_linkerOptions;
+	}
+	
+	void SetLinkerOptions(const CmpCmdLineOptions& cmpOptions) {
+		m_linkerOptions = cmpOptions;
 	}
 
 	void SetGenerateDependeciesFile(const bool& generateDependeciesFile) {

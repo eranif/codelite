@@ -25,6 +25,7 @@
 #include "compiler.h"
 #include "xmlutils.h"
 #include "macros.h"
+#include <wx/log.h>
 
 Compiler::Compiler(wxXmlNode *node)
 {
@@ -116,6 +117,20 @@ Compiler::Compiler(wxXmlNode *node)
 
 			else if (child->GetName() == wxT("PathVariable")) {
 				m_pathVariable = child->GetNodeContent();
+			}
+			
+			else if (child->GetName() == wxT("CompilerOption")) {
+				CmpCmdLineOption cmpOption;
+				cmpOption.name = XmlUtils::ReadString(child, wxT("Name"));
+				cmpOption.help = child->GetNodeContent();
+				m_compilerOptions[cmpOption.name] = cmpOption;
+			}
+
+			else if (child->GetName() == wxT("LinkerOption")) {
+				CmpCmdLineOption cmpOption;
+				cmpOption.name = XmlUtils::ReadString(child, wxT("Name"));
+				cmpOption.help = child->GetNodeContent();
+				m_linkerOptions[cmpOption.name] = cmpOption;
 			}
 
 			child = child->GetNext();
@@ -251,6 +266,28 @@ wxXmlNode *Compiler::ToXml() const
 	wxXmlNode *pathVariable = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("PathVariable"));
 	XmlUtils::SetNodeContent(pathVariable, m_pathVariable);
 	node->AddChild(pathVariable);
+
+	// Add compiler options
+	CmpCmdLineOptions::const_iterator itCmpOption = m_compilerOptions.begin();
+	for ( ; itCmpOption != m_compilerOptions.end(); ++itCmpOption)
+	{
+		const CmpCmdLineOption& cmpOption = itCmpOption->second;
+		wxXmlNode* pCmpOptionNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CompilerOption"));
+		pCmpOptionNode->AddProperty(wxT("Name"), cmpOption.name);
+		XmlUtils::SetNodeContent(pCmpOptionNode, cmpOption.help);
+		node->AddChild(pCmpOptionNode);
+	}
+
+	// Add linker options
+	CmpCmdLineOptions::const_iterator itLnkOption = m_linkerOptions.begin();
+	for ( ; itLnkOption != m_linkerOptions.end(); ++itLnkOption)
+	{
+		const CmpCmdLineOption& lnkOption = itLnkOption->second;
+		wxXmlNode* pLnkOptionNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("LinkerOption"));
+		pLnkOptionNode->AddProperty(wxT("Name"), lnkOption.name);
+		XmlUtils::SetNodeContent(pLnkOptionNode, lnkOption.help);
+		node->AddChild(pLnkOptionNode);
+	}
 
 	return node;
 }

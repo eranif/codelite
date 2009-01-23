@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Aug  4 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -291,7 +291,6 @@ CompilerAdvanceBase::CompilerAdvanceBase( wxWindow* parent, wxWindowID id, const
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkBoxGenerateDependenciesFiles = new wxCheckBox( m_panel1, wxID_ANY, _("Use compiler -MT switch to generate source dependencies files (*.o.d)"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer11->Add( m_checkBoxGenerateDependenciesFiles, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	wxBoxSizer* bSizer7;
@@ -385,5 +384,161 @@ CompilerAdvanceBase::CompilerAdvanceBase( wxWindow* parent, wxWindowID id, const
 }
 
 CompilerAdvanceBase::~CompilerAdvanceBase()
+{
+}
+
+CompilerCompilerOptionsBase::CompilerCompilerOptionsBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+{
+	wxBoxSizer* bSizer10;
+	bSizer10 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText23 = new wxStaticText( this, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText23->Wrap( -1 );
+	bSizer10->Add( m_staticText23, 0, wxALL|wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_listCompilerOptions = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
+	bSizer12->Add( m_listCompilerOptions, 1, wxALL|wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer111;
+	bSizer111 = new wxBoxSizer( wxVERTICAL );
+	
+	m_buttonCompilerOption = new wxButton( this, wxID_ANY, _("New..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCompilerOption->SetDefault(); 
+	bSizer111->Add( m_buttonCompilerOption, 0, wxALL, 5 );
+	
+	m_buttonDeleteCompilerOption = new wxButton( this, wxID_ANY, _("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer111->Add( m_buttonDeleteCompilerOption, 0, wxALL, 5 );
+	
+	bSizer12->Add( bSizer111, 0, wxEXPAND, 5 );
+	
+	bSizer10->Add( bSizer12, 1, wxEXPAND, 5 );
+	
+	this->SetSizer( bSizer10 );
+	this->Layout();
+	
+	// Connect Events
+	m_listCompilerOptions->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerCompilerOptionsBase::OnCompilerOptionActivated ), NULL, this );
+	m_listCompilerOptions->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CompilerCompilerOptionsBase::OnCompilerOptionDeSelected ), NULL, this );
+	m_listCompilerOptions->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerCompilerOptionsBase::OnCompilerOptionSelected ), NULL, this );
+	m_buttonCompilerOption->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerCompilerOptionsBase::OnNewCompilerOption ), NULL, this );
+	m_buttonDeleteCompilerOption->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerCompilerOptionsBase::OnDeleteCompilerOption ), NULL, this );
+}
+
+CompilerCompilerOptionsBase::~CompilerCompilerOptionsBase()
+{
+	// Disconnect Events
+	m_listCompilerOptions->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerCompilerOptionsBase::OnCompilerOptionActivated ), NULL, this );
+	m_listCompilerOptions->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CompilerCompilerOptionsBase::OnCompilerOptionDeSelected ), NULL, this );
+	m_listCompilerOptions->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerCompilerOptionsBase::OnCompilerOptionSelected ), NULL, this );
+	m_buttonCompilerOption->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerCompilerOptionsBase::OnNewCompilerOption ), NULL, this );
+	m_buttonDeleteCompilerOption->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerCompilerOptionsBase::OnDeleteCompilerOption ), NULL, this );
+}
+
+CompilerLinkerOptionsBase::CompilerLinkerOptionsBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+{
+	wxBoxSizer* bSizer10;
+	bSizer10 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText23 = new wxStaticText( this, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText23->Wrap( -1 );
+	bSizer10->Add( m_staticText23, 0, wxALL|wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_listLinkerOptions = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
+	bSizer12->Add( m_listLinkerOptions, 1, wxALL|wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer111;
+	bSizer111 = new wxBoxSizer( wxVERTICAL );
+	
+	m_buttonLinkerOption = new wxButton( this, wxID_ANY, _("New..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonLinkerOption->SetDefault(); 
+	bSizer111->Add( m_buttonLinkerOption, 0, wxALL, 5 );
+	
+	m_buttonDeleteLinkerOption = new wxButton( this, wxID_ANY, _("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer111->Add( m_buttonDeleteLinkerOption, 0, wxALL, 5 );
+	
+	bSizer12->Add( bSizer111, 0, wxEXPAND, 5 );
+	
+	bSizer10->Add( bSizer12, 1, wxEXPAND, 5 );
+	
+	this->SetSizer( bSizer10 );
+	this->Layout();
+	
+	// Connect Events
+	m_listLinkerOptions->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerLinkerOptionsBase::OnLinkerOptionActivated ), NULL, this );
+	m_listLinkerOptions->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CompilerLinkerOptionsBase::OnLinkerOptionDeSelected ), NULL, this );
+	m_listLinkerOptions->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerLinkerOptionsBase::OnLinkerOptionSelected ), NULL, this );
+	m_buttonLinkerOption->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerLinkerOptionsBase::OnNewLinkerOption ), NULL, this );
+	m_buttonDeleteLinkerOption->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerLinkerOptionsBase::OnDeleteLinkerOption ), NULL, this );
+}
+
+CompilerLinkerOptionsBase::~CompilerLinkerOptionsBase()
+{
+	// Disconnect Events
+	m_listLinkerOptions->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CompilerLinkerOptionsBase::OnLinkerOptionActivated ), NULL, this );
+	m_listLinkerOptions->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CompilerLinkerOptionsBase::OnLinkerOptionDeSelected ), NULL, this );
+	m_listLinkerOptions->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CompilerLinkerOptionsBase::OnLinkerOptionSelected ), NULL, this );
+	m_buttonLinkerOption->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerLinkerOptionsBase::OnNewLinkerOption ), NULL, this );
+	m_buttonDeleteLinkerOption->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( CompilerLinkerOptionsBase::OnDeleteLinkerOption ), NULL, this );
+}
+
+CompilerOptionDlgBase::CompilerOptionDlgBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer23;
+	bSizer23 = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer7;
+	fgSizer7 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer7->AddGrowableCol( 1 );
+	fgSizer7->SetFlexibleDirection( wxBOTH );
+	fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText26 = new wxStaticText( this, wxID_ANY, _("Switch"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText26->Wrap( -1 );
+	fgSizer7->Add( m_staticText26, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrl18 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl18->SetValidator( wxTextValidator( wxFILTER_NONE, &m_sName ) );
+	
+	fgSizer7->Add( m_textCtrl18, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText27 = new wxStaticText( this, wxID_ANY, _("Help"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText27->Wrap( -1 );
+	fgSizer7->Add( m_staticText27, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrl19 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrl19->SetValidator( wxTextValidator( wxFILTER_NONE, &m_sHelp ) );
+	
+	fgSizer7->Add( m_textCtrl19, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer23->Add( fgSizer7, 1, wxEXPAND, 5 );
+	
+	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer23->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer24;
+	bSizer24 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_buttonOK = new wxButton( this, wxID_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK->SetDefault(); 
+	bSizer24->Add( m_buttonOK, 0, wxALL, 5 );
+	
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer24->Add( m_buttonCancel, 0, wxALL, 5 );
+	
+	bSizer23->Add( bSizer24, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	this->SetSizer( bSizer23 );
+	this->Layout();
+}
+
+CompilerOptionDlgBase::~CompilerOptionDlgBase()
 {
 }

@@ -22,6 +22,23 @@
       <GlobalIncludePath></GlobalIncludePath>
       <GlobalLibPath></GlobalLibPath>
       <PathVariable></PathVariable>
+      <CompilerOption Name="-g">Produce debugging information.</CompilerOption>
+      <CompilerOption Name="-pg">Profile code when executed.</CompilerOption>
+      <CompilerOption Name="-ansi">In C mode, support all ISO C90 programs. In C++ mode, remove GNU extensions that conflict with ISO C++.</CompilerOption>
+      <CompilerOption Name="-Wall">Enable all compiler warnings.</CompilerOption>
+      <CompilerOption Name="-W">Enable standard compiler warnings</CompilerOption>
+      <CompilerOption Name="-Wfatal-errors">Stop compiling after first error</CompilerOption>
+      <CompilerOption Name="-w">Inhibit all warning messages</CompilerOption>
+      <CompilerOption Name="-pedantic">Enable warnings demanded by strict ISO C and ISO C++</CompilerOption>
+      <CompilerOption Name="-pedantic-errors">Treat as errors the warnings demanded by strict ISO C and ISO C++</CompilerOption>
+      <CompilerOption Name="-Wmain">Warn if main() is not conformant</CompilerOption>
+      <CompilerOption Name="-O">Optimize generated code (for speed)</CompilerOption>
+      <CompilerOption Name="-O1">Optimize more (for speed)</CompilerOption>
+      <CompilerOption Name="-O2">Optimize even more (for speed)</CompilerOption>
+      <CompilerOption Name="-O3">Optimize fully (for speed)</CompilerOption>
+      <CompilerOption Name="-Os">Optimize generated code (for size)</CompilerOption>
+      <CompilerOption Name="-fexpensive-optimizations">Expensive optimizations</CompilerOption>
+      <LinkerOption Name="-s">Remove all symbol table and relocation information from the executable.</LinkerOption>
     </Compiler>
     <Compiler Name="gnu gcc">
       <Switch Name="ArchiveOutput" Value=" "/>
@@ -44,6 +61,23 @@
       <GlobalIncludePath></GlobalIncludePath>
       <GlobalLibPath></GlobalLibPath>
       <PathVariable></PathVariable>
+      <CompilerOption Name="-g">Produce debugging information.</CompilerOption>
+      <CompilerOption Name="-pg">Profile code when executed.</CompilerOption>
+      <CompilerOption Name="-ansi">In C mode, support all ISO C90 programs. In C++ mode, remove GNU extensions that conflict with ISO C++.</CompilerOption>
+      <CompilerOption Name="-Wall">Enable all compiler warnings.</CompilerOption>
+      <CompilerOption Name="-W">Enable standard compiler warnings</CompilerOption>
+      <CompilerOption Name="-Wfatal-errors">Stop compiling after first error</CompilerOption>
+      <CompilerOption Name="-w">Inhibit all warning messages</CompilerOption>
+      <CompilerOption Name="-pedantic">Enable warnings demanded by strict ISO C and ISO C++</CompilerOption>
+      <CompilerOption Name="-pedantic-errors">Treat as errors the warnings demanded by strict ISO C and ISO C++</CompilerOption>
+      <CompilerOption Name="-Wmain">Warn if main() is not conformant</CompilerOption>
+      <CompilerOption Name="-O">Optimize generated code (for speed)</CompilerOption>
+      <CompilerOption Name="-O1">Optimize more (for speed)</CompilerOption>
+      <CompilerOption Name="-O2">Optimize even more (for speed)</CompilerOption>
+      <CompilerOption Name="-O3">Optimize fully (for speed)</CompilerOption>
+      <CompilerOption Name="-Os">Optimize generated code (for size)</CompilerOption>
+      <CompilerOption Name="-fexpensive-optimizations">Expensive optimizations</CompilerOption>
+      <LinkerOption Name="-s">Remove all symbol table and relocation information from the executable.</LinkerOption>
     </Compiler>
     <Compiler Name="VC++">
       <Switch Name="ArchiveOutput" Value="/OUT:"/>

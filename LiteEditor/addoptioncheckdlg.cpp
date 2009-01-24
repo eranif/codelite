@@ -4,6 +4,7 @@
 #include <wx/txtstrm.h>
 #include <wx/sstream.h>
 #include <list>
+#include <algorithm> // std::find
 
 AddOptionCheckDlg::AddOptionCheckDlg(wxWindow* parent, const wxString& title, const Compiler::CmpCmdLineOptions& cmpOptions, const wxString& value)
 : AddOptionCheckDialogBase(parent, wxID_ANY, title)

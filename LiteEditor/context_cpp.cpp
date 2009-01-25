@@ -370,13 +370,11 @@ bool ContextCpp::IsCommentOrString(long pos)
 //user pressed ., -> or ::
 void ContextCpp::CodeComplete(long pos)
 {
-//	wxLogMessage(wxString::Format(wxT("CodeComplete at %d"), pos));
 	VALIDATE_WORKSPACE();
 	long from = pos;
 	if (from == wxNOT_FOUND) {
 		from = GetCtrl().GetCurrentPos();
 	}
-
 	DoCodeComplete(from);
 }
 
@@ -695,7 +693,7 @@ bool ContextCpp::IsIncludeStatement(const wxString &line, wxString *fileName)
 	tmpLine = tmpLine.Trim(false);
 	tmpLine.Replace(wxT("\t"), wxT(" "));
 
-	static wxRegEx reIncludeFile(wxT("include *[\\\"\\<]{1}([a-zA-Z0-9_/\\.]*)"));
+	static wxRegEx reIncludeFile(wxT("include *[\\\"\\<]{1}([a-zA-Z0-9_/\\.\\+\\-]*)"));
 	if (tmpLine.StartsWith(wxT("#"), &tmpLine1)) {
 		if (reIncludeFile.Matches(tmpLine1)) {
 			if (fileName) {
@@ -775,7 +773,10 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 
 	std::vector<wxFileName> files;
 	TagsManagerST::Get()->GetFiles(fileName, files);
+
 	std::sort(files.begin(), files.end(), SFileSort());
+
+	wxLogMessage(wxString::Format(wxT("Completing: %s"), fileName.c_str()));
 
 	if ( files.empty() == false ) {
 		GetCtrl().RegisterImageForKind(wxT("FileCpp"),    m_cppFileBmp);
@@ -788,7 +789,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 			t->SetKind(IsSource(files.at(i).GetExt()) ? wxT("FileCpp") : wxT("FileHeader"));
 			tags.push_back(t);
 		}
-		GetCtrl().ShowCompletionBox(tags, word, false, true);
+		GetCtrl().ShowCompletionBox(tags, fileName, false, true);
 	}
 }
 

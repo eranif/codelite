@@ -767,9 +767,7 @@ void ContextCpp::DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, cons
 
 void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 {
-	LEditor &rCtrl = GetCtrl();
 	wxString list;
-	size_t i=0;
 
 	wxString fileName(word);
 	fileName.Replace(wxT("\\"), wxT("/"));
@@ -780,18 +778,17 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 	std::sort(files.begin(), files.end(), SFileSort());
 
 	if ( files.empty() == false ) {
-		for (; i<files.size()-1; i++) {
-			list.Append(files.at(i).GetFullName() + GetFileImageString(files.at(i).GetExt()) + wxT("@"));
-		}
+		GetCtrl().RegisterImageForKind(wxT("FileCpp"),    m_cppFileBmp);
+		GetCtrl().RegisterImageForKind(wxT("FileHeader"), m_hFileBmp  );
+		std::vector<TagEntryPtr> tags;
 
-		list.Append(files.at(i).GetFullName()+GetFileImageString(files.at(i).GetExt()));
-		rCtrl.AutoCompSetSeparator((int)('@'));	// set the separator to be non valid language wxChar
-		rCtrl.AutoCompSetChooseSingle(true);					// If only one match, insert it automatically
-		rCtrl.AutoCompSetDropRestOfWord(true);
-		rCtrl.AutoCompSetIgnoreCase(false);
-		rCtrl.AutoCompSetAutoHide(false);
-		rCtrl.AutoCompShow((int)fileName.Length(), list);
-		rCtrl.AutoCompSetFillUps(wxT(">\" \t"));
+		for (size_t i=0; i<files.size(); i++){
+			TagEntryPtr t(new TagEntry());
+			t->SetName(files.at(i).GetFullName());
+			t->SetKind(IsSource(files.at(i).GetExt()) ? wxT("FileCpp") : wxT("FileHeader"));
+			tags.push_back(t);
+		}
+		GetCtrl().ShowCompletionBox(tags, word, false, true);
 	}
 }
 

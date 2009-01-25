@@ -1624,12 +1624,12 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 			tip.Clear();
 
 			wxString ret_value = GetFunctionReturnValueFromPattern(t->GetPattern());
-			if(ret_value.IsEmpty() == false){
+			if (ret_value.IsEmpty() == false) {
 				tip << ret_value << wxT(" ");
 			}
 
 			// add the scope
-			if(t->GetScope() != wxT("<global>")){
+			if (t->GetScope() != wxT("<global>")) {
 				tip << t->GetScope() << wxT("::");
 			}
 
@@ -1872,16 +1872,25 @@ void TagsManager::ReloadExtDbPaths()
 	m_vars.clear();
 }
 
-void TagsManager::GetFiles(const wxString &partialName, std::vector<wxFileName> &files)
+void TagsManager::GetFiles(const wxString &partialName, std::vector<FileEntryPtr> &files)
 {
 	if (m_workspaceDatabase) {
 		m_workspaceDatabase->GetFiles(partialName, files);
 	}
-	if (m_externalDatabase) {
+	if (m_externalDatabase && m_externalDatabase->IsOpen()) {
 		m_externalDatabase->GetFiles(partialName, files);
 	}
 }
 
+void TagsManager::GetFiles(const wxString &partialName, std::vector<wxFileName> &files)
+{
+	std::vector<FileEntryPtr> f;
+	GetFiles(partialName, f);
+
+	for (size_t i=0; i<f.size(); i++) {
+		files.push_back( wxFileName(f.at(i)->GetFile()) );
+	}
+}
 
 TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName &fileName, int lineno, bool nextFunction /*false*/)
 {
@@ -2514,9 +2523,14 @@ void TagsManager::UpdateFileTree(const std::vector<wxFileName> &files, bool bold
 void TagsManager::UpdateFileTree(TagsDatabase *td, bool bold)
 {
 	if (GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD) {
-		std::vector<wxFileName> files;
+		std::vector<FileEntryPtr> files;
+		std::vector<wxFileName> file_names;
+
 		td->GetFiles(wxEmptyString, files);
-		UpdateFileTree(files, bold);
+		for (size_t i=0; i<files.size(); i++) {
+			file_names.push_back(wxFileName(files.at(i)->GetFile()));
+		}
+		UpdateFileTree(file_names, bold);
 	}
 }
 

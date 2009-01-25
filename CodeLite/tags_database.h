@@ -292,7 +292,7 @@ public:
 	 * @param partialName part of the file name to act as a filter
 	 * @param files [output] array of files
 	 */
-	void GetFiles(const wxString &partialName, std::vector<wxFileName> &files);
+	void GetFiles(const wxString &partialName, std::vector<FileEntryPtr> &files);
 
 	/**
 	 * @brief return list of files from the database

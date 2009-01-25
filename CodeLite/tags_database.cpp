@@ -528,7 +528,7 @@ void TagsDatabase::GetVariables(std::vector<VariableEntryPtr> &vars)
 	}
 }
 
-void TagsDatabase::GetFiles(const wxString &partialName, std::vector<wxFileName> &files)
+void TagsDatabase::GetFiles(const wxString &partialName, std::vector<FileEntryPtr> &files)
 {
 	try {
 		bool match_path = (!partialName.IsEmpty() &&
@@ -537,15 +537,21 @@ void TagsDatabase::GetFiles(const wxString &partialName, std::vector<wxFileName>
 		wxString query;
 		wxString tmpName(partialName);
 		tmpName.Replace(wxT("_"), wxT("^_"));
-		query << wxT("select distinct file from tags where file like '%%") << tmpName << wxT("%%' ESCAPE '^' ")
+		query << wxT("select * from files where file like '%%") << tmpName << wxT("%%' ESCAPE '^' ")
 		<< wxT("order by file");
 
 		wxSQLite3ResultSet res = m_db->ExecuteQuery(query);
 		while (res.NextRow()) {
-			wxFileName fileName(res.GetString(0));
+
+			FileEntryPtr fe(new FileEntry());
+			fe->SetId(res.GetInt(0));
+			fe->SetFile(res.GetString(1));
+			fe->SetLastRetaggedTimestamp(res.GetInt(2));
+
+			wxFileName fileName(fe->GetFile());
 			wxString match = match_path ? fileName.GetFullPath() : fileName.GetFullName();
 			if (match.StartsWith(partialName)) {
-				files.push_back(fileName);
+				files.push_back(fe);
 			}
 		}
 	} catch (wxSQLite3Exception &e) {

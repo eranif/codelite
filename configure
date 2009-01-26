@@ -537,7 +537,7 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codlite_indexer" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_indexer" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUR" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUD" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite" >> Makefile

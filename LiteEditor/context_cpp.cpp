@@ -352,14 +352,14 @@ bool ContextCpp::IsCommentOrString(long pos)
 {
 	int style;
 	style = GetCtrl().GetStyleAt(pos);
-	return (style == wxSCI_C_COMMENT				||
-	        style == wxSCI_C_COMMENTLINE			||
-	        style == wxSCI_C_COMMENTDOC				||
-	        style == wxSCI_C_COMMENTLINEDOC			||
-	        style == wxSCI_C_COMMENTDOCKEYWORD		||
+	return (style == wxSCI_C_COMMENT                ||
+	        style == wxSCI_C_COMMENTLINE            ||
+	        style == wxSCI_C_COMMENTDOC             ||
+	        style == wxSCI_C_COMMENTLINEDOC         ||
+	        style == wxSCI_C_COMMENTDOCKEYWORD      ||
 	        style == wxSCI_C_COMMENTDOCKEYWORDERROR ||
-	        style == wxSCI_C_STRING					||
-	        style == wxSCI_C_STRINGEOL				||
+	        style == wxSCI_C_STRING                 ||
+	        style == wxSCI_C_STRINGEOL              ||
 	        style == wxSCI_C_CHARACTER);
 }
 

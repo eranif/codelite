@@ -558,6 +558,12 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 
 	wxChar matchChar = 0;
 	switch ( event.GetKey() ) {
+	case ',':
+		if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
+			// try to force the function tooltip
+			ShowFunctionTipFromCurrentPos();
+		}
+		break;
 	case '(':
 		if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
 			CodeComplete();
@@ -993,11 +999,11 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 		wxString fname = GetFileName().GetFullPath();
 		calltip_type type(ct_none);
 
-		if(MarkerGet(line) & mmt_all_breakpoints){
+		if (MarkerGet(line) & mmt_all_breakpoints) {
 			tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
 			type = ct_breakpoint;
 
-		} else if(MarkerGet(line) & mmt_compiler){
+		} else if (MarkerGet(line) & mmt_compiler) {
 			tooltip = Frame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line);
 			type = ct_compiler_msg;
 		}
@@ -2747,9 +2753,11 @@ int LEditor::GetEOLByOS()
 
 void LEditor::ShowFunctionTipFromCurrentPos()
 {
-	int pos = DoGetOpenBracePos();
-	if(pos != wxNOT_FOUND){
-		m_context->CodeComplete(pos);
+	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP) {
+		int pos = DoGetOpenBracePos();
+		if (pos != wxNOT_FOUND) {
+			m_context->CodeComplete(pos);
+		}
 	}
 }
 
@@ -2993,7 +3001,7 @@ void LEditor::DoShowCalltip(int pos, const wxString& tip, calltip_type type, int
 {
 	m_calltipType = type;
 	CallTipShow(pos, tip);
-	if(hltPos >= 0 && hltLen > 0){
+	if (hltPos >= 0 && hltLen > 0) {
 		CallTipSetHighlight(hltPos, hltLen + hltPos);
 	}
 }
@@ -3010,16 +3018,19 @@ void LEditor::DoCancelCalltip()
 int LEditor::DoGetOpenBracePos()
 {
 	// determine the closest open brace from the current caret position
-	int pos = PositionBefore( GetCurrentPos() );
-	int depth(0);
+	int  depth      (0);
+	int  char_tested(0); // we add another performance tuning here: dont test more than 256 characters backward
+	bool exit_loop  (false);
 
-	bool exit_loop(false);
-	while ( pos > 0 ) {
+	int  pos = PositionBefore( GetCurrentPos() );
+	while ( pos > 0 && char_tested < 256 ) {
 		wxChar ch = SafeGetChar(pos);
 		if (m_context->IsCommentOrString(pos)) {
 			pos = PositionBefore(pos);
 			continue;
 		}
+
+		char_tested++;
 
 		switch (ch) {
 		case wxT('{'):
@@ -3048,7 +3059,9 @@ int LEditor::DoGetOpenBracePos()
 			break;
 	}
 
-	if (depth == 1 && pos >= 0) {
+	if (char_tested == 256) {
+		return wxNOT_FOUND;
+	} else if (depth == 1 && pos >= 0) {
 		return pos;
 	}
 	return wxNOT_FOUND;

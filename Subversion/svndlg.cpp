@@ -62,10 +62,10 @@ SvnDlg::SvnDlg( wxWindow* parent, const wxArrayString &files, IManager *manager 
 
 	// populate the check list
 	for (size_t i=0; i<m_files.GetCount(); i++) {
-		m_checkList->Append(m_files.Item(i));
+		wxFileName fn(m_files.Item(i));
+		m_checkList->Append(fn.GetFullName());
 		m_checkList->Check(i);
 	}
-
 	WindowAttrManager::Load(this, wxT("SvnLog"), m_manager->GetConfigTool());
 }
 
@@ -101,7 +101,9 @@ wxArrayString SvnDlg::GetFiles() const
 	wxArrayString files;
 	for (unsigned int i = 0; i<m_checkList->GetCount(); i++) {
 		if (m_checkList->IsChecked(i)) {
-			files.Add(m_checkList->GetString(i));
+			if(i < m_files.GetCount()) {
+				files.Add(m_files.Item(i));
+			}
 		}
 	}
 	return files;

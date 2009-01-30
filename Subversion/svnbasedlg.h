@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -21,6 +21,7 @@
 #include <wx/panel.h>
 #include <wx/textctrl.h>
 #include <wx/splitter.h>
+#include <wx/statbox.h>
 #include <wx/combobox.h>
 #include <wx/statline.h>
 #include <wx/button.h>
@@ -44,6 +45,7 @@ class SvnBaseDlg : public wxDialog
 		wxPanel* m_panel1;
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textCtrl;
+		wxStaticText* m_staticTextFileFullPath;
 		wxStaticText* m_staticText1;
 		wxComboBox* m_comboBoxLastCommitMsgs;
 		wxStaticLine* m_staticline1;
@@ -51,6 +53,7 @@ class SvnBaseDlg : public wxDialog
 		wxButton* m_buttonCancel;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnItemSelected( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnLastCommitMsgSelected( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
 		

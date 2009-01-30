@@ -114,3 +114,14 @@ void SvnDlg::SetLogMessage(const wxString& message)
 	m_textCtrl->SetValue(message);
 	m_textCtrl->SelectAll();
 }
+
+void SvnDlg::OnItemSelected(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	int where = m_checkList->GetSelection();
+	if(where != wxNOT_FOUND){
+		if(where >=0 && where < m_files.GetCount()){
+			m_staticTextFileFullPath->SetLabel(m_files.Item(where));
+		}
+	}
+}

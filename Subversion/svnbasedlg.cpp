@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -53,6 +53,15 @@ SvnBaseDlg::SvnBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
+	wxStaticBoxSizer* sbSizer1;
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	
+	m_staticTextFileFullPath = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextFileFullPath->Wrap( -1 );
+	sbSizer1->Add( m_staticTextFileFullPath, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer3->Add( sbSizer1, 1, wxEXPAND|wxALL, 5 );
+	
 	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Last commit messages:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	bSizer3->Add( m_staticText1, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
@@ -82,6 +91,7 @@ SvnBaseDlg::SvnBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, 
 	this->Centre( wxBOTH );
 	
 	// Connect Events
+	m_checkList->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( SvnBaseDlg::OnItemSelected ), NULL, this );
 	m_comboBoxLastCommitMsgs->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( SvnBaseDlg::OnLastCommitMsgSelected ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnBaseDlg::OnButtonOK ), NULL, this );
 }
@@ -89,6 +99,7 @@ SvnBaseDlg::SvnBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, 
 SvnBaseDlg::~SvnBaseDlg()
 {
 	// Disconnect Events
+	m_checkList->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( SvnBaseDlg::OnItemSelected ), NULL, this );
 	m_comboBoxLastCommitMsgs->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( SvnBaseDlg::OnLastCommitMsgSelected ), NULL, this );
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnBaseDlg::OnButtonOK ), NULL, this );
 }

@@ -42,8 +42,8 @@ class SvnDlg : public SvnBaseDlg
 
 private:
 	void OnLastCommitMsgSelected(wxCommandEvent &e);
-	void OnButtonOK(wxCommandEvent &e);
-
+	void OnButtonOK             (wxCommandEvent &e);
+	void OnItemSelected         (wxCommandEvent &e);
 public:
 	/** Constructor */
 	SvnDlg( wxWindow* parent, const wxArrayString &files, IManager *manager );

@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : dirpicker.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : dirpicker.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef DIRPICKER_H
@@ -55,18 +55,18 @@ private:
 protected:
 	/**
 	 * Handle button click event
-	 * \param &event 
+	 * \param &event
 	 */
 	virtual void OnButtonClicked(wxCommandEvent &event);
 	virtual void OnText(wxCommandEvent &event);
 
 public:
-	DirPicker(	wxWindow *parent, 
-				wxWindowID id = wxID_ANY, 
-				const wxString &buttonCaption = wxT("..."), 
+	DirPicker(	wxWindow *parent,
+				wxWindowID id = wxID_ANY,
+				const wxString &buttonCaption = wxT("..."),
 				const wxString &defaultPos = wxEmptyString,
-				const wxString &message = wxT("Select a folder:"), 
-				const wxPoint& pos = wxDefaultPosition, 
+				const wxString &message = wxT("Select a folder:"),
+				const wxPoint& pos = wxDefaultPosition,
 				const wxSize& size = wxDefaultSize,
 				long style = wxDP_USE_TEXTCTRL);
 
@@ -87,6 +87,8 @@ public:
 	 * Set combox values, this option is vailable only when using wxDP_USE_COMBOBOX
 	 */
 	void SetValues(const wxArrayString &values, int sel=0);
+
+	wxArrayString GetValues() const;
 	DECLARE_EVENT_TABLE()
 };
 

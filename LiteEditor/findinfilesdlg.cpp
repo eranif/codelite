@@ -79,6 +79,11 @@ void FindInFilesDialog::CreateGUIControls(size_t numpages)
 	choices.Add(SEARCH_IN_PROJECT);
 	choices.Add(SEARCH_IN_WORKSPACE);
 	choices.Add(SEARCH_IN_CURR_FILE_PROJECT);
+
+	for(size_t i=0; i<m_data.GetSearchPaths().GetCount(); i++){
+		choices.Add(m_data.GetSearchPaths().Item(i));
+	}
+
 	m_dirPicker->SetValues(choices, 1);
 
 	// Add the options
@@ -166,7 +171,7 @@ void FindInFilesDialog::ConnectEvents()
 void FindInFilesDialog::SetSearchData(const SearchData &data)
 {
     m_data.SetFindString(data.GetFindString());
-    
+
     size_t flags = 0;
     flags |= data.IsMatchCase()         ? wxFRD_MATCHCASE         : 0;
     flags |= data.IsMatchWholeWord()    ? wxFRD_MATCHWHOLEWORD    : 0;
@@ -174,7 +179,7 @@ void FindInFilesDialog::SetSearchData(const SearchData &data)
     flags |= data.UseEditorFontConfig() ? wxFRD_USEFONTENCODING   : 0;
     flags |= data.GetDisplayScope()     ? wxFRD_DISPLAYSCOPE      : 0;
     m_data.SetFlags(flags);
-    
+
     m_findString->SetValue(data.GetFindString());
     m_matchCase->SetValue(data.IsMatchCase());
     m_matchWholeWord->SetValue(data.IsMatchWholeWord());
@@ -196,6 +201,8 @@ void FindInFilesDialog::DoSearchReplace()
 	SearchData data = DoGetSearchData();
     data.SetOwner(Frame::Get()->GetOutputPane()->GetReplaceResultsTab());
 	SearchThreadST::Get()->PerformSearch(data);
+
+	DoSaveSearchPaths();
 	Hide();
 }
 
@@ -204,6 +211,8 @@ void FindInFilesDialog::DoSearch()
 	SearchData data = DoGetSearchData();
     data.SetOwner(Frame::Get()->GetOutputPane()->GetFindResultsTab());
 	SearchThreadST::Get()->PerformSearch(data);
+
+	DoSaveSearchPaths();
 	Hide();
 }
 
@@ -269,6 +278,7 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 		DoSearchReplace();
 	} else if(btnClicked == m_cancel){
 		// Hide the dialog
+		DoSaveSearchPaths();
 		Hide();
 	} else if(btnClicked == m_matchCase){
 		if(m_matchCase->IsChecked()) {
@@ -309,6 +319,7 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 void FindInFilesDialog::OnClose(wxCloseEvent &e)
 {
 	wxUnusedVar(e);
+	DoSaveSearchPaths();
 	Hide();
 }
 
@@ -349,4 +360,23 @@ bool FindInFilesDialog::Show()
         m_findString->SetFocus();
     }
 	return res;
+}
+
+void FindInFilesDialog::DoSaveSearchPaths()
+{
+	wxArrayString paths = m_dirPicker->GetValues();
+	int where = paths.Index(SEARCH_IN_PROJECT);
+	if(where != wxNOT_FOUND){
+		paths.RemoveAt(where);
+	}
+	where = paths.Index(SEARCH_IN_WORKSPACE);
+	if(where != wxNOT_FOUND){
+		paths.RemoveAt(where);
+	}
+	where = paths.Index(SEARCH_IN_CURR_FILE_PROJECT);
+	if(where != wxNOT_FOUND){
+		paths.RemoveAt(where);
+	}
+
+	m_data.SetSearchPaths(paths);
 }

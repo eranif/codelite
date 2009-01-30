@@ -273,8 +273,8 @@ void FindReplaceDialog::OnClick(wxCommandEvent &event)
 	if (btnClicked != m_replaceAll) {
 		m_data.SetFlags(flags);
 	}
-	
-	// update the data of the find/replace dialog, in particular, 
+
+	// update the data of the find/replace dialog, in particular,
 	// update the history of the Find What / replace with controls
 	SetFindReplaceData(m_data, false);
 }
@@ -393,7 +393,7 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
 		//reposition the options static sizer
 		gbSizer->Detach(sz);
 		gbSizer->Add(sz, wxGBPosition(1, 0), wxGBSpan(1, 2),  wxALL | wxEXPAND, 5 );
-		
+
 	} else {
 		// is this dialog is already a 'Replace' dialog?
 		if (!isFindDlg) {
@@ -406,7 +406,7 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
 		gbSizer->Add(m_replaceString, wxGBPosition(1, 1), wxDefaultSpan, wxALL | wxEXPAND, 5 );
 		gbSizer->Add(sz, wxGBPosition(2, 0), wxGBSpan(1, 2),  wxALL | wxEXPAND, 5 );
 	}
-	
+
 	wxString label = show ? wxT("Replace") : wxT("Find");
 	m_replace->Show(show);
 	m_replaceAll->Show(show);
@@ -414,7 +414,7 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
 	m_replacementsMsg->Show(show);
 	m_replaceWithLabel->Show(show);
 	m_selectionOnly->Show(show);
-	
+
 	SetLabel(label);
 	this->Fit();
 	GetSizer()->Layout();
@@ -441,13 +441,13 @@ void FindReplaceDialog::ResetSelectionOnlyFlag()
 
 void FindReplaceData::SetReplaceString(const wxString& str)
 {
-	
+
 	int where = m_replaceString.Index(str);
 	if (where != wxNOT_FOUND) {
 		m_replaceString.RemoveAt(where);
 	}
 	m_replaceString.Insert(str, 0);
-	
+
 	long max_value(10);
 	EditorConfigST::Get()->GetLongValue(wxT("MaxItemsInFindReplaceDialog"), max_value);
 	TruncateArray(m_replaceString, (size_t)max_value);
@@ -455,21 +455,25 @@ void FindReplaceData::SetReplaceString(const wxString& str)
 
 void FindReplaceData::Serialize(Archive& arch)
 {
-	arch.Write(wxT("m_findString"), m_findString);
+	arch.Write(wxT("m_findString"),    m_findString);
 	arch.Write(wxT("m_replaceString"), m_replaceString);
-	arch.Write(wxT("m_flags"), (long)m_flags);
+	arch.Write(wxT("m_flags"),         (long)m_flags);
+	arch.Write(wxT("m_searchPaths"),   m_searchPaths);
 }
 
 void FindReplaceData::DeSerialize(Archive& arch)
 {
-	arch.Read(wxT("m_findString"), m_findString);
+	arch.Read(wxT("m_findString"),    m_findString);
 	arch.Read(wxT("m_replaceString"), m_replaceString);
-	arch.Read(wxT("m_flags"), (long&)m_flags);
-	
+	arch.Read(wxT("m_flags"),         (long&)m_flags);
+	arch.Read(wxT("m_searchPaths"),   m_searchPaths);
+
 	long max_value(10);
 	EditorConfigST::Get()->GetLongValue(wxT("MaxItemsInFindReplaceDialog"), max_value);
-	TruncateArray(m_findString, (size_t)max_value);
+
+	TruncateArray(m_findString,    (size_t)max_value);
 	TruncateArray(m_replaceString, (size_t)max_value);
+	TruncateArray(m_searchPaths,   (size_t)max_value);
 }
 
 void FindReplaceData::SetFindString(const wxString& str)
@@ -479,7 +483,7 @@ void FindReplaceData::SetFindString(const wxString& str)
 		m_findString.RemoveAt(where);
 	}
 	m_findString.Insert(str, 0);
-	
+
 	long max_value(10);
 	EditorConfigST::Get()->GetLongValue(wxT("MaxItemsInFindReplaceDialog"), max_value);
 	TruncateArray(m_findString, (size_t)max_value);

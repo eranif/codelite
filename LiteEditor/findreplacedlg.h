@@ -66,30 +66,15 @@ class FindReplaceData : public SerializedObject
 {
 	wxArrayString m_replaceString;
 	wxArrayString m_findString;
-	size_t	m_flags;
+	size_t        m_flags;
+	wxArrayString m_searchPaths;
+
 private:
 	void TruncateArray(wxArrayString &arr, size_t maxSize);
 
 public:
 	FindReplaceData()
 			: m_flags(0) {}
-
-	// Copy ctor
-	FindReplaceData(const FindReplaceData& src) {
-		*this = src;
-	}
-
-	// assignment operator
-	FindReplaceData& operator=(const FindReplaceData& src) {
-		if (this == &src)
-			return *this;
-
-		// Copy fields
-		m_replaceString = src.m_replaceString;
-		m_findString = src.m_findString;
-		m_flags = src.m_flags;
-		return *this;
-	}
 
 	virtual ~FindReplaceData() {}
 
@@ -130,6 +115,12 @@ public:
 	 */
 	void SetReplaceString(const wxString &str);
 
+	void SetSearchPaths(const wxArrayString& searchPaths) {
+		this->m_searchPaths = searchPaths;
+	}
+	const wxArrayString& GetSearchPaths() const {
+		return m_searchPaths;
+	}
 
 	//implement the serialization API
 	void Serialize(Archive &arch);

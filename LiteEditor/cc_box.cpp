@@ -92,6 +92,11 @@ void CCBox::OnItemActivated( wxListEvent& event )
 	m_selectedItem = event.m_itemIndex;
 	InsertSelection();
 	Hide();
+
+	LEditor *editor = (LEditor*)GetParent();
+	if(editor){
+		editor->SetActive();
+	}
 }
 
 void CCBox::OnItemDeSelected( wxListEvent& event )

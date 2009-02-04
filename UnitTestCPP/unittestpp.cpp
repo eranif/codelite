@@ -354,7 +354,16 @@ void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
 
 void UnitTestPP::OnRunUnitTestsUI(wxUpdateUIEvent& e)
 {
-	e.Enable(m_mgr->IsWorkspaceOpen() && !m_proc);
+	bool activeProjIsUT(false);
+	if(m_mgr->GetWorkspace()) {
+		wxString errMsg;
+		wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
+		ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
+		if(p){
+			activeProjIsUT = p->GetProjectInternalType() == wxT("UnitTest++");
+		}
+	}
+	e.Enable(m_mgr->IsWorkspaceOpen() && !m_proc && activeProjIsUT);
 }
 
 void UnitTestPP::OnProcessTerminated(wxProcessEvent& e)

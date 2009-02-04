@@ -205,6 +205,13 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 			Frame::Get()->GetMainBook()->RestoreSession(session);
 		}
 	}
+
+	// send an event to the main frame indicating that a re-tag is required
+	// we do this only if the "smart retagging" is on
+	if (! (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_USE_FULL_RETAGGING) ) {
+		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
+		Frame::Get()->AddPendingEvent(e);
+	}
 }
 
 void Manager::CloseWorkspace()

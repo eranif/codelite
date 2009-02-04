@@ -4,6 +4,8 @@
     <File Name="unittestpp.cpp"/>
     <File Name="unittestcppoutputparser.cpp"/>
     <File Name="unittestcppoutputparser.h"/>
+    <File Name="unittestdata.cpp"/>
+    <File Name="unittestdata.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="unittestpp.h"/>

@@ -400,6 +400,18 @@ public:
 	 */
 	bool SetUserData(const wxString &name, SerializedObject *obj);
 
+	/**
+	 * @brief set the project internal type (usually used to indicate internal types for the project
+	 * like 'GUI' or 'UnitTest++' etc.
+	 * @param internalType
+	 */
+	void SetProjectInternalType(const wxString &internalType);
+	/**
+	 * @brief return the project internal type
+	 * @return
+	 */
+	wxString GetProjectInternalType() const;
+
 private:
 	void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);
 	wxXmlNode *FindFile(wxXmlNode* parent, const wxString &file);

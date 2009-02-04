@@ -24,6 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "unittestspage.h"
+#include "macros.h"
+#include "unittestdata.h"
 #include "ctags_manager.h"
 #include "unittestcppoutputparser.h"
 #include <wx/tokenzr.h>
@@ -120,14 +122,14 @@ void UnitTestPP::CreatePluginMenu(wxMenu *pluginsMenu)
 
 	item = new wxMenuItem(menu, XRCID("unittestpp_new_class_test"), wxT("Create tests for &class..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	
+
 	menu->AppendSeparator();
-	
+
 	item = new wxMenuItem(menu, XRCID("run_unit_tests"), wxT("Run Project as UnitTest++ and report"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	
+
 	pluginsMenu->Append(wxID_ANY, wxT("UnitTest++"), menu);
-	
+
 	//connect the events
 	m_topWindow->Connect(XRCID("unittestpp_new_simple_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewSimpleTest), NULL, (wxEvtHandler*)this);
 	m_topWindow->Connect(XRCID("unittestpp_new_class_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewClassTest), NULL, (wxEvtHandler*)this);
@@ -175,6 +177,15 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 
+	if (GetUnitTestProjects().empty()) {
+		if (wxMessageBox(wxString::Format(wxT("There are currently no UnitTest project in your workspace\nWould you like to create one now?")), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
+			// add new UnitTest project
+			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
+			m_mgr->GetTheApp()->GetTopWindow()->AddPendingEvent(event);
+		}
+		return;
+	}
+
 	//position has changed, compare line numbers
 	wxString clsName;
 	IEditor *editor = m_mgr->GetActiveEditor();
@@ -186,103 +197,86 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
 		}
 	}
 
-	TestClassDlg *dlg = new TestClassDlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
-	dlg->SetClassName(clsName);
+	TestClassDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr, this);
+	dlg.SetClassName(clsName);
 
-	if (dlg->ShowModal() == wxID_OK) {
-		wxArrayString arr = dlg->GetTestsList();
-		wxString fixture = dlg->GetFixtureName();
-		wxString filename = dlg->GetFileName();
-		dlg->Destroy();
+	if (dlg.ShowModal() == wxID_OK) {
+		wxArrayString arr         = dlg.GetTestsList();
+		wxString      fixture     = dlg.GetFixtureName();
+		wxString      filename    = dlg.GetFileName();
+		wxString      projectName = dlg.GetProjectName();
 
 		wxFileName fn(filename);
+		wxString err_msg;
 
-		// first open / create the target file
-		if ( wxFileName::FileExists(filename) == false ) {
-			// the file does not exist!
-			wxFFile file(filename, wxT("wb"));
-			if ( !file.IsOpened() ) {
-				wxMessageBox(wxString::Format(wxT("Could not create target file '%s'"), filename.c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
-				return;
-			}
+		fixture.Trim().Trim(false);
+		ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(projectName, err_msg);
+		if (p) {
+			// incase a relative path was given, use the selected project path
+			fn = FindBestSourceFile(p, fn);
+			for (size_t i=0; i<arr.GetCount(); i++) {
 
-			// since this is a new file, it will most probably will need the include file
-			file.Write(wxT("#include <UnitTest++.h>\n"));
-			file.Close();
+				// Construct the test name in the format of:
+				// Test<FuncName>
+				wxString name = arr.Item(i);
+				wxString prefix = name.Mid(0, 1);
 
-			TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-			wxString file_name;
-			if (m_mgr->GetActiveEditor()) {
-				file_name = m_mgr->GetActiveEditor()->GetFileName().GetFullPath();
-			}
+				name = name.Mid(1);
+				prefix.MakeUpper();
+				prefix << name;
 
-			wxString fp = item.m_fileName.GetFullPath();
-			if (item.m_item.IsOk() && fp == file_name) {
-				wxTreeItemId parentItem = m_mgr->GetTree(TreeFileView)->GetItemParent(item.m_item);
-				wxArrayString paths;
-				paths.Add(fn.GetFullPath());
-				if (m_mgr->AddFilesToVirtualFolder(parentItem, paths) == false) {
-					//probably not a virtual folder
-					wxString msg;
-					msg << wxT("CodeLite created the test file successfully, but was unable to add the generated file to any virtual folder\n");
-					msg << wxT("You can right click on virtual folder (in the 'Workspace' tab) and manually add them\n");
-					wxMessageBox(msg, wxT("CodeLite"), wxOK|wxICON_INFORMATION);
+				wxString testName;
+				testName << wxT("Test") << prefix;
+
+				if (!fixture.IsEmpty()) {
+					DoCreateFixtureTest(testName, fixture, projectName, fn.GetFullPath());
+				} else {
+					DoCreateSimpleTest(testName, projectName, fn.GetFullPath());
 				}
+
 			}
 		}
-
-		// file name exist
-		// open the file in the editor
-		m_mgr->OpenFile(filename, wxEmptyString);
-
-
-		IEditor *editor = m_mgr->GetActiveEditor();
-		if (!editor || (editor && editor->GetFileName().GetFullPath() != fn.GetFullPath())) {
-			wxMessageBox(wxString::Format(wxT("Could not open target file '%s'"), filename.c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
-			return;
-		}
-
-		for (size_t i=0; i<arr.GetCount(); i++) {
-			// Create the test in the format of:
-			// Test<FuncName>
-			wxString name = arr.Item(i);
-			wxString prefix = name.Mid(0, 1);
-
-			name = name.Mid(1);
-			prefix.MakeUpper();
-			prefix << name;
-
-			if ( fixture.IsEmpty() ) {
-				DoCreateSimpleTest(wxT("Test") + prefix, editor);
-			} else {
-				DoCreateFixtureTest(wxT("Test") + prefix, fixture, editor);
-			}
-		}
-	} else {
-		// wxID_CANCEL
-		dlg->Destroy();
 	}
 }
 
 void UnitTestPP::OnNewSimpleTest(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	NewUnitTestDlg *dlg = new NewUnitTestDlg(m_mgr->GetTheApp()->GetTopWindow());
-	if (dlg->ShowModal() == wxID_OK) {
-		// create the unit test
-		wxString testName = dlg->GetTestName();
-		wxString fixture  = dlg->GetFixtureName();
 
-		if (dlg->UseFixture()) {
-			DoCreateFixtureTest(testName, fixture, m_mgr->GetActiveEditor());
-		} else {
-			DoCreateSimpleTest(testName, m_mgr->GetActiveEditor());
+	if (GetUnitTestProjects().empty()) {
+		if (wxMessageBox(wxString::Format(wxT("There are currently no UnitTest project in your workspace\nWould you like to create one now?")), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
+			// add new UnitTest project
+			wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
+			m_mgr->GetTheApp()->GetTopWindow()->AddPendingEvent(event);
+		}
+		return;
+	}
+
+	NewUnitTestDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr->GetConfigTool());
+	if (dlg.ShowModal() == wxID_OK) {
+		// create the unit test
+		wxString testName    = dlg.GetTestName();
+		wxString fixture     = dlg.GetFixtureName();
+		wxString projectName = dlg.GetProjectName();
+		wxString filename    = dlg.GetFilename();
+
+		// incase a relative path was given, use the selected project path
+		wxFileName fn(filename);
+		wxString err_msg;
+		ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(projectName, err_msg);
+		if (p) {
+			fn = FindBestSourceFile(p, fn);
+			fixture.Trim().Trim(false);
+			if (!fixture.IsEmpty()) {
+				DoCreateFixtureTest(testName, fixture, projectName, fn.GetFullPath());
+			} else {
+				DoCreateSimpleTest(testName, projectName, fn.GetFullPath());
+			}
 		}
 	}
-	dlg->Destroy();
 }
 
-void UnitTestPP::DoCreateFixtureTest(const wxString& name, const wxString& fixture, IEditor *editor)
+void UnitTestPP::DoCreateFixtureTest(const wxString& name, const wxString& fixture, const wxString &projectName, const wxString &filename)
 {
 	wxString text;
 
@@ -290,13 +284,24 @@ void UnitTestPP::DoCreateFixtureTest(const wxString& name, const wxString& fixtu
 	text << wxT("{\n");
 	text << wxT("}\n");
 
+	IEditor *editor = DoAddTestFile(filename, projectName);
 	if (editor) {
 		editor->AppendText(text);
 	}
 }
 
-void UnitTestPP::DoCreateSimpleTest(const wxString& name, IEditor *editor)
+void UnitTestPP::DoCreateSimpleTest(const wxString& name, const wxString &projectName, const wxString &filename)
 {
+	// try to locate the file
+	wxString errMsg;
+	ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
+	if (!proj) {
+		// no such project!
+		wxMessageBox(wxT("Could not find the target project"), wxT("CodeLite"), wxOK|wxICON_ERROR);
+		return;
+	}
+
+	IEditor *editor = DoAddTestFile(filename, projectName);
 	wxString text;
 
 	text << wxT("\nTEST(") << name << wxT(")\n");
@@ -390,4 +395,115 @@ void UnitTestPP::OnProcessTerminated(wxProcessEvent& e)
 	msg << pass_percent << wxT("%");
 	page->UpdatePassedBar((size_t)(summary.totalTests - summary.errorCount), msg);
 
+}
+
+std::vector<ProjectPtr> UnitTestPP::GetUnitTestProjects()
+{
+	std::vector<ProjectPtr> ut_projects;
+	wxArrayString projects;
+	m_mgr->GetWorkspace()->GetProjectList(projects);
+	for (size_t i=0; i<projects.GetCount(); i++) {
+		wxString err_msg;
+		ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
+		if (proj && IsUnitTestProject(proj)) {
+			ut_projects.push_back(proj);
+		}
+	}
+	return ut_projects;
+}
+
+bool UnitTestPP::IsUnitTestProject(ProjectPtr p)
+{
+	if (!p) {
+		return false;
+	}
+	return p->GetProjectInternalType() == wxT("UnitTest++");
+}
+
+IEditor *UnitTestPP::DoAddTestFile(const wxString& filename, const wxString &projectName)
+{
+	// first open / create the target file
+	wxFileName fn(filename);
+	if ( wxFileName::FileExists(filename) == false ) {
+		// the file does not exist!
+		wxFFile file(filename, wxT("wb"));
+		if ( !file.IsOpened() ) {
+			wxMessageBox(wxString::Format(wxT("Could not create target file '%s'"), filename.c_str()), wxT("CodeLite"), wxICON_WARNING|wxOK);
+			return NULL;
+		}
+
+		// since this is a new file, it will most probably will need the include file
+		file.Write(wxT("#include <UnitTest++.h>\n"));
+		file.Close();
+
+	}
+
+	// locate the project
+	wxString errMsg;
+	IEditor *editor(NULL);
+
+	ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
+	if (proj) {
+		std::vector<wxFileName> files;
+		proj->GetFiles(files, true);
+
+		// Search the target file, if it is already exist in the project, open the file
+		// and return
+		for (size_t i=0; i<files.size(); i++) {
+			if (files.at(i).GetFullPath() == fn.GetFullPath()) {
+				m_mgr->OpenFile(fn.GetFullPath());
+				editor = m_mgr->GetActiveEditor();
+				if (editor && editor->GetFileName().GetFullPath() == fn.GetFullPath()) {
+					return editor;
+				} else {
+					return NULL;
+				}
+			}
+		}
+
+		// add it to the project
+		wxArrayString paths;
+		paths.Add(filename);
+		m_mgr->CreateVirtualDirectory(proj->GetName(), wxT("tests"));
+		m_mgr->AddFilesToVirtualFolder(proj->GetName() + wxT(":tests"), paths);
+
+		// open the file
+		m_mgr->OpenFile(fn.GetFullPath());
+		editor = m_mgr->GetActiveEditor();
+		if (editor && editor->GetFileName().GetFullPath() == fn.GetFullPath()) {
+			return editor;
+		}
+	}
+	return NULL;
+}
+
+wxFileName UnitTestPP::FindBestSourceFile(ProjectPtr proj, const wxFileName &filename)
+{
+	if (filename.IsOk() == false) {
+		// no such file
+		std::vector<wxFileName> files;
+		proj->GetFiles(files, true);
+
+		// Search the target file, if it is already exist in the project, open the file
+		// and return
+		for (size_t i=0; i<files.size(); i++) {
+			wxFileName fn = files.at(i);
+			if (IsSourceFile(fn.GetExt())) {
+				return fn;
+			}
+		}
+		// no source file were found in the project
+		// create a path name of the file which will be located
+		// under the selected project path (we dont create it here)
+		wxFileName fn(proj->GetFileName());
+		fn.SetFullName(wxT("unit_tests.cpp"));
+		return fn;
+	} else if (filename.IsAbsolute() == false) {
+		// relative path was given, set the path to the project path
+		wxFileName fn(filename);
+		fn.SetPath(proj->GetFileName().GetPath());
+		return fn;
+	} else {
+		return filename;
+	}
 }

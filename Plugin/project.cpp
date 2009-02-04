@@ -873,3 +873,13 @@ bool Project::SetUserData(const wxString& name, SerializedObject* obj)
 	obj->Serialize(arch);
 	return m_doc.Save(m_fileName.GetFullPath());
 }
+
+void Project::SetProjectInternalType(const wxString& internalType)
+{
+	XmlUtils::UpdateProperty(m_doc.GetRoot(), wxT("InternalType"), internalType);
+}
+
+wxString Project::GetProjectInternalType() const
+{
+	return m_doc.GetRoot()->GetPropVal(wxT("InternalType"), wxEmptyString);
+}

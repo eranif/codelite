@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : newunittestbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -47,56 +22,66 @@ NewUnitTestBaseDlg::NewUnitTestBaseDlg( wxWindow* parent, wxWindowID id, const w
 	fgSizer6->SetFlexibleDirection( wxBOTH );
 	fgSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText30 = new wxStaticText( this, wxID_ANY, wxT("Test Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText30 = new wxStaticText( this, wxID_ANY, _("Test name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText30->Wrap( -1 );
+	m_staticText30->SetToolTip( _("The C++ name of the test") );
+	
 	fgSizer6->Add( m_staticText30, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlTestName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlTestName->SetToolTip( _("The C++ name of the test") );
+	
 	fgSizer6->Add( m_textCtrlTestName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_checkBoxUseFixture = new wxCheckBox( this, wxID_ANY, wxT("Use fixture"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxUseFixture->SetValue(true);
-	
-	fgSizer6->Add( m_checkBoxUseFixture, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_filler = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	fgSizer6->Add( m_filler, 1, wxEXPAND|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_staticText32 = new wxStaticText( this, wxID_ANY, wxT("Fixture Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText32 = new wxStaticText( this, wxID_ANY, _("Fixture name (optional):"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText32->Wrap( -1 );
 	fgSizer6->Add( m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlFixtureName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer6->Add( m_textCtrlFixtureName, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
+	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Output file name (optional):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	fgSizer6->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlOutputFile = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlOutputFile->SetToolTip( _("The name of the file of which CodeLite will generate the test code.\nWhen left empty, CodeLite will use the first available source file in target project") );
+	
+	fgSizer6->Add( m_textCtrlOutputFile, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Project to whom this unit test should be added to:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	fgSizer6->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxArrayString m_choiceProjectsChoices;
+	m_choiceProjects = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceProjectsChoices, 0 );
+	m_choiceProjects->SetSelection( 0 );
+	fgSizer6->Add( m_choiceProjects, 1, wxALL|wxEXPAND, 5 );
+	
 	bSizer19->Add( fgSizer6, 1, wxEXPAND|wxALL, 5 );
 	
-	m_staticline11 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer19->Add( m_staticline11, 0, wxEXPAND | wxALL, 5 );
+	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer19->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
 	
 	wxBoxSizer* bSizer20;
 	bSizer20 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_button24 = new wxButton( this, wxID_OK, wxT("&Create"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button24 = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_button24->SetDefault(); 
 	bSizer20->Add( m_button24, 0, wxALL, 5 );
 	
-	m_button23 = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button23 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_button23, 0, wxALL, 5 );
 	
 	bSizer19->Add( bSizer20, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	this->SetSizer( bSizer19 );
 	this->Layout();
+	bSizer19->Fit( this );
 	
 	this->Centre( wxBOTH );
-	
-	// Connect Events
-	m_checkBoxUseFixture->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewUnitTestBaseDlg::OnUseFixture ), NULL, this );
 }
 
 NewUnitTestBaseDlg::~NewUnitTestBaseDlg()
 {
-	// Disconnect Events
-	m_checkBoxUseFixture->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewUnitTestBaseDlg::OnUseFixture ), NULL, this );
 }

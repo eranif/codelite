@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : testclassbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -47,17 +22,17 @@ TestClassBaseDlg::TestClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Class name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Class name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlClassName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_textCtrlClassName, 0, wxALL|wxEXPAND, 5 );
 	
-	m_buttonClass = new wxButton( this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonClass = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_buttonClass, 0, wxALL, 5 );
 	
-	m_buttonRefresh = new wxButton( this, wxID_ANY, wxT("&Show Functions..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonRefresh = new wxButton( this, wxID_ANY, _("&Show Functions..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_buttonRefresh, 0, wxALL, 5 );
 	
 	bSizer1->Add( fgSizer1, 0, wxEXPAND, 5 );
@@ -68,25 +43,34 @@ TestClassBaseDlg::TestClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_checkBox1 = new wxCheckBox( this, wxID_ANY, wxT("Enter output file name:"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	fgSizer2->Add( m_checkBox1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_textCtrlFileName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer2->Add( m_textCtrlFileName, 0, wxALL|wxEXPAND, 5 );
-	
-	m_checkBoxUseFixture = new wxCheckBox( this, wxID_ANY, wxT("Use fixture test"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	fgSizer2->Add( m_checkBoxUseFixture, 0, wxALL, 5 );
+	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Fixture name (optional):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	fgSizer2->Add( m_staticText4, 0, wxALL, 5 );
 	
 	m_textCtrlFixtureName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_textCtrlFixtureName->Enable( false );
-	
 	fgSizer2->Add( m_textCtrlFixtureName, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Output file name (optional):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlFileName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlFileName->SetToolTip( _("The name of the file of which CodeLite will generate the test code.\nWhen left empty, CodeLite will use the first available source file in target project") );
+	
+	fgSizer2->Add( m_textCtrlFileName, 0, wxALL|wxEXPAND, 5 );
+	
+	m_staticText5 = new wxStaticText( this, wxID_ANY, _("Project to whom these unit tests should be added to:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5->Wrap( -1 );
+	fgSizer2->Add( m_staticText5, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxArrayString m_choiceProjectsChoices;
+	m_choiceProjects = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceProjectsChoices, 0 );
+	m_choiceProjects->SetSelection( 0 );
+	fgSizer2->Add( m_choiceProjects, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer1->Add( fgSizer2, 0, wxEXPAND, 5 );
 	
-	m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Functions to test:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6 = new wxStaticText( this, wxID_ANY, _("Functions to test:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	bSizer1->Add( m_staticText6, 0, wxALL, 5 );
 	
@@ -100,10 +84,10 @@ TestClassBaseDlg::TestClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
-	m_buttonCheckAll = new wxButton( this, wxID_ANY, wxT("Check &All"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCheckAll = new wxButton( this, wxID_ANY, _("Check &All"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( m_buttonCheckAll, 0, wxALL, 5 );
 	
-	m_buttonUnCheckAll = new wxButton( this, wxID_ANY, wxT("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonUnCheckAll = new wxButton( this, wxID_ANY, _("Clear"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( m_buttonUnCheckAll, 0, wxALL, 5 );
 	
 	bSizer5->Add( bSizer6, 0, wxEXPAND, 5 );
@@ -116,27 +100,25 @@ TestClassBaseDlg::TestClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonCreate = new wxButton( this, wxID_OK, wxT("&Create"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCreate = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonCreate->SetDefault(); 
 	bSizer4->Add( m_buttonCreate, 0, wxALL, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_buttonCancel, 0, wxALL, 5 );
 	
 	bSizer1->Add( bSizer4, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	bSizer1->Fit( this );
 	
 	this->Centre( wxBOTH );
 	
 	// Connect Events
-	m_textCtrlClassName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TestClassBaseDlg::OnClassNameTyped ), NULL, this );
 	m_buttonClass->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnShowClassListDialog ), NULL, this );
 	m_buttonRefresh->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnRefreshFunctions ), NULL, this );
 	m_buttonRefresh->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TestClassBaseDlg::OnRefreshButtonUI ), NULL, this );
-	m_checkBox1->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUseActiveEditor ), NULL, this );
-	m_checkBoxUseFixture->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUseFixture ), NULL, this );
 	m_buttonCheckAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnCheckAll ), NULL, this );
 	m_buttonUnCheckAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUnCheckAll ), NULL, this );
 	m_buttonCreate->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnButtonOk ), NULL, this );
@@ -145,12 +127,9 @@ TestClassBaseDlg::TestClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStr
 TestClassBaseDlg::~TestClassBaseDlg()
 {
 	// Disconnect Events
-	m_textCtrlClassName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( TestClassBaseDlg::OnClassNameTyped ), NULL, this );
 	m_buttonClass->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnShowClassListDialog ), NULL, this );
 	m_buttonRefresh->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnRefreshFunctions ), NULL, this );
 	m_buttonRefresh->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TestClassBaseDlg::OnRefreshButtonUI ), NULL, this );
-	m_checkBox1->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUseActiveEditor ), NULL, this );
-	m_checkBoxUseFixture->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUseFixture ), NULL, this );
 	m_buttonCheckAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnCheckAll ), NULL, this );
 	m_buttonUnCheckAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnUnCheckAll ), NULL, this );
 	m_buttonCreate->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TestClassBaseDlg::OnButtonOk ), NULL, this );

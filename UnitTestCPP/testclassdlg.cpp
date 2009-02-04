@@ -24,20 +24,34 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "open_type_dlg.h"
+#include "unittestpp.h"
 #include "testclassdlg.h"
 #include "imanager.h"
 #include "ctags_manager.h"
+#include "windowattrmanager.h"
 
-TestClassDlg::TestClassDlg( wxWindow* parent, IManager *mgr )
+TestClassDlg::TestClassDlg( wxWindow* parent, IManager *mgr, UnitTestPP *plugin )
 		: TestClassBaseDlg( parent )
 		, m_manager(mgr)
+		, m_plugin(plugin)
 {
 	m_manager->GetTagsManager()->GetClasses(m_tags);
-	IEditor *editor = m_manager->GetActiveEditor();
-	if (editor) {
-		m_textCtrlFileName->SetValue(editor->GetFileName().GetFullPath());
-		m_textCtrlFileName->Enable(false);
+
+	// populate the unit tests project list
+	std::vector<ProjectPtr> projects = m_plugin->GetUnitTestProjects();
+	for(size_t i=0; i<projects.size(); i++){
+		m_choiceProjects->Append(projects.at(i)->GetName());
 	}
+
+	if(m_choiceProjects->IsEmpty() == false){
+		m_choiceProjects->SetSelection(0);
+	}
+	WindowAttrManager::Load(this, wxT("TestClassDlgAttr"), m_manager->GetConfigTool());
+}
+
+TestClassDlg::~TestClassDlg()
+{
+	WindowAttrManager::Save(this, wxT("TestClassDlgAttr"), m_manager->GetConfigTool());
 }
 
 void TestClassDlg::OnRefreshFunctions( wxCommandEvent& event )
@@ -85,9 +99,10 @@ wxArrayString TestClassDlg::GetTestsList()
 	for (unsigned int idx = 0; idx < m_checkListMethods->GetCount(); idx++) {
 		if (m_checkListMethods->IsChecked(idx)) {
 			wxString str = m_checkListMethods->GetString(idx);
-			
+
 			str = str.BeforeFirst(wxT('('));
 			EscapeName(str);
+			str.Prepend(m_textCtrlClassName->GetValue() + wxT("_"));
 			results.Add(str);
 		}
 	}
@@ -102,30 +117,11 @@ void TestClassDlg::OnUseFixture(wxCommandEvent& e)
 void TestClassDlg::OnButtonOk(wxCommandEvent& e)
 {
 	// validate the class name
-	if ( m_textCtrlFileName->GetValue().IsEmpty() ) {
-		wxMessageBox(_("Please provide a class name"), wxT("CodeLite"), wxICON_WARNING|wxOK);
-		return;
-	}
-
 	if ( m_checkListMethods->GetCount() == 0 ) {
 		wxMessageBox(_("There are no tests to generate"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 		return;
 	}
-
 	EndModal(wxID_OK);
-}
-
-void TestClassDlg::OnClassNameTyped(wxCommandEvent& e)
-{
-	// scane the database for classes
-	if (!m_checkBox1->IsChecked()) {
-		wxString file_name = m_textCtrlFileName->GetValue();
-		wxFileName fn(file_name);
-		fn.SetName(wxT("test_") + m_textCtrlClassName->GetValue().MakeLower());
-
-		m_textCtrlFileName->SetValue(fn.GetFullPath());
-	}
-	e.Skip();
 }
 
 void TestClassDlg::OnShowClassListDialog(wxCommandEvent& e)
@@ -215,4 +211,3 @@ void TestClassDlg::EscapeName(wxString& name)
 	name.Replace(wxT(">"), wxT("Gadol"));
 	name.Replace(wxT("<"), wxT("Katan"));
 }
-

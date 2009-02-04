@@ -288,6 +288,8 @@ void Manager::CreateProject ( ProjectData &data )
 	//copy the project settings to the new one
 	proj->SetSettings ( data.m_srcProject->GetSettings() );
 
+	proj->SetProjectInternalType(data.m_srcProject->GetProjectInternalType());
+
 	// now add the new project to the build matrix
 	WorkspaceST::Get()->AddProjectToBuildMatrix ( proj );
 	ProjectSettingsPtr settings = proj->GetSettings();
@@ -920,10 +922,10 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 #if defined(__WXMAC__)
 
 		execLine = opts->GetProgramConsoleCommand();
-		
+
 		wxString tmp_cmd;
 		tmp_cmd = wxT("cd ") + proj->GetFileName().GetPath() + wxT ( " && cd " ) + wd + wxT ( " && " ) + cmd + wxT ( " " ) + cmdArgs;
-		
+
 		execLine.Replace(wxT("$(CMD)"), tmp_cmd);
 		execLine.Replace(wxT("$(TITLE)"), cmd + wxT ( " " ) + cmdArgs);
 
@@ -947,7 +949,7 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " );
 			}
 		}
-		
+
 		command << execLine;
 		term.Replace(wxT("$(CMD)"), command);
 		execLine = term;

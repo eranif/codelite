@@ -87,8 +87,9 @@ void UpdatePostCmdAction::DoCommand()
 		// if the update provided any new / updated files, re-tag the workspace
 		SvnOptions options;
 		m_mgr->GetConfigTool()->ReadObject(wxT("SubversionOptions"), &options);
-		if(options.GetKeepTagUpToDate()){
+		if(options.GetKeepTagUpToDate() && !reload_workspace){
 			// send an event to the main frame indicating that a re-tag is required
+			// but dont send it of "reload_workspace" is ON since reloading workspace trigger this event already
 			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
 			m_mgr->GetTheApp()->GetTopWindow()->AddPendingEvent(e);
 		}

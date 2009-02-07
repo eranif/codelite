@@ -113,6 +113,9 @@ void OptionsDlg2::Initialize()
 	AddPage(new EditorSettingsFolding(m_treeBook),        wxT("Folding"));
 	AddPage(new EditorSettingsBookmarksPanel(m_treeBook), wxT("Bookmarks"));
 	AddPage(new EditorSettingsDialogs(m_treeBook),        wxT("Dialogs"));
+#ifndef __WXMSW__
+	// the Terminal page should be added under Windows
 	AddPage(new EditorSettingsTerminal(m_treeBook),       wxT("Terminal"));
+#endif
 	AddPage(new EditorSettingsMiscPanel(m_treeBook),      wxT("Misc"));
 }

@@ -208,7 +208,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 
 	// send an event to the main frame indicating that a re-tag is required
 	// we do this only if the "smart retagging" is on
-	if (! (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_USE_FULL_RETAGGING) ) {
+	if ( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ) {
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
 		Frame::Get()->AddPendingEvent(e);
 	}

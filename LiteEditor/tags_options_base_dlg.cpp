@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -36,38 +36,49 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_generalPage, wxID_ANY, wxT("General:") ), wxVERTICAL );
 	
+	wxFlexGridSizer* fgSizer31;
+	fgSizer31 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer31->SetFlexibleDirection( wxBOTH );
+	fgSizer31->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
 	m_checkBoxMarkTagsFilesInBold = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Mark files and dirs in file explorer that contribute tags in bold"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	sbSizer2->Add( m_checkBoxMarkTagsFilesInBold, 0, wxALL, 5 );
+	fgSizer31->Add( m_checkBoxMarkTagsFilesInBold, 0, wxALL, 5 );
 	
 	m_checkDisableParseOnSave = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Disable auto parsing of saved files"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	sbSizer2->Add( m_checkDisableParseOnSave, 0, wxALL, 5 );
+	fgSizer31->Add( m_checkDisableParseOnSave, 0, wxALL, 5 );
+	
+	m_checkBoxretagWorkspaceOnStartup = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Retag workspace on workspace startup"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	fgSizer31->Add( m_checkBoxretagWorkspaceOnStartup, 0, wxALL, 5 );
 	
 	m_checkParseComments = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Parse comments"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	sbSizer2->Add( m_checkParseComments, 0, wxALL, 5 );
+	fgSizer31->Add( m_checkParseComments, 0, wxALL, 5 );
 	
 	m_checkDisplayComments = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Display comments in tooltip"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	sbSizer2->Add( m_checkDisplayComments, 0, wxALL, 5 );
+	fgSizer31->Add( m_checkDisplayComments, 0, wxALL, 5 );
 	
 	m_checkDisplayTypeInfo = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Display type info tooltips"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	sbSizer2->Add( m_checkDisplayTypeInfo, 0, wxALL, 5 );
+	fgSizer31->Add( m_checkDisplayTypeInfo, 0, wxALL, 5 );
 	
 	m_checkDisplayFunctionTip = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Display function calltip"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	sbSizer2->Add( m_checkDisplayFunctionTip, 0, wxALL, 5 );
+	fgSizer31->Add( m_checkDisplayFunctionTip, 0, wxALL, 5 );
 	
 	m_checkCppKeywordAssist = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Display completion box for language keywords"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	sbSizer2->Add( m_checkCppKeywordAssist, 0, wxALL, 5 );
+	fgSizer31->Add( m_checkCppKeywordAssist, 0, wxALL, 5 );
+	
+	sbSizer2->Add( fgSizer31, 1, wxEXPAND, 5 );
 	
 	bSizer4->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer4;
-	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_generalPage, wxID_ANY, wxT("Keywords Highlight") ), wxVERTICAL );
+	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_generalPage, wxID_ANY, wxT("Keywords Highlight:") ), wxVERTICAL );
 	
 	m_checkColourLocalVars = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Colour local variables"), wxDefaultPosition, wxDefaultSize, 0 );
 	

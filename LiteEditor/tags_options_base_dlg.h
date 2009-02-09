@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -43,6 +43,7 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxPanel* m_generalPage;
 		wxCheckBox* m_checkBoxMarkTagsFilesInBold;
 		wxCheckBox* m_checkDisableParseOnSave;
+		wxCheckBox* m_checkBoxretagWorkspaceOnStartup;
 		wxCheckBox* m_checkParseComments;
 		wxCheckBox* m_checkDisplayComments;
 		wxCheckBox* m_checkDisplayTypeInfo;

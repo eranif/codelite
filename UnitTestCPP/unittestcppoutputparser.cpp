@@ -28,6 +28,9 @@
 #include <wx/regex.h>
 #include "wx/log.h"
 
+#include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
+WX_DEFINE_OBJARRAY(ErrorLineInfoArray);
+
 UnitTestCppOutputParser::~UnitTestCppOutputParser()
 {
 }
@@ -70,7 +73,7 @@ void UnitTestCppOutputParser::Parse(TestSummary *summary)
 				match = m_output.Item(i).Mid(start, len);
 				match.ToLong((long*)&summary->totalTests);
 				summary->errorCount = 0;
-				summary->errorLines.clear();
+				summary->errorLines.Clear();
 				return;
 			}
 		}
@@ -134,15 +137,12 @@ TestSummary::TestSummary()
 		: errorCount(0)
 		, totalTests(0)
 {
-	errorLines.clear();
+	errorLines.Clear();
 }
 
 TestSummary::~TestSummary()
 {
-	for(size_t i=0; i<errorLines.size(); i++){
-		delete errorLines.at(i);
-	}
-	errorLines.clear();
+	errorLines.Clear();
 }
 
 void TestSummary::PrintSelf()

@@ -58,12 +58,12 @@ UnitTestsPage::UnitTestsPage(wxWindow* parent, TestSummary* summary, IManager *m
 	m_listCtrlErrors->InsertColumn(1, wxT("Line"));
 	m_listCtrlErrors->InsertColumn(2, wxT("Description"));
 
-	for (size_t i=0; i<summary->errorCount; i++) {
-		ErrorLineInfo *info = summary->errorLines.at(i);
+	for (size_t i=0; i<summary->errorLines.GetCount(); i++) {
+		ErrorLineInfo info = summary->errorLines.Item(i);
 		long row = AppendListCtrlRow(m_listCtrlErrors);
-		SetColumnText(m_listCtrlErrors, row, 0, info->file);
-		SetColumnText(m_listCtrlErrors, row, 1, info->line);
-		SetColumnText(m_listCtrlErrors, row, 2, info->description);
+		SetColumnText(m_listCtrlErrors, row, 0, info.file);
+		SetColumnText(m_listCtrlErrors, row, 1, info.line);
+		SetColumnText(m_listCtrlErrors, row, 2, info.description);
 	}
 
 	m_listCtrlErrors->SetColumnWidth(0, 200);

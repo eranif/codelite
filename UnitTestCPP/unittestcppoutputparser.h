@@ -28,6 +28,7 @@
 
 #include <wx/arrstr.h>
 #include <vector>
+#include <wx/dynarray.h>
 
 struct ErrorLineInfo {
 	wxString line;
@@ -35,12 +36,14 @@ struct ErrorLineInfo {
 	wxString description;
 };
 
+WX_DECLARE_OBJARRAY(ErrorLineInfo, ErrorLineInfoArray);
+
 class TestSummary
 {
 public:
 	int errorCount;
 	int totalTests;
-	std::vector<ErrorLineInfo*> errorLines;
+	ErrorLineInfoArray errorLines;
 
 	TestSummary();
 	virtual ~TestSummary();

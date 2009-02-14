@@ -44,6 +44,8 @@ public:
 
 	TestSummary();
 	virtual ~TestSummary();
+
+	void PrintSelf();
 };
 
 class UnitTestCppOutputParser
@@ -53,6 +55,6 @@ public:
 	UnitTestCppOutputParser(const wxArrayString &output);
 	~UnitTestCppOutputParser();
 
-	void Parse(TestSummary &summary);
+	void Parse(TestSummary *summary);
 };
 #endif // __unittestcppoutputparser__

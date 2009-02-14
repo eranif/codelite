@@ -44,7 +44,7 @@ class UnitTestsPage : public UnitTestsBasePage
 	void OnItemActivated(wxListEvent &e);
 public:
 	/** Constructor */
-	UnitTestsPage( wxWindow* parent, const TestSummary &summary, IManager *mgr );
+	UnitTestsPage( wxWindow* parent, TestSummary *summary, IManager *mgr );
 	void UpdateFailedBar(size_t amount, const wxString &msg);
 	void UpdatePassedBar(size_t amount, const wxString &msg);
 

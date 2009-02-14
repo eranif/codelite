@@ -38,7 +38,7 @@ UnitTestCppOutputParser::UnitTestCppOutputParser(const wxArrayString& output)
 
 }
 
-void UnitTestCppOutputParser::Parse(TestSummary &summary)
+void UnitTestCppOutputParser::Parse(TestSummary *summary)
 {
 // define the regexes
 // group1: total number of tests
@@ -68,9 +68,9 @@ void UnitTestCppOutputParser::Parse(TestSummary &summary)
 
 				reSuccess.GetMatch(&start, &len, 1);
 				match = m_output.Item(i).Mid(start, len);
-				match.ToLong((long*)&summary.totalTests);
-				summary.errorCount = 0;
-				summary.errorLines.clear();
+				match.ToLong((long*)&summary->totalTests);
+				summary->errorCount = 0;
+				summary->errorLines.clear();
 				return;
 			}
 		}
@@ -103,8 +103,8 @@ void UnitTestCppOutputParser::Parse(TestSummary &summary)
 				info->line = line.AfterLast(wxT(':'));
 				info->file = line.BeforeLast(wxT(':'));
 #endif
-				summary.errorLines.push_back(info);
-				summary.errorCount++;
+				summary->errorLines.push_back(info);
+				summary->errorCount++;
 			}
 		}
 
@@ -118,11 +118,11 @@ void UnitTestCppOutputParser::Parse(TestSummary &summary)
 
 				reErrorSummary.GetMatch(&start, &len, 1);
 				match = m_output.Item(i).Mid(start, len);
-				match.ToLong((long*)&summary.errorCount);
+				match.ToLong((long*)&summary->errorCount);
 
 				reErrorSummary.GetMatch(&start, &len, 2);
 				match = m_output.Item(i).Mid(start, len);
-				match.ToLong((long*)&summary.totalTests);
+				match.ToLong((long*)&summary->totalTests);
 			}
 		}
 	}
@@ -143,4 +143,11 @@ TestSummary::~TestSummary()
 		delete errorLines.at(i);
 	}
 	errorLines.clear();
+}
+
+void TestSummary::PrintSelf()
+{
+	wxPrintf(wxT("Total tests            : %d\n"), totalTests);
+	wxPrintf(wxT("Total errors           : %d\n"), errorCount);
+	wxPrintf(wxT("Total error lines found: %d\n"), errorLines.size());
 }

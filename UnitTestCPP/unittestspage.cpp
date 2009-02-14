@@ -29,35 +29,37 @@
 #include "imanager.h"
 #include <wx/msgdlg.h>
 
-UnitTestsPage::UnitTestsPage(wxWindow* parent, const TestSummary& summary, IManager *mgr )
+UnitTestsPage::UnitTestsPage(wxWindow* parent, TestSummary* summary, IManager *mgr )
 		: UnitTestsBasePage( parent )
 		, m_mgr(mgr)
 {
-	m_progressPassed->SetMaxRange((size_t)summary.totalTests);
-	m_progressFailed->SetMaxRange((size_t)summary.totalTests);
+#ifdef __WXDEBUG__
+	summary->PrintSelf();
+#endif
+
+	m_progressPassed->SetMaxRange((size_t)summary->totalTests);
+	m_progressFailed->SetMaxRange((size_t)summary->totalTests);
 	m_progressFailed->SetFillCol(wxT("RED"));
 	m_progressPassed->SetFillCol(wxT("PALE GREEN"));
 
 	wxString msg;
-	msg << summary.totalTests;
+	msg << summary->totalTests;
 	m_staticTextTotalTests->SetLabel(msg);
 
 	msg.clear();
-	msg << summary.errorCount;
+	msg << summary->errorCount;
 	m_staticTextFailTestsNum->SetLabel(msg);
 
 	msg.clear();
-	msg << summary.totalTests - summary.errorCount;
+	msg << summary->totalTests - summary->errorCount;
 	m_staticTextSuccessTestsNum->SetLabel(msg);
 
 	m_listCtrlErrors->InsertColumn(0, wxT("File"));
 	m_listCtrlErrors->InsertColumn(1, wxT("Line"));
 	m_listCtrlErrors->InsertColumn(2, wxT("Description"));
 
-	//wxMessageBox(wxString::Format(wxT("Total of %d error lines"), summary.errorLines.size()));
-
-	for (size_t i=0; i<summary.errorLines.size(); i++) {
-		ErrorLineInfo *info = summary.errorLines.at(i);
+	for (size_t i=0; i<summary->errorCount; i++) {
+		ErrorLineInfo *info = summary->errorLines.at(i);
 		long row = AppendListCtrlRow(m_listCtrlErrors);
 		SetColumnText(m_listCtrlErrors, row, 0, info->file);
 		SetColumnText(m_listCtrlErrors, row, 1, info->line);

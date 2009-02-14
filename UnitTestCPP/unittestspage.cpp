@@ -31,39 +31,39 @@
 
 UnitTestsPage::UnitTestsPage(wxWindow* parent, const TestSummary& summary, IManager *mgr )
 		: UnitTestsBasePage( parent )
-		, m_summary( summary )
 		, m_mgr(mgr)
 {
-	m_progressPassed->SetMaxRange((size_t)m_summary.totalTests);
-	m_progressFailed->SetMaxRange((size_t)m_summary.totalTests);
+	m_progressPassed->SetMaxRange((size_t)summary.totalTests);
+	m_progressFailed->SetMaxRange((size_t)summary.totalTests);
 	m_progressFailed->SetFillCol(wxT("RED"));
 	m_progressPassed->SetFillCol(wxT("PALE GREEN"));
 
 	wxString msg;
-	msg << m_summary.totalTests;
+	msg << summary.totalTests;
 	m_staticTextTotalTests->SetLabel(msg);
 
 	msg.clear();
-	msg << m_summary.errorCount;
+	msg << summary.errorCount;
 	m_staticTextFailTestsNum->SetLabel(msg);
 
 	msg.clear();
-	msg << m_summary.totalTests - m_summary.errorCount;
+	msg << summary.totalTests - summary.errorCount;
 	m_staticTextSuccessTestsNum->SetLabel(msg);
 
 	m_listCtrlErrors->InsertColumn(0, wxT("File"));
 	m_listCtrlErrors->InsertColumn(1, wxT("Line"));
 	m_listCtrlErrors->InsertColumn(2, wxT("Description"));
 
-	//wxMessageBox(wxString::Format(wxT("Total of %d error lines"), m_summary.errorLines.size()));
+	//wxMessageBox(wxString::Format(wxT("Total of %d error lines"), summary.errorLines.size()));
 
-	for (size_t i=0; i<m_summary.errorLines.size(); i++) {
-		ErrorLineInfo info = m_summary.errorLines.at(i);
+	for (size_t i=0; i<summary.errorLines.size(); i++) {
+		ErrorLineInfo *info = summary.errorLines.at(i);
 		long row = AppendListCtrlRow(m_listCtrlErrors);
-		SetColumnText(m_listCtrlErrors, row, 0, info.file);
-		SetColumnText(m_listCtrlErrors, row, 1, info.line);
-		SetColumnText(m_listCtrlErrors, row, 2, info.description);
+		SetColumnText(m_listCtrlErrors, row, 0, info->file);
+		SetColumnText(m_listCtrlErrors, row, 1, info->line);
+		SetColumnText(m_listCtrlErrors, row, 2, info->description);
 	}
+
 	m_listCtrlErrors->SetColumnWidth(0, 200);
 	m_listCtrlErrors->SetColumnWidth(1, 100);
 	m_listCtrlErrors->SetColumnWidth(2, wxLIST_AUTOSIZE);
@@ -91,13 +91,13 @@ void UnitTestsPage::OnItemActivated(wxListEvent& e)
 	wxString err_msg, cwd;
 	wxString proj = m_mgr->GetWorkspace()->GetActiveProjectName();
 	ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(proj, err_msg);
-	
+
 	if(p) {
 		cwd = p->GetFileName().GetPath();
 	}
-	
+
 	wxFileName fn(file);
 	fn.MakeAbsolute(cwd);
-	
+
 	m_mgr->OpenFile(fn.GetFullPath(), proj, l-1);
 }

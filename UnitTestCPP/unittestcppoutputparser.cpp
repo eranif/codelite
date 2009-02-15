@@ -85,28 +85,28 @@ void UnitTestCppOutputParser::Parse(TestSummary *summary)
 
 			int where = line.Find(wxT(": error: Failure"));
 			if ( where != wxNOT_FOUND ) {
-				ErrorLineInfo *info = new ErrorLineInfo();
+				ErrorLineInfo info;
 
 #if defined (__WXGTK__) || defined (__WXMSW__)
 				// for some reason the output for Mac is different from the one
 				// on Windows & GTK
 				// main.cpp(82): error: Failure in Test4: false
-				info->file = line.BeforeFirst(wxT('('));
+				info.file = line.BeforeFirst(wxT('('));
 				line = line.AfterFirst(wxT('('));
 
-				info->line = line.BeforeFirst(wxT(')'));
-				info->description = line.AfterFirst(wxT(')'));
+				info.line = line.BeforeFirst(wxT(')'));
+				info.description = line.AfterFirst(wxT(')'));
 #else
 				// Mac output is:
 				// main.cpp:82: error: Failure in Test4: false
-				info->description = line.Mid((size_t)where);
+				info.description = line.Mid((size_t)where);
 
 				// remove the description
 				line = line.Mid(0, (size_t)where);
-				info->line = line.AfterLast(wxT(':'));
-				info->file = line.BeforeLast(wxT(':'));
+				info.line = line.AfterLast(wxT(':'));
+				info.file = line.BeforeLast(wxT(':'));
 #endif
-				summary->errorLines.push_back(info);
+				summary->errorLines.Add(info);
 				summary->errorCount++;
 			}
 		}

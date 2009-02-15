@@ -30,7 +30,7 @@
 #include <wx/msgdlg.h>
 
 UnitTestsPage::UnitTestsPage(wxWindow* parent, TestSummary* summary, IManager *mgr )
-		: UnitTestsBasePage( parent )
+		: UnitTestsBasePage( parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), 0 )
 		, m_mgr(mgr)
 {
 #ifdef __WXDEBUG__

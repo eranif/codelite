@@ -57,6 +57,7 @@ class OpenResourceDlg : public wxDialog
 protected:
 	void OnButtonOK(wxCommandEvent &event);
 	void OnButtonCancel(wxCommandEvent &event);
+	void OnItemSelected(wxCommandEvent &event);
 	void OnItemActivated(wxCommandEvent &event);
 	void ConnectEvents();
 	bool UpdateFileName();

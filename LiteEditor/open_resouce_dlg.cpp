@@ -127,6 +127,7 @@ void OpenResourceDlg::ConnectEvents()
 {
 	ConnectButton(m_button2, OpenResourceDlg::OnButtonCancel);
 	ConnectButton(m_btnOk, OpenResourceDlg::OnButtonOK);
+	m_listShortNames->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(OpenResourceDlg::OnItemSelected), NULL, this);
 	m_listShortNames->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(OpenResourceDlg::OnItemActivated), NULL, this);
 	Connect(m_timer->GetId(), wxEVT_TIMER, wxTimerEventHandler(OpenResourceDlg::OnTimer), NULL, this);
 }
@@ -205,6 +206,13 @@ void OpenResourceDlg::OnButtonOK(wxCommandEvent &event)
 	if (UpdateFileName()) {
 		EndModal(wxID_OK);
 	}
+}
+
+void OpenResourceDlg::OnItemSelected(wxCommandEvent &event)
+{
+	wxStringClientData *data = (wxStringClientData *)m_listShortNames->GetClientObject(event.GetSelection());
+	m_fullText->SetLabel(data->GetData());
+	UpdateFileName();
 }
 
 void OpenResourceDlg::OnItemActivated(wxCommandEvent &event)

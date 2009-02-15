@@ -411,6 +411,18 @@ void Project::SetSettings(ProjectSettingsPtr settings)
 	m_doc.Save(m_fileName.GetFullPath());
 }
 
+void Project::SetGlobalSettings(BuildConfigCommonPtr globalSettings)
+{
+	wxXmlNode *settings = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Settings"));
+	wxXmlNode *oldSettings = XmlUtils::FindFirstByTagName(settings, wxT("GlobalSettings"));
+	if (oldSettings) {
+		oldSettings->GetParent()->RemoveChild(oldSettings);
+		delete oldSettings;
+	}
+	settings->AddChild(globalSettings->ToXml());
+	m_doc.Save(m_fileName.GetFullPath());
+}
+
 wxArrayString Project::GetDependencies() const
 {
 	wxArrayString result;

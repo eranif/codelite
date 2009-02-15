@@ -626,7 +626,7 @@ BuildConfigPtr Workspace::GetProjBuildConf(const wxString &projectName, const wx
 	if ( proj ) {
 		ProjectSettingsPtr settings = proj->GetSettings();
 		if (settings) {
-			return settings->GetBuildConfiguration(projConf);
+			return settings->GetBuildConfiguration(projConf, true);
 		}
 	}
 	return NULL;

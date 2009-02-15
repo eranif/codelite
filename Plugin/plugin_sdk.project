@@ -22,6 +22,7 @@
     <File Name="dockablepanemenumanager.h"/>
     <File Name="custombuildrequest.cpp"/>
     <File Name="custombuildrequest.h"/>
+    <File Name="build_config_common.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="async_executable_cmd.h"/>
@@ -110,6 +111,7 @@
     <File Name="windowattrmanager.h"/>
     <File Name="tagsmanagementconf.cpp"/>
     <File Name="tagsmanagementconf.h"/>
+    <File Name="build_config_common.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ProcessControl">
     <File Name="pipedprocess.h"/>

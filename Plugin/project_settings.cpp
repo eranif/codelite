@@ -37,12 +37,22 @@ ProjectSettings::ProjectSettings(wxXmlNode *node)
 				wxString configName = XmlUtils::ReadString(child, wxT("Name"));
 				m_configs.insert(std::pair<wxString, BuildConfigPtr>(configName, new BuildConfig(child)));
 			}
+			else if (child->GetName() == wxT("GlobalSettings")) {
+				m_globalSettings = new BuildConfigCommon(child, wxT("GlobalSettings"));
+			}
 			child = child->GetNext();
 		}
 	} else {
 		//create new settings with default values
 		m_projectType = Project::STATIC_LIBRARY;
 		m_configs.insert(std::pair<wxString, BuildConfigPtr>(wxT("Debug"), new BuildConfig(NULL)));
+	}
+
+	// Create global settings if it's not been loaded or by default
+	if (!m_globalSettings)
+	{
+		wxLogMessage(wxT("ProjectSettings : Create global settings because it doesn't exists"));
+		m_globalSettings = new BuildConfigCommon(NULL, wxT("GlobalSettings"));
 	}
 }
 
@@ -62,6 +72,7 @@ wxXmlNode *ProjectSettings::ToXml() const
 {
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Settings"));
 	node->AddProperty(wxT("Type"), m_projectType);
+	node->AddChild(m_globalSettings->ToXml());
 	std::map<wxString, BuildConfigPtr>::const_iterator iter = m_configs.begin();
 	for (; iter != m_configs.end(); iter++) {
 		node->AddChild(iter->second->ToXml());
@@ -69,7 +80,7 @@ wxXmlNode *ProjectSettings::ToXml() const
 	return node;
 }
 
-BuildConfigPtr ProjectSettings::GetBuildConfiguration(const wxString &configName) const
+BuildConfigPtr ProjectSettings::GetBuildConfiguration(const wxString &configName, bool merge) const
 {
 	wxString confName = configName;
 	if (confName.IsEmpty()) {
@@ -80,7 +91,42 @@ BuildConfigPtr ProjectSettings::GetBuildConfiguration(const wxString &configName
 	if (iter == m_configs.end()) {
 		return NULL;
 	}
-	return iter->second;
+	BuildConfigPtr buildConf = iter->second;
+	if (!merge) {
+		return buildConf;
+	}
+
+	// Need to merge configuration and global settings
+	BuildConfigPtr buildConfMerged(buildConf->Clone());
+	if (buildConfMerged->GetBuildCmpWithGlobalSettings() == BuildConfig::PREPEND_GLOBAL_SETTINGS) 	{
+		buildConfMerged->SetCompileOptions(buildConf->GetCompileOptions() + wxT(";") + m_globalSettings->GetCompileOptions());
+		buildConfMerged->SetPreprocessor(buildConf->GetPreprocessor() + wxT(";") + m_globalSettings->GetPreprocessor());
+		buildConfMerged->SetIncludePath(buildConf->GetIncludePath() + wxT(";") + m_globalSettings->GetIncludePath());
+	}
+	else if (buildConfMerged->GetBuildCmpWithGlobalSettings() == BuildConfig::APPEND_TO_GLOBAL_SETTINGS) {
+		buildConfMerged->SetCompileOptions(m_globalSettings->GetCompileOptions() + wxT(";") + buildConf->GetCompileOptions());
+		buildConfMerged->SetPreprocessor(m_globalSettings->GetPreprocessor() + wxT(";") + buildConf->GetPreprocessor());
+		buildConfMerged->SetIncludePath(m_globalSettings->GetIncludePath() + wxT(";") + buildConf->GetIncludePath());
+	}
+	if (buildConfMerged->GetBuildLnkWithGlobalSettings() == BuildConfig::PREPEND_GLOBAL_SETTINGS) 	{
+		buildConfMerged->SetLinkOptions(buildConf->GetLinkOptions() + wxT(";") + m_globalSettings->GetLinkOptions());
+		buildConfMerged->SetLibraries(buildConf->GetLibraries() + wxT(";") + m_globalSettings->GetLibraries());
+		buildConfMerged->SetLibPath(buildConf->GetLibPath() + wxT(";") + m_globalSettings->GetLibPath());
+	}
+	else if (buildConfMerged->GetBuildLnkWithGlobalSettings() == BuildConfig::APPEND_TO_GLOBAL_SETTINGS) {
+		buildConfMerged->SetLinkOptions(m_globalSettings->GetLinkOptions() + wxT(";") + buildConf->GetLinkOptions());
+		buildConfMerged->SetLibraries(m_globalSettings->GetLibraries() + wxT(";") + buildConf->GetLibraries());
+		buildConfMerged->SetLibPath(m_globalSettings->GetLibPath() + wxT(";") + buildConf->GetLibPath());
+	}
+	if (buildConfMerged->GetBuildResWithGlobalSettings() == BuildConfig::PREPEND_GLOBAL_SETTINGS) 	{
+		buildConfMerged->SetResCmpOptions(buildConf->GetResCompileOptions() + wxT(";") + m_globalSettings->GetResCompileOptions());
+		buildConfMerged->SetResCmpIncludePath(buildConf->GetResCmpIncludePath() + wxT(";") + m_globalSettings->GetResCmpIncludePath());
+	}
+	else if (buildConfMerged->GetBuildResWithGlobalSettings() == BuildConfig::APPEND_TO_GLOBAL_SETTINGS) {
+		buildConfMerged->SetResCmpOptions(m_globalSettings->GetResCompileOptions() + wxT(";") + buildConf->GetResCompileOptions());
+		buildConfMerged->SetResCmpIncludePath(m_globalSettings->GetResCmpIncludePath() + wxT(";") + buildConf->GetResCmpIncludePath());
+	}
+	return buildConfMerged;
 }
 
 BuildConfigPtr ProjectSettings::GetFirstBuildConfiguration(ProjectSettingsCookie &cookie) const

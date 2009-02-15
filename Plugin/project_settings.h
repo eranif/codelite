@@ -70,6 +70,7 @@ public:
  */
 class WXDLLIMPEXP_LE_SDK ProjectSettings : public ConfObject {
 	std::map<wxString, BuildConfigPtr> m_configs;
+	BuildConfigCommonPtr m_globalSettings;
 	wxString m_projectType;
 
 public:
@@ -101,9 +102,10 @@ public:
 	/**
 	 * Find the first build configuration by name
 	 * \param configName build configuration name to find
+	 * \param merge merge with global settings or not
 	 * \return build configuration smart pointer, will be deleted automatically when no more refrences to it
 	 */
-	BuildConfigPtr GetBuildConfiguration(const wxString &configName) const;
+	BuildConfigPtr GetBuildConfiguration(const wxString &configName, bool merge = false) const;
 
 	/**
 	 * enumerate through all the build build configuration, this function returns the first build configuration found
@@ -133,6 +135,21 @@ public:
 	 * \param configName configuration name to remove. 
 	 */
 	void RemoveConfiguration(const wxString &configName);
+	
+	/**
+	 * \brief Return the global settings, common to all configurations
+	 */
+	BuildConfigCommonPtr GetGlobalSettings() const {
+		return m_globalSettings;
+	} 
+	
+	/**
+	 * \brief Set the global settings
+	 * \param global settings
+	 */
+	void SetGlobalSettings(BuildConfigCommonPtr globalSettings) {
+		m_globalSettings = globalSettings;
+	}
 
 	//setters/getters
 	wxString GetProjectType(const wxString &confName);

@@ -30,47 +30,40 @@
 #include "editor_config.h"
 #include "build_settings_config.h"
 #include "debuggermanager.h"
+#include "globals.h"
+
+
+const wxString BuildConfig::OVERWRITE_GLOBAL_SETTINGS = wxT("overwrite");
+const wxString BuildConfig::APPEND_TO_GLOBAL_SETTINGS = wxT("append");
+const wxString BuildConfig::PREPEND_GLOBAL_SETTINGS   = wxT("prepend");
 
 BuildConfig::BuildConfig(wxXmlNode *node)
+: m_commonConfig(node)
 {
 	if ( node ) {
 		m_name = XmlUtils::ReadString(node, wxT("Name"));
 		m_compilerType = XmlUtils::ReadString(node, wxT("CompilerType"));
 		m_debuggerType = XmlUtils::ReadString(node, wxT("DebuggerType"));
-		wxXmlNode *compile = XmlUtils::FindFirstByTagName(node, wxT("Compiler"));
 		m_projectType = XmlUtils::ReadString(node, wxT("Type"));
+		m_buildCmpWithGlobalSettings = XmlUtils::ReadString(node, wxT("BuildCmpWithGlobalSettings"), APPEND_TO_GLOBAL_SETTINGS);
+		m_buildLnkWithGlobalSettings = XmlUtils::ReadString(node, wxT("BuildLnkWithGlobalSettings"), APPEND_TO_GLOBAL_SETTINGS);
+		m_buildResWithGlobalSettings = XmlUtils::ReadString(node, wxT("BuildResWithGlobalSettings"), APPEND_TO_GLOBAL_SETTINGS);
 
-		// read the compile options
+		wxXmlNode *compile = XmlUtils::FindFirstByTagName(node, wxT("Compiler"));
 		if (compile) {
 			m_compilerRequired = XmlUtils::ReadBool(compile, wxT("Required"), true);
-			m_compileOptions = XmlUtils::ReadString(compile, wxT("Options"));
-			wxXmlNode *child = compile->GetChildren();
-			while (child) {
-				if (child->GetName() == wxT("IncludePath")) {
-					m_includePath.Add(XmlUtils::ReadString(child, wxT("Value")));
-				} else if (child->GetName() == wxT("Preprocessor")) {
-					m_preprocessor.Add(XmlUtils::ReadString(child, wxT("Value")));
-				}
-				child = child->GetNext();
-			}
 		}
 
 		wxXmlNode *linker = XmlUtils::FindFirstByTagName(node, wxT("Linker"));
-		// read the linker options
 		if (linker) {
 			m_linkerRequired = XmlUtils::ReadBool(linker, wxT("Required"), true);
-			m_linkOptions = XmlUtils::ReadString(linker, wxT("Options"));
-			wxXmlNode *child = linker->GetChildren();
-			while (child) {
-				if (child->GetName() == wxT("Library")) {
-					m_libs.Add(XmlUtils::ReadString(child, wxT("Value")));
-				} else if (child->GetName() == wxT("LibraryPath")) {
-					m_libPath.Add(XmlUtils::ReadString(child, wxT("Value")));
-				}
-				child = child->GetNext();
-			}
 		}
-
+		
+		wxXmlNode *resCmp = XmlUtils::FindFirstByTagName(node, wxT("ResourceCompiler"));
+		if (resCmp) {
+			m_isResCmpNeeded = XmlUtils::ReadBool(resCmp, wxT("Required"), true);
+		}
+		
 		// read the postbuild commands
 		wxXmlNode *debugger = XmlUtils::FindFirstByTagName(node, wxT("Debugger"));
 		m_isDbgRemoteTarget = false;
@@ -87,20 +80,6 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 					m_debuggerStartupCmds = child->GetNodeContent();
 				} else if (child->GetName() == wxT("PostConnectCommands")) {
 					m_debuggerPostRemoteConnectCmds = child->GetNodeContent();
-				}
-				child = child->GetNext();
-			}
-		}
-
-		// read the resource compile options
-		wxXmlNode *resCmp = XmlUtils::FindFirstByTagName(node, wxT("ResourceCompiler"));
-		if (resCmp) {
-			m_isResCmpNeeded = XmlUtils::ReadBool(resCmp, wxT("Required"), true);
-			m_resCompileOptions = XmlUtils::ReadString(resCmp, wxT("Options"));
-			wxXmlNode *child = resCmp->GetChildren();
-			while (child) {
-				if (child->GetName() == wxT("IncludePath")) {
-					m_resCmpIncludePath << XmlUtils::ReadString(child, wxT("Value")) << wxT(";");
 				}
 				child = child->GetNext();
 			}
@@ -191,13 +170,12 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 	} else {
 
 		//create default project settings
+		m_commonConfig.SetCompileOptions(wxT("-g"));
+		m_commonConfig.SetLinkOptions(wxT("-O0"));
+		m_commonConfig.SetLibPath(wxT(".;Debug"));
+		
 		m_name = wxT("Debug");
 		m_compilerRequired = true;
-		m_includePath.Add(wxT("."));
-		m_compileOptions = wxT("-g");
-		m_linkOptions = wxT("-O0");
-		m_libPath.Add(wxT("."));
-		m_libPath.Add(wxT("Debug"));
 		m_linkerRequired = true;
 		m_intermediateDirectory = wxT("./Debug");
 		m_workingDirectory = wxT("./Debug");
@@ -206,8 +184,6 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		m_customBuildCmd = wxEmptyString;
 		m_customCleanCmd = wxEmptyString;
 		m_isResCmpNeeded = false;
-		m_resCmpIncludePath = wxEmptyString;
-		m_resCompileOptions = wxEmptyString;
 		m_customPostBuildRule = wxEmptyString;
 		m_customPreBuildRule = wxEmptyString;
 		m_makeGenerationCommand = wxEmptyString;
@@ -227,18 +203,14 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 		if (dbgs.GetCount() > 0) {
 			m_debuggerType = dbgs.Item(0);
 		}
+		m_buildCmpWithGlobalSettings = APPEND_TO_GLOBAL_SETTINGS;
+		m_buildLnkWithGlobalSettings = APPEND_TO_GLOBAL_SETTINGS;
+		m_buildResWithGlobalSettings = APPEND_TO_GLOBAL_SETTINGS;
 	}
 }
 
 BuildConfig::~BuildConfig()
 {
-}
-
-wxString BuildConfig::NormalizePath(const wxString &path) const
-{
-	wxString normalized_path(path);
-	normalized_path.Replace(wxT("\\"), wxT("/"));
-	return normalized_path;
 }
 
 BuildConfig *BuildConfig::Clone() const
@@ -251,12 +223,32 @@ BuildConfig *BuildConfig::Clone() const
 
 wxXmlNode *BuildConfig::ToXml() const
 {
-	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Configuration"));
+	// Create the common nodes
+	wxXmlNode *node = m_commonConfig.ToXml();
+
 	node->AddProperty(wxT("Name"), m_name);
 	node->AddProperty(wxT("CompilerType"), m_compilerType);
 	node->AddProperty(wxT("DebuggerType"), m_debuggerType);
 	node->AddProperty(wxT("Type"), m_projectType);
+	node->AddProperty(wxT("BuildCmpWithGlobalSettings"), m_buildCmpWithGlobalSettings);
+	node->AddProperty(wxT("BuildLnkWithGlobalSettings"), m_buildLnkWithGlobalSettings);
+	node->AddProperty(wxT("BuildResWithGlobalSettings"), m_buildResWithGlobalSettings);
 
+	wxXmlNode *compile = XmlUtils::FindFirstByTagName(node, wxT("Compiler"));
+	if (compile) {
+		compile->AddProperty(wxT("Required"), BoolToString(m_compilerRequired));
+	}
+
+	wxXmlNode *link = XmlUtils::FindFirstByTagName(node, wxT("Linker"));
+	if (link) {
+		link->AddProperty(wxT("Required"), BoolToString(m_linkerRequired));
+	}
+
+	wxXmlNode *resCmp = XmlUtils::FindFirstByTagName(node, wxT("ResourceCompiler"));
+	if (resCmp) {
+		resCmp->AddProperty(wxT("Required"), BoolToString(m_isResCmpNeeded));
+	}
+	
 	wxXmlNode *general = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("General"));
 	general->AddProperty(wxT("OutputFile"), m_outputFile);
 	general->AddProperty(wxT("IntermediateDirectory"), m_intermediateDirectory);
@@ -265,43 +257,6 @@ wxXmlNode *BuildConfig::ToXml() const
 	general->AddProperty(wxT("WorkingDirectory"), m_workingDirectory);
 	general->AddProperty(wxT("PauseExecWhenProcTerminates"), BoolToString(m_pauseWhenExecEnds));
 	node->AddChild(general);
-
-	//create the compile node
-	wxXmlNode *compile = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));
-	compile->AddProperty(wxT("Required"), BoolToString(m_compilerRequired));
-	compile->AddProperty(wxT("Options"), m_compileOptions);
-	node->AddChild(compile);
-
-	size_t i=0;
-	for (i=0; i<m_includePath.GetCount(); i++) {
-		wxXmlNode *option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IncludePath"));
-		option->AddProperty(wxT("Value"), m_includePath.Item(i));
-		compile->AddChild(option);
-	}
-
-	for (i=0; i<m_preprocessor.GetCount(); i++) {
-		wxXmlNode *prep = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Preprocessor"));
-		prep->AddProperty(wxT("Value"), m_preprocessor.Item(i));
-		compile->AddChild(prep);
-	}
-
-	//add the link node
-	wxXmlNode *link = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Linker"));
-	link->AddProperty(wxT("Required"), BoolToString(m_linkerRequired));
-	link->AddProperty(wxT("Options"), m_linkOptions);
-	node->AddChild(link);
-
-	for (i=0; i<m_libPath.GetCount(); i++) {
-		wxXmlNode *option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("LibraryPath"));
-		option->AddProperty(wxT("Value"), m_libPath.Item(i));
-		link->AddChild(option);
-	}
-
-	for (i=0; i<m_libs.GetCount(); i++) {
-		wxXmlNode *option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Library"));
-		option->AddProperty(wxT("Value"), m_libs.Item(i));
-		link->AddChild(option);
-	}
 
 	wxXmlNode *debugger = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Debugger"));
 	debugger->AddProperty(wxT("IsRemote"), BoolToString(m_isDbgRemoteTarget));
@@ -316,19 +271,6 @@ wxXmlNode *BuildConfig::ToXml() const
 	XmlUtils::SetNodeContent(dbgPostConnectCommands, m_debuggerPostRemoteConnectCmds);
 
 	node->AddChild(debugger);
-
-	//add the resource compiler node
-	wxXmlNode *resCmp = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("ResourceCompiler"));
-	resCmp->AddProperty(wxT("Required"), BoolToString(m_isResCmpNeeded));
-	resCmp->AddProperty(wxT("Options"), m_resCompileOptions);
-	node->AddChild(resCmp);
-
-	wxStringTokenizer tok(m_resCmpIncludePath, wxT(";"));
-	while (tok.HasMoreTokens()) {
-		wxXmlNode *option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IncludePath"));
-		option->AddProperty(wxT("Value"),tok.NextToken());
-		resCmp->AddChild(option);
-	}
 
 	//add prebuild commands
 	wxXmlNode *preBuild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("PreBuild"));
@@ -409,65 +351,54 @@ wxXmlNode *BuildConfig::ToXml() const
 
 void BuildConfig::SetPreprocessor(const wxString &pre)
 {
-	FillFromSmiColonString(m_preprocessor, pre);
+	m_commonConfig.SetPreprocessor(pre);
 }
 
 void BuildConfig::SetIncludePath(const wxString &path)
 {
-	FillFromSmiColonString(m_includePath, path);
+	m_commonConfig.SetIncludePath(path);
 }
 
 void BuildConfig::SetLibraries(const wxString &libs)
 {
-	FillFromSmiColonString(m_libs, libs);
+	m_commonConfig.SetLibraries(libs);
 }
 
 void BuildConfig::SetLibPath(const wxString &paths)
 {
-	FillFromSmiColonString(m_libPath, paths);
-}
-
-void BuildConfig::FillFromSmiColonString(wxArrayString &arr, const wxString &str)
-{
-	arr.clear();
-	wxStringTokenizer tkz(str, wxT(";"));
-	while (tkz.HasMoreTokens()) {
-		wxString token = tkz.NextToken();
-		arr.Add(token.Trim());
-	}
-}
-// Utils function
-wxString BuildConfig::ArrayToSmiColonString(const wxArrayString &array) const
-{
-	wxString result;
-	for (size_t i=0; i<array.GetCount(); i++) {
-		result += NormalizePath(array.Item(i));
-		result += wxT(";");
-	}
-	return result.BeforeLast(wxT(';'));
-}
-
-void BuildConfig::StripSemiColons(wxString &str)
-{
-	str.Replace(wxT(";"), wxT(" "));
+	m_commonConfig.SetLibPath(paths);
 }
 
 wxString BuildConfig::GetLibPath() const
 {
-	return ArrayToSmiColonString(m_libPath);
+	return m_commonConfig.GetLibPath();
 }
 
 wxString BuildConfig::GetLibraries() const
 {
-	return ArrayToSmiColonString(m_libs);
+	return m_commonConfig.GetLibraries();
 }
 
 wxString BuildConfig::GetIncludePath() const
 {
-	return ArrayToSmiColonString(m_includePath);
+	return m_commonConfig.GetIncludePath();
 }
 
 wxString BuildConfig::GetPreprocessor() const
 {
-	return ArrayToSmiColonString(m_preprocessor);
+	return m_commonConfig.GetPreprocessor();
+}
+
+wxString BuildConfig::GetOutputFileName() const
+{
+	return NormalizePath(m_outputFile);
+}
+
+wxString BuildConfig::GetIntermediateDirectory() const
+{
+	return NormalizePath(m_intermediateDirectory);
+}
+
+wxString BuildConfig::GetWorkingDirectory() const {
+	return NormalizePath(m_workingDirectory);
 }

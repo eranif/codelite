@@ -37,6 +37,7 @@
 #include "procutils.h"
 #include <wx/clipbrd.h>
 #include "ieditor.h"
+#include <wx/tokenzr.h>
 
 static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &confToBuild, const wxString &fileName);
 
@@ -128,17 +129,17 @@ wxString GetColumnText(wxListCtrl *list, long index, long column)
 
 bool ReadFileWithConversion(const wxString &fileName, wxString &content)
 {
-    content.Clear();
+	content.Clear();
 	wxFFile file(fileName, wxT("rb"));
 	if (file.IsOpened()) {
 		// first try the user defined encoding (except for UTF8: the UTF8 builtin appears to be faster)
-        wxFontEncoding encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
-        if (encoding != wxFONTENCODING_UTF8) {
-            wxCSConv fontEncConv(encoding);
-            if (fontEncConv.IsOk()) {
-                file.ReadAll(&content, fontEncConv);
-            }
-        }
+		wxFontEncoding encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
+		if (encoding != wxFONTENCODING_UTF8) {
+			wxCSConv fontEncConv(encoding);
+			if (fontEncConv.IsOk()) {
+				file.ReadAll(&content, fontEncConv);
+			}
+		}
 		if (content.IsEmpty()) {
 			// now try the Utf8
 			file.ReadAll(&content, wxConvUTF8);
@@ -286,7 +287,7 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 			output.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			output.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 			output.Replace(wxT("$(ProjectName)"), project_name);
-			if(bldConf) {
+			if (bldConf) {
 				output.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
 				output.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
 				output.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
@@ -313,7 +314,7 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 	output.Replace(wxT("$(User)"), wxGetUserName());
 	output.Replace(wxT("$(Date)"), now.FormatDate());
 
-	if(workspace){
+	if (workspace) {
 		output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
 	}
 
@@ -449,4 +450,46 @@ bool IsFileReadOnly(const wxFileName& filename)
 	// try to open the file with 'write permission'
 	return !filename.IsFileWritable();
 #endif
+}
+
+void FillFromSmiColonString(wxArrayString &arr, const wxString &str)
+{
+	arr.clear();
+	wxStringTokenizer tkz(str, wxT(";"));
+	while (tkz.HasMoreTokens()) {
+
+		wxString token = tkz.NextToken();
+		token.Trim().Trim(false);
+		if (token.IsEmpty()) {
+			continue;
+		}
+		arr.Add(token.Trim());
+
+	}
+}
+
+wxString ArrayToSmiColonString(const wxArrayString &array)
+{
+	wxString result;
+	for (size_t i=0; i<array.GetCount(); i++) {
+		wxString tmp = NormalizePath(array.Item(i));
+		tmp.Trim().Trim(false);
+		if ( tmp.IsEmpty() == false ) {
+			result += NormalizePath(array.Item(i));
+			result += wxT(";");
+		}
+	}
+	return result.BeforeLast(wxT(';'));
+}
+
+void StripSemiColons(wxString &str)
+{
+	str.Replace(wxT(";"), wxT(" "));
+}
+
+wxString NormalizePath(const wxString &path)
+{
+	wxString normalized_path(path);
+	normalized_path.Replace(wxT("\\"), wxT("/"));
+	return normalized_path;
 }

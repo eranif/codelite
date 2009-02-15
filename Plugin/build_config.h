@@ -26,8 +26,9 @@
 #define BUILD_CONFIGURATION_H
 
 #include "configuration_object.h"
+#include "build_config_common.h"
 #include <wx/arrstr.h>
-#include "wx/string.h"
+#include <wx/string.h>
 #include <list>
 #include <map>
 
@@ -76,12 +77,15 @@ typedef std::list<BuildCommand> BuildCommandList;
 
 class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject
 {
+public:
+	static const wxString OVERWRITE_GLOBAL_SETTINGS;
+	static const wxString APPEND_TO_GLOBAL_SETTINGS;
+	static const wxString PREPEND_GLOBAL_SETTINGS;
+
+private:
+	BuildConfigCommon m_commonConfig;
+	
 	wxString m_name;
-	wxArrayString m_includePath;
-	wxString m_compileOptions;
-	wxString m_linkOptions;
-	wxArrayString m_libs;
-	wxArrayString m_libPath;
 	BuildCommandList m_preBuildCommands;
 	BuildCommandList m_postBuildCommands;
 	bool m_compilerRequired;
@@ -95,11 +99,8 @@ class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject
 	wxString m_workingDirectory;
 	wxString m_compilerType;
 	wxString m_projectType;
-	wxArrayString m_preprocessor;
 	wxString m_customBuildCmd;
 	wxString m_customCleanCmd;
-	wxString m_resCompileOptions;
-	wxString m_resCmpIncludePath;
 	bool m_isResCmpNeeded;
 	wxString m_debuggerType;
 	wxString m_customPostBuildRule;
@@ -117,12 +118,9 @@ class WXDLLIMPEXP_LE_SDK BuildConfig : public ConfObject
 	wxString m_dbgHostPort;
 	std::map<wxString, wxString> m_customTargets;
 	wxString m_debuggerPath;
-
-private:
-	void FillFromSmiColonString(wxArrayString &arr, const wxString &str);
-	wxString ArrayToSmiColonString(const wxArrayString &array) const;
-	void StripSemiColons(wxString &str);
-	wxString NormalizePath(const wxString &path) const;
+	wxString m_buildCmpWithGlobalSettings;
+	wxString m_buildLnkWithGlobalSettings;
+	wxString m_buildResWithGlobalSettings;
 
 public:
 	BuildConfig(wxXmlNode *node);
@@ -135,7 +133,7 @@ public:
 	//--------------------------------
 	wxString GetPreprocessor() const;
 	void GetPreprocessor(wxArrayString &arr) {
-		arr = m_preprocessor;
+		m_commonConfig.GetPreprocessor(arr);
 	}
 	void SetPreprocessor(const wxString &prepr);
 
@@ -155,10 +153,10 @@ public:
 
 	wxString GetIncludePath() const;
 	const wxString &GetCompileOptions() const {
-		return m_compileOptions;
+		return m_commonConfig.GetCompileOptions();
 	}
 	const wxString &GetLinkOptions() const {
-		return m_linkOptions;
+		return m_commonConfig.GetLinkOptions();
 	}
 	wxString GetLibraries() const;
 	wxString GetLibPath() const;
@@ -177,21 +175,15 @@ public:
 	bool IsLinkerRequired() const {
 		return m_linkerRequired;
 	}
-	wxString GetOutputFileName() const {
-		return NormalizePath(m_outputFile);
-	}
-	wxString GetIntermediateDirectory() const {
-		return NormalizePath(m_intermediateDirectory);
-	}
+	wxString GetOutputFileName() const;
+	wxString GetIntermediateDirectory() const;
 	const wxString &GetCommand() const {
 		return m_command;
 	}
 	const wxString &GetCommandArguments() const {
 		return m_commandArguments;
 	}
-	wxString GetWorkingDirectory() const {
-		return NormalizePath(m_workingDirectory);
-	}
+	wxString GetWorkingDirectory() const;
 	bool IsCustomBuild() const {
 		return m_enableCustomBuild;
 	}
@@ -202,7 +194,7 @@ public:
 		return m_customCleanCmd;
 	}
 	void SetIncludePath(const wxArrayString &paths) {
-		m_includePath = paths;
+		m_commonConfig.SetIncludePath(paths);
 	}
 	void SetIncludePath(const wxString &path);
 	void SetLibraries(const wxString &libs);
@@ -210,10 +202,10 @@ public:
 
 	void SetLibPath(const wxString &path);
 	void SetCompileOptions(const wxString &options) {
-		m_compileOptions = options;
+		m_commonConfig.SetCompileOptions(options);
 	}
 	void SetLinkOptions(const wxString &options) {
-		m_linkOptions = options;
+		m_commonConfig.SetLinkOptions(options);
 	}
 	void SetPreBuildCommands(const BuildCommandList &cmds) {
 		m_preBuildCommands = cmds;
@@ -222,10 +214,10 @@ public:
 		m_postBuildCommands = cmds;
 	}
 	void SetLibraries(const wxArrayString &libs) {
-		m_libs = libs;
+		m_commonConfig.SetLibraries(libs);
 	}
 	void SetLibPath(const wxArrayString &libPaths) {
-		m_libPath = libPaths;
+		m_commonConfig.SetLibPath(libPaths);
 	}
 	void SetName(const wxString &name) {
 		m_name = name;
@@ -261,7 +253,6 @@ public:
 		m_enableCustomBuild = enable;
 	}
 
-
 	void SetResCompilerRequired(bool required) {
 		m_isResCmpNeeded = required;
 	}
@@ -270,17 +261,17 @@ public:
 	}
 
 	void SetResCmpIncludePath(const wxString &path) {
-		m_resCmpIncludePath = path;
+		m_commonConfig.SetResCmpIncludePath(path);
 	}
 	const wxString& GetResCmpIncludePath() const {
-		return m_resCmpIncludePath;
+		return m_commonConfig.GetResCmpIncludePath();
 	}
 
 	void SetResCmpOptions(const wxString &options) {
-		m_resCompileOptions = options;
+		m_commonConfig.SetResCmpOptions(options);
 	}
 	const wxString &GetResCompileOptions() const {
-		return m_resCompileOptions;
+		return m_commonConfig.GetResCompileOptions();
 	}
 
 	//special custom rules
@@ -388,14 +379,39 @@ public:
 		return m_debuggerPath;
 	}
 
-
 	void SetDebuggerPostRemoteConnectCmds(const wxString& debuggerPostRemoteConnectCmds) {
 		this->m_debuggerPostRemoteConnectCmds = debuggerPostRemoteConnectCmds;
 	}
 	const wxString& GetDebuggerPostRemoteConnectCmds() const {
 		return m_debuggerPostRemoteConnectCmds;
 	}
+	
+	const wxString& GetBuildCmpWithGlobalSettings() const {
+		return m_buildCmpWithGlobalSettings;
+	}
+	void SetBuildCmpWithGlobalSettings(const wxString &buildType) {
+		m_buildCmpWithGlobalSettings = buildType;
+	}
+	
+	const wxString& GetBuildLnkWithGlobalSettings() const {
+		return m_buildLnkWithGlobalSettings;
+	}
+	void SetBuildLnkWithGlobalSettings(const wxString &buildType) {
+		m_buildLnkWithGlobalSettings = buildType;
+	}
+	
+	const wxString& GetBuildResWithGlobalSettings() const {
+		return m_buildResWithGlobalSettings;
+	}
+	void SetBuildResWithGlobalSettings(const wxString &buildType) {
+		m_buildResWithGlobalSettings = buildType;
+	}
+	
+	const BuildConfigCommon& GetCommonConfiguration() const {
+		return m_commonConfig;
+	}
 };
 
 typedef SmartPtr<BuildConfig> BuildConfigPtr;
+
 #endif // BUILD_CONFIGURATION_H

@@ -333,6 +333,13 @@ public:
  	 * \param settings settings to update
   	 */
  	void SetProjectSettings(const wxString &projectName, ProjectSettingsPtr settings);
+	
+  	/**
+ 	 * Set project global settings
+ 	 * \param projectName project name
+ 	 * \param settings global settings to update
+  	 */
+	void SetProjectGlobalSettings(const wxString &projectName, BuildConfigCommonPtr settings);
   
   	/**
  	 * \brief return the project excution command as it appears in the project settings

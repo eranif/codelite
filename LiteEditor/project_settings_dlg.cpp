@@ -45,9 +45,54 @@ static const wxString CUSTOM_TARGET_BUILD = wxT("Build");
 static const wxString CUSTOM_TARGET_CLEAN = wxT("Clean");
 static const wxString CUSTOM_TARGET_COMPILE_SINGLE_FILE = wxT("Compile Single File");
 static const wxString CUSTOM_TARGET_PREPROCESS_FILE = wxT("Preprocess File");
+static const wxString GLOBAL_SETTINGS_LABEL = wxT("Global settings");
+static const wxString APPEND_TO_GLOBAL_SETTINGS = wxT("Append to global settings");
+static const wxString OVERWRITE_GLOBAL_SETTINGS = wxT("overwrite global settings");
+static const wxString PREPEND_GLOBAL_SETTINGS = wxT("prepend global settings");
 
-ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &configName, const wxString &projectName, const wxString &title )
-		: ProjectSettingsBaseDlg( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 782,502 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
+static const wxEventType wxEVT_CL_PROJECT_SETTINGS_MODIFIED = wxNewEventType();
+
+static
+bool PopupAddOptionDlg(wxTextCtrl *ctrl)
+{
+	AddOptionDlg dlg(NULL, ctrl->GetValue());
+	if (dlg.ShowModal() == wxID_OK) {
+		ctrl->SetValue(dlg.GetValue());
+		return true;
+	}
+	return false;
+}
+
+static
+bool PopupAddOptionCheckDlg(wxTextCtrl *ctrl, const wxString& title, const Compiler::CmpCmdLineOptions& options)
+{
+	AddOptionCheckDlg dlg(NULL, title, options, ctrl->GetValue());
+	if (dlg.ShowModal() == wxID_OK) {
+		ctrl->SetValue(dlg.GetValue());
+		return true;
+	}
+	return false;
+}
+
+static
+bool SelectChoiceWithGlobalSettings(wxChoice* c, const wxString& text)
+{
+	if (text == BuildConfig::APPEND_TO_GLOBAL_SETTINGS) {
+		c->Select(c->FindString(APPEND_TO_GLOBAL_SETTINGS));
+	} else if (text == BuildConfig::OVERWRITE_GLOBAL_SETTINGS) {
+		c->Select(c->FindString(OVERWRITE_GLOBAL_SETTINGS));
+	} else if (text == BuildConfig::PREPEND_GLOBAL_SETTINGS) {
+		c->Select(c->FindString(PREPEND_GLOBAL_SETTINGS));
+	} else {
+		c->Select(c->FindString(APPEND_TO_GLOBAL_SETTINGS));
+		return false;
+	}
+	return true;
+}
+
+
+ProjectConfigurationPanel::ProjectConfigurationPanel(wxWindow* parent, const wxString &configName, const wxString &projectName)
+		: ProjectConfigurationBasePanel(parent)
 		, m_projectName(projectName)
 		, m_configName(configName)
 		, m_oldConfigurationName(wxEmptyString)
@@ -56,11 +101,25 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 	m_listCtrlTargets->InsertColumn(0, wxT("Target"));
 	m_listCtrlTargets->InsertColumn(1, wxT("Command"));
 
+	m_choiceCmpUseWithGlobalSettings->AppendString(APPEND_TO_GLOBAL_SETTINGS);
+	m_choiceCmpUseWithGlobalSettings->AppendString(OVERWRITE_GLOBAL_SETTINGS);
+	m_choiceCmpUseWithGlobalSettings->AppendString(PREPEND_GLOBAL_SETTINGS);
+	m_choiceCmpUseWithGlobalSettings->Select(0);
+
+	m_choiceLnkUseWithGlobalSettings->AppendString(APPEND_TO_GLOBAL_SETTINGS);
+	m_choiceLnkUseWithGlobalSettings->AppendString(OVERWRITE_GLOBAL_SETTINGS);
+	m_choiceLnkUseWithGlobalSettings->AppendString(PREPEND_GLOBAL_SETTINGS);
+	m_choiceLnkUseWithGlobalSettings->Select(0);
+
+	m_choiceResUseWithGlobalSettings->AppendString(APPEND_TO_GLOBAL_SETTINGS);
+	m_choiceResUseWithGlobalSettings->AppendString(OVERWRITE_GLOBAL_SETTINGS);
+	m_choiceResUseWithGlobalSettings->AppendString(PREPEND_GLOBAL_SETTINGS);
+	m_choiceResUseWithGlobalSettings->Select(0);
+
 	ConnectEvents();
-	m_notebook3->SetSelection(0);
+	m_notebook->SetSelection(0);
 	//fill the dialog with values
 	InitDialog(m_configName, wxEmptyString);
-	m_oldConfigurationName = m_choiceConfigurationType->GetStringSelection();
 
 	//if this is a custom build project disable the
 	//compiler linker pages
@@ -82,60 +141,30 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
 	m_textAddResCmpPath->Enable(!m_checkResourceNeeded->IsChecked());
 	m_buttonAddResCmpOptions->Enable(!m_checkResourceNeeded->IsChecked());
 	m_buttonAddResCmpPath->Enable(!m_checkResourceNeeded->IsChecked());
-	m_buttonApply->Enable(false);
 
 	m_textCtrl1DbgHost->Enable(m_checkBoxDbgRemote->IsChecked());
 	m_textCtrlDbgPort->Enable(m_checkBoxDbgRemote->IsChecked());
 
-	//SetSizeHints(780, -1);
 	GetSizer()->Fit(this);
 	Centre();
-
-	WindowAttrManager::Load(this, wxT("ProjectSettingsDlg"), NULL);
-
 }
 
-ProjectSettingsDlg::~ProjectSettingsDlg()
-{
-	WindowAttrManager::Save(this, wxT("ProjectSettingsDlg"), NULL);
-}
-
-void ProjectSettingsDlg::UpdateConfigurationTypeChoice(const wxString &itemToSelect)
-{
-	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
-	ProjectSettingsCookie cookie;
-	m_choiceConfigurationType->Clear();
-	BuildConfigPtr conf = projSettingsPtr->GetFirstBuildConfiguration(cookie);
-	while (conf) {
-		m_choiceConfigurationType->Append(conf->GetName());
-		conf = projSettingsPtr->GetNextBuildConfiguration(cookie);
-	}
-
-	if (itemToSelect.IsEmpty() || m_choiceConfigurationType->FindString(itemToSelect) == wxNOT_FOUND) {
-		if (m_choiceConfigurationType->GetCount() > 0)
-			m_choiceConfigurationType->SetSelection(0);
-	} else {
-		m_choiceConfigurationType->SetStringSelection(itemToSelect);
-	}
-}
-
-void ProjectSettingsDlg::InitDialog(const wxString &configName, const wxString &oldConfig)
+void ProjectConfigurationPanel::InitDialog(const wxString &configName, const wxString &oldConfig)
 {
 	wxUnusedVar(configName);
 	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
 
-	UpdateConfigurationTypeChoice(configName);
-	if (oldConfig.IsEmpty() == false) {
+	if (!oldConfig.IsEmpty() && oldConfig != GLOBAL_SETTINGS_LABEL) {
 		// save old values before replacing them
 		SaveValues(oldConfig);
 	}
 
 	ClearValues();
-	CopyValues(m_choiceConfigurationType->GetStringSelection());
+	CopyValues(configName);
 	DoUpdatePages(m_checkEnableCustomBuild->IsChecked());
 }
 
-void ProjectSettingsDlg::ClearValues()
+void ProjectConfigurationPanel::ClearValues()
 {
 	BuildCommandList preBuildCmds, postBuildCmds;
 
@@ -169,7 +198,7 @@ void ProjectSettingsDlg::ClearValues()
 	DisableCustomBuildPage(true);
 }
 
-void ProjectSettingsDlg::CopyValues(const wxString &confName)
+void ProjectConfigurationPanel::CopyValues(const wxString &confName)
 {
 	BuildConfigPtr buildConf;
 	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
@@ -222,7 +251,7 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	std::map<wxString, wxString>::iterator titer = targets.begin();
 	for (; titer != targets.end(); titer++) {
 
-		if(titer->first == CUSTOM_TARGET_BUILD || titer->first == CUSTOM_TARGET_CLEAN || titer->first == CUSTOM_TARGET_COMPILE_SINGLE_FILE || titer->first == CUSTOM_TARGET_PREPROCESS_FILE){
+		if (titer->first == CUSTOM_TARGET_BUILD || titer->first == CUSTOM_TARGET_CLEAN || titer->first == CUSTOM_TARGET_COMPILE_SINGLE_FILE || titer->first == CUSTOM_TARGET_PREPROCESS_FILE) {
 			continue;
 		}
 
@@ -325,9 +354,13 @@ void ProjectSettingsDlg::CopyValues(const wxString &confName)
 	}
 
 	m_checkBoxPauseWhenExecEnds->SetValue(buildConf->GetPauseWhenExecEnds());
+
+	SelectChoiceWithGlobalSettings(m_choiceCmpUseWithGlobalSettings, buildConf->GetBuildCmpWithGlobalSettings());
+	SelectChoiceWithGlobalSettings(m_choiceLnkUseWithGlobalSettings, buildConf->GetBuildLnkWithGlobalSettings());
+	SelectChoiceWithGlobalSettings(m_choiceResUseWithGlobalSettings, buildConf->GetBuildResWithGlobalSettings());
 }
 
-void ProjectSettingsDlg::SaveValues(const wxString &confName)
+void ProjectConfigurationPanel::SaveValues(const wxString &confName)
 {
 	BuildConfigPtr buildConf;
 	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
@@ -341,8 +374,8 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	// loop over the list and create the targets map
 	std::map<wxString, wxString> targets;
 	for (int i=0; i<(int)m_listCtrlTargets->GetItemCount(); i++) {
-        wxString colText = GetColumnText(m_listCtrlTargets, i, 0);
-		if(colText == CUSTOM_TARGET_BUILD || colText == CUSTOM_TARGET_CLEAN || colText == CUSTOM_TARGET_COMPILE_SINGLE_FILE || colText == CUSTOM_TARGET_PREPROCESS_FILE){
+		wxString colText = GetColumnText(m_listCtrlTargets, i, 0);
+		if (colText == CUSTOM_TARGET_BUILD || colText == CUSTOM_TARGET_CLEAN || colText == CUSTOM_TARGET_COMPILE_SINGLE_FILE || colText == CUSTOM_TARGET_PREPROCESS_FILE) {
 			continue;
 		}
 		targets[GetColumnText(m_listCtrlTargets, i, 0)] = GetColumnText(m_listCtrlTargets, i, 1);
@@ -368,7 +401,7 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	buildConf->SetCustomBuildCmd(GetTargetCommand(CUSTOM_TARGET_BUILD));
 	buildConf->SetCustomCleanCmd(GetTargetCommand(CUSTOM_TARGET_CLEAN));
 	buildConf->SetSingleFileBuildCommand(GetTargetCommand(CUSTOM_TARGET_COMPILE_SINGLE_FILE));
-    buildConf->SetPreprocessFileCommand(GetTargetCommand(CUSTOM_TARGET_PREPROCESS_FILE));
+	buildConf->SetPreprocessFileCommand(GetTargetCommand(CUSTOM_TARGET_PREPROCESS_FILE));
 
 	buildConf->EnableCustomBuild(m_checkEnableCustomBuild->IsChecked());
 	buildConf->SetMakeGenerationCommand(m_textCtrlMakefileGenerationCmd->GetValue());
@@ -420,49 +453,48 @@ void ProjectSettingsDlg::SaveValues(const wxString &confName)
 	}
 	buildConf->SetPostBuildCommands(cmds);
 
+	wxString useWithGlobalSettings = m_choiceCmpUseWithGlobalSettings->GetStringSelection();
+	if (useWithGlobalSettings == APPEND_TO_GLOBAL_SETTINGS) {
+		buildConf->SetBuildCmpWithGlobalSettings(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);
+	} else if (useWithGlobalSettings == OVERWRITE_GLOBAL_SETTINGS) {
+		buildConf->SetBuildCmpWithGlobalSettings(BuildConfig::OVERWRITE_GLOBAL_SETTINGS);
+	} else if (useWithGlobalSettings == PREPEND_GLOBAL_SETTINGS) {
+		buildConf->SetBuildCmpWithGlobalSettings(BuildConfig::PREPEND_GLOBAL_SETTINGS);
+	}
+	useWithGlobalSettings = m_choiceLnkUseWithGlobalSettings->GetStringSelection();
+	if (useWithGlobalSettings == APPEND_TO_GLOBAL_SETTINGS) {
+		buildConf->SetBuildLnkWithGlobalSettings(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);
+	} else if (useWithGlobalSettings == OVERWRITE_GLOBAL_SETTINGS) {
+		buildConf->SetBuildLnkWithGlobalSettings(BuildConfig::OVERWRITE_GLOBAL_SETTINGS);
+	} else if (useWithGlobalSettings == PREPEND_GLOBAL_SETTINGS) {
+		buildConf->SetBuildLnkWithGlobalSettings(BuildConfig::PREPEND_GLOBAL_SETTINGS);
+	}
+	useWithGlobalSettings = m_choiceResUseWithGlobalSettings->GetStringSelection();
+	if (useWithGlobalSettings == APPEND_TO_GLOBAL_SETTINGS) {
+		buildConf->SetBuildResWithGlobalSettings(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);
+	} else if (useWithGlobalSettings == OVERWRITE_GLOBAL_SETTINGS) {
+		buildConf->SetBuildResWithGlobalSettings(BuildConfig::OVERWRITE_GLOBAL_SETTINGS);
+	} else if (useWithGlobalSettings == PREPEND_GLOBAL_SETTINGS) {
+		buildConf->SetBuildResWithGlobalSettings(BuildConfig::PREPEND_GLOBAL_SETTINGS);
+	}
+
 	//save settings
 	ManagerST::Get()->SetProjectSettings(m_projectName, projSettingsPtr);
 }
 
-void ProjectSettingsDlg::ConnectEvents()
+void ProjectConfigurationPanel::ConnectEvents()
 {
-	ConnectChoice(m_choiceConfigurationType, ProjectSettingsDlg::OnConfigurationTypeSelected);
-	ConnectCheckBox(m_checkCompilerNeeded, ProjectSettingsDlg::OnCheckCompilerNeeded);
-	ConnectCheckBox(m_checkLinkerNeeded, ProjectSettingsDlg::OnCheckLinkerNeeded);
-	ConnectButton(m_buttonAddSearchPath, ProjectSettingsDlg::OnAddSearchPath);
-	ConnectButton(m_buttonLibraries, ProjectSettingsDlg::OnAddLibrary);
-	ConnectButton(m_buttonLibraryPath, ProjectSettingsDlg::OnAddLibraryPath);
-	ConnectButton(m_buttonNewPreBuildCmd, ProjectSettingsDlg::OnNewPreBuildCommand);
-	ConnectButton(m_buttonEditPreBuildCmd, ProjectSettingsDlg::OnEditPreBuildCommand);
-	ConnectButton(m_buttonUpPreBuildCmd, ProjectSettingsDlg::OnUpPreBuildCommand);
-	ConnectButton(m_buttonDownPreBuildCmd, ProjectSettingsDlg::OnDownPreBuildCommand);
-	ConnectButton(m_buttonDeletePreBuildCmd, ProjectSettingsDlg::OnDeletePreBuildCommand);
-	ConnectButton(m_buttonNewPostBuildCmd, ProjectSettingsDlg::OnNewPostBuildCommand);
-	ConnectButton(m_buttonEditPostBuildCmd, ProjectSettingsDlg::OnEditPostBuildCommand);
-	ConnectButton(m_buttonUpPostBuildCmd, ProjectSettingsDlg::OnUpPostBuildCommand);
-	ConnectButton(m_buttonDownPostBuildCmd, ProjectSettingsDlg::OnDownPostBuildCommand);
-	ConnectButton(m_buttonDeletePostBuildCmd, ProjectSettingsDlg::OnDeletePostBuildCommand);
-	ConnectButton(m_buttonOK, ProjectSettingsDlg::OnButtonOK);
-	ConnectButton(m_buttonApply, ProjectSettingsDlg::OnButtonApply);
-	ConnectButton(m_buttonConfigManager, ProjectSettingsDlg::OnButtonConfigurationManager);
-	ConnectButton(m_buttonAddPreprocessor, ProjectSettingsDlg::OnButtonAddPreprocessor);
-	ConnectButton(m_buttonLinkerOptions, ProjectSettingsDlg::OnButtonAddLinkerOptions);
-	ConnectButton(m_buttonCompilerOptions, ProjectSettingsDlg::OnButtonAddCompilerOptions);
-	ConnectCheckBox(m_checkEnableCustomBuild, ProjectSettingsDlg::OnCustomBuildEnabled);
-	ConnectCheckBox(m_checkResourceNeeded, ProjectSettingsDlg::OnResourceCmpNeeded);
-	ConnectButton(m_buttonAddResCmpPath, ProjectSettingsDlg::OnResourceCmpAddPath);
-	ConnectButton(m_buttonAddResCmpOptions, ProjectSettingsDlg::OnResourceCmpAddOption);
-	m_checkListPostBuildCommands->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnEditPostBuildCommand), NULL, this);
-	m_checkListPreBuildCommands->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnEditPreBuildCommand), NULL, this);
+	m_checkListPreBuildCommands->Connect(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(ProjectConfigurationPanel::OnEditPreBuildCommand), NULL, this);
 }
 
-void ProjectSettingsDlg::OnCustomBuildEnabled(wxCommandEvent &event)
+void ProjectConfigurationPanel::OnCustomBuildEnabled(wxCommandEvent &event)
 {
 	DoUpdatePages(event.IsChecked());
+	SetSettingsModified();
 	event.Skip();
 }
 
-void ProjectSettingsDlg::DoUpdatePages(bool checked)
+void ProjectConfigurationPanel::DoUpdatePages(bool checked)
 {
 	DisableCompilerPage(checked);
 	DisableLinkerPage(checked);
@@ -481,7 +513,14 @@ void ProjectSettingsDlg::DoUpdatePages(bool checked)
 	}
 }
 
-void ProjectSettingsDlg::DisableCustomBuildPage(bool disable)
+void ProjectConfigurationPanel::SetSettingsModified()
+{
+	wxCommandEvent event( wxEVT_CL_PROJECT_SETTINGS_MODIFIED, GetId());
+	event.SetEventObject( this );
+	wxPostEvent(GetParent(), event);
+}
+
+void ProjectConfigurationPanel::DisableCustomBuildPage(bool disable)
 {
 	m_listCtrlTargets->Enable(!disable);
 	m_textCtrlCustomBuildWD->Enable(!disable);
@@ -502,49 +541,56 @@ void ProjectSettingsDlg::DisableCustomBuildPage(bool disable)
 	}
 }
 
-void ProjectSettingsDlg::OnButtonAddPreprocessor(wxCommandEvent &event)
+void ProjectConfigurationPanel::OnButtonAddPreprocessor(wxCommandEvent &event)
 {
-	PopupAddOptionDlg(m_textPreprocessor);
+	if (PopupAddOptionDlg(m_textPreprocessor)) {
+		SetSettingsModified();
+	}
 	event.Skip();
 }
 
 void ProjectSettingsDlg::OnButtonOK(wxCommandEvent &event)
 {
-	wxUnusedVar(event);
-	SaveValues(m_choiceConfigurationType->GetStringSelection());
+	OnButtonApply(event);
 	EndModal(wxID_OK);
 }
 
 void ProjectSettingsDlg::OnButtonApply(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
-	SaveValues(m_choiceConfigurationType->GetStringSelection());
+	wxString sel = m_choiceConfigurationType->GetStringSelection();
+	if (sel != GLOBAL_SETTINGS_LABEL) {
+		m_configurationPanel->SaveValues(sel);
+	}
+	m_globalSettingsPanel->SaveValues();
 	m_buttonApply->Enable(false);
-}
-
-void ProjectSettingsDlg::OnButtonConfigurationManager(wxCommandEvent &event)
-{
-	wxUnusedVar(event);
-	ConfigurationManagerDlg *dlg = new ConfigurationManagerDlg(this);
-	dlg->ShowModal();
-	dlg->Destroy();
-
-	//update the configuration type choice control
-	UpdateConfigurationTypeChoice(m_choiceConfigurationType->GetStringSelection());
-	//Load values according to the new selection
-	CopyValues(m_choiceConfigurationType->GetStringSelection());
-	event.Skip();
 }
 
 void ProjectSettingsDlg::OnConfigurationTypeSelected(wxCommandEvent &event)
 {
 	wxString selection = event.GetString();
-	InitDialog(selection, m_oldConfigurationName);
-	m_oldConfigurationName = selection;
+	if (selection == GLOBAL_SETTINGS_LABEL) {
+
+		m_sizerSettings->Hide(m_configurationPanel);
+		m_sizerSettings->Show(m_globalSettingsPanel);
+	} else {
+
+		m_sizerSettings->Hide(m_globalSettingsPanel);
+		m_sizerSettings->Show(m_configurationPanel);
+
+		m_configurationPanel->InitDialog(selection, m_oldConfigurationName);
+		m_oldConfigurationName = selection;
+	}
+
+	m_sizerSettings->Layout();
+	GetSizer()->Layout();
+
+	//Layout(); // JFO : doesn't work, I don't kow why...
+				// EI  : calling each sizer for layout seems to work. Looks like a bug in WX
 	event.Skip();
 }
 
-void ProjectSettingsDlg::DisableCompilerPage(bool disable)
+void ProjectConfigurationPanel::DisableCompilerPage(bool disable)
 {
 	m_textAdditionalSearchPath->Enable(!disable);
 	m_buttonAddSearchPath->Enable(!disable);
@@ -554,7 +600,7 @@ void ProjectSettingsDlg::DisableCompilerPage(bool disable)
 	m_buttonCompilerOptions->Enable(!disable);
 }
 
-void ProjectSettingsDlg::DisableLinkerPage(bool disable)
+void ProjectConfigurationPanel::DisableLinkerPage(bool disable)
 {
 	m_textLibraryPath->Enable(!disable);
 	m_textLibraries->Enable(!disable);
@@ -564,60 +610,49 @@ void ProjectSettingsDlg::DisableLinkerPage(bool disable)
 	m_buttonLinkerOptions->Enable(!disable);
 }
 
-void ProjectSettingsDlg::OnCheckCompilerNeeded(wxCommandEvent &event)
+void ProjectConfigurationPanel::OnCheckCompilerNeeded(wxCommandEvent &event)
 {
 	DisableCompilerPage(event.IsChecked());
+	SetSettingsModified();
 	event.Skip();
 }
 
-void ProjectSettingsDlg::OnCheckLinkerNeeded(wxCommandEvent &event)
+void ProjectConfigurationPanel::OnCheckLinkerNeeded(wxCommandEvent &event)
 {
 	DisableLinkerPage(event.IsChecked());
+	SetSettingsModified();
 	event.Skip();
 }
 
-void ProjectSettingsDlg::PopupAddOptionDlg(wxTextCtrl *ctrl)
+void ProjectConfigurationPanel::OnAddSearchPath(wxCommandEvent &event)
 {
-	AddOptionDlg *dlg = new AddOptionDlg(NULL, ctrl->GetValue());
-	if (dlg->ShowModal() == wxID_OK) {
-		wxString updatedValue = dlg->GetValue();
-		ctrl->SetValue(updatedValue);
+	if (PopupAddOptionDlg(m_textAdditionalSearchPath)) {
+		SetSettingsModified();
 	}
-	dlg->Destroy();
+	event.Skip();
 }
 
-void ProjectSettingsDlg::PopupAddOptionCheckDlg(wxTextCtrl *ctrl, const wxString& title, const Compiler::CmpCmdLineOptions& options)
+void ProjectConfigurationPanel::OnAddLibrary(wxCommandEvent &event)
 {
-	AddOptionCheckDlg *dlg = new AddOptionCheckDlg(NULL, title, options, ctrl->GetValue());
-	if (dlg->ShowModal() == wxID_OK) {
-		ctrl->SetValue(dlg->GetValue());
+	if (PopupAddOptionDlg(m_textLibraries)) {
+		SetSettingsModified();
 	}
-	dlg->Destroy();
-}
-
-void ProjectSettingsDlg::OnAddSearchPath(wxCommandEvent &event)
-{
-	PopupAddOptionDlg(m_textAdditionalSearchPath);
 	event.Skip();
 }
 
-void ProjectSettingsDlg::OnAddLibrary(wxCommandEvent &event)
+void ProjectConfigurationPanel::OnAddLibraryPath(wxCommandEvent &event)
 {
-	PopupAddOptionDlg(m_textLibraries);
+	if (PopupAddOptionDlg(m_textLibraryPath)) {
+		SetSettingsModified();
+	}
 	event.Skip();
 }
 
-void ProjectSettingsDlg::OnAddLibraryPath(wxCommandEvent &event)
+void ProjectConfigurationPanel::OnNewCommand(wxCheckListBox *list)
 {
-	PopupAddOptionDlg(m_textLibraryPath);
-	event.Skip();
-}
-
-void ProjectSettingsDlg::OnNewCommand(wxCheckListBox *list)
-{
-	FreeTextDialog *dlg = new FreeTextDialog(this);
-	if (dlg->ShowModal() == wxID_OK) {
-		wxString value = dlg->GetValue();
+	FreeTextDialog dlg(this);
+	if (dlg.ShowModal() == wxID_OK) {
+		wxString value = dlg.GetValue();
 		TrimString(value);
 		//incase several commands were entered, split them
 		wxStringTokenizer tkz(value, wxT("\n"), wxTOKEN_STRTOK);
@@ -628,11 +663,11 @@ void ProjectSettingsDlg::OnNewCommand(wxCheckListBox *list)
 				list->Check(list->GetCount()-1);
 			}
 		}
+		SetSettingsModified();
 	}
-	dlg->Destroy();
 }
 
-void ProjectSettingsDlg::OnEditCommand(wxCheckListBox *list)
+void ProjectConfigurationPanel::OnEditCommand(wxCheckListBox *list)
 {
 	wxString selectedString  = list->GetStringSelection();
 	int sel = list->GetSelection();
@@ -652,10 +687,11 @@ void ProjectSettingsDlg::OnEditCommand(wxCheckListBox *list)
 			list->SetString((unsigned int)sel, value);
 			list->Check((unsigned int)sel, selectIt);
 		}
+		SetSettingsModified();
 	}
 }
 
-void ProjectSettingsDlg::OnUpCommand(wxCheckListBox *list)
+void ProjectConfigurationPanel::OnUpCommand(wxCheckListBox *list)
 {
 	wxString selectedString  = list->GetStringSelection();
 
@@ -675,9 +711,11 @@ void ProjectSettingsDlg::OnUpCommand(wxCheckListBox *list)
 	list->Insert(selectedString, sel);
 	list->Select(sel);
 	list->Check(sel, isSelected);
+
+	SetSettingsModified();
 }
 
-void ProjectSettingsDlg::OnDownCommand(wxCheckListBox *list)
+void ProjectConfigurationPanel::OnDownCommand(wxCheckListBox *list)
 {
 	int sel = list->GetSelection();
 	if (sel == wxNOT_FOUND) {
@@ -697,9 +735,11 @@ void ProjectSettingsDlg::OnDownCommand(wxCheckListBox *list)
 	list->Insert(oldStr, sel - 1);
 	list->Select(sel);
 	list->Check(sel - 1, oldStringIsSelected);
+
+	SetSettingsModified();
 }
 
-void ProjectSettingsDlg::OnDeleteCommand(wxCheckListBox *list)
+void ProjectConfigurationPanel::OnDeleteCommand(wxCheckListBox *list)
 {
 	int sel = list->GetSelection();
 	if (sel == wxNOT_FOUND) {
@@ -711,37 +751,46 @@ void ProjectSettingsDlg::OnDeleteCommand(wxCheckListBox *list)
 	} else if (sel - 1 < (int)list->GetCount()) {
 		list->Select(sel -1);
 	}
+	SetSettingsModified();
 }
 
-void ProjectSettingsDlg::OnButtonAddCompilerOptions(wxCommandEvent &event)
+void ProjectConfigurationPanel::OnButtonAddCompilerOptions(wxCommandEvent &event)
 {
 	wxString cmpName = m_choiceCompilerType->GetStringSelection();
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-	PopupAddOptionCheckDlg(m_textCompilerOptions, _("Compiler options"), cmp->GetCompilerOptions());
+	if (PopupAddOptionCheckDlg(m_textCompilerOptions, _("Compiler options"), cmp->GetCompilerOptions())) {
+		SetSettingsModified();
+	}
 	event.Skip();
 }
 
-void ProjectSettingsDlg::OnButtonAddLinkerOptions(wxCommandEvent &event)
+void ProjectConfigurationPanel::OnButtonAddLinkerOptions(wxCommandEvent &event)
 {
 	wxString cmpName = m_choiceCompilerType->GetStringSelection();
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-	PopupAddOptionCheckDlg(m_textLinkerOptions, _("Linker options"), cmp->GetLinkerOptions());
+	if (PopupAddOptionCheckDlg(m_textLinkerOptions, _("Linker options"), cmp->GetLinkerOptions())) {
+		SetSettingsModified();
+	}
 	event.Skip();
 }
 
-void ProjectSettingsDlg::OnResourceCmpAddOption(wxCommandEvent &event)
+void ProjectConfigurationPanel::OnResourceCmpAddOption(wxCommandEvent &event)
 {
-	PopupAddOptionDlg(m_textAddResCmpOptions);
+	if (PopupAddOptionDlg(m_textAddResCmpOptions)) {
+		SetSettingsModified();
+	}
 	event.Skip();
 }
 
-void ProjectSettingsDlg::OnResourceCmpAddPath(wxCommandEvent &event)
+void ProjectConfigurationPanel::OnResourceCmpAddPath(wxCommandEvent &event)
 {
-	PopupAddOptionDlg(m_textAddResCmpPath);
+	if (PopupAddOptionDlg(m_textAddResCmpPath)) {
+		SetSettingsModified();
+	}
 	event.Skip();
 }
 
-void ProjectSettingsDlg::OnResourceCmpNeeded(wxCommandEvent &event)
+void ProjectConfigurationPanel::OnResourceCmpNeeded(wxCommandEvent &event)
 {
 	m_textAddResCmpOptions->Enable(!event.IsChecked());
 	m_textAddResCmpPath->Enable(!event.IsChecked());
@@ -750,36 +799,29 @@ void ProjectSettingsDlg::OnResourceCmpNeeded(wxCommandEvent &event)
 	event.Skip();
 }
 
-void ProjectSettingsDlg::OnCmdEvtVModified(wxCommandEvent &event)
-{
-	m_buttonApply->Enable(true);
-	event.Skip();
-}
-
-void ProjectSettingsDlg::DisableGeneralPage(bool disable)
+void ProjectConfigurationPanel::DisableGeneralPage(bool disable)
 {
 	m_choiceProjectTypes->Enable( !disable );
 	m_buttonBrowseIM_WD->Enable( !disable );
 }
 
-void ProjectSettingsDlg::DisableCustomMkSteps(bool disable)
+void ProjectConfigurationPanel::DisableCustomMkSteps(bool disable)
 {
 	m_textDeps->Enable( !disable );
 	m_textPreBuildRule->Enable( !disable );
 }
 
-void ProjectSettingsDlg::OnChoiceMakefileTool(wxCommandEvent &e)
+void ProjectConfigurationPanel::OnChoiceMakefileTool(wxCommandEvent &e)
 {
 	if (e.GetString() == wxT("None")) {
 		m_textCtrlMakefileGenerationCmd->Enable(false);
 	} else {
 		m_textCtrlMakefileGenerationCmd->Enable(true);
 	}
-
-	OnCmdEvtVModified(e);
+	SetSettingsModified();
 }
 
-void ProjectSettingsDlg::OnDebuggingRemoteTarget(wxCommandEvent& e)
+void ProjectConfigurationPanel::OnDebuggingRemoteTarget(wxCommandEvent& e)
 {
 	if (e.IsChecked()) {
 		m_textCtrl1DbgHost->Enable(true);
@@ -788,7 +830,7 @@ void ProjectSettingsDlg::OnDebuggingRemoteTarget(wxCommandEvent& e)
 		m_textCtrl1DbgHost->Enable(false);
 		m_textCtrlDbgPort->Enable(false);
 	}
-	OnCmdEvtVModified(e);
+	SetSettingsModified();
 }
 
 void ProjectSettingsDlg::OnButtonHelp(wxCommandEvent& e)
@@ -801,18 +843,18 @@ void ProjectSettingsDlg::OnButtonHelp(wxCommandEvent& e)
 /**
  * Custom Build event handling
  */
-void ProjectSettingsDlg::OnDeleteTarget(wxCommandEvent& e)
+void ProjectConfigurationPanel::OnDeleteTarget(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	if (m_selecteCustomTaregt != wxNOT_FOUND) {
 		m_listCtrlTargets->DeleteItem(m_selecteCustomTaregt);
 		m_selecteCustomTaregt = wxNOT_FOUND;
 
-		m_buttonApply->Enable(true);
+		SetSettingsModified();
 	}
 }
 
-void ProjectSettingsDlg::OnEditTarget(wxCommandEvent& e)
+void ProjectConfigurationPanel::OnEditTarget(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	if (m_selecteCustomTaregt != wxNOT_FOUND) {
@@ -820,7 +862,7 @@ void ProjectSettingsDlg::OnEditTarget(wxCommandEvent& e)
 	}
 }
 
-void ProjectSettingsDlg::OnNewTarget(wxCommandEvent& e)
+void ProjectConfigurationPanel::OnNewTarget(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 
@@ -829,8 +871,8 @@ void ProjectSettingsDlg::OnNewTarget(wxCommandEvent& e)
 	dlg.SetStaticText1(wxT("Target Name:"));
 	dlg.SetStaticText2(wxT("Command:"));
 	if (dlg.ShowModal() == wxID_OK) {
-		m_buttonApply->Enable(true);
-		if(GetTargetCommand(dlg.GetName()).IsEmpty() == false){
+		SetSettingsModified();
+		if (GetTargetCommand(dlg.GetName()).IsEmpty() == false) {
 			wxMessageBox(wxString::Format(wxT("Target '%s' already exist!"), dlg.GetName().c_str()), wxT("CodeLite"), wxICON_WARNING|wxCENTER|wxOK, this);
 			return;
 		}
@@ -839,20 +881,20 @@ void ProjectSettingsDlg::OnNewTarget(wxCommandEvent& e)
 	}
 }
 
-void ProjectSettingsDlg::OnItemActivated(wxListEvent& e)
+void ProjectConfigurationPanel::OnItemActivated(wxListEvent& e)
 {
 	m_selecteCustomTaregt = e.m_itemIndex;
 	DoEditItem(m_selecteCustomTaregt);
 }
 
-void ProjectSettingsDlg::OnItemSelected(wxListEvent& e)
+void ProjectConfigurationPanel::OnItemSelected(wxListEvent& e)
 {
 	m_selecteCustomTaregt = e.m_itemIndex;
 }
 
-void ProjectSettingsDlg::OnDeleteTargetUI(wxUpdateUIEvent& e)
+void ProjectConfigurationPanel::OnDeleteTargetUI(wxUpdateUIEvent& e)
 {
-	if(m_selecteCustomTaregt != wxNOT_FOUND){
+	if (m_selecteCustomTaregt != wxNOT_FOUND) {
 		wxString name = GetColumnText(m_listCtrlTargets, m_selecteCustomTaregt, 0);
 		e.Enable(name != CUSTOM_TARGET_BUILD && name != CUSTOM_TARGET_CLEAN && name != CUSTOM_TARGET_COMPILE_SINGLE_FILE && m_checkEnableCustomBuild->IsChecked());
 	} else {
@@ -860,12 +902,12 @@ void ProjectSettingsDlg::OnDeleteTargetUI(wxUpdateUIEvent& e)
 	}
 }
 
-void ProjectSettingsDlg::OnEditTargetUI(wxUpdateUIEvent& e)
+void ProjectConfigurationPanel::OnEditTargetUI(wxUpdateUIEvent& e)
 {
 	e.Enable(m_selecteCustomTaregt != wxNOT_FOUND && m_checkEnableCustomBuild->IsChecked());
 }
 
-void ProjectSettingsDlg::DoEditItem(long item)
+void ProjectConfigurationPanel::DoEditItem(long item)
 {
 	if (item != wxNOT_FOUND) {
 		wxString target = GetColumnText(m_listCtrlTargets, item, 0);
@@ -878,18 +920,18 @@ void ProjectSettingsDlg::DoEditItem(long item)
 		dlg.SetValue(cmd);
 
 		// dont allow user to modify the common targets
-		if(target == CUSTOM_TARGET_BUILD || target == CUSTOM_TARGET_CLEAN || target == CUSTOM_TARGET_COMPILE_SINGLE_FILE){
+		if (target == CUSTOM_TARGET_BUILD || target == CUSTOM_TARGET_CLEAN || target == CUSTOM_TARGET_COMPILE_SINGLE_FILE) {
 			dlg.DisableName();
 		}
 
 		if (dlg.ShowModal() == wxID_OK) {
 			DoUpdateItem(item, dlg.GetName(), dlg.GetValue());
-			m_buttonApply->Enable(true);
+			SetSettingsModified();
 		}
 	}
 }
 
-void ProjectSettingsDlg::DoUpdateItem(long item, const wxString& target, const wxString& cmd)
+void ProjectConfigurationPanel::DoUpdateItem(long item, const wxString& target, const wxString& cmd)
 {
 	SetColumnText(m_listCtrlTargets, item, 0, target);
 	SetColumnText(m_listCtrlTargets, item, 1, cmd);
@@ -898,97 +940,319 @@ void ProjectSettingsDlg::DoUpdateItem(long item, const wxString& target, const w
 	m_listCtrlTargets->SetColumnWidth(1, 300);
 }
 
-wxString ProjectSettingsDlg::GetTargetCommand(const wxString& target)
+wxString ProjectConfigurationPanel::GetTargetCommand(const wxString& target)
 {
 	for (int i=0; i<(int)m_listCtrlTargets->GetItemCount(); i++) {
-		if(GetColumnText(m_listCtrlTargets, i, 0) == target) {
+		if (GetColumnText(m_listCtrlTargets, i, 0) == target) {
 			return GetColumnText(m_listCtrlTargets, i, 1);
 		}
 	}
 	return wxEmptyString;
 }
 
-void ProjectSettingsDlg::OnBrowseCustomBuildWD(wxCommandEvent& e)
+void ProjectConfigurationPanel::OnBrowseCustomBuildWD(wxCommandEvent& e)
 {
 	DirSaver ds;
 
 	// Since all paths are relative to the project, set the working directory to the
 	// current project path
 	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
-	if(p){
+	if (p) {
 		wxSetWorkingDirectory(p->GetFileName().GetPath());
 	}
 
 	wxFileName fn(m_textCtrlCustomBuildWD->GetValue());
 	wxString initPath(wxEmptyString);
 
-	if(fn.DirExists()) {
+	if (fn.DirExists()) {
 		fn.MakeAbsolute();
 		initPath = fn.GetFullPath();
 	}
 
 	wxString new_path = wxDirSelector(wxT("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if(new_path.IsEmpty() == false){
+	if (new_path.IsEmpty() == false) {
 		m_textCtrlCustomBuildWD->SetValue(new_path);
 	}
 }
 
-void ProjectSettingsDlg::OnBrowseCommandWD(wxCommandEvent& e)
+void ProjectConfigurationPanel::OnBrowseCommandWD(wxCommandEvent& e)
 {
 	DirSaver ds;
 
 	// Since all paths are relative to the project, set the working directory to the
 	// current project path
 	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
-	if(p){
+	if (p) {
 		wxSetWorkingDirectory(p->GetFileName().GetPath());
 	}
 
 	wxFileName fn(m_textCtrlCommandWD->GetValue());
 	wxString initPath(wxEmptyString);
-	if(fn.DirExists()) {
+	if (fn.DirExists()) {
 		fn.MakeAbsolute();
 		initPath = fn.GetFullPath();
 	}
 
 	wxString new_path = wxDirSelector(wxT("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if(new_path.IsEmpty() == false){
+	if (new_path.IsEmpty() == false) {
 		m_textCtrlCommandWD->SetValue(new_path);
 	}
 }
 
-void ProjectSettingsDlg::OnBrowseIntermediateDir(wxCommandEvent& e)
+void ProjectConfigurationPanel::OnBrowseIntermediateDir(wxCommandEvent& e)
 {
 	DirSaver ds;
 
 	// Since all paths are relative to the project, set the working directory to the
 	// current project path
 	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
-	if(p){
+	if (p) {
 		wxSetWorkingDirectory(p->GetFileName().GetPath());
 	}
 
 	wxFileName fn(m_textCtrlItermediateDir->GetValue());
 	wxString initPath(wxEmptyString);
 
-	if(fn.DirExists()) {
+	if (fn.DirExists()) {
 		fn.MakeAbsolute();
 		initPath = fn.GetFullPath();
 	}
 	wxString new_path = wxDirSelector(wxT("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-	if(new_path.IsEmpty() == false){
+	if (new_path.IsEmpty() == false) {
 		m_textCtrlItermediateDir->SetValue(new_path);
 	}
 }
 
-void ProjectSettingsDlg::OnSelectDebuggerPath(wxCommandEvent& e)
+void ProjectConfigurationPanel::OnSelectDebuggerPath(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
 	wxString path(m_textCtrlDebuggerPath->GetValue());
-	if(wxFileName::FileExists(path)){
+	if (wxFileName::FileExists(path)) {
 		m_textCtrlDebuggerPath->SetValue(wxFileSelector(wxT("Select file:"), path.c_str()));
-	}else{
+	} else {
 		m_textCtrlDebuggerPath->SetValue(wxFileSelector(wxT("Select file:")));
 	}
 }
 
+ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &configName, const wxString &projectName, const wxString &title )
+		: ProjectSettingsBaseDlg( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 782,502 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
+		, m_projectName(projectName)
+		, m_configName(configName)
+		, m_oldConfigurationName(wxEmptyString)
+		, m_selecteCustomTarget(wxNOT_FOUND)
+{
+	m_configurationPanel  = new ProjectConfigurationPanel(m_panelSettings, configName, m_projectName);
+	m_globalSettingsPanel = new GlobalSettingsPanel(m_panelSettings, m_projectName);
+	m_sizerSettings->Add(m_configurationPanel, 1, wxEXPAND | wxALL, 0);
+	m_sizerSettings->Add(m_globalSettingsPanel, 1, wxEXPAND | wxALL, 0);
+	SetAutoLayout(true);
+	ConnectEvents();
+
+	//fill the dialog with values
+	UpdateConfigurationTypeChoice(configName);
+	m_configurationPanel->InitDialog(m_configName, wxEmptyString);
+	m_oldConfigurationName = m_choiceConfigurationType->GetStringSelection();
+
+	m_buttonApply->Enable(false);
+	m_sizerSettings->Hide(m_globalSettingsPanel);
+
+	GetSizer()->Fit(this);
+	Centre();
+
+	WindowAttrManager::Load(this, wxT("ProjectSettingsDlg"), NULL);
+}
+
+ProjectSettingsDlg::~ProjectSettingsDlg()
+{
+	WindowAttrManager::Save(this, wxT("ProjectSettingsDlg"), NULL);
+}
+
+void ProjectSettingsDlg::UpdateConfigurationTypeChoice(const wxString &itemToSelect)
+{
+	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
+	ProjectSettingsCookie cookie;
+	m_choiceConfigurationType->Clear();
+	m_choiceConfigurationType->Append(GLOBAL_SETTINGS_LABEL);
+	BuildConfigPtr conf = projSettingsPtr->GetFirstBuildConfiguration(cookie);
+	while (conf) {
+		m_choiceConfigurationType->Append(conf->GetName());
+		conf = projSettingsPtr->GetNextBuildConfiguration(cookie);
+	}
+
+	if (itemToSelect.IsEmpty() || m_choiceConfigurationType->FindString(itemToSelect) == wxNOT_FOUND) {
+		if (m_choiceConfigurationType->GetCount() > 0)
+			m_choiceConfigurationType->SetSelection(0);
+	} else {
+		m_choiceConfigurationType->SetStringSelection(itemToSelect);
+	}
+}
+
+void ProjectSettingsDlg::OnButtonConfigurationManager(wxCommandEvent &event)
+{
+	wxUnusedVar(event);
+	ConfigurationManagerDlg dlg(this);
+	dlg.ShowModal();
+
+	//update the configuration type choice control
+	UpdateConfigurationTypeChoice(m_choiceConfigurationType->GetStringSelection());
+	//Load values according to the new selection
+	m_configurationPanel->CopyValues(m_choiceConfigurationType->GetStringSelection());
+	event.Skip();
+}
+
+void ProjectSettingsDlg::ConnectEvents()
+{
+	Connect(wxEVT_CL_PROJECT_SETTINGS_MODIFIED, wxCommandEventHandler(ProjectSettingsDlg::OnSettingsModified));
+}
+
+void ProjectSettingsDlg::OnSettingsModified(wxCommandEvent &event)
+{
+	m_buttonApply->Enable(true);
+	event.Skip();
+}
+
+
+GlobalSettingsPanel::GlobalSettingsPanel(wxWindow* parent, const wxString &projectName)
+		: GlobalSettingsBasePanel(parent)
+		, m_projectName(projectName)
+{
+	CopyValues();
+
+	GetSizer()->Fit(this);
+	Centre();
+}
+
+void GlobalSettingsPanel::SetSettingsModified()
+{
+	wxCommandEvent event(wxEVT_CL_PROJECT_SETTINGS_MODIFIED, GetId());
+	event.SetEventObject(this);
+	GetParent()->ProcessEvent(event);
+}
+
+void GlobalSettingsPanel::ClearValues()
+{
+	m_textCompilerOptions->SetValue(wxEmptyString);
+	m_textPreprocessor->SetValue(wxEmptyString);
+	m_textAdditionalSearchPath->SetValue(wxEmptyString);
+
+	m_textLinkerOptions->SetValue(wxEmptyString);
+	m_textLibraries->SetValue(wxEmptyString);
+	m_textLibraryPath->SetValue(wxEmptyString);
+
+	m_textAddResCmpOptions->SetValue(wxEmptyString);
+	m_textAddResCmpPath->SetValue(wxEmptyString);
+}
+
+void GlobalSettingsPanel::CopyValues()
+{
+	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
+	BuildConfigCommonPtr globalSettings = projSettingsPtr->GetGlobalSettings();
+	if (!globalSettings) {
+		ClearValues();
+		return;
+	}
+
+	m_textCompilerOptions->SetValue(globalSettings->GetCompileOptions());
+	m_textPreprocessor->SetValue(globalSettings->GetPreprocessor());
+	m_textAdditionalSearchPath->SetValue(globalSettings->GetIncludePath());
+
+	m_textLinkerOptions->SetValue(globalSettings->GetLinkOptions());
+	m_textLibraries->SetValue(globalSettings->GetLibraries());
+	m_textLibraryPath->SetValue(globalSettings->GetLibPath());
+
+	m_textAddResCmpOptions->SetValue(globalSettings->GetResCompileOptions());
+	m_textAddResCmpPath->SetValue(globalSettings->GetResCmpIncludePath());
+}
+
+void GlobalSettingsPanel::SaveValues()
+{
+	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
+	BuildConfigCommonPtr globalSettings = projSettingsPtr->GetGlobalSettings();
+	if (!globalSettings) {
+		return;
+	}
+
+	globalSettings->SetCompileOptions(m_textCompilerOptions->GetValue());
+	globalSettings->SetIncludePath(m_textAdditionalSearchPath->GetValue());
+	globalSettings->SetPreprocessor(m_textPreprocessor->GetValue());
+
+	globalSettings->SetLibPath(m_textLibraryPath->GetValue());
+	globalSettings->SetLibraries(m_textLibraries->GetValue());
+	globalSettings->SetLinkOptions(m_textLinkerOptions->GetValue());
+
+	globalSettings->SetResCmpIncludePath(m_textAddResCmpPath->GetValue());
+	globalSettings->SetResCmpOptions(m_textAddResCmpOptions->GetValue());
+
+	//save settings
+	ManagerST::Get()->SetProjectGlobalSettings(m_projectName, globalSettings);
+}
+
+void GlobalSettingsPanel::OnButtonAddCompilerOptions(wxCommandEvent &event)
+{
+	// This is not perfect : I just take the first compiler to find options
+	BuildSettingsConfigCookie cookie;
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
+	if (PopupAddOptionCheckDlg(m_textCompilerOptions, _("Compiler options"), cmp->GetCompilerOptions())) {
+		SetSettingsModified();
+	}
+	event.Skip();
+}
+
+void GlobalSettingsPanel::OnAddSearchPath(wxCommandEvent &event)
+{
+	if (PopupAddOptionDlg(m_textAdditionalSearchPath)) {
+		SetSettingsModified();
+	}
+	event.Skip();
+}
+
+void GlobalSettingsPanel::OnButtonAddPreprocessor(wxCommandEvent &event)
+{
+	if (PopupAddOptionDlg(m_textPreprocessor)) {
+		SetSettingsModified();
+	}
+	event.Skip();
+}
+
+void GlobalSettingsPanel::OnAddLibrary(wxCommandEvent &event)
+{
+	if (PopupAddOptionDlg(m_textLibraries)) {
+		SetSettingsModified();
+	}
+	event.Skip();
+}
+
+void GlobalSettingsPanel::OnAddLibraryPath(wxCommandEvent &event)
+{
+	if (PopupAddOptionDlg(m_textLibraryPath)) {
+		SetSettingsModified();
+	}
+	event.Skip();
+}
+
+void GlobalSettingsPanel::OnButtonAddLinkerOptions(wxCommandEvent &event)
+{
+	// This is not perfect : I just take the first compiler to find options
+	BuildSettingsConfigCookie cookie;
+	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
+	if (PopupAddOptionCheckDlg(m_textLinkerOptions, _("Linker options"), cmp->GetLinkerOptions())) {
+		SetSettingsModified();
+	}
+	event.Skip();
+}
+
+void GlobalSettingsPanel::OnResourceCmpAddOption(wxCommandEvent &event)
+{
+	if (PopupAddOptionDlg(m_textAddResCmpOptions)) {
+		SetSettingsModified();
+	}
+	event.Skip();
+}
+
+void GlobalSettingsPanel::OnResourceCmpAddPath(wxCommandEvent &event)
+{
+	if (PopupAddOptionDlg(m_textAddResCmpPath)) {
+		SetSettingsModified();
+	}
+	event.Skip();
+}

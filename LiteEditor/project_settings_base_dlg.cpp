@@ -48,8 +48,65 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_staticline81 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	mainSizer->Add( m_staticline81, 0, wxEXPAND | wxALL, 5 );
 	
-	m_notebook3 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	m_generalPage = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panelSettings = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_sizerSettings = new wxBoxSizer( wxVERTICAL );
+	
+	m_panelSettings->SetSizer( m_sizerSettings );
+	m_panelSettings->Layout();
+	m_sizerSettings->Fit( m_panelSettings );
+	mainSizer->Add( m_panelSettings, 1, wxEXPAND, 5 );
+	
+	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	mainSizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer3;
+	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_buttonHelp = new wxButton( this, wxID_ANY, wxT("Help..."), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer3->Add( m_buttonHelp, 0, wxALL, 5 );
+	
+	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK->SetDefault(); 
+	bSizer3->Add( m_buttonOK, 0, wxALL, 5 );
+	
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer3->Add( m_buttonCancel, 0, wxALL, 5 );
+	
+	m_buttonApply = new wxButton( this, wxID_ANY, wxT("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer3->Add( m_buttonApply, 0, wxALL, 5 );
+	
+	mainSizer->Add( bSizer3, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	this->SetSizer( mainSizer );
+	this->Layout();
+	
+	this->Centre( wxBOTH );
+	
+	// Connect Events
+	m_choiceConfigurationType->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnConfigurationTypeSelected ), NULL, this );
+	m_buttonConfigManager->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonConfigurationManager ), NULL, this );
+	m_buttonHelp->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonHelp ), NULL, this );
+	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonOK ), NULL, this );
+	m_buttonApply->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonApply ), NULL, this );
+}
+
+ProjectSettingsBaseDlg::~ProjectSettingsBaseDlg()
+{
+	// Disconnect Events
+	m_choiceConfigurationType->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnConfigurationTypeSelected ), NULL, this );
+	m_buttonConfigManager->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonConfigurationManager ), NULL, this );
+	m_buttonHelp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonHelp ), NULL, this );
+	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonOK ), NULL, this );
+	m_buttonApply->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonApply ), NULL, this );
+}
+
+ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+{
+	wxBoxSizer* bSizer94;
+	bSizer94 = new wxBoxSizer( wxVERTICAL );
+	
+	m_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_generalPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer19;
 	bSizer19 = new wxBoxSizer( wxVERTICAL );
 	
@@ -179,13 +236,30 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_generalPage->SetSizer( bSizer19 );
 	m_generalPage->Layout();
 	bSizer19->Fit( m_generalPage );
-	m_notebook3->AddPage( m_generalPage, wxT("General"), false );
-	m_compilerPage = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_notebook->AddPage( m_generalPage, wxT("General"), true );
+	m_compilerPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* compilerPageSizer;
 	compilerPageSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkCompilerNeeded = new wxCheckBox( m_compilerPage, wxID_ANY, wxT("Compiler is not required for this project"), wxDefaultPosition, wxDefaultSize, 0 );
 	compilerPageSizer->Add( m_checkCompilerNeeded, 0, wxALL, 5 );
+	
+	wxBoxSizer* bSizer23001;
+	bSizer23001 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_staticText331 = new wxStaticText( m_compilerPage, wxID_ANY, wxT("Use with global settings :"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText331->Wrap( -1 );
+	bSizer23001->Add( m_staticText331, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxArrayString m_choiceCmpUseWithGlobalSettingsChoices;
+	m_choiceCmpUseWithGlobalSettings = new wxChoice( m_compilerPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceCmpUseWithGlobalSettingsChoices, 0 );
+	m_choiceCmpUseWithGlobalSettings->SetSelection( 0 );
+	bSizer23001->Add( m_choiceCmpUseWithGlobalSettings, 1, wxALL, 5 );
+	
+	
+	bSizer23001->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	compilerPageSizer->Add( bSizer23001, 0, wxEXPAND, 5 );
 	
 	m_staticline7 = new wxStaticLine( m_compilerPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	compilerPageSizer->Add( m_staticline7, 0, wxEXPAND | wxALL, 5 );
@@ -231,13 +305,30 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_compilerPage->SetSizer( compilerPageSizer );
 	m_compilerPage->Layout();
 	compilerPageSizer->Fit( m_compilerPage );
-	m_notebook3->AddPage( m_compilerPage, wxT("Compiler"), false );
-	m_linkerPage = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_notebook->AddPage( m_compilerPage, wxT("Compiler"), false );
+	m_linkerPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* linkerPageSizer;
 	linkerPageSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkLinkerNeeded = new wxCheckBox( m_linkerPage, wxID_ANY, wxT("Linker is not required for this project"), wxDefaultPosition, wxDefaultSize, 0 );
 	linkerPageSizer->Add( m_checkLinkerNeeded, 0, wxALL, 5 );
+	
+	wxBoxSizer* bSizer231;
+	bSizer231 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_staticText3311 = new wxStaticText( m_linkerPage, wxID_ANY, wxT("Use with global settings :"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3311->Wrap( -1 );
+	bSizer231->Add( m_staticText3311, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxArrayString m_choiceLnkUseWithGlobalSettingsChoices;
+	m_choiceLnkUseWithGlobalSettings = new wxChoice( m_linkerPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceLnkUseWithGlobalSettingsChoices, 0 );
+	m_choiceLnkUseWithGlobalSettings->SetSelection( 0 );
+	bSizer231->Add( m_choiceLnkUseWithGlobalSettings, 1, wxALL, 5 );
+	
+	
+	bSizer231->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	linkerPageSizer->Add( bSizer231, 0, wxEXPAND, 5 );
 	
 	m_staticline8 = new wxStaticLine( m_linkerPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	linkerPageSizer->Add( m_staticline8, 0, wxEXPAND | wxALL, 5 );
@@ -283,8 +374,8 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_linkerPage->SetSizer( linkerPageSizer );
 	m_linkerPage->Layout();
 	linkerPageSizer->Fit( m_linkerPage );
-	m_notebook3->AddPage( m_linkerPage, wxT("Linker"), false );
-	m_panelDebugger = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_notebook->AddPage( m_linkerPage, wxT("Linker"), false );
+	m_panelDebugger = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer192;
 	bSizer192 = new wxBoxSizer( wxVERTICAL );
 	
@@ -356,14 +447,31 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_panelDebugger->SetSizer( bSizer192 );
 	m_panelDebugger->Layout();
 	bSizer192->Fit( m_panelDebugger );
-	m_notebook3->AddPage( m_panelDebugger, wxT("Debugger"), true );
-	m_resourceCmpPage = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_notebook->AddPage( m_panelDebugger, wxT("Debugger"), false );
+	m_resourceCmpPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer151;
 	bSizer151 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkResourceNeeded = new wxCheckBox( m_resourceCmpPage, wxID_ANY, wxT("Resource Compiler is not needed"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkResourceNeeded->SetValue(true); 
 	bSizer151->Add( m_checkResourceNeeded, 0, wxALL, 5 );
+	
+	wxBoxSizer* bSizer2311;
+	bSizer2311 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_staticText33111 = new wxStaticText( m_resourceCmpPage, wxID_ANY, wxT("Use with global settings :"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText33111->Wrap( -1 );
+	bSizer2311->Add( m_staticText33111, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxArrayString m_choiceResUseWithGlobalSettingsChoices;
+	m_choiceResUseWithGlobalSettings = new wxChoice( m_resourceCmpPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceResUseWithGlobalSettingsChoices, 0 );
+	m_choiceResUseWithGlobalSettings->SetSelection( 0 );
+	bSizer2311->Add( m_choiceResUseWithGlobalSettings, 1, wxALL, 5 );
+	
+	
+	bSizer2311->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	bSizer151->Add( bSizer2311, 0, wxEXPAND, 5 );
 	
 	m_staticline9 = new wxStaticLine( m_resourceCmpPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer151->Add( m_staticline9, 0, wxEXPAND | wxALL, 5 );
@@ -399,8 +507,8 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_resourceCmpPage->SetSizer( bSizer151 );
 	m_resourceCmpPage->Layout();
 	bSizer151->Fit( m_resourceCmpPage );
-	m_notebook3->AddPage( m_resourceCmpPage, wxT("Resources"), false );
-	m_preBuildPage = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_notebook->AddPage( m_resourceCmpPage, wxT("Resources"), false );
+	m_preBuildPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
@@ -443,8 +551,8 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_preBuildPage->SetSizer( bSizer8 );
 	m_preBuildPage->Layout();
 	bSizer8->Fit( m_preBuildPage );
-	m_notebook3->AddPage( m_preBuildPage, wxT("PreBuild"), false );
-	m_postBuildPage = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_notebook->AddPage( m_preBuildPage, wxT("PreBuild"), false );
+	m_postBuildPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer81;
 	bSizer81 = new wxBoxSizer( wxVERTICAL );
 	
@@ -487,8 +595,8 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_postBuildPage->SetSizer( bSizer81 );
 	m_postBuildPage->Layout();
 	bSizer81->Fit( m_postBuildPage );
-	m_notebook3->AddPage( m_postBuildPage, wxT("PostBuild"), false );
-	m_customBuildPage = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_notebook->AddPage( m_postBuildPage, wxT("PostBuild"), false );
+	m_customBuildPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer15;
 	bSizer15 = new wxBoxSizer( wxVERTICAL );
 	
@@ -566,8 +674,8 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_customBuildPage->SetSizer( bSizer15 );
 	m_customBuildPage->Layout();
 	bSizer15->Fit( m_customBuildPage );
-	m_notebook3->AddPage( m_customBuildPage, wxT("Custom Build"), false );
-	m_customMakefileStep = new wxPanel( m_notebook3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_notebook->AddPage( m_customBuildPage, wxT("Custom Build"), false );
+	m_customMakefileStep = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer16;
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
 	
@@ -606,156 +714,325 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_customMakefileStep->SetSizer( bSizer16 );
 	m_customMakefileStep->Layout();
 	bSizer16->Fit( m_customMakefileStep );
-	m_notebook3->AddPage( m_customMakefileStep, wxT("Custom makefile steps"), false );
+	m_notebook->AddPage( m_customMakefileStep, wxT("Custom makefile steps"), false );
 	
-	mainSizer->Add( m_notebook3, 1, wxEXPAND | wxALL, 5 );
+	bSizer94->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 	
-	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	mainSizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
-	
-	wxBoxSizer* bSizer3;
-	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
-	
-	m_buttonHelp = new wxButton( this, wxID_ANY, wxT("Help..."), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer3->Add( m_buttonHelp, 0, wxALL, 5 );
-	
-	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_buttonOK->SetDefault(); 
-	bSizer3->Add( m_buttonOK, 0, wxALL, 5 );
-	
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer3->Add( m_buttonCancel, 0, wxALL, 5 );
-	
-	m_buttonApply = new wxButton( this, wxID_ANY, wxT("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer3->Add( m_buttonApply, 0, wxALL, 5 );
-	
-	mainSizer->Add( bSizer3, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
-	
-	this->SetSizer( mainSizer );
+	this->SetSizer( bSizer94 );
 	this->Layout();
 	
-	this->Centre( wxBOTH );
-	
 	// Connect Events
-	m_choiceProjectTypes->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_choiceCompilerType->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_choiceDebugger->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textOutputFilePicker->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlItermediateDir->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonBrowseIM_WD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnBrowseIntermediateDir ), NULL, this );
-	m_textCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCommandArguments->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlCommandWD->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonBrowseCommandWD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnBrowseCommandWD ), NULL, this );
-	m_checkBoxPauseWhenExecEnds->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkCompilerNeeded->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCompilerOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textAdditionalSearchPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textPreprocessor->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkLinkerNeeded->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textLinkerOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textLibraryPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textLibraries->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlDebuggerPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonSelectDebugger->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnSelectDebuggerPath ), NULL, this );
-	m_checkBoxDbgRemote->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnDebuggingRemoteTarget ), NULL, this );
-	m_textCtrl1DbgHost->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlDbgPort->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlDbgCmds->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlDbgPostConnectCmds->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkResourceNeeded->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textAddResCmpOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textAddResCmpPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkListPreBuildCommands->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkListPreBuildCommands->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonNewPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonDeletePreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonEditPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonUpPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonDownPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkListPostBuildCommands->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkListPostBuildCommands->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonNewPostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonDeletePostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonEditPostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonUpPostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonDownPostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkEnableCustomBuild->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlCustomBuildWD->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonBrowseCustomBuildWD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnBrowseCustomBuildWD ), NULL, this );
-	m_listCtrlTargets->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( ProjectSettingsBaseDlg::OnItemActivated ), NULL, this );
-	m_listCtrlTargets->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( ProjectSettingsBaseDlg::OnItemSelected ), NULL, this );
-	m_buttonNewCustomTarget->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnNewTarget ), NULL, this );
-	m_buttonEditCustomTarget->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnEditTarget ), NULL, this );
-	m_buttonEditCustomTarget->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ProjectSettingsBaseDlg::OnEditTargetUI ), NULL, this );
-	m_buttonDeleteCustomTarget->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnDeleteTarget ), NULL, this );
-	m_buttonDeleteCustomTarget->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ProjectSettingsBaseDlg::OnDeleteTargetUI ), NULL, this );
-	m_thirdPartyTool->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnChoiceMakefileTool ), NULL, this );
-	m_textCtrlMakefileGenerationCmd->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textDeps->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textPreBuildRule->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonHelp->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonHelp ), NULL, this );
+	m_choiceProjectTypes->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_choiceCompilerType->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_choiceDebugger->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textOutputFilePicker->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlItermediateDir->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonBrowseIM_WD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnBrowseIntermediateDir ), NULL, this );
+	m_textCommand->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCommandArguments->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlCommandWD->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonBrowseCommandWD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnBrowseCommandWD ), NULL, this );
+	m_checkBoxPauseWhenExecEnds->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_checkCompilerNeeded->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCheckCompilerNeeded ), NULL, this );
+	m_textCompilerOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonCompilerOptions->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnButtonAddCompilerOptions ), NULL, this );
+	m_textAdditionalSearchPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddSearchPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnAddSearchPath ), NULL, this );
+	m_textPreprocessor->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddPreprocessor->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnButtonAddPreprocessor ), NULL, this );
+	m_checkLinkerNeeded->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCheckLinkerNeeded ), NULL, this );
+	m_textLinkerOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textLibraryPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonLibraries->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnAddLibrary ), NULL, this );
+	m_textLibraries->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonLibraryPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnAddLibraryPath ), NULL, this );
+	m_buttonLinkerOptions->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnButtonAddLinkerOptions ), NULL, this );
+	m_textCtrlDebuggerPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonSelectDebugger->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnSelectDebuggerPath ), NULL, this );
+	m_checkBoxDbgRemote->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDebuggingRemoteTarget ), NULL, this );
+	m_textCtrl1DbgHost->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlDbgPort->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlDbgCmds->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlDbgPostConnectCmds->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_checkResourceNeeded->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnResourceCmpNeeded ), NULL, this );
+	m_textAddResCmpOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddResCmpOptions->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnResourceCmpAddOption ), NULL, this );
+	m_buttonAddResCmpPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnResourceCmpAddPath ), NULL, this );
+	m_checkListPreBuildCommands->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_checkListPreBuildCommands->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonNewPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnNewPreBuildCommand ), NULL, this );
+	m_buttonDeletePreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDeletePreBuildCommand ), NULL, this );
+	m_buttonEditPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnEditPreBuildCommand ), NULL, this );
+	m_buttonUpPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnUpPreBuildCommand ), NULL, this );
+	m_buttonDownPreBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDownPreBuildCommand ), NULL, this );
+	m_checkListPostBuildCommands->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnEditPostBuildCommand ), NULL, this );
+	m_checkListPostBuildCommands->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonNewPostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnNewPostBuildCommand ), NULL, this );
+	m_buttonDeletePostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDeletePostBuildCommand ), NULL, this );
+	m_buttonEditPostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnEditPostBuildCommand ), NULL, this );
+	m_buttonUpPostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnUpPostBuildCommand ), NULL, this );
+	m_buttonDownPostBuildCmd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDownPostBuildCommand ), NULL, this );
+	m_checkEnableCustomBuild->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCustomBuildEnabled ), NULL, this );
+	m_textCtrlCustomBuildWD->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonBrowseCustomBuildWD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnBrowseCustomBuildWD ), NULL, this );
+	m_listCtrlTargets->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( ProjectConfigurationBasePanel::OnItemActivated ), NULL, this );
+	m_listCtrlTargets->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( ProjectConfigurationBasePanel::OnItemSelected ), NULL, this );
+	m_buttonNewCustomTarget->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnNewTarget ), NULL, this );
+	m_buttonEditCustomTarget->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnEditTarget ), NULL, this );
+	m_buttonEditCustomTarget->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ProjectConfigurationBasePanel::OnEditTargetUI ), NULL, this );
+	m_buttonDeleteCustomTarget->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDeleteTarget ), NULL, this );
+	m_buttonDeleteCustomTarget->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ProjectConfigurationBasePanel::OnDeleteTargetUI ), NULL, this );
+	m_thirdPartyTool->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnChoiceMakefileTool ), NULL, this );
+	m_textCtrlMakefileGenerationCmd->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textDeps->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textPreBuildRule->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
 }
 
-ProjectSettingsBaseDlg::~ProjectSettingsBaseDlg()
+ProjectConfigurationBasePanel::~ProjectConfigurationBasePanel()
 {
 	// Disconnect Events
-	m_choiceProjectTypes->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_choiceCompilerType->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_choiceDebugger->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textOutputFilePicker->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlItermediateDir->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonBrowseIM_WD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnBrowseIntermediateDir ), NULL, this );
-	m_textCommand->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCommandArguments->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlCommandWD->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonBrowseCommandWD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnBrowseCommandWD ), NULL, this );
-	m_checkBoxPauseWhenExecEnds->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkCompilerNeeded->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCompilerOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textAdditionalSearchPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textPreprocessor->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkLinkerNeeded->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textLinkerOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textLibraryPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textLibraries->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlDebuggerPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonSelectDebugger->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnSelectDebuggerPath ), NULL, this );
-	m_checkBoxDbgRemote->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnDebuggingRemoteTarget ), NULL, this );
-	m_textCtrl1DbgHost->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlDbgPort->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlDbgCmds->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlDbgPostConnectCmds->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkResourceNeeded->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textAddResCmpOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textAddResCmpPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkListPreBuildCommands->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkListPreBuildCommands->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonNewPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonDeletePreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonEditPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonUpPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonDownPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkListPostBuildCommands->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkListPostBuildCommands->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonNewPostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonDeletePostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonEditPostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonUpPostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonDownPostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_checkEnableCustomBuild->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textCtrlCustomBuildWD->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonBrowseCustomBuildWD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnBrowseCustomBuildWD ), NULL, this );
-	m_listCtrlTargets->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( ProjectSettingsBaseDlg::OnItemActivated ), NULL, this );
-	m_listCtrlTargets->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( ProjectSettingsBaseDlg::OnItemSelected ), NULL, this );
-	m_buttonNewCustomTarget->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnNewTarget ), NULL, this );
-	m_buttonEditCustomTarget->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnEditTarget ), NULL, this );
-	m_buttonEditCustomTarget->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ProjectSettingsBaseDlg::OnEditTargetUI ), NULL, this );
-	m_buttonDeleteCustomTarget->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnDeleteTarget ), NULL, this );
-	m_buttonDeleteCustomTarget->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ProjectSettingsBaseDlg::OnDeleteTargetUI ), NULL, this );
-	m_thirdPartyTool->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnChoiceMakefileTool ), NULL, this );
-	m_textCtrlMakefileGenerationCmd->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textDeps->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_textPreBuildRule->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnCmdEvtVModified ), NULL, this );
-	m_buttonHelp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonHelp ), NULL, this );
+	m_choiceProjectTypes->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_choiceCompilerType->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_choiceDebugger->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textOutputFilePicker->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlItermediateDir->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonBrowseIM_WD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnBrowseIntermediateDir ), NULL, this );
+	m_textCommand->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCommandArguments->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlCommandWD->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonBrowseCommandWD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnBrowseCommandWD ), NULL, this );
+	m_checkBoxPauseWhenExecEnds->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_checkCompilerNeeded->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCheckCompilerNeeded ), NULL, this );
+	m_textCompilerOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonCompilerOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnButtonAddCompilerOptions ), NULL, this );
+	m_textAdditionalSearchPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddSearchPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnAddSearchPath ), NULL, this );
+	m_textPreprocessor->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddPreprocessor->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnButtonAddPreprocessor ), NULL, this );
+	m_checkLinkerNeeded->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCheckLinkerNeeded ), NULL, this );
+	m_textLinkerOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textLibraryPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonLibraries->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnAddLibrary ), NULL, this );
+	m_textLibraries->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonLibraryPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnAddLibraryPath ), NULL, this );
+	m_buttonLinkerOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnButtonAddLinkerOptions ), NULL, this );
+	m_textCtrlDebuggerPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonSelectDebugger->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnSelectDebuggerPath ), NULL, this );
+	m_checkBoxDbgRemote->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDebuggingRemoteTarget ), NULL, this );
+	m_textCtrl1DbgHost->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlDbgPort->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlDbgCmds->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textCtrlDbgPostConnectCmds->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_checkResourceNeeded->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnResourceCmpNeeded ), NULL, this );
+	m_textAddResCmpOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddResCmpOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnResourceCmpAddOption ), NULL, this );
+	m_buttonAddResCmpPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnResourceCmpAddPath ), NULL, this );
+	m_checkListPreBuildCommands->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_checkListPreBuildCommands->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonNewPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnNewPreBuildCommand ), NULL, this );
+	m_buttonDeletePreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDeletePreBuildCommand ), NULL, this );
+	m_buttonEditPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnEditPreBuildCommand ), NULL, this );
+	m_buttonUpPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnUpPreBuildCommand ), NULL, this );
+	m_buttonDownPreBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDownPreBuildCommand ), NULL, this );
+	m_checkListPostBuildCommands->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnEditPostBuildCommand ), NULL, this );
+	m_checkListPostBuildCommands->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonNewPostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnNewPostBuildCommand ), NULL, this );
+	m_buttonDeletePostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDeletePostBuildCommand ), NULL, this );
+	m_buttonEditPostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnEditPostBuildCommand ), NULL, this );
+	m_buttonUpPostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnUpPostBuildCommand ), NULL, this );
+	m_buttonDownPostBuildCmd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDownPostBuildCommand ), NULL, this );
+	m_checkEnableCustomBuild->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCustomBuildEnabled ), NULL, this );
+	m_textCtrlCustomBuildWD->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonBrowseCustomBuildWD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnBrowseCustomBuildWD ), NULL, this );
+	m_listCtrlTargets->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( ProjectConfigurationBasePanel::OnItemActivated ), NULL, this );
+	m_listCtrlTargets->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( ProjectConfigurationBasePanel::OnItemSelected ), NULL, this );
+	m_buttonNewCustomTarget->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnNewTarget ), NULL, this );
+	m_buttonEditCustomTarget->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnEditTarget ), NULL, this );
+	m_buttonEditCustomTarget->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ProjectConfigurationBasePanel::OnEditTargetUI ), NULL, this );
+	m_buttonDeleteCustomTarget->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnDeleteTarget ), NULL, this );
+	m_buttonDeleteCustomTarget->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ProjectConfigurationBasePanel::OnDeleteTargetUI ), NULL, this );
+	m_thirdPartyTool->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnChoiceMakefileTool ), NULL, this );
+	m_textCtrlMakefileGenerationCmd->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textDeps->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textPreBuildRule->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( ProjectConfigurationBasePanel::OnCmdEvtVModified ), NULL, this );
+}
+
+GlobalSettingsBasePanel::GlobalSettingsBasePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+{
+	wxBoxSizer* bSizer117;
+	bSizer117 = new wxBoxSizer( wxVERTICAL );
+	
+	m_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_compilerPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* compilerPageSizer;
+	compilerPageSizer = new wxBoxSizer( wxVERTICAL );
+	
+	wxGridBagSizer* gbSizer1;
+	gbSizer1 = new wxGridBagSizer( 0, 0 );
+	gbSizer1->AddGrowableCol( 1 );
+	gbSizer1->SetFlexibleDirection( wxBOTH );
+	gbSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText6 = new wxStaticText( m_compilerPage, wxID_ANY, wxT("Compiler Options:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6->Wrap( -1 );
+	gbSizer1->Add( m_staticText6, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCompilerOptions = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer1->Add( m_textCompilerOptions, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND|wxALL, 5 );
+	
+	m_buttonCompilerOptions = new wxButton( m_compilerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer1->Add( m_buttonCompilerOptions, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	
+	m_staticText4 = new wxStaticText( m_compilerPage, wxID_ANY, wxT("Additional Search Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	gbSizer1->Add( m_staticText4, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textAdditionalSearchPath = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer1->Add( m_textAdditionalSearchPath, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxEXPAND|wxALL, 5 );
+	
+	m_buttonAddSearchPath = new wxButton( m_compilerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer1->Add( m_buttonAddSearchPath, wxGBPosition( 1, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	
+	m_staticText171 = new wxStaticText( m_compilerPage, wxID_ANY, wxT("Preprocessor:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText171->Wrap( -1 );
+	gbSizer1->Add( m_staticText171, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textPreprocessor = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer1->Add( m_textPreprocessor, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxEXPAND|wxALL, 5 );
+	
+	m_buttonAddPreprocessor = new wxButton( m_compilerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer1->Add( m_buttonAddPreprocessor, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	
+	compilerPageSizer->Add( gbSizer1, 1, wxEXPAND, 5 );
+	
+	m_compilerPage->SetSizer( compilerPageSizer );
+	m_compilerPage->Layout();
+	compilerPageSizer->Fit( m_compilerPage );
+	m_notebook->AddPage( m_compilerPage, wxT("Compiler"), true );
+	m_linkerPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* linkerPageSizer;
+	linkerPageSizer = new wxBoxSizer( wxVERTICAL );
+	
+	wxGridBagSizer* gbSizer2;
+	gbSizer2 = new wxGridBagSizer( 0, 0 );
+	gbSizer2->AddGrowableCol( 1 );
+	gbSizer2->SetFlexibleDirection( wxBOTH );
+	gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText10 = new wxStaticText( m_linkerPage, wxID_ANY, wxT("Options:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText10->Wrap( -1 );
+	gbSizer2->Add( m_staticText10, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textLinkerOptions = new wxTextCtrl( m_linkerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer2->Add( m_textLinkerOptions, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxEXPAND|wxALL, 5 );
+	
+	m_staticText7 = new wxStaticText( m_linkerPage, wxID_ANY, wxT("Library Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7->Wrap( -1 );
+	gbSizer2->Add( m_staticText7, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textLibraryPath = new wxTextCtrl( m_linkerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer2->Add( m_textLibraryPath, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxEXPAND|wxALL, 5 );
+	
+	m_buttonLibraries = new wxButton( m_linkerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer2->Add( m_buttonLibraries, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	
+	m_staticText8 = new wxStaticText( m_linkerPage, wxID_ANY, wxT("Libraries:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText8->Wrap( -1 );
+	gbSizer2->Add( m_staticText8, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textLibraries = new wxTextCtrl( m_linkerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer2->Add( m_textLibraries, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxEXPAND|wxALL, 5 );
+	
+	m_buttonLibraryPath = new wxButton( m_linkerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer2->Add( m_buttonLibraryPath, wxGBPosition( 1, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	
+	m_buttonLinkerOptions = new wxButton( m_linkerPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer2->Add( m_buttonLinkerOptions, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	
+	linkerPageSizer->Add( gbSizer2, 1, wxEXPAND, 5 );
+	
+	m_linkerPage->SetSizer( linkerPageSizer );
+	m_linkerPage->Layout();
+	linkerPageSizer->Fit( m_linkerPage );
+	m_notebook->AddPage( m_linkerPage, wxT("Linker"), false );
+	m_resourceCmpPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer151;
+	bSizer151 = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer4;
+	fgSizer4 = new wxFlexGridSizer( 2, 3, 0, 0 );
+	fgSizer4->AddGrowableCol( 1 );
+	fgSizer4->SetFlexibleDirection( wxBOTH );
+	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText221 = new wxStaticText( m_resourceCmpPage, wxID_ANY, wxT("Compiler Options:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText221->Wrap( -1 );
+	fgSizer4->Add( m_staticText221, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textAddResCmpOptions = new wxTextCtrl( m_resourceCmpPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer4->Add( m_textAddResCmpOptions, 0, wxEXPAND|wxALL, 5 );
+	
+	m_buttonAddResCmpOptions = new wxButton( m_resourceCmpPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer4->Add( m_buttonAddResCmpOptions, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	
+	m_staticText23 = new wxStaticText( m_resourceCmpPage, wxID_ANY, wxT("Additional Search Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText23->Wrap( -1 );
+	fgSizer4->Add( m_staticText23, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textAddResCmpPath = new wxTextCtrl( m_resourceCmpPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer4->Add( m_textAddResCmpPath, 0, wxEXPAND|wxALL, 5 );
+	
+	m_buttonAddResCmpPath = new wxButton( m_resourceCmpPage, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer4->Add( m_buttonAddResCmpPath, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	
+	bSizer151->Add( fgSizer4, 1, wxEXPAND, 5 );
+	
+	m_resourceCmpPage->SetSizer( bSizer151 );
+	m_resourceCmpPage->Layout();
+	bSizer151->Fit( m_resourceCmpPage );
+	m_notebook->AddPage( m_resourceCmpPage, wxT("Resources"), false );
+	
+	bSizer117->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
+	
+	this->SetSizer( bSizer117 );
+	this->Layout();
+	
+	// Connect Events
+	m_textCompilerOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonCompilerOptions->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnButtonAddCompilerOptions ), NULL, this );
+	m_textAdditionalSearchPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddSearchPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnAddSearchPath ), NULL, this );
+	m_textPreprocessor->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddPreprocessor->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnButtonAddPreprocessor ), NULL, this );
+	m_textLinkerOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textLibraryPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonLibraries->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnAddLibrary ), NULL, this );
+	m_textLibraries->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonLibraryPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnAddLibraryPath ), NULL, this );
+	m_buttonLinkerOptions->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnButtonAddLinkerOptions ), NULL, this );
+	m_textAddResCmpOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddResCmpOptions->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnResourceCmpAddOption ), NULL, this );
+	m_textAddResCmpPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddResCmpPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnResourceCmpAddPath ), NULL, this );
+}
+
+GlobalSettingsBasePanel::~GlobalSettingsBasePanel()
+{
+	// Disconnect Events
+	m_textCompilerOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonCompilerOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnButtonAddCompilerOptions ), NULL, this );
+	m_textAdditionalSearchPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddSearchPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnAddSearchPath ), NULL, this );
+	m_textPreprocessor->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddPreprocessor->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnButtonAddPreprocessor ), NULL, this );
+	m_textLinkerOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_textLibraryPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonLibraries->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnAddLibrary ), NULL, this );
+	m_textLibraries->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonLibraryPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnAddLibraryPath ), NULL, this );
+	m_buttonLinkerOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnButtonAddLinkerOptions ), NULL, this );
+	m_textAddResCmpOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddResCmpOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnResourceCmpAddOption ), NULL, this );
+	m_textAddResCmpPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
+	m_buttonAddResCmpPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnResourceCmpAddPath ), NULL, this );
 }

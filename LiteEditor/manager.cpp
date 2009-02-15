@@ -901,6 +901,18 @@ void Manager::SetProjectSettings ( const wxString &projectName, ProjectSettingsP
 	proj->SetSettings ( settings );
 }
 
+void Manager::SetProjectGlobalSettings ( const wxString &projectName, BuildConfigCommonPtr settings )
+{
+	wxString errMsg;
+	ProjectPtr proj = WorkspaceST::Get()->FindProjectByName ( projectName, errMsg );
+	if ( !proj ) {
+		wxLogMessage ( errMsg );
+		return;
+	}
+
+	proj->SetGlobalSettings ( settings );
+}
+
 wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxString &wd, bool considerPauseWhenExecuting )
 {
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf ( projectName, wxEmptyString );

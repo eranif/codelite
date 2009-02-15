@@ -332,6 +332,11 @@ public:
 	 */
 	void SetSettings(ProjectSettingsPtr settings);
 
+	/**
+	 * Update global settings to the project
+	 */
+	void SetGlobalSettings(BuildConfigCommonPtr settings);
+
 	//-----------------------------------
 	// visual operations
 	//-----------------------------------

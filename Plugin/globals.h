@@ -164,5 +164,28 @@ wxColour MakeColourLighter(wxColour color, float level);
  * @brief return true if filename is readonly false otherwise
  */
 bool IsFileReadOnly(const wxFileName &filename);
+
+/**
+ * \brief fill an array with a semi-colon separated string
+ * \param arr [out] the array to fill
+ * \param str the string to split
+ */
+void FillFromSmiColonString(wxArrayString &arr, const wxString &str);
+
+/**
+ * \brief return a string semi-colon separated of the given array
+ */
+wxString ArrayToSmiColonString(const wxArrayString &array);
+
+/**
+ * \brief Remove all semi colons of the given string
+ */
+void StripSemiColons(wxString &str);
+
+/**
+ * \brief Normalize the given path (change all \ by /)
+ */
+wxString NormalizePath(const wxString &path);
+
 #endif //GLOBALS_H
 

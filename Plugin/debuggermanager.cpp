@@ -143,7 +143,14 @@ bool DebuggerMgr::LoadDebuggers()
 
 	//get list of dlls
 	wxArrayString files;
-	wxDir::GetAllFiles(m_baseDir + wxT("/debuggers"), &files, fileSpec, wxDIR_FILES);
+#ifdef __WXGTK__
+	wxString debuggersPath(PLUGINS_DIR, wxConvUTF8);
+	debuggersPath += wxT("/debuggers");
+#else
+	wxString debuggersPath(m_baseDir + wxT("/debuggers"));
+#endif
+
+	wxDir::GetAllFiles(debuggersPath, &files, fileSpec, wxDIR_FILES);
 
 	for(size_t i=0; i<files.GetCount(); i++){
 		clDynamicLibrary *dl = new clDynamicLibrary();

@@ -102,11 +102,17 @@ void PluginManager::Load()
 	//does
 	LanguageST::Get()->SetTagsManager( GetTagsManager() );
 	TagsManagerST::Get()->SetLanguage( LanguageST::Get() );
+	
+#ifdef __WXGTK__
+	wxString pluginsDir(_U(PLUGINS_DIR));
+#else
+	wxString pluginsDir(ManagerST::Get()->GetInstallDir() + wxT( "/plugins" ));
+#endif
 
-	if ( wxDir::Exists( ManagerST::Get()->GetInstallDir() + wxT( "/plugins" ) ) ) {
+	if ( wxDir::Exists(pluginsDir) ) {
 		//get list of dlls
 		wxArrayString files;
-		wxDir::GetAllFiles( ManagerST::Get()->GetInstallDir() + wxT( "/plugins" ), &files, fileSpec, wxDIR_FILES );
+		wxDir::GetAllFiles( pluginsDir, &files, fileSpec, wxDIR_FILES );
 
 		for ( size_t i=0; i<files.GetCount(); i++ ) {
 			clDynamicLibrary *dl = new clDynamicLibrary();

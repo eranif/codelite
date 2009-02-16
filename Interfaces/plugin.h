@@ -82,21 +82,21 @@ enum {
 	//clientData is NULL
 	wxEVT_INIT_DONE = 3450,
 
-    //clientData is editor config node name (wxString*)
-    wxEVT_EDITOR_CONFIG_CHANGED,
+	//clientData is editor config node name (wxString*)
+	wxEVT_EDITOR_CONFIG_CHANGED,
 
 	//clientData is NULL
 	wxEVT_WORKSPACE_LOADED,
-    //clientData is NULL
+	//clientData is NULL
 	wxEVT_WORKSPACE_CONFIG_CHANGED,
 	//clientData is NULL
-    wxEVT_WORKSPACE_CLOSED,
+	wxEVT_WORKSPACE_CLOSED,
 
-    //clientData is NULL
+	//clientData is NULL
 	wxEVT_FILE_VIEW_INIT_DONE,
 	//clientData is NULL
 	wxEVT_FILE_VIEW_REFRESHED,
-    //clientData is NULL
+	//clientData is NULL
 	wxEVT_FILE_EXP_INIT_DONE,
 	//clientData is NULL
 	wxEVT_FILE_EXP_REFRESHED,
@@ -115,8 +115,8 @@ enum {
 
 	//clientData is fileName (wxString*)
 	wxEVT_FILE_SAVED,
-    //clientData is list of files which have been retagged (std::vector<wxFileName>*)
-    wxEVT_FILE_RETAGGED,
+	//clientData is list of files which have been retagged (std::vector<wxFileName>*)
+	wxEVT_FILE_RETAGGED,
 	//clientData is ParseThreadEventData*
 	wxEVT_SYNBOL_TREE_UPDATE_ITEM,
 	//clientData is ParseThreadEventData*
@@ -124,12 +124,12 @@ enum {
 	//clientData is ParseThreadEventData*
 	wxEVT_SYNBOL_TREE_ADD_ITEM,
 
-    //clientData is active editor (IEditor*)
-    wxEVT_ACTIVE_EDITOR_CHANGED,
-    //clientData is closing editor (IEditor*)
-    wxEVT_EDITOR_CLOSING,
-    //clientData is NULL
-    wxEVT_ALL_EDITORS_CLOSED,
+	//clientData is active editor (IEditor*)
+	wxEVT_ACTIVE_EDITOR_CHANGED,
+	//clientData is closing editor (IEditor*)
+	wxEVT_EDITOR_CLOSING,
+	//clientData is NULL
+	wxEVT_ALL_EDITORS_CLOSED,
 	//clientData is NULL
 	wxEVT_BUILD_STARTED,
 	//clientData is NULL
@@ -229,10 +229,15 @@ public:
 	 */
 	virtual wxBitmap LoadBitmapFile(const wxString &name, wxBitmapType type = wxBITMAP_TYPE_PNG) {
 		wxBitmap bmp;
-		wxString basePath(m_mgr->GetInstallDirectory() + wxT("/plugins/resources/"));
+#ifdef __WXGTK__
+		wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
+#else
+		wxString pluginsDir(m_mgr->GetInstallDirectory() + wxT( "/plugins" ));
+#endif
+		wxString basePath(pluginsDir + wxT("/resources/"));
 
 		bmp.LoadFile(basePath + name, type);
-		if(bmp.IsOk()) {
+		if (bmp.IsOk()) {
 			return bmp;
 		}
 		return wxNullBitmap;

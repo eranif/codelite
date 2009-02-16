@@ -481,17 +481,17 @@ createInstallTarget()
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/applications" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/config" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/debuggers" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/templates" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/plugins" >> Makefile
-	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/plugins/resources" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$plugins_dir/" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$plugins_dir/debuggers" >> Makefile
+	echo "	@mkdir -p \$(DESTDIR)$plugins_dir/resources" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/images" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/rc" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers/Default" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/lexers/BlackTheme" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/src/" >> Makefile
-	echo "	@cp -fr Runtime/plugins/resources/*.* \$(DESTDIR)$prefix/share/codelite/plugins/resources/" >> Makefile
+	echo "	@cp -fr Runtime/plugins/resources/*.* \$(DESTDIR)$plugins_dir/resources/" >> Makefile
 	echo "	@cp -fr Runtime/config/build_settings.xml.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
 	echo "	@cp -fr Runtime/config/plugins.xml.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
 	echo "	@cp -fr Runtime/config/debuggers.xml.gtk \$(DESTDIR)$prefix/share/codelite/config/debuggers.xml.default" >> Makefile
@@ -506,11 +506,7 @@ createInstallTarget()
 	echo "	@chmod -R +w \$(DESTDIR)$prefix/share/codelite/templates/* " >> Makefile
 	echo "	@cp -fpr Runtime/lexers/Default/*.xml \$(DESTDIR)$prefix/share/codelite/lexers/Default/" >> Makefile
 	echo "	@cp -fpr Runtime/lexers/BlackTheme/*.xml \$(DESTDIR)$prefix/share/codelite/lexers/BlackTheme/" >> Makefile
-	echo "	@cp -fpr lib/Debugger.so \$(DESTDIR)$prefix/share/codelite/debuggers/" >> Makefile
-	echo "	@cp -fpr lib/CodeFormatter.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
-	echo "	@cp -fpr lib/Subversion.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
-	echo "	@cp -fpr lib/cscope.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
-	echo "	@cp -fpr lib/Gizmos.so \$(DESTDIR)$prefix/share/codelite/plugins/" >> Makefile
+	echo "	@cp -fpr lib/Debugger.so \$(DESTDIR)$plugins_dir/debuggers/" >> Makefile
 	echo "	@cp -fpr Runtime/index.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
 	echo "	@cp -fpr Runtime/astyle.sample \$(DESTDIR)$prefix/share/codelite/" >> Makefile
 	echo "	@cp -fpr Runtime/svnreport.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
@@ -544,6 +540,7 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/include/UnitTest++/" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/lib/libUnitTest++.a" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/share/codelite" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$plugins_dir/" >> Makefile
     # Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
 	echo "	@if test -w \$(DESTDIR)/usr/share/applications ; then \\" >> Makefile
 	if [ "$add_desktop_icon" = "yes" ] ; then
@@ -746,16 +743,16 @@ echo "" >> Makefile
 ##
 ########################################################
 
-createPluginMakefile "Debugger" "Debugger" "\$(DESTDIR)$prefix/share/codelite/debuggers/" "../Runtime/debuggers"
-createPluginMakefile "Gizmos" "Gizmos"  "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-createPluginMakefile "cscope" "cscope" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-createPluginMakefile "Subversion" "Subversion" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-createPluginMakefile "CodeFormatter" "CodeFormatter" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-createPluginMakefile "Copyright" "Copyright" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-createPluginMakefile "ExternalTools" "ExternalTools" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-createPluginMakefile "SnipWiz" "SnipWiz" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-createPluginMakefile "wxformbuilder" "wxformbuilder" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-createPluginMakefile "abbreviation" "abbreviation" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-createPluginMakefile "SymbolView" "SymbolView" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
-createPluginMakefile "ContinuousBuild" "ContinuousBuild" "\$(DESTDIR)$prefix/share/codelite/plugins/" "../Runtime/plugins"
+createPluginMakefile "Debugger" "Debugger" "\$(DESTDIR)$plugins_dir/debuggers/" "../Runtime/debuggers"
+createPluginMakefile "Gizmos" "Gizmos"  "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "cscope" "cscope" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "Subversion" "Subversion" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "CodeFormatter" "CodeFormatter" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "Copyright" "Copyright" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "UnitTestCPP" "UnitTestCPP" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "ExternalTools" "ExternalTools" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "SnipWiz" "SnipWiz" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "wxformbuilder" "wxformbuilder" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "abbreviation" "abbreviation" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "SymbolView" "SymbolView" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "ContinuousBuild" "ContinuousBuild" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"

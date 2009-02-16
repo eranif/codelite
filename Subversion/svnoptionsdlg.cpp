@@ -27,12 +27,17 @@
 #include "windowattrmanager.h"
 #include <wx/imaglist.h>
 
-static wxBitmap LoadBmpFile(const wxString &name, IManager *mgr, wxBitmapType type = wxBITMAP_TYPE_PNG)
+static wxBitmap LoadBitmapFile(const wxString &name, IManager *manager)
 {
 	wxBitmap bmp;
-	wxString basePath(mgr->GetInstallDirectory() + wxT("/plugins/resources/"));
+#ifdef __WXGTK__
+	wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
+#else
+	wxString pluginsDir(manager->GetInstallDirectory() + wxT( "/plugins" ));
+#endif
+	wxString basePath(pluginsDir + wxT("/resources/"));
 
-	bmp.LoadFile(basePath + name, type);
+	bmp.LoadFile(basePath + name, wxBITMAP_TYPE_PNG);
 	if (bmp.IsOk()) {
 		return bmp;
 	}
@@ -69,9 +74,9 @@ SvnOptionsDlg::SvnOptionsDlg( wxWindow* parent, const SvnOptions &options, IMana
 
 	wxImageList *il = new wxImageList(32, 32);
 
-	il->Add(LoadBmpFile(wxT("svn_settings.png"), m_manager));
-	il->Add(LoadBmpFile(wxT("svn_diff.png"), m_manager));
-	il->Add(LoadBmpFile(wxT("svn_ssh.png"), m_manager));
+	il->Add(LoadBitmapFile(wxT("svn_settings.png"), m_manager));
+	il->Add(LoadBitmapFile(wxT("svn_diff.png"), m_manager));
+	il->Add(LoadBitmapFile(wxT("svn_ssh.png"), m_manager));
 
 	m_listbook1->AssignImageList(il);
 	m_listbook1->SetPageImage(0, 0);

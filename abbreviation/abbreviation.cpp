@@ -125,13 +125,7 @@ void AbbreviationPlugin::OnSettings(wxCommandEvent& e)
 
 void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
 {
-	wxString basePath(m_mgr->GetInstallDirectory() + wxT("/plugins/resources/"));
-	static wxBitmap bmp = wxNullBitmap ;
-
-	if (!bmp.IsOk()) {
-		bmp.LoadFile(basePath + wxT("abbrev.png"), wxBITMAP_TYPE_PNG);
-	}
-
+	static wxBitmap bmp = LoadBitmapFile(wxT("abbrev.png")) ;
 	IEditor *editor = m_mgr->GetActiveEditor();
 	if ( editor && bmp.IsOk() ) {
 		editor->RegisterImageForKind(wxT("Abbreviation"), bmp);

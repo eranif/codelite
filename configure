@@ -55,7 +55,7 @@ createVariables()
 	echo "WXCFG=${wxcfg}" >> Makefile
 	echo "DESTDIR=" >> Makefile
 	echo "" >> Makefile
-	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DPLUGINS_DIR=\"${plugins_dir}\"" >> Makefile
+	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\\\"${prefix}/share/codelite\\\" -DPLUGINS_DIR=\\\"${plugins_dir}\\\"" >> Makefile
 	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
 	echo "	-lwxscintilla\$(EXT) -lwxpropgrid\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 

@@ -218,7 +218,7 @@ bool App::OnInit()
 		wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
 
 		//copy the settings from the global location if needed
-		wxString installPath( wxStandardPaths::Get().GetDataDir() );
+		wxString installPath( INSTALL_DIR, wxConvUTF8 );
 		if ( ! CopySettings(homeDir, installPath ) ) return false;
 		ManagerST::Get()->SetInstallDir( installPath );
 
@@ -434,15 +434,6 @@ int App::OnExit()
 
 bool App::CopySettings(const wxString &destDir, wxString& installPath)
 {
-#if defined (__WXGTK__)
-	// By default everything's been installed to /usr/local/*
-	// However check, as --prefix= might have put things elsewhere
-	if ( ! LocateConfPath( installPath ) ) {
-		wxLogMessage( wxT("Help, I couldn't find CodeLite's resource files!\nPlease check your installation") );
-		return false;
-	}
-#endif
-
 	bool fileExist = wxFileName::FileExists( destDir + wxT("/config/codelite.xml") );
 	bool copyAnyways(true);
 
@@ -471,21 +462,6 @@ bool App::CopySettings(const wxString &destDir, wxString& installPath)
 	}
 	return true;
 }
-
-#if defined (__WXGTK__)
-bool App::LocateConfPath( wxString& installPath )
-{
-  // By default, installPath will be /usr/local/share/codelite/
-  if ( wxFileName::DirExists( installPath ) ) return true;
-  installPath = wxT("/usr/share/codelite");  // Next likeliest: this is where distros will put it
-  if ( wxFileName::DirExists( installPath ) ) return true;
-  installPath = wxT("/etc/codelite");        // OK, try the officially-correct place (though it should really be a foo.conf file)
-  if ( wxFileName::DirExists( installPath ) ) return true;
-  if ( wxFileName::FileExists( wxT("./config/accelerators.conf.default") ) )  // Last chance. If we're running from an "uninstalled" CL binary...
-    { installPath = wxGetCwd();	return true; }
-  return false;
-}
-#endif
 
 void App::OnFatalException()
 {

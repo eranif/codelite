@@ -86,6 +86,7 @@ void PluginManager::Load()
 #else
 	ext = wxT("dll");
 #endif
+
 	wxString fileSpec( wxT( "*." ) + ext );
 	PluginConfig::Instance()->Load(wxT("config/plugins.xml"));
 

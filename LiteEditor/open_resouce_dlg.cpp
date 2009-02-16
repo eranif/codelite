@@ -211,8 +211,10 @@ void OpenResourceDlg::OnButtonOK(wxCommandEvent &event)
 void OpenResourceDlg::OnItemSelected(wxCommandEvent &event)
 {
 	wxStringClientData *data = (wxStringClientData *)m_listShortNames->GetClientObject(event.GetSelection());
+	if(data) {
 	m_fullText->SetLabel(data->GetData());
 	UpdateFileName();
+	}
 }
 
 void OpenResourceDlg::OnItemActivated(wxCommandEvent &event)

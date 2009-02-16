@@ -55,7 +55,7 @@ createVariables()
 	echo "WXCFG=${wxcfg}" >> Makefile
 	echo "DESTDIR=" >> Makefile
 	echo "" >> Makefile
-	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ " >> Makefile
+	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DPLUGINS_DIR=\"${plugins_dir}\"" >> Makefile
 	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
 	echo "	-lwxscintilla\$(EXT) -lwxpropgrid\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 
@@ -579,13 +579,13 @@ checkCURL()
 Show_Help_and_Exit()
 {
 	echo "This is the CodeLite configure script"
-  echo "Usage: ./configure [OPTION]..."
+	echo "Usage: ./configure [OPTION]..."
 	echo "Available options:"
-	echo "  --prefix=PREFIX         install files into the filepath PREFIX (the default is /usr/local)"
+	echo "  --prefix=PREFIX         install files into the filepath PREFIX (the default is /usr)"
+	echo "  --plugins_dir=PREFIX    install plugins into the filepath PREFIX (the default is /usr/lib/codelite)"
 	echo "  --enable-debug          create a debug build (the default is disable)"
 	echo "  --help                  show this help"
-
-  exit
+	exit
 }
 
 ## main
@@ -593,14 +593,15 @@ Show_Help_and_Exit()
 
 ## Create variables needed by the makefile
 enable_debug="no"
-prefix="/usr/local"
+prefix="/usr"
+plugins_dir="/usr/lib/codelite"
 add_desktop_icon="yes"
 make_symlink="yes"
 os_name=`uname -s`
 arch=`uname -m`
 
 ## Determine if we are on 64 bit machine
-## AMD / Interl will produce x86_64
+## AMD / Intel will produce x86_64
 ## while itanium produces ia64
 is_64bit="no"
 if [ "$arch" = "x86_64" ] || [ "$arch" = "ia64" ]; then
@@ -610,33 +611,31 @@ fi
 ## Process any arguments that were supplied
 until [ -z "$1" ]  # Until all parameters used up
 do
-if [ "$1" = "--enable-debug" ]; then
-	enable_debug="yes"
+	if [ "$1" = "--enable-debug" ]; then
+		enable_debug="yes"
 
-   # The next 2 aren't in the Usage, but will prevent undesirable things from happening when e.g. making rpms
-  elif [ "$1" = "--disable-desktop_icon" ]; then
-    add_desktop_icon="no"
-  elif [ "$1" = "--disable-make_symlink" ]; then
-    make_symlink="no"
+	   # The next 2 aren't in the Usage, but will prevent undesirable things from happening when e.g. making rpms
+		elif [ "$1" = "--disable-desktop_icon" ]; then
+			add_desktop_icon="no"
 
-  elif [ "$1" = "--help" ]; then
-   Show_Help_and_Exit
+		elif [ "$1" = "--disable-make_symlink" ]; then
+			make_symlink="no"
 
-  else        # See if there's a --prefix=foo. Do it the hard way, to stay Bourne compatible
-    len=`expr length $1`
-    if [ $len -gt 9 ]; then  # If not, it can't be a valid prefix
-      if [ "`expr substr $1 1 9`" = "--prefix=" ]; then
-        prefix=`expr substr $1 10 $len` # $prefix now contains the bit after the '='
-        len=`expr length $prefix`       # Now remove any terminal '/'
-        if [ "`expr substr $prefix $len 1`" = "/" ]; then
-          newlen=`expr $len - 1`
-          prefix=`expr substr $prefix 1 $newlen`
-        fi
-      fi
-fi
+		elif [ "$1" = "--help" ]; then
+			Show_Help_and_Exit
 
-  fi
-  shift
+		else
+			key=`echo $1 | cut -d= -f1`
+			value=`echo $1 | cut -d= -f2`
+
+			if [ "$key" = "--prefix" ]; then
+				prefix=$value
+			elif [ "$key" = "--plugins_dir" ]; then
+				plugins_dir=$value
+			fi
+		fi
+	fi
+	shift
 done
 
 ## remove old makefile

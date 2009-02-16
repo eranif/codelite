@@ -1151,12 +1151,7 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output)
 {
 	// make the line per WORD size
-#ifdef ON_64_BIT
-	int divider (8);
-#else
-	int divider (4);
-#endif
-
+	int divider (sizeof(unsigned long));
 	int factor((int)(count/divider));
 	if (count % divider != 0) {
 		factor = (int)(count / divider) + 1;

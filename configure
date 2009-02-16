@@ -634,7 +634,6 @@ do
 				plugins_dir=$value
 			fi
 		fi
-	fi
 	shift
 done
 

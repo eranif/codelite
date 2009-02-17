@@ -24,7 +24,7 @@ parseCommandLine()
     case $1 in
         "-d")   PREFIX="/usr";;
 
-        "-u")   PREFIX="/usr/local"
+        "-u")   PREFIX="/usr"
                 cur_rev="${cur_rev}-ubuntu0";;
 
         "--help" | "-h")    usage
@@ -116,14 +116,14 @@ chmod +x fakeroot/${PREFIX}/bin/le_killproc.sh
 chmod +x fakeroot/${PREFIX}/bin/le_exec.sh
 mkdir -p fakeroot/${PREFIX}/share/codelite
 mkdir -p fakeroot/${PREFIX}/share/codelite/config
-mkdir -p fakeroot/${PREFIX}/share/codelite/debuggers
 mkdir -p fakeroot/${PREFIX}/share/codelite/templates
-mkdir -p fakeroot/${PREFIX}/share/codelite/plugins
-mkdir -p fakeroot/${PREFIX}/share/codelite/plugins/resources
 mkdir -p fakeroot/${PREFIX}/share/codelite/images
 mkdir -p fakeroot/${PREFIX}/share/codelite/rc
 mkdir -p fakeroot/${PREFIX}/share/codelite/src
 mkdir -p fakeroot/${PREFIX}/share/codelite/lexers
+mkdir -p fakeroot/${PREFIX}/lib/codelite/
+mkdir -p fakeroot/${PREFIX}/lib/codelite/debuggers
+mkdir -p fakeroot/${PREFIX}/lib/codelite/resources
 
 mkdir -p fakeroot/usr/share/applications/
 mkdir -p fakeroot/usr/share/menu/
@@ -137,20 +137,20 @@ mkdir -p fakeroot/usr/share/menu/
 \cp -pfr Runtime/templates/* fakeroot/${PREFIX}/share/codelite/templates/
 \cp -pfr Runtime/lexers/* fakeroot/${PREFIX}/share/codelite/lexers/
 \cp -pr static-symbols.tags fakeroot/${PREFIX}/share/codelite/
-\cp -pr lib/Debugger.so fakeroot/${PREFIX}/share/codelite/debuggers/
-\cp -pr lib/CodeFormatter.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr lib/Copyright.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr lib/Subversion.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr lib/Gizmos.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr lib/cscope.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr lib/UnitTestCPP.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr lib/ExternalTools.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr lib/ContinuousBuild.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr lib/SymbolView.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr lib/SnipWiz.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr lib/wxformbuilder.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr lib/abbreviation.so fakeroot/${PREFIX}/share/codelite/plugins/
-\cp -pr Runtime/plugins/resources/*.* fakeroot/${PREFIX}/share/codelite/plugins/resources/
+\cp -pr lib/Debugger.so fakeroot/${PREFIX}/lib/codelite/debuggers/
+\cp -pr lib/CodeFormatter.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/Copyright.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/Subversion.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/Gizmos.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/cscope.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/UnitTestCPP.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/ExternalTools.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/ContinuousBuild.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/SymbolView.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/SnipWiz.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/wxformbuilder.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/abbreviation.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr Runtime/plugins/resources/*.* fakeroot/${PREFIX}/lib/codelite/resources/
 \cp -pr Runtime/*.html fakeroot/${PREFIX}/share/codelite/
 \cp -pr Runtime/astyle.sample fakeroot/${PREFIX}/share/codelite/
 \cp -pr Runtime/src/* fakeroot/${PREFIX}/share/codelite/src/

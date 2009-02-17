@@ -445,7 +445,7 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
 		if (!cmp->GetCmpFileType(files[i].GetExt(), ft))
 			continue;
 
-		if ((OS_WINDOWS) && ft.kind == Compiler::CmpFileKindResource && bldConf && !bldConf->IsResCompilerRequired()) {
+		if (ft.kind == Compiler::CmpFileKindResource && bldConf && !bldConf->IsResCompilerRequired()) {
 			// we are on Windows, the file type is Resource and resource compiler is not required
 			continue;
 		}
@@ -478,7 +478,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
                                     !cmp->GetDependSuffix().IsEmpty();
     bool supportPreprocessOnlyFiles = !cmp->GetSwitch(wxT("PreprocessOnly")).IsEmpty() &&
                                       !cmp->GetPreprocessSuffix().IsEmpty();
-    
+
 	std::vector<wxFileName> abs_files, rel_paths;
 
 	// support for full path
@@ -544,8 +544,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
                     text << wxT("\t") << wxT("$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile << wxT(" \"") << absFileName << wxT("\"\n\n");
                 }
 
-			} else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired() && OS_WINDOWS ) {
-				//Windows only
+			} else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired()) {
 				// we construct an object name which also includes the full name of the reousrce file and appends a .o to the name (to be more
 				// precised, $(ObjectSuffix))
 				wxString objectName;
@@ -762,7 +761,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("ObjectSwitch :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
 	text << wxT("ArchiveOutputSwitch :=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
     text << wxT("PreprocessOnlySwitch :=") << cmp->GetSwitch(wxT("PreprocessOnly")) << wxT("\n");
-    
+
 	wxString buildOpts = bldConf->GetCompileOptions();
 	buildOpts.Replace(wxT(";"), wxT(" "));
 	text << wxT("CmpOptions :=") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");
@@ -797,7 +796,7 @@ wxString BuilderGnuMake::ParseIncludePath(const wxString &paths, const wxString 
 	//convert semi-colon delimited string into GNU list of
 	//include paths:
 	wxString incluedPath(wxEmptyString);
-	wxStringTokenizer tkz(paths, wxT(";"));
+	wxStringTokenizer tkz(paths, wxT(";"), wxTOKEN_STRTOK);
 	//prepend each include path with -I
 	while (tkz.HasMoreTokens()) {
 		wxString path(tkz.NextToken());
@@ -814,7 +813,7 @@ wxString BuilderGnuMake::ParseLibPath(const wxString &paths, const wxString &pro
 	//convert semi-colon delimited string into GNU list of
 	//lib path
 	wxString libPath(wxEmptyString);
-	wxStringTokenizer tkz(paths, wxT(";"));
+	wxStringTokenizer tkz(paths, wxT(";"), wxTOKEN_STRTOK);
 	//prepend each include path with libpath switch
 	while (tkz.HasMoreTokens()) {
 		wxString path(tkz.NextToken());
@@ -829,7 +828,7 @@ wxString BuilderGnuMake::ParseLibPath(const wxString &paths, const wxString &pro
 wxString BuilderGnuMake::ParsePreprocessor(const wxString &prep)
 {
 	wxString preprocessor(wxEmptyString);
-	wxStringTokenizer tkz(prep, wxT(";"));
+	wxStringTokenizer tkz(prep, wxT(";"), wxTOKEN_STRTOK);
 	//prepend each include path with libpath switch
 	while (tkz.HasMoreTokens()) {
 		wxString p(tkz.NextToken());
@@ -844,7 +843,7 @@ wxString BuilderGnuMake::ParseLibs(const wxString &libs)
 	//convert semi-colon delimited string into GNU list of
 	//libs
 	wxString slibs(wxEmptyString);
-	wxStringTokenizer tkz(libs, wxT(";"));
+	wxStringTokenizer tkz(libs, wxT(";"), wxTOKEN_STRTOK);
 	//prepend each include path with -l and strip trailing lib string
 	//also, if the file contains an extension (.a, .so, .dynlib) remove them as well
 	while (tkz.HasMoreTokens()) {
@@ -989,11 +988,11 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 
 	return EnvironmentConfig::Instance()->ExpandVariables(cmd);
 }
- 
+
 wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg)
 {
     // TODO: factor out common code with GetSingleFileCmd()
-    
+
 	wxString cmd;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
 	if (!bldConf) {
@@ -1020,7 +1019,7 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString &project, const wxS
 
 	return EnvironmentConfig::Instance()->ExpandVariables(cmd);
 }
- 
+
 wxString BuilderGnuMake::GetCdCmd(const wxFileName &path1, const wxFileName &path2)
 {
 	wxString cd_cmd(wxT("@"));

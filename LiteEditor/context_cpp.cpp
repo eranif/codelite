@@ -783,7 +783,7 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 		GetCtrl().RegisterImageForKind(wxT("FileHeader"), m_hFileBmp  );
 		std::vector<TagEntryPtr> tags;
 
-		for (size_t i=0; i<files.size(); i++){
+		for (size_t i=0; i<files.size(); i++) {
 			TagEntryPtr t(new TagEntry());
 			t->SetName(files.at(i).GetFullName());
 			t->SetKind(IsSource(files.at(i).GetExt()) ? wxT("FileCpp") : wxT("FileHeader"));
@@ -1711,22 +1711,22 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 
 bool ContextCpp::OpenFileAndAppend ( const wxString &fileName, const wxString &text )
 {
-    LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(fileName, wxEmptyString, 0);
-    if (!editor)
-        return false;
+	LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(fileName, wxEmptyString, 0);
+	if (!editor)
+		return false;
 
-    // if needed, append EOL
-    // in an ideal world, we would like that the file will be terminated with 2xEOL
-    if(editor->GetText().EndsWith(editor->GetEolString()) == false) {
-        editor->AppendText(editor->GetEolString());
-    }
-    if(editor->GetText().EndsWith(editor->GetEolString() + editor->GetEolString()) == false){
-        editor->AppendText(editor->GetEolString());
-    }
-    int lineNum = editor->GetLineCount();
-    editor->GotoLine ( lineNum-1 );
-    editor->AppendText ( text );
-    return true;
+	// if needed, append EOL
+	// in an ideal world, we would like that the file will be terminated with 2xEOL
+	if (editor->GetText().EndsWith(editor->GetEolString()) == false) {
+		editor->AppendText(editor->GetEolString());
+	}
+	if (editor->GetText().EndsWith(editor->GetEolString() + editor->GetEolString()) == false) {
+		editor->AppendText(editor->GetEolString());
+	}
+	int lineNum = editor->GetLineCount();
+	editor->GotoLine ( lineNum-1 );
+	editor->AppendText ( text );
+	return true;
 }
 
 void ContextCpp::OnFileSaved()
@@ -2134,21 +2134,21 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li 
 
 	for ( std::list<CppToken>::iterator iter = li.begin(); iter != li.end(); iter++ ) {
 		CppToken &token = *iter;
-        if ( file_name == token.getFilename() ) {
-            // update next token offset in case we are still in the same file
-            token.setOffset ( token.getOffset() + off );
-        } else {
-            // switched file
-            off = 0;
-            file_name = token.getFilename();
-        }
-        LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(token.getFilename(), wxEmptyString, 0);
+		if ( file_name == token.getFilename() ) {
+			// update next token offset in case we are still in the same file
+			token.setOffset ( token.getOffset() + off );
+		} else {
+			// switched file
+			off = 0;
+			file_name = token.getFilename();
+		}
+		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(token.getFilename(), wxEmptyString, 0);
 		if (editor != NULL && editor->GetFileName().GetFullPath() == wxFileName(token.getFilename()).GetFullPath()) {
-            editor->SetSelection ( token.getOffset(), token.getOffset()+token.getName().Len() );
-            if ( editor->GetSelectionStart() != editor->GetSelectionEnd() ) {
-                editor->ReplaceSelection ( word );
-                off += word.Len() - token.getName().Len();
-            }
+			editor->SetSelection ( token.getOffset(), token.getOffset()+token.getName().Len() );
+			if ( editor->GetSelectionStart() != editor->GetSelectionEnd() ) {
+				editor->ReplaceSelection ( word );
+				off += word.Len() - token.getName().Len();
+			}
 		}
 	}
 }
@@ -2374,22 +2374,27 @@ void ContextCpp::DoCodeComplete(long pos)
 
 	//get expression
 	wxString expr = GetExpression(currentPosition, false);
+
 	// get the scope
-	//Optimize the text for large files
+	// Optimize the text for large files
 	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
 	int startPos(0);
-//	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(rCtrl.GetFileName(), line);
-//	if ( t ) {
-//		startPos = rCtrl.PositionFromLine( t->GetLine() - 1);
-//		if ( startPos > currentPosition ) {
-//			startPos = 0;
-//		}
-//	}
+
+	// enable faster scope name resolving if needed
+	if ( !(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_ACCURATE_SCOPE_RESOLVING) ) {
+		TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(rCtrl.GetFileName(), line);
+		if ( t ) {
+			startPos = rCtrl.PositionFromLine( t->GetLine() - 1);
+			if ( startPos > currentPosition ) {
+				startPos = 0;
+			}
+		}
+	}
 
 	wxString text = rCtrl.GetTextRange(startPos, currentPosition);
-	//hack #2
-	//collect all text from 0 - first scope found
-	//this will help us detect statements like 'using namespace foo;'
+
+	// collect all text from 0 - first scope found
+	// this will help us detect statements like 'using namespace foo;'
 	if (startPos) { //> 0
 		//get the first function on this file
 		int endPos(0);

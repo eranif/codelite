@@ -217,6 +217,10 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	
 	bSizer6->Add( m_checkBoxFullRetagging, 0, wxALL, 5 );
 	
+	m_checkBoxAccurateScopeNameResolving = new wxCheckBox( m_ctagsPage, wxID_ANY, wxT("Use more accurate scope name resolving (you might notice a minor performance impact on large files)"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	bSizer6->Add( m_checkBoxAccurateScopeNameResolving, 0, wxALL, 5 );
+	
 	m_ctagsPage->SetSizer( bSizer6 );
 	m_ctagsPage->Layout();
 	bSizer6->Fit( m_ctagsPage );

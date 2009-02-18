@@ -31,24 +31,24 @@
     <File Name="Release\test.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
-      <General OutputFile="./Release/CppParser" IntermediateDirectory="./Release" Command="CppParser" CommandArguments="" WorkingDirectory="./Release" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="-g;">
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;" Required="yes">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="yes" Options="-O2">
+      <Linker Options="-O2" Required="yes">
         <LibraryPath Value="."/>
         <LibraryPath Value="./Release"/>
       </Linker>
+      <ResourceCompiler Options="" Required="yes"/>
+      <General OutputFile="./Release/CppParser" IntermediateDirectory="./Release" Command="CppParser" CommandArguments="" WorkingDirectory="./Release" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands></PostConnectCommands>
         <StartupCommands></StartupCommands>
       </Debugger>
-      <ResourceCompiler Required="yes" Options=""/>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy *.h ..\CodeLite\.</Command>
-        <Command Enabled="yes">copy *.cpp ..\CodeLite\.</Command>
+        <Command Enabled="no">copy *.h ..\CodeLite\.</Command>
+        <Command Enabled="no">copy *.cpp ..\CodeLite\.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>
@@ -89,6 +89,15 @@ cpp_func_parser.cpp: cpp_func_parser.y
 </CustomPreBuild>
       </AdditionalRules>
     </Configuration>
+    <GlobalSettings>
+      <Compiler Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
   </Settings>
   <Dependencies Name="Release"/>
 </CodeLite_Project>

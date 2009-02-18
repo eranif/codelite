@@ -220,7 +220,6 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="codelite_indexer_API">
     <File Name="np_connections_server.h"/>
     <File Name="cl_indexer_reply.cpp"/>
@@ -239,4 +238,5 @@
     <File Name="..\sdk\codelite_indexer\network\cl_indexer_macros.h"/>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

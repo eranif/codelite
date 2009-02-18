@@ -368,24 +368,35 @@ bool Language::ProcessExpression(const wxString& stmt,
 				accumulatedScope << wxT("<global>");
 			}
 
+			wxString originalScopeName(scopeToSearch);
 			if (op == wxT("::")) {
 				//if the operator was something like 'Qualifier::', it is safe to assume
 				//that the secope to be searched is the full expression
 				scopeToSearch = accumulatedScope;
 			}
 
-			//get the derivation list of the typename
+			// get the derivation list of the typename
 			bool res(false);
 			wxString _name(_U(result.m_name.c_str()));
 			PERF_BLOCK("TypeFromName") {
-				res = TypeFromName(	_name,
-				                    visibleScope,
-				                    lastFuncSig,
-				                    scopeToSearch,
-				                    additionalScopes,
-				                    parentTypeName.IsEmpty(),
-				                    typeName,	//output
-				                    typeScope);	//output
+				for (int i=0; i<2; i++) {
+					res = TypeFromName(	_name,
+					                    visibleScope,
+					                    lastFuncSig,
+					                    scopeToSearch,
+					                    additionalScopes,
+					                    parentTypeName.IsEmpty(),
+					                    typeName,   //output
+					                    typeScope); //output
+
+					if (!res && originalScopeName.IsEmpty() == false) {
+						// the scopeToSearch was modified earlier with the accumulated scope
+						// restore the search scope and try again
+						scopeToSearch = originalScopeName;
+						continue;
+					}
+					break;
+				}
 			}
 
 			if (!res) {
@@ -929,7 +940,7 @@ bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const 
 				// try the typeScope in any of the "using namespace XXX" declarations
 				// passed here (i.e. moreScopes variable)
 				wxString newScope(moreScopes.at(i));
-				if(typeScope != wxT("<global>")) {
+				if (typeScope != wxT("<global>")) {
 					newScope << wxT("::") << typeScope;
 				}
 
@@ -941,8 +952,33 @@ bool Language::CorrectUsingNamespace(wxString &type, wxString &typeScope, const 
 
 		//if we are here, it means that the more scopes did not matched any, try the parent scope
 		tags.clear();
-		if (DoSearchByNameAndScope(type, parentScope, tags, type, typeScope)) {
-			return true;
+
+		wxString tmpParentScope(parentScope);
+		wxString cuttedScope(tmpParentScope);
+
+		tmpParentScope.Replace(wxT("::"), wxT("@"));
+
+		cuttedScope.Trim().Trim(false);
+		while ( !cuttedScope.IsEmpty() ) {
+
+			// try all the scopes of thse parent:
+			// for example:
+			// assuming the parent scope is A::B::C
+			// try to match:
+			// A::B::C
+			// A::B
+			// A
+			tags.clear();
+			if (DoSearchByNameAndScope(type, cuttedScope, tags, type, typeScope)) {
+				return true;
+			}
+
+			// get the next scope to search
+			cuttedScope = tmpParentScope.BeforeLast(wxT('@'));
+			cuttedScope.Replace(wxT("@"), wxT("::"));
+			cuttedScope.Trim().Trim(false);
+
+			tmpParentScope = tmpParentScope.BeforeLast(wxT('@'));
 		}
 
 		//still no match?

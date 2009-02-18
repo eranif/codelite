@@ -2378,13 +2378,13 @@ void ContextCpp::DoCodeComplete(long pos)
 	//Optimize the text for large files
 	int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition())+1;
 	int startPos(0);
-	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(rCtrl.GetFileName(), line);
-	if ( t ) {
-		startPos = rCtrl.PositionFromLine( t->GetLine() - 1);
-		if ( startPos > currentPosition ) {
-			startPos = 0;
-		}
-	}
+//	TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(rCtrl.GetFileName(), line);
+//	if ( t ) {
+//		startPos = rCtrl.PositionFromLine( t->GetLine() - 1);
+//		if ( startPos > currentPosition ) {
+//			startPos = 0;
+//		}
+//	}
 
 	wxString text = rCtrl.GetTextRange(startPos, currentPosition);
 	//hack #2

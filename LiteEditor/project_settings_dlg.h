@@ -107,6 +107,10 @@ public:
 	 */
 	void SaveValues(const wxString &confName);
 
+	virtual void OnCmdEvtVModified( wxCommandEvent& event ){
+		SetSettingsModified();
+	}
+	
 	virtual void OnCheckCompilerNeeded(wxCommandEvent &event);
 	virtual void OnCheckLinkerNeeded(wxCommandEvent &event);
 	virtual void OnAddSearchPath(wxCommandEvent &event);
@@ -178,6 +182,10 @@ protected:
 	void ClearValues();
 	void CopyValues();
 
+	virtual void OnCmdEvtVModified( wxCommandEvent& event ){
+		SetSettingsModified();
+	}
+	
 	virtual void OnButtonAddCompilerOptions(wxCommandEvent &event);
 	virtual void OnAddSearchPath(wxCommandEvent &event);
 	virtual void OnButtonAddPreprocessor(wxCommandEvent &event);

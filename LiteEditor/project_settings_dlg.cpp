@@ -515,9 +515,9 @@ void ProjectConfigurationPanel::DoUpdatePages(bool checked)
 
 void ProjectConfigurationPanel::SetSettingsModified()
 {
-	wxCommandEvent event( wxEVT_CL_PROJECT_SETTINGS_MODIFIED, GetId());
-	event.SetEventObject( this );
-	wxPostEvent(GetParent(), event);
+	wxCommandEvent event(wxEVT_CL_PROJECT_SETTINGS_MODIFIED, GetId());
+	event.SetEventObject(this);
+	GetParent()->ProcessEvent(event);
 }
 
 void ProjectConfigurationPanel::DisableCustomBuildPage(bool disable)

@@ -497,10 +497,7 @@ createInstallTarget()
 	echo "	@cp -fr Runtime/config/debuggers.xml.gtk \$(DESTDIR)$prefix/share/codelite/config/debuggers.xml.default" >> Makefile
 	echo "	@cp -fr Runtime/config/codelite.xml.default.gtk \$(DESTDIR)$prefix/share/codelite/config/codelite.xml.default" >> Makefile
 	echo "	@cp -fr Runtime/config/codelite.layout.default \$(DESTDIR)$prefix/share/codelite/config/codelite.layout" >> Makefile
-    # Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
-	echo "	@if test -w \$(DESTDIR)/usr/share/applications ; then \\" >> Makefile
-	echo "	   cp -fr Runtime/codelite.desktop \$(DESTDIR)/usr/share/applications/codelite.desktop; \\" >> Makefile
-	echo "	fi" >> Makefile
+    echo "	@cp -fr Runtime/codelite.desktop \$(DESTDIR)$prefix/share/applications/codelite.desktop; " >> Makefile
 	echo "	@cp -fpr Runtime/rc/*.xrc \$(DESTDIR)$prefix/share/codelite/rc/" >> Makefile
 	echo "	@cp -fpr Runtime/templates/* \$(DESTDIR)$prefix/share/codelite/templates/" >> Makefile
 	echo "	@chmod -R +w \$(DESTDIR)$prefix/share/codelite/templates/* " >> Makefile
@@ -542,10 +539,10 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/share/codelite" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$plugins_dir/" >> Makefile
     # Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
-	echo "	@if test -w \$(DESTDIR)/usr/share/applications ; then \\" >> Makefile
+	echo "	@if test -w \$(DESTDIR)$prefix/share/applications ; then \\" >> Makefile
 	if [ "$add_desktop_icon" = "yes" ] ; then
 	  if test -d $HOME/Desktop/ ; then
-	    echo "	  \$(RM) -fr \$(DESTDIR)/usr/share/applications/codelite.desktop; \\" >> Makefile
+	    echo "	  \$(RM) -fr \$(DESTDIR)$prefix/share/applications/codelite.desktop; \\" >> Makefile
 	  fi
 	fi
 	echo "	fi" >> Makefile
@@ -579,7 +576,7 @@ Show_Help_and_Exit()
 	echo "Usage: ./configure [OPTION]..."
 	echo "Available options:"
 	echo "  --prefix=PREFIX         install files into the filepath PREFIX (the default is /usr)"
-	echo "  --plugins_dir=PREFIX    install plugins into the filepath PREFIX (the default is /usr/lib/codelite)"
+	echo "  --plugins-dir=PREFIX    install plugins into the filepath PREFIX (the default is /usr/lib/codelite)"
 	echo "  --enable-debug          create a debug build (the default is disable)"
 	echo "  --help                  show this help"
 	exit
@@ -596,6 +593,10 @@ add_desktop_icon="yes"
 make_symlink="yes"
 os_name=`uname -s`
 arch=`uname -m`
+
+## Replace place holders in the desktop file
+rm -fr Runtime/codelite.desktop
+sed s@%%PREFIX%%@$prefix@g Runtime/codelite.desktop.template >> Runtime/codelite.desktop
 
 ## Determine if we are on 64 bit machine
 ## AMD / Intel will produce x86_64
@@ -627,7 +628,7 @@ do
 
 			if [ "$key" = "--prefix" ]; then
 				prefix=$value
-			elif [ "$key" = "--plugins_dir" ]; then
+			elif [ "$key" = "--plugins-dir" ]; then
 				plugins_dir=$value
 			fi
 		fi

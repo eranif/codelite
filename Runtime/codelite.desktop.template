@@ -8,5 +8,5 @@ Icon=%%PREFIX%%/share/codelite/images/cubes.png
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Categories=Development;
+Categories=Development
 StartupNotify=true

@@ -73,18 +73,7 @@ generateControlFile()
 generateDesktopFile()
 {
     rm -fr fakeroot/usr/share/applications/codelite.desktop
-    echo "[Desktop Entry] " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "Name=codelite " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "Comment=An Open Source IDE for C/C++ " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "TryExec=codelite " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "Exec=codelite %f " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "Icon=${PREFIX}/share/codelite/images/cubes.png " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "Terminal=false " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "X-MultipleArgs=false " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "Type=Application " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "Categories=Development; " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "StartupNotify=true " >> fakeroot/usr/share/applications/codelite.desktop
-    echo "" >> fakeroot/usr/share/applications/codelite.desktop
+	cp -fr Runtime/codelite.desktop fakeroot/usr/share/applications/codelite.desktop
 }
 
 ## Making menu entry for WMs

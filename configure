@@ -515,7 +515,6 @@ createInstallTarget()
 	    echo "	@cp -fpr Runtime/codelite.desktop $HOME/Desktop/" >> Makefile
 	  fi
 	fi
-	echo "	@chmod -R 777 \$(DESTDIR)$prefix/share/codelite" >> Makefile
 	echo "" >> Makefile
 }
 

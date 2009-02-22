@@ -163,7 +163,7 @@ generateDesktopFile
 ## Make menu entry
 generateMenuFile
 
-chmod -R 755 fakeroot/${PREFIX}/share/codelite
 chmod +x fakeroot/${PREFIX}/bin/codelite
+chmod +x fakeroot/${PREFIX}/bin/codelite_indexer
 
 fakeroot dpkg -b fakeroot/ ./

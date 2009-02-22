@@ -145,6 +145,8 @@ mkdir -p fakeroot/usr/share/menu/
 \cp -pr Runtime/src/* fakeroot/${PREFIX}/share/codelite/src/
 \cp -pr Runtime/images/*.png fakeroot/${PREFIX}/share/codelite/images/
 
+\cp -pr AUTHORS fakeroot/${PREFIX}/share/codelite/
+\cp -pr COPYING fakeroot/${PREFIX}/share/codelite/
 
 ## Clean all .svn files
 find fakeroot/usr/ -name ".svn" | xargs rm -fr

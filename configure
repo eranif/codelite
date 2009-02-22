@@ -589,7 +589,7 @@ enable_debug="no"
 prefix="/usr"
 plugins_dir="/usr/lib/codelite"
 add_desktop_icon="yes"
-make_symlink="yes"
+make_symlink="no"
 os_name=`uname -s`
 arch=`uname -m`
 

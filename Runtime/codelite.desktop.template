@@ -1,12 +1,9 @@
 [Desktop Entry]
-Version=0.9
+Encoding=UTF-8
 Name=codelite
-Comment=An Open Source IDE for C/C++
-TryExec=codelite
 Exec=codelite %f
 Icon=%%PREFIX%%/share/codelite/images/cubes.png
 Terminal=false
-X-MultipleArgs=false
 Type=Application
 Categories=Development
 StartupNotify=true

@@ -148,6 +148,9 @@ mkdir -p fakeroot/usr/share/menu/
 \cp -pr AUTHORS fakeroot/${PREFIX}/share/codelite/
 \cp -pr COPYING fakeroot/${PREFIX}/share/codelite/
 
+chmod 0644 fakeroot/${PREFIX}/lib/codelite/debuggers/*.so
+chmod 0644 fakeroot/${PREFIX}/lib/codelite/*.so
+
 ## Clean all .svn files
 find fakeroot/usr/ -name ".svn" | xargs rm -fr
 

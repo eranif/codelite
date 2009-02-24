@@ -1,3 +1,5 @@
+#!/bin/sh
+
 files=`find . -name "*.project"`
 wsp_files=`find . -name "*.workspace"`
 
@@ -13,7 +15,7 @@ do
 	mv $file.tmp $file
 done
 
-## 
+##
 ## fix project files
 ##
 for file in $files

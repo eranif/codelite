@@ -496,14 +496,14 @@ createInstallTarget()
 	echo "	@cp -fr Runtime/config/plugins.xml.default \$(DESTDIR)$prefix/share/codelite/config/" >> Makefile
 	echo "	@cp -fr Runtime/config/debuggers.xml.gtk \$(DESTDIR)$prefix/share/codelite/config/debuggers.xml.default" >> Makefile
 	echo "	@cp -fr Runtime/config/codelite.xml.default.gtk \$(DESTDIR)$prefix/share/codelite/config/codelite.xml.default" >> Makefile
-	echo "	@cp -fr Runtime/config/codelite.layout.default \$(DESTDIR)$prefix/share/codelite/config/codelite.layout" >> Makefile
-    echo "	@cp -fr Runtime/codelite.desktop \$(DESTDIR)$prefix/share/applications/codelite.desktop; " >> Makefile
+	echo "	@cp -fr Runtime/codelite.desktop \$(DESTDIR)$prefix/share/applications/codelite.desktop; " >> Makefile
 	echo "	@cp -fpr Runtime/rc/*.xrc \$(DESTDIR)$prefix/share/codelite/rc/" >> Makefile
 	echo "	@cp -fpr Runtime/templates/* \$(DESTDIR)$prefix/share/codelite/templates/" >> Makefile
 	echo "	@chmod -R +w \$(DESTDIR)$prefix/share/codelite/templates/* " >> Makefile
 	echo "	@cp -fpr Runtime/lexers/Default/*.xml \$(DESTDIR)$prefix/share/codelite/lexers/Default/" >> Makefile
 	echo "	@cp -fpr Runtime/lexers/BlackTheme/*.xml \$(DESTDIR)$prefix/share/codelite/lexers/BlackTheme/" >> Makefile
 	echo "	@cp -fpr lib/Debugger.so \$(DESTDIR)$plugins_dir/debuggers/" >> Makefile
+	echo "	@chmod 0644 \$(DESTDIR)$plugins_dir/debuggers/*.so" >> Makefile
 	echo "	@cp -fpr Runtime/index.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
 	echo "	@cp -fpr Runtime/astyle.sample \$(DESTDIR)$prefix/share/codelite/" >> Makefile
 	echo "	@cp -fpr Runtime/svnreport.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
@@ -712,7 +712,8 @@ echo "SnipWiz_install\\" >> Makefile
 echo "wxformbuilder_install\\" >> Makefile
 echo "abbreviation_install\\" >> Makefile
 echo "SymbolView_install\\" >> Makefile
-echo "ContinuousBuild_install\\" >> Makefile
+echo "ContinuousBuild_install" >> Makefile
+echo "	@chmod 0644 \$(DESTDIR)$plugins_dir/*.so" >> Makefile
 echo "" >> Makefile
 
 echo "clean_plugins:\\" >> Makefile

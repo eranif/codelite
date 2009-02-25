@@ -218,6 +218,7 @@ void Manager::CloseWorkspace()
 {
 	m_workspceClosing = true;
 
+	DbgClearWatches();
 	DbgStop();
 
 	//save the current session before closing
@@ -1794,6 +1795,8 @@ void Manager::DbgStart ( long pid )
 		HideDebuggerPane = true;
 		ShowDebuggerPane ( true );
 	}
+
+	DbgRestoreWatches();
 }
 
 void Manager::DbgStop()
@@ -1808,6 +1811,9 @@ void Manager::DbgStop()
 
 	// Mark the debugger as non interactive
 	m_dbgCanInteract = false;
+
+	// Keep the current watches for the next debug session
+	m_dbgWatchExpressions = Frame::Get()->GetDebuggerPane()->GetWatchesTable()->GetExpressions();
 
 	//clear the debugger pane
 	Frame::Get()->GetDebuggerPane()->Clear();
@@ -2411,6 +2417,25 @@ void Manager::DoCmdWorkspace ( int cmd )
 			}
 			bi.SetCleanLog ( i == 0 );
 			PushQueueCommand ( bi );
+		}
+	}
+}
+
+void Manager::DbgClearWatches()
+{
+	m_dbgWatchExpressions.Clear();
+}
+
+
+void Manager::DbgRestoreWatches()
+{
+	// restore any saved watch expressions from previous debug sessions
+	if( m_dbgWatchExpressions.empty() == false ) {
+		for(size_t i=0; i<m_dbgWatchExpressions.GetCount(); i++){
+			DebugMessage(wxT("Restoring watch: ") + m_dbgWatchExpressions.Item(i) + wxT("\n"));
+			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("add_watch"));
+			e.SetString(m_dbgWatchExpressions.Item(i));
+			Frame::Get()->GetDebuggerPane()->GetWatchesTable()->AddPendingEvent( e );
 		}
 	}
 }

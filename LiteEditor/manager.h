@@ -28,7 +28,7 @@
 #include <list>
 #include <map>
 #include <wx/event.h>
- 
+
 #include "singleton.h"
 #include "debuggerobserver.h"
 #include "workspace.h"
@@ -48,39 +48,39 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
 {
   	friend class Singleton<Manager>;
 
- 	wxString         m_installDir;
- 	wxString         m_startupDir;
- 	FileHistory      m_recentWorkspaces;
- 	ShellCommand    *m_shellProcess;
- 	AsyncExeCmd     *m_asyncExeCmd;
- 	BreakptMgr      *m_breakptsmgr;
- 	QuickWatchDlg   *m_quickWatchDlg;
- 	bool             m_isShutdown;
- 	bool             m_workspceClosing;
- 	bool             m_dbgCanInteract;
- 	bool             m_useTipWin;
- 	long             m_tipWinPos;
- 	int              m_frameLineno;
-
+ 	wxString                m_installDir;
+ 	wxString                m_startupDir;
+ 	FileHistory             m_recentWorkspaces;
+ 	ShellCommand           *m_shellProcess;
+ 	AsyncExeCmd            *m_asyncExeCmd;
+ 	BreakptMgr             *m_breakptsmgr;
+ 	QuickWatchDlg          *m_quickWatchDlg;
+ 	bool                    m_isShutdown;
+ 	bool                    m_workspceClosing;
+ 	bool                    m_dbgCanInteract;
+ 	bool                    m_useTipWin;
+ 	long                    m_tipWinPos;
+ 	int                     m_frameLineno;
 	std::list<QueueCommand> m_buildQueue;
+	wxArrayString           m_dbgWatchExpressions;
 
 protected:
 	Manager(void);
 	virtual ~Manager(void);
-    
-    
+
+
      //--------------------------- Global State -----------------------------
 public:
  	const wxString &GetStarupDirectory() const { return m_startupDir; }
  	void SetStarupDirectory(const wxString &path) { m_startupDir = path; }
- 
+
  	const wxString &GetInstallDir() const { return m_installDir; }
  	void SetInstallDir(const wxString &dir) { m_installDir = dir; }
- 
+
 	bool IsShutdownInProgress() const { return m_isShutdown; }
  	void SetShutdownInProgress(bool b) { m_isShutdown = b; }
- 
- 
+
+
      //--------------------------- Workspace Loading -----------------------------
 public:
  	/*!
@@ -229,7 +229,7 @@ public:
      * Search for (non-absolute) file in the workspace
      */
     wxFileName FindFile(const wxString &fileName, const wxString &project = wxEmptyString);
-	
+
 	/**
 	 * retag workspace
 	 */
@@ -319,28 +319,28 @@ public:
  	 * \param project project name
   	 */
  	wxString GetProjectCwd(const wxString &project) const;
-  
+
   	/**
  	 * Return project settings by name
  	 * \param projectName project name
  	 * \return project settings smart prt
   	 */
  	ProjectSettingsPtr GetProjectSettings(const wxString &projectName) const;
-  
+
   	/**
  	 * Set project settings
  	 * \param projectName project name
  	 * \param settings settings to update
   	 */
  	void SetProjectSettings(const wxString &projectName, ProjectSettingsPtr settings);
-	
+
   	/**
  	 * Set project global settings
  	 * \param projectName project name
  	 * \param settings global settings to update
   	 */
 	void SetProjectGlobalSettings(const wxString &projectName, BuildConfigCommonPtr settings);
-  
+
   	/**
  	 * \brief return the project excution command as it appears in the project settings
  	 * \param projectName
@@ -350,22 +350,22 @@ public:
  	 * \return project execution command or wxEmptyString if the project does not exist
   	 */
  	wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd, bool considerPauseWhenExecuting = true);
-  
-  
+
+
      //--------------------------- External Tags DB Management -----------------------------
 public:
   	/**
  	 * use an external database
   	 */
  	void SetExternalDatabase(const wxFileName &dbname);
-  
+
   	/**
  	 * close the currenlty open extern database
  	 * and free all its resources
   	 */
  	void CloseExternalDatabase();
-  
-  
+
+
      //--------------------------- Top Level Pane Management -----------------------------
 public:
   	/**
@@ -374,7 +374,7 @@ public:
  	 * \return true on success (exist in the AUI manager and visible), false otherwise
   	 */
  	bool IsPaneVisible(const wxString &pane_name);
-  
+
   	/**
  	 * Show output pane and set focus to focusWin
  	 * \param focusWin tab name to set the focus
@@ -382,30 +382,30 @@ public:
  	 * shown and nothing needed to be done
   	 */
  	bool ShowOutputPane(wxString focusWin = wxEmptyString, bool commit = true );
-  
+
   	/**
  	 * Show the debugger pane
   	 */
  	void ShowDebuggerPane(bool commit = true);
-  
+
   	/**
  	 * Show the workspace pane and set focus to focusWin
  	 * \param focusWin tab name to set the focus
   	 */
  	void ShowWorkspacePane(wxString focusWin = wxEmptyString, bool commit = true );
-  
+
   	/**
  	 * Hide pane
   	 */
  	void HidePane(const wxString &paneName, bool commit = true);
-  
+
   	/**
  	 * Hide/Show all panes. This function saves the current prespective and
  	 * then hides all panes, when called again, all panes are restored
   	 */
  	void TogglePanes();
-  
-  
+
+
     //--------------------------- Menu and Accelerator Mmgt -----------------------------
 public:
 	/**
@@ -421,7 +421,7 @@ public:
 	void LoadAcceleratorTable(const wxArrayString &files, MenuItemDataMap &map);
 
 	void UpdateMenu(wxMenu *menu, MenuItemDataMap &accelMap, std::vector< wxAcceleratorEntry > &accelVec);
-    
+
 	/**
 	 * \brief retrun map of the default accelerator table
 	 */
@@ -463,9 +463,9 @@ public:
 	BreakptMgr* GetBreakpointsMgr() { return m_breakptsmgr; }
 
 	void UpdateDebuggerPane();
-    
+
 	void SetMemory(const wxString &address, size_t count, const wxString &hex_value);
-    
+
 	// Debugging API
 	void DbgStart(long pid = wxNOT_FOUND);
 	void DbgStop();
@@ -477,7 +477,9 @@ public:
 	void DbgSetFrame(int frame, int lineno);
 	void DbgSetThread(long threadId);
 	bool DbgCanInteract() {	return m_dbgCanInteract; }
-    
+	void DbgClearWatches();
+	void DbgRestoreWatches();
+
     // IDebuggerObserver event handlers
 	void UpdateAddLine(const wxString &line);
 	void UpdateFileLine(const wxString &file, int lineno);
@@ -556,7 +558,7 @@ public:
 protected:
 	void DoBuildProject(const QueueCommand &buildInfo);
 	void DoCleanProject(const QueueCommand &buildInfo);
-	void DoCustomBuild(const QueueCommand &buildInfo);    
+	void DoCustomBuild(const QueueCommand &buildInfo);
 	void DoCmdWorkspace(int cmd);
 };
 

@@ -46,6 +46,7 @@ SimpleTable::SimpleTable( wxWindow* parent )
 	Connect(XRCID("copy_both"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SimpleTable::OnMenuCopyBoth), NULL, this);
 	Connect(XRCID("copy_value"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SimpleTable::OnMenuCopyValue), NULL, this);
 	Connect(XRCID("dereference_expr"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SimpleTable::OnMenuDerefExpr), NULL, this);
+	Connect(XRCID("add_watch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SimpleTable::OnNewWatch_Iternal), NULL, this);
 }
 
 SimpleTable::~SimpleTable()
@@ -301,7 +302,7 @@ void SimpleTable::OnMenuCopyExpr(wxCommandEvent& event)
 		wxString expr = GetColumnText(m_selectedId, 0);
 		// copy expr + value to clipboard
 		CopyToClipboard(expr);
-	}	
+	}
 }
 
 void SimpleTable::OnMenuCopyBoth(wxCommandEvent& event)
@@ -322,13 +323,13 @@ void SimpleTable::OnMenuCopyValue(wxCommandEvent& event)
 		wxString value = GetColumnText(m_selectedId, 1);
 		// copy expr + value to clipboard
 		CopyToClipboard(value);
-	}	
+	}
 }
 
 void SimpleTable::OnDisplayFormat(wxCommandEvent& event)
 {
 	wxUnusedVar(event);
-	
+
 	// refresh the table
 	RefreshValues();
 }
@@ -338,3 +339,11 @@ wxString SimpleTable::GetDisplayFormat()
 	return m_choiceDisplayFormat->GetStringSelection();
 }
 
+void SimpleTable::OnNewWatch_Iternal(wxCommandEvent& event)
+{
+	wxString expr = event.GetString();
+	if( expr.empty() == false ){
+		AddExpression(expr);
+		RefreshValues();
+	}
+}

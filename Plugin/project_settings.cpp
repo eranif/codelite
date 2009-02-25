@@ -51,7 +51,7 @@ ProjectSettings::ProjectSettings(wxXmlNode *node)
 	// Create global settings if it's not been loaded or by default
 	if (!m_globalSettings)
 	{
-		wxLogMessage(wxT("ProjectSettings : Create global settings because it doesn't exists"));
+//		wxLogMessage(wxT("ProjectSettings : Create global settings because it doesn't exists"));
 		m_globalSettings = new BuildConfigCommon(NULL, wxT("GlobalSettings"));
 	}
 }

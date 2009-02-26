@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : context_manager.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : context_manager.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/tokenzr.h>
@@ -29,7 +29,7 @@
 #include "context_base.h"
 #include "generic_context.h"
 #include "editor_config.h"
- 
+
 ContextManager::ContextManager()
 {
 	// register available contexts
@@ -44,7 +44,7 @@ ContextManager::ContextManager()
             m_contextPool[lex->GetName()] = new ContextGeneric(lex->GetName());
 		}
 	}
-    
+
     // make sure there is a "fallback" lexer for unrecognized file types
     if (m_contextPool.find(wxT("Text")) == m_contextPool.end()) {
         m_contextPool[wxT("Text")] = new ContextGeneric(wxT("Text"));
@@ -74,7 +74,11 @@ ContextBasePtr ContextManager::NewContextByFileName (LEditor *parent, const wxFi
 		wxString lexExt = lexer->GetFileSpec();
 		wxStringTokenizer tkz ( lexExt, wxT ( ";" ) );
 		while ( tkz.HasMoreTokens() ) {
-			if ( wxMatchWild ( tkz.NextToken(), fileName.GetFullName() ) ) {
+			wxString ext      = tkz.NextToken();
+			wxString fullname = fileName.GetFullName();
+
+			ext.MakeLower(); fullname.MakeLower();
+			if ( wxMatchWild ( ext, fullname ) ) {
 				return ContextManager::Get()->NewContext ( parent, lexer->GetName() );
 			}
 		}

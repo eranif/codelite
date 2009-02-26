@@ -1394,6 +1394,7 @@ void Manager::DoGetAccelFiles ( wxArrayString& files )
 
 void Manager::DumpMenu ( wxMenu *menu, const wxString &label, wxString &content )
 {
+#if 0	
 	wxMenuItemList items = menu->GetMenuItems();
 	wxMenuItemList::iterator iter = items.begin();
 	for ( ; iter != items.end(); iter++ ) {
@@ -1418,6 +1419,7 @@ void Manager::DumpMenu ( wxMenu *menu, const wxString &label, wxString &content 
 		}
 		content << wxT ( "\n" );
 	}
+#endif	
 }
 
 

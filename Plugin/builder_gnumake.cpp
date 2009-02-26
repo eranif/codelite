@@ -195,7 +195,27 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 			if ( isCustom ) {
 
 				CreateCustomPreBuildEvents(dependProjbldConf, text);
-				text << wxT("\t") << GetCdCmd(wspfile, fn) << dependProjbldConf->GetCustomBuildCmd() << wxT("\n");
+
+				wxString customWd  = dependProjbldConf->GetCustomBuildWorkingDir();
+				wxString build_cmd = dependProjbldConf->GetCustomBuildCmd();
+				wxString customWdCmd;
+
+				build_cmd.Trim().Trim(false);
+
+				if (build_cmd.empty()) {
+					build_cmd << wxT("@echo Project has no custom build command!");
+				}
+
+				// if a working directory is provided apply it, otherwise use the project
+				// path
+				customWd.Trim().Trim(false);
+				if (customWd.empty() == false ) {
+					customWdCmd << wxT("@cd \"") << ExpandVariables(customWd, dependProj, NULL) << wxT("\" && ");
+				} else {
+					customWdCmd << GetCdCmd(wspfile, fn);
+				}
+
+				text << wxT("\t") << customWdCmd << build_cmd << wxT("\n");
 				CreateCustomPostBuildEvents(dependProjbldConf, text);
 
 			} else {
@@ -259,9 +279,29 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
 			// if we are using custom build command, invoke it instead of calling the generated makefile
 			if ( !isCustom ) {
+
 				text << wxT("\t") << GetCdCmd(wspfile, fn) << buildTool << wxT(" \"") << dependProj->GetName() << wxT(".mk\"  clean\n");
+
 			} else {
-				text << wxT("\t") << GetCdCmd(wspfile, fn) << dependProjbldConf->GetCustomCleanCmd() << wxT("\n");
+
+				wxString customWd = dependProjbldConf->GetCustomBuildWorkingDir();
+				wxString clean_cmd = dependProjbldConf->GetCustomCleanCmd();
+				wxString customWdCmd;
+
+				clean_cmd.Trim().Trim(false);
+				if (clean_cmd.empty()) {
+					clean_cmd << wxT("@echo Project has no custom clean command!");
+				}
+
+				// if a working directory is provided apply it, otherwise use the project
+				// path
+				customWd.Trim().Trim(false);
+				if (customWd.empty() == false ) {
+					customWdCmd << wxT("@cd \"") << ExpandVariables(customWd, dependProj, NULL) << wxT("\" && ");
+				} else {
+					customWdCmd << GetCdCmd(wspfile, fn);
+				}
+				text << wxT("\t") << customWdCmd << clean_cmd << wxT("\n");
 			}
 		}
 	}
@@ -475,9 +515,9 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 	//get the compiler settings
 	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 	bool generateDependeciesFiles = cmp->GetGenerateDependeciesFile() &&
-                                    !cmp->GetDependSuffix().IsEmpty();
-    bool supportPreprocessOnlyFiles = !cmp->GetSwitch(wxT("PreprocessOnly")).IsEmpty() &&
-                                      !cmp->GetPreprocessSuffix().IsEmpty();
+	                                !cmp->GetDependSuffix().IsEmpty();
+	bool supportPreprocessOnlyFiles = !cmp->GetSwitch(wxT("PreprocessOnly")).IsEmpty() &&
+	                                  !cmp->GetPreprocessSuffix().IsEmpty();
 
 	std::vector<wxFileName> abs_files, rel_paths;
 
@@ -518,15 +558,15 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 			if (ft.kind == Compiler::CmpFileKindSource) {
 				wxString objectName;
 				wxString dependFile;
-                wxString preprocessedFile;
+				wxString preprocessedFile;
 
 				objectName << wxT("$(IntermediateDirectory)/") << filenameOnly << wxT("$(ObjectSuffix)");
 				if (generateDependeciesFiles) {
 					dependFile << wxT("$(IntermediateDirectory)/") << filenameOnly << wxT("$(DependSuffix)");
 				}
-                if (supportPreprocessOnlyFiles) {
-                    preprocessedFile << wxT("$(IntermediateDirectory)/") << filenameOnly << wxT("$(PreprocessSuffix)");
-                }
+				if (supportPreprocessOnlyFiles) {
+					preprocessedFile << wxT("$(IntermediateDirectory)/") << filenameOnly << wxT("$(PreprocessSuffix)");
+				}
 
 				// set the file rule
 				text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT(" ") << dependFile << wxT("\n");
@@ -538,11 +578,11 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 					text << wxT("\t") << GetMakeDirCmd(bldConf) << wxT("\n");
 					text << wxT("\t") << wxT("@$(CompilerName) $(CmpOptions) $(IncludePath) -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM \"") << absFileName << wxT("\"\n\n");
 				}
-                if (supportPreprocessOnlyFiles) {
-                    text << preprocessedFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
-                    text << wxT("\t") << GetMakeDirCmd(bldConf) << wxT("\n");
-                    text << wxT("\t") << wxT("$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile << wxT(" \"") << absFileName << wxT("\"\n\n");
-                }
+				if (supportPreprocessOnlyFiles) {
+					text << preprocessedFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
+					text << wxT("\t") << GetMakeDirCmd(bldConf) << wxT("\n");
+					text << wxT("\t") << wxT("$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile << wxT(" \"") << absFileName << wxT("\"\n\n");
+				}
 
 			} else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired()) {
 				// we construct an object name which also includes the full name of the reousrce file and appends a .o to the name (to be more
@@ -575,10 +615,10 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
 					wxString objectName = abs_files[i].GetName() << wxT("$(ObjectSuffix)");
 					wxString dependFile = abs_files[i].GetName() << wxT("$(DependSuffix)");
-                    wxString preprocessFile = abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
+					wxString preprocessFile = abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
 					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName << wxT("\n");
 					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile << wxT("\n");
-                    text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << preprocessFile << wxT("\n");
+					text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << preprocessFile << wxT("\n");
 
 				} else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired()) {
 					wxString ofile = abs_files[i].GetFullName() << wxT("$(ObjectSuffix)");
@@ -604,11 +644,11 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
 				wxString objectName = abs_files[i].GetName() << wxT("$(ObjectSuffix)");
 				wxString dependFile = abs_files[i].GetName() << wxT("$(DependSuffix)");
-                wxString preprocessFile = abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
+				wxString preprocessFile = abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
 
 				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName << wxT("\n");
 				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile << wxT("\n");
-                text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << preprocessFile << wxT("\n");
+				text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << preprocessFile << wxT("\n");
 			}
 		}
 
@@ -745,8 +785,8 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("ArchiveTool :=") << cmp->GetTool(wxT("ArchiveTool")) << wxT("\n");
 	text << wxT("SharedObjectLinkerName :=") << cmp->GetTool(wxT("SharedObjectLinkerName")) << wxT("\n");
 	text << wxT("ObjectSuffix :=") << cmp->GetObjectSuffix() << wxT("\n");
-    text << wxT("DependSuffix :=") << cmp->GetDependSuffix() << wxT("\n");
-    text << wxT("PreprocessSuffix :=") << cmp->GetPreprocessSuffix() << wxT("\n");
+	text << wxT("DependSuffix :=") << cmp->GetDependSuffix() << wxT("\n");
+	text << wxT("PreprocessSuffix :=") << cmp->GetPreprocessSuffix() << wxT("\n");
 	text << wxT("DebugSwitch :=") << cmp->GetSwitch(wxT("Debug")) << wxT("\n");
 	text << wxT("IncludeSwitch :=") << cmp->GetSwitch(wxT("Include")) << wxT("\n");
 	text << wxT("LibrarySwitch :=") << cmp->GetSwitch(wxT("Library")) << wxT("\n");
@@ -760,7 +800,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("Preprocessors :=") << ParsePreprocessor(bldConf->GetPreprocessor()) << wxT("\n");
 	text << wxT("ObjectSwitch :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
 	text << wxT("ArchiveOutputSwitch :=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
-    text << wxT("PreprocessOnlySwitch :=") << cmp->GetSwitch(wxT("PreprocessOnly")) << wxT("\n");
+	text << wxT("PreprocessOnlySwitch :=") << cmp->GetSwitch(wxT("PreprocessOnly")) << wxT("\n");
 
 	wxString buildOpts = bldConf->GetCompileOptions();
 	buildOpts.Replace(wxT(";"), wxT(" "));
@@ -991,7 +1031,7 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 
 wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString &project, const wxString &confToBuild, const wxString &fileName, wxString &errMsg)
 {
-    // TODO: factor out common code with GetSingleFileCmd()
+	// TODO: factor out common code with GetSingleFileCmd()
 
 	wxString cmd;
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);

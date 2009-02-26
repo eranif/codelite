@@ -46,7 +46,7 @@ BEGIN_EVENT_TABLE(FindReplaceDialog, wxDialog)
 END_EVENT_TABLE()
 
 #define VALIDATE_FINDWHAT(){\
-	if(m_findString->GetValue().Trim().IsEmpty()){\
+	if(m_findString->GetValue().IsEmpty()){\
 			wxMessageBox(_("'Find What' is empty"));\
 			return;\
 		}\

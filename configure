@@ -107,6 +107,7 @@ createMainTargets()
 	echo "" >> Makefile
 
 	echo "clean: clean_plugins" >> Makefile
+	echo "	@cd sdk/codelite_indexer && make clean" >> Makefile
 	echo "	\$(RM) \$(OUTPUT_DIR)/*.a \$(OUTPUT_DIR)/*.so" >> Makefile
 	echo "	\$(RM) -fr \$(OBJ_DIR)" >> Makefile
 	echo "" >> Makefile

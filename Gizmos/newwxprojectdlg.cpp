@@ -84,6 +84,12 @@ bool NewWxProjectDlg::ValidateInput()
 	}
 
 	wxString path = m_dirPicker->GetPath();
+
+	if(m_checkBoxCreateSeparateDir->IsChecked()) {
+		path << wxFileName::GetPathSeparator();
+		path << m_textCtrlName->GetValue();
+	}
+	
 	wxFileName::Mkdir(path, 0777, wxPATH_MKDIR_FULL);
 	if ( !wxDirExists(path) ) {
 		wxMessageBox(wxString::Format(wxT("Failed to create the path: %s\nA permissions problem, perhaps?"), path.c_str() ), wxT("Error"), wxOK | wxICON_HAND);
@@ -96,6 +102,7 @@ bool NewWxProjectDlg::ValidateInput()
 void NewWxProjectDlg::GetProjectInfo(NewWxProjectInfo &info)
 {
 	size_t flag = 0;
+	wxString path = m_dirPicker->GetPath();
 	
 	if(m_checkBoxMWindows->IsChecked()){
 		flag |= wxWidgetsSetMWindows;
@@ -105,10 +112,15 @@ void NewWxProjectDlg::GetProjectInfo(NewWxProjectInfo &info)
 		flag |= wxWidgetsUnicode;
 	}
 	
+	if(m_checkBoxCreateSeparateDir->IsChecked()) {
+		path << wxFileName::GetPathSeparator();
+		path << m_textCtrlName->GetValue();
+	}	
+	
 	info.SetFlags(flag);
 	info.SetType(m_choiceApplicationType->GetSelection());
 	info.SetName(m_textCtrlName->GetValue());
-	info.SetPath(m_dirPicker->GetPath());
+	info.SetPath(path);
 }
 
 void NewWxProjectDlg::OnChoiceChanged(wxCommandEvent &e)
@@ -124,3 +136,5 @@ void NewWxProjectDlg::OnChoiceChanged(wxCommandEvent &e)
 	wxUnusedVar(e);
 #endif
 }
+
+

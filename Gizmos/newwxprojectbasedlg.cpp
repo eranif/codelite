@@ -117,6 +117,11 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	
 	bSizer2->Add( bSizer4, 0, wxEXPAND, 5 );
 	
+	m_checkBoxCreateSeparateDir = new wxCheckBox( m_panelBasicInfo, wxID_ANY, wxT("Create the project under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxCreateSeparateDir->SetValue(true);
+	
+	bSizer2->Add( m_checkBoxCreateSeparateDir, 0, wxALL, 5 );
+	
 	m_checkBoxUnicode = new wxCheckBox( m_panelBasicInfo, wxID_ANY, wxT("Use Unicode Build of wxWidgets"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxUnicode->SetValue(true);
 	

@@ -78,6 +78,7 @@ class NewWxProjectBaseDlg : public wxDialog
 		wxChoice* m_choiceApplicationType;
 		wxStaticText* m_staticText4;
 		wxStaticLine* m_staticline2;
+		wxCheckBox* m_checkBoxCreateSeparateDir;
 		wxCheckBox* m_checkBoxUnicode;
 		wxCheckBox* m_checkBoxMWindows;
 		wxStaticLine* m_staticline1;

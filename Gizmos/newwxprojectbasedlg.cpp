@@ -1,29 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : newwxprojectbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -57,7 +33,7 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline4, 0, wxEXPAND|wxBOTTOM, 5 );
 	
-	m_flatNotebook1 = new wxNotebook( this, wxID_ANY );
+	m_flatNotebook1 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	m_flatNotebook1->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
 	
 	m_panel2 = new wxPanel( m_flatNotebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -74,62 +50,62 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText1 = new wxStaticText( m_panelBasicInfo, wxID_ANY, wxT("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1 = new wxStaticText( m_panelBasicInfo, wxID_ANY, _("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
 	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlName = new wxTextCtrl( m_panelBasicInfo, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_textCtrlName->SetToolTip( wxT("Choose a name to give the project") );
+	m_textCtrlName->SetToolTip( _("Choose a name to give the project") );
 	
 	fgSizer1->Add( m_textCtrlName, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText2 = new wxStaticText( m_panelBasicInfo, wxID_ANY, wxT("Project Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panelBasicInfo, wxID_ANY, _("Project Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_dirPicker = new DirPicker(m_panelBasicInfo);
 	fgSizer1->Add( m_dirPicker, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText3 = new wxStaticText( m_panelBasicInfo, wxID_ANY, wxT("Application Type:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3 = new wxStaticText( m_panelBasicInfo, wxID_ANY, _("Application Type:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer1->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	wxString m_choiceApplicationTypeChoices[] = { wxT("GUI application with Main Frame"), wxT("Simple main with wxWidgets enabled") };
+	wxString m_choiceApplicationTypeChoices[] = { _("GUI application with Main Frame"), _("Simple main with wxWidgets enabled") };
 	int m_choiceApplicationTypeNChoices = sizeof( m_choiceApplicationTypeChoices ) / sizeof( wxString );
 	m_choiceApplicationType = new wxChoice( m_panelBasicInfo, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceApplicationTypeNChoices, m_choiceApplicationTypeChoices, 0 );
 	m_choiceApplicationType->SetSelection( 0 );
-	m_choiceApplicationType->SetToolTip( wxT("The normal choice will be 'GUI application', but choose 'Simple main' for a wx console app") );
+	m_choiceApplicationType->SetToolTip( _("The normal choice will be 'GUI application', but choose 'Simple main' for a wx console app") );
 	m_choiceApplicationType->SetMinSize( wxSize( -1,30 ) );
-
+	
 	fgSizer1->Add( m_choiceApplicationType, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer2->Add( fgSizer1, 1, wxEXPAND, 5 );
+	bSizer2->Add( fgSizer1, 1, wxEXPAND|wxALL, 5 );
 	
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText4 = new wxStaticText( m_panelBasicInfo, wxID_ANY, wxT("wxWidgets Settings:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4 = new wxStaticText( m_panelBasicInfo, wxID_ANY, _("wxWidgets Settings:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	bSizer4->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_staticline2 = new wxStaticLine( m_panelBasicInfo, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer4->Add( m_staticline2, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	bSizer2->Add( bSizer4, 0, wxEXPAND, 5 );
+	bSizer2->Add( bSizer4, 0, wxEXPAND|wxALL, 5 );
 	
-	m_checkBoxCreateSeparateDir = new wxCheckBox( m_panelBasicInfo, wxID_ANY, wxT("Create the project under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxCreateSeparateDir = new wxCheckBox( m_panelBasicInfo, wxID_ANY, _("Create the project under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxCreateSeparateDir->SetValue(true);
 	
 	bSizer2->Add( m_checkBoxCreateSeparateDir, 0, wxALL, 5 );
 	
-	m_checkBoxUnicode = new wxCheckBox( m_panelBasicInfo, wxID_ANY, wxT("Use Unicode Build of wxWidgets"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxUnicode = new wxCheckBox( m_panelBasicInfo, wxID_ANY, _("Use Unicode Build of wxWidgets"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxUnicode->SetValue(true);
 	
 	bSizer2->Add( m_checkBoxUnicode, 0, wxALL, 5 );
 	
-	m_checkBoxMWindows = new wxCheckBox( m_panelBasicInfo, wxID_ANY, wxT("Add -mwindows flag to avoid a terminal console in MSWin GUI apps"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxMWindows = new wxCheckBox( m_panelBasicInfo, wxID_ANY, _("Add -mwindows flag to avoid a terminal console in MSWin GUI apps"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	m_checkBoxMWindows->SetToolTip( wxT("Without this flag, there will be an unnecessary, visible terminal window when your app runs on MSWindows") );
+	m_checkBoxMWindows->SetToolTip( _("Without this flag, there will be an unnecessary, visible terminal window when your app runs on MSWindows") );
 	
 	bSizer2->Add( m_checkBoxMWindows, 0, wxALL, 5 );
 	
@@ -141,7 +117,7 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	m_panel2->SetSizer( bSizer5 );
 	m_panel2->Layout();
 	bSizer5->Fit( m_panel2 );
-	m_flatNotebook1->AddPage( m_panel2, wxT("Basics"), true );
+	m_flatNotebook1->AddPage( m_panel2, _("Basics"), true );
 	
 	bSizer1->Add( m_flatNotebook1, 1, wxALL|wxEXPAND, 5 );
 	
@@ -151,14 +127,14 @@ NewWxProjectBaseDlg::NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOK = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_buttonOK->SetDefault(); 
 	bSizer3->Add( m_buttonOK, 0, wxALL, 5 );
 	
-	m_button2 = new wxButton( this, wxID_CANCEL, wxT("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button2 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_button2, 0, wxALL, 5 );
 	
-	bSizer1->Add( bSizer3, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	bSizer1->Add( bSizer3, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();

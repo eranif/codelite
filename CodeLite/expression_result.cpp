@@ -1,4 +1,5 @@
 #include "expression_result.h"
+#include <cstdio>
 
 #define BOOL_TO_STR(b) b ? "true" : "false"
 
@@ -19,9 +20,9 @@ void ExpressionResult::Print()
 std::string ExpressionResult::ToString() const
 {
 	char tmp[256];
-	sprintf(tmp, "{m_name:%s, m_isFunc:%s, m_isTemplate:%s, m_isThis:%s, m_isaType:%s, m_isPtr:%s, m_scope:%s, m_templateInitList:%s}", 
-				m_name.c_str(), 
-				BOOL_TO_STR(m_isFunc), 
+	sprintf(tmp, "{m_name:%s, m_isFunc:%s, m_isTemplate:%s, m_isThis:%s, m_isaType:%s, m_isPtr:%s, m_scope:%s, m_templateInitList:%s}",
+				m_name.c_str(),
+				BOOL_TO_STR(m_isFunc),
 				BOOL_TO_STR(m_isTemplate),
 				BOOL_TO_STR(m_isThis),
 				BOOL_TO_STR(m_isaType),

@@ -1,4 +1,5 @@
 #include "variable.h"
+#include <cstdio>
 
 Variable::Variable()
 {

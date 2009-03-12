@@ -35,7 +35,7 @@
 
 class LEditor;
 
-class BuildTab : protected OutputTabWindow
+class BuildTab : public OutputTabWindow
 {
     friend class ErrorsTab;
 
@@ -106,7 +106,7 @@ protected:
 public:
 	BuildTab(wxWindow *parent, wxWindowID id, const wxString &name);
 	~BuildTab();
-    
+
     wxString GetBuildToolTip(const wxString &fileName, int lineno);
 };
 #endif // __buidltab__

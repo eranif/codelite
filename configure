@@ -472,12 +472,12 @@ createInstallTarget()
 	  echo "	@ln -s \$(DESTDIR)$prefix/bin/\$(EXE_NAME_NO_PATH) \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
 	  echo "	@chmod +x \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
 	fi
-	echo "	@cp Runtime/le_dos2unix.sh \$(DESTDIR)$prefix/bin/" >> Makefile
-	echo "	@cp Runtime/le_exec.sh \$(DESTDIR)$prefix/bin/" >> Makefile
-	echo "	@cp Runtime/le_killproc.sh \$(DESTDIR)$prefix/bin/" >> Makefile
-	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
-	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
-	echo "	@chmod +x \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
+	echo "	@cp Runtime/codelite_fix_files \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@cp Runtime/codelite_exec \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@cp Runtime/codelite_kill_children \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@chmod +x \$(DESTDIR)$prefix/bin/codelite_fix_files" >> Makefile
+	echo "	@chmod +x \$(DESTDIR)$prefix/bin/codelite_exec" >> Makefile
+	echo "	@chmod +x \$(DESTDIR)$prefix/bin/codelite_kill_children" >> Makefile
 	echo "	@cp sdk/codelite_indexer/codelite_indexer \$(DESTDIR)$prefix/bin/" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/applications" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite" >> Makefile
@@ -527,9 +527,9 @@ createUnInstallTarget()
 	  echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
 	fi
 #	echo "	@\$(RM) -fr  /usr/lib/libsqlite3-cl.so" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_dos2unix.sh" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_exec.sh" >> Makefile
-	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/le_killproc.sh" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_fix_files" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_exec" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_kill_children" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_indexer" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUR" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUD" >> Makefile

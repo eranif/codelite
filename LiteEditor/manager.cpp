@@ -961,7 +961,7 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 		if ( bldConf->GetPauseWhenExecEnds() ) {
 			wxString ld_lib_path;
 			wxFileName exePath ( wxStandardPaths::Get().GetExecutablePath() );
-			wxFileName exeWrapper ( exePath.GetPath(), wxT ( "le_exec.sh" ) );
+			wxFileName exeWrapper ( exePath.GetPath(), wxT ( "codelite_exec" ) );
 
 			if ( wxGetEnv ( wxT ( "LD_LIBRARY_PATH" ), &ld_lib_path ) && ld_lib_path.IsEmpty() == false ) {
 				command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " );
@@ -1394,7 +1394,7 @@ void Manager::DoGetAccelFiles ( wxArrayString& files )
 
 void Manager::DumpMenu ( wxMenu *menu, const wxString &label, wxString &content )
 {
-#if 0	
+#if 0
 	wxMenuItemList items = menu->GetMenuItems();
 	wxMenuItemList::iterator iter = items.begin();
 	for ( ; iter != items.end(); iter++ ) {
@@ -1419,7 +1419,7 @@ void Manager::DumpMenu ( wxMenu *menu, const wxString &label, wxString &content 
 		}
 		content << wxT ( "\n" );
 	}
-#endif	
+#endif
 }
 
 

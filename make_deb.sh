@@ -95,14 +95,16 @@ parseCommandLine $1
 
 EXE_NAME=codelite
 mkdir -p fakeroot/${PREFIX}/bin/
+
 cp ./Runtime/${EXE_NAME} fakeroot/${PREFIX}/bin/codelite
 cp sdk/codelite_indexer/codelite_indexer fakeroot/${PREFIX}/bin/
-cp Runtime/le_dos2unix.sh fakeroot/${PREFIX}/bin/
-cp Runtime/le_killproc.sh fakeroot/${PREFIX}/bin/
-cp Runtime/le_exec.sh fakeroot/${PREFIX}/bin/
-chmod +x fakeroot/${PREFIX}/bin/le_dos2unix.sh
-chmod +x fakeroot/${PREFIX}/bin/le_killproc.sh
-chmod +x fakeroot/${PREFIX}/bin/le_exec.sh
+cp Runtime/codelite_exec                 fakeroot/${PREFIX}/bin/
+cp Runtime/codelite_kill_children        fakeroot/${PREFIX}/bin/
+cp Runtime/codelite_fix_files            fakeroot/${PREFIX}/bin/
+
+chmod +x fakeroot/${PREFIX}/bin/codelite_fix_files
+chmod +x fakeroot/${PREFIX}/bin/codelite_kill_children
+chmod +x fakeroot/${PREFIX}/bin/codelite_exec
 mkdir -p fakeroot/${PREFIX}/share/codelite
 mkdir -p fakeroot/${PREFIX}/share/codelite/config
 mkdir -p fakeroot/${PREFIX}/share/codelite/templates

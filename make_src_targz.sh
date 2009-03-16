@@ -18,5 +18,5 @@ svn export . /tmp/codelite-1.0.${cur_rev}/
 cp ./LiteEditor/svninfo.cpp /tmp/codelite-1.0.${cur_rev}/LiteEditor/
 echo "Creating tar-ball"
 cd /tmp/
-rm -fr /tmp/codelite-${cur_rev}/sdk/curl
+rm -fr /tmp/codelite-1.0.${cur_rev}/sdk/curl
 tar cvfz ${curdir}/codelite-1.0.${cur_rev}.tar.gz codelite-1.0.${cur_rev}/*

@@ -34,10 +34,10 @@ int main()
 	char *buf = loadFile("test.h");
 
 	//print the scope name
-	testScopeParser(buf);
+	//testScopeParser(buf);
 	//testVarParser(buf);
 	//testExprParser(buf);
-	//testFuncParser(buf);
+	testFuncParser(buf);
 	free(buf);
 }
 

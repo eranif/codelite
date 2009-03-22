@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -43,6 +43,8 @@ class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 		wxColourPickerCtrl* m_caretLineColourPicker;
 		wxStaticText* m_staticText2;
 		wxChoice* m_whitespaceStyle;
+		wxStaticText* m_staticText4;
+		wxChoice* m_choiceEOL;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnHighlightCaretLine( wxCommandEvent& event ){ event.Skip(); }

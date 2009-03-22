@@ -29,7 +29,7 @@
 #include "buidltab.h"
 
 
-class ErrorsTab : protected OutputTabWindow
+class ErrorsTab : public OutputTabWindow
 {
 	friend class BuildTab;
 

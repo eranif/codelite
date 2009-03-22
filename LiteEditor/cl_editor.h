@@ -152,6 +152,14 @@ public:
 	bool SaveFileAs();
 
 	/**
+	 * @brief set the EOL mode of the file by applying this logic:
+	 * - if the file has content, use the current cotext EOL
+	 * - if the file is empty and the EOL mode is set to Default, make it EOL of the hosting OS
+	 * - Use the setting provided by the user
+	 */
+	void SetEOL();
+
+	/**
 	 * @brief save the editor current state (in terms of breakpoints, bookmarks & current position)
 	 * @param s state structure
 	 */

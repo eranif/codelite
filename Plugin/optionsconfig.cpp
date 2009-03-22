@@ -64,6 +64,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 #else
 		, m_programConsoleCommand(wxT(""))
 #endif
+		, m_eolMode(wxT("Default"))
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
@@ -99,6 +100,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_caretBlinkPeriod = XmlUtils::ReadLong(node, wxT("CaretBlinkPeriod"), m_caretBlinkPeriod);
 		m_caretWidth = XmlUtils::ReadLong(node, wxT("CaretWidth"), m_caretWidth);
 		m_programConsoleCommand = XmlUtils::ReadString(node, wxT("ConsoleCommand"), m_programConsoleCommand);
+		m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
 	}
 }
 
@@ -129,6 +131,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
 	n->AddProperty(wxT("AutoAdjustHScrollBarWidth"), BoolToString(m_autoAdjustHScrollBarWidth));
 	n->AddProperty(wxT("ConsoleCommand"), m_programConsoleCommand);
+	n->AddProperty(wxT("EOLMode"), m_eolMode);
 
 	wxString tmp;
     tmp << m_indentWidth;

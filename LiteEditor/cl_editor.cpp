@@ -164,6 +164,14 @@ LEditor::LEditor(wxWindow* parent)
 
 	// Initialise the breakpt-marker array
 	FillBPtoMarkerArray();
+
+	// set EOL mode for the newly created file
+	int eol = GetEOLByOS();
+	int alternate_eol = GetEOLByContent();
+	if (alternate_eol != wxNOT_FOUND) {
+		eol = alternate_eol;
+	}
+	SetEOLMode(eol);
 }
 
 LEditor::~LEditor()
@@ -909,6 +917,8 @@ void LEditor::SetSyntaxHighlight(const wxString &lexerName)
 	m_rightClickMenu->AppendSeparator(); // separates plugins
 	SetProperties();
 	UpdateColours();
+
+	SetEOL();
 	m_context->SetActive();
 }
 
@@ -1922,13 +1932,7 @@ void LEditor::ReloadFile()
 	DelAllBreakpointMarkers();
 
 	UpdateColours();
-
-	// set the EOL mode
-	int eol = GetEOLByContent();
-	if (eol == wxNOT_FOUND) {
-		eol = GetEOLByOS();
-	}
-	SetEOLMode(eol);
+	SetEOL();
 
 	int doclen = GetLength();
 	int lastLine = LineFromPosition(doclen);
@@ -2742,13 +2746,23 @@ int LEditor::GetEOLByContent()
 
 int LEditor::GetEOLByOS()
 {
+	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+	if (options->GetEolMode() == wxT("Unix (LF)")) {
+		return wxSCI_EOL_LF;
+	} else if (options->GetEolMode() == wxT("Mac (CR)")) {
+		return wxSCI_EOL_CR;
+	} else if (options->GetEolMode() == wxT("Windows (CRLF)")) {
+		return wxSCI_EOL_CRLF;
+	} else {
+		// set the EOL by the hosting OS
 #if defined(__WXMAC__)
-	return wxSCI_EOL_CR;
+		return wxSCI_EOL_CR;
 #elif defined(__WXGTK__)
-	return wxSCI_EOL_LF;
+		return wxSCI_EOL_LF;
 #else
-	return wxSCI_EOL_CRLF;
+		return wxSCI_EOL_CRLF;
 #endif
+	}
 }
 
 void LEditor::ShowFunctionTipFromCurrentPos()
@@ -3065,4 +3079,16 @@ int LEditor::DoGetOpenBracePos()
 		return pos;
 	}
 	return wxNOT_FOUND;
+}
+
+void LEditor::SetEOL()
+{
+	// set the EOL mode
+	int eol = GetEOLByOS();
+	int alternate_eol = GetEOLByContent();
+	if (alternate_eol != wxNOT_FOUND) {
+		eol = alternate_eol;
+	}
+	SetEOLMode(eol);
+
 }

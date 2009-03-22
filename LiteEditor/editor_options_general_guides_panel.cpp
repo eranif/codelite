@@ -40,6 +40,8 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel( wxWindow* pare
 
 	m_highlightCaretLine->SetValue(options->GetHighlightCaretLine());
 	m_caretLineColourPicker->SetColour(options->GetCaretLineColour());
+	m_choiceEOL->SetStringSelection(options->GetEolMode());
+
     EnableDisableCaretLineColourPicker();
 
 	switch (options->GetShowWhitspaces()) {
@@ -69,6 +71,7 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 	options->SetAutoAdjustHScrollBarWidth(m_checkBoxAdjustScrollbarSize->IsChecked());
 	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
 	options->SetAutoAddMatchedBraces(m_checkBoxAutoCompleteBraces->IsChecked());
+	options->SetEolMode(m_choiceEOL->GetStringSelection());
 
 	// save the whitespace visibility
 	int style(wxSCI_WS_INVISIBLE); // inivisble

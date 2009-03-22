@@ -64,6 +64,7 @@ class OptionsConfig : public ConfObject
 	int            m_caretWidth;
 	int            m_caretBlinkPeriod;
 	wxString       m_programConsoleCommand;
+	wxString       m_eolMode;
 
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -264,6 +265,12 @@ public:
 		return m_programConsoleCommand;
 	}
 
+	void SetEolMode(const wxString& eolMode) {
+		this->m_eolMode = eolMode;
+	}
+	const wxString& GetEolMode() const {
+		return m_eolMode;
+	}
 	/**
 	 * Return an XML representation of this object
 	 * \return XML node

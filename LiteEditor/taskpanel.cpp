@@ -138,13 +138,16 @@ void TaskPanel::DoSetSearchData()
     sfind << wxT(" *:*");
     m_data.SetFindString(sfind);
 
-    m_data.SetRootDir(m_scope->GetStringSelection());
+	wxString rootDir = m_scope->GetStringSelection();
+	wxArrayString rootDirs;
+	rootDirs.push_back(rootDir);
+    m_data.SetRootDirs(rootDirs);
     wxArrayString files;
-	if (m_scope->GetStringSelection() == SEARCH_IN_WORKSPACE) {
+	if (rootDir == SEARCH_IN_WORKSPACE) {
 		ManagerST::Get()->GetWorkspaceFiles(files);
-	}else if (m_scope->GetStringSelection() == SEARCH_IN_PROJECT) {
+	} else if (rootDir == SEARCH_IN_PROJECT) {
 		ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
-	}else if (m_scope->GetStringSelection() == SEARCH_IN_CURR_FILE_PROJECT) {
+	} else if (rootDir == SEARCH_IN_CURR_FILE_PROJECT) {
 		wxString project = ManagerST::Get()->GetActiveProjectName();
 		if (Frame::Get()->GetMainBook()->GetActiveEditor()) {
 			wxFileName activeFile = Frame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();

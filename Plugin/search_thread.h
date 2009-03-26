@@ -46,7 +46,7 @@ class SearchThread;
 
 class SearchData : public ThreadRequest
 {
-	wxString m_rootDir;
+	wxArrayString m_rootDirs;
 	wxString m_findString;
 	size_t m_flags;
 	wxString m_validExt;
@@ -70,7 +70,6 @@ public:
 	// Ctor-Dtor
 	SearchData()
 			: ThreadRequest()
-			, m_rootDir(wxEmptyString)
 			, m_findString(wxEmptyString)
 			, m_flags(0)
 			, m_outputTab(0)
@@ -89,7 +88,7 @@ public:
 		m_findString = rhs.m_findString.c_str();
 		m_flags = rhs.m_flags;
 		m_validExt = rhs.m_validExt.c_str();
-		m_rootDir = rhs.m_rootDir.c_str();
+		m_rootDirs = rhs.m_rootDirs;
 
 		m_files.clear();
 		for(size_t i=0; i<rhs.m_files.GetCount(); i++){
@@ -117,8 +116,8 @@ public:
 		return m_flags & wxSD_REGULAREXPRESSION ? true : false;
 	}
 
-	const wxString &GetRootDir() const {
-		return m_rootDir;
+	const wxArrayString &GetRootDirs() const {
+		return m_rootDirs;
 	}
 
 	void SetMatchCase(bool matchCase) {
@@ -137,8 +136,8 @@ public:
 		m_validExt = exts;
 	}
 
-	void SetRootDir(const wxString &rootDir) {
-		m_rootDir = rootDir;
+	void SetRootDirs(const wxArrayString &rootDirs) {
+		m_rootDirs = rootDirs;
 	}
 
 	const wxString& GetExtensions() const;

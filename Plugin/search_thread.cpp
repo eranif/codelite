@@ -129,27 +129,37 @@ void SearchThread::ProcessRequest(ThreadRequest *req)
 
 void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
 {
-	if (data->GetRootDir() == SEARCH_IN_WORKSPACE || data->GetRootDir() == SEARCH_IN_CURR_FILE_PROJECT || data->GetRootDir() == SEARCH_IN_PROJECT) {
-		files = data->GetFiles();
-		// filter files which does not match the criteria
-		FilterFiles(files, data);
-	} else if (wxFile::Exists(data->GetRootDir())) {
-		// search root is actually a file...
-		files.push_back(data->GetRootDir());
-	} else if (wxDir::Exists(data->GetRootDir())) {
-		// make sure it's really a dir (not a fifo, etc.)
-		DirTraverser traverser(data->GetExtensions());
-		wxDir dir(data->GetRootDir());
-		dir.Traverse(traverser);
-		files = traverser.GetFiles();
+	const wxArrayString& rootDirs = data->GetRootDirs();
+	for (size_t i = 0; i < rootDirs.Count(); ++i) {
+		wxArrayString someFiles;
+		const wxString& rootDir = rootDirs.Item(i);
+		if (rootDir == SEARCH_IN_WORKSPACE || rootDir == SEARCH_IN_CURR_FILE_PROJECT || rootDir == SEARCH_IN_PROJECT) {
+			someFiles = data->GetFiles();
+			// filter files which does not match the criteria
+			FilterFiles(someFiles, data);
+		} else if (wxFile::Exists(rootDir)) {
+			// search root is actually a file...
+			someFiles.push_back(rootDir);
+		} else if (wxDir::Exists(rootDir)) {
+			// make sure it's really a dir (not a fifo, etc.)
+			DirTraverser traverser(data->GetExtensions());
+			wxDir dir(rootDir);
+			dir.Traverse(traverser);
+			someFiles = traverser.GetFiles();
+		}
+		
+		for (size_t i = 0; i < someFiles.Count(); ++i) {
+			files.push_back(someFiles.Item(i));
+		}
 	}
 }
 
 void SearchThread::DoSearchFiles(ThreadRequest *req)
 {
 	SearchData *data = static_cast<SearchData*>(req);
+
 	// Get all files
-	if ( data->GetRootDir().IsEmpty())
+	if ( data->GetRootDirs().IsEmpty() )
 		return;
 
 	if ( data->GetFindString().IsEmpty() )

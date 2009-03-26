@@ -25,43 +25,26 @@
 #ifndef FIND_IN_FILES_DLG_H
 #define FIND_IN_FILES_DLG_H
 
-#include <wx/dialog.h>
+#include "findinfilesdlgbase.h"
 #include "findreplacedlg.h"
 #include "search_thread.h"
 
-class DirPicker;
-
-class FindInFilesDialog : public wxDialog
+class FindInFilesDialog : public FindInFilesDialogBase
 {
 	FindReplaceData m_data;
 
-	// Options
-	wxComboBox *m_findString;
-	wxCheckBox *m_matchCase;
-    wxCheckBox *m_printScope;
-	wxCheckBox *m_matchWholeWord;
-	wxCheckBox *m_regualrExpression;
-	wxCheckBox *m_fontEncoding;
-	DirPicker  *m_dirPicker;
-	wxComboBox *m_fileTypes;
-	wxChoice   *m_searchResultsTab;
-
-	// Buttons
-	wxButton *m_find;
-	wxButton *m_stop;
-	wxButton *m_cancel;
-	wxButton *m_replaceAll;
-
-	void CreateGUIControls(size_t numpages);
-	void ConnectEvents();
 	void DoSearch();
 	void DoSearchReplace();
 	void DoSaveSearchPaths();
 	SearchData DoGetSearchData();
 
-	DECLARE_EVENT_TABLE()
-	void OnClick(wxCommandEvent &event);
-	void OnClose(wxCloseEvent &event);
+	virtual void OnClick(wxCommandEvent &event);
+	virtual void OnClose(wxCloseEvent &event);
+	virtual void OnAddPath( wxCommandEvent& event );
+	virtual void OnRemovePath( wxCommandEvent& event );
+	virtual void OnClearPaths( wxCommandEvent& event );
+
+
 	void OnCharEvent(wxKeyEvent &event);
 
 public:

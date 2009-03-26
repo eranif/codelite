@@ -176,6 +176,8 @@
           <File Name="editorsettingsterminal.cpp"/>
         </VirtualDirectory>
       </VirtualDirectory>
+      <File Name="findinfilesdlgbase.h"/>
+      <File Name="findinfilesdlgbase.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>

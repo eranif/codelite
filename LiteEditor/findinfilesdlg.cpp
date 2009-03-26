@@ -31,18 +31,34 @@
 #include "findresultstab.h"
 #include "replaceinfilespanel.h"
 
-
-BEGIN_EVENT_TABLE(FindInFilesDialog, wxDialog)
-    EVT_CLOSE(FindInFilesDialog::OnClose)
-    EVT_CHAR_HOOK(FindInFilesDialog::OnCharEvent)
-END_EVENT_TABLE()
-
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const FindReplaceData& data, size_t numpages)
-    : wxDialog(parent, id, wxT("Find In Files"), wxDefaultPosition, wxSize(450, 200))
-    , m_data(data)
+: FindInFilesDialogBase(parent, id)
+, m_data(data)
 {
-	CreateGUIControls(numpages);
-	ConnectEvents();
+	// DirPicker values
+	wxArrayString choices;
+	choices.Add(SEARCH_IN_PROJECT);
+	choices.Add(SEARCH_IN_WORKSPACE);
+	choices.Add(SEARCH_IN_CURR_FILE_PROJECT);
+	for (size_t i = 0; i < m_data.GetSearchPaths().GetCount(); ++i) {
+		choices.Add(m_data.GetSearchPaths().Item(i));
+	}
+	m_dirPicker->SetValues(choices, 1);
+
+	// Result pages
+    for (size_t n = 1; n <= numpages; n++) {
+        m_searchResultsTab->Append(wxString::Format(wxT("Find Results %u"), n));
+    }
+	m_searchResultsTab->SetSelection(0);
+	
+	// Search for
+	m_findString->Clear();
+	m_findString->Append(m_data.GetFindStringArr());
+	m_findString->SetValue(m_data.GetFindString());
+
+	m_fileTypes->SetSelection(0);
+
+	Connect(wxEVT_CHAR_HOOK, wxCharEventHandler(FindInFilesDialog::OnCharEvent));
 
 	GetSizer()->Fit(this);
 	GetSizer()->SetMinSize(wxSize(600, 300));
@@ -51,121 +67,6 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 
 FindInFilesDialog::~FindInFilesDialog()
 {
-}
-
-void FindInFilesDialog::CreateGUIControls(size_t numpages)
-{
-	wxBoxSizer *btnSizer = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
-	SetSizer(mainSizer);
-
-	wxStaticText* itemStaticText;
-	itemStaticText = new wxStaticText( this, wxID_STATIC, _("Find What:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	mainSizer->Add(itemStaticText, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5 );
-
-	m_findString = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
-	m_findString->Clear();
-	m_findString->Append(m_data.GetFindStringArr());
-	m_findString->SetValue(m_data.GetFindString());
-	mainSizer->Add(m_findString, 0, wxALL | wxEXPAND, 5 );
-
-	itemStaticText = new wxStaticText( this, wxID_STATIC, _("Look In:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	mainSizer->Add(itemStaticText, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5 );
-
-	m_dirPicker = new DirPicker(this, wxID_ANY, wxT("..."), wxEmptyString, wxT("Select a folder:"), wxDefaultPosition, wxDefaultSize, wxDP_USE_COMBOBOX);
-	mainSizer->Add(m_dirPicker, 0, wxEXPAND | wxALL, 5);
-
-	wxArrayString choices;
-	choices.Add(SEARCH_IN_PROJECT);
-	choices.Add(SEARCH_IN_WORKSPACE);
-	choices.Add(SEARCH_IN_CURR_FILE_PROJECT);
-
-	for(size_t i=0; i<m_data.GetSearchPaths().GetCount(); i++){
-		choices.Add(m_data.GetSearchPaths().Item(i));
-	}
-
-	m_dirPicker->SetValues(choices, 1);
-
-	// Add the options
-	wxStaticBoxSizer *sz = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Options:"));
-	mainSizer->Add(sz, 1, wxEXPAND | wxALL, 5);
-
-	m_matchCase = new wxCheckBox(this, wxID_ANY, wxT("&Match case"));
-	m_matchCase->SetValue(m_data.GetFlags() & wxFRD_MATCHCASE ? true : false);
-	sz->Add(m_matchCase, 1, wxALL | wxEXPAND, 5 );
-
-	m_matchWholeWord = new wxCheckBox(this, wxID_ANY, wxT("Match &whole word"));
-	m_matchWholeWord->SetValue(m_data.GetFlags() & wxFRD_MATCHWHOLEWORD ? true : false);
-	sz->Add(m_matchWholeWord, 1, wxALL | wxEXPAND, 5 );
-
-	m_regualrExpression = new wxCheckBox(this, wxID_ANY, wxT("Regular &expression"));
-	m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION ? true : false);
-	sz->Add(m_regualrExpression, 1, wxALL | wxEXPAND, 5 );
-
-	m_fontEncoding = new wxCheckBox(this, wxID_ANY, wxT("Use the editor's font encoding (when left unchecked encoding is set to UTF8)"));
-	m_fontEncoding->SetValue(m_data.GetFlags() & wxFRD_USEFONTENCODING ? true : false);
-	sz->Add(m_fontEncoding, 1, wxALL | wxEXPAND, 5 );
-
-    m_printScope = new wxCheckBox(this, wxID_ANY, wxT("Display C++ scope (class/function) in result match"));
-    m_printScope->SetValue(m_data.GetFlags() & wxFRD_DISPLAYSCOPE ? true : false);
-    sz->Add(m_printScope, 1, wxALL | wxEXPAND, 5 );
-
-	itemStaticText = new wxStaticText( this, wxID_STATIC, wxT("Look at these file &types:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	sz->Add(itemStaticText, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5 );
-
-	wxString options [] = {
-			wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc"),
-			wxT("*.*") };
-
-	m_fileTypes = new wxComboBox(this,
-								wxID_ANY,
-								options[0],
-								wxDefaultPosition, wxDefaultSize,
-								2, options, wxCB_DROPDOWN);
-	sz->Add(m_fileTypes, 0, wxEXPAND | wxALL, 5);
-
-	itemStaticText = new wxStaticText( this, wxID_STATIC, wxT("Display search results in tab:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	sz->Add(itemStaticText, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 5 );
-
-	wxArrayString tabs;
-    for (size_t n = 1; n <= numpages; n++) {
-        tabs.Add(wxString::Format(wxT("Find Results %u"), n));
-    }
-	m_searchResultsTab = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tabs);
-	sz->Add(m_searchResultsTab, 0, wxEXPAND | wxALL, 5 );
-	m_searchResultsTab->SetSelection(0);
-
-	// Add the buttons
-	m_find = new wxButton(this, wxID_ANY, wxT("&Find"));
-	btnSizer->Add(m_find, 1, wxALL | wxEXPAND, 5 );
-
-	m_replaceAll = new wxButton(this, wxID_ANY, wxT("Find &Replace Candidates"));
-	btnSizer->Add(m_replaceAll, 1, wxALL | wxEXPAND, 5 );
-
-	m_stop = new wxButton(this, wxID_ANY, wxT("&Stop Search"));
-	btnSizer->Add(m_stop, 1, wxALL | wxEXPAND, 5 );
-
-	m_cancel = new wxButton(this, wxID_ANY, wxT("Close"));
-	btnSizer->Add(m_cancel, 1, wxALL | wxEXPAND, 5 );
-
-	mainSizer->Add(new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL), 0, wxEXPAND );
-	mainSizer->Add(btnSizer, 0, wxEXPAND|wxALL, 5);
-}
-
-void FindInFilesDialog::ConnectEvents()
-{
-	// Connect buttons
-	m_find->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
-	m_replaceAll->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
-	m_cancel->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
-	m_stop->Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
-
-	// connect options
-	m_matchCase->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
-	m_matchWholeWord->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
-	m_regualrExpression->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
-	m_fontEncoding->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
-    m_printScope->Connect(wxID_ANY, wxEVT_COMMAND_CHECKBOX_CLICKED , wxCommandEventHandler(FindInFilesDialog::OnClick), NULL, this);
 }
 
 void FindInFilesDialog::SetSearchData(const SearchData &data)
@@ -184,11 +85,18 @@ void FindInFilesDialog::SetSearchData(const SearchData &data)
     m_matchCase->SetValue(data.IsMatchCase());
     m_matchWholeWord->SetValue(data.IsMatchWholeWord());
     m_regualrExpression->SetValue(data.IsRegularExpression());
-    m_dirPicker->SetPath(data.GetRootDir());
     m_fontEncoding->SetValue(data.UseEditorFontConfig());
     m_printScope->SetValue(data.GetDisplayScope());
     m_fileTypes->SetValue(data.GetExtensions());
     m_searchResultsTab->SetSelection(data.GetOutputTab());
+
+	const wxArrayString& rootDirs = data.GetRootDirs();
+	for (size_t i = 0; i < rootDirs.Count(); ++i) {
+		m_listPaths->Append(rootDirs.Item(i));
+	}
+	if (rootDirs.IsEmpty() == false) {
+		m_dirPicker->SetPath(rootDirs.Item(0));
+	}
 }
 
 void FindInFilesDialog::SetRootDir(const wxString &rootDir)
@@ -209,7 +117,7 @@ void FindInFilesDialog::DoSearchReplace()
 void FindInFilesDialog::DoSearch()
 {
 	SearchData data = DoGetSearchData();
-    data.SetOwner(Frame::Get()->GetOutputPane()->GetFindResultsTab());
+	data.SetOwner(Frame::Get()->GetOutputPane()->GetFindResultsTab());
 	SearchThreadST::Get()->PerformSearch(data);
 
 	DoSaveSearchPaths();
@@ -228,36 +136,46 @@ SearchData FindInFilesDialog::DoGetSearchData()
 	data.SetMatchCase( (m_data.GetFlags() & wxFRD_MATCHCASE) != 0);
 	data.SetMatchWholeWord((m_data.GetFlags() & wxFRD_MATCHWHOLEWORD) != 0);
 	data.SetRegularExpression((m_data.GetFlags() & wxFRD_REGULAREXPRESSION) != 0);
-	data.SetRootDir(m_dirPicker->GetPath());
 	data.SetUseEditorFontConfig((m_data.GetFlags() & wxFRD_USEFONTENCODING) != 0);
     data.SetDisplayScope((m_data.GetFlags() & wxFRD_DISPLAYSCOPE) != 0);
 
-	if(m_dirPicker->GetPath() == SEARCH_IN_WORKSPACE){
-
-		wxArrayString files;
-		ManagerST::Get()->GetWorkspaceFiles(files);
-		data.SetFiles(files);
-
-	}else if(m_dirPicker->GetPath() == SEARCH_IN_PROJECT){
-
-		wxArrayString files;
-		ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
-		data.SetFiles(files);
-
-	}else if(m_dirPicker->GetPath() == SEARCH_IN_CURR_FILE_PROJECT){
-
-		wxArrayString files;
-		wxString project = ManagerST::Get()->GetActiveProjectName();
-
-		if (Frame::Get()->GetMainBook()->GetActiveEditor()) {
-			// use the active file's project
-			wxFileName activeFile = Frame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
-			project = ManagerST::Get()->GetProjectNameByFile(activeFile.GetFullPath());
-		}
-
-		ManagerST::Get()->GetProjectFiles(project, files);
-		data.SetFiles(files);
+	wxArrayString rootDirs;
+	for (size_t i = 0; i < m_listPaths->GetCount(); ++i) {
+		rootDirs.push_back(m_listPaths->GetString(i));
 	}
+	if (rootDirs.IsEmpty()) {
+		wxString dir = m_dirPicker->GetPath();
+		if (dir.IsEmpty() == false) {
+			rootDirs.push_back(dir);
+		}
+	}
+	data.SetRootDirs(rootDirs);
+
+	wxArrayString files;
+	for (size_t i = 0; i < rootDirs.GetCount(); ++i)
+	{
+		const wxString& rootDir = rootDirs.Item(i);
+		if (rootDir == SEARCH_IN_WORKSPACE){
+
+			ManagerST::Get()->GetWorkspaceFiles(files);
+
+		} else if (rootDir == SEARCH_IN_PROJECT){
+
+			ManagerST::Get()->GetProjectFiles(ManagerST::Get()->GetActiveProjectName(), files);
+
+		} else if (rootDir == SEARCH_IN_CURR_FILE_PROJECT){
+
+			wxString project = ManagerST::Get()->GetActiveProjectName();
+
+			if (Frame::Get()->GetMainBook()->GetActiveEditor()) {
+				// use the active file's project
+				wxFileName activeFile = Frame::Get()->GetMainBook()->GetActiveEditor()->GetFileName();
+				project = ManagerST::Get()->GetProjectNameByFile(activeFile.GetFullPath());
+			}
+			ManagerST::Get()->GetProjectFiles(project, files);
+		}
+	}
+	data.SetFiles(files);
 
 	data.SetOutputTab( m_searchResultsTab->GetSelection() );
 	data.SetExtensions(m_fileTypes->GetValue());
@@ -335,6 +253,27 @@ void FindInFilesDialog::OnCharEvent(wxKeyEvent &event)
 		return;
 	}
 	event.Skip();
+}
+
+void FindInFilesDialog::OnAddPath( wxCommandEvent& event )
+{
+	wxString path = m_dirPicker->GetPath();
+	if (m_listPaths->FindString(path) == wxNOT_FOUND) {
+		m_listPaths->Append(path);
+	}
+}
+
+void FindInFilesDialog::OnRemovePath( wxCommandEvent& event )
+{
+	int sel = m_listPaths->GetSelection();
+	if (sel != wxNOT_FOUND) {
+		m_listPaths->Delete(sel);
+	}
+}
+
+void FindInFilesDialog::OnClearPaths( wxCommandEvent& event )
+{
+	m_listPaths->Clear();
 }
 
 bool FindInFilesDialog::Show()

@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __wxtabcontainer__
+#ifndef __wxtabcontainer__
 #define __wxtabcontainer__
 
 #include "wx/panel.h"
@@ -34,12 +34,14 @@ class wxMenu;
 
 class wxTabContainer : public wxPanel
 {
-	int m_orientation;
-	wxSizer *m_tabsSizer;
-	CustomTab *m_draggedTab;
+	int            m_orientation;
+	wxSizer*       m_tabsSizer;
+	CustomTab*     m_draggedTab;
 	wxArrayPtrVoid m_history;
-	wxMenu *m_rightClickMenu;
-	int m_bmpHeight;
+	wxMenu *       m_rightClickMenu;
+	int            m_bmpHeight;
+	size_t         m_fixedTabWidth;
+
 	friend class CustomTab;
 
 protected:
@@ -86,8 +88,12 @@ public:
 	size_t TabToIndex(CustomTab *tab);
 	size_t GetTabsCount();
 
-	void SetRightClickMenu(wxMenu* rightClickMenu) {this->m_rightClickMenu = rightClickMenu;}
-	wxMenu* GetRightClickMenu() {return m_rightClickMenu;}
+	void SetRightClickMenu(wxMenu* rightClickMenu) {
+		this->m_rightClickMenu = rightClickMenu;
+	}
+	wxMenu* GetRightClickMenu() {
+		return m_rightClickMenu;
+	}
 
 	void Resize();
 
@@ -95,7 +101,7 @@ public:
 	 * @brief delete tab from the tab container (also destroying it)
 	 * @param deleteTab tab to delete
 	 * @param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
-     * @return true if notification sent but vetoed by user, else false
+	 * @return true if notification sent but vetoed by user, else false
 	 */
 	bool DeletePage(CustomTab *deleteTab, bool notify);
 
@@ -103,7 +109,7 @@ public:
 	 * @brief remove tab from the tab container (the tab will *not* be destroyed)
 	 * @param removePage tab to remove
 	 * @param notify set this to true if you wish to receive wxEVT_COMMAND_BOOK_PAGE_CLOSING & wxEVT_COMMAND_BOOK_PAGE_CLOSED
-     * @return true if notification sent but vetoed by user, else false
+	 * @return true if notification sent but vetoed by user, else false
 	 */
 	bool RemovePage(CustomTab *removePage, bool notify);
 
@@ -129,14 +135,35 @@ public:
 	 * @brief get tab being dragged, if any
 	 * @return tab being dragged
 	 */
-	const CustomTab* GetDraggedTab() const { return m_draggedTab; }
+	const CustomTab* GetDraggedTab() const {
+		return m_draggedTab;
+	}
+
+	/**
+	 * @brief set the fixed tab width
+	 * @param size in pixels
+	 */
+	void SetFixedTabWidth(const size_t& fixedTabWidth);
+
+	/**
+	 * @brief return the fixed tab width in pixels
+	 */
+	size_t GetFixedTabWidth() const {
+		return m_fixedTabWidth;
+	}
 
 	int GetBookStyle();
 	void SetOrientation(const int& orientation) ;
-	const int& GetOrientation() const {return m_orientation;}
+	const int& GetOrientation() const {
+		return m_orientation;
+	}
 	void ShowPopupMenu();
-	void SetHistory(const wxArrayPtrVoid& history) {this->m_history = history;}
-	const wxArrayPtrVoid& GetHistory() const {return m_history;}
+	void SetHistory(const wxArrayPtrVoid& history) {
+		this->m_history = history;
+	}
+	const wxArrayPtrVoid& GetHistory() const {
+		return m_history;
+	}
 	void SetBmpHeight(int height);
 	int GetBmpHeight() const;
 	static void DoDrawBackground(wxDC &dc, bool gradient, int orientation, const wxRect &rr);
@@ -161,19 +188,20 @@ public:
 class DropButton : public DropButtonBase
 {
 private:
-    wxTabContainer *m_tabContainer;
+	wxTabContainer *m_tabContainer;
 
 protected:
-    size_t GetItemCount();
-    wxString GetItem(size_t n);
-    bool IsItemSelected(size_t n);
+	size_t GetItemCount();
+	wxString GetItem(size_t n);
+	bool IsItemSelected(size_t n);
 
 public:
-    DropButton(wxWindow *parent, wxTabContainer *tabContainer);
-    ~DropButton();
+	DropButton(wxWindow *parent, wxTabContainer *tabContainer);
+	~DropButton();
 
-    void OnMenuSelection(wxCommandEvent &e);
+	virtual void OnMenuSelection(wxCommandEvent &e);
 	virtual void OnPaint(wxPaintEvent &e);
+	virtual void OnLeftDown(wxMouseEvent &e);
 };
 
 

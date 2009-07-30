@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug  4 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -229,6 +229,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	bSizer17 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkBoxPauseWhenExecEnds = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Pause when execution ends"), wxDefaultPosition, wxDefaultSize, 0 );
+	
 	bSizer17->Add( m_checkBoxPauseWhenExecEnds, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer19->Add( bSizer17, 1, wxEXPAND, 5 );
@@ -242,6 +243,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	compilerPageSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkCompilerNeeded = new wxCheckBox( m_compilerPage, wxID_ANY, wxT("Compiler is not required for this project"), wxDefaultPosition, wxDefaultSize, 0 );
+	
 	compilerPageSizer->Add( m_checkCompilerNeeded, 0, wxALL, 5 );
 	
 	wxBoxSizer* bSizer23001;
@@ -311,6 +313,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	linkerPageSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkLinkerNeeded = new wxCheckBox( m_linkerPage, wxID_ANY, wxT("Linker is not required for this project"), wxDefaultPosition, wxDefaultSize, 0 );
+	
 	linkerPageSizer->Add( m_checkLinkerNeeded, 0, wxALL, 5 );
 	
 	wxBoxSizer* bSizer231;
@@ -403,6 +406,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	bSizer192->Add( m_staticline121, 0, wxEXPAND | wxALL, 5 );
 	
 	m_checkBoxDbgRemote = new wxCheckBox( m_panelDebugger, wxID_ANY, wxT("Debugging remote target"), wxDefaultPosition, wxDefaultSize, 0 );
+	
 	bSizer192->Add( m_checkBoxDbgRemote, 0, wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizer61;
@@ -453,7 +457,8 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	bSizer151 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkResourceNeeded = new wxCheckBox( m_resourceCmpPage, wxID_ANY, wxT("Resource Compiler is not needed"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkResourceNeeded->SetValue(true); 
+	m_checkResourceNeeded->SetValue(true);
+	
 	bSizer151->Add( m_checkResourceNeeded, 0, wxALL, 5 );
 	
 	wxBoxSizer* bSizer2311;
@@ -601,6 +606,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	bSizer15 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkEnableCustomBuild = new wxCheckBox( m_customBuildPage, wxID_ANY, wxT("Enable custom build"), wxDefaultPosition, wxDefaultSize, 0 );
+	
 	bSizer15->Add( m_checkEnableCustomBuild, 0, wxALL, 5 );
 	
 	m_staticline12 = new wxStaticLine( m_customBuildPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -642,7 +648,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	m_buttonDeleteCustomTarget = new wxButton( m_customBuildPage, wxID_ANY, wxT("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer221->Add( m_buttonDeleteCustomTarget, 0, wxALL, 5 );
 	
-	bSizer211->Add( bSizer221, 0, 0, 5 );
+	bSizer211->Add( bSizer221, 0, wxEXPAND, 5 );
 	
 	bSizer15->Add( bSizer211, 1, wxEXPAND, 5 );
 	
@@ -658,7 +664,7 @@ ProjectConfigurationBasePanel::ProjectConfigurationBasePanel( wxWindow* parent, 
 	
 	bSizer15->Add( bSizer191, 0, 0, 5 );
 	
-	wxString m_thirdPartyToolChoices[] = { wxT("None"), wxT("Premake"), wxT("QMake"), wxT("CMake"), wxT("configure") };
+	wxString m_thirdPartyToolChoices[] = { wxT("None"), wxT("Other") };
 	int m_thirdPartyToolNChoices = sizeof( m_thirdPartyToolChoices ) / sizeof( wxString );
 	m_thirdPartyTool = new wxChoice( m_customBuildPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_thirdPartyToolNChoices, m_thirdPartyToolChoices, 0 );
 	m_thirdPartyTool->SetSelection( 0 );

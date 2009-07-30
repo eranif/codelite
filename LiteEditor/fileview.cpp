@@ -885,6 +885,7 @@ void FileViewTree::OnSaveAsTemplate( wxCommandEvent & WXUNUSED( event ) )
 			if ( dlg->ShowModal() == wxID_OK ) {
 				wxString newName = dlg->GetName();
 				wxString desc  	 = dlg->GetDescription();
+				wxString type    = dlg->GetType();
 
 				newName = newName.Trim().Trim(false);
 				desc = desc.Trim().Trim(false);
@@ -892,7 +893,10 @@ void FileViewTree::OnSaveAsTemplate( wxCommandEvent & WXUNUSED( event ) )
 				if ( newName.IsEmpty() == false ) {
                     wxString tmplateDir = ManagerST::Get()->GetStarupDirectory() + wxT ( "/templates/projects/" ) + newName + wxT ( "/" );
                     Mkdir ( tmplateDir );
-                    proj->CopyTo ( tmplateDir, newName, desc );
+
+					Project newProj( *proj );
+					newProj.SetProjectInternalType( type );
+					newProj.CopyTo ( tmplateDir, newName, desc );
 				}
 			}
 			dlg->Destroy();
@@ -1342,10 +1346,16 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	//save the project file to disk
 	proj->CommitTranscation();
 
-	//reload the project
+	// reload the project
+	wxString curr_proj_name ( proj->GetName() );
+	bool     was_active ( ManagerST::Get()->GetActiveProjectName() == curr_proj_name );
 	ManagerST::Get()->RemoveProject( proj->GetName() );
 	ManagerST::Get()->AddProject(proj->GetFileName().GetFullPath());
-	// SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED); -- sent by WorkspaceTab
+
+	// restore the active project
+	if( was_active ) {
+		MarkActive( curr_proj_name );
+	}
 }
 
 void FileViewTree::DoAddItem(ProjectPtr proj, const FileViewItem &item)
@@ -1401,28 +1411,16 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
 							return;
 						}
 
-						// remove the file from the workspace (this will erase it from the symbol database and will
-						// also close the editor that it is currently opened in (if any)
-						if (ManagerST::Get()->RemoveFile(GetItemText(item), path)) {
-
-							// rename the file
-							wxRenameFile(data->GetData().GetFile(), tmp.GetFullPath());
-
-							// add the new file to the project
-							FileViewItem new_item;
-							new_item.fullpath = tmp.GetFullPath();
-							new_item.displayName = tmp.GetFullName();
-							new_item.virtualDir = path.AfterFirst(wxT(':'));
-							DoAddItem(p, new_item);
-
+						// rename the file (this will erase it from the symbol database and will
+						// also close the editor that it is currently opened in (if any))
+						if (ManagerST::Get()->RenameFile(data->GetData().GetFile(), tmp.GetFullPath(), path)) {
 							// update the item's info
-							data->SetDisplayName(new_item.displayName);
-							data->SetFile(new_item.fullpath);
+							data->SetDisplayName(tmp.GetFullName());
+							data->SetFile(tmp.GetFullPath());
 
 							// rename the tree item
-							SetItemText(item, new_item.displayName);
+							SetItemText(item, tmp.GetFullName());
 
-							ManagerST::Get()->RetagFile(new_item.fullpath);
 							SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 						}
 					}

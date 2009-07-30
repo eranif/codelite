@@ -279,7 +279,7 @@ public:
      * @return the found tag or NULL
      */
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl) = 0;
-    
+
     /**
      * @brief show a (short) message in the status bar
      */
@@ -301,6 +301,16 @@ public:
 	 * @brief stop the current process execution and clear all commands from the queue
 	 */
 	virtual void StopAndClearQueue() = 0;
+
+	/**
+	 * return true if a compilation is in process (either clean or build)
+	 */
+	virtual bool IsBuildInProgress() const = 0;
+
+	/**
+	 * return true if the last buid ended successfully
+	 */
+	virtual bool IsBuildEndedSuccessfully() const = 0;
 
 	/**
 	 * @brief return the project name of a file

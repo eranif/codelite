@@ -203,6 +203,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 		if ( SessionManager::Get().FindSession ( path, session ) ) {
 			SessionManager::Get().SetLastWorkspaceName ( path );
 			Frame::Get()->GetMainBook()->RestoreSession(session);
+			GetBreakpointsMgr()->LoadSession(session);
 		}
 	}
 
@@ -225,6 +226,7 @@ void Manager::CloseWorkspace()
 	SessionEntry session;
 	session.SetWorkspaceName ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
 	Frame::Get()->GetMainBook()->SaveSession(session);
+	GetBreakpointsMgr()->SaveSession(session);
 	SessionManager::Get().Save ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session );
 
 	// since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
@@ -302,7 +304,7 @@ void Manager::CreateProject ( ProjectData &data )
 	WorkspaceST::Get()->AddProjectToBuildMatrix ( proj );
 	ProjectSettingsPtr settings = proj->GetSettings();
 
-	//set the compiler type
+	// set the compiler type
 	ProjectSettingsCookie cookie;
 	BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration ( cookie );
 	while ( bldConf ) {
@@ -311,8 +313,13 @@ void Manager::CreateProject ( ProjectData &data )
 	}
 	proj->SetSettings ( settings );
 
-	//copy the files as they appear in the source project
+	// copy the files as they appear in the source project
 	proj->SetFiles ( data.m_srcProject );
+
+	// copy plugins data
+	std::map<wxString, wxString> pluginsData;
+	data.m_srcProject->GetAllPluginsData( pluginsData );
+	proj->SetAllPluginsData( pluginsData );
 
 	{
 		// copy the actual files from the template directory to the new project path
@@ -335,6 +342,15 @@ void Manager::CreateProject ( ProjectData &data )
 
 void Manager::AddProject ( const wxString & path )
 {
+	// create a workspace if there is non
+	if ( IsWorkspaceOpen() == false ) {
+
+		wxFileName fn(path);
+
+		//create a workspace before creating a project
+		CreateWorkspace ( fn.GetName(), fn.GetPath() );
+	}
+
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->AddProject ( path, errMsg );
 	if ( !res ) {
@@ -782,6 +798,31 @@ bool Manager::RemoveFile ( const wxString &fileName, const wxString &vdFullPath 
 	return true;
 }
 
+bool Manager::RenameFile(const wxString &origName, const wxString &newName, const wxString &vdFullPath)
+{
+	// remove the file from the workspace (this will erase it from the symbol database and will
+	// also close the editor that it is currently opened in (if any)
+	if (!RemoveFile(origName, vdFullPath))
+		return false;
+
+	// rename the file on filesystem
+	wxRenameFile(origName, newName);
+
+	// readd file to project with the new name
+	wxString projName = vdFullPath.BeforeFirst(wxT(':'));
+	ProjectPtr proj = GetProject(projName);
+	proj->FastAddFile(newName, vdFullPath.AfterFirst(wxT(':')));
+
+	RetagFile(newName);
+
+	// notify of file addition
+	wxArrayString files;
+	files.Add(newName);
+	SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&files);
+
+	return true;
+}
+
 bool Manager::MoveFileToVD ( const wxString &fileName, const wxString &srcVD, const wxString &targetVD )
 {
 	// to move the file between targets, we need to change the file path, we do this
@@ -794,7 +835,8 @@ bool Manager::MoveFileToVD ( const wxString &fileName, const wxString &srcVD, co
 
 	//set a dir saver point
 	wxFileName fn ( fileName );
-	wxArrayString files(1, fn.GetFullPath());
+	wxArrayString files;
+	files.Add(fn.GetFullPath());
 
 	//remove the file from the source project
 	wxString errMsg;
@@ -2015,13 +2057,14 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		if ( reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS ) {
 			signame = wxT ( "EXC_BAD_ACCESS" );
 		}
-		DebugMessage ( _ ( "Program Received signal " ) + signame + _ ( "\n" ) );
-		wxMessageBox ( _ ( "Program Received signal " ) + signame + _ ( "\n" ) +
-		               _ ( "Stack trace is available in the 'Stack' tab\n" ),
-		               wxT ( "CodeLite" ), wxICON_ERROR|wxOK );
+		DebugMessage ( _("Program Received signal ") + signame + _("\n") );
+		wxMessageDialog dlg( Frame::Get(), _("Program Received signal ") + signame + wxT("\n") +
+		               _("Stack trace is available in the 'Stack' tab\n"),
+		               wxT("CodeLite"), wxICON_ERROR|wxOK );
+		dlg.ShowModal();
 
 		//Print the stack trace
-		wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT ( "Debugger" ) );
+		wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT("Debugger") );
 		if ( info.IsShown() ) {
 			Frame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
 			UpdateDebuggerPane();
@@ -2058,6 +2101,10 @@ void Manager::UpdateLostControl()
 	DbgUnMarkDebuggerLine();
 	m_dbgCanInteract = false;
 	DebugMessage ( _ ( "Continuing...\n" ) );
+
+	// Reset the debugger call-stack pane
+  Frame::Get()->GetDebuggerPane()->GetFrameListView()->Clear();
+  Frame::Get()->GetDebuggerPane()->GetFrameListView()->SetCurrentLevel(0);
 }
 
 void Manager::UpdateBpAdded(const int internal_id, const int debugger_id)
@@ -2279,13 +2326,17 @@ bool Manager::IsBuildEndedSuccessfully() const
 
 	wxArrayString lines;
 	CompileRequest *cr = dynamic_cast<CompileRequest*> ( m_shellProcess );
-	if ( cr ) {
-		if ( !cr->GetLines ( lines ) ) {
+	CustomBuildRequest *cbr = dynamic_cast<CustomBuildRequest*> ( m_shellProcess );
+	if ( cr || cbr ) {
+		if ( cr && !cr->GetLines ( lines ) ) {
+			return false;
+		}
+		if ( cbr && !cbr->GetLines ( lines ) ) {
 			return false;
 		}
 
 		//check every line to see if we got an error/warning
-		wxString project ( cr->GetProjectName() );
+		wxString project ( cr ? cr->GetProjectName() : cbr->GetProjectName() );
 
 		// TODO :: change the call to ' GetProjBuildConf' to pass the correct
 		// build configuration

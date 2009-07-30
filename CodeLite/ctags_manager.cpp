@@ -694,14 +694,44 @@ void TagsManager::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<Ta
 
 void TagsManager::RemoveDuplicatesTips(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
 {
+	std::map<wxString, TagEntryPtr> unique_tags;
+
 	for (size_t i=0; i<src.size(); i++) {
-		if (i == 0) {
-			target.push_back(src.at(0));
+
+		wxString raw_sig ( src.at(i)->GetSignature().Trim().Trim(false) );
+		wxString sig;
+		if (raw_sig.empty() == false){
+			sig = NormalizeFunctionSig(raw_sig, 0);
+		}
+
+		// the signature that we want to keep is one with name & default values, so try and get the maximum out of the
+		// function signature
+		bool hasDefaultValues = (raw_sig.Find(wxT("=")) != wxNOT_FOUND);
+
+		wxString name = src.at(i)->GetName();
+		wxString key = name + sig;
+
+		std::map<wxString, TagEntryPtr>::iterator iter = unique_tags.find(key);
+		if(iter == unique_tags.end()){
+			// does not exist
+			unique_tags[key] = src.at(i);
 		} else {
-			if (src.at(i)->GetSignature() != target.at(target.size()-1)->GetSignature()) {
-				target.push_back(src.at(i));
+			// an entry with this key already exist
+			if(hasDefaultValues){
+				// this entry has a default values, it means that we probably prefer this signature over the other
+				TagEntryPtr t = iter->second;
+				t->SetSignature(raw_sig);
+				unique_tags[key] = t;
 			}
 		}
+	}
+
+	// conver the map back to std::vector
+	std::map<wxString, TagEntryPtr>::iterator iter = unique_tags.begin();
+	target.clear();
+
+	for(; iter != unique_tags.end(); iter++){
+		target.push_back(iter->second);
 	}
 }
 
@@ -759,7 +789,7 @@ void TagsManager::GetHoverTip(const wxFileName &fileName, int lineno, const wxSt
 		GetGlobalTags(word, tmpCandidates, ExactMatch);
 		GetLocalTags(word, scope, tmpCandidates, ExactMatch);
 		TagsByScopeAndName(scopeName, word, tmpCandidates);
-		RemoveDuplicates(tmpCandidates, candidates);
+		RemoveDuplicatesTips(tmpCandidates, candidates);
 
 		// we now have a list of tags that matches our word
 		TipsFromTags(candidates, word, tips);
@@ -2352,6 +2382,10 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 
 		if (v.m_name.empty() == false && (flags & Normalize_Func_Name)) {
 			str_output << wxT(" ") << _U(v.m_name.c_str());
+		}
+
+		if (v.m_arrayBrackets.empty() == false) {
+			str_output << wxT(" ") << _U(v.m_arrayBrackets.c_str());
 		}
 
 		if (v.m_defaultValue.empty() == false && (flags & Normalize_Func_Default_value)) {

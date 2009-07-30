@@ -1,28 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : editsnippetsbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
@@ -83,7 +58,7 @@ EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const
 	
 	bSizer6->Add( fgSizer1, 1, wxEXPAND, 5 );
 	
-	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, wxT("Use $ as placeholder for selection and @ to set the caret position.\ne.g. for($ = 0; $ < @; $++)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, wxT("Use $ as placeholder for the selection and @ to set the caret position.\ne.g. for($ = 0; $ < @; $++)\nNOTE:\nIf you snippet contains @ or $, you can escape the placeholders with a backslash: \\@ OR \\$ "), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	bSizer6->Add( m_staticText2, 0, wxALL, 5 );
 	
@@ -104,7 +79,7 @@ EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const
 	m_buttonRemove = new wxButton( m_panel2, wxID_ANY, wxT("Remove"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_buttonRemove, 0, wxALL, 5 );
 	
-	bSizer6->Add( bSizer8, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	bSizer6->Add( bSizer8, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
 	bSizer5->Add( bSizer6, 1, 0, 5 );
 	

@@ -26,9 +26,19 @@
 #include "manager.h"
 #include "globals.h"
 
+#include <wx/xrc/xmlres.h>
+#include <wx/imaglist.h>
+#include <memory>
+
 ListCtrlPanel::ListCtrlPanel ( wxWindow* parent )
 		: ListCtrlPanelBase ( parent )
+		, m_currLevel(0)
 {
+	const wxBitmap& currLevel = wxXmlResource::Get()->LoadBitmap(wxT("arrow_green_right16"));
+	std::auto_ptr<wxImageList> imageList(new wxImageList(currLevel.GetWidth(), currLevel.GetHeight(), true));
+	imageList->Add(currLevel);
+	m_listCtrl->AssignImageList(imageList.release(), wxIMAGE_LIST_SMALL);
+
 	m_listCtrl->InsertColumn ( 0, wxT("Level")		);
 	m_listCtrl->InsertColumn ( 1, wxT("Address")	);
 	m_listCtrl->InsertColumn ( 2, wxT("Function")	);
@@ -43,6 +53,14 @@ void ListCtrlPanel::OnItemActivated ( wxListEvent& event )
 	wxString frameLineStr   = GetColumnText ( event.m_itemIndex, 4 );
 	frameNumber.ToLong(&frame);
 	frameLineStr.ToLong(&frameLine);
+
+	if (m_currLevel != event.m_itemIndex)
+	{
+		if (m_currLevel >= 0)
+			m_listCtrl->SetItemImage(m_currLevel, -1);
+		SetCurrentLevel( event.m_itemIndex );
+	}
+
 	ManagerST::Get()->DbgSetFrame(frame, frameLine);
 }
 
@@ -60,10 +78,16 @@ void ListCtrlPanel::Update ( const StackEntryArray &stackArr )
 			SetColumnText(item, 2, entry.function);
 			SetColumnText(item, 3, entry.file);
 			SetColumnText(item, 4, entry.line);
+			m_listCtrl->SetItemImage(item, -1);
 		}
 		m_listCtrl->SetColumnWidth(1, wxLIST_AUTOSIZE);
 		m_listCtrl->SetColumnWidth(2, wxLIST_AUTOSIZE);
 		m_listCtrl->SetColumnWidth(3, wxLIST_AUTOSIZE);
+
+		if (m_currLevel >= 0)
+			m_listCtrl->SetItemImage(m_currLevel, 0);
+
+		m_listCtrl->EnsureVisible(m_currLevel);
 	}
 	m_listCtrl->Thaw();
 }
@@ -93,4 +117,11 @@ wxString ListCtrlPanel::GetColumnText(long index, long column)
 	list_item.SetMask ( wxLIST_MASK_TEXT );
 	m_listCtrl->GetItem ( list_item );
 	return list_item.GetText();
+}
+
+void ListCtrlPanel::SetCurrentLevel(const int level)
+{
+	// Set m_currLevel to level, or 0 if level is out of bounds
+	m_currLevel = 
+				(level >=0 && level < m_listCtrl->GetItemCount()) ? level : 0;
 }

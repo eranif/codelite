@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="static-library-wx-enabled">
+<CodeLite_Project Name="Static library (wxWidgets enabled)" InternalType="Library">
 	<Description>
 		A project that produces a static library (archive).
 The settings of this project already includes the paths required by wxWidgets using the wx-config tool.

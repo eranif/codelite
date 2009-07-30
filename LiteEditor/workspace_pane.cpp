@@ -89,7 +89,16 @@ void WorkspacePane::CreateGUIControls()
 	mainSizer->Add(line, 0, wxEXPAND);
 
     // add notebook for tabs
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_LEFT|wxVB_BG_GRADIENT);
+	long bookStyle = wxVB_LEFT|wxVB_BG_GRADIENT|wxVB_FIXED_WIDTH;
+	EditorConfigST::Get()->GetLongValue(wxT("WorkspaceView"), bookStyle);
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
+
+	// Calculate the widthest tab (the one with the 'Workspcae' label)
+	int xx, yy;
+	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	wxWindow::GetTextExtent(wxT("Workspace"), &xx, &yy, NULL, NULL, &fnt);
+	m_book->SetFixedTabWidth(xx + 20);
+
     m_book->SetAuiManager(m_mgr, m_caption);
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 1);
 

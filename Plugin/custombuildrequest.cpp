@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : custombuildrequest.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : custombuildrequest.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -56,7 +56,7 @@ void CustomBuildRequest::Process(IManager *manager)
 	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
 	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
 	EnvironmentConfig *env(manager ? manager->GetEnv() : EnvironmentConfig::Instance());
-	
+
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
 		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
@@ -66,16 +66,25 @@ void CustomBuildRequest::Process(IManager *manager)
 
 	// Notify plugins that a compile process is going to start
 	wxCommandEvent event(wxEVT_BUILD_STARTING);
-	
+
 	wxString pname (proj->GetName());
 	event.SetClientData((void*)&pname);
-	
+	event.SetString( m_info.GetConfiguration() );
+
 	// since this code can be called from inside the application OR
 	// from inside a DLL, we use the application pointer from the manager
 	// when available, otherwise, events will not be processed inside
 	// plugins
 	wxApp *app = manager ? manager->GetTheApp() : wxTheApp;
 	app->ProcessEvent(event);
+
+	if(app->ProcessEvent(event)){
+
+		// the build is being handled by some plugin, no need to build it
+		// using the standard way
+		SetBusy(false);
+		return;
+	}
 
 	SendStartMsg();
 
@@ -188,7 +197,7 @@ void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, Proje
 
 	BuildManager *bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
 	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
-	
+
 	// collect all enabled commands
 	BuildCommandList::iterator iter = preBuildCmds.begin();
 	for (; iter != preBuildCmds.end(); iter ++) {

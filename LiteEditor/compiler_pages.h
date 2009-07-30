@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Aug  4 2008)
+// C++ code generated with wxFormBuilder (version May 12 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -68,7 +68,6 @@ class CompilerToolsBase : public wxPanel
 	private:
 	
 	protected:
-		wxPanel* m_panel2;
 		wxStaticText* m_staticText9;
 		wxTextCtrl* m_textCompilerName;
 		wxStaticText* m_staticText11;
@@ -97,13 +96,12 @@ class CompilerSwitchesBase : public wxPanel
 	private:
 	
 	protected:
-		wxPanel* m_panel3;
 		wxStaticText* m_staticText8;
 		wxListCtrl* m_listSwitches;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }
-		virtual void OnItemSelected( wxListEvent& event ){ event.Skip(); }
+		virtual void OnItemActivated( wxListEvent& event ) { event.Skip(); }
+		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
 		
 	
 	public:
@@ -121,18 +119,17 @@ class CompilerFileTypesBase : public wxPanel
 	private:
 	
 	protected:
-		wxPanel* m_panel4;
 		wxStaticText* m_staticText23;
 		wxListCtrl* m_listCtrlFileTypes;
 		wxButton* m_buttonNewFileType;
 		wxButton* m_buttonDeleteFileType;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnFileTypeActivated( wxListEvent& event ){ event.Skip(); }
-		virtual void OnFileTypeDeSelected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnFileTypeSelected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnNewFileType( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnDeleteFileType( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnFileTypeActivated( wxListEvent& event ) { event.Skip(); }
+		virtual void OnFileTypeDeSelected( wxListEvent& event ) { event.Skip(); }
+		virtual void OnFileTypeSelected( wxListEvent& event ) { event.Skip(); }
+		virtual void OnNewFileType( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDeleteFileType( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
@@ -150,7 +147,6 @@ class CompilerAdvanceBase : public wxPanel
 	private:
 	
 	protected:
-		wxPanel* m_panel1;
 		wxCheckBox* m_checkBoxGenerateDependenciesFiles;
 		wxStaticLine* m_staticline2;
 		wxStaticText* m_staticText18;
@@ -188,11 +184,11 @@ class CompilerCompilerOptionsBase : public wxPanel
 		wxButton* m_buttonDeleteCompilerOption;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnCompilerOptionActivated( wxListEvent& event ){ event.Skip(); }
-		virtual void OnCompilerOptionDeSelected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnCompilerOptionSelected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnNewCompilerOption( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnDeleteCompilerOption( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnCompilerOptionActivated( wxListEvent& event ) { event.Skip(); }
+		virtual void OnCompilerOptionDeSelected( wxListEvent& event ) { event.Skip(); }
+		virtual void OnCompilerOptionSelected( wxListEvent& event ) { event.Skip(); }
+		virtual void OnNewCompilerOption( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDeleteCompilerOption( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
@@ -216,11 +212,11 @@ class CompilerLinkerOptionsBase : public wxPanel
 		wxButton* m_buttonDeleteLinkerOption;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnLinkerOptionActivated( wxListEvent& event ){ event.Skip(); }
-		virtual void OnLinkerOptionDeSelected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnLinkerOptionSelected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnNewLinkerOption( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnDeleteLinkerOption( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnLinkerOptionActivated( wxListEvent& event ) { event.Skip(); }
+		virtual void OnLinkerOptionDeSelected( wxListEvent& event ) { event.Skip(); }
+		virtual void OnLinkerOptionSelected( wxListEvent& event ) { event.Skip(); }
+		virtual void OnNewLinkerOption( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDeleteLinkerOption( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

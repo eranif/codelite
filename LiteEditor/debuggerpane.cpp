@@ -96,8 +96,17 @@ void DebuggerPane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP);
+	long bookStyle = wxVB_TOP;
+	EditorConfigST::Get()->GetLongValue(wxT("DebuggerBook"), bookStyle);
+
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
 	mainSizer->Add(m_book, 1, wxEXPAND|wxALL, 1);
+
+	// Calculate the widthest tab (the one with the 'Call Stack' label)
+	int xx, yy;
+	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	wxWindow::GetTextExtent(wxT("Breakpoints"), &xx, &yy, NULL, NULL, &fnt);
+	m_book->SetFixedTabWidth(xx + 20 + 16); // Icon + Text
 
 	// load list of detached panes
 	wxArrayString detachedPanes;

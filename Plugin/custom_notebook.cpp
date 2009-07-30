@@ -207,17 +207,22 @@ void Notebook::SetOrientation(int orientation)
 {
 	int add_style(orientation);
 
-	wxSizer *sz = GetSizer();
+	wxBoxSizer *sz = (wxBoxSizer*)GetSizer();
 	m_style &= ~(wxVB_LEFT | wxVB_RIGHT | wxVB_TOP | wxVB_BOTTOM);
 	m_style |= add_style;
 
 	int ori(wxRIGHT);
+	sz->SetOrientation(wxHORIZONTAL);
+
 	if (m_style & wxVB_LEFT) {
 		ori = wxLEFT;
+		sz->SetOrientation(wxHORIZONTAL);
 	} else if (m_style & wxVB_TOP) {
 		ori = wxTOP;
+		sz->SetOrientation(wxVERTICAL);
 	} else if (m_style & wxVB_BOTTOM) {
 		ori = wxBOTTOM;
+		sz->SetOrientation(wxVERTICAL);
 	}
 	m_tabs->SetOrientation(ori);
 
@@ -417,6 +422,25 @@ void Notebook::SetPageBitmap(size_t index, const wxBitmap& bmp)
 void Notebook::SetBitmapSize(int size)
 {
 	m_tabs->SetBmpHeight(size);
+	m_tabs->Resize();
+	Layout();
+}
+
+
+size_t Notebook::GetFixedTabWidth() const
+{
+	return GetTabContainer()->GetFixedTabWidth();
+}
+
+void Notebook::SetFixedTabWidth(size_t size)
+{
+	GetTabContainer()->SetFixedTabWidth(size);
+	Layout();
+}
+
+void Notebook::SetBookStyle(long style)
+{
+	m_style = style;
 	m_tabs->Resize();
 	Layout();
 }

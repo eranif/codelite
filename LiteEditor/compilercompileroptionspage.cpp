@@ -20,6 +20,10 @@ CompilerCompilerOptionsPage::CompilerCompilerOptionsPage( wxWindow* parent, cons
 		long idx = m_listCompilerOptions->InsertItem(m_listCompilerOptions->GetItemCount(), cmpOption.name);
 		m_listCompilerOptions->SetItem(idx, 1, cmpOption.help);
 	}
+	
+	m_listCompilerOptions->SetColumnWidth(0, 100);
+	m_listCompilerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
+	
 }
 
 void CompilerCompilerOptionsPage::Save(CompilerPtr cmp)
@@ -49,6 +53,7 @@ void CompilerCompilerOptionsPage::OnCompilerOptionActivated( wxListEvent& event 
 	{
 		SetColumnText(m_listCompilerOptions, m_selectedCmpOption, 0, dlg.m_sName);
 		SetColumnText(m_listCompilerOptions, m_selectedCmpOption, 1, dlg.m_sHelp);
+		m_listCompilerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	}
 }
 
@@ -59,6 +64,7 @@ void CompilerCompilerOptionsPage::OnNewCompilerOption( wxCommandEvent& event )
 	{
 		long idx = m_listCompilerOptions->InsertItem(m_listCompilerOptions->GetItemCount(), dlg.m_sName);
 		m_listCompilerOptions->SetItem(idx, 1, dlg.m_sHelp);
+		m_listCompilerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	}
 }
 
@@ -67,6 +73,7 @@ void CompilerCompilerOptionsPage::OnDeleteCompilerOption( wxCommandEvent& event 
 	if (m_selectedCmpOption != wxNOT_FOUND) {
 		if (wxMessageBox(_("Are you sure you want to delete this compiler option?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 			m_listCompilerOptions->DeleteItem(m_selectedCmpOption);
+			m_listCompilerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
 			m_selectedCmpOption = wxNOT_FOUND;
 		}
 	}

@@ -366,7 +366,7 @@ void SurfaceImpl::RoundedRectangle(PRectangle rc, ColourAllocated fore, ColourAl
 	PenColour(fore);
 	BrushColour(back);
 	wxRect rr = wxRectFromPRectangle(rc);
-	hdc->DrawRoundedRectangle(rr, 3);
+	hdc->DrawRoundedRectangle(rr, 0);
 }
 
 void SurfaceImpl::AlphaRectangle (PRectangle rc, int cornerSize, ColourAllocated fill, int alphaFill, ColourAllocated outline, int alphaOutline, int WXUNUSED(flags))

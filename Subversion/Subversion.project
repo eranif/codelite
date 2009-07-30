@@ -20,6 +20,8 @@
     <File Name="updatepostcmdaction.h"/>
     <File Name="applypatchpostcmdaction.cpp"/>
     <File Name="applypatchpostcmdaction.h"/>
+    <File Name="revertpostcmdaction.cpp"/>
+    <File Name="revertpostcmdaction.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="svndriver.h"/>

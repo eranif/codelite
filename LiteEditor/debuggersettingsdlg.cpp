@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : debuggersettingsdlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : debuggersettingsdlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "debuggersettingsdlg.h"
@@ -35,18 +35,18 @@
 DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		: wxPanel(parent)
 		, m_title(title)
-{ 
+{
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	SetSizer(sz);
 
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
-	
+
 	fgSizer2->AddGrowableCol( 1 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	sz->Add(fgSizer2, 0, wxEXPAND|wxALL);
-	
+
 	wxStaticText *m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Debugger Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	fgSizer2->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -62,15 +62,18 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 
 	m_checkBreakAtWinMain = new wxCheckBox(this, wxID_ANY, wxT("Automatically set breakpoint at main"), wxDefaultPosition, wxDefaultSize, 0 );
 	sz->Add(m_checkBreakAtWinMain, 0, wxEXPAND|wxALL, 5);
-	
+
 	m_checkResolveStarThis = new wxCheckBox(this, wxID_ANY, wxT("Resolve '*this' in the 'Locals' view"), wxDefaultPosition, wxDefaultSize, 0 );
 	sz->Add(m_checkResolveStarThis, 0, wxEXPAND|wxALL, 5);
 
 	m_checkShowTerminal = new wxCheckBox(this, wxID_ANY, wxT("Show debugger terminal"), wxDefaultPosition, wxDefaultSize, 0 );
 	sz->Add(m_checkShowTerminal, 0, wxEXPAND|wxALL, 5);
 
+	m_checkUseRelativePaths = new wxCheckBox(this, wxID_ANY, wxT("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition, wxDefaultSize, 0 );
+	sz->Add(m_checkUseRelativePaths, 0, wxEXPAND|wxALL, 5);
+
 	sz->Layout();
-	
+
 	DebuggerInformation info;
 	if(DebuggerMgr::Get().GetDebuggerInformation(m_title, info)){
 		m_filePicker->SetPath(info.path);
@@ -79,6 +82,7 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_checkBreakAtWinMain->SetValue(info.breakAtWinMain);
 		m_checkResolveStarThis->SetValue(info.resolveThis);
 		m_checkShowTerminal->SetValue(info.showTerminal);
+		m_checkUseRelativePaths->SetValue(info.useRelativeFilePaths);
 	}
 }
 
@@ -95,10 +99,10 @@ DebuggerSettingsDlg::DebuggerSettingsDlg( wxWindow* parent )
 	//fill the notebook with the available debuggers
 	Initialize();
 	ConnectButton(m_buttonOK, DebuggerSettingsDlg::OnOk);
-	
+
 	// center the dialog
 	Centre();
-	
+
 	m_listCtrl1->SetFocus();
 }
 
@@ -123,7 +127,7 @@ void DebuggerSettingsDlg::Initialize()
 	for (size_t i=0; i<cmds.size(); i++) {
 		DebuggerCmdData cmd = cmds.at(i);
 		wxString subMenu(wxT("No"));
-		
+
 		if (cmd.GetIsSubMenu()) {
 			subMenu = wxT("Yes");
 		}
@@ -143,11 +147,11 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 	//go over the debuggers and set the debugger path
 	for (size_t i=0; i<(size_t)m_book->GetPageCount(); i++) {
 		DebuggerPage *page =  (DebuggerPage *)m_book->GetPage(i);
-		
+
 		//find the debugger
 		DebuggerInformation info;
 		DebuggerMgr::Get().GetDebuggerInformation(page->m_title, info);
-		
+
 		//populate the information and save it
 		info.enableDebugLog = page->m_checkBoxEnableLog->GetValue();
 		info.enablePendingBreakpoints = page->m_checkBoxEnablePendingBreakpoints->GetValue();
@@ -157,6 +161,8 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		info.resolveThis = page->m_checkResolveStarThis->IsChecked();
 		info.showTerminal = page->m_checkShowTerminal->IsChecked();
 		info.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
+		info.useRelativeFilePaths = page->m_checkUseRelativePaths->IsChecked();
+
 		DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
 	}
 
@@ -167,16 +173,16 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		DebuggerCmdData cmd;
 		cmd.SetName( GetColumnText(m_listCtrl1, i, 0) );
 		cmd.SetCommand( GetColumnText(m_listCtrl1, i, 1) );
-		
+
 		cmd.SetIsSubMenu( false );
 		if(GetColumnText(m_listCtrl1, i, 2) == wxT("Yes")){
 			cmd.SetIsSubMenu( true );
 		}
-		
+
 		cmdArr.push_back(cmd);
 	}
 	m_data.SetCmds(cmdArr);
-	
+
 	//save the debugger commands
 	DebuggerConfigTool::Get()->WriteObject(wxT("DebuggerCommands"), &m_data);
 	EndModal(wxID_OK);
@@ -205,8 +211,8 @@ void DebuggerSettingsDlg::OnNewShortcut(wxCommandEvent &e)
 
 		long item;
 		wxListItem info;
-		
-		//make sure that the expression does not exist 
+
+		//make sure that the expression does not exist
 		int count = m_listCtrl1->GetItemCount();
 		for(int i=0; i<count; i++){
 			wxString existingName = GetColumnText(m_listCtrl1, i, 0);
@@ -217,7 +223,7 @@ void DebuggerSettingsDlg::OnNewShortcut(wxCommandEvent &e)
 				return;
 			}
 		}
-		
+
 		// Set the item display name
 		info.SetColumn(0);
 		item = m_listCtrl1->InsertItem(info);

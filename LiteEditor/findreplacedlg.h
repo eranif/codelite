@@ -33,14 +33,15 @@ class wxCheckBox;
 class wxButton;
 class wxStaticText;
 
-#define wxFRD_MATCHCASE						0x00000001
-#define wxFRD_MATCHWHOLEWORD				0x00000002
-#define wxFRD_REGULAREXPRESSION				0x00000004
-#define wxFRD_SEARCHUP						0x00000008
-#define wxFRD_WRAPSEARCH					0x00000010
-#define wxFRD_SELECTIONONLY					0x00000020
-#define wxFRD_USEFONTENCODING				0x00000040
-#define wxFRD_DISPLAYSCOPE					0x00000080
+#define wxFRD_MATCHCASE                     0x00000001
+#define wxFRD_MATCHWHOLEWORD                0x00000002
+#define wxFRD_REGULAREXPRESSION             0x00000004
+#define wxFRD_SEARCHUP                      0x00000008
+#define wxFRD_WRAPSEARCH                    0x00000010
+#define wxFRD_SELECTIONONLY                 0x00000020
+#define wxFRD_USEFONTENCODING               0x00000040
+#define wxFRD_DISPLAYSCOPE                  0x00000080
+#define wxFRD_SAVE_BEFORE_SEARCH            0x00000100
 
 #define FIND_DLG 0
 #define REPLACE_DLG 1
@@ -64,10 +65,10 @@ DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_CLEARBOOKMARKS, -1)
 
 class FindReplaceData : public SerializedObject
 {
-	wxArrayString m_replaceString;
-	wxArrayString m_findString;
-	size_t        m_flags;
-	wxArrayString m_searchPaths;
+	wxArrayString  m_replaceString;
+	wxArrayString  m_findString;
+	size_t         m_flags;
+	wxArrayString  m_searchPaths;
 
 private:
 	void TruncateArray(wxArrayString &arr, size_t maxSize);

@@ -31,7 +31,7 @@
 #include "findresultstab.h"
 #include "replaceinfilespanel.h"
 
-FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const FindReplaceData& data, size_t numpages)
+FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const FindReplaceData& data)
 : FindInFilesDialogBase(parent, id)
 , m_data(data)
 {
@@ -45,12 +45,6 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 	}
 	m_dirPicker->SetValues(choices, 1);
 
-	// Result pages
-    for (size_t n = 1; n <= numpages; n++) {
-        m_searchResultsTab->Append(wxString::Format(wxT("Find Results %u"), n));
-    }
-	m_searchResultsTab->SetSelection(0);
-	
 	// Search for
 	m_findString->Clear();
 	m_findString->Append(m_data.GetFindStringArr());
@@ -60,9 +54,18 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
 
 	Connect(wxEVT_CHAR_HOOK, wxCharEventHandler(FindInFilesDialog::OnCharEvent));
 
+	m_matchCase->SetValue(m_data.GetFlags() & wxFRD_MATCHCASE);
+	m_matchWholeWord->SetValue(m_data.GetFlags() & wxFRD_MATCHWHOLEWORD);
+	m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION);
+	m_fontEncoding->SetValue(m_data.GetFlags() & wxFRD_USEFONTENCODING);
+	m_printScope->SetValue(m_data.GetFlags() & wxFRD_DISPLAYSCOPE);
+	m_checkBoxSaveFilesBeforeSearching->SetValue(m_data.GetFlags() & wxFRD_SAVE_BEFORE_SEARCH);
+
 	GetSizer()->Fit(this);
-	GetSizer()->SetMinSize(wxSize(600, 300));
-	GetSizer()->SetSizeHints(this);
+	//GetSizer()->SetMinSize(wxSize(600, 300));
+	//GetSizer()->SetSizeHints(this);
+
+	Centre();
 }
 
 FindInFilesDialog::~FindInFilesDialog()
@@ -88,8 +91,8 @@ void FindInFilesDialog::SetSearchData(const SearchData &data)
     m_fontEncoding->SetValue(data.UseEditorFontConfig());
     m_printScope->SetValue(data.GetDisplayScope());
     m_fileTypes->SetValue(data.GetExtensions());
-    m_searchResultsTab->SetSelection(data.GetOutputTab());
 
+	m_listPaths->Clear();
 	const wxArrayString& rootDirs = data.GetRootDirs();
 	for (size_t i = 0; i < rootDirs.Count(); ++i) {
 		m_listPaths->Append(rootDirs.Item(i));
@@ -108,6 +111,8 @@ void FindInFilesDialog::DoSearchReplace()
 {
 	SearchData data = DoGetSearchData();
     data.SetOwner(Frame::Get()->GetOutputPane()->GetReplaceResultsTab());
+
+	DoSaveOpenFiles();
 	SearchThreadST::Get()->PerformSearch(data);
 
 	DoSaveSearchPaths();
@@ -118,6 +123,9 @@ void FindInFilesDialog::DoSearch()
 {
 	SearchData data = DoGetSearchData();
 	data.SetOwner(Frame::Get()->GetOutputPane()->GetFindResultsTab());
+
+	// check to see if we require to save the files
+	DoSaveOpenFiles();
 	SearchThreadST::Get()->PerformSearch(data);
 
 	DoSaveSearchPaths();
@@ -177,7 +185,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
 	}
 	data.SetFiles(files);
 
-	data.SetOutputTab( m_searchResultsTab->GetSelection() );
+	data.UseNewTab(m_resInNewTab->GetValue());
 	data.SetExtensions(m_fileTypes->GetValue());
 	return data;
 }
@@ -186,18 +194,32 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 {
 	wxObject *btnClicked = event.GetEventObject();
 	size_t flags = m_data.GetFlags();
+
+	wxString findWhat = m_findString->GetValue();
+	findWhat = findWhat.Trim().Trim(false);
+
 	m_data.SetFindString( m_findString->GetValue() );
 
 	if(btnClicked == m_stop){
 		SearchThreadST::Get()->StopSearch();
+
 	} else if(btnClicked == m_find){
+		if( findWhat.IsEmpty() ) {
+			return;
+		}
 		DoSearch();
+
 	} else if(btnClicked == m_replaceAll){
+		if( findWhat.IsEmpty() ) {
+			return;
+		}
 		DoSearchReplace();
+
 	} else if(btnClicked == m_cancel){
 		// Hide the dialog
 		DoSaveSearchPaths();
 		Hide();
+
 	} else if(btnClicked == m_matchCase){
 		if(m_matchCase->IsChecked()) {
 			flags |= wxFRD_MATCHCASE;
@@ -227,6 +249,12 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 			flags |= wxFRD_DISPLAYSCOPE;
 		} else {
 			flags &= ~(wxFRD_DISPLAYSCOPE);
+		}
+	} else if(btnClicked == m_checkBoxSaveFilesBeforeSearching) {
+		if(m_checkBoxSaveFilesBeforeSearching->IsChecked()) {
+			flags |= wxFRD_SAVE_BEFORE_SEARCH;
+		} else {
+			flags &= ~(wxFRD_SAVE_BEFORE_SEARCH);
 		}
 	}
 
@@ -318,4 +346,11 @@ void FindInFilesDialog::DoSaveSearchPaths()
 	}
 
 	m_data.SetSearchPaths(paths);
+}
+
+void FindInFilesDialog::DoSaveOpenFiles()
+{
+	if(m_checkBoxSaveFilesBeforeSearching->IsChecked()){
+		Frame::Get()->GetMainBook()->SaveAll(false, false);
+	}
 }

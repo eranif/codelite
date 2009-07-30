@@ -33,10 +33,11 @@ class FindInFilesDialog : public FindInFilesDialogBase
 {
 	FindReplaceData m_data;
 
-	void DoSearch();
-	void DoSearchReplace();
-	void DoSaveSearchPaths();
+	void       DoSearch();
+	void       DoSearchReplace();
+	void       DoSaveSearchPaths();
 	SearchData DoGetSearchData();
+	void       DoSaveOpenFiles();
 
 	virtual void OnClick(wxCommandEvent &event);
 	virtual void OnClose(wxCloseEvent &event);
@@ -48,7 +49,7 @@ class FindInFilesDialog : public FindInFilesDialogBase
 	void OnCharEvent(wxKeyEvent &event);
 
 public:
-	FindInFilesDialog(wxWindow* parent, wxWindowID id, const FindReplaceData& data, size_t numpages = 5);
+	FindInFilesDialog(wxWindow* parent, wxWindowID id, const FindReplaceData& data);
 	virtual ~FindInFilesDialog();
 
     void SetSearchData(const SearchData &data);

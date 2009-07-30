@@ -191,9 +191,10 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								Variable var;
 								std::string pattern;
 								curr_var.m_pattern = "/^";
-								curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + $4 + "$/";
+								curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + $4 + $5 + "$/";
 								curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
 								curr_var.m_starAmp = $3;
+								curr_var.m_arrayBrackets = $5;
 								curr_var.m_lineno = cl_scope_lineno;
 								//create new variable for every variable name found
 								var = curr_var;
@@ -210,9 +211,10 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 								Variable var;
 								std::string pattern;
 								curr_var.m_pattern = "/^";
-								curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + $4 + "$/";
+								curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + $4 + $5 + "$/";
 								curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
 								curr_var.m_starAmp = $3;
+								curr_var.m_arrayBrackets = $5;
 								curr_var.m_lineno = cl_scope_lineno;
 
 								//create new variable for every variable name found
@@ -291,9 +293,10 @@ postfix3: ','
 		| ')'
 		;
 
-postfix2: /*empty*/
-		| '=' {var_consumeDefaultValue(',', ')');}
-		| ')'
+postfix2: /*empty*/ {$$ = "";}
+		| '=' {var_consumeDefaultValue(',', ')'); $$ = ""; }
+		| ')' { $$ = ""; }
+		| '[' { $$ = $1 + var_consumBracketsContent('[');}
 		;
 
 postfix: ';'
@@ -412,25 +415,34 @@ std::string var_consumBracketsContent(char openBrace)
 	while(depth > 0)
 	{
 		int ch = cl_scope_lex();
-		//printf("ch=%d\n", ch);
-		//fflush(stdout);
 		if(ch == 0){
 			break;
 		}
 
-		consumedData += cl_scope_text;
-		consumedData += " ";
+
 		if(ch == closeBrace)
 		{
+			consumedData.erase(0, consumedData.find_first_not_of(" "));
+			consumedData.erase(consumedData.find_last_not_of(" ")+1);
+			consumedData += cl_scope_text;
+
 			depth--;
 			continue;
 		}
 		else if(ch == openBrace)
 		{
+			consumedData.erase(0, consumedData.find_first_not_of(" "));
+			consumedData.erase(consumedData.find_last_not_of(" ")+1);
+			consumedData += cl_scope_text;
+
 			depth ++ ;
 			continue;
 		}
+
+		consumedData += cl_scope_text;
+		consumedData += " ";
 	}
+
 	return consumedData;
 }
 

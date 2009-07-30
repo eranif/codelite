@@ -3,21 +3,23 @@
 
 #include "string"
 #include "list"
+#include <stdio.h>
 
 class Variable
 {
 public:
-	std::string 	m_name;
-	bool 			m_isTemplate;
-	std::string	m_templateDecl;
-	bool			m_isPtr;
-	std::string	m_type;		//as in 'int a;' -> type=int
-	std::string	m_typeScope;//as in 'std::string a;' -> typeScope = std, type=string
-	std::string 	m_pattern;
-	std::string  	m_starAmp;
-	int				m_lineno;
-	bool 			m_isConst;
-	std::string		m_defaultValue;	// used mainly for function arguments with default values foo(int = 0);
+	std::string     m_name;
+	bool            m_isTemplate;
+	std::string     m_templateDecl;
+	bool            m_isPtr;
+	std::string     m_type;		//as in 'int a;' -> type=int
+	std::string     m_typeScope;//as in 'std::string a;' -> typeScope = std, type=string
+	std::string     m_pattern;
+	std::string     m_starAmp;
+	int             m_lineno;
+	bool            m_isConst;
+	std::string     m_defaultValue;	// used mainly for function arguments with default values foo(int = 0);
+	std::string     m_arrayBrackets;
 
 public:
 	Variable();

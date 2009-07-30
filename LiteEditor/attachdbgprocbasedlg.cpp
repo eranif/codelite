@@ -22,8 +22,8 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep 26 2007)
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -32,7 +32,7 @@
 #include "attachdbgprocbasedlg.h"
 
 ///////////////////////////////////////////////////////////////////////////
- 
+
 AttachDbgProcBaseDlg::AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
@@ -52,6 +52,7 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id, con
 	
 	wxArrayString m_choiceDebuggerChoices;
 	m_choiceDebugger = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceDebuggerChoices, 0 );
+	m_choiceDebugger->SetSelection( 0 );
 	fgSizer1->Add( m_choiceDebugger, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer1->Add( fgSizer1, 0, wxEXPAND, 5 );
@@ -86,4 +87,14 @@ AttachDbgProcBaseDlg::AttachDbgProcBaseDlg( wxWindow* parent, wxWindowID id, con
 	m_listCtrlProcesses->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemDeselected ), NULL, this );
 	m_listCtrlProcesses->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemSelected ), NULL, this );
 	m_buttonOk->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( AttachDbgProcBaseDlg::OnBtnAttachUI ), NULL, this );
+}
+
+AttachDbgProcBaseDlg::~AttachDbgProcBaseDlg()
+{
+	// Disconnect Events
+	m_listCtrlProcesses->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( AttachDbgProcBaseDlg::OnSortColumn ), NULL, this );
+	m_listCtrlProcesses->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemActivated ), NULL, this );
+	m_listCtrlProcesses->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemDeselected ), NULL, this );
+	m_listCtrlProcesses->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( AttachDbgProcBaseDlg::OnItemSelected ), NULL, this );
+	m_buttonOk->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( AttachDbgProcBaseDlg::OnBtnAttachUI ), NULL, this );
 }

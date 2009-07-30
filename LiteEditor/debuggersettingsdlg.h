@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : debuggersettingsdlg.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : debuggersettingsdlg.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef __debuggersettingsdlg__
@@ -42,13 +42,14 @@ class DebuggerPage : public wxPanel
 {
 	friend class DebuggerSettingsDlg;
 	FilePicker *m_filePicker;
-	wxString m_title;
+	wxString   m_title;
 	wxCheckBox *m_checkBoxEnablePendingBreakpoints;
 	wxCheckBox *m_checkBoxEnableLog;
 	wxCheckBox *m_checkBreakAtWinMain;
 	wxCheckBox *m_checkResolveStarThis;
 	wxCheckBox *m_checkShowTerminal;
-	
+	wxCheckBox *m_checkUseRelativePaths;
+
 public:
 	DebuggerPage(wxWindow *parent, wxString title);
 	virtual ~DebuggerPage();
@@ -60,7 +61,7 @@ class DebuggerSettingsDlg : public DebuggerSettingsBaseDlg
 {
 	long m_selectedItem;
 	DebuggerSettingsData m_data;
-	
+
 protected:
 	void Initialize();
 	void OnOk(wxCommandEvent &e);
@@ -71,7 +72,7 @@ protected:
 	void OnItemDeselected(wxListEvent &e);
 	void OnItemActivated(wxListEvent &e);
 	void OnButtonCancel(wxCommandEvent &e);
-	
+
 private:
 	void DoEditItem();
 	void DoDeleteItem();
@@ -79,7 +80,7 @@ private:
 public:
 	/** Constructor */
 	DebuggerSettingsDlg( wxWindow* parent );
-	
+
 };
 
 #endif // __debuggersettingsdlg__

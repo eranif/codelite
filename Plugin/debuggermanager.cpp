@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : debuggermanager.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : debuggermanager.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "debuggermanager.h"
@@ -34,7 +34,7 @@
 DebuggersData::DebuggersData()
 {
 }
- 
+
 DebuggersData::~DebuggersData()
 {
 }
@@ -52,6 +52,7 @@ void DebuggersData::Serialize(Archive &arch)
 		arch.Write(wxT("breakAtWinMain"), info.breakAtWinMain);
 		arch.Write(wxT("resolveThis"), info.resolveThis);
 		arch.Write(wxT("showTerminal"), info.showTerminal);
+		arch.Write(wxT("useRelativePaths"), info.useRelativeFilePaths);
 	}
 }
 
@@ -68,6 +69,8 @@ void DebuggersData::DeSerialize(Archive &arch)
 		arch.Read(wxT("breakAtWinMain"), info.breakAtWinMain);
 		arch.Read(wxT("resolveThis"), info.resolveThis);
 		arch.Read(wxT("showTerminal"), info.showTerminal);
+		arch.Read(wxT("useRelativePaths"), info.useRelativeFilePaths);
+
 		m_debuggers.push_back(info);
 	}
 }
@@ -189,10 +192,10 @@ bool DebuggerMgr::LoadDebuggers()
 
 		wxLogMessage(wxT("Loaded debugger: ") + info.name + wxT(", Version: ") + info.version);
 		IDebugger *dbg = pfnInitDbg();
-		
+
 		//set the environment
 		dbg->SetEnvironment(m_env);
-		
+
 		m_debuggers[info.name] = dbg;
 
 		//keep the dynamic load library

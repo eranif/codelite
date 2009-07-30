@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : workspace.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : workspace.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef WORKSPACE_H
@@ -46,16 +46,17 @@
 /*!
  * \brief
  * Workspace manager class
- * 
+ *
  */
-class WXDLLIMPEXP_LE_SDK Workspace 
+class WXDLLIMPEXP_LE_SDK Workspace
 {
 	friend class Singleton<Workspace>;
 	wxXmlDocument m_doc;
 	wxFileName m_fileName;
 	std::map<wxString, ProjectPtr> m_projects;
 	wxString m_startupDir;
-	
+	time_t m_modifyTime;
+
 private:
 
 	/// Constructor
@@ -65,10 +66,10 @@ private:
 	virtual ~Workspace();
 
 public:
-	
+
 	void SetStartupDir(const wxString& startupDir) {this->m_startupDir = startupDir;}
 	const wxString& GetStartupDir() const {return m_startupDir;}
-	
+
 	/**
 	 * Returns the workspace file name
 	 */
@@ -77,10 +78,10 @@ public:
 	/**
 	 * \brief
 	 * Create a new workspace
-	 * 
+	 *
 	 * \param name
 	 * workspace name
-	 * 
+	 *
 	 * \param path
 	 * workspace path
 	 *
@@ -92,10 +93,10 @@ public:
 	/**
 	 * \brief
 	 * Open an existing workspace
-	 * 
+	 *
 	 * \param fileName
 	 * Workspace file name (including extesion)
-	 * 
+	 *
 	 * \returns
 	 * true on success false otherwise
 	 */
@@ -108,17 +109,17 @@ public:
 
 	/**
 	 * \brief close the currently open workspace without saving any changes made to it,
-	 * and reload it again 
+	 * and reload it again
 	 */
 	void ReloadWorkspace();
-	
+
 	/**
 	 * \brief
 	 * Create a new project with given name, path and type
-	 * 
+	 *
 	 * \param name
 	 * project name
-	 * 
+	 *
 	 * \param path
 	 * project path
 	 *
@@ -131,17 +132,10 @@ public:
 
 	/**
 	 * \brief get a string property from the worksapce file
-	 * \returns property value or wxEmptyString 
+	 * \returns property value or wxEmptyString
 	 */
 	wxString GetStringProperty(const wxString &propName, wxString &errMsg);
 
-	/**
-	 * \brief reload project 
-	 * \param file project full path
-	 * \return true on success, false otherwise
-	 */
-	bool ReloadProject(const wxString &file);
-	
 	/**
 	 * Find a project by name
 	 * \param projName project name
@@ -154,7 +148,7 @@ public:
 	 * Return all project names under this workspace
 	 */
 	void GetProjectList(wxArrayString &list);
-	
+
 	/**
 	 * Add an existing project to the workspace. If no workspace is open,
 	 * this function does nothing
@@ -224,7 +218,7 @@ public:
 	void Save();
 
 	/**
-	 * Return the configuration mapping for the workspace. 'Configuration Mapping' is 
+	 * Return the configuration mapping for the workspace. 'Configuration Mapping' is
 	 * the build matrix that should be used for this workspace, it contains all possible
 	 * configurations and which project specific configuration should be built in that
 	 * configuration
@@ -252,21 +246,41 @@ public:
 
 	/**
 	 * \brief add project to the workspace build matrix. By default CodeLite will try to match the best project configuration
-	 * to the workspace configuration (i.e. Debug -> Debug, if no suitable match found, it will use the first one) 
+	 * to the workspace configuration (i.e. Debug -> Debug, if no suitable match found, it will use the first one)
 	 * \param prj
 	 */
 	void AddProjectToBuildMatrix(ProjectPtr prj);
-	
+
+	//----------------------------------
+	//File modifications
+	//----------------------------------
+
+	/**
+	 * return the last modification time (on disk) of editor's underlying file
+	 */
+	time_t GetFileLastModifiedTime() const;
+
+	/**
+	 * return/set the last modification time that was made by the editor
+	 */
+	time_t GetWorkspaceLastModifiedTime() const {
+		return m_modifyTime;
+	}
+	void SetWorkspaceLastModifiedTime(time_t modificationTime) {
+		m_modifyTime = modificationTime;
+	}
+
 private:
 	/**
-	 * Do the actual add project 
+	 * Do the actual add project
 	 * \param path project file path
 	 * \param errMsg [output] incase an error, report the error to the caller
 	 */
 	bool DoAddProject(const wxString &path, wxString &errMsg);
 
-	
 	void RemoveProjectFromBuildMatrix(ProjectPtr prj);
+
+	bool SaveXmlFile();
 };
 
 typedef Singleton<Workspace> WorkspaceST;

@@ -479,6 +479,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_NEW_DOCKPANE,    Frame::OnNewDetachedPane)
 	EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, Frame::OnDestroyDetachedPane)
 
+	EVT_MENU(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED, Frame::OnReloadExternallModified)
 END_EVENT_TABLE()
 
 
@@ -1206,6 +1207,7 @@ void Frame::OnClose(wxCloseEvent& event)
 	SessionEntry session;
 	session.SetWorkspaceName(sessionName);
 	GetMainBook()->SaveSession(session);
+	ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
 	SessionManager::Get().Save(sessionName, session);
 	SessionManager::Get().SetLastWorkspaceName(sessionName);
 
@@ -1216,6 +1218,13 @@ void Frame::OnClose(wxCloseEvent& event)
 	wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
 	DetachedPanesInfo dpi(panes);
 	EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
+
+	// save the notebooks styles
+	EditorConfigST::Get()->SaveLongValue(wxT("MainBook"),      GetMainBook()->GetBookStyle());
+	EditorConfigST::Get()->SaveLongValue(wxT("DebuggerBook"),  GetDebuggerPane()->GetNotebook()->GetBookStyle());
+	EditorConfigST::Get()->SaveLongValue(wxT("OutputPane"),    GetOutputPane()->GetNotebook()->GetBookStyle());
+	EditorConfigST::Get()->SaveLongValue(wxT("WorkspaceView"), GetWorkspacePane()->GetNotebook()->GetBookStyle());
+	EditorConfigST::Get()->SaveLongValue(wxT("FindResults"),   GetOutputPane()->GetFindResultsTab()->GetBookStyle());
 
 	event.Skip();
 }
@@ -2469,6 +2478,7 @@ void Frame::LoadPlugins()
 void Frame::OnAppActivated(wxActivateEvent &e)
 {
 	if (m_theFrame && e.GetActive()) {
+		m_theFrame->ReloadExternallyModifiedProjectFiles();
 		m_theFrame->GetMainBook()->ReloadExternallyModified();
 	}
 	e.Skip();
@@ -3104,10 +3114,10 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 			DebuggerInformation dinfo;
 			DebuggerMgr::Get().GetDebuggerInformation(dlg->GetDebuggerName(), dinfo);
 			dinfo.breakAtWinMain = true;
-			
+
 			// read the console command
 			dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
-			
+
 			// ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints(); TODO: Reimplement this when UpdateBreakpoints() updates only alterations, rather than delete/re-enter
 
 			wxString dbgname = dinfo.path;
@@ -3239,4 +3249,55 @@ void Frame::OnSetStatusMessage(wxCommandEvent& e)
 	wxString msg = e.GetString();
 	int col = e.GetInt();
 	SetStatusMessage(msg, col);
+}
+
+void Frame::OnReloadExternallModified(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	ReloadExternallyModifiedProjectFiles();
+	GetMainBook()->ReloadExternallyModified();
+}
+
+void Frame::ReloadExternallyModifiedProjectFiles()
+{
+	Workspace *workspace = WorkspaceST::Get();
+	bool workspace_modified = false, project_modified = false;
+
+	// check if the workspace needs reloading and ask the user for confirmation
+	// if it does
+	if (workspace->GetWorkspaceLastModifiedTime() < workspace->GetFileLastModifiedTime())
+	{
+		// always update last modification time: if the user chooses to reload it
+		// will not matter, and it avoids the program prompting the user repeatedly
+		// if he chooses not to reload the workspace
+		workspace->SetWorkspaceLastModifiedTime(workspace->GetFileLastModifiedTime());
+		workspace_modified = true;
+	}
+
+	// check if any of the projects in the workspace needs reloading
+	wxArrayString projects;
+	workspace->GetProjectList(projects);
+
+	for (size_t i = 0; i < projects.GetCount(); ++i)
+	{
+		wxString errStr;
+		ProjectPtr proj = workspace->FindProjectByName(projects[i], errStr);
+
+		if (proj->GetProjectLastModifiedTime() < proj->GetFileLastModifiedTime())
+		{
+			// always update last modification time: if the user chooses to reload it
+			// will not matter, and it avoids the program prompting the user repeatedly
+			// if he chooses not to reload some of the projects
+			proj->SetProjectLastModifiedTime(proj->GetFileLastModifiedTime());
+			project_modified = true;
+		}
+	}
+
+	if (!project_modified && !workspace_modified)
+		return;
+
+	if(wxMessageBox(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxYES) {
+		ManagerST::Get()->ReloadWorkspace();
+		return;
+	}
 }

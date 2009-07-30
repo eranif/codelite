@@ -1,57 +1,48 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : newprojectdlg.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : newprojectdlg.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "newprojectdlg.h"
+#include "newprojectdlg.h"
+#include "windowattrmanager.h"
+#include <wx/xrc/xmlres.h>
 #include "globals.h"
 #include "macros.h"
 #include "workspace.h"
 #include "build_settings_config.h"
 #include "manager.h"
 #include "dirtraverser.h"
+#include <wx/imaglist.h>
 
 NewProjectDlg::NewProjectDlg( wxWindow* parent )
 		:
 		NewProjectBaseDlg( parent )
 {
+	m_listTemplates->InsertColumn( 0, wxT("Type") );
+	m_listTemplates->SetColumnWidth( 0, m_listTemplates->GetSize().GetWidth() );
+
 	//get list of project templates
 	GetProjectTemplateList(m_list);
-	std::list<ProjectPtr>::iterator iter = m_list.begin();
-	for (; iter != m_list.end(); iter++) {
-		wxString n = (*iter)->GetName();
-		m_projTypes->Append((*iter)->GetName());
-	}
-
-	iter = m_list.begin();
-	if ( iter != m_list.end() ) {
-		m_projTypes->SetStringSelection((*iter)->GetName());
-		m_projectData.m_srcProject = (*iter);
-		
-		wxString desc = m_projectData.m_srcProject->GetDescription();
-		desc = desc.Trim().Trim(false);
-		desc.Replace(wxT("\t"), wxT(" "));
-		m_textCtrlDescription->SetValue(desc);
-	}
+	FillProjectTemplateListCtrl(m_chCategories->GetStringSelection());
 
 	//append list of compilers
 	wxArrayString choices;
@@ -63,19 +54,28 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 		cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
 	}
 
-	m_choiceCompilerType->Append( choices );
+	m_chCompiler->Append( choices );
 	if (choices.IsEmpty() == false) {
-		m_choiceCompilerType->SetSelection(0);
+		m_chCompiler->SetSelection(0);
 	}
-	
-	m_textCtrlProjectPath->SetValue( WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
-	m_textCtrlProjName->SetFocus();
+
+	m_dpProjPath->SetPath( WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
+	m_txtProjName->SetFocus();
 	Centre();
+
+	UpdateProjectPage();
+	WindowAttrManager::Load(this, wxT("NewProjectDialog"), NULL);
+}
+
+NewProjectDlg::~NewProjectDlg()
+{
+	WindowAttrManager::Save(this, wxT("NewProjectDialog"), NULL);
 }
 
 void NewProjectDlg::GetProjectTemplateList ( std::list<ProjectPtr> &list )
 {
 	wxString tmplateDir = ManagerST::Get()->GetStarupDirectory() + PATH_SEP + wxT ( "templates/projects" );
+	wxImageList *lstImages = new wxImageList(24, 24, true);
 
 	//read all files under this directory
 	DirTraverser dt ( wxT ( "*.project" ) );
@@ -94,6 +94,16 @@ void NewProjectDlg::GetProjectTemplateList ( std::list<ProjectPtr> &list )
 				continue;
 			}
 			list.push_back ( proj );
+			// load template icon
+			wxFileName fn( files.Item( i ) );
+			wxString imageFileName(fn.GetPath( wxPATH_GET_SEPARATOR ) + wxT("icon.png") );
+			if( wxFileExists( imageFileName )) {
+				int img_id = lstImages->Add( wxBitmap( fn.GetPath( wxPATH_GET_SEPARATOR ) + wxT("icon.png"), wxBITMAP_TYPE_PNG ) );;
+				m_mapImages[proj->GetName()] = img_id;
+			} else {
+				int img_id = lstImages->Add( wxXmlResource::Get()->LoadBitmap(wxT("plugin24")) );
+				m_mapImages[proj->GetName()] = img_id;
+			}
 		}
 	} else {
 		//if we ended up here, it means the installation got screwed up since
@@ -109,78 +119,53 @@ void NewProjectDlg::GetProjectTemplateList ( std::list<ProjectPtr> &list )
 		list.push_back ( dllProj );
 		list.push_back ( exeProj );
 	}
+	// assign image list to the list control which takes ownership of it (it will delete the image list)
+	m_listTemplates->AssignImageList(lstImages, wxIMAGE_LIST_SMALL);
 }
 
-void NewProjectDlg::OnProjectPathUpdated( wxCommandEvent& event )
+void NewProjectDlg::OnProjectPathChanged( wxFileDirPickerEvent& event )
 {
-	wxString projectPath;
-	projectPath << m_textCtrlProjectPath->GetValue();
-
-	projectPath = projectPath.Trim().Trim(false);
-
-	wxString tmpSep( wxFileName::GetPathSeparator() );
-	if ( !projectPath.EndsWith(tmpSep) && projectPath.IsEmpty() == false ) {
-		projectPath << wxFileName::GetPathSeparator();
-	}
-	
-	if( m_textCtrlProjName->GetValue().Trim().Trim(false).IsEmpty() ) {
-		m_staticTextProjectFileFullPath->SetLabel(wxEmptyString);
-		return;
-	}
-	
-	if( m_checkBoxCreateSeparateDir->IsChecked()) {
-		//append the workspace name 
-		projectPath << m_textCtrlProjName->GetValue();
-		projectPath << wxFileName::GetPathSeparator();
-	}
-	
-	projectPath << m_textCtrlProjName->GetValue();
-	projectPath << wxT(".project");
-
-	m_staticTextProjectFileFullPath->SetLabel( projectPath );
+	UpdateFullFileName();
 }
 
-void NewProjectDlg::OnProjectPathPicker( wxCommandEvent& event )
+void NewProjectDlg::OnProjectNameChanged(wxCommandEvent& event)
 {
-	const wxString& dir = wxDirSelector(wxT("Choose a folder:"), WorkspaceST::Get()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-	if ( !dir.empty() ) {
-		m_textCtrlProjectPath->SetValue( dir );
-	}
+	UpdateFullFileName();
 }
 
-void NewProjectDlg::OnButtonCreate(wxCommandEvent &e)
+void NewProjectDlg::OnCreate(wxCommandEvent &event)
 {
 	//validate that the path part is valid
-	wxString projFullPath = m_staticTextProjectFileFullPath->GetLabel();
+	wxString projFullPath = m_stxtFullFileName->GetLabel();
 	wxFileName fn(projFullPath);
-	
-	if(m_checkBoxCreateSeparateDir->IsChecked()){
+
+	if(m_cbSeparateDir->IsChecked()){
 		// dont check the return
 		Mkdir(fn.GetPath());
 	}
-	
+
 	// dont allow whitespace in project name
-	if(m_textCtrlProjName->GetValue().Find(wxT(" ")) != wxNOT_FOUND){
+	if(m_txtProjName->GetValue().Find(wxT(" ")) != wxNOT_FOUND){
 		wxMessageBox(_("Whitespace is not allowed in project name"), wxT("Error"), wxOK | wxICON_HAND | wxCENTER, this);
 		return;
 	}
-	
+
 	if ( !wxDirExists(fn.GetPath()) ) {
 		wxMessageBox(_("Invalid path: ") + fn.GetPath(), wxT("Error"), wxOK | wxICON_HAND);
 		return;
 	}
-	
+
 	// make sure that there is no conflict in files between the template project and the selected path
 	if(m_projectData.m_srcProject) {
 		ProjectPtr p = m_projectData.m_srcProject;
 		wxString base_dir( fn.GetPath() );
 		std::vector<wxFileName> files;
 		p->GetFiles(files);
-		
+
 		for(size_t i=0; i<files.size(); i++){
 			wxFileName f = files.at(i);
 			wxString new_file = base_dir + wxT("/") + f.GetFullName();
-			
+
 			if( wxFileName::FileExists(new_file) ) {
 				// this file already - notify the user
 				wxString msg;
@@ -192,25 +177,26 @@ void NewProjectDlg::OnButtonCreate(wxCommandEvent &e)
 			}
 		}
 	}
-	
-	m_projectData.m_name = m_textCtrlProjName->GetValue();
+
+	m_projectData.m_name = m_txtProjName->GetValue();
 	m_projectData.m_path = fn.GetPath();
-	m_projectData.m_cmpType = m_choiceCompilerType->GetStringSelection();
+	m_projectData.m_cmpType = m_chCompiler->GetStringSelection();
 
 	EndModal(wxID_OK);
 }
 
-void NewProjectDlg::OnItemSelected( wxCommandEvent& event )
+void NewProjectDlg::OnTemplateSelected( wxListEvent& event )
 {
-	m_projectData.m_srcProject = FindProject( event.GetString() );
-	
-	//update the description
-	if( m_projectData.m_srcProject) {
-		wxString desc = m_projectData.m_srcProject->GetDescription();
-		desc = desc.Trim().Trim(false);
-		desc.Replace(wxT("\t"), wxT(" "));
-		m_textCtrlDescription->SetValue( desc ); 
-	}
+	m_projectData.m_srcProject = FindProject( event.GetText() );
+
+	UpdateProjectPage();
+}
+
+void NewProjectDlg::OnCategorySelected(wxCommandEvent& event)
+{
+	FillProjectTemplateListCtrl(event.GetString());
+
+	UpdateProjectPage();
 }
 
 ProjectPtr NewProjectDlg::FindProject(const wxString &name)
@@ -222,4 +208,82 @@ ProjectPtr NewProjectDlg::FindProject(const wxString &name)
 		}
 	}
 	return NULL;
+}
+
+void NewProjectDlg::UpdateFullFileName()
+{
+	wxString projectPath;
+	projectPath << m_dpProjPath->GetPath();
+
+	projectPath = projectPath.Trim().Trim(false);
+
+	wxString tmpSep( wxFileName::GetPathSeparator() );
+	if ( !projectPath.EndsWith(tmpSep) && projectPath.IsEmpty() == false ) {
+		projectPath << wxFileName::GetPathSeparator();
+	}
+
+	if( m_txtProjName->GetValue().Trim().Trim(false).IsEmpty() ) {
+		m_stxtFullFileName->SetLabel(wxEmptyString);
+		return;
+	}
+
+	if( m_cbSeparateDir->IsChecked()) {
+		//append the workspace name
+		projectPath << m_txtProjName->GetValue();
+		projectPath << wxFileName::GetPathSeparator();
+	}
+
+	projectPath << m_txtProjName->GetValue();
+	projectPath << wxT(".project");
+
+	m_stxtFullFileName->SetLabel( projectPath );
+}
+
+void NewProjectDlg::UpdateProjectPage()
+{
+	//update the description
+	if( m_projectData.m_srcProject) {
+		wxString desc = m_projectData.m_srcProject->GetDescription();
+		desc = desc.Trim().Trim(false);
+		desc.Replace(wxT("\t"), wxT(" "));
+		m_txtDescription->SetValue( desc );
+
+		// select the correct compiler
+		ProjectSettingsPtr settings  = m_projectData.m_srcProject->GetSettings();
+		if(settings){
+			ProjectSettingsCookie ck;
+			BuildConfigPtr buildConf = settings->GetFirstBuildConfiguration(ck);
+			if(buildConf){
+				m_chCompiler->SetStringSelection( buildConf->GetCompilerType() );
+			}
+		}
+	}
+}
+
+void NewProjectDlg::FillProjectTemplateListCtrl(const wxString& category)
+{
+	m_listTemplates->DeleteAllItems();
+
+	std::list<ProjectPtr>::iterator iter = m_list.begin();
+	for(; iter != m_list.end(); iter++) {
+		wxString intType = (*iter)->GetProjectInternalType();
+
+		if( (category == wxT("All")) ||
+			(intType == category) ||
+			( (intType == wxEmptyString) && (category == wxT("Others")) ) ||
+			( (m_chCategories->FindString(intType) == wxNOT_FOUND) && (category == wxT("Others")) ) )
+		{
+			long item = AppendListCtrlRow(m_listTemplates);
+			std::map<wxString,int>::iterator img_iter = m_mapImages.find((*iter)->GetName());
+			int imgid(wxNOT_FOUND);
+			img_iter == m_mapImages.end() ? imgid = wxNOT_FOUND : imgid = m_mapImages[(*iter)->GetName()];
+			SetColumnText(m_listTemplates, item, 0, (*iter)->GetName(), imgid);
+		}
+	}
+
+	if( m_listTemplates->GetItemCount() ) {
+		m_projectData.m_srcProject = FindProject(m_listTemplates->GetItemText(0));
+		m_listTemplates->SetItemState(0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+		UpdateProjectPage();
+	}
 }

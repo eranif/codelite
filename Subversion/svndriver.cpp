@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "globals.h"
+#include "revertpostcmdaction.h"
 #include "svndriver.h"
 #include <wx/filedlg.h>
 #include "svntab.h"
@@ -479,6 +480,10 @@ void SvnDriver::Revert()
 	ProcUtils::ExecuteCommand(command, output);
 	PrintMessage(output);
 	PrintMessage(commandSeparator);
+
+	// Also, revert any loaded files and re-sync the tags database
+	RevertPostCmdAction action(m_manager);
+	action.DoCommand();
 }
 
 void SvnDriver::RevertFile(const wxFileName &fileName, SvnPostCmdAction *handler)

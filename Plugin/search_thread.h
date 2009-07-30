@@ -51,7 +51,7 @@ class SearchData : public ThreadRequest
 	size_t m_flags;
 	wxString m_validExt;
 	wxArrayString m_files;
-	int m_outputTab;
+	bool m_newTab;
 	wxEvtHandler *m_owner;
 
 	friend class SearchThread;
@@ -72,7 +72,7 @@ public:
 			: ThreadRequest()
 			, m_findString(wxEmptyString)
 			, m_flags(0)
-			, m_outputTab(0)
+			, m_newTab(false)
 			, m_owner(NULL) {}
 
 	SearchData(const SearchData &rhs) {
@@ -95,7 +95,7 @@ public:
 			m_files.Add(rhs.m_files.Item(i).c_str());
 		}
 
-		m_outputTab = rhs.m_outputTab;
+		m_newTab = rhs.m_newTab;
 		m_owner = rhs.m_owner;
 		return *this;
 	}
@@ -158,12 +158,12 @@ public:
 		return m_files;
 	}
 
-	void SetOutputTab(const int& outputTab) {
-		this->m_outputTab = outputTab;
+	void UseNewTab(bool useNewTab) {
+		m_newTab = useNewTab;
 	}
-
-	const int& GetOutputTab() const {
-		return m_outputTab;
+	
+	bool UseNewTab() const {
+		return m_newTab;
 	}
 
 	bool UseEditorFontConfig() const {

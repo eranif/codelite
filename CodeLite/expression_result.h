@@ -2,19 +2,21 @@
 #define EXPRESSION_RESULT_H
 
 #include "string"
+#include <stdio.h>
 
 class ExpressionResult
 {
 public:
-	
-	bool			m_isFunc;
+
+	bool        m_isFunc;
 	std::string m_name;
-	bool 			m_isThis;
-	bool			m_isaType;
-	bool 			m_isPtr;
+	bool        m_isThis;
+	bool        m_isaType;
+	bool        m_isPtr;
 	std::string m_scope;
-	bool			m_isTemplate;
+	bool        m_isTemplate;
 	std::string m_templateInitList;
+
 public:
 	ExpressionResult();
 	virtual ~ExpressionResult();

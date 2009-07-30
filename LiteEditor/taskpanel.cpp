@@ -29,7 +29,6 @@
 #include "macros.h"
 #include "taskpanel.h"
 
-
 BEGIN_EVENT_TABLE(TaskPanel, FindResultsTab)
     EVT_TOGGLEBUTTON(wxID_ANY,        TaskPanel::OnToggle)
 
@@ -41,7 +40,7 @@ BEGIN_EVENT_TABLE(TaskPanel, FindResultsTab)
 END_EVENT_TABLE()
 
 TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
-    : FindResultsTab(parent, id, name, 1)
+    : FindResultsTab(parent, id, name)
     , m_scope(NULL)
     , m_filter(NULL)
 {
@@ -110,15 +109,15 @@ TaskPanel::~TaskPanel()
 {
 }
 
-void TaskPanel::DoSetSearchData()
+SearchData TaskPanel::DoGetSearchData()
 {
-    m_data.SetDisplayScope(true);
-    m_data.SetRegularExpression(true);
-    m_data.SetMatchCase(false);
-    m_data.SetMatchWholeWord(false);
-    m_data.SetUseEditorFontConfig(false);
-    m_data.SetOutputTab(0);
-    m_data.SetOwner(this);
+	SearchData data;
+    data.SetDisplayScope(true);
+    data.SetRegularExpression(true);
+    data.SetMatchCase(false);
+    data.SetMatchWholeWord(false);
+    data.SetUseEditorFontConfig(false);
+    data.SetOwner(this);
 
 	// /[/*] *(TODO|ATTN|BUG|FIXME) *:*
     wxString sfind = wxT("/[/*] *(");
@@ -136,12 +135,12 @@ void TaskPanel::DoSetSearchData()
 
     sfind.Last() = wxT(')');
     sfind << wxT(" *:*");
-    m_data.SetFindString(sfind);
+    data.SetFindString(sfind);
 
 	wxString rootDir = m_scope->GetStringSelection();
 	wxArrayString rootDirs;
 	rootDirs.push_back(rootDir);
-    m_data.SetRootDirs(rootDirs);
+    data.SetRootDirs(rootDirs);
     wxArrayString files;
 	if (rootDir == SEARCH_IN_WORKSPACE) {
 		ManagerST::Get()->GetWorkspaceFiles(files);
@@ -155,9 +154,10 @@ void TaskPanel::DoSetSearchData()
 		}
 		ManagerST::Get()->GetProjectFiles(project, files);
 	}
-    m_data.SetFiles(files);
+    data.SetFiles(files);
+    data.SetExtensions(m_extensions[m_filter->GetSelection()]);
 
-    m_data.SetExtensions(m_extensions[m_filter->GetSelection()]);
+	return data;
 }
 
 void TaskPanel::OnToggle(wxCommandEvent &e)
@@ -169,8 +169,9 @@ void TaskPanel::OnToggle(wxCommandEvent &e)
 
 void TaskPanel::OnSearch(wxCommandEvent& e)
 {
-    DoSetSearchData();
-    OnRepeatOutput(e);
+	wxUnusedVar(e);
+    SearchData sd = DoGetSearchData();
+    SearchThreadST::Get()->PerformSearch(sd);
 }
 
 void TaskPanel::OnSearchUI(wxUpdateUIEvent& e)
@@ -185,8 +186,8 @@ void TaskPanel::OnSearchUI(wxUpdateUIEvent& e)
 void TaskPanel::OnCustomize(wxCommandEvent& e)
 {
     LoadFindInFilesData();
-    DoSetSearchData();
-    m_find->SetSearchData(m_data);
+    SearchData data = DoGetSearchData();
+    m_find->SetSearchData(data);
     LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
     if (editor) {
         // remove selection so it doesn't clobber the find-string in the dialog
@@ -198,4 +199,9 @@ void TaskPanel::OnCustomize(wxCommandEvent& e)
 void TaskPanel::OnCustomizeUI(wxUpdateUIEvent& e)
 {
     OnSearchUI(e);
+}
+
+void TaskPanel::OnRepeatOutput(wxCommandEvent& e)
+{
+	OnSearch(e);
 }

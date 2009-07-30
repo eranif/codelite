@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "updatepostcmdaction.h"
 #include "applypatchpostcmdaction.h"
+#include "revertpostcmdaction.h"
 #include "svnreportgeneratoraction.h"
 #include "custom_tab.h"
 #include "svntab.h"
@@ -209,11 +210,11 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 
 		// wxFormBuilder support
 		wxBitmap wxfb_ok, wxfb_modified, wxfb_conflict;
-		
+
 		wxfb_ok       = LoadBitmapFile(wxT("wxfb_ok.png"));
 		wxfb_modified = LoadBitmapFile(wxT("wxfb_modified.png"));
 		wxfb_conflict = LoadBitmapFile(wxT("wxfb_conflict.png"));
-		
+
 		wxFBConflictIconId = tree->GetImageList()->Add(wxfb_conflict);
 		wxFBOkIconId = tree->GetImageList()->Add(wxfb_ok);
 		wxFBModifiedIconId = tree->GetImageList()->Add(wxfb_modified);
@@ -306,7 +307,6 @@ wxMenu *SubversionPlugin::CreatePopMenu()
 SubversionPlugin::~SubversionPlugin()
 {
 	SvnCommitMsgsMgr::Release();
-	UnPlug();
 }
 
 void SubversionPlugin::OnSvnAbort(wxCommandEvent &event)
@@ -437,7 +437,7 @@ void SubversionPlugin::OnRevertFile(wxCommandEvent &e)
 	wxUnusedVar(e);
 	IEditor *editor = m_mgr->GetActiveEditor();
 	if (editor) {
-		m_svn->RevertFile(editor->GetFileName());
+		m_svn->RevertFile(editor->GetFileName(), new RevertPostCmdAction(m_mgr));
 	}
 }
 

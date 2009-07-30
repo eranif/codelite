@@ -1,31 +1,39 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : archive.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : archive.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "archive.h"
 #include <wx/colour.h>
 #include <wx/xml/xml.h>
 #include "serialized_object.h"
+
+#include <memory>
+
+namespace
+{
+	const wxChar breakpointName[] = wxT("Breakpoint");
+	const wxChar breakpointArrayName[] = wxT("BreakpointArray");
+}
 
 //helper functions
 static wxXmlNode *FindNodeByName(const wxXmlNode *parent, const wxString &tagName, const wxString &name)
@@ -34,8 +42,8 @@ static wxXmlNode *FindNodeByName(const wxXmlNode *parent, const wxString &tagNam
 		return NULL;
 	}
 
-	
-	
+
+
 	wxXmlNode *child = parent->GetChildren();
 	while ( child ) {
 		if ( child->GetName() == tagName) {
@@ -66,7 +74,7 @@ static void SetNodeContent(wxXmlNode *node, const wxString &text)
 		node->RemoveChild(contentNode);
 		delete contentNode;
 	}
-	
+
 	contentNode = new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, text);
 	node->AddChild( contentNode );
 }
@@ -88,14 +96,13 @@ void TabInfo::DeSerialize(Archive &arch)
 	arch.Read(wxT("Bookmarks"), m_bookmarks);
 }
 
-void TabInfo::Serialize(Archive &arch) 
+void TabInfo::Serialize(Archive &arch)
 {
 	arch.Write(wxT("FileName"), m_fileName);
 	arch.Write(wxT("FirstVisibleLine"), m_firstVisibleLine);
 	arch.Write(wxT("CurrentLine"), m_currentLine);
 	arch.Write(wxT("Bookmarks"), m_bookmarks);
 }
-
 
 // class Archive
 Archive::Archive()
@@ -110,7 +117,13 @@ Archive::~Archive()
 bool Archive::Write(const wxString &name, SerializedObject *obj)
 {
 	Archive arch;
-	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("SerializedObject"));
+	wxXmlNode *node = FindNodeByName(m_root, wxT("SerializedObject"), name);
+	if ( node ) {
+		m_root->RemoveChild( node );
+		delete node;
+	}
+
+	node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("SerializedObject"));
 	m_root->AddChild(node);
 	node->AddProperty(wxT("Name"), name);
 

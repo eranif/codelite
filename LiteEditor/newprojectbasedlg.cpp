@@ -1,30 +1,5 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : newprojectbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -36,108 +11,122 @@
 
 NewProjectBaseDlg::NewProjectBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetSizeHints( wxSize( 600,350 ), wxDefaultSize );
 	
-	wxBoxSizer* bSizer14;
-	bSizer14 = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer* mainSizer;
+	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	wxBoxSizer* bSizer15;
-	bSizer15 = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* templatesSizer;
+	templatesSizer = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_projTypes = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizer15->Add( m_projTypes, 1, wxALL|wxEXPAND, 5 );
+	wxBoxSizer* categoriesSizer;
+	categoriesSizer = new wxBoxSizer( wxVERTICAL );
 	
-	wxBoxSizer* bSizer18;
-	bSizer18 = new wxBoxSizer( wxVERTICAL );
+	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Categories:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2->Wrap( -1 );
+	categoriesSizer->Add( m_staticText2, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	
-	m_staticText11 = new wxStaticText( this, wxID_ANY, wxT("Project Name:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText11->Wrap( -1 );
-	bSizer18->Add( m_staticText11, 0, wxALL, 5 );
+	wxString m_chCategoriesChoices[] = { _("Console"), _("GUI"), _("Library"), _("Others"), _("User templates"), _("All") };
+	int m_chCategoriesNChoices = sizeof( m_chCategoriesChoices ) / sizeof( wxString );
+	m_chCategories = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxSize( 275,-1 ), m_chCategoriesNChoices, m_chCategoriesChoices, 0 );
+	m_chCategories->SetSelection( 0 );
+	m_chCategories->SetMinSize( wxSize( 275,-1 ) );
 	
-	m_textCtrlProjName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer18->Add( m_textCtrlProjName, 0, wxALL|wxEXPAND, 5 );
+	categoriesSizer->Add( m_chCategories, 0, wxALL, 5 );
 	
-	m_staticText12 = new wxStaticText( this, wxID_ANY, wxT("Project Path:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText12->Wrap( -1 );
-	bSizer18->Add( m_staticText12, 0, wxALL, 5 );
+	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Templates:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	categoriesSizer->Add( m_staticText3, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	
-	wxBoxSizer* bSizer19;
-	bSizer19 = new wxBoxSizer( wxHORIZONTAL );
+	m_listTemplates = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxSize( -1,200 ), wxLC_REPORT|wxLC_SINGLE_SEL );
+	m_listTemplates->SetMinSize( wxSize( -1,200 ) );
 	
-	m_textCtrlProjectPath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer19->Add( m_textCtrlProjectPath, 1, wxALL, 5 );
+	categoriesSizer->Add( m_listTemplates, 1, wxALL|wxEXPAND, 5 );
 	
-	m_buttonProjectDirPicker = new wxButton( this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer19->Add( m_buttonProjectDirPicker, 0, wxALL, 5 );
+	templatesSizer->Add( categoriesSizer, 0, wxEXPAND, 5 );
 	
-	bSizer18->Add( bSizer19, 0, wxEXPAND, 5 );
+	wxBoxSizer* detailsSizer;
+	detailsSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText14 = new wxStaticText( this, wxID_ANY, wxT("Compiler Type:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText14->Wrap( -1 );
-	bSizer18->Add( m_staticText14, 0, wxALL, 5 );
+	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Project name:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	detailsSizer->Add( m_staticText4, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	
-	wxArrayString m_choiceCompilerTypeChoices;
-	m_choiceCompilerType = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceCompilerTypeChoices, 0 );
-	m_choiceCompilerType->SetSelection( 0 );
-	bSizer18->Add( m_choiceCompilerType, 0, wxALL|wxEXPAND, 5 );
+	m_txtProjName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 365,-1 ), 0 );
+	detailsSizer->Add( m_txtProjName, 0, wxALL|wxEXPAND, 5 );
 	
-	m_checkBoxCreateSeparateDir = new wxCheckBox( this, wxID_ANY, wxT("Create the project under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxCreateSeparateDir->SetValue(true);
+	m_staticText5 = new wxStaticText( this, wxID_ANY, _("Project path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5->Wrap( -1 );
+	detailsSizer->Add( m_staticText5, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	
-	bSizer18->Add( m_checkBoxCreateSeparateDir, 0, wxALL|wxEXPAND, 5 );
+	m_dpProjPath = new wxDirPickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
+	detailsSizer->Add( m_dpProjPath, 0, wxALL|wxEXPAND, 5 );
 	
-	wxStaticBoxSizer* sbSizer2;
-	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("File Name:") ), wxVERTICAL );
+	m_staticText6 = new wxStaticText( this, wxID_ANY, _("Compiler type:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6->Wrap( -1 );
+	detailsSizer->Add( m_staticText6, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	
-	m_staticTextProjectFileFullPath = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticTextProjectFileFullPath->Wrap( -1 );
-	sbSizer2->Add( m_staticTextProjectFileFullPath, 0, wxALL|wxEXPAND, 5 );
+	wxArrayString m_chCompilerChoices;
+	m_chCompiler = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_chCompilerChoices, 0 );
+	m_chCompiler->SetSelection( 0 );
+	detailsSizer->Add( m_chCompiler, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer18->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
+	m_cbSeparateDir = new wxCheckBox( this, wxID_ANY, _("Create the project under a separate directory"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	m_textCtrlDescription = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY|wxTE_WORDWRAP );
-	m_textCtrlDescription->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+	detailsSizer->Add( m_cbSeparateDir, 0, wxALL, 5 );
 	
-	bSizer18->Add( m_textCtrlDescription, 1, wxALL|wxEXPAND, 5 );
+	wxStaticBoxSizer* labelSizer;
+	labelSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("File name:") ), wxVERTICAL );
 	
-	bSizer15->Add( bSizer18, 2, wxEXPAND, 5 );
+	m_stxtFullFileName = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_stxtFullFileName->Wrap( -1 );
+	labelSizer->Add( m_stxtFullFileName, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer14->Add( bSizer15, 1, wxEXPAND, 5 );
+	detailsSizer->Add( labelSizer, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
-	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer14->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
+	m_txtDescription = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY );
+	m_txtDescription->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+	m_txtDescription->SetMinSize( wxSize( -1,60 ) );
 	
-	wxBoxSizer* bSizer17;
-	bSizer17 = new wxBoxSizer( wxHORIZONTAL );
+	detailsSizer->Add( m_txtDescription, 1, wxALL|wxEXPAND, 5 );
 	
-	m_buttonCreateProject = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_buttonCreateProject->SetDefault(); 
-	bSizer17->Add( m_buttonCreateProject, 0, wxALL, 5 );
+	templatesSizer->Add( detailsSizer, 1, wxEXPAND, 5 );
 	
-	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer17->Add( m_buttonCancel, 0, wxALL, 5 );
+	mainSizer->Add( templatesSizer, 1, wxEXPAND, 5 );
 	
-	bSizer14->Add( bSizer17, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	m_staticline = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	mainSizer->Add( m_staticline, 0, wxEXPAND | wxALL, 5 );
 	
-	this->SetSizer( bSizer14 );
+	m_sdbSizer = new wxStdDialogButtonSizer();
+	m_sdbSizerOK = new wxButton( this, wxID_OK );
+	m_sdbSizer->AddButton( m_sdbSizerOK );
+	m_sdbSizerCancel = new wxButton( this, wxID_CANCEL );
+	m_sdbSizer->AddButton( m_sdbSizerCancel );
+	m_sdbSizer->Realize();
+	mainSizer->Add( m_sdbSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxBOTTOM, 5 );
+	
+	this->SetSizer( mainSizer );
 	this->Layout();
+	mainSizer->Fit( this );
+	
+	this->Centre( wxBOTH );
 	
 	// Connect Events
-	m_projTypes->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( NewProjectBaseDlg::OnItemSelected ), NULL, this );
-	m_textCtrlProjName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
-	m_textCtrlProjectPath->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
-	m_buttonProjectDirPicker->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathPicker ), NULL, this );
-	m_checkBoxCreateSeparateDir->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
-	m_buttonCreateProject->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnButtonCreate ), NULL, this );
+	m_chCategories->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NewProjectBaseDlg::OnCategorySelected ), NULL, this );
+	m_listTemplates->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( NewProjectBaseDlg::OnTemplateSelected ), NULL, this );
+	m_txtProjName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectNameChanged ), NULL, this );
+	m_dpProjPath->Connect( wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler( NewProjectBaseDlg::OnProjectPathChanged ), NULL, this );
+	m_cbSeparateDir->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectNameChanged ), NULL, this );
+	m_sdbSizerOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnCreate ), NULL, this );
 }
 
 NewProjectBaseDlg::~NewProjectBaseDlg()
 {
 	// Disconnect Events
-	m_projTypes->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( NewProjectBaseDlg::OnItemSelected ), NULL, this );
-	m_textCtrlProjName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
-	m_textCtrlProjectPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
-	m_buttonProjectDirPicker->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathPicker ), NULL, this );
-	m_checkBoxCreateSeparateDir->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectPathUpdated ), NULL, this );
-	m_buttonCreateProject->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnButtonCreate ), NULL, this );
+	m_chCategories->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( NewProjectBaseDlg::OnCategorySelected ), NULL, this );
+	m_listTemplates->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( NewProjectBaseDlg::OnTemplateSelected ), NULL, this );
+	m_txtProjName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectNameChanged ), NULL, this );
+	m_dpProjPath->Disconnect( wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler( NewProjectBaseDlg::OnProjectPathChanged ), NULL, this );
+	m_cbSeparateDir->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnProjectNameChanged ), NULL, this );
+	m_sdbSizerOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewProjectBaseDlg::OnCreate ), NULL, this );
 }

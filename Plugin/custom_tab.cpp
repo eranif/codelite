@@ -63,9 +63,9 @@ CustomTab::CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const w
 		, m_window(NULL)
 		, m_leftDown(false)
 		, m_hovered(false)
-		, m_style(style)
 		, m_x_state(XNone)
 		, m_x_padding(3)
+		, m_userData(NULL)
 {
 	Initialize();
 	GetParent()->Connect(GetId(), wxEVT_CMD_DELETE_TAB, wxCommandEventHandler(wxTabContainer::OnDeleteTab));
@@ -74,6 +74,10 @@ CustomTab::CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const w
 CustomTab::~CustomTab()
 {
 	GetParent()->Disconnect(GetId(), wxEVT_CMD_DELETE_TAB, wxCommandEventHandler(wxTabContainer::OnDeleteTab));
+	if(m_userData){
+		delete m_userData;
+		m_userData = NULL;
+	}
 }
 
 void CustomTab::OnPaint(wxPaintEvent &event)
@@ -82,8 +86,10 @@ void CustomTab::OnPaint(wxPaintEvent &event)
 	wxBufferedPaintDC dc(this);
 
 	if (m_orientation == wxLEFT || m_orientation == wxRIGHT) {
+		SetSizeHints(CalcTabWidth(), CalcTabHeight());
 		DoDrawVerticalTab(dc);
 	} else {
+		SetSizeHints(CalcTabHeight(), CalcTabWidth());
 		DoDrawHorizontalTab(dc);
 	}
 }
@@ -95,6 +101,10 @@ void CustomTab::OnErase(wxEraseEvent &event)
 
 int CustomTab::CalcTabHeight()
 {
+	if(IsFixedWidthTabs()) {
+		return GetTabContainer()->GetFixedTabWidth();
+	}
+
 	int tmpTabHeight(0);
 	int tabHeight(GetPadding());
 	if (GetBmp().IsOk()) {
@@ -111,7 +121,7 @@ int CustomTab::CalcTabHeight()
 		tmpTabHeight += GetPadding();
 	}
 
-	if (m_style & wxVB_HAS_X) {
+	if (GetBookStyle() & wxVB_HAS_X) {
 		//this control is using x buttons
 		tmpTabHeight -= GetXPadding() ;
 		tmpTabHeight += 16;
@@ -175,7 +185,7 @@ void CustomTab::OnMouseEnterWindow(wxMouseEvent &e)
 	if (e.LeftIsDown()) {
 		wxTabContainer *parent = (wxTabContainer*)GetParent();
 		if (parent) {
-			if (!(m_style & wxVB_NODND)) {
+			if (!(GetBookStyle() & wxVB_NODND)) {
 				parent->SwapTabs(this);
 			}
 		}
@@ -235,7 +245,7 @@ void CustomTab::OnMouseMove(wxMouseEvent &e)
 #if defined (__WXGTK__)
 	// wxGTK doesn't recognise changes of event-window while dragging, so tab DnD fails
 	// Work around this using wxFindWindowAtPointer
-	if (m_leftDown && !(m_style & wxVB_NODND)) {
+	if (m_leftDown && !(GetBookStyle() & wxVB_NODND)) {
 		wxTabContainer* parent = (wxTabContainer*)GetParent();
 		wxPoint pt;
 		wxWindow* win = wxFindWindowAtPointer(pt);
@@ -374,11 +384,16 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 		//calcualte the size left for drawing the text
 		int x_len = 0;
-		if (m_style & wxVB_HAS_X) {
+		if (GetBookStyle() & wxVB_HAS_X) {
 			x_len = 16 + GetXPadding();
 		}
 
-		int maxTextWidth = bmp.GetWidth() - posx - x_len - GetPadding();
+		int maxTextWidth(0);
+		if(IsFixedWidthTabs()) {
+			maxTextWidth = GetTabContainer()->GetFixedTabWidth() - posx - x_len- GetPadding();
+		} else {
+			maxTextWidth = bmp.GetWidth() - posx - x_len- GetPadding();
+		}
 
 		//truncate the text if needed
 		DrawingUtils::TruncateText(memDc, GetText(), maxTextWidth, truncateText);
@@ -389,7 +404,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 	}
 
 	//draw x button if needed
-	if (m_style & wxVB_HAS_X) {
+	if (GetBookStyle() & wxVB_HAS_X) {
 		wxCoord xBtnYCoord = (bmp.GetHeight() - 16)/2 + 2;
 
 		//draw the x button, only if we are the active tab
@@ -458,7 +473,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		//draw a line
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(rr.x + rr.width - 1, 0, rr.x + rr.width - 1, rr.y + rr.height);
-		if (m_style & wxVB_TAB_DECORATION) {
+		if (GetBookStyle() & wxVB_TAB_DECORATION) {
 			//draw a single caption colour on top of the active tab
 			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
 #ifdef __WXMAC__
@@ -478,7 +493,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		//draw a line
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(0, 0, 0, tmpRect.y + tmpRect.height);
-		if (m_style & wxVB_TAB_DECORATION) {
+		if (GetBookStyle() & wxVB_TAB_DECORATION) {
 			//draw a single caption colour on top of the active tab
 			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
 #ifdef __WXMAC__
@@ -574,18 +589,30 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 		wxCoord txtYCoord = (bmp.GetHeight() - yy)/2 + text_yoffset;
 
+		// Incase we are drawing the selected tab and the orientation is bottom,
+		// draw the text 3 pixles "more down"
+		if(!top && GetSelected()){
+			txtYCoord += 3;
+		}
+
 		//make sure the colour used here is the system default
 		memDc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
 		wxString truncateText;
 
 		int x_len = 0;
-		if (m_style & wxVB_HAS_X) {
+		if (GetBookStyle() & wxVB_HAS_X) {
 			x_len = 16 + GetXPadding();
 		}
 
 		//calcualte the size left for drawing the text
-		int maxTextWidth = bmp.GetWidth() - posx - x_len- GetPadding();
+
+		int maxTextWidth(0);
+		if(IsFixedWidthTabs()) {
+			maxTextWidth = GetTabContainer()->GetFixedTabWidth() - posx - x_len- GetPadding();
+		} else {
+			maxTextWidth = bmp.GetWidth() - posx - x_len- GetPadding();
+		}
 
 		//truncate the text if needed
 		DrawingUtils::TruncateText(memDc, GetText(), maxTextWidth, truncateText);
@@ -596,7 +623,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	}
 
 	//draw x button if needed
-	if (m_style & wxVB_HAS_X) {
+	if (GetBookStyle() & wxVB_HAS_X) {
 		//draw the x button, only if we are the active tab
 		if (GetSelected()) {
 			x_yoffset = (bmp.GetHeight() - GetXBmp().GetHeight())/2;
@@ -663,7 +690,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(0, rr.GetHeight()-1, rr.GetWidth(), rr.GetHeight()-1);
 
-		if (m_style & wxVB_TAB_DECORATION) {
+		if (GetBookStyle() & wxVB_TAB_DECORATION) {
 			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
 #ifdef __WXMAC__
 			col = *wxBLACK;
@@ -686,7 +713,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(0, 0, rr.GetWidth(), 0);
 
-		if (m_style & wxVB_TAB_DECORATION) {
+		if (GetBookStyle() & wxVB_TAB_DECORATION) {
 			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
 #ifdef __WXMAC__
 			col = *wxBLACK;
@@ -718,7 +745,7 @@ const wxBitmap& CustomTab::GetXBmp()
 void CustomTab::OnMouseMiddleButton(wxMouseEvent &e)
 {
 	wxUnusedVar(e);
-	if (m_style & wxVB_MOUSE_MIDDLE_CLOSE_TAB) {
+	if (GetBookStyle() & wxVB_MOUSE_MIDDLE_CLOSE_TAB) {
 		wxCommandEvent event(wxEVT_CMD_DELETE_TAB, GetId());
 		event.SetEventObject(this);
 		GetParent()->AddPendingEvent(event);
@@ -776,4 +803,15 @@ void CustomTab::SetBmp(const wxBitmap& bmp)
 	m_bmp = bmp;
 	Initialize();
 	Refresh();
+}
+
+bool CustomTab::IsFixedWidthTabs()
+{
+	return GetBookStyle() & wxVB_FIXED_WIDTH && GetTabContainer()->GetFixedTabWidth() != Notebook::npos;
+}
+
+long CustomTab::GetBookStyle()
+{
+	Notebook *book = (Notebook*)GetTabContainer()->GetParent();
+	return book->GetBookStyle();
 }

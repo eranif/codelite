@@ -141,6 +141,12 @@ mkdir -p fakeroot/usr/share/menu/
 \cp -pr lib/SnipWiz.so fakeroot/${PREFIX}/lib/codelite/
 \cp -pr lib/wxformbuilder.so fakeroot/${PREFIX}/lib/codelite/
 \cp -pr lib/abbreviation.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/QmakePlugin.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/libwxscintillau.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/libpluginu.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/libcodeliteu.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/libwxsqlite3u.so fakeroot/${PREFIX}/lib/codelite/
+\cp -pr lib/libwxpropgridu.so fakeroot/${PREFIX}/lib/codelite/
 \cp -pr Runtime/plugins/resources/*.* fakeroot/${PREFIX}/lib/codelite/resources/
 \cp -pr Runtime/*.html fakeroot/${PREFIX}/share/codelite/
 \cp -pr Runtime/astyle.sample fakeroot/${PREFIX}/share/codelite/

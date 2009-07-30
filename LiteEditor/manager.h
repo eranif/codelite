@@ -290,6 +290,14 @@ public:
 	 */
 	bool RemoveFile(const wxString &fileName, const wxString &vdFullPath);
 
+	/**
+	 * remove file from the workspace
+	 * \param origName the full path of the file to be renamed
+	 * \param newName the full path the file must be renamed to
+	 * \param vdFullPath the files' virtual directory path (including project)
+	 */
+	bool RenameFile(const wxString &origName, const wxString &newName, const wxString &vdFullPath);
+
 	bool MoveFileToVD(const wxString &fileName, const wxString &srcVD, const wxString &targetVD);
 
 	/**

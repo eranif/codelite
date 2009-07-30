@@ -25,6 +25,15 @@
 #include "sessionmanager.h"
 #include "xmlutils.h"
 #include "wx/ffile.h"
+#include <wx/log.h>
+
+#include <memory>
+
+namespace
+{
+	const wxChar defaultSessionName[] = wxT("Default");
+	const wxChar sessionTag[] = wxT("Session");
+}
 
 //Session entry
 SessionEntry::SessionEntry()
@@ -41,6 +50,7 @@ void SessionEntry::DeSerialize(Archive &arch)
 	arch.Read(wxT("m_tabs"), m_tabs);
 	arch.Read(wxT("m_workspaceName"), m_workspaceName);
 	arch.Read(wxT("TabInfoArray"), m_vTabInfoArr);
+	arch.Read(wxT("m_breakpoints"), (SerializedObject*)&m_breakpoints);
 	// initialize tab info array from m_tabs if in config file wasn't yet tab info array
 	if (m_vTabInfoArr.size() == 0 && m_tabs.GetCount() > 0) {
 		for (size_t i=0; i<m_tabs.GetCount(); i++) {
@@ -61,6 +71,7 @@ void SessionEntry::Serialize(Archive &arch)
 	//arch.Write(wxT("m_tabs"), m_tabs);
 	arch.Write(wxT("m_workspaceName"), m_workspaceName);
 	arch.Write(wxT("TabInfoArray"), m_vTabInfoArr);
+	arch.Write(wxT("m_breakpoints"), (SerializedObject*)&m_breakpoints);
 }
 
 
@@ -95,28 +106,42 @@ bool SessionManager::Load(const wxString &fileName)
 	return m_doc.IsOk();
 }
 
+wxFileName SessionManager::GetSessionFileName(const wxString& name) const
+{
+	return name + wxT(".session");
+}
+
 bool SessionManager::FindSession(const wxString &name, SessionEntry &session)
 {
 	if (!m_doc.GetRoot()) {
 		return false;
 	}
 
-	// find last active workspace name if searched is Default
-	wxString strSessionName = name;
-	wxXmlNode *node =  m_doc.GetRoot()->GetChildren();
-	while (node) {
-		if (node->GetName() == wxT("Session")) {
-			if (XmlUtils::ReadString(node, wxT("Name")) == strSessionName) {
-				//we found our session
-				Archive arch;
-				arch.SetXmlNode(node);
-				session.DeSerialize(arch);
-				return true;
-			}
-		}
-		node = node->GetNext();
+	if (defaultSessionName == name)
+		return false;
+
+	wxXmlDocument doc;
+
+	const wxFileName& sessionFileName = GetSessionFileName(name);
+	if (sessionFileName.FileExists())
+	{
+		if (!doc.Load(sessionFileName.GetFullPath()) || !doc.IsOk())
+			return false;
 	}
-	return false;
+	else
+	{
+		doc.SetRoot(new wxXmlNode(NULL, wxXML_ELEMENT_NODE, sessionTag));
+	}
+
+	wxXmlNode* const node = doc.GetRoot();
+	if (!node || node->GetName() != sessionTag)
+		return false;
+
+	Archive arch;
+	arch.SetXmlNode(node);
+	session.DeSerialize(arch);
+
+	return true;
 }
 
 bool SessionManager::Save(const wxString &name, SessionEntry &session)
@@ -125,36 +150,21 @@ bool SessionManager::Save(const wxString &name, SessionEntry &session)
 		return false;
 	}
 
-	// if saving Default then change name to workspace anme and path
-	wxString strSessionName = name;
-
-	// if session entry has no workspace name, then do not save
-	if (strSessionName.length() == 0)
+	if (name.empty())
 		return false;
 
-	wxXmlNode *node =  m_doc.GetRoot()->GetChildren();
-	while (node) {
-		if (node->GetName() == wxT("Session")) {
-			if (XmlUtils::ReadString(node, wxT("Name")) == strSessionName) {
-				//we found our session, remove it
-				m_doc.GetRoot()->RemoveChild(node);
-				delete node;
-				break;
-			}
-		}
-		node = node->GetNext();
-	}
-
-	//create new node and insert it
-	wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Session"));
-	m_doc.GetRoot()->AddChild(child);
-	child->AddProperty(wxT("Name"), strSessionName);
+	std::auto_ptr<wxXmlNode> child(new wxXmlNode(NULL, wxXML_ELEMENT_NODE, sessionTag));
+	child->AddProperty(wxT("Name"), name);
 
 	Archive arch;
-	arch.SetXmlNode(child);
+	arch.SetXmlNode(child.get());
 	session.Serialize(arch);
-	//save the file
-	return m_doc.Save(m_fileName.GetFullPath());
+
+	wxXmlDocument doc;
+	doc.SetRoot(child.release());
+
+	const wxFileName& sessionFileName = GetSessionFileName(name);
+	return doc.Save(sessionFileName.GetFullPath());
 }
 
 void SessionManager::SetLastWorkspaceName(const wxString& name)
@@ -188,12 +198,12 @@ wxString SessionManager::GetLastSession()
 	while (node) {
 		if (node->GetName() == wxT("LastActiveWorkspace")) {
 			if (node->GetNodeContent().IsEmpty()) {
-				return wxT("Default");
+				return defaultSessionName;
 			} else {
 				return node->GetNodeContent();
 			}
 		}
 		node = node->GetNext();
 	}
-	return wxT("Default");
+	return defaultSessionName;
 }

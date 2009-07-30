@@ -147,9 +147,12 @@ void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
 			dir.Traverse(traverser);
 			someFiles = traverser.GetFiles();
 		}
-		
-		for (size_t i = 0; i < someFiles.Count(); ++i) {
-			files.push_back(someFiles.Item(i));
+
+		for (size_t j = 0; j < someFiles.Count(); ++j) {
+			if(files.Index(someFiles.Item(j)) == wxNOT_FOUND) {
+				// add only unique file names
+				files.push_back(someFiles.Item(j));
+			}
 		}
 	}
 }
@@ -176,7 +179,7 @@ void SearchThread::DoSearchFiles(ThreadRequest *req)
 		wxCommandEvent event(wxEVT_SEARCH_THREAD_SEARCHSTARTED, GetId());
 		event.SetClientData(new SearchData(*data));
 		//set the rquested output tab
-		event.SetInt(data->GetOutputTab());
+		event.SetInt(data->UseNewTab() ? 1 : 0);
 		if (data->GetOwner()) {
 			::wxPostEvent(data->GetOwner(), event);
 		} else {

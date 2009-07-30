@@ -45,7 +45,7 @@ bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, c
 	return AddBreakpoint(bp);
 }
 
-bool BreakptMgr::AddBreakpoint(BreakpointInfo &bp)
+bool BreakptMgr::AddBreakpoint(const BreakpointInfo &bp)
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
@@ -61,8 +61,19 @@ bool BreakptMgr::AddBreakpoint(BreakpointInfo &bp)
 		}
 	}
 
-	SetBestBPType(bp);
-	m_bps.push_back(bp);
+	BreakpointInfo newBreakpoint(bp);
+	SetBestBPType(newBreakpoint);
+
+	bool alreadyExist(false);
+	for(size_t i=0; i<m_bps.size(); i++) {
+		if(newBreakpoint == m_bps.at(i)) {
+			// this breakpoint already exist
+			alreadyExist = true;
+			break;
+		}
+	}
+
+	if( !alreadyExist ) m_bps.push_back(newBreakpoint);
 
 	DeleteAllBreakpointMarkers();
 	RefreshBreakpointMarkers();
@@ -75,8 +86,9 @@ void BreakptMgr::AddBreakpoint()
 	BreakptPropertiesDlg dlg(NULL);
 	dlg.SetTitle(_("Create a breakpoint or watchpoint"));
 
+	LEditor* const editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	BreakpointInfo bp;
-	bp.Create(Frame::Get()->GetMainBook()->GetActiveEditor()->GetFileName().GetFullPath(), -1, GetNextID());
+	bp.Create(editor ? editor->GetFileName().GetFullPath() : wxString(), editor ? editor->GetCurrentLine() : -1, GetNextID());
 	dlg.EnterBPData(bp);
 
 	if (dlg.ShowModal() != wxID_OK) {
@@ -138,7 +150,7 @@ wxString BreakptMgr::GetTooltip(const wxString& fileName, const int lineno)
 	if (fileName.IsEmpty() || lineno < 0) {
 		return wxEmptyString;
 	}
-	
+
 	std::vector<BreakpointInfo> li;
 	GetBreakpoints(li, fileName, lineno);
 
@@ -150,7 +162,7 @@ wxString BreakptMgr::GetTooltip(const wxString& fileName, const int lineno)
 		}
 		if (iter->is_temp) {
 			tooltip << _("Temporary ");
-		}		
+		}
 		int id = (iter->debugger_id > 0 ? iter->debugger_id : iter->internal_id - FIRST_INTERNAL_ID);
 		tooltip << wxString::Format(_("Breakpoint %d"), id);
 		if (! iter->is_enabled) {
@@ -159,11 +171,11 @@ wxString BreakptMgr::GetTooltip(const wxString& fileName, const int lineno)
 		if (iter->ignore_number > 0) {
 			tooltip << wxString::Format(_(", ignore-count = %u"), iter->ignore_number);
 		}
-	
+
 		if (! iter->conditions.IsEmpty()) {
 			tooltip << wxString::Format(_(". Condition: %s"), iter->conditions.c_str());
 		}
-	
+
 		if (! iter->commandlist.IsEmpty()) {
 			tooltip << wxString::Format(_(". Commands: %s"), iter->commandlist.c_str());
 		}
@@ -435,7 +447,7 @@ void BreakptMgr::EditBreakpoint(int index, bool &bpExist)
 		// Nothing was altered
 		return ;
 	}
-	
+
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
 		// Update the bp by deleting/replacing
@@ -610,6 +622,7 @@ void BreakptMgr::DeleteAllBreakpointsByFileName(const wxString& fileName)
 			++iter;
 		}
 	}
+
 }
 
 void BreakptMgr::SetBreakpoints(const std::vector<BreakpointInfo>& bps)
@@ -617,3 +630,16 @@ void BreakptMgr::SetBreakpoints(const std::vector<BreakpointInfo>& bps)
 	// append the breakpoint list
 	m_bps.insert(m_bps.end(), bps.begin(), bps.end());
 }
+
+void BreakptMgr::SaveSession(SessionEntry& session)
+{
+	session.SetBreakpoints(m_bps);
+}
+
+void BreakptMgr::LoadSession(const SessionEntry& session)
+{
+	const std::vector<BreakpointInfo>& breakpoints = session.GetBreakpoints();
+	for (std::vector<BreakpointInfo>::const_iterator itr = breakpoints.begin(); itr != breakpoints.end(); ++itr)
+		AddBreakpoint(*itr);
+}
+

@@ -474,10 +474,17 @@ void DbgGdb::SetBreakpoints()
 	}
 }
 
-bool DbgGdb::Break(BreakpointInfo& bp)
+bool DbgGdb::Break(const BreakpointInfo& bp)
 {
 	wxFileName fn(bp.file);
-	wxString tmpfileName(fn.GetFullPath());
+
+	// by default, use full paths for the file name when setting breakpoints
+	wxString tmpfileName(fn.GetFullPath());;
+	if(m_info.useRelativeFilePaths){
+		// user set the option to use relative paths (file name w/o the full path)
+		tmpfileName = fn.GetFullName();
+	}
+
 	tmpfileName.Replace(wxT("\\"), wxT("/"));
 
 	wxString command;
@@ -531,7 +538,7 @@ bool DbgGdb::Break(BreakpointInfo& bp)
 	} else if (bp.bp_type != BP_type_watchpt) {
 		// Function and Lineno locations can/should be prepended by a filename (but see later)
 		if (! tmpfileName.IsEmpty() && bp.lineno > 0 ) {
-			breakWhere << wxT("\"") << tmpfileName << wxT(":") << bp.lineno << wxT("\"");
+			breakWhere << wxT("\"\\\"") << tmpfileName << wxT(":") << bp.lineno << wxT("\\\"\"");
 		} else if (! bp.function_name.IsEmpty()) {
 			if (bp.regex) {
 				// update the command
@@ -545,7 +552,7 @@ bool DbgGdb::Break(BreakpointInfo& bp)
 	// prepare the conditions
 	//------------------------------------------------------------------------
 	if(bp.conditions.IsEmpty() == false){
-		condition << wxT("-c ") << bp.conditions << wxT(" ");
+		condition << wxT("-c ") << wxT("\"") << bp.conditions << wxT("\" ");
 	}
 
 	//------------------------------------------------------------------------
@@ -873,13 +880,20 @@ void DbgGdb::Poke()
 void DbgGdb::DoProcessAsyncCommand(wxString &line, wxString &id)
 {
 	if (line.StartsWith(wxT("^error"))) {
-		//the command was error, for example:
-		//finish in the outer most frame
-		//print the error message and remove the command from the queue
+
+		// the command was error, for example:
+		// finish in the outer most frame
+		// print the error message and remove the command from the queue
 		DbgCmdHandler *handler = PopHandler(id);
+
+		if(handler && handler->WantsErrors()){
+			handler->ProcessOutput(line);
+		}
+
 		if (handler) {
 			delete handler;
 		}
+
 		StripString(line);
 		//We also need to pass the control back to the program
 		m_observer->UpdateGotControl(DBG_CMD_ERROR);

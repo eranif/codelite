@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : snipwiz.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : snipwiz.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -56,8 +56,15 @@
 #define FRLSNIPWIZ_VERSION 1000
 #define FRLSNIPWIZ_HEADER _T("Code snippet wizard file")
 
-#define CARET		wxT("@")
-#define SELECTION	wxT("$")
+#define CARET                 wxT("@")
+#define USER_ESC_CARET        wxT("\\@")
+#define SELECTION             wxT("$")
+#define USER_ESC_SELECTION    wxT("\\$")
+#define REAL_CARET_STR        wxT("%CARET%")
+#define REAL_SELECTION_STR    wxT("%SELECTION%")
+#define TMP_ESC_CARET_STR     wxT("%ESC_CARET%")
+#define TMP_ESC_SELECTION_STR wxT("%ESC_SELECTION%")
+
 ////------------------------------------------------------------
 static SnipWiz* thePlugin = NULL;
 
@@ -87,7 +94,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 }
 
 //------------------------------------------------------------
-// When creating new file, we default the EOL mode to 
+// When creating new file, we default the EOL mode to
 // the OS conventions
 static int GetEOLByOS()
 {
@@ -107,16 +114,17 @@ SnipWiz::SnipWiz( IManager *manager )
 	m_topWin = NULL;
 	m_longName = wxT( "Snippet wizard" );
 	m_shortName = plugName;
-	m_topWin = wxTheApp;
+	m_topWin = m_mgr->GetTheApp();
+
 	// get plugin path
 	m_pluginPath = m_mgr->GetStartupDirectory();
 	m_pluginPath += wxFILE_SEP_PATH;
 	m_pluginPath += wxT( "templates" );
 	m_pluginPath += wxFILE_SEP_PATH;
-	if ( ! wxFileName::DirExists(m_pluginPath) ){
+	if ( ! wxFileName::DirExists(m_pluginPath) ) {
 		wxFileName::Mkdir(m_pluginPath);
 	}
-  
+
 	m_StringDb.SetCompress( true );
 
 	m_StringDb.Load( m_pluginPath + defaultTmplFile );
@@ -135,14 +143,6 @@ SnipWiz::~SnipWiz()
 {
 	if ( m_modified )
 		m_StringDb.Save( m_pluginPath + defaultTmplFile );
-
-	m_topWin->Disconnect( IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnSettings ), NULL, this );
-	m_topWin->Disconnect( IDM_CLASS_WIZ, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnClassWizard ), NULL, this );
-
-	m_topWin->Disconnect( IDM_EXP_SWITCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnMenuExpandSwitch ), NULL, this );
-	m_topWin->Disconnect( IDM_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnMenuPaste ), NULL, this );
-
-	DetachDynMenus();
 }
 //------------------------------------------------------------
 
@@ -216,8 +216,15 @@ void SnipWiz::UnHookPopupMenu( wxMenu *menu, MenuType type )
 
 void SnipWiz::UnPlug()
 {
-	//TODO:: perform the unplug action for this plugin
+	m_topWin->Disconnect( IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnSettings ), NULL, this );
+	m_topWin->Disconnect( IDM_CLASS_WIZ, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnClassWizard ), NULL, this );
+
+	m_topWin->Disconnect( IDM_EXP_SWITCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnMenuExpandSwitch ), NULL, this );
+	m_topWin->Disconnect( IDM_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( SnipWiz::OnMenuPaste ), NULL, this );
+
+	DetachDynMenus();
 }
+
 //------------------------------------------------------------
 void SnipWiz::OnMenuExpandSwitch( wxCommandEvent& e )
 {
@@ -261,29 +268,44 @@ void SnipWiz::OnMenuSnippets( wxCommandEvent &e )
 
 	bool crtl = ::wxGetKeyState( WXK_CONTROL );
 	bool sourceIsMenu( false );
-	
+
 	wxMenu *m = dynamic_cast<wxMenu*>( e.GetEventObject() );
-	if(m) {
+	if (m) {
 		sourceIsMenu = true;
 	}
-		
+
 	if ( e.GetId() >= IDM_ADDSTART && e.GetId() < ( IDM_ADDSTART + (int)m_snippets.GetCount() ) ) {
 		wxString key = m_snippets.Item( e.GetId() - IDM_ADDSTART );
-		wxString srText = m_StringDb.GetSnippetString( key );
+		wxString srText    = m_StringDb.GetSnippetString( key );
 		wxString selection = editor->GetSelection();
+
 		// replace template eols with current
 		int curEol = editor->GetEOL();
-		if(srText.Find(eol[2])  != wxNOT_FOUND )
+		if (srText.Find(eol[2])  != wxNOT_FOUND )
 			srText.Replace( eol[2], eol[curEol].c_str() );
+
+		// Replace any escaped carets/selection strings
+		srText.Replace(USER_ESC_CARET,        TMP_ESC_CARET_STR    );
+		srText.Replace(USER_ESC_SELECTION,    TMP_ESC_SELECTION_STR);
+		srText.Replace(CARET,                 REAL_CARET_STR       );
+		srText.Replace(SELECTION,             REAL_SELECTION_STR   );
+
 		// selection ?
-		if ( srText.Find( SELECTION ) != wxNOT_FOUND )
-			srText.Replace( SELECTION, selection.c_str() );
+		if ( srText.Find( REAL_SELECTION_STR ) != wxNOT_FOUND )
+			srText.Replace( REAL_SELECTION_STR, selection.c_str() );
+
+		// restore the escaped selection, this time without the escaping backslash
+		srText.Replace(TMP_ESC_SELECTION_STR, SELECTION);
+
+		// restore the escaped caret, this time without the escaping backslash
+		srText.Replace(TMP_ESC_CARET_STR, CARET);
 
 		// if the user pressed control while clicking
 		if ( crtl && sourceIsMenu ) {
 			m_clipboard = srText;
 			// remove caret mark if there
-			srText.Replace( CARET, wxT( "" ) );
+			srText.Replace( REAL_CARET_STR, wxT( "" ) );
+
 			// copy text to clipboard
 			if ( wxTheClipboard->Open() ) {
 				wxTheClipboard->SetData( new wxTextDataObject( srText ) );
@@ -291,12 +313,15 @@ void SnipWiz::OnMenuSnippets( wxCommandEvent &e )
 			}
 		} else {
 			// otherwise insert text
+
+			// format the text for insertion
 			wxString output = FormatOutput( editor, srText );
+
 			int curPos = editor->GetCurrentPosition() - selection.Len();
 			// get caret position
-			long cursorPos = output.Find( CARET );
+			long cursorPos = output.Find( REAL_CARET_STR );
 			if ( cursorPos != wxNOT_FOUND )
-				output.Remove( cursorPos, 1 );
+				output.Remove( cursorPos, wxStrlen(REAL_CARET_STR) );
 			editor->ReplaceSelection( output );
 			// set caret
 			if ( cursorPos != wxNOT_FOUND )
@@ -321,9 +346,9 @@ void SnipWiz::OnMenuPaste( wxCommandEvent& e )
 	wxString selection = editor->GetSelection();
 	int curPos = editor->GetCurrentPosition() - selection.Len();
 	// get caret position
-	long cursorPos = output.Find( CARET );
+	long cursorPos = output.Find( REAL_CARET_STR );
 	if ( cursorPos != wxNOT_FOUND )
-		output.Remove( cursorPos, 1 );
+		output.Remove( cursorPos, wxStrlen(REAL_CARET_STR) );
 	editor->ReplaceSelection( output );
 	// set caret
 	if ( cursorPos != wxNOT_FOUND )
@@ -450,7 +475,7 @@ IEditor* SnipWiz::GetEditor()
 void SnipWiz::OnClassWizard( wxCommandEvent& e )
 {
 	TemplateClassDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr);
-	
+
 	wxString errMsg, projectPath, projectName;
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo( TreeFileView );
 
@@ -469,10 +494,10 @@ void SnipWiz::OnClassWizard( wxCommandEvent& e )
 	dlg.SetPluginPath(m_pluginPath );
 	dlg.SetProjectPath( projectPath );
 	dlg.ShowModal();
-	
-	if ( dlg.GetModified() ){
+
+	if ( dlg.GetModified() ) {
 		m_modified = true;
 	}
-	
+
 }
 //------------------------------------------------------------

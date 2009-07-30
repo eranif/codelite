@@ -181,6 +181,10 @@
       <File Name="closetab-active.xpm"/>
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
+      <File Name="notebookcustomdlgbase.h"/>
+      <File Name="notebookcustomdlg.cpp"/>
+      <File Name="notebookcustomdlg.h"/>
+      <File Name="notebookcustomdlgbase.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="TokenScanner">
@@ -200,7 +204,6 @@
     <File Name="job.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
   <VirtualDirectory Name="BrowsingRecords">
     <File Name="browse_record.h"/>
@@ -342,5 +345,6 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

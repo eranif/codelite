@@ -23,10 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "project.h"
+#include "fileextmanager.h"
 #include "xmlutils.h"
 #include <wx/tokenzr.h>
 #include "wx/arrstr.h"
 #include "dirsaver.h"
+#include "globals.h"
 
 const wxString Project::STATIC_LIBRARY = wxT("Static Library");
 const wxString Project::DYNAMIC_LIBRARY = wxT("Dynamic Library");
@@ -73,7 +75,7 @@ bool Project::Create(const wxString &name, const wxString &description, const wx
 	wxXmlNode *depNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Dependencies"));
 	root->AddChild(depNode);
 
-	m_doc.Save(m_fileName.GetFullPath());
+	SaveXmlFile();
 	//create build settings
 	SetSettings(new ProjectSettings(NULL));
 	ProjectSettingsPtr settings = GetSettings();
@@ -94,6 +96,8 @@ bool Project::Load(const wxString &path)
 	m_fileName = path;
 	m_fileName.MakeAbsolute();
 	SetModified(true);
+	SetProjectLastModifiedTime(GetFileLastModifiedTime());
+
 	return true;
 }
 
@@ -156,7 +160,7 @@ wxXmlNode *Project::CreateVD(const wxString &vdFullPath, bool mkpath)
 
 	//if not in transaction save the changes
 	if (!InTransaction()) {
-		m_doc.Save(m_fileName.GetFullPath());
+		SaveXmlFile();
 	}
 
 	// cache the result
@@ -211,7 +215,7 @@ bool Project::AddFile(const wxString &fileName, const wxString &virtualDirPath)
 	node->AddProperty(wxT("Name"), tmp.GetFullPath());
 	vd->AddChild(node);
 	if (!InTransaction()) {
-		m_doc.Save(m_fileName.GetFullPath());
+		SaveXmlFile();
 	}
 	SetModified(true);
 	return true;
@@ -239,7 +243,7 @@ bool Project::DeleteVirtualDir(const wxString &vdFullPath)
 
 		delete vd;
 		SetModified(true);
-		return m_doc.Save(m_fileName.GetFullPath());
+		return SaveXmlFile();
 	}
 	return false;
 }
@@ -265,7 +269,7 @@ bool Project::RemoveFile(const wxString &fileName, const wxString &virtualDir)
 		delete node;
 	}
 	SetModified(true);
-	return m_doc.Save(m_fileName.GetFullPath());;
+	return SaveXmlFile();
 }
 
 wxString Project::GetName() const
@@ -335,11 +339,19 @@ void Project::RecursiveAdd(wxXmlNode *xmlNode, ProjectTreePtr &ptp, ProjectTreeN
 	SetModified(true);
 }
 
+bool Project::SaveXmlFile()
+{
+	bool ok = m_doc.Save(m_fileName.GetFullPath());
+	SetProjectLastModifiedTime(GetFileLastModifiedTime());
+
+	return ok;
+}
+
 void Project::Save()
 {
 	m_tranActive = false;
 	if ( m_doc.IsOk() )
-		m_doc.Save(m_fileName.GetFullPath());
+		SaveXmlFile();
 }
 
 void Project::GetFilesByVirtualDir(const wxString &vdFullPath, wxArrayString &files)
@@ -408,7 +420,7 @@ void Project::SetSettings(ProjectSettingsPtr settings)
 		delete oldSettings;
 	}
 	m_doc.GetRoot()->AddChild(settings->ToXml());
-	m_doc.Save(m_fileName.GetFullPath());
+	SaveXmlFile();
 }
 
 void Project::SetGlobalSettings(BuildConfigCommonPtr globalSettings)
@@ -420,7 +432,7 @@ void Project::SetGlobalSettings(BuildConfigCommonPtr globalSettings)
 		delete oldSettings;
 	}
 	settings->AddChild(globalSettings->ToXml());
-	m_doc.Save(m_fileName.GetFullPath());
+	SaveXmlFile();
 }
 
 wxArrayString Project::GetDependencies() const
@@ -506,12 +518,6 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
 		}
 	}
 
-//	wxXmlNode *deps = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("Dependencies"));
-//	if (deps) {
-//		doc.GetRoot()->RemoveChild(deps);
-//		delete deps;
-//	}
-
 	// add an empty deps node
 	deps = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Dependencies"));
 	doc.GetRoot()->AddChild(deps);
@@ -537,14 +543,12 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
 		wxFileName fn = files.at(i);
 		wxCopyFile(fn.GetFullPath(), new_path + wxT("/") + fn.GetFullName());
 
-		// add source file under the 'src' while headers are added under 'include'
-		wxString e(fn.GetExt());
-		e = e.MakeLower();
-
 		wxXmlNode *file_node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
 		file_node->AddProperty(wxT("Name"), fn.GetFullName());
 
-		if ( e == wxT("cpp") || e == wxT("cxx") || e == wxT("c") || e == wxT("c++") || e == wxT("cc") ) {
+		switch ( FileExtManager::GetType( fn.GetFullName() ) ) {
+		case FileExtManager::TypeSource:
+
 			// source file
 			if ( !srcNode ) {
 				srcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
@@ -552,8 +556,9 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
 				doc.GetRoot()->AddChild(srcNode);
 			}
 			srcNode->AddChild(file_node);
+			break;
 
-		} else if ( e == wxT("h") || e == wxT("hpp") || e == wxT("h++") || e == wxT("hxx")|| e == wxT("hh")  || e == wxT("inc") || e == wxT("inl") ) {
+		case FileExtManager::TypeHeader:
 			// header file
 			if (!headNode) {
 				headNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
@@ -561,8 +566,9 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
 				doc.GetRoot()->AddChild(headNode);
 			}
 			headNode->AddChild(file_node);
+			break;
 
-		} else {
+		default:
 			// resource file
 			if ( !rcNode ) {
 				rcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("VirtualDirectory"));
@@ -570,8 +576,10 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
 				doc.GetRoot()->AddChild(rcNode);
 			}
 			rcNode->AddChild(file_node);
+			break;
 		}
 	}
+
 	doc.Save(newFile);
 }
 
@@ -596,7 +604,7 @@ void Project::SetFiles(ProjectPtr src)
 		}
 		child = child->GetNext();
 	}
-	m_doc.Save(m_fileName.GetFullPath());
+	SaveXmlFile();
 }
 
 bool Project::RenameFile(const wxString& oldName, const wxString& virtualDir, const wxString& newName)
@@ -622,7 +630,7 @@ bool Project::RenameFile(const wxString& oldName, const wxString& virtualDir, co
 	}
 
 	SetModified(true);
-	return m_doc.Save(m_fileName.GetFullPath());;
+	return SaveXmlFile();
 }
 
 wxString Project::GetVDByFileName(const wxString& file)
@@ -681,7 +689,7 @@ bool Project::RenameVirtualDirectory(const wxString& oldVdPath, const wxString& 
 	wxXmlNode *vdNode = GetVirtualDir(oldVdPath);
 	if (vdNode) {
 		XmlUtils::UpdateProperty(vdNode, wxT("Name"), newName);
-		return m_doc.Save(m_fileName.GetFullPath());
+		return SaveXmlFile();
 	}
 	return false;
 }
@@ -739,7 +747,7 @@ void Project::SetDependencies(wxArrayString& deps, const wxString& configuration
 	}
 
 	//save changes
-	m_doc.Save(m_fileName.GetFullPath());
+	SaveXmlFile();
 	SetModified(true);
 }
 
@@ -795,7 +803,7 @@ bool Project::FastAddFile(const wxString& fileName, const wxString& virtualDir)
 	node->AddProperty(wxT("Name"), tmp.GetFullPath());
 	vd->AddChild(node);
 	if (!InTransaction()) {
-		m_doc.Save(m_fileName.GetFullPath());
+		SaveXmlFile();
 	}
 	SetModified(true);
 	return true;
@@ -883,7 +891,7 @@ bool Project::SetUserData(const wxString& name, SerializedObject* obj)
 	// serialize the data
 	arch.SetXmlNode(dataNode);
 	obj->Serialize(arch);
-	return m_doc.Save(m_fileName.GetFullPath());
+	return SaveXmlFile();
 }
 
 void Project::SetProjectInternalType(const wxString& internalType)
@@ -894,4 +902,94 @@ void Project::SetProjectInternalType(const wxString& internalType)
 wxString Project::GetProjectInternalType() const
 {
 	return m_doc.GetRoot()->GetPropVal(wxT("InternalType"), wxEmptyString);
+}
+
+void Project::GetAllPluginsData(std::map<wxString, wxString>& pluginsDataMap)
+{
+	if(!m_doc.IsOk()){
+		return;
+	}
+
+	// locate the 'Plugins' node
+	wxXmlNode *plugins = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Plugins"));
+	if( !plugins ) {
+		return;
+	}
+
+	wxXmlNode *child = plugins->GetChildren();
+	while( child ) {
+		if( child->GetName() == wxT("Plugin") ) {
+			// get the content
+			pluginsDataMap[child->GetPropVal(wxT("Name"), wxEmptyString)] = child->GetNodeContent();
+		}
+		child = child->GetNext();
+	}
+}
+
+wxString Project::GetPluginData(const wxString& pluginName)
+{
+	if(!m_doc.IsOk()){
+		return wxEmptyString;
+	}
+
+	// locate the 'Plugins' node
+	wxXmlNode *plugins = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Plugins"));
+	if( !plugins ) {
+		return wxEmptyString;
+	}
+
+	// find the node and return its content
+	wxXmlNode *dataNode = XmlUtils::FindNodeByName(plugins, wxT("Plugin"), pluginName);
+	if( dataNode ){
+		return dataNode->GetNodeContent();
+	}
+	return wxEmptyString;
+}
+
+void Project::SetPluginData(const wxString& pluginName, const wxString& data)
+{
+	if(!m_doc.IsOk()){
+		return ;
+	}
+
+	// locate the 'Plugins' node
+	wxXmlNode *plugins = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Plugins"));
+	if( !plugins ) {
+		plugins = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("Plugins"));
+	}
+
+	wxXmlNode *plugin = XmlUtils::FindNodeByName(plugins, wxT("Plugin"), pluginName);
+	if( !plugin ) {
+		plugin = new wxXmlNode(plugins, wxXML_ELEMENT_NODE, wxT("Plugin"));
+		plugin->AddProperty(wxT("Name"), pluginName);
+	}
+
+	XmlUtils::SetCDATANodeContent(plugin, data);
+	SaveXmlFile();
+}
+
+
+void Project::SetAllPluginsData(const std::map<wxString, wxString>& pluginsDataMap)
+{
+	if(!m_doc.IsOk()){
+		return;
+	}
+
+	// locate the 'Plugins' node
+	wxXmlNode *plugins = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Plugins"));
+	if( plugins ) {
+		m_doc.GetRoot()->RemoveChild( plugins );
+		delete plugins;
+	}
+
+	std::map<wxString, wxString>::const_iterator iter = pluginsDataMap.begin();
+	for(; iter != pluginsDataMap.end(); iter ++) {
+		SetPluginData( iter->first, iter->second );
+	}
+	SaveXmlFile();
+}
+
+time_t Project::GetFileLastModifiedTime() const
+{
+	return GetFileModificationTime(GetFileName());
 }

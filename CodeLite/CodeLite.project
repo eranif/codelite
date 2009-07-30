@@ -26,6 +26,8 @@
     <File Name="winprocess.cpp"/>
     <File Name="cl_calltip.cpp"/>
     <File Name="performance.cpp"/>
+    <File Name="fileextmanager.cpp"/>
+    <File Name="fileextmanager.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>
@@ -235,8 +237,8 @@
     <File Name="named_pipe_server.cpp"/>
     <File Name="named_pipe_server.h"/>
     <File Name="np_connections_server.cpp"/>
-    <File Name="..\sdk\codelite_indexer\network\cl_indexer_macros.h"/>
+    <File Name="../sdk/codelite_indexer/network/cl_indexer_macros.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

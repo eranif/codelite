@@ -315,7 +315,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 
 bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 {
-	//parse the line, in case we have an error, keep this breakpoint in the queue
+	// parse the line, in case we have an error, keep this breakpoint in the queue
 	if (line.StartsWith(wxT("^done"))) {
 		//remove this breakpoint from the breakpoint list
 		for (size_t i=0; i< m_bplist->size(); i++) {
@@ -325,6 +325,10 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 				break;
 			}
 		}
+	} else if(line.StartsWith(wxT("^error"))) {
+		// failed to place the breakpoint
+		m_observer->UpdateAddLine(wxString::Format(wxT("ERROR: failed to place breakpoint: \"%s\""), line.c_str()));
+		return true;
 	}
 
 	// so the breakpoint ID will come in form of

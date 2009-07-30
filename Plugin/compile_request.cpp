@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "compile_request.h"
+#include "compile_request.h"
 #include "imanager.h"
 #include "macros.h"
 #include "compiler.h"
@@ -40,7 +40,7 @@ CompileRequest::CompileRequest(wxEvtHandler *owner, const QueueCommand &buildInf
 		: ShellCommand(owner, buildInfo)
 		, m_fileName(fileName)
 		, m_premakeOnly(runPremakeOnly)
-        , m_preprocessOnly(preprocessOnly)
+		, m_preprocessOnly(preprocessOnly)
 {
 }
 
@@ -69,12 +69,18 @@ void CompileRequest::Process(IManager *manager)
 		return;
 	}
 
-	// TODO:: make the builder name configurable
+	// since this code can be called from inside the application OR
+	// from inside a DLL, we use the application pointer from the manager
+	// when available, otherwise, events will not be processed inside
+	// plugins
+	wxApp *app = manager ? manager->GetTheApp() : wxTheApp;
+	wxString pname (proj->GetName());
+
 	BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_fileName.IsEmpty() == false) {
 		//we got a complie request of a single file
 		cmd = m_preprocessOnly ? builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg)
-                               : builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg);
+		      : builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), m_fileName, errMsg);
 	} else if (m_info.GetProjectOnly()) {
 		cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
 	} else {
@@ -83,16 +89,16 @@ void CompileRequest::Process(IManager *manager)
 
 	// Notify plugins that a compile process is going to start
 	wxCommandEvent event(wxEVT_BUILD_STARTING);
-	
-	wxString pname (proj->GetName());
 	event.SetClientData((void*)&pname);
-	
-	// since this code can be called from inside the application OR
-	// from inside a DLL, we use the application pointer from the manager
-	// when available, otherwise, events will not be processed inside
-	// plugins
-	wxApp *app = manager ? manager->GetTheApp() : wxTheApp;
-	app->ProcessEvent(event);
+	event.SetString( m_info.GetConfiguration() );
+
+	if (app->ProcessEvent(event)) {
+
+		// the build is being handled by some plugin, no need to build it
+		// using the standard way
+		SetBusy(false);
+		return;
+	}
 
 	// Send the EVENT_STARTED : even if this event is sent, next event will
 	// be post, so no way to be sure the the build process has not started
@@ -109,12 +115,12 @@ void CompileRequest::Process(IManager *manager)
 
 	}
 
-	if(bldConf) {
+	if (bldConf) {
 		wxString cmpType = bldConf->GetCompilerType();
 		CompilerPtr cmp = bsc->GetCompiler(cmpType);
-		if(cmp) {
+		if (cmp) {
 			wxString value( cmp->GetPathVariable() );
-			if(value.Trim().Trim(false).IsEmpty() == false) {
+			if (value.Trim().Trim(false).IsEmpty() == false) {
 				wxLogMessage(wxString::Format(wxT("Setting PATH to '%s'"), value.c_str()));
 				om[wxT("PATH")] = value.Trim().Trim(false);
 			}
@@ -153,7 +159,7 @@ void CompileRequest::Process(IManager *manager)
 
 		// print the prefix message of the build start. This is important since the parser relies
 		// on this message
-		if(m_info.GetProjectOnly() || m_fileName.IsEmpty() == false){
+		if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
 			wxString configName(m_info.GetConfiguration());
 
 			//also, send another message to the main frame, indicating which project is being built
@@ -164,7 +170,7 @@ void CompileRequest::Process(IManager *manager)
 				text << wxT("----------\n");
 			} else if (m_preprocessOnly) {
 				text << wxT(" (Preprocess Single File)----------\n");
-            } else {
+			} else {
 				text << wxT(" (Single File Build)----------\n");
 			}
 			AppendLine(text);

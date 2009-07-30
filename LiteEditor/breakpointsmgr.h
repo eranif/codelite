@@ -31,6 +31,7 @@
 #include "wx/string.h"
 #include "debugger.h"
 #include "cl_editor.h"
+#include "sessionmanager.h"
 #include "wx/arrstr.h"
 
 #define FIRST_INTERNAL_ID 10000
@@ -123,7 +124,7 @@ public:
 	 * all breakpoints will be passed to the debugger
 	 * once started
 	 */
-	bool AddBreakpoint(BreakpointInfo &bp);
+	bool AddBreakpoint(const BreakpointInfo &bp);
 
 	/**
 	 * Delete break point by id
@@ -194,5 +195,15 @@ public:
 	 * Get a unique id for a breakpoint, to use when the debugger isn't running
 	 */
 	int GetNextID() { return ++NextInternalID; }
+
+	/**
+	 * Save session
+	 */
+	 void SaveSession(SessionEntry& session);
+
+	/**
+	 * Load session
+	 */
+	 void LoadSession(const SessionEntry& session);
 };
 #endif //BREAKPOINTS_MANAGER_H

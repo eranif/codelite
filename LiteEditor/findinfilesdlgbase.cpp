@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -14,7 +14,10 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
 	wxBoxSizer* bSizer1;
-	bSizer1 = new wxBoxSizer( wxVERTICAL );
+	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
+	
+	wxBoxSizer* bSizer91;
+	bSizer91 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 2, 2, 0, 0 );
@@ -41,105 +44,132 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	m_dirPicker = new DirPicker(this, wxID_ANY, wxT("..."), wxEmptyString, _("Select a folder:"), wxDefaultPosition, wxDefaultSize, wxDP_USE_COMBOBOX);
 	bSizer10->Add( m_dirPicker, 1, wxALL, 5 );
 	
-	m_btnAddPath = new wxButton( this, wxID_ANY, _("Add"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+	m_btnAddPath = new wxButton( this, wxID_ANY, _("&Add"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	bSizer10->Add( m_btnAddPath, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	fgSizer1->Add( bSizer10, 1, wxEXPAND, 5 );
 	
-	bSizer1->Add( fgSizer1, 0, wxEXPAND|wxALL, 5 );
+	bSizer91->Add( fgSizer1, 0, wxEXPAND|wxALL, 5 );
 	
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_listPaths = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizer6->Add( m_listPaths, 1, wxRIGHT|wxLEFT|wxEXPAND, 5 );
+	bSizer6->Add( m_listPaths, 1, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 	
 	m_btnRemovelPath = new wxButton( this, wxID_ANY, _("-"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	m_btnRemovelPath->SetToolTip( _("Remove the selected path from the search paths") );
+	m_btnRemovelPath->SetToolTip( _("Remove the selected search path") );
 	
 	bSizer9->Add( m_btnRemovelPath, 0, wxALL|wxEXPAND, 5 );
 	
 	m_btnClearPaths = new wxButton( this, wxID_ANY, _("X"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
-	m_btnClearPaths->SetToolTip( _("Remove all search paths") );
+	m_btnClearPaths->SetToolTip( _("Clear the search path list") );
 	
 	bSizer9->Add( m_btnClearPaths, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer6->Add( bSizer9, 0, wxALIGN_CENTER_VERTICAL, 5 );
 	
-	bSizer1->Add( bSizer6, 1, wxEXPAND|wxALL, 5 );
+	bSizer91->Add( bSizer6, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
-	wxStaticBoxSizer* sbSizer1;
-	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Options") ), wxVERTICAL );
-	
-	m_matchCase = new wxCheckBox( this, wxID_ANY, _("&Match case"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	sbSizer1->Add( m_matchCase, 0, wxALL, 5 );
-	
-	m_matchWholeWord = new wxCheckBox( this, wxID_ANY, _("Match &whole word"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	sbSizer1->Add( m_matchWholeWord, 0, wxALL, 5 );
-	
-	m_regualrExpression = new wxCheckBox( this, wxID_ANY, _("Regular &expression"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	sbSizer1->Add( m_regualrExpression, 0, wxALL, 5 );
-	
-	m_fontEncoding = new wxCheckBox( this, wxID_ANY, _("Use the editor's font encoding (when left unchecked encoding is set to UTF8)"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	sbSizer1->Add( m_fontEncoding, 0, wxALL, 5 );
-	
-	m_printScope = new wxCheckBox( this, wxID_ANY, _("Display C++ scope (class/function) in result match"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	sbSizer1->Add( m_printScope, 0, wxALL, 5 );
-	
-	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
-	fgSizer2->AddGrowableCol( 1 );
-	fgSizer2->SetFlexibleDirection( wxBOTH );
-	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxBoxSizer* bSizer5;
+	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
 	
 	wxStaticText* m_staticText3;
 	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Look at these file &types :"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
-	fgSizer2->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer5->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_fileTypes = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	m_fileTypes->Append( _("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx;*.hh;*.inl;*.inc") );
 	m_fileTypes->Append( _("*.*") );
-	fgSizer2->Add( m_fileTypes, 1, wxALL|wxEXPAND, 5 );
+	bSizer5->Add( m_fileTypes, 1, wxALL, 5 );
+	
+	bSizer91->Add( bSizer5, 0, wxEXPAND|wxALL, 5 );
+	
+	wxStaticBoxSizer* sbSizer1;
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Options:") ), wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer2;
+	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer2->SetFlexibleDirection( wxBOTH );
+	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_matchCase = new wxCheckBox( this, wxID_ANY, _("&Match case"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	fgSizer2->Add( m_matchCase, 0, wxALL|wxEXPAND, 5 );
+	
+	m_matchWholeWord = new wxCheckBox( this, wxID_ANY, _("Match &whole word"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	fgSizer2->Add( m_matchWholeWord, 0, wxALL|wxEXPAND, 5 );
+	
+	m_regualrExpression = new wxCheckBox( this, wxID_ANY, _("Regular &expression"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	fgSizer2->Add( m_regualrExpression, 0, wxALL|wxEXPAND, 5 );
+	
+	m_fontEncoding = new wxCheckBox( this, wxID_ANY, _("Use the editor's font encoding (when left unchecked encoding is set to UTF8)"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	fgSizer2->Add( m_fontEncoding, 0, wxALL|wxEXPAND, 5 );
+	
+	m_printScope = new wxCheckBox( this, wxID_ANY, _("Display C++ scope (class/function) for the matches"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	fgSizer2->Add( m_printScope, 0, wxALL, 5 );
+	
+	m_checkBoxSaveFilesBeforeSearching = new wxCheckBox( this, wxID_ANY, _("&Save modified files before searching"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	fgSizer2->Add( m_checkBoxSaveFilesBeforeSearching, 0, wxALL|wxEXPAND, 5 );
+	
+	sbSizer1->Add( fgSizer2, 0, wxEXPAND, 5 );
+	
+	bSizer91->Add( sbSizer1, 0, wxEXPAND|wxALL, 10 );
+	
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
 	
 	wxStaticText* m_staticText4;
 	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Display search results in tab :"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
-	fgSizer2->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer7->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	wxArrayString m_searchResultsTabChoices;
-	m_searchResultsTab = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_searchResultsTabChoices, 0 );
-	m_searchResultsTab->SetSelection( 0 );
-	fgSizer2->Add( m_searchResultsTab, 1, wxALL|wxEXPAND, 5 );
+	m_resInNewTab = new wxRadioButton( this, wxID_ANY, _("New tab"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+	m_resInNewTab->SetValue( true ); 
+	bSizer7->Add( m_resInNewTab, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	sbSizer1->Add( fgSizer2, 1, wxEXPAND, 5 );
 	
-	bSizer1->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
+	bSizer7->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_resInActiveTab = new wxRadioButton( this, wxID_ANY, _("Active tab (overwrite last search)"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer7->Add( m_resInActiveTab, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	
+	bSizer7->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	bSizer91->Add( bSizer7, 0, wxEXPAND|wxALL, 5 );
+	
+	bSizer1->Add( bSizer91, 1, wxEXPAND, 5 );
+	
+	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL|wxLI_VERTICAL );
+	bSizer1->Add( m_staticline1, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
 	wxBoxSizer* bSizer2;
-	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
+	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
 	m_find = new wxButton( this, wxID_ANY, _("&Find"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer2->Add( m_find, 1, wxALL|wxEXPAND, 5 );
+	m_find->SetDefault(); 
+	bSizer2->Add( m_find, 0, wxALL|wxEXPAND, 5 );
 	
 	m_replaceAll = new wxButton( this, wxID_ANY, _("Find &Replace Candidates"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer2->Add( m_replaceAll, 1, wxALL|wxEXPAND, 5 );
+	bSizer2->Add( m_replaceAll, 0, wxALL|wxEXPAND, 5 );
 	
-	m_stop = new wxButton( this, wxID_ANY, _("&Stop Search"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer2->Add( m_stop, 1, wxALL|wxEXPAND, 5 );
+	m_stop = new wxButton( this, wxID_ANY, _("Sto&p Search"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer2->Add( m_stop, 0, wxALL|wxEXPAND, 5 );
 	
 	m_cancel = new wxButton( this, wxID_ANY, _("Close"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer2->Add( m_cancel, 1, wxALL|wxEXPAND, 5 );
+	bSizer2->Add( m_cancel, 0, wxALL|wxEXPAND, 5 );
 	
-	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxALL, 5 );
+	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL|wxALL|wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
@@ -155,6 +185,7 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	m_regualrExpression->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_fontEncoding->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_printScope->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
+	m_checkBoxSaveFilesBeforeSearching->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_find->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_replaceAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_stop->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
@@ -173,6 +204,7 @@ FindInFilesDialogBase::~FindInFilesDialogBase()
 	m_regualrExpression->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_fontEncoding->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_printScope->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
+	m_checkBoxSaveFilesBeforeSearching->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_find->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_replaceAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );
 	m_stop->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( FindInFilesDialogBase::OnClick ), NULL, this );

@@ -23,6 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "custom_tabcontainer.h"
+#include "notebookcustomdlg.h"
+#include <wx/app.h>
+#include <wx/xrc/xmlres.h>
 #include "drawingutils.h"
 #include "wx/settings.h"
 #include "wx/sizer.h"
@@ -133,11 +136,12 @@ void wxTabContainer::DoDrawMargin(wxDC &dc, int orientation, const wxRect &rr)
 //-------------------------------------------------------
 //-------------------------------------------------------
 wxTabContainer::wxTabContainer(wxWindow *win, wxWindowID id, int orientation, long style)
-		: wxPanel(win, id)
-		, m_orientation(orientation)
-		, m_draggedTab(NULL)
+		: wxPanel         (win, id)
+		, m_orientation   (orientation)
+		, m_draggedTab    (NULL)
 		, m_rightClickMenu(NULL)
-		, m_bmpHeight(14)
+		, m_bmpHeight     (14)
+		, m_fixedTabWidth (120)
 {
 	Initialize();
 }
@@ -381,9 +385,10 @@ void wxTabContainer::SetOrientation(const int& orientation)
 {
 	this->m_orientation = orientation;
 
-	wxSizer *sz = m_tabsSizer;
+	wxBoxSizer *sz = (wxBoxSizer*)m_tabsSizer;
 	wxSizerItemList items = sz->GetChildren();
 
+	std::vector<CustomTab*> tabs;
 	wxSizerItemList::iterator iter = items.begin();
 	for (; iter != items.end(); iter++) {
 		wxSizerItem *item = *iter;
@@ -391,8 +396,29 @@ void wxTabContainer::SetOrientation(const int& orientation)
 		if (win) {
 			CustomTab *curtab = (CustomTab*)win;
 			curtab->SetOrientation(m_orientation);
+			tabs.push_back(curtab);
 		}
 	}
+	sz->Clear();
+
+	switch (orientation) {
+	case wxTOP:
+	case wxBOTTOM:
+		((wxBoxSizer*)m_tabsSizer)->SetOrientation(wxHORIZONTAL);
+		((wxBoxSizer*)GetSizer())->SetOrientation(wxHORIZONTAL);
+		break;
+	default:
+		((wxBoxSizer*)m_tabsSizer)->SetOrientation(wxVERTICAL);
+		((wxBoxSizer*)GetSizer())->SetOrientation(wxVERTICAL);
+		break;
+	}
+
+	// add the tabs
+	for (size_t i=0; i<tabs.size(); i++) {
+		AddTab(tabs.at(i));
+	}
+
+	Layout();
 	GetSizer()->Layout();
 }
 
@@ -753,10 +779,16 @@ bool DropButton::IsItemSelected(size_t n)
 
 void DropButton::OnMenuSelection(wxCommandEvent &e)
 {
-	size_t item = (size_t)e.GetId();
+	if (e.GetId() == XRCID("customize")) {
+		Notebook *bk = (Notebook*)m_tabContainer->GetParent();
+		NotebookCustomDlg dlg(wxTheApp->GetTopWindow(), bk, bk->GetFixedTabWidth());
+		dlg.ShowModal();
 
-	CustomTab *tab = m_tabContainer->IndexToTab(item);
-	m_tabContainer->SetSelection(tab, true);
+	} else {
+		size_t item = (size_t)e.GetId();
+		CustomTab *tab = m_tabContainer->IndexToTab(item);
+		m_tabContainer->SetSelection(tab, true);
+	}
 }
 
 void DropButton::OnPaint(wxPaintEvent& e)
@@ -784,7 +816,7 @@ void DropButton::OnPaint(wxPaintEvent& e)
 		dc.DrawBitmap(m_arrowDownBmp, bmpX, bmpY, true);
 	}
 
-	if(book->GetBookStyle() & wxVB_BORDER){
+	if (book->GetBookStyle() & wxVB_BORDER) {
 
 		wxColour borderColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), DrawingUtils::GetDdkShadowLightFactor2());
 		dc.SetPen(borderColour);
@@ -813,7 +845,7 @@ int wxTabContainer::GetBmpHeight() const
 
 void wxTabContainer::SetBmpHeight(int height)
 {
-	if(height < 0){
+	if (height < 0) {
 		return;
 	}
 
@@ -821,3 +853,67 @@ void wxTabContainer::SetBmpHeight(int height)
 	Resize();
 }
 
+void wxTabContainer::SetFixedTabWidth(const size_t& fixedTabWidth)
+{
+	this->m_fixedTabWidth = fixedTabWidth;
+	Resize();
+	Layout();
+
+}
+
+void DropButton::OnLeftDown(wxMouseEvent& e)
+{
+	size_t count = GetItemCount();
+	if (count == 0) {
+		return;
+	}
+
+	wxRect rr = GetSize();
+	wxMenu popupMenu;
+
+#ifdef __WXMSW__
+	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+#endif
+
+	for (size_t i=0; i<count; i++) {
+		wxString text = GetItem(i);
+		bool selected = IsItemSelected(i);
+
+		wxMenuItem *item = new wxMenuItem(&popupMenu, static_cast<int>(i), text, text, wxITEM_CHECK);
+
+		//set the font
+#ifdef __WXMSW__
+		if (selected) {
+			font.SetWeight(wxBOLD);
+		}
+		item->SetFont(font);
+#endif
+		popupMenu.Append( item );
+
+		//mark the selected item
+		item->Check(selected);
+
+		//restore font
+#ifdef __WXMSW__
+		font.SetWeight(wxNORMAL);
+#endif
+	}
+
+	wxMenuItem *item = new wxMenuItem(&popupMenu, XRCID("customize"), wxT("Customize..."), wxT("Customize..."), wxITEM_NORMAL);
+#ifdef __WXMSW__
+	font.SetWeight(wxNORMAL);
+	item->SetFont(font);
+#endif
+	popupMenu.AppendSeparator();
+	popupMenu.Append( item );
+
+	// connect an event handler to our menu
+	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DropButtonBase::OnMenuSelection), NULL, this);
+
+	m_state = BTN_PUSHED;
+	Refresh();
+	PopupMenu( &popupMenu, 0, rr.y + rr.height );
+
+	m_state = BTN_NONE;
+	Refresh();
+}

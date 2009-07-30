@@ -180,6 +180,7 @@ private:
 	bool m_tranActive;
 	bool m_isModified;
 	std::map<wxString, wxXmlNode*> m_vdCache;
+	time_t m_modifyTime;
 
 public:
 	const wxFileName &GetFileName() const {
@@ -417,7 +418,53 @@ public:
 	 */
 	wxString GetProjectInternalType() const;
 
+	/**
+	 * @brief return the plugins' data. This data is copied when using 'save project as template' functionality
+	 * @param plugin plugin name
+	 * @return plugins data or wxEmptyString
+	 */
+	wxString GetPluginData(const wxString &pluginName);
+
+	/**
+	 * @brief set the plugin data. This data is copied when using 'save project as template' functionality
+	 * @param plugin the plugins' name
+	 * @param data the data
+	 */
+	void SetPluginData(const wxString &pluginName, const wxString &data);
+
+	/**
+	 * @brief get all plugins data as map of plugin=value pair
+	 * @param pluginsDataMap [output]
+	 */
+	void GetAllPluginsData(std::map<wxString, wxString> &pluginsDataMap);
+
+	/**
+	 * @brief set all plugins data as map of plugin=value pair
+	 * @param pluginsDataMap
+	 */
+	void SetAllPluginsData(const std::map<wxString, wxString> &pluginsDataMap);
+
+	//----------------------------------
+	//File modifications
+	//----------------------------------
+
+	/**
+	 * return the last modification time (on disk) of editor's underlying file
+	 */
+	time_t GetFileLastModifiedTime() const;
+
+	/**
+	 * return/set the last modification time that was made by the editor
+	 */
+	time_t GetProjectLastModifiedTime() const {
+		return m_modifyTime;
+	}
+	void SetProjectLastModifiedTime(time_t modificationTime) {
+		m_modifyTime = modificationTime;
+	}
+
 private:
+
 	void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);
 	wxXmlNode *FindFile(wxXmlNode* parent, const wxString &file);
 
@@ -437,6 +484,8 @@ private:
 	 * Return list of projects that this projects depends on
 	 */
 	wxArrayString GetDependencies() const;
+
+	bool SaveXmlFile();
 };
 
 class ProjectData

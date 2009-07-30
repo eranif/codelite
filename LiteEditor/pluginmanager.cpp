@@ -102,7 +102,7 @@ void PluginManager::Load()
 	//does
 	LanguageST::Get()->SetTagsManager( GetTagsManager() );
 	TagsManagerST::Get()->SetLanguage( LanguageST::Get() );
-	
+
 #ifdef __WXGTK__
 	wxString pluginsDir(_U(PLUGINS_DIR));
 #else
@@ -432,7 +432,7 @@ void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name)
 	}
 }
 
-TagEntryPtr PluginManager::GetTagAtCaret(bool scoped, bool impl) 
+TagEntryPtr PluginManager::GetTagAtCaret(bool scoped, bool impl)
 {
     LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
     if (!editor)
@@ -490,6 +490,16 @@ void PluginManager::StopAndClearQueue()
 	ManagerST::Get()->StopBuild();
 }
 
+bool PluginManager::IsBuildInProgress() const
+{
+	return ManagerST::Get()->IsBuildInProgress();
+}
+
+bool PluginManager::IsBuildEndedSuccessfully() const
+{
+	return ManagerST::Get()->IsBuildEndedSuccessfully();
+}
+
 wxString PluginManager::GetProjectNameByFile(const wxString& fullPathFileName)
 {
 	return ManagerST::Get()->GetProjectNameByFile(fullPathFileName);
@@ -534,3 +544,20 @@ NavMgr* PluginManager::GetNavigationMgr()
 {
 	return NavMgr::Get();
 }
+
+void PluginManager::HookProjectSettingsTab(wxNotebook* book, const wxString &projectName, const wxString &configName)
+{
+	std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
+	for ( ; iter != m_plugins.end(); iter++ ) {
+		iter->second->HookProjectSettingsTab( book, projectName, configName );
+	}
+}
+
+void PluginManager::UnHookProjectSettingsTab(wxNotebook* book, const wxString &projectName, const wxString &configName)
+{
+	std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
+	for ( ; iter != m_plugins.end(); iter++ ) {
+		iter->second->UnHookProjectSettingsTab( book, projectName, configName );
+	}
+}
+

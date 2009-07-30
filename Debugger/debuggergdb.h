@@ -80,7 +80,7 @@ public:
 	virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
 	virtual bool Run(const wxString &args, const wxString &comm);
 	virtual bool Stop();
-	virtual bool Break(BreakpointInfo& bp);
+	virtual bool Break(const BreakpointInfo& bp);
 	virtual bool RemoveBreak(int bid);
 	virtual bool RemoveBreak(const wxString &fileName, long lineno);
 	virtual bool RemoveAllBreaks();

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "dirsaver.h"
+#include "pluginmanager.h"
 #include "windowattrmanager.h"
 #include "envvar_dlg.h"
 #include <wx/dirdlg.h>
@@ -118,6 +119,7 @@ ProjectConfigurationPanel::ProjectConfigurationPanel(wxWindow* parent, const wxS
 
 	ConnectEvents();
 	m_notebook->SetSelection(0);
+
 	//fill the dialog with values
 	InitDialog(m_configName, wxEmptyString);
 
@@ -157,11 +159,27 @@ void ProjectConfigurationPanel::InitDialog(const wxString &configName, const wxS
 	if (!oldConfig.IsEmpty() && oldConfig != GLOBAL_SETTINGS_LABEL) {
 		// save old values before replacing them
 		SaveValues(oldConfig);
+
+		// Notify the plugins to save their data
+		SendCmdEvent(wxEVT_CMD_PROJ_SETTINGS_SAVED, (void*)&m_projectName, oldConfig);
 	}
+
+	Freeze();
+
+	int sel = m_notebook->GetSelection();
+	// Load the new tab for the new configuration
+	PluginManager::Get()->HookProjectSettingsTab(m_notebook, m_projectName, configName);
 
 	ClearValues();
 	CopyValues(configName);
 	DoUpdatePages(m_checkEnableCustomBuild->IsChecked());
+
+	if( sel != wxNOT_FOUND ) {
+		m_notebook->SetSelection( sel );
+	}
+
+	Thaw();
+	Layout();
 }
 
 void ProjectConfigurationPanel::ClearValues()
@@ -480,6 +498,9 @@ void ProjectConfigurationPanel::SaveValues(const wxString &confName)
 
 	//save settings
 	ManagerST::Get()->SetProjectSettings(m_projectName, projSettingsPtr);
+
+	// Notify the plugins to save their data
+	SendCmdEvent(wxEVT_CMD_PROJ_SETTINGS_SAVED, (void*)&m_projectName, confName);
 }
 
 void ProjectConfigurationPanel::ConnectEvents()
@@ -586,7 +607,7 @@ void ProjectSettingsDlg::OnConfigurationTypeSelected(wxCommandEvent &event)
 	GetSizer()->Layout();
 
 	//Layout(); // JFO : doesn't work, I don't kow why...
-				// EI  : calling each sizer for layout seems to work. Looks like a bug in WX
+	// EI  : calling each sizer for layout seems to work. Looks like a bug in WX
 	event.Skip();
 }
 
@@ -1255,4 +1276,9 @@ void GlobalSettingsPanel::OnResourceCmpAddPath(wxCommandEvent &event)
 		SetSettingsModified();
 	}
 	event.Skip();
+}
+
+ProjectConfigurationPanel::~ProjectConfigurationPanel()
+{
+	PluginManager::Get()->UnHookProjectSettingsTab(m_notebook, m_projectName, wxEmptyString /* all tabs */);
 }

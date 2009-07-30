@@ -31,6 +31,7 @@
 #include <wx/tokenzr.h>
 #include "macros.h"
 #include "wx/regex.h"
+#include "globals.h"
 
 Workspace::Workspace()
 {
@@ -39,7 +40,7 @@ Workspace::Workspace()
 Workspace::~Workspace()
 {
 	if ( m_doc.IsOk() ) {
-		m_doc.Save(m_fileName.GetFullPath());
+		SaveXmlFile();
 	}
 }
 
@@ -59,7 +60,7 @@ wxString Workspace::ExpandVariables(const wxString &expression) const
 void Workspace::CloseWorkspace()
 {
 	if (m_doc.IsOk()) {
-		m_doc.Save(m_fileName.GetFullPath());
+		SaveXmlFile();
 		m_doc = wxXmlDocument();
 	}
 
@@ -86,6 +87,8 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
 		errMsg = wxT("Corrupted workspace file");
 		return false;
 	}
+
+	SetWorkspaceLastModifiedTime(GetFileLastModifiedTime());
 
 	// This function sets the working directory to the workspace directory!
 	::wxSetWorkingDirectory(m_fileName.GetPath());
@@ -138,8 +141,8 @@ void Workspace::SetBuildMatrix(BuildMatrixPtr mapping)
 		delete oldMapping;
 	}
 	parent->AddChild(mapping->ToXml());
-	m_doc.Save(m_fileName.GetFullPath());
-        
+	SaveXmlFile();
+
     // force regeneration of makefiles for all projects
 	for (std::map<wxString, ProjectPtr>::iterator iter = m_projects.begin(); iter != m_projects.end(); iter++) {
         iter->second->SetModified(true);
@@ -150,7 +153,7 @@ bool Workspace::CreateWorkspace(const wxString &name, const wxString &path, wxSt
 {
 	// If we have an open workspace, close it
 	if ( m_doc.IsOk() ) {
-		if ( !m_doc.Save(m_fileName.GetFullPath()) ) {
+		if ( !SaveXmlFile() ) {
 			errMsg = wxT("Failed to save current workspace");
 			return false;
 		}
@@ -176,7 +179,7 @@ bool Workspace::CreateWorkspace(const wxString &name, const wxString &path, wxSt
 	m_doc.GetRoot()->AddProperty(wxT("Name"), name);
 	m_doc.GetRoot()->AddProperty(wxT("Database"), dbFileName.GetFullPath());
 
-	m_doc.Save(m_fileName.GetFullPath());
+	SaveXmlFile();
 	//create an empty build matrix
 	SetBuildMatrix(new BuildMatrix(NULL));
 	return true;
@@ -263,7 +266,7 @@ void Workspace::RemoveProjectFromBuildMatrix(ProjectPtr prj)
 {
 	BuildMatrixPtr matrix = GetBuildMatrix();
 	wxString selConfName = matrix->GetSelectedConfigurationName();
-	
+
 	std::list<WorkspaceConfigurationPtr> wspList = matrix->GetConfigurations();
 	std::list<WorkspaceConfigurationPtr>::iterator iter = wspList.begin();
 	for (; iter !=  wspList.end(); iter++) {
@@ -280,7 +283,7 @@ void Workspace::RemoveProjectFromBuildMatrix(ProjectPtr prj)
 		(*iter)->SetConfigMappingList(prjList);
 		matrix->SetConfiguration((*iter));
 	}
-	
+
 	// and set the configuration name
 	matrix->SetSelectedConfigurationName(selConfName);
 	SetBuildMatrix(matrix);
@@ -312,7 +315,7 @@ bool Workspace::CreateProject(const wxString &name, const wxString &path, const 
 		SetActiveProject(name, true);
 	}
 
-	m_doc.Save(m_fileName.GetFullPath());
+	SaveXmlFile();
 	if (addToBuildMatrix) {
 		AddProjectToBuildMatrix(proj);
 	}
@@ -375,7 +378,7 @@ bool Workspace::AddProject(const wxString & path, wxString &errMsg)
 		node->AddProperty(wxT("Path"), fn.GetFullPath());
 		node->AddProperty(wxT("Active"), m_projects.size() == 1 ? wxT("Yes") : wxT("No"));
 		m_doc.GetRoot()->AddChild(node);
-		if (!m_doc.Save(m_fileName.GetFullPath())) {
+		if (!SaveXmlFile()) {
 			wxMessageBox(_("Failed to save workspace file to disk. Please check that you have permission to write to disk"),
 			             wxT("CodeLite"), wxICON_ERROR | wxOK);
 			return false;
@@ -472,7 +475,7 @@ bool Workspace::RemoveProject(const wxString &name, wxString &errMsg)
 			}
 		}
 	}
-	return m_doc.Save( m_fileName.GetFullPath() );
+	return SaveXmlFile();
 }
 
 wxString Workspace::GetActiveProjectName()
@@ -507,7 +510,7 @@ void Workspace::SetActiveProject(const wxString &name, bool active)
 		}
 		child = child->GetNext();
 	}
-	m_doc.Save( m_fileName.GetFullPath() );
+	SaveXmlFile();
 }
 
 bool Workspace::CreateVirtualDirectory(const wxString &vdFullPath, wxString &errMsg)
@@ -548,6 +551,14 @@ bool Workspace::RemoveVirtualDirectory(const wxString &vdFullPath, wxString &err
 	return proj->DeleteVirtualDir(fixedPath);
 }
 
+bool Workspace::SaveXmlFile()
+{
+	bool ok = m_doc.Save(m_fileName.GetFullPath());
+	SetWorkspaceLastModifiedTime(GetFileLastModifiedTime());
+
+	return ok;
+}
+
 void Workspace::Save()
 {
 	if ( m_doc.IsOk() ) {
@@ -555,7 +566,7 @@ void Workspace::Save()
 		for (; iter != m_projects.end(); iter ++) {
 			iter->second->Save();
 		}
-		m_doc.Save(m_fileName.GetFullPath());
+		SaveXmlFile();
 	}
 }
 
@@ -632,18 +643,6 @@ BuildConfigPtr Workspace::GetProjBuildConf(const wxString &projectName, const wx
 	return NULL;
 }
 
-bool Workspace::ReloadProject(const wxString& file)
-{
-	// first search for the project file
-	ProjectPtr proj(new Project());
-	if (!proj->Load(file)) {
-		wxLogMessage(wxT("Failed to load project file: '") + file + wxT("'"));
-		return false;
-	}
-	m_projects[proj->GetName()] = proj;
-	return true;
-}
-
 void Workspace::ReloadWorkspace()
 {
 	m_doc = wxXmlDocument();
@@ -658,4 +657,9 @@ void Workspace::ReloadWorkspace()
 	if (!OpenWorkspace(m_fileName.GetFullPath(), err_msg)) {
 		wxLogMessage(wxT("Reload workspace: ")+ err_msg);
 	}
+}
+
+time_t Workspace::GetFileLastModifiedTime() const
+{
+	return GetFileModificationTime(GetWorkspaceFileName());
 }

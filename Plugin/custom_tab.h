@@ -42,33 +42,33 @@ class wxTabContainer;
 class CustomTab : public wxPanel
 {
 
-	wxString m_text;
-	wxString m_tooltip;
-	wxBitmap m_bmp;
-	bool m_selected;
-	int m_padding;
-	int m_heightPadding;
-	int m_orientation;
-	wxWindow *m_window;
-	bool m_leftDown;
-	bool m_hovered;
-	wxRect m_xButtonRect;
-	wxBitmap m_xButtonNormalBmp;
-	wxBitmap m_xButtonPressedBmp;
-	long m_style;
-	XState m_x_state;
-	int m_x_padding;
+	wxString    m_text;
+	wxString    m_tooltip;
+	wxBitmap    m_bmp;
+	bool        m_selected;
+	int         m_padding;
+	int         m_heightPadding;
+	int         m_orientation;
+	wxWindow *  m_window;
+	bool        m_leftDown;
+	bool        m_hovered;
+	wxRect      m_xButtonRect;
+	wxBitmap    m_xButtonNormalBmp;
+	wxBitmap    m_xButtonPressedBmp;
+	XState      m_x_state;
+	int         m_x_padding;
+	void*       m_userData;
 
 protected:
 	int CalcTabHeight();
 	int CalcTabWidth();
 
-	void DoDrawVerticalTab(wxDC &dc);
-	void DoDrawHorizontalTab(wxDC &dc);
+	void            DoDrawVerticalTab(wxDC &dc);
+	void            DoDrawHorizontalTab(wxDC &dc);
 	const wxBitmap &GetXBmp();
-
 	wxTabContainer *GetTabContainer();
-
+	bool            IsFixedWidthTabs();
+	long            GetBookStyle();
 public:
 
 	CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const wxString &tooltip, const wxBitmap &bmp = wxNullBitmap, bool selected = false, int orientation = wxLEFT, long style=0);
@@ -129,6 +129,12 @@ public:
 		return m_x_padding;
 	}
 
+	void SetUserData(void* userData) {
+		this->m_userData = userData;
+	}
+	void* GetUserData() {
+		return m_userData;
+	}
 	DECLARE_EVENT_TABLE()
 
 	//Event handlers

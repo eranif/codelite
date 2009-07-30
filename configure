@@ -16,14 +16,22 @@ createRevisionFile()
 createVariables()
 {
 	## set the compiler name
+	#  Note the lack of -fPIC. Only use this for .so libs; strange and random bugs occur otherwise
 	compiler_name="g++ "
 	c_compiler_name="gcc "
 	exe_name="Runtime/codelite"
 	exe_name1="codelite"
-	is_plugin=$1
+	is_so_lib=$1
+
 	if [ "$is_64bit" = "yes" ]; then
-		compiler_name=${compiler_name}" -fPIC -DON_64_BIT "
-		c_compiler_name=${c_compiler_name}" -fPIC -DON_64_BIT "
+		compiler_name=${compiler_name}" -DON_64_BIT "
+		c_compiler_name=${c_compiler_name}" -DON_64_BIT "
+	fi
+
+	## If the non-plugin .so libs aren't installed with the plugin ones, add their dir to the rpath
+	rpaths="-Wl,-rpath,$plugins_dir"
+	if [ "$non_plugins_dir" != "$plugins_dir" ]; then
+		rpaths="$rpaths -Wl,-rpath,$non_plugins_dir"
 	fi
 
 	## set the executable name
@@ -56,17 +64,19 @@ createVariables()
 	echo "DESTDIR=" >> Makefile
 	echo "" >> Makefile
 	echo "CCFLAGS= -Wall \$(shell wx-config --cxxflags \$(WXCFG)) -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\\\"${prefix}/share/codelite\\\" -DPLUGINS_DIR=\\\"${plugins_dir}\\\"" >> Makefile
-	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
+	echo "LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) \\" >> Makefile
 	echo "	-lwxscintilla\$(EXT) -lwxpropgrid\$(EXT) -L${base_dir}/sdk/sqlite3/lib \$(shell wx-config --libs \$(WXCFG))" >> Makefile
+	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) \$(shell wx-config --libs \$(WXCFG))" >> Makefile
 
 
-	if [ "$is_plugin" = "no" ]; then
+	if [ "$is_so_lib" = "no" ]; then
 		echo "INCLUDES := \$(INCLUDES) -ILiteEditor " >> Makefile
 	fi
 	echo "" >> Makefile
 	if [ "$os_name" != "Darwin" ] ; then
 		echo "INCLUDES := \$(INCLUDES) \$(shell pkg-config --cflags gtk+-2.0)" >> Makefile
 		echo "LINK_FLAGS := \$(LINK_FLAGS) \$(shell pkg-config --libs gtk+-2.0)" >> Makefile
+		echo "PLUGIN_LINK_FLAGS := \$(PLUGIN_LINK_FLAGS) \$(shell pkg-config --libs gtk+-2.0)" >> Makefile
 	else
 		echo "CCFLAGS := \$(CCFLAGS) -D__APPLE__ -DMACOSX" >> Makefile
 	fi
@@ -80,15 +90,15 @@ createMainTargets()
 	echo "## build targets" >> Makefile
 
 	## default
-	target_all="all :  pre_build CodeLite Scintilla SQLite PropGrid SDK LiteEditor codelite_indexer Plugins "
+	target_all="all :  pre_build SQLite Scintilla PropGrid CodeLite SDK LiteEditor codelite_indexer Plugins "
 
 	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
-		target_all="all :  pre_build CodeLite Scintilla SQLite PropGrid SDK LiteEditor codelite_indexer Plugins post_build_msg"
+		target_all="$target_all post_build_msg"
 	fi
 
 	if [ "$os_name" = "Darwin" ]; then
-		target_all="all :  pre_build CodeLite Scintilla SQLite PropGrid SDK LiteEditor codelite_indexer Plugins mac_bundle"
+		target_all="$target_all Plugins mac_bundle"
 	fi
 
 	## add the "all" target to the makefile
@@ -137,45 +147,46 @@ createObjectList ()
 	echo >> Makefile
 }
 
-# create list of files for scintilla
-createRules_archive ()
-{
-	files_list=$1
-	object_list_name=$2
-	rule_name=$3
-	libname=$4
-	for a_file in $files_list
-	do
-
-		a_file_with_ext=`basename $a_file`
-		a_file_no_ext=`basename $a_file .cxx`
-		a_file_no_ext=`basename $a_file_no_ext .cpp`
-		a_file_no_ext=`basename $a_file_no_ext .c`
-		file_extension=`basename $a_file | cut -d. -f2`
-
-		if [ "$file_extension" = "c" ]; then
-			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
-			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
-			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
-		else
-			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
-			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
-			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
-		fi
-	done
-	echo >> Makefile
-
-	echo "${rule_name}: \$(${object_list_name})" >> Makefile
-	echo "	ar rcu \$(OUTPUT_DIR)/lib${libname}\$(EXT).a \$(${object_list_name})" >> Makefile
-	echo "	ranlib \$(OUTPUT_DIR)/lib${libname}\$(EXT).a " >> Makefile
-	echo >> Makefile
-}
+# create list of files for scintilla and other static libs: no longer used as no longer any static libs
+# createRules_archive ()
+# {
+# 	files_list=$1
+# 	object_list_name=$2
+# 	rule_name=$3
+# 	libname=$4
+# 
+# 	for a_file in $files_list
+# 	do
+# 
+# 		a_file_with_ext=`basename $a_file`
+# 		a_file_no_ext=`basename $a_file .cxx`
+# 		a_file_no_ext=`basename $a_file_no_ext .cpp`
+# 		a_file_no_ext=`basename $a_file_no_ext .c`
+# 		file_extension=`basename $a_file | cut -d. -f2`
+# 
+# 		if [ "$file_extension" = "c" ]; then
+# 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+# 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+# 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
+# 		else
+# 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+# 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+# 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
+# 		fi
+# 	done
+# 	echo >> Makefile
+# 
+# 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
+# 	echo "	ar rcu \$(OUTPUT_DIR)/lib${libname}\$(EXT).a \$(${object_list_name})" >> Makefile
+# 	echo "	ranlib \$(OUTPUT_DIR)/lib${libname}\$(EXT).a " >> Makefile
+# 	echo >> Makefile
+# }
 
 createCodeLiteIndexerMakefile ()
 {
@@ -191,8 +202,8 @@ createCodeLiteIndexerMakefile ()
 	compiler_name="g++ "
 	c_compiler_name="gcc "
 	if [ "$is_64bit" = "yes" ]; then
-		compiler_name=${compiler_name}" -fPIC -DON_64_BIT "
-		c_compiler_name=${c_compiler_name}" -fPIC -DON_64_BIT "
+		compiler_name=${compiler_name}" -DON_64_BIT "
+		c_compiler_name=${c_compiler_name}" -DON_64_BIT "
 	fi
 	## set the executable name
 	if [ "$enable_debug" = "yes" ]; then
@@ -265,55 +276,67 @@ createCodeLiteIndexerMakefile ()
 	cd ${current_wd}
 }
 
-createRules_sharedObject_no_link_flags ()
-{
-	files_list=$1
-	object_list_name=$2
-	rule_name=$3
-	libname=$4
-	for a_file in $files_list
-	do
+# createRules_sharedObject_no_link_flags ()
+# {
+# 	files_list=$1
+# 	object_list_name=$2
+# 	rule_name=$3
+# 	libname=$4
+# 	for a_file in $files_list
+# 	do
+# 
+# 		a_file_with_ext=`basename $a_file`
+# 		a_file_no_ext=`basename $a_file .cxx`
+# 		a_file_no_ext=`basename $a_file_no_ext .cpp`
+# 		a_file_no_ext=`basename $a_file_no_ext .c`
+# 		file_extension=`basename $a_file | cut -d. -f2`
+# 
+# 		if [ "$file_extension" = "c" ]; then
+# 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+# 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+# 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
+# 		else
+# 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+# 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+# 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
+# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
+# 		fi
+# 	done
+# 	echo >> Makefile
+# 
+# 	shared_obj_switch=" -shared "
+# 	if [ "$os_name" = "Darwin" ]; then
+# 		shared_obj_switch=" -dynamiclib "
+# 	fi
+# 
+# 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
+# 	echo "	\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) " >> Makefile
+# 	echo >> Makefile
+# }
 
-		a_file_with_ext=`basename $a_file`
-		a_file_no_ext=`basename $a_file .cxx`
-		a_file_no_ext=`basename $a_file_no_ext .cpp`
-		a_file_no_ext=`basename $a_file_no_ext .c`
-		file_extension=`basename $a_file | cut -d. -f2`
-
-		if [ "$file_extension" = "c" ]; then
-			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
-			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
-			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
-		else
-			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
-			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
-			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
-		fi
-	done
-	echo >> Makefile
-
-	shared_obj_switch=" -shared "
-	if [ "$os_name" = "Darwin" ]; then
-		shared_obj_switch=" -dynamiclib "
-	fi
-
-	echo "${rule_name}: \$(${object_list_name})" >> Makefile
-	echo "	\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) " >> Makefile
-	echo >> Makefile
-}
-
+## The rules created here all contain -fPIC. Any other shared-lib-creating functions *must* do this too
 createRules_sharedObject ()
 {
 	files_list=$1
 	object_list_name=$2
 	rule_name=$3
 	libname=$4
+	# createRules_sharedObject() creates both plugin and non-plugin libs
+	# For plugins, we want a cp -f line at the end to copy them to Runtime/plugins.
+	# For non-plugins we don't: they're installed direct from ./lib
+	dont_copy=$5
+	# Only use any additional link options on the Mac:
+	# they're not needed for Linux, and (on Linux at least) they break -j2
+	additional_link_libs=""
+	if [ "$os_name" = "Darwin" ];then
+	  additional_link_libs=$6
+	fi
+
 	for a_file in $files_list
 	do
 
@@ -325,18 +348,18 @@ createRules_sharedObject ()
 
 		if [ "$file_extension" = "c" ]; then
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(GCC) -fPIC \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(GCC) -fPIC \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
-			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
+			echo "	\$(GCC) -fPIC \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(CMP) -fPIC \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(CMP) -fPIC \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
-			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
+			echo "	\$(CMP) -fPIC \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
 		fi
 	done
 	echo >> Makefile
@@ -347,7 +370,10 @@ createRules_sharedObject ()
 	fi
 
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
-	echo "	\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
+	echo "	\$(CMP) -fPIC ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) \$(PLUGIN_LINK_FLAGS) ${additional_link_libs}" >> Makefile
+	if [ $dont_copy != "dont_copy" ]; then
+		echo "	cp -f ${base_dir}/\$(OUTPUT_DIR)/${libname}.so ${runtime_path}/." >> Makefile
+	fi
 	echo >> Makefile
 	echo "-include ${configuration}/*.o.d" >> Makefile
 	echo >> Makefile
@@ -387,6 +413,8 @@ createRules_exe ()
 	echo >> Makefile
 
 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
+	# Hack to make -j2 work. Without it, one job tries to make the CodeLite exe before the other has finished creating libpluginu.so
+	echo "	@sleep 1" >> Makefile
 	echo "	\$(CMP) -o ${exename} \$(${object_list_name}) \$(LINK_FLAGS)" >> Makefile
 	echo >> Makefile
 }
@@ -409,9 +437,20 @@ createPluginMakefile()
 	base_dir=".."
 
 	createVariables "yes"
-	createObjectList "*.cpp" "${plugin_name}Objects"
+
+	## Hack to include the md5c.c file in the makefile for the qmake plugin
+	if [ "$plugin_name" = "QmakePlugin" ] ; then
+	  createObjectList "*.cpp md5c.c" "${plugin_name}Objects"
+	else 
+	  createObjectList "*.cpp" "${plugin_name}Objects"
+	fi
+
 	createPluginTargets "${plugin_name}" "${post_install_path}"
-	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}"
+	if [ "$plugin_name" = "QmakePlugin" ] ; then
+	  createRules_sharedObject "*.cpp md5c.c" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT) -lwxpropgrid\$(EXT)"
+	else
+	  createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT) -lwxpropgrid\$(EXT)"
+	fi
 
 	## restore the path
 	cd ${current_wd}
@@ -452,7 +491,7 @@ createPluginTargets()
 	echo "" >> Makefile
 
 	echo "post_build:" >> Makefile
-	echo "	cp -fr ${base_dir}/\$(OUTPUT_DIR)/${plugin_name}.so ${runtime_path}/." >> Makefile
+	# Don't copy to ${runtime_path} here, do it in the target; otherwise it breaks 'make -j2'
 	echo "" >> Makefile
 
 }
@@ -469,7 +508,7 @@ createInstallTarget()
 	echo "	@mkdir -p \$(DESTDIR)$prefix/bin" >> Makefile
 	echo "	@cp \$(EXE_NAME) \$(DESTDIR)$prefix/bin/" >> Makefile
 	if [ "$make_symlink" = "yes" ] ; then
-	  echo "	@ln -s \$(DESTDIR)$prefix/bin/\$(EXE_NAME_NO_PATH) \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
+	  echo "	@ln -s \$(EXE_NAME_NO_PATH) \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
 	  echo "	@chmod +x \$(DESTDIR)$prefix/bin/CodeLite" >> Makefile
 	fi
 	echo "	@cp Runtime/codelite_fix_files \$(DESTDIR)$prefix/bin/" >> Makefile
@@ -484,6 +523,8 @@ createInstallTarget()
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/config" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/templates" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$plugins_dir/" >> Makefile
+	# In case the non-plugin.so libs aren't to go into the same dir as plugins...
+	echo "	@mkdir -p \$(DESTDIR)$non_plugins_dir/" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$plugins_dir/debuggers" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$plugins_dir/resources" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/images" >> Makefile
@@ -503,6 +544,8 @@ createInstallTarget()
 	echo "	@chmod -R +w \$(DESTDIR)$prefix/share/codelite/templates/* " >> Makefile
 	echo "	@cp -fpr Runtime/lexers/Default/*.xml \$(DESTDIR)$prefix/share/codelite/lexers/Default/" >> Makefile
 	echo "	@cp -fpr Runtime/lexers/BlackTheme/*.xml \$(DESTDIR)$prefix/share/codelite/lexers/BlackTheme/" >> Makefile
+	echo "	@cp -fpr lib/lib*${ext}.so \$(DESTDIR)$non_plugins_dir/" >> Makefile
+	echo "	@chmod 0644 \$(DESTDIR)$non_plugins_dir/*.so" >> Makefile
 	echo "	@cp -fpr lib/Debugger.so \$(DESTDIR)$plugins_dir/debuggers/" >> Makefile
 	echo "	@chmod 0644 \$(DESTDIR)$plugins_dir/debuggers/*.so" >> Makefile
 	echo "	@cp -fpr Runtime/index.html \$(DESTDIR)$prefix/share/codelite/" >> Makefile
@@ -537,6 +580,7 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/include/UnitTest++/" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/lib/libUnitTest++.a" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/share/codelite" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$non_plugins_dir/" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$plugins_dir/" >> Makefile
     # Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
 	echo "	@if test -w \$(DESTDIR)$prefix/share/applications ; then \\" >> Makefile
@@ -560,15 +604,15 @@ createEndMessage()
 	fi
 }
 
-checkCURL()
-{
-	if [ -d "/usr/include/curl/" ] || [ -d "/usr/local/include/curl/" ] ; then
-		echo "Found cURL installation"
-	else
-		echo "ERROR: Please install libcurl development package (under Ubuntu 7.10, the package name is libcurl4-dev)"
-		exit 1
-	fi
-}
+# checkCURL()
+# {
+# 	if [ -d "/usr/include/curl/" ] || [ -d "/usr/local/include/curl/" ] ; then
+# 		echo "Found cURL installation"
+# 	else
+# 		echo "ERROR: Please install libcurl development package (under Ubuntu 7.10, the package name is libcurl4-dev)"
+# 		exit 1
+# 	fi
+# }
 
 Show_Help_and_Exit()
 {
@@ -593,6 +637,7 @@ add_desktop_icon="yes"
 make_symlink="no"
 os_name=`uname -s`
 arch=`uname -m`
+
 
 ## Replace place holders in the desktop file
 rm -fr Runtime/codelite.desktop
@@ -635,6 +680,10 @@ do
 	shift
 done
 
+## To where shall we install the .so libs which used to be static e.g. libwxscintillau.so
+# I'm using plugins_dir for simplicity, but creating its own name make this easy to change
+non_plugins_dir=$plugins_dir
+
 ## remove old makefile
 makefile_name="Makefile"
 base_dir="."
@@ -657,13 +706,17 @@ createMainTargets
 echo >> Makefile
 
 ## Create the rules
-createRules_archive "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects" "Scintilla" "wxscintilla"
-createRules_archive "CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "codelite"
-createRules_archive "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "wxsqlite3"
-createRules_archive "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects" "PropGrid" "wxpropgrid"
-createRules_archive "Plugin/*.cpp " "SDKObjects" "SDK" "plugin"
+# First the non-plugin .so libs:
+createRules_sharedObject  "Plugin/*.cpp " "SDKObjects" "SDK" "libplugin\$(EXT)" "dont_copy" "-L./lib -lwxscintilla\$(EXT) -lcodelite\$(EXT)"
+createRules_sharedObject  "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects" "Scintilla" "libwxscintilla\$(EXT)" "dont_copy"
+createRules_sharedObject  "CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "libcodelite\$(EXT)" "dont_copy" "-L./lib -lwxsqlite3\$(EXT)"
+createRules_sharedObject  "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "libwxsqlite3\$(EXT)" "dont_copy" ""
+createRules_sharedObject  "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects" "PropGrid" "libwxpropgrid\$(EXT)" "dont_copy" ""
+
+# Then the binary, and indexer
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createCodeLiteIndexerMakefile "sdk/codelite_indexer/*.cpp sdk/codelite_indexer/network/*.cpp sdk/codelite_indexer/libctags/*.c sdk/codelite_indexer/libctags/*.cpp"
+
 createInstallTarget
 createUnInstallTarget
 
@@ -693,6 +746,7 @@ echo "wxformbuilder\\" >> Makefile
 echo "abbreviation\\" >> Makefile
 echo "SymbolView\\" >> Makefile
 echo "ContinuousBuild\\" >> Makefile
+echo "QmakePlugin" >> Makefile
 echo "" >> Makefile
 
 echo "plugins_install:\\" >> Makefile
@@ -713,7 +767,8 @@ echo "SnipWiz_install\\" >> Makefile
 echo "wxformbuilder_install\\" >> Makefile
 echo "abbreviation_install\\" >> Makefile
 echo "SymbolView_install\\" >> Makefile
-echo "ContinuousBuild_install" >> Makefile
+echo "ContinuousBuild_install\\" >> Makefile
+echo "QmakePlugin_install" >> Makefile
 echo "	@chmod 0644 \$(DESTDIR)$plugins_dir/*.so" >> Makefile
 echo "" >> Makefile
 
@@ -736,6 +791,7 @@ echo "wxformbuilder_clean\\" >> Makefile
 echo "abbreviation_clean\\" >> Makefile
 echo "SymbolView_clean\\" >> Makefile
 echo "ContinuousBuild_clean\\" >> Makefile
+echo "QmakePlugin_clean" >> Makefile
 echo "" >> Makefile
 
 ########################################################
@@ -758,3 +814,4 @@ createPluginMakefile "wxformbuilder" "wxformbuilder" "\$(DESTDIR)$plugins_dir/" 
 createPluginMakefile "abbreviation" "abbreviation" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "SymbolView" "SymbolView" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "ContinuousBuild" "ContinuousBuild" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "QmakePlugin" "QmakePlugin" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"

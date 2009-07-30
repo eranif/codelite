@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : archive.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : archive.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef ARCHIVE_H
@@ -47,6 +47,7 @@ class wxXmlNode;
 
 class SerializedObject;
 class TabInfo;
+class BreakpointInfo;
 
 WX_DECLARE_STRING_HASH_MAP( wxString, StringMap );
 
@@ -88,7 +89,8 @@ public:
 	bool Write(const wxString &name, const wxColour &colour);
 	bool Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
 	bool Write(const wxString &name, const std::map<wxString, wxString> &strinMap);
-	
+
+
 	//--------------------
 	// Read API
 	//--------------------
@@ -103,10 +105,10 @@ public:
 	bool Read(const wxString &name, wxPoint &pt);
 	bool Read(const wxString &name, StringMap &str_map);
 	bool Read(const wxString &name, SerializedObject *obj);
-	bool Read(const wxString &name, wxColour &colour);	
+	bool Read(const wxString &name, wxColour &colour);
 	bool Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
 	bool Read(const wxString &name, std::map<wxString, wxString> &strinMap);
-	
+
 private:
 	bool WriteSimple(long value, const wxString &typeName, const wxString &name);
 	bool ReadSimple(long &value, const wxString &typeName, const wxString &name);

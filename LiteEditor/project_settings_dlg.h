@@ -44,7 +44,7 @@ class ProjectConfigurationPanel : public ProjectConfigurationBasePanel
 	wxString m_configName;
 	wxString m_oldConfigurationName;
 	long m_selecteCustomTaregt;
-	
+
 protected:
 	void ConnectEvents();
 	void DoUpdatePages(bool checked);
@@ -66,15 +66,15 @@ protected:
 	void OnDownCommand(wxCheckListBox* list);
 	void OnNewCommand(wxCheckListBox* list);
 	void OnDeleteCommand(wxCheckListBox* list);
-	
+
 	virtual void OnDebuggingRemoteTarget(wxCommandEvent &e);
 	virtual void OnBrowseCommandWD(wxCommandEvent &e);
 	virtual void OnBrowseIntermediateDir(wxCommandEvent &e);
 	virtual void OnBrowseCustomBuildWD(wxCommandEvent &e);
-	
-	/** 
+
+	/**
 	 * Custom target handling
-	 */ 
+	 */
 	virtual void OnNewTarget(wxCommandEvent &e);
 	virtual void OnEditTarget(wxCommandEvent &e);
 	virtual void OnDeleteTarget(wxCommandEvent &e);
@@ -83,14 +83,15 @@ protected:
 	virtual void OnDeleteTargetUI(wxUpdateUIEvent &e);
 	virtual void OnEditTargetUI(wxUpdateUIEvent &e);
 	virtual void OnSelectDebuggerPath(wxCommandEvent &e);
-	
+
 	void DoEditItem(long item);
 	void DoUpdateItem(long item, const wxString& target, const wxString& cmd);
 	wxString GetTargetCommand(const wxString &target);
 public:
 	/** Constructor */
 	ProjectConfigurationPanel(wxWindow* parent, const wxString &configName, const wxString &projectName);
-	
+	virtual ~ProjectConfigurationPanel();
+
 	void InitDialog(const wxString &configName, const wxString &oldConfig);
 
 	/**
@@ -110,7 +111,7 @@ public:
 	virtual void OnCmdEvtVModified( wxCommandEvent& event ){
 		SetSettingsModified();
 	}
-	
+
 	virtual void OnCheckCompilerNeeded(wxCommandEvent &event);
 	virtual void OnCheckLinkerNeeded(wxCommandEvent &event);
 	virtual void OnAddSearchPath(wxCommandEvent &event);
@@ -185,7 +186,7 @@ protected:
 	virtual void OnCmdEvtVModified( wxCommandEvent& event ){
 		SetSettingsModified();
 	}
-	
+
 	virtual void OnButtonAddCompilerOptions(wxCommandEvent &event);
 	virtual void OnAddSearchPath(wxCommandEvent &event);
 	virtual void OnButtonAddPreprocessor(wxCommandEvent &event);
@@ -209,10 +210,10 @@ class ProjectSettingsDlg : public ProjectSettingsBaseDlg
 	wxString m_configName;
 	wxString m_oldConfigurationName;
 	long m_selecteCustomTarget;
-	
+
 	ProjectConfigurationPanel* m_configurationPanel;
 	GlobalSettingsPanel* m_globalSettingsPanel;
-	
+
 public:
 	/** Constructor */
 	ProjectSettingsDlg( wxWindow* parent, const wxString &configName, const wxString &projectName, const wxString &title );

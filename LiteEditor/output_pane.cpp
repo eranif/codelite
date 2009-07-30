@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "editor_config.h"
 #include <wx/dcbuffer.h>
 
 #include "output_pane.h"
@@ -36,14 +37,14 @@
 #include "taskpanel.h"
 
 
-const wxString OutputPane::FIND_IN_FILES_WIN= wxT("Find Results");
-const wxString OutputPane::BUILD_WIN        = wxT("Build");
-const wxString OutputPane::ERRORS_WIN       = wxT("Errors");
-const wxString OutputPane::OUTPUT_WIN		= wxT("Output");
-const wxString OutputPane::OUTPUT_DEBUG     = wxT("Debug");
-const wxString OutputPane::REPLACE_IN_FILES = wxT("Replace Results");
-const wxString OutputPane::TASKS			= wxT("Tasks");
-const wxString OutputPane::TRACE_TAB		= wxT("Trace");
+const wxString OutputPane::FIND_IN_FILES_WIN = wxT("Find Results");
+const wxString OutputPane::BUILD_WIN         = wxT("Build");
+const wxString OutputPane::ERRORS_WIN        = wxT("Errors");
+const wxString OutputPane::OUTPUT_WIN        = wxT("Output");
+const wxString OutputPane::OUTPUT_DEBUG      = wxT("Debug");
+const wxString OutputPane::REPLACE_IN_FILES  = wxT("Replace Results");
+const wxString OutputPane::TASKS             = wxT("Tasks");
+const wxString OutputPane::TRACE_TAB         = wxT("Trace");
 
 
 BEGIN_EVENT_TABLE(OutputPane, wxPanel)
@@ -70,7 +71,17 @@ void OutputPane::CreateGUIControls()
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(mainSizer);
 
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVB_TOP);
+	// load the notebook style from codelite settings file
+	long bookStyle = wxVB_TOP|wxVB_FIXED_WIDTH;
+	EditorConfigST::Get()->GetLongValue(wxT("OutputPane"), bookStyle);
+
+	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
+	// Calculate the widthest tab (the one with the 'Workspcae' label)
+	int xx, yy;
+	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	wxWindow::GetTextExtent(REPLACE_IN_FILES, &xx, &yy, NULL, NULL, &fnt);
+	m_book->SetFixedTabWidth(xx + 16 + 20);
+
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
 
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
@@ -79,7 +90,7 @@ void OutputPane::CreateGUIControls()
 	m_errorsWin = new ErrorsTab(m_buildWin, m_book, wxID_ANY, ERRORS_WIN);
 	m_book->AddPage(m_errorsWin, ERRORS_WIN, ERRORS_WIN, wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")));
 
-	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN);
+	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN, true);
 	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, FIND_IN_FILES_WIN, wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
 
 	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);

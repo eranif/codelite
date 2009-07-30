@@ -37,9 +37,19 @@ class IEditor;
 /**
  * \brief send command event to the application (wxTheApp),
  * \param eventId
- * \param clientData allocated data on the heap. Must be freed by the handler
+ * \param clientData any user data. Must NOT be freed by the handler
+ * \return same as wxTheApp->ProcessEvent()
  */
-void SendCmdEvent(int eventId, void *clientData = NULL);
+bool SendCmdEvent(int eventId, void *clientData = NULL);
+
+/**
+ * @brief send command event to the application (wxTheApp),
+ * @param eventId
+ * @param clientData any user data. Must NOT be freed by the handler
+ * @param str this string will be available by the handlers by calling event.GetString()
+ * @return same as wxTheApp->ProcessEvent()
+ */
+bool SendCmdEvent(int eventId, void *clientData, const wxString &str);
 
 /**
  * \brief post command event to the application (wxTheApp),
@@ -186,6 +196,12 @@ void StripSemiColons(wxString &str);
  * \brief Normalize the given path (change all \ by /)
  */
 wxString NormalizePath(const wxString &path);
+
+/**
+ * \brief Returns the file modification time in seconds after the epoch.
+ */
+time_t GetFileModificationTime(const wxString &filename);
+time_t GetFileModificationTime(const wxFileName &filename);
 
 #endif //GLOBALS_H
 

@@ -25,6 +25,9 @@
 #ifndef DEBUGGER_H
 #define DEBUGGER_H
 
+#include "archive.h"
+#include "serialized_object.h"
+
 #include "wx/string.h"
 #include "wx/arrstr.h"
 #include "wx/event.h"
@@ -73,7 +76,7 @@ struct ThreadEntry {
 typedef std::vector<StackEntry> StackEntryArray;
 typedef std::vector<ThreadEntry> ThreadEntryArray;
 
-class BreakpointInfo
+class BreakpointInfo: public SerializedObject
 {
 public:
 	// Where the bp is: file/lineno, function name (e.g. main()) or the memory location
@@ -140,6 +143,101 @@ public:
 		        && (ignore_number == BI.ignore_number) && (conditions == BI.conditions) && (commandlist == BI.commandlist) && (is_temp == BI.is_temp)
 		        && (bp_type==BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) && (!function_name.IsEmpty() ? (regex == BI.regex) : true));
 	}
+
+protected:
+	// SerializedObject interface
+	virtual void Serialize(Archive& arch) {
+		arch.Write(wxT("file"), file);
+		arch.Write(wxT("lineno"), lineno);
+		arch.Write(wxT("function_name"), function_name);
+		arch.Write(wxT("memory_address"), memory_address);
+		arch.Write(wxT("bp_type"), bp_type);
+		arch.Write(wxT("watchpoint_type"), watchpoint_type);
+		arch.Write(wxT("watchpt_data"), watchpt_data);
+		arch.Write(wxT("commandlist"), commandlist);
+		arch.Write(wxT("regex"), regex);
+		arch.Write(wxT("is_temp"), is_temp);
+		arch.Write(wxT("internal_id"), internal_id);
+		arch.Write(wxT("debugger_id"), debugger_id);
+		arch.Write(wxT("is_enabled"), is_enabled);
+		arch.Write(wxT("ignore_number"), (int)ignore_number);
+		arch.Write(wxT("conditions"), conditions);
+	}
+
+	virtual void DeSerialize(Archive& arch) {
+		arch.Read(wxT("file"), file);
+		arch.Read(wxT("lineno"), lineno);
+		arch.Read(wxT("function_name"), function_name);
+		arch.Read(wxT("memory_address"), memory_address);
+		arch.Read(wxT("bp_type"), (int&)bp_type);
+		arch.Read(wxT("watchpoint_type"), (int&)watchpoint_type);
+		arch.Read(wxT("watchpt_data"), watchpt_data);
+		arch.Read(wxT("commandlist"), commandlist);
+		arch.Read(wxT("regex"), regex);
+		arch.Read(wxT("is_temp"), is_temp);
+		arch.Read(wxT("internal_id"), internal_id);
+		arch.Read(wxT("debugger_id"), debugger_id);
+		arch.Read(wxT("is_enabled"), is_enabled);
+		arch.Read(wxT("ignore_number"), (int&)ignore_number);
+		arch.Read(wxT("conditions"), conditions);
+	}
+	//
+};
+
+/**
+ * @class BreakpointInfoArray a wrapper class to allow saving and reading breakpoint array to and
+ * from the disk
+ * @author eran
+ * @date 07/06/09
+ * @file debugger.h
+ * @brief
+ */
+class BreakpointInfoArray : public SerializedObject
+{
+	std::vector<BreakpointInfo> m_breakpoints;
+public:
+	BreakpointInfoArray() {
+	}
+
+	virtual ~BreakpointInfoArray() {
+	}
+
+	BreakpointInfoArray& operator=(const std::vector<BreakpointInfo> &breakpoints) {
+		m_breakpoints = breakpoints;
+		return *this;
+	}
+
+	void SetBreakpoints(const std::vector<BreakpointInfo>& breakpoints) {
+		this->m_breakpoints = breakpoints;
+	}
+	const std::vector<BreakpointInfo>& GetBreakpoints() const {
+		return m_breakpoints;
+	}
+
+public:
+	virtual void DeSerialize(Archive& arch) {
+
+		size_t bt_count(0);
+		m_breakpoints.clear();
+		arch.Read(wxT("Count"), bt_count);
+
+		for (size_t i=0; i<bt_count; i++) {
+			wxString name = wxString::Format(wxT("Breakpoint%d"), i);
+			BreakpointInfo bkpt;
+			arch.Read(name, (SerializedObject*)&bkpt);
+			m_breakpoints.push_back( bkpt );
+		}
+	}
+
+	virtual void Serialize(Archive &arch) {
+
+		arch.Write(wxT("Count"), (size_t)m_breakpoints.size());
+		for (size_t i=0; i<m_breakpoints.size(); i++) {
+			wxString name = wxString::Format(wxT("Breakpoint%d"), i);
+			arch.Write(name, (SerializedObject*)&m_breakpoints.at(i));
+		}
+
+	}
 };
 
 class DebuggerInformation
@@ -153,6 +251,7 @@ public:
 	bool      resolveThis;
 	bool      showTerminal;
 	wxString  consoleCommand;
+	bool      useRelativeFilePaths;
 
 public:
 	DebuggerInformation()
@@ -170,7 +269,7 @@ public:
 #else
 			, consoleCommand(wxT(""))
 #endif
-	{}
+			, useRelativeFilePaths(false) {}
 	~DebuggerInformation() {}
 };
 
@@ -299,7 +398,7 @@ public:
 	/**
 	 * \brief set break point at given file and line, or function
 	 */
-	virtual bool Break(BreakpointInfo& bp) = 0;
+	virtual bool Break(const BreakpointInfo& bp) = 0;
 	/**
 	 * \brief remove breakpoint from given file and line
 	 */

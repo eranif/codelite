@@ -71,58 +71,64 @@ public:
 	//Implementation of IManager interface
 	//------------------------------------
 
-	virtual IEditor *GetActiveEditor();
-	virtual IConfigTool *GetConfigTool();
-	virtual TreeItemInfo GetSelectedTreeItemInfo(TreeType type);
-	virtual wxTreeCtrl *GetTree(TreeType type);
-	virtual Notebook *GetOutputPaneNotebook();
-    virtual Notebook *GetWorkspacePaneNotebook();
-	virtual bool OpenFile(const wxString &fileName, const wxString &projectName = wxEmptyString, int lineno = wxNOT_FOUND);
-	virtual bool OpenFile(const BrowseRecord &rec);
-	virtual wxString GetStartupDirectory() const;
-	virtual void AddProject(const wxString & path);
-	virtual bool IsWorkspaceOpen() const;
-	virtual TagsManager *GetTagsManager();
-	virtual Workspace *GetWorkspace();
-	virtual bool AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths);
-	virtual bool AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths);
-	virtual int GetToolbarIconSize();
-	virtual wxAuiManager* GetDockingManager();
-	virtual EnvironmentConfig* GetEnv();
-	virtual JobQueue *GetJobQueue();
-	virtual wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd);
-	virtual wxApp *GetTheApp();
-	virtual void ReloadWorkspace();
-	virtual IPlugin* GetPlugin(const wxString &pluginName);
-	virtual wxEvtHandler *GetOutputWindow();
-	virtual bool SaveAll();
-	virtual wxString GetInstallDirectory() const;
-	virtual IKeyboard *GetKeyboardManager();
-	virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName);
-	virtual OptionsConfigPtr GetEditorSettings();
-    virtual void FindAndSelect(const wxString& pattern, const wxString& name);
-    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
-	virtual bool AllowToolbar();
-	virtual void SetStatusMessage(const wxString &msg, int col, int id);
-	virtual void PushQueueCommand(const QueueCommand &cmd);
-	virtual void ProcessCommandQueue();
-	virtual void StopAndClearQueue();
-	virtual wxString GetProjectNameByFile( const wxString &fullPathFileName );
-	virtual BuildManager *GetBuildManager();
-	virtual BuildSettingsConfig *GetBuildSettingsConfigManager();
-    virtual bool ClosePage(const wxString &text);
-    virtual wxWindow *FindPage(const wxString &text);
-    virtual bool AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
-    virtual bool SelectPage(wxWindow *win);
-	virtual NavMgr *GetNavigationMgr();
+	virtual IEditor *              GetActiveEditor();
+	virtual IConfigTool *          GetConfigTool();
+	virtual TreeItemInfo           GetSelectedTreeItemInfo(TreeType type);
+	virtual wxTreeCtrl *           GetTree(TreeType type);
+	virtual Notebook *             GetOutputPaneNotebook();
+    virtual Notebook *             GetWorkspacePaneNotebook();
+	virtual bool                   OpenFile(const wxString &fileName, const wxString &projectName = wxEmptyString, int lineno = wxNOT_FOUND);
+	virtual bool                   OpenFile(const BrowseRecord &rec);
+	virtual wxString               GetStartupDirectory() const;
+	virtual void                   AddProject(const wxString & path);
+	virtual bool                   IsWorkspaceOpen() const;
+	virtual TagsManager *          GetTagsManager();
+	virtual Workspace *            GetWorkspace();
+	virtual bool                   AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths);
+	virtual bool                   AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths);
+	virtual int                    GetToolbarIconSize();
+	virtual wxAuiManager*          GetDockingManager();
+	virtual EnvironmentConfig*     GetEnv();
+	virtual JobQueue *             GetJobQueue();
+	virtual wxString               GetProjectExecutionCommand(const wxString &projectName, wxString &wd);
+	virtual wxApp *                GetTheApp();
+	virtual void                   ReloadWorkspace();
+	virtual IPlugin*               GetPlugin(const wxString &pluginName);
+	virtual wxEvtHandler *         GetOutputWindow();
+	virtual bool                   SaveAll();
+	virtual wxString               GetInstallDirectory() const;
+	virtual IKeyboard *            GetKeyboardManager();
+	virtual bool                   CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName);
+	virtual OptionsConfigPtr       GetEditorSettings();
+    virtual void                   FindAndSelect(const wxString& pattern, const wxString& name);
+    virtual TagEntryPtr            GetTagAtCaret(bool scoped, bool impl);
+	virtual bool                   AllowToolbar();
+	virtual void                   SetStatusMessage(const wxString &msg, int col, int id);
+	virtual void                   PushQueueCommand(const QueueCommand &cmd);
+	virtual void                   ProcessCommandQueue();
+	virtual void                   StopAndClearQueue();
+	virtual bool                   IsBuildInProgress() const;
+	virtual bool                   IsBuildEndedSuccessfully() const;
+	virtual wxString               GetProjectNameByFile( const wxString &fullPathFileName );
+	virtual BuildManager *         GetBuildManager();
+	virtual BuildSettingsConfig *  GetBuildSettingsConfigManager();
+    virtual bool                   ClosePage(const wxString &text);
+    virtual wxWindow *             FindPage(const wxString &text);
+    virtual bool                   AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
+    virtual bool                   SelectPage(wxWindow *win);
+	virtual NavMgr *               GetNavigationMgr();
 
 	//------------------------------------
 	//End of IManager interface
 	//------------------------------------
 
+	// (Un)Hook the contect menus
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
 
+	// (Un)Hook the project settings tab
+	virtual void HookProjectSettingsTab  (wxNotebook *book, const wxString &projectName, const wxString &configName);
+	virtual void UnHookProjectSettingsTab(wxNotebook *book, const wxString &projectName, const wxString &configName);
 };
 
 #endif //PLUGINMANAGER_H

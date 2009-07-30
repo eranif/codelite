@@ -111,7 +111,7 @@
     <File Name="network/cl_indexer_request.cpp"/>
     <File Name="network/clindexerprotocol.cpp"/>
     <File Name="network/clindexerprotocol.h"/>
-    <File Name="network\cl_indexer_macros.h"/>
+    <File Name="network/cl_indexer_macros.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix"/>
   <Dependencies Name="Release_Unix"/>
@@ -224,7 +224,7 @@
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy network\*.* ..\..\CodeLite\.</Command>
+        <Command Enabled="yes">copy network/*.* ../../CodeLite/.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <CleanCommand></CleanCommand>

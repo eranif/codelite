@@ -21,6 +21,8 @@ void CompilerSwitchesPage::AddSwitch(const wxString &name, const wxString &value
 		m_selSwitchName = name;
 		m_selSwitchValue = value;
 	}
+	m_listSwitches->SetColumnWidth(0, wxLIST_AUTOSIZE);
+	m_listSwitches->SetColumnWidth(0, 100);
 }
 
 void CompilerSwitchesPage::EditSwitch()
@@ -88,6 +90,7 @@ void CompilerSwitchesPage::InitSwitches()
 	for (; iter != cmp->SwitchesEnd(); iter++) {
 		AddSwitch(iter->first, iter->second, iter == cmp->SwitchesBegin());
 	}
+	m_listSwitches->SetColumnWidth(0, wxLIST_AUTOSIZE);
 	m_listSwitches->Thaw();
 }
 

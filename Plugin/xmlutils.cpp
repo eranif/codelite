@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : xmlutils.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : xmlutils.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "xmlutils.h"
@@ -147,7 +147,7 @@ void XmlUtils::SetNodeContent(wxXmlNode *node, const wxString &text)
 		node->RemoveChild(contentNode);
 		delete contentNode;
 	}
-	
+
 	contentNode = new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, text);
 	node->AddChild( contentNode );
 }
@@ -161,4 +161,27 @@ void XmlUtils::RemoveChildren(wxXmlNode *node)
 		delete child;
 		child = nextChild;
 	}
+}
+
+void XmlUtils::SetCDATANodeContent(wxXmlNode* node, const wxString& text)
+{
+	wxXmlNode *n = node->GetChildren();
+	wxXmlNode *contentNode = NULL;
+    while (n)
+    {
+		if (n->GetType() == wxXML_TEXT_NODE || n->GetType() == wxXML_CDATA_SECTION_NODE){
+			contentNode = n;
+			break;
+		}
+        n = n->GetNext();
+    }
+
+	if(contentNode) {
+		// remove old node
+		node->RemoveChild(contentNode);
+		delete contentNode;
+	}
+
+	contentNode = new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, text);
+	node->AddChild( contentNode );
 }

@@ -40,6 +40,10 @@ public:
 	DbgCmdHandler(IDebuggerObserver *observer) : m_observer(observer){}
 	virtual ~DbgCmdHandler(){}
 
+	virtual bool WantsErrors() const {
+		return false;
+	}
+
 	virtual bool ProcessOutput(const wxString &line) = 0;
 };
 
@@ -98,6 +102,9 @@ public:
 
 	virtual ~DbgCmdHandlerBp(){}
 	virtual bool ProcessOutput(const wxString &line);
+	virtual bool WantsErrors() const {
+		return true;
+	}
 };
 
 class DbgCmdHandlerLocals : public DbgCmdHandler {

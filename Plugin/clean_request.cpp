@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : clean_request.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : clean_request.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "build_settings_config.h"
@@ -33,6 +33,7 @@
 #include "wx/process.h"
 #include "dirsaver.h"
 #include "workspace.h"
+#include "plugin.h"
 
 CleanRequest::CleanRequest(wxEvtHandler *owner, const QueueCommand &info)
 		: ShellCommand(owner, info)
@@ -51,20 +52,23 @@ void CleanRequest::Process(IManager *manager)
 	wxString cmd;
 	wxString errMsg;
 	StringMap om;
-	
+
 	SetBusy(true);
-	
-	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());	
-	BuildManager *bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
-	Workspace *w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
-	
+
+	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
+	BuildManager *       bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
+	Workspace *          w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
+	wxApp *              app = manager ? manager->GetTheApp() : wxTheApp;
+
+
 	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
 	if (!proj) {
 		AppendLine(wxT("Cant find project: ") + m_info.GetProject());
 		SetBusy(false);
 		return;
 	}
-	
+	wxString             pname (proj->GetName());
+
 	BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
 	if (m_info.GetProjectOnly()) {
 		cmd = builder->GetPOCleanCommand(m_info.GetProject(), m_info.GetConfiguration());
@@ -95,6 +99,18 @@ void CleanRequest::Process(IManager *manager)
 		return;
 	}
 
+	// Notify plugins that a compile process is going to start
+	wxCommandEvent event(wxEVT_BUILD_STARTING);
+	event.SetClientData((void*)&pname);
+	event.SetString( m_info.GetConfiguration() );
+
+	if (app->ProcessEvent(event)) {
+
+		// the build is being handled by some plugin, no need to build it
+		// using the standard way
+		SetBusy(false);
+		return;
+	}
 	SendStartMsg();
 
 	//expand the variables of the command
@@ -105,19 +121,19 @@ void CleanRequest::Process(IManager *manager)
 
 		DirSaver ds;
 		DoSetWorkingDirectory(proj, false, false);
-		
+
 		if (m_info.GetProjectOnly() ) {
 			//need to change directory to project dir
 			wxSetWorkingDirectory(proj->GetFileName().GetPath());
 		}
 		//print the build command
 		AppendLine(cmd + wxT("\n"));
-		
-		// print the prefix message of the build start. This is important since the parser relies 
-		// on this message 
+
+		// print the prefix message of the build start. This is important since the parser relies
+		// on this message
 		if(m_info.GetProjectOnly()){
 			wxString configName(m_info.GetConfiguration());
-			
+
 			//also, send another message to the main frame, indicating which project is being built
 			//and what configuration
 			wxString text;
@@ -125,15 +141,15 @@ void CleanRequest::Process(IManager *manager)
 			text << wxT("----------\n");
 			AppendLine(text);
 		}
-		
+
 		//apply environment settings
 		EnvironmentConfig::Instance()->ApplyEnv( &om );
-		
+
 		if (m_proc->Start() == 0) {
-			
+
 			//remove environment settings applied
 			EnvironmentConfig::Instance()->UnApplyEnv();
-			
+
 			wxString message;
 			message << wxT("Failed to start clean process, command: ") << cmd << wxT(", process terminated with exit code: 0");
 			AppendLine(message);

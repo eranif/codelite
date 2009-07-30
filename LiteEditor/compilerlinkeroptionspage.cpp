@@ -20,6 +20,8 @@ CompilerLinkerOptionsPage::CompilerLinkerOptionsPage( wxWindow* parent, const wx
 		long idx = m_listLinkerOptions->InsertItem(m_listLinkerOptions->GetItemCount(), lnkOption.name);
 		m_listLinkerOptions->SetItem(idx, 1, lnkOption.help);
 	}
+	m_listLinkerOptions->SetColumnWidth(0, 100);
+	m_listLinkerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
 }
 
 void CompilerLinkerOptionsPage::Save(CompilerPtr cmp)
@@ -49,6 +51,7 @@ void CompilerLinkerOptionsPage::OnLinkerOptionActivated( wxListEvent& event )
 	{
 		SetColumnText(m_listLinkerOptions, m_selectedLnkOption, 0, dlg.m_sName);
 		SetColumnText(m_listLinkerOptions, m_selectedLnkOption, 1, dlg.m_sHelp);
+		m_listLinkerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	}
 }
 
@@ -59,6 +62,7 @@ void CompilerLinkerOptionsPage::OnNewLinkerOption( wxCommandEvent& event )
 	{
 		long idx = m_listLinkerOptions->InsertItem(m_listLinkerOptions->GetItemCount(), dlg.m_sName);
 		m_listLinkerOptions->SetItem(idx, 1, dlg.m_sHelp);
+		m_listLinkerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
 	}
 }
 
@@ -67,6 +71,7 @@ void CompilerLinkerOptionsPage::OnDeleteLinkerOption( wxCommandEvent& event )
 	if (m_selectedLnkOption != wxNOT_FOUND) {
 		if (wxMessageBox(_("Are you sure you want to delete this linker option?"), wxT("CodeLite"), wxYES_NO|wxCANCEL) == wxYES) {
 			m_listLinkerOptions->DeleteItem(m_selectedLnkOption);
+			m_listLinkerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
 			m_selectedLnkOption = wxNOT_FOUND;
 		}
 	}

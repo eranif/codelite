@@ -88,13 +88,21 @@ static bool ReadFile8BitData(const char *file_name, wxString &content)
 	return content.IsEmpty() == false;
 }
 
-void SendCmdEvent(int eventId, void *clientData)
+bool SendCmdEvent(int eventId, void *clientData)
 {
 	wxCommandEvent e(eventId);
 	if (clientData) {
 		e.SetClientData(clientData);
 	}
-	wxTheApp->ProcessEvent(e);
+	return wxTheApp->ProcessEvent(e);
+}
+
+bool SendCmdEvent(int eventId, void *clientData, const wxString &str)
+{
+	wxCommandEvent e(eventId);
+	e.SetClientData(clientData);
+	e.SetString(str);
+	return wxTheApp->ProcessEvent(e);
 }
 
 void PostCmdEvent(int eventId, void *clientData)
@@ -492,4 +500,19 @@ wxString NormalizePath(const wxString &path)
 	wxString normalized_path(path);
 	normalized_path.Replace(wxT("\\"), wxT("/"));
 	return normalized_path;
+}
+
+time_t GetFileModificationTime(const wxFileName &filename)
+{
+	return GetFileModificationTime(filename.GetFullPath());
+}
+
+time_t GetFileModificationTime(const wxString &filename)
+{
+	struct stat buff;
+	const wxCharBuffer cname = _C(filename);
+	if (stat(cname.data(), &buff) < 0) {
+		return 0;
+	}
+	return buff.st_mtime;
 }

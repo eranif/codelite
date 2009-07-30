@@ -315,7 +315,7 @@ void EditorConfig::GetRecentlyOpenedFies(wxArrayString &files)
 			if (child->GetName() == wxT("File")) {
 				wxString fileName = XmlUtils::ReadString(child, wxT("Name"));
 				// wxXmlDocument Saves/Loads items in reverse order, so prepend, not add.
-				files.Insert(fileName, 0);
+				if( wxFileExists( fileName) ) files.Insert(fileName, 0);
 			}
 			child = child->GetNext();
 		}
@@ -356,7 +356,7 @@ void EditorConfig::GetRecentlyOpenedWorkspaces(wxArrayString &files)
 			if (child->GetName() == wxT("File")) {
 				wxString fileName = XmlUtils::ReadString(child, wxT("Name"));
 				// wxXmlDocument Saves/Loads items in reverse order, so prepend, not add.
-				files.Insert(fileName, 0);
+				if( wxFileExists( fileName ) ) files.Insert(fileName, 0);
 			}
 			child = child->GetNext();
 		}

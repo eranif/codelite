@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : xmlutils.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : xmlutils.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef XMLUTILS_H
@@ -46,14 +46,14 @@ public:
 
 	/// Find the last child node of parent with a given name. NULL if no childs exist
 	/// \param parent  the parent node whom to be searched
-	/// \param name	   the element's tag name 
+	/// \param name	   the element's tag name
 	static wxXmlNode *FindLastByTagName(const wxXmlNode *parent, const wxString &tagName);
 
-	
+
 	/**
 	 * update node property. If multiple properties with the same name exist, this function updates
      * the first occurance
-	 * \param node 
+	 * \param node
 	 * \param name property name
 	 * \param value new value to set
 	 */
@@ -62,17 +62,24 @@ public:
 	/**
 	 * Find the first child node of parent with a given name. NULL if no childs exist
 	 * \param the parent node whom to be searched
-	 * \param the element's tag name 
+	 * \param the element's tag name
 	 */
 	static wxXmlNode *FindFirstByTagName(const wxXmlNode *parent, const wxString &tagName);
 
-	
+
 	/**
 	 * Set the content of node. This function replaces any existing content of node
-	 * \param node 
+	 * \param node
 	 * \param text content
 	 */
 	static void SetNodeContent(wxXmlNode *node, const wxString &text);
+
+	/**
+	 * Set the content of node. This function replaces any existing content of node
+	 * \param node
+	 * \param text content
+	 */
+	static void SetCDATANodeContent(wxXmlNode *node, const wxString &text);
 
 	/**
 	 * Read string property from the given node
@@ -94,7 +101,7 @@ public:
 	 * \param defaultValue default value to return if no property exist
 	 */
 	static bool ReadBool(wxXmlNode *node, const wxString &propName, bool defaultValue = false);
-	
+
 	/**
 	 * Remove all children of xml node
 	 * \param node xml node

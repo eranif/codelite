@@ -111,6 +111,7 @@ public:
 
 	wxString GetPageTitle(wxWindow *win);
 	void     SetPageTitle(wxWindow *page, const wxString &name);
+	long     GetBookStyle();
 
     // TODO: replace these functions with event handlers
 	void ApplySettingsChanges   ();

@@ -1,5 +1,5 @@
 Name:           codelite
-Version:        1.0.2782
+Version:        1.0.2841
 Release:        1%{?dist}
 License:        GPLv2+
 Group:          Development/Tools
@@ -18,7 +18,8 @@ users to easily create, build and debug complex projects.
 %setup -q
 
 %build
-./configure --prefix=%{_prefix} --plugins-dir=%{_libdir}/%{name}
+./configure --prefix=%{_prefix} --plugins-dir=%{_libdir}/%{name} \
+               --disable-debian --disable-desktop_icon --disable-make_symlink
 %{__make} 
 
 %install
@@ -36,14 +37,16 @@ desktop-file-install  --delete-original       \
 %doc AUTHORS LICENSE COPYING 
 %{_bindir}/codelite
 %{_bindir}/codelite_indexer
-%{_bindir}/le_dos2unix.sh
-%{_bindir}/le_exec.sh
-%{_bindir}/le_killproc.sh
+%{_bindir}/codelite_fix_files
+%{_bindir}/codelite_exec
+%{_bindir}/codelite_kill_children
 %{_datadir}/codelite
 %{_datadir}/applications/codelite.desktop
 %{_libdir}/%{name}
 
 %changelog
+* Tue Feb 24 2009 DH
+- Spec file: Corrected names. Disabled unwanted things in configure
 * Tue Feb 24 2009 Jess Portnoy <kernel01@gmail.com> 1.0.2782-1
 - Spec file: Added call to desktop-file-install and %doc
   code: fixed perms and other rpmlint issues.

@@ -52,11 +52,13 @@ public:
     DropButtonBase(wxWindow *parent);
     ~DropButtonBase();
 
-    DECLARE_EVENT_TABLE()
-    void OnLeftDown(wxMouseEvent &e);
-    virtual void OnPaint(wxPaintEvent &e);
-	virtual void OnEraseBg(wxEraseEvent &){}
+
+    virtual void OnLeftDown     (wxMouseEvent &e);
+    virtual void OnPaint        (wxPaintEvent &e);
+	virtual void OnEraseBg      (wxEraseEvent &){}
     virtual void OnMenuSelection(wxCommandEvent &e) = 0;
+
+	DECLARE_EVENT_TABLE()
 };
 
 class StackButton : public DropButtonBase

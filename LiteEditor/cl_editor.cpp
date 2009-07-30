@@ -128,16 +128,6 @@ FindReplaceDialog* LEditor::m_findReplaceDlg = NULL;
 FindReplaceData LEditor::m_findReplaceData;
 std::map<wxString, int> LEditor::ms_bookmarkShapes;
 
-time_t GetFileModificationTime(const wxString &filename)
-{
-	struct stat buff;
-	const wxCharBuffer cname = _C(filename);
-	if (stat(cname.data(), &buff) < 0) {
-		return 0;
-	}
-	return buff.st_mtime;
-}
-
 LEditor::LEditor(wxWindow* parent)
 		: wxScintilla                (parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1))
 		, m_rightClickMenu           (NULL)
@@ -466,7 +456,7 @@ void LEditor::SetProperties()
 	MarkerSetBackground(smt_error, wxColor(255, 0, 0));
 
 	CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 
 #ifdef __WXMAC__
 	// turning off these two greatly improves performance
@@ -520,6 +510,8 @@ void LEditor::SetProperties()
 	IndicatorSetStyle(HYPERLINK_INDICATOR, wxSCI_INDIC_PLAIN);
 	IndicatorSetStyle(MATCH_INDICATOR, wxSCI_INDIC_BOX);
 	IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
+
+	CmdKeyClear(wxT('L'), wxSCI_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
 }
 
 void LEditor::OnSavePoint(wxScintillaEvent &event)
@@ -1437,9 +1429,9 @@ void LEditor::FindNext(const FindReplaceData &data)
 		long res(wxNOT_FOUND);
 		wxString msg;
 		if ( dirDown ) {
-			msg << wxT("CodeLite reached the end of the document, Search again from the start?");
+			msg << _("CodeLite reached the end of the document, Search again from the start?");
 		} else {
-			msg << wxT("CodeLite reached the end of the document, Search again from the bottom?");
+			msg << _("CodeLite reached the top of the document, Search again from the bottom?");
 		}
 
 		if (!conf->GetLongValue(wxT("FindNextWrapAroundAnswer"), res)) {
@@ -1450,6 +1442,11 @@ void LEditor::FindNext(const FindReplaceData &data)
 				conf->SaveLongValue(wxT("FindNextWrapAroundAnswer"), res);
 			}
 			dlg->Destroy();
+		} else {
+			// The user doesn't want to be asked if it's OK to continue, but at least let him know he has
+			wxString msg = dirDown ? _("Reached end of document, continued from start")
+										: _("Reached top of document, continued from bottom");
+			Frame::Get()->SetStatusMessage(msg, 0, XRCID("findnext"));
 		}
 
 		if (res == wxID_OK) {
@@ -1463,12 +1460,17 @@ void LEditor::FindNext(const FindReplaceData &data)
 			if ( !FindAndSelect(data) ) {
 				// restore the caret
 				DoSetCaretAt( saved_pos );
-
+				// Kill the "...continued from start" statusbar message
+				Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
 				wxMessageBox(_("Can not find the string '") + data.GetFindString() + wxT("'"),
 				             wxT("CodeLite"),
 				             wxICON_WARNING);
 			}
 		}
+	} else {
+		// The string *was* found, without needing to restart from the top
+		// So cancel any previous statusbar restart message
+		Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("findnext"));
 	}
 }
 

@@ -22,24 +22,25 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __Notebook__
+#ifndef __Notebook__
 #define __Notebook__
 
 #include "wx/panel.h"
 #include "wx/aui/framemanager.h"
 
 enum {
-	wxVB_LEFT 					= 0x00000001,
-	wxVB_RIGHT 					= 0x00000002,
-	wxVB_TOP 					= 0x00000004,
-	wxVB_BOTTOM					= 0x00000008,
-	wxVB_HAS_X					= 0x00000010,
+	wxVB_LEFT                   = 0x00000001,
+	wxVB_RIGHT                  = 0x00000002,
+	wxVB_TOP                    = 0x00000004,
+	wxVB_BOTTOM                 = 0x00000008,
+	wxVB_HAS_X                  = 0x00000010,
 	wxVB_MOUSE_MIDDLE_CLOSE_TAB = 0x00000020,
-	wxVB_TAB_DECORATION			= 0x00000040,
-	wxVB_BG_GRADIENT			= 0x00000080,
-	wxVB_BORDER					= 0x00000100,
-	wxVB_NODND					= 0x00000200,
-	wxVB_NO_DROPBUTTON			= 0x00000400
+	wxVB_TAB_DECORATION         = 0x00000040,
+	wxVB_BG_GRADIENT            = 0x00000080,
+	wxVB_BORDER                 = 0x00000100,
+	wxVB_NODND                  = 0x00000200,
+	wxVB_NO_DROPBUTTON          = 0x00000400,
+	wxVB_FIXED_WIDTH            = 0x00000800
 };
 
 class wxTabContainer;
@@ -58,7 +59,7 @@ class Notebook : public wxPanel
 	NotebookNavDialog *m_popupWin;
 
 public:
-	static const size_t	npos = static_cast<size_t>(-1);
+	static const size_t npos = static_cast<size_t>(-1);
 
 protected:
 	void Initialize();
@@ -158,12 +159,18 @@ public:
 	/**
 	 * \brief return the notebook style
 	 */
-	long GetBookStyle() const {return m_style;}
+	long GetBookStyle() const {
+		return m_style;
+	}
+
+	void SetBookStyle(long style);
 
 	/**
 	 * \brief return the tabs container control
 	 */
-	wxTabContainer *GetTabContainer() {return m_tabs;}
+	wxTabContainer *GetTabContainer() const {
+		return m_tabs;
+	}
 
 	/**
 	 *\param menu - right click menu object
@@ -209,6 +216,19 @@ public:
 	 * @param size the size
 	 */
 	void SetBitmapSize(int size);
+
+	/**
+	 * @brief set the fixed tab width
+	 * when setting it to Notebook::npos the wxVB_FIXED_WIDTH is ignored
+	 * @param size in pixels
+	 */
+	void SetFixedTabWidth(size_t size);
+
+	/**
+	 * @brief return the fixed tab width in pixels
+	 */
+	size_t GetFixedTabWidth() const;
+
 	DECLARE_EVENT_TABLE()
 	virtual void OnNavigationKey(wxNavigationKeyEvent &e);
 };

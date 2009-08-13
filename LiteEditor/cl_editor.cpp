@@ -592,33 +592,47 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	case '}':
 		m_context->AutoIndent(event.GetKey());
 		// fall through...
-	case '\n':
-		m_context->AutoIndent(event.GetKey());
-		// incase we are typing in a folded line, make sure it is visible
-		EnsureVisible(curLine+1);
+	case '\n': {
+		// incase ENTER was hit between {}
+			if ( GetCharAt (PositionBefore( PositionBefore(pos) )) == wxT('{') ) {
+				matchChar = '}';
+				InsertText(pos, matchChar);
+				BeginUndoAction();
+				//InsertText(pos, GetEolString());
+				CharRight();
+				m_context->AutoIndent(wxT('}'));
+				InsertText(pos, GetEolString());
+				CharRight();
+				SetCaretAt(pos);
+				m_context->AutoIndent(wxT('\n'));
+				EndUndoAction();
+			} else {
+				m_context->AutoIndent(event.GetKey());
+				// incase we are typing in a folded line, make sure it is visible
+				EnsureVisible(curLine+1);
+			}
+
+		}
+
 		break;
 	default:
 		break;
 	}
 
 	if (matchChar && m_autoAddMatchedBrace && !m_context->IsCommentOrString(pos)) {
-		InsertText(pos, matchChar);
+
 		if (matchChar != '}') {
+			InsertText(pos, matchChar);
 			SetIndicatorCurrent(MATCH_INDICATOR);
 			// use grey colour rather than black, otherwise this indicator is invisible when using the
 			// black theme
 			IndicatorFillRange(pos, 1);
-		} else {
-			BeginUndoAction();
-			InsertText(pos, GetEolString());
-			CharRight();
-			m_context->AutoIndent(wxT('}'));
-			SetCurrentPos(pos);
-			InsertText(pos, GetEolString());
-			CharRight();
-			m_context->AutoIndent(wxT('\n'));
-			EndUndoAction();
-		}
+
+		}/* else {
+			// the matched char is '}'
+			InsertText(pos, matchChar);
+
+		}*/
 	}
 
 	if ( IsCompletionBoxShown() == false ) {
@@ -1445,7 +1459,7 @@ void LEditor::FindNext(const FindReplaceData &data)
 		} else {
 			// The user doesn't want to be asked if it's OK to continue, but at least let him know he has
 			wxString msg = dirDown ? _("Reached end of document, continued from start")
-										: _("Reached top of document, continued from bottom");
+			               : _("Reached top of document, continued from bottom");
 			Frame::Get()->SetStatusMessage(msg, 0, XRCID("findnext"));
 		}
 

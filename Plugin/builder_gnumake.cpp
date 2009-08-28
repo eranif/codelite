@@ -852,30 +852,39 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 
 	text << wxT("## ") << name << wxT("\n");
 
-	// The following two variables are here for compatibility with MSVS
-	text << wxT("ConfigurationName :=") << name << wxT("\n");
-	text << wxT("IntermediateDirectory :=") << bldConf->GetIntermediateDirectory() << wxT("\n");
-	text << wxT("OutDir := $(IntermediateDirectory)\n");
-	text << wxT("LinkerName:=") << cmp->GetTool(wxT("LinkerName")) << wxT("\n");
-	text << wxT("ArchiveTool :=") << cmp->GetTool(wxT("ArchiveTool")) << wxT("\n");
-	text << wxT("SharedObjectLinkerName :=") << cmp->GetTool(wxT("SharedObjectLinkerName")) << wxT("\n");
-	text << wxT("ObjectSuffix :=") << cmp->GetObjectSuffix() << wxT("\n");
-	text << wxT("DependSuffix :=") << cmp->GetDependSuffix() << wxT("\n");
-	text << wxT("PreprocessSuffix :=") << cmp->GetPreprocessSuffix() << wxT("\n");
-	text << wxT("DebugSwitch :=") << cmp->GetSwitch(wxT("Debug")) << wxT("\n");
-	text << wxT("IncludeSwitch :=") << cmp->GetSwitch(wxT("Include")) << wxT("\n");
-	text << wxT("LibrarySwitch :=") << cmp->GetSwitch(wxT("Library")) << wxT("\n");
-	text << wxT("OutputSwitch :=") << cmp->GetSwitch(wxT("Output")) << wxT("\n");
-	text << wxT("LibraryPathSwitch :=") << cmp->GetSwitch(wxT("LibraryPath")) << wxT("\n");
-	text << wxT("PreprocessorSwitch :=") << cmp->GetSwitch(wxT("Preprocessor")) << wxT("\n");
-	text << wxT("SourceSwitch :=") << cmp->GetSwitch(wxT("Source")) << wxT("\n");
-	text << wxT("CompilerName :=") << cmp->GetTool(wxT("CompilerName")) << wxT("\n");
+	// Expand the build macros into the generated makefile
+	text << wxT("ConfigurationName      :=") << name << wxT("\n");
+	text << wxT("IntermediateDirectory  :=") << bldConf->GetIntermediateDirectory() << wxT("\n");
+	text << wxT("OutDir                 := $(IntermediateDirectory)\n");
+	text << wxT("WorkspacePath          := \"") << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxT("\"\n");
+	text << wxT("ProjectPath            := \"") << proj->GetFileName().GetPath() << wxT("\"\n");
+	text << wxT("CurrentFileName        :=\n"); // TODO:: Need implementation
+	text << wxT("CurrentFulePath        :=\n"); // TODO:: Need implementation
+	text << wxT("CurrentFileFullPath    :=\n"); // TODO:: Need implementation
+	text << wxT("User                   :=") << wxGetUserName() << wxT("\n");
+	text << wxT("Date                   :=") << wxDateTime::Now().FormatDate() << wxT("\n");
+	text << wxT("CodeLitePath           :=\"") << WorkspaceST::Get()->GetStartupDir() << wxT("\"\n");
 
-	text << wxT("OutputFile :=") << bldConf->GetOutputFileName() << wxT("\n");
-	text << wxT("Preprocessors :=") << ParsePreprocessor(bldConf->GetPreprocessor()) << wxT("\n");
-	text << wxT("ObjectSwitch :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
-	text << wxT("ArchiveOutputSwitch :=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
-	text << wxT("PreprocessOnlySwitch :=") << cmp->GetSwitch(wxT("PreprocessOnly")) << wxT("\n");
+	text << wxT("LinkerName             :=") << cmp->GetTool(wxT("LinkerName")) << wxT("\n");
+	text << wxT("ArchiveTool            :=") << cmp->GetTool(wxT("ArchiveTool")) << wxT("\n");
+	text << wxT("SharedObjectLinkerName :=") << cmp->GetTool(wxT("SharedObjectLinkerName")) << wxT("\n");
+	text << wxT("ObjectSuffix           :=") << cmp->GetObjectSuffix() << wxT("\n");
+	text << wxT("DependSuffix           :=") << cmp->GetDependSuffix() << wxT("\n");
+	text << wxT("PreprocessSuffix       :=") << cmp->GetPreprocessSuffix() << wxT("\n");
+	text << wxT("DebugSwitch            :=") << cmp->GetSwitch(wxT("Debug")) << wxT("\n");
+	text << wxT("IncludeSwitch          :=") << cmp->GetSwitch(wxT("Include")) << wxT("\n");
+	text << wxT("LibrarySwitch          :=") << cmp->GetSwitch(wxT("Library")) << wxT("\n");
+	text << wxT("OutputSwitch           :=") << cmp->GetSwitch(wxT("Output")) << wxT("\n");
+	text << wxT("LibraryPathSwitch      :=") << cmp->GetSwitch(wxT("LibraryPath")) << wxT("\n");
+	text << wxT("PreprocessorSwitch     :=") << cmp->GetSwitch(wxT("Preprocessor")) << wxT("\n");
+	text << wxT("SourceSwitch           :=") << cmp->GetSwitch(wxT("Source")) << wxT("\n");
+	text << wxT("CompilerName           :=") << cmp->GetTool(wxT("CompilerName")) << wxT("\n");
+
+	text << wxT("OutputFile             :=") << bldConf->GetOutputFileName() << wxT("\n");
+	text << wxT("Preprocessors          :=") << ParsePreprocessor(bldConf->GetPreprocessor()) << wxT("\n");
+	text << wxT("ObjectSwitch           :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
+	text << wxT("ArchiveOutputSwitch    :=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
+	text << wxT("PreprocessOnlySwitch   :=") << cmp->GetSwitch(wxT("PreprocessOnly")) << wxT("\n");
 
 	wxString buildOpts = bldConf->GetCompileOptions();
 	buildOpts.Replace(wxT(";"), wxT(" "));

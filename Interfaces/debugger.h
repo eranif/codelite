@@ -268,6 +268,43 @@ public:
 	~DebuggerInformation() {}
 };
 
+class IDebugger;
+
+// sent by debugger start events
+class DebuggerStartupInfo
+{
+public:
+	enum DebugType
+	{
+		DebugProject  = 1,
+		AttachProcess = 2,
+		QuickDebug    = 3
+	};
+
+	long pid;
+	wxString project;
+	IDebugger *debugger;
+
+	DebuggerStartupInfo()
+		: pid(wxNOT_FOUND), project(wxEmptyString), debugger(NULL)
+	{}
+
+	DebuggerStartupInfo(long pid)
+		: pid(pid), project(wxEmptyString), debugger(NULL)
+	{}
+
+	DebuggerStartupInfo(const wxString &project)
+		: pid(wxNOT_FOUND), project(project), debugger(NULL)
+	{}
+
+	DebugType GetDebugType() const
+	{
+		return pid != wxNOT_FOUND ? AttachProcess :
+			   project.IsEmpty()  ? QuickDebug :
+									DebugProject;
+	}
+};
+
 class IDebuggerObserver;
 class EnvironmentConfig;
 

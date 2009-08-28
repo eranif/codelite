@@ -3133,7 +3133,19 @@ void Frame::OnQuickDebug(wxCommandEvent& e)
 			// get an updated list of breakpoints
 			ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bpList);
 
+			DebuggerStartupInfo startup_info;
+			startup_info.debugger = dbgr;
+
+			// notify plugins that we're about to start debugging
+			if (SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info))
+				// plugin stopped debugging
+				return;
+
 			dbgr->Start(dbgname, exepath, wd, bpList, cmds);
+
+			// notify plugins that the debugger just started
+			SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
+
 			dbgr->Run(dlg->GetArguments(), wxEmptyString);
 
 			// Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,

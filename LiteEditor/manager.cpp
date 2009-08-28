@@ -1644,6 +1644,7 @@ void Manager::DbgStart ( long pid )
 	BuildConfigPtr bldConf;
 	ProjectPtr proj;
 	long PID ( -1 );
+	DebuggerStartupInfo startup_info;
 
 #if defined(__WXGTK__)
 	wxString where;
@@ -1669,6 +1670,8 @@ void Manager::DbgStart ( long pid )
 
 			}
 			dlg->Destroy();
+
+			startup_info.pid = PID;
 		} else {
 			dlg->Destroy();
 			return;
@@ -1686,10 +1689,12 @@ void Manager::DbgStart ( long pid )
 				DebuggerMgr::Get().SetActiveDebugger ( debuggerName );
 			}
 		}
+
+		startup_info.project = GetActiveProjectName();
 	}
 
 	//make sure we have an active debugger
-	IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if ( !dbgr ) {
 		//No debugger available,
 		wxString message;
@@ -1698,6 +1703,7 @@ void Manager::DbgStart ( long pid )
 		wxMessageBox ( message, wxT ( "CodeLite" ), wxOK|wxICON_WARNING );
 		return;
 	}
+	startup_info.debugger = dbgr;
 
 	if ( dbgr->IsRunning() ) {
 		//debugger is already running, so issue a 'cont' command
@@ -1771,6 +1777,11 @@ void Manager::DbgStart ( long pid )
 	// delete all the information
 	GetBreakpointsMgr()->GetBreakpoints ( bps );
 
+	// notify plugins that we're about to start debugging
+	if (SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info))
+		// plugin stopped debugging
+		return;
+
 	// read
 	wxArrayString dbg_cmds;
 	if ( pid == wxNOT_FOUND ) {
@@ -1791,6 +1802,9 @@ void Manager::DbgStart ( long pid )
 			return;
 		}
 	}
+
+	// notify plugins that the debugger just started
+	SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
 
 	// Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
 	// so that it uses debugger_ids instead of internal_ids
@@ -1885,9 +1899,15 @@ void Manager::DbgStop()
 		return;
 	}
 
+	// notify plugins that the debugger is about to be stopped
+	SendCmdEvent(wxEVT_DEBUG_ENDING);
+
 	dbgr->Stop();
 	DebuggerMgr::Get().SetActiveDebugger ( wxEmptyString );
 	DebugMessage ( _ ( "Debug session ended\n" ) );
+
+	// notify plugins that the debugger stopped
+	SendCmdEvent(wxEVT_DEBUG_ENDED);
 }
 
 void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )

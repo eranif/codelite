@@ -1146,20 +1146,22 @@ bool TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 	wxProgressDialog* prgDlg = NULL;
 
 	int maxVal = (int)files.GetCount();
-	if (files.IsEmpty())
+	if (files.IsEmpty()) {
 		return false;
+	}
 
 	// Create a progress dialog
-	prgDlg = new wxProgressDialog (wxT("Building tags database ..."), wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"), (int)files.GetCount()*2, NULL, wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT );
+	prgDlg = new wxProgressDialog (	wxT("Building tags database ..."),
+									wxT("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"),
+									(int)files.GetCount(),
+									NULL,
+									wxPD_APP_MODAL | wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_CAN_ABORT );
 	prgDlg->GetSizer()->Fit(prgDlg);
 	prgDlg->Layout();
 	prgDlg->Centre();
-
 	prgDlg->Update(0, wxT("Parsing..."));
-	int i = 0;
 
-	std::list<tagParseResult> trees;
-	for (i=0; i<maxVal; i++) {
+	for (int i=0; i<maxVal; i++) {
 		wxString fileTags;
 		wxFileName curFile(files.Item(i));
 
@@ -1169,45 +1171,35 @@ bool TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 		}
 
 		// update the progress bar
-		wxString msg;
-		msg << wxT("Parsing file: ") << curFile.GetFullName();
-		if (!prgDlg->Update(i, msg)) {
+		if (!prgDlg->Update(i, wxString::Format(wxT("Parsing file: %s"), curFile.GetFullName().c_str()))) {
 			prgDlg->Destroy();
-			trees.clear();
 			return false;
 		}
 
 		tags.Clear();
-		tagParseResult result;
-		result.fileName = curFile.GetFullName();
+		tagParseResult parsing_result;
+		parsing_result.comments = NULL;
+
+		parsing_result.fileName = curFile.GetFullName();
 		if (GetParseComments()) {
-			result.comments = new std::vector<DbRecordPtr>();
-			result.tree = ParseSourceFile(curFile, result.comments);
+			parsing_result.comments = new std::vector<DbRecordPtr>();
+			parsing_result.tree = ParseSourceFile(curFile, parsing_result.comments);
 		} else {
-			result.tree = ParseSourceFile(curFile);
+			parsing_result.tree = ParseSourceFile(curFile);
 		}
-		trees.push_back(result);
-	}
 
-	unsigned int cur = 0;
-	for (std::list<tagParseResult>::iterator iter = trees.begin(); iter != trees.end(); iter++) {
-		wxString msg;
-		msg << wxT("Saving symbols of: ") << (*iter).fileName;
-		prgDlg->Update(maxVal + cur, msg);
-
-		db.Store((*iter).tree, wxFileName());
-		if (GetParseComments()) {
+		db.Store(parsing_result.tree, wxFileName());
+		if (parsing_result.comments) {
 			// drop all old entries from this file
 			try {
-				db.Store(*(*iter).comments, wxFileName());
+				db.Store(*(parsing_result.comments), wxFileName());
 			} catch ( wxSQLite3Exception & e) {
 				wxUnusedVar(e);
 			}
 
 			//free the vector
-			delete (*iter).comments;
+			delete parsing_result.comments;
 		}
-		cur++;
 	}
 
 	// update the variable table

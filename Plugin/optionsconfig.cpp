@@ -57,13 +57,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_autoAdjustHScrollBarWidth(true)
 		, m_caretWidth(1)
 		, m_caretBlinkPeriod(500)
-#if defined(__WXGTK__)
-		, m_programConsoleCommand(wxT("xterm -title '$(TITLE)' -e '$(CMD)'"))
-#elif defined(__WXMAC__)
-		, m_programConsoleCommand(wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"$(CMD)\"' -e 'end tell'"))
-#else
-		, m_programConsoleCommand(wxT(""))
-#endif
+		, m_programConsoleCommand(TERMINAL_CMD)
 		, m_eolMode(wxT("Default"))
 {
 	//set the default font name to be UTF8

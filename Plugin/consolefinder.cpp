@@ -25,16 +25,11 @@
 #include "consolefinder.h"
 #include "procutils.h"
 #include "exelocator.h"
+#include "macros.h"
 
 ConsoleFinder::ConsoleFinder()
 		: m_nConsolePid(0)
-#if defined(__WXGTK__)
-		, m_consoleCommand(wxT("xterm -title '$(TITLE)' -e '$(CMD)'"))
-#elif defined(__WXMAC__)
-		, m_consoleCommand(wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"$(CMD)\"' -e 'end tell'"))
-#else
-		, m_consoleCommand(wxT(""))
-#endif
+		, m_consoleCommand(TERMINAL_CMD)
 {
 }
 
@@ -63,9 +58,9 @@ int ConsoleFinder::RunConsole(const wxString &title)
 	cmd = GetConsoleCommand();
 	cmd.Replace(wxT("$(TITLE)"), title);
 	cmd.Replace(wxT("$(CMD)"), wxString::Format(wxT("sleep %d"), 80000 + wxGetProcessId()));
-	
+
 	wxLogMessage(wxString::Format(wxT("Launching console: %s"), cmd.c_str()));
-	
+
 	m_nConsolePid = wxExecute(cmd, wxEXEC_ASYNC);
 	if (m_nConsolePid <= 0) {
 		return -1;

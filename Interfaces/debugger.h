@@ -32,6 +32,7 @@
 #include "wx/arrstr.h"
 #include "wx/event.h"
 #include "vector"
+#include "macros.h"
 
 enum DebuggerCommands {
 	DBG_PAUSE = 0,
@@ -262,13 +263,7 @@ public:
 			, breakAtWinMain(false)
 			, resolveThis(false)
 			, showTerminal(false)
-#if defined(__WXGTK__)
-			, consoleCommand(wxT("xterm -title '$(TITLE)' -e '$(CMD)'"))
-#elif defined(__WXMAC__)
-			, consoleCommand(wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"$(CMD)\"' -e 'end tell'"))
-#else
-			, consoleCommand(wxT(""))
-#endif
+			, consoleCommand(TERMINAL_CMD)
 			, useRelativeFilePaths(false) {}
 	~DebuggerInformation() {}
 };

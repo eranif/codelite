@@ -92,6 +92,15 @@ const wxString SEARCH_IN_WORKSPACE  = wxT("Entire Workspace");
 const wxString SEARCH_IN_PROJECT    = wxT("Active Project");
 const wxString SEARCH_IN_CURR_FILE_PROJECT = wxT("Current File's Project");
 
+// terminal macro
+#ifdef __WXGTK__
+const wxString TERMINAL_CMD         = wxT("xterm -sb -title '$(TITLE)' -e '$(CMD)'");
+#elif defined(__WXMAC__)
+const wxString TERMINAL_CMD         = wxT("osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script with command \"$(CMD)\"' -e 'end tell'");
+#else
+const wxString TERMINAL_CMD         = wxT("");
+#endif
+
 #ifdef __WXMSW__
 #define PATH_SEP wxT("\\")
 #else

@@ -1,3 +1,14 @@
+/*********************************************************************
+ * Name:      	main.cpp
+ * Purpose:   	Implements simple wxWidgets application with GUI.
+ * Author:    
+ * Created:   
+ * Copyright: 
+ * License:   	wxWidgets license (www.wxwidgets.org)
+ * 
+ * Notes:		
+ *********************************************************************/
+ 
 #include <wx/wx.h>
 
 // application class

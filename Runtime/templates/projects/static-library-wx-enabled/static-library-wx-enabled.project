@@ -5,8 +5,12 @@
 The settings of this project already includes the paths required by wxWidgets using the wx-config tool.
 Note that this project is set to work with the GNU toolchain (gdb, g++)
 	</Description>
-  <VirtualDirectory Name="src"/>
-  <VirtualDirectory Name="include"/>
+  <VirtualDirectory Name="src">
+    <File Name="main.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <File Name="defs.h"/>
+  </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Static Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
@@ -14,7 +18,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="yes" Options=""/>
+      <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=yes)"/>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
@@ -28,7 +32,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
       <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=no)">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="yes" Options=""/>
+      <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=no)"/>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>
@@ -39,10 +43,10 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
-      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=no)">
+      <Compiler Required="yes" Options="-O2;$(shell wx-config --cxxflags --debug=no --unicode=no)">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="yes" Options="-O2">
+      <Linker Required="yes" Options="-s;$(shell wx-config --libs --debug=no --unicode=no)">
       </Linker>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
@@ -54,10 +58,10 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
     </Configuration>
     <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
-      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2">
+      <Compiler Required="yes" Options="-O2;$(shell wx-config --cxxflags --debug=no --unicode=yes);">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="yes" Options="-O2"/>
+      <Linker Required="yes" Options="-s;$(shell wx-config --libs --debug=no --unicode=yes)"/>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>

@@ -1141,7 +1141,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 		return;
 
 	TagEntryPtr tag = classtags.at(0);
-	if (tag->GetFile() != editor.GetFileName().GetFullPath()) {
+	if (editor.GetFileName() != tag->GetFile()) {
 		wxString msg;
 		msg << wxT("This file does not seem to contain the declaration for '") << tag->GetName() << wxT("'\n");
 		msg << wxT("The declaration of '") << tag->GetName() << wxT("' is located at '") << tag->GetFile() << wxT("'\n");
@@ -2143,7 +2143,7 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, std::list<CppToken> &li 
 			file_name = token.getFilename();
 		}
 		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(token.getFilename(), wxEmptyString, 0);
-		if (editor != NULL && editor->GetFileName().GetFullPath() == wxFileName(token.getFilename()).GetFullPath()) {
+		if (editor != NULL && editor->GetFileName() == wxFileName(token.getFilename())) {
 			editor->SetSelection ( token.getOffset(), token.getOffset()+token.getName().Len() );
 			if ( editor->GetSelectionStart() != editor->GetSelectionEnd() ) {
 				editor->ReplaceSelection ( word );

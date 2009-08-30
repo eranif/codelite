@@ -459,10 +459,10 @@ IEditor *UnitTestPP::DoAddTestFile(const wxString& filename, const wxString &pro
 		// Search the target file, if it is already exist in the project, open the file
 		// and return
 		for (size_t i=0; i<files.size(); i++) {
-			if (files.at(i).GetFullPath() == fn.GetFullPath()) {
+			if (files.at(i) == fn) {
 				m_mgr->OpenFile(fn.GetFullPath());
 				editor = m_mgr->GetActiveEditor();
-				if (editor && editor->GetFileName().GetFullPath() == fn.GetFullPath()) {
+				if (editor && editor->GetFileName() == fn) {
 					return editor;
 				} else {
 					return NULL;
@@ -479,7 +479,7 @@ IEditor *UnitTestPP::DoAddTestFile(const wxString& filename, const wxString &pro
 		// open the file
 		m_mgr->OpenFile(fn.GetFullPath());
 		editor = m_mgr->GetActiveEditor();
-		if (editor && editor->GetFileName().GetFullPath() == fn.GetFullPath()) {
+		if (editor && editor->GetFileName() == fn) {
 			return editor;
 		}
 	}

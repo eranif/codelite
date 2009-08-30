@@ -530,7 +530,7 @@ wxFileName Manager::FindFile ( const wxArrayString& files, const wxFileName &fn 
 
 	for ( size_t i=0; i< files.GetCount(); i++ ) {
 		wxFileName tmpFileName ( files.Item ( i ) );
-		if ( tmpFileName.GetFullPath() == fn.GetFullPath() ) {
+		if ( tmpFileName == fn ) {
 			wxFileName tt ( tmpFileName );
 			if ( tt.MakeAbsolute() ) {
 				return tt;
@@ -895,7 +895,7 @@ wxString Manager::GetProjectNameByFile ( const wxString &fullPathFileName )
 		proj->GetFiles ( files, true );
 
 		for ( size_t xx=0; xx<files.size(); xx++ ) {
-			if ( files.at ( xx ).GetFullPath() == fullPathFileName ) {
+			if ( files.at ( xx ) == fullPathFileName ) {
 				return proj->GetName();
 			}
 		}
@@ -1922,7 +1922,7 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 	//try to open the file
 	wxFileName fn ( fileName );
 	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
-	if ( editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() ) {
+	if ( editor && editor->GetFileName() == fn ) {
 		editor->HighlightLine ( lineno );
 		editor->GotoLine ( lineno-1 );
 		editor->EnsureVisible ( lineno-1 );

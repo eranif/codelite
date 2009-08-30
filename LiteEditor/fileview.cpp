@@ -1206,7 +1206,7 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId &parent, const wxString &
 		FilewViewTreeItemData *childData = static_cast<FilewViewTreeItemData*>( GetItemData( child ) );
 		wxFileName fn(childData->GetData().GetFile());
 		fn.MakeAbsolute( projectPath );
-		if (fn.GetFullPath() == fileName) {
+		if (fn == fileName) {
 			return child;
 		}
 

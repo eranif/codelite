@@ -218,7 +218,7 @@ void BreakptMgr::DoRefreshFileBreakpoints(LEditor* editor)
 	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
 	for (; iter != m_bps.end(); ++iter) {
 		BreakpointInfo b = *iter;
-		if ((b.file == editor->GetFileName().GetFullPath()) && (b.lineno != -1)) {
+		if ((editor->GetFileName() == b.file) && (b.lineno != -1)) {
 			bps.insert(std::pair<int, BreakpointInfo>(b.lineno, b));
 		}
 	}

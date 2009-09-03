@@ -3098,7 +3098,7 @@ void wxScintilla::OnMouseLeftDown (wxMouseEvent& evt) {
                              evt.ShiftDown(), evt.ControlDown(),
 
 							 // FIXME:: Scintilla 2.0 seems to cause a crash when using rectuangaler selection, we are disabling it for now
-							 evt.AltDown());
+							 false);
 }
 
 void wxScintilla::OnMouseMove (wxMouseEvent& evt) {

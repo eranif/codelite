@@ -346,5 +346,9 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="Images">
+    <File Name="overlaytool.cpp"/>
+    <File Name="overlaytool.h"/>
+  </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

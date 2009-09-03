@@ -121,20 +121,16 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
 {
 	Create( parent, id, pos, size, style );
 
-
-//	SetBackgroundColour(*wxBLACK);
-//	SetForegroundColour(wxT("GREY"));
-
 	// Initialise images map
 	wxImageList *images = new wxImageList( 16, 16, true );
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "project" ) ) );				//0
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "folder" ) ) );					//1
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_c" ) ) );			//2
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_cplusplus" ) ) );	//3
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_h" ) ) );			//4
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_text" ) ) );		//5
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "workspace" ) ) );				//6
-	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "wxfb" ) ) );					//7
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "project" ) ) );              //0
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "folder" ) ) );               //1
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_c" ) ) );         //2
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_cplusplus" ) ) ); //3
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_h" ) ) );         //4
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "page_white_text" ) ) );      //5
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "workspace" ) ) );            //6
+	images->Add( wxXmlResource::Get()->LoadBitmap( wxT( "formbuilder" ) ) );          //7
 	AssignImageList( images );
 
 	Connect( GetId(), wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler( FileViewTree::OnPopupMenu ) );
@@ -1206,7 +1202,7 @@ wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId &parent, const wxString &
 		FilewViewTreeItemData *childData = static_cast<FilewViewTreeItemData*>( GetItemData( child ) );
 		wxFileName fn(childData->GetData().GetFile());
 		fn.MakeAbsolute( projectPath );
-		if (fn == fileName) {
+		if (fn.GetFullPath().CmpNoCase(fileName) == 0) {
 			return child;
 		}
 

@@ -3357,20 +3357,31 @@ public:
     // Returns the current UseAntiAliasing setting.
     bool GetUseAntiAliasing();
 
-	// ERAN IFRAH
+	// [PATCH] Starts
     void SetScrollWidthTracking(bool tracking);
     bool GetScrollWidthTracking();
-    
+
 	// Modern indicators
-	void SetIndicatorCurrent(int indicator);
-	int  GetIndicatorCurrent();
-	int IndicatorValueAt(int indicator, int position);
-	void IndicatorFillRange(int position, int len);
-	void IndicatorClearRange(int position, int len);
-	int IndicatorStart(int indicator, int position);
-	int IndicatorEnd(int indicator, int position);
-	void IndicatorSetUnder(int indicator, bool under);
-	// ERAN IFRAH - END
+	void     SetIndicatorCurrent(int indicator);
+	int      GetIndicatorCurrent();
+	int      IndicatorValueAt(int indicator, int position);
+	void     IndicatorFillRange(int position, int len);
+	void     IndicatorClearRange(int position, int len);
+	int      IndicatorStart(int indicator, int position);
+	int      IndicatorEnd(int indicator, int position);
+	void     IndicatorSetUnder(int indicator, bool under);
+	void     IndicatorSetAlpha(int indicatorNumber, int alpha);
+	int      IndicatorGetAlpha(int indicatorNumber);
+	void     AnnotationSetText(int line, const wxString &text);
+	wxString AnnotationGetText(int line);
+	void     AnnotationSetStyle(int line, int style);
+	int      AnnotationGetStyle(int line);
+	void     AnnotationClearAll();
+	void     AnnotationSetVisible(int visible);
+	bool     AnnotationGetVisible();
+	void     AnnotationSetStyleOffset(int style);
+	void     AnnotationSetStyles(int line, const wxMemoryBuffer &styles);
+	// [PATCH] END
 
 #if wxCHECK_VERSION(2, 5, 0)
     // The following methods are nearly equivallent to their similarly named

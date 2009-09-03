@@ -107,7 +107,7 @@ public:
 	BuildTab(wxWindow *parent, wxWindowID id, const wxString &name);
 	~BuildTab();
 
-    wxString GetBuildToolTip(const wxString &fileName, int lineno);
+    wxString GetBuildToolTip(const wxString &fileName, int lineno, wxMemoryBuffer &styleBits);
 };
 #endif // __buidltab__
 

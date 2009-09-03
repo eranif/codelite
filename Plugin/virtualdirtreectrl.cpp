@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : virtualdirtreectrl.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : virtualdirtreectrl.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  /////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@
 #include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
-    #pragma hdrstop 
+    #pragma hdrstop
 #endif
 
 #include "wx/wx.h"
@@ -80,9 +80,9 @@ wxVirtualDirTreeCtrl::~wxVirtualDirTreeCtrl()
 {
 	// first delete all VdtcTreeItemBase items (client data)
 	DeleteAllItems();
-#ifdef __WXMSW__	
+#ifdef __WXMSW__
 	_cache.clear();
-#endif	
+#endif
 	// delete the icons
 	delete _iconList;
 }
@@ -98,9 +98,9 @@ bool wxVirtualDirTreeCtrl::SetRootPath(const wxString &root, bool notify, int fl
 
 	// delete all items plus root first
 	DeleteAllItems();
-#ifdef __WXMSW__		
+#ifdef __WXMSW__
 	_cache.clear();
-#endif	
+#endif
 	VdtcTreeItemBase *start = 0;
 
 	// now call for icons management, the virtual
@@ -261,10 +261,10 @@ void wxVirtualDirTreeCtrl::GetFiles(VdtcTreeItemBase *parent, VdtcTreeItemBaseAr
 			while(bOk)
 			{
 				// TODO: Flag for double items
-										
+
 				item = AddFileItem(fname);
 				if(item)
-				{						
+				{
 					// fill it in, and marshall it by the user for info
 					fpath.SetFullName(fname);
 					if(OnAddFile(*item, fpath))
@@ -298,7 +298,7 @@ void wxVirtualDirTreeCtrl::GetDirectories(VdtcTreeItemBase *parent, VdtcTreeItem
 			// TODO: Flag for double items
 			item = AddDirItem(fname);
 			if(item)
-			{						
+			{
 				// fill it in, and marshall it by the user for info
 				fpath = path;
 				fpath.AppendDir(fname);
@@ -390,12 +390,12 @@ void wxVirtualDirTreeCtrl::AddItemsToTreeCtrl(VdtcTreeItemBase *item, VdtcTreeIt
                 SetItemHasChildren(newItem);
             }
 			//keep the newly added item in the cache
-#ifdef __WXMSW__	
+#ifdef __WXMSW__
 			wxString fullpath = GetFullPath(newItem).GetFullPath();
 			if(fullpath.IsEmpty() == false){
 					_cache[fullpath] = newItem.m_pItem;
 			}
-#endif			
+#endif
 		}
 	}
 }
@@ -428,7 +428,7 @@ wxFileName wxVirtualDirTreeCtrl::GetFullPath(const wxTreeItemId &id)
 
 wxTreeItemId wxVirtualDirTreeCtrl::GetItemByFullPath(const wxFileName &fullpath, bool scandirs)
 {
-#ifdef __WXMSW__	
+#ifdef __WXMSW__
 	// try the cache
 	std::map< wxString, void* >::const_iterator iter = _cache.find(fullpath.GetFullPath());
 	if (iter != _cache.end()) {
@@ -437,8 +437,8 @@ wxTreeItemId wxVirtualDirTreeCtrl::GetItemByFullPath(const wxFileName &fullpath,
 #endif
 
 	wxTreeItemId id = DoFindItemByPath(fullpath, scandirs);
-    
-#ifdef __WXMSW__			
+
+#ifdef __WXMSW__
 	if (scandirs && id.IsOk()) {
 		_cache[fullpath.GetFullPath()] = id.m_pItem;
 	}
@@ -458,13 +458,13 @@ wxTreeItemId wxVirtualDirTreeCtrl::ExpandToPath(const wxFileName &path)
         EnsureVisible(item);
 		SendCmdEvent(wxEVT_FILE_EXP_REFRESHED);
 	}
-	return item; 
+	return item;
 }
 
 wxTreeItemId wxVirtualDirTreeCtrl::DoFindItemByPath(const wxFileName &path, bool scandirs)
 {
     PERF_FUNCTION();
-    
+
     wxString volume = path.HasVolume() ? path.GetVolume()+wxT(":\\") : wxString(wxT("/"));
 
     // look for volume
@@ -476,7 +476,7 @@ wxTreeItemId wxVirtualDirTreeCtrl::DoFindItemByPath(const wxFileName &path, bool
         }
         curr = GetRootItem();
     }
-    
+
     // look for directories in the path
 	wxFileName seekpath;
     if (path.HasVolume()) {
@@ -556,10 +556,10 @@ bool wxVirtualDirTreeCtrl::IsFileNode(const wxTreeItemId &id)
 
 /** Appends subdirs up until root. This is done by finding the root first and
     going back down to the original caller. This is faster because no copying takes place */
-void wxVirtualDirTreeCtrl::AppendPathRecursively(VdtcTreeItemBase *b, wxFileName &dir, bool useRoot) 
+void wxVirtualDirTreeCtrl::AppendPathRecursively(VdtcTreeItemBase *b, wxFileName &dir, bool useRoot)
 {
-	wxCHECK2(b, return); 
-	
+	wxCHECK2(b, return);
+
 	VdtcTreeItemBase *parent = GetParent(b);
 	if(parent)
 		AppendPathRecursively(parent, dir, useRoot);
@@ -570,7 +570,7 @@ void wxVirtualDirTreeCtrl::AppendPathRecursively(VdtcTreeItemBase *b, wxFileName
 			dir.AssignDir(b->GetName());
 		return;
 	}
-	
+
 	// now we are unwinding the other way around
 	if(b->IsDir())
 		dir.AppendDir(b->GetName());
@@ -582,7 +582,7 @@ void wxVirtualDirTreeCtrl::AppendPathRecursively(VdtcTreeItemBase *b, wxFileName
 
 void wxVirtualDirTreeCtrl::OnExpanding(wxTreeEvent &event)
 {
-	
+
 	// check for collapsing item, and scan from there
 	wxTreeItemId item = event.GetItem();
 	if(item.IsOk())
@@ -628,12 +628,22 @@ VdtcTreeItemBase *wxVirtualDirTreeCtrl::AddDirItem(const wxString &name)
 
 void wxVirtualDirTreeCtrl::OnAssignIcons(wxImageList &icons)
 {
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("document_root")));
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("folder")));
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus")));
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_c")));
-	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_h")));
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("document_root")));       //0
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("folder")));              //1
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_text")));     //2
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_cplusplus")));//3
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_c")));        //4
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("page_white_h")));        //5
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("executable")));          //6
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("file_php")));            //7
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("shared_library")));      //8
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("pixmap")));              //9
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("shellscript")));         //10
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("compressed_file")));     //11
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("file_xml")));            //12
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("file_html")));           //13
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("makefile")));            //14
+	icons.Add(wxXmlResource::Get()->LoadBitmap(wxT("formbuilder")));         //15
 }
 
 VdtcTreeItemBase *wxVirtualDirTreeCtrl::OnCreateTreeItem(int type, const wxString &name)

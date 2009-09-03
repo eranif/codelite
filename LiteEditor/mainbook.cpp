@@ -327,12 +327,13 @@ LEditor *MainBook::FindEditor(const wxString &fileName)
 {
 	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
-		if (editor && editor->GetFileName() == fileName)
+		if (editor && editor->GetFileName().GetFullPath().CmpNoCase(fileName) == 0)
 			return editor;
 	}
+
 	for (std::set<wxWindow*>::iterator i = m_detachedTabs.begin(); i != m_detachedTabs.end(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(*i);
-		if (editor && editor->GetFileName() == fileName)
+		if (editor && editor->GetFileName().GetFullPath().CmpNoCase(fileName) == 0)
 			return editor;
 	}
 	return NULL;
@@ -342,7 +343,7 @@ wxWindow *MainBook::FindPage(const wxString &text)
 {
 	for (size_t i = 0; i < m_book->GetPageCount(); i++) {
 		LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
-		if (editor && editor->GetFileName() == text) {
+		if (editor && editor->GetFileName().GetFullPath().CmpNoCase(text) == 0) {
 			return editor;
 		}
 

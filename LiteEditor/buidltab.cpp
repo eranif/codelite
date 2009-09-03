@@ -168,7 +168,9 @@ void BuildTab::Clear()
 	Frame::Get()->GetOutputPane()->GetErrorsTab()->ClearLines();
 	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 	if ( editor ) {
-		editor->DelAllCompilerMarkers();
+		editor->AnnotationClearAll();
+		editor->AnnotationSetVisible(0); // Hidden
+		editor->Refresh();
 	}
 }
 
@@ -313,7 +315,10 @@ void BuildTab::MarkEditor ( LEditor *editor )
 {
 	if ( !editor )
 		return;
-	editor->DelAllCompilerMarkers();
+
+	editor->AnnotationClearAll();
+	editor->AnnotationSetVisible(2); // Visible with box around it
+
     std::pair<std::multimap<wxString,int>::iterator,
               std::multimap<wxString,int>::iterator> iters = m_fileMap.equal_range(editor->GetFileName().GetFullPath());
 	std::multimap<wxString,int>::iterator b = iters.first;
@@ -321,15 +326,25 @@ void BuildTab::MarkEditor ( LEditor *editor )
     if (b == m_fileMap.end())
         return;
     for (; b != e; b++ ) {
+
         std::map<int,LineInfo>::iterator i = m_lineInfo.find ( b->second ) ;
+
         if ( i == m_lineInfo.end() )
             continue; // safety check -- should not normally happen
-		if ( i->second.linecolor == wxSCI_LEX_GCC_ERROR ) {
-			editor->SetErrorMarker ( i->second.linenum );
-		} else if ( i->second.linecolor == wxSCI_LEX_GCC_WARNING ) {
-			editor->SetWarningMarker ( i->second.linenum );
+
+		if ( i->second.linecolor == wxSCI_LEX_GCC_ERROR || i->second.linecolor == wxSCI_LEX_GCC_WARNING ) {
+
+			wxMemoryBuffer style_bytes;
+			int      line_number = i->second.linenum;
+			wxString tip = GetBuildToolTip(editor->GetFileName().GetFullPath(), line_number, style_bytes);
+
+			editor->AnnotationSetText (line_number, tip);
+			editor->AnnotationSetStyles(line_number, style_bytes );
+
 		}
+
     }
+	editor->Refresh();
 }
 
 void BuildTab::OnClearAll ( wxCommandEvent &e )
@@ -513,7 +528,7 @@ void BuildTab::OnMouseDClick ( wxScintillaEvent &e )
 	PERF_END();
 }
 
-wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno)
+wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemoryBuffer &styleBits)
 {
 	std::pair<std::multimap<wxString,int>::iterator,
               std::multimap<wxString,int>::iterator> iters = m_fileMap.equal_range(fileName);
@@ -524,17 +539,28 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno)
 	if(i1 == m_fileMap.end())
 		return wxEmptyString;
 
-	wxString tip;
+	wxString tip(wxT("\n "));
+	styleBits.AppendByte((char)eAnnotationStyleError);
+	styleBits.AppendByte((char)eAnnotationStyleError);
     for ( ; i1 != i2;  i1++ ) {
         std::map<int,LineInfo>::iterator i = m_lineInfo.find ( i1->second ) ;
-        if ( i != m_lineInfo.end() && i->second.linenum == lineno &&
-                (i->second.linecolor == wxSCI_LEX_GCC_ERROR || i->second.linecolor == wxSCI_LEX_GCC_WARNING )) {
+        if ( i != m_lineInfo.end() && i->second.linenum == lineno && (i->second.linecolor == wxSCI_LEX_GCC_ERROR || i->second.linecolor == wxSCI_LEX_GCC_WARNING )) {
             wxString text = i->second.linetext.Mid(i->second.filestart+i->second.filelen);
             if (!text.IsEmpty() && text[0] == wxT(':')) {
                 text.erase(0, 1);
             }
-			tip << text.Trim(false).Trim() << wxT("\n");
+
+			wxString tmpTip (text.Trim(false).Trim() << wxT("\n "));
+
+			for(size_t j=0; j<tmpTip.Length(); j++) {
+				if( i->second.linecolor == wxSCI_LEX_GCC_WARNING ) {
+					styleBits.AppendByte((char)eAnnotationStyleWarning);
+				} else {
+					styleBits.AppendByte((char)eAnnotationStyleError);
+				}
+			}
+			tip << tmpTip;
         }
     }
-	return tip.Trim(false).Trim();
+	return tip ;
 }

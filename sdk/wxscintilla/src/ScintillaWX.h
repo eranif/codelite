@@ -17,6 +17,7 @@
 #ifndef __ScintillaWX_h__
 #define __ScintillaWX_h__
 // [CHANGED] BEGIN
+#include <vector>
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -47,9 +48,11 @@
 #include "CharClassify.h"
 #include "Decoration.h"
 #include "Document.h"
+#include "Selection.h"
 #include "PositionCache.h"
 #include "Editor.h"
 #include "SString.h"
+#include "PropSetSimple.h"
 #include "ScintillaBase.h"
 #include <wx/wx.h>
 #include <wx/dataobj.h>

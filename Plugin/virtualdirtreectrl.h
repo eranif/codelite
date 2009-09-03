@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : virtualdirtreectrl.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : virtualdirtreectrl.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  /////////////////////////////////////////////////////////////////////////////
@@ -104,6 +104,7 @@ class VdtcTreeItemBase : public wxTreeItemData
 protected:
 	wxString _name;
 	int _type;
+	std::map<wxString, int> _imgIdx;
 
 public:
 	/** Default constructor. Pass the parent of this node as a VdtcTreeItemBase object, the type
@@ -129,6 +130,59 @@ public:
 		: _name(name)
 		, _type(type)
 	{
+		_imgIdx[wxT("cpp")] = 3;
+		_imgIdx[wxT("cxx")] = 3;
+		_imgIdx[wxT("cc")]  = 3;
+		_imgIdx[wxT("c++")] = 3;
+		_imgIdx[wxT("c")]   = 4;
+		_imgIdx[wxT("h++")] = 5;
+		_imgIdx[wxT("hpp")] = 5;
+		_imgIdx[wxT("h")]   = 5;
+
+		// executable
+		_imgIdx[wxT("exe")] =  6;
+
+		// shared libraris / static libraries
+		_imgIdx[wxT("php")] =  7;
+
+		// shared libraris / static libraries
+		_imgIdx[wxT("dylib")] =  8;
+		_imgIdx[wxT("dll")] =  8;
+		_imgIdx[wxT("so")] =  8;
+		_imgIdx[wxT("lib")] =  8;
+		_imgIdx[wxT("a")] =  8;
+
+		// images
+		_imgIdx[wxT("png")] =  9;
+		_imgIdx[wxT("bmp")] =  9;
+		_imgIdx[wxT("gif")] =  9;
+		_imgIdx[wxT("xpm")] =  9;
+
+		// scripts
+		_imgIdx[wxT("sh")] =  10;
+		_imgIdx[wxT("bat")] =  10;
+
+		// compressed files
+		_imgIdx[wxT("zip")] =  11;
+		_imgIdx[wxT("gz")] =  11;
+		_imgIdx[wxT("tgz")] =  11;
+		_imgIdx[wxT("tar")] =  11;
+		_imgIdx[wxT("jar")] =  11;
+
+		// XML files
+		_imgIdx[wxT("xml")] =  12;
+		_imgIdx[wxT("xrc")] =  12;
+
+		// HTML files
+		_imgIdx[wxT("html")] =  13;
+		_imgIdx[wxT("htm")] =  13;
+
+		// Makefile
+		_imgIdx[wxT("mk")] =  14;
+		_imgIdx[wxT("makefile")] =  14;
+
+		// formbuilder files
+		_imgIdx[wxT("fbp")] =  15;
 	};
 
 	/** Default destructor */
@@ -166,15 +220,16 @@ public:
 		if(_type == VDTC_TI_FILE){
 			//return icon id based on the file extension
 			wxString ext = _name.AfterLast(wxT('.'));
-			if(ext.CmpNoCase(wxT("cpp")) == 0){return 3;}
-			if(ext.CmpNoCase(wxT("cxx")) == 0){return 3;}
-			if(ext.CmpNoCase(wxT("cc")) == 0){return 3;}
-			if(ext.CmpNoCase(wxT("c++")) == 0){return 3;}
-			if(ext.CmpNoCase(wxT("c")) == 0){return 4;}
-			if(ext.CmpNoCase(wxT("h++")) == 0){return 5;}
-			if(ext.CmpNoCase(wxT("hpp")) == 0){return 5;}
-			if(ext.CmpNoCase(wxT("h")) == 0){return 5;}
-			return VDTC_ICON_FILE;
+			ext.MakeLower();
+
+			std::map<wxString, int>::const_iterator iter = _imgIdx.find(ext);
+			if( iter != _imgIdx.end() ) {
+				return iter->second;
+			} else if(_name.CmpNoCase(wxT("makefile")) == 0) {
+				return 14;
+			} else {
+				return VDTC_ICON_FILE;
+			}
 		}
 		return -1;
 	};
@@ -264,7 +319,7 @@ private:
 	void SwapItem(VdtcTreeItemBaseArray &items, int a, int b);
 
 	wxTreeItemId DoFindItemByPath(const wxFileName &path, bool scandirs = true);
-	
+
 	// -- event handlers --
 
 	void OnExpanding(wxTreeEvent &event);
@@ -272,7 +327,7 @@ private:
 protected:
 	/** Inherited virtual function for SortChildren */
 	int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
-	
+
 	/**
 	 * Delete all children of item and rebuild it from disk
 	 */
@@ -362,14 +417,14 @@ public:
 		of every newly created instance of the (inherited) VdtcTreeItemBase class. */
 	VdtcTreeItemBase *AddDirItem(const wxString &name);
 
-	/** Returns parent of the passed VdtcItemBase object. It will fetch the wxTreeItemId of this parent, 
+	/** Returns parent of the passed VdtcItemBase object. It will fetch the wxTreeItemId of this parent,
 	    and return the VdtcTreeItemBase parent associated with it. If the associated item is nil, there is no
 		parent, this is most likely the root else an assertion failure occurs */
 	VdtcTreeItemBase *GetParent(VdtcTreeItemBase *item) const {
 		if(!item){
 			return NULL;
 		}
-		
+
 		wxTreeItemId p = GetItemParent(item->GetId());
 		if(p.IsOk()){
 			return (VdtcTreeItemBase *)GetItemData(p);
@@ -381,12 +436,12 @@ public:
 	/**
 	 * \brief find item which holds fullpath
 	 * \param fullpath fullpath to search
-	 * \param scandirs whether to search the actual file system (true) 
+	 * \param scandirs whether to search the actual file system (true)
 	 *                 or just search the already-loaded tree (false)
 	 * \return tree item or invalid incase no match found
 	 */
 	wxTreeItemId GetItemByFullPath(const wxFileName &fullpath, bool scandirs = true);
-	
+
 	// --- handlers ---
 
 	/** This handler is called when the SetRootPath function is called. This call causes a re-initialisation of
@@ -480,7 +535,7 @@ public:
 		handler, subsequent calls to OnAddFile, OnAddDirectory will be made for every file and directory
 		encountered in this level to be scanned. NOTE: When this scan is veto'd there will be no call
 		to OnDirectoryScanEnd because there was no scan. Also OnAddedItems is not called */
-	
+
 	virtual bool OnDirectoryScanBegin(const wxFileName &path);
 
 	/** This handler is called when all files and all directories are scanned in the current dir and iterated in
@@ -489,7 +544,7 @@ public:
 	    contains the pointer array of all the items that are in the list, and the path parameter contains the
 	    current path investigated. NOTE: If you want to delete an item from the array, delete it with delete
 	    operator and remove the pointer from the list.  */
-		
+
 	virtual void OnDirectoryScanEnd(VdtcTreeItemBaseArray &items, const wxFileName &path);
 
 	/** This handler is called the very moment after all items are added to the tree control. The parent parameter

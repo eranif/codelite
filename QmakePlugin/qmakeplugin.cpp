@@ -317,6 +317,7 @@ void QMakePlugin::OnGetBuildCommand(wxCommandEvent& event)
 		return;
 	}
 
+	// we avoid calling event.Skip() to override the default build system by this one
 	event.SetString( DoGetBuildCommand(project, config, event.GetInt() == 1) );
 }
 

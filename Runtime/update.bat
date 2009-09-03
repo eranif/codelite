@@ -22,5 +22,5 @@ copy CodeLite.exe "%ProgramFiles%\CodeLite\" /Y
 copy patch.exe "%ProgramFiles%\CodeLite\" /Y
 copy astyle.sample "%ProgramFiles%\CodeLite\" /Y
 copy ..\sdk\wxconfig\wx-config.exe "%ProgramFiles%\CodeLite\" /Y
-copy ..\sdk\curl\lib\libcurl-4.dll "%ProgramFiles%\CodeLite\" /Y
-copy ..\sdk\curl\lib\libcurl-4.dll . /Y
+:: copy ..\sdk\curl\lib\libcurl-4.dll "%ProgramFiles%\CodeLite\" /Y
+:: copy ..\sdk\curl\lib\libcurl-4.dll . /Y

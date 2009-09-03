@@ -58,6 +58,9 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 	WordList &keywords3 = *keywordlists[2];
 	WordList &keywords4 = *keywordlists[3];
 
+	// property styling.within.preprocessor
+	//	For C++ code, determines whether all preprocessor code is styled in the preprocessor style (0, the default) 
+	//	or only from the initial # to the end of the command word(1). 
 	bool stylingWithinPreprocessor = styler.GetPropertyInt("styling.within.preprocessor") != 0;
 
 	CharacterSet setOKBeforeRE(CharacterSet::setNone, "([{=,:;!%^&*|?~+-");
@@ -67,6 +70,9 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 
 	CharacterSet setWordStart(CharacterSet::setAlpha, "_", 0x80, true);
 	CharacterSet setWord(CharacterSet::setAlphaNum, "._", 0x80, true);
+
+	// property lexer.cpp.allow.dollars
+	//	Set to 0 to disallow the '$' character in identifiers with the cpp lexer. 
 	if (styler.GetPropertyInt("lexer.cpp.allow.dollars", 1) != 0) {
 		setWordStart.Add('$');
 		setWord.Add('$');
@@ -78,6 +84,7 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 	bool lastOpSetScope = false;
 	int styleBeforeDCKeyword = SCE_C_DEFAULT;
 	bool continuationLine = false;
+	bool isIncludePreprocessor = false;
 
 	if (initStyle == SCE_C_PREPROCESSOR) {
 		// Set continuationLine if last character of previous line is '\'
@@ -119,6 +126,7 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 			// if different sets of lines lexed.
 			visibleChars = 0;
 			lastWordWasUUID = false;
+			isIncludePreprocessor = false;
 		}
 
 		// Handle line continuation generically.
@@ -233,6 +241,11 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 			case SCE_C_STRING:
 				if (sc.atLineEnd) {
 					sc.ChangeState(SCE_C_STRINGEOL);
+				} else if (isIncludePreprocessor) {
+					if (sc.ch == '>') {
+						sc.ForwardSetState(SCE_C_DEFAULT);
+						isIncludePreprocessor = false;
+					}
 				} else if (sc.ch == '\\') {
 					if (sc.chNext == '\"' || sc.chNext == '\'' || sc.chNext == '\\') {
 						sc.Forward();
@@ -324,6 +337,9 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 				sc.SetState(SCE_C_REGEX);	// JavaScript's RegEx
 			} else if (sc.ch == '\"') {
 				sc.SetState(SCE_C_STRING);
+				isIncludePreprocessor = false;	// ensure that '>' won't end the string
+			} else if (isIncludePreprocessor && sc.ch == '<') {
+				sc.SetState(SCE_C_STRING);
 			} else if (sc.ch == '\'') {
 				sc.SetState(SCE_C_CHARACTER);
 			} else if (sc.ch == '#' && visibleChars == 0) {
@@ -335,6 +351,8 @@ static void ColouriseCppDoc(unsigned int startPos, int length, int initStyle, Wo
 				} while ((sc.ch == ' ' || sc.ch == '\t') && sc.More());
 				if (sc.atLineEnd) {
 					sc.SetState(SCE_C_DEFAULT);
+				} else if (sc.Match("include")) {
+					isIncludePreprocessor = true;
 				}
 			} else if (isoperator(static_cast<char>(sc.ch))) {
 				sc.SetState(SCE_C_OPERATOR);
@@ -372,10 +390,24 @@ static bool IsStreamCommentStyle(int style) {
 // and to make it possible to fiddle the current level for "} else {".
 static void FoldCppDoc(unsigned int startPos, int length, int initStyle,
 					   WordList *[], Accessor &styler) {
+
+	// property fold.comment
+	//	This option enables folding multi-line comments and explicit fold points when using the C++ lexer. 
+	//	Explicit fold points allows adding extra folding by placing a //{ comment at the start and a //} 
+	//	at the end of a section that should fold. 
 	bool foldComment = styler.GetPropertyInt("fold.comment") != 0;
+
+	// property fold.preprocessor
+	//	This option enables folding preprocessor directives when using the C++ lexer. 
+	//	Includes C#'s explicit #region and #endregion folding directives. 
 	bool foldPreprocessor = styler.GetPropertyInt("fold.preprocessor") != 0;
+
 	bool foldCompact = styler.GetPropertyInt("fold.compact", 1) != 0;
+
+	// property fold.at.else 
+	//	This option enables C++ folding on a "} else {" line of an if statement. 
 	bool foldAtElse = styler.GetPropertyInt("fold.at.else", 0) != 0;
+
 	unsigned int endPos = startPos + length;
 	int visibleChars = 0;
 	int lineCurrent = styler.GetLine(startPos);
@@ -422,18 +454,6 @@ static void FoldCppDoc(unsigned int startPos, int length, int initStyle,
 					levelNext++;
 				} else if (styler.Match(j, "end")) {
 					levelNext--;
-				} else if (j < endPos && isdigit(styler.SafeGetCharAt(j))) {
-                    // e.g.: # 34 "file.h" 1 3 4
-                    // a '1' after the file name indicates start of include, a '2' end of include
-                    char pch, nch = ch;
-                    do pch = nch, nch = styler.SafeGetCharAt(++j); 
-                        while (j < endPos && nch != '\r' && nch != '\n' && 
-                                !((nch == '1' || nch == '2') && IsASpaceOrTab(pch)));
-                    if (nch == '1') {
-                        levelNext++;
-                    } else if (nch == '2') {
-                        levelNext--;
-                    }
                 }
 			}
 		}
@@ -467,6 +487,10 @@ static void FoldCppDoc(unsigned int startPos, int length, int initStyle,
 			lineCurrent++;
 			levelCurrent = levelNext;
 			levelMinCurrent = levelCurrent;
+			if (atEOL && (i == static_cast<unsigned int>(styler.Length()-1))) {
+				// There is an empty line at end of file so give it same level and empty
+				styler.SetLevel(lineCurrent, (levelCurrent | levelCurrent << 16) | SC_FOLDLEVELWHITEFLAG);
+			}
 			visibleChars = 0;
 		}
 	}

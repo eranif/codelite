@@ -160,7 +160,7 @@ bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent &event, bool noti
 			FindAndSelect(editor, pattern, GetItemText(item));
 		}
 	}
-	
+
 	// post an event that an item was activated
 	if ( notify ) {
 		wxCommandEvent e(wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED);

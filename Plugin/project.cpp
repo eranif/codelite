@@ -184,7 +184,7 @@ bool Project::IsFileExist(const wxString &fileName)
 	GetFiles(files);
 
 	for (size_t i=0; i<files.size(); i++) {
-		if (files.at(i) == tmp) {
+		if (files.at(i).GetFullPath().CmpNoCase(tmp.GetFullPath()) == 0) {
 			return true;
 		}
 	}

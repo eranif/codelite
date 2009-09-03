@@ -73,6 +73,8 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 #else
 	rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
 	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
+	rCtrl.IndicatorSetAlpha(1, 70);
+	rCtrl.IndicatorSetAlpha(2, 70);
 #endif
 
 	bool tooltip(false);

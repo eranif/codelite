@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_editor.h"
+#include "buildtabsettingsdata.h"
 #include "jobqueue.h"
 #include "stringhighlighterjob.h"
 #include "job.h"
@@ -312,7 +313,7 @@ void LEditor::SetProperties()
 	SetMarginType(NUMBER_MARGIN_ID, wxSCI_MARGIN_NUMBER);
 
 	// line number margin displays every thing but folding, bookmarks and breakpoint
-	SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
+	SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_all_breakpoints));
 
 	// Separators
 	SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSCI_MARGIN_FORE);
@@ -511,6 +512,20 @@ void LEditor::SetProperties()
 	IndicatorSetStyle(MATCH_INDICATOR, wxSCI_INDIC_BOX);
 	IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
 
+	// Error
+	wxFont guiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	BuildTabSettingsData cmpColoursOptions;
+	EditorConfigST::Get()->ReadObject ( wxT ( "build_tab_settings" ), &cmpColoursOptions);
+
+	StyleSetBackground(eAnnotationStyleError, DrawingUtils::LightColour(cmpColoursOptions.GetErrorColour(), 9.0));
+	StyleSetForeground(eAnnotationStyleError, cmpColoursOptions.GetErrorColour());
+	StyleSetFont(eAnnotationStyleError, guiFont);
+
+	// Warning
+	StyleSetBackground(eAnnotationStyleWarning, DrawingUtils::LightColour(cmpColoursOptions.GetErrorColour(), 9.0));
+	StyleSetForeground(eAnnotationStyleWarning, cmpColoursOptions.GetWarnColour());
+	StyleSetFont(eAnnotationStyleWarning, guiFont);
+
 	CmdKeyClear(wxT('L'), wxSCI_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
 }
 
@@ -531,6 +546,8 @@ void LEditor::OnSavePoint(wxScintillaEvent &event)
 
 void LEditor::OnCharAdded(wxScintillaEvent& event)
 {
+	static wxChar s_lastCharEntered = 0;
+
 	int pos = GetCurrentPos();
 
 	// get the word and select it in the completion box
@@ -594,7 +611,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		// fall through...
 	case '\n': {
 		// incase ENTER was hit between {}
-			if ( GetCharAt (PositionBefore( PositionBefore(pos) )) == wxT('{') ) {
+			if ( GetCharAt (PositionBefore( PositionBefore(pos) )) == wxT('{') && s_lastCharEntered == wxT('{') ) {
 				matchChar = '}';
 				InsertText(pos, matchChar);
 				BeginUndoAction();
@@ -643,6 +660,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			m_context->OnUserTypedXChars(GetWordAtCaret());
 		}
 	}
+	s_lastCharEntered = event.GetKey();
 	event.Skip();
 }
 
@@ -1019,9 +1037,6 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 			tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
 			type = ct_breakpoint;
 
-		} else if (MarkerGet(line) & mmt_compiler) {
-			tooltip = Frame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line);
-			type = ct_compiler_msg;
 		}
 
 		if (! tooltip.IsEmpty()) {
@@ -2371,8 +2386,8 @@ void LEditor::SetErrorMarker(int lineno)
 
 void LEditor::DelAllCompilerMarkers()
 {
-	MarkerDeleteAll(smt_warning);
-	MarkerDeleteAll(smt_error);
+//	MarkerDeleteAll(smt_warning);
+//	MarkerDeleteAll(smt_error);
 }
 
 // Maybe one day we'll display multiple bps differently

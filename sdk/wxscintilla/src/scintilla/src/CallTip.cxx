@@ -32,7 +32,7 @@ CallTip::CallTip() {
 	startHighlight = 0;
 	endHighlight = 0;
 	tabSize = 0;
-	useStyleCallTip = true;    // for backwards compatibility
+	useStyleCallTip = false;    // for backwards compatibility
 
 #ifdef __APPLE__
 	// proper apple colours for the default
@@ -117,10 +117,10 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 					const int halfWidth = widthArrow / 2 - 3;
 					const int centreX = rcClient.left + widthArrow / 2 - 1;
 					const int centreY = (rcClient.top + rcClient.bottom) / 2;
-//					surface->FillRectangle(rcClient, colourBG.allocated);
-//					PRectangle rcClientInner(rcClient.left + 1, rcClient.top + 1,
-//					                         rcClient.right - 2, rcClient.bottom - 1);
-//					surface->FillRectangle(rcClientInner, colourUnSel.allocated);
+					surface->FillRectangle(rcClient, colourBG.allocated);
+					PRectangle rcClientInner(rcClient.left + 1, rcClient.top + 1,
+					                         rcClient.right - 2, rcClient.bottom - 1);
+					surface->FillRectangle(rcClientInner, colourUnSel.allocated);
 
 					if (upArrow) {      // Up arrow
 						Point pts[] = {
@@ -137,7 +137,7 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
     						Point(centreX, centreY + halfWidth - halfWidth / 2),
 						};
 						surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
-                 						colourUnSel.allocated, colourUnSel.allocated);
+                 						colourBG.allocated, colourBG.allocated);
 					}
 				}
 				xEnd = rcClient.right;
@@ -150,18 +150,13 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 			} else if (IsTabCharacter(s[startSeg])) {
 				xEnd = NextTabPos(x);
 			} else {
-				ColourDesired hltBgCol((unsigned int)170, (unsigned int)255, (unsigned int)170);
 				xEnd = x + surface->WidthText(font, s + startSeg, endSeg - startSeg);
 				if (draw) {
 					rcClient.left = x;
 					rcClient.right = xEnd;
-
-					PRectangle rr = rcClient;
-					rr.top += 1;
-					surface->DrawTextNoClip(rr, font, ytext,
-											s+startSeg, endSeg - startSeg,
-					                        highlight ? colourSel.allocated : colourUnSel.allocated,
-											highlight ? hltBgCol.AsLong() : colourBG.allocated);
+					surface->DrawTextTransparent(rcClient, font, ytext,
+										s+startSeg, endSeg - startSeg,
+					                             highlight ? colourSel.allocated : colourUnSel.allocated);
 				}
 			}
 			x = xEnd;
@@ -259,9 +254,8 @@ PRectangle CallTip::CallTipStart(int pos, Point pt, const char *defn,
 	clickPlace = 0;
 	if (val)
 		delete []val;
+	val = 0;
 	val = new char[strlen(defn) + 1];
-	if (!val)
-		return PRectangle();
 	strcpy(val, defn);
 	codePage = codePage_;
 	Surface *surfaceMeasure = Surface::Allocate();

@@ -452,7 +452,7 @@ void SymbolViewPlugin::GetFiles(const wxFileName &path, std::multimap<wxString,w
 				// for now, make sure .c or .cpp file also includes corresponding .h file.
 				// FIXME: this only works if the .h file is in the same directory as the .c/.cpp file.
 				fileName.SetExt(path.GetExt());
-				if (fileName == fullPath) {
+				if (fullPath.CmpNoCase(fileName.GetFullPath()) == 0) {
 					sqlopts.insert(std::make_pair(sqlFileKey, file));
 				}
 			}

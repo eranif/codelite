@@ -50,4 +50,5 @@
     </Configuration>
   </Settings>
   <Dependencies/>
+  <Dependencies Name="ReleaseUnicode"/>
 </CodeLite_Project>

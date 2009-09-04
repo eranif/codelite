@@ -556,7 +556,7 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemor
 			wxString asciiTip;
 			
 			for(size_t at=0; at<tmpTip.Length(); at++) {
-				if( wxIsprint(tmpTip.GetChar(at) ) || tmpTip.GetChar(at) == wxT('\n') ) {
+				if( isprint((char)tmpTip.GetChar(at) ) || tmpTip.GetChar(at) == wxT('\n') ) {
 					asciiTip.Append( tmpTip.GetChar(at) );
 				}
 			}

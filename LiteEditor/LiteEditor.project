@@ -3,6 +3,7 @@
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00010001N0004Unix000000000000
+    
     ]]>
     </Plugin>
   </Plugins>
@@ -819,11 +820,11 @@ resources.cpp: resources.xrc
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="WinReleaseUnicode">
-    <Project Name="sqlite3"/>
+  <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
-    <Project Name="wxpropgrid"/>
+    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
+    <Project Name="wxpropgrid"/>
     <Project Name="CodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>
@@ -841,11 +842,11 @@ resources.cpp: resources.xrc
     <Project Name="ContinuousBuild"/>
     <Project Name="QMakePlugin"/>
   </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="wxscintilla"/>
+  <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
+    <Project Name="wxscintilla"/>
     <Project Name="wxpropgrid"/>
+    <Project Name="wxsqlite3"/>
     <Project Name="CodeLite"/>
     <Project Name="plugin_sdk"/>
     <Project Name="CodeFormatter"/>

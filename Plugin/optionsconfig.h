@@ -65,6 +65,7 @@ class OptionsConfig : public ConfObject
 	int            m_caretBlinkPeriod;
 	wxString       m_programConsoleCommand;
 	wxString       m_eolMode;
+	bool           m_hideChangeMarkerMargin;
 
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -73,6 +74,15 @@ public:
 	//-------------------------------------
 	// Setters/Getters
 	//-------------------------------------
+
+	void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin) {
+		this->m_hideChangeMarkerMargin = hideChangeMarkerMargin;
+	}
+
+	bool GetHideChangeMarkerMargin() const {
+		return m_hideChangeMarkerMargin;
+	}
+
 	bool GetDisplayFoldMargin() const {
 		return m_displayFoldMargin;
 	}

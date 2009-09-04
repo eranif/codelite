@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -39,6 +39,8 @@ class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 		wxCheckBox* m_checkBoxAutoCompleteBraces;
 		wxCheckBox* m_highlightCaretLine;
 		wxCheckBox* m_checkBoxAdjustScrollbarSize;
+		wxCheckBox* m_checkBoxHideChangeMarkerMargin;
+		
 		wxStaticText* m_staticText1;
 		wxColourPickerCtrl* m_caretLineColourPicker;
 		wxStaticText* m_staticText2;

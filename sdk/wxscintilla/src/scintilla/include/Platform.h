@@ -534,9 +534,11 @@ public:
 	static int Clamp(int val, int minVal, int maxVal);
 };
 
-#ifdef  NDEBUG
+//#ifdef  NDEBUG
+#if 1
 #define PLATFORM_ASSERT(c) ((void)0)
 #else
+
 #ifdef SCI_NAMESPACE
 #define PLATFORM_ASSERT(c) ((c) ? (void)(0) : Scintilla::Platform::Assert(#c, __FILE__, __LINE__))
 #else

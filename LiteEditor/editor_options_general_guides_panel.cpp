@@ -41,6 +41,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel( wxWindow* pare
 	m_highlightCaretLine->SetValue(options->GetHighlightCaretLine());
 	m_caretLineColourPicker->SetColour(options->GetCaretLineColour());
 	m_choiceEOL->SetStringSelection(options->GetEolMode());
+	m_checkBoxHideChangeMarkerMargin->SetValue( options->GetHideChangeMarkerMargin() );
 
     EnableDisableCaretLineColourPicker();
 
@@ -72,6 +73,7 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 	options->SetCaretLineColour(m_caretLineColourPicker->GetColour());
 	options->SetAutoAddMatchedBraces(m_checkBoxAutoCompleteBraces->IsChecked());
 	options->SetEolMode(m_choiceEOL->GetStringSelection());
+	options->SetHideChangeMarkerMargin( m_checkBoxHideChangeMarkerMargin->IsChecked() );
 
 	// save the whitespace visibility
 	int style(wxSCI_WS_INVISIBLE); // inivisble

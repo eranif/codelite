@@ -539,10 +539,8 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemor
 	if(i1 == m_fileMap.end())
 		return wxEmptyString;
 
-	wxString tip(wxT("\n "));
-	styleBits.AppendByte((char)eAnnotationStyleError);
-	styleBits.AppendByte((char)eAnnotationStyleError);
-    for ( ; i1 != i2;  i1++ ) {
+	wxString tip;
+	for ( ; i1 != i2;  i1++ ) {
         std::map<int,LineInfo>::iterator i = m_lineInfo.find ( i1->second ) ;
         if ( i != m_lineInfo.end() && i->second.linenum == lineno && (i->second.linecolor == wxSCI_LEX_GCC_ERROR || i->second.linecolor == wxSCI_LEX_GCC_WARNING )) {
             wxString text = i->second.linetext.Mid(i->second.filestart+i->second.filelen);
@@ -550,7 +548,9 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemor
                 text.erase(0, 1);
             }
 
-			wxString tmpTip (text.Trim(false).Trim() << wxT("\n "));
+			wxString tmpTip (wxT(" ") + text.Trim(false).Trim() + wxT("\n"));
+			tmpTip.Replace(wxT("\r"), wxT(""));
+			tmpTip.Replace(wxT("\t"), wxT(" "));
 
 			for(size_t j=0; j<tmpTip.Length(); j++) {
 				if( i->second.linecolor == wxSCI_LEX_GCC_WARNING ) {
@@ -560,7 +560,13 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemor
 				}
 			}
 			tip << tmpTip;
+
         }
     }
+	if(tip.IsEmpty() == false) {
+		tip.RemoveLast();
+		styleBits.SetDataLen( styleBits.GetDataLen()-1 );
+	}
+	styleBits.AppendByte(0);
 	return tip ;
 }

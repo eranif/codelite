@@ -3381,6 +3381,10 @@ public:
 	bool     AnnotationGetVisible();
 	void     AnnotationSetStyleOffset(int style);
 	void     AnnotationSetStyles(int line, const wxMemoryBuffer &styles);
+	void     MarginSetText(int line, const wxString &text);
+	void     MarginSetStyle(int line, int style);
+	void     MarginTextClearAll();
+	int      MarginGetStyle(int line);
 	// [PATCH] END
 
 #if wxCHECK_VERSION(2, 5, 0)

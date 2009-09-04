@@ -2649,6 +2649,22 @@ void wxScintilla::IndicatorSetAlpha(int indicator, int alpha){
 	SendMsg(SCI_INDICSETALPHA, indicator, alpha);
 }
 
+void wxScintilla::MarginSetText(int line, const wxString &text){
+	SendMsg(SCI_MARGINSETTEXT, line, (long)(const char*)wx2sci(text));
+}
+
+void wxScintilla::MarginSetStyle(int line, int style) {
+	SendMsg(SCI_MARGINSETSTYLE, line, style);
+}
+
+int wxScintilla::MarginGetStyle(int line) {
+	return SendMsg(SCI_MARGINGETSTYLE, line);
+}
+
+void wxScintilla::MarginTextClearAll(){
+	SendMsg(SCI_MARGINTEXTCLEARALL);
+}
+
 void wxScintilla::AnnotationSetText(int line, const wxString &text) {
 	SendMsg(SCI_ANNOTATIONSETTEXT, line, (long)(const char*)wx2sci(text));
 }

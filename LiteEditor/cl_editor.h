@@ -109,36 +109,42 @@ struct LEditorState {
  */
 class LEditor : public wxScintilla, public IEditor
 {
-	wxFileName m_fileName;
-	wxString m_project;
-	wxStopWatch m_watch;
-	ContextBasePtr m_context;
-	wxMenu *m_rightClickMenu;
-	std::vector<wxMenuItem*> m_dynItems;
-	std::vector<BPtoMarker> m_BPstoMarkers;
-
-	// static cache among editors to keep track of jumping between editors
-	static FindReplaceDialog *m_findReplaceDlg;
-	static FindReplaceData m_findReplaceData;
-	int m_lastMatchPos;
-	static std::map<wxString, int> ms_bookmarkShapes;
-	bool m_popupIsOn;
-	time_t m_modifyTime;
-	std::map<int, wxString> m_customCmds;
-	CCBox *m_ccBox;
-	bool m_isVisible;
-	int m_hyperLinkIndicatroStart;
-	int m_hyperLinkIndicatroEnd;
-	int m_hyperLinkType;
-	bool m_hightlightMatchedBraces;
-	bool m_autoAddMatchedBrace;
+	wxFileName                                  m_fileName;
+	wxString                                    m_project;
+	wxStopWatch                                 m_watch;
+	ContextBasePtr                              m_context;
+	wxMenu *                                    m_rightClickMenu;
+	std::vector<wxMenuItem*>                    m_dynItems;
+	std::vector<BPtoMarker>                     m_BPstoMarkers;
+	static FindReplaceDialog *                  m_findReplaceDlg;
+	static FindReplaceData                      m_findReplaceData;
+	int                                         m_lastMatchPos;
+	static std::map<wxString, int>              ms_bookmarkShapes;
+	bool                                        m_popupIsOn;
+	time_t                                      m_modifyTime;
+	std::map<int, wxString>                     m_customCmds;
+	CCBox *                                     m_ccBox;
+	bool                                        m_isVisible;
+	int                                         m_hyperLinkIndicatroStart;
+	int                                         m_hyperLinkIndicatroEnd;
+	int                                         m_hyperLinkType;
+	bool                                        m_hightlightMatchedBraces;
+	bool                                        m_autoAddMatchedBrace;
 	std::map<int, std::vector<BreakpointInfo> > m_breakpointsInfo;
-	bool m_autoAdjustHScrollbarWidth;
-	calltip_type m_calltipType;
+	bool                                        m_autoAdjustHScrollbarWidth;
+	calltip_type                                m_calltipType;
+	bool                                        m_reloadingFile;
 
 public:
 	static FindReplaceData &GetFindReplaceData() {
 		return m_findReplaceData;
+	}
+
+	void SetReloadingFile(const bool& reloadingFile) {
+		this->m_reloadingFile = reloadingFile;
+	}
+	const bool& GetReloadingFile() const {
+		return m_reloadingFile;
 	}
 
 public:
@@ -384,7 +390,9 @@ public:
 	void DoCancelCalltip();
 	int  DoGetOpenBracePos();
 
-	calltip_type GetCalltipType() const {return m_calltipType;}
+	calltip_type GetCalltipType() const {
+		return m_calltipType;
+	}
 
 	//----------------------------------
 	//File modifications

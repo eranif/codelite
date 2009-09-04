@@ -70,15 +70,18 @@
 #define EVT_SCI_CALLTIP_CLICK(id, fn)          DECLARE_EVENT_TABLE_ENTRY (wxEVT_SCI_CALLTIP_CLICK,          id, wxID_ANY, (wxObjectEventFunction) (wxEventFunction)  wxStaticCastEvent( wxScintillaEventFunction, & fn ), (wxObject *) NULL),
 #endif
 
-#define NUMBER_MARGIN_ID 		0
-#define NUMBER_MARGIN_SEP_ID 	1
+#define NUMBER_MARGIN_ID        0
+#define EDIT_TRACKER_MARGIN_ID  1
 #define SYMBOLS_MARGIN_ID 		2
-#define SYMBOLS_MARGIN_SEP_ID 	3
-#define FOLD_MARGIN_ID 			4
+#define SYMBOLS_MARGIN_SEP_ID   3
+#define FOLD_MARGIN_ID          4
 
 #define USER_INDICATOR 				3
 #define HYPERLINK_INDICATOR 		4
 #define MATCH_INDICATOR             5
+
+#define CL_LINE_MODIFIED_STYLE      200
+#define CL_LINE_SAVED_STYLE         201
 
 #ifndef wxScintillaEventHandler
 #define wxScintillaEventHandler(func) \
@@ -106,6 +109,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 	EVT_SCI_UPDATEUI(wxID_ANY, LEditor::OnSciUpdateUI)
 	EVT_SCI_SAVEPOINTREACHED(wxID_ANY, LEditor::OnSavePoint)
 	EVT_SCI_SAVEPOINTLEFT(wxID_ANY, LEditor::OnSavePoint)
+	EVT_SCI_MODIFIED(wxID_ANY, LEditor::OnChange)
 	EVT_CONTEXT_MENU(LEditor::OnContextMenu)
 	EVT_KEY_DOWN(LEditor::OnKeyDown)
 	EVT_LEFT_DOWN(LEditor::OnLeftDown)
@@ -143,6 +147,7 @@ LEditor::LEditor(wxWindow* parent)
 		, m_autoAddMatchedBrace      (false)
 		, m_autoAdjustHScrollbarWidth(true)
 		, m_calltipType              (ct_none)
+		, m_reloadingFile            (false)
 {
 	ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSCI_MARK_SMALLRECT;
 	ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
@@ -290,9 +295,8 @@ void LEditor::SetProperties()
 
 	SetCaretWidth(options->GetCaretWidth());
 	SetCaretPeriod(options->GetCaretBlinkPeriod());
-
 	SetMarginLeft(1);
-	SetMarginRight(0);
+
 
 	// Mark current line
 	SetCaretLineVisible(options->GetHighlightCaretLine());
@@ -307,6 +311,7 @@ void LEditor::SetProperties()
 	//------------------------------------------
 	// Margin settings
 	//------------------------------------------
+
 	// symbol margin
 	SetMarginType(SYMBOLS_MARGIN_ID, wxSCI_MARGIN_SYMBOL);
 	// Line numbes
@@ -315,18 +320,23 @@ void LEditor::SetProperties()
 	// line number margin displays every thing but folding, bookmarks and breakpoint
 	SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_all_breakpoints));
 
-	// Separators
-	SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSCI_MARGIN_FORE);
-	SetMarginMask(SYMBOLS_MARGIN_SEP_ID, 0);
+	// Define the styles for the editing margin
+	StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("GREEN")));
+	StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("PINK")));
+	SetMarginType     (EDIT_TRACKER_MARGIN_ID, 4); // Styled Text margin
+	SetMarginWidth    (EDIT_TRACKER_MARGIN_ID, options->GetHideChangeMarkerMargin() ? 0 : 3);
+	SetMarginMask     (EDIT_TRACKER_MARGIN_ID, 0);
 
-	SetMarginType(NUMBER_MARGIN_SEP_ID, wxSCI_MARGIN_FORE);
-	SetMarginMask(NUMBER_MARGIN_SEP_ID, 0);
+	// Separators
+	SetMarginType     (SYMBOLS_MARGIN_SEP_ID, wxSCI_MARGIN_FORE);
+	SetMarginMask     (SYMBOLS_MARGIN_SEP_ID, 0);
 
 	// Fold margin - allow only folder symbols to display
-	SetMarginMask(FOLD_MARGIN_ID, wxSCI_MASK_FOLDERS);
+	SetMarginMask     (FOLD_MARGIN_ID, wxSCI_MASK_FOLDERS);
 
 	// Set margins' width
-	SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? 16 : 0);	// Symbol margin
+	SetMarginWidth    (SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? 16 : 0);	// Symbol margin
+
 	// If the symbols margin is hidden, hide its related separator margin
 	// as well
 	SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, options->GetDisplayBookmarkMargin() ? 1 : 0);	// Symbol margin which acts as separator
@@ -339,10 +349,6 @@ void LEditor::SetProperties()
 
 	// Show number margin according to settings.
 	SetMarginWidth(NUMBER_MARGIN_ID, options->GetDisplayLineNumbers() ? pixelWidth : 0);
-
-	// If number margin is hidden, hide its related separator margin
-	// as well
-	SetMarginWidth(NUMBER_MARGIN_SEP_ID, options->GetDisplayLineNumbers() ? 1 : 0);	// Symbol margin which acts as separator
 
 	// Show the fold margin
 	SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? 16 : 0);	// Fold margin
@@ -533,10 +539,30 @@ void LEditor::OnSavePoint(wxScintillaEvent &event)
 {
 	if (!GetIsVisible())
 		return;
+
 	wxString title;
 	if (GetModify()) {
 		title << wxT("*");
+
+	} else {
+
+		if( GetMarginWidth(EDIT_TRACKER_MARGIN_ID) ) {
+
+			Freeze();
+
+			int numlines = GetLineCount();
+			for (int i=0; i<numlines; i++) {
+				int style = MarginGetStyle(i);
+				if ( style == CL_LINE_MODIFIED_STYLE) {
+					MarginSetText (i, wxT(" "));
+					MarginSetStyle(i, CL_LINE_SAVED_STYLE);
+				}
+			}
+			Refresh();
+			Thaw();
+		}
 	}
+
 	title << GetFileName().GetFullName();
 	Frame::Get()->GetMainBook()->SetPageTitle(this, title);
 	if (Frame::Get()->GetMainBook()->GetActiveEditor() == this) {
@@ -610,7 +636,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		m_context->AutoIndent(event.GetKey());
 		// fall through...
 	case '\n': {
-		// incase ENTER was hit between {}
+			// incase ENTER was hit between {}
 			if ( GetCharAt (PositionBefore( PositionBefore(pos) )) == wxT('{') && s_lastCharEntered == wxT('{') ) {
 				matchChar = '}';
 				InsertText(pos, matchChar);
@@ -1938,11 +1964,14 @@ bool LEditor::MarkAll()
 
 void LEditor::ReloadFile()
 {
+	SetReloadingFile( true );
+
 	HideCompletionBox();
 	DoCancelCalltip();
 
 	if (m_fileName.GetFullPath().IsEmpty() == true || m_fileName.GetFullPath().StartsWith(wxT("Untitled"))) {
 		SetEOLMode(GetEOLByOS());
+		SetReloadingFile( false );
 		return;
 	}
 
@@ -1977,6 +2006,8 @@ void LEditor::ReloadFile()
 
 	// try to locate the pattern on which the caret was prior to reloading the file
 	Frame::Get()->SetStatusMessage(wxEmptyString, 0, XRCID("editor"));
+
+	SetReloadingFile( false );
 }
 
 void LEditor::SetEditorText(const wxString &text)
@@ -3122,4 +3153,28 @@ void LEditor::SetEOL()
 	}
 	SetEOLMode(eol);
 
+}
+
+void LEditor::OnChange(wxScintillaEvent& event)
+{
+	if (event.GetModificationType() & wxSCI_MOD_INSERTTEXT || event.GetModificationType() & wxSCI_MOD_DELETETEXT) {
+		// ignore this event incase we are in the middle of file reloading
+		if ( GetReloadingFile() == false && GetMarginWidth(EDIT_TRACKER_MARGIN_ID) /* margin is visible */ ) {
+			int curline (LineFromPosition(event.GetPosition()));
+			int numlines(event.GetLinesAdded());
+
+			if ( numlines == 0 ) {
+				// probably only the current line was modified
+				MarginSetText (curline, wxT(" "));
+				MarginSetStyle(curline, CL_LINE_MODIFIED_STYLE);
+
+			} else {
+
+				for (int i=0; i<=numlines; i++) {
+					MarginSetText (curline+i, wxT(" "));
+					MarginSetStyle(curline+i, CL_LINE_MODIFIED_STYLE);
+				}
+			}
+		}
+	}
 }

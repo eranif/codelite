@@ -323,7 +323,7 @@ void LEditor::SetProperties()
 	// Define the styles for the editing margin
 	StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("GREEN")));
 	StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
-	
+
 	SetMarginType     (EDIT_TRACKER_MARGIN_ID, 4); // Styled Text margin
 	SetMarginWidth    (EDIT_TRACKER_MARGIN_ID, options->GetHideChangeMarkerMargin() ? 0 : 3);
 	SetMarginMask     (EDIT_TRACKER_MARGIN_ID, 0);
@@ -3159,10 +3159,16 @@ void LEditor::SetEOL()
 void LEditor::OnChange(wxScintillaEvent& event)
 {
 	if (event.GetModificationType() & wxSCI_MOD_INSERTTEXT || event.GetModificationType() & wxSCI_MOD_DELETETEXT) {
+		int numlines(event.GetLinesAdded());
+		if ( numlines ) {
+			// a line was added / removed from the document, synchronized between the breakpoints on this editor
+			// and the breakpoint manager
+			UpdateBreakpoints();
+		}
+
 		// ignore this event incase we are in the middle of file reloading
 		if ( GetReloadingFile() == false && GetMarginWidth(EDIT_TRACKER_MARGIN_ID) /* margin is visible */ ) {
 			int curline (LineFromPosition(event.GetPosition()));
-			int numlines(event.GetLinesAdded());
 
 			if ( numlines == 0 ) {
 				// probably only the current line was modified

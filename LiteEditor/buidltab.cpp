@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include <wx/ffile.h>
 #include "globals.h"
 #include "plugin.h"
 #include <wx/regex.h>
@@ -337,7 +338,7 @@ void BuildTab::MarkEditor ( LEditor *editor )
 			wxMemoryBuffer style_bytes;
 			int      line_number = i->second.linenum;
 			wxString tip = GetBuildToolTip(editor->GetFileName().GetFullPath(), line_number, style_bytes);
-
+			
 			editor->AnnotationSetText (line_number, tip);
 			editor->AnnotationSetStyles(line_number, style_bytes );
 
@@ -549,8 +550,21 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemor
             }
 
 			wxString tmpTip (wxT(" ") + text.Trim(false).Trim() + wxT("\n"));
+			
+#if defined(__WXGTK__) || defined (__WXMAC__)
+			// Remove any non ascii characters from the tip
+			wxString asciiTip;
+			
+			for(size_t at=0; at<tmpTip.Length(); at++) {
+				if( wxIsprint(tmpTip.GetChar(at) ) || tmpTip.GetChar(at) == wxT('\n') ) {
+					asciiTip.Append( tmpTip.GetChar(at) );
+				}
+			}
+			
+			tmpTip = asciiTip;
 			tmpTip.Replace(wxT("\r"), wxT(""));
 			tmpTip.Replace(wxT("\t"), wxT(" "));
+#endif
 
 			for(size_t j=0; j<tmpTip.Length(); j++) {
 				if( i->second.linecolor == wxSCI_LEX_GCC_WARNING ) {
@@ -563,10 +577,11 @@ wxString BuildTab::GetBuildToolTip(const wxString& fileName, int lineno, wxMemor
 
         }
     }
+	
 	if(tip.IsEmpty() == false) {
 		tip.RemoveLast();
 		styleBits.SetDataLen( styleBits.GetDataLen()-1 );
 	}
-	styleBits.AppendByte(0);
+	
 	return tip ;
 }

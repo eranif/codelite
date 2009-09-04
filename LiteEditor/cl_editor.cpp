@@ -322,7 +322,8 @@ void LEditor::SetProperties()
 
 	// Define the styles for the editing margin
 	StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("GREEN")));
-	StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("PINK")));
+	StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
+	
 	SetMarginType     (EDIT_TRACKER_MARGIN_ID, 4); // Styled Text margin
 	SetMarginWidth    (EDIT_TRACKER_MARGIN_ID, options->GetHideChangeMarkerMargin() ? 0 : 3);
 	SetMarginMask     (EDIT_TRACKER_MARGIN_ID, 0);

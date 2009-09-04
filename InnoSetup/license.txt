@@ -337,3 +337,24 @@ proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.
+
+EXCEPTION:
+==========
+
+The only exception is that plugins developed for CodeLite and are linking against CodeLite sources (either static linking or dynamic linking),
+and the plugin is NOT one of the official plugins (see list below):
+
+- Abbreviation
+- CodeFormatter
+- ContinousBuild
+- Copyright
+- Cscope
+- ExternalTools
+- Gizmos
+- QMakePlugin
+- snipwiz
+- Subversion
+- UnitTestPP
+- wxFormBuilder plugin
+
+Can be distributed under a license other than the GPL

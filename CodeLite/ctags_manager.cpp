@@ -422,10 +422,21 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 
 	// read the reply
 	clIndexerReply reply;
-	if (!clIndexerProtocol::ReadReply(&client, reply)) {
-		wxPrintf(wxT("ERROR: failed to read reply\n"));
+	try {
+		if (!clIndexerProtocol::ReadReply(&client, reply)) {
+			wxPrintf(wxT("ERROR: failed to read reply\n"));
+			return;
+		}
+	} catch (std::bad_alloc &ex) {
+		tags.Clear();
+#ifdef __WXMSW__
+		wxLogMessage(wxString::Format(wxT("ERROR: failed to read reply from codelite_indexer for file %s: cought std::bad_alloc exception"), source.GetFullPath().c_str()));
+#else
+		wxPrintf(wxT("ERROR: failed to read reply: cought std::bad_alloc exception\n"));
+#endif
 		return;
 	}
+
 	// convert the data into wxString
 	tags = wxString::From8BitData(reply.getTags().c_str());
 }

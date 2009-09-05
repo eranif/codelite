@@ -49,6 +49,7 @@ class DebuggerPage : public wxPanel
 	wxCheckBox *m_checkResolveStarThis;
 	wxCheckBox *m_checkShowTerminal;
 	wxCheckBox *m_checkUseRelativePaths;
+	wxCheckBox *m_catchThrow;
 
 public:
 	DebuggerPage(wxWindow *parent, wxString title);

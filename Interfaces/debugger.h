@@ -253,6 +253,7 @@ public:
 	bool      showTerminal;
 	wxString  consoleCommand;
 	bool      useRelativeFilePaths;
+	bool      catchThrow;
 
 public:
 	DebuggerInformation()
@@ -264,7 +265,8 @@ public:
 			, resolveThis(false)
 			, showTerminal(false)
 			, consoleCommand(TERMINAL_CMD)
-			, useRelativeFilePaths(false) {}
+			, useRelativeFilePaths(false)
+			, catchThrow(false) {}
 	~DebuggerInformation() {}
 };
 

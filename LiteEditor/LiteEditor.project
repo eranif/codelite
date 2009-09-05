@@ -2,10 +2,7 @@
 <CodeLite_Project Name="LiteEditor">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0004Unix000000000000
-    
-    
-    ]]>
+      <![CDATA[00020001N0004Unix0000000000000001N0015WinDebugUnicode000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Source Files">
@@ -547,6 +544,50 @@
     <Project Name="DebuggerGDB"/>
     <Project Name="wxpropgrid"/>
   </Dependencies>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="wxpropgrid"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Subversion"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="SymbolView"/>
+    <Project Name="ContinuousBuild"/>
+    <Project Name="QMakePlugin"/>
+  </Dependencies>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="wxpropgrid"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Subversion"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="SymbolView"/>
+    <Project Name="ContinuousBuild"/>
+    <Project Name="QMakePlugin"/>
+  </Dependencies>
   <Settings Type="Executable">
     <Configuration Name="Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;$(shell pkg-config --cflags gtk+-2.0);-Wall;-fno-strict-aliasing" Required="yes">
@@ -570,8 +611,8 @@
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="../Runtime/codelite" IntermediateDirectory="./ReleaseUnicode" Command="./codelite" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
       </Debugger>
       <PreBuild/>
       <PostBuild/>
@@ -587,7 +628,7 @@
         <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc -c -v -o resources.cpp resources.xrc
@@ -618,8 +659,8 @@ resources.cpp: resources.xrc
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="../Runtime/CodeLite" IntermediateDirectory="./ReleaseUnicode" Command="./CodeLite" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
       </Debugger>
       <PreBuild>
         <Command Enabled="yes">cd ../ &amp;&amp; ./le_makerevision.sh</Command>
@@ -628,14 +669,14 @@ resources.cpp: resources.xrc
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc -c -v -o resources.cpp resources.xrc
@@ -666,8 +707,8 @@ resources.cpp: resources.xrc
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./Debug" Command="./CodeLite.exe" CommandArguments="-b ." WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
       </Debugger>
       <PreBuild/>
       <PostBuild/>
@@ -676,14 +717,14 @@ resources.cpp: resources.xrc
         <Target Name="configure">./configure</Target>
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp svninfo.cpp
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
@@ -717,8 +758,8 @@ svninfo.cpp:
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./Release" Command="./CodeLite.exe" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
       </Debugger>
       <PreBuild>
         <Command Enabled="yes">autorev .</Command>
@@ -727,14 +768,14 @@ svninfo.cpp:
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
@@ -765,8 +806,8 @@ resources.cpp: resources.xrc
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="../Runtime/CodeLite.exe" IntermediateDirectory="./Release" Command="./CodeLite.exe" CommandArguments="-b ." WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
       </Debugger>
       <PreBuild>
         <Command Enabled="yes">autorev .</Command>
@@ -775,14 +816,14 @@ resources.cpp: resources.xrc
       <CustomBuild Enabled="no">
         <CleanCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI clean</CleanCommand>
         <BuildCommand>mingw32-make -f LiteEditor_wsp.mk type=ReleaseANSI</BuildCommand>
-        <PreprocessFileCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
+        <WorkingDirectory></WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild/>
+        <CustomPostBuild></CustomPostBuild>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
@@ -799,50 +840,6 @@ resources.cpp: resources.xrc
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="wxpropgrid"/>
-    <Project Name="CodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="Subversion"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="SymbolView"/>
-    <Project Name="ContinuousBuild"/>
-    <Project Name="QMakePlugin"/>
-  </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="wxpropgrid"/>
-    <Project Name="CodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="Subversion"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="SymbolView"/>
-    <Project Name="ContinuousBuild"/>
-    <Project Name="QMakePlugin"/>
-  </Dependencies>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
     <Project Name="wxscintilla"/>

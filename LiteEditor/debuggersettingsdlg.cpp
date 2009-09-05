@@ -72,6 +72,9 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 	m_checkUseRelativePaths = new wxCheckBox(this, wxID_ANY, wxT("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition, wxDefaultSize, 0 );
 	sz->Add(m_checkUseRelativePaths, 0, wxEXPAND|wxALL, 5);
 
+	m_catchThrow = new wxCheckBox(this, wxID_ANY, wxT("Break when C++ excpetion is thrown"), wxDefaultPosition, wxDefaultSize, 0 );
+	sz->Add(m_catchThrow, 0, wxEXPAND|wxALL, 5);
+
 	sz->Layout();
 
 	DebuggerInformation info;
@@ -83,6 +86,7 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_checkResolveStarThis->SetValue(info.resolveThis);
 		m_checkShowTerminal->SetValue(info.showTerminal);
 		m_checkUseRelativePaths->SetValue(info.useRelativeFilePaths);
+		m_catchThrow->SetValue(info.catchThrow);
 	}
 }
 
@@ -153,16 +157,16 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		DebuggerMgr::Get().GetDebuggerInformation(page->m_title, info);
 
 		//populate the information and save it
-		info.enableDebugLog = page->m_checkBoxEnableLog->GetValue();
+		info.enableDebugLog           = page->m_checkBoxEnableLog->GetValue();
 		info.enablePendingBreakpoints = page->m_checkBoxEnablePendingBreakpoints->GetValue();
-		info.path = page->m_filePicker->GetPath();
-		info.name = page->m_title;
-		info.breakAtWinMain = page->m_checkBreakAtWinMain->IsChecked();
-		info.resolveThis = page->m_checkResolveStarThis->IsChecked();
-		info.showTerminal = page->m_checkShowTerminal->IsChecked();
-		info.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
-		info.useRelativeFilePaths = page->m_checkUseRelativePaths->IsChecked();
-
+		info.path                     = page->m_filePicker->GetPath();
+		info.name                     = page->m_title;
+		info.breakAtWinMain           = page->m_checkBreakAtWinMain->IsChecked();
+		info.resolveThis              = page->m_checkResolveStarThis->IsChecked();
+		info.showTerminal             = page->m_checkShowTerminal->IsChecked();
+		info.consoleCommand           = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
+		info.useRelativeFilePaths     = page->m_checkUseRelativePaths->IsChecked();
+		info.catchThrow               = page->m_catchThrow->IsChecked();
 		DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
 	}
 

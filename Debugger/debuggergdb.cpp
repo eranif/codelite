@@ -288,6 +288,10 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString & exeName, int p
 			ExecuteCmd(wxT("set breakpoint pending on"));
 		}
 
+		if (m_info.catchThrow) {
+			ExecuteCmd(wxT("catch throw"));
+		}
+
 		for (size_t i=0; i<cmds.GetCount(); i++) {
 			ExecuteCmd(cmds.Item(i));
 		}
@@ -380,6 +384,10 @@ bool DbgGdb::Start(const wxString &debuggerPath, const wxString &exeName, const 
 
 		if (m_info.enablePendingBreakpoints) {
 			ExecuteCmd(wxT("set breakpoint pending on"));
+		}
+
+		if (m_info.catchThrow) {
+			ExecuteCmd(wxT("catch throw"));
 		}
 
 		//dont wrap lines

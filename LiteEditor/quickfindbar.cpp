@@ -29,6 +29,7 @@
 #include "stringsearcher.h"
 #include "quickfindbar.h"
 
+#define CONTROL_ALIGN_STYLE wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL
 
 BEGIN_EVENT_TABLE(QuickFindBar, wxPanel)
     EVT_BUTTON(XRCID("close_quickfind"), QuickFindBar::OnHide)
@@ -56,11 +57,11 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 
     wxButton *btn(NULL);
 	m_closeButton = new wxBitmapButton(this, XRCID("close_quickfind"), wxXmlResource::Get()->LoadBitmap(wxT("page_close16")));
-    mainSizer->Add(m_closeButton, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+    mainSizer->Add(m_closeButton, 0, CONTROL_ALIGN_STYLE, 2);
 	m_closeButton->SetToolTip(wxT("Close QuickFind Bar"));
 
     wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Find:"));
-    mainSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+    mainSizer->Add(text, 0, CONTROL_ALIGN_STYLE, 2);
 
     m_findWhat = new wxTextCtrl(this, XRCID("find_what_quick"), wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
     m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
@@ -68,26 +69,26 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_findWhat->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBar::OnKeyDown), NULL, this);
 	m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBar::OnEnter), NULL, this);
 
-    mainSizer->Add(m_findWhat, 1, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+    mainSizer->Add(m_findWhat, 1, CONTROL_ALIGN_STYLE, 5);
 
     btn = new wxButton(this, XRCID("find_next_quick"), wxT("Next"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-    mainSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+    mainSizer->Add(btn, 0, CONTROL_ALIGN_STYLE, 5);
 	btn->SetDefault();
 
-    btn = new wxButton(this, XRCID("find_prev_quick"), wxT("Prev"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-    mainSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+	btn = new wxButton(this, XRCID("find_prev_quick"), wxT("Prev"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    mainSizer->Add(btn, 0, CONTROL_ALIGN_STYLE, 5);
 
-    text = new wxStaticText(this, wxID_ANY, wxT("Match:"));
-    mainSizer->Add(text, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+	wxStaticBoxSizer *staticSizer = new wxStaticBoxSizer(wxHORIZONTAL, this);
+	mainSizer->Add(staticSizer, 0, CONTROL_ALIGN_STYLE, 5);
 
     wxCheckBox *check = new wxCheckBox(this, XRCID("match_case_quick"), wxT("Case"));
-    mainSizer->Add(check, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+    staticSizer->Add(check, 0, wxEXPAND|wxALL, 5);
 
     check = new wxCheckBox(this, XRCID("match_word_quick"), wxT("Word"));
-    mainSizer->Add(check, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+    staticSizer->Add(check, 0, wxEXPAND|wxALL, 5);
 
     check = new wxCheckBox(this, XRCID("match_regexp_quick"), wxT("Regexp"));
-    mainSizer->Add(check, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5);
+    staticSizer->Add(check, 0, wxEXPAND|wxALL, 5);
 
     mainSizer->Layout();
 

@@ -1200,11 +1200,12 @@ void wxScintilla::SetSelection (int startPos, int endPos) {
 
 // Retrieve the selected text.
 wxString wxScintilla::GetSelectedText() {
-    int start;
-    int end;
-    GetSelection(&start, &end);
-    int len = end - start;
-    if (!len) return wxEmptyString;
+ 	int len (0);
+
+	// determine the selected text range
+	len = SendMsg (SCI_GETSELTEXT, 0, 0);
+	if (!len) return wxEmptyString;
+
     wxMemoryBuffer mbuf(len+2);
     char* buf = (char*)mbuf.GetWriteBuf(len+1);
     SendMsg (SCI_GETSELTEXT, 0, (long)buf);
@@ -3138,7 +3139,7 @@ void wxScintilla::OnMouseLeftDown (wxMouseEvent& evt) {
                              evt.ShiftDown(), evt.ControlDown(),
 
 							 // FIXME:: Scintilla 2.0 seems to cause a crash when using rectuangaler selection, we are disabling it for now
-							 false);
+							 evt.AltDown());
 }
 
 void wxScintilla::OnMouseMove (wxMouseEvent& evt) {

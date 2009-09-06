@@ -2706,6 +2706,30 @@ bool wxScintilla::AnnotationGetVisible() {
 	return (bool) SendMsg(SCI_ANNOTATIONGETVISIBLE);
 }
 
+void wxScintilla::SetMultipleSelection(bool multipleSelection){
+	SendMsg(SCI_SETMULTIPLESELECTION, multipleSelection);
+}
+
+bool wxScintilla::GetMultipleSelection(){
+	return (bool)SendMsg(SCI_GETMULTIPLESELECTION);
+}
+
+bool wxScintilla::GetAdditionalSelectionTyping(){
+	return (bool) SendMsg(SCI_GETADDITIONALSELECTIONTYPING);
+}
+
+void wxScintilla::SetAdditionalSelectionTyping(bool additionalSelectionTyping){
+	SendMsg(SCI_SETADDITIONALSELECTIONTYPING, (long)additionalSelectionTyping);
+}
+
+void wxScintilla::SetRectangularSelectionModifier(int mod){
+	SendMsg(SCI_SETRECTANGULARSELECTIONMODIFIER, (long)mod);
+}
+
+int wxScintilla::GetRectangularSelectionModifier(){
+	return (int)SendMsg(SCI_GETRECTANGULARSELECTIONMODIFIER);
+}
+
 // Returns the line number of the line with the caret.
 int wxScintilla::GetCurrentLine () {
     int line = LineFromPosition (GetCurrentPos());

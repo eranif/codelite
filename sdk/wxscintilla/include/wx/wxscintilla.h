@@ -3385,6 +3385,14 @@ public:
 	void     MarginSetStyle(int line, int style);
 	void     MarginTextClearAll();
 	int      MarginGetStyle(int line);
+
+	// Multiple selection
+	void     SetMultipleSelection(bool multipleSelection);
+	bool     GetMultipleSelection();
+	bool     GetAdditionalSelectionTyping();
+	void     SetAdditionalSelectionTyping(bool additionalSelectionTyping);
+	void     SetRectangularSelectionModifier(int mod);
+	int      GetRectangularSelectionModifier();
 	// [PATCH] END
 
 #if wxCHECK_VERSION(2, 5, 0)

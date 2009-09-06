@@ -251,6 +251,11 @@ void LEditor::SetCaretAt(long pos)
 /// Setup some scintilla properties
 void LEditor::SetProperties()
 {
+
+//	SetMultipleSelection(true);
+//	SetRectangularSelectionModifier(wxSCI_SCMOD_CTRL);
+//	SetAdditionalSelectionTyping(true);
+
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
 	CallTipUseStyle(1);
 

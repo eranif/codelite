@@ -2203,12 +2203,14 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 
 void LEditor::OnLeftUp(wxMouseEvent& event)
 {
+#ifdef __WXMSW__
 	long value(0);
 	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
 
 	if (!value) {
 		DoQuickJump(event, false);
 	}
+#endif
 	event.Skip();
 }
 
@@ -2234,6 +2236,7 @@ void LEditor::OnFocusLost(wxFocusEvent &event)
 
 void LEditor::OnMiddleUp(wxMouseEvent& event)
 {
+#ifdef __WXMSW__
 	long value(0);
 	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
 
@@ -2244,30 +2247,35 @@ void LEditor::OnMiddleUp(wxMouseEvent& event)
 		}
 		DoQuickJump(event, true);
 	}
+#endif
 	event.Skip();
 }
 
 void LEditor::OnMiddleDown(wxMouseEvent& event)
 {
+#ifdef __WXMSW__
 	long value(0);
 	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
 	if (value) {
 		DoMarkHyperlink(event, true);
 		return;
 	}
+#endif
+	event.Skip();
 }
 
 void LEditor::OnLeftDown(wxMouseEvent &event)
 {
 	// hide completion box
 	HideCompletionBox();
-
+#ifdef __WXMSW__
 	long value(0);
 	EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
 
 	if (!value) {
 		DoMarkHyperlink(event, false);
 	}
+#endif
 	event.Skip();
 }
 

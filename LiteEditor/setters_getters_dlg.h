@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : setters_getters_dlg.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : setters_getters_dlg.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef __setters_getters_dlg__
@@ -46,9 +46,11 @@ class SettersGettersDlg : public SettersGettersBaseDlg
 
 protected:
 	void OnCheckStartWithUpperCase(wxCommandEvent &event);
+	void OnLeftDown(wxMouseEvent& event);
 	void OnCheckAll(wxCommandEvent &e);
 	void OnUncheckAll(wxCommandEvent &e);
-	
+	void OnUpdatePreview(wxCommandEvent &e);
+
 	wxString GenerateFunctions();
 	wxString GenerateSetter(TagEntryPtr tag);
 	wxString GenerateGetter(TagEntryPtr tag);
@@ -56,7 +58,7 @@ protected:
 	void UpdatePreview();
 	void GenerateGetters(wxString &code);
 	void GenerateSetters(wxString &code);
-	
+
 public:
 	/** Constructor */
 	SettersGettersDlg(wxWindow* parent);

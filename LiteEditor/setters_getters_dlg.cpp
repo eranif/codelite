@@ -28,11 +28,29 @@
 #include "language.h"
 #include "wx/tokenzr.h"
 
+const wxEventType wxEVT_CMD_UPDATE_PREVIEW = 19343;
+
+//----------------------------------------------------
+class SettersGettersTreeData : public wxTreeItemData {
+public:
+	enum { Kind_Getter = 0, Kind_Setter, Kind_Parent, Kind_Root };
+
+	TagEntryPtr m_tag;
+	int         m_kind;
+public:
+	SettersGettersTreeData(TagEntryPtr tag, int kind) : m_tag(tag), m_kind(kind) {}
+	virtual ~SettersGettersTreeData(){}
+};
+
+//----------------------------------------------------
+
 SettersGettersDlg::SettersGettersDlg(wxWindow* parent)
 		: SettersGettersBaseDlg(parent)
 {
 	ConnectCheckBox(m_checkStartWithUppercase, SettersGettersDlg::OnCheckStartWithUpperCase);
-	ConnectCheckList(m_checkListMembers, SettersGettersDlg::OnCheckStartWithUpperCase);
+	m_checkListMembers->Connect(wxEVT_LEFT_DOWN,   wxMouseEventHandler(SettersGettersDlg::OnLeftDown), NULL, this);
+	m_checkListMembers->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(SettersGettersDlg::OnLeftDown), NULL, this);
+	Connect ( wxEVT_CMD_UPDATE_PREVIEW,  wxCommandEventHandler ( SettersGettersDlg::OnUpdatePreview ), NULL, this );
 }
 
 void SettersGettersDlg::Init(const std::vector<TagEntryPtr> &tags, const wxFileName &file, int lineno)
@@ -42,22 +60,21 @@ void SettersGettersDlg::Init(const std::vector<TagEntryPtr> &tags, const wxFileN
 	m_lineno = lineno;
 	m_members = tags;
 
-	wxArrayString members;
-	for (size_t i=0; i<tags.size() ; i++) {
-		members.Add(tags.at(i)->GetName() + wxT(" : [Getter]"));
-		members.Add(tags.at(i)->GetName() + wxT(" : [Setter]"));
-
-		m_tagsMap[tags.at(i)->GetName() + wxT(" : [Getter]")] = tags.at(i);
-		m_tagsMap[tags.at(i)->GetName() + wxT(" : [Setter]")] = tags.at(i);
-	}
 
 	//append all members to the check list
-	m_checkListMembers->Clear();
-	m_checkListMembers->Append(members);
+	m_checkListMembers->DeleteAllItems();
+	wxTreeItemId root = m_checkListMembers->AddRoot(wxT("Root"), false, new SettersGettersTreeData(NULL, SettersGettersTreeData::Kind_Root));
 
-	//uncheck all items
-	for (unsigned int i=0; i<m_checkListMembers->GetCount(); i++) {
-		m_checkListMembers->Check(i, false);
+	for (size_t i=0; i<tags.size() ; i++) {
+		// add child node for the members
+		wxTreeItemId parent = m_checkListMembers->AppendItem(root, tags.at(i)->GetName(), false, new SettersGettersTreeData(NULL, SettersGettersTreeData::Kind_Parent));
+
+		// add two children to generate the name of the next entries
+		wxString getter = GenerateGetter(tags.at(i));
+		wxString setter = GenerateSetter(tags.at(i));
+
+		m_checkListMembers->AppendItem(parent, getter, false, new SettersGettersTreeData(tags.at(i), SettersGettersTreeData::Kind_Getter));
+		m_checkListMembers->AppendItem(parent, setter, false, new SettersGettersTreeData(tags.at(i), SettersGettersTreeData::Kind_Setter));
 	}
 
 	if (tags.empty() == false) {
@@ -96,39 +113,45 @@ wxString SettersGettersDlg::GenerateFunctions()
 
 void SettersGettersDlg::GenerateGetters(wxString &code)
 {
-	for (size_t i=0; i<m_checkListMembers->GetCount(); i++) {
-		TagEntryPtr tag;
-		if (m_checkListMembers->IsChecked((unsigned int)i)) {
-			wxString item = m_checkListMembers->GetString((unsigned int)i);
-			//get the tag for this
-			std::map<wxString, TagEntryPtr>::iterator iter = m_tagsMap.find(item);
-			if (iter != m_tagsMap.end()) {
-				tag = iter->second;
-				//geenerate function for this tag
-				if (item.EndsWith(wxT("[Getter]"))) {
-					code << GenerateGetter(tag) << wxT("\n");
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = m_checkListMembers->GetFirstChild(m_checkListMembers->GetRootItem(), cookie);
+	while (child.IsOk()) {
+		if (m_checkListMembers->ItemHasChildren(child)) {
+
+			wxTreeItemIdValue gcookie;
+			wxTreeItemId gchild = m_checkListMembers->GetFirstChild(child, gcookie);
+			while( gchild.IsOk() ) {
+				SettersGettersTreeData *data = (SettersGettersTreeData *)m_checkListMembers->GetItemData(gchild);
+				if( data->m_kind == SettersGettersTreeData::Kind_Getter && m_checkListMembers->IsChecked(gchild) ) {
+					code << GenerateGetter(data->m_tag) << wxT("\n");
+					break;
 				}
+				gchild = m_checkListMembers->GetNextChild(child, gcookie);
 			}
 		}
+		child = m_checkListMembers->GetNextChild(m_checkListMembers->GetRootItem(), cookie);
 	}
 }
 
 void SettersGettersDlg::GenerateSetters(wxString &code)
 {
-	for (size_t i=0; i<m_checkListMembers->GetCount(); i++) {
-		TagEntryPtr tag;
-		if (m_checkListMembers->IsChecked((unsigned int)i)) {
-			wxString item = m_checkListMembers->GetString((unsigned int)i);
-			//get the tag for this
-			std::map<wxString, TagEntryPtr>::iterator iter = m_tagsMap.find(item);
-			if (iter != m_tagsMap.end()) {
-				tag = iter->second;
-				//geenerate function for this tag
-				if (item.EndsWith(wxT("[Setter]"))) {
-					code << GenerateSetter(tag) << wxT("\n");;
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = m_checkListMembers->GetFirstChild(m_checkListMembers->GetRootItem(), cookie);
+	while (child.IsOk()) {
+		if (m_checkListMembers->ItemHasChildren(child)) {
+
+			wxTreeItemIdValue gcookie;
+			wxTreeItemId gchild = m_checkListMembers->GetFirstChild(child, gcookie);
+			while( gchild.IsOk() ) {
+				SettersGettersTreeData *data = (SettersGettersTreeData *)m_checkListMembers->GetItemData(gchild);
+				if( data->m_kind == SettersGettersTreeData::Kind_Setter && m_checkListMembers->IsChecked(gchild)) {
+					code << GenerateSetter(data->m_tag) << wxT("\n");
+					break;
 				}
+				gchild = m_checkListMembers->GetNextChild(child, gcookie);
 			}
 		}
+		child = m_checkListMembers->GetNextChild(m_checkListMembers->GetRootItem(), cookie);
 	}
 }
 
@@ -148,7 +171,7 @@ wxString SettersGettersDlg::GenerateSetter(TagEntryPtr tag)
 		}
 		wxString name = _U(var.m_name.c_str());
 		FormatName(name);
-		
+
 		if(!var.m_isPtr){
 			func << name << wxT("(const ");
 		}else{
@@ -207,7 +230,7 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag)
 
 		wxString name = _U(var.m_name.c_str());
 		FormatName(name);
-		
+
 		if(!var.m_isPtr){
 			func << name << wxT("() const {return ") << _U(var.m_name.c_str()) << wxT(";}");
 		} else {
@@ -250,8 +273,21 @@ void SettersGettersDlg::UpdatePreview()
 void SettersGettersDlg::OnCheckAll(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-	for (unsigned int i=0; i< (unsigned int)m_checkListMembers->GetCount(); i++) {
-		m_checkListMembers->Check(i);
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = m_checkListMembers->GetFirstChild(m_checkListMembers->GetRootItem(), cookie);
+	while (child.IsOk()) {
+		m_checkListMembers->Check(child, true);
+		if (m_checkListMembers->ItemHasChildren(child)) {
+
+			wxTreeItemIdValue gcookie;
+			wxTreeItemId gchild = m_checkListMembers->GetFirstChild(child, gcookie);
+			while( gchild.IsOk() ) {
+				m_checkListMembers->Check(gchild, true);
+				gchild = m_checkListMembers->GetNextChild(child, gcookie);
+			}
+
+		}
+		child = m_checkListMembers->GetNextChild(m_checkListMembers->GetRootItem(), cookie);
 	}
 	UpdatePreview();
 }
@@ -259,8 +295,39 @@ void SettersGettersDlg::OnCheckAll(wxCommandEvent &e)
 void SettersGettersDlg::OnUncheckAll(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
-	for (unsigned int i=0; i< (unsigned int)m_checkListMembers->GetCount(); i++) {
-		m_checkListMembers->Check(i, false);
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = m_checkListMembers->GetFirstChild(m_checkListMembers->GetRootItem(), cookie);
+	while (child.IsOk()) {
+		m_checkListMembers->Check(child, false);
+		if (m_checkListMembers->ItemHasChildren(child)) {
+
+			wxTreeItemIdValue gcookie;
+			wxTreeItemId gchild = m_checkListMembers->GetFirstChild(child, gcookie);
+			while( gchild.IsOk() ) {
+				m_checkListMembers->Check(gchild, false);
+				gchild = m_checkListMembers->GetNextChild(child, gcookie);
+			}
+
+		}
+		child = m_checkListMembers->GetNextChild(m_checkListMembers->GetRootItem(), cookie);
 	}
+	UpdatePreview();
+}
+
+void SettersGettersDlg::OnLeftDown(wxMouseEvent& event)
+{
+	int flags;
+	wxTreeItemId item = m_checkListMembers->HitTest(event.GetPosition(), flags);
+	if(item.IsOk() && flags & wxTREE_HITTEST_ONITEMICON){
+		// Post event to update the preview
+		wxCommandEvent event(wxEVT_CMD_UPDATE_PREVIEW);
+		AddPendingEvent(event);
+	}
+	event.Skip();
+}
+
+void SettersGettersDlg::OnUpdatePreview(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
 	UpdatePreview();
 }

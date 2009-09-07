@@ -16,18 +16,19 @@ Variable::Variable(const Variable &src)
 
 Variable & Variable::operator =(const Variable &src)
 {
-	m_type = src.m_type;
-	m_templateDecl = src.m_templateDecl;
-	m_name = src.m_name;
-	m_isTemplate = src.m_isTemplate;
-	m_isPtr = src.m_isPtr;
-	m_typeScope = src.m_typeScope;
-	m_pattern = src.m_pattern;
-	m_starAmp = src.m_starAmp;
-	m_lineno = src.m_lineno;
-	m_isConst = src.m_isConst;
-	m_defaultValue = src.m_defaultValue;
+	m_type          = src.m_type;
+	m_templateDecl  = src.m_templateDecl;
+	m_name          = src.m_name;
+	m_isTemplate    = src.m_isTemplate;
+	m_isPtr         = src.m_isPtr;
+	m_typeScope     = src.m_typeScope;
+	m_pattern       = src.m_pattern;
+	m_starAmp       = src.m_starAmp;
+	m_lineno        = src.m_lineno;
+	m_isConst       = src.m_isConst;
+	m_defaultValue  = src.m_defaultValue;
 	m_arrayBrackets = src.m_arrayBrackets;
+	m_isEllipsis    = src.m_isEllipsis;
 	return *this;
 }
 
@@ -45,11 +46,12 @@ void Variable::Reset()
 	m_isConst = false;
 	m_defaultValue = "";
 	m_arrayBrackets = "";
+	m_isEllipsis = false;
 }
 
 void Variable::Print()
 {
-	fprintf(    stdout, "{m_name=%s, m_defaultValue=%s, m_lineno=%d, m_starAmp=%s, m_type=%s, m_isConst=%s, m_typeScope=%s, m_templateDecl=%s, m_arrayBrackets=%s, m_isPtr=%s, m_isTemplate=%s }\n",
+	fprintf(    stdout, "{m_name=%s, m_defaultValue=%s, m_lineno=%d, m_starAmp=%s, m_type=%s, m_isConst=%s, m_typeScope=%s, m_templateDecl=%s, m_arrayBrackets=%s, m_isPtr=%s, m_isTemplate=%s, m_isEllips=%s }\n",
 				m_name.c_str(),
 				m_defaultValue.c_str(),
 				m_lineno,
@@ -60,7 +62,8 @@ void Variable::Print()
 				m_templateDecl.c_str(),
 				m_arrayBrackets.c_str(),
 				m_isPtr ? "true" : "false",
-				m_isTemplate ? "true" : "false");
+				m_isTemplate ? "true" : "false",
+				m_isEllipsis ? "true" : "false");
 
 	fprintf( stdout, "Pattern: %s\n", m_pattern.c_str());
 	fflush(stdout);

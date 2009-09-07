@@ -55,11 +55,11 @@ extern void cl_scope_lex_clean();
 %token  LE_THIS
 %token  LE_OPERATOR
 %token  LE_CLASS
-%token  LE_PUBLIC          	LE_PROTECTED       LE_PRIVATE
-%token  LE_VIRTUAL         	LE_FRIEND
-%token  LE_INLINE          	LE_OVERLOAD
-%token  LE_TEMPLATE		  	LE_TYPENAME
-%token  LE_THROW		  	LE_CATCH
+%token  LE_PUBLIC    LE_PROTECTED       LE_PRIVATE
+%token  LE_VIRTUAL   LE_FRIEND
+%token  LE_INLINE    LE_OVERLOAD
+%token  LE_TEMPLATE  LE_TYPENAME
+%token  LE_THROW     LE_CATCH
 
 /* ANSI C Grammar suggestions */
 %token  LE_IDENTIFIER              LE_STRINGliteral
@@ -71,21 +71,23 @@ extern void cl_scope_lex_clean();
 %token  LE_TYPEDEFname
 
 /* Multi-Character operators */
-%token   LE_ARROW            											/*    ->                              */
-%token   LE_ICR LE_DECR         										/*    ++      --                      */
-%token   LE_LS LE_RS            										/*    <<      >>                      */
-%token   LE_LE LE_GE LE_EQ LE_NE      								/*    <=      >=      ==      !=      */
-%token   LE_ANDAND LE_OROR      										/*    &&      ||                      */
-%token   LE_ELLIPSIS         											/*    ...                             */
+%token   LE_ARROW                   /*    ->                              */
+%token   LE_ICR LE_DECR             /*    ++      --                      */
+%token   LE_LS LE_RS                /*    <<      >>                      */
+%token   LE_LE LE_GE LE_EQ LE_NE    /*    <=      >=      ==      !=      */
+%token   LE_ANDAND LE_OROR          /*    &&      ||                      */
+%token   LE_ELLIPSIS                /*    ...                             */
+
 			/* Following are used in C++, not ANSI C        */
-%token   LE_CLCL             											/*    ::                              */
-%token   LE_DOTstar LE_ARROWstar										/*    .*       ->*                    */
+
+%token   LE_CLCL                    /*    ::                              */
+%token   LE_DOTstar LE_ARROWstar    /*    .*       ->*                    */
 
 /* modifying assignment operators */
-%token  LE_MULTassign  LE_DIVassign    LE_MODassign   	/*   *=      /=      %=      */
-%token  LE_PLUSassign  LE_MINUSassign              		/*   +=      -=              */
-%token  LE_LSassign    LE_RSassign                 		/*   <<=     >>=             */
-%token  LE_ANDassign   LE_ERassign     LE_ORassign    	/*   &=      ^=      |=      */
+%token  LE_MULTassign  LE_DIVassign    LE_MODassign /*   *=      /=      %=      */
+%token  LE_PLUSassign  LE_MINUSassign               /*   +=      -=              */
+%token  LE_LSassign    LE_RSassign                  /*   <<=     >>=             */
+%token  LE_ANDassign   LE_ERassign     LE_ORassign  /*   &=      ^=      |=      */
 %token  LE_MACRO
 %token  LE_DYNAMIC_CAST
 %token  LE_STATIC_CAST
@@ -96,47 +98,47 @@ extern void cl_scope_lex_clean();
 
 %%
 /* Costants */
-basic_type_name_inter:    LE_INT			{ $$ = $1; }
-				| 	LE_CHAR			{ $$ = $1; }
-				| 	LE_SHORT		{ $$ = $1; }
-				| 	LE_LONG			{ $$ = $1; }
-				| 	LE_FLOAT		{ $$ = $1; }
-				| 	LE_DOUBLE		{ $$ = $1; }
-				| 	LE_SIGNED		{ $$ = $1; }
-				| 	LE_UNSIGNED		{ $$ = $1; }
-				| 	LE_VOID			{ $$ = $1; }
+basic_type_name_inter:    LE_INT { $$ = $1; }
+				| LE_CHAR      { $$ = $1; }
+				| LE_SHORT     { $$ = $1; }
+				| LE_LONG      { $$ = $1; }
+				| LE_FLOAT     { $$ = $1; }
+				| LE_DOUBLE    { $$ = $1; }
+				| LE_SIGNED    { $$ = $1; }
+				| LE_UNSIGNED  { $$ = $1; }
+				| LE_VOID      { $$ = $1; }
 				;
 
-basic_type_name:	LE_UNSIGNED basic_type_name_inter 	{ $$ = $1 + " " + $2; }
-				|	LE_SIGNED basic_type_name_inter 	{ $$ = $1 + " " + $2; }
-				|	LE_LONG LE_LONG 					{ $$ = $1 + " " + $2; }
-				|	LE_LONG LE_INT 						{ $$ = $1 + " " + $2; }
-				|	basic_type_name_inter 			  	{ $$ = $1; }
+basic_type_name:  LE_UNSIGNED basic_type_name_inter { $$ = $1 + " " + $2; }
+				| LE_SIGNED basic_type_name_inter   { $$ = $1 + " " + $2; }
+				| LE_LONG LE_LONG                   { $$ = $1 + " " + $2; }
+				| LE_LONG LE_INT                    { $$ = $1 + " " + $2; }
+				| basic_type_name_inter             { $$ = $1;            }
 				;
 
 
 /* ========================================================================*/
-/* find declarations																   */
+/* find declarations                                                       */
 /* ========================================================================*/
 
-translation_unit	:		/*empty*/
+translation_unit :      /*empty*/
 						| translation_unit external_decl
 						;
 
-external_decl	:	 	{curr_func.Reset();} function_decl
-					| 	error {
+external_decl :     {curr_func.Reset();} function_decl
+					|  error {
 							//printf("CodeLite: syntax error, unexpected token '%s' found\n", cl_func_lval.c_str());
 						}
 					;
 
 /*templates*/
-template_arg		:	/* empty */	{ $$ = "";}
+template_arg        : /* empty */	{ $$ = "";}
 						| template_specifiter LE_IDENTIFIER {$$ = $1 + " " + $2;}
 						;
 
-template_arg_list	:	template_arg	{ $$ = $1; }
-						| 	template_arg_list ',' template_arg	{ $$ = $1 + " " + $2 + " " + $3; }
-						;
+template_arg_list   : template_arg                       { $$ = $1; }
+					| template_arg_list ',' template_arg { $$ = $1 + " " + $2 + " " + $3; }
+					;
 
 template_specifiter	:	LE_CLASS	{ $$ = $1; }
 							|	LE_TYPENAME	{ $$ = $1; }

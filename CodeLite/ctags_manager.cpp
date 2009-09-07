@@ -2385,7 +2385,10 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
 
 		if (v.m_name.empty() == false && (flags & Normalize_Func_Name)) {
 			str_output << wxT(" ") << _U(v.m_name.c_str());
+		} else if ( v.m_isEllipsis ) {
+			str_output << wxT(" ...");
 		}
+
 
 		if (v.m_arrayBrackets.empty() == false) {
 			str_output << wxT(" ") << _U(v.m_arrayBrackets.c_str());

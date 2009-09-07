@@ -273,8 +273,33 @@ variables			: stmnt_starter variable_decl special_star_amp variable_name_list po
 							if($4 == ",") {
 								cl_scope_less(0);
 							}
-						};
+						}
+						| ellipsis_prefix LE_ELLIPSIS ')'
+						{
+							/* special type of argument: Ellipsis, can only be at the end of function argument */
+							if(gs_vars && g_isUsedWithinFunc)
+							{
+								Variable var;
+								std::string pattern;
+								curr_var.m_pattern = "/^";
+								curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + "$/";
+								curr_var.m_isPtr = false;
+								curr_var.m_starAmp = "";
+								curr_var.m_lineno = cl_scope_lineno;
+								curr_var.m_isEllipsis = true;
 
+								var = curr_var;
+								gs_vars->push_back(var);
+
+								curr_var.Reset();
+								gs_names.clear();
+							}
+						}
+						;
+
+ellipsis_prefix: '(' {$$ = $1;}
+				|',' {$$ = $1;}
+				;
 
 variable_name_list: 	LE_IDENTIFIER
 						{

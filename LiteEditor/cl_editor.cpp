@@ -642,8 +642,8 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		m_context->AutoIndent(event.GetKey());
 		// fall through...
 	case '\n': {
-			// incase ENTER was hit between {}
-			if ( GetCharAt (PositionBefore( PositionBefore(pos) )) == wxT('{') && s_lastCharEntered == wxT('{') ) {
+			// incase ENTER was hit immediatly after we inserted '{' into the code...
+			if ( s_lastCharEntered == wxT('{') ) {
 				matchChar = '}';
 				InsertText(pos, matchChar);
 				BeginUndoAction();
@@ -677,11 +677,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			// black theme
 			IndicatorFillRange(pos, 1);
 
-		}/* else {
-			// the matched char is '}'
-			InsertText(pos, matchChar);
-
-		}*/
+		}
 	}
 
 	if ( IsCompletionBoxShown() == false ) {

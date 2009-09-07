@@ -320,6 +320,14 @@ void BuildTab::MarkEditor ( LEditor *editor )
 	editor->AnnotationClearAll();
 	editor->AnnotationSetVisible(2); // Visible with box around it
 
+	BuildTabSettingsData options;
+	EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
+
+	// Are annotations enabled?
+	if( options.getDisplayAnnotations() == false ) {
+		return;
+	}
+
     std::pair<std::multimap<wxString,int>::iterator,
               std::multimap<wxString,int>::iterator> iters = m_fileMap.equal_range(editor->GetFileName().GetFullPath());
 	std::multimap<wxString,int>::iterator b = iters.first;

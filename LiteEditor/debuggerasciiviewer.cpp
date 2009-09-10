@@ -2,6 +2,13 @@
 #include "manager.h"
 #include "debugger.h"
 
+static void sDefineMarker(wxScintilla *s, int marker, int markerType, wxColor fore, wxColor back)
+{
+	s->MarkerDefine(marker, markerType);
+	s->MarkerSetForeground(marker, fore);
+	s->MarkerSetBackground(marker, back);
+}
+
 DebuggerAsciiViewer::DebuggerAsciiViewer( wxWindow* parent )
 		: DebuggerAsciiViewerBase( parent )
 		, m_debugger(NULL)
@@ -15,6 +22,17 @@ DebuggerAsciiViewer::DebuggerAsciiViewer( wxWindow* parent )
 	m_textView->SetMarginWidth(3, 0);
 	m_textView->SetMarginWidth(4, 0);
 
+	m_textView->SetMarginSensitive(4, true);
+	m_textView->SetProperty(wxT("fold"), wxT("1"));
+
+	sDefineMarker(m_textView, wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_BOXMINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+	sDefineMarker(m_textView, wxSCI_MARKNUM_FOLDER, wxSCI_MARK_BOXPLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+	sDefineMarker(m_textView, wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_VLINE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+	sDefineMarker(m_textView, wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_LCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+	sDefineMarker(m_textView, wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_BOXPLUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+	sDefineMarker(m_textView, wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_BOXMINUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+	sDefineMarker(m_textView, wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_TCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+
 	// set wrapped line indicator
 	m_textView->SetWrapVisualFlags(1);
 	m_textView->SetWrapStartIndent(4);
@@ -24,7 +42,8 @@ DebuggerAsciiViewer::DebuggerAsciiViewer( wxWindow* parent )
 	// Set wrap mode on
 	m_textView->SetWrapMode(wxSCI_WRAP_WORD);
 	// Use NULL lexer
-	m_textView->SetLexer(wxSCI_LEX_NULL);
+	m_textView->SetLexer(wxSCI_LEX_CPP);
+	m_textView->SetMarginMask(4, wxSCI_MASK_FOLDERS);
 
 	// Set TELETYPE font (monospace)
 	m_textView->StyleSetFont(wxSCI_STYLE_DEFAULT, font);
@@ -65,7 +84,7 @@ void DebuggerAsciiViewer::DoUpdateView()
 	wxString expression ( m_textCtrlExpression->GetValue() );
 	expression.Trim().Trim(false);
 
-	if( expression.IsEmpty() ) {
+	if ( expression.IsEmpty() ) {
 		evaluated = wxT("");
 	} else {
 		m_debugger->GetTip(m_textCtrlExpression->GetValue(), evaluated );

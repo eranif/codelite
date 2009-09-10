@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/aui/framemanager.h>
+#include "debuggerasciiviewer.h"
 #include "dockablepane.h"
 #include "editor_config.h"
 #include "detachedpanesinfo.h"
@@ -37,21 +38,13 @@
 #include "breakpointdlg.h"
 #include "threadlistpanel.h"
 
-const wxString DebuggerPane::LOCALS = wxT("Locals");
-const wxString DebuggerPane::WATCHES = wxT("Watches");
-const wxString DebuggerPane::FRAMES = wxT("Call Stack");
-const wxString DebuggerPane::BREAKPOINTS = wxT("Breakpoints");
-const wxString DebuggerPane::THREADS = wxT("Threads");
-const wxString DebuggerPane::MEMORY = wxT("Memory");
-
-/*#define ADD_DEBUGGER_PAGE(win, name, bmp) \
-	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
-		wxAuiPaneInfo info;\
-		DockablePane *pane = new DockablePane(GetParent(), m_book, win, name, bmp, wxSize(200, 200));\
-		m_mgr->AddPane(pane, info.Name(name).Caption(name));\
-	} else {\
-		m_book->AddPage(win, name, bmp, false);\
-	}*/
+const wxString DebuggerPane::LOCALS       = wxT("Locals");
+const wxString DebuggerPane::WATCHES      = wxT("Watches");
+const wxString DebuggerPane::FRAMES       = wxT("Call Stack");
+const wxString DebuggerPane::BREAKPOINTS  = wxT("Breakpoints");
+const wxString DebuggerPane::THREADS      = wxT("Threads");
+const wxString DebuggerPane::MEMORY       = wxT("Memory");
+const wxString DebuggerPane::ASCII_VIEWER = wxT("Ascii Viewer");
 
 #define ADD_DEBUGGER_PAGE(win, name, bmp) \
 	if( detachedPanes.Index(name) != wxNOT_FOUND ) {\
@@ -120,7 +113,10 @@ void DebuggerPane::CreateGUIControls()
 	//add the watches view
 	m_watchesTable = new SimpleTable(m_book);
 	ADD_DEBUGGER_PAGE(m_watchesTable, WATCHES, wxXmlResource::Get()->LoadBitmap(wxT("watches")));
-
+	
+	m_asciiViewer = new DebuggerAsciiViewer(this);
+	ADD_DEBUGGER_PAGE(m_asciiViewer, ASCII_VIEWER, wxXmlResource::Get()->LoadBitmap(wxT("watches")));
+	
 	m_frameList = new ListCtrlPanel(m_book);
 	ADD_DEBUGGER_PAGE(m_frameList, FRAMES, wxXmlResource::Get()->LoadBitmap(wxT("frames")));
 

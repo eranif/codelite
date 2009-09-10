@@ -36,6 +36,7 @@ class BreakpointDlg;
 class ThreadListPanel;
 class MemoryView;
 class wxAuiManager;
+class DebuggerAsciiViewer;
 
 class DebuggerPane : public wxPanel
 {
@@ -46,18 +47,20 @@ public:
 	static const wxString BREAKPOINTS;
 	static const wxString THREADS;
 	static const wxString MEMORY;
+	static const wxString ASCII_VIEWER;
 	
 private:
-	Notebook *m_book;
-	LocalVarsTree *m_localsTree;
-	wxString m_caption;
-	SimpleTable *m_watchesTable;
-	ListCtrlPanel *m_frameList;
-	BreakpointDlg *m_breakpoints;
-	ThreadListPanel *m_threads;
-	MemoryView *m_memory;
-	bool m_initDone;
-	wxAuiManager *m_mgr;
+	Notebook *            m_book;
+	LocalVarsTree *       m_localsTree;
+	wxString              m_caption;
+	SimpleTable *         m_watchesTable;
+	ListCtrlPanel *       m_frameList;
+	BreakpointDlg *       m_breakpoints;
+	ThreadListPanel*      m_threads;
+	MemoryView *          m_memory;
+	DebuggerAsciiViewer*  m_asciiViewer;
+	bool                  m_initDone;
+	wxAuiManager *        m_mgr;
 	
 private:
 	void CreateGUIControls();
@@ -68,13 +71,14 @@ public:
 	virtual ~DebuggerPane();
 
 	//setters/getters
-	const wxString &GetCaption() const{return m_caption;}
-	LocalVarsTree *GetLocalsTree() {return m_localsTree;}
-	SimpleTable *GetWatchesTable(){return m_watchesTable;}
-	ListCtrlPanel *GetFrameListView(){return m_frameList;}
-	BreakpointDlg *GetBreakpointView(){return m_breakpoints;}
-	ThreadListPanel *GetThreadsView(){return m_threads;}
-	MemoryView *GetMemoryView(){return m_memory;}
+	const wxString &     GetCaption() const{return m_caption;}
+	LocalVarsTree *      GetLocalsTree() {return m_localsTree;}
+	SimpleTable *        GetWatchesTable(){return m_watchesTable;}
+	ListCtrlPanel *      GetFrameListView(){return m_frameList;}
+	BreakpointDlg *      GetBreakpointView(){return m_breakpoints;}
+	ThreadListPanel *    GetThreadsView(){return m_threads;}
+	MemoryView *         GetMemoryView(){return m_memory;}
+	DebuggerAsciiViewer* GetAsciiViewer(){return m_asciiViewer;}
 	
 	Notebook *GetNotebook(){return m_book;}
 	void SelectTab(const wxString &tabName);

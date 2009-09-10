@@ -89,7 +89,7 @@ void WorkspacePane::CreateGUIControls()
 	mainSizer->Add(line, 0, wxEXPAND);
 
     // add notebook for tabs
-	long bookStyle = wxVB_LEFT|wxVB_BG_GRADIENT|wxVB_FIXED_WIDTH;
+	long bookStyle = wxVB_LEFT|wxVB_FIXED_WIDTH;
 	EditorConfigST::Get()->GetLongValue(wxT("WorkspaceView"), bookStyle);
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
 

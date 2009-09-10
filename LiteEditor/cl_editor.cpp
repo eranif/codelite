@@ -688,7 +688,11 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			m_context->OnUserTypedXChars(GetWordAtCaret());
 		}
 	}
-	s_lastCharEntered = event.GetKey();
+	
+	if( event.GetKey() !=  13 ) {
+		// Dont store last character if it was \r
+		s_lastCharEntered = event.GetKey();
+	}
 	event.Skip();
 }
 

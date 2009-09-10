@@ -25,6 +25,7 @@
 
 
 #include "pluginmanager.h"
+#include "debuggerasciiviewer.h"
 #include <wx/file.h>
 #include "threebuttondlg.h"
 #include "precompiled_header.h"
@@ -1384,16 +1385,19 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		}
 
 		wxString output;
-		if (dbgr->GetTip(command, output)) {
-			// cancel any old calltip and display the new one
-			ctrl.DoCancelCalltip();
+		Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetDebugger  (dbgr   );
+		Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetExpression(command);
 
-			// wxScintilla's tooltip does not present \t characters
-			// so we replace it with 4 spaces
-			output.Replace(wxT("\t"), wxT("    "));
-
-			ctrl.DoShowCalltip(event.GetPosition(), output, ct_debugger);
-		}
+//		if (dbgr->GetTip(command, output)) {
+//			// cancel any old calltip and display the new one
+//			ctrl.DoCancelCalltip();
+//
+//			// wxScintilla's tooltip does not present \t characters
+//			// so we replace it with 4 spaces
+//			output.Replace(wxT("\t"), wxT("    "));
+//
+//			ctrl.DoShowCalltip(event.GetPosition(), output, ct_debugger);
+//		}
 	}
 }
 

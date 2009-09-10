@@ -11,6 +11,11 @@
     
     
     
+    
+    
+    
+    
+    
     ]]>
     </Plugin>
   </Plugins>
@@ -470,6 +475,10 @@
     <File Name="taskpanel.cpp"/>
     <File Name="errorstab.h"/>
     <File Name="errorstab.cpp"/>
+    <File Name="debuggerasciiviewerbase.cpp"/>
+    <File Name="debuggerasciiviewerbase.h"/>
+    <File Name="debuggerasciiviewer.h"/>
+    <File Name="debuggerasciiviewer.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>
@@ -518,6 +527,7 @@
     <File Name="editorsettingsmiscbasepanel.fbp"/>
     <File Name="editorsettingscaretbase.fbp"/>
     <File Name="editorsettingsterminal.fbp"/>
+    <File Name="debuggerasciiviewerbase.fbp"/>
   </VirtualDirectory>
   <Dependencies Name="UnixCodeLite">
     <Project Name="wxscintilla"/>

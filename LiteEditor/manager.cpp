@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "debuggerasciiviewer.h"
 
 #include <vector>
 #include <algorithm>
@@ -1097,7 +1098,8 @@ void Manager::ShowDebuggerPane ( bool show )
 	dbgPanes.Add ( DebuggerPane::BREAKPOINTS );
 	dbgPanes.Add ( DebuggerPane::THREADS );
 	dbgPanes.Add ( DebuggerPane::MEMORY );
-
+	dbgPanes.Add ( DebuggerPane::ASCII_VIEWER );
+	
 	if ( show ) {
 
 		for ( size_t i=0; i<dbgPanes.GetCount(); i++ ) {
@@ -1604,6 +1606,15 @@ void Manager::UpdateDebuggerPane()
 			pane->GetThreadsView()->PopulateList ( threads );
 
 		}
+		
+		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetAsciiViewer() ) || IsPaneVisible ( DebuggerPane::ASCII_VIEWER ) ) {
+			
+			// re-evaluate the expression
+			pane->GetAsciiViewer()->SetDebugger( dbgr );
+			pane->GetAsciiViewer()->UpdateView();
+
+		}
+		
 		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetMemoryView() ) || IsPaneVisible ( DebuggerPane::MEMORY ) ) {
 
 			// Update the memory view tab

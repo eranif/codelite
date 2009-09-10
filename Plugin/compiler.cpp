@@ -149,11 +149,11 @@ Compiler::Compiler(wxXmlNode *node)
 		m_switches[wxT("ArchiveOutput")] = wxT(" ");
         m_switches[wxT("PreprocessOnly")] = wxT("-E");
 		m_objectSuffix = wxT(".o");
-						    
-		m_errorPattern =   	wxT("(^[a-zA-Z:]{2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([ eor]*)");
+		
+		m_errorPattern =   	wxT("^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([ eor]*)");
 		m_errorFileNameIndex = wxT("1");
 		m_errorLineNubmerIndex = wxT("3");
-		m_warningPattern = 	wxT("(^[a-zA-Z:]{2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning:)");
+		m_warningPattern = 	wxT("^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning:)");
 		m_warningFileNameIndex = wxT("1");
 		m_warningLineNubmerIndex = wxT("3");
 		m_tools[wxT("LinkerName")] = wxT("g++");

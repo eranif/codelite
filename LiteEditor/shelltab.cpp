@@ -244,6 +244,20 @@ void ShellTab::OnEnter(wxCommandEvent& e)
 DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
     : ShellTab(parent, id, name)
 {
+	if (m_sci) {
+		m_sci->SetMarginType(0, wxSCI_MARGIN_NUMBER);
+		m_sci->SetMarginType(1, wxSCI_MARGIN_FORE);
+
+		int pixelWidth = 4 + 4 * m_sci->TextWidth(wxSCI_STYLE_LINENUMBER, wxT("9"));
+
+		// Show number margin according to settings.
+		m_sci->SetMarginWidth(0, pixelWidth);
+		m_sci->SetMarginWidth(1, 1);
+
+		m_sci->SetMarginLeft(1);
+		m_sci->StyleSetBackground(wxSCI_STYLE_LINENUMBER, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+		m_sci->StyleSetForeground(wxSCI_STYLE_LINENUMBER, wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	}
 }
 
 DebugTab::~DebugTab()

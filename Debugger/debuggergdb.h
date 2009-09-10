@@ -70,6 +70,8 @@ protected:
 	void SetBreakpoints();
 	void OnProcessEndEx(wxProcessEvent &e);
 
+	bool DoLocateGdbExecutable(const wxString &debuggerPath, wxString &dbgExeName);
+	bool DoInitializeGdb      (const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
 public:
 	DbgGdb();
 	virtual ~DbgGdb();

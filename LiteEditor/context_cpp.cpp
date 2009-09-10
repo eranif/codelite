@@ -1388,16 +1388,17 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetDebugger  (dbgr   );
 		Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetExpression(command);
 
-//		if (dbgr->GetTip(command, output)) {
-//			// cancel any old calltip and display the new one
-//			ctrl.DoCancelCalltip();
-//
-//			// wxScintilla's tooltip does not present \t characters
-//			// so we replace it with 4 spaces
-//			output.Replace(wxT("\t"), wxT("    "));
-//
-//			ctrl.DoShowCalltip(event.GetPosition(), output, ct_debugger);
-//		}
+		// Display tooltip if needed only
+		if (dbgr->GetDebuggerInformation().showTooltips && command.IsEmpty() == false && dbgr->GetTip(command, output)) {
+			// cancel any old calltip and display the new one
+			ctrl.DoCancelCalltip();
+
+			// wxScintilla's tooltip does not present \t characters
+			// so we replace it with 4 spaces
+			output.Replace(wxT("\t"), wxT("    "));
+
+			ctrl.DoShowCalltip(event.GetPosition(), output, ct_debugger);
+		}
 	}
 }
 

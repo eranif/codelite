@@ -54,6 +54,7 @@ void DebuggersData::Serialize(Archive &arch)
 		arch.Write(wxT("showTerminal"), info.showTerminal);
 		arch.Write(wxT("useRelativePaths"), info.useRelativeFilePaths);
 		arch.Write(wxT("catchThrow"), info.catchThrow);
+		arch.Write(wxT("showTooltips"), info.showTooltips);
 	}
 }
 
@@ -72,6 +73,7 @@ void DebuggersData::DeSerialize(Archive &arch)
 		arch.Read(wxT("showTerminal"), info.showTerminal);
 		arch.Read(wxT("useRelativePaths"), info.useRelativeFilePaths);
 		arch.Read(wxT("catchThrow"), info.catchThrow);
+		arch.Read(wxT("showTooltips"), info.showTooltips);
 
 		m_debuggers.push_back(info);
 	}

@@ -254,7 +254,7 @@ public:
 	wxString  consoleCommand;
 	bool      useRelativeFilePaths;
 	bool      catchThrow;
-
+	bool      showTooltips;
 public:
 	DebuggerInformation()
 			: name(wxEmptyString)
@@ -266,7 +266,8 @@ public:
 			, showTerminal(false)
 			, consoleCommand(TERMINAL_CMD)
 			, useRelativeFilePaths(false)
-			, catchThrow(false) {}
+			, catchThrow(false)
+			, showTooltips(false) {}
 	~DebuggerInformation() {}
 };
 
@@ -276,8 +277,7 @@ class IDebugger;
 class DebuggerStartupInfo
 {
 public:
-	enum DebugType
-	{
+	enum DebugType {
 		DebugProject  = 1,
 		AttachProcess = 2,
 		QuickDebug    = 3
@@ -288,22 +288,18 @@ public:
 	IDebugger *debugger;
 
 	DebuggerStartupInfo()
-		: pid(wxNOT_FOUND), project(wxEmptyString), debugger(NULL)
-	{}
+			: pid(wxNOT_FOUND), project(wxEmptyString), debugger(NULL) {}
 
 	DebuggerStartupInfo(long pid)
-		: pid(pid), project(wxEmptyString), debugger(NULL)
-	{}
+			: pid(pid), project(wxEmptyString), debugger(NULL) {}
 
 	DebuggerStartupInfo(const wxString &project)
-		: pid(wxNOT_FOUND), project(project), debugger(NULL)
-	{}
+			: pid(wxNOT_FOUND), project(project), debugger(NULL) {}
 
-	DebugType GetDebugType() const
-	{
+	DebugType GetDebugType() const {
 		return pid != wxNOT_FOUND ? AttachProcess :
-			   project.IsEmpty()  ? QuickDebug :
-									DebugProject;
+		       project.IsEmpty()  ? QuickDebug :
+		       DebugProject;
 	}
 };
 
@@ -335,19 +331,26 @@ protected:
 public:
 	IDebugger() : m_env(NULL) {};
 	virtual ~IDebugger() {};
-	virtual void SetObserver(IDebuggerObserver *observer) {
+
+	void SetObserver(IDebuggerObserver *observer) {
 		m_observer = observer;
 	}
-	virtual IDebuggerObserver *GetObserver() {
+
+	IDebuggerObserver *GetObserver() {
 		return m_observer;
 	}
-	virtual void SetEnvironment(EnvironmentConfig *env) {
+
+	void SetEnvironment(EnvironmentConfig *env) {
 		m_env = env;
 	}
-	virtual void SetDebuggerInformation(const DebuggerInformation& info) {
+
+	void SetDebuggerInformation(const DebuggerInformation& info) {
 		m_info = info;
 	}
 
+	DebuggerInformation GetDebuggerInformation() {
+		return m_info;
+	}
 	//-------------------------------------------------------------
 	// Debugger operations
 	//-------------------------------------------------------------

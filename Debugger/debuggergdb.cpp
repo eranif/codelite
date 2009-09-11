@@ -474,7 +474,7 @@ bool DbgGdb::Break(const BreakpointInfo& bp)
 	}
 
 	// execute it
-	return WriteCommand(gdbCommand, new DbgCmdHandlerBp(m_observer, bp, &m_bpList, bp.bp_type));
+	return WriteCommand(gdbCommand, new DbgCmdHandlerBp(m_observer, this, bp, &m_bpList, bp.bp_type));
 }
 
 bool DbgGdb::Continue()

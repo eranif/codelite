@@ -326,9 +326,9 @@ class EnvironmentConfig;
 class IDebugger
 {
 protected:
-	IDebuggerObserver *m_observer;
+	IDebuggerObserver * m_observer;
 	DebuggerInformation m_info;
-	EnvironmentConfig *m_env;
+	EnvironmentConfig * m_env;
 
 public:
 	IDebugger() : m_env(NULL) {};

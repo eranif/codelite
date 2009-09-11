@@ -1099,7 +1099,7 @@ void Manager::ShowDebuggerPane ( bool show )
 	dbgPanes.Add ( DebuggerPane::THREADS );
 	dbgPanes.Add ( DebuggerPane::MEMORY );
 	dbgPanes.Add ( DebuggerPane::ASCII_VIEWER );
-	
+
 	if ( show ) {
 
 		for ( size_t i=0; i<dbgPanes.GetCount(); i++ ) {
@@ -1606,15 +1606,15 @@ void Manager::UpdateDebuggerPane()
 			pane->GetThreadsView()->PopulateList ( threads );
 
 		}
-		
+
 		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetAsciiViewer() ) || IsPaneVisible ( DebuggerPane::ASCII_VIEWER ) ) {
-			
+
 			// re-evaluate the expression
 			pane->GetAsciiViewer()->SetDebugger( dbgr );
 			pane->GetAsciiViewer()->UpdateView();
 
 		}
-		
+
 		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetMemoryView() ) || IsPaneVisible ( DebuggerPane::MEMORY ) ) {
 
 			// Update the memory view tab
@@ -2084,14 +2084,32 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 
 	switch ( reason ) {
 	case DBG_RECV_SIGNAL_EXC_BAD_ACCESS:
+	case DBG_RECV_SIGNAL_SIGABRT:
 	case DBG_RECV_SIGNAL_SIGSEGV: { //program received signal sigsegv
 		wxString signame = wxT ( "SIGSEGV" );
 		if ( reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS ) {
 			signame = wxT ( "EXC_BAD_ACCESS" );
+		} else if ( reason == DBG_RECV_SIGNAL_SIGABRT ) {
+			signame = wxT ( "SIGABRT" );
 		}
+
 		DebugMessage ( _("Program Received signal ") + signame + _("\n") );
 		wxMessageDialog dlg( Frame::Get(), _("Program Received signal ") + signame + wxT("\n") +
-		               _("Stack trace is available in the 'Stack' tab\n"),
+		               _("Stack trace is available in the 'Call Stack' tab\n"),
+		               wxT("CodeLite"), wxICON_ERROR|wxOK );
+		dlg.ShowModal();
+
+		//Print the stack trace
+		wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( wxT("Debugger") );
+		if ( info.IsShown() ) {
+			Frame::Get()->GetDebuggerPane()->SelectTab ( DebuggerPane::FRAMES );
+			UpdateDebuggerPane();
+		}
+	}
+	break;
+	case DBG_BP_ASSERTION_HIT: {
+
+		wxMessageDialog dlg( Frame::Get(), _("Assertion failed!\nStack trace is available in the 'Call Stack' tab\n"),
 		               wxT("CodeLite"), wxICON_ERROR|wxOK );
 		dlg.ShowModal();
 

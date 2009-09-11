@@ -267,8 +267,29 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 		//just notify the container that we got control back from debugger
 		m_observer->UpdateGotControl(DBG_END_STEPPING);
 	} else if (reason == wxT("breakpoint-hit")) {
-		//just notify the container that we got control back from debugger
-		m_observer->UpdateGotControl(DBG_BP_HIT);
+		static wxRegEx reFuncName(wxT("func=\"([a-zA-Z!_0-9]+)\""));
+
+		// Incase we break due to assertion, notify the observer with different break code
+#ifdef __WXMSW__
+		if ( reFuncName.Matches(line) )
+#else // Mac / Linux
+		if ( false )
+#endif
+		{
+			wxString func_name = reFuncName.GetMatch(line, 1);
+			if( func_name == wxT("msvcrt!_assert") || // MinGW
+				func_name == wxT("__assert")          // Cygwin
+			) {
+				// assertion caught
+				m_observer->UpdateGotControl(DBG_BP_ASSERTION_HIT);
+			} else {
+				m_observer->UpdateGotControl(DBG_BP_HIT);
+			}
+		} else {
+			//just notify the container that we got control back from debugger
+			m_observer->UpdateGotControl(DBG_BP_HIT);
+		}
+
 	} else if (reason == wxT("signal-received")) {
 		//got signal
 		//which signal?
@@ -282,8 +303,13 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 
 		if (signame == wxT("SIGSEGV")) {
 			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_SIGSEGV);
+
 		} else if (signame == wxT("EXC_BAD_ACCESS")) {
 			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_EXC_BAD_ACCESS);
+
+		} else if (signame == wxT("SIGABRT")) {
+			m_observer->UpdateGotControl(DBG_RECV_SIGNAL_SIGABRT);
+
 		} else {
 			//default
 			m_observer->UpdateGotControl(DBG_RECV_SIGNAL);
@@ -334,15 +360,16 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 	// so the breakpoint ID will come in form of
 	// ^done,bkpt={number="2"....
 	// ^done,wpt={number="2"
-	static wxRegEx reBreak(wxT("done,bkpt={number=\"([0-9]+)\""));
-	static wxRegEx reWatch(wxT("done,wpt={number=\"([0-9]+)\""));
+	static wxRegEx reBreak   (wxT("done,bkpt={number=\"([0-9]+)\""));
+	static wxRegEx reWatch   (wxT("done,wpt={number=\"([0-9]+)\""));
 
 	wxString number;
 	long breakpointId(wxNOT_FOUND);
 
 	if (reBreak.Matches(line)) {
-		m_observer->UpdateAddLine(wxString::Format(wxT("Found the breakpoint ID!")));
 		number = reBreak.GetMatch(line, 1);
+		m_observer->UpdateAddLine(wxString::Format(wxT("Found the breakpoint ID!")));
+
 	} else if (reWatch.Matches(line)) {
 		number = reWatch.GetMatch(line, 1);
 	}

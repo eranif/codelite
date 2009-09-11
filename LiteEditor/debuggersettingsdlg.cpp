@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include "debuggersettingsdlg.h"
+#include "windowattrmanager.h"
 #include "editor_config.h"
 #include "debuggermanager.h"
 #include "macros.h"
@@ -33,56 +34,12 @@
 
 //-------------------------------------------------------------------
 DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
-		: wxPanel(parent)
+		: DebuggerPageBase(parent)
 		, m_title(title)
 {
-	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
-	SetSizer(sz);
-
-	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 2, 2, 0, 0 );
-
-	fgSizer2->AddGrowableCol( 1 );
-	fgSizer2->SetFlexibleDirection( wxBOTH );
-	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	sz->Add(fgSizer2, 0, wxEXPAND|wxALL);
-
-	wxStaticText *m_staticText2 = new wxStaticText( this, wxID_ANY, wxT("Debugger Path:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2->Wrap( -1 );
-	fgSizer2->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-
-	m_filePicker = new FilePicker( this );
-	fgSizer2->Add( m_filePicker, 0, wxALL|wxEXPAND, 5 );
-
-	m_checkBoxEnableLog = new wxCheckBox( this, wxID_ANY, wxT("Enable full debugger logging"), wxDefaultPosition, wxDefaultSize, 0 );
-	sz->Add(m_checkBoxEnableLog, 0, wxEXPAND|wxALL, 5);
-
-	m_checkBoxEnablePendingBreakpoints = new wxCheckBox(this, wxID_ANY, wxT("Enable pending breakpoint"), wxDefaultPosition, wxDefaultSize, 0 );
-	sz->Add(m_checkBoxEnablePendingBreakpoints, 0, wxEXPAND|wxALL, 5);
-
-	m_checkBreakAtWinMain = new wxCheckBox(this, wxID_ANY, wxT("Automatically set breakpoint at main"), wxDefaultPosition, wxDefaultSize, 0 );
-	sz->Add(m_checkBreakAtWinMain, 0, wxEXPAND|wxALL, 5);
-
-	m_checkResolveStarThis = new wxCheckBox(this, wxID_ANY, wxT("Resolve '*this' in the 'Locals' view"), wxDefaultPosition, wxDefaultSize, 0 );
-	sz->Add(m_checkResolveStarThis, 0, wxEXPAND|wxALL, 5);
-
-	m_checkShowTerminal = new wxCheckBox(this, wxID_ANY, wxT("Show debugger terminal"), wxDefaultPosition, wxDefaultSize, 0 );
-	sz->Add(m_checkShowTerminal, 0, wxEXPAND|wxALL, 5);
-
-	m_checkUseRelativePaths = new wxCheckBox(this, wxID_ANY, wxT("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition, wxDefaultSize, 0 );
-	sz->Add(m_checkUseRelativePaths, 0, wxEXPAND|wxALL, 5);
-
-	m_catchThrow = new wxCheckBox(this, wxID_ANY, wxT("Break when C++ execption is thrown"), wxDefaultPosition, wxDefaultSize, 0 );
-	sz->Add(m_catchThrow, 0, wxEXPAND|wxALL, 5);
-
-	m_showTooltips = new wxCheckBox(this, wxID_ANY, wxT("While debugging, show debugger tooltips"), wxDefaultPosition, wxDefaultSize, 0 );
-	sz->Add(m_showTooltips, 0, wxEXPAND|wxALL, 5);
-
-	sz->Layout();
-
 	DebuggerInformation info;
 	if(DebuggerMgr::Get().GetDebuggerInformation(m_title, info)){
-		m_filePicker->SetPath(info.path);
+		m_textCtrDbgPath->SetValue(info.path);
 		m_checkBoxEnableLog->SetValue(info.enableDebugLog);
 		m_checkBoxEnablePendingBreakpoints->SetValue(info.enablePendingBreakpoints);
 		m_checkBreakAtWinMain->SetValue(info.breakAtWinMain);
@@ -91,11 +48,42 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_checkUseRelativePaths->SetValue(info.useRelativeFilePaths);
 		m_catchThrow->SetValue(info.catchThrow);
 		m_showTooltips->SetValue(info.showTooltips);
+#ifdef __WXMSW__
+		m_checkBoxDebugAssert->SetValue(info.debugAsserts);
+#endif
 	}
+
+#ifndef __WXMSW__
+	m_checkBoxDebugAssert->SetValue(false);
+	m_checkBoxDebugAssert->Enable(false);
+#endif
+
 }
 
 DebuggerPage::~DebuggerPage()
 {
+}
+
+void DebuggerPage::OnBrowse(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	wxString newfilepath, filepath(m_textCtrDbgPath->GetValue());
+	if ((!filepath.IsEmpty()) && wxFileName::FileExists(filepath)) {
+		newfilepath = wxFileSelector(wxT("Select file:"), filepath.c_str());
+	} else {
+		newfilepath = wxFileSelector(wxT("Select file:"));
+	}
+
+	if (!newfilepath.IsEmpty()) {
+		m_textCtrDbgPath->SetValue(newfilepath);
+	}
+}
+
+void DebuggerPage::OnDebugAssert(wxCommandEvent& e)
+{
+	if ( e.IsChecked() ) {
+		m_checkBoxEnablePendingBreakpoints->SetValue(true);
+	}
 }
 
 //-------------------------------------------------------------------
@@ -112,6 +100,8 @@ DebuggerSettingsDlg::DebuggerSettingsDlg( wxWindow* parent )
 	Centre();
 
 	m_listCtrl1->SetFocus();
+	GetSizer()->Fit(this);
+	WindowAttrManager::Load(this, wxT("DbgSettingsDlg"), NULL);
 }
 
 void DebuggerSettingsDlg::Initialize()
@@ -163,7 +153,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		//populate the information and save it
 		info.enableDebugLog           = page->m_checkBoxEnableLog->GetValue();
 		info.enablePendingBreakpoints = page->m_checkBoxEnablePendingBreakpoints->GetValue();
-		info.path                     = page->m_filePicker->GetPath();
+		info.path                     = page->m_textCtrDbgPath->GetValue();
 		info.name                     = page->m_title;
 		info.breakAtWinMain           = page->m_checkBreakAtWinMain->IsChecked();
 		info.resolveThis              = page->m_checkResolveStarThis->IsChecked();
@@ -172,7 +162,9 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		info.useRelativeFilePaths     = page->m_checkUseRelativePaths->IsChecked();
 		info.catchThrow               = page->m_catchThrow->IsChecked();
 		info.showTooltips             = page->m_showTooltips->IsChecked();
-
+#ifdef __WXMSW__
+		info.debugAsserts             = page->m_checkBoxDebugAssert->IsChecked();
+#endif
 		DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
 	}
 
@@ -323,4 +315,9 @@ void DebuggerSettingsDlg::DoDeleteItem()
 	}
 	m_listCtrl1->DeleteItem(m_selectedItem);
 	m_selectedItem = wxNOT_FOUND;
+}
+
+DebuggerSettingsDlg::~DebuggerSettingsDlg()
+{
+	WindowAttrManager::Save(this, wxT("DbgSettingsDlg"), NULL);
 }

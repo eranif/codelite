@@ -1244,6 +1244,12 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wx
 		ExecuteCmd(wxT("catch throw"));
 	}
 
+#ifdef __WXMSW__
+	if (m_info.debugAsserts) {
+		ExecuteCmd(wxT("break assert"));
+	}
+#endif
+
 	ExecuteCmd(wxT("set width 0"));
 	ExecuteCmd(wxT("set height 0"));
 	ExecuteCmd(wxT("set print elements 0")); // Allow large strings

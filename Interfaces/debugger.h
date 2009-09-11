@@ -255,6 +255,7 @@ public:
 	bool      useRelativeFilePaths;
 	bool      catchThrow;
 	bool      showTooltips;
+	bool      debugAsserts;
 public:
 	DebuggerInformation()
 			: name(wxEmptyString)
@@ -267,7 +268,8 @@ public:
 			, consoleCommand(TERMINAL_CMD)
 			, useRelativeFilePaths(false)
 			, catchThrow(false)
-			, showTooltips(false) {}
+			, showTooltips(false)
+			 ,debugAsserts(false){}
 	~DebuggerInformation() {}
 };
 

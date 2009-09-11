@@ -1,28 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : debuggersettingsbasedlg.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
@@ -136,4 +111,103 @@ DebuggerSettingsBaseDlg::~DebuggerSettingsBaseDlg()
 	m_buttonEdit->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerSettingsBaseDlg::OnEditShortcut ), NULL, this );
 	m_buttonDelete->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerSettingsBaseDlg::OnDeleteShortcut ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerSettingsBaseDlg::OnButtonCancel ), NULL, this );
+}
+
+DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+{
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer2;
+	fgSizer2 = new wxFlexGridSizer( 2, 3, 0, 0 );
+	fgSizer2->AddGrowableCol( 1 );
+	fgSizer2->SetFlexibleDirection( wxBOTH );
+	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Debugger path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText1->Wrap( -1 );
+	fgSizer2->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrDbgPath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_textCtrDbgPath, 0, wxALL|wxEXPAND, 5 );
+	
+	m_buttonBrowse = new wxButton( this, wxID_ANY, wxT("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer2->Add( m_buttonBrowse, 0, wxALL, 5 );
+	
+	bSizer7->Add( fgSizer2, 0, wxEXPAND, 5 );
+	
+	wxGridSizer* gSizer1;
+	gSizer1 = new wxGridSizer( 2, 2, 0, 0 );
+	
+	bSizer7->Add( gSizer1, 0, wxEXPAND, 5 );
+	
+	wxStaticBoxSizer* sbSizer1;
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Options:") ), wxVERTICAL );
+	
+	wxGridSizer* gSizer3;
+	gSizer3 = new wxGridSizer( 2, 2, 0, 0 );
+	
+	m_checkBoxEnablePendingBreakpoints = new wxCheckBox( this, wxID_ANY, wxT("Enable pending breakpoint"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	gSizer3->Add( m_checkBoxEnablePendingBreakpoints, 0, wxALL, 5 );
+	
+	m_checkBreakAtWinMain = new wxCheckBox( this, wxID_ANY, wxT("Automatically set breakpoint at main"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	gSizer3->Add( m_checkBreakAtWinMain, 0, wxALL, 5 );
+	
+	m_checkResolveStarThis = new wxCheckBox( this, wxID_ANY, wxT("Resolve '*this' in the 'Locals' view"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	gSizer3->Add( m_checkResolveStarThis, 0, wxALL, 5 );
+	
+	m_catchThrow = new wxCheckBox( this, wxID_ANY, wxT("Break when C++ execption is thrown"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	gSizer3->Add( m_catchThrow, 0, wxALL, 5 );
+	
+	m_checkBoxDebugAssert = new wxCheckBox( this, wxID_ANY, wxT("Break at assertion failure (MinGW only)"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	gSizer3->Add( m_checkBoxDebugAssert, 0, wxALL, 5 );
+	
+	sbSizer1->Add( gSizer3, 1, wxEXPAND, 5 );
+	
+	bSizer7->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
+	
+	wxStaticBoxSizer* sbSizer2;
+	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Misc:") ), wxVERTICAL );
+	
+	wxGridSizer* gSizer2;
+	gSizer2 = new wxGridSizer( 2, 2, 0, 0 );
+	
+	m_checkBoxEnableLog = new wxCheckBox( this, wxID_ANY, wxT("Enable full debugger logging"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	gSizer2->Add( m_checkBoxEnableLog, 0, wxALL, 5 );
+	
+	m_checkShowTerminal = new wxCheckBox( this, wxID_ANY, wxT("Show debugger terminal"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	gSizer2->Add( m_checkShowTerminal, 0, wxALL, 5 );
+	
+	m_checkUseRelativePaths = new wxCheckBox( this, wxID_ANY, wxT("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	gSizer2->Add( m_checkUseRelativePaths, 0, wxALL, 5 );
+	
+	m_showTooltips = new wxCheckBox( this, wxID_ANY, wxT("While debugging, show debugger tooltips"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	gSizer2->Add( m_showTooltips, 0, wxALL, 5 );
+	
+	sbSizer2->Add( gSizer2, 1, wxEXPAND, 5 );
+	
+	bSizer7->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
+	
+	this->SetSizer( bSizer7 );
+	this->Layout();
+	
+	// Connect Events
+	m_buttonBrowse->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerPageBase::OnBrowse ), NULL, this );
+	m_checkBoxDebugAssert->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( DebuggerPageBase::OnDebugAssert ), NULL, this );
+}
+
+DebuggerPageBase::~DebuggerPageBase()
+{
+	// Disconnect Events
+	m_buttonBrowse->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerPageBase::OnBrowse ), NULL, this );
+	m_checkBoxDebugAssert->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( DebuggerPageBase::OnDebugAssert ), NULL, this );
 }

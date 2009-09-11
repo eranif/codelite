@@ -1,28 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : debuggersettingsbasedlg.h              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Mar 19 2008)
 // http://www.wxformbuilder.org/
@@ -48,6 +23,10 @@
 #include <wx/button.h>
 #include <wx/statline.h>
 #include <wx/dialog.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/checkbox.h>
+#include <wx/statbox.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -83,8 +62,40 @@ class DebuggerSettingsBaseDlg : public wxDialog
 		
 	
 	public:
-		DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 537,451 ), long style = wxDEFAULT_DIALOG_STYLE );
+		DebuggerSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 537,451 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~DebuggerSettingsBaseDlg();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class DebuggerPageBase
+///////////////////////////////////////////////////////////////////////////////
+class DebuggerPageBase : public wxPanel 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText1;
+		wxTextCtrl* m_textCtrDbgPath;
+		wxButton* m_buttonBrowse;
+		wxCheckBox* m_checkBoxEnablePendingBreakpoints;
+		wxCheckBox* m_checkBreakAtWinMain;
+		wxCheckBox* m_checkResolveStarThis;
+		wxCheckBox* m_catchThrow;
+		wxCheckBox* m_checkBoxDebugAssert;
+		wxCheckBox* m_checkBoxEnableLog;
+		wxCheckBox* m_checkShowTerminal;
+		wxCheckBox* m_checkUseRelativePaths;
+		wxCheckBox* m_showTooltips;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnBrowse( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnDebugAssert( wxCommandEvent& event ){ event.Skip(); }
+		
+	
+	public:
+		DebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
+		~DebuggerPageBase();
 	
 };
 

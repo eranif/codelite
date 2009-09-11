@@ -621,7 +621,7 @@ void Frame::CreateGUIControls(void)
 	m_mgr.SetManagedWindow(this);
 	m_mgr.SetArtProvider(new CLAuiDockArt());
 
-	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
+//	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
 
 #if defined (__WXGTK__) || defined (__WXMAC__)
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE);
@@ -638,7 +638,8 @@ void Frame::CreateGUIControls(void)
 	DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"));
 	WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
 
-	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
+	// FIXME:: Dragging toolar with transparent ON seems to crash (WX > 2.8.8)
+//	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
 
 // On wx2.8.7, AUI dragging is broken but this happens only in debug build & on GTK
 #if defined (__WXGTK__) && defined (__WXDEBUG__)

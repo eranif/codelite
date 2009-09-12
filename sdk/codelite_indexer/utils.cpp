@@ -145,9 +145,9 @@ void execute_command(const std::string &command, std::vector<std::string> &outpu
 	FILE *fp;
 	char line[512];
 	memset(line, 0, sizeof(line));
-	fp = popen(command.mb_str(wxConvUTF8), "r");
+	fp = popen(command.c_str(), "r");
 	while ( fgets( line, sizeof line, fp)) {
-		output.Add(wxString(line, wxConvUTF8));
+		output.push_back(line);
 		memset(line, 0, sizeof(line));
 	}
 

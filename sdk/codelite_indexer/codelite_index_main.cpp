@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "workerthread.h"
-
+#include "utils.h"
 #include "equeue.h"
 #include "network/named_pipe_client.h"
 #include "network/np_connections_server.h"
@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	int  max_requests(1500);
 	int  requests(0);
 	bool check_parent(false);
-
+	long parent_pid (0);
 	if(argc < 2){
 		printf("Usage: %s <string> [--pid]\n", argv[0]);
 		printf("   <string> - a unique string that identifies this indexer from other instances               \n");
@@ -35,6 +35,7 @@ int main(int argc, char **argv)
 
 	if ( argc == 3 && strcmp( argv[2], "--pid") == 0 ) {
 		check_parent = true;
+		parent_pid = atol( argv[1] );
 		printf("INFO: parent PID is set on %s\n", argv[1]);
 	}
 
@@ -52,9 +53,16 @@ int main(int argc, char **argv)
 	printf("INFO: listening on %s\n", channel_name);
 
 	while (true) {
-		clNamedPipe *conn = server.waitForNewConnection(-1);
+		clNamedPipe *conn = server.waitForNewConnection(5000 /* 1 second */);
 		if (!conn) {
-			fprintf(stderr, "ERROR: Failed to receive new connection: %d\n", server.getLastError());
+#ifdef __DEBUG
+			fprintf(stderr, "INFO: Failed to receive new connection: %d\n", server.getLastError());
+#endif
+			if( check_parent && !is_process_alive( parent_pid ) ) {
+				printf("INFO: Parent process %d is not alive, going down\n", parent_pid );
+				ctags_shutdown();
+				return 0;
+			}
 			continue;
 		}
 

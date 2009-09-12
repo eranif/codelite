@@ -6,6 +6,10 @@
 #  include <sys/socket.h>
 #  include <sys/un.h>
 #  include <stdio.h>
+#else
+# include <ctype.h>
+# include <sys/time.h>
+# include <fcntl.h>
 #endif
 
 #ifdef __WXMSW__
@@ -92,7 +96,7 @@ clNamedPipeConnectionsServer::~clNamedPipeConnectionsServer()
 {
 	if(_pipePath) {
 		free(_pipePath);
-		_pipePath = NULL;	
+		_pipePath = NULL;
 	}
 	_listenHandle = INVALID_PIPE_HANDLE;
 }
@@ -117,22 +121,22 @@ PIPE_HANDLE clNamedPipeConnectionsServer::initNewInstance()
 	return hPipe;
 #else
 	if(_listenHandle == INVALID_PIPE_HANDLE) {
-		
+
 		unlink(_pipePath);
 		struct sockaddr_un server;
-		
+
 		_listenHandle = socket(AF_UNIX, SOCK_STREAM, 0);
 		if (_listenHandle < 0) {
 			perror("ERROR: socket");
 			return INVALID_PIPE_HANDLE;
 		}
-		
+
 		server.sun_family = AF_UNIX;
 		strcpy(server.sun_path, _pipePath);
 		if (bind(_listenHandle, (struct sockaddr *) &server, sizeof(struct sockaddr_un))) {
 			perror("ERROR: binding stream socket");
 			return INVALID_PIPE_HANDLE;
-		}	
+		}
 	}
 	listen(_listenHandle, 10);
 	return _listenHandle;
@@ -143,7 +147,7 @@ bool clNamedPipeConnectionsServer::shutdown()
 {
 	if(_pipePath){
 		free(_pipePath);
-		_pipePath = NULL;	
+		_pipePath = NULL;
 	}
 
 #ifndef __WXMSW__
@@ -206,6 +210,21 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 #else
 	// accept new connection
 	if(hConn != INVALID_PIPE_HANDLE){
+		fd_set fds;
+		struct timeval tv;
+		memset( (void*)&fds, 0, sizeof( fds ) );
+		FD_SET( hConn, &fds );
+
+		tv.tv_sec = 0;
+		tv.tv_usec = timeout * 1000; // convert mili to micro
+
+		int rc = select(hConn + 1, &fds, 0, 0, &tv);
+		if( rc == 0 || rc < 0 ) {
+			// timeout or error
+			setLastError(NP_SERVER_TIMEOUT);
+			return NULL;
+		}
+
 		PIPE_HANDLE fd = ::accept(hConn, 0, 0);
 		if(fd > 0){
 			clNamedPipeServer *conn = new clNamedPipeServer(_pipePath);
@@ -215,7 +234,7 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 			perror("ERROR: accept");
 			return NULL;
 		}
-		
+
 	}
 	return NULL;
 #endif

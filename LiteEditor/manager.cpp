@@ -230,6 +230,9 @@ void Manager::CloseWorkspace()
 	GetBreakpointsMgr()->SaveSession(session);
 	SessionManager::Get().Save ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath(), session );
 
+	// Delete any breakpoints belong to the current workspace
+	GetBreakpointsMgr()->DelAllBreakpoints();
+
 	// since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
 	// default
 	SessionManager::Get().SetLastWorkspaceName ( wxT ( "Default" ) );

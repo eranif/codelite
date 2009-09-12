@@ -21,14 +21,21 @@ static eQueue<clNamedPipe*> g_connectionQueue;
 
 int main(int argc, char **argv)
 {
-	int max_requests(1500);
-	int requests(0);
+	int  max_requests(1500);
+	int  requests(0);
+	bool check_parent(false);
 
 	if(argc < 2){
-		printf("Usage: %s <unique string>\n", argv[0]);
-		printf("   <unique string> - a unique string that identifies this indexer from other instances\n");
-		printf("                     this number can contains only [a-zA-Z]\n");
+		printf("Usage: %s <string> [--pid]\n", argv[0]);
+		printf("   <string> - a unique string that identifies this indexer from other instances               \n");
+		printf("   --pid    - when set, <string> is handled as process number and the indexer will            \n");
+		printf("              check if this process alive. Incase it is down, the indexer will go down as well\n");
 		return 1;
+	}
+
+	if ( argc == 3 && strcmp( argv[2], "--pid") == 0 ) {
+		check_parent = true;
+		printf("INFO: parent PID is set on %s\n", argv[1]);
 	}
 
 	// create the connection factory

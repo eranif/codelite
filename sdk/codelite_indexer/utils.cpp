@@ -1,5 +1,10 @@
 #include "utils.h"
 
+#ifdef __WXMSW__
+# include <windows.h>
+# include <process.h>
+# include <Tlhelp32.h>
+#endif
 /**
  * helper string methods
  */
@@ -129,4 +134,94 @@ std::string after_last(const std::string &str, char c)
 		return str;
 	}
 	return str.substr(where+1);
+}
+
+// ------------------------------------------
+// Process manipulation
+// ------------------------------------------
+void execute_command(const std::string &command, std::vector<std::string> &output)
+{
+#ifndef __WXMSW__
+	FILE *fp;
+	char line[512];
+	memset(line, 0, sizeof(line));
+	fp = popen(command.mb_str(wxConvUTF8), "r");
+	while ( fgets( line, sizeof line, fp)) {
+		output.Add(wxString(line, wxConvUTF8));
+		memset(line, 0, sizeof(line));
+	}
+
+	pclose(fp);
+#endif
+}
+
+bool is_process_alive(long pid)
+{
+#ifdef __WXMSW__
+	//go over the process modules and get the full path of
+	//the executeable
+	HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
+	MODULEENTRY32 me32;
+
+	//  Take a snapshot of all modules in the specified process.
+	hModuleSnap = CreateToolhelp32Snapshot( TH32CS_SNAPMODULE, (DWORD)pid );
+	if ( hModuleSnap == INVALID_HANDLE_VALUE ) {
+		return false;
+	}
+
+	//  Set the size of the structure before using it.
+	me32.dwSize = sizeof( MODULEENTRY32 );
+
+	//  Retrieve information about the first module,
+	//  and exit if unsuccessful
+	if (!Module32First( hModuleSnap, &me32 )) {
+		CloseHandle( hModuleSnap );    // Must clean up the
+		// snapshot object!
+		return false;
+	}
+
+	//get the name of the process (it is located in the first entry)
+	CloseHandle( hModuleSnap );
+
+	std::string name(me32.szExePath);
+	return name.empty();
+
+#elif defined(__FreeBSD__)
+	kvm_t *            kvd;
+	struct kinfo_proc *ki;
+	int                nof_procs;
+	std::string        cmd;
+
+	if (!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, NULL, O_RDONLY, NULL)))
+	    return "";
+
+	if (!(ki = kvm_getprocs(kvd, KERN_PROC_PID, pid, &nof_procs))) {
+	    kvm_close(kvd);
+	    return false;
+	}
+	return true;
+
+#else
+	std::vector<std::string> output;
+	execute_command("ps -A -o pid,command --no-heading", output);
+
+	//parse the output and search for our process ID
+	for (size_t i=0; i< output.size(); i++) {
+		std::string line = output.at(i);
+
+		//remove whitespaces
+		string_trim(line);
+
+		//get the process ID
+		std::string spid = before_first(line, ' ');
+		long        cpid(0);
+
+		cpid = atol(spid.c_str());
+
+		if (cpid == pid) {
+			return true;
+		}
+	}
+	return false; //Not implemented yet
+#endif
 }

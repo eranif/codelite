@@ -57,4 +57,21 @@ std::string before_last(const std::string &str, char c);
  */
 std::string after_last(const std::string &str, char c);
 
+//------------------------------------------------------------
+// process methods
+//------------------------------------------------------------
+/**
+ * @brief exceute command and return its output in the form std::string vector
+ * @param command command to run
+ * @param output  vector of strings
+ */
+void execute_command(const std::string &command, std::vector<std::string> &output);
+
+/**
+ * @brief return true if PID is alive
+ * @param pid process id
+ * @return true if the process alive, false otherwise
+ */
+bool is_process_alive(long pid);
+
 #endif // __UTILS_H__

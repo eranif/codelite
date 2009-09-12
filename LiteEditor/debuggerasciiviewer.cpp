@@ -90,6 +90,10 @@ void DebuggerAsciiViewer::DoUpdateView()
 		m_debugger->GetTip(m_textCtrlExpression->GetValue(), evaluated );
 	}
 
+	evaluated.Replace(wxT("\r\n"), wxT("\n"));
+	evaluated.Replace(wxT("\n,"), wxT(",\n"));
+	evaluated.Replace(wxT("\n\n"), wxT("\n"));
+
 	// update the view
 	m_textView->SetReadOnly(false);
 	m_textView->ClearAll();

@@ -87,14 +87,14 @@ out_fail:
 #endif
 
 clNamedPipeConnectionsServer::clNamedPipeConnectionsServer(const char* pipeName)
-: _listenHandle(INVALID_PIPE_HANDLE)
+		: _listenHandle(INVALID_PIPE_HANDLE)
 {
 	_pipePath = strdup(pipeName);
 }
 
 clNamedPipeConnectionsServer::~clNamedPipeConnectionsServer()
 {
-	if(_pipePath) {
+	if (_pipePath) {
 		free(_pipePath);
 		_pipePath = NULL;
 	}
@@ -120,7 +120,7 @@ PIPE_HANDLE clNamedPipeConnectionsServer::initNewInstance()
 	}
 	return hPipe;
 #else
-	if(_listenHandle == INVALID_PIPE_HANDLE) {
+	if (_listenHandle == INVALID_PIPE_HANDLE) {
 
 		unlink(_pipePath);
 		struct sockaddr_un server;
@@ -145,7 +145,7 @@ PIPE_HANDLE clNamedPipeConnectionsServer::initNewInstance()
 
 bool clNamedPipeConnectionsServer::shutdown()
 {
-	if(_pipePath){
+	if (_pipePath) {
 		free(_pipePath);
 		_pipePath = NULL;
 	}
@@ -209,18 +209,18 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 	}
 #else
 	// accept new connection
-	if(hConn != INVALID_PIPE_HANDLE){
-		fd_set fds;
-		struct timeval tv;
-		memset( (void*)&fds, 0, sizeof( fds ) );
-		FD_SET( hConn, &fds );
+	if (hConn != INVALID_PIPE_HANDLE) {
 
 		if ( timeout > 0 ) {
+			fd_set fds;
+			struct timeval tv;
+			memset( (void*)&fds, 0, sizeof( fds ) );
+			FD_SET( hConn, &fds );
 			tv.tv_sec = 0;
 			tv.tv_usec = timeout * 1000; // convert mili to micro
 
 			int rc = select(hConn + 1, &fds, 0, 0, &tv);
-			if( rc == 0 || rc < 0 ) {
+			if ( rc == 0 || rc < 0 ) {
 				// timeout or error
 				setLastError(NP_SERVER_TIMEOUT);
 				return NULL;
@@ -228,7 +228,7 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 		}
 
 		PIPE_HANDLE fd = ::accept(hConn, 0, 0);
-		if(fd > 0){
+		if (fd > 0) {
 			clNamedPipeServer *conn = new clNamedPipeServer(_pipePath);
 			conn->setHandle(fd);
 			return conn;

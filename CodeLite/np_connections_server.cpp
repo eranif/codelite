@@ -215,14 +215,16 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 		memset( (void*)&fds, 0, sizeof( fds ) );
 		FD_SET( hConn, &fds );
 
-		tv.tv_sec = 0;
-		tv.tv_usec = timeout * 1000; // convert mili to micro
+		if ( timeout > 0 ) {
+			tv.tv_sec = 0;
+			tv.tv_usec = timeout * 1000; // convert mili to micro
 
-		int rc = select(hConn + 1, &fds, 0, 0, &tv);
-		if( rc == 0 || rc < 0 ) {
-			// timeout or error
-			setLastError(NP_SERVER_TIMEOUT);
-			return NULL;
+			int rc = select(hConn + 1, &fds, 0, 0, &tv);
+			if( rc == 0 || rc < 0 ) {
+				// timeout or error
+				setLastError(NP_SERVER_TIMEOUT);
+				return NULL;
+			}
 		}
 
 		PIPE_HANDLE fd = ::accept(hConn, 0, 0);

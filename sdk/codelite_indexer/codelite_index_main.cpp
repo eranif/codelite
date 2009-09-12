@@ -53,13 +53,13 @@ int main(int argc, char **argv)
 	printf("INFO: listening on %s\n", channel_name);
 
 	while (true) {
-		clNamedPipe *conn = server.waitForNewConnection(5000 /* 1 second */);
+		clNamedPipe *conn = server.waitForNewConnection(-1);
 		if (!conn) {
 #ifdef __DEBUG
 			fprintf(stderr, "INFO: Failed to receive new connection: %d\n", server.getLastError());
 #endif
 			if( check_parent && !is_process_alive( parent_pid ) ) {
-				printf("INFO: Parent process %d is not alive, going down\n", parent_pid );
+				printf("INFO: Parent process %d is not alive, going down\n", (int)parent_pid );
 				ctags_shutdown();
 				return 0;
 			}

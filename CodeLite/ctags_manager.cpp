@@ -298,7 +298,7 @@ clProcess *TagsManager::StartCtagsProcess()
 	uid << wxGetProcessId();
 
 	// concatenate the PID to identifies this channel to this instance of codelite
-	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\" ") << uid;
+	cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\" ") << uid;// << wxT(" --pid");
 	clProcess* process;
 
 	process = new clProcess(wxNewId(), cmd);

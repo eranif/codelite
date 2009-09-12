@@ -169,22 +169,7 @@ bool is_process_alive(long pid)
 		return false;
 	}
 
-	//  Set the size of the structure before using it.
-	me32.dwSize = sizeof( MODULEENTRY32 );
-
-	//  Retrieve information about the first module,
-	//  and exit if unsuccessful
-	if (!Module32First( hModuleSnap, &me32 )) {
-		CloseHandle( hModuleSnap );    // Must clean up the
-		// snapshot object!
-		return false;
-	}
-
-	//get the name of the process (it is located in the first entry)
-	CloseHandle( hModuleSnap );
-
-	std::string name(me32.szExePath);
-	return name.empty();
+	return true;
 
 #elif defined(__FreeBSD__)
 	kvm_t *            kvd;

@@ -36,15 +36,6 @@
 #include "macros.h"
 #include "workspace.h"
 
-#define ADJUST_LINE_AND_CONT(modLine, pos, findString)	\
-	{														\
-		if( !AdjustLine(modLine, pos, findString) ){		\
-			break;											\
-		} else {											\
-			continue;										\
-		}													\
-	}
-
 const wxEventType wxEVT_SEARCH_THREAD_MATCHFOUND = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHEND = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHCANCELED = wxNewEventType();
@@ -326,15 +317,24 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 			if ( data->IsMatchWholeWord() ) {
 
 				// make sure that the word before is not in the wordChars map
-				if ((pos > 0) && (m_wordCharsMap.find(modLine.GetChar(pos-1)) != m_wordCharsMap.end()) )
-					ADJUST_LINE_AND_CONT(modLine, pos, findString);
-
+				if ((pos > 0) && (m_wordCharsMap.find(modLine.GetChar(pos-1)) != m_wordCharsMap.end()) ) {
+					if( !AdjustLine(modLine, col, findString) ){
+						break;
+					} else {
+                    	continue;
+					}
+				}
 				// if we have more characters to the right, make sure that the first char does not match any
 				// in the wordCharsMap
 				if (pos + findString.Length() <= modLine.Length()) {
 					wxChar nextCh = modLine.GetChar(pos+findString.Length());
-					if (m_wordCharsMap.find(nextCh) != m_wordCharsMap.end())
-						ADJUST_LINE_AND_CONT(modLine, pos, findString);
+					if (m_wordCharsMap.find(nextCh) != m_wordCharsMap.end()){
+						if( !AdjustLine(modLine, col, findString) ){
+							break;
+						} else {
+							continue;
+						}
+					}
 				}
 			}
 

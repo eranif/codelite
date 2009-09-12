@@ -345,10 +345,10 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="Images">
     <File Name="overlaytool.cpp"/>
     <File Name="overlaytool.h"/>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

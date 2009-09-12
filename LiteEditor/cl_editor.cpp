@@ -643,7 +643,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		// fall through...
 	case '\n': {
 			// incase ENTER was hit immediatly after we inserted '{' into the code...
-			if ( s_lastCharEntered == wxT('{') ) {
+			if ( s_lastCharEntered == wxT('{') && m_autoAddMatchedBrace ) {
 				matchChar = '}';
 				InsertText(pos, matchChar);
 				BeginUndoAction();
@@ -688,7 +688,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 			m_context->OnUserTypedXChars(GetWordAtCaret());
 		}
 	}
-	
+
 	if( event.GetKey() !=  13 ) {
 		// Dont store last character if it was \r
 		s_lastCharEntered = event.GetKey();

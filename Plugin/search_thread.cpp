@@ -318,9 +318,11 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 
 				// make sure that the word before is not in the wordChars map
 				if ((pos > 0) && (m_wordCharsMap.find(modLine.GetChar(pos-1)) != m_wordCharsMap.end()) ) {
-					if( !AdjustLine(modLine, col, findString) ){
+					if( !AdjustLine(modLine, pos, findString) ){
+
 						break;
 					} else {
+						col += (int) findString.Length();
                     	continue;
 					}
 				}
@@ -329,9 +331,11 @@ void SearchThread::DoSearchLine(const wxString &line, const int lineNum, const w
 				if (pos + findString.Length() <= modLine.Length()) {
 					wxChar nextCh = modLine.GetChar(pos+findString.Length());
 					if (m_wordCharsMap.find(nextCh) != m_wordCharsMap.end()){
-						if( !AdjustLine(modLine, col, findString) ){
+						if( !AdjustLine(modLine, pos, findString) ){
+
 							break;
 						} else {
+							col += (int) findString.Length();
 							continue;
 						}
 					}

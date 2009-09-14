@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "debuggergdb.h"
+#include <wx/ffile.h>
 #include "exelocator.h"
 #include "environmentconfig.h"
 #include "dirkeeper.h"
@@ -665,19 +666,28 @@ bool DbgGdb::RemoveBreak(const wxString &fileName, long lineno)
 
 bool DbgGdb::FilterMessage(const wxString &msg)
 {
-	if (msg.Contains(wxT("Variable object not found"))) {
+	wxString tmpmsg ( msg );
+	StripString( tmpmsg );
+	tmpmsg.Trim().Trim(false);
+
+	if (tmpmsg.Contains(wxT("Variable object not found"))) {
 		return true;
 	}
 
-	if (msg.Contains(wxT("mi_cmd_var_create: unable to create variable object"))) {
+	if (tmpmsg.Contains(wxT("mi_cmd_var_create: unable to create variable object"))) {
 		return true;
 	}
 
-	if (msg.Contains(wxT("Variable object not found"))) {
+	if (tmpmsg.Contains(wxT("Variable object not found"))) {
 		return true;
 	}
 
-	if (msg.Contains(wxT("No symbol \"this\" in current context"))) {
+	if (tmpmsg.Contains(wxT("No symbol \"this\" in current context"))) {
+		return true;
+	}
+
+	if (tmpmsg.StartsWith(wxT(">"))) {
+		// shell line
 		return true;
 	}
 	return false;
@@ -728,9 +738,15 @@ void DbgGdb::Poke()
 		line = line.Trim();
 		line = line.Trim(false);
 
+		// For string manipulations without damaging the original line read
+		wxString tmpline ( line );
+		StripString( tmpline );
+		tmpline.Trim().Trim(false);
+
 		if (m_info.enableDebugLog) {
 			//Is logging enabled?
-			if (line.IsEmpty() == false) {
+
+			if (line.IsEmpty() == false && !tmpline.StartsWith(wxT(">")) ) {
 				wxString strdebug(wxT("DEBUG>>"));
 				strdebug << line;
 				m_observer->UpdateAddLine(strdebug);
@@ -745,6 +761,11 @@ void DbgGdb::Poke()
 			m_observer->UpdateAddLine(line);
 			m_observer->UpdateGotControl(DBG_EXITED_NORMALLY);
 			return;
+		}
+
+		if( tmpline.StartsWith(wxT(">")) ) {
+			// Shell line, probably user command line
+			break;
 		}
 
 		line.Replace(wxT("(gdb)"), wxEmptyString);
@@ -978,6 +999,7 @@ bool DbgGdb::GetTip(const wxString &dbgCommand, const wxString& expression, wxSt
 		//we simply replace it with the actual string
 		static wxRegEx reGdbVar(wxT("^\\$[0-9]+"));
 		reGdbVar.ReplaceFirst(&evaluated, expression);
+		evaluated.Replace(wxT("\\t"), wxT("\t"));
 		return true;
 	}
 	return false;
@@ -1219,6 +1241,30 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 		SetBusy(false);
 		return false;
 	}
+
+	// set the debugger specific startup commands
+	wxString startupInfo ( m_info.startupCommands );
+
+	// We must replace TABS with spaces or else gdb will hang...
+	startupInfo.Replace(wxT("\t"), wxT(" "));
+
+	// Write the content into a file
+	wxString codelite_gdbinit_file;
+	codelite_gdbinit_file << wxFileName::GetTempDir() << wxFileName::GetPathSeparator() << wxT("codelite_gdbinit.txt");
+
+	wxFFile file;
+	if (!file.Open(codelite_gdbinit_file, wxT("w+b"))) {
+		m_observer->UpdateAddLine(wxString::Format(wxT("Failed to generate gdbinit file at %s"), codelite_gdbinit_file.c_str()));
+
+	} else {
+		m_observer->UpdateAddLine(wxString::Format(wxT("Using gdbinit file: %s"), codelite_gdbinit_file.c_str()));
+		file.Write(startupInfo);
+		file.Close();
+
+		dbgExeName << wxT(" --command=\"") << codelite_gdbinit_file << wxT("\"");
+
+	}
+
 	return true;
 }
 
@@ -1230,6 +1276,7 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wx
 	m_canUse = true;
 	m_timer->Start(10);
 	wxWakeUpIdle();
+
 	//place breakpoint at first line
 #ifdef __WXMSW__
 	ExecuteCmd(wxT("set  new-console on"));
@@ -1254,12 +1301,6 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wx
 	ExecuteCmd(wxT("set height 0"));
 	ExecuteCmd(wxT("set print elements 0")); // Allow large strings
 	ExecuteCmd(wxT("set print pretty on"));  // pretty printing
-
-	// set the debugger specific startup commands
-	wxArrayString debuggerStartupCommand = wxStringTokenize(m_info.startupCommands, wxT("\n"), wxTOKEN_STRTOK);
-	for (size_t i=0; i<debuggerStartupCommand.GetCount(); i++) {
-		ExecuteCmd(debuggerStartupCommand.Item(i));
-	}
 
 	// set the project startup commands
 	for (size_t i=0; i<cmds.GetCount(); i++) {

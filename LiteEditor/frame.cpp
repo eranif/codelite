@@ -880,6 +880,7 @@ void Frame::CreateToolbars24()
 	tb->AddSeparator();
 	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"), wxXmlResource::Get()->LoadBitmap(wxT("highlight24")), wxT("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
+	tb->AddSeparator();
 
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb->Realize();
@@ -994,7 +995,7 @@ void Frame::CreateToolbars16()
 	tb->AddSeparator();
 	tb->AddTool(XRCID("highlight_word"), wxT("Highlight Word"), wxXmlResource::Get()->LoadBitmap(wxT("highlight16")), wxT("Highlight Word"), wxITEM_CHECK);
 	tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
-
+	tb->AddSeparator();
 
 	if (PluginManager::Get()->AllowToolbar()) {
 		tb->Realize();

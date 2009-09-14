@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Debuggers>
   <ArchiveObject Name="DebuggerCommands">
-    <long Value="3" Name="size"/>
+    <long Value="4" Name="size"/>
     <SerializedObject Name="DebuggerCmd0">
-      <wxString Value="vector" Name="m_name"/>
-      <wxString Value="$(Variable).size()" Name="m_command"/>
-      <bool Value="0" Name="m_isSubMenu"/>
+      <wxString Value="string" Name="m_name"/>
+      <wxString Value="$(Variable).c_str()" Name="m_command"/>
+      <wxString Value="print" Name="m_dbgCommand"/>
     </SerializedObject>
     <SerializedObject Name="DebuggerCmd1">
       <wxString Value="wxString" Name="m_name"/>
       <wxString Value="$(Variable).ToAscii().m_str" Name="m_command"/>
-      <bool Value="0" Name="m_isSubMenu"/>
+      <wxString Value="print" Name="m_dbgCommand"/>
     </SerializedObject>
     <SerializedObject Name="DebuggerCmd2">
-      <wxString Value="string" Name="m_name"/>
-      <wxString Value="$(Variable).c_str()" Name="m_command"/>
-      <bool Value="0" Name="m_isSubMenu"/>
+      <wxString Value="vector" Name="m_name"/>
+      <wxString Value="$(Variable)" Name="m_command"/>
+      <wxString Value="pvector" Name="m_dbgCommand"/>
+    </SerializedObject>
+	<SerializedObject Name="DebuggerCmd3">
+      <wxString Value="QString" Name="m_name"/>
+      <wxString Value="$(Variable)" Name="m_command"/>
+      <wxString Value="printqstring" Name="m_dbgCommand"/>
     </SerializedObject>
   </ArchiveObject>
   <ArchiveObject Name="DebuggersData">
@@ -26,5 +31,90 @@
     <bool Value="0" Name="enablePendingBreakpoints"/>
     <bool Value="0" Name="breakAtWinMain"/>
     <bool Value="0" Name="resolveThis"/>
+    <CData Name="startup_commands">
+      <![CDATA[define printqstring
+    printf "(QString)0x%x (length=%i): \"",&$arg0,$arg0.d->size
+    set $i=0
+    while $i < $arg0.d->size
+        set $c=$arg0.d->data[$i++]
+        if $c < 32 || $c > 127
+                printf "\\u0x%04x", $c
+        else
+                printf "%c", (char)$c
+        end
+    end
+    printf "\"\n"
+end
+
+define pvector
+	if $argc == 0
+		help pvector
+	else
+		set $size = $arg0._M_impl._M_finish - $arg0._M_impl._M_start
+		set $capacity = $arg0._M_impl._M_end_of_storage - $arg0._M_impl._M_start
+		set $size_max = $size - 1
+	end
+	if $argc == 1
+		set $i = 0
+		while $i < $size
+			printf "elem[%u]: ", $i
+			p *($arg0._M_impl._M_start + $i)
+			set $i++
+		end
+	end
+	if $argc == 2
+		set $idx = $arg1
+		if $idx < 0 || $idx > $size_max
+			printf "idx1, idx2 are not in acceptable range: [0..%u].\n", $size_max
+		else
+			printf "elem[%u]: ", $idx
+			p *($arg0._M_impl._M_start + $idx)
+		end
+	end
+	if $argc == 3
+	  set $start_idx = $arg1
+	  set $stop_idx = $arg2
+	  if $start_idx > $stop_idx
+	    set $tmp_idx = $start_idx
+	    set $start_idx = $stop_idx
+	    set $stop_idx = $tmp_idx
+	  end
+	  if $start_idx < 0 || $stop_idx < 0 || $start_idx > $size_max || $stop_idx > $size_max
+	    printf "idx1, idx2 are not in acceptable range: [0..%u].\n", $size_max
+	  else
+	    set $i = $start_idx
+		while $i <= $stop_idx
+			printf "elem[%u]: ", $i
+			p *($arg0._M_impl._M_start + $i)
+			set $i++
+		end
+	  end
+	end
+	if $argc > 0
+		printf "Vector size = %u\n", $size
+		printf "Vector capacity = %u\n", $capacity
+		printf "Element "
+		whatis $arg0._M_impl._M_start
+	end
+end
+
+document pvector
+	Prints std::vector<T> information.
+	Syntax: pvector <vector> <idx1> <idx2>
+	Note: idx, idx1 and idx2 must be in acceptable range [0..<vector>.size()-1].
+	Examples:
+	pvector v - Prints vector content, size, capacity and T typedef
+	pvector v 0 - Prints element[idx] from vector
+	pvector v 1 2 - Prints elements in range [idx1..idx2] from vector
+end
+set print object on
+set print static-members on
+set print vtbl on
+set print demangle on
+set demangle-style gnu-v3
+set print sevenbit-strings off
+]]>
+    </CData>
+
   </ArchiveObject>
 </Debuggers>

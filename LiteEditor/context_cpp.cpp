@@ -1353,6 +1353,7 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		// evaluated string
 		wxString type;
 		wxString command(word);
+		wxString dbg_command(wxT("print"));
 
 		if (dbgr->ResolveType(word, type)) {
 
@@ -1360,7 +1361,7 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 			// const string &, so in order to get the actual type
 			// we construct a valid expression by appending a valid identifier followed by a semi colon.
 			wxString expression;
-			//	wxLogMessage(word + wxT(" resolved into: ") + type);
+			//wxLogMessage(word + wxT(" resolved into: ") + type);
 
 			expression << wxT("/^");
 			expression << type;
@@ -1376,20 +1377,23 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 						// prepare the string to be evaluated
 						command = cmd.GetCommand();
 						command.Replace(wxT("$(Variable)"), word);
+
+						dbg_command = cmd.GetDbgCommand();
 						break;
 					}
 				}
 			}
 		} else {
-			//	wxLogMessage(wxT("ResolveType failed for ") + word);
+			//wxLogMessage(wxT("ResolveType failed for ") + word);
 		}
 
 		wxString output;
 		Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetDebugger  (dbgr   );
+		Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetDbgCommand(dbg_command);
 		Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetExpression(command);
 
 		// Display tooltip if needed only
-		if (dbgr->GetDebuggerInformation().showTooltips && command.IsEmpty() == false && dbgr->GetTip(command, output)) {
+		if (dbgr->GetDebuggerInformation().showTooltips && command.IsEmpty() == false && dbgr->GetTip(dbg_command, command, output)) {
 			// cancel any old calltip and display the new one
 			ctrl.DoCancelCalltip();
 

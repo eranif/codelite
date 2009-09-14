@@ -239,6 +239,6 @@
     <File Name="np_connections_server.cpp"/>
     <File Name="../sdk/codelite_indexer/network/cl_indexer_macros.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

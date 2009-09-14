@@ -12,6 +12,7 @@ static void sDefineMarker(wxScintilla *s, int marker, int markerType, wxColor fo
 DebuggerAsciiViewer::DebuggerAsciiViewer( wxWindow* parent )
 		: DebuggerAsciiViewerBase( parent )
 		, m_debugger(NULL)
+		, m_dbgCommand(wxT("print"))
 {
 	wxFont font(8, wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 
@@ -87,7 +88,7 @@ void DebuggerAsciiViewer::DoUpdateView()
 	if ( expression.IsEmpty() ) {
 		evaluated = wxT("");
 	} else {
-		m_debugger->GetTip(m_textCtrlExpression->GetValue(), evaluated );
+		m_debugger->GetTip(m_dbgCommand, m_textCtrlExpression->GetValue(), evaluated );
 	}
 
 	evaluated.Replace(wxT("\r\n"), wxT("\n"));
@@ -104,4 +105,9 @@ void DebuggerAsciiViewer::DoUpdateView()
 void DebuggerAsciiViewer::UpdateView()
 {
 	DoUpdateView();
+}
+
+void DebuggerAsciiViewer::SetDbgCommand(const wxString& dbgCmd)
+{
+	m_dbgCommand = dbgCmd;
 }

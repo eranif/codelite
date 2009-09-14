@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "archive.h"
+#include "archive.h"
 #include <wx/colour.h>
 #include <wx/xml/xml.h>
 #include "serialized_object.h"
@@ -31,8 +31,8 @@
 
 namespace
 {
-	const wxChar breakpointName[] = wxT("Breakpoint");
-	const wxChar breakpointArrayName[] = wxT("BreakpointArray");
+const wxChar breakpointName[] = wxT("Breakpoint");
+const wxChar breakpointArrayName[] = wxT("BreakpointArray");
 }
 
 //helper functions
@@ -60,6 +60,28 @@ static void SetNodeContent(wxXmlNode *node, const wxString &text)
 {
 	wxXmlNode *n = node->GetChildren();
 	wxXmlNode *contentNode = NULL;
+	while (n) {
+		if (n->GetType() == wxXML_TEXT_NODE || n->GetType() == wxXML_CDATA_SECTION_NODE) {
+			contentNode = n;
+			break;
+		}
+		n = n->GetNext();
+	}
+
+	if (contentNode) {
+		// remove old node
+		node->RemoveChild(contentNode);
+		delete contentNode;
+	}
+
+	contentNode = new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, text);
+	node->AddChild( contentNode );
+}
+
+static void SetCDATANodeContent(wxXmlNode* node, const wxString& text)
+{
+	wxXmlNode *n = node->GetChildren();
+	wxXmlNode *contentNode = NULL;
     while (n)
     {
 		if (n->GetType() == wxXML_TEXT_NODE || n->GetType() == wxXML_CDATA_SECTION_NODE){
@@ -75,7 +97,7 @@ static void SetNodeContent(wxXmlNode *node, const wxString &text)
 		delete contentNode;
 	}
 
-	contentNode = new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, text);
+	contentNode = new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, text);
 	node->AddChild( contentNode );
 }
 
@@ -172,8 +194,7 @@ bool Archive::Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr)
 	node->AddProperty(wxT("Name"), name);
 
 	//add an entry for each wxString in the array
-	for(size_t i=0; i<_vTabInfoArr.size(); i++)
-	{
+	for (size_t i=0; i<_vTabInfoArr.size(); i++) {
 		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TabInfo"));
 		Archive arch;
 		arch.SetXmlNode(child);
@@ -412,6 +433,35 @@ bool Archive::Write(const wxString &name, const wxString &str)
 	node->AddProperty(wxT("Value"), str);
 	node->AddProperty(wxT("Name"), name);
 	return true;
+}
+
+bool Archive::WriteCData(const wxString &name, const wxString &str)
+{
+	if (!m_root) {
+		return false;
+	}
+
+	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CData"));
+	m_root->AddChild(node);
+
+	SetCDATANodeContent(node, str);
+	node->AddProperty(wxT("Name"), name);
+	return true;
+}
+
+bool Archive::ReadCData(const wxString &name, wxString &value)
+{
+	if (!m_root) {
+		return false;
+	}
+
+	wxXmlNode *node = FindNodeByName(m_root, wxT("CData"), name);
+	if (node) {
+		// get the content node
+		value = node->GetNodeContent();
+		return true;
+	}
+	return false;
 }
 
 bool Archive::Read(const wxString &name, wxString &value)

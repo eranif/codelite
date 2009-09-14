@@ -89,7 +89,7 @@ public:
 	bool Write(const wxString &name, const wxColour &colour);
 	bool Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
 	bool Write(const wxString &name, const std::map<wxString, wxString> &strinMap);
-
+	bool WriteCData(const wxString &name, const wxString &value);
 
 	//--------------------
 	// Read API
@@ -108,6 +108,7 @@ public:
 	bool Read(const wxString &name, wxColour &colour);
 	bool Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
 	bool Read(const wxString &name, std::map<wxString, wxString> &strinMap);
+	bool ReadCData(const wxString &name, wxString &value);
 
 private:
 	bool WriteSimple(long value, const wxString &typeName, const wxString &name);

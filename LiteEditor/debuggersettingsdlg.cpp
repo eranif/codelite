@@ -48,6 +48,12 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
 		m_checkUseRelativePaths->SetValue(info.useRelativeFilePaths);
 		m_catchThrow->SetValue(info.catchThrow);
 		m_showTooltips->SetValue(info.showTooltips);
+		m_textCtrlStartupCommands->SetValue( info.startupCommands );
+
+//		if ( commands.IsEmpty() ) {
+//			if( info.name == wxT("GNU gdb debugger") ) {
+//			}
+//		}
 #ifdef __WXMSW__
 		m_checkBoxDebugAssert->SetValue(info.debugAsserts);
 #endif
@@ -114,8 +120,8 @@ void DebuggerSettingsDlg::Initialize()
 	}
 
 	m_listCtrl1->InsertColumn(0, wxT("Type"));
-	m_listCtrl1->InsertColumn(1, wxT("Command"));
-	m_listCtrl1->InsertColumn(2, wxT("Sub Menu?"));
+	m_listCtrl1->InsertColumn(1, wxT("Expression"));
+	m_listCtrl1->InsertColumn(2, wxT("Debugger Command"));
 
 	//add items from the saved items
 	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &m_data);
@@ -124,16 +130,11 @@ void DebuggerSettingsDlg::Initialize()
 	std::vector<DebuggerCmdData> cmds = m_data.GetCmds();
 	for (size_t i=0; i<cmds.size(); i++) {
 		DebuggerCmdData cmd = cmds.at(i);
-		wxString subMenu(wxT("No"));
-
-		if (cmd.GetIsSubMenu()) {
-			subMenu = wxT("Yes");
-		}
 
 		long item = AppendListCtrlRow(m_listCtrl1);
 		SetColumnText(m_listCtrl1, item, 0, cmd.GetName());
 		SetColumnText(m_listCtrl1, item, 1, cmd.GetCommand());
-		SetColumnText(m_listCtrl1, item, 2, subMenu);
+		SetColumnText(m_listCtrl1, item, 2, cmd.GetDbgCommand());
 	}
 	m_listCtrl1->SetColumnWidth(0, 100);
 	m_listCtrl1->SetColumnWidth(1, 200);
@@ -162,6 +163,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 		info.useRelativeFilePaths     = page->m_checkUseRelativePaths->IsChecked();
 		info.catchThrow               = page->m_catchThrow->IsChecked();
 		info.showTooltips             = page->m_showTooltips->IsChecked();
+		info.startupCommands          = page->m_textCtrlStartupCommands->GetValue();
 #ifdef __WXMSW__
 		info.debugAsserts             = page->m_checkBoxDebugAssert->IsChecked();
 #endif
@@ -173,14 +175,9 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 	std::vector<DebuggerCmdData> cmdArr;
 	for(int i=0; i<count; i++){
 		DebuggerCmdData cmd;
-		cmd.SetName( GetColumnText(m_listCtrl1, i, 0) );
-		cmd.SetCommand( GetColumnText(m_listCtrl1, i, 1) );
-
-		cmd.SetIsSubMenu( false );
-		if(GetColumnText(m_listCtrl1, i, 2) == wxT("Yes")){
-			cmd.SetIsSubMenu( true );
-		}
-
+		cmd.SetName      ( GetColumnText(m_listCtrl1, i, 0) );
+		cmd.SetCommand   ( GetColumnText(m_listCtrl1, i, 1) );
+		cmd.SetDbgCommand( GetColumnText(m_listCtrl1, i, 2) );
 		cmdArr.push_back(cmd);
 	}
 	m_data.SetCmds(cmdArr);
@@ -202,15 +199,9 @@ void DebuggerSettingsDlg::OnNewShortcut(wxCommandEvent &e)
 	DbgCommandDlg *dlg = new DbgCommandDlg(this);
 	if (dlg->ShowModal() == wxID_OK) {
 		//add new command to the table
-		wxString name = dlg->GetName();
-		wxString cmd  = dlg->GetCommand();
-		wxString subMenu;
-		if (dlg->IsSubMenu()) {
-			subMenu = wxT("Yes");
-		} else {
-			subMenu = wxT("No");
-		}
-
+		wxString name       = dlg->GetName();
+		wxString expression = dlg->GetExpression();
+		wxString dbgCmd     = dlg->GetDbgCommand();
 		long item;
 		wxListItem info;
 
@@ -220,8 +211,7 @@ void DebuggerSettingsDlg::OnNewShortcut(wxCommandEvent &e)
 			wxString existingName = GetColumnText(m_listCtrl1, i, 0);
 			if(name == existingName){
 				dlg->Destroy();
-				wxString msg;
-				wxMessageBox(_("Debugger shortcut with the same name already exist"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
+				wxMessageBox(_("Debugger type with the same name already exist"), wxT("CodeLite"), wxOK | wxICON_INFORMATION);
 				return;
 			}
 		}
@@ -230,13 +220,13 @@ void DebuggerSettingsDlg::OnNewShortcut(wxCommandEvent &e)
 		info.SetColumn(0);
 		item = m_listCtrl1->InsertItem(info);
 
-		SetColumnText(m_listCtrl1, item, 0, name);
-		SetColumnText(m_listCtrl1, item, 1, cmd);
-		SetColumnText(m_listCtrl1, item, 2, subMenu);
+		SetColumnText(m_listCtrl1, item, 0, name       );
+		SetColumnText(m_listCtrl1, item, 1, expression );
+		SetColumnText(m_listCtrl1, item, 2, dbgCmd);
 
 		m_listCtrl1->SetColumnWidth(0, 100);
-		m_listCtrl1->SetColumnWidth(1, 400);
-		m_listCtrl1->SetColumnWidth(2, 100);
+		m_listCtrl1->SetColumnWidth(1, 200);
+		m_listCtrl1->SetColumnWidth(1, 200);
 	}
 	dlg->Destroy();
 }
@@ -279,33 +269,21 @@ void DebuggerSettingsDlg::DoEditItem()
 	}
 
 	//popup edit dialog
-	DbgCommandDlg *dlg = new DbgCommandDlg(this);
-	wxString name = GetColumnText(m_listCtrl1, m_selectedItem, 0);
-	wxString cmd  = GetColumnText(m_listCtrl1, m_selectedItem, 1);
-	wxString sm   = GetColumnText(m_listCtrl1, m_selectedItem, 2);
+	DbgCommandDlg dlg(this);
 
-	bool subMenu(false);
-	if (sm == wxT("Yes")) {
-		subMenu = true;
+	wxString name  = GetColumnText(m_listCtrl1, m_selectedItem, 0);
+	wxString expr  = GetColumnText(m_listCtrl1, m_selectedItem, 1);
+	wxString dbgCmd= GetColumnText(m_listCtrl1, m_selectedItem, 2);
+
+	dlg.SetName(name);
+	dlg.SetExpression(expr);
+	dlg.SetDbgCommand(dbgCmd);
+
+	if (dlg.ShowModal() == wxID_OK) {
+		SetColumnText(m_listCtrl1, m_selectedItem, 0, dlg.GetName());
+		SetColumnText(m_listCtrl1, m_selectedItem, 1, dlg.GetExpression());
+		SetColumnText(m_listCtrl1, m_selectedItem, 2, dlg.GetDbgCommand());
 	}
-
-	dlg->SetName(name);
-	dlg->SetCommand(cmd);
-	dlg->SetAsSubMenu(subMenu);
-
-	if (dlg->ShowModal() == wxID_OK) {
-		//update the item
-		sm = wxT("No");
-		if (dlg->IsSubMenu()) {
-			sm = wxT("Yes");
-		}
-
-		SetColumnText(m_listCtrl1, m_selectedItem, 0, dlg->GetName());
-		SetColumnText(m_listCtrl1, m_selectedItem, 1, dlg->GetCommand());
-		SetColumnText(m_listCtrl1, m_selectedItem, 2, sm);
-	}
-
-	dlg->Destroy();
 }
 
 void DebuggerSettingsDlg::DoDeleteItem()

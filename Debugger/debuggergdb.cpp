@@ -968,10 +968,10 @@ void DbgGdb::OnProcessEndEx(wxProcessEvent &e)
 	m_env->UnApplyEnv();
 }
 
-bool DbgGdb::GetTip(const wxString& expression, wxString& evaluated)
+bool DbgGdb::GetTip(const wxString &dbgCommand, const wxString& expression, wxString& evaluated)
 {
 	wxString cmd;
-	cmd << wxT("print ") << expression;
+	cmd << dbgCommand << wxT(" ") << expression;
 	if (ExecSyncCmd(cmd, evaluated)) {
 		evaluated = evaluated.Trim().Trim(false);
 		//gdb displays the variable name as $<NUMBER>,
@@ -991,7 +991,7 @@ bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
 	if (ExecSyncCmd(cmd, output)) {
 		// delete the temporary variable object
 		cmd.clear();
-		//	wxLogMessage(wxT("ResolveType: gdb returned '") + output + wxT("'"));
+		//wxLogMessage(wxT("ResolveType: gdb returned '") + output + wxT("'"));
 
 		// parse the output
 		// ^done,name="var2",numchild="1",value="{...}",type="orxAABOX"
@@ -1255,6 +1255,13 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wx
 	ExecuteCmd(wxT("set print elements 0")); // Allow large strings
 	ExecuteCmd(wxT("set print pretty on"));  // pretty printing
 
+	// set the debugger specific startup commands
+	wxArrayString debuggerStartupCommand = wxStringTokenize(m_info.startupCommands, wxT("\n"), wxTOKEN_STRTOK);
+	for (size_t i=0; i<debuggerStartupCommand.GetCount(); i++) {
+		ExecuteCmd(debuggerStartupCommand.Item(i));
+	}
+
+	// set the project startup commands
 	for (size_t i=0; i<cmds.GetCount(); i++) {
 		ExecuteCmd(cmds.Item(i));
 	}

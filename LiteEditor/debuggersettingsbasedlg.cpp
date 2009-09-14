@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -196,6 +196,16 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	sbSizer2->Add( gSizer2, 1, wxEXPAND, 5 );
 	
 	bSizer7->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
+	
+	wxStaticBoxSizer* m_staticStartupCommands;
+	m_staticStartupCommands = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Startup commands:") ), wxVERTICAL );
+	
+	m_textCtrlStartupCommands = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_textCtrlStartupCommands->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
+	m_staticStartupCommands->Add( m_textCtrlStartupCommands, 1, wxALL|wxEXPAND, 5 );
+	
+	bSizer7->Add( m_staticStartupCommands, 1, wxEXPAND|wxALL, 5 );
 	
 	this->SetSizer( bSizer7 );
 	this->Layout();

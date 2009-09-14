@@ -256,6 +256,8 @@ public:
 	bool      catchThrow;
 	bool      showTooltips;
 	bool      debugAsserts;
+	wxString  startupCommands;
+
 public:
 	DebuggerInformation()
 			: name(wxEmptyString)
@@ -269,7 +271,8 @@ public:
 			, useRelativeFilePaths(false)
 			, catchThrow(false)
 			, showTooltips(false)
-			 ,debugAsserts(false){}
+			, debugAsserts(false)
+			, startupCommands(wxEmptyString) {}
 	~DebuggerInformation() {}
 };
 
@@ -497,13 +500,15 @@ public:
 	 * \brief the Poke() method is called at Idle() time by the application so the debugger can read the actual debugger process output and process it
 	 */
 	virtual void Poke() = 0;
+
 	/**
-	 * \brief return tip for a give expression
-	 * \param expression expression to evaluate
-	 * \param evaluated evaluated value from the debugger
-	 * \return
+	 * @brief return string to show the user as tip for expression
+	 * @param dbgCommand debugger command to evaluate the tip (e.g. "print")
+	 * @param expression expression to evaluate
+	 * @param evaluated [output]
+	 * @return true if evaluation succeeded, false otherwise
 	 */
-	virtual bool GetTip(const wxString &expression, wxString &evaluated) = 0;
+	virtual bool GetTip(const wxString &dbgCommand, const wxString &expression, wxString &evaluated) = 0;
 
 	/**
 	 * \brief resolve expression and return its actual type

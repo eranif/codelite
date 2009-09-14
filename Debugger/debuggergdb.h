@@ -102,7 +102,7 @@ public:
 	virtual bool SelectThread(long threadId);
 	virtual bool SetFrame(int frame);
 	virtual void Poke();
-	virtual bool GetTip(const wxString &expression, wxString &evaluated);
+	virtual bool GetTip(const wxString &dbgCommand, const wxString &expression, wxString &evaluated);
 	virtual bool ResolveType(const wxString &expression, wxString &type);
 	virtual bool WatchMemory(const wxString &address, size_t count, wxString &output);
 	virtual bool SetMemory(const wxString &address, size_t count, const wxString &hex_value);

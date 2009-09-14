@@ -1250,8 +1250,20 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 
 	// Write the content into a file
 	wxString codelite_gdbinit_file;
+#ifdef __WXMSW__	
 	codelite_gdbinit_file << wxFileName::GetTempDir() << wxFileName::GetPathSeparator() << wxT("codelite_gdbinit.txt");
-
+#else
+	wxString home_env;
+	if( !wxGetEnv(wxT("HOME"), &home_env) ) {
+		m_observer->UpdateAddLine(wxString::Format(wxT("Failed to read HOME environment variable")));
+	} else {
+		codelite_gdbinit_file  << home_env << wxT("/") << wxT(".gdbinit");
+		if( wxFileName::FileExists(codelite_gdbinit_file) && !wxFileName::FileExists(codelite_gdbinit_file + wxT(".backup"))) {
+			wxCopyFile(codelite_gdbinit_file, codelite_gdbinit_file + wxT(".backup") );
+			m_observer->UpdateAddLine(wxString::Format(wxT(".gdbinit file was backup to %s"), wxString(codelite_gdbinit_file + wxT(".backup")).c_str()));
+		}
+	}
+#endif
 	wxFFile file;
 	if (!file.Open(codelite_gdbinit_file, wxT("w+b"))) {
 		m_observer->UpdateAddLine(wxString::Format(wxT("Failed to generate gdbinit file at %s"), codelite_gdbinit_file.c_str()));

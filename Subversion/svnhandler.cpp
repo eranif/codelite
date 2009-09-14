@@ -77,6 +77,13 @@ void SvnDefaultCmdHandler::ProcessEvent(wxCommandEvent &event)
 			m_svnDriver->Svn()->GetProcess()->Write(answer + wxT("\n"));
 		}
 	}
+
+	if ( IsConflictWasFound(text) ) {
+		// Conflict was detected during update, postpone it
+		m_svnDriver->Svn()->GetProcess()->Write(wxT("p\n"));
+		m_svnDriver->SetConflictFound(true);
+	}
+
 #ifdef __WXMSW__
 	if (IsAuthFailed(text)) {
 		m_svnDriver->PrintMessage(wxT("Authentication requires\nplease wait for the login dialog ...\n"));
@@ -210,5 +217,14 @@ void SvnChangeLogCmdHandler::ProcessEvent(wxCommandEvent &event)
 			m_svnDriver->DisplayLog(m_outputFile, m_content);
 		}
 
+	}
+}
+
+bool SvnDefaultCmdHandler::IsConflictWasFound(wxString text)
+{
+	if( text.MakeLower().Contains(wxT("conflict discovered in ")) ) {
+		return true;
+	} else {
+		return false;
 	}
 }

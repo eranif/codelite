@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "globals.h"
+#include "svncopydlg.h"
 #include "revertpostcmdaction.h"
 #include "svndriver.h"
 #include <wx/filedlg.h>
@@ -69,6 +70,7 @@ SvnDriver::SvnDriver(SubversionPlugin *plugin, IManager *mgr)
 		, m_curHandler(NULL)
 		, m_plugin(plugin)
 		, m_commitWithPass(false)
+		, m_conflictDetected(false)
 {
 }
 
@@ -155,6 +157,14 @@ void SvnDriver::OnSvnProcessTerminated(wxProcessEvent &event)
 		ProcUtils::ExecuteCommand(command, output);
 		PrintMessage(_("Done\n"));
 		CommitWithAuth(cmd, item);
+
+	} else if ( m_conflictDetected ) {
+		// Operation completed, but a conflict was found, notify the user
+		if (postCmd) {
+			postCmd->DoCommand();
+			delete postCmd;
+		}
+		wxMessageBox(wxT("Some files are in conflict state"), wxT("Subversion"), wxOK|wxCENTRE|wxICON_WARNING);
 
 	} else {
 		//operation completed successfully
@@ -879,4 +889,63 @@ void SvnDriver::DoDiff(const wxFileName& fileName, bool promptForRevision)
 
 	m_curHandler = new SvnDiffCmdHandler(this, command, fileName.GetFullPath());
 	ExecCommand(command, !hasExternalDiffCmd);
+}
+
+void SvnDriver::SetConflictFound(bool b)
+{
+	m_conflictDetected = b;
+}
+
+void SvnDriver::Copy()
+{
+	// pass the SVN guard
+	ENTER_SVN_AND_SELECT()
+
+	wxString command;
+	TreeItemInfo item = m_manager->GetSelectedTreeItemInfo(TreeFileExplorer);
+	if (item.m_fileName.IsDir()) {
+
+		DirSaver ds;
+		wxSetWorkingDirectory(item.m_fileName.GetPath());
+
+		wxString url = GetSvnURLFromCurrentDir();
+		if( url.IsEmpty() ) {
+			wxMessageBox( wxT("Failed to locate repository URL"), wxT("Subversion") );
+			return;
+		}
+
+		SvnCopyDlg dlg(m_manager->GetTheApp()->GetTopWindow(), m_manager->GetConfigTool());
+		dlg.SetSourceURL( url );
+		dlg.SetTargetURL( wxT("") );
+
+		if( dlg.ShowModal() == wxID_OK ) {
+			// prepare the command
+			wxString command;
+			command << wxT("\"") << m_plugin->GetOptions().GetExePath() << wxT("\" ");
+			command << wxT("copy \"")
+					<< dlg.GetSourceURL() << wxT("\" ")
+					<< wxT(" \"") << dlg.GetTargetURL() << wxT("\" ")
+					<< wxT(" -m \"") << dlg.GetComment() << wxT("\" ");
+
+			m_curHandler = new SvnDefaultCmdHandler(this, command);
+			ExecCommand(command);
+		}
+	}
+}
+
+
+wxString SvnDriver::GetSvnURLFromCurrentDir()
+{
+	wxArrayString reply;
+	ProcUtils::SafeExecuteCommand(wxT("svn info"), reply);
+	for(size_t i=0; i<reply.GetCount(); i++) {
+		if( reply.Item(i).StartsWith(wxT("URL:")) ) {
+			wxString url = reply.Item(i).AfterFirst(wxT(':'));
+			url.Trim().Trim(false);
+
+			return url;
+		}
+	}
+
+	return wxEmptyString;
 }

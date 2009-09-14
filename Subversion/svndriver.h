@@ -40,23 +40,24 @@ class SvnPostCmdAction;
 
 class SvnDriver : public wxEvtHandler
 {
-	AsyncExeCmd *m_cmd;
-	IManager *m_manager;
-	SvnCmdHandler *m_curHandler;
+	AsyncExeCmd *               m_cmd;
+	IManager *                  m_manager;
+	SvnCmdHandler *             m_curHandler;
 	std::vector<SvnCmdHandler*> m_statusCmdQueue;
-	SubversionPlugin *m_plugin;
-	bool m_commitWithPass;
-	wxArrayString m_modifiedFiles;
+	SubversionPlugin *          m_plugin;
+	bool                        m_commitWithPass;
+	wxArrayString               m_modifiedFiles;
+	bool                        m_conflictDetected;
 
 protected:
-	void OnSvnProcessTerminated(wxProcessEvent &event);
-	void OnSvnProcess(wxCommandEvent &event);
-	void ExecCommand(const wxString &cmd, bool hide = true);
-	bool GetFilesList(const wxArrayString& output, wxArrayString &files);
-	void SelectSvnTab();
-	void CommitWithAuth(const wxString &cmd, const TreeItemInfo &item);
-	void DoDiff(const wxFileName &fileName, bool promptForRevision);
-
+	void     OnSvnProcessTerminated(wxProcessEvent &event);
+	void     OnSvnProcess(wxCommandEvent &event);
+	void     ExecCommand(const wxString &cmd, bool hide = true);
+	bool     GetFilesList(const wxArrayString& output, wxArrayString &files);
+	void     SelectSvnTab();
+	void     CommitWithAuth(const wxString &cmd, const TreeItemInfo &item);
+	void     DoDiff(const wxFileName &fileName, bool promptForRevision);
+	wxString GetSvnURLFromCurrentDir();
 public:
 	SvnDriver(SubversionPlugin *plugin, IManager *mgr);
 	virtual ~SvnDriver();
@@ -68,6 +69,7 @@ public:
 	void ExecStatusCommand(const wxString &path, wxString &output);
 	void ExecInfoCommand(const wxFileName &filename, wxString &output);
 	void SetCommitWithPassword(bool need);
+	void SetConflictFound(bool b);
 	bool IsRunning() {return m_cmd != NULL;}
 	AsyncExeCmd *Svn() {return m_cmd;}
 
@@ -94,6 +96,7 @@ public:
 	void Revert();
 	void ApplyPatch(SvnPostCmdAction *handler = NULL);
 	void ResolveConflictedFile(const wxFileName &filename, SvnPostCmdAction *handler = NULL);
+	void Copy();
 	DECLARE_EVENT_TABLE()
 };
 

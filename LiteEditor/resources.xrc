@@ -85,7 +85,7 @@
 	<object class="wxBitmap" name="outline24">res/24/text_tree.png</object>
 	<object class="wxBitmap" name="configure_ext_tools24">res/24/external_tools24.png</object>
 	<object class="wxBitmap" name="ext_tool_default24">res/24/gear24.png</object>
-	<object class="wxBitmap" name="stop_external_tool24">res/24/stop_external_tool.png</object>
+	<object class="wxBitmap" name="stop_external_tool24">res/24/process_stop.png</object>
 	<object class="wxBitmap" name="folder24">res/24/folder24.png</object>
 	<object class="wxBitmap" name="refresh24">res/24/refresh.png</object>
 	<object class="wxBitmap" name="reload24">res/24/revert.png</object>
@@ -103,13 +103,13 @@
 	<object class="wxBitmap" name="page_save24">res/24/page_save.png</object>
 	<object class="wxBitmap" name="new_wx_project24">res/24/wx24.png</object>
 	<object class="wxBitmap" name="plugin24">res/24/plugin24.png</object>
-	<object class="wxBitmap" name="code_format_options24">res/24/signature.png</object>
-	<object class="wxBitmap" name="code_format24">res/24/magic-wand2.png</object>
-	<object class="wxBitmap" name="build_active_project24">res/24/hammer.png</object>
-	<object class="wxBitmap" name="stop_build24">res/24/stop.png</object>
+	<object class="wxBitmap" name="code_format_options24">res/24/formatter_settings.png</object>
+	<object class="wxBitmap" name="code_format24">res/24/formatter.png</object>
+	<object class="wxBitmap" name="build_active_project24">res/24/compfile.png</object>
+	<object class="wxBitmap" name="stop_build24">res/24/process_stop.png</object>
 	<object class="wxBitmap" name="execute24">res/24/gear_run.png</object>
 	<object class="wxBitmap" name="stop_executed_program24">res/24/gear_stop.png</object>
-	<object class="wxBitmap" name="clean24">res/24/garbage.png</object>
+	<object class="wxBitmap" name="clean24">res/24/emptytrash.png</object>
 	<object class="wxBitmap" name="find_in_files24">res/24/find.png</object>
 	<object class="wxBitmap" name="find_and_replace24">res/24/search.png</object>
 	<object class="wxBitmap" name="open_resource24">res/24/open_resource.png</object>
@@ -138,7 +138,7 @@
 	<object class="wxBitmap" name="outline16">res/16/text_tree.png</object>
 	<object class="wxBitmap" name="configure_ext_tools16">res/16/external_tools16.png</object>
 	<object class="wxBitmap" name="ext_tool_default16">res/16/gear16.png</object>
-	<object class="wxBitmap" name="stop_external_tool16">res/16/stop_external_tool.png</object>
+	<object class="wxBitmap" name="stop_external_tool16">res/16/process_stop.png</object>
 	<object class="wxBitmap" name="folder16">res/16/folder24.png</object>
 	<object class="wxBitmap" name="refresh16">res/16/refresh.png</object>
 	<object class="wxBitmap" name="reload16">res/16/revert.png</object>
@@ -156,13 +156,13 @@
 	<object class="wxBitmap" name="page_save16">res/16/page_save.png</object>
 	<object class="wxBitmap" name="new_wx_project16">res/16/wx24.png</object>
 	<object class="wxBitmap" name="plugin16">res/16/plugin24.png</object>
-	<object class="wxBitmap" name="code_format_options16">res/16/signature.png</object>
-	<object class="wxBitmap" name="code_format16">res/16/magic-wand2.png</object>
-	<object class="wxBitmap" name="build_active_project16">res/16/hammer.png</object>
-	<object class="wxBitmap" name="stop_build16">res/16/stop.png</object>
+	<object class="wxBitmap" name="code_format_options16">res/16/formatter_settings.png</object>
+	<object class="wxBitmap" name="code_format16">res/16/formatter.png</object>
+	<object class="wxBitmap" name="build_active_project16">res/16/compfile.png</object>
+	<object class="wxBitmap" name="stop_build16">res/16/process_stop.png</object>
 	<object class="wxBitmap" name="execute16">res/16/gear_run.png</object>
 	<object class="wxBitmap" name="stop_executed_program16">res/16/gear_stop.png</object>
-	<object class="wxBitmap" name="clean16">res/16/garbage.png</object>
+	<object class="wxBitmap" name="clean16">res/16/emptytrash.png</object>
 	<object class="wxBitmap" name="find_in_files16">res/16/find.png</object>
 	<object class="wxBitmap" name="find_and_replace16">res/16/search.png</object>
 	<object class="wxBitmap" name="open_resource16">res/16/open_resource.png</object>

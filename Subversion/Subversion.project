@@ -51,6 +51,10 @@
     <File Name="logindlgbase.cpp"/>
     <File Name="logindlg.h"/>
     <File Name="logindlgbase.h"/>
+    <File Name="svncopybasedlg.cpp"/>
+    <File Name="svncopybasedlg.h"/>
+    <File Name="svncopydlg.h"/>
+    <File Name="svncopydlg.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="HTML">
@@ -227,5 +231,8 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="formbuilder">
+    <File Name="svncopybasedlg.fbp"/>
+  </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

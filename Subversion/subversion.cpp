@@ -175,6 +175,7 @@ SubversionPlugin::SubversionPlugin(IManager *manager)
 		topWin->Connect(XRCID("svn_svr_refresh_wsp"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnShowServerReportWsp), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_update_wsp"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnUpdateWsp), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_commit_wsp"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommitWsp), NULL, (wxEvtHandler*)this);
+		topWin->Connect(XRCID("svn_copy"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCopy), NULL, (wxEvtHandler*)this);
 
 		topWin->Connect(XRCID("svn_refresh_prj"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnShowReportPrj), NULL, (wxEvtHandler*)this);
 		topWin->Connect(XRCID("svn_svr_refresh_prj"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnShowServerReportPrj), NULL, (wxEvtHandler*)this);
@@ -279,6 +280,10 @@ wxMenu *SubversionPlugin::CreatePopMenu()
 	menu->Append(item);
 
 	item = new wxMenuItem(menu, XRCID("svn_add"), wxT("&Add"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	menu->AppendSeparator();
+	item = new wxMenuItem(menu, XRCID("svn_copy"), wxT("&Copy"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	menu->AppendSeparator();
@@ -654,6 +659,7 @@ void SubversionPlugin::UnPlug()
 	topWin->Disconnect(XRCID("svn_commit_prj"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCommitPrj), NULL, (wxEvtHandler*)this);
 	topWin->Disconnect(XRCID("editor_resolve_conflicted_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnResolveConflictFile), NULL, (wxEvtHandler*)this);
 	topWin->Disconnect(XRCID("svn_resolve_conflicted_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnResolveConflict), NULL, (wxEvtHandler*)this);
+	topWin->Disconnect(XRCID("svn_copy"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionPlugin::OnCopy), NULL, (wxEvtHandler*)this);
 
 	// before this plugin is un-plugged we must remove the tab we added
 	for (size_t i=0; i<m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
@@ -1293,4 +1299,10 @@ void SubversionPlugin::DoSetSshEnv()
 		wxSetEnv(wxT("SVN_SSH"), env_value.c_str());
 		wxLogMessage(wxString::Format(wxT("Environment variable SVN_SSH is set to %s"), env_value.c_str()));
 	}
+}
+
+void SubversionPlugin::OnCopy(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	m_svn->Copy();
 }

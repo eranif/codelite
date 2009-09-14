@@ -131,6 +131,7 @@ protected:
 	void OnResolveConflictFile(wxCommandEvent &e);
 	void OnResolveConflict(wxCommandEvent &e);
 	void OnPatch(wxCommandEvent &e);
+	void OnCopy(wxCommandEvent &e);
 };
 
 #endif //SUBVERSION_H

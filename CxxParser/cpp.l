@@ -1,4 +1,4 @@
-%{ 
+%{
 /* Included code before lex code */
 /*************** Includes and Defines *****************************/
 
@@ -8,6 +8,7 @@
 #include "errno.h"
 
 #define YYSTYPE std::string
+#define ECHO
 
 #include "string"
 #include <stdlib.h>
@@ -118,7 +119,7 @@ horizontal_white [ ]|{h_tab}
 "//" {
 			BEGIN CPP_COMMENT;
      }
-     
+
 {horizontal_white}+     {
 			WHITE_RETURN(' ');
 			}
@@ -268,12 +269,12 @@ catch				{CPP_KEYWORD_RETURN(LE_CATCH);}
 "^="                	{NAMEDOP_RETURN(LE_ERassign);}
 "|="					{NAMEDOP_RETURN(LE_ORassign);}
 "..."					{NAMEDOP_RETURN(LE_ELLIPSIS);}
-<<EOF>> 				{	
+<<EOF>> 				{
 							//reset lexer
 							yyterminate();
 						}
 .						{return yytext[0];}
-<PREPR>\n			{	 
+<PREPR>\n			{
 						defineFound = false;
 						cl_scope_lineno++;
 						BEGIN INITIAL;
@@ -288,22 +289,22 @@ catch				{CPP_KEYWORD_RETURN(LE_CATCH);}
 						cl_scope_lineno++;
 						BEGIN PREPR;
 					}
-<WRAP_PREP>{identifier}   { 
-						if(defineFound)
-						{
-							defineFound = false;
-							g_macros[yytext] = true;
-						}
-					}				
-<PREPR>{identifier}       { 
+<WRAP_PREP>{identifier}   {
 						if(defineFound)
 						{
 							defineFound = false;
 							g_macros[yytext] = true;
 						}
 					}
-<WRAP_PREP>.		{}					
-<PREPR>.			{}		
+<PREPR>{identifier}       {
+						if(defineFound)
+						{
+							defineFound = false;
+							g_macros[yytext] = true;
+						}
+					}
+<WRAP_PREP>.		{}
+<PREPR>.			{}
 <CPP_COMMENT>\n 	{BEGIN INITIAL;}
 <CPP_COMMENT>.	 	{}
 <C_COMMENT>"*/" 	{BEGIN INITIAL;}
@@ -338,7 +339,7 @@ bool isaMACRO(char *string)
 
 void cl_scope_lex_clean()
 {
-	yy_flush_buffer(YY_CURRENT_BUFFER); 
+	yy_flush_buffer(YY_CURRENT_BUFFER);
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	cl_scope_lineno = 1;
 	currentScope.clear();
@@ -367,7 +368,7 @@ void increaseScope()
 {
 	static int value = 0;
 	std::string scopeName("__anon_");
-	
+
 	char buf[100];
 	sprintf(buf, "%d", value++);
 	scopeName += buf;
@@ -381,32 +382,32 @@ std::string getCurrentScope()
 	if(currentScope.empty()){
 		return "";
 	}
-	
+
 	std::vector<std::string> tmpscope(currentScope);
-	
+
 	while( tmpscope.empty() == false ){
 		std::string _scope = tmpscope.front();
 		tmpscope.erase(tmpscope.begin());
-		
+
 		if(_scope.find("__anon_") == (size_t)-1 && _scope.empty() == false){
 			scope += _scope;
 			scope += "::";
 		}
 	}
-	
+
 	//remove the trailing '::'
 	scope.erase(scope.find_last_not_of(":")+1);
 	return scope;
 }
 
 /*******************************************************************/
-bool setLexerInput(const std::string &in, const std::map<std::string, std::string> &ignoreTokens) 
+bool setLexerInput(const std::string &in, const std::map<std::string, std::string> &ignoreTokens)
 {
 	BEGIN INITIAL;
 	yy_scan_string(in.c_str());
-	
+
 	g_ignoreList = ignoreTokens;
-	
+
 	//update the working file name
 	return true;
 }

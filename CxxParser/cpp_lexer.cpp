@@ -113,7 +113,7 @@
 #define YY_END_OF_BUFFER_CHAR 0
 
 /* Size of default input buffer. */
-#define YY_BUF_SIZE 16384*10
+#define YY_BUF_SIZE 16384
 
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
@@ -810,6 +810,7 @@ char *yytext;
 #include "errno.h"
 
 #define YYSTYPE std::string
+#define ECHO
 
 #include "string"
 #include <stdlib.h>

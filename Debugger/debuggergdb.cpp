@@ -998,7 +998,11 @@ bool DbgGdb::GetTip(const wxString &dbgCommand, const wxString& expression, wxSt
 		//gdb displays the variable name as $<NUMBER>,
 		//we simply replace it with the actual string
 		static wxRegEx reGdbVar(wxT("^\\$[0-9]+"));
+		static wxRegEx reGdbVar2(wxT("\\$[0-9]+ = "));
+
 		reGdbVar.ReplaceFirst(&evaluated, expression);
+		reGdbVar2.ReplaceAll(&evaluated, wxEmptyString);
+
 		evaluated.Replace(wxT("\\t"), wxT("\t"));
 		return true;
 	}
@@ -1250,7 +1254,7 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 
 	// Write the content into a file
 	wxString codelite_gdbinit_file;
-#ifdef __WXMSW__	
+#ifdef __WXMSW__
 	codelite_gdbinit_file << wxFileName::GetTempDir() << wxFileName::GetPathSeparator() << wxT("codelite_gdbinit.txt");
 #else
 	wxString home_env;

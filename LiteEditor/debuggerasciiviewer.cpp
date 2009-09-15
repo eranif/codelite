@@ -109,5 +109,6 @@ void DebuggerAsciiViewer::UpdateView()
 
 void DebuggerAsciiViewer::SetDbgCommand(const wxString& dbgCmd)
 {
+	m_textCtrlDbgCommand->SetValue(dbgCmd);
 	m_dbgCommand = dbgCmd;
 }

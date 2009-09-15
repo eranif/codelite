@@ -1379,6 +1379,25 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 						command.Replace(wxT("$(Variable)"), word);
 
 						dbg_command = cmd.GetDbgCommand();
+
+						//---------------------------------------------------
+						// Special handling for the templates
+						//---------------------------------------------------
+
+						wxArrayString types = DoGetTemplateTypes(_U(variable.m_templateDecl.c_str()));
+						// Case 1: list
+						// The user defined scripts requires that we pass info like this:
+						// plist <list name> <T>
+						if ( type == wxT("list") && types.GetCount() > 0 ) {
+							command << wxT(" ") << types.Item(0);
+						}
+						// Case 2: map & multimap
+						// The user defined script requires that we pass the TLeft & TRight
+						// pmap <list name> TLeft TRight
+						if ( (type == wxT("map") || type == wxT("multimap")) && types.GetCount() > 1 ) {
+							command << wxT(" ") << types.Item(0) << wxT(" ") << types.Item(1);
+						}
+
 						break;
 					}
 				}
@@ -2683,4 +2702,65 @@ void ContextCpp::DoUpdateCalltipHighlight()
 			ctrl.CallTipSetHighlight(start, start + len);
 		}
 	}
+}
+
+wxArrayString ContextCpp::DoGetTemplateTypes(const wxString& tmplDecl)
+{
+	wxArrayString types;
+	int           depth (0);
+	wxString      type;
+
+	wxString tmpstr ( tmplDecl );
+	tmpstr.Trim().Trim(false);
+
+	if ( tmpstr.StartsWith(wxT("<")) ) {
+		tmpstr.Remove(0, 1);
+	}
+
+	if ( tmpstr.EndsWith(wxT(">")) ) {
+		tmpstr.RemoveLast();
+	}
+	tmpstr.Trim().Trim(false);
+
+	for (size_t i=0; i<tmpstr.Length(); i++) {
+		switch (tmpstr.GetChar(i)) {
+		case wxT(','):
+						if ( depth > 0 ) {
+					type << wxT(",");
+				} else {
+					type.Trim().Trim(false);
+					if ( type.Contains(wxT("std::basic_string<char")) ) {
+						type = wxT("string");
+					} else if ( type.Contains(wxT("std::basic_string<wchar_t")) ) {
+						type = wxT("wstring");
+					}
+					types.Add( type );
+					type.Empty();
+				}
+			break;
+		case wxT('<'):
+						depth ++;
+			type << wxT("<");
+			break;
+		case wxT('>'):
+						depth--;
+			type << wxT(">");
+			break;
+		default:
+			type << tmpstr.GetChar(i);
+			break;
+		}
+	}
+
+	if ( depth == 0 && type.IsEmpty() == false ) {
+		type.Trim().Trim(false);
+		if ( type.Contains(wxT("std::basic_string<char")) ) {
+			type = wxT("string");
+		} else if ( type.Contains(wxT("std::basic_string<wchar_t")) ) {
+			type = wxT("wstring");
+		}
+		types.Add( type );
+	}
+
+	return types;
 }

@@ -132,17 +132,17 @@ public:
 	virtual void OnCalltipCancel();
 	DECLARE_EVENT_TABLE();
 private:
-	wxString GetWordUnderCaret();
-	wxString GetFileImageString(const wxString &ext);
-	wxString GetImageString(const TagEntry &entry);
-	wxString GetExpression(long pos, bool onlyWord, LEditor *editor = NULL);
-	void DoGotoSymbol(TagEntryPtr tag);
-	bool IsIncludeStatement(const wxString &line, wxString *fileName = NULL);
-	void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
-	int FindLineToAddInclude();
-	void MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
-	void DoOpenWorkspaceFile();
-
+	wxString      GetWordUnderCaret();
+	wxString      GetFileImageString(const wxString &ext);
+	wxString      GetImageString(const TagEntry &entry);
+	wxString      GetExpression(long pos, bool onlyWord, LEditor *editor = NULL);
+	void          DoGotoSymbol(TagEntryPtr tag);
+	bool          IsIncludeStatement(const wxString &line, wxString *fileName = NULL);
+	void          RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
+	int           FindLineToAddInclude();
+	void          MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
+	void          DoOpenWorkspaceFile();
+	wxArrayString DoGetTemplateTypes(const wxString &tmplDecl);
 	/**
 	 * \brief try to find a swapped file for this rhs. The logic is based on the C++ coding conventions
 	 * a swapped file for a.cpp will be a.h or a.hpp

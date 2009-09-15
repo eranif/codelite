@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Debuggers>
   <ArchiveObject Name="DebuggerCommands">
-    <long Value="4" Name="size"/>
+    <long Value="7" Name="size"/>
     <SerializedObject Name="DebuggerCmd0">
       <wxString Value="string" Name="m_name"/>
       <wxString Value="$(Variable)" Name="m_command"/>
@@ -21,6 +21,26 @@
       <wxString Value="QString" Name="m_name"/>
       <wxString Value="$(Variable)" Name="m_command"/>
       <wxString Value="printqstring" Name="m_dbgCommand"/>
+    </SerializedObject>
+	<SerializedObject Name="DebuggerCmd4">
+      <wxString Value="wstring" Name="m_name"/>
+      <wxString Value="$(Variable)" Name="m_command"/>
+      <wxString Value="pwstring" Name="m_dbgCommand"/>
+    </SerializedObject>
+	<SerializedObject Name="DebuggerCmd5">
+      <wxString Value="list" Name="m_name"/>
+      <wxString Value="$(Variable)" Name="m_command"/>
+      <wxString Value="plist" Name="m_dbgCommand"/>
+    </SerializedObject>
+	<SerializedObject Name="DebuggerCmd6">
+      <wxString Value="map" Name="m_name"/>
+      <wxString Value="$(Variable)" Name="m_command"/>
+      <wxString Value="pmap" Name="m_dbgCommand"/>
+    </SerializedObject>
+	<SerializedObject Name="DebuggerCmd6">
+      <wxString Value="multimap" Name="m_name"/>
+      <wxString Value="$(Variable)" Name="m_command"/>
+      <wxString Value="pmap" Name="m_dbgCommand"/>
     </SerializedObject>
   </ArchiveObject>
   <ArchiveObject Name="DebuggersData">

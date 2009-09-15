@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -14,15 +14,24 @@ DebuggerAsciiViewerBase::DebuggerAsciiViewerBase( wxWindow* parent, wxWindowID i
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
+	wxBoxSizer* bSizer2;
+	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_textCtrlDbgCommand = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+	m_textCtrlDbgCommand->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
+	
+	bSizer2->Add( m_textCtrlDbgCommand, 0, wxALL, 5 );
+	
 	m_textCtrlExpression = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2 );
-	mainSizer->Add( m_textCtrlExpression, 0, wxALL|wxEXPAND, 5 );
+	bSizer2->Add( m_textCtrlExpression, 1, wxALL|wxEXPAND, 5 );
+	
+	mainSizer->Add( bSizer2, 0, wxEXPAND, 5 );
 	
 	m_textView = new wxScintilla(this);
 	mainSizer->Add( m_textView, 1, wxALL|wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
-	mainSizer->Fit( this );
 	
 	// Connect Events
 	m_textCtrlExpression->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( DebuggerAsciiViewerBase::OnEnter ), NULL, this );

@@ -1,6 +1,7 @@
 #include "utils.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #ifdef __WXMSW__
 # include <windows.h>

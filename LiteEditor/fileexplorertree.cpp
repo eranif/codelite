@@ -167,7 +167,15 @@ void FileExplorerTree::DoOpenItem(const wxTreeItemId &item)
 		if (fn.GetExt() == wxT("workspace")) {
 			//open workspace
 			ManagerST::Get()->OpenWorkspace(fn.GetFullPath());
+
 		} else {
+
+			// Send event to the plugins to see if any plugin want to handle this file differently
+			wxString file_path = fn.GetFullPath();
+			if (SendCmdEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED, &file_path)) {
+				return;
+			}
+
 			Frame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString);
 		}
 	}
@@ -251,9 +259,9 @@ void FileExplorerTree::OnRefreshNode(wxCommandEvent &event)
 	wxUnusedVar(event);
 	wxTreeItemId item = GetSelection();
 	wxFileName   path = GetFullPath(item); // save here because item gets clobbered by DoReloadNode()
-    
+
 	Freeze();
-    
+
 	m_itemsAdded = false;
 	DoReloadNode(item);
 	if (m_itemsAdded) { // check if new items need to be bolded
@@ -264,7 +272,7 @@ void FileExplorerTree::OnRefreshNode(wxCommandEvent &event)
 		}
 		m_itemsAdded = false;
 	}
-    
+
 	Thaw();
 }
 
@@ -274,10 +282,10 @@ void FileExplorerTree::OnOpenShell(wxCommandEvent &event)
 	wxTreeItemId item = GetSelection();
 	if (item.IsOk()) {
 		wxFileName fullpath = GetFullPath(item);
-		
+
 		DirSaver ds;
 		wxSetWorkingDirectory(fullpath.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
-		
+
 		if (!ProcUtils::Shell()) {
 			wxMessageBox(_("Failed to load shell terminal"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 			return;
@@ -302,7 +310,7 @@ void FileExplorerTree::OnOpenWidthDefaultApp(wxCommandEvent& e)
 				return;
 			}
 		}
-		
+
 		// fallback code: suggest to the user to open the file with CL
 		if (wxMessageBox(wxString::Format(wxT("Could not find default application for file '%s'\nWould you like CodeLite to open it?"), fullpath.GetFullName().c_str()), wxT("CodeLite"),
 						 wxICON_QUESTION|wxYES_NO) == wxYES) {
@@ -344,21 +352,21 @@ void FileExplorerTree::DoTagsUpdated(const std::vector<wxFileName>& files, bool 
     // we use this map as a queue of nodes to check, where nodes are guaranteed to be sorted
     // by full pathname, and no duplicates will occur
     std::map<wxString, std::pair<wxTreeItemId, bool> > nodes;
-	
+
 	// insert the list of files in the map
     for (unsigned i = 0; i < files.size(); i++) {
         wxTreeItemId id = GetItemByFullPath(files[i], false);
         if (id.IsOk())
-            // note: use GetFullPath(id) to get the path, rather than files[i], in case 
-            // the returned node is an ancestor dir of the file (this happens when the file 
+            // note: use GetFullPath(id) to get the path, rather than files[i], in case
+            // the returned node is an ancestor dir of the file (this happens when the file
             // explorer tree is not fully expanded, which is most of the time).
             nodes[GetFullPath(id).GetFullPath()] = std::make_pair(id, bold);
     }
     if (nodes.empty())
         return;
-        
+
     Freeze();
-    // now we process the queue.  first, note we traverse the map in reverse.  this way we 
+    // now we process the queue.  first, note we traverse the map in reverse.  this way we
     // always process all children of a node before we process the node itself.  the 'bold'
     // flag of a given directory is just the logical-or of all the bold flags of its children
     // but we want to compute this lazily.
@@ -389,5 +397,5 @@ void FileExplorerTree::DoTagsUpdated(const std::vector<wxFileName>& files, bool 
             nodes.insert(std::make_pair(path, std::make_pair(id, false))).first->second.second |= bold;
         }
     }
-    Thaw();	
+    Thaw();
 }

@@ -101,6 +101,10 @@ enum {
 	wxEVT_FILE_EXP_INIT_DONE,
 	//clientData is NULL
 	wxEVT_FILE_EXP_REFRESHED,
+	// an attempt to open a file using double click / ENTER was made
+	// on an item in the 'File Explorer' OR from the 'Workspace' tree
+	// clientData is the full path of the file (wxString*)
+	wxEVT_TREE_ITEM_FILE_ACTIVATED,
 
 	//clientData is list of files added to project (wxArrayString*)
 	wxEVT_PROJ_FILE_ADDED,

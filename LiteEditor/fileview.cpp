@@ -474,15 +474,26 @@ void FileViewTree::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 
 	//if file item was hit, open it
 	if ( itemData->GetData().GetKind() == ProjectItem::TypeFile ) {
+
 		wxString filename = itemData->GetData().GetFile();
 		wxString project  = itemData->GetData().Key().BeforeFirst( wxT( ':' ) );
 
 		// Convert the file name to be in absolute path
 		wxFileName fn( filename );
 		fn.MakeAbsolute( ManagerST::Get()->GetProjectCwd( project ) );
+
+		// send event to the plugins to see if they want the file opening in another way
+		wxString file_path = fn.GetFullPath();
+		if (SendCmdEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED, &file_path)) {
+			return;
+		}
+
 		Frame::Get()->GetMainBook()->OpenFile( fn.GetFullPath(), project, -1 );
-		return;
-	} else { // if(itemData->GetData().GetKind() == ProjectItem::TypeVirtualDirectory)
+
+	} else if ( itemData->GetData().GetKind() == ProjectItem::TypeProject ) {
+		// make it active
+		DoSetProjectActive(item);
+	} else {
 		event.Skip();
 	}
 }

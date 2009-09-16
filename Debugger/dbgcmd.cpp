@@ -266,7 +266,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 	if (reason == wxT("end-stepping-range")) {
 		//just notify the container that we got control back from debugger
 		m_observer->UpdateGotControl(DBG_END_STEPPING);
-	} else if (reason == wxT("breakpoint-hit")) {
+	} else if ((reason == wxT("breakpoint-hit")) || (reason == wxT("watchpoint-trigger"))) { 
 		static wxRegEx reFuncName(wxT("func=\"([a-zA-Z!_0-9]+)\""));
 
 		// Incase we break due to assertion, notify the observer with different break code
@@ -286,8 +286,17 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 				m_observer->UpdateGotControl(DBG_BP_HIT);
 			}
 		} else {
-			//just notify the container that we got control back from debugger
+			// Notify the container that we got control back from debugger
 			m_observer->UpdateGotControl(DBG_BP_HIT);
+			// Now discover which bp was hit. Fortunately, that's in the next token: bkptno="12"
+			static wxRegEx reGetBreakNo(wxT("[0-9]+"));
+			wxString whichBP = tkz.NextToken();
+			if (reGetBreakNo.Matches(whichBP)) {
+				wxString number = reGetBreakNo.GetMatch(whichBP);
+				long id; if (number.ToLong(&id)) {
+					m_observer->UpdateBpHit((int)id);
+				}
+			}
 		}
 
 	} else if (reason == wxT("signal-received")) {

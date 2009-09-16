@@ -2132,6 +2132,10 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 		if ( dbgr && dbgr->IsRunning() ) {
 			dbgr->QueryFileLine();
+			// If a bp hit, do -break-list so that we can update breakpoint info e.g. ignore-count
+			if ((reason==DBG_BP_HIT) || (reason==DBG_UNKNOWN)) {
+				dbgr->BreakList();
+			}
 		}
 	}
 	break;
@@ -2158,6 +2162,16 @@ void Manager::UpdateLostControl()
 	// Reset the debugger call-stack pane
   Frame::Get()->GetDebuggerPane()->GetFrameListView()->Clear();
   Frame::Get()->GetDebuggerPane()->GetFrameListView()->SetCurrentLevel(0);
+}
+
+void Manager::UpdateBpHit(int id)
+{
+	GetBreakpointsMgr()->BreakpointHit(id);
+}
+
+void Manager::ReconcileBreakpoints(std::vector<BreakpointInfo>& li)
+{
+	GetBreakpointsMgr()->ReconcileBreakpoints(li);
 }
 
 void Manager::UpdateBpAdded(const int internal_id, const int debugger_id)

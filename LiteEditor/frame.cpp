@@ -349,6 +349,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("edit_breakpoint"),          Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("show_breakpoint_dlg"),      Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("insert_watchpoint"),        Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("toggle_breakpoint_enabled_status"),  Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("ignore_breakpoint"),        Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_breakpoint"),        Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("quick_debug"),              Frame::OnQuickDebug)
 

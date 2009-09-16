@@ -789,7 +789,48 @@ void LEditor::OnMarginClick(wxScintillaEvent& event)
 	case SYMBOLS_MARGIN_ID:
 		//symbols / breakpoints margin
 		{
+			// If Shift-LeftDown, let the user drag any breakpoint marker
+			if (event.GetShift()) {
+				int markers = (MarkerGet(nLine) & mmt_all_breakpoints);
+				if (! markers) {
+					break;
+				}
+				// There doesn't seem to be an elegant way to get the defined bitmap for a marker
+				wxBitmap bm;
+				if (markers & mmt_bp_disabled) {
+					bm = wxBitmap(wxImage(BreakptDisabled));
+				} else
+				if (markers & mmt_bp_cmdlist) {
+					bm = wxBitmap(wxImage(BreakptCommandList));
+				} else
+				if (markers & mmt_bp_cmdlist_disabled) {
+					bm = wxBitmap(wxImage(BreakptCommandListDisabled));
+				} else
+				if (markers & mmt_bp_ignored) {
+					bm = wxBitmap(wxImage(BreakptIgnore));
+				} else
+				if (markers & mmt_cond_bp) {
+					bm = wxBitmap(wxImage(ConditionalBreakpt));
+				} else
+				if (markers & mmt_cond_bp_disabled) {
+					bm = wxBitmap(wxImage(ConditionalBreakptDisabled));
+				} else {
+				// Make the standard bp bitmap the default
+					bm = wxBitmap(wxImage(stop_xpm));
+				}
+
+				// There'll probably be a tooltip from the marker. Kill it
+				DoCancelCalltip();
+				// The breakpoint manager organises the actual drag/drop
+				BreakptMgr* bpm = ManagerST::Get()->GetBreakpointsMgr();
+				bpm->DragBreakpoint(this, nLine, bm);
+				
+				Connect(wxEVT_MOTION, wxMouseEventHandler(myDragImage::OnMotion), NULL, bpm->GetDragImage());
+				Connect(wxEVT_LEFT_UP, wxMouseEventHandler(myDragImage::OnEndDrag), NULL, bpm->GetDragImage());
+
+			} else {
 			ToggleBreakpoint(nLine+1);
+		}
 		}
 		break;
 	case FOLD_MARGIN_ID:
@@ -2324,8 +2365,26 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 	// What we show depends on whether there's already a bp here (or several)
 	if (count > 0) {
 		menu.AppendSeparator();
+		if (count == 1) {
 		menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
+			menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
+			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+			if (dbgr && dbgr->IsRunning()) {
+				// On MSWin it often crashes the debugger to try to load-then-disable a bp
+				// so don't show the menu item unless the debugger is running
+				menu.Append(XRCID("toggle_breakpoint_enabled_status"),
+			            lineBPs[0].is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
+			}
 		menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
+		} else if (count > 1) {
+			menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove a Breakpoint")));
+			menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore a Breakpoint")));
+			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+			if (dbgr && dbgr->IsRunning()) {
+				menu.Append(XRCID("toggle_breakpoint_enabled_status"), wxString(_("Toggle a breakpoint's enabled state")));
+			}
+			menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit a Breakpoint")));
+		}
 	}
 
 	if (ManagerST::Get()->DbgCanInteract()) {
@@ -2349,15 +2408,32 @@ void LEditor::AddOtherBreakpointType(wxCommandEvent &event)
 	wxString conditions;
 	if (event.GetId() == XRCID("insert_cond_breakpoint")) {
 		conditions = wxGetTextFromUser(wxT("Enter the condition statement"), wxT("Create Conditional Breakpoint"));
+		if (conditions.IsEmpty()) {
+			return;
+		}
 	}
 
 	AddBreakpoint(-1, conditions, is_temp);
+}
+
+void LEditor::OnIgnoreBreakpoint()
+{
+	if (ManagerST::Get()->GetBreakpointsMgr()->IgnoreByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1)) {
+		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	}
 }
 
 void LEditor::OnEditBreakpoint()
 {
 	ManagerST::Get()->GetBreakpointsMgr()->EditBreakpointByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1);
 	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+}
+
+void LEditor::ToggleBreakpointEnablement()
+{
+	if (ManagerST::Get()->GetBreakpointsMgr()->ToggleEnabledStateByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1)) {
+		Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+	}
 }
 
 void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT("")*/, const bool is_temp/*=false*/)

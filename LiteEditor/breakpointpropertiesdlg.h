@@ -22,6 +22,7 @@ protected:
 	void OnCheckBreakLinenoUI( wxUpdateUIEvent& event );
 	void OnCheckBreakFunctionUI( wxUpdateUIEvent& event );
 	void OnCheckBreakMemoryUI( wxUpdateUIEvent& event );
+	void OnPageChanging(wxChoicebookEvent &event);
 	void OnPageChanged(wxChoicebookEvent &event);
 
 	bool its_a_breakpt;	// Holds whether it's a break or a watch. Used for UpdateUI

@@ -500,6 +500,8 @@ public:
 	void UpdateQuickWatch(const wxString &expression, TreeNode<wxString, NodeData> *tree);
 	void UpdateStackList(const StackEntryArray &stackArray);
 	void UpdateRemoteTargetConnected(const wxString &line);
+	void ReconcileBreakpoints(std::vector<BreakpointInfo>& li);
+	void UpdateBpHit(int id);
 
 
     //--------------------------- Build Management -----------------------------

@@ -489,7 +489,7 @@
                         <property name="window_style"></property>
                         <event name="OnChar"></event>
                         <event name="OnChoicebookPageChanged">OnPageChanged</event>
-                        <event name="OnChoicebookPageChanging"></event>
+                        <event name="OnChoicebookPageChanging">OnPageChanging</event>
                         <event name="OnEnterWindow"></event>
                         <event name="OnEraseBackground"></event>
                         <event name="OnKeyDown"></event>
@@ -1422,7 +1422,7 @@
                                             <property name="size"></property>
                                             <property name="style">wxTE_MULTILINE</property>
                                             <property name="subclass"></property>
-                                            <property name="tooltip">Identify the data to be watched. It can be one of:&#x0A;1) Any variable name e.g. &apos;foo&apos;&#x0A;2) A memory address, suitably cast e.g.*(int*)0x12345678 will watch an int-sized block starting at this address.&#x0A;3) A complex expression e.g. a*b + c/d&apos;. The expression can use any operators valid in the program&apos;s native language.&#x0A;&#x0A;NB. A watchpoint set on a local variable will automatically be removed when the variable loses scope.</property>
+                                            <property name="tooltip"><property name="tooltip">Identify the data to be watched. It can be one of:&#x0A;1) Any variable name e.g. &apos;foo&apos;&#x0A;2) A memory address, suitably cast e.g.*(int*)0x12345678 will watch an int-sized block starting at this address.&#x0A;Don&apos;t include spaces in the expression: gdb can&apos;t understand them.&#x0A;3) A complex expression e.g. a*b + c/d&apos;. The expression can use any operators valid in the program&apos;s native language.&#x0A;&#x0A;NB. A watchpoint set on a local variable will automatically be removed when the variable loses scope.</property>
                                             <property name="value"></property>
                                             <property name="window_extra_style"></property>
                                             <property name="window_name"></property>
@@ -1583,7 +1583,7 @@
                             <object class="wxStaticText" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
-                                <property name="enabled">0</property>
+                                <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
                                 <property name="hidden">0</property>
@@ -1634,7 +1634,7 @@
                             <object class="wxTextCtrl" expanded="1">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
-                                <property name="enabled">0</property>
+                                <property name="enabled">1</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
                                 <property name="hidden">0</property>
@@ -1706,12 +1706,12 @@
                                         <property name="bg"></property>
                                         <property name="checked">0</property>
                                         <property name="context_help"></property>
-                                        <property name="enabled">0</property>
+                                        <property name="enabled">1</property>
                                         <property name="fg"></property>
                                         <property name="font"></property>
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
-                                        <property name="label">Disabled</property>
+                                        <property name="label">Disable</property>
                                         <property name="maximum_size"></property>
                                         <property name="minimum_size"></property>
                                         <property name="name">m_checkDisable</property>
@@ -1720,7 +1720,7 @@
                                         <property name="size"></property>
                                         <property name="style"></property>
                                         <property name="subclass"></property>
-                                        <property name="tooltip">If you check this box, the breakpoint (or watchpoint) will still exist, but it won&apos;t trigger. If you re-enable it in the future, it will then start working.</property>
+                                        <property name="tooltip">If you check this box, the breakpoint (or watchpoint) will still exist, but it won&apos;t trigger. If you uncheck it in the future, the breakpoint will work again.</property>
                                         <property name="window_extra_style"></property>
                                         <property name="window_name"></property>
                                         <property name="window_style"></property>

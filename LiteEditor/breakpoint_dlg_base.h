@@ -104,6 +104,7 @@ class BreakpointPropertiesDlg : public wxDialog
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnPageChanged( wxChoicebookEvent& event ){ event.Skip(); }
+		virtual void OnPageChanging( wxChoicebookEvent& event ){ event.Skip(); }
 		virtual void OnCheckBreakLineno( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnCheckBreakLinenoUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnCheckBreakFunction( wxCommandEvent& event ){ event.Skip(); }

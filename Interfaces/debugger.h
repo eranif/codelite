@@ -442,17 +442,29 @@ public:
 	 */
 	virtual bool Break(const BreakpointInfo& bp) = 0;
 	/**
-	 * \brief remove breakpoint from given file and line
-	 */
-	virtual bool RemoveBreak(const wxString &file, long lineno) = 0;
-	/**
-	 * \brief remove breakpoint by its internal ID
+	 * \brief remove breakpoint by its ID
 	 */
 	virtual bool RemoveBreak(int bid) = 0;
 	/**
 	 * \brief clear all breakpoints set (gdb's 'clear' command)
 	 */
 	virtual bool RemoveAllBreaks() = 0;
+	/**
+	 * \brief Enable or Disable a breakpoint
+	 */
+	virtual bool SetEnabledState(const int bid, const bool enable) = 0;
+	/**
+	 * \brief Set this breakpoint's Ignore count
+	 */
+	 virtual bool SetIgnoreLevel(const int bid, const int ignorecount) = 0;
+	/**
+	 * \brief Set this breakpoint's condition
+	 */
+	 virtual bool SetCondition(const BreakpointInfo& bp) = 0;
+	/**
+	 * \brief Set a command-list for this breakpoint
+	 */
+	 virtual bool SetCommands(const BreakpointInfo& bp) = 0;
 	/**
 	 * \brief ask the debugger to query about its file & line. Once the result arrives, the observer's UpdateFileLine() will be invoked
 	 */
@@ -538,6 +550,11 @@ public:
 	 * hex values (e.g. '0x01 0x02 0x03')
 	 */
 	virtual bool SetMemory(const wxString &address, size_t count, const wxString &hex_value) = 0;
+
+	/**
+	 * \brief have the debugger list all breakpoints
+	 */
+	virtual void BreakList() = 0;
 };
 
 

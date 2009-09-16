@@ -191,7 +191,7 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	bSizer13->Add( m_staticText5, 0, wxALL|wxEXPAND, 5 );
 	
 	m_textWatchExpression = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
-	m_textWatchExpression->SetToolTip( wxT("Identify the data to be watched. It can be one of:\n1) Any variable name e.g. 'foo'\n2) A memory address, suitably cast e.g.*(int*)0x12345678 will watch an int-sized block starting at this address.\n3) A complex expression e.g. a*b + c/d'. The expression can use any operators valid in the program's native language.\n\nNB. A watchpoint set on a local variable will automatically be removed when the variable loses scope.") );
+	m_textWatchExpression->SetToolTip( wxT("Identify the data to be watched. It can be one of:\n1) Any variable name e.g. 'foo'\n2) A memory address, suitably cast e.g.*(int*)0x12345678 will watch an int-sized block starting at this address.\nDon't include spaces in the expression: gdb can't understand them.\n3) A complex expression e.g. a*b + c/d'. The expression can use any operators valid in the program's native language.\n\nNB. A watchpoint set on a local variable will automatically be removed when the variable loses scope.") );	
 	
 	bSizer13->Add( m_textWatchExpression, 1, wxEXPAND|wxALL, 5 );
 	
@@ -215,12 +215,10 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	
 	m_staticText11 = new wxStaticText( this, wxID_ANY, wxT("Command List: Add any command(s) here"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText11->Wrap( -1 );
-	m_staticText11->Enable( false );
 	
 	bSizer5->Add( m_staticText11, 0, wxALL|wxEXPAND, 5 );
 	
 	m_textCommands = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
-	m_textCommands->Enable( false );
 	m_textCommands->SetToolTip( wxT("You can add a list of commands to any breakpoint or watchpoint. When the breakpoint is hit and the program interrupted, those commands will be executed.\n\nFor example, to print the value of the variable foo and then continue running the program, enter:\nprint foo\ncont\n\nIf you've previously entered commands, and no longer want them, just clear this textctrl.") );
 	
 	bSizer5->Add( m_textCommands, 1, wxEXPAND|wxALL, 5 );
@@ -234,10 +232,10 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_checkDisable = new wxCheckBox( this, wxID_ANY, wxT("Disabled"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkDisable = new wxCheckBox( this, wxID_ANY, wxT("Disable"), wxDefaultPosition, wxDefaultSize, 0 );
 	
 	m_checkDisable->Enable( false );
-	m_checkDisable->SetToolTip( wxT("If you check this box, the breakpoint (or watchpoint) will still exist, but it won't trigger. If you re-enable it in the future, it will then start working.") );
+	m_checkDisable->SetToolTip( wxT("If you check this box, the breakpoint (or watchpoint) will still exist, but it won't trigger. If you uncheck it in the future, the breakpoint will work again.") );
 	
 	fgSizer1->Add( m_checkDisable, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
@@ -281,6 +279,7 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	
 	// Connect Events
 	m_choicebook->Connect( wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, wxChoicebookEventHandler( BreakpointPropertiesDlg::OnPageChanged ), NULL, this );
+	m_choicebook->Connect( wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING, wxChoicebookEventHandler( BreakpointPropertiesDlg::OnPageChanging ), NULL, this );
 	m_checkLineno->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( BreakpointPropertiesDlg::OnCheckBreakLineno ), NULL, this );
 	m_checkLineno->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( BreakpointPropertiesDlg::OnCheckBreakLinenoUI ), NULL, this );
 	m_checkBreakFunction->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( BreakpointPropertiesDlg::OnCheckBreakFunction ), NULL, this );
@@ -294,6 +293,7 @@ BreakpointPropertiesDlg::~BreakpointPropertiesDlg()
 {
 	// Disconnect Events
 	m_choicebook->Disconnect( wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, wxChoicebookEventHandler( BreakpointPropertiesDlg::OnPageChanged ), NULL, this );
+	m_choicebook->Disconnect( wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING, wxChoicebookEventHandler( BreakpointPropertiesDlg::OnPageChanging ), NULL, this );
 	m_checkLineno->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( BreakpointPropertiesDlg::OnCheckBreakLineno ), NULL, this );
 	m_checkLineno->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( BreakpointPropertiesDlg::OnCheckBreakLinenoUI ), NULL, this );
 	m_checkBreakFunction->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( BreakpointPropertiesDlg::OnCheckBreakFunction ), NULL, this );

@@ -131,6 +131,18 @@ public:
 	 * @param line debugger output
 	 */
 	virtual void UpdateRemoteTargetConnected(const wxString &line) = 0;
+
+	/**
+	 * @brief Update the breakpoints-manager's info with what the debugger really contains
+	 * @param vector of breakpoints acquired from -break-list
+	 */
+	virtual void ReconcileBreakpoints(std::vector<BreakpointInfo>& li) = 0;
+	
+	/**
+	 * @brief Tells the breakpoints-manager which breakpoint was just hit
+	 * @param The breakpoint's ID
+	 */
+	virtual void UpdateBpHit(int id) = 0;
 };
 
 #endif //DEBUGGER_OBSERVER_H

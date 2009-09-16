@@ -33,6 +33,9 @@
 #include "cl_editor.h"
 #include "sessionmanager.h"
 #include "wx/arrstr.h"
+#include "wx/dragimag.h"
+
+class myDragImage;
 
 #define FIRST_INTERNAL_ID 10000
 
@@ -40,6 +43,8 @@ class BreakptMgr
 {
 	std::vector<BreakpointInfo> m_bps;
 	int NextInternalID;		// Used to give each bp a unique internal ID. Start at 10k to avoid confusion with gdb's IDs
+
+	myDragImage* m_dragImage;
 
 	// Delete all breakpoint markers for this file, then re-mark with the currently-correct marker
 	void DoRefreshFileBreakpoints(LEditor* editor);
@@ -70,6 +75,26 @@ class BreakptMgr
 	 * Sets bp.bp_type to the value most appropriate to its contents
 	 */
 	void SetBestBPType(BreakpointInfo& bp);
+
+	/**
+	 * Ignore this bp
+	 */
+	bool SetBPIgnoreCount(const int bid, const int ignorecount);
+
+	/**
+	 * Enable or Disable this breakpoint
+	 */
+	bool SetBPEnabledState(const int bid, const bool enable);
+
+	/**
+	 * Set this breakpoint's condition to that in bp.condition
+	 */
+	bool SetBPConditon(const BreakpointInfo &bp);
+
+	/**
+	 * Set this breakpoint's command-list to that in bp.commandlist
+	 */
+	bool SetBPCommands(const BreakpointInfo &bp);
 
 	/**
 	 * Clear the list of breakpoints
@@ -137,9 +162,19 @@ public:
 	int DelBreakpointByLineno(const wxString& file, const int lineno);
 
 	/**
+	 * Toggle a breakpoint's enabled state
+	 */
+	bool ToggleEnabledStateByLineno(const wxString& file, const int lineno);
+
+	/**
 	 * Summon the BreakptProperties dialog for a bp
 	 */
 	void EditBreakpointByLineno(const wxString& file, const int lineno);
+
+	/**
+	 * Set a breakpoint's ignore count
+	 */
+	bool IgnoreByLineno(const wxString& file, const int lineno);
 
 	/**
 	 * return list of breakpoints
@@ -170,6 +205,12 @@ public:
 	wxString GetTooltip(const wxString& fileName, const int lineno);
 
 	/**
+	 * Update the m_bps with what the debugger really contains
+	 * from vector of breakpoints acquired from -break-list
+	 */
+	void ReconcileBreakpoints(std::vector<BreakpointInfo>& li);
+
+	/**
 	 * Clears the debugger_ids of all breakpoints.
 	 * Called when the debugger has stopped, so they're  no longer valid
 	 */
@@ -192,6 +233,28 @@ public:
 	bool PauseDebuggerIfNeeded();
 
 	/**
+	 * Notification from the debugger that breakpoint id was just hit
+	 */
+	void BreakpointHit(int id);
+	
+	/**
+	 * Starts 'drag'n'drop' for breakpoints
+	 */
+	void DragBreakpoint(LEditor* editor, int line, wxBitmap bitmap);
+	
+	/**
+	 * The 'drop' bit of breakpoints 'drag'n'drop'
+	 */
+	void DropBreakpoint(std::vector<BreakpointInfo>& BPs, int newline);
+	
+	/**
+	 * Getter for the myDragImage pointer
+	 */
+	myDragImage* GetDragImage() {
+		return m_dragImage;
+	}
+
+	/**
 	 * Get a unique id for a breakpoint, to use when the debugger isn't running
 	 */
 	int GetNextID() { return ++NextInternalID; }
@@ -205,5 +268,21 @@ public:
 	 * Load session
 	 */
 	 void LoadSession(const SessionEntry& session);
+};
+
+class myDragImage  :  public wxDragImage, public wxEvtHandler
+{
+	LEditor* editor;
+	wxBitmap bitmap;
+	std::vector<BreakpointInfo> lineBPs;
+	int m_startx; // The initial x position
+	wxCursor oldcursor;
+	
+public:
+	myDragImage(LEditor* ed, wxBitmap bitmap, std::vector<BreakpointInfo>& BPs);
+	bool StartDrag();
+	void OnMotion(wxMouseEvent& event);
+	void OnEndDrag(wxMouseEvent& event);
+
 };
 #endif //BREAKPOINTS_MANAGER_H

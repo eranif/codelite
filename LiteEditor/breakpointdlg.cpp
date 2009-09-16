@@ -159,15 +159,13 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 	ClearAll();
 	Freeze();
 
-	InsertColumn(col_id, wxT("ID"));
-	InsertColumn(col_type, wxT("Breakpoint Type"));
-	InsertColumn(col_enabled, wxT("Enabled"));
-	InsertColumn(col_file, wxT("File"));
-	InsertColumn(col_lineno, wxT("Line"));
-	InsertColumn(col_functionname, wxT("Function"));
-	InsertColumn(col_memory, wxT("Memory"));
-	InsertColumn(col_ignorecount, wxT("Ignored"));
-	InsertColumn(col_extras, wxT("Extras"));
+	const wxChar* column_headers[] = 
+		{ wxT("ID"), wxT("Breakpoint Type"), wxT("Enabled"), wxT("File"),
+			wxT("Line"), wxT("Function"), wxT("Memory"), wxT("Ignored"), wxT("Extras")
+		};
+	for (int n=col_id; n <= col_extras;++n) {
+		InsertColumn(n, column_headers[n]);
+	}
 
 	// Reverse through the items, as AppendListCtrlRow() inserts at 0, and the bps look silly with their id's reverse-sorted
 	std::vector<BreakpointInfo>::reverse_iterator iter = bps.rbegin();
@@ -235,7 +233,17 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 			continue;
 		}
 		// Otherwise, use the maximum of the itemsize and headersize
-		SetColumnWidth(col, 100);
+		SetColumnWidth(col, wxLIST_AUTOSIZE);
+		int itemwidth = GetColumnWidth(col);
+		int headerwidth, y; GetTextExtent(column_headers[col], &headerwidth,&y);
+		// The width returned from GetTextExtent() is too small (bold font?) so add a fiddle-factor
+		int extrawidth = 
+#if defined (__WXMSW__)
+			20;
+#else
+			12;
+#endif
+		SetColumnWidth(col, wxMax(itemwidth,headerwidth+extrawidth));
 	}
 
 	Thaw();

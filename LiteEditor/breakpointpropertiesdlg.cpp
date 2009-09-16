@@ -59,7 +59,15 @@ void BreakptPropertiesDlg::EnterBPData( const BreakpointInfo &bp )
 		m_choicebook->SetSelection(1);
 	}
 
+	// if b.debugger_id > -1, the debugger must be running
+	if (b.debugger_id > -1) {
 	m_checkDisable->SetValue(!bp.is_enabled);
+	} else {
+		// On MSWin it often crashes the debugger to try to load-then-disable a bp
+		// so hide the checkbox if the debugger isn't running, or we're adding a bp
+		m_checkDisable->Hide();
+		m_checkDisable->GetContainingSizer()->Layout();
+	}
 	m_checkTemp->SetValue(bp.is_temp);
 	m_checkTemp->Show(its_a_breakpt); // Watchpoints can't be temporary
 	m_spinIgnore->SetValue(bp.ignore_number);
@@ -80,6 +88,10 @@ void BreakptPropertiesDlg::EndModal( int retCode )
 		b.bp_type = BP_type_watchpt;
 		b.watchpoint_type = (WP_type)m_radioWatchtype->GetSelection();
 		b.watchpt_data = m_textWatchExpression->GetValue();
+		if (b.watchpt_data.IsEmpty()) {
+			wxMessageBox(_("You don't seem to have entered a variable for the watchpoint to watch. Please try again."), wxT(":/"), wxICON_ERROR);
+			return;
+		}
 	} else {
 		// It's some flavour of breakpoint (assume standard for now). Only insert enabled data, in case a lineno sort is now a function bp
 		b.bp_type = BP_type_break;
@@ -118,7 +130,9 @@ void BreakptPropertiesDlg::EndModal( int retCode )
 		}
 	}
 
+	if (b.debugger_id > -1) {
 	b.is_enabled = ! m_checkDisable->GetValue();
+	}
 	b.is_temp = m_checkTemp->GetValue();
 	b.ignore_number = m_spinIgnore->GetValue();
 	b.conditions = m_textCond->GetValue();
@@ -182,6 +196,14 @@ void BreakptPropertiesDlg::OnCheckBreakMemoryUI( wxUpdateUIEvent& event )
 	m_textBreakMemory->Enable(m_checkBreakMemory->IsChecked() && m_checkBreakMemory->IsEnabled());
 	// Disable the filename textctrl if the memory check is ticked
 	m_textFilename->Enable(! m_textBreakMemory->IsEnabled());
+}
+
+void BreakptPropertiesDlg::OnPageChanging(wxChoicebookEvent& event)
+{
+	if (b.debugger_id != -1) {
+		wxMessageBox(_("Sorry, you can't change a breakpoint to a watchpoint, or vice versa, while the debugger is running"), _("Not possible"), wxICON_ERROR | wxOK);
+		event.Veto();
+	}
 }
 
 void BreakptPropertiesDlg::OnPageChanged(wxChoicebookEvent& event)

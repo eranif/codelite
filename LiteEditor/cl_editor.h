@@ -356,6 +356,16 @@ public:
 	void AddOtherBreakpointType(wxCommandEvent &event);
 
 	/**
+	 * toggle whether the break point at the current line & file is enabled
+	 */
+	void ToggleBreakpointEnablement();
+
+	/**
+	 * Ignore the break point at the current line & file
+	 */
+	void OnIgnoreBreakpoint();
+
+	/**
 	 * Edit a breakpoint in the BreakptProperties dialog
 	 */
 	void OnEditBreakpoint();

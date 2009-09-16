@@ -470,12 +470,98 @@ bool DbgGdb::Break(const BreakpointInfo& bp)
 
 	// concatenate all the string into one command to pass to gdb
 	gdbCommand << command << condition << ignoreCounnt << breakWhere;
-	if (m_info.enableDebugLog) {
-		m_observer->UpdateAddLine(gdbCommand);
-	}
 
 	// execute it
 	return WriteCommand(gdbCommand, new DbgCmdHandlerBp(m_observer, this, bp, &m_bpList, bp.bp_type));
+}
+
+bool DbgGdb::SetIgnoreLevel(const int bid, const int ignorecount)
+{
+	if (bid == -1) {	// Sanity check
+		return false;
+	}
+
+	wxString command(wxT("-break-after "));
+	command << bid << wxT(" ") << ignorecount;
+
+	wxString dbg_output;
+	if (ExecSyncCmd(command, dbg_output)) {
+		// If successful, the only output is ^done, so assume that means it worked
+		if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
+			m_observer->UpdateAddLine(wxString::Format(wxT("Set ignore-count %d for breakpoint %d"), ignorecount, bid));
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool DbgGdb::SetEnabledState(const int bid, const bool enable)
+{
+	if (bid == -1) {	// Sanity check
+		return false;
+	}
+
+	wxString command(wxT("-break-disable "));
+	if (enable) {
+		command = wxT("-break-enable ");
+	}
+	command << bid;
+
+	wxString dbg_output;
+	if (ExecSyncCmd(command, dbg_output)) {
+		// If successful, the only output is ^done, so assume that means it worked
+		if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
+			m_observer->UpdateAddLine(wxString::Format(wxT("Breakpoint %d %s"), bid, enable ? wxT("enabled"):wxT("disabled")));
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool DbgGdb::SetCondition(const BreakpointInfo& bp)
+{
+	if (bp.debugger_id == -1) {	// Sanity check
+		return false;
+	}
+
+	wxString command(wxT("-break-condition "));
+	command << bp.debugger_id << wxT(" ") << bp.conditions;
+
+	wxString dbg_output;
+	if (ExecSyncCmd(command, dbg_output)) {
+		// If successful, the only output is ^done, so assume that means it worked
+		if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
+			if (bp.conditions.IsEmpty()) {
+				m_observer->UpdateAddLine(wxString::Format(wxT("Breakpoint %d condition cleared"), bp.debugger_id));
+			} else {
+				m_observer->UpdateAddLine(wxString::Format(wxT("Condition %s set for breakpoint %d"), bp.conditions.c_str(), bp.debugger_id));
+			}
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool DbgGdb::SetCommands(const BreakpointInfo& bp)
+{
+	if (bp.debugger_id == -1) {	// Sanity check
+		return false;
+	}
+	// There isn't (currentl) a MI command-list command, so use the CLI one
+	// This doesn't actually work either, but at least the commands are visible in -break-list
+	wxString command(wxT("commands "));
+	command << bp.debugger_id << wxT('\n') << bp.commandlist << wxT("\nend");
+
+	if (m_info.enableDebugLog) {
+		m_observer->UpdateAddLine(command);
+	}
+
+	// If we really wanted, we could get the output (for bp 3) of "commands 3"
+	// but as that's not very informative, and we're only faking the command-list anyway, don't bother
+	return WriteCommand(command, NULL);
 }
 
 bool DbgGdb::Continue()
@@ -652,15 +738,6 @@ bool DbgGdb::RemoveBreak(int bid)
 {
 	wxString command;
 	command << wxT("-break-delete ") << bid;
-	return WriteCommand(command, NULL);
-}
-
-bool DbgGdb::RemoveBreak(const wxString &fileName, long lineno)
-{
-	wxString command;
-	wxString fileName_(fileName);
-	fileName_.Replace(wxT("\\"), wxT("/"));
-	command << wxT("clear \"") << fileName_ << wxT("\":") << lineno;
 	return WriteCommand(command, NULL);
 }
 
@@ -1222,6 +1299,77 @@ void DbgGdb::SetDebuggerInformation(const DebuggerInformation& info)
 {
 	IDebugger::SetDebuggerInformation(info);
 	m_consoleFinder.SetConsoleCommand(info.consoleCommand);
+}
+
+void DbgGdb::BreakList()
+{
+	wxString dbg_output;
+	if (!ExecSyncCmd(wxT("-break-list"), dbg_output)) {
+		return;
+	}
+
+	std::vector<BreakpointInfo> li;
+	if (dbg_output.Find(wxT("body=[]")) != wxNOT_FOUND) {
+		// No breakpoints. This will happen when the only bp had been a temporary one, now deleted
+		// So reconcile with the empty vector, to remove that bp from the manager/editor
+		m_observer->ReconcileBreakpoints(li);
+		return;
+	}
+
+	dbg_output.Replace(wxT("\""), wxT(""));
+	dbg_output.Replace(wxT("\\"), wxT(""));
+
+	// We've got a string containing the -break-list output. Extract the data for each bp
+	// We only need to know the following:
+	// Does the breakpoint still exist? (or was it temporary, now deleted; or a watchpoint now out of scope)
+	// Is it (still) ignored? It might have been, but now the ignore-count has dec.ed to 0
+	// So, having stripped the quotes and escapes, we're looking for bkpt={number=14 ..... ,ignore=1...
+	static wxRegEx reNumber(wxT("number=([0-9]+)"));
+	static wxRegEx reIgnore(wxT("ignore=([0-9]+)"));
+
+	wxArrayString breakarray; int offset;
+	// Split the list into individual breakpoints, then parse each one
+	if ((offset = dbg_output.Find(wxT("number="))) == wxNOT_FOUND) {
+		return;
+	}
+	dbg_output = dbg_output.Mid(offset);
+	do {
+		size_t next = dbg_output.find(wxT("number="), 7);
+		wxString breakpt(dbg_output);
+		if (next != wxString::npos) {
+			breakpt = dbg_output.Left(next);
+		}
+		breakarray.Add(breakpt);
+		dbg_output = dbg_output.Mid(breakpt.Len());
+	}
+	while (dbg_output.Find(wxT("number=")) != wxNOT_FOUND);
+
+	for (size_t n=0; n < breakarray.GetCount(); ++n) {
+		wxString breakpt = breakarray[n];
+		if (! reNumber.Matches(breakpt)) {
+			continue;
+		}
+		BreakpointInfo bp;
+		wxString id = reNumber.GetMatch(breakpt, 1);
+		long l; if (! id.ToLong(&l)) {
+			continue;	// Syntax error :/
+		}
+		bp.debugger_id = (int)l;
+
+		// That section should always have worked. This one will only match for ignored breakpoints
+		if (reIgnore.Matches(breakpt)) {
+			wxString id = reIgnore.GetMatch(breakpt, 1);
+			long l; if (id.ToLong(&l)) {
+				bp.ignore_number = (int)l;
+			}
+		}
+
+		li.push_back(bp);
+	}
+
+	// We now have a vector of bps, each containing its debugger_id and ignore-count.
+	// Pass the vector to the breakpoints manager to be reconciled
+	m_observer->ReconcileBreakpoints(li);
 }
 
 bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgExeName)

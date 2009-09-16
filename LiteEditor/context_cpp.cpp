@@ -2655,7 +2655,9 @@ int ContextCpp::DoGetCalltipParamterIndex()
 		bool exit_loop(false);
 
 		while ( pos < ctrl.GetCurrentPos() && !exit_loop ) {
-			wxChar ch = ctrl.SafeGetChar(pos);
+			wxChar ch        = ctrl.SafeGetChar(pos);
+			wxChar ch_before = ctrl.SafeGetChar(ctrl.PositionBefore(pos));
+
 			if (IsCommentOrString(pos)) {
 				pos = ctrl.PositionAfter(pos);
 				continue;
@@ -2676,10 +2678,15 @@ int ContextCpp::DoGetCalltipParamterIndex()
 							case wxT('['):
 									depth++;
 				break;
+			case wxT('>'):
+				if ( ch_before == wxT('-') ) {
+					// operator noting to do
+					break;
+				}
+				// fall through
 			case wxT(')'):
-						case wxT('>'):
-							case wxT(']'):
-									depth--;
+				case wxT(']'):
+					depth--;
 				break;
 			default:
 				break;

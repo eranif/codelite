@@ -1896,6 +1896,10 @@ void Manager::DbgStop()
 	GetBreakpointsMgr()->ClearBP_debugger_ids();
 	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
+	// Clear the ascii viewer
+	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetExpression(wxT(""));
+	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetDbgCommand(wxT(""));
+
 	// update toolbar state
 	UpdateStopped();
 

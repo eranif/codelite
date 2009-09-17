@@ -40,7 +40,7 @@ static void EscapeComment(wxString &comment)
 			comment << line << wxT("\n");
 		}
 	}
-
+	comment.Trim().Trim(false);
 	// SVN does not like any quotation marks in the comment -> escape them
 	comment.Replace(wxT("\""), wxT("\\\""));
 }

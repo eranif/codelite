@@ -1,5 +1,6 @@
 #include "clindexerprotocol.h"
 #include <memory>
+#include <stdio.h>
 
 #define ACK_MAGIC 1975
 

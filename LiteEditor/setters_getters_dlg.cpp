@@ -62,17 +62,20 @@ void SettersGettersDlg::Init(const std::vector<TagEntryPtr> &tags, const wxFileN
 		wxTreeItemId parent = m_checkListMembers->AppendItem(root, tags.at(i)->GetName(), false, new SettersGettersTreeData(NULL, SettersGettersTreeData::Kind_Parent));
 
 		// add two children to generate the name of the next entries
-		bool getter_exist (false);
-		bool setter_exist (false);
-		wxString getter = GenerateGetter(tags.at(i), getter_exist);
-		wxString setter = GenerateSetter(tags.at(i), setter_exist);
+		bool     getter_exist (false);
+		bool     setter_exist (false);
+		wxString setter_display_name;
+		wxString getter_display_name;
 
-		wxTreeItemId gitem = m_checkListMembers->AppendItem(parent, getter, false, new SettersGettersTreeData(tags.at(i), SettersGettersTreeData::Kind_Getter));
+		wxString getter = GenerateGetter(tags.at(i), getter_exist, getter_display_name);
+		wxString setter = GenerateSetter(tags.at(i), setter_exist, setter_display_name);
+
+		wxTreeItemId gitem = m_checkListMembers->AppendItem(parent, getter_display_name, false, new SettersGettersTreeData(tags.at(i), SettersGettersTreeData::Kind_Getter));
 		if(getter_exist) {
 			m_checkListMembers->SetItemTextColour(gitem, wxT("GREY"));
 		}
 
-		wxTreeItemId sitem = m_checkListMembers->AppendItem(parent, setter, false, new SettersGettersTreeData(tags.at(i), SettersGettersTreeData::Kind_Setter));
+		wxTreeItemId sitem = m_checkListMembers->AppendItem(parent, setter_display_name, false, new SettersGettersTreeData(tags.at(i), SettersGettersTreeData::Kind_Setter));
 
 		if ( setter_exist ) {
 			m_checkListMembers->SetItemTextColour(sitem, wxT("GREY"));
@@ -126,8 +129,7 @@ void SettersGettersDlg::GenerateGetters(wxString &code)
 			while ( gchild.IsOk() ) {
 				SettersGettersTreeData *data = (SettersGettersTreeData *)m_checkListMembers->GetItemData(gchild);
 				if ( data->m_kind == SettersGettersTreeData::Kind_Getter && m_checkListMembers->IsChecked(gchild) ) {
-					bool dummy(false);
-					code << GenerateGetter(data->m_tag, dummy) << wxT("\n");
+					code << GenerateGetter(data->m_tag) << wxT("\n");
 					break;
 				}
 				gchild = m_checkListMembers->GetNextChild(child, gcookie);
@@ -149,8 +151,7 @@ void SettersGettersDlg::GenerateSetters(wxString &code)
 			while ( gchild.IsOk() ) {
 				SettersGettersTreeData *data = (SettersGettersTreeData *)m_checkListMembers->GetItemData(gchild);
 				if ( data->m_kind == SettersGettersTreeData::Kind_Setter && m_checkListMembers->IsChecked(gchild)) {
-					bool dummy(false);
-					code << GenerateSetter(data->m_tag, dummy) << wxT("\n");
+					code << GenerateSetter(data->m_tag) << wxT("\n");
 					break;
 				}
 				gchild = m_checkListMembers->GetNextChild(child, gcookie);
@@ -160,7 +161,7 @@ void SettersGettersDlg::GenerateSetters(wxString &code)
 	}
 }
 
-wxString SettersGettersDlg::GenerateSetter(TagEntryPtr tag, bool &alreadyExist)
+wxString SettersGettersDlg::GenerateSetter(TagEntryPtr tag, bool &alreadyExist, wxString &displayName)
 {
 	alreadyExist = false;
 	bool startWithUpper  = m_checkStartWithUppercase->IsChecked();
@@ -208,17 +209,24 @@ wxString SettersGettersDlg::GenerateSetter(TagEntryPtr tag, bool &alreadyExist)
 		tmpName.StartsWith(wxT("m_"), &tmpName);
 
 		method_signature << tmpName << wxT(")");
-		func << method_signature << wxT(" {this->") << _U(var.m_name.c_str()) << wxT(" = ") << tmpName << wxT(";}");
+		func << method_signature;
+
+		// at this point, func contains the display_name (i.e. the function without the implementation)
+		displayName << func;
+
+		// add the implementation
+		func << wxT(" {this->") << _U(var.m_name.c_str()) << wxT(" = ") << tmpName << wxT(";}");
 
 		if ( m_checkForDuplicateEntries ) {
 			alreadyExist = DoCheckExistance(tag->GetScope(), method_name, method_signature);
 		}
+
 		return func;
 	}
 	return wxEmptyString;
 }
 
-wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool &alreadyExist)
+wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool &alreadyExist, wxString &displayName)
 {
 	alreadyExist = false;
 	bool startWithUpper  = m_checkStartWithUppercase->IsChecked();
@@ -273,8 +281,11 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool &alreadyExist)
 			alreadyExist = DoCheckExistance(tag->GetScope(), method_name, method_signature);
 		}
 
+		displayName << func;
+
 		// add the implementation
 		func << wxT(" {return ") << _U(var.m_name.c_str()) << wxT(";}");
+
 		return func;
 	}
 	return wxEmptyString;
@@ -383,4 +394,19 @@ bool SettersGettersDlg::DoCheckExistance(const wxString& scope, const wxString& 
 		}
 	}
 	return false;
+}
+
+wxString SettersGettersDlg::GenerateSetter(TagEntryPtr tag)
+{
+	bool dummy;
+	wxString s_dummy;
+	return GenerateSetter(tag, dummy, s_dummy);
+}
+
+
+wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag)
+{
+	bool dummy;
+	wxString s_dummy;
+	return GenerateGetter(tag, dummy, s_dummy);
 }

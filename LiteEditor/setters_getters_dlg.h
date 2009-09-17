@@ -53,8 +53,10 @@ protected:
 	void OnUpdatePreview(wxCommandEvent &e);
 
 	wxString GenerateFunctions();
-	wxString GenerateSetter(TagEntryPtr tag, bool &alreadyExist);
-	wxString GenerateGetter(TagEntryPtr tag, bool &alreadyExist);
+	wxString GenerateSetter(TagEntryPtr tag, bool &alreadyExist, wxString &displayName);
+	wxString GenerateSetter(TagEntryPtr tag);
+	wxString GenerateGetter(TagEntryPtr tag, bool &alreadyExist, wxString &displayName);
+	wxString GenerateGetter(TagEntryPtr tag);
 	void FormatName(wxString &name);
 	void UpdatePreview();
 	void GenerateGetters(wxString &code);

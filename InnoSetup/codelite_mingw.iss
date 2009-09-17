@@ -42,6 +42,7 @@ Source: "C:\Development\C++\codelite\trunk\Runtime\config\codelite.xml.default";
 Source: "C:\Development\C++\codelite\trunk\Runtime\config\plugins.xml.default"; DestDir: "{app}\config";  Components: Editor;
 Source: "C:\Development\C++\codelite\trunk\Runtime\config\accelerators.conf.default"; DestDir: "{app}\config"; Components: Editor;
 Source: "C:\Development\C++\codelite\trunk\Runtime\config\debuggers.xml.default"; DestDir: "{app}\config"; Components: Editor;
+Source: "C:\Development\C++\codelite\trunk\Runtime\config\debuggers.xml"; DestDir: "{app}\config"; Components: Editor;
 Source: "C:\Development\C++\codelite\trunk\Runtime\config\build_settings.xml.default.win"; DestDir: "{app}\config"; DestName: "build_settings.xml.default"; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

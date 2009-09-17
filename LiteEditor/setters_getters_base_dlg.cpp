@@ -42,6 +42,7 @@
 #endif //WX_PRECOMP
 
 #include "setters_getters_base_dlg.h"
+#include "settersgetterstreectrl.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +71,7 @@ SettersGettersBaseDlg::SettersGettersBaseDlg( wxWindow* parent, wxWindowID id, c
 	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
 
 	wxArrayString m_checkListMembersChoices;
-	m_checkListMembers = new wxCheckTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxTR_HIDE_ROOT );
+	m_checkListMembers = new SettersGettersTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxTR_HIDE_ROOT );
 	m_checkListMembers->AddRoot(wxT("Root"), false);
 
 	bSizer4->Add( m_checkListMembers, 1, wxALL|wxEXPAND, 5 );
@@ -89,40 +90,40 @@ SettersGettersBaseDlg::SettersGettersBaseDlg( wxWindow* parent, wxWindowID id, c
 
 	bSizer3->Add( bSizer4, 1, wxEXPAND, 5 );
 
-	m_staticText31 = new wxStaticText( this, wxID_ANY, wxT("Preview:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText31->Wrap( -1 );
-	bSizer3->Add( m_staticText31, 0, wxALL, 5 );
+//	m_staticText31 = new wxStaticText( this, wxID_ANY, wxT("Preview:"), wxDefaultPosition, wxDefaultSize, 0 );
+//	m_staticText31->Wrap( -1 );
+//	bSizer3->Add( m_staticText31, 0, wxALL, 5 );
 
-	m_textPreview = new LEditor(this);
-	m_textPreview->SetUseTabs( false );
-	m_textPreview->SetTabWidth( 4 );
-	m_textPreview->SetIndent( 4 );
-	m_textPreview->SetTabIndents( false );
-	m_textPreview->SetBackSpaceUnIndents( false );
-	m_textPreview->SetViewEOL( false );
-	m_textPreview->SetViewWhiteSpace( false );
-	m_textPreview->SetMarginWidth( 2, 0 );
-	m_textPreview->SetIndentationGuides( false );
-	m_textPreview->SetMarginWidth( 1, 0 );
-	m_textPreview->SetMarginWidth( 0, 0 );
-	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDER, wxSCI_MARK_BOXPLUS );
-	m_textPreview->MarkerSetBackground( wxSCI_MARKNUM_FOLDER, wxColour( wxT("BLACK") ) );
-	m_textPreview->MarkerSetForeground( wxSCI_MARKNUM_FOLDER, wxColour( wxT("WHITE") ) );
-	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_BOXMINUS );
-	m_textPreview->MarkerSetBackground( wxSCI_MARKNUM_FOLDEROPEN, wxColour( wxT("BLACK") ) );
-	m_textPreview->MarkerSetForeground( wxSCI_MARKNUM_FOLDEROPEN, wxColour( wxT("WHITE") ) );
-	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_EMPTY );
-	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_BOXPLUS );
-	m_textPreview->MarkerSetBackground( wxSCI_MARKNUM_FOLDEREND, wxColour( wxT("BLACK") ) );
-	m_textPreview->MarkerSetForeground( wxSCI_MARKNUM_FOLDEREND, wxColour( wxT("WHITE") ) );
-	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_BOXMINUS );
-	m_textPreview->MarkerSetBackground( wxSCI_MARKNUM_FOLDEROPENMID, wxColour( wxT("BLACK") ) );
-	m_textPreview->MarkerSetForeground( wxSCI_MARKNUM_FOLDEROPENMID, wxColour( wxT("WHITE") ) );
-	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_EMPTY );
-	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_EMPTY );
-	m_textPreview->SetSelBackground( true, wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-	m_textPreview->SetSelForeground( true, wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT ) );
-	bSizer3->Add( m_textPreview, 1, wxEXPAND | wxALL, 5 );
+//	m_textPreview = new LEditor(this);
+//	m_textPreview->SetUseTabs( false );
+//	m_textPreview->SetTabWidth( 4 );
+//	m_textPreview->SetIndent( 4 );
+//	m_textPreview->SetTabIndents( false );
+//	m_textPreview->SetBackSpaceUnIndents( false );
+//	m_textPreview->SetViewEOL( false );
+//	m_textPreview->SetViewWhiteSpace( false );
+//	m_textPreview->SetMarginWidth( 2, 0 );
+//	m_textPreview->SetIndentationGuides( false );
+//	m_textPreview->SetMarginWidth( 1, 0 );
+//	m_textPreview->SetMarginWidth( 0, 0 );
+//	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDER, wxSCI_MARK_BOXPLUS );
+//	m_textPreview->MarkerSetBackground( wxSCI_MARKNUM_FOLDER, wxColour( wxT("BLACK") ) );
+//	m_textPreview->MarkerSetForeground( wxSCI_MARKNUM_FOLDER, wxColour( wxT("WHITE") ) );
+//	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_BOXMINUS );
+//	m_textPreview->MarkerSetBackground( wxSCI_MARKNUM_FOLDEROPEN, wxColour( wxT("BLACK") ) );
+//	m_textPreview->MarkerSetForeground( wxSCI_MARKNUM_FOLDEROPEN, wxColour( wxT("WHITE") ) );
+//	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_EMPTY );
+//	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_BOXPLUS );
+//	m_textPreview->MarkerSetBackground( wxSCI_MARKNUM_FOLDEREND, wxColour( wxT("BLACK") ) );
+//	m_textPreview->MarkerSetForeground( wxSCI_MARKNUM_FOLDEREND, wxColour( wxT("WHITE") ) );
+//	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_BOXMINUS );
+//	m_textPreview->MarkerSetBackground( wxSCI_MARKNUM_FOLDEROPENMID, wxColour( wxT("BLACK") ) );
+//	m_textPreview->MarkerSetForeground( wxSCI_MARKNUM_FOLDEROPENMID, wxColour( wxT("WHITE") ) );
+//	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_EMPTY );
+//	m_textPreview->MarkerDefine( wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_EMPTY );
+//	m_textPreview->SetSelBackground( true, wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+//	m_textPreview->SetSelForeground( true, wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT ) );
+//	bSizer3->Add( m_textPreview, 1, wxEXPAND | wxALL, 5 );
 
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT("Options:") ), wxHORIZONTAL );

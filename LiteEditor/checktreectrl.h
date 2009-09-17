@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : checktreectrl.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : checktreectrl.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #ifndef CHECKTREECTRL_H
@@ -29,7 +29,7 @@
 #include <wx/bitmap.h>
 #include "list"
 
-class wxCheckTreeCtrl : public wxTreeCtrl 
+class wxCheckTreeCtrl : public wxTreeCtrl
 {
 	wxBitmap m_checkedBmp;
 	wxBitmap m_uncheckedBmp;
@@ -42,8 +42,8 @@ public:
 	virtual ~wxCheckTreeCtrl();
 
 	//override item managements functions
-	wxTreeItemId AddRoot(const wxString& text, bool checked, wxTreeItemData* data = NULL);
-	wxTreeItemId AppendItem(const wxTreeItemId& parent, const wxString& text, bool checked, wxTreeItemData* data = NULL);
+	virtual wxTreeItemId AddRoot(const wxString& text, bool checked, wxTreeItemData* data = NULL);
+	virtual wxTreeItemId AppendItem(const wxTreeItemId& parent, const wxString& text, bool checked, wxTreeItemData* data = NULL);
 
 	bool IsChecked(const wxTreeItemId& item) const;
 	void Check(const wxTreeItemId& item, bool check = true);
@@ -59,7 +59,7 @@ public:
  * \code
  * EVT_CHECKTREE_ITEM_SELECTED() //wxEVT_CKTR_ITEM_SELECTED
  * EVT_CHECKTREE_ITEM_UNSELECTED() //wxEVT_CKTR_ITEM_UNSELECTED
- * \code 
+ * \code
  * macros to handle them.
  */
 class wxCheckTreeCtrlEvent : public wxNotifyEvent

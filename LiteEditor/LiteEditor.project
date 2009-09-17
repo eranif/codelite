@@ -9,6 +9,7 @@
     
     
     
+    
     ]]>
     </Plugin>
   </Plugins>
@@ -379,6 +380,8 @@
     <File Name="filechecklistbase.h"/>
     <File Name="clauidockart.cpp"/>
     <File Name="clauidockart.h"/>
+    <File Name="settersgetterstreectrl.cpp"/>
+    <File Name="settersgetterstreectrl.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

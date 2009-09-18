@@ -44,6 +44,8 @@
 // The Manager class
 // ====================================================================
 
+extern const wxEventType wxEVT_CMD_RESTART_CODELITE;
+
 class Manager : public wxEvtHandler, public IDebuggerObserver
 {
   	friend class Singleton<Manager>;
@@ -81,8 +83,12 @@ public:
 	bool IsShutdownInProgress() const { return m_isShutdown; }
  	void SetShutdownInProgress(bool b) { m_isShutdown = b; }
 
-	void RestartCodeLite();
+
 	void SetCodeLiteLauncherPath(const wxString &path);
+	void OnRestart(wxCommandEvent &event);
+protected:
+	void DoRestartCodeLite();
+
 	 //--------------------------- Workspace Loading -----------------------------
 public:
  	/*!

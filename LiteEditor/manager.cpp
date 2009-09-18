@@ -71,6 +71,8 @@
 
 #include "manager.h"
 
+const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
+
 //---------------------------------------------------------------
 // Menu accelerators helper methods
 //---------------------------------------------------------------
@@ -109,6 +111,7 @@ Manager::Manager ( void )
 		, m_frameLineno ( wxNOT_FOUND )
 {
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
+	Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventFunction(Manager::OnRestart), NULL, this);
 }
 
 Manager::~Manager ( void )
@@ -2584,7 +2587,7 @@ void Manager::RestartCodeLite()
 	wxMilliSleep(100);
 	wxPrintf(wxT("%s\n"), command.c_str());
 	wxExecute(command, wxEXEC_ASYNC|wxEXEC_NOHIDE);
-	
+
 #elif defined (__WXGTK__)
 	// The Shell is our friend
 	command << wxT("sleep 1 && kill ") << wxGetProcessId() << wxT(" && ") << wxStandardPaths::Get().GetExecutablePath();
@@ -2592,18 +2595,20 @@ void Manager::RestartCodeLite()
 
 	// save the current session, unsaved editors and layout before restarting
 	Frame::Get()->SaveLayoutAndSession();
-	
+
 	wxMilliSleep(100);
 	wxArrayString dummy;
 	ProcUtils::SafeExecuteCommand(command, dummy);
 #endif
-
-
-	
-
 }
 
 void Manager::SetCodeLiteLauncherPath(const wxString& path)
 {
 	m_codeliteLauncher = wxFileName(path, wxT("codelite_launcher"));
+}
+
+void Manager::OnRestart(wxCommandEvent& event)
+{
+	wxUnusedVar(event);
+	DoRestartCodeLite();
 }

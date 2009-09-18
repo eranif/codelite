@@ -140,7 +140,8 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 		// On Winodws & GTK we offer auto-restart
 		int answer = wxMessageBox(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL);
 		if ( answer == wxYES ) {
-			ManagerST::Get()->RestartCodeLite();
+			wxCommandEvent e(wxEVT_CMD_RESTART_CODELITE);
+			ManagerST::Get()->AddPendingEvent(e);
 		}
 #endif
 

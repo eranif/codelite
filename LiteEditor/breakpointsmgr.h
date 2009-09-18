@@ -62,11 +62,6 @@ class BreakptMgr
 	bool CanThisBreakpointBeUpdated(const BreakpointInfo &bp1, const BreakpointInfo &bp2) const;
 
 	/**
-	 * Tell the debugger about the ignore count, conditions etc
-	 */
-	void DoBreakpointExtras(BreakpointInfo &bp);
-
-	/**
 	 * Get id of the breakpoint on this line. If multiple bps, ask the user to select
 	 */
 	int GetDesiredBreakpointIfMultiple(const wxString &fileName, const int lineno, const wxString msg = wxT(""));

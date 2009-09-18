@@ -301,6 +301,7 @@ void BreakptMgr::ClearBP_debugger_ids()
 	for (; iter != m_bps.end(); iter++) {
 		BreakpointInfo bp = *iter;
 		bp.debugger_id = -1;
+		*iter = bp;
 	}
 }
 
@@ -625,30 +626,6 @@ void BreakptMgr::BreakpointHit(int id)
 }
 
 /*------------------------------- Implementation -------------------------------*/
-
-// Tell the debugger about the bp's enabled state and command-list
-void BreakptMgr::DoBreakpointExtras(BreakpointInfo &bp)
-{
-	if (bp.is_enabled && bp.commandlist.IsEmpty()) {
-		// Nothing to do
-		return;
-	}
-
-	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr && dbgr->IsRunning()) {
-		bool contIsNeeded = PauseDebuggerIfNeeded();
-		if (! bp.is_enabled) {
-			dbgr->SetEnabledState(bp.debugger_id, bp.is_enabled);
-		}
-		if (! bp.commandlist.IsEmpty()) {
-			dbgr->SetCommands(bp);
-		}
-		
-		if (contIsNeeded) {
-			dbgr->Continue();
-		}
-	}
-}
 
 // Get a breakpoint on this line. If multiple bps, ask the user to select
 int BreakptMgr::GetDesiredBreakpointIfMultiple(const wxString &fileName, const int lineno, const wxString msg /*=wxT("")*/)

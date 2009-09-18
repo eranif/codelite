@@ -234,7 +234,6 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	
 	m_checkDisable = new wxCheckBox( this, wxID_ANY, wxT("Disable"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	m_checkDisable->Enable( false );
 	m_checkDisable->SetToolTip( wxT("If you check this box, the breakpoint (or watchpoint) will still exist, but it won't trigger. If you uncheck it in the future, the breakpoint will work again.") );
 	
 	fgSizer1->Add( m_checkDisable, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );

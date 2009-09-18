@@ -84,7 +84,7 @@ class SGDlgData : public SerializedObject
 	bool  m_formatSource;
 
 public:
-	SGDlgData() {}
+	SGDlgData() : m_useUpperCase (true), m_formatSource(true) {}
 	~SGDlgData() {}
 
 	virtual void Serialize(Archive &arch);

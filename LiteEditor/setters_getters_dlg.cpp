@@ -386,9 +386,12 @@ void SettersGettersDlg::BuildTree()
 	EditorConfigST::Get()->ReadObject(wxT("SGDlgData"), &data);
 
 	m_checkListMembers->Freeze();
-	//append all members to the check list
+	// Append all members to the check list
 	m_checkListMembers->DeleteAllItems();
 	wxTreeItemId root = m_checkListMembers->AddRoot(wxT("Root"), false, new SettersGettersTreeData(NULL, SettersGettersTreeData::Kind_Root, false));
+	
+	m_checkFormat->SetValue(data.GetFormatSource());
+	m_checkStartWithUppercase->SetValue(data.GetUseUpperCase());
 
 	m_checkForDuplicateEntries = true;
 	for (size_t i=0; i<m_members.size() ; i++) {
@@ -420,9 +423,6 @@ void SettersGettersDlg::BuildTree()
 	if (m_members.empty() == false) {
 		m_textClassName->SetValue(m_members.at(0)->GetParent());
 	}
-
-	m_checkFormat->SetValue(data.GetFormatSource());
-	m_checkStartWithUppercase->SetValue(data.GetUseUpperCase());
 
 	m_checkListMembers->ExpandAll();
 	m_checkListMembers->Thaw();

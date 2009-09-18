@@ -54,6 +54,7 @@ Source: "C:\Development\C++\codelite\trunk\Runtime\debuggers\Debugger.dll"; Dest
 Source: "C:\Development\C++\codelite\trunk\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\plugins\resources\*"; DestDir: "{app}\plugins\resources\"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\Development\C++\codelite\trunk\Runtime\codelite_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\le_exec.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\Development\C++\codelite\trunk\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

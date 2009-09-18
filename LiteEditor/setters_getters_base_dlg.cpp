@@ -132,18 +132,20 @@ SettersGettersBaseDlg::SettersGettersBaseDlg( wxWindow* parent, wxWindowID id, c
 
 	sbSizer1->Add( m_checkStartWithUppercase, 0, wxALL, 5 );
 
+	m_checkFormat = new wxCheckBox( this, wxID_ANY, wxT("Format text after insertion"), wxDefaultPosition, wxDefaultSize, 0 );
+
+	sbSizer1->Add( m_checkFormat, 0, wxALL, 5 );
+
 	bSizer3->Add( sbSizer1, 0, wxALL|wxEXPAND, 5 );
 
 	bSizer1->Add( bSizer3, 1, wxEXPAND, 5 );
-
-	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
 
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 
 	m_buttonOK = new wxButton( this, wxID_OK, wxT("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonOK, 0, wxALL, 5 );
+	m_buttonOK->SetDefault();
 
 	m_buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonCancel, 0, wxALL, 5 );
@@ -156,4 +158,5 @@ SettersGettersBaseDlg::SettersGettersBaseDlg( wxWindow* parent, wxWindowID id, c
 	// Connect Events
 	m_buttonCheckAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SettersGettersBaseDlg::OnCheckAll ), NULL, this );
 	m_buttonUncheckAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SettersGettersBaseDlg::OnUncheckAll ), NULL, this );
+	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SettersGettersBaseDlg::OnButtonOk ), NULL, this );
 }

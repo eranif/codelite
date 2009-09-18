@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "editor_config.h"
 #include "ctags_manager.h"
 #include "settersgetterstreectrl.h"
 #include "setters_getters_dlg.h"
@@ -51,41 +52,7 @@ void SettersGettersDlg::Init(const std::vector<TagEntryPtr> &tags, const wxFileN
 	m_lineno = lineno;
 	m_members = tags;
 
-
-	//append all members to the check list
-	m_checkListMembers->DeleteAllItems();
-	wxTreeItemId root = m_checkListMembers->AddRoot(wxT("Root"), false, new SettersGettersTreeData(NULL, SettersGettersTreeData::Kind_Root));
-
-	m_checkForDuplicateEntries = true;
-	for (size_t i=0; i<tags.size() ; i++) {
-		// add child node for the members
-		wxTreeItemId parent = m_checkListMembers->AppendItem(root, tags.at(i)->GetName(), false, new SettersGettersTreeData(NULL, SettersGettersTreeData::Kind_Parent));
-
-		// add two children to generate the name of the next entries
-		bool     getter_exist (false);
-		bool     setter_exist (false);
-		wxString setter_display_name;
-		wxString getter_display_name;
-
-		wxString getter = GenerateGetter(tags.at(i), getter_exist, getter_display_name);
-		wxString setter = GenerateSetter(tags.at(i), setter_exist, setter_display_name);
-
-		wxTreeItemId gitem = m_checkListMembers->AppendItem(parent, getter_display_name, false, new SettersGettersTreeData(tags.at(i), SettersGettersTreeData::Kind_Getter));
-		if(getter_exist) {
-			m_checkListMembers->SetItemTextColour(gitem, wxT("GREY"));
-		}
-
-		wxTreeItemId sitem = m_checkListMembers->AppendItem(parent, setter_display_name, false, new SettersGettersTreeData(tags.at(i), SettersGettersTreeData::Kind_Setter));
-
-		if ( setter_exist ) {
-			m_checkListMembers->SetItemTextColour(sitem, wxT("GREY"));
-		}
-	}
-	m_checkForDuplicateEntries = false;
-
-	if (tags.empty() == false) {
-		m_textClassName->SetValue(tags.at(0)->GetParent());
-	}
+	BuildTree();
 
 	//set the preview
 //	m_textPreview->SetReadOnly(false);
@@ -99,6 +66,7 @@ void SettersGettersDlg::Init(const std::vector<TagEntryPtr> &tags, const wxFileN
 void SettersGettersDlg::OnCheckStartWithUpperCase(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
+	UpdateTree();
 	UpdatePreview();
 }
 
@@ -277,7 +245,7 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool &alreadyExist, 
 		// add the signature
 		func << method_signature;
 
-		if(m_checkForDuplicateEntries) {
+		if (m_checkForDuplicateEntries) {
 			alreadyExist = DoCheckExistance(tag->GetScope(), method_name, method_signature);
 		}
 
@@ -410,3 +378,110 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag)
 	wxString s_dummy;
 	return GenerateGetter(tag, dummy, s_dummy);
 }
+
+
+void SettersGettersDlg::BuildTree()
+{
+	SGDlgData data;
+	EditorConfigST::Get()->ReadObject(wxT("SGDlgData"), &data);
+
+	m_checkListMembers->Freeze();
+	//append all members to the check list
+	m_checkListMembers->DeleteAllItems();
+	wxTreeItemId root = m_checkListMembers->AddRoot(wxT("Root"), false, new SettersGettersTreeData(NULL, SettersGettersTreeData::Kind_Root, false));
+
+	m_checkForDuplicateEntries = true;
+	for (size_t i=0; i<m_members.size() ; i++) {
+		// add child node for the members
+		wxTreeItemId parent = m_checkListMembers->AppendItem(root, m_members.at(i)->GetName(), false, new SettersGettersTreeData(NULL, SettersGettersTreeData::Kind_Parent, false));
+
+		// add two children to generate the name of the next entries
+		bool     getter_exist (false);
+		bool     setter_exist (false);
+		wxString setter_display_name;
+		wxString getter_display_name;
+
+		wxString getter = GenerateGetter(m_members.at(i), getter_exist, getter_display_name);
+		wxString setter = GenerateSetter(m_members.at(i), setter_exist, setter_display_name);
+
+		wxTreeItemId gitem = m_checkListMembers->AppendItem(parent, getter_display_name, false, new SettersGettersTreeData(m_members.at(i), SettersGettersTreeData::Kind_Getter,
+															getter_exist ? true : false));
+		if ( getter_exist ) {
+			m_checkListMembers->SetItemTextColour(gitem, wxT("GREY"));
+		}
+		wxTreeItemId sitem = m_checkListMembers->AppendItem(parent, setter_display_name, false, new SettersGettersTreeData(m_members.at(i), SettersGettersTreeData::Kind_Setter,
+															setter_exist ? true : false));
+		if ( setter_exist ) {
+			m_checkListMembers->SetItemTextColour(sitem, wxT("GREY"));
+		}
+	}
+	m_checkForDuplicateEntries = false;
+
+	if (m_members.empty() == false) {
+		m_textClassName->SetValue(m_members.at(0)->GetParent());
+	}
+
+	m_checkFormat->SetValue(data.GetFormatSource());
+	m_checkStartWithUppercase->SetValue(data.GetUseUpperCase());
+
+	m_checkListMembers->ExpandAll();
+	m_checkListMembers->Thaw();
+}
+
+void SettersGettersDlg::UpdateTree()
+{
+	wxTreeItemIdValue cookie;
+	wxTreeItemId child = m_checkListMembers->GetFirstChild(m_checkListMembers->GetRootItem(), cookie);
+	while (child.IsOk()) {
+		if (m_checkListMembers->ItemHasChildren(child)) {
+
+			wxTreeItemIdValue gcookie;
+			wxTreeItemId gchild = m_checkListMembers->GetFirstChild(child, gcookie);
+			while ( gchild.IsOk() ) {
+				SettersGettersTreeData *data = (SettersGettersTreeData *)m_checkListMembers->GetItemData(gchild);
+
+				wxString display_name;
+				bool dummy;
+				if ( data->m_kind == SettersGettersTreeData::Kind_Getter ) {
+					GenerateGetter(data->m_tag, dummy, display_name);
+
+				} else if ( data->m_kind == SettersGettersTreeData::Kind_Setter ) {
+					GenerateSetter(data->m_tag, dummy, display_name);
+
+				}
+				m_checkListMembers->SetItemText(gchild, display_name);
+				gchild = m_checkListMembers->GetNextChild(child, gcookie);
+			}
+		}
+		child = m_checkListMembers->GetNextChild(m_checkListMembers->GetRootItem(), cookie);
+	}
+}
+
+void SettersGettersDlg::OnButtonOk(wxCommandEvent& e)
+{
+	SGDlgData data;
+	data.SetFormatSource( m_checkFormat->IsChecked()  );
+	data.SetUseUpperCase( m_checkStartWithUppercase->IsChecked() );
+	EditorConfigST::Get()->WriteObject(wxT("SGDlgData"), &data);
+	e.Skip();
+}
+
+//------------------------------------- Configuration Data -----------------------------------
+
+void SGDlgData::DeSerialize(Archive& arch)
+{
+	if ( arch.Read(wxT("m_useUpperCase"), m_useUpperCase) == false ) {
+		m_useUpperCase = true;
+	}
+
+	if ( arch.Read(wxT("m_formatSource"), m_formatSource) == false ) {
+		m_formatSource = true;
+	}
+}
+
+void SGDlgData::Serialize(Archive& arch)
+{
+	arch.Write(wxT("m_useUpperCase"), m_useUpperCase);
+	arch.Write(wxT("m_formatSource"), m_formatSource);
+}
+

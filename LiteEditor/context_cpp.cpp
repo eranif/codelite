@@ -1170,11 +1170,14 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 		if (code.IsEmpty() == false) {
 			editor.InsertTextWithIndentation(code, lineno);
 		}
-		IPlugin *formatter = PluginManager::Get()->GetPlugin(wxT("CodeFormatter"));
-		if (formatter) {
-			// code formatter is available, format the current source file
-			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("format_source"));
-			Frame::Get()->GetEventHandler()->AddPendingEvent(e);
+
+		if ( s_dlg->GetFormatText() ) {
+			IPlugin *formatter = PluginManager::Get()->GetPlugin(wxT("CodeFormatter"));
+			if (formatter) {
+				// code formatter is available, format the current source file
+				wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("format_source"));
+				Frame::Get()->GetEventHandler()->AddPendingEvent(e);
+			}
 		}
 	}
 }

@@ -72,6 +72,35 @@ static const char *Checkbox_on_XPM[] = {
 "&&&&&&&&&&&&&&&&"
 };
 
+/* XPM */
+static char * check_box_disabled_xpm[] = {
+"16 16 10 1",
+" 	c None",
+".	c #185284",
+"+	c #E7E7DE",
+"@	c #E7E7E7",
+"#	c #EFEFE7",
+"$	c #EFEFEF",
+"%	c #F7F7EF",
+"&	c #C3C3C3",
+"*	c #F7F7F7",
+"=	c #FFFFFF",
+"                ",
+"................",
+".+++++++@##$%++.",
+".+++++@@##$%$++.",
+".++&&&&&&&&&&++.",
+".++&&&&&&&&&&++.",
+".++&&&&&&&&&&++.",
+".++&&&&&&&&&&++.",
+".+@&&&&&&&&&&++.",
+".+#&&&&&&&&&&++.",
+".+#&&&&&&&&&&++.",
+".+$&&&&&&&&&&++.",
+".+%%***==*===++.",
+".++++++++++++++.",
+"................",
+"                "};
 //----------------------------------------------
 
 BEGIN_EVENT_TABLE(SettersGettersTreeCtrl, wxCheckTreeCtrl)
@@ -89,7 +118,7 @@ SettersGettersTreeCtrl::SettersGettersTreeCtrl(wxWindow* parent, wxWindowID id, 
 	il->Add(wxBitmap(Checkbox_on_XPM));                              // 0
 	il->Add(wxBitmap(Checkbox_off_XPM));                             // 1
 	il->Add(wxXmlResource::Get()->LoadBitmap(wxT("member_public"))); // 2
-
+	il->Add(wxBitmap(check_box_disabled_xpm));                       // 3
 	//will be owned by the control
 	AssignImageList(il);
 }
@@ -102,8 +131,13 @@ wxTreeItemId SettersGettersTreeCtrl::AppendItem(const wxTreeItemId& parent, cons
 {
 	if ( data ) {
 		SettersGettersTreeData* d = dynamic_cast<SettersGettersTreeData*>( data );
-		if ( d && d->m_kind == SettersGettersTreeData::Kind_Parent ) {
-			return wxTreeCtrl::AppendItem(parent, text, 2, 2, data);
+
+		if ( d ) {
+			if ( d->m_kind == SettersGettersTreeData::Kind_Parent ) {
+				return wxTreeCtrl::AppendItem(parent, text, 2, 2, data);
+			} else if ( d->m_disabled ) {
+				return wxTreeCtrl::AppendItem(parent, text, 3, 3, data);
+			}
 		}
 	}
 	return wxCheckTreeCtrl::AppendItem(parent, text, checked, data);
@@ -123,19 +157,22 @@ void SettersGettersTreeCtrl::OnItemUnchecked(wxCheckTreeCtrlEvent& e)
 		if ( data ) {
 			SettersGettersTreeData* d = dynamic_cast<SettersGettersTreeData*>( data );
 			if ( d ) {
-				switch (d->m_kind) {
-				case SettersGettersTreeData::Kind_Root:
+				if ( d->m_disabled ) {
 					e.Veto();
-					break;
-				case SettersGettersTreeData::Kind_Parent:
-					e.Veto();
-					break;
+				} else {
+					switch (d->m_kind) {
+					case SettersGettersTreeData::Kind_Root:
+					case SettersGettersTreeData::Kind_Parent:
+						e.Veto();
+						break;
+					}
 				}
 			}
 		}
 		e.Skip();
 	}
 }
+
 void SettersGettersTreeCtrl::OnItemChecked(wxCheckTreeCtrlEvent& e)
 {
 	wxTreeItemId item = e.GetItem();
@@ -144,13 +181,15 @@ void SettersGettersTreeCtrl::OnItemChecked(wxCheckTreeCtrlEvent& e)
 		if ( data ) {
 			SettersGettersTreeData* d = dynamic_cast<SettersGettersTreeData*>( data );
 			if ( d ) {
-				switch (d->m_kind) {
-				case SettersGettersTreeData::Kind_Root:
+				if ( d->m_disabled ) {
 					e.Veto();
-					break;
-				case SettersGettersTreeData::Kind_Parent:
-					e.Veto();
-					break;
+				} else {
+					switch (d->m_kind) {
+					case SettersGettersTreeData::Kind_Root:
+					case SettersGettersTreeData::Kind_Parent:
+						e.Veto();
+						break;
+					}
 				}
 			}
 		}

@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __setters_getters_dlg__
+#ifndef __setters_getters_dlg__
 #define __setters_getters_dlg__
 
 /**
@@ -51,12 +51,16 @@ protected:
 	void OnCheckAll(wxCommandEvent &e);
 	void OnUncheckAll(wxCommandEvent &e);
 	void OnUpdatePreview(wxCommandEvent &e);
+	void OnButtonOk(wxCommandEvent &e);
+	void BuildTree ();
+	void UpdateTree();
 
 	wxString GenerateFunctions();
 	wxString GenerateSetter(TagEntryPtr tag, bool &alreadyExist, wxString &displayName);
 	wxString GenerateSetter(TagEntryPtr tag);
 	wxString GenerateGetter(TagEntryPtr tag, bool &alreadyExist, wxString &displayName);
 	wxString GenerateGetter(TagEntryPtr tag);
+
 	void FormatName(wxString &name);
 	void UpdatePreview();
 	void GenerateGetters(wxString &code);
@@ -65,8 +69,38 @@ protected:
 public:
 	/** Constructor */
 	SettersGettersDlg(wxWindow* parent);
-	const wxString &GetGenCode() const {return m_code;}
+	const wxString &GetGenCode() const {
+		return m_code;
+	}
+	bool GetFormatText() {
+		return m_checkFormat->IsChecked();
+	}
 	void Init(const std::vector<TagEntryPtr> &tags, const wxFileName &file, int lineno);
 };
 
+class SGDlgData : public SerializedObject
+{
+	bool  m_useUpperCase;
+	bool  m_formatSource;
+
+public:
+	SGDlgData() {}
+	~SGDlgData() {}
+
+	virtual void Serialize(Archive &arch);
+	virtual void DeSerialize(Archive &arch);
+
+	void SetFormatSource(const bool& formatSource) {
+		this->m_formatSource = formatSource;
+	}
+	void SetUseUpperCase(const bool& useUpperCase) {
+		this->m_useUpperCase = useUpperCase;
+	}
+	const bool& GetFormatSource() const {
+		return m_formatSource;
+	}
+	const bool& GetUseUpperCase() const {
+		return m_useUpperCase;
+	}
+};
 #endif // __setters_getters_dlg__

@@ -70,7 +70,7 @@ protected:
 	wxStaticText*    m_staticText31;
 	LEditor*         m_textPreview;
 	wxCheckBox*      m_checkStartWithUppercase;
-	wxStaticLine*    m_staticline1;
+	wxCheckBox*      m_checkFormat;
 	wxButton*        m_buttonOK;
 	wxButton*        m_buttonCancel;
 
@@ -82,6 +82,9 @@ protected:
 		event.Skip();
 	}
 
+	virtual void OnButtonOk( wxCommandEvent &event ) {
+		event.Skip();
+	}
 
 public:
 	SettersGettersBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Generate Setters/Getters for class"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 655,518 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );

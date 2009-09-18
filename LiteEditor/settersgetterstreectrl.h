@@ -12,8 +12,9 @@ public:
 
 	TagEntryPtr m_tag;
 	int         m_kind;
+	bool        m_disabled;
 public:
-	SettersGettersTreeData(TagEntryPtr tag, int kind) : m_tag(tag), m_kind(kind) {}
+	SettersGettersTreeData(TagEntryPtr tag, int kind, bool disabled) : m_tag(tag), m_kind(kind), m_disabled(disabled) {}
 	virtual ~SettersGettersTreeData() {}
 };
 

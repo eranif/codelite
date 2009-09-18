@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : gdb_result.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : gdb_result.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -138,7 +138,7 @@
 #define YY_END_OF_BUFFER_CHAR 0
 
 /* Size of default input buffer. */
-#define YY_BUF_SIZE 1024*64
+#define YY_BUF_SIZE 1024*256
 
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
@@ -588,7 +588,7 @@ void gdb_result_less(int count);
 #define RETURN_VAL(x) {\
 					gdb_result_string = yytext;\
 					return(x);}
-					
+
 #define RETURN_ESCAPED_STRING(x) {\
 					gdb_result_string = yytext;\
 					std::string str;\
@@ -1865,7 +1865,7 @@ int main()
 /*******************************************************************/
 void gdb_result_lex_clean()
 {
-	yy_flush_buffer(YY_CURRENT_BUFFER); 
+	yy_flush_buffer(YY_CURRENT_BUFFER);
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	gdb_result_lineno = 1;
 }
@@ -1887,7 +1887,7 @@ void gdb_result_less(int count){
 void gdb_result_push_buffer(const std::string &new_input){
 	// keep current buffer state
 	gs_bufferStack.push_back(YY_CURRENT_BUFFER);
-	
+
 	// create new buffer and use it
 	yy_switch_to_buffer( yy_scan_string(new_input.c_str()) );
 }
@@ -1895,7 +1895,7 @@ void gdb_result_push_buffer(const std::string &new_input){
 void gdb_result_pop_buffer(){
 	// clean current buffer
 	yy_delete_buffer(YY_CURRENT_BUFFER);
-	
+
 	// create new buffer and use it
 	yy_switch_to_buffer( gs_bufferStack.back() );
 	gs_bufferStack.pop_back();

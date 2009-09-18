@@ -81,31 +81,32 @@ class BreakpointInfo: public SerializedObject
 {
 public:
 	// Where the bp is: file/lineno, function name (e.g. main()) or the memory location
-	wxString file;
-	int lineno;
-	wxString watchpt_data;
-	wxString function_name;
-	bool regex;							// Is the function_name a regex?
-	int memory_address;
-
+	wxString               file;
+	int                    lineno;
+	wxString               watchpt_data;
+	wxString               function_name;
+	bool                   regex;            // Is the function_name a regex?
+	int                    memory_address;
 	// How to identify the bp. Because the debugger won't always be running, we need an internal id as well as the debugger's one
-	int internal_id;
-	int debugger_id;	// -1 signifies not set
+	int                    internal_id;
+	int                    debugger_id;	// -1 signifies not set
+	enum BP_type           bp_type;  // Is it a plain vanilla breakpoint, or a temporary one, or a watchpoint, or...
+	unsigned int           ignore_number; // 0 means 'not ignored'. >0 is the number of times the bp must be hit before it becomes enabled
+	bool                   is_enabled;
+	bool                   is_temp;
+	enum WP_type           watchpoint_type;	// If this is a watchpoint, holds which sort it is
+	wxString               commandlist;
+	wxString               conditions;
 
-
-	enum BP_type bp_type;  // Is it a plain vanilla breakpoint, or a temporary one, or a watchpoint, or...
-	unsigned int ignore_number; // 0 means 'not ignored'. >0 is the number of times the bp must be hit before it becomes enabled
-	bool is_enabled;
-	bool is_temp;
-	enum WP_type watchpoint_type;	// If this is a watchpoint, holds which sort it is
-	wxString commandlist;
-	wxString conditions;
+	BreakpointInfo(const BreakpointInfo& BI ) {
+		if ( this == &BI ) {
+			return;
+		}
+		*this = BI;
+	}
 
 	BreakpointInfo() : lineno(-1), regex(false), memory_address(-1), debugger_id(-1), bp_type(BP_type_break),
 			ignore_number(0), is_enabled(true), is_temp(false), watchpoint_type(WP_watch)	{}
-	BreakpointInfo(const BreakpointInfo& BI ) {
-		*this = BI;
-	}
 
 	bool IsConditional() {
 		return ! conditions.IsEmpty();
@@ -119,22 +120,40 @@ public:
 		debugger_id = ext_id;
 	}
 
+//	BreakpointInfo& operator=(const BreakpointInfo& BI) {
+//		file = BI.file;
+//		lineno = BI.lineno;
+//		function_name = BI.function_name;
+//		memory_address = BI.memory_address;
+//		bp_type = BI.bp_type;
+//		watchpoint_type = BI.watchpoint_type;
+//		watchpt_data = BI.watchpt_data;
+//		commandlist = BI.commandlist;
+//		regex = BI.regex;
+//		is_temp = BI.is_temp;
+//		internal_id = BI.internal_id;
+//		debugger_id = BI.debugger_id;
+//		is_enabled = BI.is_enabled;
+//		ignore_number = BI.ignore_number;
+//		conditions = BI.conditions;
+//		return *this;
+//	}
 	BreakpointInfo& operator=(const BreakpointInfo& BI) {
-		file = BI.file;
-		lineno = BI.lineno;
-		function_name = BI.function_name;
-		memory_address = BI.memory_address;
-		bp_type = BI.bp_type;
-		watchpoint_type = BI.watchpoint_type;
-		watchpt_data = BI.watchpt_data;
-		commandlist = BI.commandlist;
-		regex = BI.regex;
-		is_temp = BI.is_temp;
-		internal_id = BI.internal_id;
-		debugger_id = BI.debugger_id;
-		is_enabled = BI.is_enabled;
-		ignore_number = BI.ignore_number;
-		conditions = BI.conditions;
+		file             = BI.file;
+		lineno           = BI.lineno;
+		watchpt_data     = BI.watchpt_data;
+		function_name    = BI.function_name;
+		regex            = BI.regex;
+		memory_address   = BI.memory_address;
+		internal_id      = BI.internal_id;
+		debugger_id      = BI.debugger_id;
+		bp_type          = BI.bp_type;
+		ignore_number    = BI.ignore_number;
+		is_enabled       = BI.is_enabled;
+		is_temp          = BI.is_temp;
+		watchpoint_type  = BI.watchpoint_type;
+		commandlist      = BI.commandlist;
+		conditions       = BI.conditions;
 		return *this;
 	}
 
@@ -456,15 +475,15 @@ public:
 	/**
 	 * \brief Set this breakpoint's Ignore count
 	 */
-	 virtual bool SetIgnoreLevel(const int bid, const int ignorecount) = 0;
+	virtual bool SetIgnoreLevel(const int bid, const int ignorecount) = 0;
 	/**
 	 * \brief Set this breakpoint's condition
 	 */
-	 virtual bool SetCondition(const BreakpointInfo& bp) = 0;
+	virtual bool SetCondition(const BreakpointInfo& bp) = 0;
 	/**
 	 * \brief Set a command-list for this breakpoint
 	 */
-	 virtual bool SetCommands(const BreakpointInfo& bp) = 0;
+	virtual bool SetCommands(const BreakpointInfo& bp) = 0;
 	/**
 	 * \brief ask the debugger to query about its file & line. Once the result arrives, the observer's UpdateFileLine() will be invoked
 	 */

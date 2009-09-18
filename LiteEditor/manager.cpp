@@ -2577,19 +2577,29 @@ void Manager::RestartCodeLite()
 			<< wxT(" --name=\"")
 			<< wxStandardPaths::Get().GetExecutablePath()
 			<< wxT("\"");
-
-#elif defined (__WXGTK__)
-	// The Shell is our friend
-	command << wxT("kill -9 ") << wxGetProcessId() << wxT(" && ") << wxStandardPaths::Get().GetExecutablePath();
-
-#endif
 	TagsManagerST::Free(); // This will stop the codelite indexer process and will make sure it will wont start again
 
 	// save the current session, unsaved editors and layout before restarting
 	Frame::Get()->SaveLayoutAndSession();
-
 	wxMilliSleep(100);
+	wxPrintf(wxT("%s\n"), command.c_str());
 	wxExecute(command, wxEXEC_ASYNC|wxEXEC_NOHIDE);
+	
+#elif defined (__WXGTK__)
+	// The Shell is our friend
+	command << wxT("sleep 1 && kill ") << wxGetProcessId() << wxT(" && ") << wxStandardPaths::Get().GetExecutablePath();
+	TagsManagerST::Free(); // This will stop the codelite indexer process and will make sure it will wont start again
+
+	// save the current session, unsaved editors and layout before restarting
+	Frame::Get()->SaveLayoutAndSession();
+	
+	wxMilliSleep(100);
+	wxArrayString dummy;
+	ProcUtils::SafeExecuteCommand(command, dummy);
+#endif
+
+
+	
 
 }
 

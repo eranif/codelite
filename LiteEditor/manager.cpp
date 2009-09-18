@@ -111,7 +111,7 @@ Manager::Manager ( void )
 		, m_frameLineno ( wxNOT_FOUND )
 {
 	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
-	Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventFunction(Manager::OnRestart), NULL, this);
+	Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnRestart), NULL, this);
 }
 
 Manager::~Manager ( void )
@@ -2568,7 +2568,7 @@ void Manager::DbgRestoreWatches()
 	}
 }
 
-void Manager::RestartCodeLite()
+void Manager::DoRestartCodeLite()
 {
 	wxString command;
 #ifdef __WXMSW__

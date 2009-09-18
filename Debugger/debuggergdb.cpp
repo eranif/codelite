@@ -1479,4 +1479,6 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wx
 		//try also to set breakpoint at WinMain
 		WriteCommand(wxT("-break-insert main"), NULL);
 	}
+	
+	return true; // to stop the compiler complaining
 }

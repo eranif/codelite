@@ -96,10 +96,10 @@ class DbgCmdHandlerBp : public DbgCmdHandler {
 public:
 	DbgCmdHandlerBp(IDebuggerObserver *observer, IDebugger *debugger, BreakpointInfo bp, std::vector< BreakpointInfo > *bplist, int bptype = BP_type_break)
 	: DbgCmdHandler(observer)
-	, m_debugger(debugger)
 	, m_bp(bp)
 	, m_bplist(bplist)
 	, m_bpType(bptype)
+	, m_debugger(debugger)
 	{}
 
 	virtual ~DbgCmdHandlerBp(){}

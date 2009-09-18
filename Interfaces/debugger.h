@@ -98,15 +98,30 @@ public:
 	wxString               commandlist;
 	wxString               conditions;
 
-	BreakpointInfo(const BreakpointInfo& BI ) {
-		if ( this == &BI ) {
-			return;
-		}
-		*this = BI;
+	BreakpointInfo(const BreakpointInfo& BI ):
+			file(BI.file),
+			lineno(BI.lineno),
+			watchpt_data(BI.watchpt_data),
+			function_name(BI.function_name),
+			regex(BI.regex),
+			memory_address(BI.memory_address),
+			internal_id(BI.internal_id),
+			debugger_id(BI.debugger_id),
+			bp_type(BI.bp_type),
+			ignore_number(BI.ignore_number),
+			is_enabled(BI.is_enabled),
+			is_temp (BI.is_temp),
+			watchpoint_type(BI.watchpoint_type),
+			commandlist(BI.commandlist),
+			conditions(BI.conditions) {
 	}
 
 	BreakpointInfo() : lineno(-1), regex(false), memory_address(-1), debugger_id(-1), bp_type(BP_type_break),
 			ignore_number(0), is_enabled(true), is_temp(false), watchpoint_type(WP_watch)	{}
+
+//	BreakpointInfo(const BreakpointInfo& BI ) {
+//		*this = BI;
+//	}
 
 	bool IsConditional() {
 		return ! conditions.IsEmpty();

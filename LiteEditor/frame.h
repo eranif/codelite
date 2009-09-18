@@ -68,26 +68,25 @@ struct StartPageData {
 
 class Frame : public wxFrame
 {
-	MainBook *m_mainBook;
-	static Frame* m_theFrame;
-	wxAuiManager m_mgr;
-	OutputPane *m_outputPane;
-	WorkspacePane *m_workspacePane;
-	wxArrayString m_files;
-	wxTimer *m_timer;
-	std::map<int, wxString> m_viewAsMap;
-	TagsOptionsData m_tagsOptionsData;
-	DebuggerPane *m_debuggerPane;
-	wxToolBar *m_debuggerTb;
-	bool m_buildAndRun;
-
-	GeneralInfo m_frameGeneralInfo;
-	std::map<int, wxString> m_toolbars;
-	std::map<int, wxString> m_panes;
+	MainBook *                            m_mainBook;
+	static Frame*                         m_theFrame;
+	wxAuiManager                          m_mgr;
+	OutputPane *                          m_outputPane;
+	WorkspacePane *                       m_workspacePane;
+	wxArrayString                         m_files;
+	wxTimer *                             m_timer;
+	std::map<int, wxString>               m_viewAsMap;
+	TagsOptionsData                       m_tagsOptionsData;
+	DebuggerPane *                        m_debuggerPane;
+	wxToolBar *                           m_debuggerTb;
+	bool                                  m_buildAndRun;
+	GeneralInfo                           m_frameGeneralInfo;
+	std::map<int, wxString>               m_toolbars;
+	std::map<int, wxString>               m_panes;
     std::vector<std::map<int, wxString> > m_status;
-	wxMenu *m_cppMenu;
-	bool m_highlightWord;
-	DockablePaneMenuManager *m_DPmenuMgr;
+	wxMenu *                              m_cppMenu;
+	bool                                  m_highlightWord;
+	DockablePaneMenuManager *             m_DPmenuMgr;
 
 public:
 	static Frame* Get();
@@ -221,6 +220,11 @@ public:
      * @brief set a status message
      */
     void SetStatusMessage(const wxString &msg, int col, int id = wxID_ANY);
+
+	/**
+	 * @brief save the current IDE layout and session
+	 */
+	void SaveLayoutAndSession();
 
 private:
 	// make our frame's constructor private

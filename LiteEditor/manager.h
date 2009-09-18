@@ -63,6 +63,7 @@ class Manager : public wxEvtHandler, public IDebuggerObserver
  	int                     m_frameLineno;
 	std::list<QueueCommand> m_buildQueue;
 	wxArrayString           m_dbgWatchExpressions;
+	wxFileName              m_codeliteLauncher;
 
 protected:
 	Manager(void);
@@ -80,8 +81,9 @@ public:
 	bool IsShutdownInProgress() const { return m_isShutdown; }
  	void SetShutdownInProgress(bool b) { m_isShutdown = b; }
 
-
-     //--------------------------- Workspace Loading -----------------------------
+	void RestartCodeLite();
+	void SetCodeLiteLauncherPath(const wxString &path);
+	 //--------------------------- Workspace Loading -----------------------------
 public:
  	/*!
  	 * \brief

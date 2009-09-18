@@ -712,6 +712,7 @@ void Frame::CreateGUIControls(void)
 	// set the path to codelite_indexer
 	wxFileName exePath( wxStandardPaths::Get().GetExecutablePath() );
 	tagsManager->SetCodeLiteIndexerPath(exePath.GetPath());
+	ManagerST::Get()->SetCodeLiteLauncherPath(exePath.GetPath());
 #endif
 	tagsManager->StartCtagsProcess();
 
@@ -1183,53 +1184,7 @@ void Frame::OnClose(wxCloseEvent& event)
 	ManagerST::Get()->DbgStop();
 	SearchThreadST::Get()->StopSearch();
 
-	//save the perspective
-	WriteFileUTF8(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"), m_mgr.SavePerspective());
-	EditorConfigST::Get()->SaveLexers();
-
-	//save general information
-	if (IsMaximized()) {
-		m_frameGeneralInfo.SetFrameSize(wxSize(800, 600));
-	} else {
-		m_frameGeneralInfo.SetFrameSize(this->GetSize());
-	}
-	m_frameGeneralInfo.SetFramePosition(this->GetScreenPosition());
-
-	SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);
-	EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
-	EditorConfigST::Get()->SaveLongValue(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
-
-	//save the 'find and replace' information
-	GetOutputPane()->GetFindResultsTab()->SaveFindInFilesData();
-	if (LEditor::GetFindReplaceDialog()) {
-		EditorConfigST::Get()->WriteObject(wxT("FindAndReplaceData"), &(LEditor::GetFindReplaceDialog()->GetData()));
-	}
-
-	//save the current session before closing
-	wxString sessionName = ManagerST::Get()->IsWorkspaceOpen() ? WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath()
-	                       : wxString(wxT("Default"));
-	SessionEntry session;
-	session.SetWorkspaceName(sessionName);
-	GetMainBook()->SaveSession(session);
-	ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
-	SessionManager::Get().Save(sessionName, session);
-	SessionManager::Get().SetLastWorkspaceName(sessionName);
-
-	// make sure there are no 'unsaved documents'
-	GetMainBook()->CloseAll(false);
-
-	// keep list of all detached panes
-	wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
-	DetachedPanesInfo dpi(panes);
-	EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
-
-	// save the notebooks styles
-	EditorConfigST::Get()->SaveLongValue(wxT("MainBook"),      GetMainBook()->GetBookStyle());
-	EditorConfigST::Get()->SaveLongValue(wxT("DebuggerBook"),  GetDebuggerPane()->GetNotebook()->GetBookStyle());
-	EditorConfigST::Get()->SaveLongValue(wxT("OutputPane"),    GetOutputPane()->GetNotebook()->GetBookStyle());
-	EditorConfigST::Get()->SaveLongValue(wxT("WorkspaceView"), GetWorkspacePane()->GetNotebook()->GetBookStyle());
-	EditorConfigST::Get()->SaveLongValue(wxT("FindResults"),   GetOutputPane()->GetFindResultsTab()->GetBookStyle());
-
+	SaveLayoutAndSession();
 	event.Skip();
 }
 
@@ -3316,4 +3271,54 @@ void Frame::ReloadExternallyModifiedProjectFiles()
 		ManagerST::Get()->ReloadWorkspace();
 		return;
 	}
+}
+
+void Frame::SaveLayoutAndSession()
+{
+	//save the perspective
+	WriteFileUTF8(ManagerST::Get()->GetStarupDirectory() + wxT("/config/codelite.layout"), m_mgr.SavePerspective());
+	EditorConfigST::Get()->SaveLexers();
+
+	//save general information
+	if (IsMaximized()) {
+		m_frameGeneralInfo.SetFrameSize(wxSize(800, 600));
+	} else {
+		m_frameGeneralInfo.SetFrameSize(this->GetSize());
+	}
+	m_frameGeneralInfo.SetFramePosition(this->GetScreenPosition());
+
+	SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);
+	EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
+	EditorConfigST::Get()->SaveLongValue(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
+
+	//save the 'find and replace' information
+	GetOutputPane()->GetFindResultsTab()->SaveFindInFilesData();
+	if (LEditor::GetFindReplaceDialog()) {
+		EditorConfigST::Get()->WriteObject(wxT("FindAndReplaceData"), &(LEditor::GetFindReplaceDialog()->GetData()));
+	}
+
+	//save the current session before closing
+	wxString sessionName = ManagerST::Get()->IsWorkspaceOpen() ? WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath()
+	                       : wxString(wxT("Default"));
+	SessionEntry session;
+	session.SetWorkspaceName(sessionName);
+	GetMainBook()->SaveSession(session);
+	ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
+	SessionManager::Get().Save(sessionName, session);
+	SessionManager::Get().SetLastWorkspaceName(sessionName);
+
+	// make sure there are no 'unsaved documents'
+	GetMainBook()->CloseAll(false);
+
+	// keep list of all detached panes
+	wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
+	DetachedPanesInfo dpi(panes);
+	EditorConfigST::Get()->WriteObject(wxT("DetachedPanesList"), &dpi);
+
+	// save the notebooks styles
+	EditorConfigST::Get()->SaveLongValue(wxT("MainBook"),      GetMainBook()->GetBookStyle());
+	EditorConfigST::Get()->SaveLongValue(wxT("DebuggerBook"),  GetDebuggerPane()->GetNotebook()->GetBookStyle());
+	EditorConfigST::Get()->SaveLongValue(wxT("OutputPane"),    GetOutputPane()->GetNotebook()->GetBookStyle());
+	EditorConfigST::Get()->SaveLongValue(wxT("WorkspaceView"), GetWorkspacePane()->GetNotebook()->GetBookStyle());
+	EditorConfigST::Get()->SaveLongValue(wxT("FindResults"),   GetOutputPane()->GetFindResultsTab()->GetBookStyle());
 }

@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : editorsettingsmiscpanel.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : editorsettingsmiscpanel.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -134,7 +134,16 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	if (oldIconSize != iconSize || oldUseSingleToolbar != m_useSingleToolbar->IsChecked()) {
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 0);
 		//notify the user
+#ifdef __WXMAC__
 		wxMessageBox(_("Some of the changes made requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+#else
+		// On Winodws & GTK we offer auto-restart
+		int answer = wxMessageBox(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL);
+		if ( answer == wxYES ) {
+			ManagerST::Get()->RestartCodeLite();
+		}
+#endif
+
 	} else {
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
 	}

@@ -108,6 +108,7 @@ Manager::Manager ( void )
 		, m_tipWinPos ( wxNOT_FOUND )
 		, m_frameLineno ( wxNOT_FOUND )
 {
+	m_codeliteLauncher = wxFileName(wxT("codelite_launcher"));
 }
 
 Manager::~Manager ( void )
@@ -2562,4 +2563,37 @@ void Manager::DbgRestoreWatches()
 			Frame::Get()->GetDebuggerPane()->GetWatchesTable()->AddPendingEvent( e );
 		}
 	}
+}
+
+void Manager::RestartCodeLite()
+{
+	wxString command;
+#ifdef __WXMSW__
+	// the codelite_launcher application is located where the codelite executable is
+	// to properly shoutdown codelite. We first need to close the codelite_indexer process
+	command << wxT("\"") << m_codeliteLauncher.GetFullPath()
+			<< wxT("\" --pid=")
+			<< wxGetProcessId()
+			<< wxT(" --name=\"")
+			<< wxStandardPaths::Get().GetExecutablePath()
+			<< wxT("\"");
+
+#elif defined (__WXGTK__)
+	// The Shell is our friend
+	command << wxT("kill -9 ") << wxGetProcessId() << wxT(" && ") << wxStandardPaths::Get().GetExecutablePath();
+
+#endif
+	TagsManagerST::Free(); // This will stop the codelite indexer process and will make sure it will wont start again
+
+	// save the current session, unsaved editors and layout before restarting
+	Frame::Get()->SaveLayoutAndSession();
+
+	wxMilliSleep(100);
+	wxExecute(command, wxEXEC_ASYNC|wxEXEC_NOHIDE);
+
+}
+
+void Manager::SetCodeLiteLauncherPath(const wxString& path)
+{
+	m_codeliteLauncher = wxFileName(path, wxT("codelite_launcher"));
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Workspace Name="cppchecker" Database=".\cppchecker.tags">
+  <Project Name="cppchecker" Path="cppchecker.project" Active="Yes"/>
+  <Project Name="CppCheckerClient" Path="CppCheckerClient\CppCheckerClient.project" Active="No"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="WinDebug" Selected="no">
+      <Project Name="cppchecker" ConfigName="WinDebug"/>
+      <Project Name="CppCheckerClient" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="WinRelease" Selected="yes">
+      <Project Name="cppchecker" ConfigName="WinRelease"/>
+      <Project Name="CppCheckerClient" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

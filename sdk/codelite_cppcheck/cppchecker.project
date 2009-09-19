@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="cppchecker" InternalType="Console">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00040001N0005Debug0000000000000001N0007Release0000000000000001N0008WinDebug0000000000000001N0010WinRelease000000000000
+    ]]>
+    </Plugin>
+  </Plugins>
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="src">
+    <File Name="src\check.h"/>
+    <File Name="src\checkautovariables.cpp"/>
+    <File Name="src\checkautovariables.h"/>
+    <File Name="src\checkbufferoverrun.cpp"/>
+    <File Name="src\checkbufferoverrun.h"/>
+    <File Name="src\checkclass.cpp"/>
+    <File Name="src\checkclass.h"/>
+    <File Name="src\checkdangerousfunctions.cpp"/>
+    <File Name="src\checkdangerousfunctions.h"/>
+    <File Name="src\checkheaders.cpp"/>
+    <File Name="src\checkheaders.h"/>
+    <File Name="src\checkmemoryleak.cpp"/>
+    <File Name="src\checkmemoryleak.h"/>
+    <File Name="src\checkother.cpp"/>
+    <File Name="src\checkother.h"/>
+    <File Name="src\checkstl.cpp"/>
+    <File Name="src\checkstl.h"/>
+    <File Name="src\checkunusedfunctions.cpp"/>
+    <File Name="src\checkunusedfunctions.h"/>
+    <File Name="src\classinfo.h"/>
+    <File Name="src\cppcheck.cpp"/>
+    <File Name="src\cppcheck.h"/>
+    <File Name="src\cppcheckexecutor.cpp"/>
+    <File Name="src\cppcheckexecutor.h"/>
+    <File Name="src\errorlogger.cpp"/>
+    <File Name="src\errorlogger.h"/>
+    <File Name="src\filelister.cpp"/>
+    <File Name="src\filelister.h"/>
+    <File Name="src\main.cpp"/>
+    <File Name="src\mathlib.cpp"/>
+    <File Name="src\mathlib.h"/>
+    <File Name="src\preprocessor.cpp"/>
+    <File Name="src\preprocessor.h"/>
+    <File Name="src\resource.h"/>
+    <File Name="src\settings.cpp"/>
+    <File Name="src\settings.h"/>
+    <File Name="src\threadexecutor.cpp"/>
+    <File Name="src\threadexecutor.h"/>
+    <File Name="src\token.cpp"/>
+    <File Name="src\token.h"/>
+    <File Name="src\tokenize.cpp"/>
+    <File Name="src\tokenize.h"/>
+    <File Name="src\cppcheckexecutornetwork.cpp"/>
+    <File Name="src\cppcheckexecutornetwork.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="network">
+    <File Name="network\named_pipe.cpp"/>
+    <File Name="network\named_pipe.h"/>
+    <File Name="network\named_pipe_client.cpp"/>
+    <File Name="network\named_pipe_client.h"/>
+    <File Name="network\named_pipe_server.cpp"/>
+    <File Name="network\named_pipe_server.h"/>
+    <File Name="network\np_connections_server.cpp"/>
+    <File Name="network\np_connections_server.h"/>
+    <File Name="network\cppchecker_net_reply.cpp"/>
+    <File Name="network\cppcheck_net_macros.h"/>
+    <File Name="network\cppchecker_net_reply.h"/>
+    <File Name="network\cppchecker_request.cpp"/>
+    <File Name="network\cppchecker_request.h"/>
+    <File Name="network\cppchecker_protocol.cpp"/>
+    <File Name="network\cppchecker_protocol.h"/>
+  </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="WinDebug"/>
+  <Settings Type="Executable">
+    <Configuration Name="WinDebug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" Required="yes">
+        <IncludePath Value="."/>
+        <Preprocessor Value="__WXMSW__"/>
+      </Compiler>
+      <Linker Options="" Required="yes">
+        <Library Value="shlwapi.a"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="-s --all --daemon=1234 --xml" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinRelease" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2" Required="yes">
+        <IncludePath Value="."/>
+        <Preprocessor Value="__WXMSW__"/>
+      </Compiler>
+      <Linker Options="-O2" Required="yes">
+        <Library Value="shlwapi.a"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="-s --all --daemon=1234 --xml" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <GlobalSettings>
+      <Compiler Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+  </Settings>
+  <Dependencies Name="WinRelease"/>
+</CodeLite_Project>

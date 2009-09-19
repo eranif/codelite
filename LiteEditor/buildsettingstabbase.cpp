@@ -1,28 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : buildsettingstabbase.cpp              
-//                                                                          
-// -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 ///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
@@ -101,23 +76,37 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	
 	bSizer1->Add( fgSizer1, 0, wxALL|wxEXPAND, 5 );
 	
-    wxArrayString choices;
-    choices.Add(wxT("When build starts"));
-    choices.Add(wxT("When build ends"));
-    choices.Add(wxT("Don't automatically show"));
-    m_radioBoxShowBuildTab = new wxRadioBox(this, wxID_ANY, wxT("Show Build Pane"), wxDefaultPosition, wxDefaultSize,
-                                            choices, 1);
-    bSizer1->Add( m_radioBoxShowBuildTab, 0, wxALL|wxEXPAND, 5 );
+	wxStaticBoxSizer* sbSizer2;
+	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("General:") ), wxVERTICAL );
+	
+	m_checkBoxSkipeWarnings = new wxCheckBox( this, wxID_ANY, wxT("When using the menu to jump to errors, skip warnings"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	sbSizer2->Add( m_checkBoxSkipeWarnings, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxAutoHide = new wxCheckBox( this, wxID_ANY, wxT("Automatically hide the build pane when there are no errors nor warnings"), wxDefaultPosition, wxDefaultSize, 0 );
 	
-	bSizer1->Add( m_checkBoxAutoHide, 0, wxALL, 5 );
+	sbSizer2->Add( m_checkBoxAutoHide, 0, wxALL|wxEXPAND, 5 );
 	
-	m_checkBoxDisplayAnnotations = new wxCheckBox( this, wxID_ANY, wxT("Display compiler errors / warnings as annotations"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxSkipeWarnings = new wxCheckBox( this, wxID_ANY, wxT("When using the menu to jump to errors, skip warnings"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer1->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
 	
-	bSizer1->Add( m_checkBoxDisplayAnnotations, 0, wxALL|wxEXPAND, 5 );
-	bSizer1->Add( m_checkBoxSkipeWarnings, 0, wxALL, 5 );
+	wxString m_radioBoxShowBuildTabChoices[] = { wxT("When build starts"), wxT("When build ends"), wxT("Don't automatically show") };
+	int m_radioBoxShowBuildTabNChoices = sizeof( m_radioBoxShowBuildTabChoices ) / sizeof( wxString );
+	m_radioBoxShowBuildTab = new wxRadioBox( this, wxID_ANY, wxT("Show build pane:"), wxDefaultPosition, wxDefaultSize, m_radioBoxShowBuildTabNChoices, m_radioBoxShowBuildTabChoices, 1, wxRA_SPECIFY_COLS );
+	m_radioBoxShowBuildTab->SetSelection( 0 );
+	bSizer1->Add( m_radioBoxShowBuildTab, 0, wxALL|wxEXPAND, 5 );
+	
+	wxStaticBoxSizer* sbSizer1;
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Errors / warnings markers:") ), wxVERTICAL );
+	
+	m_checkBoxDisplayAnnotations = new wxCheckBox( this, wxID_ANY, wxT("Compiler errors / warnings shown in text annotations"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	sbSizer1->Add( m_checkBoxDisplayAnnotations, 0, wxALL|wxEXPAND, 5 );
+	
+	m_checkBoxDisplayMarkers = new wxCheckBox( this, wxID_ANY, wxT("Compiler errors / warnings marked with bookmarks"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	sbSizer1->Add( m_checkBoxDisplayMarkers, 0, wxALL, 5 );
+	
+	bSizer1->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();

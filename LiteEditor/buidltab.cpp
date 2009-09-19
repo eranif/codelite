@@ -171,6 +171,7 @@ void BuildTab::Clear()
 	if ( editor ) {
 		editor->AnnotationClearAll();
 		editor->AnnotationSetVisible(0); // Hidden
+		editor->DelAllCompilerMarkers();
 		editor->Refresh();
 	}
 }
@@ -317,6 +318,7 @@ void BuildTab::MarkEditor ( LEditor *editor )
 	if ( !editor )
 		return;
 
+	editor->DelAllCompilerMarkers();
 	editor->AnnotationClearAll();
 	editor->AnnotationSetVisible(2); // Visible with box around it
 
@@ -324,7 +326,7 @@ void BuildTab::MarkEditor ( LEditor *editor )
 	EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
 
 	// Are annotations enabled?
-	if( options.getDisplayAnnotations() == false ) {
+	if( options.GetErrorWarningStyle() == BuildTabSettingsData::EWS_NoMarkers ) {
 		return;
 	}
 
@@ -341,14 +343,27 @@ void BuildTab::MarkEditor ( LEditor *editor )
         if ( i == m_lineInfo.end() )
             continue; // safety check -- should not normally happen
 
-		if ( i->second.linecolor == wxSCI_LEX_GCC_ERROR || i->second.linecolor == wxSCI_LEX_GCC_WARNING ) {
+		int line_colour = i->second.linecolor;
+		if ( line_colour == wxSCI_LEX_GCC_ERROR || line_colour == wxSCI_LEX_GCC_WARNING ) {
 
 			wxMemoryBuffer style_bytes;
 			int      line_number = i->second.linenum;
 			wxString tip = GetBuildToolTip(editor->GetFileName().GetFullPath(), line_number, style_bytes);
 
-			editor->AnnotationSetText (line_number, tip);
-			editor->AnnotationSetStyles(line_number, style_bytes );
+			// Set annotations
+			if ( options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotations ) {
+				editor->AnnotationSetText (line_number, tip);
+				editor->AnnotationSetStyles(line_number, style_bytes );
+			}
+
+			// Set compiler bookmarks
+			if ( options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks ) {
+				if ( line_colour == wxSCI_LEX_GCC_ERROR ) {
+					editor->SetErrorMarker( line_number );
+				} else if ( line_colour == wxSCI_LEX_GCC_WARNING ) {
+					editor->SetWarningMarker( line_number );
+				}
+			}
 
 		}
 

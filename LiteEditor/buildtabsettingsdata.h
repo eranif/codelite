@@ -38,13 +38,19 @@ class BuildTabSettingsData : public SerializedObject
 	bool     m_boldWarnFont;
 	bool     m_showBuildPane;
 	bool     m_autoHide;
-	bool     m_displayAnnotations;
+	int      m_errorWarningStyle;
 
 private:
 	BuildTabSettingsData(const BuildTabSettingsData& rhs);
 	BuildTabSettingsData& operator=(const BuildTabSettingsData& rhs);
 
 public:
+	enum ErrorsWarningStyle {
+		EWS_NoMarkers   = 0x00000000,
+		EWS_Annotations = 0x00000001,
+		EWS_Bookmarks   = 0x00000002
+	};
+
 	enum ShowBuildPane {
 		ShowOnStart,
 		ShowOnEnd,
@@ -117,11 +123,11 @@ public:
 		return m_autoHide;
 	}
 
-	void setDisplayAnnotations(const bool& displayAnnotations) {
-		this->m_displayAnnotations = displayAnnotations;
+	void SetErrorWarningStyle(const int& errorWarningStyle) {
+		this->m_errorWarningStyle = errorWarningStyle;
 	}
-	const bool& getDisplayAnnotations() const {
-		return m_displayAnnotations;
+	const int& GetErrorWarningStyle() const {
+		return m_errorWarningStyle;
 	}
 };
 #endif // __buildtabsettingsdata__

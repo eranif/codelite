@@ -32,7 +32,7 @@ BuildTabSettingsData::BuildTabSettingsData()
 		, m_boldWarnFont(true)
 		, m_showBuildPane(0)
 		, m_autoHide(false)
-		, m_displayAnnotations(true)
+		, m_errorWarningStyle(EWS_Annotations)
 {
 	wxColour errColour(wxT("RED"));
 	wxColour wrnColour(wxT("GOLD"));
@@ -50,28 +50,28 @@ BuildTabSettingsData::~BuildTabSettingsData()
 
 void BuildTabSettingsData::Serialize(Archive &arch)
 {
-	arch.Write(wxT("m_errorColour"), m_errorColour);
-	arch.Write(wxT("m_warnColour"), m_warnColour);
-	arch.Write(wxT("m_errorColourBg"), m_errorColourBg);
-	arch.Write(wxT("m_warnColourBg"), m_warnColourBg);
-	arch.Write(wxT("m_skipWarnings"), m_skipWarnings);
-	arch.Write(wxT("m_boldErrFont"), m_boldErrFont);
-	arch.Write(wxT("m_boldWarnFont"), m_boldWarnFont);
-	arch.Write(wxT("m_autoHide"), m_autoHide);
-	arch.Write(wxT("m_showBuildPane"), m_showBuildPane);
-	arch.Write(wxT("m_displayAnnotations"), m_displayAnnotations);
+	arch.Write(wxT("m_errorColour"),       m_errorColour);
+	arch.Write(wxT("m_warnColour"),        m_warnColour);
+	arch.Write(wxT("m_errorColourBg"),     m_errorColourBg);
+	arch.Write(wxT("m_warnColourBg"),      m_warnColourBg);
+	arch.Write(wxT("m_skipWarnings"),      m_skipWarnings);
+	arch.Write(wxT("m_boldErrFont"),       m_boldErrFont);
+	arch.Write(wxT("m_boldWarnFont"),      m_boldWarnFont);
+	arch.Write(wxT("m_autoHide"),          m_autoHide);
+	arch.Write(wxT("m_showBuildPane"),     m_showBuildPane);
+	arch.Write(wxT("m_errorWarningStyle"), m_errorWarningStyle);
 }
 
 void BuildTabSettingsData::DeSerialize(Archive &arch)
 {
-	arch.Read(wxT("m_errorColour"), m_errorColour);
-	arch.Read(wxT("m_warnColour"), m_warnColour);
-	arch.Read(wxT("m_errorColourBg"), m_errorColourBg);
-	arch.Read(wxT("m_warnColourBg"), m_warnColourBg);
-	arch.Read(wxT("m_skipWarnings"), m_skipWarnings);
-	arch.Read(wxT("m_boldErrFont"), m_boldErrFont);
-	arch.Read(wxT("m_boldWarnFont"), m_boldWarnFont);
-	arch.Read(wxT("m_autoHide"), m_autoHide);
-	arch.Read(wxT("m_showBuildPane"), m_showBuildPane);
-	arch.Read(wxT("m_displayAnnotations"), m_displayAnnotations);
+	arch.Read(wxT("m_errorColour"),       m_errorColour);
+	arch.Read(wxT("m_warnColour"),        m_warnColour);
+	arch.Read(wxT("m_errorColourBg"),     m_errorColourBg);
+	arch.Read(wxT("m_warnColourBg"),      m_warnColourBg);
+	arch.Read(wxT("m_skipWarnings"),      m_skipWarnings);
+	arch.Read(wxT("m_boldErrFont"),       m_boldErrFont);
+	arch.Read(wxT("m_boldWarnFont"),      m_boldWarnFont);
+	arch.Read(wxT("m_autoHide"),          m_autoHide);
+	arch.Read(wxT("m_showBuildPane"),     m_showBuildPane);
+	arch.Read(wxT("m_errorWarningStyle"), m_errorWarningStyle);
 }

@@ -323,7 +323,7 @@ void LEditor::SetProperties()
 	SetMarginType(NUMBER_MARGIN_ID, wxSCI_MARGIN_NUMBER);
 
 	// line number margin displays every thing but folding, bookmarks and breakpoint
-	SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_all_breakpoints));
+	SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
 
 	// Define the styles for the editing margin
 	StyleSetBackground(CL_LINE_SAVED_STYLE, wxColour(wxT("GREEN")));
@@ -824,7 +824,7 @@ void LEditor::OnMarginClick(wxScintillaEvent& event)
 				// The breakpoint manager organises the actual drag/drop
 				BreakptMgr* bpm = ManagerST::Get()->GetBreakpointsMgr();
 				bpm->DragBreakpoint(this, nLine, bm);
-				
+
 				Connect(wxEVT_MOTION, wxMouseEventHandler(myDragImage::OnMotion), NULL, bpm->GetDragImage());
 				Connect(wxEVT_LEFT_UP, wxMouseEventHandler(myDragImage::OnEndDrag), NULL, bpm->GetDragImage());
 
@@ -1110,6 +1110,10 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 			tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
 			type = ct_breakpoint;
 
+		} else if (MarkerGet(line) & mmt_compiler) {
+			wxMemoryBuffer style_bytes;
+			tooltip = Frame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line, style_bytes);
+			type = ct_compiler_msg;
 		}
 
 		if (! tooltip.IsEmpty()) {
@@ -2507,8 +2511,8 @@ void LEditor::SetErrorMarker(int lineno)
 
 void LEditor::DelAllCompilerMarkers()
 {
-//	MarkerDeleteAll(smt_warning);
-//	MarkerDeleteAll(smt_error);
+	MarkerDeleteAll(smt_warning);
+	MarkerDeleteAll(smt_error);
 }
 
 // Maybe one day we'll display multiple bps differently

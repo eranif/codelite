@@ -90,7 +90,7 @@ createMainTargets()
 	echo "## build targets" >> Makefile
 
 	## default
-	target_all="all :  pre_build SQLite Scintilla PropGrid CodeLite SDK LiteEditor codelite_indexer Plugins "
+	target_all="all :  pre_build SQLite Scintilla PropGrid CodeLite SDK LiteEditor codelite_indexer codelite_cppcheck Plugins "
 
 	## if we are on Linux, print the post message
 	if [ "$os_name" = "Linux" ]; then
@@ -110,6 +110,11 @@ createMainTargets()
 	echo "	cp -fr sdk/codelite_indexer/codelite_indexer Runtime/." >> Makefile
 	echo "" >> Makefile
 
+	echo "codelite_cppcheck:" >> Makefile
+	echo "	@cd sdk/codelite_cppcheck/ && \$(MAKE)" >> Makefile
+	echo "	cp -fr sdk/codelite_cppcheck/codelite_cppcheck Runtime/." >> Makefile
+	echo "" >> Makefile
+
 	echo "pre_build:" >> Makefile
 	echo "	./le_makerevision.sh" >> Makefile
 	echo "	@test -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
@@ -118,6 +123,7 @@ createMainTargets()
 
 	echo "clean: clean_plugins" >> Makefile
 	echo "	@cd sdk/codelite_indexer && make clean" >> Makefile
+	echo "	@cd sdk/codelite_cppcheck && make clean" >> Makefile
 	echo "	\$(RM) \$(OUTPUT_DIR)/*.a \$(OUTPUT_DIR)/*.so" >> Makefile
 	echo "	\$(RM) -fr \$(OBJ_DIR)" >> Makefile
 	echo "" >> Makefile
@@ -147,46 +153,93 @@ createObjectList ()
 	echo >> Makefile
 }
 
-# create list of files for scintilla and other static libs: no longer used as no longer any static libs
-# createRules_archive ()
-# {
-# 	files_list=$1
-# 	object_list_name=$2
-# 	rule_name=$3
-# 	libname=$4
-# 
-# 	for a_file in $files_list
-# 	do
-# 
-# 		a_file_with_ext=`basename $a_file`
-# 		a_file_no_ext=`basename $a_file .cxx`
-# 		a_file_no_ext=`basename $a_file_no_ext .cpp`
-# 		a_file_no_ext=`basename $a_file_no_ext .c`
-# 		file_extension=`basename $a_file | cut -d. -f2`
-# 
-# 		if [ "$file_extension" = "c" ]; then
-# 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-# 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
-# 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
-# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
-# 		else
-# 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-# 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
-# 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
-# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
-# 		fi
-# 	done
-# 	echo >> Makefile
-# 
-# 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
-# 	echo "	ar rcu \$(OUTPUT_DIR)/lib${libname}\$(EXT).a \$(${object_list_name})" >> Makefile
-# 	echo "	ranlib \$(OUTPUT_DIR)/lib${libname}\$(EXT).a " >> Makefile
-# 	echo >> Makefile
-# }
+createCodeLiteCppcheckMakefile ()
+{
+	files_list=$1
+	echo "Generating sdk/codelite_cppcheck/Makefile..."
+	current_wd=`pwd`
+
+	cd sdk/codelite_cppcheck/
+
+	## remove old Makefile
+	rm -fr Makefile
+
+	compiler_name="g++ "
+	c_compiler_name="gcc "
+	if [ "$is_64bit" = "yes" ]; then
+		compiler_name=${compiler_name}" -DON_64_BIT "
+		c_compiler_name=${c_compiler_name}" -DON_64_BIT "
+	fi
+	## set the executable name
+	if [ "$enable_debug" = "yes" ]; then
+		debug_flag=" -g "
+		configuration="Debug"
+		optimization=" -O0 "
+	else
+		configuration="Release"
+		debug_flag=""
+		optimization=" -O2 "
+	fi
+
+	echo "OPT=${optimization}" >> Makefile
+	echo "DEBUG=${debug_flag}" >> Makefile
+	echo "CMP=${compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "GCC=${c_compiler_name} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "" >> Makefile
+	echo "all: codelite_cppcheck" >> Makefile
+
+	createObjectList "network/*.cpp src/*.cpp " "codelite_cppcheck_objects"
+
+	for a_file in $files_list
+	do
+		a_file_with_ext=`basename $a_file`
+		a_file_no_ext=`basename $a_file .cxx`
+		a_file_no_ext=`basename $a_file_no_ext .cpp`
+		a_file_no_ext=`basename $a_file_no_ext .c`
+		file_extension=`basename $a_file | cut -d. -f2`
+
+		if [ "$file_extension" = "c" ]; then
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "	\$(GCC) -c ${a_file} -I.  -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "	\$(GCC) -I.  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		else
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "	\$(CMP)  -c ${a_file} -I. -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "	\$(CMP) -I. -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		fi
+
+		echo "-include ${configuration}/*.d" >> Makefile
+	done
+	echo >> Makefile
+
+	echo "codelite_cppcheck: make_dirs \$(codelite_cppcheck_objects)" >> Makefile
+
+	## On FreeBSD, -ldl is part og libc
+	if [ "$os_name" = "FreeBSD" ]; then
+		echo "	\$(CMP) -o codelite_cppcheck \$(codelite_cppcheck_objects) -lpthread " >> Makefile
+	else
+		echo "	\$(CMP) -o codelite_cppcheck \$(codelite_cppcheck_objects) -lpthread -ldl " >> Makefile
+	fi
+
+	echo >> Makefile
+
+	echo "make_dirs:" >> Makefile
+	echo "	@echo" >> Makefile
+	echo "	@echo \"----------Building project:[ codelite_cppcheck - ${configuration} ]----------\"" >> Makefile
+	echo "	@echo" >> Makefile
+	echo "	test -d ${configuration} || mkdir ${configuration}" >> Makefile
+	echo >> Makefile
+
+	echo "clean: " >> Makefile
+	echo "	\$(RM) -fr ${configuration}/*.o" >> Makefile
+	echo "	\$(RM) -fr ${configuration}/*.o.d" >> Makefile
+	echo "	\$(RM) -fr codelite_cppcheck" >> Makefile
+
+	## restore the path
+	cd ${current_wd}
+}
 
 createCodeLiteIndexerMakefile ()
 {
@@ -284,13 +337,13 @@ createCodeLiteIndexerMakefile ()
 # 	libname=$4
 # 	for a_file in $files_list
 # 	do
-# 
+#
 # 		a_file_with_ext=`basename $a_file`
 # 		a_file_no_ext=`basename $a_file .cxx`
 # 		a_file_no_ext=`basename $a_file_no_ext .cpp`
 # 		a_file_no_ext=`basename $a_file_no_ext .c`
 # 		file_extension=`basename $a_file | cut -d. -f2`
-# 
+#
 # 		if [ "$file_extension" = "c" ]; then
 # 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
 # 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
@@ -308,12 +361,12 @@ createCodeLiteIndexerMakefile ()
 # 		fi
 # 	done
 # 	echo >> Makefile
-# 
+#
 # 	shared_obj_switch=" -shared "
 # 	if [ "$os_name" = "Darwin" ]; then
 # 		shared_obj_switch=" -dynamiclib "
 # 	fi
-# 
+#
 # 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
 # 	echo "	\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) " >> Makefile
 # 	echo >> Makefile
@@ -441,7 +494,7 @@ createPluginMakefile()
 	## Hack to include the md5c.c file in the makefile for the qmake plugin
 	if [ "$plugin_name" = "QmakePlugin" ] ; then
 	  createObjectList "*.cpp md5c.c" "${plugin_name}Objects"
-	else 
+	else
 	  createObjectList "*.cpp" "${plugin_name}Objects"
 	fi
 
@@ -716,7 +769,7 @@ createRules_sharedObject  "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects" "PropGr
 # Then the binary, and indexer
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createCodeLiteIndexerMakefile "sdk/codelite_indexer/*.cpp sdk/codelite_indexer/network/*.cpp sdk/codelite_indexer/libctags/*.c sdk/codelite_indexer/libctags/*.cpp"
-
+createCodeLiteCppcheckMakefile "sdk/codelite_cppcheck/network/*.cpp sdk/codelite_indexer/src/*.cpp"
 createInstallTarget
 createUnInstallTarget
 

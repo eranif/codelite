@@ -156,10 +156,9 @@ void BreakpointDlg::OnAdd(wxCommandEvent& e)
 
 void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 {
-	ClearAll();
 	Freeze();
-
-	const wxChar* column_headers[] = 
+	ClearAll();
+	const wxChar* column_headers[] =
 		{ wxT("ID"), wxT("Breakpoint Type"), wxT("Enabled"), wxT("File"),
 			wxT("Line"), wxT("Function"), wxT("Memory"), wxT("Ignored"), wxT("Extras")
 		};
@@ -237,7 +236,7 @@ void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
 		int itemwidth = GetColumnWidth(col);
 		int headerwidth, y; GetTextExtent(column_headers[col], &headerwidth,&y);
 		// The width returned from GetTextExtent() is too small (bold font?) so add a fiddle-factor
-		int extrawidth = 
+		int extrawidth =
 #if defined (__WXMSW__)
 			20;
 #else

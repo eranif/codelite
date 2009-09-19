@@ -192,8 +192,6 @@ protected:
 		arch.Write(wxT("commandlist"), commandlist);
 		arch.Write(wxT("regex"), regex);
 		arch.Write(wxT("is_temp"), is_temp);
-		arch.Write(wxT("internal_id"), internal_id);
-		arch.Write(wxT("debugger_id"), debugger_id);
 		arch.Write(wxT("is_enabled"), is_enabled);
 		arch.Write(wxT("ignore_number"), (int)ignore_number);
 		arch.Write(wxT("conditions"), conditions);
@@ -210,9 +208,7 @@ protected:
 		arch.Read(wxT("commandlist"), commandlist);
 		arch.Read(wxT("regex"), regex);
 		arch.Read(wxT("is_temp"), is_temp);
-		arch.Read(wxT("internal_id"), internal_id);
-		arch.Read(wxT("debugger_id"), debugger_id);
-		arch.Read(wxT("is_enabled"), is_enabled);
+		// arch.Read(wxT("is_enabled"), is_enabled); // It's currently not possible to create a disabled bp
 		arch.Read(wxT("ignore_number"), (int&)ignore_number);
 		arch.Read(wxT("conditions"), conditions);
 	}

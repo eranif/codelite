@@ -845,8 +845,11 @@ void BreakptMgr::SaveSession(SessionEntry& session)
 void BreakptMgr::LoadSession(const SessionEntry& session)
 {
 	const std::vector<BreakpointInfo>& breakpoints = session.GetBreakpoints();
-	for (std::vector<BreakpointInfo>::const_iterator itr = breakpoints.begin(); itr != breakpoints.end(); ++itr)
-		AddBreakpoint(*itr);
+	for (std::vector<BreakpointInfo>::const_iterator itr = breakpoints.begin(); itr != breakpoints.end(); ++itr) {
+		BreakpointInfo bp = *itr;
+		bp.internal_id = GetNextID();
+		AddBreakpoint(bp);
+	}
 }
 
 void BreakptMgr::DragBreakpoint(LEditor* editor, int line, wxBitmap bitmap)
@@ -875,6 +878,9 @@ void BreakptMgr::DropBreakpoint(std::vector<BreakpointInfo>& BPs, int newline)
 	int index = FindBreakpointById(bid);
 	BreakpointInfo bp = *(m_bps.begin()+index);
 	bp.lineno = newline+1;
+	// AddBreakpoint() doesn't do the disabled state: it can't, and there's no good way round this
+	// So if the dragged bp was disabled, we need to enable it here, otherwise it retains its disabled icon
+	bp.is_enabled = true;
 	
 	if (DelBreakpoint(bid)) {
 		AddBreakpoint(bp);

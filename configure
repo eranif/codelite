@@ -80,7 +80,7 @@ createVariables()
 	else
 		echo "CCFLAGS := \$(CCFLAGS) -D__APPLE__ -DMACOSX" >> Makefile
 	fi
-	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include -I${base_dir}/sdk/wxpropgrid/include	 -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite " >> Makefile
+	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/codelite_indexer/network -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include -I${base_dir}/sdk/wxpropgrid/include	 -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite " >> Makefile
 	echo "" >> Makefile
 	echo "" >> Makefile
 }
@@ -329,49 +329,6 @@ createCodeLiteIndexerMakefile ()
 	cd ${current_wd}
 }
 
-# createRules_sharedObject_no_link_flags ()
-# {
-# 	files_list=$1
-# 	object_list_name=$2
-# 	rule_name=$3
-# 	libname=$4
-# 	for a_file in $files_list
-# 	do
-#
-# 		a_file_with_ext=`basename $a_file`
-# 		a_file_no_ext=`basename $a_file .cxx`
-# 		a_file_no_ext=`basename $a_file_no_ext .cpp`
-# 		a_file_no_ext=`basename $a_file_no_ext .c`
-# 		file_extension=`basename $a_file | cut -d. -f2`
-#
-# 		if [ "$file_extension" = "c" ]; then
-# 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-# 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
-# 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
-# 			echo "	\$(GCC) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
-# 		else
-# 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-# 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
-# 			echo ${configuration}/${a_file_no_ext}.o.i:  >> Makefile
-# 			echo "	\$(CMP) \$(CCFLAGS) \$(INCLUDES) -E -o ${configuration}/${a_file_no_ext}.o.i ${a_file}" >> Makefile
-# 		fi
-# 	done
-# 	echo >> Makefile
-#
-# 	shared_obj_switch=" -shared "
-# 	if [ "$os_name" = "Darwin" ]; then
-# 		shared_obj_switch=" -dynamiclib "
-# 	fi
-#
-# 	echo "${rule_name}: \$(${object_list_name})" >> Makefile
-# 	echo "	\$(CMP) ${shared_obj_switch} -o ${base_dir}/\$(OUTPUT_DIR)/${libname}.so \$(${object_list_name}) " >> Makefile
-# 	echo >> Makefile
-# }
-
 ## The rules created here all contain -fPIC. Any other shared-lib-creating functions *must* do this too
 createRules_sharedObject ()
 {
@@ -571,6 +528,7 @@ createInstallTarget()
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/codelite_exec" >> Makefile
 	echo "	@chmod +x \$(DESTDIR)$prefix/bin/codelite_kill_children" >> Makefile
 	echo "	@cp sdk/codelite_indexer/codelite_indexer \$(DESTDIR)$prefix/bin/" >> Makefile
+	echo "	@cp sdk/codelite_cppcheck/codelite_cppcheck \$(DESTDIR)$prefix/bin/" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/applications" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite" >> Makefile
 	echo "	@mkdir -p \$(DESTDIR)$prefix/share/codelite/config" >> Makefile
@@ -627,6 +585,7 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_exec" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_kill_children" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_indexer" >> Makefile
+	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite_cppcheck" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUR" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/CodeLiteUD" >> Makefile
 	echo "	@\$(RM) -fr  \$(DESTDIR)$prefix/bin/codelite" >> Makefile
@@ -656,16 +615,6 @@ createEndMessage()
 		echo "	@echo ==========================================================" >> Makefile
 	fi
 }
-
-# checkCURL()
-# {
-# 	if [ -d "/usr/include/curl/" ] || [ -d "/usr/local/include/curl/" ] ; then
-# 		echo "Found cURL installation"
-# 	else
-# 		echo "ERROR: Please install libcurl development package (under Ubuntu 7.10, the package name is libcurl4-dev)"
-# 		exit 1
-# 	fi
-# }
 
 Show_Help_and_Exit()
 {
@@ -762,14 +711,14 @@ echo >> Makefile
 # First the non-plugin .so libs:
 createRules_sharedObject  "Plugin/*.cpp " "SDKObjects" "SDK" "libplugin\$(EXT)" "dont_copy" "-L./lib -lwxscintilla\$(EXT) -lcodelite\$(EXT)"
 createRules_sharedObject  "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects" "Scintilla" "libwxscintilla\$(EXT)" "dont_copy"
-createRules_sharedObject  "CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "libcodelite\$(EXT)" "dont_copy" "-L./lib -lwxsqlite3\$(EXT)"
+createRules_sharedObject  "sdk/codelite_indexer/network/*.cpp CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "libcodelite\$(EXT)" "dont_copy" "-L./lib -lwxsqlite3\$(EXT)"
 createRules_sharedObject  "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "libwxsqlite3\$(EXT)" "dont_copy" ""
 createRules_sharedObject  "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects" "PropGrid" "libwxpropgrid\$(EXT)" "dont_copy" ""
 
 # Then the binary, and indexer
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createCodeLiteIndexerMakefile "sdk/codelite_indexer/*.cpp sdk/codelite_indexer/network/*.cpp sdk/codelite_indexer/libctags/*.c sdk/codelite_indexer/libctags/*.cpp"
-createCodeLiteCppcheckMakefile "sdk/codelite_cppcheck/network/*.cpp sdk/codelite_indexer/src/*.cpp"
+createCodeLiteCppcheckMakefile "sdk/codelite_cppcheck/network/*.cpp sdk/codelite_cppcheck/src/*.cpp"
 createInstallTarget
 createUnInstallTarget
 

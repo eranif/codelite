@@ -2,7 +2,7 @@
 
 fix_shared_object_depends() {
 	search_string=$1
-	
+
 	## Get list of files to work on
 	file_list=`ls ../lib/*.so`
 	file_list="${file_list} ${exe_name} "
@@ -11,7 +11,7 @@ fix_shared_object_depends() {
 	## executable, we can run the following command only once and
 	## use the results to manipulate the plugins as well
 	orig_path=`otool -L ${exe_name}  | grep ${search_string} | awk '{print $1;}'`
-	
+
 	## Loop over the files, and update the path of the wx library
 	for file in ${file_list}
 	do
@@ -120,5 +120,6 @@ cp ../lib/libcodeliteu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libwxsqlite3u.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libwxpropgridu.so ./CodeLite.app/Contents/MacOS/
 
-cp ../sdk/codelite_indexer/codelite_indexer ./CodeLite.app/Contents/SharedSupport/
-cp plugins/resources/*.* ./CodeLite.app/Contents/SharedSupport/plugins/resources/
+cp ../sdk/codelite_indexer/codelite_indexer   ./CodeLite.app/Contents/SharedSupport/
+cp ../sdk/codelite_cppcheck/codelite_cppcheck ./CodeLite.app/Contents/SharedSupport/
+cp plugins/resources/*.*                      ./CodeLite.app/Contents/SharedSupport/plugins/resources/

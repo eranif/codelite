@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="CodeLite">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00040001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode000000000000]]>
+    </Plugin>
+  </Plugins>
   <VirtualDirectory Name="Source Files">
     <File Name="worker_thread.cpp"/>
     <File Name="tokenizer.cpp"/>
@@ -98,147 +103,172 @@
     <File Name="tagscache.h"/>
   </VirtualDirectory>
   <Dependencies Name="ReleaseUnicode"/>
-  <Settings Type="Static Library">
-    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="" Type="">
-      <General OutputFile="../lib/gcc_lib/libCodeLiteud.a" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
-      </Compiler>
-      <Linker Required="yes" Options=" "/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <ResourceCompiler Required="no" Options=""/>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName/>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library">
-      <General OutputFile="../lib/gcc_lib/libCodeLiteu.a" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;-fPIC">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
-      </Compiler>
-      <Linker Required="yes" Options=" "/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <ResourceCompiler Required="no" Options=""/>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
-      <General OutputFile="../lib/gcc_lib/libCodeLiteud.a" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Required="yes" Options=""/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <ResourceCompiler Required="no" Options=""/>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName/>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library">
-      <General OutputFile="../lib/gcc_lib/libCodeLiteu.a" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2">
-        <IncludePath Value="."/>
-        <IncludePath Value="./include"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <Preprocessor Value="__WX__"/>
-        <Preprocessor Value="WXUSINGDLL"/>
-      </Compiler>
-      <Linker Required="yes" Options=""/>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands/>
-        <StartupCommands/>
-      </Debugger>
-      <ResourceCompiler Required="no" Options=""/>
-      <PreBuild/>
-      <PostBuild/>
-      <CustomBuild Enabled="no">
-        <CleanCommand/>
-        <BuildCommand/>
-        <SingleFileCommand/>
-        <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory/>
-      </CustomBuild>
-      <AdditionalRules>
-        <CustomPostBuild/>
-        <CustomPreBuild/>
-      </AdditionalRules>
-    </Configuration>
-  </Settings>
   <VirtualDirectory Name="codelite_indexer_API">
-    <File Name="np_connections_server.h"/>
-    <File Name="cl_indexer_reply.cpp"/>
-    <File Name="cl_indexer_reply.h"/>
-    <File Name="cl_indexer_request.cpp"/>
-    <File Name="cl_indexer_request.h"/>
-    <File Name="clindexerprotocol.cpp"/>
-    <File Name="clindexerprotocol.h"/>
-    <File Name="named_pipe.cpp"/>
-    <File Name="named_pipe.h"/>
-    <File Name="named_pipe_client.cpp"/>
-    <File Name="named_pipe_client.h"/>
-    <File Name="named_pipe_server.cpp"/>
-    <File Name="named_pipe_server.h"/>
-    <File Name="np_connections_server.cpp"/>
+    <File Name="../sdk/codelite_indexer/network/np_connections_server.h"/>
+    <File Name="../sdk/codelite_indexer/network/cl_indexer_reply.cpp"/>
+    <File Name="../sdk/codelite_indexer/network/cl_indexer_reply.h"/>
+    <File Name="../sdk/codelite_indexer/network/cl_indexer_request.cpp"/>
+    <File Name="../sdk/codelite_indexer/network/cl_indexer_request.h"/>
+    <File Name="../sdk/codelite_indexer/network/clindexerprotocol.cpp"/>
+    <File Name="../sdk/codelite_indexer/network/clindexerprotocol.h"/>
+    <File Name="../sdk/codelite_indexer/network/named_pipe.cpp"/>
+    <File Name="../sdk/codelite_indexer/network/named_pipe.h"/>
+    <File Name="../sdk/codelite_indexer/network/named_pipe_client.cpp"/>
+    <File Name="../sdk/codelite_indexer/network/named_pipe_client.h"/>
+    <File Name="../sdk/codelite_indexer/network/named_pipe_server.cpp"/>
+    <File Name="../sdk/codelite_indexer/network/named_pipe_server.h"/>
+    <File Name="../sdk/codelite_indexer/network/np_connections_server.cpp"/>
     <File Name="../sdk/codelite_indexer/network/cl_indexer_macros.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Settings Type="Static Library">
+    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes);" Required="yes">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/codelite_indexer/network"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Options=" " Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../lib/gcc_lib/libCodeLiteud.a" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;-fPIC" Required="yes">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/codelite_indexer/network"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Options=" " Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../lib/gcc_lib/libCodeLiteu.a" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g" Required="yes">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/codelite_indexer/network"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../lib/gcc_lib/libCodeLiteud.a" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2" Required="yes">
+        <IncludePath Value="."/>
+        <IncludePath Value="./include"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/codelite_indexer/network"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../lib/gcc_lib/libCodeLiteu.a" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>
+
+</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <GlobalSettings>
+      <Compiler Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+  </Settings>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

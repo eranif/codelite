@@ -698,7 +698,7 @@ createVariables "no"
 
 ## Create the various object lists
 createObjectList "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp" "ScintillaObjects"
-createObjectList "CodeLite/*.cpp" "CodeLiteObjects"
+createObjectList "sdk/codelite_indexer/network/*.cpp CodeLite/*.cpp" "CodeLiteObjects"
 createObjectList "LiteEditor/*.cpp" "LiteEditorObjects"
 createObjectList "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects"
 createObjectList "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects"

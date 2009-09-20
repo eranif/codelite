@@ -119,7 +119,7 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 2, 3, 0, 0 );
+	fgSizer2 = new wxFlexGridSizer( 1, 0, 0, 0 );
 	fgSizer2->AddGrowableCol( 1 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -136,16 +136,11 @@ DebuggerPageBase::DebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	bSizer7->Add( fgSizer2, 0, wxEXPAND, 5 );
 	
-	wxGridSizer* gSizer1;
-	gSizer1 = new wxGridSizer( 2, 2, 0, 0 );
-	
-	bSizer7->Add( gSizer1, 0, wxEXPAND, 5 );
-	
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Options:") ), wxVERTICAL );
 	
 	wxGridSizer* gSizer3;
-	gSizer3 = new wxGridSizer( 2, 2, 0, 0 );
+	gSizer3 = new wxGridSizer( 0, 2, 0, 0 );
 	
 	m_checkBoxEnablePendingBreakpoints = new wxCheckBox( this, wxID_ANY, wxT("Enable pending breakpoint"), wxDefaultPosition, wxDefaultSize, 0 );
 	

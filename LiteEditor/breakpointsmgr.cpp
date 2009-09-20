@@ -354,8 +354,12 @@ int BreakptMgr::DelBreakpointByLineno(const wxString& file, const int lineno)
 void BreakptMgr::DelAllBreakpoints()
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr) {
+	if (dbgr && dbgr->IsRunning()) {
+		bool contIsNeeded = PauseDebuggerIfNeeded();
 		dbgr->RemoveAllBreaks();
+		if (contIsNeeded) {
+			dbgr->Continue();
+		}
 	}
 
 	// Delete all markers before clearing m_bps, otherwise we won't know which files they were in

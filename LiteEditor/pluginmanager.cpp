@@ -200,28 +200,26 @@ void PluginManager::Load()
 			m_plugins[plugin->GetShortName()] = plugin;
 
 			//load the toolbar
-			if ( AllowToolbar() ) {
-				wxToolBar *tb = plugin->CreateToolBar(Frame::Get()->GetMainPanel());
-				if ( tb ) {
-					Frame::Get()->GetDockingManager().AddPane( tb, wxAuiPaneInfo().Name( plugin->GetShortName() ).LeftDockable( true ).RightDockable( true ).Caption( plugin->GetShortName() ).ToolbarPane().Top() );
+			wxToolBar *tb = plugin->CreateToolBar( AllowToolbar() ? (wxWindow*)Frame::Get()->GetMainPanel() : (wxWindow*)Frame::Get() );
+			if ( tb ) {
+				Frame::Get()->GetDockingManager().AddPane( tb, wxAuiPaneInfo().Name( plugin->GetShortName() ).LeftDockable( true ).RightDockable( true ).Caption( plugin->GetShortName() ).ToolbarPane().Top() );
 
-					//Add menu entry at the 'View->Toolbars' menu for this toolbar
-					int ii = Frame::Get()->GetMenuBar()->FindMenu( wxT( "View" ) );
-					if ( ii != wxNOT_FOUND ) {
-						wxMenu *viewMenu = Frame::Get()->GetMenuBar()->GetMenu( ii );
-						wxMenu *submenu = NULL;
-						wxMenuItem *item = viewMenu->FindItem( XRCID("toolbars_menu") );
-						if (item) {
-							submenu = item->GetSubMenu();
-							//add the new toolbar entry at the end of this menu
+				//Add menu entry at the 'View->Toolbars' menu for this toolbar
+				int ii = Frame::Get()->GetMenuBar()->FindMenu( wxT( "View" ) );
+				if ( ii != wxNOT_FOUND ) {
+					wxMenu *viewMenu = Frame::Get()->GetMenuBar()->GetMenu( ii );
+					wxMenu *submenu = NULL;
+					wxMenuItem *item = viewMenu->FindItem( XRCID("toolbars_menu") );
+					if (item) {
+						submenu = item->GetSubMenu();
+						//add the new toolbar entry at the end of this menu
 
-							int id = wxNewId();
-							wxString text(plugin->GetShortName());
-							text << wxT(" ToolBar");
-							wxMenuItem *newItem = new wxMenuItem(submenu, id, text, wxEmptyString, wxITEM_CHECK);
-							submenu->Append(newItem);
-							Frame::Get()->RegisterToolbar(id, plugin->GetShortName());
-						}
+						int id = wxNewId();
+						wxString text(plugin->GetShortName());
+						text << wxT(" ToolBar");
+						wxMenuItem *newItem = new wxMenuItem(submenu, id, text, wxEmptyString, wxITEM_CHECK);
+						submenu->Append(newItem);
+						Frame::Get()->RegisterToolbar(id, plugin->GetShortName());
 					}
 				}
 			}

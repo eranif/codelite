@@ -124,10 +124,10 @@ wxToolBar *CodeFormatter::CreateToolBar(wxWindow *parent)
 	}
 
 	//Connect the events to us
-	parent->Connect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
-	parent->Connect(XRCID("formatter_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CodeFormatter::OnFormatOptions), NULL, (wxEvtHandler*)this);
-	parent->Connect(XRCID("format_source"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
-	parent->Connect(XRCID("formatter_options"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(XRCID("formatter_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CodeFormatter::OnFormatOptions), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(XRCID("format_source"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(XRCID("formatter_options"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
 	return tb;
 }
 
@@ -135,7 +135,7 @@ void CodeFormatter::CreatePluginMenu(wxMenu *pluginsMenu)
 {
 	wxMenu *menu = new wxMenu();
 	wxMenuItem *item(NULL);
-	item = new wxMenuItem(menu, XRCID("format_source"), wxT("Format Current Source\tCtrl+I"), wxT("Format Current Source"), wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("format_source"), wxT("Format Current Source"), wxT("Format Current Source"), wxITEM_NORMAL);
 	menu->Append(item);
 	menu->AppendSeparator();
 	item = new wxMenuItem(menu, XRCID("formatter_options"), wxT("Options..."), wxEmptyString, wxITEM_NORMAL);

@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : externaltools.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : externaltools.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -72,9 +72,10 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 }
 
 ExternalToolsPlugin::ExternalToolsPlugin(IManager *manager)
-		: IPlugin(manager)
-		, topWin(NULL)
+		: IPlugin       (manager)
+		, topWin        (NULL)
 		, m_pipedProcess(NULL)
+		, m_parentMenu  (NULL)
 {
 	m_longName = wxT("A plugin that allows user to launch external tools from within CodeLite");
 	m_shortName = wxT("ExternalTools");
@@ -165,13 +166,8 @@ wxToolBar *ExternalToolsPlugin::CreateToolBar(wxWindow *parent)
 
 void ExternalToolsPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 {
-	wxMenu *menu = new wxMenu();
-	wxMenuItem *item(NULL);
-	item = new wxMenuItem(menu, XRCID("external_tools_settings"), wxT("Configure external tools..."), wxEmptyString, wxITEM_NORMAL);
-	menu->Append(item);
-	pluginsMenu->Append(wxID_ANY, wxT("External Tools"), menu);
-
-	topWin->Connect(XRCID("external_tools_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnSettings), NULL, (wxEvtHandler*)this);
+	m_parentMenu = pluginsMenu;
+	DoCreatePluginMenu();
 }
 
 void ExternalToolsPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
@@ -204,6 +200,7 @@ void ExternalToolsPlugin::OnSettings(wxCommandEvent& e)
 		m_mgr->GetConfigTool()->WriteObject(wxT("ExternalTools"), &data);
 
 		DoRecreateToolbar();
+		DoCreatePluginMenu();
 	}
 }
 
@@ -326,4 +323,33 @@ void ExternalToolsPlugin::OnStopExternalTool(wxCommandEvent& e)
 void ExternalToolsPlugin::OnStopExternalToolUI(wxUpdateUIEvent& e)
 {
 	e.Enable(this->IsRedirectedToolRunning());
+}
+
+void ExternalToolsPlugin::DoCreatePluginMenu()
+{
+	if ( m_parentMenu ) {
+		// destroy the old menu entries
+		if ( m_parentMenu->FindItem(58374) ) {
+			m_parentMenu->Destroy(58374);
+		}
+
+		wxMenu *menu = new wxMenu();
+		wxMenuItem *item(NULL);
+		item = new wxMenuItem(menu, XRCID("external_tools_settings"), wxT("Configure external tools..."), wxEmptyString, wxITEM_NORMAL);
+		menu->Append(item);
+		menu->AppendSeparator();
+
+		// Loop and append the tools already defined
+		ExternalToolsData inData;
+		m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
+
+		for (size_t i=0; i<inData.GetTools().size(); i++) {
+			ToolInfo ti = inData.GetTools().at(i);
+			item = new wxMenuItem(menu, wxXmlResource::GetXRCID(ti.GetId().c_str()), ti.GetName(), wxEmptyString, wxITEM_NORMAL);
+			menu->Append(item);
+		}
+
+		m_parentMenu->Append(58374, wxT("External Tools"), menu);
+		topWin->Connect(XRCID("external_tools_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ExternalToolsPlugin::OnSettings), NULL, (wxEvtHandler*)this);
+	}
 }

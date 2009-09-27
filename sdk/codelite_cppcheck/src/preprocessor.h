@@ -95,6 +95,7 @@ protected:
      * Remove comments from code. This should only be called from read().
      * @param str Code processed by read().
      * @return code without comments
+     * @throws std::runtime_error when code contains unhandled characters
      */
     static std::string removeComments(const std::string &str);
 
@@ -126,6 +127,13 @@ private:
     static std::string getdef(std::string line, bool def);
 
 public:
+
+    /**
+     * Remove asm(...) from a string
+     * @param str Code
+     */
+    static void removeAsm(std::string &str);
+
     /**
      * Evaluate condition 'numerically'
      * @param cfg configuration

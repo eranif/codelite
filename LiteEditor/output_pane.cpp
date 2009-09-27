@@ -23,11 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "frame.h"
 #include "editor_config.h"
 #include <wx/dcbuffer.h>
-
 #include "output_pane.h"
-
 #include "custom_notebook.h"
 #include "findresultstab.h"
 #include "replaceinfilespanel.h"
@@ -35,7 +34,6 @@
 #include "errorstab.h"
 #include "shelltab.h"
 #include "taskpanel.h"
-
 
 const wxString OutputPane::FIND_IN_FILES_WIN = wxT("Find Results");
 const wxString OutputPane::BUILD_WIN         = wxT("Build");
@@ -48,15 +46,15 @@ const wxString OutputPane::TRACE_TAB         = wxT("Trace");
 
 
 BEGIN_EVENT_TABLE(OutputPane, wxPanel)
-    EVT_PAINT(OutputPane::OnPaint)
-    EVT_ERASE_BACKGROUND(OutputPane::OnEraseBg)
-    EVT_SIZE(OutputPane::OnSize)
+	EVT_PAINT(OutputPane::OnPaint)
+	EVT_ERASE_BACKGROUND(OutputPane::OnEraseBg)
+	EVT_SIZE(OutputPane::OnSize)
 END_EVENT_TABLE()
 
 OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
-    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300))
-    , m_caption(caption)
-    , m_logTargetOld(NULL)
+		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300))
+		, m_caption(caption)
+		, m_logTargetOld(NULL)
 {
 	CreateGUIControls();
 }
@@ -72,8 +70,8 @@ void OutputPane::CreateGUIControls()
 	SetSizer(mainSizer);
 
 	// load the notebook style from codelite settings file
-	long bookStyle = wxVB_TOP|wxVB_FIXED_WIDTH;
-	EditorConfigST::Get()->GetLongValue(wxT("OutputPane"), bookStyle);
+	long bookStyle = wxVB_TOP|wxVB_FIXED_WIDTH|wxVB_NO_TABS;
+//	EditorConfigST::Get()->GetLongValue(wxT("OutputPane"), bookStyle);
 
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
 	// Calculate the widthest tab (the one with the 'Workspcae' label)
@@ -82,13 +80,13 @@ void OutputPane::CreateGUIControls()
 	wxWindow::GetTextExtent(REPLACE_IN_FILES, &xx, &yy, NULL, NULL, &fnt);
 	m_book->SetFixedTabWidth(xx + 16 + 20);
 
-	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
+	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 0);
 
 	m_buildWin = new BuildTab(m_book, wxID_ANY, BUILD_WIN);
 	m_book->AddPage(m_buildWin, BUILD_WIN, BUILD_WIN, wxXmlResource::Get()->LoadBitmap(wxT("build")));
 
 	m_errorsWin = new ErrorsTab(m_buildWin, m_book, wxID_ANY, ERRORS_WIN);
-	m_book->AddPage(m_errorsWin, ERRORS_WIN, ERRORS_WIN, wxXmlResource::Get()->LoadBitmap(wxT("project_conflict")));
+	m_book->AddPage(m_errorsWin, ERRORS_WIN, ERRORS_WIN, wxXmlResource::Get()->LoadBitmap(wxT("error")));
 
 	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN, true);
 	m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, FIND_IN_FILES_WIN, wxXmlResource::Get()->LoadBitmap(wxT("find_results")));
@@ -108,7 +106,6 @@ void OutputPane::CreateGUIControls()
 
 	m_taskPanel = new TaskPanel(m_book, wxID_ANY, TASKS);
 	m_book->AddPage(m_taskPanel, TASKS, TASKS, wxXmlResource::Get()->LoadBitmap(wxT("todo")));
-
 	mainSizer->Layout();
 }
 

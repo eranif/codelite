@@ -256,6 +256,13 @@
                 <label>Find Word At Caret Backward</label>
             </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+			<object class="wxMenuItem" name="next_fif_match">
+                <label>Go to Next 'Find In File' Match</label>
+            </object>
+			<object class="wxMenuItem" name="previous_fif_match">
+                <label>Go to Previous 'Find In File' Match</label>
+            </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="incremental_search">
                 <label>Incremental Search</label>
             </object>

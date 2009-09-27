@@ -7,7 +7,7 @@
     <Option Name="ParseComments">yes</Option>
   </Ctags>
   <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
-  <Project Name="wxscintilla" Path="sdk/wxscintilla/wxscintilla.project"/>
+  <Project Name="wxscintilla" Path="sdk/wxscintilla/wxscintilla.project" Active="No"/>
   <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
   <Project Name="LiteEditor" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
   <Project Name="sqlite3" Path="sqlite3/sqlite3.project"/>
@@ -33,6 +33,7 @@
   <Project Name="ContinuousBuild" Path="ContinuousBuild/ContinuousBuild.project" Active="No"/>
   <Project Name="wxpropgrid" Path="sdk/wxpropgrid/wxpropgrid.project" Active="No"/>
   <Project Name="QMakePlugin" Path="QmakePlugin/QMakePlugin.project" Active="No"/>
+  <Project Name="CppChecker" Path="cppchecker/CppChecker.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
@@ -52,6 +53,7 @@
       <Project Name="ExternalTools" ConfigName="WinReleaseUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinReleaseUnicode"/>
       <Project Name="Cscope" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CppChecker" ConfigName="WinReleaseUnicode"/>
       <Project Name="Copyright" ConfigName="WinReleaseUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
@@ -76,6 +78,7 @@
       <Project Name="ExternalTools" ConfigName="WinDebugUnicode"/>
       <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
       <Project Name="Cscope" ConfigName="WinDebugUnicode"/>
+      <Project Name="CppChecker" ConfigName="WinDebugUnicode"/>
       <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
       <Project Name="ContinuousBuild" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
@@ -105,8 +108,9 @@
       <Project Name="CodeFormatter" ConfigName="DebugUnicode"/>
       <Project Name="abbreviation" ConfigName="DebugUnicode"/>
       <Project Name="QMakePlugin" ConfigName="DebugUnicode"/>
+      <Project Name="CppChecker" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="no">
+    <WorkspaceConfiguration Name="Linux_64Bit_Release" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="ReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="ReleaseUnicode"/>
       <Project Name="wxpropgrid" ConfigName="ReleaseUnicode"/>
@@ -129,8 +133,9 @@
       <Project Name="CodeFormatter" ConfigName="ReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="ReleaseUnicode"/>
       <Project Name="QMakePlugin" ConfigName="DebugUnicode"/>
+      <Project Name="CppChecker" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="no">
+    <WorkspaceConfiguration Name="WinReleaseUnicode_NoPlugins" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>
@@ -153,6 +158,7 @@
       <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CppChecker" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

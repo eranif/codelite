@@ -1,4 +1,5 @@
 #include <wx/xrc/xmlres.h>
+#include <wx/mimetype.h>
 #include "globals.h"
 #include "dirsaver.h"
 #include "newqtprojdlg.h"
@@ -52,11 +53,12 @@ QMakePlugin::QMakePlugin(IManager *manager)
 	//Connect items
 	wxApp *app = m_mgr->GetTheApp();
 
-	app->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(QMakePlugin::OnSaveConfig     ), NULL, this);
-	app->Connect(wxEVT_BUILD_STARTING,          wxCommandEventHandler(QMakePlugin::OnBuildStarting  ), NULL, this);
-	app->Connect(wxEVT_GET_PROJECT_BUILD_CMD,   wxCommandEventHandler(QMakePlugin::OnGetBuildCommand), NULL, this);
-	app->Connect(wxEVT_GET_PROJECT_CLEAN_CMD,   wxCommandEventHandler(QMakePlugin::OnGetCleanCommand), NULL, this);
-	app->Connect(wxEVT_GET_IS_PLUGIN_MAKEFILE,  wxCommandEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
+	app->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(QMakePlugin::OnSaveConfig     ),     NULL, this);
+	app->Connect(wxEVT_BUILD_STARTING,           wxCommandEventHandler(QMakePlugin::OnBuildStarting  ),     NULL, this);
+	app->Connect(wxEVT_GET_PROJECT_BUILD_CMD,    wxCommandEventHandler(QMakePlugin::OnGetBuildCommand),     NULL, this);
+	app->Connect(wxEVT_GET_PROJECT_CLEAN_CMD,    wxCommandEventHandler(QMakePlugin::OnGetCleanCommand),     NULL, this);
+	app->Connect(wxEVT_GET_IS_PLUGIN_MAKEFILE,   wxCommandEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
+	app->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(QMakePlugin::OnOpenFile),            NULL, this);
 }
 
 QMakePlugin::~QMakePlugin()
@@ -132,11 +134,13 @@ void QMakePlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 void QMakePlugin::UnPlug()
 {
 	wxApp *app = m_mgr->GetTheApp();
-	app->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(QMakePlugin::OnSaveConfig     ),     NULL, this);
-	app->Disconnect(wxEVT_BUILD_STARTING,          wxCommandEventHandler(QMakePlugin::OnBuildStarting  ),     NULL, this);
-	app->Disconnect(wxEVT_GET_PROJECT_BUILD_CMD,   wxCommandEventHandler(QMakePlugin::OnGetBuildCommand),     NULL, this);
-	app->Disconnect(wxEVT_GET_PROJECT_CLEAN_CMD,   wxCommandEventHandler(QMakePlugin::OnGetCleanCommand),     NULL, this);
-	app->Disconnect(wxEVT_GET_IS_PLUGIN_MAKEFILE,  wxCommandEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
+
+	app->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(QMakePlugin::OnSaveConfig     ),     NULL, this);
+	app->Disconnect(wxEVT_BUILD_STARTING,           wxCommandEventHandler(QMakePlugin::OnBuildStarting  ),     NULL, this);
+	app->Disconnect(wxEVT_GET_PROJECT_BUILD_CMD,    wxCommandEventHandler(QMakePlugin::OnGetBuildCommand),     NULL, this);
+	app->Disconnect(wxEVT_GET_PROJECT_CLEAN_CMD,    wxCommandEventHandler(QMakePlugin::OnGetCleanCommand),     NULL, this);
+	app->Disconnect(wxEVT_GET_IS_PLUGIN_MAKEFILE,   wxCommandEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
+	app->Disconnect(wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(QMakePlugin::OnOpenFile),            NULL, this);
 }
 
 void QMakePlugin::HookProjectSettingsTab(wxNotebook* book, const wxString &projectName, const wxString &configName)
@@ -456,4 +460,31 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
 			m_mgr->AddProject(path);
 		}
 	}
+}
+
+void QMakePlugin::OnOpenFile(wxCommandEvent &event)
+{
+	wxString *fn = (wxString*)event.GetClientData();
+	if ( fn ) {
+		// launch it with the default application
+		wxFileName fullpath ( *fn );
+		if ( fullpath.GetExt().MakeLower() != wxT("ui") ) {
+			event.Skip();
+			return;
+		}
+
+		wxMimeTypesManager *mgr = wxTheMimeTypesManager;
+		wxFileType *type = mgr->GetFileTypeFromExtension(fullpath.GetExt());
+		if ( type ) {
+			wxString cmd = type->GetOpenCommand(fullpath.GetFullPath());
+			delete type;
+
+			if ( cmd.IsEmpty() == false ) {
+				wxExecute(cmd);
+				return;
+			}
+		}
+	}
+	// we failed, call event.Skip()
+	event.Skip();
 }

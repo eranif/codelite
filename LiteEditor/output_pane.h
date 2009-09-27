@@ -37,6 +37,7 @@ class ReplaceInFilesPanel;
 class ShellTab;
 class DebugTab;
 class TaskPanel;
+class OutputViewControlBar;
 
 /**
  * \ingroup LiteEditor

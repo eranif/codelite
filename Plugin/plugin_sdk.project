@@ -139,6 +139,8 @@
       <File Name="virtualdirectoryselectorbase.cpp"/>
       <File Name="windowstack.h"/>
       <File Name="windowstack.cpp"/>
+      <File Name="outputviewcontrolbar.cpp"/>
+      <File Name="outputviewcontrolbar.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="threebuttondlg.h"/>

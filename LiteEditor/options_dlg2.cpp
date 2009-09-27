@@ -44,8 +44,9 @@
 #include "../Plugin/windowattrmanager.h"
 
 OptionsDlg2::OptionsDlg2( wxWindow* parent )
-: OptionsBaseDlg2( parent )
-, m_contentObjects()
+		: OptionsBaseDlg2( parent )
+		, m_contentObjects()
+		, restartRquired(false)
 {
 	Initialize();
 	WindowAttrManager::Load(this, wxT("OptionsDlgAttr"), NULL);
@@ -54,7 +55,8 @@ OptionsDlg2::OptionsDlg2( wxWindow* parent )
 
 OptionsDlg2::~OptionsDlg2()
 {
-	WindowAttrManager::Save(this, wxT("OptionsDlgAttr"), NULL);
+	if ( !this->restartRquired )
+		WindowAttrManager::Save(this, wxT("OptionsDlgAttr"), NULL);
 }
 
 void OptionsDlg2::OnButtonOK( wxCommandEvent&)
@@ -82,9 +84,14 @@ void OptionsDlg2::DoSave()
 	// file
 	EditorConfigST::Get()->Begin();
 	typedef std::list<TreeBookNodeBase*>::iterator ContentIter;
-	for(ContentIter it = m_contentObjects.begin(), end = m_contentObjects.end(); it != end; ++it){
-		if(*it){
-			(*it)->Save(options);
+	for (ContentIter it = m_contentObjects.begin(), end = m_contentObjects.end(); it != end; ++it) {
+		if (*it) {
+			TreeBookNodeBase* child = *it;
+			child->Save( options );
+			
+			if ( !this->restartRquired ) {
+				this->restartRquired = child->IsRestartRequired();
+			}
 		}
 	}
 
@@ -94,6 +101,10 @@ void OptionsDlg2::DoSave()
 	EditorConfigST::Get()->Save();
 
 	Frame::Get()->GetMainBook()->ApplySettingsChanges();
+	
+	if ( this->restartRquired ) {
+		WindowAttrManager::Save(this, wxT("OptionsDlgAttr"), NULL);
+	}
 }
 
 void OptionsDlg2::Initialize()

@@ -72,13 +72,9 @@
 
 #define NUMBER_MARGIN_ID        0
 #define EDIT_TRACKER_MARGIN_ID  1
-#define SYMBOLS_MARGIN_ID 		2
+#define SYMBOLS_MARGIN_ID       2
 #define SYMBOLS_MARGIN_SEP_ID   3
 #define FOLD_MARGIN_ID          4
-
-#define USER_INDICATOR 				3
-#define HYPERLINK_INDICATOR 		4
-#define MATCH_INDICATOR             5
 
 #define CL_LINE_MODIFIED_STYLE      200
 #define CL_LINE_SAVED_STYLE         201
@@ -98,34 +94,37 @@ extern const char *BreakptIgnore[];
 extern const char *ConditionalBreakpt[];
 extern const char *ConditionalBreakptDisabled[];
 
+const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR = XRCID("remove_match_indicator");
+
 extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
 BEGIN_EVENT_TABLE(LEditor, wxScintilla)
 
-	EVT_SCI_CHARADDED(wxID_ANY, LEditor::OnCharAdded)
-	EVT_SCI_MARGINCLICK(wxID_ANY, LEditor::OnMarginClick)
-	EVT_SCI_CALLTIP_CLICK(wxID_ANY, LEditor::OnCallTipClick)
-	EVT_SCI_DWELLEND(wxID_ANY, LEditor::OnDwellEnd)
-	EVT_SCI_UPDATEUI(wxID_ANY, LEditor::OnSciUpdateUI)
-	EVT_SCI_SAVEPOINTREACHED(wxID_ANY, LEditor::OnSavePoint)
-	EVT_SCI_SAVEPOINTLEFT(wxID_ANY, LEditor::OnSavePoint)
-	EVT_SCI_MODIFIED(wxID_ANY, LEditor::OnChange)
-	EVT_CONTEXT_MENU(LEditor::OnContextMenu)
-	EVT_KEY_DOWN(LEditor::OnKeyDown)
-	EVT_LEFT_DOWN(LEditor::OnLeftDown)
-	EVT_MIDDLE_DOWN(LEditor::OnMiddleDown)
-	EVT_MIDDLE_UP(LEditor::OnMiddleUp)
-	EVT_LEFT_UP(LEditor::OnLeftUp)
-	EVT_LEAVE_WINDOW(LEditor::OnLeaveWindow)
-	EVT_KILL_FOCUS(LEditor::OnFocusLost)
-	EVT_SCI_DOUBLECLICK(wxID_ANY, LEditor::OnLeftDClick)
-	EVT_COMMAND(wxID_ANY, wxEVT_FRD_FIND_NEXT, LEditor::OnFindDialog)
-	EVT_COMMAND(wxID_ANY, wxEVT_FRD_REPLACE, LEditor::OnFindDialog)
-	EVT_COMMAND(wxID_ANY, wxEVT_FRD_REPLACEALL, LEditor::OnFindDialog)
-	EVT_COMMAND(wxID_ANY, wxEVT_FRD_BOOKMARKALL, LEditor::OnFindDialog)
-	EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLOSE, LEditor::OnFindDialog)
-	EVT_COMMAND(wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
-	EVT_COMMAND(wxID_ANY, wxEVT_CMD_JOB_STATUS_VOID_PTR, LEditor::OnHighlightThread)
+	EVT_SCI_CHARADDED              (wxID_ANY, LEditor::OnCharAdded)
+	EVT_SCI_MARGINCLICK            (wxID_ANY, LEditor::OnMarginClick)
+	EVT_SCI_CALLTIP_CLICK          (wxID_ANY, LEditor::OnCallTipClick)
+	EVT_SCI_DWELLEND               (wxID_ANY, LEditor::OnDwellEnd)
+	EVT_SCI_UPDATEUI               (wxID_ANY, LEditor::OnSciUpdateUI)
+	EVT_SCI_SAVEPOINTREACHED       (wxID_ANY, LEditor::OnSavePoint)
+	EVT_SCI_SAVEPOINTLEFT          (wxID_ANY, LEditor::OnSavePoint)
+	EVT_SCI_MODIFIED               (wxID_ANY, LEditor::OnChange)
+	EVT_CONTEXT_MENU               (LEditor::OnContextMenu)
+	EVT_KEY_DOWN                   (LEditor::OnKeyDown)
+	EVT_LEFT_DOWN                  (LEditor::OnLeftDown)
+	EVT_MIDDLE_DOWN                (LEditor::OnMiddleDown)
+	EVT_MIDDLE_UP                  (LEditor::OnMiddleUp)
+	EVT_LEFT_UP                    (LEditor::OnLeftUp)
+	EVT_LEAVE_WINDOW               (LEditor::OnLeaveWindow)
+	EVT_KILL_FOCUS                 (LEditor::OnFocusLost)
+	EVT_SCI_DOUBLECLICK            (wxID_ANY, LEditor::OnLeftDClick)
+	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_FIND_NEXT, LEditor::OnFindDialog)
+	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_REPLACE, LEditor::OnFindDialog)
+	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_REPLACEALL, LEditor::OnFindDialog)
+	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_BOOKMARKALL, LEditor::OnFindDialog)
+	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_CLOSE, LEditor::OnFindDialog)
+	EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
+	EVT_COMMAND                    (wxID_ANY, wxEVT_CMD_JOB_STATUS_VOID_PTR, LEditor::OnHighlightThread)
+	EVT_COMMAND                    (wxID_ANY, wxCMD_EVENT_REMOVE_MATCH_INDICATOR, LEditor::OnRemoveMatchInidicator)
 END_EVENT_TABLE()
 
 // Instantiate statics
@@ -251,7 +250,6 @@ void LEditor::SetCaretAt(long pos)
 /// Setup some scintilla properties
 void LEditor::SetProperties()
 {
-
 	SetMultipleSelection(true);
 	SetRectangularSelectionModifier(wxSCI_SCMOD_CTRL);
 	SetAdditionalSelectionTyping(true);
@@ -281,7 +279,7 @@ void LEditor::SetProperties()
 
 	// Fold and comments as well
 	SetProperty(wxT("fold.comment"), wxT("1"));
-	SetModEventMask (wxSCI_MOD_DELETETEXT | wxSCI_MOD_INSERTTEXT  | wxSCI_PERFORMED_UNDO  | wxSCI_PERFORMED_REDO );
+	SetModEventMask (wxSCI_MOD_DELETETEXT | wxSCI_MOD_INSERTTEXT  | wxSCI_PERFORMED_UNDO  | wxSCI_PERFORMED_REDO | wxSCI_MOD_BEFOREDELETE );
 
 	int caretSlop = 1;
 	int caretZone = 20;
@@ -509,7 +507,7 @@ void LEditor::SetProperties()
 	IndicatorSetUnder(HYPERLINK_INDICATOR, true);
 	IndicatorSetUnder(MATCH_INDICATOR, true);
 #endif
-
+	SetInidicatorValue(MATCH_INDICATOR, 1);
 	SetUserIndicatorStyleAndColour(wxSCI_INDIC_SQUIGGLE, wxT("RED"));
 
 	wxColour col2(wxT("LIGHT BLUE"));
@@ -552,7 +550,7 @@ void LEditor::OnSavePoint(wxScintillaEvent &event)
 
 	} else {
 
-		if( GetMarginWidth(EDIT_TRACKER_MARGIN_ID) ) {
+		if ( GetMarginWidth(EDIT_TRACKER_MARGIN_ID) ) {
 
 			Freeze();
 
@@ -605,7 +603,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		DeleteBack();
 	}
 
-	wxChar matchChar = 0;
+	wxChar matchChar (0);
 	switch ( event.GetKey() ) {
 	case ',':
 		if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
@@ -640,7 +638,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		break;
 	case '}':
 		m_context->AutoIndent(event.GetKey());
-		// fall through...
+		break;
 	case '\n': {
 			// incase ENTER was hit immediatly after we inserted '{' into the code...
 			if ( s_lastCharEntered == wxT('{') && m_autoAddMatchedBrace ) {
@@ -669,8 +667,23 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	}
 
 	if (matchChar && m_autoAddMatchedBrace && !m_context->IsCommentOrString(pos)) {
-
-		if (matchChar != '}') {
+		if ( matchChar == ')' ) {
+			// avoid adding close brace if the next char is not a whitespace
+			// character
+			int nextChar = SafeGetChar(pos);
+			switch (nextChar) {
+			case ' ' :
+			case '\t':
+			case '\n':
+			case '\r':
+				InsertText(pos, matchChar);
+				SetIndicatorCurrent(MATCH_INDICATOR);
+				// use grey colour rather than black, otherwise this indicator is invisible when using the
+				// black theme
+				IndicatorFillRange(pos, 1);
+				break;
+			}
+		} else if (matchChar != '}') {
 			InsertText(pos, matchChar);
 			SetIndicatorCurrent(MATCH_INDICATOR);
 			// use grey colour rather than black, otherwise this indicator is invisible when using the
@@ -689,7 +702,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		}
 	}
 
-	if( event.GetKey() !=  13 ) {
+	if ( event.GetKey() !=  13 ) {
 		// Dont store last character if it was \r
 		s_lastCharEntered = event.GetKey();
 	}
@@ -800,24 +813,24 @@ void LEditor::OnMarginClick(wxScintillaEvent& event)
 				if (markers & mmt_bp_disabled) {
 					bm = wxBitmap(wxImage(BreakptDisabled));
 				} else
-				if (markers & mmt_bp_cmdlist) {
-					bm = wxBitmap(wxImage(BreakptCommandList));
-				} else
-				if (markers & mmt_bp_cmdlist_disabled) {
-					bm = wxBitmap(wxImage(BreakptCommandListDisabled));
-				} else
-				if (markers & mmt_bp_ignored) {
-					bm = wxBitmap(wxImage(BreakptIgnore));
-				} else
-				if (markers & mmt_cond_bp) {
-					bm = wxBitmap(wxImage(ConditionalBreakpt));
-				} else
-				if (markers & mmt_cond_bp_disabled) {
-					bm = wxBitmap(wxImage(ConditionalBreakptDisabled));
-				} else {
-				// Make the standard bp bitmap the default
-					bm = wxBitmap(wxImage(stop_xpm));
-				}
+					if (markers & mmt_bp_cmdlist) {
+						bm = wxBitmap(wxImage(BreakptCommandList));
+					} else
+						if (markers & mmt_bp_cmdlist_disabled) {
+							bm = wxBitmap(wxImage(BreakptCommandListDisabled));
+						} else
+							if (markers & mmt_bp_ignored) {
+								bm = wxBitmap(wxImage(BreakptIgnore));
+							} else
+								if (markers & mmt_cond_bp) {
+									bm = wxBitmap(wxImage(ConditionalBreakpt));
+								} else
+									if (markers & mmt_cond_bp_disabled) {
+										bm = wxBitmap(wxImage(ConditionalBreakptDisabled));
+									} else {
+										// Make the standard bp bitmap the default
+										bm = wxBitmap(wxImage(stop_xpm));
+									}
 
 				// There'll probably be a tooltip from the marker. Kill it
 				DoCancelCalltip();
@@ -829,8 +842,8 @@ void LEditor::OnMarginClick(wxScintillaEvent& event)
 				Connect(wxEVT_LEFT_UP, wxMouseEventHandler(myDragImage::OnEndDrag), NULL, bpm->GetDragImage());
 
 			} else {
-			ToggleBreakpoint(nLine+1);
-		}
+				ToggleBreakpoint(nLine+1);
+			}
 		}
 		break;
 	case FOLD_MARGIN_ID:
@@ -2370,16 +2383,16 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 	if (count > 0) {
 		menu.AppendSeparator();
 		if (count == 1) {
-		menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
+			menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
 			menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
 			IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 			if (dbgr && dbgr->IsRunning()) {
 				// On MSWin it often crashes the debugger to try to load-then-disable a bp
 				// so don't show the menu item unless the debugger is running
 				menu.Append(XRCID("toggle_breakpoint_enabled_status"),
-			            lineBPs[0].is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
+				            lineBPs[0].is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
 			}
-		menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
+			menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
 		} else if (count > 1) {
 			menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove a Breakpoint")));
 			menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore a Breakpoint")));
@@ -3251,7 +3264,26 @@ void LEditor::SetEOL()
 
 void LEditor::OnChange(wxScintillaEvent& event)
 {
+	if ( m_autoAddMatchedBrace ) {
+		if ( (event.GetModificationType() & wxSCI_MOD_BEFOREDELETE) && (event.GetModificationType() & wxSCI_PERFORMED_USER) ) {
+			wxString deletedText = GetTextRange(event.GetPosition(), event.GetPosition() + event.GetLength());
+			if ( deletedText.IsEmpty() == false && deletedText.Length() == 1 ) {
+				if ( deletedText.GetChar(0) == wxT('[') || deletedText.GetChar(0) == wxT('(') ) {
+					int where = wxScintilla::BraceMatch(event.GetPosition());
+					if ( where != wxNOT_FOUND ) {
+						wxCommandEvent e(wxCMD_EVENT_REMOVE_MATCH_INDICATOR);
+						// the removal will take place after the actual deletion of the
+						// character, so we set it to be position before
+						e.SetInt( PositionBefore(where) );
+						AddPendingEvent( e );
+					}
+				}
+			}
+		}
+	}
+
 	if (event.GetModificationType() & wxSCI_MOD_INSERTTEXT || event.GetModificationType() & wxSCI_MOD_DELETETEXT) {
+
 		int numlines(event.GetLinesAdded());
 		if ( numlines ) {
 			// a line was added / removed from the document, synchronized between the breakpoints on this editor
@@ -3276,5 +3308,16 @@ void LEditor::OnChange(wxScintillaEvent& event)
 				}
 			}
 		}
+	}
+}
+
+void LEditor::OnRemoveMatchInidicator(wxCommandEvent& e)
+{
+	// get the current indicator end range
+	if ( IndicatorValueAt(MATCH_INDICATOR, e.GetInt()) == 1 ) {
+		int curpos = GetCurrentPos();
+		SetSelection(e.GetInt(), e.GetInt()+1);
+		ReplaceSelection(wxEmptyString);
+		SetCaretAt( curpos );
 	}
 }

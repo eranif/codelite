@@ -202,45 +202,23 @@ bool App::OnInit()
 		homeDir = newBaseDir;
 	}
 
-#if defined (__WXGTK__) || defined (__WXMSW__)
-
-#if defined (__WXMSW__)
-	wxString installPath = homeDir;
-	if (installPath.IsEmpty()) { //did we got a basedir from user?
-		installPath = ::wxGetCwd();
-	}
-
-	wxFileName menu_xrc(installPath + wxT("/rc"), wxT("menu.xrc"));
-	if(!menu_xrc.FileExists()){
-		// we got wrong home directory
-		wxFileName appFn( wxAppBase::argv[0] );
-		installPath = appFn.GetPath();
-	}
-
-	// for backward compatibility, if the install path contains
-	// user configuration files, use it as home directory
-	wxFileName codelite_xml(installPath + wxT("/config"), wxT("codelite.xml"));
-	if (homeDir.IsEmpty() && codelite_xml.FileExists()) {
-		homeDir = installPath;
-	}
-#else
-	wxString installPath( INSTALL_DIR, wxConvUTF8 );
-#endif
+#if defined (__WXGTK__)
 	if (homeDir.IsEmpty()) {
 		SetAppName(wxT("codelite"));
 		homeDir = wxStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or ~/.codelite
 
 		//Create the directory structure
-		wxFileName::Mkdir(homeDir, 0777, wxPATH_MKDIR_FULL);
-		wxFileName::Mkdir(homeDir + wxT("/lexers/"), 0777, wxPATH_MKDIR_FULL);
-		wxFileName::Mkdir(homeDir + wxT("/lexers/Default"), 0777, wxPATH_MKDIR_FULL);
-		wxFileName::Mkdir(homeDir + wxT("/lexers/BlackTheme"), 0777, wxPATH_MKDIR_FULL);
-		wxFileName::Mkdir(homeDir + wxT("/rc/"), 0777, wxPATH_MKDIR_FULL);
-		wxFileName::Mkdir(homeDir + wxT("/images/"), 0777, wxPATH_MKDIR_FULL);
-		wxFileName::Mkdir(homeDir + wxT("/templates/"), 0777, wxPATH_MKDIR_FULL);
-		wxFileName::Mkdir(homeDir + wxT("/config/"), 0777, wxPATH_MKDIR_FULL);
+		wxMkDir(homeDir.ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/lexers/")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/lexers/Default")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/lexers/BlackTheme")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/rc/")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/images/")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/templates/")).ToAscii(), 0777);
+		wxMkDir((homeDir + wxT("/config/")).ToAscii(), 0777);
 
 		//copy the settings from the global location if needed
+		wxString installPath( INSTALL_DIR, wxConvUTF8 );
 		if ( ! CopySettings(homeDir, installPath ) ) return false;
 		ManagerST::Get()->SetInstallDir( installPath );
 
@@ -249,10 +227,6 @@ bool App::OnInit()
 		fn.MakeAbsolute();
 		ManagerST::Get()->SetInstallDir( fn.GetFullPath() );
 	}
-
-#if defined(__WXMSW__)
-	EditorConfig::Init( SvnRevision );
-#endif
 
 #elif defined (__WXMAC__)
 	SetAppName(wxT("codelite"));
@@ -272,6 +246,27 @@ bool App::OnInit()
 	//copy the settings from the global location if needed
 	CopySettings(homeDir, installPath);
 
+#else //__WXMSW__
+	if (homeDir.IsEmpty()) { //did we got a basedir from user?
+		homeDir = ::wxGetCwd();
+	}
+	wxFileName fnHomdDir(homeDir + wxT("/"));
+
+	// try to locate the menu/rc.xrc file
+	wxFileName fn(homeDir + wxT("/rc"), wxT("menu.xrc"));
+	if(!fn.FileExists()){
+		// we got wrong home directory
+		wxFileName appFn( wxAppBase::argv[0] );
+		homeDir = appFn.GetPath();
+	}
+
+	if(fnHomdDir.IsRelative()){
+		fnHomdDir.MakeAbsolute();
+		homeDir = fnHomdDir.GetPath();
+	}
+
+	ManagerST::Get()->SetInstallDir( homeDir );
+	EditorConfig::Init( SvnRevision );
 #endif
 
 	wxString curdir = wxGetCwd();

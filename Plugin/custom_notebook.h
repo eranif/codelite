@@ -40,7 +40,8 @@ enum {
 	wxVB_BORDER                 = 0x00000100,
 	wxVB_NODND                  = 0x00000200,
 	wxVB_NO_DROPBUTTON          = 0x00000400,
-	wxVB_FIXED_WIDTH            = 0x00000800
+	wxVB_FIXED_WIDTH            = 0x00000800,
+	wxVB_NO_TABS                = 0x00001000
 };
 
 class wxTabContainer;
@@ -85,7 +86,7 @@ public:
 	 * \brief set page at given index to be the selected page. this function does not trigger an event
 	 * \param page
 	 */
-	void SetSelection(size_t page);
+	void SetSelection(size_t page, bool notify = true);
 
 	/**
 	 * \brief add page to the book

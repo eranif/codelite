@@ -343,6 +343,14 @@ std::string Preprocessor::removeComments(const std::string &str)
     for (std::string::size_type i = 0; i < str.length(); ++i)
     {
         char ch = str[i];
+        if (i == 0 && str.size() > 3 &&
+            (char)str[0] == (char)0xef &&
+            (char)str[1] == (char)0xbb &&
+            (char)str[2] == (char)0xbf)
+        {
+            i = 2;
+            continue;
+        }
         if (ch < 0)
             throw std::runtime_error("The code contains characters that are unhandled");
 
@@ -368,8 +376,7 @@ std::string Preprocessor::removeComments(const std::string &str)
                 ch = str[i];
                 if (ch == '\n')
                 {
-                    code << "\n";
-                    previous = '\n';
+                    ++newlines;
                     ++lineno;
                 }
             }
@@ -433,6 +440,60 @@ std::string Preprocessor::removeComments(const std::string &str)
 
     return code.str();
 }
+
+
+
+static void _removeAsm(std::string &str, const std::string::size_type pos)
+{
+    unsigned int newlines = 0;
+    bool instr = false;
+    int parlevel = 0;
+    std::string::size_type pos2 = pos + 1;
+    while (pos2 < str.length())
+    {
+        if (str[pos2] == '\"')
+            instr = !instr;
+
+        else if (str[pos2] == '\n')
+            ++newlines;
+
+        else if (!instr)
+        {
+            if (str[pos2] == '(')
+                ++parlevel;
+            else if (str[pos2] == ')')
+            {
+                if (parlevel <= 1)
+                    break;
+                --parlevel;
+            }
+        }
+
+        ++pos2;
+    }
+    str.erase(pos + 1, pos2 - pos);
+    str.insert(pos, std::string(newlines, '\n'));
+}
+
+void Preprocessor::removeAsm(std::string &str)
+{
+    std::string::size_type pos = 0;
+    while ((pos = str.find("\nasm(", pos)) != std::string::npos)
+        _removeAsm(str, pos);
+
+    pos = 0;
+    while ((pos = str.find("\nasm (", pos)) != std::string::npos)
+        _removeAsm(str, pos);
+
+    pos = 0;
+    while ((pos = str.find("\nasm __volatile(", pos)) != std::string::npos)
+        _removeAsm(str, pos);
+
+    pos = 0;
+    while ((pos = str.find("\nasm __volatile (", pos)) != std::string::npos)
+        _removeAsm(str, pos);
+}
+
 
 void Preprocessor::preprocess(std::istream &istr, std::map<std::string, std::string> &result, const std::string &filename, const std::list<std::string> &includePaths)
 {
@@ -518,6 +579,9 @@ void Preprocessor::preprocess(std::istream &istr, std::string &processedFile, st
 
     // Remove space characters that are after or before new line character
     processedFile = removeSpaceNearNL(processedFile);
+
+    // Remove asm(...)
+    removeAsm(processedFile);
 
     // Replace "defined A" with "defined(A)"
     {
@@ -644,9 +708,15 @@ std::list<std::string> Preprocessor::getcfgs(const std::string &filedata)
                     break;
                 if (*it == "1")
                     continue;
-                if (! def.empty())
-                    def += ";";
-                def += *it;
+
+                // don't add "T;T":
+                // treat two and more similar nested conditions as one
+                if (def != *it)
+                {
+                    if (! def.empty())
+                        def += ";";
+                    def += *it;
+                }
             }
 
             if (std::find(ret.begin(), ret.end(), def) == ret.end())
@@ -707,20 +777,6 @@ std::list<std::string> Preprocessor::getcfgs(const std::string &filedata)
         }
     }
 
-    // Remove duplicates from the ret list..
-    for (std::list<std::string>::iterator it1 = ret.begin(); it1 != ret.end(); ++it1)
-    {
-        std::list<std::string>::iterator it2 = it1;
-        ++it2;
-        while (it2 != ret.end())
-        {
-            if (*it1 == *it2)
-                ret.erase(it2++);
-            else
-                ++it2;
-        }
-    }
-
     // convert configurations: "defined(A) && defined(B)" => "A;B"
     for (std::list<std::string>::iterator it = ret.begin(); it != ret.end(); ++it)
     {
@@ -732,36 +788,49 @@ std::list<std::string> Preprocessor::getcfgs(const std::string &filedata)
             std::istringstream istr(s.c_str());
             tokenizer.tokenize(istr, "");
 
-            s = "";
+
             const Token *tok = tokenizer.tokens();
+            std::list<std::string> varList;
             while (tok)
             {
                 if (Token::Match(tok, "defined ( %var% )"))
                 {
-                    s = s + tok->strAt(2);
+                    varList.push_back(tok->strAt(2));
                     tok = tok->tokAt(4);
                     if (tok && tok->str() == "&&")
                     {
-                        s += ";";
                         tok = tok->next();
                     }
                 }
                 else if (Token::Match(tok, "%var% ;"))
                 {
-                    s += tok->str() + ";";
+                    varList.push_back(tok->str());
                     tok = tok->tokAt(2);
                 }
                 else
                 {
-                    s = "";
                     break;
                 }
+            }
+
+            varList.sort();
+            s = "";
+            for (std::list<std::string>::iterator varIter = varList.begin(); varIter != varList.end(); ++varIter)
+            {
+                if (!s.empty())
+                    s += ";";
+
+                s += *varIter;
             }
 
             if (!s.empty())
                 *it = s;
         }
     }
+
+    // Remove duplicates from the ret list..
+    ret.sort();
+    ret.unique();
 
     // cleanup unhandled configurations..
     for (std::list<std::string>::iterator it = ret.begin(); it != ret.end();)
@@ -778,8 +847,6 @@ std::list<std::string> Preprocessor::getcfgs(const std::string &filedata)
         else
             ++it;
     }
-
-    ret.sort();
 
     return ret;
 }
@@ -906,14 +973,14 @@ std::string Preprocessor::getcode(const std::string &filedata, std::string cfg, 
     std::string line;
     while (getline(istr, line))
     {
-        if (line == "#pragma asm")
+        if (line.substr(0, 11) == "#pragma asm")
         {
             ret << "\n";
             bool found_end = false;
             while (getline(istr, line))
             {
                 ret << "\n";
-                if (line == "#pragma endasm")
+                if (line.substr(0, 14) == "#pragma endasm")
                 {
                     found_end = true;
                     break;
@@ -1154,13 +1221,18 @@ private:
     std::string _name;
     std::string _macro;
     bool _variadic;
+    const std::string _prefix;
 
     /** The macro has parantheses but no parameters.. "AAA()" */
     bool _nopar;
 
 public:
+    /**
+     * @param macro The code after #define, until end of line,
+     * e.g. "A(x) foo(x);"
+     */
     PreprocessorMacro(const std::string &macro)
-            : _macro(macro)
+            : _macro(macro), _prefix("__cppcheck__")
     {
         // Tokenize the macro to make it easier to handle
         std::istringstream istr(macro.c_str());
@@ -1198,6 +1270,41 @@ public:
             else if (Token::Match(tokens(), "%var% ( )"))
                 _nopar = true;
         }
+    }
+
+    /**
+     * To avoid name collisions, we will rename macro variables by
+     * adding _prefix in front of the name of each variable.
+     * Returns the macro with converted names
+     * @return e.g. "A(__cppcheck__x) foo(__cppcheck__x);"
+     */
+    std::string renameMacroVariables()
+    {
+        // No variables
+        if (_params.size() == 0)
+            return _macro;
+
+        // Already renamed
+        if (_params[0].compare(0, _prefix.length(), _prefix) == 0)
+            return _macro;
+
+        std::string result;
+        result.append(_name);
+        result.append("(");
+        std::vector<std::string> values;
+        for (unsigned int i = 0; i < _params.size(); ++i)
+        {
+            if (i > 0)
+                result.append(",");
+            values.push_back(_prefix + _params[i]);
+            result.append(values.back());
+        }
+
+        result.append(") ");
+        std::string temp;
+        this->code(values, temp);
+        result.append(temp);
+        return result;
     }
 
     const Token *tokens() const
@@ -1314,7 +1421,7 @@ public:
                                 if (_variadic && i == _params.size() - 1)
                                 {
                                     str = "";
-                                    for (unsigned int j = _params.size() - 1; j < params2.size(); ++j)
+                                    for (unsigned int j = (unsigned int)_params.size() - 1; j < params2.size(); ++j)
                                     {
                                         if (optcomma || j > _params.size() - 1)
                                             str += ",";
@@ -1362,7 +1469,7 @@ std::string Preprocessor::expandMacros(std::string code, const std::string &file
     {
         if (defpos > 0 && code[defpos-1] != '\n')
         {
-            defpos += 6;
+            defpos++;
             continue;
         }
 
@@ -1473,6 +1580,25 @@ std::string Preprocessor::expandMacros(std::string code, const std::string &file
             std::string::size_type pos2 = pos1 + macro.name().length();
             if (macro.params().size() && pos2 >= code.length())
                 continue;
+
+            // Check are we in #define
+            std::string::size_type startOfLine = code.rfind("\n", pos1);
+            ++startOfLine;
+
+            if (code.substr(startOfLine, 8) == "#define ")
+            {
+                // We are inside a define, make sure we don't have name collision
+                // by e.g. replacing the following code:
+                // #define B(a) A(a)
+                // With this:
+                // #define B(2a) A(2a)
+                std::string::size_type endOfLine = code.find("\n", pos1);
+                startOfLine += 8;
+
+                PreprocessorMacro tempMacro(code.substr(startOfLine, endOfLine - startOfLine));
+                code.erase(startOfLine, endOfLine - startOfLine);
+                code.insert(startOfLine, tempMacro.renameMacroVariables());
+            }
 
             unsigned int numberOfNewlines = 0;
 

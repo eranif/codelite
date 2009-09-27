@@ -31,7 +31,6 @@
 BEGIN_EVENT_TABLE ( ErrorsTab, OutputTabWindow )
 	EVT_MENU ( XRCID ( "show_errors" ),      ErrorsTab::OnRedisplayLines )
 	EVT_MENU ( XRCID ( "show_warnings" ),    ErrorsTab::OnRedisplayLines )
-	EVT_MENU ( XRCID ( "show_build_lines" ), ErrorsTab::OnRedisplayLines )
 END_EVENT_TABLE()
 
 
@@ -42,14 +41,11 @@ ErrorsTab::ErrorsTab ( BuildTab *bt, wxWindow *parent, wxWindowID id, const wxSt
     m_autoAppear = false; // BuildTab controls this tab's auto-appearance
 
 	m_tb->RemoveTool ( XRCID ( "repeat_output" ) );
-	m_tb->AddCheckTool ( XRCID ( "show_errors" ), wxT ( "Errors" ), wxXmlResource::Get()->LoadBitmap ( wxT ( "project_conflict" ) ), wxNullBitmap, wxT ( "Show build errors" ) );
+	m_tb->AddCheckTool ( XRCID ( "show_errors" ), wxT ( "Errors" ), wxXmlResource::Get()->LoadBitmap ( wxT ( "error" ) ), wxNullBitmap, wxT ( "Show build errors" ) );
 	m_tb->ToggleTool ( XRCID ( "show_errors" ), true );
 
-	m_tb->AddCheckTool ( XRCID ( "show_warnings" ), wxT ( "Warnings" ), wxXmlResource::Get()->LoadBitmap ( wxT ( "help_icon" ) ), wxNullBitmap, wxT ( "Show build warnings" ) );
+	m_tb->AddCheckTool ( XRCID ( "show_warnings" ), wxT ( "Warnings" ), wxXmlResource::Get()->LoadBitmap ( wxT ( "project_conflict" ) ), wxNullBitmap, wxT ( "Show build warnings" ) );
 	m_tb->ToggleTool ( XRCID ( "show_warnings" ), true );
-
-	m_tb->AddCheckTool ( XRCID ( "show_build_lines" ), wxT ( "Build" ), wxXmlResource::Get()->LoadBitmap ( wxT ( "todo" ) ), wxNullBitmap, wxT ( "Show build status lines" ) );
-	m_tb->ToggleTool ( XRCID ( "show_build_lines" ), true );
 	m_tb->Realize();
 
 	FindResultsTab::SetStyles ( m_sci );
@@ -69,7 +65,7 @@ bool ErrorsTab::IsShowing ( int linecolor )
 {
 	switch ( linecolor ) {
 	case wxSCI_LEX_GCC_BUILDING:
-		return m_tb->GetToolState ( XRCID ( "show_build_lines" ) );
+		return true;
 	case wxSCI_LEX_GCC_ERROR:
 		return m_tb->GetToolState ( XRCID ( "show_errors" ) );
 	case wxSCI_LEX_GCC_WARNING:

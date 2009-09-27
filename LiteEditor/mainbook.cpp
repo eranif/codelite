@@ -53,13 +53,9 @@ void MainBook::CreateGuiControls()
 	sz->Add(m_navBar, 0, wxEXPAND);
 
 	long style = wxVB_TOP|wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
-
-#ifdef __WXGTK__
-	style |= wxVB_BORDER;
-#endif
-
 	// load the notebook style from the configuration settings
 	EditorConfigST::Get()->GetLongValue(wxT("MainBook"), style);
+	style &= ~(wxVB_BORDER);
 	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 
 	m_book->GetTabContainer()->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(MainBook::OnMouseDClick), NULL, this);

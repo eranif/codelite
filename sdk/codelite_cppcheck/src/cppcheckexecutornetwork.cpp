@@ -2,6 +2,14 @@
 #include <sstream>
 #include "network/cppchecker_protocol.h"
 #include "network/cppchecker_request.h"
+#include <iostream>
+
+CppCheckExecutorNetwork::CppCheckExecutorNetwork()
+		: _connection(NULL)
+		, _argv      (NULL)
+		, _argc      (0)
+{
+}
 
 CppCheckExecutorNetwork::CppCheckExecutorNetwork(clNamedPipe *connection, int argc, char **argv)
 		: _connection(connection)
@@ -10,6 +18,7 @@ CppCheckExecutorNetwork::CppCheckExecutorNetwork(clNamedPipe *connection, int ar
 {
 	// get request from the client
 	CPPCheckerRequest req;
+	/*printf( "command: " );*/
 	if ( CPPCheckerProtocol::ReadRequest(_connection, req) ) {
 		_argc = argc;
 		_argv = new char*[_argc];
@@ -34,10 +43,12 @@ CppCheckExecutorNetwork::CppCheckExecutorNetwork(clNamedPipe *connection, int ar
 
 CppCheckExecutorNetwork::~CppCheckExecutorNetwork()
 {
-	for (int i=0; i<_argc; i++) {
-		delete [] _argv[i];
+	if ( _connection ) {
+		for (int i=0; i<_argc; i++) {
+			delete [] _argv[i];
+		}
+		delete [] _argv;
 	}
-	delete [] _argv;
 }
 
 void CppCheckExecutorNetwork::reportErr(const ErrorLogger::ErrorMessage& msg)
@@ -49,10 +60,17 @@ void CppCheckExecutorNetwork::reportErr(const ErrorLogger::ErrorMessage& msg)
 	} else {
 		data = msg.toText();
 	}
-	CPPCheckerReply reply;
-	reply.setCompletionCode(CPPCheckerReply::CheckingInProgress);
-	reply.setReport( data );
-	CPPCheckerProtocol::SendReply(_connection, reply);
+
+	if ( _connection ) {
+		CPPCheckerReply reply;
+		reply.setCompletionCode(CPPCheckerReply::CheckingInProgress);
+		reply.setReport( data );
+		CPPCheckerProtocol::SendReply(_connection, reply);
+
+	} else {
+		fprintf(stdout, "%s", data.c_str());
+		fflush (stdout);
+	}
 }
 
 void CppCheckExecutorNetwork::reportStatus(unsigned int index, unsigned int max)
@@ -64,20 +82,31 @@ void CppCheckExecutorNetwork::reportStatus(unsigned int index, unsigned int max)
 		<< " files checked " <<
 		static_cast<int>(static_cast<double>(index) / max*100)
 		<< "% done";
-		/*std::cout << oss.str() << std::endl;*/
 
-		CPPCheckerReply reply;
-		reply.setCompletionCode(CPPCheckerReply::StatusMessage);
-		reply.setReport( oss.str() );
-		CPPCheckerProtocol::SendReply(_connection, reply);
+		if ( _connection ) {
+			CPPCheckerReply reply;
+			reply.setCompletionCode(CPPCheckerReply::StatusMessage);
+			reply.setReport( oss.str() );
+			CPPCheckerProtocol::SendReply(_connection, reply);
+
+		} else {
+			fprintf(stderr, "%s", oss.str().c_str());
+			fflush (stderr);
+		}
 
 	}
 }
 
 void CppCheckExecutorNetwork::reportErr(const std::string& errmsg)
 {
-	CPPCheckerReply reply;
-	reply.setCompletionCode(CPPCheckerReply::CheckingInProgress);
-	reply.setReport( errmsg );
-	CPPCheckerProtocol::SendReply(_connection, reply);
+	if ( _connection ) {
+		CPPCheckerReply reply;
+		reply.setCompletionCode(CPPCheckerReply::CheckingInProgress);
+		reply.setReport( errmsg );
+		CPPCheckerProtocol::SendReply(_connection, reply);
+
+	} else {
+		fprintf(stdout, "%s", errmsg.c_str());
+		fflush (stdout);
+	}
 }

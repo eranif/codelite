@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include "drawingutils.h"
 #include "custom_tabcontainer.h"
 #include "custom_tab.h"
 #include <wx/tokenzr.h>
@@ -164,6 +165,9 @@ void FindResultsTab::SetStyles(wxScintilla *sci)
 
 	sci->StyleSetHotSpot(wxSCI_LEX_FIF_MATCH, true);
 	sci->StyleSetHotSpot(wxSCI_LEX_FIF_FILE,  true);
+
+	sci->MarkerDefine       (7, wxSCI_MARK_BACKGROUND);
+	sci->MarkerSetBackground(7, DrawingUtils::LightColour(wxT("BLUE"), 8));
 }
 
 size_t FindResultsTab::GetPageCount() const
@@ -237,7 +241,7 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 	wxString label = data ? data->GetFindString() : wxT("");
 
 	if (e.GetInt() != 0 || m_sci == NULL) {
-		if(m_book){
+		if (m_book) {
 			wxScintilla *sci = new wxScintilla(m_book);
 			SetStyles(sci);
 
@@ -254,7 +258,7 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 			m_matchInfo.push_back(MatchInfo());
 			m_sci = sci;
 		}
-	} else if(m_book){
+	} else if (m_book) {
 		// using current tab, update the tab title and the search data
 		size_t where = m_book->GetPageIndex(m_sci);
 		if (where != Notebook::npos) {
@@ -396,13 +400,8 @@ void FindResultsTab::OnMouseDClick(wxScintillaEvent &e)
 		size_t n = m_book ? m_book->GetSelection() : 0;
 		const MatchInfo& matchInfo = GetMatchInfo(n);
 		MatchInfo::const_iterator m = matchInfo.find(line);
-		if (m != matchInfo.end() && !m->second.GetFileName().IsEmpty()) {
-			LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(m->second.GetFileName(), wxEmptyString, m->second.GetLineNumber()-1);
-			if (editor && m->second.GetColumn() >= 0 && m->second.GetLen() >= 0) {
-				int offset = editor->PositionFromLine(m->second.GetLineNumber()-1) + m->second.GetColumn();
-				editor->EnsureVisible(m->second.GetLineNumber()-1);
-				editor->SetSelection(offset, offset + m->second.GetLen());
-			}
+		if (m != matchInfo.end()) {
+			DoOpenSearchResult( m->second, m_sci, m->first );
 		}
 	}
 
@@ -438,7 +437,7 @@ SearchData FindResultsTab::GetSearchData(wxScintilla* sci)
 void FindResultsTab::OnCloseAllTabs(wxCommandEvent& e)
 {
 	wxUnusedVar( e );
-	if(m_book) {
+	if (m_book) {
 		m_book->DeleteAllPages(true);
 	}
 }
@@ -446,15 +445,15 @@ void FindResultsTab::OnCloseAllTabs(wxCommandEvent& e)
 void FindResultsTab::OnCloseOtherTab(wxCommandEvent& e)
 {
 	wxUnusedVar( e );
-	if(m_book) {
+	if (m_book) {
 		size_t idx = m_book->GetSelection();
-		if(idx != Notebook::npos) {
-			for(size_t i=0; i<idx; i++){
+		if (idx != Notebook::npos) {
+			for (size_t i=0; i<idx; i++) {
 				m_book->DeletePage((size_t)0);
 			}
 
 			size_t number = m_book->GetPageCount();
-			for(size_t i = number - 1; i>0; i--){
+			for (size_t i = number - 1; i>0; i--) {
 				m_book->DeletePage(i);
 			}
 		}
@@ -464,9 +463,9 @@ void FindResultsTab::OnCloseOtherTab(wxCommandEvent& e)
 void FindResultsTab::OnCloseTab(wxCommandEvent& e)
 {
 	wxUnusedVar( e );
-	if(m_book) {
+	if (m_book) {
 		size_t idx = m_book->GetSelection();
-		if(idx != Notebook::npos) {
+		if (idx != Notebook::npos) {
 			m_book->DeletePage(idx);
 		}
 	}
@@ -475,4 +474,97 @@ void FindResultsTab::OnCloseTab(wxCommandEvent& e)
 void FindResultsTab::OnTabMenuUI(wxUpdateUIEvent& e)
 {
 	e.Enable( !m_searchInProgress );
+}
+
+void FindResultsTab::NextMatch()
+{
+	// m_sci holds to the selected tab's scintilla editor
+	if ( m_sci ) {
+		const MatchInfo& matchInfo = GetMatchInfo( m_book ? m_book->GetSelection() : 0 );
+
+		// locate the last match
+		int firstLine = m_sci->MarkerNext(0, 255);
+		if ( firstLine == wxNOT_FOUND ) {
+			firstLine = 0;
+		}
+
+		// We found the last marker
+		for (int i=firstLine+1; i<m_sci->GetLineCount(); i++) {
+
+			// Find the next match
+			MatchInfo::const_iterator iter = matchInfo.find(i);
+			if ( iter != matchInfo.end() ) {
+				SearchResult sr = iter->second;
+
+				// open the new searchresult in the editor
+				DoOpenSearchResult ( sr, m_sci, i );
+				return;
+			}
+		}
+		// if we are here, it means we are the end of the search results list, add a status message
+		wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
+		e.SetEventObject(this);
+		e.SetString(wxString::Format(wxT("Reached the end of 'find in files' search results list" )));
+		e.SetInt(0);
+		Frame::Get()->AddPendingEvent(e);
+	}
+}
+
+void FindResultsTab::PrevMatch()
+{
+	// m_sci holds to the selected tab's scintilla editor
+	if ( m_sci ) {
+		const MatchInfo& matchInfo = GetMatchInfo( m_book ? m_book->GetSelection() : 0 );
+
+		// locate the last match
+		int firstLine = m_sci->MarkerPrevious(m_sci->GetLineCount()-1, 255);
+		if ( firstLine == wxNOT_FOUND ) {
+			firstLine = m_sci->GetLineCount();
+		}
+
+		// We found the last marker
+		for (int i=firstLine-1; i>=0; i--) {
+
+			// Find the next match
+			MatchInfo::const_iterator iter = matchInfo.find(i);
+			if ( iter != matchInfo.end() ) {
+				SearchResult sr = iter->second;
+
+				// open the new searchresult in the editor
+				DoOpenSearchResult ( sr, m_sci, i );
+				return;
+			}
+		}
+		// if we are here, it means we are the top of the search results list, add a status message
+		wxCommandEvent e(wxEVT_UPDATE_STATUS_BAR);
+		e.SetEventObject(this);
+		e.SetString(wxString::Format(wxT("Reached the begining of 'find in files' search results list" )));
+		e.SetInt(0);
+		Frame::Get()->AddPendingEvent(e);
+	}
+}
+
+void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxScintilla *sci, int markerLine)
+{
+	if (!result.GetFileName().IsEmpty()) {
+		LEditor *editor = Frame::Get()->GetMainBook()->OpenFile(result.GetFileName(), wxEmptyString, result.GetLineNumber()-1);
+		if (editor && result.GetColumn() >= 0 && result.GetLen() >= 0) {
+			int offset = editor->PositionFromLine(result.GetLineNumber()-1) + result.GetColumn();
+			editor->EnsureVisible(result.GetLineNumber()-1);
+			editor->SetSelection(offset, offset + result.GetLen());
+
+			if ( sci ) {
+				// remove the previous marker and add the new one
+				sci->MarkerDeleteAll( 7 );
+				sci->MarkerAdd(markerLine, 7 );
+
+				// make the marked line visible
+				int pos = sci->PositionFromLine(markerLine);
+				sci->SetCurrentPos     (pos);
+				sci->SetSelectionStart (pos);
+				sci->SetSelectionEnd   (pos);
+				sci->EnsureCaretVisible(   );
+			}
+		}
+	}
 }

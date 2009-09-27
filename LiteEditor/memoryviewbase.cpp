@@ -46,7 +46,7 @@ MemoryViewBase::MemoryViewBase( wxWindow* parent, wxWindowID id, const wxPoint& 
 	m_staticText2->Wrap( -1 );
 	bSizer2->Add( m_staticText2, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 	
-	m_textCtrlExpression = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlExpression = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
 	bSizer2->Add( m_textCtrlExpression, 1, wxALL, 5 );
 	
 	m_staticText1 = new wxStaticText( this, wxID_ANY, wxT("Size:"), wxDefaultPosition, wxDefaultSize, 0 );

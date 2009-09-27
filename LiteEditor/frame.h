@@ -54,6 +54,7 @@ class WorkspaceTab;
 class FileExplorer;
 class OutputTabWindow;
 class DockablePaneMenuManager;
+class OutputViewControlBar;
 
 //--------------------------------
 // Helper class
@@ -87,6 +88,8 @@ class Frame : public wxFrame
 	wxMenu *                              m_cppMenu;
 	bool                                  m_highlightWord;
 	DockablePaneMenuManager *             m_DPmenuMgr;
+	OutputViewControlBar *                m_controlBar;
+	wxPanel*                              m_mainPanel;
 
 public:
 	static Frame* Get();
@@ -95,6 +98,8 @@ public:
 	DockablePaneMenuManager *GetDockablePaneMenuManager() {
 		return m_DPmenuMgr;
 	}
+
+	wxPanel *GetMainPanel() {return m_mainPanel;}
 
 	virtual ~Frame(void);
 	/**
@@ -173,6 +178,10 @@ public:
 		return m_mgr;
 	}
 
+	wxAuiManager* GetDockingManagerPtr() {
+		return &m_mgr;
+	}
+
 	/**
 	 * Return the debugger toolbar
 	 */
@@ -186,9 +195,11 @@ public:
 	void LoadSession(const wxString &sessionName);
 
 	/**
-	 * load all available plugins
+	 * Compelete the main frame initialization
+	 * this method is called immediatly after the
+	 * main frame construction is over.
 	 */
-	void LoadPlugins();
+	void CompleteInitialization();
 
 	void RegisterToolbar(int menuItemId, const wxString &name);
 	void RegisterDockWindow(int menuItemId, const wxString &name);
@@ -341,6 +352,10 @@ protected:
 	void OnOpenShellFromFilePath(wxCommandEvent &e);
 	void OnQuickDebug(wxCommandEvent &e);
 	void OnQuickDebugUI(wxUpdateUIEvent &e);
+	void OnNextFiFMatch      (wxCommandEvent &e);
+	void OnPreviousFiFMatch  (wxCommandEvent &e);
+	void OnNextFiFMatchUI    (wxUpdateUIEvent &e);
+	void OnPreviousFiFMatchUI(wxUpdateUIEvent &e);
 
 	// this event is sent from the notebook container to the frame
 	void OnFileClosing(NotebookEvent &event);

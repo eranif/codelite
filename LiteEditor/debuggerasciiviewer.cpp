@@ -1,4 +1,6 @@
 #include "debuggerasciiviewer.h"
+#include "frame.h"
+#include "debuggerpane.h"
 #include "manager.h"
 #include "debugger.h"
 
@@ -80,14 +82,23 @@ void DebuggerAsciiViewer::SetDebugger(IDebugger* debugger)
 
 void DebuggerAsciiViewer::DoUpdateView()
 {
+	Manager *     m = ManagerST::Get();
+	DebuggerPane *pane = Frame::Get()->GetDebuggerPane();
+	bool          visible = ( ( m->IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* )this ) || m->IsPaneVisible ( DebuggerPane::ASCII_VIEWER ) );
+	bool          can_interact = m_debugger && m_debugger->IsRunning() && m->DbgCanInteract();
+
+	if ( !visible ) {
+		return;
+	}
+
 	// Evaluate the tip
-	wxString evaluated;
+	wxString evaluated (wxEmptyString);
 	wxString expression ( m_textCtrlExpression->GetValue() );
 	expression.Trim().Trim(false);
 
 	if ( expression.IsEmpty() ) {
 		evaluated = wxT("");
-	} else {
+	} else if ( can_interact ) {
 		m_debugger->GetTip(m_dbgCommand, m_textCtrlExpression->GetValue(), evaluated );
 	}
 

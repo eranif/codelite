@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 21 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,15 +16,14 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/filepicker.h>
+#include <wx/textctrl.h>
+#include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/checkbox.h>
-#include <wx/textctrl.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/button.h>
 #include <wx/statbox.h>
 #include <wx/listbook.h>
 #include <wx/listctrl.h>
@@ -46,7 +45,8 @@ class SvnOptionsBaseDlg : public wxDialog
 		wxListbook* m_listbook1;
 		wxPanel* m_panel2;
 		wxStaticText* m_staticText1;
-		wxFilePickerCtrl* m_filePicker;
+		wxTextCtrl* m_textCtrlSvnExe;
+		wxButton* m_buttonBrowseSvnExe;
 		wxCheckBox* m_checkBoxUseIconsInWorkspace;
 		
 		wxCheckBox* m_checkBoxKeepIconsAutoUpdate;
@@ -60,7 +60,8 @@ class SvnOptionsBaseDlg : public wxDialog
 		wxCheckBox* m_checkBoxUseExternalDiff;
 		
 		wxStaticText* m_staticText12;
-		wxFilePickerCtrl* m_diffExe;
+		wxTextCtrl* m_textCtrlDiffExe;
+		wxButton* m_buttonBrowseDiff;
 		wxStaticText* m_staticText13;
 		wxTextCtrl* m_diffArgs;
 		
@@ -85,10 +86,12 @@ class SvnOptionsBaseDlg : public wxDialog
 		wxButton* m_button3;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnBrowseSvnExe( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnSvnUseIcons( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAutoAddNewFiles( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnCheckUseExternalDiffViewer( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnEnableExternalDiffViewerUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnBrowseDiffExe( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonBrowseSSHClient( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonOk( wxCommandEvent& event ){ event.Skip(); }
 		

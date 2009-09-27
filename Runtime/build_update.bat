@@ -23,6 +23,10 @@ copy makedir.exe "update\" /Y
 copy le_exec.exe "update\" /Y
 copy astyle.sample "update\" /Y
 copy CodeLite.exe "update\" /Y
+copy codelite_cppcheck.exe "update\" /Y
+copy codelite_indexer.exe "update\" /Y
+copy codelite_launcher.exe "update\" /Y
+copy le_exec.exe "update\" /Y
 copy patch.exe "update\" /Y
 copy wxmsw28u_gcc*.dll "update\" /Y
 copy ..\InnoSetup\license.txt "update\" /Y

@@ -2617,6 +2617,11 @@ int wxScintilla::IndicatorValueAt(int indicator, int position)
 	return SendMsg(SCI_INDICATORVALUEAT, indicator, position);
 }
 
+void wxScintilla::SetInidicatorValue(int indicator, int value)
+{
+	SendMsg(SCI_SETINDICATORVALUE, indicator, value);
+}
+
 void wxScintilla::IndicatorFillRange(int position, int len)
 {
 	SendMsg(SCI_INDICATORFILLRANGE, position, len);

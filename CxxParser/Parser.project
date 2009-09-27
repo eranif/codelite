@@ -53,8 +53,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy *.h ..\CodeLite\.</Command>
-        <Command Enabled="yes">copy *.cpp ..\CodeLite\.</Command>
+        <Command Enabled="yes">copy *.h ../CodeLite/.</Command>
+        <Command Enabled="yes">copy *.cpp ../CodeLite/.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <CleanCommand/>

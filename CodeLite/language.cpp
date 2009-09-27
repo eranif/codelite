@@ -380,7 +380,7 @@ bool Language::ProcessExpression(const wxString& stmt,
 			wxString _name(_U(result.m_name.c_str()));
 			PERF_BLOCK("TypeFromName") {
 				for (int i=0; i<2; i++) {
-					res = TypeFromName(	_name,
+					res = TypeFromName( _name,
 					                    visibleScope,
 					                    lastFuncSig,
 					                    scopeToSearch,
@@ -404,28 +404,24 @@ bool Language::ProcessExpression(const wxString& stmt,
 				break;
 			}
 
-			// do typedef subsitute
-			wxString tmp_name(typeName);
-			while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
-				if (tmp_name == typeName) {
-					//same type? break
-					break;
-				}
-				tmp_name = typeName;
-			}
+			//-------------------------------------
+			// do typedef / template subsitutations
+			//-------------------------------------
 
-			//do template subsitute
-			if (OnTemplates(typeName, typeScope, parent)) {
-				//do typedef subsitute
-				wxString tmp_name(typeName);
-				while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
-					if (tmp_name == typeName) {
-						//same type? break
-						break;
-					}
-					tmp_name = typeName;
-				}
-			}
+			wxString tmp_name(typeName);
+			bool     res_typedef;
+			bool     res_templte;
+
+			do {
+				tmp_name = typeName;
+				res_typedef = OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList);
+				tmp_name == typeName ? res_typedef = false : res_typedef = true;
+
+				tmp_name = typeName;
+				res_templte = OnTemplates(typeName, typeScope, parent);
+				tmp_name == typeName ? res_templte = false : res_templte = true;
+
+			} while ( res_templte || res_typedef ) ;
 
 			// try match any overloading operator to the typeName
 			wxString origTypeName(typeName);
@@ -857,14 +853,14 @@ ExpressionResult Language::ParseExpression(const wxString &in)
 	return result;
 }
 
-bool Language::TypeFromName(const wxString &name,
-                            const wxString &text,
-                            const wxString &extraScope,
-                            const wxString &scopeName,
-                            const std::vector<wxString> &moreScopes,
-                            bool firstToken,
-                            wxString &type,
-                            wxString &typeScope)
+bool Language::TypeFromName(const wxString &             name,           // Input
+                            const wxString &             text,           // Input
+                            const wxString &             extraScope,     // Input
+                            const wxString &             scopeName,      // Input
+                            const std::vector<wxString>& moreScopes,     // Input
+                            bool                         firstToken,     // Input
+                            wxString&                    type,           // Output
+                            wxString&                    typeScope)      // Output
 {
 	//try local scope
 	VariableList li;

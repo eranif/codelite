@@ -16,6 +16,7 @@ xcopy templates\qmake\* "%ProgramFiles%\CodeLite\templates\qmake\" /E /I /H /Y /
 xcopy *.html "%ProgramFiles%\CodeLite\" /H /Y /EXCLUDE:excludes
 :: Copy the misc files
 copy codelite_indexer.exe "%ProgramFiles%\CodeLite\" /Y
+copy codelite_cppcheck.exe "%ProgramFiles%\CodeLite\" /Y
 copy codelite_launcher.exe "%ProgramFiles%\CodeLite\" /Y
 copy makedir.exe "%ProgramFiles%\CodeLite\" /Y
 copy le_exec.exe "%ProgramFiles%\CodeLite\" /Y

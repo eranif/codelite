@@ -117,9 +117,27 @@ public:
      */
     static bool Match(const Token *tok, const char pattern[], unsigned int varid = 0);
 
-    bool isName() const;
-    bool isNumber() const;
-    bool isBoolean() const;
+    /**
+     * Return length of C-string.
+     *
+     * Should be called for %str% tokens only.
+     *
+     * @param tok token with C-string
+     **/
+    static size_t getStrLength(const Token *tok);
+
+    bool isName() const
+    {
+        return _isName;
+    }
+    bool isNumber() const
+    {
+        return _isNumber;
+    }
+    bool isBoolean() const
+    {
+        return _isBoolean;
+    }
     bool isStandardType() const;
 
     static const Token *findmatch(const Token *tok, const char pattern[], unsigned int varId = 0);
@@ -139,13 +157,28 @@ public:
      */
     static int multiCompare(const char *haystack, const char *needle);
 
-    unsigned int linenr() const;
-    void linenr(unsigned int linenr);
+    unsigned int linenr() const
+    {
+        return _linenr;
+    }
+    void linenr(unsigned int linenr)
+    {
+        _linenr = linenr;
+    }
 
-    unsigned int fileIndex() const;
-    void fileIndex(unsigned int fileIndex);
+    unsigned int fileIndex() const
+    {
+        return _fileIndex;
+    }
+    void fileIndex(unsigned int fileIndex)
+    {
+        _fileIndex = fileIndex;
+    }
 
-    Token *next() const;
+    Token *next() const
+    {
+        return _next;
+    }
 
 
     /**
@@ -164,11 +197,20 @@ public:
      */
     void insertToken(const char str[]);
 
-    Token *previous() const;
+    Token *previous() const
+    {
+        return _previous;
+    }
 
 
-    unsigned int varId() const;
-    void varId(unsigned int id);
+    unsigned int varId() const
+    {
+        return _varId;
+    }
+    void varId(unsigned int id)
+    {
+        _varId = id;
+    }
 
     /**
      * For debugging purposes, prints token and all tokens
@@ -188,7 +230,7 @@ public:
     static void replace(Token *replaceThis, Token *start, Token *end);
 
     /** Stringify a token list (with or without varId) */
-    std::string stringifyList(const bool varid = true, const char *title = 0) const;
+    std::string stringifyList(bool varid = true, const char *title = 0) const;
 
     /**
      * This is intended to be used for the first token in the list
@@ -202,7 +244,10 @@ public:
      * @param link The token where this token should link
      * to.
      */
-    void link(Token *link);
+    void link(Token *link)
+    {
+        _link = link;
+    }
 
     /**
      * Return token where this token links to.
@@ -211,11 +256,55 @@ public:
      *
      * @return The token where this token links to.
      */
-    Token *link() const;
+    Token *link() const
+    {
+        return _link;
+    }
+
+    /**
+     * Links two elements against each other.
+     **/
+    static void createMutualLinks(Token *begin, Token *end);
+
+    /**
+     * This can be called only for tokens that are strings, else
+     * the assert() is called. If Token is e.g. '"hello"', this will return
+     * 'hello' (removing the double quotes).
+     * @return String value
+     */
+    std::string strValue() const;
 
 private:
-    void next(Token *next);
-    void previous(Token *previous);
+    void next(Token *next)
+    {
+        _next = next;
+    }
+    void previous(Token *previous)
+    {
+        _previous = previous;
+    }
+
+    /**
+     * Works almost like strcmp() except returns only 0 or 1 and
+     * if str has empty space ' ' character, that character is handled
+     * as if it were '\0'
+     */
+    static int firstWordEquals(const char *str, const char *word);
+
+    /**
+     * Works almost like strchr() except
+     * if str has empty space ' ' character, that character is handled
+     * as if it were '\0'
+     */
+    static const char *chrInFirstWord(const char *str, char c);
+
+    /**
+     * Works almost like strlen() except
+     * if str has empty space ' ' character, that character is handled
+     * as if it were '\0'
+     */
+    static int firstWordLen(const char *str);
+
 
     std::string _str;
     bool _isName;

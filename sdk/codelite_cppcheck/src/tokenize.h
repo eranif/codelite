@@ -117,11 +117,14 @@ private:
 #endif
 
     /**
-     * Simplify variable declarations
-     * @return true if something is modified
-     *         false if nothing is done.
+     * Replace sizeof() to appropriate size.
      */
-    bool simplifyVarDecl();
+    void simplifySizeof();
+
+    /**
+     * Simplify variable declarations
+     */
+    void simplifyVarDecl();
 
     /**
      * insert an "int" after "unsigned" if needed:
@@ -140,56 +143,51 @@ private:
     /**
      * simplify if-assignments..
      * Example: "if(a=b);" => "a=b;if(a);"
-     * @return true if something is modified
-     *         false if nothing is done.
      */
-    bool simplifyIfAssign();
+    void simplifyIfAssign();
 
     /**
      * simplify if-not..
      * Example: "if(0==x);" => "if(!x);"
-     * @return true if something is modified
-     *         false if nothing is done.
      */
-    bool simplifyIfNot();
+    void simplifyIfNot();
 
     /**
      * simplify if-not NULL..
      * Example: "if(0!=x);" => "if(x);"
-     * @return true if something is modified
-     *         false if nothing is done.
      */
-    bool simplifyIfNotNull();
+    void simplifyIfNotNull();
 
     /**
-     * simplify the "not" keyword to "!"
-     * Example: "if (not p)" => "if (!p)"
-     * @return true if something is modified
-     *         false if nothing is done.
+     * Simplify the "not" and "and" keywords to "!" and "&&"
+     * accordingly.
+     * Examples:
+     *     "if (not p)" => "if (!p)"
+     *     "if (p and q)" => "if (p && q)"
      */
-    bool simplifyNot();
+    void simplifyLogicalOperators();
 
     /**
      * Simplify comma into a semicolon when possible
      * Example: "delete a, delete b" => "delete a; delete b;"
      * Example: "a = 0, b = 0;" => "a = 0; b = 0;"
      * Example: "return a(), b;" => "a(); return b;"
-     * @return true if something is modified
-     *         false if nothing is done.
      */
-    bool simplifyComma();
+    void simplifyComma();
 
     /** Add braces to an if-block
-     * @return true if something is modified
-     *         false if nothing is done.
      */
-    bool simplifyIfAddBraces();
+    void simplifyIfAddBraces();
 
-    /** Simplify casts
-     * @return true if something is modified
-     *         false if nothing is done.
+    /**
+     * Add braces to an do-while block
      */
-    bool simplifyCasts();
+    void simplifyDoWhileAddBraces();
+
+    /**
+     * Simplify casts
+     */
+    void simplifyCasts();
 
     /**
      * A simplify function that replaces a variable with its value in cases
@@ -200,8 +198,14 @@ private:
      */
     bool simplifyKnownVariables();
 
+    /** Replace a "goto" with the statements */
+    void simplifyGoto();
+
+    /** Expand nested strcat() calls. */
+    void simplifyNestedStrcat();
+
     /** Simplify "if else" */
-    bool elseif();
+    void elseif();
 
     std::vector<const Token *> _functionList;
 
@@ -218,10 +222,8 @@ private:
 
     /**
      * Simplify the operator "?:"
-     * @return true if something is modified
-     *         false if nothing is done.
      */
-    bool simplifyConditionOperator();
+    void simplifyConditionOperator();
 
     /** Simplify conditions
      * @return true if something is modified
@@ -264,7 +266,7 @@ private:
      * Simplify functions like "void f(x) int x; {"
      * into "void f(int x) {"
      */
-    bool simplifyFunctionParameters();
+    void simplifyFunctionParameters();
 
     /**
      * Simplify namespaces by removing them, e.g.
@@ -277,7 +279,12 @@ private:
      */
     void simplifyTemplates();
 
-    void insertTokens(Token *dest, Token *src, unsigned int n);
+    /**
+     * Simplify e.g. 'atol("0")' into '0'
+     */
+    void simplifyMathFunctions();
+
+    void insertTokens(Token *dest, const Token *src, unsigned int n);
 
     /**
      * Setup links for tokens so that one can call Token::link().
@@ -294,6 +301,19 @@ private:
      * functions and member variables.
      */
     void updateClassList();
+
+    /** Disable assignments.. */
+    Tokenizer(const Tokenizer &);
+
+    /**
+     * assert that tokens are ok - used during debugging for example
+     * to catch problems in simplifyTokenList.
+     * @return always true.
+     */
+    bool validate() const;
+
+    /** Disable assignment operator */
+    void operator=(const Tokenizer &);
 
     Token *_tokens, *_tokensBack;
     std::map<std::string, unsigned int> _typeSize;

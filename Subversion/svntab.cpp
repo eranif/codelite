@@ -81,6 +81,8 @@ void SvnTab::Initialize()
 	m_sci->StyleSetForeground(wxSCI_LEX_SVN_MERGED, wxT("FOREST GREEN"));
 	
 	m_sci->StyleSetBackground(0, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	m_sci->SetWrapMode(wxSCI_WRAP_WORD);
+	m_sci->SetWrapVisualFlags(1);
 	sz->Layout();
 }
 

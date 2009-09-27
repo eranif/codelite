@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/settings.h>
+#include <wx/app.h>
 #include <wx/dcbuffer.h>
 #include <wx/xrc/xmlres.h>
 #include "custom_notebook.h"
@@ -57,7 +58,7 @@ DockablePane::DockablePane(wxWindow* parent, Notebook* book, wxWindow* child, co
 
     wxCommandEvent event(wxEVT_CMD_NEW_DOCKPANE);
 	event.SetClientData(this);
-	parent->ProcessEvent(event);
+	parent->AddPendingEvent(event);
 }
 
 DockablePane::~DockablePane()
@@ -86,7 +87,7 @@ void DockablePane::OnPaint(wxPaintEvent& e)
 {
 	wxBufferedPaintDC dc(this);
 
-	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW)));
+	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
 
 	dc.DrawRectangle(GetClientSize());

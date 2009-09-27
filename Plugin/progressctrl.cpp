@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : progressctrl.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : progressctrl.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
  #include <wx/settings.h>
@@ -58,10 +58,13 @@ void ProgressCtrl::OnPaint(wxPaintEvent& e)
 	dc.SetPen(brushCol);
 	dc.SetBrush(brushCol);
 
-	wxRect rect = GetClientSize();
-	
+	dc.SetPen( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
+	wxRect rect        = GetClientSize();
+	wxRect client_rect = GetClientSize();
+
 	// draw a bordered rectangle
 	dc.DrawRectangle(rect);
+
 
 	// fill it with progress range
 	if (m_currValue > m_maxRange) {
@@ -69,39 +72,38 @@ void ProgressCtrl::OnPaint(wxPaintEvent& e)
 	}
 
 	double factor = (double)m_currValue / (double)m_maxRange;
-	double fill_width = factor * rect.width;
-
-	wxRect rr(rect);
+	double fill_width = factor * rect.width;	wxRect rr(rect);
+	rr.Deflate(1, 1);
 	rr.width = static_cast<int>(fill_width);
 
-	// set the fill colour
-	wxColour fillCol(wxT("LIGHT BLUE"));
-//	wxColour fillCol1 = DrawingUtils::LightColour(fillCol, 30);
-//	wxColour fillCol2 = DrawingUtils::LightColour(fillCol, 70);
-//	
-//	dc.SetBrush(fillCol);
-//	rr = rr.Deflate(1);
-//	
-//	// define 2 rectangles for the gradient: top and bottom
-//	wxRect topRect(rr.x, rr.y, rr.width, rr.height/2);
-//	wxRect bottomRect(rr.x, rr.y+rr.height/2, rr.width, rr.height/2);
-//	
-//	DrawingUtils::PaintStraightGradientBox(dc, topRect, fillCol2, fillCol1, true);
-//	DrawingUtils::PaintStraightGradientBox(dc, bottomRect, fillCol1, fillCol2, true);
-//	
-//	dc.SetBrush(fillCol);
-	
-	dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW)));
+	dc.SetPen(wxPen(m_fillCol));
 	dc.SetBrush(wxBrush(m_fillCol));
 	dc.DrawRectangle(rr);
-	
+	dc.SetBrush(*wxTRANSPARENT_BRUSH);
+
+	dc.SetPen(*wxWHITE_PEN);
+	dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+	dc.DrawLine(rect.GetTopRight(),   rect.GetBottomRight());
+
+	dc.DrawPoint(client_rect.GetBottomRight());
+	rect.Deflate(1, 1);
+
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+	dc.DrawLine(rect.GetTopRight(),   rect.GetBottomRight());
+
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+	dc.DrawLine(rect.GetBottomLeft(), rect.GetTopLeft());
+	dc.DrawLine(rect.GetTopLeft(),    rect.GetTopRight());
+
 	// calculate the location to place the string
 	wxCoord xx, yy;
-	dc.GetTextExtent(m_msg, &xx, &yy);
-	
-	wxCoord txtYCoord = (GetClientSize().y - yy)/2;
+	wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	dc.GetTextExtent(m_msg, &xx, &yy, NULL, NULL, &f);
+
+	wxCoord txtYCoord = (rect.GetHeight() - yy)/2;
 	wxCoord txtXCoord = 5;
-	
+
 	//make sure the colour used here is the system default
 	dc.SetTextForeground(*wxBLACK);
 	dc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));

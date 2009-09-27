@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 	clNamedPipeClient client(channel_name);
 
 	// build the request
-	req.setFile("C:\\Development\\C++\\codelite\\trunk\\Subversion\\");
+	req.setFile("C:\\Development\\C++\\codelite\\trunk\\Plugin\\");
 	client.connect();
 
 	CPPCheckerProtocol::SendRequest(&client, req);

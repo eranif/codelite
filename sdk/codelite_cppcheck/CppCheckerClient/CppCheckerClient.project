@@ -2,7 +2,7 @@
 <CodeLite_Project Name="CppCheckerClient" InternalType="Console">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+      <![CDATA[00030001N0005Debug0000000000000001N0010Debug_Unix0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>
@@ -11,28 +11,58 @@
     <File Name="main.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="network">
-    <File Name="..\network\np_connections_server.h"/>
-    <File Name="..\network\cppcheck_net_macros.h"/>
-    <File Name="..\network\cppchecker_net_reply.cpp"/>
-    <File Name="..\network\cppchecker_net_reply.h"/>
-    <File Name="..\network\cppchecker_protocol.cpp"/>
-    <File Name="..\network\cppchecker_protocol.h"/>
-    <File Name="..\network\cppchecker_request.cpp"/>
-    <File Name="..\network\cppchecker_request.h"/>
-    <File Name="..\network\named_pipe.cpp"/>
-    <File Name="..\network\named_pipe.h"/>
-    <File Name="..\network\named_pipe_client.cpp"/>
-    <File Name="..\network\named_pipe_client.h"/>
-    <File Name="..\network\named_pipe_server.cpp"/>
-    <File Name="..\network\named_pipe_server.h"/>
-    <File Name="..\network\np_connections_server.cpp"/>
+    <File Name="../network/np_connections_server.h"/>
+    <File Name="../network/cppcheck_net_macros.h"/>
+    <File Name="../network/cppchecker_net_reply.cpp"/>
+    <File Name="../network/cppchecker_net_reply.h"/>
+    <File Name="../network/cppchecker_protocol.cpp"/>
+    <File Name="../network/cppchecker_protocol.h"/>
+    <File Name="../network/cppchecker_request.cpp"/>
+    <File Name="../network/cppchecker_request.h"/>
+    <File Name="../network/named_pipe.cpp"/>
+    <File Name="../network/named_pipe.h"/>
+    <File Name="../network/named_pipe_client.cpp"/>
+    <File Name="../network/named_pipe_client.h"/>
+    <File Name="../network/named_pipe_server.cpp"/>
+    <File Name="../network/named_pipe_server.h"/>
+    <File Name="../network/np_connections_server.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Debug"/>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g" Required="yes">
         <IncludePath Value="."/>
         <IncludePath Value=".."/>
         <Preprocessor Value="__WXMSW__"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="1234" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands></PostConnectCommands>
+        <StartupCommands></StartupCommands>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+        <PreprocessFileCommand></PreprocessFileCommand>
+        <SingleFileCommand></SingleFileCommand>
+        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory></WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild></CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" Required="yes">
+        <IncludePath Value="."/>
+        <IncludePath Value=".."/>
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
@@ -85,9 +115,7 @@
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPreBuild></CustomPreBuild>
       </AdditionalRules>
     </Configuration>
     <GlobalSettings>
@@ -100,6 +128,5 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
+  <Dependencies Name="Debug_Unix"/>
 </CodeLite_Project>

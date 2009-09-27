@@ -23,6 +23,46 @@
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     ]]>
     </Plugin>
   </Plugins>
@@ -845,6 +885,7 @@ resources.cpp: resources.xrc
     <Project Name="SymbolView"/>
     <Project Name="ContinuousBuild"/>
     <Project Name="QMakePlugin"/>
+    <Project Name="CppChecker"/>
   </Dependencies>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
@@ -867,6 +908,7 @@ resources.cpp: resources.xrc
     <Project Name="SymbolView"/>
     <Project Name="ContinuousBuild"/>
     <Project Name="QMakePlugin"/>
+    <Project Name="CppChecker"/>
   </Dependencies>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
@@ -889,5 +931,6 @@ resources.cpp: resources.xrc
     <Project Name="SymbolView"/>
     <Project Name="ContinuousBuild"/>
     <Project Name="QMakePlugin"/>
+    <Project Name="CppChecker"/>
   </Dependencies>
 </CodeLite_Project>

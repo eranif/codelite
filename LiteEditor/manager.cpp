@@ -1165,11 +1165,13 @@ void Manager::HidePane ( const wxString &paneName, bool commit )
 void Manager::TogglePanes()
 {
 	static bool toggled = false;
+	static wxString savedLayout;
+
 	// list of panes to be toggled on and off
 	static wxArrayString panes;
 
-	Frame::Get()->Freeze();
 	if ( !toggled ) {
+		savedLayout = Frame::Get()->GetDockingManager().SavePerspective();
 		panes.Clear();
 		// create the list of panes to be tested
 		wxArrayString candidates;
@@ -1191,6 +1193,7 @@ void Manager::TogglePanes()
 			}
 		}
 
+		Frame::Get()->Freeze();
 		// hide the matched panes
 		for ( size_t i=0; i<panes.GetCount(); i++ ) {
 			HidePane ( panes.Item ( i ), false );
@@ -1198,31 +1201,17 @@ void Manager::TogglePanes()
 
 		//update changes
 		Frame::Get()->GetDockingManager().Update();
+		Frame::Get()->Thaw();
 		toggled = true;
 
 	} else {
+		Frame::Get()->Freeze();
+		Frame::Get()->GetDockingManager().LoadPerspective(savedLayout);
+		Frame::Get()->Thaw();
 
-		for ( size_t i=0; i<panes.GetCount(); i++ ) {
-			wxString pane_name = panes.Item ( i );
-			if ( pane_name == wxT ( "Output View" ) ) {
-				ShowOutputPane ( wxEmptyString, false );
-				continue;
-			}
-			if ( pane_name == wxT ( "Workspace View" ) ) {
-				ShowWorkspacePane ( wxEmptyString, false );
-				continue;
-			}
-
-			wxAuiPaneInfo &info = Frame::Get()->GetDockingManager().GetPane ( pane_name );
-			if ( info.IsOk() && !info.IsShown() ) {
-				info.Show();
-			}
-		}
-
-		Frame::Get()->GetDockingManager().Update();
 		toggled = false;
+		savedLayout.Clear();
 	}
-	Frame::Get()->Thaw();
 }
 
 
@@ -1562,7 +1551,7 @@ void Manager::UpdateDebuggerPane()
 	//Update the debugger pane
 	DebuggerPane *pane = Frame::Get()->GetDebuggerPane();
 
-	if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetBreakpointView() ) ) {
+	if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetBreakpointView() ) || IsPaneVisible ( DebuggerPane::BREAKPOINTS) ) {
 		pane->GetBreakpointView()->Initialize();
 	}
 
@@ -2574,31 +2563,24 @@ void Manager::DoRestartCodeLite()
 #ifdef __WXMSW__
 	// the codelite_launcher application is located where the codelite executable is
 	// to properly shoutdown codelite. We first need to close the codelite_indexer process
-	command << wxT("\"") << m_codeliteLauncher.GetFullPath()
-			<< wxT("\" --pid=")
-			<< wxGetProcessId()
+	command << wxT("\"") << m_codeliteLauncher.GetFullPath() << wxT("\" ")
 			<< wxT(" --name=\"")
 			<< wxStandardPaths::Get().GetExecutablePath()
 			<< wxT("\"");
-	TagsManagerST::Free(); // This will stop the codelite indexer process and will make sure it will wont start again
 
-	// save the current session, unsaved editors and layout before restarting
-	Frame::Get()->SaveLayoutAndSession();
-	wxMilliSleep(100);
-	wxPrintf(wxT("%s\n"), command.c_str());
+	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
+	Frame::Get()->ProcessEvent(event);
+
 	wxExecute(command, wxEXEC_ASYNC|wxEXEC_NOHIDE);
 
 #elif defined (__WXGTK__)
 	// The Shell is our friend
-	command << wxT("sleep 1 && kill ") << wxGetProcessId() << wxT(" && ") << wxStandardPaths::Get().GetExecutablePath();
-	TagsManagerST::Free(); // This will stop the codelite indexer process and will make sure it will wont start again
+	command << wxStandardPaths::Get().GetExecutablePath();
 
-	// save the current session, unsaved editors and layout before restarting
-	Frame::Get()->SaveLayoutAndSession();
+	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
+	Frame::Get()->AddPendingEvent(event);
 
-	wxMilliSleep(100);
-	wxArrayString dummy;
-	ProcUtils::SafeExecuteCommand(command, dummy);
+	wxExecute(command, wxEXEC_ASYNC|wxEXEC_NOHIDE);
 #endif
 }
 

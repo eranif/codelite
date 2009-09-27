@@ -68,6 +68,7 @@ public:
 	/** Constructor */
 	OptionsDlg2( wxWindow* parent );
 	virtual ~OptionsDlg2();
+	bool     restartRquired;
 };
 
 #endif // __options_dlg2__

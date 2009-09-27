@@ -41,6 +41,10 @@
 #include "breakpointsmgr.h"
 #include "plugin.h"
 
+#define MATCH_INDICATOR             10
+#define USER_INDICATOR              3
+#define HYPERLINK_INDICATOR         4
+
 class wxFindReplaceDialog;
 class CCBox;
 
@@ -88,6 +92,7 @@ struct LEditorState {
 	int caretPosition;
 };
 
+extern const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR;
 /**
  * \ingroup LiteEditor
  * LEditor CodeLite editing component based on Scintilla
@@ -575,6 +580,7 @@ private:
 	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
 
 	DECLARE_EVENT_TABLE()
+	void OnRemoveMatchInidicator(wxCommandEvent &e);
 	void OnSavePoint(wxScintillaEvent &event);
 	void OnCharAdded(wxScintillaEvent& event);
 	void OnMarginClick(wxScintillaEvent& event);

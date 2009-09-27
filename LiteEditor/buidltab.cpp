@@ -207,6 +207,12 @@ void BuildTab::AppendText ( const wxString &text )
 					m_cmp = BuildSettingsConfigST::Get()->GetCompiler ( bldConf->GetCompilerType() );
 				}
 			}
+		} else {
+			// probably custom build with project names incorret
+			// assign the default compiler for this purpose
+			if ( BuildSettingsConfigST::Get()->IsCompilerExist(wxT("gnu g++")) ) {
+				m_cmp = BuildSettingsConfigST::Get()->GetCompiler( wxT("gnu g++") );
+			}
 		}
 	} else if ( !m_lineInfo.empty() ) {
 		// consider this line part of the currently building project

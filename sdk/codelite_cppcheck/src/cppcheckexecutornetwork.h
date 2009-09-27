@@ -14,6 +14,7 @@ public:
 
 public:
 	CppCheckExecutorNetwork(clNamedPipe *connection, int argc, char **argv);
+	CppCheckExecutorNetwork();
 	virtual ~CppCheckExecutorNetwork();
 
 public:
@@ -22,3 +23,4 @@ public:
 	virtual void reportErr(const std::string &errmsg);
 };
 #endif // __cppcheckexecutornetwork__
+

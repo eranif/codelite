@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "outputviewcontrolbar.h"
 #include "clauidockart.h"
 
 #include <set>
@@ -142,8 +143,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_ACTIVATE(Frame::OnAppActivated)
 	EVT_CLOSE(Frame::OnClose)
 	EVT_TIMER(FrameTimerId, Frame::OnTimer)
-	EVT_AUI_RENDER(Frame::OnAuiManagerRender)
-	EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
+//	EVT_AUI_RENDER(Frame::OnAuiManagerRender)
+//	EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
 
 	//---------------------------------------------------
 	// File menu
@@ -265,24 +266,29 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("next_bookmark"),            Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("previous_bookmark"),        Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("removeall_bookmarks"),      Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("next_fif_match"),           Frame::OnNextFiFMatch      )
+	EVT_MENU(XRCID("previous_fif_match"),       Frame::OnPreviousFiFMatch  )
 
-	EVT_UPDATE_UI(wxID_FIND,                    Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(wxID_REPLACE,                 Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("find_next"),           Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("find_previous"),       Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("find_next_at_caret"),  Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("find_previous_at_caret"),  Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("incremental_search"),  Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("find_resource"),       Frame::OnWorkspaceOpen)
-	EVT_UPDATE_UI(XRCID("find_type"),           Frame::OnWorkspaceOpen)
-	EVT_UPDATE_UI(XRCID("find_symbol"),         Frame::OnCompleteWordUpdateUI)
-	EVT_UPDATE_UI(XRCID("goto_definition"),     Frame::DispatchUpdateUIEvent)
-	EVT_UPDATE_UI(XRCID("goto_previous_definition"),    Frame::DispatchUpdateUIEvent)
-	EVT_UPDATE_UI(XRCID("goto_linenumber"),     Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("toggle_bookmark"),     Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("next_bookmark"),       Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("previous_bookmark"),   Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("removeall_bookmarks"), Frame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(wxID_FIND,                        Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(wxID_REPLACE,                     Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(XRCID("find_next"),               Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(XRCID("find_previous"),           Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(XRCID("find_next_at_caret"),      Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(XRCID("find_previous_at_caret"),  Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(XRCID("incremental_search"),      Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(XRCID("find_resource"),           Frame::OnWorkspaceOpen       )
+	EVT_UPDATE_UI(XRCID("find_type"),               Frame::OnWorkspaceOpen       )
+	EVT_UPDATE_UI(XRCID("find_symbol"),             Frame::OnCompleteWordUpdateUI)
+	EVT_UPDATE_UI(XRCID("goto_definition"),         Frame::DispatchUpdateUIEvent )
+	EVT_UPDATE_UI(XRCID("goto_previous_definition"),Frame::DispatchUpdateUIEvent )
+	EVT_UPDATE_UI(XRCID("goto_linenumber"),         Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(XRCID("toggle_bookmark"),         Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(XRCID("next_bookmark"),           Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(XRCID("previous_bookmark"),       Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(XRCID("removeall_bookmarks"),     Frame::OnFileExistUpdateUI   )
+	EVT_UPDATE_UI(XRCID("next_fif_match"),          Frame::OnNextFiFMatchUI      )
+	EVT_UPDATE_UI(XRCID("previous_fif_match"),      Frame::OnPreviousFiFMatchUI  )
+
 
 	//-------------------------------------------------------
 	// Project menu
@@ -587,7 +593,7 @@ void Frame::Initialize(bool loadLastSession)
 	}
 
 	//plugins must be loaded before the file explorer
-	m_theFrame->LoadPlugins();
+	m_theFrame->CompleteInitialization();
 
 	//time to create the file explorer
 	wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("go_home"));
@@ -618,14 +624,19 @@ void Frame::CreateGUIControls(void)
 	icon.CopyFromBitmap(bmp);
 	SetIcon(icon);
 #endif
+	m_mainPanel = new wxPanel(this);
+	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
+	SetSizer(mainSizer);
+
+	mainSizer->Add(m_mainPanel, 1, wxEXPAND);
 
 	// tell wxAuiManager to manage this frame
-	m_mgr.SetManagedWindow(this);
+	m_mgr.SetManagedWindow(m_mainPanel);
 	m_mgr.SetArtProvider(new CLAuiDockArt());
 
 //	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
 
-#if defined (__WXGTK__) || defined (__WXMAC__)
+#if defined (__WXMAC__)
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE);
 #endif
 
@@ -648,12 +659,8 @@ void Frame::CreateGUIControls(void)
 	m_mgr.SetFlags(wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_ALLOW_ACTIVE_PANE|wxAUI_MGR_TRANSPARENT_DRAG|wxAUI_MGR_RECTANGLE_HINT);
 #endif
 
-#ifdef __WXGTK__
-	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_VERTICAL);
-#else
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
-#endif
-	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
+	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 6);
 
 	// Load the menubar from XRC and set this frame's menubar to it.
@@ -668,25 +675,25 @@ void Frame::CreateGUIControls(void)
 	// Add docking windows
 	//---------------------------------------------
 
-	m_outputPane = new OutputPane(this, wxT("Output View"));
+	m_outputPane = new OutputPane(m_mainPanel, wxT("Output View"));
 	wxAuiPaneInfo paneInfo;
-	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton());
+	m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(2).Position(1).CaptionVisible(false));
 	RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 
 	// Add the explorer pane
-	m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);
+	m_workspacePane = new WorkspacePane(m_mainPanel, wxT("Workspace View"), &m_mgr);
 	m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().
 	              Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
 	              Left().BestSize(250, 300).Layer(2).Position(0).CloseButton(true));
 	RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
 
 	//add the debugger locals tree, make it hidden by default
-	m_debuggerPane = new DebuggerPane(this, wxT("Debugger"), &m_mgr);
+	m_debuggerPane = new DebuggerPane(m_mainPanel, wxT("Debugger"), &m_mgr);
 	m_mgr.AddPane(m_debuggerPane,
 	              wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).Hide());
 	RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
-	m_mainBook = new MainBook(this);
+	m_mainBook = new MainBook(m_mainPanel);
 	m_mgr.AddPane(m_mainBook, wxAuiPaneInfo().Name(wxT("Editor")).CenterPane().PaneBorder(true));
 	CreateRecentlyOpenedFilesMenu();
 
@@ -755,6 +762,11 @@ void Frame::CreateGUIControls(void)
 	//load the tab right click menu
 	GetWorkspacePane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("workspace_view_right_click_menu")));
 	GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu(wxT("debugger_view_right_click_menu")));
+
+	// construct the output view control bar
+	m_controlBar = new OutputViewControlBar(this, GetOutputPane()->GetNotebook(), &m_mgr, wxID_ANY);
+	mainSizer->Add(m_controlBar, 0, wxEXPAND);
+
 	m_mgr.Update();
 	SetAutoLayout (true);
 
@@ -833,10 +845,15 @@ void Frame::CreateMenuBar()
 void Frame::CreateToolbars24()
 {
 	wxAuiPaneInfo info;
+	wxWindow *toolbar_parent (this);
+	if (PluginManager::Get()->AllowToolbar()) {
+		toolbar_parent = m_mainPanel;
+	}
+
 	//----------------------------------------------
 	//create the standard toolbar
 	//----------------------------------------------
-	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	wxToolBar *tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(24, 24));
 
 	tb->AddTool(XRCID("new_file"), wxT("New"), wxXmlResource::Get()->LoadBitmap(wxT("page_new24")), wxT("New File"));
@@ -870,7 +887,7 @@ void Frame::CreateToolbars24()
 	//----------------------------------------------
 	if (PluginManager::Get()->AllowToolbar()) {
 		info = wxAuiPaneInfo();
-		tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace24")), wxT("Find"));
@@ -893,7 +910,7 @@ void Frame::CreateToolbars24()
 	//create the build toolbar
 	//----------------------------------------------
 	if (PluginManager::Get()->AllowToolbar()) {
-		tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 
@@ -913,7 +930,7 @@ void Frame::CreateToolbars24()
 	//create the debugger toolbar
 	//----------------------------------------------
 	if (PluginManager::Get()->AllowToolbar()) {
-		tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 		tb->SetToolBitmapSize(wxSize(24, 24));
 	}
 
@@ -947,7 +964,12 @@ void Frame::CreateToolbars16()
 	//----------------------------------------------
 	//create the standard toolbar
 	//----------------------------------------------
-	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+	wxWindow *toolbar_parent (this);
+	if (PluginManager::Get()->AllowToolbar()) {
+		toolbar_parent = m_mainPanel;
+	}
+
+	wxToolBar *tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 	wxAuiPaneInfo info;
 
 	tb->SetToolBitmapSize(wxSize(16, 16));
@@ -984,7 +1006,7 @@ void Frame::CreateToolbars16()
 	info = wxAuiPaneInfo();
 
 	if (PluginManager::Get()->AllowToolbar()) {
-		tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
@@ -1007,7 +1029,7 @@ void Frame::CreateToolbars16()
 		//----------------------------------------------
 		//create the build toolbar
 		//----------------------------------------------
-		tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
@@ -1028,7 +1050,7 @@ void Frame::CreateToolbars16()
 	//create the debugger toolbar
 	//----------------------------------------------
 	if (PluginManager::Get()->AllowToolbar()) {
-		tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
+		tb = new wxToolBar(toolbar_parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_NODIVIDER);
 		tb->SetToolBitmapSize(wxSize(16, 16));
 	}
 
@@ -1539,9 +1561,21 @@ void Frame::ViewPaneUI(const wxString &paneName, wxUpdateUIEvent &event)
 
 void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 {
-	OptionsDlg2 *dlg = new OptionsDlg2(this);
-	dlg->ShowModal();
-	dlg->Destroy();
+	OptionsDlg2 dlg(this);
+	dlg.ShowModal();
+
+	if ( dlg.restartRquired ) {
+#ifdef __WXMAC__
+		wxMessageBox(_("Some of the changes made requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+#else
+		// On Winodws & GTK we offer auto-restart
+		int answer = wxMessageBox(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL);
+		if ( answer == wxYES ) {
+			wxCommandEvent e(wxEVT_CMD_RESTART_CODELITE);
+			ManagerST::Get()->AddPendingEvent(e);
+		}
+#endif
+	}
 }
 
 void Frame::OnTogglePanes(wxCommandEvent &event)
@@ -2406,12 +2440,12 @@ void Frame::OnShowWelcomePage(wxCommandEvent &event)
 	ShowWelcomePage();
 }
 
-void Frame::LoadPlugins()
+void Frame::CompleteInitialization()
 {
 	PluginManager::Get()->Load();
 
-	//after the plugin are loaded, it is time to load the saved
-	//perspective
+	// after the plugin are loaded, it is time to load the saved
+	// perspective
 	long loadIt(1);
 	EditorConfigST::Get()->GetLongValue(wxT("LoadSavedPrespective"), loadIt);
 	if (loadIt) {
@@ -2431,7 +2465,26 @@ void Frame::LoadPlugins()
 			EditorConfigST::Get()->SetRevision(SvnRevision);
 		}
 	}
+
+	// Since of revision 3048, we need to manually force some of the changes
+	// to the "Output View" pane, otherwise users wont be able to see them
+	// unless they delete their codelite.layout file, which people usually
+	// dont do
+	GetDockingManager().GetPane(wxT("Output View")).Floatable(false);
+	GetDockingManager().GetPane(wxT("Output View")).Dockable(false);
+	GetDockingManager().GetPane(wxT("Output View")).CloseButton(false);
+	GetDockingManager().GetPane(wxT("Output View")).CaptionVisible(false);
+	GetDockingManager().GetPane(wxT("Output View")).Hide();
+	GetDockingManager().Update();
+
 	EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
+
+	// Add buttons to the OutputControlBarView
+	m_controlBar->AddAllButtons();
+
+	// Connect some system events
+	m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(Frame::OnDockablePaneClosed), NULL, this);
+	m_mgr.Connect(wxEVT_AUI_RENDER,     wxAuiManagerEventHandler(Frame::OnAuiManagerRender),   NULL, this);
 }
 
 void Frame::OnAppActivated(wxActivateEvent &e)
@@ -2668,11 +2721,19 @@ void Frame::OnWorkspaceMenuUI(wxUpdateUIEvent &e)
 
 void Frame::OnManagePlugins(wxCommandEvent &e)
 {
-	PluginMgrDlg *dlg = new PluginMgrDlg(this);
-	if (dlg->ShowModal() == wxID_OK) {
+	PluginMgrDlg dlg(this);
+	if (dlg.ShowModal() == wxID_OK) {
+#ifdef __WXMAC__
 		wxMessageBox(_("Changes will take place after restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+#else
+		// On Winodws & GTK we offer auto-restart
+		int answer = wxMessageBox(_("Changes made requires restart of CodeLite\nWould you like to restart now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL);
+		if ( answer == wxYES ) {
+			wxCommandEvent e(wxEVT_CMD_RESTART_CODELITE);
+			ManagerST::Get()->AddPendingEvent(e);
+		}
+#endif
 	}
-	dlg->Destroy();
 }
 
 void Frame::OnCppContextMenu(wxCommandEvent &e)
@@ -2786,7 +2847,7 @@ void Frame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
 	// remove the page from the notebook
 	GetWorkspacePane()->GetNotebook()->RemovePage(sel, false);
 
-	DockablePane *pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
+	DockablePane *pane = new DockablePane(m_mainPanel, GetWorkspacePane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
 	wxUnusedVar(pane);
 	wxUnusedVar(e);
 }
@@ -2984,7 +3045,7 @@ void Frame::OnDetachDebuggerViewTab(wxCommandEvent& e)
 	// remove the page from the notebook
 	GetDebuggerPane()->GetNotebook()->RemovePage(sel, false);
 
-	DockablePane *pane = new DockablePane(this, GetDebuggerPane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
+	DockablePane *pane = new DockablePane(m_mainPanel, GetDebuggerPane()->GetNotebook(), page, text, bmp, wxSize(200, 200));
 	wxUnusedVar(pane);
 	wxUnusedVar(e);
 }
@@ -3321,4 +3382,26 @@ void Frame::SaveLayoutAndSession()
 	EditorConfigST::Get()->SaveLongValue(wxT("OutputPane"),    GetOutputPane()->GetNotebook()->GetBookStyle());
 	EditorConfigST::Get()->SaveLongValue(wxT("WorkspaceView"), GetWorkspacePane()->GetNotebook()->GetBookStyle());
 	EditorConfigST::Get()->SaveLongValue(wxT("FindResults"),   GetOutputPane()->GetFindResultsTab()->GetBookStyle());
+}
+
+void Frame::OnNextFiFMatch(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	GetOutputPane()->GetFindResultsTab()->NextMatch();
+}
+
+void Frame::OnPreviousFiFMatch(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	GetOutputPane()->GetFindResultsTab()->PrevMatch();
+}
+
+void Frame::OnNextFiFMatchUI(wxUpdateUIEvent& e)
+{
+	e.Enable(GetOutputPane()->GetFindResultsTab()->GetPageCount() > 0);
+}
+
+void Frame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e)
+{
+	e.Enable(GetOutputPane()->GetFindResultsTab()->GetPageCount() > 0);
 }

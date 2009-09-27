@@ -143,6 +143,9 @@ wxTabContainer::wxTabContainer(wxWindow *win, wxWindowID id, int orientation, lo
 		, m_bmpHeight     (14)
 		, m_fixedTabWidth (120)
 {
+	if ( style & wxVB_NO_TABS ) {
+		Hide();
+	}
 	Initialize();
 }
 

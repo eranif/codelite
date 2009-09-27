@@ -52,6 +52,7 @@ public:
             checkOther.warningOldStylePointerCast();
             checkOther.checkUnsignedDivision();
             checkOther.checkCharVariable();
+            checkOther.nullPointer();
         }
     }
 
@@ -67,12 +68,14 @@ public:
             checkOther.checkConstantFunctionParameter();
             checkOther.checkStructMemberUsage();
             checkOther.checkIncompleteStatement();
-            checkOther.postIncrement();
+            if (settings->_showAll)
+            {
+                checkOther.postIncrement();
+            }
         }
 
         checkOther.strPlusChar();
         checkOther.invalidFunctionUsage();
-        checkOther.nullPointer();
         checkOther.checkZeroDivision();
     }
 
@@ -143,6 +146,7 @@ public:
     void conditionAlwaysTrueFalse(const Token *tok, const std::string &truefalse);
     void strPlusChar(const Token *tok);
     void nullPointerError(const Token *tok, const std::string &varname);
+    void nullPointerError(const Token *tok, const std::string &varname, const int line);
     void zerodivError(const Token *tok);
     void postIncrementError(const Token *tok, const std::string &var_name, const bool isIncrement);
 

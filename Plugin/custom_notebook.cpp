@@ -92,7 +92,7 @@ void Notebook::Initialize()
 	sz->Layout();
 }
 
-void Notebook::SetSelection(size_t page)
+void Notebook::SetSelection(size_t page, bool notify)
 {
 	CustomTab *tab = m_tabs->IndexToTab(page);
 	CustomTab *old_tab = m_tabs->GetSelection();
@@ -106,7 +106,7 @@ void Notebook::SetSelection(size_t page)
 		tab->GetWindow()->SetFocus();
 
 		//the next call will also trigger a call to Notebook::SetSelection(CustomTab *tab)
-		m_tabs->SetSelection(tab, true);
+		m_tabs->SetSelection(tab, notify);
 	}
 }
 

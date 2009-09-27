@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="CppChecker">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00040001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode000000000000
+    
+    
+    
+    ]]>
+    </Plugin>
+  </Plugins>
+  <VirtualDirectory Name="src">
+    <File Name="cppchecker.cpp"/>
+    <File Name="cppcheckreportbasepage.cpp"/>
+    <File Name="cppcheckreportbasepage.h"/>
+    <File Name="cppcheckreportpage.cpp"/>
+    <File Name="cppcheckreportpage.h"/>
+    <File Name="cppcheckfilelistctrl.cpp"/>
+    <File Name="cppcheckfilelistctrl.h"/>
+    <File Name="cppchecksettingsdlg.cpp"/>
+    <File Name="cppchecksettingsdlg.h"/>
+    <File Name="cppchecksettingsdlgbase.cpp"/>
+    <File Name="cppchecksettingsdlgbase.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <File Name="cppchecker.h"/>
+  </VirtualDirectory>
+  <Dependencies/>
+  <VirtualDirectory Name="network">
+    <File Name="../sdk/codelite_cppcheck/network/np_connections_server.h"/>
+    <File Name="../sdk/codelite_cppcheck/network/cppcheck_net_macros.h"/>
+    <File Name="../sdk/codelite_cppcheck/network/cppchecker_net_reply.cpp"/>
+    <File Name="../sdk/codelite_cppcheck/network/cppchecker_net_reply.h"/>
+    <File Name="../sdk/codelite_cppcheck/network/cppchecker_protocol.cpp"/>
+    <File Name="../sdk/codelite_cppcheck/network/cppchecker_protocol.h"/>
+    <File Name="../sdk/codelite_cppcheck/network/cppchecker_request.cpp"/>
+    <File Name="../sdk/codelite_cppcheck/network/cppchecker_request.h"/>
+    <File Name="../sdk/codelite_cppcheck/network/named_pipe.cpp"/>
+    <File Name="../sdk/codelite_cppcheck/network/named_pipe.h"/>
+    <File Name="../sdk/codelite_cppcheck/network/named_pipe_client.cpp"/>
+    <File Name="../sdk/codelite_cppcheck/network/named_pipe_client.h"/>
+    <File Name="../sdk/codelite_cppcheck/network/named_pipe_server.cpp"/>
+    <File Name="../sdk/codelite_cppcheck/network/named_pipe_server.h"/>
+    <File Name="../sdk/codelite_cppcheck/network/np_connections_server.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="WorkerThread">
+    <File Name="cppcheckjob.cpp"/>
+    <File Name="cppcheckjob.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="formbuilder">
+    <File Name="cppcheckreportbasepage.fbp"/>
+    <File Name="cppchecksettingsdlg.fbp"/>
+  </VirtualDirectory>
+  <Dependencies Name="DebugUnicode"/>
+  <Settings Type="Dynamic Library">
+    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" Required="yes">
+        <IncludePath Value="."/>
+        <IncludePath Value="../../trunk/Interfaces"/>
+        <IncludePath Value="../../trunk/CodeLite"/>
+        <IncludePath Value="../../trunk/Plugin"/>
+        <IncludePath Value="../../trunk/sqlite3"/>
+        <IncludePath Value="../../trunk/sdk/wxsqlite3/include"/>
+        <IncludePath Value="../../trunk/sdk/wxpropgrid/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+        <LibraryPath Value="../../trunk/lib"/>
+        <Library Value="libpluginu.a"/>
+        <Library Value="libcodeliteud.a"/>
+        <Library Value="libwxsqlite3ud.a"/>
+        <Library Value="libwxpropgridud.a"/>
+        <Library Value="libsqlite3.a"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ConfigurationName)/CppChecker.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2" Required="yes">
+        <IncludePath Value="."/>
+        <IncludePath Value="../../trunk/Interfaces"/>
+        <IncludePath Value="../../trunk/CodeLite"/>
+        <IncludePath Value="../../trunk/Plugin"/>
+        <IncludePath Value="../../trunk/sqlite3"/>
+        <IncludePath Value="../../trunk/sdk/wxsqlite3/include"/>
+        <IncludePath Value="../../trunk/sdk/wxpropgrid/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);" Required="yes">
+        <LibraryPath Value="../../trunk/lib"/>
+        <Library Value="libpluginu.a"/>
+        <Library Value="libcodeliteu.a"/>
+        <Library Value="libwxsqlite3u.a"/>
+        <Library Value="libwxpropgridu.a"/>
+        <Library Value="libsqlite3.a"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ConfigurationName)/CppChecker.dll" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sqlite3"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxpropgrid/include"/>
+        <IncludePath Value="../sdk/codelite_cppcheck"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="_WIN32_WINNT=0x501"/>
+        <Preprocessor Value="ASTYLE_LIB"/>
+      </Compiler>
+      <Linker Options="-O2;$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdkud.a"/>
+        <Library Value="libCodeLiteud.a"/>
+        <Library Value="libwxsqlite3ud.a"/>
+        <Library Value="libwxpropgridud.a"/>
+        <Library Value="libsqlite3.a"/>
+        <Library Value="libwxscintillaud.a"/>
+        <Library Value="libwxmsw28ud.a"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../Runtime/plugins/CppChecker.dll" IntermediateDirectory="./WinDebugUnicode" Command="codelite" CommandArguments="-b ." WorkingDirectory="../Runtime/" PauseExecWhenProcTerminates="no"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" Required="yes">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sqlite3"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxpropgrid/include"/>
+        <IncludePath Value="../sdk/codelite_cppcheck"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="_WIN32_WINNT=0x501"/>
+        <Preprocessor Value="ASTYLE_LIB"/>
+      </Compiler>
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);" Required="yes">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdku.a"/>
+        <Library Value="libCodeLiteu.a"/>
+        <Library Value="libwxsqlite3u.a"/>
+        <Library Value="libwxpropgridu.a"/>
+        <Library Value="libsqlite3.a"/>
+        <Library Value="libwxscintillau.a"/>
+        <Library Value="libwxmsw28u.a"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="../Runtime/plugins/CppChecker.dll" IntermediateDirectory="./WinReleaseUnicode" Command="./codelite" CommandArguments="" WorkingDirectory="../Runtime/" PauseExecWhenProcTerminates="no"/>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <GlobalSettings>
+      <Compiler Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+  </Settings>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+</CodeLite_Project>

@@ -33,6 +33,7 @@ MemoryView::MemoryView( wxWindow* parent )
 		: MemoryViewBase( parent )
 {
 	m_buttonUpdate->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( MemoryView::OnUpdateUI ), NULL, this );
+	m_textCtrlExpression->Connect( wxEVT_COMMAND_TEXT_ENTER, wxTextEventHandler( MemoryView::OnEvaluate ), NULL, this );
 }
 
 void MemoryView::OnEvaluate( wxCommandEvent& event )

@@ -38,6 +38,7 @@ class EditorSettingsMiscPanel
 : public EditorSettingsMiscBasePanel
 , public TreeBookNode<EditorSettingsMiscPanel>
 {
+	bool m_restartRequired;
 protected:
 	// Handlers for EditorSettingsMiscBasePanel events.
 	void OnClearButtonClick( wxCommandEvent& event );
@@ -46,6 +47,8 @@ public:
 	/** Constructor */
 	EditorSettingsMiscPanel( wxWindow* parent );
 	void Save(OptionsConfigPtr options);
+	virtual bool IsRestartRequired() { return this->m_restartRequired; }
+
 };
 
 #endif // __editorsettingsmiscpanel__

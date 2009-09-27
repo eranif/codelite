@@ -1347,7 +1347,7 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 	}
 
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-	if (dbgr) {
+	if (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
 		DebuggerSettingsData data;
 		DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
 		std::vector<DebuggerCmdData> cmds = data.GetCmds();
@@ -1410,9 +1410,14 @@ void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
 		}
 
 		wxString output;
-		Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetDebugger  (dbgr   );
-		Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetDbgCommand(dbg_command);
-		Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetExpression(command);
+		Notebook *book = Frame::Get()->GetDebuggerPane()->GetNotebook();
+		Manager *     m = ManagerST::Get();
+
+		if ( book->GetPageText(book->GetSelection()) == DebuggerPane::ASCII_VIEWER || m->IsPaneVisible(DebuggerPane::ASCII_VIEWER) ) {
+			Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetDebugger  (dbgr   );
+			Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetDbgCommand(dbg_command);
+			Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetExpression(command);
+		}
 
 		// Display tooltip if needed only
 		if (dbgr->GetDebuggerInformation().showTooltips && command.IsEmpty() == false && dbgr->GetTip(dbg_command, command, output)) {
@@ -2327,7 +2332,10 @@ void ContextCpp::MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryP
 	                        "do double dynamic_cast else enum explicit export extern false float for friend goto if inline int long mutable namespace "
 	                        "new not not_eq operator or or_eq private protected public register reinterpret_cast return short signed sizeof size_t static "
 	                        "static_cast struct switch template this throw true try typedef typeid typename union unsigned using virtual void volatile "
-	                        "wchar_t while xor xor_eq");
+	                        "wchar_t while xor xor_eq ");
+
+	// add preprocessors
+	cppWords << wxT("ifdef undef define defined include endif elif ");
 
 	wxString s1(word);
 	wxArrayString wordsArr = wxStringTokenize(cppWords, wxT(" "));

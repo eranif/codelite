@@ -32,8 +32,9 @@
 #include <wx/fontmap.h>
 
 EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
-: EditorSettingsMiscBasePanel( parent )
-, TreeBookNode<EditorSettingsMiscPanel>()
+		: EditorSettingsMiscBasePanel( parent )
+		, TreeBookNode<EditorSettingsMiscPanel>()
+		, m_restartRequired (false)
 {
 	GeneralInfo info = Frame::Get()->GetFrameGeneralInfo();
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
@@ -86,7 +87,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 
 void EditorSettingsMiscPanel::OnClearButtonClick( wxCommandEvent& )
 {
-    ManagerST::Get()->ClearWorkspaceHistory();
+	ManagerST::Get()->ClearWorkspaceHistory();
 	Frame::Get()->GetMainBook()->ClearFileHistory();
 }
 
@@ -107,7 +108,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	EditorConfigST::Get()->SaveLongValue(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);
 
 	int value = m_maxItemsFindReplace->GetValue();
-	if(value < 1 || value > 50) {
+	if (value < 1 || value > 50) {
 		value = 10;
 	}
 
@@ -134,17 +135,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	if (oldIconSize != iconSize || oldUseSingleToolbar != m_useSingleToolbar->IsChecked()) {
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 0);
 		//notify the user
-#ifdef __WXMAC__
-		wxMessageBox(_("Some of the changes made requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
-#else
-		// On Winodws & GTK we offer auto-restart
-		int answer = wxMessageBox(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL);
-		if ( answer == wxYES ) {
-			wxCommandEvent e(wxEVT_CMD_RESTART_CODELITE);
-			ManagerST::Get()->AddPendingEvent(e);
-		}
-#endif
-
+		m_restartRequired = true;
 	} else {
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
 	}

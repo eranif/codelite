@@ -315,7 +315,7 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 				int pos = editor->GetCurrentPos();
 				editor->SetSelectionStart(pos);
 				editor->SetSelectionEnd(pos);
-				editor->SetIndicatorCurrent(5); // Move MATCH_INDICATOR to cl_editor.h
+				editor->SetIndicatorCurrent(MATCH_INDICATOR);
 				editor->IndicatorFillRange(pos, 1);
 				// trigger function tip
 				editor->CodeComplete();

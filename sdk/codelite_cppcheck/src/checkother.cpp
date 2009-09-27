@@ -454,6 +454,9 @@ void CheckOther::invalidFunctionUsage()
 
 void CheckOther::checkUnsignedDivision()
 {
+    if (!_settings->_showAll || !_settings->_checkCodingStyle)
+        return;
+
     // Check for "ivar / uvar" and "uvar / ivar"
     std::map<std::string, char> varsign;
     for (const Token *tok = _tokenizer->tokens(); tok; tok = tok->next())
@@ -591,7 +594,19 @@ void CheckOther::checkVariableScope()
                 continue;
 
             // Variable declaration?
-            if (Token::Match(tok1, "%type% %var% [;=]"))
+            if (Token::Match(tok1, "%type% %var% ; %var% = %num% ;"))
+            {
+                // Tokenizer modify "int i = 0;" to "int i; i = 0;",
+                // so to handle this situation we just skip
+                // initialization (see ticket #272).
+                const unsigned int firstVarId = tok1->next()->varId();
+                const unsigned int secondVarId = tok1->tokAt(3)->varId();
+                if (firstVarId > 0 && firstVarId == secondVarId)
+                {
+                    lookupVar(tok1->tokAt(6), tok1->strAt(1));
+                }
+            }
+            else if (Token::Match(tok1, "%type% %var% [;=]"))
             {
                 lookupVar(tok1, tok1->strAt(1));
             }
@@ -965,24 +980,17 @@ void CheckOther::nullPointer()
 
         // Locate the end of the while loop..
         const Token *tok2 = tok->tokAt(4);
-        int indentlevel = 0;
-        while (tok2)
+        if (tok2->str() == "{")
+            tok2 = tok2->link();
+        else
         {
-            if (tok2->str() == "{")
-                ++indentlevel;
-            else if (tok2->str() == "}")
-            {
-                if (indentlevel <= 1)
-                    break;
-                --indentlevel;
-            }
-            else if (indentlevel == 0 && tok2->str() == ";")
-                break;
-            tok2 = tok2->next();
+            while (tok2 && tok2->str() != ";")
+                tok2 = tok2->next();
         }
 
         // Goto next token
-        tok2 = tok2 ? tok2->next() : 0;
+        if (tok2)
+            tok2 = tok2->next();
 
         // Check if the variable is dereferenced..
         while (tok2)
@@ -1154,7 +1162,7 @@ void CheckOther::nullPointer()
 
                 else if (Token::Match(tok2, "if ( !| %varid% )", varid1))
                 {
-                    nullPointerError(tok1, varname);
+                    nullPointerError(tok1, varname, tok2->linenr());
                     break;
                 }
             }
@@ -1180,7 +1188,7 @@ void CheckOther::nullPointer()
             {
                 if (tok1->varId() == varid)
                 {
-                    if (tok1->previous() && tok1->previous()->str() == "*" && tok1->tokAt(-2)->str() != "*")
+                    if (Token::Match(tok1->tokAt(-2), "[=;{}] *"))
                     {
                         nullPointerError(tok1, varname);
                         break;
@@ -1213,8 +1221,19 @@ void CheckOther::checkZeroDivision()
 {
     for (const Token *tok = _tokenizer->tokens(); tok; tok = tok->next())
     {
-        if (Token::simpleMatch(tok, "/ 0"))
+
+        if (Token::Match(tok, "/ %num%") &&
+            MathLib::isInt(tok->next()->str()) &&
+            MathLib::toLongNumber(tok->next()->str()) == 0L)
+        {
             zerodivError(tok);
+        }
+        else if (Token::Match(tok, "div|ldiv|lldiv|imaxdiv ( %num% , %num% )") &&
+                 MathLib::isInt(tok->tokAt(4)->str()) &&
+                 MathLib::toLongNumber(tok->tokAt(4)->str()) == 0L)
+        {
+            zerodivError(tok);
+        }
     }
 }
 
@@ -1291,7 +1310,7 @@ void CheckOther::udivError(const Token *tok)
 
 void CheckOther::udivWarning(const Token *tok)
 {
-    reportError(tok, Severity::possibleStyle, "udivWarning", "Warning: Division with signed and unsigned operators");
+    reportError(tok, Severity::possibleStyle, "udivWarning", "Division with signed and unsigned operators");
 }
 
 void CheckOther::unusedStructMemberError(const Token *tok, const std::string &structname, const std::string &varname)
@@ -1337,6 +1356,11 @@ void CheckOther::strPlusChar(const Token *tok)
 void CheckOther::nullPointerError(const Token *tok, const std::string &varname)
 {
     reportError(tok, Severity::error, "nullPointer", "Possible null pointer dereference: " + varname);
+}
+
+void CheckOther::nullPointerError(const Token *tok, const std::string &varname, const int line)
+{
+    reportError(tok, Severity::error, "nullPointer", "Possible null pointer dereference: " + varname + " - otherwise it is redundant to check if " + varname + " is null at line " + MathLib::toString<long>(line));
 }
 
 void CheckOther::zerodivError(const Token *tok)

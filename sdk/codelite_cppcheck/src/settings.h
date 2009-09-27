@@ -38,6 +38,9 @@ private:
     /** classes that are automaticly deallocated */
     std::list<std::string> _autoDealloc;
 
+    /** Code to append in the checks */
+    std::string _append;
+
 public:
     Settings();
     virtual ~Settings();
@@ -65,6 +68,10 @@ public:
         Default value is 0. */
     int _exitCode;
 
+    /** The output format in which the errors are printed in text mode,
+        e.g. "{severity} {file}:{line} {message} {id}" */
+    std::string _outputFormat;
+
 #ifdef __GNUC__
     /** show timing information */
     bool _showtime;
@@ -82,6 +89,12 @@ public:
 
     /** is a class automaticly deallocated? */
     bool isAutoDealloc(const char classname[]) const;
+
+    /** assign append code */
+    void append(const std::string &filename);
+
+    /** get append code */
+    std::string append() const;
 };
 
 /// @}

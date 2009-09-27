@@ -48,6 +48,9 @@ protected:
 	void SaveOptions();
 	void OnEnableExternalDiffViewerUI(wxUpdateUIEvent &e);
 	void OnButtonBrowseSSHClient(wxCommandEvent &e);
+	void OnBrowseSvnExe(wxCommandEvent &e);
+	void OnBrowseDiffExe(wxCommandEvent &e);
+
 public:
 	/** Constructor */
 	SvnOptionsDlg( wxWindow* parent, const SvnOptions& options, IManager *manager );

@@ -35,6 +35,7 @@ public:
 	virtual ~TreeBookNodeBase();
 
 	virtual void Save(OptionsConfigPtr options)  = 0;
+	virtual bool IsRestartRequired() { return false; }
 };
 
 template<typename DerivedT>

@@ -1274,6 +1274,12 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	wxString mask = dlg->GetFileMask();
 	dlg->Destroy();
 
+	//{ Fixe bug 2847625
+	if (path.EndsWith(wxT("/")) || path.EndsWith(wxT("\\"))) {
+		path.RemoveLast();
+	}
+	//} bug 2847625
+	
 	wxFileName rootPath(path);
 
 	//Collect all candidates files

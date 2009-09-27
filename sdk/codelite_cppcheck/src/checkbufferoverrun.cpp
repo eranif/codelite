@@ -30,6 +30,7 @@
 #include <sstream>
 #include <list>
 #include <cstring>
+#include <cctype>
 
 
 #include <cstdlib>     // <- strtoul
@@ -267,9 +268,8 @@ void CheckBufferOverrun::checkScope(const Token *tok, const char *varname[], con
             if (value <= size)
                 condition_out_of_bounds = false;;
 
-            // Goto the end of the for loop..
-            while (tok2 && tok2->str() != ")")
-                tok2 = tok2->next();
+            // Goto the end paranthesis of the for-statement: "for (x; y; z)" ..
+            tok2 = tok->next()->link();
             if (!tok2 || !tok2->tokAt(5))
                 break;
 
@@ -277,7 +277,7 @@ void CheckBufferOverrun::checkScope(const Token *tok, const char *varname[], con
             pattern << varnames << " [ " << strindex << " ]";
 
             int indentlevel2 = 0;
-            while ((tok2 = tok2->next()))
+            while ((tok2 = tok2->next()) != 0)
             {
                 if (tok2->str() == ";" && indentlevel2 == 0)
                     break;
@@ -349,20 +349,12 @@ void CheckBufferOverrun::checkScope(const Token *tok, const char *varname[], con
         // Writing data into array..
         if (Token::Match(tok, ("strcpy|strcat ( " + varnames + " , %str% )").c_str()))
         {
-            int len = 0;
-            const char *str = tok->strAt(varc + 4);
-            while (*str)
-            {
-                if (*str == '\\')
-                    ++str;
-                ++str;
-                ++len;
-            }
-            if (len > 2 && len >= (int)size + 2)
+            size_t len = Token::getStrLength(tok->tokAt(varc + 4));
+            if (len >= static_cast<size_t>(size))
             {
                 bufferOverrun(tok);
+                continue;
             }
-            continue;
         }
 
 
@@ -383,12 +375,28 @@ void CheckBufferOverrun::checkScope(const Token *tok, const char *varname[], con
                 strncatUsage(tok->tokAt(9));
         }
 
+        // Detect few strcat() calls
+        if (varid > 0 && Token::Match(tok, "strcat ( %varid% , %str% ) ;", varid))
+        {
+            size_t charactersAppend = 0;
+            const Token *tok2 = tok;
+
+            while (tok2 && Token::Match(tok2, "strcat ( %varid% , %str% ) ;", varid))
+            {
+                charactersAppend += Token::getStrLength(tok2->tokAt(4));
+                if (charactersAppend >= static_cast<size_t>(size))
+                {
+                    bufferOverrun(tok2);
+                    break;
+                }
+                tok2 = tok2->tokAt(7);
+            }
+        }
 
         // sprintf..
         if (varid > 0 && Token::Match(tok, "sprintf ( %varid% , %str% [,)]", varid))
         {
             int len = -2;
-            const Token *end = tok->next()->link();
 
             // check format string
             const char *fmt = tok->strAt(4);
@@ -400,8 +408,15 @@ void CheckBufferOverrun::checkScope(const Token *tok, const char *varname[], con
                 }
                 else if (*fmt == '%')
                 {
+                    ++fmt;
+
+                    // skip field width
+                    while (std::isdigit(*fmt)) {
+                        ++fmt;
+                    }
+
                     // FIXME: better handling for format specifiers
-                    fmt += 2;
+                    ++fmt;
                     continue;
                 }
                 ++fmt;
@@ -413,26 +428,22 @@ void CheckBufferOverrun::checkScope(const Token *tok, const char *varname[], con
                 bufferOverrun(tok);
             }
 
-            // check arguments
-            len = 0;
-            for (const Token *tok2 = tok->tokAt(6); tok2 && tok2 != end; tok2 = tok2->next())
+            // check arguments (if they exists)
+            if (tok->tokAt(5)->str() == ",")
             {
-                if (tok2->str()[0] == '\"')
+                len = 0;
+                const Token *end = tok->next()->link();
+                for (const Token *tok2 = tok->tokAt(6); tok2 && tok2 != end; tok2 = tok2->next())
                 {
-                    len -= 2;
-                    const char *str = tok2->str().c_str();
-                    while (*str)
+                    if (tok2->str()[0] == '\"')
                     {
-                        if (*str == '\\')
-                            ++str;
-                        ++str;
-                        ++len;
+                        len += (int)Token::getStrLength(tok2);
                     }
                 }
-            }
-            if (len >= (int)size)
-            {
-                bufferOverrun(tok);
+                if (len >= (int)size)
+                {
+                    bufferOverrun(tok);
+                }
             }
         }
 

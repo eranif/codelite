@@ -54,7 +54,7 @@ protected:
 	bool m_stop;
 	wxArrayString m_lines;
 	QueueCommand m_info;
-	
+
 protected:
 	virtual void OnTimer(wxTimerEvent &event);
 	virtual void OnProcessEnd(wxProcessEvent& event);
@@ -62,7 +62,7 @@ protected:
 	virtual void DoPrintOutput(const wxString &out, const wxString &errs);
 	void CleanUp();
 	void DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool isFileOnly);
-	
+
 public:
 	bool IsBusy() const {
 		return m_busy;

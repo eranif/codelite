@@ -37,6 +37,16 @@
 #include "newwxprojectdlg.h"
 #include <algorithm>
 
+static wxString MI_NEW_WX_PROJECT      = wxT("Create new wxWidgets project...");
+static wxString MI_NEW_CODELITE_PLUGIN = wxT("Create new CodeLite plugin...");
+static wxString MI_NEW_NEW_CLASS       = wxT("Create new C++ class...");
+
+enum {
+	ID_MI_NEW_WX_PROJECT = 9000,
+	ID_MI_NEW_CODELITE_PLUGIN,
+	ID_MI_NEW_NEW_CLASS
+};
+
 static GizmosPlugin* theGismos = NULL;
 
 //Define the plugin entry point
@@ -157,27 +167,26 @@ wxToolBar *GizmosPlugin::CreateToolBar(wxWindow *parent)
 		tb->SetToolBitmapSize(wxSize(size, size));
 
 		if (size == 24) {
-			tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("New Plugin Wizard..."));
-			tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class24")), wxT("New Class..."));
-			tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project24")), wxT("New wxWidget Project"));
+			tb->AddTool(XRCID("gizmos_options"), wxT("Gizmos..."), wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("Open Gizmos quick menu"));
 		} else {
-			tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"), wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("New Plugin Wizard..."));
-			tb->AddTool(XRCID("new_class"), wxT("Create New Class"), wxXmlResource::Get()->LoadBitmap(wxT("class16")), wxT("New Class..."));
-			tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"), wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project16")), wxT("New wxWidget Project"));
+			tb->AddTool(XRCID("gizmos_options"), wxT("Gizmos..."), wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("Open Gizmos quick menu"));
 		}
 		tb->Realize();
 	}
 
 	//Connect the events to us
-	parent->Connect(XRCID("new_plugin"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnNewPlugin), NULL, (wxEvtHandler*)this);
-	parent->Connect(XRCID("new_plugin"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GizmosPlugin::OnNewPluginUI), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnGizmos   ), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(GizmosPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
+
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnNewPlugin), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GizmosPlugin::OnNewPluginUI), NULL, (wxEvtHandler*)this);
 
 
-	parent->Connect(XRCID("new_class"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnNewClass), NULL, (wxEvtHandler*)this);
-	parent->Connect(XRCID("new_class"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GizmosPlugin::OnNewClassUI), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnNewClass), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GizmosPlugin::OnNewClassUI), NULL, (wxEvtHandler*)this);
 
-	parent->Connect(XRCID("new_wx_project"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnNewWxProject), NULL, (wxEvtHandler*)this);
-	parent->Connect(XRCID("new_wx_project"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GizmosPlugin::OnNewWxProjectUI), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GizmosPlugin::OnNewWxProject), NULL, (wxEvtHandler*)this);
+	m_mgr->GetTheApp()->Connect(ID_MI_NEW_WX_PROJECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GizmosPlugin::OnNewWxProjectUI), NULL, (wxEvtHandler*)this);
 	return tb;
 }
 
@@ -185,11 +194,11 @@ void GizmosPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 {
 	wxMenu *menu = new wxMenu();
 	wxMenuItem *item(NULL);
-	item = new wxMenuItem(menu, XRCID("new_plugin"), _("New CodeLite Plugin Wizard..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, ID_MI_NEW_CODELITE_PLUGIN, _("New CodeLite Plugin Wizard..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	item = new wxMenuItem(menu, XRCID("new_class"), _("New Class Wizard..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, ID_MI_NEW_NEW_CLASS, _("New Class Wizard..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
-	item = new wxMenuItem(menu, XRCID("new_wx_project"), _("New wxWidgets Project Wizard..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, ID_MI_NEW_WX_PROJECT, _("New wxWidgets Project Wizard..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	pluginsMenu->Append(wxID_ANY, _("Gizmos"), menu);
 }
@@ -223,12 +232,16 @@ void GizmosPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 
 void GizmosPlugin::UnPlug()
 {
-	//TODO:: perform the unplug action of this plugin
 }
 
 void GizmosPlugin::OnNewPlugin(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
+	DoCreateNewPlugin();
+}
+
+void GizmosPlugin::DoCreateNewPlugin()
+{
 	//Load the wizard
 	PluginWizard *wiz = new PluginWizard(NULL, wxID_ANY);
 	NewPluginData data;
@@ -343,6 +356,12 @@ void GizmosPlugin::OnNewClassUI(wxUpdateUIEvent &e)
 }
 
 void GizmosPlugin::OnNewClass(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	DoCreateNewClass();
+}
+
+void GizmosPlugin::DoCreateNewClass()
 {
 	NewClassDlg *dlg = new NewClassDlg(NULL, m_mgr);
 	if (dlg->ShowModal() == wxID_OK) {
@@ -484,6 +503,12 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 }
 
 void GizmosPlugin::OnNewWxProject(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	DoCreateNewWxProject();
+}
+
+void GizmosPlugin::DoCreateNewWxProject()
 {
 	NewWxProjectDlg *dlg = new NewWxProjectDlg(NULL, m_mgr);
 	if (dlg->ShowModal() == wxID_OK) {
@@ -672,4 +697,35 @@ wxString GizmosPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
 		decl << wxT("\t") << m_mgr->GetTagsManager()->FormatFunction(tt);
 	}
 	return decl;
+}
+
+void GizmosPlugin::OnGizmos(wxCommandEvent& e)
+{
+	// open a popup menu
+	wxUnusedVar(e);
+
+#ifdef __WXMSW__
+	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+#endif
+
+	wxMenu popupMenu;
+
+	std::map<wxString, int> options;
+	options[MI_NEW_CODELITE_PLUGIN] = ID_MI_NEW_CODELITE_PLUGIN;
+	options[MI_NEW_NEW_CLASS      ] = ID_MI_NEW_NEW_CLASS;
+	options[MI_NEW_WX_PROJECT     ] = ID_MI_NEW_WX_PROJECT;
+
+	std::map<wxString, int>::iterator iter = options.begin();
+	for (; iter != options.end(); iter++) {
+		int      id   = (*iter).second;
+		wxString text = (*iter).first;
+		wxMenuItem *item = new wxMenuItem(&popupMenu, id, text, text, wxITEM_NORMAL);
+		popupMenu.Append(item);
+	}
+	m_mgr->GetTheApp()->GetTopWindow()->PopupMenu(&popupMenu);
+}
+
+void GizmosPlugin::OnGizmosUI(wxUpdateUIEvent& e)
+{
+	e.Enable(m_mgr->IsWorkspaceOpen());
 }

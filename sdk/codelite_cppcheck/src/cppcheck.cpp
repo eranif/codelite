@@ -80,7 +80,7 @@ std::string CppCheck::parseFromArgs(int argc, const char* const argv[])
     for (int i = 1; i < argc; i++)
     {
         if (strcmp(argv[i], "--version") == 0)
-            return "Cppcheck 1.35\n";
+            return "Cppcheck 1.36\n";
 
         // Flag used for various purposes during debugging
         if (strcmp(argv[i], "--debug") == 0)
@@ -113,6 +113,10 @@ std::string CppCheck::parseFromArgs(int argc, const char* const argv[])
         // Check if there are unused functions
         else if (strcmp(argv[i], "--unused-functions") == 0)
             _settings._unusedFunctions = true;
+
+        // Append userdefined code to checked source code
+        else if (strncmp(argv[i], "--append=", 9) == 0)
+            _settings.append(9 + argv[i]);
 
 #ifdef __GNUC__
         // show timing information..
@@ -172,7 +176,22 @@ std::string CppCheck::parseFromArgs(int argc, const char* const argv[])
             _settings._includePaths.push_back(path);
         }
 
-// Include paths
+
+        // Output formatter
+        else if (strcmp(argv[i], "--template") == 0)
+        {
+            // "--template path/"
+            if (strcmp(argv[i], "--template") == 0)
+            {
+                ++i;
+                if (i >= argc)
+                    return "cppcheck: argument to '--template' is missing\n";
+
+                _settings._outputFormat = argv[i];
+            }
+        }
+
+        // Include paths
         else if (strcmp(argv[i], "-j") == 0 ||
                  strncmp(argv[i], "-j", 2) == 0)
         {
@@ -279,15 +298,18 @@ std::string CppCheck::parseFromArgs(int argc, const char* const argv[])
         oss <<   "Cppcheck - A tool for static C/C++ code analysis\n"
         "\n"
         "Syntax:\n"
-        "    cppcheck [--all] [--auto-dealloc file.lst] [--error-exitcode=[n]] [--force]\n"
-        "             [--help] [-Idir] [-j [jobs]] [--quiet] [--style] [--unused-functions]\n"
-        "             [--verbose] [--version] [--xml] [file or path1] [file or path] ...\n"
+        "    cppcheck [--all] [--append=file] [--auto-dealloc file.lst]\n"
+        "             [--error-exitcode=[n]] [--force] [--help] [-Idir] [-j [jobs]]\n"
+        "             [--quiet] [--style] [--unused-functions] [--verbose] [--version]\n"
+        "             [--xml] [file or path1] [file or path] ...\n"
         "\n"
         "If path is given instead of filename, *.cpp, *.cxx, *.cc, *.c++ and *.c files\n"
         "are checked recursively from given directory.\n\n"
         "Options:\n"
         "    -a, --all            Make the checking more sensitive. More bugs are\n"
         "                         detected, but there are also more false positives\n"
+        "    --append=file        This allows you to provide information about\n"
+        "                         functions by providing an implementation for these.\n"
         "    --auto-dealloc file  Suppress warnings about classes that have automatic\n"
         "                         deallocation.\n"
         "                         The classnames must be provided in plain text - one\n"
@@ -308,6 +330,9 @@ std::string CppCheck::parseFromArgs(int argc, const char* const argv[])
         "    -j [jobs]            Start [jobs] threads to do the checking simultaneously.\n"
         "    -q, --quiet          Only print error messages\n"
         "    -s, --style          Check coding style\n"
+        "    --template '[text]'  Format the error messages. E.g.\n"
+        "                         '{file}:{line},{severity},{id},{message}' or\n"
+        "                         '{file}({line}):({severity}) {message}'\n"
         "    --unused-functions   Check if there are unused functions\n"
         "    -v, --verbose        More detailed error reports\n"
         "    --version            Print out version number\n"
@@ -395,7 +420,7 @@ unsigned int CppCheck::check()
                 if (_settings._errorsOnly == false && it != configurations.begin())
                     _errorLogger->reportOut(std::string("Checking ") + fname + ": " + cfg + std::string("..."));
 
-                checkFile(codeWithoutCfg, _filenames[c].c_str());
+                checkFile(codeWithoutCfg + _settings.append(), _filenames[c].c_str());
                 ++checkCount;
             }
         }
@@ -405,7 +430,7 @@ unsigned int CppCheck::check()
             _errorLogger->reportOut("Bailing out from checking " + fname + ": " + e.what());
         }
 
-        _errorLogger->reportStatus(c + 1, _filenames.size());
+        _errorLogger->reportStatus(c + 1, (unsigned int)_filenames.size());
     }
 
     // This generates false positives - especially for libraries

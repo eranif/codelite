@@ -22,6 +22,7 @@ createVariables()
 	exe_name="Runtime/codelite"
 	exe_name1="codelite"
 	is_so_lib=$1
+	additional_include_path=$2
 
 	if [ "$is_64bit" = "yes" ]; then
 		compiler_name=${compiler_name}" -DON_64_BIT "
@@ -72,6 +73,7 @@ createVariables()
 	if [ "$is_so_lib" = "no" ]; then
 		echo "INCLUDES := \$(INCLUDES) -ILiteEditor " >> Makefile
 	fi
+	echo "INCLUDES := \$(INCLUDES) ${additional_include_path} " >> Makefile
 	echo "" >> Makefile
 	if [ "$os_name" != "Darwin" ] ; then
 		echo "INCLUDES := \$(INCLUDES) \$(shell pkg-config --cflags gtk+-2.0)" >> Makefile
@@ -446,11 +448,18 @@ createPluginMakefile()
 	## set the plugin path relative to the main path
 	base_dir=".."
 
-	createVariables "yes"
+
+	if [ "$plugin_name" = "CppCheck" ] ; then
+	  createVariables "yes" "-I../sdk/codelite_cppcheck/"
+	else
+	  createVariables "yes" 
+	fi
 
 	## Hack to include the md5c.c file in the makefile for the qmake plugin
 	if [ "$plugin_name" = "QmakePlugin" ] ; then
 	  createObjectList "*.cpp md5c.c" "${plugin_name}Objects"
+	elif [ "$plugin_name" = "CppCheck" ] ; then
+	  createObjectList "*.cpp ../sdk/codelite_cppcheck/network/*.cpp" "${plugin_name}Objects"
 	else
 	  createObjectList "*.cpp" "${plugin_name}Objects"
 	fi
@@ -458,8 +467,10 @@ createPluginMakefile()
 	createPluginTargets "${plugin_name}" "${post_install_path}"
 	if [ "$plugin_name" = "QmakePlugin" ] ; then
 	  createRules_sharedObject "*.cpp md5c.c" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT) -lwxpropgrid\$(EXT)"
+	elif [ "$plugin_name" = "CppCheck" ] ; then
+	  createRules_sharedObject "*.cpp ../sdk/codelite_cppcheck/network/*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT) -lwxpropgrid\$(EXT)"
 	else
-	  createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT) -lwxpropgrid\$(EXT)"
+	 createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -l    wxsqlite3\$(EXT) -lwxpropgrid\$(EXT)"
 	fi
 
 	## restore the path
@@ -748,7 +759,8 @@ echo "wxformbuilder\\" >> Makefile
 echo "abbreviation\\" >> Makefile
 echo "SymbolView\\" >> Makefile
 echo "ContinuousBuild\\" >> Makefile
-echo "QmakePlugin" >> Makefile
+echo "QmakePlugin\\" >> Makefile
+echo "CppCheck" >> Makefile
 echo "" >> Makefile
 
 echo "plugins_install:\\" >> Makefile
@@ -770,7 +782,8 @@ echo "wxformbuilder_install\\" >> Makefile
 echo "abbreviation_install\\" >> Makefile
 echo "SymbolView_install\\" >> Makefile
 echo "ContinuousBuild_install\\" >> Makefile
-echo "QmakePlugin_install" >> Makefile
+echo "QmakePlugin_install\\" >> Makefile
+echo "CppCheck_install" >> Makefile
 echo "	@chmod 0644 \$(DESTDIR)$plugins_dir/*.so" >> Makefile
 echo "" >> Makefile
 
@@ -793,7 +806,8 @@ echo "wxformbuilder_clean\\" >> Makefile
 echo "abbreviation_clean\\" >> Makefile
 echo "SymbolView_clean\\" >> Makefile
 echo "ContinuousBuild_clean\\" >> Makefile
-echo "QmakePlugin_clean" >> Makefile
+echo "QmakePlugin_clean\\" >> Makefile
+echo "CppCheck_clean" >> Makefile
 echo "" >> Makefile
 
 ########################################################
@@ -817,3 +831,4 @@ createPluginMakefile "abbreviation" "abbreviation" "\$(DESTDIR)$plugins_dir/" ".
 createPluginMakefile "SymbolView" "SymbolView" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "ContinuousBuild" "ContinuousBuild" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
 createPluginMakefile "QmakePlugin" "QmakePlugin" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"
+createPluginMakefile "cppchecker" "CppCheck" "\$(DESTDIR)$plugins_dir/" "../Runtime/plugins"

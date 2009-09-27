@@ -63,8 +63,29 @@ CheckClass::Var *CheckClass::getVarList(const Token *tok1, bool withClasses)
         if (indentlevel != 1)
             continue;
 
+        if (tok->str() == "__published:")
+        {
+            for (; tok; tok = tok->next())
+            {
+                if (tok->str() == "{")
+                    ++indentlevel;
+                else if (tok->str() == "}")
+                {
+                    if (indentlevel <= 1)
+                        break;
+                    --indentlevel;
+                }
+                if (indentlevel == 1 && Token::Match(tok->next(), "private:|protected:|public:"))
+                    break;
+            }
+            if (tok)
+                continue;
+            else
+                break;
+        }
+
         // "private:" "public:" "protected:" etc
-        bool b = bool((*tok->strAt(0) != ':') && strchr(tok->strAt(0), ':') != 0);
+        const bool b((*tok->strAt(0) != ':') && strchr(tok->strAt(0), ':') != 0);
 
         // Search for start of statement..
         if (! Token::Match(tok, "[;{}]") && ! b)
@@ -107,6 +128,11 @@ CheckClass::Var *CheckClass::getVarList(const Token *tok1, bool withClasses)
         else if (Token::Match(next, "%type% %type% * %var% ;"))
         {
             varname = next->strAt(3);
+        }
+
+        else if (Token::Match(next, "%type% %var% [") && next->next()->str() != "operator")
+        {
+            varname = next->strAt(1);
         }
 
         // std::string..
@@ -165,7 +191,7 @@ void CheckClass::initializeVarList(const Token *tok1, const Token *ftok, Var *va
         {
             if (Assign && Token::Match(ftok, "%var% ("))
             {
-                initVar(varlist, ftok->str().c_str());
+                initVar(varlist, ftok->strAt(0));
             }
 
             Assign |= (ftok->str() == ":");
@@ -191,7 +217,7 @@ void CheckClass::initializeVarList(const Token *tok1, const Token *ftok, Var *va
         // Variable getting value from stream?
         if (Token::Match(ftok, ">> %var%"))
         {
-            initVar(varlist, ftok->next()->str().c_str());
+            initVar(varlist, ftok->strAt(1));
         }
 
         // Before a new statement there is "[{};)=]" or "else"
@@ -216,6 +242,10 @@ void CheckClass::initializeVarList(const Token *tok1, const Token *ftok, Var *va
         if (Token::simpleMatch(ftok, "this ."))
             ftok = ftok->tokAt(2);
 
+        // Skip "classname :: "
+        if (Token::Match(ftok, "%var% ::"))
+            ftok = ftok->tokAt(2);
+
         // Clearing all variables..
         if (Token::simpleMatch(ftok, "memset ( this ,"))
         {
@@ -232,21 +262,40 @@ void CheckClass::initializeVarList(const Token *tok1, const Token *ftok, Var *va
             {
                 callstack.push_back(ftok->str());
                 int i = 0;
-                const Token *ftok2 = Tokenizer::findClassFunction(tok1, classname, ftok->str().c_str(), i);
-                initializeVarList(tok1, ftok2, varlist, classname, callstack);
+                const Token *ftok2 = Tokenizer::findClassFunction(tok1, classname, ftok->strAt(0), i);
+                if (ftok2)
+                {
+                    initializeVarList(tok1, ftok2, varlist, classname, callstack);
+                }
+                else  // there is a called member function, but it is not defined where we can find it, so we assume it initializes everything
+                {
+                    for (Var *var = varlist; var; var = var->next)
+                        var->init = true;
+                    break;
+
+                    // we don't report this, as somewhere along the line we hope that the class and member function
+                    // are checked together. It is possible that this will not be the case (where there are enough
+                    // nested functions defined in different files), but that isn't really likely.
+                }
             }
         }
 
         // Assignment of member variable?
         else if (Token::Match(ftok, "%var% ="))
         {
-            initVar(varlist, ftok->str().c_str());
+            initVar(varlist, ftok->strAt(0));
+        }
+
+        // Assignment of array item of member variable?
+        else if (Token::Match(ftok, "%var% [ %any% ] ="))
+        {
+            initVar(varlist, ftok->strAt(0));
         }
 
         // The functions 'clear' and 'Clear' are supposed to initialize variable.
         if (Token::Match(ftok, "%var% . clear|Clear ("))
         {
-            initVar(varlist, ftok->str().c_str());
+            initVar(varlist, ftok->strAt(0));
         }
     }
 }
@@ -469,6 +518,7 @@ void CheckClass::privateFunctions()
                     break;
                 --indent_level;
             }
+
             else if (indent_level != 1)
                 continue;
             else if (tok->str() == "private:")
@@ -480,10 +530,10 @@ void CheckClass::privateFunctions()
             else if (priv)
             {
                 if (Token::Match(tok, "typedef %type% ("))
-                    tok = tok->tokAt(2);
+                    tok = tok->tokAt(2)->link();
 
                 else if (Token::Match(tok, "[:,] %var% ("))
-                    tok = tok->tokAt(2);
+                    tok = tok->tokAt(2)->link();
 
                 else if (Token::Match(tok, "%var% (") &&
                          !Token::Match(tok, classname.c_str()))
@@ -613,7 +663,7 @@ void CheckClass::noMemset()
         }
 
         // Warn if type is a struct that contains any std::*
-        const std::string pattern2(std::string("struct ") + type);
+        const std::string pattern2(std::string("struct ") + type + " {");
         for (const Token *tstruct = Token::findmatch(_tokenizer->tokens(), pattern2.c_str()); tstruct; tstruct = tstruct->next())
         {
             if (tstruct->str() == "}")
@@ -801,6 +851,21 @@ void CheckClass::virtualDestructor()
     }
 }
 //---------------------------------------------------------------------------
+
+void CheckClass::thisSubtractionError(const Token *tok)
+{
+    reportError(tok, Severity::possibleStyle, "thisSubtraction", "Suspicious pointer subtraction");
+}
+
+void CheckClass::thisSubtraction()
+{
+    const Token *tok = Token::findmatch(_tokenizer->tokens(), "this - %var%");
+    if (tok)
+    {
+        thisSubtractionError(tok);
+    }
+}
+
 
 
 

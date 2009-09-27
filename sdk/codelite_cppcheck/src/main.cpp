@@ -20,7 +20,7 @@
 /**
  *
  * @mainpage Cppcheck
- * @version 1.35
+ * @version 1.36
  *
  * @section overview_sec Overview
  * Cppcheck is a simple tool for static analysis of C/C++ code.
@@ -96,6 +96,7 @@ void CheckOther::checkZeroDivision()
 #include "network/cppchecker_net_reply.h"
 #include "cppcheckexecutornetwork.h"
 #include <iostream>
+#include <cstdio>
 #include "network/named_pipe.h"
 #include "network/np_connections_server.h"
 
@@ -173,7 +174,7 @@ int main(int argc, char* argv[])
 		}
 
 	} else {
-		CppCheckExecutor exec;
+		CppCheckExecutorNetwork exec;
 		return exec.check(argc, argv);
 	}
 }

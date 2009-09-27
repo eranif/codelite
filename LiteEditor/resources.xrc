@@ -33,22 +33,21 @@
 	<object class="wxBitmap" name="folder">res/folder.png</object>
 	<object class="wxBitmap" name="cross">res/cross.png</object>
     <object class="wxBitmap" name="document_delete">res/clean.png</object>
-    <object class="wxBitmap" name="build">res/cog.png</object>
-    <object class="wxBitmap" name="find_results">res/page_find.png</object>
-    <object class="wxBitmap" name="file_view">res/folder_table.png</object>
+    <object class="wxBitmap" name="build">res/rebuild.png</object>
+    <object class="wxBitmap" name="find_results">res/16/find.png</object>
     <object class="wxBitmap" name="class_view">res/chart_organisation.png</object>
     <object class="wxBitmap" name="page_open">res/folder.png</object>
 	<object class="wxBitmap" name="word_wrap">res/wrap_arrow.png</object>
-	<object class="wxBitmap" name="output_win">res/output_win.png</object>
-	<object class="wxBitmap" name="debug_window">res/debug_windows.png</object>
+	<object class="wxBitmap" name="output_win">res/commandprompt.png</object>
+	<object class="wxBitmap" name="debug_window">res/trace.png</object>
 	<object class="wxBitmap" name="sym_wiz_bmp">res/sym_wiz_bmp.png</object>
-	<object class="wxBitmap" name="debugger_tab">res/bug.png</object>
+	<object class="wxBitmap" name="debugger_tab">res/debug_windows.png</object>
 	<object class="wxBitmap" name="help_icon">res/help.png</object>
 	<object class="wxBitmap" name="svn_repo">res/svn_repo.png</object>
 	<object class="wxBitmap" name="document_root">res/drive.png</object>
 	<object class="wxBitmap" name="locals_view">res/locals_view.png</object>
 	<object class="wxBitmap" name="watches">res/watches.png</object>
-	<object class="wxBitmap" name="frames">res/frames.png</object>
+	<object class="wxBitmap" name="frames">res/window_duplicate.png</object>
 	<object class="wxBitmap" name="breakpoint">res/breakpoint.png</object>
 	<object class="wxBitmap" name="new_plugin_wiz_bmp">res/puzzle.png</object>
 	<object class="wxBitmap" name="question_and_answer">res/question_and_answer.png</object>
@@ -61,7 +60,9 @@
 	<object class="wxBitmap" name="colourise">res/colorize.png</object>
 	<object class="wxBitmap" name="collapse">res/collapse.png</object>
 	<object class="wxBitmap" name="gohome">res/gohome.png</object>
-	<object class="wxBitmap" name="project_conflict">res/error.png</object>
+	<object class="wxBitmap" name="project_conflict">res/messagebox_warning.png</object>
+	<object class="wxBitmap" name="error">res/mail_mark_important.png</object>
+	<object class="wxBitmap" name="text_view">res/view_text.png</object>
 
 	<!-- Mimetype -->
 	<object class="wxBitmap" name="page_white_c">res/mimetype/page_white_c.png</object>

@@ -113,10 +113,10 @@ void DebuggerPane::CreateGUIControls()
 	//add the watches view
 	m_watchesTable = new SimpleTable(m_book);
 	ADD_DEBUGGER_PAGE(m_watchesTable, WATCHES, wxXmlResource::Get()->LoadBitmap(wxT("watches")));
-	
+
 	m_asciiViewer = new DebuggerAsciiViewer(this);
-	ADD_DEBUGGER_PAGE(m_asciiViewer, ASCII_VIEWER, wxXmlResource::Get()->LoadBitmap(wxT("watches")));
-	
+	ADD_DEBUGGER_PAGE(m_asciiViewer, ASCII_VIEWER, wxXmlResource::Get()->LoadBitmap(wxT("text_view")));
+
 	m_frameList = new ListCtrlPanel(m_book);
 	ADD_DEBUGGER_PAGE(m_frameList, FRAMES, wxXmlResource::Get()->LoadBitmap(wxT("frames")));
 

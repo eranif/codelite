@@ -34,7 +34,10 @@
 #include "search_thread.h"
 #include "findinfilesdlg.h"
 
+// Map between the line numbers and a search results
 typedef std::map<int, SearchResult> MatchInfo;
+
+// List containing the match info for all tabs (pre location)
 typedef std::list<MatchInfo> ListMatchInfos;
 
 class FindResultsTab : public OutputTabWindow
@@ -54,25 +57,26 @@ protected:
 	void AppendText(const wxString &line);
 	void Clear();
 
-	virtual void OnPageClosed    (NotebookEvent    &e);
-    virtual void OnPageChanged   (NotebookEvent    &e);
-    virtual void OnFindInFiles   (wxCommandEvent   &e);
-    virtual void OnSearchStart   (wxCommandEvent   &e);
-    virtual void OnSearchMatch   (wxCommandEvent   &e);
-    virtual void OnSearchEnded   (wxCommandEvent   &e);
-    virtual void OnSearchCancel  (wxCommandEvent   &e);
-    virtual void OnClearAll      (wxCommandEvent   &e);
-    virtual void OnRepeatOutput  (wxCommandEvent   &e);
+	virtual void OnPageClosed      (NotebookEvent    &e);
+    virtual void OnPageChanged     (NotebookEvent    &e);
+    virtual void OnFindInFiles     (wxCommandEvent   &e);
+    virtual void OnSearchStart     (wxCommandEvent   &e);
+    virtual void OnSearchMatch     (wxCommandEvent   &e);
+    virtual void OnSearchEnded     (wxCommandEvent   &e);
+    virtual void OnSearchCancel    (wxCommandEvent   &e);
+    virtual void OnClearAll        (wxCommandEvent   &e);
+    virtual void OnRepeatOutput    (wxCommandEvent   &e);
 
-	virtual void OnCloseTab      (wxCommandEvent   &e);
-	virtual void OnCloseAllTabs  (wxCommandEvent   &e);
-	virtual void OnCloseOtherTab (wxCommandEvent   &e);
-	virtual void OnTabMenuUI     (wxUpdateUIEvent  &e);
+	virtual void OnCloseTab        (wxCommandEvent   &e);
+	virtual void OnCloseAllTabs    (wxCommandEvent   &e);
+	virtual void OnCloseOtherTab   (wxCommandEvent   &e);
+	virtual void OnTabMenuUI       (wxUpdateUIEvent  &e);
 
-	virtual void OnClearAllUI    (wxUpdateUIEvent  &e);
-	virtual void OnRepeatOutputUI(wxUpdateUIEvent  &e);
-	virtual void OnMouseDClick   (wxScintillaEvent &e);
-	SearchData   GetSearchData   (wxScintilla *sci   );
+	virtual void OnClearAllUI      (wxUpdateUIEvent  &e);
+	virtual void OnRepeatOutputUI  (wxUpdateUIEvent  &e);
+	virtual void OnMouseDClick     (wxScintillaEvent &e);
+	SearchData   GetSearchData     (wxScintilla *sci   );
+	void         DoOpenSearchResult(const SearchResult &result, wxScintilla *sci, int markerLine);
     DECLARE_EVENT_TABLE()
 
 public:
@@ -84,5 +88,7 @@ public:
 	long        GetBookStyle();
     static void SetStyles(wxScintilla *sci);
 	size_t      GetPageCount() const ;
+	void        NextMatch();
+	void        PrevMatch();
 };
 #endif // __findresultstab__

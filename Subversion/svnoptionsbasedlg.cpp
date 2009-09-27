@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 21 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -34,8 +34,11 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_staticText1->Wrap( -1 );
 	bSizer5->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_filePicker = new wxFilePickerCtrl( m_panel2, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
-	bSizer5->Add( m_filePicker, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	m_textCtrlSvnExe = new wxTextCtrl( m_panel2, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer5->Add( m_textCtrlSvnExe, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_buttonBrowseSvnExe = new wxButton( m_panel2, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer5->Add( m_buttonBrowseSvnExe, 0, wxALL, 5 );
 	
 	bSizer111->Add( bSizer5, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
@@ -98,7 +101,7 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_panel2->SetSizer( bSizer111 );
 	m_panel2->Layout();
 	bSizer111->Fit( m_panel2 );
-	m_listbook1->AddPage( m_panel2, _("General"), true );
+	m_listbook1->AddPage( m_panel2, _("General"), false );
 	m_panel3 = new wxPanel( m_listbook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
@@ -126,8 +129,16 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_staticText12->Wrap( -1 );
 	fgSizer2->Add( m_staticText12, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_diffExe = new wxFilePickerCtrl( m_panel3, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
-	fgSizer2->Add( m_diffExe, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL, 5 );
+	wxBoxSizer* bSizer141;
+	bSizer141 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_textCtrlDiffExe = new wxTextCtrl( m_panel3, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer141->Add( m_textCtrlDiffExe, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_buttonBrowseDiff = new wxButton( m_panel3, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer141->Add( m_buttonBrowseDiff, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	
+	fgSizer2->Add( bSizer141, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_staticText13 = new wxStaticText( m_panel3, wxID_ANY, _("Arguments:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText13->Wrap( -1 );
@@ -192,7 +203,7 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_panel3->SetSizer( bSizer9 );
 	m_panel3->Layout();
 	bSizer9->Fit( m_panel3 );
-	m_listbook1->AddPage( m_panel3, _("External Diff"), false );
+	m_listbook1->AddPage( m_panel3, _("External Diff"), true );
 	m_panel4 = new wxPanel( m_listbook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer131;
 	bSizer131 = new wxBoxSizer( wxVERTICAL );
@@ -257,11 +268,12 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 	this->Centre( wxBOTH );
 	
 	// Connect Events
+	m_buttonBrowseSvnExe->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnBrowseSvnExe ), NULL, this );
 	m_checkBoxUseIconsInWorkspace->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnSvnUseIcons ), NULL, this );
 	m_checkBoxAutoAddNewFiles->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnAutoAddNewFiles ), NULL, this );
 	m_checkBoxUseExternalDiff->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnCheckUseExternalDiffViewer ), NULL, this );
 	m_staticText12->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnOptionsBaseDlg::OnEnableExternalDiffViewerUI ), NULL, this );
-	m_diffExe->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnOptionsBaseDlg::OnEnableExternalDiffViewerUI ), NULL, this );
+	m_buttonBrowseDiff->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnBrowseDiffExe ), NULL, this );
 	m_staticText13->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnOptionsBaseDlg::OnEnableExternalDiffViewerUI ), NULL, this );
 	m_diffArgs->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnOptionsBaseDlg::OnEnableExternalDiffViewerUI ), NULL, this );
 	m_staticText4->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnOptionsBaseDlg::OnEnableExternalDiffViewerUI ), NULL, this );
@@ -280,11 +292,12 @@ SvnOptionsBaseDlg::SvnOptionsBaseDlg( wxWindow* parent, wxWindowID id, const wxS
 SvnOptionsBaseDlg::~SvnOptionsBaseDlg()
 {
 	// Disconnect Events
+	m_buttonBrowseSvnExe->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnBrowseSvnExe ), NULL, this );
 	m_checkBoxUseIconsInWorkspace->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnSvnUseIcons ), NULL, this );
 	m_checkBoxAutoAddNewFiles->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnAutoAddNewFiles ), NULL, this );
 	m_checkBoxUseExternalDiff->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnCheckUseExternalDiffViewer ), NULL, this );
 	m_staticText12->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnOptionsBaseDlg::OnEnableExternalDiffViewerUI ), NULL, this );
-	m_diffExe->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnOptionsBaseDlg::OnEnableExternalDiffViewerUI ), NULL, this );
+	m_buttonBrowseDiff->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnOptionsBaseDlg::OnBrowseDiffExe ), NULL, this );
 	m_staticText13->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnOptionsBaseDlg::OnEnableExternalDiffViewerUI ), NULL, this );
 	m_diffArgs->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnOptionsBaseDlg::OnEnableExternalDiffViewerUI ), NULL, this );
 	m_staticText4->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnOptionsBaseDlg::OnEnableExternalDiffViewerUI ), NULL, this );

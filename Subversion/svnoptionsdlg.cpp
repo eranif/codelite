@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "imanager.h"
+#include <wx/filedlg.h>
 #include "svnoptionsdlg.h"
 #include "windowattrmanager.h"
 #include <wx/imaglist.h>
@@ -49,14 +50,14 @@ SvnOptionsDlg::SvnOptionsDlg( wxWindow* parent, const SvnOptions &options, IMana
 		, m_manager(manager)
 {
 	m_options = options;
-	m_filePicker->SetPath(m_options.GetExePath());
+	m_textCtrlSvnExe->SetValue(m_options.GetExePath());
 	m_checkBoxUseIconsInWorkspace->SetValue(m_options.GetFlags() & SvnUseIcons ? true : false);
 	m_checkBoxKeepIconsAutoUpdate->SetValue(m_options.GetFlags() & SvnKeepIconsUpdated ? true : false);
 	m_checkBoxAutoAddNewFiles->SetValue(m_options.GetFlags() & SvnAutoAddFiles ? true : false);
 	m_checkBoxUpdateAfterSave->SetValue(m_options.GetFlags() & SvnUpdateAfterSave ? true : false);
 	m_checkBoxCaptureDiffOutput->SetValue(m_options.GetFlags() & SvnCaptureDiffOutput ? true : false);
 	m_checkBoxUseExternalDiff->SetValue(m_options.GetFlags() & SvnUseExternalDiff ? true : false);
-	m_diffExe->SetPath(m_options.GetDiffCmd());
+	m_textCtrlDiffExe->SetValue(m_options.GetDiffCmd());
 	m_diffArgs->SetValue(m_options.GetDiffArgs());
 	m_checkBoxKeepTagsUpToDate->SetValue(m_options.GetKeepTagUpToDate());
 
@@ -70,7 +71,7 @@ SvnOptionsDlg::SvnOptionsDlg( wxWindow* parent, const SvnOptions &options, IMana
 	m_textCtrlArguments->SetValue(options.GetSshClientArguments());
 
 	GetSizer()->Fit(this);
-	m_filePicker->SetFocus();
+	m_textCtrlSvnExe->SetFocus();
 
 	wxImageList *il = new wxImageList(32, 32);
 
@@ -89,8 +90,8 @@ SvnOptionsDlg::SvnOptionsDlg( wxWindow* parent, const SvnOptions &options, IMana
 void SvnOptionsDlg::OnButtonOk( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	m_options.SetExePath(m_filePicker->GetPath());
-	m_options.SetDiffCmd(m_diffExe->GetPath());
+	m_options.SetExePath(m_textCtrlSvnExe->GetValue());
+	m_options.SetDiffCmd(m_textCtrlDiffExe->GetValue());
 	m_options.SetDiffArgs(m_diffArgs->GetValue());
 	m_options.SetPattern(m_textCtrl1->GetValue());
 	m_options.SetKeepTagUpToDate(m_checkBoxKeepTagsUpToDate->IsChecked());
@@ -157,5 +158,39 @@ void SvnOptionsDlg::OnButtonBrowseSSHClient(wxCommandEvent& e)
 	wxString new_path = wxFileSelector(wxT("Select a program:"), wxT(""), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
 	if (new_path.empty() == false) {
 		m_textCtrlSshClientCmd->SetValue(new_path);
+	}
+}
+
+void SvnOptionsDlg::OnBrowseSvnExe(wxCommandEvent& e)
+{
+	wxString path = m_textCtrlSvnExe->GetValue();
+#ifdef __WXGTK__
+	// to avoid warnings, we accept as default path
+	// only absolute paths
+	if ( !path.Trim().Trim(false).StartsWith(wxT("/")) ) {
+		path.Empty();
+	}
+#endif
+	wxString new_path = wxFileSelector(wxT("Select a program:"), path.c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
+	if (new_path.IsEmpty() == false) {
+		m_textCtrlSvnExe->SetValue(new_path);
+	}
+}
+
+void SvnOptionsDlg::OnBrowseDiffExe(wxCommandEvent& e)
+{
+	wxString path = m_textCtrlDiffExe->GetValue();
+
+#ifdef __WXGTK__
+	// to avoid warnings, we accept as default path
+	// only absolute paths
+	if ( !path.Trim().Trim(false).StartsWith(wxT("/")) ) {
+		path.Empty();
+	}
+#endif
+
+	wxString new_path = wxFileSelector(wxT("Select a program:"), path.c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
+	if (new_path.IsEmpty() == false) {
+		m_textCtrlDiffExe->SetValue(new_path);
 	}
 }

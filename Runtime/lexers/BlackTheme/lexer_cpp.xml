@@ -8,9 +8,9 @@
   <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
-    <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
-    <Property Id="2" Name="C++ comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
-    <Property Id="3" Name="C style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="1" Name="Common C style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="2" Name="Common C++ style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="3" Name="Doxygen C style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
     <Property Id="4" Name="Number" Bold="no" Face="" Colour="#FF00FF" BgColour="#000000" Size="9"/>
     <Property Id="5" Name="C++ keyword" Bold="no" Face="" Colour="#0080FF" BgColour="#000000" Size="9"/>
     <Property Id="6" Name="String" Bold="no" Face="" Colour="#FF8000" BgColour="#000000" Size="9"/>
@@ -20,7 +20,7 @@
     <Property Id="10" Name="Operator" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
     <Property Id="11" Name="Identifier" Bold="no" Face="" Colour="#C0C0C0" BgColour="#000000" Size="9"/>
     <Property Id="12" Name="Open string" Bold="no" Face="" Colour="#000000" BgColour="#FF8000" Size="9"/>
-    <Property Id="15" Name="Doxygen C++ comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
+    <Property Id="15" Name="Doxygen C++ style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="9"/>
     <Property Id="17" Name="Doxygen keyword" Bold="no" Face="" Colour="#8080FF" BgColour="#000000" Size="9"/>
     <Property Id="18" Name="Doxygen keyword error" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>
     <Property Id="16" Name="Workspace tags" Bold="no" Face="" Colour="#800080" BgColour="#000000" Size="9"/>

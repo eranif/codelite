@@ -8,9 +8,9 @@
   <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Italic="no" Underline="no" Face="" Colour="#808080" BgColour="#FFFFFF" Size="9"/>
-    <Property Id="1" Name="Comment" Bold="no" Italic="yes" Underline="no" Face="" Colour="#0080C0" BgColour="#FFFFFF" Size="9"/>
-    <Property Id="2" Name="C++ comment" Bold="no" Italic="yes" Underline="no" Face="" Colour="#008000" BgColour="#FFFFFF" Size="9"/>
-    <Property Id="3" Name="C style comment" Bold="no" Italic="yes" Underline="no" Face="" Colour="#3978C6" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="1" Name="Common C style comment" Bold="no" Italic="yes" Underline="no" Face="" Colour="#0080C0" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="2" Name="Common C++ style comment" Bold="no" Italic="yes" Underline="no" Face="" Colour="#008000" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="3" Name="Doxygen C style comment" Bold="no" Italic="yes" Underline="no" Face="" Colour="#3978C6" BgColour="#FFFFFF" Size="9"/>
     <Property Id="4" Name="Number" Bold="no" Italic="no" Underline="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="9"/>
     <Property Id="5" Name="C++ keyword" Bold="no" Italic="no" Underline="no" Face="" Colour="#0000FF" BgColour="#FFFFFF" Size="9"/>
     <Property Id="6" Name="String" Bold="no" Italic="no" Underline="no" Face="" Colour="#800000" BgColour="#FFFFFF" Size="9"/>
@@ -20,7 +20,7 @@
     <Property Id="10" Name="Operator" Bold="no" Italic="no" Underline="no" Face="" Colour="#000000" BgColour="#FFFFFF" Size="9"/>
     <Property Id="11" Name="Identifier" Bold="no" Italic="no" Underline="no" Face="" Colour="black" BgColour="#FFFFFF" Size="9"/>
     <Property Id="12" Name="Open string" Bold="no" Italic="no" Underline="no" Face="" Colour="#800000" BgColour="#FFFFFF" Size="9"/>
-    <Property Id="15" Name="Doxygen C++ comment" Bold="no" Italic="yes" Underline="no" Face="" Colour="FOREST GREEN" BgColour="#FFFFFF" Size="9"/>
+    <Property Id="15" Name="Doxygen C++ style comment" Bold="no" Italic="yes" Underline="no" Face="" Colour="FOREST GREEN" BgColour="#FFFFFF" Size="9"/>
     <Property Id="17" Name="Doxygen keyword" Bold="no" Italic="no" Underline="no" Face="" Colour="blue" BgColour="#FFFFFF" Size="9"/>
     <Property Id="18" Name="Doxygen keyword error" Bold="no" Italic="no" Underline="no" Face="" Colour="#800080" BgColour="#FFFFFF" Size="9"/>
     <Property Id="16" Name="Workspace tags" Bold="no" Italic="no" Underline="no" Face="" Colour="#800080" BgColour="#FFFFFF" Size="9"/>

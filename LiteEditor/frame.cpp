@@ -143,8 +143,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_ACTIVATE(Frame::OnAppActivated)
 	EVT_CLOSE(Frame::OnClose)
 	EVT_TIMER(FrameTimerId, Frame::OnTimer)
-//	EVT_AUI_RENDER(Frame::OnAuiManagerRender)
-//	EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
+	//	EVT_AUI_RENDER(Frame::OnAuiManagerRender)
+	//	EVT_AUI_PANE_CLOSE(Frame::OnDockablePaneClosed)
 
 	//---------------------------------------------------
 	// File menu
@@ -175,8 +175,8 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(wxID_UNDO,                         Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_REDO,                         Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_CUT,                          Frame::DispatchCommandEvent)
-	EVT_MENU(wxID_COPY,                         Frame::DispatchCommandEvent)
-	EVT_MENU(wxID_PASTE,                        Frame::DispatchCommandEvent)
+	//	EVT_MENU(wxID_COPY,                         Frame::DispatchCommandEvent)
+	//	EVT_MENU(wxID_PASTE,                        Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_DUPLICATE,                    Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_SELECTALL,                    Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_line"),              Frame::DispatchCommandEvent)
@@ -196,10 +196,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(wxID_UNDO,                    Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_REDO,                    Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_CUT,                     Frame::DispatchUpdateUIEvent)
-	EVT_UPDATE_UI(wxID_COPY,                    Frame::DispatchUpdateUIEvent)
-	EVT_UPDATE_UI(wxID_PASTE,                   Frame::DispatchUpdateUIEvent)
+	//	EVT_UPDATE_UI(wxID_COPY,                    Frame::DispatchUpdateUIEvent)
+	//	EVT_UPDATE_UI(wxID_PASTE,                   Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_DUPLICATE,               Frame::DispatchUpdateUIEvent)
-	EVT_UPDATE_UI(wxID_SELECTALL,               Frame::DispatchUpdateUIEvent)
+	//EVT_UPDATE_UI(wxID_SELECTALL,               Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(XRCID("delete_line"),         Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("delete_line_end"),     Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("delete_line_start"),   Frame::OnFileExistUpdateUI)
@@ -535,6 +535,11 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	//start the editor creator thread
 	m_timer = new wxTimer(this, FrameTimerId);
 	m_timer->Start(1000);
+
+	// Connect wxID_COPY event
+	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
+	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
+	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
 }
 
 Frame::~Frame(void)
@@ -1147,6 +1152,32 @@ void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void Frame::DispatchCommandEvent(wxCommandEvent &event)
 {
+	// Handle COPY/PASTE commands:
+	// if the focused window is *not* LEditor,
+	// and the focused windows is of type
+	// wxTextCtrl or wxScintilla, let the focused
+	// Window handle the event
+	wxWindow *focusWin = wxWindow::FindFocus();
+	if ( focusWin ) {
+		switch (event.GetId()) {
+		case wxID_SELECTALL:
+		case wxID_COPY:
+		case wxID_PASTE: {
+			LEditor *ed = dynamic_cast<LEditor*>(focusWin);
+			if ( !ed ) {
+				// let other controls handle it
+				event.Skip();
+				return;
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+
+	// Do the default and pass this event to the Editor
 	LEditor* editor = GetMainBook()->GetActiveEditor();
 	if ( !editor )
 		return;
@@ -2150,12 +2181,12 @@ void Frame::OnRecentWorkspace(wxCommandEvent &event)
 void Frame::OnBackwardForward(wxCommandEvent &event)
 {
 	switch (event.GetId()) {
-        case wxID_FORWARD:
-            NavMgr::Get()->NavigateForward(PluginManager::Get());
-            break;
-        case wxID_BACKWARD:
-            NavMgr::Get()->NavigateBackward(PluginManager::Get());
-            break;
+	case wxID_FORWARD:
+		NavMgr::Get()->NavigateForward(PluginManager::Get());
+		break;
+	case wxID_BACKWARD:
+		NavMgr::Get()->NavigateBackward(PluginManager::Get());
+		break;
 	}
 }
 
@@ -3297,8 +3328,7 @@ void Frame::ReloadExternallyModifiedProjectFiles()
 
 	// check if the workspace needs reloading and ask the user for confirmation
 	// if it does
-	if (workspace->GetWorkspaceLastModifiedTime() < workspace->GetFileLastModifiedTime())
-	{
+	if (workspace->GetWorkspaceLastModifiedTime() < workspace->GetFileLastModifiedTime()) {
 		// always update last modification time: if the user chooses to reload it
 		// will not matter, and it avoids the program prompting the user repeatedly
 		// if he chooses not to reload the workspace
@@ -3310,13 +3340,11 @@ void Frame::ReloadExternallyModifiedProjectFiles()
 	wxArrayString projects;
 	workspace->GetProjectList(projects);
 
-	for (size_t i = 0; i < projects.GetCount(); ++i)
-	{
+	for (size_t i = 0; i < projects.GetCount(); ++i) {
 		wxString errStr;
 		ProjectPtr proj = workspace->FindProjectByName(projects[i], errStr);
 
-		if (proj->GetProjectLastModifiedTime() < proj->GetFileLastModifiedTime())
-		{
+		if (proj->GetProjectLastModifiedTime() < proj->GetFileLastModifiedTime()) {
 			// always update last modification time: if the user chooses to reload it
 			// will not matter, and it avoids the program prompting the user repeatedly
 			// if he chooses not to reload some of the projects
@@ -3328,7 +3356,7 @@ void Frame::ReloadExternallyModifiedProjectFiles()
 	if (!project_modified && !workspace_modified)
 		return;
 
-	if(wxMessageBox(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxYES) {
+	if (wxMessageBox(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxYES) {
 		ManagerST::Get()->ReloadWorkspace();
 		return;
 	}

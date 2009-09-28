@@ -36,6 +36,29 @@ extern std::string gdb_result_string;
 extern void gdb_result_push_buffer(const std::string &new_input);
 extern void gdb_result_pop_buffer();
 
+static void wxGDB_STRIP_QUOATES(wxString &currentToken)
+{
+	size_t where = currentToken.find(wxT("\""));
+	if (where != std::string::npos && where == 0) {
+		currentToken.erase(0, 1);
+	}
+
+	where = currentToken.rfind(wxT("\""));
+	if (where != std::string::npos && where == currentToken.length()-1) {
+		currentToken.erase(where);
+	}
+
+	where = currentToken.find(wxT("\"\\\\"));
+	if (where != std::string::npos && where == 0) {
+		currentToken.erase(0, 3);
+	}
+
+	where = currentToken.rfind(wxT("\"\\\\"));
+	if (where != std::string::npos && where == currentToken.length()-3) {
+		currentToken.erase(where);
+	}
+}
+
 static void GDB_STRIP_QUOATES(std::string &currentToken)
 {
 	size_t where = currentToken.find("\"");
@@ -266,7 +289,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 	if (reason == wxT("end-stepping-range")) {
 		//just notify the container that we got control back from debugger
 		m_observer->UpdateGotControl(DBG_END_STEPPING);
-	} else if ((reason == wxT("breakpoint-hit")) || (reason == wxT("watchpoint-trigger"))) { 
+	} else if ((reason == wxT("breakpoint-hit")) || (reason == wxT("watchpoint-trigger"))) {
 		static wxRegEx reFuncName(wxT("func=\"([a-zA-Z!_0-9]+)\""));
 
 		// Incase we break due to assertion, notify the observer with different break code
@@ -277,9 +300,9 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 #endif
 		{
 			wxString func_name = reFuncName.GetMatch(line, 1);
-			if( func_name == wxT("msvcrt!_assert") || // MinGW
-				func_name == wxT("__assert")          // Cygwin
-			) {
+			if ( func_name == wxT("msvcrt!_assert") || // MinGW
+			        func_name == wxT("__assert")          // Cygwin
+			   ) {
 				// assertion caught
 				m_observer->UpdateGotControl(DBG_BP_ASSERTION_HIT);
 			} else {
@@ -293,7 +316,8 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 			wxString whichBP = tkz.NextToken();
 			if (reGetBreakNo.Matches(whichBP)) {
 				wxString number = reGetBreakNo.GetMatch(whichBP);
-				long id; if (number.ToLong(&id)) {
+				long id;
+				if (number.ToLong(&id)) {
 					m_observer->UpdateBpHit((int)id);
 				}
 			}
@@ -360,7 +384,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 				break;
 			}
 		}
-	} else if(line.StartsWith(wxT("^error"))) {
+	} else if (line.StartsWith(wxT("^error"))) {
 		// failed to place the breakpoint
 		m_observer->UpdateAddLine(wxString::Format(wxT("ERROR: failed to place breakpoint: \"%s\""), line.c_str()));
 		return true;
@@ -470,20 +494,22 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 
 		strline = strline.AfterFirst(wxT('{'));
 		strline = strline.BeforeLast(wxT('}'));
-		if (strline.EndsWith(wxT("}"))) {
+		if (strline.EndsWith(wxT("}")))
 #else
 		strline = strline.AfterFirst(wxT('['));
 		strline = strline.BeforeLast(wxT(']'));
-		if (strline.EndsWith(wxT("]"))) {
+		if (strline.EndsWith(wxT("]")))
 #endif
+		{
 			strline = strline.RemoveLast();
 		}
 	} else if (m_evaluateExpression == FunctionArguments) {
 #ifdef __WXMAC__
-		if (strline.StartsWith(wxT("^done,stack-args={frame={level=\"0\",args={"), &tmpline)) {
+		if (strline.StartsWith(wxT("^done,stack-args={frame={level=\"0\",args={"), &tmpline))
 #else
-		if (strline.StartsWith(wxT("^done,stack-args=[frame={level=\"0\",args=["), &tmpline)) {
+		if (strline.StartsWith(wxT("^done,stack-args=[frame={level=\"0\",args=["), &tmpline))
 #endif
+		{
 			strline = tmpline;
 		}
 
@@ -519,7 +545,8 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 	return true;
 }
 
-void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent) {
+void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent)
+{
 	wxString displayLine;
 	std::string currentToken;
 	int type(0);
@@ -631,7 +658,8 @@ void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent) {
 	}
 }
 
-void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent) {
+void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent)
+{
 	//the pattern here should be
 	//key = value, ....
 	//where value can be a complex value:
@@ -698,12 +726,14 @@ void DbgCmdHandlerLocals::MakeSubTree(TreeNode<wxString, NodeData> *parent) {
 	}
 }
 
-bool DbgCmdHandlerVarCreator::ProcessOutput(const wxString &line) {
+bool DbgCmdHandlerVarCreator::ProcessOutput(const wxString &line)
+{
 	wxUnusedVar(line);
 	return true;
 }
 
-bool DbgCmdHandlerEvalExpr::ProcessOutput(const wxString &line) {
+bool DbgCmdHandlerEvalExpr::ProcessOutput(const wxString &line)
+{
 	//remove the ^done
 	wxString tmpLine(line);
 	line.StartsWith(wxT("^done,value=\""), &tmpLine);
@@ -713,7 +743,8 @@ bool DbgCmdHandlerEvalExpr::ProcessOutput(const wxString &line) {
 	return true;
 }
 
-bool DbgCmdStackList::ProcessOutput(const wxString &line) {
+bool DbgCmdStackList::ProcessOutput(const wxString &line)
+{
 	wxString tmpLine(line);
 	line.StartsWith(wxT("^done,stack=["), &tmpLine);
 
@@ -746,13 +777,15 @@ bool DbgCmdStackList::ProcessOutput(const wxString &line) {
 	return true;
 }
 
-bool DbgCmdSelectFrame::ProcessOutput(const wxString &line) {
+bool DbgCmdSelectFrame::ProcessOutput(const wxString &line)
+{
 	wxUnusedVar(line);
 	m_observer->UpdateGotControl(DBG_END_STEPPING);
 	return true;
 }
 
-void DbgCmdHandlerLocals::MakeTreeFromFrame(wxString &strline, TreeNode<wxString, NodeData>* parent) {
+void DbgCmdHandlerLocals::MakeTreeFromFrame(wxString &strline, TreeNode<wxString, NodeData>* parent)
+{
 	wxString displayLine;
 	wxString name, val;
 
@@ -780,7 +813,8 @@ void DbgCmdHandlerLocals::MakeTreeFromFrame(wxString &strline, TreeNode<wxString
 	}
 }
 
-bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line) {
+bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line)
+{
 	// We use this handler as a callback to indicate that gdb has connected to the debugger
 	m_observer->UpdateRemoteTargetConnected(line);
 
@@ -788,9 +822,118 @@ bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line) {
 	return m_debugger->Continue();
 }
 
-bool DbgCmdDisplayOutput::ProcessOutput(const wxString& line) {
+bool DbgCmdDisplayOutput::ProcessOutput(const wxString& line)
+{
 	// Hopefully, display whatever output gdb has generated, without pruning
 	m_observer->UpdateAddLine(line);
+	return true;
+}
 
+bool DbgCmdResolveTypeHandler::ProcessOutput(const wxString& line)
+{
+	// parse the output
+	// ^done,name="var2",numchild="1",value="{...}",type="orxAABOX"
+	const wxCharBuffer scannerText =  _C(line);
+	setGdbLexerInput(scannerText.data());
+	int type;
+	wxString cmd, var_name;
+	wxString type_name, currentToken;
+
+	do {
+		// ^done
+		GDB_NEXT_TOKEN();
+		GDB_ABORT('^');
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(GDB_DONE);
+
+		// ,name="..."
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(',');
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(GDB_NAME);
+		GDB_NEXT_TOKEN();
+		GDB_ABORT('=');
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(GDB_STRING);
+		var_name = currentToken;
+
+		// ,numchild="..."
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(',');
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(GDB_NUMCHILD);
+		GDB_NEXT_TOKEN();
+		GDB_ABORT('=');
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(GDB_STRING);
+		// On Mac this part does not seem to be reported by GDB
+#ifndef __WXMAC__
+		// ,value="..."
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(',');
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(GDB_VALUE);
+		GDB_NEXT_TOKEN();
+		GDB_ABORT('=');
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(GDB_STRING);
+#endif
+		// ,type="..."
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(',');
+		GDB_NEXT_TOKEN();
+		GDB_ABORT(GDB_TYPE);
+		GDB_NEXT_TOKEN();
+		GDB_ABORT('=');
+		GDB_NEXT_TOKEN();
+		type_name = currentToken;
+
+	} while (0);
+	gdb_result_lex_clean();
+
+	wxGDB_STRIP_QUOATES(type_name);
+	wxGDB_STRIP_QUOATES(var_name);
+
+	// delete the variable object
+	cmd.Clear();
+	cmd << wxT("-var-delete ") << var_name;
+
+	// since the above gdb command yields an output, we use the sync command
+	// to get it as well to avoid errors in future calls to the gdb
+
+	m_debugger->WriteCommand(cmd, NULL); // pass in NULL handler so the output of this command will be ignored
+
+	// Update the observer
+	m_observer->UpdateTypeReolsved(m_expression, type_name);
+	return true;
+}
+
+DbgCmdResolveTypeHandler::DbgCmdResolveTypeHandler(const wxString &expression, DbgGdb* debugger)
+		: DbgCmdHandler(debugger->GetObserver())
+		, m_debugger   (debugger)
+		, m_expression (expression)
+{}
+
+bool DbgCmdCLIHandler::ProcessOutput(const wxString& line)
+{
+	// nothing to be done
+	return true;
+}
+
+bool DbgCmdGetTipHandler::ProcessOutput(const wxString& line)
+{
+	wxString evaluated = GetOutput();
+	evaluated = evaluated.Trim().Trim(false);
+	//gdb displays the variable name as $<NUMBER>,
+	//we simply replace it with the actual string
+	static wxRegEx reGdbVar(wxT("^\\$[0-9]+"));
+	static wxRegEx reGdbVar2(wxT("\\$[0-9]+ = "));
+
+	reGdbVar.ReplaceFirst(&evaluated, m_expression);
+	reGdbVar2.ReplaceAll (&evaluated, wxEmptyString);
+
+	evaluated.Replace(wxT("\\t"), wxT("\t"));
+	// Update the observer
+	m_observer->UpdateTip(m_expression, evaluated);
 	return true;
 }

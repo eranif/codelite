@@ -703,13 +703,13 @@
         <label>Project</label>
         <style>wxMENU_TEAROFF</style>
         <object class="wxMenuItem" name="new_item">
-            <label>Add New Item...</label>
+            <label>Add a New File...</label>
         </object>
         <object class="wxMenuItem" name="add_existing_item">
-            <label>Add Existing Item...</label>
+            <label>Add an Existing File...</label>
         </object>
         <object class="wxMenuItem" name="new_virtual_folder">
-            <label>New Virtual Folder</label>
+            <label>New virtual Folder</label>
         </object>
          <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="sort_item">

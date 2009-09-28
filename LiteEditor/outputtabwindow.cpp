@@ -36,15 +36,11 @@ BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
 	EVT_MENU(XRCID("word_wrap_output"),      OutputTabWindow::OnWordWrap)
 	EVT_MENU(XRCID("collapse_all"),          OutputTabWindow::OnCollapseAll)
 	EVT_MENU(XRCID("repeat_output"),         OutputTabWindow::OnRepeatOutput)
-	EVT_MENU(wxID_COPY,                      OutputTabWindow::OnCopy)
-
 	EVT_UPDATE_UI(XRCID("scroll_on_output"), OutputTabWindow::OnOutputScrollsUI)
 	EVT_UPDATE_UI(XRCID("clear_all_output"), OutputTabWindow::OnClearAllUI)
 	EVT_UPDATE_UI(XRCID("word_wrap_output"), OutputTabWindow::OnWordWrapUI)
 	EVT_UPDATE_UI(XRCID("collapse_all"),     OutputTabWindow::OnCollapseAllUI)
 	EVT_UPDATE_UI(XRCID("repeat_output"),    OutputTabWindow::OnRepeatOutputUI)
-	EVT_UPDATE_UI(wxID_COPY,                 OutputTabWindow::OnCopyUI)
-
 	EVT_SCI_DOUBLECLICK(wxID_ANY,            OutputTabWindow::OnMouseDClick)
 	EVT_SCI_HOTSPOT_CLICK(wxID_ANY,          OutputTabWindow::OnHotspotClicked)
 	EVT_SCI_MARGINCLICK(wxID_ANY,            OutputTabWindow::OnMarginClick)
@@ -60,6 +56,8 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
 		, m_autoAppear(true)
 {
 	CreateGUIControls();
+	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnCopy),      NULL, this);
+	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnSelectAll), NULL, this);
 }
 
 OutputTabWindow::~OutputTabWindow()
@@ -301,18 +299,16 @@ void OutputTabWindow::OnRepeatOutputUI(wxUpdateUIEvent& e)
 
 void OutputTabWindow::OnCopy(wxCommandEvent &e)
 {
-	if(m_sci) {
-	m_sci->Copy();
+	if ( IsFocused() && m_sci ) {
+		m_sci->Copy();
+	} else {
+		e.Skip();
 	}
-}
-
-void OutputTabWindow::OnCopyUI(wxUpdateUIEvent& e)
-{
-	e.Enable(m_sci && (m_sci->GetSelectionStart() - m_sci->GetSelectionEnd() != 0) );
 }
 
 void OutputTabWindow::OnMouseDClick(wxScintillaEvent& e)
 {
+	e.Skip();
 }
 
 void OutputTabWindow::OnHotspotClicked(wxScintillaEvent& e)
@@ -325,4 +321,20 @@ void OutputTabWindow::OnMarginClick(wxScintillaEvent& e)
 	if (m_sci && e.GetMargin() == 4) {
 		m_sci->ToggleFold(m_sci->LineFromPosition(e.GetPosition()));
 	}
+}
+
+void OutputTabWindow::OnSelectAll(wxCommandEvent& e)
+{
+	if ( IsFocused() && m_sci ) {
+		m_sci->SelectAll();
+	} else {
+		e.Skip();
+	}
+}
+
+
+bool OutputTabWindow::IsFocused()
+{
+	wxWindow *win = wxWindow::FindFocus();
+	return (win && win == m_sci);
 }

@@ -66,17 +66,6 @@ static void GDB_STRIP_QUOATES(wxString &currentToken)
 	}
 }
 
-#define GDB_NEXT_TOKEN()\
-	{\
-		type = gdb_result_lex();\
-		currentToken = _U(gdb_result_string.c_str());\
-	}
-
-#define GDB_ABORT(ch)\
-	if(type != (int)ch){\
-		break;\
-	}
-
 #ifdef __WXMSW__
 #include "windows.h"
 
@@ -151,7 +140,8 @@ static wxString MakeId()
 
 DbgGdb::DbgGdb()
 		: m_debuggeePid(wxNOT_FOUND)
-		, m_isRemote(false)
+		, m_isRemote   (false)
+		, m_cliHandler (NULL)
 {
 #ifdef __WXMSW__
 	Kernel32Dll = LoadLibrary(wxT("kernel32.dll"));
@@ -747,23 +737,23 @@ bool DbgGdb::FilterMessage(const wxString &msg)
 	StripString( tmpmsg );
 	tmpmsg.Trim().Trim(false);
 
-	if (tmpmsg.Contains(wxT("Variable object not found"))) {
+	if (tmpmsg.Contains(wxT("Variable object not found")) || msg.Contains(wxT("Variable object not found"))) {
 		return true;
 	}
 
-	if (tmpmsg.Contains(wxT("mi_cmd_var_create: unable to create variable object"))) {
+	if (tmpmsg.Contains(wxT("mi_cmd_var_create: unable to create variable object"))||msg.Contains(wxT("mi_cmd_var_create: unable to create variable object"))) {
 		return true;
 	}
 
-	if (tmpmsg.Contains(wxT("Variable object not found"))) {
+	if (tmpmsg.Contains(wxT("Variable object not found"))|| msg.Contains(wxT("Variable object not found"))) {
 		return true;
 	}
 
-	if (tmpmsg.Contains(wxT("No symbol \"this\" in current context"))) {
+	if (tmpmsg.Contains(wxT("No symbol \"this\" in current context"))||msg.Contains(wxT("No symbol \"this\" in current context"))) {
 		return true;
 	}
 
-	if (tmpmsg.StartsWith(wxT(">"))) {
+	if (tmpmsg.StartsWith(wxT(">"))||msg.StartsWith(wxT(">"))) {
 		// shell line
 		return true;
 	}
@@ -854,22 +844,45 @@ void DbgGdb::Poke()
 
 
 		if (line.StartsWith(wxT("~")) || line.StartsWith(wxT("&"))) {
-			//just an informative line,
-			StripString(line);
-			//filter out some gdb error lines...
+
+			// lines starting with ~ are considered "console stream" message
+			// and are important to the CLI handler
+			bool consoleStream(false);
+			if ( line.StartsWith(wxT("~")) ) {
+				consoleStream = true;
+			}
+
+			// Filter out some gdb error lines...
 			if (FilterMessage(line)) {
 				continue;
 			}
-			m_observer->UpdateAddLine(line);
+
+			StripString( line );
+
+			// If we got a valid "CLI Handler" instead of writing the output to
+			// the output view, concatenate it into the handler buffer
+			if ( GetCliHandler() && consoleStream ) {
+				GetCliHandler()->Append( line );
+			} else if ( consoleStream ) {
+				// log message
+				m_observer->UpdateAddLine( line );
+			}
 		} else if (reCommand.Matches(line)) {
 
 			//not a gdb message, get the command associated with the message
 			wxString id = reCommand.GetMatch(line, 1);
 
-			//strip the id from the line
-			line = line.Mid(8);
-			DoProcessAsyncCommand(line, id);
+			if ( GetCliHandler() && GetCliHandler()->GetCommandId() == id ) {
+				// probably the "^done" message of the CLI command
+				GetCliHandler()->ProcessOutput( line );
+				SetCliHandler( NULL ); // we are done processing the CLI
 
+			} else {
+				//strip the id from the line
+				line = line.Mid(8);
+				DoProcessAsyncCommand(line, id);
+
+			}
 		} else if (line.StartsWith(wxT("^done")) || line.StartsWith(wxT("*stopped"))) {
 			//Unregistered command, use the default AsyncCommand handler to process the line
 			DbgCmdHandlerAsyncCmd cmd(m_observer);
@@ -1066,109 +1079,19 @@ void DbgGdb::OnProcessEndEx(wxProcessEvent &e)
 	m_env->UnApplyEnv();
 }
 
-bool DbgGdb::GetTip(const wxString &dbgCommand, const wxString& expression, wxString& evaluated)
+bool DbgGdb::GetTip(const wxString &dbgCommand, const wxString& expression)
 {
 	wxString cmd;
 	cmd << dbgCommand << wxT(" ") << expression;
-	if (ExecSyncCmd(cmd, evaluated)) {
-		evaluated = evaluated.Trim().Trim(false);
-		//gdb displays the variable name as $<NUMBER>,
-		//we simply replace it with the actual string
-		static wxRegEx reGdbVar(wxT("^\\$[0-9]+"));
-		static wxRegEx reGdbVar2(wxT("\\$[0-9]+ = "));
 
-		reGdbVar.ReplaceFirst(&evaluated, expression);
-		reGdbVar2.ReplaceAll(&evaluated, wxEmptyString);
-
-		evaluated.Replace(wxT("\\t"), wxT("\t"));
-		return true;
-	}
-	return false;
+	return ExecCLICommand(cmd, new DbgCmdGetTipHandler(m_observer, expression));
 }
 
-bool DbgGdb::ResolveType(const wxString& expression, wxString& type_name)
+bool DbgGdb::ResolveType(const wxString& expression)
 {
 	wxString output, cmd, var_name;
 	cmd << wxT("-var-create - * \"") << expression << wxT("\"");
-
-	if (ExecSyncCmd(cmd, output)) {
-		// delete the temporary variable object
-		cmd.clear();
-		//wxLogMessage(wxT("ResolveType: gdb returned '") + output + wxT("'"));
-
-		// parse the output
-		// ^done,name="var2",numchild="1",value="{...}",type="orxAABOX"
-		const wxCharBuffer scannerText =  _C(output);
-		setGdbLexerInput(scannerText.data());
-		int type;
-		wxString currentToken;
-
-		do {
-			// ^done
-			GDB_NEXT_TOKEN();
-			GDB_ABORT('^');
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(GDB_DONE);
-
-			// ,name="..."
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(',');
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(GDB_NAME);
-			GDB_NEXT_TOKEN();
-			GDB_ABORT('=');
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(GDB_STRING);
-			var_name = currentToken;
-
-			// ,numchild="..."
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(',');
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(GDB_NUMCHILD);
-			GDB_NEXT_TOKEN();
-			GDB_ABORT('=');
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(GDB_STRING);
-			// On Mac this part does not seem to be reported by GDB
-#ifndef __WXMAC__
-			// ,value="..."
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(',');
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(GDB_VALUE);
-			GDB_NEXT_TOKEN();
-			GDB_ABORT('=');
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(GDB_STRING);
-#endif
-			// ,type="..."
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(',');
-			GDB_NEXT_TOKEN();
-			GDB_ABORT(GDB_TYPE);
-			GDB_NEXT_TOKEN();
-			GDB_ABORT('=');
-			GDB_NEXT_TOKEN();
-			type_name = currentToken;
-
-		} while (0);
-		gdb_result_lex_clean();
-
-		GDB_STRIP_QUOATES(type_name);
-		GDB_STRIP_QUOATES(var_name);
-
-		// delete the variable object
-		cmd.clear();
-		cmd << wxT("-var-delete ") << var_name;
-
-		// since the above gdb command yields an output, we use the sync command
-		// to get it as well to avoid errors in future calls to the gdb
-		ExecSyncCmd(cmd, output);
-
-		return type_name.IsEmpty() == false;
-	}
-	return false;
+	return WriteCommand(cmd, new DbgCmdResolveTypeHandler(expression, this));
 }
 
 bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output)
@@ -1261,8 +1184,6 @@ bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output
 				GDB_NEXT_TOKEN();	//GDB_ASCII
 				GDB_NEXT_TOKEN();	//=
 				GDB_NEXT_TOKEN();	//ascii_value
-//				GDB_STRIP_QUOATES(currentToken);
-
 				currentLine << wxT(" : ") << hex;
 
 				GDB_STRIP_QUOATES(currentToken);
@@ -1479,6 +1400,37 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo> &bpList, const wx
 		//try also to set breakpoint at WinMain
 		WriteCommand(wxT("-break-insert main"), NULL);
 	}
-	
+
 	return true; // to stop the compiler complaining
+}
+
+bool DbgGdb::ExecCLICommand(const wxString& command, DbgCmdCLIHandler* handler)
+{
+	wxString cmd;
+	wxString id = MakeId( );
+	cmd << id << command;
+	//send the command to gdb
+	if (!ExecuteCmd(cmd)) {
+		return false;
+	}
+
+	if ( handler ) {
+		handler->SetCommandId(id);
+		SetCliHandler( handler );
+	}
+	return true;
+}
+
+
+void DbgGdb::SetCliHandler(DbgCmdCLIHandler* handler)
+{
+	if( m_cliHandler ) {
+		delete m_cliHandler;
+	}
+	m_cliHandler = handler;
+}
+
+DbgCmdCLIHandler* DbgGdb::GetCliHandler()
+{
+	return m_cliHandler;
 }

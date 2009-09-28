@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "debuggerconfigtool.h"
+#include "debuggersettings.h"
 #include "debuggerasciiviewer.h"
 
 #include <vector>
@@ -90,6 +92,70 @@ static wxString StripAccelAndNemonics ( const wxString &text )
 static wxString StripAccel ( const wxString &text )
 {
 	return text.BeforeFirst ( wxT ( '\t' ) );
+}
+
+//---------------------------------------------------------------
+// Debugger helper method
+//---------------------------------------------------------------
+static wxArrayString DoGetTemplateTypes(const wxString& tmplDecl)
+{
+	wxArrayString types;
+	int           depth (0);
+	wxString      type;
+
+	wxString tmpstr ( tmplDecl );
+	tmpstr.Trim().Trim(false);
+
+	if ( tmpstr.StartsWith(wxT("<")) ) {
+		tmpstr.Remove(0, 1);
+	}
+
+	if ( tmpstr.EndsWith(wxT(">")) ) {
+		tmpstr.RemoveLast();
+	}
+	tmpstr.Trim().Trim(false);
+
+	for (size_t i=0; i<tmpstr.Length(); i++) {
+		switch (tmpstr.GetChar(i)) {
+		case wxT(','):
+						if ( depth > 0 ) {
+					type << wxT(",");
+				} else {
+					type.Trim().Trim(false);
+					if ( type.Contains(wxT("std::basic_string<char")) ) {
+						type = wxT("string");
+					} else if ( type.Contains(wxT("std::basic_string<wchar_t")) ) {
+						type = wxT("wstring");
+					}
+					types.Add( type );
+					type.Empty();
+				}
+			break;
+		case wxT('<'):
+						depth ++;
+			type << wxT("<");
+			break;
+		case wxT('>'):
+						depth--;
+			type << wxT(">");
+			break;
+		default:
+			type << tmpstr.GetChar(i);
+			break;
+		}
+	}
+
+	if ( depth == 0 && type.IsEmpty() == false ) {
+		type.Trim().Trim(false);
+		if ( type.Contains(wxT("std::basic_string<char")) ) {
+			type = wxT("string");
+		} else if ( type.Contains(wxT("std::basic_string<wchar_t")) ) {
+			type = wxT("wstring");
+		}
+		types.Add( type );
+	}
+
+	return types;
 }
 
 //---------------------------------------------------------------
@@ -1603,13 +1669,13 @@ void Manager::UpdateDebuggerPane()
 
 		}
 
-		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetAsciiViewer() ) || IsPaneVisible ( DebuggerPane::ASCII_VIEWER ) ) {
-
-			// re-evaluate the expression
-			pane->GetAsciiViewer()->SetDebugger( dbgr );
-			pane->GetAsciiViewer()->UpdateView();
-
-		}
+//		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetAsciiViewer() ) || IsPaneVisible ( DebuggerPane::ASCII_VIEWER ) ) {
+//
+//			// re-evaluate the expression
+//			pane->GetAsciiViewer()->SetDebugger( dbgr );
+//			pane->GetAsciiViewer()->UpdateView();
+//
+//		}
 
 		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetMemoryView() ) || IsPaneVisible ( DebuggerPane::MEMORY ) ) {
 
@@ -1890,8 +1956,7 @@ void Manager::DbgStop()
 	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 	// Clear the ascii viewer
-	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetExpression(wxT(""));
-	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->SetDbgCommand(wxT(""));
+	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView(wxT(""), wxT(""));
 
 	// update toolbar state
 	UpdateStopped();
@@ -2095,8 +2160,8 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 
 		DebugMessage ( _("Program Received signal ") + signame + _("\n") );
 		wxMessageDialog dlg( Frame::Get(), _("Program Received signal ") + signame + wxT("\n") +
-		               _("Stack trace is available in the 'Call Stack' tab\n"),
-		               wxT("CodeLite"), wxICON_ERROR|wxOK );
+		                     _("Stack trace is available in the 'Call Stack' tab\n"),
+		                     wxT("CodeLite"), wxICON_ERROR|wxOK );
 		dlg.ShowModal();
 
 		//Print the stack trace
@@ -2110,7 +2175,7 @@ void Manager::UpdateGotControl ( DebuggerReasons reason )
 	case DBG_BP_ASSERTION_HIT: {
 
 		wxMessageDialog dlg( Frame::Get(), _("Assertion failed!\nStack trace is available in the 'Call Stack' tab\n"),
-		               wxT("CodeLite"), wxICON_ERROR|wxOK );
+		                     wxT("CodeLite"), wxICON_ERROR|wxOK );
 		dlg.ShowModal();
 
 		//Print the stack trace
@@ -2157,13 +2222,118 @@ void Manager::UpdateLostControl()
 	DebugMessage ( _ ( "Continuing...\n" ) );
 
 	// Reset the debugger call-stack pane
-  Frame::Get()->GetDebuggerPane()->GetFrameListView()->Clear();
-  Frame::Get()->GetDebuggerPane()->GetFrameListView()->SetCurrentLevel(0);
+	Frame::Get()->GetDebuggerPane()->GetFrameListView()->Clear();
+	Frame::Get()->GetDebuggerPane()->GetFrameListView()->SetCurrentLevel(0);
 }
 
 void Manager::UpdateBpHit(int id)
 {
 	GetBreakpointsMgr()->BreakpointHit(id);
+}
+
+void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name)
+{
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	// Sanity
+	if ( dbgr == NULL               ) {return;}
+	if ( dbgr->IsRunning() == false ) {return;}
+	if ( DbgCanInteract() == false  ) {return;}
+
+	// gdb returns usually expression like:
+	// const string &, so in order to get the actual type
+	// we construct a valid expression by appending a valid identifier followed by a semi colon.
+	wxString expression;
+	wxString command(expr);
+	wxString dbg_command(wxT("print"));
+	wxString expression_type;
+
+	//wxLogMessage(word + wxT(" resolved into: ") + type);
+	DebuggerSettingsData data;
+	DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
+	std::vector<DebuggerCmdData> cmds = data.GetCmds();
+
+	expression << wxT("/^");
+	expression << type_name;
+	expression << wxT(" someValidName;");
+	expression << wxT("$/");
+
+	Variable variable;
+	if (LanguageST::Get()->VariableFromPattern(expression, wxT("someValidName"), variable)) {
+		expression_type = _U(variable.m_type.c_str());
+		for (size_t i=0; i<cmds.size(); i++) {
+			DebuggerCmdData cmd = cmds.at(i);
+			if (cmd.GetName() == expression_type) {
+				// prepare the string to be evaluated
+				command = cmd.GetCommand();
+				command.Replace(wxT("$(Variable)"), expr);
+
+				dbg_command = cmd.GetDbgCommand();
+
+				//---------------------------------------------------
+				// Special handling for the templates
+				//---------------------------------------------------
+
+				wxArrayString types = DoGetTemplateTypes(_U(variable.m_templateDecl.c_str()));
+				// Case 1: list
+				// The user defined scripts requires that we pass info like this:
+				// plist <list name> <T>
+				if ( expression_type == wxT("list") && types.GetCount() > 0 ) {
+					command << wxT(" ") << types.Item(0);
+				}
+				// Case 2: map & multimap
+				// The user defined script requires that we pass the TLeft & TRight
+				// pmap <list name> TLeft TRight
+				if ( (expression_type == wxT("map") || expression_type == wxT("multimap")) && types.GetCount() > 1 ) {
+					command << wxT(" ") << types.Item(0) << wxT(" ") << types.Item(1);
+				}
+
+				break;
+			}
+		}
+	}
+
+
+	wxString output;
+	bool     get_tip (false);
+
+	Notebook * book = Frame::Get()->GetDebuggerPane()->GetNotebook();
+	if ( book->GetPageText(book->GetSelection()) == DebuggerPane::ASCII_VIEWER || IsPaneVisible(DebuggerPane::ASCII_VIEWER) ) {
+		get_tip = true;
+	}
+
+
+	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+	if (editor && dbgr->GetDebuggerInformation().showTooltips && command.IsEmpty() == false) {
+		get_tip = true;
+	}
+
+	if ( get_tip ) {
+		dbgr->GetTip(dbg_command, command); // Will trigger a call to UpdateTip()
+	}
+}
+
+void Manager::UpdateTip(const wxString& expression, const wxString& tip)
+{
+
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if ( dbgr && dbgr->GetDebuggerInformation().showTooltips ) {
+		LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
+		if ( editor ) {
+			wxPoint pt = wxGetMousePosition();
+			wxPoint clientPt = editor->ScreenToClient(pt);
+			int pos = editor->PositionFromPoint(clientPt);
+
+			// do some formatting before we display the tooltip
+			wxString evaluated (tip);
+			evaluated.Replace(wxT("\r\n"), wxT("\n"));
+			evaluated.Replace(wxT("\n,"), wxT(",\n"));
+			evaluated.Replace(wxT("\n\n"), wxT("\n"));
+
+			editor->DoCancelCalltip();
+			editor->DoShowCalltip(pos, evaluated, ct_debugger);
+		}
+	}
+	Frame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView( expression, tip );
 }
 
 void Manager::ReconcileBreakpoints(std::vector<BreakpointInfo>& li)
@@ -2547,8 +2717,8 @@ void Manager::DbgClearWatches()
 void Manager::DbgRestoreWatches()
 {
 	// restore any saved watch expressions from previous debug sessions
-	if( m_dbgWatchExpressions.empty() == false ) {
-		for(size_t i=0; i<m_dbgWatchExpressions.GetCount(); i++){
+	if ( m_dbgWatchExpressions.empty() == false ) {
+		for (size_t i=0; i<m_dbgWatchExpressions.GetCount(); i++) {
 			DebugMessage(wxT("Restoring watch: ") + m_dbgWatchExpressions.Item(i) + wxT("\n"));
 			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("add_watch"));
 			e.SetString(m_dbgWatchExpressions.Item(i));
@@ -2564,9 +2734,9 @@ void Manager::DoRestartCodeLite()
 	// the codelite_launcher application is located where the codelite executable is
 	// to properly shoutdown codelite. We first need to close the codelite_indexer process
 	command << wxT("\"") << m_codeliteLauncher.GetFullPath() << wxT("\" ")
-			<< wxT(" --name=\"")
-			<< wxStandardPaths::Get().GetExecutablePath()
-			<< wxT("\"");
+	<< wxT(" --name=\"")
+	<< wxStandardPaths::Get().GetExecutablePath()
+	<< wxT("\"");
 
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("exit_app"));
 	Frame::Get()->ProcessEvent(event);

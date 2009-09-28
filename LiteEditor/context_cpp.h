@@ -142,7 +142,7 @@ private:
 	int           FindLineToAddInclude();
 	void          MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);
 	void          DoOpenWorkspaceFile();
-	wxArrayString DoGetTemplateTypes(const wxString &tmplDecl);
+
 	/**
 	 * \brief try to find a swapped file for this rhs. The logic is based on the C++ coding conventions
 	 * a swapped file for a.cpp will be a.h or a.hpp

@@ -497,20 +497,21 @@ public:
 	void DbgRestoreWatches();
 
     // IDebuggerObserver event handlers
-	void UpdateAddLine(const wxString &line);
-	void UpdateFileLine(const wxString &file, int lineno);
-	void UpdateLocals(TreeNode<wxString, NodeData> *tree);
-    void UpdateStopped();
-	void UpdateGotControl(DebuggerReasons reason);
-	void UpdateLostControl();
-	void UpdateBpAdded(const int internal_id, const int debugger_id);
-	void UpdateExpression(const wxString &expression, const wxString &evaluated);
-	void UpdateQuickWatch(const wxString &expression, TreeNode<wxString, NodeData> *tree);
-	void UpdateStackList(const StackEntryArray &stackArray);
+	void UpdateAddLine              (const wxString &line);
+	void UpdateFileLine             (const wxString &file, int lineno);
+	void UpdateLocals               (TreeNode<wxString, NodeData> *tree);
+    void UpdateStopped              ();
+	void UpdateGotControl           (DebuggerReasons reason);
+	void UpdateLostControl          ();
+	void UpdateBpAdded              (const int internal_id, const int debugger_id);
+	void UpdateExpression           (const wxString &expression, const wxString &evaluated);
+	void UpdateQuickWatch           (const wxString &expression, TreeNode<wxString, NodeData> *tree);
+	void UpdateStackList            (const StackEntryArray &stackArray);
 	void UpdateRemoteTargetConnected(const wxString &line);
-	void ReconcileBreakpoints(std::vector<BreakpointInfo>& li);
-	void UpdateBpHit(int id);
-
+	void ReconcileBreakpoints       (std::vector<BreakpointInfo>& li);
+	void UpdateBpHit                (int id);
+	void UpdateTypeReolsved         (const wxString &expression, const wxString &type);
+	void UpdateTip                  (const wxString &expression, const wxString &tip);
 
     //--------------------------- Build Management -----------------------------
 public:

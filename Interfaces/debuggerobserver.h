@@ -137,12 +137,27 @@ public:
 	 * @param vector of breakpoints acquired from -break-list
 	 */
 	virtual void ReconcileBreakpoints(std::vector<BreakpointInfo>& li) = 0;
-	
+
 	/**
 	 * @brief Tells the breakpoints-manager which breakpoint was just hit
 	 * @param The breakpoint's ID
 	 */
 	virtual void UpdateBpHit(int id) = 0;
+
+	/**
+	 * @brief updates the observer that a request to resolve 'expression' is completed
+	 * and the type can be examined in 'type'
+	 * @param expression
+	 * @param type
+	 */
+	virtual void UpdateTypeReolsved(const wxString &expression, const wxString &type) = 0;
+
+	/**
+	 * @brief update the observer with tip for expression
+	 * @param expression
+	 * @param tip
+	 */
+	virtual void UpdateTip (const wxString &expression, const wxString &tip) = 0;
 };
 
 #endif //DEBUGGER_OBSERVER_H

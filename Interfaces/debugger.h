@@ -544,21 +544,21 @@ public:
 	virtual void Poke() = 0;
 
 	/**
-	 * @brief return string to show the user as tip for expression
+	 * @brief return string to show the user as tip for expression. this is an async call. When this function is done, it will trigger a call to
+	 * IDebuggerObserver::UpdateTip()
 	 * @param dbgCommand debugger command to evaluate the tip (e.g. "print")
 	 * @param expression expression to evaluate
-	 * @param evaluated [output]
 	 * @return true if evaluation succeeded, false otherwise
 	 */
-	virtual bool GetTip(const wxString &dbgCommand, const wxString &expression, wxString &evaluated) = 0;
+	virtual bool GetTip(const wxString &dbgCommand, const wxString &expression) = 0;
 
 	/**
-	 * \brief resolve expression and return its actual type
+	 * \brief resolve expression and return its actual type this is an async call. When this function is done, it will trigger a call to
+	 * IDebuggerObserver::UpdateTypeResolved()
 	 * \param expression expression to evaluate
-	 * \param type the type [output]
 	 * \return true on success, false otherwise
 	 */
-	virtual bool ResolveType(const wxString &expression, wxString &type) = 0;
+	virtual bool ResolveType(const wxString &expression) = 0;
 
 	//We provide two ways of evulating an expressions:
 	//The short one, which returns a string, and long one

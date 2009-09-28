@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef DBGCMD_H
+#ifndef DBGCMD_H
 #define DBGCMD_H
 
 #include "wx/string.h"
@@ -31,14 +31,27 @@
 #include "debugger.h"
 
 class IDebugger;
+class DbgGdb;
 
-class DbgCmdHandler {
+#define GDB_NEXT_TOKEN()\
+	{\
+		type = gdb_result_lex();\
+		currentToken = _U(gdb_result_string.c_str());\
+	}
+
+#define GDB_ABORT(ch)\
+	if(type != (int)ch){\
+		break;\
+	}
+
+class DbgCmdHandler
+{
 protected:
 	IDebuggerObserver *m_observer;
 
 public:
-	DbgCmdHandler(IDebuggerObserver *observer) : m_observer(observer){}
-	virtual ~DbgCmdHandler(){}
+	DbgCmdHandler(IDebuggerObserver *observer) : m_observer(observer) {}
+	virtual ~DbgCmdHandler() {}
 
 	virtual bool WantsErrors() const {
 		return false;
@@ -51,10 +64,11 @@ public:
  * handles the
  * -file-list-exec-source-file command
  */
-class DbgCmdHandlerGetLine : public DbgCmdHandler {
+class DbgCmdHandlerGetLine : public DbgCmdHandler
+{
 public:
-	DbgCmdHandlerGetLine(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
-	virtual ~DbgCmdHandlerGetLine(){}
+	DbgCmdHandlerGetLine(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+	virtual ~DbgCmdHandlerGetLine() {}
 
 	virtual bool ProcessOutput(const wxString &line);
 };
@@ -67,27 +81,29 @@ public:
  * -exec-next
  * -exec-finish
  */
-class DbgCmdHandlerAsyncCmd : public DbgCmdHandler {
+class DbgCmdHandlerAsyncCmd : public DbgCmdHandler
+{
 public:
-	DbgCmdHandlerAsyncCmd(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
-	virtual ~DbgCmdHandlerAsyncCmd(){}
+	DbgCmdHandlerAsyncCmd(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+	virtual ~DbgCmdHandlerAsyncCmd() {}
 
 	virtual bool ProcessOutput(const wxString &line);
 };
 
-class DbgCmdHandlerRemoteDebugging : public DbgCmdHandler {
+class DbgCmdHandlerRemoteDebugging : public DbgCmdHandler
+{
 	IDebugger *m_debugger;
 
 public:
-	DbgCmdHandlerRemoteDebugging(IDebuggerObserver *observer, IDebugger *debugger) : DbgCmdHandler(observer), m_debugger(debugger)
-	{}
+	DbgCmdHandlerRemoteDebugging(IDebuggerObserver *observer, IDebugger *debugger) : DbgCmdHandler(observer), m_debugger(debugger) {}
 
-	virtual ~DbgCmdHandlerRemoteDebugging(){}
+	virtual ~DbgCmdHandlerRemoteDebugging() {}
 
 	virtual bool ProcessOutput(const wxString &line);
 };
 
-class DbgCmdHandlerBp : public DbgCmdHandler {
+class DbgCmdHandlerBp : public DbgCmdHandler
+{
 	const BreakpointInfo           m_bp;
 	std::vector< BreakpointInfo > *m_bplist;
 	int                            m_bpType; // BP_type_break by default
@@ -95,21 +111,21 @@ class DbgCmdHandlerBp : public DbgCmdHandler {
 
 public:
 	DbgCmdHandlerBp(IDebuggerObserver *observer, IDebugger *debugger, BreakpointInfo bp, std::vector< BreakpointInfo > *bplist, int bptype = BP_type_break)
-	: DbgCmdHandler(observer)
-	, m_bp(bp)
-	, m_bplist(bplist)
-	, m_bpType(bptype)
-	, m_debugger(debugger)
-	{}
+			: DbgCmdHandler(observer)
+			, m_bp(bp)
+			, m_bplist(bplist)
+			, m_bpType(bptype)
+			, m_debugger(debugger) {}
 
-	virtual ~DbgCmdHandlerBp(){}
+	virtual ~DbgCmdHandlerBp() {}
 	virtual bool ProcessOutput(const wxString &line);
 	virtual bool WantsErrors() const {
 		return true;
 	}
 };
 
-class DbgCmdHandlerLocals : public DbgCmdHandler {
+class DbgCmdHandlerLocals : public DbgCmdHandler
+{
 public:
 	enum {
 		EvaluateExpression,
@@ -127,59 +143,115 @@ protected:
 
 public:
 	DbgCmdHandlerLocals(IDebuggerObserver *observer, int kind = Locals, const wxString &expr = wxEmptyString)
-		: DbgCmdHandler(observer)
-		, m_evaluateExpression(kind)
-		, m_expression(expr)
-	{}
+			: DbgCmdHandler(observer)
+			, m_evaluateExpression(kind)
+			, m_expression(expr) {}
 
-	virtual ~DbgCmdHandlerLocals(){}
+	virtual ~DbgCmdHandlerLocals() {}
 
 	virtual bool ProcessOutput(const wxString &line);
 };
 
 // A Void Handler, which is here simply to ignore a reply from the debugger
-class DbgCmdHandlerVarCreator : public DbgCmdHandler {
+class DbgCmdHandlerVarCreator : public DbgCmdHandler
+{
 public:
-	DbgCmdHandlerVarCreator(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
-	virtual ~DbgCmdHandlerVarCreator(){}
+	DbgCmdHandlerVarCreator(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+	virtual ~DbgCmdHandlerVarCreator() {}
 	virtual bool ProcessOutput(const wxString & line);
 };
 
-class DbgCmdHandlerEvalExpr : public DbgCmdHandler {
+class DbgCmdHandlerEvalExpr : public DbgCmdHandler
+{
 	wxString m_expression;
 public:
 	DbgCmdHandlerEvalExpr(IDebuggerObserver *observer, const wxString &expression)
-		: DbgCmdHandler(observer)
-		, m_expression(expression)
-	{}
+			: DbgCmdHandler(observer)
+			, m_expression(expression) {}
 
-	virtual ~DbgCmdHandlerEvalExpr(){}
+	virtual ~DbgCmdHandlerEvalExpr() {}
 	virtual bool ProcessOutput(const wxString & line);
-	virtual const wxString & GetExpression() const {return m_expression;}
+	virtual const wxString & GetExpression() const {
+		return m_expression;
+	}
 };
 
 // handler -list-stack-frames command
-class DbgCmdStackList : public DbgCmdHandler {
+class DbgCmdStackList : public DbgCmdHandler
+{
 public:
-	DbgCmdStackList(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
-	virtual ~DbgCmdStackList(){}
+	DbgCmdStackList(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+	virtual ~DbgCmdStackList() {}
 	virtual bool ProcessOutput(const wxString & line);
 };
 
 // handler -list-stack-frames command
-class DbgCmdSelectFrame : public DbgCmdHandler {
+class DbgCmdSelectFrame : public DbgCmdHandler
+{
 public:
-	DbgCmdSelectFrame(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
-	virtual ~DbgCmdSelectFrame(){}
+	DbgCmdSelectFrame(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+	virtual ~DbgCmdSelectFrame() {}
 	virtual bool ProcessOutput(const wxString & line);
 };
 
 // Used for Ignore etc
-class DbgCmdDisplayOutput : public DbgCmdHandler {
+class DbgCmdDisplayOutput : public DbgCmdHandler
+{
 public:
-	DbgCmdDisplayOutput(IDebuggerObserver *observer) : DbgCmdHandler(observer){}
-	virtual ~DbgCmdDisplayOutput(){}
+	DbgCmdDisplayOutput(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+	virtual ~DbgCmdDisplayOutput() {}
 	virtual bool ProcessOutput(const wxString & line);
 };
-#endif //DBGCMD_H
 
+class DbgCmdResolveTypeHandler : public DbgCmdHandler
+{
+	DbgGdb * m_debugger;
+	wxString m_expression;
+
+public:
+	DbgCmdResolveTypeHandler(const wxString &expression, DbgGdb *debugger);
+
+	virtual ~DbgCmdResolveTypeHandler() {}
+	virtual bool ProcessOutput(const wxString & line);
+};
+
+class DbgCmdCLIHandler : public DbgCmdHandler
+{
+	wxString m_output;
+	wxString m_commandId;
+
+public:
+	DbgCmdCLIHandler(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+
+	virtual ~DbgCmdCLIHandler() {}
+	virtual bool ProcessOutput(const wxString & line);
+
+	const wxString& GetOutput() const {
+		return m_output;
+	}
+
+	void SetCommandId(const wxString& commandId) {
+		this->m_commandId = commandId;
+	}
+
+	const wxString& GetCommandId() const {
+		return m_commandId;
+	}
+
+	void Append( const wxString &text ) {
+		m_output.Append(text + wxT("\n"));
+	}
+};
+
+class DbgCmdGetTipHandler : public DbgCmdCLIHandler {
+
+	wxString m_expression;
+
+public:
+	DbgCmdGetTipHandler(IDebuggerObserver *observer, const wxString &expression) : DbgCmdCLIHandler(observer), m_expression(expression) {}
+
+	virtual ~DbgCmdGetTipHandler() {}
+	virtual bool ProcessOutput(const wxString & line);
+
+};
+#endif //DBGCMD_H

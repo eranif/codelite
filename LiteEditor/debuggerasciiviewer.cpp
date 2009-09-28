@@ -13,8 +13,6 @@ static void sDefineMarker(wxScintilla *s, int marker, int markerType, wxColor fo
 
 DebuggerAsciiViewer::DebuggerAsciiViewer( wxWindow* parent )
 		: DebuggerAsciiViewerBase( parent )
-		, m_debugger(NULL)
-		, m_dbgCommand(wxT("print"))
 {
 	wxFont font(8, wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
 
@@ -55,71 +53,24 @@ DebuggerAsciiViewer::DebuggerAsciiViewer( wxWindow* parent )
 	m_textView->SetReadOnly(true);
 }
 
-void DebuggerAsciiViewer::OnEnter( wxCommandEvent& event )
-{
-	if ( m_textCtrlExpression->GetValue().IsEmpty() ) {
-
-		m_textView->SetReadOnly(false);
-		m_textView->ClearAll();
-		m_textView->SetReadOnly(true);
-
-	} else if ( m_debugger && m_debugger->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
-		DoUpdateView();
-
-	}
-}
-
-void DebuggerAsciiViewer::SetExpression(const wxString& expr)
+void DebuggerAsciiViewer::UpdateView(const wxString &expr, const wxString &value)
 {
 	m_textCtrlExpression->SetValue(expr);
-	DoUpdateView();
-}
 
-void DebuggerAsciiViewer::SetDebugger(IDebugger* debugger)
-{
-	m_debugger = debugger;
-}
-
-void DebuggerAsciiViewer::DoUpdateView()
-{
-	Manager *     m = ManagerST::Get();
-	DebuggerPane *pane = Frame::Get()->GetDebuggerPane();
-	bool          visible = ( ( m->IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* )this ) || m->IsPaneVisible ( DebuggerPane::ASCII_VIEWER ) );
-	bool          can_interact = m_debugger && m_debugger->IsRunning() && m->DbgCanInteract();
-
-	if ( !visible ) {
-		return;
-	}
-
-	// Evaluate the tip
-	wxString evaluated (wxEmptyString);
-	wxString expression ( m_textCtrlExpression->GetValue() );
-	expression.Trim().Trim(false);
-
-	if ( expression.IsEmpty() ) {
-		evaluated = wxT("");
-	} else if ( can_interact ) {
-		m_debugger->GetTip(m_dbgCommand, m_textCtrlExpression->GetValue(), evaluated );
-	}
-
+	wxString evaluated (value);
 	evaluated.Replace(wxT("\r\n"), wxT("\n"));
 	evaluated.Replace(wxT("\n,"), wxT(",\n"));
 	evaluated.Replace(wxT("\n\n"), wxT("\n"));
 
-	// update the view
 	m_textView->SetReadOnly(false);
 	m_textView->ClearAll();
 	m_textView->SetText(evaluated);
 	m_textView->SetReadOnly(true);
+
 }
 
-void DebuggerAsciiViewer::UpdateView()
+void DebuggerAsciiViewer::OnClearView(wxCommandEvent& e)
 {
-	DoUpdateView();
-}
-
-void DebuggerAsciiViewer::SetDbgCommand(const wxString& dbgCmd)
-{
-	m_textCtrlDbgCommand->SetValue(dbgCmd);
-	m_dbgCommand = dbgCmd;
+	wxUnusedVar(e);
+	UpdateView(wxT(""), wxT(""));
 }

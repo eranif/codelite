@@ -15,17 +15,17 @@ class Notebook;
 class OutputViewControlBar : public wxPanel
 {
 	wxAuiManager *                           m_aui;
-	std::vector<OutputViewControlBarButton*> m_buttons;
 	Notebook*                                m_book;
 
 public:
+	std::vector<OutputViewControlBarButton*> m_buttons;
 	OutputViewControlBar(wxWindow *win, Notebook *book, wxAuiManager *aui, wxWindowID id);
+
 	virtual ~OutputViewControlBar();
 
 	void AddButton        (const wxString &text, const wxBitmap & bmp, bool selected, long style);
 	void AddAllButtons    ();
 
-	DECLARE_EVENT_TABLE()
 	void OnPaint          (wxPaintEvent      &event);
 	void OnEraseBackground(wxEraseEvent      &event);
 	void OnButtonClicked  (wxCommandEvent    &event);
@@ -34,18 +34,20 @@ public:
 	void OnSize           (wxSizeEvent       &event);
 	void OnMenuSelection  (wxCommandEvent    &event);
 
+	DECLARE_EVENT_TABLE()
+
 protected:
 	void                           DoTogglePane    (bool hide = true);
 	void                           DoToggleButton  (OutputViewControlBarButton *button);
 	OutputViewControlBarButton *   DoFindButton    (const wxString &name);
 	void                           DoMarkActive    (const wxString &name);
 	bool                           DoFindDockInfo  (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
-	void                           DoShowPopupMenu ();
 };
 
 //--------------------------------------------------------
 
 extern const wxEventType EVENT_BUTTON_PRESSED;
+extern const wxEventType EVENT_SHOW_MENU;
 
 class OutputViewControlBarButton : public wxPanel
 {
@@ -71,6 +73,7 @@ public:
 
 	static int DoCalcButtonWidth (wxWindow *win, const wxString &text, const wxBitmap &bmp, int spacer);
 	static int DoCalcButtonHeight(wxWindow *win, const wxString &text, const wxBitmap &bmp, int spacer);
+	void       DoShowPopupMenu ();
 
 public:
 	OutputViewControlBarButton(wxWindow *win, const wxString &title, const wxBitmap &bmp, long style = Button_Default);

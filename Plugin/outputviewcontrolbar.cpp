@@ -88,23 +88,7 @@ void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, 
 void OutputViewControlBar::OnButtonClicked(wxCommandEvent& event)
 {
 	OutputViewControlBarButton *button = (OutputViewControlBarButton *)event.GetEventObject();
-
-	// check to see if it is the 'more' button
-	if ( button->GetText() == wxT("More") ) { // the 'more' button
-
-		button->SetState(OutputViewControlBarButton::Button_Pressed);
-		button->Refresh ();
-
-		DoShowPopupMenu();
-
-		button->SetState(OutputViewControlBarButton::Button_Normal);
-		button->Refresh ();
-
-	} else {
-
-		DoToggleButton( button );
-
-	}
+	DoToggleButton( button );
 }
 
 void OutputViewControlBar::DoTogglePane(bool hide)
@@ -230,10 +214,6 @@ bool OutputViewControlBar::DoFindDockInfo(const wxString &saved_perspective, con
 void OutputViewControlBar::OnSize(wxSizeEvent& event)
 {
 	event.Skip();
-
-	// Calculate to see if all buttons can fit into the screen
-	wxSize controlSize = GetClientSize();
-
 }
 
 void OutputViewControlBar::DoToggleButton(OutputViewControlBarButton* button)
@@ -251,49 +231,6 @@ void OutputViewControlBar::DoToggleButton(OutputViewControlBarButton* button)
 		DoTogglePane(false);
 	}
 }
-
-void OutputViewControlBar::DoShowPopupMenu()
-{
-	wxRect rr = GetSize();
-	wxMenu popupMenu;
-
-#ifdef __WXMSW__
-	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#endif
-
-	for (size_t i=0; i<m_buttons.size(); i++) {
-		OutputViewControlBarButton *button = m_buttons.at(i);
-		if ( button->GetText() == wxT("More")) {
-			continue;
-		}
-
-		wxString text = button->GetText();
-		bool selected = button->GetState() == OutputViewControlBarButton::Button_Pressed;
-
-		wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(button->GetText().c_str()), text, text, wxITEM_CHECK);
-
-		//set the font
-#ifdef __WXMSW__
-		if (selected) {
-			font.SetWeight(wxBOLD);
-		}
-		item->SetFont(font);
-#endif
-		popupMenu.Append( item );
-
-		//mark the selected item
-		item->Check(selected);
-
-		//restore font
-#ifdef __WXMSW__
-		font.SetWeight(wxNORMAL);
-#endif
-	}
-
-	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewControlBar::OnMenuSelection), NULL, this);
-	PopupMenu( &popupMenu, 0, rr.y);
-}
-
 
 OutputViewControlBarButton* OutputViewControlBar::DoFindButton(const wxString& name)
 {
@@ -356,10 +293,17 @@ void OutputViewControlBarButton::OnEraseBackground(wxEraseEvent& event)
 void OutputViewControlBarButton::OnMouseLDown(wxMouseEvent& event)
 {
 	// notify our parent
-	wxCommandEvent e(EVENT_BUTTON_PRESSED);
-	e.SetEventObject(this);
-	GetParent()->AddPendingEvent( e );
-	event.Skip();
+
+	if ( GetText() == wxT("More") ) {
+		// Popup the menu
+		DoShowPopupMenu();
+	} else {
+
+		wxCommandEvent e(EVENT_BUTTON_PRESSED);
+		e.SetEventObject(this);
+		GetParent()->AddPendingEvent( e );
+
+	}
 }
 
 void OutputViewControlBarButton::OnPaint(wxPaintEvent& event)
@@ -468,4 +412,46 @@ int OutputViewControlBarButton::DoCalcButtonHeight(wxWindow *win, const wxString
 	height += spacer;
 
 	return height;
+}
+void OutputViewControlBarButton::DoShowPopupMenu()
+{
+	wxRect rr = GetSize();
+	wxMenu popupMenu;
+
+#ifdef __WXMSW__
+	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+#endif
+
+	OutputViewControlBar *bar = (OutputViewControlBar *)GetParent();
+	for (size_t i=0; i<bar->m_buttons.size(); i++) {
+		OutputViewControlBarButton *button = bar->m_buttons.at(i);
+		if ( button->GetText() == wxT("More")) {
+			continue;
+		}
+
+		wxString text = button->GetText();
+		bool selected = button->GetState() == OutputViewControlBarButton::Button_Pressed;
+
+		wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(button->GetText().c_str()), text, text, wxITEM_CHECK);
+
+		//set the font
+#ifdef __WXMSW__
+		if (selected) {
+			font.SetWeight(wxBOLD);
+		}
+		item->SetFont(font);
+#endif
+		popupMenu.Append( item );
+
+		//mark the selected item
+		item->Check(selected);
+
+		//restore font
+#ifdef __WXMSW__
+		font.SetWeight(wxNORMAL);
+#endif
+	}
+
+	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewControlBar::OnMenuSelection), NULL, bar);
+	PopupMenu( &popupMenu, 0, rr.y + rr.height );
 }

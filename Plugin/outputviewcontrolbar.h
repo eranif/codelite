@@ -22,20 +22,25 @@ public:
 	OutputViewControlBar(wxWindow *win, Notebook *book, wxAuiManager *aui, wxWindowID id);
 	virtual ~OutputViewControlBar();
 
-	void AddButton        (const wxString &text, const wxBitmap & bmp, bool selected);
+	void AddButton        (const wxString &text, const wxBitmap & bmp, bool selected, long style);
 	void AddAllButtons    ();
 
 	DECLARE_EVENT_TABLE()
-	void OnPaint          (wxPaintEvent   &event);
-	void OnEraseBackground(wxEraseEvent   &event);
-	void OnButtonClicked  (wxCommandEvent &event);
-	void OnPageChanged    (NotebookEvent  &event);
+	void OnPaint          (wxPaintEvent      &event);
+	void OnEraseBackground(wxEraseEvent      &event);
+	void OnButtonClicked  (wxCommandEvent    &event);
+	void OnPageChanged    (NotebookEvent     &event);
 	void OnRender         (wxAuiManagerEvent &event);
+	void OnSize           (wxSizeEvent       &event);
+	void OnMenuSelection  (wxCommandEvent    &event);
 
 protected:
-	void  DoTogglePane            (bool hide = true);
-	void  DoMarkActive            (const wxString &name);
-	bool  DoFindDockInfo          (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
+	void                           DoTogglePane    (bool hide = true);
+	void                           DoToggleButton  (OutputViewControlBarButton *button);
+	OutputViewControlBarButton *   DoFindButton    (const wxString &name);
+	void                           DoMarkActive    (const wxString &name);
+	bool                           DoFindDockInfo  (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
+	void                           DoShowPopupMenu ();
 };
 
 //--------------------------------------------------------
@@ -47,6 +52,7 @@ class OutputViewControlBarButton : public wxPanel
 	int           m_state;
 	wxString      m_text;
 	wxBitmap      m_bmp;
+	long          m_style;
 public:
 	/**
 	 * button states
@@ -57,11 +63,17 @@ public:
 		Button_Hover
 	};
 
+	enum {
+		Button_UseXSpacer = 0x00000001,
+		Button_UseText    = 0x00000002,
+		Button_Default    = Button_UseXSpacer | Button_UseText
+	};
+
 	static int DoCalcButtonWidth (wxWindow *win, const wxString &text, const wxBitmap &bmp, int spacer);
 	static int DoCalcButtonHeight(wxWindow *win, const wxString &text, const wxBitmap &bmp, int spacer);
 
 public:
-	OutputViewControlBarButton(wxWindow *win, const wxString &title, const wxBitmap &bmp);
+	OutputViewControlBarButton(wxWindow *win, const wxString &title, const wxBitmap &bmp, long style = Button_Default);
 	virtual ~OutputViewControlBarButton();
 
 	void SetBmp(const wxBitmap& bmp) {
@@ -93,4 +105,5 @@ public:
 	void OnEraseBackground(wxEraseEvent &event);
 	void OnMouseLDown     (wxMouseEvent &event);
 };
+
 #endif // __auicontrolbar__

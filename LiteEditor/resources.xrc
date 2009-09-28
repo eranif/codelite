@@ -1,4 +1,5 @@
 <resource>
+	<object class="wxBitmap" name="downarrow">res/downarrow.png</object>
 	<object class="wxBitmap" name="fold_airplane">res/outbox.png</object>
 	<object class="wxBitmap" name="read_only">res/lock.png</object>
 	<object class="wxBitmap" name="find_refresh">res/find_refresh.png</object>
@@ -57,7 +58,7 @@
 	<object class="wxBitmap" name="text_ok">res/page_green.png</object>
 	<object class="wxBitmap" name="new_class_title">res/new_class.png</object>
 	<object class="wxBitmap" name="wx_project_header">res/wxproject.png</object>
-	<object class="wxBitmap" name="colourise">res/colorize.png</object>
+	<object class="wxBitmap" name="colourise">res/package_utilities.png</object>
 	<object class="wxBitmap" name="collapse">res/collapse.png</object>
 	<object class="wxBitmap" name="gohome">res/gohome.png</object>
 	<object class="wxBitmap" name="project_conflict">res/messagebox_warning.png</object>

@@ -1,4 +1,6 @@
 #include "outputviewcontrolbar.h"
+#include <wx/image.h>
+#include <wx/menu.h>
 #include <wx/tokenzr.h>
 #include "custom_tab.h"
 #include "custom_notebook.h"
@@ -11,8 +13,14 @@
 #include <wx/log.h>
 #include <wx/aui/framemanager.h>
 
+static unsigned char list_bits[] = {
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+	0x0f, 0xf8, 0xff, 0xff, 0x0f, 0xf8, 0x1f, 0xfc, 0x3f, 0xfe, 0x7f, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
+};
+
 #ifdef __WXMSW__
-# define BUTTON_SPACER_X 8
+# define BUTTON_SPACER_X 5
 # define BUTTON_SPACER_Y 6
 # define BAR_SPACER      6
 #else
@@ -25,6 +33,7 @@ BEGIN_EVENT_TABLE(OutputViewControlBar, wxPanel)
 	EVT_PAINT           (OutputViewControlBar::OnPaint)
 	EVT_ERASE_BACKGROUND(OutputViewControlBar::OnEraseBackground)
 	EVT_COMMAND         (wxID_ANY, EVENT_BUTTON_PRESSED, OutputViewControlBar::OnButtonClicked)
+	EVT_SIZE            (OutputViewControlBar::OnSize)
 END_EVENT_TABLE()
 
 OutputViewControlBar::OutputViewControlBar(wxWindow* win, Notebook *book, wxAuiManager *aui, wxWindowID id)
@@ -66,12 +75,12 @@ void OutputViewControlBar::OnPaint(wxPaintEvent& event)
 	dc.DrawRectangle( rect );
 }
 
-void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, bool selected)
+void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, bool selected, long style)
 {
-	OutputViewControlBarButton *button = new OutputViewControlBarButton(this, text, bmp);
+	OutputViewControlBarButton *button = new OutputViewControlBarButton(this, text, bmp, style);
 	button->SetState( selected ? OutputViewControlBarButton::Button_Pressed : OutputViewControlBarButton::Button_Normal );
 	m_buttons.push_back( button );
-	GetSizer()->Add(button, 0, wxALL | wxALIGN_CENTER_VERTICAL | wxEXPAND, 1);
+	GetSizer()->Add(button, 0, wxALL | wxEXPAND, 1);
 	GetSizer()->Layout();
 	button->Refresh();
 }
@@ -79,17 +88,22 @@ void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, 
 void OutputViewControlBar::OnButtonClicked(wxCommandEvent& event)
 {
 	OutputViewControlBarButton *button = (OutputViewControlBarButton *)event.GetEventObject();
-	if ( button && button->GetState() == OutputViewControlBarButton::Button_Pressed ) {
-		// second click on an already pressed button, hide the AUI pane
-		button->SetState(OutputViewControlBarButton::Button_Normal);
-		button->Refresh();
 
-		// hide the pane
-		DoTogglePane(true);
+	// check to see if it is the 'more' button
+	if ( button->GetText() == wxT("More") ) { // the 'more' button
+
+		button->SetState(OutputViewControlBarButton::Button_Pressed);
+		button->Refresh ();
+
+		DoShowPopupMenu();
+
+		button->SetState(OutputViewControlBarButton::Button_Normal);
+		button->Refresh ();
 
 	} else {
-		DoMarkActive( button->GetText() );
-		DoTogglePane(false);
+
+		DoToggleButton( button );
+
 	}
 }
 
@@ -170,12 +184,21 @@ void OutputViewControlBar::DoMarkActive(const wxString& name)
 
 void OutputViewControlBar::AddAllButtons()
 {
+	// add the 'more' button
+	wxColour color(*wxBLACK);
+	wxImage img = wxBitmap((const char*)list_bits, 16, 16).ConvertToImage();
+	img.Replace(0, 0, 0, 123, 123, 123);
+	img.Replace(255,255,255,color.Red(),color.Green(),color.Blue());
+	img.SetMaskColour(123, 123, 123);
+
+	AddButton ( wxT("More"), wxBitmap(img), false, 0 /* no text, no spacer */);
+
 	if ( m_book ) {
 		for(size_t i=0; i<m_book->GetPageCount(); i++) {
 			wxString text = m_book->GetPageText(i);
 			wxBitmap bmp  = m_book->GetTabContainer()->IndexToTab(i)->GetBmp();
 
-			AddButton(text, bmp, m_book->GetSelection() == i);
+			AddButton(text, bmp, m_book->GetSelection() == i, OutputViewControlBarButton::Button_Default);
 		}
 	}
 }
@@ -203,6 +226,98 @@ bool OutputViewControlBar::DoFindDockInfo(const wxString &saved_perspective, con
 	return false;
 }
 
+
+void OutputViewControlBar::OnSize(wxSizeEvent& event)
+{
+	event.Skip();
+
+	// Calculate to see if all buttons can fit into the screen
+	wxSize controlSize = GetClientSize();
+
+}
+
+void OutputViewControlBar::DoToggleButton(OutputViewControlBarButton* button)
+{
+	if ( button && button->GetState() == OutputViewControlBarButton::Button_Pressed ) {
+		// second click on an already pressed button, hide the AUI pane
+		button->SetState(OutputViewControlBarButton::Button_Normal);
+		button->Refresh();
+
+		// hide the pane
+		DoTogglePane(true);
+
+	} else if ( button ) {
+		DoMarkActive( button->GetText() );
+		DoTogglePane(false);
+	}
+}
+
+void OutputViewControlBar::DoShowPopupMenu()
+{
+	wxRect rr = GetSize();
+	wxMenu popupMenu;
+
+#ifdef __WXMSW__
+	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+#endif
+
+	for (size_t i=0; i<m_buttons.size(); i++) {
+		OutputViewControlBarButton *button = m_buttons.at(i);
+		if ( button->GetText() == wxT("More")) {
+			continue;
+		}
+
+		wxString text = button->GetText();
+		bool selected = button->GetState() == OutputViewControlBarButton::Button_Pressed;
+
+		wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(button->GetText().c_str()), text, text, wxITEM_CHECK);
+
+		//set the font
+#ifdef __WXMSW__
+		if (selected) {
+			font.SetWeight(wxBOLD);
+		}
+		item->SetFont(font);
+#endif
+		popupMenu.Append( item );
+
+		//mark the selected item
+		item->Check(selected);
+
+		//restore font
+#ifdef __WXMSW__
+		font.SetWeight(wxNORMAL);
+#endif
+	}
+
+	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewControlBar::OnMenuSelection), NULL, this);
+	PopupMenu( &popupMenu, 0, rr.y);
+}
+
+
+OutputViewControlBarButton* OutputViewControlBar::DoFindButton(const wxString& name)
+{
+	for (size_t i=0; i<m_buttons.size(); i++) {
+		OutputViewControlBarButton *button = m_buttons.at(i);
+		if ( button->GetText() == name ) {
+			return button;
+		}
+	}
+	return NULL;
+}
+
+
+void OutputViewControlBar::OnMenuSelection(wxCommandEvent& event)
+{
+	for(size_t i=0; i<m_buttons.size(); i++){
+		OutputViewControlBarButton *button = m_buttons.at(i);
+		if ( wxXmlResource::GetXRCID(button->GetText().c_str()) == event.GetId() ) {
+			DoToggleButton(button);
+			break;
+		}
+	}
+}
+
 //-----------------------------------------------------------------------------------
 
 const wxEventType EVENT_BUTTON_PRESSED = XRCID("button_pressed");
@@ -214,13 +329,19 @@ BEGIN_EVENT_TABLE(OutputViewControlBarButton, wxPanel)
 	EVT_LEFT_DCLICK     (OutputViewControlBarButton::OnMouseLDown)
 END_EVENT_TABLE()
 
-OutputViewControlBarButton::OutputViewControlBarButton(wxWindow* win, const wxString& title, const wxBitmap& bmp)
+OutputViewControlBarButton::OutputViewControlBarButton(wxWindow* win, const wxString& title, const wxBitmap& bmp, long style)
 		: wxPanel(win)
 		, m_state(Button_Normal)
 		, m_text (title)
 		, m_bmp  (bmp)
+		, m_style (style)
 {
-	SetSizeHints(DoCalcButtonWidth(this, m_text, m_bmp, BUTTON_SPACER_X), DoCalcButtonHeight(this, wxEmptyString, m_bmp, BUTTON_SPACER_Y));
+	SetSizeHints(DoCalcButtonWidth( this,
+									m_style & Button_UseText  ? m_text : wxT(""),
+									m_bmp,
+									m_style & Button_UseXSpacer ? BUTTON_SPACER_X : 1),
+
+									DoCalcButtonHeight(this, wxEmptyString, m_bmp, BUTTON_SPACER_Y));
 }
 
 OutputViewControlBarButton::~OutputViewControlBarButton()
@@ -267,23 +388,30 @@ void OutputViewControlBarButton::OnPaint(wxPaintEvent& event)
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	dc.GetTextExtent(GetText(), &xx, &yy, NULL, NULL, &font);
 
-	int text_x = BUTTON_SPACER_X; // the spacer size
-	int text_y = (rect.height - yy) / 2;
-	dc.SetFont( font );
-	dc.DrawText(GetText(), text_x, text_y);
+	int  spacer_x  = m_style & Button_UseXSpacer ? BUTTON_SPACER_X : 1;
+	bool draw_text = m_style & Button_UseText    ? true : false       ;
 
 	// draw the bitmap
+	int bmp_x(0);
+	int bmp_y(0);
 	if ( GetBmp().IsOk() ) {
-		int bmp_x = text_x + xx + BUTTON_SPACER_X;
-		int bmp_y = (rect.height - GetBmp().GetHeight())/2;
+		bmp_x = spacer_x;
+		bmp_y = (rect.height - GetBmp().GetHeight())/2;
 
 		dc.DrawBitmap(GetBmp(), bmp_x, bmp_y, true);
+	}
+
+	if ( draw_text ) {
+		int text_x = bmp_x + GetBmp().GetWidth() + spacer_x;
+		int text_y = (rect.height - yy) / 2;
+		dc.SetFont( font );
+		dc.DrawText(GetText(), text_x, text_y);
 	}
 
 	// draw the border
 	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
 	dc.SetBrush( *wxTRANSPARENT_BRUSH );
-	dc.DrawRoundedRectangle(rect, 2);
+	dc.DrawRoundedRectangle(rect, 0);
 }
 
 int OutputViewControlBarButton::DoCalcButtonWidth(wxWindow *win, const wxString &text, const wxBitmap &bmp, int spacer)
@@ -341,4 +469,3 @@ int OutputViewControlBarButton::DoCalcButtonHeight(wxWindow *win, const wxString
 
 	return height;
 }
-

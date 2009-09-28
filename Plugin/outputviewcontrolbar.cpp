@@ -295,7 +295,6 @@ void OutputViewControlBarButton::OnMouseLDown(wxMouseEvent& event)
 	// notify our parent
 
 	if ( GetText() == wxT("More") ) {
-		// Popup the menu
 		DoShowPopupMenu();
 	} else {
 
@@ -322,10 +321,12 @@ void OutputViewControlBarButton::OnPaint(wxPaintEvent& event)
 	// draw the filling
 	wxRect tmpRect (rect);
 	tmpRect.Deflate(1, 1);
-	if ( GetState() == Button_Normal ) {
-		DrawingUtils::PaintStraightGradientBox(dc, tmpRect, wxT("WHITE"), wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
-	} else {
-		DrawingUtils::PaintStraightGradientBox(dc, tmpRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
+	if ( m_style != 0 ) {
+		if ( GetState() == Button_Normal ) {
+			DrawingUtils::PaintStraightGradientBox(dc, tmpRect, wxT("WHITE"), wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
+		} else {
+			DrawingUtils::PaintStraightGradientBox(dc, tmpRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
+		}
 	}
 
 	// Draw the text
@@ -353,9 +354,11 @@ void OutputViewControlBarButton::OnPaint(wxPaintEvent& event)
 	}
 
 	// draw the border
-	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-	dc.SetBrush( *wxTRANSPARENT_BRUSH );
-	dc.DrawRoundedRectangle(rect, 0);
+	if ( m_style != 0 ) {
+		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+		dc.SetBrush( *wxTRANSPARENT_BRUSH );
+		dc.DrawRoundedRectangle(rect, 0);
+	}
 }
 
 int OutputViewControlBarButton::DoCalcButtonWidth(wxWindow *win, const wxString &text, const wxBitmap &bmp, int spacer)
@@ -453,5 +456,5 @@ void OutputViewControlBarButton::DoShowPopupMenu()
 	}
 
 	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewControlBar::OnMenuSelection), NULL, bar);
-	PopupMenu( &popupMenu, 0, rr.y + rr.height );
+	PopupMenu( &popupMenu, rr.x, rr.y );
 }

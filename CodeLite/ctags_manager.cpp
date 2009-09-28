@@ -25,6 +25,7 @@
 #include "precompiled_header.h"
 #include "ctags_manager.h"
 #include "named_pipe_client.h"
+#include <set>
 #include "cl_indexer_request.h"
 #include "clindexerprotocol.h"
 #include "cl_indexer_reply.h"
@@ -2669,28 +2670,39 @@ void TagsManager::DoFilterNonNeededFilesForRetaging(wxArrayString& strFiles, Tag
 		//         the file
 		std::vector<FileEntryPtr> files_entries;
 		db->GetFiles(files_entries);
+		std::set<wxString> files_set;
+
+		for(size_t i=0; i<strFiles.GetCount(); i++){
+			files_set.insert(strFiles.Item(i));
+		}
 
 		for (size_t i=0; i<files_entries.size(); i++) {
 			FileEntryPtr fe = files_entries.at(i);
 
 			// does the file exist in both lists?
-			int where = strFiles.Index(fe->GetFile());
-			while ( where != wxNOT_FOUND ) {
+			std::set<wxString>::iterator iter = files_set.find(fe->GetFile());
+			if ( iter != files_set.end() ) {
 				// get the actual modifiaction time of the file from the disk
 				struct stat buff;
 				int modified(0);
 
-				const wxCharBuffer cname = _C(strFiles.Item(where));
+				const wxCharBuffer cname = _C((*iter));
 				if (stat(cname.data(), &buff) == 0) {
 					modified = (int)buff.st_mtime;
 				}
 
 				// if the timestamp from the database < then the actual timestamp, re-tag the file
 				if (fe->GetLastRetaggedTimestamp() >= modified) {
-					strFiles.RemoveAt(where);
+					files_set.erase(iter);
 				}
-				where = strFiles.Index(fe->GetFile());
 			}
+		}
+
+		// copy back the files to the array
+		std::set<wxString>::iterator iter = files_set.begin();
+		strFiles.Clear();
+		for(; iter != files_set.end(); iter++ ) {
+			strFiles.Add( *iter );
 		}
 	}
 }

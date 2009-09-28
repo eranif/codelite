@@ -1338,18 +1338,16 @@ void Frame::OnBuildExternalDatabase(wxCommandEvent& event)
 void Frame::DoBuildExternalDatabase(const wxString &dir)
 {
 	ExtDbData data;
-	ExtDbWizard *wiz = new ExtDbWizard(this, wxID_ANY);
-	if (wiz->Run(data, dir)) {
+	ExtDbWizard wiz(this, wxID_ANY);
+	if (wiz.Run(data, dir)) {
+
 		// build the external database
-		wxFileName dbname(ManagerST::Get()->GetStarupDirectory() + PATH_SEP + data.dbName);
-		data.dbName = dbname.GetFullPath();
 		TagsManagerST::Get()->BuildExternalDatabase(data);
 
 		if (data.attachDb) {
-			ManagerST::Get()->SetExternalDatabase(dbname);
+			ManagerST::Get()->SetExternalDatabase(data.dbName);
 		}
 	}
-	wiz->Destroy();
 }
 
 void Frame::OnCloseExternalDatabase(wxCommandEvent& WXUNUSED(event))

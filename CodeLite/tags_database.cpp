@@ -603,3 +603,46 @@ void TagsDatabase::GetFiles(std::vector<FileEntryPtr>& files)
 		wxUnusedVar(e);
 	}
 }
+
+void TagsDatabase::DeleteFromFiles(const wxArrayString& files)
+{
+	if (files.IsEmpty()) {
+		return;
+	}
+
+	wxString query;
+	query << wxT("delete from FILES where file in (");
+
+	for(size_t i=0; i<files.GetCount(); i++){
+		query << wxT("'") << files.Item(i) << wxT("',");
+	}
+
+	// remove last ','
+	query.RemoveLast();
+	query << wxT(")");
+
+	try {
+		m_db->ExecuteQuery(query);
+	} catch(wxSQLite3Exception &e) {
+		wxUnusedVar(e);
+	}
+}
+
+void TagsDatabase::DeleteFromFilesByPrefix(const wxFileName& dbpath, const wxString& filePrefix)
+{
+	// make sure database is open
+	OpenDatabase(dbpath);
+
+	try {
+		wxString sql;
+		wxString name(filePrefix);
+		name.Replace(wxT("_"), wxT("^_"));
+
+		sql << wxT("delete from FILES where file like '") << name << wxT("%%' ESCAPE '^' ");
+		m_db->ExecuteUpdate(sql);
+
+	} catch (wxSQLite3Exception& e) {
+		wxUnusedVar(e);
+	}
+}
+

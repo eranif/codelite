@@ -1029,18 +1029,27 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName> &projectFiles)
 		return;
 	}
 
-	wxString query;
-	wxString filelist;
+	wxString      query;
+	wxString      filelist;
+	wxArrayString file_array;
+
 	query << wxT("delete from tags where file in (");
 	for (size_t i=0; i<projectFiles.size(); i++) {
 		filelist << wxT("'") << projectFiles.at(i).GetFullPath() << wxT("'") << wxT(",");
+		file_array.Add(projectFiles.at(i).GetFullPath());
 	}
+
 	filelist = filelist.BeforeLast(wxT(','));
 	query << filelist << wxT(")");
 
-	m_workspaceDatabase->Begin();
-	m_workspaceDatabase->ExecuteUpdate(query);
-	m_workspaceDatabase->Commit();
+	try {
+		m_workspaceDatabase->Begin();
+		m_workspaceDatabase->ExecuteUpdate(query);
+		m_workspaceDatabase->DeleteFromFiles(file_array);
+		m_workspaceDatabase->Commit();
+	} catch (wxSQLite3Exception &e) {
+		wxUnusedVar(e);
+	}
 
 	UpdateFileTree(projectFiles, false);
 }
@@ -2605,7 +2614,12 @@ void TagsManager::DeleteTagsByFilePrefix(const wxString& dbfileName, const wxStr
 
 		db.OpenDatabase(wxFileName(dbfileName));
 		db.Begin();
-		db.DeleteByFilePrefix(db.GetDatabaseFileName(), filePrefix);
+
+		// delete the tags
+		db.DeleteByFilePrefix     (db.GetDatabaseFileName(), filePrefix);
+
+		// deelete the FILES entries
+		db.DeleteFromFilesByPrefix(db.GetDatabaseFileName(), filePrefix);
 
 		VariableEntry ve(filePrefix, wxEmptyString);
 		wxString delStr = ve.GetDeleteOneStatement();
@@ -2661,8 +2675,7 @@ void TagsManager::DoFilterNonNeededFilesForRetaging(wxArrayString& strFiles, Tag
 
 			// does the file exist in both lists?
 			int where = strFiles.Index(fe->GetFile());
-			if (where != wxNOT_FOUND) {
-
+			while ( where != wxNOT_FOUND ) {
 				// get the actual modifiaction time of the file from the disk
 				struct stat buff;
 				int modified(0);
@@ -2676,6 +2689,7 @@ void TagsManager::DoFilterNonNeededFilesForRetaging(wxArrayString& strFiles, Tag
 				if (fe->GetLastRetaggedTimestamp() >= modified) {
 					strFiles.RemoveAt(where);
 				}
+				where = strFiles.Index(fe->GetFile());
 			}
 		}
 	}

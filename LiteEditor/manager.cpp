@@ -1109,7 +1109,7 @@ void Manager::SetExternalDatabase ( const wxFileName &dbname )
 	CloseExternalDatabase();
 	TagsManagerST::Get()->OpenExternalDatabase ( dbname );
 	if ( TagsManagerST::Get()->GetExtDatabase()->IsOpen() ) {
-		Frame::Get()->SetStatusMessage ( wxString::Format ( wxT ( "External DB: '%s'" ), dbname.GetFullName().GetData() ), 1 );
+		Frame::Get()->SetStatusMessage ( wxString::Format ( wxT ( "%s" ), dbname.GetFullPath().c_str() ), 1 );
 		EditorConfigST::Get()->SetTagsDatabase ( dbname.GetFullPath() );
 	}
 }

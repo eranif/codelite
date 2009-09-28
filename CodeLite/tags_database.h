@@ -168,6 +168,19 @@ public:
 	void DeleteByFilePrefix(const wxFileName& dbpath, const wxString &filePrefix);
 
 	/**
+	 * @brief delete all files from FILES table which starts with filePrefix
+	 * @param dbpath database file name
+	 * @param filePrefix prefix criterion
+	 */
+	void DeleteFromFilesByPrefix(const wxFileName &dbpath, const wxString &filePrefix);
+
+	/**
+	 * @brief delete files from FILES table
+	 * @param files
+	 */
+	void DeleteFromFiles        (const wxArrayString &files);
+
+	/**
 	 * Begin transaction.
 	 */
 	void Begin() {

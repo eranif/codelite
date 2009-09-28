@@ -75,6 +75,10 @@ protected:
 	virtual void OnClearAllUI      (wxUpdateUIEvent  &e);
 	virtual void OnRepeatOutputUI  (wxUpdateUIEvent  &e);
 	virtual void OnMouseDClick     (wxScintillaEvent &e);
+
+	virtual void OnStopSearch      (wxCommandEvent   &e);
+	virtual void OnStopSearchUI    (wxUpdateUIEvent  &e);
+
 	SearchData   GetSearchData     (wxScintilla *sci   );
 	void         DoOpenSearchResult(const SearchResult &result, wxScintilla *sci, int markerLine);
     DECLARE_EVENT_TABLE()

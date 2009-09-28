@@ -324,11 +324,24 @@ void Manager::AddToRecentlyOpenedWorkspaces ( const wxString &fileName )
 {
 	// Add this workspace to the history. Don't check for uniqueness:
 	// if it's already on the list, wxFileHistory will move it to the top
-	m_recentWorkspaces.AddFileToHistory ( fileName );
+	wxString short_name;
+	if( fileName.EndsWith(wxT(".workspace"), &short_name) ) {
+		m_recentWorkspaces.AddFileToHistory ( short_name );
+
+	} else {
+		m_recentWorkspaces.AddFileToHistory ( fileName );
+	}
 
 	//sync between the history object and the configuration file
 	wxArrayString files;
 	m_recentWorkspaces.GetFiles ( files );
+
+	for( size_t i=0; i<files.GetCount(); i++ ) {
+		if(files.Item(i).EndsWith(wxT(".workspace")) == false) {
+			files.Item(i).Append(wxT(".workspace"));
+		}
+	}
+
 	EditorConfigST::Get()->SetRecentlyOpenedWorkspaces ( files );
 }
 
@@ -345,6 +358,14 @@ void Manager::ClearWorkspaceHistory()
 void Manager::GetRecentlyOpenedWorkspaces ( wxArrayString &files )
 {
 	EditorConfigST::Get()->GetRecentlyOpenedWorkspaces ( files );
+	wxArrayString files_ok;
+	for(size_t i=0; i<files.GetCount(); i++){
+		if(wxFileName::FileExists(files.Item(i))) {
+			files_ok.Add(files.Item(i));
+		}
+	}
+	EditorConfigST::Get()->SetRecentlyOpenedWorkspaces( files_ok );
+	files = files_ok;
 }
 
 

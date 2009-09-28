@@ -140,10 +140,12 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 		offset = fwd ? 0 : text.Len()-1;
 		if (!StringFindReplacer::Search(text, offset, find, flags, pos, len)) {
 			m_findWhat->SetBackgroundColour(wxT("PINK"));
+			m_findWhat->Refresh();
 			return;
 		}
 	}
 	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+	m_findWhat->Refresh();
 	m_sci->SetSelection(pos, pos+len);
 }
 

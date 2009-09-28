@@ -223,6 +223,14 @@ void MainBook::ClearFileHistory()
 void MainBook::GetRecentlyOpenedFiles ( wxArrayString &files )
 {
 	EditorConfigST::Get()->GetRecentlyOpenedFies ( files );
+	wxArrayString files_ok;
+	for(size_t i=0; i<files.GetCount(); i++){
+		if(wxFileName::FileExists(files.Item(i))) {
+			files_ok.Add(files.Item(i));
+		}
+	}
+	EditorConfigST::Get()->SetRecentlyOpenedFies( files_ok );
+	files = files_ok;
 }
 
 void MainBook::UpdateNavBar(LEditor *editor)

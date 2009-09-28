@@ -2064,11 +2064,23 @@ wxString Frame::CreateWorkspaceTable()
 		html << wxT("<tr><td><font size=2 face=\"Verdana\">");
 		html << wxT("No workspaces found.") << wxT("</font></td></tr>");
 	} else {
+		wxColour lineCol(0xd0, 0xff, 0xff);
 		for (size_t i=0; i<files.GetCount(); i++) {
-			html << wxT("<tr><td><font size=2 face=\"Verdana\">");
-			html << wxT("<a href=\"action:open-file:") << files.Item(i) << wxT("\" >") << files.Item(i) << wxT("</a></font></td></tr>");
+			wxFileName fn( files.Item(i) );
+
+			lineCol.Set(lineCol.Red() == 0xff ? 0xd0 : 0xff, 0xff, 0xff);
+			lineCol = DrawingUtils::LightColour(lineCol, 1);
+			html << wxT("<tr bgcolor=\"") << lineCol.GetAsString(wxC2S_HTML_SYNTAX)<< wxT("\">")
+			     << wxT("<td><font size=2 face=\"Verdana\">")
+			     << wxT("<a href=\"action:open-file:")
+				 << fn.GetFullPath() << wxT("\" >")
+				 << fn.GetName()
+				 << wxT("</a></font></td>")
+				 << wxT("<td><font size=2 face=\"Verdana\">") << fn.GetFullPath() << wxT("</font></td>")
+				 << wxT("</tr>");
 		}
 	}
+
 	html << wxT("</table>");
 	return html;
 }
@@ -2086,9 +2098,21 @@ wxString Frame::CreateFilesTable()
 		html << wxT("<tr><td><font size=2 face=\"Verdana\">");
 		html << wxT("No files found.") << wxT("</font></td></tr>");
 	} else {
+		wxColour lineCol(0xd0, 0xff, 0xff);
 		for (size_t i=0; i<files.GetCount(); i++) {
-			html << wxT("<tr><td><font size=2 face=\"Verdana\">");
-			html << wxT("<a href=\"action:open-file:") << files.Item(i) << wxT("\" >") << files.Item(i) << wxT("</a></font></td></tr>");
+
+			wxFileName fn( files.Item(i) );
+			lineCol.Set(lineCol.Red() == 0xff ? 0xd0 : 0xff, 0xff, 0xff);
+
+			lineCol = DrawingUtils::LightColour(lineCol, 1);
+			html << wxT("<tr bgcolor=\"") << lineCol.GetAsString(wxC2S_HTML_SYNTAX)<< wxT("\">")
+			     << wxT("<td><font size=2 face=\"Verdana\">")
+			     << wxT("<a href=\"action:open-file:")
+				 << fn.GetFullPath() << wxT("\" >")
+				 << fn.GetFullName()
+				 << wxT("</a></font></td>")
+				 << wxT("<td><font size=2 face=\"Verdana\">") << fn.GetFullPath() << wxT("</font></td>")
+				 << wxT("</tr>");
 		}
 	}
 	html << wxT("</table>");
@@ -2139,7 +2163,7 @@ void Frame::CreateRecentlyOpenedWorkspacesMenu()
 
 		if (submenu) {
 			for (size_t i=0; i<files.GetCount(); i++) {
-				hs.AddFileToHistory(files.Item(i));
+				hs.AddFileToHistory(files.Item(i).BeforeLast(wxT('.')));
 			}
 			//set this menu as the recent file menu
 			hs.SetBaseId(RecentWorkspaceSubMenuID+1);
@@ -2172,7 +2196,11 @@ void Frame::OnRecentWorkspace(wxCommandEvent &event)
 	fh.GetFiles(files);
 
 	if (idx < files.GetCount()) {
-		ManagerST::Get()->OpenWorkspace(files.Item(idx));
+		wxString file_name (files.Item(idx));
+		if( file_name.EndsWith(wxT(".workspace")) == false ) {
+			file_name << wxT(".workspace");
+		}
+		ManagerST::Get()->OpenWorkspace( file_name );
 	}
 }
 

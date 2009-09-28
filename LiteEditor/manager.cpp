@@ -1994,25 +1994,19 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 		return;
 	}
 
-//    wxWindow *focusWin = wxWindow::FindFocus();
-
 	//try to open the file
 	wxFileName fn ( fileName );
 	LEditor *editor = Frame::Get()->GetMainBook()->GetActiveEditor();
-	if ( editor && editor->GetFileName().GetFullPath().CmpNoCase(fn.GetFullPath()) == 0 ) {
-		editor->HighlightLine ( lineno );
-		editor->GotoLine ( lineno-1 );
+	if ( editor && editor->GetFileName().GetFullPath().CmpNoCase(fn.GetFullPath()) == 0 && lineno > 0) {
+		editor->HighlightLine ( lineno   );
+		editor->GotoLine      ( lineno-1 );
 		editor->EnsureVisible ( lineno-1 );
-	} else if (Frame::Get()->GetMainBook()->OpenFile ( fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND)) {
+	} else if (Frame::Get()->GetMainBook()->OpenFile ( fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND) && lineno > 0) {
 		editor = Frame::Get()->GetMainBook()->GetActiveEditor();
 		if ( editor ) {
 			editor->HighlightLine ( lineno );
 		}
 	}
-
-//    if (focusWin) {
-//        focusWin->SetFocus();
-//    }
 }
 
 void Manager::DbgUnMarkDebuggerLine()

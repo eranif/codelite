@@ -2553,6 +2553,10 @@ void LEditor::DelAllBreakpointMarkers()
 
 void LEditor::HighlightLine(int lineno)
 {
+	if ( GetLineCount() <= 0 ) {
+		return;
+	}
+
 	int sci_line = lineno - 1;
 	if (GetLineCount() < sci_line -1) {
 		sci_line = GetLineCount() - 1;

@@ -66,7 +66,8 @@ class OptionsConfig : public ConfObject
 	wxString       m_programConsoleCommand;
 	wxString       m_eolMode;
 	bool           m_hideChangeMarkerMargin;
-
+	bool           m_hideOutpuPaneOnUserClick;
+	bool           m_showQuickFinder;
 public:
 	OptionsConfig(wxXmlNode *node);
 	virtual ~OptionsConfig(void);
@@ -75,6 +76,18 @@ public:
 	// Setters/Getters
 	//-------------------------------------
 
+	void SetShowQuickFinder(const bool& showQuickFinder) {
+		this->m_showQuickFinder = showQuickFinder;
+	}
+	const bool& GetShowQuickFinder() const {
+		return m_showQuickFinder;
+	}
+	void SetHideOutpuPaneOnUserClick(const bool& hideOutpuPaneOnUserClick) {
+		this->m_hideOutpuPaneOnUserClick = hideOutpuPaneOnUserClick;
+	}
+	const bool& GetHideOutpuPaneOnUserClick() const {
+		return m_hideOutpuPaneOnUserClick;
+	}
 	void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin) {
 		this->m_hideChangeMarkerMargin = hideChangeMarkerMargin;
 	}

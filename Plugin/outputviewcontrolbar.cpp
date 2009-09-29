@@ -1,4 +1,8 @@
 #include "outputviewcontrolbar.h"
+#include <wx/button.h>
+#include "editor_config.h"
+#include <wx/app.h>
+#include "plugin.h"
 #include <wx/image.h>
 #include <wx/menu.h>
 #include <wx/tokenzr.h>
@@ -20,19 +24,25 @@ static unsigned char list_bits[] = {
 };
 
 #ifdef __WXMSW__
-# define BUTTON_SPACER_X 5
-# define BUTTON_SPACER_Y 6
-# define BAR_SPACER      6
+#  define BUTTON_SPACER_X 5
+#  define BUTTON_SPACER_Y 6
+#  define BAR_SPACER      9
 #elif defined(__WXGTK__)
-# define BUTTON_SPACER_X 4
-# define BUTTON_SPACER_Y 3
-# define BAR_SPACER      5
+#  define BUTTON_SPACER_X 4
+#  define BUTTON_SPACER_Y 3
+#  define BAR_SPACER      5
 #else // __WXMAC__
-# define BUTTON_SPACER_X 6
-# define BUTTON_SPACER_Y 4
-# define BAR_SPACER      6
+#  define BUTTON_SPACER_X 6
+#  define BUTTON_SPACER_Y 4
+#  define BAR_SPACER      6
 #endif
 
+
+static wxString ST_CLASS          = wxT("Class, struct or union");
+static wxString ST_WORKSPACE_FILE = wxT("Workspace file");
+static wxString ST_MACRO          = wxT("Macro");
+static wxString ST_TYPEDEF        = wxT("Typedef");
+static wxString ST_FUNCTION       = wxT("Function");
 
 BEGIN_EVENT_TABLE(OutputViewControlBar, wxPanel)
 	EVT_PAINT           (OutputViewControlBar::OnPaint)
@@ -46,7 +56,7 @@ OutputViewControlBar::OutputViewControlBar(wxWindow* win, Notebook *book, wxAuiM
 		, m_aui  (aui)
 		, m_book (book)
 {
-	SetSizeHints( wxSize(-1, OutputViewControlBarButton::DoCalcButtonHeight(this, wxEmptyString, wxNullBitmap, BAR_SPACER) ) );
+//	SetSizeHints( wxSize(-1, OutputViewControlBarButton::DoCalcButtonHeight(this, wxEmptyString, wxNullBitmap, BAR_SPACER) ) );
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer( mainSizer );
 
@@ -57,6 +67,8 @@ OutputViewControlBar::OutputViewControlBar(wxWindow* win, Notebook *book, wxAuiM
 	if ( m_aui ) {
 		m_aui->Connect(wxEVT_AUI_RENDER, wxAuiManagerEventHandler(OutputViewControlBar::OnRender), NULL, this);
 	}
+	wxTheApp->Connect ( wxEVT_EDITOR_CLICKED         , wxCommandEventHandler ( OutputViewControlBar::OnEditorFocus          ), NULL, this );
+	wxTheApp->Connect ( wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler ( OutputViewControlBar::OnEditorSettingsChanged), NULL, this );
 }
 
 OutputViewControlBar::~OutputViewControlBar()
@@ -85,7 +97,7 @@ void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, 
 	OutputViewControlBarButton *button = new OutputViewControlBarButton(this, text, bmp, style);
 	button->SetState( selected ? OutputViewControlBarButton::Button_Pressed : OutputViewControlBarButton::Button_Normal );
 	m_buttons.push_back( button );
-	GetSizer()->Add(button, 0, wxALL | wxEXPAND, 1);
+	GetSizer()->Add(button, 0, wxTOP | wxBOTTOM | wxRIGHT | wxEXPAND, 3);
 	GetSizer()->Layout();
 	button->Refresh();
 }
@@ -184,12 +196,15 @@ void OutputViewControlBar::AddAllButtons()
 	AddButton ( wxT("More"), wxBitmap(img), false, 0 /* no text, no spacer */);
 
 	// Add the search control
-	OutputViewSearchCtrl *button = new OutputViewSearchCtrl(this);
-	m_buttons.push_back( button );
-	GetSizer()->Add(button, 0, wxALL | wxEXPAND, 1);
+	m_searchBar = new OutputViewSearchCtrl(this);
+	m_buttons.push_back( m_searchBar );
+	GetSizer()->Add(m_searchBar, 0, wxALL | wxEXPAND, 1);
 
-	// Hide it by default
-	GetSizer()->Hide(button);
+	// Hide it?
+	if(!EditorConfigST::Get()->GetOptions()->GetShowQuickFinder()) {
+		GetSizer()->Hide(m_searchBar);
+	}
+
 	GetSizer()->Layout();
 
 	if ( m_book ) {
@@ -267,6 +282,43 @@ void OutputViewControlBar::OnMenuSelection(wxCommandEvent& event)
 			DoToggleButton(button);
 			break;
 		}
+	}
+}
+
+void OutputViewControlBar::OnEditorSettingsChanged(wxCommandEvent& event)
+{
+	event.Skip();
+	if(!EditorConfigST::Get()->GetOptions()->GetShowQuickFinder()) {
+		// Hide it
+		if(GetSizer()->IsShown(m_searchBar)) {
+			GetSizer()->Hide(m_searchBar);
+			GetSizer()->Layout();
+		}
+	} else {
+		// Show it
+		if ( GetSizer()->IsShown(m_searchBar) == false ) {
+			GetSizer()->Show(m_searchBar);
+			GetSizer()->Layout();
+		}
+	}
+}
+
+void OutputViewControlBar::OnEditorFocus(wxCommandEvent& event)
+{
+	event.Skip();
+
+	if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+
+		// re-draw all the buttons
+		for (size_t i=0; i<m_buttons.size(); i++) {
+			OutputViewControlBarButton *button = m_buttons.at(i);
+			button->SetState( OutputViewControlBarButton::Button_Normal);
+			button->Refresh();
+		}
+
+		// and hide the output view
+		DoTogglePane(true);
+
 	}
 }
 
@@ -372,7 +424,7 @@ void OutputViewControlBarButton::OnPaint(wxPaintEvent& event)
 
 	// draw the border
 	if ( m_style != 0 ) {
-#ifdef __WXMAC__ 
+#ifdef __WXMAC__
 		// we need a darker color on Mac
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
 #else
@@ -491,13 +543,25 @@ OutputViewSearchCtrl::OutputViewSearchCtrl(wxWindow* win)
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer( mainSizer );
 
-	m_findWhat = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	m_findWhat = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2);
 	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	m_findWhat->SetMinSize(wxSize(200,-1));
 	m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OutputViewSearchCtrl::OnEnter), NULL, this);
 
-	mainSizer->Add(m_findWhat, 1, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5);
+	m_button = new wxButton(this, wxID_ANY, wxT(">>"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+	m_button->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OutputViewSearchCtrl::OnShowSearchOptions), NULL, this);
+	mainSizer->Add(m_button,   0, wxLEFT  | wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL | wxEXPAND, 5);
+	mainSizer->Add(m_findWhat, 1, wxRIGHT | wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL | wxEXPAND, 5);
 	mainSizer->Fit(this);
+
+	// Initialize the various search types
+	m_searchTypeArray.Add(ST_CLASS);
+	m_searchTypeArray.Add(ST_FUNCTION);
+	m_searchTypeArray.Add(ST_MACRO);
+	m_searchTypeArray.Add(ST_TYPEDEF);
+	m_searchTypeArray.Add(ST_WORKSPACE_FILE);
+
+	m_searchType = ST_WORKSPACE_FILE;
 }
 
 OutputViewSearchCtrl::~OutputViewSearchCtrl()
@@ -507,3 +571,35 @@ OutputViewSearchCtrl::~OutputViewSearchCtrl()
 void OutputViewSearchCtrl::OnEnter(wxCommandEvent& event)
 {
 }
+
+void OutputViewSearchCtrl::OnShowSearchOptions(wxCommandEvent& event)
+{
+	wxRect rect = m_button->GetRect();
+	wxMenu popupMenu;
+
+	wxMenuItem *item (NULL);
+
+	for(size_t i=0; i<m_searchTypeArray.GetCount(); i++) {
+		item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(m_searchTypeArray.Item(i).c_str()), m_searchTypeArray.Item(i), m_searchTypeArray.Item(i), wxITEM_CHECK);
+		popupMenu.Append( item );
+		item->Check( m_searchType == m_searchTypeArray.Item(i) );
+	}
+
+	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewSearchCtrl::OnMenuSelection), NULL, this);
+	PopupMenu( &popupMenu, rect.x, rect.y);
+
+}
+
+void OutputViewSearchCtrl::OnMenuSelection(wxCommandEvent& event)
+{
+	// set the focus to the m_findWhat control
+	m_findWhat->SetFocus();
+
+	for(size_t i=0; i<m_searchTypeArray.GetCount(); i++) {
+		if ( wxXmlResource::GetXRCID(m_searchTypeArray.Item(i).c_str()) == event.GetId() ) {
+			m_searchType = m_searchTypeArray.Item(i);
+			break;
+		}
+	}
+}
+

@@ -24,6 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "options_dlg2.h"
+#include "plugin.h"
+#include "editorsettingsdockingwidows.h"
 #include "editorsettingsterminal.h"
 #include "editorsettingscaret.h"
 
@@ -33,6 +35,7 @@
 #include "editoroptionsgeneralindentationpanel.h"
 #include "editoroptionsgeneralrightmarginpanel.h"
 #include "editoroptionsgeneralsavepanel.h"
+#include "globals.h"
 
 #include "editorsettingscomments.h"
 #include "editorsettingscommentsdoxygenpanel.h"
@@ -88,7 +91,7 @@ void OptionsDlg2::DoSave()
 		if (*it) {
 			TreeBookNodeBase* child = *it;
 			child->Save( options );
-			
+
 			if ( !this->restartRquired ) {
 				this->restartRquired = child->IsRestartRequired();
 			}
@@ -101,7 +104,10 @@ void OptionsDlg2::DoSave()
 	EditorConfigST::Get()->Save();
 
 	Frame::Get()->GetMainBook()->ApplySettingsChanges();
-	
+
+	// Notify plugins about settings changed
+	PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
+
 	if ( this->restartRquired ) {
 		WindowAttrManager::Save(this, wxT("OptionsDlgAttr"), NULL);
 	}
@@ -127,6 +133,8 @@ void OptionsDlg2::Initialize()
 	AddPage(new EditorSettingsFolding(m_treeBook),        wxT("Folding"));
 	AddPage(new EditorSettingsBookmarksPanel(m_treeBook), wxT("Bookmarks"));
 	AddPage(new EditorSettingsDialogs(m_treeBook),        wxT("Dialogs"));
+	AddPage(new EditorSettingsDockingWindows(m_treeBook), wxT("Docking Windows"));
+
 #ifndef __WXMSW__
 	// the Terminal page should NOT be added under Windows
 	AddPage(new EditorSettingsTerminal(m_treeBook),       wxT("Terminal"));

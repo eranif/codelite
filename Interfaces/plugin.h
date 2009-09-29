@@ -136,6 +136,16 @@ enum {
 	//clientData is NULL
 	wxEVT_ALL_EDITORS_CLOSED,
 
+	// This event is sent when the user clicks inside an editor
+	// this event can not be Veto()
+	// clientData is NULL. You may query the clicked editor by calling to
+	// IManager::GetActiveEditor()
+	wxEVT_EDITOR_CLICKED,
+
+	// User dismissed the Editor's settings dialog with
+	// Apply or OK (Settings | Editor)
+	// clientData is NULL
+	wxEVT_EDITOR_SETTINGS_CHANGED,
 
 	// This event is sent from plugins to the application to tell it to reload
 	// any open files (and re-tag them as well)

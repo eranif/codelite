@@ -11,6 +11,7 @@
     
     
     
+    
     ]]>
     </Plugin>
   </Plugins>
@@ -188,6 +189,12 @@
           <File Name="editorsettings_terminal_base.h"/>
           <File Name="editorsettingsterminal.h"/>
           <File Name="editorsettingsterminal.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="DockingWindows">
+          <File Name="editorsettingsdockingwindowsbase.cpp"/>
+          <File Name="editorsettingsdockingwindowsbase.h"/>
+          <File Name="editorsettingsdockingwidows.h"/>
+          <File Name="editorsettingsdockingwidows.cpp"/>
         </VirtualDirectory>
       </VirtualDirectory>
       <File Name="findinfilesdlgbase.h"/>
@@ -525,6 +532,7 @@
     <File Name="editorsettingscaretbase.fbp"/>
     <File Name="editorsettingsterminal.fbp"/>
     <File Name="debuggerasciiviewerbase.fbp"/>
+    <File Name="editorsettingsdockingwindowsbase.fbp"/>
   </VirtualDirectory>
   <Dependencies Name="UnixCodeLite">
     <Project Name="wxscintilla"/>

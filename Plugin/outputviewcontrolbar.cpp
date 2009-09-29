@@ -23,11 +23,16 @@ static unsigned char list_bits[] = {
 # define BUTTON_SPACER_X 5
 # define BUTTON_SPACER_Y 6
 # define BAR_SPACER      6
-#else
+#elif defined(__WXGTK__)
 # define BUTTON_SPACER_X 4
 # define BUTTON_SPACER_Y 3
 # define BAR_SPACER      5
+#else // __WXMAC__
+# define BUTTON_SPACER_X 6
+# define BUTTON_SPACER_Y 4
+# define BAR_SPACER      6
 #endif
+
 
 BEGIN_EVENT_TABLE(OutputViewControlBar, wxPanel)
 	EVT_PAINT           (OutputViewControlBar::OnPaint)
@@ -367,7 +372,12 @@ void OutputViewControlBarButton::OnPaint(wxPaintEvent& event)
 
 	// draw the border
 	if ( m_style != 0 ) {
+#ifdef __WXMAC__ 
+		// we need a darker color on Mac
+		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+#else
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+#endif
 		dc.SetBrush( *wxTRANSPARENT_BRUSH );
 		dc.DrawRoundedRectangle(rect, 0);
 	}

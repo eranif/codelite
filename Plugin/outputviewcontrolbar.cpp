@@ -440,7 +440,9 @@ void OutputViewControlBarButton::DoShowPopupMenu()
 	OutputViewControlBar *bar = (OutputViewControlBar *)GetParent();
 	for (size_t i=0; i<bar->m_buttons.size(); i++) {
 		OutputViewControlBarButton *button = bar->m_buttons.at(i);
-		if ( button->GetText() == wxT("More")) {
+
+		// Skip the More button and empty text buttons
+		if ( button->GetText() == wxT("More") || button->GetText().IsEmpty() ) {
 			continue;
 		}
 

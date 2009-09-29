@@ -157,8 +157,8 @@ void OutputViewControlBar::DoMarkActive(const wxString& name)
 	}
 
 	if ( m_book && name.IsEmpty() == false ) {
-		for(size_t i=0; i<m_book->GetPageCount(); i++) {
-			if( m_book->GetPageText(i) == name ) {
+		for (size_t i=0; i<m_book->GetPageCount(); i++) {
+			if ( m_book->GetPageText(i) == name ) {
 				m_book->SetSelection(i, false);
 				break;
 			}
@@ -175,10 +175,20 @@ void OutputViewControlBar::AddAllButtons()
 	img.Replace(255,255,255,color.Red(),color.Green(),color.Blue());
 	img.SetMaskColour(123, 123, 123);
 
+	// Add the 'More' button
 	AddButton ( wxT("More"), wxBitmap(img), false, 0 /* no text, no spacer */);
 
+	// Add the search control
+	OutputViewSearchCtrl *button = new OutputViewSearchCtrl(this);
+	m_buttons.push_back( button );
+	GetSizer()->Add(button, 0, wxALL | wxEXPAND, 1);
+
+	// Hide it by default
+	GetSizer()->Hide(button);
+	GetSizer()->Layout();
+
 	if ( m_book ) {
-		for(size_t i=0; i<m_book->GetPageCount(); i++) {
+		for (size_t i=0; i<m_book->GetPageCount(); i++) {
 			wxString text = m_book->GetPageText(i);
 			wxBitmap bmp  = m_book->GetTabContainer()->IndexToTab(i)->GetBmp();
 
@@ -201,7 +211,7 @@ bool OutputViewControlBar::DoFindDockInfo(const wxString &saved_perspective, con
 {
 	// search for the 'Output View' perspective
 	wxArrayString panes = wxStringTokenize(saved_perspective, wxT("|"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<panes.GetCount(); i++){
+	for (size_t i=0; i<panes.GetCount(); i++) {
 		if ( panes.Item(i).StartsWith(dock_name) ) {
 			dock_info = panes.Item(i);
 			return true;
@@ -246,7 +256,7 @@ OutputViewControlBarButton* OutputViewControlBar::DoFindButton(const wxString& n
 
 void OutputViewControlBar::OnMenuSelection(wxCommandEvent& event)
 {
-	for(size_t i=0; i<m_buttons.size(); i++){
+	for (size_t i=0; i<m_buttons.size(); i++) {
 		OutputViewControlBarButton *button = m_buttons.at(i);
 		if ( wxXmlResource::GetXRCID(button->GetText().c_str()) == event.GetId() ) {
 			DoToggleButton(button);
@@ -273,12 +283,14 @@ OutputViewControlBarButton::OutputViewControlBarButton(wxWindow* win, const wxSt
 		, m_bmp  (bmp)
 		, m_style (style)
 {
-	SetSizeHints(DoCalcButtonWidth( this,
-									m_style & Button_UseText  ? m_text : wxT(""),
-									m_bmp,
-									m_style & Button_UseXSpacer ? BUTTON_SPACER_X : 1),
+	if ( title.IsEmpty() && bmp.IsOk() == false ) return;
 
-									DoCalcButtonHeight(this, wxEmptyString, m_bmp, BUTTON_SPACER_Y));
+	SetSizeHints(DoCalcButtonWidth( this,
+	                                m_style & Button_UseText  ? m_text : wxT(""),
+	                                m_bmp,
+	                                m_style & Button_UseXSpacer ? BUTTON_SPACER_X : 1),
+
+	             DoCalcButtonHeight(this, wxEmptyString, m_bmp, BUTTON_SPACER_Y));
 }
 
 OutputViewControlBarButton::~OutputViewControlBarButton()
@@ -457,4 +469,29 @@ void OutputViewControlBarButton::DoShowPopupMenu()
 
 	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewControlBar::OnMenuSelection), NULL, bar);
 	PopupMenu( &popupMenu, rr.x, rr.y );
+}
+
+// -----------------------------------------------------------------------------------------
+
+OutputViewSearchCtrl::OutputViewSearchCtrl(wxWindow* win)
+		: OutputViewControlBarButton(win, wxEmptyString, wxNullBitmap)
+{
+	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
+	SetSizer( mainSizer );
+
+	m_findWhat = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+	m_findWhat->SetMinSize(wxSize(200,-1));
+	m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OutputViewSearchCtrl::OnEnter), NULL, this);
+
+	mainSizer->Add(m_findWhat, 1, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5);
+	mainSizer->Fit(this);
+}
+
+OutputViewSearchCtrl::~OutputViewSearchCtrl()
+{
+}
+
+void OutputViewSearchCtrl::OnEnter(wxCommandEvent& event)
+{
 }

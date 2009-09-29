@@ -6,6 +6,7 @@
 #include <wx/bitmap.h>
 #include <vector>
 #include "custom_notebook.h"
+#include <wx/textctrl.h>
 
 //--------------------------------------------------------
 class wxAuiManager;
@@ -104,9 +105,20 @@ public:
 	}
 
 	DECLARE_EVENT_TABLE();
-	void OnPaint          (wxPaintEvent &event);
-	void OnEraseBackground(wxEraseEvent &event);
-	void OnMouseLDown     (wxMouseEvent &event);
+	virtual void OnPaint          (wxPaintEvent &event);
+	virtual void OnEraseBackground(wxEraseEvent &event);
+	virtual void OnMouseLDown     (wxMouseEvent &event);
 };
 
+class OutputViewSearchCtrl : public OutputViewControlBarButton {
+	wxTextCtrl   *m_findWhat;
+public:
+	OutputViewSearchCtrl(wxWindow *win);
+	~OutputViewSearchCtrl();
+	// override parent methods which we dont really need
+	virtual void OnPaint          (wxPaintEvent &event) {event.Skip();}
+	virtual void OnEraseBackground(wxEraseEvent &event) {event.Skip();}
+	virtual void OnMouseLDown     (wxMouseEvent &event) {event.Skip();}
+	virtual void OnEnter          (wxCommandEvent &event);
+};
 #endif // __auicontrolbar__

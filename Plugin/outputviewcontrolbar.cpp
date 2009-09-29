@@ -1,5 +1,6 @@
 #include "outputviewcontrolbar.h"
 #include <wx/button.h>
+#include <wx/frame.h>
 #include "editor_config.h"
 #include <wx/app.h>
 #include "plugin.h"
@@ -288,17 +289,25 @@ void OutputViewControlBar::OnMenuSelection(wxCommandEvent& event)
 void OutputViewControlBar::OnEditorSettingsChanged(wxCommandEvent& event)
 {
 	event.Skip();
+	wxFrame * main_frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
 	if(!EditorConfigST::Get()->GetOptions()->GetShowQuickFinder()) {
 		// Hide it
 		if(GetSizer()->IsShown(m_searchBar)) {
 			GetSizer()->Hide(m_searchBar);
 			GetSizer()->Layout();
+
+			if ( main_frame ) {
+				main_frame->SendSizeEvent();
+			}
 		}
 	} else {
 		// Show it
 		if ( GetSizer()->IsShown(m_searchBar) == false ) {
 			GetSizer()->Show(m_searchBar);
 			GetSizer()->Layout();
+			if ( main_frame ) {
+				main_frame->SendSizeEvent();
+			}
 		}
 	}
 }

@@ -61,7 +61,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_eolMode(wxT("Default"))
 		, m_hideChangeMarkerMargin(false)
 		, m_hideOutpuPaneOnUserClick(false)
-		, m_showQuickFinder(true)
+		, m_showQuickFinder(false)
 {
 	//set the default font name to be UTF8
 	SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));

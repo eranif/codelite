@@ -147,7 +147,7 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 				}
 			}
 		}
-		wxTheApp->GetTopWindow()->Freeze();
+		wxTheApp->GetTopWindow()->Thaw();
 	}
 }
 

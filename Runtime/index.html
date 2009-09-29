@@ -1,68 +1,49 @@
 <html>
 <body>
-<table border=0 width="100%" >
+<table border=0 width="100%" border=0>
 	<tr>
-		<td bgcolor="$(ACTIVE_CAPTION)">
-		<strong>
-		<font size="3" face="Verdana" color="$(ACTIVE_CAPTION_TEXT)">
-		Common tasks
-		</font>
-		</strong>
+		<td>
+		<img src="$(InstallPath)/images/common_tasks.png"/></td>
 		</td>
 	</tr>
-	<tr align="center">
+	<tr>
 	<td>
 		<table width="100%" border=0 >
-		<tr><td><font size="2" face="Verdana">
+		<tr><td align="left"><font size="2" face="Verdana">
 			<a href="http://codelite.org/wiki/pmwiki.php?n=LiteEditor.Documentation">Open CodeLite Online Help<img src="$(InstallPath)/images/help_earth.png"/></a>
 		</font></td>
-		<td><font size="2" face="Verdana">
+		<td align="left"><font size="2" face="Verdana">
 			<a href="http://codelite.org/forum/">Visit CodeLite Forums</a>
 		</font></td></tr>
-		<tr><td><font size="2" face="Verdana">
+		<tr><td align="left"><font size="2" face="Verdana">
 			<a href="action:create-workspace">Create New Workspace</a>
 		</font></td>
-		<td><font size="2" face="Verdana">
+		<td align="left"><font size="2" face="Verdana">
 			<a href="action:open-workspace">Open Workspace</a>
-		</font></td></tr>
-		<tr>
-		<td><font size="2" face="Verdana"></font></td>
-		<td><font size="2" face="Verdana">
-			<a href="action:import-msvs-solution">Import Microsoft Visual Studio Solution File</a>
 		</font></td></tr>
 		</table>
 	</td>
 	</tr>
-	<hr>
-	<tr>
-		<td bgcolor="$(ACTIVE_CAPTION)">
-		<strong>
-		<font size="3" face="Verdana" color="$(ACTIVE_CAPTION_TEXT)">
-		Recently opened workspaces:
-		</font>
-		</strong>
-		</td>
+	<tr><td><hr></td></tr>
+	<tr><td><br></td></tr>
+	<tr><td>
+	<img src="$(InstallPath)/images/recent_workspaces.png"/></td>
 	</tr>
 	<tr>
 		<td>
 		$(WorkspaceTable)
 		</td>
 	</tr>
-	<tr>
-		<td bgcolor="$(ACTIVE_CAPTION)">
-		<strong>
-		<font size="3" face="Verdana" color="$(ACTIVE_CAPTION_TEXT)">
-		Recently opened files:
-		</font>
-		</strong>
-		</td>
-	</tr>
+	<tr><td><br></td></tr>
+	<tr><td><hr></td></tr>
+	<tr><td>
+	<img src="$(InstallPath)/images/recent_files.png"/></td>
+	</td></tr>
 	<tr>
 		<td>
 		$(FilesTable)
 		</td>
 	</tr>
-	<hr>
 </table>
 </body>
 </html>

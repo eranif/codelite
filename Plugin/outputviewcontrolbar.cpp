@@ -113,8 +113,7 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 {
 	static wxString saved_dock_info;
 	if ( m_book && m_aui ) {
-
-		GetParent()->Freeze();
+		wxTheApp->GetTopWindow()->Freeze();
 		wxAuiPaneInfo &pane_info = m_aui->GetPane(wxT("Output View"));
 		wxString dock_info ( wxString::Format(wxT("dock_size(%d,%d,%d)"), pane_info.dock_direction, pane_info.dock_layer, pane_info.dock_row) );
 		if ( hide ) {
@@ -148,7 +147,7 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 				}
 			}
 		}
-		GetParent()->Thaw();
+		wxTheApp->GetTopWindow()->Freeze();
 	}
 }
 
@@ -559,8 +558,8 @@ OutputViewSearchCtrl::OutputViewSearchCtrl(wxWindow* win)
 
 	m_button = new wxButton(this, wxID_ANY, wxT(">>"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	m_button->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OutputViewSearchCtrl::OnShowSearchOptions), NULL, this);
-	mainSizer->Add(m_button,   0, wxLEFT  | wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL | wxEXPAND, 5);
-	mainSizer->Add(m_findWhat, 1, wxRIGHT | wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL | wxEXPAND, 5);
+	mainSizer->Add(m_button,   0, wxLEFT  | wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL | wxEXPAND, 2);
+	mainSizer->Add(m_findWhat, 1, wxRIGHT | wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL | wxEXPAND, 2);
 	mainSizer->Fit(this);
 
 	// Initialize the various search types

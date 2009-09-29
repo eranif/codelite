@@ -295,6 +295,10 @@ void OutputViewControlBar::OnEditorSettingsChanged(wxCommandEvent& event)
 			GetSizer()->Hide(m_searchBar);
 			GetSizer()->Layout();
 
+			for (size_t i=0; i<m_buttons.size(); i++) {
+				OutputViewControlBarButton *button = m_buttons.at(i);
+				button->Refresh();
+			}
 			if ( main_frame ) {
 				main_frame->SendSizeEvent();
 			}
@@ -304,6 +308,12 @@ void OutputViewControlBar::OnEditorSettingsChanged(wxCommandEvent& event)
 		if ( GetSizer()->IsShown(m_searchBar) == false ) {
 			GetSizer()->Show(m_searchBar);
 			GetSizer()->Layout();
+
+			for (size_t i=0; i<m_buttons.size(); i++) {
+				OutputViewControlBarButton *button = m_buttons.at(i);
+				button->Refresh();
+			}
+
 			if ( main_frame ) {
 				main_frame->SendSizeEvent();
 			}

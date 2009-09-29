@@ -26,8 +26,8 @@ static unsigned char list_bits[] = {
 
 #ifdef __WXMSW__
 #  define BUTTON_SPACER_X 5
-#  define BUTTON_SPACER_Y 6
-#  define BAR_SPACER      9
+#  define BUTTON_SPACER_Y 4
+#  define BAR_SPACER      6
 #elif defined(__WXGTK__)
 #  define BUTTON_SPACER_X 4
 #  define BUTTON_SPACER_Y 3

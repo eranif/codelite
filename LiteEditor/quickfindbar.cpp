@@ -63,7 +63,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 	wxStaticText *text = new wxStaticText(this, wxID_ANY, wxT("Find:"));
 	mainSizer->Add(text, 0, CONTROL_ALIGN_STYLE, 2);
 
-	m_findWhat = new wxTextCtrl(this, XRCID("find_what_quick"), wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	m_findWhat = new wxTextCtrl(this, XRCID("find_what_quick"), wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2);
 	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 	m_findWhat->SetMinSize(wxSize(200,-1));
 	m_findWhat->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBar::OnKeyDown), NULL, this);

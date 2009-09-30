@@ -252,6 +252,16 @@ public:
 	 * @return browsing record
 	 */
 	virtual BrowseRecord CreateBrowseRecord() = 0;
+
+	/**
+	 * @brief search the editor for pattern. If pattern is found, the editor will then search for 'what'
+	 * inside the pattern and will select it
+	 * @param pattern pattern to search in the editor
+	 * @param what    sub string of pattern to select
+	 * @param navmgr  Navigation manager to place browsing recrods
+	 * @return return true if a match was found, false otherwise
+	 */
+	virtual bool FindAndSelect(const wxString &pattern, const wxString &what, NavMgr *navmgr) = 0;
 };
 
 #endif //IEDITOR_H

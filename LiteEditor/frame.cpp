@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "quickfinder.h"
 #include "outputviewcontrolbar.h"
 #include "clauidockart.h"
 
@@ -175,10 +176,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(wxID_UNDO,                         Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_REDO,                         Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_CUT,                          Frame::DispatchCommandEvent)
-	//	EVT_MENU(wxID_COPY,                         Frame::DispatchCommandEvent)
-	//	EVT_MENU(wxID_PASTE,                        Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_DUPLICATE,                    Frame::DispatchCommandEvent)
-	EVT_MENU(wxID_SELECTALL,                    Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_line"),              Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_line_end"),          Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_line_start"),        Frame::DispatchCommandEvent)
@@ -196,10 +194,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(wxID_UNDO,                    Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_REDO,                    Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_CUT,                     Frame::DispatchUpdateUIEvent)
-	//	EVT_UPDATE_UI(wxID_COPY,                    Frame::DispatchUpdateUIEvent)
-	//	EVT_UPDATE_UI(wxID_PASTE,                   Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_DUPLICATE,               Frame::DispatchUpdateUIEvent)
-	//EVT_UPDATE_UI(wxID_SELECTALL,               Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(XRCID("delete_line"),         Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("delete_line_end"),     Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("delete_line_start"),   Frame::OnFileExistUpdateUI)
@@ -251,14 +246,15 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//-------------------------------------------------------
 	EVT_MENU(wxID_FIND,                         Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_REPLACE,                      Frame::DispatchCommandEvent)
+	EVT_MENU(XRCID("show_quick_finder"),        Frame::OnShowQuickFinder   )
 	EVT_MENU(XRCID("find_next"),                Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("find_previous"),            Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("find_next_at_caret"),       Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("find_previous_at_caret"),   Frame::DispatchCommandEvent)
-	EVT_MENU(XRCID("incremental_search"),       Frame::OnIncrementalSearch)
-	EVT_MENU(XRCID("find_resource"),            Frame::OnFindResource)
-	EVT_MENU(XRCID("find_type"),                Frame::OnFindType)
-	EVT_MENU(XRCID("find_symbol"),              Frame::OnQuickOutline)
+	EVT_MENU(XRCID("incremental_search"),       Frame::OnIncrementalSearch )
+	EVT_MENU(XRCID("find_resource"),            Frame::OnFindResource      )
+	EVT_MENU(XRCID("find_type"),                Frame::OnFindType          )
+	EVT_MENU(XRCID("find_symbol"),              Frame::OnQuickOutline      )
 	EVT_MENU(XRCID("goto_definition"),          Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("goto_previous_definition"), Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("goto_linenumber"),          Frame::DispatchCommandEvent)
@@ -277,6 +273,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("find_previous_at_caret"),  Frame::OnFileExistUpdateUI   )
 	EVT_UPDATE_UI(XRCID("incremental_search"),      Frame::OnFileExistUpdateUI   )
 	EVT_UPDATE_UI(XRCID("find_resource"),           Frame::OnWorkspaceOpen       )
+	EVT_UPDATE_UI(XRCID("show_quick_finder"),       Frame::OnWorkspaceOpen       )
 	EVT_UPDATE_UI(XRCID("find_type"),               Frame::OnWorkspaceOpen       )
 	EVT_UPDATE_UI(XRCID("find_symbol"),             Frame::OnCompleteWordUpdateUI)
 	EVT_UPDATE_UI(XRCID("goto_definition"),         Frame::DispatchUpdateUIEvent )
@@ -779,6 +776,9 @@ void Frame::CreateGUIControls(void)
 	DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), ManagerST::Get()->GetInstallDir());
 	DebuggerMgr::Get().LoadDebuggers();
 
+	// Initialize the QuickFinder
+	QuickFinder::Initialize(PluginManager::Get());
+
 	wxString sessConfFile;
 	sessConfFile << ManagerST::Get()->GetStarupDirectory() << wxT("/config/sessions.xml");
 	SessionManager::Get().Load(sessConfFile);
@@ -898,6 +898,7 @@ void Frame::CreateToolbars24()
 	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace24")), wxT("Find"));
 	tb->AddTool(wxID_REPLACE, wxT("Replace"), wxXmlResource::Get()->LoadBitmap(wxT("refresh24")), wxT("Replace"));
 	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"), wxXmlResource::Get()->LoadBitmap(wxT("find_in_files24")), wxT("Find In Files"));
+	tb->AddTool(XRCID("show_quick_finder"), wxT("Show QuickFinder"), wxXmlResource::Get()->LoadBitmap(wxT("quickfinder24")), wxT("Show QuickFinder"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_resource24")), wxT("Find Resource In Workspace"));
 	tb->AddTool(XRCID("find_type"), wxT("Find Type In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_type24")), wxT("Find Type In Workspace"));
@@ -1018,6 +1019,7 @@ void Frame::CreateToolbars16()
 	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace16")), wxT("Find"));
 	tb->AddTool(wxID_REPLACE, wxT("Replace"), wxXmlResource::Get()->LoadBitmap(wxT("refresh16")), wxT("Replace"));
 	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"), wxXmlResource::Get()->LoadBitmap(wxT("find_in_files16")), wxT("Find In Files"));
+	tb->AddTool(XRCID("show_quick_finder"), wxT("Show QuickFinder"), wxXmlResource::Get()->LoadBitmap(wxT("quickfinder16")), wxT("Show QuickFinder"));
 	tb->AddSeparator();
 	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_resource16")), wxT("Find Resource In Workspace"));
 	tb->AddTool(XRCID("find_type"), wxT("Find Type In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_type16")), wxT("Find Type In Workspace"));
@@ -2071,13 +2073,13 @@ wxString Frame::CreateWorkspaceTable()
 			lineCol.Set(lineCol.Red() == 0xff ? 0xd0 : 0xff, 0xff, 0xff);
 			lineCol = DrawingUtils::LightColour(lineCol, 1);
 			html << wxT("<tr bgcolor=\"") << lineCol.GetAsString(wxC2S_HTML_SYNTAX)<< wxT("\">")
-			     << wxT("<td><font size=2 face=\"Verdana\">")
-			     << wxT("<a href=\"action:open-file:")
-				 << fn.GetFullPath() << wxT("\" >")
-				 << fn.GetName()
-				 << wxT("</a></font></td>")
-				 << wxT("<td><font size=2 face=\"Verdana\">") << fn.GetFullPath() << wxT("</font></td>")
-				 << wxT("</tr>");
+			<< wxT("<td><font size=2 face=\"Verdana\">")
+			<< wxT("<a href=\"action:open-file:")
+			<< fn.GetFullPath() << wxT("\" >")
+			<< fn.GetName()
+			<< wxT("</a></font></td>")
+			<< wxT("<td><font size=2 face=\"Verdana\">") << fn.GetFullPath() << wxT("</font></td>")
+			<< wxT("</tr>");
 		}
 	}
 
@@ -2106,13 +2108,13 @@ wxString Frame::CreateFilesTable()
 
 			lineCol = DrawingUtils::LightColour(lineCol, 1);
 			html << wxT("<tr bgcolor=\"") << lineCol.GetAsString(wxC2S_HTML_SYNTAX)<< wxT("\">")
-			     << wxT("<td><font size=2 face=\"Verdana\">")
-			     << wxT("<a href=\"action:open-file:")
-				 << fn.GetFullPath() << wxT("\" >")
-				 << fn.GetFullName()
-				 << wxT("</a></font></td>")
-				 << wxT("<td><font size=2 face=\"Verdana\">") << fn.GetFullPath() << wxT("</font></td>")
-				 << wxT("</tr>");
+			<< wxT("<td><font size=2 face=\"Verdana\">")
+			<< wxT("<a href=\"action:open-file:")
+			<< fn.GetFullPath() << wxT("\" >")
+			<< fn.GetFullName()
+			<< wxT("</a></font></td>")
+			<< wxT("<td><font size=2 face=\"Verdana\">") << fn.GetFullPath() << wxT("</font></td>")
+			<< wxT("</tr>");
 		}
 	}
 	html << wxT("</table>");
@@ -2197,7 +2199,7 @@ void Frame::OnRecentWorkspace(wxCommandEvent &event)
 
 	if (idx < files.GetCount()) {
 		wxString file_name (files.Item(idx));
-		if( file_name.EndsWith(wxT(".workspace")) == false ) {
+		if ( file_name.EndsWith(wxT(".workspace")) == false ) {
 			file_name << wxT(".workspace");
 		}
 		ManagerST::Get()->OpenWorkspace( file_name );
@@ -3459,4 +3461,16 @@ void Frame::OnNextFiFMatchUI(wxUpdateUIEvent& e)
 void Frame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e)
 {
 	e.Enable(GetOutputPane()->GetFindResultsTab()->GetPageCount() > 0);
+}
+
+void Frame::OnShowQuickFinder(wxCommandEvent& e)
+{
+	// the proper way of showing it, is by setting the configuration to true and
+	// sending an event
+	// Notify plugins about settings changed
+	OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+	opts->SetShowQuickFinder( true );
+	EditorConfigST::Get()->SetOptions( opts );
+
+	PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
 }

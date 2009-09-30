@@ -1,5 +1,6 @@
 <resource>
 	<object class="wxBitmap" name="downarrow">res/downarrow.png</object>
+	<object class="wxBitmap" name="findwhat">res/find_what.png</object>
 	<object class="wxBitmap" name="fold_airplane">res/outbox.png</object>
 	<object class="wxBitmap" name="read_only">res/lock.png</object>
 	<object class="wxBitmap" name="find_refresh">res/find_refresh.png</object>
@@ -84,6 +85,7 @@
 	<!--
 		Toolbar bitmaps (24x24)
 	-->
+	<object class="wxBitmap" name="quickfinder24">res/24/quickfinder.png</object>
 	<object class="wxBitmap" name="outline24">res/24/text_tree.png</object>
 	<object class="wxBitmap" name="configure_ext_tools24">res/24/external_tools24.png</object>
 	<object class="wxBitmap" name="ext_tool_default24">res/24/gear24.png</object>
@@ -137,6 +139,7 @@
 	<!--
 		Toolbar bitmaps (16x16)
 	-->
+	<object class="wxBitmap" name="quickfinder16">res/16/quickfinder.png</object>
 	<object class="wxBitmap" name="outline16">res/16/text_tree.png</object>
 	<object class="wxBitmap" name="configure_ext_tools16">res/16/external_tools16.png</object>
 	<object class="wxBitmap" name="ext_tool_default16">res/16/gear16.png</object>

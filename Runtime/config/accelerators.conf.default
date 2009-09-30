@@ -58,6 +58,7 @@ toggle_panes|View|Toggle All Panes|Ctrl-M
 23508|View::View As|Text|
 23509|View::View As|XML|
 find_in_files|Search|Find In Files...|Ctrl-Shift-F
+show_quick_finder|Search|Show QuickFinder...|Ctrl-Q
 wxID_FIND|Search|Find...|Ctrl-K
 wxID_REPLACE|Search|Replace...|Ctrl-H
 find_next|Search|Find Next|F3

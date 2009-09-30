@@ -1650,92 +1650,7 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 
 bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 {
-	BrowseRecord jumpfrom = CreateBrowseRecord();
-
-	wxString pattern ( _pattern );
-	pattern.StartsWith ( wxT ( "/^" ), &pattern );
-
-	if ( pattern.EndsWith ( wxT ( "$/" ) ) ) {
-		pattern = pattern.Left ( pattern.Len()-2 );
-	} else if ( pattern.EndsWith ( wxT ( "/" ) ) ) {
-		pattern = pattern.Left ( pattern.Len()-1 );
-	}
-
-	size_t flags = wxSD_MATCHCASE;
-
-	FindReplaceData data;
-	data.SetFindString ( pattern );
-	data.SetFlags ( flags );
-
-	// keep current position
-	long curr_pos = GetCurrentPos();
-	int match_len ( 0 ), pos ( 0 );
-
-	// set the caret at the document start
-	SetCurrentPos ( 0 );
-	SetSelectionStart ( 0 );
-	SetSelectionEnd ( 0 );
-	int offset ( 0 );
-	bool again ( false );
-	bool res = false;
-
-	do {
-		again = false;
-		flags = wxSD_MATCHCASE;
-
-		if ( StringFindReplacer::Search ( GetText(), offset, pattern, flags, pos, match_len ) ) {
-
-			int line = LineFromPosition ( pos );
-			wxString dbg_line = GetLine ( line ).Trim().Trim ( false );
-
-			wxString tmp_pattern ( pattern );
-			if ( dbg_line.Len() != tmp_pattern.Trim().Trim ( false ).Len() ) {
-				offset = pos + match_len;
-				again = true;
-			} else {
-
-				// select only the name at the give text range
-				wxString display_name = name.BeforeFirst ( wxT ( '(' ) );
-
-				int match_len1 ( 0 ), pos1 ( 0 );
-				flags |= wxSD_SEARCH_BACKWARD;
-				flags |= wxSD_MATCHWHOLEWORD;
-
-				// the inner search is done on the pattern without without the part of the
-				// signature
-				pattern = pattern.BeforeFirst ( wxT ( '(' ) );
-				if ( StringFindReplacer::Search ( pattern, UTF8Length ( pattern, pattern.Len() ), display_name, flags, pos1, match_len1 ) ) {
-
-					// select only the word
-					if ( GetContext()->IsCommentOrString ( pos+pos1 ) ) {
-						// try again
-						offset = pos + pos1;
-						again = true;
-					} else {
-						SetSelection ( pos + pos1, pos + pos1 + match_len1 );
-						res = true;
-					}
-				} else {
-
-					// as a fallback, mark the whole line
-					SetSelection ( pos, pos + match_len );
-					res = true;
-				}
-			}
-
-		} else {
-			wxLogMessage ( wxT ( "Failed to find[" ) + pattern + wxT ( "]" ) );
-
-			// match failed, restore the caret
-			SetCurrentPos ( curr_pos );
-			SetSelectionStart ( curr_pos );
-			SetSelectionEnd ( curr_pos );
-		}
-	} while ( again );
-	if (res) {
-		NavMgr::Get()->AddJump(jumpfrom, CreateBrowseRecord());
-	}
-	return res;
+	return DoFindAndSelect(_pattern, name, NavMgr::Get());
 }
 
 bool LEditor::Replace(const FindReplaceData &data)
@@ -3126,43 +3041,6 @@ wxString LEditor::GetEolString()
 	return eol;
 }
 
-void LEditor::GetEditorState(LEditorState& s)
-{
-	int mask(0);
-	mask |= mmt_all_breakpoints;
-
-	// collect breakpoints
-	int lineno = MarkerNext(0, mask);
-	while (lineno >= 0) {
-		s.breakpoints.push_back(lineno);//*******************TODO: needs to save the type, and ?data
-		lineno = MarkerNext(lineno+1, mask);
-	}
-
-	// collect all bookmarks
-	mask = mmt_bookmarks;
-	lineno = MarkerNext(0, mask);
-	while (lineno >= 0) {
-		s.markers.push_back(lineno);
-		lineno = MarkerNext(lineno+1, mask);
-	}
-
-	s.caretPosition = GetCurrentPos();
-}
-
-void LEditor::SetEditorState(const LEditorState& s)
-{
-	for (size_t i=0; i<s.markers.size(); i++) {
-		int line_number = s.markers.at(i);
-		MarkerAdd(line_number, smt_bookmark);
-	}
-
-	for (size_t i=0; i<s.breakpoints.size(); i++) {
-		int line_number = s.breakpoints.at(i);
-		MarkerAdd(line_number, smt_breakpoint);//*******************TODO: needs to use the correct type, and ?data
-	}
-	SetCaretAt(s.caretPosition);
-}
-
 void LEditor::OnDbgRunToCursor(wxCommandEvent& event)
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -3325,4 +3203,101 @@ void LEditor::OnRemoveMatchInidicator(wxCommandEvent& e)
 		ReplaceSelection(wxEmptyString);
 		SetCaretAt( curpos );
 	}
+}
+
+bool LEditor::FindAndSelect(const wxString &pattern, const wxString &what, NavMgr *navmgr)
+{
+	return DoFindAndSelect(pattern, what, navmgr);
+}
+
+
+bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, NavMgr* navmgr)
+{
+	BrowseRecord jumpfrom = CreateBrowseRecord();
+
+	wxString pattern ( _pattern );
+	pattern.StartsWith ( wxT ( "/^" ), &pattern );
+
+	if ( pattern.EndsWith ( wxT ( "$/" ) ) ) {
+		pattern = pattern.Left ( pattern.Len()-2 );
+	} else if ( pattern.EndsWith ( wxT ( "/" ) ) ) {
+		pattern = pattern.Left ( pattern.Len()-1 );
+	}
+
+	size_t flags = wxSD_MATCHCASE;
+
+	FindReplaceData data;
+	data.SetFindString ( pattern );
+	data.SetFlags ( flags );
+
+	// keep current position
+	long curr_pos = GetCurrentPos();
+	int match_len ( 0 ), pos ( 0 );
+
+	// set the caret at the document start
+	SetCurrentPos ( 0 );
+	SetSelectionStart ( 0 );
+	SetSelectionEnd ( 0 );
+	int offset ( 0 );
+	bool again ( false );
+	bool res = false;
+
+	do {
+		again = false;
+		flags = wxSD_MATCHCASE;
+
+		if ( StringFindReplacer::Search ( GetText(), offset, pattern, flags, pos, match_len ) ) {
+
+			int line = LineFromPosition ( pos );
+			wxString dbg_line = GetLine ( line ).Trim().Trim ( false );
+
+			wxString tmp_pattern ( pattern );
+			if ( dbg_line.Len() != tmp_pattern.Trim().Trim ( false ).Len() ) {
+				offset = pos + match_len;
+				again = true;
+			} else {
+
+				// select only the name at the give text range
+				wxString display_name = what.BeforeFirst ( wxT ( '(' ) );
+
+				int match_len1 ( 0 ), pos1 ( 0 );
+				flags |= wxSD_SEARCH_BACKWARD;
+				flags |= wxSD_MATCHWHOLEWORD;
+
+				// the inner search is done on the pattern without without the part of the
+				// signature
+				pattern = pattern.BeforeFirst ( wxT ( '(' ) );
+				if ( StringFindReplacer::Search ( pattern, UTF8Length ( pattern, pattern.Len() ), display_name, flags, pos1, match_len1 ) ) {
+
+					// select only the word
+					if ( GetContext()->IsCommentOrString ( pos+pos1 ) ) {
+						// try again
+						offset = pos + pos1;
+						again = true;
+					} else {
+						SetSelection ( pos + pos1, pos + pos1 + match_len1 );
+						res = true;
+					}
+				} else {
+
+					// as a fallback, mark the whole line
+					SetSelection ( pos, pos + match_len );
+					res = true;
+				}
+			}
+
+		} else {
+			wxLogMessage ( wxT ( "Failed to find[" ) + pattern + wxT ( "]" ) );
+
+			// match failed, restore the caret
+			SetCurrentPos ( curr_pos );
+			SetSelectionStart ( curr_pos );
+			SetSelectionEnd ( curr_pos );
+		}
+	} while ( again );
+
+	if (res && navmgr) {
+		navmgr->AddJump(jumpfrom, CreateBrowseRecord());
+	}
+	return res;
 }

@@ -21,6 +21,14 @@ class OutputViewControlBar : public wxPanel
 	OutputViewSearchCtrl *                   m_searchBar;
 
 public:
+	void SetSearchBar(OutputViewSearchCtrl* searchBar) {
+		this->m_searchBar = searchBar;
+	}
+	OutputViewSearchCtrl* GetSearchBar() {
+		return m_searchBar;
+	}
+
+public:
 	std::vector<OutputViewControlBarButton*> m_buttons;
 	OutputViewControlBar(wxWindow *win, Notebook *book, wxAuiManager *aui, wxWindowID id);
 
@@ -41,11 +49,12 @@ public:
 	DECLARE_EVENT_TABLE()
 
 protected:
-	void                           DoTogglePane    (bool hide = true);
-	void                           DoToggleButton  (OutputViewControlBarButton *button);
-	OutputViewControlBarButton *   DoFindButton    (const wxString &name);
-	void                           DoMarkActive    (const wxString &name);
-	bool                           DoFindDockInfo  (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
+	void                           DoTogglePane     (bool hide = true);
+	void                           DoToggleButton   (OutputViewControlBarButton *button);
+	OutputViewControlBarButton *   DoFindButton     (const wxString &name);
+	void                           DoMarkActive     (const wxString &name);
+	bool                           DoFindDockInfo   (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
+	void                           DoShowQuickFinder(bool show);
 };
 
 //--------------------------------------------------------
@@ -113,7 +122,9 @@ public:
 	virtual void OnMouseLDown     (wxMouseEvent &event);
 };
 
-class OutputViewSearchCtrl : public OutputViewControlBarButton {
+class OutputViewSearchCtrl : public OutputViewControlBarButton
+{
+public:
 	wxTextCtrl   *m_findWhat;
 	wxButton     *m_button;
 	wxString      m_searchType;
@@ -123,13 +134,18 @@ public:
 	OutputViewSearchCtrl(wxWindow *win);
 	~OutputViewSearchCtrl();
 	// override parent methods which we dont really need
-	virtual void OnPaint             (wxPaintEvent &event) {event.Skip();}
-	virtual void OnEraseBackground   (wxEraseEvent &event) {event.Skip();}
-	virtual void OnMouseLDown        (wxMouseEvent &event) {event.Skip();}
+	virtual void OnPaint             (wxPaintEvent &event) {
+		event.Skip();
+	}
+	virtual void OnEraseBackground   (wxEraseEvent &event) {
+		event.Skip();
+	}
+	virtual void OnMouseLDown        (wxMouseEvent &event) {
+		event.Skip();
+	}
 	virtual void OnEnter             (wxCommandEvent &event);
 	virtual void OnShowSearchOptions (wxCommandEvent &event);
 	virtual void OnMenuSelection     (wxCommandEvent &event);
-
-
+	virtual void OnKeyDown           (wxKeyEvent&         e);
 };
 #endif // __auicontrolbar__

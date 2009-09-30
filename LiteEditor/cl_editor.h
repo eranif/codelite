@@ -82,16 +82,6 @@ typedef struct _BPtoMarker {
 	marker_mask_type mask_disabled;
 } BPtoMarker;
 
-/**
- * @class LEditorState
- * a container for the editor state (breakpoints, bookmarks and current position)
- */
-struct LEditorState {
-	std::vector<int> breakpoints;
-	std::vector<int> markers;
-	int caretPosition;
-};
-
 extern const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR;
 /**
  * \ingroup LiteEditor
@@ -173,18 +163,6 @@ public:
 	 * - Use the setting provided by the user
 	 */
 	void SetEOL();
-
-	/**
-	 * @brief save the editor current state (in terms of breakpoints, bookmarks & current position)
-	 * @param s state structure
-	 */
-	void GetEditorState(LEditorState &s);
-
-	/**
-	 * @brief set the editor current state (in terms of breakpoints, bookmarks & current position)
-	 * @param s state structure
-	 */
-	void SetEditorState(const LEditorState &s);
 
 	void CompleteWord();
 
@@ -386,6 +364,16 @@ public:
 	 */
 	void DelBreakpoint(int lineno = -1);
 
+	/**
+	 * @brief search the editor for pattern. If pattern is found, the editor will then search for 'what'
+	 * inside the pattern and will select it
+	 * @param pattern pattern to search in the editor
+	 * @param what    sub string of pattern to select
+	 * @param navmgr  Navigation manager to place browsing recrods
+	 * @return return true if a match was found, false otherwise
+	 */
+	virtual bool FindAndSelect(const wxString &pattern, const wxString &what, NavMgr *navmgr);
+
 	virtual void UpdateBreakpoints();
 
 	//--------------------------------
@@ -578,6 +566,7 @@ private:
 	void DoBreakptContextMenu(wxPoint clientPt);
 	void DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
 	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
+	bool DoFindAndSelect(const wxString &pattern, const wxString &what, NavMgr *navmgr);
 
 	DECLARE_EVENT_TABLE()
 	void OnRemoveMatchInidicator(wxCommandEvent &e);

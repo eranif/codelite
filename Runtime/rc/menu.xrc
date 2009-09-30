@@ -234,7 +234,11 @@
         <object class="wxMenu" name="search_menu">
             <label>&amp;Search</label>
             <style>wxMENU_TEAROFF</style>
-			<object class="wxMenuItem" name="find_in_files">
+			<object class="wxMenuItem" name="show_quick_finder">
+                <label>Show &amp;QuickFinder...</label>
+            </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="find_in_files">
                 <label>&amp;Find In Files...</label>
             </object>
             <object class="wxMenuItem" name="wxID_FIND">

@@ -435,6 +435,7 @@ protected:
 	void OnShowWhitespace(wxCommandEvent &e);
 	void OnShowFullScreen(wxCommandEvent &e);
 	void OnSetStatusMessage(wxCommandEvent &e);
+	void OnShowQuickFinder (wxCommandEvent &e);
 
 // Any class wishing to process wxWindows events must use this macro
 	DECLARE_EVENT_TABLE()

@@ -164,6 +164,8 @@ void SvnDriver::OnSvnProcessTerminated(wxProcessEvent &event)
 			postCmd->DoCommand();
 			delete postCmd;
 		}
+		// reset the flag
+		m_conflictDetected = false;
 		wxMessageBox(wxT("Some files are in conflict state"), wxT("Subversion"), wxOK|wxCENTRE|wxICON_WARNING);
 
 	} else {

@@ -2817,6 +2817,7 @@ void Frame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
 void Frame::OnHighlightWord(wxCommandEvent& event)
 {
 	if (event.IsChecked()) {
+		GetMainBook()->HighlightWord(true);
 		EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 1);
 	} else {
 		GetMainBook()->HighlightWord(false);

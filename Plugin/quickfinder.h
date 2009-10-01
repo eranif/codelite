@@ -15,11 +15,16 @@ public:
 	 * @param s
 	 */
 	static bool OpenWorkspaceFile(const wxString &s);
-	
+
 	/**
 	 * @brief set the focus to the active editor
 	 */
 	static void FocusActiveEditor();
 
+	/**
+	 * @brief locate and open a class
+	 * @param s
+	 */
+	static void OpenClass(const wxString &s);
 };
 #endif // __quickfinder__

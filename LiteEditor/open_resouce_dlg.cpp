@@ -210,6 +210,11 @@ void OpenResourceDlg::OnButtonOK(wxCommandEvent &event)
 
 void OpenResourceDlg::OnItemSelected(wxCommandEvent &event)
 {
+	if (event.GetSelection() == wxNOT_FOUND) {
+		// This would otherwise cause a wx assertion
+		return;
+	}
+
 	wxStringClientData *data = (wxStringClientData *)m_listShortNames->GetClientObject(event.GetSelection());
 	if(data) {
 	m_fullText->SetLabel(data->GetData());

@@ -91,3 +91,8 @@ void QuickFinder::FocusActiveEditor()
 		m_manager->OpenFile(editor->GetFileName().GetFullPath(), editor->GetProjectName(), editor->GetCurrentLine());
 	}
 }
+
+void QuickFinder::OpenClass(const wxString& s)
+{
+	if(!m_manager) {return;}
+}

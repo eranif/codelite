@@ -336,8 +336,9 @@ void OutputViewControlBar::DoShowQuickFinder(bool show)
 	wxFrame * main_frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
 	if (!show) {
 		// Hide it
-		main_frame->Freeze();
+
 		if (GetSizer()->IsShown(m_searchBar)) {
+			main_frame->Freeze();
 			GetSizer()->Hide(m_searchBar);
 			GetSizer()->Layout();
 
@@ -348,15 +349,17 @@ void OutputViewControlBar::DoShowQuickFinder(bool show)
 			if ( main_frame ) {
 				main_frame->SendSizeEvent();
 			}
-			
+
 			// set the focus to the active editor
 			QuickFinder::FocusActiveEditor();
+			main_frame->Thaw();
 		}
-		main_frame->Thaw();
+
 	} else {
 		// Show it
-		main_frame->Freeze();
+
 		if ( GetSizer()->IsShown(m_searchBar) == false ) {
+			main_frame->Freeze();
 			GetSizer()->Show(m_searchBar);
 			GetSizer()->Layout();
 
@@ -368,10 +371,11 @@ void OutputViewControlBar::DoShowQuickFinder(bool show)
 			if ( main_frame ) {
 				main_frame->SendSizeEvent();
 			}
+			main_frame->Thaw();
 		}
 		GetSearchBar()->m_findWhat->SetFocus();
 		GetSearchBar()->m_findWhat->SelectAll();
-		main_frame->Thaw();
+
 	}
 }
 

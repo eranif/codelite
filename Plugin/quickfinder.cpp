@@ -83,3 +83,11 @@ bool QuickFinder::OpenWorkspaceFile(const wxString& s)
 	}
 	return false;
 }
+
+void QuickFinder::FocusActiveEditor()
+{
+	IEditor *editor = m_manager->GetActiveEditor();
+	if ( m_manager && editor ) {
+		m_manager->OpenFile(editor->GetFileName().GetFullPath(), editor->GetProjectName(), editor->GetCurrentLine());
+	}
+}

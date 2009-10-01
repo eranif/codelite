@@ -348,6 +348,9 @@ void OutputViewControlBar::DoShowQuickFinder(bool show)
 			if ( main_frame ) {
 				main_frame->SendSizeEvent();
 			}
+			
+			// set the focus to the active editor
+			QuickFinder::FocusActiveEditor();
 		}
 		main_frame->Thaw();
 	} else {

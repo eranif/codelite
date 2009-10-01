@@ -261,7 +261,6 @@ private:
 	 */
 	void DispatchCommandEvent(wxCommandEvent &event);
 	void DispatchUpdateUIEvent(wxUpdateUIEvent &event);
-	void OnShowQuickFinderUI  (wxUpdateUIEvent &event);
 	void CreateToolbars24();
 	void CreateToolbars16();
 	void ViewPaneUI(const wxString &paneName, wxUpdateUIEvent&event);

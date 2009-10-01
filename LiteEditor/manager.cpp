@@ -1280,7 +1280,7 @@ void Manager::TogglePanes()
 			}
 		}
 
-		Frame::Get()->Freeze();
+		Frame::Get()->GetMainPanel()->Freeze();
 		// hide the matched panes
 		for ( size_t i=0; i<panes.GetCount(); i++ ) {
 			HidePane ( panes.Item ( i ), false );
@@ -1288,13 +1288,13 @@ void Manager::TogglePanes()
 
 		//update changes
 		Frame::Get()->GetDockingManager().Update();
-		Frame::Get()->Thaw();
+		Frame::Get()->GetMainPanel()->Thaw();
 		toggled = true;
 
 	} else {
-		Frame::Get()->Freeze();
+		Frame::Get()->GetMainPanel()->Freeze();
 		Frame::Get()->GetDockingManager().LoadPerspective(savedLayout);
-		Frame::Get()->Thaw();
+		Frame::Get()->GetMainPanel()->Thaw();
 
 		toggled = false;
 		savedLayout.Clear();

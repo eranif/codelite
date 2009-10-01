@@ -273,7 +273,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("find_previous_at_caret"),  Frame::OnFileExistUpdateUI   )
 	EVT_UPDATE_UI(XRCID("incremental_search"),      Frame::OnFileExistUpdateUI   )
 	EVT_UPDATE_UI(XRCID("find_resource"),           Frame::OnWorkspaceOpen       )
-	EVT_UPDATE_UI(XRCID("show_quick_finder"),       Frame::OnWorkspaceOpen       )
+	EVT_UPDATE_UI(XRCID("show_quick_finder"),       Frame::OnShowQuickFinderUI   )
 	EVT_UPDATE_UI(XRCID("find_type"),               Frame::OnWorkspaceOpen       )
 	EVT_UPDATE_UI(XRCID("find_symbol"),             Frame::OnCompleteWordUpdateUI)
 	EVT_UPDATE_UI(XRCID("goto_definition"),         Frame::DispatchUpdateUIEvent )
@@ -898,7 +898,7 @@ void Frame::CreateToolbars24()
 	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace24")), wxT("Find"));
 	tb->AddTool(wxID_REPLACE, wxT("Replace"), wxXmlResource::Get()->LoadBitmap(wxT("refresh24")), wxT("Replace"));
 	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"), wxXmlResource::Get()->LoadBitmap(wxT("find_in_files24")), wxT("Find In Files"));
-	tb->AddTool(XRCID("show_quick_finder"), wxT("Show QuickFinder"), wxXmlResource::Get()->LoadBitmap(wxT("quickfinder24")), wxT("Show QuickFinder"));
+	tb->AddTool(XRCID("show_quick_finder"), wxT("Show QuickFinder"), wxXmlResource::Get()->LoadBitmap(wxT("quickfinder24")), wxT("Show QuickFinder"), wxITEM_CHECK);
 	tb->AddSeparator();
 	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_resource24")), wxT("Find Resource In Workspace"));
 	tb->AddTool(XRCID("find_type"), wxT("Find Type In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_type24")), wxT("Find Type In Workspace"));
@@ -1019,7 +1019,7 @@ void Frame::CreateToolbars16()
 	tb->AddTool(wxID_FIND, wxT("Find"), wxXmlResource::Get()->LoadBitmap(wxT("find_and_replace16")), wxT("Find"));
 	tb->AddTool(wxID_REPLACE, wxT("Replace"), wxXmlResource::Get()->LoadBitmap(wxT("refresh16")), wxT("Replace"));
 	tb->AddTool(XRCID("find_in_files"), wxT("Find In Files"), wxXmlResource::Get()->LoadBitmap(wxT("find_in_files16")), wxT("Find In Files"));
-	tb->AddTool(XRCID("show_quick_finder"), wxT("Show QuickFinder"), wxXmlResource::Get()->LoadBitmap(wxT("quickfinder16")), wxT("Show QuickFinder"));
+	tb->AddTool(XRCID("show_quick_finder"), wxT("Show QuickFinder"), wxXmlResource::Get()->LoadBitmap(wxT("quickfinder16")), wxT("Show QuickFinder"), wxITEM_CHECK);
 	tb->AddSeparator();
 	tb->AddTool(XRCID("find_resource"), wxT("Find Resource In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_resource16")), wxT("Find Resource In Workspace"));
 	tb->AddTool(XRCID("find_type"), wxT("Find Type In Workspace"), wxXmlResource::Get()->LoadBitmap(wxT("open_type16")), wxT("Find Type In Workspace"));
@@ -3469,8 +3469,13 @@ void Frame::OnShowQuickFinder(wxCommandEvent& e)
 	// sending an event
 	// Notify plugins about settings changed
 	OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-	opts->SetShowQuickFinder( true );
+	opts->SetShowQuickFinder( e.IsChecked() );
 	EditorConfigST::Get()->SetOptions( opts );
 
 	PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
+}
+
+void Frame::OnShowQuickFinderUI(wxUpdateUIEvent& event)
+{
+	event.Check(EditorConfigST::Get()->GetOptions()->GetShowQuickFinder());
 }

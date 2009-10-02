@@ -527,12 +527,21 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 		}
 	}
 
-	if (m_evaluateExpression == FunctionArguments) {
-		MakeTreeFromFrame(strline, tree);
-	} else {
-		const wxCharBuffer scannerText =  _C(strline);
-		setGdbLexerInput(scannerText.data());
-		MakeTree(tree);
+	try {
+		if (m_evaluateExpression == FunctionArguments) {
+			MakeTreeFromFrame(strline, tree);
+		} else {
+			const wxCharBuffer scannerText =  _C(strline);
+			setGdbLexerInput(scannerText.data());
+			MakeTree(tree);
+		}
+	} catch ( ... ) {
+		// something really bad happend :)
+		// print error message and the output which caused the error and
+		// bailout
+		gdb_result_lex_clean();
+		wxLogMessage(wxT("Debugger: ERROR: cought a std exception while processing output '%s'"), line.c_str());
+		return false;
 	}
 
 	gdb_result_lex_clean();
@@ -591,8 +600,16 @@ void DbgCmdHandlerLocals::MakeTree(TreeNode<wxString, NodeData> *parent)
 			break;
 		}
 
+
+
 		// remove the quoates from the value
 		GDB_STRIP_QUOATES(currentToken);
+
+		if ( currentToken.size() == 0 ) {
+			// empty token?
+			wxLogMessage(wxT("Debugger: ERROR: currentToke.size() == 0"));
+			break;
+		}
 
 		if (currentToken.at(0) == '{') {
 			if (displayLine.IsEmpty() == false) {

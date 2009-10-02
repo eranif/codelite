@@ -648,6 +648,7 @@ OutputViewSearchCtrl::~OutputViewSearchCtrl()
 
 void OutputViewSearchCtrl::OnEnter(wxCommandEvent& event)
 {
+	wxUnusedVar(event);
 	wxArrayString kind;
 
 
@@ -685,11 +686,8 @@ void OutputViewSearchCtrl::OnEnter(wxCommandEvent& event)
 	if ( !QuickFinder::OpenType(m_findWhat->GetValue(), kind) ) {
 		m_findWhat->SetBackgroundColour(wxT("PINK"));
 		m_findWhat->Refresh();
-	} else {
-		m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-		m_findWhat->Refresh();
+		m_findWhat->SetFocus();
 	}
-	m_findWhat->SetFocus();
 }
 
 void OutputViewSearchCtrl::OnShowSearchOptions(wxCommandEvent& event)

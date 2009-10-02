@@ -43,6 +43,7 @@ QuickfinderSelect::QuickfinderSelect( wxWindow* parent , const std::vector<TagEn
 	il->Add(wxXmlResource::Get()->LoadBitmap(_T("func_public")));//6
 	m_listCtrlTags->AssignImageList( il, wxIMAGE_LIST_SMALL );
 
+	m_buttonClose->SetDefault();
 	DoCreateList();
 	DoPopulate  ();
 }
@@ -87,5 +88,10 @@ void QuickfinderSelect::DoPopulate()
 		m_listCtrlTags->SetItemPtrData(idx, (wxUIntPtr) t.Get());
 	}
 	m_listCtrlTags->SetColumnWidth(2, wxLIST_AUTOSIZE);
+	if ( m_listCtrlTags->GetItemCount() > 0 ) {
+		m_listCtrlTags->Select(0);
+		m_listCtrlTags->Focus(0);
+		m_listCtrlTags->SetFocus();
+	}
 	Thaw();
 }

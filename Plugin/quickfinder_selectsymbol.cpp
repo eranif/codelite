@@ -20,7 +20,6 @@ static int getImageId ( const wxString &kind ) {
 QuickfinderSelect::QuickfinderSelect( wxWindow* parent , const std::vector<TagEntryPtr> &tags)
 		: SelectSymbolDlgBase( parent )
 		, m_tags(tags)
-		, selection(NULL)
 {
 	wxImageList *il = new wxImageList(16, 16, true);
 	il->Add(wxXmlResource::Get()->LoadBitmap(_T("namespace")));//0
@@ -56,7 +55,7 @@ void QuickfinderSelect::OnItemActivated( wxListEvent& event )
 {
 	long sel = m_listCtrlTags->GetFirstSelected();
 	if ( sel != wxNOT_FOUND ) {
-		this->selection = (TagEntry*) m_listCtrlTags->GetItemData(sel);
+		this->selection = *((TagEntry*) m_listCtrlTags->GetItemData(sel));
 		EndModal(wxID_OK);
 	}
 }

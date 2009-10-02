@@ -16,7 +16,7 @@ class QuickfinderSelect : public SelectSymbolDlgBase
 	std::vector<TagEntryPtr> m_tags;
 
 public:
-	TagEntryPtr selection;
+	TagEntry selection;
 
 protected:
 	// Handlers for SelectSymbolDlgBase events.

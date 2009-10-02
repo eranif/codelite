@@ -35,6 +35,8 @@
 class CSscopeConfData : public SerializedObject
 {
 	wxString m_scanScope;
+	bool     m_rebuildDb;
+	bool     m_buildRevertedIndex;
 
 public:
 	CSscopeConfData();
@@ -49,6 +51,18 @@ public:
 	}
 	const wxString& GetScanScope() const {
 		return m_scanScope;
+	}
+	void SetRebuildDbOption(const bool rebuild) {
+		this->m_rebuildDb = rebuild;
+	}
+	bool GetRebuildOption() const {
+		return m_rebuildDb;
+	}
+	void SetBuildRevertedIndexOption(const bool revertedIndex) {
+		this->m_buildRevertedIndex = revertedIndex;
+	}
+	bool GetBuildRevertedIndexOption() const {
+		return m_buildRevertedIndex;
 	}
 };
 #endif // __csscopeconfdata__

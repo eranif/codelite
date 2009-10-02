@@ -119,9 +119,6 @@ manage_tags|Tags|Manage external tags databases...|
 manage_plugins|Plugins|Manage Plugins...|
 format_source|Plugins::Source Code Formatter|Format Current Source|Ctrl-I
 formatter_options|Plugins::Source Code Formatter|Options...|
-cscope_find_symbol|Plugins::cscope|Find this C symbol|Ctrl-0
-cscope_functions_calling_this_function|Plugins::cscope|Find functions called by this function|Ctrl-2
-cscope_functions_called_by_this_function|Plugins::cscope|Find functions calling this function|Ctrl-3
 svn_options|Plugins::Subversion|Options...|
 copyrights_options|Plugins::Copyright|Insert Copyright Block|
 insert_copyrights|Plugins::Copyright|Batch Insert of Copyright Block|

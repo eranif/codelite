@@ -36,6 +36,8 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 	CSscopeConfData data;
 	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
 	m_choiceSearchScope->SetStringSelection(data.GetScanScope());
+	m_checkBoxUpdateDb->SetValue(data.GetRebuildOption());
+	m_checkBoxRevertedIndex->SetValue(data.GetBuildRevertedIndexOption());
 	SetMessage(wxT("Ready"), 0);
 }
 
@@ -174,5 +176,7 @@ void CscopeTab::OnChangeSearchScope(wxCommandEvent& e)
 {
 	CSscopeConfData data;
 	data.SetScanScope(m_choiceSearchScope->GetStringSelection());
+	data.SetRebuildDbOption(m_checkBoxUpdateDb->IsChecked());
+	data.SetBuildRevertedIndexOption(m_checkBoxRevertedIndex->IsChecked());
 	m_mgr->GetConfigTool()->WriteObject(wxT("CscopeSettings"), &data);
 }

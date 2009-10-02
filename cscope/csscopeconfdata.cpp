@@ -26,6 +26,8 @@
 #include "csscopeconfdata.h"
 CSscopeConfData::CSscopeConfData()
 		: m_scanScope(SCOPE_ENTIRE_WORKSPACE)
+		, m_rebuildDb(true)
+		, m_buildRevertedIndex(false)
 {
 }
 
@@ -36,9 +38,13 @@ CSscopeConfData::~CSscopeConfData()
 void CSscopeConfData::DeSerialize(Archive& arch)
 {
 	arch.Read(wxT("m_scanScope"), m_scanScope);
+	arch.Read(wxT("m_rebuildDb"), m_rebuildDb);
+	arch.Read(wxT("m_buildRevertedIndex"), m_buildRevertedIndex);
 }
 
 void CSscopeConfData::Serialize(Archive& arch)
 {
 	arch.Write(wxT("m_scanScope"), m_scanScope);
+	arch.Write(wxT("m_rebuildDb"), m_rebuildDb);
+	arch.Write(wxT("m_buildRevertedIndex"), m_buildRevertedIndex);
 }

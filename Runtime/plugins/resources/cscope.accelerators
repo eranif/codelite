@@ -1,0 +1,5 @@
+cscope_find_symbol|Plugins::CScope|Find this C symbol|Ctrl-0
+cscope_find_global_definition|Plugins::CScope|Find this global definition|Ctrl-1
+cscope_functions_calling_this_function|Plugins::CScope|Find functions called by this function|Ctrl-2
+cscope_functions_called_by_this_function|Plugins::CScope|Find functions calling this function|Ctrl-3
+cscope_create_db|Plugins::CScope|Create CScope database|Ctrl-4

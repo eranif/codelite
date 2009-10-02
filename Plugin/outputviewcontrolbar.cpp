@@ -653,9 +653,12 @@ void OutputViewSearchCtrl::OnEnter(wxCommandEvent& event)
 
 
 	if ( m_searchType == ST_WORKSPACE_FILE ) {
-		kind.Add(wxT("function"));
-		kind.Add(wxT("prototype"));
-
+		if ( !QuickFinder::OpenWorkspaceFile(m_findWhat->GetValue()) ) {
+			m_findWhat->SetBackgroundColour(wxT("PINK"));
+			m_findWhat->Refresh();
+			m_findWhat->SetFocus();
+		}
+		return;
 	} else if ( m_searchType == ST_CLASS ) {
 		kind.Add(wxT("class"));
 		kind.Add(wxT("struct"));

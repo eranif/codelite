@@ -2,29 +2,35 @@
 #define __quickfinder__
 
 #include <wx/string.h>
+#include <vector>
+#include "entry.h"
 
 class IManager;
 
 class QuickFinder {
 	static IManager *m_manager;
+	private:
+	static bool FilterAndDisplayTags(const std::vector<TagEntryPtr> &tags, const wxString &matchPattern);
 public:
 
 	static void Initialize(IManager *manager);
+
 	/**
-	 * @brief open a workspae file
+	 * @brief open a workspace file
+	 * @param s
+	 * @return
+	 */
+	static bool OpenWorkspaceFile(const wxString& s);
+
+	/**
+	 * @brief open and display user selection dialog for a given kind
 	 * @param s
 	 */
-	static bool OpenWorkspaceFile(const wxString &s);
+	static bool OpenType(const wxString &s, const wxArrayString &kind);
 
 	/**
 	 * @brief set the focus to the active editor
 	 */
 	static void FocusActiveEditor();
-
-	/**
-	 * @brief locate and open a class
-	 * @param s
-	 */
-	static void OpenClass(const wxString &s);
 };
 #endif // __quickfinder__

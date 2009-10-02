@@ -2732,3 +2732,19 @@ wxString TagsManager::GetFunctionReturnValueFromPattern(const wxString& pattern)
 	}
 	return return_value;
 }
+
+void TagsManager::GetTagsByKind(std::vector<TagEntryPtr>& tags, const wxArrayString& kind, const wxString& partName)
+{
+	wxUnusedVar(partName);
+
+	wxString sql;
+	if ( kind.empty() ) return;
+
+	sql << wxT("select * from tags where kind in (");
+	for(size_t i=0; i<kind.GetCount(); i++) {
+		sql << wxT("'") << kind.Item(i) << wxT("',");
+	}
+	sql.RemoveLast();
+	sql << wxT(")");
+	DoExecuteQueury(sql, true, tags, true);
+}

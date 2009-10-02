@@ -159,6 +159,10 @@
       <File Name="macrosbasedlg.cpp"/>
       <File Name="macrosbasedlg.h"/>
       <File Name="macrosdlg.cpp"/>
+      <File Name="quickfinder_basedlg.h"/>
+      <File Name="quickfinder_basedlg.cpp"/>
+      <File Name="quickfinder_selectsymbol.h"/>
+      <File Name="quickfinder_selectsymbol.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="custom_notebook.cpp"/>

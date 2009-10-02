@@ -624,6 +624,14 @@ public:
 	void GetFunctions(std::vector< TagEntryPtr > &tags, const wxString &fileName = wxEmptyString, bool onlyWorkspace = true);
 
 	/**
+	 * @brief return list of tags by KIND
+	 * @param tags [output]
+	 * @param kind the kind of the tags to fetch from the database
+	 * @param partName name criterion (partial)
+	 */
+	void GetTagsByKind(std::vector<TagEntryPtr> &tags, const wxArrayString &kind, const wxString &partName = wxEmptyString);
+
+	/**
 	 * @brief generate function body/impl based on a tag
 	 * @param tag the input tag which represents the requested tag
 	 * @param impl set to true if you need an implementation, false otherwise. Default is set to false

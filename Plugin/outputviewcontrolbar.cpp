@@ -47,6 +47,7 @@ static wxString ST_WORKSPACE_FILE = wxT("Workspace file");
 static wxString ST_MACRO          = wxT("Macro");
 static wxString ST_TYPEDEF        = wxT("Typedef");
 static wxString ST_FUNCTION       = wxT("Function");
+static wxString TYPE_HERE_TEXT    = wxT("<type search string>");
 
 BEGIN_EVENT_TABLE(OutputViewControlBar, wxPanel)
 	EVT_PAINT           (OutputViewControlBar::OnPaint)
@@ -610,8 +611,13 @@ OutputViewSearchCtrl::OutputViewSearchCtrl(wxWindow* win)
 
 	m_findWhat = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2);
 	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+	m_findWhat->SetValue(TYPE_HERE_TEXT);
+	m_findWhat->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
 	m_findWhat->SetMinSize(wxSize(200,-1));
-	m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OutputViewSearchCtrl::OnEnter), NULL, this);
+	m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER,   wxCommandEventHandler(OutputViewSearchCtrl::OnEnter      ), NULL, this);
+	m_findWhat->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OutputViewSearchCtrl::OnTextUpdated), NULL, this);
+	m_findWhat->Connect(wxEVT_SET_FOCUS,            wxFocusEventHandler(OutputViewSearchCtrl::OnFocus)        , NULL, this);
+	m_findWhat->Connect(wxEVT_KILL_FOCUS,           wxFocusEventHandler(OutputViewSearchCtrl::OnFocus)        , NULL, this);
 	m_findWhat->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(OutputViewSearchCtrl::OnKeyDown), NULL, this);
 
 	m_button = new wxBitmapButton(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("findwhat")));
@@ -629,7 +635,11 @@ OutputViewSearchCtrl::OutputViewSearchCtrl(wxWindow* win)
 	m_searchTypeArray.Add(ST_TYPEDEF);
 	m_searchTypeArray.Add(ST_WORKSPACE_FILE);
 
-	m_searchType = ST_WORKSPACE_FILE;
+	// load the search type
+	m_searchType = EditorConfigST::Get()->GetStringValue(wxT("QuickFinderSearchType"));
+	if ( m_searchType.IsEmpty() ) {
+		m_searchType = ST_WORKSPACE_FILE;
+	}
 }
 
 OutputViewSearchCtrl::~OutputViewSearchCtrl()
@@ -638,9 +648,48 @@ OutputViewSearchCtrl::~OutputViewSearchCtrl()
 
 void OutputViewSearchCtrl::OnEnter(wxCommandEvent& event)
 {
+	wxArrayString kind;
+
+
 	if ( m_searchType == ST_WORKSPACE_FILE ) {
-		QuickFinder::OpenWorkspaceFile( m_findWhat->GetValue() );
+		kind.Add(wxT("function"));
+		kind.Add(wxT("prototype"));
+
+	} else if ( m_searchType == ST_CLASS ) {
+		kind.Add(wxT("class"));
+		kind.Add(wxT("struct"));
+		kind.Add(wxT("union"));
+
+	} else if ( m_searchType == ST_FUNCTION ) {
+		kind.Add(wxT("function"));
+		kind.Add(wxT("prototype"));
+
+	} else if ( m_searchType == ST_MACRO) {
+		kind.Add(wxT("macro"));
+
+	} else if ( m_searchType == ST_TYPEDEF) {
+		kind.Add(wxT("typedef"));
+
 	}
+
+	wxString what ( m_findWhat->GetValue() );
+	what.Trim().Trim(false);
+
+	if ( what.IsEmpty() ) {
+		m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+		m_findWhat->Refresh();
+		m_findWhat->SetFocus();
+		return;
+	}
+
+	if ( !QuickFinder::OpenType(m_findWhat->GetValue(), kind) ) {
+		m_findWhat->SetBackgroundColour(wxT("PINK"));
+		m_findWhat->Refresh();
+	} else {
+		m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+		m_findWhat->Refresh();
+	}
+	m_findWhat->SetFocus();
 }
 
 void OutputViewSearchCtrl::OnShowSearchOptions(wxCommandEvent& event)
@@ -669,6 +718,8 @@ void OutputViewSearchCtrl::OnMenuSelection(wxCommandEvent& event)
 	for (size_t i=0; i<m_searchTypeArray.GetCount(); i++) {
 		if ( wxXmlResource::GetXRCID(m_searchTypeArray.Item(i).c_str()) == event.GetId() ) {
 			m_searchType = m_searchTypeArray.Item(i);
+			// and save the search type
+			EditorConfigST::Get()->SaveStringValue(wxT("QuickFinderSearchType"), m_searchType);
 			break;
 		}
 	}
@@ -688,4 +739,35 @@ void OutputViewSearchCtrl::OnKeyDown(wxKeyEvent& e)
 	default:
 		e.Skip();
 	}
+}
+
+void OutputViewSearchCtrl::OnTextUpdated(wxCommandEvent& event)
+{
+	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+	event.Skip();
+}
+
+void OutputViewSearchCtrl::OnFocus(wxFocusEvent& event)
+{
+	if ( event.GetEventType() == wxEVT_KILL_FOCUS ) {
+
+		// we lost the focus
+		if ( m_findWhat->GetValue().IsEmpty() ) {
+			m_findWhat->SetValue(TYPE_HERE_TEXT);
+			m_findWhat->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+			m_findWhat->Refresh();
+		}
+
+	} else {
+
+		// we got the focus
+		if ( m_findWhat->GetValue() == TYPE_HERE_TEXT ) {
+			m_findWhat->Clear();
+			m_findWhat->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+			m_findWhat->Refresh();
+		}
+
+	}
+
+	event.Skip();
 }

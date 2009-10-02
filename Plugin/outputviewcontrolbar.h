@@ -144,8 +144,10 @@ public:
 		event.Skip();
 	}
 	virtual void OnEnter             (wxCommandEvent &event);
+	virtual void OnTextUpdated       (wxCommandEvent &event);
 	virtual void OnShowSearchOptions (wxCommandEvent &event);
 	virtual void OnMenuSelection     (wxCommandEvent &event);
-	virtual void OnKeyDown           (wxKeyEvent&         e);
+	virtual void OnKeyDown           (wxKeyEvent     &event);
+	virtual void OnFocus             (wxFocusEvent   &event);
 };
 #endif // __auicontrolbar__

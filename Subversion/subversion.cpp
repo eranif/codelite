@@ -746,11 +746,6 @@ void SubversionPlugin::DoGetWspSvnStatus(const wxString &basePath, wxArrayString
 
 		//check that this directory is actually under svn control
 		dir.AppendDir(wxT(".svn"));
-		if (!dir.DirExists()) {
-			m_svn->PrintMessage(wxString::Format(wxT("Skipping non-versioned directory: %s\n"), iter->first.c_str()));
-			workspaceFolders.erase(iter);
-			continue;
-		}
 		dir.RemoveLastDir();
 
 		//check that this directory is not a child of another directory under svn control
@@ -891,14 +886,8 @@ void SubversionPlugin::DoGetPrjSvnStatus(const wxString &basePath, wxArrayString
 	if (inclOutOfDate) {
 		command << wxT("-u ");
 	}
-	wxFileName dir(basePath);
-	dir.AppendDir(wxT(".svn"));
-	if (dir.DirExists()) {
-		command << wxT("\"") <<  basePath << wxT("\" ");
-		ProcUtils::ExecuteCommand(command, output);
-	} else {
-		m_svn->PrintMessage(wxString::Format(_("Directory '%s' is not under SVN\n"), basePath.c_str()));
-	}
+	command << wxT("\"") <<  basePath << wxT("\" ");
+	ProcUtils::ExecuteCommand(command, output);
 }
 
 void SubversionPlugin::DoGeneratePrjReport(bool inclOutOfDate)

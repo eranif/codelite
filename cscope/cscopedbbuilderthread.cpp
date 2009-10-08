@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : cscopedbbuilderthread.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : cscopedbbuilderthread.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "cscopestatusmessage.h"
@@ -29,8 +29,8 @@
 #include "cscopedbbuilderthread.h"
 #include "cscope.h"
 
-int wxEVT_CSCOPE_THREAD_DONE = wxNewId();
-int wxEVT_CSCOPE_THREAD_UPDATE_STATUS = wxNewId();
+int wxEVT_CSCOPE_THREAD_DONE            = wxNewId();
+int wxEVT_CSCOPE_THREAD_UPDATE_STATUS   = wxNewId();
 
 CscopeDbBuilderThread::CscopeDbBuilderThread()
 {
@@ -43,27 +43,27 @@ CscopeDbBuilderThread::~CscopeDbBuilderThread()
 void CscopeDbBuilderThread::ProcessRequest(ThreadRequest *request)
 {
 	CscopeRequest *req = (CscopeRequest*)request;
-	
+
 	//change dir to the workspace directory
 	DirSaver ds;
-	
+
 	wxSetWorkingDirectory(req->GetWorkingDir());
-	SendStatusEvent( wxT("Executing cscope..."), 10, req->GetOwner() );
-	
+	SendStatusEvent( wxT("Executing cscope..."), 10, req->GetFindWhat(), req->GetOwner() );
+
 	//notify the database creation process as completed
 	wxArrayString output;
-	
+
 	//set environment variables required by cscope
 	wxSetEnv(wxT("TMPDIR"), wxT("."));
 	ProcUtils::SafeExecuteCommand(req->GetCmd(), output);
-	SendStatusEvent( wxT("Parsing results..."), 50, req->GetOwner() );
-	
-	CscopeResultTable *result = ParseResults( output );
-	SendStatusEvent( wxT("Done"), 100, req->GetOwner() );
+	SendStatusEvent( wxT("Parsing results..."), 50, wxEmptyString, req->GetOwner() );
 
-	// send status message 
-	SendStatusEvent(req->GetEndMsg(), 100, req->GetOwner());
-	
+	CscopeResultTable *result = ParseResults( output );
+	SendStatusEvent( wxT("Done"), 100, wxEmptyString, req->GetOwner() );
+
+	// send status message
+	SendStatusEvent(req->GetEndMsg(), 100, wxEmptyString, req->GetOwner());
+
 	// send the results
 	wxCommandEvent e(wxEVT_CSCOPE_THREAD_DONE);
 	e.SetClientData(result);
@@ -82,7 +82,7 @@ CscopeResultTable* CscopeDbBuilderThread::ParseResults(const wxArrayString &outp
 		line = line.Trim().Trim(false);
 		//skip errors
 		if(line.StartsWith(wxT("cscope:"))){continue;}
-		
+
 		wxString file = line.BeforeFirst(wxT(' '));
 		data.SetFile(file);
 		line = line.AfterFirst(wxT(' '));
@@ -92,7 +92,7 @@ CscopeResultTable* CscopeDbBuilderThread::ParseResults(const wxArrayString &outp
 		wxString scope = line.BeforeFirst(wxT(' '));
 		line = line.AfterFirst(wxT(' '));
 		data.SetScope( scope );
-		
+
 		//next is the line number
 		line = line.Trim().Trim(false);
 		long nn;
@@ -121,13 +121,14 @@ CscopeResultTable* CscopeDbBuilderThread::ParseResults(const wxArrayString &outp
 	return results;
 }
 
-void CscopeDbBuilderThread::SendStatusEvent(const wxString &msg, int percent, wxEvtHandler *owner)
+void CscopeDbBuilderThread::SendStatusEvent(const wxString &msg, int percent, const wxString &findWhat, wxEvtHandler *owner)
 {
 	wxCommandEvent e(wxEVT_CSCOPE_THREAD_UPDATE_STATUS);
 	CScopeStatusMessage *statusMsg = new CScopeStatusMessage();
 	statusMsg->SetMessage(msg);
 	statusMsg->SetPercentage(percent);
+	statusMsg->SetFindWhat(findWhat);
 	e.SetClientData(statusMsg);
-	
+
 	owner->AddPendingEvent(e);
 }

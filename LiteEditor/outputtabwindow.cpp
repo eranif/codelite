@@ -56,8 +56,8 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
 		, m_autoAppear(true)
 {
 	CreateGUIControls();
-	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnCopy),      NULL, this);
-	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnSelectAll), NULL, this);
+	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),      NULL, this);
+	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL, this);
 }
 
 OutputTabWindow::~OutputTabWindow()
@@ -297,15 +297,6 @@ void OutputTabWindow::OnRepeatOutputUI(wxUpdateUIEvent& e)
 	e.Enable(false);
 }
 
-void OutputTabWindow::OnCopy(wxCommandEvent &e)
-{
-	if ( IsFocused() && m_sci ) {
-		m_sci->Copy();
-	} else {
-		e.Skip();
-	}
-}
-
 void OutputTabWindow::OnMouseDClick(wxScintillaEvent& e)
 {
 	e.Skip();
@@ -323,18 +314,43 @@ void OutputTabWindow::OnMarginClick(wxScintillaEvent& e)
 	}
 }
 
-void OutputTabWindow::OnSelectAll(wxCommandEvent& e)
-{
-	if ( IsFocused() && m_sci ) {
-		m_sci->SelectAll();
-	} else {
-		e.Skip();
-	}
-}
-
-
 bool OutputTabWindow::IsFocused()
 {
 	wxWindow *win = wxWindow::FindFocus();
 	return (win && win == m_sci);
+}
+
+void OutputTabWindow::OnEditUI(wxUpdateUIEvent& e)
+{
+	if ( !IsFocused() || !m_sci ) {
+		e.Skip();
+		return;
+	}
+
+	switch (e.GetId()) {
+	case wxID_COPY:
+		if(m_sci->GetSelectedText().IsEmpty()) e.Enable(false);
+		break;
+	default:
+		break;
+	}
+}
+
+void OutputTabWindow::OnEdit(wxCommandEvent &e)
+{
+	if ( !IsFocused() || !m_sci ) {
+		e.Skip();
+		return;
+	}
+
+	switch (e.GetId()) {
+	case wxID_COPY:
+		m_sci->Copy();
+		break;
+	case wxID_SELECTALL:
+		m_sci->SelectAll();
+		break;
+	default:
+		break;
+	}
 }

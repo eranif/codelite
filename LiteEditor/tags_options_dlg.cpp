@@ -42,6 +42,7 @@
 #endif //WX_PRECOMP
 
 #include "tags_options_dlg.h"
+#include "ctags_manager.h"
 #include "windowattrmanager.h"
 #include "macros.h"
 #include "wx/tokenzr.h"
@@ -73,7 +74,6 @@ void TagsOptionsDlg::InitValues()
 	m_checkLoadLastDB->SetValue                   (m_data.GetFlags() & CC_LOAD_EXT_DB ? true : false);
 	m_checkDisplayTypeInfo->SetValue              (m_data.GetFlags() & CC_DISP_TYPE_INFO ? true : false);
 	m_checkDisplayComments->SetValue              (m_data.GetFlags() & CC_DISP_COMMENTS ? true : false);
-	m_checkLoadToMemory->SetValue                 (m_data.GetFlags() & CC_LOAD_EXT_DB_TO_MEMORY ? true : false);
 	m_checkFilesWithoutExt->SetValue              (m_data.GetFlags() & CC_PARSE_EXT_LESS_FILES ? true : false);
 	m_checkColourLocalVars->SetValue              (m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
 	m_checkColourProjTags->SetValue               (m_data.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
@@ -83,6 +83,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkBoxFullRetagging->SetValue             (m_data.GetFlags() & CC_USE_FULL_RETAGGING ? true : false);
 	m_checkBoxretagWorkspaceOnStartup->SetValue   (m_data.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ? true : false);
 	m_checkBoxAccurateScopeNameResolving->SetValue(m_data.GetFlags() & CC_ACCURATE_SCOPE_RESOLVING ? true : false);
+	m_checkBoxDisableCaching->SetValue            (m_data.GetDisableCaching());
 
 	m_checkBoxClass->SetValue     (m_data.GetCcColourFlags() & CC_COLOUR_CLASS);
 	m_checkBoxEnum->SetValue      (m_data.GetCcColourFlags() & CC_COLOUR_ENUM);
@@ -96,6 +97,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkBoxEnumerator->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_ENUMERATOR);
 	m_checkBoxMember->SetValue    (m_data.GetCcColourFlags() & CC_COLOUR_MEMBER);
 	m_checkBoxVariable->SetValue  (m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
+	m_spinCtrlCacheSize->SetValue ( m_data.GetMaxCacheSize() );
 
 	//initialize the ctags page
 	wxString prep;
@@ -137,11 +139,9 @@ void TagsOptionsDlg::CopyData()
 	SetFlag(CC_DISP_TYPE_INFO,             m_checkDisplayTypeInfo->IsChecked());
 	SetFlag(CC_LOAD_EXT_DB,                m_checkLoadLastDB->IsChecked());
 	SetFlag(CC_PARSE_COMMENTS,             m_checkParseComments->IsChecked());
-	SetFlag(CC_LOAD_EXT_DB_TO_MEMORY,      m_checkLoadToMemory->IsChecked());
 	SetFlag(CC_PARSE_EXT_LESS_FILES,       m_checkFilesWithoutExt->IsChecked());
 	SetFlag(CC_COLOUR_VARS,                m_checkColourLocalVars->IsChecked());
 	SetFlag(CC_CPP_KEYWORD_ASISST,         m_checkCppKeywordAssist->IsChecked());
-	SetFlag(CC_CACHE_WORKSPACE_TAGS,       false);
 	SetFlag(CC_DISABLE_AUTO_PARSING,       m_checkDisableParseOnSave->IsChecked());
 	SetFlag(CC_COLOUR_WORKSPACE_TAGS,      m_checkColourProjTags->IsChecked());
 	SetFlag(CC_MARK_TAGS_FILES_IN_BOLD,    m_checkBoxMarkTagsFilesInBold->IsChecked());
@@ -165,9 +165,10 @@ void TagsOptionsDlg::CopyData()
 	m_data.SetFileSpec(m_textFileSpec->GetValue());
 	wxArrayString prep = wxStringTokenize(m_textPrep->GetValue(), wxT(";"), wxTOKEN_STRTOK);
 	m_data.SetPreprocessor(prep);
-
+	m_data.SetDisableCaching(m_checkBoxDisableCaching->IsChecked());
 	m_data.SetLanguages(m_comboBoxLang->GetStrings());
 	m_data.SetLanguageSelection(m_comboBoxLang->GetStringSelection());
+	m_data.SetMaxCacheSize(m_spinCtrlCacheSize->GetValue());
 
 }
 
@@ -192,4 +193,26 @@ void TagsOptionsDlg::SetColouringFlag(CodeCompletionColourOpts flag, bool set)
 void TagsOptionsDlg::OnColourWorkspaceUI(wxUpdateUIEvent& e)
 {
 	e.Enable(m_checkColourProjTags->IsChecked());
+}
+
+void TagsOptionsDlg::OnCachePageUI(wxUpdateUIEvent& e)
+{
+	e.Enable( m_checkBoxDisableCaching->IsChecked() == false );
+}
+
+void TagsOptionsDlg::OnCleanCache(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	TagsManagerST::Get()->GetDatabase()->ClearCache();
+}
+
+void TagsOptionsDlg::OnClearCacheUI(wxUpdateUIEvent& e)
+{
+	if ( m_checkBoxDisableCaching->IsChecked() ) {
+		e.Enable(false);
+	} else if ( TagsManagerST::Get()->GetCacheItemCount()>0 ) {
+		e.Enable (true);
+	} else {
+		e.Enable(false);
+	}
 }

@@ -5,19 +5,13 @@
 #include <wx/string.h>
 #include "smart_ptr.h"
 #include "entry.h"
+#include <set>
 
 class TagCacheEntry
 {
-	wxString m_query;
+	wxString                 m_query;
 	std::vector<TagEntryPtr> m_tags;
-	wxArrayString m_files;
-
-protected:
-	/**
-	 * \brief normalize the file name: make it lower case, replace all backslashes with forward slashes
-	 * \param file_name
-	 */
-	wxString NormalizeFileName(const wxString &file_name);
+	std::set<wxString>       m_scopes;
 
 public:
 	TagCacheEntry(const wxString& query, const std::vector<TagEntryPtr> &tags);
@@ -31,13 +25,14 @@ public:
 		return m_tags;
 	}
 
-	const wxArrayString& GetFiles() const {
-		return m_files;
-	}
-
-	bool IsFileRelated(const wxString &fileName);
-
-	bool IsFileStartsWith(const wxString &fileNamePrefix);
+	/**
+	 * @brief return true if this cache entry is related to the input tag
+	 * the 'relation' is determined by the tag's sccope
+	 * @param tag
+	 * @return
+	 */
+	bool IsRelated       (TagEntryPtr tag);
+	bool IsRelated       (const TagEntry& tag);
 };
 
 typedef SmartPtr<TagCacheEntry> TagCacheEntryPtr;

@@ -5,6 +5,16 @@
       <![CDATA[00040001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode000000000000
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     ]]>
     </Plugin>
   </Plugins>
@@ -30,12 +40,10 @@
     <File Name="tags_options_data.cpp"/>
     <File Name="setters_getters_data.cpp"/>
     <File Name="archive.cpp"/>
-    <File Name="winprocess.h"/>
     <File Name="winprocess.cpp"/>
     <File Name="cl_calltip.cpp"/>
     <File Name="performance.cpp"/>
     <File Name="fileextmanager.cpp"/>
-    <File Name="fileextmanager.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>
@@ -71,6 +79,8 @@
     <File Name="extdbdata.h"/>
     <File Name="cl_calltip.h"/>
     <File Name="performance.h"/>
+    <File Name="fileextmanager.h"/>
+    <File Name="winprocess.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GeneratedFiles">
     <File Name="expression_result.h"/>
@@ -96,6 +106,7 @@
     <File Name="variable_entry.h"/>
     <File Name="fileentry.cpp"/>
     <File Name="fileentry.h"/>
+    <File Name="istorage.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies/>

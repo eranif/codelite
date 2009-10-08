@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Aug 28 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -46,7 +46,6 @@ class NewWxProjectBaseDlg : public wxDialog
 		wxStaticBitmap* m_bitmap1;
 		wxStaticLine* m_staticline4;
 		wxNotebook* m_flatNotebook1;
-		wxPanel* m_panel2;
 		wxPanel* m_panelBasicInfo;
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrlName;
@@ -57,19 +56,29 @@ class NewWxProjectBaseDlg : public wxDialog
 		wxStaticText* m_staticText4;
 		wxStaticLine* m_staticline2;
 		wxCheckBox* m_checkBoxCreateSeparateDir;
-		wxCheckBox* m_checkBoxUnicode;
+		wxCheckBox* m_checkBoxPCH;
+		wxCheckBox* m_checkBoxWinRes;
 		wxCheckBox* m_checkBoxMWindows;
+		wxPanel* m_panelAdvancedInfo;
+		wxCheckBox* m_checkBoxUnicode;
+		wxCheckBox* m_checkBoxStatic;
+		wxCheckBox* m_checkBoxUniversal;
+		wxStaticText* m_staticText6;
+		wxChoice* m_choiceVersion;
+		wxStaticText* m_staticText7;
+		wxTextCtrl* m_textCtrlPrefix;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOK;
 		wxButton* m_button2;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnChoiceChanged( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnButtonCancel( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnChoiceChanged( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonCancel( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
+		
 		NewWxProjectBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New wxWidgets Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~NewWxProjectBaseDlg();
 	

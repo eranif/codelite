@@ -135,11 +135,11 @@ bool QuickFinder::FilterAndDisplayTags(const std::vector<TagEntryPtr>& tags, con
 
 	int rc = dlg.ShowModal();
 	WindowAttrManager::Save(&dlg, wxT("QuickfinderSelect"), m_manager->GetConfigTool());
-	if ( rc == wxID_OK ) {
+	if ( rc == wxID_OK && dlg.selection.IsOk() ) {
 		if ( m_manager->OpenFile(dlg.selection.GetFile(), wxEmptyString, dlg.selection.GetLine()) ) {
 			IEditor *editor = m_manager->GetActiveEditor();
 			if ( editor ) {
-				editor->FindAndSelect(dlg.selection.GetPattern(), dlg.selection.GetName(), m_manager->GetNavigationMgr());
+				editor->FindAndSelect(dlg.selection.GetPattern(), dlg.selection.GetName(), 0, m_manager->GetNavigationMgr());
 			}
 		}
 	}

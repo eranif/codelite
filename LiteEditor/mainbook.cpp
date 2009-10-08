@@ -63,7 +63,7 @@ void MainBook::CreateGuiControls()
 	sz->Add(m_book, 1, wxEXPAND);
 
 	m_quickFindBar = new QuickFindBar(this);
-	sz->Add(m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND, 5);
+	sz->Add(m_quickFindBar, 0, wxTOP|wxBOTTOM|wxEXPAND);
 
 	sz->Layout();
 }
@@ -96,6 +96,7 @@ void MainBook::OnMouseDClick(wxMouseEvent& e)
 
 void MainBook::OnFocus(wxFocusEvent &e)
 {
+	// we use here DoSelectPage so the the selection wont change
 	if (!SelectPage(dynamic_cast<wxWindow*>(e.GetEventObject()))) {
 		e.Skip();
 	}
@@ -223,14 +224,6 @@ void MainBook::ClearFileHistory()
 void MainBook::GetRecentlyOpenedFiles ( wxArrayString &files )
 {
 	EditorConfigST::Get()->GetRecentlyOpenedFies ( files );
-	wxArrayString files_ok;
-	for(size_t i=0; i<files.GetCount(); i++){
-		if(wxFileName::FileExists(files.Item(i))) {
-			files_ok.Add(files.Item(i));
-		}
-	}
-	EditorConfigST::Get()->SetRecentlyOpenedFies( files_ok );
-	files = files_ok;
 }
 
 void MainBook::UpdateNavBar(LEditor *editor)
@@ -482,35 +475,7 @@ bool MainBook::SelectPage(wxWindow *win)
 	} else
 		return false;
 
-	m_currentPage = win;
-
-	LEditor *editor = dynamic_cast<LEditor*>(win);
-
-	// FIXME: move special context-specific menu handling to the Context classes?
-	// it could be done inside the existing ContextXXX::SetActive() method.
-	if (!editor || editor->GetContext()->GetName() != wxT("C++")) {
-		int idx = Frame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
-		if ( idx != wxNOT_FOUND ) {
-			delete Frame::Get()->GetMenuBar()->Remove(idx);
-		}
-	}
-
-	if (!editor) {
-		Frame::Get()->SetFrameTitle(NULL);
-		Frame::Get()->SetStatusMessage(wxEmptyString, 2); // clear line & column indicator
-		Frame::Get()->SetStatusMessage(wxEmptyString, 3); // clear end-of-line mode indicator
-		UpdateNavBar(NULL);
-	} else {
-		editor->SetActive();
-		if (editor->GetContext()->GetName() == wxT("C++")) {
-			if (Frame::Get()->GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
-				Frame::Get()->GetMenuBar()->Append(wxXmlResource::Get()->LoadMenu(wxT("editor_right_click")), wxT("C++"));
-			}
-		}
-		SendCmdEvent(wxEVT_ACTIVE_EDITOR_CHANGED, (IEditor*)editor);
-	}
-
-	return true;
+	return DoSelectPage( win );
 }
 
 bool MainBook::DetachPage(wxWindow* win)
@@ -566,6 +531,7 @@ bool MainBook::UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, 
 
 bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 {
+	// turn the 'saving all' flag on so we could 'Veto' all focus events
 	std::vector<LEditor*> editors;
 	GetAllEditors(editors);
 
@@ -812,4 +778,40 @@ void MainBook::MarkEditorReadOnly(LEditor* editor, bool ro)
 long MainBook::GetBookStyle()
 {
 	return m_book->GetBookStyle();
+}
+
+bool MainBook::DoSelectPage(wxWindow* win)
+{
+	m_currentPage = win;
+
+	LEditor *editor = dynamic_cast<LEditor*>(win);
+	if ( editor ) {
+		editor->SetActive();
+	}
+
+	// FIXME: move special context-specific menu handling to the Context classes?
+	// it could be done inside the existing ContextXXX::SetActive() method.
+	if (!editor || editor->GetContext()->GetName() != wxT("C++")) {
+		int idx = Frame::Get()->GetMenuBar()->FindMenu(wxT("C++"));
+		if ( idx != wxNOT_FOUND ) {
+			delete Frame::Get()->GetMenuBar()->Remove(idx);
+		}
+	}
+
+	if (!editor) {
+		Frame::Get()->SetFrameTitle(NULL);
+		Frame::Get()->SetStatusMessage(wxEmptyString, 2); // clear line & column indicator
+		Frame::Get()->SetStatusMessage(wxEmptyString, 3); // clear end-of-line mode indicator
+		UpdateNavBar(NULL);
+	} else {
+		editor->SetActive();
+		if (editor->GetContext()->GetName() == wxT("C++")) {
+			if (Frame::Get()->GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {
+				Frame::Get()->GetMenuBar()->Append(wxXmlResource::Get()->LoadMenu(wxT("editor_right_click")), wxT("C++"));
+			}
+		}
+		SendCmdEvent(wxEVT_ACTIVE_EDITOR_CHANGED, (IEditor*)editor);
+	}
+
+	return true;
 }

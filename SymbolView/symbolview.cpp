@@ -35,6 +35,7 @@
 #include <wx/busyinfo.h>
 #include <wx/utils.h>
 #include <wx/xrc/xmlres.h>
+#include "parse_thread.h"
 
 
 //--------------------------------------------

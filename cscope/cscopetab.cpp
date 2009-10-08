@@ -33,7 +33,7 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 		, m_table(NULL)
 		, m_mgr(mgr)
 {
-	CSscopeConfData data;
+	CScopeConfData data;
 	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
 	m_choiceSearchScope->SetStringSelection(data.GetScanScope());
 	m_checkBoxUpdateDb->SetValue(data.GetRebuildOption());
@@ -143,7 +143,13 @@ void CscopeTab::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 					wxLogMessage(wxT("failed to convert file to absolute path"));
 				}
 
-				m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine()-1);
+				if(m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine()-1)) {
+					IEditor *editor = m_mgr->GetActiveEditor();
+					if( editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() && !GetFindWhat().IsEmpty()) {
+						// Find and select the entry in the file
+						editor->FindAndSelect(data->GetEntry().GetPattern(), GetFindWhat(), editor->GetCurrentPosition(), m_mgr->GetNavigationMgr());
+					}
+				}
 				return;
 			} else if (data->GetEntry().GetKind() == KindFileNode) {
 				event.Skip();
@@ -174,7 +180,7 @@ void CscopeTab::OnClearResultsUI(wxUpdateUIEvent& e)
 
 void CscopeTab::OnChangeSearchScope(wxCommandEvent& e)
 {
-	CSscopeConfData data;
+	CScopeConfData data;
 	data.SetScanScope(m_choiceSearchScope->GetStringSelection());
 	data.SetRebuildDbOption(m_checkBoxUpdateDb->IsChecked());
 	data.SetBuildRevertedIndexOption(m_checkBoxRevertedIndex->IsChecked());

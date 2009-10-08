@@ -358,14 +358,6 @@ void Manager::ClearWorkspaceHistory()
 void Manager::GetRecentlyOpenedWorkspaces ( wxArrayString &files )
 {
 	EditorConfigST::Get()->GetRecentlyOpenedWorkspaces ( files );
-	wxArrayString files_ok;
-	for(size_t i=0; i<files.GetCount(); i++){
-		if(wxFileName::FileExists(files.Item(i))) {
-			files_ok.Add(files.Item(i));
-		}
-	}
-	EditorConfigST::Get()->SetRecentlyOpenedWorkspaces( files_ok );
-	files = files_ok;
 }
 
 
@@ -711,8 +703,11 @@ void Manager::RetagWorkspace()
 			proj->GetFiles ( projectFiles, true );
 		}
 	}
-
+	wxStopWatch sw;
+	sw.Start();
 	TagsManagerST::Get()->RetagFiles ( projectFiles );
+	long end   = sw.Time();
+	wxLogMessage(wxT("INFO: Retag workspace completed after %d seconds"), (end)/1000);
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
 }
 
@@ -812,10 +807,9 @@ bool Manager::AddFileToProject ( const wxString &fileName, const wxString &vdFul
 
 	TagTreePtr ttp;
 	if ( project.IsEmpty() == false ) {
-		std::vector<DbRecordPtr> comments;
+		std::vector<CommentPtr> comments;
 		if ( TagsManagerST::Get()->GetParseComments() ) {
 			ttp = TagsManagerST::Get()->ParseSourceFile ( fileName, &comments );
-			TagsManagerST::Get()->StoreComments ( comments );
 		} else {
 			ttp = TagsManagerST::Get()->ParseSourceFile ( fileName );
 		}
@@ -2574,27 +2568,20 @@ bool Manager::IsBuildEndedSuccessfully() const
 	}
 
 	wxArrayString lines;
-	CompileRequest *cr = dynamic_cast<CompileRequest*> ( m_shellProcess );
-	CustomBuildRequest *cbr = dynamic_cast<CustomBuildRequest*> ( m_shellProcess );
-	if ( cr || cbr ) {
-		if ( cr && !cr->GetLines ( lines ) ) {
-			return false;
-		}
-		if ( cbr && !cbr->GetLines ( lines ) ) {
+	if ( m_shellProcess ) {
+
+		if ( !m_shellProcess->GetLines ( lines ) ) {
 			return false;
 		}
 
 		//check every line to see if we got an error/warning
-		wxString project ( cr ? cr->GetProjectName() : cbr->GetProjectName() );
+		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf     ( m_shellProcess->GetInfo().GetProject(), m_shellProcess->GetInfo().GetConfiguration() );
+		CompilerPtr    cmp     = BuildSettingsConfigST::Get()->GetCompiler( bldConf->GetCompilerType() );
 
-		// TODO :: change the call to ' GetProjBuildConf' to pass the correct
-		// build configuration
-		BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf ( project, wxEmptyString );
-		CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler ( bldConf->GetCompilerType() );
-		wxString errPattern = cmp->GetErrPattern();
+		wxString errPattern  = cmp->GetErrPattern();
 		wxString warnPattern = cmp->GetWarnPattern();
 
-		wxRegEx reErr ( errPattern );
+		wxRegEx reErr  ( errPattern );
 		wxRegEx reWarn ( warnPattern );
 		for ( size_t i=0; i<lines.GetCount(); i++ ) {
 			if ( reWarn.IsValid() && reWarn.Matches ( lines.Item ( i ) ) ) {

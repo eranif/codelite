@@ -1,51 +1,39 @@
 #include "tagcacheentry.h"
 
+static wxString GetScope(const TagEntry& tag)
+{
+	wxString affectedScope;
+	if ( tag.IsContainer() ) {
+		affectedScope << tag.GetScope() << wxT("::") << tag.GetName();
+	} else {
+		affectedScope << tag.GetScope();
+	}
+	return affectedScope;
+}
+
 TagCacheEntry::TagCacheEntry(const wxString &query, const std::vector<TagEntryPtr> &tags)
 		: m_query(query)
 		, m_tags(tags)
 {
-	// populate the files list for this query
+	// Keep a set of the relevant scopes
 	for (size_t i=0; i<m_tags.size(); i++) {
-		TagEntryPtr t = m_tags.at(i);
-		if (m_files.Index(t->GetFile()) == wxNOT_FOUND) {
-
-			// normalize the file name
-			wxString file_name = NormalizeFileName(t->GetFile());
-			// add it
-			m_files.Add(file_name);
-		}
+		m_scopes.insert(GetScope((*m_tags.at(i))));
 	}
 }
 
 TagCacheEntry::~TagCacheEntry()
 {
-	m_files.Clear();
+	m_scopes.clear();
 }
 
-bool TagCacheEntry::IsFileRelated(const wxString& fileName)
+bool TagCacheEntry::IsRelated(TagEntryPtr tag)
 {
-	wxString file_name = NormalizeFileName(fileName);
-	return m_files.Index(file_name) != wxNOT_FOUND;
+	wxString scope = GetScope(*tag);
+	return m_scopes.find(scope) != m_scopes.end();
 }
 
-wxString TagCacheEntry::NormalizeFileName(const wxString& fileName)
+bool TagCacheEntry::IsRelated(const TagEntry& tag)
 {
-	// normalize the file name
-	wxString file_name(fileName);
-	file_name.MakeLower();
-	file_name.Replace(wxT("\\"), wxT("/"));
-	file_name.Replace(wxT("//"), wxT("/"));
-	file_name.Trim().Trim(false);
-	return file_name;
-}
-
-bool TagCacheEntry::IsFileStartsWith(const wxString& fileNamePrefix)
-{
-	wxString prefix = NormalizeFileName(fileNamePrefix);
-	for(size_t i=0; i<m_files.GetCount(); i++){
-		if(m_files.Item(i).StartsWith(fileNamePrefix)){
-			return true;
-		}
-	}
-	return false;
+	wxString scope = GetScope(tag);
+	return m_scopes.find(scope) != m_scopes.end();
 }

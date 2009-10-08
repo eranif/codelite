@@ -58,8 +58,8 @@ protected:
 	virtual void OnWordWrap       (wxCommandEvent   &e);
 	virtual void OnCollapseAll    (wxCommandEvent   &e);
     virtual void OnRepeatOutput   (wxCommandEvent   &e);
-	virtual void OnCopy           (wxCommandEvent   &e);
-	virtual void OnSelectAll      (wxCommandEvent   &e);
+	virtual void OnEdit           (wxCommandEvent   &e);
+
 
     virtual void OnOutputScrollsUI(wxUpdateUIEvent  &e);
 	virtual void OnClearAllUI     (wxUpdateUIEvent  &e);
@@ -70,6 +70,7 @@ protected:
 	virtual void OnMouseDClick    (wxScintillaEvent &e);
 	virtual void OnHotspotClicked (wxScintillaEvent &e);
 	virtual void OnMarginClick    (wxScintillaEvent &e);
+	virtual void OnEditUI         (wxUpdateUIEvent  &e);
 
     DECLARE_EVENT_TABLE()
 

@@ -124,12 +124,14 @@ public:
 
 class OutputViewSearchCtrl : public OutputViewControlBarButton
 {
+	bool IsFocused();
+
 public:
 	wxTextCtrl   *m_findWhat;
 	wxButton     *m_button;
 	wxString      m_searchType;
 	wxArrayString m_searchTypeArray;
-
+	wxColour      GREY_TEXT;
 public:
 	OutputViewSearchCtrl(wxWindow *win);
 	~OutputViewSearchCtrl();
@@ -149,5 +151,6 @@ public:
 	virtual void OnMenuSelection     (wxCommandEvent &event);
 	virtual void OnKeyDown           (wxKeyEvent     &event);
 	virtual void OnFocus             (wxFocusEvent   &event);
+	virtual void OnEdit              (wxCommandEvent &event);
 };
 #endif // __auicontrolbar__

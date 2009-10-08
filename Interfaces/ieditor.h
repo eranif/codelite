@@ -261,7 +261,7 @@ public:
 	 * @param navmgr  Navigation manager to place browsing recrods
 	 * @return return true if a match was found, false otherwise
 	 */
-	virtual bool FindAndSelect(const wxString &pattern, const wxString &what, NavMgr *navmgr) = 0;
+	virtual bool FindAndSelect(const wxString &pattern, const wxString &what, int from_pos, NavMgr *navmgr) = 0;
 };
 
 #endif //IEDITOR_H

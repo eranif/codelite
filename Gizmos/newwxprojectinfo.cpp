@@ -28,6 +28,7 @@ NewWxProjectInfo::NewWxProjectInfo()
 	size_t flags(0);
 #if defined (__WXMSW__)	
 	flags |= wxWidgetsSetMWindows;
+	flags |= wxWidgetsWinRes;
 #endif
 	flags |= wxWidgetsUnicode;
 	SetFlags(flags);

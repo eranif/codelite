@@ -369,10 +369,11 @@ public:
 	 * inside the pattern and will select it
 	 * @param pattern pattern to search in the editor
 	 * @param what    sub string of pattern to select
+	 * @param pos     start the search from 'pos'
 	 * @param navmgr  Navigation manager to place browsing recrods
 	 * @return return true if a match was found, false otherwise
 	 */
-	virtual bool FindAndSelect(const wxString &pattern, const wxString &what, NavMgr *navmgr);
+	virtual bool FindAndSelect(const wxString &pattern, const wxString &what, int pos, NavMgr *navmgr);
 
 	virtual void UpdateBreakpoints();
 
@@ -566,7 +567,7 @@ private:
 	void DoBreakptContextMenu(wxPoint clientPt);
 	void DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
 	void DoQuickJump(wxMouseEvent &event, bool isMiddle);
-	bool DoFindAndSelect(const wxString &pattern, const wxString &what, NavMgr *navmgr);
+	bool DoFindAndSelect(const wxString &pattern, const wxString &what, int start_pos, NavMgr *navmgr);
 
 	DECLARE_EVENT_TABLE()
 	void OnRemoveMatchInidicator(wxCommandEvent &e);

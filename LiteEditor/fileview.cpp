@@ -1279,7 +1279,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 		path.RemoveLast();
 	}
 	//} bug 2847625
-	
+
 	wxFileName rootPath(path);
 
 	//Collect all candidates files

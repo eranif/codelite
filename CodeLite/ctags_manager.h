@@ -136,12 +136,11 @@ class TagsManager : public wxEvtHandler
 	std::list<clProcess*>         m_gargabeCollector;
 	wxTimer*                      m_timer;
 	std::vector<VariableEntryPtr> m_vars;
-	TagsCache*                    m_extDbCache;
-	TagsCache*                    m_workspaceDbCache;
 	Language*                     m_lang;
 	bool                          m_useExternalDatabase;
 	std::vector<TagEntryPtr>      m_cachedFileFunctionsTags;
 	wxString                      m_cachedFile;
+	bool                          m_enableCaching;
 
 public:
 
@@ -150,20 +149,36 @@ public:
 
 	wxString GetCTagsCmd();
 
+	//----------------------------------- Cache management -------------------------------------------
+	/**
+	 * @brief event handler which is sent by the parser thread
+	 * to tell us that a list of tags were updated in the database
+	 * @param event
+	 */
+	void OnUpdateCache (wxCommandEvent &event);
+
+	/**
+	 * @brief enable/disable caching
+	 * @param enable
+	 */
+	void EnableCaching(bool enable);
+
+	/**
+	 * @brief sets the maximum entries kept in the cache
+	 * @param size
+	 */
+	void SetMaxCacheSize(int size);
+
+	/**
+	 * @brief return the number of items in cache
+	 * @return
+	 */
+	int  GetCacheItemCount();
+
 	/**
 	 * @brief return the currently cached file
 	 */
 	bool IsFileCached(const wxString &fileName) const;
-
-	/**
-	 * @brief return reference to the workspace tags cache
-	 * By default codelite caches tags of all queries executed. In order to
-	 * clear cached items, user should handle it in the appropriate places
-	 * (e.g. in the onFileSave() handler)
-	 */
-	TagsCache* GetWorkspaceTagsCache() {
-		return m_workspaceDbCache;
-	}
 
 	/**
 	 * @brief clear the file cached
@@ -220,8 +235,8 @@ public:
 	 * @param comments if not null, comments will be parsed as well, and will be returned as vector
 	 * @return tag tree
 	 */
-	TagTreePtr ParseSourceFile(const wxFileName& fp, std::vector<DbRecordPtr> *comments = NULL);
-	TagTreePtr ParseSourceFile2(const wxFileName& fp, const wxString &tags, std::vector<DbRecordPtr> *comments = NULL);
+	TagTreePtr ParseSourceFile(const wxFileName& fp, std::vector<CommentPtr> *comments = NULL);
+	TagTreePtr ParseSourceFile2(const wxFileName& fp, const wxString &tags, std::vector<CommentPtr> *comments = NULL);
 
 	/**
 	 * @brief Set the full path to ctags executable, else TagsManager will use relative path ctags.
@@ -237,13 +252,6 @@ public:
 	 * @param path Database file name
 	 */
 	void Store(TagTreePtr tree, const wxFileName& path = wxFileName());
-
-	/**
-	 * @brief Store vector of comments into database
-	 * @param comments comments vector to store
-	 * @param path Database file name
-	 */
-	void StoreComments(const std::vector<DbRecordPtr> &comments, const wxFileName& path = wxFileName());
 
 	/**
 	 * load all symbols of fileName from the database and return them
@@ -427,13 +435,6 @@ public:
 	 * Return true if comment parsing is enabled, false otherwise
 	 */
 	bool GetParseComments();
-
-	/**
-	 * Load comment from database by line and file
-	 * @param line line number
-	 * @param file file name
-	 */
-	wxString GetComment(const wxString &file, const int line);
 
 	/**
 	 * Generate doxygen based on file & line. The generated doxygen is partial, that is, only the "\param" "\return"
@@ -700,12 +701,6 @@ public:
 	wxString NormalizeFunctionSig(const wxString &sig, size_t flags = Normalize_Func_Name, std::vector<std::pair<int, int> > *paramLen = NULL);
 
 	/**
-	 * @brief fetch a workspace tag by its ID
-	 * @return tag or NULL
-	 */
-	TagEntryPtr GetWorkspaceTagById(int id);
-
-	/**
 	 * @brief return map of un-implemented methods of given scope
 	 * @param scopeName scope to search
 	 * @param protos map of methods prototypes
@@ -740,8 +735,9 @@ protected:
 	/**
 	 * Handler ctags process termination
 	 */
-	void OnCtagsEnd(wxProcessEvent& event);
-	void OnTimer(wxTimerEvent &event);
+	void OnCtagsEnd    (wxProcessEvent &event);
+	void OnTimer       (wxTimerEvent   &event);
+
 	DECLARE_EVENT_TABLE()
 
 private:
@@ -777,7 +773,6 @@ protected:
 
 protected:
 	void           DoFindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags);
-	void           DoExecuteQueury(const wxString &sql, bool queryBothDB, std::vector<TagEntryPtr> &tags, bool onlyWorkspace = false);
 	void           RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
 	void           RemoveDuplicatesTips(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
 	void           GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &tags, size_t flags = PartialMatch);

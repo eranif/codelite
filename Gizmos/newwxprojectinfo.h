@@ -29,20 +29,28 @@
 
 //wxWidgets settings
 enum {
-	wxWidgetsSetMWindows = 0x00000001,
-	wxWidgetsUnicode  = 0x00000002
+	wxWidgetsSetMWindows = 1,
+	wxWidgetsUnicode  = 2,
+	wxWidgetsStatic  = 4,
+	wxWidgetsUniversal  = 8,
+	wxWidgetsPCH  = 16,
+	wxWidgetsWinRes  = 32
 };
 
 //Project types
 enum {
-	wxProjectTypeGUI = 0,
-	wxProjectTypeSimpleMain
+	wxProjectTypeSimpleMain = 0,
+	wxProjectTypeGUI,
+	wxProjectTypeGUIFBFrame,
+	wxProjectTypeGUIFBDialog
 };
 
 class NewWxProjectInfo {
 	
 	wxString m_name;
 	wxString m_path;
+	wxString m_prefix;
+	wxString m_version;
 	size_t m_flags;
 	int m_type;
 	
@@ -55,12 +63,16 @@ public:
 	void SetName(const wxString& name) {this->m_name = name;}
 	void SetPath(const wxString& path) {this->m_path = path;}
 	void SetType(const int& type) {this->m_type = type;}
-	
+	void SetPrefix(const wxString& prefix) {this->m_prefix = prefix;}
+	void SetVersion(const wxString& version) {this->m_version = version;}
+
 	//Getters
 	const size_t& GetFlags() const {return m_flags;}
 	const wxString& GetName() const {return m_name;}
 	const wxString& GetPath() const {return m_path;}
 	const int& GetType() const {return m_type;}
+	const wxString& GetPrefix() const {return m_prefix;}
+	const wxString& GetVersion() const {return m_version;}
 	
 };
 #endif // __newwxprojectinfo__

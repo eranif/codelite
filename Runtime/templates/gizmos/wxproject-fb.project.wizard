@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="$(ProjectName)">
+  <VirtualDirectory Name="src">
+	<File Name="$(AppFile).cpp"/>
+	<File Name="gui.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+	<File Name="$(AppFile).h"/>
+	<File Name="gui.h"/>
+	$(PCHFile)
+  </VirtualDirectory>
+  <VirtualDirectory Name="resources">
+	<File Name="gui.fbp"/>
+	$(WinResFile)
+  </VirtualDirectory>
+  <Dependencies/>
+  <Settings Type="Executable">
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
+      <Compiler Required="yes" Options="-g;$(PCHCmpOptions);$(shell wx-config --cxxflags --unicode=$(Unicode) --static=$(Static) --universal=$(Universal) --debug=yes $(Other))">
+		<Preprocessor Value="__WX__;$(PCHFlag)"/>
+	  </Compiler>
+      <Linker Required="yes" Options="$(shell wx-config --debug=yes --libs --unicode=$(Unicode) --static=$(Static) --universal=$(Universal) $(Other));$(MWindowsFlag)">
+      </Linker>
+      <ResourceCompiler Required="$(WinResFlag)" Options="$(shell wx-config --rcflags)"/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>$(PCHMakeCmd)</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
+      <Compiler Required="yes" Options="-O2;$(PCHCmpOptions);$(shell wx-config --cxxflags --unicode=$(Unicode) --static=$(Static) --universal=$(Universal) --debug=no $(Other))">
+        <Preprocessor Value="__WX__;$(PCHFlag)"/>
+      </Compiler>
+      <Linker Required="yes" Options="-s;$(shell wx-config --debug=no --libs --unicode=$(Unicode) --static=$(Static) --universal=$(Universal) $(Other));$(MWindowsFlag)"/>
+      <ResourceCompiler Required="$(WinResFlag)" Options="$(shell wx-config --rcflags)"/>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <CleanCommand></CleanCommand>
+        <BuildCommand></BuildCommand>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild></CustomPostBuild>
+        <CustomPreBuild>$(PCHMakeCmd)</CustomPreBuild>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>

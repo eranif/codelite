@@ -43,7 +43,6 @@ QuickfinderSelect::QuickfinderSelect( wxWindow* parent , const std::vector<TagEn
 	il->Add(wxXmlResource::Get()->LoadBitmap(_T("func_public")));//6
 	m_listCtrlTags->AssignImageList( il, wxIMAGE_LIST_SMALL );
 
-	m_buttonClose->SetDefault();
 	DoCreateList();
 	DoPopulate  ();
 }
@@ -58,6 +57,8 @@ void QuickfinderSelect::OnItemActivated( wxListEvent& event )
 	if ( sel != wxNOT_FOUND ) {
 		this->selection = *((TagEntry*) m_listCtrlTags->GetItemData(sel));
 		EndModal(wxID_OK);
+	} else {
+		EndModal(wxID_CANCEL);
 	}
 }
 
@@ -94,4 +95,16 @@ void QuickfinderSelect::DoPopulate()
 		m_listCtrlTags->SetFocus();
 	}
 	Thaw();
+}
+
+
+void QuickfinderSelect::OnButtonOK(wxCommandEvent& event)
+{
+	long sel = m_listCtrlTags->GetFirstSelected();
+	if ( sel != wxNOT_FOUND ) {
+		this->selection = *((TagEntry*) m_listCtrlTags->GetItemData(sel));
+		EndModal(wxID_OK);
+	} else {
+		EndModal(wxID_CANCEL);
+	}
 }

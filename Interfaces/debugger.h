@@ -189,7 +189,10 @@ protected:
 		arch.Write(wxT("bp_type"), bp_type);
 		arch.Write(wxT("watchpoint_type"), watchpoint_type);
 		arch.Write(wxT("watchpt_data"), watchpt_data);
-		arch.Write(wxT("commandlist"), commandlist);
+		// WriteCDate tends to write white-space even for empty commandlists
+		if (!commandlist.IsEmpty()) {
+		arch.WriteCData(wxT("commandlist"), commandlist);
+		}
 		arch.Write(wxT("regex"), regex);
 		arch.Write(wxT("is_temp"), is_temp);
 		arch.Write(wxT("is_enabled"), is_enabled);
@@ -205,7 +208,8 @@ protected:
 		arch.Read(wxT("bp_type"), (int&)bp_type);
 		arch.Read(wxT("watchpoint_type"), (int&)watchpoint_type);
 		arch.Read(wxT("watchpt_data"), watchpt_data);
-		arch.Read(wxT("commandlist"), commandlist);
+		arch.ReadCData(wxT("commandlist"), commandlist);
+		commandlist.Trim().Trim(false); // ReadCData tends to add white-space to the commands e.g. a terminal \n
 		arch.Read(wxT("regex"), regex);
 		arch.Read(wxT("is_temp"), is_temp);
 		// arch.Read(wxT("is_enabled"), is_enabled); // It's currently not possible to create a disabled bp

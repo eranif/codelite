@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 19 2008)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -21,8 +21,9 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/stattext.h>
-#include <wx/textctrl.h>
+#include <wx/spinctrl.h>
 #include <wx/button.h>
+#include <wx/textctrl.h>
 #include <wx/combobox.h>
 #include <wx/notebook.h>
 #include <wx/statline.h>
@@ -64,7 +65,13 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxCheckBox* m_checkBoxMember;
 		wxCheckBox* m_checkBoxVariable;
 		wxCheckBox* m_checkLoadLastDB;
-		wxCheckBox* m_checkLoadToMemory;
+		wxPanel* m_panelCache;
+		wxCheckBox* m_checkBoxDisableCaching;
+		wxStaticText* m_staticText4;
+		wxStaticText* m_staticText51;
+		wxSpinCtrl* m_spinCtrlCacheSize;
+		wxStaticText* m_staticText6;
+		wxButton* m_buttonClearCache;
 		wxPanel* m_ctagsPage;
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textPrep;
@@ -82,6 +89,9 @@ class TagsOptionsBaseDlg : public wxDialog
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnColourWorkspaceUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnCachePageUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnCleanCache( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnClearCacheUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnButtonAdd( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
 		

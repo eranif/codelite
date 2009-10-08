@@ -25,8 +25,12 @@ SelectSymbolDlgBase::SelectSymbolDlgBase( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_buttonClose = new wxButton( this, wxID_CANCEL, _("&Close"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer2->Add( m_buttonClose, 0, wxALL, 5 );
+	m_buttonOk = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonOk->SetDefault();
+	bSizer2->Add( m_buttonOk, 0, wxALL, 5 );
+
+	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer2->Add( m_buttonCancel, 0, wxALL, 5 );
 
 	bSizer1->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
@@ -36,10 +40,12 @@ SelectSymbolDlgBase::SelectSymbolDlgBase( wxWindow* parent, wxWindowID id, const
 
 	// Connect Events
 	m_listCtrlTags->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( SelectSymbolDlgBase::OnItemActivated ), NULL, this );
+	m_buttonOk->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SelectSymbolDlgBase::OnButtonOK ), NULL, this );
 }
 
 SelectSymbolDlgBase::~SelectSymbolDlgBase()
 {
 	// Disconnect Events
 	m_listCtrlTags->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( SelectSymbolDlgBase::OnItemActivated ), NULL, this );
+	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SelectSymbolDlgBase::OnButtonOK ), NULL, this );
 }

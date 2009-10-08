@@ -58,6 +58,7 @@ private:
     void OnWorkspaceClosed   (wxCommandEvent    &e);
 
 	bool AskUserToSave(LEditor *editor);
+	bool DoSelectPage (wxWindow *win  );
 
 public:
 	MainBook(wxWindow *parent);

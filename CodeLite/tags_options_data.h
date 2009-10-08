@@ -35,12 +35,11 @@ enum CodeCompletionOpts {
 	CC_DISP_TYPE_INFO             = 0x00000004,
 	CC_DISP_FUNC_CALLTIP          = 0x00000008,
 	CC_LOAD_EXT_DB                = 0x00000010,
-	CC_LOAD_EXT_DB_TO_MEMORY      = 0x00000020,
 	CC_PARSE_EXT_LESS_FILES       = 0x00000040,
 	CC_COLOUR_VARS                = 0x00000080,
 	CC_COLOUR_WORKSPACE_TAGS      = 0x00000100,
 	CC_CPP_KEYWORD_ASISST         = 0x00000200,
-	CC_CACHE_WORKSPACE_TAGS       = 0x00000400,
+//	CC_CACHE_WORKSPACE_TAGS       = 0x00000400,
 	CC_DISABLE_AUTO_PARSING       = 0x00000800,
 	CC_MARK_TAGS_FILES_IN_BOLD    = 0x00001000,
 	CC_USE_FULL_RETAGGING         = 0x00002000,
@@ -62,18 +61,19 @@ enum CodeCompletionColourOpts {
 	CC_COLOUR_VARIABLE          = 0x00000400,
 	CC_COLOUR_MEMBER            = 0x00000800,
 	CC_COLOUR_DEFAULT           = CC_COLOUR_CLASS | CC_COLOUR_STRUCT | CC_COLOUR_FUNCTION |
-									CC_COLOUR_ENUM | CC_COLOUR_PROTOTYPE
+	CC_COLOUR_ENUM | CC_COLOUR_PROTOTYPE
 };
 
 class TagsOptionsData : public SerializedObject
 {
-	size_t m_ccFlags;
-	size_t m_ccColourFlags;
-
-	wxArrayString m_prep;
-	wxString m_fileSpec;
-	wxArrayString m_languages;
-	int m_minWordLen;
+	size_t           m_ccFlags;
+	size_t           m_ccColourFlags;
+	wxArrayString    m_prep;
+	wxString         m_fileSpec;
+	wxArrayString    m_languages;
+	int              m_minWordLen;
+	int              m_maxCacheSize;
+	bool             m_disableCaching;
 
 public:
 	TagsOptionsData();
@@ -131,6 +131,18 @@ public:
 
 	const size_t& GetCcColourFlags() const {
 		return m_ccColourFlags;
+	}
+	void SetMaxCacheSize(const int& maxCacheSize) {
+		this->m_maxCacheSize = maxCacheSize;
+	}
+	const int& GetMaxCacheSize() const {
+		return m_maxCacheSize;
+	}
+	void SetDisableCaching(const bool& disableCaching) {
+		this->m_disableCaching = disableCaching;
+	}
+	const bool& GetDisableCaching() const {
+		return m_disableCaching;
 	}
 };
 

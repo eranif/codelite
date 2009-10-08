@@ -35,7 +35,8 @@ class CscopeTab;
 class Cscope : public IPlugin
 {
 	wxEvtHandler *m_topWindow;
-	CscopeTab *m_cscopeWin;
+	CscopeTab    *m_cscopeWin;
+
 public:
 	Cscope(IManager *manager);
 	~Cscope();
@@ -52,10 +53,10 @@ public:
 protected:
 	//Helper
 	//------------------------------------------
-	wxMenu *CreateEditorPopMenu();
+	wxMenu * CreateEditorPopMenu();
 	wxString GetCscopeExeName();
 	wxString DoCreateListFile(bool force);
-	void DoCscopeCommand(const wxString &command, const wxString &endMsg);
+	void     DoCscopeCommand(const wxString &command, const wxString &findWhat, const wxString &endMsg);
 
 	//Event handlers
 	//------------------------------------------
@@ -64,6 +65,7 @@ protected:
 	void OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e);
 	void OnFindFunctionsCallingThisFunction(wxCommandEvent &e);
 	void OnCreateDB                        (wxCommandEvent &e);
+	void OnDoSettings                      (wxCommandEvent &e);
 	void OnCScopeThreadEnded               (wxCommandEvent &e);
 	void OnCScopeThreadUpdateStatus        (wxCommandEvent &e);
 	void OnCscopeUI                        (wxUpdateUIEvent &e);

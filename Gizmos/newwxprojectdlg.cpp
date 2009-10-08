@@ -34,15 +34,18 @@ NewWxProjectDlg::NewWxProjectDlg( wxWindow* parent, IManager *mgr  )
 , m_mgr(mgr)
 {
 	m_bitmap1->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("wx_project_header")));
-	m_choiceApplicationType->SetSelection(wxProjectTypeGUI);
+	m_choiceApplicationType->SetSelection(wxProjectTypeSimpleMain);
 	m_dirPicker->SetPath(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 	m_textCtrlName->SetFocus();
 
 #if defined (__WXMSW__)	
 	m_checkBoxMWindows->SetValue(true);
+	m_checkBoxWinRes->SetValue(true);
 #else
 	m_checkBoxMWindows->SetValue(false);
 	m_checkBoxMWindows->Enable(false);
+	m_checkBoxWinRes->SetValue(false);
+	m_checkBoxWinRes->Enable(false);
 #endif
 	WindowAttrManager::Load(this, wxT("NewWxProjectDlgAttr"), m_mgr->GetConfigTool());
 }
@@ -107,9 +110,25 @@ void NewWxProjectDlg::GetProjectInfo(NewWxProjectInfo &info)
 	if(m_checkBoxMWindows->IsChecked()){
 		flag |= wxWidgetsSetMWindows;
 	}
+	
+	if(m_checkBoxWinRes->IsChecked()){
+		flag |= wxWidgetsWinRes;
+	}
 
 	if(m_checkBoxUnicode->IsChecked()){
 		flag |= wxWidgetsUnicode;
+	}
+	
+	if(m_checkBoxStatic->IsChecked()){
+		flag |= wxWidgetsStatic;
+	}
+	
+	if(m_checkBoxUniversal->IsChecked()){
+		flag |= wxWidgetsUniversal;
+	}
+	
+	if(m_checkBoxPCH->IsChecked()){
+		flag |= wxWidgetsPCH;
 	}
 	
 	if(m_checkBoxCreateSeparateDir->IsChecked()) {
@@ -121,12 +140,14 @@ void NewWxProjectDlg::GetProjectInfo(NewWxProjectInfo &info)
 	info.SetType(m_choiceApplicationType->GetSelection());
 	info.SetName(m_textCtrlName->GetValue());
 	info.SetPath(path);
+	info.SetPrefix(m_textCtrlPrefix->GetValue());
+	info.SetVersion(m_choiceVersion->GetStringSelection());
 }
 
 void NewWxProjectDlg::OnChoiceChanged(wxCommandEvent &e)
 {
 #ifdef __WXMSW__
-	if(e.GetSelection() == 1) {	//Simple main with wxWidgets enabled
+	if(e.GetSelection() == wxProjectTypeSimpleMain) {
 		m_checkBoxMWindows->SetValue(false);
 		m_checkBoxMWindows->Enable(false);
 	} else {

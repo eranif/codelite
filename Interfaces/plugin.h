@@ -42,28 +42,6 @@
 
 class IManager;
 
-class ParseThreadEventData
-{
-	wxString m_fileName;
-	std::vector<std::pair<wxString, TagEntry> >  m_items;
-public:
-	ParseThreadEventData() {}
-	~ParseThreadEventData() {}
-
-	void SetFileName(const wxString& fileName) {
-		this->m_fileName = fileName.c_str();
-	}
-	void SetItems(const std::vector<std::pair<wxString, TagEntry> >& items) {
-		this->m_items = items;
-	}
-	const wxString& GetFileName() const {
-		return m_fileName;
-	}
-	const std::vector<std::pair<wxString, TagEntry> >& GetItems() const {
-		return m_items;
-	}
-};
-
 /**
  * Possible popup menu
  */

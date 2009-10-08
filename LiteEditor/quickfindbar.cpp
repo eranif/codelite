@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/xrc/xmlres.h>
+#include <wx/statline.h>
 #include "manager.h"
 #include <wx/textctrl.h>
 #include <wx/wxscintilla.h>
@@ -64,7 +65,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 	mainSizer->Add(text, 0, CONTROL_ALIGN_STYLE, 2);
 
 	m_findWhat = new wxTextCtrl(this, XRCID("find_what_quick"), wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2);
-	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	m_findWhat->SetMinSize(wxSize(200,-1));
 	m_findWhat->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBar::OnKeyDown), NULL, this);
 	m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBar::OnEnter), NULL, this);
@@ -78,17 +79,16 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 	btn = new wxButton(this, XRCID("find_prev_quick"), wxT("Prev"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	mainSizer->Add(btn, 0, CONTROL_ALIGN_STYLE, 5);
 
-	wxStaticBoxSizer *staticSizer = new wxStaticBoxSizer(wxHORIZONTAL, this);
-	mainSizer->Add(staticSizer, 0, CONTROL_ALIGN_STYLE, 5);
+	mainSizer->Add(new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL), 0, wxEXPAND);
 
 	wxCheckBox *check = new wxCheckBox(this, XRCID("match_case_quick"), wxT("Case"));
-	staticSizer->Add(check, 0, wxEXPAND|wxALL, 5);
+	mainSizer->Add(check, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
 
 	check = new wxCheckBox(this, XRCID("match_word_quick"), wxT("Word"));
-	staticSizer->Add(check, 0, wxEXPAND|wxALL, 5);
+	mainSizer->Add(check, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
 
 	check = new wxCheckBox(this, XRCID("match_regexp_quick"), wxT("Regexp"));
-	staticSizer->Add(check, 0, wxEXPAND|wxALL, 5);
+	mainSizer->Add(check, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
 
 	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnCopy),      NULL, this);
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnPaste),     NULL, this);
@@ -144,7 +144,7 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 			return;
 		}
 	}
-	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	m_findWhat->Refresh();
 	m_sci->SetSelection(pos, pos+len);
 }

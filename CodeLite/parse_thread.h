@@ -34,16 +34,44 @@
 #include "worker_thread.h"
 #include "procutils.h"
 
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_CL
-#endif // WXMAKINGDLL_CODELITE
-
 class TagsDatabase;
 
+/**
+ * @class ParseThreadEventData
+ * @author eran
+ * @date 10/04/09
+ * @file parse_thread.h
+ * @brief
+ */
+class ParseThreadEventData
+{
+	wxString m_fileName;
+	std::vector<std::pair<wxString, TagEntry> >  m_items;
+public:
+	ParseThreadEventData() {}
+	~ParseThreadEventData() {}
+
+	void SetFileName(const wxString& fileName) {
+		this->m_fileName = fileName.c_str();
+	}
+	void SetItems(const std::vector<std::pair<wxString, TagEntry> >& items) {
+		this->m_items = items;
+	}
+	const wxString& GetFileName() const {
+		return m_fileName;
+	}
+	const std::vector<std::pair<wxString, TagEntry> >& GetItems() const {
+		return m_items;
+	}
+};
+
+/**
+ * @class ParseRequest
+ * @author eran
+ * @date 10/04/09
+ * @file parse_thread.h
+ * @brief a class representing a parsing request
+ */
 class ParseRequest : public ThreadRequest
 {
 	wxString _file;
@@ -78,7 +106,14 @@ public:
 	ParseRequest &operator=(const ParseRequest& rhs);
 };
 
-class WXDLLIMPEXP_CL ParseThread : public WorkerThread
+/**
+ * @class ParseThread
+ * @author eran
+ * @date 10/04/09
+ * @file parse_thread.h
+ * @brief
+ */
+class ParseThread : public WorkerThread
 {
 	friend class Singleton<ParseThread>;
 	std::auto_ptr<TagsDatabase> m_pDb;

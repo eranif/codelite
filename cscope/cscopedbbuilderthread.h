@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : cscopedbbuilderthread.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : cscopedbbuilderthread.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __cscopedbbuilderthread__
+#ifndef __cscopedbbuilderthread__
 #define __cscopedbbuilderthread__
 
 
@@ -41,22 +41,22 @@ typedef std::map<wxString, std::vector< CscopeEntryData >* > CscopeResultTable;
 
 /**
  * \class CscopeRequest
- * \brief 
+ * \brief
  * \author eran
  * \date 01/23/08
  */
 class CscopeRequest : public ThreadRequest
 {
 	wxEvtHandler *m_owner;
-	wxString m_cmd;
-	wxString m_workingDir;
-	wxString m_outfile;
-	wxString m_endMsg;
-	
+	wxString      m_cmd;
+	wxString      m_workingDir;
+	wxString      m_outfile;
+	wxString      m_endMsg;
+	wxString      m_findWhat;
 public:
 	CscopeRequest() {};
 	~CscopeRequest() {};
-	
+
 
 //Setters
 	void SetCmd(const wxString& cmd) {
@@ -68,7 +68,7 @@ public:
 	void SetOwner(wxEvtHandler* owner) {
 		this->m_owner = owner;
 	}
-	
+
 	void SetWorkingDir(const wxString& workingDir) {
 		this->m_workingDir = workingDir;
 	}
@@ -85,9 +85,19 @@ public:
 	const wxString& GetWorkingDir() const {
 		return m_workingDir;
 	}
-	
-	void SetEndMsg(const wxString& endMsg) {this->m_endMsg = endMsg;}
-	const wxString& GetEndMsg() const {return m_endMsg;}
+
+	void SetFindWhat(const wxString& findWhat) {
+		this->m_findWhat = findWhat;
+	}
+	const wxString& GetFindWhat() const {
+		return m_findWhat;
+	}
+	void SetEndMsg(const wxString& endMsg) {
+		this->m_endMsg = endMsg;
+	}
+	const wxString& GetEndMsg() const {
+		return m_endMsg;
+	}
 };
 
 class CscopeDbBuilderThread : public WorkerThread
@@ -96,9 +106,9 @@ class CscopeDbBuilderThread : public WorkerThread
 protected:
 	void ProcessRequest(ThreadRequest *req);
 	CscopeResultTable* ParseResults(const wxArrayString &output);
-	
+
 protected:
-	void SendStatusEvent(const wxString &msg, int percent, wxEvtHandler *owner);
+	void SendStatusEvent(const wxString &msg, int percent, const wxString &findWhat, wxEvtHandler *owner);
 
 public:
 	CscopeDbBuilderThread();

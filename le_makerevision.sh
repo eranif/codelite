@@ -1,8 +1,8 @@
 ################################################################################
-## This file is part of CodeLite IDE and is released 
-## under the terms of the GNU General Public License as published by  
-##    the Free Software Foundation; either version 2 of the License, or     
-##    (at your option) any later version.                              
+## This file is part of CodeLite IDE and is released
+## under the terms of the GNU General Public License as published by
+##    the Free Software Foundation; either version 2 of the License, or
+##    (at your option) any later version.
 ################################################################################
 
 #!/bin/sh
@@ -15,7 +15,7 @@ fi
 
 if (test -d ".svn"); then
 	has_svn=1
-	cur_rev=`svn info | grep Revision | awk '{print $2;}'`
+	cur_rev=`LC_ALL=C svn info | grep Revision | awk '{print $2;}'`
 else
 	cur_rev=""
 fi

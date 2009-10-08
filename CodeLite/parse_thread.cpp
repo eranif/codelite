@@ -87,7 +87,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 
 	// Build second tree from the updated file
 	TagTreePtr newTree;
-	std::vector<DbRecordPtr> comments;
+	std::vector<CommentPtr> comments;
 
 	TagsManager *mgr = TagsManagerST::Get();
 	if (mgr->GetParseComments() ) {
@@ -118,18 +118,6 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 
 	// Prepare sql statements
 	TagEntry dummy;
-	if ( TagsManagerST::Get()->GetParseComments() ) {
-		// drop all old entries from this file
-		try {
-			wxString sql;
-			sql << wxT("DELETE FROM COMMENTS WHERE FILE='") << file << wxT("'");
-			m_pDb->ExecuteUpdate( sql );
-			m_pDb->Store( comments, wxFileName(), false );
-		} catch ( wxSQLite3Exception & e) {
-			wxUnusedVar(e);
-		}
-	}
-
 	try {
 		wxSQLite3Statement insertStmt = m_pDb->PrepareStatement( dummy.GetInsertOneStatement() );
 		wxSQLite3Statement updateStmt = m_pDb->PrepareStatement( dummy.GetUpdateOneStatement() );

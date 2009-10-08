@@ -35,19 +35,12 @@
 #include "expression_result.h"
 #include "variable.h"
 #include "function.h"
-
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else
-#    define WXDLLIMPEXP_CL
-#endif
+#include "comment.h"
 
 enum SearchFlags
 {
-	PartialMatch = 1,
-	ExactMatch = 2,
+	PartialMatch        = 1,
+	ExactMatch          = 2,
 	IgnoreCaseSensitive = 4
 };
 
@@ -64,7 +57,7 @@ class TagsManager;
  * \date 09-02-2006
  * \author Eran
  */
-class WXDLLIMPEXP_CL Language
+class Language
 {
 	friend class Singleton<Language>;
 
@@ -121,7 +114,7 @@ public:
 	 * \param name file name
 	 * \param comments [output] returned vector of comments
 	 */
-	void ParseComments(const wxFileName &fileName, std::vector<DbRecordPtr>* comments);
+	void ParseComments(const wxFileName &fileName, std::vector<CommentPtr>* comments);
 
 	//==========================================================
 	// New API based on the yacc grammar files

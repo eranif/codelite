@@ -1996,14 +1996,6 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 	std::list<CppToken>::iterator iter = tokens.begin();
 	int counter(0);
 
-	// enable tags caching to boost performance
-	TagsOptionsData data = TagsManagerST::Get()->GetCtagsOptions();
-	data.SetFlags(data.GetFlags() | CC_CACHE_WORKSPACE_TAGS);
-	TagsManagerST::Get()->SetCtagsOptions( data );
-
-	// clear the caching flag
-	data.SetFlags(data.GetFlags() & ~(CC_CACHE_WORKSPACE_TAGS));
-
 	for (; iter != tokens.end(); iter++) {
 		CppToken token = *iter;
 		editor->Create(wxEmptyString, token.getFilename());
@@ -2017,9 +2009,6 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 			// user clicked 'Cancel'
 			prgDlg->Destroy();
 			editor->Destroy();
-
-			// restore CC flags
-			TagsManagerST::Get()->SetCtagsOptions( data );
 			return;
 		}
 
@@ -2047,9 +2036,6 @@ void ContextCpp::OnRenameFunction(wxCommandEvent& e)
 			possibleCandidates.push_back( token );
 		}
 	}
-
-	// restore CC flags
-	TagsManagerST::Get()->SetCtagsOptions( data );
 
 	editor->Destroy();
 	prgDlg->Destroy();
@@ -2203,6 +2189,7 @@ void ContextCpp::OnRetagFile(wxCommandEvent& e)
 	}
 
 	RetagFile();
+	ctrl.SetActive();
 }
 
 void ContextCpp::RetagFile()
@@ -2213,16 +2200,14 @@ void ContextCpp::RetagFile()
 	// incase this file is not cache this function does nothing
 	TagsManagerST::Get()->ClearCachedFile(ctrl.GetFileName().GetFullPath());
 
-	// clear all the queries which holds reference to this file
-	TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(ctrl.GetFileName().GetFullPath());
-
-	// clear also the swapped file
-	wxString targetFile;
-	if (FindSwappedFile(ctrl.GetFileName(), targetFile) && targetFile.IsEmpty() == false) {
-		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(targetFile);
-	}
-
-	ctrl.SetActive();
+//	// clear all the queries which holds reference to this file
+//	TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(ctrl.GetFileName().GetFullPath());
+//
+//	// clear also the swapped file
+//	wxString targetFile;
+//	if (FindSwappedFile(ctrl.GetFileName(), targetFile) && targetFile.IsEmpty() == false) {
+//		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(targetFile);
+//	}
 }
 
 void ContextCpp::OnUserTypedXChars(const wxString &word)

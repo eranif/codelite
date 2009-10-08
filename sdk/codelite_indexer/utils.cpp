@@ -4,10 +4,13 @@
 #include <stdio.h>
 
 #ifdef __WXMSW__
-# include <windows.h>
-# include <process.h>
-# include <Tlhelp32.h>
+#    include <windows.h>
+#    include <process.h>
+#    include <Tlhelp32.h>
+#else
+#    include <signal.h>
 #endif
+
 /**
  * helper string methods
  */
@@ -142,29 +145,12 @@ std::string after_last(const std::string &str, char c)
 // ------------------------------------------
 // Process manipulation
 // ------------------------------------------
-void execute_command(const std::string &command, std::vector<std::string> &output)
-{
-#ifndef __WXMSW__
-	FILE *fp;
-	char line[512];
-	memset(line, 0, sizeof(line));
-	fp = popen(command.c_str(), "r");
-	while ( fgets( line, sizeof line, fp)) {
-		output.push_back(line);
-		memset(line, 0, sizeof(line));
-	}
-
-	pclose(fp);
-#endif
-}
-
 bool is_process_alive(long pid)
 {
 #ifdef __WXMSW__
 	//go over the process modules and get the full path of
 	//the executeable
 	HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
-	MODULEENTRY32 me32;
 
 	//  Take a snapshot of all modules in the specified process.
 	hModuleSnap = CreateToolhelp32Snapshot( TH32CS_SNAPMODULE, (DWORD)pid );
@@ -174,42 +160,7 @@ bool is_process_alive(long pid)
 
 	return true;
 
-#elif defined(__FreeBSD__)
-	kvm_t *            kvd;
-	struct kinfo_proc *ki;
-	int                nof_procs;
-	std::string        cmd;
-
-	if (!(kvd = kvm_openfiles(_PATH_DEVNULL, _PATH_DEVNULL, NULL, O_RDONLY, NULL)))
-	    return "";
-
-	if (!(ki = kvm_getprocs(kvd, KERN_PROC_PID, pid, &nof_procs))) {
-	    kvm_close(kvd);
-	    return false;
-	}
-	return true;
-
 #else
-	std::vector<std::string> output;
-	execute_command("ps -A -o pid,command --no-heading", output);
-
-	//parse the output and search for our process ID
-	for (size_t i=0; i< output.size(); i++) {
-		std::string line = output.at(i);
-
-		//remove whitespaces
-		string_trim(line);
-
-		//get the process ID
-		std::string spid = before_first(line, ' ');
-		long        cpid(0);
-
-		cpid = atol(spid.c_str());
-
-		if (cpid == pid) {
-			return true;
-		}
-	}
-	return false; //Not implemented yet
+	return kill(pid, 0) == 0; // send signal 0 to process
 #endif
 }

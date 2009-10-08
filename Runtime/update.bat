@@ -11,7 +11,7 @@ xcopy rc\*.xrc "%ProgramFiles%\CodeLite\rc\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\ "%ProgramFiles%\CodeLite\templates\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\formbuilder\* "%ProgramFiles%\CodeLite\templates\formbuilder\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\projects\* "%ProgramFiles%\CodeLite\templates\projects\" /E /I /H /Y /EXCLUDE:excludes
-xcopy templates\gizmos\* "%ProgramFiles%\CodeLite\templates\projects\" /E /I /H /Y /EXCLUDE:excludes
+xcopy templates\gizmos\* "%ProgramFiles%\CodeLite\templates\gizmos\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\qmake\* "%ProgramFiles%\CodeLite\templates\qmake\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "%ProgramFiles%\CodeLite\" /H /Y /EXCLUDE:excludes
 :: Copy the misc files

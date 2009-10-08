@@ -47,18 +47,8 @@ show_search_toolbar|View::Toolbars|Search ToolBar|
 show_build_toolbar|View::Toolbars|Build ToolBar|
 show_debug_toolbar|View::Toolbars|Debug ToolBar|
 toggle_panes|View|Toggle All Panes|Ctrl-M
-23500|View::View As|C++|
-23501|View::View As|Diff|
-23502|View::View As|Java|
-23503|View::View As|Lua|
-23504|View::View As|Makefile|
-23505|View::View As|Perl|
-23506|View::View As|Properties|
-23507|View::View As|Script|
-23508|View::View As|Text|
-23509|View::View As|XML|
 find_in_files|Search|Find In Files...|Ctrl-Shift-F
-show_quick_finder|Search|Show QuickFinder...|Ctrl-Q
+show_quick_finder|Search|Show QuickFinder...|Ctrl-Shift-Y
 wxID_FIND|Search|Find...|Ctrl-K
 wxID_REPLACE|Search|Replace...|Ctrl-H
 find_next|Search|Find Next|F3

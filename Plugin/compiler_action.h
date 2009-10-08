@@ -47,13 +47,13 @@ extern const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN;
 class ShellCommand : public wxEvtHandler
 {
 protected:
-	clProcess *m_proc;
+	clProcess *   m_proc;
 	wxEvtHandler *m_owner;
-	wxTimer *m_timer;
-	bool m_busy;
-	bool m_stop;
+	wxTimer *     m_timer;
+	bool          m_busy;
+	bool          m_stop;
 	wxArrayString m_lines;
-	QueueCommand m_info;
+	QueueCommand  m_info;
 
 protected:
 	virtual void OnTimer(wxTimerEvent &event);
@@ -67,15 +67,24 @@ public:
 	bool IsBusy() const {
 		return m_busy;
 	}
+
 	void SetBusy(bool busy) {
 		m_busy = busy;
 	}
+
 	void Stop();
+
 	bool GetLines(wxArrayString &lines) {
 		lines = m_lines;
 		return true;
 	}
 
+	void SetInfo(const QueueCommand& info) {
+		this->m_info = info;
+	}
+	const QueueCommand& GetInfo() const {
+		return m_info;
+	}
 public:
 	//construct a compiler action
 	// \param owner the window owner for this action

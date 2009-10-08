@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "csscopeconfdata.h"
+#include <wx/stdpaths.h>
 #include "cscopestatusmessage.h"
 #include "dirsaver.h"
 #include "cscope.h"
@@ -31,6 +32,7 @@
 #include "wx/ffile.h"
 #include "workspace.h"
 #include <wx/xrc/xmlres.h>
+#include "exelocator.h"
 #include "cscopetab.h"
 #include "cscopedbbuilderthread.h"
 
@@ -113,6 +115,7 @@ wxToolBar *Cscope::CreateToolBar(wxWindow *parent)
 	// Command events
 	m_topWindow->Connect( XRCID("cscope_find_global_definition"),            wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this );
 	m_topWindow->Connect( XRCID("cscope_create_db"),                         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnCreateDB), NULL, (wxEvtHandler*)this );
+	m_topWindow->Connect( XRCID("cscope_settings"),                         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnDoSettings), NULL, (wxEvtHandler*)this );
 	m_topWindow->Connect( XRCID("cscope_functions_calling_this_function"),   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCallingThisFunction), NULL, (wxEvtHandler*)this);
 	m_topWindow->Connect( XRCID("cscope_find_symbol"),                       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindSymbol), NULL, (wxEvtHandler*)this);
 	m_topWindow->Connect( XRCID("cscope_functions_called_by_this_function"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Cscope::OnFindFunctionsCalledByThisFuncion), NULL, (wxEvtHandler*)this);
@@ -145,6 +148,11 @@ void Cscope::CreatePluginMenu(wxMenu *pluginsMenu)
 	menu->AppendSeparator();
 
 	item = new wxMenuItem(menu, XRCID("cscope_create_db"), wxT("Create CScope database"), wxT("Create/Recreate the cscope database"), wxITEM_NORMAL);
+	menu->Append(item);
+
+	menu->AppendSeparator();
+
+	item = new wxMenuItem(menu, XRCID("cscope_settings"), wxT("CScope settings"), wxT("Configure cscope"), wxITEM_NORMAL);
 	menu->Append(item);
 
 	pluginsMenu->Append(wxID_ANY, CSCOPE_NAME, menu);
@@ -225,7 +233,7 @@ wxMenu *Cscope::CreateEditorPopMenu()
 wxString Cscope::DoCreateListFile(bool force)
 {
 	// get the scope
-	CSscopeConfData settings;
+	CScopeConfData settings;
 	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
 
 	//create temporary file and save the file there
@@ -286,8 +294,17 @@ wxString Cscope::DoCreateListFile(bool force)
 	return list_file;
 }
 
-void Cscope::DoCscopeCommand(const wxString &command, const wxString &endMsg)
+void Cscope::DoCscopeCommand(const wxString &command, const wxString &findWhat, const wxString &endMsg)
 {
+	// We haven't yet found a valid cscope exe, so look for one
+	wxString where;
+	if ( !ExeLocator::Locate( GetCscopeExeName(), where ) ) {
+		wxString msg; msg << _("I can't find 'cscope' anywhere. Please check if it's installed.") << wxT('\n')
+						  << _("Or tell me where it can be found, from the menu: 'Plugins | CScope | Settings'");
+		wxMessageBox( msg, _("CScope not found"), wxOK|wxCENTER|wxICON_WARNING );
+		return;
+	}
+
 	//try to locate the cscope database
 	wxArrayString output;
 
@@ -316,9 +333,10 @@ void Cscope::DoCscopeCommand(const wxString &command, const wxString &endMsg)
 
 	//create the search thread and return
 	CscopeRequest *req = new CscopeRequest();
-	req->SetOwner(this);
-	req->SetCmd(command);
-	req->SetEndMsg(endMsg);
+	req->SetOwner     (this    );
+	req->SetCmd       (command );
+	req->SetEndMsg    (endMsg  );
+	req->SetFindWhat  (findWhat);
 	req->SetWorkingDir(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR));
 
 	CScopeThreadST::Get()->Add( req );
@@ -340,7 +358,7 @@ void Cscope::OnFindSymbol(wxCommandEvent &e)
 
 	// get the rebuild option
 	wxString rebuildOption = wxT("");
-	CSscopeConfData settings;
+	CScopeConfData settings;
 
 	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
 	if (!settings.GetRebuildOption())
@@ -353,7 +371,7 @@ void Cscope::OnFindSymbol(wxCommandEvent &e)
 	wxString endMsg;
 	command << GetCscopeExeName() << rebuildOption << wxT(" -L -0 ") << word << wxT(" -i ") << list_file;
 	endMsg << wxT("cscope results for: find C symbol '") << word << wxT("'");
-	DoCscopeCommand(command, endMsg);
+	DoCscopeCommand(command, word, endMsg);
 }
 
 void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
@@ -375,7 +393,7 @@ void Cscope::OnFindGlobalDefinition(wxCommandEvent &e)
 	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -d -L -1 ") << word << wxT(" -i ") << list_file;
 	endMsg << wxT("cscope results for: find global definition of '") << word << wxT("'");
-	DoCscopeCommand(command, endMsg);
+	DoCscopeCommand(command, word, endMsg);
 }
 
 void Cscope::OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e)
@@ -398,7 +416,7 @@ void Cscope::OnFindFunctionsCalledByThisFuncion(wxCommandEvent &e)
 	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -d -L -2 ") << word << wxT(" -i ") << list_file;
 	endMsg << wxT("cscope results for: functions called by '") << word << wxT("'");
-	DoCscopeCommand(command, endMsg);
+	DoCscopeCommand(command, word, endMsg);
 }
 
 void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
@@ -416,7 +434,7 @@ void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent &e)
 	wxString endMsg;
 	command << GetCscopeExeName() << wxT(" -d -L -3 ") << word << wxT(" -i ") << list_file;
 	endMsg << wxT("cscope results for: functions calling '") << word << wxT("'");
-	DoCscopeCommand(command, endMsg);
+	DoCscopeCommand(command, word, endMsg);
 }
 
 void Cscope::OnCreateDB(wxCommandEvent &e)
@@ -432,7 +450,7 @@ void Cscope::OnCreateDB(wxCommandEvent &e)
 	// get the reverted index option
 	wxString command;
 	wxString endMsg;
-	CSscopeConfData settings;
+	CScopeConfData settings;
 
 	command << GetCscopeExeName();
 
@@ -450,12 +468,32 @@ void Cscope::OnCreateDB(wxCommandEvent &e)
 
 	//Do the actual create db
 	command << wxT(" -L -i ") << list_file;
-	DoCscopeCommand(command, endMsg);
+	DoCscopeCommand(command, wxEmptyString, endMsg);
+}
+
+void Cscope::OnDoSettings(wxCommandEvent &e)
+{
+	// atm the only setting to set is the cscope filepath
+	// First find the current value, if any
+	CScopeConfData settings;
+	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+	wxString filepath = settings.GetCscopeExe();
+
+	// Since there's only the one thing to ask, keep it simple for now
+	wxString fp = wxGetTextFromUser(_("Please enter the filepath where cscope can be found"), _("Where is cscope?"), filepath);
+	if ( fp.IsEmpty() ) {
+		return;
+	}
+
+	settings.SetCscopeExe(fp);
+	m_mgr->GetConfigTool()->WriteObject(wxT("CscopeSettings"), &settings);
 }
 
 wxString Cscope::GetCscopeExeName()
 {
-	return wxT("cscope ");
+	CScopeConfData settings;
+	m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+	return settings.GetCscopeExe();
 }
 
 void Cscope::OnCScopeThreadEnded(wxCommandEvent &e)
@@ -469,6 +507,10 @@ void Cscope::OnCScopeThreadUpdateStatus(wxCommandEvent &e)
 	CScopeStatusMessage *msg = (CScopeStatusMessage *)e.GetClientData();
 	if (msg) {
 		m_cscopeWin->SetMessage(msg->GetMessage(), msg->GetPercentage());
+
+		if( msg->GetFindWhat().IsEmpty() == false ) {
+			m_cscopeWin->SetFindWhat(msg->GetFindWhat());
+		}
 		delete msg;
 	}
 	e.Skip();

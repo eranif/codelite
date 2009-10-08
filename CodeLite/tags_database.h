@@ -31,9 +31,10 @@
 #include "db_record.h"
 #include "fileentry.h"
 #include "variable_entry.h"
+#include "istorage.h"
 
 const wxString gTagsDatabaseVersion(wxT("CodeLite version 0.5 Alpha"));
-
+class TagsCache;
 /**
 TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.
 It allows caller to query and populate the SQLite database for tags with a set of convinient functions.
@@ -89,17 +90,36 @@ Table Name: FILES
 \author Eran
 \ingroup CodeLite
 */
-class WXDLLIMPEXP_CL TagsDatabase
+class TagsDatabase : public ITagsStorage
 {
 	wxSQLite3Database *m_db;
-	wxFileName m_fileName;
-	bool m_extDb;
+	wxFileName         m_fileName;
+	TagsCache*         m_cache;
+
+private:
+	/**
+	 * @brief fetch tags from the database
+	 * @param sql
+	 * @param tags
+	 */
+	void DoFetchTags ( const wxString &sql, std::vector<TagEntryPtr> &tags);
+
+	void DoFixPath     ( TagEntryPtr& tag );
 
 public:
 	/**
+	 * Execute a query sql and return result set.
+	 * @param sql Select statement
+	 * @param path Database file to use
+	 * @return result set
+	 */
+	wxSQLite3ResultSet Query(const wxString& sql, const wxFileName& path = wxFileName());
+
+
+	/**
 	 * Construct a tags database.
 	 */
-	TagsDatabase(bool extDb = false);
+	TagsDatabase(bool useCache = false);
 
 	/**
 	 *
@@ -216,14 +236,6 @@ public:
 	const bool IsOpen() const;
 
 	/**
-	 * Execute a query sql and return result set.
-	 * @param sql Select statement
-	 * @param path Database file to use
-	 * @return result set
-	 */
-	wxSQLite3ResultSet Query(const wxString& sql, const wxFileName& path = wxFileName());
-
-	/**
 	 * Return SQLite3 preapre statement object
 	 * @param sql sql
 	 * @return wxSQLite3ResultSet object
@@ -245,12 +257,6 @@ public:
 	const wxString& GetVersion() const {
 		return gTagsDatabaseVersion;
 	}
-
-	/**
-	 * Load the tags table into memory, to improve performance
-	 * @param fn file name
-	 */
-	void LoadToMemory(const wxFileName& fn);
 
 	/**
 	 * Schema version as appears in TAGS_VERSION table
@@ -314,6 +320,138 @@ public:
 	void GetFiles(std::vector<FileEntryPtr> &files);
 
 	void GetVariables(std::vector<VariableEntryPtr> &vars);
+
+	//----------------------------------------------------------
+	//----------------------------------------------------------
+	//----------------------------------------------------------
+	//       Implementation of the IStorage methods
+	//----------------------------------------------------------
+	//----------------------------------------------------------
+	//----------------------------------------------------------
+
+	//----------------------------- Cache Access ---------------------------------------
+
+	/**
+	 * @brief search for tags in the cache, return true on match, false otherwise
+	 * @param sql
+	 * @param tags
+	 * @return
+	 */
+	virtual bool GetCacheTags(const wxString &sql, std::vector<TagEntryPtr> &tags);
+
+	/**
+	 * @brief cache tags by sql
+	 * @param sql
+	 * @param tags
+	 */
+	virtual void CacheTags   (const wxString &sql, const std::vector<TagEntryPtr> &tags);
+
+	/**
+	 * @brief clear the cache
+	 */
+	virtual void ClearCache  ();
+
+	/**
+	 * @brief return the cache hit rate
+	 * @return
+	 */
+	virtual int GetCacheHitRate();
+
+	/**
+	 * @brief delete entries from the cache based on their relation
+	 * to the tags in the tags vector
+	 * @param tags
+	 */
+	virtual void  DeleteCachedEntriesByRelation(const std::vector<std::pair<wxString, TagEntry> >& tags);
+
+	/**
+	 * @brief enable caching
+	 * @param enable
+	 */
+	virtual void EnableCache(bool enable) {m_useCache = enable;}
+
+	virtual void SetMaxCacheSize(int size);
+
+	/**
+	 * @brief return the number of items in cache
+	 * @return
+	 */
+	virtual int GetCacheItemsCount();
+
+	// --------------------------------------------------------------------------------------------
+
+	/**
+	 * @brief return list of tags based on scope and name
+	 * @param scope the scope to search. If 'scope' is empty the scope is ommited from the search
+	 * @param name
+	 * @param partialNameAllowed
+	 * @param tags [output]
+	 */
+	virtual void GetTagsByScopeAndName(const wxString &scope, const wxString &name, bool partialNameAllowed, std::vector<TagEntryPtr> &tags);
+
+	/**
+	 * @brief return list of tags by scope. If the cache is enabled, tags will be fetched from the
+	 * cache instead of accessing the disk
+	 * @param scope
+	 * @param tags [output]
+	 */
+	virtual void GetTagsByScope(const wxString& scope, std::vector<TagEntryPtr> &tags);
+
+	/**
+	 * @brief return array of tags by kind.
+	 * @param kinds array of kinds
+	 * @param orderingColumn the column that the output should be ordered by (leave empty for no sorting)
+	 * @param order OrderAsc, OrderDesc or use OrderNone for no ordering the results
+	 * @param tags [output]
+	 */
+	virtual void GetTagsByKind (const wxArrayString &kinds, const wxString &orderingColumn, int order, std::vector<TagEntryPtr> &tags);
+
+	/**
+	 * @brief return array of items by path
+	 * @param path
+	 * @param tags
+	 */
+	virtual void GetTagsByPath (const wxString &path, std::vector<TagEntryPtr> &tags);
+
+	/**
+	 * @brief return array of items by name and parent
+	 * @param path
+	 * @param tags
+	 */
+	virtual void GetTagsByNameAndParent (const wxString &name, const wxString &parent, std::vector<TagEntryPtr> &tags);
+
+	/**
+	 * @brief reutnr array of tags by kind and path
+	 * @param kinds array of kind
+	 * @param path
+	 * @param tags  [output]
+	 */
+	virtual void GetTagsByKindAndPath (const wxArrayString &kinds, const wxString &path, std::vector<TagEntryPtr> &tags);
+
+	/**
+	 * @brief return tags by file and line number
+	 * @param file
+	 * @param line
+	 * @param tags
+	 */
+	virtual void GetTagsByFileAndLine (const wxString &file, int line, std::vector<TagEntryPtr> &tags);
+
+	/**
+	 * @brief return list by kind and scope
+	 * @param scope
+	 * @param kinds
+	 * @param tags [output]
+	 */
+	virtual void GetTagsByScopeAndKind(const wxString &scope, const wxArrayString &kinds, std::vector<TagEntryPtr> &tags);
+
+	/**
+	 * @brief get list of tags by kind and file
+	 * @param kind
+	 * @param orderingColumn the column that the output should be ordered by (leave empty for no sorting)
+	 * @param order OrderAsc, OrderDesc or use OrderNone for no ordering the results
+	 * @param tags
+	 */
+	virtual void GetTagsByKindAndFile(const wxArrayString& kind, const wxString &fileName, const wxString &orderingColumn, int order, std::vector<TagEntryPtr> &tags);
 };
 
 #endif // CODELITE_TAGS_DATABASE_H

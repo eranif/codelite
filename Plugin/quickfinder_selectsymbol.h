@@ -20,7 +20,8 @@ public:
 
 protected:
 	// Handlers for SelectSymbolDlgBase events.
-	void OnItemActivated( wxListEvent& event );
+	void OnItemActivated( wxListEvent    &event );
+	void OnButtonOK     ( wxCommandEvent &event );
 	void DoCreateList();
 	void DoPopulate  ();
 public:

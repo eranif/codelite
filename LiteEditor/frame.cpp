@@ -175,7 +175,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//--------------------------------------------------
 	EVT_MENU(wxID_UNDO,                         Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_REDO,                         Frame::DispatchCommandEvent)
-	EVT_MENU(wxID_CUT,                          Frame::DispatchCommandEvent)
 	EVT_MENU(wxID_DUPLICATE,                    Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_line"),              Frame::DispatchCommandEvent)
 	EVT_MENU(XRCID("delete_line_end"),          Frame::DispatchCommandEvent)
@@ -193,7 +192,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 
 	EVT_UPDATE_UI(wxID_UNDO,                    Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_REDO,                    Frame::DispatchUpdateUIEvent)
-	EVT_UPDATE_UI(wxID_CUT,                     Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(wxID_DUPLICATE,               Frame::DispatchUpdateUIEvent)
 	EVT_UPDATE_UI(XRCID("delete_line"),         Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("delete_line_end"),     Frame::OnFileExistUpdateUI)
@@ -532,10 +530,16 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 	m_timer = new wxTimer(this, FrameTimerId);
 	m_timer->Start(1000);
 
-	// Connect wxID_COPY event
+	// connect common edit events
 	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
 	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
+	wxTheApp->Connect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
+
+	wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::DispatchUpdateUIEvent ), NULL, this);
+	wxTheApp->Connect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::DispatchUpdateUIEvent ), NULL, this);
+	wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::DispatchUpdateUIEvent ), NULL, this);
+	wxTheApp->Connect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::DispatchUpdateUIEvent ), NULL, this);
 }
 
 Frame::~Frame(void)
@@ -723,6 +727,11 @@ void Frame::CreateGUIControls(void)
 	ManagerST::Get()->SetCodeLiteLauncherPath(exePath.GetPath());
 #endif
 	tagsManager->StartCtagsProcess();
+
+	// Connect tag changes notifications
+	wxTheApp->Connect(wxEVT_SYNBOL_TREE_UPDATE_ITEM,  wxCommandEventHandler(TagsManager::OnUpdateCache), NULL, tagsManager);
+	wxTheApp->Connect(wxEVT_SYNBOL_TREE_DELETE_ITEM,  wxCommandEventHandler(TagsManager::OnUpdateCache), NULL, tagsManager);
+	wxTheApp->Connect(wxEVT_SYNBOL_TREE_ADD_ITEM,     wxCommandEventHandler(TagsManager::OnUpdateCache), NULL, tagsManager);
 
 	//--------------------------------------------------------------------------------------
 	// Start the parsing thread, the parsing thread and the SymbolTree (or its derived)
@@ -1150,10 +1159,13 @@ void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
 	Close();
 }
+//----------------------------------------------------
+// Helper method for the event handling
+//----------------------------------------------------
 
-void Frame::DispatchCommandEvent(wxCommandEvent &event)
+static bool IsEditorEvent(wxEvent &event)
 {
-	// Handle COPY/PASTE commands:
+	// Handle common edit events
 	// if the focused window is *not* LEditor,
 	// and the focused windows is of type
 	// wxTextCtrl or wxScintilla, let the focused
@@ -1161,14 +1173,14 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 	wxWindow *focusWin = wxWindow::FindFocus();
 	if ( focusWin ) {
 		switch (event.GetId()) {
+		case wxID_CUT:
 		case wxID_SELECTALL:
 		case wxID_COPY:
 		case wxID_PASTE: {
 			LEditor *ed = dynamic_cast<LEditor*>(focusWin);
 			if ( !ed ) {
 				// let other controls handle it
-				event.Skip();
-				return;
+				return false;
 			}
 			break;
 		}
@@ -1176,7 +1188,15 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 			break;
 		}
 	}
+	return true;
+}
 
+void Frame::DispatchCommandEvent(wxCommandEvent &event)
+{
+	if ( !IsEditorEvent(event) ) {
+		event.Skip();
+		return;
+	}
 
 	// Do the default and pass this event to the Editor
 	LEditor* editor = GetMainBook()->GetActiveEditor();
@@ -1194,6 +1214,11 @@ void Frame::DispatchCommandEvent(wxCommandEvent &event)
 
 void Frame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
 {
+//	if ( !IsEditorEvent(event) ) {
+//		event.Skip();
+//		return;
+//	}
+
 	LEditor* editor = GetMainBook()->GetActiveEditor();
 	if ( !editor ) {
 		event.Enable(false);
@@ -1282,7 +1307,7 @@ void Frame::OnFileReload(wxCommandEvent &event)
 			wxString msg;
 			msg << wxT("The file '") << editor->GetFileName().GetFullName() << wxT("' has been altered.\n");
 			msg << wxT("Are you sure you want to lose all changes?");
-			if ( wxMessageBox(msg, wxT("Confirm"),wxYES_NO) != wxYES ) {
+			if ( wxMessageBox(msg, wxT("Confirm"), wxYES_NO, this) != wxYES ) {
 				return;
 			}
 		}
@@ -1303,7 +1328,7 @@ void Frame::OnSwitchWorkspace(wxCommandEvent &event)
 {
 	wxUnusedVar(event);
 
-	// not it is time to prompt user for new workspace to open
+	// now it is time to prompt user for new workspace to open
 	const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|")
 	                   wxT("All Files (*)|*"));
 	wxFileDialog *dlg = new wxFileDialog(this, wxT("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE , wxDefaultPosition);
@@ -1496,8 +1521,8 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 		TagsManager *tagsMgr = TagsManagerST::Get();
 		m_tagsOptionsData = dlg.GetData();
 
-		newColVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
-		newColTags = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
+		newColVars         = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
+		newColTags         = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
 		newMarkFilesAsBold = (m_tagsOptionsData.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
 
 		tagsMgr->SetCtagsOptions(m_tagsOptionsData);
@@ -1515,9 +1540,8 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 		}
 
 		// reset cache if needed
-		if (!(m_tagsOptionsData.GetFlags() & CC_CACHE_WORKSPACE_TAGS)) {
-			tagsMgr->GetWorkspaceTagsCache()->Clear();
-		}
+		tagsMgr->EnableCaching  ( !m_tagsOptionsData.GetDisableCaching() );
+		tagsMgr->SetMaxCacheSize( m_tagsOptionsData.GetMaxCacheSize() );
 	}
 }
 
@@ -1596,10 +1620,10 @@ void Frame::OnViewOptions(wxCommandEvent & WXUNUSED( event))
 
 	if ( dlg.restartRquired ) {
 #ifdef __WXMAC__
-		wxMessageBox(_("Some of the changes made requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		wxMessageBox(_("Some of the changes made requires restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK, this);
 #else
 		// On Winodws & GTK we offer auto-restart
-		int answer = wxMessageBox(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL);
+		int answer = wxMessageBox(_("Some of the changes made requires restart of CodeLite\nWould you like to restart now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL, this);
 		if ( answer == wxYES ) {
 			wxCommandEvent e(wxEVT_CMD_RESTART_CODELITE);
 			ManagerST::Get()->AddPendingEvent(e);
@@ -1668,7 +1692,7 @@ void Frame::OnBuildEnded(wxCommandEvent &event)
 		//occured during build process, if non, launch the output
 		m_buildAndRun = false;
 		if (ManagerST::Get()->IsBuildEndedSuccessfully() ||
-		        wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES) {
+		        wxMessageBox(_("Build ended with errors. Continue?"), wxT("Confirm"), wxYES_NO| wxICON_QUESTION) == wxYES, this) {
 			ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
 		}
 	}
@@ -2066,8 +2090,8 @@ wxString Frame::CreateWorkspaceTable()
 		html << wxT("No workspaces found.") << wxT("</font></td></tr>");
 	} else {
 		wxColour lineCol(0xd0, 0xff, 0xff);
-		for (size_t i=0; i<files.GetCount(); i++) {
-			wxFileName fn( files.Item(i) );
+		for (int i=(int)files.GetCount(); i>0; --i) {
+			wxFileName fn( files.Item(i-1) );
 
 			lineCol.Set(lineCol.Red() == 0xff ? 0xd0 : 0xff, 0xff, 0xff);
 			lineCol = DrawingUtils::LightColour(lineCol, 1);
@@ -2100,9 +2124,9 @@ wxString Frame::CreateFilesTable()
 		html << wxT("No files found.") << wxT("</font></td></tr>");
 	} else {
 		wxColour lineCol(0xd0, 0xff, 0xff);
-		for (size_t i=0; i<files.GetCount(); i++) {
+		for (int i=(int)files.GetCount(); i>0; --i) {
 
-			wxFileName fn( files.Item(i) );
+			wxFileName fn( files.Item(i-1) );
 			lineCol.Set(lineCol.Red() == 0xff ? 0xd0 : 0xff, 0xff, 0xff);
 
 			lineCol = DrawingUtils::LightColour(lineCol, 1);
@@ -2595,7 +2619,7 @@ void Frame::AutoLoadExternalDb()
 			message << wxT("However, several databases were found, would you like to attach one now?\n");
 			message << wxT("(attaching external symbols database improves CodeCompletion significantly)");
 
-			if (wxMessageBox(message, wxT("Attach symbols database"), wxICON_QUESTION | wxYES_NO | wxCANCEL) == wxYES) {
+			if (wxMessageBox(message, wxT("Attach symbols database"), wxICON_QUESTION | wxYES_NO | wxCANCEL, this) == wxYES) {
 				wxString dbname = wxGetSingleChoice(wxT("Select extenal database symbols to attach:"), wxT("Select symbols database"), files, this);
 				if (dbname.IsEmpty() == false) {
 					EditorConfigST::Get()->SetTagsDatabase(dbname);
@@ -2610,7 +2634,7 @@ void Frame::AutoLoadExternalDb()
 			message << wxT("CodeLite detected that there is no external symbols database attached,\n");
 			message << wxT("nor it can not find any. Would you like to create one?\n");
 			message << wxT("(attaching external symbols database improves CodeCompletion significantly)");
-			if (wxMessageBox(message, wxT("Create symbols database"), wxICON_QUESTION | wxYES_NO | wxCANCEL) == wxYES) {
+			if (wxMessageBox(message, wxT("Create symbols database"), wxICON_QUESTION | wxYES_NO | wxCANCEL, this) == wxYES) {
 				DoBuildExternalDatabase();
 			}
 		}
@@ -2782,10 +2806,10 @@ void Frame::OnManagePlugins(wxCommandEvent &e)
 	PluginMgrDlg dlg(this);
 	if (dlg.ShowModal() == wxID_OK) {
 #ifdef __WXMAC__
-		wxMessageBox(_("Changes will take place after restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK);
+		wxMessageBox(_("Changes will take place after restart of CodeLite"), wxT("CodeLite"), wxICON_INFORMATION|wxOK, this);
 #else
 		// On Winodws & GTK we offer auto-restart
-		int answer = wxMessageBox(_("Changes made requires restart of CodeLite\nWould you like to restart now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL);
+		int answer = wxMessageBox(_("Changes made requires restart of CodeLite\nWould you like to restart now?"), wxT("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL, this);
 		if ( answer == wxYES ) {
 			wxCommandEvent e(wxEVT_CMD_RESTART_CODELITE);
 			ManagerST::Get()->AddPendingEvent(e);
@@ -2856,7 +2880,7 @@ void Frame::OnSingleInstanceOpenFiles(wxCommandEvent& e)
 			// if file is workspace, load it
 			if (fn.GetExt() == wxT("workspace")) {
 				if ( ManagerST::Get()->IsWorkspaceOpen() ) {
-					if (wxMessageBox(_("Close this workspace, and load workspace '") + fn.GetFullName() + wxT("'"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxNO) {
+					if (wxMessageBox(_("Close this workspace, and load workspace '") + fn.GetFullName() + wxT("'"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO, this) == wxNO) {
 						continue;
 					}
 				}
@@ -3384,7 +3408,7 @@ void Frame::ReloadExternallyModifiedProjectFiles()
 	if (!project_modified && !workspace_modified)
 		return;
 
-	if (wxMessageBox(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO) == wxYES) {
+	if (wxMessageBox(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), wxT("CodeLite"), wxICON_QUESTION|wxYES_NO, this) == wxYES) {
 		ManagerST::Get()->ReloadWorkspace();
 		return;
 	}
@@ -3403,6 +3427,8 @@ void Frame::SaveLayoutAndSession()
 		m_frameGeneralInfo.SetFrameSize(this->GetSize());
 	}
 	m_frameGeneralInfo.SetFramePosition(this->GetScreenPosition());
+
+	EditorConfigST::Get()->Begin();
 
 	SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);
 	EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
@@ -3438,6 +3464,8 @@ void Frame::SaveLayoutAndSession()
 	EditorConfigST::Get()->SaveLongValue(wxT("OutputPane"),    GetOutputPane()->GetNotebook()->GetBookStyle());
 	EditorConfigST::Get()->SaveLongValue(wxT("WorkspaceView"), GetWorkspacePane()->GetNotebook()->GetBookStyle());
 	EditorConfigST::Get()->SaveLongValue(wxT("FindResults"),   GetOutputPane()->GetFindResultsTab()->GetBookStyle());
+
+	EditorConfigST::Get()->Save();
 }
 
 void Frame::OnNextFiFMatch(wxCommandEvent& e)

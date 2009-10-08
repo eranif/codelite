@@ -9,7 +9,7 @@
 
 
 ## Copy files to the fakeroot directory structure
-cur_rev=`svn info | grep Revision | awk '{print $2;}'`
+cur_rev=`LC_ALL=C svn info | grep Revision | awk '{print $2;}'`
 arch=`uname -m`
 
 if [ "${arch}" = "i686" ]; then

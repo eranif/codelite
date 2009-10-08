@@ -46,8 +46,14 @@ int main(int argc, char **argv)
 	clNamedPipeConnectionsServer server(channel_name);
 
 	// start the worker thread
-	WorkerThread worker( &g_connectionQueue );
+	WorkerThread  worker( &g_connectionQueue );
+
+	// start the 'is alive thread'
+	IsAliveThread isAliveThread( parent_pid  );
 	worker.run();
+	if ( parent_pid ) {
+		isAliveThread.run();
+	}
 
 	printf("INFO: codelite_indexer started\n");
 	printf("INFO: listening on %s\n", channel_name);
@@ -58,23 +64,24 @@ int main(int argc, char **argv)
 #ifdef __DEBUG
 			fprintf(stderr, "INFO: Failed to receive new connection: %d\n", server.getLastError());
 #endif
-			if( check_parent && !is_process_alive( parent_pid ) ) {
-				printf("INFO: Parent process %d is not alive, going down\n", (int)parent_pid );
-				ctags_shutdown();
-				return 0;
-			}
 			continue;
 		}
 
 		// add the request to the queue
-		g_connectionQueue.put(conn);
-
+		g_connectionQueue.put( conn );
 		requests ++;
+
 		if(requests == max_requests) {
 			// stop the worker thread and exit
 			printf("INFO: Max requests reached, going down\n");
 			worker.requestStop();
 			worker.wait(-1);
+
+			// stop the isAlive thread
+			if ( parent_pid ) {
+				isAliveThread.requestStop();
+				isAliveThread.wait(-1);
+			}
 			break;
 		}
 	}

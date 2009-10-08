@@ -355,7 +355,7 @@ void LEditor::SetProperties()
 	SetMarginWidth(NUMBER_MARGIN_ID, options->GetDisplayLineNumbers() ? pixelWidth : 0);
 
 	// Show the fold margin
-	SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? 16 : 0);	// Fold margin
+	SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? 12 : 0);	// Fold margin
 
 	// Mark fold margin & symbols margins as sensetive
 	SetMarginSensitive(FOLD_MARGIN_ID, true);
@@ -900,9 +900,7 @@ bool LEditor::SaveFile()
 		// clear cached file, this function does nothing if the file is not cached
 		TagsManagerST::Get()->ClearCachedFile(GetFileName().GetFullPath());
 
-		// clear all the queries which holds reference to this file
-		TagsManagerST::Get()->GetWorkspaceTagsCache()->DeleteByFilename(GetFileName().GetFullPath());
-
+		//
 		if (ManagerST::Get()->IsShutdownInProgress() || ManagerST::Get()->IsWorkspaceClosing()) {
 			return true;
 		}
@@ -1650,7 +1648,7 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 
 bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
 {
-	return DoFindAndSelect(_pattern, name, NavMgr::Get());
+	return DoFindAndSelect(_pattern, name, 0, NavMgr::Get());
 }
 
 bool LEditor::Replace(const FindReplaceData &data)
@@ -3205,23 +3203,29 @@ void LEditor::OnRemoveMatchInidicator(wxCommandEvent& e)
 	}
 }
 
-bool LEditor::FindAndSelect(const wxString &pattern, const wxString &what, NavMgr *navmgr)
+bool LEditor::FindAndSelect(const wxString &pattern, const wxString &what, int pos, NavMgr *navmgr)
 {
-	return DoFindAndSelect(pattern, what, navmgr);
+	return DoFindAndSelect(pattern, what, pos, navmgr);
 }
 
 
-bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, NavMgr* navmgr)
+bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, int start_pos, NavMgr* navmgr)
 {
 	BrowseRecord jumpfrom = CreateBrowseRecord();
 
+	bool realPattern( false );
 	wxString pattern ( _pattern );
 	pattern.StartsWith ( wxT ( "/^" ), &pattern );
+	if ( _pattern.Length() != pattern.Length() ) {
+		realPattern = true;
+	}
 
 	if ( pattern.EndsWith ( wxT ( "$/" ) ) ) {
 		pattern = pattern.Left ( pattern.Len()-2 );
+		realPattern = true;
 	} else if ( pattern.EndsWith ( wxT ( "/" ) ) ) {
 		pattern = pattern.Left ( pattern.Len()-1 );
+		realPattern = true;
 	}
 
 	size_t flags = wxSD_MATCHCASE;
@@ -3235,12 +3239,18 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, Na
 	int match_len ( 0 ), pos ( 0 );
 
 	// set the caret at the document start
-	SetCurrentPos ( 0 );
+	if(start_pos < 0 || start_pos > GetLength()) {
+		start_pos = 0;
+	}
+
+	// set the starting point
+	SetCurrentPos     ( 0 );
 	SetSelectionStart ( 0 );
-	SetSelectionEnd ( 0 );
-	int offset ( 0 );
+	SetSelectionEnd   ( 0 );
+
+	int  offset( start_pos );
 	bool again ( false );
-	bool res = false;
+	bool res   ( false );
 
 	do {
 		again = false;
@@ -3257,16 +3267,19 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, Na
 				again = true;
 			} else {
 
-				// select only the name at the give text range
+				// select only the name at the given text range
 				wxString display_name = what.BeforeFirst ( wxT ( '(' ) );
 
 				int match_len1 ( 0 ), pos1 ( 0 );
 				flags |= wxSD_SEARCH_BACKWARD;
 				flags |= wxSD_MATCHWHOLEWORD;
 
-				// the inner search is done on the pattern without without the part of the
-				// signature
-				pattern = pattern.BeforeFirst ( wxT ( '(' ) );
+				if ( realPattern ) {
+					// the inner search is done on the pattern without the part of the
+					// signature
+					pattern = pattern.BeforeFirst ( wxT ( '(' ) );
+				}
+
 				if ( StringFindReplacer::Search ( pattern, UTF8Length ( pattern, pattern.Len() ), display_name, flags, pos1, match_len1 ) ) {
 
 					// select only the word

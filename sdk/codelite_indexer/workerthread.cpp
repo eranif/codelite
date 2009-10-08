@@ -7,6 +7,7 @@
 #include "network/clindexerprotocol.h"
 #include "libctags/libctags.h"
 #include "utils.h"
+#include <stdlib.h>
 
 WorkerThread::WorkerThread(eQueue<clNamedPipe*> *queue)
 		: m_queue(queue)
@@ -96,4 +97,23 @@ void WorkerThread::start()
 		}
 	}
 	printf("INFO: WorkerThread: Going down\n");
+}
+
+// ---------------------------------------------
+// is alive thread
+// ---------------------------------------------
+
+void IsAliveThread::start()
+{
+	while ( !testDestroy() ) {
+#ifdef __WXMSW__
+		Sleep(1000);
+#else
+		sleep(1);
+#endif
+		if ( !is_process_alive(m_pid) ) {
+			fprintf(stderr, "INFO: parent process died, going down\n");
+			exit(0);
+		}
+	}
 }

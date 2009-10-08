@@ -396,7 +396,9 @@ bool Archive::Read(const wxString &name, int &value)
 
 	long v;
 	bool res = ReadSimple(v, wxT("int"), name);
-	value = v;
+	if ( res ) {
+		value = v;
+	}
 	return res;
 }
 
@@ -419,7 +421,9 @@ bool Archive::Read(const wxString &name, bool &value)
 {
 	long v;
 	bool res = ReadSimple(v, wxT("bool"), name);
-	v  == 0 ? value = false : value = true;
+	if( res ) {
+		v  == 0 ? value = false : value = true;
+	}
 	return res;
 }
 
@@ -471,7 +475,7 @@ bool Archive::Read(const wxString &name, wxString &value)
 	}
 	wxXmlNode *node = FindNodeByName(m_root, wxT("wxString"), name);
 	if (node) {
-		value = node->GetPropVal(wxT("Value"), wxEmptyString);
+		value = node->GetPropVal(wxT("Value"), value);
 		return true;
 	}
 	return false;

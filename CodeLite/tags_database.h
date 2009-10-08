@@ -119,7 +119,7 @@ public:
 	/**
 	 * Construct a tags database.
 	 */
-	TagsDatabase(bool useCache = false);
+	TagsDatabase(bool useCache = false, bool readOnly = false);
 
 	/**
 	 *

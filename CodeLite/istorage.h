@@ -13,6 +13,7 @@ class ITagsStorage
 {
 protected:
 	bool m_useCache;
+	bool m_readOnly;
 
 public:
 	enum {
@@ -22,7 +23,7 @@ public:
 	};
 
 public:
-	ITagsStorage(bool useCahe) : m_useCache (useCahe) {}
+	ITagsStorage(bool useCahe, bool readOnly) : m_useCache (useCahe), m_readOnly(readOnly) {}
 	virtual ~ITagsStorage(){};
 
 	/**

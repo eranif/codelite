@@ -31,8 +31,8 @@
 //-------------------------------------------------
 // Tags database class implementation
 //-------------------------------------------------
-TagsDatabase::TagsDatabase(bool useCache)
-		: ITagsStorage(useCache)
+TagsDatabase::TagsDatabase(bool useCache, bool readOnly)
+		: ITagsStorage(useCache, readOnly)
 		, m_cache     (NULL    )
 {
 	m_db    = new wxSQLite3Database();
@@ -689,8 +689,9 @@ void TagsDatabase::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& ta
 
 		// Add results to cache
 		// EI: to avoid errors, dont add to cache empty results
-		// since they might be added later
-		if ( tmpTags.empty() == false ) {
+		// since they might be added later unless it is a read-only database
+		// and on this case, the query results will not change
+		if ( tmpTags.empty() == false || m_readOnly ) {
 			CacheTags(sql, tmpTags);
 		}
 

@@ -107,7 +107,9 @@ TagsManager::TagsManager()
 {
 	// Create databases
 	m_workspaceDatabase = new TagsDatabase( !GetCtagsOptions().GetDisableCaching() );
-	m_externalDatabase  = new TagsDatabase(true );
+
+	// create external database with caching ON and read only flag ON - which enabels better caching
+	m_externalDatabase  = new TagsDatabase(true, true);
 
 	// Update cache size
 	m_externalDatabase->SetMaxCacheSize(1000);

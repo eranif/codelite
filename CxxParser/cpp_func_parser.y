@@ -290,7 +290,8 @@ variable_decl		:	nested_scope_specifier basic_type_name special_star_amp
 								curr_func.m_returnValue.m_isPtr = ($3.find("*") != (size_t)-1);
 								$$ = $1 + $2 + $3  ;
 							}
-						| 	nested_scope_specifier LE_IDENTIFIER '<' template_parameter_list '>' special_star_amp
+
+| 	nested_scope_specifier LE_IDENTIFIER '<' template_parameter_list '>' special_star_amp
 							{
 								$1.erase($1.find_last_not_of(":")+1);
 								curr_func.m_returnValue.m_type = $2;

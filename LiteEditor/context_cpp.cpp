@@ -2239,7 +2239,7 @@ void ContextCpp::MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryP
 	                        "wchar_t while xor xor_eq ");
 
 	// add preprocessors
-	cppWords << wxT("ifdef undef define defined include endif elif ");
+	cppWords << wxT("ifdef undef define defined include endif elif ifndef ");
 
 	wxString s1(word);
 	wxArrayString wordsArr = wxStringTokenize(cppWords, wxT(" "));

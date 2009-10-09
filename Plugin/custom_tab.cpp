@@ -35,7 +35,7 @@
 #include "tabicons.h"
 
 #define clMASK_COLOR wxColor(0, 128, 128)
-#define TAB_RADIUS 3
+#define TAB_RADIUS 1
 
 BEGIN_EVENT_TABLE(CustomTab, wxPanel)
 	EVT_PAINT(CustomTab::OnPaint)
@@ -58,7 +58,11 @@ CustomTab::CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const w
 		, m_bmp(bmp)
 		, m_selected(selected)
 		, m_padding(6)
-		, m_heightPadding(6)
+#ifdef __WXMSW__
+		, m_heightPadding(2)
+#else
+		, m_heightPadding(4)
+#endif
 		, m_orientation(orientation)
 		, m_window(NULL)
 		, m_leftDown(false)
@@ -333,7 +337,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 	bool hovered = (m_hovered && (GetSelected() == false));
 	bool left = m_orientation == wxLEFT;
 
-	if (left) {
+	if (left && GetSelected()) {
 		wxRect rt(bmpRect);
 		if (GetSelected()) {
 			rt.y += 1;
@@ -349,7 +353,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		rt.height -= 1;
 		DrawingUtils::DrawVerticalButton(memDc, rt, GetSelected(), left, true, hovered);
 
-	} else {
+	} else if ( GetSelected() ) {
 		wxRect rt(bmpRect);
 		if (GetSelected()) {
 			rt.y += 1;
@@ -451,7 +455,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		dc.DrawLine(0, 0, 0, tmpRect.y + tmpRect.height);
 	}
 
-	int radius(TAB_RADIUS);
+	int radius(TAB_RADIUS ? TAB_RADIUS : 1);
 	if (GetTabContainer()) {
 		size_t tabIdx = GetTabContainer()->TabToIndex(this);
 		bool drawBottomBorder = (tabIdx == GetTabContainer()->GetFirstVisibleTab() || GetSelected());
@@ -467,7 +471,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 	tmpRect.width += radius;
 	left ? tmpRect.x : tmpRect.x -= radius;
 
-	dc.DrawRoundedRectangle(tmpRect, radius);
+	dc.DrawRoundedRectangle(tmpRect, TAB_RADIUS);
 
 	if (left && GetSelected()) {
 		//draw a line
@@ -535,7 +539,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	bool hovered = (m_hovered && (GetSelected() == false));
 	bool top = m_orientation == wxTOP;
 
-	if (top) {
+	if (top && GetSelected()) {
 		wxRect fillRect(bmpRect);
 
 		if (GetSelected()) {
@@ -547,11 +551,11 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		// we want the gradient NOT to be painted on the border,
 		// so we reduce the width of the fillRect by 2 pixles
 		// also, we need to adjust the x & y coordinates by 1 pixel
-		fillRect.width -= 2;
-		fillRect.x += 1;
+		fillRect.width -= 4;
+		fillRect.x += 2;
 		fillRect.height -= 1;
 		DrawingUtils::DrawHorizontalButton(memDc, fillRect, GetSelected(), top, true, hovered);
-	} else {
+	} else if ( GetSelected() ) {
 		wxRect fillRect(bmpRect);
 		if (GetSelected()) {
 			fillRect.height -= 1;
@@ -658,7 +662,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		dc.DrawLine(0, 0, tmpRect.x+tmpRect.width, 0);
 	}
 
-	int radius(TAB_RADIUS);
+	int radius(TAB_RADIUS ? TAB_RADIUS : 1);
 	if (GetTabContainer()) {
 		size_t tabIdx = GetTabContainer()->TabToIndex(this);
 		bool drawLeftBorder = (tabIdx == GetTabContainer()->GetFirstVisibleTab() || GetSelected());
@@ -676,13 +680,13 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 	// draw the outer dark border
 	dc.SetPen(pen);
-	dc.DrawRoundedRectangle(tmpRect, radius);
+	dc.DrawRoundedRectangle(tmpRect, TAB_RADIUS);
 
 	if (GetSelected()) {
 		// draw the inner white border
 		dc.SetPen(wxPen(wxT("WHITE")));
 		tmpRect.Deflate(1);
-		dc.DrawRoundedRectangle(tmpRect, radius);
+		dc.DrawRoundedRectangle(tmpRect, TAB_RADIUS);
 	}
 
 	if (top && GetSelected()) {

@@ -355,10 +355,10 @@
     <File Name="overlaytool.cpp"/>
     <File Name="overlaytool.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="QuickFinder">
     <File Name="quickfinder.h"/>
     <File Name="quickfinder.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

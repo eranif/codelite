@@ -338,7 +338,7 @@ bool CppCheckPlugin::StartCppCheckDaemon()
 	wxString cmd;
 	cmd << wxT("\"") << m_cppcheckPath << wxT("\" ");
 	cmd << m_settings.GetOptions();
-	cmd << wxT("--daemon=") << wxGetProcessId() << wxT(" --xml");
+	cmd << wxT("--daemon=") << wxGetProcessId() << wxT(" --pid ") << wxT(" --xml");
 	m_cppcheckProcess = new clProcess(wxNewId(), cmd, false);
 
 	// Launch it!

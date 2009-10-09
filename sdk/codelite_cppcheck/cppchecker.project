@@ -2,7 +2,9 @@
 <CodeLite_Project Name="cppchecker" InternalType="Console">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00050001N0005Debug0000000000000001N0010Debug_unix0000000000000001N0007Release0000000000000001N0008WinDebug0000000000000001N0010WinRelease000000000000]]>
+      <![CDATA[00050001N0005Debug0000000000000001N0010Debug_unix0000000000000001N0007Release0000000000000001N0008WinDebug0000000000000001N0010WinRelease000000000000
+    
+    ]]>
     </Plugin>
   </Plugins>
   <Description/>
@@ -71,8 +73,16 @@
     <File Name="network/cppchecker_protocol.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
-  <Dependencies Name="WinDebug"/>
   <Dependencies Name="Debug_unix"/>
+  <VirtualDirectory Name="threads">
+    <File Name="..\codelite_indexer\ethread.h"/>
+    <File Name="..\codelite_indexer\ethread_unix.cpp"/>
+    <File Name="..\codelite_indexer\ethread_unix.h"/>
+    <File Name="..\codelite_indexer\ethread_win.cpp"/>
+    <File Name="..\codelite_indexer\ethread_win.h"/>
+    <File Name="..\codelite_indexer\utils.h"/>
+    <File Name="..\codelite_indexer\utils.cpp"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="Debug_unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g" Required="yes">
@@ -85,23 +95,23 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="./Debug/cppcheck_daemon" IntermediateDirectory="./Debug" Command="./cppcheck_daemon" CommandArguments="--all -s --xml --daemon=1234" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands></PostConnectCommands>
-        <StartupCommands></StartupCommands>
+        <PostConnectCommands/>
+        <StartupCommands/>
       </Debugger>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <PreprocessFileCommand></PreprocessFileCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinDebug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -115,57 +125,55 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/codelite_cppcheck" IntermediateDirectory="./Debug" Command="./codelite_cppcheck" CommandArguments="-s --all --daemon=3608 --xml" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands></PostConnectCommands>
-        <StartupCommands></StartupCommands>
+        <PostConnectCommands/>
+        <StartupCommands/>
       </Debugger>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <PreprocessFileCommand></PreprocessFileCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild></CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <Configuration Name="WinRelease" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;" Required="yes">
+      <Compiler Options="-O2;-s" Required="yes">
         <IncludePath Value="."/>
         <Preprocessor Value="__WXMSW__"/>
       </Compiler>
-      <Linker Options="-mwindows" Required="yes">
+      <Linker Options="-mwindows;-s" Required="yes">
         <Library Value="shlwapi.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/codelite_cppcheck" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="-s --all --daemon=1234 --xml" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <PostConnectCommands></PostConnectCommands>
-        <StartupCommands></StartupCommands>
+        <PostConnectCommands/>
+        <StartupCommands/>
       </Debugger>
       <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">strip ./Release/codelite_cppcheck.exe</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
-        <CleanCommand></CleanCommand>
-        <BuildCommand></BuildCommand>
-        <PreprocessFileCommand></PreprocessFileCommand>
-        <SingleFileCommand></SingleFileCommand>
-        <MakefileGenerationCommand></MakefileGenerationCommand>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
         <ThirdPartyToolName>None</ThirdPartyToolName>
-        <WorkingDirectory></WorkingDirectory>
+        <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
-        <CustomPostBuild></CustomPostBuild>
-        <CustomPreBuild>
-
-</CustomPreBuild>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
     <GlobalSettings>
@@ -178,5 +186,6 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <Dependencies Name="WinDebug"/>
   <Dependencies Name="WinRelease"/>
 </CodeLite_Project>

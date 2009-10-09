@@ -18,14 +18,33 @@ CppCheckExecutorNetwork::CppCheckExecutorNetwork(clNamedPipe *connection, int ar
 {
 	// get request from the client
 	CPPCheckerRequest req;
-	/*printf( "command: " );*/
 	if ( CPPCheckerProtocol::ReadRequest(_connection, req) ) {
-		_argc = argc;
+
+		_argc = 1; // for the file name
+
+		// Calculate the required array size
+		for (int i=0; i<argc; i++) {
+			if ( strncmp ( argv[i], "--daemon", 9) == 0 ) {
+				// skip this one
+				continue;
+			}
+			if ( strncmp ( argv[i], "--pid", 5) == 0 ) {
+				// skip this one
+				continue;
+			}
+			_argc++;
+		}
 		_argv = new char*[_argc];
 
 		// copy the original array
 		for (int i=0, j=0; i<argc; i++) {
+
 			if ( strncmp ( argv[i], "--daemon", 9) == 0 ) {
+				// skip this one
+				continue;
+			}
+
+			if ( strncmp ( argv[i], "--pid", 5) == 0 ) {
 				// skip this one
 				continue;
 			}
@@ -35,9 +54,9 @@ CppCheckExecutorNetwork::CppCheckExecutorNetwork(clNamedPipe *connection, int ar
 			j++;
 		}
 
-		// add the new entry
-		_argv[argc-1] = new char [ req.getFile().length() + 1 ];
-		strcpy ( _argv[argc-1], req.getFile().c_str() );
+		// add the new entry at the last space
+		_argv[_argc-1] = new char [ req.getFile().length() + 1 ];
+		strcpy ( _argv[_argc-1], req.getFile().c_str() );
 	}
 }
 

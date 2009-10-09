@@ -92,6 +92,8 @@ void CheckOther::checkZeroDivision()
 #endif
 
 #include "network/cppchecker_protocol.h"
+#include "../codelite_indexer/ethread.h"
+#include "../codelite_indexer/utils.h"
 #include "cppcheckexecutor.h"
 #include "network/cppchecker_net_reply.h"
 #include "cppcheckexecutornetwork.h"
@@ -141,6 +143,36 @@ bool isWatchForParent(int argc, char *argv[])
 	return false;
 }
 
+// ---------------------------------------------
+// is alive thread
+// ---------------------------------------------
+class IsAliveThread : public eThread
+{
+	int m_pid;
+public:
+	IsAliveThread(int pid) : m_pid(pid) {}
+	~IsAliveThread() {}
+
+public:
+	/**
+	 * @brief thread main loop: check every 1 seconds if the parent process
+	 * is still alive.
+	 */
+	virtual void start() {
+		while ( !testDestroy() ) {
+#ifdef __WXMSW__
+			Sleep(1000);
+#else
+			sleep(1);
+#endif
+			if ( !is_process_alive(m_pid) ) {
+				fprintf(stderr, "INFO: parent process died, going down\n");
+				exit(0);
+			}
+		}
+	}
+};
+
 /**
  * Main function of cppcheck
  *
@@ -151,15 +183,30 @@ bool isWatchForParent(int argc, char *argv[])
 int main(int argc, char* argv[])
 {
 	// Check if daemon mode was requested
-	std::string daemon_name;
-	bool isDaemon = isDaemonMode(argc, argv, daemon_name);
-	if (isDaemonMode(argc, argv, daemon_name)) {
+	std::string          daemon_name;
+	bool isDaemon      = isDaemonMode(argc, argv, daemon_name);
+	bool isWatchParent = isWatchForParent(argc, argv);
+
+	if ( isWatchParent && !isDaemon ) {
+		printf("--pid can only be used with the --deamon option\n");
+		return 1;
+	}
+
+	if ( isDaemon ) {
 
 		// create channel and listen on it
 		char channel_name[1024];
 		int  max_requests(1500);
 		int  requests    (0);
+		long ppid        (0);
 
+		ppid = atol(daemon_name.c_str());
+		IsAliveThread    isAliveThr(ppid);
+
+		// if the --pid swtich was ON, start the watch for parent thread
+		if ( isWatchParent ) {
+			isAliveThr.run();
+		}
 		sprintf(channel_name, PIPE_NAME, daemon_name.c_str());
 		clNamedPipeConnectionsServer npServer(channel_name);
 
@@ -185,6 +232,13 @@ int main(int argc, char* argv[])
 
 			if (requests == max_requests) {
 				std::cout << "INFO: Max requests reached, going down" << std::endl;
+
+				if ( isWatchParent ) {
+					// Stop the watcher thread
+					isAliveThr.requestStop();
+					isAliveThr.wait(-1);
+				}
+
 				break;
 			}
 		}

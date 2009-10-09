@@ -127,6 +127,21 @@ bool isDaemonMode(int argc, char *argv[], std::string &str)
 }
 
 /**
+ * @brief return true if the cppchecker was invoked with the --pid switch. If --pid was passed, the --daemon=<PID> must exist
+ * @param argc main's argc
+ * @param argv main's argv
+ */
+bool isWatchForParent(int argc, char *argv[])
+{
+	for (size_t i=1; i<argc; i++) {
+		if ( strncmp(argv[i], "--pid", 5) == 0 ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
  * Main function of cppcheck
  *
  * @param argc Passed to CppCheck::parseFromArgs()
@@ -137,6 +152,7 @@ int main(int argc, char* argv[])
 {
 	// Check if daemon mode was requested
 	std::string daemon_name;
+	bool isDaemon = isDaemonMode(argc, argv, daemon_name);
 	if (isDaemonMode(argc, argv, daemon_name)) {
 
 		// create channel and listen on it

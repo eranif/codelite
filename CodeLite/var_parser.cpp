@@ -819,11 +819,12 @@ case 27:
                             	Variable var;
                             	std::string pattern;
                             	curr_var.m_pattern       = "/^";
-                            	curr_var.m_pattern       += yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0] + "$/";
+                            	curr_var.m_pattern       += yyvsp[-5] + " " + yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0] + "$/";
                             	curr_var.m_isPtr         = (yyvsp[-3].find("*") != (size_t)-1);
                             	curr_var.m_starAmp       = yyvsp[-3];
-                            	curr_var.m_arrayBrackets = yyvsp[-1];
+                            	curr_var.m_arrayBrackets = yyvsp[0];
                             	curr_var.m_lineno        = cl_scope_lineno;
+								/*create new variable for every variable name found*/
                                 var = curr_var;
                             	var.m_name               = yyvsp[-1];
                             	gs_vars->push_back(var);
@@ -839,10 +840,10 @@ case 28:
                             	Variable var;
                             	std::string pattern;
                             	curr_var.m_pattern       = "/^";
-                            	curr_var.m_pattern      += yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0] + "$/";
+                            	curr_var.m_pattern      += yyvsp[-5] + " " + yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0] + " $/";
                             	curr_var.m_isPtr         = (yyvsp[-3].find("*") != (size_t)-1);
                             	curr_var.m_starAmp       = yyvsp[-3];
-                            	curr_var.m_arrayBrackets = yyvsp[-1];
+                            	curr_var.m_arrayBrackets = yyvsp[0];
                             	curr_var.m_lineno        = cl_scope_lineno;
 
                                 /*create new variable for every variable name found*/
@@ -862,7 +863,7 @@ case 29:
                             	Variable var;
                             	std::string pattern;
                             	curr_var.m_pattern = "/^";
-                            	curr_var.m_pattern += yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + " $/";
+                            	curr_var.m_pattern += yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + " $/";
                             	curr_var.m_isPtr = (yyvsp[-2].find("*") != (size_t)-1);
                             	curr_var.m_starAmp = yyvsp[-2];
                             	curr_var.m_lineno = cl_scope_lineno;
@@ -875,7 +876,7 @@ case 29:
                             	curr_var.Reset();
                             	gs_names.clear();
                             }
-                        	if(yyvsp[-1] == ",") {
+                        	if(yyvsp[0] == ",") {
                             	cl_scope_less(0);
                             }
                         }

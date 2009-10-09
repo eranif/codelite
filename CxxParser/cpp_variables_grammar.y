@@ -191,11 +191,12 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	Variable var;
                             	std::string pattern;
                             	curr_var.m_pattern       = "/^";
-                            	curr_var.m_pattern       += $2 + " " + $3 + " " + $4 + " " + $5 + " " + $6 + "$/";
+                            	curr_var.m_pattern       += $1 + " " + $2 + " " + $3 + " " + $4 + " " + $5 + " " + $6 + "$/";
                             	curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp       = $3;
-                            	curr_var.m_arrayBrackets = $5;
+                            	curr_var.m_arrayBrackets = $6;
                             	curr_var.m_lineno        = cl_scope_lineno;
+								//create new variable for every variable name found
                                 var = curr_var;
                             	var.m_name               = $5;
                             	gs_vars->push_back(var);
@@ -210,10 +211,10 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	Variable var;
                             	std::string pattern;
                             	curr_var.m_pattern       = "/^";
-                            	curr_var.m_pattern      += $2 + " " + $3 + " " + $4 + " " + $5 + " " + $6 + "$/";
+                            	curr_var.m_pattern      += $1 + " " + $2 + " " + $3 + " " + $4 + " " + $5 + " " + $6 + " $/";
                             	curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp       = $3;
-                            	curr_var.m_arrayBrackets = $5;
+                            	curr_var.m_arrayBrackets = $6;
                             	curr_var.m_lineno        = cl_scope_lineno;
 
                                 //create new variable for every variable name found
@@ -232,7 +233,7 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	Variable var;
                             	std::string pattern;
                             	curr_var.m_pattern = "/^";
-                            	curr_var.m_pattern += $2 + " " + $3 + " " + $4 + " $/";
+                            	curr_var.m_pattern += $1 + " " + $2 + " " + $3 + " " + $4 + " $/";
                             	curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
                             	curr_var.m_starAmp = $3;
                             	curr_var.m_lineno = cl_scope_lineno;
@@ -245,7 +246,7 @@ variables	        : stmnt_starter variable_decl special_star_amp const_spec vari
                             	curr_var.Reset();
                             	gs_names.clear();
                             }
-                        	if($4 == ",") {
+                        	if($5 == ",") {
                             	cl_scope_less(0);
                             }
                         }
@@ -359,8 +360,10 @@ special_star_amp:star_list amp_item { $$ = $1 + $2; }
 stmnt_starter       : /*empty*/ {$$ = "";}
                     | ';' { $$ = ";";}
                     | '{' { $$ = "{";}
+//						| '(' { $$ = "(";}
                     | '}' { $$ = "}";}
                     | ':' { $$ = ":";}    //e.g. private: std::string m_name;
+//						| '=' { $$ = "=";}
                     ;
 
 /** Variables **/

@@ -190,7 +190,7 @@ createCodeLiteCppcheckMakefile ()
 	echo "" >> Makefile
 	echo "all: codelite_cppcheck" >> Makefile
 
-	createObjectList "network/*.cpp src/*.cpp " "codelite_cppcheck_objects"
+	createObjectList "network/*.cpp src/*.cpp utils/*.cpp" "codelite_cppcheck_objects"
 
 	for a_file in $files_list
 	do
@@ -212,8 +212,8 @@ createCodeLiteCppcheckMakefile ()
 			echo "	\$(CMP) -I. -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		fi
 
-		echo "-include ${configuration}/*.d" >> Makefile
 	done
+	echo "-include ${configuration}/*.d" >> Makefile
 	echo >> Makefile
 
 	echo "codelite_cppcheck: make_dirs \$(codelite_cppcheck_objects)" >> Makefile
@@ -300,8 +300,8 @@ createCodeLiteIndexerMakefile ()
 			echo "	\$(CMP) -DHAVE_CONFIG_H -I. -Ilibctags  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		fi
 
-		echo "-include ${configuration}/*.d" >> Makefile
 	done
+	echo "-include ${configuration}/*.d" >> Makefile
 	echo >> Makefile
 
 	echo "codelite_indexer: make_dirs \$(codelite_indexer_objects)" >> Makefile
@@ -729,7 +729,7 @@ createRules_sharedObject  "sdk/wxpropgrid/src/*.cpp" "wxPropGridObjects" "PropGr
 # Then the binary, and indexer
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createCodeLiteIndexerMakefile "sdk/codelite_indexer/*.cpp sdk/codelite_indexer/network/*.cpp sdk/codelite_indexer/libctags/*.c sdk/codelite_indexer/libctags/*.cpp"
-createCodeLiteCppcheckMakefile "sdk/codelite_cppcheck/network/*.cpp sdk/codelite_cppcheck/src/*.cpp"
+createCodeLiteCppcheckMakefile "sdk/codelite_cppcheck/network/*.cpp sdk/codelite_cppcheck/src/*.cpp sdk/codelite_cppcheck/utils/*.cpp"
 createInstallTarget
 createUnInstallTarget
 

@@ -92,8 +92,8 @@ void CheckOther::checkZeroDivision()
 #endif
 
 #include "network/cppchecker_protocol.h"
-#include "../codelite_indexer/ethread.h"
-#include "../codelite_indexer/utils.h"
+#include "utils/ethread.h"
+#include "utils/utils.h"
 #include "cppcheckexecutor.h"
 #include "network/cppchecker_net_reply.h"
 #include "cppcheckexecutornetwork.h"

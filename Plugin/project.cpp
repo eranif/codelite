@@ -964,7 +964,9 @@ void Project::SetPluginData(const wxString& pluginName, const wxString& data)
 		plugin->AddProperty(wxT("Name"), pluginName);
 	}
 
-	XmlUtils::SetCDATANodeContent(plugin, data);
+	wxString tmpData ( data );
+	tmpData.Trim().Trim(false);
+	XmlUtils::SetCDATANodeContent(plugin, tmpData);
 	SaveXmlFile();
 }
 

@@ -35,7 +35,12 @@
 #include "tabicons.h"
 
 #define clMASK_COLOR wxColor(0, 128, 128)
+
+#ifdef __WXMSW__
 #define TAB_RADIUS 1
+#else
+#define TAB_RADIUS 3
+#endif
 
 BEGIN_EVENT_TABLE(CustomTab, wxPanel)
 	EVT_PAINT(CustomTab::OnPaint)

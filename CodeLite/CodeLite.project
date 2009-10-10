@@ -16,6 +16,7 @@
     
     
     
+    
     ]]>
     </Plugin>
   </Plugins>
@@ -276,6 +277,11 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <VirtualDirectory Name="file_crawler">
+    <File Name="crawler_lexer.cpp"/>
+    <File Name="fc_fileopener.cpp"/>
+    <File Name="fc_fileopener.h"/>
+  </VirtualDirectory>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

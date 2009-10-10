@@ -147,6 +147,14 @@ private:
 	 * \param items Vector of items that were modified/deleted/added
 	 */
 	void SendEvent(int evtType, const wxString &fileName, std::vector<std::pair<wxString, TagEntry> >  &items);
+	
+	/**
+	 * @brief parse include files and retrieve a list of all
+	 * include files that should be tagged and inserted into
+	 * the external database
+	 * @param filename
+	 */
+	void ParseIncludeFiles(const wxString &filename);
 };
 
 typedef Singleton<ParseThread> ParseThreadST;

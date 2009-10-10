@@ -36,6 +36,7 @@ TagsDatabase::TagsDatabase(bool useCache, bool readOnly)
 		, m_cache     (NULL    )
 {
 	m_db    = new wxSQLite3Database();
+	m_db->SetBusyTimeout(500);
 	m_cache = new TagsCache();
 	m_cache->SetMaxCacheSize(1000);
 }

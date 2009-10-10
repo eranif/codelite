@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "fc_fileopener.h"
 
 #include "parse_thread.h"
 #include "ctags_manager.h"
@@ -35,6 +36,7 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 
 const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS = wxNewId();
+extern int crawlerScan(const char *path);
 
 ParseThread::ParseThread()
 		: WorkerThread()
@@ -115,7 +117,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 
 
 	m_pDb->Begin();
-
+	
 	// Prepare sql statements
 	TagEntry dummy;
 	try {
@@ -154,35 +156,60 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	}
 
 	m_pDb->Commit();
-
-
+	
+	// Parse the saved file to get a list of files to include
+	//ParseIncludeFiles( file );
+	
 	// If there is no event handler set to handle this comaprison
 	// results, then nothing more to be done
-	if (m_notifiedWindow == NULL)
-		return;
+	if (m_notifiedWindow ) {
 
-	// send "end" event
-	wxCommandEvent e(wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS);
-	wxPostEvent(m_notifiedWindow, e);
+		// send "end" event
+		wxCommandEvent e(wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS);
+		wxPostEvent(m_notifiedWindow, e);
 
-	// Send an event for each operation type
-	if ( !deletedItems.empty() )
-		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM, req->getFile(), deletedItems);
+		// Send an event for each operation type
+		if ( !deletedItems.empty() )
+			SendEvent(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM, req->getFile(), deletedItems);
 
-	if ( !newItems.empty() )
-		SendEvent(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM, req->getFile(), goodNewItems);
+		if ( !newItems.empty() )
+			SendEvent(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM, req->getFile(), goodNewItems);
 
-	if ( !modifiedItems.empty() ) {
-		std::vector<std::pair<wxString, TagEntry> >  realModifiedItems;
-		for (size_t i=0; i<modifiedItems.size(); i++) {
-			std::pair<wxString, TagEntry> p = modifiedItems.at(i);
-			if (!p.second.GetDifferOnByLineNumber()) {
-				realModifiedItems.push_back(p);
+		if ( !modifiedItems.empty() ) {
+			std::vector<std::pair<wxString, TagEntry> >  realModifiedItems;
+			for (size_t i=0; i<modifiedItems.size(); i++) {
+				std::pair<wxString, TagEntry> p = modifiedItems.at(i);
+				if (!p.second.GetDifferOnByLineNumber()) {
+					realModifiedItems.push_back(p);
+				}
+			}
+			if (realModifiedItems.empty() == false) {
+				SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), realModifiedItems);
 			}
 		}
-		if (realModifiedItems.empty() == false) {
-			SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), realModifiedItems);
-		}
+		
+	}
+}
+
+void ParseThread::ParseIncludeFiles(const wxString& filename)
+{
+	// TODO:: insert here the user defined search-path
+#if defined(__WXGTK__)||defined(__WXMAC__)
+	fcFileOpener::Instance()->AddSearchPath("/usr/include");
+#else
+	fcFileOpener::Instance()->AddSearchPath("C:/MinGW-3.4.5/include/c++/3.4.5");
+	fcFileOpener::Instance()->AddSearchPath("C:/wxWidgets-2.8.10/include");
+#endif
+	
+	const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
+	crawlerScan( cfile.data() );
+	
+	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
+	std::set<std::string>::iterator iter = fileSet.begin();
+	for(; iter != fileSet.end(); iter++ ){
+		wxString filename((*iter).c_str(), wxConvUTF8); // input file
+		wxString tags;                                  // output
+		TagsManagerST::Get()->SourceToTags(filename, tags);
 	}
 }
 
@@ -230,3 +257,4 @@ void ParseRequest::setFile(const wxString& file)
 ParseRequest::~ParseRequest()
 {
 }
+

@@ -5,6 +5,7 @@
       <![CDATA[00030001N0004Unix0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode000000000000
     
     
+    
     ]]>
     </Plugin>
   </Plugins>
@@ -561,29 +562,6 @@
     <Project Name="DebuggerGDB"/>
     <Project Name="wxpropgrid"/>
   </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="wxpropgrid"/>
-    <Project Name="CodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="Subversion"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="abbreviation"/>
-    <Project Name="SymbolView"/>
-    <Project Name="ContinuousBuild"/>
-    <Project Name="QMakePlugin"/>
-    <Project Name="CppChecker"/>
-  </Dependencies>
   <Settings Type="Executable">
     <Configuration Name="Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;$(shell pkg-config --cflags gtk+-2.0);-Wall;-fno-strict-aliasing" Required="yes">
@@ -836,6 +814,29 @@ resources.cpp: resources.xrc
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="wxpropgrid"/>
+    <Project Name="CodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="Subversion"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="abbreviation"/>
+    <Project Name="SymbolView"/>
+    <Project Name="ContinuousBuild"/>
+    <Project Name="QMakePlugin"/>
+    <Project Name="CppChecker"/>
+  </Dependencies>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="wxscintilla"/>
     <Project Name="sqlite3"/>

@@ -300,6 +300,9 @@ void MainBook::RestoreSession(SessionEntry &session)
 
 LEditor *MainBook::GetActiveEditor()
 {
+	if ( !GetCurrentPage() ) {
+		return NULL;
+	}
 	return dynamic_cast<LEditor*>(GetCurrentPage());
 }
 

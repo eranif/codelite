@@ -2862,6 +2862,11 @@ void Frame::OnShowNavBarUI(wxUpdateUIEvent& e)
 
 void Frame::OnParsingThreadDone(wxCommandEvent& e)
 {
+	if ( ManagerST::Get()->IsShutdownInProgress() ) {
+		// we are in shutdown progress, dont do anything
+		return;
+	}
+	
 	wxUnusedVar(e);
 	SetStatusMessage(wxEmptyString, 0, XRCID("retag_file"));
 	LEditor *editor = GetMainBook()->GetActiveEditor();

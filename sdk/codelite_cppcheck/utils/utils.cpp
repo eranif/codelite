@@ -148,16 +148,21 @@ std::string after_last(const std::string &str, char c)
 bool is_process_alive(long pid)
 {
 #ifdef __WXMSW__
-	//go over the process modules and get the full path of
-	//the executeable
-	HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
-
-	//  Take a snapshot of all modules in the specified process.
-	hModuleSnap = CreateToolhelp32Snapshot( TH32CS_SNAPMODULE, (DWORD)pid );
-	if ( hModuleSnap == INVALID_HANDLE_VALUE ) {
-		return false;
+	static HANDLE hProc = NULL;
+	
+	if ( hProc == NULL ) {
+		hProc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)pid);
 	}
-
+	
+	if ( hProc ) {
+		int rc = WaitForSingleObject(hProc, 5);
+		switch (rc) {
+		case WAIT_TIMEOUT:
+			return true;
+		default:
+			return false;
+		}
+	}
 	return true;
 
 #else

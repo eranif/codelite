@@ -30,32 +30,30 @@
 #include "sessionmanager.h"
 #include "navbar.h"
 #include "quickfindbar.h"
-#include "custom_notebook.h"
 #include "filehistory.h"
+#include <wx/aui/auibook.h>
+
+class clAuiBook;
 
 class MainBook : public wxPanel
 {
 private:
-    FileHistory   m_recentFiles;
-	NavBar       *m_navBar;
-	Notebook     *m_book;
-	QuickFindBar *m_quickFindBar;
-    wxWindow     *m_currentPage;
-
-    std::set<wxWindow*> m_detachedTabs;
+    FileHistory    m_recentFiles;
+	NavBar       * m_navBar;
+	clAuiBook*     m_book;
+	QuickFindBar * m_quickFindBar;
 
     void CreateGuiControls();
     void ConnectEvents    ();
 
-    void OnMouseDClick       (wxMouseEvent      &e);
-    void OnFocus             (wxFocusEvent      &e);
-    void OnPaneClosed        (wxAuiManagerEvent &e);
-    void OnPageClosing       (NotebookEvent     &e);
-    void OnPageClosed        (NotebookEvent     &e);
-    void OnProjectFileAdded  (wxCommandEvent    &e);
-	void OnProjectFileRemoved(wxCommandEvent    &e);
-    void OnWorkspaceLoaded   (wxCommandEvent    &e);
-    void OnWorkspaceClosed   (wxCommandEvent    &e);
+    void OnMouseDClick       (wxAuiNotebookEvent &e);
+    void OnFocus             (wxFocusEvent       &e);
+    void OnPageClosing       (wxAuiNotebookEvent &e);
+    void OnPageClosed        (wxAuiNotebookEvent &e);
+    void OnProjectFileAdded  (wxCommandEvent     &e);
+	void OnProjectFileRemoved(wxCommandEvent     &e);
+    void OnWorkspaceLoaded   (wxCommandEvent     &e);
+    void OnWorkspaceClosed   (wxCommandEvent     &e);
 
 	bool AskUserToSave(LEditor *editor);
 	bool DoSelectPage (wxWindow *win  );
@@ -81,7 +79,7 @@ public:
 	LEditor *FindEditor     (const wxString &fileName);
     bool     CloseEditor    (const wxString &fileName) { return ClosePage(FindEditor(fileName)); }
 
-    wxWindow *GetCurrentPage() { return m_currentPage; }
+    wxWindow *GetCurrentPage();
     wxWindow *FindPage      (const wxString &text);
 
     LEditor *NewEditor();
@@ -93,10 +91,6 @@ public:
 
     bool AddPage   (wxWindow *win, const wxString &text, const wxBitmap &bmp = wxNullBitmap, bool selected = false);
     bool SelectPage(wxWindow *win);
-
-    bool DetachPage(wxWindow *win);
-    bool DockPage  (wxWindow *win);
-    bool IsDetached(wxWindow *win);
 
     bool UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, const wxString &title, const wxString &caption,
                          bool cancellable = true);
@@ -126,4 +120,22 @@ public:
 	void MarkEditorReadOnly		(LEditor *editor, bool ro);
 };
 
+/**
+ * @class clAuiBook
+ * @author eran
+ * @date 10/10/09
+ * @file mainbook.h
+ * @brief
+ */
+class clAuiBook : public wxAuiNotebook {
+	wxMenu *m_menu;
+public:
+	clAuiBook(wxWindow *win);
+	virtual ~clAuiBook();
+
+	void SetRightClickMenu(wxMenu *menu);
+
+	void OnRightDown(wxAuiNotebookEvent &e);
+
+};
 #endif //MAINBOOK_H

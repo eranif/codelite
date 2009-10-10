@@ -3,6 +3,7 @@
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00030001N0004Unix0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode000000000000
+    
     ]]>
     </Plugin>
   </Plugins>

@@ -420,12 +420,10 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("close_other_tabs"),         Frame::OnCloseAllButThis)
 	EVT_MENU(XRCID("copy_file_name"),           Frame::OnCopyFilePath)
 	EVT_MENU(XRCID("copy_file_path"),           Frame::OnCopyFilePathOnly)
-	EVT_MENU(XRCID("detach_tab"),               Frame::OnDetachTab)
 	EVT_MENU(XRCID("open_shell_from_filepath"), Frame::OnOpenShellFromFilePath)
 
 	EVT_UPDATE_UI(XRCID("copy_file_name"),      Frame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("copy_file_path"),      Frame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("detach_tab"),          Frame::OnDetachTabUI)
 	EVT_UPDATE_UI(XRCID("open_shell_from_filepath"),    Frame::OnFileExistUpdateUI)
 
 	//-----------------------------------------------------------------
@@ -1971,7 +1969,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 	}
 
 	//clear navigation queue
-	if (GetMainBook()->GetCurrentPage() == 0) {
+	if (GetMainBook()->GetCurrentPage() == NULL) {
 		NavMgr::Get()->Clear();
 	}
 	event.Skip();
@@ -3153,17 +3151,6 @@ void Frame::OnReBuildWorkspace(wxCommandEvent& e)
 void Frame::OnReBuildWorkspaceUI(wxUpdateUIEvent& e)
 {
 	e.Enable(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsBuildInProgress());
-}
-
-void Frame::OnDetachTab(wxCommandEvent &e)
-{
-	wxUnusedVar(e);
-	GetMainBook()->DetachPage(GetMainBook()->GetCurrentPage());
-}
-
-void Frame::OnDetachTabUI(wxUpdateUIEvent &e)
-{
-	e.Enable(!GetMainBook()->IsDetached(GetMainBook()->GetCurrentPage()));
 }
 
 void Frame::OnOpenShellFromFilePath(wxCommandEvent& e)

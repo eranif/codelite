@@ -30,12 +30,12 @@
 
 TagsOptionsData::TagsOptionsData()
 		: SerializedObject()
-		, m_ccFlags(CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB | CC_CPP_KEYWORD_ASISST | CC_COLOUR_WORKSPACE_TAGS | CC_COLOUR_VARS)
+		, m_ccFlags(CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB | CC_CPP_KEYWORD_ASISST | CC_COLOUR_WORKSPACE_TAGS | CC_COLOUR_VARS | CC_ACCURATE_SCOPE_RESOLVING)
 		, m_ccColourFlags(CC_COLOUR_DEFAULT)
 		, m_fileSpec(wxT("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++"))
 		, m_minWordLen(3)
 		, m_maxCacheSize(1000)
-		, m_disableCaching(false)
+		, m_disableCaching(true)
 {
 	m_languages.Add(wxT("C++"));
 }

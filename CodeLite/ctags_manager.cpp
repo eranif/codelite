@@ -2474,51 +2474,51 @@ void TagsManager::UpdateFilesRetagTimestamp(const wxArrayString& files, TagsData
 	}
 }
 
+void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, TagsDatabase* db)
+{
+	std::vector<FileEntryPtr> files_entries;
+	db->GetFiles(files_entries);
+	std::set<wxString> files_set;
+
+	for (size_t i=0; i<strFiles.GetCount(); i++) {
+		files_set.insert(strFiles.Item(i));
+	}
+
+	for (size_t i=0; i<files_entries.size(); i++) {
+		FileEntryPtr fe = files_entries.at(i);
+
+		// does the file exist in both lists?
+		std::set<wxString>::iterator iter = files_set.find(fe->GetFile());
+		if ( iter != files_set.end() ) {
+			// get the actual modifiaction time of the file from the disk
+			struct stat buff;
+			int modified(0);
+
+			const wxCharBuffer cname = _C((*iter));
+			if (stat(cname.data(), &buff) == 0) {
+				modified = (int)buff.st_mtime;
+			}
+
+			// if the timestamp from the database < then the actual timestamp, re-tag the file
+			if (fe->GetLastRetaggedTimestamp() >= modified) {
+				files_set.erase(iter);
+			}
+		}
+	}
+
+	// copy back the files to the array
+	std::set<wxString>::iterator iter = files_set.begin();
+	strFiles.Clear();
+	for (; iter != files_set.end(); iter++ ) {
+		strFiles.Add( *iter );
+	}
+}
+
 void TagsManager::DoFilterNonNeededFilesForRetaging(wxArrayString& strFiles, TagsDatabase* db)
 {
 	TagsOptionsData options = GetCtagsOptions();
 	if (!(options.GetFlags() & CC_USE_FULL_RETAGGING)) {
-		// step 2: get list of files from the database
-		//         for each file compare the actual modification
-		//         timestamp vs the last_retagged timestamp from the database
-		//         if the timestamp is newer than the file, dont retag
-		//         the file
-		std::vector<FileEntryPtr> files_entries;
-		db->GetFiles(files_entries);
-		std::set<wxString> files_set;
-
-		for (size_t i=0; i<strFiles.GetCount(); i++) {
-			files_set.insert(strFiles.Item(i));
-		}
-
-		for (size_t i=0; i<files_entries.size(); i++) {
-			FileEntryPtr fe = files_entries.at(i);
-
-			// does the file exist in both lists?
-			std::set<wxString>::iterator iter = files_set.find(fe->GetFile());
-			if ( iter != files_set.end() ) {
-				// get the actual modifiaction time of the file from the disk
-				struct stat buff;
-				int modified(0);
-
-				const wxCharBuffer cname = _C((*iter));
-				if (stat(cname.data(), &buff) == 0) {
-					modified = (int)buff.st_mtime;
-				}
-
-				// if the timestamp from the database < then the actual timestamp, re-tag the file
-				if (fe->GetLastRetaggedTimestamp() >= modified) {
-					files_set.erase(iter);
-				}
-			}
-		}
-
-		// copy back the files to the array
-		std::set<wxString>::iterator iter = files_set.begin();
-		strFiles.Clear();
-		for (; iter != files_set.end(); iter++ ) {
-			strFiles.Add( *iter );
-		}
+		FilterNonNeededFilesForRetaging(strFiles, db);
 	}
 }
 

@@ -78,6 +78,8 @@ void TagsOptionsData::DeSerialize(Archive &arch)
 	if (where != wxNOT_FOUND) {
 		m_prep.RemoveAt(where);
 	}
+
+	m_disableCaching = true;
 }
 
 wxString TagsOptionsData::ToString() const

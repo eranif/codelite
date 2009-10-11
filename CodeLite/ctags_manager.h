@@ -727,6 +727,20 @@ public:
 	 * @return return value of the method from the pattern of empty string
 	 */
 	wxString GetFunctionReturnValueFromPattern(const wxString &pattern);
+	/**
+	 * @brief fileter a recently tagged files from the strFiles array
+	 * @param strFiles
+	 * @param db
+	 */
+	void FilterNonNeededFilesForRetaging(wxArrayString &strFiles, TagsDatabase *db);
+
+	/**
+	 * Parse tags from memory and constructs a TagTree.
+	 * This function throws a std::exception*.
+	 * @param tags wxString containing the tags to parse
+	 * @return tag tree, must be freed by caller
+	 */
+	TagTreePtr TreeFromTags(const wxString& tags);
 
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
@@ -750,14 +764,6 @@ private:
 	 * Destructor
 	 */
 	virtual ~TagsManager();
-
-	/**
-	 * Parse tags from memory and constructs a TagTree.
-	 * This function throws a std::exception*.
-	 * @param tags wxString containing the tags to parse
-	 * @return tag tree, must be freed by caller
-	 */
-	TagTreePtr TreeFromTags(const wxString& tags);
 
 	/**
 	 *

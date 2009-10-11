@@ -726,8 +726,9 @@ void Manager::RetagFile ( const wxString& filename )
 	absFile.MakeAbsolute();
 
 	ParseRequest *req = new ParseRequest();
-	req->setDbFile ( TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
-	req->setFile ( absFile.GetFullPath().c_str() );
+	req->setDbFile   ( TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
+	req->setFile     ( absFile.GetFullPath().c_str() );
+	req->setExtDbFile( TagsManagerST::Get()->GetExtDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
 	ParseThreadST::Get()->Add ( req );
 
 	wxString msg = wxString::Format(wxT( "Re-tagging file %s..." ), absFile.GetFullName().c_str());

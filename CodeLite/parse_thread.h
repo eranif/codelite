@@ -33,6 +33,7 @@
 #include <wx/stopwatch.h>
 #include "worker_thread.h"
 #include "procutils.h"
+#include "tag_tree.h"
 
 class TagsDatabase;
 
@@ -77,6 +78,7 @@ class ParseRequest : public ThreadRequest
 	wxString _file;
 	wxString _dbfile;
 	wxString _tags;
+	wxString _extDbFile;
 
 public:
 
@@ -85,19 +87,26 @@ public:
 	virtual ~ParseRequest() ;
 
 	// accessors
-	void setFile(const wxString &file) ;
-	void setDbFile(const wxString &dbfile) ;
-	void setTags(const wxString &tags) ;
+	void setFile     (const wxString &file     );
+	void setDbFile   (const wxString &dbfile   );
+	void setTags     (const wxString &tags     );
+	void setExtDbFile(const wxString &extDbFile);
 
 	//Getters
 	const wxString& getDbfile() const {
 		return _dbfile;
 	}
+
 	const wxString& getFile() const {
 		return _file;
 	}
+
 	const wxString& getTags() const {
 		return _tags;
+	}
+
+	const wxString& getExtDbFile() const {
+		return _extDbFile;
 	}
 
 	// copy ctor
@@ -117,8 +126,8 @@ class ParseThread : public WorkerThread
 {
 	friend class Singleton<ParseThread>;
 	std::auto_ptr<TagsDatabase> m_pDb;
-
-	wxStopWatch m_watch;
+	TagsDatabase*               m_externalSymbolsDb;
+	wxStopWatch                 m_watch;
 
 private:
 	/**
@@ -130,6 +139,9 @@ private:
 	 * Destructor.
 	 */
 	virtual ~ParseThread();
+
+	void       DoStoreTags   (const wxString &tags, const wxString &filename);
+	TagTreePtr DoTreeFromTags(const wxString &tags);
 
 private:
 
@@ -147,7 +159,7 @@ private:
 	 * \param items Vector of items that were modified/deleted/added
 	 */
 	void SendEvent(int evtType, const wxString &fileName, std::vector<std::pair<wxString, TagEntry> >  &items);
-	
+
 	/**
 	 * @brief parse include files and retrieve a list of all
 	 * include files that should be tagged and inserted into

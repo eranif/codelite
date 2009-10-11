@@ -28,7 +28,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	wxBoxSizer* mainSizer;
 	mainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	m_mainBook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_FIXEDWIDTH );
+	m_mainBook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	m_generalPage = new wxPanel( m_mainBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -55,9 +55,13 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	
 	m_checkParseComments = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Parse comments"), wxDefaultPosition, wxDefaultSize, 0 );
 	
+	m_checkParseComments->Enable( false );
+	
 	fgSizer31->Add( m_checkParseComments, 0, wxALL, 5 );
 	
 	m_checkDisplayComments = new wxCheckBox( m_generalPage, wxID_ANY, wxT("Display comments in tooltip"), wxDefaultPosition, wxDefaultSize, 0 );
+	
+	m_checkDisplayComments->Enable( false );
 	
 	fgSizer31->Add( m_checkDisplayComments, 0, wxALL, 5 );
 	
@@ -158,49 +162,6 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_generalPage->Layout();
 	bSizer4->Fit( m_generalPage );
 	m_mainBook->AddPage( m_generalPage, wxT("General"), true );
-	m_panelCache = new wxPanel( m_mainBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer61;
-	bSizer61 = new wxBoxSizer( wxVERTICAL );
-	
-	m_checkBoxDisableCaching = new wxCheckBox( m_panelCache, wxID_ANY, wxT("Disable caching"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	bSizer61->Add( m_checkBoxDisableCaching, 0, wxALL|wxEXPAND, 5 );
-	
-	wxStaticBoxSizer* sbSizer41;
-	sbSizer41 = new wxStaticBoxSizer( new wxStaticBox( m_panelCache, wxID_ANY, wxEmptyString ), wxVERTICAL );
-	
-	m_staticText4 = new wxStaticText( m_panelCache, wxID_ANY, wxT("To improve the responsiveness of code completion functionality, codelite manages an internal caching.\nHere, you may modify some of the cache settings, or disable it completly."), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText4->Wrap( -1 );
-	sbSizer41->Add( m_staticText4, 0, wxALL|wxEXPAND, 5 );
-	
-	bSizer61->Add( sbSizer41, 0, wxEXPAND|wxALL, 5 );
-	
-	wxFlexGridSizer* fgSizer4;
-	fgSizer4 = new wxFlexGridSizer( 2, 2, 0, 0 );
-	fgSizer4->AddGrowableCol( 1 );
-	fgSizer4->SetFlexibleDirection( wxBOTH );
-	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	m_staticText51 = new wxStaticText( m_panelCache, wxID_ANY, wxT("Maximum items kept in cache:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText51->Wrap( -1 );
-	fgSizer4->Add( m_staticText51, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
-	
-	m_spinCtrlCacheSize = new wxSpinCtrl( m_panelCache, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 500, 5000, 1000 );
-	fgSizer4->Add( m_spinCtrlCacheSize, 0, wxALL|wxALIGN_RIGHT, 5 );
-	
-	m_staticText6 = new wxStaticText( m_panelCache, wxID_ANY, wxT("Clear cache content"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText6->Wrap( -1 );
-	fgSizer4->Add( m_staticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_buttonClearCache = new wxButton( m_panelCache, wxID_ANY, wxT("Clear Cache"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer4->Add( m_buttonClearCache, 0, wxALL|wxALIGN_RIGHT, 5 );
-	
-	bSizer61->Add( fgSizer4, 0, wxEXPAND|wxALL, 5 );
-	
-	m_panelCache->SetSizer( bSizer61 );
-	m_panelCache->Layout();
-	bSizer61->Fit( m_panelCache );
-	m_mainBook->AddPage( m_panelCache, wxT("Cache"), false );
 	m_ctagsPage = new wxPanel( m_mainBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
@@ -264,6 +225,52 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_ctagsPage->Layout();
 	bSizer6->Fit( m_ctagsPage );
 	m_mainBook->AddPage( m_ctagsPage, wxT("Advanced"), false );
+	m_panelCache = new wxPanel( m_mainBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer61;
+	bSizer61 = new wxBoxSizer( wxVERTICAL );
+	
+	m_checkBoxDisableCaching = new wxCheckBox( m_panelCache, wxID_ANY, wxT("Disable caching"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxDisableCaching->SetValue(true);
+	
+	m_checkBoxDisableCaching->Enable( false );
+	
+	bSizer61->Add( m_checkBoxDisableCaching, 0, wxALL|wxEXPAND, 5 );
+	
+	wxStaticBoxSizer* sbSizer41;
+	sbSizer41 = new wxStaticBoxSizer( new wxStaticBox( m_panelCache, wxID_ANY, wxEmptyString ), wxVERTICAL );
+	
+	m_staticText4 = new wxStaticText( m_panelCache, wxID_ANY, wxT("To improve the responsiveness of code completion functionality, codelite manages an internal caching.\nHere, you may modify some of the cache settings, or disable it completly."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	sbSizer41->Add( m_staticText4, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer61->Add( sbSizer41, 0, wxEXPAND|wxALL, 5 );
+	
+	wxFlexGridSizer* fgSizer4;
+	fgSizer4 = new wxFlexGridSizer( 2, 2, 0, 0 );
+	fgSizer4->AddGrowableCol( 1 );
+	fgSizer4->SetFlexibleDirection( wxBOTH );
+	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText51 = new wxStaticText( m_panelCache, wxID_ANY, wxT("Maximum items kept in cache:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText51->Wrap( -1 );
+	fgSizer4->Add( m_staticText51, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+	
+	m_spinCtrlCacheSize = new wxSpinCtrl( m_panelCache, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 500, 5000, 1000 );
+	fgSizer4->Add( m_spinCtrlCacheSize, 0, wxALL|wxALIGN_RIGHT, 5 );
+	
+	m_staticText6 = new wxStaticText( m_panelCache, wxID_ANY, wxT("Clear cache content"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6->Wrap( -1 );
+	fgSizer4->Add( m_staticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_buttonClearCache = new wxButton( m_panelCache, wxID_ANY, wxT("Clear Cache"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer4->Add( m_buttonClearCache, 0, wxALL|wxALIGN_RIGHT, 5 );
+	
+	bSizer61->Add( fgSizer4, 0, wxEXPAND|wxALL, 5 );
+	
+	m_panelCache->SetSizer( bSizer61 );
+	m_panelCache->Layout();
+	bSizer61->Fit( m_panelCache );
+	m_mainBook->AddPage( m_panelCache, wxT("Cache"), false );
 	
 	mainSizer->Add( m_mainBook, 1, wxEXPAND | wxALL, 5 );
 	
@@ -301,13 +308,13 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg( wxWindow* parent, wxWindowID id, const w
 	m_checkBoxNamespace->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnColourWorkspaceUI ), NULL, this );
 	m_checkBoxMember->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnColourWorkspaceUI ), NULL, this );
 	m_checkBoxVariable->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnColourWorkspaceUI ), NULL, this );
+	m_buttonAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonAdd ), NULL, this );
 	m_staticText4->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnCachePageUI ), NULL, this );
 	m_staticText51->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnCachePageUI ), NULL, this );
 	m_spinCtrlCacheSize->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnCachePageUI ), NULL, this );
 	m_staticText6->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnCachePageUI ), NULL, this );
 	m_buttonClearCache->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnCleanCache ), NULL, this );
 	m_buttonClearCache->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnClearCacheUI ), NULL, this );
-	m_buttonAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonAdd ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonOK ), NULL, this );
 	m_buttonCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonOK ), NULL, this );
 }
@@ -327,13 +334,13 @@ TagsOptionsBaseDlg::~TagsOptionsBaseDlg()
 	m_checkBoxNamespace->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnColourWorkspaceUI ), NULL, this );
 	m_checkBoxMember->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnColourWorkspaceUI ), NULL, this );
 	m_checkBoxVariable->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnColourWorkspaceUI ), NULL, this );
+	m_buttonAdd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonAdd ), NULL, this );
 	m_staticText4->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnCachePageUI ), NULL, this );
 	m_staticText51->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnCachePageUI ), NULL, this );
 	m_spinCtrlCacheSize->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnCachePageUI ), NULL, this );
 	m_staticText6->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnCachePageUI ), NULL, this );
 	m_buttonClearCache->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnCleanCache ), NULL, this );
 	m_buttonClearCache->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( TagsOptionsBaseDlg::OnClearCacheUI ), NULL, this );
-	m_buttonAdd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonAdd ), NULL, this );
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonOK ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( TagsOptionsBaseDlg::OnButtonOK ), NULL, this );
 }

@@ -35,25 +35,40 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 
+#if 0
+#    ifdef __WXMSW__
+#        define DEBUG_MESSAGE(x) wxLogMessage(x)
+#    else
+#        define DEBUG_MESSAGE(x) wxPrintf(x)
+#    endif
+#else
+#        define DEBUG_MESSAGE(x)
+#endif
+
 const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS = wxNewId();
 extern int crawlerScan(const char *path);
 
 ParseThread::ParseThread()
 		: WorkerThread()
-		, m_pDb( new TagsDatabase() )
+		, m_pDb              ( new TagsDatabase() )
+		, m_externalSymbolsDb( new TagsDatabase() )
 {
 }
 
 ParseThread::~ParseThread()
 {
+	if ( m_externalSymbolsDb ) {
+		delete m_externalSymbolsDb;
+	}
 }
 
 void ParseThread::ProcessRequest(ThreadRequest * request)
 {
 	// request is delete by the parent WorkerThread after this method is completed
-	ParseRequest *req = (ParseRequest*)request;
-	wxString dbfile  = req->getDbfile();
-	wxString file  = req->getFile();
+	ParseRequest *req    = (ParseRequest*)request;
+	wxString      dbfile = req->getDbfile();
+	wxString      file   = req->getFile();
+	wxString   extDbFile = req->getExtDbFile();
 
 	// req->tags should contain the tags
 	// convert the file to tags
@@ -72,6 +87,10 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	//----------------------------------------------
 	TagTreePtr oldTree;
 	try {
+		// Open the external database
+		DEBUG_MESSAGE( wxString::Format(wxT("Opening external database %s"), extDbFile.c_str()) ) ;
+		m_externalSymbolsDb->OpenDatabase(extDbFile);
+
 		wxSQLite3ResultSet rs = m_pDb->SelectTagsByFile(file, wxFileName(dbfile));
 
 		// Load the records and build a language tree
@@ -117,7 +136,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 
 
 	m_pDb->Begin();
-	
+
 	// Prepare sql statements
 	TagEntry dummy;
 	try {
@@ -156,10 +175,10 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	}
 
 	m_pDb->Commit();
-	
+
 	// Parse the saved file to get a list of files to include
 	//ParseIncludeFiles( file );
-	
+
 	// If there is no event handler set to handle this comaprison
 	// results, then nothing more to be done
 	if (m_notifiedWindow ) {
@@ -187,7 +206,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 				SendEvent(wxEVT_COMMAND_SYMBOL_TREE_UPDATE_ITEM, req->getFile(), realModifiedItems);
 			}
 		}
-		
+
 	}
 }
 
@@ -202,16 +221,60 @@ void ParseThread::ParseIncludeFiles(const wxString& filename)
 	fcFileOpener::Instance()->AddSearchPath("C:/MinGW-3.4.5/include/c++/3.4.5");
 	fcFileOpener::Instance()->AddSearchPath("C:/wxWidgets-2.8.10/include");
 #endif
-	
+
+	// Invoke the crawler
 	const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
 	crawlerScan( cfile.data() );
-	
+
+	// Loop over the crawler results and remove any files
+	// which were recently updated
 	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
 	std::set<std::string>::iterator iter = fileSet.begin();
-	for(; iter != fileSet.end(); iter++ ){
-		wxString filename((*iter).c_str(), wxConvUTF8); // input file
-		wxString tags;                                  // output
-		TagsManagerST::Get()->SourceToTags(filename, tags);
+	wxArrayString                    arrFiles;
+	for (; iter != fileSet.end(); iter++ ) {
+		arrFiles.Add(wxString((*iter).c_str(), wxConvUTF8));
+	}
+
+	DEBUG_MESSAGE( wxString::Format(wxT("Files that need parse %d"), arrFiles.GetCount()) ) ;
+	TagsManagerST::Get()->FilterNonNeededFilesForRetaging(arrFiles, m_externalSymbolsDb);
+	DEBUG_MESSAGE( wxString::Format(wxT("Actual files that need parse %d"), arrFiles.GetCount()) );
+
+	// Loop over the files and parse them
+	DEBUG_MESSAGE(wxString::Format(wxT("Saving files to database....")));
+	for (size_t i=0; i<arrFiles.GetCount(); i++) {
+		wxString tags;  // output
+		TagsManagerST::Get()->SourceToTags(arrFiles.Item(i), tags);
+
+		if ( tags.IsEmpty() == false ) {
+			DoStoreTags(tags, arrFiles.Item(i));
+		}
+	}
+	DEBUG_MESSAGE(wxT("Done"));
+
+	// Update the retagging timestamp
+	try {
+		TagsManagerST::Get()->UpdateFilesRetagTimestamp(arrFiles, m_externalSymbolsDb);
+	} catch (wxSQLite3Exception & e) {
+		DEBUG_MESSAGE(wxString::Format(wxT("Got sqlite3 exception: %s"), e.GetMessage().c_str()));
+	}
+}
+
+TagTreePtr ParseThread::DoTreeFromTags(const wxString& tags)
+{
+	return TagsManagerST::Get()->TreeFromTags(tags);
+}
+
+void ParseThread::DoStoreTags(const wxString& tags, const wxString &filename)
+{
+	TagTreePtr ttp = DoTreeFromTags(tags);
+	try {
+		m_externalSymbolsDb->Begin();
+		m_externalSymbolsDb->DeleteByFileName( m_externalSymbolsDb->GetDatabaseFileName(), filename, false);
+		m_externalSymbolsDb->Store(ttp, wxFileName(), false);
+		m_externalSymbolsDb->Commit();
+
+	} catch ( wxSQLite3Exception &e ) {
+		DEBUG_MESSAGE(wxString::Format(wxT("Got sqlite3 exception: %s"), e.GetMessage().c_str()));
 	}
 }
 
@@ -260,3 +323,7 @@ ParseRequest::~ParseRequest()
 {
 }
 
+void ParseRequest::setExtDbFile(const wxString& extDbFile)
+{
+	_extDbFile = extDbFile.c_str();
+}

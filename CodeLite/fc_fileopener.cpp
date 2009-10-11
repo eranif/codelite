@@ -61,13 +61,14 @@ FILE* fcFileOpener::OpenFile(const std::string& include_path)
 		return NULL;
 	}
 
-	// try to open the file as is
-	FILE *fp = fopen(mod_path.c_str(), "r");
-	if ( fp ) {
-		_matchedfiles.insert( mod_path );
-		_scannedfiles.insert( mod_path );
-		return fp;
-	}
+	FILE *fp(NULL);
+//	// try to open the file as is
+//	FILE *fp = fopen(mod_path.c_str(), "r");
+//	if ( fp ) {
+//		_matchedfiles.insert( mod_path );
+//		_scannedfiles.insert( mod_path );
+//		return fp;
+//	}
 
 	// try to prepend the search paths
 	for(size_t i=0; i<_searchPath.size(); i++){

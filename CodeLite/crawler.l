@@ -105,10 +105,5 @@ int crawlerScan( const char* filePath )
 	yy_switch_to_buffer( yy_create_buffer(fp, YY_BUF_SIZE) );
 	fc_in = fp;
 	int rc = fc_lex();
-	fclose( fp );
-	//fclose( YY_CURRENT_BUFFER->yy_input_file );
-	//YY_CURRENT_BUFFER->yy_input_file = NULL;
-	yy_delete_buffer    ( YY_CURRENT_BUFFER    );
-		
 	return rc;
 }

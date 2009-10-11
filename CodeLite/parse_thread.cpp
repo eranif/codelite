@@ -196,6 +196,8 @@ void ParseThread::ParseIncludeFiles(const wxString& filename)
 	// TODO:: insert here the user defined search-path
 #if defined(__WXGTK__)||defined(__WXMAC__)
 	fcFileOpener::Instance()->AddSearchPath("/usr/include");
+	fcFileOpener::Instance()->AddSearchPath("/usr/include/c++/4.2.4/");
+	fcFileOpener::Instance()->AddSearchPath("/usr/include/wx-2.8/");
 #else
 	fcFileOpener::Instance()->AddSearchPath("C:/MinGW-3.4.5/include/c++/3.4.5");
 	fcFileOpener::Instance()->AddSearchPath("C:/wxWidgets-2.8.10/include");

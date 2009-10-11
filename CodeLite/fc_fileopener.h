@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <cstdio>
 
 class fcFileOpener {
 	std::vector<std::string> _searchPath  ;

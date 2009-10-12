@@ -177,7 +177,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	m_pDb->Commit();
 
 	// Parse the saved file to get a list of files to include
-	ParseIncludeFiles( file );
+	//ParseIncludeFiles( file );
 
 	// If there is no event handler set to handle this comaprison
 	// results, then nothing more to be done

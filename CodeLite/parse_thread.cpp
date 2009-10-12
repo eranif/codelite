@@ -35,7 +35,7 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_ADD_ITEM)
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_SYMBOL_TREE_DELETE_PROJECT)
 
-#if 0
+#if 1
 #    ifdef __WXMSW__
 #        define DEBUG_MESSAGE(x) wxLogMessage(x)
 #    else
@@ -177,7 +177,7 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	m_pDb->Commit();
 
 	// Parse the saved file to get a list of files to include
-	//ParseIncludeFiles( file );
+	ParseIncludeFiles( file );
 
 	// If there is no event handler set to handle this comaprison
 	// results, then nothing more to be done

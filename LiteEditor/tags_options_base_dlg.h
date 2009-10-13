@@ -21,9 +21,8 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/stattext.h>
-#include <wx/listbox.h>
-#include <wx/button.h>
 #include <wx/spinctrl.h>
+#include <wx/button.h>
 #include <wx/textctrl.h>
 #include <wx/combobox.h>
 #include <wx/notebook.h>
@@ -66,12 +65,6 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxCheckBox* m_checkBoxMember;
 		wxCheckBox* m_checkBoxVariable;
 		wxCheckBox* m_checkLoadLastDB;
-		wxPanel* m_panelParser;
-		wxStaticText* m_staticText7;
-		wxListBox* m_listBoxSearchPaths;
-		wxButton* m_buttonAddSearchPath;
-		wxButton* m_buttonRemovePath;
-		wxButton* m_buttonClearAll;
 		wxPanel* m_panelCache;
 		wxCheckBox* m_checkBoxDisableCaching;
 		wxStaticText* m_staticText4;
@@ -96,12 +89,6 @@ class TagsOptionsBaseDlg : public wxDialog
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnColourWorkspaceUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void OnAddSearchPath( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnAddSearchPathUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void OnRemoveSearchPath( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnRemoveSearchPathUI( wxUpdateUIEvent& event ){ event.Skip(); }
-		virtual void OnClearAll( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnClearAllUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnCachePageUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnCleanCache( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnClearCacheUI( wxUpdateUIEvent& event ){ event.Skip(); }

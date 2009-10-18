@@ -334,7 +334,7 @@ bool App::OnInit()
 			}
 
 			long up(0);
-			if( cfg->GetLongValue(wxT("UpdateWxPaths"), up) && up){
+			if( !cfg->GetLongValue(wxT("UpdateWxPaths"), up)){
 				if(strWx.IsEmpty() == false) {
 					// add WX include path
 					m_parserPaths.Add(strWx + wxT("\\include"));
@@ -387,18 +387,8 @@ bool App::OnInit()
 		}
 	}
 
-	// Create the main application window (a dialog in this case)
-	// NOTE: Vertical dimension comprises the caption bar.
-	//       Horizontal dimension has to take into account the thin
-	//       hilighting border around the dialog (2 points in
-	//       Win 95).
-	Frame::Initialize( parser.GetParamCount() == 0 );
-	m_pMainFrame = Frame::Get();
-
-	// update the accelerators table
-	ManagerST::Get()->UpdateMenuAccelerators();
 	TagsOptionsData tod;
-	EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &tod);
+	cfg->ReadObject(wxT("m_tagsOptionsData"), &tod);
 
 	// update the search paths
 	if(tod.GetParserSearchPaths().IsEmpty()) {
@@ -411,8 +401,19 @@ bool App::OnInit()
 		}
 		tod.SetParserSearchPaths( m_parserPaths );
 	}
-	EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &tod);
 
+	cfg->WriteObject(wxT("m_tagsOptionsData"), &tod);
+
+	// Create the main application window (a dialog in this case)
+	// NOTE: Vertical dimension comprises the caption bar.
+	//       Horizontal dimension has to take into account the thin
+	//       hilighting border around the dialog (2 points in
+	//       Win 95).
+	Frame::Initialize( parser.GetParamCount() == 0 );
+	m_pMainFrame = Frame::Get();
+
+	// update the accelerators table
+	ManagerST::Get()->UpdateMenuAccelerators();
 	m_pMainFrame->Show(TRUE);
 	SetTopWindow(m_pMainFrame);
 

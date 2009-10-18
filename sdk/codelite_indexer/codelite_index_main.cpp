@@ -21,7 +21,7 @@ static eQueue<clNamedPipe*> g_connectionQueue;
 
 int main(int argc, char **argv)
 {
-	int  max_requests(1500);
+	int  max_requests(5000);
 	int  requests(0);
 	bool check_parent(false);
 	long parent_pid (0);

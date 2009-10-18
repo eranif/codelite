@@ -197,6 +197,9 @@ void CppCheckPlugin::UnPlug()
 	if ( m_cppcheckProcess ) {
 		wxLogMessage(wxT("CppCheckPlugin: Terminating cppcheck daemon..."));
 		SetCanRestart( false );
+
+		// detach the process from the plugin and terminate it
+		m_cppcheckProcess->Detach();
 		m_cppcheckProcess->Terminate();
 	}
 }

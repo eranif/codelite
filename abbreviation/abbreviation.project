@@ -9,7 +9,6 @@
     <File Name="abbreviation.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="DebugUnicode"/>
   <VirtualDirectory Name="UI">
     <File Name="abbreviationssettingsbase.cpp"/>
     <File Name="abbreviationssettingsbase.h"/>
@@ -19,8 +18,6 @@
   <VirtualDirectory Name="formbuilder">
     <File Name="abbreviationssettingsbase.fbp"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="">
@@ -200,5 +197,8 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

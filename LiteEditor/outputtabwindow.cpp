@@ -76,8 +76,10 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 	sci->SetLexer(lexer);
 	sci->StyleClearAll();
 
-	sci->StyleSetBackground(0, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-	sci->StyleSetBackground(wxSCI_STYLE_DEFAULT, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	for(int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
+		sci->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+		sci->StyleSetForeground(i, wxT("BLACK"));
+	}
 
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxNORMAL, wxNORMAL);
@@ -115,7 +117,7 @@ void OutputTabWindow::InitStyle(wxScintilla *sci, int lexer, bool folding)
 		sci->SetMarginWidth(4, 16);
 		sci->SetProperty(wxT("fold"), wxT("1"));
 		sci->SetMarginSensitive(4, true);
-		sci->StyleSetForeground(wxSCI_STYLE_DEFAULT, wxT("GREY"));
+//		sci->StyleSetForeground(wxSCI_STYLE_DEFAULT, wxT("GREY"));
 	}
 
 	// current line marker

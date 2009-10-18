@@ -584,6 +584,10 @@ bool wxTabContainer::DoRemoveTab(CustomTab *deleteTab, bool deleteIt, bool notif
 		//you can now safely destroy the visual tab button
 		deleteTab->Destroy();
 	}
+	if ( GetTabsCount() == 0 ) {
+		Hide();
+	}
+
 	m_tabsSizer->Layout();
 	GetParent()->GetSizer()->Layout();
 

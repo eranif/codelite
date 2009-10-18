@@ -1,7 +1,11 @@
 #include "fc_fileopener.h"
+
+
 fcFileOpener* fcFileOpener::ms_instance = 0;
 
 fcFileOpener::fcFileOpener()
+		: _depth(0)
+		, _maxDepth(20)
 {
 }
 
@@ -11,7 +15,7 @@ fcFileOpener::~fcFileOpener()
 
 fcFileOpener* fcFileOpener::Instance()
 {
-	if(ms_instance == 0){
+	if (ms_instance == 0) {
 		ms_instance = new fcFileOpener();
 	}
 	return ms_instance;
@@ -19,7 +23,7 @@ fcFileOpener* fcFileOpener::Instance()
 
 void fcFileOpener::Release()
 {
-	if(ms_instance){
+	if (ms_instance) {
 		delete ms_instance;
 	}
 	ms_instance = 0;
@@ -36,8 +40,8 @@ void fcFileOpener::AddSearchPath(const std::string& path)
 
 bool fcFileOpener::IsPathExist(const std::string& path)
 {
-	for(size_t i=0; i<_searchPath.size(); i++){
-		if(_searchPath.at(i) == path){
+	for (size_t i=0; i<_searchPath.size(); i++) {
+		if (_searchPath.at(i) == path) {
 			return true;
 		}
 	}
@@ -61,17 +65,11 @@ FILE* fcFileOpener::OpenFile(const std::string& include_path)
 		return NULL;
 	}
 
-	FILE *fp(NULL);
-//	// try to open the file as is
-//	FILE *fp = fopen(mod_path.c_str(), "r");
-//	if ( fp ) {
-//		_matchedfiles.insert( mod_path );
-//		_scannedfiles.insert( mod_path );
-//		return fp;
-//	}
+	// try to open the file as is
+	FILE *fp (NULL);
 
 	// try to prepend the search paths
-	for(size_t i=0; i<_searchPath.size(); i++){
+	for (size_t i=0; i<_searchPath.size(); i++) {
 		fp = fopen(std::string(_searchPath.at(i) + "/" + mod_path).c_str(), "r" );
 		if ( fp ) {
 			_matchedfiles.insert( std::string(_searchPath.at(i) + "/" + mod_path) );

@@ -26,7 +26,6 @@
 #ifndef CODELITE_CTAGS_MANAGER_H
 #define CODELITE_CTAGS_MANAGER_H
 
-#include "tagscache.h"
 #include "wx/event.h"
 #include "wx/process.h"
 #include "cl_process.h"
@@ -41,7 +40,6 @@
 #include "setters_getters_data.h"
 #include "extdbdata.h"
 #include "language.h"
-#include "tagcacheentry.h"
 
 #ifdef USE_TRACE
 #include <wx/stopwatch.h>
@@ -60,21 +58,11 @@ class Language;
 
 // send this event whenever the a tags file needs to be updated
 extern const wxEventType wxEVT_UPDATE_FILETREE_EVENT;
+extern const wxEventType wxEVT_TAGS_DB_UPGRADE;
 
 struct DoxygenComment {
 	wxString name;
 	wxString comment;
-};
-
-class BoolGuard
-{
-	bool *m_bool;
-	bool m_value;
-public:
-	BoolGuard(bool *b) : m_bool(b), m_value(*b) {}
-	~BoolGuard() {
-		*m_bool = m_value;
-	}
 };
 
 // By default the NormalizeFunctionSig returns only the variables type
@@ -84,6 +72,8 @@ enum NormalizeFuncFlag {
 	// variable default value
 	Normalize_Func_Default_value = 0x00000002,
 };
+
+class ITagsStorage;
 
 /**
  * This class is the interface to ctags and SQLite database.
@@ -122,8 +112,7 @@ class TagsManager : public wxEvtHandler
 	friend class DirTraverser;
 	friend class Language;
 
-	TagsDatabase *                m_workspaceDatabase;
-	TagsDatabase *                m_externalDatabase;
+	ITagsStorage *                m_workspaceDatabase;
 	wxCriticalSection             m_cs;
 	wxFileName                    m_codeliteIndexerPath;
 	clProcess*                    m_codeliteIndexerProcess;
@@ -135,45 +124,19 @@ class TagsManager : public wxEvtHandler
 	bool                          m_canDeleteCtags;
 	std::list<clProcess*>         m_gargabeCollector;
 	wxTimer*                      m_timer;
-	std::vector<VariableEntryPtr> m_vars;
 	Language*                     m_lang;
-	bool                          m_useExternalDatabase;
 	std::vector<TagEntryPtr>      m_cachedFileFunctionsTags;
 	wxString                      m_cachedFile;
 	bool                          m_enableCaching;
+	wxEvtHandler*                 m_evtHandler;
 
 public:
 
 	void SetLanguage(Language *lang);
 	Language *GetLanguage();
+	void      SetEvtHandler(wxEvtHandler *handler){m_evtHandler = handler;}
 
 	wxString GetCTagsCmd();
-
-	//----------------------------------- Cache management -------------------------------------------
-	/**
-	 * @brief event handler which is sent by the parser thread
-	 * to tell us that a list of tags were updated in the database
-	 * @param event
-	 */
-	void OnUpdateCache (wxCommandEvent &event);
-
-	/**
-	 * @brief enable/disable caching
-	 * @param enable
-	 */
-	void EnableCaching(bool enable);
-
-	/**
-	 * @brief sets the maximum entries kept in the cache
-	 * @param size
-	 */
-	void SetMaxCacheSize(int size);
-
-	/**
-	 * @brief return the number of items in cache
-	 * @return
-	 */
-	int  GetCacheItemCount();
 
 	/**
 	 * @brief return the currently cached file
@@ -271,11 +234,8 @@ public:
 	 * Return a pointer to the underlying databases object.
 	 * @return tags database
 	 */
-	TagsDatabase* GetDatabase() {
+	ITagsStorage* GetDatabase() {
 		return m_workspaceDatabase;
-	}
-	TagsDatabase* GetExtDatabase() {
-		return m_externalDatabase;
 	}
 
 	/**
@@ -376,16 +336,6 @@ public:
 	void DeleteTagsByFilePrefix(const wxString &dbfileName, const wxString &filePrefix);
 
 	/**
-	 * Build a secondary database that will be used for searching (e.g. database containing C/C++ header files)
-	 * if dbName is already existed, it will be updated, else it will be created.
-	 * @param rootDir root directory to start processing files
-	 * @param dbName database to store the data
-	 * @param FFU
-	 * @param updateDlgParent when set to non-null, TagsManager will popup a modal dialog to report its progress
-	 */
-	void BuildExternalDatabase(ExtDbData &data);
-
-	/**
 	 * Retag files in the database. 'Retagging' means:
 	 * - delete all entries from the database that belongs to one of these files
 	 * - parse the files
@@ -393,18 +343,6 @@ public:
 	 * @param files list of files, in absolute path, to retag
 	 */
 	void RetagFiles(const std::vector<wxFileName> &files);
-
-	/**
-	 * Open a an existing external database that will be used for searching (e.g. database containing C/C++ header files)
-	 * tags in this database can not be updated. This is a read-only database
-	 * @param dbName external database file name
-	 */
-	void OpenExternalDatabase(const wxFileName &dbName);
-
-	/**
-	 * close external database and free all its resources
-	 */
-	void CloseExternalDatabase();
 
 	/**
 	 * Close the workspace database
@@ -502,35 +440,6 @@ public:
 	 * @return scope name or '<global>' if non found
 	 */
 	wxString GetScopeName(const wxString &scope);
-
-	/**
-	 * Update path variable in the database
-	 * return TagOk on success.
-	 * TagExist when a variable with this name already exist
-	 * TagError in any other failure
-	 */
-	int UpdatePathVariable(const wxString &name, const wxString &value);
-
-	/**
-	 * insert path variable into the database
-	 * return TagOk on success.
-	 * TagExist when a variable with this name already exist
-	 * TagError in any other failure
-	 */
-	int InsertPathVariable(const wxString &name, const wxString &value);
-
-	/**
-	 * find variable's value in the database
-	 * return TagOk on success.
-	 * TagExist when a variable with this name already exist
-	 * TagError in any other failure
-	 */
-	int GetPathVariable(const wxString &name, wxString &path);
-
-	/**
-	 * Reload the external database paths
-	 */
-	void ReloadExtDbPaths();
 
 	/**
 	 * Pass a source file to ctags process, wait for it to process it and return the output.
@@ -718,7 +627,7 @@ public:
 	 * @param files list of files
 	 * @brief db    database to use
 	 */
-	void UpdateFilesRetagTimestamp(const wxArrayString &files, TagsDatabase *db);
+	void UpdateFilesRetagTimestamp(const wxArrayString &files, ITagsStorage *db);
 
 	/**
 	 * @brief accept as input ctags pattern of a function and tries to evaluate the
@@ -732,7 +641,7 @@ public:
 	 * @param strFiles
 	 * @param db
 	 */
-	void FilterNonNeededFilesForRetaging(wxArrayString &strFiles, TagsDatabase *db);
+	void FilterNonNeededFilesForRetaging(wxArrayString &strFiles, ITagsStorage *db);
 
 	/**
 	 * Parse tags from memory and constructs a TagTree.
@@ -740,7 +649,7 @@ public:
 	 * @param tags wxString containing the tags to parse
 	 * @return tag tree, must be freed by caller
 	 */
-	TagTreePtr TreeFromTags(const wxString& tags);
+	TagTreePtr TreeFromTags(const wxString& tags, int &count);
 
 protected:
 	std::map<wxString, bool> m_typeScopeCache;
@@ -786,15 +695,14 @@ protected:
 	void           TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips);
 	void           GetFunctionTipFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<TagEntryPtr> &tips);
 	DoxygenComment DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix);
-	bool           DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, const wxString *rootPath = NULL);
+	bool           DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, const wxString *rootPath = NULL);
 	bool           ProcessExpression(const wxFileName &filename, int lineno, const wxString &expr, const wxString &scopeText, wxString &typeName, wxString &typeScope, wxString &oper, wxString &scopeTempalteInitiList);
 	void           FilterImplementation(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
 	void           FilterDeclarations(const std::vector<TagEntryPtr> &src, std::vector<TagEntryPtr> &tags);
-	void           ConvertPath(TagEntryPtr& tag);
 	wxString       DoReplaceMacros(wxString name);
 	void           UpdateFileTree(const std::vector<wxFileName> &files, bool bold);
-	void           UpdateFileTree(TagsDatabase *td, bool bold);
-	void           DoFilterNonNeededFilesForRetaging(wxArrayString &strFiles, TagsDatabase *db);
+	void           UpdateFileTree(ITagsStorage *td, bool bold);
+	void           DoFilterNonNeededFilesForRetaging(wxArrayString &strFiles, ITagsStorage *db);
 };
 
 /// create the singleton typedef

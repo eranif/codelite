@@ -43,7 +43,6 @@
 #include <gtk-2.0/gtk/gtk.h>
 #endif
 
-#include "tagsmanagementdlg.h"
 #include "imanager.h"
 #include "newversiondlg.h"
 #include "quickdebugdlg.h"
@@ -95,9 +94,7 @@
 #include "open_resouce_dlg.h"
 #include "open_type_dlg.h"
 #include "workspace_pane.h"
-#include "extdbwizard.h"
 #include "navigationmanager.h"
-#include "keyvaluetabledlg.h"
 #include "debuggermanager.h"
 #include "breakpointdlg.h"
 #include "generalinfo.h"
@@ -117,6 +114,7 @@
 #include "fileexplorer.h"
 #include "custom_notebook.h"
 #include "options_dlg2.h"
+#include <wx/msgdlg.h>
 
 // from auto-generated file svninfo.cpp:
 extern const wxChar *SvnRevision;
@@ -366,14 +364,6 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("quick_debug"),         Frame::OnQuickDebugUI)
 
 	//-------------------------------------------------------
-	// Tags menu
-	//-------------------------------------------------------
-	EVT_MENU(XRCID("create_ext_database"),      Frame::OnBuildExternalDatabase)
-	EVT_MENU(XRCID("open_ext_database"),        Frame::OnUseExternalDatabase)
-	EVT_MENU(XRCID("close_ext_database"),       Frame::OnCloseExternalDatabase)
-	EVT_MENU(XRCID("manage_tags"),              Frame::OnManageTags)
-
-	//-------------------------------------------------------
 	// Plugins menu
 	//-------------------------------------------------------
 	EVT_MENU(XRCID("manage_plugins"),           Frame::OnManagePlugins)
@@ -462,10 +452,11 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//-----------------------------------------------------------------
 	// CodeLite-specific events
 	//-----------------------------------------------------------------
-	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone)
+	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, Frame::OnParsingThreadDone   )
+	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_MESSAGE             , Frame::OnParsingThreadMessage)
 
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR, Frame::OnSetStatusMessage)
-
+	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE,   Frame::OnDatabaseUpgrade )
 	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED, Frame::OnBuildEnded)
 
 	EVT_SYMBOLTREE_ADD_ITEM(wxID_ANY,    Frame::OnAddSymbols)
@@ -588,10 +579,6 @@ void Frame::Initialize(bool loadLastSession)
 
 	m_theFrame->Maximize(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME ? true : false);
 
-	// upgrade: change all .db files under the startup directory to be
-	// .tags
-	m_theFrame->UpgradeExternalDbExt();
-
 	//add the welcome page
 	if (m_theFrame->m_frameGeneralInfo.GetFlags() & CL_SHOW_WELCOME_PAGE) {
 		m_theFrame->CreateWelcomePage();
@@ -639,9 +626,7 @@ void Frame::CreateGUIControls(void)
 	m_mgr.SetManagedWindow(m_mainPanel);
 	m_mgr.SetArtProvider(new CLAuiDockArt());
 
-//	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_TRANSPARENT_DRAG);
-
-#if defined (__WXMAC__)
+#ifndef __WXMSW__
 	m_mgr.SetFlags(m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE);
 #endif
 
@@ -728,11 +713,6 @@ void Frame::CreateGUIControls(void)
 #endif
 	tagsManager->StartCtagsProcess();
 
-	// Connect tag changes notifications
-	wxTheApp->Connect(wxEVT_SYNBOL_TREE_UPDATE_ITEM,  wxCommandEventHandler(TagsManager::OnUpdateCache), NULL, tagsManager);
-	wxTheApp->Connect(wxEVT_SYNBOL_TREE_DELETE_ITEM,  wxCommandEventHandler(TagsManager::OnUpdateCache), NULL, tagsManager);
-	wxTheApp->Connect(wxEVT_SYNBOL_TREE_ADD_ITEM,     wxCommandEventHandler(TagsManager::OnUpdateCache), NULL, tagsManager);
-
 	//--------------------------------------------------------------------------------------
 	// Start the parsing thread, the parsing thread and the SymbolTree (or its derived)
 	// Are connected. The constructor of SymbolTree, calls ParseThreadST::Get()->SetNotifyWindow(this)
@@ -741,6 +721,10 @@ void Frame::CreateGUIControls(void)
 	// If you wish to connect another object for it, simply call ParseThreadST::Get()->SetNotifyWindow(this)
 	// with another object as 'this'
 	//--------------------------------------------------------------------------------------
+	// Update the parser thread search paths
+	ParseThreadST::Get()->SetCrawlerEnabeld(m_tagsOptionsData.GetParserEnabled());
+	ParseThreadST::Get()->SetSearchPaths( m_tagsOptionsData.GetParserSearchPaths() );
+
 	ParseThreadST::Get()->Start();
 
 	// Connect this tree to the parse thread
@@ -749,13 +733,16 @@ void Frame::CreateGUIControls(void)
 	// And finally create a status bar
 	wxStatusBar* statusBar = new wxStatusBar(this, wxID_ANY);
 	SetStatusBar(statusBar);
-	m_status.resize(5);
+	m_status.resize(4);
 	GetStatusBar()->SetFieldsCount(m_status.size());
 	SetStatusMessage(wxT("Ready"), 0);
 	SetStatusMessage(wxT("Done"), m_status.size()-1);
 
-	//update ctags options
+	// update ctags options
 	TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
+
+	// set this frame as the event handler for any events
+	TagsManagerST::Get()->SetEvtHandler( this );
 
 	//load windows perspective
 	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
@@ -1356,54 +1343,6 @@ void Frame::OnFunctionCalltip(wxCommandEvent& event)
 	}
 }
 
-void Frame::OnBuildExternalDatabase(wxCommandEvent& event)
-{
-	DoBuildExternalDatabase(event.GetString());
-}
-
-void Frame::DoBuildExternalDatabase(const wxString &dir)
-{
-	ExtDbData data;
-	ExtDbWizard wiz(this, wxID_ANY);
-	if (wiz.Run(data, dir)) {
-
-		// build the external database
-		TagsManagerST::Get()->BuildExternalDatabase(data);
-
-		if (data.attachDb) {
-			ManagerST::Get()->SetExternalDatabase(data.dbName);
-		}
-	}
-}
-
-void Frame::OnCloseExternalDatabase(wxCommandEvent& WXUNUSED(event))
-{
-	ManagerST::Get()->CloseExternalDatabase();
-}
-
-void Frame::OnUseExternalDatabase(wxCommandEvent& WXUNUSED(event))
-{
-	const wxString ALL(	wxT("Tags Database File (*.tags)|*.tags|")
-	                    wxT("All Files (*)|*"));
-
-	//set the default current directory to the working directory of
-	//lite editor
-	wxFileDialog *dlg = new wxFileDialog(this,
-	                                     wxT("Select an external database:"),
-	                                     ManagerST::Get()->GetStarupDirectory(),
-	                                     wxEmptyString,
-	                                     ALL,
-	                                     wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE ,
-	                                     wxDefaultPosition);
-
-	if (dlg->ShowModal() == wxID_OK) {
-		// get the path
-		wxFileName dbname(dlg->GetPath());
-		ManagerST::Get()->SetExternalDatabase(dbname);
-	}
-	dlg->Destroy();
-}
-
 // Open new file
 void Frame::OnFileNew(wxCommandEvent &event)
 {
@@ -1521,8 +1460,8 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 		TagsManager *tagsMgr = TagsManagerST::Get();
 		m_tagsOptionsData = dlg.GetData();
 
-		newColVars         = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
-		newColTags         = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
+		newColVars         = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS             ? true : false);
+		newColTags         = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS   ? true : false);
 		newMarkFilesAsBold = (m_tagsOptionsData.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
 
 		tagsMgr->SetCtagsOptions(m_tagsOptionsData);
@@ -1539,9 +1478,9 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 			TagsManagerST::Get()->NotifyFileTree(newMarkFilesAsBold);
 		}
 
-		// reset cache if needed
-		tagsMgr->EnableCaching  ( !m_tagsOptionsData.GetDisableCaching() );
-		tagsMgr->SetMaxCacheSize( m_tagsOptionsData.GetMaxCacheSize() );
+		// update parser search paths
+		ParseThreadST::Get()->SetSearchPaths   ( m_tagsOptionsData.GetParserSearchPaths() );
+		ParseThreadST::Get()->SetCrawlerEnabeld( m_tagsOptionsData.GetParserEnabled()     );
 	}
 }
 
@@ -1902,25 +1841,6 @@ void Frame::OnTimer(wxTimerEvent &event)
 			JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this));
 		}
 
-		if (m_tagsOptionsData.GetFlags() & CC_LOAD_EXT_DB) {
-			//load the recently opened external database
-			wxString tagDb = EditorConfigST::Get()->GetTagsDatabase();
-			if (tagDb.IsEmpty() == false) {
-				wxFileName dbname(tagDb);
-
-				//as part of the change from the .db to .tags, rename the entry in the
-				//configuratin file as well
-				if (dbname.GetExt() == wxT("db")) {
-					dbname.SetExt(wxT("tags"));
-					EditorConfigST::Get()->SetTagsDatabase(dbname.GetFullPath());
-				}
-
-				//if the database will be loaded to memory, display a busy dialog
-				ManagerST::Get()->SetExternalDatabase(dbname);
-			}
-			AutoLoadExternalDb();
-		}
-
 		//update the build system to contain the number of CPUs
 		int cpus = wxThread::GetCPUCount();
 		if (cpus != wxNOT_FOUND) {
@@ -1966,6 +1886,16 @@ void Frame::OnTimer(wxTimerEvent &event)
 		// enable/disable plugins toolbar functionality
 		PluginManager::Get()->EnableToolbars();
 
+		// Check that the user has some paths set in the parser
+		TagsOptionsData tod;
+		EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &tod);
+
+		if ( tod.GetParserSearchPaths().IsEmpty() ) {
+			wxMessageBox(   wxT("CodeLite has detected that there are no search paths set for the parser\n")
+							wxT("This means that CodeLite will *NOT* be able to offer any code completion for\n")
+							wxT("non-workspace files (e.g. string.h). To fix this, please set search paths for the parser\n")
+							wxT("This can be done from the main menu: Settings > Tags Settings > Parser"), _("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION, this);
+		}
 		//send initialization end event
 		SendCmdEvent(wxEVT_INIT_DONE);
 	}
@@ -2578,69 +2508,6 @@ void Frame::OnAppActivated(wxActivateEvent &e)
 	e.Skip();
 }
 
-void Frame::UpgradeExternalDbExt()
-{
-	wxString fileSpec( wxT( "*.db" ) );
-	wxArrayString files;
-	wxDir::GetAllFiles( ManagerST::Get()->GetStarupDirectory(), &files, fileSpec, wxDIR_FILES );
-	for ( size_t i=0; i<files.GetCount(); i++ ) {
-		wxFileName fn(files.Item(i));
-		fn.SetExt(wxT("tags"));
-		::wxRenameFile(files.Item(i), fn.GetFullPath());
-
-		wxString logMsg;
-		logMsg << wxT("Renaming: ") << files.Item(i) << wxT(" to ") << fn.GetFullPath();
-		wxLogMessage(logMsg);
-	}
-}
-
-void Frame::AutoLoadExternalDb()
-{
-	wxString fileSpec( wxT( "*.tags" ) );
-	wxArrayString files;
-
-	//check to see if an external database is loaded
-	wxString tagDb = EditorConfigST::Get()->GetTagsDatabase();
-	if (tagDb.IsEmpty()) {
-
-		//fetch list of files
-		wxDir::GetAllFiles( ManagerST::Get()->GetStarupDirectory(), &files, fileSpec, wxDIR_FILES );
-		if (files.GetCount() == 1) {
-			wxString dbname = files.Item(0);
-
-			//Only one database was found, attach it
-			EditorConfigST::Get()->SetTagsDatabase(dbname);
-			ManagerST::Get()->SetExternalDatabase(wxFileName(dbname));
-
-		} else if (files.GetCount() > 1) {
-
-			wxString message;
-			message << wxT("CodeLite detected that there is no external symbols database attached.\n");
-			message << wxT("However, several databases were found, would you like to attach one now?\n");
-			message << wxT("(attaching external symbols database improves CodeCompletion significantly)");
-
-			if (wxMessageBox(message, wxT("Attach symbols database"), wxICON_QUESTION | wxYES_NO | wxCANCEL, this) == wxYES) {
-				wxString dbname = wxGetSingleChoice(wxT("Select extenal database symbols to attach:"), wxT("Select symbols database"), files, this);
-				if (dbname.IsEmpty() == false) {
-					EditorConfigST::Get()->SetTagsDatabase(dbname);
-					ManagerST::Get()->SetExternalDatabase(wxFileName(dbname));
-				}
-			}
-		} else {
-
-			//no databases were found at all.
-			//suggest user to create one
-			wxString message;
-			message << wxT("CodeLite detected that there is no external symbols database attached,\n");
-			message << wxT("nor it can not find any. Would you like to create one?\n");
-			message << wxT("(attaching external symbols database improves CodeCompletion significantly)");
-			if (wxMessageBox(message, wxT("Create symbols database"), wxICON_QUESTION | wxYES_NO | wxCANCEL, this) == wxYES) {
-				DoBuildExternalDatabase();
-			}
-		}
-	}
-}
-
 void Frame::OnCompileFile(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
@@ -2866,7 +2733,7 @@ void Frame::OnParsingThreadDone(wxCommandEvent& e)
 		// we are in shutdown progress, dont do anything
 		return;
 	}
-	
+
 	wxUnusedVar(e);
 	SetStatusMessage(wxEmptyString, 0, XRCID("retag_file"));
 	LEditor *editor = GetMainBook()->GetActiveEditor();
@@ -2994,18 +2861,8 @@ void Frame::OnDockablePaneClosed(wxAuiManagerEvent &e)
 
 void Frame::SetStatusMessage(const wxString &msg, int col, int id)
 {
-	if (col < 0 || col >= (int)m_status.size())
-		return;
-	wxString text = msg;
-	if (!msg.IsEmpty()) {
-		m_status[col][id] = msg;
-	} else {
-		m_status[col].erase(id);
-		if (!m_status[col].empty()) {
-			text = m_status[col].begin()->second;
-		}
-	}
-	SetStatusText(text, col);
+	wxUnusedVar(id);
+	SetStatusText(msg, col);
 }
 
 void Frame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
@@ -3318,12 +3175,6 @@ void Frame::OnRetagWorkspace(wxCommandEvent& event)
 	ManagerST::Get()->RetagWorkspace();
 }
 
-void Frame::OnManageTags(wxCommandEvent& e)
-{
-	TagsManagementDlg dlg(this);
-	dlg.ShowModal();
-}
-
 void Frame::OnShowFullScreen(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
@@ -3507,3 +3358,22 @@ void Frame::OnShowQuickFinder(wxCommandEvent& e)
 	PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
 }
 
+void Frame::OnParsingThreadMessage(wxCommandEvent& e)
+{
+	wxString *msg = (wxString*) e.GetClientData();
+	if( msg ) {
+		wxLogMessage( *msg );
+		delete msg;
+	}
+}
+
+// Due to differnet schema versions, the database was truncated by the
+// TagsManager, prompt the user
+void Frame::OnDatabaseUpgrade(wxCommandEvent& e)
+{
+	int answer = wxMessageBox(wxT("Your workspace symbols file does not match the current version of CodeLite. This can be fixed by re-tagging your workspace\nWould you like to re-tag your workspace now?"),
+							  wxT("CodeLite"), wxYES_NO|wxICON_QUESTION|wxCENTER, this);
+	if ( answer == wxYES ) {
+		OnRetagWorkspace( e /* dummy */);
+	}
+}

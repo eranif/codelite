@@ -2,6 +2,7 @@
 #define __auicontrolbar__
 
 #include <wx/panel.h>
+#include <wx/tglbtn.h>
 #include <wx/window.h>
 #include <wx/bitmap.h>
 #include <vector>
@@ -13,6 +14,7 @@ class wxAuiManager;
 class OutputViewControlBarButton;
 class Notebook;
 class OutputViewSearchCtrl;
+class OutputViewControlBarToggleButton;
 
 class OutputViewControlBar : public wxPanel
 {
@@ -29,7 +31,11 @@ public:
 	}
 
 public:
-	std::vector<OutputViewControlBarButton*> m_buttons;
+#ifdef __WXMSW__
+	std::vector<OutputViewControlBarButton*>       m_buttons;
+#else
+	std::vector<OutputViewControlBarToggleButton*> m_buttons;
+#endif
 	OutputViewControlBar(wxWindow *win, Notebook *book, wxAuiManager *aui, wxWindowID id);
 
 	virtual ~OutputViewControlBar();
@@ -49,12 +55,12 @@ public:
 	DECLARE_EVENT_TABLE()
 
 protected:
-	void                           DoTogglePane     (bool hide = true);
-	void                           DoToggleButton   (OutputViewControlBarButton *button);
-	OutputViewControlBarButton *   DoFindButton     (const wxString &name);
-	void                           DoMarkActive     (const wxString &name);
-	bool                           DoFindDockInfo   (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
-	void                           DoShowQuickFinder(bool show);
+	void        DoTogglePane     (bool hide = true);
+	void        DoToggleButton   (wxWindow *button);
+	wxWindow *  DoFindButton     (const wxString &name);
+	void        DoMarkActive     (const wxString &name);
+	bool        DoFindDockInfo   (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);
+	void        DoShowQuickFinder(bool show);
 };
 
 //--------------------------------------------------------
@@ -153,4 +159,23 @@ public:
 	virtual void OnFocus             (wxFocusEvent   &event);
 	virtual void OnEdit              (wxCommandEvent &event);
 };
+
+class OutputViewControlBarToggleButton : public wxToggleButton
+{
+public:
+	OutputViewControlBarToggleButton(wxWindow *parent, const wxString &label);
+	virtual ~OutputViewControlBarToggleButton();
+
+	void SetText(const wxString& text) {
+		SetLabel(text);
+	}
+
+	wxString GetText() const {
+		return GetLabel();
+	}
+
+	DECLARE_EVENT_TABLE()
+	void OnButtonToggled(wxCommandEvent &e);
+};
+
 #endif // __auicontrolbar__

@@ -22,19 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "precompiled_header.h"
-#include "tags_database.h"
+#include "precompiled_header.h"
 
 #include "entry.h"
 #include <wx/tokenzr.h>
 #include "tokenizer.h"
 #include "language.h"
-
-#ifdef __VISUALC__
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-#endif
 
 TagEntry::TagEntry(const tagEntry& entry)
 {
@@ -42,16 +35,16 @@ TagEntry::TagEntry(const tagEntry& entry)
 }
 
 TagEntry::TagEntry()
-: m_path(wxEmptyString)
-, m_file(wxEmptyString)
-, m_lineNumber(-1)
-, m_pattern(wxEmptyString)
-, m_kind(wxT("<unknown>"))
-, m_parent(wxEmptyString)
-, m_name(wxEmptyString)
-, m_id(wxNOT_FOUND)
-, m_scope(wxEmptyString)
-, m_differOnByLineNumber(false)
+		: m_path(wxEmptyString)
+		, m_file(wxEmptyString)
+		, m_lineNumber(-1)
+		, m_pattern(wxEmptyString)
+		, m_kind(wxT("<unknown>"))
+		, m_parent(wxEmptyString)
+		, m_name(wxEmptyString)
+		, m_id(wxNOT_FOUND)
+		, m_scope(wxEmptyString)
+		, m_differOnByLineNumber(false)
 {
 }
 
@@ -83,7 +76,7 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
 	// ref counting which may cause crash when sharing wxString among threads
 	m_extFields.clear();
 	std::map<wxString, wxString>::const_iterator iter = rhs.m_extFields.begin();
-	for( ; iter != rhs.m_extFields.end(); iter ++ ){
+	for ( ; iter != rhs.m_extFields.end(); iter ++ ) {
 		m_extFields[iter->first.c_str()] = iter->second.c_str();
 	}
 	return *this;
@@ -93,32 +86,32 @@ bool TagEntry::operator ==(const TagEntry& rhs)
 {
 	//Note: tree item id is not used in this function!
 	bool res =
-		m_scope == rhs.m_scope &&
-		m_file == rhs.m_file &&
-		m_kind == rhs.m_kind &&
-		m_parent == rhs.m_parent &&
-		m_pattern == rhs.m_pattern &&
-		m_name == rhs.m_name &&
-		m_path == rhs.m_path &&
-		m_lineNumber == rhs.m_lineNumber &&
-		GetInherits() == rhs.GetInherits() &&
-		GetAccess() == rhs.GetAccess() &&
-		GetSignature() == rhs.GetSignature() &&
-		GetTyperef() == rhs.GetTyperef();
+	    m_scope == rhs.m_scope &&
+	    m_file == rhs.m_file &&
+	    m_kind == rhs.m_kind &&
+	    m_parent == rhs.m_parent &&
+	    m_pattern == rhs.m_pattern &&
+	    m_name == rhs.m_name &&
+	    m_path == rhs.m_path &&
+	    m_lineNumber == rhs.m_lineNumber &&
+	    GetInherits() == rhs.GetInherits() &&
+	    GetAccess() == rhs.GetAccess() &&
+	    GetSignature() == rhs.GetSignature() &&
+	    GetTyperef() == rhs.GetTyperef();
 
 	bool res2 = m_scope == rhs.m_scope &&
-		m_file == rhs.m_file &&
-		m_kind == rhs.m_kind &&
-		m_parent == rhs.m_parent &&
-		m_pattern == rhs.m_pattern &&
-		m_name == rhs.m_name &&
-		m_path == rhs.m_path &&
-		GetInherits() == rhs.GetInherits() &&
-		GetAccess() == rhs.GetAccess() &&
-		GetSignature() == rhs.GetSignature() &&
-		GetTyperef() == rhs.GetTyperef();
+	            m_file == rhs.m_file &&
+	            m_kind == rhs.m_kind &&
+	            m_parent == rhs.m_parent &&
+	            m_pattern == rhs.m_pattern &&
+	            m_name == rhs.m_name &&
+	            m_path == rhs.m_path &&
+	            GetInherits() == rhs.GetInherits() &&
+	            GetAccess() == rhs.GetAccess() &&
+	            GetSignature() == rhs.GetSignature() &&
+	            GetTyperef() == rhs.GetTyperef();
 
-	if(res2 && !res) {
+	if (res2 && !res) {
 		// the entries are differs only in the line numbers
 		m_differOnByLineNumber = true;
 	}
@@ -126,11 +119,11 @@ bool TagEntry::operator ==(const TagEntry& rhs)
 }
 
 void TagEntry::Create(const wxString &fileName,
-					  const wxString &name,
-					  int lineNumber,
-					  const wxString &pattern,
-					  const wxString &kind,
-					  std::map<wxString, wxString>& extFields)
+                      const wxString &name,
+                      int lineNumber,
+                      const wxString &pattern,
+                      const wxString &kind,
+                      std::map<wxString, wxString>& extFields)
 {
 	SetName( name );
 	SetLine( lineNumber );
@@ -143,29 +136,29 @@ void TagEntry::Create(const wxString &fileName,
 
 	// Check if we can get full name (including path)
 	path = GetExtField(wxT("class"));
-	if(!path.IsEmpty()){
+	if (!path.IsEmpty()) {
 		UpdatePath( path ) ;
-	}else{
+	} else {
 		path = GetExtField(wxT("struct"));
-		if(!path.IsEmpty()){
+		if (!path.IsEmpty()) {
 			UpdatePath( path ) ;
-		}else{
+		} else {
 			path = GetExtField(wxT("namespace"));
-			if(!path.IsEmpty()){
+			if (!path.IsEmpty()) {
 				UpdatePath( path ) ;
-			}else{
+			} else {
 				path = GetExtField(wxT("interface"));
-				if(!path.IsEmpty()){
+				if (!path.IsEmpty()) {
 					UpdatePath( path ) ;
-				}else{
+				} else {
 					path = GetExtField(wxT("enum"));
-					if(!path.IsEmpty()){
+					if (!path.IsEmpty()) {
 						UpdatePath( path ) ;
-					}else{
+					} else {
 						path = GetExtField(wxT("union"));
 						wxString tmpname = path.AfterLast(wxT(':'));
-						if(!path.IsEmpty()){
-							if(!tmpname.StartsWith(wxT("__anon"))) {
+						if (!path.IsEmpty()) {
+							if (!tmpname.StartsWith(wxT("__anon"))) {
 								UpdatePath( path ) ;
 							} else {
 								// anonymouse union, remove the anonymous part from its name
@@ -180,14 +173,14 @@ void TagEntry::Create(const wxString &fileName,
 		}
 	}
 
-	if(!path.IsEmpty()){
+	if (!path.IsEmpty()) {
 		SetScope(path);
-	}else{
+	} else {
 		SetScope(wxT("<global>"));
 	}
 
 	// If there is no path, path is set to name
-	if( GetPath().IsEmpty() )
+	if ( GetPath().IsEmpty() )
 		SetPath( GetName() );
 
 	// Get the parent name
@@ -201,18 +194,17 @@ void TagEntry::Create(const wxString &fileName,
 void TagEntry::Create(const tagEntry& entry)
 {
 	// Get other information from the string data and store it into map
-	for (int i = 0;  i < entry.fields.count;  ++i)
-	{
+	for (int i = 0;  i < entry.fields.count;  ++i) {
 		wxString key = _U(entry.fields.list[i].key);
 		wxString value = _U(entry.fields.list[i].value);
 		m_extFields[key] = value;
 	}
 	Create(	_U(entry.file),
-		_U(entry.name),
-		entry.address.lineNumber,
-		_U(entry.address.pattern),
-		_U(entry.kind),
-		m_extFields);
+	        _U(entry.name),
+	        entry.address.lineNumber,
+	        _U(entry.address.pattern),
+	        _U(entry.kind),
+	        m_extFields);
 }
 
 void TagEntry::Print()
@@ -227,7 +219,7 @@ void TagEntry::Print()
 
 	std::cout << " ---- Ext fields: ---- " << std::endl;
 	std::map<wxString, wxString>::const_iterator iter = m_extFields.begin();
-	for(; iter != m_extFields.end(); iter++)
+	for (; iter != m_extFields.end(); iter++)
 		std::cout << iter->first << ":\t\t" << iter->second << std::endl;
 	std::cout << "======================================" << std::endl;
 }
@@ -235,7 +227,7 @@ void TagEntry::Print()
 wxString TagEntry::Key() const
 {
 	wxString key;
-	if(GetKind() == wxT("prototype") || GetKind() == wxT("macro")) {
+	if (GetKind() == wxT("prototype") || GetKind() == wxT("macro")) {
 		key << GetKind() << wxT(": ");
 	}
 
@@ -254,7 +246,7 @@ wxString TagEntry::GetFullDisplayName() const
 {
 	wxString name;
 
-	if( GetParent() == wxT("<global>") ){
+	if ( GetParent() == wxT("<global>") ) {
 		name << GetDisplayName();
 	} else {
 		name << GetParent() << wxT("::") << GetName() << GetSignature();
@@ -263,123 +255,17 @@ wxString TagEntry::GetFullDisplayName() const
 	return name;
 }
 
-TagEntry::TagEntry(wxSQLite3ResultSet& rs)
-{
-	m_extFields.clear();
-	m_id = rs.GetInt(0);
-	m_name = rs.GetString(1);
-	m_file = rs.GetString(2);
-	m_lineNumber = rs.GetInt(3);
-	m_kind = rs.GetString(4);
-	m_extFields[wxT("access")] = rs.GetString(5);
-	m_extFields[wxT("signature")] = rs.GetString(6);
-	m_pattern = rs.GetString(7);
-	m_parent  = rs.GetString(8);
-	m_extFields[wxT("inherits")] = rs.GetString(9);
-	m_path = rs.GetString(10);
-	m_extFields[wxT("typeref")] = rs.GetString(11);
-	m_scope = rs.GetString(12);
-}
-
 //----------------------------------------------------------------------------
 // Database operations
 //----------------------------------------------------------------------------
-
-int TagEntry::Store(wxSQLite3Statement& insertPerepareStmnt, TagsDatabase *db)
-{
-	// If this node is a dummy, (IsOk() == false) we dont insert it to database
-	if( !IsOk() )
-		return TagOk;
-
-	try
-	{
-		// see TagsDatabase::GetInsertOneStatement() for the order of binding
-		insertPerepareStmnt.Bind(1, GetName());
-		insertPerepareStmnt.Bind(2, GetFile());
-		insertPerepareStmnt.Bind(3, GetLine());
-		insertPerepareStmnt.Bind(4, GetKind());
-		insertPerepareStmnt.Bind(5, GetAccess());
-		insertPerepareStmnt.Bind(6, GetSignature());
-		insertPerepareStmnt.Bind(7, GetPattern());
-		insertPerepareStmnt.Bind(8, GetParent());
-		insertPerepareStmnt.Bind(9, GetInherits());
-		insertPerepareStmnt.Bind(10, GetPath());
-		insertPerepareStmnt.Bind(11, GetTyperef());
-		insertPerepareStmnt.Bind(12, GetScope());
-		insertPerepareStmnt.ExecuteUpdate();
-		insertPerepareStmnt.Reset();
-
-		// update the ID
-//		SetId( db->LastRowId() );
-
-	}
-	catch(wxSQLite3Exception& exc)
-	{
-		if(exc.ErrorCodeAsString(exc.GetErrorCode()) == wxT("SQLITE_CONSTRAINT"))
-			return TagExist;
-		return TagError;
-	}
-	return TagOk;
-}
-
-int TagEntry::Update(wxSQLite3Statement& updatePerepareStmnt)
-{
-	// If this node is a dummy, (IsOk() == false) we dont update it to database
-	if( !IsOk() )
-		return TagOk;
-
-	try
-	{
-		// see TagsDatabase::GetUpdateOneStatement() function for the order of binding
-		updatePerepareStmnt.Bind(1, GetName());
-		updatePerepareStmnt.Bind(2, GetFile());
-		updatePerepareStmnt.Bind(3, GetLine());
-		updatePerepareStmnt.Bind(4, GetAccess());
-		updatePerepareStmnt.Bind(5, GetPattern());
-		updatePerepareStmnt.Bind(6, GetParent());
-		updatePerepareStmnt.Bind(7, GetInherits());
-		updatePerepareStmnt.Bind(8, GetTyperef());
-		updatePerepareStmnt.Bind(9, GetScope());
-		updatePerepareStmnt.Bind(10, GetKind());
-		updatePerepareStmnt.Bind(11, GetSignature());
-		updatePerepareStmnt.Bind(12, GetPath());
-		updatePerepareStmnt.ExecuteUpdate();
-		updatePerepareStmnt.Reset();
-	}
-	catch(wxSQLite3Exception& WXUNUSED(exc))
-	{
-		return TagError;
-	}
-	return TagOk;
-}
-
-
-int TagEntry::Delete(wxSQLite3Statement &deletePreparedStmnt)
-{
-	// Delete this record from database.
-	// Delete is done using the index
-	try
-	{
-		deletePreparedStmnt.Bind(1, GetKind());			// Kind
-		deletePreparedStmnt.Bind(2, GetSignature());	// Signature
-		deletePreparedStmnt.Bind(3, GetPath());			// Path
-		deletePreparedStmnt.ExecuteUpdate();
-		deletePreparedStmnt.Reset();
-	}
-	catch(wxSQLite3Exception& exc)
-	{
-		wxUnusedVar(exc);
-		return TagError;
-	}
-	return TagOk;
-}
 
 wxString TagEntry::GetScopeName() const
 {
 	return GetScope();
 }
 
-wxString TagEntry::GetKind() const {
+wxString TagEntry::GetKind() const
+{
 	wxString kind(m_kind);
 	kind.Trim();
 	return kind;
@@ -389,16 +275,15 @@ wxString TagEntry::GetKind() const {
 const bool TagEntry::IsContainer() const
 {
 	return	GetKind() == wxT("class")  ||
-		GetKind() == wxT("struct") ||
-		GetKind() == wxT("union")  ||
-		GetKind() == wxT("namespace") ||
-		GetKind() == wxT("project");
+	       GetKind() == wxT("struct") ||
+	       GetKind() == wxT("union")  ||
+	       GetKind() == wxT("namespace") ||
+	       GetKind() == wxT("project");
 }
 
 void TagEntry::UpdatePath(wxString & path)
 {
-	if(!path.IsEmpty())
-	{
+	if (!path.IsEmpty()) {
 		wxString name(path);
 		name += wxT("::");
 		name += GetName();
@@ -409,8 +294,7 @@ void TagEntry::UpdatePath(wxString & path)
 wxString TagEntry::TypeFromTyperef() const
 {
 	wxString typeref = GetTyperef();
-	if( typeref.IsEmpty() == false )
-	{
+	if ( typeref.IsEmpty() == false ) {
 		wxString name = typeref.BeforeFirst(wxT(':'));
 		return name;
 	}
@@ -421,18 +305,16 @@ wxString TagEntry::TypeFromTyperef() const
 wxString TagEntry::NameFromTyperef(wxString &templateInitList)
 {
 	wxString typeref = GetTyperef();
-	if( typeref.IsEmpty() == false )
-	{
+	if ( typeref.IsEmpty() == false ) {
 		wxString name = typeref.AfterFirst(wxT(':'));
 		return name;
 	}
 
 	// incase our entry is a typedef, and it is not marked as typeref,
 	// try to get the real name from the pattern
-	if( GetKind() == wxT("typedef"))
-	{
+	if ( GetKind() == wxT("typedef")) {
 		wxString name;
-		if(TypedefFromPattern(GetPattern(), GetName(),name, templateInitList))
+		if (TypedefFromPattern(GetPattern(), GetName(),name, templateInitList))
 			return name;
 	}
 	return wxEmptyString;
@@ -450,97 +332,91 @@ bool TagEntry::TypedefFromPattern(const wxString &tagPattern, const wxString &ty
 	int depth(0);
 	bool found(false);
 	wxString token;
-	while((type = sc.yylex()) != 0)
-	{
-		if(type == 0)
+	while ((type = sc.yylex()) != 0) {
+		if (type == 0)
 			return false;
 
-		if(!found){
-			if(type != TYPEDEF){
+		if (!found) {
+			if (type != TYPEDEF) {
 				continue;
-			}else{
+			} else {
 				found = true;
 				continue;
 			}
 		}
 
 		token = _U(sc.YYText());
-		if(token == typedefName){
+		if (token == typedefName) {
 			//we found the end token, break
 			break;
 		}
 
-		switch(type)
-		{
+		switch (type) {
 		case CLCL:
-			if(depth == 0){
+			if (depth == 0) {
 				name << token;
-			}else{
+			} else {
 				templateInit << token;
 			}
 			break;
 
 		case IDENTIFIER:
-			if(depth == 0){
+			if (depth == 0) {
 				name << token;
-			}else{
+			} else {
 				templateInit << token;
 			}
 			break;
 
 		case wxT('<'):
-			depth++;
-			if(depth > 0){ templateInit << token; }
+						depth++;
+			if (depth > 0) {
+				templateInit << token;
+			}
 			break;
 
 		case wxT('>'):
-			if(depth > 0){ templateInit << token; }
+						if (depth > 0) {
+					templateInit << token;
+				}
 			depth--;
 			break;
 
 		case wxT('{'):
-		case wxT('('):
-		case wxT('['):
-			if(depth > 0){ templateInit << token; }
+					case wxT('('):
+						case wxT('['):
+								if (depth > 0) {
+							templateInit << token;
+						}
 			depth++;
 			break;
 
 		case wxT('}'):
-		case wxT(')'):
-		case wxT(']'):
-			if(depth > 0){ templateInit << token; }
+					case wxT(')'):
+						case wxT(']'):
+								if (depth > 0) {
+							templateInit << token;
+						}
 			depth--;
 			break;
 
 		default:
-			if(depth > 0){ templateInit << token; }
+			if (depth > 0) {
+				templateInit << token;
+			}
 			break;
 		}
 	}
 	return true;
 }
 
-wxString TagEntry::GetDeleteOneStatement()
+wxString TagEntry::GetPattern() const
 {
-	return wxT("DELETE FROM TAGS WHERE Kind=? AND Signature=? AND Path=?");
-}
-
-wxString TagEntry::GetUpdateOneStatement()
-{
-	return wxT("UPDATE TAGS SET Name=?, File=?, Line=?, Access=?, Pattern=?, Parent=?, Inherits=?, Typeref=?, Scope=? WHERE Kind=? AND Signature=? AND Path=?");
-}
-
-wxString TagEntry::GetInsertOneStatement()
-{
-	return wxT("INSERT INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-}
-
-wxString TagEntry::GetPattern()
-{
+	wxString pattern ( m_pattern );
 	//since ctags's pattern is regex, forward slashes are escaped. ('/' becomes '\/')
-	m_pattern.Replace(wxT("\\\\"), wxT("\\"));
-	m_pattern.Replace(wxT("\\/"), wxT("/"));
-	return m_pattern;
+	pattern.Replace(wxT("\\\\"), wxT("\\"));
+	pattern.Replace(wxT("\\/"), wxT("/"));
+	return pattern;
 }
 
 void TagEntry::FromLine(const wxString& line)

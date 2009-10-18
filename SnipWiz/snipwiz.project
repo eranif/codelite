@@ -23,7 +23,6 @@
     <File Name="templateclassbasedlg.h"/>
     <File Name="templateclassdlg.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="DebugUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library">
       <General OutputFile="$(ConfigurationName)/snipwiz.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
@@ -178,6 +177,7 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>

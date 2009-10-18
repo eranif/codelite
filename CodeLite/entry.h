@@ -25,29 +25,17 @@
  #ifndef CODELITE_ENTRY_H
 #define CODELITE_ENTRY_H
 
-#include "db_record.h"
 #include <wx/treectrl.h>
 #include "readtags.h"
 #include <wx/string.h>
 #include <map>
 #include "smart_ptr.h"
 
-#ifdef WXMAKINGDLL_CODELITE
-#    define WXDLLIMPEXP_CL WXEXPORT
-#elif defined(WXUSINGDLL_CODELITE)
-#    define WXDLLIMPEXP_CL WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_CL
-#endif //
-
-class TagsDatabase;
-
 /**
  * TagEntry is a persistent object which is capable of storing and loading itself from
  * various inputs:
  * - tagEntry (ctags structure)
- * - wxSQLite3ResultSet - from the database
- *
+  *
  * It contains all the knowledge of storing and retrieving itself from the database
  *
  * \ingroup CodeLite
@@ -57,20 +45,20 @@ class TagsDatabase;
  * \date 11-11-2006
  * \author Eran
  */
-class WXDLLIMPEXP_CL TagEntry : public DbRecord
+class TagEntry
 {
-	wxString m_path;		///< Tag full path
-	wxString m_file;		///< File this tag is found
-	int		 m_lineNumber;	///< Line number
-	wxString m_pattern;		///< A pattern that can be used to locate the tag in the file
-	wxString m_kind;		///< Member, function, class, typedef etc.
-	wxString m_parent;		///< Direct parent
-	wxTreeItemId m_hti;		///< Handle to tree item, not persistent item
-	wxString m_name;		///< Tag name (short name, excluding any scope names)
+	wxString                     m_path;		///< Tag full path
+	wxString                     m_file;		///< File this tag is found
+	int                          m_lineNumber;	///< Line number
+	wxString                     m_pattern;		///< A pattern that can be used to locate the tag in the file
+	wxString                     m_kind;		///< Member, function, class, typedef etc.
+	wxString                     m_parent;		///< Direct parent
+	wxTreeItemId                 m_hti;		///< Handle to tree item, not persistent item
+	wxString                     m_name;		///< Tag name (short name, excluding any scope names)
 	std::map<wxString, wxString> m_extFields; ///< Additional extension fields
-	long	m_id;
-	wxString m_scope;
-	bool m_differOnByLineNumber;
+	long                         m_id;
+	wxString                     m_scope;
+	bool                         m_differOnByLineNumber;
 
 public:
 	/**
@@ -90,12 +78,6 @@ public:
 	 * Copy constructor.
 	 */
 	TagEntry(const TagEntry& rhs);
-
-	/**
-	 * Construct a tag entry from db record.
-	 * \param rs Result set
-	 */
-	TagEntry(wxSQLite3ResultSet& rs);
 
 	/**
 	 * \param rhs Source to copy from (right hand side)
@@ -169,7 +151,7 @@ public:
 	int GetLine() const { return m_lineNumber;}
 	void SetLine(int line) { m_lineNumber = line; }
 
-	wxString GetPattern();
+	wxString GetPattern() const;
 	void SetPattern(const wxString& pattern) { m_pattern = pattern; }
 
 	wxString GetKind() const;
@@ -186,6 +168,9 @@ public:
 
 	wxString GetSignature() const { return GetExtField(_T("signature")); }
 	void SetSignature(const wxString &sig) { m_extFields[wxT("signature")] = sig; }
+
+	void SetInherits ( const wxString &inherits ) { m_extFields[_T("inherits")] = inherits; }
+	void SetTyperef  ( const wxString &typeref  ) { m_extFields[_T("typeref")]   = typeref; }
 
 	wxString GetInherits() const { return GetExtField(_T("inherits")); }
 	wxString GetTyperef() const { return GetExtField(_T("typeref")); }
@@ -246,53 +231,12 @@ public:
 	//------------------------------------------
 	void Print();
 
-
-	//------------------------------------------
-	// Database operations
-	//------------------------------------------
-	/**
-	 * Save this record into db.
-	 * \param insertPreparedStmnt Prepared statement for insert operation
-	 * \return TagOk, TagExist, TagError
-	 */
-	virtual int Store(wxSQLite3Statement& insertPreparedStmnt, TagsDatabase *db);
-
-	/**
-	 * Update this record into db.
-	 * \param insertPreparedStmnt Prepared statement for insert operation
-	 * \return TagOk, TagError
-	 */
-	virtual int Update(wxSQLite3Statement& updatePreparedStmnt);
-
-	/**
-	 * Delete this record from db.
-	 * \param deletePreparedStmnt Prepared statement for delete operation
-	 * \return TagOk, TagError
-	 */
-	virtual int Delete(wxSQLite3Statement& deletePreparedStmnt);
-
-	/**
-	 * \return delete preapred statement
-	 */
-	virtual wxString GetDeleteOneStatement();
-
-	/**
-	 * \return update preapred statement
-	 */
-	virtual wxString GetUpdateOneStatement();
-
-	/**
-	 * \return insert preapred statement
-	 */
-	virtual wxString GetInsertOneStatement();
-
-
 private:
 	/**
 	 * Update the path with full path (e.g. namespace::class)
 	 * \param path path to add
 	 */
-	void UpdatePath(wxString & path);
+	void UpdatePath        (wxString & path);
 	bool TypedefFromPattern(const wxString &tagPattern, const wxString &typedefName, wxString &name, wxString &templateInit);
 };
 

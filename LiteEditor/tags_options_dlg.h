@@ -45,18 +45,24 @@ protected:
 	void SetFlag(CodeCompletionOpts flag, bool set);
 	void SetColouringFlag(CodeCompletionColourOpts flag, bool set);
 
-	void InitValues();
-	void CopyData();
-	void OnButtonOK(wxCommandEvent &event);
-	void OnButtonAdd(wxCommandEvent &event);
-	void OnColourWorkspaceUI(wxUpdateUIEvent &e);
-	void OnCachePageUI(wxUpdateUIEvent &e);
-	void OnCleanCache(wxCommandEvent &e);
-	void OnClearCacheUI(wxUpdateUIEvent &e);
+	void InitValues          ();
+	void CopyData            ();
+	void OnButtonOK          (wxCommandEvent &event);
+	void OnButtonAdd         (wxCommandEvent &event);
+	void OnColourWorkspaceUI (wxUpdateUIEvent &e);
+	void OnClearAll          (wxCommandEvent &e);
+	void OnClearAllUI        (wxUpdateUIEvent &e);
+	void OnAddSearchPath     (wxCommandEvent &e);
+	void OnAddSearchPathUI   (wxUpdateUIEvent &e);
+	void OnRemoveSearchPath  (wxCommandEvent &e);
+	void OnRemoveSearchPathUI(wxUpdateUIEvent &e);
+
 public:
 	TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data);
 	virtual ~TagsOptionsDlg();
-	TagsOptionsData &GetData() {return m_data;}
+	TagsOptionsData &GetData() {
+		return m_data;
+	}
 };
 
 #endif //__tags_options_dlg__

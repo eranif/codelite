@@ -56,6 +56,7 @@ Notebook::~Notebook()
 void Notebook::AddPage(wxWindow *win, const wxString &text, const wxString &tooltip, const wxBitmap &bmp, bool selected)
 {
 	Freeze();
+
 	CustomTab *tab = new CustomTab(m_tabs, wxID_ANY, text, tooltip, bmp, selected, m_tabs->GetOrientation(), m_style);
 	win->Reparent(this);
 	tab->SetWindow(win);
@@ -89,6 +90,8 @@ void Notebook::Initialize()
 
 	m_tabs = new wxTabContainer(this, wxID_ANY, ori, m_style);
 	sz->Add(m_tabs, 0, wxEXPAND);
+	// On startup, before we hide the tab container
+	sz->Hide(m_tabs);
 	sz->Layout();
 }
 
@@ -177,6 +180,11 @@ bool Notebook::RemovePage(size_t page, bool notify)
 	if (tab) {
 		res = m_tabs->RemovePage(tab, notify);
 	}
+
+	if( GetSizer()->IsShown(m_tabs) && m_tabs->GetTabsCount() == 0 ) {
+		GetSizer()->Hide(m_tabs);
+	}
+
 	Thaw();
     return res;
 
@@ -190,6 +198,11 @@ bool Notebook::DeletePage(size_t page, bool notify)
 	if (tab) {
 		res = m_tabs->DeletePage(tab, notify);
 	}
+
+	if( GetSizer()->IsShown(m_tabs) && m_tabs->GetTabsCount() == 0 ) {
+		GetSizer()->Hide(m_tabs);
+	}
+
 	Thaw();
     return res;
 }
@@ -312,6 +325,10 @@ const wxArrayPtrVoid& Notebook::GetHistory() const
 
 void Notebook::AddPage(CustomTab *tab)
 {
+	if( GetSizer()->IsShown(m_tabs) == false && !(m_style & wxVB_NO_TABS)) {
+		GetSizer()->Show(m_tabs);
+	}
+
 	wxWindow *oldWindow(NULL);
 	CustomTab *oldSelection = m_tabs->GetSelection();
 	if (oldSelection) {

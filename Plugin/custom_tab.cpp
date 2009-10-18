@@ -37,9 +37,14 @@
 #define clMASK_COLOR wxColor(0, 128, 128)
 
 #ifdef __WXMSW__
-#define TAB_RADIUS 1
+#    define TAB_RADIUS  1
+#    define DARK_FACTOR 2
+#elif defined(__WXGTK__)
+#    define TAB_RADIUS 0
+#    define DARK_FACTOR 2
 #else
-#define TAB_RADIUS 3
+#    define TAB_RADIUS 3
+#    define DARK_FACTOR 1.2
 #endif
 
 BEGIN_EVENT_TABLE(CustomTab, wxPanel)
@@ -57,7 +62,7 @@ END_EVENT_TABLE()
 const wxEventType wxEVT_CMD_DELETE_TAB = XRCID("custom_tab_delete");
 
 CustomTab::CustomTab(wxWindow *win, wxWindowID id, const wxString &text, const wxString &tooltip, const wxBitmap &bmp, bool selected, int orientation, long style)
-		: wxPanel(win, id)
+		: wxPanel(win, id, wxDefaultPosition, wxSize(1, 1))
 		, m_text(text)
 		, m_tooltip(tooltip)
 		, m_bmp(bmp)
@@ -339,7 +344,6 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 	memDc.DrawRectangle(bmpRect);
 
 	//fill the bmp with a nice gradient colour
-	bool hovered = (m_hovered && (GetSelected() == false));
 	bool left = m_orientation == wxLEFT;
 
 	if (left && GetSelected()) {
@@ -356,8 +360,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		rt.width -= 2;
 		rt.x += 1;
 		rt.height -= 1;
-		DrawingUtils::DrawVerticalButton(memDc, rt, GetSelected(), left, true, hovered);
-
+		memDc.DrawRoundedRectangle(rt, TAB_RADIUS);
 	} else if ( GetSelected() ) {
 		wxRect rt(bmpRect);
 		if (GetSelected()) {
@@ -365,7 +368,19 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		} else {
 			rt.y += 3;
 		}
-		DrawingUtils::DrawVerticalButton(memDc, rt, GetSelected(), left, true, hovered);
+
+		memDc.DrawRoundedRectangle(rt, TAB_RADIUS);
+	} else {
+		wxRect fillRect(bmpRect);
+		fillRect.height -= 3;
+		fillRect.y  += 3;
+
+		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
+		bgTabColour = DrawingUtils::DarkColour(bgTabColour, DARK_FACTOR);
+
+		memDc.SetBrush( bgTabColour );
+		memDc.SetPen( *wxTRANSPARENT_PEN );
+		memDc.DrawRectangle(fillRect);
 	}
 
 	int posx(GetPadding());
@@ -478,47 +493,25 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 
 	dc.DrawRoundedRectangle(tmpRect, TAB_RADIUS);
 
+	if (GetSelected()) {
+		// draw an inner white rectangle as well
+		wxColour innerBorderCol (wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		innerBorderCol = DrawingUtils::LightColour(innerBorderCol, 3);
+		dc.SetPen  ( wxPen(innerBorderCol) );
+
+		tmpRect.Deflate(1);
+		dc.DrawRoundedRectangle(tmpRect, TAB_RADIUS);
+	}
+
 	if (left && GetSelected()) {
 		//draw a line
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(rr.x + rr.width - 1, 0, rr.x + rr.width - 1, rr.y + rr.height);
-		if (GetBookStyle() & wxVB_TAB_DECORATION) {
-			//draw a single caption colour on top of the active tab
-			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-#ifdef __WXMAC__
-			col = *wxBLACK;
-#endif
-			wxPen p(col, 1, wxSOLID);
-			dc.SetPen(p);
-			dc.DrawLine(rr.x+1, 1, rr.x+1, rr.y+rr.height+1);
-			dc.DrawLine(rr.x+2, 1, rr.x+2, rr.y+rr.height+1);
-			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(col, 6.0), 1, wxSOLID);
-			dc.SetPen(p);
-			dc.DrawLine(rr.x+2, 2, rr.x+2, rr.y+rr.height);
-		}
 
 	} else if (!left && GetSelected()) {
 		//draw a line
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(0, 0, 0, tmpRect.y + tmpRect.height);
-		if (GetBookStyle() & wxVB_TAB_DECORATION) {
-			//draw a single caption colour on top of the active tab
-			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-#ifdef __WXMAC__
-			col = *wxBLACK;
-#endif
-
-			wxPen p(col, 1, wxSOLID);
-			dc.SetPen(p);
-
-			dc.DrawLine(rr.x+rr.width-2, 0, rr.x+rr.width-2, rr.y+rr.height);
-			dc.DrawLine(rr.x+rr.width-3, 0, rr.x+rr.width-3, rr.y+rr.height);
-			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(col, 6.0) );
-			dc.SetPen(p);
-			dc.DrawLine(rr.x+rr.width-3, 1, rr.x+rr.width-3, rr.y+rr.height-1);
-		}
 	}
 }
 
@@ -541,7 +534,6 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 	memDc.DrawRectangle(bmpRect);
 
 	//fill the bmp with a nice gradient colour
-	bool hovered = (m_hovered && (GetSelected() == false));
 	bool top = m_orientation == wxTOP;
 
 	if (top && GetSelected()) {
@@ -553,13 +545,14 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 			fillRect.y += 3;
 		}
 
-		// we want the gradient NOT to be painted on the border,
+		// We want the gradient NOT to be painted on the border,
 		// so we reduce the width of the fillRect by 2 pixles
 		// also, we need to adjust the x & y coordinates by 1 pixel
 		fillRect.width -= 4;
 		fillRect.x += 2;
 		fillRect.height -= 1;
-		DrawingUtils::DrawHorizontalButton(memDc, fillRect, GetSelected(), top, true, hovered);
+		memDc.DrawRoundedRectangle(fillRect, TAB_RADIUS);
+
 	} else if ( GetSelected() ) {
 		wxRect fillRect(bmpRect);
 		if (GetSelected()) {
@@ -567,7 +560,20 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		} else {
 			fillRect.height -= 3;
 		}
-		DrawingUtils::DrawHorizontalButton(memDc, fillRect, GetSelected(), top, true, hovered);
+		memDc.DrawRoundedRectangle(fillRect, TAB_RADIUS);
+
+	} else {
+
+		wxRect fillRect(bmpRect);
+		fillRect.height -= 3;
+		top ? fillRect.y  += 3 : fillRect.y -= 3;
+
+		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
+		bgTabColour = DrawingUtils::DarkColour(bgTabColour, DARK_FACTOR);
+
+		memDc.SetBrush( bgTabColour );
+		memDc.SetPen( *wxTRANSPARENT_PEN );
+		memDc.DrawRectangle(fillRect);
 	}
 
 	int text_yoffset(1);
@@ -604,7 +610,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 			txtYCoord += 3;
 		}
 
-		//make sure the colour used here is the system default
+		// Make sure the colour used here is the system default
 		memDc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
 		wxString truncateText;
@@ -689,7 +695,10 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 
 	if (GetSelected()) {
 		// draw the inner white border
-		dc.SetPen(wxPen(wxT("WHITE")));
+		wxColour innerBorderCol (wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		innerBorderCol = DrawingUtils::LightColour(innerBorderCol, 3);
+		dc.SetPen  ( wxPen(innerBorderCol) );
+
 		tmpRect.Deflate(1);
 		dc.DrawRoundedRectangle(tmpRect, TAB_RADIUS);
 	}
@@ -699,43 +708,11 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(0, rr.GetHeight()-1, rr.GetWidth(), rr.GetHeight()-1);
 
-		if (GetBookStyle() & wxVB_TAB_DECORATION) {
-			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-#ifdef __WXMAC__
-			col = *wxBLACK;
-#endif
-
-			wxPen p(col, 1, wxSOLID);
-			dc.SetPen(p);
-
-			dc.DrawLine(rr.x+1, rr.y+1, rr.x+rr.width-1, rr.y+1);
-			dc.DrawLine(rr.x+1, rr.y+2, rr.x+rr.width-1, rr.y+2);
-
-			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(col, 6.0), 1, wxSOLID);
-			dc.SetPen(p);
-			dc.DrawLine(rr.x+2, rr.y+2, rr.x+rr.width-2, rr.y+2);
-		}
 	} else if (!top && GetSelected()) {
 		//draw a line
 
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 		dc.DrawLine(0, 0, rr.GetWidth(), 0);
-
-		if (GetBookStyle() & wxVB_TAB_DECORATION) {
-			wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-#ifdef __WXMAC__
-			col = *wxBLACK;
-#endif
-			wxPen p(col, 1, wxSOLID);
-			dc.SetPen(p);
-			dc.DrawLine(rr.x+1, rr.y+rr.height-2, rr.x+rr.width-1, rr.y+rr.height-2);
-			dc.DrawLine(rr.x+1, rr.y+rr.height-3, rr.x+rr.width-1, rr.y+rr.height-3);
-			//draw third line on top of the second line, but 1 pixel shorter
-			p = wxPen( DrawingUtils::LightColour(col, 6.0), 1, wxSOLID);
-			dc.SetPen(p);
-			dc.DrawLine(rr.x+2, rr.y+rr.height-3, rr.x+rr.width-2, rr.y+rr.height-3);
-		}
 	}
 }
 

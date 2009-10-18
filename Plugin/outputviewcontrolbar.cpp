@@ -28,19 +28,21 @@ static unsigned char list_bits[] = {
 };
 
 #ifdef __WXMSW__
-#  define BUTTON_SPACER_X 5
-#  define BUTTON_SPACER_Y 4
-#  define BAR_SPACER      6
+#    define BUTTON_SPACER_X 5
+#    define BUTTON_SPACER_Y 4
+#    define BAR_SPACER      6
+#    define DARK_FACTOR     2
 #elif defined(__WXGTK__)
-#  define BUTTON_SPACER_X 4
-#  define BUTTON_SPACER_Y 3
-#  define BAR_SPACER      5
+#    define BUTTON_SPACER_X 4
+#    define BUTTON_SPACER_Y 3
+#    define BAR_SPACER      5
+#    define DARK_FACTOR     2
 #else // __WXMAC__
-#  define BUTTON_SPACER_X 6
-#  define BUTTON_SPACER_Y 4
-#  define BAR_SPACER      6
+#    define BUTTON_SPACER_X 6
+#    define BUTTON_SPACER_Y 4
+#    define BAR_SPACER      6
+#    define DARK_FACTOR     1.2
 #endif
-
 
 static wxString ST_CLASS          = wxT("Class, struct or union");
 static wxString ST_WORKSPACE_FILE = wxT("Workspace file");
@@ -51,8 +53,10 @@ static wxString TYPE_HERE_TEXT    = wxT("<Type String to Search>");
 
 
 BEGIN_EVENT_TABLE(OutputViewControlBar, wxPanel)
+	#if defined(__WXMSW__)||defined(__WXMAC__)
 	EVT_PAINT           (OutputViewControlBar::OnPaint)
 	EVT_ERASE_BACKGROUND(OutputViewControlBar::OnEraseBackground)
+	#endif
 	EVT_COMMAND         (wxID_ANY, EVENT_BUTTON_PRESSED, OutputViewControlBar::OnButtonClicked)
 	EVT_SIZE            (OutputViewControlBar::OnSize)
 END_EVENT_TABLE()
@@ -62,7 +66,6 @@ OutputViewControlBar::OutputViewControlBar(wxWindow* win, Notebook *book, wxAuiM
 		, m_aui  (aui)
 		, m_book (book)
 {
-//	SetSizeHints( wxSize(-1, OutputViewControlBarButton::DoCalcButtonHeight(this, wxEmptyString, wxNullBitmap, BAR_SPACER) ) );
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer( mainSizer );
 
@@ -100,17 +103,28 @@ void OutputViewControlBar::OnPaint(wxPaintEvent& event)
 
 void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, bool selected, long style)
 {
+#ifdef __WXMSW__
 	OutputViewControlBarButton *button = new OutputViewControlBarButton(this, text, bmp, style);
 	button->SetState( selected ? OutputViewControlBarButton::Button_Pressed : OutputViewControlBarButton::Button_Normal );
 	m_buttons.push_back( button );
-	GetSizer()->Add(button, 0, wxTOP | wxBOTTOM | wxRIGHT | wxEXPAND, 3);
+#else
+	OutputViewControlBarToggleButton *button = new OutputViewControlBarToggleButton(this, text);
+	button->SetValue(selected);
+	m_buttons.push_back( button );
+#endif
+
+	GetSizer()->Add(button, 0, wxRIGHT|wxTOP|wxBOTTOM | wxEXPAND, 3);
 	GetSizer()->Layout();
 	button->Refresh();
 }
 
 void OutputViewControlBar::OnButtonClicked(wxCommandEvent& event)
 {
+#ifdef __WXMSW__
 	OutputViewControlBarButton *button = (OutputViewControlBarButton *)event.GetEventObject();
+#else
+	OutputViewControlBarToggleButton *button = (OutputViewControlBarToggleButton *)event.GetEventObject();
+#endif
 	DoToggleButton( button );
 }
 
@@ -168,6 +182,7 @@ void OutputViewControlBar::OnRender(wxAuiManagerEvent& event)
 
 void OutputViewControlBar::DoMarkActive(const wxString& name)
 {
+#ifdef __WXMSW__
 	for (size_t i=0; i<m_buttons.size(); i++) {
 		OutputViewControlBarButton *button = m_buttons.at(i);
 		if ( button->GetText() == name ) {
@@ -177,6 +192,16 @@ void OutputViewControlBar::DoMarkActive(const wxString& name)
 		}
 		button->Refresh();
 	}
+#else
+	for (size_t i=0; i<m_buttons.size(); i++) {
+		OutputViewControlBarToggleButton *button = m_buttons.at(i);
+		if ( button->GetText() == name ) {
+			button->SetValue(true);
+		} else {
+			button->SetValue(false);
+		}
+	}
+#endif
 
 	if ( m_book && name.IsEmpty() == false ) {
 		for (size_t i=0; i<m_book->GetPageCount(); i++) {
@@ -198,11 +223,11 @@ void OutputViewControlBar::AddAllButtons()
 	img.SetMaskColour(123, 123, 123);
 
 	// Add the 'More' button
-	AddButton ( wxT("More"), wxBitmap(img), false, 0 /* no text, no spacer */);
+//	AddButton ( wxT("More"), wxBitmap(img), false, 0 /* no text, no spacer */);
 
 	// Add the search control
 	m_searchBar = new OutputViewSearchCtrl(this);
-	m_buttons.push_back( m_searchBar );
+	//m_buttons.push_back( m_searchBar );
 	GetSizer()->Add(m_searchBar, 0, wxALL | wxEXPAND, 1);
 
 	// Hide it?
@@ -251,26 +276,43 @@ void OutputViewControlBar::OnSize(wxSizeEvent& event)
 	event.Skip();
 }
 
-void OutputViewControlBar::DoToggleButton(OutputViewControlBarButton* button)
+void OutputViewControlBar::DoToggleButton(wxWindow* button)
 {
-	if ( button && button->GetState() == OutputViewControlBarButton::Button_Pressed ) {
+#ifdef __WXMSW__
+	OutputViewControlBarButton *bt = (OutputViewControlBarButton*)button;
+	if ( bt && bt->GetState() == OutputViewControlBarButton::Button_Pressed ) {
 		// second click on an already pressed button, hide the AUI pane
-		button->SetState(OutputViewControlBarButton::Button_Normal);
-		button->Refresh();
+		bt->SetState(OutputViewControlBarButton::Button_Normal);
+		bt->Refresh();
 
 		// hide the pane
 		DoTogglePane(true);
 
-	} else if ( button ) {
-		DoMarkActive( button->GetText() );
+	}
+#else
+	OutputViewControlBarToggleButton *bt = (OutputViewControlBarToggleButton*)button;
+	if ( bt && !bt->GetValue() ) {
+		// second click on an already pressed button, hide the AUI pane
+		bt->SetValue(false);
+
+		// hide the pane
+		DoTogglePane(true);
+	}
+#endif
+	else if ( bt ) {
+		DoMarkActive( bt->GetText() );
 		DoTogglePane(false);
 	}
 }
 
-OutputViewControlBarButton* OutputViewControlBar::DoFindButton(const wxString& name)
+wxWindow* OutputViewControlBar::DoFindButton(const wxString& name)
 {
 	for (size_t i=0; i<m_buttons.size(); i++) {
-		OutputViewControlBarButton *button = m_buttons.at(i);
+#ifdef __WXMSW__
+		OutputViewControlBarButton *      button = m_buttons.at(i);
+#else
+		OutputViewControlBarToggleButton *button = m_buttons.at(i);
+#endif
 		if ( button->GetText() == name ) {
 			return button;
 		}
@@ -282,7 +324,11 @@ OutputViewControlBarButton* OutputViewControlBar::DoFindButton(const wxString& n
 void OutputViewControlBar::OnMenuSelection(wxCommandEvent& event)
 {
 	for (size_t i=0; i<m_buttons.size(); i++) {
-		OutputViewControlBarButton *button = m_buttons.at(i);
+#ifdef __WXMSW__
+		OutputViewControlBarButton *      button = m_buttons.at(i);
+#else
+		OutputViewControlBarToggleButton *button = m_buttons.at(i);
+#endif
 		if ( wxXmlResource::GetXRCID(button->GetText().c_str()) == event.GetId() ) {
 			DoToggleButton(button);
 			break;
@@ -322,14 +368,18 @@ void OutputViewControlBar::OnEditorFocus(wxCommandEvent& event)
 
 		// re-draw all the buttons
 		for (size_t i=0; i<m_buttons.size(); i++) {
+#ifdef __WXMSW__
 			OutputViewControlBarButton *button = m_buttons.at(i);
 			button->SetState( OutputViewControlBarButton::Button_Normal);
 			button->Refresh();
+#else
+			OutputViewControlBarToggleButton *button = m_buttons.at(i);
+			button->SetValue(false);
+			button->Refresh();
+#endif
 		}
-
 		// and hide the output view
 		DoTogglePane(true);
-
 	}
 }
 
@@ -344,10 +394,12 @@ void OutputViewControlBar::DoShowQuickFinder(bool show)
 			GetSizer()->Hide(m_searchBar);
 			GetSizer()->Layout();
 
+#ifdef __WXMSW__
 			for (size_t i=0; i<m_buttons.size(); i++) {
 				OutputViewControlBarButton *button = m_buttons.at(i);
 				button->Refresh();
 			}
+#endif
 			if ( main_frame ) {
 				main_frame->SendSizeEvent();
 			}
@@ -365,10 +417,12 @@ void OutputViewControlBar::DoShowQuickFinder(bool show)
 			GetSizer()->Show(m_searchBar);
 			GetSizer()->Layout();
 
+#ifdef __WXMSW__
 			for (size_t i=0; i<m_buttons.size(); i++) {
 				OutputViewControlBarButton *button = m_buttons.at(i);
 				button->Refresh();
 			}
+#endif
 
 			if ( main_frame ) {
 				main_frame->SendSizeEvent();
@@ -440,18 +494,22 @@ void OutputViewControlBarButton::OnPaint(wxPaintEvent& event)
 
 	// Fill the background
 	wxRect rect = GetClientSize();
-	dc.SetBrush( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
-	dc.SetPen  ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
+	dc.SetBrush( wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT) );
+	dc.SetPen  ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT) );
 
 	// draw the background
 	dc.DrawRectangle( rect );
 
 	// draw the filling
 	wxRect tmpRect (rect);
-	tmpRect.Deflate(1, 1);
+	tmpRect.Deflate(2, 2);
 	if ( m_style != 0 ) {
 		if ( GetState() == Button_Normal ) {
-			DrawingUtils::PaintStraightGradientBox(dc, tmpRect, wxT("WHITE"), wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
+			DrawingUtils::PaintStraightGradientBox( dc,
+			                                        tmpRect,
+			                                        wxT("WHITE"),
+			                                        DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), DARK_FACTOR),
+			                                        true);
 		} else {
 			DrawingUtils::PaintStraightGradientBox(dc, tmpRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), true);
 		}
@@ -459,6 +517,7 @@ void OutputViewControlBarButton::OnPaint(wxPaintEvent& event)
 
 	// Draw the text
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
 	dc.GetTextExtent(GetText(), &xx, &yy, NULL, NULL, &font);
 
 	int  spacer_x  = m_style & Button_UseXSpacer ? BUTTON_SPACER_X : 1;
@@ -490,6 +549,15 @@ void OutputViewControlBarButton::OnPaint(wxPaintEvent& event)
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
 #endif
 		dc.SetBrush( *wxTRANSPARENT_BRUSH );
+		dc.DrawRoundedRectangle(rect, 1);
+
+		// draw an inner white rectangle as well
+		wxColour innerBorderCol (wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+		innerBorderCol = DrawingUtils::LightColour(innerBorderCol, 3);
+
+		dc.SetPen  ( wxPen(innerBorderCol) );
+		dc.SetBrush( *wxTRANSPARENT_BRUSH );
+		rect.Deflate(1);
 		dc.DrawRoundedRectangle(rect, 0);
 	}
 }
@@ -560,16 +628,22 @@ void OutputViewControlBarButton::DoShowPopupMenu()
 
 	OutputViewControlBar *bar = (OutputViewControlBar *)GetParent();
 	for (size_t i=0; i<bar->m_buttons.size(); i++) {
+#ifdef __WXMSW__
 		OutputViewControlBarButton *button = bar->m_buttons.at(i);
-
+#else
+		OutputViewControlBarToggleButton *button = bar->m_buttons.at(i);
+#endif
 		// Skip the More button and empty text buttons
 		if ( button->GetText() == wxT("More") || button->GetText().IsEmpty() ) {
 			continue;
 		}
 
 		wxString text = button->GetText();
+#ifdef __WXMSW__
 		bool selected = button->GetState() == OutputViewControlBarButton::Button_Pressed;
-
+#else
+		bool selected = button->GetValue();
+#endif
 		wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(button->GetText().c_str()), text, text, wxITEM_CHECK);
 
 		//set the font
@@ -609,9 +683,9 @@ OutputViewSearchCtrl::OutputViewSearchCtrl(wxWindow* win)
 {
 
 #ifdef __WXMAC__
-GREY_TEXT = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+	GREY_TEXT = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
 #else
-GREY_TEXT = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+	GREY_TEXT = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
 #endif
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer( mainSizer );
@@ -619,8 +693,8 @@ GREY_TEXT = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
 	m_findWhat = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_RICH2);
 	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	m_findWhat->SetValue(TYPE_HERE_TEXT);
-	m_findWhat->SetForegroundColour(GREY_TEXT);
-	
+	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)    );
+
 	m_findWhat->SetMinSize(wxSize(200,-1));
 	m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER,   wxCommandEventHandler(OutputViewSearchCtrl::OnEnter      ), NULL, this);
 	m_findWhat->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OutputViewSearchCtrl::OnTextUpdated), NULL, this);
@@ -774,7 +848,6 @@ void OutputViewSearchCtrl::OnFocus(wxFocusEvent& event)
 		// we lost the focus
 		if ( m_findWhat->GetValue().IsEmpty() ) {
 			m_findWhat->SetValue(TYPE_HERE_TEXT);
-			m_findWhat->SetForegroundColour(GREY_TEXT);
 			m_findWhat->Refresh();
 			return;
 		}
@@ -785,9 +858,8 @@ void OutputViewSearchCtrl::OnFocus(wxFocusEvent& event)
 		m_findWhat->Clear();
 	}
 
-	m_findWhat->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)    );
 	m_findWhat->Refresh();
-
 }
 
 void OutputViewSearchCtrl::OnEdit(wxCommandEvent& event)
@@ -821,4 +893,27 @@ bool OutputViewSearchCtrl::IsFocused()
 	bool visible = GetSizer()->IsShown(m_findWhat);
 	wxWindow *win = wxWindow::FindFocus();
 	return win && win == m_findWhat && visible;
+}
+BEGIN_EVENT_TABLE(OutputViewControlBarToggleButton, wxToggleButton)
+	EVT_TOGGLEBUTTON(wxID_ANY, OutputViewControlBarToggleButton::OnButtonToggled)
+END_EVENT_TABLE()
+OutputViewControlBarToggleButton::OutputViewControlBarToggleButton(wxWindow* parent, const wxString& label)
+		: wxToggleButton(parent, wxID_ANY, label, wxDefaultPosition, wxDefaultSize)
+{
+}
+
+OutputViewControlBarToggleButton::~OutputViewControlBarToggleButton()
+{
+}
+
+void OutputViewControlBarToggleButton::OnButtonToggled(wxCommandEvent& e)
+{
+	if ( GetText() == wxT("More") ) {
+		// TODO: Show pop menu here
+	} else {
+
+		wxCommandEvent e(EVENT_BUTTON_PRESSED);
+		e.SetEventObject(this);
+		GetParent()->AddPendingEvent( e );
+	}
 }

@@ -35,7 +35,7 @@
 #include "procutils.h"
 #include "tag_tree.h"
 
-class TagsDatabase;
+class TagsStorageSQLite;
 
 /**
  * @class ParseThreadEventData
@@ -78,19 +78,24 @@ class ParseRequest : public ThreadRequest
 	wxString _file;
 	wxString _dbfile;
 	wxString _tags;
-	wxString _extDbFile;
+	int      _type;
+
+public:
+	enum {
+		PR_FILESAVED,
+		PR_PARSEINCLUDES
+	};
 
 public:
 
 	// ctor/dtor
-	ParseRequest() {}
+	ParseRequest() : _type (PR_FILESAVED) {}
 	virtual ~ParseRequest() ;
 
 	// accessors
 	void setFile     (const wxString &file     );
 	void setDbFile   (const wxString &dbfile   );
 	void setTags     (const wxString &tags     );
-	void setExtDbFile(const wxString &extDbFile);
 
 	//Getters
 	const wxString& getDbfile() const {
@@ -105,12 +110,16 @@ public:
 		return _tags;
 	}
 
-	const wxString& getExtDbFile() const {
-		return _extDbFile;
+	void setType(int _type) {
+		this->_type = _type;
+	}
+	int getType() const {
+		return _type;
 	}
 
 	// copy ctor
 	ParseRequest(const ParseRequest& rhs) ;
+
 	// assignment operator
 	ParseRequest &operator=(const ParseRequest& rhs);
 };
@@ -125,10 +134,16 @@ public:
 class ParseThread : public WorkerThread
 {
 	friend class Singleton<ParseThread>;
-	std::auto_ptr<TagsDatabase> m_pDb;
-	TagsDatabase*               m_externalSymbolsDb;
+	TagsStorageSQLite*               m_pDb;
 	wxStopWatch                 m_watch;
+	wxArrayString               m_searchPaths;
+	bool                        m_crawlerEnabled;
 
+public:
+	void SetCrawlerEnabeld (bool b                    );
+	void SetSearchPaths    (const wxArrayString &paths);
+	void GetSearchPaths    (wxArrayString &paths      );
+	bool IsCrawlerEnabled  ();
 private:
 	/**
 	 * Default constructor.
@@ -140,8 +155,8 @@ private:
 	 */
 	virtual ~ParseThread();
 
-	void       DoStoreTags   (const wxString &tags, const wxString &filename);
-	TagTreePtr DoTreeFromTags(const wxString &tags);
+	void       DoStoreTags   (const wxString &tags, const wxString &filename, int &count);
+	TagTreePtr DoTreeFromTags(const wxString &tags, int &count);
 
 private:
 
@@ -167,6 +182,12 @@ private:
 	 * @param filename
 	 */
 	void ParseIncludeFiles(const wxString &filename);
+
+	void ProcessSimple     (ParseRequest *req);
+	void ProcessIncludes   (ParseRequest *req);
+	void GetFileListToParse(const wxString &filename, wxArrayString &arrFiles);
+	void ParseAndStoreFiles(const wxArrayString &arrFiles, int initalCount);
+
 };
 
 typedef Singleton<ParseThread> ParseThreadST;
@@ -271,7 +292,7 @@ DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_CL, wxEVT_COMMAND_SYMBOL_TREE_DELETE_PRO
 END_DECLARE_EVENT_TYPES()
 
 extern const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS;
-
+extern const wxEventType wxEVT_PARSE_THREAD_MESSAGE;
 
 typedef void (wxEvtHandler::*SymbolTreeEventFunction)(SymbolTreeEvent&);
 

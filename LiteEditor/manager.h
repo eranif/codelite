@@ -367,21 +367,6 @@ public:
   	 */
  	wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd, bool considerPauseWhenExecuting = true);
 
-
-     //--------------------------- External Tags DB Management -----------------------------
-public:
-  	/**
- 	 * use an external database
-  	 */
- 	void SetExternalDatabase(const wxFileName &dbname);
-
-  	/**
- 	 * close the currenlty open extern database
- 	 * and free all its resources
-  	 */
- 	void CloseExternalDatabase();
-
-
      //--------------------------- Top Level Pane Management -----------------------------
 public:
   	/**

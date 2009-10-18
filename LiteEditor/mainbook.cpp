@@ -803,8 +803,8 @@ bool MainBook::DoSelectPage(wxWindow* win)
 
 	if (!editor) {
 		Frame::Get()->SetFrameTitle(NULL);
-		Frame::Get()->SetStatusMessage(wxEmptyString, 2); // clear line & column indicator
-		Frame::Get()->SetStatusMessage(wxEmptyString, 3); // clear end-of-line mode indicator
+		Frame::Get()->SetStatusMessage(wxEmptyString, 1); // clear line & column indicator
+		Frame::Get()->SetStatusMessage(wxEmptyString, 2); // clear end-of-line mode indicator
 		UpdateNavBar(NULL);
 	} else {
 		editor->SetActive();

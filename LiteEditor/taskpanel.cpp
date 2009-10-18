@@ -71,7 +71,8 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
     for (size_t i = 0; i < sizeof(tasks)/sizeof(tasks[0]); i++) {
         wxToggleButton *btn = new wxToggleButton(this, wxID_ANY, tasks[i], wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
         btn->SetValue(true);
-        btn->SetBackgroundColour(wxColor(wxT("GOLD")));
+        btn->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+        btn->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
         m_task.push_back(btn);
         horzSizer->Add(btn, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2);
     }
@@ -163,7 +164,8 @@ SearchData TaskPanel::DoGetSearchData()
 void TaskPanel::OnToggle(wxCommandEvent &e)
 {
     wxToggleButton *btn = (wxToggleButton*) e.GetEventObject();
-    btn->SetBackgroundColour(e.IsChecked() ? wxColor(wxT("GOLD")) : wxNullColour);
+	btn->SetBackgroundColour(e.IsChecked() ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT) : wxNullColour);
+    btn->SetForegroundColour(e.IsChecked() ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT) : wxNullColour);
     btn->Refresh();
 }
 

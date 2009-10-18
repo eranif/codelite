@@ -2,9 +2,8 @@
 #define __fileentry__
 
 #include <wx/string.h>
-#include "db_record.h"
-
-class FileEntry : public DbRecord
+#include "smart_ptr.h"
+class FileEntry
 {
 	long      m_id;
 	wxString  m_file;
@@ -15,14 +14,6 @@ public:
 	~FileEntry();
 
 public:
-	virtual int      Delete                (wxSQLite3Statement& deletePreparedStmnt);
-	virtual wxString GetDeleteOneStatement ();
-	virtual wxString GetInsertOneStatement ();
-	virtual wxString GetUpdateOneStatement ();
-	virtual int      Store                 (wxSQLite3Statement& insertPreparedStmnt, TagsDatabase *db);
-	virtual int      Update                (wxSQLite3Statement& updatePreparedStmnt);
-	virtual int      Fetch                 (TagsDatabase *db);
-
 	void SetFile(const wxString& file) {
 		this->m_file = file;
 	}
@@ -43,4 +34,5 @@ public:
 	}
 };
 typedef SmartPtr<FileEntry> FileEntryPtr;
+
 #endif // __fileentry__

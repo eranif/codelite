@@ -17,7 +17,6 @@
     <File Name="qmakeplugin.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="DebugUnicode"/>
   <VirtualDirectory Name="UI">
     <File Name="qmaketabbase.cpp"/>
     <File Name="qmaketabbase.h"/>
@@ -222,6 +221,8 @@
     <File Name="qmakegenerator.cpp"/>
     <File Name="qmakegenerator.h"/>
   </VirtualDirectory>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

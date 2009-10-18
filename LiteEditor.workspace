@@ -29,7 +29,6 @@
   <Project Name="snipwiz" Path="SnipWiz/snipwiz.project" Active="No"/>
   <Project Name="wxFormBuilder" Path="wxformbuilder/wxFormBuilder.project" Active="No"/>
   <Project Name="abbreviation" Path="abbreviation/abbreviation.project" Active="No"/>
-  <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
   <Project Name="ContinuousBuild" Path="ContinuousBuild/ContinuousBuild.project" Active="No"/>
   <Project Name="wxpropgrid" Path="sdk/wxpropgrid/wxpropgrid.project" Active="No"/>
   <Project Name="QMakePlugin" Path="QmakePlugin/QMakePlugin.project" Active="No"/>
@@ -41,7 +40,6 @@
       <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
-      <Project Name="SymbolView" ConfigName="WinReleaseUnicode"/>
       <Project Name="Subversion" ConfigName="WinReleaseUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="WinReleaseUnicode"/>
@@ -66,7 +64,6 @@
       <Project Name="wxpropgrid" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
-      <Project Name="SymbolView" ConfigName="WinDebugUnicode"/>
       <Project Name="Subversion" ConfigName="WinDebugUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="WinDebugUnicode"/>
@@ -91,7 +88,6 @@
       <Project Name="wxpropgrid" ConfigName="DebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="DebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="DebugUnicode"/>
-      <Project Name="SymbolView" ConfigName="DebugUnicode"/>
       <Project Name="Subversion" ConfigName="DebugUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="DebugUnicode"/>
@@ -116,7 +112,6 @@
       <Project Name="wxpropgrid" ConfigName="ReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="ReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="ReleaseUnicode"/>
-      <Project Name="SymbolView" ConfigName="ReleaseUnicode"/>
       <Project Name="Subversion" ConfigName="ReleaseUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="ReleaseUnicode"/>
@@ -141,7 +136,6 @@
       <Project Name="wxpropgrid" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
-      <Project Name="SymbolView" ConfigName="WinReleaseUnicode"/>
       <Project Name="Subversion" ConfigName="WinReleaseUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="WinReleaseUnicode"/>

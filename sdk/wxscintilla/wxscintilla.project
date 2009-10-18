@@ -166,7 +166,6 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="ReleaseUnicode"/>
   <Settings Type="Static Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="" Type="">
       <General OutputFile="../../lib/gcc_lib/libwxscintillaud.a" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
@@ -301,6 +300,8 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

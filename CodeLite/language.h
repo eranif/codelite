@@ -31,7 +31,6 @@
 #include "singleton.h"
 #include "entry.h"
 #include <wx/filename.h>
-#include "db_record.h"
 #include "expression_result.h"
 #include "variable.h"
 #include "function.h"

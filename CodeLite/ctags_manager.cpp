@@ -43,9 +43,11 @@
 #include "tags_options_data.h"
 #include <wx/busyinfo.h>
 #include "wx/timer.h"
-#include "variable_entry.h"
 #include "procutils.h"
 #include <sstream>
+#include <wx/string.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/msgdlg.h>
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -60,7 +62,8 @@
 #define PIPE_NAME "/tmp/codelite_indexer.%s.sock"
 #endif
 
-const wxEventType wxEVT_UPDATE_FILETREE_EVENT = wxNewEventType();
+const wxEventType wxEVT_UPDATE_FILETREE_EVENT = XRCID("update_file_tree_event");
+const wxEventType wxEVT_TAGS_DB_UPGRADE       = XRCID("tags_db_upgraded");
 
 //---------------------------------------------------------------------------
 // Misc
@@ -103,18 +106,10 @@ TagsManager::TagsManager()
 		, m_canDeleteCtags(true)
 		, m_timer(NULL)
 		, m_lang(NULL)
-		, m_useExternalDatabase(true)
+		, m_evtHandler(NULL)
 {
 	// Create databases
-	m_workspaceDatabase = new TagsDatabase( !GetCtagsOptions().GetDisableCaching() );
-
-	// create external database with caching ON and read only flag ON - which enabels better caching
-	m_externalDatabase  = new TagsDatabase(true, true);
-
-	// Update cache size
-	m_externalDatabase->SetMaxCacheSize(1000);
-	m_workspaceDatabase->SetMaxCacheSize(GetCtagsOptions().GetMaxCacheSize());
-
+	m_workspaceDatabase = new TagsStorageSQLite( );
 	m_ctagsCmd = wxT("  --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
 	m_timer = new wxTimer(this, CtagsMgrTimerId);
 	m_timer->Start(100);
@@ -123,7 +118,6 @@ TagsManager::TagsManager()
 TagsManager::~TagsManager()
 {
 	delete m_workspaceDatabase;
-	delete m_externalDatabase;
 	if (m_timer) {
 		delete m_timer;
 	}
@@ -169,9 +163,17 @@ void TagsManager::OpenDatabase(const wxFileName& fileName)
 {
 	UpdateFileTree(m_workspaceDatabase, false);
 	m_workspaceDatabase->OpenDatabase(fileName);
+
 	if (m_workspaceDatabase->GetVersion() != m_workspaceDatabase->GetSchemaVersion()) {
 		m_workspaceDatabase->RecreateDatabase();
+
+		// Send event to the main frame notifying it about database recreation
+		if( m_evtHandler ) {
+			wxCommandEvent event(wxEVT_TAGS_DB_UPGRADE);
+			m_evtHandler->AddPendingEvent( event );
+		}
 	}
+
 	UpdateFileTree(m_workspaceDatabase, true);
 }
 
@@ -215,7 +217,8 @@ TagTreePtr TagsManager::ParseSourceFile(const wxFileName& fp, std::vector<Commen
 	SourceToTags(fp, tags);
 
 	// return ParseTagsFile(tags, project);
-	TagTreePtr ttp = TagTreePtr( TreeFromTags(tags) );
+	int dummy;
+	TagTreePtr ttp = TagTreePtr( TreeFromTags(tags, dummy) );
 
 	if ( comments && GetParseComments() ) {
 		// parse comments
@@ -228,7 +231,8 @@ TagTreePtr TagsManager::ParseSourceFile(const wxFileName& fp, std::vector<Commen
 TagTreePtr TagsManager::ParseSourceFile2(const wxFileName& fp, const wxString &tags, std::vector<CommentPtr> *comments)
 {
 	//	return ParseTagsFile(tags, project);
-	TagTreePtr ttp = TagTreePtr( TreeFromTags(tags) );
+	int count(0);
+	TagTreePtr ttp = TagTreePtr( TreeFromTags(tags, count) );
 
 	if (comments && GetParseComments()) {
 		// parse comments
@@ -254,23 +258,16 @@ TagTreePtr TagsManager::Load(const wxFileName& fileName)
 	// Make this call threadsafe
 	wxCriticalSectionLocker locker(m_cs);
 
-	// Incase empty file path is provided, use the current file name
-	TagTreePtr tree;
-	try {
-		wxSQLite3ResultSet rs = m_workspaceDatabase->SelectTagsByFile(fileName.GetFullPath());
+	TagTreePtr               tree;
+	std::vector<TagEntryPtr> tagsByFile;
+	m_workspaceDatabase->SelectTagsByFile(fileName.GetFullPath(), tagsByFile);
 
-		// Load the records and build a language tree
-		TagEntry root;
-		std::vector<TagEntry> rejectedTags;
-		root.SetName(wxT("<ROOT>"));
-		tree.Reset( new TagTree(wxT("<ROOT>"), root) );
-		while ( rs.NextRow() ) {
-			TagEntry entry(rs);
-			tree->AddEntry(entry);
-		}
-		rs.Finalize();
-	} catch (wxSQLite3Exception& e) {
-		wxUnusedVar(e);
+	// Load the records and build a language tree
+	TagEntry root;
+	root.SetName(wxT("<ROOT>"));
+	tree.Reset( new TagTree(wxT("<ROOT>"), root) );
+	for(size_t i=0; i<tagsByFile.size(); i++) {
+		tree->AddEntry( *(tagsByFile.at(i)) );
 	}
 	return tree;
 }
@@ -445,7 +442,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 	tags = wxString::From8BitData(reply.getTags().c_str());
 }
 
-TagTreePtr TagsManager::TreeFromTags(const wxString& tags)
+TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int &count)
 {
 	// Load the records and build a language tree
 	TagEntry root;
@@ -468,6 +465,7 @@ TagTreePtr TagsManager::TreeFromTags(const wxString& tags)
 
 		// Add the tag to the tree, locals are not added to the
 		// tree
+		count++;
 		if ( tag.GetKind() != wxT("local") )
 			tree->AddEntry(tag);
 	}
@@ -512,16 +510,14 @@ void TagsManager::TagsByScopeAndName(const wxString& scope, const wxString &name
 
 	// make enough room for max of 500 elements in the vector
 	tags.reserve(500);
+	wxArrayString scopes;
 
 	for (size_t i=0; i<derivationList.size(); i++) {
-		size_t count_before = tags.size();
-
-		if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByScopeAndName(derivationList.at(i), name, flags & PartialMatch, tags);
-		if ( count_before == tags.size() ) {
-			// try the worksapce database for match
-			m_workspaceDatabase->GetTagsByScopeAndName(derivationList.at(i), name, flags & PartialMatch, tags);
-		}
+		// try the worksapce database for match
+		scopes.Add(derivationList.at(i));
 	}
+
+	m_workspaceDatabase->GetTagsByScopeAndName(scopes, name, flags & PartialMatch, tags);
 
 	// and finally sort the results
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
@@ -543,12 +539,8 @@ void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr> &t
 		wxString tmpScope(derivationList.at(i));
 		tmpScope = DoReplaceMacros(tmpScope);
 
-		size_t count_before = tags.size();
-		if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByScope(tmpScope, tags);
-		if ( count_before == tags.size() ) {
-			// try the external database for match
-			m_workspaceDatabase->GetTagsByScope(derivationList.at(i), tags);
-		}
+		// try the external database for match
+		m_workspaceDatabase->GetTagsByScope(derivationList.at(i), tags);
 	}
 
 	// and finally sort the results
@@ -751,7 +743,6 @@ void TagsManager::GetGlobalTags(const wxString &name, std::vector<TagEntryPtr> &
 	// Make enough room for max of 500 elements in the vector
 	tags.reserve(500);
 	m_workspaceDatabase->GetTagsByScopeAndName(wxT("<global>"), name, flags & PartialMatch, tags);
-	if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByScopeAndName( wxT("<global>"), name, flags & PartialMatch, tags);
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
 }
 
@@ -834,14 +825,6 @@ void TagsManager::FindImplDecl(const wxFileName &fileName, int lineno, const wxS
 	tmp = expression;
 	expression.EndsWith(word, &tmp);
 	expression = tmp;
-
-	// add bool guard for the flag
-	BoolGuard guard( &m_useExternalDatabase );
-
-	if (workspaceOnly) {
-		// disable scan in external database
-		m_useExternalDatabase = false;
-	}
 
 	wxString scope(text);// = GetLanguage()->GetScope(text);
 	wxString scopeName = GetLanguage()->GetScopeName(scope, NULL);
@@ -1000,13 +983,11 @@ void TagsManager::OpenType(std::vector<TagEntryPtr> &tags)
 	kinds.Add(wxT("typedef"));
 
 	m_workspaceDatabase->GetTagsByKind(kinds, wxT("name"), ITagsStorage::OrderDesc, tags);
-	if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByKind( kinds, wxT("name"), ITagsStorage::OrderDesc, tags);
 }
 
 void TagsManager::FindSymbol(const wxString& name, std::vector<TagEntryPtr> &tags)
 {
 	m_workspaceDatabase->GetTagsByScopeAndName(wxEmptyString, name, false, tags);
-	if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByScopeAndName( wxEmptyString, name, false, tags);
 }
 
 void TagsManager::DeleteFilesTags(const wxArrayString &files)
@@ -1024,92 +1005,17 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName> &projectFiles)
 		return;
 	}
 
-	wxString      query;
-	wxString      filelist;
 	wxArrayString file_array;
 
-	query << wxT("delete from tags where file in (");
+	m_workspaceDatabase->Begin();
+
 	for (size_t i=0; i<projectFiles.size(); i++) {
-		filelist << wxT("'") << projectFiles.at(i).GetFullPath() << wxT("'") << wxT(",");
+		m_workspaceDatabase->DeleteByFileName(wxFileName(), projectFiles.at(i).GetFullPath(), false);
 		file_array.Add(projectFiles.at(i).GetFullPath());
 	}
-
-	filelist = filelist.BeforeLast(wxT(','));
-	query << filelist << wxT(")");
-
-	try {
-		m_workspaceDatabase->Begin();
-		m_workspaceDatabase->ExecuteUpdate(query);
-		m_workspaceDatabase->DeleteFromFiles(file_array);
-		m_workspaceDatabase->Commit();
-		m_workspaceDatabase->ClearCache();
-	} catch (wxSQLite3Exception &e) {
-		wxUnusedVar(e);
-	}
-
+	m_workspaceDatabase->DeleteFromFiles(file_array);
+	m_workspaceDatabase->Commit();
 	UpdateFileTree(projectFiles, false);
-}
-
-void TagsManager::BuildExternalDatabase(ExtDbData &data)
-{
-	// set cursor to busy
-	wxBusyCursor busy;
-	wxArrayString all_files;
-	wxArrayString files;
-	bool extlessFiles = data.parseFilesWithoutExtension;
-
-	wxDir::GetAllFiles(data.rootPath, &all_files);
-	wxStringTokenizer tok(data.fileMasking, wxT(";"));
-
-	std::map<wxString, bool> specMap;
-	while ( tok.HasMoreTokens() ) {
-		std::pair<wxString, bool> val;
-		val.first = tok.GetNextToken().AfterLast(wxT('*'));
-		val.first = val.first.AfterLast(wxT('.')).MakeLower();
-		val.second = true;
-		specMap.insert( val );
-	}
-
-	//filter non interesting files
-	for (size_t i=0; i<all_files.GetCount(); i++) {
-		wxFileName fn(all_files.Item(i));
-
-		if (data.includeDirs.Index(fn.GetPath()) == wxNOT_FOUND) {
-			continue;
-		}
-
-		if ( specMap.empty() ) {
-			files.Add(all_files.Item(i));
-		} else if (fn.GetExt().IsEmpty() & extlessFiles) {
-			files.Add(all_files.Item(i));
-		} else if (specMap.find(fn.GetExt().MakeLower()) != specMap.end()) {
-			files.Add(all_files.Item(i));
-		}
-	}
-
-	TagsDatabase db;
-	db.OpenDatabase(data.dbName);
-
-	// remove all files which do not need re-tagging
-	DoFilterNonNeededFilesForRetaging(files, &db);
-
-	// if no files needs to be updated, print message in the status bar and continue
-	if (files.IsEmpty()) {
-		wxFrame *frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
-		if (frame) {
-			frame->SetStatusText(wxT("All files are up-to-date"), 0);
-		}
-		return;
-	}
-
-	wxFileName dbPath(data.rootPath);
-	wxString path = dbPath.GetFullPath();
-
-	if (DoBuildDatabase(files, db, &path)) {
-
-		// update the last_retagged field in the database for these files
-		UpdateFilesRetagTimestamp(files, &db);
-	}
 }
 
 void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
@@ -1150,7 +1056,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
 	UpdateFileTree(m_workspaceDatabase, true);
 }
 
-bool TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, const wxString *rootPath)
+bool TagsManager::DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, const wxString *rootPath)
 {
 	wxString tags;
 
@@ -1186,15 +1092,9 @@ bool TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 
 		tags.Clear();
 		tagParseResult parsing_result;
-		parsing_result.comments = NULL;
 
 		parsing_result.fileName = curFile.GetFullName();
-		if (GetParseComments()) {
-			parsing_result.comments = new std::vector<CommentPtr>();
-			parsing_result.tree = ParseSourceFile(curFile, parsing_result.comments);
-		} else {
-			parsing_result.tree = ParseSourceFile(curFile);
-		}
+		parsing_result.tree = ParseSourceFile(curFile);
 
 		// update the progress bar
 		if (!prgDlg.Update(i, wxString::Format(wxT("Saving  : %s"), curFile.GetFullName().c_str()))) {
@@ -1203,36 +1103,8 @@ bool TagsManager::DoBuildDatabase(const wxArrayString &files, TagsDatabase &db, 
 		}
 
 		db.Store(parsing_result.tree, wxFileName());
-		if (parsing_result.comments) {
-			// free the vector
-			delete parsing_result.comments;
-		}
-	}
-
-	// update the variable table
-	if (rootPath) {
-		DbRecordPtr record(new VariableEntry(*rootPath, *rootPath));
-		db.Begin();
-		if (db.Insert(record) == TagExist) {
-			db.Update(record);
-		}
-		db.Commit();
 	}
 	return true;
-}
-
-void TagsManager::OpenExternalDatabase(const wxFileName &dbName)
-{
-	// check that the database exist
-	if (!wxFile::Exists(dbName.GetFullPath()))
-		return;
-
-	wxString message;
-	m_externalDatabase->OpenDatabase(dbName);
-	if (m_externalDatabase->GetVersion() != m_externalDatabase->GetSchemaVersion()) {
-		m_externalDatabase->RecreateDatabase();
-	}
-	UpdateFileTree(m_externalDatabase, true);
 }
 
 void TagsManager::FindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags)
@@ -1247,41 +1119,28 @@ void TagsManager::FindByNameAndScope(const wxString &name, const wxString &scope
 
 void TagsManager::FindByPath(const wxString &path, std::vector<TagEntryPtr> &tags)
 {
-	size_t count_before = tags.size();
-	if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByPath(path, tags);
-	if ( count_before == tags.size() ) {
-		// try the external database for match
-		m_workspaceDatabase->GetTagsByPath(path, tags);
-	}
+	m_workspaceDatabase->GetTagsByPath(path, tags);
 }
 
 void TagsManager::DoFindByNameAndScope(const wxString &name, const wxString &scope, std::vector<TagEntryPtr> &tags)
 {
 	wxString sql;
 	if (scope == wxT("<global>")) {
-		// try the external database,if it fails, try to workspace one
-		size_t count_before = tags.size();
-		if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByNameAndParent(name, wxT("<global>"), tags);
-		if ( count_before == tags.size() ) {
-			// try the workspace database for match
-			m_workspaceDatabase->GetTagsByNameAndParent(name, wxT("<global>"), tags);
-		}
+		// try the workspace database for match
+		m_workspaceDatabase->GetTagsByNameAndParent(name, wxT("<global>"), tags);
 	} else {
 		std::vector<wxString> derivationList;
 		derivationList.push_back(scope);
 		GetDerivationList(scope, derivationList);
-
+		wxArrayString paths;
 		for (size_t i=0; i<derivationList.size(); i++) {
 			wxString path_;
 			path_ << derivationList.at(i) << wxT("::") << name ;
-			size_t count_before = tags.size();
-
-			if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByPath(path_, tags);
-			if ( count_before == tags.size() ) {
-				// try the workspace database for match
-				m_workspaceDatabase->GetTagsByPath(path_, tags);
-			}
+			paths.Add(path_);
 		}
+
+		// try the workspace database for match
+		m_workspaceDatabase->GetTagsByPath(paths, tags);
 	}
 }
 
@@ -1289,10 +1148,6 @@ bool TagsManager::IsTypeAndScopeContainer(const wxString& typeName, wxString& sc
 {
 	wxString cacheKey;
 	cacheKey << typeName << wxT("@") << scope;
-
-	if (!m_externalDatabase->IsOpen()) {
-		m_typeScopeContainerCache.clear();
-	}
 
 	//we search the cache first, note that the cache
 	//is used only for the external database
@@ -1304,64 +1159,15 @@ bool TagsManager::IsTypeAndScopeContainer(const wxString& typeName, wxString& sc
 	// replace macros:
 	// replace the provided typeName and scope with user defined macros as appeared in the PreprocessorMap
 	wxString _typeName = DoReplaceMacros(typeName);
-	wxString _scope = DoReplaceMacros(scope);
+	wxString _scope    = DoReplaceMacros(scope);
 
-	wxString sql;
-	sql << wxT("select ID from tags where name='") << _typeName << wxT("' and scope='") << _scope << wxT("' and KIND IN('struct', 'class') LIMIT 1");
-
-	for (size_t i=0; i<2; i++) {
-
-		if (i == 1) {
-			// Second try, change the SQL query to test against the global scope
-			sql.Clear();
-			sql << wxT("select ID from tags where name='") << _typeName << wxT("' and scope='<global>' LIMIT 1");
-		}
-
-		try {
-			wxSQLite3ResultSet rs = m_workspaceDatabase->Query(sql);
-			if (rs.NextRow()) {
-				if (i == 1) {
-					scope = wxT("<global>");
-				}
-				return true;
-
-			}
-
-			if ( m_externalDatabase->IsOpen() ) {
-
-				wxSQLite3ResultSet ex_rs;
-				ex_rs = m_externalDatabase->Query(sql);
-				if ( ex_rs.NextRow() ) {
-					if (i == 1) {
-						scope = wxT("<global>");
-						return true;
-					}
-					m_typeScopeContainerCache[cacheKey] = true;
-					return true;
-				} else {
-					if ( i == 1 ) {
-						m_typeScopeContainerCache[cacheKey] = false;
-					}
-				}
-			}
-		} catch ( wxSQLite3Exception& e) {
-			wxUnusedVar(e);
-			return false;
-		}
-
-		// no match, try to find the typeName in the global scope
-	}
-	return false;
+	return m_workspaceDatabase->IsTypeAndScopeContainer(_typeName, _scope);
 }
 
 bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope)
 {
 	wxString cacheKey;
 	cacheKey << typeName << wxT("@") << scope;
-
-	if (!m_externalDatabase->IsOpen()) {
-		m_typeScopeCache.clear();
-	}
 
 	//we search the cache first, note that the cache
 	//is used only for the external database
@@ -1373,74 +1179,9 @@ bool TagsManager::IsTypeAndScopeExists(const wxString &typeName, wxString &scope
 	// replace macros:
 	// replace the provided typeName and scope with user defined macros as appeared in the PreprocessorMap
 	wxString _typeName = DoReplaceMacros(typeName);
-	wxString _scope = DoReplaceMacros(scope);
+	wxString _scope    = DoReplaceMacros(scope);
 
-	wxString sql;
-	sql << wxT("select ID from tags where name='") << _typeName << wxT("' and scope='") << _scope << wxT("' LIMIT 1");
-
-	for (size_t i=0; i<2; i++) {
-
-		if (i == 1) {
-			// Second try, change the SQL query to test against the global scope
-			sql.Clear();
-			sql << wxT("select ID from tags where name='") << _typeName << wxT("' and scope='<global>' LIMIT 1");
-		}
-
-		try {
-			wxSQLite3ResultSet rs = m_workspaceDatabase->Query(sql);
-			if (rs.NextRow()) {
-				if (i == 1) {
-					scope = wxT("<global>");
-				}
-				return true;
-
-			}
-
-			if ( m_externalDatabase->IsOpen() ) {
-
-				wxSQLite3ResultSet ex_rs;
-				ex_rs = m_externalDatabase->Query(sql);
-				if ( ex_rs.NextRow() ) {
-					if (i == 1) {
-						scope = wxT("<global>");
-						return true;
-					}
-					m_typeScopeCache[cacheKey] = true;
-					return true;
-				} else {
-					if ( i == 1 ) {
-						m_typeScopeCache[cacheKey] = false;
-					}
-				}
-			}
-		} catch ( wxSQLite3Exception& e) {
-			wxUnusedVar(e);
-			return false;
-		}
-
-		// no match, try to find the typeName in the global scope
-	}
-	return false;
-}
-
-void TagsManager::ConvertPath(TagEntryPtr& tag)
-{
-	//get list of variables from database if not loaded
-	if (m_externalDatabase->IsOpen() && m_vars.empty()) {
-		m_externalDatabase->GetVariables(m_vars);
-	}
-
-	wxString filename = tag->GetFile();
-	for (size_t i=0; i<m_vars.size(); i++) {
-		wxString fixedpath;
-		if (m_vars.at(i)->GetValue().IsEmpty() == false) {
-			if (filename.StartsWith(m_vars.at(i)->GetName(), &fixedpath)) {
-				fixedpath = fixedpath.Prepend(m_vars.at(i)->GetValue() + wxT("/"));
-				tag->SetFile(fixedpath);
-				break;
-			}
-		}
-	}
+	return m_workspaceDatabase->IsTypeAndScopeExist(_typeName, _scope);
 }
 
 bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> &derivationList)
@@ -1452,10 +1193,7 @@ bool TagsManager::GetDerivationList(const wxString &path, std::vector<wxString> 
 	kind.Add(wxT("class"));
 	kind.Add(wxT("struct"));
 
-	if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByKindAndPath(kind, path, tags);
-	if ( tags.empty() ) {
-		m_workspaceDatabase->GetTagsByKindAndPath(kind, path, tags);
-	}
+	m_workspaceDatabase->GetTagsByKindAndPath(kind, path, tags);
 
 	if (tags.size() == 1) {
 		tag = tags.at(0);
@@ -1620,20 +1358,7 @@ void TagsManager::CloseDatabase()
 	if (m_workspaceDatabase) {
 		UpdateFileTree(m_workspaceDatabase, false);
 		delete m_workspaceDatabase;
-		m_workspaceDatabase = new TagsDatabase( !GetCtagsOptions().GetDisableCaching() );
-	}
-}
-
-void TagsManager::CloseExternalDatabase()
-{
-	//close the database by simply deleting it and creating new
-	//empty one
-	if (m_externalDatabase) {
-		UpdateFileTree(m_externalDatabase, false);
-		delete m_externalDatabase;
-		m_externalDatabase = new TagsDatabase(true);
-		//clear variables cache
-		m_vars.clear();
+		m_workspaceDatabase = new TagsStorageSQLite( );
 	}
 }
 
@@ -1642,7 +1367,6 @@ DoxygenComment TagsManager::GenerateDoxygenComment(const wxString &file, const i
 	if (m_workspaceDatabase->IsOpen()) {
 		std::vector<TagEntryPtr> tags;
 
-		if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByFileAndLine(file, line + 1, tags );
 		m_workspaceDatabase->GetTagsByFileAndLine(file, line + 1, tags );
 
 		if (tags.empty() || tags.size() > 1)
@@ -1700,16 +1424,14 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxString &kind, s
 
 	//make enough room for max of 500 elements in the vector
 	tags.reserve(500);
-	wxArrayString kinds;
+	wxArrayString kinds, scopes;
 	kinds.Add(kind);
 
 	for (size_t i=0; i<derivationList.size(); i++) {
-		size_t count_before = tags.size();
-		if ( m_useExternalDatabase && !onlyWorkspace ) m_externalDatabase->GetTagsByScopeAndKind(derivationList.at(i), kinds, tags);
-		if ( count_before == tags.size() ) {
-			m_workspaceDatabase->GetTagsByScopeAndKind(derivationList.at(i), kinds, tags);
-		}
+		scopes.Add(derivationList.at(i));
 	}
+
+	m_workspaceDatabase->GetTagsByScopesAndKind(scopes, kinds, tags);
 	// and finally sort the results
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
 }
@@ -1738,40 +1460,10 @@ bool TagsManager::GetMemberType(const wxString &scope, const wxString &name, wxS
 	return GetLanguage()->ProcessExpression(expression, wxEmptyString, wxFileName(), wxNOT_FOUND, type, typeScope, dummy, dummy);
 }
 
-int TagsManager::UpdatePathVariable(const wxString &name, const wxString &value)
-{
-	DbRecordPtr record(new VariableEntry(name, value));
-	return m_externalDatabase->Update(record);
-}
-
-int TagsManager::InsertPathVariable(const wxString &name, const wxString &value)
-{
-	DbRecordPtr record(new VariableEntry(name, value));
-	return m_externalDatabase->Insert(record);
-}
-
-int TagsManager::GetPathVariable(const wxString &name, wxString &path)
-{
-	VariableEntryPtr var = m_externalDatabase->FindVariableByName(name);
-	if (var) {
-		path = var->GetValue();
-		return TagOk;
-	}
-	return TagError;
-}
-
-void TagsManager::ReloadExtDbPaths()
-{
-	m_vars.clear();
-}
-
 void TagsManager::GetFiles(const wxString &partialName, std::vector<FileEntryPtr> &files)
 {
 	if (m_workspaceDatabase) {
 		m_workspaceDatabase->GetFiles(partialName, files);
-	}
-	if (m_externalDatabase && m_externalDatabase->IsOpen()) {
-		m_externalDatabase->GetFiles(partialName, files);
 	}
 }
 
@@ -1819,22 +1511,7 @@ void TagsManager::GetScopesFromFile(const wxFileName &fileName, std::vector< wxS
 		return;
 	}
 
-	wxString sql;
-	sql << wxT("select distinct scope from tags where file = '")
-	<< fileName.GetFullPath() << wxT("' ")
-	<< wxT(" and kind in('prototype', 'function', 'enum')")
-	<< wxT(" order by scope ASC");
-
-	//we take the first entry
-	try {
-		wxSQLite3ResultSet rs = m_workspaceDatabase->Query(sql);
-		while ( rs.NextRow() ) {
-			scopes.push_back(rs.GetString(0));
-		}
-		rs.Finalize();
-	} catch ( wxSQLite3Exception& e) {
-		wxUnusedVar(e);
-	}
+	m_workspaceDatabase->GetScopesFromFileAsc(fileName, scopes);
 }
 
 void TagsManager::TagsFromFileAndScope(const wxFileName& fileName, const wxString &scopeName, std::vector< TagEntryPtr > &tags)
@@ -1843,25 +1520,12 @@ void TagsManager::TagsFromFileAndScope(const wxFileName& fileName, const wxStrin
 		return;
 	}
 
-	wxString sql;
-	sql << wxT("select * from tags where file = '")
-	<< fileName.GetFullPath() << wxT("' ")
-	<< wxT(" and scope='") << scopeName << wxT("' ")
-	<< wxT(" and kind in('prototype', 'function', 'enum')");
+	wxArrayString kind;
+	kind.Add(wxT("function"));
+	kind.Add(wxT("prototype"));
+	kind.Add(wxT("enum"));
 
-	//we take the first entry
-	try {
-		wxSQLite3ResultSet rs = m_workspaceDatabase->Query(sql);
-		while ( rs.NextRow() ) {
-			// Construct a TagEntry from the rescord set
-			TagEntryPtr tag(new TagEntry(rs));
-			tags.push_back(tag);
-		}
-		rs.Finalize();
-	} catch ( wxSQLite3Exception& e) {
-		wxUnusedVar(e);
-	}
-
+	m_workspaceDatabase->GetTagsByFileScopeAndKind(fileName, scopeName, kind, tags);
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
 }
 
@@ -1881,26 +1545,13 @@ TagEntryPtr TagsManager::FirstFunctionOfFile(const wxFileName &fileName)
 		return NULL;
 	}
 
-	wxString sql;
-	sql << wxT("select * from tags where file = '")
-	<< fileName.GetFullPath()
-	<< wxT("' ")
-	<< wxT(" and kind='function' order by line ASC");
+	std::vector<TagEntryPtr> tags;
+	wxArrayString            kind;
+	kind.Add(wxT("function"));
+	m_workspaceDatabase->GetTagsByKindAndFile(kind, fileName.GetFullPath(), wxT("line"), ITagsStorage::OrderAsc, tags);
 
-	//we take the first entry
-	try {
-		wxSQLite3ResultSet rs = m_workspaceDatabase->Query(sql);
-		if ( rs.NextRow() ) {
-			// Construct a TagEntry from the rescord set
-			TagEntryPtr tag(new TagEntry(rs));
-			rs.Finalize();
-			return tag;
-		}
-		rs.Finalize();
-	} catch ( wxSQLite3Exception& e) {
-		wxUnusedVar(e);
-	}
-	return NULL;
+	if ( tags.empty() ) return NULL;
+	return tags.at(0);
 }
 
 TagEntryPtr TagsManager::FirstScopeOfFile(const wxFileName &fileName)
@@ -1908,27 +1559,15 @@ TagEntryPtr TagsManager::FirstScopeOfFile(const wxFileName &fileName)
 	if (!m_workspaceDatabase) {
 		return NULL;
 	}
+	std::vector<TagEntryPtr> tags;
+	wxArrayString            kind;
+	kind.Add(wxT("struct"));
+	kind.Add(wxT("class"));
+	kind.Add(wxT("namespace"));
+	m_workspaceDatabase->GetTagsByKindAndFile(kind, fileName.GetFullPath(), wxT("line"), ITagsStorage::OrderAsc, tags);
 
-	wxString sql;
-	sql << wxT("select * from tags where file = '")
-	<< fileName.GetFullPath()
-	<< wxT("' ")
-	<< wxT(" and (kind='class' or kind='struct' or kind='namespace') order by line ASC");
-
-	//we take the first entry
-	try {
-		wxSQLite3ResultSet rs = m_workspaceDatabase->Query(sql);
-		if ( rs.NextRow() ) {
-			// Construct a TagEntry from the rescord set
-			TagEntryPtr tag(new TagEntry(rs));
-			rs.Finalize();
-			return tag;
-		}
-		rs.Finalize();
-	} catch ( wxSQLite3Exception& e) {
-		wxUnusedVar(e);
-	}
-	return NULL;
+	if ( tags.empty() ) return NULL;
+	return tags.at(0);
 }
 
 wxString TagsManager::FormatFunction(TagEntryPtr tag, bool impl, const wxString &scope)
@@ -2035,7 +1674,6 @@ void TagsManager::GetClasses(std::vector< TagEntryPtr > &tags, bool onlyWorkspac
 	kind.Add(wxT("struct"));
 	kind.Add(wxT("union"));
 
-	if ( m_useExternalDatabase && !onlyWorkspace ) m_externalDatabase->GetTagsByKind(kind, wxT("name"), ITagsStorage::OrderAsc, tags);
 	m_workspaceDatabase->GetTagsByKind(kind, wxT("name"), ITagsStorage::OrderAsc, tags);
 }
 
@@ -2085,10 +1723,6 @@ void TagsManager::GetFunctions(std::vector< TagEntryPtr > &tags, const wxString 
 	wxArrayString kind;
 	kind.Add(wxT("function"));
 	kind.Add(wxT("prototype"));
-	if ( !onlyWorkspace && m_useExternalDatabase ) {
-		// try the external database
-		m_externalDatabase->GetTagsByKindAndFile(kind, fileName, wxT("name"), ITagsStorage::OrderAsc, tags);
-	}
 	m_workspaceDatabase->GetTagsByKindAndFile(kind, fileName, wxT("name"), ITagsStorage::OrderAsc, tags);
 }
 
@@ -2138,28 +1772,7 @@ void TagsManager::GetAllTagsNames(wxArrayString &tagsList)
 		return;
 	}
 
-	try {
-
-		wxString whereClause;
-		whereClause << wxT(" kind IN (");
-		for (size_t i=0; i<kindArr.GetCount(); i++) {
-			whereClause << wxT("'") << kindArr.Item(i) << wxT("',");
-		}
-
-		whereClause = whereClause.BeforeLast(wxT(','));
-		whereClause << wxT(") ");
-
-		wxString query(wxT("SELECT DISTINCT name FROM tags WHERE "));
-		query << whereClause << wxT(" order by name ASC");
-
-		wxSQLite3ResultSet res = m_workspaceDatabase->Query(query);
-		while (res.NextRow()) {
-			tagsList.Add(res.GetString(0));
-		}
-
-	} catch (wxSQLite3Exception &e) {
-		wxUnusedVar(e);
-	}
+	m_workspaceDatabase->GetTagsNames(kindArr, tagsList);
 }
 
 void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags, bool include_anon)
@@ -2174,16 +1787,14 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
 
 	//make enough room for max of 500 elements in the vector
 	tags.reserve(500);
-
+	wxArrayString scopes;
 	for (size_t i=0; i<derivationList.size(); i++) {
 		wxString tmpScope(derivationList.at(i));
 		tmpScope = DoReplaceMacros(tmpScope);
-		size_t count_before = tags.size();
-		if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByScopeAndKind(tmpScope, kind, tags);
-		if( count_before == tags.size() ) {
-			m_workspaceDatabase->GetTagsByScopeAndKind(tmpScope, kind, tags);
-		}
+		scopes.Add(tmpScope);
 	}
+
+	m_workspaceDatabase->GetTagsByScopesAndKind(scopes, kind, tags);
 
 	// and finally sort the results
 	std::sort(tags.begin(), tags.end(), SAscendingSort());
@@ -2388,7 +1999,7 @@ void TagsManager::UpdateFileTree(const std::vector<wxFileName> &files, bool bold
 	}
 }
 
-void TagsManager::UpdateFileTree(TagsDatabase *td, bool bold)
+void TagsManager::UpdateFileTree(ITagsStorage *td, bool bold)
 {
 	if (GetCtagsOptions().GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD) {
 		std::vector<FileEntryPtr> files;
@@ -2418,63 +2029,36 @@ void TagsManager::NotifyFileTree(bool bold)
 		UpdateFileTree(m_workspaceDatabase, bold);
 	}
 
-	if (m_externalDatabase && m_externalDatabase->IsOpen()) {
-		UpdateFileTree(m_externalDatabase, bold);
-	}
-
 	// restore original flags
 	m_tagsOptions.SetFlags(origFlags);
 }
 
 void TagsManager::DeleteTagsByFilePrefix(const wxString& dbfileName, const wxString& filePrefix)
 {
-	TagsDatabase db;
-	try {
+	ITagsStorage *db = new TagsStorageSQLite();
+	db->OpenDatabase(wxFileName(dbfileName));
+	db->Begin();
 
-		db.OpenDatabase(wxFileName(dbfileName));
-		db.Begin();
+	// delete the tags
+	db->DeleteByFilePrefix     (db->GetDatabaseFileName(), filePrefix);
 
-		// delete the tags
-		db.DeleteByFilePrefix     (db.GetDatabaseFileName(), filePrefix);
+	// deelete the FILES entries
+	db->DeleteFromFilesByPrefix(db->GetDatabaseFileName(), filePrefix);
+	db->Commit();
 
-		// deelete the FILES entries
-		db.DeleteFromFilesByPrefix(db.GetDatabaseFileName(), filePrefix);
-
-		VariableEntry ve(filePrefix, wxEmptyString);
-		wxString delStr = ve.GetDeleteOneStatement();
-		wxSQLite3Statement delStatement = db.PrepareStatement(delStr);
-		ve.Delete(delStatement);
-
-		db.Commit();
-
-		// Clear the external database cache
-		m_externalDatabase->ClearCache();
-
-	} catch (wxSQLite3Exception &e) {
-		wxUnusedVar(e);
-	}
+	delete db;
 }
 
-void TagsManager::UpdateFilesRetagTimestamp(const wxArrayString& files, TagsDatabase* db)
+void TagsManager::UpdateFilesRetagTimestamp(const wxArrayString& files, ITagsStorage* db)
 {
-	try {
-
-		std::vector<DbRecordPtr> entries;
-		for (size_t i=0; i<files.GetCount(); i++) {
-			FileEntry *fe = new FileEntry();
-			fe->SetFile(files.Item(i));
-			fe->SetLastRetaggedTimestamp((int)time(NULL));
-			DbRecordPtr fep(fe);
-			entries.push_back(fep);
-		}
-		db->Store(entries, wxFileName());
-
-	} catch (wxSQLite3Exception &e) {
-		wxUnusedVar(e);
+	db->Begin();
+	for (size_t i=0; i<files.GetCount(); i++) {
+		db->InsertFileEntry(files.Item(i), (int)time(NULL));
 	}
+	db->Commit();
 }
 
-void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, TagsDatabase* db)
+void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITagsStorage* db)
 {
 	std::vector<FileEntryPtr> files_entries;
 	db->GetFiles(files_entries);
@@ -2514,7 +2098,7 @@ void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, TagsD
 	}
 }
 
-void TagsManager::DoFilterNonNeededFilesForRetaging(wxArrayString& strFiles, TagsDatabase* db)
+void TagsManager::DoFilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITagsStorage* db)
 {
 	TagsOptionsData options = GetCtagsOptions();
 	if (!(options.GetFlags() & CC_USE_FULL_RETAGGING)) {
@@ -2552,30 +2136,4 @@ void TagsManager::GetTagsByKind(std::vector<TagEntryPtr>& tags, const wxArrayStr
 {
 	wxUnusedVar(partName);
 	m_workspaceDatabase->GetTagsByKind(kind, wxEmptyString, ITagsStorage::OrderNone, tags);
-	if ( m_useExternalDatabase ) m_externalDatabase->GetTagsByKind(kind, wxEmptyString, ITagsStorage::OrderNone, tags);
-}
-
-void TagsManager::OnUpdateCache(wxCommandEvent& event)
-{
-	event.Skip();
-
-	ParseThreadEventData *data = (ParseThreadEventData*) event.GetClientData();
-	if (data && !data->GetItems().empty()) {
-		m_workspaceDatabase->DeleteCachedEntriesByRelation( data->GetItems() );
-	}
-}
-
-void TagsManager::EnableCaching(bool enable)
-{
-	m_workspaceDatabase->EnableCache(enable);
-}
-
-void TagsManager::SetMaxCacheSize(int size)
-{
-	m_workspaceDatabase->SetMaxCacheSize(size);
-}
-
-int TagsManager::GetCacheItemCount()
-{
-	return m_workspaceDatabase->GetCacheItemsCount();
 }

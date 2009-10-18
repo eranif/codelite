@@ -37,12 +37,6 @@
 //#define __PERFORMANCE
 #include "performance.h"
 
-#ifdef __VISUALC__
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-#endif
-
 //===============================================================
 //defined in generated files from the yacc grammar:
 //cpp_scope_garmmar.y
@@ -239,223 +233,200 @@ bool Language::ProcessExpression(const wxString& stmt,
                                  wxString &oper,					//output
                                  wxString &scopeTemplateInitList)	//output
 {
-	PERF_START("Language::ProcessExpression");
-
-	ExpressionResult result;
-	wxString statement( stmt );
 	bool evaluationSucceeded = true;
+	PERF_BLOCK("Language::ProcessExpression") {
+		ExpressionResult result;
+		wxString statement( stmt );
 
-	// Trim whitespace from right and left
-	static wxString trimString(_T("{};\r\n\t\v "));
+		// Trim whitespace from right and left
+		static wxString trimString(_T("{};\r\n\t\v "));
 
-	statement.erase(0, statement.find_first_not_of(trimString));
-	statement.erase(statement.find_last_not_of(trimString)+1);
-	wxString dbgStmnt = statement;
+		statement.erase(0, statement.find_first_not_of(trimString));
+		statement.erase(statement.find_last_not_of(trimString)+1);
+		wxString dbgStmnt = statement;
 
-	// First token is handled sepratly
-	wxString word;
-	wxString op;
-	wxString lastFuncSig;
-	wxString accumulatedScope;
-	std::vector<TagEntry> tags;
-	wxString visibleScope, scopeName;
-	wxString parentTypeName, parentTypeScope;
-	wxString grandParentTypeName, grandParentTypeScope;
+		// First token is handled sepratly
+		wxString word;
+		wxString op;
+		wxString lastFuncSig;
+		wxString accumulatedScope;
+		std::vector<TagEntry> tags;
+		wxString visibleScope, scopeName;
+		wxString parentTypeName, parentTypeScope;
+		wxString grandParentTypeName, grandParentTypeScope;
 
-	PERF_BLOCK("GetScope") {
-		visibleScope = OptimizeScope(text);
-	}
-
-	std::vector<wxString> additionalScopes;
-	PERF_BLOCK("GetScopeName") {
-		scopeName = GetScopeName(text, &additionalScopes);
-	}
-
-	PERF_BLOCK("FunctionFromFileLine") {
-		TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
-		if (tag) {
-			lastFuncSig = tag->GetSignature();
-		}
-	}
-
-	//get next token using the tokenscanner object
-	m_tokenScanner->SetText(_C(statement));
-	Variable parent;
-	while (NextToken(word, op)) {
-		oper = op;
-		m_parentVar.Reset();
-		wxString templateInitList;
-		result = ParseExpression(word);
-
-
-		//parsing failed?
-		if (result.m_name.empty()) {
-			wxLogMessage(wxString::Format(wxT("Failed to parse '%s' from '%s'"), word.c_str(), statement.c_str()));
-			evaluationSucceeded = false;
-			break;
+		PERF_BLOCK("GetScope") {
+			visibleScope = OptimizeScope(text);
 		}
 
-		scopeTemplateInitList.Clear();
-		word.clear();
-		//no tokens before this, what we need to do now, is find the TagEntry
-		//that corrseponds to the result
-		if (result.m_isaType) {
-			//-------------------------------------------
-			// Handle type (usually when casting is found
-			//--------------------------------------------
+		std::vector<wxString> additionalScopes;
+		PERF_BLOCK("GetScopeName") {
+			scopeName = GetScopeName(text, &additionalScopes);
+		}
 
-			typeScope = result.m_scope.empty() ? wxT("<global>") : _U(result.m_scope.c_str());
-			typeName = _U(result.m_name.c_str());
-		} else if (result.m_isThis) {
-			//-----------------------------------------
-			// special handle for 'this' keyword
-			//-----------------------------------------
+		PERF_BLOCK("FunctionFromFileLine") {
+			TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
+			if (tag) {
+				lastFuncSig = tag->GetSignature();
+			}
+		}
 
-			typeScope = result.m_scope.empty() ? wxT("<global>") : _U(result.m_scope.c_str());
-			if (scopeName == wxT("<global>")) {
-				wxLogMessage(wxString::Format(wxT("'this' can not be used in the global scope")));
+		//get next token using the tokenscanner object
+		m_tokenScanner->SetText(_C(statement));
+		Variable parent;
+		while (NextToken(word, op)) {
+			oper = op;
+			m_parentVar.Reset();
+			wxString templateInitList;
+			result = ParseExpression(word);
+
+
+			//parsing failed?
+			if (result.m_name.empty()) {
+				wxLogMessage(wxString::Format(wxT("Failed to parse '%s' from '%s'"), word.c_str(), statement.c_str()));
 				evaluationSucceeded = false;
 				break;
 			}
-			if (op == wxT("::")) {
-				wxLogMessage(wxString::Format(wxT("'this' can not be used with operator ::")));
 
-				evaluationSucceeded = false;
-				break;
-			} // if(oper == wxT("::"))
+			scopeTemplateInitList.Clear();
+			word.clear();
+			//no tokens before this, what we need to do now, is find the TagEntry
+			//that corrseponds to the result
+			if (result.m_isaType) {
+				//-------------------------------------------
+				// Handle type (usually when casting is found
+				//--------------------------------------------
 
-			if (result.m_isPtr && op == wxT(".")) {
-				wxLogMessage(wxString::Format(wxT("Did you mean to use '->' instead of '.' ?")));
-				evaluationSucceeded = false;
-				break;
-			}
-			if (!result.m_isPtr && op == wxT("->")) {
-				wxLogMessage(wxString::Format(wxT("Can not use '->' operator on a non pointer object")));
-				evaluationSucceeded = false;
-				break;
-			}
-			typeName = scopeName;
-		} else {
-			//-------------------------------------------
-			// found an identifier
-			//--------------------------------------------
-			wxString scopeToSearch(scopeName);
-			if (parentTypeScope.IsEmpty() == false && parentTypeScope != wxT("<global>")) {
-				scopeToSearch = parentTypeScope + wxT("::") + parentTypeName;
-			} else if ((parentTypeScope.IsEmpty()|| parentTypeScope == wxT("<global>")) && !parentTypeName.IsEmpty()) {
-				scopeToSearch = parentTypeName;
-			}
+				typeScope = result.m_scope.empty() ? wxT("<global>") : _U(result.m_scope.c_str());
+				typeName = _U(result.m_name.c_str());
+			} else if (result.m_isThis) {
+				//-----------------------------------------
+				// special handle for 'this' keyword
+				//-----------------------------------------
 
-			//--------------------------------------------------------------------------------------------
-			//keep the scope that we searched so far. The accumumlated scope
-			//are used for types, for scenarios like:
-			//void Box::GetWidth()
-			// {
-			//	Rectangle::
-			//
-			//trying to process the above code, will yield searching Rectangle inside Box scope, since we are
-			//inside Box's GetWidth() function.
-			//the correct behavior shuold be searching for Rectangle in the global scope.
-			//to correct this, we do special handling for Qualifier followed by coloon:colon operator (::)
-			if (accumulatedScope.IsEmpty() == false) {
-				if (accumulatedScope == wxT("<global>")) {
-					accumulatedScope = scopeToSearch;
-				} else {
-					accumulatedScope << wxT("::");
-					accumulatedScope << scopeToSearch;
-				}
-			} else {
-				accumulatedScope << wxT("<global>");
-			}
-
-			wxString originalScopeName(scopeToSearch);
-			if (op == wxT("::")) {
-				//if the operator was something like 'Qualifier::', it is safe to assume
-				//that the secope to be searched is the full expression
-				scopeToSearch = accumulatedScope;
-			}
-
-			// get the derivation list of the typename
-			bool res(false);
-			wxString _name(_U(result.m_name.c_str()));
-			PERF_BLOCK("TypeFromName") {
-				for (int i=0; i<2; i++) {
-					res = TypeFromName( _name,
-					                    visibleScope,
-					                    lastFuncSig,
-					                    scopeToSearch,
-					                    additionalScopes,
-					                    parentTypeName.IsEmpty(),
-					                    typeName,   //output
-					                    typeScope); //output
-
-					if (!res && originalScopeName.IsEmpty() == false) {
-						// the scopeToSearch was modified earlier with the accumulated scope
-						// restore the search scope and try again
-						scopeToSearch = originalScopeName;
-						continue;
-					}
+				typeScope = result.m_scope.empty() ? wxT("<global>") : _U(result.m_scope.c_str());
+				if (scopeName == wxT("<global>")) {
+					wxLogMessage(wxString::Format(wxT("'this' can not be used in the global scope")));
+					evaluationSucceeded = false;
 					break;
 				}
-			}
+				if (op == wxT("::")) {
+					wxLogMessage(wxString::Format(wxT("'this' can not be used with operator ::")));
 
-			if (!res) {
-				evaluationSucceeded = false;
-				break;
-			}
+					evaluationSucceeded = false;
+					break;
+				} // if(oper == wxT("::"))
 
-			//-------------------------------------
-			// do typedef / template subsitutations
-			//-------------------------------------
+				if (result.m_isPtr && op == wxT(".")) {
+					wxLogMessage(wxString::Format(wxT("Did you mean to use '->' instead of '.' ?")));
+					evaluationSucceeded = false;
+					break;
+				}
+				if (!result.m_isPtr && op == wxT("->")) {
+					wxLogMessage(wxString::Format(wxT("Can not use '->' operator on a non pointer object")));
+					evaluationSucceeded = false;
+					break;
+				}
+				typeName = scopeName;
+			} else {
+				//-------------------------------------------
+				// found an identifier
+				//--------------------------------------------
+				wxString scopeToSearch(scopeName);
+				if (parentTypeScope.IsEmpty() == false && parentTypeScope != wxT("<global>")) {
+					scopeToSearch = parentTypeScope + wxT("::") + parentTypeName;
+				} else if ((parentTypeScope.IsEmpty()|| parentTypeScope == wxT("<global>")) && !parentTypeName.IsEmpty()) {
+					scopeToSearch = parentTypeName;
+				}
 
-			wxString tmp_name(typeName);
-			bool     res_typedef;
-			bool     res_templte;
+				//--------------------------------------------------------------------------------------------
+				//keep the scope that we searched so far. The accumumlated scope
+				//are used for types, for scenarios like:
+				//void Box::GetWidth()
+				// {
+				//	Rectangle::
+				//
+				//trying to process the above code, will yield searching Rectangle inside Box scope, since we are
+				//inside Box's GetWidth() function.
+				//the correct behavior shuold be searching for Rectangle in the global scope.
+				//to correct this, we do special handling for Qualifier followed by coloon:colon operator (::)
+				if (accumulatedScope.IsEmpty() == false) {
+					if (accumulatedScope == wxT("<global>")) {
+						accumulatedScope = scopeToSearch;
+					} else {
+						accumulatedScope << wxT("::");
+						accumulatedScope << scopeToSearch;
+					}
+				} else {
+					accumulatedScope << wxT("<global>");
+				}
 
-			do {
-				tmp_name = typeName;
-				res_typedef = OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList);
-				tmp_name == typeName ? res_typedef = false : res_typedef = true;
+				wxString originalScopeName(scopeToSearch);
+				if (op == wxT("::")) {
+					//if the operator was something like 'Qualifier::', it is safe to assume
+					//that the secope to be searched is the full expression
+					scopeToSearch = accumulatedScope;
+				}
 
-				tmp_name = typeName;
-				res_templte = OnTemplates(typeName, typeScope, parent);
-				tmp_name == typeName ? res_templte = false : res_templte = true;
+				// get the derivation list of the typename
+				bool res(false);
+				wxString _name(_U(result.m_name.c_str()));
+				PERF_BLOCK("TypeFromName") {
+					for (int i=0; i<2; i++) {
+						res = TypeFromName( _name,
+											visibleScope,
+											lastFuncSig,
+											scopeToSearch,
+											additionalScopes,
+											parentTypeName.IsEmpty(),
+											typeName,   //output
+											typeScope); //output
 
-			} while ( res_templte || res_typedef ) ;
-
-			// try match any overloading operator to the typeName
-			wxString origTypeName(typeName);
-
-			// keep the typeScope in variable origTypeScope since it might be modified by
-			// the OnArrowOperatorOverloading() method, but we might need it again in case
-			// -> operator overloading is found
-			wxString origTypeScope(typeScope);
-			if ( op == wxT("->") && OnArrowOperatorOverloading(typeName, typeScope) ) {
-
-				// there is an operator overloading for ->
-				// do the whole typedef/template subsitute again
-				wxString tmp_name(typeName);
-				while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
-					if (tmp_name == typeName) {
-						//same type? break
+						if (!res && originalScopeName.IsEmpty() == false) {
+							// the scopeToSearch was modified earlier with the accumulated scope
+							// restore the search scope and try again
+							scopeToSearch = originalScopeName;
+							continue;
+						}
 						break;
 					}
+				}
+
+				if (!res) {
+					evaluationSucceeded = false;
+					break;
+				}
+
+				//-------------------------------------
+				// do typedef / template subsitutations
+				//-------------------------------------
+
+				wxString tmp_name(typeName);
+				bool     res_typedef;
+				bool     res_templte;
+
+				do {
 					tmp_name = typeName;
-				}
+					res_typedef = OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList);
+					tmp_name == typeName ? res_typedef = false : res_typedef = true;
 
-				// When template is found, replace the typeName with the temporary type name
-				// usually it will replace 'T' with the parent type, such as
-				// 'Singleton'
-				if (templateInitList.IsEmpty() == false) {
-					m_parentVar.m_isTemplate = true;
-					m_parentVar.m_templateDecl = _C(templateInitList);
-					m_parentVar.m_type = _C(origTypeName);
-					m_parentVar.m_typeScope = _C(origTypeScope); // we use the original type scope
-				}
+					tmp_name = typeName;
+					res_templte = OnTemplates(typeName, typeScope, parent);
+					tmp_name == typeName ? res_templte = false : res_templte = true;
 
-				// do template subsitute
-				if (OnTemplates(typeName, typeScope, m_parentVar)) {
-					//do typedef subsitute
+				} while ( res_templte || res_typedef ) ;
+
+				// try match any overloading operator to the typeName
+				wxString origTypeName(typeName);
+
+				// keep the typeScope in variable origTypeScope since it might be modified by
+				// the OnArrowOperatorOverloading() method, but we might need it again in case
+				// -> operator overloading is found
+				wxString origTypeScope(typeScope);
+				if ( op == wxT("->") && OnArrowOperatorOverloading(typeName, typeScope) ) {
+
+					// there is an operator overloading for ->
+					// do the whole typedef/template subsitute again
 					wxString tmp_name(typeName);
 					while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
 						if (tmp_name == typeName) {
@@ -464,32 +435,54 @@ bool Language::ProcessExpression(const wxString& stmt,
 						}
 						tmp_name = typeName;
 					}
+
+					// When template is found, replace the typeName with the temporary type name
+					// usually it will replace 'T' with the parent type, such as
+					// 'Singleton'
+					if (templateInitList.IsEmpty() == false) {
+						m_parentVar.m_isTemplate = true;
+						m_parentVar.m_templateDecl = _C(templateInitList);
+						m_parentVar.m_type = _C(origTypeName);
+						m_parentVar.m_typeScope = _C(origTypeScope); // we use the original type scope
+					}
+
+					// do template subsitute
+					if (OnTemplates(typeName, typeScope, m_parentVar)) {
+						//do typedef subsitute
+						wxString tmp_name(typeName);
+						while (OnTypedef(typeName, typeScope, templateInitList, scopeName, scopeTemplateInitList)) {
+							if (tmp_name == typeName) {
+								//same type? break
+								break;
+							}
+							tmp_name = typeName;
+						}
+					}
 				}
 			}
+
+			parent = m_parentVar;
+
+			//Keep the information about this token for next iteration
+			if (!parent.m_isTemplate && result.m_isTemplate) {
+
+				parent.m_isTemplate = true;
+				parent.m_templateDecl = result.m_templateInitList;
+				parent.m_type = _C(typeName);
+				parent.m_typeScope = _C(typeScope);
+
+			} else if (templateInitList.IsEmpty() == false) {
+
+				parent.m_isTemplate = true;
+				parent.m_templateDecl = _C(templateInitList);
+				parent.m_type = _C(typeName);
+				parent.m_typeScope = _C(typeScope);
+			}
+
+			parentTypeName = typeName;
+			parentTypeScope = typeScope;
 		}
-
-		parent = m_parentVar;
-
-		//Keep the information about this token for next iteration
-		if (!parent.m_isTemplate && result.m_isTemplate) {
-
-			parent.m_isTemplate = true;
-			parent.m_templateDecl = result.m_templateInitList;
-			parent.m_type = _C(typeName);
-			parent.m_typeScope = _C(typeScope);
-
-		} else if (templateInitList.IsEmpty() == false) {
-
-			parent.m_isTemplate = true;
-			parent.m_templateDecl = _C(templateInitList);
-			parent.m_type = _C(typeName);
-			parent.m_typeScope = _C(typeScope);
-		}
-
-		parentTypeName = typeName;
-		parentTypeScope = typeScope;
 	}
-	PERF_END();
 	return evaluationSucceeded;
 }
 
@@ -989,75 +982,77 @@ bool Language::DoSearchByNameAndScope(const wxString &name,
                                       wxString &type,
                                       wxString &typeScope)
 {
-	std::vector<TagEntryPtr> tmp_tags;
-	GetTagsManager()->FindByNameAndScope(name, scopeName, tmp_tags);
-	if ( tmp_tags.empty() ) {
-		// try the global scope maybe?
-		GetTagsManager()->FindByNameAndScope(name, wxT("<global>"), tmp_tags);
-	}
-
-	// filter macros from the result
-	for (size_t i=0; i<tmp_tags.size(); i++) {
-		TagEntryPtr t = tmp_tags.at(i);
-		if (t->GetKind() != wxT("macro")) {
-			tags.push_back(t);
-		}
-	}
-
-	if (tags.size() == 1) {
-		TagEntryPtr tag(tags.at(0));
-		//we have a single match!
-		if (tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype")) {
-			clFunction foo;
-			if (FunctionFromPattern(tag->GetPattern(), foo)) {
-				type = _U(foo.m_returnValue.m_type.c_str());
-				typeScope = foo.m_returnValue.m_typeScope.empty() ? wxT("<global>") : _U(foo.m_returnValue.m_typeScope.c_str());
-				return true;
-			} // if(FunctionFromPattern(tag->GetPattern(), foo))
-			return false;
-		} // if(tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype"))
-		else if (tag->GetKind() == wxT("member") || tag->GetKind() == wxT("variable")) {
-			Variable var;
-			if (VariableFromPattern(tag->GetPattern(), tag->GetName(), var)) {
-				type = _U(var.m_type.c_str());
-				typeScope = var.m_typeScope.empty() ? wxT("<global>") : _U(var.m_typeScope.c_str());
-				return true;
-			}
-			return false;
-		} else {
-			type = tag->GetName();
-			typeScope = tag->GetScopeName();
-		}
-		return true;
-	} else if (tags.size() > 1) {
-		//if list contains more than one entry, check if all entries are of type 'function' or 'prototype'
-		//(they can be mixed). If all entries are of one of these types, test their return value,
-		//if all have the same return value, then we are ok
-		clFunction foo;
-		wxString tmpType, tmpTypeScope;
-		bool allthesame(true);
-		for (size_t i=0; i<tags.size(); i++) {
-			TagEntryPtr tag(tags.at(i));
-			wxString dbg_str = tag->GetPattern();
-			if (!FunctionFromPattern(tag->GetPattern(), foo)) {
-				allthesame = false;
-				break;
-			}
-
-			tmpType = _U(foo.m_returnValue.m_type.c_str());
-			tmpTypeScope = foo.m_returnValue.m_typeScope.empty() ? wxT("<global>") : _U(foo.m_returnValue.m_typeScope.c_str());
-			if (i > 0 && (tmpType != type || tmpTypeScope != typeScope)) {
-				allthesame = false;
-				break;
-			}
-			type = tmpType;
-			typeScope = tmpTypeScope;
+	PERF_BLOCK("DoSearchByNameAndScope") {
+		std::vector<TagEntryPtr> tmp_tags;
+		GetTagsManager()->FindByNameAndScope(name, scopeName, tmp_tags);
+		if ( tmp_tags.empty() ) {
+			// try the global scope maybe?
+			GetTagsManager()->FindByNameAndScope(name, wxT("<global>"), tmp_tags);
 		}
 
-		if (allthesame && !tags.empty()) {
+		// filter macros from the result
+		for (size_t i=0; i<tmp_tags.size(); i++) {
+			TagEntryPtr t = tmp_tags.at(i);
+			if (t->GetKind() != wxT("macro")) {
+				tags.push_back(t);
+			}
+		}
+
+		if (tags.size() == 1) {
+			TagEntryPtr tag(tags.at(0));
+			//we have a single match!
+			if (tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype")) {
+				clFunction foo;
+				if (FunctionFromPattern(tag->GetPattern(), foo)) {
+					type = _U(foo.m_returnValue.m_type.c_str());
+					typeScope = foo.m_returnValue.m_typeScope.empty() ? wxT("<global>") : _U(foo.m_returnValue.m_typeScope.c_str());
+					return true;
+				} // if(FunctionFromPattern(tag->GetPattern(), foo))
+				return false;
+			} // if(tag->GetKind() == wxT("function") || tag->GetKind() == wxT("prototype"))
+			else if (tag->GetKind() == wxT("member") || tag->GetKind() == wxT("variable")) {
+				Variable var;
+				if (VariableFromPattern(tag->GetPattern(), tag->GetName(), var)) {
+					type = _U(var.m_type.c_str());
+					typeScope = var.m_typeScope.empty() ? wxT("<global>") : _U(var.m_typeScope.c_str());
+					return true;
+				}
+				return false;
+			} else {
+				type = tag->GetName();
+				typeScope = tag->GetScopeName();
+			}
 			return true;
+		} else if (tags.size() > 1) {
+			//if list contains more than one entry, check if all entries are of type 'function' or 'prototype'
+			//(they can be mixed). If all entries are of one of these types, test their return value,
+			//if all have the same return value, then we are ok
+			clFunction foo;
+			wxString tmpType, tmpTypeScope;
+			bool allthesame(true);
+			for (size_t i=0; i<tags.size(); i++) {
+				TagEntryPtr tag(tags.at(i));
+				wxString dbg_str = tag->GetPattern();
+				if (!FunctionFromPattern(tag->GetPattern(), foo)) {
+					allthesame = false;
+					break;
+				}
+
+				tmpType = _U(foo.m_returnValue.m_type.c_str());
+				tmpTypeScope = foo.m_returnValue.m_typeScope.empty() ? wxT("<global>") : _U(foo.m_returnValue.m_typeScope.c_str());
+				if (i > 0 && (tmpType != type || tmpTypeScope != typeScope)) {
+					allthesame = false;
+					break;
+				}
+				type = tmpType;
+				typeScope = tmpTypeScope;
+			}
+
+			if (allthesame && !tags.empty()) {
+				return true;
+			}
+			return false;
 		}
-		return false;
 	}
 	return false;
 }

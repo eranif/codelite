@@ -121,5 +121,5 @@ void QuickOutlineDlg::OnTextEntered(wxCommandEvent &WXUNUSED(e))
 void QuickOutlineDlg::OnItemSelected(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	EndModal(wxID_OK);
+//	EndModal(wxID_OK);
 }

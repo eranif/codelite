@@ -12,12 +12,6 @@
   <Dependencies>
     <Project Name="sqlite3"/>
   </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="sqlite3"/>
-  </Dependencies>
-  <Dependencies Name="ReleaseUnicode">
-    <Project Name="sqlite3"/>
-  </Dependencies>
   <Settings Type="Static Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="" Type="">
       <General OutputFile="../../lib/gcc_lib/libwxsqlite3ud.a" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
@@ -140,6 +134,15 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode">
+    <Project Name="sqlite3"/>
+  </Dependencies>
+  <Dependencies Name="ReleaseUnicode">
+    <Project Name="sqlite3"/>
+  </Dependencies>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="sqlite3"/>
+  </Dependencies>
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>

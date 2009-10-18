@@ -417,14 +417,16 @@ void SettersGettersDlg::BuildTree()
 		if ( setter_exist ) {
 			m_checkListMembers->SetItemTextColour(sitem, wxT("GREY"));
 		}
+		m_checkListMembers->Expand(parent);
 	}
+	
 	m_checkForDuplicateEntries = false;
 
 	if (m_members.empty() == false) {
 		m_textClassName->SetValue(m_members.at(0)->GetParent());
 	}
 
-	m_checkListMembers->ExpandAll();
+	
 	m_checkListMembers->Thaw();
 }
 

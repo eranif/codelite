@@ -33,9 +33,8 @@ TagsOptionsData::TagsOptionsData()
 		, m_ccFlags(CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB | CC_CPP_KEYWORD_ASISST | CC_COLOUR_WORKSPACE_TAGS | CC_COLOUR_VARS | CC_ACCURATE_SCOPE_RESOLVING)
 		, m_ccColourFlags(CC_COLOUR_DEFAULT)
 		, m_fileSpec(wxT("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++"))
-		, m_minWordLen(3)
-		, m_maxCacheSize(1000)
-		, m_disableCaching(true)
+		, m_minWordLen    (3)
+		, m_parserEnabled (true)
 {
 	m_languages.Add(wxT("C++"));
 }
@@ -52,34 +51,32 @@ void TagsOptionsData::Serialize(Archive &arch)
 		m_prep.RemoveAt(where);
 	}
 
-	arch.Write(wxT("m_ccFlags"),       m_ccFlags);
-	arch.Write(wxT("m_ccColourFlags"), m_ccColourFlags);
-	arch.Write(wxT("m_prep"),          m_prep);
-	arch.Write(wxT("m_fileSpec"),      m_fileSpec);
-	arch.Write(wxT("m_languages"),     m_languages);
-	arch.Write(wxT("m_minWordLen"),    m_minWordLen);
-	arch.Write(wxT("m_maxCacheSize"),  m_maxCacheSize);
-	arch.Write(wxT("m_disableCaching"),m_disableCaching);
+	arch.Write(wxT("m_ccFlags"),          m_ccFlags);
+	arch.Write(wxT("m_ccColourFlags"),    m_ccColourFlags);
+	arch.Write(wxT("m_prep"),             m_prep);
+	arch.Write(wxT("m_fileSpec"),         m_fileSpec);
+	arch.Write(wxT("m_languages"),        m_languages);
+	arch.Write(wxT("m_minWordLen"),       m_minWordLen);
+	arch.Write(wxT("m_parserSearchPaths"),m_parserSearchPaths);
+	arch.Write(wxT("m_parserEnabled"),    m_parserEnabled);
 }
 
 void TagsOptionsData::DeSerialize(Archive &arch)
 {
-	arch.Read(wxT("m_ccFlags"),       m_ccFlags);
-	arch.Read(wxT("m_ccColourFlags"), m_ccColourFlags);
-	arch.Read(wxT("m_prep"),          m_prep);
-	arch.Read(wxT("m_fileSpec"),      m_fileSpec);
-	arch.Read(wxT("m_languages"),     m_languages);
-	arch.Read(wxT("m_minWordLen"),    m_minWordLen);
-	arch.Read(wxT("m_maxCacheSize"),  m_maxCacheSize);
-	arch.Read(wxT("m_disableCaching"),m_disableCaching);
+	arch.Read(wxT("m_ccFlags"),           m_ccFlags);
+	arch.Read(wxT("m_ccColourFlags"),     m_ccColourFlags);
+	arch.Read(wxT("m_prep"),              m_prep);
+	arch.Read(wxT("m_fileSpec"),          m_fileSpec);
+	arch.Read(wxT("m_languages"),         m_languages);
+	arch.Read(wxT("m_minWordLen"),        m_minWordLen);
+	arch.Read(wxT("m_parserSearchPaths"), m_parserSearchPaths);
+	arch.Read(wxT("m_parserEnabled"),     m_parserEnabled);
 
 	// Hack: remove "extern"
 	int where = m_prep.Index(wxT("extern"));
 	if (where != wxNOT_FOUND) {
 		m_prep.RemoveAt(where);
 	}
-
-	m_disableCaching = true;
 }
 
 wxString TagsOptionsData::ToString() const

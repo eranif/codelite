@@ -194,8 +194,6 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="TokenScanner">
-    <File Name="tokendb.cpp"/>
-    <File Name="tokendb.h"/>
     <File Name="cpptoken.cpp"/>
     <File Name="cpptoken.h"/>
     <File Name="cppwordscanner.cpp"/>
@@ -210,7 +208,6 @@
     <File Name="job.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="ReleaseUnicode"/>
   <VirtualDirectory Name="BrowsingRecords">
     <File Name="browse_record.h"/>
     <File Name="navigationmanager.h"/>
@@ -359,6 +356,8 @@
     <File Name="quickfinder.h"/>
     <File Name="quickfinder.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

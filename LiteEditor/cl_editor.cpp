@@ -349,7 +349,11 @@ void LEditor::SetProperties()
 	SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSCI_MASK_FOLDERS));
 
 	// Line number margin
+#ifdef __WXMSW__
 	int pixelWidth = 4 + 5*TextWidth(wxSCI_STYLE_LINENUMBER, wxT("9"));
+#else
+	int pixelWidth = 4 + 5*8;
+#endif
 
 	// Show number margin according to settings.
 	SetMarginWidth(NUMBER_MARGIN_ID, options->GetDisplayLineNumbers() ? pixelWidth : 0);
@@ -756,7 +760,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	message << wxT("Ln ") << curLine+1 << wxT(",  Col ") << GetColumn(pos) << wxT(",  Pos ") << pos << wxT(",  Style ") << GetStyleAt(pos);
 
 	// Always update the status bar with event, calling it directly causes performance degredation
-	DoSetStatusMessage(message, 2);
+	DoSetStatusMessage(message, 1);
 
 	SetIndicatorCurrent(MATCH_INDICATOR);
 	IndicatorClearRange(0, pos);
@@ -768,13 +772,13 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 
 	switch ( GetEOLMode() ) {
 	case wxSCI_EOL_CR:
-		DoSetStatusMessage(wxT("EOL Mode: Mac"), 3);
+		DoSetStatusMessage(wxT("EOL Mode: Mac"), 2);
 		break;
 	case wxSCI_EOL_CRLF:
-		DoSetStatusMessage(wxT("EOL Mode: Dos/Windows"), 3);
+		DoSetStatusMessage(wxT("EOL Mode: Dos/Windows"), 2);
 		break;
 	default:
-		DoSetStatusMessage(wxT("EOL Mode: Unix"), 3);
+		DoSetStatusMessage(wxT("EOL Mode: Unix"), 2);
 		break;
 	}
 

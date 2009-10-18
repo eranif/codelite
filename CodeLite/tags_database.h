@@ -28,13 +28,12 @@
 #include "tag_tree.h"
 #include "entry.h"
 #include <wx/filename.h>
-#include "db_record.h"
 #include "fileentry.h"
-#include "variable_entry.h"
 #include "istorage.h"
+#include <wx/wxsqlite3.h>
 
-const wxString gTagsDatabaseVersion(wxT("CodeLite version 0.5 Alpha"));
-class TagsCache;
+const wxString gTagsDatabaseVersion(wxT("CodeLite Version 2.0"));
+
 /**
 TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.
 It allows caller to query and populate the SQLite database for tags with a set of convinient functions.
@@ -60,23 +59,10 @@ Table Name: TAGS
 |Path          | String | full name including path, (e.g. Project::ClassName::FunctionName
 |Typeref       | String | Special type of tag, that points to other Tag (i.e. typedef)
 
-Table Name: COMMENTS
-
-|| Column Name || Type || Description
-|Comment       | String | String comment found in code
-|File          | String | File that the comment was found in
-|Line          | Number | Line number of the comment in File
-
 Table Name: TAGS_VERSION
 
 || Column Name || Type || Description
 | Version      | String | contains the current database schema
-
-Table Name: VARIABLES
-
-|| Column Name || Type || Description
-| variable     | String | contains the variable name
-| value	       | String | the actual path
 
 Table Name: FILES
 
@@ -90,11 +76,9 @@ Table Name: FILES
 \author Eran
 \ingroup CodeLite
 */
-class TagsDatabase : public ITagsStorage
+class TagsStorageSQLite : public ITagsStorage
 {
 	wxSQLite3Database *m_db;
-	wxFileName         m_fileName;
-	TagsCache*         m_cache;
 
 private:
 	/**
@@ -104,7 +88,15 @@ private:
 	 */
 	void DoFetchTags ( const wxString &sql, std::vector<TagEntryPtr> &tags);
 
-	void DoFixPath     ( TagEntryPtr& tag );
+	/**
+	 * @brief
+	 * @param sql
+	 * @param tags
+	 */
+	void DoFetchTags ( const wxString &sql, std::vector<TagEntryPtr> &tags, const wxArrayString &kinds);
+
+public:
+	static TagEntry *FromSQLite3ResultSet(wxSQLite3ResultSet &rs);
 
 public:
 	/**
@@ -119,13 +111,13 @@ public:
 	/**
 	 * Construct a tags database.
 	 */
-	TagsDatabase(bool useCache = false, bool readOnly = false);
+	TagsStorageSQLite();
 
 	/**
 	 *
 	 * Destructor
 	 */
-	virtual ~TagsDatabase();
+	virtual ~TagsStorageSQLite();
 
 	/**
 	 * Return the currently opened database.
@@ -156,21 +148,12 @@ public:
 	void Store(TagTreePtr tree, const wxFileName& path, bool autoCommit = true);
 
 	/**
-	 * Store vector of database recreds into db.
-	 * ASSUMPTION: all records are of same type (i.e. Comments OR TagEntry )
-	 * @param records records to store
-	 * @param path Database file name
-	 * @param autoCommit handle the Store operation inside a transaction or let the user hadle it
-	 */
-	void Store(const std::vector<DbRecordPtr> &records, const wxFileName& path, bool autoCommit = true);
-
-	/**
 	 * Return a result set of tags according to file name.
 	 * @param file Source file name
 	 * @param path Database file name
 	 * @return result set
 	 */
-	wxSQLite3ResultSet SelectTagsByFile(const wxString& file, const wxFileName& path = wxFileName());
+	virtual void SelectTagsByFile(const wxString& file, std::vector<TagEntryPtr> &tags, const wxFileName& path = wxFileName());
 
 	/**
 	 * Delete all entries from database that are related to filename.
@@ -251,59 +234,11 @@ public:
 	void ExecuteUpdate( const wxString& sql );
 
 	/**
-	 * Return the current version of the database library .
-	 * @return current version of the database library
-	 */
-	const wxString& GetVersion() const {
-		return gTagsDatabaseVersion;
-	}
-
-	/**
-	 * Schema version as appears in TAGS_VERSION table
-	 * @return schema's version
-	 */
-	wxString GetSchemaVersion() const;
-
-	/**
-	 * Return tag entry from database by ID
-	 * @param id
-	 * @return tag entry or NULL
-	 */
-	TagEntryPtr FindTagById(int id) const;
-
-	/**
-	 * Return variable entry from database by name
-	 * @param name
-	 * @return variable entry or NULL
-	 */
-	VariableEntryPtr FindVariableByName(const wxString &name) const;
-
-	/**
 	 * A very dengerous API call, which drops all tables from the database
 	 * and recreate the schema from fresh. It is used when upgrading database between different
 	 * versions
 	 */
 	void RecreateDatabase();
-
-	//---------------------------------------
-	// Basic database operations on a single
-	// record
-	//---------------------------------------
-
-	/**
-	 * if item does not exist, insert it, else return 'TagExist' error code
-	 */
-	int Insert(DbRecordPtr record);
-
-	/**
-	* if item does not exist, insert it, else return 'TagExist' error code
-	*/
-	int Update(DbRecordPtr record);
-
-	/**
-	 * delete record
-	 */
-	int Delete(DbRecordPtr record);
 
 	/**
 	 * return list of files from the database. The returned list is ordered
@@ -319,8 +254,6 @@ public:
 	 */
 	void GetFiles(std::vector<FileEntryPtr> &files);
 
-	void GetVariables(std::vector<VariableEntryPtr> &vars);
-
 	//----------------------------------------------------------
 	//----------------------------------------------------------
 	//----------------------------------------------------------
@@ -329,54 +262,21 @@ public:
 	//----------------------------------------------------------
 	//----------------------------------------------------------
 
-	//----------------------------- Cache Access ---------------------------------------
+	//----------------------------- Meta Data ---------------------------------------
 
 	/**
-	 * @brief search for tags in the cache, return true on match, false otherwise
-	 * @param sql
-	 * @param tags
-	 * @return
+	 * Return the current version of the database library .
+	 * @return current version of the database library
 	 */
-	virtual bool GetCacheTags(const wxString &sql, std::vector<TagEntryPtr> &tags);
+	const wxString& GetVersion() const {
+		return gTagsDatabaseVersion;
+	}
 
 	/**
-	 * @brief cache tags by sql
-	 * @param sql
-	 * @param tags
+	 * Schema version as appears in TAGS_VERSION table
+	 * @return schema's version
 	 */
-	virtual void CacheTags   (const wxString &sql, const std::vector<TagEntryPtr> &tags);
-
-	/**
-	 * @brief clear the cache
-	 */
-	virtual void ClearCache  ();
-
-	/**
-	 * @brief return the cache hit rate
-	 * @return
-	 */
-	virtual int GetCacheHitRate();
-
-	/**
-	 * @brief delete entries from the cache based on their relation
-	 * to the tags in the tags vector
-	 * @param tags
-	 */
-	virtual void  DeleteCachedEntriesByRelation(const std::vector<std::pair<wxString, TagEntry> >& tags);
-
-	/**
-	 * @brief enable caching
-	 * @param enable
-	 */
-	virtual void EnableCache(bool enable) {m_useCache = enable;}
-
-	virtual void SetMaxCacheSize(int size);
-
-	/**
-	 * @brief return the number of items in cache
-	 * @return
-	 */
-	virtual int GetCacheItemsCount();
+	wxString GetSchemaVersion() const;
 
 	// --------------------------------------------------------------------------------------------
 
@@ -388,6 +288,7 @@ public:
 	 * @param tags [output]
 	 */
 	virtual void GetTagsByScopeAndName(const wxString &scope, const wxString &name, bool partialNameAllowed, std::vector<TagEntryPtr> &tags);
+	virtual void GetTagsByScopeAndName(const wxArrayString &scope, const wxString &name, bool partialNameAllowed, std::vector<TagEntryPtr> &tags);
 
 	/**
 	 * @brief return list of tags by scope. If the cache is enabled, tags will be fetched from the
@@ -411,7 +312,8 @@ public:
 	 * @param path
 	 * @param tags
 	 */
-	virtual void GetTagsByPath (const wxString &path, std::vector<TagEntryPtr> &tags);
+	virtual void GetTagsByPath (const wxArrayString &path, std::vector<TagEntryPtr> &tags);
+	virtual void GetTagsByPath (const wxString      &path, std::vector<TagEntryPtr> &tags);
 
 	/**
 	 * @brief return array of items by name and parent
@@ -445,6 +347,14 @@ public:
 	virtual void GetTagsByScopeAndKind(const wxString &scope, const wxArrayString &kinds, std::vector<TagEntryPtr> &tags);
 
 	/**
+	 * @brief return list of tags by scopes and kinds
+	 * @param scopes array of possible scopes
+	 * @param kinds array of possible kinds
+	 * @param tags [output]
+	 */
+	virtual void GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags);
+
+	/**
 	 * @brief get list of tags by kind and file
 	 * @param kind
 	 * @param orderingColumn the column that the output should be ordered by (leave empty for no sorting)
@@ -452,6 +362,86 @@ public:
 	 * @param tags
 	 */
 	virtual void GetTagsByKindAndFile(const wxArrayString& kind, const wxString &fileName, const wxString &orderingColumn, int order, std::vector<TagEntryPtr> &tags);
-};
 
+	/**
+	 * @brief delete an entry by file name
+	 * @param filename
+	 * @return
+	 */
+	virtual int DeleteFileEntry ( const wxString &filename );
+
+	/**
+	 * @brief insert entry by file name
+	 * @param filename
+	 * @return
+	 */
+	virtual int InsertFileEntry ( const wxString &filename, int timestamp );
+
+		/**
+	 * @brief update file entry using file name as key
+	 * @param filename
+	 * @param timestamp new timestamp
+	 * @return
+	 */
+	virtual int UpdateFileEntry ( const wxString &filename , int timestamp );
+
+	/**
+	 * @brief update tag. The parameters used as key for the update are:
+	 * Kind/Signature/Path
+	 * @param tag
+	 * @return TagOk or TagError
+	 */
+	virtual int UpdateTagEntry ( const TagEntry& tag );
+
+	/**
+	 * @brief insert tag into the database.
+	 * @param tag
+	 * @return TagOk, TagExist or TagError
+	 */
+	virtual int InsertTagEntry ( const TagEntry &tag );
+
+	/**
+	 * @brief delete TagEntry
+	 * @param kind
+	 * @param signature
+	 * @param path
+	 * @return TagOk or TagError
+	 */
+	virtual int DeleteTagEntry ( const wxString &kind, const wxString &signature, const wxString &path );
+
+	/**
+	 * @brief return true if type exist under a given scope.
+	 * Incase it exist but under the <global> scope, 'scope' will be modified
+	 * @param typeName type to search
+	 * @param scope [intput/output]
+	 * @return true on success
+	 */
+	virtual bool IsTypeAndScopeContainer(const wxString& typeName, wxString& scope);
+
+	/**
+	 * @brief return true if type & scope do exist in the symbols database and is container
+	 * @param typeName
+	 * @param scope
+	 * @return
+	 */
+	virtual bool IsTypeAndScopeExist(const wxString &typeName, wxString &scope);
+
+	/**
+	 * @brief return list of scopes (classes, namespaces, structs) from a given file as a unique and ascended ordered
+	 * vector of strings
+	 * @param fileName
+	 * @param scopes
+	 */
+	virtual void GetScopesFromFileAsc(const wxFileName &fileName, std::vector< wxString > &scopes);
+
+	/**
+	 * @brief
+	 * @param fileName
+	 * @param scopeName
+	 * @param tags
+	 */
+	virtual void GetTagsByFileScopeAndKind(const wxFileName& fileName, const wxString &scopeName, const wxArrayString& kind, std::vector< TagEntryPtr > &tags);
+
+	virtual void GetTagsNames(const wxArrayString& kind, wxArrayString& names);
+};
 #endif // CODELITE_TAGS_DATABASE_H

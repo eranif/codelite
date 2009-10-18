@@ -169,6 +169,9 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 
 	bool fConnected = ConnectNamedPipe(hConn, &ov);
 	if (fConnected != 0) {
+		if(hConn != INVALID_PIPE_HANDLE) {
+			CloseHandle(hConn);
+		}
 		this->setLastError(NP_SERVER_UNKNOWN_ERROR);
 		return NULL;
 	}
@@ -185,10 +188,17 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 			return conn;
 		}
 		case WAIT_TIMEOUT : {
+			if ( hConn != INVALID_PIPE_HANDLE ) {
+				CloseHandle( hConn );
+			}
 			this->setLastError(NP_SERVER_TIMEOUT);
 			return NULL;
 		}
 		default: {
+			if ( hConn != INVALID_PIPE_HANDLE ) {
+				CloseHandle( hConn );
+			}
+
 			this->setLastError(NP_SERVER_UNKNOWN_ERROR);
 			return NULL;
 		}
@@ -203,6 +213,10 @@ clNamedPipe *clNamedPipeConnectionsServer::waitForNewConnection( int timeout )
 	}
 	// If an error occurs during the connect operation...
 	default: {
+		if(hConn != INVALID_PIPE_HANDLE) {
+			CloseHandle(hConn);
+		}
+
 		this->setLastError(NP_SERVER_UNKNOWN_ERROR);
 		return NULL;
 	}

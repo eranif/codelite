@@ -194,7 +194,7 @@ void ContinuousBuild::OnShellProcessEnded(wxCommandEvent& e)
 	m_view->RemoveFile(m_currentBuildInfo.file);
 	m_view->SetStatusMessage(wxEmptyString);
 
-    m_mgr->SetStatusMessage(wxEmptyString, 4, XRCID("continuous"));
+    m_mgr->SetStatusMessage(wxEmptyString, 3, XRCID("continuous"));
 
 	DoReportErrors();
 	m_currentBuildInfo.Clear();

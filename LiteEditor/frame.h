@@ -270,10 +270,6 @@ private:
 	void CreateRecentlyOpenedWorkspacesMenu();
 	void CreateWelcomePage();
 	void CreateMenuBar();
-	void UpgradeExternalDbExt();
-	void AutoLoadExternalDb();
-	void DoBuildExternalDatabase(const wxString &dir = wxEmptyString);
-
 	void ReloadExternallyModifiedProjectFiles();
 
 protected:
@@ -292,9 +288,6 @@ protected:
 	void OnCompleteWord(wxCommandEvent& event);
 	void OnFunctionCalltip(wxCommandEvent& event);
 	void OnDeleteProject(wxCommandEvent& event);
-	void OnBuildExternalDatabase(wxCommandEvent& event);
-	void OnUseExternalDatabase(wxCommandEvent& event);
-	void OnCloseExternalDatabase(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
 	void OnFileNew(wxCommandEvent &event);
 	void OnFileOpen(wxCommandEvent &event);
@@ -363,10 +356,12 @@ protected:
 	void OnPageClosed(NotebookEvent &event);
 
 	//handle symbol tree events
-	void OnAddSymbols(SymbolTreeEvent &event);
-	void OnDeleteSymbols(SymbolTreeEvent &event);
-	void OnUpdateSymbols(SymbolTreeEvent &event);
-	void OnParsingThreadDone(wxCommandEvent &e);
+	void OnAddSymbols                 (SymbolTreeEvent &event);
+	void OnDeleteSymbols              (SymbolTreeEvent &event);
+	void OnUpdateSymbols              (SymbolTreeEvent &event);
+	void OnParsingThreadDone          (wxCommandEvent  &e);
+	void OnParsingThreadMessage       (wxCommandEvent  &e);
+	void OnDatabaseUpgrade            (wxCommandEvent  &e);
 
 	void OnRecentFile(wxCommandEvent &event);
 	void OnRecentWorkspace(wxCommandEvent &event);

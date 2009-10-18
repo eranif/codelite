@@ -36,7 +36,6 @@
 #include <wx/progdlg.h>
 #include "renamesymboldlg.h"
 #include "cpptoken.h"
-#include "tokendb.h"
 #include "globals.h"
 #include "commentconfigdata.h"
 #include "editor_config.h"

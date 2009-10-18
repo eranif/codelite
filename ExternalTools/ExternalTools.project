@@ -7,7 +7,6 @@
     <File Name="externaltoolsdata.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="DebugUnicode"/>
   <VirtualDirectory Name="UI">
     <File Name="newtoolbase.cpp"/>
     <File Name="newtoolbase.h"/>
@@ -172,6 +171,7 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>

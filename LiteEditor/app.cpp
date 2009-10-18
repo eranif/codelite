@@ -323,6 +323,7 @@ bool App::OnInit()
 		// read the installation path of MinGW & WX
 		wxRegKey rk(wxT("HKEY_CURRENT_USER\\Software\\CodeLite"));
 		if(rk.Exists()) {
+			m_parserPaths.Clear();
 			wxString strWx, strMingw;
 			if(rk.HasValue(wxT("wx"))){
 				rk.QueryValue(wxT("wx"), strWx);
@@ -332,9 +333,12 @@ bool App::OnInit()
 				rk.QueryValue(wxT("mingw"), strMingw);
 			}
 
-			long up;
-			if( !cfg->GetLongValue(wxT("UpdateWxPaths"), up) ){
+			long up(0);
+			if( cfg->GetLongValue(wxT("UpdateWxPaths"), up) && up){
 				if(strWx.IsEmpty() == false) {
+					// add WX include path
+					m_parserPaths.Add(strWx + wxT("\\include"));
+
 					// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
 					EvnVarList vars;
 					EnvironmentConfig::Instance()->Load();
@@ -352,6 +356,9 @@ bool App::OnInit()
 			}
 
 			if(strMingw.IsEmpty() == false) {
+				// Add the installation include paths
+				m_parserPaths.Add(strMingw + wxT("\\include"));
+				m_parserPaths.Add(strMingw + wxT("\\include\\c++\\3.4.5"));
 				pathEnv << wxT(";") << strMingw << wxT("\\bin");
 			}
 		}
@@ -390,6 +397,21 @@ bool App::OnInit()
 
 	// update the accelerators table
 	ManagerST::Get()->UpdateMenuAccelerators();
+	TagsOptionsData tod;
+	EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &tod);
+
+	// update the search paths
+	if(tod.GetParserSearchPaths().IsEmpty()) {
+		tod.SetParserSearchPaths( m_parserPaths );
+	} else {
+		for(size_t i=0; i<tod.GetParserSearchPaths().GetCount(); i++) {
+			if ( m_parserPaths.Index(tod.GetParserSearchPaths().Item(i)) == wxNOT_FOUND ) {
+				m_parserPaths.Add( tod.GetParserSearchPaths().Item(i) );
+			}
+		}
+		tod.SetParserSearchPaths( m_parserPaths );
+	}
+	EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &tod);
 
 	m_pMainFrame->Show(TRUE);
 	SetTopWindow(m_pMainFrame);

@@ -7,6 +7,8 @@
     
     
     
+    
+    
     ]]>
     </Plugin>
   </Plugins>
@@ -52,7 +54,6 @@
     <File Name="cppcheckreportbasepage.fbp"/>
     <File Name="cppchecksettingsdlg.fbp"/>
   </VirtualDirectory>
-  <Dependencies Name="DebugUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" Required="yes">
@@ -246,6 +247,8 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

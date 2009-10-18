@@ -280,7 +280,8 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 
 	// send an event to the main frame indicating that a re-tag is required
 	// we do this only if the "smart retagging" is on
-	if ( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ) {
+	TagsOptionsData tagsopt = TagsManagerST::Get()->GetCtagsOptions();
+	if ( tagsopt.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP && !(tagsopt.GetFlags() & CC_USE_FULL_RETAGGING)) {
 		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
 		Frame::Get()->AddPendingEvent(e);
 	}
@@ -516,6 +517,7 @@ ProjectPtr Manager::GetProject ( const wxString &name ) const
 
 wxString Manager::GetActiveProjectName()
 {
+
 	return WorkspaceST::Get()->GetActiveProjectName();
 }
 
@@ -708,6 +710,13 @@ void Manager::RetagWorkspace()
 	TagsManagerST::Get()->RetagFiles ( projectFiles );
 	long end   = sw.Time();
 	wxLogMessage(wxT("INFO: Retag workspace completed after %d seconds"), (end)/1000);
+
+	// Put a request to the parsing thread to parse include files
+	ParseRequest *req = new ParseRequest();
+	req->setDbFile   ( TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
+	req->setType     ( ParseRequest::PR_PARSEINCLUDES );
+	ParseThreadST::Get()->Add ( req );
+
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
 }
 
@@ -725,16 +734,16 @@ void Manager::RetagFile ( const wxString& filename )
 	wxFileName absFile ( filename );
 	absFile.MakeAbsolute();
 
+	// Put a request to the parsing thread
 	ParseRequest *req = new ParseRequest();
 	req->setDbFile   ( TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
 	req->setFile     ( absFile.GetFullPath().c_str() );
-	req->setExtDbFile( TagsManagerST::Get()->GetExtDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
+	req->setType     ( ParseRequest::PR_FILESAVED );
 	ParseThreadST::Get()->Add ( req );
 
 	wxString msg = wxString::Format(wxT( "Re-tagging file %s..." ), absFile.GetFullName().c_str());
 	Frame::Get()->SetStatusMessage(msg, 0, XRCID("retag_file"));
 }
-
 
 //--------------------------- Project Files Mgmt -----------------------------
 
@@ -1115,26 +1124,6 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 #endif
 	}
 	return execLine;
-}
-
-
-//--------------------------- External Tags DB Management -----------------------------
-
-void Manager::SetExternalDatabase ( const wxFileName &dbname )
-{
-	CloseExternalDatabase();
-	TagsManagerST::Get()->OpenExternalDatabase ( dbname );
-	if ( TagsManagerST::Get()->GetExtDatabase()->IsOpen() ) {
-		Frame::Get()->SetStatusMessage ( wxString::Format ( wxT ( "%s" ), dbname.GetFullPath().c_str() ), 1 );
-		EditorConfigST::Get()->SetTagsDatabase ( dbname.GetFullPath() );
-	}
-}
-
-void Manager::CloseExternalDatabase()
-{
-	TagsManager *mgr = TagsManagerST::Get();
-	mgr->CloseExternalDatabase();
-	Frame::Get()->SetStatusMessage ( wxEmptyString, 1 );
 }
 
 
@@ -2619,6 +2608,7 @@ void Manager::DoBuildProject ( const QueueCommand& buildInfo )
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 	}
+
 	m_shellProcess = new CompileRequest ( Frame::Get(), buildInfo );
 	m_shellProcess->Process();
 }

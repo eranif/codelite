@@ -440,25 +440,6 @@
 			</object>
 		</object>
 
-        <object class="wxMenu" name="tags_menu">
-            <label>&amp;Tags</label>
-            <style>wxMENU_TEAROFF</style>
-            <object class="wxMenuItem" name="create_ext_database">
-                <label>&amp;Create external tags database...</label>
-            </object>
-
-            <object class="wxMenuItem" name="open_ext_database">
-                <label>&amp;Attach external tags database...</label>
-            </object>
-            <object class="wxMenuItem" name="close_ext_database">
-                <label>Cl&amp;ose external tags database</label>
-            </object>
-			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="manage_tags">
-                <label>&amp;Manage external tags databases...</label>
-            </object>
-        </object>
-
         <object class="wxMenu" name="plugins">
             <label>&amp;Plugins</label>
             <style>wxMENU_TEAROFF</style>

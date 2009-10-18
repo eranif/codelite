@@ -83,7 +83,9 @@ SvnOptionsDlg::SvnOptionsDlg( wxWindow* parent, const SvnOptions &options, IMana
 	m_listbook1->SetPageImage(0, 0);
 	m_listbook1->SetPageImage(1, 1);
 	m_listbook1->SetPageImage(2, 2);
-
+	
+	// Make the first tab of the SVN options to be selected
+	m_listbook1->SetSelection(0);
 	WindowAttrManager::Load(this, wxT("SvnOptionsDialogAttr"), m_manager->GetConfigTool());
 }
 

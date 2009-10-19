@@ -1701,7 +1701,6 @@ int yywrap() {
 int crawlerScan( const char* filePath )
 {
 	BEGIN INITIAL;
-	fcFileOpener::Instance()->ClearResults();
 	FILE* fp = fopen(filePath, "r");
 	if ( fp == NULL ) {
 		//printf("%s\n", strerror(errno));

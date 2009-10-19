@@ -77,9 +77,9 @@ void ParseThread::ProcessRequest(ThreadRequest * request)
 	ParseRequest *req    = (ParseRequest*)request;
 
 	switch (req->getType()) {
-	case ParseRequest::PR_PARSEINCLUDES:
-		ProcessIncludes( req );
-		break;
+//	case ParseRequest::PR_PARSEINCLUDES:
+//		ProcessIncludes( req );
+//		break;
 	default:
 	case ParseRequest::PR_FILESAVED:
 		ProcessSimple( req );
@@ -196,11 +196,11 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> Workspace files %d"), filteredFileList.GetCount()) );
 
 	wxArrayString arrFiles;
-	
+
 	// Clear the results once
 	fcFileOpener::Instance()->ClearResults();
 	fcFileOpener::Instance()->ClearSearchPath();
-	
+
 	for(size_t i=0; i<searchPaths.GetCount(); i++) {
 		fcFileOpener::Instance()->AddSearchPath(searchPaths.Item(i).mb_str(wxConvUTF8).data());
 	}
@@ -210,7 +210,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 		crawlerScan(filteredFileList.Item(i).mb_str(wxConvUTF8).data());
 		TEST_DESTROY();
 	}
-	
+
 	// collect the results
 	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
 	std::set<std::string>::iterator iter = fileSet.begin();
@@ -221,7 +221,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 			arrFiles.Add( fn.GetFullPath() );
 		}
 	}
-	
+
 	// Remove any file which was recently updated
 	int initalCount = arrFiles.GetCount();
 	DEBUG_MESSAGE( wxString::Format(wxT("ParseThread::ProcessIncludes -> Files that need parse %d, time elapsed to get list %d ms"), arrFiles.GetCount(), sw.Time()/1000) ) ;

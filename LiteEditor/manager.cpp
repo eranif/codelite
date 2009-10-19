@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "fc_fileopener.h"
 #include "debuggerconfigtool.h"
 #include "debuggersettings.h"
 #include "debuggerasciiviewer.h"
@@ -74,6 +75,7 @@
 #include "manager.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
+extern int crawlerScan(const char *path);
 
 //---------------------------------------------------------------
 // Menu accelerators helper methods
@@ -705,17 +707,57 @@ void Manager::RetagWorkspace()
 			proj->GetFiles ( projectFiles, true );
 		}
 	}
+
+	// -----------------------------------------------
+	// get the list of 'external files' for retagging
+	// -----------------------------------------------
+
+	wxArrayString searchPaths;
+	fcFileOpener::Instance()->ClearResults();
+	fcFileOpener::Instance()->ClearSearchPath();
+	ParseThreadST::Get()->GetSearchPaths( searchPaths );
+	for(size_t i=0; i<searchPaths.GetCount(); i++) {
+		fcFileOpener::Instance()->AddSearchPath(searchPaths.Item(i).mb_str(wxConvUTF8).data());
+	}
+
+	for(size_t i=0; i<projectFiles.size(); i++) {
+		crawlerScan(projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data());
+	}
+
+	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
+
+	// add to this set the workspace files to create a unique list of
+	// files
+	for(size_t i=0; i<projectFiles.size(); i++) {
+		wxString fn( projectFiles.at(i).GetFullPath() );
+		fileSet.insert( fn.mb_str(wxConvUTF8).data() );
+	}
+
+	// recreate the list in the form of vector (the API requirs vector)
+	projectFiles.clear();
+	std::set<std::string>::iterator iter = fileSet.begin();
+	for (; iter != fileSet.end(); iter++ ) {
+		wxFileName fn(wxString((*iter).c_str(), wxConvUTF8));
+		fn.MakeAbsolute();
+		projectFiles.push_back( fn );
+	}
+
 	wxStopWatch sw;
 	sw.Start();
+
+	// -----------------------------------------------
+	// tag them
+	// -----------------------------------------------
+
 	TagsManagerST::Get()->RetagFiles ( projectFiles );
 	long end   = sw.Time();
-	wxLogMessage(wxT("INFO: Retag workspace completed after %d seconds"), (end)/1000);
+	wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), (end)/1000, projectFiles.size());
 
-	// Put a request to the parsing thread to parse include files
-	ParseRequest *req = new ParseRequest();
-	req->setDbFile   ( TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
-	req->setType     ( ParseRequest::PR_PARSEINCLUDES );
-	ParseThreadST::Get()->Add ( req );
+//	// Put a request to the parsing thread to parse include files
+//	ParseRequest *req = new ParseRequest();
+//	req->setDbFile   ( TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
+//	req->setType     ( ParseRequest::PR_PARSEINCLUDES );
+//	ParseThreadST::Get()->Add ( req );
 
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
 }

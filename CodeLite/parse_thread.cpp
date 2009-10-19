@@ -110,8 +110,10 @@ TagTreePtr ParseThread::DoTreeFromTags(const wxString& tags, int &count)
 void ParseThread::DoStoreTags(const wxString& tags, const wxString &filename, int &count)
 {
 	TagTreePtr ttp = DoTreeFromTags(tags, count);
-	m_pDb->DeleteByFileName( m_pDb->GetDatabaseFileName(), filename);
-	m_pDb->Store(ttp, wxFileName());
+	m_pDb->Begin();
+	m_pDb->DeleteByFileName( m_pDb->GetDatabaseFileName(), filename, false);
+	m_pDb->Store(ttp, wxFileName(), false);
+	m_pDb->Commit();
 }
 
 void ParseThread::SendEvent(int evtType, const wxString &fileName, std::vector<std::pair<wxString, TagEntry> >  &items)

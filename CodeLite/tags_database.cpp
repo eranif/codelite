@@ -461,18 +461,13 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 		ex_rs = Query(sql);
 
 		// add results from external database to the workspace database
-		std::vector<TagEntryPtr> tmpTags;
 		while ( ex_rs.NextRow() ) {
 			// Construct a TagEntry from the rescord set
 			TagEntryPtr tag(FromSQLite3ResultSet(ex_rs));
 			//conver the path to be real path
-			tmpTags.push_back(tag);
+			tags.push_back(tag);
 		}
-
-		// Append the matched results to the tags we collected so far
-		tags.insert(tags.end(), tmpTags.begin(), tmpTags.end());
 		ex_rs.Finalize();
-
 	} catch (wxSQLite3Exception &e) {
 		wxUnusedVar ( e );
 	}
@@ -485,7 +480,6 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 		ex_rs = Query(sql);
 
 		// add results from external database to the workspace database
-		std::vector<TagEntryPtr> tmpTags;
 		while ( ex_rs.NextRow() ) {
 			// check if this kind is accepted
 			if ( kinds.Index(ex_rs.GetString(4)) != wxNOT_FOUND ) {
@@ -494,13 +488,9 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 				TagEntryPtr tag(FromSQLite3ResultSet(ex_rs));
 
 				//conver the path to be real path
-				tmpTags.push_back(tag);
-
+				tags.push_back(tag);
 			}
 		}
-
-		// Append the matched results to the tags we collected so far
-		tags.insert(tags.end(), tmpTags.begin(), tmpTags.end());
 		ex_rs.Finalize();
 
 	} catch (wxSQLite3Exception &e) {
@@ -610,15 +600,7 @@ void TagsStorageSQLite::GetTagsByKindAndPath(const wxArrayString& kinds, const w
 	wxString sql;
 	sql << wxT("select * from tags where path='") << path << wxT("'");
 
-	std::vector<TagEntryPtr> tmpResults;
-	DoFetchTags(sql, tmpResults);
-
-	// Filter by kind
-	for (size_t i=0; i<tmpResults.size(); i++) {
-		if (kinds.Index(tmpResults.at(i)->GetKind()) != wxNOT_FOUND) {
-			tags.push_back( tmpResults.at(i) );
-		}
-	}
+	DoFetchTags(sql, tags, kinds);
 }
 
 void TagsStorageSQLite::GetTagsByFileAndLine(const wxString& file, int line, std::vector<TagEntryPtr>& tags)
@@ -918,12 +900,13 @@ void TagsStorageSQLite::GetTagsNames(const wxArrayString& kind, wxArrayString& n
 		whereClause = whereClause.BeforeLast(wxT(','));
 		whereClause << wxT(") ");
 
-		wxString query(wxT("SELECT DISTINCT name FROM tags WHERE "));
-		query << whereClause << wxT(" order by name ASC");
+		wxString query(wxT("SELECT distinct name FROM tags WHERE "));
+		query << whereClause << wxT(" order by name ASC LIMIT 500");
 
 		wxSQLite3ResultSet res = Query(query);
 		while (res.NextRow()) {
-			names.Add(res.GetString(0));
+			// add unique strings only
+			names.Add( res.GetString(0) );
 		}
 
 	} catch (wxSQLite3Exception &e) {

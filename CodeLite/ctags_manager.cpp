@@ -1075,6 +1075,8 @@ bool TagsManager::DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, 
 	prgDlg.Centre();
 	prgDlg.Update(0, wxT("Parsing..."));
 
+	// We commit every 10 files
+	db.Begin();
 	for (int i=0; i<maxVal; i++) {
 		wxString fileTags;
 		wxFileName curFile(files.Item(i));
@@ -1096,14 +1098,24 @@ bool TagsManager::DoBuildDatabase(const wxArrayString &files, ITagsStorage &db, 
 		parsing_result.fileName = curFile.GetFullName();
 		parsing_result.tree = ParseSourceFile(curFile);
 
-		// update the progress bar
-		if (!prgDlg.Update(i, wxString::Format(wxT("Saving  : %s"), curFile.GetFullName().c_str()))) {
-			prgDlg.Destroy();
-			return false;
-		}
+		db.Store(parsing_result.tree, wxFileName(), false);
+		if ( i % 50 == 0 ) {
+			// update the progress bar
+			if (!prgDlg.Update(i, wxT("Committing..."))) {
+				prgDlg.Destroy();
+				return false;
+			}
 
-		db.Store(parsing_result.tree, wxFileName());
+			// Commit what we got so far
+			db.Commit();
+
+			// Start a new transaction
+			db.Begin();
+		}
 	}
+
+	// Commit whats left
+	db.Commit();
 	return true;
 }
 

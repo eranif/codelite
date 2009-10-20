@@ -34,25 +34,33 @@ void IncludePathLocator::Locate(wxArrayString& paths)
 	ProcUtils::SafeExecuteCommand(cmd, out);
 
 	if (out.IsEmpty() == false ) {
+		wxString qt_output (out.Item(0));
+		qt_output.Trim().Trim(false);
 #if defined(__WXGTK__)||defined(__WXMAC__)
-		wxString pathQt4, pathQt3;
-		pathQt4 << out.Item(0) << wxFileName::GetPathSeparator() << wxT("include") << wxFileName::GetPathSeparator() << wxT("qt4");
-		pathQt3 << out.Item(0) << wxFileName::GetPathSeparator() << wxT("include") << wxFileName::GetPathSeparator() << wxT("qt3");
-
+		wxString pathQt4, pathQt3, pathQt;
+		pathQt4 << qt_output << wxFileName::GetPathSeparator() << wxT("include") << wxFileName::GetPathSeparator() << wxT("qt4");
+		pathQt3 << qt_output << wxFileName::GetPathSeparator() << wxT("include") << wxFileName::GetPathSeparator() << wxT("qt3");
+		pathQt  << qt_output << wxFileName::GetPathSeparator() << wxT("include");
+		
 		if (wxDir::Exists( pathQt4 )) {
-			paths.Add( pathQt4 + wxT("QtCore") );
-			paths.Add( pathQt4 + wxT("QtGui")  );
-			paths.Add( pathQt4 + wxT("QtXml")  );
+			paths.Add( pathQt4 + wxT("/QtCore") );
+			paths.Add( pathQt4 + wxT("/QtGui")  );
+			paths.Add( pathQt4 + wxT("/QtXml")  );
 
 		} else if (wxDir::Exists( pathQt3 ) ) {
-			paths.Add( pathQt3 + wxT("QtCore") );
-			paths.Add( pathQt3 + wxT("QtGui")  );
-			paths.Add( pathQt3 + wxT("QtXml")  );
+			paths.Add( pathQt3 + wxT("/QtCore") );
+			paths.Add( pathQt3 + wxT("/QtGui")  );
+			paths.Add( pathQt3 + wxT("/QtXml")  );
 
+		} else if (wxDir::Exists( pathQt ) ) {
+			paths.Add( pathQt + wxT("/QtCore") );
+			paths.Add( pathQt + wxT("/QtGui")  );
+			paths.Add( pathQt + wxT("/QtXml")  );
 		}
+		
 #else // __WXMSW__
 		wxString pathWin;
-		pathWin << out.Item(0) << wxFileName::GetPathSeparator() << wxT("include") << wxFileName::GetPathSeparator();
+		pathWin << qt_output << wxFileName::GetPathSeparator() << wxT("include") << wxFileName::GetPathSeparator();
 		if (wxDir::Exists( pathWin )) {
 			paths.Add( pathWin + wxT("QtCore") );
 			paths.Add( pathWin + wxT("QtGui")  );

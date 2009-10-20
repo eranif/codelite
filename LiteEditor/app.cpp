@@ -359,7 +359,7 @@ bool App::OnInit()
 				// Add the installation include paths
 				m_parserPaths.Add(strMingw + wxT("\\include\\c++\\3.4.5"));
 				pathEnv << wxT(";") << strMingw << wxT("\\bin");
-				
+
 				wxSetEnv(wxT("MINGW_INCL_HOME"), strMingw + wxT("\\include"));
 			}
 		}
@@ -382,28 +382,11 @@ bool App::OnInit()
 			mainTitle << wxT("v1.0.") << SvnRevision;
 			m_splash = new SplashScreen(bitmap, mainTitle, wxEmptyString,
 			                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
-			                            3000, NULL, -1, wxDefaultPosition, wxDefaultSize,
+			                            2000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 			                            style);
 			wxTheApp->Yield();
 		}
 	}
-
-	TagsOptionsData tod;
-	cfg->ReadObject(wxT("m_tagsOptionsData"), &tod);
-
-	// update the search paths
-	if(tod.GetParserSearchPaths().IsEmpty()) {
-		tod.SetParserSearchPaths( m_parserPaths );
-	} else {
-		for(size_t i=0; i<tod.GetParserSearchPaths().GetCount(); i++) {
-			if ( m_parserPaths.Index(tod.GetParserSearchPaths().Item(i)) == wxNOT_FOUND ) {
-				m_parserPaths.Add( tod.GetParserSearchPaths().Item(i) );
-			}
-		}
-		tod.SetParserSearchPaths( m_parserPaths );
-	}
-
-	cfg->WriteObject(wxT("m_tagsOptionsData"), &tod);
 
 	// Create the main application window (a dialog in this case)
 	// NOTE: Vertical dimension comprises the caption bar.

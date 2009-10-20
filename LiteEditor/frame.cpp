@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "tags_parser_search_path_dlg.h"
+#include "includepathlocator.h"
 #include "includepathlocator.h"
 #include "quickfinder.h"
 #include "outputviewcontrolbar.h"
@@ -520,7 +522,7 @@ Frame::Frame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPo
 
 	//start the editor creator thread
 	m_timer = new wxTimer(this, FrameTimerId);
-	m_timer->Start(1000);
+	m_timer->Start(2500);
 
 	// connect common edit events
 	wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::DispatchCommandEvent), NULL, this);
@@ -1889,15 +1891,40 @@ void Frame::OnTimer(wxTimerEvent &event)
 		PluginManager::Get()->EnableToolbars();
 
 		// Check that the user has some paths set in the parser
-		TagsOptionsData tod;
-		EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &tod);
+		EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
 
-		if ( tod.GetParserSearchPaths().IsEmpty() ) {
-			wxMessageBox(   wxT("CodeLite has detected that there are no search paths set for the parser\n")
-							wxT("This means that CodeLite will *NOT* be able to offer any code completion for\n")
-							wxT("non-workspace files (e.g. string.h). To fix this, please set search paths for the parser\n")
-							wxT("This can be done from the main menu: Settings > Tags Settings > Parser"), _("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION, this);
+		if ( m_tagsOptionsData.GetParserSearchPaths().IsEmpty() ) {
+			// Try to locate the paths automatically
+			wxArrayString paths;
+			IncludePathLocator locator(PluginManager::Get());
+			locator.Locate( paths );
+
+			if ( paths.IsEmpty() == false ) {
+				TagsParserSearchPathsDlg dlg(this, paths);
+				if(dlg.ShowModal() == wxID_OK) {
+					paths = dlg.GetSearchPaths();
+				} else {
+					paths.Empty();
+				}
+			}
+
+			if ( paths.IsEmpty() ) {
+
+				wxMessageBox(   wxT("CodeLite has detected that there are no search paths set for the parser\n")
+								wxT("This means that CodeLite will *NOT* be able to offer any code completion\n")
+								wxT("for non-workspace files (e.g. string.h).\n")
+								wxT("To fix this, please set search paths for the parser\n")
+								wxT("This can be done from the main menu: Settings > Tags Settings > Parser"), _("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION, this);
+
+			} else {
+				m_tagsOptionsData.SetParserSearchPaths( paths );
+
+				// Update the parser thread
+				ParseThreadST::Get()->SetSearchPaths( paths );
+				EditorConfigST::Get()->WriteObject( wxT("m_tagsOptionsData"), &m_tagsOptionsData );
+			}
 		}
+
 		//send initialization end event
 		SendCmdEvent(wxEVT_INIT_DONE);
 	}

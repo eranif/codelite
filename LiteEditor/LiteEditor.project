@@ -23,6 +23,7 @@
     
     
     
+    
     ]]>
     </Plugin>
   </Plugins>
@@ -222,6 +223,10 @@
       <File Name="movefuncimpldlg.cpp"/>
       <File Name="tags_options_base_dlg.h"/>
       <File Name="tags_options_base_dlg.cpp"/>
+      <File Name="tagsparsersearchpathsbasedlg.cpp"/>
+      <File Name="tagsparsersearchpathsbasedlg.h"/>
+      <File Name="tags_parser_search_path_dlg.h"/>
+      <File Name="tags_parser_search_path_dlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
       <File Name="advanced_settings.h"/>
@@ -524,6 +529,7 @@
     <File Name="editorsettingsterminal.fbp"/>
     <File Name="debuggerasciiviewerbase.fbp"/>
     <File Name="editorsettingsdockingwindowsbase.fbp"/>
+    <File Name="tagsparsersearchpathsbasedlg.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
     <File Name="breakpointsmgr.h"/>

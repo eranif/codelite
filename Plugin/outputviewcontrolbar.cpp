@@ -113,7 +113,7 @@ void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, 
 	m_buttons.push_back( button );
 #endif
 
-	GetSizer()->Add(button, 0, wxRIGHT|wxTOP|wxBOTTOM | wxEXPAND, 3);
+	GetSizer()->Add(button, 0, wxLEFT|wxTOP|wxBOTTOM | wxEXPAND, 3);
 	GetSizer()->Layout();
 	button->Refresh();
 }
@@ -898,7 +898,7 @@ BEGIN_EVENT_TABLE(OutputViewControlBarToggleButton, wxToggleButton)
 	EVT_TOGGLEBUTTON(wxID_ANY, OutputViewControlBarToggleButton::OnButtonToggled)
 END_EVENT_TABLE()
 OutputViewControlBarToggleButton::OutputViewControlBarToggleButton(wxWindow* parent, const wxString& label)
-		: wxToggleButton(parent, wxID_ANY, label, wxDefaultPosition, wxDefaultSize)
+		: wxToggleButton(parent, wxID_ANY, label, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT)
 {
 }
 

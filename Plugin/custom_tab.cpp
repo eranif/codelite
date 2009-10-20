@@ -40,7 +40,7 @@
 #    define TAB_RADIUS  1
 #    define DARK_FACTOR 2
 #elif defined(__WXGTK__)
-#    define TAB_RADIUS 0
+#    define TAB_RADIUS 3
 #    define DARK_FACTOR 2
 #else
 #    define TAB_RADIUS 3
@@ -340,7 +340,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 	wxRect bmpRect(0, 0, bmp.GetWidth(), bmp.GetHeight());
 
 	memDc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-	memDc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	memDc.SetPen(wxSystemSettings::GetColour  (wxSYS_COLOUR_3DFACE));
 	memDc.DrawRectangle(bmpRect);
 
 	//fill the bmp with a nice gradient colour
@@ -375,12 +375,13 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		fillRect.height -= 3;
 		fillRect.y  += 3;
 
-		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
-		bgTabColour = DrawingUtils::DarkColour(bgTabColour, DARK_FACTOR);
-
-		memDc.SetBrush( bgTabColour );
-		memDc.SetPen( *wxTRANSPARENT_PEN );
-		memDc.DrawRectangle(fillRect);
+		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
+		bgTabColour = DrawingUtils::LightColour(bgTabColour, 0.0);
+		
+//		memDc.SetBrush( bgTabColour );
+//		memDc.SetPen( *wxTRANSPARENT_PEN );
+//		memDc.DrawRectangle(fillRect);
+		DrawingUtils::PaintStraightGradientBox(memDc, fillRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), true);
 	}
 
 	int posx(GetPadding());
@@ -503,6 +504,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		dc.DrawRoundedRectangle(tmpRect, TAB_RADIUS);
 	}
 
+
 	if (left && GetSelected()) {
 		//draw a line
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
@@ -568,12 +570,13 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		fillRect.height -= 3;
 		top ? fillRect.y  += 3 : fillRect.y -= 3;
 
-		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
-		bgTabColour = DrawingUtils::DarkColour(bgTabColour, DARK_FACTOR);
+		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
+		bgTabColour = DrawingUtils::LightColour(bgTabColour, 0.0);
 
-		memDc.SetBrush( bgTabColour );
-		memDc.SetPen( *wxTRANSPARENT_PEN );
-		memDc.DrawRectangle(fillRect);
+//		memDc.SetBrush( bgTabColour );
+//		memDc.SetPen( *wxTRANSPARENT_PEN );
+//		memDc.DrawRectangle(fillRect);
+		DrawingUtils::PaintStraightGradientBox(memDc, fillRect, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), true);
 	}
 
 	int text_yoffset(1);

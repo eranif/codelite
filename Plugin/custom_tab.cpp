@@ -38,13 +38,13 @@
 
 #ifdef __WXMSW__
 #    define TAB_RADIUS  1
-#    define DARK_FACTOR 2
+#    define LIGHT_FACTOR 2
 #elif defined(__WXGTK__)
 #    define TAB_RADIUS 3
-#    define DARK_FACTOR 2
+#    define LIGHT_FACTOR 2
 #else
 #    define TAB_RADIUS 3
-#    define DARK_FACTOR 1.2
+#    define LIGHT_FACTOR 5
 #endif
 
 BEGIN_EVENT_TABLE(CustomTab, wxPanel)
@@ -376,7 +376,7 @@ void CustomTab::DoDrawVerticalTab(wxDC &dc)
 		fillRect.y  += 3;
 
 		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
-		bgTabColour = DrawingUtils::LightColour(bgTabColour, 5.0);
+		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
 
 //		memDc.SetBrush( bgTabColour );
 //		memDc.SetPen( *wxTRANSPARENT_PEN );
@@ -575,7 +575,7 @@ void CustomTab::DoDrawHorizontalTab(wxDC &dc)
 		top ? fillRect.y  += 3 : fillRect.y -= 3;
 
 		wxColour bgTabColour ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
-		bgTabColour = DrawingUtils::LightColour(bgTabColour, 5.0);
+		bgTabColour = DrawingUtils::LightColour(bgTabColour, LIGHT_FACTOR);
 
 //		memDc.SetBrush( bgTabColour );
 //		memDc.SetPen( *wxTRANSPARENT_PEN );

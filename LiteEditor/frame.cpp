@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include <wx/busyinfo.h>
 #include "tags_parser_search_path_dlg.h"
 #include "includepathlocator.h"
 #include "includepathlocator.h"
@@ -1459,10 +1460,39 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 
 	colourTypes = m_tagsOptionsData.GetCcColourFlags();
 
+	wxArrayString pathsBefore = m_tagsOptionsData.GetParserSearchPaths();
 	TagsOptionsDlg dlg(this, m_tagsOptionsData);
 	if (dlg.ShowModal() == wxID_OK) {
 		TagsManager *tagsMgr = TagsManagerST::Get();
 		m_tagsOptionsData = dlg.GetData();
+
+		wxArrayString pathsAfter = m_tagsOptionsData.GetParserSearchPaths();
+		wxArrayString removedPaths;
+
+		// Compare the paths
+		for(size_t i=0; i<pathsBefore.GetCount(); i++) {
+			int where = pathsAfter.Index(pathsBefore.Item(i));
+			if(where == wxNOT_FOUND) {
+				removedPaths.Add( pathsBefore.Item(i) );
+			} else {
+				pathsAfter.RemoveAt((size_t)where);
+			}
+		}
+
+		if ( removedPaths.IsEmpty() == false ) {
+			wxWindowDisabler disableAll;
+			wxBusyInfo info(_T("Updating tags database, please wait..."), this);
+
+			// Remove all tags from the database which starts with the paths which were
+			// removed from the parser include path
+			ITagsStorage *db = TagsManagerST::Get()->GetDatabase();
+			db->Begin();
+			for(size_t i=0; i<removedPaths.GetCount(); i++) {
+				db->DeleteByFilePrefix     (wxFileName(), removedPaths.Item(i));
+				db->DeleteFromFilesByPrefix(wxFileName(), removedPaths.Item(i));
+			}
+			db->Commit();
+		}
 
 		newColVars         = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS             ? true : false);
 		newColTags         = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS   ? true : false);
@@ -1485,6 +1515,12 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 		// update parser search paths
 		ParseThreadST::Get()->SetSearchPaths   ( m_tagsOptionsData.GetParserSearchPaths() );
 		ParseThreadST::Get()->SetCrawlerEnabeld( m_tagsOptionsData.GetParserEnabled()     );
+
+		if(pathsAfter.IsEmpty() == false) {
+			// a retagg is needed
+			wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
+			AddPendingEvent(e);
+		}
 	}
 }
 

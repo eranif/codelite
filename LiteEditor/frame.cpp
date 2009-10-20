@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "includepathlocator.h"
 #include "quickfinder.h"
 #include "outputviewcontrolbar.h"
 #include "clauidockart.h"
@@ -721,6 +722,7 @@ void Frame::CreateGUIControls(void)
 	// If you wish to connect another object for it, simply call ParseThreadST::Get()->SetNotifyWindow(this)
 	// with another object as 'this'
 	//--------------------------------------------------------------------------------------
+
 	// Update the parser thread search paths
 	ParseThreadST::Get()->SetCrawlerEnabeld(m_tagsOptionsData.GetParserEnabled());
 	ParseThreadST::Get()->SetSearchPaths( m_tagsOptionsData.GetParserSearchPaths() );

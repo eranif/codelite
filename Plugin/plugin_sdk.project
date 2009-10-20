@@ -112,6 +112,8 @@
     <File Name="tagsmanagementconf.cpp"/>
     <File Name="tagsmanagementconf.h"/>
     <File Name="build_config_common.h"/>
+    <File Name="includepathlocator.cpp"/>
+    <File Name="includepathlocator.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ProcessControl">
     <File Name="pipedprocess.h"/>
@@ -358,6 +360,6 @@
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

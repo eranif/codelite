@@ -296,7 +296,7 @@ public:
 	 * @param scope
 	 * @param tags [output]
 	 */
-	virtual void GetTagsByScope(const wxString& scope, std::vector<TagEntryPtr> &tags);
+	virtual void GetTagsByScope(const wxString& scope, int limit, bool &limitExceeded, std::vector<TagEntryPtr>& tags);
 
 	/**
 	 * @brief return array of tags by kind.

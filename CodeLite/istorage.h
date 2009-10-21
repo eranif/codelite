@@ -50,9 +50,11 @@ public:
 	 * @brief return list of tags by scope. If the cache is enabled, tags will be fetched from the
 	 * cache instead of accessing the disk
 	 * @param scope
+	 * @param limit maximum items to fetch
+	 * @param limitExceeded set to true if the 
 	 * @param tags
 	 */
-	virtual void GetTagsByScope(const wxString& scope, std::vector<TagEntryPtr> &tags) = 0;
+	virtual void GetTagsByScope(const wxString& scope, int limit, bool &limitExceeded, std::vector<TagEntryPtr> &tags) = 0;
 
 	/**
 	 * @brief return array of tags by kind.

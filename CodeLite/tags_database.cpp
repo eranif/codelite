@@ -522,13 +522,22 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxStr
 	DoFetchTags(sql, tags);
 }
 
-void TagsStorageSQLite::GetTagsByScope(const wxString& scope, std::vector<TagEntryPtr>& tags)
+void TagsStorageSQLite::GetTagsByScope(const wxString& scope, int limit, bool &limitExceeded, std::vector<TagEntryPtr>& tags)
 {
 	wxString sql;
+	if ( limit < 0  ){
+		limit = 1000;
+	}
+	limitExceeded = false;
+	
 	// Build the SQL statement
-	sql << wxT("select * from tags where scope='") << scope << wxT("'");
+	sql << wxT("select * from tags where scope='") << scope << wxT("' limit ") << limit;
 
 	DoFetchTags(sql, tags);
+	if ( tags.size() == (size_t)limit ) {
+		// we can assume that the limit was hit
+		limitExceeded = true;
+	}
 }
 
 void TagsStorageSQLite::GetTagsByKind(const wxArrayString& kinds, const wxString &orderingColumn, int order, std::vector<TagEntryPtr>& tags)

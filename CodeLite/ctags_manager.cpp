@@ -534,13 +534,17 @@ void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr> &t
 
 	//make enough room for max of 500 elements in the vector
 	tags.reserve(500);
-
+	bool limitExceeded (false);
+	
+	// TODO: make the limit configurable
+	int  limit (1000);
+	
 	for (size_t i=0; i<derivationList.size(); i++) {
 		wxString tmpScope(derivationList.at(i));
 		tmpScope = DoReplaceMacros(tmpScope);
 
 		// try the external database for match
-		m_workspaceDatabase->GetTagsByScope(derivationList.at(i), tags);
+		m_workspaceDatabase->GetTagsByScope(derivationList.at(i), limit, limitExceeded, tags);
 	}
 
 	// and finally sort the results

@@ -728,7 +728,7 @@ void Frame::CreateGUIControls(void)
 
 	// Update the parser thread search paths
 	ParseThreadST::Get()->SetCrawlerEnabeld(m_tagsOptionsData.GetParserEnabled());
-	ParseThreadST::Get()->SetSearchPaths( m_tagsOptionsData.GetParserSearchPaths() );
+	ParseThreadST::Get()->SetSearchPaths( m_tagsOptionsData.GetParserSearchPaths(), m_tagsOptionsData.GetParserExcludePaths() );
 
 	ParseThreadST::Get()->Start();
 
@@ -1513,7 +1513,7 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 		}
 
 		// update parser search paths
-		ParseThreadST::Get()->SetSearchPaths   ( m_tagsOptionsData.GetParserSearchPaths() );
+		ParseThreadST::Get()->SetSearchPaths   ( m_tagsOptionsData.GetParserSearchPaths(), m_tagsOptionsData.GetParserExcludePaths() );
 		ParseThreadST::Get()->SetCrawlerEnabeld( m_tagsOptionsData.GetParserEnabled()     );
 
 		if(pathsAfter.IsEmpty() == false) {
@@ -1956,7 +1956,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 				m_tagsOptionsData.SetParserSearchPaths( paths );
 
 				// Update the parser thread
-				ParseThreadST::Get()->SetSearchPaths( paths );
+				ParseThreadST::Get()->SetSearchPaths( paths, m_tagsOptionsData.GetParserExcludePaths() );
 				EditorConfigST::Get()->WriteObject( wxT("m_tagsOptionsData"), &m_tagsOptionsData );
 			}
 		}

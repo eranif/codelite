@@ -130,12 +130,16 @@ void ParseThread::SetCrawlerEnabeld(bool b)
 	m_crawlerEnabled = b;
 }
 
-void ParseThread::SetSearchPaths(const wxArrayString& paths)
+void ParseThread::SetSearchPaths(const wxArrayString& paths, const wxArrayString &exlucdePaths)
 {
 	wxCriticalSectionLocker locker( m_cs );
 	m_searchPaths.Clear();
 	for (size_t i=0; i<paths.GetCount(); i++) {
 		m_searchPaths.Add( paths.Item(i).c_str() );
+	}
+
+	for (size_t i=0; i<exlucdePaths.GetCount(); i++) {
+		m_excludePaths.Add( exlucdePaths.Item(i).c_str() );
 	}
 }
 
@@ -145,11 +149,15 @@ bool ParseThread::IsCrawlerEnabled()
 	return m_crawlerEnabled;
 }
 
-void ParseThread::GetSearchPaths(wxArrayString& paths)
+void ParseThread::GetSearchPaths(wxArrayString& paths, wxArrayString &excludePaths)
 {
 	wxCriticalSectionLocker locker( m_cs );
 	for (size_t i=0; i<m_searchPaths.GetCount(); i++) {
 		paths.Add( m_searchPaths.Item(i).c_str() );
+	}
+
+	for (size_t i=0; i<m_excludePaths.GetCount(); i++) {
+		excludePaths.Add( m_excludePaths.Item(i).c_str() );
 	}
 }
 
@@ -170,8 +178,8 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
 	m_pDb->GetFiles(files);
 
 	// Remove from this list all files which starts with one of the crawler search paths
-	wxArrayString searchPaths, filteredFileList;
-	GetSearchPaths( searchPaths );
+	wxArrayString searchPaths, excludePaths, filteredFileList;
+	GetSearchPaths( searchPaths, excludePaths );
 
 	for(size_t i=0; i<files.size(); i++) {
 		wxString name = files.at(i)->GetFile();
@@ -362,8 +370,8 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
 		return;
 	}
 
-	wxArrayString includePaths;
-	GetSearchPaths( includePaths );
+	wxArrayString includePaths, excludePaths;
+	GetSearchPaths( includePaths, excludePaths );
 
 	fcFileOpener::Instance()->ClearSearchPath();
 	for(size_t i=0; i<includePaths.GetCount(); i++) {

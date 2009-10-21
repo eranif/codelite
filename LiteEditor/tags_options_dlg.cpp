@@ -83,19 +83,20 @@ void TagsOptionsDlg::InitValues()
 	m_checkBoxretagWorkspaceOnStartup->SetValue   (m_data.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ? true : false);
 	m_checkBoxAccurateScopeNameResolving->SetValue(m_data.GetFlags() & CC_ACCURATE_SCOPE_RESOLVING ? true : false);
 
-	m_checkBoxClass->SetValue     (m_data.GetCcColourFlags() & CC_COLOUR_CLASS);
-	m_checkBoxEnum->SetValue      (m_data.GetCcColourFlags() & CC_COLOUR_ENUM);
-	m_checkBoxFunction->SetValue  (m_data.GetCcColourFlags() & CC_COLOUR_FUNCTION);
-	m_checkBoxMacro->SetValue     (m_data.GetCcColourFlags() & CC_COLOUR_MACRO);
-	m_checkBoxNamespace->SetValue (m_data.GetCcColourFlags() & CC_COLOUR_NAMESPACE);
-	m_checkBoxPrototype->SetValue (m_data.GetCcColourFlags() & CC_COLOUR_PROTOTYPE);
-	m_checkBoxStruct->SetValue    (m_data.GetCcColourFlags() & CC_COLOUR_STRUCT);
-	m_checkBoxTypedef->SetValue   (m_data.GetCcColourFlags() & CC_COLOUR_TYPEDEF);
-	m_checkBoxUnion->SetValue     (m_data.GetCcColourFlags() & CC_COLOUR_UNION);
-	m_checkBoxEnumerator->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_ENUMERATOR);
-	m_checkBoxMember->SetValue    (m_data.GetCcColourFlags() & CC_COLOUR_MEMBER);
-	m_checkBoxVariable->SetValue  (m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
-	m_listBoxSearchPaths->Append  ( m_data.GetParserSearchPaths() );
+	m_checkBoxClass->SetValue                     (m_data.GetCcColourFlags() & CC_COLOUR_CLASS);
+	m_checkBoxEnum->SetValue                      (m_data.GetCcColourFlags() & CC_COLOUR_ENUM);
+	m_checkBoxFunction->SetValue                  (m_data.GetCcColourFlags() & CC_COLOUR_FUNCTION);
+	m_checkBoxMacro->SetValue                     (m_data.GetCcColourFlags() & CC_COLOUR_MACRO);
+	m_checkBoxNamespace->SetValue                 (m_data.GetCcColourFlags() & CC_COLOUR_NAMESPACE);
+	m_checkBoxPrototype->SetValue                 (m_data.GetCcColourFlags() & CC_COLOUR_PROTOTYPE);
+	m_checkBoxStruct->SetValue                    (m_data.GetCcColourFlags() & CC_COLOUR_STRUCT);
+	m_checkBoxTypedef->SetValue                   (m_data.GetCcColourFlags() & CC_COLOUR_TYPEDEF);
+	m_checkBoxUnion->SetValue                     (m_data.GetCcColourFlags() & CC_COLOUR_UNION);
+	m_checkBoxEnumerator->SetValue                (m_data.GetCcColourFlags() & CC_COLOUR_ENUMERATOR);
+	m_checkBoxMember->SetValue                    (m_data.GetCcColourFlags() & CC_COLOUR_MEMBER);
+	m_checkBoxVariable->SetValue                  (m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
+	m_listBoxSearchPaths->Append                  ( m_data.GetParserSearchPaths() );
+	m_listBoxSearchPaths1->Append                 ( m_data.GetParserExcludePaths() );
 
 	//initialize the ctags page
 	wxString prep;
@@ -165,6 +166,7 @@ void TagsOptionsDlg::CopyData()
 	m_data.SetLanguages(m_comboBoxLang->GetStrings());
 	m_data.SetLanguageSelection(m_comboBoxLang->GetStringSelection());
 	m_data.SetParserSearchPaths( m_listBoxSearchPaths->GetStrings() );
+	m_data.SetParserExcludePaths( m_listBoxSearchPaths1->GetStrings() );
 
 }
 
@@ -230,5 +232,46 @@ void TagsOptionsDlg::OnRemoveSearchPath(wxCommandEvent& e)
 void TagsOptionsDlg::OnRemoveSearchPathUI(wxUpdateUIEvent& e)
 {
 	e.Enable(m_listBoxSearchPaths->GetSelection() != wxNOT_FOUND);
+}
+
+void TagsOptionsDlg::OnAddExcludePath(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	wxString new_path = wxDirSelector(wxT("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	if(new_path.IsEmpty() == false){
+		if(m_listBoxSearchPaths1->GetStrings().Index(new_path) == wxNOT_FOUND) {
+			m_listBoxSearchPaths1->Append(new_path);
+		}
+	}
+}
+
+void TagsOptionsDlg::OnAddExcludePathUI(wxUpdateUIEvent& e)
+{
+	e.Enable(true);
+}
+
+void TagsOptionsDlg::OnClearAllExcludePaths(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	m_listBoxSearchPaths1->Clear();
+}
+
+void TagsOptionsDlg::OnClearAllExcludePathsUI(wxUpdateUIEvent& e)
+{
+	e.Enable(m_listBoxSearchPaths1->IsEmpty() == false);
+}
+
+void TagsOptionsDlg::OnRemoveExcludePath(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	int sel = m_listBoxSearchPaths1->GetSelection();
+	if( sel != wxNOT_FOUND) {
+		m_listBoxSearchPaths1->Delete((unsigned int)sel);
+	}
+}
+
+void TagsOptionsDlg::OnRemoveExcludePathUI(wxUpdateUIEvent& e)
+{
+	e.Enable(m_listBoxSearchPaths1->GetSelection() != wxNOT_FOUND);
 }
 

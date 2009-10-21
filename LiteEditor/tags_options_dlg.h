@@ -45,17 +45,23 @@ protected:
 	void SetFlag(CodeCompletionOpts flag, bool set);
 	void SetColouringFlag(CodeCompletionColourOpts flag, bool set);
 
-	void InitValues          ();
-	void CopyData            ();
-	void OnButtonOK          (wxCommandEvent &event);
-	void OnButtonAdd         (wxCommandEvent &event);
-	void OnColourWorkspaceUI (wxUpdateUIEvent &e);
-	void OnClearAll          (wxCommandEvent &e);
-	void OnClearAllUI        (wxUpdateUIEvent &e);
-	void OnAddSearchPath     (wxCommandEvent &e);
-	void OnAddSearchPathUI   (wxUpdateUIEvent &e);
-	void OnRemoveSearchPath  (wxCommandEvent &e);
-	void OnRemoveSearchPathUI(wxUpdateUIEvent &e);
+	void InitValues              ();
+	void CopyData                ();
+	void OnButtonOK              (wxCommandEvent &event);
+	void OnButtonAdd             (wxCommandEvent &event);
+	void OnColourWorkspaceUI     (wxUpdateUIEvent &e);
+	void OnClearAll              (wxCommandEvent &e);
+	void OnClearAllUI            (wxUpdateUIEvent &e);
+	void OnAddSearchPath         (wxCommandEvent &e);
+	void OnAddSearchPathUI       (wxUpdateUIEvent &e);
+	void OnRemoveSearchPath      (wxCommandEvent &e);
+	void OnRemoveSearchPathUI    (wxUpdateUIEvent &e);
+	void OnClearAllExcludePaths  (wxCommandEvent &e);
+	void OnClearAllExcludePathsUI(wxUpdateUIEvent &e);
+	void OnAddExcludePath        (wxCommandEvent &e);
+	void OnAddExcludePathUI      (wxUpdateUIEvent &e);
+	void OnRemoveExcludePath     (wxCommandEvent &e);
+	void OnRemoveExcludePathUI   (wxUpdateUIEvent &e);
 
 public:
 	TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data);

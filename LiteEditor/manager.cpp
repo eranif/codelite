@@ -712,12 +712,17 @@ void Manager::RetagWorkspace()
 	// get the list of 'external files' for retagging
 	// -----------------------------------------------
 
-	wxArrayString searchPaths;
+	wxArrayString searchPaths, excludePaths;
 	fcFileOpener::Instance()->ClearResults();
 	fcFileOpener::Instance()->ClearSearchPath();
-	ParseThreadST::Get()->GetSearchPaths( searchPaths );
+	ParseThreadST::Get()->GetSearchPaths( searchPaths, excludePaths );
+
 	for(size_t i=0; i<searchPaths.GetCount(); i++) {
 		fcFileOpener::Instance()->AddSearchPath(searchPaths.Item(i).mb_str(wxConvUTF8).data());
+	}
+
+	for(size_t i=0; i<excludePaths.GetCount(); i++) {
+		fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
 	}
 
 	for(size_t i=0; i<projectFiles.size(); i++) {

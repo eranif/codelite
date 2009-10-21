@@ -137,12 +137,13 @@ class ParseThread : public WorkerThread
 	TagsStorageSQLite*               m_pDb;
 	wxStopWatch                 m_watch;
 	wxArrayString               m_searchPaths;
+	wxArrayString               m_excludePaths;
 	bool                        m_crawlerEnabled;
 
 public:
 	void SetCrawlerEnabeld (bool b                    );
-	void SetSearchPaths    (const wxArrayString &paths);
-	void GetSearchPaths    (wxArrayString &paths      );
+	void SetSearchPaths    (const wxArrayString &paths, const wxArrayString &exlucdePaths);
+	void GetSearchPaths    (wxArrayString &paths, wxArrayString &excludePaths);
 	bool IsCrawlerEnabled  ();
 private:
 	/**

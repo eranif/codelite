@@ -72,6 +72,7 @@ class TagsOptionsData : public SerializedObject
 	wxArrayString    m_languages;
 	int              m_minWordLen;
 	wxArrayString    m_parserSearchPaths;
+	wxArrayString    m_parserExcludePaths;
 	bool             m_parserEnabled;
 
 public:
@@ -142,6 +143,12 @@ public:
 	}
 	const wxArrayString& GetParserSearchPaths() const {
 		return m_parserSearchPaths;
+	}
+	void SetParserExcludePaths(const wxArrayString& parserExcludePaths) {
+		this->m_parserExcludePaths = parserExcludePaths;
+	}
+	const wxArrayString& GetParserExcludePaths() const {
+		return m_parserExcludePaths;
 	}
 };
 

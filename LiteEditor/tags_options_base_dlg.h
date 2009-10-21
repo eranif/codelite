@@ -70,6 +70,11 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxButton* m_buttonAddSearchPath;
 		wxButton* m_buttonRemovePath;
 		wxButton* m_buttonClearAll;
+		wxStaticText* m_staticText71;
+		wxListBox* m_listBoxSearchPaths1;
+		wxButton* m_buttonAddExcludePath;
+		wxButton* m_buttonRemoveExcludePath;
+		wxButton* m_buttonClearAllExcludPath;
 		wxPanel* m_ctagsPage;
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textPrep;
@@ -93,6 +98,12 @@ class TagsOptionsBaseDlg : public wxDialog
 		virtual void OnRemoveSearchPathUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnClearAll( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnClearAllUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnAddExcludePath( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnAddExcludePathUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnRemoveExcludePath( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnRemoveExcludePathUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnClearAllExcludePaths( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnClearAllExcludePathsUI( wxUpdateUIEvent& event ){ event.Skip(); }
 		virtual void OnButtonAdd( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ){ event.Skip(); }
 		

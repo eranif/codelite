@@ -62,6 +62,8 @@
 #define PIPE_NAME "/tmp/codelite_indexer.%s.sock"
 #endif
 
+#define MAX_SEARCH_LIMIT 5000
+
 const wxEventType wxEVT_UPDATE_FILETREE_EVENT = XRCID("update_file_tree_event");
 const wxEventType wxEVT_TAGS_DB_UPGRADE       = XRCID("tags_db_upgraded");
 
@@ -110,7 +112,7 @@ TagsManager::TagsManager()
 {
 	// Create databases
 	m_workspaceDatabase = new TagsStorageSQLite( );
-	m_workspaceDatabase->SetSingleSearchLimit( 5000 );
+	m_workspaceDatabase->SetSingleSearchLimit( MAX_SEARCH_LIMIT );
 	m_ctagsCmd = wxT("  --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
 	m_timer = new wxTimer(this, CtagsMgrTimerId);
 	m_timer->Start(100);
@@ -1372,7 +1374,7 @@ void TagsManager::CloseDatabase()
 		UpdateFileTree(m_workspaceDatabase, false);
 		delete m_workspaceDatabase;
 		m_workspaceDatabase = new TagsStorageSQLite( );
-		m_workspaceDatabase->SetSingleSearchLimit( 5000 );
+		m_workspaceDatabase->SetSingleSearchLimit( MAX_SEARCH_LIMIT );
 	}
 }
 

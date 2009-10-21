@@ -2674,6 +2674,13 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 	m_ccBox->SetAutoHide(false);
 	m_ccBox->SetInsertSingleChoice(false);
 
+	// If the number of elements exceeds the maximum query result,
+	// alert the user
+	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
+	if( tags.size() >= (size_t) limit ) {
+		this->DoSetStatusMessage(wxString::Format(wxT("Too many items were found. Narrow your search criteria (Displaying %d)"), tags.size()), 0);
+	}
+
 	m_ccBox->Adjust();
 	m_ccBox->Show(tags, word, false, owner);
 }
@@ -2687,6 +2694,13 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 
 	m_ccBox->SetAutoHide(autoHide);
 	m_ccBox->SetInsertSingleChoice(autoInsertSingleChoice);
+
+	// If the number of elements exceeds the maximum query result,
+	// alert the user
+	int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
+	if( tags.size() >= (size_t) limit ) {
+		this->DoSetStatusMessage(wxString::Format(wxT("Too many items were found. Narrow your search criteria (Displaying %d)"), tags.size()), 0);
+	}
 
 	m_ccBox->Adjust();
 	m_ccBox->Show(tags, word, showFullDecl, NULL);

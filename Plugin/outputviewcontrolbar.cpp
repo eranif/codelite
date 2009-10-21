@@ -366,6 +366,15 @@ void OutputViewControlBar::OnEditorFocus(wxCommandEvent& event)
 
 	if (EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 
+		// Optionally don't hide the Debug pane: it's irritating during a debug session, you click to set a breakpoint...
+		if (EditorConfigST::Get()->GetOptions()->GetHideOutputPaneNotIfDebug()) {
+			// Find if it's 'Debug' that's visible
+			size_t cursel = m_book->GetSelection();
+			if ( cursel != Notebook::npos && m_book->GetPageText(cursel) == wxT("Debug") ) {
+				return;
+			}
+		}
+
 		// re-draw all the buttons
 		for (size_t i=0; i<m_buttons.size(); i++) {
 #ifdef __WXMSW__

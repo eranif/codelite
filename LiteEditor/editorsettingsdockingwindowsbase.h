@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Feb  8 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -32,9 +32,15 @@ class EditorSettingsDockingWindowsBase : public wxPanel
 	
 	protected:
 		wxCheckBox* m_checkBoxHideOutputPaneOnClick;
+		wxCheckBox* m_checkBoxHideOutputPaneNotIfDebug;
 		wxCheckBox* m_checkBoxShowQuickFinder;
 	
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnHideOutputPaneNotIfDebugUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		
+	
 	public:
+		
 		EditorSettingsDockingWindowsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~EditorSettingsDockingWindowsBase();
 	

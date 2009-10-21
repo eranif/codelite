@@ -15,6 +15,7 @@ class EditorSettingsDockingWindows
 : public EditorSettingsDockingWindowsBase
 , public TreeBookNode<EditorSettingsDockingWindows>
 {
+	void OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event);
 public:
 	/** Constructor */
 	EditorSettingsDockingWindows( wxWindow* parent );

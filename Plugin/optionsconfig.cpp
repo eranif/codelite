@@ -61,6 +61,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		, m_eolMode(wxT("Default"))
 		, m_hideChangeMarkerMargin(false)
 		, m_hideOutpuPaneOnUserClick(false)
+		, m_hideOutputPaneNotIfDebug(true)
 		, m_showQuickFinder(true)
 {
 	//set the default font name to be UTF8
@@ -100,6 +101,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
 		m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
 		m_hideChangeMarkerMargin = XmlUtils::ReadBool(node, wxT("HideChangeMarkerMargin"));
 		m_hideOutpuPaneOnUserClick = XmlUtils::ReadBool(node, wxT("HideOutputPaneOnUserClick"));
+		m_hideOutputPaneNotIfDebug = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfDebug"));
 		m_showQuickFinder = XmlUtils::ReadBool(node, wxT("ShowQuickFinder"), m_showQuickFinder);
 	}
 }
@@ -132,6 +134,7 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("AutoAdjustHScrollBarWidth"), BoolToString(m_autoAdjustHScrollBarWidth));
 	n->AddProperty(wxT("HideChangeMarkerMargin"),    BoolToString(m_hideChangeMarkerMargin));
 	n->AddProperty(wxT("HideOutputPaneOnUserClick"), BoolToString(m_hideOutpuPaneOnUserClick));
+	n->AddProperty(wxT("HideOutputPaneNotIfDebug"),	 BoolToString(m_hideOutputPaneNotIfDebug));
 	n->AddProperty(wxT("ShowQuickFinder"),           BoolToString(m_showQuickFinder));
 	n->AddProperty(wxT("ConsoleCommand"),            m_programConsoleCommand);
 	n->AddProperty(wxT("EOLMode"),                   m_eolMode);

@@ -429,6 +429,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 		editor->SetCaretAt(position);
 	} else if (lineno != wxNOT_FOUND) {
 		editor->GotoLine(lineno);
+		editor->EnsureVisible(lineno);
 	}
 	editor->EnsureCaretVisible();
 	if (GetActiveEditor() == editor) {

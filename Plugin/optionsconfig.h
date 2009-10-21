@@ -67,6 +67,7 @@ class OptionsConfig : public ConfObject
 	wxString       m_eolMode;
 	bool           m_hideChangeMarkerMargin;
 	bool           m_hideOutpuPaneOnUserClick;
+	bool           m_hideOutputPaneNotIfDebug;
 	bool           m_showQuickFinder;
 public:
 	OptionsConfig(wxXmlNode *node);
@@ -87,6 +88,12 @@ public:
 	}
 	const bool& GetHideOutpuPaneOnUserClick() const {
 		return m_hideOutpuPaneOnUserClick;
+	}
+	void SetHideOutputPaneNotIfDebug(const bool& HideOutpuPaneNotIfDebug) {
+		this->m_hideOutputPaneNotIfDebug = HideOutpuPaneNotIfDebug;
+	}
+	const bool& GetHideOutputPaneNotIfDebug() const {
+		return m_hideOutputPaneNotIfDebug;
 	}
 	void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin) {
 		this->m_hideChangeMarkerMargin = hideChangeMarkerMargin;

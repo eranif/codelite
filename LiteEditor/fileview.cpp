@@ -1133,10 +1133,14 @@ void FileViewTree::OnItemEndDrag( wxTreeEvent &event )
 	                       itemDst = event.GetItem();
 
 	wxString targetVD, fromVD;
-	if ( itemDst.IsOk() ) {
+	while ( itemDst.IsOk() ) {
 		FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( itemDst ) );
-		if ( data->GetData().GetKind() == ProjectItem::TypeVirtualDirectory ) {
-			//we are only allowed items between virtual folders
+		if ( data->GetData().GetKind() != ProjectItem::TypeVirtualDirectory ) {
+			// We're only allowed to drag items between virtual folders, so find the parent folder
+			itemDst = GetItemParent( itemDst );
+			continue;
+		}
+
 			wxTreeItemId target  = itemDst;
 			if ( target.IsOk() ) {
 				targetVD = GetItemPath( target );
@@ -1170,7 +1174,8 @@ void FileViewTree::OnItemEndDrag( wxTreeEvent &event )
 				Expand( target );
 				SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 			}
-		}
+		
+		break;	// from the 'while' loop
 	}
 }
 

@@ -1,6 +1,5 @@
 <resource>
     <object class="wxMenuBar" name="main_menu">
-		<style>wxMB_DOCKABLE</style>
         <object class="wxMenu" name="file_tool_or_menuitem">
             <label>&amp;File</label>
             <style>wxMENU_TEAROFF</style>

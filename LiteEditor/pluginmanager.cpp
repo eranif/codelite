@@ -345,6 +345,11 @@ bool PluginManager::AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayS
 	return Frame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolder(vdFullPath, paths);
 }
 
+bool PluginManager::AddFilesToVirtualFolderIntelligently(const wxString &vdFullPath, wxArrayString &paths)
+{
+	return Frame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolderIntelligently(vdFullPath, paths);
+}
+
 int PluginManager::GetToolbarIconSize()
 {
 	//for now return 24 by default

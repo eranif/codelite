@@ -511,8 +511,10 @@ void GizmosPlugin::CreateClass(const NewClassInfo &info)
 	paths.Add(srcFile);
 	paths.Add(hdrFile);
 
-	wxString err_msg;
-	m_mgr->AddFilesToVirtualFolder(info.virtualDirectory, paths);
+	// We have a .cpp and an .h file, and there may well be a :src and an :include folder available
+	// So try to place the files appropriately. If that fails, dump both in the selected folder
+	if (! m_mgr->AddFilesToVirtualFolderIntelligently(info.virtualDirectory, paths) )
+		m_mgr->AddFilesToVirtualFolder(info.virtualDirectory, paths);
 }
 
 void GizmosPlugin::OnNewWxProject(wxCommandEvent &e)

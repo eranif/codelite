@@ -551,8 +551,8 @@ bool FileViewTree::AddFilesToVirtualFolder(const wxString& vdFullPath, wxArraySt
 
 			wxTreeItemId hti = AppendItem(	item,						// parent
 			                               projItem.GetDisplayName(),	// display name
-			                               GetIconIndex( projItem ),		// item image index
-			                               GetIconIndex( projItem ),		// selected item image
+			                               GetIconIndex( projItem ),	// item image index
+			                               GetIconIndex( projItem ),	// selected item image
 			                               new FilewViewTreeItemData( projItem ) );
 			wxUnusedVar( hti );
 		}
@@ -563,6 +563,54 @@ bool FileViewTree::AddFilesToVirtualFolder(const wxString& vdFullPath, wxArraySt
 		return true;
 	}
 	return false;
+}
+
+bool FileViewTree::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths)
+{
+	// Note: This is only used atm to place a pair of cpp/h files, so I'm not checking paths.
+	// If you use the function for anything else in the future...
+
+	// The files passed in 'paths' may be a .cpp and an .h. See if there's a :src and :include folder to put them in
+	wxString srcname, includename;
+	size_t basenamelen = vdFullPath.rfind(wxT(":src"));
+	if (basenamelen == wxString::npos) {
+		basenamelen = vdFullPath.rfind(wxT(":include"));
+		if (basenamelen == wxString::npos) {
+		// The selected folder name ends neither in :src nor in :include, so we can't be intelligent this time
+			return false;
+		}
+	}
+	// OK, the selected folder is suitable; but check there's a matching pair
+	wxString basename = vdFullPath.Left(basenamelen);
+	srcname = basename + wxT(":src");
+	includename = basename + wxT(":include");
+	wxTreeItemId srcitem = ItemByFullPath(srcname);
+	wxTreeItemId includeitem = ItemByFullPath(includename);
+	if (!srcitem.IsOk() || !includeitem.IsOk()) {
+		return false;
+	}
+	// We're winning. Now it's just a matter of putting the cpp file into :src, etc
+	wxArrayString cppfiles, hfiles;
+	for (int c = (int)paths.GetCount()-1; c >= 0 ; --c) {
+		wxString file = paths.Item(c);
+		if (file.Right(4) == wxT(".cpp")) {
+			cppfiles.Add(file);
+			paths.RemoveAt(c);
+		}
+		 else if (file.Right(2) == wxT(".h")) {
+			hfiles.Add(file);
+			paths.RemoveAt(c);			
+		}
+	}
+	// Finally do the Adds
+	AddFilesToVirtualFolder(srcname, cppfiles);
+	AddFilesToVirtualFolder(includename, hfiles);
+	// There shouldn't have been any other files passed; but if there were, add them to the selected folder
+	if (paths.GetCount()) {
+		AddFilesToVirtualFolder(vdFullPath, paths);
+	}
+
+	return true;
 }
 
 bool FileViewTree::AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths)

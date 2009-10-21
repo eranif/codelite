@@ -111,6 +111,8 @@ public:
 
 	bool AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths);
 	bool AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths);
+	bool AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths);
+
 	bool CreateVirtualDirectory(const wxString &parentPath, const wxString &vdName);
 
 protected:

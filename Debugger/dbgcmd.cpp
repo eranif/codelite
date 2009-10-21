@@ -312,10 +312,10 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 			// Notify the container that we got control back from debugger
 			m_observer->UpdateGotControl(DBG_BP_HIT);
 			// Now discover which bp was hit. Fortunately, that's in the next token: bkptno="12"
-			static wxRegEx reGetBreakNo(wxT("[0-9]+"));
-			wxString whichBP = tkz.NextToken();
-			if (reGetBreakNo.Matches(whichBP)) {
-				wxString number = reGetBreakNo.GetMatch(whichBP);
+			// Except that it no longer is in gdb 7.0. It's now: ..disp="keep",bkptno="12". So:
+			static wxRegEx reGetBreakNo(wxT("bkptno=\"([0-9]+)\""));
+			if (reGetBreakNo.Matches(line)) {
+				wxString number = reGetBreakNo.GetMatch(line, 1);
 				long id;
 				if (number.ToLong(&id)) {
 					m_observer->UpdateBpHit((int)id);

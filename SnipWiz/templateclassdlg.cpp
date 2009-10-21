@@ -153,15 +153,23 @@ void TemplateClassDlg::OnGenerate( wxCommandEvent& event )
 	SaveBufferToFile( files.Item(1), buffer );
 
 	if ( !m_textCtrlVD->GetValue().IsEmpty() ) {
-		m_pManager->AddFilesToVirtualFolder( m_textCtrlVD->GetValue(), files );
+		// Create the Success message first, as 'files' may be altered during creation
+		wxString msg;
+		msg << wxString::Format( wxT( "%s%s" ), files.Item(0).c_str(), eol[m_curEol].c_str())
+		<< wxString::Format( wxT( "%s%s%s" ), files.Item(1).c_str(), eol[m_curEol].c_str(), eol[m_curEol].c_str())
+		<< wxT( "Files successfully created." );
+		// We have a .cpp and an .h file, and there may well be a :src and an :include folder available
+		// So try to place the files appropriately. If that fails, dump both in the selected folder	
+		if ( m_pManager->AddFilesToVirtualFolderIntelligently( m_textCtrlVD->GetValue(), files )
+				|| m_pManager->AddFilesToVirtualFolder( m_textCtrlVD->GetValue(), files ) ) {
+			wxMessageBox(msg, wxT("Add template class"), wxOK|wxCENTER|wxICON_INFORMATION, this);
+			EndModal(wxID_OK);
+			return;
+		}
 	}
 
-	wxString msg;
-	msg << wxString::Format( wxT( "%s%s" ), files.Item(0).c_str(), eol[m_curEol].c_str())
-	<< wxString::Format( wxT( "%s%s%s" ), files.Item(1).c_str(), eol[m_curEol].c_str(), eol[m_curEol].c_str())
-	<< wxT( "Files successfully created." );
-	wxMessageBox(msg, wxT( "Add template class" ));
-	EndModal(wxID_OK);
+	wxMessageBox(wxT("Adding the template class failed"), wxT("Oops"), wxOK|wxCENTER|wxICON_ERROR, this);
+	EndModal(wxID_CANCEL);	// The return value isn't actually used at present, but send Cancel on failure for future-proofing
 }
 
 void TemplateClassDlg::OnGenerateUI( wxUpdateUIEvent& event )

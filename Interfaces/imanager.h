@@ -186,6 +186,14 @@ public:
 	virtual bool AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths) = 0;
 
 	/**
+	 * @brief Add a pair of cpp/h files to the :src/include folders, if these exist
+	 * @param vdFullPath virtual directory full path in the form of <project>:vd1:vd2:...:vdN
+	 * @param paths an array of files to add
+	 * @return true on sucesss, false otherwise
+	 */	
+	virtual bool AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths) = 0;
+
+	/**
 	 * @brief create virtual folder to parentPath
 	 * @param parentPath parent virtual directory full path in the form of <project>:vd1:vd2:...:vdN which must exist
 	 * @param vdName child VD name

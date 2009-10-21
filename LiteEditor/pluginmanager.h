@@ -86,6 +86,7 @@ public:
 	virtual Workspace *            GetWorkspace();
 	virtual bool                   AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths);
 	virtual bool                   AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths);
+	virtual bool                   AddFilesToVirtualFolderIntelligently(const wxString &vdFullPath, wxArrayString &paths);
 	virtual int                    GetToolbarIconSize();
 	virtual wxAuiManager*          GetDockingManager();
 	virtual EnvironmentConfig*     GetEnv();

@@ -74,7 +74,7 @@ define pvector
 	end
 	if $argc == 1
 		set $i = 0
-		while $i < $size
+		while $i < $size && $i < 10
 			printf "elem[%u]: ", $i
 			p *($arg0._M_impl._M_start + $i)
 			set $i++
@@ -112,6 +112,7 @@ define pvector
 		printf "Vector size = %u\n", $size
 		printf "Vector capacity = %u\n", $capacity
 		printf "Element "
+		printf "*** Displaying maximum of 10 items ***\n"
 		whatis $arg0._M_impl._M_start
 	end
 end
@@ -712,9 +713,7 @@ set print static-members on
 set print vtbl on
 set print demangle on
 set demangle-style gnu-v3
-set print sevenbit-strings off
-
-    ]]>
+set print sevenbit-strings off]]>
     </CData>
 
   </ArchiveObject>

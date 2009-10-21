@@ -1950,7 +1950,7 @@ void Frame::OnTimer(wxTimerEvent &event)
 								wxT("This means that CodeLite will *NOT* be able to offer any code completion\n")
 								wxT("for non-workspace files (e.g. string.h).\n")
 								wxT("To fix this, please set search paths for the parser\n")
-								wxT("This can be done from the main menu: Settings > Tags Settings > Parser"), _("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION, this);
+								wxT("This can be done from the main menu: Settings > Tags Settings > Include Files"), _("CodeLite"), wxOK|wxCENTER|wxICON_INFORMATION, this);
 
 			} else {
 				m_tagsOptionsData.SetParserSearchPaths( paths );

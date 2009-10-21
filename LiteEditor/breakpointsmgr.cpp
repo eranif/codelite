@@ -73,7 +73,10 @@ bool BreakptMgr::AddBreakpoint(const BreakpointInfo &bp)
 		}
 	}
 
-	if( !alreadyExist ) m_bps.push_back(newBreakpoint);
+	if( !alreadyExist ) {
+		m_bps.push_back(newBreakpoint);
+		m_PendingBPs.push_back(newBreakpoint); // Add also to the 'pending' array
+	}
 
 	DeleteAllBreakpointMarkers();
 	RefreshBreakpointMarkers();
@@ -305,9 +308,23 @@ void BreakptMgr::ClearBP_debugger_ids()
 	}
 }
 
+// Since a bp can't be created disabled, enable them all here when the debugger stops
+// That way they're guaranteed all to be enabled when it starts again
+void BreakptMgr::UnDisableAllBreakpoints()
+{
+	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
+	for (; iter != m_bps.end(); iter++) {
+		BreakpointInfo bp = *iter;
+		bp.is_enabled = true;
+		*iter = bp;
+	}
+	
+	RefreshBreakpointMarkers(); // Make this visible to the user
+}
+
 bool BreakptMgr::DelBreakpoint(const int id)
 {
-	int index = FindBreakpointById(id);
+	int index = FindBreakpointById(id, m_bps);
 	if (index == wxNOT_FOUND) {
 		return false;
 	}
@@ -351,6 +368,44 @@ int BreakptMgr::DelBreakpointByLineno(const wxString& file, const int lineno)
 	return (DelBreakpoint(bid) == true ? true : -1); // Use -1 as an arbitrary failed-to-delete flag
 }
 
+void BreakptMgr::ApplyPendingBreakpoints()
+{
+	if (!PendingBreakpointsExist()) {
+		return; // Nothing to do
+	}
+
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	if (!(dbgr && dbgr->IsRunning())) {
+		return; // If the debugger isn't running, there's no point (and we shouldn't have reached here anyway)
+	}
+	bool contIsNeeded = PauseDebuggerIfNeeded();
+
+	for (size_t i=m_PendingBPs.size(); i>0; --i) {
+		BreakpointInfo bp = m_PendingBPs.at(i-1);
+
+		// First check to see if the debugger already accepted this one
+		// The answer should be no, as acceptance should have removed it from this list
+		int index = FindBreakpointById(bp.internal_id, m_bps);
+		if (index != wxNOT_FOUND) {
+			// Hmm. See if there's a valid debugger_id. If so, the bp *was* accepted, and shouldn't be on the pending list
+			if (m_bps.at(index).debugger_id != -1) {
+				m_PendingBPs.erase(m_PendingBPs.begin()+i-1);
+			}
+			continue;	// The bp hasn't been assessed yet; it's probably pointless to try to reapply it atm
+		}
+
+		// This bp didn't 'take' the first time; "..try, try again" :p
+		dbgr->Break(bp);
+		m_bps.push_back(bp);
+	}
+  
+	if (contIsNeeded) {
+		dbgr->Continue();
+	}
+
+	RefreshBreakpointMarkers();
+}
+
 void BreakptMgr::DelAllBreakpoints()
 {
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -376,7 +431,7 @@ bool BreakptMgr::ToggleEnabledStateByLineno(const wxString& file, const int line
 		return false;
 	}
 
-	int index = FindBreakpointById(bid);
+	int index = FindBreakpointById(bid, m_bps);
 
 	// sanity
 	if (index < 0 || index >= (int)m_bps.size()) {
@@ -411,16 +466,21 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
 
 				// add message to the debugger tab
 				ManagerST::Get()->UpdateAddLine(msg);
+				DeleteAllBreakpointMarkers(); // Must do this before the erase, otherwise the last-bp-in-file will be missed
 				m_bps.erase(iter);
 
 				// update the UI as well
 				Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-
+				RefreshBreakpointMarkers();
 				return;
 			}
 			// Otherwise store the valid debugger_id
 			iter->debugger_id = debugger_id;
-
+			// Remove the bp from  the 'pending' array
+			int index = FindBreakpointById(internal_id, m_PendingBPs);
+			if (index != wxNOT_FOUND) {
+				m_PendingBPs.erase(m_PendingBPs.begin()+index);
+			}
 			// update the UI as well
 			Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 			return;
@@ -438,7 +498,7 @@ bool BreakptMgr::IgnoreByLineno(const wxString& file, const int lineno)
 		return false;
 	}
 
-	int index = FindBreakpointById(bid);
+	int index = FindBreakpointById(bid, m_bps);
 
 	// sanity
 	if (index < 0 || index >= (int)m_bps.size()) {
@@ -475,7 +535,7 @@ void BreakptMgr::EditBreakpointByLineno(const wxString& file, const int lineno)
 		return;
 	}
 
-	int index = FindBreakpointById(bid);
+	int index = FindBreakpointById(bid, m_bps);
 	if (index == wxNOT_FOUND) {
 		return;
 	}
@@ -570,13 +630,13 @@ void BreakptMgr::ReconcileBreakpoints(std::vector<BreakpointInfo>& li)
 	std::vector<BreakpointInfo> updated_bps;
 	std::vector<BreakpointInfo>::iterator li_iter = li.begin();
 	for (; li_iter != li.end(); ++li_iter) {
-		int id = FindBreakpointById(li_iter->debugger_id);
-		if (id == wxNOT_FOUND) {
+		int index = FindBreakpointById(li_iter->debugger_id, m_bps);
+		if (index == wxNOT_FOUND) {
 			continue; // Shouldn't happen
 		}
 		// We've match the debugger_id from -break-list with a bp
 		// Update the ignore-count, then store it in a new vector
-		BreakpointInfo bp = m_bps.at(id);
+		BreakpointInfo bp = m_bps.at(index);
 		bp.ignore_number = li_iter->ignore_number;
 		SetBestBPType(bp);	// as this might have just changed
 		updated_bps.push_back(bp);
@@ -596,7 +656,7 @@ void BreakptMgr::ReconcileBreakpoints(std::vector<BreakpointInfo>& li)
 	// When a a breakpoint is hit, see if it's got a command-list that needs faking
 void BreakptMgr::BreakpointHit(int id)
 {
-	int index = FindBreakpointById(id);
+	int index = FindBreakpointById(id, m_bps);
 	if ((index == wxNOT_FOUND) || (index >= FIRST_INTERNAL_ID)) {
 		return;
 	}
@@ -690,15 +750,15 @@ std::set<wxString> BreakptMgr::GetFilesWithBreakpointMarkers()
 	return filenames;
 }
 
-int BreakptMgr::FindBreakpointById(const int id)
+int BreakptMgr::FindBreakpointById(const int id, const std::vector<BreakpointInfo>& li)
 {
-	std::vector<BreakpointInfo>::iterator iter = m_bps.begin();
-	for (; iter != m_bps.end(); ++iter) {
+	std::vector<BreakpointInfo>::const_iterator iter = li.begin();
+	for (; iter != li.end(); ++iter) {
 		BreakpointInfo b = *iter;
 		// If we were passed an id > 10000, it must be internal
 		int this_id = (id > FIRST_INTERNAL_ID ? b.internal_id : b.debugger_id);
 		if (id == this_id) {
-			return (int)(iter - m_bps.begin());
+			return (int)(iter - li.begin());
 		}
 	}
 
@@ -879,7 +939,7 @@ void BreakptMgr::DropBreakpoint(std::vector<BreakpointInfo>& BPs, int newline)
 		return;
 	}
 
-	int index = FindBreakpointById(bid);
+	int index = FindBreakpointById(bid, m_bps);
 	BreakpointInfo bp = *(m_bps.begin()+index);
 	bp.lineno = newline+1;
 	// AddBreakpoint() doesn't do the disabled state: it can't, and there's no good way round this

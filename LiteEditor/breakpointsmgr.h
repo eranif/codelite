@@ -41,7 +41,9 @@ class myDragImage;
 
 class BreakptMgr
 {
-	std::vector<BreakpointInfo> m_bps;
+	std::vector<BreakpointInfo> m_bps;        // The vector of breakpoints
+	std::vector<BreakpointInfo> m_PendingBPs; // These are any breakpoints that the debugger won't (yet) accept (often because they're in a plugin)
+
 	int NextInternalID;		// Used to give each bp a unique internal ID. Start at 10k to avoid confusion with gdb's IDs
 
 	myDragImage* m_dragImage;
@@ -55,7 +57,11 @@ class BreakptMgr
 	void DeleteAllBreakpointMarkers();
 	std::set<wxString> GetFilesWithBreakpointMarkers();
 
-	int FindBreakpointById(const int id);
+	/**
+	 * Return the index of the bp with the passed id, in the vector that will normally be m_bps
+	 */
+	int FindBreakpointById(const int id, const std::vector<BreakpointInfo>& li);
+
 	/**
 	 * Can gdb accept this alteration, or will be bp have to be replaced?
 	 */
@@ -119,6 +125,27 @@ public:
 	 * @param bps
 	 */
 	void SetBreakpoints(const std::vector<BreakpointInfo>& bps);
+
+	/**
+	 * @brief Store list of breakpoints in the pending-breakpoints list
+	 * @param bps
+	 */
+	void SetPendingBreakpoints(const std::vector<BreakpointInfo>& bps) {
+		m_PendingBPs.clear(); m_PendingBPs = bps;
+	}
+	
+	/**
+	 * @brief Returns true if there are pending breakpoints
+	 */
+	bool PendingBreakpointsExist() {
+		return ! m_PendingBPs.empty();
+	}
+  
+	/**
+	 * Send again to the debugger any breakpoints that weren't accepted by the debugger the first time
+	 *  (e.g. because they're inside a plugin)
+	 */
+	void ApplyPendingBreakpoints();
 
 	/**
 	 * @brief delete all stored breakpoints related to file. this method should does not update the
@@ -210,6 +237,12 @@ public:
 	 * Called when the debugger has stopped, so they're  no longer valid
 	 */
 	void ClearBP_debugger_ids();
+
+	/**
+	 * Since a bp can't be created disabled, enable them all here when the debugger stops
+	 * That way they're guaranteed all to be enabled when it starts again
+	 */
+	void UnDisableAllBreakpoints();
 
 	/**
 	 * remove all breakpoints

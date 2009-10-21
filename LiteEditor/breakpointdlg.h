@@ -73,6 +73,7 @@ protected:
 	void OnEdit(wxCommandEvent &e);
 	void OnDelete(wxCommandEvent &e);
 	void OnDeleteAll(wxCommandEvent &e);
+	void OnApplyPending(wxCommandEvent &e);
 	void OnItemActivated(wxListEvent &e);
 	void OnItemSelected(wxListEvent &e);
 	void OnItemDeselected(wxListEvent &e);

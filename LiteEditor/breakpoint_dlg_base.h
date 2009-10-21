@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Feb  8 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -44,6 +44,7 @@ class BreakpointTab : public wxPanel
 		wxButton* m_buttonEdit;
 		wxButton* m_buttonDelete;
 		wxButton* m_buttonDeleteAll;
+		wxButton* m_buttonApplyPending;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnItemActivated( wxListEvent& event ){ event.Skip(); }
@@ -54,9 +55,11 @@ class BreakpointTab : public wxPanel
 		virtual void OnEdit( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnDelete( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnDeleteAll( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnApplyPending( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
+		
 		BreakpointTab( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 		~BreakpointTab();
 	
@@ -115,6 +118,7 @@ class BreakpointPropertiesDlg : public wxDialog
 		
 	
 	public:
+		
 		BreakpointPropertiesDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Breakpoint and Watchpoint Properties"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~BreakpointPropertiesDlg();
 	

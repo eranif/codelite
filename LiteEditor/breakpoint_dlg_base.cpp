@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Feb  8 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -50,7 +50,14 @@ BreakpointTab::BreakpointTab( wxWindow* parent, wxWindowID id, const wxPoint& po
 	bSizer6->Add( m_buttonDelete, 0, wxALL, 5 );
 	
 	m_buttonDeleteAll = new wxButton( this, wxID_ANY, wxT("Delete &All"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonDeleteAll->SetToolTip( wxT("Delete all breakpoints and watchpoints") );
+	
 	bSizer6->Add( m_buttonDeleteAll, 0, wxALL, 5 );
+	
+	m_buttonApplyPending = new wxButton( this, wxID_ANY, wxT("Set Pending"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonApplyPending->SetToolTip( wxT("If this button is visible, there are breakpoints that you tried to set, but that the debugger refused. This most often happens when the breakpoint is inside a library that hadn't been loaded when the debugger started.\n\nClick to offer the breakpoints to the debugger again.") );
+	
+	bSizer6->Add( m_buttonApplyPending, 0, wxALL, 5 );
 	
 	bSizer5->Add( bSizer6, 0, wxEXPAND|wxTOP, 25 );
 	
@@ -66,6 +73,7 @@ BreakpointTab::BreakpointTab( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_buttonEdit->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnEdit ), NULL, this );
 	m_buttonDelete->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnDelete ), NULL, this );
 	m_buttonDeleteAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnDeleteAll ), NULL, this );
+	m_buttonApplyPending->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnApplyPending ), NULL, this );
 }
 
 BreakpointTab::~BreakpointTab()
@@ -79,6 +87,7 @@ BreakpointTab::~BreakpointTab()
 	m_buttonEdit->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnEdit ), NULL, this );
 	m_buttonDelete->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnDelete ), NULL, this );
 	m_buttonDeleteAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnDeleteAll ), NULL, this );
+	m_buttonApplyPending->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( BreakpointTab::OnApplyPending ), NULL, this );
 }
 
 BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -111,7 +120,6 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_checkLineno = new wxCheckBox( m_panel1, wxID_ANY, wxT("Line number"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	fgSizer2->Add( m_checkLineno, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textLineno = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
@@ -120,7 +128,6 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	fgSizer2->Add( m_textLineno, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBreakFunction = new wxCheckBox( m_panel1, wxID_ANY, wxT("Function name"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	fgSizer2->Add( m_checkBreakFunction, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textFunctionname = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
@@ -132,13 +139,11 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	fgSizer2->Add( 0, 0, 1, 0, 5 );
 	
 	m_checkRegex = new wxCheckBox( m_panel1, wxID_ANY, wxT("This is a regex"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	m_checkRegex->SetToolTip( wxT("If you wish to insert a breakpoint on several functions, you can tick this box, then enter a suitable regular expression in the textctrl above.") );
 	
 	fgSizer2->Add( m_checkRegex, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBreakMemory = new wxCheckBox( m_panel1, wxID_ANY, wxT("Memory address:"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	fgSizer2->Add( m_checkBreakMemory, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textBreakMemory = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
@@ -215,7 +220,6 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	
 	m_staticText11 = new wxStaticText( this, wxID_ANY, wxT("Command List: Add any command(s) here"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText11->Wrap( -1 );
-	
 	bSizer5->Add( m_staticText11, 0, wxALL|wxEXPAND, 5 );
 	
 	m_textCommands = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
@@ -233,13 +237,11 @@ BreakpointPropertiesDlg::BreakpointPropertiesDlg( wxWindow* parent, wxWindowID i
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_checkDisable = new wxCheckBox( this, wxID_ANY, wxT("Disable"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	m_checkDisable->SetToolTip( wxT("If you check this box, the breakpoint (or watchpoint) will still exist, but it won't trigger. If you uncheck it in the future, the breakpoint will work again.") );
 	
 	fgSizer1->Add( m_checkDisable, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_checkTemp = new wxCheckBox( this, wxID_ANY, wxT("Make temporary"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	m_checkTemp->SetToolTip( wxT("A temporary breakpoint (or watchpoint) is one that works only once. When it's hit it behaves like any other, except that it's then deleted.") );
 	
 	fgSizer1->Add( m_checkTemp, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );

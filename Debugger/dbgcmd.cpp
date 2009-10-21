@@ -385,8 +385,10 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 			}
 		}
 	} else if (line.StartsWith(wxT("^error"))) {
-		// failed to place the breakpoint
-		m_observer->UpdateAddLine(wxString::Format(wxT("ERROR: failed to place breakpoint: \"%s\""), line.c_str()));
+		// Failed to place the breakpoint
+		// Tell the bp manager to remove the bp from public view
+		m_observer->UpdateBpAdded(m_bp.internal_id, -1);
+//		m_observer->UpdateAddLine(wxString::Format(wxT("ERROR: failed to place breakpoint: \"%s\""), line.c_str()));
 		return true;
 	}
 

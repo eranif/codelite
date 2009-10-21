@@ -34,8 +34,6 @@ BreakpointDlg::BreakpointDlg( wxWindow* parent )
 		, m_selectedItem(wxNOT_FOUND)
 {
 	Initialize();
-	ConnectButton(m_buttonDelete, BreakpointDlg::OnDelete);
-	ConnectButton(m_buttonDeleteAll, BreakpointDlg::OnDeleteAll);
 }
 
 void BreakpointDlg::Initialize()
@@ -72,6 +70,11 @@ void BreakpointDlg::Initialize()
 	m_buttonEdit->Enable(hasitems);
 	m_buttonDelete->Enable(hasitems);
 	m_buttonDeleteAll->Enable(hasitems);
+	// The 'Apply Pending' button is more complicated: it should be hidden,
+	// unless there are pending bps to apply,and the debugger is running
+	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+	m_buttonApplyPending->Show( ManagerST::Get()->GetBreakpointsMgr()->PendingBreakpointsExist()
+																		&& dbgr && dbgr->IsRunning() );
 }
 
 void BreakpointDlg::OnDelete(wxCommandEvent &e)
@@ -96,6 +99,15 @@ void BreakpointDlg::OnDeleteAll(wxCommandEvent &e)
 	Initialize();
 
 	Frame::Get()->SetStatusMessage(wxT("All Breakpoints deleted"), 0);
+}
+
+void BreakpointDlg::OnApplyPending(wxCommandEvent &e)
+{
+	wxUnusedVar(e);
+	ManagerST::Get()->GetBreakpointsMgr()->ApplyPendingBreakpoints();
+	Initialize();
+
+	Frame::Get()->SetStatusMessage(wxT("Pending Breakpoints reapplied"), 0);
 }
 
 void BreakpointDlg::OnItemSelected(wxListEvent &e)

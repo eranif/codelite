@@ -277,6 +277,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 			SessionManager::Get().SetLastWorkspaceName ( path );
 			Frame::Get()->GetMainBook()->RestoreSession(session);
 			GetBreakpointsMgr()->LoadSession(session);
+			Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 		}
 	}
 
@@ -305,6 +306,8 @@ void Manager::CloseWorkspace()
 
 	// Delete any breakpoints belong to the current workspace
 	GetBreakpointsMgr()->DelAllBreakpoints();
+	// Then remove them from the debugger pane, in case that's visible
+	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 	// since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
 	// default
@@ -1902,6 +1905,8 @@ void Manager::DbgStart ( long pid )
 	// since files may have been updated and the breakpoints may have been moved,
 	// delete all the information
 	GetBreakpointsMgr()->GetBreakpoints ( bps );
+	// Take the opportunity to store them in the pending array too
+	GetBreakpointsMgr()->SetPendingBreakpoints( bps );
 
 	// notify plugins that we're about to start debugging
 	if (SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info))
@@ -1934,6 +1939,7 @@ void Manager::DbgStart ( long pid )
 
 	// Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
 	// so that it uses debugger_ids instead of internal_ids
+	// Hmm. The above comment is probably no longer true; but it'll do no harm to Initialise() anyway
 	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 	// let the active editor get the focus
@@ -2003,8 +2009,9 @@ void Manager::DbgStop()
 	Frame::Get()->GetDebuggerPane()->Clear();
 
 	// The list of breakpoints is still there, but their debugger_ids are now invalid
-	// So remove them. Then reInitialise the breakpt view, to use internal_ids
+	// So remove them, and enable all disabled bps (since these can't be applied if the debugger restarts).
 	GetBreakpointsMgr()->ClearBP_debugger_ids();
+	GetBreakpointsMgr()->UnDisableAllBreakpoints();
 	Frame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
 	// Clear the ascii viewer

@@ -52,6 +52,8 @@
       <wxString Value="WXDLLIMPEXP_SCI"/>
       <wxString Value="__const=const"/>
       <wxString Value="__restrict"/>
+      <wxString Value="__THROW"/>
+      <wxString Value="__wur"/>
     </wxArrayString>
     <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">

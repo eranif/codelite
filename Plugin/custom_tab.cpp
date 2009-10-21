@@ -40,7 +40,7 @@
 #    define TAB_RADIUS  1
 #    define LIGHT_FACTOR 2
 #elif defined(__WXGTK__)
-#    define TAB_RADIUS 3
+#    define TAB_RADIUS 0
 #    define LIGHT_FACTOR 2
 #else
 #    define TAB_RADIUS 3

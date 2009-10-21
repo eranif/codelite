@@ -13,7 +13,7 @@ class ITagsStorage
 {
 protected:
 	wxFileName m_fileName;
-
+	int        m_singleSearchLimit;
 public:
 	enum {
 		OrderNone,
@@ -22,8 +22,8 @@ public:
 	};
 
 public:
-	ITagsStorage(){}
-	virtual ~ITagsStorage(){};
+	ITagsStorage() : m_singleSearchLimit(1000) {}
+	virtual ~ITagsStorage() {};
 
 	/**
 	 * Return the currently opened database.
@@ -31,6 +31,17 @@ public:
 	 */
 	const wxFileName& GetDatabaseFileName() const {
 		return m_fileName;
+	}
+
+	void SetSingleSearchLimit(int singleSearchLimit) {
+		if( singleSearchLimit < 0 ) {
+			singleSearchLimit = 1000;
+		}
+		this->m_singleSearchLimit = singleSearchLimit;
+	}
+
+	int GetSingleSearchLimit() const {
+		return m_singleSearchLimit;
 	}
 
 	// -----------------------------------------------------------------
@@ -51,10 +62,10 @@ public:
 	 * cache instead of accessing the disk
 	 * @param scope
 	 * @param limit maximum items to fetch
-	 * @param limitExceeded set to true if the 
+	 * @param limitExceeded set to true if the
 	 * @param tags
 	 */
-	virtual void GetTagsByScope(const wxString& scope, int limit, bool &limitExceeded, std::vector<TagEntryPtr> &tags) = 0;
+	virtual void GetTagsByScope(const wxString& scope, std::vector<TagEntryPtr> &tags) = 0;
 
 	/**
 	 * @brief return array of tags by kind.
@@ -307,12 +318,10 @@ public:
 	virtual void GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags) = 0;
 };
 
-enum
-{
+enum {
 	TagOk = 0,
 	TagExist,
 	TagError
 };
 
 #endif // ISTORAGE_H
-

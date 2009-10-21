@@ -110,6 +110,7 @@ TagsManager::TagsManager()
 {
 	// Create databases
 	m_workspaceDatabase = new TagsStorageSQLite( );
+	m_workspaceDatabase->SetSingleSearchLimit( 5000 );
 	m_ctagsCmd = wxT("  --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
 	m_timer = new wxTimer(this, CtagsMgrTimerId);
 	m_timer->Start(100);
@@ -534,17 +535,13 @@ void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr> &t
 
 	//make enough room for max of 500 elements in the vector
 	tags.reserve(500);
-	bool limitExceeded (false);
-	
-	// TODO: make the limit configurable
-	int  limit (1000);
-	
+
 	for (size_t i=0; i<derivationList.size(); i++) {
 		wxString tmpScope(derivationList.at(i));
 		tmpScope = DoReplaceMacros(tmpScope);
 
 		// try the external database for match
-		m_workspaceDatabase->GetTagsByScope(derivationList.at(i), limit, limitExceeded, tags);
+		m_workspaceDatabase->GetTagsByScope(derivationList.at(i), tags);
 	}
 
 	// and finally sort the results
@@ -1375,6 +1372,7 @@ void TagsManager::CloseDatabase()
 		UpdateFileTree(m_workspaceDatabase, false);
 		delete m_workspaceDatabase;
 		m_workspaceDatabase = new TagsStorageSQLite( );
+		m_workspaceDatabase->SetSingleSearchLimit( 5000 );
 	}
 }
 

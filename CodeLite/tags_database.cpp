@@ -95,8 +95,8 @@ void TagsStorageSQLite::CreateSchema()
 		sql = wxT("PRAGMA temp_store = MEMORY;");
 		m_db->ExecuteUpdate(sql);
 
-		sql = wxT("PRAGMA default_cache_size = 2000;");
-		m_db->ExecuteUpdate(sql);
+//		sql = wxT("PRAGMA default_cache_size = 2000;");
+//		m_db->ExecuteUpdate(sql);
 
 		sql = wxT("create  table if not exists tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, file string, line integer, kind string, access string, signature string, pattern string, parent string, inherits string, path string, typeref string, scope string);");
 		m_db->ExecuteUpdate(sql);
@@ -148,27 +148,45 @@ void TagsStorageSQLite::CreateSchema()
 void TagsStorageSQLite::RecreateDatabase()
 {
 	try {
-		// drop tables
-		m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS TAGS"));
-		m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS COMMENTS"));
-		m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS TAGS_VERSION"));
-		m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS VARIABLES"));
-		m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS FILES"));
+		// commit any open transactions
+		Commit();
 
-		// drop indexes
-		m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS FILES_NAME"));
-		m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS TAGS_UNIQ"));
-		m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS KIND_IDX"));
-		m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS FILE_IDX"));
-		m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS TAGS_NAME"));
-		m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS TAGS_SCOPE"));
-		m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS TAGS_PATH"));
-		m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS TAGS_PARENT"));
-		m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS tags_version_uniq"));
+		// Close the database
+		m_db->Close();
+		wxString filename = m_fileName.GetFullPath();
+		if(wxRemoveFile(m_fileName.GetFullPath()) == false ) {
 
-		// Recreate the schema
-		CreateSchema();
+			// faild to delete it, probably someone else got it opened as well
+			m_fileName.Clear();
+			m_db->Open( filename ); // re-open the database
 
+			// and drop tables
+			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS TAGS"));
+			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS COMMENTS"));
+			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS TAGS_VERSION"));
+			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS VARIABLES"));
+			m_db->ExecuteUpdate(wxT("DROP TABLE IF EXISTS FILES"));
+
+			// drop indexes
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS FILES_NAME"));
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS TAGS_UNIQ"));
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS KIND_IDX"));
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS FILE_IDX"));
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS TAGS_NAME"));
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS TAGS_SCOPE"));
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS TAGS_PATH"));
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS TAGS_PARENT"));
+			m_db->ExecuteUpdate(wxT("DROP INDEX IF EXISTS tags_version_uniq"));
+
+			// Recreate the schema
+			CreateSchema();
+		} else {
+			// We managed to delete the file
+			// re-open it
+
+			m_fileName.Clear();
+			OpenDatabase(filename);
+		}
 	} catch (wxSQLite3Exception &e) {
 		wxUnusedVar(e);
 	}
@@ -517,27 +535,20 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxStr
 	} else {
 		sql << wxT(" name ='") << name << wxT("' ");
 	}
+	sql << wxT(" LIMIT ") << this->GetSingleSearchLimit();
 
 	// get get the tags
 	DoFetchTags(sql, tags);
 }
 
-void TagsStorageSQLite::GetTagsByScope(const wxString& scope, int limit, bool &limitExceeded, std::vector<TagEntryPtr>& tags)
+void TagsStorageSQLite::GetTagsByScope(const wxString& scope, std::vector<TagEntryPtr>& tags)
 {
 	wxString sql;
-	if ( limit < 0  ){
-		limit = 1000;
-	}
-	limitExceeded = false;
-	
+
 	// Build the SQL statement
-	sql << wxT("select * from tags where scope='") << scope << wxT("' limit ") << limit;
+	sql << wxT("select * from tags where scope='") << scope << wxT("' limit ") << GetSingleSearchLimit();
 
 	DoFetchTags(sql, tags);
-	if ( tags.size() == (size_t)limit ) {
-		// we can assume that the limit was hit
-		limitExceeded = true;
-	}
 }
 
 void TagsStorageSQLite::GetTagsByKind(const wxArrayString& kinds, const wxString &orderingColumn, int order, std::vector<TagEntryPtr>& tags)

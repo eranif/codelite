@@ -463,6 +463,7 @@ bool Archive::ReadCData(const wxString &name, wxString &value)
 	if (node) {
 		// get the content node
 		value = node->GetNodeContent();
+		value.Trim().Trim(false);
 		return true;
 	}
 	return false;

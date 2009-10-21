@@ -941,7 +941,7 @@ wxString Project::GetPluginData(const wxString& pluginName)
 	// find the node and return its content
 	wxXmlNode *dataNode = XmlUtils::FindNodeByName(plugins, wxT("Plugin"), pluginName);
 	if( dataNode ){
-		return dataNode->GetNodeContent();
+		return dataNode->GetNodeContent().Trim().Trim(false);
 	}
 	return wxEmptyString;
 }

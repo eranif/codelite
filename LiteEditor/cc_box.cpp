@@ -260,6 +260,10 @@ void CCBox::Show(const wxString& word)
 		DoInsertSelection(_tags.at(0).displayName, false);
 
 		// return without calling to wxWindow::Show()
+		// also, make sure we are hidden
+		if ( IsShown() ) {
+			Hide();
+		}
 		return;
 	}
 

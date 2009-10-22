@@ -35,14 +35,6 @@
 #include "serialized_object.h"
 #include "plugin.h"
 
-#ifdef WXMAKINGDLL_LE_SDK
-#    define WXDLLIMPEXP_LE_SDK WXEXPORT
-#elif defined(WXUSINGDLL_LE_SDK)
-#    define WXDLLIMPEXP_LE_SDK WXIMPORT
-#else /* not making nor using FNB as DLL */
-#    define WXDLLIMPEXP_LE_SDK
-#endif // WXMAKINGDLL_LE_SDK
-
 class SimpleLongValue : public SerializedObject
 {
 	long m_value;
@@ -114,29 +106,32 @@ public:
 class EditorConfig : public IConfigTool
 {
 	friend class Singleton<EditorConfig>;
-	wxXmlDocument* m_doc;
-	wxFileName m_fileName;
+	wxXmlDocument*                   m_doc;
+	wxFileName                       m_fileName;
 	std::map<wxString, LexerConfPtr> m_lexers;
-	bool m_transcation;
-	
+	bool                             m_transcation;
+
 	static wxString m_svnRevision;
-	
+	static wxString m_version;
+
 	bool DoSave() const;
-	
+	bool DoLoadDefaultSettings();
+
 public:
 
 	//load lexers again, based on the active theme
 	void LoadLexers(bool loadDefault);
-	static void Init(const wxChar *revision) {
-		m_svnRevision = revision;
+	static void Init(const wxChar *revision, const wxChar* version) {
+		m_svnRevision  = revision;
+		m_version      = version;
 	}
 
 public:
 	typedef std::map<wxString, LexerConfPtr>::const_iterator ConstIterator;
-	
+
 	void Begin();
 	void Save();
-	
+
 	/**
 	 * Load the configuration file
 	 * \param fileName configuration file name
@@ -168,13 +163,6 @@ public:
 	bool IsOk() const {
 		return m_doc->IsOk();
 	}
-
-	/**
-	 * Load perspective from configuration file
-	 * \param name perspective name
-	  * \return perspective
-	 */
-	wxString LoadPerspective(const wxString &name) const ;
 
 	/**
 	 * Read the editor options from the configuration file

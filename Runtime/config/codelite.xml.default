@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LiteEditor Revision="653">
+<CodeLite Revision="653" Version="2.0.0">
   <ArchiveObject Name="m_tagsOptionsData">
-    <long Value="984" Name="m_ccFlags"/>
+    <long Value="728" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
 	  <wxString Value="EXPORT"/>
       <wxString Value="WXDLLIMPEXP_CORE"/>
@@ -55,12 +55,12 @@
       <wxString Value="__THROW"/>
       <wxString Value="__wur"/>
     </wxArrayString>
-    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++" Name="m_fileSpec"/>
+    <wxString Value="*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc" Name="m_fileSpec"/>
     <wxArrayString Name="m_languages">
       <wxString Value="C++"/>
     </wxArrayString>
   </ArchiveObject>
-  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Arrows" DisplayBookmarkMargin="yes" BookmarkShape="Small Rectangle" BookmarkBgColour="#FF0080" BookmarkFgColour="#FF0080" HighlightCaretLine="no" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#BFD8D8" CaretColour="#000000"/>
+  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Arrows" DisplayBookmarkMargin="yes" BookmarkShape="Small Rectangle" BookmarkBgColour="#FF0080" BookmarkFgColour="#FF0080" HighlightCaretLine="no" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#BFD8D8" CaretColour="#000000" AutoAdjustHScrollBarWidth="no"/>
   <ArchiveObject Name="LexerTheme">
     <wxString Value="Default" Name="m_value"/>
   </ArchiveObject>
@@ -68,7 +68,7 @@
     <long Value="0" Name="m_value"/>
   </ArchiveObject>
   <ArchiveObject Name="WordHighlightColour">
-    <wxString Value="red" Name="m_value"/>
+    <wxString Value="yellow" Name="m_value"/>
   </ArchiveObject>
   <ArchiveObject Name="highlight_word">
     <long Value="1" Name="m_value"/>
@@ -79,4 +79,4 @@
   <ArchiveObject Name="GenerateFullPathMakefile">
     <long Value="1" Name="m_value"/>
   </ArchiveObject>
-</LiteEditor>
+</CodeLite>

@@ -72,6 +72,7 @@ void SimpleStringValue::DeSerialize(Archive &arch)
 //-------------------------------------------------------------------------------------------
 
 wxString EditorConfig::m_svnRevision;
+wxString EditorConfig::m_version;
 
 EditorConfig::EditorConfig()
 		: m_transcation(false)
@@ -84,37 +85,62 @@ EditorConfig::~EditorConfig()
 	delete m_doc;
 }
 
+bool EditorConfig::DoLoadDefaultSettings()
+{
+	//try to load the default settings
+	m_fileName = wxFileName(wxT("config/codelite.xml.default"));
+	m_fileName.MakeAbsolute();
+
+	if ( !m_fileName.FileExists() ) {
+		//create a new empty file with this name so the load function will not
+		//fail
+		wxFFile file(m_fileName.GetFullPath(), wxT("a"));
+		wxString content;
+		content << wxT("<CodeLite Revision=\"")
+		<< m_svnRevision
+		<< wxT("\"")
+		<< wxT(" Version=\"")
+		<< m_version
+		<< wxT("\">")
+		<< wxT("</CodeLite>");
+
+		if (file.IsOpened()) {
+			file.Write(content);
+			file.Close();
+		}
+	}
+	return m_doc->Load(m_fileName.GetFullPath());
+}
+
 bool EditorConfig::Load()
 {
 	//first try to load the user's settings
 	m_fileName = wxFileName(wxT("config/codelite.xml"));
 	m_fileName.MakeAbsolute();
+	bool userSettingsLoaded(false);
+	bool loadSuccess       (false);
 
 	if (!m_fileName.FileExists()) {
-		//try to load the default settings
-		m_fileName = wxFileName(wxT("config/codelite.xml.default"));
-		m_fileName.MakeAbsolute();
+		loadSuccess = DoLoadDefaultSettings();
 
-		if ( !m_fileName.FileExists() ) {
-			//create a new empty file with this name so the load function will not
-			//fail
-			wxFFile file(m_fileName.GetFullPath(), wxT("a"));
-			wxString content;
-			content << wxT("<LiteEditor Revision=\"")
-			<< m_svnRevision
-			<< wxT("\">")
-			<< wxT("</LiteEditor>");
-
-			if (file.IsOpened()) {
-				file.Write(content);
-				file.Close();
-			}
-		}
+	} else {
+		userSettingsLoaded = true;
+		loadSuccess = m_doc->Load(m_fileName.GetFullPath());
 	}
 
-	// load the main configuration file
-	if (!m_doc->Load(m_fileName.GetFullPath())) {
+	if ( !loadSuccess ) {
 		return false;
+	}
+
+	// Check the codelite-version for this file
+	wxString version;
+	bool found = m_doc->GetRoot()->GetPropVal(wxT("Version"), &version);
+	if ( userSettingsLoaded ) {
+		if(!found || (found && version != this->m_version)) {
+			if(DoLoadDefaultSettings() == false) {
+				return false;
+			}
+		}
 	}
 
 	// load CodeLite lexers
@@ -151,30 +177,6 @@ LexerConfPtr EditorConfig::GetLexer(const wxString &lexerName)
 	}
 
 	return m_lexers.find(lexerName)->second;
-}
-
-wxString EditorConfig::LoadPerspective(const wxString &Name) const
-{
-	wxXmlNode *layoutNode = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Layout"));
-	if ( !layoutNode ) {
-		//add an Layout node
-		wxXmlNode *newChild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Layout"));
-		m_doc->GetRoot()->AddChild(newChild);
-		DoSave();
-		layoutNode = newChild;
-	}
-
-	wxXmlNode *child = layoutNode->GetChildren();
-	while ( child ) {
-		if ( child->GetName() == wxT("Perspective") ) {
-			if (child->GetPropVal(wxT("Name"), wxEmptyString) == Name) {
-				return child->GetPropVal(wxT("Value"), wxEmptyString);
-			}
-		}
-		child = child->GetNext();
-	}
-
-	return wxEmptyString;
 }
 
 //long EditorConfig::LoadNotebookStyle(const wxString &nbName)
@@ -574,3 +576,4 @@ void SimpleRectValue::Serialize(Archive& arch)
 	arch.Write(wxT("TopLeft"), m_rect.GetTopLeft());
 	arch.Write(wxT("Size"), m_rect.GetSize());
 }
+

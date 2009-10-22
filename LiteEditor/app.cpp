@@ -266,8 +266,10 @@ bool App::OnInit()
 	}
 
 	ManagerST::Get()->SetInstallDir( homeDir );
-	EditorConfig::Init( SvnRevision );
 #endif
+
+	// Update codelite revision and Version
+	EditorConfig::Init( SvnRevision, wxT("2.0.0") );
 
 	wxString curdir = wxGetCwd();
 	::wxSetWorkingDirectory(homeDir);

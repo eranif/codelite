@@ -95,7 +95,7 @@
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="link.exe /DLL  /nologo"/>
       <Option Name="ObjectSuffix" Value=".obj"/>
-      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:\+\-]+ *)(\()([0-9]+)(\))( \: )</Pattern>
+      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:\+\-]+ *)(\()([0-9]+)(\))( \: )(error)</Pattern>
       <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:\+\-]+ *)(\()([0-9]+)(\))( \: )(warning)</Pattern>
       <GlobalIncludePath>"C:/Program Files/Microsoft Visual Studio 8/VC/include";.</GlobalIncludePath>
       <GlobalLibPath>"C:/Program Files/Microsoft Visual Studio 8/VC/lib"</GlobalLibPath>

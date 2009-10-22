@@ -79,28 +79,6 @@
       <CompilerOption Name="-fexpensive-optimizations">Expensive optimizations</CompilerOption>
       <LinkerOption Name="-s">Remove all symbol table and relocation information from the executable.</LinkerOption>
     </Compiler>
-    <Compiler Name="VC++">
-      <Switch Name="ArchiveOutput" Value="/OUT:"/>
-      <Switch Name="Debug" Value="/Zi "/>
-      <Switch Name="Include" Value="/I"/>
-      <Switch Name="Library" Value=" "/>
-      <Switch Name="LibraryPath" Value="/LIBPATH:"/>
-      <Switch Name="Object" Value="/Fo"/>
-      <Switch Name="Output" Value="/OUT:"/>
-      <Switch Name="Preprocessor" Value="/D"/>
-      <Switch Name="Source" Value=""/>
-      <Tool Name="ArchiveTool" Value="lib.exe  /nologo"/>
-      <Tool Name="CompilerName" Value="cl.exe /nologo /c"/>
-      <Tool Name="LinkerName" Value="link.exe  /nologo"/>
-      <Tool Name="ResourceCompiler" Value="windres"/>
-      <Tool Name="SharedObjectLinkerName" Value="link.exe /DLL  /nologo"/>
-      <Option Name="ObjectSuffix" Value=".obj"/>
-      <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:\+\-]+ *)(\()([0-9]+)(\))( \: )</Pattern>
-      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:\+\-]+ *)(\()([0-9]+)(\))( \: )(warning)</Pattern>
-      <GlobalIncludePath>"C:/Program Files/Microsoft Visual Studio 8/VC/include";.</GlobalIncludePath>
-      <GlobalLibPath>"C:/Program Files/Microsoft Visual Studio 8/VC/lib"</GlobalLibPath>
-      <PathVariable></PathVariable>
-    </Compiler>
   </Compilers>
   <BuildSystem Name="GNU makefile for g++/gcc" ToolPath="make" Options="-f" Jobs="2"/>
 </BuildSettings>

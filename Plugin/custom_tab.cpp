@@ -44,7 +44,7 @@
 #    define LIGHT_FACTOR 2
 #else
 #    define TAB_RADIUS 3
-#    define LIGHT_FACTOR 5
+#    define LIGHT_FACTOR 0
 #endif
 
 BEGIN_EVENT_TABLE(CustomTab, wxPanel)

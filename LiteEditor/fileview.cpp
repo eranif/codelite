@@ -271,7 +271,7 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
 {
 	wxString err_msg;
 	ProjectPtr prj = WorkspaceST::Get()->FindProjectByName ( projectName, err_msg );
-    ProjectTreePtr tree = prj->AsTree();
+	ProjectTreePtr tree = prj->AsTree();
 	TreeWalker<wxString, ProjectItem> walker( tree->GetRoot() );
 
 	std::map<wxString, wxTreeItemId> items;
@@ -583,7 +583,7 @@ bool FileViewTree::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPa
 	if (basenamelen == wxString::npos) {
 		basenamelen = vdFullPath.rfind(wxT(":include"));
 		if (basenamelen == wxString::npos) {
-		// The selected folder name ends neither in :src nor in :include, so we can't be intelligent this time
+			// The selected folder name ends neither in :src nor in :include, so we can't be intelligent this time
 			return false;
 		}
 	}
@@ -603,8 +603,7 @@ bool FileViewTree::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPa
 		if (file.Right(4) == wxT(".cpp")) {
 			cppfiles.Add(file);
 			paths.RemoveAt(c);
-		}
-		 else if (file.Right(2) == wxT(".h")) {
+		} else if (file.Right(2) == wxT(".h")) {
 			hfiles.Add(file);
 			paths.RemoveAt(c);
 		}
@@ -738,7 +737,7 @@ void FileViewTree::DoSetProjectActive( wxTreeItemId &item )
 			wxTreeItemId child = GetFirstChild( GetRootItem(), cookie );
 			while ( child.IsOk() ) {
 				FilewViewTreeItemData *childData = static_cast<FilewViewTreeItemData*>( GetItemData( child ) );
-				if ( childData->GetData().GetDisplayName() == curActiveProj ) {
+				if ( childData &&  childData->GetData().GetDisplayName() == curActiveProj ) {
 					SetItemBold( child, false );
 					break;
 				}
@@ -775,51 +774,60 @@ void FileViewTree::DoRemoveItems()
 
 	for ( size_t i=0; i<num; i++ ) {
 		wxTreeItemId item = items.Item( i );
-	wxString name = GetItemText( item );
-	FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
+		wxString name = GetItemText( item );
+		
+		if( !item.IsOk() ) {
+			continue;
+		}
+		
+		FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
 
-	switch (data->GetData().GetKind()) {
-	case ProjectItem::TypeFile: {
-			int result = wxID_YES;
-			if ( ApplyToEachFile==false ) {
-		wxString message;
-		message << wxT( "Are you sure you want remove '" ) << name << wxT( "' ?" );
-				if (num > 1) {
-					// For multiple selections, use a YesToAll dialog
-					YesToAllDlg dlg(this, message);
-					dlg.SetCheckboxText(wxString(wxT("Apply to all Files")));
-					result = dlg.ShowModal();
-					ApplyToEachFile = dlg.GetIsChecked();
-				} else {
-					result = wxMessageBox( message, wxT("Are you sure?"), wxYES_NO | wxICON_QUESTION, this );
+		if ( data ) {
+			switch (data->GetData().GetKind()) {
+			case ProjectItem::TypeFile: {
+				int result = wxID_YES;
+				if ( ApplyToEachFile==false ) {
+					wxString message;
+					message << wxT( "Are you sure you want remove '" ) << name << wxT( "' ?" );
+					if (num > 1) {
+						// For multiple selections, use a YesToAll dialog
+						YesToAllDlg dlg(this, message);
+						dlg.SetCheckboxText(wxString(wxT("Apply to all Files")));
+						result = dlg.ShowModal();
+						ApplyToEachFile = dlg.GetIsChecked();
+					} else {
+						result = wxMessageBox( message, wxT("Are you sure?"), wxYES_NO | wxICON_QUESTION, this );
+					}
+				}
+				if ( result==wxID_CANCEL || (result==wxID_NO && ApplyToEachFile==true) ) {
+					return;	// Assume Cancel or No+ApplyToEachFile means for folders etc too, not just files
+				}
+				if ( result==wxID_YES || result==wxYES ) {
+					wxTreeItemId parent = GetItemParent( item );
+					if ( parent.IsOk() ) {
+						wxString path = GetItemPath( parent );
+						ManagerST::Get()->RemoveFile( data->GetData().GetFile(), path );
+
+						wxString file_name(data->GetData().GetFile());
+						Delete( item );
+						SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+					}
 				}
 			}
-			if ( result==wxID_CANCEL || (result==wxID_NO && ApplyToEachFile==true) ) {
-				return;	// Assume Cancel or No+ApplyToEachFile means for folders etc too, not just files
+			break;
+			case ProjectItem::TypeVirtualDirectory:
+				DoRemoveVirtualFolder(item);
+				break;
+			case ProjectItem::TypeProject:
+				DoRemoveProject(name);
+				break;
+			default:
+				break;
 			}
-			if ( result==wxID_YES || result==wxYES ) {
-			wxTreeItemId parent = GetItemParent( item );
-			if ( parent.IsOk() ) {
-				wxString path = GetItemPath( parent );
-				ManagerST::Get()->RemoveFile( data->GetData().GetFile(), path );
 
-				wxString file_name(data->GetData().GetFile());
-				Delete( item );
-				SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
-			}
+
 		}
 	}
-	break;
-	case ProjectItem::TypeVirtualDirectory:
-		DoRemoveVirtualFolder(item);
-		break;
-	case ProjectItem::TypeProject:
-		DoRemoveProject(name);
-		break;
-	default:
-		break;
-	}
-}
 }
 
 void FileViewTree::DoRemoveVirtualFolder( wxTreeItemId &item )
@@ -979,8 +987,8 @@ void FileViewTree::OnSaveAsTemplate( wxCommandEvent & WXUNUSED( event ) )
 				desc = desc.Trim().Trim(false);
 
 				if ( newName.IsEmpty() == false ) {
-                    wxString tmplateDir = ManagerST::Get()->GetStarupDirectory() + wxT ( "/templates/projects/" ) + newName + wxT ( "/" );
-                    Mkdir ( tmplateDir );
+					wxString tmplateDir = ManagerST::Get()->GetStarupDirectory() + wxT ( "/templates/projects/" ) + newName + wxT ( "/" );
+					Mkdir ( tmplateDir );
 
 					Project newProj( *proj );
 					newProj.SetProjectInternalType( type );
@@ -997,8 +1005,8 @@ void FileViewTree::OnBuildOrder( wxCommandEvent &event )
 	wxUnusedVar( event );
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
-        DependenciesDlg dlg ( Frame::Get(), GetItemText( item ) );
-        dlg.ShowModal();
+		DependenciesDlg dlg ( Frame::Get(), GetItemText( item ) );
+		dlg.ShowModal();
 	}
 }
 
@@ -1155,9 +1163,9 @@ void FileViewTree::OnItemBeginDrag( wxTreeEvent &event )
 		if ( item.IsOk() && item != GetRootItem() ) {
 			// If it's a file, add it to the array
 			FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
-		if ( data->GetData().GetKind() == ProjectItem::TypeFile ) {
+			if ( data && data->GetData().GetKind() == ProjectItem::TypeFile ) {
 				m_draggedItems.Add(item);
-		}
+			}
 		}
 	}
 
@@ -1180,53 +1188,57 @@ void FileViewTree::OnItemEndDrag( wxTreeEvent &event )
 			return;
 		}
 		FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( itemDst ) );
-		if ( data->GetData().GetKind() == ProjectItem::TypeVirtualDirectory ) {
+		if ( data && data->GetData().GetKind() == ProjectItem::TypeVirtualDirectory ) {
 			break;	// Found a vd, so break out of the while loop
 		}
-			// We're only allowed to drag items between virtual folders, so find the parent folder
-			itemDst = GetItemParent( itemDst );
-		}
+		// We're only allowed to drag items between virtual folders, so find the parent folder
+		itemDst = GetItemParent( itemDst );
+	}
 
-			wxTreeItemId target  = itemDst;
-			if ( target.IsOk() ) {
-				targetVD = GetItemPath( target );
-			} else {
-				return;
-			}
+	wxTreeItemId target  = itemDst;
+	if ( target.IsOk() ) {
+		targetVD = GetItemPath( target );
+	} else {
+		return;
+	}
 
 	for (size_t n=0; n < m_draggedItems.GetCount(); ++n) {
 		wxTreeItemId itemSrc = m_draggedItems.Item(n);
-			wxTreeItemId fromItem  = GetItemParent( itemSrc );
-			if ( fromItem.IsOk() ) {
-				fromVD = GetItemPath( fromItem );
-			} else {
+		wxTreeItemId fromItem  = GetItemParent( itemSrc );
+		if ( fromItem.IsOk() ) {
+			fromVD = GetItemPath( fromItem );
+		} else {
 			continue;
 		}
 
 		if ( fromVD == targetVD ) {
 			// Not much point dropping onto the same virtual dir
 			continue;
-			}
+		}
 
-			//the file name to remove
-			FilewViewTreeItemData *srcData = static_cast<FilewViewTreeItemData*>( GetItemData( itemSrc ) );
-			wxString filename = srcData->GetData().GetFile();
+		//the file name to remove
+		FilewViewTreeItemData *srcData = static_cast<FilewViewTreeItemData*>( GetItemData( itemSrc ) );
+		
+		// no tree-item-data? skip this one
+		if ( !srcData ) continue;
+		
+		wxString filename = srcData->GetData().GetFile();
 
-			ProjectItem itemData = srcData->GetData();
+		ProjectItem itemData = srcData->GetData();
 
-			//call the manager to remove them in the underlying project
-			if ( ManagerST::Get()->MoveFileToVD( filename, fromVD, targetVD ) ) {
-				//remove the item from its current node, and place it under the
-				//new parent node
-				AppendItem(	target,						// parent
-				            itemData.GetDisplayName(),	// display name
-				            GetIconIndex( itemData ),		// item image index
-				            GetIconIndex( itemData ),		// selected item image
-				            new FilewViewTreeItemData( itemData ) );
-				Delete( itemSrc );
-				Expand( target );
-				SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
-			}
+		//call the manager to remove them in the underlying project
+		if ( ManagerST::Get()->MoveFileToVD( filename, fromVD, targetVD ) ) {
+			//remove the item from its current node, and place it under the
+			//new parent node
+			AppendItem(	target,						// parent
+			            itemData.GetDisplayName(),	// display name
+			            GetIconIndex( itemData ),		// item image index
+			            GetIconIndex( itemData ),		// selected item image
+			            new FilewViewTreeItemData( itemData ) );
+			Delete( itemSrc );
+			Expand( target );
+			SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+		}
 	}
 }
 
@@ -1474,7 +1486,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	ManagerST::Get()->AddProject(proj->GetFileName().GetFullPath());
 
 	// restore the active project
-	if( was_active ) {
+	if ( was_active ) {
 		MarkActive( curr_proj_name );
 	}
 }
@@ -1653,7 +1665,7 @@ bool FileViewTree::CreateAndAddFile(const wxString& filename, const wxString& vd
 
 bool FileViewTree::DoAddNewItem(wxTreeItemId& item, const wxString& filename, const wxString& vdFullpath)
 {
-	if(item.IsOk() == false){
+	if (item.IsOk() == false) {
 		return false;
 	}
 

@@ -29,11 +29,13 @@ void fcFileOpener::Release()
 
 void fcFileOpener::AddSearchPath(const std::string& path)
 {
-	if ( IsPathExist(path) ) {
+	std::string p ( path );
+	normalize_path( p );
+	if ( IsPathExist( p ) ) {
 		return;
 	}
 
-	_searchPath.push_back(path);
+	_searchPath.push_back( p );
 }
 
 bool fcFileOpener::IsPathExist(const std::string& path)
@@ -101,9 +103,10 @@ std::string fcFileOpener::extract_path(const std::string &filePath)
 FILE* fcFileOpener::try_open(const std::string &path, const std::string &name)
 {
 	std::string fullpath ( path + "/" + name );
+	normalize_path( fullpath );
+
 	FILE *fp = fopen(fullpath.c_str(), "r" );
 	if ( fp ) {
-		_matchedfiles.insert( fullpath );
 		_scannedfiles.insert( name );
 		std::string p = extract_path(fullpath);
 
@@ -116,6 +119,7 @@ FILE* fcFileOpener::try_open(const std::string &path, const std::string &name)
 			}
 		}
 
+		_matchedfiles.insert( fullpath );
 		return fp;
 	}
 	return NULL;
@@ -123,11 +127,12 @@ FILE* fcFileOpener::try_open(const std::string &path, const std::string &name)
 
 void fcFileOpener::AddExcludePath(const std::string& path)
 {
-	if ( IsExcludePathExist(path) ) {
-		return;
-	}
 	std::string normalizedPath ( path );
 	normalize_path( normalizedPath );
+
+	if ( IsExcludePathExist(normalizedPath) ) {
+		return;
+	}
 	_excludePaths.push_back(normalizedPath);
 }
 

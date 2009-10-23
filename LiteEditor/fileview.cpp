@@ -494,7 +494,6 @@ void FileViewTree::DoItemActivated( wxTreeItemId &item, wxEvent &event )
 		if (SendCmdEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED, &file_path)) {
 			return;
 		}
-
 		Frame::Get()->GetMainBook()->OpenFile( fn.GetFullPath(), project, -1 );
 
 	} else if ( itemData->GetData().GetKind() == ProjectItem::TypeProject ) {
@@ -1307,7 +1306,10 @@ void FileViewTree::ExpandToPath(const wxString &project, const wxFileName &fileN
 				// And,no, SelectItem(fileItem, false) isn't the answer: in 2.8 it toggles (a wx bug) and the 'selected' tab ends up unselected
 				UnselectAll();
 				SelectItem(fileItem);
-				EnsureVisible( fileItem );
+				
+				if ( IsVisible( fileItem ) == false ) {
+					EnsureVisible( fileItem );
+				}
 			} else {
 				wxString message;
 				message << wxT("Failed to find file: ") << fileName.GetFullPath() << wxT(" in FileView.");

@@ -73,12 +73,10 @@ void IncludePathLocator::Locate(wxArrayString& paths)
 #ifdef __WXMSW__
 	// On Windows, just read the content of the WXWIN environment variable
 	wxString wxwin;
-	if (wxGetEnv(wxT("WXWIN"), &wxwin)) {
+	if (wxGetEnv(wxT("WX_INCL_HOME"), &wxwin)) {
 		// we got the path to the installation of wxWidgets
-		wxString wxpath;
-		wxpath << wxwin << wxT("\\include");
-		if (wxDir::Exists(wxpath)) {
-			paths.Add( wxpath );
+		if (wxDir::Exists(wxwin)) {
+			paths.Add( wxwin );
 		}
 	}
 

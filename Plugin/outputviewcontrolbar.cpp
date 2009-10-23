@@ -135,18 +135,20 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 		wxAuiPaneInfo &pane_info = m_aui->GetPane(wxT("Output View"));
 		wxString dock_info ( wxString::Format(wxT("dock_size(%d,%d,%d)"), pane_info.dock_direction, pane_info.dock_layer, pane_info.dock_row) );
 		if ( hide ) {
-			wxTheApp->GetTopWindow()->Freeze();
 			if ( pane_info.IsShown() ) {
-
+				wxTheApp->GetTopWindow()->Freeze();
+			
 				DoFindDockInfo(m_aui->SavePerspective(), dock_info, saved_dock_info);
 				pane_info.Hide();
 
 				m_aui->Update();
-
+				
+				wxTheApp->GetTopWindow()->Thaw();
 			}
-			wxTheApp->GetTopWindow()->Thaw();
+			
 			
 		} else {
+			// Show it
 			if ( pane_info.IsShown() == false ) {
 				wxTheApp->GetTopWindow()->Freeze();
 				if ( saved_dock_info.IsEmpty() ) {

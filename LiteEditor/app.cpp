@@ -338,9 +338,6 @@ bool App::OnInit()
 			long up(0);
 			if( !cfg->GetLongValue(wxT("UpdateWxPaths"), up)){
 				if(strWx.IsEmpty() == false) {
-					// add WX include path
-					m_parserPaths.Add(strWx + wxT("\\include"));
-
 					// we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
 					EvnVarList vars;
 					EnvironmentConfig::Instance()->Load();
@@ -354,6 +351,8 @@ bool App::OnInit()
 
 					EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
 					cfg->SaveLongValue(wxT("UpdateWxPaths"), 1);
+					
+					wxSetEnv(wxT("WX_INCL_HOME"), strWx + wxT("\\include"));
 				}
 			}
 

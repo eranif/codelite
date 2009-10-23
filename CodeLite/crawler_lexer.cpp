@@ -1709,9 +1709,6 @@ int crawlerScan( const char* filePath )
 		return -1;
 	}
 
-	// set the initial path to the files' path
-	fcFileOpener::Instance()->setCurrpath( fcFileOpener::extract_path(filePath) );
-
 	yy_switch_to_buffer( yy_create_buffer(fp, YY_BUF_SIZE) );
 	fc_in = fp;
 	int rc = fc_lex();

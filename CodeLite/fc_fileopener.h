@@ -14,7 +14,6 @@ class fcFileOpener
 	static fcFileOpener*     ms_instance  ;
 	int                      _depth       ;
 	int                      _maxDepth    ;
-	std::string              _currpath    ;
 
 private:
 	bool IsPathExist(const std::string &path);
@@ -35,13 +34,11 @@ public:
 	void ClearResults()    {
 		_matchedfiles.clear();
 		_scannedfiles.clear();
-		_currpath.clear();
 		_depth = 0;
 	}
 
 	void ClearSearchPath() {
 		_searchPath.clear();
-		_currpath.clear();
 		_excludePaths.clear();
 	}
 
@@ -71,12 +68,6 @@ public:
 	// getters
 	const std::set<std::string>& GetResults() const {
 		return _matchedfiles;
-	}
-	void setCurrpath(const std::string& _currpath) {
-		this->_currpath = _currpath;
-	}
-	const std::string& getCurrpath() const {
-		return _currpath;
 	}
 private:
 	fcFileOpener();

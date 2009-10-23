@@ -76,12 +76,6 @@ FILE* fcFileOpener::OpenFile(const std::string& include_path)
 	// try to open the file as is
 	FILE *fp (NULL);
 
-	if ( _currpath.empty() == false ) {
-		// we got a path, try it first
-		fp = try_open(_currpath, mod_path);
-		if ( fp ) return fp;
-	}
-
 	// try to prepend the search paths
 	for (size_t i=0; i<_searchPath.size(); i++) {
 		fp = try_open(_searchPath.at(i), mod_path);
@@ -122,7 +116,6 @@ FILE* fcFileOpener::try_open(const std::string &path, const std::string &name)
 			}
 		}
 
-		_currpath = p ;
 		return fp;
 	}
 	return NULL;

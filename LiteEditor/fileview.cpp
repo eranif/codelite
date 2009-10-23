@@ -217,7 +217,7 @@ void FileViewTree::SortTree()
 
 wxTreeItemId FileViewTree::GetSingleSelection()
 {
-#if wxVERSION_NUMBER > 2900	
+#if wxVERSION_NUMBER > 2900
 	return GetFocusedItem();
 #else
 	wxTreeItemId invalid;
@@ -606,7 +606,7 @@ bool FileViewTree::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPa
 		}
 		 else if (file.Right(2) == wxT(".h")) {
 			hfiles.Add(file);
-			paths.RemoveAt(c);			
+			paths.RemoveAt(c);
 		}
 	}
 	// Finally do the Adds
@@ -1178,7 +1178,7 @@ void FileViewTree::OnItemEndDrag( wxTreeEvent &event )
 	while ( true ) {
 		if (!itemDst.IsOk()) {
 			return;
-		}		
+		}
 		FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( itemDst ) );
 		if ( data->GetData().GetKind() == ProjectItem::TypeVirtualDirectory ) {
 			break;	// Found a vd, so break out of the while loop
@@ -1295,6 +1295,7 @@ void FileViewTree::ExpandToPath(const wxString &project, const wxFileName &fileN
 				// And,no, SelectItem(fileItem, false) isn't the answer: in 2.8 it toggles (a wx bug) and the 'selected' tab ends up unselected
 				UnselectAll();
 				SelectItem(fileItem);
+				EnsureVisible( fileItem );
 			} else {
 				wxString message;
 				message << wxT("Failed to find file: ") << fileName.GetFullPath() << wxT(" in FileView.");

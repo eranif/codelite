@@ -132,11 +132,10 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 {
 	static wxString saved_dock_info;
 	if ( m_book && m_aui ) {
-		wxTheApp->GetTopWindow()->Freeze();
 		wxAuiPaneInfo &pane_info = m_aui->GetPane(wxT("Output View"));
 		wxString dock_info ( wxString::Format(wxT("dock_size(%d,%d,%d)"), pane_info.dock_direction, pane_info.dock_layer, pane_info.dock_row) );
 		if ( hide ) {
-
+			wxTheApp->GetTopWindow()->Freeze();
 			if ( pane_info.IsShown() ) {
 
 				DoFindDockInfo(m_aui->SavePerspective(), dock_info, saved_dock_info);
@@ -145,9 +144,11 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 				m_aui->Update();
 
 			}
-
+			wxTheApp->GetTopWindow()->Thaw();
+			
 		} else {
 			if ( pane_info.IsShown() == false ) {
+				wxTheApp->GetTopWindow()->Freeze();
 				if ( saved_dock_info.IsEmpty() ) {
 					pane_info.Show();
 					m_aui->Update();
@@ -164,9 +165,10 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 						m_aui->Update();
 					}
 				}
+				wxTheApp->GetTopWindow()->Thaw();
 			}
 		}
-		wxTheApp->GetTopWindow()->Thaw();
+		
 	}
 }
 

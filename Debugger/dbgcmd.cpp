@@ -388,7 +388,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 		// Failed to place the breakpoint
 		// Tell the bp manager to remove the bp from public view
 		m_observer->UpdateBpAdded(m_bp.internal_id, -1);
-//		m_observer->UpdateAddLine(wxString::Format(wxT("ERROR: failed to place breakpoint: \"%s\""), line.c_str()));
+		m_observer->UpdateAddLine(wxString::Format(wxT("ERROR: failed to place breakpoint: \"%s\""), line.c_str()), true);
 		return true;
 	}
 
@@ -403,7 +403,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 
 	if (reBreak.Matches(line)) {
 		number = reBreak.GetMatch(line, 1);
-		m_observer->UpdateAddLine(wxString::Format(wxT("Found the breakpoint ID!")));
+		m_observer->UpdateAddLine(wxString::Format(wxT("Found the breakpoint ID!")), true);
 
 	} else if (reWatch.Matches(line)) {
 		number = reWatch.GetMatch(line, 1);
@@ -412,7 +412,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 	if (number.IsEmpty() == false) {
 		if (number.ToLong(&breakpointId)) {
 			// for debugging purpose
-			m_observer->UpdateAddLine(wxString::Format(wxT("Storing debugger breakpoint Id=%d"), breakpointId));
+			m_observer->UpdateAddLine(wxString::Format(wxT("Storing debugger breakpoint Id=%d"), breakpointId), true);
 		}
 	}
 

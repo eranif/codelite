@@ -48,7 +48,7 @@ class FileViewTree : public wxTreeCtrl
 	wxMenu *m_workspaceMenu;
 
 	std::map<void*, bool> m_itemsToSort;
-	wxTreeItemId m_draggedItem;
+	wxArrayTreeItemIds m_draggedItems;
 
 public:
 	/**
@@ -170,7 +170,7 @@ private:
 	void DoSetProjectActive(wxTreeItemId &item);
 	void DoAddVirtualFolder(wxTreeItemId &parent, const wxString &text);
 	void DoRemoveVirtualFolder(wxTreeItemId &parent);
-	void DoRemoveItem(wxTreeItemId &item);
+	void DoRemoveItems();
 	void DoItemActivated(wxTreeItemId &item, wxEvent &event);
 	void DoAddItem(ProjectPtr proj, const FileViewItem &item);
 	wxTreeItemId DoGetItemByText(const wxTreeItemId &parent, const wxString &text);

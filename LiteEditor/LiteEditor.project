@@ -2,10 +2,7 @@
 <CodeLite_Project Name="LiteEditor">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00030001N0004Unix0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode000000000000
-    
-    
-    ]]>
+      <![CDATA[00030001N0004Unix0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Source Files">
@@ -180,6 +177,10 @@
       </VirtualDirectory>
       <File Name="findinfilesdlgbase.h"/>
       <File Name="findinfilesdlgbase.cpp"/>
+      <File Name="yestoalldlg.h"/>
+      <File Name="yestoallbasedlg.cpp"/>
+      <File Name="yestoallbasedlg.h"/>
+      <File Name="yestoalldlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>

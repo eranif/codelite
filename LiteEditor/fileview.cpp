@@ -44,6 +44,8 @@
 #include "ctags_manager.h"
 #include <wx/progdlg.h>
 #include "editor_config.h"
+#include "yestoalldlg.h"
+
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -149,9 +151,9 @@ FileViewTree::~FileViewTree()
 void FileViewTree::Create( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
 {
 #ifndef __WXGTK__
-	style |= ( wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT );
+	style |= ( wxTR_HAS_BUTTONS | wxTR_MULTIPLE | wxTR_LINES_AT_ROOT );
 #else
-	style |= ( wxTR_HAS_BUTTONS );
+	style |= ( wxTR_HAS_BUTTONS | wxTR_MULTIPLE );
 #endif
 	wxTreeCtrl::Create( parent, id, pos, size, style );
 
@@ -191,7 +193,7 @@ void FileViewTree::BuildTree()
 		Thaw();
 
 		//set selection to first item
-		SelectItem( root );
+		SelectItem( root, false );
 	}
 }
 
@@ -215,7 +217,14 @@ void FileViewTree::SortTree()
 
 wxTreeItemId FileViewTree::GetSingleSelection()
 {
-	return GetSelection();
+#if wxVERSION_NUMBER > 2900	
+	return GetFocusedItem();
+#else
+	wxTreeItemId invalid;
+	wxArrayTreeItemIds arr;
+	size_t count = GetMultiSelection( arr );
+	return (count > 0) ? arr.Item(0) : invalid;
+#endif
 }
 
 int FileViewTree::GetIconIndex( const ProjectItem &item )
@@ -390,8 +399,6 @@ void FileViewTree::OnPopupMenu( wxTreeEvent &event )
 	if ( GetSingleSelection().IsOk() ) {
 		wxTreeItemId item = event.GetItem();
 		if ( item.IsOk() ) {
-			SelectItem( item, true );
-
 			FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
 			switch ( data->GetData().GetKind() ) {
 			case ProjectItem::TypeProject:
@@ -753,19 +760,44 @@ void FileViewTree::OnRemoveVirtualFolder( wxCommandEvent & WXUNUSED( event ) )
 
 void FileViewTree::OnRemoveItem( wxCommandEvent &WXUNUSED( event ) )
 {
-	wxTreeItemId item = GetSingleSelection();
-	DoRemoveItem( item );
+	DoRemoveItems();
 }
 
-void FileViewTree::DoRemoveItem( wxTreeItemId &item )
+void FileViewTree::DoRemoveItems()
 {
+	wxArrayTreeItemIds items;
+	size_t num = GetMultiSelection( items );
+	if ( !num ) {
+		return;
+	}
+
+	bool ApplyToEachFile = false;
+
+	for ( size_t i=0; i<num; i++ ) {
+		wxTreeItemId item = items.Item( i );
 	wxString name = GetItemText( item );
 	FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
+
 	switch (data->GetData().GetKind()) {
 	case ProjectItem::TypeFile: {
+			int result = wxID_YES;
+			if ( ApplyToEachFile==false ) {
 		wxString message;
 		message << wxT( "Are you sure you want remove '" ) << name << wxT( "' ?" );
-		if ( wxMessageBox( message, wxT( "CodeLite" ), wxYES_NO | wxICON_QUESTION ) == wxYES ) {
+				if (num > 1) {
+					// For multiple selections, use a YesToAll dialog
+					YesToAllDlg dlg(this, message);
+					dlg.SetCheckboxText(wxString(wxT("Apply to all Files")));
+					result = dlg.ShowModal();
+					ApplyToEachFile = dlg.GetIsChecked();
+				} else {
+					result = wxMessageBox( message, wxT("Are you sure?"), wxYES_NO | wxICON_QUESTION, this );
+				}
+			}
+			if ( result==wxID_CANCEL || (result==wxID_NO && ApplyToEachFile==true) ) {
+				return;	// Assume Cancel or No+ApplyToEachFile means for folders etc too, not just files
+			}
+			if ( result==wxID_YES || result==wxYES ) {
 			wxTreeItemId parent = GetItemParent( item );
 			if ( parent.IsOk() ) {
 				wxString path = GetItemPath( parent );
@@ -787,6 +819,7 @@ void FileViewTree::DoRemoveItem( wxTreeItemId &item )
 	default:
 		break;
 	}
+}
 }
 
 void FileViewTree::DoRemoveVirtualFolder( wxTreeItemId &item )
@@ -1076,14 +1109,7 @@ void FileViewTree::OnItemActivated( wxTreeEvent &event )
 			}
 		}
 	} else if (event.GetKeyCode() == WXK_DELETE ||  event.GetKeyCode() == WXK_NUMPAD_DELETE ) {
-		wxArrayTreeItemIds items;
-		size_t num = GetMultiSelection( items );
-		if ( num > 0 ) {
-			for ( size_t i=0; i<num; i++ ) {
-				wxTreeItemId item = items.Item( i );
-				DoRemoveItem( item );
-			}
-		}
+		DoRemoveItems();
 	} else {
 		event.Skip();
 	}
@@ -1094,8 +1120,11 @@ size_t FileViewTree::GetMultiSelection( wxArrayTreeItemIds &arr )
 	if ( GetWindowStyleFlag() & wxTR_MULTIPLE ) {
 		return GetSelections( arr );
 	} else {
-		arr.Add( GetSelection() );
-		return 1;
+		wxTreeItemId item = GetSelection();
+		if (item.IsOk()) {
+			arr.Add( item );
+		}
+		return arr.GetCount();
 	}
 }
 
@@ -1117,28 +1146,45 @@ void FileViewTree::OnRetagWorkspace( wxCommandEvent &event )
 
 void FileViewTree::OnItemBeginDrag( wxTreeEvent &event )
 {
-	if ( event.GetItem() != GetRootItem() ) {
-		m_draggedItem = event.GetItem();
-		FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( m_draggedItem ) );
+	wxArrayTreeItemIds selections;
+	size_t num = GetMultiSelection( selections );
+
+	m_draggedItems.Clear();
+	for (size_t n=0; n < num; ++n) {
+		wxTreeItemId item = selections[n];
+		if ( item.IsOk() && item != GetRootItem() ) {
+			// If it's a file, add it to the array
+			FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
 		if ( data->GetData().GetKind() == ProjectItem::TypeFile ) {
-			event.Allow();
-			return;
+				m_draggedItems.Add(item);
 		}
+		}
+	}
+
+	// Allow the event only if there were any valid selections
+	if (m_draggedItems.GetCount() > 0) {
+		event.Allow();
 	}
 }
 
 void FileViewTree::OnItemEndDrag( wxTreeEvent &event )
 {
-	wxTreeItemId itemSrc = m_draggedItem,
-	                       itemDst = event.GetItem();
+	wxTreeItemId itemDst = event.GetItem();
+	if (!itemDst.IsOk()) {
+		return;
+	}
 
 	wxString targetVD, fromVD;
-	while ( itemDst.IsOk() ) {
+	while ( true ) {
+		if (!itemDst.IsOk()) {
+			return;
+		}		
 		FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( itemDst ) );
-		if ( data->GetData().GetKind() != ProjectItem::TypeVirtualDirectory ) {
+		if ( data->GetData().GetKind() == ProjectItem::TypeVirtualDirectory ) {
+			break;	// Found a vd, so break out of the while loop
+		}
 			// We're only allowed to drag items between virtual folders, so find the parent folder
 			itemDst = GetItemParent( itemDst );
-			continue;
 		}
 
 			wxTreeItemId target  = itemDst;
@@ -1148,11 +1194,18 @@ void FileViewTree::OnItemEndDrag( wxTreeEvent &event )
 				return;
 			}
 
+	for (size_t n=0; n < m_draggedItems.GetCount(); ++n) {
+		wxTreeItemId itemSrc = m_draggedItems.Item(n);
 			wxTreeItemId fromItem  = GetItemParent( itemSrc );
 			if ( fromItem.IsOk() ) {
 				fromVD = GetItemPath( fromItem );
 			} else {
-				return;
+			continue;
+		}
+
+		if ( fromVD == targetVD ) {
+			// Not much point dropping onto the same virtual dir
+			continue;
 			}
 
 			//the file name to remove
@@ -1174,8 +1227,6 @@ void FileViewTree::OnItemEndDrag( wxTreeEvent &event )
 				Expand( target );
 				SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 			}
-		
-		break;	// from the 'while' loop
 	}
 }
 
@@ -1240,6 +1291,9 @@ void FileViewTree::ExpandToPath(const wxString &project, const wxFileName &fileN
 		if (childData->GetData().GetDisplayName() == project) {
 			wxTreeItemId fileItem = fileName.GetName().IsEmpty() ? child : FindItemByPath(child, ManagerST::Get()->GetProjectCwd( project ), fileName.GetFullPath());
 			if (fileItem.IsOk()) {
+				// Now we're using a wxTR_MULTIPLE tree, we need to unselect here, otherwise all project files get selected
+				// And,no, SelectItem(fileItem, false) isn't the answer: in 2.8 it toggles (a wx bug) and the 'selected' tab ends up unselected
+				UnselectAll();
 				SelectItem(fileItem);
 			} else {
 				wxString message;
@@ -1473,7 +1527,7 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
 						tmp.SetFullName(newName);
 
 						if (tmp.FileExists()) {
-							wxMessageBox(_("File with that name already exist!"), wxT("CodeLite"), wxICON_WARNING|wxOK);
+							wxMessageBox(_("A File with that name already exists!"), wxT("CodeLite"), wxICON_WARNING|wxOK);
 							return;
 						}
 

@@ -90,7 +90,13 @@ bool Project::Load(const wxString &path)
 	if ( !m_doc.Load(path) ) {
 		return false;
 	}
-
+	
+	// Workaround WX bug: load the plugins data (GetAllPluginsData will strip any trailing whitespaces)
+	// and then set them back
+	std::map<wxString, wxString> pluginsData;
+	GetAllPluginsData(pluginsData);
+	SetAllPluginsData(pluginsData, false);
+	
 	m_vdCache.clear();
 
 	m_fileName = path;
@@ -920,7 +926,10 @@ void Project::GetAllPluginsData(std::map<wxString, wxString>& pluginsDataMap)
 	while( child ) {
 		if( child->GetName() == wxT("Plugin") ) {
 			// get the content
-			pluginsDataMap[child->GetPropVal(wxT("Name"), wxEmptyString)] = child->GetNodeContent();
+			wxString content = child->GetNodeContent();
+			// overcome bug in WX where CDATA content comes out with extra \n and 4xspaces
+			content.Trim().Trim(false);
+			pluginsDataMap[child->GetPropVal(wxT("Name"), wxEmptyString)] = content;
 		}
 		child = child->GetNext();
 	}
@@ -971,7 +980,7 @@ void Project::SetPluginData(const wxString& pluginName, const wxString& data)
 }
 
 
-void Project::SetAllPluginsData(const std::map<wxString, wxString>& pluginsDataMap)
+void Project::SetAllPluginsData(const std::map<wxString, wxString>& pluginsDataMap, bool saveToFile /* true */)
 {
 	if(!m_doc.IsOk()){
 		return;
@@ -988,7 +997,10 @@ void Project::SetAllPluginsData(const std::map<wxString, wxString>& pluginsDataM
 	for(; iter != pluginsDataMap.end(); iter ++) {
 		SetPluginData( iter->first, iter->second );
 	}
-	SaveXmlFile();
+	
+	if ( saveToFile ) {
+		SaveXmlFile();
+	}
 }
 
 time_t Project::GetFileLastModifiedTime() const

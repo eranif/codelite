@@ -86,7 +86,7 @@ public:
 	 * @brief tells the observer to add line to the log view
 	 * @param line message to log
 	 */
-	virtual void UpdateAddLine(const wxString &line) = 0;
+	virtual void UpdateAddLine(const wxString &line, const bool OnlyIfLoggingOn = false) = 0;
 
 	/**
 	 * @brief notify the caller of the added breakpoint's debugger_id

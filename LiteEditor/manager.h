@@ -482,7 +482,7 @@ public:
 	void DbgRestoreWatches();
 
     // IDebuggerObserver event handlers
-	void UpdateAddLine              (const wxString &line);
+	void UpdateAddLine              (const wxString &line, const bool OnlyIfLoggingOn = false);
 	void UpdateFileLine             (const wxString &file, int lineno);
 	void UpdateLocals               (TreeNode<wxString, NodeData> *tree);
     void UpdateStopped              ();

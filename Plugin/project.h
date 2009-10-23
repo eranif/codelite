@@ -442,7 +442,7 @@ public:
 	 * @brief set all plugins data as map of plugin=value pair
 	 * @param pluginsDataMap
 	 */
-	void SetAllPluginsData(const std::map<wxString, wxString> &pluginsDataMap);
+	void SetAllPluginsData(const std::map<wxString, wxString> &pluginsDataMap, bool saveToFile = true);
 
 	//----------------------------------
 	//File modifications

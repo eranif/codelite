@@ -390,6 +390,23 @@ public:
 	DebuggerInformation GetDebuggerInformation() {
 		return m_info;
 	}
+	
+	/**
+	 * \brief Sets the logging level 'on the fly'
+	 * \param level the new level
+	 */
+	void SetDebugLoggingLevel(bool level) {
+		m_info.enableDebugLog = level;
+	}
+
+	/**
+	 * \brief Gets the current logging level
+	 * \return the current level
+	 */
+	bool GetDebugLoggingLevel() const {
+		return m_info.enableDebugLog;
+	}
+	
 	//-------------------------------------------------------------
 	// Debugger operations
 	//-------------------------------------------------------------

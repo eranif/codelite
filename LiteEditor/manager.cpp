@@ -2145,8 +2145,16 @@ void Manager::DbgSetThread ( long threadId )
 
 // Event handlers from the debugger
 
-void Manager::UpdateAddLine ( const wxString &line )
+void Manager::UpdateAddLine ( const wxString &line, const bool OnlyIfLoggingOn /*=false*/ )
 {
+	// There are a few messages that are only worth displaying if full logging is enabled
+	if (OnlyIfLoggingOn) {
+		IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+		if ( dbgr && (dbgr->GetDebugLoggingLevel()==false) ) {
+			return;
+		}
+	}
+
 	DebugMessage ( line + wxT ( "\n" ) );
 }
 

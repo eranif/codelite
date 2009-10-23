@@ -1,4 +1,5 @@
 #include "fileentry.h"
+#include <time.h>
 
 FileEntry::FileEntry()
 		: m_id                   (wxNOT_FOUND)

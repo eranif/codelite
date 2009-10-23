@@ -132,6 +132,8 @@ void FileExplorerTree::OnSearchNode(wxCommandEvent &e)
 
 void FileExplorerTree::OnTagNode(wxCommandEvent &e)
 {
+	// TODO:: replace this with 'Add this directory to the parser search path'
+	//        or to the exclude path
     wxTreeItemId item = GetSelection();
     if (item.IsOk()) {
         wxString path = GetFullPath(item).GetFullPath();

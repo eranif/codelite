@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <stdio.h>
 
 class fcFileOpener
 {

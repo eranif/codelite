@@ -47,6 +47,7 @@
       <wxString Value="_GLIBCXX_BEGIN_NAMESPACE(std)=namespace std{"/>
       <wxString Value="_GLIBCXX_END_NAMESPACE=}"/>
       <wxString Value="_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD)=namespace std{"/>
+	  <wxString Value="_GLIBCXX_BEGIN_NESTED_NAMESPACE(std, _GLIBCXX_STD_D)=namespace std{"/>	  
       <wxString Value="_GLIBCXX_END_NESTED_NAMESPACE=}"/>
       <wxString Value="_GLIBCXX_STD=std"/>
       <wxString Value="WXDLLIMPEXP_SCI"/>

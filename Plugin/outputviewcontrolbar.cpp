@@ -108,9 +108,16 @@ void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, 
 	button->SetState( selected ? OutputViewControlBarButton::Button_Pressed : OutputViewControlBarButton::Button_Normal );
 	m_buttons.push_back( button );
 #else
-	OutputViewControlBarToggleButton *button = new OutputViewControlBarToggleButton(this, text);
-	button->SetValue(selected);
-	m_buttons.push_back( button );
+	if ( text == wxT("More") ) {
+//		OutputViewControlBarButton *button = new OutputViewControlBarButton(this, text, bmp, style);
+//		button->SetState( selected ? OutputViewControlBarButton::Button_Pressed : OutputViewControlBarButton::Button_Normal );
+//		m_buttons.push_back( button );
+
+	} else {
+		OutputViewControlBarToggleButton *button = new OutputViewControlBarToggleButton(this, text);
+		button->SetValue(selected);
+		m_buttons.push_back( button );
+	}
 #endif
 
 	GetSizer()->Add(button, 0, wxLEFT|wxTOP|wxBOTTOM | wxEXPAND, 3);
@@ -137,16 +144,16 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 		if ( hide ) {
 			if ( pane_info.IsShown() ) {
 				wxTheApp->GetTopWindow()->Freeze();
-			
+
 				DoFindDockInfo(m_aui->SavePerspective(), dock_info, saved_dock_info);
 				pane_info.Hide();
 
 				m_aui->Update();
-				
+
 				wxTheApp->GetTopWindow()->Thaw();
 			}
-			
-			
+
+
 		} else {
 			// Show it
 			if ( pane_info.IsShown() == false ) {
@@ -170,7 +177,7 @@ void OutputViewControlBar::DoTogglePane(bool hide)
 				wxTheApp->GetTopWindow()->Thaw();
 			}
 		}
-		
+
 	}
 }
 
@@ -227,7 +234,7 @@ void OutputViewControlBar::AddAllButtons()
 	img.SetMaskColour(123, 123, 123);
 
 	// Add the 'More' button
-//	AddButton ( wxT("More"), wxBitmap(img), false, 0 /* no text, no spacer */);
+	AddButton ( wxT("More"), wxBitmap(img), false, 0 /* no text, no spacer */);
 
 	// Add the search control
 	m_searchBar = new OutputViewSearchCtrl(this);
@@ -922,11 +929,71 @@ OutputViewControlBarToggleButton::~OutputViewControlBarToggleButton()
 void OutputViewControlBarToggleButton::OnButtonToggled(wxCommandEvent& e)
 {
 	if ( GetText() == wxT("More") ) {
-		// TODO: Show pop menu here
+		DoShowPopupMenu();
+
 	} else {
 
 		wxCommandEvent e(EVENT_BUTTON_PRESSED);
 		e.SetEventObject(this);
 		GetParent()->AddPendingEvent( e );
 	}
+}
+
+void OutputViewControlBarToggleButton::DoShowPopupMenu()
+{
+	wxRect rr = GetSize();
+	wxMenu popupMenu;
+
+#ifdef __WXMSW__
+	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+#endif
+
+	OutputViewControlBar *bar = (OutputViewControlBar *)GetParent();
+	for (size_t i=0; i<bar->m_buttons.size(); i++) {
+#ifdef __WXMSW__
+		OutputViewControlBarButton *button = bar->m_buttons.at(i);
+#else
+		OutputViewControlBarToggleButton *button = bar->m_buttons.at(i);
+#endif
+		// Skip the More button and empty text buttons
+		if ( button->GetText() == wxT("More") || button->GetText().IsEmpty() ) {
+			continue;
+		}
+
+		wxString text = button->GetText();
+#ifdef __WXMSW__
+		bool selected = button->GetState() == OutputViewControlBarButton::Button_Pressed;
+#else
+		bool selected = button->GetValue();
+#endif
+		wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(button->GetText().c_str()), text, text, wxITEM_CHECK);
+
+		//set the font
+#ifdef __WXMSW__
+		if (selected) {
+			font.SetWeight(wxBOLD);
+		}
+		item->SetFont(font);
+#endif
+		popupMenu.Append( item );
+
+		//mark the selected item
+		item->Check(selected);
+
+		//restore font
+#ifdef __WXMSW__
+		font.SetWeight(wxNORMAL);
+#endif
+	}
+	popupMenu.AppendSeparator();
+
+	bool     isQuickFinderShown( bar->GetSizer()->IsShown( bar->GetSearchBar() ) );
+	wxString quickFinderText;
+
+	quickFinderText = isQuickFinderShown ? wxT("Hide QuickFinder") : wxT("Show QuickFinder");
+	wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(quickFinderText.c_str()), quickFinderText, quickFinderText, wxITEM_NORMAL);
+	popupMenu.Append( item );
+
+	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewControlBar::OnMenuSelection), NULL, bar);
+	PopupMenu( &popupMenu, rr.x, rr.y );
 }

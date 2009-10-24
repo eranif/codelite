@@ -162,6 +162,7 @@ public:
 
 class OutputViewControlBarToggleButton : public wxToggleButton
 {
+	void DoShowPopupMenu();
 public:
 	OutputViewControlBarToggleButton(wxWindow *parent, const wxString &label);
 	virtual ~OutputViewControlBarToggleButton();

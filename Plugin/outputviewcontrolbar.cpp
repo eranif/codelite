@@ -65,6 +65,7 @@ OutputViewControlBar::OutputViewControlBar(wxWindow* win, Notebook *book, wxAuiM
 		: wxPanel(win, id)
 		, m_aui  (aui)
 		, m_book (book)
+		, m_moreButton(NULL)
 {
 	wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	SetSizer( mainSizer );
@@ -108,24 +109,14 @@ void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, 
 	button->SetState( selected ? OutputViewControlBarButton::Button_Pressed : OutputViewControlBarButton::Button_Normal );
 	m_buttons.push_back( button );
 #else
-	OutputViewControlBarToggleButton *button (NULL);
-	if ( text == wxT("More") ) {
-//		OutputViewControlBarButton *button = new OutputViewControlBarButton(this, text, bmp, style);
-//		button->SetState( selected ? OutputViewControlBarButton::Button_Pressed : OutputViewControlBarButton::Button_Normal );
-//		m_buttons.push_back( button );
-
-	} else {
-		button = new OutputViewControlBarToggleButton(this, text);
-		button->SetValue(selected);
-		m_buttons.push_back( button );
-	}
+	OutputViewControlBarToggleButton *button = new OutputViewControlBarToggleButton(this, text);
+	button->SetValue(selected);
+	m_buttons.push_back( button );
 #endif
 	
-	if ( button ) {
-		GetSizer()->Add(button, 0, wxLEFT|wxTOP|wxBOTTOM | wxEXPAND, 3);
-		GetSizer()->Layout();
-		button->Refresh();
-	}
+	GetSizer()->Add(button, 0, wxLEFT|wxTOP|wxBOTTOM | wxEXPAND, 3);
+	GetSizer()->Layout();
+	button->Refresh();
 }
 
 void OutputViewControlBar::OnButtonClicked(wxCommandEvent& event)
@@ -135,7 +126,7 @@ void OutputViewControlBar::OnButtonClicked(wxCommandEvent& event)
 #else
 	OutputViewControlBarToggleButton *button = (OutputViewControlBarToggleButton *)event.GetEventObject();
 #endif
-	DoToggleButton( button );
+	DoToggleButton( button, false );
 }
 
 void OutputViewControlBar::DoTogglePane(bool hide)
@@ -237,12 +228,15 @@ void OutputViewControlBar::AddAllButtons()
 	img.SetMaskColour(123, 123, 123);
 
 	// Add the 'More' button
-	AddButton ( wxT("More"), wxBitmap(img), false, 0 /* no text, no spacer */);
+	m_moreButton = new OutputViewControlBarButton(this, wxT("More"), wxBitmap(img), 0);
+	m_moreButton->SetState( OutputViewControlBarButton::Button_Normal );
 
 	// Add the search control
 	m_searchBar = new OutputViewSearchCtrl(this);
+	
 	//m_buttons.push_back( m_searchBar );
-	GetSizer()->Add(m_searchBar, 0, wxALL | wxEXPAND, 1);
+	GetSizer()->Add(m_moreButton, 0, wxALL | wxEXPAND, 1);
+	GetSizer()->Add(m_searchBar , 0, wxALL | wxEXPAND, 1);
 
 	// Hide it?
 	if (!EditorConfigST::Get()->GetOptions()->GetShowQuickFinder()) {
@@ -290,7 +284,7 @@ void OutputViewControlBar::OnSize(wxSizeEvent& event)
 	event.Skip();
 }
 
-void OutputViewControlBar::DoToggleButton(wxWindow* button)
+void OutputViewControlBar::DoToggleButton(wxWindow* button, bool fromMenu)
 {
 #ifdef __WXMSW__
 	OutputViewControlBarButton *bt = (OutputViewControlBarButton*)button;
@@ -305,7 +299,8 @@ void OutputViewControlBar::DoToggleButton(wxWindow* button)
 	}
 #else
 	OutputViewControlBarToggleButton *bt = (OutputViewControlBarToggleButton*)button;
-	if ( bt && !bt->GetValue() ) {
+	if ( (!fromMenu && (bt && !bt->GetValue())) || 
+	      (fromMenu && (bt && bt->GetValue()))) {
 		// second click on an already pressed button, hide the AUI pane
 		bt->SetValue(false);
 
@@ -344,7 +339,7 @@ void OutputViewControlBar::OnMenuSelection(wxCommandEvent& event)
 		OutputViewControlBarToggleButton *button = m_buttons.at(i);
 #endif
 		if ( wxXmlResource::GetXRCID(button->GetText().c_str()) == event.GetId() ) {
-			DoToggleButton(button);
+			DoToggleButton(button, true);
 			break;
 		}
 	}
@@ -958,11 +953,6 @@ void OutputViewControlBarToggleButton::DoShowPopupMenu()
 #else
 		OutputViewControlBarToggleButton *button = bar->m_buttons.at(i);
 #endif
-		// Skip the More button and empty text buttons
-		if ( button->GetText() == wxT("More") || button->GetText().IsEmpty() ) {
-			continue;
-		}
-
 		wxString text = button->GetText();
 #ifdef __WXMSW__
 		bool selected = button->GetState() == OutputViewControlBarButton::Button_Pressed;

@@ -21,7 +21,7 @@ class OutputViewControlBar : public wxPanel
 	wxAuiManager *                           m_aui;
 	Notebook*                                m_book;
 	OutputViewSearchCtrl *                   m_searchBar;
-
+	OutputViewControlBarButton*              m_moreButton;
 public:
 	void SetSearchBar(OutputViewSearchCtrl* searchBar) {
 		this->m_searchBar = searchBar;
@@ -56,7 +56,7 @@ public:
 
 protected:
 	void        DoTogglePane     (bool hide = true);
-	void        DoToggleButton   (wxWindow *button);
+	void        DoToggleButton   (wxWindow *button, bool fromMenu);
 	wxWindow *  DoFindButton     (const wxString &name);
 	void        DoMarkActive     (const wxString &name);
 	bool        DoFindDockInfo   (const wxString &saved_perspective, const wxString &dock_name, wxString &dock_info);

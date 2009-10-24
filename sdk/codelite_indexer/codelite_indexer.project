@@ -120,6 +120,7 @@
   </VirtualDirectory>
   <Dependencies Name="Debug_Unix"/>
   <Dependencies Name="Release_Unix"/>
+  <Dependencies Name="Debug_Win"/>
   <Settings Type="Executable">
     <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g" Required="yes">
@@ -159,7 +160,7 @@
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="1975 --pid" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="3356 --pid" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
         <StartupCommands/>
@@ -251,5 +252,4 @@
     </GlobalSettings>
   </Settings>
   <Dependencies Name="Release_Win"/>
-  <Dependencies Name="Debug_Win"/>
 </CodeLite_Project>

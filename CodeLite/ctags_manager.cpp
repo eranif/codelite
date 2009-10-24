@@ -53,11 +53,7 @@
 #include "performance.h"
 
 #ifdef __WXMSW__
-#ifdef __DEBUG
-#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s_dbg"
-#else
 #define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s"
-#endif
 #else
 #define PIPE_NAME "/tmp/codelite_indexer.%s.sock"
 #endif

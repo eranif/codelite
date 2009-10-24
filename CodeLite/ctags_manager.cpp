@@ -393,6 +393,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 	s << wxGetProcessId();
 
 	char channel_name[1024];
+	memset(channel_name, 0, sizeof(channel_name));
 	sprintf(channel_name, PIPE_NAME, s.str().c_str());
 
 	clNamedPipeClient client(channel_name);

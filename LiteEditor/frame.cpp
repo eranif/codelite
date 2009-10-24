@@ -1464,7 +1464,6 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 	wxArrayString pathsBefore = m_tagsOptionsData.GetParserSearchPaths();
 	TagsOptionsDlg dlg(this, m_tagsOptionsData);
 	if (dlg.ShowModal() == wxID_OK) {
-		TagsManager *tagsMgr = TagsManagerST::Get();
 		m_tagsOptionsData = dlg.GetData();
 
 		wxArrayString pathsAfter = m_tagsOptionsData.GetParserSearchPaths();
@@ -1499,8 +1498,9 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 		newColTags         = (m_tagsOptionsData.GetFlags() & CC_COLOUR_WORKSPACE_TAGS   ? true : false);
 		newMarkFilesAsBold = (m_tagsOptionsData.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
 
-		tagsMgr->SetCtagsOptions(m_tagsOptionsData);
+		TagsManagerST::Get()->SetCtagsOptions( m_tagsOptionsData );
 		EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
+		ParseThreadST::Get()->SetSearchPaths( m_tagsOptionsData.GetParserSearchPaths(), m_tagsOptionsData.GetParserExcludePaths() );
 
 		//do we need to colourise?
 		if (newColTags != colTags || newColVars != colVars || colourTypes != m_tagsOptionsData.GetCcColourFlags()) {
@@ -1512,10 +1512,6 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 		if (markFilesAsBold != newMarkFilesAsBold) {
 			TagsManagerST::Get()->NotifyFileTree(newMarkFilesAsBold);
 		}
-
-		// update parser search paths
-		ParseThreadST::Get()->SetSearchPaths   ( m_tagsOptionsData.GetParserSearchPaths(), m_tagsOptionsData.GetParserExcludePaths() );
-		ParseThreadST::Get()->SetCrawlerEnabeld( m_tagsOptionsData.GetParserEnabled()     );
 
 		if(pathsAfter.IsEmpty() == false) {
 			// a retagg is needed
@@ -3442,4 +3438,12 @@ void Frame::OnDatabaseUpgrade(wxCommandEvent& e)
 	if ( answer == wxYES ) {
 		OnRetagWorkspace( e /* dummy */);
 	}
+}
+
+void Frame::UpdateTagsOptions(const TagsOptionsData& tod)
+{
+	m_tagsOptionsData = tod;
+	TagsManagerST::Get()->SetCtagsOptions( m_tagsOptionsData );
+	EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
+	ParseThreadST::Get()->SetSearchPaths( tod.GetParserSearchPaths(), tod.GetParserExcludePaths() );
 }

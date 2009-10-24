@@ -137,32 +137,30 @@ void FileExplorerTree::OnTagNode(wxCommandEvent &e)
 	bool retagRequires (false);
     wxTreeItemId item = GetSelection();
     if (item.IsOk()) {
+
+		TagsOptionsData tod = Frame::Get()->GetTagsOptions();
         wxString path = GetFullPath(item).GetFullPath();
+		if ( path.EndsWith(wxT("\\")) || path.EndsWith(wxT("/")) )  {
+			path.RemoveLast();
+		}
+
 		if ( e.GetId() == XRCID("tags_add_include") ) {
 			// add this directory as include path
-			TagsOptionsData tod;
-			EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &tod);
-
 			wxArrayString arr = tod.GetParserSearchPaths();
 			if ( arr.Index( path ) == wxNOT_FOUND ) {
 				arr.Add( path );
 				tod.SetParserSearchPaths( arr );
 
-				EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &tod);
+				Frame::Get()->UpdateTagsOptions( tod );
 				retagRequires = true;
 			}
 		} else {
-			// add this directory as exclude path
-			// add this directory as include path
-			TagsOptionsData tod;
-			EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &tod);
-
 			wxArrayString arr = tod.GetParserExcludePaths();
 			if ( arr.Index(path) == wxNOT_FOUND ) {
 				arr.Add( path );
 				tod.SetParserExcludePaths( arr );
 
-				EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &tod);
+				Frame::Get()->UpdateTagsOptions( tod );
 				retagRequires = true;
 			}
 		}

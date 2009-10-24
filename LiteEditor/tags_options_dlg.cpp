@@ -109,8 +109,13 @@ void TagsOptionsDlg::InitValues()
 	m_textFileSpec->SetValue(m_data.GetFileSpec());
 	m_comboBoxLang->Clear();
 	m_comboBoxLang->Append(m_data.GetLanguages());
-	wxString lan = m_data.GetLanguages().Item(0);
-	m_comboBoxLang->SetStringSelection(lan);
+	if ( m_data.GetLanguages().IsEmpty() == false ) {
+		wxString lan = m_data.GetLanguages().Item(0);
+		m_comboBoxLang->SetStringSelection(lan);
+	} else {
+		m_comboBoxLang->Append(wxT("c++"));
+		m_comboBoxLang->SetSelection(0);
+	}
 }
 
 void TagsOptionsDlg::OnButtonOK(wxCommandEvent &event)

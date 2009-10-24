@@ -729,14 +729,14 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 	if (m_hightlightMatchedBraces) {
 		if ( sel_text.IsEmpty() == false) {
 			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
-		} else if (	charCurrnt == '<' && charAfter == '<' 	||	//<<
-		            charCurrnt == '<' && charBefore == '<' 	||	//<<
-		            charCurrnt == '>' && charAfter == '>' 	||	//>>
-		            charCurrnt == '>' && charBefore == '>'  ||	//>>
-		            beforeBefore == '<' && charBefore == '<'||	//<<
-		            beforeBefore == '>' && charBefore == '>'||	//>>
-		            beforeBefore == '-' && charBefore == '>'||	//->
-		            charCurrnt == '>' && charBefore == '-'	) {	//->
+		} else if (	(charCurrnt == '<' && charAfter == '<'   ) 	||	//<<
+		            (charCurrnt == '<' && charBefore == '<'  ) 	||	//<<
+		            (charCurrnt == '>' && charAfter == '>'   ) 	||	//>>
+		            (charCurrnt == '>' && charBefore == '>'  )  ||	//>>
+		            (beforeBefore == '<' && charBefore == '<')  ||	//<<
+		            (beforeBefore == '>' && charBefore == '>')  ||	//>>
+		            (beforeBefore == '-' && charBefore == '>')  ||	//->
+		            (charCurrnt == '>' && charBefore == '-'  )	) {	//->
 			wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
 		} else {
 			if ((charCurrnt == '{' || charCurrnt == '[' || GetCharAt(pos) == '<' || charCurrnt == '(') && !m_context->IsCommentOrString(pos)) {
@@ -2980,7 +2980,7 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 		// indicator is highlighted
 		long pos = PositionFromPointClose(event.GetX(), event.GetY());
 		if (m_hyperLinkIndicatroStart <= pos && pos <= m_hyperLinkIndicatroEnd) {
-			bool altLink = isMiddle && event.m_controlDown || !isMiddle && event.m_altDown;
+			bool altLink = (isMiddle && event.m_controlDown) || (!isMiddle && event.m_altDown);
 			m_context->GoHyperlink(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd,
 			                       m_hyperLinkType, altLink);
 		}

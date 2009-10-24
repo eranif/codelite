@@ -82,11 +82,7 @@ void CheckOther::checkZeroDivision()
  */
 
 #ifdef __WXMSW__
-#ifdef __DEBUG
-#define PIPE_NAME "\\\\.\\pipe\\cppchecker_%s_dbg"
-#else
 #define PIPE_NAME "\\\\.\\pipe\\cppchecker_%s"
-#endif
 #else
 #define PIPE_NAME "/tmp/cppchecker.%s.sock"
 #endif

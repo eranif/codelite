@@ -134,6 +134,7 @@ void FileExplorerTree::OnSearchNode(wxCommandEvent &e)
 
 void FileExplorerTree::OnTagNode(wxCommandEvent &e)
 {
+	bool retagRequires (false);
     wxTreeItemId item = GetSelection();
     if (item.IsOk()) {
         wxString path = GetFullPath(item).GetFullPath();
@@ -143,11 +144,13 @@ void FileExplorerTree::OnTagNode(wxCommandEvent &e)
 			EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &tod);
 
 			wxArrayString arr = tod.GetParserSearchPaths();
-			arr.Add( path );
-			tod.SetParserSearchPaths( arr );
+			if ( arr.Index( path ) == wxNOT_FOUND ) {
+				arr.Add( path );
+				tod.SetParserSearchPaths( arr );
 
-			EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &tod);
-
+				EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &tod);
+				retagRequires = true;
+			}
 		} else {
 			// add this directory as exclude path
 			// add this directory as include path
@@ -155,15 +158,20 @@ void FileExplorerTree::OnTagNode(wxCommandEvent &e)
 			EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &tod);
 
 			wxArrayString arr = tod.GetParserExcludePaths();
-			arr.Add( path );
-			tod.SetParserExcludePaths( arr );
+			if ( arr.Index(path) == wxNOT_FOUND ) {
+				arr.Add( path );
+				tod.SetParserExcludePaths( arr );
 
-			EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &tod);
+				EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &tod);
+				retagRequires = true;
+			}
 		}
 
 		// send notification to the main frame to perform retag
-		wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
-		Frame::Get()->AddPendingEvent( event );
+		if ( retagRequires ) {
+			wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
+			Frame::Get()->AddPendingEvent( event );
+		}
 	}
 }
 

@@ -135,10 +135,16 @@ void WorkspaceTab::OnCollapseAll(wxCommandEvent &e)
     m_fileView->CollapseAll();
     m_fileView->Expand(m_fileView->GetRootItem());
     m_fileView->Thaw();
-	wxTreeItemId sel = m_fileView->GetSelection();
-	if (sel.IsOk()) {
-		m_fileView->EnsureVisible(sel);
-    }
+	
+	wxArrayTreeItemIds arr;
+	size_t count = m_fileView->GetSelections( arr );
+	
+	if ( count == 1 ) {
+		wxTreeItemId sel = arr.Item(0);
+		if (sel.IsOk()) {
+			m_fileView->EnsureVisible(sel);
+		}
+	}
 }
 
 void WorkspaceTab::OnCollapseAllUI(wxUpdateUIEvent &e)
@@ -153,9 +159,15 @@ void WorkspaceTab::OnGoHome(wxCommandEvent &e)
 	if (activeProject.IsEmpty())
 		return;
 	m_fileView->ExpandToPath(activeProject, wxFileName());
-	wxTreeItemId sel = m_fileView->GetSelection();
-	if (sel.IsOk() && m_fileView->ItemHasChildren(sel))
-		m_fileView->Expand(sel);
+	
+	wxArrayTreeItemIds arr;
+	size_t count = m_fileView->GetSelections( arr );
+	
+	if ( count == 1 ) {
+		wxTreeItemId sel = arr.Item(0);
+		if (sel.IsOk() && m_fileView->ItemHasChildren(sel))
+			m_fileView->Expand(sel);
+	}
 	ManagerST::Get()->ShowWorkspacePane(m_caption);
 }
 

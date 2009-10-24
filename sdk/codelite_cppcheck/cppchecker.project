@@ -2,11 +2,7 @@
 <CodeLite_Project Name="cppchecker" InternalType="Console">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00050001N0005Debug0000000000000001N0010Debug_unix0000000000000001N0007Release0000000000000001N0008WinDebug0000000000000001N0010WinRelease000000000000
-    
-    
-    
-    ]]>
+      <![CDATA[00050001N0005Debug0000000000000001N0010Debug_unix0000000000000001N0007Release0000000000000001N0008WinDebug0000000000000001N0010WinRelease000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>

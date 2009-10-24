@@ -358,10 +358,8 @@ bool App::OnInit()
 
 			if(strMingw.IsEmpty() == false) {
 				// Add the installation include paths
-				m_parserPaths.Add(strMingw + wxT("\\include\\c++\\3.4.5"));
 				pathEnv << wxT(";") << strMingw << wxT("\\bin");
-
-				wxSetEnv(wxT("MINGW_INCL_HOME"), strMingw + wxT("\\include"));
+				wxSetEnv(wxT("MINGW_INCL_HOME"), strMingw);
 			}
 		}
 

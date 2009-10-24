@@ -82,6 +82,13 @@ void IncludePathLocator::Locate(wxArrayString& paths)
 
 	wxString      standardIncludeBase;
 	wxGetEnv(wxT("MINGW_INCL_HOME"), &standardIncludeBase);
+	if (standardIncludeBase.IsEmpty() == false && wxDir::Exists(standardIncludeBase)) {
+		// since we only support codelite's installation of MinGW, we know what to append
+		// to the include path
+		paths.Add(standardIncludeBase + wxT("\\include"));
+		standardIncludeBase << wxT("\\lib\\gcc\\mingw32\\4.4.0\\include\\c++");
+		paths.Add( standardIncludeBase );
+	}
 #else
 	// run wx-config and parse the output
 	out.Clear();
@@ -97,12 +104,10 @@ void IncludePathLocator::Locate(wxArrayString& paths)
 		}
 	}
 	wxString      standardIncludeBase(wxT("/usr/include"));
-#endif
-
 	if (standardIncludeBase.IsEmpty() == false && wxDir::Exists(standardIncludeBase)) {
 		paths.Add(standardIncludeBase);
 
-		// In addition, add the STL path whcih is under /usr/include/c++/X.X.X
+		// Linux: In addition, add the STL path whcih is under /usr/include/c++/X.X.X
 		// take the highest number of the X.X.X
 		wxArrayString files;
 		wxArrayString dirs;
@@ -133,4 +138,5 @@ void IncludePathLocator::Locate(wxArrayString& paths)
 			}
 		}
 	}
+#endif	
 }

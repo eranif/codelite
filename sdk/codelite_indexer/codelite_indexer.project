@@ -2,9 +2,7 @@
 <CodeLite_Project Name="codelite_indexer">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00040001N0010Debug_Unix0000000000000001N0009Debug_Win0000000000000001N0012Release_Unix0000000000000001N0011Release_Win000000000000
-    
-    ]]>
+      <![CDATA[00040001N0010Debug_Unix0000000000000001N0009Debug_Win0000000000000001N0012Release_Unix0000000000000001N0011Release_Win000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>

@@ -1124,15 +1124,7 @@ void FileViewTree::OnItemActivated( wxTreeEvent &event )
 
 size_t FileViewTree::GetMultiSelection( wxArrayTreeItemIds &arr )
 {
-	if ( GetWindowStyleFlag() & wxTR_MULTIPLE ) {
-		return GetSelections( arr );
-	} else {
-		wxTreeItemId item = GetSelection();
-		if (item.IsOk()) {
-			arr.Add( item );
-		}
-		return arr.GetCount();
-	}
+	return GetSelections( arr );
 }
 
 void FileViewTree::OnRetagProject( wxCommandEvent &event )

@@ -8,6 +8,7 @@
 #include "libctags/libctags.h"
 #include "utils.h"
 #include <stdlib.h>
+#include <cstdio>
 
 WorkerThread::WorkerThread(eQueue<clNamedPipe*> *queue)
 		: m_queue(queue)

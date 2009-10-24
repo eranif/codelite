@@ -3,6 +3,7 @@
 #include "network/cppchecker_protocol.h"
 #include "network/cppchecker_request.h"
 #include <iostream>
+#include <cstdio>
 
 CppCheckExecutorNetwork::CppCheckExecutorNetwork()
 		: _connection(NULL)

@@ -114,15 +114,6 @@ public:
 	virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnPlug();
 
-	/** setters/getters **/
-
-	void SetCanRestart(const bool& canRestart) {
-		this->m_canRestart = canRestart;
-	}
-	const bool& GetCanRestart() const {
-		return m_canRestart;
-	}
-
 	/**
 	 * @brief stop the analysis of the current file
 	 * and clear the queue

@@ -108,21 +108,24 @@ void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, 
 	button->SetState( selected ? OutputViewControlBarButton::Button_Pressed : OutputViewControlBarButton::Button_Normal );
 	m_buttons.push_back( button );
 #else
+	OutputViewControlBarToggleButton *button (NULL);
 	if ( text == wxT("More") ) {
 //		OutputViewControlBarButton *button = new OutputViewControlBarButton(this, text, bmp, style);
 //		button->SetState( selected ? OutputViewControlBarButton::Button_Pressed : OutputViewControlBarButton::Button_Normal );
 //		m_buttons.push_back( button );
 
 	} else {
-		OutputViewControlBarToggleButton *button = new OutputViewControlBarToggleButton(this, text);
+		button = new OutputViewControlBarToggleButton(this, text);
 		button->SetValue(selected);
 		m_buttons.push_back( button );
 	}
 #endif
-
-	GetSizer()->Add(button, 0, wxLEFT|wxTOP|wxBOTTOM | wxEXPAND, 3);
-	GetSizer()->Layout();
-	button->Refresh();
+	
+	if ( button ) {
+		GetSizer()->Add(button, 0, wxLEFT|wxTOP|wxBOTTOM | wxEXPAND, 3);
+		GetSizer()->Layout();
+		button->Refresh();
+	}
 }
 
 void OutputViewControlBar::OnButtonClicked(wxCommandEvent& event)

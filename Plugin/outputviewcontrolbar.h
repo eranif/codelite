@@ -135,6 +135,7 @@ class OutputViewSearchCtrl : public OutputViewControlBarButton
 public:
 	wxTextCtrl   *m_findWhat;
 	wxButton     *m_button;
+	wxButton     *m_buttonHide;
 	wxString      m_searchType;
 	wxArrayString m_searchTypeArray;
 	wxColour      GREY_TEXT;
@@ -154,6 +155,7 @@ public:
 	virtual void OnEnter             (wxCommandEvent &event);
 	virtual void OnTextUpdated       (wxCommandEvent &event);
 	virtual void OnShowSearchOptions (wxCommandEvent &event);
+	virtual void OnHideSearchBar     (wxCommandEvent &event);
 	virtual void OnMenuSelection     (wxCommandEvent &event);
 	virtual void OnKeyDown           (wxKeyEvent     &event);
 	virtual void OnFocus             (wxFocusEvent   &event);

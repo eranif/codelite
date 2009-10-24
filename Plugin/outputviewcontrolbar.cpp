@@ -113,7 +113,7 @@ void OutputViewControlBar::AddButton(const wxString& text, const wxBitmap& bmp, 
 	button->SetValue(selected);
 	m_buttons.push_back( button );
 #endif
-	
+
 	GetSizer()->Add(button, 0, wxLEFT|wxTOP|wxBOTTOM | wxEXPAND, 3);
 	GetSizer()->Layout();
 	button->Refresh();
@@ -233,7 +233,7 @@ void OutputViewControlBar::AddAllButtons()
 
 	// Add the search control
 	m_searchBar = new OutputViewSearchCtrl(this);
-	
+
 	//m_buttons.push_back( m_searchBar );
 	GetSizer()->Add(m_moreButton, 0, wxALL | wxEXPAND, 1);
 	GetSizer()->Add(m_searchBar , 0, wxALL | wxEXPAND, 1);
@@ -299,8 +299,8 @@ void OutputViewControlBar::DoToggleButton(wxWindow* button, bool fromMenu)
 	}
 #else
 	OutputViewControlBarToggleButton *bt = (OutputViewControlBarToggleButton*)button;
-	if ( (!fromMenu && (bt && !bt->GetValue())) || 
-	      (fromMenu && (bt && bt->GetValue()))) {
+	if ( (!fromMenu && (bt && !bt->GetValue())) ||
+	        (fromMenu && (bt && bt->GetValue()))) {
 		// second click on an already pressed button, hide the AUI pane
 		bt->SetValue(false);
 
@@ -353,7 +353,7 @@ void OutputViewControlBar::OnMenuSelection(wxCommandEvent& event)
 		EditorConfigST::Get()->SetOptions( opts );
 	}
 
-	if ( XRCID("Show QuickFinder") == event.GetId() ) {
+	if ( XRCID("Show Finder") == event.GetId() ) {
 		DoShowQuickFinder(true);
 
 		// update the configuration file
@@ -681,14 +681,14 @@ void OutputViewControlBarButton::DoShowPopupMenu()
 		font.SetWeight(wxNORMAL);
 #endif
 	}
-	popupMenu.AppendSeparator();
-
 	bool     isQuickFinderShown( bar->GetSizer()->IsShown( bar->GetSearchBar() ) );
-	wxString quickFinderText;
 
-	quickFinderText = isQuickFinderShown ? wxT("Hide QuickFinder") : wxT("Show QuickFinder");
-	wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(quickFinderText.c_str()), quickFinderText, quickFinderText, wxITEM_NORMAL);
-	popupMenu.Append( item );
+	if ( !isQuickFinderShown ) {
+		popupMenu.AppendSeparator();
+		wxString quickFinderText ( wxT("Show Finder") );
+		wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(quickFinderText.c_str()), quickFinderText, quickFinderText, wxITEM_NORMAL);
+		popupMenu.Append( item );
+	}
 
 	popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewControlBar::OnMenuSelection), NULL, bar);
 	PopupMenu( &popupMenu, rr.x, rr.y );
@@ -726,10 +726,21 @@ OutputViewSearchCtrl::OutputViewSearchCtrl(wxWindow* win)
 	wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputViewSearchCtrl::OnEdit),      NULL, this);
 
 	m_button = new wxBitmapButton(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("findwhat")));
-	m_button->SetToolTip(wxT("Show QuickFinder Search Categories"));
+	m_button->SetToolTip(wxT("Show Finder Search Categories"));
+
+	m_buttonHide = new wxBitmapButton(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("page_close16")));
+	m_buttonHide->SetToolTip(wxT("Close Finder"));
 
 	m_button->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OutputViewSearchCtrl::OnShowSearchOptions), NULL, this);
-	mainSizer->Add(m_findWhat, 0, wxLEFT | wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL , 2);
+	m_buttonHide->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OutputViewSearchCtrl::OnHideSearchBar), NULL, this);
+
+#ifdef __WXMAC__
+	mainSizer->Add(m_buttonHide,   0, wxALL | wxALIGN_CENTER_VERTICAL , 2);
+#else
+	mainSizer->Add(m_buttonHide,   0, wxLEFT| wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL , 2);
+#endif
+
+	mainSizer->Add(m_findWhat, 0, wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL , 2);
 
 #ifdef __WXMAC__
 	mainSizer->Add(m_button,   0, wxALL | wxALIGN_CENTER_VERTICAL , 2);
@@ -906,6 +917,15 @@ void OutputViewSearchCtrl::OnEdit(wxCommandEvent& event)
 	}
 }
 
+void OutputViewSearchCtrl::OnHideSearchBar(wxCommandEvent& event)
+{
+	OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+	opts->SetShowQuickFinder( false );
+	EditorConfigST::Get()->SetOptions( opts );
+
+	PostCmdEvent( wxEVT_EDITOR_SETTINGS_CHANGED );
+}
+
 bool OutputViewSearchCtrl::IsFocused()
 {
 	bool visible = GetSizer()->IsShown(m_findWhat);
@@ -983,7 +1003,7 @@ void OutputViewControlBarToggleButton::DoShowPopupMenu()
 	bool     isQuickFinderShown( bar->GetSizer()->IsShown( bar->GetSearchBar() ) );
 	wxString quickFinderText;
 
-	quickFinderText = isQuickFinderShown ? wxT("Hide QuickFinder") : wxT("Show QuickFinder");
+	quickFinderText = isQuickFinderShown ? wxT("Hide QuickFinder") : wxT("Show Finder");
 	wxMenuItem *item = new wxMenuItem(&popupMenu, wxXmlResource::GetXRCID(quickFinderText.c_str()), quickFinderText, quickFinderText, wxITEM_NORMAL);
 	popupMenu.Append( item );
 

@@ -594,7 +594,7 @@ void MainBook::ReloadExternallyModified()
 		}
 	}
 	if (!filesToRetag.empty()) {
-		TagsManagerST::Get()->RetagFiles(filesToRetag);
+		TagsManagerST::Get()->RetagFiles(filesToRetag, true);
 		SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&filesToRetag);
 	}
 }

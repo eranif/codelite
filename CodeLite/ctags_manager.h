@@ -342,7 +342,7 @@ public:
 	 * - update the database again
 	 * @param files list of files, in absolute path, to retag
 	 */
-	void RetagFiles(const std::vector<wxFileName> &files);
+	void RetagFiles(const std::vector<wxFileName> &files, bool quickRetag);
 
 	/**
 	 * Close the workspace database

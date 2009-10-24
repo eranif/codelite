@@ -241,7 +241,7 @@ public:
 	/**
 	 * retag workspace
 	 */
-	void RetagWorkspace();
+	void RetagWorkspace(bool quickRetag);
 
 	/**
 	 * \brief retag a given file
@@ -313,7 +313,7 @@ public:
 	 * that belongs to a given project, and then re-index all files
 	 * \param projectName project to re-tag
 	 */
-	void RetagProject(const wxString &projectName);
+	void RetagProject(const wxString &projectName, bool quickRetag);
 
 	/**
 	 * return list of files in absolute path of a given project

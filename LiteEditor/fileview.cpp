@@ -774,11 +774,11 @@ void FileViewTree::DoRemoveItems()
 	for ( size_t i=0; i<num; i++ ) {
 		wxTreeItemId item = items.Item( i );
 		wxString name = GetItemText( item );
-		
+
 		if( !item.IsOk() ) {
 			continue;
 		}
-		
+
 		FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
 
 		if ( data ) {
@@ -1133,14 +1133,14 @@ void FileViewTree::OnRetagProject( wxCommandEvent &event )
 	wxTreeItemId item = GetSingleSelection();
 	if ( item.IsOk() ) {
 		wxString projectName = GetItemText( item );
-		ManagerST::Get()->RetagProject( projectName );
+		ManagerST::Get()->RetagProject( projectName, true );
 	}
 }
 
 void FileViewTree::OnRetagWorkspace( wxCommandEvent &event )
 {
 	wxUnusedVar( event );
-	ManagerST::Get()->RetagWorkspace();
+	ManagerST::Get()->RetagWorkspace(true);
 }
 
 void FileViewTree::OnItemBeginDrag( wxTreeEvent &event )
@@ -1209,10 +1209,10 @@ void FileViewTree::OnItemEndDrag( wxTreeEvent &event )
 
 		//the file name to remove
 		FilewViewTreeItemData *srcData = static_cast<FilewViewTreeItemData*>( GetItemData( itemSrc ) );
-		
+
 		// no tree-item-data? skip this one
 		if ( !srcData ) continue;
-		
+
 		wxString filename = srcData->GetData().GetFile();
 
 		ProjectItem itemData = srcData->GetData();
@@ -1298,7 +1298,7 @@ void FileViewTree::ExpandToPath(const wxString &project, const wxFileName &fileN
 				// And,no, SelectItem(fileItem, false) isn't the answer: in 2.8 it toggles (a wx bug) and the 'selected' tab ends up unselected
 				UnselectAll();
 				SelectItem(fileItem);
-				
+
 				if ( IsVisible( fileItem ) == false ) {
 					EnsureVisible( fileItem );
 				}

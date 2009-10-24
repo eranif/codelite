@@ -297,6 +297,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_MENU(XRCID("new_project"),              Frame::OnProjectNewProject)
 	EVT_MENU(XRCID("add_project"),              Frame::OnProjectAddProject)
 	EVT_MENU(XRCID("retag_workspace"),          Frame::OnRetagWorkspace)
+	EVT_MENU(XRCID("full_retag_workspace"),     Frame::OnRetagWorkspace)
 
 	EVT_UPDATE_UI(XRCID("close_workspace"),     Frame::OnWorkspaceOpen)
 	EVT_UPDATE_UI(XRCID("reload_workspace"),    Frame::OnReloadWorkspaceUI)
@@ -3237,7 +3238,7 @@ void Frame::OnIncrementalSearch(wxCommandEvent& event)
 void Frame::OnRetagWorkspace(wxCommandEvent& event)
 {
 	wxUnusedVar( event );
-	ManagerST::Get()->RetagWorkspace();
+	ManagerST::Get()->RetagWorkspace(event.GetId() == XRCID("retag_workspace") ? true : false );
 }
 
 void Frame::OnShowFullScreen(wxCommandEvent& e)

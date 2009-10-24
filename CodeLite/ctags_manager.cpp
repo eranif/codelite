@@ -1021,7 +1021,7 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName> &projectFiles)
 	UpdateFileTree(projectFiles, false);
 }
 
-void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
+void TagsManager::RetagFiles(const std::vector<wxFileName> &files, bool quickRetag)
 {
 	wxArrayString strFiles;
 	// step 1: remove all non-tags files
@@ -1034,7 +1034,8 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files)
 	}
 
 	// step 2: remove all files which do not need retag
-	DoFilterNonNeededFilesForRetaging(strFiles, m_workspaceDatabase);
+	if ( quickRetag )
+		DoFilterNonNeededFilesForRetaging(strFiles, m_workspaceDatabase);
 
 	if (strFiles.IsEmpty()) {
 		wxFrame *frame = dynamic_cast<wxFrame*>( wxTheApp->GetTopWindow() );
@@ -2116,10 +2117,7 @@ void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITags
 
 void TagsManager::DoFilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITagsStorage* db)
 {
-	TagsOptionsData options = GetCtagsOptions();
-	if (!(options.GetFlags() & CC_USE_FULL_RETAGGING)) {
-		FilterNonNeededFilesForRetaging(strFiles, db);
-	}
+	FilterNonNeededFilesForRetaging(strFiles, db);
 }
 
 wxString TagsManager::GetFunctionReturnValueFromPattern(const wxString& pattern)

@@ -79,7 +79,7 @@ void TagsOptionsDlg::InitValues()
 	m_checkCppKeywordAssist->SetValue             (m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
 	m_checkDisableParseOnSave->SetValue           (m_data.GetFlags() & CC_DISABLE_AUTO_PARSING ? true : false);
 	m_checkBoxMarkTagsFilesInBold->SetValue       (m_data.GetFlags() & CC_MARK_TAGS_FILES_IN_BOLD ? true : false);
-	m_checkBoxFullRetagging->SetValue             (m_data.GetFlags() & CC_USE_FULL_RETAGGING ? true : false);
+//	m_checkBoxFullRetagging->SetValue             (m_data.GetFlags() & CC_USE_FULL_RETAGGING ? true : false);
 	m_checkBoxretagWorkspaceOnStartup->SetValue   (m_data.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ? true : false);
 	m_checkBoxAccurateScopeNameResolving->SetValue(m_data.GetFlags() & CC_ACCURATE_SCOPE_RESOLVING ? true : false);
 
@@ -143,7 +143,7 @@ void TagsOptionsDlg::CopyData()
 	SetFlag(CC_DISABLE_AUTO_PARSING,       m_checkDisableParseOnSave->IsChecked());
 	SetFlag(CC_COLOUR_WORKSPACE_TAGS,      m_checkColourProjTags->IsChecked());
 	SetFlag(CC_MARK_TAGS_FILES_IN_BOLD,    m_checkBoxMarkTagsFilesInBold->IsChecked());
-	SetFlag(CC_USE_FULL_RETAGGING,         m_checkBoxFullRetagging->IsChecked());
+//	SetFlag(CC_USE_FULL_RETAGGING,         m_checkBoxFullRetagging->IsChecked());
 	SetFlag(CC_RETAG_WORKSPACE_ON_STARTUP, m_checkBoxretagWorkspaceOnStartup->IsChecked());
 	SetFlag(CC_ACCURATE_SCOPE_RESOLVING,   m_checkBoxAccurateScopeNameResolving->IsChecked());
 

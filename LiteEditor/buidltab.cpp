@@ -513,7 +513,7 @@ void BuildTab::OnCompilerColours ( wxCommandEvent &e )
 void BuildTab::OnNextBuildError ( wxCommandEvent &e )
 {
 	wxUnusedVar ( e );
-	if ( m_errorCount > 0 || !m_skipWarnings && m_warnCount > 0 ) {
+	if ( (m_errorCount > 0) || (!m_skipWarnings && m_warnCount > 0) ) {
 		std::map<int,LineInfo>::iterator i = GetNextBadLine();
 		if ( i != m_lineInfo.end() ) {
 			wxString showpane = m_name;
@@ -529,7 +529,7 @@ void BuildTab::OnNextBuildError ( wxCommandEvent &e )
 
 void BuildTab::OnNextBuildErrorUI ( wxUpdateUIEvent &e )
 {
-	e.Enable ( m_errorCount > 0 || !m_skipWarnings && m_warnCount > 0 );
+	e.Enable ( (m_errorCount > 0) || (!m_skipWarnings && m_warnCount > 0) );
 }
 
 void BuildTab::OnActiveEditorChanged ( wxCommandEvent &e )

@@ -284,10 +284,8 @@ void Manager::DoSetupWorkspace ( const wxString &path )
 	// send an event to the main frame indicating that a re-tag is required
 	// we do this only if the "smart retagging" is on
 	TagsOptionsData tagsopt = TagsManagerST::Get()->GetCtagsOptions();
-	if ( tagsopt.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP && !(tagsopt.GetFlags() & CC_USE_FULL_RETAGGING)) {
-		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
-		Frame::Get()->AddPendingEvent(e);
-	}
+	wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
+	Frame::Get()->AddPendingEvent(e);
 }
 
 void Manager::CloseWorkspace()
@@ -429,7 +427,7 @@ void Manager::CreateProject ( ProjectData &data )
 	}
 
 	wxString projectName = proj->GetName();
-	RetagProject ( projectName );
+	RetagProject ( projectName, true );
 	SendCmdEvent ( wxEVT_PROJ_ADDED, ( void* ) &projectName );
 }
 
@@ -453,7 +451,7 @@ void Manager::AddProject ( const wxString & path )
 
 	wxFileName fn ( path );
 	wxString projectName ( fn.GetName() );
-	RetagProject ( projectName );
+	RetagProject ( projectName, true );
 	SendCmdEvent ( wxEVT_PROJ_ADDED, ( void* ) &projectName );
 }
 
@@ -691,14 +689,12 @@ wxFileName Manager::FindFile ( const wxArrayString& files, const wxFileName &fn 
 	return wxFileName();
 }
 
-void Manager::RetagWorkspace()
+void Manager::RetagWorkspace(bool quickRetag)
 {
 	// in the case of re-tagging the entire workspace and full re-tagging is enabled
 	// it is faster to drop the tables instead of deleting
-	TagsOptionsData options = TagsManagerST::Get()->GetCtagsOptions();
-	if (options.GetFlags() & CC_USE_FULL_RETAGGING) {
+	if( !quickRetag )
 		TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
-	}
 
 	wxArrayString projects;
 	GetProjectList ( projects );
@@ -757,16 +753,9 @@ void Manager::RetagWorkspace()
 	// tag them
 	// -----------------------------------------------
 
-	TagsManagerST::Get()->RetagFiles ( projectFiles );
+	TagsManagerST::Get()->RetagFiles ( projectFiles, quickRetag );
 	long end   = sw.Time();
 	wxLogMessage(wxT("INFO: Retag workspace completed in %d seconds (%d files were scanned)"), (end)/1000, projectFiles.size());
-
-//	// Put a request to the parsing thread to parse include files
-//	ParseRequest *req = new ParseRequest();
-//	req->setDbFile   ( TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
-//	req->setType     ( ParseRequest::PR_PARSEINCLUDES );
-//	ParseThreadST::Get()->Add ( req );
-
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
 }
 
@@ -917,7 +906,7 @@ void Manager::AddFilesToProject ( const wxArrayString &files, const wxString &vd
 
 	//re-tag the added files
 	if ( vFiles.empty() == false ) {
-		TagsManagerST::Get()->RetagFiles ( vFiles );
+		TagsManagerST::Get()->RetagFiles ( vFiles, true );
 	}
 
 	if ( !actualAdded.IsEmpty() ) {
@@ -1006,14 +995,14 @@ bool Manager::MoveFileToVD ( const wxString &fileName, const wxString &srcVD, co
 	return true;
 }
 
-void Manager::RetagProject ( const wxString &projectName )
+void Manager::RetagProject ( const wxString &projectName, bool quickRetag )
 {
 	ProjectPtr proj = GetProject ( projectName );
 	if ( !proj )
 		return;
 	std::vector<wxFileName> projectFiles;
 	proj->GetFiles ( projectFiles, true );
-	TagsManagerST::Get()->RetagFiles ( projectFiles );
+	TagsManagerST::Get()->RetagFiles ( projectFiles, quickRetag );
 	SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
 }
 

@@ -336,10 +336,13 @@
                 <label>&amp;Add an Existing Project</label>
             </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-			<object class="wxMenuItem" name="retag_workspace">
-				<label>Retag Workspace</label>
+			<object class="wxMenuItem" name="full_retag_workspace">
+				<label>Retag Workspace ( Full )</label>
+				<help>Retag the workspace by dropping the old tags tables, and recreate them</help>
 			</object>
-
+			<object class="wxMenuItem" name="retag_workspace">
+				<label>Retag Workspace ( Quick )</label>
+			</object>
         </object>
 
         <object class="wxMenu" name="build_menu">
@@ -888,9 +891,17 @@
             <label>Search...</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-		<object class="wxMenuItem" name="tag_node">
-            <label>Add Tags...</label>
-        </object>
+
+		<object class="wxMenu" name="tags_paths">
+			<label>Tags</label>
+			<object class="wxMenuItem" name="tags_add_include">
+				<label>Add this path to the parser search path</label>
+			</object>
+			<object class="wxMenuItem" name="tags_add_exclude">
+				<label>Add this path to the parser exclude path</label>
+			</object>
+		</object>
+
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="open_file">
             <label>&amp;Open</label>

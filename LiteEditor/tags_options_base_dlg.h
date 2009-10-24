@@ -84,7 +84,6 @@ class TagsOptionsBaseDlg : public wxDialog
 		wxStaticText* m_staticText5;
 		wxComboBox* m_comboBoxLang;
 		wxCheckBox* m_checkFilesWithoutExt;
-		wxCheckBox* m_checkBoxFullRetagging;
 		wxCheckBox* m_checkBoxAccurateScopeNameResolving;
 		wxStaticLine* m_staticline1;
 		wxButton* m_buttonOK;

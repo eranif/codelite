@@ -602,7 +602,7 @@ bool Workspace::RemoveFile(const wxString &vdFullPath, const wxString &fileName,
 	// Construct new path excluding the first token
 	size_t count = tkz.CountTokens();
 	if (!count) {
-		errMsg = wxT("Malformed project name");
+		errMsg = _("Malformed project name");
 		return false;
 	}
 
@@ -614,11 +614,15 @@ bool Workspace::RemoveFile(const wxString &vdFullPath, const wxString &fileName,
 
 	ProjectPtr proj = FindProjectByName(projName, errMsg);
 	if ( !proj ) {
-		errMsg = wxT("No such project");
+		errMsg = _("No such project");
 		return false;
 	}
 
-	return proj->RemoveFile(fileName, fixedPath);
+	bool result = proj->RemoveFile(fileName, fixedPath);
+	if ( !result ) {
+		errMsg = _("File removal failed");
+	}
+	return result;
 }
 
 BuildConfigPtr Workspace::GetProjBuildConf(const wxString &projectName, const wxString &confName) const

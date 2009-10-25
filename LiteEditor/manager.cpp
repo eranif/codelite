@@ -927,7 +927,7 @@ bool Manager::RemoveFile ( const wxString &fileName, const wxString &vdFullPath 
 	wxString errMsg;
 	bool res = WorkspaceST::Get()->RemoveFile ( vdFullPath, fileName, errMsg );
 	if ( !res ) {
-		wxMessageBox(errMsg, wxT("Error"), wxOK | wxICON_HAND);
+		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND, Frame::Get());
 		return false;
 	}
 

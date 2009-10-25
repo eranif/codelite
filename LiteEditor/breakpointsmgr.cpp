@@ -260,14 +260,13 @@ void BreakptMgr::DoProvideBestBP_Type(LEditor* editor, const std::vector<Breakpo
 	}
 	// If there's an enabled bp of any sort, it beats all disabled ones
 	// Otherwise, BP_type_break > BP_type_tempbreak > BP_type_cmdlistbreak > BP_type_condbreak > BP_type_ignoredbreak
-	int values[BP_LAST_MARKED_ITEM+2]; // Allow for BP_type_invalid = -1 & BP_type_none = 0
+	int values[BP_LAST_MARKED_ITEM+1]; // Allow for BP_type_none = 0
 	values[BP_type_break] = 100;
 	values[BP_type_tempbreak] = 90;
 	values[BP_type_cmdlistbreak] = 80;
 	values[BP_type_condbreak] = 70;
 	values[BP_type_ignoredbreak] = 60;
 	values[BP_type_none] = 0;
-	values[BP_type_invalid] = -1;
 
 	BP_type best = BP_type_none;
 	int best_value = 0;
@@ -275,6 +274,9 @@ void BreakptMgr::DoProvideBestBP_Type(LEditor* editor, const std::vector<Breakpo
 	std::vector<BreakpointInfo>::const_iterator iter = li.begin();
 	for (; iter != li.end(); ++iter) {
 		BP_type bpt = iter->bp_type;
+		if (bpt == BP_type_invalid) {
+			continue;
+		}
 		int val = values[bpt];
 		if (!iter->is_enabled) {
 			val /= 2;	// Halving the value for disability means that abled always outranks disabled, without otherwise interfering with the order

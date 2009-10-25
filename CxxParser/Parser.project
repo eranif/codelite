@@ -2,11 +2,7 @@
 <CodeLite_Project Name="Parser">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0007Release000000000000
-    
-    
-    
-    ]]>
+      <![CDATA[00010001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">

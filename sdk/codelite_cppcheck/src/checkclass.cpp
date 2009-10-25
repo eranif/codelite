@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 //---------------------------------------------------------------------------
@@ -541,13 +541,19 @@ void CheckClass::privateFunctions()
                     FuncList.push_back(tok);
                 }
             }
+
+            /** @todo embedded class have access to private functions */
+            if (tok->str() == "class")
+            {
+                FuncList.clear();
+                break;
+            }
         }
 
         // Check that all private functions are used..
         bool HasFuncImpl = false;
         bool inclass = false;
         indent_level = 0;
-        const std::string pattern_function(classname + " ::");
         for (const Token *ftok = _tokenizer->tokens(); ftok; ftok = ftok->next())
         {
             if (ftok->str() == "{")
@@ -871,7 +877,7 @@ void CheckClass::thisSubtraction()
 
 void CheckClass::noConstructorError(const Token *tok, const std::string &classname)
 {
-    reportError(tok, Severity::style, "noConstructor", "The class '" + classname + "' has no constructor");
+    reportError(tok, Severity::style, "noConstructor", "The class '" + classname + "' has no constructor. Member variables not initialized.");
 }
 
 void CheckClass::uninitVarError(const Token *tok, const std::string &classname, const std::string &varname)

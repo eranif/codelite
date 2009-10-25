@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
@@ -48,6 +48,13 @@ public:
     static std::string tan(const std::string & tok);
     static std::string abs(const std::string & tok);
     static bool isGreater(const std::string & first, const std::string & second);
+
+    /**
+     * Return true if given character is 0,1,2,3,4,5,6 or 7.
+     * @param c The character to check
+     * @return true if given character is octal digit.
+     */
+    static bool isOctalDigit(char c);
 };
 
 /// @}

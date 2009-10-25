@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "token.h"
@@ -393,7 +393,8 @@ bool Token::Match(const Token *tok, const char pattern[], unsigned int varid)
             {
                 if (varid == 0)
                 {
-                    std::cerr << "\n###### If you see this, there is a bug ###### Token::Match() - varid was 0" << std::endl;
+                    std::cerr << "\n###### If you see this, there is a bug ######" << std::endl
+                              << "Token::Match(\"" << pattern << "\", 0)" << std::endl;
                 }
 
                 if (tok->varId() != varid)
@@ -510,7 +511,14 @@ size_t Token::getStrLength(const Token *tok)
     while (*str)
     {
         if (*str == '\\')
+        {
             ++str;
+
+            // string ends at '\0'
+            if (*str == '0')
+                break;
+        }
+
         ++str;
         ++len;
     }

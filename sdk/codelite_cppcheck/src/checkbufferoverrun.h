@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
@@ -50,13 +50,22 @@ public:
     void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
     {
         CheckBufferOverrun checkBufferOverrun(tokenizer, settings, errorLogger);
-        if (settings->_showAll)
-            checkBufferOverrun.bufferOverrun();
+        checkBufferOverrun.bufferOverrun();
     }
 
     /** Check for buffer overruns */
     void bufferOverrun();
+    static int countSprintfLength(const std::string &input_string, const std::list<const Token*> &parameters);
+
 private:
+
+    /**
+     * Check code that matches: "sprintf ( %varid% , %str% [,)]" when varid is not 0,
+     * and report found errors.
+     * @param tok The "sprintf" token.
+     * @param size The size of the buffer where sprintf is writing.
+     */
+    void checkSprintfCall(const Token *tok, int size);
 
     /** Check for buffer overruns - locate struct variables and check them with the .._CheckScope function */
     void checkStructVariable();
@@ -70,17 +79,19 @@ private:
     /** callstack - used during intra-function checking */
     std::list<const Token *> _callStack;
 
-    void arrayIndexOutOfBounds(const Token *tok);
-    void arrayIndexOutOfBounds();
+    void arrayIndexOutOfBounds(const Token *tok, int size);
+    void arrayIndexOutOfBounds(int size);
     void bufferOverrun(const Token *tok);
+    void dangerousStdCin(const Token *tok);
     void strncatUsage(const Token *tok);
     void outOfBounds(const Token *tok, const std::string &what);
     void sizeArgumentAsChar(const Token *tok);
 
     void getErrorMessages()
     {
-        arrayIndexOutOfBounds(0);
+        arrayIndexOutOfBounds(0, 2);
         bufferOverrun(0);
+        dangerousStdCin(0);
         strncatUsage(0);
         outOfBounds(0, "index");
         sizeArgumentAsChar(0);
@@ -99,4 +110,6 @@ private:
 /// @}
 //---------------------------------------------------------------------------
 #endif
+
+
 

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
@@ -159,7 +159,7 @@ void CheckUnusedFunctions::check()
         const FunctionUsage &func = it->second;
         if (func.usedOtherFile || func.filename.empty())
             continue;
-        if (it->first == "main" || it->first == "if")
+        if (it->first == "main" || it->first == "WinMain" || it->first == "if")
             continue;
         if (! func.usedSameFile)
         {

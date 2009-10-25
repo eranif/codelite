@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 //---------------------------------------------------------------------------
@@ -196,18 +196,12 @@ void CheckAutoVariables::autoVariables()
         //Critical assignement
         else if (Token::Match(tok, "[;{}] %var% = & %var%") && errorAv(tok->tokAt(1), tok->tokAt(4)))
         {
-            reportError(tok,
-                        Severity::error,
-                        "autoVariables",
-                        "Wrong assignement of an auto-variable to an effective parameter of a function");
+            errorAutoVariableAssignment(tok);
         }
         //Critical assignement
         else if (Token::Match(tok, "[;{}] %var% [ %any% ] = & %var%") && errorAv(tok->tokAt(1), tok->tokAt(7)))
         {
-            reportError(tok,
-                        Severity::error,
-                        "autoVariables",
-                        "Wrong assignement of an auto-variable to an effective parameter of a function");
+            errorAutoVariableAssignment(tok);
         }
         // Critical return
         else if (Token::Match(tok, "return & %var% ;") && isAutoVar(tok->tokAt(2)->varId()))
@@ -304,5 +298,8 @@ void CheckAutoVariables::errorReturnPointerToLocalArray(const Token *tok)
     reportError(tok, Severity::error, "returnLocalVariable", "Returning pointer to local array variable");
 }
 
-
+void CheckAutoVariables::errorAutoVariableAssignment(const Token *tok)
+{
+    reportError(tok, Severity::error, "autoVariables", "Wrong assignement of an auto-variable to an effective parameter of a function");
+}
 

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
@@ -324,9 +324,16 @@ std::string Preprocessor::read(std::istream &istr)
         }
     }
 
-    return removeComments(code.str());
+    return removeParantheses(removeComments(code.str()));
 }
 
+static bool hasbom(const std::string &str)
+{
+    return bool(str.size() > 3 &&
+                static_cast<unsigned char>(str[0]) == 0xef &&
+                static_cast<unsigned char>(str[1]) == 0xbb &&
+                static_cast<unsigned char>(str[2]) == 0xbf);
+}
 
 
 std::string Preprocessor::removeComments(const std::string &str)
@@ -340,17 +347,9 @@ std::string Preprocessor::removeComments(const std::string &str)
     unsigned int newlines = 0;
     std::ostringstream code;
     char previous = 0;
-    for (std::string::size_type i = 0; i < str.length(); ++i)
+    for (std::string::size_type i = hasbom(str) ? 3 : 0; i < str.length(); ++i)
     {
         char ch = str[i];
-        if (i == 0 && str.size() > 3 &&
-            (char)str[0] == (char)0xef &&
-            (char)str[1] == (char)0xbb &&
-            (char)str[2] == (char)0xbf)
-        {
-            i = 2;
-            continue;
-        }
         if (ch < 0)
             throw std::runtime_error("The code contains characters that are unhandled");
 
@@ -439,6 +438,81 @@ std::string Preprocessor::removeComments(const std::string &str)
     }
 
     return code.str();
+}
+
+
+std::string Preprocessor::removeParantheses(const std::string &str)
+{
+    if (str.find("\n#if") == std::string::npos && str.compare(0, 3, "#if") != 0)
+        return str;
+
+    std::istringstream istr(str.c_str());
+    std::ostringstream ret;
+    std::string line;
+    while (std::getline(istr, line))
+    {
+        if (line.compare(0, 3, "#if") == 0 || line.compare(0, 5, "#elif") == 0)
+        {
+            std::string::size_type pos;
+            pos = 0;
+            while ((pos = line.find(" (", pos)) != std::string::npos)
+                line.erase(pos, 1);
+            pos = 0;
+            while ((pos = line.find("( ", pos)) != std::string::npos)
+                line.erase(pos + 1, 1);
+            pos = 0;
+            while ((pos = line.find(" )", pos)) != std::string::npos)
+                line.erase(pos, 1);
+            pos = 0;
+            while ((pos = line.find(") ", pos)) != std::string::npos)
+                line.erase(pos + 1, 1);
+
+            // Remove inner paranthesis "((..))"..
+            pos = 0;
+            while ((pos = line.find("((", pos)) != std::string::npos)
+            {
+                ++pos;
+                std::string::size_type pos2 = line.find_first_of("()", pos + 1);
+                if (pos2 != std::string::npos && line[pos2] == ')')
+                {
+                    line.erase(pos2, 1);
+                    line.erase(pos, 1);
+                }
+            }
+
+            // "#if(A) => #if A", but avoid "#if (defined A) || defined (B)"
+            if (line.compare(0, 4, "#if(") == 0 && line[line.length() - 1] == ')')
+            {
+                int ind = 0;
+                for (std::string::size_type i = 0; i < line.length(); ++i)
+                {
+                    if (line[i] == '(')
+                        ++ind;
+                    else if (line[i] == ')')
+                    {
+                        --ind;
+                        if (ind == 0)
+                        {
+                            if (i == line.length() - 1)
+                            {
+                                line[3] = ' ';
+                                line.erase(line.length() - 1);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (line.compare(0, 4, "#if(") == 0)
+                line.insert(3, " ");
+            else if (line.compare(0, 4, "#elif(") == 0)
+                line.insert(5, " ");
+        }
+        ret << line << "\n";
+    }
+
+    return ret.str();
 }
 
 
@@ -563,6 +637,20 @@ std::string Preprocessor::replaceIfDefined(const std::string &str)
         ++pos;
     }
 
+    pos = 0;
+    while ((pos = ret.find("#elif defined(", pos)) != std::string::npos)
+    {
+        std::string::size_type pos2 = ret.find(")", pos + 9);
+        if (pos2 > ret.length() - 1)
+            break;
+        if (ret[pos2+1] == '\n')
+        {
+            ret.erase(pos2, 1);
+            ret.erase(pos + 6, 8);
+        }
+        ++pos;
+    }
+
     return ret;
 }
 
@@ -590,7 +678,7 @@ void Preprocessor::preprocess(std::istream &istr, std::string &processedFile, st
         std::string line;
         while (std::getline(istr, line))
         {
-            if (line.substr(0, 4) == "#if " || line.substr(0, 6) == "#elif ")
+            if (line.compare(0, 4, "#if ") == 0 || line.compare(0, 6, "#elif ") == 0)
             {
                 std::string::size_type pos = 0;
                 while ((pos = line.find(" defined ")) != std::string::npos)
@@ -667,7 +755,7 @@ std::list<std::string> Preprocessor::getcfgs(const std::string &filedata)
     std::string line;
     while (getline(istr, line))
     {
-        if (line.substr(0, 6) == "#file ")
+        if (line.compare(0, 6, "#file ") == 0)
         {
             ++filelevel;
             continue;
@@ -680,7 +768,7 @@ std::list<std::string> Preprocessor::getcfgs(const std::string &filedata)
             continue;
         }
 
-        else if (line.substr(0, 8) == "#define " && line.find("(", 8) == std::string::npos)
+        else if (line.compare(0, 8, "#define ") == 0 && line.find("(", 8) == std::string::npos)
         {
             if (line.find(" ", 8) == std::string::npos)
                 defines.insert(line.substr(8));
@@ -939,7 +1027,7 @@ std::string Preprocessor::getcode(const std::string &filedata, std::string cfg, 
     std::map<std::string, std::string> cfgmap;
     {
         std::string::size_type pos = 0;
-        while (true)
+        for (;;)
         {
             std::string::size_type pos2 = cfg.find_first_of(";=", pos);
             if (pos2 == std::string::npos)
@@ -973,14 +1061,14 @@ std::string Preprocessor::getcode(const std::string &filedata, std::string cfg, 
     std::string line;
     while (getline(istr, line))
     {
-        if (line.substr(0, 11) == "#pragma asm")
+        if (line.compare(0, 11, "#pragma asm") == 0)
         {
             ret << "\n";
             bool found_end = false;
             while (getline(istr, line))
             {
                 ret << "\n";
-                if (line.substr(0, 14) == "#pragma endasm")
+                if (line.compare(0, 14, "#pragma endasm") == 0)
                 {
                     found_end = true;
                     break;
@@ -995,7 +1083,7 @@ std::string Preprocessor::getcode(const std::string &filedata, std::string cfg, 
         std::string def = getdef(line, true);
         std::string ndef = getdef(line, false);
 
-        if (line.substr(0, 8) == "#define " && line.find("(", 8) == std::string::npos)
+        if (line.compare(0, 8, "#define ") == 0 && line.find("(", 8) == std::string::npos)
         {
             std::string::size_type pos = line.find(" ", 8);
             if (pos == std::string::npos)
@@ -1134,10 +1222,10 @@ void Preprocessor::handleIncludes(std::string &code, const std::string &filename
 
         // If endfile is encountered, we have moved to a next file in our stack,
         // so remove last path in our list.
-        while ((endfilePos = code.find("#endfile", endfilePos)) != std::string::npos && endfilePos < pos)
+        while ((endfilePos = code.find("\n#endfile", endfilePos)) != std::string::npos && endfilePos < pos)
         {
             paths.pop_back();
-            endfilePos += 8; // size of #endfile
+            endfilePos += 9; // size of #endfile
         }
 
         endfilePos = pos;
@@ -1226,6 +1314,8 @@ private:
     /** The macro has parantheses but no parameters.. "AAA()" */
     bool _nopar;
 
+    /** disabled assignment operator */
+    void operator=(const PreprocessorMacro &);
 public:
     /**
      * @param macro The code after #define, until end of line,
@@ -1276,19 +1366,50 @@ public:
      * To avoid name collisions, we will rename macro variables by
      * adding _prefix in front of the name of each variable.
      * Returns the macro with converted names
-     * @return e.g. "A(__cppcheck__x) foo(__cppcheck__x);"
+     * @param result If return value is false, this is not touched. If
+     * return value is true, this will contain new macro line
+     * (all that comes after #define) e.g.
+     * "A(__cppcheck__x) foo(__cppcheck__x);"
+     * @param macro The macro which is about to cause name collision.
+     * @return true if code needs to be changed, false is no changes
+     * are required.
      */
-    std::string renameMacroVariables()
+    bool renameMacroVariables(std::string &result, const PreprocessorMacro &macro)
     {
         // No variables
         if (_params.size() == 0)
-            return _macro;
+            return false;
 
         // Already renamed
         if (_params[0].compare(0, _prefix.length(), _prefix) == 0)
-            return _macro;
+            return false;
 
-        std::string result;
+        // Check does the macro contain tokens that have
+        // the same name as parameters in this macro.
+        const Token *tok = macro.tokens();
+        if (Token::Match(tok->next(), "("))
+        {
+            std::map<std::string, bool> paramMap;
+            for (unsigned int i = 0; i < _params.size(); ++i)
+                paramMap[_params[i]] = true;
+
+            bool collision = false;
+            tok = Token::findmatch(tok, ")", 0);
+            for (; tok; tok = tok->next())
+            {
+                if (paramMap.find(tok->str()) != paramMap.end())
+                {
+                    // Name collision
+                    collision = true;
+                    break;
+                }
+            }
+
+            if (!collision)
+                return false;
+        }
+
+        result = "";
         result.append(_name);
         result.append("(");
         std::vector<std::string> values;
@@ -1304,7 +1425,7 @@ public:
         std::string temp;
         this->code(values, temp);
         result.append(temp);
-        return result;
+        return true;
     }
 
     const Token *tokens() const
@@ -1408,11 +1529,10 @@ public:
                         continue;
                     if (str[0] == '#' || tok->isName())
                     {
-                        bool stringify = false;
-                        if (str[0] == '#')
+                        const bool stringify(str[0] == '#');
+                        if (stringify)
                         {
                             str = str.erase(0, 1);
-                            stringify = true;
                         }
                         for (unsigned int i = 0; i < _params.size(); ++i)
                         {
@@ -1436,7 +1556,18 @@ public:
                                     return false;
                                 }
                                 else if (stringify)
-                                    str = "\"" + params2[i] + "\"";
+                                {
+                                    const std::string &s(params2[i]);
+                                    std::ostringstream ostr;
+                                    ostr << "\"";
+                                    for (std::string::size_type i = 0; i < s.size(); ++i)
+                                    {
+                                        if (s[i] == '\\' || s[i] == '\"')
+                                            ostr << '\\';
+                                        ostr << s[i];
+                                    }
+                                    str = ostr.str() + "\"";
+                                }
                                 else
                                     str = params2[i];
 
@@ -1501,9 +1632,9 @@ std::string Preprocessor::expandMacros(std::string code, const std::string &file
             if (code[pos1] == '#')
             {
                 // Are we at a #undef or #define?
-                if (code.substr(pos1, 7) == "#undef ")
+                if (code.compare(pos1, 7, "#undef ") == 0)
                     pos1 += 7;
-                else if (code.substr(pos1, 8) == "#define ")
+                else if (code.compare(pos1, 8, "#define ") == 0)
                     pos1 += 8;
                 else
                     continue;
@@ -1512,7 +1643,7 @@ std::string Preprocessor::expandMacros(std::string code, const std::string &file
                 // If it's the same macroname.. break.
                 std::string::size_type pos = pos1 + macro.name().length();
                 if (pos < code.length()
-                    && code.substr(pos1, macro.name().length()) == macro.name()
+                    && code.compare(pos1, macro.name().length(), macro.name()) == 0
                     && !std::isalnum(code[pos]) && code[pos] != '_')
                     break;
 
@@ -1538,7 +1669,7 @@ std::string Preprocessor::expandMacros(std::string code, const std::string &file
                     std::string::size_type lineStart = code.rfind('\n', pos1 - 1);
                     if (lineStart != std::string::npos)
                     {
-                        if (code.substr(lineStart + 1, 7) == "#define")
+                        if (code.compare(lineStart + 1, 7, "#define") == 0)
                         {
                             // There is nothing wrong #define containing quote without
                             // a pair.
@@ -1560,8 +1691,7 @@ std::string Preprocessor::expandMacros(std::string code, const std::string &file
             }
 
             // Matching the macroname?
-            const std::string substr(code.substr(pos1, macro.name().length()));
-            if (code.substr(pos1, macro.name().length()) != macro.name())
+            if (code.compare(pos1, macro.name().length(), macro.name()) != 0)
                 continue;
 
             // Previous char must not be alphanumeric nor '_'
@@ -1585,7 +1715,7 @@ std::string Preprocessor::expandMacros(std::string code, const std::string &file
             std::string::size_type startOfLine = code.rfind("\n", pos1);
             ++startOfLine;
 
-            if (code.substr(startOfLine, 8) == "#define ")
+            if (code.compare(startOfLine, 8, "#define ") == 0)
             {
                 // We are inside a define, make sure we don't have name collision
                 // by e.g. replacing the following code:
@@ -1596,8 +1726,16 @@ std::string Preprocessor::expandMacros(std::string code, const std::string &file
                 startOfLine += 8;
 
                 PreprocessorMacro tempMacro(code.substr(startOfLine, endOfLine - startOfLine));
-                code.erase(startOfLine, endOfLine - startOfLine);
-                code.insert(startOfLine, tempMacro.renameMacroVariables());
+                std::string tempMacroCode;
+                if (tempMacro.renameMacroVariables(tempMacroCode, macro))
+                {
+                    // Change the macro and then start again from the start
+                    // of the line, as code has changed.
+                    code.erase(startOfLine, endOfLine - startOfLine);
+                    code.insert(startOfLine, tempMacroCode);
+                    pos1 = startOfLine;
+                    continue;
+                }
             }
 
             unsigned int numberOfNewlines = 0;

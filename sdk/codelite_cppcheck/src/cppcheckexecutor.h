@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef CPPCHECKEXECUTOR_H
@@ -53,7 +53,7 @@ public:
      *         given value is returned instead of default 0.
      *         If no errors are found, 0 is returned.
      */
-    int check(int argc, const char* const argv[]);
+    virtual int check(int argc, const char* const argv[]);
 
     /**
      * Information about progress is directed here. This should be
@@ -68,7 +68,7 @@ public:
 
     virtual void reportStatus(unsigned int index, unsigned int max);
 
-private:
+protected:
 
     /**
      * Helper function to print out errors. Appends a line change.
@@ -76,7 +76,9 @@ private:
      */
     virtual void reportErr(const std::string &errmsg);
 
-protected:
+    /**
+     * check() will setup this in the beginning of check().
+     */
     Settings _settings;
 };
 

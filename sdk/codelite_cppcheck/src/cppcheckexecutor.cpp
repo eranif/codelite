@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "cppcheckexecutor.h"
@@ -22,6 +22,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstdlib> // EXIT_SUCCESS and EXIT_FAILURE
+#include <stdexcept>
 
 CppCheckExecutor::CppCheckExecutor()
 {
@@ -36,9 +37,16 @@ CppCheckExecutor::~CppCheckExecutor()
 int CppCheckExecutor::check(int argc, const char* const argv[])
 {
     CppCheck cppCheck(*this);
-    std::string result = cppCheck.parseFromArgs(argc, argv);
-    if (result.length() == 0)
+    try
     {
+        cppCheck.parseFromArgs(argc, argv);
+    }
+    catch (std::runtime_error &e)
+    {
+        std::cerr << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
+
         _settings = cppCheck.settings();
         if (_settings._xml)
         {
@@ -74,12 +82,6 @@ int CppCheckExecutor::check(int argc, const char* const argv[])
         else
             return 0;
     }
-    else
-    {
-        std::cout << result;
-        return EXIT_FAILURE;
-    }
-}
 
 void CppCheckExecutor::reportErr(const std::string &errmsg)
 {

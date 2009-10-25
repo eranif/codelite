@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 //---------------------------------------------------------------------------
@@ -98,6 +98,13 @@ protected:
      * @throws std::runtime_error when code contains unhandled characters
      */
     static std::string removeComments(const std::string &str);
+
+    /**
+     * Remove redundant parantheses from preprocessor commands. This should only be called from read().
+     * @param str Code processed by read().
+     * @return code with reduced parantheses
+     */
+    static std::string removeParantheses(const std::string &str);
 
     /**
      * Returns the string between double quote characters or \< \> characters.

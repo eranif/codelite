@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
@@ -69,11 +69,12 @@ private:
 
 
     void errorReturnPointerToLocalArray(const Token *tok);
+    void errorAutoVariableAssignment(const Token *tok);
 
 
     void getErrorMessages()
     {
-        reportError(0, Severity::error, "autoVariables", "Wrong assignement of an auto-variable to an effective parameter of a function");
+        errorAutoVariableAssignment(0);
         errorReturnPointerToLocalArray(0);
     }
 

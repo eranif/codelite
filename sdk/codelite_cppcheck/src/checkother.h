@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
@@ -47,12 +47,14 @@ public:
     {
         CheckOther checkOther(tokenizer, settings, errorLogger);
 
+        checkOther.nullPointer();
         if (settings->_checkCodingStyle)
         {
             checkOther.warningOldStylePointerCast();
             checkOther.checkUnsignedDivision();
             checkOther.checkCharVariable();
-            checkOther.nullPointer();
+            checkOther.checkVariableScope();
+            checkOther.checkStructMemberUsage();
         }
     }
 
@@ -63,10 +65,7 @@ public:
         if (settings->_checkCodingStyle)
         {
             checkOther.warningRedundantCode();
-            checkOther.warningIf();
-            checkOther.checkVariableScope();
             checkOther.checkConstantFunctionParameter();
-            checkOther.checkStructMemberUsage();
             checkOther.checkIncompleteStatement();
             if (settings->_showAll)
             {
@@ -84,9 +83,6 @@ public:
 
     // Redundant code
     void warningRedundantCode();
-
-    // Warning upon: if (condition);
-    void warningIf();
 
     // Invalid function usage..
     void invalidFunctionUsage();
@@ -133,7 +129,6 @@ public:
     void redundantIfDelete0Error(const Token *tok);
     void redundantIfRemoveError(const Token *tok);
     void dangerousUsageStrtolError(const Token *tok);
-    void ifNoActionError(const Token *tok);
     void sprintfOverlappingDataError(const Token *tok, const std::string &varname);
     void udivError(const Token *tok);
     void udivWarning(const Token *tok);
@@ -152,13 +147,17 @@ public:
 
     void getErrorMessages()
     {
+        // error
+        sprintfOverlappingDataError(0, "varname");
+        udivError(0);
+        nullPointerError(0, "pointer");
+        zerodivError(0);
+
+        // style
         cstyleCastError(0);
         redundantIfDelete0Error(0);
         redundantIfRemoveError(0);
         dangerousUsageStrtolError(0);
-        ifNoActionError(0);
-        sprintfOverlappingDataError(0, "varname");
-        udivError(0);
         udivWarning(0);
         unusedStructMemberError(0, "structname", "variable");
         passedByValueError(0, "parametername");
@@ -168,8 +167,8 @@ public:
         variableScopeError(0, "varname");
         conditionAlwaysTrueFalse(0, "true/false");
         strPlusChar(0);
-        nullPointerError(0, "pointer");
-        zerodivError(0);
+
+        // optimisations
         postIncrementError(0, "varname", true);
     }
 
@@ -181,20 +180,62 @@ public:
     std::string classInfo() const
     {
         return "Other checks\n"
+
+               // error
+               " * [[OverlappingData|bad usage of the function 'sprintf' (overlapping data)]]\n"
+               " * division with zero\n"
+               " * null pointer dereferencing\n"
+
+               // warning
                " * C-style pointer cast in cpp file\n"
                " * redundant if\n"
                " * bad usage of the function 'strtol'\n"
-               " * [[OverlappingData|bad usage of the function 'sprintf' (overlapping data)]]\n"
-               " * division with zero\n"
                " * [[CheckUnsignedDivision|unsigned division]]\n"
                " * unused struct member\n"
                " * passing parameter by value\n"
+               " * [[IncompleteStatement|Incomplete statement]]\n"
                " * [[charvar|check how signed char variables are used]]\n"
+               " * variable scope can be limited\n"
                " * condition that is always true/false\n"
                " * unusal pointer arithmetic. For example: \"abc\" + 'd'\n"
-               " * dereferencing a null pointer\n"
-               " * [[IncompleteStatement|Incomplete statement]]\n";
+
+               // optimisations
+               " * optimisation: detect post increment/decrement\n";
     }
+
+private:
+
+    /**
+     * Does one part of the check for nullPointer().
+     * Locate insufficient null-pointer handling after loop
+     */
+    void nullPointerAfterLoop();
+
+    /**
+     * Does one part of the check for nullPointer().
+     * looping through items in a linked list in a inner loop..
+     */
+    void nullPointerLinkedList();
+
+    /**
+     * Does one part of the check for nullPointer().
+     * Dereferencing a struct pointer and then checking if it's NULL..
+     */
+    void nullPointerStructByDeRefAndChec();
+
+    /**
+     * Does one part of the check for nullPointer().
+     * Dereferencing a pointer and then checking if it's NULL..
+     */
+    void nullPointerByDeRefAndChec();
+
+    /**
+     * Does one part of the check for nullPointer().
+     * 1. initialize pointer to 0
+     * 2. conditionally assign pointer
+     * 3. dereference pointer
+     */
+    void nullPointerConditionalAssignment();
 };
 /// @}
 //---------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LiteEditor Revision="$(Revision)">
+<CodeLite Revision="$(Revision)" Version="2.0.1">
   <ArchiveObject Name="m_tagsOptionsData">
     <long Value="984" Name="m_ccFlags"/>
     <wxArrayString Name="m_prep">
@@ -63,4 +63,4 @@
   <ArchiveObject Name="highlight_word">
     <long Value="1" Name="m_value"/>
   </ArchiveObject>
-</LiteEditor>
+</CodeLite>

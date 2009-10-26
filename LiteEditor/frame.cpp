@@ -3294,6 +3294,10 @@ void Frame::OnReloadExternallModified(wxCommandEvent& e)
 
 void Frame::ReloadExternallyModifiedProjectFiles()
 {
+	if ( ManagerST::Get()->IsWorkspaceOpen() == false ) {
+		return;
+	}
+	
 	Workspace *workspace = WorkspaceST::Get();
 	bool workspace_modified = false, project_modified = false;
 

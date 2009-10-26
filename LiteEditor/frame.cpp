@@ -26,7 +26,6 @@
 #include <wx/busyinfo.h>
 #include "tags_parser_search_path_dlg.h"
 #include "includepathlocator.h"
-#include "includepathlocator.h"
 #include "quickfinder.h"
 #include "outputviewcontrolbar.h"
 #include "clauidockart.h"
@@ -78,7 +77,6 @@
 #include "buidltab.h"
 #include "errorstab.h"
 #include "frame.h"
-#include "splashscreen.h"
 #include "symbol_tree.h"
 #include "cpp_symbol_tree.h"
 #include "plugin.h"

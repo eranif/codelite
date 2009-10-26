@@ -131,8 +131,6 @@
       <File Name="filepicker.h"/>
       <File Name="dirpicker.cpp"/>
       <File Name="dirpicker.h"/>
-      <File Name="splashscreen.cpp"/>
-      <File Name="splashscreen.h"/>
       <File Name="progressctrl.cpp"/>
       <File Name="progressctrl.h"/>
       <File Name="virtualdirectoryselectorbase.h"/>

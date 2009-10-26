@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/socket.h>
+#include <wx/splash.h>
 #include "evnvarlist.h"
 #include "environmentconfig.h"
 #include "conffilelocator.h"
@@ -47,7 +48,6 @@
 #include "globals.h"
 #include "wx/tokenzr.h"
 #include "wx/dir.h"
-#include "splashscreen.h"
 #include <wx/stdpaths.h>
 
 #define __PERFORMANCE
@@ -87,6 +87,73 @@ wxString MacGetBasePath()
 	return rest;
 }
 #endif
+//-------------------------------------------------
+// helper method to draw the revision + version
+// on our splash screen
+//-------------------------------------------------
+static wxBitmap clDrawSplashBitmap(	const wxBitmap& bitmap,
+								    const wxString &mainTitle,
+									const wxString &subTitle)
+{
+	wxBitmap bmp ( bitmap.GetWidth(), bitmap.GetHeight()  );
+	
+    wxMemoryDC dcMem;
+
+#ifdef USE_PALETTE_IN_SPLASH
+    bool hiColour = (wxDisplayDepth() >= 16) ;
+
+    if (bitmap.GetPalette() && !hiColour)
+    {
+        dcMem.SetPalette(* bitmap.GetPalette());
+    }
+#endif // USE_PALETTE_IN_SPLASH
+
+    dcMem.SelectObject( bmp );
+	dcMem.DrawBitmap  ( bitmap, 0, 0, true);
+	
+	//write the main title & subtitle
+	wxCoord w, h, w1, h1;
+	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	wxFont smallfont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	font.SetPointSize(12);
+	smallfont.SetPointSize(10);
+	dcMem.SetFont(font);
+	dcMem.GetMultiLineTextExtent(mainTitle, &w, &h);
+	wxCoord bmpW = bitmap.GetWidth();
+	wxCoord bmpH = bitmap.GetHeight();
+	
+	//draw shadow 
+	dcMem.SetTextForeground(wxT("LIGHT GRAY"));
+	
+	dcMem.DrawText(mainTitle, bmpW - w - 9, 11);
+	//draw the text	
+	dcMem.SetTextForeground(wxT("BLACK"));
+	dcMem.SetFont(font);
+	
+	//draw the main title
+	wxCoord textX = bmpW - w - 10;
+	wxCoord textY = 10;
+	dcMem.DrawText(mainTitle, textX, textY);
+	
+	//draw the subtitle
+	dcMem.SetFont(smallfont);
+	dcMem.SetTextForeground(wxT("WHITE"));
+	dcMem.GetMultiLineTextExtent(subTitle, &w1, &h1);
+	
+	wxCoord stextX = textX + (w - w1)/2;
+	wxCoord stextY = bmpH - h1 - 10;
+	
+	dcMem.DrawText(subTitle, stextX, stextY);
+	dcMem.SelectObject(wxNullBitmap);
+
+#ifdef USE_PALETTE_IN_SPLASH
+    if (bitmap.GetPalette() && !hiColour)
+    {
+        dcMem.SetPalette(wxNullPalette);
+    }
+#endif // USE_PALETTE_IN_SPLASH
+	return bmp;
+}
 
 #if wxVERSION_NUMBER < 2900
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
@@ -379,10 +446,10 @@ bool App::OnInit()
 		if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
 			wxString mainTitle;
 			mainTitle << wxT("v1.0.") << SvnRevision;
-			m_splash = new SplashScreen(bitmap, mainTitle, wxEmptyString,
+			wxBitmap splash = clDrawSplashBitmap(bitmap, mainTitle, wxT(""));
+			m_splash = new wxSplashScreen(splash,
 			                            wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
-			                            2000, NULL, -1, wxDefaultPosition, wxDefaultSize,
-			                            style);
+			                            2000, NULL, wxID_ANY);
 			wxTheApp->Yield();
 		}
 	}

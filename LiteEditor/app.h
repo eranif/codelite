@@ -26,12 +26,12 @@
 #define LITEEDITOR_APP_H
 
 #include "frame.h"
-class SplashScreen;
+class wxSplashScreen;
 class wxSingleInstanceChecker;
 
 class App : public wxApp
 {
-	SplashScreen*            m_splash;
+	wxSplashScreen*            m_splash;
 	Frame *                  m_pMainFrame;
 	wxSingleInstanceChecker *m_singleInstance;
 	wxArrayString            m_parserPaths;

@@ -1483,7 +1483,8 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 		if ( removedPaths.IsEmpty() == false ) {
 			wxWindowDisabler disableAll;
 			wxBusyInfo info(_T("Updating tags database, please wait..."), this);
-
+			wxTheApp->Yield();
+			
 			// Remove all tags from the database which starts with the paths which were
 			// removed from the parser include path
 			ITagsStorage *db = TagsManagerST::Get()->GetDatabase();
@@ -1491,6 +1492,7 @@ void Frame::OnCtagsOptions(wxCommandEvent &event)
 			for(size_t i=0; i<removedPaths.GetCount(); i++) {
 				db->DeleteByFilePrefix     (wxFileName(), removedPaths.Item(i));
 				db->DeleteFromFilesByPrefix(wxFileName(), removedPaths.Item(i));
+				wxTheApp->Yield();
 			}
 			db->Commit();
 		}

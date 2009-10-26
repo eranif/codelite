@@ -725,11 +725,17 @@ void Manager::RetagWorkspace(bool quickRetag)
 	for(size_t i=0; i<excludePaths.GetCount(); i++) {
 		fcFileOpener::Instance()->AddExcludePath(excludePaths.Item(i).mb_str(wxConvUTF8).data());
 	}
-
-	for(size_t i=0; i<projectFiles.size(); i++) {
-		crawlerScan(projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data());
+	
+	{
+		wxWindowDisabler disableAll; 
+		wxBusyInfo bi(wxT("Scanning for include files to parse. please wait..."), Frame::Get());
+		
+		for(size_t i=0; i<projectFiles.size(); i++) {
+			crawlerScan(projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data());
+			wxTheApp->Yield();
+		}
 	}
-
+	
 	std::set<std::string> fileSet = fcFileOpener::Instance()->GetResults();
 
 	// add to this set the workspace files to create a unique list of

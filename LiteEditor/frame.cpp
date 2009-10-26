@@ -303,6 +303,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	EVT_UPDATE_UI(XRCID("reload_workspace"),    Frame::OnReloadWorkspaceUI)
 	EVT_UPDATE_UI(XRCID("add_project"),         Frame::OnWorkspaceMenuUI)
 	EVT_UPDATE_UI(XRCID("retag_workspace"),     Frame::OnWorkspaceOpen)
+	EVT_UPDATE_UI(XRCID("full_retag_workspace"),Frame::OnWorkspaceOpen)
 
 	//-------------------------------------------------------
 	// Build menu

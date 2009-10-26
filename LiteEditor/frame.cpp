@@ -376,7 +376,7 @@ BEGIN_EVENT_TABLE(Frame, wxFrame)
 	//-------------------------------------------------------
 	// Settings menu
 	//-------------------------------------------------------
-	EVT_MENU(XRCID("options"),                  Frame::OnViewOptions)
+	EVT_MENU(wxID_PREFERENCES,                  Frame::OnViewOptions)
 	EVT_MENU(XRCID("syntax_highlight"),         Frame::OnSyntaxHighlight)
 	EVT_MENU(XRCID("configure_accelerators"),   Frame::OnConfigureAccelerators)
 	EVT_MENU(XRCID("add_envvar"),               Frame::OnAddEnvironmentVariable)

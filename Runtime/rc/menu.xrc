@@ -454,7 +454,7 @@
 		<object class="wxMenu" name="settings_menu">
             <label>Settin&amp;gs</label>
             <style>wxMENU_TEAROFF</style>
-            <object class="wxMenuItem" name="options">
+            <object class="wxMenuItem" name="wxID_PREFERENCES">
                 <label>&amp;Editor...</label>
             </object>
 			<object class="wxMenuItem" name="syntax_highlight">

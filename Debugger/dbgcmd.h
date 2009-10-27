@@ -254,4 +254,46 @@ public:
 	virtual bool ProcessOutput(const wxString & line);
 
 };
+
+// Callback for handling 'set condition' command
+class DbgCmdSetConditionHandler : public DbgCmdHandler {
+	BreakpointInfo m_bp;
+public:
+	DbgCmdSetConditionHandler(IDebuggerObserver *observer, const BreakpointInfo& bp) : DbgCmdHandler(observer), m_bp(bp) {}
+	virtual ~DbgCmdSetConditionHandler(){}
+
+	virtual bool ProcessOutput(const wxString & line);
+};
+
+// Callback for handling parsing the -break-list output from
+// the debugger
+class DbgCmdBreakList : public DbgCmdHandler {
+public:
+	DbgCmdBreakList(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+	virtual ~DbgCmdBreakList(){}
+
+	virtual bool ProcessOutput(const wxString & line);
+};
+
+// Callback for handling threads info
+// command
+class DbgCmdListThreads : public DbgCmdCLIHandler {
+public:
+	DbgCmdListThreads(IDebuggerObserver *observer) : DbgCmdCLIHandler(observer) {}
+	virtual ~DbgCmdListThreads(){}
+
+	virtual bool ProcessOutput(const wxString & line);
+};
+
+// Callback for handling the '-data-read-memory' command
+class DbgCmdWatchMemory : public DbgCmdHandler {
+	wxString m_address;
+	size_t   m_count;
+
+public:
+	DbgCmdWatchMemory(IDebuggerObserver *observer, const wxString &address, size_t count) : DbgCmdHandler(observer), m_address(address), m_count(count) {}
+	virtual ~DbgCmdWatchMemory(){}
+
+	virtual bool ProcessOutput(const wxString & line);
+};
 #endif //DBGCMD_H

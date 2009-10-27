@@ -390,7 +390,7 @@ public:
 	DebuggerInformation GetDebuggerInformation() {
 		return m_info;
 	}
-	
+
 	/**
 	 * \brief Sets the logging level 'on the fly'
 	 * \param level the new level
@@ -406,7 +406,7 @@ public:
 	bool GetDebugLoggingLevel() const {
 		return m_info.enableDebugLog;
 	}
-	
+
 	//-------------------------------------------------------------
 	// Debugger operations
 	//-------------------------------------------------------------
@@ -524,12 +524,7 @@ public:
 	 * \brief executes a command that does not yield any output from the debugger
 	 */
 	virtual bool ExecuteCmd(const wxString &cmd) = 0;
-	/**
-	 * \brief excute a command and waits from its answer from the debugger
-	 * \param command command to execute
-	 * \param output the debugger response
-	 */
-	virtual bool ExecSyncCmd(const wxString &command, wxString &output) = 0;
+
 	/**
 	 * \brief ask the debugger to print the current stack local variable. When the results arrives, the observer->UpdateLocals() is called
 	 * \return true on success, false otherwise
@@ -549,10 +544,9 @@ public:
 	virtual bool SetFrame(int frame) = 0;
 	/**
 	 * \brief return list of threads.
-	 * \param threads [output]
 	 * \return true on success, false otherwise
 	 */
-	virtual bool ListThreads(ThreadEntryArray &threads) = 0;
+	virtual bool ListThreads() = 0;
 	/**
 	 * \brief select threadId to be active
 	 * \param threadId thread id
@@ -591,10 +585,9 @@ public:
 	 * \brief a request to display memory from address -> address + count. This is a synchronous call
 	 * \param address starting address
 	 * \param count address range
-	 * \param output [output] string containing the formatted result
 	 * \return true on success, false otherwise
 	 */
-	virtual bool WatchMemory(const wxString &address, size_t count, wxString &output) = 0;
+	virtual bool WatchMemory(const wxString &address, size_t count) = 0;
 
 	/**
 	 * \brief set memory at given address and of size count. the value to set must be a space delimited

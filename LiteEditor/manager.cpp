@@ -1715,10 +1715,7 @@ void Manager::UpdateDebuggerPane()
 		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetThreadsView() ) || IsPaneVisible ( DebuggerPane::THREADS ) ) {
 
 			// update the thread list
-			ThreadEntryArray threads;
-			dbgr->ListThreads ( threads );
-			pane->GetThreadsView()->PopulateList ( threads );
-
+			dbgr->ListThreads();
 		}
 
 //		if ( ( IsPaneVisible ( wxT ( "Debugger" ) ) && pane->GetNotebook()->GetCurrentPage() == ( wxWindow* ) pane->GetAsciiViewer() ) || IsPaneVisible ( DebuggerPane::ASCII_VIEWER ) ) {
@@ -1736,13 +1733,9 @@ void Manager::UpdateDebuggerPane()
 			if ( memView->GetExpression().IsEmpty() == false ) {
 
 				wxString output;
-				if ( dbgr->WatchMemory ( memView->GetExpression(), memView->GetSize(), output ) ) {
-					memView->SetViewString ( output );
-				}
+				dbgr->WatchMemory ( memView->GetExpression(), memView->GetSize() );
 			}
-
 		}
-
 	}
 }
 
@@ -2797,6 +2790,14 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 
 	case DBG_UR_TIP:
 		UpdateTip( event.m_expression, event.m_text );
+		break;
+
+	case DBG_UR_LISTTHRAEDS:
+		Frame::Get()->GetDebuggerPane()->GetThreadsView()->PopulateList( event.m_threads );
+		break;
+
+	case DBG_UR_WATCHMEMORY:
+		Frame::Get()->GetDebuggerPane()->GetMemoryView()->SetViewString( event.m_evaluated );
 		break;
 
 	case DBG_UR_INVALID:

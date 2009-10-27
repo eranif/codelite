@@ -85,8 +85,6 @@ public:
 	DbgGdb();
 	virtual ~DbgGdb();
 
-	virtual bool ExecSyncCmd(const wxString &command, wxString &output);
-
 	//------ IDebugger ---------
 	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
 	virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
@@ -112,13 +110,13 @@ public:
 	virtual bool EvaluateExpressionToString(const wxString &expression, const wxString &format);
 	virtual bool QueryLocals();
 	virtual bool ListFrames();
-	virtual bool ListThreads(ThreadEntryArray &threads);
+	virtual bool ListThreads();
 	virtual bool SelectThread(long threadId);
 	virtual bool SetFrame(int frame);
 	virtual void Poke();
 	virtual bool GetTip(const wxString &dbgCommand, const wxString &expression);
 	virtual bool ResolveType(const wxString &expression);
-	virtual bool WatchMemory(const wxString &address, size_t count, wxString &output);
+	virtual bool WatchMemory(const wxString &address, size_t count);
 	virtual bool SetMemory(const wxString &address, size_t count, const wxString &hex_value);
 	virtual void SetDebuggerInformation(const DebuggerInformation &info);
 	virtual void BreakList();

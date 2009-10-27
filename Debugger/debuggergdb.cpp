@@ -34,37 +34,6 @@
 #include "procutils.h"
 #include "wx/tokenzr.h"
 #include <algorithm>
-#include "gdb_result_parser.h"
-
-extern int gdb_result_lex();
-extern bool setGdbLexerInput(const std::string &in);
-extern void gdb_result_lex_clean();
-extern std::string gdb_result_string;
-extern void gdb_result_push_buffer(const std::string &new_input);
-extern void gdb_result_pop_buffer();
-
-static void GDB_STRIP_QUOATES(wxString &currentToken)
-{
-	size_t where = currentToken.find(wxT("\""));
-	if (where != std::string::npos && where == 0) {
-		currentToken.erase(0, 1);
-	}
-
-	where = currentToken.rfind(wxT("\""));
-	if (where != std::string::npos && where == currentToken.length()-1) {
-		currentToken.erase(where);
-	}
-
-	where = currentToken.find(wxT("\"\\\\"));
-	if (where != std::string::npos && where == 0) {
-		currentToken.erase(0, 3);
-	}
-
-	where = currentToken.rfind(wxT("\"\\\\"));
-	if (where != std::string::npos && where == currentToken.length()-3) {
-		currentToken.erase(where);
-	}
-}
 
 #ifdef __WXMSW__
 #include "windows.h"
@@ -473,17 +442,18 @@ bool DbgGdb::SetIgnoreLevel(const int bid, const int ignorecount)
 
 	wxString command(wxT("-break-after "));
 	command << bid << wxT(" ") << ignorecount;
+	return WriteCommand(command, NULL);
 
-	wxString dbg_output;
-	if (ExecSyncCmd(command, dbg_output)) {
-		// If successful, the only output is ^done, so assume that means it worked
-		if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
-			m_observer->UpdateAddLine(wxString::Format(wxT("Set ignore-count %d for breakpoint %d"), ignorecount, bid));
-			return true;
-		}
-	}
-
-	return false;
+//	wxString dbg_output;
+//	if (ExecSyncCmd(command, dbg_output)) {
+//		// If successful, the only output is ^done, so assume that means it worked
+//		if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
+//			m_observer->UpdateAddLine(wxString::Format(wxT("Set ignore-count %d for breakpoint %d"), ignorecount, bid));
+//			return true;
+//		}
+//	}
+//
+//	return false;
 }
 
 bool DbgGdb::SetEnabledState(const int bid, const bool enable)
@@ -497,17 +467,18 @@ bool DbgGdb::SetEnabledState(const int bid, const bool enable)
 		command = wxT("-break-enable ");
 	}
 	command << bid;
-
-	wxString dbg_output;
-	if (ExecSyncCmd(command, dbg_output)) {
-		// If successful, the only output is ^done, so assume that means it worked
-		if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
-			m_observer->UpdateAddLine(wxString::Format(wxT("Breakpoint %d %s"), bid, enable ? wxT("enabled"):wxT("disabled")));
-			return true;
-		}
-	}
-
-	return false;
+	return WriteCommand(command, NULL);
+//
+//	wxString dbg_output;
+//	if (ExecSyncCmd(command, dbg_output)) {
+//		// If successful, the only output is ^done, so assume that means it worked
+//		if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
+//			m_observer->UpdateAddLine(wxString::Format(wxT("Breakpoint %d %s"), bid, enable ? wxT("enabled"):wxT("disabled")));
+//			return true;
+//		}
+//	}
+//
+//	return false;
 }
 
 bool DbgGdb::SetCondition(const BreakpointInfo& bp)
@@ -518,21 +489,7 @@ bool DbgGdb::SetCondition(const BreakpointInfo& bp)
 
 	wxString command(wxT("-break-condition "));
 	command << bp.debugger_id << wxT(" ") << bp.conditions;
-
-	wxString dbg_output;
-	if (ExecSyncCmd(command, dbg_output)) {
-		// If successful, the only output is ^done, so assume that means it worked
-		if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
-			if (bp.conditions.IsEmpty()) {
-				m_observer->UpdateAddLine(wxString::Format(wxT("Breakpoint %d condition cleared"), bp.debugger_id));
-			} else {
-				m_observer->UpdateAddLine(wxString::Format(wxT("Condition %s set for breakpoint %d"), bp.conditions.c_str(), bp.debugger_id));
-			}
-			return true;
-		}
-	}
-
-	return false;
+	return WriteCommand(command, new DbgCmdSetConditionHandler(m_observer, bp));
 }
 
 bool DbgGdb::SetCommands(const BreakpointInfo& bp)
@@ -628,95 +585,6 @@ bool DbgGdb::ExecuteCmd(const wxString &cmd)
 		m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), cmd.c_str()));
 	}
 	return Write(cmd);
-}
-
-bool DbgGdb::ExecSyncCmd(const wxString &command, wxString &output)
-{
-	wxString cmd;
-	wxString id = MakeId( );
-	cmd << id << command;
-	//send the command to gdb
-	if (!ExecuteCmd(cmd)) {
-		return false;
-	}
-
-	bool miCommand(false);
-	wxString trimmedCommand(command);
-
-	if (trimmedCommand.Trim().Trim(false).StartsWith(wxT("-"))) {
-		miCommand = true;
-	}
-
-	//read all output until we found 'XXXXXXXX^done'
-	static wxRegEx reCommand(wxT("^([0-9]{8})"));
-	const int maxPeeks(100);
-	wxString line;
-	int counter(0);
-	for ( ;; ) {
-		//try to read a line from the debugger
-		line.Empty();
-		ReadLine(line, 1);
-		line = line.Trim();
-
-		if (line.IsEmpty()) {
-			if (counter < maxPeeks) {
-				counter++;
-				continue;
-			} else {
-				break;
-			}
-		}
-
-		if (m_info.enableDebugLog) {
-			m_observer->UpdateAddLine(wxString::Format(wxT("DEBUG>>%s"), line.c_str()));
-		}
-
-		counter = 0;
-		if (reCommand.Matches(line)) {
-			//not a gdb message, get the command associated with the message
-			wxString cmd_id = reCommand.GetMatch(line, 1);
-			if (cmd_id != id) {
-
-				long expcId(0), recvId(0);
-				cmd_id.ToLong(&recvId);
-				id.ToLong(&expcId);
-
-				// first, process this reply, since it might be an output from a previous command
-				// strip the id from the line
-				line = line.Mid(8);
-				DoProcessAsyncCommand(line, cmd_id);
-
-				if (recvId > expcId) {
-					// if we are here, it means that the received ID is greater than ours...
-					// so we probably will never get it ..
-					return false;
-				}
-				continue;
-			}
-
-			//remove trailing new line
-			if (miCommand) {
-				// if the execute command is a GDB MI command,
-				// remove the command ID (the 8 digit sequence)
-				// and append this line to the output
-				int where = line.Find(cmd_id);
-				if (where != wxNOT_FOUND) {
-					output << line.Mid(where + 8);
-				}
-			}
-
-			output = output.Trim();
-			return true;
-
-		} else {
-			StripString(line);
-
-			if (!line.Contains(command)) {
-				output << line << wxT("\n");
-			}
-		}
-	}
-	return false;
 }
 
 bool DbgGdb::RemoveAllBreaks()
@@ -1027,42 +895,9 @@ bool DbgGdb::SetFrame(int frame)
 	return WriteCommand(command, new DbgCmdSelectFrame(m_observer));
 }
 
-bool DbgGdb::ListThreads(ThreadEntryArray &threads)
+bool DbgGdb::ListThreads()
 {
-	static wxRegEx reCommand(wxT("^([0-9]{8})"));
-	wxString output;
-	if (!ExecSyncCmd(wxT("info threads"), output)) {
-		return false;
-	}
-
-	//parse the debugger output
-	wxStringTokenizer tok(output, wxT("\n"), wxTOKEN_STRTOK);
-	while (tok.HasMoreTokens()) {
-		ThreadEntry entry;
-		wxString line = tok.NextToken();
-		line.Replace(wxT("\t"), wxT(" "));
-		line = line.Trim().Trim(false);
-
-
-		if (reCommand.Matches(line)) {
-			//this is the ack line, ignore it
-			continue;
-		}
-
-		wxString tmpline(line);
-		if (tmpline.StartsWith(wxT("*"), &line)) {
-			//active thread
-			entry.active = true;
-		} else {
-			entry.active = false;
-		}
-
-		line = line.Trim().Trim(false);
-		line.ToLong(&entry.dbgid);
-		entry.more = line.AfterFirst(wxT(' '));
-		threads.push_back(entry);
-	}
-	return true;
+	return ExecCLICommand(wxT("info threads"), new DbgCmdListThreads(m_observer));
 }
 
 bool DbgGdb::SelectThread(long threadId)
@@ -1094,7 +929,7 @@ bool DbgGdb::ResolveType(const wxString& expression)
 	return WriteCommand(cmd, new DbgCmdResolveTypeHandler(expression, this));
 }
 
-bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output)
+bool DbgGdb::WatchMemory(const wxString& address, size_t count)
 {
 	// make the line per WORD size
 	int divider (sizeof(unsigned long));
@@ -1105,99 +940,9 @@ bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output
 
 	// at this point, 'factor' contains the number rows
 	// and the 'divider' is the columns
-	wxString cmd, dbg_output;
+	wxString cmd;
 	cmd << wxT("-data-read-memory \"") << address << wxT("\" x 1 ") << factor << wxT(" ") << divider << wxT(" ?");
-
-	if (ExecSyncCmd(cmd, dbg_output)) {
-
-		// {addr="0x003d3e24",data=["0x65","0x72","0x61","0x6e"],ascii="eran"},
-		// {addr="0x003d3e28",data=["0x00","0xab","0xab","0xab"],ascii="xxxx"}
-
-		// search for ,memory=[
-		int where = dbg_output.Find(wxT(",memory="));
-		if (where != wxNOT_FOUND) {
-			dbg_output = dbg_output.Mid((size_t)(where + 9));
-
-			const wxCharBuffer scannerText =  _C(dbg_output);
-			setGdbLexerInput(scannerText.data());
-
-			int type;
-			wxString currentToken;
-			wxString currentLine;
-			GDB_NEXT_TOKEN();
-
-			for (int i=0; i<factor && type != 0; i++) {
-				currentLine.Clear();
-
-				while (type != GDB_ADDR) {
-
-					if (type == 0) {
-						break;
-					}
-
-					GDB_NEXT_TOKEN();
-					continue;
-				}
-
-				// Eof?
-				if (type == 0) {
-					break;
-				}
-
-				GDB_NEXT_TOKEN();	//=
-				GDB_NEXT_TOKEN();	//0x003d3e24
-				GDB_STRIP_QUOATES(currentToken);
-				currentLine << currentToken << wxT(": ");
-
-				GDB_NEXT_TOKEN();	//,
-				GDB_NEXT_TOKEN();	//data
-				GDB_NEXT_TOKEN();	//=
-				GDB_NEXT_TOKEN();	//[
-
-				long v(0);
-				wxString hex, asciiDump;
-				for (int yy=0; yy<divider; yy++) {
-					GDB_NEXT_TOKEN();	//"0x65"
-					GDB_STRIP_QUOATES(currentToken);
-					// convert the hex string into real value
-					if (currentToken.ToLong(&v, 16)) {
-
-						//	char ch = (char)v;
-						if (wxIsprint((wxChar)v) || (wxChar)v == ' ') {
-							if (v == 9) { //TAB
-								v = 32; //SPACE
-							}
-
-							hex << (wxChar)v;
-						} else {
-							hex << wxT("?");
-						}
-					} else {
-						hex << wxT("?");
-					}
-
-					currentLine << currentToken << wxT(" ");
-					GDB_NEXT_TOKEN();	//, | ]
-				}
-
-				GDB_NEXT_TOKEN();	//,
-				GDB_NEXT_TOKEN();	//GDB_ASCII
-				GDB_NEXT_TOKEN();	//=
-				GDB_NEXT_TOKEN();	//ascii_value
-				currentLine << wxT(" : ") << hex;
-
-				GDB_STRIP_QUOATES(currentToken);
-				output << currentLine << wxT("\n");
-				GDB_NEXT_TOKEN();
-			}
-
-			gdb_result_lex_clean();
-			return true;
-		}
-
-		return true;
-	}
-	return false;
+	return WriteCommand(cmd, new DbgCmdWatchMemory(m_observer, address, count));
 }
 
 bool DbgGdb::SetMemory(const wxString& address, size_t count, const wxString& hex_value)
@@ -1224,73 +969,7 @@ void DbgGdb::SetDebuggerInformation(const DebuggerInformation& info)
 
 void DbgGdb::BreakList()
 {
-	wxString dbg_output;
-	if (!ExecSyncCmd(wxT("-break-list"), dbg_output)) {
-		return;
-	}
-
-	std::vector<BreakpointInfo> li;
-	if (dbg_output.Find(wxT("body=[]")) != wxNOT_FOUND) {
-		// No breakpoints. This will happen when the only bp had been a temporary one, now deleted
-		// So reconcile with the empty vector, to remove that bp from the manager/editor
-		m_observer->ReconcileBreakpoints(li);
-		return;
-	}
-
-	dbg_output.Replace(wxT("\""), wxT(""));
-	dbg_output.Replace(wxT("\\"), wxT(""));
-
-	// We've got a string containing the -break-list output. Extract the data for each bp
-	// We only need to know the following:
-	// Does the breakpoint still exist? (or was it temporary, now deleted; or a watchpoint now out of scope)
-	// Is it (still) ignored? It might have been, but now the ignore-count has dec.ed to 0
-	// So, having stripped the quotes and escapes, we're looking for bkpt={number=14 ..... ,ignore=1...
-	static wxRegEx reNumber(wxT("number=([0-9]+)"));
-	static wxRegEx reIgnore(wxT("ignore=([0-9]+)"));
-
-	wxArrayString breakarray; int offset;
-	// Split the list into individual breakpoints, then parse each one
-	if ((offset = dbg_output.Find(wxT("number="))) == wxNOT_FOUND) {
-		return;
-	}
-	dbg_output = dbg_output.Mid(offset);
-	do {
-		size_t next = dbg_output.find(wxT("number="), 7);
-		wxString breakpt(dbg_output);
-		if (next != wxString::npos) {
-			breakpt = dbg_output.Left(next);
-		}
-		breakarray.Add(breakpt);
-		dbg_output = dbg_output.Mid(breakpt.Len());
-	}
-	while (dbg_output.Find(wxT("number=")) != wxNOT_FOUND);
-
-	for (size_t n=0; n < breakarray.GetCount(); ++n) {
-		wxString breakpt = breakarray[n];
-		if (! reNumber.Matches(breakpt)) {
-			continue;
-		}
-		BreakpointInfo bp;
-		wxString id = reNumber.GetMatch(breakpt, 1);
-		long l; if (! id.ToLong(&l)) {
-			continue;	// Syntax error :/
-		}
-		bp.debugger_id = (int)l;
-
-		// That section should always have worked. This one will only match for ignored breakpoints
-		if (reIgnore.Matches(breakpt)) {
-			wxString id = reIgnore.GetMatch(breakpt, 1);
-			long l; if (id.ToLong(&l)) {
-				bp.ignore_number = (int)l;
-			}
-		}
-
-		li.push_back(bp);
-	}
-
-	// We now have a vector of bps, each containing its debugger_id and ignore-count.
-	// Pass the vector to the breakpoints manager to be reconciled
-	m_observer->ReconcileBreakpoints(li);
+	(void)WriteCommand(wxT("-break-list"), new DbgCmdBreakList(m_observer));
 }
 
 bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgExeName)

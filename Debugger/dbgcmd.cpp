@@ -956,3 +956,232 @@ bool DbgCmdGetTipHandler::ProcessOutput(const wxString& line)
 	m_observer->UpdateTip(m_expression, evaluated);
 	return true;
 }
+
+// Set condition handler
+bool DbgCmdSetConditionHandler::ProcessOutput(const wxString& line)
+{
+	wxString dbg_output ( line );
+	// If successful, the only output is ^done, so assume that means it worked
+	if (dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
+		if (m_bp.conditions.IsEmpty()) {
+			m_observer->UpdateAddLine(wxString::Format(wxT("Breakpoint %d condition cleared"), m_bp.debugger_id));
+		} else {
+			m_observer->UpdateAddLine(wxString::Format(wxT("Condition %s set for breakpoint %d"), m_bp.conditions.c_str(), m_bp.debugger_id));
+		}
+		return true;
+	}
+	return false;
+}
+
+// -break-list output handler
+bool DbgCmdBreakList::ProcessOutput(const wxString& line)
+{
+	wxString dbg_output( line );
+	std::vector<BreakpointInfo> li;
+	if (dbg_output.Find(wxT("body=[]")) != wxNOT_FOUND) {
+		// No breakpoints. This will happen when the only bp had been a temporary one, now deleted
+		// So reconcile with the empty vector, to remove that bp from the manager/editor
+		m_observer->ReconcileBreakpoints(li);
+		return true;
+	}
+
+	dbg_output.Replace(wxT("\""), wxT(""));
+	dbg_output.Replace(wxT("\\"), wxT(""));
+
+	// We've got a string containing the -break-list output. Extract the data for each bp
+	// We only need to know the following:
+	// Does the breakpoint still exist? (or was it temporary, now deleted; or a watchpoint now out of scope)
+	// Is it (still) ignored? It might have been, but now the ignore-count has dec.ed to 0
+	// So, having stripped the quotes and escapes, we're looking for bkpt={number=14 ..... ,ignore=1...
+	static wxRegEx reNumber(wxT("number=([0-9]+)"));
+	static wxRegEx reIgnore(wxT("ignore=([0-9]+)"));
+
+	wxArrayString breakarray;
+	int offset;
+	// Split the list into individual breakpoints, then parse each one
+	if ((offset = dbg_output.Find(wxT("number="))) == wxNOT_FOUND) {
+		return true;
+	}
+	dbg_output = dbg_output.Mid(offset);
+	do {
+		size_t next = dbg_output.find(wxT("number="), 7);
+		wxString breakpt(dbg_output);
+		if (next != wxString::npos) {
+			breakpt = dbg_output.Left(next);
+		}
+		breakarray.Add(breakpt);
+		dbg_output = dbg_output.Mid(breakpt.Len());
+	} while (dbg_output.Find(wxT("number=")) != wxNOT_FOUND);
+
+	for (size_t n=0; n < breakarray.GetCount(); ++n) {
+		wxString breakpt = breakarray[n];
+		if (! reNumber.Matches(breakpt)) {
+			continue;
+		}
+		BreakpointInfo bp;
+		wxString id = reNumber.GetMatch(breakpt, 1);
+		long l;
+		if (! id.ToLong(&l)) {
+			continue;	// Syntax error :/
+		}
+		bp.debugger_id = (int)l;
+
+		// That section should always have worked. This one will only match for ignored breakpoints
+		if (reIgnore.Matches(breakpt)) {
+			wxString id = reIgnore.GetMatch(breakpt, 1);
+			long l;
+			if (id.ToLong(&l)) {
+				bp.ignore_number = (int)l;
+			}
+		}
+
+		li.push_back(bp);
+	}
+
+	// We now have a vector of bps, each containing its debugger_id and ignore-count.
+	// Pass the vector to the breakpoints manager to be reconciled
+	m_observer->ReconcileBreakpoints(li);
+	return true;
+}
+
+bool DbgCmdListThreads::ProcessOutput(const wxString& line)
+{
+	wxUnusedVar(line);
+	static wxRegEx reCommand(wxT("^([0-9]{8})"));
+
+	wxString output( GetOutput() );
+	DebuggerEvent e;
+
+	//parse the debugger output
+	wxStringTokenizer tok(output, wxT("\n"), wxTOKEN_STRTOK);
+	while ( tok.HasMoreTokens() ) {
+		ThreadEntry entry;
+		wxString line = tok.NextToken();
+		line.Replace(wxT("\t"), wxT(" "));
+		line = line.Trim().Trim(false);
+
+
+		if (reCommand.Matches(line)) {
+			//this is the ack line, ignore it
+			continue;
+		}
+
+		wxString tmpline(line);
+		if (tmpline.StartsWith(wxT("*"), &line)) {
+			//active thread
+			entry.active = true;
+		} else {
+			entry.active = false;
+		}
+
+		line = line.Trim().Trim(false);
+		line.ToLong(&entry.dbgid);
+		entry.more = line.AfterFirst(wxT(' '));
+		e.m_threads.push_back( entry );
+	}
+
+	// Notify the observer
+	e.m_updateReason  = DBG_UR_LISTTHRAEDS;
+	m_observer->DebuggerUpdate( e );
+	return true;
+}
+
+bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
+{
+	DebuggerEvent e;
+	int divider (sizeof(unsigned long));
+	int factor((int)(m_count/divider));
+
+	if (m_count % divider != 0) {
+		factor = (int)(m_count / divider) + 1;
+	}
+
+	// {addr="0x003d3e24",data=["0x65","0x72","0x61","0x6e"],ascii="eran"},
+	// {addr="0x003d3e28",data=["0x00","0xab","0xab","0xab"],ascii="xxxx"}
+	wxString dbg_output ( line ), output;
+
+	// search for ,memory=[
+	int where = dbg_output.Find(wxT(",memory="));
+	if (where != wxNOT_FOUND) {
+		dbg_output = dbg_output.Mid((size_t)(where + 9));
+
+		const wxCharBuffer scannerText =  _C(dbg_output);
+		setGdbLexerInput(scannerText.data());
+
+		int type;
+		wxString currentToken;
+		wxString currentLine;
+		GDB_NEXT_TOKEN();
+
+		for (int i=0; i<factor && type != 0; i++) {
+			currentLine.Clear();
+
+			while (type != GDB_ADDR) {
+
+				if (type == 0) {
+					break;
+				}
+
+				GDB_NEXT_TOKEN();
+				continue;
+			}
+
+			// Eof?
+			if (type == 0) {
+				break;
+			}
+
+			GDB_NEXT_TOKEN();	//=
+			GDB_NEXT_TOKEN();	//0x003d3e24
+			wxGDB_STRIP_QUOATES(currentToken);
+			currentLine << currentToken << wxT(": ");
+
+			GDB_NEXT_TOKEN();	//,
+			GDB_NEXT_TOKEN();	//data
+			GDB_NEXT_TOKEN();	//=
+			GDB_NEXT_TOKEN();	//[
+
+			long v(0);
+			wxString hex, asciiDump;
+			for (int yy=0; yy<divider; yy++) {
+				GDB_NEXT_TOKEN();	//"0x65"
+				wxGDB_STRIP_QUOATES(currentToken);
+				// convert the hex string into real value
+				if (currentToken.ToLong(&v, 16)) {
+
+					//	char ch = (char)v;
+					if (wxIsprint((wxChar)v) || (wxChar)v == ' ') {
+						if (v == 9) { //TAB
+							v = 32; //SPACE
+						}
+
+						hex << (wxChar)v;
+					} else {
+						hex << wxT("?");
+					}
+				} else {
+					hex << wxT("?");
+				}
+
+				currentLine << currentToken << wxT(" ");
+				GDB_NEXT_TOKEN();	//, | ]
+			}
+
+			GDB_NEXT_TOKEN();	//,
+			GDB_NEXT_TOKEN();	//GDB_ASCII
+			GDB_NEXT_TOKEN();	//=
+			GDB_NEXT_TOKEN();	//ascii_value
+			currentLine << wxT(" : ") << hex;
+
+			wxGDB_STRIP_QUOATES(currentToken);
+			output << currentLine << wxT("\n");
+			GDB_NEXT_TOKEN();
+		}
+
+		gdb_result_lex_clean();
+	}
+	e.m_evaluated  = output;
+	e.m_expression = m_address;
+	m_observer->DebuggerUpdate( e );
+	return true;
+}

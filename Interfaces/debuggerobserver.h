@@ -68,7 +68,9 @@ enum DebuggerUpdateReason
 	DBG_UR_RECONCILE_BPTS,          // Reconcile breakpoints is needed
 	DBG_UR_BP_HIT,                  // Breakpoint was hit
 	DBG_UR_TYPE_RESOLVED,           // The debugger has evaluated the a type
-	DBG_UR_TIP                      // Tip is available
+	DBG_UR_TIP,                     // Tip is available
+	DBG_UR_WATCHMEMORY,             // Watch memory is available
+	DBG_UR_LISTTHRAEDS              // Threads list is available
 };
 
 struct DebuggerEvent {
@@ -83,11 +85,12 @@ struct DebuggerEvent {
 	int                           m_bpInternalId;  // DBG_UR_BP_ADDED
 	int                           m_bpDebuggerId;  // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
 	TreeNode<wxString, NodeData> *m_tree;          // DBG_UR_LOCALS, DBG_UR_QUICK_WATCH
-	wxString                      m_expression;    // DBG_UR_EXPRESSION, DBG_UR_QUICK_WATCH, DBG_UR_TYPE_RESOLVED, DBG_UR_TIP
-	wxString                      m_evaluated;     // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED
+	wxString                      m_expression;    // DBG_UR_EXPRESSION, DBG_UR_QUICK_WATCH, DBG_UR_TYPE_RESOLVED, DBG_UR_TIP, DBG_UR_WATCHMEMORY
+	wxString                      m_evaluated;     // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY
 	StackEntryArray               m_stack;         // DBG_UR_UPDATE_STACK_LIST
 	std::vector<BreakpointInfo>   m_bpInfoList;    // DBG_UR_RECONCILE_BPTS
 	bool                          m_onlyIfLogging; // DBG_UR_ADD_LINE
+	ThreadEntryArray              m_threads;       // DBG_UR_LISTTHRAEDS
 
 	DebuggerEvent()
 		: m_updateReason  (DBG_UR_INVALID)
@@ -104,6 +107,7 @@ struct DebuggerEvent {
 	{
 		m_stack.clear();
 		m_bpInfoList.clear();
+		m_threads.clear();
 	}
 };
 

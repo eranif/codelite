@@ -1110,8 +1110,8 @@ bool DbgGdb::WatchMemory(const wxString& address, size_t count, wxString& output
 
 	if (ExecSyncCmd(cmd, dbg_output)) {
 
-		//{addr="0x003d3e24",data=["0x65","0x72","0x61","0x6e"],ascii="eran"},
-		//{addr="0x003d3e28",data=["0x00","0xab","0xab","0xab"],ascii="xxxx"}
+		// {addr="0x003d3e24",data=["0x65","0x72","0x61","0x6e"],ascii="eran"},
+		// {addr="0x003d3e28",data=["0x00","0xab","0xab","0xab"],ascii="xxxx"}
 
 		// search for ,memory=[
 		int where = dbg_output.Find(wxT(",memory="));

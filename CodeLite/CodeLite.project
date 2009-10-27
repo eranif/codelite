@@ -259,6 +259,16 @@
   </Settings>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="AsyncProcess">
+    <File Name="asyncprocess.cpp"/>
+    <File Name="asyncprocess.h"/>
+    <File Name="processreaderthread.cpp"/>
+    <File Name="processreaderthread.h"/>
+    <File Name="unixprocess_impl.cpp"/>
+    <File Name="unixprocess_impl.h"/>
+    <File Name="winprocess_impl.cpp"/>
+    <File Name="winprocess_impl.h"/>
+  </VirtualDirectory>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>
